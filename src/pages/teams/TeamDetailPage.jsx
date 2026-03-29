@@ -9,9 +9,12 @@ function cleanStr(str) {
   return String(str).trim().toLowerCase()
 }
 
+// 【修复1】增强了职责字段的兼容性
 function normalizeRole(role) {
-  const r = String(role || '').toUpperCase()
-  if (r === 'SUPPORT') return 'SUP'
+  const r = String(role || '').toUpperCase().trim()
+  if (r === 'SUPPORT' || r === 'HEALER' || r === '辅助') return 'SUP'
+  if (r === 'DAMAGE' || r === '输出') return 'DPS'
+  if (r === 'TANK' || r === '重装') return 'TANK'
   return r || 'FLEX'
 }
 
@@ -66,6 +69,7 @@ export default function TeamDetailPage() {
     return safeArr(db?.teams).find(t => String(t.team_id) === String(teamId))
   }, [db, teamId])
 
+  // 【修复2】在这里缝合 db.players 和 db.player_totals
   const roster = useMemo(() => {
     if (!team) return []
 
@@ -73,7 +77,8 @@ export default function TeamDetailPage() {
     const tName = cleanStr(team.team_name)
     const teamPlayerIds = new Set(safeArr(team.player_ids).map(id => String(id)))
 
-    return safeArr(db?.players).filter(player => {
+    // 1. 提取基础选手数据
+    const basePlayers = safeArr(db?.players).filter(player => {
       const pId = String(player.player_id || '')
       const pTId = cleanStr(player.team_id)
       const pTName = cleanStr(player.team_name)
@@ -83,6 +88,17 @@ export default function TeamDetailPage() {
         pTId === tId ||
         (pTName && pTName === tName)
       )
+    })
+
+    // 2. 建立 totals 数据的字典
+    const totalsMap = new Map(
+      safeArr(db?.player_totals).map(pt => [String(pt.player_id), pt])
+    )
+
+    // 3. 将统计数据合并到基础对象上
+    return basePlayers.map(player => {
+      const stats = totalsMap.get(String(player.player_id)) || {}
+      return { ...player, ...stats }
     })
   }, [db, team])
 
