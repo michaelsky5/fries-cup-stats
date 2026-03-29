@@ -255,10 +255,6 @@
   font-family: var(--font-mono);
 }
 
-.liveValue {
-  color: #4ade80;
-}
-
 /* ---------- section header ---------- */
 .sectionHeader {
   margin-bottom: 12px;
@@ -293,6 +289,267 @@
   font-family: var(--font-mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+/* ---------- info grid ---------- */
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.infoPanel {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.016) 0%, rgba(255,255,255,0.004) 100%),
+    #101010;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.staffGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.staffItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 62px;
+  padding: 10px 12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.022) 0%, rgba(255,255,255,0.008) 100%),
+    #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.staffLabel {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.26);
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.staffValue {
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.2;
+  color: #ffffff;
+  word-break: break-word;
+}
+
+.profileTag {
+  width: fit-content;
+  min-height: 22px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(244,195,32,0.1);
+  border: 1px solid rgba(244,195,32,0.24);
+  color: #f4c320;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.profileTagEn {
+  margin-top: 6px;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  color: rgba(255,255,255,0.28);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.profileDesc {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.62);
+}
+
+.roleStrip {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.roleChip {
+  min-height: 20px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.74);
+  font-size: 9px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.formRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.formLabel {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.26);
+  font-family: var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.formList {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.formChip {
+  min-width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.formWin {
+  background: rgba(74,222,128,0.08);
+  color: #4ade80;
+  border-color: rgba(74,222,128,0.24);
+}
+
+.formLoss {
+  background: rgba(255,77,79,0.08);
+  color: #ff4d4f;
+  border-color: rgba(255,77,79,0.24);
+}
+
+.formDraw {
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.72);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.formEmpty {
+  font-size: 9px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.38);
+  font-family: var(--font-mono);
+}
+
+/* ---------- role panels ---------- */
+.roleAnalyticsSection {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.016) 0%, rgba(255,255,255,0.004) 100%),
+    #101010;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.rolePanels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rolePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.006) 100%),
+    #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 2px solid #f4c320;
+}
+
+.rolePanelHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.rolePanelTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rolePanelTitle {
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.rolePanelSub {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(255,255,255,0.26);
+  font-family: var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.rolePanelCount {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  color: #f4c320;
+  font-family: var(--font-mono);
+}
+
+.roleMetrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.roleMetric {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.roleMetricLabel {
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1.3;
+  color: rgba(255,255,255,0.62);
+}
+
+.roleMetricValue {
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+  font-family: var(--font-mono);
 }
 
 /* ---------- layout ---------- */
@@ -593,7 +850,9 @@
 /* ---------- responsive ---------- */
 @media (max-width: 1180px) {
   .heroContent,
-  .contentGrid {
+  .contentGrid,
+  .infoGrid,
+  .rolePanels {
     grid-template-columns: 1fr;
   }
 
@@ -603,7 +862,9 @@
 }
 
 @media (max-width: 760px) {
-  .heroRight {
+  .heroRight,
+  .staffGrid,
+  .roleMetrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -618,14 +879,9 @@
   }
 
   .teamHero,
-  .matchRow {
-    padding-left: 14px;
-    padding-right: 14px;
-  }
-
-  .teamHero {
-    padding-top: 14px;
-    padding-bottom: 14px;
+  .infoPanel,
+  .roleAnalyticsSection {
+    padding: 14px;
   }
 
   .topbarLeft {
@@ -637,7 +893,9 @@
     font-size: 26px;
   }
 
-  .heroRight {
+  .heroRight,
+  .staffGrid,
+  .roleMetrics {
     grid-template-columns: 1fr;
   }
 
