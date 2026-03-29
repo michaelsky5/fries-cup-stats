@@ -1,6 +1,6 @@
 import { useMemo, useEffect } from 'react'
 import { Link, useOutletContext, useParams, useNavigate } from 'react-router-dom'
-import { safeArr, getLeaderboardRows } from '../../lib/selectors.js'
+import { safeArr } from '../../lib/selectors.js'
 import PlayerCard from '../../components/players/PlayerCard.jsx'
 import styles from './TeamDetailPage.module.css'
 
@@ -25,11 +25,13 @@ function formatNum(value, digits = 1) {
   return Number.isFinite(num) ? num.toFixed(digits) : '0.0'
 }
 
-function pickFirstValue(...values) {
-  for (const value of values) {
-    if (value !== undefined && value !== null && String(value).trim() !== '') return value
-  }
-  return '-'
+function formatMinutes(value) {
+  const mins = Number(value || 0)
+  if (!Number.isFinite(mins) || mins <= 0) return '0m'
+  const h = Math.floor(mins / 60)
+  const m = Math.round(mins % 60)
+  if (h > 0) return `${h}h ${m}m`
+  return `${Math.round(mins)}m`
 }
 
 function getStatusInfo(match, isMyTeamA) {
@@ -64,42 +66,33 @@ export default function TeamDetailPage() {
     return safeArr(db?.teams).find(t => String(t.team_id) === String(teamId))
   }, [db, teamId])
 
-  const leaderboardRows = useMemo(() => getLeaderboardRows(db), [db])
-
   const roster = useMemo(() => {
     if (!team) return []
 
     const tId = cleanStr(team.team_id)
     const tName = cleanStr(team.team_name)
+    const teamPlayerIds = new Set(safeArr(team.player_ids).map(id => String(id)))
 
-    return safeArr(db?.players).filter(p => {
-      const pTId = cleanStr(p.team_id)
-      const pTName = cleanStr(p.team_name)
-      return pTId === tId || (pTName && pTName === tName)
+    return safeArr(db?.players).filter(player => {
+      const pId = String(player.player_id || '')
+      const pTId = cleanStr(player.team_id)
+      const pTName = cleanStr(player.team_name)
+
+      return (
+        teamPlayerIds.has(pId) ||
+        pTId === tId ||
+        (pTName && pTName === tName)
+      )
     })
   }, [db, team])
-
-  const rosterStatsRows = useMemo(() => {
-    if (!team) return []
-
-    const tId = cleanStr(team.team_id)
-    const tName = cleanStr(team.team_name)
-
-    return safeArr(leaderboardRows).filter(p => {
-      const pTId = cleanStr(p.team_id)
-      const pTName = cleanStr(p.team_name)
-      return pTId === tId || (pTName && pTName === tName)
-    })
-  }, [leaderboardRows, team])
 
   const teamMatches = useMemo(() => {
     if (!team) return []
     const targetId = String(teamId)
-
     const statusOrder = { IN_PROGRESS: 0, PENDING: 1, SCHEDULED: 1, COMPLETE: 2, COMPLETED: 2 }
 
     return safeArr(db?.matches)
-      .filter(m => String(m.team_a?.id) === targetId || String(m.team_b?.id) === targetId)
+      .filter(match => String(match.team_a?.id) === targetId || String(match.team_b?.id) === targetId)
       .sort((a, b) => {
         const sa = statusOrder[a.status] ?? 99
         const sb = statusOrder[b.status] ?? 99
@@ -108,15 +101,11 @@ export default function TeamDetailPage() {
       })
   }, [db, team, teamId])
 
-  const staffInfo = useMemo(() => {
-    const staff = team?.staff || {}
-    return {
-      coach: pickFirstValue(team?.coach, team?.head_coach, team?.headCoach, staff?.coach, staff?.head_coach),
-      manager: pickFirstValue(team?.manager, team?.team_manager, team?.teamManager, staff?.manager),
-      captain: pickFirstValue(team?.captain, team?.leader, team?.team_captain, staff?.captain),
-      analyst: pickFirstValue(team?.analyst, team?.analysis, staff?.analyst)
-    }
-  }, [team])
+  const staffInfo = useMemo(() => ({
+    coach: team?.team_coach || '-',
+    manager: team?.team_manager || '-',
+    club: team?.team_club || '-'
+  }), [team])
 
   const matchSummary = useMemo(() => {
     const completedMatches = teamMatches.filter(m => m.status === 'COMPLETE' || m.status === 'COMPLETED')
@@ -135,12 +124,16 @@ export default function TeamDetailPage() {
       else draws += 1
     })
 
-    const completed = completedMatches.length
-    const live = teamMatches.filter(m => m.status === 'IN_PROGRESS').length
-    const pending = teamMatches.filter(m => m.status === 'PENDING' || m.status === 'SCHEDULED').length
-    const winRate = completed > 0 ? Math.round((wins / completed) * 100) : 0
+    const recentCompleted = [...completedMatches]
+      .sort((a, b) => {
+        const aTime = a.updated_at ? new Date(a.updated_at).getTime() : 0
+        const bTime = b.updated_at ? new Date(b.updated_at).getTime() : 0
+        if (aTime !== bTime) return bTime - aTime
+        return String(b.match_id || '').localeCompare(String(a.match_id || ''))
+      })
+      .slice(0, 5)
 
-    const recentForm = completedMatches.slice(-5).map(match => {
+    const recentForm = recentCompleted.map(match => {
       const mineAsA = String(match.team_a?.id) === String(teamId)
       const myScore = mineAsA ? Number(match.team_a?.score || 0) : Number(match.team_b?.score || 0)
       const opScore = mineAsA ? Number(match.team_b?.score || 0) : Number(match.team_a?.score || 0)
@@ -150,15 +143,16 @@ export default function TeamDetailPage() {
       return 'D'
     })
 
+    const completed = completedMatches.length
+    const live = teamMatches.filter(m => m.status === 'IN_PROGRESS').length
+    const pending = teamMatches.filter(m => m.status === 'PENDING' || m.status === 'SCHEDULED').length
+    const winRate = completed > 0 ? Math.round((wins / completed) * 100) : 0
+
     return { wins, losses, draws, completed, live, pending, winRate, recentForm }
   }, [teamMatches, teamId])
 
   const roleStructure = useMemo(() => {
-    const counts = {
-      TANK: 0,
-      DPS: 0,
-      SUP: 0
-    }
+    const counts = { TANK: 0, DPS: 0, SUP: 0 }
 
     roster.forEach(player => {
       const role = normalizeRole(player.role)
@@ -172,7 +166,9 @@ export default function TeamDetailPage() {
 
   const rolePanels = useMemo(() => {
     const makeRolePanel = (role, cn, en, metrics) => {
-      const rows = rosterStatsRows.filter(p => normalizeRole(p.role) === role)
+      let rows = roster.filter(player => normalizeRole(player.role) === role && Number(player.raw_time_mins || 0) > 0)
+      if (!rows.length) rows = roster.filter(player => normalizeRole(player.role) === role)
+
       return {
         role,
         cn,
@@ -202,12 +198,12 @@ export default function TeamDetailPage() {
         { label: '阵亡 /10', key: 'avg_dth' }
       ])
     ]
-  }, [rosterStatsRows, roleStructure])
+  }, [roster, roleStructure])
 
   const teamProfile = useMemo(() => {
-    const tankPanel = rolePanels.find(p => p.role === 'TANK')
-    const dpsPanel = rolePanels.find(p => p.role === 'DPS')
-    const supPanel = rolePanels.find(p => p.role === 'SUP')
+    const tankPanel = rolePanels.find(panel => panel.role === 'TANK')
+    const dpsPanel = rolePanels.find(panel => panel.role === 'DPS')
+    const supPanel = rolePanels.find(panel => panel.role === 'SUP')
 
     const tankScore =
       (tankPanel?.count || 0) * 500 +
@@ -236,7 +232,7 @@ export default function TeamDetailPage() {
       return {
         tag: '前线推进型',
         en: 'FRONTLINE DRIVE',
-        desc: '以前排承压与空间推进构成团队骨架，比赛节奏更偏向正面展开。'
+        desc: '以前排承压与空间推进构成队伍骨架，比赛节奏更偏向正面展开。'
       }
     }
 
@@ -246,6 +242,56 @@ export default function TeamDetailPage() {
       desc: '队伍节奏更依赖支援与协同稳定性，整体表现偏向稳态运营。'
     }
   }, [rolePanels])
+
+  const corePlayers = useMemo(() => {
+    const getCoreByRole = role => {
+      const rolePlayers = roster
+        .filter(player => normalizeRole(player.role) === role)
+        .sort((a, b) => {
+          const timeDiff = Number(b.raw_time_mins || 0) - Number(a.raw_time_mins || 0)
+          if (timeDiff !== 0) return timeDiff
+          return Number(b.maps_played || 0) - Number(a.maps_played || 0)
+        })
+
+      return rolePlayers[0] || null
+    }
+
+    return {
+      tank: getCoreByRole('TANK'),
+      dps: getCoreByRole('DPS'),
+      sup: getCoreByRole('SUP')
+    }
+  }, [roster])
+
+  const heroPool = useMemo(() => {
+    const poolMap = new Map()
+
+    roster.forEach(player => {
+      const logs = safeArr(player.match_logs?.length > 0 ? player.match_logs : player.live_match_logs)
+
+      if (logs.length > 0) {
+        logs.forEach(log => {
+          const hero = String(log.hero || '').trim()
+          if (!hero || hero === '-' || hero === 'UNKNOWN') return
+          const minutes = Number(log.playtimeMinutes || 0)
+          poolMap.set(hero, (poolMap.get(hero) || 0) + minutes)
+        })
+      } else {
+        const heroes = Array.isArray(player.top_3_heroes) ? player.top_3_heroes.filter(Boolean) : []
+        heroes.forEach((hero, idx) => {
+          poolMap.set(hero, (poolMap.get(hero) || 0) + Math.max(1, 3 - idx))
+        })
+        if ((!heroes.length) && player.most_played_hero) {
+          poolMap.set(player.most_played_hero, (poolMap.get(player.most_played_hero) || 0) + 1)
+        }
+      }
+    })
+
+    return [...poolMap.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([hero, time]) => ({ hero, time }))
+  }, [roster])
 
   if (!team) {
     return (
@@ -359,12 +405,12 @@ export default function TeamDetailPage() {
               <span className={styles.staffValue}>{staffInfo.manager}</span>
             </div>
             <div className={styles.staffItem}>
-              <span className={styles.staffLabel}>队长 / CAPTAIN</span>
-              <span className={styles.staffValue}>{staffInfo.captain}</span>
+              <span className={styles.staffLabel}>所属俱乐部 / CLUB</span>
+              <span className={styles.staffValue}>{staffInfo.club}</span>
             </div>
             <div className={styles.staffItem}>
-              <span className={styles.staffLabel}>分析 / ANALYST</span>
-              <span className={styles.staffValue}>{staffInfo.analyst}</span>
+              <span className={styles.staffLabel}>最终排名 / FINAL</span>
+              <span className={styles.staffValue}>{team.final_rank || '-'}</span>
             </div>
           </div>
         </div>
@@ -443,6 +489,73 @@ export default function TeamDetailPage() {
 
       <div className={styles.contentGrid}>
         <div className={styles.mainColumn}>
+          <div className={styles.infoGrid}>
+            <div className={styles.infoPanel}>
+              <div className={styles.sectionHeader}>
+                <div className={styles.sectionKicker}>
+                  <span className={styles.sectionKickerCn}>队内核心</span>
+                  <span className={styles.sectionKickerEn}>CORE PLAYERS</span>
+                </div>
+              </div>
+
+              <div className={styles.staffGrid}>
+                <div className={styles.staffItem}>
+                  <span className={styles.staffLabel}>前排核心 / TANK</span>
+                  {corePlayers.tank ? (
+                    <Link to={`/players/${corePlayers.tank.player_id}`} className={styles.staffValue} style={{ textDecoration: 'none' }}>
+                      {corePlayers.tank.display_name || corePlayers.tank.player_name}
+                    </Link>
+                  ) : (
+                    <span className={styles.staffValue}>-</span>
+                  )}
+                </div>
+
+                <div className={styles.staffItem}>
+                  <span className={styles.staffLabel}>输出核心 / DPS</span>
+                  {corePlayers.dps ? (
+                    <Link to={`/players/${corePlayers.dps.player_id}`} className={styles.staffValue} style={{ textDecoration: 'none' }}>
+                      {corePlayers.dps.display_name || corePlayers.dps.player_name}
+                    </Link>
+                  ) : (
+                    <span className={styles.staffValue}>-</span>
+                  )}
+                </div>
+
+                <div className={styles.staffItem}>
+                  <span className={styles.staffLabel}>支援核心 / SUPPORT</span>
+                  {corePlayers.sup ? (
+                    <Link to={`/players/${corePlayers.sup.player_id}`} className={styles.staffValue} style={{ textDecoration: 'none' }}>
+                      {corePlayers.sup.display_name || corePlayers.sup.player_name}
+                    </Link>
+                  ) : (
+                    <span className={styles.staffValue}>-</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.infoPanel}>
+              <div className={styles.sectionHeader}>
+                <div className={styles.sectionKicker}>
+                  <span className={styles.sectionKickerCn}>团队英雄池</span>
+                  <span className={styles.sectionKickerEn}>TEAM HERO POOL</span>
+                </div>
+              </div>
+
+              <div className={styles.roleStrip}>
+                {heroPool.length > 0 ? (
+                  heroPool.map(item => (
+                    <span key={item.hero} className={styles.roleChip}>
+                      {item.hero} · {formatMinutes(item.time)}
+                    </span>
+                  ))
+                ) : (
+                  <span className={styles.formEmpty}>NO HERO DATA</span>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div className={styles.sectionHeader}>
             <div className={styles.sectionKicker}>
               <span className={styles.sectionKickerCn}>首发花名册</span>
