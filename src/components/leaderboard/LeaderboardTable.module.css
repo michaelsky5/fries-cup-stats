@@ -1,0 +1,430 @@
+.wrap {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0%, rgba(255, 255, 255, 0) 100%),
+    #101010;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: linear-gradient(90deg, #f4c320 0%, rgba(244, 195, 32, 0.28) 22%, transparent 48%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.table {
+  width: 100%;
+  min-width: 1500px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* ---------- header ---------- */
+.table thead th {
+  padding: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.028) 0%, rgba(255, 255, 255, 0) 100%),
+    #141414;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  white-space: nowrap;
+}
+
+.sortHead {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 58px;
+  padding: 13px 12px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.58);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.sortHead.alignLeft { justify-content: flex-start; }
+.sortHead.alignCenter { justify-content: center; }
+
+.sortHead:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.headLabel {
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.headSubLabel {
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: var(--font-mono);
+}
+
+.activeLabel {
+  color: #f4c320;
+}
+
+.sortArrow {
+  flex-shrink: 0;
+  font-size: 9px;
+  opacity: 0;
+  transition: opacity 0.18s ease, color 0.18s ease;
+}
+
+.sortHead:hover .sortArrow { opacity: 0.45; }
+
+.arrowActive {
+  opacity: 1 !important;
+  color: #f4c320;
+}
+
+/* ---------- group heads ---------- */
+.combatHead {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.008) 100%),
+    #141414 !important;
+}
+
+.table thead th:nth-child(7) {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.table thead th:nth-child(9) {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dmgHead {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 2px solid rgba(255, 77, 79, 0.4) !important;
+}
+
+.healHead {
+  border-bottom: 2px solid rgba(74, 222, 128, 0.4) !important;
+}
+
+.mitHead {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 2px solid rgba(96, 165, 250, 0.4) !important;
+}
+
+/* ---------- body ---------- */
+.table tbody tr {
+  transition: background 0.18s ease;
+}
+
+.table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.012);
+}
+
+.table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.table tbody td {
+  padding: 13px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.rowTop {
+  background: linear-gradient(90deg, rgba(244, 195, 32, 0.05) 0%, rgba(244, 195, 32, 0.01) 26%, transparent 52%);
+}
+
+.rowTop1 {
+  background: linear-gradient(90deg, rgba(244, 195, 32, 0.08) 0%, rgba(244, 195, 32, 0.02) 26%, transparent 54%);
+}
+
+.rowTop2 {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.014) 24%, transparent 52%);
+}
+
+.rowTop3 {
+  background: linear-gradient(90deg, rgba(255, 155, 87, 0.07) 0%, rgba(255, 155, 87, 0.015) 24%, transparent 52%);
+}
+
+/* ---------- columns ---------- */
+.rankCol { width: 78px; }
+.playerCol { width: 184px; }
+.teamCol { width: 150px; }
+.roleCol { width: 90px; }
+.heroCol { width: 260px; }
+
+.rank {
+  text-align: center !important;
+}
+
+.rankBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.rankTop {
+  color: #111111;
+  background: #f4c320;
+  border-color: rgba(244, 195, 32, 0.96);
+}
+
+.rankTop1 {
+  transform: scale(1.04);
+}
+
+.rankTop2 {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.rankTop3 {
+  background: #ff9b57;
+  border-color: #ff9b57;
+}
+
+.player,
+.team,
+.hero {
+  text-align: left !important;
+}
+
+.identityBlock,
+.heroTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mainText {
+  font-size: 13px;
+  font-weight: 900;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subText {
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.38);
+  letter-spacing: 0.06em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.role {
+  text-align: center !important;
+}
+
+.roleTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  height: 22px;
+  padding: 0 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.72);
+  text-transform: uppercase;
+}
+
+/* ---------- 新增：职权同步高亮色 ---------- */
+.damage {
+  color: #ff5a5d;
+  border-color: rgba(255, 77, 79, 0.58);
+  background: rgba(255, 77, 79, 0.09);
+}
+
+.support {
+  color: #57dc8b;
+  border-color: rgba(74, 222, 128, 0.58);
+  background: rgba(74, 222, 128, 0.09);
+}
+
+.tank {
+  color: #72b2ff;
+  border-color: rgba(96, 165, 250, 0.58);
+  background: rgba(96, 165, 250, 0.09);
+}
+
+.dataCellStandard,
+.dataCell {
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.dataCellStandard {
+  color: rgba(255, 255, 255, 0.84);
+  font-weight: 700;
+}
+
+.dataCell {
+  font-weight: 900;
+}
+
+/* ---------- combat group ---------- */
+.cellCombat {
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.045) 0%, transparent 100%);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.table tbody td:nth-child(7) {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.table tbody td:nth-child(8) {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.03),
+    inset -1px 0 0 rgba(255, 255, 255, 0.03);
+}
+
+.cellCombatDeath {
+  color: rgba(255, 255, 255, 0.7);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.table tbody tr:hover .cellCombat {
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.07) 0%, transparent 100%);
+}
+
+/* ---------- RGB highlight ---------- */
+.cellDmg {
+  color: #ff5a5d;
+  background: linear-gradient(270deg, rgba(255, 77, 79, 0.09) 0%, transparent 100%);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 2px solid rgba(255, 77, 79, 0.58) !important;
+}
+
+.cellHeal {
+  color: #57dc8b;
+  background: linear-gradient(270deg, rgba(74, 222, 128, 0.09) 0%, transparent 100%);
+  border-right: 2px solid rgba(74, 222, 128, 0.58) !important;
+}
+
+.cellMit {
+  color: #72b2ff;
+  background: linear-gradient(270deg, rgba(96, 165, 250, 0.09) 0%, transparent 100%);
+  border-right: 2px solid rgba(96, 165, 250, 0.58) !important;
+}
+
+/* ---------- hero ---------- */
+.heroWrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.avatarBox {
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatarFallback,
+.avatarFallbackState {
+  background: repeating-linear-gradient(
+    45deg,
+    #1a1a1a,
+    #1a1a1a 4px,
+    #232323 4px,
+    #232323 8px
+  );
+}
+
+.avatarFallback {
+  width: 100%;
+  height: 100%;
+}
+
+.heroTextGroup {
+  min-width: 0;
+}
+
+/* ---------- empty ---------- */
+.empty {
+  padding: 68px 12px !important;
+  text-align: center !important;
+  color: rgba(255, 255, 255, 0.38) !important;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.emptySub {
+  display: block;
+  margin-top: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.24);
+  font-family: var(--font-mono);
+}
+
+/* ---------- scrollbar ---------- */
+.wrap::-webkit-scrollbar {
+  height: 10px;
+}
+
+.wrap::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+.wrap::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border: 2px solid #111111;
+}
+
+.wrap::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+}

@@ -1,0 +1,325 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* ---------- hero ---------- */
+.hero {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 16px 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0%, rgba(255, 255, 255, 0) 100%),
+    #101010;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  flex-wrap: wrap;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 2px;
+  background: linear-gradient(90deg, #f4c320 0%, rgba(244, 195, 32, 0.34) 60%, transparent 100%);
+}
+
+.heroMain {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  flex: 1 1 420px;
+  min-width: 0;
+}
+
+.heroKicker {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.heroKickerCn {
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.heroKickerEn {
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.32);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.08;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.heroDesc {
+  max-width: 620px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.heroMetaRow {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.heroBadge {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 108px;
+  min-height: 58px;
+  padding: 10px 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.028) 0%, rgba(255, 255, 255, 0.008) 100%),
+    #141414;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 2px solid rgba(255, 255, 255, 0.16);
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.heroBadge:hover {
+  border-left-color: #f4c320;
+  background:
+    linear-gradient(180deg, rgba(244, 195, 32, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%),
+    #141414;
+}
+
+.badgeLive {
+  border-left-color: #f4c320;
+}
+
+.badgeLabel {
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.badgeValue,
+.badgeValueHighlight {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  font-family: var(--font-mono);
+}
+
+.badgeValue {
+  color: #ffffff;
+}
+
+.badgeValueHighlight {
+  color: #f4c320;
+}
+
+/* ---------- table section ---------- */
+.tableSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.tableHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 14px;
+  padding: 0 2px;
+}
+
+.tableHeadLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.tableKicker {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tableKickerCn {
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.tableKickerEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.tableTitle {
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.08;
+  color: #ffffff;
+}
+
+.tableHeadRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.filterTags {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tagItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 30px;
+  padding: 0 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.022) 0%, rgba(255, 255, 255, 0.008) 100%),
+    #111111;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.tagItemAccent {
+  border-color: rgba(244, 195, 32, 0.26);
+  background:
+    linear-gradient(180deg, rgba(244, 195, 32, 0.05) 0%, rgba(244, 195, 32, 0.015) 100%),
+    #111111;
+}
+
+.tagText {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.tagCn {
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.tagEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.28);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.tagVal,
+.tagValAccent {
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.tagVal {
+  color: #ffffff;
+}
+
+.tagValAccent {
+  color: #f4c320;
+  font-family: var(--font-mono);
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 980px) {
+  .hero {
+    align-items: flex-start;
+  }
+
+  .tableHead {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tableHeadRight,
+  .filterTags {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    gap: 12px;
+  }
+
+  .hero {
+    padding: 14px;
+    gap: 14px;
+  }
+
+  .heroTitle {
+    font-size: 22px;
+  }
+
+  .heroDesc {
+    font-size: 12px;
+  }
+
+  .heroMetaRow {
+    width: 100%;
+  }
+
+  .heroBadge {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 0;
+  }
+
+  .tableTitle {
+    font-size: 16px;
+  }
+
+  .tagItem {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

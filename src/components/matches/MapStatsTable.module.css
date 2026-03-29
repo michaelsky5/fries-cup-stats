@@ -1,0 +1,345 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* ---------- title ---------- */
+.titleBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-left: 2px;
+  min-width: 0;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.teamName {
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.teamSub {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.26);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.titleWinner .teamName {
+  color: #f4c320;
+}
+
+.winnerBadge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  min-height: 20px;
+  padding: 0 8px;
+  background: rgba(244, 195, 32, 0.1);
+  border: 1px solid rgba(244, 195, 32, 0.24);
+  color: #f4c320;
+}
+
+.winnerCn {
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.winnerEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  opacity: 0.84;
+}
+
+/* ---------- table shell ---------- */
+.wrap {
+  width: 100%;
+  overflow-x: auto;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.014) 0%, rgba(255, 255, 255, 0.006) 100%),
+    #101010;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* ---------- head ---------- */
+.table thead th {
+  padding: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.022) 0%, rgba(255, 255, 255, 0.008) 100%),
+    #141414;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: right;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.headCellInner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 10px;
+}
+
+.headCn {
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.headEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.28);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.alignLeft {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.alignCenter {
+  align-items: center;
+  text-align: center;
+}
+
+.table thead th:first-child {
+  width: 150px;
+}
+
+.table thead th:nth-child(2) {
+  width: 160px;
+}
+
+.table thead th:nth-child(3) {
+  width: 78px;
+}
+
+.combatHead {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%),
+    #141414 !important;
+}
+
+.table thead th:nth-child(4) {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.table thead th:nth-child(6) {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dmgHead {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 2px solid rgba(255, 77, 79, 0.4) !important;
+}
+
+.healHead {
+  border-bottom: 2px solid rgba(74, 222, 128, 0.4) !important;
+}
+
+.mitHead {
+  border-bottom: 2px solid rgba(96, 165, 250, 0.4) !important;
+}
+
+/* ---------- body ---------- */
+.table tbody td {
+  padding: 10px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  font-size: 12px;
+  text-align: right;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.alignCenter {
+  text-align: center !important;
+}
+
+.player {
+  text-align: left !important;
+  font-size: 12px;
+  font-weight: 900;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.heroCell {
+  text-align: left !important;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 11px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.roleTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 18px;
+  padding: 0 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------- 新增：职权同步高亮色（严格匹配下方单元格的色值与透明度） ---------- */
+.damage {
+  color: #ff5a5d;
+  border-color: rgba(255, 77, 79, 0.56);
+  background: rgba(255, 77, 79, 0.085);
+}
+
+.support {
+  color: #59dc8c;
+  border-color: rgba(74, 222, 128, 0.56);
+  background: rgba(74, 222, 128, 0.085);
+}
+
+.tank {
+  color: #74b4ff;
+  border-color: rgba(96, 165, 250, 0.56);
+  background: rgba(96, 165, 250, 0.085);
+}
+
+/* ---------- data groups ---------- */
+.dataCell,
+.dataCellStrong {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.dataCell {
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.dataCellStrong {
+  font-weight: 900;
+}
+
+.cellCombat {
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.04) 0%, transparent 100%);
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.table tbody td:nth-child(4) {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.table tbody td:nth-child(5) {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.03),
+    inset -1px 0 0 rgba(255, 255, 255, 0.03);
+}
+
+.cellCombatDeath {
+  color: rgba(255, 255, 255, 0.68);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.table tbody tr:hover .cellCombat {
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.065) 0%, transparent 100%);
+}
+
+.cellDmg {
+  color: #ff5a5d;
+  background: linear-gradient(270deg, rgba(255, 77, 79, 0.085) 0%, transparent 100%);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 2px solid rgba(255, 77, 79, 0.56) !important;
+}
+
+.cellHeal {
+  color: #59dc8c;
+  background: linear-gradient(270deg, rgba(74, 222, 128, 0.085) 0%, transparent 100%);
+  border-right: 2px solid rgba(74, 222, 128, 0.56) !important;
+}
+
+.cellMit {
+  color: #74b4ff;
+  background: linear-gradient(270deg, rgba(96, 165, 250, 0.085) 0%, transparent 100%);
+  border-right: 2px solid rgba(96, 165, 250, 0.56) !important;
+}
+
+/* ---------- empty ---------- */
+.empty {
+  padding: 36px 12px !important;
+  text-align: center !important;
+}
+
+.emptyCn {
+  display: block;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.emptyEn {
+  display: block;
+  margin-top: 6px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.24);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 640px) {
+  .teamName {
+    font-size: 12px;
+  }
+
+  .table {
+    min-width: 920px;
+  }
+}

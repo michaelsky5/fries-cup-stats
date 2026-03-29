@@ -1,0 +1,154 @@
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.metricCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 88px;
+  padding: 12px 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0%, rgba(255, 255, 255, 0.004) 100%),
+    #101010;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.metricCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  transition: width 0.2s ease, background 0.2s ease;
+}
+
+.metricCard:hover {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.006) 100%),
+    #121212;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.metricCard:hover::before {
+  width: 72px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.metricCardAccent {
+  background:
+    linear-gradient(180deg, rgba(244, 195, 32, 0.05) 0%, rgba(244, 195, 32, 0.008) 100%),
+    #101010;
+  border-color: rgba(244, 195, 32, 0.14);
+}
+
+.metricCardAccent::before {
+  background: #f4c320;
+  width: 56px;
+}
+
+.metricCardAccent:hover {
+  border-color: rgba(244, 195, 32, 0.28);
+}
+
+.metricCardAccent:hover::before {
+  width: 90px;
+}
+
+.metricCardLive::before {
+  background: #4ade80;
+}
+
+/* ---------- content ---------- */
+.metricTop {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metricLabelWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.metricLabel {
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.metricMeta {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.24);
+  font-family: var(--font-mono);
+}
+
+.metricValue {
+  margin-top: 8px;
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  font-family: var(--font-mono);
+}
+
+.valueLive {
+  color: #4ade80;
+}
+
+/* ---------- live pulse ---------- */
+.pulseDot {
+  width: 6px;
+  height: 6px;
+  background-color: #4ade80;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1280px) {
+  .metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metricCard {
+    min-height: 80px;
+    padding: 12px;
+  }
+
+  .metricValue {
+    font-size: 20px;
+  }
+}

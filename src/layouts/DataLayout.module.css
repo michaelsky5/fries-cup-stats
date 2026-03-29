@@ -1,0 +1,287 @@
+.shell {
+  min-height: 100vh;
+  display: grid;
+  /* 左右布局核心：左侧固定260px，右侧填满 */
+  grid-template-columns: 260px minmax(0, 1fr);
+  background: #0b0b0b;
+  color: #ffffff;
+  align-items: start;
+  /* 全局注入鸿蒙无衬线字体 */
+  font-family: 'HarmonyOS Sans SC', 'HarmonyOS Sans', 'PingFang SC', sans-serif;
+}
+
+/* --- 侧边栏样式 --- */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.015) 0%, rgba(255, 255, 255, 0) 100%), #111111;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  z-index: 10;
+}
+
+.sidebarInner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+}
+
+.brand {
+  position: relative;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 24px;
+}
+
+.brand::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 60px;
+  height: 2px;
+  background: #f4c320;
+}
+
+.brandKicker {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em; /* 中文不需要太宽的间距 */
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 6px;
+}
+
+.brandTitle {
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.05em; /* 中文缩紧间距 */
+  color: #ffffff;
+}
+
+/* --- 侧边栏导航 --- */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1; /* 撑开中间，把 footer 挤到底部 */
+}
+
+.navLabel {
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 14px; /* 中文字号调大，提升辨识度 */
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  transition: all 0.15s ease;
+}
+
+.navMarker {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: transparent;
+  border-radius: 0 2px 2px 0;
+  transition: background 0.15s ease;
+}
+
+.link:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: #ffffff;
+}
+
+.linkActive {
+  background: rgba(244, 195, 32, 0.06);
+  color: #f4c320;
+}
+
+.linkActive .navMarker {
+  background: #f4c320;
+}
+
+/* --- 侧边栏底部信息 --- */
+.sidebarFooter {
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.metaLabel {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 6px;
+}
+
+.metaValue {
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-mono, monospace);
+}
+
+.textPulse {
+  animation: textOpacity 1.5s infinite;
+  color: #f4c320;
+}
+
+@keyframes textOpacity {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* --- 右侧主内容区 --- */
+.mainWrapper {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.contentInner {
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.main {
+  min-width: 0;
+}
+
+/* --- 加载与错误状态 --- */
+.systemBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  padding: 24px;
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.systemText {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.loader {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #f4c320;
+  animation: spin 1.2s cubic-bezier(0.75, 0, 0.25, 1) infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(180deg); }
+}
+
+.errorBox {
+  border-color: rgba(255, 68, 68, 0.3);
+  background: linear-gradient(180deg, rgba(255, 68, 68, 0.05) 0%, rgba(17, 17, 17, 1) 100%);
+}
+
+.errorTitle {
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #ff4444;
+}
+
+.errorText {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 600px;
+  text-align: center;
+}
+
+/* --- 响应式设计 --- */
+@media (max-width: 980px) {
+  .shell {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: relative;
+    top: auto;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    z-index: 10;
+  }
+
+  .sidebarInner {
+    padding: 16px 20px;
+  }
+
+  .brand {
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .brand::after { display: none; }
+
+  .nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .navLabel { display: none; }
+
+  .link {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .navMarker { display: none; }
+
+  .sidebarFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    margin-top: 16px;
+  }
+
+  .metaLabel { margin-bottom: 0; }
+
+  .contentInner {
+    padding: 16px 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .sidebarInner { padding: 16px; }
+  .contentInner { padding: 12px; }
+  .brand { flex-direction: column; align-items: flex-start; gap: 8px; }
+}

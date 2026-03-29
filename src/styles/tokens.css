@@ -1,0 +1,71 @@
+:root {
+  /* --- 背景色阶 --- */
+  --bg-page: #0b0b0b;
+  --bg-panel: #111111;
+  --bg-panel-2: #151515;
+  --bg-panel-3: #1a1a1a;
+
+  /* --- 文本色阶 --- */
+  --text-main: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.72);
+  --text-muted: rgba(255, 255, 255, 0.5);
+  --text-faint: rgba(255, 255, 255, 0.34);
+
+  /* --- 边框色阶 --- */
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --border-main: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.2);
+
+  /* --- 品牌/状态高亮色 --- */
+  --accent: #f4c320; /* 核心黄 */
+  --accent-soft: rgba(244, 195, 32, 0.08);
+  --accent-border: rgba(244, 195, 32, 0.28);
+
+  --accent-live: #4ade80;  /* 新增：系统绿 (用于 IN_PROGRESS) */
+  --accent-error: #ff4444; /* 新增：警报红 (用于 Error 状态) */
+
+  --success: #f4c320;
+  --pending: rgba(255, 255, 255, 0.62);
+  --progress: #ffffff;
+
+  /* --- 字体栈 --- */
+  --font-sans:
+    "Inter",
+    "HarmonyOS Sans SC",
+    "PingFang SC",
+    "Microsoft YaHei",
+    "Noto Sans SC",
+    sans-serif;
+    
+  /* 新增：全局等宽字体栈 (非常重要，用于比分、数据、时间对齐) */
+  --font-mono: 
+    ui-monospace, 
+    "JetBrains Mono", 
+    "SFMono-Regular", 
+    "Menlo", 
+    "Consolas", 
+    "Liberation Mono", 
+    monospace;
+
+  /* --- 几何参数 --- */
+  --shadow-none: none;
+  --radius-none: 0;
+  --radius-sm: 2px; /* 稍微给一点点微小的圆角，2px能让纯直角没那么扎人 */
+  --radius-md: 4px;
+  --radius-lg: 8px;
+
+  --container-max: 1680px;
+
+  /* --- 间距系统 --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+
+  /* --- 动画过渡 --- */
+  --transition-fast: 0.15s ease; /* 稍微调快一点，增加系统的干脆感 */
+  --transition-mid: 0.24s ease;
+}

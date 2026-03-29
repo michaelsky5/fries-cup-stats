@@ -1,0 +1,351 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* ---------- hero ---------- */
+.hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.9fr);
+  gap: 16px;
+  padding: 16px 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0%, rgba(255, 255, 255, 0) 100%),
+    #101010;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 2px;
+  background: linear-gradient(90deg, #f4c320 0%, rgba(244, 195, 32, 0.34) 60%, transparent 100%);
+}
+
+.heroMain {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.heroKicker {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.heroKickerCn {
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.heroKickerEn {
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.32);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.08;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.heroDesc {
+  max-width: 560px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.heroMeta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.heroMetaItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  min-height: 70px;
+  padding: 10px 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.008) 100%),
+    #141414;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 2px solid rgba(255, 255, 255, 0.16);
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.heroMetaItem:hover {
+  border-left-color: #f4c320;
+  background:
+    linear-gradient(180deg, rgba(244, 195, 32, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%),
+    #141414;
+}
+
+.heroMetaItemHighlight {
+  border-left-color: #f4c320;
+}
+
+.heroMetaLabel {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.heroMetaCn {
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.metaLabelEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.28);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.heroMetaValue {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  color: #f4c320;
+  font-family: var(--font-mono);
+}
+
+.valueUnit {
+  margin-left: 5px;
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(244, 195, 32, 0.58);
+  letter-spacing: 0.08em;
+}
+
+/* ---------- table section ---------- */
+.tableSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.tableHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 14px;
+  padding: 0 2px;
+}
+
+.tableHeadLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.tableKicker {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tableKickerCn {
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.tableKickerEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.tableTitle {
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.08;
+  color: #ffffff;
+}
+
+.tableHeadRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tableMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 30px;
+  padding: 0 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.022) 0%, rgba(255, 255, 255, 0.008) 100%),
+    #111111;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.tableMetaHighlight {
+  border-color: rgba(244, 195, 32, 0.26);
+  background:
+    linear-gradient(180deg, rgba(244, 195, 32, 0.05) 0%, rgba(244, 195, 32, 0.015) 100%),
+    #111111;
+}
+
+.metaText {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.metaCn {
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.metaEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.28);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.metaVal {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+}
+
+.metaValEn {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.42);
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+}
+
+.tableMetaHighlight .metaVal {
+  color: #f4c320;
+  font-family: var(--font-mono);
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1240px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .heroMeta {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .heroMeta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tableHead {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tableHeadRight {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    gap: 12px;
+  }
+
+  .hero {
+    padding: 14px;
+    gap: 14px;
+  }
+
+  .heroTitle {
+    font-size: 22px;
+  }
+
+  .heroDesc {
+    font-size: 12px;
+  }
+
+  .heroMeta {
+    grid-template-columns: 1fr;
+  }
+
+  .heroMetaItem {
+    min-height: 64px;
+  }
+
+  .heroMetaValue {
+    font-size: 20px;
+  }
+
+  .tableTitle {
+    font-size: 16px;
+  }
+
+  .tableHeadRight {
+    width: 100%;
+  }
+
+  .tableMeta {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
