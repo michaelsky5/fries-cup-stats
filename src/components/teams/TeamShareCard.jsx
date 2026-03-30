@@ -126,8 +126,8 @@ export default function TeamShareCard({
       </div>
 
       <div className={styles.footer}>
-        <span className={styles.footerLeft}>薯条杯 2026</span>
-        <span className={styles.footerRight}>战队档案分享版</span>
+        <span className={styles.footerLeft}>FRIESCUP 2026</span>
+        <span className={styles.footerRight}>STATS.FRIES-CUP.COM</span>
       </div>
     </section>
   )
