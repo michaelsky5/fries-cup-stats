@@ -1,0 +1,380 @@
+.pageContainer {
+  padding: 1.5rem 5%;
+  color: #ffffff;
+  background-color: #0a0a0a;
+  min-height: 100vh;
+  /* 融合中英文字体 */
+  font-family: var(--font-primary, 'HarmonyOS Sans SC', 'Inter', sans-serif);
+}
+
+.backLink, .backBtn {
+  display: inline-block;
+  color: #888;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.backLink:hover, .backBtn:hover {
+  color: var(--primary-yellow, #FFD700);
+}
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  background-color: #0a0a0a;
+  color: #fff;
+  gap: 1rem;
+}
+
+/* 顶部大头图 */
+.heroHeader {
+  position: relative;
+  min-height: 260px;
+  display: flex;
+  align-items: flex-end;
+  padding: 2.5rem;
+  border: 1px solid #333;
+  margin-bottom: 3rem;
+  overflow: hidden;
+}
+
+.headerBgWrapper {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+}
+
+.headerBgImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: 0.4;
+  filter: grayscale(40%);
+}
+
+.headerOverlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(0deg, rgba(10,10,10,1) 0%, rgba(10,10,10,0.3) 100%);
+}
+
+.headerContent {
+  position: relative;
+  z-index: 1;
+}
+
+.kicker {
+  color: var(--primary-yellow, #FFD700);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.mapTitle {
+  font-size: 3.8rem;
+  font-weight: 900;
+  margin: 0 0 1rem 0;
+  line-height: 1;
+  text-transform: uppercase;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.9);
+}
+
+.mapMeta {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.metaBadge {
+  background-color: #222;
+  border: 1px solid #444;
+  padding: 0.25rem 0.75rem;
+  color: #fff;
+  font-weight: 700;
+}
+
+.textYellow {
+  color: var(--primary-yellow, #FFD700);
+}
+
+/* 模块标题通用 */
+.sectionHeader {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.sectionHeader h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0;
+  border-left: 4px solid var(--primary-yellow, #FFD700);
+  padding-left: 0.75rem;
+  line-height: 1;
+}
+
+.subLabel {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+}
+
+/* 记录模块 (自适应变为 5 格) */
+.recordsSection {
+  margin-bottom: 4rem;
+}
+
+.recordGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.recordCard {
+  background: #111;
+  border: 1px solid #222;
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: border-color 0.2s;
+}
+
+.recordCard:hover {
+  border-color: #444;
+}
+
+.recordLabel {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: #888;
+  letter-spacing: 0.05em;
+}
+
+.recordValue {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--primary-yellow, #FFD700);
+  line-height: 1;
+  font-family: var(--font-mono, monospace);
+}
+
+.recordPlayer {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.dim {
+  color: #666;
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+/* 双列数据布局 */
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  margin-bottom: 4rem;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  background: #111;
+  border: 1px solid #222;
+  padding: 0.75rem 1rem;
+  transition: background 0.2s;
+}
+
+.listItem:hover {
+  background: #1a1a1a;
+  border-color: #333;
+}
+
+.rankNum {
+  width: 30px;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.heroInfo, .teamInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.heroName, .teamName {
+  font-weight: 800;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.heroCount, .teamRecord {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 0.1rem;
+}
+
+.barArea {
+  width: 140px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.barWrap {
+  flex: 1;
+  height: 6px;
+  background: #222;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background: #aaa;
+}
+
+.bgYellow {
+  background: var(--primary-yellow, #FFD700);
+}
+
+.bgGray {
+  background: #555;
+}
+
+.rateText {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  font-weight: 700;
+  width: 45px;
+  text-align: right;
+}
+
+/* 新增：近期交战记录模块 */
+.recentGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.matchCard {
+  display: flex;
+  flex-direction: column;
+  background: #111;
+  border: 1px solid #222;
+  padding: 1.25rem;
+  text-decoration: none;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.matchCard:hover {
+  border-color: var(--primary-yellow, #FFD700);
+  background: #151515;
+  transform: translateY(-2px);
+}
+
+.matchMetaInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed #333;
+}
+
+.matchStage {
+  color: var(--primary-yellow, #FFD700);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.matchId {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  color: #666;
+}
+
+.matchScoreboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.teamTag {
+  flex: 1;
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+}
+
+.teamTag:last-child {
+  text-align: right;
+}
+
+.scoreBox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 1.5rem;
+  font-weight: 900;
+  background: #1a1a1a;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2px;
+}
+
+.scoreDiv {
+  color: #555;
+  font-weight: 400;
+}
+
+.scoreNum {
+  color: #fff;
+}
+
+
+/* 移动端降维适配 */
+@media (max-width: 980px) {
+  .mainGrid {
+    grid-template-columns: 1fr; /* 两列数据变成上下排列 */
+    gap: 3rem;
+  }
+  
+  .mapTitle {
+    font-size: 2.2rem;
+  }
+  
+  .mapMeta {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}

@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 148px;
+  min-height: 156px;
   padding: 14px 16px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0%, rgba(255, 255, 255, 0.004) 100%),
@@ -191,6 +191,21 @@
   text-overflow: ellipsis;
 }
 
+.subMeta {
+  max-width: 100%;
+  margin-top: 2px;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.26);
+  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ---------- arrow ---------- */
 .arrow {
   flex-shrink: 0;
@@ -210,7 +225,7 @@
 /* ---------- responsive ---------- */
 @media (max-width: 640px) {
   .card {
-    min-height: 132px;
+    min-height: 142px;
     padding: 12px 14px;
   }
 

@@ -1,0 +1,184 @@
+.pageContainer {
+  padding: 2rem 5%;
+  color: #fff;
+  background-color: #0b0b0b;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #222;
+  padding-bottom: 1.5rem;
+}
+
+.kicker {
+  color: var(--primary-yellow, #FFD700);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 0.05em;
+}
+
+.subtitle {
+  color: #888;
+  font-size: 0.95rem;
+  margin: 0;
+}
+.subtitle strong {
+  color: #fff;
+}
+
+/* --- 表格基础 --- */
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #222;
+}
+
+.table {
+  width: 100%;
+  min-width: 800px; /* 小于这个宽度才出滚动条 */
+  border-collapse: collapse;
+}
+
+.table th {
+  background: #111;
+  color: #666;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid #333;
+}
+
+.colCenter { text-align: center !important; }
+
+.row {
+  border-bottom: 1px solid #1a1a1a;
+  background: #0b0b0b;
+  transition: background 0.2s;
+}
+
+.row:hover { background: #141414; }
+
+/* 已经晋级的队伍背景微亮 */
+.row_success { background: rgba(88, 214, 141, 0.03); }
+/* 已经淘汰的队伍变暗 */
+.row_danger { opacity: 0.5; filter: grayscale(100%); }
+
+.table td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+/* --- 队伍与数字展示 --- */
+.colRank { width: 60px; }
+.rankNum {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #888;
+}
+
+.teamLink {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  gap: 2px;
+}
+.teamShort {
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.teamFull {
+  color: #666;
+  font-size: 0.8rem;
+}
+.teamLink:hover .teamShort { color: var(--primary-yellow, #FFD700); }
+
+/* 胜负比分 */
+.matchScore {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.5rem;
+  font-weight: 900;
+  display: inline-flex;
+  gap: 0.4rem;
+  background: #111;
+  padding: 0.2rem 0.8rem;
+  border: 1px solid #222;
+  border-radius: 2px;
+}
+.textWin { color: #58d68d; }
+.scoreDash { color: #555; }
+.textLoss { color: #ec7063; }
+
+.mapScore {
+  font-family: var(--font-mono, monospace);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #aaa;
+}
+
+.mapDiff {
+  font-family: var(--font-mono, monospace);
+  font-size: 1rem;
+  font-weight: 800;
+  color: #666;
+}
+.diffPositive { color: #58d68d; }
+.diffNegative { color: #ec7063; }
+
+/* --- 状态徽章 --- */
+.statusBadge {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 0.4rem 0.8rem;
+  border-left: 3px solid transparent;
+  background: #111;
+}
+
+.statusEn {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+.statusCn {
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+/* 状态颜色分配 */
+.badge_success {
+  border-left-color: #58d68d;
+  background: rgba(88, 214, 141, 0.1);
+}
+.badge_success .statusEn { color: #58d68d; }
+.badge_success .statusCn { color: rgba(88, 214, 141, 0.8); }
+
+.badge_warning {
+  border-left-color: var(--primary-yellow, #FFD700);
+  background: rgba(244, 195, 32, 0.1);
+}
+.badge_warning .statusEn { color: var(--primary-yellow, #FFD700); }
+.badge_warning .statusCn { color: rgba(244, 195, 32, 0.8); }
+
+.badge_danger {
+  border-left-color: #555;
+}
+.badge_danger .statusEn { color: #888; }
+.badge_danger .statusCn { color: #555; }
+
+.badge_active {
+  border-left-color: #444;
+}
+.badge_active .statusEn { color: #ccc; }
+.badge_active .statusCn { color: #888; }

@@ -479,7 +479,7 @@
   letter-spacing: 0.14em;
 }
 
-/* ---------- teams ---------- */
+/* ---------- teams (✨ 升级为真实的战绩展示) ---------- */
 .teamsList {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -519,33 +519,48 @@
 .teamName {
   flex: 1;
   min-width: 0;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 900;
   line-height: 1.05;
   color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-transform: uppercase;
 }
 
-.teamWins {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 4px;
-  font-size: 20px;
+/* 新增：胜负战绩样式 */
+.teamRecord {
+  display: flex;
+  gap: 6px;
+  font-size: 16px;
   font-weight: 900;
-  line-height: 1;
-  color: #f4c320;
   font-family: var(--font-mono);
 }
 
-.teamWinsEn {
+.textWin { color: #58d68d; }
+.textLoss { color: #ec7063; }
+
+/* 新增：净胜局样式 */
+.teamDiff {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #888;
+  font-family: var(--font-mono);
+  width: 40px;
+  justify-content: flex-end;
+}
+
+.teamDiffEn {
   font-size: 8px;
   font-weight: 800;
-  color: rgba(244, 195, 32, 0.46);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.1em;
 }
+
 
 /* ---------- empty ---------- */
 .emptyState {
@@ -626,7 +641,7 @@
     font-size: 16px;
   }
 
-  .teamWins {
-    font-size: 18px;
+  .teamRecord {
+    font-size: 14px;
   }
 }

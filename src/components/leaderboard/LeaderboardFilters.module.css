@@ -160,17 +160,22 @@
   border-color: rgba(255, 255, 255, 0.26);
 }
 
+/* 替换掉原来的 .select:focus, .input:focus */
 .select:focus,
 .input:focus {
   border-color: #f4c320;
-  background:
-    linear-gradient(180deg, rgba(244, 195, 32, 0.05) 0%, rgba(244, 195, 32, 0) 100%),
-    #151515;
+  /* 🌟 修复关键 1：不要用 background 简写，改用 background-color 纯黑底色，维持极简风 */
+  background-color: #111111; 
   box-shadow: inset 0 0 0 1px rgba(244, 195, 32, 0.18);
 }
 
+/* 替换掉原来的 .select:focus */
 .select:focus {
+  /* 🌟 修复关键 2：只替换箭头图片，并严格锁定不许它重复平铺！ */
   background-image: url('data:image/svg+xml;charset=US-ASCII,<svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="%23f4c320" stroke-width="1.5" stroke-linecap="square"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 10px;
 }
 
 .select option {

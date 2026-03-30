@@ -1,15 +1,18 @@
-import { useMemo, useEffect } from 'react'
+import { useMemo, useEffect, useRef } from 'react'
 import { Link, useOutletContext, useParams, useNavigate } from 'react-router-dom'
 import { safeArr } from '../../lib/selectors.js'
 import PlayerCard from '../../components/players/PlayerCard.jsx'
 import styles from './TeamDetailPage.module.css'
+
+// 👇 补充的两个 import
+import { toPng } from 'html-to-image'
+import TeamShareCard from '../../components/teams/TeamShareCard.jsx'
 
 function cleanStr(str) {
   if (!str) return ''
   return String(str).trim().toLowerCase()
 }
 
-// 【修复1】增强了职责字段的兼容性
 function normalizeRole(role) {
   const r = String(role || '').toUpperCase().trim()
   if (r === 'SUPPORT' || r === 'HEALER' || r === '辅助') return 'SUP'
@@ -51,10 +54,20 @@ function getStatusInfo(match, isMyTeamA) {
   return { cn: '平', en: 'DRAW', className: styles.resDraw }
 }
 
+function getRoleThemeClass(role) {
+  if (role === 'TANK') return styles.roleTank
+  if (role === 'DPS') return styles.roleDps
+  if (role === 'SUP') return styles.roleSup
+  return ''
+}
+
 export default function TeamDetailPage() {
   const { db } = useOutletContext()
   const { teamId } = useParams()
   const navigate = useNavigate()
+  
+  // 👇 补充的 ref
+  const shareCardRef = useRef(null)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -65,11 +78,30 @@ export default function TeamDetailPage() {
     else navigate('/teams')
   }
 
+  // 👇 补充的导出函数
+  const handleExportShareCard = async () => {
+    if (!shareCardRef.current || !team) return
+
+    try {
+      const dataUrl = await toPng(shareCardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: '#0f0f0f'
+      })
+
+      const link = document.createElement('a')
+      link.download = `${team.team_short_name || team.team_id || 'team'}-share-card.png`
+      link.href = dataUrl
+      link.click()
+    } catch (error) {
+      console.error('EXPORT_TEAM_SHARE_CARD_FAILED', error)
+    }
+  }
+
   const team = useMemo(() => {
     return safeArr(db?.teams).find(t => String(t.team_id) === String(teamId))
   }, [db, teamId])
 
-  // 【修复2】在这里缝合 db.players 和 db.player_totals
   const roster = useMemo(() => {
     if (!team) return []
 
@@ -77,7 +109,6 @@ export default function TeamDetailPage() {
     const tName = cleanStr(team.team_name)
     const teamPlayerIds = new Set(safeArr(team.player_ids).map(id => String(id)))
 
-    // 1. 提取基础选手数据
     const basePlayers = safeArr(db?.players).filter(player => {
       const pId = String(player.player_id || '')
       const pTId = cleanStr(player.team_id)
@@ -90,12 +121,10 @@ export default function TeamDetailPage() {
       )
     })
 
-    // 2. 建立 totals 数据的字典
     const totalsMap = new Map(
       safeArr(db?.player_totals).map(pt => [String(pt.player_id), pt])
     )
 
-    // 3. 将统计数据合并到基础对象上
     return basePlayers.map(player => {
       const stats = totalsMap.get(String(player.player_id)) || {}
       return { ...player, ...stats }
@@ -240,7 +269,8 @@ export default function TeamDetailPage() {
       return {
         tag: '进攻压制型',
         en: 'OFFENSIVE PRESSURE',
-        desc: '更依赖输出位的火力制造节奏与压制，整体风格偏向主动进攻。'
+        desc: '更依赖输出位的火力制造节奏与压制，整体风格偏向主动进攻。',
+        hook: '以持续火力制造主动权，是一支更愿意先出手的队伍。'
       }
     }
 
@@ -248,15 +278,28 @@ export default function TeamDetailPage() {
       return {
         tag: '前线推进型',
         en: 'FRONTLINE DRIVE',
-        desc: '以前排承压与空间推进构成队伍骨架，比赛节奏更偏向正面展开。'
+        desc: '以前排承压与空间推进构成队伍骨架，比赛节奏更偏向正面展开。',
+        hook: '胜负上限更多取决于前排空间质量与阵地推进效率。'
       }
     }
 
     return {
       tag: '运营支点型',
       en: 'CONTROLLED SUPPORT',
-      desc: '队伍节奏更依赖支援与协同稳定性，整体表现偏向稳态运营。'
+      desc: '队伍节奏更依赖支援与协同稳定性，整体表现偏向稳态运营。',
+      hook: '这支队伍更像一套稳定运转的系统，而不是只靠瞬时爆发取胜。'
     }
+  }, [rolePanels])
+
+  const strongestRole = useMemo(() => {
+    const panels = rolePanels.map(panel => ({
+      role: panel.role,
+      cn: panel.cn,
+      en: panel.en,
+      score: (panel.count || 0) * 100 + panel.metrics.reduce((sum, metric) => sum + (Number(metric.value) || 0), 0)
+    })).sort((a, b) => b.score - a.score)
+
+    return panels[0] || { role: 'TANK', cn: '重装阵列', en: 'TANK UNIT', score: 0 }
   }, [rolePanels])
 
   const corePlayers = useMemo(() => {
@@ -309,6 +352,13 @@ export default function TeamDetailPage() {
       .map(([hero, time]) => ({ hero, time }))
   }, [roster])
 
+  const campaignSignals = useMemo(() => ([
+    { label: '已完结', value: matchSummary.completed },
+    { label: '进行中', value: matchSummary.live },
+    { label: '待开始', value: matchSummary.pending },
+    { label: '当前强项', value: strongestRole.cn }
+  ]), [matchSummary.completed, matchSummary.live, matchSummary.pending, strongestRole.cn])
+
   if (!team) {
     return (
       <div className={styles.shell}>
@@ -331,6 +381,7 @@ export default function TeamDetailPage() {
 
   return (
     <div className={styles.shell}>
+      {/* 👇 替换的 topbar */}
       <div className={styles.topbar}>
         <div className={styles.topbarLeft}>
           <button type="button" onClick={handleBack} className={styles.navBackBtn}>
@@ -354,6 +405,13 @@ export default function TeamDetailPage() {
             </div>
           </div>
         </div>
+
+        <div className={styles.topbarRight}>
+          <button type="button" onClick={handleExportShareCard} className={styles.exportShareBtn}>
+            导出战队分享图
+            <span className={styles.exportShareBtnEn}>EXPORT TEAM CARD</span>
+          </button>
+        </div>
       </div>
 
       <section className={styles.teamHero}>
@@ -364,49 +422,93 @@ export default function TeamDetailPage() {
             <div className={styles.teamIdBox}>{team.team_id}</div>
             <h1 className={styles.teamName}>{team.team_name || '未命名战队'}</h1>
             <div className={styles.teamShortName}>{team.team_short_name || team.team_name}</div>
+
+            <div className={styles.profileBlock}>
+              <div className={styles.profileTag}>{teamProfile.tag}</div>
+              <div className={styles.profileTagEn}>{teamProfile.en}</div>
+              <p className={styles.profileDesc}>{teamProfile.desc}</p>
+              <p className={styles.profileHook}>{teamProfile.hook}</p>
+            </div>
+
+            <div className={styles.heroRoleStrip}>
+              <span className={styles.roleChip}>TANK {roleStructure.TANK}</span>
+              <span className={styles.roleChip}>DPS {roleStructure.DPS}</span>
+              <span className={styles.roleChip}>SUP {roleStructure.SUP}</span>
+              <span className={`${styles.roleChip} ${styles.roleChipStrong}`}>STRONGEST · {strongestRole.role}</span>
+            </div>
           </div>
 
           <div className={styles.heroRight}>
-            <div className={styles.statBox}>
-              <div className={styles.statLabel}>
-                <span className={styles.statCn}>注册选手</span>
-                <span className={styles.statEn}>ROSTER</span>
+            <div className={styles.heroStatsGrid}>
+              <div className={styles.statBox}>
+                <div className={styles.statLabel}>
+                  <span className={styles.statCn}>注册选手</span>
+                  <span className={styles.statEn}>ROSTER</span>
+                </div>
+                <div className={styles.statValue}>{roster.length}</div>
               </div>
-              <div className={styles.statValue}>{roster.length}</div>
+
+              <div className={styles.statBox}>
+                <div className={styles.statLabel}>
+                  <span className={styles.statCn}>总场次</span>
+                  <span className={styles.statEn}>MATCHES</span>
+                </div>
+                <div className={styles.statValue}>{teamMatches.length}</div>
+              </div>
+
+              <div className={styles.statBox}>
+                <div className={styles.statLabel}>
+                  <span className={styles.statCn}>胜场</span>
+                  <span className={styles.statEn}>WINS</span>
+                </div>
+                <div className={styles.statValue}>{matchSummary.wins}</div>
+              </div>
+
+              <div className={styles.statBox}>
+                <div className={styles.statLabel}>
+                  <span className={styles.statCn}>胜率</span>
+                  <span className={styles.statEn}>WIN RATE</span>
+                </div>
+                <div className={styles.statValue}>{matchSummary.winRate}%</div>
+              </div>
             </div>
 
-            <div className={styles.statBox}>
-              <div className={styles.statLabel}>
-                <span className={styles.statCn}>总场次</span>
-                <span className={styles.statEn}>MATCHES</span>
+            <div className={styles.heroFormPanel}>
+              <div className={styles.panelMiniHeader}>
+                <span className={styles.panelMiniTitle}>近期状态</span>
+                <span className={styles.panelMiniSub}>RECENT FORM</span>
               </div>
-              <div className={styles.statValue}>{teamMatches.length}</div>
-            </div>
 
-            <div className={styles.statBox}>
-              <div className={styles.statLabel}>
-                <span className={styles.statCn}>胜场</span>
-                <span className={styles.statEn}>WINS</span>
+              <div className={styles.formList}>
+                {matchSummary.recentForm.length > 0 ? (
+                  matchSummary.recentForm.map((item, index) => (
+                    <span
+                      key={`${item}-${index}`}
+                      className={`${styles.formChip} ${item === 'W' ? styles.formWin : item === 'L' ? styles.formLoss : styles.formDraw}`}
+                    >
+                      {item}
+                    </span>
+                  ))
+                ) : (
+                  <span className={styles.formEmpty}>NO DATA</span>
+                )}
               </div>
-              <div className={styles.statValue}>{matchSummary.wins}</div>
-            </div>
 
-            <div className={styles.statBox}>
-              <div className={styles.statLabel}>
-                <span className={styles.statCn}>胜率</span>
-                <span className={styles.statEn}>WIN RATE</span>
+              <div className={styles.formSummary}>
+                <span>{matchSummary.wins}W</span>
+                <span>{matchSummary.losses}L</span>
+                {matchSummary.draws > 0 ? <span>{matchSummary.draws}D</span> : null}
               </div>
-              <div className={styles.statValue}>{matchSummary.winRate}%</div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className={styles.infoGrid}>
+      <section className={styles.snapshotGrid}>
         <div className={styles.infoPanel}>
           <div className={styles.sectionHeader}>
             <div className={styles.sectionKicker}>
-              <span className={styles.sectionKickerCn}>团队管理层</span>
+              <span className={styles.sectionKickerCn}>组织信息</span>
               <span className={styles.sectionKickerEn}>TEAM STAFF</span>
             </div>
           </div>
@@ -434,36 +536,52 @@ export default function TeamDetailPage() {
         <div className={styles.infoPanel}>
           <div className={styles.sectionHeader}>
             <div className={styles.sectionKicker}>
-              <span className={styles.sectionKickerCn}>战队画像</span>
-              <span className={styles.sectionKickerEn}>TEAM PROFILE</span>
+              <span className={styles.sectionKickerCn}>队内核心结构</span>
+              <span className={styles.sectionKickerEn}>CORE STRUCTURE</span>
             </div>
           </div>
 
-          <div className={styles.profileTag}>{teamProfile.tag}</div>
-          <div className={styles.profileTagEn}>{teamProfile.en}</div>
-          <p className={styles.profileDesc}>{teamProfile.desc}</p>
-
-          <div className={styles.roleStrip}>
-            <span className={styles.roleChip}>TANK {roleStructure.TANK}</span>
-            <span className={styles.roleChip}>DPS {roleStructure.DPS}</span>
-            <span className={styles.roleChip}>SUP {roleStructure.SUP}</span>
-          </div>
-
-          <div className={styles.formRow}>
-            <span className={styles.formLabel}>RECENT FORM</span>
-            <div className={styles.formList}>
-              {matchSummary.recentForm.length > 0 ? (
-                matchSummary.recentForm.map((item, index) => (
-                  <span
-                    key={`${item}-${index}`}
-                    className={`${styles.formChip} ${item === 'W' ? styles.formWin : item === 'L' ? styles.formLoss : styles.formDraw}`}
-                  >
-                    {item}
-                  </span>
-                ))
+          <div className={styles.coreGrid}>
+            <div className={`${styles.coreCard} ${styles.roleTank}`}>
+              <div className={styles.coreLabel}>前排核心 / TANK</div>
+              {corePlayers.tank ? (
+                <Link to={`/players/${corePlayers.tank.player_id}`} className={styles.coreName}>
+                  {corePlayers.tank.display_name || corePlayers.tank.player_name}
+                </Link>
               ) : (
-                <span className={styles.formEmpty}>NO DATA</span>
+                <span className={styles.coreName}>-</span>
               )}
+              <div className={styles.coreMeta}>
+                {corePlayers.tank ? `${formatMinutes(corePlayers.tank.raw_time_mins)} · ${corePlayers.tank.maps_played || 0} MAPS` : 'NO DATA'}
+              </div>
+            </div>
+
+            <div className={`${styles.coreCard} ${styles.roleDps}`}>
+              <div className={styles.coreLabel}>输出核心 / DPS</div>
+              {corePlayers.dps ? (
+                <Link to={`/players/${corePlayers.dps.player_id}`} className={styles.coreName}>
+                  {corePlayers.dps.display_name || corePlayers.dps.player_name}
+                </Link>
+              ) : (
+                <span className={styles.coreName}>-</span>
+              )}
+              <div className={styles.coreMeta}>
+                {corePlayers.dps ? `${formatMinutes(corePlayers.dps.raw_time_mins)} · ${corePlayers.dps.maps_played || 0} MAPS` : 'NO DATA'}
+              </div>
+            </div>
+
+            <div className={`${styles.coreCard} ${styles.roleSup}`}>
+              <div className={styles.coreLabel}>支援核心 / SUPPORT</div>
+              {corePlayers.sup ? (
+                <Link to={`/players/${corePlayers.sup.player_id}`} className={styles.coreName}>
+                  {corePlayers.sup.display_name || corePlayers.sup.player_name}
+                </Link>
+              ) : (
+                <span className={styles.coreName}>-</span>
+              )}
+              <div className={styles.coreMeta}>
+                {corePlayers.sup ? `${formatMinutes(corePlayers.sup.raw_time_mins)} · ${corePlayers.sup.maps_played || 0} MAPS` : 'NO DATA'}
+              </div>
             </div>
           </div>
         </div>
@@ -475,11 +593,15 @@ export default function TeamDetailPage() {
             <span className={styles.sectionKickerCn}>职责数据面板</span>
             <span className={styles.sectionKickerEn}>ROLE PANELS</span>
           </div>
+          <div className={styles.sectionMeta}>
+            <span className={styles.sectionMetaLabel}>当前最强职责</span>
+            <span className={styles.sectionMetaValue}>{strongestRole.cn}</span>
+          </div>
         </div>
 
         <div className={styles.rolePanels}>
           {rolePanels.map(panel => (
-            <div key={panel.role} className={styles.rolePanel}>
+            <div key={panel.role} className={`${styles.rolePanel} ${getRoleThemeClass(panel.role)}`}>
               <div className={styles.rolePanelHead}>
                 <div className={styles.rolePanelTitleGroup}>
                   <div className={styles.rolePanelTitle}>{panel.cn}</div>
@@ -505,160 +627,149 @@ export default function TeamDetailPage() {
 
       <div className={styles.contentGrid}>
         <div className={styles.mainColumn}>
-          <div className={styles.infoGrid}>
-            <div className={styles.infoPanel}>
-              <div className={styles.sectionHeader}>
-                <div className={styles.sectionKicker}>
-                  <span className={styles.sectionKickerCn}>队内核心</span>
-                  <span className={styles.sectionKickerEn}>CORE PLAYERS</span>
-                </div>
-              </div>
-
-              <div className={styles.staffGrid}>
-                <div className={styles.staffItem}>
-                  <span className={styles.staffLabel}>前排核心 / TANK</span>
-                  {corePlayers.tank ? (
-                    <Link to={`/players/${corePlayers.tank.player_id}`} className={styles.staffValue} style={{ textDecoration: 'none' }}>
-                      {corePlayers.tank.display_name || corePlayers.tank.player_name}
-                    </Link>
-                  ) : (
-                    <span className={styles.staffValue}>-</span>
-                  )}
-                </div>
-
-                <div className={styles.staffItem}>
-                  <span className={styles.staffLabel}>输出核心 / DPS</span>
-                  {corePlayers.dps ? (
-                    <Link to={`/players/${corePlayers.dps.player_id}`} className={styles.staffValue} style={{ textDecoration: 'none' }}>
-                      {corePlayers.dps.display_name || corePlayers.dps.player_name}
-                    </Link>
-                  ) : (
-                    <span className={styles.staffValue}>-</span>
-                  )}
-                </div>
-
-                <div className={styles.staffItem}>
-                  <span className={styles.staffLabel}>支援核心 / SUPPORT</span>
-                  {corePlayers.sup ? (
-                    <Link to={`/players/${corePlayers.sup.player_id}`} className={styles.staffValue} style={{ textDecoration: 'none' }}>
-                      {corePlayers.sup.display_name || corePlayers.sup.player_name}
-                    </Link>
-                  ) : (
-                    <span className={styles.staffValue}>-</span>
-                  )}
-                </div>
+          <section className={styles.infoPanel}>
+            <div className={styles.sectionHeader}>
+              <div className={styles.sectionKicker}>
+                <span className={styles.sectionKickerCn}>团队资源与英雄池</span>
+                <span className={styles.sectionKickerEn}>TEAM HERO POOL</span>
               </div>
             </div>
 
-            <div className={styles.infoPanel}>
-              <div className={styles.sectionHeader}>
-                <div className={styles.sectionKicker}>
-                  <span className={styles.sectionKickerCn}>团队英雄池</span>
-                  <span className={styles.sectionKickerEn}>TEAM HERO POOL</span>
-                </div>
+            <div className={styles.roleStrip}>
+              {heroPool.length > 0 ? (
+                heroPool.map(item => (
+                  <span key={item.hero} className={styles.roleChip}>
+                    {item.hero} · {formatMinutes(item.time)}
+                  </span>
+                ))
+              ) : (
+                <span className={styles.formEmpty}>NO HERO DATA</span>
+              )}
+            </div>
+          </section>
+
+          <section className={styles.rosterSection}>
+            <div className={styles.sectionHeader}>
+              <div className={styles.sectionKicker}>
+                <span className={styles.sectionKickerCn}>首发花名册</span>
+                <span className={styles.sectionKickerEn}>ACTIVE ROSTER</span>
               </div>
+            </div>
 
-              <div className={styles.roleStrip}>
-                {heroPool.length > 0 ? (
-                  heroPool.map(item => (
-                    <span key={item.hero} className={styles.roleChip}>
-                      {item.hero} · {formatMinutes(item.time)}
-                    </span>
-                  ))
-                ) : (
-                  <span className={styles.formEmpty}>NO HERO DATA</span>
-                )}
+            {roster.length > 0 ? (
+              <div className={styles.rosterGrid}>
+                {roster.map(player => (
+                  <PlayerCard key={player.player_id} player={player} />
+                ))}
               </div>
-            </div>
-          </div>
-
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionKicker}>
-              <span className={styles.sectionKickerCn}>首发花名册</span>
-              <span className={styles.sectionKickerEn}>ACTIVE ROSTER</span>
-            </div>
-          </div>
-
-          {roster.length > 0 ? (
-            <div className={styles.rosterGrid}>
-              {roster.map(player => (
-                <PlayerCard key={player.player_id} player={player} />
-              ))}
-            </div>
-          ) : (
-            <div className={styles.emptyState}>
-              <span className={styles.emptyCn}>暂无注册选手</span>
-              <span className={styles.emptyEn}>NO ROSTER DATA</span>
-            </div>
-          )}
+            ) : (
+              <div className={styles.emptyState}>
+                <span className={styles.emptyCn}>暂无注册选手</span>
+                <span className={styles.emptyEn}>NO ROSTER DATA</span>
+              </div>
+            )}
+          </section>
         </div>
 
         <div className={styles.sideColumn}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionKicker}>
-              <span className={styles.sectionKickerCn}>近期赛程</span>
-              <span className={styles.sectionKickerEn}>MATCH HISTORY</span>
-            </div>
-          </div>
-
-          <div className={styles.matchList}>
-            {teamMatches.length > 0 ? teamMatches.map(match => {
-              const mineAsA = isMyTeamA(match)
-              const statusInfo = getStatusInfo(match, mineAsA)
-
-              const myTeamObj = mineAsA ? match.team_a : match.team_b
-              const opTeamObj = mineAsA ? match.team_b : match.team_a
-
-              const myName = myTeamObj?.short || myTeamObj?.name || 'TBD'
-              const opName = opTeamObj?.short || opTeamObj?.name || 'TBD'
-
-              const isPending = match.status === 'PENDING' || match.status === 'SCHEDULED'
-              const myScore = isPending ? '-' : (myTeamObj?.score ?? '0')
-              const opScore = isPending ? '-' : (opTeamObj?.score ?? '0')
-
-              return (
-                <Link key={match.match_id} to={`/matches/${match.match_id}`} className={styles.matchRow}>
-                  <div className={`${styles.matchResult} ${statusInfo.className}`}>
-                    <span className={styles.matchResultCn}>{statusInfo.cn}</span>
-                    <span className={styles.matchResultEn}>{statusInfo.en}</span>
-                  </div>
-
-                  <div className={styles.matchMain}>
-                    <div className={styles.matchMeta}>
-                      <span className={styles.matchStage}>{match.stage || 'TBD'}</span>
-                      <span className={styles.matchRound}>{match.round || '-'}</span>
-                    </div>
-
-                    <div className={styles.matchScoreboard}>
-                      <div className={styles.myTeam}>
-                        <span className={styles.teamText}>{myName}</span>
-                        <span className={statusInfo.en === 'WIN' ? styles.scoreWin : styles.scoreNormal}>{myScore}</span>
-                      </div>
-
-                      <div className={styles.vsDivider}>VS</div>
-
-                      <div className={styles.opTeam}>
-                        <span className={statusInfo.en === 'LOSS' ? styles.scoreWin : styles.scoreNormal}>{opScore}</span>
-                        <span className={styles.teamText}>{opName}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.matchArrow}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                      <path d="M9 18l6-6-6-6" />
-                    </svg>
-                  </div>
-                </Link>
-              )
-            }) : (
-              <div className={styles.emptyState}>
-                <span className={styles.emptyCn}>暂无比赛记录</span>
-                <span className={styles.emptyEn}>NO MATCH HISTORY</span>
+          <section className={styles.infoPanel}>
+            <div className={styles.sectionHeader}>
+              <div className={styles.sectionKicker}>
+                <span className={styles.sectionKickerCn}>赛季快照</span>
+                <span className={styles.sectionKickerEn}>CAMPAIGN SNAPSHOT</span>
               </div>
-            )}
-          </div>
+            </div>
+
+            <div className={styles.signalGrid}>
+              {campaignSignals.map(item => (
+                <div key={item.label} className={styles.signalItem}>
+                  <span className={styles.signalLabel}>{item.label}</span>
+                  <span className={styles.signalValue}>{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.matchesSection}>
+            <div className={styles.sectionHeader}>
+              <div className={styles.sectionKicker}>
+                <span className={styles.sectionKickerCn}>近期赛程</span>
+                <span className={styles.sectionKickerEn}>MATCH HISTORY</span>
+              </div>
+            </div>
+
+            <div className={styles.matchList}>
+              {teamMatches.length > 0 ? teamMatches.map(match => {
+                const mineAsA = isMyTeamA(match)
+                const statusInfo = getStatusInfo(match, mineAsA)
+
+                const myTeamObj = mineAsA ? match.team_a : match.team_b
+                const opTeamObj = mineAsA ? match.team_b : match.team_a
+
+                const myName = myTeamObj?.short || myTeamObj?.name || 'TBD'
+                const opName = opTeamObj?.short || opTeamObj?.name || 'TBD'
+
+                const isPending = match.status === 'PENDING' || match.status === 'SCHEDULED'
+                const myScore = isPending ? '-' : (myTeamObj?.score ?? '0')
+                const opScore = isPending ? '-' : (opTeamObj?.score ?? '0')
+
+                return (
+                  <Link key={match.match_id} to={`/matches/${match.match_id}`} className={styles.matchRow}>
+                    <div className={`${styles.matchResult} ${statusInfo.className}`}>
+                      <span className={styles.matchResultCn}>{statusInfo.cn}</span>
+                      <span className={styles.matchResultEn}>{statusInfo.en}</span>
+                    </div>
+
+                    <div className={styles.matchMain}>
+                      <div className={styles.matchMeta}>
+                        <span className={styles.matchStage}>{match.stage || 'TBD'}</span>
+                        <span className={styles.matchRound}>{match.round || '-'}</span>
+                      </div>
+
+                      <div className={styles.matchScoreboard}>
+                        <div className={styles.myTeam}>
+                          <span className={styles.teamText}>{myName}</span>
+                          <span className={statusInfo.en === 'WIN' ? styles.scoreWin : styles.scoreNormal}>{myScore}</span>
+                        </div>
+
+                        <div className={styles.vsDivider}>VS</div>
+
+                        <div className={styles.opTeam}>
+                          <span className={statusInfo.en === 'LOSS' ? styles.scoreWin : styles.scoreNormal}>{opScore}</span>
+                          <span className={styles.teamText}>{opName}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={styles.matchArrow}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
+                    </div>
+                  </Link>
+                )
+              }) : (
+                <div className={styles.emptyState}>
+                  <span className={styles.emptyCn}>暂无比赛记录</span>
+                  <span className={styles.emptyEn}>NO MATCH HISTORY</span>
+                </div>
+              )}
+            </div>
+          </section>
         </div>
+      </div>
+      
+      {/* 👇 补充的隐藏渲染节点 */}
+      <div className={styles.shareRenderMount} aria-hidden="true">
+        <TeamShareCard
+          team={team}
+          teamProfile={teamProfile}
+          matchSummary={matchSummary}
+          strongestRole={strongestRole}
+          heroPool={heroPool}
+          corePlayers={corePlayers}
+          shareRef={shareCardRef}
+        />
       </div>
     </div>
   )

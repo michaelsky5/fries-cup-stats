@@ -41,7 +41,9 @@ export default function DataLayout() {
   const isMatchDetail = location.pathname.startsWith('/matches/')
   const isPlayerDetail = location.pathname.startsWith('/players/')
   const isTeamDetail = location.pathname.startsWith('/teams/')
-  const isHeroes = location.pathname.startsWith('/heroes') // 英雄情报高亮状态
+  const isHeroes = location.pathname.startsWith('/heroes') 
+  const isMaps = location.pathname.startsWith('/maps') 
+  const isFantasy = location.pathname.startsWith('/fantasy') // ✨ 新增：电竞经理高亮状态
 
   return (
     <div className={styles.shell}>
@@ -97,13 +99,37 @@ export default function DataLayout() {
               战队总控
             </NavLink>
 
-            {/* 新增的英雄情报入口 */}
             <NavLink
               to="/heroes"
               className={({ isActive }) => `${styles.link} ${isActive || isHeroes ? styles.linkActive : ''}`}
             >
               <span className={styles.navMarker} />
               英雄情报
+            </NavLink>
+
+            <NavLink
+              to="/maps"
+              className={({ isActive }) => `${styles.link} ${isActive || isMaps ? styles.linkActive : ''}`}
+            >
+              <span className={styles.navMarker} />
+              地图数据
+            </NavLink>
+
+            <NavLink
+              to="/standings"
+              className={({ isActive }) => `${styles.link} ${isActive ? styles.linkActive : ''}`}
+            >
+              <span className={styles.navMarker} />
+              战队排名
+            </NavLink>
+
+            {/* ✨ 新增：电竞经理入口 */}
+            <NavLink
+              to="/fantasy"
+              className={({ isActive }) => `${styles.link} ${isActive || isFantasy ? styles.linkActive : ''}`}
+            >
+              <span className={styles.navMarker} />
+              电竞经理(开发中)
             </NavLink>
           </nav>
 

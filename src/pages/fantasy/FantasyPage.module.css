@@ -1,0 +1,118 @@
+.container {
+  padding: 2rem 5%;
+  color: #fff;
+  background-color: #0b0b0b;
+  min-height: 100vh;
+  font-family: var(--font-primary, 'Inter', sans-serif);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 2px solid #222;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.kicker {
+  color: var(--primary-yellow, #FFD700);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.titleArea h1 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 0.05em;
+}
+
+.titleArea p { color: #888; font-size: 0.9rem; margin: 0; }
+
+.careerBoard { display: flex; gap: 1rem; align-items: center; }
+
+.statBox {
+  background: #111; border: 1px solid #333; padding: 0.75rem 1.25rem; display: flex; flex-direction: column; align-items: center;
+}
+
+.statLabel { font-size: 0.75rem; color: #666; font-family: var(--font-mono, monospace); }
+.statValue { font-size: 1.5rem; font-weight: 900; color: #fff; }
+.statValueHighlight { font-size: 1.5rem; font-weight: 900; color: var(--primary-yellow, #FFD700); }
+
+.resetCareerBtn {
+  background: transparent; border: 1px solid #ff5555; color: #ff5555; font-family: var(--font-mono, monospace);
+  font-weight: 800; font-size: 0.8rem; cursor: pointer; padding: 0.5rem 1rem; height: fit-content;
+  transition: all 0.2s; letter-spacing: 0.05em;
+}
+.resetCareerBtn:hover { background: #ff5555; color: #000; }
+.resetCareerBtn:active { transform: translateY(1px); }
+
+.gameGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+
+.panelHead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #333; padding-bottom: 0.5rem; }
+.panelHead h2 { font-size: 1.2rem; margin: 0; }
+
+.budgetBox { font-family: var(--font-mono, monospace); font-size: 1.1rem; font-weight: 800; }
+.textYellow { color: var(--primary-yellow, #FFD700); }
+.textDanger { color: #ff5555; animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: 0.5; } }
+
+.rosterSlots { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+.rosterCard { display: flex; justify-content: space-between; background: #151515; border: 1px solid #333; padding: 0.75rem; align-items: center; }
+.cardLeft, .cardRight { display: flex; align-items: center; gap: 1rem; }
+
+.roleTag { font-size: 0.7rem; padding: 0.2rem 0.4rem; font-weight: 800; background: #222; width: 40px; text-align: center; }
+.tank { color: #5dade2; } .dps { color: #ec7063; } .sup { color: #58d68d; }
+
+.cardInfo { display: flex; flex-direction: column; }
+.playerName { font-weight: 800; font-size: 1rem; color: #fff; }
+.playerBnet { font-size: 0.7rem; color: #666; font-family: var(--font-mono, monospace); margin-bottom: 2px; }
+.playerMeta { font-size: 0.75rem; color: #888; font-family: var(--font-mono, monospace); }
+
+.ovrBadge { font-family: var(--font-mono, monospace); font-weight: 900; font-size: 1.2rem; color: var(--primary-yellow, #FFD700); }
+
+.dropBtn { background: transparent; border: 1px solid #ff5555; color: #ff5555; cursor: pointer; padding: 0.3rem 0.6rem; font-size: 0.8rem; font-weight: bold; }
+.dropBtn:hover { background: #ff5555; color: #000; }
+
+.emptySlot { background: #0a0a0a; border: 1px dashed #333; padding: 1.25rem; text-align: center; color: #444; font-family: var(--font-mono, monospace); font-size: 0.85rem; }
+
+.teamPowerBar { background: #222; padding: 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; }
+
+.simBtnReady { background: var(--primary-yellow, #FFD700); border: none; color: #000; font-weight: 900; padding: 0.75rem 1.5rem; cursor: pointer; transition: transform 0.1s; }
+.simBtnReady:active { transform: scale(0.95); }
+.simBtnDisabled { background: #333; border: none; color: #666; font-weight: 900; padding: 0.75rem 1.5rem; cursor: not-allowed; }
+
+.filterTabs { display: flex; gap: 0.5rem; }
+.tab, .tabActive { background: transparent; border: 1px solid #333; color: #888; padding: 0.3rem 0.8rem; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+.tabActive { background: #222; color: #fff; border-color: #666; }
+
+.playerList { display: flex; flex-direction: column; gap: 0.3rem; max-height: 600px; overflow-y: auto; padding-right: 0.5rem; }
+.playerList::-webkit-scrollbar { width: 6px; }
+.playerList::-webkit-scrollbar-thumb { background: #333; }
+
+.marketRow { display: flex; justify-content: space-between; padding: 0.5rem 0.75rem; background: #111; border: 1px solid #222; }
+.marketRow:hover { background: #1a1a1a; }
+.draftedRow { opacity: 0.4; filter: grayscale(100%); }
+
+.marketInfo { display: flex; align-items: center; gap: 0.75rem; }
+.marketNameGroup { display: flex; flex-direction: column; width: 140px; }
+.marketName { font-weight: 800; font-size: 0.95rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.marketBnet { font-size: 0.7rem; color: #666; font-family: var(--font-mono, monospace); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.marketOvr { font-family: var(--font-mono, monospace); font-weight: 800; color: #aaa; }
+
+.marketAction { display: flex; align-items: center; gap: 1rem; }
+.priceTag { font-family: var(--font-mono, monospace); font-weight: 900; color: #58d68d; }
+
+.btnDraft { background: #333; color: #fff; border: none; padding: 0.3rem 0.8rem; font-weight: bold; cursor: pointer; }
+.btnDraft:hover { background: var(--primary-yellow, #FFD700); color: #000; }
+.btnDrafted { background: #111; color: #444; border: none; padding: 0.3rem 0.8rem; font-weight: bold; }
+
+.heroAvatar { width: 36px; height: 36px; border-radius: 4px; background: #1a1a1a; border: 1px solid #333; object-fit: cover; flex-shrink: 0; }
+.heroAvatarSmall { width: 28px; height: 28px; border-radius: 4px; background: #1a1a1a; border: 1px solid #333; object-fit: cover; flex-shrink: 0; }
+
+@media (max-width: 980px) { .gameGrid { grid-template-columns: 1fr; } }

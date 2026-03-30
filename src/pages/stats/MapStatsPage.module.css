@@ -1,0 +1,205 @@
+/* ... 顶部的 pageContainer, header 等样式保持不变 ... */
+.pageContainer {
+  padding: 2rem 5%;
+  color: #ffffff;
+  background-color: #0a0a0a;
+  min-height: 100vh;
+  font-family: var(--font-primary, 'Inter', sans-serif);
+}
+
+.header {
+  border-bottom: 2px solid #333;
+  padding-bottom: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.kicker {
+  color: #888;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 900;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  color: #aaa;
+  font-size: 1rem;
+  margin: 0;
+  font-family: var(--font-mono, monospace);
+}
+
+.highlight {
+  color: var(--primary-yellow, #FFD700);
+  font-weight: bold;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.modeSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.5rem;
+}
+
+.modeTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  border-left: 4px solid var(--primary-yellow, #FFD700);
+  padding-left: 0.75rem;
+  line-height: 1;
+}
+
+.modeTotal {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.mapGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* ======== 地图卡片核心变更 ======== */
+.mapCard {
+  position: relative;
+  background-color: #141414;
+  border: 1px solid #2a2a2a;
+  overflow: hidden; /* 确保背景图不会溢出边框 */
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+  min-height: 110px; /* 给予图片展示空间 */
+  
+  /* 👇 新增：防止 Link 组件的默认样式破坏排版 */
+  text-decoration: none; 
+  color: inherit; 
+}
+
+/* 悬浮时整个卡片边框变黄，并微微上浮 */
+.mapCard:hover {
+  border-color: var(--primary-yellow, #FFD700);
+  transform: translateY(-2px);
+}
+
+/* 背景图外壳 */
+.mapBgWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* 置于底层 */
+}
+
+.mapBgImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 保证图片铺满且不变形 */
+  object-position: center;
+  filter: grayscale(80%); /* 降低饱和度，维持硬派风格 */
+  opacity: 0.4; /* 初始暗度 */
+  transition: all 0.3s ease;
+}
+
+.mapCard:hover .mapBgImg {
+  filter: grayscale(0%); /* 悬浮时恢复色彩 */
+  opacity: 0.6; /* 悬浮时稍微调亮 */
+  transform: scale(1.05); /* 悬浮时产生轻微放大推进效果 */
+}
+
+/* 渐变遮罩层：从左侧黑到右侧半透明，确保文字清晰度 */
+.mapBgOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(20,20,20,0.95) 0%, rgba(20,20,20,0.7) 40%, rgba(20,20,20,0.3) 100%);
+}
+
+/* 内容层 */
+.mapCardInner {
+  position: relative;
+  z-index: 1; /* 置于背景之上 */
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 100%;
+  justify-content: center;
+}
+
+.mapInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mapName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8); /* 增加文字在图片上的清晰度 */
+}
+
+.mapCount {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.dimText {
+  font-size: 0.7rem;
+  color: #888;
+  margin-left: 0.2rem;
+}
+
+.barContainer {
+  width: 100%;
+  height: 6px; /* 稍微调细一点点，更锐利 */
+  background-color: rgba(255,255,255,0.1);
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.barFill {
+  height: 100%;
+  background-color: var(--primary-yellow, #FFD700);
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mapStats {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.globalRate {
+  color: #777;
+}

@@ -23,6 +23,46 @@
   min-width: 0;
 }
 
+.topbarRight {
+  display: flex;
+  align-items: flex-end;
+}
+
+.exportShareBtn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 112px;
+  height: 34px;
+  padding: 0 14px;
+  background: transparent;
+  border: 1px solid rgba(244,195,32,0.9);
+  color: #f4c320;
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease, transform 0.12s ease;
+}
+
+.exportShareBtn:hover {
+  background: #f4c320;
+  color: #111111;
+}
+
+.exportShareBtn:active {
+  transform: translateY(1px);
+}
+
+.exportShareBtnEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  opacity: 0.84;
+}
+
 .navBackBtn {
   display: inline-flex;
   align-items: center;
@@ -118,6 +158,65 @@
   letter-spacing: 0.04em;
 }
 
+/* ---------- section header ---------- */
+.sectionHeader {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.sectionKicker {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sectionKickerCn {
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.sectionKickerEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(255,255,255,0.26);
+  font-family: var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sectionMeta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sectionMetaLabel {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.26);
+  font-family: var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sectionMetaValue {
+  font-size: 10px;
+  font-weight: 900;
+  color: #f4c320;
+  line-height: 1;
+}
+
 /* ---------- hero ---------- */
 .teamHero {
   position: relative;
@@ -153,9 +252,9 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
   gap: 20px;
-  align-items: end;
+  align-items: stretch;
 }
 
 .heroLeft {
@@ -202,9 +301,92 @@
   text-transform: uppercase;
 }
 
+.profileBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+  max-width: 700px;
+}
+
+.profileTag {
+  width: fit-content;
+  min-height: 22px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(244,195,32,0.1);
+  border: 1px solid rgba(244,195,32,0.24);
+  color: #f4c320;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.profileTagEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  color: rgba(255,255,255,0.28);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.profileDesc {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.62);
+}
+
+.profileHook {
+  margin: 2px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.84);
+  font-weight: 900;
+}
+
+.heroRoleStrip {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.roleChip {
+  min-height: 20px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.74);
+  font-size: 9px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.roleChipStrong {
+  color: #f4c320;
+  border-color: rgba(244,195,32,0.18);
+  background: rgba(244,195,32,0.08);
+}
+
 .heroRight {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.heroStatsGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(90px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -255,50 +437,105 @@
   font-family: var(--font-mono);
 }
 
-/* ---------- section header ---------- */
-.sectionHeader {
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 14px;
-  flex-wrap: wrap;
+.heroFormPanel {
+  padding: 14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.006) 100%),
+    #141414;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-.sectionKicker {
+.panelMiniHeader {
   display: flex;
   align-items: baseline;
+  justify-content: space-between;
   gap: 8px;
-  flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
-.sectionKickerCn {
+.panelMiniTitle {
   font-size: 12px;
   font-weight: 900;
-  line-height: 1;
   color: #ffffff;
+  line-height: 1;
 }
 
-.sectionKickerEn {
+.panelMiniSub {
   font-size: 8px;
   font-weight: 800;
-  line-height: 1;
-  color: rgba(255,255,255,0.26);
+  color: rgba(255,255,255,0.28);
   font-family: var(--font-mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-/* ---------- info grid ---------- */
-.infoGrid {
+.formList {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.formChip {
+  min-width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.formWin {
+  background: rgba(74,222,128,0.08);
+  color: #4ade80;
+  border-color: rgba(74,222,128,0.24);
+}
+
+.formLoss {
+  background: rgba(255,77,79,0.08);
+  color: #ff4d4f;
+  border-color: rgba(255,77,79,0.24);
+}
+
+.formDraw {
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.72);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.formEmpty {
+  font-size: 9px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.38);
+  font-family: var(--font-mono);
+}
+
+.formSummary {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 10px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.62);
+  font-family: var(--font-mono);
+}
+
+/* ---------- panels ---------- */
+.snapshotGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
 
-.infoPanel {
+.infoPanel,
+.roleAnalyticsSection,
+.rosterSection,
+.matchesSection {
   display: flex;
   flex-direction: column;
   padding: 16px;
@@ -343,130 +580,55 @@
   word-break: break-word;
 }
 
-.profileTag {
-  width: fit-content;
-  min-height: 22px;
-  padding: 0 9px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(244,195,32,0.1);
-  border: 1px solid rgba(244,195,32,0.24);
-  color: #f4c320;
-  font-size: 10px;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.profileTagEn {
-  margin-top: 6px;
-  font-size: 8px;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: 0.16em;
-  color: rgba(255,255,255,0.28);
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-}
-
-.profileDesc {
-  margin: 10px 0 0;
-  font-size: 12px;
-  line-height: 1.6;
-  color: rgba(255,255,255,0.62);
-}
-
-.roleStrip {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-
-.roleChip {
-  min-height: 20px;
-  padding: 0 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.74);
-  font-size: 9px;
-  font-weight: 900;
-  font-family: var(--font-mono);
-  letter-spacing: 0.08em;
-}
-
-.formRow {
-  display: flex;
-  align-items: center;
+.coreGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 14px;
 }
 
-.formLabel {
+.coreCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 96px;
+  padding: 12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.022) 0%, rgba(255,255,255,0.008) 100%),
+    #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 2px solid rgba(255,255,255,0.16);
+}
+
+.coreLabel {
   font-size: 8px;
   font-weight: 800;
   color: rgba(255,255,255,0.26);
   font-family: var(--font-mono);
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.formList {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.formChip {
-  min-width: 22px;
-  height: 22px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 9px;
+.coreName {
+  font-size: 15px;
   font-weight: 900;
-  font-family: var(--font-mono);
-  border: 1px solid rgba(255,255,255,0.12);
+  line-height: 1.15;
+  color: #ffffff;
+  text-decoration: none;
 }
 
-.formWin {
-  background: rgba(74,222,128,0.08);
-  color: #4ade80;
-  border-color: rgba(74,222,128,0.24);
-}
-
-.formLoss {
-  background: rgba(255,77,79,0.08);
-  color: #ff4d4f;
-  border-color: rgba(255,77,79,0.24);
-}
-
-.formDraw {
-  background: rgba(255,255,255,0.05);
-  color: rgba(255,255,255,0.72);
-  border-color: rgba(255,255,255,0.12);
-}
-
-.formEmpty {
+.coreMeta {
+  margin-top: auto;
   font-size: 9px;
   font-weight: 800;
   color: rgba(255,255,255,0.38);
   font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 /* ---------- role panels ---------- */
 .roleAnalyticsSection {
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.016) 0%, rgba(255,255,255,0.004) 100%),
-    #101010;
-  border: 1px solid rgba(255,255,255,0.12);
+  gap: 0;
 }
 
 .rolePanels {
@@ -485,6 +647,18 @@
     #141414;
   border: 1px solid rgba(255,255,255,0.08);
   border-left: 2px solid #f4c320;
+}
+
+.roleTank {
+  border-left-color: #60a5fa !important;
+}
+
+.roleDps {
+  border-left-color: #ff4d4f !important;
+}
+
+.roleSup {
+  border-left-color: #4ade80 !important;
 }
 
 .rolePanelHead {
@@ -552,10 +726,10 @@
   font-family: var(--font-mono);
 }
 
-/* ---------- layout ---------- */
+/* ---------- content layout ---------- */
 .contentGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.95fr);
+  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.86fr);
   gap: 16px;
   align-items: start;
 }
@@ -564,12 +738,47 @@
 .sideColumn {
   display: flex;
   flex-direction: column;
+  gap: 14px;
 }
 
 .rosterGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 14px;
+}
+
+.signalGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.signalItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 64px;
+  padding: 10px 12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.022) 0%, rgba(255,255,255,0.008) 100%),
+    #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.signalLabel {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.26);
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.signalValue {
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.15;
+  color: #ffffff;
 }
 
 /* ---------- match list ---------- */
@@ -750,6 +959,16 @@
   color: #f4c320;
 }
 
+/* ---------- share render mount ---------- */
+.shareRenderMount {
+  position: fixed;
+  left: -20000px;
+  top: 0;
+  width: 1200px;
+  pointer-events: none;
+  z-index: -1;
+}
+
 /* ---------- states ---------- */
 .emptyState {
   padding: 56px 20px;
@@ -850,21 +1069,23 @@
 /* ---------- responsive ---------- */
 @media (max-width: 1180px) {
   .heroContent,
-  .contentGrid,
-  .infoGrid,
-  .rolePanels {
+  .snapshotGrid,
+  .rolePanels,
+  .contentGrid {
     grid-template-columns: 1fr;
   }
 
-  .heroRight {
+  .heroStatsGrid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 760px) {
-  .heroRight,
+@media (max-width: 820px) {
+  .heroStatsGrid,
   .staffGrid,
-  .roleMetrics {
+  .coreGrid,
+  .roleMetrics,
+  .signalGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -880,7 +1101,9 @@
 
   .teamHero,
   .infoPanel,
-  .roleAnalyticsSection {
+  .roleAnalyticsSection,
+  .rosterSection,
+  .matchesSection {
     padding: 14px;
   }
 
@@ -888,14 +1111,25 @@
     width: 100%;
     align-items: flex-start;
   }
+  
+  .topbarRight {
+    width: 100%;
+  }
+
+  .exportShareBtn {
+    width: 100%;
+    max-width: 180px;
+  }
 
   .teamName {
     font-size: 26px;
   }
 
-  .heroRight,
+  .heroStatsGrid,
   .staffGrid,
-  .roleMetrics {
+  .coreGrid,
+  .roleMetrics,
+  .signalGrid {
     grid-template-columns: 1fr;
   }
 

@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-03-30T09:25:43.730Z",
+  "updated_at": "2026-03-30T16:10:41.825Z",
   "meta": {
     "team_count": 30,
     "player_count": 188,
     "match_count": 30,
-    "map_count": 87
+    "map_count": 90
   },
   "teams": [
     {
@@ -3936,44 +3936,6 @@
       ],
       "match_logs": [
         {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "D.Va",
-          "role": "TANK",
-          "playtimeMinutes": 13.5,
-          "totals": {
-            "elims": 39,
-            "assists": 17,
-            "deaths": 3,
-            "damage": 13413,
-            "healing": 2022,
-            "blocked": 14256
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 2,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "D.Va",
-          "role": "TANK",
-          "playtimeMinutes": 7.616666666666666,
-          "totals": {
-            "elims": 24,
-            "assists": 11,
-            "deaths": 1,
-            "damage": 5967,
-            "healing": 2154,
-            "blocked": 11250
-          }
-        },
-        {
           "matchId": "FCA26-SWISS-R1-M09",
           "rawMatchId": "FCA26-IMPORTED-HSE47X",
           "matchDisplayName": "ROUND 1 / CR VS LSJ",
@@ -4320,44 +4282,6 @@
         }
       ],
       "match_logs": [
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Cassidy",
-          "role": "DPS",
-          "playtimeMinutes": 13.5,
-          "totals": {
-            "elims": 37,
-            "assists": 3,
-            "deaths": 8,
-            "damage": 19876,
-            "healing": 845,
-            "blocked": 61
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 2,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Cassidy",
-          "role": "DPS",
-          "playtimeMinutes": 7.616666666666666,
-          "totals": {
-            "elims": 15,
-            "assists": 4,
-            "deaths": 5,
-            "damage": 9542,
-            "healing": 0,
-            "blocked": 133
-          }
-        },
         {
           "matchId": "FCA26-SWISS-R1-M09",
           "rawMatchId": "FCA26-IMPORTED-HSE47X",
@@ -4706,44 +4630,6 @@
       ],
       "match_logs": [
         {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Vendetta",
-          "role": "DPS",
-          "playtimeMinutes": 13.5,
-          "totals": {
-            "elims": 26,
-            "assists": 5,
-            "deaths": 8,
-            "damage": 13659,
-            "healing": 682,
-            "blocked": 835
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 2,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Vendetta",
-          "role": "DPS",
-          "playtimeMinutes": 7.616666666666666,
-          "totals": {
-            "elims": 21,
-            "assists": 4,
-            "deaths": 2,
-            "damage": 9255,
-            "healing": 221,
-            "blocked": 138
-          }
-        },
-        {
           "matchId": "FCA26-SWISS-R1-M09",
           "rawMatchId": "FCA26-IMPORTED-HSE47X",
           "matchDisplayName": "ROUND 1 / CR VS LSJ",
@@ -5090,44 +4976,6 @@
         }
       ],
       "match_logs": [
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Lúcio",
-          "role": "SUP",
-          "playtimeMinutes": 13.5,
-          "totals": {
-            "elims": 18,
-            "assists": 16,
-            "deaths": 8,
-            "damage": 3658,
-            "healing": 10945,
-            "blocked": 1167
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 2,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Lúcio",
-          "role": "SUP",
-          "playtimeMinutes": 7.616666666666666,
-          "totals": {
-            "elims": 11,
-            "assists": 11,
-            "deaths": 2,
-            "damage": 2042,
-            "healing": 5362,
-            "blocked": 1428
-          }
-        },
         {
           "matchId": "FCA26-SWISS-R1-M09",
           "rawMatchId": "FCA26-IMPORTED-HSE47X",
@@ -5477,44 +5325,6 @@
         }
       ],
       "match_logs": [
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Kiriko",
-          "role": "SUP",
-          "playtimeMinutes": 13.5,
-          "totals": {
-            "elims": 14,
-            "assists": 30,
-            "deaths": 8,
-            "damage": 5004,
-            "healing": 15505,
-            "blocked": 0
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 2,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Kiriko",
-          "role": "SUP",
-          "playtimeMinutes": 7.616666666666666,
-          "totals": {
-            "elims": 11,
-            "assists": 24,
-            "deaths": 3,
-            "damage": 3662,
-            "healing": 6807,
-            "blocked": 0
-          }
-        },
         {
           "matchId": "FCA26-SWISS-R1-M09",
           "rawMatchId": "FCA26-IMPORTED-HSE47X",
@@ -7494,63 +7304,6 @@
       ],
       "match_logs": [
         {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Zarya",
-          "role": "TANK",
-          "playtimeMinutes": 11.366666666666667,
-          "totals": {
-            "elims": 24,
-            "assists": 16,
-            "deaths": 6,
-            "damage": 8949,
-            "healing": 315,
-            "blocked": 9887
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 2,
-          "mapName": "Midtown",
-          "mapType": "Hybrid",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Zarya",
-          "role": "TANK",
-          "playtimeMinutes": 23.933333333333334,
-          "totals": {
-            "elims": 42,
-            "assists": 18,
-            "deaths": 8,
-            "damage": 19482,
-            "healing": 0,
-            "blocked": 14884
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 3,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Zarya",
-          "role": "TANK",
-          "playtimeMinutes": 8.25,
-          "totals": {
-            "elims": 23,
-            "assists": 16,
-            "deaths": 4,
-            "damage": 6748,
-            "healing": 0,
-            "blocked": 5875
-          }
-        },
-        {
           "matchId": "FCA26-SWISS-R1-M15",
           "rawMatchId": "FCA26-IMPORTED-HXDK31",
           "matchDisplayName": "ROUND 1 / TF VS OL",
@@ -7917,63 +7670,6 @@
       ],
       "match_logs": [
         {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Emre",
-          "role": "DPS",
-          "playtimeMinutes": 11.366666666666667,
-          "totals": {
-            "elims": 35,
-            "assists": 0,
-            "deaths": 6,
-            "damage": 14517,
-            "healing": 1393,
-            "blocked": 0
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 2,
-          "mapName": "Midtown",
-          "mapType": "Hybrid",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Emre",
-          "role": "DPS",
-          "playtimeMinutes": 23.933333333333334,
-          "totals": {
-            "elims": 47,
-            "assists": 2,
-            "deaths": 11,
-            "damage": 20925,
-            "healing": 1721,
-            "blocked": 0
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 3,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Emre",
-          "role": "DPS",
-          "playtimeMinutes": 8.25,
-          "totals": {
-            "elims": 24,
-            "assists": 0,
-            "deaths": 4,
-            "damage": 10598,
-            "healing": 1093,
-            "blocked": 0
-          }
-        },
-        {
           "matchId": "FCA26-SWISS-R1-M15",
           "rawMatchId": "FCA26-IMPORTED-HXDK31",
           "matchDisplayName": "ROUND 1 / TF VS OL",
@@ -8339,63 +8035,6 @@
         }
       ],
       "match_logs": [
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Vendetta",
-          "role": "DPS",
-          "playtimeMinutes": 11.366666666666667,
-          "totals": {
-            "elims": 33,
-            "assists": 6,
-            "deaths": 7,
-            "damage": 9794,
-            "healing": 485,
-            "blocked": 917
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 2,
-          "mapName": "Midtown",
-          "mapType": "Hybrid",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Vendetta",
-          "role": "DPS",
-          "playtimeMinutes": 23.933333333333334,
-          "totals": {
-            "elims": 23,
-            "assists": 3,
-            "deaths": 16,
-            "damage": 13745,
-            "healing": 573,
-            "blocked": 1666
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 3,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Vendetta",
-          "role": "DPS",
-          "playtimeMinutes": 8.25,
-          "totals": {
-            "elims": 22,
-            "assists": 3,
-            "deaths": 5,
-            "damage": 8573,
-            "healing": 334,
-            "blocked": 395
-          }
-        },
         {
           "matchId": "FCA26-SWISS-R1-M15",
           "rawMatchId": "FCA26-IMPORTED-HXDK31",
@@ -8765,63 +8404,6 @@
       ],
       "match_logs": [
         {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Wuyang",
-          "role": "SUP",
-          "playtimeMinutes": 11.366666666666667,
-          "totals": {
-            "elims": 24,
-            "assists": 31,
-            "deaths": 4,
-            "damage": 8238,
-            "healing": 8016,
-            "blocked": 578
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 2,
-          "mapName": "Midtown",
-          "mapType": "Hybrid",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Illari",
-          "role": "SUP",
-          "playtimeMinutes": 23.933333333333334,
-          "totals": {
-            "elims": 37,
-            "assists": 7,
-            "deaths": 9,
-            "damage": 17762,
-            "healing": 13994,
-            "blocked": 0
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 3,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Wuyang",
-          "role": "SUP",
-          "playtimeMinutes": 8.25,
-          "totals": {
-            "elims": 25,
-            "assists": 19,
-            "deaths": 3,
-            "damage": 6962,
-            "healing": 3841,
-            "blocked": 816
-          }
-        },
-        {
           "matchId": "FCA26-SWISS-R1-M15",
           "rawMatchId": "FCA26-IMPORTED-HXDK31",
           "matchDisplayName": "ROUND 1 / TF VS OL",
@@ -9187,63 +8769,6 @@
         }
       ],
       "match_logs": [
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Kiriko",
-          "role": "SUP",
-          "playtimeMinutes": 11.366666666666667,
-          "totals": {
-            "elims": 12,
-            "assists": 36,
-            "deaths": 5,
-            "damage": 1651,
-            "healing": 14342,
-            "blocked": 0
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 2,
-          "mapName": "Midtown",
-          "mapType": "Hybrid",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Kiriko",
-          "role": "SUP",
-          "playtimeMinutes": 23.933333333333334,
-          "totals": {
-            "elims": 9,
-            "assists": 48,
-            "deaths": 8,
-            "damage": 2861,
-            "healing": 22548,
-            "blocked": 0
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 3,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Kiriko",
-          "role": "SUP",
-          "playtimeMinutes": 8.25,
-          "totals": {
-            "elims": 10,
-            "assists": 32,
-            "deaths": 3,
-            "damage": 1840,
-            "healing": 8076,
-            "blocked": 0
-          }
-        },
         {
           "matchId": "FCA26-SWISS-R1-M15",
           "rawMatchId": "FCA26-IMPORTED-HXDK31",
@@ -17487,8 +17012,8 @@
     {
       "player_id": "FCA26-P0083",
       "player_name": "Cr3puscule#5209",
-      "nickname": "crépuscule （twilight",
-      "display_name": "crépuscule （twilight",
+      "nickname": "crépuscule",
+      "display_name": "crépuscule",
       "team_id": "FCA26-T011",
       "team_name": "Spark Crew",
       "team_short_name": "SPC",
@@ -20646,63 +20171,6 @@
       ],
       "match_logs": [
         {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Zarya",
-          "role": "TANK",
-          "playtimeMinutes": 11.366666666666667,
-          "totals": {
-            "elims": 24,
-            "assists": 6,
-            "deaths": 8,
-            "damage": 14048,
-            "healing": 0,
-            "blocked": 9679
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 2,
-          "mapName": "Midtown",
-          "mapType": "Hybrid",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Zarya",
-          "role": "TANK",
-          "playtimeMinutes": 23.933333333333334,
-          "totals": {
-            "elims": 30,
-            "assists": 11,
-            "deaths": 10,
-            "damage": 22534,
-            "healing": 0,
-            "blocked": 16127
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 3,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Zarya",
-          "role": "TANK",
-          "playtimeMinutes": 8.25,
-          "totals": {
-            "elims": 14,
-            "assists": 6,
-            "deaths": 8,
-            "damage": 7194,
-            "healing": 0,
-            "blocked": 6583
-          }
-        },
-        {
           "matchId": "FCA26-SWISS-R1-M15",
           "rawMatchId": "FCA26-IMPORTED-HXDK31",
           "matchDisplayName": "ROUND 1 / TF VS OL",
@@ -21020,63 +20488,6 @@
         }
       ],
       "match_logs": [
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Reaper",
-          "role": "DPS",
-          "playtimeMinutes": 11.366666666666667,
-          "totals": {
-            "elims": 21,
-            "assists": 3,
-            "deaths": 12,
-            "damage": 7333,
-            "healing": 869,
-            "blocked": 3
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 2,
-          "mapName": "Midtown",
-          "mapType": "Hybrid",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Reaper",
-          "role": "DPS",
-          "playtimeMinutes": 23.933333333333334,
-          "totals": {
-            "elims": 31,
-            "assists": 1,
-            "deaths": 19,
-            "damage": 10806,
-            "healing": 476,
-            "blocked": 909
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 3,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Reaper",
-          "role": "DPS",
-          "playtimeMinutes": 8.25,
-          "totals": {
-            "elims": 11,
-            "assists": 0,
-            "deaths": 10,
-            "damage": 4698,
-            "healing": 1203,
-            "blocked": 0
-          }
-        },
         {
           "matchId": "FCA26-SWISS-R1-M15",
           "rawMatchId": "FCA26-IMPORTED-HXDK31",
@@ -21565,63 +20976,6 @@
       ],
       "match_logs": [
         {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Emre",
-          "role": "DPS",
-          "playtimeMinutes": 11.366666666666667,
-          "totals": {
-            "elims": 6,
-            "assists": 0,
-            "deaths": 13,
-            "damage": 10855,
-            "healing": 659,
-            "blocked": 0
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 2,
-          "mapName": "Midtown",
-          "mapType": "Hybrid",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Emre",
-          "role": "DPS",
-          "playtimeMinutes": 23.933333333333334,
-          "totals": {
-            "elims": 34,
-            "assists": 1,
-            "deaths": 15,
-            "damage": 19633,
-            "healing": 1793,
-            "blocked": 0
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 3,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Emre",
-          "role": "DPS",
-          "playtimeMinutes": 8.25,
-          "totals": {
-            "elims": 15,
-            "assists": 0,
-            "deaths": 7,
-            "damage": 7922,
-            "healing": 928,
-            "blocked": 0
-          }
-        },
-        {
           "matchId": "FCA26-SWISS-R1-M15",
           "rawMatchId": "FCA26-IMPORTED-HXDK31",
           "matchDisplayName": "ROUND 1 / TF VS OL",
@@ -21988,63 +21342,6 @@
       ],
       "match_logs": [
         {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Kiriko",
-          "role": "SUP",
-          "playtimeMinutes": 11.366666666666667,
-          "totals": {
-            "elims": 6,
-            "assists": 17,
-            "deaths": 9,
-            "damage": 2170,
-            "healing": 12333,
-            "blocked": 0
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 2,
-          "mapName": "Midtown",
-          "mapType": "Hybrid",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Kiriko",
-          "role": "SUP",
-          "playtimeMinutes": 23.933333333333334,
-          "totals": {
-            "elims": 14,
-            "assists": 32,
-            "deaths": 14,
-            "damage": 3363,
-            "healing": 20657,
-            "blocked": 445
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 3,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Kiriko",
-          "role": "SUP",
-          "playtimeMinutes": 8.25,
-          "totals": {
-            "elims": 4,
-            "assists": 14,
-            "deaths": 6,
-            "damage": 1585,
-            "healing": 8678,
-            "blocked": 0
-          }
-        },
-        {
           "matchId": "FCA26-SWISS-R1-M15",
           "rawMatchId": "FCA26-IMPORTED-HXDK31",
           "matchDisplayName": "ROUND 1 / TF VS OL",
@@ -22386,63 +21683,6 @@
         }
       ],
       "match_logs": [
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Lúcio",
-          "role": "SUP",
-          "playtimeMinutes": 11.366666666666667,
-          "totals": {
-            "elims": 17,
-            "assists": 12,
-            "deaths": 8,
-            "damage": 4461,
-            "healing": 8640,
-            "blocked": 2136
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 2,
-          "mapName": "Midtown",
-          "mapType": "Hybrid",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Baptiste",
-          "role": "SUP",
-          "playtimeMinutes": 23.933333333333334,
-          "totals": {
-            "elims": 25,
-            "assists": 32,
-            "deaths": 12,
-            "damage": 7814,
-            "healing": 23494,
-            "blocked": 1582
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HXDK31",
-          "mapOrder": 3,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Lúcio",
-          "role": "SUP",
-          "playtimeMinutes": 8.25,
-          "totals": {
-            "elims": 7,
-            "assists": 9,
-            "deaths": 9,
-            "damage": 2508,
-            "healing": 8098,
-            "blocked": 986
-          }
-        },
         {
           "matchId": "FCA26-SWISS-R1-M15",
           "rawMatchId": "FCA26-IMPORTED-HXDK31",
@@ -29021,44 +28261,6 @@
       ],
       "match_logs": [
         {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "D.Va",
-          "role": "TANK",
-          "playtimeMinutes": 13.5,
-          "totals": {
-            "elims": 28,
-            "assists": 4,
-            "deaths": 10,
-            "damage": 14409,
-            "healing": 3471,
-            "blocked": 17419
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 2,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Hazard",
-          "role": "TANK",
-          "playtimeMinutes": 7.616666666666666,
-          "totals": {
-            "elims": 7,
-            "assists": 0,
-            "deaths": 6,
-            "damage": 5663,
-            "healing": 1576,
-            "blocked": 7183
-          }
-        },
-        {
           "matchId": "FCA26-SWISS-R1-M09",
           "rawMatchId": "FCA26-IMPORTED-HSE47X",
           "matchDisplayName": "ROUND 1 / CR VS LSJ",
@@ -29405,44 +28607,6 @@
         }
       ],
       "match_logs": [
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Sombra",
-          "role": "DPS",
-          "playtimeMinutes": 13.5,
-          "totals": {
-            "elims": 23,
-            "assists": 5,
-            "deaths": 8,
-            "damage": 11559,
-            "healing": 1003,
-            "blocked": 0
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 2,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Sombra",
-          "role": "DPS",
-          "playtimeMinutes": 7.616666666666666,
-          "totals": {
-            "elims": 9,
-            "assists": 7,
-            "deaths": 8,
-            "damage": 4643,
-            "healing": 665,
-            "blocked": 0
-          }
-        },
         {
           "matchId": "FCA26-SWISS-R1-M09",
           "rawMatchId": "FCA26-IMPORTED-HSE47X",
@@ -29859,44 +29023,6 @@
       ],
       "match_logs": [
         {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Reaper",
-          "role": "DPS",
-          "playtimeMinutes": 13.5,
-          "totals": {
-            "elims": 17,
-            "assists": 0,
-            "deaths": 15,
-            "damage": 11323,
-            "healing": 2006,
-            "blocked": 125
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 2,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Reaper",
-          "role": "DPS",
-          "playtimeMinutes": 7.616666666666666,
-          "totals": {
-            "elims": 7,
-            "assists": 0,
-            "deaths": 7,
-            "damage": 6065,
-            "healing": 1113,
-            "blocked": 0
-          }
-        },
-        {
           "matchId": "FCA26-SWISS-R1-M09",
           "rawMatchId": "FCA26-IMPORTED-HSE47X",
           "matchDisplayName": "ROUND 1 / CR VS LSJ",
@@ -30246,44 +29372,6 @@
       ],
       "match_logs": [
         {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Kiriko",
-          "role": "SUP",
-          "playtimeMinutes": 13.5,
-          "totals": {
-            "elims": 9,
-            "assists": 18,
-            "deaths": 13,
-            "damage": 5435,
-            "healing": 13285,
-            "blocked": 0
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 2,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Kiriko",
-          "role": "SUP",
-          "playtimeMinutes": 7.616666666666666,
-          "totals": {
-            "elims": 0,
-            "assists": 9,
-            "deaths": 7,
-            "damage": 2756,
-            "healing": 6559,
-            "blocked": 0
-          }
-        },
-        {
           "matchId": "FCA26-SWISS-R1-M09",
           "rawMatchId": "FCA26-IMPORTED-HSE47X",
           "matchDisplayName": "ROUND 1 / CR VS LSJ",
@@ -30606,44 +29694,6 @@
         }
       ],
       "match_logs": [
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 1,
-          "mapName": "Busan",
-          "mapType": "Control",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Lúcio",
-          "role": "SUP",
-          "playtimeMinutes": 13.5,
-          "totals": {
-            "elims": 12,
-            "assists": 11,
-            "deaths": 13,
-            "damage": 4845,
-            "healing": 10616,
-            "blocked": 1026
-          }
-        },
-        {
-          "matchId": "FCA26-IMPORTED-HSE47X",
-          "mapOrder": 2,
-          "mapName": "Suravasa",
-          "mapType": "Flashpoint",
-          "stage": "QUALIFIERS",
-          "source": "WORKBENCH",
-          "hero": "Mizuki",
-          "role": "SUP",
-          "playtimeMinutes": 7.616666666666666,
-          "totals": {
-            "elims": 1,
-            "assists": 9,
-            "deaths": 6,
-            "damage": 2724,
-            "healing": 7780,
-            "blocked": 1361
-          }
-        },
         {
           "matchId": "FCA26-SWISS-R1-M09",
           "rawMatchId": "FCA26-IMPORTED-HSE47X",
@@ -38686,6 +37736,78 @@
             "healing": 2193,
             "blocked": 7889
           }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "D.Va",
+          "role": "TANK",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 41,
+            "assists": 28,
+            "deaths": 4,
+            "damage": 7408,
+            "healing": 1873,
+            "blocked": 7095
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "D.Va",
+          "role": "TANK",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 26,
+            "assists": 7,
+            "deaths": 5,
+            "damage": 11508,
+            "healing": 2878,
+            "blocked": 6600
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "D.Va",
+          "role": "TANK",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 22,
+            "assists": 15,
+            "deaths": 5,
+            "damage": 10312,
+            "healing": 2402,
+            "blocked": 7059
+          }
         }
       ],
       "match_logs": [
@@ -38759,6 +37881,78 @@
             "damage": 8157,
             "healing": 2193,
             "blocked": 7889
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "D.Va",
+          "role": "TANK",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 41,
+            "assists": 28,
+            "deaths": 4,
+            "damage": 7408,
+            "healing": 1873,
+            "blocked": 7095
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "D.Va",
+          "role": "TANK",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 26,
+            "assists": 7,
+            "deaths": 5,
+            "damage": 11508,
+            "healing": 2878,
+            "blocked": 6600
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "D.Va",
+          "role": "TANK",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 22,
+            "assists": 15,
+            "deaths": 5,
+            "damage": 10312,
+            "healing": 2402,
+            "blocked": 7059
           }
         }
       ]
@@ -38853,6 +38047,78 @@
             "healing": 663,
             "blocked": 0
           }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Vendetta",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 24,
+            "assists": 3,
+            "deaths": 6,
+            "damage": 8322,
+            "healing": 443,
+            "blocked": 252
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Vendetta",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 18,
+            "assists": 2,
+            "deaths": 10,
+            "damage": 5745,
+            "healing": 222,
+            "blocked": 124
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Vendetta",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 17,
+            "assists": 4,
+            "deaths": 9,
+            "damage": 7512,
+            "healing": 392,
+            "blocked": 619
+          }
         }
       ],
       "match_logs": [
@@ -38926,6 +38192,78 @@
             "damage": 10080,
             "healing": 663,
             "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Vendetta",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 24,
+            "assists": 3,
+            "deaths": 6,
+            "damage": 8322,
+            "healing": 443,
+            "blocked": 252
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Vendetta",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 18,
+            "assists": 2,
+            "deaths": 10,
+            "damage": 5745,
+            "healing": 222,
+            "blocked": 124
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Vendetta",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 17,
+            "assists": 4,
+            "deaths": 9,
+            "damage": 7512,
+            "healing": 392,
+            "blocked": 619
           }
         }
       ]
@@ -39017,6 +38355,78 @@
             "healing": 1567,
             "blocked": 0
           }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Emre",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 32,
+            "assists": 0,
+            "deaths": 4,
+            "damage": 10264,
+            "healing": 881,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Sojourn",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 20,
+            "assists": 0,
+            "deaths": 5,
+            "damage": 10113,
+            "healing": 115,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Cassidy",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 21,
+            "assists": 4,
+            "deaths": 11,
+            "damage": 11004,
+            "healing": 760,
+            "blocked": 203
+          }
         }
       ],
       "match_logs": [
@@ -39090,6 +38500,78 @@
             "damage": 9039,
             "healing": 1567,
             "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Emre",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 32,
+            "assists": 0,
+            "deaths": 4,
+            "damage": 10264,
+            "healing": 881,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Sojourn",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 20,
+            "assists": 0,
+            "deaths": 5,
+            "damage": 10113,
+            "healing": 115,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Cassidy",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 21,
+            "assists": 4,
+            "deaths": 11,
+            "damage": 11004,
+            "healing": 760,
+            "blocked": 203
           }
         }
       ]
@@ -39184,6 +38666,78 @@
             "healing": 7360,
             "blocked": 2421
           }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Lúcio",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 22,
+            "assists": 22,
+            "deaths": 5,
+            "damage": 4203,
+            "healing": 7627,
+            "blocked": 858
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Lúcio",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 8,
+            "assists": 10,
+            "deaths": 10,
+            "damage": 1787,
+            "healing": 6214,
+            "blocked": 776
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Lúcio",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 16,
+            "assists": 18,
+            "deaths": 9,
+            "damage": 4082,
+            "healing": 8346,
+            "blocked": 1474
+          }
         }
       ],
       "match_logs": [
@@ -39257,6 +38811,78 @@
             "damage": 2399,
             "healing": 7360,
             "blocked": 2421
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Lúcio",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 22,
+            "assists": 22,
+            "deaths": 5,
+            "damage": 4203,
+            "healing": 7627,
+            "blocked": 858
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Lúcio",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 8,
+            "assists": 10,
+            "deaths": 10,
+            "damage": 1787,
+            "healing": 6214,
+            "blocked": 776
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Lúcio",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 16,
+            "assists": 18,
+            "deaths": 9,
+            "damage": 4082,
+            "healing": 8346,
+            "blocked": 1474
           }
         }
       ]
@@ -39351,6 +38977,78 @@
             "healing": 8973,
             "blocked": 0
           }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Kiriko",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 14,
+            "assists": 31,
+            "deaths": 6,
+            "damage": 4049,
+            "healing": 7559,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Kiriko",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 6,
+            "assists": 22,
+            "deaths": 10,
+            "damage": 2546,
+            "healing": 6503,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Kiriko",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 4,
+            "assists": 16,
+            "deaths": 9,
+            "damage": 2318,
+            "healing": 8043,
+            "blocked": 0
+          }
         }
       ],
       "match_logs": [
@@ -39423,6 +39121,78 @@
             "deaths": 8,
             "damage": 2614,
             "healing": 8973,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Kiriko",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 14,
+            "assists": 31,
+            "deaths": 6,
+            "damage": 4049,
+            "healing": 7559,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Kiriko",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 6,
+            "assists": 22,
+            "deaths": 10,
+            "damage": 2546,
+            "healing": 6503,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T024",
+          "teamName": "宝藏船队",
+          "hero": "Kiriko",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 4,
+            "assists": 16,
+            "deaths": 9,
+            "damage": 2318,
+            "healing": 8043,
             "blocked": 0
           }
         }
@@ -47458,6 +47228,78 @@
             "healing": 119,
             "blocked": 215
           }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Tracer",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 14,
+            "assists": 1,
+            "deaths": 12,
+            "damage": 9181,
+            "healing": 0,
+            "blocked": 328
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Tracer",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 16,
+            "assists": 1,
+            "deaths": 9,
+            "damage": 7096,
+            "healing": 120,
+            "blocked": 664
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Tracer",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 20,
+            "assists": 0,
+            "deaths": 8,
+            "damage": 6154,
+            "healing": 0,
+            "blocked": 0
+          }
         }
       ],
       "match_logs": [
@@ -47531,6 +47373,78 @@
             "damage": 6035,
             "healing": 119,
             "blocked": 215
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Tracer",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 14,
+            "assists": 1,
+            "deaths": 12,
+            "damage": 9181,
+            "healing": 0,
+            "blocked": 328
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Tracer",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 16,
+            "assists": 1,
+            "deaths": 9,
+            "damage": 7096,
+            "healing": 120,
+            "blocked": 664
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Tracer",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 20,
+            "assists": 0,
+            "deaths": 8,
+            "damage": 6154,
+            "healing": 0,
+            "blocked": 0
           }
         }
       ]
@@ -47622,6 +47536,78 @@
             "healing": 521,
             "blocked": 0
           }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Emre",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 13,
+            "assists": 0,
+            "deaths": 9,
+            "damage": 9245,
+            "healing": 807,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Sojourn",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 24,
+            "assists": 0,
+            "deaths": 7,
+            "damage": 8937,
+            "healing": 0,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Venture",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 27,
+            "assists": 4,
+            "deaths": 6,
+            "damage": 11883,
+            "healing": 0,
+            "blocked": 1917
+          }
         }
       ],
       "match_logs": [
@@ -47695,6 +47681,78 @@
             "damage": 9991,
             "healing": 521,
             "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Emre",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 13,
+            "assists": 0,
+            "deaths": 9,
+            "damage": 9245,
+            "healing": 807,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Sojourn",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 24,
+            "assists": 0,
+            "deaths": 7,
+            "damage": 8937,
+            "healing": 0,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Venture",
+          "role": "DPS",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 27,
+            "assists": 4,
+            "deaths": 6,
+            "damage": 11883,
+            "healing": 0,
+            "blocked": 1917
           }
         }
       ]
@@ -47788,6 +47846,78 @@
             "healing": 5344,
             "blocked": 0
           }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Lúcio",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 6,
+            "assists": 7,
+            "deaths": 9,
+            "damage": 3024,
+            "healing": 5310,
+            "blocked": 1987
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Lúcio",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 14,
+            "assists": 21,
+            "deaths": 6,
+            "damage": 3403,
+            "healing": 5792,
+            "blocked": 1452
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Lúcio",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 7,
+            "assists": 15,
+            "deaths": 6,
+            "damage": 3849,
+            "healing": 7358,
+            "blocked": 1271
+          }
         }
       ],
       "match_logs": [
@@ -47861,6 +47991,78 @@
             "damage": 7434,
             "healing": 5344,
             "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Lúcio",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 6,
+            "assists": 7,
+            "deaths": 9,
+            "damage": 3024,
+            "healing": 5310,
+            "blocked": 1987
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Lúcio",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 14,
+            "assists": 21,
+            "deaths": 6,
+            "damage": 3403,
+            "healing": 5792,
+            "blocked": 1452
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Lúcio",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 7,
+            "assists": 15,
+            "deaths": 6,
+            "damage": 3849,
+            "healing": 7358,
+            "blocked": 1271
           }
         }
       ]
@@ -47952,6 +48154,78 @@
             "healing": 8101,
             "blocked": 0
           }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Kiriko",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 1,
+            "assists": 10,
+            "deaths": 9,
+            "damage": 2156,
+            "healing": 6650,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Kiriko",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 4,
+            "assists": 19,
+            "deaths": 6,
+            "damage": 2548,
+            "healing": 7388,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Kiriko",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 10,
+            "assists": 25,
+            "deaths": 7,
+            "damage": 4278,
+            "healing": 7589,
+            "blocked": 0
+          }
         }
       ],
       "match_logs": [
@@ -48024,6 +48298,78 @@
             "deaths": 8,
             "damage": 2457,
             "healing": 8101,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Kiriko",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 1,
+            "assists": 10,
+            "deaths": 9,
+            "damage": 2156,
+            "healing": 6650,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Kiriko",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 4,
+            "assists": 19,
+            "deaths": 6,
+            "damage": 2548,
+            "healing": 7388,
+            "blocked": 0
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Kiriko",
+          "role": "SUP",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 10,
+            "assists": 25,
+            "deaths": 7,
+            "damage": 4278,
+            "healing": 7589,
             "blocked": 0
           }
         }
@@ -48118,6 +48464,78 @@
             "healing": 2491,
             "blocked": 11767
           }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "D.Va",
+          "role": "TANK",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 18,
+            "assists": 11,
+            "deaths": 7,
+            "damage": 7244,
+            "healing": 1581,
+            "blocked": 10291
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Winston",
+          "role": "TANK",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 25,
+            "assists": 2,
+            "deaths": 4,
+            "damage": 8778,
+            "healing": 2618,
+            "blocked": 11124
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Winston",
+          "role": "TANK",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 29,
+            "assists": 6,
+            "deaths": 6,
+            "damage": 11314,
+            "healing": 3016,
+            "blocked": 14363
+          }
         }
       ],
       "match_logs": [
@@ -48192,6 +48610,78 @@
             "healing": 2491,
             "blocked": 11767
           }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 1,
+          "mapName": "Lijiang Tower",
+          "mapType": "Control",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "D.Va",
+          "role": "TANK",
+          "rowTime": "",
+          "playtimeMinutes": 9.5,
+          "totals": {
+            "elims": 18,
+            "assists": 11,
+            "deaths": 7,
+            "damage": 7244,
+            "healing": 1581,
+            "blocked": 10291
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 2,
+          "mapName": "Esperança",
+          "mapType": "Push",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Winston",
+          "role": "TANK",
+          "rowTime": "",
+          "playtimeMinutes": 10.683333333333334,
+          "totals": {
+            "elims": 25,
+            "assists": 2,
+            "deaths": 4,
+            "damage": 8778,
+            "healing": 2618,
+            "blocked": 11124
+          }
+        },
+        {
+          "matchId": "FCA26-SWISS-R2-M10",
+          "rawMatchId": "FCA26-SWISS-R2-M10-0941",
+          "matchDisplayName": "ROUND 02 / TS VS V50",
+          "mapOrder": 3,
+          "mapName": "Suravasa",
+          "mapType": "Flashpoint",
+          "stage": "QUALIFIERS",
+          "source": "WORKBENCH",
+          "teamId": "FCA26-T030",
+          "teamName": "V我50鸡翅分你一队",
+          "hero": "Winston",
+          "role": "TANK",
+          "rowTime": "",
+          "playtimeMinutes": 11.366666666666667,
+          "totals": {
+            "elims": 29,
+            "assists": 6,
+            "deaths": 6,
+            "damage": 11314,
+            "healing": 3016,
+            "blocked": 14363
+          }
         }
       ]
     }
@@ -48207,7 +48697,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -48784,7 +49274,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -49361,7 +49851,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -49938,7 +50428,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -50515,7 +51005,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -51092,7 +51582,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -51669,7 +52159,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -52246,7 +52736,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -52823,7 +53313,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -53400,11 +53890,11 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
-      "updated_at": "2026-03-28T19:13:54.730Z",
+      "updated_at": "2026-03-30T15:42:24.372Z",
       "winner": "Sapphire Star",
       "team_a": {
         "id": "FCA26-T020",
@@ -53606,10 +54096,10 @@
           "map_name": "Suravasa",
           "map_type": "Flashpoint",
           "match_time": "12:36",
-          "winner": "FCA26-T020",
+          "winner": "FCA26-T015",
           "winner_label": "XCFN.Green",
-          "score_a": "3",
-          "score_b": "2",
+          "score_a": "2",
+          "score_b": "3",
           "team_a_name": "Sapphire Star",
           "team_b_name": "XCFN.Green",
           "team_a_ban": "",
@@ -53788,17 +54278,17 @@
           "map_name": "Esperança",
           "map_type": "Push",
           "match_time": "3:50",
-          "winner": null,
+          "winner": "FCA26-T020",
           "winner_label": "Sapphire Star",
-          "score_a": "",
-          "score_b": "",
+          "score_a": "1",
+          "score_b": "0",
           "team_a_name": "Sapphire Star",
           "team_b_name": "XCFN.Green",
           "team_a_ban": "",
           "team_a_ban_role": "",
           "team_b_ban": "",
           "team_b_ban_role": "",
-          "lobby_code": "",
+          "lobby_code": "3555WW",
           "notes": "",
           "team_a_stats": [
             {
@@ -53977,7 +54467,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -54554,7 +55044,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -55131,7 +55621,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -55708,7 +56198,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -56285,7 +56775,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
@@ -56862,7 +57352,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -57439,7 +57929,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -58016,7 +58506,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -58593,7 +59083,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -59170,7 +59660,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -59747,7 +60237,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -60324,7 +60814,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -60901,7 +61391,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -61478,7 +61968,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -62049,31 +62539,578 @@
       "match_id": "FCA26-SWISS-R2-M10",
       "raw_match_id": "FCA26-SWISS-R2-M10-0941",
       "match_display_name": "ROUND 02 / TS VS V50",
-      "status": "PENDING",
+      "status": "COMPLETE",
       "progress": {
-        "result": "PENDING",
-        "maps": "PENDING",
-        "players": "PENDING"
+        "result": "COMPLETE",
+        "maps": "COMPLETE",
+        "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-28T16:04:06.528Z",
-      "winner": null,
+      "updated_at": "2026-03-30T14:50:04.699Z",
+      "winner": "V我50鸡翅分你一队",
       "team_a": {
         "id": "FCA26-T024",
         "name": "宝藏船队",
         "short": "TS",
-        "score": ""
+        "score": "1"
       },
       "team_b": {
         "id": "FCA26-T030",
         "name": "V我50鸡翅分你一队",
         "short": "V50",
-        "score": ""
+        "score": "2"
       },
-      "maps": []
+      "maps": [
+        {
+          "map_order": 1,
+          "map_name": "Lijiang Tower",
+          "map_type": "Control",
+          "match_time": "9:30",
+          "winner": "FCA26-T024",
+          "winner_label": "宝藏船队",
+          "score_a": "2",
+          "score_b": "0",
+          "team_a_name": "宝藏船队",
+          "team_b_name": "V我50鸡翅分你一队",
+          "team_a_ban": "",
+          "team_a_ban_role": "",
+          "team_b_ban": "",
+          "team_b_ban_role": "",
+          "lobby_code": "12SP8S",
+          "notes": "",
+          "team_a_stats": [
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0146",
+              "player_name": "Player#5569368",
+              "role": "DPS",
+              "heroes_played": "Vendetta",
+              "eliminations": 24,
+              "assists": 3,
+              "deaths": 6,
+              "damage": 8322,
+              "healing": 443,
+              "mitigation": 252,
+              "time": ""
+            },
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0149",
+              "player_name": "Su9ar#51621",
+              "role": "SUP",
+              "heroes_played": "Kiriko",
+              "eliminations": 14,
+              "assists": 31,
+              "deaths": 6,
+              "damage": 4049,
+              "healing": 7559,
+              "mitigation": 0,
+              "time": ""
+            },
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0145",
+              "player_name": "yxp#51596",
+              "role": "TANK",
+              "heroes_played": "D.Va",
+              "eliminations": 41,
+              "assists": 28,
+              "deaths": 4,
+              "damage": 7408,
+              "healing": 1873,
+              "mitigation": 7095,
+              "time": ""
+            },
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0148",
+              "player_name": "时光#54787",
+              "role": "SUP",
+              "heroes_played": "Lúcio",
+              "eliminations": 22,
+              "assists": 22,
+              "deaths": 5,
+              "damage": 4203,
+              "healing": 7627,
+              "mitigation": 858,
+              "time": ""
+            },
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0147",
+              "player_name": "莫徐坤#5190",
+              "role": "DPS",
+              "heroes_played": "Emre",
+              "eliminations": 32,
+              "assists": 0,
+              "deaths": 4,
+              "damage": 10264,
+              "healing": 881,
+              "mitigation": 0,
+              "time": ""
+            }
+          ],
+          "team_b_stats": [
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0113",
+              "player_name": "Giotto#52922",
+              "role": "TANK",
+              "heroes_played": "D.Va",
+              "eliminations": 18,
+              "assists": 11,
+              "deaths": 7,
+              "damage": 7244,
+              "healing": 1581,
+              "mitigation": 10291,
+              "time": ""
+            },
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0109",
+              "player_name": "回春丹#5383",
+              "role": "DPS",
+              "heroes_played": "Tracer",
+              "eliminations": 14,
+              "assists": 1,
+              "deaths": 12,
+              "damage": 9181,
+              "healing": 0,
+              "mitigation": 328,
+              "time": ""
+            },
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0111",
+              "player_name": "带派之足#5817",
+              "role": "SUP",
+              "heroes_played": "Lúcio",
+              "eliminations": 6,
+              "assists": 7,
+              "deaths": 9,
+              "damage": 3024,
+              "healing": 5310,
+              "mitigation": 1987,
+              "time": ""
+            },
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0112",
+              "player_name": "摇翘#5887",
+              "role": "SUP",
+              "heroes_played": "Kiriko",
+              "eliminations": 1,
+              "assists": 10,
+              "deaths": 9,
+              "damage": 2156,
+              "healing": 6650,
+              "mitigation": 0,
+              "time": ""
+            },
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0110",
+              "player_name": "重庆霍建华#5200",
+              "role": "DPS",
+              "heroes_played": "Emre",
+              "eliminations": 13,
+              "assists": 0,
+              "deaths": 9,
+              "damage": 9245,
+              "healing": 807,
+              "mitigation": 0,
+              "time": ""
+            }
+          ]
+        },
+        {
+          "map_order": 2,
+          "map_name": "Esperança",
+          "map_type": "Push",
+          "match_time": "10:41",
+          "winner": "FCA26-T030",
+          "winner_label": "V我50鸡翅分你一队",
+          "score_a": "0",
+          "score_b": "1",
+          "team_a_name": "宝藏船队",
+          "team_b_name": "V我50鸡翅分你一队",
+          "team_a_ban": "",
+          "team_a_ban_role": "",
+          "team_b_ban": "",
+          "team_b_ban_role": "",
+          "lobby_code": "FN29GR",
+          "notes": "",
+          "team_a_stats": [
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0146",
+              "player_name": "Player#5569368",
+              "role": "DPS",
+              "heroes_played": "Vendetta",
+              "eliminations": 18,
+              "assists": 2,
+              "deaths": 10,
+              "damage": 5745,
+              "healing": 222,
+              "mitigation": 124,
+              "time": ""
+            },
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0149",
+              "player_name": "Su9ar#51621",
+              "role": "SUP",
+              "heroes_played": "Kiriko",
+              "eliminations": 6,
+              "assists": 22,
+              "deaths": 10,
+              "damage": 2546,
+              "healing": 6503,
+              "mitigation": 0,
+              "time": ""
+            },
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0145",
+              "player_name": "yxp#51596",
+              "role": "TANK",
+              "heroes_played": "D.Va",
+              "eliminations": 26,
+              "assists": 7,
+              "deaths": 5,
+              "damage": 11508,
+              "healing": 2878,
+              "mitigation": 6600,
+              "time": ""
+            },
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0148",
+              "player_name": "时光#54787",
+              "role": "SUP",
+              "heroes_played": "Lúcio",
+              "eliminations": 8,
+              "assists": 10,
+              "deaths": 10,
+              "damage": 1787,
+              "healing": 6214,
+              "mitigation": 776,
+              "time": ""
+            },
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0147",
+              "player_name": "莫徐坤#5190",
+              "role": "DPS",
+              "heroes_played": "Sojourn",
+              "eliminations": 20,
+              "assists": 0,
+              "deaths": 5,
+              "damage": 10113,
+              "healing": 115,
+              "mitigation": 0,
+              "time": ""
+            }
+          ],
+          "team_b_stats": [
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0113",
+              "player_name": "Giotto#52922",
+              "role": "TANK",
+              "heroes_played": "Winston",
+              "eliminations": 25,
+              "assists": 2,
+              "deaths": 4,
+              "damage": 8778,
+              "healing": 2618,
+              "mitigation": 11124,
+              "time": ""
+            },
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0109",
+              "player_name": "回春丹#5383",
+              "role": "DPS",
+              "heroes_played": "Tracer",
+              "eliminations": 16,
+              "assists": 1,
+              "deaths": 9,
+              "damage": 7096,
+              "healing": 120,
+              "mitigation": 664,
+              "time": ""
+            },
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0111",
+              "player_name": "带派之足#5817",
+              "role": "SUP",
+              "heroes_played": "Lúcio",
+              "eliminations": 14,
+              "assists": 21,
+              "deaths": 6,
+              "damage": 3403,
+              "healing": 5792,
+              "mitigation": 1452,
+              "time": ""
+            },
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0112",
+              "player_name": "摇翘#5887",
+              "role": "SUP",
+              "heroes_played": "Kiriko",
+              "eliminations": 4,
+              "assists": 19,
+              "deaths": 6,
+              "damage": 2548,
+              "healing": 7388,
+              "mitigation": 0,
+              "time": ""
+            },
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0110",
+              "player_name": "重庆霍建华#5200",
+              "role": "DPS",
+              "heroes_played": "Sojourn",
+              "eliminations": 24,
+              "assists": 0,
+              "deaths": 7,
+              "damage": 8937,
+              "healing": 0,
+              "mitigation": 0,
+              "time": ""
+            }
+          ]
+        },
+        {
+          "map_order": 3,
+          "map_name": "Suravasa",
+          "map_type": "Flashpoint",
+          "match_time": "11:22",
+          "winner": "FCA26-T030",
+          "winner_label": "V我50鸡翅分你一队",
+          "score_a": "1",
+          "score_b": "3",
+          "team_a_name": "宝藏船队",
+          "team_b_name": "V我50鸡翅分你一队",
+          "team_a_ban": "",
+          "team_a_ban_role": "",
+          "team_b_ban": "",
+          "team_b_ban_role": "",
+          "lobby_code": "QY1EJ5",
+          "notes": "",
+          "team_a_stats": [
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0146",
+              "player_name": "Player#5569368",
+              "role": "DPS",
+              "heroes_played": "Vendetta",
+              "eliminations": 17,
+              "assists": 4,
+              "deaths": 9,
+              "damage": 7512,
+              "healing": 392,
+              "mitigation": 619,
+              "time": ""
+            },
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0149",
+              "player_name": "Su9ar#51621",
+              "role": "SUP",
+              "heroes_played": "Kiriko",
+              "eliminations": 4,
+              "assists": 16,
+              "deaths": 9,
+              "damage": 2318,
+              "healing": 8043,
+              "mitigation": 0,
+              "time": ""
+            },
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0145",
+              "player_name": "yxp#51596",
+              "role": "TANK",
+              "heroes_played": "D.Va",
+              "eliminations": 22,
+              "assists": 15,
+              "deaths": 5,
+              "damage": 10312,
+              "healing": 2402,
+              "mitigation": 7059,
+              "time": ""
+            },
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0148",
+              "player_name": "时光#54787",
+              "role": "SUP",
+              "heroes_played": "Lúcio",
+              "eliminations": 16,
+              "assists": 18,
+              "deaths": 9,
+              "damage": 4082,
+              "healing": 8346,
+              "mitigation": 1474,
+              "time": ""
+            },
+            {
+              "side": "A",
+              "team_id": "FCA26-T024",
+              "team_name": "宝藏船队",
+              "player_id": "FCA26-P0147",
+              "player_name": "莫徐坤#5190",
+              "role": "DPS",
+              "heroes_played": "Cassidy",
+              "eliminations": 21,
+              "assists": 4,
+              "deaths": 11,
+              "damage": 11004,
+              "healing": 760,
+              "mitigation": 203,
+              "time": ""
+            }
+          ],
+          "team_b_stats": [
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0113",
+              "player_name": "Giotto#52922",
+              "role": "TANK",
+              "heroes_played": "Winston",
+              "eliminations": 29,
+              "assists": 6,
+              "deaths": 6,
+              "damage": 11314,
+              "healing": 3016,
+              "mitigation": 14363,
+              "time": ""
+            },
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0109",
+              "player_name": "回春丹#5383",
+              "role": "DPS",
+              "heroes_played": "Tracer",
+              "eliminations": 20,
+              "assists": 0,
+              "deaths": 8,
+              "damage": 6154,
+              "healing": 0,
+              "mitigation": 0,
+              "time": ""
+            },
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0111",
+              "player_name": "带派之足#5817",
+              "role": "SUP",
+              "heroes_played": "Lúcio",
+              "eliminations": 7,
+              "assists": 15,
+              "deaths": 6,
+              "damage": 3849,
+              "healing": 7358,
+              "mitigation": 1271,
+              "time": ""
+            },
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0112",
+              "player_name": "摇翘#5887",
+              "role": "SUP",
+              "heroes_played": "Kiriko",
+              "eliminations": 10,
+              "assists": 25,
+              "deaths": 7,
+              "damage": 4278,
+              "healing": 7589,
+              "mitigation": 0,
+              "time": ""
+            },
+            {
+              "side": "B",
+              "team_id": "FCA26-T030",
+              "team_name": "V我50鸡翅分你一队",
+              "player_id": "FCA26-P0110",
+              "player_name": "重庆霍建华#5200",
+              "role": "DPS",
+              "heroes_played": "Venture",
+              "eliminations": 27,
+              "assists": 4,
+              "deaths": 6,
+              "damage": 11883,
+              "healing": 0,
+              "mitigation": 1917,
+              "time": ""
+            }
+          ]
+        }
+      ]
     },
     {
       "match_id": "FCA26-SWISS-R2-M11",
@@ -62085,7 +63122,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -62662,7 +63699,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -63239,7 +64276,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -63816,7 +64853,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -64393,7 +65430,7 @@
         "maps": "COMPLETE",
         "players": "COMPLETE"
       },
-      "stage": "QUALIFIERS",
+      "stage": "SWISS",
       "round": "ROUND 2",
       "format": "BO3",
       "scheduled_at": "TBD",
@@ -65225,7 +66262,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "50m",
       "raw_time_mins": 50.7,
       "most_played_hero": "Zarya",
@@ -65260,7 +66297,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 1,
+      "maps_played": 0,
       "total_time_played": "0m",
       "raw_time_mins": 0,
       "most_played_hero": "",
@@ -65293,7 +66330,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 1,
+      "maps_played": 0,
       "total_time_played": "0m",
       "raw_time_mins": 0,
       "most_played_hero": "",
@@ -65326,7 +66363,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "50m",
       "raw_time_mins": 50.7,
       "most_played_hero": "Sojourn",
@@ -65360,7 +66397,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "50m",
       "raw_time_mins": 50.7,
       "most_played_hero": "Tracer",
@@ -65466,26 +66503,26 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 8,
-      "total_time_played": "1h 7m",
-      "raw_time_mins": 67.76666666666667,
+      "maps_played": 4,
+      "total_time_played": "46m",
+      "raw_time_mins": 46.65,
       "most_played_hero": "D.Va",
       "top_3_heroes": [
         "D.Va",
         "Zarya"
       ],
-      "total_elim": 180,
-      "total_ast": 76,
-      "total_dth": 16,
-      "total_dmg": 64203,
-      "total_heal": 8352,
-      "total_block": 72100,
-      "avg_elim": "26.562",
-      "avg_ast": "11.215",
-      "avg_dth": "2.361",
-      "avg_dmg": "9474.127",
-      "avg_heal": "1232.464",
-      "avg_block": "10639.449"
+      "total_elim": 117,
+      "total_ast": 48,
+      "total_dth": 12,
+      "total_dmg": 44823,
+      "total_heal": 4176,
+      "total_block": 46594,
+      "avg_elim": "25.080",
+      "avg_ast": "10.289",
+      "avg_dth": "2.572",
+      "avg_dmg": "9608.360",
+      "avg_heal": "895.177",
+      "avg_block": "9987.996"
     },
     {
       "player_id": "FCA26-P0014",
@@ -65500,26 +66537,26 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 8,
-      "total_time_played": "1h 7m",
-      "raw_time_mins": 67.76666666666667,
+      "maps_played": 4,
+      "total_time_played": "46m",
+      "raw_time_mins": 46.65,
       "most_played_hero": "Cassidy",
       "top_3_heroes": [
         "Cassidy",
         "Emre"
       ],
-      "total_elim": 152,
-      "total_ast": 14,
-      "total_dth": 41,
-      "total_dmg": 86154,
-      "total_heal": 3309,
-      "total_block": 497,
-      "avg_elim": "22.430",
-      "avg_ast": "2.066",
-      "avg_dth": "6.050",
-      "avg_dmg": "12713.330",
-      "avg_heal": "488.293",
-      "avg_block": "73.340"
+      "total_elim": 100,
+      "total_ast": 7,
+      "total_dth": 28,
+      "total_dmg": 56736,
+      "total_heal": 2464,
+      "total_block": 303,
+      "avg_elim": "21.436",
+      "avg_ast": "1.501",
+      "avg_dth": "6.002",
+      "avg_dmg": "12162.058",
+      "avg_heal": "528.189",
+      "avg_block": "64.952"
     },
     {
       "player_id": "FCA26-P0015",
@@ -65534,25 +66571,25 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 8,
-      "total_time_played": "1h 7m",
-      "raw_time_mins": 67.76666666666667,
+      "maps_played": 4,
+      "total_time_played": "46m",
+      "raw_time_mins": 46.65,
       "most_played_hero": "Vendetta",
       "top_3_heroes": [
         "Vendetta"
       ],
-      "total_elim": 132,
-      "total_ast": 22,
-      "total_dth": 42,
-      "total_dmg": 63026,
-      "total_heal": 2204,
-      "total_block": 4965,
-      "avg_elim": "19.479",
-      "avg_ast": "3.246",
-      "avg_dth": "6.198",
-      "avg_dmg": "9300.443",
-      "avg_heal": "325.234",
-      "avg_block": "732.661"
+      "total_elim": 85,
+      "total_ast": 13,
+      "total_dth": 32,
+      "total_dmg": 40112,
+      "total_heal": 1301,
+      "total_block": 3992,
+      "avg_elim": "18.221",
+      "avg_ast": "2.787",
+      "avg_dth": "6.860",
+      "avg_dmg": "8598.499",
+      "avg_heal": "278.885",
+      "avg_block": "855.734"
     },
     {
       "player_id": "FCA26-P0016",
@@ -65567,25 +66604,25 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 8,
-      "total_time_played": "1h 7m",
-      "raw_time_mins": 67.76666666666667,
+      "maps_played": 4,
+      "total_time_played": "46m",
+      "raw_time_mins": 46.65,
       "most_played_hero": "Lúcio",
       "top_3_heroes": [
         "Lúcio"
       ],
-      "total_elim": 85,
-      "total_ast": 87,
-      "total_dth": 30,
-      "total_dmg": 16750,
-      "total_heal": 52468,
-      "total_block": 9396,
-      "avg_elim": "12.543",
-      "avg_ast": "12.838",
-      "avg_dth": "4.427",
-      "avg_dmg": "2471.717",
-      "avg_heal": "7742.450",
-      "avg_block": "1386.522"
+      "total_elim": 56,
+      "total_ast": 60,
+      "total_dth": 20,
+      "total_dmg": 11050,
+      "total_heal": 36161,
+      "total_block": 6801,
+      "avg_elim": "12.004",
+      "avg_ast": "12.862",
+      "avg_dth": "4.287",
+      "avg_dmg": "2368.703",
+      "avg_heal": "7751.554",
+      "avg_block": "1457.878"
     },
     {
       "player_id": "FCA26-P0017",
@@ -65602,24 +66639,24 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 8,
-      "total_time_played": "1h 7m",
-      "raw_time_mins": 67.76666666666667,
+      "maps_played": 4,
+      "total_time_played": "46m",
+      "raw_time_mins": 46.65,
       "most_played_hero": "Kiriko",
       "top_3_heroes": [
         "Kiriko"
       ],
-      "total_elim": 72,
-      "total_ast": 155,
-      "total_dth": 32,
-      "total_dmg": 23539,
-      "total_heal": 75039,
+      "total_elim": 47,
+      "total_ast": 101,
+      "total_dth": 21,
+      "total_dmg": 14873,
+      "total_heal": 52727,
       "total_block": 0,
-      "avg_elim": "10.625",
-      "avg_ast": "22.873",
-      "avg_dth": "4.722",
-      "avg_dmg": "3473.537",
-      "avg_heal": "11073.143",
+      "avg_elim": "10.075",
+      "avg_ast": "21.651",
+      "avg_dth": "4.502",
+      "avg_dmg": "3188.210",
+      "avg_heal": "11302.680",
       "avg_block": "0.000"
     },
     {
@@ -65669,7 +66706,7 @@
         "DPS",
         "SUP"
       ],
-      "maps_played": 1,
+      "maps_played": 0,
       "total_time_played": "0m",
       "raw_time_mins": 0,
       "most_played_hero": "",
@@ -65702,7 +66739,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "55m",
       "raw_time_mins": 55.41666666666667,
       "most_played_hero": "Zarya",
@@ -65736,7 +66773,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "55m",
       "raw_time_mins": 55.41666666666667,
       "most_played_hero": "Vendetta",
@@ -65772,7 +66809,7 @@
         "TANK",
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "55m",
       "raw_time_mins": 55.41666666666667,
       "most_played_hero": "Sojourn",
@@ -65806,7 +66843,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 1,
+      "maps_played": 0,
       "total_time_played": "0m",
       "raw_time_mins": 0,
       "most_played_hero": "",
@@ -65910,25 +66947,25 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 9,
-      "total_time_played": "1h 52m",
-      "raw_time_mins": 112.63333333333334,
+      "maps_played": 5,
+      "total_time_played": "1h 9m",
+      "raw_time_mins": 69.08333333333333,
       "most_played_hero": "Zarya",
       "top_3_heroes": [
         "Zarya"
       ],
-      "total_elim": 226,
-      "total_ast": 119,
-      "total_dth": 49,
-      "total_dmg": 93743,
-      "total_heal": 630,
-      "total_block": 79993,
-      "avg_elim": "20.065",
-      "avg_ast": "10.565",
-      "avg_dth": "4.350",
-      "avg_dmg": "8322.847",
-      "avg_heal": "55.934",
-      "avg_block": "7102.072"
+      "total_elim": 137,
+      "total_ast": 69,
+      "total_dth": 31,
+      "total_dmg": 58564,
+      "total_heal": 315,
+      "total_block": 49347,
+      "avg_elim": "19.831",
+      "avg_ast": "9.988",
+      "avg_dth": "4.487",
+      "avg_dmg": "8477.298",
+      "avg_heal": "45.597",
+      "avg_block": "7143.112"
     },
     {
       "player_id": "FCA26-P0049",
@@ -65943,25 +66980,25 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 9,
-      "total_time_played": "1h 52m",
-      "raw_time_mins": 112.63333333333334,
+      "maps_played": 5,
+      "total_time_played": "1h 9m",
+      "raw_time_mins": 69.08333333333333,
       "most_played_hero": "Emre",
       "top_3_heroes": [
         "Emre",
         "Tracer"
       ],
-      "total_elim": 255,
-      "total_ast": 4,
-      "total_dth": 58,
-      "total_dmg": 118406,
-      "total_heal": 11040,
+      "total_elim": 149,
+      "total_ast": 2,
+      "total_dth": 37,
+      "total_dmg": 72366,
+      "total_heal": 6833,
       "total_block": 0,
-      "avg_elim": "22.640",
-      "avg_ast": "0.355",
-      "avg_dth": "5.149",
-      "avg_dmg": "10512.518",
-      "avg_heal": "980.172",
+      "avg_elim": "21.568",
+      "avg_ast": "0.290",
+      "avg_dth": "5.356",
+      "avg_dmg": "10475.175",
+      "avg_heal": "989.095",
       "avg_block": "0.000"
     },
     {
@@ -65977,25 +67014,25 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 9,
-      "total_time_played": "1h 52m",
-      "raw_time_mins": 112.63333333333334,
+      "maps_played": 5,
+      "total_time_played": "1h 9m",
+      "raw_time_mins": 69.08333333333333,
       "most_played_hero": "Vendetta",
       "top_3_heroes": [
         "Vendetta"
       ],
-      "total_elim": 191,
-      "total_ast": 28,
-      "total_dth": 72,
-      "total_dmg": 81683,
-      "total_heal": 3663,
-      "total_block": 8211,
-      "avg_elim": "16.958",
-      "avg_ast": "2.486",
-      "avg_dth": "6.392",
-      "avg_dmg": "7252.116",
-      "avg_heal": "325.215",
-      "avg_block": "729.003"
+      "total_elim": 113,
+      "total_ast": 16,
+      "total_dth": 44,
+      "total_dmg": 49571,
+      "total_heal": 2271,
+      "total_block": 5233,
+      "avg_elim": "16.357",
+      "avg_ast": "2.316",
+      "avg_dth": "6.369",
+      "avg_dmg": "7175.537",
+      "avg_heal": "328.733",
+      "avg_block": "757.491"
     },
     {
       "player_id": "FCA26-P0051",
@@ -66012,27 +67049,27 @@
       "allowed_flex": [
         "TANK"
       ],
-      "maps_played": 9,
-      "total_time_played": "1h 52m",
-      "raw_time_mins": 112.63333333333334,
+      "maps_played": 5,
+      "total_time_played": "1h 9m",
+      "raw_time_mins": 69.08333333333333,
       "most_played_hero": "Wuyang",
       "top_3_heroes": [
         "Wuyang",
         "Illari",
         "Mizuki"
       ],
-      "total_elim": 207,
-      "total_ast": 148,
-      "total_dth": 50,
-      "total_dmg": 81127,
-      "total_heal": 66998,
-      "total_block": 4234,
-      "avg_elim": "18.378",
-      "avg_ast": "13.140",
-      "avg_dth": "4.439",
-      "avg_dmg": "7202.752",
-      "avg_heal": "5948.328",
-      "avg_block": "375.910"
+      "total_elim": 121,
+      "total_ast": 91,
+      "total_dth": 34,
+      "total_dmg": 48165,
+      "total_heal": 41147,
+      "total_block": 2840,
+      "avg_elim": "17.515",
+      "avg_ast": "13.172",
+      "avg_dth": "4.922",
+      "avg_dmg": "6972.014",
+      "avg_heal": "5956.140",
+      "avg_block": "411.098"
     },
     {
       "player_id": "FCA26-P0052",
@@ -66047,24 +67084,24 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 9,
-      "total_time_played": "1h 52m",
-      "raw_time_mins": 112.63333333333334,
+      "maps_played": 5,
+      "total_time_played": "1h 9m",
+      "raw_time_mins": 69.08333333333333,
       "most_played_hero": "Kiriko",
       "top_3_heroes": [
         "Kiriko"
       ],
-      "total_elim": 74,
-      "total_ast": 274,
-      "total_dth": 47,
-      "total_dmg": 16579,
-      "total_heal": 118052,
+      "total_elim": 43,
+      "total_ast": 158,
+      "total_dth": 31,
+      "total_dmg": 10227,
+      "total_heal": 73086,
       "total_block": 0,
-      "avg_elim": "6.570",
-      "avg_ast": "24.327",
-      "avg_dth": "4.173",
-      "avg_dmg": "1471.944",
-      "avg_heal": "10481.089",
+      "avg_elim": "6.224",
+      "avg_ast": "22.871",
+      "avg_dth": "4.487",
+      "avg_dmg": "1480.386",
+      "avg_heal": "10579.397",
       "avg_block": "0.000"
     },
     {
@@ -66114,7 +67151,7 @@
         "DPS",
         "SUP"
       ],
-      "maps_played": 5,
+      "maps_played": 3,
       "total_time_played": "27m",
       "raw_time_mins": 27.85,
       "most_played_hero": "Junker Queen",
@@ -66148,7 +67185,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 3,
+      "maps_played": 1,
       "total_time_played": "6m",
       "raw_time_mins": 6.1,
       "most_played_hero": "D.Va",
@@ -66183,7 +67220,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "33m",
       "raw_time_mins": 33.949999999999996,
       "most_played_hero": "Venture",
@@ -66219,7 +67256,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 4,
+      "maps_played": 2,
       "total_time_played": "17m",
       "raw_time_mins": 17.78333333333333,
       "most_played_hero": "Genji",
@@ -66254,7 +67291,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 4,
+      "maps_played": 2,
       "total_time_played": "16m",
       "raw_time_mins": 16.166666666666664,
       "most_played_hero": "Emre",
@@ -66358,7 +67395,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 4,
+      "maps_played": 2,
       "total_time_played": "17m",
       "raw_time_mins": 17.78333333333333,
       "most_played_hero": "Domina",
@@ -66391,7 +67428,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 2,
+      "maps_played": 0,
       "total_time_played": "0m",
       "raw_time_mins": 0,
       "most_played_hero": "",
@@ -66424,7 +67461,7 @@
       "allowed_flex": [
         "TANK"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "40m",
       "raw_time_mins": 40.88333333333333,
       "most_played_hero": "Vendetta",
@@ -66459,7 +67496,7 @@
       "allowed_flex": [
         "TANK"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "40m",
       "raw_time_mins": 40.88333333333333,
       "most_played_hero": "Emre",
@@ -66494,7 +67531,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 4,
+      "maps_played": 2,
       "total_time_played": "23m",
       "raw_time_mins": 23.1,
       "most_played_hero": "Sojourn",
@@ -66597,7 +67634,7 @@
         "DPS",
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.93333333333334,
       "most_played_hero": "Winston",
@@ -66634,7 +67671,7 @@
       "allowed_flex": [
         "TANK"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.93333333333334,
       "most_played_hero": "Freja",
@@ -66672,7 +67709,7 @@
         "TANK",
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.93333333333334,
       "most_played_hero": "Vendetta",
@@ -66709,7 +67746,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.93333333333334,
       "most_played_hero": "Wuyang",
@@ -66746,7 +67783,7 @@
       "allowed_flex": [
         "TANK"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.93333333333334,
       "most_played_hero": "Kiriko",
@@ -66779,7 +67816,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 4,
+      "maps_played": 2,
       "total_time_played": "20m",
       "raw_time_mins": 20.116666666666667,
       "most_played_hero": "Winston",
@@ -66814,7 +67851,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 4,
+      "maps_played": 2,
       "total_time_played": "19m",
       "raw_time_mins": 19.2,
       "most_played_hero": "Hazard",
@@ -66849,7 +67886,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "39m",
       "raw_time_mins": 39.31666666666666,
       "most_played_hero": "Sojourn",
@@ -66884,7 +67921,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "39m",
       "raw_time_mins": 39.31666666666666,
       "most_played_hero": "Venture",
@@ -66917,7 +67954,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "39m",
       "raw_time_mins": 39.31666666666666,
       "most_played_hero": "Lúcio",
@@ -66985,7 +68022,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.400000000000006,
       "most_played_hero": "D.Va",
@@ -67021,7 +68058,7 @@
       "allowed_flex": [
         "TANK"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.400000000000006,
       "most_played_hero": "Vendetta",
@@ -67056,7 +68093,7 @@
       "allowed_flex": [
         "TANK"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.400000000000006,
       "most_played_hero": "Emre",
@@ -67093,7 +68130,7 @@
       "allowed_flex": [
         "TANK"
       ],
-      "maps_played": 2,
+      "maps_played": 0,
       "total_time_played": "0m",
       "raw_time_mins": 0,
       "most_played_hero": "",
@@ -67124,7 +68161,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.400000000000006,
       "most_played_hero": "Kiriko",
@@ -67199,7 +68236,7 @@
         "DPS",
         "SUP"
       ],
-      "maps_played": 4,
+      "maps_played": 2,
       "total_time_played": "20m",
       "raw_time_mins": 20.366666666666667,
       "most_played_hero": "Vendetta",
@@ -67223,8 +68260,8 @@
     {
       "player_id": "FCA26-P0083",
       "player_name": "Cr3puscule#5209",
-      "nickname": "crépuscule （twilight",
-      "display_name": "crépuscule （twilight",
+      "nickname": "crépuscule",
+      "display_name": "crépuscule",
       "team_id": "FCA26-T011",
       "team_name": "Spark Crew",
       "team_short_name": "SPC",
@@ -67235,7 +68272,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "47m",
       "raw_time_mins": 47.28333333333333,
       "most_played_hero": "D.Va",
@@ -67272,7 +68309,7 @@
         "TANK",
         "SUP"
       ],
-      "maps_played": 4,
+      "maps_played": 2,
       "total_time_played": "26m",
       "raw_time_mins": 26.916666666666668,
       "most_played_hero": "Vendetta",
@@ -67306,7 +68343,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "47m",
       "raw_time_mins": 47.28333333333333,
       "most_played_hero": "Emre",
@@ -67343,7 +68380,7 @@
         "TANK",
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "47m",
       "raw_time_mins": 47.28333333333333,
       "most_played_hero": "Lúcio",
@@ -67446,7 +68483,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "57m",
       "raw_time_mins": 57.35,
       "most_played_hero": "Zarya",
@@ -67481,7 +68518,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "57m",
       "raw_time_mins": 57.35,
       "most_played_hero": "Reaper",
@@ -67517,7 +68554,7 @@
       "allowed_flex": [
         "TANK"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "57m",
       "raw_time_mins": 57.35,
       "most_played_hero": "Mizuki",
@@ -67552,7 +68589,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "57m",
       "raw_time_mins": 57.35,
       "most_played_hero": "Tracer",
@@ -67587,7 +68624,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 1,
+      "maps_played": 0,
       "total_time_played": "0m",
       "raw_time_mins": 0,
       "most_played_hero": "",
@@ -67654,25 +68691,25 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 9,
-      "total_time_played": "1h 40m",
-      "raw_time_mins": 100.2,
+      "maps_played": 5,
+      "total_time_played": "56m",
+      "raw_time_mins": 56.65,
       "most_played_hero": "Zarya",
       "top_3_heroes": [
         "Zarya"
       ],
-      "total_elim": 190,
-      "total_ast": 75,
-      "total_dth": 55,
-      "total_dmg": 98435,
+      "total_elim": 122,
+      "total_ast": 52,
+      "total_dth": 29,
+      "total_dmg": 54659,
       "total_heal": 0,
-      "total_block": 71105,
-      "avg_elim": "18.962",
-      "avg_ast": "7.485",
-      "avg_dth": "5.489",
-      "avg_dmg": "9823.852",
+      "total_block": 38716,
+      "avg_elim": "21.536",
+      "avg_ast": "9.179",
+      "avg_dth": "5.119",
+      "avg_dmg": "9648.544",
       "avg_heal": "0.000",
-      "avg_block": "7096.307"
+      "avg_block": "6834.245"
     },
     {
       "player_id": "FCA26-P0104",
@@ -67687,19 +68724,19 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 7,
-      "total_time_played": "1h 27m",
-      "raw_time_mins": 87.1,
+      "maps_played": 3,
+      "total_time_played": "43m",
+      "raw_time_mins": 43.55,
       "most_played_hero": "Reaper",
       "top_3_heroes": [
         "Reaper"
       ],
-      "total_elim": 126,
-      "total_ast": 8,
-      "total_dth": 82,
-      "total_dmg": 45674,
-      "total_heal": 5096,
-      "total_block": 1824,
+      "total_elim": 63,
+      "total_ast": 4,
+      "total_dth": 41,
+      "total_dmg": 22837,
+      "total_heal": 2548,
+      "total_block": 912,
       "avg_elim": "14.466",
       "avg_ast": "0.918",
       "avg_dth": "9.414",
@@ -67723,7 +68760,7 @@
         "TANK",
         "SUP"
       ],
-      "maps_played": 3,
+      "maps_played": 2,
       "total_time_played": "13m",
       "raw_time_mins": 13.100000000000001,
       "most_played_hero": "Vendetta",
@@ -67758,26 +68795,26 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 9,
-      "total_time_played": "1h 40m",
-      "raw_time_mins": 100.2,
+      "maps_played": 5,
+      "total_time_played": "56m",
+      "raw_time_mins": 56.65,
       "most_played_hero": "Emre",
       "top_3_heroes": [
         "Emre",
         "Symmetra"
       ],
-      "total_elim": 170,
-      "total_ast": 11,
-      "total_dth": 76,
-      "total_dmg": 91679,
-      "total_heal": 7320,
+      "total_elim": 115,
+      "total_ast": 10,
+      "total_dth": 41,
+      "total_dmg": 53269,
+      "total_heal": 3940,
       "total_block": 1245,
-      "avg_elim": "16.966",
-      "avg_ast": "1.098",
-      "avg_dth": "7.585",
-      "avg_dmg": "9149.601",
-      "avg_heal": "730.539",
-      "avg_block": "124.251"
+      "avg_elim": "20.300",
+      "avg_ast": "1.765",
+      "avg_dth": "7.237",
+      "avg_dmg": "9403.177",
+      "avg_heal": "695.499",
+      "avg_block": "219.771"
     },
     {
       "player_id": "FCA26-P0107",
@@ -67792,25 +68829,25 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 9,
-      "total_time_played": "1h 40m",
-      "raw_time_mins": 100.2,
+      "maps_played": 5,
+      "total_time_played": "56m",
+      "raw_time_mins": 56.65,
       "most_played_hero": "Kiriko",
       "top_3_heroes": [
         "Kiriko"
       ],
-      "total_elim": 74,
-      "total_ast": 169,
-      "total_dth": 64,
-      "total_dmg": 18477,
-      "total_heal": 90751,
-      "total_block": 890,
-      "avg_elim": "7.385",
-      "avg_ast": "16.866",
-      "avg_dth": "6.387",
-      "avg_dmg": "1844.012",
-      "avg_heal": "9056.986",
-      "avg_block": "88.822"
+      "total_elim": 50,
+      "total_ast": 106,
+      "total_dth": 35,
+      "total_dmg": 11359,
+      "total_heal": 49083,
+      "total_block": 445,
+      "avg_elim": "8.826",
+      "avg_ast": "18.711",
+      "avg_dth": "6.178",
+      "avg_dmg": "2005.119",
+      "avg_heal": "8664.254",
+      "avg_block": "78.553"
     },
     {
       "player_id": "FCA26-P0108",
@@ -67825,26 +68862,26 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 8,
-      "total_time_played": "1h 40m",
-      "raw_time_mins": 100.2,
+      "maps_played": 5,
+      "total_time_played": "56m",
+      "raw_time_mins": 56.65,
       "most_played_hero": "Lúcio",
       "top_3_heroes": [
         "Lúcio",
         "Baptiste"
       ],
-      "total_elim": 145,
-      "total_ast": 151,
-      "total_dth": 61,
-      "total_dmg": 36639,
-      "total_heal": 88123,
-      "total_block": 10698,
-      "avg_elim": "14.471",
-      "avg_ast": "15.070",
-      "avg_dth": "6.088",
-      "avg_dmg": "3656.587",
-      "avg_heal": "8794.711",
-      "avg_block": "1067.665"
+      "total_elim": 96,
+      "total_ast": 98,
+      "total_dth": 32,
+      "total_dmg": 21856,
+      "total_heal": 47891,
+      "total_block": 5994,
+      "avg_elim": "16.946",
+      "avg_ast": "17.299",
+      "avg_dth": "5.649",
+      "avg_dmg": "3858.076",
+      "avg_heal": "8453.839",
+      "avg_block": "1058.076"
     },
     {
       "player_id": "FCA26-P0089",
@@ -67859,7 +68896,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "29m",
       "raw_time_mins": 29.266666666666666,
       "most_played_hero": "D.Va",
@@ -67893,7 +68930,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "29m",
       "raw_time_mins": 29.266666666666666,
       "most_played_hero": "Sojourn",
@@ -67927,7 +68964,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "29m",
       "raw_time_mins": 29.266666666666666,
       "most_played_hero": "Tracer",
@@ -67961,7 +68998,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 2,
+      "maps_played": 0,
       "total_time_played": "0m",
       "raw_time_mins": 0,
       "most_played_hero": "",
@@ -67992,7 +69029,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "29m",
       "raw_time_mins": 29.266666666666666,
       "most_played_hero": "Ana",
@@ -68097,7 +69134,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "54m",
       "raw_time_mins": 54.983333333333334,
       "most_played_hero": "Zarya",
@@ -68134,7 +69171,7 @@
       "allowed_flex": [
         "TANK"
       ],
-      "maps_played": 4,
+      "maps_played": 3,
       "total_time_played": "34m",
       "raw_time_mins": 34.11666666666667,
       "most_played_hero": "Vendetta",
@@ -68169,7 +69206,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 3,
+      "maps_played": 2,
       "total_time_played": "20m",
       "raw_time_mins": 20.866666666666667,
       "most_played_hero": "Symmetra",
@@ -68202,7 +69239,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "54m",
       "raw_time_mins": 54.983333333333334,
       "most_played_hero": "Cassidy",
@@ -68237,7 +69274,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "54m",
       "raw_time_mins": 54.983333333333334,
       "most_played_hero": "Wuyang",
@@ -68307,7 +69344,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "1h 2m",
       "raw_time_mins": 62.60000000000001,
       "most_played_hero": "Doomfist",
@@ -68344,7 +69381,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "1h 2m",
       "raw_time_mins": 62.60000000000001,
       "most_played_hero": "Tracer",
@@ -68378,7 +69415,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "1h 2m",
       "raw_time_mins": 62.60000000000001,
       "most_played_hero": "Emre",
@@ -68412,7 +69449,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "1h 2m",
       "raw_time_mins": 62.60000000000001,
       "most_played_hero": "Kiriko",
@@ -68448,7 +69485,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "1h 2m",
       "raw_time_mins": 62.60000000000001,
       "most_played_hero": "Wuyang",
@@ -68518,7 +69555,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "43m",
       "raw_time_mins": 43.983333333333334,
       "most_played_hero": "D.Va",
@@ -68551,7 +69588,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "43m",
       "raw_time_mins": 43.983333333333334,
       "most_played_hero": "Venture",
@@ -68586,7 +69623,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "43m",
       "raw_time_mins": 43.983333333333334,
       "most_played_hero": "Tracer",
@@ -68621,7 +69658,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "43m",
       "raw_time_mins": 43.983333333333334,
       "most_played_hero": "Lúcio",
@@ -68655,7 +69692,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "43m",
       "raw_time_mins": 43.983333333333334,
       "most_played_hero": "Mizuki",
@@ -68690,27 +69727,27 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 8,
-      "total_time_played": "1h 15m",
-      "raw_time_mins": 75.41666666666667,
+      "maps_played": 5,
+      "total_time_played": "54m",
+      "raw_time_mins": 54.3,
       "most_played_hero": "Domina",
       "top_3_heroes": [
         "Domina",
         "D.Va",
         "Hazard"
       ],
-      "total_elim": 145,
-      "total_ast": 18,
-      "total_dth": 46,
-      "total_dmg": 69607,
-      "total_heal": 16563,
-      "total_block": 96356,
-      "avg_elim": "19.227",
-      "avg_ast": "2.387",
-      "avg_dth": "6.099",
-      "avg_dmg": "9229.657",
-      "avg_heal": "2196.199",
-      "avg_block": "12776.486"
+      "total_elim": 110,
+      "total_ast": 14,
+      "total_dth": 30,
+      "total_dmg": 49535,
+      "total_heal": 11516,
+      "total_block": 71754,
+      "avg_elim": "20.258",
+      "avg_ast": "2.578",
+      "avg_dth": "5.525",
+      "avg_dmg": "9122.468",
+      "avg_heal": "2120.810",
+      "avg_block": "13214.365"
     },
     {
       "player_id": "FCA26-P0043",
@@ -68725,26 +69762,26 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 8,
-      "total_time_played": "1h 15m",
-      "raw_time_mins": 75.41666666666667,
+      "maps_played": 5,
+      "total_time_played": "54m",
+      "raw_time_mins": 54.3,
       "most_played_hero": "Sombra",
       "top_3_heroes": [
         "Sombra",
         "Emre"
       ],
-      "total_elim": 128,
-      "total_ast": 35,
-      "total_dth": 51,
-      "total_dmg": 61777,
-      "total_heal": 6353,
+      "total_elim": 96,
+      "total_ast": 23,
+      "total_dth": 35,
+      "total_dmg": 45575,
+      "total_heal": 4685,
       "total_block": 57,
-      "avg_elim": "16.972",
-      "avg_ast": "4.641",
-      "avg_dth": "6.762",
-      "avg_dmg": "8191.425",
-      "avg_heal": "842.387",
-      "avg_block": "7.558"
+      "avg_elim": "17.680",
+      "avg_ast": "4.236",
+      "avg_dth": "6.446",
+      "avg_dmg": "8393.186",
+      "avg_heal": "862.799",
+      "avg_block": "10.497"
     },
     {
       "player_id": "FCA26-P0044",
@@ -68759,7 +69796,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 1,
+      "maps_played": 0,
       "total_time_played": "0m",
       "raw_time_mins": 0,
       "most_played_hero": "",
@@ -68790,27 +69827,27 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 8,
-      "total_time_played": "1h 15m",
-      "raw_time_mins": 75.41666666666667,
+      "maps_played": 5,
+      "total_time_played": "54m",
+      "raw_time_mins": 54.3,
       "most_played_hero": "Reaper",
       "top_3_heroes": [
         "Reaper",
         "Venture",
         "Ashe"
       ],
-      "total_elim": 107,
+      "total_elim": 83,
       "total_ast": 3,
-      "total_dth": 62,
-      "total_dmg": 58528,
-      "total_heal": 7469,
-      "total_block": 1714,
-      "avg_elim": "14.188",
-      "avg_ast": "0.398",
-      "avg_dth": "8.221",
-      "avg_dmg": "7760.619",
-      "avg_heal": "990.365",
-      "avg_block": "227.271"
+      "total_dth": 40,
+      "total_dmg": 41140,
+      "total_heal": 4350,
+      "total_block": 1589,
+      "avg_elim": "15.285",
+      "avg_ast": "0.552",
+      "avg_dth": "7.366",
+      "avg_dmg": "7576.427",
+      "avg_heal": "801.105",
+      "avg_block": "292.634"
     },
     {
       "player_id": "FCA26-P0046",
@@ -68827,26 +69864,26 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 8,
-      "total_time_played": "1h 15m",
-      "raw_time_mins": 75.41666666666667,
+      "maps_played": 5,
+      "total_time_played": "54m",
+      "raw_time_mins": 54.3,
       "most_played_hero": "Kiriko",
       "top_3_heroes": [
         "Kiriko",
         "Illari"
       ],
-      "total_elim": 47,
-      "total_ast": 118,
-      "total_dth": 52,
-      "total_dmg": 29884,
-      "total_heal": 69263,
+      "total_elim": 38,
+      "total_ast": 91,
+      "total_dth": 32,
+      "total_dmg": 21693,
+      "total_heal": 49419,
       "total_block": 399,
-      "avg_elim": "6.232",
-      "avg_ast": "15.646",
-      "avg_dth": "6.895",
-      "avg_dmg": "3962.519",
-      "avg_heal": "9184.044",
-      "avg_block": "52.906"
+      "avg_elim": "6.998",
+      "avg_ast": "16.759",
+      "avg_dth": "5.893",
+      "avg_dmg": "3995.028",
+      "avg_heal": "9101.105",
+      "avg_block": "73.481"
     },
     {
       "player_id": "FCA26-P0047",
@@ -68861,27 +69898,27 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 7,
-      "total_time_played": "1h 15m",
-      "raw_time_mins": 75.41666666666667,
+      "maps_played": 5,
+      "total_time_played": "54m",
+      "raw_time_mins": 54.3,
       "most_played_hero": "Lúcio",
       "top_3_heroes": [
         "Lúcio",
         "Mizuki",
         "Kiriko"
       ],
-      "total_elim": 75,
-      "total_ast": 87,
-      "total_dth": 53,
-      "total_dmg": 28239,
-      "total_heal": 56348,
-      "total_block": 6793,
-      "avg_elim": "9.945",
-      "avg_ast": "11.536",
-      "avg_dth": "7.028",
-      "avg_dmg": "3744.398",
-      "avg_heal": "7471.558",
-      "avg_block": "900.729"
+      "total_elim": 62,
+      "total_ast": 67,
+      "total_dth": 34,
+      "total_dmg": 20670,
+      "total_heal": 37952,
+      "total_block": 4406,
+      "avg_elim": "11.418",
+      "avg_ast": "12.339",
+      "avg_dth": "6.262",
+      "avg_dmg": "3806.630",
+      "avg_heal": "6989.319",
+      "avg_block": "811.418"
     },
     {
       "player_id": "FCA26-P0184",
@@ -68896,7 +69933,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "49m",
       "raw_time_mins": 49.48333333333334,
       "most_played_hero": "Ramattra",
@@ -68933,7 +69970,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "49m",
       "raw_time_mins": 49.48333333333334,
       "most_played_hero": "Vendetta",
@@ -68968,7 +70005,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "49m",
       "raw_time_mins": 49.48333333333334,
       "most_played_hero": "Sojourn",
@@ -69006,7 +70043,7 @@
         "TANK",
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "49m",
       "raw_time_mins": 49.48333333333334,
       "most_played_hero": "Kiriko",
@@ -69042,7 +70079,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "49m",
       "raw_time_mins": 49.48333333333334,
       "most_played_hero": "Kiriko",
@@ -69078,7 +70115,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 1,
+      "maps_played": 0,
       "total_time_played": "0m",
       "raw_time_mins": 0,
       "most_played_hero": "",
@@ -69109,7 +70146,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "47m",
       "raw_time_mins": 47.233333333333334,
       "most_played_hero": "Zarya",
@@ -69142,7 +70179,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "47m",
       "raw_time_mins": 47.233333333333334,
       "most_played_hero": "Tracer",
@@ -69177,7 +70214,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "47m",
       "raw_time_mins": 47.233333333333334,
       "most_played_hero": "Vendetta",
@@ -69213,7 +70250,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "47m",
       "raw_time_mins": 47.233333333333334,
       "most_played_hero": "Lúcio",
@@ -69317,7 +70354,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "53m",
       "raw_time_mins": 53.55,
       "most_played_hero": "D.Va",
@@ -69352,7 +70389,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "53m",
       "raw_time_mins": 53.55,
       "most_played_hero": "Emre",
@@ -69389,7 +70426,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "53m",
       "raw_time_mins": 53.55,
       "most_played_hero": "Symmetra",
@@ -69426,7 +70463,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "53m",
       "raw_time_mins": 53.55,
       "most_played_hero": "Zenyatta",
@@ -69463,7 +70500,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "53m",
       "raw_time_mins": 53.55,
       "most_played_hero": "Ana",
@@ -69497,7 +70534,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 2,
+      "maps_played": 1,
       "total_time_played": "13m",
       "raw_time_mins": 13.316666666666666,
       "most_played_hero": "Roadhog",
@@ -69530,7 +70567,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 5,
+      "maps_played": 4,
       "total_time_played": "47m",
       "raw_time_mins": 47.333333333333336,
       "most_played_hero": "Ramattra",
@@ -69564,7 +70601,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "1h 0m",
       "raw_time_mins": 60.650000000000006,
       "most_played_hero": "Tracer",
@@ -69599,7 +70636,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 3,
+      "maps_played": 2,
       "total_time_played": "26m",
       "raw_time_mins": 26.21666666666667,
       "most_played_hero": "Cassidy",
@@ -69633,7 +70670,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 4,
+      "maps_played": 3,
       "total_time_played": "34m",
       "raw_time_mins": 34.43333333333333,
       "most_played_hero": "Pharah",
@@ -69739,7 +70776,7 @@
         "DPS",
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "57m",
       "raw_time_mins": 57.53333333333333,
       "most_played_hero": "D.Va",
@@ -69776,7 +70813,7 @@
         "DPS",
         "SUP"
       ],
-      "maps_played": 3,
+      "maps_played": 2,
       "total_time_played": "23m",
       "raw_time_mins": 23.1,
       "most_played_hero": "Wuyang",
@@ -69812,7 +70849,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "57m",
       "raw_time_mins": 57.53333333333333,
       "most_played_hero": "Emre",
@@ -69845,7 +70882,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "57m",
       "raw_time_mins": 57.53333333333333,
       "most_played_hero": "Tracer",
@@ -69879,7 +70916,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 4,
+      "maps_played": 3,
       "total_time_played": "34m",
       "raw_time_mins": 34.43333333333333,
       "most_played_hero": "Kiriko",
@@ -69951,25 +70988,25 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 3,
-      "total_time_played": "31m",
-      "raw_time_mins": 31.633333333333333,
+      "maps_played": 6,
+      "total_time_played": "1h 3m",
+      "raw_time_mins": 63.18333333333333,
       "most_played_hero": "D.Va",
       "top_3_heroes": [
         "D.Va"
       ],
-      "total_elim": 66,
-      "total_ast": 34,
-      "total_dth": 17,
-      "total_dmg": 25552,
-      "total_heal": 7575,
-      "total_block": 23283,
-      "avg_elim": "20.864",
-      "avg_ast": "10.748",
-      "avg_dth": "5.374",
-      "avg_dmg": "8077.555",
-      "avg_heal": "2394.626",
-      "avg_block": "7360.274"
+      "total_elim": 155,
+      "total_ast": 84,
+      "total_dth": 31,
+      "total_dmg": 54780,
+      "total_heal": 14728,
+      "total_block": 44037,
+      "avg_elim": "24.532",
+      "avg_ast": "13.295",
+      "avg_dth": "4.906",
+      "avg_dmg": "8670.008",
+      "avg_heal": "2330.994",
+      "avg_block": "6969.718"
     },
     {
       "player_id": "FCA26-P0146",
@@ -69987,26 +71024,26 @@
         "TANK",
         "SUP"
       ],
-      "maps_played": 3,
-      "total_time_played": "31m",
-      "raw_time_mins": 31.633333333333333,
+      "maps_played": 6,
+      "total_time_played": "1h 3m",
+      "raw_time_mins": 63.18333333333333,
       "most_played_hero": "Vendetta",
       "top_3_heroes": [
         "Vendetta",
         "Emre"
       ],
-      "total_elim": 63,
-      "total_ast": 5,
-      "total_dth": 26,
-      "total_dmg": 26329,
-      "total_heal": 1350,
-      "total_block": 537,
-      "avg_elim": "19.916",
-      "avg_ast": "1.581",
-      "avg_dth": "8.219",
-      "avg_dmg": "8323.182",
-      "avg_heal": "426.765",
-      "avg_block": "169.758"
+      "total_elim": 122,
+      "total_ast": 14,
+      "total_dth": 51,
+      "total_dmg": 47908,
+      "total_heal": 2407,
+      "total_block": 1532,
+      "avg_elim": "19.309",
+      "avg_ast": "2.216",
+      "avg_dth": "8.072",
+      "avg_dmg": "7582.379",
+      "avg_heal": "380.955",
+      "avg_block": "242.469"
     },
     {
       "player_id": "FCA26-P0147",
@@ -70021,26 +71058,27 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 3,
-      "total_time_played": "31m",
-      "raw_time_mins": 31.633333333333333,
+      "maps_played": 6,
+      "total_time_played": "1h 3m",
+      "raw_time_mins": 63.18333333333333,
       "most_played_hero": "Sojourn",
       "top_3_heroes": [
         "Sojourn",
-        "Reaper"
+        "Reaper",
+        "Emre"
       ],
-      "total_elim": 67,
-      "total_ast": 1,
-      "total_dth": 17,
-      "total_dmg": 27773,
-      "total_heal": 1639,
-      "total_block": 0,
-      "avg_elim": "21.180",
-      "avg_ast": "0.316",
-      "avg_dth": "5.374",
-      "avg_dmg": "8779.663",
-      "avg_heal": "518.124",
-      "avg_block": "0.000"
+      "total_elim": 140,
+      "total_ast": 5,
+      "total_dth": 37,
+      "total_dmg": 59154,
+      "total_heal": 3395,
+      "total_block": 203,
+      "avg_elim": "22.158",
+      "avg_ast": "0.791",
+      "avg_dth": "5.856",
+      "avg_dmg": "9362.279",
+      "avg_heal": "537.325",
+      "avg_block": "32.129"
     },
     {
       "player_id": "FCA26-P0148",
@@ -70058,25 +71096,25 @@
         "DPS",
         "TANK"
       ],
-      "maps_played": 3,
-      "total_time_played": "31m",
-      "raw_time_mins": 31.633333333333333,
+      "maps_played": 6,
+      "total_time_played": "1h 3m",
+      "raw_time_mins": 63.18333333333333,
       "most_played_hero": "Lúcio",
       "top_3_heroes": [
         "Lúcio"
       ],
-      "total_elim": 46,
-      "total_ast": 47,
-      "total_dth": 25,
-      "total_dmg": 8249,
-      "total_heal": 21863,
-      "total_block": 6925,
-      "avg_elim": "14.542",
-      "avg_ast": "14.858",
-      "avg_dth": "7.903",
-      "avg_dmg": "2607.692",
-      "avg_heal": "6911.380",
-      "avg_block": "2189.146"
+      "total_elim": 92,
+      "total_ast": 97,
+      "total_dth": 49,
+      "total_dmg": 18321,
+      "total_heal": 44050,
+      "total_block": 10033,
+      "avg_elim": "14.561",
+      "avg_ast": "15.352",
+      "avg_dth": "7.755",
+      "avg_dmg": "2899.657",
+      "avg_heal": "6971.775",
+      "avg_block": "1587.919"
     },
     {
       "player_id": "FCA26-P0149",
@@ -70094,24 +71132,24 @@
         "TANK",
         "DPS"
       ],
-      "maps_played": 3,
-      "total_time_played": "31m",
-      "raw_time_mins": 31.633333333333333,
+      "maps_played": 6,
+      "total_time_played": "1h 3m",
+      "raw_time_mins": 63.18333333333333,
       "most_played_hero": "Kiriko",
       "top_3_heroes": [
         "Kiriko"
       ],
-      "total_elim": 29,
-      "total_ast": 63,
-      "total_dth": 20,
-      "total_dmg": 8930,
-      "total_heal": 29477,
+      "total_elim": 53,
+      "total_ast": 132,
+      "total_dth": 45,
+      "total_dmg": 17843,
+      "total_heal": 51582,
       "total_block": 0,
-      "avg_elim": "9.168",
-      "avg_ast": "19.916",
-      "avg_dth": "6.322",
-      "avg_dmg": "2822.972",
-      "avg_heal": "9318.335",
+      "avg_elim": "8.388",
+      "avg_ast": "20.892",
+      "avg_dth": "7.122",
+      "avg_dmg": "2824.004",
+      "avg_heal": "8163.862",
       "avg_block": "0.000"
     },
     {
@@ -70194,7 +71232,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "49m",
       "raw_time_mins": 49.516666666666666,
       "most_played_hero": "Wrecking Ball",
@@ -70231,7 +71269,7 @@
       "allowed_flex": [
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "49m",
       "raw_time_mins": 49.516666666666666,
       "most_played_hero": "Venture",
@@ -70266,7 +71304,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "49m",
       "raw_time_mins": 49.516666666666666,
       "most_played_hero": "Vendetta",
@@ -70301,7 +71339,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 1,
+      "maps_played": 0,
       "total_time_played": "0m",
       "raw_time_mins": 0,
       "most_played_hero": "",
@@ -70332,7 +71370,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 5,
+      "maps_played": 4,
       "total_time_played": "38m",
       "raw_time_mins": 38.35,
       "most_played_hero": "Lúcio",
@@ -70686,7 +71724,7 @@
         "DPS",
         "SUP"
       ],
-      "maps_played": 3,
+      "maps_played": 2,
       "total_time_played": "20m",
       "raw_time_mins": 20.049999999999997,
       "most_played_hero": "Mauga",
@@ -70721,7 +71759,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 4,
+      "maps_played": 3,
       "total_time_played": "37m",
       "raw_time_mins": 37.71666666666667,
       "most_played_hero": "D.Va",
@@ -70758,7 +71796,7 @@
         "TANK",
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "57m",
       "raw_time_mins": 57.766666666666666,
       "most_played_hero": "Emre",
@@ -70793,7 +71831,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "57m",
       "raw_time_mins": 57.766666666666666,
       "most_played_hero": "Venture",
@@ -70830,7 +71868,7 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 5,
       "total_time_played": "57m",
       "raw_time_mins": 57.766666666666666,
       "most_played_hero": "Kiriko",
@@ -70903,7 +71941,7 @@
         "DPS",
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "42m",
       "raw_time_mins": 42.766666666666666,
       "most_played_hero": "Kiriko",
@@ -70941,7 +71979,7 @@
         "DPS",
         "SUP"
       ],
-      "maps_played": 4,
+      "maps_played": 2,
       "total_time_played": "22m",
       "raw_time_mins": 22.65,
       "most_played_hero": "Domina",
@@ -70975,7 +72013,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 5,
+      "maps_played": 3,
       "total_time_played": "29m",
       "raw_time_mins": 29.71666666666667,
       "most_played_hero": "Tracer",
@@ -71011,7 +72049,7 @@
       "allowed_flex": [
         "TANK"
       ],
-      "maps_played": 5,
+      "maps_played": 3,
       "total_time_played": "35m",
       "raw_time_mins": 35.03333333333333,
       "most_played_hero": "Ashe",
@@ -71046,7 +72084,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 4,
+      "maps_played": 2,
       "total_time_played": "20m",
       "raw_time_mins": 20.783333333333335,
       "most_played_hero": "Reaper",
@@ -71153,7 +72191,7 @@
         "DPS",
         "SUP"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.36666666666667,
       "most_played_hero": "D.Va",
@@ -71188,7 +72226,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.36666666666667,
       "most_played_hero": "Tracer",
@@ -71223,7 +72261,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 2,
+      "maps_played": 0,
       "total_time_played": "0m",
       "raw_time_mins": 0,
       "most_played_hero": "",
@@ -71254,7 +72292,7 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.36666666666667,
       "most_played_hero": "Sojourn",
@@ -71292,7 +72330,7 @@
         "TANK",
         "DPS"
       ],
-      "maps_played": 6,
+      "maps_played": 4,
       "total_time_played": "43m",
       "raw_time_mins": 43.36666666666667,
       "most_played_hero": "Lúcio",
@@ -71361,26 +72399,26 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 3,
-      "total_time_played": "26m",
-      "raw_time_mins": 26.91666666666667,
-      "most_played_hero": "Vendetta",
+      "maps_played": 6,
+      "total_time_played": "58m",
+      "raw_time_mins": 58.466666666666676,
+      "most_played_hero": "Tracer",
       "top_3_heroes": [
-        "Vendetta",
-        "Tracer"
+        "Tracer",
+        "Vendetta"
       ],
-      "total_elim": 34,
-      "total_ast": 2,
-      "total_dth": 26,
-      "total_dmg": 15544,
-      "total_heal": 503,
-      "total_block": 374,
-      "avg_elim": "12.632",
-      "avg_ast": "0.743",
-      "avg_dth": "9.659",
-      "avg_dmg": "5774.861",
-      "avg_heal": "186.873",
-      "avg_block": "138.947"
+      "total_elim": 84,
+      "total_ast": 4,
+      "total_dth": 55,
+      "total_dmg": 37975,
+      "total_heal": 623,
+      "total_block": 1366,
+      "avg_elim": "14.367",
+      "avg_ast": "0.684",
+      "avg_dth": "9.407",
+      "avg_dmg": "6495.154",
+      "avg_heal": "106.556",
+      "avg_block": "233.637"
     },
     {
       "player_id": "FCA26-P0110",
@@ -71395,27 +72433,27 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 3,
-      "total_time_played": "26m",
-      "raw_time_mins": 26.91666666666667,
-      "most_played_hero": "Cassidy",
+      "maps_played": 6,
+      "total_time_played": "58m",
+      "raw_time_mins": 58.466666666666676,
+      "most_played_hero": "Emre",
       "top_3_heroes": [
+        "Emre",
         "Cassidy",
-        "Ashe",
-        "Emre"
+        "Ashe"
       ],
-      "total_elim": 40,
-      "total_ast": 2,
-      "total_dth": 18,
-      "total_dmg": 23953,
-      "total_heal": 1336,
-      "total_block": 240,
-      "avg_elim": "14.861",
-      "avg_ast": "0.743",
-      "avg_dth": "6.687",
-      "avg_dmg": "8898.947",
-      "avg_heal": "496.347",
-      "avg_block": "89.164"
+      "total_elim": 104,
+      "total_ast": 6,
+      "total_dth": 40,
+      "total_dmg": 54018,
+      "total_heal": 2143,
+      "total_block": 2157,
+      "avg_elim": "17.788",
+      "avg_ast": "1.026",
+      "avg_dth": "6.842",
+      "avg_dmg": "9239.111",
+      "avg_heal": "366.534",
+      "avg_block": "368.928"
     },
     {
       "player_id": "FCA26-P0111",
@@ -71432,25 +72470,26 @@
       "allowed_flex": [
         "TANK"
       ],
-      "maps_played": 3,
-      "total_time_played": "26m",
-      "raw_time_mins": 26.91666666666667,
+      "maps_played": 6,
+      "total_time_played": "58m",
+      "raw_time_mins": 58.466666666666676,
       "most_played_hero": "Illari",
       "top_3_heroes": [
-        "Illari"
+        "Illari",
+        "Lúcio"
       ],
-      "total_elim": 27,
-      "total_ast": 12,
-      "total_dth": 17,
-      "total_dmg": 18591,
-      "total_heal": 17278,
-      "total_block": 26,
-      "avg_elim": "10.031",
-      "avg_ast": "4.458",
-      "avg_dth": "6.316",
-      "avg_dmg": "6906.873",
-      "avg_heal": "6419.071",
-      "avg_block": "9.659"
+      "total_elim": 54,
+      "total_ast": 55,
+      "total_dth": 38,
+      "total_dmg": 28867,
+      "total_heal": 35738,
+      "total_block": 4736,
+      "avg_elim": "9.236",
+      "avg_ast": "9.407",
+      "avg_dth": "6.499",
+      "avg_dmg": "4937.343",
+      "avg_heal": "6112.543",
+      "avg_block": "810.034"
     },
     {
       "player_id": "FCA26-P0112",
@@ -71465,24 +72504,24 @@
       "status": "ACTIVE",
       "join_stage": "SEASON",
       "allowed_flex": [],
-      "maps_played": 3,
-      "total_time_played": "26m",
-      "raw_time_mins": 26.91666666666667,
+      "maps_played": 6,
+      "total_time_played": "58m",
+      "raw_time_mins": 58.466666666666676,
       "most_played_hero": "Kiriko",
       "top_3_heroes": [
         "Kiriko"
       ],
-      "total_elim": 12,
-      "total_ast": 41,
-      "total_dth": 18,
-      "total_dmg": 4049,
-      "total_heal": 22084,
+      "total_elim": 27,
+      "total_ast": 95,
+      "total_dth": 40,
+      "total_dmg": 13031,
+      "total_heal": 43711,
       "total_block": 0,
-      "avg_elim": "4.458",
-      "avg_ast": "15.232",
-      "avg_dth": "6.687",
-      "avg_dmg": "1504.272",
-      "avg_heal": "8204.582",
+      "avg_elim": "4.618",
+      "avg_ast": "16.249",
+      "avg_dth": "6.842",
+      "avg_dmg": "2228.791",
+      "avg_heal": "7476.226",
       "avg_block": "0.000"
     },
     {
@@ -71500,27 +72539,27 @@
       "allowed_flex": [
         "DPS"
       ],
-      "maps_played": 3,
-      "total_time_played": "26m",
-      "raw_time_mins": 26.91666666666667,
-      "most_played_hero": "D.Va",
+      "maps_played": 6,
+      "total_time_played": "58m",
+      "raw_time_mins": 58.466666666666676,
+      "most_played_hero": "Winston",
       "top_3_heroes": [
+        "Winston",
         "D.Va",
-        "Sigma",
-        "Winston"
+        "Sigma"
       ],
-      "total_elim": 41,
-      "total_ast": 19,
-      "total_dth": 16,
-      "total_dmg": 22158,
-      "total_heal": 4947,
-      "total_block": 30124,
-      "avg_elim": "15.232",
-      "avg_ast": "7.059",
-      "avg_dth": "5.944",
-      "avg_dmg": "8232.074",
-      "avg_heal": "1837.895",
-      "avg_block": "11191.579"
+      "total_elim": 113,
+      "total_ast": 38,
+      "total_dth": 33,
+      "total_dmg": 49494,
+      "total_heal": 12162,
+      "total_block": 65902,
+      "avg_elim": "19.327",
+      "avg_ast": "6.499",
+      "avg_dth": "5.644",
+      "avg_dmg": "8465.336",
+      "avg_heal": "2080.160",
+      "avg_block": "11271.722"
     }
   ]
 }

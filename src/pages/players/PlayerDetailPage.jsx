@@ -1,5 +1,5 @@
-import { useMemo, useEffect, useState } from 'react'
-import { useOutletContext, useParams, useNavigate } from 'react-router-dom'
+import { useMemo, useEffect, useRef, useState } from 'react'
+import { useOutletContext, useParams, useNavigate, Link } from 'react-router-dom'
 import {
   Radar,
   RadarChart,
@@ -11,6 +11,10 @@ import {
 } from 'recharts'
 import { getLeaderboardRows, safeArr } from '../../lib/selectors.js'
 import styles from './PlayerDetailPage.module.css'
+
+// 引入 html-to-image 和新增的分享名片组件
+import { toPng } from 'html-to-image'
+import PlayerShareCard from '../../components/players/PlayerShareCard.jsx'
 
 function formatNum(value, digits = 2) {
   const num = Number(value || 0)
@@ -49,6 +53,24 @@ function calculatePercentile(rank, total) {
   return Math.round(((total - rank) / (total - 1)) * 100)
 }
 
+function formatTimePlayed(rawTimeMins, fallbackText) {
+  if (fallbackText) return fallbackText
+
+  const mins = Math.round(Number(rawTimeMins || 0))
+  if (!mins) return '-'
+  if (mins < 60) return `${mins}m`
+
+  const h = Math.floor(mins / 60)
+  const m = mins % 60
+  if (!m) return `${h}h`
+  return `${h}h ${m}m`
+}
+
+function formatPercentileText(value) {
+  const pct = Math.max(0, Math.round(Number(value) || 0))
+  return `超越同职责 ${pct}%`
+}
+
 const CustomRadarTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload
@@ -74,6 +96,7 @@ export default function PlayerDetailPage() {
   const { playerId } = useParams()
   const navigate = useNavigate()
   const [aiText, setAiText] = useState('')
+  const shareCardRef = useRef(null)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -82,6 +105,25 @@ export default function PlayerDetailPage() {
   const handleBack = () => {
     if (window.history.state && window.history.state.idx > 0) navigate(-1)
     else navigate('/players')
+  }
+
+  const handleExportShareCard = async () => {
+    if (!shareCardRef.current || !player) return
+
+    try {
+      const dataUrl = await toPng(shareCardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: '#0f0f0f'
+      })
+
+      const link = document.createElement('a')
+      link.download = `${player.display_name || player.player_id || 'player'}-share-card.png`
+      link.href = dataUrl
+      link.click()
+    } catch (error) {
+      console.error('EXPORT_SHARE_CARD_FAILED', error)
+    }
   }
 
   const player = useMemo(() => {
@@ -135,6 +177,7 @@ export default function PlayerDetailPage() {
     })
 
     return {
+      sampleSize: totalInRole,
       avg: {
         dmg: sum.dmg / totalInRole,
         heal: sum.heal / totalInRole,
@@ -276,17 +319,44 @@ export default function PlayerDetailPage() {
     }
   }, [player, roleStats])
 
+  const topHeroes = useMemo(() => {
+    if (!player) return []
+    const heroes = Array.isArray(player.top_3_heroes) ? player.top_3_heroes.filter(Boolean) : []
+    if (heroes.length === 0 && player.most_played_hero) heroes.push(player.most_played_hero)
+    return heroes
+  }, [player])
+
+  const bestEdge = useMemo(() => {
+    if (!roleStats) return { label: '-', value: 0 }
+
+    const pool = [
+      { label: '伤害输出', value: roleStats.ranks.dmg.percentile || 0 },
+      { label: '击杀效率', value: roleStats.ranks.elim.percentile || 0 },
+      { label: '治疗效能', value: roleStats.ranks.heal.percentile || 0 },
+      { label: '阻挡效能', value: roleStats.ranks.mit.percentile || 0 },
+      { label: '生存能力', value: roleStats.ranks.dth.percentile || 0 }
+    ]
+
+    return pool.sort((a, b) => b.value - a.value)[0]
+  }, [roleStats])
+
+  const displayTime = useMemo(() => (
+    formatTimePlayed(player?.raw_time_mins, player?.total_time_played)
+  ), [player])
+
   useEffect(() => {
     if (!player || !roleStats || !styleProfile) return
 
     const lines = [
       `> 载入选手档案 [${player.player_id}] ...`,
       `> 位置识别：${player.role || 'UNKNOWN'}。`,
+      `> 样本范围：${player.maps_played || 0} 张地图 / ${displayTime}。`,
       `> 风格判定：${styleProfile.cn}。`,
       `> --------------------------------`,
-      `> 火力输出高于同职责 ${roleStats.ranks.dmg.percentile}% 选手。`,
-      `> 治疗/援护高于同职责 ${roleStats.ranks.heal.percentile}% 选手。`,
-      `> 生存控制高于同职责 ${roleStats.ranks.dth.percentile}% 选手。`,
+      `> 当前最强边：${bestEdge.label}，超越同职责 ${bestEdge.value}% 选手。`,
+      `> 火力输出超越同职责 ${roleStats.ranks.dmg.percentile}% 选手。`,
+      `> 援护能力超越同职责 ${roleStats.ranks.heal.percentile}% 选手。`,
+      `> 生存表现超越同职责 ${roleStats.ranks.dth.percentile}% 选手。`,
       `> 综合判词：${styleProfile.desc}`,
       `> --------------------------------`,
       `> AI 评估完成。`
@@ -315,14 +385,7 @@ export default function PlayerDetailPage() {
 
     typeWriter()
     return () => clearTimeout(timer)
-  }, [player, roleStats, styleProfile])
-
-  const topHeroes = useMemo(() => {
-    if (!player) return []
-    const heroes = Array.isArray(player.top_3_heroes) ? player.top_3_heroes.filter(Boolean) : []
-    if (heroes.length === 0 && player.most_played_hero) heroes.push(player.most_played_hero)
-    return heroes
-  }, [player])
+  }, [bestEdge, displayTime, player, roleStats, styleProfile])
 
   if (!player) {
     return (
@@ -368,6 +431,13 @@ export default function PlayerDetailPage() {
             </div>
           </div>
         </div>
+
+        <div className={styles.topbarRight}>
+          <button type="button" onClick={handleExportShareCard} className={styles.exportShareBtn}>
+            导出分享图
+            <span className={styles.exportShareBtnEn}>EXPORT SHARE CARD</span>
+          </button>
+        </div>
       </div>
 
       <section className={`${styles.idCard} ${roleClass}`}>
@@ -407,10 +477,10 @@ export default function PlayerDetailPage() {
               </div>
               <div className={styles.idMetaItem}>
                 <span className={styles.idMetaLabel}>TIME</span>
-                <span className={styles.idMetaValue}>{player.total_time_played || `${Math.round(player.raw_time_mins || 0)}m`}</span>
+                <span className={styles.idMetaValue}>{displayTime}</span>
               </div>
               <div className={styles.idMetaItem}>
-                <span className={styles.idMetaLabel}>FOCUS</span>
+                <span className={styles.idMetaLabel}>REC HERO</span>
                 <span className={styles.idMetaValue}>{topHeroes[0] || '-'}</span>
               </div>
             </div>
@@ -418,7 +488,123 @@ export default function PlayerDetailPage() {
         </div>
       </section>
 
+      <section className={`${styles.tacticalGridSection} ${roleClass}`}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionKicker}>
+            <span className={styles.sectionKickerCn}>战术数据指标</span>
+            <span className={styles.sectionKickerEn}>TACTICAL METRICS / PER 10</span>
+          </div>
+          <div className={styles.hudLegend}>ROLE SAMPLE / {roleStats?.sampleSize || 1}</div>
+        </div>
+
+        <div className={styles.metricsGrid}>
+          <div className={styles.metricCard}>
+            <div className={styles.metricLabelGroup}>
+              <span className={styles.metricLabel}>出场时间</span>
+              <span className={styles.metricLabelEn}>TIME</span>
+            </div>
+            <div className={styles.metricValuePrimary}>{displayTime}</div>
+            <div className={styles.metricSecondary}>
+              <span className={styles.metricAvg}>Maps: {player.maps_played || '-'}</span>
+              <span className={styles.metricPercentile}>Role Pool: {roleStats?.sampleSize || 1}</span>
+            </div>
+          </div>
+
+          <div className={styles.metricCard}>
+            <div className={styles.metricLabelGroup}>
+              <span className={styles.metricLabel}>击杀</span>
+              <span className={styles.metricLabelEn}>ELIM</span>
+            </div>
+            <div className={styles.metricValuePrimary}>{formatNum(player.avg_elim)}</div>
+            <div className={styles.metricSecondary}>
+              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.elim)}</span>
+              <span className={styles.metricPercentile}>{formatPercentileText(roleStats?.ranks.elim.percentile)}</span>
+            </div>
+          </div>
+
+          <div className={`${styles.metricCard} ${styles.cardDth}`}>
+            <div className={styles.metricLabelGroup}>
+              <span className={styles.metricLabel}>阵亡</span>
+              <span className={styles.metricLabelEn}>DTH</span>
+            </div>
+            <div className={styles.metricValuePrimary}>{formatNum(player.avg_dth)}</div>
+            <div className={styles.metricSecondary}>
+              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.dth)}</span>
+              <span className={styles.metricPercentile}>{formatPercentileText(roleStats?.ranks.dth.percentile)}</span>
+            </div>
+          </div>
+
+          <div className={`${styles.metricCard} ${styles.cardDmg}`}>
+            <div className={styles.metricLabelGroup}>
+              <span className={styles.metricLabel}>伤害</span>
+              <span className={styles.metricLabelEn}>DMG</span>
+            </div>
+            <div className={styles.metricValuePrimary}>{formatNum(player.avg_dmg)}</div>
+            <div className={styles.metricSecondary}>
+              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.dmg)}</span>
+              <span className={styles.metricPercentile}>{formatPercentileText(roleStats?.ranks.dmg.percentile)}</span>
+            </div>
+          </div>
+
+          <div className={`${styles.metricCard} ${styles.cardHeal}`}>
+            <div className={styles.metricLabelGroup}>
+              <span className={styles.metricLabel}>治疗</span>
+              <span className={styles.metricLabelEn}>HEAL</span>
+            </div>
+            <div className={styles.metricValuePrimary}>{formatNum(player.avg_heal)}</div>
+            <div className={styles.metricSecondary}>
+              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.heal)}</span>
+              <span className={styles.metricPercentile}>{formatPercentileText(roleStats?.ranks.heal.percentile)}</span>
+            </div>
+          </div>
+
+          <div className={`${styles.metricCard} ${styles.cardMit}`}>
+            <div className={styles.metricLabelGroup}>
+              <span className={styles.metricLabel}>阻挡</span>
+              <span className={styles.metricLabelEn}>BLOCK</span>
+            </div>
+            <div className={styles.metricValuePrimary}>{formatNum(player.avg_block)}</div>
+            <div className={styles.metricSecondary}>
+              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.mit)}</span>
+              <span className={styles.metricPercentile}>{formatPercentileText(roleStats?.ranks.mit.percentile)}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div className={styles.chartsGrid}>
+        <section className={styles.hudSection}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionKicker}>
+              <span className={styles.sectionKickerCn}>同职责超越百分位</span>
+              <span className={styles.sectionKickerEn}>PERCENTILE RANKING</span>
+            </div>
+            <div className={styles.hudLegend}>BEST EDGE / {bestEdge.label} {bestEdge.value}%</div>
+          </div>
+
+          <div className={styles.barsGrid}>
+            {[
+              { id: 'dmg', label: '伤害输出', val: roleStats?.ranks.dmg.percentile, color: 'dmgRed' },
+              { id: 'heal', label: '治疗效能', val: roleStats?.ranks.heal.percentile, color: 'healGreen' },
+              { id: 'mit', label: '阻挡效能', val: roleStats?.ranks.mit.percentile, color: 'mitBlue' },
+              { id: 'surv', label: '生存能力', val: roleStats?.ranks.dth.percentile, color: 'survGold' }
+            ].map(bar => {
+              const percentile = bar.val || 0
+              return (
+                <div key={bar.id} className={`${styles.barField} ${styles[bar.color]}`}>
+                  <div className={styles.barLabelGroup}>
+                    <span className={styles.barLabel}>{bar.label}</span>
+                    <span className={styles.barValue}>{percentile}%</span>
+                  </div>
+                  <div className={styles.barBase}>
+                    <div className={styles.barFill} style={{ width: `${percentile}%` }}></div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
         <section className={`${styles.hudSection} ${roleClass}`}>
           <div className={styles.sectionHeader}>
             <div className={styles.sectionKicker}>
@@ -446,140 +632,13 @@ export default function PlayerDetailPage() {
             )}
           </div>
         </section>
-
-        <section className={styles.hudSection}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionKicker}>
-              <span className={styles.sectionKickerCn}>同职责超越百分位</span>
-              <span className={styles.sectionKickerEn}>PERCENTILE RANKING</span>
-            </div>
-            <div className={styles.hudLegend}>ROLE COMPARISON</div>
-          </div>
-
-          <div className={styles.barsGrid}>
-            {[
-              { id: 'dmg', label: '伤害输出', val: roleStats?.ranks.dmg.percentile, color: 'dmgRed' },
-              { id: 'heal', label: '治疗效能', val: roleStats?.ranks.heal.percentile, color: 'healGreen' },
-              { id: 'mit', label: '阻挡效能', val: roleStats?.ranks.mit.percentile, color: 'mitBlue' },
-              { id: 'surv', label: '生存能力', val: roleStats?.ranks.dth.percentile, color: 'survGold' }
-            ].map(bar => {
-              const percentile = bar.val || 0
-              return (
-                <div key={bar.id} className={`${styles.barField} ${styles[bar.color]}`}>
-                  <div className={styles.barLabelGroup}>
-                    <span className={styles.barLabel}>{bar.label}</span>
-                    <span className={styles.barValue}>{percentile}%</span>
-                  </div>
-                  <div className={styles.barBase}>
-                    <div className={styles.barFill} style={{ width: `${percentile}%` }}></div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </section>
       </div>
-
-      <section className={styles.aiTerminal}>
-        <div className={styles.sectionHeader}>
-          <div className={styles.sectionKicker}>
-            <span className={styles.sectionKickerCn}>AI 球探综合报告</span>
-            <span className={styles.sectionKickerEn}>AI SCOUT REPORT</span>
-          </div>
-        </div>
-
-        <div className={styles.terminalWindow}>
-          <pre className={styles.terminalText}>{aiText}</pre>
-        </div>
-      </section>
-
-      <section className={`${styles.tacticalGridSection} ${roleClass}`}>
-        <div className={styles.sectionHeader}>
-          <div className={styles.sectionKicker}>
-            <span className={styles.sectionKickerCn}>战术数据指标</span>
-            <span className={styles.sectionKickerEn}>TACTICAL METRICS / PER 10</span>
-          </div>
-        </div>
-
-        <div className={styles.metricsGrid}>
-          <div className={styles.metricCard}>
-            <div className={styles.metricLabelGroup}>
-              <span className={styles.metricLabel}>存活时长</span>
-              <span className={styles.metricLabelEn}>TIME</span>
-            </div>
-            <div className={styles.metricValuePrimary}>{player.total_time_played || `${Math.round(player.raw_time_mins || 0)}m`}</div>
-            <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Maps: {player.maps_played || '-'}</span>
-            </div>
-          </div>
-
-          <div className={styles.metricCard}>
-            <div className={styles.metricLabelGroup}>
-              <span className={styles.metricLabel}>击杀</span>
-              <span className={styles.metricLabelEn}>ELIM</span>
-            </div>
-            <div className={styles.metricValuePrimary}>{formatNum(player.avg_elim)}</div>
-            <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.elim)}</span>
-              <span className={styles.metricPercentile}>Top {roleStats?.ranks.elim.percentile || 0}%</span>
-            </div>
-          </div>
-
-          <div className={`${styles.metricCard} ${styles.cardDth}`}>
-            <div className={styles.metricLabelGroup}>
-              <span className={styles.metricLabel}>阵亡</span>
-              <span className={styles.metricLabelEn}>DTH</span>
-            </div>
-            <div className={styles.metricValuePrimary}>{formatNum(player.avg_dth)}</div>
-            <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.dth)}</span>
-              <span className={styles.metricPercentile}>Top {roleStats?.ranks.dth.percentile || 0}%</span>
-            </div>
-          </div>
-
-          <div className={`${styles.metricCard} ${styles.cardDmg}`}>
-            <div className={styles.metricLabelGroup}>
-              <span className={styles.metricLabel}>伤害</span>
-              <span className={styles.metricLabelEn}>DMG</span>
-            </div>
-            <div className={styles.metricValuePrimary}>{formatNum(player.avg_dmg)}</div>
-            <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.dmg)}</span>
-              <span className={styles.metricPercentile}>Top {roleStats?.ranks.dmg.percentile || 0}%</span>
-            </div>
-          </div>
-
-          <div className={`${styles.metricCard} ${styles.cardHeal}`}>
-            <div className={styles.metricLabelGroup}>
-              <span className={styles.metricLabel}>治疗</span>
-              <span className={styles.metricLabelEn}>HEAL</span>
-            </div>
-            <div className={styles.metricValuePrimary}>{formatNum(player.avg_heal)}</div>
-            <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.heal)}</span>
-              <span className={styles.metricPercentile}>Top {roleStats?.ranks.heal.percentile || 0}%</span>
-            </div>
-          </div>
-
-          <div className={`${styles.metricCard} ${styles.cardMit}`}>
-            <div className={styles.metricLabelGroup}>
-              <span className={styles.metricLabel}>阻挡</span>
-              <span className={styles.metricLabelEn}>BLOCK</span>
-            </div>
-            <div className={styles.metricValuePrimary}>{formatNum(player.avg_block)}</div>
-            <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.mit)}</span>
-              <span className={styles.metricPercentile}>Top {roleStats?.ranks.mit.percentile || 0}%</span>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <section className={styles.dataSection}>
         <div className={styles.sectionHeader}>
           <div className={styles.sectionKicker}>
-            <span className={styles.sectionKickerCn}>常用英雄</span>
-            <span className={styles.sectionKickerEn}>MOST PLAYED HEROES</span>
+            <span className={styles.sectionKickerCn}>记录英雄</span>
+            <span className={styles.sectionKickerEn}>RECORDED HEROES</span>
           </div>
         </div>
 
@@ -603,15 +662,39 @@ export default function PlayerDetailPage() {
                     />
                   </div>
                   <div className={styles.heroCardName}>{heroName}</div>
-                  <div className={styles.heroRank}>TOP {idx + 1}</div>
+                  <div className={styles.heroRank}>REC {idx + 1}</div>
                 </div>
               )
             })}
           </div>
         ) : (
-          <div className={styles.emptyState}>暂无英雄使用记录</div>
+          <div className={styles.emptyState}>暂无英雄记录</div>
         )}
       </section>
+
+      <section className={styles.aiTerminal}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionKicker}>
+            <span className={styles.sectionKickerCn}>AI 球探综合报告</span>
+            <span className={styles.sectionKickerEn}>AI SCOUT REPORT</span>
+          </div>
+          <div className={styles.hudLegend}>NARRATIVE OUTPUT</div>
+        </div>
+
+        <div className={styles.terminalWindow}>
+          <pre className={styles.terminalText}>{aiText}</pre>
+        </div>
+      </section>
+
+      <div className={styles.shareRenderMount} aria-hidden="true">
+        <PlayerShareCard
+          player={player}
+          styleProfile={styleProfile}
+          roleStats={roleStats}
+          topHeroes={topHeroes}
+          shareRef={shareCardRef}
+        />
+      </div>
     </div>
   )
 }

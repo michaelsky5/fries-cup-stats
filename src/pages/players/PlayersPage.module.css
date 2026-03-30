@@ -9,13 +9,13 @@
 .hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.95fr);
+  grid-template-columns: minmax(0, 1.18fr) minmax(360px, 0.92fr);
   gap: 16px;
   padding: 18px;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.006) 100%),
     #101010;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255,255,255,0.12);
   overflow: hidden;
 }
 
@@ -24,16 +24,16 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 220px;
+  width: 240px;
   height: 2px;
-  background: linear-gradient(90deg, #f4c320 0%, rgba(244, 195, 32, 0.34) 60%, transparent 100%);
+  background: linear-gradient(90deg, #f4c320 0%, rgba(244,195,32,0.34) 58%, transparent 100%);
 }
 
 .heroMain {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -64,19 +64,54 @@
 
 .heroTitle {
   margin: 0;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 900;
-  line-height: 1.08;
+  line-height: 1.06;
   color: #ffffff;
   letter-spacing: 0.02em;
 }
 
 .heroDesc {
-  max-width: 620px;
+  max-width: 680px;
   margin: 0;
   font-size: 12px;
-  line-height: 1.6;
-  color: rgba(255,255,255,0.52);
+  line-height: 1.7;
+  color: rgba(255,255,255,0.54);
+}
+
+.heroViewBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.heroViewLabel {
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255,255,255,0.42);
+  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.heroViewValue {
+  min-height: 22px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(244,195,32,0.08);
+  border: 1px solid rgba(244,195,32,0.18);
+  color: #f4c320;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.04em;
 }
 
 .heroMeta {
@@ -90,7 +125,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 8px;
-  min-height: 72px;
+  min-height: 74px;
   padding: 10px 12px;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.022) 0%, rgba(255,255,255,0.008) 100%),
@@ -132,12 +167,47 @@
 }
 
 .heroMetaValueText {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 900;
-  line-height: 1.08;
+  line-height: 1.2;
   color: #f4c320;
-  font-family: var(--font-mono);
   word-break: break-word;
+}
+
+/* ---------- stat strip ---------- */
+.statStrip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.statStripItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.016) 0%, rgba(255,255,255,0.004) 100%),
+    #101010;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.statStripLabel {
+  font-size: 9px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.42);
+  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.statStripValue {
+  font-size: 14px;
+  font-weight: 900;
+  color: #ffffff;
+  font-family: var(--font-mono);
 }
 
 /* ---------- toolbar ---------- */
@@ -149,7 +219,7 @@
   background:
     linear-gradient(180deg, rgba(255,255,255,0.016) 0%, rgba(255,255,255,0.004) 100%),
     #101010;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255,255,255,0.12);
 }
 
 .toolbarHead {
@@ -223,29 +293,26 @@
 
 .toolbarMain {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 16px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.toolGroup,
-.toolGroupRight {
-  display: flex;
-  align-items: flex-end;
+.toolGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
-  flex-wrap: wrap;
+  align-items: end;
 }
 
 .field {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-width: 140px;
+  min-width: 0;
 }
 
 .searchField {
-  min-width: 300px;
+  min-width: 0;
 }
 
 .label {
@@ -274,7 +341,7 @@
 
 .select,
 .input {
-  height: 36px;
+  height: 38px;
   padding: 0 12px;
   border: 1px solid rgba(255,255,255,0.14);
   background:
@@ -291,7 +358,6 @@
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  min-width: 148px;
   padding-right: 38px;
   cursor: pointer;
   background-image: url('data:image/svg+xml;charset=US-ASCII,<svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="%23ffffff" stroke-width="1.5" stroke-linecap="square"/></svg>');
@@ -305,17 +371,19 @@
   border-color: rgba(255,255,255,0.26);
 }
 
+/* 🌟 已经为你修复了这里的选中状态连环爆炸 Bug */
 .select:focus,
 .input:focus {
   border-color: #f4c320;
-  background:
-    linear-gradient(180deg, rgba(244,195,32,0.05) 0%, rgba(244,195,32,0) 100%),
-    #151515;
+  background-color: #111111; 
   box-shadow: inset 0 0 0 1px rgba(244,195,32,0.18);
 }
 
 .select:focus {
   background-image: url('data:image/svg+xml;charset=US-ASCII,<svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="%23f4c320" stroke-width="1.5" stroke-linecap="square"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 10px;
 }
 
 .select option {
@@ -333,19 +401,78 @@
   letter-spacing: 0.04em;
 }
 
-/* ---------- grid ---------- */
-.gridSection {
-  margin-top: 0;
+/* ---------- results ---------- */
+.resultsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
+.resultsHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.resultsTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.resultsTitle {
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+  letter-spacing: 0.06em;
+}
+
+.resultsSubTitle {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(255,255,255,0.28);
+  font-family: var(--font-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.resultsMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.resultPill {
+  min-height: 24px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.66);
+  font-size: 9px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---------- grid ---------- */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 14px;
 }
 
+/* ---------- empty ---------- */
 .emptyState {
-  padding: 72px 20px;
+  padding: 76px 20px;
   background: #111111;
   border: 1px dashed rgba(255,255,255,0.16);
   text-align: center;
@@ -355,7 +482,7 @@
   display: block;
   font-size: 12px;
   font-weight: 900;
-  color: rgba(255,255,255,0.46);
+  color: rgba(255,255,255,0.5);
 }
 
 .emptyEn {
@@ -365,73 +492,65 @@
   font-weight: 800;
   color: rgba(255,255,255,0.24);
   font-family: var(--font-mono);
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
+.emptyHint {
+  display: block;
+  margin-top: 12px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.34);
+}
+
 /* ---------- responsive ---------- */
-@media (max-width: 1180px) {
+@media (max-width: 1200px) {
+  .toolGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
   .hero {
     grid-template-columns: 1fr;
   }
 
-  .heroMeta {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .statStrip {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 760px) {
-  .heroMeta {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .toolbarMain {
-    align-items: stretch;
-  }
-
-  .toolGroup,
-  .toolGroupRight {
-    width: 100%;
-  }
-
-  .field {
-    flex: 1 1 140px;
-  }
-
-  .searchField {
-    flex: 1 1 240px;
-  }
-}
-
-@media (max-width: 640px) {
-  .shell {
-    gap: 12px;
-  }
-
-  .hero,
-  .toolbar {
-    padding: 14px;
-  }
-
+@media (max-width: 720px) {
   .heroTitle {
-    font-size: 24px;
+    font-size: 26px;
   }
 
   .heroMeta {
     grid-template-columns: 1fr;
   }
 
-  .field,
-  .searchField {
-    min-width: 100%;
+  .toolGrid {
+    grid-template-columns: 1fr;
   }
 
-  .select,
-  .input {
+  .resultsMeta {
     width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .toolbar,
+  .hero {
+    padding: 16px;
   }
 
   .grid {
     grid-template-columns: 1fr;
+  }
+
+  .select,
+  .input {
+    height: 36px;
   }
 }

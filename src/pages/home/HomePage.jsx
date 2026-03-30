@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
-import { safeArr } from '../../lib/selectors.js'
+import { safeArr, getSwissStandings } from '../../lib/selectors.js' // ✨ 引入真实的瑞士轮引擎
 import styles from './HomePage.module.css'
 
 function formatNum(value, digits = 2) {
@@ -39,24 +39,9 @@ export default function HomePage() {
     return players.sort((a, b) => (Number(b.avg_elim) || 0) - (Number(a.avg_elim) || 0))[0]
   }, [db])
 
+  // ✨ 核心优化：直接调用我们写好的终极瑞士轮引擎，取前 3 名
   const topTeams = useMemo(() => {
-    const matches = safeArr(db?.matches).filter(m => (m.status === 'COMPLETE' || m.status === 'COMPLETED') && m.winner)
-    const winCounts = {}
-
-    matches.forEach(m => {
-      winCounts[m.winner] = (winCounts[m.winner] || 0) + 1
-    })
-
-    const sorted = Object.entries(winCounts).sort((a, b) => b[1] - a[1]).slice(0, 3)
-
-    return sorted.map(([teamName, wins]) => {
-      const t = safeArr(db?.teams).find(t => t.team_name === teamName || t.team_short_name === teamName) || {
-        team_id: teamName,
-        team_name: teamName,
-        team_short_name: teamName
-      }
-      return { ...t, wins }
-    })
+    return getSwissStandings(db).slice(0, 3)
   }, [db])
 
   const summary = useMemo(() => {
@@ -100,7 +85,7 @@ export default function HomePage() {
 
           <div className={styles.heroActions}>
             <Link to="/matches" className={styles.primaryBtn}>进入赛事大厅</Link>
-            <Link to="/leaderboard" className={styles.secondaryBtn}>查看数据排行</Link>
+            <Link to="/standings" className={styles.secondaryBtn}>查看积分榜</Link>
           </div>
         </div>
 
@@ -118,8 +103,8 @@ export default function HomePage() {
           <Link to={`/players/${currentMVP.player_id}`} className={`${styles.featureCard} ${styles.mvpCard}`}>
             <div className={styles.cardHead}>
               <div className={styles.cardKicker}>
-                <span className={styles.cardKickerCn}>全场最佳</span>
-                <span className={styles.cardKickerEn}>TOURNAMENT MVP</span>
+                <span className={styles.cardKickerCn}>数据领跑者</span>
+                <span className={styles.cardKickerEn}>STATISTICAL MVP</span>
               </div>
             </div>
 
@@ -194,24 +179,32 @@ export default function HomePage() {
         <div className={`${styles.featureCard} ${styles.teamsCard}`}>
           <div className={styles.cardHead}>
             <div className={styles.cardKicker}>
-              <span className={styles.cardKickerCn}>联盟统治者</span>
-              <span className={styles.cardKickerEn}>TOP TEAMS</span>
+              <span className={styles.cardKickerCn}>瑞士轮积分榜</span>
+              <span className={styles.cardKickerEn}>SWISS TOP TEAMS</span>
             </div>
-            <Link to="/teams" className={styles.cardLink}>全部战队</Link>
+            {/* ✨ 指向新的 standings 页面 */}
+            <Link to="/standings" className={styles.cardLink}>完整榜单</Link>
           </div>
 
           <div className={styles.teamsList}>
             {topTeams.length > 0 ? topTeams.map((team, idx) => (
               <Link key={team.team_id || idx} to={`/teams/${team.team_id}`} className={styles.teamRow}>
-                <div className={styles.teamRank}>0{idx + 1}</div>
+                <div className={styles.teamRank}>0{team.rank}</div>
                 <div className={styles.teamName}>{team.team_short_name || team.team_name}</div>
-                <div className={styles.teamWins}>
-                  {team.wins}
-                  <span className={styles.teamWinsEn}>WINS</span>
+                
+                {/* ✨ 新增真实战绩展示 */}
+                <div className={styles.teamRecord}>
+                  <span className={styles.textWin}>{team.match_wins}W</span>
+                  <span className={styles.textLoss}>{team.match_losses}L</span>
+                </div>
+                
+                <div className={styles.teamDiff}>
+                  {team.map_diff > 0 ? `+${team.map_diff}` : team.map_diff}
+                  <span className={styles.teamDiffEn}>DIFF</span>
                 </div>
               </Link>
             )) : (
-              <EmptyCard text="胜场数据不足" />
+              <EmptyCard text="赛事尚未产出积分" />
             )}
           </div>
         </div>
