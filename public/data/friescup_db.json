@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-01T06:03:25.554Z",
+  "updated_at": "2026-04-01T13:46:16.247Z",
   "meta": {
     "team_count": 30,
     "player_count": 188,
@@ -65999,8 +65999,8 @@
     },
     {
       "match_id": "FCA26-SWISS-R3-M01",
-      "raw_match_id": "FCA26-SWISS-R3-M01-T5EN",
-      "match_display_name": "ROUND 03 / CR VS FG",
+      "raw_match_id": "FCA26-SWISS-R3-M01-U28H",
+      "match_display_name": "ROUND 03 / NGP VS CR",
       "status": "PENDING",
       "progress": {
         "result": "PENDING",
@@ -66011,26 +66011,26 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
+      "updated_at": "2026-04-01T06:32:24.438Z",
       "winner": null,
       "team_a": {
-        "id": "FCA26-T003",
-        "name": "Crazy Rabbit",
-        "short": "CR",
+        "id": "FCA26-T002",
+        "name": "Never Get Point",
+        "short": "NGP",
         "score": ""
       },
       "team_b": {
-        "id": "FCA26-T010",
-        "name": "家和万事兴",
-        "short": "FG",
+        "id": "FCA26-T003",
+        "name": "Crazy Rabbit",
+        "short": "CR",
         "score": ""
       },
       "maps": []
     },
     {
       "match_id": "FCA26-SWISS-R3-M02",
-      "raw_match_id": "FCA26-SWISS-R3-M02-HNL2",
-      "match_display_name": "ROUND 03 / NGP VS CUG",
+      "raw_match_id": "FCA26-SWISS-R3-M02-6SJF",
+      "match_display_name": "ROUND 03 / FG VS CUG",
       "status": "PENDING",
       "progress": {
         "result": "PENDING",
@@ -66041,12 +66041,12 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
+      "updated_at": "2026-04-01T06:32:24.438Z",
       "winner": null,
       "team_a": {
-        "id": "FCA26-T002",
-        "name": "Never Get Point",
-        "short": "NGP",
+        "id": "FCA26-T010",
+        "name": "家和万事兴",
+        "short": "FG",
         "score": ""
       },
       "team_b": {
@@ -66059,7 +66059,7 @@
     },
     {
       "match_id": "FCA26-SWISS-R3-M03",
-      "raw_match_id": "FCA26-SWISS-R3-M03-J7HX",
+      "raw_match_id": "FCA26-SWISS-R3-M03-RQGZ",
       "match_display_name": "ROUND 03 / SPS VS TNS",
       "status": "PENDING",
       "progress": {
@@ -66071,7 +66071,7 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
+      "updated_at": "2026-04-01T06:32:24.438Z",
       "winner": null,
       "team_a": {
         "id": "FCA26-T020",
@@ -66089,8 +66089,8 @@
     },
     {
       "match_id": "FCA26-SWISS-R3-M04",
-      "raw_match_id": "FCA26-SWISS-R3-M04-Q5QR",
-      "match_display_name": "ROUND 03 / ASP VS FZ",
+      "raw_match_id": "FCA26-SWISS-R3-M04-M3ZL",
+      "match_display_name": "ROUND 03 / ASP VS OL",
       "status": "PENDING",
       "progress": {
         "result": "PENDING",
@@ -66101,12 +66101,42 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
+      "updated_at": "2026-04-01T06:32:24.438Z",
       "winner": null,
       "team_a": {
         "id": "FCA26-T009",
         "name": "Astropollo",
         "short": "ASP",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T005",
+        "name": "NJFU Out laws",
+        "short": "OL",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M05",
+      "raw_match_id": "FCA26-SWISS-R3-M05-BWZN",
+      "match_display_name": "ROUND 03 / SK VS FZ",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-01T06:32:24.438Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T012",
+        "name": "snack",
+        "short": "SK",
         "score": ""
       },
       "team_b": {
@@ -66118,39 +66148,9 @@
       "maps": []
     },
     {
-      "match_id": "FCA26-SWISS-R3-M05",
-      "raw_match_id": "FCA26-SWISS-R3-M05-6ELC",
-      "match_display_name": "ROUND 03 / OL VS SK",
-      "status": "PENDING",
-      "progress": {
-        "result": "PENDING",
-        "maps": "PENDING",
-        "players": "PENDING"
-      },
-      "stage": "SWISS",
-      "round": "ROUND 3",
-      "format": "BO3",
-      "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
-      "winner": null,
-      "team_a": {
-        "id": "FCA26-T005",
-        "name": "NJFU Out laws",
-        "short": "OL",
-        "score": ""
-      },
-      "team_b": {
-        "id": "FCA26-T012",
-        "name": "snack",
-        "short": "SK",
-        "score": ""
-      },
-      "maps": []
-    },
-    {
       "match_id": "FCA26-SWISS-R3-M06",
-      "raw_match_id": "FCA26-SWISS-R3-M06-E9QE",
-      "match_display_name": "ROUND 03 / XCFN.G VS FFA",
+      "raw_match_id": "FCA26-SWISS-R3-M06-54O8",
+      "match_display_name": "ROUND 03 / FFA VS SD",
       "status": "PENDING",
       "progress": {
         "result": "PENDING",
@@ -66161,25 +66161,25 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
+      "updated_at": "2026-04-01T06:32:24.438Z",
       "winner": null,
       "team_a": {
-        "id": "FCA26-T015",
-        "name": "XCFN.Green",
-        "short": "XCFN.G",
-        "score": ""
-      },
-      "team_b": {
         "id": "FCA26-T001",
         "name": "French Fries. Academy",
         "short": "FFA",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T004",
+        "name": "SENSEIDEATH",
+        "short": "SD",
         "score": ""
       },
       "maps": []
     },
     {
       "match_id": "FCA26-SWISS-R3-M07",
-      "raw_match_id": "FCA26-SWISS-R3-M07-9V8H",
+      "raw_match_id": "FCA26-SWISS-R3-M07-XBYC",
       "match_display_name": "ROUND 03 / ZS VS 5GGS",
       "status": "PENDING",
       "progress": {
@@ -66191,7 +66191,7 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
+      "updated_at": "2026-04-01T06:32:24.438Z",
       "winner": null,
       "team_a": {
         "id": "FCA26-T006",
@@ -66209,8 +66209,8 @@
     },
     {
       "match_id": "FCA26-SWISS-R3-M08",
-      "raw_match_id": "FCA26-SWISS-R3-M08-OFOA",
-      "match_display_name": "ROUND 03 / SPC VS V50",
+      "raw_match_id": "FCA26-SWISS-R3-M08-43IP",
+      "match_display_name": "ROUND 03 / SPC VS XCFN.G",
       "status": "PENDING",
       "progress": {
         "result": "PENDING",
@@ -66221,12 +66221,72 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
+      "updated_at": "2026-04-01T06:32:24.438Z",
       "winner": null,
       "team_a": {
         "id": "FCA26-T011",
         "name": "Spark Crew",
         "short": "SPC",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T015",
+        "name": "XCFN.Green",
+        "short": "XCFN.G",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M09",
+      "raw_match_id": "FCA26-SWISS-R3-M09-DCHX",
+      "match_display_name": "ROUND 03 / LSJ VS YOU",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-01T06:32:24.438Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T018",
+        "name": "LSJ-Gaming 沈阳老四季",
+        "short": "LSJ",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T022",
+        "name": "可爱小鱿4277",
+        "short": "YOU",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M10",
+      "raw_match_id": "FCA26-SWISS-R3-M10-PHF3",
+      "match_display_name": "ROUND 03 / NBA VS V50",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-01T06:32:24.438Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T025",
+        "name": "NingBoU Again",
+        "short": "NBA",
         "score": ""
       },
       "team_b": {
@@ -66238,68 +66298,8 @@
       "maps": []
     },
     {
-      "match_id": "FCA26-SWISS-R3-M09",
-      "raw_match_id": "FCA26-SWISS-R3-M09-NFDI",
-      "match_display_name": "ROUND 03 / SD VS LSJ",
-      "status": "PENDING",
-      "progress": {
-        "result": "PENDING",
-        "maps": "PENDING",
-        "players": "PENDING"
-      },
-      "stage": "SWISS",
-      "round": "ROUND 3",
-      "format": "BO3",
-      "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
-      "winner": null,
-      "team_a": {
-        "id": "FCA26-T004",
-        "name": "SENSEIDEATH",
-        "short": "SD",
-        "score": ""
-      },
-      "team_b": {
-        "id": "FCA26-T018",
-        "name": "LSJ-Gaming 沈阳老四季",
-        "short": "LSJ",
-        "score": ""
-      },
-      "maps": []
-    },
-    {
-      "match_id": "FCA26-SWISS-R3-M10",
-      "raw_match_id": "FCA26-SWISS-R3-M10-77EQ",
-      "match_display_name": "ROUND 03 / YOU VS NBA",
-      "status": "PENDING",
-      "progress": {
-        "result": "PENDING",
-        "maps": "PENDING",
-        "players": "PENDING"
-      },
-      "stage": "SWISS",
-      "round": "ROUND 3",
-      "format": "BO3",
-      "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
-      "winner": null,
-      "team_a": {
-        "id": "FCA26-T022",
-        "name": "可爱小鱿4277",
-        "short": "YOU",
-        "score": ""
-      },
-      "team_b": {
-        "id": "FCA26-T025",
-        "name": "NingBoU Again",
-        "short": "NBA",
-        "score": ""
-      },
-      "maps": []
-    },
-    {
       "match_id": "FCA26-SWISS-R3-M11",
-      "raw_match_id": "FCA26-SWISS-R3-M11-F70R",
+      "raw_match_id": "FCA26-SWISS-R3-M11-VCY4",
       "match_display_name": "ROUND 03 / TF VS BLG",
       "status": "PENDING",
       "progress": {
@@ -66311,7 +66311,7 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
+      "updated_at": "2026-04-01T06:32:24.438Z",
       "winner": null,
       "team_a": {
         "id": "FCA26-T013",
@@ -66329,7 +66329,7 @@
     },
     {
       "match_id": "FCA26-SWISS-R3-M12",
-      "raw_match_id": "FCA26-SWISS-R3-M12-SD6Y",
+      "raw_match_id": "FCA26-SWISS-R3-M12-X098",
       "match_display_name": "ROUND 03 / HYW VS JDG",
       "status": "PENDING",
       "progress": {
@@ -66341,7 +66341,7 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
+      "updated_at": "2026-04-01T06:32:24.438Z",
       "winner": null,
       "team_a": {
         "id": "FCA26-T029",
@@ -66359,8 +66359,8 @@
     },
     {
       "match_id": "FCA26-SWISS-R3-M13",
-      "raw_match_id": "FCA26-SWISS-R3-M13-ICFD",
-      "match_display_name": "ROUND 03 / YM VS TS",
+      "raw_match_id": "FCA26-SWISS-R3-M13-7MRU",
+      "match_display_name": "ROUND 03 / YM VS TCK",
       "status": "PENDING",
       "progress": {
         "result": "PENDING",
@@ -66371,7 +66371,7 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
+      "updated_at": "2026-04-01T06:32:24.438Z",
       "winner": null,
       "team_a": {
         "id": "FCA26-T028",
@@ -66380,16 +66380,16 @@
         "score": ""
       },
       "team_b": {
-        "id": "FCA26-T024",
-        "name": "宝藏船队",
-        "short": "TS",
+        "id": "FCA26-T014",
+        "name": "Team Chicken",
+        "short": "TCK",
         "score": ""
       },
       "maps": []
     },
     {
       "match_id": "FCA26-SWISS-R3-M14",
-      "raw_match_id": "FCA26-SWISS-R3-M14-DY80",
+      "raw_match_id": "FCA26-SWISS-R3-M14-FGKF",
       "match_display_name": "ROUND 03 / AST VS WBG",
       "status": "PENDING",
       "progress": {
@@ -66401,7 +66401,7 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
+      "updated_at": "2026-04-01T06:32:24.438Z",
       "winner": null,
       "team_a": {
         "id": "FCA26-T016",
@@ -66419,8 +66419,8 @@
     },
     {
       "match_id": "FCA26-SWISS-R3-M15",
-      "raw_match_id": "FCA26-SWISS-R3-M15-FJ8U",
-      "match_display_name": "ROUND 03 / CUIT VS TCK",
+      "raw_match_id": "FCA26-SWISS-R3-M15-KX0Y",
+      "match_display_name": "ROUND 03 / TS VS CUIT",
       "status": "PENDING",
       "progress": {
         "result": "PENDING",
@@ -66431,18 +66431,18 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-03-31T07:32:02.766Z",
+      "updated_at": "2026-04-01T06:32:24.438Z",
       "winner": null,
       "team_a": {
-        "id": "FCA26-T027",
-        "name": "成信大撕咬者",
-        "short": "CUIT",
+        "id": "FCA26-T024",
+        "name": "宝藏船队",
+        "short": "TS",
         "score": ""
       },
       "team_b": {
-        "id": "FCA26-T014",
-        "name": "Team Chicken",
-        "short": "TCK",
+        "id": "FCA26-T027",
+        "name": "成信大撕咬者",
+        "short": "CUIT",
         "score": ""
       },
       "maps": []
