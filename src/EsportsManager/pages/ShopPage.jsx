@@ -284,7 +284,7 @@ export default function ShopPage() {
                     className={styles.btnReset}
                     style={{ borderColor: '#facc15', color: '#facc15' }}
                   >
-                    🏆 荣誉殿堂
+                    HISTORY
                   </button>
                   <button
                     onClick={() => {
@@ -471,7 +471,7 @@ export default function ShopPage() {
                   <div className={styles.marketMetaBar}>
                     <span className={styles.marketMetaChip}>POOL {filteredCards.length}/6</span>
                     <button onClick={handleRefresh} className={styles.btnRefreshSmall}>
-                      🔄 REFRESH (${hasBlackCard ? 16 : 10}K)
+                      REFRESH (${hasBlackCard ? 16 : 10}K)
                     </button>
                   </div>
                 )}
