@@ -1,0 +1,756 @@
+.pageContainer {
+  min-height: 100vh;
+  background-color: #050505;
+  color: #fff;
+  padding: 24px 18px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-family: var(--font-primary, sans-serif);
+  box-sizing: border-box;
+}
+
+.heroShell,
+.previewSection {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.016) 0%, rgba(255,255,255,0.004) 100%),
+    #101010;
+  border: 1px solid rgba(255,255,255,0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.heroShell::before,
+.previewSection::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 220px;
+  height: 2px;
+  background: linear-gradient(90deg, #facc15 0%, rgba(250,204,21,0.32) 62%, transparent 100%);
+}
+
+.heroShell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 18px;
+  padding: 18px;
+}
+
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.kickerRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.kickerCn {
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 0.08em;
+}
+
+.kickerEn,
+.previewKicker,
+.previewMeta,
+.sectionKicker,
+.sectionMeta,
+.heroStatLabel,
+.heroStatMeta,
+.actionKicker,
+.actionMeta,
+.statusChip,
+.kicker,
+.posterDate,
+.posterStageLabel,
+.bannerLabel,
+.boxTitle,
+.watermark {
+  font-family: var(--font-mono, monospace);
+  text-transform: uppercase;
+}
+
+.kickerEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(255,255,255,0.28);
+  letter-spacing: 0.16em;
+}
+
+.statusRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.statusChip {
+  min-height: 22px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(250,204,21,0.08);
+  border: 1px solid rgba(250,204,21,0.18);
+  color: #facc15;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: clamp(34px, 5vw, 54px);
+  font-weight: 900;
+  line-height: 0.98;
+  color: #fff;
+}
+
+.pageDesc {
+  max-width: 760px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #a1a1aa;
+}
+
+.pageDesc strong {
+  color: #fff;
+}
+
+.heroStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.heroStat {
+  min-height: 84px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.022) 0%, rgba(255,255,255,0.008) 100%),
+    #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 2px solid rgba(255,255,255,0.14);
+}
+
+.heroStatAccent {
+  border-left-color: #facc15;
+}
+
+.heroStatLabel {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.24);
+  letter-spacing: 0.14em;
+}
+
+.heroStatValue {
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.05;
+  color: #fff;
+  font-family: var(--font-mono, monospace);
+}
+
+.heroStatMeta {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: rgba(255,255,255,0.28);
+  letter-spacing: 0.12em;
+}
+
+.actionPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.006) 100%),
+    #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.actionPanelHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.actionKicker,
+.actionMeta {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.actionKicker {
+  color: rgba(255,255,255,0.28);
+}
+
+.actionMeta {
+  color: #facc15;
+}
+
+.btnExport,
+.btnContinue {
+  width: 100%;
+  min-height: 72px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.btnExport {
+  background: #facc15;
+  color: #000;
+  border: 2px solid #facc15;
+}
+
+.btnExport:hover:not(:disabled) {
+  background: #fff;
+  border-color: #fff;
+  transform: translateY(-2px);
+}
+
+.btnExport:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btnContinue {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.btnContinue:hover {
+  border-color: rgba(250,204,21,0.3);
+  transform: translateY(-2px);
+}
+
+.btnTitle {
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.btnDesc {
+  font-size: 11px;
+  line-height: 1.45;
+  opacity: 0.7;
+}
+
+.actionHint {
+  padding-top: 2px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #a1a1aa;
+}
+
+.previewSection {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.previewHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.previewKicker {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.28);
+}
+
+.previewTitle {
+  margin: 6px 0 0;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  color: #fff;
+}
+
+.previewMeta {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.26);
+  text-align: right;
+}
+
+.posterWrapper {
+  padding: 16px;
+  border: 1px dashed #3f3f46;
+  background: #000;
+}
+
+.posterCanvas {
+  width: min(100%, 1100px);
+  margin: 0 auto;
+  background: linear-gradient(135deg, #0f0f13 0%, #000000 100%);
+  border: 4px solid #27272a;
+  border-top: 8px solid #facc15;
+  padding: 34px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.posterCanvas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#3f3f46 1px, transparent 1px);
+  background-size: 30px 30px;
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.posterHeader,
+.posterBanner,
+.lineupSection,
+.footerSection {
+  position: relative;
+  z-index: 1;
+}
+
+.posterHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.44fr);
+  gap: 18px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+
+.posterHeaderMain {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.kicker {
+  font-size: 12px;
+  font-weight: 900;
+  color: #facc15;
+  letter-spacing: 0.28em;
+}
+
+.posterTitle {
+  margin: 0;
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(250, 204, 21, 0.24);
+}
+
+.posterDate {
+  font-size: 11px;
+  font-weight: 800;
+  color: #71717a;
+  letter-spacing: 0.12em;
+}
+
+.posterStageBadge {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.posterStageLabel {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.28);
+  letter-spacing: 0.14em;
+}
+
+.posterStageValueWrap,
+.powerValue {
+  font-family: var(--font-mono, monospace);
+}
+
+.posterStageValueWrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.powerValue {
+  font-size: clamp(56px, 9vw, 92px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 0.92;
+  text-shadow: 0 0 30px rgba(250, 204, 21, 0.24);
+}
+
+.powerUnit {
+  font-size: 22px;
+  font-weight: 900;
+  color: #facc15;
+}
+
+.costValue {
+  font-size: 13px;
+  color: #22c55e;
+  font-weight: 900;
+  font-family: var(--font-mono, monospace);
+}
+
+.posterBanner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+  padding: 16px 0 18px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 18px;
+}
+
+.bannerBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.bannerLabel {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.26);
+  letter-spacing: 0.14em;
+}
+
+.bannerValue {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #fff;
+}
+
+.bannerDivider {
+  background: rgba(255,255,255,0.08);
+}
+
+.lineupSection {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.sectionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.sectionTitleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sectionKicker {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.26);
+  letter-spacing: 0.14em;
+}
+
+.sectionTitle {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  color: #fff;
+}
+
+.sectionMeta {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.26);
+  letter-spacing: 0.12em;
+  text-align: right;
+}
+
+.rosterGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.playerCard {
+  min-height: 250px;
+  padding: 16px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.roleBadgeTank,
+.roleBadgeDps,
+.roleBadgeSup {
+  min-height: 22px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 900;
+  font-family: var(--font-mono, monospace);
+  margin-bottom: 12px;
+  letter-spacing: 0.12em;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.03);
+}
+
+.roleBadgeTank { color: #60a5fa; }
+.roleBadgeDps { color: #f87171; }
+.roleBadgeSup { color: #4ade80; }
+
+.playerAvatar,
+.playerAvatarFallback {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  margin-bottom: 14px;
+  background: #18181b;
+  object-fit: cover;
+}
+
+.playerAvatarFallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 900;
+  font-family: var(--font-mono, monospace);
+}
+
+.playerInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.playerName {
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.08;
+  text-transform: uppercase;
+  word-break: break-word;
+}
+
+/* 👇 彻底修复 Emoji + html2canvas 的坑：移除 background-clip 换成高级的 text-shadow */
+.textAwakened {
+  color: #facc15;
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.6), 0 0 20px rgba(250, 204, 21, 0.2);
+}
+
+.playerMeta {
+  font-size: 11px;
+  line-height: 1.45;
+  color: #a1a1aa;
+  font-family: var(--font-mono, monospace);
+}
+
+.awakenBadge {
+  background: #facc15;
+  color: #000;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 3px 8px;
+  display: inline-block;
+}
+
+.stars {
+  color: #facc15;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.footerSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 2px;
+}
+
+.infoBox {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px;
+}
+
+.boxTitle {
+  font-size: 10px;
+  font-weight: 900;
+  color: #facc15;
+  margin-bottom: 8px;
+  letter-spacing: 0.14em;
+}
+
+.boxContent {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #d4d4d8;
+}
+
+.watermark {
+  margin-top: 20px;
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.12em;
+  text-align: right;
+}
+
+@media (max-width: 1180px) {
+  .heroShell {
+    grid-template-columns: 1fr;
+  }
+
+  .heroStatsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .posterHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .rosterGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .pageContainer {
+    padding: 16px 12px 28px;
+  }
+
+  .heroShell,
+  .previewSection {
+    padding: 14px;
+  }
+
+  .previewHead,
+  .sectionRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .previewMeta,
+  .sectionMeta {
+    text-align: left;
+  }
+
+  .posterWrapper {
+    padding: 12px;
+  }
+
+  .posterCanvas {
+    padding: 22px;
+  }
+
+  .posterBanner,
+  .footerSection {
+    grid-template-columns: 1fr;
+  }
+
+  .bannerDivider {
+    display: none;
+  }
+
+  .rosterGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .pageTitle {
+    font-size: 30px;
+  }
+
+  .heroStatsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .btnExport,
+  .btnContinue {
+    min-height: 66px;
+    padding: 12px 14px;
+  }
+
+  .btnTitle {
+    font-size: 16px;
+  }
+
+  .posterCanvas {
+    padding: 16px;
+  }
+
+  .rosterGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .playerCard {
+    min-height: 0;
+  }
+
+  .posterTitle {
+    font-size: 30px;
+  }
+
+  .powerValue {
+    font-size: 52px;
+  }
+
+  .boxContent,
+  .bannerValue {
+    font-size: 13px;
+  }
+}

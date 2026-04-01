@@ -1,304 +1,553 @@
-.pageContainer {
-  padding: 1.5rem 5%;
-  color: #ffffff;
-  background-color: #0a0a0a;
-  min-height: 100vh;
-  /* 融合中英文字体 */
-  font-family: var(--font-primary, 'HarmonyOS Sans SC', 'Inter', sans-serif);
-}
-
-.backLink, .backBtn {
-  display: inline-block;
-  color: #888;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.85rem;
-  text-decoration: none;
-  margin-bottom: 1.5rem;
-  transition: color 0.2s;
-  letter-spacing: 0.05em;
-}
-
-.backLink:hover, .backBtn:hover {
-  color: var(--primary-yellow, #FFD700);
-}
-
-.errorContainer {
+.shell {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 60vh;
-  background-color: #0a0a0a;
-  color: #fff;
-  gap: 1rem;
+  gap: 14px;
+  min-width: 0;
 }
 
-/* 顶部大头图 */
-.heroHeader {
+.backLink,
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  color: rgba(255,255,255,0.44);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 800;
+  text-decoration: none;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 0.18s ease;
+}
+
+.backLink:hover,
+.backBtn:hover {
+  color: #f4c320;
+}
+
+/* ---------- error ---------- */
+.errorShell {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+}
+
+.errorPanel {
+  width: min(560px, 100%);
+  padding: 22px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.006) 100%),
+    #101010;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.errorKicker {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.26);
+  letter-spacing: 0.14em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.errorTitle {
+  margin: 10px 0 8px;
+  font-size: 26px;
+  line-height: 1.05;
+  color: #ffffff;
+}
+
+.errorDesc {
+  margin: 0 0 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.56);
+}
+
+/* ---------- hero ---------- */
+.heroSection {
   position: relative;
-  min-height: 260px;
-  display: flex;
-  align-items: flex-end;
-  padding: 2.5rem;
-  border: 1px solid #333;
-  margin-bottom: 3rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+  gap: 16px;
+  min-height: 280px;
+  padding: 18px;
+  background: #101010;
+  border: 1px solid rgba(255,255,255,0.12);
   overflow: hidden;
 }
 
-.headerBgWrapper {
+.heroSection::before {
+  content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  inset: 0 auto auto 0;
+  width: 240px;
+  height: 2px;
+  background: linear-gradient(90deg, #f4c320 0%, rgba(244,195,32,0.34) 60%, transparent 100%);
+  z-index: 2;
+}
+
+.heroBgWrapper {
+  position: absolute;
+  inset: 0;
   z-index: 0;
 }
 
-.headerBgImg {
+.heroBgImg {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 30%;
-  opacity: 0.4;
-  filter: grayscale(40%);
+  object-position: center 34%;
+  opacity: 0.24;
+  filter: grayscale(72%);
 }
 
-.headerOverlay {
+.heroBgOverlay {
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(0deg, rgba(10,10,10,1) 0%, rgba(10,10,10,0.3) 100%);
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(16,16,16,0.96) 0%, rgba(16,16,16,0.84) 36%, rgba(16,16,16,0.62) 100%);
 }
 
-.headerContent {
+.heroMain,
+.heroSummary {
   position: relative;
   z-index: 1;
 }
 
-.kicker {
-  color: var(--primary-yellow, #FFD700);
-  font-family: var(--font-mono, monospace);
-  font-size: 0.85rem;
-  letter-spacing: 0.1em;
-  margin-bottom: 0.5rem;
+.heroMain {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
 }
 
-.mapTitle {
-  font-size: 3.8rem;
+.heroKicker {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.heroKickerCn {
+  font-size: 11px;
   font-weight: 900;
-  margin: 0 0 1rem 0;
   line-height: 1;
-  text-transform: uppercase;
-  text-shadow: 0 4px 12px rgba(0,0,0,0.9);
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 0.08em;
 }
 
-.mapMeta {
+.heroKickerEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(255,255,255,0.28);
+  letter-spacing: 0.16em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 0.98;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  word-break: break-word;
+}
+
+.heroMeta {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.9rem;
-  color: #ccc;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .metaBadge {
-  background-color: #222;
-  border: 1px solid #444;
-  padding: 0.25rem 0.75rem;
-  color: #fff;
-  font-weight: 700;
-}
-
-.textYellow {
-  color: var(--primary-yellow, #FFD700);
-}
-
-/* 模块标题通用 */
-.sectionHeader {
-  display: flex;
-  align-items: flex-end;
-  gap: 1rem;
-  border-bottom: 1px solid #333;
-  padding-bottom: 0.75rem;
-  margin-bottom: 1.5rem;
-}
-
-.sectionHeader h2 {
-  font-size: 1.4rem;
-  font-weight: 800;
-  margin: 0;
-  border-left: 4px solid var(--primary-yellow, #FFD700);
-  padding-left: 0.75rem;
-  line-height: 1;
-}
-
-.subLabel {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.75rem;
-  color: #666;
+  min-height: 22px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #ffffff;
+  font-size: 8px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-/* 记录模块 (自适应变为 5 格) */
-.recordsSection {
-  margin-bottom: 4rem;
+.metaText {
+  font-size: 9px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.46);
+  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
 }
 
+.metaText strong {
+  color: #ffffff;
+}
+
+.heroDesc {
+  max-width: 720px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.56);
+}
+
+.heroDesc strong {
+  color: #ffffff;
+}
+
+.ruleStrip {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.ruleChip {
+  min-height: 20px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(244,195,32,0.08);
+  border: 1px solid rgba(244,195,32,0.18);
+  color: #f4c320;
+  font-size: 8px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.heroSummary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-self: stretch;
+}
+
+.summaryCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-height: 78px;
+  padding: 10px 12px;
+  min-width: 0;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.022) 0%, rgba(255,255,255,0.008) 100%),
+    rgba(20,20,20,0.94);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 2px solid rgba(255,255,255,0.16);
+}
+
+.summary_accent { border-left-color: #f4c320; }
+.summary_highlight { border-left-color: #ffffff; }
+
+.summaryLabel {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.summaryCn {
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255,255,255,0.78);
+}
+
+.summaryEn {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(255,255,255,0.24);
+  letter-spacing: 0.14em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.summaryValue {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.05;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  word-break: break-word;
+}
+
+.summaryMeta {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: rgba(255,255,255,0.28);
+  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+/* ---------- section ---------- */
+.recordsSection,
+.panelSection,
+.recentSection {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.016) 0%, rgba(255,255,255,0.004) 100%),
+    #101010;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.sectionHeaderMain {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.sectionKicker {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(255,255,255,0.26);
+  letter-spacing: 0.14em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.sectionMeta {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: rgba(255,255,255,0.26);
+  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  text-align: right;
+}
+
+/* ---------- records ---------- */
 .recordGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .recordCard {
-  background: #111;
-  border: 1px solid #222;
-  padding: 1.5rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  transition: border-color 0.2s;
+  gap: 8px;
+  min-height: 108px;
+  padding: 12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.006) 100%),
+    #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 2px solid rgba(255,255,255,0.12);
 }
 
-.recordCard:hover {
-  border-color: #444;
+.recordAccent {
+  border-left-color: #f4c320;
 }
 
 .recordLabel {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.75rem;
-  color: #888;
-  letter-spacing: 0.05em;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: rgba(255,255,255,0.28);
+  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
 }
 
 .recordValue {
-  font-size: 2.2rem;
+  font-size: 24px;
   font-weight: 900;
-  color: var(--primary-yellow, #FFD700);
   line-height: 1;
-  font-family: var(--font-mono, monospace);
+  color: #f4c320;
+  font-family: var(--font-mono);
 }
 
 .recordPlayer {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.45;
+  color: #ffffff;
+  word-break: break-word;
 }
 
 .dim {
-  color: #666;
-  font-weight: 400;
-  font-size: 0.8rem;
+  color: rgba(255,255,255,0.36);
+  font-size: 11px;
+  font-weight: 600;
 }
 
-/* 双列数据布局 */
+/* ---------- main grid ---------- */
 .mainGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  margin-bottom: 4rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .listContainer {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .listItem {
   display: flex;
   align-items: center;
-  background: #111;
-  border: 1px solid #222;
-  padding: 0.75rem 1rem;
-  transition: background 0.2s;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px 12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.006) 100%),
+    #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: background 0.18s ease, border-color 0.18s ease;
 }
 
 .listItem:hover {
-  background: #1a1a1a;
-  border-color: #333;
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.14);
 }
 
 .rankNum {
-  width: 30px;
-  font-family: var(--font-mono, monospace);
-  font-weight: 700;
-  color: #555;
-  font-size: 0.9rem;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.54);
+  font-size: 13px;
+  font-weight: 900;
+  font-family: var(--font-mono);
 }
 
-.heroInfo, .teamInfo {
+.itemInfo {
+  min-width: 0;
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
-.heroName, .teamName {
-  font-weight: 800;
-  font-size: 1rem;
+.itemTitle {
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   text-transform: uppercase;
 }
 
-.heroCount, .teamRecord {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.75rem;
-  color: #888;
-  margin-top: 0.1rem;
+.itemSub {
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: rgba(255,255,255,0.36);
+  font-family: var(--font-mono);
 }
 
 .barArea {
-  width: 140px;
+  width: 168px;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 10px;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .barWrap {
   flex: 1;
   height: 6px;
-  background: #222;
+  background: rgba(255,255,255,0.08);
   overflow: hidden;
 }
 
 .barFill {
   height: 100%;
-  background: #aaa;
 }
 
 .bgYellow {
-  background: var(--primary-yellow, #FFD700);
+  background: #f4c320;
 }
 
 .bgGray {
-  background: #555;
+  background: #6b7280;
 }
 
 .rateText {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.85rem;
-  font-weight: 700;
-  width: 45px;
+  width: 52px;
   text-align: right;
+  font-size: 12px;
+  font-weight: 900;
+  color: #ffffff;
+  font-family: var(--font-mono);
 }
 
-/* 新增：近期交战记录模块 */
+/* ---------- recent matches ---------- */
 .recentGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1rem;
+  gap: 10px;
 }
 
 .matchCard {
   display: flex;
   flex-direction: column;
-  background: #111;
-  border: 1px solid #222;
-  padding: 1.25rem;
+  gap: 12px;
+  min-height: 112px;
+  padding: 12px;
   text-decoration: none;
-  color: #fff;
-  transition: all 0.2s ease;
+  color: inherit;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.006) 100%),
+    #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
 .matchCard:hover {
-  border-color: var(--primary-yellow, #FFD700);
-  background: #151515;
+  border-color: rgba(244,195,32,0.42);
+  background: rgba(255,255,255,0.03);
   transform: translateY(-2px);
 }
 
@@ -306,75 +555,158 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px dashed #333;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .matchStage {
-  color: var(--primary-yellow, #FFD700);
-  font-size: 0.75rem;
-  font-weight: 800;
+  font-size: 8px;
+  font-weight: 900;
+  color: #f4c320;
+  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
 }
 
 .matchId {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.7rem;
-  color: #666;
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.24);
+  letter-spacing: 0.08em;
+  font-family: var(--font-mono);
 }
 
 .matchScoreboard {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
+  gap: 10px;
 }
 
 .teamTag {
-  flex: 1;
-  font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #ffffff;
   text-transform: uppercase;
+  word-break: break-word;
 }
 
 .teamTag:last-child {
   text-align: right;
 }
 
+.textYellow {
+  color: #f4c320;
+}
+
 .scoreBox {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-family: var(--font-mono, monospace);
-  font-size: 1.5rem;
-  font-weight: 900;
-  background: #1a1a1a;
-  padding: 0.25rem 0.75rem;
-  border-radius: 2px;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 12px;
+  background: #111111;
+  border: 1px solid rgba(255,255,255,0.08);
+  font-family: var(--font-mono);
 }
 
 .scoreDiv {
   color: #555;
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .scoreNum {
-  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  color: #ffffff;
 }
 
+/* ---------- responsive ---------- */
+@media (max-width: 1180px) {
+  .heroSection {
+    grid-template-columns: 1fr;
+  }
 
-/* 移动端降维适配 */
+  .heroSummary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .recordGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 980px) {
   .mainGrid {
-    grid-template-columns: 1fr; /* 两列数据变成上下排列 */
-    gap: 3rem;
+    grid-template-columns: 1fr;
   }
-  
-  .mapTitle {
-    font-size: 2.2rem;
+
+  .recordGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  
-  .mapMeta {
+
+  .barArea {
+    width: 150px;
+  }
+}
+
+@media (max-width: 900px) {
+  .heroSummary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sectionMeta {
+    text-align: left;
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    gap: 12px;
+  }
+
+  .heroSection,
+  .recordsSection,
+  .panelSection,
+  .recentSection {
+    padding: 14px;
+  }
+
+  .heroTitle {
+    font-size: 24px;
+  }
+
+  .heroSummary,
+  .recordGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .matchScoreboard {
+    grid-template-columns: 1fr;
+  }
+
+  .teamTag,
+  .teamTag:last-child {
+    text-align: left;
+  }
+
+  .scoreBox {
+    width: fit-content;
+  }
+
+  .listItem {
+    align-items: flex-start;
     flex-wrap: wrap;
-    gap: 0.75rem;
+  }
+
+  .barArea {
+    width: 100%;
   }
 }

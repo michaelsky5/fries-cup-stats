@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-03-30T16:10:41.825Z",
+  "updated_at": "2026-04-01T06:03:25.554Z",
   "meta": {
     "team_count": 30,
     "player_count": 188,
-    "match_count": 30,
+    "match_count": 45,
     "map_count": 90
   },
   "teams": [
@@ -51009,7 +51009,7 @@
       "round": "ROUND 1",
       "format": "BO3",
       "scheduled_at": "HISTORICAL DATA",
-      "updated_at": "2026-03-28T18:57:03.435Z",
+      "updated_at": "2026-04-01T06:03:21.044Z",
       "winner": "南望山瓜皮小队",
       "team_a": {
         "id": "FCA26-T019",
@@ -51029,10 +51029,10 @@
           "map_name": "Busan",
           "map_type": "Control",
           "match_time": "13:19",
-          "winner": "FCA26-T022",
+          "winner": "FCA26-T019",
           "winner_label": "南望山瓜皮小队",
-          "score_a": "1",
-          "score_b": "2",
+          "score_a": "2",
+          "score_b": "1",
           "team_a_name": "南望山瓜皮小队",
           "team_b_name": "可爱小鱿4277",
           "team_a_ban": "",
@@ -65996,6 +65996,456 @@
           ]
         }
       ]
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M01",
+      "raw_match_id": "FCA26-SWISS-R3-M01-T5EN",
+      "match_display_name": "ROUND 03 / CR VS FG",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T003",
+        "name": "Crazy Rabbit",
+        "short": "CR",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T010",
+        "name": "家和万事兴",
+        "short": "FG",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M02",
+      "raw_match_id": "FCA26-SWISS-R3-M02-HNL2",
+      "match_display_name": "ROUND 03 / NGP VS CUG",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T002",
+        "name": "Never Get Point",
+        "short": "NGP",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T019",
+        "name": "南望山瓜皮小队",
+        "short": "CUG",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M03",
+      "raw_match_id": "FCA26-SWISS-R3-M03-J7HX",
+      "match_display_name": "ROUND 03 / SPS VS TNS",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T020",
+        "name": "Sapphire Star",
+        "short": "SPS",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T007",
+        "name": "Team New Star",
+        "short": "TNS",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M04",
+      "raw_match_id": "FCA26-SWISS-R3-M04-Q5QR",
+      "match_display_name": "ROUND 03 / ASP VS FZ",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T009",
+        "name": "Astropollo",
+        "short": "ASP",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T017",
+        "name": "Five Zones",
+        "short": "FZ",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M05",
+      "raw_match_id": "FCA26-SWISS-R3-M05-6ELC",
+      "match_display_name": "ROUND 03 / OL VS SK",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T005",
+        "name": "NJFU Out laws",
+        "short": "OL",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T012",
+        "name": "snack",
+        "short": "SK",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M06",
+      "raw_match_id": "FCA26-SWISS-R3-M06-E9QE",
+      "match_display_name": "ROUND 03 / XCFN.G VS FFA",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T015",
+        "name": "XCFN.Green",
+        "short": "XCFN.G",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T001",
+        "name": "French Fries. Academy",
+        "short": "FFA",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M07",
+      "raw_match_id": "FCA26-SWISS-R3-M07-9V8H",
+      "match_display_name": "ROUND 03 / ZS VS 5GGS",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T006",
+        "name": "ZWU Spark",
+        "short": "ZS",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T008",
+        "name": "Five Eggs",
+        "short": "5GGS",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M08",
+      "raw_match_id": "FCA26-SWISS-R3-M08-OFOA",
+      "match_display_name": "ROUND 03 / SPC VS V50",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T011",
+        "name": "Spark Crew",
+        "short": "SPC",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T030",
+        "name": "V我50鸡翅分你一队",
+        "short": "V50",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M09",
+      "raw_match_id": "FCA26-SWISS-R3-M09-NFDI",
+      "match_display_name": "ROUND 03 / SD VS LSJ",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T004",
+        "name": "SENSEIDEATH",
+        "short": "SD",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T018",
+        "name": "LSJ-Gaming 沈阳老四季",
+        "short": "LSJ",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M10",
+      "raw_match_id": "FCA26-SWISS-R3-M10-77EQ",
+      "match_display_name": "ROUND 03 / YOU VS NBA",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T022",
+        "name": "可爱小鱿4277",
+        "short": "YOU",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T025",
+        "name": "NingBoU Again",
+        "short": "NBA",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M11",
+      "raw_match_id": "FCA26-SWISS-R3-M11-F70R",
+      "match_display_name": "ROUND 03 / TF VS BLG",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T013",
+        "name": "Thanks Faker",
+        "short": "TF",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T026",
+        "name": "不烂的gaming",
+        "short": "BLG",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M12",
+      "raw_match_id": "FCA26-SWISS-R3-M12-SD6Y",
+      "match_display_name": "ROUND 03 / HYW VS JDG",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T029",
+        "name": "何意味3",
+        "short": "HYW",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T023",
+        "name": "Jetpack dog gaming",
+        "short": "JDG",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M13",
+      "raw_match_id": "FCA26-SWISS-R3-M13-ICFD",
+      "match_display_name": "ROUND 03 / YM VS TS",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T028",
+        "name": "Yes Mercy",
+        "short": "YM",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T024",
+        "name": "宝藏船队",
+        "short": "TS",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M14",
+      "raw_match_id": "FCA26-SWISS-R3-M14-DY80",
+      "match_display_name": "ROUND 03 / AST VS WBG",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T016",
+        "name": "AstroTemis",
+        "short": "AST",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T021",
+        "name": "WO BI GAO",
+        "short": "WBG",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R3-M15",
+      "raw_match_id": "FCA26-SWISS-R3-M15-FJ8U",
+      "match_display_name": "ROUND 03 / CUIT VS TCK",
+      "status": "PENDING",
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 3",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-03-31T07:32:02.766Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T027",
+        "name": "成信大撕咬者",
+        "short": "CUIT",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T014",
+        "name": "Team Chicken",
+        "short": "TCK",
+        "score": ""
+      },
+      "maps": []
     }
   ],
   "player_totals": [

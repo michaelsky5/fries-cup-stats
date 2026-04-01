@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
-import { safeArr, getSwissStandings } from '../../lib/selectors.js' // ✨ 引入真实的瑞士轮引擎
+import { safeArr, getSwissStandings } from '../../lib/selectors.js'
 import styles from './HomePage.module.css'
 
 function formatNum(value, digits = 2) {
@@ -24,6 +24,87 @@ function EmptyCard({ text = '数据演算中...' }) {
   return <div className={styles.emptyState}>{text}</div>
 }
 
+function normalizeRole(role) {
+  const r = String(role || '').toUpperCase().trim()
+  if (r === 'SUPPORT' || r === 'HEALER' || r === '辅助') return 'SUP'
+  if (r === 'DAMAGE' || r === '输出' || r === 'DPS') return 'DPS'
+  if (r === 'TANK' || r === '重装') return 'TANK'
+  return r || 'FLEX'
+}
+
+function getTankScore(player) {
+  return Number(player?.avg_block || 0)
+}
+
+function getElimDpsScore(player) {
+  return Number(player?.avg_elim || 0)
+}
+
+function getDamageDpsScore(player) {
+  return Number(player?.avg_dmg || 0)
+}
+
+function getAssistSupportScore(player) {
+  return Number(player?.avg_ast || 0)
+}
+
+function getHealSupportScore(player) {
+  return Number(player?.avg_heal || 0)
+}
+
+function getLineupMetric(player, subrole) {
+  if (!player) return { label: '-', value: '-' }
+
+  if (subrole === 'TANK') return { label: '阻挡 /10', value: formatNum(player.avg_block) }
+  if (subrole === 'ELIM_DPS') return { label: '击杀 /10', value: formatNum(player.avg_elim) }
+  if (subrole === 'DMG_DPS') return { label: '伤害 /10', value: formatNum(player.avg_dmg) }
+  if (subrole === 'AST_SUP') return { label: '助攻 /10', value: formatNum(player.avg_ast) }
+  if (subrole === 'HEAL_SUP') return { label: '治疗 /10', value: formatNum(player.avg_heal) }
+
+  return { label: '-', value: '-' }
+}
+
+function LineupSlot({ cn, en, roleTheme, player, subrole }) {
+  if (!player) {
+    return (
+      <div className={styles.lineupSlot}>
+        <div className={styles.lineupSlotTop}>
+          <span className={styles.lineupSlotTag}>{cn}</span>
+          <span className={`${styles.lineupRoleTag} ${styles[`role${roleTheme}`]}`}>{roleTheme}</span>
+        </div>
+        <div className={styles.lineupSlotSubEn}>{en}</div>
+        <div className={styles.lineupEmpty}>暂无人选</div>
+      </div>
+    )
+  }
+
+  const metric = getLineupMetric(player, subrole)
+
+  return (
+    <Link to={`/players/${player.player_id}`} className={styles.lineupSlot}>
+      <div className={styles.lineupSlotTop}>
+        <span className={styles.lineupSlotTag}>{cn}</span>
+        <span className={`${styles.lineupRoleTag} ${styles[`role${roleTheme}`]}`}>{roleTheme}</span>
+      </div>
+
+      <div className={styles.lineupSlotSubEn}>{en}</div>
+
+      <div className={styles.lineupPlayerName}>
+        {player.display_name || player.player_name || '-'}
+      </div>
+
+      <div className={styles.lineupPlayerTeam}>
+        {player.team_short_name || player.team_name || 'FREE AGENT'}
+      </div>
+
+      <div className={styles.lineupMetric}>
+        <span className={styles.lineupMetricLabel}>{metric.label}</span>
+        <span className={styles.lineupMetricValue}>{metric.value}</span>
+      </div>
+    </Link>
+  )
+}
+
 export default function HomePage() {
   const { db } = useOutletContext()
 
@@ -39,9 +120,41 @@ export default function HomePage() {
     return players.sort((a, b) => (Number(b.avg_elim) || 0) - (Number(a.avg_elim) || 0))[0]
   }, [db])
 
-  // ✨ 核心优化：直接调用我们写好的终极瑞士轮引擎，取前 3 名
   const topTeams = useMemo(() => {
     return getSwissStandings(db).slice(0, 3)
+  }, [db])
+
+  const bestLineup = useMemo(() => {
+    const pool = safeArr(db?.player_totals)
+      .filter(player => Number(player.raw_time_mins || 0) >= 20)
+      .map(player => ({ ...player, roleNorm: normalizeRole(player.role) }))
+
+    const tanks = pool.filter(player => player.roleNorm === 'TANK')
+    const dpsPlayers = pool.filter(player => player.roleNorm === 'DPS')
+    const supPlayers = pool.filter(player => player.roleNorm === 'SUP')
+
+    const pickTop = (players, scoreFn, excludedIds = new Set()) =>
+      players
+        .filter(player => !excludedIds.has(String(player.player_id)))
+        .sort((a, b) => scoreFn(b) - scoreFn(a))[0] || null
+
+    const tank = pickTop(tanks, getTankScore)
+
+    const elimDps = pickTop(dpsPlayers, getElimDpsScore)
+    const usedDps = new Set(elimDps ? [String(elimDps.player_id)] : [])
+    const damageDps = pickTop(dpsPlayers, getDamageDpsScore, usedDps)
+
+    const assistSup = pickTop(supPlayers, getAssistSupportScore)
+    const usedSup = new Set(assistSup ? [String(assistSup.player_id)] : [])
+    const healSup = pickTop(supPlayers, getHealSupportScore, usedSup)
+
+    return {
+      tank,
+      elimDps,
+      damageDps,
+      assistSup,
+      healSup
+    }
   }, [db])
 
   const summary = useMemo(() => {
@@ -182,7 +295,6 @@ export default function HomePage() {
               <span className={styles.cardKickerCn}>瑞士轮积分榜</span>
               <span className={styles.cardKickerEn}>SWISS TOP TEAMS</span>
             </div>
-            {/* ✨ 指向新的 standings 页面 */}
             <Link to="/standings" className={styles.cardLink}>完整榜单</Link>
           </div>
 
@@ -191,13 +303,12 @@ export default function HomePage() {
               <Link key={team.team_id || idx} to={`/teams/${team.team_id}`} className={styles.teamRow}>
                 <div className={styles.teamRank}>0{team.rank}</div>
                 <div className={styles.teamName}>{team.team_short_name || team.team_name}</div>
-                
-                {/* ✨ 新增真实战绩展示 */}
+
                 <div className={styles.teamRecord}>
                   <span className={styles.textWin}>{team.match_wins}W</span>
                   <span className={styles.textLoss}>{team.match_losses}L</span>
                 </div>
-                
+
                 <div className={styles.teamDiff}>
                   {team.map_diff > 0 ? `+${team.map_diff}` : team.map_diff}
                   <span className={styles.teamDiffEn}>DIFF</span>
@@ -206,6 +317,24 @@ export default function HomePage() {
             )) : (
               <EmptyCard text="赛事尚未产出积分" />
             )}
+          </div>
+        </div>
+
+        <div className={`${styles.featureCard} ${styles.lineupCard}`}>
+          <div className={styles.cardHead}>
+            <div className={styles.cardKicker}>
+              <span className={styles.cardKickerCn}>数据最佳阵容</span>
+              <span className={styles.cardKickerEn}>BEST LINEUP BY METRICS</span>
+            </div>
+            <Link to="/leaderboard" className={styles.cardLink}>查看完整排行</Link>
+          </div>
+
+          <div className={styles.lineupGrid}>
+            <LineupSlot cn="坦克" en="TANK" roleTheme="TANK" player={bestLineup.tank} subrole="TANK" />
+            <LineupSlot cn="输出（击杀）" en="DPS · ELIM" roleTheme="DPS" player={bestLineup.elimDps} subrole="ELIM_DPS" />
+            <LineupSlot cn="输出（伤害）" en="DPS · DAMAGE" roleTheme="DPS" player={bestLineup.damageDps} subrole="DMG_DPS" />
+            <LineupSlot cn="辅助（助攻）" en="SUPPORT · ASSIST" roleTheme="SUP" player={bestLineup.assistSup} subrole="AST_SUP" />
+            <LineupSlot cn="辅助（治疗）" en="SUPPORT · HEAL" roleTheme="SUP" player={bestLineup.healSup} subrole="HEAL_SUP" />
           </div>
         </div>
       </section>

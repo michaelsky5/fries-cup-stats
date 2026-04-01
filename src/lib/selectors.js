@@ -289,83 +289,196 @@ export function getMapDetail(db, mapName) {
   }
 }
 
-// ✨ 新增/替换：获取瑞士轮战队积分榜 (终极防弹版)
+// ✨ 新增/替换：获取瑞士轮战队积分榜 (规则书对齐版)
 export function getSwissStandings(db) {
-  const standings = {}
+  const teams = safeArr(db?.teams)
+  const matches = safeArr(db?.matches)
 
-  // 1. 初始化所有战队的数据桶
-  safeArr(db?.teams).forEach(team => {
-    standings[team.team_id] = {
-      team_id: team.team_id,
-      team_name: team.team_name,
-      team_short_name: team.team_short_name || team.team_name,
-      matches_played: 0,
-      match_wins: 0,
-      match_losses: 0,
-      map_wins: 0,
-      map_losses: 0,
-      map_diff: 0
+  const standings = new Map()
+
+  const ensureTeam = (teamId, shortName = '', fullName = '') => {
+    const key = String(teamId || '')
+    if (!key) return null
+
+    if (!standings.has(key)) {
+      standings.set(key, {
+        team_id: key,
+        team_name: fullName || shortName || key,
+        team_short_name: shortName || fullName || key,
+        matches_played: 0,
+        match_wins: 0,
+        match_losses: 0,
+        map_wins: 0,
+        map_losses: 0,
+        map_diff: 0,
+        buchholz: 0,
+        opponent_win_rate: 0,
+        opponents: [],
+        h2hWins: {} // 记录对每个对手的直接交手胜场
+      })
     }
+
+    const row = standings.get(key)
+    if (fullName && (!row.team_name || row.team_name === key)) row.team_name = fullName
+    if (shortName && (!row.team_short_name || row.team_short_name === key)) row.team_short_name = shortName
+    return row
+  }
+
+  // 先把所有队伍放进去，保证未开赛也能显示
+  teams.forEach(team => {
+    ensureTeam(team.team_id, team.team_short_name, team.team_name)
   })
 
-  // 2. 筛选出所有瑞士轮的比赛 (支持兼容老旧数据的 ID 匹配)
-  const swissMatches = safeArr(db?.matches).filter(m => 
-    (m.stage === 'SWISS' || m.stage === 'swiss' || m.match_id?.includes('SWISS')) && 
-    (m.status === 'COMPLETE' || m.status === 'COMPLETED')
-  )
+  const swissMatches = matches.filter(match => {
+    const stageText = String(match?.stage || '').toLowerCase()
+    const roundText = String(match?.round || '').toLowerCase()
+    const idText = String(match?.match_id || '').toLowerCase()
+    const status = String(match?.status || '').toUpperCase()
 
-  // 3. 遍历比赛，累加战绩
+    const isSwiss =
+      stageText.includes('swiss') ||
+      stageText.includes('瑞士') ||
+      roundText.includes('swiss') ||
+      roundText.includes('瑞士') ||
+      idText.includes('swiss')
+
+    const isCompleted = status === 'COMPLETE' || status === 'COMPLETED'
+
+    return isSwiss && isCompleted
+  })
+
   swissMatches.forEach(match => {
-    const teamA = match.team_a?.id
-    const teamB = match.team_b?.id
-    
-    if (!teamA || !teamB || !standings[teamA] || !standings[teamB]) return
+    const teamAId = String(match?.team_a?.id || '')
+    const teamBId = String(match?.team_b?.id || '')
+    if (!teamAId || !teamBId) return
 
-    standings[teamA].matches_played += 1
-    standings[teamB].matches_played += 1
+    const rowA = ensureTeam(teamAId, match?.team_a?.short, match?.team_a?.name)
+    const rowB = ensureTeam(teamBId, match?.team_b?.short, match?.team_b?.name)
+    if (!rowA || !rowB) return
 
-    // 🌟 防弹逻辑：自己遍历地图算小分，不依赖外层可能漏填的 score 字段
-    let realMapWinsA = 0
-    let realMapWinsB = 0
+    rowA.matches_played += 1
+    rowB.matches_played += 1
 
-    safeArr(match.maps).forEach(mapObj => {
-      // 通过分数严格判断谁赢了这张图
-      const sA = Number(mapObj.score_a || 0)
-      const sB = Number(mapObj.score_b || 0)
-      
-      if (sA > sB || mapObj.winner === teamA) realMapWinsA++
-      else if (sB > sA || mapObj.winner === teamB) realMapWinsB++
+    let mapWinsA = 0
+    let mapWinsB = 0
+
+    safeArr(match?.maps).forEach(mapObj => {
+      const scoreA = Number(mapObj?.score_a || 0)
+      const scoreB = Number(mapObj?.score_b || 0)
+      const winner = String(mapObj?.winner || '')
+
+      if (winner && winner === teamAId) mapWinsA += 1
+      else if (winner && winner === teamBId) mapWinsB += 1
+      else if (scoreA > scoreB) mapWinsA += 1
+      else if (scoreB > scoreA) mapWinsB += 1
     })
 
-    // 累加真实小局比分
-    standings[teamA].map_wins += realMapWinsA
-    standings[teamA].map_losses += realMapWinsB
-    standings[teamB].map_wins += realMapWinsB
-    standings[teamB].map_losses += realMapWinsA
-
-    // 🌟 防弹逻辑：自己判断大场胜负，只要 A 赢的小局比 B 多，A 就是大场胜者
-    if (realMapWinsA > realMapWinsB) {
-      standings[teamA].match_wins += 1
-      standings[teamB].match_losses += 1
-    } else if (realMapWinsB > realMapWinsA) {
-      standings[teamB].match_wins += 1
-      standings[teamA].match_losses += 1
+    // 如果 maps 为空，兜底使用外层比分
+    if (mapWinsA === 0 && mapWinsB === 0) {
+      const outerA = Number(match?.team_a?.score || 0)
+      const outerB = Number(match?.team_b?.score || 0)
+      mapWinsA = outerA
+      mapWinsB = outerB
     }
+
+    rowA.map_wins += mapWinsA
+    rowA.map_losses += mapWinsB
+    rowB.map_wins += mapWinsB
+    rowB.map_losses += mapWinsA
+
+    if (mapWinsA > mapWinsB) {
+      rowA.match_wins += 1
+      rowB.match_losses += 1
+      rowA.h2hWins[teamBId] = (rowA.h2hWins[teamBId] || 0) + 1
+    } else if (mapWinsB > mapWinsA) {
+      rowB.match_wins += 1
+      rowA.match_losses += 1
+      rowB.h2hWins[teamAId] = (rowB.h2hWins[teamAId] || 0) + 1
+    }
+
+    rowA.opponents.push(teamBId)
+    rowB.opponents.push(teamAId)
   })
 
-  // 4. 计算净胜局，并进行严谨的瑞士轮排序
-  const result = Object.values(standings).map(t => {
-    t.map_diff = t.map_wins - t.map_losses
-    return t
+  const rows = [...standings.values()]
+
+  rows.forEach(row => {
+    row.map_diff = row.map_wins - row.map_losses
   })
 
-  result.sort((a, b) => {
-    if (a.match_wins !== b.match_wins) return b.match_wins - a.match_wins // 大分
-    if (a.match_losses !== b.match_losses) return a.match_losses - b.match_losses // 负场少优先
-    if (a.map_diff !== b.map_diff) return b.map_diff - a.map_diff // 净胜局
-    if (a.map_wins !== b.map_wins) return b.map_wins - a.map_wins // 胜局数
-    return a.team_name.localeCompare(b.team_name)
+  const rowMap = new Map(rows.map(row => [row.team_id, row]))
+
+  // Buchholz = 对手总胜场
+  rows.forEach(row => {
+    row.buchholz = row.opponents.reduce((sum, oppId) => {
+      const opp = rowMap.get(String(oppId))
+      return sum + Number(opp?.match_wins || 0)
+    }, 0)
   })
 
-  return result.map((t, index) => ({ ...t, rank: index + 1 }))
+  // 对手胜率 = 对手各自胜率平均
+  rows.forEach(row => {
+    const opponentRows = row.opponents.map(oppId => rowMap.get(String(oppId))).filter(Boolean)
+
+    if (!opponentRows.length) {
+      row.opponent_win_rate = 0
+      return
+    }
+
+    const totalRate = opponentRows.reduce((sum, opp) => {
+      const played = Number(opp.match_wins || 0) + Number(opp.match_losses || 0)
+      if (played <= 0) return sum
+      return sum + Number(opp.match_wins || 0) / played
+    }, 0)
+
+    row.opponent_win_rate = totalRate / opponentRows.length
+  })
+
+  // 先按战绩分组
+  const grouped = new Map()
+  rows.forEach(row => {
+    const key = `${row.match_wins}-${row.match_losses}`
+    if (!grouped.has(key)) grouped.set(key, [])
+    grouped.get(key).push(row)
+  })
+
+  const sortedKeys = [...grouped.keys()].sort((a, b) => {
+    const [aw, al] = a.split('-').map(Number)
+    const [bw, bl] = b.split('-').map(Number)
+
+    if (bw !== aw) return bw - aw
+    if (al !== bl) return al - bl
+    return 0
+  })
+
+  const finalRows = []
+
+  sortedKeys.forEach(key => {
+    const group = [...grouped.get(key)]
+
+    group.sort((a, b) => {
+      // 1) Buchholz
+      if (b.buchholz !== a.buchholz) return b.buchholz - a.buchholz
+
+      // 2) 胜负关系（仅两队同分且直接交手时）
+      if (group.length === 2) {
+        const aBeatB = Number(a.h2hWins[b.team_id] || 0)
+        const bBeatA = Number(b.h2hWins[a.team_id] || 0)
+        if (aBeatB !== bBeatA) return bBeatA - aBeatB
+      }
+
+      // 3) 对手胜率
+      if (b.opponent_win_rate !== a.opponent_win_rate) return b.opponent_win_rate - a.opponent_win_rate
+
+      // 非正式兜底：只为保持稳定顺序，不属于规则书
+      return String(a.team_short_name || a.team_name).localeCompare(String(b.team_short_name || b.team_name))
+    })
+
+    finalRows.push(...group)
+  })
+
+  return finalRows.map((row, index) => ({
+    ...row,
+    rank: index + 1
+  }))
 }

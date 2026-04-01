@@ -112,7 +112,7 @@ export default function DataLayout() {
               className={({ isActive }) => `${styles.link} ${isActive || isMaps ? styles.linkActive : ''}`}
             >
               <span className={styles.navMarker} />
-              地图数据(未优化)
+              地图数据
             </NavLink>
 
             <NavLink
@@ -120,7 +120,7 @@ export default function DataLayout() {
               className={({ isActive }) => `${styles.link} ${isActive ? styles.linkActive : ''}`}
             >
               <span className={styles.navMarker} />
-              战队排名(未优化)
+              战队排名
             </NavLink>
 
             {/* ✨ 新增：电竞经理入口 */}

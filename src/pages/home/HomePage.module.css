@@ -286,7 +286,8 @@
   min-height: 260px;
 }
 
-.teamsCard {
+.teamsCard,
+.lineupCard {
   grid-column: 1 / -1;
 }
 
@@ -479,7 +480,7 @@
   letter-spacing: 0.14em;
 }
 
-/* ---------- teams (✨ 升级为真实的战绩展示) ---------- */
+/* ---------- teams ---------- */
 .teamsList {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -529,7 +530,6 @@
   text-transform: uppercase;
 }
 
-/* 新增：胜负战绩样式 */
 .teamRecord {
   display: flex;
   gap: 6px;
@@ -541,7 +541,6 @@
 .textWin { color: #58d68d; }
 .textLoss { color: #ec7063; }
 
-/* 新增：净胜局样式 */
 .teamDiff {
   display: flex;
   align-items: baseline;
@@ -561,6 +560,154 @@
   letter-spacing: 0.1em;
 }
 
+/* ---------- lineup ---------- */
+.lineupCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 96px;
+  height: 2px;
+  background: #f4c320;
+}
+
+.lineupGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.lineupSlot {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 176px;
+  padding: 14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.006) 100%),
+    #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+  text-decoration: none;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.lineupSlot:hover {
+  border-color: rgba(255,255,255,0.18);
+  background:
+    linear-gradient(180deg, rgba(244,195,32,0.04) 0%, rgba(255,255,255,0.006) 100%),
+    #141414;
+  transform: translateY(-1px);
+}
+
+.lineupSlotTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.lineupSlotTag {
+  min-height: 18px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.72);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.lineupRoleTag {
+  min-height: 20px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 9px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.72);
+  text-transform: uppercase;
+}
+
+.roleTANK {
+  color: #72b2ff;
+  border-color: rgba(96,165,250,0.42);
+  background: rgba(96,165,250,0.09);
+}
+
+.roleDPS {
+  color: #ff5a5d;
+  border-color: rgba(255,77,79,0.42);
+  background: rgba(255,77,79,0.09);
+}
+
+.roleSUP {
+  color: #57dc8b;
+  border-color: rgba(74,222,128,0.42);
+  background: rgba(74,222,128,0.09);
+}
+
+.lineupSlotSubEn {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.26);
+  font-family: var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.lineupPlayerName {
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.08;
+  color: #ffffff;
+  word-break: break-word;
+}
+
+.lineupPlayerTeam {
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.2;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+}
+
+.lineupMetric {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.lineupMetricLabel {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.26);
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lineupMetricValue {
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+  color: #f4c320;
+  font-family: var(--font-mono);
+}
+
+.lineupEmpty {
+  margin-top: auto;
+  font-size: 11px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.32);
+}
 
 /* ---------- empty ---------- */
 .emptyState {
@@ -584,6 +731,10 @@
   .heroSummary {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
+
+  .lineupGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 900px) {
@@ -591,7 +742,8 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .teamsList {
+  .teamsList,
+  .lineupGrid {
     grid-template-columns: 1fr;
   }
 
@@ -643,5 +795,9 @@
 
   .teamRecord {
     font-size: 14px;
+  }
+
+  .lineupPlayerName {
+    font-size: 16px;
   }
 }
