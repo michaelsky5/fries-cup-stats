@@ -122,7 +122,6 @@ export default function ShopPage() {
     return rawPool.map(raw => {
       const baseCard = allCards.find(c => c.player_id === raw.player_id)
       
-      // 👇 核心修复：如果是 SSR 传奇卡（自带所有属性，无基础数据库映射），直接返回！
       if (!baseCard) {
         if (raw.player_id && String(raw.player_id).startsWith('L-')) return raw;
         return null;
@@ -145,12 +144,23 @@ export default function ShopPage() {
   const handleDraft = player => {
     const result = hirePlayer(runState, player)
     if (!result.success) return alert(result.msg)
-    setRunState({ ...result.state })
+    
+    // 👇 完美修复：强制深拷贝，唤醒 React 重新渲染
+    setRunState({
+      ...result.state,
+      roster: [...result.state.roster],
+      shopPool: [...(result.state.shopPool || [])]
+    })
   }
 
   const handleDrop = playerId => {
     const newState = firePlayer(runState, playerId)
-    setRunState({ ...newState })
+    
+    // 👇 完美修复：同上，强制深拷贝更新视图
+    setRunState({
+      ...newState,
+      roster: [...newState.roster]
+    })
   }
 
   const handleUpgrade = player => {
@@ -268,14 +278,13 @@ export default function ShopPage() {
               title="当前首发阵容"
               desc="严格遵守 1 坦克、2 输出、2 辅助的联赛规章。观察选手特质的化学反应，构建战术闭环。"
               right={
-                // 👇 核心修复：补回了快捷进入“荣誉殿堂”的入口！
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <button
                     onClick={() => navigate('/career')}
                     className={styles.btnReset}
                     style={{ borderColor: '#facc15', color: '#facc15' }}
                   >
-                    History
+                    🏆 荣誉殿堂
                   </button>
                   <button
                     onClick={() => {
@@ -462,7 +471,7 @@ export default function ShopPage() {
                   <div className={styles.marketMetaBar}>
                     <span className={styles.marketMetaChip}>POOL {filteredCards.length}/6</span>
                     <button onClick={handleRefresh} className={styles.btnRefreshSmall}>
-                      REFRESH (${hasBlackCard ? 16 : 10}K)
+                      🔄 REFRESH (${hasBlackCard ? 16 : 10}K)
                     </button>
                   </div>
                 )}
