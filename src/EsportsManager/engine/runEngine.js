@@ -26,7 +26,6 @@ export const RELICS_POOL = [
   { id: 'DRAGONS_MIRACLE', name: '上海龙的破釜沉舟', icon: '🐉', desc: '从 0-40 到总冠军！当你的战队 HP 只剩 1 滴血时，全队 OVR 永久 +15，并免疫一切掉分负面事件！' },
   { id: 'CHENGDU_ZONE', name: '欢迎来到成都区', icon: '🐼', desc: '只要你不选【地推阵地】战术，全队获得“快乐电竞”Buff，敌方的战术克制对你完全无效！' },
   { id: 'PURPLE_MATRIX', name: '紫色巴蒂的矩阵', icon: '🪟', desc: '哈瓦那的奇迹！处于劣势时，我方辅助治疗和伤害翻倍，且极大概率触发锁血！' },
-  // 👇 补回丢失的神器
   { id: 'PINE_WATERCUP', name: 'Big Boss的保温杯', icon: '🍵', desc: '深藏功与名。每次打赢一场比赛，所有带有【大心脏】和【玻璃大炮】特质的输出选手，永久额外 +3 OVR。' }
 ];
 
@@ -189,7 +188,6 @@ export function getRandomShopPool(db, currentRosterIds, relics = []) {
   // 盲盒变异判定
   if (relics.some(r => r.id === 'GAMBLER_DICE')) {
     shop = shop.map(p => {
-      // 保护机制：如果是自带的 SSR 传奇卡，绝对不被盲盒变异成垃圾
       if (p.player_id.startsWith('L-')) return p; 
 
       const roll = Math.random();
@@ -213,7 +211,7 @@ export function refreshShop(runState, db) {
   if (hasVipPass) cost = 5; 
 
   if (runState.money < cost) {
-    return { success: false, msg: "资金不足，刷不起牌了！" };
+    return { success: false, msg: "俱乐部资金不足，无法刷新大名单！" };
   }
 
   runState.money -= cost;
@@ -227,19 +225,27 @@ export function hirePlayer(runState, player) {
   const finalPrice = player.price === 0 ? 0 : (hasBlackCard ? Math.floor(player.price * 0.8) : player.price);
 
   if (runState.money < finalPrice) {
-    return { success: false, msg: `战队资金不足，无法签约！(需要 $${finalPrice}K)` };
+    return { success: false, msg: `俱乐部预算不足！(实付需要 $${finalPrice}K)` };
   }
   if (runState.roster.length >= 5) {
-    return { success: false, msg: "首发大名单已满，请先解雇选手！" };
+    return { success: false, msg: "首发名单已满，请先解雇多余选手！" };
   }
 
   const roleCount = runState.roster.filter(p => p.role === player.role).length;
-  if (player.role === 'TANK' && roleCount >= 1) return { success: false, msg: "阵容中只能有 1 名坦克！" };
-  if (player.role === 'DPS' && roleCount >= 2) return { success: false, msg: "最多只能上阵 2 名输出！" };
-  if (player.role === 'SUP' && roleCount >= 2) return { success: false, msg: "最多只能上阵 2 名辅助！" };
+  if (player.role === 'TANK' && roleCount >= 1) return { success: false, msg: "战术限制：只能配置 1 名坦克选手！" };
+  if (player.role === 'DPS' && roleCount >= 2) return { success: false, msg: "战术限制：最多配置 2 名输出选手！" };
+  if (player.role === 'SUP' && roleCount >= 2) return { success: false, msg: "战术限制：最多配置 2 名辅助选手！" };
 
   runState.money -= finalPrice;
-  runState.roster.push(player);
+  
+  // 注入新援标签，防误触可全额退款
+  const newHire = { 
+    ...player, 
+    actualPaidPrice: finalPrice, 
+    isNewThisNode: true 
+  };
+  
+  runState.roster.push(newHire);
   
   if (runState.shopPool) {
     runState.shopPool = runState.shopPool.filter(p => p.player_id !== player.player_id);
@@ -253,8 +259,26 @@ export function firePlayer(runState, playerId) {
   const playerIndex = runState.roster.findIndex(p => p.player_id === playerId);
   if (playerIndex > -1) {
     const player = runState.roster[playerIndex];
-    const refund = Math.floor(player.price * 0.8);
+    
+    // 如果是本轮新买的，且没点过特训，直接 100% 实付退款
+    const isRefundable = player.isNewThisNode && (player.upgradeLevel || 0) === 0;
+    const refundRatio = isRefundable ? 1.0 : 0.8;
+    
+    const basePrice = player.actualPaidPrice !== undefined ? player.actualPaidPrice : player.price;
+    const refund = Math.floor(basePrice * refundRatio);
+    
     runState.money += refund; 
+    
+    // 👇 核心修复：将卖出的选手无缝退回到自由市场列表
+    if (!runState.shopPool) runState.shopPool = [];
+    
+    const returnedPlayer = { ...player };
+    // 撕掉新援和实付标签，让他恢复成纯净的卡池状态
+    delete returnedPlayer.isNewThisNode;
+    delete returnedPlayer.actualPaidPrice;
+    
+    runState.shopPool.push(returnedPlayer);
+
     runState.roster.splice(playerIndex, 1);
     saveRun(runState);
   }
@@ -309,7 +333,6 @@ export function generateMatchOptions(db, currentNode, currentRelics = []) {
 }
 
 export function processBattleResult(runState, isWin, selectedMatch, db) {
-  // 👇 关键修复：加入 runState.relics，激活“Big Boss 的保温杯”等局外遗物滚雪球机制！
   runState.roster = applyPostMatchTraits(runState.roster, isWin, runState.relics);
 
   let moneyEarned = selectedMatch.rewardMoney;
@@ -349,6 +372,9 @@ export function processBattleResult(runState, isWin, selectedMatch, db) {
     }
     runState.money += (80 + runState.currentNode * 20); 
   }
+
+  // 👇 关键：打完一局比赛回来，全员撕掉“新援”标签，下次卖出统统只能 8折
+  runState.roster.forEach(p => { p.isNewThisNode = false; });
 
   if (db) {
     runState.shopPool = getRandomShopPool(db, runState.roster.map(p => p.player_id), runState.relics);
@@ -491,7 +517,6 @@ export function recordCareerRun(runState, resultText, finalPower) {
     try { stats = { ...stats, ...JSON.parse(saved) }; } catch (e) {}
   }
 
-  // 累计数据更新
   stats.totalRuns += 1;
   const isWin = String(resultText).toUpperCase().includes('WIN') || resultText.includes('胜') || resultText.includes('冠');
   if (isWin) stats.wins += 1;
@@ -499,7 +524,6 @@ export function recordCareerRun(runState, resultText, finalPower) {
 
   if (finalPower > stats.maxOvr) stats.maxOvr = finalPower;
 
-  // 封装当次记录
   const record = {
     node: runState.currentNode,
     finalPower: finalPower,
@@ -508,9 +532,7 @@ export function recordCareerRun(runState, resultText, finalPower) {
     result: resultText
   };
 
-  // 插入荣誉墙头部，最多保留最近的 10 次记录
   stats.hallOfFame = [record, ...stats.hallOfFame].slice(0, 10);
   
-  // 写入本地存储
   localStorage.setItem('fca_manager_career_v2', JSON.stringify(stats));
 }

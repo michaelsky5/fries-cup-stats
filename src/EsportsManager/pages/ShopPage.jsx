@@ -183,7 +183,9 @@ export default function ShopPage() {
     const newState = firePlayer(runState, playerId)
     setRunState({
       ...newState,
-      roster: [...newState.roster]
+      roster: [...newState.roster],
+      // 👇 完美修复：强制刷新 shopPool，使得退回的选手立刻出现在市场上
+      shopPool: [...(newState.shopPool || [])]
     })
   }
 
@@ -386,8 +388,12 @@ export default function ShopPage() {
                             </span>
                           )}
                         </div>
+                        
                         <p className={styles.playerMeta}>
-                          {p.team_short_name} // OVR {p.ovr + (p.upgradeBonus || 0)} // SELL ${Math.floor(p.price * 0.8)}K
+                          {p.team_short_name} // OVR {p.ovr + (p.upgradeBonus || 0)} //{' '}
+                          <span style={{ color: (p.isNewThisNode && (p.upgradeLevel||0) === 0) ? '#4ade80' : 'inherit' }}>
+                            SELL ${Math.floor((p.actualPaidPrice !== undefined ? p.actualPaidPrice : p.price) * (p.isNewThisNode && (p.upgradeLevel||0) === 0 ? 1 : 0.8))}K
+                          </span>
                         </p>
                       </div>
                     </div>
@@ -496,9 +502,9 @@ export default function ShopPage() {
           {activeTab === 'MARKET' && (
             <>
               <PanelHeader
-                kicker="TRANSFER MARKET"
-                title="转会市场候选名单"
-                desc="转会期请主教练综合考量位置补齐与特质化学反应。毒瘤与绝活哥可能会在赛场上打出意想不到的节目效果。"
+                kicker="FREE MARKET"
+                title="签约候选名单"
+                desc="签约区强调位置补齐与特质适配。注意：毒瘤和绝活哥可能会在赛场上给你带来巨大的惊喜，或者惊吓。"
                 right={(
                   <div className={styles.marketMetaBar}>
                     <span className={styles.marketMetaChip}>POOL {filteredCards.length}/6</span>
