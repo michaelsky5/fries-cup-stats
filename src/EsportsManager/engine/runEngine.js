@@ -477,3 +477,40 @@ export function processEventChoice(runState, optionType) {
   saveRun(runState);
   return { success: true, state: runState, msg: message };
 }
+
+// ==========================================
+// 🏆 生涯档案记录系统
+// ==========================================
+export function recordCareerRun(runState, resultText, finalPower) {
+  if (typeof window === 'undefined') return;
+  
+  const saved = localStorage.getItem('fca_manager_career_v2');
+  let stats = { totalRuns: 0, wins: 0, losses: 0, maxOvr: 0, totalMoneySpent: 0, hallOfFame: [] };
+  
+  if (saved) {
+    try { stats = { ...stats, ...JSON.parse(saved) }; } catch (e) {}
+  }
+
+  // 累计数据更新
+  stats.totalRuns += 1;
+  const isWin = String(resultText).toUpperCase().includes('WIN') || resultText.includes('胜') || resultText.includes('冠');
+  if (isWin) stats.wins += 1;
+  else stats.losses += 1;
+
+  if (finalPower > stats.maxOvr) stats.maxOvr = finalPower;
+
+  // 封装当次记录
+  const record = {
+    node: runState.currentNode,
+    finalPower: finalPower,
+    roster: [...runState.roster],
+    relics: [...runState.relics],
+    result: resultText
+  };
+
+  // 插入荣誉墙头部，最多保留最近的 10 次记录
+  stats.hallOfFame = [record, ...stats.hallOfFame].slice(0, 10);
+  
+  // 写入本地存储
+  localStorage.setItem('fca_manager_career_v2', JSON.stringify(stats));
+}

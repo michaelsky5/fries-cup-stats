@@ -9,14 +9,29 @@ import { calculateTeamPower } from '../engine/managerEngine'
 function getHeroAvatarUrl(role, heroName) {
   if (!heroName) return ''
   const dir = role === 'DPS' ? 'damage' : role === 'SUP' ? 'support' : 'tank'
-  const cleanName = heroName.toLowerCase().replace(/[úü]/g, 'u').replace(/ö/g, 'o').replace(/[\.\s:\-_]/g, '')
+  
+  // 1. 字典映射：将中文名映射到【准确包含下划线的文件名】
   const dict = {
-    '末日铁拳': 'doomfist', '奥丽莎': 'orisa', '莱因哈特': 'reinhardt', '路霸': 'roadhog', '西格玛': 'sigma', '温斯顿': 'winston', '破坏球': 'wreckingball', '哈蒙德': 'wreckingball', '查莉娅': 'zarya', '拉玛刹': 'ramattra', '渣客女王': 'junkerqueen', '毛加': 'mauga',
-    '艾什': 'ashe', '堡垒': 'bastion', '卡西迪': 'cassidy', '回声': 'echo', '源氏': 'genji', '半藏': 'hanzo', '狂鼠': 'junkrat', '美': 'mei', '法老之鹰': 'pharah', '死神': 'reaper', '索杰恩': 'sojourn', '士兵：76': 'soldier76', '黑影': 'sombra', '秩序之光': 'symmetra', '托比昂': 'torbjorn', '猎空': 'tracer', '黑百合': 'widowmaker', '探险家': 'venture', '安然': 'anran',
-    '安娜': 'ana', '巴蒂斯特': 'baptiste', '布丽吉塔': 'brigitte', '伊拉锐': 'illari', '雾子': 'kiriko', '生命编织者': 'lifeweaver', '卢西奥': 'lucio', '天使': 'mercy', '莫伊拉': 'moira', '禅雅塔': 'zenyatta', '朱诺': 'juno'
+    '末日铁拳': 'doomfist', '奥丽莎': 'orisa', '莱因哈特': 'reinhardt', '路霸': 'roadhog', '西格玛': 'sigma', '温斯顿': 'winston', '破坏球': 'wrecking_ball', '哈蒙德': 'wrecking_ball', '查莉娅': 'zarya', '拉玛刹': 'ramattra', '渣客女王': 'junker_queen', '毛加': 'mauga',
+    '艾什': 'ashe', '堡垒': 'bastion', '卡西迪': 'cassidy', '回声': 'echo', '源氏': 'genji', '半藏': 'hanzo', '狂鼠': 'junkrat', '美': 'mei', '法老之鹰': 'pharah', '死神': 'reaper', '索杰恩': 'sojourn', '士兵：76': 'soldier_76', '黑影': 'sombra', '秩序之光': 'symmetra', '托比昂': 'torbjorn', '猎空': 'tracer', '黑百合': 'widowmaker', '探险家': 'venture', '安然': 'anran',
+    '安娜': 'ana', '巴蒂斯特': 'baptiste', '布丽吉塔': 'brigitte', '伊拉锐': 'illari', '雾子': 'kiriko', '生命编织者': 'lifeweaver', '卢西奥': 'lucio', '天使': 'mercy', '莫伊拉': 'moira', '禅雅塔': 'zenyatta', '朱诺': 'juno',
+    '喷气猫': 'jetpack_cat' // 补上彩蛋英雄
   }
-  const fileName = dict[heroName] || cleanName
-  return `/heroes/${dir}/${fileName}.png`
+
+  if (dict[heroName]) {
+    return `/heroes/${dir}/${dict[heroName]}.png`;
+  }
+
+  // 2. 如果字典没命中 (比如直接传了英文名 Wrecking Ball)
+  // 把注音符号去掉，然后把 空格、冒号、连字符 转换为下划线，最后清理多余的下划线
+  const cleanName = heroName
+    .toLowerCase()
+    .replace(/[úü]/g, 'u')
+    .replace(/ö/g, 'o')
+    .replace(/[\.\s:\-]/g, '_') 
+    .replace(/_+/g, '_'); 
+
+  return `/heroes/${dir}/${cleanName}.png`
 }
 
 function HeroStat({ label, value, meta, accent = false }) {
