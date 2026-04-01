@@ -418,7 +418,7 @@ export default function ShopPage() {
         <section className={styles.rightPanel} ref={opsPanelRef}>
           <div className={styles.hubTabs}>
             <button className={activeTab === 'MARKET' ? styles.hubTabActive : styles.hubTab} onClick={() => setActiveTab('MARKET')}>
-              走私市场
+              人才市场
             </button>
             <button className={activeTab === 'TRAINING' ? styles.hubTabActive : styles.hubTab} onClick={() => setActiveTab('TRAINING')}>
               突击特训
