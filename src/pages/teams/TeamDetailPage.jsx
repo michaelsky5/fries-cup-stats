@@ -4,7 +4,6 @@ import { safeArr } from '../../lib/selectors.js'
 import PlayerCard from '../../components/players/PlayerCard.jsx'
 import styles from './TeamDetailPage.module.css'
 
-// 👇 补充的两个 import
 import { toPng } from 'html-to-image'
 import TeamShareCard from '../../components/teams/TeamShareCard.jsx'
 
@@ -66,7 +65,6 @@ export default function TeamDetailPage() {
   const { teamId } = useParams()
   const navigate = useNavigate()
   
-  // 👇 补充的 ref
   const shareCardRef = useRef(null)
 
   useEffect(() => {
@@ -78,7 +76,6 @@ export default function TeamDetailPage() {
     else navigate('/teams')
   }
 
-  // 👇 补充的导出函数
   const handleExportShareCard = async () => {
     if (!shareCardRef.current || !team) return
 
@@ -114,11 +111,8 @@ export default function TeamDetailPage() {
       const pTId = cleanStr(player.team_id)
       const pTName = cleanStr(player.team_name)
 
-      return (
-        teamPlayerIds.has(pId) ||
-        pTId === tId ||
-        (pTName && pTName === tName)
-      )
+      // 🌟 恢复：只要属于这个队伍都算作 roster 的一部分，不再剔除退赛选手
+      return teamPlayerIds.has(pId) || pTId === tId || (pTName && pTName === tName)
     })
 
     const totalsMap = new Map(
@@ -381,7 +375,6 @@ export default function TeamDetailPage() {
 
   return (
     <div className={styles.shell}>
-      {/* 👇 替换的 topbar */}
       <div className={styles.topbar}>
         <div className={styles.topbarLeft}>
           <button type="button" onClick={handleBack} className={styles.navBackBtn}>
@@ -443,7 +436,7 @@ export default function TeamDetailPage() {
               <div className={styles.statBox}>
                 <div className={styles.statLabel}>
                   <span className={styles.statCn}>注册选手</span>
-                  <span className={styles.statEn}>ROSTER</span>
+                  <span className={styles.statEn}>TOTAL ROSTER</span>
                 </div>
                 <div className={styles.statValue}>{roster.length}</div>
               </div>
@@ -651,20 +644,36 @@ export default function TeamDetailPage() {
           <section className={styles.rosterSection}>
             <div className={styles.sectionHeader}>
               <div className={styles.sectionKicker}>
-                <span className={styles.sectionKickerCn}>首发花名册</span>
-                <span className={styles.sectionKickerEn}>ACTIVE ROSTER</span>
+                <span className={styles.sectionKickerCn}>战队花名册</span>
+                <span className={styles.sectionKickerEn}>TEAM ROSTER</span>
               </div>
             </div>
 
             {roster.length > 0 ? (
               <div className={styles.rosterGrid}>
-                {roster.map(player => (
-                  <PlayerCard key={player.player_id} player={player} />
-                ))}
+                {/* 🌟 新增：动态排序与样式置灰 */}
+                {[...roster]
+                  .sort((a, b) => {
+                    const isExitedA = a.status === 'EXITED' || a.status === '已退赛'
+                    const isExitedB = b.status === 'EXITED' || b.status === '已退赛'
+                    return isExitedA === isExitedB ? 0 : isExitedA ? 1 : -1
+                  })
+                  .map(player => {
+                    const isExited = player.status === 'EXITED' || player.status === '已退赛'
+                    return (
+                      <div 
+                        key={player.player_id} 
+                        style={isExited ? { opacity: 0.45, filter: 'grayscale(1)' } : {}}
+                        title={isExited ? '该选手已退赛' : ''}
+                      >
+                        <PlayerCard player={player} />
+                      </div>
+                    )
+                  })}
               </div>
             ) : (
               <div className={styles.emptyState}>
-                <span className={styles.emptyCn}>暂无注册选手</span>
+                <span className={styles.emptyCn}>暂无名单数据</span>
                 <span className={styles.emptyEn}>NO ROSTER DATA</span>
               </div>
             )}
@@ -759,7 +768,6 @@ export default function TeamDetailPage() {
         </div>
       </div>
       
-      {/* 👇 补充的隐藏渲染节点 */}
       <div className={styles.shareRenderMount} aria-hidden="true">
         <TeamShareCard
           team={team}

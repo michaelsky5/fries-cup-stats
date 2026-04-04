@@ -12,8 +12,11 @@ export default function TeamsPage() {
     const players = safeArr(db?.players)
 
     return teams.map(team => {
+      // 🌟 新增：过滤掉状态为 EXITED 或 已退赛 的选手，只计算活跃人数
       const roster = players.filter(
-        p => p.team_id === team.team_id || p.team_name === team.team_name
+        p => (p.team_id === team.team_id || p.team_name === team.team_name) 
+             && p.status !== 'EXITED' 
+             && p.status !== '已退赛'
       )
 
       return {
