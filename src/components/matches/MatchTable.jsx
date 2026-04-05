@@ -5,8 +5,12 @@ function displayScore(value) {
   return value === '' || value === null || value === undefined ? '-' : value
 }
 
-function getStatusInfo(status) {
+// 🌟 修改：接收 isForfeit 参数，返回专属的弃权状态文本
+function getStatusInfo(status, isForfeit) {
   if (status === 'COMPLETE' || status === 'COMPLETED') {
+    if (isForfeit) {
+      return { cn: '弃权完结', en: 'FORFEIT', className: styles.statusComplete }
+    }
     return { cn: '已完结', en: 'COMPLETE', className: styles.statusComplete }
   }
   if (status === 'IN_PROGRESS') {
@@ -46,6 +50,7 @@ export default function MatchTable({ rows = [] }) {
           {rows.length > 0 ? rows.map(row => {
             const isComplete = row.status === 'COMPLETE' || row.status === 'COMPLETED'
             const isProgress = row.status === 'IN_PROGRESS'
+            const isForfeit = row.is_forfeit // 🌟 获取底层的弃权标记
             const matchTitle = row.match_display_name || row.match_id
             const teamAName = row?.team_a?.name || 'TBD'
             const teamBName = row?.team_b?.name || 'TBD'
@@ -53,7 +58,7 @@ export default function MatchTable({ rows = [] }) {
             const scoreB = Number(row?.team_b?.score)
             const isWinnerA = isComplete && scoreA > scoreB
             const isWinnerB = isComplete && scoreB > scoreA
-            const statusInfo = getStatusInfo(row.status)
+            const statusInfo = getStatusInfo(row.status, isForfeit) // 🌟 传入判定
 
             return (
               <div
