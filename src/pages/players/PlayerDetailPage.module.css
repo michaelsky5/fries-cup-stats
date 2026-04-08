@@ -704,6 +704,7 @@
 }
 
 .dmgRed { --bar-color: #ff4d4f; }
+.elimOrange { --bar-color: #F28C28; }
 .healGreen { --bar-color: #4ade80; }
 .mitBlue { --bar-color: #60a5fa; }
 .survGold { --bar-color: #f4c320; }

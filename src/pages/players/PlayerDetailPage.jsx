@@ -353,7 +353,7 @@ export default function PlayerDetailPage() {
 
   const TREND_CONFIGS = [
     { id: 'dmg', short: '伤害', label: '伤害 / 10 Mins', dataKey: 'dmg', color: '#ff4d4f' },
-    { id: 'elim', short: '击杀', label: '击杀 / 10 Mins', dataKey: 'elims', color: '#f87171' },
+    { id: 'elim', short: '击杀', label: '击杀 / 10 Mins', dataKey: 'elims', color: '#F28C28' },
     { id: 'heal', short: '治疗', label: '治疗 / 10 Mins', dataKey: 'heal', color: '#4ade80' },
     { id: 'block', short: '阻挡', label: '阻挡 / 10 Mins', dataKey: 'block', color: '#60a5fa' },
     { id: 'dth', short: '阵亡', label: '阵亡 / 10 Mins', dataKey: 'dths', color: 'rgba(255,255,255,0.72)' }
@@ -814,7 +814,7 @@ export default function PlayerDetailPage() {
 
           <div className={styles.barsGrid}>
             {[ 
-              { id: 'elim', label: '击杀效率', val: roleStats?.ranks.elim.percentile, color: 'dmgRed' },
+              { id: 'elim', label: '击杀效率', val: roleStats?.ranks.elim.percentile, color: 'elimOrange' },
               { id: 'dmg', label: '伤害输出', val: roleStats?.ranks.dmg.percentile, color: 'dmgRed' }, 
               { id: 'heal', label: '治疗效能', val: roleStats?.ranks.heal.percentile, color: 'healGreen' }, 
               { id: 'mit', label: '阻挡效能', val: roleStats?.ranks.mit.percentile, color: 'mitBlue' }, 
