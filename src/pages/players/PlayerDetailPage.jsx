@@ -6,8 +6,14 @@ import {
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
+  AreaChart,
+  Area,
+  CartesianGrid,
+  XAxis,
+  YAxis,
   ResponsiveContainer,
-  Tooltip
+  Tooltip,
+  ReferenceLine
 } from 'recharts'
 import { getLeaderboardRows, safeArr } from '../../lib/selectors.js'
 import styles from './PlayerDetailPage.module.css'
@@ -43,7 +49,7 @@ function getRoleFolder(role) {
 function getRoleClass(role) {
   const r = String(role || '').toUpperCase()
   if (r === 'TANK') return styles.roleTank
-  if (r === 'DPS' || r === 'DAMAGE') return styles.roleDps // 🌟 修复：兼容 DAMAGE 唤起红色样式
+  if (r === 'DPS' || r === 'DAMAGE') return styles.roleDps 
   if (r === 'SUP' || r === 'SUPPORT') return styles.roleSup
   return styles.roleFlex
 }
@@ -101,6 +107,8 @@ export default function PlayerDetailPage() {
 
   // 🌟 核心状态：记录当前选中的职责标签页
   const [selectedRole, setSelectedRole] = useState('')
+  // 🌟 记录当前折线图选中的战术指标，默认回归硬核指标 dmg
+  const [trendMetric, setTrendMetric] = useState('dmg')
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -156,6 +164,19 @@ export default function PlayerDetailPage() {
       setSelectedRole(baseEntry ? baseEntry.role : availableRoles[0])
     }
   }, [availableRoles, allPlayerEntries, selectedRole])
+
+  // 🌟 角色切换时智能重置面积图指标
+  useEffect(() => {
+    if (!selectedRole) return
+    const r = selectedRole.toUpperCase()
+    if (r === 'SUP' || r === 'SUPPORT') {
+      if (trendMetric === 'dmg' || trendMetric === 'block') setTrendMetric('heal')
+    } else if (r === 'TANK') {
+      if (trendMetric === 'heal') setTrendMetric('block')
+    } else {
+      if (trendMetric === 'heal' || trendMetric === 'block') setTrendMetric('dmg')
+    }
+  }, [selectedRole, trendMetric])
 
   // 🌟 根据当前选中的 Tab，锁定要展示的数据体
   const player = useMemo(() => {
@@ -252,6 +273,159 @@ export default function PlayerDetailPage() {
       { subject: '生存', Player: getSurvScore(player.avg_dth, roleStats.max.dth), Avg: getSurvScore(roleStats.avg.dth, roleStats.max.dth), rawPlayer: player.avg_dth, rawAvg: roleStats.avg.dth }
     ]
   }, [player, roleStats])
+
+  // 🌟 获取每一小局数据，计算 Per 10 Mins 详情，用于趋势分析
+  const trendData = useMemo(() => {
+    if (!db || !playerId) return []
+
+    const basePlayer = safeArr(db?.players).find(p => String(p.player_id) === String(playerId))
+    const allLogs = basePlayer?.match_logs || []
+    if (!allLogs.length) return []
+
+    const normalize = r => {
+      const str = String(r || '').toUpperCase()
+      if (str === 'DPS') return 'DAMAGE'
+      if (str === 'SUP') return 'SUPPORT'
+      return str
+    }
+
+    const targetRole = normalize(selectedRole)
+    const roleLogs = allLogs.filter(log => normalize(log.role) === targetRole && Number(log.playtimeMinutes || 0) > 0)
+    if (!roleLogs.length) return []
+
+    const grouped = new Map()
+
+    roleLogs.forEach((log, orderIndex) => {
+      const key = `${log.matchId}_${log.mapOrder}`
+
+      if (!grouped.has(key)) {
+        grouped.set(key, {
+          key,
+          orderIndex,
+          mapOrder: Number(log.mapOrder || 0),
+          matchName: log.matchDisplayName || log.matchId || 'UNKNOWN MATCH',
+          mapName: log.mapName || `Map ${log.mapOrder || 1}`,
+          playtime: 0,
+          elims: 0,
+          asts: 0,
+          dths: 0,
+          dmg: 0,
+          heal: 0,
+          block: 0,
+          heroes: new Set()
+        })
+      }
+
+      const g = grouped.get(key)
+      g.playtime += Number(log.playtimeMinutes || 0)
+      g.elims += Number(log.totals?.elims || 0)
+      g.asts += Number(log.totals?.assists || 0)
+      g.dths += Number(log.totals?.deaths || 0)
+      g.dmg += Number(log.totals?.damage || 0)
+      g.heal += Number(log.totals?.healing || 0)
+      g.block += Number(log.totals?.blocked || 0)
+      if (log.hero && log.hero !== '-') g.heroes.add(log.hero)
+    })
+
+    return Array.from(grouped.values())
+      .sort((a, b) => a.orderIndex - b.orderIndex || a.mapOrder - b.mapOrder)
+      .map((g, idx) => {
+        const calc10 = val => g.playtime > 0 ? (val / g.playtime) * 10 : 0
+
+        return {
+          idx: idx + 1,
+          xAxisName: `#${String(idx + 1).padStart(2, '0')}`,
+          shortMapName: g.mapName,
+          fullName: `${g.matchName} · ${g.mapName}`,
+          heroes: Array.from(g.heroes).join(' / '),
+          playtime: g.playtime,
+          elims: calc10(g.elims),
+          dths: calc10(g.dths),
+          dmg: calc10(g.dmg),
+          heal: calc10(g.heal),
+          block: calc10(g.block)
+        }
+      })
+  }, [db, playerId, selectedRole])
+
+  const TREND_CONFIGS = [
+    { id: 'dmg', short: '伤害', label: '伤害 / 10 Mins', dataKey: 'dmg', color: '#ff4d4f' },
+    { id: 'elim', short: '击杀', label: '击杀 / 10 Mins', dataKey: 'elims', color: '#f87171' },
+    { id: 'heal', short: '治疗', label: '治疗 / 10 Mins', dataKey: 'heal', color: '#4ade80' },
+    { id: 'block', short: '阻挡', label: '阻挡 / 10 Mins', dataKey: 'block', color: '#60a5fa' },
+    { id: 'dth', short: '阵亡', label: '阵亡 / 10 Mins', dataKey: 'dths', color: 'rgba(255,255,255,0.72)' }
+  ]
+
+  const activeTrendConf = TREND_CONFIGS.find(c => c.id === trendMetric) || TREND_CONFIGS[0]
+  const activeTrendKey = activeTrendConf.dataKey
+
+  // 计算当前指标在这个选手数据中的平均值，用作参考线
+  const currentMetricAverage = useMemo(() => {
+    if (!trendData.length) return 0
+    const sum = trendData.reduce((acc, curr) => acc + (Number(curr[activeTrendKey]) || 0), 0)
+    return sum / trendData.length
+  }, [trendData, activeTrendKey])
+
+  const trendSummary = useMemo(() => {
+    if (!trendData.length) return null
+
+    const sorted = [...trendData].sort((a, b) => (Number(b[activeTrendKey]) || 0) - (Number(a[activeTrendKey]) || 0))
+    const peak = sorted[0]
+    const low = sorted[sorted.length - 1]
+    const values = trendData.map(item => Number(item[activeTrendKey]) || 0)
+    const range = (Number(peak?.[activeTrendKey]) || 0) - (Number(low?.[activeTrendKey]) || 0)
+    const variance = values.reduce((acc, val) => acc + Math.pow(val - currentMetricAverage, 2), 0) / values.length
+    const std = Math.sqrt(variance)
+
+    return { peak, low, range, std }
+  }, [trendData, activeTrendKey, currentMetricAverage])
+
+  const getTrendDeltaInfo = value => {
+    const delta = (Number(value) || 0) - currentMetricAverage
+    if (Math.abs(delta) < 0.05) return { text: '接近个人均值', tone: 'flat' }
+    if (delta > 0) return { text: `高于个人均值 ${formatNum(delta, 1)}`, tone: 'up' }
+    return { text: `低于个人均值 ${formatNum(Math.abs(delta), 1)}`, tone: 'down' }
+  }
+
+  const TrendTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload
+      const deltaInfo = getTrendDeltaInfo(data[activeTrendKey])
+
+      return (
+        <div className={styles.trendTooltip}>
+          <div className={styles.ttHeader}>{data.fullName}</div>
+
+          <div className={styles.ttRow}>
+            <span className={styles.ttLabel}>记录英雄</span>
+            <span>{data.heroes || '-'}</span>
+          </div>
+
+          <div className={styles.ttRow}>
+            <span className={styles.ttLabel}>上场时间</span>
+            <span>{formatNum(data.playtime, 1)} min</span>
+          </div>
+
+          <div className={styles.ttMetric} style={{ color: activeTrendConf.color }}>
+            {activeTrendConf.label}：{formatNum(data[activeTrendKey], 1)}
+          </div>
+
+          <div
+            className={`${styles.ttDelta} ${
+              deltaInfo.tone === 'up'
+                ? styles.ttDeltaUp
+                : deltaInfo.tone === 'down'
+                  ? styles.ttDeltaDown
+                  : styles.ttDeltaFlat
+            }`}
+          >
+            {deltaInfo.text}
+          </div>
+        </div>
+      )
+    }
+    return null
+  }
 
   const styleProfile = useMemo(() => {
     if (!player || !roleStats) {
@@ -686,6 +860,140 @@ export default function PlayerDetailPage() {
           </div>
         </section>
       </div>
+
+      <section className={`${styles.trendSection} ${roleClass}`}>
+        <div className={styles.trendHeader}>
+          <div className={styles.trendHeaderMain}>
+            <div className={styles.sectionKicker}>
+              <span className={styles.sectionKickerCn}>单图表现趋势</span>
+              <span className={styles.sectionKickerEn}>MAP-BY-MAP TREND</span>
+            </div>
+            <p className={styles.trendDesc}>
+              展示该选手在当前职责下、所选指标上的单图数据波动。虚线为个人赛季均值，用于判断这一张图的发挥高于常态、接近常态，还是低于常态。
+            </p>
+          </div>
+
+          <div className={styles.trendControls}>
+            {TREND_CONFIGS.map(conf => {
+              const isActive = trendMetric === conf.id
+              return (
+                <button
+                  key={conf.id}
+                  type="button"
+                  className={`${styles.trendBtn} ${isActive ? styles.trendBtnActive : ''}`}
+                  style={isActive ? { borderColor: conf.color, color: conf.color } : undefined}
+                  onClick={() => setTrendMetric(conf.id)}
+                >
+                  <span className={styles.trendBtnText}>{conf.short}</span>
+                  <span className={styles.trendBtnMeta}>{conf.id.toUpperCase()}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className={styles.trendSummaryGrid}>
+          <div className={styles.trendSummaryCard}>
+            <div className={styles.trendSummaryLabel}>
+              峰值单图
+              <span>PEAK MAP</span>
+            </div>
+            <div className={styles.trendSummaryValue} style={{ color: activeTrendConf.color }}>
+              {trendSummary ? formatNum(trendSummary.peak?.[activeTrendKey], 1) : '-'}
+            </div>
+            <div className={styles.trendSummaryNote}>
+              {trendSummary?.peak?.shortMapName || '-'}
+            </div>
+          </div>
+
+          <div className={styles.trendSummaryCard}>
+            <div className={styles.trendSummaryLabel}>
+              低谷单图
+              <span>LOW MAP</span>
+            </div>
+            <div className={styles.trendSummaryValue}>
+              {trendSummary ? formatNum(trendSummary.low?.[activeTrendKey], 1) : '-'}
+            </div>
+            <div className={styles.trendSummaryNote}>
+              {trendSummary?.low?.shortMapName || '-'}
+            </div>
+          </div>
+
+          <div className={styles.trendSummaryCard}>
+            <div className={styles.trendSummaryLabel}>
+              波动区间
+              <span>RANGE</span>
+            </div>
+            <div className={styles.trendSummaryValue}>
+              {trendSummary ? formatNum(trendSummary.range, 1) : '-'}
+            </div>
+            <div className={styles.trendSummaryNote}>
+              STD {trendSummary ? formatNum(trendSummary.std, 1) : '-'} / 越低越稳
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.trendChartWrap}>
+          {trendData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={trendData} margin={{ top: 8, right: 8, left: -20, bottom: 2 }}>
+                <defs>
+                  <linearGradient id="colorMetric" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={activeTrendConf.color} stopOpacity={0.34} />
+                    <stop offset="95%" stopColor={activeTrendConf.color} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+
+                <XAxis
+                  dataKey="xAxisName"
+                  stroke="rgba(255,255,255,0.2)"
+                  tick={{ fill: 'rgba(255,255,255,0.42)', fontSize: 10, fontFamily: 'monospace' }}
+                  dy={10}
+                />
+
+                <YAxis
+                  width={38}
+                  stroke="rgba(255,255,255,0.2)"
+                  tick={{ fill: 'rgba(255,255,255,0.42)', fontSize: 10, fontFamily: 'monospace' }}
+                />
+
+                <Tooltip
+                  content={<TrendTooltip />}
+                  cursor={{ stroke: 'rgba(255,255,255,0.12)', strokeWidth: 1, strokeDasharray: '4 4' }}
+                />
+
+                <ReferenceLine
+                  y={currentMetricAverage}
+                  stroke="rgba(255,255,255,0.42)"
+                  strokeDasharray="4 4"
+                  label={{
+                    position: 'top',
+                    value: 'PLAYER AVG',
+                    fill: 'rgba(255,255,255,0.46)',
+                    fontSize: 9,
+                    fontFamily: 'monospace'
+                  }}
+                />
+
+                <Area
+                  type="monotone"
+                  dataKey={activeTrendKey}
+                  stroke={activeTrendConf.color}
+                  fill="url(#colorMetric)"
+                  fillOpacity={1}
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 5, fill: activeTrendConf.color, stroke: '#111111', strokeWidth: 2 }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className={styles.emptyTrend}>当前职责暂无足够的单图记录</div>
+          )}
+        </div>
+      </section>
 
       <section className={styles.dataSection}>
         <div className={styles.sectionHeader}>

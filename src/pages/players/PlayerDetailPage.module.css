@@ -158,7 +158,7 @@
   letter-spacing: 0.04em;
 }
 
-/* ---------- identity ---------- */
+/* ---------- identity (身份主题色) ---------- */
 .roleTank {
   --role-color: #60a5fa;
   --role-rgb: 96, 165, 250;
@@ -179,6 +179,7 @@
   --role-rgb: 244, 195, 32;
 }
 
+/* ---------- id card ---------- */
 .idCard {
   position: relative;
   padding: 18px;
@@ -225,7 +226,7 @@
   min-width: 0;
 }
 
-/* ---------- 🌟 新增：职责切换 Tab 样式 ---------- */
+/* 职责切换 Tab */
 .roleSwitchGroup {
   display: flex;
   flex-wrap: wrap;
@@ -257,7 +258,6 @@
 }
 
 .roleSwitchBtnActive {
-  /* 使用动态的主题色变量，不同位置会发不同颜色的光 */
   background: rgba(var(--role-rgb), 0.15);
   border-color: rgba(var(--role-rgb), 0.4);
   color: var(--role-color);
@@ -463,7 +463,117 @@
   text-transform: uppercase;
 }
 
-/* ---------- chart sections ---------- */
+/* ---------- metrics (战术数据指标面板) ---------- */
+.tacticalGridSection {
+  margin-top: 0;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.metricCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.016) 0%, rgba(255,255,255,0.004) 100%),
+    #101010;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-left: 2px solid rgba(255,255,255,0.18);
+}
+
+.metricLabelGroup {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.metricLabel {
+  font-size: 10px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.78);
+}
+
+.metricLabelEn {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.24);
+  font-family: var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.metricValuePrimary {
+  font-size: 28px;
+  font-weight: 900;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.metricSecondary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.metricAvg,
+.metricPercentile {
+  font-size: 10px;
+  font-family: var(--font-mono);
+}
+
+.metricAvg {
+  color: rgba(255,255,255,0.38);
+}
+
+.metricPercentile {
+  color: rgba(255,255,255,0.7);
+  font-weight: 900;
+}
+
+/* Specific metric colors */
+.cardDmg {
+  border-left-color: #ff4d4f;
+}
+.cardDmg .metricValuePrimary,
+.cardDmg .metricPercentile {
+  color: #ff4d4f;
+}
+
+.cardHeal {
+  border-left-color: #4ade80;
+}
+.cardHeal .metricValuePrimary,
+.cardHeal .metricPercentile {
+  color: #4ade80;
+}
+
+.cardMit {
+  border-left-color: #60a5fa;
+}
+.cardMit .metricValuePrimary,
+.cardMit .metricPercentile {
+  color: #60a5fa;
+}
+
+.cardDth {
+  border-left-color: rgba(255,255,255,0.56);
+}
+
+
+/* ---------- charts section (雷达与条形图) ---------- */
 .chartsGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -598,78 +708,125 @@
 .mitBlue { --bar-color: #60a5fa; }
 .survGold { --bar-color: #f4c320; }
 
-/* ---------- terminal ---------- */
-.aiTerminal {
-  display: flex;
-  flex-direction: column;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.014) 0%, rgba(255,255,255,0.004) 100%),
-    #101010;
-  border: 1px solid rgba(255,255,255,0.12);
-  padding: 14px 16px;
-}
 
-.terminalWindow {
-  background: #070707;
-  border: 1px solid rgba(255,255,255,0.06);
-  padding: 16px;
-}
-
-.terminalText {
-  margin: 0;
-  color: rgba(255,255,255,0.74);
-  font-size: 11px;
-  line-height: 1.7;
-  white-space: pre-wrap;
-  font-family: var(--font-mono);
-}
-
-/* ---------- metrics ---------- */
-.tacticalGridSection {
-  margin-top: 0;
-}
-
-.metricsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 14px;
-}
-
-.metricCard {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 14px;
+/* ---------- trend section (趋势分析区) ---------- */
+.trendSection {
   background:
     linear-gradient(180deg, rgba(255,255,255,0.016) 0%, rgba(255,255,255,0.004) 100%),
     #101010;
   border: 1px solid rgba(255,255,255,0.12);
-  border-left: 2px solid rgba(255,255,255,0.18);
+  padding: 18px;
 }
 
-.metricLabelGroup {
+.trendHeader {
   display: flex;
-  align-items: baseline;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.trendHeaderMain {
+  max-width: 640px;
+}
+
+.trendDesc {
+  margin: 8px 0 0 0;
+  font-size: 11px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.48);
+}
+
+.trendControls {
+  display: flex;
   gap: 6px;
   flex-wrap: wrap;
 }
 
-.metricLabel {
+.trendBtn {
+  min-height: 32px;
+  padding: 6px 10px 5px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.42);
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease, transform 0.12s ease;
+}
+
+.trendBtn:hover {
+  background: rgba(255,255,255,0.08);
+  color: #ffffff;
+}
+
+.trendBtn:active {
+  transform: translateY(1px);
+}
+
+.trendBtnActive {
+  background: rgba(255,255,255,0.06);
+}
+
+.trendBtnText {
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.trendBtnMeta {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  opacity: 0.74;
+}
+
+.trendSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.trendSummaryCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px 14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.008) 100%),
+    #121212;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.trendSummaryLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   font-size: 10px;
   font-weight: 900;
   color: rgba(255,255,255,0.78);
+  line-height: 1;
 }
 
-.metricLabelEn {
+.trendSummaryLabel span {
   font-size: 8px;
   font-weight: 800;
-  color: rgba(255,255,255,0.24);
+  color: rgba(255,255,255,0.26);
   font-family: var(--font-mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-.metricValuePrimary {
+.trendSummaryValue {
   font-size: 28px;
   font-weight: 900;
   color: #ffffff;
@@ -678,63 +835,90 @@
   letter-spacing: -0.04em;
 }
 
-.metricSecondary {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-  padding-top: 6px;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  margin-top: 4px;
-  flex-wrap: wrap;
+.trendSummaryNote {
+  min-height: 16px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.42);
+  word-break: break-word;
 }
 
-.metricAvg,
-.metricPercentile {
-  font-size: 10px;
+.trendChartWrap {
+  width: 100%;
+  height: 280px;
+  position: relative;
+}
+
+.emptyTrend {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgba(255,255,255,0.08);
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.34);
   font-family: var(--font-mono);
 }
 
-.metricAvg {
-  color: rgba(255,255,255,0.38);
+.trendTooltip {
+  min-width: 220px;
+  background: rgba(17,17,17,0.96);
+  border: 1px solid rgba(255,255,255,0.14);
+  padding: 12px;
+  backdrop-filter: blur(4px);
+  pointer-events: none;
 }
 
-.metricPercentile {
-  color: rgba(255,255,255,0.7);
+.ttHeader {
+  font-size: 11px;
   font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.cardDmg {
-  border-left-color: #ff4d4f;
+.ttRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 5px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.72);
+  font-family: var(--font-mono);
 }
 
-.cardDmg .metricValuePrimary,
-.cardDmg .metricPercentile {
-  color: #ff4d4f;
+.ttLabel {
+  color: rgba(255,255,255,0.44);
 }
 
-.cardHeal {
-  border-left-color: #4ade80;
+.ttMetric {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 900;
+  font-family: var(--font-mono);
 }
 
-.cardHeal .metricValuePrimary,
-.cardHeal .metricPercentile {
+.ttDelta {
+  margin-top: 6px;
+  font-size: 10px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+}
+
+.ttDeltaUp {
   color: #4ade80;
 }
 
-.cardMit {
-  border-left-color: #60a5fa;
+.ttDeltaDown {
+  color: #f87171;
 }
 
-.cardMit .metricValuePrimary,
-.cardMit .metricPercentile {
-  color: #60a5fa;
+.ttDeltaFlat {
+  color: rgba(255,255,255,0.56);
 }
-
-.cardDth {
-  border-left-color: rgba(255,255,255,0.56);
-}
-
 /* ---------- heroes ---------- */
 .dataSection {
   margin-top: 0;
@@ -800,6 +984,34 @@
   letter-spacing: 0.08em;
 }
 
+
+/* ---------- terminal (AI 球探报告) ---------- */
+.aiTerminal {
+  display: flex;
+  flex-direction: column;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.014) 0%, rgba(255,255,255,0.004) 100%),
+    #101010;
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 14px 16px;
+}
+
+.terminalWindow {
+  background: #070707;
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 16px;
+}
+
+.terminalText {
+  margin: 0;
+  color: rgba(255,255,255,0.74);
+  font-size: 11px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  font-family: var(--font-mono);
+}
+
+
 /* ---------- share mount ---------- */
 .shareRenderMount {
   position: fixed;
@@ -856,37 +1068,11 @@
   color: rgba(255,255,255,0.52);
 }
 
-.backLinkBtn {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  min-width: 128px;
-  height: 40px;
-  padding: 0 18px;
-  border: 1px solid rgba(244,195,32,0.92);
-  background: transparent;
-  color: #f4c320;
-  cursor: pointer;
-  transition: background 0.16s ease, color 0.16s ease;
-}
 
-.backLinkBtn:hover {
-  background: #f4c320;
-  color: #111111;
-}
+/* ==========================================
+   ⚠️ 媒体查询块 (Media Queries) 必须放在最底部！
+   ========================================== */
 
-.backLinkBtnEn {
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  opacity: 0.84;
-}
-
-/* ---------- responsive ---------- */
 @media (max-width: 980px) {
   .idCardContent,
   .chartsGrid {
@@ -904,6 +1090,10 @@
 
   .idCardMeta {
     justify-content: flex-start;
+  }
+
+  .trendSummaryGrid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -928,7 +1118,8 @@
 
   .idCard,
   .hudSection,
-  .aiTerminal {
+  .aiTerminal,
+  .trendSection {
     padding: 14px;
   }
 
@@ -956,5 +1147,35 @@
 
   .heroesGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* 🌟 趋势分析区移动端微调 */
+  .trendHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .trendControls {
+    width: 100%;
+  }
+
+  .trendBtn {
+    flex: 1 1 calc(50% - 6px);
+    min-height: 30px;
+    white-space: nowrap;
+  }
+
+  .trendSummaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .trendChartWrap {
+    height: 240px;
+  }
+
+  .trendDesc {
+    font-size: 10px;
   }
 }
