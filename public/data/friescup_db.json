@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-08T16:05:14.725Z",
+  "updated_at": "2026-04-08T16:13:35.595Z",
   "meta": {
     "team_count": 30,
     "player_count": 190,
@@ -34447,12 +34447,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 10,
-            "assists": 5,
-            "deaths": 6,
-            "damage": 8511,
-            "healing": 2996,
-            "blocked": 21721
+            "elims": 24,
+            "assists": 7,
+            "deaths": 4,
+            "damage": 12884,
+            "healing": 2373,
+            "blocked": 19365
           }
         },
         {
@@ -34689,12 +34689,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 10,
-            "assists": 5,
-            "deaths": 6,
-            "damage": 8511,
-            "healing": 2996,
-            "blocked": 21721
+            "elims": 24,
+            "assists": 7,
+            "deaths": 4,
+            "damage": 12884,
+            "healing": 2373,
+            "blocked": 19365
           }
         },
         {
@@ -34947,12 +34947,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 11,
+            "elims": 27,
             "assists": 0,
-            "deaths": 11,
-            "damage": 9144,
-            "healing": 1382,
-            "blocked": 90
+            "deaths": 6,
+            "damage": 10306,
+            "healing": 1818,
+            "blocked": 0
           }
         },
         {
@@ -35237,12 +35237,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 11,
+            "elims": 27,
             "assists": 0,
-            "deaths": 11,
-            "damage": 9144,
-            "healing": 1382,
-            "blocked": 90
+            "deaths": 6,
+            "damage": 10306,
+            "healing": 1818,
+            "blocked": 0
           }
         },
         {
@@ -36045,12 +36045,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 2,
-            "assists": 12,
-            "deaths": 8,
-            "damage": 2106,
-            "healing": 12198,
-            "blocked": 0
+            "elims": 23,
+            "assists": 7,
+            "deaths": 6,
+            "damage": 13235,
+            "healing": 75,
+            "blocked": 81
           }
         },
         {
@@ -36335,12 +36335,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 2,
-            "assists": 12,
-            "deaths": 8,
-            "damage": 2106,
-            "healing": 12198,
-            "blocked": 0
+            "elims": 23,
+            "assists": 7,
+            "deaths": 6,
+            "damage": 13235,
+            "healing": 75,
+            "blocked": 81
           }
         },
         {
@@ -36521,12 +36521,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 13,
-            "assists": 1,
-            "deaths": 13,
-            "damage": 12301,
-            "healing": 150,
-            "blocked": 134
+            "elims": 9,
+            "assists": 15,
+            "deaths": 2,
+            "damage": 4301,
+            "healing": 9663,
+            "blocked": 435
           }
         },
         {
@@ -36691,12 +36691,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 13,
-            "assists": 1,
-            "deaths": 13,
-            "damage": 12301,
-            "healing": 150,
-            "blocked": 134
+            "elims": 9,
+            "assists": 15,
+            "deaths": 2,
+            "damage": 4301,
+            "healing": 9663,
+            "blocked": 435
           }
         },
         {
@@ -36976,12 +36976,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 8,
-            "assists": 10,
-            "deaths": 9,
-            "damage": 4279,
-            "healing": 9605,
-            "blocked": 589
+            "elims": 11,
+            "assists": 19,
+            "deaths": 3,
+            "damage": 6139,
+            "healing": 10715,
+            "blocked": 0
           }
         },
         {
@@ -37194,12 +37194,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 8,
-            "assists": 10,
-            "deaths": 9,
-            "damage": 4279,
-            "healing": 9605,
-            "blocked": 589
+            "elims": 11,
+            "assists": 19,
+            "deaths": 3,
+            "damage": 6139,
+            "healing": 10715,
+            "blocked": 0
           }
         },
         {
@@ -49063,12 +49063,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 24,
-            "assists": 7,
-            "deaths": 4,
-            "damage": 12884,
-            "healing": 2373,
-            "blocked": 19365
+            "elims": 10,
+            "assists": 5,
+            "deaths": 6,
+            "damage": 8511,
+            "healing": 2996,
+            "blocked": 21721
           }
         },
         {
@@ -49353,12 +49353,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 24,
-            "assists": 7,
-            "deaths": 4,
-            "damage": 12884,
-            "healing": 2373,
-            "blocked": 19365
+            "elims": 10,
+            "assists": 5,
+            "deaths": 6,
+            "damage": 8511,
+            "healing": 2996,
+            "blocked": 21721
           }
         },
         {
@@ -49659,12 +49659,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 9,
-            "assists": 15,
-            "deaths": 2,
-            "damage": 4301,
-            "healing": 9663,
-            "blocked": 435
+            "elims": 13,
+            "assists": 1,
+            "deaths": 13,
+            "damage": 12301,
+            "healing": 150,
+            "blocked": 134
           }
         },
         {
@@ -49949,12 +49949,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 9,
-            "assists": 15,
-            "deaths": 2,
-            "damage": 4301,
-            "healing": 9663,
-            "blocked": 435
+            "elims": 13,
+            "assists": 1,
+            "deaths": 13,
+            "damage": 12301,
+            "healing": 150,
+            "blocked": 134
           }
         },
         {
@@ -50255,12 +50255,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 27,
+            "elims": 11,
             "assists": 0,
-            "deaths": 6,
-            "damage": 10306,
-            "healing": 1818,
-            "blocked": 0
+            "deaths": 11,
+            "damage": 9144,
+            "healing": 1382,
+            "blocked": 90
           }
         },
         {
@@ -50545,12 +50545,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 27,
+            "elims": 11,
             "assists": 0,
-            "deaths": 6,
-            "damage": 10306,
-            "healing": 1818,
-            "blocked": 0
+            "deaths": 11,
+            "damage": 9144,
+            "healing": 1382,
+            "blocked": 90
           }
         },
         {
@@ -50851,12 +50851,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 23,
-            "assists": 7,
-            "deaths": 6,
-            "damage": 13235,
-            "healing": 75,
-            "blocked": 81
+            "elims": 2,
+            "assists": 12,
+            "deaths": 8,
+            "damage": 2106,
+            "healing": 12198,
+            "blocked": 0
           }
         },
         {
@@ -51141,12 +51141,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 23,
-            "assists": 7,
-            "deaths": 6,
-            "damage": 13235,
-            "healing": 75,
-            "blocked": 81
+            "elims": 2,
+            "assists": 12,
+            "deaths": 8,
+            "damage": 2106,
+            "healing": 12198,
+            "blocked": 0
           }
         },
         {
@@ -51447,12 +51447,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 11,
-            "assists": 19,
-            "deaths": 3,
-            "damage": 6139,
-            "healing": 10715,
-            "blocked": 0
+            "elims": 8,
+            "assists": 10,
+            "deaths": 9,
+            "damage": 4279,
+            "healing": 9605,
+            "blocked": 589
           }
         },
         {
@@ -51737,12 +51737,12 @@
           "rowTime": "",
           "playtimeMinutes": 13.183333333333334,
           "totals": {
-            "elims": 11,
-            "assists": 19,
-            "deaths": 3,
-            "damage": 6139,
-            "healing": 10715,
-            "blocked": 0
+            "elims": 8,
+            "assists": 10,
+            "deaths": 9,
+            "damage": 4279,
+            "healing": 9605,
+            "blocked": 589
           }
         },
         {
@@ -110195,7 +110195,7 @@
       "round": "ROUND 3",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-04-04T06:10:15.013Z",
+      "updated_at": "2026-04-08T16:13:33.919Z",
       "winner": "snack",
       "team_a": {
         "id": "FCA26-T012",
@@ -110418,12 +110418,12 @@
               "player_name": "spadeC0M3T#5989",
               "role": "SUP",
               "heroes_played": "Ana",
-              "eliminations": 13,
-              "assists": 1,
-              "deaths": 13,
-              "damage": 12301,
-              "healing": 150,
-              "mitigation": 134,
+              "eliminations": 9,
+              "assists": 15,
+              "deaths": 2,
+              "damage": 4301,
+              "healing": 9663,
+              "mitigation": 435,
               "time": ""
             },
             {
@@ -110434,12 +110434,12 @@
               "player_name": "Z1Han#5188",
               "role": "TANK",
               "heroes_played": "Winston",
-              "eliminations": 10,
-              "assists": 5,
-              "deaths": 6,
-              "damage": 8511,
-              "healing": 2996,
-              "mitigation": 21721,
+              "eliminations": 24,
+              "assists": 7,
+              "deaths": 4,
+              "damage": 12884,
+              "healing": 2373,
+              "mitigation": 19365,
               "time": ""
             },
             {
@@ -110450,12 +110450,12 @@
               "player_name": "四季冬#51594",
               "role": "SUP",
               "heroes_played": "Kiriko",
-              "eliminations": 8,
-              "assists": 10,
-              "deaths": 9,
-              "damage": 4279,
-              "healing": 9605,
-              "mitigation": 589,
+              "eliminations": 11,
+              "assists": 19,
+              "deaths": 3,
+              "damage": 6139,
+              "healing": 10715,
+              "mitigation": 0,
               "time": ""
             },
             {
@@ -110466,12 +110466,12 @@
               "player_name": "恶鬼#51412",
               "role": "DPS",
               "heroes_played": "Ashe",
-              "eliminations": 2,
-              "assists": 12,
-              "deaths": 8,
-              "damage": 2106,
-              "healing": 12198,
-              "mitigation": 0,
+              "eliminations": 23,
+              "assists": 7,
+              "deaths": 6,
+              "damage": 13235,
+              "healing": 75,
+              "mitigation": 81,
               "time": ""
             },
             {
@@ -110482,12 +110482,12 @@
               "player_name": "烧肉粽#51317",
               "role": "DPS",
               "heroes_played": "Reaper",
-              "eliminations": 11,
+              "eliminations": 27,
               "assists": 0,
-              "deaths": 11,
-              "damage": 9144,
-              "healing": 1382,
-              "mitigation": 90,
+              "deaths": 6,
+              "damage": 10306,
+              "healing": 1818,
+              "mitigation": 0,
               "time": ""
             }
           ],
@@ -110500,12 +110500,12 @@
               "player_name": "Lilas#51713",
               "role": "DPS",
               "heroes_played": "Sojourn",
-              "eliminations": 9,
-              "assists": 15,
-              "deaths": 2,
-              "damage": 4301,
-              "healing": 9663,
-              "mitigation": 435,
+              "eliminations": 13,
+              "assists": 1,
+              "deaths": 13,
+              "damage": 12301,
+              "healing": 150,
+              "mitigation": 134,
               "time": ""
             },
             {
@@ -110516,12 +110516,12 @@
               "player_name": "东方月输#5789",
               "role": "TANK",
               "heroes_played": "D.Va",
-              "eliminations": 24,
-              "assists": 7,
-              "deaths": 4,
-              "damage": 12884,
-              "healing": 2373,
-              "mitigation": 19365,
+              "eliminations": 10,
+              "assists": 5,
+              "deaths": 6,
+              "damage": 8511,
+              "healing": 2996,
+              "mitigation": 21721,
               "time": ""
             },
             {
@@ -110532,12 +110532,12 @@
               "player_name": "南南#51230",
               "role": "SUP",
               "heroes_played": "Ana",
-              "eliminations": 11,
-              "assists": 19,
-              "deaths": 3,
-              "damage": 6139,
-              "healing": 10715,
-              "mitigation": 0,
+              "eliminations": 8,
+              "assists": 10,
+              "deaths": 9,
+              "damage": 4279,
+              "healing": 9605,
+              "mitigation": 589,
               "time": ""
             },
             {
@@ -110548,12 +110548,12 @@
               "player_name": "最后的学术剽窃#5256",
               "role": "SUP",
               "heroes_played": "Kiriko",
-              "eliminations": 23,
-              "assists": 7,
-              "deaths": 6,
-              "damage": 13235,
-              "healing": 75,
-              "mitigation": 81,
+              "eliminations": 2,
+              "assists": 12,
+              "deaths": 8,
+              "damage": 2106,
+              "healing": 12198,
+              "mitigation": 0,
               "time": ""
             },
             {
@@ -110564,12 +110564,12 @@
               "player_name": "朗读并背诵全文#5675",
               "role": "DPS",
               "heroes_played": "Tracer",
-              "eliminations": 27,
+              "eliminations": 11,
               "assists": 0,
-              "deaths": 6,
-              "damage": 10306,
-              "healing": 1818,
-              "mitigation": 0,
+              "deaths": 11,
+              "damage": 9144,
+              "healing": 1382,
+              "mitigation": 90,
               "time": ""
             }
           ]
@@ -129060,18 +129060,18 @@
         "Doomfist",
         "Mauga"
       ],
-      "total_elim": 171,
-      "total_ast": 56,
-      "total_dth": 51,
-      "total_dmg": 81559,
-      "total_heal": 14816,
-      "total_block": 80165,
-      "avg_elim": "20.193",
-      "avg_ast": "6.613",
-      "avg_dth": "6.022",
-      "avg_dmg": "9631.057",
-      "avg_heal": "1749.577",
-      "avg_block": "9466.444",
+      "total_elim": 185,
+      "total_ast": 58,
+      "total_dth": 49,
+      "total_dmg": 85932,
+      "total_heal": 14193,
+      "total_block": 77809,
+      "avg_elim": "21.846",
+      "avg_ast": "6.849",
+      "avg_dth": "5.786",
+      "avg_dmg": "10147.451",
+      "avg_heal": "1676.009",
+      "avg_block": "9188.231",
       "role_breakdown": {
         "TANK": {
           "maps_played": 7,
@@ -129083,18 +129083,18 @@
             "Doomfist",
             "Mauga"
           ],
-          "total_elim": 171,
-          "total_ast": 56,
-          "total_dth": 51,
-          "total_dmg": 81559,
-          "total_heal": 14816,
-          "total_block": 80165,
-          "avg_elim": "20.193",
-          "avg_ast": "6.613",
-          "avg_dth": "6.022",
-          "avg_dmg": "9631.057",
-          "avg_heal": "1749.577",
-          "avg_block": "9466.444"
+          "total_elim": 185,
+          "total_ast": 58,
+          "total_dth": 49,
+          "total_dmg": 85932,
+          "total_heal": 14193,
+          "total_block": 77809,
+          "avg_elim": "21.846",
+          "avg_ast": "6.849",
+          "avg_dth": "5.786",
+          "avg_dmg": "10147.451",
+          "avg_heal": "1676.009",
+          "avg_block": "9188.231"
         }
       }
     },
@@ -129120,18 +129120,18 @@
         "Sombra",
         "Tracer"
       ],
-      "total_elim": 150,
+      "total_elim": 166,
       "total_ast": 7,
-      "total_dth": 79,
-      "total_dmg": 74269,
-      "total_heal": 7780,
-      "total_block": 3021,
-      "avg_elim": "15.146",
+      "total_dth": 74,
+      "total_dmg": 75431,
+      "total_heal": 8216,
+      "total_block": 2931,
+      "avg_elim": "16.762",
       "avg_ast": "0.707",
-      "avg_dth": "7.977",
-      "avg_dmg": "7499.394",
-      "avg_heal": "785.594",
-      "avg_block": "305.049",
+      "avg_dth": "7.472",
+      "avg_dmg": "7616.728",
+      "avg_heal": "829.620",
+      "avg_block": "295.961",
       "role_breakdown": {
         "DPS": {
           "maps_played": 9,
@@ -129143,18 +129143,18 @@
             "Sombra",
             "Tracer"
           ],
-          "total_elim": 150,
+          "total_elim": 166,
           "total_ast": 7,
-          "total_dth": 79,
-          "total_dmg": 74269,
-          "total_heal": 7780,
-          "total_block": 3021,
-          "avg_elim": "15.146",
+          "total_dth": 74,
+          "total_dmg": 75431,
+          "total_heal": 8216,
+          "total_block": 2931,
+          "avg_elim": "16.762",
           "avg_ast": "0.707",
-          "avg_dth": "7.977",
-          "avg_dmg": "7499.394",
-          "avg_heal": "785.594",
-          "avg_block": "305.049"
+          "avg_dth": "7.472",
+          "avg_dmg": "7616.728",
+          "avg_heal": "829.620",
+          "avg_block": "295.961"
         }
       }
     },
@@ -129283,18 +129283,18 @@
         "Cassidy",
         "Pharah"
       ],
-      "total_elim": 164,
-      "total_ast": 17,
-      "total_dth": 61,
-      "total_dmg": 74035,
-      "total_heal": 12506,
-      "total_block": 2648,
-      "avg_elim": "16.560",
-      "avg_ast": "1.717",
-      "avg_dth": "6.160",
-      "avg_dmg": "7475.766",
-      "avg_heal": "1262.807",
-      "avg_block": "267.385",
+      "total_elim": 185,
+      "total_ast": 12,
+      "total_dth": 59,
+      "total_dmg": 85164,
+      "total_heal": 383,
+      "total_block": 2729,
+      "avg_elim": "18.681",
+      "avg_ast": "1.212",
+      "avg_dth": "5.958",
+      "avg_dmg": "8599.529",
+      "avg_heal": "38.674",
+      "avg_block": "275.564",
       "role_breakdown": {
         "DPS": {
           "maps_played": 9,
@@ -129306,18 +129306,18 @@
             "Cassidy",
             "Pharah"
           ],
-          "total_elim": 164,
-          "total_ast": 17,
-          "total_dth": 61,
-          "total_dmg": 74035,
-          "total_heal": 12506,
-          "total_block": 2648,
-          "avg_elim": "16.560",
-          "avg_ast": "1.717",
-          "avg_dth": "6.160",
-          "avg_dmg": "7475.766",
-          "avg_heal": "1262.807",
-          "avg_block": "267.385"
+          "total_elim": 185,
+          "total_ast": 12,
+          "total_dth": 59,
+          "total_dmg": 85164,
+          "total_heal": 383,
+          "total_block": 2729,
+          "avg_elim": "18.681",
+          "avg_ast": "1.212",
+          "avg_dth": "5.958",
+          "avg_dmg": "8599.529",
+          "avg_heal": "38.674",
+          "avg_block": "275.564"
         }
       }
     },
@@ -129342,18 +129342,18 @@
         "Lúcio",
         "Ana"
       ],
-      "total_elim": 45,
-      "total_ast": 28,
-      "total_dth": 39,
-      "total_dmg": 21132,
-      "total_heal": 15932,
-      "total_block": 3582,
-      "avg_elim": "10.796",
-      "avg_ast": "6.717",
-      "avg_dth": "9.356",
-      "avg_dmg": "5069.652",
-      "avg_heal": "3822.151",
-      "avg_block": "859.336",
+      "total_elim": 41,
+      "total_ast": 42,
+      "total_dth": 28,
+      "total_dmg": 13132,
+      "total_heal": 25445,
+      "total_block": 3883,
+      "avg_elim": "9.836",
+      "avg_ast": "10.076",
+      "avg_dth": "6.717",
+      "avg_dmg": "3150.420",
+      "avg_heal": "6104.358",
+      "avg_block": "931.547",
       "role_breakdown": {
         "SUP": {
           "maps_played": 4,
@@ -129364,18 +129364,18 @@
             "Lúcio",
             "Ana"
           ],
-          "total_elim": 45,
-          "total_ast": 28,
-          "total_dth": 39,
-          "total_dmg": 21132,
-          "total_heal": 15932,
-          "total_block": 3582,
-          "avg_elim": "10.796",
-          "avg_ast": "6.717",
-          "avg_dth": "9.356",
-          "avg_dmg": "5069.652",
-          "avg_heal": "3822.151",
-          "avg_block": "859.336"
+          "total_elim": 41,
+          "total_ast": 42,
+          "total_dth": 28,
+          "total_dmg": 13132,
+          "total_heal": 25445,
+          "total_block": 3883,
+          "avg_elim": "9.836",
+          "avg_ast": "10.076",
+          "avg_dth": "6.717",
+          "avg_dmg": "3150.420",
+          "avg_heal": "6104.358",
+          "avg_block": "931.547"
         }
       }
     },
@@ -129402,18 +129402,18 @@
       "top_3_heroes": [
         "Kiriko"
       ],
-      "total_elim": 71,
-      "total_ast": 139,
-      "total_dth": 72,
-      "total_dmg": 30772,
-      "total_heal": 79676,
-      "total_block": 589,
-      "avg_elim": "7.169",
-      "avg_ast": "14.036",
-      "avg_dth": "7.270",
-      "avg_dmg": "3107.237",
-      "avg_heal": "8045.372",
-      "avg_block": "59.475",
+      "total_elim": 74,
+      "total_ast": 148,
+      "total_dth": 66,
+      "total_dmg": 32632,
+      "total_heal": 80786,
+      "total_block": 0,
+      "avg_elim": "7.472",
+      "avg_ast": "14.944",
+      "avg_dth": "6.664",
+      "avg_dmg": "3295.052",
+      "avg_heal": "8157.455",
+      "avg_block": "0.000",
       "role_breakdown": {
         "SUP": {
           "maps_played": 9,
@@ -129423,18 +129423,18 @@
           "top_3_heroes": [
             "Kiriko"
           ],
-          "total_elim": 71,
-          "total_ast": 139,
-          "total_dth": 72,
-          "total_dmg": 30772,
-          "total_heal": 79676,
-          "total_block": 589,
-          "avg_elim": "7.169",
-          "avg_ast": "14.036",
-          "avg_dth": "7.270",
-          "avg_dmg": "3107.237",
-          "avg_heal": "8045.372",
-          "avg_block": "59.475"
+          "total_elim": 74,
+          "total_ast": 148,
+          "total_dth": 66,
+          "total_dmg": 32632,
+          "total_heal": 80786,
+          "total_block": 0,
+          "avg_elim": "7.472",
+          "avg_ast": "14.944",
+          "avg_dth": "6.664",
+          "avg_dmg": "3295.052",
+          "avg_heal": "8157.455",
+          "avg_block": "0.000"
         }
       }
     },
@@ -130941,18 +130941,18 @@
       "top_3_heroes": [
         "D.Va"
       ],
-      "total_elim": 170,
-      "total_ast": 75,
-      "total_dth": 38,
-      "total_dmg": 74601,
-      "total_heal": 24017,
-      "total_block": 100277,
-      "avg_elim": "19.213",
-      "avg_ast": "8.476",
-      "avg_dth": "4.295",
-      "avg_dmg": "8431.079",
-      "avg_heal": "2714.296",
-      "avg_block": "11332.869",
+      "total_elim": 156,
+      "total_ast": 73,
+      "total_dth": 40,
+      "total_dmg": 70228,
+      "total_heal": 24640,
+      "total_block": 102633,
+      "avg_elim": "17.630",
+      "avg_ast": "8.250",
+      "avg_dth": "4.521",
+      "avg_dmg": "7936.862",
+      "avg_heal": "2784.705",
+      "avg_block": "11599.134",
       "role_breakdown": {
         "TANK": {
           "maps_played": 9,
@@ -130962,18 +130962,18 @@
           "top_3_heroes": [
             "D.Va"
           ],
-          "total_elim": 170,
-          "total_ast": 75,
-          "total_dth": 38,
-          "total_dmg": 74601,
-          "total_heal": 24017,
-          "total_block": 100277,
-          "avg_elim": "19.213",
-          "avg_ast": "8.476",
-          "avg_dth": "4.295",
-          "avg_dmg": "8431.079",
-          "avg_heal": "2714.296",
-          "avg_block": "11332.869"
+          "total_elim": 156,
+          "total_ast": 73,
+          "total_dth": 40,
+          "total_dmg": 70228,
+          "total_heal": 24640,
+          "total_block": 102633,
+          "avg_elim": "17.630",
+          "avg_ast": "8.250",
+          "avg_dth": "4.521",
+          "avg_dmg": "7936.862",
+          "avg_heal": "2784.705",
+          "avg_block": "11599.134"
         }
       }
     },
@@ -130999,18 +130999,18 @@
         "Tracer",
         "Cassidy"
       ],
-      "total_elim": 113,
-      "total_ast": 24,
-      "total_dth": 65,
-      "total_dmg": 75921,
-      "total_heal": 10785,
-      "total_block": 5770,
-      "avg_elim": "12.771",
-      "avg_ast": "2.712",
-      "avg_dth": "7.346",
-      "avg_dmg": "8580.260",
-      "avg_heal": "1218.874",
-      "avg_block": "652.100",
+      "total_elim": 117,
+      "total_ast": 10,
+      "total_dth": 76,
+      "total_dmg": 83921,
+      "total_heal": 1272,
+      "total_block": 5469,
+      "avg_elim": "13.223",
+      "avg_ast": "1.130",
+      "avg_dth": "8.589",
+      "avg_dmg": "9484.385",
+      "avg_heal": "143.756",
+      "avg_block": "618.083",
       "role_breakdown": {
         "DPS": {
           "maps_played": 9,
@@ -131022,18 +131022,18 @@
             "Tracer",
             "Cassidy"
           ],
-          "total_elim": 113,
-          "total_ast": 24,
-          "total_dth": 65,
-          "total_dmg": 75921,
-          "total_heal": 10785,
-          "total_block": 5770,
-          "avg_elim": "12.771",
-          "avg_ast": "2.712",
-          "avg_dth": "7.346",
-          "avg_dmg": "8580.260",
-          "avg_heal": "1218.874",
-          "avg_block": "652.100"
+          "total_elim": 117,
+          "total_ast": 10,
+          "total_dth": 76,
+          "total_dmg": 83921,
+          "total_heal": 1272,
+          "total_block": 5469,
+          "avg_elim": "13.223",
+          "avg_ast": "1.130",
+          "avg_dth": "8.589",
+          "avg_dmg": "9484.385",
+          "avg_heal": "143.756",
+          "avg_block": "618.083"
         }
       }
     },
@@ -131059,18 +131059,18 @@
         "Sojourn",
         "Sombra"
       ],
-      "total_elim": 146,
+      "total_elim": 130,
       "total_ast": 5,
-      "total_dth": 59,
-      "total_dmg": 69335,
-      "total_heal": 3927,
-      "total_block": 134,
-      "avg_elim": "16.500",
+      "total_dth": 64,
+      "total_dmg": 68173,
+      "total_heal": 3491,
+      "total_block": 224,
+      "avg_elim": "14.692",
       "avg_ast": "0.565",
-      "avg_dth": "6.668",
-      "avg_dmg": "7835.939",
-      "avg_heal": "443.812",
-      "avg_block": "15.144",
+      "avg_dth": "7.233",
+      "avg_dmg": "7704.615",
+      "avg_heal": "394.538",
+      "avg_block": "25.316",
       "role_breakdown": {
         "DPS": {
           "maps_played": 9,
@@ -131082,18 +131082,18 @@
             "Sojourn",
             "Sombra"
           ],
-          "total_elim": 146,
+          "total_elim": 130,
           "total_ast": 5,
-          "total_dth": 59,
-          "total_dmg": 69335,
-          "total_heal": 3927,
-          "total_block": 134,
-          "avg_elim": "16.500",
+          "total_dth": 64,
+          "total_dmg": 68173,
+          "total_heal": 3491,
+          "total_block": 224,
+          "avg_elim": "14.692",
           "avg_ast": "0.565",
-          "avg_dth": "6.668",
-          "avg_dmg": "7835.939",
-          "avg_heal": "443.812",
-          "avg_block": "15.144"
+          "avg_dth": "7.233",
+          "avg_dmg": "7704.615",
+          "avg_heal": "394.538",
+          "avg_block": "25.316"
         }
       }
     },
@@ -131118,18 +131118,18 @@
         "Kiriko",
         "Lúcio"
       ],
-      "total_elim": 86,
-      "total_ast": 98,
-      "total_dth": 64,
-      "total_dmg": 38512,
-      "total_heal": 61412,
-      "total_block": 7630,
-      "avg_elim": "9.719",
-      "avg_ast": "11.076",
-      "avg_dth": "7.233",
-      "avg_dmg": "4352.458",
-      "avg_heal": "6940.516",
-      "avg_block": "862.309",
+      "total_elim": 65,
+      "total_ast": 103,
+      "total_dth": 66,
+      "total_dmg": 27383,
+      "total_heal": 73535,
+      "total_block": 7549,
+      "avg_elim": "7.346",
+      "avg_ast": "11.641",
+      "avg_dth": "7.459",
+      "avg_dmg": "3094.707",
+      "avg_heal": "8310.605",
+      "avg_block": "853.155",
       "role_breakdown": {
         "SUP": {
           "maps_played": 9,
@@ -131140,18 +131140,18 @@
             "Kiriko",
             "Lúcio"
           ],
-          "total_elim": 86,
-          "total_ast": 98,
-          "total_dth": 64,
-          "total_dmg": 38512,
-          "total_heal": 61412,
-          "total_block": 7630,
-          "avg_elim": "9.719",
-          "avg_ast": "11.076",
-          "avg_dth": "7.233",
-          "avg_dmg": "4352.458",
-          "avg_heal": "6940.516",
-          "avg_block": "862.309"
+          "total_elim": 65,
+          "total_ast": 103,
+          "total_dth": 66,
+          "total_dmg": 27383,
+          "total_heal": 73535,
+          "total_block": 7549,
+          "avg_elim": "7.346",
+          "avg_ast": "11.641",
+          "avg_dth": "7.459",
+          "avg_dmg": "3094.707",
+          "avg_heal": "8310.605",
+          "avg_block": "853.155"
         }
       }
     },
@@ -131177,18 +131177,18 @@
         "Wuyang",
         "Kiriko"
       ],
-      "total_elim": 73,
-      "total_ast": 106,
-      "total_dth": 55,
-      "total_dmg": 33646,
-      "total_heal": 67294,
-      "total_block": 3414,
-      "avg_elim": "8.250",
-      "avg_ast": "11.980",
-      "avg_dth": "6.216",
-      "avg_dmg": "3802.524",
-      "avg_heal": "7605.274",
-      "avg_block": "385.835",
+      "total_elim": 70,
+      "total_ast": 97,
+      "total_dth": 61,
+      "total_dmg": 31786,
+      "total_heal": 66184,
+      "total_block": 4003,
+      "avg_elim": "7.911",
+      "avg_ast": "10.963",
+      "avg_dth": "6.894",
+      "avg_dmg": "3592.315",
+      "avg_heal": "7479.827",
+      "avg_block": "452.402",
       "role_breakdown": {
         "SUP": {
           "maps_played": 9,
@@ -131200,18 +131200,18 @@
             "Wuyang",
             "Kiriko"
           ],
-          "total_elim": 73,
-          "total_ast": 106,
-          "total_dth": 55,
-          "total_dmg": 33646,
-          "total_heal": 67294,
-          "total_block": 3414,
-          "avg_elim": "8.250",
-          "avg_ast": "11.980",
-          "avg_dth": "6.216",
-          "avg_dmg": "3802.524",
-          "avg_heal": "7605.274",
-          "avg_block": "385.835"
+          "total_elim": 70,
+          "total_ast": 97,
+          "total_dth": 61,
+          "total_dmg": 31786,
+          "total_heal": 66184,
+          "total_block": 4003,
+          "avg_elim": "7.911",
+          "avg_ast": "10.963",
+          "avg_dth": "6.894",
+          "avg_dmg": "3592.315",
+          "avg_heal": "7479.827",
+          "avg_block": "452.402"
         }
       }
     },
