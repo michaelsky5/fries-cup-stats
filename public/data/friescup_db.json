@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-04-07T16:42:18.571Z",
+  "updated_at": "2026-04-08T12:21:56.298Z",
   "meta": {
     "team_count": 30,
     "player_count": 190,
-    "match_count": 60,
+    "match_count": 75,
     "map_count": 180
   },
   "teams": [
@@ -124746,6 +124746,486 @@
           ]
         }
       ]
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M01",
+      "raw_match_id": "FCA26-SWISS-R5-M01-GIGZ",
+      "match_display_name": "ROUND 05 / NGP VS SPS",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T002",
+        "name": "Never Get Point",
+        "short": "NGP",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T020",
+        "name": "Sapphire Star",
+        "short": "SPS",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M02",
+      "raw_match_id": "FCA26-SWISS-R5-M02-FRFE",
+      "match_display_name": "ROUND 05 / FG VS CR",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T010",
+        "name": "家和万事兴",
+        "short": "FG",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T003",
+        "name": "Crazy Rabbit",
+        "short": "CR",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M03",
+      "raw_match_id": "FCA26-SWISS-R5-M03-PCAV",
+      "match_display_name": "ROUND 05 / TNS VS ASP",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T007",
+        "name": "Team New Star",
+        "short": "TNS",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T009",
+        "name": "Astropollo",
+        "short": "ASP",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M04",
+      "raw_match_id": "FCA26-SWISS-R5-M04-U2MS",
+      "match_display_name": "ROUND 05 / YOU VS SPC",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T022",
+        "name": "可爱小鱿4277",
+        "short": "YOU",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T011",
+        "name": "Spark Crew",
+        "short": "SPC",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M05",
+      "raw_match_id": "FCA26-SWISS-R5-M05-CS8A",
+      "match_display_name": "ROUND 05 / TF VS SK",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T013",
+        "name": "Thanks Faker",
+        "short": "TF",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T012",
+        "name": "snack",
+        "short": "SK",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M06",
+      "raw_match_id": "FCA26-SWISS-R5-M06-WCK5",
+      "match_display_name": "ROUND 05 / OL VS CUG",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T005",
+        "name": "NJFU Out laws",
+        "short": "OL",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T019",
+        "name": "南望山瓜皮小队",
+        "short": "CUG",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M07",
+      "raw_match_id": "FCA26-SWISS-R5-M07-482C",
+      "match_display_name": "ROUND 05 / JDG VS NBA",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T023",
+        "name": "Jetpack dog gaming",
+        "short": "JDG",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T025",
+        "name": "NingBoU Again",
+        "short": "NBA",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M08",
+      "raw_match_id": "FCA26-SWISS-R5-M08-RAS5",
+      "match_display_name": "ROUND 05 / V50 VS ZS",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T030",
+        "name": "V我50鸡翅分你一队",
+        "short": "V50",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T006",
+        "name": "ZWU Spark",
+        "short": "ZS",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M09",
+      "raw_match_id": "FCA26-SWISS-R5-M09-9A79",
+      "match_display_name": "ROUND 05 / FFA VS 5GGS",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T001",
+        "name": "French Fries. Academy",
+        "short": "FFA",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T008",
+        "name": "Five Eggs",
+        "short": "5GGS",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M10",
+      "raw_match_id": "FCA26-SWISS-R5-M10-QPLB",
+      "match_display_name": "ROUND 05 / LSJ VS HYW",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T018",
+        "name": "LSJ-Gaming 沈阳老四季",
+        "short": "LSJ",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T029",
+        "name": "何意味3",
+        "short": "HYW",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M11",
+      "raw_match_id": "FCA26-SWISS-R5-M11-8VKW",
+      "match_display_name": "ROUND 05 / TS VS XCFN.G",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T024",
+        "name": "宝藏船队",
+        "short": "TS",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T015",
+        "name": "XCFN.Green",
+        "short": "XCFN.G",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M12",
+      "raw_match_id": "FCA26-SWISS-R5-M12-OBIN",
+      "match_display_name": "ROUND 05 / SD VS FZ",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T004",
+        "name": "SENSEIDEATH",
+        "short": "SD",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T017",
+        "name": "Five Zones",
+        "short": "FZ",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M13",
+      "raw_match_id": "FCA26-SWISS-R5-M13-HKA0",
+      "match_display_name": "ROUND 05 / BLG VS YM",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T026",
+        "name": "不烂的gaming",
+        "short": "BLG",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T028",
+        "name": "Yes Mercy",
+        "short": "YM",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M14",
+      "raw_match_id": "FCA26-SWISS-R5-M14-VWIM",
+      "match_display_name": "ROUND 05 / CUIT VS AST",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T027",
+        "name": "成信大撕咬者",
+        "short": "CUIT",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T016",
+        "name": "AstroTemis",
+        "short": "AST",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M15",
+      "raw_match_id": "FCA26-SWISS-R5-M15-2UXV",
+      "match_display_name": "ROUND 05 / TCK VS WBG",
+      "status": "PENDING",
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-07T16:58:39.348Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T014",
+        "name": "Team Chicken",
+        "short": "TCK",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T021",
+        "name": "WO BI GAO",
+        "short": "WBG",
+        "score": ""
+      },
+      "maps": []
     }
   ],
   "player_totals": [
@@ -124784,7 +125264,32 @@
       "avg_dth": "5.676",
       "avg_dmg": "9296.247",
       "avg_heal": "1904.913",
-      "avg_block": "12388.343"
+      "avg_block": "12388.343",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 5,
+          "total_time_played": "54m",
+          "raw_time_mins": 54.616666666666674,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Mauga",
+            "Zarya"
+          ],
+          "total_elim": 94,
+          "total_ast": 50,
+          "total_dth": 31,
+          "total_dmg": 50773,
+          "total_heal": 10404,
+          "total_block": 67661,
+          "avg_elim": "17.211",
+          "avg_ast": "9.155",
+          "avg_dth": "5.676",
+          "avg_dmg": "9296.247",
+          "avg_heal": "1904.913",
+          "avg_block": "12388.343"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0030",
@@ -124822,7 +125327,32 @@
       "avg_dth": "4.669",
       "avg_dmg": "10604.339",
       "avg_heal": "1465.409",
-      "avg_block": "11593.398"
+      "avg_block": "11593.398",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 6,
+          "total_time_played": "1h 10m",
+          "raw_time_mins": 70.68333333333334,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Sigma",
+            "Mauga"
+          ],
+          "total_elim": 146,
+          "total_ast": 66,
+          "total_dth": 33,
+          "total_dmg": 74955,
+          "total_heal": 10358,
+          "total_block": 81946,
+          "avg_elim": "20.656",
+          "avg_ast": "9.337",
+          "avg_dth": "4.669",
+          "avg_dmg": "10604.339",
+          "avg_heal": "1465.409",
+          "avg_block": "11593.398"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0031",
@@ -124857,7 +125387,30 @@
       "avg_dth": "5.541",
       "avg_dmg": "10037.476",
       "avg_heal": "468.411",
-      "avg_block": "405.848"
+      "avg_block": "405.848",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 4,
+          "total_time_played": "43m",
+          "raw_time_mins": 43.31666666666667,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta"
+          ],
+          "total_elim": 105,
+          "total_ast": 12,
+          "total_dth": 24,
+          "total_dmg": 43479,
+          "total_heal": 2029,
+          "total_block": 1758,
+          "avg_elim": "24.240",
+          "avg_ast": "2.770",
+          "avg_dth": "5.541",
+          "avg_dmg": "10037.476",
+          "avg_heal": "468.411",
+          "avg_block": "405.848"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0032",
@@ -124894,7 +125447,32 @@
       "avg_dth": "6.576",
       "avg_dmg": "7186.128",
       "avg_heal": "329.440",
-      "avg_block": "1629.937"
+      "avg_block": "1629.937",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 8,
+          "total_time_played": "1h 37m",
+          "raw_time_mins": 97.31666666666666,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Vendetta",
+            "Symmetra"
+          ],
+          "total_elim": 144,
+          "total_ast": 30,
+          "total_dth": 64,
+          "total_dmg": 69933,
+          "total_heal": 3206,
+          "total_block": 15862,
+          "avg_elim": "14.797",
+          "avg_ast": "3.083",
+          "avg_dth": "6.576",
+          "avg_dmg": "7186.128",
+          "avg_heal": "329.440",
+          "avg_block": "1629.937"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0033",
@@ -124931,7 +125509,32 @@
       "avg_dth": "6.002",
       "avg_dmg": "8835.405",
       "avg_heal": "204.517",
-      "avg_block": "787.420"
+      "avg_block": "787.420",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 49m",
+          "raw_time_mins": 109.96666666666667,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Symmetra",
+            "Emre"
+          ],
+          "total_elim": 184,
+          "total_ast": 9,
+          "total_dth": 66,
+          "total_dmg": 97160,
+          "total_heal": 2249,
+          "total_block": 8659,
+          "avg_elim": "16.732",
+          "avg_ast": "0.818",
+          "avg_dth": "6.002",
+          "avg_dmg": "8835.405",
+          "avg_heal": "204.517",
+          "avg_block": "787.420"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0034",
@@ -124965,7 +125568,31 @@
       "avg_dth": "5.666",
       "avg_dmg": "3942.219",
       "avg_heal": "8177.494",
-      "avg_block": "1740.543"
+      "avg_block": "1740.543",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 11,
+          "total_time_played": "2h 5m",
+          "raw_time_mins": 125.30000000000001,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Baptiste"
+          ],
+          "total_elim": 142,
+          "total_ast": 176,
+          "total_dth": 71,
+          "total_dmg": 49396,
+          "total_heal": 102464,
+          "total_block": 21809,
+          "avg_elim": "11.333",
+          "avg_ast": "14.046",
+          "avg_dth": "5.666",
+          "avg_dmg": "3942.219",
+          "avg_heal": "8177.494",
+          "avg_block": "1740.543"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0035",
@@ -124999,7 +125626,31 @@
       "avg_dth": "5.507",
       "avg_dmg": "4490.662",
       "avg_heal": "9888.508",
-      "avg_block": "208.859"
+      "avg_block": "208.859",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 11,
+          "total_time_played": "2h 5m",
+          "raw_time_mins": 125.30000000000001,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Illari"
+          ],
+          "total_elim": 122,
+          "total_ast": 208,
+          "total_dth": 69,
+          "total_dmg": 56268,
+          "total_heal": 123903,
+          "total_block": 2617,
+          "avg_elim": "9.737",
+          "avg_ast": "16.600",
+          "avg_dth": "5.507",
+          "avg_dmg": "4490.662",
+          "avg_heal": "9888.508",
+          "avg_block": "208.859"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0054",
@@ -125034,7 +125685,32 @@
       "avg_dth": "5.283",
       "avg_dmg": "9395.334",
       "avg_heal": "992.646",
-      "avg_block": "9219.589"
+      "avg_block": "9219.589",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 10,
+          "total_time_played": "1h 47m",
+          "raw_time_mins": 107.88333333333335,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Zarya",
+            "Winston"
+          ],
+          "total_elim": 246,
+          "total_ast": 118,
+          "total_dth": 57,
+          "total_dmg": 101360,
+          "total_heal": 10709,
+          "total_block": 99464,
+          "avg_elim": "22.802",
+          "avg_ast": "10.938",
+          "avg_dth": "5.283",
+          "avg_dmg": "9395.334",
+          "avg_heal": "992.646",
+          "avg_block": "9219.589"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0055",
@@ -125065,7 +125741,28 @@
       "avg_dth": "0.000",
       "avg_dmg": "0.000",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 0,
+          "total_time_played": "0m",
+          "raw_time_mins": 0,
+          "most_played_hero": "",
+          "top_3_heroes": [],
+          "total_elim": 0,
+          "total_ast": 0,
+          "total_dth": 0,
+          "total_dmg": 0,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "0.000",
+          "avg_ast": "0.000",
+          "avg_dth": "0.000",
+          "avg_dmg": "0.000",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0056",
@@ -125101,7 +125798,50 @@
       "avg_dth": "6.342",
       "avg_dmg": "3895.053",
       "avg_heal": "6622.072",
-      "avg_block": "211.332"
+      "avg_block": "211.332",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 0,
+          "total_time_played": "0m",
+          "raw_time_mins": 0,
+          "most_played_hero": "",
+          "top_3_heroes": [],
+          "total_elim": 0,
+          "total_ast": 0,
+          "total_dth": 0,
+          "total_dmg": 0,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "0.000",
+          "avg_ast": "0.000",
+          "avg_dth": "0.000",
+          "avg_dmg": "0.000",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        },
+        "SUP": {
+          "maps_played": 3,
+          "total_time_played": "39m",
+          "raw_time_mins": 39.416666666666664,
+          "most_played_hero": "Illari",
+          "top_3_heroes": [
+            "Illari",
+            "Baptiste"
+          ],
+          "total_elim": 40,
+          "total_ast": 24,
+          "total_dth": 25,
+          "total_dmg": 15353,
+          "total_heal": 26102,
+          "total_block": 833,
+          "avg_elim": "10.148",
+          "avg_ast": "6.089",
+          "avg_dth": "6.342",
+          "avg_dmg": "3895.053",
+          "avg_heal": "6622.072",
+          "avg_block": "211.332"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0057",
@@ -125138,7 +125878,32 @@
       "avg_dth": "5.191",
       "avg_dmg": "8564.159",
       "avg_heal": "129.028",
-      "avg_block": "26.047"
+      "avg_block": "26.047",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 47m",
+          "raw_time_mins": 107.88333333333335,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Emre",
+            "Cassidy"
+          ],
+          "total_elim": 243,
+          "total_ast": 0,
+          "total_dth": 56,
+          "total_dmg": 92393,
+          "total_heal": 1392,
+          "total_block": 281,
+          "avg_elim": "22.524",
+          "avg_ast": "0.000",
+          "avg_dth": "5.191",
+          "avg_dmg": "8564.159",
+          "avg_heal": "129.028",
+          "avg_block": "26.047"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0058",
@@ -125173,7 +125938,32 @@
       "avg_dth": "6.025",
       "avg_dmg": "7638.251",
       "avg_heal": "497.667",
-      "avg_block": "439.642"
+      "avg_block": "439.642",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 47m",
+          "raw_time_mins": 107.88333333333335,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Reaper",
+            "Tracer"
+          ],
+          "total_elim": 222,
+          "total_ast": 20,
+          "total_dth": 65,
+          "total_dmg": 82404,
+          "total_heal": 5369,
+          "total_block": 4743,
+          "avg_elim": "20.578",
+          "avg_ast": "1.854",
+          "avg_dth": "6.025",
+          "avg_dmg": "7638.251",
+          "avg_heal": "497.667",
+          "avg_block": "439.642"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0059",
@@ -125207,7 +125997,31 @@
       "avg_dth": "4.357",
       "avg_dmg": "3804.758",
       "avg_heal": "10099.706",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 47m",
+          "raw_time_mins": 107.88333333333335,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Illari"
+          ],
+          "total_elim": 135,
+          "total_ast": 219,
+          "total_dth": 47,
+          "total_dmg": 41047,
+          "total_heal": 108959,
+          "total_block": 0,
+          "avg_elim": "12.514",
+          "avg_ast": "20.300",
+          "avg_dth": "4.357",
+          "avg_dmg": "3804.758",
+          "avg_heal": "10099.706",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0060",
@@ -125244,7 +126058,32 @@
       "avg_dth": "4.090",
       "avg_dmg": "4548.783",
       "avg_heal": "8882.425",
-      "avg_block": "962.366"
+      "avg_block": "962.366",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 7,
+          "total_time_played": "1h 8m",
+          "raw_time_mins": 68.46666666666667,
+          "most_played_hero": "Mizuki",
+          "top_3_heroes": [
+            "Mizuki",
+            "Lúcio",
+            "Baptiste"
+          ],
+          "total_elim": 100,
+          "total_ast": 145,
+          "total_dth": 28,
+          "total_dmg": 31144,
+          "total_heal": 60815,
+          "total_block": 6589,
+          "avg_elim": "14.606",
+          "avg_ast": "21.178",
+          "avg_dth": "4.090",
+          "avg_dmg": "4548.783",
+          "avg_heal": "8882.425",
+          "avg_block": "962.366"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0013",
@@ -125279,7 +126118,32 @@
       "avg_dth": "2.858",
       "avg_dmg": "8861.724",
       "avg_heal": "1048.057",
-      "avg_block": "9095.042"
+      "avg_block": "9095.042",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 9,
+          "total_time_played": "1h 51m",
+          "raw_time_mins": 111.95,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Zarya",
+            "Ramattra"
+          ],
+          "total_elim": 252,
+          "total_ast": 103,
+          "total_dth": 32,
+          "total_dmg": 99207,
+          "total_heal": 11733,
+          "total_block": 101819,
+          "avg_elim": "22.510",
+          "avg_ast": "9.201",
+          "avg_dth": "2.858",
+          "avg_dmg": "8861.724",
+          "avg_heal": "1048.057",
+          "avg_block": "9095.042"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0014",
@@ -125313,7 +126177,31 @@
       "avg_dth": "6.163",
       "avg_dmg": "11377.401",
       "avg_heal": "494.596",
-      "avg_block": "59.580"
+      "avg_block": "59.580",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 51m",
+          "raw_time_mins": 111.95,
+          "most_played_hero": "Emre",
+          "top_3_heroes": [
+            "Emre",
+            "Cassidy"
+          ],
+          "total_elim": 221,
+          "total_ast": 12,
+          "total_dth": 69,
+          "total_dmg": 127370,
+          "total_heal": 5537,
+          "total_block": 667,
+          "avg_elim": "19.741",
+          "avg_ast": "1.072",
+          "avg_dth": "6.163",
+          "avg_dmg": "11377.401",
+          "avg_heal": "494.596",
+          "avg_block": "59.580"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0015",
@@ -125347,7 +126235,31 @@
       "avg_dth": "6.967",
       "avg_dmg": "8557.034",
       "avg_heal": "365.967",
-      "avg_block": "865.565"
+      "avg_block": "865.565",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 51m",
+          "raw_time_mins": 111.95,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Tracer"
+          ],
+          "total_elim": 213,
+          "total_ast": 34,
+          "total_dth": 78,
+          "total_dmg": 95796,
+          "total_heal": 4097,
+          "total_block": 9690,
+          "avg_elim": "19.026",
+          "avg_ast": "3.037",
+          "avg_dth": "6.967",
+          "avg_dmg": "8557.034",
+          "avg_heal": "365.967",
+          "avg_block": "865.565"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0016",
@@ -125381,7 +126293,31 @@
       "avg_dth": "4.734",
       "avg_dmg": "2718.803",
       "avg_heal": "7414.917",
-      "avg_block": "1084.145"
+      "avg_block": "1084.145",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 51m",
+          "raw_time_mins": 111.95,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Baptiste"
+          ],
+          "total_elim": 121,
+          "total_ast": 143,
+          "total_dth": 53,
+          "total_dmg": 30437,
+          "total_heal": 83010,
+          "total_block": 12137,
+          "avg_elim": "10.808",
+          "avg_ast": "12.774",
+          "avg_dth": "4.734",
+          "avg_dmg": "2718.803",
+          "avg_heal": "7414.917",
+          "avg_block": "1084.145"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0017",
@@ -125417,7 +126353,31 @@
       "avg_dth": "4.288",
       "avg_dmg": "3179.366",
       "avg_heal": "10959.982",
-      "avg_block": "70.657"
+      "avg_block": "70.657",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 51m",
+          "raw_time_mins": 111.95,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Illari"
+          ],
+          "total_elim": 103,
+          "total_ast": 232,
+          "total_dth": 48,
+          "total_dmg": 35593,
+          "total_heal": 122697,
+          "total_block": 791,
+          "avg_elim": "9.201",
+          "avg_ast": "20.724",
+          "avg_dth": "4.288",
+          "avg_dmg": "3179.366",
+          "avg_heal": "10959.982",
+          "avg_block": "70.657"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0018",
@@ -125448,7 +126408,8 @@
       "avg_dth": "0.000",
       "avg_dmg": "0.000",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {}
     },
     {
       "player_id": "FCA26-P0068",
@@ -125485,7 +126446,50 @@
       "avg_dth": "9.817",
       "avg_dmg": "4455.245",
       "avg_heal": "7120.308",
-      "avg_block": "1197.690"
+      "avg_block": "1197.690",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 0,
+          "total_time_played": "0m",
+          "raw_time_mins": 0,
+          "most_played_hero": "",
+          "top_3_heroes": [],
+          "total_elim": 0,
+          "total_ast": 0,
+          "total_dth": 0,
+          "total_dmg": 0,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "0.000",
+          "avg_ast": "0.000",
+          "avg_dth": "0.000",
+          "avg_dmg": "0.000",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        },
+        "SUP": {
+          "maps_played": 2,
+          "total_time_played": "17m",
+          "raw_time_mins": 17.316666666666666,
+          "most_played_hero": "Wuyang",
+          "top_3_heroes": [
+            "Wuyang",
+            "Jetpack Cat"
+          ],
+          "total_elim": 14,
+          "total_ast": 12,
+          "total_dth": 17,
+          "total_dmg": 7715,
+          "total_heal": 12330,
+          "total_block": 2074,
+          "avg_elim": "8.085",
+          "avg_ast": "6.930",
+          "avg_dth": "9.817",
+          "avg_dmg": "4455.245",
+          "avg_heal": "7120.308",
+          "avg_block": "1197.690"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0069",
@@ -125522,7 +126526,32 @@
       "avg_dth": "8.003",
       "avg_dmg": "9575.882",
       "avg_heal": "873.963",
-      "avg_block": "7324.319"
+      "avg_block": "7324.319",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 9,
+          "total_time_played": "1h 31m",
+          "raw_time_mins": 91.21666666666667,
+          "most_played_hero": "Zarya",
+          "top_3_heroes": [
+            "Zarya",
+            "Wrecking Ball",
+            "Roadhog"
+          ],
+          "total_elim": 144,
+          "total_ast": 66,
+          "total_dth": 73,
+          "total_dmg": 87348,
+          "total_heal": 7972,
+          "total_block": 66810,
+          "avg_elim": "15.787",
+          "avg_ast": "7.236",
+          "avg_dth": "8.003",
+          "avg_dmg": "9575.882",
+          "avg_heal": "873.963",
+          "avg_block": "7324.319"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0070",
@@ -125556,7 +126585,31 @@
       "avg_dth": "8.661",
       "avg_dmg": "7195.944",
       "avg_heal": "253.791",
-      "avg_block": "734.515"
+      "avg_block": "734.515",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 31m",
+          "raw_time_mins": 91.21666666666667,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Venture"
+          ],
+          "total_elim": 123,
+          "total_ast": 6,
+          "total_dth": 79,
+          "total_dmg": 65639,
+          "total_heal": 2315,
+          "total_block": 6700,
+          "avg_elim": "13.484",
+          "avg_ast": "0.658",
+          "avg_dth": "8.661",
+          "avg_dmg": "7195.944",
+          "avg_heal": "253.791",
+          "avg_block": "734.515"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0071",
@@ -125594,7 +126647,32 @@
       "avg_dth": "7.674",
       "avg_dmg": "9106.779",
       "avg_heal": "93.075",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 31m",
+          "raw_time_mins": 91.21666666666667,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Emre",
+            "Tracer"
+          ],
+          "total_elim": 135,
+          "total_ast": 0,
+          "total_dth": 70,
+          "total_dmg": 83069,
+          "total_heal": 849,
+          "total_block": 0,
+          "avg_elim": "14.800",
+          "avg_ast": "0.000",
+          "avg_dth": "7.674",
+          "avg_dmg": "9106.779",
+          "avg_heal": "93.075",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0072",
@@ -125625,7 +126703,28 @@
       "avg_dth": "0.000",
       "avg_dmg": "0.000",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 0,
+          "total_time_played": "0m",
+          "raw_time_mins": 0,
+          "most_played_hero": "",
+          "top_3_heroes": [],
+          "total_elim": 0,
+          "total_ast": 0,
+          "total_dth": 0,
+          "total_dmg": 0,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "0.000",
+          "avg_ast": "0.000",
+          "avg_dth": "0.000",
+          "avg_dmg": "0.000",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0073",
@@ -125661,7 +126760,30 @@
       "avg_dth": "8.254",
       "avg_dmg": "3643.708",
       "avg_heal": "8416.103",
-      "avg_block": "1830.176"
+      "avg_block": "1830.176",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 7,
+          "total_time_played": "1h 13m",
+          "raw_time_mins": 73.9,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio"
+          ],
+          "total_elim": 60,
+          "total_ast": 81,
+          "total_dth": 61,
+          "total_dmg": 26927,
+          "total_heal": 62195,
+          "total_block": 13525,
+          "avg_elim": "8.119",
+          "avg_ast": "10.961",
+          "avg_dth": "8.254",
+          "avg_dmg": "3643.708",
+          "avg_heal": "8416.103",
+          "avg_block": "1830.176"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0074",
@@ -125698,7 +126820,31 @@
       "avg_dth": "8.003",
       "avg_dmg": "3510.543",
       "avg_heal": "8096.327",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 31m",
+          "raw_time_mins": 91.21666666666667,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Jetpack Cat"
+          ],
+          "total_elim": 49,
+          "total_ast": 130,
+          "total_dth": 73,
+          "total_dmg": 32022,
+          "total_heal": 73852,
+          "total_block": 0,
+          "avg_elim": "5.372",
+          "avg_ast": "14.252",
+          "avg_dth": "8.003",
+          "avg_dmg": "3510.543",
+          "avg_heal": "8096.327",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0048",
@@ -125732,7 +126878,31 @@
       "avg_dth": "4.429",
       "avg_dmg": "8705.919",
       "avg_heal": "453.087",
-      "avg_block": "7770.958"
+      "avg_block": "7770.958",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 10,
+          "total_time_played": "1h 57m",
+          "raw_time_mins": 117.41666666666666,
+          "most_played_hero": "Zarya",
+          "top_3_heroes": [
+            "Zarya",
+            "D.Va"
+          ],
+          "total_elim": 241,
+          "total_ast": 123,
+          "total_dth": 52,
+          "total_dmg": 102222,
+          "total_heal": 5320,
+          "total_block": 91244,
+          "avg_elim": "20.525",
+          "avg_ast": "10.476",
+          "avg_dth": "4.429",
+          "avg_dmg": "8705.919",
+          "avg_heal": "453.087",
+          "avg_block": "7770.958"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0049",
@@ -125767,7 +126937,32 @@
       "avg_dth": "5.877",
       "avg_dmg": "10036.139",
       "avg_heal": "859.077",
-      "avg_block": "0.426"
+      "avg_block": "0.426",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 57m",
+          "raw_time_mins": 117.41666666666666,
+          "most_played_hero": "Emre",
+          "top_3_heroes": [
+            "Emre",
+            "Tracer",
+            "Cassidy"
+          ],
+          "total_elim": 252,
+          "total_ast": 2,
+          "total_dth": 69,
+          "total_dmg": 117841,
+          "total_heal": 10087,
+          "total_block": 5,
+          "avg_elim": "21.462",
+          "avg_ast": "0.170",
+          "avg_dth": "5.877",
+          "avg_dmg": "10036.139",
+          "avg_heal": "859.077",
+          "avg_block": "0.426"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0050",
@@ -125801,7 +126996,31 @@
       "avg_dth": "6.132",
       "avg_dmg": "7513.754",
       "avg_heal": "315.287",
-      "avg_block": "551.370"
+      "avg_block": "551.370",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 57m",
+          "raw_time_mins": 117.41666666666666,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Tracer"
+          ],
+          "total_elim": 206,
+          "total_ast": 29,
+          "total_dth": 72,
+          "total_dmg": 88224,
+          "total_heal": 3702,
+          "total_block": 6474,
+          "avg_elim": "17.544",
+          "avg_ast": "2.470",
+          "avg_dth": "6.132",
+          "avg_dmg": "7513.754",
+          "avg_heal": "315.287",
+          "avg_block": "551.370"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0051",
@@ -125838,7 +127057,32 @@
       "avg_dth": "5.280",
       "avg_dmg": "6737.289",
       "avg_heal": "6249.454",
-      "avg_block": "633.982"
+      "avg_block": "633.982",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 57m",
+          "raw_time_mins": 117.41666666666666,
+          "most_played_hero": "Wuyang",
+          "top_3_heroes": [
+            "Wuyang",
+            "Mizuki",
+            "Illari"
+          ],
+          "total_elim": 199,
+          "total_ast": 173,
+          "total_dth": 62,
+          "total_dmg": 79107,
+          "total_heal": 73379,
+          "total_block": 7444,
+          "avg_elim": "16.948",
+          "avg_ast": "14.734",
+          "avg_dth": "5.280",
+          "avg_dmg": "6737.289",
+          "avg_heal": "6249.454",
+          "avg_block": "633.982"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0052",
@@ -125871,7 +127115,30 @@
       "avg_dth": "5.280",
       "avg_dmg": "1665.607",
       "avg_heal": "9956.934",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 57m",
+          "raw_time_mins": 117.41666666666666,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko"
+          ],
+          "total_elim": 80,
+          "total_ast": 251,
+          "total_dth": 62,
+          "total_dmg": 19557,
+          "total_heal": 116911,
+          "total_block": 0,
+          "avg_elim": "6.813",
+          "avg_ast": "21.377",
+          "avg_dth": "5.280",
+          "avg_dmg": "1665.607",
+          "avg_heal": "9956.934",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0053",
@@ -125902,7 +127169,8 @@
       "avg_dth": "0.000",
       "avg_dmg": "0.000",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {}
     },
     {
       "player_id": "FCA26-P0132",
@@ -125939,7 +127207,31 @@
       "avg_dth": "5.503",
       "avg_dmg": "9962.949",
       "avg_heal": "2359.281",
-      "avg_block": "6316.067"
+      "avg_block": "6316.067",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 5,
+          "total_time_played": "45m",
+          "raw_time_mins": 45.43333333333333,
+          "most_played_hero": "Junker Queen",
+          "top_3_heroes": [
+            "Junker Queen",
+            "Sigma"
+          ],
+          "total_elim": 77,
+          "total_ast": 29,
+          "total_dth": 25,
+          "total_dmg": 45265,
+          "total_heal": 10719,
+          "total_block": 28696,
+          "avg_elim": "16.948",
+          "avg_ast": "6.383",
+          "avg_dth": "5.503",
+          "avg_dmg": "9962.949",
+          "avg_heal": "2359.281",
+          "avg_block": "6316.067"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0133",
@@ -125973,7 +127265,31 @@
       "avg_dth": "4.694",
       "avg_dmg": "7884.495",
       "avg_heal": "2127.738",
-      "avg_block": "11926.600"
+      "avg_block": "11926.600",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 3,
+          "total_time_played": "23m",
+          "raw_time_mins": 23.433333333333334,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Zarya"
+          ],
+          "total_elim": 35,
+          "total_ast": 17,
+          "total_dth": 11,
+          "total_dmg": 18476,
+          "total_heal": 4986,
+          "total_block": 27948,
+          "avg_elim": "14.936",
+          "avg_ast": "7.255",
+          "avg_dth": "4.694",
+          "avg_dmg": "7884.495",
+          "avg_heal": "2127.738",
+          "avg_block": "11926.600"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0134",
@@ -126010,7 +127326,32 @@
       "avg_dth": "7.551",
       "avg_dmg": "6631.220",
       "avg_heal": "106.147",
-      "avg_block": "1216.844"
+      "avg_block": "1216.844",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 8,
+          "total_time_played": "1h 8m",
+          "raw_time_mins": 68.86666666666666,
+          "most_played_hero": "Venture",
+          "top_3_heroes": [
+            "Venture",
+            "Sojourn",
+            "Tracer"
+          ],
+          "total_elim": 77,
+          "total_ast": 1,
+          "total_dth": 52,
+          "total_dmg": 45667,
+          "total_heal": 731,
+          "total_block": 8380,
+          "avg_elim": "11.181",
+          "avg_ast": "0.145",
+          "avg_dth": "7.551",
+          "avg_dmg": "6631.220",
+          "avg_heal": "106.147",
+          "avg_block": "1216.844"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0135",
@@ -126045,7 +127386,30 @@
       "avg_dth": "6.748",
       "avg_dmg": "6643.861",
       "avg_heal": "608.435",
-      "avg_block": "977.320"
+      "avg_block": "977.320",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 2,
+          "total_time_played": "17m",
+          "raw_time_mins": 17.78333333333333,
+          "most_played_hero": "Genji",
+          "top_3_heroes": [
+            "Genji"
+          ],
+          "total_elim": 26,
+          "total_ast": 0,
+          "total_dth": 12,
+          "total_dmg": 11815,
+          "total_heal": 1082,
+          "total_block": 1738,
+          "avg_elim": "14.620",
+          "avg_ast": "0.000",
+          "avg_dth": "6.748",
+          "avg_dmg": "6643.861",
+          "avg_heal": "608.435",
+          "avg_block": "977.320"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0136",
@@ -126082,7 +127446,32 @@
       "avg_dth": "3.719",
       "avg_dmg": "11665.840",
       "avg_heal": "240.000",
-      "avg_block": "23.491"
+      "avg_block": "23.491",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 6,
+          "total_time_played": "51m",
+          "raw_time_mins": 51.08333333333333,
+          "most_played_hero": "Emre",
+          "top_3_heroes": [
+            "Emre",
+            "Sojourn",
+            "Ashe"
+          ],
+          "total_elim": 89,
+          "total_ast": 4,
+          "total_dth": 19,
+          "total_dmg": 59593,
+          "total_heal": 1226,
+          "total_block": 120,
+          "avg_elim": "17.423",
+          "avg_ast": "0.783",
+          "avg_dth": "3.719",
+          "avg_dmg": "11665.840",
+          "avg_heal": "240.000",
+          "avg_block": "23.491"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0137",
@@ -126118,7 +127507,31 @@
       "avg_dth": "5.954",
       "avg_dmg": "2711.617",
       "avg_heal": "8965.876",
-      "avg_block": "530.591"
+      "avg_block": "530.591",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 8,
+          "total_time_played": "1h 8m",
+          "raw_time_mins": 68.86666666666666,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Brigitte"
+          ],
+          "total_elim": 44,
+          "total_ast": 123,
+          "total_dth": 41,
+          "total_dmg": 18674,
+          "total_heal": 61745,
+          "total_block": 3654,
+          "avg_elim": "6.389",
+          "avg_ast": "17.861",
+          "avg_dth": "5.954",
+          "avg_dmg": "2711.617",
+          "avg_heal": "8965.876",
+          "avg_block": "530.591"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0138",
@@ -126152,7 +127565,31 @@
       "avg_dth": "5.227",
       "avg_dmg": "3156.825",
       "avg_heal": "8217.619",
-      "avg_block": "1557.502"
+      "avg_block": "1557.502",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 8,
+          "total_time_played": "1h 8m",
+          "raw_time_mins": 68.86666666666666,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Juno"
+          ],
+          "total_elim": 70,
+          "total_ast": 88,
+          "total_dth": 36,
+          "total_dmg": 21740,
+          "total_heal": 56592,
+          "total_block": 10726,
+          "avg_elim": "10.165",
+          "avg_ast": "12.778",
+          "avg_dth": "5.227",
+          "avg_dmg": "3156.825",
+          "avg_heal": "8217.619",
+          "avg_block": "1557.502"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0096",
@@ -126187,7 +127624,32 @@
       "avg_dth": "4.441",
       "avg_dmg": "9283.647",
       "avg_heal": "2134.320",
-      "avg_block": "8371.332"
+      "avg_block": "8371.332",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 5,
+          "total_time_played": "49m",
+          "raw_time_mins": 49.53333333333333,
+          "most_played_hero": "Domina",
+          "top_3_heroes": [
+            "Domina",
+            "Winston",
+            "Wrecking Ball"
+          ],
+          "total_elim": 105,
+          "total_ast": 29,
+          "total_dth": 22,
+          "total_dmg": 45985,
+          "total_heal": 10572,
+          "total_block": 41466,
+          "avg_elim": "21.198",
+          "avg_ast": "5.855",
+          "avg_dth": "4.441",
+          "avg_dmg": "9283.647",
+          "avg_heal": "2134.320",
+          "avg_block": "8371.332"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0097",
@@ -126218,7 +127680,28 @@
       "avg_dth": "0.000",
       "avg_dmg": "0.000",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 0,
+          "total_time_played": "0m",
+          "raw_time_mins": 0,
+          "most_played_hero": "",
+          "top_3_heroes": [],
+          "total_elim": 0,
+          "total_ast": 0,
+          "total_dth": 0,
+          "total_dmg": 0,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "0.000",
+          "avg_ast": "0.000",
+          "avg_dth": "0.000",
+          "avg_dmg": "0.000",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0098",
@@ -126254,7 +127737,31 @@
       "avg_dth": "6.208",
       "avg_dmg": "6882.698",
       "avg_heal": "263.729",
-      "avg_block": "757.616"
+      "avg_block": "757.616",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 26m",
+          "raw_time_mins": 86.98333333333332,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Tracer"
+          ],
+          "total_elim": 170,
+          "total_ast": 14,
+          "total_dth": 54,
+          "total_dmg": 59868,
+          "total_heal": 2294,
+          "total_block": 6590,
+          "avg_elim": "19.544",
+          "avg_ast": "1.610",
+          "avg_dth": "6.208",
+          "avg_dmg": "6882.698",
+          "avg_heal": "263.729",
+          "avg_block": "757.616"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0099",
@@ -126291,7 +127798,53 @@
       "avg_dth": "4.599",
       "avg_dmg": "8892.853",
       "avg_heal": "758.076",
-      "avg_block": "3610.577"
+      "avg_block": "3610.577",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 4,
+          "total_time_played": "37m",
+          "raw_time_mins": 37.45,
+          "most_played_hero": "Zarya",
+          "top_3_heroes": [
+            "Zarya",
+            "D.Va"
+          ],
+          "total_elim": 91,
+          "total_ast": 59,
+          "total_dth": 12,
+          "total_dmg": 29817,
+          "total_heal": 3233,
+          "total_block": 31406,
+          "avg_elim": "24.299",
+          "avg_ast": "15.754",
+          "avg_dth": "3.204",
+          "avg_dmg": "7961.816",
+          "avg_heal": "863.284",
+          "avg_block": "8386.115"
+        },
+        "DPS": {
+          "maps_played": 5,
+          "total_time_played": "49m",
+          "raw_time_mins": 49.53333333333333,
+          "most_played_hero": "Emre",
+          "top_3_heroes": [
+            "Emre",
+            "Tracer"
+          ],
+          "total_elim": 93,
+          "total_ast": 0,
+          "total_dth": 28,
+          "total_dmg": 47536,
+          "total_heal": 3361,
+          "total_block": 0,
+          "avg_elim": "18.775",
+          "avg_ast": "0.000",
+          "avg_dth": "5.653",
+          "avg_dmg": "9596.770",
+          "avg_heal": "678.533",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0100",
@@ -126325,7 +127878,31 @@
       "avg_dth": "4.272",
       "avg_dmg": "9943.124",
       "avg_heal": "483.311",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 4,
+          "total_time_played": "37m",
+          "raw_time_mins": 37.45,
+          "most_played_hero": "Emre",
+          "top_3_heroes": [
+            "Emre",
+            "Sojourn"
+          ],
+          "total_elim": 94,
+          "total_ast": 0,
+          "total_dth": 16,
+          "total_dmg": 37237,
+          "total_heal": 1810,
+          "total_block": 0,
+          "avg_elim": "25.100",
+          "avg_ast": "0.000",
+          "avg_dth": "4.272",
+          "avg_dmg": "9943.124",
+          "avg_heal": "483.311",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0101",
@@ -126359,7 +127936,31 @@
       "avg_dth": "3.909",
       "avg_dmg": "3791.991",
       "avg_heal": "6417.091",
-      "avg_block": "1372.217"
+      "avg_block": "1372.217",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 26m",
+          "raw_time_mins": 86.98333333333332,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Ana"
+          ],
+          "total_elim": 138,
+          "total_ast": 136,
+          "total_dth": 34,
+          "total_dmg": 32984,
+          "total_heal": 55818,
+          "total_block": 11936,
+          "avg_elim": "15.865",
+          "avg_ast": "15.635",
+          "avg_dth": "3.909",
+          "avg_dmg": "3791.991",
+          "avg_heal": "6417.091",
+          "avg_block": "1372.217"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0102",
@@ -126393,7 +127994,31 @@
       "avg_dth": "4.943",
       "avg_dmg": "6945.009",
       "avg_heal": "6745.200",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 26m",
+          "raw_time_mins": 86.98333333333332,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Illari"
+          ],
+          "total_elim": 135,
+          "total_ast": 154,
+          "total_dth": 43,
+          "total_dmg": 60410,
+          "total_heal": 58672,
+          "total_block": 0,
+          "avg_elim": "15.520",
+          "avg_ast": "17.705",
+          "avg_dth": "4.943",
+          "avg_dmg": "6945.009",
+          "avg_heal": "6745.200",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0019",
@@ -126431,7 +128056,32 @@
       "avg_dth": "4.891",
       "avg_dmg": "8962.806",
       "avg_heal": "1663.063",
-      "avg_block": "12123.166"
+      "avg_block": "12123.166",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 8,
+          "total_time_played": "1h 17m",
+          "raw_time_mins": 77.7,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Winston",
+            "Hazard"
+          ],
+          "total_elim": 148,
+          "total_ast": 50,
+          "total_dth": 38,
+          "total_dmg": 69641,
+          "total_heal": 12922,
+          "total_block": 94197,
+          "avg_elim": "19.048",
+          "avg_ast": "6.435",
+          "avg_dth": "4.891",
+          "avg_dmg": "8962.806",
+          "avg_heal": "1663.063",
+          "avg_block": "12123.166"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0020",
@@ -126468,7 +128118,32 @@
       "avg_dth": "5.534",
       "avg_dmg": "8533.848",
       "avg_heal": "397.040",
-      "avg_block": "72.201"
+      "avg_block": "72.201",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 8,
+          "total_time_played": "1h 17m",
+          "raw_time_mins": 77.7,
+          "most_played_hero": "Emre",
+          "top_3_heroes": [
+            "Emre",
+            "Freja",
+            "Cassidy"
+          ],
+          "total_elim": 105,
+          "total_ast": 1,
+          "total_dth": 43,
+          "total_dmg": 66308,
+          "total_heal": 3085,
+          "total_block": 561,
+          "avg_elim": "13.514",
+          "avg_ast": "0.129",
+          "avg_dth": "5.534",
+          "avg_dmg": "8533.848",
+          "avg_heal": "397.040",
+          "avg_block": "72.201"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0021",
@@ -126506,7 +128181,32 @@
       "avg_dth": "6.692",
       "avg_dmg": "7544.659",
       "avg_heal": "172.844",
-      "avg_block": "1033.205"
+      "avg_block": "1033.205",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 8,
+          "total_time_played": "1h 17m",
+          "raw_time_mins": 77.7,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Venture",
+            "Sojourn"
+          ],
+          "total_elim": 128,
+          "total_ast": 24,
+          "total_dth": 52,
+          "total_dmg": 58622,
+          "total_heal": 1343,
+          "total_block": 8028,
+          "avg_elim": "16.474",
+          "avg_ast": "3.089",
+          "avg_dth": "6.692",
+          "avg_dmg": "7544.659",
+          "avg_heal": "172.844",
+          "avg_block": "1033.205"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0022",
@@ -126543,7 +128243,32 @@
       "avg_dth": "6.435",
       "avg_dmg": "5261.390",
       "avg_heal": "9517.761",
-      "avg_block": "1732.304"
+      "avg_block": "1732.304",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 8,
+          "total_time_played": "1h 17m",
+          "raw_time_mins": 77.7,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Wuyang",
+            "Mizuki"
+          ],
+          "total_elim": 79,
+          "total_ast": 102,
+          "total_dth": 50,
+          "total_dmg": 40881,
+          "total_heal": 73953,
+          "total_block": 13460,
+          "avg_elim": "10.167",
+          "avg_ast": "13.127",
+          "avg_dth": "6.435",
+          "avg_dmg": "5261.390",
+          "avg_heal": "9517.761",
+          "avg_block": "1732.304"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0023",
@@ -126578,7 +128303,30 @@
       "avg_dth": "4.891",
       "avg_dmg": "4397.297",
       "avg_heal": "11849.292",
-      "avg_block": "59.717"
+      "avg_block": "59.717",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 8,
+          "total_time_played": "1h 17m",
+          "raw_time_mins": 77.7,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko"
+          ],
+          "total_elim": 77,
+          "total_ast": 148,
+          "total_dth": 38,
+          "total_dmg": 34167,
+          "total_heal": 92069,
+          "total_block": 464,
+          "avg_elim": "9.910",
+          "avg_ast": "19.048",
+          "avg_dth": "4.891",
+          "avg_dmg": "4397.297",
+          "avg_heal": "11849.292",
+          "avg_block": "59.717"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0007",
@@ -126612,7 +128360,31 @@
       "avg_dth": "6.003",
       "avg_dmg": "9903.502",
       "avg_heal": "1490.161",
-      "avg_block": "10257.699"
+      "avg_block": "10257.699",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 3,
+          "total_time_played": "29m",
+          "raw_time_mins": 29.983333333333334,
+          "most_played_hero": "Winston",
+          "top_3_heroes": [
+            "Winston",
+            "Mauga"
+          ],
+          "total_elim": 73,
+          "total_ast": 16,
+          "total_dth": 18,
+          "total_dmg": 29694,
+          "total_heal": 4468,
+          "total_block": 30756,
+          "avg_elim": "24.347",
+          "avg_ast": "5.336",
+          "avg_dth": "6.003",
+          "avg_dmg": "9903.502",
+          "avg_heal": "1490.161",
+          "avg_block": "10257.699"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0008",
@@ -126647,7 +128419,30 @@
       "avg_dth": "5.162",
       "avg_dmg": "10258.847",
       "avg_heal": "2441.985",
-      "avg_block": "8946.315"
+      "avg_block": "8946.315",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 6,
+          "total_time_played": "58m",
+          "raw_time_mins": 58.11666666666667,
+          "most_played_hero": "Hazard",
+          "top_3_heroes": [
+            "Hazard"
+          ],
+          "total_elim": 147,
+          "total_ast": 47,
+          "total_dth": 30,
+          "total_dmg": 59621,
+          "total_heal": 14192,
+          "total_block": 51993,
+          "avg_elim": "25.294",
+          "avg_ast": "8.087",
+          "avg_dth": "5.162",
+          "avg_dmg": "10258.847",
+          "avg_heal": "2441.985",
+          "avg_block": "8946.315"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0009",
@@ -126684,7 +128479,32 @@
       "avg_dth": "6.243",
       "avg_dmg": "9802.157",
       "avg_heal": "438.025",
-      "avg_block": "49.716"
+      "avg_block": "49.716",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 28m",
+          "raw_time_mins": 88.1,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Emre",
+            "Genji"
+          ],
+          "total_elim": 172,
+          "total_ast": 1,
+          "total_dth": 55,
+          "total_dmg": 86357,
+          "total_heal": 3859,
+          "total_block": 438,
+          "avg_elim": "19.523",
+          "avg_ast": "0.114",
+          "avg_dth": "6.243",
+          "avg_dmg": "9802.157",
+          "avg_heal": "438.025",
+          "avg_block": "49.716"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0010",
@@ -126717,7 +128537,30 @@
       "avg_dth": "6.356",
       "avg_dmg": "7687.174",
       "avg_heal": "39.501",
-      "avg_block": "1602.157"
+      "avg_block": "1602.157",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 28m",
+          "raw_time_mins": 88.1,
+          "most_played_hero": "Venture",
+          "top_3_heroes": [
+            "Venture"
+          ],
+          "total_elim": 191,
+          "total_ast": 21,
+          "total_dth": 56,
+          "total_dmg": 67724,
+          "total_heal": 348,
+          "total_block": 14115,
+          "avg_elim": "21.680",
+          "avg_ast": "2.384",
+          "avg_dth": "6.356",
+          "avg_dmg": "7687.174",
+          "avg_heal": "39.501",
+          "avg_block": "1602.157"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0011",
@@ -126752,7 +128595,32 @@
       "avg_dth": "5.335",
       "avg_dmg": "3720.318",
       "avg_heal": "6764.132",
-      "avg_block": "947.787"
+      "avg_block": "947.787",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 28m",
+          "raw_time_mins": 88.1,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Juno",
+            "Kiriko"
+          ],
+          "total_elim": 136,
+          "total_ast": 137,
+          "total_dth": 47,
+          "total_dmg": 32776,
+          "total_heal": 59592,
+          "total_block": 8350,
+          "avg_elim": "15.437",
+          "avg_ast": "15.551",
+          "avg_dth": "5.335",
+          "avg_dmg": "3720.318",
+          "avg_heal": "6764.132",
+          "avg_block": "947.787"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0012",
@@ -126786,7 +128654,31 @@
       "avg_dth": "6.016",
       "avg_dmg": "4863.451",
       "avg_heal": "7829.739",
-      "avg_block": "237.457"
+      "avg_block": "237.457",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 28m",
+          "raw_time_mins": 88.1,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Brigitte"
+          ],
+          "total_elim": 123,
+          "total_ast": 168,
+          "total_dth": 53,
+          "total_dmg": 42847,
+          "total_heal": 68980,
+          "total_block": 2092,
+          "avg_elim": "13.961",
+          "avg_ast": "19.069",
+          "avg_dth": "6.016",
+          "avg_dmg": "4863.451",
+          "avg_heal": "7829.739",
+          "avg_block": "237.457"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0171",
@@ -126823,7 +128715,32 @@
       "avg_dth": "3.830",
       "avg_dmg": "9835.424",
       "avg_heal": "2513.930",
-      "avg_block": "12325.898"
+      "avg_block": "12325.898",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 10,
+          "total_time_played": "1h 44m",
+          "raw_time_mins": 104.45,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Domina",
+            "Winston"
+          ],
+          "total_elim": 260,
+          "total_ast": 89,
+          "total_dth": 40,
+          "total_dmg": 102731,
+          "total_heal": 26258,
+          "total_block": 128744,
+          "avg_elim": "24.892",
+          "avg_ast": "8.521",
+          "avg_dth": "3.830",
+          "avg_dmg": "9835.424",
+          "avg_heal": "2513.930",
+          "avg_block": "12325.898"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0172",
@@ -126859,7 +128776,31 @@
       "avg_dth": "7.563",
       "avg_dmg": "7103.782",
       "avg_heal": "41.838",
-      "avg_block": "477.932"
+      "avg_block": "477.932",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 44m",
+          "raw_time_mins": 104.45,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Genji"
+          ],
+          "total_elim": 193,
+          "total_ast": 30,
+          "total_dth": 79,
+          "total_dmg": 74199,
+          "total_heal": 437,
+          "total_block": 4992,
+          "avg_elim": "18.478",
+          "avg_ast": "2.872",
+          "avg_dth": "7.563",
+          "avg_dmg": "7103.782",
+          "avg_heal": "41.838",
+          "avg_block": "477.932"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0173",
@@ -126896,7 +128837,32 @@
       "avg_dth": "4.883",
       "avg_dmg": "9471.709",
       "avg_heal": "130.397",
-      "avg_block": "22.212"
+      "avg_block": "22.212",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 44m",
+          "raw_time_mins": 104.45,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Emre",
+            "Tracer"
+          ],
+          "total_elim": 195,
+          "total_ast": 3,
+          "total_dth": 51,
+          "total_dmg": 98932,
+          "total_heal": 1362,
+          "total_block": 232,
+          "avg_elim": "18.669",
+          "avg_ast": "0.287",
+          "avg_dth": "4.883",
+          "avg_dmg": "9471.709",
+          "avg_heal": "130.397",
+          "avg_block": "22.212"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0174",
@@ -126929,7 +128895,28 @@
       "avg_dth": "0.000",
       "avg_dmg": "0.000",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 0,
+          "total_time_played": "0m",
+          "raw_time_mins": 0,
+          "most_played_hero": "",
+          "top_3_heroes": [],
+          "total_elim": 0,
+          "total_ast": 0,
+          "total_dth": 0,
+          "total_dmg": 0,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "0.000",
+          "avg_ast": "0.000",
+          "avg_dth": "0.000",
+          "avg_dmg": "0.000",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0175",
@@ -126964,7 +128951,32 @@
       "avg_dth": "6.319",
       "avg_dmg": "5112.877",
       "avg_heal": "8484.442",
-      "avg_block": "298.133"
+      "avg_block": "298.133",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 44m",
+          "raw_time_mins": 104.45,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Illari",
+            "Wuyang"
+          ],
+          "total_elim": 116,
+          "total_ast": 172,
+          "total_dth": 66,
+          "total_dmg": 53404,
+          "total_heal": 88620,
+          "total_block": 3114,
+          "avg_elim": "11.106",
+          "avg_ast": "16.467",
+          "avg_dth": "6.319",
+          "avg_dmg": "5112.877",
+          "avg_heal": "8484.442",
+          "avg_block": "298.133"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0176",
@@ -127001,7 +129013,32 @@
       "avg_dth": "5.074",
       "avg_dmg": "3147.343",
       "avg_heal": "7147.535",
-      "avg_block": "800.670"
+      "avg_block": "800.670",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 44m",
+          "raw_time_mins": 104.45,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Ana",
+            "Kiriko"
+          ],
+          "total_elim": 136,
+          "total_ast": 154,
+          "total_dth": 53,
+          "total_dmg": 32874,
+          "total_heal": 74656,
+          "total_block": 8363,
+          "avg_elim": "13.021",
+          "avg_ast": "14.744",
+          "avg_dth": "5.074",
+          "avg_dmg": "3147.343",
+          "avg_heal": "7147.535",
+          "avg_block": "800.670"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0082",
@@ -127038,7 +129075,50 @@
       "avg_dth": "5.892",
       "avg_dmg": "7192.635",
       "avg_heal": "463.502",
-      "avg_block": "743.863"
+      "avg_block": "743.863",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 2,
+          "total_time_played": "20m",
+          "raw_time_mins": 20.366666666666667,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Reaper"
+          ],
+          "total_elim": 37,
+          "total_ast": 2,
+          "total_dth": 12,
+          "total_dmg": 14649,
+          "total_heal": 944,
+          "total_block": 1515,
+          "avg_elim": "18.167",
+          "avg_ast": "0.982",
+          "avg_dth": "5.892",
+          "avg_dmg": "7192.635",
+          "avg_heal": "463.502",
+          "avg_block": "743.863"
+        },
+        "TANK": {
+          "maps_played": 0,
+          "total_time_played": "0m",
+          "raw_time_mins": 0,
+          "most_played_hero": "",
+          "top_3_heroes": [],
+          "total_elim": 0,
+          "total_ast": 0,
+          "total_dth": 0,
+          "total_dmg": 0,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "0.000",
+          "avg_ast": "0.000",
+          "avg_dth": "0.000",
+          "avg_dmg": "0.000",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0083",
@@ -127075,7 +129155,32 @@
       "avg_dth": "3.821",
       "avg_dmg": "9732.494",
       "avg_heal": "1820.883",
-      "avg_block": "13572.334"
+      "avg_block": "13572.334",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 9,
+          "total_time_played": "1h 52m",
+          "raw_time_mins": 112.53333333333333,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Domina",
+            "Sigma"
+          ],
+          "total_elim": 272,
+          "total_ast": 113,
+          "total_dth": 43,
+          "total_dmg": 109523,
+          "total_heal": 20491,
+          "total_block": 152734,
+          "avg_elim": "24.171",
+          "avg_ast": "10.041",
+          "avg_dth": "3.821",
+          "avg_dmg": "9732.494",
+          "avg_heal": "1820.883",
+          "avg_block": "13572.334"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0084",
@@ -127112,7 +129217,31 @@
       "avg_dth": "6.401",
       "avg_dmg": "8347.595",
       "avg_heal": "333.092",
-      "avg_block": "503.110"
+      "avg_block": "503.110",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 7,
+          "total_time_played": "1h 32m",
+          "raw_time_mins": 92.16666666666667,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Tracer"
+          ],
+          "total_elim": 189,
+          "total_ast": 23,
+          "total_dth": 59,
+          "total_dmg": 76937,
+          "total_heal": 3070,
+          "total_block": 4637,
+          "avg_elim": "20.506",
+          "avg_ast": "2.495",
+          "avg_dth": "6.401",
+          "avg_dmg": "8347.595",
+          "avg_heal": "333.092",
+          "avg_block": "503.110"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0085",
@@ -127147,7 +129276,32 @@
       "avg_dth": "5.954",
       "avg_dmg": "8592.565",
       "avg_heal": "214.425",
-      "avg_block": "103.081"
+      "avg_block": "103.081",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 52m",
+          "raw_time_mins": 112.53333333333333,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Emre",
+            "Sombra"
+          ],
+          "total_elim": 224,
+          "total_ast": 8,
+          "total_dth": 67,
+          "total_dmg": 96695,
+          "total_heal": 2413,
+          "total_block": 1160,
+          "avg_elim": "19.905",
+          "avg_ast": "0.711",
+          "avg_dth": "5.954",
+          "avg_dmg": "8592.565",
+          "avg_heal": "214.425",
+          "avg_block": "103.081"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0086",
@@ -127185,7 +129339,32 @@
       "avg_dth": "5.076",
       "avg_dmg": "2419.246",
       "avg_heal": "8034.121",
-      "avg_block": "910.892"
+      "avg_block": "910.892",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 4,
+          "total_time_played": "47m",
+          "raw_time_mins": 47.28333333333333,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Kiriko",
+            "Ana"
+          ],
+          "total_elim": 56,
+          "total_ast": 65,
+          "total_dth": 24,
+          "total_dmg": 11439,
+          "total_heal": 37988,
+          "total_block": 4307,
+          "avg_elim": "11.843",
+          "avg_ast": "13.747",
+          "avg_dth": "5.076",
+          "avg_dmg": "2419.246",
+          "avg_heal": "8034.121",
+          "avg_block": "910.892"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0087",
@@ -127216,7 +129395,8 @@
       "avg_dth": "0.000",
       "avg_dmg": "0.000",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {}
     },
     {
       "player_id": "FCA26-P0088",
@@ -127253,7 +129433,32 @@
       "avg_dth": "4.088",
       "avg_dmg": "3596.090",
       "avg_heal": "10804.177",
-      "avg_block": "117.387"
+      "avg_block": "117.387",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 52m",
+          "raw_time_mins": 112.53333333333333,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Ana",
+            "Jetpack Cat"
+          ],
+          "total_elim": 135,
+          "total_ast": 226,
+          "total_dth": 46,
+          "total_dmg": 40468,
+          "total_heal": 121583,
+          "total_block": 1321,
+          "avg_elim": "11.996",
+          "avg_ast": "20.083",
+          "avg_dth": "4.088",
+          "avg_dmg": "3596.090",
+          "avg_heal": "10804.177",
+          "avg_block": "117.387"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0190",
@@ -127287,7 +129492,31 @@
       "avg_dth": "5.057",
       "avg_dmg": "4459.464",
       "avg_heal": "7515.709",
-      "avg_block": "1862.069"
+      "avg_block": "1862.069",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 5,
+          "total_time_played": "1h 5m",
+          "raw_time_mins": 65.25,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Wuyang"
+          ],
+          "total_elim": 111,
+          "total_ast": 123,
+          "total_dth": 33,
+          "total_dmg": 29098,
+          "total_heal": 49040,
+          "total_block": 12150,
+          "avg_elim": "17.011",
+          "avg_ast": "18.851",
+          "avg_dth": "5.057",
+          "avg_dmg": "4459.464",
+          "avg_heal": "7515.709",
+          "avg_block": "1862.069"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0139",
@@ -127322,7 +129551,32 @@
       "avg_dth": "6.022",
       "avg_dmg": "9631.057",
       "avg_heal": "1749.577",
-      "avg_block": "9466.444"
+      "avg_block": "9466.444",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 7,
+          "total_time_played": "1h 24m",
+          "raw_time_mins": 84.68333333333334,
+          "most_played_hero": "Zarya",
+          "top_3_heroes": [
+            "Zarya",
+            "Doomfist",
+            "Mauga"
+          ],
+          "total_elim": 171,
+          "total_ast": 56,
+          "total_dth": 51,
+          "total_dmg": 81559,
+          "total_heal": 14816,
+          "total_block": 80165,
+          "avg_elim": "20.193",
+          "avg_ast": "6.613",
+          "avg_dth": "6.022",
+          "avg_dmg": "9631.057",
+          "avg_heal": "1749.577",
+          "avg_block": "9466.444"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0140",
@@ -127357,7 +129611,32 @@
       "avg_dth": "7.977",
       "avg_dmg": "7499.394",
       "avg_heal": "785.594",
-      "avg_block": "305.049"
+      "avg_block": "305.049",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 39m",
+          "raw_time_mins": 99.03333333333333,
+          "most_played_hero": "Reaper",
+          "top_3_heroes": [
+            "Reaper",
+            "Sombra",
+            "Tracer"
+          ],
+          "total_elim": 150,
+          "total_ast": 7,
+          "total_dth": 79,
+          "total_dmg": 74269,
+          "total_heal": 7780,
+          "total_block": 3021,
+          "avg_elim": "15.146",
+          "avg_ast": "0.707",
+          "avg_dth": "7.977",
+          "avg_dmg": "7499.394",
+          "avg_heal": "785.594",
+          "avg_block": "305.049"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0141",
@@ -127394,7 +129673,73 @@
       "avg_dth": "8.229",
       "avg_dmg": "5967.643",
       "avg_heal": "7108.229",
-      "avg_block": "2999.721"
+      "avg_block": "2999.721",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 5,
+          "total_time_played": "57m",
+          "raw_time_mins": 57.35,
+          "most_played_hero": "Mizuki",
+          "top_3_heroes": [
+            "Mizuki",
+            "Wuyang",
+            "Lúcio"
+          ],
+          "total_elim": 74,
+          "total_ast": 116,
+          "total_dth": 42,
+          "total_dmg": 32918,
+          "total_heal": 49276,
+          "total_block": 10707,
+          "avg_elim": "12.903",
+          "avg_ast": "20.227",
+          "avg_dth": "7.323",
+          "avg_dmg": "5739.843",
+          "avg_heal": "8592.153",
+          "avg_block": "1866.957"
+        },
+        "DPS": {
+          "maps_played": 0,
+          "total_time_played": "0m",
+          "raw_time_mins": 0,
+          "most_played_hero": "",
+          "top_3_heroes": [],
+          "total_elim": 0,
+          "total_ast": 0,
+          "total_dth": 0,
+          "total_dmg": 0,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "0.000",
+          "avg_ast": "0.000",
+          "avg_dth": "0.000",
+          "avg_dmg": "0.000",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        },
+        "TANK": {
+          "maps_played": 2,
+          "total_time_played": "14m",
+          "raw_time_mins": 14.35,
+          "most_played_hero": "Zarya",
+          "top_3_heroes": [
+            "Zarya",
+            "Roadhog"
+          ],
+          "total_elim": 18,
+          "total_ast": 8,
+          "total_dth": 17,
+          "total_dmg": 9870,
+          "total_heal": 1690,
+          "total_block": 10801,
+          "avg_elim": "12.544",
+          "avg_ast": "5.575",
+          "avg_dth": "11.847",
+          "avg_dmg": "6878.049",
+          "avg_heal": "1177.700",
+          "avg_block": "7526.829"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0142",
@@ -127429,7 +129774,32 @@
       "avg_dth": "6.160",
       "avg_dmg": "7475.766",
       "avg_heal": "1262.807",
-      "avg_block": "267.385"
+      "avg_block": "267.385",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 39m",
+          "raw_time_mins": 99.03333333333333,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Cassidy",
+            "Pharah"
+          ],
+          "total_elim": 164,
+          "total_ast": 17,
+          "total_dth": 61,
+          "total_dmg": 74035,
+          "total_heal": 12506,
+          "total_block": 2648,
+          "avg_elim": "16.560",
+          "avg_ast": "1.717",
+          "avg_dth": "6.160",
+          "avg_dmg": "7475.766",
+          "avg_heal": "1262.807",
+          "avg_block": "267.385"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0143",
@@ -127463,7 +129833,31 @@
       "avg_dth": "9.356",
       "avg_dmg": "5069.652",
       "avg_heal": "3822.151",
-      "avg_block": "859.336"
+      "avg_block": "859.336",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 4,
+          "total_time_played": "41m",
+          "raw_time_mins": 41.68333333333334,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Ana"
+          ],
+          "total_elim": 45,
+          "total_ast": 28,
+          "total_dth": 39,
+          "total_dmg": 21132,
+          "total_heal": 15932,
+          "total_block": 3582,
+          "avg_elim": "10.796",
+          "avg_ast": "6.717",
+          "avg_dth": "9.356",
+          "avg_dmg": "5069.652",
+          "avg_heal": "3822.151",
+          "avg_block": "859.336"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0144",
@@ -127499,7 +129893,30 @@
       "avg_dth": "7.270",
       "avg_dmg": "3107.237",
       "avg_heal": "8045.372",
-      "avg_block": "59.475"
+      "avg_block": "59.475",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 39m",
+          "raw_time_mins": 99.03333333333333,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko"
+          ],
+          "total_elim": 71,
+          "total_ast": 139,
+          "total_dth": 72,
+          "total_dmg": 30772,
+          "total_heal": 79676,
+          "total_block": 589,
+          "avg_elim": "7.169",
+          "avg_ast": "14.036",
+          "avg_dth": "7.270",
+          "avg_dmg": "3107.237",
+          "avg_heal": "8045.372",
+          "avg_block": "59.475"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0103",
@@ -127532,7 +129949,30 @@
       "avg_dth": "3.952",
       "avg_dmg": "10145.225",
       "avg_heal": "0.000",
-      "avg_block": "6875.082"
+      "avg_block": "6875.082",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 9,
+          "total_time_played": "1h 31m",
+          "raw_time_mins": 91.1,
+          "most_played_hero": "Zarya",
+          "top_3_heroes": [
+            "Zarya"
+          ],
+          "total_elim": 207,
+          "total_ast": 104,
+          "total_dth": 36,
+          "total_dmg": 92423,
+          "total_heal": 0,
+          "total_block": 62632,
+          "avg_elim": "22.722",
+          "avg_ast": "11.416",
+          "avg_dth": "3.952",
+          "avg_dmg": "10145.225",
+          "avg_heal": "0.000",
+          "avg_block": "6875.082"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0104",
@@ -127565,7 +130005,30 @@
       "avg_dth": "9.414",
       "avg_dmg": "5243.858",
       "avg_heal": "585.075",
-      "avg_block": "209.414"
+      "avg_block": "209.414",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 3,
+          "total_time_played": "43m",
+          "raw_time_mins": 43.55,
+          "most_played_hero": "Reaper",
+          "top_3_heroes": [
+            "Reaper"
+          ],
+          "total_elim": 63,
+          "total_ast": 4,
+          "total_dth": 41,
+          "total_dmg": 22837,
+          "total_heal": 2548,
+          "total_block": 912,
+          "avg_elim": "14.466",
+          "avg_ast": "0.918",
+          "avg_dth": "9.414",
+          "avg_dmg": "5243.858",
+          "avg_heal": "585.075",
+          "avg_block": "209.414"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0105",
@@ -127602,7 +130065,31 @@
       "avg_dth": "5.258",
       "avg_dmg": "9201.893",
       "avg_heal": "182.334",
-      "avg_block": "313.985"
+      "avg_block": "313.985",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 6,
+          "total_time_played": "47m",
+          "raw_time_mins": 47.55,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Tracer"
+          ],
+          "total_elim": 113,
+          "total_ast": 15,
+          "total_dth": 25,
+          "total_dmg": 43755,
+          "total_heal": 867,
+          "total_block": 1493,
+          "avg_elim": "23.764",
+          "avg_ast": "3.155",
+          "avg_dth": "5.258",
+          "avg_dmg": "9201.893",
+          "avg_heal": "182.334",
+          "avg_block": "313.985"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0106",
@@ -127638,7 +130125,31 @@
       "avg_dth": "5.818",
       "avg_dmg": "9910.977",
       "avg_heal": "727.223",
-      "avg_block": "136.663"
+      "avg_block": "136.663",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 31m",
+          "raw_time_mins": 91.1,
+          "most_played_hero": "Emre",
+          "top_3_heroes": [
+            "Emre",
+            "Symmetra"
+          ],
+          "total_elim": 186,
+          "total_ast": 10,
+          "total_dth": 53,
+          "total_dmg": 90289,
+          "total_heal": 6625,
+          "total_block": 1245,
+          "avg_elim": "20.417",
+          "avg_ast": "1.098",
+          "avg_dth": "5.818",
+          "avg_dmg": "9910.977",
+          "avg_heal": "727.223",
+          "avg_block": "136.663"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0107",
@@ -127671,7 +130182,30 @@
       "avg_dth": "4.830",
       "avg_dmg": "2090.889",
       "avg_heal": "8878.485",
-      "avg_block": "48.847"
+      "avg_block": "48.847",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 31m",
+          "raw_time_mins": 91.1,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko"
+          ],
+          "total_elim": 76,
+          "total_ast": 189,
+          "total_dth": 44,
+          "total_dmg": 19048,
+          "total_heal": 80883,
+          "total_block": 445,
+          "avg_elim": "8.342",
+          "avg_ast": "20.746",
+          "avg_dth": "4.830",
+          "avg_dmg": "2090.889",
+          "avg_heal": "8878.485",
+          "avg_block": "48.847"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0108",
@@ -127706,7 +130240,32 @@
       "avg_dth": "4.610",
       "avg_dmg": "4069.923",
       "avg_heal": "8145.115",
-      "avg_block": "1108.782"
+      "avg_block": "1108.782",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 31m",
+          "raw_time_mins": 91.1,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Baptiste",
+            "Wuyang"
+          ],
+          "total_elim": 155,
+          "total_ast": 166,
+          "total_dth": 42,
+          "total_dmg": 37077,
+          "total_heal": 74202,
+          "total_block": 10101,
+          "avg_elim": "17.014",
+          "avg_ast": "18.222",
+          "avg_dth": "4.610",
+          "avg_dmg": "4069.923",
+          "avg_heal": "8145.115",
+          "avg_block": "1108.782"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0089",
@@ -127741,7 +130300,32 @@
       "avg_dth": "9.497",
       "avg_dmg": "7752.937",
       "avg_heal": "1044.882",
-      "avg_block": "8641.224"
+      "avg_block": "8641.224",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 6,
+          "total_time_played": "47m",
+          "raw_time_mins": 47.383333333333326,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Orisa",
+            "Winston"
+          ],
+          "total_elim": 48,
+          "total_ast": 15,
+          "total_dth": 45,
+          "total_dmg": 36736,
+          "total_heal": 4951,
+          "total_block": 40945,
+          "avg_elim": "10.130",
+          "avg_ast": "3.166",
+          "avg_dth": "9.497",
+          "avg_dmg": "7752.937",
+          "avg_heal": "1044.882",
+          "avg_block": "8641.224"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0090",
@@ -127775,7 +130359,31 @@
       "avg_dth": "11.819",
       "avg_dmg": "6060.148",
       "avg_heal": "110.798",
-      "avg_block": "248.822"
+      "avg_block": "248.822",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 6,
+          "total_time_played": "47m",
+          "raw_time_mins": 47.383333333333326,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Symmetra"
+          ],
+          "total_elim": 34,
+          "total_ast": 3,
+          "total_dth": 56,
+          "total_dmg": 28715,
+          "total_heal": 525,
+          "total_block": 1179,
+          "avg_elim": "7.176",
+          "avg_ast": "0.633",
+          "avg_dth": "11.819",
+          "avg_dmg": "6060.148",
+          "avg_heal": "110.798",
+          "avg_block": "248.822"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0091",
@@ -127809,7 +130417,31 @@
       "avg_dth": "9.708",
       "avg_dmg": "4434.893",
       "avg_heal": "74.499",
-      "avg_block": "136.757"
+      "avg_block": "136.757",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 6,
+          "total_time_played": "47m",
+          "raw_time_mins": 47.383333333333326,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Vendetta"
+          ],
+          "total_elim": 27,
+          "total_ast": 5,
+          "total_dth": 46,
+          "total_dmg": 21014,
+          "total_heal": 353,
+          "total_block": 648,
+          "avg_elim": "5.698",
+          "avg_ast": "1.055",
+          "avg_dth": "9.708",
+          "avg_dmg": "4434.893",
+          "avg_heal": "74.499",
+          "avg_block": "136.757"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0092",
@@ -127840,7 +130472,28 @@
       "avg_dth": "0.000",
       "avg_dmg": "0.000",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 0,
+          "total_time_played": "0m",
+          "raw_time_mins": 0,
+          "most_played_hero": "",
+          "top_3_heroes": [],
+          "total_elim": 0,
+          "total_ast": 0,
+          "total_dth": 0,
+          "total_dmg": 0,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "0.000",
+          "avg_ast": "0.000",
+          "avg_dth": "0.000",
+          "avg_dmg": "0.000",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0093",
@@ -127875,7 +130528,32 @@
       "avg_dth": "9.286",
       "avg_dmg": "3742.666",
       "avg_heal": "7470.770",
-      "avg_block": "826.873"
+      "avg_block": "826.873",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 6,
+          "total_time_played": "47m",
+          "raw_time_mins": 47.383333333333326,
+          "most_played_hero": "Ana",
+          "top_3_heroes": [
+            "Ana",
+            "Moira",
+            "Brigitte"
+          ],
+          "total_elim": 27,
+          "total_ast": 29,
+          "total_dth": 44,
+          "total_dmg": 17734,
+          "total_heal": 35399,
+          "total_block": 3918,
+          "avg_elim": "5.698",
+          "avg_ast": "6.120",
+          "avg_dth": "9.286",
+          "avg_dmg": "3742.666",
+          "avg_heal": "7470.770",
+          "avg_block": "826.873"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0094",
@@ -127910,7 +130588,30 @@
       "avg_dth": "12.977",
       "avg_dmg": "2027.481",
       "avg_heal": "3743.511",
-      "avg_block": "1250.382"
+      "avg_block": "1250.382",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 2,
+          "total_time_played": "13m",
+          "raw_time_mins": 13.100000000000001,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio"
+          ],
+          "total_elim": 8,
+          "total_ast": 8,
+          "total_dth": 17,
+          "total_dmg": 2656,
+          "total_heal": 4904,
+          "total_block": 1638,
+          "avg_elim": "6.107",
+          "avg_ast": "6.107",
+          "avg_dth": "12.977",
+          "avg_dmg": "2027.481",
+          "avg_heal": "3743.511",
+          "avg_block": "1250.382"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0095",
@@ -127947,7 +130648,32 @@
       "avg_dth": "9.626",
       "avg_dmg": "2658.726",
       "avg_heal": "6300.146",
-      "avg_block": "276.519"
+      "avg_block": "276.519",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 4,
+          "total_time_played": "34m",
+          "raw_time_mins": 34.28333333333333,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Wuyang",
+            "Juno"
+          ],
+          "total_elim": 12,
+          "total_ast": 13,
+          "total_dth": 33,
+          "total_dmg": 9115,
+          "total_heal": 21599,
+          "total_block": 948,
+          "avg_elim": "3.500",
+          "avg_ast": "3.792",
+          "avg_dth": "9.626",
+          "avg_dmg": "2658.726",
+          "avg_heal": "6300.146",
+          "avg_block": "276.519"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0119",
@@ -127982,7 +130708,32 @@
       "avg_dth": "5.752",
       "avg_dmg": "9179.111",
       "avg_heal": "918.913",
-      "avg_block": "8718.390"
+      "avg_block": "8718.390",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 10,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.73333333333335,
+          "most_played_hero": "Zarya",
+          "top_3_heroes": [
+            "Zarya",
+            "D.Va",
+            "Winston"
+          ],
+          "total_elim": 228,
+          "total_ast": 98,
+          "total_dth": 66,
+          "total_dmg": 105315,
+          "total_heal": 10543,
+          "total_block": 100029,
+          "avg_elim": "19.872",
+          "avg_ast": "8.542",
+          "avg_dth": "5.752",
+          "avg_dmg": "9179.111",
+          "avg_heal": "918.913",
+          "avg_block": "8718.390"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0120",
@@ -128018,7 +130769,31 @@
       "avg_dth": "9.588",
       "avg_dmg": "8009.979",
       "avg_heal": "289.453",
-      "avg_block": "992.152"
+      "avg_block": "992.152",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 8,
+          "total_time_played": "1h 33m",
+          "raw_time_mins": 93.86666666666667,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Venture"
+          ],
+          "total_elim": 150,
+          "total_ast": 19,
+          "total_dth": 90,
+          "total_dmg": 75187,
+          "total_heal": 2717,
+          "total_block": 9313,
+          "avg_elim": "15.980",
+          "avg_ast": "2.024",
+          "avg_dth": "9.588",
+          "avg_dmg": "8009.979",
+          "avg_heal": "289.453",
+          "avg_block": "992.152"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0121",
@@ -128053,7 +130828,30 @@
       "avg_dth": "9.105",
       "avg_dmg": "3912.939",
       "avg_heal": "326.358",
-      "avg_block": "1735.304"
+      "avg_block": "1735.304",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 2,
+          "total_time_played": "20m",
+          "raw_time_mins": 20.866666666666667,
+          "most_played_hero": "Symmetra",
+          "top_3_heroes": [
+            "Symmetra"
+          ],
+          "total_elim": 22,
+          "total_ast": 5,
+          "total_dth": 19,
+          "total_dmg": 8165,
+          "total_heal": 681,
+          "total_block": 3621,
+          "avg_elim": "10.543",
+          "avg_ast": "2.396",
+          "avg_dth": "9.105",
+          "avg_dmg": "3912.939",
+          "avg_heal": "326.358",
+          "avg_block": "1735.304"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0122",
@@ -128088,7 +130886,32 @@
       "avg_dth": "6.711",
       "avg_dmg": "8452.121",
       "avg_heal": "435.880",
-      "avg_block": "34.863"
+      "avg_block": "34.863",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.73333333333335,
+          "most_played_hero": "Cassidy",
+          "top_3_heroes": [
+            "Cassidy",
+            "Reaper",
+            "Sojourn"
+          ],
+          "total_elim": 220,
+          "total_ast": 1,
+          "total_dth": 77,
+          "total_dmg": 96974,
+          "total_heal": 5001,
+          "total_block": 400,
+          "avg_elim": "19.175",
+          "avg_ast": "0.087",
+          "avg_dth": "6.711",
+          "avg_dmg": "8452.121",
+          "avg_heal": "435.880",
+          "avg_block": "34.863"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0123",
@@ -128123,7 +130946,32 @@
       "avg_dth": "6.275",
       "avg_dmg": "5974.288",
       "avg_heal": "6080.273",
-      "avg_block": "264.875"
+      "avg_block": "264.875",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.73333333333335,
+          "most_played_hero": "Wuyang",
+          "top_3_heroes": [
+            "Wuyang",
+            "Kiriko",
+            "Illari"
+          ],
+          "total_elim": 136,
+          "total_ast": 184,
+          "total_dth": 72,
+          "total_dmg": 68545,
+          "total_heal": 69761,
+          "total_block": 3039,
+          "avg_elim": "11.854",
+          "avg_ast": "16.037",
+          "avg_dth": "6.275",
+          "avg_dmg": "5974.288",
+          "avg_heal": "6080.273",
+          "avg_block": "264.875"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0124",
@@ -128158,7 +131006,32 @@
       "avg_dth": "7.583",
       "avg_dmg": "2658.600",
       "avg_heal": "8404.532",
-      "avg_block": "921.267"
+      "avg_block": "921.267",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.73333333333335,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Lúcio",
+            "Ana"
+          ],
+          "total_elim": 112,
+          "total_ast": 185,
+          "total_dth": 87,
+          "total_dmg": 30503,
+          "total_heal": 96428,
+          "total_block": 10570,
+          "avg_elim": "9.762",
+          "avg_ast": "16.124",
+          "avg_dth": "7.583",
+          "avg_dmg": "2658.600",
+          "avg_heal": "8404.532",
+          "avg_block": "921.267"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0001",
@@ -128193,7 +131066,32 @@
       "avg_dth": "5.434",
       "avg_dmg": "9879.958",
       "avg_heal": "1233.233",
-      "avg_block": "9661.819"
+      "avg_block": "9661.819",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 10,
+          "total_time_played": "2h 6m",
+          "raw_time_mins": 126.98333333333335,
+          "most_played_hero": "Doomfist",
+          "top_3_heroes": [
+            "Doomfist",
+            "Zarya",
+            "Ramattra"
+          ],
+          "total_elim": 223,
+          "total_ast": 89,
+          "total_dth": 69,
+          "total_dmg": 125459,
+          "total_heal": 15660,
+          "total_block": 122689,
+          "avg_elim": "17.561",
+          "avg_ast": "7.009",
+          "avg_dth": "5.434",
+          "avg_dmg": "9879.958",
+          "avg_heal": "1233.233",
+          "avg_block": "9661.819"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0002",
@@ -128230,7 +131128,32 @@
       "avg_dth": "5.670",
       "avg_dmg": "7501.614",
       "avg_heal": "212.390",
-      "avg_block": "424.859"
+      "avg_block": "424.859",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "2h 6m",
+          "raw_time_mins": 126.98333333333335,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Vendetta",
+            "Genji"
+          ],
+          "total_elim": 222,
+          "total_ast": 9,
+          "total_dth": 72,
+          "total_dmg": 95258,
+          "total_heal": 2697,
+          "total_block": 5395,
+          "avg_elim": "17.483",
+          "avg_ast": "0.709",
+          "avg_dth": "5.670",
+          "avg_dmg": "7501.614",
+          "avg_heal": "212.390",
+          "avg_block": "424.859"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0003",
@@ -128265,7 +131188,32 @@
       "avg_dth": "5.828",
       "avg_dmg": "8671.689",
       "avg_heal": "362.725",
-      "avg_block": "24.176"
+      "avg_block": "24.176",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "2h 6m",
+          "raw_time_mins": 126.98333333333335,
+          "most_played_hero": "Emre",
+          "top_3_heroes": [
+            "Emre",
+            "Sojourn",
+            "Cassidy"
+          ],
+          "total_elim": 179,
+          "total_ast": 0,
+          "total_dth": 74,
+          "total_dmg": 110116,
+          "total_heal": 4606,
+          "total_block": 307,
+          "avg_elim": "14.096",
+          "avg_ast": "0.000",
+          "avg_dth": "5.828",
+          "avg_dmg": "8671.689",
+          "avg_heal": "362.725",
+          "avg_block": "24.176"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0004",
@@ -128300,7 +131248,32 @@
       "avg_dth": "5.355",
       "avg_dmg": "2785.484",
       "avg_heal": "9810.894",
-      "avg_block": "391.784"
+      "avg_block": "391.784",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "2h 6m",
+          "raw_time_mins": 126.98333333333335,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Lúcio",
+            "Juno"
+          ],
+          "total_elim": 110,
+          "total_ast": 184,
+          "total_dth": 68,
+          "total_dmg": 35371,
+          "total_heal": 124582,
+          "total_block": 4975,
+          "avg_elim": "8.663",
+          "avg_ast": "14.490",
+          "avg_dth": "5.355",
+          "avg_dmg": "2785.484",
+          "avg_heal": "9810.894",
+          "avg_block": "391.784"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0005",
@@ -128337,7 +131310,32 @@
       "avg_dth": "6.056",
       "avg_dmg": "3579.102",
       "avg_heal": "7054.423",
-      "avg_block": "504.651"
+      "avg_block": "504.651",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 7,
+          "total_time_played": "1h 24m",
+          "raw_time_mins": 84.21666666666668,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Wuyang",
+            "Lúcio"
+          ],
+          "total_elim": 70,
+          "total_ast": 111,
+          "total_dth": 51,
+          "total_dmg": 30142,
+          "total_heal": 59410,
+          "total_block": 4250,
+          "avg_elim": "8.312",
+          "avg_ast": "13.180",
+          "avg_dth": "6.056",
+          "avg_dmg": "3579.102",
+          "avg_heal": "7054.423",
+          "avg_block": "504.651"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0006",
@@ -128374,7 +131372,32 @@
       "avg_dth": "5.612",
       "avg_dmg": "4498.831",
       "avg_heal": "8304.599",
-      "avg_block": "333.671"
+      "avg_block": "333.671",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 3,
+          "total_time_played": "42m",
+          "raw_time_mins": 42.766666666666666,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Lúcio",
+            "Jetpack Cat"
+          ],
+          "total_elim": 55,
+          "total_ast": 62,
+          "total_dth": 24,
+          "total_dmg": 19240,
+          "total_heal": 35516,
+          "total_block": 1427,
+          "avg_elim": "12.860",
+          "avg_ast": "14.497",
+          "avg_dth": "5.612",
+          "avg_dmg": "4498.831",
+          "avg_heal": "8304.599",
+          "avg_block": "333.671"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0024",
@@ -128409,7 +131432,30 @@
       "avg_dth": "4.295",
       "avg_dmg": "8431.079",
       "avg_heal": "2714.296",
-      "avg_block": "11332.869"
+      "avg_block": "11332.869",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 9,
+          "total_time_played": "1h 28m",
+          "raw_time_mins": 88.48333333333333,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va"
+          ],
+          "total_elim": 170,
+          "total_ast": 75,
+          "total_dth": 38,
+          "total_dmg": 74601,
+          "total_heal": 24017,
+          "total_block": 100277,
+          "avg_elim": "19.213",
+          "avg_ast": "8.476",
+          "avg_dth": "4.295",
+          "avg_dmg": "8431.079",
+          "avg_heal": "2714.296",
+          "avg_block": "11332.869"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0025",
@@ -128444,7 +131490,32 @@
       "avg_dth": "7.346",
       "avg_dmg": "8580.260",
       "avg_heal": "1218.874",
-      "avg_block": "652.100"
+      "avg_block": "652.100",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 28m",
+          "raw_time_mins": 88.48333333333333,
+          "most_played_hero": "Venture",
+          "top_3_heroes": [
+            "Venture",
+            "Tracer",
+            "Cassidy"
+          ],
+          "total_elim": 113,
+          "total_ast": 24,
+          "total_dth": 65,
+          "total_dmg": 75921,
+          "total_heal": 10785,
+          "total_block": 5770,
+          "avg_elim": "12.771",
+          "avg_ast": "2.712",
+          "avg_dth": "7.346",
+          "avg_dmg": "8580.260",
+          "avg_heal": "1218.874",
+          "avg_block": "652.100"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0026",
@@ -128479,7 +131550,32 @@
       "avg_dth": "6.668",
       "avg_dmg": "7835.939",
       "avg_heal": "443.812",
-      "avg_block": "15.144"
+      "avg_block": "15.144",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 28m",
+          "raw_time_mins": 88.48333333333333,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Sojourn",
+            "Sombra"
+          ],
+          "total_elim": 146,
+          "total_ast": 5,
+          "total_dth": 59,
+          "total_dmg": 69335,
+          "total_heal": 3927,
+          "total_block": 134,
+          "avg_elim": "16.500",
+          "avg_ast": "0.565",
+          "avg_dth": "6.668",
+          "avg_dmg": "7835.939",
+          "avg_heal": "443.812",
+          "avg_block": "15.144"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0027",
@@ -128513,7 +131609,31 @@
       "avg_dth": "7.233",
       "avg_dmg": "4352.458",
       "avg_heal": "6940.516",
-      "avg_block": "862.309"
+      "avg_block": "862.309",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 28m",
+          "raw_time_mins": 88.48333333333333,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Lúcio"
+          ],
+          "total_elim": 86,
+          "total_ast": 98,
+          "total_dth": 64,
+          "total_dmg": 38512,
+          "total_heal": 61412,
+          "total_block": 7630,
+          "avg_elim": "9.719",
+          "avg_ast": "11.076",
+          "avg_dth": "7.233",
+          "avg_dmg": "4352.458",
+          "avg_heal": "6940.516",
+          "avg_block": "862.309"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0028",
@@ -128548,7 +131668,32 @@
       "avg_dth": "6.216",
       "avg_dmg": "3802.524",
       "avg_heal": "7605.274",
-      "avg_block": "385.835"
+      "avg_block": "385.835",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 28m",
+          "raw_time_mins": 88.48333333333333,
+          "most_played_hero": "Mizuki",
+          "top_3_heroes": [
+            "Mizuki",
+            "Wuyang",
+            "Kiriko"
+          ],
+          "total_elim": 73,
+          "total_ast": 106,
+          "total_dth": 55,
+          "total_dmg": 33646,
+          "total_heal": 67294,
+          "total_block": 3414,
+          "avg_elim": "8.250",
+          "avg_ast": "11.980",
+          "avg_dth": "6.216",
+          "avg_dmg": "3802.524",
+          "avg_heal": "7605.274",
+          "avg_block": "385.835"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0042",
@@ -128583,7 +131728,32 @@
       "avg_dth": "5.125",
       "avg_dmg": "10392.597",
       "avg_heal": "1325.521",
-      "avg_block": "11240.402"
+      "avg_block": "11240.402",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 10,
+          "total_time_played": "1h 51m",
+          "raw_time_mins": 111.21666666666667,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Domina",
+            "Orisa"
+          ],
+          "total_elim": 247,
+          "total_ast": 36,
+          "total_dth": 57,
+          "total_dmg": 115583,
+          "total_heal": 14742,
+          "total_block": 125012,
+          "avg_elim": "22.209",
+          "avg_ast": "3.237",
+          "avg_dth": "5.125",
+          "avg_dmg": "10392.597",
+          "avg_heal": "1325.521",
+          "avg_block": "11240.402"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0043",
@@ -128618,7 +131788,32 @@
       "avg_dth": "5.755",
       "avg_dmg": "8250.022",
       "avg_heal": "1035.546",
-      "avg_block": "667.616"
+      "avg_block": "667.616",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 51m",
+          "raw_time_mins": 111.21666666666667,
+          "most_played_hero": "Sombra",
+          "top_3_heroes": [
+            "Sombra",
+            "Emre",
+            "Mei"
+          ],
+          "total_elim": 224,
+          "total_ast": 51,
+          "total_dth": 64,
+          "total_dmg": 91754,
+          "total_heal": 11517,
+          "total_block": 7425,
+          "avg_elim": "20.141",
+          "avg_ast": "4.586",
+          "avg_dth": "5.755",
+          "avg_dmg": "8250.022",
+          "avg_heal": "1035.546",
+          "avg_block": "667.616"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0044",
@@ -128653,7 +131848,32 @@
       "avg_dth": "5.271",
       "avg_dmg": "8564.451",
       "avg_heal": "186.061",
-      "avg_block": "47.086"
+      "avg_block": "47.086",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 5,
+          "total_time_played": "56m",
+          "raw_time_mins": 56.916666666666664,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Cassidy",
+            "Ashe"
+          ],
+          "total_elim": 96,
+          "total_ast": 5,
+          "total_dth": 30,
+          "total_dmg": 48746,
+          "total_heal": 1059,
+          "total_block": 268,
+          "avg_elim": "16.867",
+          "avg_ast": "0.878",
+          "avg_dth": "5.271",
+          "avg_dmg": "8564.451",
+          "avg_heal": "186.061",
+          "avg_block": "47.086"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0045",
@@ -128688,7 +131908,32 @@
       "avg_dth": "7.366",
       "avg_dmg": "7576.427",
       "avg_heal": "801.105",
-      "avg_block": "292.634"
+      "avg_block": "292.634",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 5,
+          "total_time_played": "54m",
+          "raw_time_mins": 54.3,
+          "most_played_hero": "Reaper",
+          "top_3_heroes": [
+            "Reaper",
+            "Venture",
+            "Ashe"
+          ],
+          "total_elim": 83,
+          "total_ast": 3,
+          "total_dth": 40,
+          "total_dmg": 41140,
+          "total_heal": 4350,
+          "total_block": 1589,
+          "avg_elim": "15.285",
+          "avg_ast": "0.552",
+          "avg_dth": "7.366",
+          "avg_dmg": "7576.427",
+          "avg_heal": "801.105",
+          "avg_block": "292.634"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0046",
@@ -128725,7 +131970,32 @@
       "avg_dth": "5.305",
       "avg_dmg": "3758.429",
       "avg_heal": "9451.731",
-      "avg_block": "49.003"
+      "avg_block": "49.003",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 51m",
+          "raw_time_mins": 111.21666666666667,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Illari",
+            "Lúcio"
+          ],
+          "total_elim": 103,
+          "total_ast": 201,
+          "total_dth": 59,
+          "total_dmg": 41800,
+          "total_heal": 105119,
+          "total_block": 545,
+          "avg_elim": "9.261",
+          "avg_ast": "18.073",
+          "avg_dth": "5.305",
+          "avg_dmg": "3758.429",
+          "avg_heal": "9451.731",
+          "avg_block": "49.003"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0047",
@@ -128760,7 +132030,32 @@
       "avg_dth": "5.575",
       "avg_dmg": "3436.895",
       "avg_heal": "7028.533",
-      "avg_block": "969.909"
+      "avg_block": "969.909",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 51m",
+          "raw_time_mins": 111.21666666666667,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Mizuki",
+            "Kiriko"
+          ],
+          "total_elim": 129,
+          "total_ast": 151,
+          "total_dth": 62,
+          "total_dmg": 38224,
+          "total_heal": 78169,
+          "total_block": 10787,
+          "avg_elim": "11.599",
+          "avg_ast": "13.577",
+          "avg_dth": "5.575",
+          "avg_dmg": "3436.895",
+          "avg_heal": "7028.533",
+          "avg_block": "969.909"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0189",
@@ -128791,7 +132086,8 @@
       "avg_dth": "0.000",
       "avg_dmg": "0.000",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {}
     },
     {
       "player_id": "FCA26-P0184",
@@ -128826,7 +132122,32 @@
       "avg_dth": "5.565",
       "avg_dmg": "9269.096",
       "avg_heal": "1630.275",
-      "avg_block": "13928.983"
+      "avg_block": "13928.983",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 10,
+          "total_time_played": "1h 40m",
+          "raw_time_mins": 100.63333333333335,
+          "most_played_hero": "Ramattra",
+          "top_3_heroes": [
+            "Ramattra",
+            "Winston",
+            "Mauga"
+          ],
+          "total_elim": 147,
+          "total_ast": 33,
+          "total_dth": 56,
+          "total_dmg": 93278,
+          "total_heal": 16406,
+          "total_block": 140172,
+          "avg_elim": "14.607",
+          "avg_ast": "3.279",
+          "avg_dth": "5.565",
+          "avg_dmg": "9269.096",
+          "avg_heal": "1630.275",
+          "avg_block": "13928.983"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0185",
@@ -128863,7 +132184,32 @@
       "avg_dth": "5.863",
       "avg_dmg": "7751.110",
       "avg_heal": "362.604",
-      "avg_block": "688.142"
+      "avg_block": "688.142",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 40m",
+          "raw_time_mins": 100.63333333333335,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Vendetta",
+            "Genji"
+          ],
+          "total_elim": 140,
+          "total_ast": 9,
+          "total_dth": 59,
+          "total_dmg": 78002,
+          "total_heal": 3649,
+          "total_block": 6925,
+          "avg_elim": "13.912",
+          "avg_ast": "0.894",
+          "avg_dth": "5.863",
+          "avg_dmg": "7751.110",
+          "avg_heal": "362.604",
+          "avg_block": "688.142"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0186",
@@ -128898,7 +132244,32 @@
       "avg_dth": "6.260",
       "avg_dmg": "10903.743",
       "avg_heal": "331.898",
-      "avg_block": "90.328"
+      "avg_block": "90.328",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 40m",
+          "raw_time_mins": 100.63333333333335,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Emre",
+            "Cassidy"
+          ],
+          "total_elim": 169,
+          "total_ast": 3,
+          "total_dth": 63,
+          "total_dmg": 109728,
+          "total_heal": 3340,
+          "total_block": 909,
+          "avg_elim": "16.794",
+          "avg_ast": "0.298",
+          "avg_dth": "6.260",
+          "avg_dmg": "10903.743",
+          "avg_heal": "331.898",
+          "avg_block": "90.328"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0187",
@@ -128936,7 +132307,32 @@
       "avg_dth": "5.962",
       "avg_dmg": "5218.847",
       "avg_heal": "8243.591",
-      "avg_block": "1315.568"
+      "avg_block": "1315.568",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 40m",
+          "raw_time_mins": 100.63333333333335,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Lúcio",
+            "Mizuki"
+          ],
+          "total_elim": 111,
+          "total_ast": 114,
+          "total_dth": 60,
+          "total_dmg": 52519,
+          "total_heal": 82958,
+          "total_block": 13239,
+          "avg_elim": "11.030",
+          "avg_ast": "11.328",
+          "avg_dth": "5.962",
+          "avg_dmg": "5218.847",
+          "avg_heal": "8243.591",
+          "avg_block": "1315.568"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0188",
@@ -128972,7 +132368,31 @@
       "avg_dth": "6.658",
       "avg_dmg": "1945.081",
       "avg_heal": "9527.360",
-      "avg_block": "115.071"
+      "avg_block": "115.071",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 40m",
+          "raw_time_mins": 100.63333333333335,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Ana"
+          ],
+          "total_elim": 44,
+          "total_ast": 145,
+          "total_dth": 67,
+          "total_dmg": 19574,
+          "total_heal": 95877,
+          "total_block": 1158,
+          "avg_elim": "4.372",
+          "avg_ast": "14.409",
+          "avg_dth": "6.658",
+          "avg_dmg": "1945.081",
+          "avg_heal": "9527.360",
+          "avg_block": "115.071"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0075",
@@ -129005,7 +132425,28 @@
       "avg_dth": "0.000",
       "avg_dmg": "0.000",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 0,
+          "total_time_played": "0m",
+          "raw_time_mins": 0,
+          "most_played_hero": "",
+          "top_3_heroes": [],
+          "total_elim": 0,
+          "total_ast": 0,
+          "total_dth": 0,
+          "total_dmg": 0,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "0.000",
+          "avg_ast": "0.000",
+          "avg_dth": "0.000",
+          "avg_dmg": "0.000",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0076",
@@ -129039,7 +132480,31 @@
       "avg_dth": "3.921",
       "avg_dmg": "8832.617",
       "avg_heal": "369.881",
-      "avg_block": "7797.212"
+      "avg_block": "7797.212",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 11,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.76666666666667,
+          "most_played_hero": "Zarya",
+          "top_3_heroes": [
+            "Zarya",
+            "Domina"
+          ],
+          "total_elim": 288,
+          "total_ast": 126,
+          "total_dth": 45,
+          "total_dmg": 101369,
+          "total_heal": 4245,
+          "total_block": 89486,
+          "avg_elim": "25.094",
+          "avg_ast": "10.979",
+          "avg_dth": "3.921",
+          "avg_dmg": "8832.617",
+          "avg_heal": "369.881",
+          "avg_block": "7797.212"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0077",
@@ -129074,7 +132539,32 @@
       "avg_dth": "6.012",
       "avg_dmg": "9447.255",
       "avg_heal": "368.487",
-      "avg_block": "147.081"
+      "avg_block": "147.081",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 11,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.76666666666667,
+          "most_played_hero": "Cassidy",
+          "top_3_heroes": [
+            "Cassidy",
+            "Emre",
+            "Tracer"
+          ],
+          "total_elim": 262,
+          "total_ast": 17,
+          "total_dth": 69,
+          "total_dmg": 108423,
+          "total_heal": 4229,
+          "total_block": 1688,
+          "avg_elim": "22.829",
+          "avg_ast": "1.481",
+          "avg_dth": "6.012",
+          "avg_dmg": "9447.255",
+          "avg_heal": "368.487",
+          "avg_block": "147.081"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0078",
@@ -129109,7 +132599,32 @@
       "avg_dth": "5.489",
       "avg_dmg": "8127.447",
       "avg_heal": "361.429",
-      "avg_block": "867.238"
+      "avg_block": "867.238",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 11,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.76666666666667,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Venture",
+            "Tracer"
+          ],
+          "total_elim": 242,
+          "total_ast": 26,
+          "total_dth": 63,
+          "total_dmg": 93276,
+          "total_heal": 4148,
+          "total_block": 9953,
+          "avg_elim": "21.086",
+          "avg_ast": "2.265",
+          "avg_dth": "5.489",
+          "avg_dmg": "8127.447",
+          "avg_heal": "361.429",
+          "avg_block": "867.238"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0079",
@@ -129145,7 +132660,31 @@
       "avg_dth": "5.054",
       "avg_dmg": "2723.962",
       "avg_heal": "7833.198",
-      "avg_block": "1618.327"
+      "avg_block": "1618.327",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 11,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.76666666666667,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Illari"
+          ],
+          "total_elim": 175,
+          "total_ast": 198,
+          "total_dth": 58,
+          "total_dmg": 31262,
+          "total_heal": 89899,
+          "total_block": 18573,
+          "avg_elim": "15.248",
+          "avg_ast": "17.252",
+          "avg_dth": "5.054",
+          "avg_dmg": "2723.962",
+          "avg_heal": "7833.198",
+          "avg_block": "1618.327"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0080",
@@ -129182,7 +132721,32 @@
       "avg_dth": "6.062",
       "avg_dmg": "2179.527",
       "avg_heal": "10474.555",
-      "avg_block": "1.595"
+      "avg_block": "1.595",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 6,
+          "total_time_played": "1h 2m",
+          "raw_time_mins": 62.68333333333334,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Lúcio",
+            "Baptiste"
+          ],
+          "total_elim": 55,
+          "total_ast": 146,
+          "total_dth": 38,
+          "total_dmg": 13662,
+          "total_heal": 65658,
+          "total_block": 10,
+          "avg_elim": "8.774",
+          "avg_ast": "23.292",
+          "avg_dth": "6.062",
+          "avg_dmg": "2179.527",
+          "avg_heal": "10474.555",
+          "avg_block": "1.595"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0081",
@@ -129217,7 +132781,30 @@
       "avg_dth": "5.760",
       "avg_dmg": "2888.640",
       "avg_heal": "8771.712",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 5,
+          "total_time_played": "52m",
+          "raw_time_mins": 52.083333333333336,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko"
+          ],
+          "total_elim": 53,
+          "total_ast": 143,
+          "total_dth": 30,
+          "total_dmg": 15045,
+          "total_heal": 45686,
+          "total_block": 0,
+          "avg_elim": "10.176",
+          "avg_ast": "27.456",
+          "avg_dth": "5.760",
+          "avg_dmg": "2888.640",
+          "avg_heal": "8771.712",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0114",
@@ -129252,7 +132839,32 @@
       "avg_dth": "6.395",
       "avg_dmg": "9130.410",
       "avg_heal": "1529.628",
-      "avg_block": "13793.524"
+      "avg_block": "13793.524",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 10,
+          "total_time_played": "2h 3m",
+          "raw_time_mins": 123.53333333333333,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Winston",
+            "Orisa"
+          ],
+          "total_elim": 166,
+          "total_ast": 43,
+          "total_dth": 79,
+          "total_dmg": 112791,
+          "total_heal": 18896,
+          "total_block": 170396,
+          "avg_elim": "13.438",
+          "avg_ast": "3.481",
+          "avg_dth": "6.395",
+          "avg_dmg": "9130.410",
+          "avg_heal": "1529.628",
+          "avg_block": "13793.524"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0115",
@@ -129287,7 +132899,32 @@
       "avg_dth": "7.043",
       "avg_dmg": "9525.364",
       "avg_heal": "162.871",
-      "avg_block": "20.966"
+      "avg_block": "20.966",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "2h 3m",
+          "raw_time_mins": 123.53333333333333,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Emre",
+            "Cassidy"
+          ],
+          "total_elim": 185,
+          "total_ast": 0,
+          "total_dth": 87,
+          "total_dmg": 117670,
+          "total_heal": 2012,
+          "total_block": 259,
+          "avg_elim": "14.976",
+          "avg_ast": "0.000",
+          "avg_dth": "7.043",
+          "avg_dmg": "9525.364",
+          "avg_heal": "162.871",
+          "avg_block": "20.966"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0116",
@@ -129324,7 +132961,32 @@
       "avg_dth": "6.800",
       "avg_dmg": "6357.232",
       "avg_heal": "312.709",
-      "avg_block": "283.405"
+      "avg_block": "283.405",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "2h 3m",
+          "raw_time_mins": 123.53333333333333,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Symmetra",
+            "Vendetta"
+          ],
+          "total_elim": 166,
+          "total_ast": 22,
+          "total_dth": 84,
+          "total_dmg": 78533,
+          "total_heal": 3863,
+          "total_block": 3501,
+          "avg_elim": "13.438",
+          "avg_ast": "1.781",
+          "avg_dth": "6.800",
+          "avg_dmg": "6357.232",
+          "avg_heal": "312.709",
+          "avg_block": "283.405"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0117",
@@ -129361,7 +133023,32 @@
       "avg_dth": "6.395",
       "avg_dmg": "2551.619",
       "avg_heal": "8348.111",
-      "avg_block": "216.865"
+      "avg_block": "216.865",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "2h 3m",
+          "raw_time_mins": 123.53333333333333,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Zenyatta",
+            "Lifeweaver"
+          ],
+          "total_elim": 68,
+          "total_ast": 163,
+          "total_dth": 79,
+          "total_dmg": 31521,
+          "total_heal": 103127,
+          "total_block": 2679,
+          "avg_elim": "5.505",
+          "avg_ast": "13.195",
+          "avg_dth": "6.395",
+          "avg_dmg": "2551.619",
+          "avg_heal": "8348.111",
+          "avg_block": "216.865"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0118",
@@ -129397,7 +133084,31 @@
       "avg_dth": "5.586",
       "avg_dmg": "5153.508",
       "avg_heal": "8193.902",
-      "avg_block": "720.777"
+      "avg_block": "720.777",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "2h 3m",
+          "raw_time_mins": 123.53333333333333,
+          "most_played_hero": "Ana",
+          "top_3_heroes": [
+            "Ana",
+            "Baptiste"
+          ],
+          "total_elim": 139,
+          "total_ast": 125,
+          "total_dth": 69,
+          "total_dmg": 63663,
+          "total_heal": 101222,
+          "total_block": 8904,
+          "avg_elim": "11.252",
+          "avg_ast": "10.119",
+          "avg_dth": "5.586",
+          "avg_dmg": "5153.508",
+          "avg_heal": "8193.902",
+          "avg_block": "720.777"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0177",
@@ -129432,7 +133143,32 @@
       "avg_dth": "5.096",
       "avg_dmg": "9221.692",
       "avg_heal": "3255.995",
-      "avg_block": "3808.363"
+      "avg_block": "3808.363",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 5,
+          "total_time_played": "51m",
+          "raw_time_mins": 51.016666666666666,
+          "most_played_hero": "Doomfist",
+          "top_3_heroes": [
+            "Doomfist",
+            "Roadhog",
+            "Zarya"
+          ],
+          "total_elim": 104,
+          "total_ast": 18,
+          "total_dth": 26,
+          "total_dmg": 47046,
+          "total_heal": 16611,
+          "total_block": 19429,
+          "avg_elim": "20.385",
+          "avg_ast": "3.528",
+          "avg_dth": "5.096",
+          "avg_dmg": "9221.692",
+          "avg_heal": "3255.995",
+          "avg_block": "3808.363"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0178",
@@ -129466,7 +133202,31 @@
       "avg_dth": "7.289",
       "avg_dmg": "9005.279",
       "avg_heal": "798.827",
-      "avg_block": "10183.913"
+      "avg_block": "10183.913",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 6,
+          "total_time_played": "1h 19m",
+          "raw_time_mins": 79.56666666666666,
+          "most_played_hero": "Ramattra",
+          "top_3_heroes": [
+            "Ramattra",
+            "Mauga"
+          ],
+          "total_elim": 116,
+          "total_ast": 54,
+          "total_dth": 58,
+          "total_dmg": 71652,
+          "total_heal": 6356,
+          "total_block": 81030,
+          "avg_elim": "14.579",
+          "avg_ast": "6.787",
+          "avg_dth": "7.289",
+          "avg_dmg": "9005.279",
+          "avg_heal": "798.827",
+          "avg_block": "10183.913"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0179",
@@ -129501,7 +133261,32 @@
       "avg_dth": "4.702",
       "avg_dmg": "7796.453",
       "avg_heal": "184.133",
-      "avg_block": "307.548"
+      "avg_block": "307.548",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "2h 1m",
+          "raw_time_mins": 121.2166666666667,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Sojourn",
+            "Echo"
+          ],
+          "total_elim": 244,
+          "total_ast": 14,
+          "total_dth": 57,
+          "total_dmg": 94506,
+          "total_heal": 2232,
+          "total_block": 3728,
+          "avg_elim": "20.129",
+          "avg_ast": "1.155",
+          "avg_dth": "4.702",
+          "avg_dmg": "7796.453",
+          "avg_heal": "184.133",
+          "avg_block": "307.548"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0180",
@@ -129536,7 +133321,32 @@
       "avg_dth": "7.270",
       "avg_dmg": "8652.935",
       "avg_heal": "103.029",
-      "avg_block": "69.062"
+      "avg_block": "69.062",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 7,
+          "total_time_played": "1h 19m",
+          "raw_time_mins": 79.78333333333333,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Tracer",
+            "Cassidy"
+          ],
+          "total_elim": 122,
+          "total_ast": 10,
+          "total_dth": 58,
+          "total_dmg": 69036,
+          "total_heal": 822,
+          "total_block": 551,
+          "avg_elim": "15.291",
+          "avg_ast": "1.253",
+          "avg_dth": "7.270",
+          "avg_dmg": "8652.935",
+          "avg_heal": "103.029",
+          "avg_block": "69.062"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0181",
@@ -129571,7 +133381,32 @@
       "avg_dth": "5.651",
       "avg_dmg": "7142.659",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 5,
+          "total_time_played": "1h 0m",
+          "raw_time_mins": 60.166666666666664,
+          "most_played_hero": "Pharah",
+          "top_3_heroes": [
+            "Pharah",
+            "Sombra",
+            "Sojourn"
+          ],
+          "total_elim": 85,
+          "total_ast": 6,
+          "total_dth": 34,
+          "total_dmg": 42975,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "14.127",
+          "avg_ast": "0.997",
+          "avg_dth": "5.651",
+          "avg_dmg": "7142.659",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0182",
@@ -129605,7 +133440,31 @@
       "avg_dth": "6.739",
       "avg_dmg": "3876.911",
       "avg_heal": "8560.664",
-      "avg_block": "141.749"
+      "avg_block": "141.749",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 11,
+          "total_time_played": "2h 10m",
+          "raw_time_mins": 130.58333333333337,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Lúcio"
+          ],
+          "total_elim": 127,
+          "total_ast": 195,
+          "total_dth": 88,
+          "total_dmg": 50626,
+          "total_heal": 111788,
+          "total_block": 1851,
+          "avg_elim": "9.726",
+          "avg_ast": "14.933",
+          "avg_dth": "6.739",
+          "avg_dmg": "3876.911",
+          "avg_heal": "8560.664",
+          "avg_block": "141.749"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0183",
@@ -129640,7 +133499,32 @@
       "avg_dth": "6.509",
       "avg_dmg": "3561.940",
       "avg_heal": "8051.410",
-      "avg_block": "1003.880"
+      "avg_block": "1003.880",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 11,
+          "total_time_played": "2h 10m",
+          "raw_time_mins": 130.58333333333337,
+          "most_played_hero": "Wuyang",
+          "top_3_heroes": [
+            "Wuyang",
+            "Brigitte",
+            "Lúcio"
+          ],
+          "total_elim": 122,
+          "total_ast": 200,
+          "total_dth": 85,
+          "total_dmg": 46513,
+          "total_heal": 105138,
+          "total_block": 13109,
+          "avg_elim": "9.343",
+          "avg_ast": "15.316",
+          "avg_dth": "6.509",
+          "avg_dmg": "3561.940",
+          "avg_heal": "8051.410",
+          "avg_block": "1003.880"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0036",
@@ -129678,7 +133562,53 @@
       "avg_dth": "4.317",
       "avg_dmg": "6121.506",
       "avg_heal": "4112.200",
-      "avg_block": "8134.762"
+      "avg_block": "8134.762",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 7,
+          "total_time_played": "1h 17m",
+          "raw_time_mins": 77.73333333333333,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Zarya"
+          ],
+          "total_elim": 137,
+          "total_ast": 83,
+          "total_dth": 34,
+          "total_dmg": 56918,
+          "total_heal": 14012,
+          "total_block": 86077,
+          "avg_elim": "17.624",
+          "avg_ast": "10.678",
+          "avg_dth": "4.374",
+          "avg_dmg": "7322.213",
+          "avg_heal": "1802.573",
+          "avg_block": "11073.370"
+        },
+        "SUP": {
+          "maps_played": 2,
+          "total_time_played": "31m",
+          "raw_time_mins": 31.150000000000002,
+          "most_played_hero": "Brigitte",
+          "top_3_heroes": [
+            "Brigitte",
+            "Kiriko"
+          ],
+          "total_elim": 29,
+          "total_ast": 58,
+          "total_dth": 13,
+          "total_dmg": 9735,
+          "total_heal": 30763,
+          "total_block": 2497,
+          "avg_elim": "9.310",
+          "avg_ast": "18.620",
+          "avg_dth": "4.173",
+          "avg_dmg": "3125.201",
+          "avg_heal": "9875.762",
+          "avg_block": "801.605"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0037",
@@ -129716,7 +133646,51 @@
       "avg_dth": "6.985",
       "avg_dmg": "2444.325",
       "avg_heal": "8018.536",
-      "avg_block": "2180.792"
+      "avg_block": "2180.792",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 6,
+          "total_time_played": "1h 14m",
+          "raw_time_mins": 74.45,
+          "most_played_hero": "Juno",
+          "top_3_heroes": [
+            "Juno",
+            "Wuyang",
+            "Moira"
+          ],
+          "total_elim": 62,
+          "total_ast": 85,
+          "total_dth": 52,
+          "total_dmg": 18198,
+          "total_heal": 59698,
+          "total_block": 16236,
+          "avg_elim": "8.328",
+          "avg_ast": "11.417",
+          "avg_dth": "6.985",
+          "avg_dmg": "2444.325",
+          "avg_heal": "8018.536",
+          "avg_block": "2180.792"
+        },
+        "TANK": {
+          "maps_played": 0,
+          "total_time_played": "0m",
+          "raw_time_mins": 0,
+          "most_played_hero": "",
+          "top_3_heroes": [],
+          "total_elim": 0,
+          "total_ast": 0,
+          "total_dth": 0,
+          "total_dmg": 0,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "0.000",
+          "avg_ast": "0.000",
+          "avg_dth": "0.000",
+          "avg_dmg": "0.000",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0038",
@@ -129752,7 +133726,31 @@
       "avg_dth": "6.337",
       "avg_dmg": "9832.451",
       "avg_heal": "689.362",
-      "avg_block": "30.675"
+      "avg_block": "30.675",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 48m",
+          "raw_time_mins": 108.88333333333333,
+          "most_played_hero": "Emre",
+          "top_3_heroes": [
+            "Emre",
+            "Cassidy"
+          ],
+          "total_elim": 159,
+          "total_ast": 7,
+          "total_dth": 69,
+          "total_dmg": 107059,
+          "total_heal": 7506,
+          "total_block": 334,
+          "avg_elim": "14.603",
+          "avg_ast": "0.643",
+          "avg_dth": "6.337",
+          "avg_dmg": "9832.451",
+          "avg_heal": "689.362",
+          "avg_block": "30.675"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0039",
@@ -129786,7 +133784,31 @@
       "avg_dth": "5.786",
       "avg_dmg": "9058.503",
       "avg_heal": "297.934",
-      "avg_block": "417.327"
+      "avg_block": "417.327",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 48m",
+          "raw_time_mins": 108.88333333333333,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Vendetta"
+          ],
+          "total_elim": 205,
+          "total_ast": 16,
+          "total_dth": 63,
+          "total_dmg": 98632,
+          "total_heal": 3244,
+          "total_block": 4544,
+          "avg_elim": "18.827",
+          "avg_ast": "1.469",
+          "avg_dth": "5.786",
+          "avg_dmg": "9058.503",
+          "avg_heal": "297.934",
+          "avg_block": "417.327"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0040",
@@ -129820,7 +133842,31 @@
       "avg_dth": "6.680",
       "avg_dmg": "4979.768",
       "avg_heal": "6425.460",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 3,
+          "total_time_played": "34m",
+          "raw_time_mins": 34.43333333333333,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Wuyang"
+          ],
+          "total_elim": 30,
+          "total_ast": 50,
+          "total_dth": 23,
+          "total_dmg": 17147,
+          "total_heal": 22125,
+          "total_block": 0,
+          "avg_elim": "8.712",
+          "avg_ast": "14.521",
+          "avg_dth": "6.680",
+          "avg_dmg": "4979.768",
+          "avg_heal": "6425.460",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0041",
@@ -129857,7 +133903,53 @@
       "avg_dth": "5.602",
       "avg_dmg": "4536.782",
       "avg_heal": "6098.730",
-      "avg_block": "3371.958"
+      "avg_block": "3371.958",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 7,
+          "total_time_played": "1h 17m",
+          "raw_time_mins": 77.73333333333333,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Lúcio"
+          ],
+          "total_elim": 71,
+          "total_ast": 108,
+          "total_dth": 48,
+          "total_dmg": 26025,
+          "total_heal": 59339,
+          "total_block": 3762,
+          "avg_elim": "9.134",
+          "avg_ast": "13.894",
+          "avg_dth": "6.175",
+          "avg_dmg": "3347.985",
+          "avg_heal": "7633.662",
+          "avg_block": "483.962"
+        },
+        "TANK": {
+          "maps_played": 2,
+          "total_time_played": "31m",
+          "raw_time_mins": 31.150000000000002,
+          "most_played_hero": "Wrecking Ball",
+          "top_3_heroes": [
+            "Wrecking Ball",
+            "D.Va"
+          ],
+          "total_elim": 62,
+          "total_ast": 20,
+          "total_dth": 13,
+          "total_dmg": 23373,
+          "total_heal": 7066,
+          "total_block": 32953,
+          "avg_elim": "19.904",
+          "avg_ast": "6.421",
+          "avg_dth": "4.173",
+          "avg_dmg": "7503.371",
+          "avg_heal": "2268.379",
+          "avg_block": "10578.812"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0145",
@@ -129893,7 +133985,31 @@
       "avg_dth": "3.600",
       "avg_dmg": "9301.800",
       "avg_heal": "2193.245",
-      "avg_block": "8990.845"
+      "avg_block": "8990.845",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 10,
+          "total_time_played": "1h 37m",
+          "raw_time_mins": 97.21666666666665,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Sigma"
+          ],
+          "total_elim": 269,
+          "total_ast": 142,
+          "total_dth": 35,
+          "total_dmg": 90429,
+          "total_heal": 21322,
+          "total_block": 87406,
+          "avg_elim": "27.670",
+          "avg_ast": "14.607",
+          "avg_dth": "3.600",
+          "avg_dmg": "9301.800",
+          "avg_heal": "2193.245",
+          "avg_block": "8990.845"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0146",
@@ -129931,7 +134047,32 @@
       "avg_dth": "6.789",
       "avg_dmg": "7794.034",
       "avg_heal": "516.372",
-      "avg_block": "249.340"
+      "avg_block": "249.340",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 37m",
+          "raw_time_mins": 97.21666666666665,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Reaper",
+            "Emre"
+          ],
+          "total_elim": 204,
+          "total_ast": 24,
+          "total_dth": 66,
+          "total_dmg": 75771,
+          "total_heal": 5020,
+          "total_block": 2424,
+          "avg_elim": "20.984",
+          "avg_ast": "2.469",
+          "avg_dth": "6.789",
+          "avg_dmg": "7794.034",
+          "avg_heal": "516.372",
+          "avg_block": "249.340"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0147",
@@ -129966,7 +134107,32 @@
       "avg_dth": "5.040",
       "avg_dmg": "10121.001",
       "avg_heal": "522.133",
-      "avg_block": "20.881"
+      "avg_block": "20.881",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 37m",
+          "raw_time_mins": 97.21666666666665,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Emre",
+            "Reaper"
+          ],
+          "total_elim": 243,
+          "total_ast": 7,
+          "total_dth": 49,
+          "total_dmg": 98393,
+          "total_heal": 5076,
+          "total_block": 203,
+          "avg_elim": "24.996",
+          "avg_ast": "0.720",
+          "avg_dth": "5.040",
+          "avg_dmg": "10121.001",
+          "avg_heal": "522.133",
+          "avg_block": "20.881"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0148",
@@ -130003,7 +134169,31 @@
       "avg_dth": "5.863",
       "avg_dmg": "3302.623",
       "avg_heal": "7615.258",
-      "avg_block": "1434.528"
+      "avg_block": "1434.528",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 37m",
+          "raw_time_mins": 97.21666666666665,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Wuyang"
+          ],
+          "total_elim": 160,
+          "total_ast": 174,
+          "total_dth": 57,
+          "total_dmg": 32107,
+          "total_heal": 74033,
+          "total_block": 13946,
+          "avg_elim": "16.458",
+          "avg_ast": "17.898",
+          "avg_dth": "5.863",
+          "avg_dmg": "3302.623",
+          "avg_heal": "7615.258",
+          "avg_block": "1434.528"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0149",
@@ -130039,7 +134229,30 @@
       "avg_dth": "7.122",
       "avg_dmg": "2824.004",
       "avg_heal": "8163.862",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 6,
+          "total_time_played": "1h 3m",
+          "raw_time_mins": 63.18333333333333,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko"
+          ],
+          "total_elim": 53,
+          "total_ast": 132,
+          "total_dth": 45,
+          "total_dmg": 17843,
+          "total_heal": 51582,
+          "total_block": 0,
+          "avg_elim": "8.388",
+          "avg_ast": "20.892",
+          "avg_dth": "7.122",
+          "avg_dmg": "2824.004",
+          "avg_heal": "8163.862",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0150",
@@ -130072,7 +134285,30 @@
       "avg_dth": "2.351",
       "avg_dmg": "3811.851",
       "avg_heal": "8296.572",
-      "avg_block": "6.758"
+      "avg_block": "6.758",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 4,
+          "total_time_played": "34m",
+          "raw_time_mins": 34.03333333333333,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko"
+          ],
+          "total_elim": 49,
+          "total_ast": 77,
+          "total_dth": 8,
+          "total_dmg": 12973,
+          "total_heal": 28236,
+          "total_block": 23,
+          "avg_elim": "14.398",
+          "avg_ast": "22.625",
+          "avg_dth": "2.351",
+          "avg_dmg": "3811.851",
+          "avg_heal": "8296.572",
+          "avg_block": "6.758"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0151",
@@ -130106,7 +134342,8 @@
       "avg_dth": "0.000",
       "avg_dmg": "0.000",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {}
     },
     {
       "player_id": "FCA26-P0061",
@@ -130143,7 +134380,32 @@
       "avg_dth": "3.102",
       "avg_dmg": "9434.774",
       "avg_heal": "1477.914",
-      "avg_block": "5771.335"
+      "avg_block": "5771.335",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 10,
+          "total_time_played": "1h 46m",
+          "raw_time_mins": 106.4,
+          "most_played_hero": "Wrecking Ball",
+          "top_3_heroes": [
+            "Wrecking Ball",
+            "Sigma",
+            "Mauga"
+          ],
+          "total_elim": 202,
+          "total_ast": 55,
+          "total_dth": 33,
+          "total_dmg": 100386,
+          "total_heal": 15725,
+          "total_block": 61407,
+          "avg_elim": "18.985",
+          "avg_ast": "5.169",
+          "avg_dth": "3.102",
+          "avg_dmg": "9434.774",
+          "avg_heal": "1477.914",
+          "avg_block": "5771.335"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0062",
@@ -130180,7 +134442,32 @@
       "avg_dth": "7.237",
       "avg_dmg": "7600.094",
       "avg_heal": "256.955",
-      "avg_block": "331.955"
+      "avg_block": "331.955",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 46m",
+          "raw_time_mins": 106.4,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Venture",
+            "Reaper"
+          ],
+          "total_elim": 182,
+          "total_ast": 7,
+          "total_dth": 77,
+          "total_dmg": 80865,
+          "total_heal": 2734,
+          "total_block": 3532,
+          "avg_elim": "17.105",
+          "avg_ast": "0.658",
+          "avg_dth": "7.237",
+          "avg_dmg": "7600.094",
+          "avg_heal": "256.955",
+          "avg_block": "331.955"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0063",
@@ -130215,7 +134502,32 @@
       "avg_dth": "7.519",
       "avg_dmg": "8388.346",
       "avg_heal": "251.410",
-      "avg_block": "581.015"
+      "avg_block": "581.015",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 46m",
+          "raw_time_mins": 106.4,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Venture",
+            "Echo"
+          ],
+          "total_elim": 174,
+          "total_ast": 25,
+          "total_dth": 80,
+          "total_dmg": 89252,
+          "total_heal": 2675,
+          "total_block": 6182,
+          "avg_elim": "16.353",
+          "avg_ast": "2.350",
+          "avg_dth": "7.519",
+          "avg_dmg": "8388.346",
+          "avg_heal": "251.410",
+          "avg_block": "581.015"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0064",
@@ -130246,7 +134558,28 @@
       "avg_dth": "0.000",
       "avg_dmg": "0.000",
       "avg_heal": "0.000",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 0,
+          "total_time_played": "0m",
+          "raw_time_mins": 0,
+          "most_played_hero": "",
+          "top_3_heroes": [],
+          "total_elim": 0,
+          "total_ast": 0,
+          "total_dth": 0,
+          "total_dmg": 0,
+          "total_heal": 0,
+          "total_block": 0,
+          "avg_elim": "0.000",
+          "avg_ast": "0.000",
+          "avg_dth": "0.000",
+          "avg_dmg": "0.000",
+          "avg_heal": "0.000",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0065",
@@ -130281,7 +134614,32 @@
       "avg_dth": "6.615",
       "avg_dmg": "4174.064",
       "avg_heal": "6011.551",
-      "avg_block": "407.945"
+      "avg_block": "407.945",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 35m",
+          "raw_time_mins": 95.23333333333335,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Lúcio",
+            "Wuyang"
+          ],
+          "total_elim": 81,
+          "total_ast": 140,
+          "total_dth": 63,
+          "total_dmg": 39751,
+          "total_heal": 57250,
+          "total_block": 3885,
+          "avg_elim": "8.505",
+          "avg_ast": "14.701",
+          "avg_dth": "6.615",
+          "avg_dmg": "4174.064",
+          "avg_heal": "6011.551",
+          "avg_block": "407.945"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0066",
@@ -130317,7 +134675,31 @@
       "avg_dth": "6.660",
       "avg_dmg": "3663.875",
       "avg_heal": "7779.717",
-      "avg_block": "433.502"
+      "avg_block": "433.502",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 3,
+          "total_time_played": "33m",
+          "raw_time_mins": 33.03333333333333,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Lúcio"
+          ],
+          "total_elim": 26,
+          "total_ast": 39,
+          "total_dth": 22,
+          "total_dmg": 12103,
+          "total_heal": 25699,
+          "total_block": 1432,
+          "avg_elim": "7.871",
+          "avg_ast": "11.806",
+          "avg_dth": "6.660",
+          "avg_dmg": "3663.875",
+          "avg_heal": "7779.717",
+          "avg_block": "433.502"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0067",
@@ -130352,7 +134734,32 @@
       "avg_dth": "7.216",
       "avg_dmg": "4345.741",
       "avg_heal": "6215.300",
-      "avg_block": "1925.276"
+      "avg_block": "1925.276",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 8,
+          "total_time_played": "1h 24m",
+          "raw_time_mins": 84.53333333333333,
+          "most_played_hero": "Brigitte",
+          "top_3_heroes": [
+            "Brigitte",
+            "Mizuki",
+            "Kiriko"
+          ],
+          "total_elim": 99,
+          "total_ast": 117,
+          "total_dth": 61,
+          "total_dmg": 36736,
+          "total_heal": 52540,
+          "total_block": 16275,
+          "avg_elim": "11.711",
+          "avg_ast": "13.841",
+          "avg_dth": "7.216",
+          "avg_dmg": "4345.741",
+          "avg_heal": "6215.300",
+          "avg_block": "1925.276"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0152",
@@ -130389,7 +134796,31 @@
       "avg_dth": "5.457",
       "avg_dmg": "10580.417",
       "avg_heal": "2680.578",
-      "avg_block": "11037.881"
+      "avg_block": "11037.881",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 2,
+          "total_time_played": "31m",
+          "raw_time_mins": 31.150000000000002,
+          "most_played_hero": "Mauga",
+          "top_3_heroes": [
+            "Mauga",
+            "D.Va"
+          ],
+          "total_elim": 56,
+          "total_ast": 20,
+          "total_dth": 17,
+          "total_dmg": 32958,
+          "total_heal": 8350,
+          "total_block": 34383,
+          "avg_elim": "17.978",
+          "avg_ast": "6.421",
+          "avg_dth": "5.457",
+          "avg_dmg": "10580.417",
+          "avg_heal": "2680.578",
+          "avg_block": "11037.881"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0153",
@@ -130424,7 +134855,32 @@
       "avg_dth": "5.001",
       "avg_dmg": "9149.375",
       "avg_heal": "1742.651",
-      "avg_block": "7406.224"
+      "avg_block": "7406.224",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 6,
+          "total_time_played": "59m",
+          "raw_time_mins": 59.98333333333333,
+          "most_played_hero": "Wrecking Ball",
+          "top_3_heroes": [
+            "Wrecking Ball",
+            "Hazard",
+            "Mauga"
+          ],
+          "total_elim": 93,
+          "total_ast": 33,
+          "total_dth": 30,
+          "total_dmg": 54881,
+          "total_heal": 10453,
+          "total_block": 44425,
+          "avg_elim": "15.504",
+          "avg_ast": "5.502",
+          "avg_dth": "5.001",
+          "avg_dmg": "9149.375",
+          "avg_heal": "1742.651",
+          "avg_block": "7406.224"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0154",
@@ -130462,7 +134918,54 @@
       "avg_dth": "7.599",
       "avg_dmg": "7106.941",
       "avg_heal": "315.987",
-      "avg_block": "1748.092"
+      "avg_block": "1748.092",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 2,
+          "total_time_played": "20m",
+          "raw_time_mins": 20.183333333333334,
+          "most_played_hero": "Winston",
+          "top_3_heroes": [
+            "Winston",
+            "D.Va"
+          ],
+          "total_elim": 20,
+          "total_ast": 5,
+          "total_dth": 18,
+          "total_dmg": 13803,
+          "total_heal": 926,
+          "total_block": 17594,
+          "avg_elim": "9.909",
+          "avg_ast": "2.477",
+          "avg_dth": "8.918",
+          "avg_dmg": "6838.811",
+          "avg_heal": "458.794",
+          "avg_block": "8717.093"
+        },
+        "DPS": {
+          "maps_played": 7,
+          "total_time_played": "1h 21m",
+          "raw_time_mins": 81.15,
+          "most_played_hero": "Reaper",
+          "top_3_heroes": [
+            "Reaper",
+            "Sojourn",
+            "Tracer"
+          ],
+          "total_elim": 103,
+          "total_ast": 4,
+          "total_dth": 59,
+          "total_dmg": 58214,
+          "total_heal": 2276,
+          "total_block": 120,
+          "avg_elim": "12.693",
+          "avg_ast": "0.493",
+          "avg_dth": "7.270",
+          "avg_dmg": "7173.629",
+          "avg_heal": "280.468",
+          "avg_block": "14.787"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0155",
@@ -130497,7 +135000,32 @@
       "avg_dth": "5.749",
       "avg_dmg": "7227.489",
       "avg_heal": "162.509",
-      "avg_block": "509.627"
+      "avg_block": "509.627",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 51m",
+          "raw_time_mins": 111.31666666666669,
+          "most_played_hero": "Echo",
+          "top_3_heroes": [
+            "Echo",
+            "Tracer",
+            "Pharah"
+          ],
+          "total_elim": 136,
+          "total_ast": 12,
+          "total_dth": 64,
+          "total_dmg": 80454,
+          "total_heal": 1809,
+          "total_block": 5673,
+          "avg_elim": "12.217",
+          "avg_ast": "1.078",
+          "avg_dth": "5.749",
+          "avg_dmg": "7227.489",
+          "avg_heal": "162.509",
+          "avg_block": "509.627"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0156",
@@ -130533,7 +135061,31 @@
       "avg_dth": "5.304",
       "avg_dmg": "4404.862",
       "avg_heal": "80.552",
-      "avg_block": "56.685"
+      "avg_block": "56.685",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 3,
+          "total_time_played": "30m",
+          "raw_time_mins": 30.166666666666664,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Cassidy"
+          ],
+          "total_elim": 31,
+          "total_ast": 2,
+          "total_dth": 16,
+          "total_dmg": 13288,
+          "total_heal": 243,
+          "total_block": 171,
+          "avg_elim": "10.276",
+          "avg_ast": "0.663",
+          "avg_dth": "5.304",
+          "avg_dmg": "4404.862",
+          "avg_heal": "80.552",
+          "avg_block": "56.685"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0157",
@@ -130567,7 +135119,31 @@
       "avg_dth": "6.288",
       "avg_dmg": "3117.862",
       "avg_heal": "8552.358",
-      "avg_block": "0.000"
+      "avg_block": "0.000",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 51m",
+          "raw_time_mins": 111.31666666666669,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Jetpack Cat"
+          ],
+          "total_elim": 82,
+          "total_ast": 150,
+          "total_dth": 70,
+          "total_dmg": 34707,
+          "total_heal": 95202,
+          "total_block": 0,
+          "avg_elim": "7.366",
+          "avg_ast": "13.475",
+          "avg_dth": "6.288",
+          "avg_dmg": "3117.862",
+          "avg_heal": "8552.358",
+          "avg_block": "0.000"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0158",
@@ -130605,7 +135181,32 @@
       "avg_dth": "6.109",
       "avg_dmg": "5747.657",
       "avg_heal": "7596.976",
-      "avg_block": "1355.233"
+      "avg_block": "1355.233",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 51m",
+          "raw_time_mins": 111.31666666666669,
+          "most_played_hero": "Mizuki",
+          "top_3_heroes": [
+            "Mizuki",
+            "Lúcio",
+            "Ana"
+          ],
+          "total_elim": 134,
+          "total_ast": 117,
+          "total_dth": 68,
+          "total_dmg": 63981,
+          "total_heal": 84567,
+          "total_block": 15086,
+          "avg_elim": "12.038",
+          "avg_ast": "10.511",
+          "avg_dth": "6.109",
+          "avg_dmg": "5747.657",
+          "avg_heal": "7596.976",
+          "avg_block": "1355.233"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0159",
@@ -130642,7 +135243,31 @@
       "avg_dth": "4.979",
       "avg_dmg": "10004.928",
       "avg_heal": "1052.150",
-      "avg_block": "5200.101"
+      "avg_block": "5200.101",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 6,
+          "total_time_played": "1h 6m",
+          "raw_time_mins": 66.28333333333333,
+          "most_played_hero": "Mauga",
+          "top_3_heroes": [
+            "Mauga",
+            "Orisa"
+          ],
+          "total_elim": 130,
+          "total_ast": 68,
+          "total_dth": 33,
+          "total_dmg": 66316,
+          "total_heal": 6974,
+          "total_block": 34468,
+          "avg_elim": "19.613",
+          "avg_ast": "10.259",
+          "avg_dth": "4.979",
+          "avg_dmg": "10004.928",
+          "avg_heal": "1052.150",
+          "avg_block": "5200.101"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0160",
@@ -130678,7 +135303,31 @@
       "avg_dth": "4.484",
       "avg_dmg": "10397.509",
       "avg_heal": "1240.142",
-      "avg_block": "13155.374"
+      "avg_block": "13155.374",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 4,
+          "total_time_played": "46m",
+          "raw_time_mins": 46.833333333333336,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Wrecking Ball"
+          ],
+          "total_elim": 64,
+          "total_ast": 21,
+          "total_dth": 21,
+          "total_dmg": 48695,
+          "total_heal": 5808,
+          "total_block": 61611,
+          "avg_elim": "13.665",
+          "avg_ast": "4.484",
+          "avg_dth": "4.484",
+          "avg_dmg": "10397.509",
+          "avg_heal": "1240.142",
+          "avg_block": "13155.374"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0161",
@@ -130716,7 +135365,32 @@
       "avg_dth": "6.630",
       "avg_dmg": "10556.358",
       "avg_heal": "492.677",
-      "avg_block": "136.143"
+      "avg_block": "136.143",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 53m",
+          "raw_time_mins": 113.11666666666667,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Emre",
+            "Bastion"
+          ],
+          "total_elim": 173,
+          "total_ast": 4,
+          "total_dth": 75,
+          "total_dmg": 119410,
+          "total_heal": 5573,
+          "total_block": 1540,
+          "avg_elim": "15.294",
+          "avg_ast": "0.354",
+          "avg_dth": "6.630",
+          "avg_dmg": "10556.358",
+          "avg_heal": "492.677",
+          "avg_block": "136.143"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0162",
@@ -130751,7 +135425,32 @@
       "avg_dth": "7.338",
       "avg_dmg": "7598.085",
       "avg_heal": "225.785",
-      "avg_block": "1486.695"
+      "avg_block": "1486.695",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 10,
+          "total_time_played": "1h 53m",
+          "raw_time_mins": 113.11666666666667,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Venture",
+            "Vendetta"
+          ],
+          "total_elim": 160,
+          "total_ast": 22,
+          "total_dth": 83,
+          "total_dmg": 85947,
+          "total_heal": 2554,
+          "total_block": 16817,
+          "avg_elim": "14.145",
+          "avg_ast": "1.945",
+          "avg_dth": "7.338",
+          "avg_dmg": "7598.085",
+          "avg_heal": "225.785",
+          "avg_block": "1486.695"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0163",
@@ -130787,7 +135486,31 @@
       "avg_dth": "5.923",
       "avg_dmg": "2997.436",
       "avg_heal": "9909.857",
-      "avg_block": "95.565"
+      "avg_block": "95.565",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 53m",
+          "raw_time_mins": 113.11666666666667,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Ana"
+          ],
+          "total_elim": 68,
+          "total_ast": 174,
+          "total_dth": 67,
+          "total_dmg": 33906,
+          "total_heal": 112097,
+          "total_block": 1081,
+          "avg_elim": "6.011",
+          "avg_ast": "15.382",
+          "avg_dth": "5.923",
+          "avg_dmg": "2997.436",
+          "avg_heal": "9909.857",
+          "avg_block": "95.565"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0164",
@@ -130825,7 +135548,32 @@
       "avg_dth": "5.393",
       "avg_dmg": "4428.967",
       "avg_heal": "9380.846",
-      "avg_block": "1105.231"
+      "avg_block": "1105.231",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 10,
+          "total_time_played": "1h 53m",
+          "raw_time_mins": 113.11666666666667,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Mizuki",
+            "Juno"
+          ],
+          "total_elim": 128,
+          "total_ast": 146,
+          "total_dth": 61,
+          "total_dmg": 50099,
+          "total_heal": 106113,
+          "total_block": 12502,
+          "avg_elim": "11.316",
+          "avg_ast": "12.907",
+          "avg_dth": "5.393",
+          "avg_dmg": "4428.967",
+          "avg_heal": "9380.846",
+          "avg_block": "1105.231"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0125",
@@ -130863,7 +135611,53 @@
       "avg_dth": "6.875",
       "avg_dmg": "7630.863",
       "avg_heal": "4710.924",
-      "avg_block": "6869.519"
+      "avg_block": "6869.519",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 4,
+          "total_time_played": "42m",
+          "raw_time_mins": 42.8,
+          "most_played_hero": "Winston",
+          "top_3_heroes": [
+            "Winston",
+            "Orisa",
+            "Doomfist"
+          ],
+          "total_elim": 66,
+          "total_ast": 13,
+          "total_dth": 31,
+          "total_dmg": 42207,
+          "total_heal": 9365,
+          "total_block": 43315,
+          "avg_elim": "15.421",
+          "avg_ast": "3.037",
+          "avg_dth": "7.243",
+          "avg_dmg": "9861.449",
+          "avg_heal": "2188.084",
+          "avg_block": "10120.327"
+        },
+        "SUP": {
+          "maps_played": 2,
+          "total_time_played": "22m",
+          "raw_time_mins": 22.65,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko"
+          ],
+          "total_elim": 16,
+          "total_ast": 19,
+          "total_dth": 14,
+          "total_dmg": 7737,
+          "total_heal": 21468,
+          "total_block": 1646,
+          "avg_elim": "7.064",
+          "avg_ast": "8.389",
+          "avg_dth": "6.181",
+          "avg_dmg": "3415.894",
+          "avg_heal": "9478.146",
+          "avg_block": "726.711"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0126",
@@ -130900,7 +135694,31 @@
       "avg_dth": "9.272",
       "avg_dmg": "7596.909",
       "avg_heal": "760.265",
-      "avg_block": "11890.508"
+      "avg_block": "11890.508",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 2,
+          "total_time_played": "22m",
+          "raw_time_mins": 22.65,
+          "most_played_hero": "Domina",
+          "top_3_heroes": [
+            "Domina",
+            "Sigma"
+          ],
+          "total_elim": 26,
+          "total_ast": 1,
+          "total_dth": 21,
+          "total_dmg": 17207,
+          "total_heal": 1722,
+          "total_block": 26932,
+          "avg_elim": "11.479",
+          "avg_ast": "0.442",
+          "avg_dth": "9.272",
+          "avg_dmg": "7596.909",
+          "avg_heal": "760.265",
+          "avg_block": "11890.508"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0127",
@@ -130935,7 +135753,32 @@
       "avg_dth": "11.450",
       "avg_dmg": "6387.786",
       "avg_heal": "283.397",
-      "avg_block": "1090.076"
+      "avg_block": "1090.076",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 5,
+          "total_time_played": "52m",
+          "raw_time_mins": 52.4,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Reaper",
+            "Vendetta"
+          ],
+          "total_elim": 39,
+          "total_ast": 4,
+          "total_dth": 60,
+          "total_dmg": 33472,
+          "total_heal": 1485,
+          "total_block": 5712,
+          "avg_elim": "7.443",
+          "avg_ast": "0.763",
+          "avg_dth": "11.450",
+          "avg_dmg": "6387.786",
+          "avg_heal": "283.397",
+          "avg_block": "1090.076"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0128",
@@ -130972,7 +135815,32 @@
       "avg_dth": "7.970",
       "avg_dmg": "8202.137",
       "avg_heal": "271.152",
-      "avg_block": "77.274"
+      "avg_block": "77.274",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 5,
+          "total_time_played": "57m",
+          "raw_time_mins": 57.71666666666666,
+          "most_played_hero": "Ashe",
+          "top_3_heroes": [
+            "Ashe",
+            "Anran",
+            "Sombra"
+          ],
+          "total_elim": 85,
+          "total_ast": 7,
+          "total_dth": 46,
+          "total_dmg": 47340,
+          "total_heal": 1565,
+          "total_block": 446,
+          "avg_elim": "14.727",
+          "avg_ast": "1.213",
+          "avg_dth": "7.970",
+          "avg_dmg": "8202.137",
+          "avg_heal": "271.152",
+          "avg_block": "77.274"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0129",
@@ -131006,7 +135874,31 @@
       "avg_dth": "8.661",
       "avg_dmg": "10669.126",
       "avg_heal": "138.091",
-      "avg_block": "207.378"
+      "avg_block": "207.378",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 2,
+          "total_time_played": "20m",
+          "raw_time_mins": 20.783333333333335,
+          "most_played_hero": "Reaper",
+          "top_3_heroes": [
+            "Reaper",
+            "Pharah"
+          ],
+          "total_elim": 30,
+          "total_ast": 1,
+          "total_dth": 18,
+          "total_dmg": 22174,
+          "total_heal": 287,
+          "total_block": 431,
+          "avg_elim": "14.435",
+          "avg_ast": "0.481",
+          "avg_dth": "8.661",
+          "avg_dmg": "10669.126",
+          "avg_heal": "138.091",
+          "avg_block": "207.378"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0130",
@@ -131041,7 +135933,32 @@
       "avg_dth": "9.112",
       "avg_dmg": "3513.084",
       "avg_heal": "7338.551",
-      "avg_block": "172.664"
+      "avg_block": "172.664",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 4,
+          "total_time_played": "42m",
+          "raw_time_mins": 42.8,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Baptiste",
+            "Ana"
+          ],
+          "total_elim": 27,
+          "total_ast": 40,
+          "total_dth": 39,
+          "total_dmg": 15036,
+          "total_heal": 31409,
+          "total_block": 739,
+          "avg_elim": "6.308",
+          "avg_ast": "9.346",
+          "avg_dth": "9.112",
+          "avg_dmg": "3513.084",
+          "avg_heal": "7338.551",
+          "avg_block": "172.664"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0131",
@@ -131078,7 +135995,32 @@
       "avg_dth": "9.473",
       "avg_dmg": "2615.890",
       "avg_heal": "7262.185",
-      "avg_block": "623.377"
+      "avg_block": "623.377",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 6,
+          "total_time_played": "1h 5m",
+          "raw_time_mins": 65.44999999999999,
+          "most_played_hero": "Brigitte",
+          "top_3_heroes": [
+            "Brigitte",
+            "Zenyatta",
+            "Mercy"
+          ],
+          "total_elim": 34,
+          "total_ast": 55,
+          "total_dth": 62,
+          "total_dmg": 17121,
+          "total_heal": 47531,
+          "total_block": 4080,
+          "avg_elim": "5.195",
+          "avg_ast": "8.403",
+          "avg_dth": "9.473",
+          "avg_dmg": "2615.890",
+          "avg_heal": "7262.185",
+          "avg_block": "623.377"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0165",
@@ -131116,7 +136058,32 @@
       "avg_dth": "3.285",
       "avg_dmg": "10064.476",
       "avg_heal": "1662.936",
-      "avg_block": "10250.616"
+      "avg_block": "10250.616",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 9,
+          "total_time_played": "1h 37m",
+          "raw_time_mins": 97.4,
+          "most_played_hero": "D.Va",
+          "top_3_heroes": [
+            "D.Va",
+            "Zarya",
+            "Sigma"
+          ],
+          "total_elim": 200,
+          "total_ast": 70,
+          "total_dth": 32,
+          "total_dmg": 98028,
+          "total_heal": 16197,
+          "total_block": 99841,
+          "avg_elim": "20.534",
+          "avg_ast": "7.187",
+          "avg_dth": "3.285",
+          "avg_dmg": "10064.476",
+          "avg_heal": "1662.936",
+          "avg_block": "10250.616"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0166",
@@ -131151,7 +136118,32 @@
       "avg_dth": "4.090",
       "avg_dmg": "9896.224",
       "avg_heal": "112.952",
-      "avg_block": "4.562"
+      "avg_block": "4.562",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 6,
+          "total_time_played": "1h 3m",
+          "raw_time_mins": 63.56666666666667,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Sojourn",
+            "Emre"
+          ],
+          "total_elim": 138,
+          "total_ast": 1,
+          "total_dth": 26,
+          "total_dmg": 62907,
+          "total_heal": 718,
+          "total_block": 29,
+          "avg_elim": "21.709",
+          "avg_ast": "0.157",
+          "avg_dth": "4.090",
+          "avg_dmg": "9896.224",
+          "avg_heal": "112.952",
+          "avg_block": "4.562"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0167",
@@ -131186,7 +136178,32 @@
       "avg_dth": "5.320",
       "avg_dmg": "11390.837",
       "avg_heal": "203.645",
-      "avg_block": "19.212"
+      "avg_block": "19.212",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 3,
+          "total_time_played": "33m",
+          "raw_time_mins": 33.83333333333333,
+          "most_played_hero": "Sojourn",
+          "top_3_heroes": [
+            "Sojourn",
+            "Cassidy",
+            "Emre"
+          ],
+          "total_elim": 64,
+          "total_ast": 4,
+          "total_dth": 18,
+          "total_dmg": 38539,
+          "total_heal": 689,
+          "total_block": 65,
+          "avg_elim": "18.916",
+          "avg_ast": "1.182",
+          "avg_dth": "5.320",
+          "avg_dmg": "11390.837",
+          "avg_heal": "203.645",
+          "avg_block": "19.212"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0168",
@@ -131221,7 +136238,32 @@
       "avg_dth": "6.057",
       "avg_dmg": "6563.655",
       "avg_heal": "159.754",
-      "avg_block": "691.684"
+      "avg_block": "691.684",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 9,
+          "total_time_played": "1h 37m",
+          "raw_time_mins": 97.4,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Tracer",
+            "Sojourn"
+          ],
+          "total_elim": 136,
+          "total_ast": 14,
+          "total_dth": 59,
+          "total_dmg": 63930,
+          "total_heal": 1556,
+          "total_block": 6737,
+          "avg_elim": "13.963",
+          "avg_ast": "1.437",
+          "avg_dth": "6.057",
+          "avg_dmg": "6563.655",
+          "avg_heal": "159.754",
+          "avg_block": "691.684"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0169",
@@ -131259,7 +136301,32 @@
       "avg_dth": "4.928",
       "avg_dmg": "5146.099",
       "avg_heal": "7730.698",
-      "avg_block": "594.661"
+      "avg_block": "594.661",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 37m",
+          "raw_time_mins": 97.4,
+          "most_played_hero": "Lúcio",
+          "top_3_heroes": [
+            "Lúcio",
+            "Mizuki",
+            "Kiriko"
+          ],
+          "total_elim": 109,
+          "total_ast": 120,
+          "total_dth": 48,
+          "total_dmg": 50123,
+          "total_heal": 75297,
+          "total_block": 5792,
+          "avg_elim": "11.191",
+          "avg_ast": "12.320",
+          "avg_dth": "4.928",
+          "avg_dmg": "5146.099",
+          "avg_heal": "7730.698",
+          "avg_block": "594.661"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0170",
@@ -131294,7 +136361,32 @@
       "avg_dth": "5.031",
       "avg_dmg": "3675.873",
       "avg_heal": "7856.674",
-      "avg_block": "330.698"
+      "avg_block": "330.698",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 9,
+          "total_time_played": "1h 37m",
+          "raw_time_mins": 97.4,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Lúcio",
+            "Ana"
+          ],
+          "total_elim": 89,
+          "total_ast": 141,
+          "total_dth": 49,
+          "total_dmg": 35803,
+          "total_heal": 76524,
+          "total_block": 3221,
+          "avg_elim": "9.138",
+          "avg_ast": "14.476",
+          "avg_dth": "5.031",
+          "avg_dmg": "3675.873",
+          "avg_heal": "7856.674",
+          "avg_block": "330.698"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0109",
@@ -131329,7 +136421,32 @@
       "avg_dth": "8.214",
       "avg_dmg": "6882.960",
       "avg_heal": "205.797",
-      "avg_block": "243.286"
+      "avg_block": "243.286",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 11,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.43333333333334,
+          "most_played_hero": "Tracer",
+          "top_3_heroes": [
+            "Tracer",
+            "Vendetta",
+            "Soldier: 76"
+          ],
+          "total_elim": 169,
+          "total_ast": 14,
+          "total_dth": 94,
+          "total_dmg": 78764,
+          "total_heal": 2355,
+          "total_block": 2784,
+          "avg_elim": "14.768",
+          "avg_ast": "1.223",
+          "avg_dth": "8.214",
+          "avg_dmg": "6882.960",
+          "avg_heal": "205.797",
+          "avg_block": "243.286"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0110",
@@ -131364,7 +136481,32 @@
       "avg_dth": "6.117",
       "avg_dmg": "8968.715",
       "avg_heal": "255.782",
-      "avg_block": "371.657"
+      "avg_block": "371.657",
+      "role_breakdown": {
+        "DPS": {
+          "maps_played": 11,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.43333333333334,
+          "most_played_hero": "Vendetta",
+          "top_3_heroes": [
+            "Vendetta",
+            "Cassidy",
+            "Emre"
+          ],
+          "total_elim": 204,
+          "total_ast": 12,
+          "total_dth": 70,
+          "total_dmg": 102632,
+          "total_heal": 2927,
+          "total_block": 4253,
+          "avg_elim": "17.827",
+          "avg_ast": "1.049",
+          "avg_dth": "6.117",
+          "avg_dmg": "8968.715",
+          "avg_heal": "255.782",
+          "avg_block": "371.657"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0111",
@@ -131401,7 +136543,32 @@
       "avg_dth": "6.729",
       "avg_dmg": "4976.435",
       "avg_heal": "7238.450",
-      "avg_block": "826.070"
+      "avg_block": "826.070",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 11,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.43333333333334,
+          "most_played_hero": "Mizuki",
+          "top_3_heroes": [
+            "Mizuki",
+            "Illari",
+            "Lúcio"
+          ],
+          "total_elim": 106,
+          "total_ast": 140,
+          "total_dth": 77,
+          "total_dmg": 56947,
+          "total_heal": 82832,
+          "total_block": 9453,
+          "avg_elim": "9.263",
+          "avg_ast": "12.234",
+          "avg_dth": "6.729",
+          "avg_dmg": "4976.435",
+          "avg_heal": "7238.450",
+          "avg_block": "826.070"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0112",
@@ -131435,7 +136602,31 @@
       "avg_dth": "6.991",
       "avg_dmg": "2418.002",
       "avg_heal": "7187.591",
-      "avg_block": "38.188"
+      "avg_block": "38.188",
+      "role_breakdown": {
+        "SUP": {
+          "maps_played": 11,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.43333333333334,
+          "most_played_hero": "Kiriko",
+          "top_3_heroes": [
+            "Kiriko",
+            "Wuyang"
+          ],
+          "total_elim": 61,
+          "total_ast": 190,
+          "total_dth": 80,
+          "total_dmg": 27670,
+          "total_heal": 82250,
+          "total_block": 437,
+          "avg_elim": "5.331",
+          "avg_ast": "16.604",
+          "avg_dth": "6.991",
+          "avg_dmg": "2418.002",
+          "avg_heal": "7187.591",
+          "avg_block": "38.188"
+        }
+      }
     },
     {
       "player_id": "FCA26-P0113",
@@ -131472,7 +136663,32 @@
       "avg_dth": "5.505",
       "avg_dmg": "8171.221",
       "avg_heal": "2167.113",
-      "avg_block": "10224.468"
+      "avg_block": "10224.468",
+      "role_breakdown": {
+        "TANK": {
+          "maps_played": 11,
+          "total_time_played": "1h 54m",
+          "raw_time_mins": 114.43333333333334,
+          "most_played_hero": "Winston",
+          "top_3_heroes": [
+            "Winston",
+            "D.Va",
+            "Sigma"
+          ],
+          "total_elim": 200,
+          "total_ast": 63,
+          "total_dth": 63,
+          "total_dmg": 93506,
+          "total_heal": 24799,
+          "total_block": 117002,
+          "avg_elim": "17.477",
+          "avg_ast": "5.505",
+          "avg_dth": "5.505",
+          "avg_dmg": "8171.221",
+          "avg_heal": "2167.113",
+          "avg_block": "10224.468"
+        }
+      }
     }
   ]
 }

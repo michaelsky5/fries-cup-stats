@@ -14,11 +14,13 @@ function formatHeroName(name) {
     .replace(/-/g, '_')
 }
 
+// 🌟 修复：安全容错机制
 function getRoleFolder(role) {
   if (!role) return 'damage'
   const r = role.toUpperCase()
   if (r === 'TANK') return 'tank'
   if (r === 'SUP' || r === 'SUPPORT') return 'support'
+  if (r === 'DPS' || r === 'DAMAGE') return 'damage'
   return 'damage'
 }
 
@@ -30,11 +32,13 @@ function formatTime(minutes) {
   return `${m}m`
 }
 
+// 🌟 修复：对齐 DAMAGE 和 SUPPORT
 function getRoleLabel(role) {
   if (role === 'ALL') return { cn: '全部阵列', en: 'ALL ROLES' }
   if (role === 'TANK') return { cn: '重装阵列', en: 'TANK' }
-  if (role === 'DPS') return { cn: '输出阵列', en: 'DPS' }
-  return { cn: '支援阵列', en: 'SUPPORT' }
+  if (role === 'DAMAGE' || role === 'DPS') return { cn: '输出阵列', en: 'DAMAGE' }
+  if (role === 'SUPPORT' || role === 'SUP') return { cn: '支援阵列', en: 'SUPPORT' }
+  return { cn: '未知阵列', en: 'UNKNOWN' }
 }
 
 export default function HeroesPage() {
@@ -56,10 +60,15 @@ export default function HeroesPage() {
         const h = log.hero
         if (!h || h === '-' || h === 'UNKNOWN') return
 
+        // 🌟 修复：规范化 JSON 里的角色，统一变成标准大写
+        let normalizedRole = String(log.role).toUpperCase()
+        if (normalizedRole === 'DPS') normalizedRole = 'DAMAGE'
+        if (normalizedRole === 'SUP') normalizedRole = 'SUPPORT'
+
         if (!stats[h]) {
           stats[h] = {
             name: h,
-            role: String(log.role).toUpperCase() === 'SUPPORT' ? 'SUP' : String(log.role).toUpperCase(),
+            role: normalizedRole,
             totalTime: 0,
             players: {}
           }
@@ -165,7 +174,8 @@ export default function HeroesPage() {
         </div>
 
         <div className={styles.roleFilter}>
-          {['ALL', 'TANK', 'DPS', 'SUP'].map(role => {
+          {/* 🌟 修复：把筛选按钮变成统一的数据格式 */}
+          {['ALL', 'TANK', 'DAMAGE', 'SUPPORT'].map(role => {
             const label = getRoleLabel(role)
             return (
               <button
@@ -190,10 +200,11 @@ export default function HeroesPage() {
               const heroFileName = formatHeroName(hero.name)
               const pickRatePercent = Math.min(100, (hero.totalTime / maxTime) * 100)
 
+              // 🌟 修复：匹配底层的新名字，不然颜色不对
               let roleClass = styles.borderFlex
               if (hero.role === 'TANK') roleClass = styles.borderTank
-              if (hero.role === 'DPS') roleClass = styles.borderDps
-              if (hero.role === 'SUP') roleClass = styles.borderSup
+              if (hero.role === 'DAMAGE' || hero.role === 'DPS') roleClass = styles.borderDps
+              if (hero.role === 'SUPPORT' || hero.role === 'SUP') roleClass = styles.borderSup
 
               return (
                 <div key={hero.name} className={`${styles.heroCard} ${roleClass}`}>
@@ -238,7 +249,7 @@ export default function HeroesPage() {
                       <span className={styles.bestPlayerEn}>BEST SPECIALIST</span>
                     </div>
 
-                    <Link to={`/players/${hero.bestPlayer.id}`} className={styles.bestPlayerLink}>
+                    <Link to={`/players/${encodeURIComponent(hero.bestPlayer.id)}`} className={styles.bestPlayerLink}>
                       <span className={styles.bpTeam}>[{hero.bestPlayer.team}]</span>
                       <span className={styles.bpName}>{hero.bestPlayer.name}</span>
                       <span className={styles.bpTime}>{formatTime(hero.bestPlayer.time)}</span>

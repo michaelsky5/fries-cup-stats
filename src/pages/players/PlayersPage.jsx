@@ -1,14 +1,15 @@
 import { useMemo, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import PlayerCard from '../../components/players/PlayerCard.jsx'
-import { getLeaderboardRows, safeArr } from '../../lib/selectors.js'
+import { safeArr } from '../../lib/selectors.js' // 🌟 移除了 getLeaderboardRows
 import styles from './PlayersPage.module.css'
 
 function getRoleLabel(role) {
   if (role === 'ALL') return { cn: '全部位置', en: 'ALL ROLES', short: 'ALL' }
   if (role === 'TANK') return { cn: '重装', en: 'TANK', short: 'TANK' }
-  if (role === 'DPS') return { cn: '输出', en: 'DPS', short: 'DPS' }
-  return { cn: '支援', en: 'SUPPORT', short: 'SUP' }
+  if (role === 'DAMAGE' || role === 'DPS') return { cn: '输出', en: 'DAMAGE', short: 'DMG' }
+  if (role === 'SUPPORT' || role === 'SUP') return { cn: '支援', en: 'SUPPORT', short: 'SUP' }
+  return { cn: '未知', en: 'UNKNOWN', short: 'UNK' }
 }
 
 const SORT_OPTIONS = [
@@ -54,14 +55,12 @@ export default function PlayersPage() {
   const [sortBy, setSortBy] = useState('time_desc')
 
   const allPlayers = useMemo(() => {
-    const leaderboardRows = safeArr(getLeaderboardRows?.(db))
+    // 🌟 修复核心：绝对不能用 getLeaderboardRows（因为它把多修玩家拆成了多行）
+    // 直接读取 player_totals，确保每个选手在这里只有唯一的一个对象！
     const playerTotals = safeArr(db?.player_totals)
     const rawPlayers = safeArr(db?.players)
 
-    const source =
-      leaderboardRows.length > 0 ? leaderboardRows
-      : playerTotals.length > 0 ? playerTotals
-      : rawPlayers
+    const source = playerTotals.length > 0 ? playerTotals : rawPlayers
 
     return source.map(player => {
       const mapsPlayed = toNum(player.maps_played)
@@ -110,7 +109,17 @@ export default function PlayersPage() {
 
   const filteredPlayers = useMemo(() => {
     return allPlayers.filter(player => {
-      if (roleFilter !== 'ALL' && player.role !== roleFilter) return false
+      // 🌟 修复核心：高级角色匹配
+      // 如果筛选了具体位置，不但要看他的主位置(role)，还要看他客串的副业(role_breakdown)里有没有打过这个位置
+      if (roleFilter !== 'ALL') {
+        const isMainRole = player.role === roleFilter;
+        const isSubRole = player.role_breakdown && 
+                          player.role_breakdown[roleFilter] && 
+                          (player.role_breakdown[roleFilter].raw_time_mins > 0);
+        
+        if (!isMainRole && !isSubRole) return false;
+      }
+
       if (teamFilter !== 'ALL' && (player.team_id || player.team_name || player.team_short_name) !== teamFilter) return false
 
       if (query.trim()) {
@@ -152,14 +161,14 @@ export default function PlayersPage() {
       allPlayers.map(player => player.team_id || player.team_name || player.team_short_name).filter(Boolean)
     ).size
 
-    const dataReadyPlayers = allPlayers.filter(player => player.hasStats).length
     const filteredTeams = new Set(
       sortedPlayers.map(player => player.team_id || player.team_name || player.team_short_name).filter(Boolean)
     ).size
 
+    // 🌟 因为数据源已经没有“影分身”了，我们可以安全地退回使用 .length，性能更好
     return {
       totalPlayers: allPlayers.length,
-      dataReadyPlayers,
+      dataReadyPlayers: allPlayers.filter(p => p.hasStats).length,
       filteredPlayers: sortedPlayers.length,
       filteredTeams,
       totalTeams,
@@ -279,8 +288,8 @@ export default function PlayersPage() {
               >
                 <option value="ALL">全部位置 / ALL ROLES</option>
                 <option value="TANK">重装 / TANK</option>
-                <option value="DPS">输出 / DPS</option>
-                <option value="SUP">支援 / SUPPORT</option>
+                <option value="DAMAGE">输出 / DPS</option>
+                <option value="SUPPORT">支援 / SUPPORT</option>
               </select>
             </div>
 
@@ -345,7 +354,7 @@ export default function PlayersPage() {
           </div>
 
           <div className={styles.resultsMeta}>
-            <span className={styles.resultPill}>{summary.filteredPlayers} PLAYERS</span>
+            <span className={styles.resultPill}>{summary.filteredPlayers} RESULTS</span>
             <span className={styles.resultPill}>{summary.filteredTeams} TEAMS</span>
             <span className={styles.resultPill}>{currentSort.en}</span>
           </div>

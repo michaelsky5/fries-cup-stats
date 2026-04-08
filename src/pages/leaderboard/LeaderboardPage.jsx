@@ -53,18 +53,21 @@ export default function LeaderboardPage() {
   ), [db])
 
   const summary = useMemo(() => {
-    const totalPlayers = rows.length
-    const rankedPlayers = sortedRows.length
+    // 🌟 修复核心：使用 Set 去重 player_id 从而得到真实的【人数】
+    const uniquePlayersInDB = new Set(safeArr(db?.players).map(p => p.player_id)).size || 0
+    const uniqueRankedPlayers = new Set(sortedRows.map(r => r.player_id)).size || 0
+
+    // 注意：地图数不需要去重，但时间需要防止同一场比赛同一个选手双修职责被记两次时间（这里以最简化的方式仅汇总有效条目的时间）
     const totalMinutes = sortedRows.reduce((sum, row) => sum + Number(row.raw_time_mins || 0), 0)
     const totalMaps = sortedRows.reduce((sum, row) => sum + Number(row.maps_played || 0), 0)
 
     return {
-      totalPlayers,
-      rankedPlayers,
+      totalPlayers: uniquePlayersInDB, // 改回读取纯净的玩家基础库总数
+      rankedPlayers: uniqueRankedPlayers, // 用去重后的数量
       totalMinutes,
       totalMaps
     }
-  }, [rows, sortedRows])
+  }, [db, sortedRows])
 
   const requestSort = key => {
     if (sortKey === key) {

@@ -1,5 +1,5 @@
 import { useMemo, useEffect, useRef, useState } from 'react'
-import { useOutletContext, useParams, useNavigate, Link } from 'react-router-dom'
+import { useOutletContext, useParams, useNavigate } from 'react-router-dom'
 import {
   Radar,
   RadarChart,
@@ -43,7 +43,7 @@ function getRoleFolder(role) {
 function getRoleClass(role) {
   const r = String(role || '').toUpperCase()
   if (r === 'TANK') return styles.roleTank
-  if (r === 'DPS') return styles.roleDps
+  if (r === 'DPS' || r === 'DAMAGE') return styles.roleDps // 🌟 修复：兼容 DAMAGE 唤起红色样式
   if (r === 'SUP' || r === 'SUPPORT') return styles.roleSup
   return styles.roleFlex
 }
@@ -95,8 +95,12 @@ export default function PlayerDetailPage() {
   const { db } = useOutletContext()
   const { playerId } = useParams()
   const navigate = useNavigate()
+  
   const [aiText, setAiText] = useState('')
   const shareCardRef = useRef(null)
+
+  // 🌟 核心状态：记录当前选中的职责标签页
+  const [selectedRole, setSelectedRole] = useState('')
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -126,12 +130,38 @@ export default function PlayerDetailPage() {
     }
   }
 
-  const player = useMemo(() => {
+  // 🌟 获取该选手所有的职责数据条目
+  const allPlayerEntries = useMemo(() => {
+    if (!db) return []
     const rows = getLeaderboardRows(db)
-    const statsPlayer = rows.find(p => String(p.player_id) === String(playerId))
-    if (!statsPlayer) return safeArr(db?.players).find(p => String(p.player_id) === String(playerId))
-    return statsPlayer
+    const entries = rows.filter(p => String(p.player_id) === String(playerId))
+    
+    // 如果有比赛数据，返回他打过的所有位置
+    if (entries.length > 0) return entries
+
+    // 如果还没有比赛数据，退回到基础库拿他原本的信息
+    const basePlayer = safeArr(db?.players).find(p => String(p.player_id) === String(playerId))
+    return basePlayer ? [basePlayer] : []
   }, [db, playerId])
+
+  // 🌟 提取该选手打过的所有职责，用于渲染 Tab
+  const availableRoles = useMemo(() => {
+    return allPlayerEntries.map(p => p.role || 'FLEX')
+  }, [allPlayerEntries])
+
+  // 🌟 初始化时，自动选择他打得最多的职责 (base_role)
+  useEffect(() => {
+    if (availableRoles.length > 0 && !selectedRole) {
+      const baseEntry = allPlayerEntries.find(p => p.role === p.base_role)
+      setSelectedRole(baseEntry ? baseEntry.role : availableRoles[0])
+    }
+  }, [availableRoles, allPlayerEntries, selectedRole])
+
+  // 🌟 根据当前选中的 Tab，锁定要展示的数据体
+  const player = useMemo(() => {
+    if (!allPlayerEntries.length) return null
+    return allPlayerEntries.find(p => p.role === selectedRole) || allPlayerEntries[0]
+  }, [allPlayerEntries, selectedRole])
 
   const roleStats = useMemo(() => {
     if (!player || !db) return null
@@ -239,7 +269,8 @@ export default function PlayerDetailPage() {
     const elim = roleStats.ranks.elim.percentile || 0
     const survive = roleStats.ranks.dth.percentile || 0
 
-    if (role === 'DPS') {
+    // 🌟 修复：兼容 DAMAGE，让 AI 球探正常对输出位进行评价！
+    if (role === 'DPS' || role === 'DAMAGE') {
       if (dmg >= 80 && elim >= 80 && survive >= 50) {
         return {
           cn: '高压进攻核心',
@@ -321,9 +352,15 @@ export default function PlayerDetailPage() {
 
   const topHeroes = useMemo(() => {
     if (!player) return []
-    const heroes = Array.isArray(player.top_3_heroes) ? player.top_3_heroes.filter(Boolean) : []
-    if (heroes.length === 0 && player.most_played_hero) heroes.push(player.most_played_hero)
-    return heroes
+    const heroes = []
+    
+    if (player.most_played_hero) heroes.push(player.most_played_hero)
+    if (Array.isArray(player.top_3_heroes)) {
+      player.top_3_heroes.forEach(h => {
+        if (h && !heroes.includes(h)) heroes.push(h)
+      })
+    }
+    return heroes.slice(0, 3)
   }, [player])
 
   const bestEdge = useMemo(() => {
@@ -445,7 +482,23 @@ export default function PlayerDetailPage() {
 
         <div className={styles.idCardContent}>
           <div className={styles.idCardLeft}>
-            <div className={styles.playerRoleTag}>{player.role || 'FLEX'}</div>
+            <div className={styles.roleSwitchGroup}>
+              {availableRoles.length > 1 ? (
+                availableRoles.map(r => (
+                  <button
+                    key={r}
+                    type="button"
+                    className={`${styles.roleSwitchBtn} ${selectedRole === r ? styles.roleSwitchBtnActive : ''}`}
+                    onClick={() => setSelectedRole(r)}
+                  >
+                    {r}
+                  </button>
+                ))
+              ) : (
+                <div className={styles.playerRoleTag}>{player.role || 'FLEX'}</div>
+              )}
+            </div>
+
             <h1 className={styles.playerName}>{player.display_name || player.player_id}</h1>
             <div className={styles.playerRealName}>{player.player_name || 'UNKNOWN IDENTITY'}</div>
 

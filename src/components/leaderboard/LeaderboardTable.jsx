@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom' // 🌟 新增路由跳转钩子
 import styles from './LeaderboardTable.module.css'
 
 function formatNum(value, digits = 2) {
@@ -70,6 +71,8 @@ function MobileStat({ label, value, tone = '' }) {
 }
 
 export default function LeaderboardTable({ rows = [], sortKey, direction, onSort }) {
+  const navigate = useNavigate() // 🌟 初始化跳转钩子
+
   return (
     <div className={styles.wrap}>
       <div className={styles.desktopTable}>
@@ -125,6 +128,7 @@ export default function LeaderboardTable({ rows = [], sortKey, direction, onSort
 
               const rowClass = [
                 styles.row,
+                styles.clickableRow, // 🌟 如果你的 CSS 里没有定义，可以加个 cursor: pointer
                 isTop3 ? styles.rowTop : '',
                 index === 0 && isTop3 ? styles.rowTop1 : '',
                 index === 1 && isTop3 ? styles.rowTop2 : '',
@@ -144,7 +148,12 @@ export default function LeaderboardTable({ rows = [], sortKey, direction, onSort
               const heroAvatarUrl = `/heroes/${roleFolder}/${heroFileName}.png`
 
               return (
-                <tr key={row.player_id} className={rowClass}>
+                <tr 
+                  key={`${row.player_id}_${row.role}`} // 🌟 修复关键：联合 ID 避免重复 key
+                  className={rowClass}
+                  onClick={() => navigate(`/players/${encodeURIComponent(row.player_id)}`)} // 🌟 增加点击跳转
+                  style={{ cursor: 'pointer' }} // 🌟 确保鼠标移上去是小手
+                >
                   <td className={styles.rank}>
                     <span className={rankBadgeClass}>{row.rank}</span>
                   </td>
@@ -238,7 +247,12 @@ export default function LeaderboardTable({ rows = [], sortKey, direction, onSort
           const heroAvatarUrl = `/heroes/${roleFolder}/${heroFileName}.png`
 
           return (
-            <article key={row.player_id} className={styles.mobileCard}>
+            <article 
+              key={`${row.player_id}_${row.role}`} // 🌟 修复关键：移动端同样需要联合 ID
+              className={styles.mobileCard}
+              onClick={() => navigate(`/players/${encodeURIComponent(row.player_id)}`)} // 🌟 移动端增加点击跳转
+              style={{ cursor: 'pointer' }}
+            >
               <div className={styles.mobileCardTop}>
                 <div className={styles.mobileRankBlock}>
                   <span className={rankBadgeClass}>{row.rank}</span>

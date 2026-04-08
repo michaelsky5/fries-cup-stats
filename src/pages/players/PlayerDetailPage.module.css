@@ -225,6 +225,44 @@
   min-width: 0;
 }
 
+/* ---------- 🌟 新增：职责切换 Tab 样式 ---------- */
+.roleSwitchGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.roleSwitchBtn {
+  min-height: 22px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 9px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.roleSwitchBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.roleSwitchBtnActive {
+  /* 使用动态的主题色变量，不同位置会发不同颜色的光 */
+  background: rgba(var(--role-rgb), 0.15);
+  border-color: rgba(var(--role-rgb), 0.4);
+  color: var(--role-color);
+}
+
 .playerRoleTag {
   width: fit-content;
   min-height: 20px;

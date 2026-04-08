@@ -72,15 +72,37 @@ export function filterMatches(matches, filters) {
   })
 }
 
-// 获取全联盟排行榜 (已配合后端新版导出逻辑，前端无需再做复杂的 Set 去重计算)
+// 获取全联盟排行榜 (已配合后端新版导出逻辑，按职责扁平化展开选手数据)
 export function getLeaderboardRows(db) {
-  // 直接过滤掉纯替补(时间为0)的选手
-  const activePlayers = safeArr(db?.player_totals).filter(p => (p.raw_time_mins || 0) > 0)
-  
-  return activePlayers.map((row, index) => ({
+  const expandedRows = [];
+
+  safeArr(db?.player_totals).forEach(p => {
+    // 🌟 检查是否存在新版的按职责拆分数据
+    if (p.role_breakdown && Object.keys(p.role_breakdown).length > 0) {
+      Object.entries(p.role_breakdown).forEach(([roleName, roleStats]) => {
+        // 只保留该选手确实打过该职责的数据 (时间 > 0)
+        if ((roleStats.raw_time_mins || 0) > 0) {
+          expandedRows.push({
+            ...p,            // 1. 继承选手的静态基础信息 (player_name, team_name 等)
+            ...roleStats,    // 2. 🌟 覆盖为该职责的纯净数据 (avg_elim, most_played_hero 等)
+            role: roleName,  // 3. 🌟 强制覆写当前的职责标签
+            base_role: p.role // (可选) 存一下他最常玩的本职工作
+          });
+        }
+      });
+    } else {
+      // 兼容旧版 JSON（没有拆分职责时）
+      if ((p.raw_time_mins || 0) > 0) {
+        expandedRows.push(p);
+      }
+    }
+  });
+
+  // 返回扁平化展开后的数组，并重置序号
+  return expandedRows.map((row, index) => ({
     rank: index + 1,
     ...row
-  }))
+  }));
 }
 
 // 排行榜列表多条件过滤

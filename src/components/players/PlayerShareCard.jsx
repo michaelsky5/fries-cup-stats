@@ -3,7 +3,7 @@ import styles from './PlayerShareCard.module.css'
 function getRoleClass(role) {
   const r = String(role || '').toUpperCase()
   if (r === 'TANK') return styles.roleTank
-  if (r === 'DPS') return styles.roleDps
+  if (r === 'DPS' || r === 'DAMAGE') return styles.roleDps // 🌟 兼容 DAMAGE
   if (r === 'SUP' || r === 'SUPPORT') return styles.roleSup
   return styles.roleFlex
 }
@@ -11,7 +11,7 @@ function getRoleClass(role) {
 function getRoleCn(role) {
   const r = String(role || '').toUpperCase()
   if (r === 'TANK') return '坦克'
-  if (r === 'DPS') return '输出'
+  if (r === 'DPS' || r === 'DAMAGE') return '输出' // 🌟 兼容 DAMAGE
   if (r === 'SUP' || r === 'SUPPORT') return '辅助'
   return '自由'
 }

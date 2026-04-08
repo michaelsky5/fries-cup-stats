@@ -4,7 +4,7 @@ import styles from './PlayerCard.module.css'
 function getRoleClass(role) {
   const r = String(role || '').toUpperCase()
   if (r === 'TANK') return styles.roleTank
-  if (r === 'DPS') return styles.roleDps
+  if (r === 'DPS' || r === 'DAMAGE') return styles.roleDps // 🌟 兼容 DAMAGE
   if (r === 'SUP' || r === 'SUPPORT') return styles.roleSup
   return styles.roleFlex
 }
@@ -27,8 +27,14 @@ function formatTimeCompact(value) {
 }
 
 export default function PlayerCard({ player }) {
+  // 卡片主色调依然使用选手最常玩的本职
   const roleClass = getRoleClass(player.role)
-  const roleText = player.role || 'FLEX'
+  
+  // 🌟 核心升级：提取该选手所有打过的职责
+  const availableRoles = player.role_breakdown && Object.keys(player.role_breakdown).length > 0
+    ? Object.keys(player.role_breakdown).filter(r => (player.role_breakdown[r].raw_time_mins || 0) > 0)
+    : [player.role || 'FLEX']
+
   const teamShort = player.team_short_name || player.team_name || 'FREE AGENT'
   const displayName = player.display_name || player.player_id
   const realName = player.player_name || 'Unknown Player'
@@ -46,7 +52,12 @@ export default function PlayerCard({ player }) {
       <div className={styles.cardGlow}></div>
 
       <div className={styles.top}>
-        <div className={styles.roleTag}>{roleText}</div>
+        {/* 🌟 渲染多个职责标签 */}
+        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+          {availableRoles.map(r => (
+            <div key={r} className={styles.roleTag}>{r}</div>
+          ))}
+        </div>
 
         <div className={styles.teamBlock}>
           <div className={styles.teamLabel}>TEAM</div>

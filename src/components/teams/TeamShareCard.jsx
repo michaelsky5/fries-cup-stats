@@ -26,9 +26,10 @@ export default function TeamShareCard({
   if (!team) return null
 
   const topHeroes = getTopHeroes(heroPool)
+  // 🌟 修复：增加对 damage 和 support 键名的兼容，防止获取不到数据
   const tankCore = getCoreName(corePlayers?.tank)
-  const dpsCore = getCoreName(corePlayers?.dps)
-  const supCore = getCoreName(corePlayers?.sup)
+  const dpsCore = getCoreName(corePlayers?.dps || corePlayers?.damage)
+  const supCore = getCoreName(corePlayers?.sup || corePlayers?.support)
 
   return (
     <section ref={shareRef} className={styles.shareCard}>

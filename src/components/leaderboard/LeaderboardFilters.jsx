@@ -25,11 +25,12 @@ export default function LeaderboardFilters({ filters, onChange, teamOptions = []
     .map(normalizeOption)
     .filter(item => item.value !== '' || item.label !== '')
 
+  // 🌟 修复：将 value 值严格对齐底层数据的真实大写名称
   const roleOptions = [
     { value: 'ALL', label: '全部位置 / ALL ROLES' },
     { value: 'TANK', label: '重装 / TANK' },
-    { value: 'DPS', label: '输出 / DPS' },
-    { value: 'SUP', label: '支援 / SUPPORT' },
+    { value: 'DAMAGE', label: '输出 / DPS' },      // 从 'DPS' 改为 'DAMAGE'
+    { value: 'SUPPORT', label: '支援 / SUPPORT' }, // 从 'SUP' 改为 'SUPPORT'
     { value: 'FLEX', label: '自由位 / FLEX' }
   ]
 
