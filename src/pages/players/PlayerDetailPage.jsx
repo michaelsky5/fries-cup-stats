@@ -165,18 +165,21 @@ export default function PlayerDetailPage() {
     }
   }, [availableRoles, allPlayerEntries, selectedRole])
 
-  // 🌟 角色切换时智能重置面积图指标
+  // 🌟 修复：仅在角色切换时智能重置面积图指标，使用 prev 避免依赖死循环
   useEffect(() => {
     if (!selectedRole) return
-    const r = selectedRole.toUpperCase()
-    if (r === 'SUP' || r === 'SUPPORT') {
-      if (trendMetric === 'dmg' || trendMetric === 'block') setTrendMetric('heal')
-    } else if (r === 'TANK') {
-      if (trendMetric === 'heal') setTrendMetric('block')
-    } else {
-      if (trendMetric === 'heal' || trendMetric === 'block') setTrendMetric('dmg')
-    }
-  }, [selectedRole, trendMetric])
+    setTrendMetric(prev => {
+      const r = selectedRole.toUpperCase()
+      if (r === 'SUP' || r === 'SUPPORT') {
+        if (prev === 'dmg' || prev === 'block') return 'heal'
+      } else if (r === 'TANK') {
+        if (prev === 'heal') return 'block'
+      } else {
+        if (prev === 'heal' || prev === 'block') return 'dmg'
+      }
+      return prev
+    })
+  }, [selectedRole])
 
   // 🌟 根据当前选中的 Tab，锁定要展示的数据体
   const player = useMemo(() => {
@@ -810,10 +813,11 @@ export default function PlayerDetailPage() {
           </div>
 
           <div className={styles.barsGrid}>
-            {[
-              { id: 'dmg', label: '伤害输出', val: roleStats?.ranks.dmg.percentile, color: 'dmgRed' },
-              { id: 'heal', label: '治疗效能', val: roleStats?.ranks.heal.percentile, color: 'healGreen' },
-              { id: 'mit', label: '阻挡效能', val: roleStats?.ranks.mit.percentile, color: 'mitBlue' },
+            {[ 
+              { id: 'elim', label: '击杀效率', val: roleStats?.ranks.elim.percentile, color: 'dmgRed' },
+              { id: 'dmg', label: '伤害输出', val: roleStats?.ranks.dmg.percentile, color: 'dmgRed' }, 
+              { id: 'heal', label: '治疗效能', val: roleStats?.ranks.heal.percentile, color: 'healGreen' }, 
+              { id: 'mit', label: '阻挡效能', val: roleStats?.ranks.mit.percentile, color: 'mitBlue' }, 
               { id: 'surv', label: '生存能力', val: roleStats?.ranks.dth.percentile, color: 'survGold' }
             ].map(bar => {
               const percentile = bar.val || 0
@@ -872,7 +876,7 @@ export default function PlayerDetailPage() {
               展示该选手在当前职责下、所选指标上的单图数据波动。虚线为个人赛季均值，用于判断这一张图的发挥高于常态、接近常态，还是低于常态。
             </p>
           </div>
-
+          
           <div className={styles.trendControls}>
             {TREND_CONFIGS.map(conf => {
               const isActive = trendMetric === conf.id
