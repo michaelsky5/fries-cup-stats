@@ -5,14 +5,33 @@ import MapCard from '../../components/matches/MapCard.jsx'
 import { getMatchById, safeArr } from '../../lib/selectors.js'
 import styles from './MatchDetailPage.module.css'
 
-// 🌟 修改：接收 isForfeit，适配顶部状态栏显示
-function getStatusInfo(status, isForfeit) {
+function getResultMode(match) {
+  const mode = String(match?.result_mode || '').toUpperCase()
+  if (mode) return mode
+  if (match?.is_forfeit) return 'FORFEIT'
+  return 'NORMAL'
+}
+
+function getRulingType(match) {
+  return String(match?.ruling?.type || '').toUpperCase()
+}
+
+function getStatusInfo(status, isForfeit, resultMode) {
   if (status === 'IN_PROGRESS') return { cn: '进行中', en: 'LIVE', className: styles.statusLive }
   if (status === 'COMPLETE' || status === 'COMPLETED') {
     if (isForfeit) return { cn: '弃权完结', en: 'FORFEIT', className: styles.statusComplete }
+    if (resultMode === 'OVERRULED') return { cn: '改判完结', en: 'OVERRULED', className: styles.statusOverruled }
     return { cn: '已完结', en: 'COMPLETED', className: styles.statusComplete }
   }
   return { cn: '未开始', en: 'PENDING', className: styles.statusPending }
+}
+
+function getRawResult(match) {
+  return {
+    scoreA: match?.raw_result?.scoreA ?? match?.raw_result?.score_a ?? '',
+    scoreB: match?.raw_result?.scoreB ?? match?.raw_result?.score_b ?? '',
+    winner: match?.raw_result?.winner || ''
+  }
 }
 
 export default function MatchDetailPage() {
@@ -25,11 +44,8 @@ export default function MatchDetailPage() {
   }, [])
 
   const handleBack = () => {
-    if (window.history.state && window.history.state.idx > 0) {
-      navigate(-1)
-    } else {
-      navigate('/matches')
-    }
+    if (window.history.state && window.history.state.idx > 0) navigate(-1)
+    else navigate('/matches')
   }
 
   const match = useMemo(() => getMatchById(db, matchId), [db, matchId])
@@ -74,8 +90,11 @@ export default function MatchDetailPage() {
     )
   }
 
-  // 🌟 传入 is_forfeit
-  const statusInfo = getStatusInfo(match.status, match.is_forfeit)
+  const resultMode = getResultMode(match)
+  const rulingType = getRulingType(match)
+  const rawResult = getRawResult(match)
+  const isOverruled = resultMode === 'OVERRULED'
+  const statusInfo = getStatusInfo(match.status, match.is_forfeit, resultMode)
 
   return (
     <div className={styles.shell}>
@@ -158,7 +177,7 @@ export default function MatchDetailPage() {
             <span className={styles.tagLabelEn}>MAPS</span>
           </span>
           <span className={styles.tagVal}>
-            {match.is_forfeit ? 'N/A' : summary.playedMaps} {/* 🌟 弃权时地图进度显示 N/A */}
+            {match.is_forfeit ? 'N/A' : summary.playedMaps}
             {!match.is_forfeit && (
               <>
                 <span className={styles.tagDivider}>/</span>
@@ -167,7 +186,73 @@ export default function MatchDetailPage() {
             )}
           </span>
         </span>
+
+        {isOverruled && (
+          <>
+            <span className={`${styles.tagItem} ${styles.rulingItem}`}>
+              <span className={styles.tagLabelGroup}>
+                <span className={styles.tagLabel}>结果模式</span>
+                <span className={styles.tagLabelEn}>RESULT MODE</span>
+              </span>
+              <span className={styles.tagValHighlight}>OVERRULED</span>
+            </span>
+
+            <span className={`${styles.tagItem} ${styles.rulingItem}`}>
+              <span className={styles.tagLabelGroup}>
+                <span className={styles.tagLabel}>裁决类型</span>
+                <span className={styles.tagLabelEn}>RULING TYPE</span>
+              </span>
+              <span className={styles.tagVal}>{rulingType || 'DISCIPLINARY'}</span>
+            </span>
+          </>
+        )}
       </section>
+
+      {isOverruled && (
+        <section className={styles.rulingNotice}>
+          <div className={styles.rulingNoticeHead}>
+            <span className={styles.rulingNoticeKicker}>RESULT OVERRULED</span>
+            <span className={styles.rulingNoticeType}>{rulingType || 'DISCIPLINARY'}</span>
+          </div>
+
+          <div className={styles.rulingNoticeBody}>
+            <div className={styles.rulingMain}>
+              本场比赛最终结果已由赛事组改判，下方地图与选手数据为原始比赛记录。
+            </div>
+
+            <div className={styles.rulingMetaRow}>
+              <span className={styles.rulingMetaItem}>
+                <span className={styles.rulingMetaLabel}>RAW RESULT</span>
+                <span className={styles.rulingMetaValue}>
+                  {rawResult.scoreA || '-'} : {rawResult.scoreB || '-'}
+                </span>
+              </span>
+
+              <span className={styles.rulingMetaItem}>
+                <span className={styles.rulingMetaLabel}>RAW WINNER</span>
+                <span className={styles.rulingMetaValue}>{rawResult.winner || 'UNSET'}</span>
+              </span>
+            </div>
+
+            {(match?.ruling?.reason || match?.ruling?.note) && (
+              <div className={styles.rulingReasonBlock}>
+                {match?.ruling?.reason && (
+                  <div className={styles.rulingReasonLine}>
+                    <span className={styles.rulingReasonLabel}>原因</span>
+                    <span className={styles.rulingReasonText}>{match.ruling.reason}</span>
+                  </div>
+                )}
+                {match?.ruling?.note && (
+                  <div className={styles.rulingReasonLine}>
+                    <span className={styles.rulingReasonLabel}>说明</span>
+                    <span className={styles.rulingReasonText}>{match.ruling.note}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       <section className={styles.mapsSection}>
         <div className={styles.sectionHead}>
@@ -176,14 +261,15 @@ export default function MatchDetailPage() {
               <span className={styles.sectionKickerCn}>地图时间轴</span>
               <span className={styles.sectionKickerEn}>MAP TIMELINE</span>
             </div>
-            <div className={styles.sectionTitle}>对局流程与选手数据记录</div>
+            <div className={styles.sectionTitle}>
+              {isOverruled ? '原始对局流程与选手数据记录' : '对局流程与选手数据记录'}
+            </div>
           </div>
         </div>
 
         <div className={styles.mapList}>
-          {/* 🌟 核心拦截逻辑：如果是弃权局，直接渲染红色的警告块，不走后续的空图遍历 */}
           {match.is_forfeit ? (
-            <div className={styles.noMaps} style={{ border: '1px solid rgba(248,113,113,0.3)', color: '#f87171' }}>
+            <div className={`${styles.noMaps} ${styles.noMapsDanger}`}>
               <span className={styles.noMapsCn}>本场比赛因战队弃权提前结束，无详细对局数据</span>
               <span className={styles.noMapsEn}>WIN BY FORFEIT · NO MATCH DATA AVAILABLE</span>
             </div>

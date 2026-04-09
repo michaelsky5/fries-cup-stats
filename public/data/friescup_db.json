@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-04-08T16:13:35.595Z",
+  "updated_at": "2026-04-09T09:38:22.321Z",
   "meta": {
     "team_count": 30,
     "player_count": 190,
-    "match_count": 60,
+    "match_count": 75,
     "map_count": 180
   },
   "teams": [
@@ -90498,6 +90498,9 @@
       "raw_match_id": "FCA26-IMPORTED-0APWGN",
       "match_display_name": "ROUND 1 / TNS VS JDG",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -91077,6 +91080,9 @@
       "raw_match_id": "FCA26-IMPORTED-EAXK9K",
       "match_display_name": "ROUND 1 / ZS VS TCK",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -91656,6 +91662,9 @@
       "raw_match_id": "FCA26-IMPORTED-0BFFFF",
       "match_display_name": "ROUND 1 / HYW VS FZ",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -92235,6 +92244,9 @@
       "raw_match_id": "FCA26-IMPORTED-JNTL97",
       "match_display_name": "ROUND 1 / FFA VS SK",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -92814,6 +92826,9 @@
       "raw_match_id": "FCA26-IMPORTED-60JA8N",
       "match_display_name": "ROUND 1 / CUG VS YOU",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -93393,6 +93408,9 @@
       "raw_match_id": "FCA26-IMPORTED-P01TW3",
       "match_display_name": "ROUND 1 / FG VS NBA",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -93972,6 +93990,9 @@
       "raw_match_id": "FCA26-IMPORTED-X91NNC",
       "match_display_name": "ROUND 1 / BLG VS AST",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -94551,6 +94572,9 @@
       "raw_match_id": "FCA26-IMPORTED-SRL1ZC",
       "match_display_name": "ROUND 1 / 5GGS VS CUIT",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -95130,6 +95154,9 @@
       "raw_match_id": "FCA26-IMPORTED-HSE47X",
       "match_display_name": "ROUND 1 / CR VS LSJ",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -95709,6 +95736,9 @@
       "raw_match_id": "FCA26-IMPORTED-U9HAP9",
       "match_display_name": "ROUND 1 / SPS VS XCFN.G",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -96288,6 +96318,9 @@
       "raw_match_id": "FCA26-IMPORTED-4FDK0A",
       "match_display_name": "ROUND 1 / SD VS TS",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -96867,6 +96900,9 @@
       "raw_match_id": "FCA26-IMPORTED-UQZD8R",
       "match_display_name": "ROUND 1 / ASP VS YM",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -97446,6 +97482,9 @@
       "raw_match_id": "FCA26-IMPORTED-CV5N8F",
       "match_display_name": "ROUND 1 / T2L.A VS WBG",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -98025,6 +98064,9 @@
       "raw_match_id": "FCA26-IMPORTED-I85UBL",
       "match_display_name": "ROUND 1 / NGP VS V50",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -98604,6 +98646,9 @@
       "raw_match_id": "FCA26-IMPORTED-HXDK31",
       "match_display_name": "ROUND 1 / TF VS OL",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -99183,6 +99228,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M01-UQXA",
       "match_display_name": "ROUND 02 / CR VS OL",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -99762,6 +99810,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M02-6YP0",
       "match_display_name": "ROUND 02 / ZS VS TNS",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -100341,6 +100392,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M03-88VS",
       "match_display_name": "ROUND 02 / 5GGS VS ASP",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -100920,6 +100974,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M04-38XH",
       "match_display_name": "ROUND 02 / FG VS T2L.A",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -101499,6 +101556,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M05-LQEN",
       "match_display_name": "ROUND 02 / FZ VS CUG",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -102078,6 +102138,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M06-M1VV",
       "match_display_name": "ROUND 02 / NGP VS SD",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -102657,6 +102720,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M07-J3R9",
       "match_display_name": "ROUND 02 / SK VS SPS",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -103236,6 +103302,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M08-67P3",
       "match_display_name": "ROUND 02 / BLG VS FFA",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -103815,6 +103884,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M09-UW4W",
       "match_display_name": "ROUND 02 / XCFN.G VS AST",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -104394,6 +104466,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M10-0941",
       "match_display_name": "ROUND 02 / TS VS V50",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -104973,6 +105048,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M11-JXU6",
       "match_display_name": "ROUND 02 / TF VS TCK",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -105552,6 +105630,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M12-PCSY",
       "match_display_name": "ROUND 02 / LSJ VS WBG",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -106131,6 +106212,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M13-LYS8",
       "match_display_name": "ROUND 02 / YOU VS JDG",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -106710,6 +106794,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M14-S8SZ",
       "match_display_name": "ROUND 02 / NBA VS CUIT",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -107289,6 +107376,9 @@
       "raw_match_id": "FCA26-SWISS-R2-M15-WRTQ",
       "match_display_name": "ROUND 02 / YM VS HYW",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -107868,6 +107958,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M01-U28H",
       "match_display_name": "ROUND 03 / NGP VS CR",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -108447,6 +108540,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M02-6SJF",
       "match_display_name": "ROUND 03 / FG VS CUG",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -109026,6 +109122,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M03-RQGZ",
       "match_display_name": "ROUND 03 / SPS VS TNS",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -109605,6 +109704,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M04-M3ZL",
       "match_display_name": "ROUND 03 / ASP VS OL",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -110184,6 +110286,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M05-BWZN",
       "match_display_name": "ROUND 03 / SK VS FZ",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -110763,6 +110868,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M06-54O8",
       "match_display_name": "ROUND 03 / FFA VS SD",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -111342,6 +111450,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M07-XBYC",
       "match_display_name": "ROUND 03 / ZS VS 5GGS",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -111921,6 +112032,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M08-43IP",
       "match_display_name": "ROUND 03 / SPC VS XCFN.G",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -112500,6 +112614,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M09-DCHX",
       "match_display_name": "ROUND 03 / LSJ VS YOU",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -113079,6 +113196,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M10-PHF3",
       "match_display_name": "ROUND 03 / NBA VS V50",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -113658,6 +113778,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M11-VCY4",
       "match_display_name": "ROUND 03 / TF VS BLG",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -114237,6 +114360,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M12-X098",
       "match_display_name": "ROUND 03 / HYW VS JDG",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -114816,6 +114942,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M13-7MRU",
       "match_display_name": "ROUND 03 / YM VS TCK",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": true,
       "forfeited_by": "B",
       "progress": {
@@ -114909,6 +115038,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M14-FGKF",
       "match_display_name": "ROUND 03 / AST VS WBG",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -115488,6 +115620,9 @@
       "raw_match_id": "FCA26-SWISS-R3-M15-KX0Y",
       "match_display_name": "ROUND 03 / TS VS CUIT",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -116067,6 +116202,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M01-T6MV",
       "match_display_name": "ROUND 04 / FG VS SPS",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -116646,6 +116784,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M02-W1WO",
       "match_display_name": "ROUND 04 / NGP VS ASP",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -117225,6 +117366,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M03-04IO",
       "match_display_name": "ROUND 04 / TNS VS SK",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -117804,6 +117948,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M04-FC99",
       "match_display_name": "ROUND 04 / CUG VS CR",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -118383,6 +118530,17 @@
       "raw_match_id": "FCA26-SWISS-R4-M05-G4JM",
       "match_display_name": "ROUND 04 / FFA VS SPC",
       "status": "COMPLETE",
+      "result_mode": "OVERRULED",
+      "ruling": {
+        "type": "DISCIPLINARY",
+        "reason": "教练违规指挥，选手违规发言",
+        "note": "原始比分1:2，经过判罚改成2:0"
+      },
+      "raw_result": {
+        "scoreA": "1",
+        "scoreB": "2",
+        "winner": "Spark Crew"
+      },
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -118394,19 +118552,19 @@
       "round": "ROUND 4",
       "format": "BO3",
       "scheduled_at": "TBD",
-      "updated_at": "2026-04-07T06:15:05.421Z",
-      "winner": "Spark Crew",
+      "updated_at": "2026-04-09T08:41:14.645Z",
+      "winner": "French Fries. Academy",
       "team_a": {
         "id": "FCA26-T001",
         "name": "French Fries. Academy",
         "short": "FFA",
-        "score": "1"
+        "score": "2"
       },
       "team_b": {
         "id": "FCA26-T011",
         "name": "Spark Crew",
         "short": "SPC",
-        "score": "2"
+        "score": "0"
       },
       "maps": [
         {
@@ -118425,7 +118583,7 @@
           "team_b_ban": "",
           "team_b_ban_role": "",
           "lobby_code": "4S2QWC",
-          "notes": "",
+          "notes": "SPC教练违规发言",
           "team_a_stats": [
             {
               "side": "A",
@@ -118607,7 +118765,7 @@
           "team_b_ban": "",
           "team_b_ban_role": "",
           "lobby_code": "34R3W7",
-          "notes": "",
+          "notes": "SPC教练违规发言",
           "team_a_stats": [
             {
               "side": "A",
@@ -118789,7 +118947,7 @@
           "team_b_ban": "",
           "team_b_ban_role": "",
           "lobby_code": "MW3ZC5",
-          "notes": "",
+          "notes": "SPC教练违规发言",
           "team_a_stats": [
             {
               "side": "A",
@@ -118962,6 +119120,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M06-9OED",
       "match_display_name": "ROUND 04 / YOU VS NBA",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -119541,6 +119702,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M07-8H9E",
       "match_display_name": "ROUND 04 / ZS VS TF",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -120120,6 +120284,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M08-CTQA",
       "match_display_name": "ROUND 04 / OL VS SD",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -120699,6 +120866,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M09-QDUD",
       "match_display_name": "ROUND 04 / XCFN.G VS V50",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -121278,6 +121448,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M10-I7QR",
       "match_display_name": "ROUND 04 / 5GGS VS FZ",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -121857,6 +122030,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M11-EAWN",
       "match_display_name": "ROUND 04 / JDG VS BLG",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -122436,6 +122612,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M12-MVG9",
       "match_display_name": "ROUND 04 / LSJ VS YM",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -123015,6 +123194,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M13-CED5",
       "match_display_name": "ROUND 04 / HYW VS AST",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -123594,6 +123776,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M14-U0X9",
       "match_display_name": "ROUND 04 / TS VS TCK",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -124173,6 +124358,9 @@
       "raw_match_id": "FCA26-SWISS-R4-M15-SWUB",
       "match_display_name": "ROUND 04 / WBG VS CUIT",
       "status": "COMPLETE",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
       "is_forfeit": false,
       "forfeited_by": null,
       "progress": {
@@ -124746,6 +124934,531 @@
           ]
         }
       ]
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M01",
+      "raw_match_id": "FCA26-SWISS-R5-M01-681L",
+      "match_display_name": "ROUND 05 / NGP VS SPS",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T002",
+        "name": "Never Get Point",
+        "short": "NGP",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T020",
+        "name": "Sapphire Star",
+        "short": "SPS",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M02",
+      "raw_match_id": "FCA26-SWISS-R5-M02-LJPW",
+      "match_display_name": "ROUND 05 / CR VS TNS",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T003",
+        "name": "Crazy Rabbit",
+        "short": "CR",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T007",
+        "name": "Team New Star",
+        "short": "TNS",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M03",
+      "raw_match_id": "FCA26-SWISS-R5-M03-CHJM",
+      "match_display_name": "ROUND 05 / FG VS ASP",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T010",
+        "name": "家和万事兴",
+        "short": "FG",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T009",
+        "name": "Astropollo",
+        "short": "ASP",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M04",
+      "raw_match_id": "FCA26-SWISS-R5-M04-QVJ3",
+      "match_display_name": "ROUND 05 / YOU VS FFA",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T022",
+        "name": "可爱小鱿4277",
+        "short": "YOU",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T001",
+        "name": "French Fries. Academy",
+        "short": "FFA",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M05",
+      "raw_match_id": "FCA26-SWISS-R5-M05-NJ10",
+      "match_display_name": "ROUND 05 / TF VS SK",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T013",
+        "name": "Thanks Faker",
+        "short": "TF",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T012",
+        "name": "snack",
+        "short": "SK",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M06",
+      "raw_match_id": "FCA26-SWISS-R5-M06-34JR",
+      "match_display_name": "ROUND 05 / OL VS CUG",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T005",
+        "name": "NJFU Out laws",
+        "short": "OL",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T019",
+        "name": "南望山瓜皮小队",
+        "short": "CUG",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M07",
+      "raw_match_id": "FCA26-SWISS-R5-M07-4YAR",
+      "match_display_name": "ROUND 05 / JDG VS NBA",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T023",
+        "name": "Jetpack dog gaming",
+        "short": "JDG",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T025",
+        "name": "NingBoU Again",
+        "short": "NBA",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M08",
+      "raw_match_id": "FCA26-SWISS-R5-M08-E0CX",
+      "match_display_name": "ROUND 05 / V50 VS ZS",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T030",
+        "name": "V我50鸡翅分你一队",
+        "short": "V50",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T006",
+        "name": "ZWU Spark",
+        "short": "ZS",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M09",
+      "raw_match_id": "FCA26-SWISS-R5-M09-E1CG",
+      "match_display_name": "ROUND 05 / 5GGS VS SPC",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T008",
+        "name": "Five Eggs",
+        "short": "5GGS",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T011",
+        "name": "Spark Crew",
+        "short": "SPC",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M10",
+      "raw_match_id": "FCA26-SWISS-R5-M10-KAZ5",
+      "match_display_name": "ROUND 05 / LSJ VS HYW",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T018",
+        "name": "LSJ-Gaming 沈阳老四季",
+        "short": "LSJ",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T029",
+        "name": "何意味3",
+        "short": "HYW",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M11",
+      "raw_match_id": "FCA26-SWISS-R5-M11-L6YB",
+      "match_display_name": "ROUND 05 / TS VS XCFN.G",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T024",
+        "name": "宝藏船队",
+        "short": "TS",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T015",
+        "name": "XCFN.Green",
+        "short": "XCFN.G",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M12",
+      "raw_match_id": "FCA26-SWISS-R5-M12-DACH",
+      "match_display_name": "ROUND 05 / SD VS BLG",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T004",
+        "name": "SENSEIDEATH",
+        "short": "SD",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T026",
+        "name": "不烂的gaming",
+        "short": "BLG",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M13",
+      "raw_match_id": "FCA26-SWISS-R5-M13-PBIA",
+      "match_display_name": "ROUND 05 / FZ VS YM",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T017",
+        "name": "Five Zones",
+        "short": "FZ",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T028",
+        "name": "Yes Mercy",
+        "short": "YM",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M14",
+      "raw_match_id": "FCA26-SWISS-R5-M14-JALA",
+      "match_display_name": "ROUND 05 / CUIT VS AST",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T027",
+        "name": "成信大撕咬者",
+        "short": "CUIT",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T016",
+        "name": "AstroTemis",
+        "short": "AST",
+        "score": ""
+      },
+      "maps": []
+    },
+    {
+      "match_id": "FCA26-SWISS-R5-M15",
+      "raw_match_id": "FCA26-SWISS-R5-M15-RHKI",
+      "match_display_name": "ROUND 05 / TCK VS WBG",
+      "status": "PENDING",
+      "result_mode": "NORMAL",
+      "ruling": null,
+      "raw_result": null,
+      "is_forfeit": false,
+      "forfeited_by": null,
+      "progress": {
+        "result": "PENDING",
+        "maps": "PENDING",
+        "players": "PENDING"
+      },
+      "stage": "SWISS",
+      "round": "ROUND 5",
+      "format": "BO3",
+      "scheduled_at": "TBD",
+      "updated_at": "2026-04-09T08:43:16.810Z",
+      "winner": null,
+      "team_a": {
+        "id": "FCA26-T014",
+        "name": "Team Chicken",
+        "short": "TCK",
+        "score": ""
+      },
+      "team_b": {
+        "id": "FCA26-T021",
+        "name": "WO BI GAO",
+        "short": "WBG",
+        "score": ""
+      },
+      "maps": []
     }
   ],
   "player_totals": [
