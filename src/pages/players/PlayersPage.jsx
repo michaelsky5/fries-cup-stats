@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import PlayerCard from '../../components/players/PlayerCard.jsx'
-import { safeArr } from '../../lib/selectors.js' // 🌟 移除了 getLeaderboardRows
+import { safeArr } from '../../lib/selectors.js'
 import styles from './PlayersPage.module.css'
 
 function getRoleLabel(role) {
@@ -55,19 +55,43 @@ export default function PlayersPage() {
   const [sortBy, setSortBy] = useState('time_desc')
 
   const allPlayers = useMemo(() => {
-    // 🌟 修复核心：绝对不能用 getLeaderboardRows（因为它把多修玩家拆成了多行）
-    // 直接读取 player_totals，确保每个选手在这里只有唯一的一个对象！
     const playerTotals = safeArr(db?.player_totals)
     const rawPlayers = safeArr(db?.players)
+
+    // 🌟 架构级升级：建立选手“主数据字典” (Single Source of Truth)
+    // 这样做的时间复杂度是 O(n)，比在 map 里去 find 要高效得多 (避免 O(n²))
+    // 无论后端的聚合表(player_totals)怎么污染数据，我们永远能通过 ID 找回纯净的注册信息
+    const identityMap = new Map()
+    rawPlayers.forEach(p => {
+      if (p.player_id) identityMap.set(p.player_id, p)
+    })
 
     const source = playerTotals.length > 0 ? playerTotals : rawPlayers
 
     return source.map(player => {
+      // 1. 提取基础身份数据，如果聚合表里没有，强制兜底回注册表
+      const baseIdentity = identityMap.get(player.player_id) || {}
+      
+      // 2. 身份锁：强制使用报名时的 role、真名和队伍，防止被战时数据覆盖
+      const trueRole = baseIdentity.role || player.role || 'FLEX'
+      const truePlayerName = baseIdentity.player_name || player.player_name
+      const trueDisplayName = baseIdentity.display_name || player.display_name
+      const trueTeamName = baseIdentity.team_name || player.team_name
+      const trueTeamShort = baseIdentity.team_short_name || player.team_short_name
+
+      // 3. 解析战术数据
       const mapsPlayed = toNum(player.maps_played)
       const rawTimeMins = toNum(player.raw_time_mins)
 
       return {
-        ...player,
+        ...player, // 保留所有聚合统计数据
+        // 覆盖回滚为绝对纯净的注册身份信息：
+        role: trueRole,
+        player_name: truePlayerName,
+        display_name: trueDisplayName,
+        team_name: trueTeamName,
+        team_short_name: trueTeamShort,
+        // 数值安全转换：
         maps_played: mapsPlayed,
         raw_time_mins: rawTimeMins,
         avg_elim: toNum(player.avg_elim),
@@ -78,12 +102,12 @@ export default function PlayersPage() {
         avg_block: toNum(player.avg_block),
         hasStats: mapsPlayed > 0 || rawTimeMins > 0,
         search_blob: [
-          player.display_name,
-          player.nickname,
-          player.player_name,
+          trueDisplayName,
+          player.nickname, // 也许有临时外号
+          truePlayerName,
           player.player_id,
-          player.team_name,
-          player.team_short_name,
+          trueTeamName,
+          trueTeamShort,
           player.most_played_hero
         ].filter(Boolean).join(' ').toLowerCase()
       }
@@ -109,13 +133,20 @@ export default function PlayersPage() {
 
   const filteredPlayers = useMemo(() => {
     return allPlayers.filter(player => {
-      // 🌟 修复核心：高级角色匹配
-      // 如果筛选了具体位置，不但要看他的主位置(role)，还要看他客串的副业(role_breakdown)里有没有打过这个位置
+      // 🌟 高级角色匹配：完美兼容 DAMAGE / DPS
       if (roleFilter !== 'ALL') {
-        const isMainRole = player.role === roleFilter;
-        const isSubRole = player.role_breakdown && 
-                          player.role_breakdown[roleFilter] && 
-                          (player.role_breakdown[roleFilter].raw_time_mins > 0);
+        const isDpsFilter = roleFilter === 'DAMAGE' || roleFilter === 'DPS';
+        
+        // 匹配主位置 (由于上面经过了 identity 修复，这里的 player.role 绝对是原汁原味的报名位置)
+        const isMainRole = isDpsFilter 
+          ? (player.role === 'DPS' || player.role === 'DAMAGE')
+          : (player.role === roleFilter);
+
+        // 匹配客串位置 (允许搜索到有上场数据的跨界选手)
+        const isSubRole = player.role_breakdown && Object.keys(player.role_breakdown).some(r => {
+          const isMatch = isDpsFilter ? (r === 'DPS' || r === 'DAMAGE') : (r === roleFilter);
+          return isMatch && player.role_breakdown[r].raw_time_mins > 0;
+        });
         
         if (!isMainRole && !isSubRole) return false;
       }
@@ -165,7 +196,6 @@ export default function PlayersPage() {
       sortedPlayers.map(player => player.team_id || player.team_name || player.team_short_name).filter(Boolean)
     ).size
 
-    // 🌟 因为数据源已经没有“影分身”了，我们可以安全地退回使用 .length，性能更好
     return {
       totalPlayers: allPlayers.length,
       dataReadyPlayers: allPlayers.filter(p => p.hasStats).length,

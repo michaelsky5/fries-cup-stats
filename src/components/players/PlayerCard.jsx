@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useOutletContext } from 'react-router-dom'
 import styles from './PlayerCard.module.css'
 
 function getRoleClass(role) {
@@ -27,13 +27,33 @@ function formatTimeCompact(value) {
 }
 
 export default function PlayerCard({ player }) {
-  // 卡片主色调依然使用选手最常玩的本职
-  const roleClass = getRoleClass(player.role)
+  // 🌟 核心升级：让卡片组件拥有自我修复能力，直接去全局数据库查户口
+  const context = useOutletContext();
+  const db = context?.db;
+
+  // 1. 强制找回他最初的报名本职（防止在战队页、大厅页被后端的比赛上场时间污染）
+  let registeredRole = player.role || 'FLEX';
+  if (db && db.players) {
+    const rawPlayer = db.players.find(p => String(p.player_id) === String(player.player_id));
+    if (rawPlayer && rawPlayer.role) {
+      registeredRole = rawPlayer.role;
+    }
+  }
+
+  // 2. 卡片主色调严格使用他真实的报名本职
+  const roleClass = getRoleClass(registeredRole)
   
-  // 🌟 核心升级：提取该选手所有打过的职责
-  const availableRoles = player.role_breakdown && Object.keys(player.role_breakdown).length > 0
-    ? Object.keys(player.role_breakdown).filter(r => (player.role_breakdown[r].raw_time_mins || 0) > 0)
-    : [player.role || 'FLEX']
+  // 3. 提取他打过的其他位置（客串）
+  const subRoles = player.role_breakdown && Object.keys(player.role_breakdown).length > 0
+    ? Object.keys(player.role_breakdown)
+        // 过滤掉本职，且必须有上场时间
+        .filter(r => r !== registeredRole && (player.role_breakdown[r].raw_time_mins || 0) > 0)
+        // 客串位置按时长降序
+        .sort((a, b) => (player.role_breakdown[b].raw_time_mins || 0) - (player.role_breakdown[a].raw_time_mins || 0))
+    : [];
+
+  // 4. 组装最终展示的标签：永远首显“报名本职”
+  const availableRoles = [registeredRole, ...subRoles];
 
   const teamShort = player.team_short_name || player.team_name || 'FREE AGENT'
   const displayName = player.display_name || player.player_id

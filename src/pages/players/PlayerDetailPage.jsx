@@ -138,7 +138,7 @@ export default function PlayerDetailPage() {
     }
   }
 
-  // 🌟 获取该选手所有的职责数据条目
+  // 🌟 获取该选手所有的比赛数据条目
   const allPlayerEntries = useMemo(() => {
     if (!db) return []
     const rows = getLeaderboardRows(db)
@@ -152,18 +152,23 @@ export default function PlayerDetailPage() {
     return basePlayer ? [basePlayer] : []
   }, [db, playerId])
 
-  // 🌟 提取该选手打过的所有职责，用于渲染 Tab
+  // 🌟 提取该选手的职责标签：【强制】报名职责永远在第一位，客串职责排在后面
   const availableRoles = useMemo(() => {
-    return allPlayerEntries.map(p => p.role || 'FLEX')
-  }, [allPlayerEntries])
+    const playedRoles = allPlayerEntries.map(p => p.role).filter(Boolean)
+    
+    const basePlayer = safeArr(db?.players).find(p => String(p.player_id) === String(playerId))
+    const registeredRole = basePlayer?.role || 'FLEX'
+    
+    // 利用 Set 自动去重。因为 registeredRole 是第一个放进去的，所以它永远在索引 0 的位置
+    return Array.from(new Set([registeredRole, ...playedRoles]))
+  }, [allPlayerEntries, db, playerId])
 
-  // 🌟 初始化时，自动选择他打得最多的职责 (base_role)
+  // 🌟 初始化时，直接默认选中第一位（即他的报名本职）
   useEffect(() => {
     if (availableRoles.length > 0 && !selectedRole) {
-      const baseEntry = allPlayerEntries.find(p => p.role === p.base_role)
-      setSelectedRole(baseEntry ? baseEntry.role : availableRoles[0])
+      setSelectedRole(availableRoles[0])
     }
-  }, [availableRoles, allPlayerEntries, selectedRole])
+  }, [availableRoles, selectedRole])
 
   // 🌟 修复：仅在角色切换时智能重置面积图指标，使用 prev 避免依赖死循环
   useEffect(() => {
@@ -183,9 +188,32 @@ export default function PlayerDetailPage() {
 
   // 🌟 根据当前选中的 Tab，锁定要展示的数据体
   const player = useMemo(() => {
-    if (!allPlayerEntries.length) return null
-    return allPlayerEntries.find(p => p.role === selectedRole) || allPlayerEntries[0]
-  }, [allPlayerEntries, selectedRole])
+    if (!allPlayerEntries.length && !db) return null
+    
+    // 如果他打过当前选中的位置，直接返回比赛数据
+    const matchEntry = allPlayerEntries.find(p => p.role === selectedRole)
+    if (matchEntry) return matchEntry
+
+    // 🌟 核心升级：如果他没打过这个位置（比如本职一场没打，全去客串了），构造一个 0 数据的实体
+    const basePlayer = safeArr(db?.players).find(p => String(p.player_id) === String(playerId))
+    if (!basePlayer) return allPlayerEntries[0] || null
+
+    return {
+      ...basePlayer,
+      role: selectedRole,
+      maps_played: 0,
+      raw_time_mins: 0,
+      total_time_played: '0m',
+      avg_dmg: 0,
+      avg_elim: 0,
+      avg_heal: 0,
+      avg_block: 0,
+      avg_dth: 0,
+      avg_ast: 0,
+      most_played_hero: '-',
+      top_3_heroes: []
+    }
+  }, [allPlayerEntries, selectedRole, db, playerId])
 
   const roleStats = useMemo(() => {
     if (!player || !db) return null
@@ -197,7 +225,7 @@ export default function PlayerDetailPage() {
     const totalInRole = sameRole.length
 
     const getRankBySort = key => {
-      if (totalInRole <= 1) return { percentile: 100 }
+      if (totalInRole <= 1 || (player.raw_time_mins || 0) === 0) return { percentile: 0 }
 
       const sorted = [...sameRole].sort((a, b) => (
         key === 'avg_dth'
@@ -263,7 +291,8 @@ export default function PlayerDetailPage() {
     const getSurvScore = (dth, maxDth) => {
       const d = Number(dth) || 0
       const m = Number(maxDth) || 1
-      if (d <= 0) return 100
+      if (d <= 0 && player.raw_time_mins > 0) return 100
+      if (player.raw_time_mins === 0) return 0
       return Math.min(100, Math.max(0, 100 - (d / m) * 100)) || 0
     }
 
@@ -439,6 +468,14 @@ export default function PlayerDetailPage() {
       }
     }
 
+    if (player.raw_time_mins === 0) {
+      return {
+        cn: '暂无出场记录',
+        en: 'NO MATCH RECORD',
+        desc: '该选手在当前职责下尚未产生有效的比赛记录。'
+      }
+    }
+
     const role = String(player.role || '').toUpperCase()
     const dmg = roleStats.ranks.dmg.percentile || 0
     const heal = roleStats.ranks.heal.percentile || 0
@@ -531,10 +568,10 @@ export default function PlayerDetailPage() {
     if (!player) return []
     const heroes = []
     
-    if (player.most_played_hero) heroes.push(player.most_played_hero)
+    if (player.most_played_hero && player.most_played_hero !== '-') heroes.push(player.most_played_hero)
     if (Array.isArray(player.top_3_heroes)) {
       player.top_3_heroes.forEach(h => {
-        if (h && !heroes.includes(h)) heroes.push(h)
+        if (h && h !== '-' && !heroes.includes(h)) heroes.push(h)
       })
     }
     return heroes.slice(0, 3)
@@ -561,20 +598,33 @@ export default function PlayerDetailPage() {
   useEffect(() => {
     if (!player || !roleStats || !styleProfile) return
 
-    const lines = [
-      `> 载入选手档案 [${player.player_id}] ...`,
-      `> 位置识别：${player.role || 'UNKNOWN'}。`,
-      `> 样本范围：${player.maps_played || 0} 张地图 / ${displayTime}。`,
-      `> 风格判定：${styleProfile.cn}。`,
-      `> --------------------------------`,
-      `> 当前最强边：${bestEdge.label}，超越同职责 ${bestEdge.value}% 选手。`,
-      `> 火力输出超越同职责 ${roleStats.ranks.dmg.percentile}% 选手。`,
-      `> 援护能力超越同职责 ${roleStats.ranks.heal.percentile}% 选手。`,
-      `> 生存表现超越同职责 ${roleStats.ranks.dth.percentile}% 选手。`,
-      `> 综合判词：${styleProfile.desc}`,
-      `> --------------------------------`,
-      `> AI 评估完成。`
-    ]
+    let lines = []
+
+    if (player.raw_time_mins === 0) {
+      lines = [
+        `> 载入选手档案 [${player.player_id}] ...`,
+        `> 位置识别：${player.role || 'UNKNOWN'}。`,
+        `> 状态：无出场记录。`,
+        `> 系统提示：该选手尚未在 ${player.role} 位置产生数据记录。`,
+        `> --------------------------------`,
+        `> AI 评估中止。`
+      ]
+    } else {
+      lines = [
+        `> 载入选手档案 [${player.player_id}] ...`,
+        `> 位置识别：${player.role || 'UNKNOWN'}。`,
+        `> 样本范围：${player.maps_played || 0} 张地图 / ${displayTime}。`,
+        `> 风格判定：${styleProfile.cn}。`,
+        `> --------------------------------`,
+        `> 当前最强边：${bestEdge.label}，超越同职责 ${bestEdge.value}% 选手。`,
+        `> 火力输出超越同职责 ${roleStats.ranks.dmg.percentile}% 选手。`,
+        `> 援护能力超越同职责 ${roleStats.ranks.heal.percentile}% 选手。`,
+        `> 生存表现超越同职责 ${roleStats.ranks.dth.percentile}% 选手。`,
+        `> 综合判词：${styleProfile.desc}`,
+        `> --------------------------------`,
+        `> AI 评估完成。`
+      ]
+    }
 
     setAiText('')
     let currentLine = 0
@@ -703,7 +753,7 @@ export default function PlayerDetailPage() {
             <div className={styles.idCardMeta}>
               <div className={styles.idMetaItem}>
                 <span className={styles.idMetaLabel}>MAPS</span>
-                <span className={styles.idMetaValue}>{player.maps_played || '-'}</span>
+                <span className={styles.idMetaValue}>{player.maps_played || '0'}</span>
               </div>
               <div className={styles.idMetaItem}>
                 <span className={styles.idMetaLabel}>TIME</span>
@@ -735,7 +785,7 @@ export default function PlayerDetailPage() {
             </div>
             <div className={styles.metricValuePrimary}>{displayTime}</div>
             <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Maps: {player.maps_played || '-'}</span>
+              <span className={styles.metricAvg}>Maps: {player.maps_played || '0'}</span>
               <span className={styles.metricPercentile}>Role Pool: {roleStats?.sampleSize || 1}</span>
             </div>
           </div>
