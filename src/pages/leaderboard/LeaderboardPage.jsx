@@ -149,32 +149,63 @@ export default function LeaderboardPage() {
           </div>
 
           <div className={styles.tableHeadRight}>
-            <span className={styles.tableMeta}>
-              <span className={styles.metaText}>
-                <span className={styles.metaCn}>排序字段</span>
-                <span className={styles.metaEn}>SORT</span>
+            
+            {/* 🌟 核心修复 1：把电脑端的纯展示数据包进 desktopMetaGroup 里 */}
+            <div className={styles.desktopMetaGroup}>
+              <span className={styles.tableMeta}>
+                <span className={styles.metaText}>
+                  <span className={styles.metaCn}>排序字段</span>
+                  <span className={styles.metaEn}>SORT</span>
+                </span>
+                <span className={styles.metaVal}>{getSortLabel(sortKey)}</span>
               </span>
-              <span className={styles.metaVal}>{getSortLabel(sortKey)}</span>
-            </span>
 
-            <span className={styles.tableMeta}>
-              <span className={styles.metaText}>
-                <span className={styles.metaCn}>排序方向</span>
-                <span className={styles.metaEn}>DIR</span>
+              <span className={styles.tableMeta}>
+                <span className={styles.metaText}>
+                  <span className={styles.metaCn}>排序方向</span>
+                  <span className={styles.metaEn}>DIR</span>
+                </span>
+                <span className={styles.metaVal}>
+                  {getDirectionLabel(direction)}
+                  <span className={styles.metaValEn}>{direction === 'desc' ? 'DESC' : 'ASC'}</span>
+                </span>
               </span>
-              <span className={styles.metaVal}>
-                {getDirectionLabel(direction)}
-                <span className={styles.metaValEn}>{direction === 'desc' ? 'DESC' : 'ASC'}</span>
-              </span>
-            </span>
 
-            <span className={`${styles.tableMeta} ${styles.tableMetaHighlight}`}>
-              <span className={styles.metaText}>
-                <span className={styles.metaCn}>结果数量</span>
-                <span className={styles.metaEn}>ROWS</span>
+              <span className={`${styles.tableMeta} ${styles.tableMetaHighlight}`}>
+                <span className={styles.metaText}>
+                  <span className={styles.metaCn}>结果数量</span>
+                  <span className={styles.metaEn}>ROWS</span>
+                </span>
+                <span className={styles.metaVal}>{sortedRows.length}</span>
               </span>
-              <span className={styles.metaVal}>{sortedRows.length}</span>
-            </span>
+            </div>
+
+            {/* 🌟 核心修复 2：加入手机端真正的交互式排序控制条 */}
+            <div className={styles.mobileSortControl}>
+              <span className={styles.mobileSortLabel}>排序</span>
+              <select
+                className={styles.mobileSortSelect}
+                value={sortKey}
+                onChange={e => requestSort(e.target.value)}
+              >
+                <option value="raw_time_mins">按存活时长</option>
+                <option value="avg_dmg">按伤害 /10</option>
+                <option value="avg_heal">按治疗 /10</option>
+                <option value="avg_block">按阻挡 /10</option>
+                <option value="avg_elim">按击杀 /10</option>
+                <option value="avg_ast">按助攻 /10</option>
+                <option value="avg_dth">按死亡 /10</option>
+                <option value="rank">按综合排名</option>
+              </select>
+              <button
+                type="button"
+                className={styles.mobileSortDirBtn}
+                onClick={() => requestSort(sortKey)}
+              >
+                {direction === 'desc' ? '↓ 降序' : '↑ 升序'}
+              </button>
+            </div>
+
           </div>
         </div>
 

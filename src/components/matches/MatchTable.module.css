@@ -408,16 +408,17 @@
 
   .tableWrap {
     padding: 0;
-    overflow-x: hidden; /* 彻底干掉横向滚动条 */
+    overflow-x: hidden;
   }
 
+  /* 🌟 核心修复：添加 !important 彻底击杀手机端表头 */
   .headerRow {
-    display: none; /* 手机端隐藏电脑表头 */
+    display: none !important;
   }
 
-  .headerRow,
+  /* 🌟 核心修复：删掉这里的 .headerRow, 只保留 .bodyRow */
   .bodyRow {
-    min-width: 0; /* 🌟 释放宽度，允许缩小，拯救整个大厅的横向溢出 */
+    min-width: 0; 
     display: flex;
     flex-direction: column;
     align-items: stretch;

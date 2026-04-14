@@ -291,6 +291,20 @@
   }
 }
 
+/* =========================================
+   🌟 手机端排序控件专属样式 
+   ========================================= */
+.desktopMetaGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.mobileSortControl {
+  display: none; /* 电脑端隐藏真正的控制条 */
+}
+
 @media (max-width: 900px) {
   .heroMeta {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -302,7 +316,62 @@
   }
 
   .tableHeadRight {
-    justify-content: flex-start;
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  /* ⚡️ 核心：强行隐藏那三个占地方的死数据块！ */
+  .desktopMetaGroup {
+    display: none !important;
+  }
+
+  /* ⚡️ 核心：显示真正的交互式排序控制条 */
+  .mobileSortControl {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+    padding: 10px 14px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-left: 3px solid #f4c320; /* 标志性的黄色状态线 */
+  }
+
+  .mobileSortLabel {
+    font-size: 11px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.6);
+    flex-shrink: 0;
+  }
+
+  .mobileSortSelect {
+    flex: 1;
+    min-width: 0;
+    height: 34px;
+    padding: 0 10px;
+    background: #111111;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 900;
+    outline: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="%23ffffff" stroke-width="1.5" stroke-linecap="square"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+  }
+
+  .mobileSortDirBtn {
+    flex-shrink: 0;
+    height: 34px;
+    padding: 0 14px;
+    background: rgba(244, 195, 32, 0.1);
+    border: 1px solid rgba(244, 195, 32, 0.36);
+    color: #f4c320;
+    font-size: 11px;
+    font-weight: 900;
+    cursor: pointer;
   }
 }
 
@@ -324,8 +393,13 @@
     font-size: 12px;
   }
 
+  /* 🌟 优化：手机端顶部数据概览保持双列，最后奇数个跨列，避免拉太长 */
   .heroMeta {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .heroMetaItem:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 
   .heroMetaItem {
@@ -338,14 +412,5 @@
 
   .tableTitle {
     font-size: 16px;
-  }
-
-  .tableHeadRight {
-    width: 100%;
-  }
-
-  .tableMeta {
-    width: 100%;
-    justify-content: space-between;
   }
 }

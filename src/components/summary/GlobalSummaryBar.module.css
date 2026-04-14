@@ -152,3 +152,78 @@
     font-size: 20px;
   }
 }
+
+@media (max-width: 640px) {
+  /* 🌟 核心升级 1：放弃横向滑动，回归严谨的双列数据网格 */
+  .metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px; /* 缩小缝隙，提升模块整体感 */
+  }
+
+  /* 如果是 7 个（单数），让最后一个横跨全屏作为稳固的底座 */
+  .metricCard:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  /* 🌟 核心升级 2：卡片内部由“垂直堆叠”压扁为“水平两端对齐” */
+  .metricCard {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px; /* ⚡️ 高度直接砍半 */
+    padding: 0 12px 0 14px;
+  }
+
+  /* 🌟 核心升级 3：把原本在卡片顶部的亮色装饰条，移到左侧变成“状态指示灯” */
+  .metricCard::before {
+    width: 2px;
+    height: 16px;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    transition: height 0.2s ease, background 0.2s ease;
+  }
+
+  .metricCard:hover::before {
+    width: 2px;
+    height: 24px; /* 交互动画改为高度延伸 */
+  }
+
+  .metricCardAccent::before {
+    width: 2px;
+    height: 20px;
+  }
+
+  .metricCardAccent:hover::before {
+    width: 2px;
+    height: 32px;
+  }
+
+  /* 重组内部文字标签布局 */
+  .metricTop {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .metricLabelWrap {
+    flex-direction: column; /* 保持中英文上下堆叠，省横向空间 */
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .metricLabel {
+    font-size: 11px; /* 标签稍微放大，确保横向排版的可读性 */
+  }
+
+  .metricMeta {
+    font-size: 7px;
+    opacity: 0.6; /* 弱化英文，避免喧宾夺主 */
+  }
+
+  .metricValue {
+    margin-top: 0; /* 取消原本的顶部间距 */
+    font-size: 18px; /* 适配紧凑卡片字号 */
+  }
+}

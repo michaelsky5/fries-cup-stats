@@ -258,27 +258,64 @@
 @media (max-width: 640px) {
   .shell {
     padding: 14px;
-    gap: 14px;
+    gap: 12px;
   }
 
   .topLine {
-    gap: 10px;
+    gap: 4px;
     padding-bottom: 10px;
+    flex-direction: column; /* 标题和副标题改为上下堆叠 */
+    align-items: flex-start;
   }
 
-  .left,
-  .right {
+  /* 隐藏过长的面板英文装饰字，给手机端省空间 */
+  .panelMeta {
+    display: none;
+  }
+
+  /* 🌟 核心优化：前两个并排，第三个横跨全屏 */
+  .left {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
+    width: 100%;
+  }
+
+  /* 强制第三个筛选项（最小时长）横跨两列，填满右侧空白 */
+  .left > .field:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  .right {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    width: 100%;
+    align-items: flex-end;
   }
 
   .field,
   .searchField {
-    min-width: 100%;
+    min-width: 0;
+    width: 100%;
   }
 
-  .select,
-  .input,
-  .resetBtn {
+  /* 🌟 微调下拉框，防止文字被裁断 */
+  .select {
     width: 100%;
+    padding-left: 8px;
+    padding-right: 28px; /* 缩小右侧箭头占用的空间 */
+    font-size: 11px; /* 略微缩小字号适配手机 */
+    background-position: right 10px center;
+  }
+
+  .input {
+    width: 100%;
+  }
+
+  .resetBtn {
+    width: auto;
+    min-width: 90px;
+    padding: 0 12px;
   }
 }

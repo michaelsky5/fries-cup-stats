@@ -593,6 +593,12 @@
 @media (max-width: 900px) {
   .wrap {
     overflow: hidden;
+    background: transparent; /* 取消外壳底色，让卡片更独立 */
+    border: none;
+  }
+  
+  .wrap::before {
+    display: none; /* 隐藏最顶部的全局黄线，卡片模式下不需要 */
   }
 
   .desktopTable {
@@ -600,21 +606,42 @@
   }
 
   .mobileList {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* 🌟 给卡片之间加上间距，增加呼吸感 */
+  }
+
+  .mobileCard {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 3px solid rgba(255, 255, 255, 0.2); /* 注入赛博工业风的左侧高亮边框 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 }
 
 @media (max-width: 520px) {
+  /* 🌟 核心修复 3：绝对不能变成单列！强行维持双列数据网格，并进一步压缩高度 */
   .mobileStatsGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
   }
 
+  .mobileStat {
+    min-height: 46px; /* 压低数据块高度 */
+    padding: 6px 10px;
+  }
+
+  .mobileStatValue {
+    font-size: 16px; /* 稍微缩小一点数值，适配压低后的高度 */
+  }
+
+  /* 🌟 核心修复 4：禁止名字和标签因为屏幕窄而上下换行，强制保持水平！ */
   .mobilePlayerRow {
-    align-items: flex-start;
-    flex-direction: column;
+    align-items: center;
+    flex-direction: row; 
+    gap: 8px;
   }
 
   .mobilePlayerName {
-    font-size: 15px;
+    font-size: 16px;
   }
 }

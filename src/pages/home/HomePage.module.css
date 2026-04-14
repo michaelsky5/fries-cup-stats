@@ -742,9 +742,13 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .teamsList,
-  .lineupGrid {
+  .teamsList {
     grid-template-columns: 1fr;
+  }
+  
+  /* 中等屏幕时让阵容变双列，优于单列 */
+  .lineupGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); 
   }
 
   .mvpName {
@@ -772,32 +776,129 @@
 
   .primaryBtn,
   .secondaryBtn {
-    flex: 1 1 calc(50% - 10px);
+    flex: 1 1 calc(50% - 5px);
     min-width: 0;
     padding: 0 12px;
   }
 
+  /* 保留：顶部数据概览依然是紧凑的双列网格 */
   .heroSummary {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+  .summaryItem:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 
   .mvpName {
     font-size: 28px;
   }
 
+/* 🌟 核心升级 3：极致压缩“最新战报”卡片，打平为单行计分板 */
+  .latestCard {
+    min-height: auto; /* ⚡️ 这是关键：解除电脑端 260px 的高度锁定，消除巨大黑边 */
+    padding: 14px 16px;
+  }
+
+  .latestMatchContent {
+    flex-direction: row; 
+    justify-content: center; /* 整体居中 */
+    align-items: baseline;
+    gap: 16px;
+    padding: 16px 0 4px;
+    width: 100%;
+  }
+
+  .latestTeam {
+    flex-direction: row; /* 让分数和队伍名在同一行 */
+    align-items: baseline;
+    gap: 10px;
+    flex: none; 
+  }
+
+  /* ⚡️ 神奇的 CSS 魔法：
+     HTML 结构是 [分数] 然后 [队名]。
+     通过 row-reverse，我们强行让左边队伍显示为 [队名] 然后 [分数]！ */
+  .latestTeam:first-of-type {
+    flex-direction: row-reverse;
+  }
+
   .latestScore {
-    font-size: 34px;
+    font-size: 28px; /* 适当缩小以匹配单行排版 */
+    padding: 0;
+  }
+
+  .latestName {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .latestVs {
+    font-size: 11px;
+    transform: translateY(-2px); /* 视觉微调，对齐大字号数字的重心 */
+  }
+
+  .teamRow {
+    padding: 12px;
   }
 
   .teamName {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .teamRecord {
     font-size: 14px;
   }
 
+/* 🌟 核心修复 2：撤销横滑，恢复单列竖排 */
+  .lineupGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px; /* 增加卡片之间的间距，不再连成一片 */
+  }
+
+  /* 🌟 核心升级 3：在左右紧凑布局的基础上，注入“呼吸感” */
+  .lineupSlot {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px 16px; /* 纵向元素间距拉大，横向两列拉开 */
+    padding: 18px 20px; /* ⚡️ 核心：加厚上下左右的内边距，让卡片看起来更饱满 */
+    min-height: auto;
+    align-items: center;
+  }
+
+  .lineupSlotTop {
+    grid-column: 1 / -1;
+    margin-bottom: 8px; /* ⚡️ 核心：把顶部的职业标签和下方的名字强行隔开 */
+  }
+
+  .lineupSlotSubEn {
+    display: none; /* 依然隐藏冗余的英文副标题 */
+  }
+
   .lineupPlayerName {
-    font-size: 16px;
+    grid-column: 1;
+    font-size: 18px; /* 稍微放大一点名字，撑起场面 */
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .lineupPlayerTeam {
+    grid-column: 1;
+    font-size: 13px; /* 配合放大的名字，稍微调大战队字号 */
+    color: rgba(255, 255, 255, 0.45); /* 稍微提亮一点对比度 */
+    margin: 0;
+  }
+
+  .lineupMetric {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+    margin-top: 0;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 6px; /* ⚡️ 把“阻挡 /10”标签和下方数值的距离也稍微拉开 */
+  }
+
+  .lineupMetricValue {
+    font-size: 24px; /* 伴随空间变大，将数值放大，突出数据焦点 */
   }
 }
