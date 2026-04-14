@@ -241,16 +241,13 @@
   .main {
     align-items: stretch;
   }
-
   .group,
   .groupRight {
     width: 100%;
   }
-
   .field {
     flex: 1 1 140px;
   }
-
   .searchField {
     flex: 1 1 240px;
   }
@@ -267,14 +264,22 @@
     padding-bottom: 10px;
   }
 
-  .group,
+  /* 🌟 核心升级：手机端筛选器 2列网格，节省高度 */
+  .group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
   .groupRight {
+    flex-direction: column;
     gap: 12px;
   }
 
   .field,
   .searchField {
-    min-width: 100%;
+    min-width: 0;
+    width: 100%;
   }
 
   .select,

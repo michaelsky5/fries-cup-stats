@@ -340,6 +340,44 @@
   }
 
   .table {
-    min-width: 920px;
+    min-width: 820px; /* 移动端稍微允许压缩一点宽度，但不破坏表格形态 */
+  }
+
+  /* 🌟 核心升级：计分板启用“首列冻结 (Sticky Column)”模式 */
+  /* 让玩家横向滑动看伤害/治疗时，永远知道当前看的是哪位选手 */
+  .table thead th:first-child,
+  .table tbody td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    /* 必须设置纯色背景，防止右侧滚动的数据字体重叠透视 */
+    background: #111111; 
+  }
+
+  /* 冻结列的表头背景，对齐原表头的深灰色 */
+  .table thead th:first-child {
+    background: #141414;
+  }
+
+  /* 匹配斑马线和 hover 效果的深色背景 */
+  .table tbody tr:nth-child(even) td:first-child {
+    background: #141414;
+  }
+  .table tbody tr:hover td:first-child {
+    background: #181818;
+  }
+
+  /* 在冻结列的右侧切出一条工业风的投影线，暗示右侧可滑动 */
+  .table thead th:first-child::after,
+  .table tbody td:first-child::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 4px 0 8px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
   }
 }

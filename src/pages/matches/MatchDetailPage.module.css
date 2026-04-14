@@ -587,6 +587,22 @@
   }
 }
 
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .topbarRight {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .rulingNoticeHead {
+    align-items: flex-start;
+  }
+}
+
 @media (max-width: 640px) {
   .shell {
     gap: 12px;
@@ -601,26 +617,43 @@
     min-height: 30px;
   }
 
+  /* 🌟 核心升级 1：信息栏 (Info Bar) 由单列变多列混合网格 */
   .infoBar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
     width: 100%;
   }
 
   .tagItem {
     width: 100%;
     justify-content: space-between;
+    padding: 0 8px; /* 移动端稍微收缩内边距 */
+  }
+
+  /* 🌟 让重要状态强制横跨全屏，形成视觉分割线 */
+  /* 第 4 个是“当前状态”，第 5 个是“地图进度”，以及所有的改判 Tag */
+  .tagItem:nth-child(4),
+  .tagItem:nth-child(5),
+  .rulingItem {
+    grid-column: 1 / -1;
   }
 
   .sectionTitle {
     font-size: 16px;
   }
 
+  /* 🌟 核心升级 2：改判公告内的元数据 (RAW RESULT) 改为双列并排 */
   .rulingMetaRow {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
   }
 
   .rulingMetaItem {
     width: 100%;
     justify-content: space-between;
+    padding: 0 8px;
   }
 
   .rulingReasonLine {

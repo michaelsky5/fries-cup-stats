@@ -343,32 +343,25 @@
     grid-template-columns: 1fr;
     gap: 16px;
   }
-
   .center {
     align-items: flex-start;
   }
-
   .scoreTeams {
     max-width: none;
   }
-
   .right {
     align-items: flex-start;
   }
-
   .metaLine {
     justify-content: flex-start;
   }
-
   .metaValue {
     min-width: 0;
     text-align: left;
   }
-
   .infoGrid {
     grid-template-columns: 1fr;
   }
-
   .infoCardWide {
     grid-column: auto;
   }
@@ -380,8 +373,20 @@
     gap: 12px;
   }
 
+  .head {
+    gap: 12px;
+  }
+
   .name {
     font-size: 18px;
+  }
+
+  /* 中心比分块加上背景区分层次 */
+  .center {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 12px;
+    align-items: center;
   }
 
   .scoreNum {
@@ -390,6 +395,31 @@
 
   .scoreDivider {
     font-size: 24px;
+  }
+
+  /* 右侧的胜者和时长改为横向并排 */
+  .right {
+    flex-direction: row;
+    justify-content: space-between;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    padding-top: 12px;
+  }
+
+  .metaLine {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  /* 🌟 核心升级：信息网格中，A队Ban和B队Ban 强行同行并排 */
+  .infoGrid {
+    grid-template-columns: 1fr 1fr; 
+  }
+
+  /* 第三个卡片(代码)和可能存在的备注，占满整行 */
+  .infoCard:nth-child(3),
+  .infoCardWide {
+    grid-column: 1 / -1;
   }
 
   .infoCard {

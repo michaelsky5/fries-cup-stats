@@ -264,14 +264,12 @@
   .board {
     grid-template-columns: 1fr;
   }
-
   .teamBlockA,
   .teamBlockB {
     align-items: center;
     text-align: center;
     padding: 16px;
   }
-
   .scoreBlock {
     min-height: 90px;
   }
@@ -290,11 +288,48 @@
   }
 
   .title {
-    font-size: 24px;
+    font-size: 20px;
+  }
+
+  /* 🌟 核心升级：利用 Grid Areas 打造紧凑计分板 */
+  .board {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "teamA teamB"
+      "score score";
+    gap: 10px;
+  }
+
+  .teamBlockA {
+    grid-area: teamA;
+    padding: 12px 8px;
+  }
+
+  .teamBlockB {
+    grid-area: teamB;
+    padding: 12px 8px;
   }
 
   .teamName {
-    font-size: 20px;
+    font-size: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .scoreBlock {
+    grid-area: score;
+    min-height: 70px;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+
+  .scoreLabel {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 
   .score {

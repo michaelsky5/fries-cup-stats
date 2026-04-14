@@ -274,12 +274,10 @@
   .hero {
     align-items: flex-start;
   }
-
   .tableHead {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .tableHeadRight,
   .filterTags {
     width: 100%;
@@ -305,21 +303,42 @@
     font-size: 12px;
   }
 
+  /* 🌟 核心升级 1：顶部四大状态面板使用精确的 2x2 网格，避免内容溢出 */
   .heroMetaRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
     width: 100%;
   }
 
   .heroBadge {
-    flex: 1 1 calc(50% - 8px);
-    min-width: 0;
+    min-height: 50px;
+    padding: 8px 10px;
+    width: 100%;
   }
 
   .tableTitle {
     font-size: 16px;
   }
 
+  /* 🌟 核心升级 2：拯救屏幕垂直空间，重组 Filter Tags */
+  /* 将 5 行堆叠改为双列紧凑布局 (2x2 + 1通栏) */
+  .filterTags {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
   .tagItem {
     width: 100%;
     justify-content: space-between;
+    padding: 0 8px;
+    min-height: 28px;
+  }
+
+  /* 让最重要的“结果数”横跨两列，充当视觉分割线，平滑过渡到下方的赛程卡片 */
+  .tagItemAccent {
+    grid-column: 1 / -1;
   }
 }

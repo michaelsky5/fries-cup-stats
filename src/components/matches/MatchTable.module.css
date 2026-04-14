@@ -384,20 +384,117 @@
   .tableWrap {
     padding: 12px;
   }
-
   .headerRow,
   .bodyRow {
     gap: 12px;
   }
-
   .matchTitle,
   .teamName {
     font-size: 13px;
   }
-
   .scoreBlock {
     min-width: 84px;
     min-height: 40px;
     font-size: 20px;
+  }
+}
+
+/* 🌟 核心升级：手机端表格转卡片模式 (Table to Cards) */
+@media (max-width: 860px) {
+  .tablePanel {
+    background: transparent;
+    border: none;
+  }
+
+  .tableWrap {
+    padding: 0;
+    overflow-x: hidden; /* 彻底干掉横向滚动条 */
+  }
+
+  .headerRow {
+    display: none; /* 手机端隐藏电脑表头 */
+  }
+
+  .headerRow,
+  .bodyRow {
+    min-width: 0; /* 打破 860px 死锁 */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .bodyList {
+    gap: 12px;
+    padding-top: 0;
+  }
+
+  .bodyRow {
+    gap: 12px;
+    padding: 16px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.005) 100%), #101010;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 3px solid rgba(255, 255, 255, 0.2); /* 增加赛博朋克左侧标识线 */
+  }
+
+  .bodyRowProgress {
+    border-left-color: #f4c320;
+    background: linear-gradient(180deg, rgba(244, 195, 32, 0.06) 0%, #101010 100%);
+  }
+
+  .bodyRowComplete {
+    border-left-color: #4ade80;
+  }
+
+  /* 内部单元格重新排布为卡片信息流 */
+  .matchInfoCell {
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-bottom: 12px;
+    align-items: flex-start;
+  }
+
+  .stageCell {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .matchupCell {
+    padding: 10px 0;
+  }
+
+  .teamStack {
+    flex-direction: row;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .teamName {
+    font-size: 16px;
+    max-width: 40%;
+  }
+
+  .scoreStatusCell {
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-top: 12px;
+  }
+
+  .scorePanel {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .actionCell {
+    margin-top: 4px;
+  }
+
+  .actionBtn {
+    max-width: 100%;
+    height: 40px;
+    flex-direction: row;
+    gap: 8px;
   }
 }
