@@ -264,16 +264,19 @@
     padding-bottom: 10px;
   }
 
-  /* 🌟 核心升级：手机端筛选器改为双列网格，节省一半的垂直高度 */
+  /* 🌟 左侧下拉框组：双列网格节省高度 */
   .group {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
 
+  /* 🌟 核心升级：右侧检索和重置改为横向并排，贴合更紧密 */
   .groupRight {
-    flex-direction: column;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: 1fr auto; /* 检索框自适应，按钮保持原宽 */
+    gap: 8px; /* 缩小间距，增强视觉关联 */
+    align-items: flex-end; /* 强制底部对齐，无视上方 Label 的高度差 */
   }
 
   .field,
@@ -283,8 +286,13 @@
   }
 
   .select,
-  .input,
-  .resetBtn {
+  .input {
     width: 100%;
+  }
+
+  .resetBtn {
+    width: auto; /* 取消之前的 100% 宽度 */
+    min-width: 90px; /* 稍微缩短最小宽度以适应极窄屏幕 */
+    padding: 0 12px;
   }
 }
