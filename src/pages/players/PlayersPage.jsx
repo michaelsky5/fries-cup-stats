@@ -133,19 +133,23 @@ export default function PlayersPage() {
 
   const filteredPlayers = useMemo(() => {
     return allPlayers.filter(player => {
-      // 🌟 高级角色匹配：完美兼容 DAMAGE / DPS
+      // 🌟 修复：引入角色标准化函数，完美解决大小写和别名（DPS/DAMAGE, SUP/SUPPORT）不一致的问题
       if (roleFilter !== 'ALL') {
-        const isDpsFilter = roleFilter === 'DAMAGE' || roleFilter === 'DPS';
-        
-        // 匹配主位置 (由于上面经过了 identity 修复，这里的 player.role 绝对是原汁原味的报名位置)
-        const isMainRole = isDpsFilter 
-          ? (player.role === 'DPS' || player.role === 'DAMAGE')
-          : (player.role === roleFilter);
+        const normalizeRole = (r) => {
+          const str = String(r || '').toUpperCase();
+          if (str === 'DPS') return 'DAMAGE';
+          if (str === 'SUP') return 'SUPPORT';
+          return str;
+        };
 
-        // 匹配客串位置 (允许搜索到有上场数据的跨界选手)
+        const targetRole = normalizeRole(roleFilter);
+
+        // 匹配主位置 (无论原始数据是 'Damage', 'dps', 'Sup', 都能被正确识别)
+        const isMainRole = normalizeRole(player.role) === targetRole;
+
+        // 匹配客串位置
         const isSubRole = player.role_breakdown && Object.keys(player.role_breakdown).some(r => {
-          const isMatch = isDpsFilter ? (r === 'DPS' || r === 'DAMAGE') : (r === roleFilter);
-          return isMatch && player.role_breakdown[r].raw_time_mins > 0;
+          return normalizeRole(r) === targetRole && player.role_breakdown[r].raw_time_mins > 0;
         });
         
         if (!isMainRole && !isSubRole) return false;

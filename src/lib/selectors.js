@@ -3,6 +3,15 @@
 // 安全的数组转换辅助函数
 export const safeArr = v => Array.isArray(v) ? v : []
 
+// 🌟 新增：全局通用的角色标准化工具函数
+// 抹平大小写差异，并将别名（DPS/SUP）统一映射为标准全称（DAMAGE/SUPPORT）
+export function normalizeRole(role) {
+  const str = String(role || '').toUpperCase()
+  if (str === 'DPS') return 'DAMAGE'
+  if (str === 'SUP') return 'SUPPORT'
+  return str
+}
+
 // 获取全局赛事概览数据
 export function getGlobalSummary(db) {
   const matches = safeArr(db?.matches)
@@ -111,7 +120,13 @@ export function filterLeaderboard(rows, filters) {
   const q = query.trim().toLowerCase()
 
   return safeArr(rows).filter(row => {
-    if (role !== 'ALL' && row.role !== role) return false
+    // 🌟 核心修复：引入 normalizeRole，完美解决大小写和别名不一致的问题
+    if (role !== 'ALL') {
+      const targetRole = normalizeRole(role)
+      const rowRole = normalizeRole(row.role)
+      if (rowRole !== targetRole) return false
+    }
+
     if (team !== 'ALL' && row.team_id !== team) return false
     if ((row.raw_time_mins || 0) < minTime) return false
 
