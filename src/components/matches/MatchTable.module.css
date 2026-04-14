@@ -399,7 +399,7 @@
   }
 }
 
-/* 🌟 核心升级：手机端表格转卡片模式 (Table to Cards) */
+/* 🌟 核心升级：打破 860px 死锁，手机端表格转卡片模式 */
 @media (max-width: 860px) {
   .tablePanel {
     background: transparent;
@@ -417,7 +417,7 @@
 
   .headerRow,
   .bodyRow {
-    min-width: 0; /* 打破 860px 死锁 */
+    min-width: 0; /* 🌟 释放宽度，允许缩小，拯救整个大厅的横向溢出 */
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -433,7 +433,7 @@
     padding: 16px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.005) 100%), #101010;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-left: 3px solid rgba(255, 255, 255, 0.2); /* 增加赛博朋克左侧标识线 */
+    border-left: 3px solid rgba(255, 255, 255, 0.2); /* 左侧状态线 */
   }
 
   .bodyRowProgress {

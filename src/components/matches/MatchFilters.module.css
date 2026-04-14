@@ -264,7 +264,7 @@
     padding-bottom: 10px;
   }
 
-  /* 🌟 核心升级：手机端筛选器 2列网格，节省高度 */
+  /* 🌟 核心升级：手机端筛选器改为双列网格，节省一半的垂直高度 */
   .group {
     display: grid;
     grid-template-columns: 1fr 1fr;
