@@ -856,178 +856,11 @@
   }
 }
 
-@media (max-width: 760px) {
-  .hero {
-    padding: 22px;
-  }
-
-  .heroTopline,
-  .searchHead,
-  .resultsHead,
-  .viewerCardTop {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .archiveTag {
-    display: none;
-  }
-
-  .hero h1 {
-    font-size: 34px;
-  }
-
-  .hero p {
-    font-size: 12px;
-  }
-
-  .heroBgText {
-    font-size: 90px;
-  }
-
-  .heroStats {
-    grid-template-columns: 1fr;
-  }
-
-  .identityGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .identityCard {
-    min-height: 156px;
-  }
-
-  .identityCard strong {
-    margin-top: 18px;
-    font-size: 21px;
-  }
-
-  .searchBox {
-    flex-direction: column;
-  }
-
-  .clearBtn {
-    height: 38px;
-  }
-
-  .viewerCard {
-    min-height: 0;
-    padding: 20px;
-  }
-
-  .viewerCardMain h2 {
-    font-size: 26px;
-  }
-
-  .viewerCardMain p {
-    font-size: 12px;
-  }
-
-  .viewerCardGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .resultItem {
-    grid-template-columns: 38px minmax(0, 1fr);
-  }
-
-  .resultBadge {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .resultMain {
-    grid-column: 1 / -1;
-  }
-
-  .resultAction {
-    grid-column: 1 / -1;
-    justify-content: flex-end;
-  }
-}
-
-@media (max-width: 520px) {
-  .shell {
-    gap: 10px;
-  }
-
-  .hero,
-  .searchPanel {
-    padding: 18px;
-  }
-
-  .hero h1 {
-    font-size: 30px;
-  }
-
-  .searchTitle {
-    font-size: 18px;
-  }
-
-  .identityNo {
-    font-size: 16px;
-  }
-
-  .identityEn {
-    font-size: 8px;
-  }
-
-  .viewerCardMain h2 {
-    font-size: 23px;
-  }
-
-  .viewerCardAction {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* ---------- final polish ---------- */
-
-.identityHint span,
-.resultBadge,
-.viewerCardTop b,
-.viewerCardTop span,
-.viewerCardAction span,
-.countPill,
-.searchMeta span,
-.searchMeta strong {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.identityCard,
-.resultItem,
-.viewerCard,
-.searchPanel,
-.hero {
-  min-width: 0;
-}
-
-.viewerCardMain,
-.resultMain,
-.searchHead > div:first-child,
-.resultsHead > div:first-child {
-  min-width: 0;
-}
-
-.viewerCardMain h2,
-.viewerCardMain p,
-.searchTitle,
-.searchSub,
-.resultTitle,
-.resultSub {
-  overflow-wrap: anywhere;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Mobile operation layer: compact role rail + search-first flow               */
-/* -------------------------------------------------------------------------- */
+/* ---------- mobile operation layer ---------- */
 
 .identitySection {
   min-width: 0;
+  max-width: 100%;
 }
 
 .mobileIdentityHead {
@@ -1058,7 +891,19 @@
 
 @media (max-width: 760px) {
   .shell {
+    width: 100%;
+    max-width: 100%;
     gap: 12px;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .hero,
+  .searchPanel,
+  .identitySection {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .hero {
@@ -1067,6 +912,13 @@
 
   .heroTopline {
     margin-bottom: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .archiveTag {
+    display: none;
   }
 
   .kicker {
@@ -1075,7 +927,7 @@
   }
 
   .hero h1 {
-    max-width: 320px;
+    max-width: 330px;
     font-size: 29px;
     line-height: 1.06;
   }
@@ -1095,11 +947,6 @@
     bottom: -12px;
     font-size: 68px;
     opacity: 0.9;
-  }
-
-  .identitySection {
-    position: relative;
-    min-width: 0;
   }
 
   .mobileIdentityHead {
@@ -1125,32 +972,43 @@
   }
 
   .identityGrid {
-    margin: 0 -18px;
-    padding: 0 18px 6px;
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .identityGrid::-webkit-scrollbar {
-    display: none;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    overflow: visible;
   }
 
   .identityCard {
-    flex: 0 0 154px;
-    min-height: 126px;
-    padding: 14px;
-    scroll-snap-align: start;
+    min-width: 0;
+    min-height: 108px;
+    padding: 12px;
+    transform: none;
+  }
+
+  .identityCard:hover,
+  .identityCardActive {
+    transform: none;
+  }
+
+  .identityCard::before {
+    left: 12px;
+    right: 12px;
   }
 
   .identityCard::after {
-    right: -48px;
-    bottom: -52px;
+    right: -52px;
+    bottom: -56px;
     width: 104px;
     height: 104px;
+  }
+
+  .identityCardViewer {
+    grid-column: 1 / -1;
+    min-height: 98px;
   }
 
   .identityHead {
@@ -1162,16 +1020,17 @@
   }
 
   .identityEn {
-    max-width: 76px;
+    max-width: 78px;
     font-size: 7px;
     line-height: 1.25;
     white-space: normal;
   }
 
   .identityCard strong {
-    margin-top: 16px;
-    font-size: 18px;
+    margin-top: 14px;
+    font-size: 17px;
     line-height: 1.18;
+    overflow-wrap: anywhere;
   }
 
   .identityCard p {
@@ -1179,12 +1038,13 @@
   }
 
   .identityHint {
-    padding-top: 12px;
+    padding-top: 10px;
   }
 
   .identityHint span {
     max-width: 100%;
-    min-height: 22px;
+    min-height: 20px;
+    padding: 0 7px;
     font-size: 8px;
     line-height: 1;
   }
@@ -1245,6 +1105,7 @@
 
   .searchInput {
     height: 48px;
+    min-width: 0;
     padding: 0 13px;
     font-size: 13px;
     border-radius: 0;
@@ -1340,7 +1201,9 @@
   }
 
   .viewerCard {
+    min-height: 0;
     padding: 18px;
+    grid-template-columns: 1fr;
     gap: 16px;
   }
 
@@ -1382,9 +1245,32 @@
   }
 }
 
-@media (max-width: 380px) {
+@media (max-width: 420px) {
   .identityCard {
-    flex-basis: 146px;
+    min-height: 104px;
+    padding: 11px;
+  }
+
+  .identityCard strong {
+    font-size: 16px;
+  }
+
+  .identityHint span {
+    font-size: 7px;
+  }
+}
+
+@media (max-width: 380px) {
+  .identityGrid {
+    gap: 7px;
+  }
+
+  .identityCard {
+    min-height: 100px;
+  }
+
+  .identityEn {
+    max-width: 66px;
   }
 
   .searchHead {
@@ -1403,5 +1289,91 @@
   .viewerCardTop {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+/* ---------- final polish ---------- */
+
+.identityHint span,
+.resultBadge,
+.viewerCardTop b,
+.viewerCardTop span,
+.viewerCardAction span,
+.countPill,
+.searchMeta span,
+.searchMeta strong {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.identityCard,
+.resultItem,
+.viewerCard,
+.searchPanel,
+.hero {
+  min-width: 0;
+}
+
+.viewerCardMain,
+.resultMain,
+.searchHead > div:first-child,
+.resultsHead > div:first-child {
+  min-width: 0;
+}
+
+.viewerCardMain h2,
+.viewerCardMain p,
+.searchTitle,
+.searchSub,
+.resultTitle,
+.resultSub {
+  overflow-wrap: anywhere;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Mobile poster actions: compact 2x2 button grid                             */
+/* Put this at the very bottom of ReviewStoryPage.module.css                   */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 820px) {
+  .posterActions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+
+  .posterActions button,
+  .posterActions a {
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 42px !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+    font-size: 12px !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0.03em !important;
+    text-align: center !important;
+    white-space: normal !important;
+  }
+
+  .posterActions > :only-child {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .posterActions {
+    gap: 7px !important;
+  }
+
+  .posterActions button,
+  .posterActions a {
+    min-height: 40px !important;
+    padding: 0 6px !important;
+    font-size: 11px !important;
+    letter-spacing: 0.02em !important;
   }
 }

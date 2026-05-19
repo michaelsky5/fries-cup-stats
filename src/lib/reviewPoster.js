@@ -1882,26 +1882,26 @@ function drawLandscapePlayerTicket(ctx, width, height, payload, images, accent) 
   ctx.fillStyle = 'rgba(255,255,255,0.04)'
   ctx.strokeStyle = 'rgba(255,255,255,0.1)'
   ctx.lineWidth = 2
-  drawCutCornerRect(ctx, 70, 558, 644, 120, 18)
+  drawCutCornerRect(ctx, 70, 558, 644, 154, 18)
   ctx.fill()
   ctx.stroke()
   ctx.fillStyle = accent
-  ctx.fillRect(70, 558, 6, 120)
+  ctx.fillRect(70, 558, 6, 154)
 
   drawText(ctx, 'TRAVEL NOTE', 104, 594, {
     font: `900 18px ${FONT_MONO}`,
     fill: accent
   })
 
-  drawText(ctx, safeText(memory.title, '这张票证明你来过'), 104, 628, {
-    font: `900 26px ${FONT_SC}`,
+  drawText(ctx, safeText(memory.title, '这张票证明你来过'), 104, 626, {
+    font: `900 24px ${FONT_SC}`,
     fill: '#ffffff',
     maxWidth: 560
   })
 
-  ctx.font = `800 21px ${FONT_SC}`
+  ctx.font = `800 20px ${FONT_SC}`
   ctx.fillStyle = 'rgba(255,255,255,0.68)'
-  wrapCanvasText(ctx, safeText(memory.body, payload.mainText), 104, 658, 560, 26, 1)
+  wrapCanvasText(ctx, safeText(memory.body, payload.mainText), 104, 654, 560, 25, 3)
   ctx.restore()
 
   drawRouteMap(ctx, data, accent, 770, 252, 490, 294)
@@ -2432,23 +2432,23 @@ function drawLandscapeIdentityTicket(ctx, width, height, payload, images, accent
   ctx.fillStyle = 'rgba(255,255,255,0.04)'
   ctx.strokeStyle = 'rgba(255,255,255,0.1)'
   ctx.lineWidth = 2
-  drawCutCornerRect(ctx, 70, 558, 644, 120, 18)
+  drawCutCornerRect(ctx, 70, 558, 644, 154, 18)
   ctx.fill()
   ctx.stroke()
   ctx.fillStyle = accent
-  ctx.fillRect(70, 558, 6, 120)
+  ctx.fillRect(70, 558, 6, 154)
   drawText(ctx, config.noteTitle || 'TRAVEL NOTE', 104, 594, {
     font: `900 18px ${FONT_MONO}`,
     fill: accent
   })
-  drawText(ctx, safeText(data.memory?.title, '这张票证明你来过'), 104, 628, {
-    font: `900 26px ${FONT_SC}`,
+  drawText(ctx, safeText(data.memory?.title, '这张票证明你来过'), 104, 626, {
+    font: `900 24px ${FONT_SC}`,
     fill: '#ffffff',
     maxWidth: 560
   })
-  ctx.font = `800 21px ${FONT_SC}`
+  ctx.font = `800 20px ${FONT_SC}`
   ctx.fillStyle = 'rgba(255,255,255,0.68)'
-  wrapCanvasText(ctx, safeText(data.memory?.body, payload.mainText), 104, 658, 560, 26, 1)
+  wrapCanvasText(ctx, safeText(data.memory?.body, payload.mainText), 104, 654, 560, 25, 3)
   ctx.restore()
 
   drawIdentityRouteMap(ctx, data, accent, 770, 252, 490, 294)
