@@ -197,6 +197,7 @@ export default function HomePage() {
           </p>
 
           <div className={styles.heroActions}>
+            <Link to="/review" className={styles.primaryBtn}>开启赛季回顾</Link>
             <Link to="/matches" className={styles.primaryBtn}>进入赛事大厅</Link>
             <Link to="/standings" className={styles.secondaryBtn}>查看积分榜</Link>
           </div>

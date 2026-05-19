@@ -1,0 +1,61 @@
+{
+  "output": "/mnt/data/friescup_db_review_ready.json",
+  "ranking_rows": 30,
+  "ranking_unmatched": [],
+  "teams_unranked": [],
+  "schedule_rows": 127,
+  "schedule_matched": 127,
+  "schedule_unmatched": [],
+  "matches_without_schedule": [],
+  "team_review_count": 30,
+  "top_8": [
+    {
+      "rank": 1,
+      "rank_text": "冠军",
+      "team_name": "何意味3",
+      "short": "HYW"
+    },
+    {
+      "rank": 2,
+      "rank_text": "亚军",
+      "team_name": "Team New Star",
+      "short": "TNS"
+    },
+    {
+      "rank": 3,
+      "rank_text": "季军",
+      "team_name": "Spark Crew",
+      "short": "SPC"
+    },
+    {
+      "rank": 4,
+      "rank_text": "第4名",
+      "team_name": "家和万事兴",
+      "short": "FG"
+    },
+    {
+      "rank": 5,
+      "rank_text": "第5名",
+      "team_name": "可爱小鱿4277",
+      "short": "YOU"
+    },
+    {
+      "rank": 6,
+      "rank_text": "第6名",
+      "team_name": "Never Get Point",
+      "short": "NGP"
+    },
+    {
+      "rank": 7,
+      "rank_text": "第7名",
+      "team_name": "ZWU Spark",
+      "short": "ZS"
+    },
+    {
+      "rank": 8,
+      "rank_text": "第8名",
+      "team_name": "XCFN.Green",
+      "short": "XCFN.G"
+    }
+  ]
+}
