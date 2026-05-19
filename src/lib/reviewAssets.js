@@ -124,7 +124,7 @@ const RAW_STAFF_AVATAR_ALIASES = {
   iris: '鸢尾.jpg',
   转生成雷电将军: '雷电将军.jpg',
   CHILLBOI: 'HAJIMI.jpg',
-  我在黄昏淇里: '良良子.jpg',
+  我在黄昏漠里: '良良子.jpg',
   君子与月齐辉: '君子.jpg',
   LuckyBoy: 'LuckyBoy.jpg',
   寒冷的笑: '小云.jpg',
