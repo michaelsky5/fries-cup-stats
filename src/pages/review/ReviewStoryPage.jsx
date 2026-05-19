@@ -729,6 +729,52 @@ function getPosterDownloadName(payload) {
   return `friescup_2026_${kind}_${id}.png`
 }
 
+
+async function getBlobFromUrl(url) {
+  if (!url) return null
+  const response = await fetch(url)
+  if (!response.ok) return null
+  return response.blob()
+}
+
+function openImageInNewTab(url) {
+  if (!url || typeof window === 'undefined') return false
+
+  const opened = window.open(url, '_blank', 'noopener,noreferrer')
+  if (!opened) return false
+  opened.opener = null
+  return true
+}
+
+async function sharePosterImage(url, filename) {
+  if (!url || typeof navigator === 'undefined' || typeof File === 'undefined') {
+    return { ok: false, reason: 'unsupported' }
+  }
+
+  if (typeof navigator.share !== 'function') {
+    return { ok: false, reason: 'unsupported' }
+  }
+
+  const blob = await getBlobFromUrl(url)
+  if (!blob) return { ok: false, reason: 'blob' }
+
+  const file = new File([blob], filename || 'friescup_2026_ticket.png', {
+    type: blob.type || 'image/png'
+  })
+  const payload = {
+    files: [file],
+    title: '薯条杯 2026 官方纪念票',
+    text: '保存我的薯条杯 2026 官方纪念票'
+  }
+
+  if (typeof navigator.canShare === 'function' && !navigator.canShare({ files: [file] })) {
+    return { ok: false, reason: 'files' }
+  }
+
+  await navigator.share(payload)
+  return { ok: true }
+}
+
 function PosterModal({ scenes, storyType, perspective, staffType, onClose }) {
   const isViewerPoster = storyType === 'tournament'
   const [viewerId, setViewerId] = useState('')
@@ -738,6 +784,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, onClose }) {
   )
   const [pngUrl, setPngUrl] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
+  const [isSharing, setIsSharing] = useState(false)
   const [error, setError] = useState('')
 
   const meta = getPosterKindMeta(payload.cardKind)
@@ -762,6 +809,16 @@ function PosterModal({ scenes, storyType, perspective, staffType, onClose }) {
     }
   }, [pngUrl])
 
+  useEffect(() => {
+    if (!isViewerPoster) return
+
+    setError('')
+    setPngUrl(prev => {
+      if (prev) URL.revokeObjectURL(prev)
+      return ''
+    })
+  }, [viewerId, isViewerPoster])
+
   const handleGenerate = async () => {
     setIsGenerating(true)
     setError('')
@@ -783,6 +840,38 @@ function PosterModal({ scenes, storyType, perspective, staffType, onClose }) {
       setError(err?.message || '生成失败，请稍后再试。')
     } finally {
       setIsGenerating(false)
+    }
+  }
+
+  const handleOpenImage = () => {
+    setError('')
+
+    if (!openImageInNewTab(pngUrl)) {
+      setError('浏览器阻止了打开图片。可以长按下方预览图保存，或换用系统浏览器打开。')
+    }
+  }
+
+  const handleShareImage = async () => {
+    if (!pngUrl) return
+
+    setIsSharing(true)
+    setError('')
+
+    try {
+      const result = await sharePosterImage(pngUrl, downloadName)
+
+      if (!result.ok) {
+        const message = result.reason === 'files'
+          ? '当前浏览器不支持直接分享图片文件。请点击“打开图片”，再长按保存。'
+          : '当前浏览器不支持系统分享。请点击“打开图片”，或长按下方预览图保存。'
+        setError(message)
+      }
+    } catch (err) {
+      if (err?.name !== 'AbortError') {
+        setError('分享失败。请点击“打开图片”，或长按下方预览图保存。')
+      }
+    } finally {
+      setIsSharing(false)
     }
   }
 
@@ -810,7 +899,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, onClose }) {
               <div>
                 <span className={styles.posterMockLabel}>{isViewerPoster ? 'EVENT / WITNESS' : 'ISSUED TO'}</span>
 
-                <strong title={isViewerPoster ? '2026 薯条杯 | 学院赛' : previewMainName}>
+                <strong title={isViewerPoster ? '2026 薯条杯学院赛' : previewMainName}>
                   {isViewerPoster ? 'FCA 2026' : previewMainName}
                 </strong>
 
@@ -878,7 +967,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, onClose }) {
           ) : null}
 
           <div className={styles.posterActions}>
-            <button type="button" onClick={handleGenerate} disabled={isGenerating}>
+            <button type="button" onClick={handleGenerate} disabled={isGenerating || isSharing}>
               {isGenerating ? '生成中...' : '生成 PNG'}
             </button>
 
@@ -887,13 +976,25 @@ function PosterModal({ scenes, storyType, perspective, staffType, onClose }) {
                 下载纪念票
               </a>
             ) : null}
+
+            {pngUrl ? (
+              <button type="button" onClick={handleOpenImage} disabled={isGenerating || isSharing}>
+                打开图片
+              </button>
+            ) : null}
+
+            {pngUrl ? (
+              <button type="button" onClick={handleShareImage} disabled={isGenerating || isSharing}>
+                {isSharing ? '分享中...' : '手机分享 / 保存'}
+              </button>
+            ) : null}
           </div>
 
           {error ? <div className={styles.posterError}>{error}</div> : null}
 
           <div className={styles.posterOutputFrame}>
             {pngUrl ? (
-              <img src={pngUrl} alt="生成后的纪念票" className={styles.generatedPosterImage} />
+              <img src={pngUrl} alt="生成后的纪念票" title="手机端可以长按图片保存" className={styles.generatedPosterImage} />
             ) : (
               <div className={styles.posterOutputEmpty}>
                 <b>PNG PREVIEW</b>
@@ -905,8 +1006,8 @@ function PosterModal({ scenes, storyType, perspective, staffType, onClose }) {
 
         <div className={styles.posterTip}>
           {isViewerPoster
-            ? '观众票是签发给见证者的赛事证明。填写 ID 后，票面会带上你的观众标记。'
-            : '当前纪念票为横版 PNG。电脑端可直接下载；手机端如浏览器拦截下载，可以长按生成后的图片保存。'}
+            ? '观众票是签发给见证者的赛事证明。填写 ID 后，票面会带上你的观众标记。手机端可优先使用“手机分享 / 保存”，或打开图片后长按保存。'
+            : '当前纪念票为横版 PNG。电脑端可直接下载；手机端如浏览器拦截下载，可使用“手机分享 / 保存”，或打开图片后长按保存。'}
         </div>
       </div>
     </div>
@@ -1075,7 +1176,7 @@ export default function ReviewStoryPage({ storyType }) {
 
           {isEnding ? (
             <button type="button" className={styles.posterBtn} onClick={() => setShowPoster(true)}>
-              生成纪念卡
+              生成纪念票
             </button>
           ) : (
             <button type="button" onClick={goNext}>下一幕</button>

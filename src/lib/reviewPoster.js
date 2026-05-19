@@ -8,12 +8,48 @@ export const TONE_COLORS = {
   purple: '#b58cff'
 }
 
-const FONT_SC = '"HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif'
-const FONT_MONO = '"HarmonyOS Sans SC", "JetBrains Mono", "Consolas", monospace'
+const FONT_SC = '"FCA Sans", "HarmonyOS Sans SC", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", sans-serif'
+const FONT_MONO = '"FCA Mono", "JetBrains Mono", "HarmonyOS Sans SC", "Noto Sans SC", "Consolas", monospace'
 const CARD_BG = '#050505'
 const PANEL_BG = 'rgba(14,14,14,0.94)'
 const FCA_LOGO = '/logos/fca_logo.png'
 const DEFAULT_TEAM_LOGO = '/logos/OW.png'
+const POSTER_FONT_TIMEOUT_MS = 1800
+const POSTER_FONT_LOADS = [
+  '900 32px "FCA Sans"',
+  '800 32px "FCA Sans"',
+  '900 32px "HarmonyOS Sans SC"',
+  '800 32px "HarmonyOS Sans SC"',
+  '900 32px "Noto Sans SC"',
+  '800 32px "Noto Sans SC"',
+  '900 32px "PingFang SC"',
+  '800 32px "PingFang SC"',
+  '900 32px "Microsoft YaHei"',
+  '800 32px "Microsoft YaHei"',
+  '900 24px "FCA Mono"',
+  '900 24px "JetBrains Mono"',
+  '900 24px "Consolas"'
+]
+
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+function nextFrame() {
+  if (typeof requestAnimationFrame !== 'function') return Promise.resolve()
+  return new Promise(resolve => requestAnimationFrame(() => resolve()))
+}
+
+export async function ensurePosterFontsReady(timeoutMs = POSTER_FONT_TIMEOUT_MS) {
+  if (typeof document === 'undefined' || !document?.fonts?.load) return
+
+  const fontSet = document.fonts
+  const loaders = POSTER_FONT_LOADS.map(font => fontSet.load(font).catch(() => []))
+  const ready = Promise.all([...loaders, fontSet.ready].filter(Boolean)).catch(() => null)
+
+  await Promise.race([ready, wait(timeoutMs)])
+  await nextFrame()
+}
 
 function hexToRgba(hex, alpha = 1) {
   const clean = String(hex || '#f4c320').replace('#', '')
@@ -2642,7 +2678,40 @@ function drawLegacyPoster(ctx, payload, image, accent) {
   })
 }
 
+function canvasToPngUrl(canvas) {
+  return new Promise(resolve => {
+    if (!canvas) {
+      resolve('')
+      return
+    }
+
+    const fallbackToDataUrl = () => {
+      try {
+        resolve(canvas.toDataURL('image/png', 0.96))
+      } catch {
+        resolve('')
+      }
+    }
+
+    if (typeof canvas.toBlob !== 'function') {
+      fallbackToDataUrl()
+      return
+    }
+
+    canvas.toBlob(blob => {
+      if (blob) {
+        resolve(URL.createObjectURL(blob))
+        return
+      }
+
+      fallbackToDataUrl()
+    }, 'image/png', 0.96)
+  })
+}
+
 export async function generatePosterPng(payload) {
+  await ensurePosterFontsReady()
+
   const canvas = document.createElement('canvas')
   const isPlayerTicket = payload.cardKind === 'player'
   const isIdentityTicket = Boolean(payload.identityTicket)
@@ -2655,6 +2724,11 @@ export async function generatePosterPng(payload) {
   canvas.height = height
 
   const ctx = canvas.getContext('2d')
+  if (!ctx) return ''
+
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
+
   const image = await loadImage(payload.image)
 
   if (isPlayerTicket) {
@@ -2677,13 +2751,5 @@ export async function generatePosterPng(payload) {
     drawLegacyPoster(ctx, payload, image, accent)
   }
 
-  return new Promise(resolve => {
-    canvas.toBlob(blob => {
-      if (!blob) {
-        resolve('')
-        return
-      }
-      resolve(URL.createObjectURL(blob))
-    }, 'image/png', 0.96)
-  })
+  return canvasToPngUrl(canvas)
 }
