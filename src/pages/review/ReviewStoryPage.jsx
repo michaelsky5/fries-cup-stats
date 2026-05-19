@@ -12,6 +12,43 @@ import styles from './ReviewStoryPage.module.css'
 
 const DEFAULT_LOGO = '/logos/OW.png'
 
+const STORY_FRAME_WIDTH = 460
+const STORY_FRAME_HEIGHT = 820
+const STORY_FRAME_SAFE_GAP = 24
+
+function getViewportStoryScale() {
+  if (typeof window === 'undefined') return 1
+
+  const viewport = window.visualViewport
+  const width = viewport?.width || window.innerWidth || STORY_FRAME_WIDTH
+  const height = viewport?.height || window.innerHeight || STORY_FRAME_HEIGHT
+  const scale = Math.min(1, (width - STORY_FRAME_SAFE_GAP) / STORY_FRAME_WIDTH, (height - STORY_FRAME_SAFE_GAP) / STORY_FRAME_HEIGHT)
+
+  return Number(Math.max(0.45, scale).toFixed(3))
+}
+
+function useStoryScale() {
+  const [scale, setScale] = useState(() => getViewportStoryScale())
+
+  useEffect(() => {
+    const update = () => setScale(getViewportStoryScale())
+    const viewport = window.visualViewport
+
+    update()
+    window.addEventListener('resize', update)
+    viewport?.addEventListener('resize', update)
+    viewport?.addEventListener('scroll', update)
+
+    return () => {
+      window.removeEventListener('resize', update)
+      viewport?.removeEventListener('resize', update)
+      viewport?.removeEventListener('scroll', update)
+    }
+  }, [])
+
+  return scale
+}
+
 function cx(...names) {
   return names.filter(Boolean).join(' ')
 }
@@ -1025,6 +1062,7 @@ export default function ReviewStoryPage({ storyType }) {
   const [index, setIndex] = useState(0)
   const [touchStartX, setTouchStartX] = useState(null)
   const [showPoster, setShowPoster] = useState(false)
+  const storyScale = useStoryScale()
 
   useEffect(() => {
     let alive = true
@@ -1140,7 +1178,8 @@ export default function ReviewStoryPage({ storyType }) {
   return (
     <div
       className={styles.fullscreen}
-      onTouchStart={event => setTouchStartX(event.touches?.[0]?.clientX ?? null)}
+      style={{ '--story-scale': String(storyScale) }}
+      onTouchStart={event => !showPoster && setTouchStartX(event.touches?.[0]?.clientX ?? null)}
       onTouchEnd={handleTouchEnd}
     >
       <div className={styles.bgGlow}></div>
