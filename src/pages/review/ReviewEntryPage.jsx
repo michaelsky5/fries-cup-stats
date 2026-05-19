@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { getReviewSearchResults } from '../../lib/reviewSearch.js'
 import styles from './ReviewEntryPage.module.css'
@@ -140,6 +140,7 @@ export default function ReviewEntryPage() {
   const db = outlet?.db
   const [identity, setIdentity] = useState('player')
   const [query, setQuery] = useState('')
+  const searchPanelRef = useRef(null)
 
   const selected = IDENTITIES.find(item => item.id === identity)
   const isViewer = identity === 'viewer'
@@ -148,6 +149,23 @@ export default function ReviewEntryPage() {
     return getReviewSearchResults(db, identity, query)
   }, [db, identity, query, isViewer])
   const emptyText = getEmptyText(identity, query)
+
+  function handleIdentitySelect(nextIdentity) {
+    setIdentity(nextIdentity)
+    setQuery('')
+
+    if (typeof window === 'undefined') return
+
+    const isMobile = window.matchMedia?.('(max-width: 760px)').matches
+    if (!isMobile) return
+
+    window.requestAnimationFrame(() => {
+      searchPanelRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+    })
+  }
 
   return (
     <div className={styles.shell}>
@@ -184,37 +202,42 @@ export default function ReviewEntryPage() {
         </div>
       </section>
 
-      <section className={styles.identityGrid}>
-        {IDENTITIES.map(item => {
-          const active = identity === item.id
+      <section className={styles.identitySection} aria-label="选择你的赛季回顾身份">
+        <div className={styles.mobileIdentityHead}>
+          <span>选择身份</span>
+          <b>左右滑动</b>
+        </div>
 
-          return (
-            <button
-              key={item.id}
-              type="button"
-              className={`${styles.identityCard} ${active ? styles.identityCardActive : ''} ${item.id === 'viewer' ? styles.identityCardViewer : ''}`}
-              onClick={() => {
-                setIdentity(item.id)
-                setQuery('')
-              }}
-            >
-              <div className={styles.identityHead}>
-                <span className={styles.identityNo}>{item.no}</span>
-                <span className={styles.identityEn}>{item.en}</span>
-              </div>
+        <div className={styles.identityGrid}>
+          {IDENTITIES.map(item => {
+            const active = identity === item.id
 
-              <strong>{item.title}</strong>
-              <p>{item.desc}</p>
+            return (
+              <button
+                key={item.id}
+                type="button"
+                aria-pressed={active}
+                className={`${styles.identityCard} ${active ? styles.identityCardActive : ''} ${item.id === 'viewer' ? styles.identityCardViewer : ''}`}
+                onClick={() => handleIdentitySelect(item.id)}
+              >
+                <div className={styles.identityHead}>
+                  <span className={styles.identityNo}>{item.no}</span>
+                  <span className={styles.identityEn}>{item.en}</span>
+                </div>
 
-              <div className={styles.identityHint}>
-                <span>{item.hint}</span>
-              </div>
-            </button>
-          )
-        })}
+                <strong>{item.title}</strong>
+                <p>{item.desc}</p>
+
+                <div className={styles.identityHint}>
+                  <span>{item.hint}</span>
+                </div>
+              </button>
+            )
+          })}
+        </div>
       </section>
 
-      <section className={`${styles.searchPanel} ${isViewer ? styles.searchPanelViewer : ''}`}>
+      <section ref={searchPanelRef} className={`${styles.searchPanel} ${isViewer ? styles.searchPanelViewer : ''}`}>
         <div className={styles.panelGlow} />
 
         <div className={styles.searchHead}>

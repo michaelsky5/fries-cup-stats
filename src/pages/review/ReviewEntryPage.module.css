@@ -1021,3 +1021,387 @@
 .resultSub {
   overflow-wrap: anywhere;
 }
+
+/* -------------------------------------------------------------------------- */
+/* Mobile operation layer: compact role rail + search-first flow               */
+/* -------------------------------------------------------------------------- */
+
+.identitySection {
+  min-width: 0;
+}
+
+.mobileIdentityHead {
+  display: none;
+}
+
+.identityCard:focus-visible,
+.searchInput:focus-visible,
+.clearBtn:focus-visible,
+.resultItem:focus-visible,
+.viewerCard:focus-visible {
+  outline: 2px solid rgba(244,195,32,0.72);
+  outline-offset: 2px;
+}
+
+@media (hover: none) {
+  .identityCard:hover,
+  .viewerCard:hover,
+  .resultItem:hover {
+    transform: none;
+  }
+
+  .viewerCard:hover .viewerCardAction b,
+  .resultItem:hover .resultAction b {
+    transform: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .shell {
+    gap: 12px;
+  }
+
+  .hero {
+    padding: 18px;
+  }
+
+  .heroTopline {
+    margin-bottom: 14px;
+  }
+
+  .kicker {
+    font-size: 9px;
+    line-height: 1.35;
+  }
+
+  .hero h1 {
+    max-width: 320px;
+    font-size: 29px;
+    line-height: 1.06;
+  }
+
+  .hero p {
+    margin-top: 12px;
+    font-size: 12px;
+    line-height: 1.72;
+  }
+
+  .heroStats {
+    display: none;
+  }
+
+  .heroBgText {
+    right: -10px;
+    bottom: -12px;
+    font-size: 68px;
+    opacity: 0.9;
+  }
+
+  .identitySection {
+    position: relative;
+    min-width: 0;
+  }
+
+  .mobileIdentityHead {
+    margin: 0 0 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255,255,255,0.48);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    font-family: var(--font-mono, monospace);
+  }
+
+  .mobileIdentityHead span {
+    color: #f4c320;
+  }
+
+  .mobileIdentityHead b {
+    font: inherit;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .identityGrid {
+    margin: 0 -18px;
+    padding: 0 18px 6px;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .identityGrid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .identityCard {
+    flex: 0 0 154px;
+    min-height: 126px;
+    padding: 14px;
+    scroll-snap-align: start;
+  }
+
+  .identityCard::after {
+    right: -48px;
+    bottom: -52px;
+    width: 104px;
+    height: 104px;
+  }
+
+  .identityHead {
+    align-items: flex-start;
+  }
+
+  .identityNo {
+    font-size: 14px;
+  }
+
+  .identityEn {
+    max-width: 76px;
+    font-size: 7px;
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  .identityCard strong {
+    margin-top: 16px;
+    font-size: 18px;
+    line-height: 1.18;
+  }
+
+  .identityCard p {
+    display: none;
+  }
+
+  .identityHint {
+    padding-top: 12px;
+  }
+
+  .identityHint span {
+    max-width: 100%;
+    min-height: 22px;
+    font-size: 8px;
+    line-height: 1;
+  }
+
+  .searchPanel {
+    scroll-margin-top: 12px;
+    padding: 16px;
+  }
+
+  .searchPanelViewer {
+    min-height: 0;
+  }
+
+  .panelGlow {
+    right: -160px;
+    top: -160px;
+    width: 300px;
+    height: 300px;
+  }
+
+  .searchHead {
+    margin-bottom: 12px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .searchTitle {
+    font-size: 17px;
+    line-height: 1.22;
+  }
+
+  .searchSub {
+    font-size: 8px;
+    line-height: 1.35;
+    letter-spacing: 0.12em;
+  }
+
+  .searchMeta {
+    flex: 0 0 auto;
+    min-width: 70px;
+    padding: 8px 9px;
+  }
+
+  .searchMeta span {
+    font-size: 7px;
+  }
+
+  .searchMeta strong {
+    font-size: 19px;
+  }
+
+  .searchBox {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .searchInput {
+    height: 48px;
+    padding: 0 13px;
+    font-size: 13px;
+    border-radius: 0;
+  }
+
+  .clearBtn {
+    flex: 0 0 56px;
+    min-width: 56px;
+    height: 48px;
+    padding: 0;
+  }
+
+  .resultsHead {
+    margin-top: 14px;
+    padding-top: 12px;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .resultsHead strong {
+    display: none;
+  }
+
+  .countPill {
+    flex: 0 0 auto;
+    min-height: 24px;
+    font-size: 8px;
+  }
+
+  .results {
+    gap: 9px;
+  }
+
+  .resultItem {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    gap: 8px 10px;
+    align-items: center;
+    min-height: 0;
+    padding: 13px;
+  }
+
+  .resultIndex {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 16px;
+  }
+
+  .resultBadge {
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 23px;
+    max-width: 100%;
+    font-size: 9px;
+  }
+
+  .resultMain {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .resultTitle {
+    font-size: 15px;
+    line-height: 1.35;
+    white-space: normal;
+  }
+
+  .resultSub {
+    margin-top: 5px;
+    font-size: 11px;
+    line-height: 1.45;
+    white-space: normal;
+  }
+
+  .resultAction {
+    grid-column: 3;
+    grid-row: 1;
+    justify-content: flex-end;
+    min-height: 24px;
+    font-size: 9px;
+  }
+
+  .resultAction span {
+    display: none;
+  }
+
+  .resultAction b {
+    font-size: 18px;
+  }
+
+  .empty {
+    min-height: 130px;
+    padding: 18px;
+  }
+
+  .viewerCard {
+    padding: 18px;
+    gap: 16px;
+  }
+
+  .viewerCardTop {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .viewerCardTop span,
+  .viewerCardTop b {
+    font-size: 8px;
+    letter-spacing: 0.12em;
+  }
+
+  .viewerCardMain h2 {
+    font-size: 23px;
+    line-height: 1.12;
+  }
+
+  .viewerCardMain p {
+    margin-top: 12px;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  .viewerCardGrid {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .viewerCardGrid div {
+    min-height: 54px;
+    padding: 10px;
+  }
+
+  .viewerCardAction {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .identityCard {
+    flex-basis: 146px;
+  }
+
+  .searchHead {
+    align-items: flex-start;
+  }
+
+  .searchMeta {
+    min-width: 62px;
+    padding: 7px;
+  }
+
+  .searchMeta strong {
+    font-size: 17px;
+  }
+
+  .viewerCardTop {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

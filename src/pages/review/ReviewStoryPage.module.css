@@ -4861,3 +4861,112 @@
     padding-top: 8px !important;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Final mobile fix: keep dataImpact / MAP MEMORY compact while frame scales   */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 860px), (max-height: 760px) {
+  .visual_dataImpact .sceneStoryLayerMap {
+    top: 94px !important;
+    left: 24px !important;
+    right: 24px !important;
+    gap: 8px !important;
+    max-height: 190px !important;
+    overflow: hidden !important;
+  }
+
+  .visual_dataImpact .sceneStoryLayerMap .miniCardsTitle {
+    min-height: 22px !important;
+    margin-bottom: 7px !important;
+    font-size: 8px !important;
+  }
+
+  .visual_dataImpact .sceneStoryLayerMap .miniCards_map .miniCardsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+
+  .visual_dataImpact .sceneStoryLayerMap .miniCards_map .miniCard {
+    min-height: 92px !important;
+    padding: 8px !important;
+  }
+
+  .visual_dataImpact .sceneStoryLayerMap .miniCards_map .miniCardImage {
+    height: 42px !important;
+  }
+
+  .visual_dataImpact .sceneStoryLayerMap .miniCardText strong {
+    font-size: 10px !important;
+    line-height: 1.15 !important;
+  }
+
+  .visual_dataImpact .sceneStoryLayerMap .miniCardText b {
+    font-size: 11px !important;
+    line-height: 1 !important;
+  }
+
+  .visual_dataImpact .sceneStoryLayerMap .miniCardText span,
+  .visual_dataImpact .sceneStoryLayerMap .miniCardText em,
+  .visual_dataImpact .sceneStoryLayerMap .miniCardText p {
+    font-size: 7px !important;
+    line-height: 1.25 !important;
+  }
+
+  .visual_dataImpact.sceneHasLayer .sceneText {
+    margin-top: auto !important;
+    transform: none !important;
+    padding: 15px 16px 14px !important;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.42), rgba(0,0,0,0.18)),
+      linear-gradient(180deg, rgba(255,255,255,0.052), rgba(255,255,255,0.012)) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-bottom: 2px solid var(--tone) !important;
+    backdrop-filter: blur(12px) !important;
+    box-shadow: 0 20px 70px rgba(0,0,0,0.34) !important;
+  }
+
+  .visual_dataImpact.sceneHasLayer h1 {
+    font-size: 29px !important;
+    line-height: 1.08 !important;
+  }
+
+  .visual_dataImpact.sceneHasLayer .sceneBody,
+  .visual_dataImpact.sceneHasLayer .sceneText p {
+    margin-top: 12px !important;
+    font-size: 12px !important;
+    line-height: 1.68 !important;
+  }
+
+  .visual_dataImpact.sceneHasLayer .storyQuote {
+    margin-top: 12px !important;
+    padding: 11px 12px !important;
+  }
+
+  .visual_dataImpact.sceneHasLayer .metricBlock {
+    margin-top: 14px !important;
+  }
+
+  .visual_dataImpact.sceneHasLayer .metricValue {
+    font-size: 74px !important;
+  }
+
+  .visual_dataImpact.sceneHasLayer .metricLabel {
+    margin-top: 8px !important;
+  }
+
+  .visual_dataImpact.sceneHasLayer .statLines {
+    margin-top: 14px !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .visual_dataImpact.sceneHasLayer .statLine {
+    min-height: 54px !important;
+    padding: 8px !important;
+  }
+
+  .visual_dataImpact.sceneHasLayer .statLineValue {
+    font-size: 17px !important;
+  }
+}
