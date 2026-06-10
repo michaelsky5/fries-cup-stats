@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useOutletContext } from 'react-router-dom'
 import styles from './MapStatsPage.module.css'
-import db from '../../../public/data/friescup_db.json'
 import { getMapStats } from '../../lib/selectors'
 
 function formatMapFileName(name) {
@@ -25,7 +24,8 @@ function SummaryCard({ labelCn, labelEn, value, meta, tone = 'default' }) {
 }
 
 const MapStatsPage = () => {
-  const { totalValidMaps, groupedByType } = useMemo(() => getMapStats(db), [])
+  const { db } = useOutletContext()
+  const { totalValidMaps, groupedByType } = useMemo(() => getMapStats(db), [db])
 
   const sortedModes = useMemo(() => {
     return Object.keys(groupedByType).sort((a, b) => {

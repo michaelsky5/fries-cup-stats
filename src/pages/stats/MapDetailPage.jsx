@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useOutletContext } from 'react-router-dom'
 import styles from './MapDetailPage.module.css'
-import db from '../../../public/data/friescup_db.json'
 import { getMapDetail, safeArr } from '../../lib/selectors'
 
 function formatMapFileName(name) {
@@ -59,6 +58,7 @@ function RankedBarItem({ rank, title, sub, rateText, width, barTone = 'yellow' }
 
 const MapDetailPage = () => {
   const { mapName } = useParams()
+  const { db } = useOutletContext()
   const decodedMapName = decodeURIComponent(mapName || '')
 
   const data = useMemo(() => {
@@ -110,13 +110,13 @@ const MapDetailPage = () => {
       },
       recentMatches
     }
-  }, [decodedMapName])
+  }, [db, decodedMapName])
 
   const mapType = useMemo(() => {
     const allMaps = safeArr(db?.matches).flatMap(match => safeArr(match?.maps))
     const found = allMaps.find(map => map.map_name === decodedMapName)
     return found?.map_type || 'UNKNOWN'
-  }, [decodedMapName])
+  }, [db, decodedMapName])
 
   const mapImageUrl = `/maps/${mapType}/${formatMapFileName(decodedMapName)}.jpg`
 
