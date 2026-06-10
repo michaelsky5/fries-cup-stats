@@ -5,7 +5,7 @@ const LOCAL_DB_URL = '/data/friescup_db_review_ready.json'
 const LOCAL_REPORT_URL = '/data/friescup_db_review_ready_report.json'
 const PUBLISHED_DB_URL = 'https://admin.fries-cup.com/api/public/seasons/FCA26/publish/latest/data'
 const PUBLISHED_REPORT_URL = 'https://admin.fries-cup.com/api/public/seasons/FCA26/publish/latest/report'
-const REQUEST_TIMEOUT_MS = 4500
+const REQUEST_TIMEOUT_MS = 12000
 
 function uniqueUrls(urls) {
   return Array.from(new Set(urls.filter(Boolean)))
@@ -29,7 +29,7 @@ async function fetchJson(url, errorCode) {
 
   try {
     const res = await fetch(url, {
-      cache: 'no-store',
+      cache: 'default',
       signal: controller.signal
     })
     if (!res.ok) throw new Error(`${errorCode}: ${res.status}`)
