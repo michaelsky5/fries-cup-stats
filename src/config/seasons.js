@@ -19,9 +19,6 @@ export const SEASONS = [
     proxyReportUrl: '/api/admin-public/seasons/FCR26/publish/latest/report',
     dataUrl: 'https://admin.fries-cup.com/api/public/seasons/FCR26/publish/latest/data',
     reportUrl: 'https://admin.fries-cup.com/api/public/seasons/FCR26/publish/latest/report',
-    localDataUrl: '/data/fcr2026_local_public.json',
-    localReportUrl: '',
-    preferLocalData: true,
     reviewEnabled: false,
     rankingMinTimeMins: 30,
     rules: {
@@ -81,8 +78,6 @@ export const SEASONS = [
     proxyReportUrl: '/api/admin-public/seasons/FCA26/publish/latest/report',
     dataUrl: 'https://admin.fries-cup.com/api/public/seasons/FCA26/publish/latest/data',
     reportUrl: 'https://admin.fries-cup.com/api/public/seasons/FCA26/publish/latest/report',
-    localDataUrl: '/data/friescup_db_review_ready.json',
-    localReportUrl: '/data/friescup_db_review_ready_report.json',
     reviewEnabled: true,
     rankingMinTimeMins: 30,
     rules: {
