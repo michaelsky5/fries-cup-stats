@@ -369,10 +369,6 @@ function collectTeamStaffEntries(team, type) {
   }))
 }
 
-function collectTeamStaffNames(team, type) {
-  return collectTeamStaffEntries(team, type).map(entry => entry.name)
-}
-
 function getTeamRankText(team) {
   const sources = safeArr(team?.__sources).length ? team.__sources : [team]
 

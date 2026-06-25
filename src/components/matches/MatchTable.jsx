@@ -1,11 +1,11 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useOutletContext } from 'react-router-dom'
+import { formatMatchSchedule } from '../../lib/scheduleFormat.js'
 import styles from './MatchTable.module.css'
 
 function displayScore(value) {
   return value === '' || value === null || value === undefined ? '-' : value
 }
 
-// 🌟 修改：接收 isForfeit 参数，返回专属的弃权状态文本
 function getStatusInfo(status, isForfeit) {
   if (status === 'COMPLETE' || status === 'COMPLETED') {
     if (isForfeit) {
@@ -34,7 +34,11 @@ function HeadLabel({ cn, en, align = 'center' }) {
   )
 }
 
-export default function MatchTable({ rows = [] }) {
+export default function MatchTable({ rows = [], locale = 'zh-CN' }) {
+  const { withSeason = path => path } = useOutletContext()
+  const location = useLocation()
+  const returnTo = `${location.pathname}${location.search || ''}`
+
   return (
     <div className={styles.tablePanel}>
       <div className={styles.tableWrap}>
@@ -50,7 +54,7 @@ export default function MatchTable({ rows = [] }) {
           {rows.length > 0 ? rows.map(row => {
             const isComplete = row.status === 'COMPLETE' || row.status === 'COMPLETED'
             const isProgress = row.status === 'IN_PROGRESS'
-            const isForfeit = row.is_forfeit // 🌟 获取底层的弃权标记
+            const isForfeit = row.is_forfeit
             const matchTitle = row.match_display_name || row.match_id
             const teamAName = row?.team_a?.name || 'TBD'
             const teamBName = row?.team_b?.name || 'TBD'
@@ -58,7 +62,8 @@ export default function MatchTable({ rows = [] }) {
             const scoreB = Number(row?.team_b?.score)
             const isWinnerA = isComplete && scoreA > scoreB
             const isWinnerB = isComplete && scoreB > scoreA
-            const statusInfo = getStatusInfo(row.status, isForfeit) // 🌟 传入判定
+            const statusInfo = getStatusInfo(row.status, isForfeit)
+            const schedule = formatMatchSchedule(row, { locale })
 
             return (
               <div
@@ -73,6 +78,7 @@ export default function MatchTable({ rows = [] }) {
                   <div className={styles.matchTitle} title={matchTitle}>{matchTitle}</div>
                   <div className={styles.matchMetaRow}>
                     <span className={styles.miniTag}>{row.format || 'TBD'}</span>
+                    <span className={styles.miniTag} title={schedule.title}>{schedule.compact}</span>
                     <span className={styles.miniTag} title={row.match_id}>{row.match_id}</span>
                   </div>
                 </div>
@@ -111,7 +117,8 @@ export default function MatchTable({ rows = [] }) {
 
                 <div className={`${styles.actionCell} ${styles.alignCenter}`}>
                   <Link
-                    to={`/matches/${row.match_id}`}
+                    to={withSeason(`/matches/${row.match_id}`)}
+                    state={{ returnTo }}
                     className={`${styles.actionBtn} ${isComplete ? styles.actionBtnSubtle : styles.actionBtnAccent}`}
                   >
                     <span className={styles.actionBtnCn}>查看详情</span>

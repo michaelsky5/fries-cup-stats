@@ -9,7 +9,7 @@
   gap: 14px;
   padding: 18px;
   box-sizing: border-box;
-  font-family: var(--font-primary, 'HarmonyOS Sans SC', 'Inter', sans-serif);
+  font-family: var(--font-primary, 'HarmonyOS Sans SC', sans-serif);
 }
 
 .topBar {

@@ -1,0 +1,255 @@
+.contextBar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 58px;
+  gap: clamp(18px, 3vw, 54px);
+  padding: 0;
+  background: var(--portal-black);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--fc-white);
+}
+
+.eventLead {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 2.8vw, 48px);
+}
+
+.eventLabel {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 12px;
+  color: var(--portal-yellow);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.eventLabel::after {
+  display: inline-block;
+  width: 42px;
+  height: 3px;
+  background: currentColor;
+  content: "";
+}
+
+.eventIdentity {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+}
+
+.eventCode {
+  display: block;
+  color: var(--portal-yellow);
+  font-size: clamp(28px, 2.35vw, 38px);
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 0.92;
+  white-space: nowrap;
+}
+
+.eventMeta {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.eventMeta > span {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 16px;
+  border-left: 1px solid rgba(244, 195, 32, 0.24);
+}
+
+.homeLink {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 16px;
+  border-left: 1px solid rgba(244, 195, 32, 0.24);
+  color: var(--portal-yellow);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.homeLink:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--fc-white);
+}
+
+.eventSwitcher {
+  position: relative;
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  padding-left: 16px;
+  border-left: 1px solid rgba(244, 195, 32, 0.24);
+}
+
+.eventSwitcher summary {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  border: 1px solid rgba(244, 195, 32, 0.42);
+  color: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  list-style: none;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.eventSwitcher summary::-webkit-details-marker {
+  display: none;
+}
+
+.eventSwitcher summary::after {
+  color: var(--portal-yellow);
+  content: "▾";
+  font-size: 11px;
+}
+
+.eventSwitcher summary span {
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.eventSwitcher summary strong {
+  color: var(--fc-white);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+}
+
+.eventSwitcher[open] summary,
+.eventSwitcher summary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(244, 195, 32, 0.74);
+  color: var(--fc-white);
+}
+
+.switcherPanel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 5;
+  width: min(420px, calc(100vw - 48px));
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  background: var(--fc-white);
+  border: 2px solid var(--portal-border);
+  box-shadow: 10px 10px 0 rgba(244, 195, 32, 0.42);
+  color: var(--portal-ink);
+}
+
+.switcherPanel section {
+  display: grid;
+  gap: 8px;
+}
+
+.switcherPanel h3 {
+  margin: 0 0 2px;
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  line-height: 1;
+}
+
+.switcherPanel button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px 14px;
+  width: 100%;
+  min-height: 76px;
+  padding: 13px 14px;
+  background: var(--portal-cream);
+  border: 2px solid rgba(42, 42, 42, 0.14);
+  color: var(--portal-ink);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.switcherPanel button:hover,
+.switcherPanel .switcherOptionActive {
+  background: var(--portal-yellow);
+  border-color: var(--portal-border);
+}
+
+.switcherPanel button strong {
+  grid-row: 1 / span 2;
+  align-self: center;
+  color: var(--portal-black);
+  font-size: 24px;
+  font-weight: 950;
+  line-height: 0.9;
+}
+
+.switcherPanel button span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--portal-ink);
+  font-size: 14px;
+  font-weight: 950;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.switcherPanel button em {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--portal-muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 850;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1180px) {
+  .contextBar {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 14px 0 16px;
+  }
+
+  .eventLead,
+  .eventIdentity,
+  .eventMeta {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .switcherPanel {
+    right: auto;
+    left: 16px;
+  }
+}

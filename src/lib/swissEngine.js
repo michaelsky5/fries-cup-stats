@@ -33,7 +33,7 @@ export function calculateSwissStandings(db) {
       ...team,
       __seedOrder: index,
       team_id: team.team_id,
-      team_short_name: team.team_short_name || team.team_name || team.team_id,
+      team_short_name: team.team_short_name || team.team_id || team.team_name,
       team_name: team.team_name || team.team_short_name || team.team_id,
       match_wins: 0,
       match_losses: 0,
@@ -55,7 +55,7 @@ export function calculateSwissStandings(db) {
       standings[key] = {
         __seedOrder: Number.MAX_SAFE_INTEGER,
         team_id: key,
-        team_short_name: shortName || fullName || key,
+        team_short_name: shortName || key || fullName,
         team_name: fullName || shortName || key,
         match_wins: 0,
         match_losses: 0,
@@ -70,7 +70,9 @@ export function calculateSwissStandings(db) {
     }
 
     const row = standings[key]
-    if ((!row.team_short_name || row.team_short_name === key) && shortName) row.team_short_name = shortName
+    if ((!row.team_short_name || row.team_short_name === key || row.team_short_name === row.team_name) && shortName) {
+      row.team_short_name = shortName
+    }
     if ((!row.team_name || row.team_name === key) && fullName) row.team_name = fullName
     return row
   }

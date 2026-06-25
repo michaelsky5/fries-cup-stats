@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
+import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
 import styles from './MapStatsPage.module.css'
 import { getMapStats } from '../../lib/selectors'
 
@@ -24,7 +25,7 @@ function SummaryCard({ labelCn, labelEn, value, meta, tone = 'default' }) {
 }
 
 const MapStatsPage = () => {
-  const { db } = useOutletContext()
+  const { db, withSeason = path => path } = useOutletContext()
   const { totalValidMaps, groupedByType } = useMemo(() => getMapStats(db), [db])
 
   const sortedModes = useMemo(() => {
@@ -49,11 +50,12 @@ const MapStatsPage = () => {
 
   return (
     <div className={styles.shell}>
+      <DatabaseSubnav />
       <section className={styles.heroSection}>
         <div className={styles.heroMain}>
           <div className={styles.heroKicker}>
             <span className={styles.heroKickerCn}>地图环境总览</span>
-            <span className={styles.heroKickerEn}>MAP DATA CENTER</span>
+            <span className={styles.heroKickerEn}>MAP META REPORT</span>
           </div>
 
           <h1 className={styles.heroTitle}>地图登场数据</h1>
@@ -135,7 +137,7 @@ const MapStatsPage = () => {
                   return (
                     <Link
                       key={map.name}
-                      to={`/maps/${encodeURIComponent(map.name)}`}
+                      to={withSeason(`/maps/${encodeURIComponent(map.name)}`)}
                       className={styles.mapCard}
                     >
                       <div className={styles.mapBgWrapper}>

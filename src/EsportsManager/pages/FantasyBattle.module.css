@@ -21,7 +21,7 @@
   overflow: hidden;
   background: radial-gradient(circle at top, rgba(50, 72, 102, 0.16), transparent 34%), linear-gradient(180deg, #0a0d12 0%, #05070b 100%);
   color: var(--text);
-  font-family: var(--font-primary, 'HarmonyOS Sans SC', 'Inter', sans-serif);
+  font-family: var(--font-primary, 'HarmonyOS Sans SC', sans-serif);
 }
 
 .loadingShell {

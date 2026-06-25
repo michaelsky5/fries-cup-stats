@@ -20,16 +20,16 @@ function Item({ label, value, meta, accent = false, isLive = false }) {
   )
 }
 
-export default function GlobalSummaryBar({ summary }) {
+export default function GlobalSummaryBar({ summary, t = (key, fallback) => fallback || key }) {
   return (
     <section className={styles.metrics}>
-      <Item label="参赛队伍" value={summary?.teamCount || 0} meta="REGISTERED TEAMS" />
-      <Item label="选手名单" value={summary?.playerCount || 0} meta="ACTIVE ROSTER" />
-      <Item label="总场次" value={summary?.matchCount || 0} meta="SEASON MATCHES" accent />
-      <Item label="地图总数" value={summary?.mapCount || 0} meta="TOTAL MAPS" />
-      <Item label="已完结" value={summary?.completed || 0} meta="COMPLETED" />
-      <Item label="进行中" value={summary?.inProgress || 0} meta="LIVE OPERATION" isLive />
-      <Item label="未开始" value={summary?.pending || 0} meta="PENDING" />
+      <Item label={t('summary.teams', 'Teams')} value={summary?.teamCount || 0} meta="TEAMS" />
+      <Item label={t('summary.players', 'Players')} value={summary?.playerCount || 0} meta="PLAYERS" />
+      <Item label={t('summary.matches', 'Matches')} value={summary?.matchCount || 0} meta="MATCHES" accent />
+      <Item label={t('summary.maps', 'Maps')} value={summary?.mapCount || 0} meta="MAPS PLAYED" />
+      <Item label={t('summary.completed', 'Completed')} value={summary?.completed || 0} meta="FINISHED" />
+      <Item label={t('summary.live', 'Live')} value={summary?.inProgress || 0} meta="LIVE MATCHES" isLive />
+      <Item label={t('summary.pending', 'Pending')} value={summary?.pending || 0} meta="UPCOMING" />
     </section>
   )
 }

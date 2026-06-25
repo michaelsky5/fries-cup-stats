@@ -8,27 +8,26 @@ export const TONE_COLORS = {
   purple: '#b58cff'
 }
 
-const FONT_SC = '"FCA Sans", "HarmonyOS Sans SC", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", sans-serif'
-const FONT_MONO = '"FCA Mono", "JetBrains Mono", "HarmonyOS Sans SC", "Noto Sans SC", "Consolas", monospace'
+const FONT_SC = '"HarmonyOS Sans SC", "HarmonyOS Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", sans-serif'
+const FONT_MONO = '"HarmonyOS Sans SC", "HarmonyOS Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif'
 const CARD_BG = '#050505'
 const PANEL_BG = 'rgba(14,14,14,0.94)'
 const FCA_LOGO = '/logos/fca_logo.png'
-const DEFAULT_TEAM_LOGO = '/logos/OW.png'
+const DEFAULT_TEAM_LOGO = '/logos/fc_logo.png'
 const POSTER_FONT_TIMEOUT_MS = 1800
 const POSTER_FONT_LOADS = [
-  '900 32px "FCA Sans"',
-  '800 32px "FCA Sans"',
   '900 32px "HarmonyOS Sans SC"',
   '800 32px "HarmonyOS Sans SC"',
+  '900 32px "HarmonyOS Sans"',
+  '800 32px "HarmonyOS Sans"',
   '900 32px "Noto Sans SC"',
   '800 32px "Noto Sans SC"',
   '900 32px "PingFang SC"',
   '800 32px "PingFang SC"',
   '900 32px "Microsoft YaHei"',
   '800 32px "Microsoft YaHei"',
-  '900 24px "FCA Mono"',
-  '900 24px "JetBrains Mono"',
-  '900 24px "Consolas"'
+  '900 24px "HarmonyOS Sans SC"',
+  '900 24px "HarmonyOS Sans"'
 ]
 
 function wait(ms) {
@@ -385,7 +384,7 @@ function normalizePosterDate(value) {
   const titleMatch = raw.match(/记录从\s*(.+?)\s*开始/)
   const source = titleMatch ? titleMatch[1] : raw
 
-  const full = source.match(/(20\d{2})[\-\/.年](\d{1,2})[\-\/.月](\d{1,2})/)
+  const full = source.match(/(20\d{2})[-/.年](\d{1,2})[-/.月](\d{1,2})/)
   if (full) {
     return `${full[1]}.${String(full[2]).padStart(2, '0')}.${String(full[3]).padStart(2, '0')}`
   }
@@ -1007,6 +1006,7 @@ function getTicketStatValue(stats, keys) {
   return found?.value
 }
 
+// eslint-disable-next-line no-unused-vars
 function normalizeTournamentStageValue(value) {
   const text = String(value || '').trim()
   if (!text) return '-'
@@ -1031,6 +1031,7 @@ function buildTournamentStats(stats, champion) {
   ]
 }
 
+// eslint-disable-next-line no-unused-vars
 function buildIdentityMemory(kind, data) {
   if (kind === 'caster') {
     return {
@@ -1123,6 +1124,7 @@ function getTournamentChampionLabel(list) {
   return safeText(champion?.title || champion?.name || champion?.label || fallback?.title || fallback?.name || '', '')
 }
 
+// eslint-disable-next-line no-unused-vars
 function compactMatchupLabel(value) {
   const raw = String(value || '').trim()
   if (!raw) return ''
@@ -1421,6 +1423,7 @@ function drawGrid(ctx, width, height) {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function drawTicketBase(ctx, x, y, w, h, accent, options = {}) {
   const { label = '', stub = true, perforationX = x + w - 214 } = options
 
@@ -1534,6 +1537,7 @@ function drawImageInside(ctx, image, x, y, w, h, options = {}) {
   ctx.restore()
 }
 
+// eslint-disable-next-line no-unused-vars
 function drawImagePlain(ctx, image, x, y, w, h, options = {}) {
   const { contain = true, alpha = 1 } = options
   if (!image) return
@@ -1549,6 +1553,7 @@ function drawImagePlain(ctx, image, x, y, w, h, options = {}) {
   ctx.restore()
 }
 
+// eslint-disable-next-line no-unused-vars
 function drawHeroStamp(ctx, hero, image, x, y, accent, index) {
   ctx.save()
   ctx.fillStyle = 'rgba(255,255,255,0.045)'
@@ -1973,7 +1978,7 @@ function drawLandscapePlayerTicket(ctx, width, height, payload, images, accent) 
     align: 'center'
   })
 
-  drawText(ctx, 'FRIES CUP DATA CENTER', stubCenterX, 184, {
+  drawText(ctx, 'FRIES CUP SEASON REVIEW', stubCenterX, 184, {
     font: `900 16px ${FONT_MONO}`,
     fill: hexToRgba(accent, 0.82),
     align: 'center',
@@ -2503,7 +2508,7 @@ function drawLandscapeIdentityTicket(ctx, width, height, payload, images, accent
     align: 'center'
   })
 
-  drawText(ctx, 'FRIES CUP DATA CENTER', stubCenterX, 184, {
+  drawText(ctx, 'FRIES CUP SEASON REVIEW', stubCenterX, 184, {
     font: `900 16px ${FONT_MONO}`,
     fill: hexToRgba(accent, 0.82),
     align: 'center',
@@ -2666,7 +2671,7 @@ function drawLegacyPoster(ctx, payload, image, accent) {
     fill: 'rgba(255,255,255,0.34)'
   })
 
-  drawText(ctx, 'FRIES CUP DATA CENTER', 82, 1856, {
+  drawText(ctx, 'FRIES CUP SEASON REVIEW', 82, 1856, {
     font: `900 32px ${FONT_MONO}`,
     fill: accent
   })

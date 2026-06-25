@@ -1,0 +1,116 @@
+.shell {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 22px;
+  color: var(--portal-ink);
+}
+
+.stickyRosterControls {
+  position: sticky;
+  top: 138px;
+  z-index: 20;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--portal-page);
+  padding-bottom: 0;
+}
+
+.typeTabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+}
+
+.staffTypeControl {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.staffTypeLabel {
+  color: var(--portal-muted);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.typeTab {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--portal-surface);
+  border: 0;
+  border-right: 1px solid var(--portal-border);
+  color: var(--portal-ink);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+.typeTab:last-child {
+  border-right: 0;
+}
+
+.typeTabActive {
+  background: var(--portal-yellow);
+}
+
+.staffNote {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+  color: var(--portal-ink-soft);
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.5;
+}
+
+.directorySection {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 18px;
+  scroll-margin-top: 280px;
+}
+
+@media (max-width: 1180px) {
+  .stickyRosterControls {
+    position: static;
+  }
+
+  .directorySection {
+    scroll-margin-top: 24px;
+  }
+}
+
+@media (max-width: 760px) {
+  .typeTabs {
+    grid-template-columns: 1fr;
+  }
+
+  .typeTab {
+    border-right: 0;
+    border-bottom: 1px solid var(--portal-border);
+  }
+
+  .typeTab:last-child {
+    border-bottom: 0;
+  }
+
+  .staffNote {
+    min-height: auto;
+    padding: 12px 14px;
+  }
+}

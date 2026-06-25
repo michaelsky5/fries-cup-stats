@@ -1,192 +1,186 @@
-import { useMemo, useState } from 'react'
-import { Link, useOutletContext } from 'react-router-dom'
-import { safeArr } from '../../lib/selectors.js'
+import { useEffect, useMemo, useRef } from 'react'
+import { Link, useOutletContext, useSearchParams } from 'react-router-dom'
+import RosterPageHeader from '../../components/roster/RosterPageHeader.jsx'
+import RosterPagination from '../../components/roster/RosterPagination.jsx'
+import RosterSubnav from '../../components/roster/RosterSubnav.jsx'
+import RosterToolbar from '../../components/roster/RosterToolbar.jsx'
+import TeamDirectoryCard from '../../components/roster/TeamDirectoryCard.jsx'
+import RosterEmptyState from '../../components/roster/RosterEmptyState.jsx'
+import rosterStyles from '../../components/roster/RosterComponents.module.css'
+import {
+  TEAM_PAGE_SIZES,
+  buildRosterQueryState,
+  filterTeams,
+  getRosterSummary,
+  getTeamDirectory,
+  paginateTeams,
+  sortTeams
+} from '../../lib/rosterSelectors.js'
 import styles from './TeamsPage.module.css'
 
-export default function TeamsPage() {
-  const { db } = useOutletContext()
-  const [query, setQuery] = useState('')
+const TEAM_FILTERS = [
+  { value: 'all', label: '全部战队' },
+  { value: 'following', label: '我的关注' },
+  { value: 'roster5', label: '5 人名单' },
+  { value: 'roster6', label: '6 人名单' },
+  { value: 'roster7', label: '7 人名单' },
+  { value: 'hasCoach', label: '有教练' },
+  { value: 'noCoach', label: '无教练' }
+]
 
-  const teamsWithStats = useMemo(() => {
-    const teams = safeArr(db?.teams)
-    const players = safeArr(db?.players)
+const SORT_OPTIONS = [
+  { value: 'default', label: '关注优先' },
+  { value: 'short', label: '简称 A-Z' },
+  { value: 'roster', label: '名单人数' },
+  { value: 'coach', label: '有教练优先' }
+]
 
-    return teams.map(team => {
-      // 🌟 新增：过滤掉状态为 EXITED 或 已退赛 的选手，只计算活跃人数
-      const roster = players.filter(
-        p => (p.team_id === team.team_id || p.team_name === team.team_name) 
-             && p.status !== 'EXITED' 
-             && p.status !== '已退赛'
-      )
+const FILTER_LABELS = new Map(TEAM_FILTERS.map(item => [item.value, item.label]))
 
-      return {
-        ...team,
-        playerCount: roster.length
-      }
+function useQueryWriter(searchParams, setSearchParams) {
+  return (updates, { resetPage = true, replace = true } = {}) => {
+    const next = new URLSearchParams(searchParams)
+    Object.entries(updates).forEach(([key, config]) => {
+      const value = typeof config === 'object' && config !== null ? config.value : config
+      const fallback = typeof config === 'object' && config !== null ? config.fallback : ''
+      if (!value || value === fallback) next.delete(key)
+      else next.set(key, String(value))
     })
-  }, [db])
+    if (resetPage) next.delete('page')
+    setSearchParams(next, { replace })
+  }
+}
 
+export default function TeamsPage() {
+  const {
+    db,
+    seasonId,
+    withSeason = path => path,
+    favorites,
+    favoriteLimits,
+    toggleTeamFavorite
+  } = useOutletContext()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const directoryRef = useRef(null)
+  const setQuery = useQueryWriter(searchParams, setSearchParams)
+  const queryState = useMemo(() => buildRosterQueryState(searchParams, 'teams'), [searchParams])
+
+  const summary = useMemo(() => getRosterSummary(db), [db])
+  const teams = useMemo(() => getTeamDirectory(db, favorites), [db, favorites])
   const filteredTeams = useMemo(() => {
-    if (!query) return teamsWithStats
-    const q = query.toLowerCase()
+    return sortTeams(filterTeams(teams, queryState), queryState.sort)
+  }, [queryState, teams])
+  const pagination = useMemo(() => {
+    return paginateTeams(filteredTeams, queryState.page, queryState.pageSize)
+  }, [filteredTeams, queryState.page, queryState.pageSize])
 
-    return teamsWithStats.filter(t =>
-      (t.team_name || '').toLowerCase().includes(q) ||
-      (t.team_short_name || '').toLowerCase().includes(q) ||
-      (t.team_id || '').toLowerCase().includes(q)
-    )
-  }, [teamsWithStats, query])
-
-  const summary = useMemo(() => {
-    const totalTeams = teamsWithStats.length
-    const filteredCount = filteredTeams.length
-    const totalPlayers = teamsWithStats.reduce((sum, team) => sum + Number(team.playerCount || 0), 0)
-
-    const largestRosterTeam = [...teamsWithStats]
-      .sort((a, b) => Number(b.playerCount || 0) - Number(a.playerCount || 0))[0]
-
-    return {
-      totalTeams,
-      filteredCount,
-      totalPlayers,
-      largestRoster: largestRosterTeam?.team_short_name || largestRosterTeam?.team_name || '-'
+  useEffect(() => {
+    if (pagination.page !== queryState.page) {
+      setQuery({ page: { value: pagination.page, fallback: 1 } }, { resetPage: false })
     }
-  }, [teamsWithStats, filteredTeams])
+  }, [pagination.page, queryState.page, setQuery])
+
+  const favoriteCount = teams.filter(team => team.isFavorite).length
+  const favoriteLimit = favoriteLimits?.teams || 5
+  const hasFilters = Boolean(queryState.q || queryState.filter !== 'all' || queryState.sort !== 'default')
+  const reset = () => {
+    const next = new URLSearchParams(searchParams)
+    ;['q', 'filter', 'sort', 'page', 'pageSize'].forEach(key => next.delete(key))
+    setSearchParams(next, { replace: true })
+  }
+  const activeFilters = [
+    queryState.q ? {
+      key: 'q',
+      label: `搜索：${queryState.q}`,
+      onRemove: () => setQuery({ q: { value: '', fallback: '' } })
+    } : null,
+    queryState.filter !== 'all' ? {
+      key: 'filter',
+      label: FILTER_LABELS.get(queryState.filter) || queryState.filter,
+      onRemove: () => setQuery({ filter: { value: 'all', fallback: 'all' } })
+    } : null
+  ].filter(Boolean)
 
   return (
     <div className={styles.shell}>
-      <section className={styles.hero}>
-        <div className={styles.heroMain}>
-          <div className={styles.heroKicker}>
-            <span className={styles.heroKickerCn}>战队大厅</span>
-            <span className={styles.heroKickerEn}>TEAMS DIRECTORY</span>
+      <RosterPageHeader
+        stats={[
+          { value: summary.totalTeams, label: '参赛战队' },
+          { value: summary.totalPlayers, label: '参赛选手' },
+          { value: summary.managers, label: '经理岗位' },
+          { value: summary.coaches, label: '教练岗位' }
+        ]}
+      />
+
+      <div className={styles.stickyRosterControls}>
+        <RosterSubnav withSeason={withSeason} />
+
+        <RosterToolbar
+          compact
+          searchValue={queryState.q}
+          searchPlaceholder="搜索战队简称、全称、经理或教练"
+          onSearchChange={value => setQuery({ q: { value, fallback: '' } })}
+          resultLabel={`${filteredTeams.length} 支结果`}
+          actions={(
+            <Link to={withSeason('/following?manage=1')} className={styles.followingInline}>
+              已关注 {favoriteCount} 支 · 管理关注 →
+            </Link>
+          )}
+          fields={[
+            {
+              name: 'filter',
+              label: 'FILTER',
+              value: queryState.filter,
+              onChange: value => setQuery({ filter: { value, fallback: 'all' } }),
+              options: TEAM_FILTERS
+            },
+            {
+              name: 'sort',
+              label: 'SORT',
+              value: queryState.sort,
+              onChange: value => setQuery({ sort: { value, fallback: 'default' } }),
+              options: SORT_OPTIONS
+            }
+          ]}
+          activeFilters={activeFilters}
+          onReset={hasFilters ? reset : null}
+        />
+      </div>
+
+      <section ref={directoryRef} className={styles.directorySection}>
+        <div className={rosterStyles.directoryHead}>
+          <div className={rosterStyles.directoryTitleGroup}>
+            <h2 className={rosterStyles.directoryTitle}>全部战队</h2>
+            <div className={rosterStyles.directorySubtitle}>TEAM DIRECTORY</div>
           </div>
-
-          <h1 className={styles.heroTitle}>联盟注册战队</h1>
-
-          <p className={styles.heroDesc}>
-            薯条杯联盟战队总览入口。浏览各支战队的识别信息、阵容规模与基础档案，并进入战队详情页查看其名单与对局数据。
-          </p>
+          <div className={rosterStyles.directoryCount}>{filteredTeams.length} 支结果</div>
         </div>
 
-        <div className={styles.heroMeta}>
-          <div className={styles.heroMetaItem}>
-            <div className={styles.heroMetaLabel}>
-              <span className={styles.metaCn}>注册战队</span>
-              <span className={styles.metaEn}>TOTAL TEAMS</span>
-            </div>
-            <div className={styles.heroMetaValue}>{summary.totalTeams}</div>
-          </div>
-
-          <div className={styles.heroMetaItem}>
-            <div className={styles.heroMetaLabel}>
-              <span className={styles.metaCn}>当前结果</span>
-              <span className={styles.metaEn}>FILTERED</span>
-            </div>
-            <div className={styles.heroMetaValue}>{summary.filteredCount}</div>
-          </div>
-
-          <div className={styles.heroMetaItem}>
-            <div className={styles.heroMetaLabel}>
-              <span className={styles.metaCn}>在册选手</span>
-              <span className={styles.metaEn}>ROSTERED PLAYERS</span>
-            </div>
-            <div className={styles.heroMetaValue}>{summary.totalPlayers}</div>
-          </div>
-
-          <div className={styles.heroMetaItem}>
-            <div className={styles.heroMetaLabel}>
-              <span className={styles.metaCn}>最大阵容</span>
-              <span className={styles.metaEn}>LARGEST ROSTER</span>
-            </div>
-            <div className={styles.heroMetaValueText}>{summary.largestRoster}</div>
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.toolbar}>
-        <div className={styles.toolbarHead}>
-          <div className={styles.toolbarTitleGroup}>
-            <div className={styles.toolbarTitle}>检索条件</div>
-            <div className={styles.toolbarSubTitle}>TEAM SEARCH</div>
-          </div>
-
-          <button
-            type="button"
-            className={styles.resetBtn}
-            onClick={() => setQuery('')}
-          >
-            重置
-            <span className={styles.resetBtnEn}>RESET</span>
-          </button>
-        </div>
-
-        <div className={styles.toolbarMain}>
-          <div className={`${styles.field} ${styles.searchField}`}>
-            <label className={styles.label}>
-              <span className={styles.labelCn}>检索</span>
-              <span className={styles.labelEn}>SEARCH</span>
-            </label>
-
-            <input
-              className={styles.input}
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="输入战队名 / 简称 / 编号..."
-            />
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.gridSection}>
-        {filteredTeams.length > 0 ? (
-          <div className={styles.grid}>
-            {filteredTeams.map(team => (
-              <Link key={team.team_id} to={`/teams/${team.team_id}`} className={styles.teamCard}>
-                <div className={styles.cardGlow}></div>
-
-                <div className={styles.cardTop}>
-                  <div className={styles.teamCodeBlock}>
-                    <div className={styles.teamShortName}>{team.team_short_name || team.team_id}</div>
-                    <div className={styles.teamIdBox}>{team.team_id}</div>
-                  </div>
-
-                  <div className={styles.arrow}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-
-                <div className={styles.cardMiddle}>
-                  <div className={styles.teamName} title={team.team_name || '未命名战队'}>
-                    {team.team_name || '未命名战队'}
-                  </div>
-                </div>
-
-                <div className={styles.cardBottom}>
-                  <div className={styles.infoRow}>
-                    <span className={styles.infoLabel}>ROSTER</span>
-                    <span className={styles.infoValue}>{team.playerCount}</span>
-                  </div>
-
-                  <div className={styles.infoDivider}></div>
-
-                  <div className={styles.infoRow}>
-                    <span className={styles.infoLabel}>ENTRY</span>
-                    <span className={styles.infoValueText}>查看详情</span>
-                  </div>
-                </div>
-              </Link>
+        {pagination.items.length ? (
+          <div className={styles.teamGrid}>
+            {pagination.items.map(team => (
+              <TeamDirectoryCard
+                key={team.routeId}
+                team={team}
+                seasonId={seasonId}
+                withSeason={withSeason}
+                onToggleFavorite={toggleTeamFavorite}
+                favoriteDisabled={!team.isFavorite && favoriteCount >= favoriteLimit}
+              />
             ))}
           </div>
         ) : (
-          <div className={styles.emptyState}>
-            <span className={styles.emptyCn}>未找到匹配的战队</span>
-            <span className={styles.emptyEn}>NO TEAMS FOUND</span>
-          </div>
+          <RosterEmptyState title="未找到符合条件的战队。" onReset={reset} />
         )}
       </section>
+
+      <RosterPagination
+        pagination={pagination}
+        pageSizeOptions={TEAM_PAGE_SIZES}
+        scrollTargetRef={directoryRef}
+        onPageChange={page => setQuery({ page: { value: page, fallback: 1 } }, { resetPage: false, replace: false })}
+        onPageSizeChange={pageSize => setQuery({ pageSize: { value: pageSize, fallback: 12 } })}
+      />
     </div>
   )
 }

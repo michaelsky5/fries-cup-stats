@@ -1,0 +1,1243 @@
+.pageHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1.16fr) minmax(360px, 0.84fr);
+  gap: 28px;
+  align-items: stretch;
+  padding: 32px;
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+  color: var(--portal-ink);
+}
+
+.pageHeaderMain {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+
+.sectionLabel {
+  width: fit-content;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  background: var(--portal-black);
+  color: var(--portal-yellow);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 1.5px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.pageTitle {
+  margin: 0;
+  color: var(--portal-ink);
+  font-size: clamp(44px, 5vw, 72px);
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 0.95;
+}
+
+.pageDesc {
+  max-width: 680px;
+  margin: 0;
+  color: var(--portal-ink-soft);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+}
+
+.summaryItem {
+  min-height: 104px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px;
+  border-right: 1px solid var(--portal-border);
+  border-bottom: 1px solid var(--portal-border);
+}
+
+.summaryItem:nth-child(2n) {
+  border-right: 0;
+}
+
+.summaryItem:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.summaryValue {
+  color: var(--portal-ink);
+  font-size: 38px;
+  font-weight: 950;
+  line-height: 0.95;
+}
+
+.summaryLabel {
+  color: var(--portal-muted);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.subnav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+}
+
+.subnavLink {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 0 18px;
+  border-right: 1px solid var(--portal-border);
+  color: var(--portal-ink);
+  font-size: 14px;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.subnavLink:last-child {
+  border-right: 0;
+}
+
+.subnavLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subnavCode {
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+}
+
+.subnavActive {
+  background: var(--portal-yellow);
+}
+
+.subnavActive .subnavCode {
+  color: var(--portal-ink);
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+}
+
+.toolbarCompact {
+  gap: 10px;
+  padding: 10px;
+}
+
+.compactToolbarRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.compactToolbarRowWithLead {
+  grid-template-columns: minmax(270px, 0.52fr) minmax(0, 1fr) auto;
+}
+
+.toolbarCompact .formGrid {
+  grid-template-columns: minmax(240px, 1.35fr) repeat(var(--roster-toolbar-fields, 2), minmax(156px, 0.62fr));
+  gap: 10px;
+}
+
+.toolbarCompact .field {
+  gap: 5px;
+}
+
+.toolbarCompact .fieldLabel {
+  font-size: 10px;
+}
+
+.toolbarCompact .input,
+.toolbarCompact .select {
+  height: 36px;
+}
+
+.toolbarCompact .toolbarActions {
+  align-self: end;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.toolbarCompact .secondaryAction,
+.toolbarCompact .primaryAction {
+  min-height: 36px;
+  padding: 0 10px;
+}
+
+.toolbarCompact .resultPill {
+  min-height: 32px;
+}
+
+.toolbarCompact .advancedGrid,
+.toolbarCompact .activeFilters {
+  padding-top: 10px;
+}
+
+.toolbarTop {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--portal-border);
+}
+
+.toolbarTitleGroup {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toolbarTitle {
+  color: var(--portal-ink);
+  font-size: 18px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.toolbarSubtitle {
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.toolbarActions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.secondaryAction,
+.primaryAction {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border: 2px solid var(--portal-border);
+  font-size: 12px;
+  font-weight: 950;
+  line-height: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.secondaryAction {
+  background: var(--portal-surface);
+  color: var(--portal-ink);
+}
+
+.secondaryActionActive,
+.secondaryAction:hover {
+  background: var(--portal-black);
+  color: var(--portal-yellow);
+}
+
+.primaryAction {
+  background: var(--portal-yellow);
+  color: var(--portal-ink);
+}
+
+.resultPill {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  background: var(--portal-black);
+  color: var(--fc-white) !important;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1.4fr) repeat(var(--roster-toolbar-fields, 2), minmax(170px, 0.7fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.advancedGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--portal-border);
+}
+
+.field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fieldLabel {
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.input,
+.select {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+  border-radius: 0;
+  color: var(--portal-ink);
+  font-size: 13px;
+  font-weight: 800;
+  outline: 0;
+}
+
+.input:focus,
+.select:focus,
+.pageSizeSelect:focus {
+  border-color: var(--portal-yellow);
+  outline: 2px solid var(--portal-border);
+  outline-offset: 0;
+}
+
+.input::placeholder {
+  color: var(--portal-faint);
+}
+
+.activeFilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--portal-border);
+}
+
+.filterChip {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 9px;
+  background: var(--portal-yellow);
+  border: 2px solid var(--portal-border);
+  color: var(--portal-ink);
+  font-size: 11px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.clearAllLink {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--portal-ink);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.directoryHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 0 2px;
+}
+
+.directoryTitleGroup {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.directoryTitle {
+  margin: 0;
+  color: var(--portal-ink);
+  font-size: 28px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.directorySubtitle {
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.directoryCount {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
+  background: var(--portal-black);
+  color: var(--fc-white);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.teamCard,
+.playerCard {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+  color: var(--portal-ink);
+}
+
+.teamCard {
+  min-height: 344px;
+}
+
+.teamCard::before,
+.playerCard::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 84px;
+  height: 6px;
+  background: var(--portal-yellow);
+  content: "";
+  opacity: 0;
+  z-index: 3;
+}
+
+.playerCard::before {
+  background: var(--roster-role-color, var(--portal-yellow));
+  opacity: 1;
+}
+
+.teamCardFavorite::before {
+  opacity: 1;
+}
+
+.cardLinkOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  cursor: pointer;
+}
+
+.teamCard:focus-within,
+.playerCard:focus-within,
+.staffItem:focus-within,
+.staffItem:focus {
+  outline: 3px solid var(--portal-yellow);
+  outline-offset: 0;
+}
+
+.teamBrandArea {
+  position: relative;
+  min-height: 142px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: var(--portal-black);
+}
+
+.teamLogo {
+  width: 104px;
+  height: 104px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--portal-yellow);
+}
+
+.teamLogo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.teamLogo b {
+  color: var(--portal-yellow);
+  font-size: 28px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.favoriteBadge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+  min-height: 22px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  background: var(--portal-yellow);
+  color: var(--portal-ink);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+}
+
+.favoriteButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+  color: var(--portal-ink);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.favoriteButtonActive {
+  background: var(--portal-yellow);
+}
+
+.favoriteButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.teamBody,
+.playerBody {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+}
+
+.teamIdentityRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.teamNameBlock {
+  min-width: 0;
+}
+
+.teamShortName {
+  color: var(--portal-ink);
+  font-size: 32px;
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 0.95;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teamFullName {
+  margin-top: 7px;
+  color: var(--portal-ink-soft);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rosterSplit {
+  position: relative;
+  min-width: 88px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 8px;
+  align-items: end;
+  padding: 8px;
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+}
+
+.rosterTotal {
+  color: var(--portal-ink);
+  font-size: 34px;
+  font-weight: 950;
+  line-height: 0.86;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.rosterSplitLabel {
+  color: var(--portal-muted);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+}
+
+.roleSplitRow {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 4px -8px -8px;
+  border-top: 1px solid var(--portal-border);
+}
+
+.roleSplitRow b {
+  min-height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-right: 1px solid var(--portal-border);
+  font-size: 13px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.roleSplitRow b:last-child {
+  border-right: 0;
+}
+
+.roleTank {
+  color: #3978C5;
+}
+
+.roleDps {
+  color: #CC4944;
+}
+
+.roleSupport {
+  color: #3F9369;
+}
+
+.metaLabel {
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.teamStaffGrid {
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.staffBlock {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.staffBlock strong,
+.staffBlock em {
+  min-width: 0;
+  overflow: hidden;
+  font-style: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staffBlock strong {
+  color: var(--portal-ink);
+  font-size: 13px;
+  font-weight: 950;
+  line-height: 1.15;
+}
+
+.staffBlock em {
+  color: var(--portal-muted);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.cardTextLink {
+  position: relative;
+  z-index: 4;
+  width: fit-content;
+  margin-top: auto;
+  color: var(--portal-ink);
+  font-size: 13px;
+  font-weight: 950;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.teamCard:hover .cardTextLink,
+.playerCard:hover .cardTextLink,
+.staffItem:hover .staffTeamLink {
+  color: var(--portal-yellow);
+}
+
+.playerCard {
+  min-height: 236px;
+}
+
+.playerBody {
+  min-height: 236px;
+  gap: 14px;
+  justify-content: space-between;
+}
+
+.playerHeaderRow {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  padding-right: 50px;
+}
+
+.avatarBox {
+  width: 76px;
+  height: 76px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--portal-black);
+  border: 2px solid var(--portal-border);
+  color: var(--portal-yellow);
+}
+
+.avatarBox img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarInitials {
+  font-size: 25px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.playerMain {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 1px;
+}
+
+.playerName {
+  color: var(--portal-ink);
+  font-size: 24px;
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1.03;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playerBattleTag {
+  color: var(--portal-muted);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playerMetaStrip {
+  display: inline-flex;
+  gap: 0;
+  align-items: stretch;
+  width: fit-content;
+  max-width: 100%;
+  border: 2px solid var(--portal-border);
+  margin-top: 4px;
+}
+
+.teamTag,
+.roleTag,
+.flexTag {
+  min-width: 52px;
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--portal-border);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teamTag {
+  background: var(--portal-black);
+  color: var(--portal-white, #ffffff) !important;
+  -webkit-text-fill-color: var(--portal-white, #ffffff);
+  max-width: 104px;
+}
+
+.roleTag {
+  background: var(--roster-role-color, var(--portal-black));
+  color: var(--portal-white, #ffffff) !important;
+  -webkit-text-fill-color: var(--portal-white, #ffffff);
+}
+
+.flexTag {
+  background: var(--portal-surface);
+  color: var(--portal-ink);
+}
+
+.playerMetaStrip span:last-child {
+  border-right: 0;
+}
+
+.teamTagText {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--portal-white, #ffffff) !important;
+  -webkit-text-fill-color: var(--portal-white, #ffffff);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playerHeroPanel {
+  min-height: 44px;
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: 0;
+  align-items: center;
+  padding: 0;
+  border: 1px solid var(--portal-border-soft);
+  border-left: 6px solid var(--roster-role-color, var(--portal-border));
+  background: var(--portal-surface-soft);
+}
+
+.playerHeroPanel span {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border-right: 1px solid var(--portal-border-soft);
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.playerHeroPanel strong {
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 12px;
+  color: var(--portal-ink);
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staffGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+}
+
+.staffItem {
+  position: relative;
+  min-width: 0;
+  min-height: 132px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: stretch;
+  padding: 14px;
+  background: var(--portal-surface);
+  border-right: 1px solid var(--portal-border);
+  border-bottom: 1px solid var(--portal-border);
+  color: var(--portal-ink);
+}
+
+.staffItem:nth-child(4n) {
+  border-right: 0;
+}
+
+.staffName {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.staffPrimary {
+  color: var(--portal-ink);
+  font-size: 17px;
+  font-weight: 950;
+  line-height: 1.08;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staffSecondary {
+  color: var(--portal-muted);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staffMetaGrid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  padding-top: 10px;
+  border-top: 1px solid var(--portal-border-soft);
+}
+
+.staffMetaBlock {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.staffMetaLabel {
+  color: var(--portal-muted);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.staffMetaBlock strong {
+  color: var(--portal-ink);
+  font-size: 13px;
+  font-weight: 950;
+  line-height: 1.2;
+}
+
+.staffMetaBlock em {
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staffTeamLink {
+  position: relative;
+  z-index: 2;
+  width: fit-content;
+  justify-self: start;
+  margin-top: 0;
+  color: var(--portal-ink);
+  font-size: 12px;
+  font-weight: 950;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.pagination {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(0, 1.6fr) minmax(140px, 0.4fr);
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+}
+
+.paginationRange {
+  color: var(--portal-ink);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pageNumbers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.pageButton,
+.pageNumber {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+  color: var(--portal-ink);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.pageButton {
+  padding: 0 12px;
+}
+
+.pageNumber {
+  width: 34px;
+  padding: 0;
+}
+
+.pageButton:disabled {
+  opacity: 0.42;
+}
+
+.pageNumberActive {
+  background: var(--portal-yellow);
+}
+
+.pageEllipsis {
+  min-width: 24px;
+  color: var(--portal-muted);
+  font-size: 16px;
+  font-weight: 950;
+  text-align: center;
+}
+
+.pageSizeControl {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pageSizeSelect {
+  height: 34px;
+  min-width: 78px;
+  padding: 0 8px;
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+  border-radius: 0;
+  color: var(--portal-ink);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.emptyState {
+  min-height: 168px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 28px;
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
+  color: var(--portal-ink);
+  text-align: center;
+}
+
+.emptyTitle {
+  color: var(--portal-ink);
+  font-size: 22px;
+  font-weight: 950;
+  line-height: 1.1;
+}
+
+.emptyAction {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  background: var(--portal-yellow);
+  border: 2px solid var(--portal-border);
+  color: var(--portal-ink);
+  font-size: 12px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+@media (max-width: 1180px) {
+  .pageHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .compactToolbarRow {
+    grid-template-columns: 1fr;
+  }
+
+  .compactToolbarRowWithLead {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbarCompact .toolbarActions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .formGrid,
+  .advancedGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pagination {
+    grid-template-columns: 1fr;
+  }
+
+  .paginationControls,
+  .pageSizeControl {
+    justify-content: flex-start;
+  }
+
+  .staffItem {
+    grid-template-columns: none;
+  }
+
+  .staffGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .staffItem:nth-child(4n) {
+    border-right: 1px solid var(--portal-border);
+  }
+
+  .staffItem:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .staffMetaGrid {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .pageHeader,
+  .toolbar {
+    padding: 18px;
+  }
+
+  .summaryGrid,
+  .subnav,
+  .formGrid,
+  .advancedGrid,
+  .staffGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryItem,
+  .summaryItem:nth-child(2n),
+  .summaryItem:nth-last-child(-n + 2),
+  .subnavLink,
+  .staffItem,
+  .staffItem:nth-child(2n) {
+    border-right: 0;
+    border-bottom: 1px solid var(--portal-border);
+  }
+
+  .summaryItem:last-child,
+  .subnavLink:last-child,
+  .staffItem:last-child {
+    border-bottom: 0;
+  }
+
+  .staffItem {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .staffTeamLink {
+    justify-self: start;
+  }
+
+  .toolbarTop,
+  .directoryHead {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .paginationControls {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

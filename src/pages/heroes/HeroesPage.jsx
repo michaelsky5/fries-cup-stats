@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
+import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
 import { safeArr } from '../../lib/selectors.js'
 import styles from './HeroesPage.module.css'
 
@@ -42,7 +43,7 @@ function getRoleLabel(role) {
 }
 
 export default function HeroesPage() {
-  const { db } = useOutletContext()
+  const { db, withSeason = path => path } = useOutletContext()
   const [activeRole, setActiveRole] = useState('ALL')
 
   useEffect(() => {
@@ -116,6 +117,7 @@ export default function HeroesPage() {
 
   return (
     <div className={styles.shell}>
+      <DatabaseSubnav />
       <section className={styles.heroSection}>
         <div className={styles.heroMain}>
           <div className={styles.heroKicker}>
@@ -249,7 +251,7 @@ export default function HeroesPage() {
                       <span className={styles.bestPlayerEn}>BEST SPECIALIST</span>
                     </div>
 
-                    <Link to={`/players/${encodeURIComponent(hero.bestPlayer.id)}`} className={styles.bestPlayerLink}>
+                    <Link to={withSeason(`/players/${encodeURIComponent(hero.bestPlayer.id)}`)} className={styles.bestPlayerLink}>
                       <span className={styles.bpTeam}>[{hero.bestPlayer.team}]</span>
                       <span className={styles.bpName}>{hero.bestPlayer.name}</span>
                       <span className={styles.bpTime}>{formatTime(hero.bestPlayer.time)}</span>

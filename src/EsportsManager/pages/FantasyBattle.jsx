@@ -41,7 +41,10 @@ const TRAIT_ICONS = ['💎', '🩸', '🗡️', '🥊', '👼', '🔥', '🛡️
 
 const ROLE_SLOTS = ['TANK', 'DPS-1', 'DPS-2', 'SUP-1', 'SUP-2']
 const ENEMY_LABELS = ['FRONTLINE', 'DAMAGE-1', 'DAMAGE-2', 'MAIN SUPPORT', 'FLEX SUPPORT']
+const ROLE_ORDER = { TANK: 1, DPS: 2, SUP: 3 }
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+const getMomentumJitter = () => (Math.random() - 0.5) * 150
+const pickRandomMap = () => MAP_POOL[Math.floor(Math.random() * MAP_POOL.length)]
 
 function getHeroAvatarUrl(role, heroName) {
   if (!heroName) return ''
@@ -65,7 +68,7 @@ function getHeroAvatarUrl(role, heroName) {
     .toLowerCase()
     .replace(/[úü]/g, 'u')
     .replace(/ö/g, 'o')
-    .replace(/[\.\s:\-]/g, '_') 
+    .replace(/[.\s:-]/g, '_')
     .replace(/_+/g, '_'); 
 
   return `/heroes/${dir}/${cleanName}.png`
@@ -151,9 +154,8 @@ export default function FantasyBattle() {
     logEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [logs, phase])
 
-  const roleOrder = { 'TANK': 1, 'DPS': 2, 'SUP': 3 }
   const sortedRoster = useMemo(() => {
-    return [...myRoster].sort((a, b) => roleOrder[a.role] - roleOrder[b.role])
+    return [...myRoster].sort((a, b) => ROLE_ORDER[a.role] - ROLE_ORDER[b.role])
   }, [myRoster])
 
   const phaseMeta = useMemo(() => {
@@ -233,7 +235,7 @@ export default function FantasyBattle() {
     setLogs(prev => [...prev, `--- 第 ${currentMapNum} 局 ---`, `[BP环节] 等待 ${pickerName} 选择地图...`])
     await sleep(1200)
 
-    const selectedMap = MAP_POOL[Math.floor(Math.random() * MAP_POOL.length)]
+    const selectedMap = pickRandomMap()
     setActiveMap(selectedMap)
     setStageOverlay({ title: 'MAP LOCKED', sub: `${selectedMap.name} // ${selectedMap.type}` })
     setLogs(prev => [...prev, `[BP环节] 锁定了地图：【${selectedMap.name}】`])
@@ -294,8 +296,8 @@ export default function FantasyBattle() {
       if (log.includes('致命失误')) myDelta -= 1000
       if (log.includes('赞助商')) myDelta += 400
 
-      myDelta += (Math.random() - 0.5) * 150
-      bossDelta += (Math.random() - 0.5) * 150
+      myDelta += getMomentumJitter()
+      bossDelta += getMomentumJitter()
 
       currentMyPwr = Math.max(100, currentMyPwr + myDelta)
       currentBossPwr = Math.max(100, currentBossPwr + bossDelta)

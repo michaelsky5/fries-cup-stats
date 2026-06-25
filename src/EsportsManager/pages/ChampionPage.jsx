@@ -6,6 +6,8 @@ import styles from './ChampionPage.module.css'
 import { getRunState } from '../engine/runEngine'
 import { calculateTeamPower } from '../engine/managerEngine'
 
+const ROLE_ORDER = { TANK: 1, DPS: 2, SUP: 3 }
+
 function getHeroAvatarUrl(role, heroName) {
   if (!heroName) return ''
   const dir = role === 'DPS' ? 'damage' : role === 'SUP' ? 'support' : 'tank'
@@ -28,7 +30,7 @@ function getHeroAvatarUrl(role, heroName) {
     .toLowerCase()
     .replace(/[úü]/g, 'u')
     .replace(/ö/g, 'o')
-    .replace(/[\.\s:\-]/g, '_') 
+    .replace(/[.\s:-]/g, '_')
     .replace(/_+/g, '_'); 
 
   return `/heroes/${dir}/${cleanName}.png`
@@ -63,10 +65,9 @@ export default function ChampionPage() {
     setTeamData(calculateTeamPower(state.roster))
   }, [navigate, db])
 
-  const roleOrder = { TANK: 1, DPS: 2, SUP: 3 }
   const sortedRoster = useMemo(() => {
     if (!runState) return []
-    return [...runState.roster].sort((a, b) => roleOrder[a.role] - roleOrder[b.role])
+    return [...runState.roster].sort((a, b) => ROLE_ORDER[a.role] - ROLE_ORDER[b.role])
   }, [runState])
 
   const awakenedCount = useMemo(() => sortedRoster.filter(p => p.isAwakened).length, [sortedRoster])
@@ -90,7 +91,7 @@ export default function ChampionPage() {
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
-    } catch (err) {
+    } catch {
       alert('海报生成失败，请检查浏览器权限！')
     } finally {
       setIsExporting(false)

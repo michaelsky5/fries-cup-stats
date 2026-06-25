@@ -4162,8 +4162,8 @@
    ========================================================= */
 
 .fullscreen {
-  --font-review-sans: "FCA Sans", "HarmonyOS Sans SC", "HarmonyOS Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
-  --font-mono: "FCA Mono", "JetBrains Mono", "Consolas", "HarmonyOS Sans SC", monospace;
+  --font-review-sans: "HarmonyOS Sans SC", "HarmonyOS Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "HarmonyOS Sans SC", "HarmonyOS Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
   font-family: var(--font-review-sans);
 }
 

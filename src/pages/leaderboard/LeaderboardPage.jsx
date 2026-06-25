@@ -1,221 +1,419 @@
-import { useMemo, useState } from 'react'
-import { useOutletContext } from 'react-router-dom'
-import LeaderboardFilters from '../../components/leaderboard/LeaderboardFilters.jsx'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
+import DataMvpPanel from '../../components/leaderboard/DataMvpPanel.jsx'
+import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
+import LeaderboardHeader from '../../components/leaderboard/LeaderboardHeader.jsx'
 import LeaderboardTable from '../../components/leaderboard/LeaderboardTable.jsx'
-import { filterLeaderboard, getLeaderboardRows, safeArr, sortLeaderboard } from '../../lib/selectors.js'
+import LeaderboardTabs from '../../components/leaderboard/LeaderboardTabs.jsx'
+import LeaderboardToolbar from '../../components/leaderboard/LeaderboardToolbar.jsx'
+import MetricModeTabs from '../../components/leaderboard/MetricModeTabs.jsx'
+import PlayerCompareBar from '../../components/leaderboard/PlayerCompareBar.jsx'
+import PlayerComparePanel from '../../components/leaderboard/PlayerComparePanel.jsx'
+import RoleLeaderCard from '../../components/leaderboard/RoleLeaderCard.jsx'
+import {
+  DEFAULT_VISIBLE_COLUMNS,
+  LEADERBOARD_COLUMNS,
+  LEADERBOARD_PAGE_SIZE,
+  LEADERBOARD_PAGE_SIZE_OPTIONS,
+  METRIC_MODES,
+  filterLeaderboardEntries,
+  getLeaderboardEntries,
+  getLeaderboardHighlights,
+  getLeaderboardOptions,
+  getLeaderboardSummary,
+  getRankingMinTimeMins,
+  getTabRole,
+  getValidMetricMode,
+  getValidTab,
+  normalizeLeaderboardRole,
+  paginateLeaderboardEntries,
+  sortLeaderboardEntries
+} from '../../lib/leaderboardSelectors.js'
+import { ROLE_ORDER } from '../../lib/leaderboardScoring.js'
 import styles from './LeaderboardPage.module.css'
 
-function getSortLabel(key) {
-  const map = {
-    rank: '排名',
-    display_name: '选手名称',
-    team_name: '战队名称',
-    role: '位置',
-    raw_time_mins: '存活时长',
-    maps_played: '参与地图数',
-    avg_elim: '击杀 /10',
-    avg_ast: '助攻 /10',
-    avg_dth: '死亡 /10',
-    avg_dmg: '伤害 /10',
-    avg_heal: '治疗 /10',
-    avg_block: '阻挡 /10',
-    most_played_hero: '常用英雄'
-  }
-  return map[key] || key.toUpperCase()
+const VALID_SORT_KEYS = new Set(['rank', 'player', 'team', 'role', 'maps', 'time', 'score', 'elim', 'ast', 'dth', 'dmg', 'heal', 'block'])
+const FILTER_KEYS = new Set(['q', 'team', 'role', 'following', 'hero', 'minTime', 'insufficient'])
+
+function getModeLabel(mode) {
+  return METRIC_MODES.find(item => item.id === mode)?.en || 'PER 10'
 }
 
-function getDirectionLabel(direction) {
-  return direction === 'desc' ? '降序' : '升序'
+function parsePage(value) {
+  const num = Number(value)
+  return Number.isInteger(num) && num > 0 ? num : 1
+}
+
+function parsePageSize(value) {
+  const num = Number(value)
+  return LEADERBOARD_PAGE_SIZE_OPTIONS.includes(num) ? num : LEADERBOARD_PAGE_SIZE
+}
+
+function parseVisibleColumns(value) {
+  if (!value) return DEFAULT_VISIBLE_COLUMNS
+  const valid = new Set(LEADERBOARD_COLUMNS.map(column => column.id))
+  const parsed = String(value)
+    .split(',')
+    .map(item => item.trim())
+    .filter(item => valid.has(item))
+
+  return parsed.length ? parsed : DEFAULT_VISIBLE_COLUMNS
+}
+
+function getDefaultDirection(sortKey) {
+  if (sortKey === 'rank' || sortKey === 'player' || sortKey === 'team' || sortKey === 'role' || sortKey === 'dth') {
+    return 'asc'
+  }
+  return 'desc'
 }
 
 export default function LeaderboardPage() {
-  const { db } = useOutletContext()
+  const {
+    db,
+    season,
+    locale = 'zh-CN',
+    updatedAtText = '',
+    withSeason = path => path,
+    isFavoritePlayer,
+    togglePlayerFavorite
+  } = useOutletContext()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const [advancedOpen, setAdvancedOpen] = useState(false)
+  const [selectedCompareKeys, setSelectedCompareKeys] = useState([])
+  const [compareOpen, setCompareOpen] = useState(false)
+  const [compareWarning, setCompareWarning] = useState('')
+  const tableTopRef = useRef(null)
+  const shouldScrollTableRef = useRef(false)
+  const compareWarningTimerRef = useRef(null)
 
-  const [filters, setFilters] = useState({
-    role: 'ALL',
-    team: 'ALL',
-    minTime: 30,
-    query: ''
-  })
+  const activeTab = getValidTab(searchParams.get('tab'), searchParams.get('role'))
+  const mode = getValidMetricMode(searchParams.get('mode'))
+  const sortKey = VALID_SORT_KEYS.has(searchParams.get('sort')) ? searchParams.get('sort') : 'score'
+  const direction = searchParams.get('dir') === 'asc' ? 'asc' : 'desc'
+  const page = parsePage(searchParams.get('page'))
+  const pageSize = parsePageSize(searchParams.get('pageSize'))
+  const visibleColumns = parseVisibleColumns(searchParams.get('cols'))
+  const minTimeMins = getRankingMinTimeMins(season, db)
+  const activeRole = getTabRole(activeTab)
 
-  const [sortKey, setSortKey] = useState('raw_time_mins')
-  const [direction, setDirection] = useState('desc')
+  const filters = useMemo(() => ({
+    tab: activeTab,
+    role: activeRole,
+    query: searchParams.get('q') || '',
+    team: searchParams.get('team') || 'ALL',
+    hero: searchParams.get('hero') || 'ALL',
+    following: searchParams.get('following') === '1',
+    showInsufficient: searchParams.get('insufficient') !== '0',
+    minTimeMins: searchParams.get('minTime') || ''
+  }), [activeRole, activeTab, searchParams])
 
-  const rows = useMemo(() => getLeaderboardRows(db), [db])
-  const filteredRows = useMemo(() => filterLeaderboard(rows, filters), [rows, filters])
-  const sortedRows = useMemo(() => sortLeaderboard(filteredRows, sortKey, direction), [filteredRows, sortKey, direction])
+  const updateQuery = (patch, { resetPage = true } = {}) => {
+    const next = new URLSearchParams(searchParams)
 
-  const teamOptions = useMemo(() => (
-    ['ALL', ...safeArr(db?.teams).map(team => ({
-      value: team.team_id,
-      label: team.team_short_name || team.team_name || team.team_id
-    }))]
-  ), [db])
+    Object.entries(patch).forEach(([key, value]) => {
+      if (value === null || value === undefined || value === '' || value === 'ALL' || value === false) {
+        next.delete(key)
+        return
+      }
 
-  const summary = useMemo(() => {
-    // 🌟 修复核心：使用 Set 去重 player_id 从而得到真实的【人数】
-    const uniquePlayersInDB = new Set(safeArr(db?.players).map(p => p.player_id)).size || 0
-    const uniqueRankedPlayers = new Set(sortedRows.map(r => r.player_id)).size || 0
+      next.set(key, String(value))
+    })
 
-    // 注意：地图数不需要去重，但时间需要防止同一场比赛同一个选手双修职责被记两次时间（这里以最简化的方式仅汇总有效条目的时间）
-    const totalMinutes = sortedRows.reduce((sum, row) => sum + Number(row.raw_time_mins || 0), 0)
-    const totalMaps = sortedRows.reduce((sum, row) => sum + Number(row.maps_played || 0), 0)
-
-    return {
-      totalPlayers: uniquePlayersInDB, // 改回读取纯净的玩家基础库总数
-      rankedPlayers: uniqueRankedPlayers, // 用去重后的数量
-      totalMinutes,
-      totalMaps
+    if (resetPage && Object.keys(patch).some(key => FILTER_KEYS.has(key) || key === 'tab' || key === 'mode')) {
+      next.delete('page')
     }
-  }, [db, sortedRows])
 
-  const requestSort = key => {
-    if (sortKey === key) {
-      setDirection(prev => prev === 'desc' ? 'asc' : 'desc')
+    setSearchParams(next)
+  }
+
+  const entries = useMemo(() => getLeaderboardEntries(db, season), [db, season])
+  const summary = useMemo(() => getLeaderboardSummary(entries, minTimeMins, db), [entries, minTimeMins, db])
+  const highlights = useMemo(() => getLeaderboardHighlights(entries), [entries])
+  const options = useMemo(() => getLeaderboardOptions(entries, db), [entries, db])
+
+  const filteredRows = useMemo(() => (
+    filterLeaderboardEntries(entries, filters, isFavoritePlayer)
+  ), [entries, filters, isFavoritePlayer])
+
+  const sortedRows = useMemo(() => (
+    sortLeaderboardEntries(filteredRows, sortKey, direction, mode)
+  ), [filteredRows, sortKey, direction, mode])
+
+  const pagination = useMemo(() => (
+    paginateLeaderboardEntries(sortedRows, page, pageSize)
+  ), [sortedRows, page, pageSize])
+
+  const entryByKey = useMemo(() => {
+    const map = new Map()
+    entries.forEach(entry => map.set(entry.entryKey, entry))
+    return map
+  }, [entries])
+
+  const selectedCompareEntries = selectedCompareKeys
+    .map(key => entryByKey.get(key))
+    .filter(Boolean)
+  const selectedCompareKeySet = useMemo(
+    () => new Set(selectedCompareEntries.map(entry => entry.entryKey)),
+    [selectedCompareEntries]
+  )
+  const compareRole = selectedCompareEntries[0]?.role || ''
+
+  const roleCounts = {
+    overall: summary.qualifiedEntries,
+    ...summary.roleCounts
+  }
+  const hasStatEntries = entries.length > 0
+
+  useEffect(() => {
+    return () => {
+      window.clearTimeout(compareWarningTimerRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!shouldScrollTableRef.current) return
+    shouldScrollTableRef.current = false
+
+    window.requestAnimationFrame(() => {
+      tableTopRef.current?.scrollIntoView({ block: 'start' })
+    })
+  }, [pagination.page])
+
+  const handleTabChange = tab => {
+    const role = getTabRole(tab)
+    updateQuery({
+      tab,
+      role: role === 'ALL' ? null : role
+    })
+  }
+
+  const handleFilterChange = patch => {
+    if (Object.prototype.hasOwnProperty.call(patch, 'role')) {
+      const role = normalizeLeaderboardRole(patch.role)
+      if (!role) {
+        updateQuery({ tab: 'overall', role: null })
+        return
+      }
+      const roleTab = role === 'TANK' ? 'tank' : role === 'DPS' ? 'dps' : 'support'
+      updateQuery({ tab: roleTab, role })
       return
     }
-    setSortKey(key)
-    setDirection('desc')
+
+    const queryPatch = {}
+
+    if (Object.prototype.hasOwnProperty.call(patch, 'query')) queryPatch.q = patch.query
+    if (Object.prototype.hasOwnProperty.call(patch, 'team')) queryPatch.team = patch.team
+    if (Object.prototype.hasOwnProperty.call(patch, 'hero')) queryPatch.hero = patch.hero
+    if (Object.prototype.hasOwnProperty.call(patch, 'following')) queryPatch.following = patch.following ? '1' : null
+    if (Object.prototype.hasOwnProperty.call(patch, 'showInsufficient')) queryPatch.insufficient = patch.showInsufficient ? null : '0'
+    if (Object.prototype.hasOwnProperty.call(patch, 'minTimeMins')) queryPatch.minTime = patch.minTimeMins
+
+    updateQuery(queryPatch)
+  }
+
+  const handleReset = () => {
+    updateQuery({
+      q: null,
+      team: null,
+      hero: null,
+      following: null,
+      minTime: null,
+      insufficient: null
+    })
+  }
+
+  const handleSort = key => {
+    const nextDirection = sortKey === key
+      ? direction === 'asc' ? 'desc' : 'asc'
+      : getDefaultDirection(key)
+
+    updateQuery({ sort: key === 'score' ? null : key, dir: nextDirection === 'desc' ? null : nextDirection }, { resetPage: false })
+  }
+
+  const handleColumnsChange = columns => {
+    const safeColumns = columns.length ? columns : DEFAULT_VISIBLE_COLUMNS
+    const isDefault = safeColumns.join(',') === DEFAULT_VISIBLE_COLUMNS.join(',')
+    updateQuery({ cols: isDefault ? null : safeColumns.join(',') }, { resetPage: false })
+  }
+
+  const handleModeChange = nextMode => {
+    updateQuery({ mode: nextMode === 'per10' ? null : nextMode })
+  }
+
+  const handleNavigate = entry => {
+    navigate(withSeason(`/players/${encodeURIComponent(entry.player_id)}?role=${entry.role}`))
+  }
+
+  const showCompareWarning = message => {
+    setCompareWarning(message)
+    window.clearTimeout(compareWarningTimerRef.current)
+    compareWarningTimerRef.current = window.setTimeout(() => setCompareWarning(''), 2400)
+  }
+
+  const handleToggleCompare = (entry, checked) => {
+    if (!checked) {
+      setSelectedCompareKeys(current => current.filter(key => key !== entry.entryKey))
+      return
+    }
+
+    if (compareRole && compareRole !== entry.role) {
+      showCompareWarning('仅支持同职责选手比较')
+      return
+    }
+
+    if (selectedCompareEntries.length >= 4) {
+      showCompareWarning('最多选择 4 名选手')
+      return
+    }
+
+    setSelectedCompareKeys(current => current.includes(entry.entryKey) ? current : [...current, entry.entryKey])
+  }
+
+  const handleOpenCompare = () => {
+    if (selectedCompareEntries.length < 2) {
+      showCompareWarning('至少选择 2 名同职责选手')
+      return
+    }
+    setCompareOpen(true)
+  }
+
+  const handlePageChange = nextPage => {
+    shouldScrollTableRef.current = true
+    updateQuery({ page: nextPage <= 1 ? null : nextPage }, { resetPage: false })
+  }
+
+  const handlePageSizeChange = nextPageSize => {
+    const parsedPageSize = parsePageSize(nextPageSize)
+    shouldScrollTableRef.current = true
+    updateQuery({
+      page: null,
+      pageSize: parsedPageSize === LEADERBOARD_PAGE_SIZE ? null : parsedPageSize
+    }, { resetPage: false })
   }
 
   return (
-    <div className={styles.shell}>
-      <section className={styles.hero}>
-        <div className={styles.heroMain}>
-          <div className={styles.heroKicker}>
-            <span className={styles.heroKickerCn}>选手数据中心</span>
-            <span className={styles.heroKickerEn}>PLAYER LEADERBOARD</span>
-          </div>
-
-          <h1 className={styles.heroTitle}>全联盟排行榜</h1>
-
-          <p className={styles.heroDesc}>
-            面向选手开放的赛季数据榜单，支持按位置、战队、时长与关键词快速筛选，并对核心对局数据进行排序对比。
-          </p>
-        </div>
-
-        <div className={styles.heroMeta}>
-          <div className={styles.heroMetaItem}>
-            <div className={styles.heroMetaLabel}>
-              <span className={styles.heroMetaCn}>总注册选手</span>
-              <span className={styles.metaLabelEn}>TOTAL PLAYERS</span>
-            </div>
-            <div className={styles.heroMetaValue}>{summary.totalPlayers}</div>
-          </div>
-
-          <div className={`${styles.heroMetaItem} ${styles.heroMetaItemHighlight}`}>
-            <div className={styles.heroMetaLabel}>
-              <span className={styles.heroMetaCn}>当前入榜人数</span>
-              <span className={styles.metaLabelEn}>RANKED PLAYERS</span>
-            </div>
-            <div className={styles.heroMetaValue}>{summary.rankedPlayers}</div>
-          </div>
-
-          <div className={styles.heroMetaItem}>
-            <div className={styles.heroMetaLabel}>
-              <span className={styles.heroMetaCn}>总参与地图</span>
-              <span className={styles.metaLabelEn}>TOTAL MAPS</span>
-            </div>
-            <div className={styles.heroMetaValue}>{summary.totalMaps}</div>
-          </div>
-
-          <div className={styles.heroMetaItem}>
-            <div className={styles.heroMetaLabel}>
-              <span className={styles.heroMetaCn}>总存活时长</span>
-              <span className={styles.metaLabelEn}>TOTAL TIME</span>
-            </div>
-            <div className={styles.heroMetaValue}>
-              {Math.round(summary.totalMinutes)}
-              <span className={styles.valueUnit}>MIN</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <LeaderboardFilters
-        filters={filters}
-        onChange={setFilters}
-        teamOptions={teamOptions}
+    <div className={`${styles.shell} ${selectedCompareEntries.length ? styles.hasCompareBar : ''}`}>
+      <DatabaseSubnav />
+      <LeaderboardHeader
+        summary={summary}
+        modeLabel={getModeLabel(mode)}
+        season={season}
+        updatedAtText={updatedAtText}
+        activeTab={activeTab}
+        locale={locale}
       />
 
-      <section className={styles.tableSection}>
-        <div className={styles.tableHead}>
-          <div className={styles.tableHeadLeft}>
-            <div className={styles.tableKicker}>
-              <span className={styles.tableKickerCn}>榜单结果</span>
-              <span className={styles.tableKickerEn}>LEADERBOARD TABLE</span>
+      {!hasStatEntries ? (
+        <section className={styles.dataPendingPanel}>
+          <div className={styles.dataPendingMain}>
+            <span className={styles.panelKicker}>DATA STATUS</span>
+            <h2>赛事统计尚未生成</h2>
+            <p>
+              当前赛季已载入 {summary.totalPlayers} 名选手，但数据包里还没有可用于 player × role
+              排行的职责出场时间、地图数或正数统计。等比赛统计发布后，这里会自动生成数据 MVP、
+              职责领跑者、完整排行榜和同职责比较。
+            </p>
+          </div>
+          <div className={styles.dataPendingGrid}>
+            <div>
+              <span>合格排行条目</span>
+              <strong>{summary.qualifiedEntries}</strong>
             </div>
-            <div className={styles.tableTitle}>综合排名数据</div>
+            <div>
+              <span>可排行统计条目</span>
+              <strong>{summary.totalEntries}</strong>
+            </div>
+            <div>
+              <span>全部选手</span>
+              <strong>{summary.totalPlayers}</strong>
+            </div>
+            <div>
+              <span>正式排名门槛</span>
+              <strong>{summary.minTimeMins}m</strong>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <>
+          <section className={styles.highlightGrid} aria-label="榜首选手">
+            <DataMvpPanel entry={highlights.dataMvp} withSeason={withSeason} />
+            <div className={styles.roleLeaderGrid}>
+              {ROLE_ORDER.map((role, index) => (
+                <RoleLeaderCard
+                  key={role}
+                  role={role}
+                  entry={highlights.roleLeaders[role]}
+                  withSeason={withSeason}
+                  order={index + 1}
+                />
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.controlSection}>
+            <div className={styles.rankModeRow}>
+              <LeaderboardTabs activeTab={activeTab} onChange={handleTabChange} counts={roleCounts} />
+              <MetricModeTabs mode={mode} onChange={handleModeChange} />
+            </div>
+            <LeaderboardToolbar
+              filters={filters}
+              options={options}
+              minTimeMins={minTimeMins}
+              visibleColumns={visibleColumns}
+              advancedOpen={advancedOpen}
+              onAdvancedToggle={() => setAdvancedOpen(open => !open)}
+              onFilterChange={handleFilterChange}
+              onReset={handleReset}
+              onColumnsChange={handleColumnsChange}
+            />
+          </section>
+
+          <div ref={tableTopRef} className={styles.tableAnchor}>
+            <LeaderboardTable
+              rows={pagination.rows}
+              pagination={pagination}
+              visibleColumns={visibleColumns}
+              mode={mode}
+              sortKey={sortKey}
+              direction={direction}
+              activeRole={activeRole}
+              activeTab={activeTab}
+              selectedCompareKeys={selectedCompareKeySet}
+              compareRole={compareRole}
+              isFavoritePlayer={isFavoritePlayer}
+              onSort={handleSort}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+              pageSizeOptions={LEADERBOARD_PAGE_SIZE_OPTIONS}
+              onNavigate={handleNavigate}
+              onToggleFavorite={entry => togglePlayerFavorite?.(entry)}
+              onToggleCompare={handleToggleCompare}
+              locale={locale}
+            />
           </div>
 
-          <div className={styles.tableHeadRight}>
-            
-            {/* 🌟 核心修复 1：把电脑端的纯展示数据包进 desktopMetaGroup 里 */}
-            <div className={styles.desktopMetaGroup}>
-              <span className={styles.tableMeta}>
-                <span className={styles.metaText}>
-                  <span className={styles.metaCn}>排序字段</span>
-                  <span className={styles.metaEn}>SORT</span>
-                </span>
-                <span className={styles.metaVal}>{getSortLabel(sortKey)}</span>
-              </span>
+          <PlayerCompareBar
+            selectedEntries={selectedCompareEntries}
+            modeLabel={getModeLabel(mode)}
+            warning={compareWarning}
+            onClear={() => {
+              setSelectedCompareKeys([])
+              setCompareOpen(false)
+            }}
+            onOpen={handleOpenCompare}
+          />
 
-              <span className={styles.tableMeta}>
-                <span className={styles.metaText}>
-                  <span className={styles.metaCn}>排序方向</span>
-                  <span className={styles.metaEn}>DIR</span>
-                </span>
-                <span className={styles.metaVal}>
-                  {getDirectionLabel(direction)}
-                  <span className={styles.metaValEn}>{direction === 'desc' ? 'DESC' : 'ASC'}</span>
-                </span>
-              </span>
-
-              <span className={`${styles.tableMeta} ${styles.tableMetaHighlight}`}>
-                <span className={styles.metaText}>
-                  <span className={styles.metaCn}>结果数量</span>
-                  <span className={styles.metaEn}>ROWS</span>
-                </span>
-                <span className={styles.metaVal}>{sortedRows.length}</span>
-              </span>
-            </div>
-
-            {/* 🌟 核心修复 2：加入手机端真正的交互式排序控制条 */}
-            <div className={styles.mobileSortControl}>
-              <span className={styles.mobileSortLabel}>排序</span>
-              <select
-                className={styles.mobileSortSelect}
-                value={sortKey}
-                onChange={e => requestSort(e.target.value)}
-              >
-                <option value="raw_time_mins">按存活时长</option>
-                <option value="avg_dmg">按伤害 /10</option>
-                <option value="avg_heal">按治疗 /10</option>
-                <option value="avg_block">按阻挡 /10</option>
-                <option value="avg_elim">按击杀 /10</option>
-                <option value="avg_ast">按助攻 /10</option>
-                <option value="avg_dth">按死亡 /10</option>
-                <option value="rank">按综合排名</option>
-              </select>
-              <button
-                type="button"
-                className={styles.mobileSortDirBtn}
-                onClick={() => requestSort(sortKey)}
-              >
-                {direction === 'desc' ? '↓ 降序' : '↑ 升序'}
-              </button>
-            </div>
-
-          </div>
-        </div>
-
-        <LeaderboardTable
-          rows={sortedRows}
-          sortKey={sortKey}
-          direction={direction}
-          onSort={requestSort}
-        />
-      </section>
+          {compareOpen ? (
+            <PlayerComparePanel
+              entries={selectedCompareEntries}
+              mode={mode}
+              modeLabel={getModeLabel(mode)}
+              onClose={() => setCompareOpen(false)}
+            />
+          ) : null}
+        </>
+      )}
     </div>
   )
 }

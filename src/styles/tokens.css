@@ -1,62 +1,156 @@
-:root {
-  /* --- 背景色阶 --- */
-  --bg-page: #0b0b0b;
-  --bg-panel: #111111;
-  --bg-panel-2: #151515;
-  --bg-panel-3: #1a1a1a;
+@font-face {
+  font-family: "FCA Harmony";
+  src: url("/fonts/harmonyos/HarmonyOS_Sans_SC_Regular.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
 
-  /* --- 文本色阶 --- */
-  --text-main: #ffffff;
+@font-face {
+  font-family: "FCA Harmony";
+  src: url("/fonts/harmonyos/HarmonyOS_Sans_SC_Medium.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "FCA Harmony";
+  src: url("/fonts/harmonyos/HarmonyOS_Sans_SC_Bold.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "FCA Harmony";
+  src: url("/fonts/harmonyos/HarmonyOS_Sans_SC_Bold.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: "FCA Harmony";
+  src: url("/fonts/harmonyos/HarmonyOS_Sans_SC_Black.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: "FCA Harmony";
+  src: url("/fonts/harmonyos/HarmonyOS_Sans_SC_Black.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 950;
+}
+
+:root {
+  /* FriesCup official brand palette */
+  --fc-yellow: #f4c320;
+  --fc-black: #2a2a2a;
+  --fc-white: #ffffff;
+
+  /* FCUP core palette */
+  --fcup-yellow: var(--fc-yellow);
+  --fcup-yellow-bright: #ffd95a;
+  --fcup-yellow-deep: #b88700;
+  --fcup-black: var(--fc-black);
+  --fcup-graphite: #101010;
+  --fcup-steel: #1a1a1a;
+  --fcup-white: var(--fc-white);
+
+  /* Role colors */
+  --role-tank: #60a5fa;
+  --role-tank-rgb: 96, 165, 250;
+  --role-dps: #ff4d4f;
+  --role-dps-rgb: 255, 77, 79;
+  --role-support: #4ade80;
+  --role-support-rgb: 74, 222, 128;
+  --role-flex: var(--fcup-yellow);
+  --role-flex-rgb: 244, 195, 32;
+
+  /* Surfaces */
+  --bg-page: #0b0b0b;
+  --bg-canvas: #0e0e0e;
+  --bg-panel: var(--fc-black);
+  --bg-panel-2: var(--fc-black);
+  --bg-panel-3: #1a1a1a;
+  --bg-panel-hover: #181818;
+  --surface-raised: linear-gradient(180deg, rgba(255, 255, 255, 0.022) 0%, rgba(255, 255, 255, 0.006) 100%), var(--bg-panel);
+  --surface-card: linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0%, rgba(255, 255, 255, 0.004) 100%), #101010;
+  --surface-card-hover: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.008) 100%), #141414;
+
+  /* Text */
+  --text-main: var(--fc-white);
   --text-secondary: rgba(255, 255, 255, 0.72);
   --text-muted: rgba(255, 255, 255, 0.5);
   --text-faint: rgba(255, 255, 255, 0.34);
+  --text-ghost: rgba(255, 255, 255, 0.18);
+  --text-on-accent: var(--fc-black);
 
-  /* --- 边框色阶 --- */
+  /* Lines */
   --border-soft: rgba(255, 255, 255, 0.08);
   --border-main: rgba(255, 255, 255, 0.12);
   --border-strong: rgba(255, 255, 255, 0.2);
-
-  /* --- 品牌/状态高亮色 --- */
-  --accent: #f4c320; /* 核心黄 */
+  --accent: var(--fcup-yellow);
   --accent-soft: rgba(244, 195, 32, 0.08);
+  --accent-veil: rgba(244, 195, 32, 0.14);
   --accent-border: rgba(244, 195, 32, 0.28);
+  --accent-live: var(--role-support);
+  --accent-error: #ff4444;
 
-  --accent-live: #4ade80;  /* 新增：系统绿 (用于 IN_PROGRESS) */
-  --accent-error: #ff4444; /* 新增：警报红 (用于 Error 状态) */
-
-  --success: #f4c320;
+  /* Semantic aliases used by existing pages */
+  --success: var(--fcup-yellow);
   --pending: rgba(255, 255, 255, 0.62);
-  --progress: #ffffff;
+  --progress: var(--fc-white);
 
-  /* --- 字体栈 --- */
+  /* Legacy aliases from the previous index.css */
+  --bg-color: var(--bg-page);
+  --panel-color: #141414;
+  --panel-color-2: var(--bg-panel-3);
+  --border-color: var(--border-soft);
+  --accent-color: var(--accent);
+  --text-soft: rgba(255, 255, 255, 0.6);
+  --radius-base: 8px;
+
+  /* Type */
   --font-sans:
-    "Inter",
+    "FCA Harmony",
     "HarmonyOS Sans SC",
+    "HarmonyOS Sans",
     "PingFang SC",
     "Microsoft YaHei",
     "Noto Sans SC",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
     sans-serif;
-    
-  /* 新增：全局等宽字体栈 (非常重要，用于比分、数据、时间对齐) */
-  --font-mono: 
-    ui-monospace, 
-    "JetBrains Mono", 
-    "SFMono-Regular", 
-    "Menlo", 
-    "Consolas", 
-    "Liberation Mono", 
-    monospace;
+  --font-mono:
+    "FCA Harmony",
+    "HarmonyOS Sans SC",
+    "HarmonyOS Sans",
+    "PingFang SC",
+    "Microsoft YaHei",
+    "Noto Sans SC",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  --font-primary: var(--font-sans);
 
-  /* --- 几何参数 --- */
+  /* Geometry */
   --shadow-none: none;
+  --shadow-panel: 0 18px 60px rgba(0, 0, 0, 0.34);
+  --shadow-accent: 0 0 32px rgba(244, 195, 32, 0.12);
   --radius-none: 0;
-  --radius-sm: 2px; /* 稍微给一点点微小的圆角，2px能让纯直角没那么扎人 */
+  --radius-sm: 2px;
   --radius-md: 4px;
   --radius-lg: 8px;
-
   --container-max: 1680px;
 
-  /* --- 间距系统 --- */
+  /* Spacing */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -64,8 +158,31 @@
   --space-5: 20px;
   --space-6: 24px;
   --space-7: 32px;
+  --space-8: 40px;
 
-  /* --- 动画过渡 --- */
-  --transition-fast: 0.15s ease; /* 稍微调快一点，增加系统的干脆感 */
+  /* Motion */
+  --transition-fast: 0.15s ease;
   --transition-mid: 0.24s ease;
+  --transition-slow: 0.42s ease;
+
+  /* FCUP visual motifs */
+  --rail-accent: linear-gradient(90deg, var(--accent) 0%, rgba(244, 195, 32, 0.34) 62%, transparent 100%);
+  --grid-line-soft: rgba(255, 255, 255, 0.025);
+  --grid-line-faint: rgba(255, 255, 255, 0.015);
+
+  /* Light event portal palette */
+  --portal-page: #f5efe3;
+  --portal-cream: #fbf7ee;
+  --portal-surface: var(--fc-white);
+  --portal-surface-soft: #fffaf0;
+  --portal-ink: var(--fc-black);
+  --portal-ink-soft: rgba(42, 42, 42, 0.72);
+  --portal-muted: rgba(42, 42, 42, 0.56);
+  --portal-faint: rgba(42, 42, 42, 0.34);
+  --portal-border: var(--fc-black);
+  --portal-border-soft: rgba(42, 42, 42, 0.14);
+  --portal-yellow: var(--fc-yellow);
+  --portal-yellow-soft: rgba(244, 195, 32, 0.22);
+  --portal-black: var(--fc-black);
+  --portal-radius: 8px;
 }

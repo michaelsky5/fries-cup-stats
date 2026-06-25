@@ -1,290 +1,229 @@
-import { useMemo, useEffect } from 'react'
-import { useOutletContext, useParams, useNavigate } from 'react-router-dom'
-import MatchHeader from '../../components/matches/MatchHeader.jsx'
-import MapCard from '../../components/matches/MapCard.jsx'
-import { getMatchById, safeArr } from '../../lib/selectors.js'
-import styles from './MatchDetailPage.module.css'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useLocation, useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router-dom'
+import MatchAnalysisSection from '../../components/matches/detail/MatchAnalysisSection.jsx'
+import MatchDetailEmptyState from '../../components/matches/detail/MatchDetailEmptyState.jsx'
+import MatchDetailFooterNav from '../../components/matches/detail/MatchDetailFooterNav.jsx'
+import MatchPosterHero from '../../components/matches/detail/MatchPosterHero.jsx'
+import MapRecordSection from '../../components/matches/detail/MapRecordSection.jsx'
+import SeriesMapRail from '../../components/matches/detail/SeriesMapRail.jsx'
+import styles from '../../components/matches/detail/MatchDetail.module.css'
+import { getMatchDossier, getValidMapOrder } from '../../lib/matchDetailSelectors.js'
 
-function getResultMode(match) {
-  const mode = String(match?.result_mode || '').toUpperCase()
-  if (mode) return mode
-  if (match?.is_forfeit) return 'FORFEIT'
-  return 'NORMAL'
+function safeReturnPath(value) {
+  const text = String(value || '').trim()
+  return text.startsWith('/matches') ? text : ''
 }
 
-function getRulingType(match) {
-  return String(match?.ruling?.type || '').toUpperCase()
-}
-
-function getStatusInfo(status, isForfeit, resultMode) {
-  if (status === 'IN_PROGRESS') return { cn: '进行中', en: 'LIVE', className: styles.statusLive }
-  if (status === 'COMPLETE' || status === 'COMPLETED') {
-    if (isForfeit) return { cn: '弃权完结', en: 'FORFEIT', className: styles.statusComplete }
-    if (resultMode === 'OVERRULED') return { cn: '改判完结', en: 'OVERRULED', className: styles.statusOverruled }
-    return { cn: '已完结', en: 'COMPLETED', className: styles.statusComplete }
-  }
-  return { cn: '未开始', en: 'PENDING', className: styles.statusPending }
-}
-
-function getRawResult(match) {
-  return {
-    scoreA: match?.raw_result?.scoreA ?? match?.raw_result?.score_a ?? '',
-    scoreB: match?.raw_result?.scoreB ?? match?.raw_result?.score_b ?? '',
-    winner: match?.raw_result?.winner || ''
-  }
+function getMapOrdersKey(dossier) {
+  return dossier?.mapRecords?.map(map => map.order).join('|') || ''
 }
 
 export default function MatchDetailPage() {
-  const { db } = useOutletContext()
+  const context = useOutletContext() || {}
+  const {
+    db,
+    withSeason = path => path,
+    seasonId,
+    locale = 'zh-CN',
+    t = (key, fallback) => fallback || key
+  } = context
   const { matchId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const analysisRef = useRef(null)
+  const mapRefs = useRef(new Map())
+  const [expandedMaps, setExpandedMaps] = useState(() => new Set())
+  const [activeAnchor, setActiveAnchor] = useState('overview')
+  const [collapseAllRequested, setCollapseAllRequested] = useState(false)
+
+  const dossier = useMemo(
+    () => getMatchDossier(db, matchId, { locale }),
+    [db, matchId, locale]
+  )
+  const mapOrdersKey = getMapOrdersKey(dossier)
+  const requestedMap = searchParams.get('map')
+  const expandAll = searchParams.get('expand') === 'all'
+  const defaultMapOrder = getValidMapOrder(dossier, requestedMap)
+  const returnTo = safeReturnPath(location.state?.returnTo)
+  const fallbackReturnTo = returnTo || withSeason('/matches')
+
+  const setMapRef = useCallback((order, node) => {
+    if (node) mapRefs.current.set(order, node)
+    else mapRefs.current.delete(order)
+  }, [])
+
+  const scrollToNode = useCallback(node => {
+    if (!node) return
+    window.setTimeout(() => {
+      node.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 0)
+  }, [])
+
+  const scrollToMap = useCallback(order => {
+    scrollToNode(mapRefs.current.get(order))
+  }, [scrollToNode])
 
   useEffect(() => {
     window.scrollTo(0, 0)
-  }, [])
+  }, [matchId])
+
+  useEffect(() => {
+    if (!dossier?.hasMapRecords) {
+      setExpandedMaps(new Set())
+      setActiveAnchor('overview')
+      return
+    }
+
+    if (collapseAllRequested) {
+      setExpandedMaps(new Set())
+      setActiveAnchor('overview')
+      return
+    }
+
+    const allOrders = dossier.mapRecords.map(map => map.order)
+    if (expandAll) {
+      setExpandedMaps(new Set(allOrders))
+      setActiveAnchor(defaultMapOrder || allOrders[0])
+    } else {
+      setExpandedMaps(defaultMapOrder ? new Set([defaultMapOrder]) : new Set())
+      setActiveAnchor(defaultMapOrder || 'overview')
+    }
+  }, [dossier?.internalId, dossier?.hasMapRecords, mapOrdersKey, expandAll, defaultMapOrder, collapseAllRequested])
+
+  useEffect(() => {
+    if (!dossier?.hasMapRecords || !requestedMap) return
+    if (String(defaultMapOrder) === String(requestedMap)) return
+
+    const next = new URLSearchParams(searchParams)
+    next.set('map', String(defaultMapOrder))
+    next.delete('expand')
+    setSearchParams(next, { replace: true })
+  }, [dossier?.hasMapRecords, requestedMap, defaultMapOrder, searchParams, setSearchParams])
+
+  useEffect(() => {
+    if (!dossier?.hasMapRecords || !requestedMap || !defaultMapOrder) return
+    scrollToMap(defaultMapOrder)
+  }, [dossier?.internalId, dossier?.hasMapRecords, requestedMap, defaultMapOrder, scrollToMap])
 
   const handleBack = () => {
+    if (returnTo) {
+      navigate(returnTo)
+      return
+    }
     if (window.history.state && window.history.state.idx > 0) navigate(-1)
-    else navigate('/matches')
+    else navigate(withSeason('/matches'))
   }
 
-  const match = useMemo(() => getMatchById(db, matchId), [db, matchId])
+  const handleOverview = () => {
+    setActiveAnchor('overview')
+    const next = new URLSearchParams(searchParams)
+    next.delete('map')
+    next.delete('expand')
+    setSearchParams(next)
+    scrollToNode(analysisRef.current)
+  }
 
-  const playedMapsList = useMemo(() => {
-    return safeArr(match?.maps).filter(map => {
-      const hasWinner = Boolean(map?.winner && map?.winner !== 'UNKNOWN')
-      const scoreA = Number(map?.score_a) || 0
-      const scoreB = Number(map?.score_b) || 0
-      const hasScore = scoreA > 0 || scoreB > 0
-      const allStats = [...safeArr(map?.team_a_stats), ...safeArr(map?.team_b_stats)]
-      const hasRealStats = allStats.some(p =>
-        Number(p.damage) > 0 ||
-        Number(p.healing) > 0 ||
-        Number(p.eliminations) > 0 ||
-        (p.heroes_played && p.heroes_played !== '-' && p.heroes_played !== 'UNKNOWN')
-      )
-      return hasWinner || hasScore || hasRealStats
-    })
-  }, [match])
+  const handleSelectMap = order => {
+    setCollapseAllRequested(false)
+    setActiveAnchor(order)
+    setExpandedMaps(new Set([order]))
+    const next = new URLSearchParams(searchParams)
+    next.set('map', String(order))
+    next.delete('expand')
+    setSearchParams(next)
+    scrollToMap(order)
+  }
 
-  const summary = useMemo(() => ({
-    totalMaps: safeArr(match?.maps).length,
-    playedMaps: playedMapsList.length
-  }), [match, playedMapsList])
+  const handleToggleMap = order => {
+    if (expandedMaps.has(order)) {
+      setExpandedMaps(prev => {
+        const next = new Set(prev)
+        next.delete(order)
+        return next
+      })
+      return
+    }
+    handleSelectMap(order)
+  }
 
-  if (!match) {
+  const handleExpandAll = () => {
+    if (!dossier?.hasMapRecords) return
+    setCollapseAllRequested(false)
+    const orders = dossier.mapRecords.map(map => map.order)
+    setExpandedMaps(new Set(orders))
+    setActiveAnchor(orders[0] || 'overview')
+    const next = new URLSearchParams(searchParams)
+    next.set('expand', 'all')
+    next.delete('map')
+    setSearchParams(next)
+  }
+
+  const handleCollapseAll = () => {
+    setCollapseAllRequested(true)
+    setExpandedMaps(new Set())
+    setActiveAnchor('overview')
+    const next = new URLSearchParams(searchParams)
+    next.delete('map')
+    next.delete('expand')
+    setSearchParams(next)
+  }
+
+  if (!dossier) {
     return (
-      <div className={styles.shell}>
-        <section className={styles.errorState}>
-          <div className={styles.errorKicker}>SYSTEM ALERT / 404</div>
-          <h1 className={styles.errorTitle}>未找到对局档案</h1>
-          <p className={styles.errorDesc}>
-            请求的比赛编号 <span className={styles.errorCode}>[{matchId}]</span> 不存在，或已被移出当前赛季数据库。
-          </p>
-          <button type="button" onClick={handleBack} className={styles.backLinkBtn}>
-            返回比赛大厅
-            <span className={styles.backLinkBtnEn}>MATCHES</span>
+      <main className={styles.shell}>
+        <div className={styles.statePanel}>
+          <h1 className={styles.stateTitle}>MATCH NOT FOUND</h1>
+          <p className={styles.stateBody}>{matchId}</p>
+          <button type="button" className={styles.backButton} onClick={handleBack}>
+            {t('matchDetail.back', 'Back to Matches')} {'->'}
           </button>
-        </section>
-      </div>
+        </div>
+      </main>
     )
   }
 
-  const resultMode = getResultMode(match)
-  const rulingType = getRulingType(match)
-  const rawResult = getRawResult(match)
-  const isOverruled = resultMode === 'OVERRULED'
-  const statusInfo = getStatusInfo(match.status, match.is_forfeit, resultMode)
+  const showResultSections = dossier.state.canShowResults && !dossier.state.isForfeit
+  const showMaps = showResultSections && dossier.hasMapRecords
 
   return (
-    <div className={styles.shell}>
-      <div className={styles.topbar}>
-        <div className={styles.topbarLeft}>
-          <button type="button" onClick={handleBack} className={styles.navBackBtn}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            <span className={styles.navBackText}>
-              <span className={styles.navBackCn}>返回大厅</span>
-              <span className={styles.navBackEn}>MATCHES</span>
-            </span>
-          </button>
+    <main className={styles.shell}>
+      <MatchPosterHero dossier={dossier} seasonId={seasonId} onBack={handleBack} t={t} />
+      <SeriesMapRail
+        dossier={dossier}
+        activeMapOrder={typeof activeAnchor === 'number' ? activeAnchor : 0}
+        overviewActive={activeAnchor === 'overview'}
+        onOverview={handleOverview}
+        onSelectMap={handleSelectMap}
+        t={t}
+      />
 
-          <div className={styles.topbarPathGroup}>
-            <div className={styles.topbarKicker}>
-              <span className={styles.topbarKickerCn}>对局档案</span>
-              <span className={styles.topbarKickerEn}>MATCH ARCHIVE</span>
-            </div>
-            <div className={styles.topbarPath}>
-              <span className={styles.topbarDivider}>/</span>
-              <span className={styles.topbarCurrent}>{match.match_id || 'UNKNOWN'}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.topbarRight}>
-          <span className={styles.topbarMeta}>
-            <span className={styles.metaText}>
-              <span className={styles.metaCn}>最后同步</span>
-              <span className={styles.metaEn}>UPDATED</span>
-            </span>
-            <span className={styles.metaValue}>{match.updated_at || '-'}</span>
-          </span>
-        </div>
-      </div>
-
-      <MatchHeader match={match} />
-
-      <section className={styles.infoBar}>
-        <span className={styles.tagItem}>
-          <span className={styles.tagLabelGroup}>
-            <span className={styles.tagLabel}>赛段</span>
-            <span className={styles.tagLabelEn}>STAGE</span>
-          </span>
-          <span className={styles.tagVal}>{match.stage || 'TBD'}</span>
-        </span>
-
-        <span className={styles.tagItem}>
-          <span className={styles.tagLabelGroup}>
-            <span className={styles.tagLabel}>轮次</span>
-            <span className={styles.tagLabelEn}>ROUND</span>
-          </span>
-          <span className={styles.tagVal}>{match.round || 'TBD'}</span>
-        </span>
-
-        <span className={styles.tagItem}>
-          <span className={styles.tagLabelGroup}>
-            <span className={styles.tagLabel}>赛制</span>
-            <span className={styles.tagLabelEn}>FORMAT</span>
-          </span>
-          <span className={styles.tagVal}>{match.format || 'TBD'}</span>
-        </span>
-
-        <span className={`${styles.tagItem} ${styles.statusItem}`}>
-          <span className={styles.tagLabelGroup}>
-            <span className={styles.tagLabel}>当前状态</span>
-            <span className={styles.tagLabelEn}>STATUS</span>
-          </span>
-          <span className={`${styles.tagValHighlight} ${statusInfo.className}`}>
-            {statusInfo.cn}
-            <span className={styles.statusEn}>{statusInfo.en}</span>
-          </span>
-        </span>
-
-        <span className={styles.tagItem}>
-          <span className={styles.tagLabelGroup}>
-            <span className={styles.tagLabel}>地图进度</span>
-            <span className={styles.tagLabelEn}>MAPS</span>
-          </span>
-          <span className={styles.tagVal}>
-            {match.is_forfeit ? 'N/A' : summary.playedMaps}
-            {!match.is_forfeit && (
-              <>
-                <span className={styles.tagDivider}>/</span>
-                {summary.totalMaps}
-              </>
-            )}
-          </span>
-        </span>
-
-        {isOverruled && (
-          <>
-            <span className={`${styles.tagItem} ${styles.rulingItem}`}>
-              <span className={styles.tagLabelGroup}>
-                <span className={styles.tagLabel}>结果模式</span>
-                <span className={styles.tagLabelEn}>RESULT MODE</span>
-              </span>
-              <span className={styles.tagValHighlight}>OVERRULED</span>
-            </span>
-
-            <span className={`${styles.tagItem} ${styles.rulingItem}`}>
-              <span className={styles.tagLabelGroup}>
-                <span className={styles.tagLabel}>裁决类型</span>
-                <span className={styles.tagLabelEn}>RULING TYPE</span>
-              </span>
-              <span className={styles.tagVal}>{rulingType || 'DISCIPLINARY'}</span>
-            </span>
-          </>
-        )}
-      </section>
-
-      {isOverruled && (
-        <section className={styles.rulingNotice}>
-          <div className={styles.rulingNoticeHead}>
-            <span className={styles.rulingNoticeKicker}>RESULT OVERRULED</span>
-            <span className={styles.rulingNoticeType}>{rulingType || 'DISCIPLINARY'}</span>
-          </div>
-
-          <div className={styles.rulingNoticeBody}>
-            <div className={styles.rulingMain}>
-              本场比赛最终结果已由赛事组改判，下方地图与选手数据为原始比赛记录。
-            </div>
-
-            <div className={styles.rulingMetaRow}>
-              <span className={styles.rulingMetaItem}>
-                <span className={styles.rulingMetaLabel}>RAW RESULT</span>
-                <span className={styles.rulingMetaValue}>
-                  {rawResult.scoreA || '-'} : {rawResult.scoreB || '-'}
-                </span>
-              </span>
-
-              <span className={styles.rulingMetaItem}>
-                <span className={styles.rulingMetaLabel}>RAW WINNER</span>
-                <span className={styles.rulingMetaValue}>{rawResult.winner || 'UNSET'}</span>
-              </span>
-            </div>
-
-            {(match?.ruling?.reason || match?.ruling?.note) && (
-              <div className={styles.rulingReasonBlock}>
-                {match?.ruling?.reason && (
-                  <div className={styles.rulingReasonLine}>
-                    <span className={styles.rulingReasonLabel}>原因</span>
-                    <span className={styles.rulingReasonText}>{match.ruling.reason}</span>
-                  </div>
-                )}
-                {match?.ruling?.note && (
-                  <div className={styles.rulingReasonLine}>
-                    <span className={styles.rulingReasonLabel}>说明</span>
-                    <span className={styles.rulingReasonText}>{match.ruling.note}</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </section>
+      {showResultSections ? (
+        <MatchAnalysisSection dossier={dossier} analysisRef={analysisRef} withSeason={withSeason} t={t} />
+      ) : (
+        <MatchDetailEmptyState dossier={dossier} t={t} />
       )}
 
-      <section className={styles.mapsSection}>
-        <div className={styles.sectionHead}>
-          <div className={styles.sectionHeadLeft}>
-            <div className={styles.sectionKicker}>
-              <span className={styles.sectionKickerCn}>地图时间轴</span>
-              <span className={styles.sectionKickerEn}>MAP TIMELINE</span>
-            </div>
-            <div className={styles.sectionTitle}>
-              {isOverruled ? '原始对局流程与选手数据记录' : '对局流程与选手数据记录'}
-            </div>
-          </div>
-        </div>
+      {showMaps ? (
+        <MapRecordSection
+          dossier={dossier}
+          expandedMaps={expandedMaps}
+          onToggleMap={handleToggleMap}
+          onExpandAll={handleExpandAll}
+          onCollapseAll={handleCollapseAll}
+          setMapRef={setMapRef}
+          seasonId={seasonId}
+          t={t}
+        />
+      ) : null}
 
-        <div className={styles.mapList}>
-          {match.is_forfeit ? (
-            <div className={`${styles.noMaps} ${styles.noMapsDanger}`}>
-              <span className={styles.noMapsCn}>本场比赛因战队弃权提前结束，无详细对局数据</span>
-              <span className={styles.noMapsEn}>WIN BY FORFEIT · NO MATCH DATA AVAILABLE</span>
-            </div>
-          ) : playedMapsList.length > 0 ? (
-            playedMapsList.map(map => (
-              <MapCard key={`${match.match_id}-${map.map_order}`} map={map} match={match} />
-            ))
-          ) : (
-            <div className={styles.noMaps}>
-              <span className={styles.noMapsCn}>暂无已记录的地图数据</span>
-              <span className={styles.noMapsEn}>NO MAP DATA AVAILABLE</span>
-            </div>
-          )}
-        </div>
-      </section>
-    </div>
+      <MatchDetailFooterNav
+        adjacent={dossier.adjacent}
+        withSeason={withSeason}
+        returnTo={fallbackReturnTo}
+        locale={locale}
+        t={t}
+      />
+    </main>
   )
 }

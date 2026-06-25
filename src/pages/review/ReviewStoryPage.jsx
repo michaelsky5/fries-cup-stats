@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { DEFAULT_SEASON_ID, resolveSeasonFromUrl, withSeason as buildSeasonLink } from '../../config/seasons.js'
 import { getDb } from '../../lib/db.js'
 import {
   buildPlayerStory,
@@ -10,7 +11,7 @@ import {
 import { generatePosterPng, getPosterPayload } from '../../lib/reviewPoster.js'
 import styles from './ReviewStoryPage.module.css'
 
-const DEFAULT_LOGO = '/logos/OW.png'
+const DEFAULT_LOGO = '/logos/fc_logo.png'
 
 const STORY_FRAME_WIDTH = 460
 const STORY_FRAME_HEIGHT = 820
@@ -376,7 +377,7 @@ function SceneStoryLayer({ scene, visualType }) {
   )
 }
 
-function StoryScene({ scene, sceneKey, currentIndex, total }) {
+function StoryScene({ scene, sceneKey }) {
   const visualType = scene.visualType || 'default'
   const hasStoryLayer = Boolean(
     scene.matchCard ||
@@ -1055,6 +1056,18 @@ export default function ReviewStoryPage({ storyType }) {
   const params = useParams()
   const [searchParams] = useSearchParams()
   const perspective = searchParams.get('as') || 'team'
+  const seasonParam = searchParams.get('season')
+  const hasSeasonParam = searchParams.has('season')
+  const searchKey = searchParams.toString()
+  const activeSeasonId = useMemo(() => {
+    if (!hasSeasonParam) return null
+    return resolveSeasonFromUrl(seasonParam) || DEFAULT_SEASON_ID
+  }, [hasSeasonParam, seasonParam])
+  const withSeason = useMemo(() => {
+    return path => activeSeasonId
+      ? buildSeasonLink(path, activeSeasonId, searchKey ? `?${searchKey}` : '')
+      : path
+  }, [activeSeasonId, searchKey])
 
   const [db, setDb] = useState(null)
   const [error, setError] = useState('')
@@ -1066,8 +1079,11 @@ export default function ReviewStoryPage({ storyType }) {
 
   useEffect(() => {
     let alive = true
+    setDb(null)
+    setError('')
+    setLoading(true)
 
-    getDb()
+    getDb(activeSeasonId || undefined)
       .then(data => {
         if (!alive) return
         setDb(data)
@@ -1085,7 +1101,7 @@ export default function ReviewStoryPage({ storyType }) {
     return () => {
       alive = false
     }
-  }, [])
+  }, [activeSeasonId])
 
   const scenes = useMemo(() => {
     if (!db) return []
@@ -1101,7 +1117,7 @@ export default function ReviewStoryPage({ storyType }) {
   useEffect(() => {
     setIndex(0)
     setShowPoster(false)
-  }, [storyType, params.playerId, params.teamId, params.staffType, params.staffKey, perspective])
+  }, [storyType, params.playerId, params.teamId, params.staffType, params.staffKey, perspective, activeSeasonId])
 
   const current = scenes[index]
   const progress = scenes.length > 0 ? ((index + 1) / scenes.length) * 100 : 0
@@ -1168,8 +1184,8 @@ export default function ReviewStoryPage({ storyType }) {
     return (
       <div className={styles.fullscreen}>
         <div className={styles.systemBox}>
-          <div>{error || '没有找到这份赛季回顾。'}</div>
-          <Link to="/review">返回回顾中心</Link>
+          <div>{error || '当前赛季暂无回顾数据 / No review data available for this season'}</div>
+          <Link to={withSeason('/review')}>返回回顾中心</Link>
         </div>
       </div>
     )
@@ -1183,7 +1199,7 @@ export default function ReviewStoryPage({ storyType }) {
       onTouchEnd={handleTouchEnd}
     >
       <div className={styles.bgGlow}></div>
-      <Link to="/review" className={styles.closeBtn}>退出</Link>
+      <Link to={withSeason('/review')} className={styles.closeBtn}>退出</Link>
 
       <div className={styles.desktopHint}>点击右侧继续 · 点击左侧返回 · 支持键盘 ← →</div>
 
@@ -1206,8 +1222,6 @@ export default function ReviewStoryPage({ storyType }) {
         <StoryScene
           scene={current}
           sceneKey={`${index}-${current.title}`}
-          currentIndex={index}
-          total={scenes.length}
         />
 
         <div className={styles.footer}>

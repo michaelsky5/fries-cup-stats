@@ -1,413 +1,299 @@
-import { useMemo, useState } from 'react'
-import { useOutletContext } from 'react-router-dom'
-import PlayerCard from '../../components/players/PlayerCard.jsx'
-import { safeArr } from '../../lib/selectors.js'
+import { useEffect, useMemo, useRef } from 'react'
+import { useOutletContext, useSearchParams } from 'react-router-dom'
+import RosterPageHeader from '../../components/roster/RosterPageHeader.jsx'
+import RosterPagination from '../../components/roster/RosterPagination.jsx'
+import RosterSubnav from '../../components/roster/RosterSubnav.jsx'
+import RosterToolbar from '../../components/roster/RosterToolbar.jsx'
+import PlayerDirectoryCard from '../../components/roster/PlayerDirectoryCard.jsx'
+import RosterEmptyState from '../../components/roster/RosterEmptyState.jsx'
+import rosterStyles from '../../components/roster/RosterComponents.module.css'
+import {
+  PLAYER_PAGE_SIZES,
+  buildRosterQueryState,
+  filterPlayers,
+  getPlayerDirectory,
+  getRosterSummary,
+  normalizeRosterRole,
+  paginatePlayers,
+  safeArr,
+  sortPlayers
+} from '../../lib/rosterSelectors.js'
 import styles from './PlayersPage.module.css'
 
-function getRoleLabel(role) {
-  if (role === 'ALL') return { cn: '全部位置', en: 'ALL ROLES', short: 'ALL' }
-  if (role === 'TANK') return { cn: '重装', en: 'TANK', short: 'TANK' }
-  if (role === 'DAMAGE' || role === 'DPS') return { cn: '输出', en: 'DAMAGE', short: 'DMG' }
-  if (role === 'SUPPORT' || role === 'SUP') return { cn: '支援', en: 'SUPPORT', short: 'SUP' }
-  return { cn: '未知', en: 'UNKNOWN', short: 'UNK' }
-}
-
-const SORT_OPTIONS = [
-  { value: 'time_desc', cn: '按总时长', en: 'TIME PLAYED' },
-  { value: 'maps_desc', cn: '按出场地图', en: 'MAPS PLAYED' },
-  { value: 'dmg_desc', cn: '按伤害均值', en: 'AVG DAMAGE' },
-  { value: 'elim_desc', cn: '按击杀均值', en: 'AVG ELIMS' },
-  { value: 'heal_desc', cn: '按治疗均值', en: 'AVG HEALING' },
-  { value: 'block_desc', cn: '按阻挡均值', en: 'AVG MITIGATION' },
-  { value: 'name_asc', cn: '按名称 A-Z', en: 'NAME A-Z' }
+const ROLE_TABS = [
+  { id: 'ALL', label: '全部' },
+  { id: 'TANK', label: 'TANK' },
+  { id: 'DPS', label: 'DPS' },
+  { id: 'SUPPORT', label: 'SUPPORT' },
+  { id: 'following', label: '我的关注' }
 ]
 
-function toNum(value) {
-  const n = Number(value)
-  return Number.isFinite(n) ? n : 0
+const ROLE_OPTIONS = [
+  { value: 'ALL', label: '全部职责' },
+  { value: 'TANK', label: 'TANK' },
+  { value: 'DPS', label: 'DPS' },
+  { value: 'SUPPORT', label: 'SUPPORT' }
+]
+
+const FOLLOWING_OPTIONS = [
+  { value: 'all', label: '全部选手' },
+  { value: 'following', label: '我的关注' }
+]
+
+const BASE_SORT_OPTIONS = [
+  { value: 'default', label: '关注优先' },
+  { value: 'name', label: '昵称' },
+  { value: 'team', label: '队伍' },
+  { value: 'role', label: '职责' }
+]
+
+function displayRole(role) {
+  return normalizeRosterRole(role) === 'SUP' ? 'SUPPORT' : normalizeRosterRole(role)
 }
 
-function getSortValue(player, sortBy) {
-  if (sortBy === 'time_desc') return toNum(player.raw_time_mins)
-  if (sortBy === 'maps_desc') return toNum(player.maps_played)
-  if (sortBy === 'dmg_desc') return toNum(player.avg_dmg)
-  if (sortBy === 'elim_desc') return toNum(player.avg_elim)
-  if (sortBy === 'heal_desc') return toNum(player.avg_heal)
-  if (sortBy === 'block_desc') return toNum(player.avg_block)
-  return 0
-}
-
-function formatViewLabel({ roleFilter, teamFilter, teamOptions }) {
-  const role = getRoleLabel(roleFilter)
-  const team = teamFilter === 'ALL'
-    ? '全部战队'
-    : (teamOptions.find(t => t.value === teamFilter)?.labelCn || '指定战队')
-
-  return `${role.cn} / ${team}`
+function useQueryWriter(searchParams, setSearchParams) {
+  return (updates, { resetPage = true, replace = true } = {}) => {
+    const next = new URLSearchParams(searchParams)
+    Object.entries(updates).forEach(([key, config]) => {
+      const value = typeof config === 'object' && config !== null ? config.value : config
+      const fallback = typeof config === 'object' && config !== null ? config.fallback : ''
+      if (!value || value === fallback) next.delete(key)
+      else next.set(key, String(value))
+    })
+    if (resetPage) next.delete('page')
+    setSearchParams(next, { replace })
+  }
 }
 
 export default function PlayersPage() {
-  const { db } = useOutletContext()
+  const {
+    db,
+    withSeason = path => path,
+    favorites,
+    favoriteLimits,
+    togglePlayerFavorite
+  } = useOutletContext()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const directoryRef = useRef(null)
+  const setQuery = useQueryWriter(searchParams, setSearchParams)
+  const queryState = useMemo(() => buildRosterQueryState(searchParams, 'players'), [searchParams])
 
-  const [query, setQuery] = useState('')
-  const [roleFilter, setRoleFilter] = useState('ALL')
-  const [teamFilter, setTeamFilter] = useState('ALL')
-  const [sortBy, setSortBy] = useState('time_desc')
-
-  const allPlayers = useMemo(() => {
-    const playerTotals = safeArr(db?.player_totals)
-    const rawPlayers = safeArr(db?.players)
-
-    // 🌟 架构级升级：建立选手“主数据字典” (Single Source of Truth)
-    // 这样做的时间复杂度是 O(n)，比在 map 里去 find 要高效得多 (避免 O(n²))
-    // 无论后端的聚合表(player_totals)怎么污染数据，我们永远能通过 ID 找回纯净的注册信息
-    const identityMap = new Map()
-    rawPlayers.forEach(p => {
-      if (p.player_id) identityMap.set(p.player_id, p)
-    })
-
-    const source = playerTotals.length > 0 ? playerTotals : rawPlayers
-
-    return source.map(player => {
-      // 1. 提取基础身份数据，如果聚合表里没有，强制兜底回注册表
-      const baseIdentity = identityMap.get(player.player_id) || {}
-      
-      // 2. 身份锁：强制使用报名时的 role、真名和队伍，防止被战时数据覆盖
-      const trueRole = baseIdentity.role || player.role || 'FLEX'
-      const truePlayerName = baseIdentity.player_name || player.player_name
-      const trueDisplayName = baseIdentity.display_name || player.display_name
-      const trueTeamName = baseIdentity.team_name || player.team_name
-      const trueTeamShort = baseIdentity.team_short_name || player.team_short_name
-
-      // 3. 解析战术数据
-      const mapsPlayed = toNum(player.maps_played)
-      const rawTimeMins = toNum(player.raw_time_mins)
-
-      return {
-        ...player, // 保留所有聚合统计数据
-        // 覆盖回滚为绝对纯净的注册身份信息：
-        role: trueRole,
-        player_name: truePlayerName,
-        display_name: trueDisplayName,
-        team_name: trueTeamName,
-        team_short_name: trueTeamShort,
-        // 数值安全转换：
-        maps_played: mapsPlayed,
-        raw_time_mins: rawTimeMins,
-        avg_elim: toNum(player.avg_elim),
-        avg_ast: toNum(player.avg_ast),
-        avg_dth: toNum(player.avg_dth),
-        avg_dmg: toNum(player.avg_dmg),
-        avg_heal: toNum(player.avg_heal),
-        avg_block: toNum(player.avg_block),
-        hasStats: mapsPlayed > 0 || rawTimeMins > 0,
-        search_blob: [
-          trueDisplayName,
-          player.nickname, // 也许有临时外号
-          truePlayerName,
-          player.player_id,
-          trueTeamName,
-          trueTeamShort,
-          player.most_played_hero
-        ].filter(Boolean).join(' ').toLowerCase()
-      }
-    })
-  }, [db])
-
+  const summary = useMemo(() => getRosterSummary(db), [db])
+  const players = useMemo(() => {
+    return getPlayerDirectory(db, favorites, { role: queryState.role })
+  }, [db, favorites, queryState.role])
   const teamOptions = useMemo(() => {
-    const teamMap = new Map()
-
-    allPlayers.forEach(player => {
-      const key = player.team_id || player.team_name || player.team_short_name
-      if (!key || teamMap.has(key)) return
-
-      teamMap.set(key, {
+    const map = new Map()
+    players.forEach(player => {
+      const key = player.teamRouteId || player.teamShortName
+      if (!key || map.has(key)) return
+      map.set(key, {
         value: key,
-        labelCn: player.team_name || player.team_short_name || '未知战队',
-        labelEn: player.team_short_name || player.team_name || 'TEAM'
+        label: `${player.teamShortName} · ${player.teamFullName}`
       })
     })
-
-    return [...teamMap.values()].sort((a, b) => a.labelCn.localeCompare(b.labelCn, 'zh-Hans-CN'))
-  }, [allPlayers])
-
+    return [
+      { value: 'ALL', label: '全部队伍' },
+      ...[...map.values()].sort((a, b) => a.label.localeCompare(b.label, 'zh-Hans-CN'))
+    ]
+  }, [players])
+  const heroOptions = useMemo(() => {
+    const heroes = new Set()
+    players.forEach(player => {
+      if (player.avatar?.heroName) heroes.add(player.avatar.heroName)
+      safeArr(player.heroNames).forEach(hero => hero && heroes.add(hero))
+      safeArr(player.top_3_heroes).forEach(hero => hero && heroes.add(hero))
+    })
+    return [
+      { value: 'ALL', label: '全部英雄' },
+      ...[...heroes].sort((a, b) => a.localeCompare(b, 'zh-Hans-CN')).map(hero => ({ value: hero, label: hero }))
+    ]
+  }, [players])
+  const sortOptions = useMemo(() => {
+    const hasTimeData = players.some(player => Number(player.raw_time_mins || 0) > 0)
+    return hasTimeData ? [...BASE_SORT_OPTIONS, { value: 'time', label: '出场时间' }] : BASE_SORT_OPTIONS
+  }, [players])
   const filteredPlayers = useMemo(() => {
-    return allPlayers.filter(player => {
-      // 🌟 修复：引入角色标准化函数，完美解决大小写和别名（DPS/DAMAGE, SUP/SUPPORT）不一致的问题
-      if (roleFilter !== 'ALL') {
-        const normalizeRole = (r) => {
-          const str = String(r || '').toUpperCase();
-          if (str === 'DPS') return 'DAMAGE';
-          if (str === 'SUP') return 'SUPPORT';
-          return str;
-        };
+    return sortPlayers(filterPlayers(players, queryState), queryState.sort)
+  }, [players, queryState])
+  const pagination = useMemo(() => {
+    return paginatePlayers(filteredPlayers, queryState.page, queryState.pageSize)
+  }, [filteredPlayers, queryState.page, queryState.pageSize])
 
-        const targetRole = normalizeRole(roleFilter);
-
-        // 匹配主位置 (无论原始数据是 'Damage', 'dps', 'Sup', 都能被正确识别)
-        const isMainRole = normalizeRole(player.role) === targetRole;
-
-        // 匹配客串位置
-        const isSubRole = player.role_breakdown && Object.keys(player.role_breakdown).some(r => {
-          return normalizeRole(r) === targetRole && player.role_breakdown[r].raw_time_mins > 0;
-        });
-        
-        if (!isMainRole && !isSubRole) return false;
-      }
-
-      if (teamFilter !== 'ALL' && (player.team_id || player.team_name || player.team_short_name) !== teamFilter) return false
-
-      if (query.trim()) {
-        const q = query.trim().toLowerCase()
-        if (!player.search_blob.includes(q)) return false
-      }
-
-      return true
-    })
-  }, [allPlayers, query, roleFilter, teamFilter])
-
-  const sortedPlayers = useMemo(() => {
-    const rows = [...filteredPlayers]
-
-    if (sortBy === 'name_asc') {
-      return rows.sort((a, b) => {
-        const aName = String(a.display_name || a.nickname || a.player_id || '')
-        const bName = String(b.display_name || b.nickname || b.player_id || '')
-        return aName.localeCompare(bName, 'zh-Hans-CN')
-      })
+  useEffect(() => {
+    if (pagination.page !== queryState.page) {
+      setQuery({ page: { value: pagination.page, fallback: 1 } }, { resetPage: false })
     }
+  }, [pagination.page, queryState.page, setQuery])
 
-    return rows.sort((a, b) => {
-      const diff = getSortValue(b, sortBy) - getSortValue(a, sortBy)
-      if (diff !== 0) return diff
-
-      const mapsDiff = toNum(b.maps_played) - toNum(a.maps_played)
-      if (mapsDiff !== 0) return mapsDiff
-
-      return String(a.display_name || a.player_id || '').localeCompare(
-        String(b.display_name || b.player_id || ''),
-        'zh-Hans-CN'
-      )
-    })
-  }, [filteredPlayers, sortBy])
-
-  const summary = useMemo(() => {
-    const totalTeams = new Set(
-      allPlayers.map(player => player.team_id || player.team_name || player.team_short_name).filter(Boolean)
-    ).size
-
-    const filteredTeams = new Set(
-      sortedPlayers.map(player => player.team_id || player.team_name || player.team_short_name).filter(Boolean)
-    ).size
-
-    return {
-      totalPlayers: allPlayers.length,
-      dataReadyPlayers: allPlayers.filter(p => p.hasStats).length,
-      filteredPlayers: sortedPlayers.length,
-      filteredTeams,
-      totalTeams,
-      currentView: formatViewLabel({ roleFilter, teamFilter, teamOptions })
-    }
-  }, [allPlayers, roleFilter, sortedPlayers, teamFilter, teamOptions])
-
-  const currentSort = SORT_OPTIONS.find(option => option.value === sortBy) || SORT_OPTIONS[0]
-  const activeRole = getRoleLabel(roleFilter)
+  const favoriteCount = players.filter(player => player.isFavorite).length
+  const favoriteLimit = favoriteLimits?.players || 12
+  const hasFilters = Boolean(
+    queryState.q ||
+    queryState.role !== 'ALL' ||
+    queryState.team !== 'ALL' ||
+    queryState.hero !== 'ALL' ||
+    queryState.following !== 'all' ||
+    queryState.sort !== 'default'
+  )
+  const reset = () => {
+    const next = new URLSearchParams(searchParams)
+    ;['q', 'role', 'team', 'hero', 'following', 'sort', 'page', 'pageSize'].forEach(key => next.delete(key))
+    setSearchParams(next, { replace: true })
+  }
+  const teamLabel = teamOptions.find(option => option.value === queryState.team)?.label || queryState.team
+  const activeFilters = [
+    queryState.q ? {
+      key: 'q',
+      label: `搜索：${queryState.q}`,
+      onRemove: () => setQuery({ q: { value: '', fallback: '' } })
+    } : null,
+    queryState.role !== 'ALL' ? {
+      key: 'role',
+      label: displayRole(queryState.role),
+      onRemove: () => setQuery({ role: { value: 'ALL', fallback: 'ALL' } })
+    } : null,
+    queryState.team !== 'ALL' ? {
+      key: 'team',
+      label: teamLabel,
+      onRemove: () => setQuery({ team: { value: 'ALL', fallback: 'ALL' } })
+    } : null,
+    queryState.hero !== 'ALL' ? {
+      key: 'hero',
+      label: queryState.hero,
+      onRemove: () => setQuery({ hero: { value: 'ALL', fallback: 'ALL' } })
+    } : null,
+    queryState.following === 'following' ? {
+      key: 'following',
+      label: '只看关注',
+      onRemove: () => setQuery({ following: { value: 'all', fallback: 'all' } })
+    } : null
+  ].filter(Boolean)
+  const activeTab = queryState.following === 'following' ? 'following' : queryState.role
 
   return (
     <div className={styles.shell}>
-      <section className={styles.hero}>
-        <div className={styles.heroMain}>
-          <div className={styles.heroKicker}>
-            <span className={styles.heroKickerCn}>选手大厅</span>
-            <span className={styles.heroKickerEn}>PLAYER INDEX</span>
-          </div>
+      <RosterPageHeader
+        stats={[
+          { value: summary.totalPlayers, label: '参赛选手' },
+          { value: summary.roleCounts.TANK, label: 'TANK' },
+          { value: summary.roleCounts.DPS, label: 'DPS' },
+          { value: summary.roleCounts.SUPPORT, label: 'SUPPORT' }
+        ]}
+      />
 
-          <h1 className={styles.heroTitle}>全联盟选手数据入口</h1>
+      <div className={styles.stickyRosterControls}>
+        <RosterSubnav withSeason={withSeason} />
 
-          <p className={styles.heroDesc}>
-            从注册名单升级为可检索、可排序的数据大厅。你可以按职责、队伍快速定位选手，并直接进入个人画像页查看更完整的风格与战术指标。
-          </p>
-
-          <div className={styles.heroViewBar}>
-            <span className={styles.heroViewLabel}>当前视图</span>
-            <span className={styles.heroViewValue}>{summary.currentView}</span>
-          </div>
+        <div className={styles.roleTabs} role="tablist" aria-label="Player role filters">
+          {ROLE_TABS.map(tab => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`${styles.roleTab} ${activeTab === tab.id || (tab.id === 'SUPPORT' && normalizeRosterRole(activeTab) === 'SUP') ? styles.roleTabActive : ''}`}
+              data-role={tab.id}
+              onClick={() => {
+                if (tab.id === 'following') {
+                  setQuery({
+                    following: { value: 'following', fallback: 'all' },
+                    role: { value: 'ALL', fallback: 'ALL' }
+                  })
+                } else {
+                  setQuery({
+                    role: { value: tab.id, fallback: 'ALL' },
+                    following: { value: 'all', fallback: 'all' }
+                  })
+                }
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        <div className={styles.heroMeta}>
-          <div className={styles.heroMetaItem}>
-            <div className={styles.heroMetaLabel}>
-              <span className={styles.metaCn}>注册选手</span>
-              <span className={styles.metaEn}>TOTAL PLAYERS</span>
-            </div>
-            <div className={styles.heroMetaValue}>{summary.totalPlayers}</div>
+        <RosterToolbar
+          compact
+          searchValue={queryState.q}
+          searchPlaceholder="搜索昵称、BattleTag、队伍简称或全称"
+          onSearchChange={value => setQuery({ q: { value, fallback: '' } })}
+          resultLabel={`${filteredPlayers.length} 条结果`}
+          fields={[
+            {
+              name: 'sort',
+              label: 'SORT',
+              value: queryState.sort,
+              onChange: value => setQuery({ sort: { value, fallback: 'default' } }),
+              options: sortOptions
+            }
+          ]}
+          advancedFields={[
+            {
+              name: 'role',
+              label: 'ROLE',
+              value: queryState.role,
+              onChange: value => setQuery({ role: { value, fallback: 'ALL' } }),
+              options: ROLE_OPTIONS
+            },
+            {
+              name: 'team',
+              label: 'TEAM',
+              value: queryState.team,
+              onChange: value => setQuery({ team: { value, fallback: 'ALL' } }),
+              options: teamOptions
+            },
+            {
+              name: 'hero',
+              label: 'HERO',
+              value: queryState.hero,
+              onChange: value => setQuery({ hero: { value, fallback: 'ALL' } }),
+              options: heroOptions
+            },
+            {
+              name: 'following',
+              label: 'FOLLOWING',
+              value: queryState.following,
+              onChange: value => setQuery({ following: { value, fallback: 'all' } }),
+              options: FOLLOWING_OPTIONS
+            }
+          ]}
+          activeFilters={activeFilters}
+          onReset={hasFilters ? reset : null}
+        />
+      </div>
+
+      <section ref={directoryRef} className={styles.directorySection}>
+        <div className={rosterStyles.directoryHead}>
+          <div className={rosterStyles.directoryTitleGroup}>
+            <h2 className={rosterStyles.directoryTitle}>全部选手</h2>
+            <div className={rosterStyles.directorySubtitle}>PLAYER DIRECTORY</div>
           </div>
-
-          <div className={styles.heroMetaItem}>
-            <div className={styles.heroMetaLabel}>
-              <span className={styles.metaCn}>数据就绪</span>
-              <span className={styles.metaEn}>DATA READY</span>
-            </div>
-            <div className={styles.heroMetaValue}>{summary.dataReadyPlayers}</div>
-          </div>
-
-          <div className={styles.heroMetaItem}>
-            <div className={styles.heroMetaLabel}>
-              <span className={styles.metaCn}>当前结果</span>
-              <span className={styles.metaEn}>FILTERED</span>
-            </div>
-            <div className={styles.heroMetaValue}>{summary.filteredPlayers}</div>
-          </div>
-
-          <div className={styles.heroMetaItem}>
-            <div className={styles.heroMetaLabel}>
-              <span className={styles.metaCn}>当前排序</span>
-              <span className={styles.metaEn}>SORT MODE</span>
-            </div>
-            <div className={styles.heroMetaValueText}>{currentSort.cn}</div>
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.statStrip}>
-        <div className={styles.statStripItem}>
-          <span className={styles.statStripLabel}>角色视图</span>
-          <span className={styles.statStripValue}>{activeRole.short}</span>
-        </div>
-
-        <div className={styles.statStripItem}>
-          <span className={styles.statStripLabel}>结果队伍数</span>
-          <span className={styles.statStripValue}>{summary.filteredTeams}</span>
-        </div>
-
-        <div className={styles.statStripItem}>
-          <span className={styles.statStripLabel}>排序模式</span>
-          <span className={styles.statStripValue}>{currentSort.en}</span>
-        </div>
-      </section>
-
-      <section className={styles.toolbar}>
-        <div className={styles.toolbarHead}>
-          <div className={styles.toolbarTitleGroup}>
-            <div className={styles.toolbarTitle}>筛选与排序</div>
-            <div className={styles.toolbarSubTitle}>FILTERS & SORTING</div>
-          </div>
-
-          <button
-            type="button"
-            className={styles.resetBtn}
-            onClick={() => {
-              setQuery('')
-              setRoleFilter('ALL')
-              setTeamFilter('ALL')
-              setSortBy('time_desc')
-            }}
-          >
-            重置
-            <span className={styles.resetBtnEn}>RESET</span>
-          </button>
+          <div className={rosterStyles.directoryCount}>{filteredPlayers.length} 条结果</div>
         </div>
 
-        <div className={styles.toolbarMain}>
-          <div className={styles.toolGrid}>
-            <div className={styles.field}>
-              <label className={styles.label}>
-                <span className={styles.labelCn}>位置</span>
-                <span className={styles.labelEn}>ROLE</span>
-              </label>
-              <select
-                className={styles.select}
-                value={roleFilter}
-                onChange={e => setRoleFilter(e.target.value)}
-              >
-                <option value="ALL">全部位置 / ALL ROLES</option>
-                <option value="TANK">重装 / TANK</option>
-                <option value="DAMAGE">输出 / DPS</option>
-                <option value="SUPPORT">支援 / SUPPORT</option>
-              </select>
-            </div>
-
-            <div className={styles.field}>
-              <label className={styles.label}>
-                <span className={styles.labelCn}>战队</span>
-                <span className={styles.labelEn}>TEAM</span>
-              </label>
-              <select
-                className={styles.select}
-                value={teamFilter}
-                onChange={e => setTeamFilter(e.target.value)}
-              >
-                <option value="ALL">全部战队 / ALL TEAMS</option>
-                {teamOptions.map(team => (
-                  <option key={team.value} value={team.value}>
-                    {team.labelCn} / {team.labelEn}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className={styles.field}>
-              <label className={styles.label}>
-                <span className={styles.labelCn}>排序</span>
-                <span className={styles.labelEn}>SORT BY</span>
-              </label>
-              <select
-                className={styles.select}
-                value={sortBy}
-                onChange={e => setSortBy(e.target.value)}
-              >
-                {SORT_OPTIONS.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.cn} / {option.en}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className={`${styles.field} ${styles.searchField}`}>
-              <label className={styles.label}>
-                <span className={styles.labelCn}>检索</span>
-                <span className={styles.labelEn}>SEARCH</span>
-              </label>
-              <input
-                className={styles.input}
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                placeholder="输入选手 ID / 游戏名 / 队伍名 / 英雄名..."
+        {pagination.items.length ? (
+          <div className={styles.playerGrid}>
+            {pagination.items.map(player => (
+              <PlayerDirectoryCard
+                key={player.identity.playerId || player.player_id}
+                player={player}
+                withSeason={withSeason}
+                onToggleFavorite={togglePlayerFavorite}
+                favoriteDisabled={!player.isFavorite && favoriteCount >= favoriteLimit}
               />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.resultsSection}>
-        <div className={styles.resultsHead}>
-          <div className={styles.resultsTitleGroup}>
-            <div className={styles.resultsTitle}>结果列表</div>
-            <div className={styles.resultsSubTitle}>PLAYER RESULTS</div>
-          </div>
-
-          <div className={styles.resultsMeta}>
-            <span className={styles.resultPill}>{summary.filteredPlayers} RESULTS</span>
-            <span className={styles.resultPill}>{summary.filteredTeams} TEAMS</span>
-            <span className={styles.resultPill}>{currentSort.en}</span>
-          </div>
-        </div>
-
-        {sortedPlayers.length > 0 ? (
-          <div className={styles.grid}>
-            {sortedPlayers.map(player => (
-              <PlayerCard key={player.player_id} player={player} />
             ))}
           </div>
         ) : (
-          <div className={styles.emptyState}>
-            <span className={styles.emptyCn}>未找到匹配的选手</span>
-            <span className={styles.emptyEn}>NO PLAYERS FOUND</span>
-            <span className={styles.emptyHint}>尝试切换队伍、角色筛选，或清空检索关键词。</span>
-          </div>
+          <RosterEmptyState title="未找到符合条件的选手。" onReset={reset} />
         )}
       </section>
+
+      <RosterPagination
+        pagination={pagination}
+        pageSizeOptions={PLAYER_PAGE_SIZES}
+        scrollTargetRef={directoryRef}
+        onPageChange={page => setQuery({ page: { value: page, fallback: 1 } }, { resetPage: false, replace: false })}
+        onPageSizeChange={pageSize => setQuery({ pageSize: { value: pageSize, fallback: 24 } })}
+      />
     </div>
   )
 }

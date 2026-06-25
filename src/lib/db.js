@@ -1,27 +1,42 @@
-let dbCache = null
-let reportCache = null
+import { getSeasonById, getStoredSeasonId } from '../config/seasons.js'
 
-const LOCAL_DB_URL = '/data/friescup_db_review_ready.json'
-const LOCAL_REPORT_URL = '/data/friescup_db_review_ready_report.json'
-const PUBLISHED_DB_URL = 'https://admin.fries-cup.com/api/public/seasons/FCA26/publish/latest/data'
-const PUBLISHED_REPORT_URL = 'https://admin.fries-cup.com/api/public/seasons/FCA26/publish/latest/report'
+const dbCache = new Map()
+const reportCache = new Map()
+
 const REQUEST_TIMEOUT_MS = 12000
 
 function uniqueUrls(urls) {
   return Array.from(new Set(urls.filter(Boolean)))
 }
 
-const DB_URLS = uniqueUrls([
-  import.meta.env.VITE_PUBLIC_DATA_URL,
-  import.meta.env.PROD ? PUBLISHED_DB_URL : '',
-  LOCAL_DB_URL
-])
+function getEnvUrl(seasonId, kind) {
+  const upperKind = kind === 'report' ? 'REPORT' : 'DATA'
+  return import.meta.env[`VITE_PUBLIC_${seasonId}_${upperKind}_URL`] ||
+    import.meta.env[`VITE_PUBLIC_${upperKind}_URL`] ||
+    ''
+}
 
-const REPORT_URLS = uniqueUrls([
-  import.meta.env.VITE_PUBLIC_REPORT_URL,
-  import.meta.env.PROD ? PUBLISHED_REPORT_URL : '',
-  LOCAL_REPORT_URL
-])
+function getDbUrls(season) {
+  const remoteUrls = [
+    getEnvUrl(season.id, 'data'),
+    season.proxyDataUrl,
+    season.dataUrl
+  ]
+  const localUrls = [season.localDataUrl]
+
+  return uniqueUrls(season?.preferLocalData
+    ? [...localUrls, ...remoteUrls]
+    : [...remoteUrls, ...localUrls])
+}
+
+function getReportUrls(season) {
+  return uniqueUrls([
+    getEnvUrl(season.id, 'report'),
+    season.proxyReportUrl,
+    season.reportUrl,
+    season.localReportUrl
+  ])
+}
 
 async function fetchJson(url, errorCode) {
   const controller = new AbortController()
@@ -39,7 +54,22 @@ async function fetchJson(url, errorCode) {
   }
 }
 
-function validatePublicDb(data) {
+function attachSeasonMeta(data, season) {
+  return {
+    ...data,
+    meta: {
+      ...(data?.meta || {}),
+      season_id: data?.meta?.season_id || season.id,
+      season_code: data?.meta?.season_code || season.publicCode,
+      season_name: data?.meta?.season_name || season.name.zh,
+      season_name_en: data?.meta?.season_name_en || season.name.en,
+      series_code: data?.meta?.series_code || season.seriesCode,
+      review_enabled: season.reviewEnabled
+    }
+  }
+}
+
+function validatePublicDb(data, season) {
   if (!Array.isArray(data?.teams) || !Array.isArray(data?.players) || !Array.isArray(data?.matches)) {
     throw new Error('DB_PAYLOAD_INVALID')
   }
@@ -48,11 +78,17 @@ function validatePublicDb(data) {
     throw new Error('DB_PLAYER_TOTALS_MISSING')
   }
 
-  if (!data?.meta?.review_ready || !Array.isArray(data?.team_reviews) || data.team_reviews.length === 0) {
-    throw new Error('DB_REVIEW_PAYLOAD_MISSING')
+  if (season.reviewEnabled) {
+    const hasReviewPayload = data?.meta?.review_ready &&
+      Array.isArray(data?.team_reviews) &&
+      data.team_reviews.length > 0
+
+    if (!hasReviewPayload) {
+      throw new Error('DB_REVIEW_PAYLOAD_MISSING')
+    }
   }
 
-  return data
+  return attachSeasonMeta(data, season)
 }
 
 async function fetchFirstAvailable(urls, errorCode, validate = data => data) {
@@ -69,19 +105,36 @@ async function fetchFirstAvailable(urls, errorCode, validate = data => data) {
   throw new Error(`${errorCode}: ${errors.join(' | ')}`)
 }
 
-export async function getDb() {
-  if (dbCache) return dbCache
-  dbCache = await fetchFirstAvailable(DB_URLS, 'DB_LOAD_FAILED', validatePublicDb)
-  return dbCache
+export async function getDb(seasonId) {
+  const season = getSeasonById(seasonId || getStoredSeasonId())
+  if (dbCache.has(season.id)) return dbCache.get(season.id)
+
+  const data = await fetchFirstAvailable(
+    getDbUrls(season),
+    'DB_LOAD_FAILED',
+    payload => validatePublicDb(payload, season)
+  )
+  dbCache.set(season.id, data)
+  return data
 }
 
-export async function getReviewReport() {
-  if (reportCache) return reportCache
-  reportCache = await fetchFirstAvailable(REPORT_URLS, 'REPORT_LOAD_FAILED')
-  return reportCache
+export async function getReviewReport(seasonId) {
+  const season = getSeasonById(seasonId || getStoredSeasonId())
+  if (reportCache.has(season.id)) return reportCache.get(season.id)
+
+  const report = await fetchFirstAvailable(getReportUrls(season), 'REPORT_LOAD_FAILED')
+  reportCache.set(season.id, report)
+  return report
 }
 
-export function clearDbCache() {
-  dbCache = null
-  reportCache = null
+export function clearDbCache(seasonId) {
+  if (!seasonId) {
+    dbCache.clear()
+    reportCache.clear()
+    return
+  }
+
+  const season = getSeasonById(seasonId)
+  dbCache.delete(season.id)
+  reportCache.delete(season.id)
 }

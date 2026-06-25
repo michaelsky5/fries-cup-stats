@@ -1,1115 +1,606 @@
-import { useMemo, useEffect, useRef, useState } from 'react'
-import { useOutletContext, useParams, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router-dom'
 import {
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
   Radar,
   RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  AreaChart,
-  Area,
-  CartesianGrid,
-  XAxis,
-  YAxis,
   ResponsiveContainer,
-  Tooltip,
-  ReferenceLine
+  Tooltip
 } from 'recharts'
-import { getLeaderboardRows, safeArr } from '../../lib/selectors.js'
+import PlayerShareDialog from '../../features/player-share/PlayerShareDialog.jsx'
+import {
+  getHeroAvatarSrc,
+  getRoleColor,
+  getRoleLabel,
+  normalizeLeaderboardRole
+} from '../../lib/leaderboardSelectors.js'
+import {
+  PLAYER_MAP_METRICS,
+  PLAYER_METRIC_MODES,
+  getPlayerDossier,
+  getPlayerRoleAnalysis
+} from '../../lib/playerDetailSelectors.js'
 import styles from './PlayerDetailPage.module.css'
 
-// 引入 html-to-image 和新增的分享名片组件
-import { toPng } from 'html-to-image'
-import PlayerShareCard from '../../components/players/PlayerShareCard.jsx'
-
-function formatNum(value, digits = 2) {
-  const num = Number(value || 0)
-  return Number.isFinite(num) ? num.toFixed(digits) : '0.00'
-}
-
-function formatHeroName(name) {
-  if (!name || name === '-') return 'unknown'
-  return name.toLowerCase()
-    .replace(/ú/g, 'u')
-    .replace(/ö/g, 'o')
-    .replace(/\./g, '')
-    .replace(/: /g, '_')
-    .replace(/ /g, '_')
-    .replace(/-/g, '_')
-}
-
-function getRoleFolder(role) {
-  if (!role) return 'damage'
-  const r = role.toUpperCase()
-  if (r === 'TANK') return 'tank'
-  if (r === 'SUP' || r === 'SUPPORT') return 'support'
-  return 'damage'
-}
-
 function getRoleClass(role) {
-  const r = String(role || '').toUpperCase()
-  if (r === 'TANK') return styles.roleTank
-  if (r === 'DPS' || r === 'DAMAGE') return styles.roleDps 
-  if (r === 'SUP' || r === 'SUPPORT') return styles.roleSup
+  const normalized = normalizeLeaderboardRole(role)
+  if (normalized === 'TANK') return styles.roleTank
+  if (normalized === 'DPS') return styles.roleDps
+  if (normalized === 'SUPPORT') return styles.roleSupport
   return styles.roleFlex
 }
 
-function calculatePercentile(rank, total) {
-  if (total <= 1) return 100
-  return Math.round(((total - rank) / (total - 1)) * 100)
+function roleDisplay(role) {
+  const normalized = normalizeLeaderboardRole(role)
+  return normalized === 'SUPPORT' ? 'SUPPORT' : normalized || 'ROLE'
 }
 
-function formatTimePlayed(rawTimeMins, fallbackText) {
-  if (fallbackText) return fallbackText
+function HeroPortrait({ heroName, role, initials, large = false }) {
+  const [failed, setFailed] = useState(false)
+  const src = heroName ? getHeroAvatarSrc(heroName, role) : ''
 
-  const mins = Math.round(Number(rawTimeMins || 0))
-  if (!mins) return '-'
-  if (mins < 60) return `${mins}m`
+  useEffect(() => {
+    setFailed(false)
+  }, [src])
 
-  const h = Math.floor(mins / 60)
-  const m = mins % 60
-  if (!m) return `${h}h`
-  return `${h}h ${m}m`
+  return (
+    <div className={`${styles.portrait} ${large ? styles.portraitLarge : ''}`}>
+      {src && !failed ? (
+        <img
+          src={src}
+          alt={heroName}
+          className={styles.portraitImg}
+          loading="lazy"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <span>{initials}</span>
+      )}
+    </div>
+  )
 }
 
-function formatPercentileText(value) {
-  const pct = Math.max(0, Math.round(Number(value) || 0))
-  return `超越同职责 ${pct}%`
+function HeroThumb({ heroName, role }) {
+  const [failed, setFailed] = useState(false)
+  const src = heroName ? getHeroAvatarSrc(heroName, role) : ''
+
+  useEffect(() => {
+    setFailed(false)
+  }, [src])
+
+  return (
+    <div className={styles.heroThumb}>
+      {src && !failed ? (
+        <img src={src} alt={heroName} loading="lazy" onError={() => setFailed(true)} />
+      ) : (
+        <span>{String(heroName || 'FC').slice(0, 2).toUpperCase()}</span>
+      )}
+    </div>
+  )
 }
 
-const CustomRadarTooltip = ({ active, payload }) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload
-    return (
-      <div className={styles.radarTooltip}>
-        <div className={styles.tooltipTitle}>{data.subject}</div>
-        <div className={styles.tooltipRow}>
-          <span className={styles.tooltipLabel}>选手真实数据</span>
-          <span className={styles.tooltipValueHighlight}>{formatNum(data.rawPlayer)}</span>
+function RadarTooltip({ active, payload }) {
+  if (!active || !payload?.length) return null
+  const data = payload[0].payload
+  return (
+    <div className={styles.chartTooltip}>
+      <strong>{data.subject}</strong>
+      <span>选手：{data.available ? `P${data.percentile}` : '样本不足'}</span>
+      <span>参考：同职责中位</span>
+      {data.rawPlayer ? <em>{data.rawPlayer}</em> : null}
+    </div>
+  )
+}
+
+function SectionHeading({ kicker, title, meta, action }) {
+  return (
+    <div className={styles.sectionHeading}>
+      <div>
+        <div className={styles.sectionKicker}>
+          <span>{kicker}</span>
+          <i aria-hidden="true" />
         </div>
-        <div className={styles.tooltipRow}>
-          <span className={styles.tooltipLabel}>同位置平均</span>
-          <span className={styles.tooltipValue}>{formatNum(data.rawAvg)}</span>
+        <h2>{title}</h2>
+        {meta ? <p>{meta}</p> : null}
+      </div>
+      {action ? <div className={styles.sectionAction}>{action}</div> : null}
+    </div>
+  )
+}
+
+function RoleTabs({ roles, activeView, onChange }) {
+  const showOverview = roles.length > 1
+  const tabs = [
+    ...(showOverview ? [{ id: 'overview', label: '综合资料', en: 'OVERVIEW' }] : []),
+    ...roles.map(role => ({ id: role, label: roleDisplay(role), en: getRoleLabel(role) }))
+  ]
+
+  return (
+    <nav className={styles.roleTabs} aria-label="选手职责">
+      {tabs.map(tab => (
+        <button
+          key={tab.id}
+          type="button"
+          className={activeView === tab.id ? styles.roleTabActive : ''}
+          onClick={() => onChange(tab.id)}
+        >
+          <span>{tab.label}</span>
+          <small>{tab.en}</small>
+        </button>
+      ))}
+    </nav>
+  )
+}
+
+function OverviewPanel({ dossier, onChange }) {
+  return (
+    <section className={styles.overviewPanel}>
+      <SectionHeading
+        kicker="ROLE FILES"
+        title="综合资料"
+        meta="不同职责的出场时间、地图数、数据评分和正式排名分开记录。"
+      />
+      <div className={styles.roleOverviewGrid}>
+        {dossier.roleEntries.map(item => (
+          <article key={item.role} className={`${styles.roleOverviewCard} ${getRoleClass(item.role)}`}>
+            <div className={styles.roleOverviewTop}>
+              <span>{roleDisplay(item.role)}</span>
+              <strong>{item.summary.scoreLabel}</strong>
+            </div>
+            <div className={styles.roleOverviewFacts}>
+              <span>
+                <b>{item.summary.maps}</b>
+                地图
+              </span>
+              <span>
+                <b>{item.summary.timeLabel}</b>
+                出场时间
+              </span>
+              <span>
+                <b>{item.summary.rankLabel}</b>
+                同职责排名
+              </span>
+            </div>
+            <button type="button" onClick={() => onChange(item.role)}>
+              进入 {roleDisplay(item.role)} 档案 →
+            </button>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function DossierHero({
+  dossier,
+  analysis,
+  withSeason,
+  onExport,
+  onFavorite,
+  favoriteLabel,
+  favoriteDisabled
+}) {
+  const { identity } = dossier
+  const summary = analysis.summary
+  const topHero = analysis.heroPool[0]?.hero || summary.primaryHero
+  const teamPath = identity.teamRouteId ? withSeason(`/teams/${encodeURIComponent(identity.teamRouteId)}`) : ''
+
+  return (
+    <section className={`${styles.hero} ${getRoleClass(summary.role)}`}>
+      <div className={styles.identityBlock}>
+        <div className={styles.heroKicker}>
+          <span>PLAYER DOSSIER</span>
+          <i aria-hidden="true" />
+        </div>
+        <HeroPortrait heroName={topHero} role={summary.role} initials={identity.initials} large />
+        <h1>{identity.displayName}</h1>
+        {identity.battleTag ? <p className={styles.battleTag}>{identity.battleTag}</p> : null}
+        <div className={styles.identityMeta}>
+          <span>{identity.teamShort} · {identity.teamFull}</span>
+          <span>{dossier.isOverview ? '综合资料' : roleDisplay(summary.role)}</span>
+        </div>
+        <div className={styles.heroActions}>
+          <button type="button" onClick={onFavorite} disabled={favoriteDisabled}>
+            {favoriteLabel}
+          </button>
+          {teamPath ? <Link to={teamPath}>查看战队 →</Link> : null}
+          <button type="button" onClick={onExport} className={styles.textAction}>
+            导出分享图 →
+          </button>
         </div>
       </div>
-    )
-  }
-  return null
+
+      <div className={styles.summaryBlock}>
+        <div className={styles.summaryTop}>
+          <div>
+            <span className={styles.summaryKicker}>CURRENT ROLE</span>
+            <h2>{dossier.isOverview ? '综合资料' : roleDisplay(summary.role)}</h2>
+          </div>
+          <span className={styles.sampleBadge}>
+            门槛 {dossier.minTimeMins} 分钟
+          </span>
+        </div>
+
+        <div className={styles.summaryGrid}>
+          <div>
+            <span>出场地图</span>
+            <strong>{summary.maps}</strong>
+          </div>
+          <div>
+            <span>出场时间</span>
+            <strong>{summary.timeLabel}</strong>
+          </div>
+          <div>
+            <span>主力英雄</span>
+            <strong>{summary.primaryHero || '—'}</strong>
+          </div>
+          <div>
+            <span>数据评分</span>
+            <strong>{summary.scoreLabel}</strong>
+          </div>
+          <div>
+            <span>同职责排名</span>
+            <strong>{summary.rankLabel}</strong>
+          </div>
+          <div>
+            <span>排名状态</span>
+            <strong>{summary.eligible ? summary.scorePercentileLabel : '样本不足'}</strong>
+          </div>
+        </div>
+
+        <p className={styles.scoreNotice}>数据评分仅依据赛事统计计算，不代表官方 MVP 评选。</p>
+      </div>
+    </section>
+  )
+}
+
+function ScoreRadarPanel({ analysis }) {
+  const summary = analysis.summary
+  const roleColor = getRoleColor(summary.role)
+  const validRadar = analysis.radarData.some(item => item.available)
+
+  return (
+    <section className={`${styles.scorePanel} ${getRoleClass(summary.role)}`}>
+      <div className={styles.scorePlate}>
+        <div className={styles.scoreLabel}>数据评分</div>
+        <div className={styles.scoreValue}>{summary.scoreLabel}</div>
+        <div className={styles.scoreRank}>
+          {summary.eligible ? `${summary.rankLabel} · ${summary.scorePercentileLabel}` : '样本不足 · 不进入正式排名'}
+        </div>
+        <div className={styles.scoreMeta}>
+          <span>{roleDisplay(summary.role)}</span>
+          <span>{summary.qualifiedSize} 名有效样本</span>
+        </div>
+      </div>
+
+      <div className={styles.radarPanel}>
+        <div className={styles.radarTitle}>
+          <span>ROLE RADAR</span>
+          <strong>选手表现 vs 同职责中位</strong>
+        </div>
+        <div className={styles.radarCanvas}>
+          {validRadar ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart data={analysis.radarData} cx="50%" cy="50%" outerRadius="74%">
+                <PolarGrid gridType="polygon" stroke="rgba(42,42,42,0.28)" />
+                <PolarAngleAxis dataKey="subject" tick={{ fill: '#2a2a2a', fontSize: 12, fontWeight: 900 }} />
+                <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
+                <Tooltip content={<RadarTooltip />} />
+                <Radar name="同职责中位" dataKey="Avg" stroke="rgba(42,42,42,0.42)" fill="rgba(42,42,42,0.08)" strokeDasharray="4 4" />
+                <Radar name="选手" dataKey="Player" stroke={roleColor} fill={roleColor} fillOpacity={0.2} strokeWidth={3} />
+              </RadarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className={styles.inlineEmpty}>比赛开始后生成雷达数据</div>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Achievements({ achievements }) {
+  if (!achievements.length) return null
+  return (
+    <section className={styles.achievementStrip}>
+      <span>SEASON ACHIEVEMENTS</span>
+      {achievements.map(item => (
+        <div key={`${item.label}-${item.value}`}>
+          <strong>{item.label}</strong>
+          {item.value ? <small>{item.value}</small> : null}
+        </div>
+      ))}
+    </section>
+  )
+}
+
+function CoreStats({ analysis, metricMode, onModeChange }) {
+  return (
+    <section className={styles.coreStatsSection}>
+      <SectionHeading
+        kicker="CORE STATS"
+        title="六项核心数据"
+        meta="按游戏内记分板顺序展示，默认使用每 10 分钟。"
+        action={(
+          <div className={styles.segmented}>
+            {PLAYER_METRIC_MODES.map(mode => (
+              <button
+                key={mode.id}
+                type="button"
+                className={metricMode === mode.id ? styles.segmentedActive : ''}
+                onClick={() => onModeChange(mode.id)}
+              >
+                {mode.label}
+              </button>
+            ))}
+          </div>
+        )}
+      />
+      <div className={styles.coreStatsBand}>
+        {analysis.coreStats.map(stat => (
+          <div key={stat.id} className={styles.coreStat}>
+            <span>{stat.label}</span>
+            <strong>{stat.valueLabel}</strong>
+            <small>{stat.percentile === null ? '样本不足' : `同职责 P${stat.percentile}`}</small>
+            <em>平均 {stat.averageLabel}</em>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function RecentMatches({ matches, withSeason, playerId, role }) {
+  return (
+    <section className={styles.recentSection}>
+      <SectionHeading kicker="RECENT MATCHES" title="最近比赛" meta="只统计当前选中职责的比赛记录。" />
+      {matches.length ? (
+        <div className={styles.recentList}>
+          {matches.map(match => (
+            <Link
+              key={match.matchId}
+              to={withSeason(`/matches/${encodeURIComponent(match.matchId)}?player=${encodeURIComponent(playerId)}&role=${role}`)}
+              className={styles.recentRow}
+            >
+              <span>{match.dateLabel}</span>
+              <strong>vs {match.opponent.short}</strong>
+              <em>{match.scoreLabel}</em>
+              <small>{roleDisplay(role)} · {match.heroLabel}</small>
+              <b>{match.coreMetric.label} {match.coreMetric.value}</b>
+              <i aria-hidden="true">→</i>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className={styles.lightEmpty}>当前职责暂无比赛记录。</div>
+      )}
+    </section>
+  )
+}
+
+function HeroPool({ heroes, role }) {
+  const primary = heroes[0]
+  const rest = heroes.slice(1)
+  return (
+    <section className={styles.heroPoolSection}>
+      <SectionHeading kicker="HERO POOL" title="英雄池" meta="仅统计当前职责下的英雄使用记录。" />
+      {primary ? (
+        <div className={styles.heroPoolLayout}>
+          <article className={styles.primaryHeroCard}>
+            <HeroThumb heroName={primary.hero} role={role} />
+            <div>
+              <span>主力英雄</span>
+              <h3>{primary.hero}</h3>
+              <p>{primary.timeLabel} · {primary.usageLabel} · {primary.maps} 张地图</p>
+            </div>
+            <strong>{primary.coreMetric.label} {primary.coreMetric.value}</strong>
+          </article>
+          <div className={styles.secondaryHeroes}>
+            {rest.length ? rest.map(hero => (
+              <article key={hero.hero} className={styles.secondaryHeroCard}>
+                <HeroThumb heroName={hero.hero} role={role} />
+                <strong>{hero.hero}</strong>
+                <span>{hero.timeLabel}</span>
+                <small>{hero.usageLabel} · {hero.maps} 图</small>
+              </article>
+            )) : <div className={styles.lightEmpty}>暂无更多英雄记录。</div>}
+          </div>
+        </div>
+      ) : (
+        <div className={styles.lightEmpty}>当前职责暂无英雄池数据。</div>
+      )}
+    </section>
+  )
+}
+
+function MapPerformance({ rows, mapMetric, onMetricChange, withSeason }) {
+  const metric = PLAYER_MAP_METRICS.find(item => item.id === mapMetric) || PLAYER_MAP_METRICS[0]
+  return (
+    <section className={styles.mapSection}>
+      <SectionHeading
+        kicker="MAP PERFORMANCE"
+        title="地图表现"
+        meta="每一行对应一张真实地图，不使用平滑趋势线。"
+        action={(
+          <div className={styles.segmented}>
+            {PLAYER_MAP_METRICS.map(item => (
+              <button
+                key={item.id}
+                type="button"
+                className={mapMetric === item.id ? styles.segmentedActive : ''}
+                onClick={() => onMetricChange(item.id)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        )}
+      />
+      {rows.length ? (
+        <div className={styles.mapRows}>
+          {rows.map(row => (
+            <Link key={row.key} to={withSeason(`/matches/${encodeURIComponent(row.matchId)}`)} className={styles.mapRow}>
+              <span className={styles.mapIndex}>{String(row.order).padStart(2, '0')}</span>
+              <div className={styles.mapNameBlock}>
+                <strong>{row.mapName}</strong>
+                <small>vs {row.opponent} · {row.dateLabel}</small>
+              </div>
+              <div className={styles.mapHero}>{row.hero}</div>
+              <div className={styles.mapBar} aria-label={`${metric.label} ${row.valueLabel}`}>
+                <i style={{ width: `${Math.max(4, Math.min(100, (row.value / row.maxValue) * 100))}%` }} />
+              </div>
+              <b>{row.valueLabel}</b>
+              <em>→</em>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className={styles.lightEmpty}>当前职责暂无地图表现数据。</div>
+      )}
+    </section>
+  )
+}
+
+function ScoutingNotes({ notes }) {
+  return (
+    <section className={styles.notesSection}>
+      <details>
+        <summary>
+          <span>SCOUTING NOTES</span>
+          <strong>数据观察</strong>
+          <em>根据赛事统计自动生成，仅供参考。</em>
+        </summary>
+        {notes.length ? (
+          <div className={styles.notesGrid}>
+            {notes.map(note => (
+              <article key={note.type}>
+                <span>{note.type}</span>
+                <p>{note.text}</p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className={styles.lightEmpty}>样本不足，暂不生成数据观察。</div>
+        )}
+      </details>
+    </section>
+  )
 }
 
 export default function PlayerDetailPage() {
-  const { db } = useOutletContext()
+  const {
+    db,
+    season,
+    seasonId,
+    locale,
+    t = (_key, fallback) => fallback,
+    updatedAtText,
+    withSeason = path => path,
+    favorites,
+    favoriteLimits,
+    isFavoritePlayer,
+    togglePlayerFavorite
+  } = useOutletContext()
   const { playerId } = useParams()
   const navigate = useNavigate()
-  
-  const [aiText, setAiText] = useState('')
-  const shareCardRef = useRef(null)
-
-  // 🌟 核心状态：记录当前选中的职责标签页
-  const [selectedRole, setSelectedRole] = useState('')
-  // 🌟 记录当前折线图选中的战术指标，默认回归硬核指标 dmg
-  const [trendMetric, setTrendMetric] = useState('dmg')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const roleParam = normalizeLeaderboardRole(searchParams.get('role'))
+  const [metricMode, setMetricMode] = useState('per10')
+  const [mapMetric, setMapMetric] = useState('dmg')
+  const [shareOpen, setShareOpen] = useState(false)
 
   useEffect(() => {
     window.scrollTo(0, 0)
-  }, [])
+  }, [playerId])
+
+  const dossier = useMemo(
+    () => getPlayerDossier(db, playerId, roleParam, season),
+    [db, playerId, roleParam, season]
+  )
+
+  const activeRoleData = dossier?.selectedRoleData || null
+  const analysis = useMemo(() => {
+    if (!db || !dossier || !activeRoleData) return null
+    return getPlayerRoleAnalysis(db, dossier.basePlayer, activeRoleData.entry, season, metricMode, mapMetric)
+  }, [activeRoleData, db, dossier, mapMetric, metricMode, season])
+
+  const playerFavorited = dossier ? Boolean(isFavoritePlayer?.(dossier.basePlayer)) : false
+  const playerFavoriteLimitReached = dossier && !playerFavorited && (favorites?.favoritePlayerIds?.length || 0) >= (favoriteLimits?.players || 12)
 
   const handleBack = () => {
     if (window.history.state && window.history.state.idx > 0) navigate(-1)
-    else navigate('/players')
+    else navigate(withSeason('/players'))
   }
 
-  const handleExportShareCard = async () => {
-    if (!shareCardRef.current || !player) return
-
-    try {
-      const dataUrl = await toPng(shareCardRef.current, {
-        cacheBust: true,
-        pixelRatio: 2,
-        backgroundColor: '#0f0f0f'
-      })
-
-      const link = document.createElement('a')
-      link.download = `${player.display_name || player.player_id || 'player'}-share-card.png`
-      link.href = dataUrl
-      link.click()
-    } catch (error) {
-      console.error('EXPORT_SHARE_CARD_FAILED', error)
-    }
+  const handleViewChange = view => {
+    const next = new URLSearchParams(searchParams)
+    if (view === 'overview') next.delete('role')
+    else next.set('role', view)
+    setSearchParams(next)
   }
 
-  // 🌟 获取该选手所有的比赛数据条目
-  const allPlayerEntries = useMemo(() => {
-    if (!db) return []
-    const rows = getLeaderboardRows(db)
-    const entries = rows.filter(p => String(p.player_id) === String(playerId))
-    
-    // 如果有比赛数据，返回他打过的所有位置
-    if (entries.length > 0) return entries
-
-    // 如果还没有比赛数据，退回到基础库拿他原本的信息
-    const basePlayer = safeArr(db?.players).find(p => String(p.player_id) === String(playerId))
-    return basePlayer ? [basePlayer] : []
-  }, [db, playerId])
-
-  // 🌟 提取该选手的职责标签：【强制】报名职责永远在第一位，客串职责排在后面
-  const availableRoles = useMemo(() => {
-    const playedRoles = allPlayerEntries.map(p => p.role).filter(Boolean)
-    
-    const basePlayer = safeArr(db?.players).find(p => String(p.player_id) === String(playerId))
-    const registeredRole = basePlayer?.role || 'FLEX'
-    
-    // 利用 Set 自动去重。因为 registeredRole 是第一个放进去的，所以它永远在索引 0 的位置
-    return Array.from(new Set([registeredRole, ...playedRoles]))
-  }, [allPlayerEntries, db, playerId])
-
-  // 🌟 初始化时，直接默认选中第一位（即他的报名本职）
-  useEffect(() => {
-    if (availableRoles.length > 0 && !selectedRole) {
-      setSelectedRole(availableRoles[0])
-    }
-  }, [availableRoles, selectedRole])
-
-  // 🌟 修复：仅在角色切换时智能重置面积图指标，使用 prev 避免依赖死循环
-  useEffect(() => {
-    if (!selectedRole) return
-    setTrendMetric(prev => {
-      const r = selectedRole.toUpperCase()
-      if (r === 'SUP' || r === 'SUPPORT') {
-        if (prev === 'dmg' || prev === 'block') return 'heal'
-      } else if (r === 'TANK') {
-        if (prev === 'heal') return 'block'
-      } else {
-        if (prev === 'heal' || prev === 'block') return 'dmg'
-      }
-      return prev
-    })
-  }, [selectedRole])
-
-  // 🌟 根据当前选中的 Tab，锁定要展示的数据体
-  const player = useMemo(() => {
-    if (!allPlayerEntries.length && !db) return null
-    
-    // 如果他打过当前选中的位置，直接返回比赛数据
-    const matchEntry = allPlayerEntries.find(p => p.role === selectedRole)
-    if (matchEntry) return matchEntry
-
-    // 🌟 核心升级：如果他没打过这个位置（比如本职一场没打，全去客串了），构造一个 0 数据的实体
-    const basePlayer = safeArr(db?.players).find(p => String(p.player_id) === String(playerId))
-    if (!basePlayer) return allPlayerEntries[0] || null
-
-    return {
-      ...basePlayer,
-      role: selectedRole,
-      maps_played: 0,
-      raw_time_mins: 0,
-      total_time_played: '0m',
-      avg_dmg: 0,
-      avg_elim: 0,
-      avg_heal: 0,
-      avg_block: 0,
-      avg_dth: 0,
-      avg_ast: 0,
-      most_played_hero: '-',
-      top_3_heroes: []
-    }
-  }, [allPlayerEntries, selectedRole, db, playerId])
-
-  const roleStats = useMemo(() => {
-    if (!player || !db) return null
-
-    const rows = getLeaderboardRows(db)
-    let sameRole = rows.filter(p => p.role === player.role && (p.raw_time_mins || 0) > 0)
-    if (sameRole.length === 0) sameRole = [player]
-
-    const totalInRole = sameRole.length
-
-    const getRankBySort = key => {
-      if (totalInRole <= 1 || (player.raw_time_mins || 0) === 0) return { percentile: 0 }
-
-      const sorted = [...sameRole].sort((a, b) => (
-        key === 'avg_dth'
-          ? (Number(a[key]) || 0) - (Number(b[key]) || 0)
-          : (Number(b[key]) || 0) - (Number(a[key]) || 0)
-      ))
-
-      const rank = sorted.findIndex(p => p.player_id === player.player_id) + 1
-      if (rank === 0) return { percentile: 0 }
-
-      return { percentile: calculatePercentile(rank, totalInRole) }
-    }
-
-    const max = { dmg: 1, heal: 1, mit: 1, elim: 1, ast: 1, dth: 1 }
-    const sum = { dmg: 0, heal: 0, mit: 0, elim: 0, ast: 0, dth: 0 }
-
-    sameRole.forEach(p => {
-      max.dmg = Math.max(max.dmg, Number(p.avg_dmg) || 0)
-      max.heal = Math.max(max.heal, Number(p.avg_heal) || 0)
-      max.mit = Math.max(max.mit, Number(p.avg_block) || 0)
-      max.elim = Math.max(max.elim, Number(p.avg_elim) || 0)
-      max.ast = Math.max(max.ast, Number(p.avg_ast) || 0)
-      max.dth = Math.max(max.dth, Number(p.avg_dth) || 0)
-
-      sum.dmg += Number(p.avg_dmg) || 0
-      sum.heal += Number(p.avg_heal) || 0
-      sum.mit += Number(p.avg_block) || 0
-      sum.elim += Number(p.avg_elim) || 0
-      sum.ast += Number(p.avg_ast) || 0
-      sum.dth += Number(p.avg_dth) || 0
-    })
-
-    return {
-      sampleSize: totalInRole,
-      avg: {
-        dmg: sum.dmg / totalInRole,
-        heal: sum.heal / totalInRole,
-        mit: sum.mit / totalInRole,
-        elim: sum.elim / totalInRole,
-        ast: sum.ast / totalInRole,
-        dth: sum.dth / totalInRole
-      },
-      max,
-      ranks: {
-        dmg: getRankBySort('avg_dmg'),
-        heal: getRankBySort('avg_heal'),
-        mit: getRankBySort('avg_block'),
-        elim: getRankBySort('avg_elim'),
-        dth: getRankBySort('avg_dth')
-      }
-    }
-  }, [db, player])
-
-  const radarData = useMemo(() => {
-    if (!player || !roleStats) return []
-
-    const getScore = (val, maxVal) => {
-      const v = Number(val) || 0
-      const m = Number(maxVal) || 1
-      return Math.min(100, Math.max(0, (v / m) * 100)) || 0
-    }
-
-    const getSurvScore = (dth, maxDth) => {
-      const d = Number(dth) || 0
-      const m = Number(maxDth) || 1
-      if (d <= 0 && player.raw_time_mins > 0) return 100
-      if (player.raw_time_mins === 0) return 0
-      return Math.min(100, Math.max(0, 100 - (d / m) * 100)) || 0
-    }
-
-    return [
-      { subject: '伤害', Player: getScore(player.avg_dmg, roleStats.max.dmg), Avg: getScore(roleStats.avg.dmg, roleStats.max.dmg), rawPlayer: player.avg_dmg, rawAvg: roleStats.avg.dmg },
-      { subject: '击杀', Player: getScore(player.avg_elim, roleStats.max.elim), Avg: getScore(roleStats.avg.elim, roleStats.max.elim), rawPlayer: player.avg_elim, rawAvg: roleStats.avg.elim },
-      { subject: '助攻', Player: getScore(player.avg_ast, roleStats.max.ast), Avg: getScore(roleStats.avg.ast, roleStats.max.ast), rawPlayer: player.avg_ast, rawAvg: roleStats.avg.ast },
-      { subject: '治疗', Player: getScore(player.avg_heal, roleStats.max.heal), Avg: getScore(roleStats.avg.heal, roleStats.max.heal), rawPlayer: player.avg_heal, rawAvg: roleStats.avg.heal },
-      { subject: '阻挡', Player: getScore(player.avg_block, roleStats.max.mit), Avg: getScore(roleStats.avg.mit, roleStats.max.mit), rawPlayer: player.avg_block, rawAvg: roleStats.avg.mit },
-      { subject: '生存', Player: getSurvScore(player.avg_dth, roleStats.max.dth), Avg: getSurvScore(roleStats.avg.dth, roleStats.max.dth), rawPlayer: player.avg_dth, rawAvg: roleStats.avg.dth }
-    ]
-  }, [player, roleStats])
-
-  // 🌟 获取每一小局数据，计算 Per 10 Mins 详情，用于趋势分析
-  const trendData = useMemo(() => {
-    if (!db || !playerId) return []
-
-    const basePlayer = safeArr(db?.players).find(p => String(p.player_id) === String(playerId))
-    const allLogs = basePlayer?.match_logs || []
-    if (!allLogs.length) return []
-
-    const normalize = r => {
-      const str = String(r || '').toUpperCase()
-      if (str === 'DPS') return 'DAMAGE'
-      if (str === 'SUP') return 'SUPPORT'
-      return str
-    }
-
-    const targetRole = normalize(selectedRole)
-    const roleLogs = allLogs.filter(log => normalize(log.role) === targetRole && Number(log.playtimeMinutes || 0) > 0)
-    if (!roleLogs.length) return []
-
-    const grouped = new Map()
-
-    roleLogs.forEach((log, orderIndex) => {
-      const key = `${log.matchId}_${log.mapOrder}`
-
-      if (!grouped.has(key)) {
-        grouped.set(key, {
-          key,
-          orderIndex,
-          mapOrder: Number(log.mapOrder || 0),
-          matchName: log.matchDisplayName || log.matchId || 'UNKNOWN MATCH',
-          mapName: log.mapName || `Map ${log.mapOrder || 1}`,
-          playtime: 0,
-          elims: 0,
-          asts: 0,
-          dths: 0,
-          dmg: 0,
-          heal: 0,
-          block: 0,
-          heroes: new Set()
-        })
-      }
-
-      const g = grouped.get(key)
-      g.playtime += Number(log.playtimeMinutes || 0)
-      g.elims += Number(log.totals?.elims || 0)
-      g.asts += Number(log.totals?.assists || 0)
-      g.dths += Number(log.totals?.deaths || 0)
-      g.dmg += Number(log.totals?.damage || 0)
-      g.heal += Number(log.totals?.healing || 0)
-      g.block += Number(log.totals?.blocked || 0)
-      if (log.hero && log.hero !== '-') g.heroes.add(log.hero)
-    })
-
-    return Array.from(grouped.values())
-      .sort((a, b) => a.orderIndex - b.orderIndex || a.mapOrder - b.mapOrder)
-      .map((g, idx) => {
-        const calc10 = val => g.playtime > 0 ? (val / g.playtime) * 10 : 0
-
-        return {
-          idx: idx + 1,
-          xAxisName: `#${String(idx + 1).padStart(2, '0')}`,
-          shortMapName: g.mapName,
-          fullName: `${g.matchName} · ${g.mapName}`,
-          heroes: Array.from(g.heroes).join(' / '),
-          playtime: g.playtime,
-          elims: calc10(g.elims),
-          dths: calc10(g.dths),
-          dmg: calc10(g.dmg),
-          heal: calc10(g.heal),
-          block: calc10(g.block)
-        }
-      })
-  }, [db, playerId, selectedRole])
-
-  const TREND_CONFIGS = [
-    { id: 'dmg', short: '伤害', label: '伤害 / 10 Mins', dataKey: 'dmg', color: '#ff4d4f' },
-    { id: 'elim', short: '击杀', label: '击杀 / 10 Mins', dataKey: 'elims', color: '#F28C28' },
-    { id: 'heal', short: '治疗', label: '治疗 / 10 Mins', dataKey: 'heal', color: '#4ade80' },
-    { id: 'block', short: '阻挡', label: '阻挡 / 10 Mins', dataKey: 'block', color: '#60a5fa' },
-    { id: 'dth', short: '阵亡', label: '阵亡 / 10 Mins', dataKey: 'dths', color: 'rgba(255,255,255,0.72)' }
-  ]
-
-  const activeTrendConf = TREND_CONFIGS.find(c => c.id === trendMetric) || TREND_CONFIGS[0]
-  const activeTrendKey = activeTrendConf.dataKey
-
-  // 计算当前指标在这个选手数据中的平均值，用作参考线
-  const currentMetricAverage = useMemo(() => {
-    if (!trendData.length) return 0
-    const sum = trendData.reduce((acc, curr) => acc + (Number(curr[activeTrendKey]) || 0), 0)
-    return sum / trendData.length
-  }, [trendData, activeTrendKey])
-
-  const trendSummary = useMemo(() => {
-    if (!trendData.length) return null
-
-    const sorted = [...trendData].sort((a, b) => (Number(b[activeTrendKey]) || 0) - (Number(a[activeTrendKey]) || 0))
-    const peak = sorted[0]
-    const low = sorted[sorted.length - 1]
-    const values = trendData.map(item => Number(item[activeTrendKey]) || 0)
-    const range = (Number(peak?.[activeTrendKey]) || 0) - (Number(low?.[activeTrendKey]) || 0)
-    const variance = values.reduce((acc, val) => acc + Math.pow(val - currentMetricAverage, 2), 0) / values.length
-    const std = Math.sqrt(variance)
-
-    return { peak, low, range, std }
-  }, [trendData, activeTrendKey, currentMetricAverage])
-
-  const getTrendDeltaInfo = value => {
-    const delta = (Number(value) || 0) - currentMetricAverage
-    if (Math.abs(delta) < 0.05) return { text: '接近个人均值', tone: 'flat' }
-    if (delta > 0) return { text: `高于个人均值 ${formatNum(delta, 1)}`, tone: 'up' }
-    return { text: `低于个人均值 ${formatNum(Math.abs(delta), 1)}`, tone: 'down' }
-  }
-
-  const TrendTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload
-      const deltaInfo = getTrendDeltaInfo(data[activeTrendKey])
-
-      return (
-        <div className={styles.trendTooltip}>
-          <div className={styles.ttHeader}>{data.fullName}</div>
-
-          <div className={styles.ttRow}>
-            <span className={styles.ttLabel}>记录英雄</span>
-            <span>{data.heroes || '-'}</span>
-          </div>
-
-          <div className={styles.ttRow}>
-            <span className={styles.ttLabel}>上场时间</span>
-            <span>{formatNum(data.playtime, 1)} min</span>
-          </div>
-
-          <div className={styles.ttMetric} style={{ color: activeTrendConf.color }}>
-            {activeTrendConf.label}：{formatNum(data[activeTrendKey], 1)}
-          </div>
-
-          <div
-            className={`${styles.ttDelta} ${
-              deltaInfo.tone === 'up'
-                ? styles.ttDeltaUp
-                : deltaInfo.tone === 'down'
-                  ? styles.ttDeltaDown
-                  : styles.ttDeltaFlat
-            }`}
-          >
-            {deltaInfo.text}
-          </div>
-        </div>
-      )
-    }
-    return null
-  }
-
-  const styleProfile = useMemo(() => {
-    if (!player || !roleStats) {
-      return {
-        cn: '数据分析中',
-        en: 'PROFILE LOADING',
-        desc: '系统正在生成该选手的风格画像。'
-      }
-    }
-
-    if (player.raw_time_mins === 0) {
-      return {
-        cn: '暂无出场记录',
-        en: 'NO MATCH RECORD',
-        desc: '该选手在当前职责下尚未产生有效的比赛记录。'
-      }
-    }
-
-    const role = String(player.role || '').toUpperCase()
-    const dmg = roleStats.ranks.dmg.percentile || 0
-    const heal = roleStats.ranks.heal.percentile || 0
-    const mit = roleStats.ranks.mit.percentile || 0
-    const elim = roleStats.ranks.elim.percentile || 0
-    const survive = roleStats.ranks.dth.percentile || 0
-
-    // 🌟 修复：兼容 DAMAGE，让 AI 球探正常对输出位进行评价！
-    if (role === 'DPS' || role === 'DAMAGE') {
-      if (dmg >= 80 && elim >= 80 && survive >= 50) {
-        return {
-          cn: '高压进攻核心',
-          en: 'AGGRESSIVE CORE',
-          desc: '以高击杀和高伤害构成正面压制，是典型的前压型输出位。'
-        }
-      }
-      if (survive >= 75 && dmg >= 65) {
-        return {
-          cn: '稳定压制输出',
-          en: 'STABLE DAMAGE',
-          desc: '在保持生存稳定的同时持续制造火力压力，节奏控制较强。'
-        }
-      }
-      if (dmg >= 75) {
-        return {
-          cn: '节奏型输出',
-          en: 'PACE BREAKER',
-          desc: '更擅长在关键节点拉高输出曲线，打破对局节奏。'
-        }
-      }
-      return {
-        cn: '机动火力点',
-        en: 'FLEXIBLE FRAGGER',
-        desc: '不依赖单一维度取胜，更偏向灵活补位与局部终结。'
-      }
-    }
-
-    if (role === 'TANK') {
-      if (mit >= 80 && survive >= 75) {
-        return {
-          cn: '前线承压核心',
-          en: 'FRONTLINE ANCHOR',
-          desc: '承担大量前线压力，生存与阻挡能力构成队伍的主框架。'
-        }
-      }
-      if (dmg >= 75) {
-        return {
-          cn: '推进型前排',
-          en: 'PACE DRIVER',
-          desc: '更倾向于用主动推进和输出施压来打开空间。'
-        }
-      }
-      return {
-        cn: '均衡前线',
-        en: 'BALANCED FRONT',
-        desc: '综合能力分布均衡，在对局中承担稳定的前排职责。'
-      }
-    }
-
-    if (role === 'SUP' || role === 'SUPPORT') {
-      if (heal >= 80 && survive >= 75) {
-        return {
-          cn: '稳定后排支援',
-          en: 'BACKLINE CORE',
-          desc: '以后排持续援护和稳定存活构成团队支撑，是标准支点型选手。'
-        }
-      }
-      if (dmg >= 70) {
-        return {
-          cn: '进攻型支援',
-          en: 'OFFENSIVE SUPPORT',
-          desc: '在保持团队功能的同时，具备较强的主动输出倾向。'
-        }
-      }
-      return {
-        cn: '团队支点',
-        en: 'TEAM PIVOT',
-        desc: '更偏向节奏支援和团队协同，作用体现在整体稳定性上。'
-      }
-    }
-
-    return {
-      cn: '均衡型选手',
-      en: 'ALL-ROUND STYLE',
-      desc: '整体能力分布较为均衡，没有明显短板，适合多场景发挥。'
-    }
-  }, [player, roleStats])
-
-  const topHeroes = useMemo(() => {
-    if (!player) return []
-    const heroes = []
-    
-    if (player.most_played_hero && player.most_played_hero !== '-') heroes.push(player.most_played_hero)
-    if (Array.isArray(player.top_3_heroes)) {
-      player.top_3_heroes.forEach(h => {
-        if (h && h !== '-' && !heroes.includes(h)) heroes.push(h)
-      })
-    }
-    return heroes.slice(0, 3)
-  }, [player])
-
-  const bestEdge = useMemo(() => {
-    if (!roleStats) return { label: '-', value: 0 }
-
-    const pool = [
-      { label: '伤害输出', value: roleStats.ranks.dmg.percentile || 0 },
-      { label: '击杀效率', value: roleStats.ranks.elim.percentile || 0 },
-      { label: '治疗效能', value: roleStats.ranks.heal.percentile || 0 },
-      { label: '阻挡效能', value: roleStats.ranks.mit.percentile || 0 },
-      { label: '生存能力', value: roleStats.ranks.dth.percentile || 0 }
-    ]
-
-    return pool.sort((a, b) => b.value - a.value)[0]
-  }, [roleStats])
-
-  const displayTime = useMemo(() => (
-    formatTimePlayed(player?.raw_time_mins, player?.total_time_played)
-  ), [player])
-
-  useEffect(() => {
-    if (!player || !roleStats || !styleProfile) return
-
-    let lines = []
-
-    if (player.raw_time_mins === 0) {
-      lines = [
-        `> 载入选手档案 [${player.player_id}] ...`,
-        `> 位置识别：${player.role || 'UNKNOWN'}。`,
-        `> 状态：无出场记录。`,
-        `> 系统提示：该选手尚未在 ${player.role} 位置产生数据记录。`,
-        `> --------------------------------`,
-        `> AI 评估中止。`
-      ]
-    } else {
-      lines = [
-        `> 载入选手档案 [${player.player_id}] ...`,
-        `> 位置识别：${player.role || 'UNKNOWN'}。`,
-        `> 样本范围：${player.maps_played || 0} 张地图 / ${displayTime}。`,
-        `> 风格判定：${styleProfile.cn}。`,
-        `> --------------------------------`,
-        `> 当前最强边：${bestEdge.label}，超越同职责 ${bestEdge.value}% 选手。`,
-        `> 火力输出超越同职责 ${roleStats.ranks.dmg.percentile}% 选手。`,
-        `> 援护能力超越同职责 ${roleStats.ranks.heal.percentile}% 选手。`,
-        `> 生存表现超越同职责 ${roleStats.ranks.dth.percentile}% 选手。`,
-        `> 综合判词：${styleProfile.desc}`,
-        `> --------------------------------`,
-        `> AI 评估完成。`
-      ]
-    }
-
-    setAiText('')
-    let currentLine = 0
-    let currentChar = 0
-    let timer
-
-    const typeWriter = () => {
-      if (currentLine >= lines.length) return
-      const textToType = lines[currentLine]
-
-      if (currentChar <= textToType.length) {
-        setAiText(prev => prev + textToType.charAt(currentChar))
-        currentChar++
-        timer = setTimeout(typeWriter, 10)
-      } else {
-        setAiText(prev => prev + '\n')
-        currentLine++
-        currentChar = 0
-        timer = setTimeout(typeWriter, 140)
-      }
-    }
-
-    typeWriter()
-    return () => clearTimeout(timer)
-  }, [bestEdge, displayTime, player, roleStats, styleProfile])
-
-  if (!player) {
+  if (!dossier || !analysis) {
     return (
       <div className={styles.shell}>
         <section className={styles.errorState}>
-          <div className={styles.errorKicker}>PLAYER DOSSIER / ERROR</div>
-          <h1 className={styles.errorTitle}>未找到该选手档案</h1>
-          <p className={styles.errorDesc}>请求的选手编号不存在，或尚未载入当前赛季数据库。</p>
-          <button type="button" onClick={handleBack} className={styles.backLinkBtn}>
-            返回选手列表
-            <span className={styles.backLinkBtnEn}>PLAYERS</span>
-          </button>
+          <span>PLAYER DOSSIER / ERROR</span>
+          <h1>未找到该选手档案</h1>
+          <p>请求的选手编号不存在，或当前赛季数据库尚未载入。</p>
+          <button type="button" onClick={handleBack}>返回选手列表</button>
         </section>
       </div>
     )
   }
 
-  const roleClass = getRoleClass(player.role)
-  const roleColor = 'var(--role-color)'
-
   return (
     <div className={styles.shell}>
-      <div className={styles.topbar}>
-        <div className={styles.topbarLeft}>
-          <button type="button" onClick={handleBack} className={styles.navBackBtn}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            <span className={styles.navBackText}>
-              <span className={styles.navBackCn}>返回</span>
-              <span className={styles.navBackEn}>BACK</span>
-            </span>
-          </button>
-
-          <div className={styles.topbarPathGroup}>
-            <div className={styles.topbarKicker}>
-              <span className={styles.topbarKickerCn}>选手档案</span>
-              <span className={styles.topbarKickerEn}>PLAYER DOSSIER</span>
-            </div>
-            <div className={styles.topbarPath}>
-              <span className={styles.topbarDivider}>/</span>
-              <span className={styles.topbarCurrent}>{player.player_id || 'UNKNOWN'}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.topbarRight}>
-          <button type="button" onClick={handleExportShareCard} className={styles.exportShareBtn}>
-            导出分享图
-            <span className={styles.exportShareBtnEn}>EXPORT SHARE CARD</span>
-          </button>
-        </div>
+      <div className={styles.pageTopline}>
+        <button type="button" onClick={handleBack}>← 返回选手列表</button>
+        <span>{t('player.detail.title', '选手档案')} / {dossier.identity.playerId}</span>
       </div>
 
-      <section className={`${styles.idCard} ${roleClass}`}>
-        <div className={styles.cardGlow}></div>
+      <DossierHero
+        dossier={dossier}
+        analysis={analysis}
+        withSeason={withSeason}
+        onExport={() => {
+          setShareOpen(true)
+        }}
+        onFavorite={() => togglePlayerFavorite?.(dossier.basePlayer)}
+        favoriteLabel={playerFavorited ? '取消关注' : playerFavoriteLimitReached ? '关注已满' : '关注选手'}
+        favoriteDisabled={playerFavoriteLimitReached}
+      />
 
-        <div className={styles.idCardContent}>
-          <div className={styles.idCardLeft}>
-            <div className={styles.roleSwitchGroup}>
-              {availableRoles.length > 1 ? (
-                availableRoles.map(r => (
-                  <button
-                    key={r}
-                    type="button"
-                    className={`${styles.roleSwitchBtn} ${selectedRole === r ? styles.roleSwitchBtnActive : ''}`}
-                    onClick={() => setSelectedRole(r)}
-                  >
-                    {r}
-                  </button>
-                ))
-              ) : (
-                <div className={styles.playerRoleTag}>{player.role || 'FLEX'}</div>
-              )}
-            </div>
+      <RoleTabs roles={dossier.roles} activeView={dossier.selectedView} onChange={handleViewChange} />
 
-            <h1 className={styles.playerName}>{player.display_name || player.player_id}</h1>
-            <div className={styles.playerRealName}>{player.player_name || 'UNKNOWN IDENTITY'}</div>
+      {dossier.isOverview ? (
+        <OverviewPanel dossier={dossier} onChange={handleViewChange} />
+      ) : (
+        <>
+          <ScoreRadarPanel analysis={analysis} />
+          <Achievements achievements={analysis.achievements} />
+          <CoreStats analysis={analysis} metricMode={metricMode} onModeChange={setMetricMode} />
+          <RecentMatches matches={analysis.recentMatches} withSeason={withSeason} playerId={dossier.identity.playerId} role={analysis.summary.role} />
+          <HeroPool heroes={analysis.heroPool} role={analysis.summary.role} />
+          <MapPerformance rows={analysis.mapPerformance} mapMetric={mapMetric} onMetricChange={setMapMetric} withSeason={withSeason} />
+          <ScoutingNotes notes={analysis.scoutingNotes} />
+        </>
+      )}
 
-            <div className={styles.profileBlock}>
-              <div className={styles.profileTag}>{styleProfile.cn}</div>
-              <div className={styles.profileTagEn}>{styleProfile.en}</div>
-              <div className={styles.profileDesc}>{styleProfile.desc}</div>
-            </div>
-
-            {topHeroes.length > 0 ? (
-              <div className={styles.quickHeroList}>
-                {topHeroes.map((hero, idx) => (
-                  <span key={`${hero}-${idx}`} className={styles.quickHeroChip}>{hero}</span>
-                ))}
-              </div>
-            ) : null}
-          </div>
-
-          <div className={styles.idCardRight}>
-            <div className={styles.teamBadge}>
-              <div className={styles.teamKicker}>CURRENT TEAM</div>
-              <div className={styles.currentTeamName}>{player.team_name || player.team_short_name || 'FREE AGENT'}</div>
-            </div>
-
-            <div className={styles.idCardMeta}>
-              <div className={styles.idMetaItem}>
-                <span className={styles.idMetaLabel}>MAPS</span>
-                <span className={styles.idMetaValue}>{player.maps_played || '0'}</span>
-              </div>
-              <div className={styles.idMetaItem}>
-                <span className={styles.idMetaLabel}>TIME</span>
-                <span className={styles.idMetaValue}>{displayTime}</span>
-              </div>
-              <div className={styles.idMetaItem}>
-                <span className={styles.idMetaLabel}>REC HERO</span>
-                <span className={styles.idMetaValue}>{topHeroes[0] || '-'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className={`${styles.tacticalGridSection} ${roleClass}`}>
-        <div className={styles.sectionHeader}>
-          <div className={styles.sectionKicker}>
-            <span className={styles.sectionKickerCn}>战术数据指标</span>
-            <span className={styles.sectionKickerEn}>TACTICAL METRICS / PER 10</span>
-          </div>
-          <div className={styles.hudLegend}>ROLE SAMPLE / {roleStats?.sampleSize || 1}</div>
-        </div>
-
-        <div className={styles.metricsGrid}>
-          <div className={styles.metricCard}>
-            <div className={styles.metricLabelGroup}>
-              <span className={styles.metricLabel}>出场时间</span>
-              <span className={styles.metricLabelEn}>TIME</span>
-            </div>
-            <div className={styles.metricValuePrimary}>{displayTime}</div>
-            <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Maps: {player.maps_played || '0'}</span>
-              <span className={styles.metricPercentile}>Role Pool: {roleStats?.sampleSize || 1}</span>
-            </div>
-          </div>
-
-          <div className={styles.metricCard}>
-            <div className={styles.metricLabelGroup}>
-              <span className={styles.metricLabel}>击杀</span>
-              <span className={styles.metricLabelEn}>ELIM</span>
-            </div>
-            <div className={styles.metricValuePrimary}>{formatNum(player.avg_elim)}</div>
-            <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.elim)}</span>
-              <span className={styles.metricPercentile}>{formatPercentileText(roleStats?.ranks.elim.percentile)}</span>
-            </div>
-          </div>
-
-          <div className={`${styles.metricCard} ${styles.cardDth}`}>
-            <div className={styles.metricLabelGroup}>
-              <span className={styles.metricLabel}>阵亡</span>
-              <span className={styles.metricLabelEn}>DTH</span>
-            </div>
-            <div className={styles.metricValuePrimary}>{formatNum(player.avg_dth)}</div>
-            <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.dth)}</span>
-              <span className={styles.metricPercentile}>{formatPercentileText(roleStats?.ranks.dth.percentile)}</span>
-            </div>
-          </div>
-
-          <div className={`${styles.metricCard} ${styles.cardDmg}`}>
-            <div className={styles.metricLabelGroup}>
-              <span className={styles.metricLabel}>伤害</span>
-              <span className={styles.metricLabelEn}>DMG</span>
-            </div>
-            <div className={styles.metricValuePrimary}>{formatNum(player.avg_dmg)}</div>
-            <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.dmg)}</span>
-              <span className={styles.metricPercentile}>{formatPercentileText(roleStats?.ranks.dmg.percentile)}</span>
-            </div>
-          </div>
-
-          <div className={`${styles.metricCard} ${styles.cardHeal}`}>
-            <div className={styles.metricLabelGroup}>
-              <span className={styles.metricLabel}>治疗</span>
-              <span className={styles.metricLabelEn}>HEAL</span>
-            </div>
-            <div className={styles.metricValuePrimary}>{formatNum(player.avg_heal)}</div>
-            <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.heal)}</span>
-              <span className={styles.metricPercentile}>{formatPercentileText(roleStats?.ranks.heal.percentile)}</span>
-            </div>
-          </div>
-
-          <div className={`${styles.metricCard} ${styles.cardMit}`}>
-            <div className={styles.metricLabelGroup}>
-              <span className={styles.metricLabel}>阻挡</span>
-              <span className={styles.metricLabelEn}>BLOCK</span>
-            </div>
-            <div className={styles.metricValuePrimary}>{formatNum(player.avg_block)}</div>
-            <div className={styles.metricSecondary}>
-              <span className={styles.metricAvg}>Role Avg: {formatNum(roleStats?.avg.mit)}</span>
-              <span className={styles.metricPercentile}>{formatPercentileText(roleStats?.ranks.mit.percentile)}</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className={styles.chartsGrid}>
-        <section className={styles.hudSection}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionKicker}>
-              <span className={styles.sectionKickerCn}>同职责超越百分位</span>
-              <span className={styles.sectionKickerEn}>PERCENTILE RANKING</span>
-            </div>
-            <div className={styles.hudLegend}>BEST EDGE / {bestEdge.label} {bestEdge.value}%</div>
-          </div>
-
-          <div className={styles.barsGrid}>
-            {[ 
-              { id: 'elim', label: '击杀效率', val: roleStats?.ranks.elim.percentile, color: 'elimOrange' },
-              { id: 'dmg', label: '伤害输出', val: roleStats?.ranks.dmg.percentile, color: 'dmgRed' }, 
-              { id: 'heal', label: '治疗效能', val: roleStats?.ranks.heal.percentile, color: 'healGreen' }, 
-              { id: 'mit', label: '阻挡效能', val: roleStats?.ranks.mit.percentile, color: 'mitBlue' }, 
-              { id: 'surv', label: '生存能力', val: roleStats?.ranks.dth.percentile, color: 'survGold' }
-            ].map(bar => {
-              const percentile = bar.val || 0
-              return (
-                <div key={bar.id} className={`${styles.barField} ${styles[bar.color]}`}>
-                  <div className={styles.barLabelGroup}>
-                    <span className={styles.barLabel}>{bar.label}</span>
-                    <span className={styles.barValue}>{percentile}%</span>
-                  </div>
-                  <div className={styles.barBase}>
-                    <div className={styles.barFill} style={{ width: `${percentile}%` }}></div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </section>
-
-        <section className={`${styles.hudSection} ${roleClass}`}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionKicker}>
-              <span className={styles.sectionKickerCn}>能力多边形模型</span>
-              <span className={styles.sectionKickerEn}>RADAR MODEL</span>
-            </div>
-            <div className={styles.legend}>
-              <span className={styles.legendPlayer}>■ 本人</span>
-              <span className={styles.legendAvg}>■ 平均</span>
-            </div>
-          </div>
-
-          <div className={styles.radarWrap}>
-            {radarData.length > 0 && (
-              <ResponsiveContainer width="100%" height="100%">
-                <RadarChart cx="50%" cy="50%" outerRadius={86} data={radarData}>
-                  <PolarGrid gridType="polygon" stroke="rgba(255,255,255,0.15)" />
-                  <PolarAngleAxis dataKey="subject" stroke="rgba(255,255,255,0.6)" fontSize={11} fontWeight={800} />
-                  <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
-                  <Tooltip content={<CustomRadarTooltip />} />
-                  <Radar name="Avg" dataKey="Avg" stroke="rgba(255,255,255,0.42)" fill="rgba(255,255,255,0.05)" fillOpacity={0.5} strokeDasharray="3 3" />
-                  <Radar name="Player" dataKey="Player" stroke={roleColor} fill={roleColor} fillOpacity={0.25} strokeWidth={2} />
-                </RadarChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </section>
-      </div>
-
-      <section className={`${styles.trendSection} ${roleClass}`}>
-        <div className={styles.trendHeader}>
-          <div className={styles.trendHeaderMain}>
-            <div className={styles.sectionKicker}>
-              <span className={styles.sectionKickerCn}>单图表现趋势</span>
-              <span className={styles.sectionKickerEn}>MAP-BY-MAP TREND</span>
-            </div>
-            <p className={styles.trendDesc}>
-              展示该选手在当前职责下、所选指标上的单图数据波动。虚线为个人赛季均值，用于判断这一张图的发挥高于常态、接近常态，还是低于常态。
-            </p>
-          </div>
-          
-          <div className={styles.trendControls}>
-            {TREND_CONFIGS.map(conf => {
-              const isActive = trendMetric === conf.id
-              return (
-                <button
-                  key={conf.id}
-                  type="button"
-                  className={`${styles.trendBtn} ${isActive ? styles.trendBtnActive : ''}`}
-                  style={isActive ? { borderColor: conf.color, color: conf.color } : undefined}
-                  onClick={() => setTrendMetric(conf.id)}
-                >
-                  <span className={styles.trendBtnText}>{conf.short}</span>
-                  <span className={styles.trendBtnMeta}>{conf.id.toUpperCase()}</span>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-
-        <div className={styles.trendSummaryGrid}>
-          <div className={styles.trendSummaryCard}>
-            <div className={styles.trendSummaryLabel}>
-              峰值单图
-              <span>PEAK MAP</span>
-            </div>
-            <div className={styles.trendSummaryValue} style={{ color: activeTrendConf.color }}>
-              {trendSummary ? formatNum(trendSummary.peak?.[activeTrendKey], 1) : '-'}
-            </div>
-            <div className={styles.trendSummaryNote}>
-              {trendSummary?.peak?.shortMapName || '-'}
-            </div>
-          </div>
-
-          <div className={styles.trendSummaryCard}>
-            <div className={styles.trendSummaryLabel}>
-              低谷单图
-              <span>LOW MAP</span>
-            </div>
-            <div className={styles.trendSummaryValue}>
-              {trendSummary ? formatNum(trendSummary.low?.[activeTrendKey], 1) : '-'}
-            </div>
-            <div className={styles.trendSummaryNote}>
-              {trendSummary?.low?.shortMapName || '-'}
-            </div>
-          </div>
-
-          <div className={styles.trendSummaryCard}>
-            <div className={styles.trendSummaryLabel}>
-              波动区间
-              <span>RANGE</span>
-            </div>
-            <div className={styles.trendSummaryValue}>
-              {trendSummary ? formatNum(trendSummary.range, 1) : '-'}
-            </div>
-            <div className={styles.trendSummaryNote}>
-              STD {trendSummary ? formatNum(trendSummary.std, 1) : '-'} / 越低越稳
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.trendChartWrap}>
-          {trendData.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={trendData} margin={{ top: 8, right: 8, left: -20, bottom: 2 }}>
-                <defs>
-                  <linearGradient id="colorMetric" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={activeTrendConf.color} stopOpacity={0.34} />
-                    <stop offset="95%" stopColor={activeTrendConf.color} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
-
-                <XAxis
-                  dataKey="xAxisName"
-                  stroke="rgba(255,255,255,0.2)"
-                  tick={{ fill: 'rgba(255,255,255,0.42)', fontSize: 10, fontFamily: 'monospace' }}
-                  dy={10}
-                />
-
-                <YAxis
-                  width={38}
-                  stroke="rgba(255,255,255,0.2)"
-                  tick={{ fill: 'rgba(255,255,255,0.42)', fontSize: 10, fontFamily: 'monospace' }}
-                />
-
-                <Tooltip
-                  content={<TrendTooltip />}
-                  cursor={{ stroke: 'rgba(255,255,255,0.12)', strokeWidth: 1, strokeDasharray: '4 4' }}
-                />
-
-                <ReferenceLine
-                  y={currentMetricAverage}
-                  stroke="rgba(255,255,255,0.42)"
-                  strokeDasharray="4 4"
-                  label={{
-                    position: 'top',
-                    value: 'PLAYER AVG',
-                    fill: 'rgba(255,255,255,0.46)',
-                    fontSize: 9,
-                    fontFamily: 'monospace'
-                  }}
-                />
-
-                <Area
-                  type="monotone"
-                  dataKey={activeTrendKey}
-                  stroke={activeTrendConf.color}
-                  fill="url(#colorMetric)"
-                  fillOpacity={1}
-                  strokeWidth={2}
-                  dot={false}
-                  activeDot={{ r: 5, fill: activeTrendConf.color, stroke: '#111111', strokeWidth: 2 }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className={styles.emptyTrend}>当前职责暂无足够的单图记录</div>
-          )}
-        </div>
-      </section>
-
-      <section className={styles.dataSection}>
-        <div className={styles.sectionHeader}>
-          <div className={styles.sectionKicker}>
-            <span className={styles.sectionKickerCn}>记录英雄</span>
-            <span className={styles.sectionKickerEn}>RECORDED HEROES</span>
-          </div>
-        </div>
-
-        {topHeroes.length > 0 ? (
-          <div className={styles.heroesGrid}>
-            {topHeroes.map((heroName, idx) => {
-              const roleFolder = getRoleFolder(player.role)
-              const heroFileName = formatHeroName(heroName)
-
-              return (
-                <div key={`${heroName}-${idx}`} className={styles.heroCard}>
-                  <div className={styles.avatarBox}>
-                    <img
-                      src={`/heroes/${roleFolder}/${heroFileName}.png`}
-                      alt={heroName}
-                      className={styles.avatarImg}
-                      onError={(e) => {
-                        e.target.style.display = 'none'
-                        e.target.parentElement.classList.add(styles.avatarFallback)
-                      }}
-                    />
-                  </div>
-                  <div className={styles.heroCardName}>{heroName}</div>
-                  <div className={styles.heroRank}>REC {idx + 1}</div>
-                </div>
-              )
-            })}
-          </div>
-        ) : (
-          <div className={styles.emptyState}>暂无英雄记录</div>
-        )}
-      </section>
-
-      <section className={styles.aiTerminal}>
-        <div className={styles.sectionHeader}>
-          <div className={styles.sectionKicker}>
-            <span className={styles.sectionKickerCn}>AI 球探综合报告</span>
-            <span className={styles.sectionKickerEn}>AI SCOUT REPORT</span>
-          </div>
-          <div className={styles.hudLegend}>NARRATIVE OUTPUT</div>
-        </div>
-
-        <div className={styles.terminalWindow}>
-          <pre className={styles.terminalText}>{aiText}</pre>
-        </div>
-      </section>
-
-      <div className={styles.shareRenderMount} aria-hidden="true">
-        <PlayerShareCard
-          player={player}
-          styleProfile={styleProfile}
-          roleStats={roleStats}
-          topHeroes={topHeroes}
-          shareRef={shareCardRef}
-        />
-      </div>
+      <PlayerShareDialog
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        db={db}
+        season={season}
+        seasonId={seasonId}
+        locale={locale}
+        playerId={dossier.identity.playerId}
+        roleEntries={dossier.roleEntries}
+        currentRole={analysis.summary.role}
+        updatedAtText={updatedAtText}
+      />
     </div>
   )
 }

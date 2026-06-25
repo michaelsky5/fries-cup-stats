@@ -25,7 +25,7 @@ export default function MatchFilters({
           <div className={styles.panelTitle}>筛选条件</div>
           <div className={styles.panelSubTitle}>MATCH FILTERS</div>
         </div>
-        <div className={styles.panelMeta}>SCHEDULE CONTROL PANEL</div>
+        <div className={styles.panelMeta}>MATCH FILTERS</div>
       </div>
 
       <div className={styles.main}>

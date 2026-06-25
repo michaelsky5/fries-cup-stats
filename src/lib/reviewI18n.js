@@ -48,7 +48,7 @@ export const HERO_CN = {
   Zarya: '查莉娅',
 
   // DPS
-  Anran: '安燃',
+  Anran: '安然',
   Ashe: '艾什',
   Bastion: '堡垒',
   Cassidy: '卡西迪',
@@ -121,6 +121,10 @@ export const MAP_CN = {
   'ROUTE 66': '66号公路',
   'Watchpoint: Gibraltar': '监测站：直布罗陀',
   'WATCHPOINT: GIBRALTAR': '监测站：直布罗陀',
+  'Circuit Royal': '皇家赛道',
+  'CIRCUIT ROYAL': '皇家赛道',
+  'Shambali Monastery': '香巴里寺院',
+  'SHAMBALI MONASTERY': '香巴里寺院',
 
   BlizzardWorld: '暴雪世界',
   'Blizzard World': '暴雪世界',

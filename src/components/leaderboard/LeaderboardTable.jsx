@@ -1,321 +1,494 @@
-import { useNavigate } from 'react-router-dom' // 🌟 新增路由跳转钩子
-import styles from './LeaderboardTable.module.css'
+import { useState } from 'react'
+import { formatDecimal, formatInt, formatPlayerTime } from '../../lib/format.js'
+import {
+  LEADERBOARD_COLUMNS,
+  LEADERBOARD_TABS,
+  METRIC_MODES,
+  getEntryMetricValue,
+  getRoleEnLabel,
+  getRoleLabel
+} from '../../lib/leaderboardSelectors.js'
+import { PUBLIC_METRICS, getRoleCoreMetricIds, isRoleCoreMetric } from '../../lib/leaderboardScoring.js'
+import LeaderboardEmptyState from './LeaderboardEmptyState.jsx'
+import LeaderboardRow, { HeroAvatar } from './LeaderboardRow.jsx'
+import { formatLeaderboardStat } from './leaderboardFormat.js'
+import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
 
-function formatNum(value, digits = 2) {
-  const num = Number(value || 0)
-  return Number.isFinite(num) ? num.toFixed(digits) : '0.00'
-}
+const METRIC_LABELS = PUBLIC_METRICS.reduce((acc, metric) => {
+  acc[metric.id] = metric.label
+  return acc
+}, {})
 
-function formatInt(value) {
-  const num = Number(value || 0)
-  return Number.isFinite(num) ? num.toLocaleString() : '0'
-}
-
-function formatHeroName(name) {
-  if (!name || name === '-') return 'unknown'
-  return name.toLowerCase()
-    .replace(/ú/g, 'u')
-    .replace(/ö/g, 'o')
-    .replace(/\./g, '')
-    .replace(/: /g, '_')
-    .replace(/ /g, '_')
-    .replace(/-/g, '_')
-}
-
-function getRoleFolder(role) {
-  if (!role) return 'damage'
-  const r = role.toUpperCase()
-  if (r === 'TANK') return 'tank'
-  if (r === 'SUP' || r === 'SUPPORT') return 'support'
-  return 'damage'
-}
-
-function formatRoleText(role) {
-  if (!role) return '-'
-  const r = role.toUpperCase()
-  if (r === 'TANK') return '坦克'
-  if (r === 'SUP' || r === 'SUPPORT') return '辅助'
-  if (r === 'DAMAGE' || r === 'DPS') return '输出'
-  return role
-}
-
-function SortHead({ label, subLabel, sortKey, activeKey, direction, onSort, align = 'right', className = '' }) {
-  const isActive = activeKey === sortKey
-  const headClass = [
-    styles.sortHead,
-    align === 'left' ? styles.alignLeft : '',
-    align === 'center' ? styles.alignCenter : '',
-    className
-  ].filter(Boolean).join(' ')
+function SortButton({ column, sortKey, direction, onSort, activeRole }) {
+  const active = sortKey === column.id
+  const priority = column.metricId && activeRole !== 'ALL' && isRoleCoreMetric(activeRole, column.metricId)
+  const metricTone = getMetricToneClass(column.metricId)
 
   return (
-    <button type="button" className={headClass} onClick={() => onSort(sortKey)}>
-      <span className={styles.headText}>
-        <span className={`${styles.headLabel} ${isActive ? styles.activeLabel : ''}`}>{label}</span>
-        <span className={styles.headSubLabel}>{subLabel}</span>
-      </span>
-      <span className={`${styles.sortArrow} ${isActive ? styles.arrowActive : ''}`}>
-        {isActive ? (direction === 'asc' ? '▲' : '▼') : '▼'}
-      </span>
+    <button
+      type="button"
+      className={`${styles.sortButton} ${active ? styles.sortButtonActive : ''} ${priority ? styles.priorityHead : ''} ${metricTone}`}
+      aria-label={`按${column.label}排序${active ? `，当前${direction === 'asc' ? '升序' : '降序'}` : ''}`}
+      onClick={() => onSort(column.id)}
+    >
+      <span>{column.label}</span>
+      <b>{column.en}</b>
+      <em>{active ? (direction === 'asc' ? 'ASC' : 'DESC') : 'SORT'}</em>
     </button>
   )
 }
 
-function MobileStat({ label, value, tone = '' }) {
+function getMetricToneClass(metricId) {
+  if (metricId === 'dmg') return styles.metricDamage
+  if (metricId === 'heal') return styles.metricHeal
+  if (metricId === 'block') return styles.metricBlock
+  return ''
+}
+
+function getColClass(columnId) {
+  if (columnId === 'rank') return styles.colRank
+  if (columnId === 'player') return styles.colPlayer
+  if (columnId === 'score') return styles.colScore
+  if (columnId === 'team') return styles.colTeam
+  if (columnId === 'role') return styles.colRole
+  if (columnId === 'maps') return styles.colMaps
+  if (columnId === 'time') return styles.colTime
+  if (columnId === 'actions') return styles.colAction
+  return styles.colMetric
+}
+
+function getColumnGroup(columnId) {
+  if (columnId === 'rank') return '排名'
+  if (columnId === 'score') return '综合评分'
+  if (columnId === 'player' || columnId === 'team' || columnId === 'role') return '选手信息'
+  if (columnId === 'maps' || columnId === 'time') return '出场信息'
+  if (columnId === 'actions') return '操作'
+  return '公开指标'
+}
+
+function getColumnAriaSort(columnId, sortKey, direction) {
+  if (columnId !== sortKey) return 'none'
+  return direction === 'asc' ? 'ascending' : 'descending'
+}
+
+function getSortLabel(sortKey) {
+  if (sortKey === 'rank') return '排名'
+  if (sortKey === 'player') return '选手'
+  const match = LEADERBOARD_COLUMNS.find(column => column.id === sortKey)
+  return match?.label || sortKey
+}
+
+function TableColGroup({ columns }) {
   return (
-    <div className={`${styles.mobileStat} ${tone ? styles[tone] : ''}`}>
-      <span className={styles.mobileStatLabel}>{label}</span>
-      <span className={styles.mobileStatValue}>{value}</span>
+    <colgroup>
+      <col className={getColClass('rank')} />
+      {columns.map(column => (
+        <col key={column.id} className={getColClass(column.id)} />
+      ))}
+      <col className={getColClass('actions')} />
+    </colgroup>
+  )
+}
+
+function HeaderGroups({ columns }) {
+  const grouped = []
+  const allColumns = [{ id: 'rank' }, ...columns, { id: 'actions' }]
+
+  allColumns.forEach(column => {
+    const group = getColumnGroup(column.id)
+    const last = grouped[grouped.length - 1]
+    if (last?.label === group) {
+      last.span += 1
+    } else {
+      grouped.push({ label: group, span: 1, id: `${group}-${grouped.length}` })
+    }
+  })
+
+  return (
+    <tr className={styles.tableGroupRow}>
+      {grouped.map(group => (
+        <th key={group.id} scope="colgroup" colSpan={group.span}>
+          {group.label}
+        </th>
+      ))}
+    </tr>
+  )
+}
+
+function TableHeader({ columns, rankColumn, sortKey, direction, activeRole, onSort }) {
+  return (
+    <thead>
+      <HeaderGroups columns={columns} />
+      <tr>
+        <th
+          scope="col"
+          aria-sort={getColumnAriaSort('rank', sortKey, direction)}
+          className={`${styles.rankCell} ${styles.stickyRank}`}
+        >
+          <SortButton column={rankColumn} sortKey={sortKey} direction={direction} onSort={onSort} activeRole={activeRole} />
+        </th>
+
+        {columns.map(column => (
+          <th
+            key={column.id}
+            scope="col"
+            aria-sort={column.sortable === false ? undefined : getColumnAriaSort(column.id, sortKey, direction)}
+            className={[
+              column.id === 'player' ? `${styles.playerCell} ${styles.stickyPlayer}` : '',
+              column.id === 'score' ? styles.scoreHead : '',
+              column.id === 'team' ? styles.teamHead : '',
+              column.id === 'role' ? styles.roleHead : '',
+              column.numeric ? styles.numericHead : ''
+            ].filter(Boolean).join(' ')}
+          >
+            {column.sortable !== false ? (
+              <SortButton column={column} sortKey={sortKey} direction={direction} onSort={onSort} activeRole={activeRole} />
+            ) : (
+              <span>{column.label}</span>
+            )}
+          </th>
+        ))}
+
+        <th scope="col" className={styles.actionHead}>操作</th>
+      </tr>
+    </thead>
+  )
+}
+
+function Pagination({ page, totalPages, totalRows, pageSize, pageSizeOptions = [], onPageChange, onPageSizeChange }) {
+  const start = totalRows ? ((page - 1) * pageSize) + 1 : 0
+  const end = Math.min(page * pageSize, totalRows)
+
+  return (
+    <div className={styles.pagination}>
+      <span className={styles.paginationMeta}>
+        <strong>{start}-{end}</strong>
+        <em>/ {totalRows}</em>
+        <b>每页 {pageSize} 条</b>
+      </span>
+      {pageSizeOptions.length ? (
+        <div className={styles.pageSizeSwitch} aria-label="每页显示数量">
+          {pageSizeOptions.map(option => (
+            <button
+              key={option}
+              type="button"
+              className={option === pageSize ? styles.pageSizeButtonActive : ''}
+              aria-pressed={option === pageSize}
+              onClick={() => onPageSizeChange?.(option)}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      ) : null}
+      <div className={styles.paginationActions}>
+        <button type="button" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>上一页</button>
+        <strong>{page} / {totalPages}</strong>
+        <button type="button" disabled={page >= totalPages} onClick={() => onPageChange(page + 1)}>下一页</button>
+      </div>
     </div>
   )
 }
 
-export default function LeaderboardTable({ rows = [], sortKey, direction, onSort }) {
-  const navigate = useNavigate() // 🌟 初始化跳转钩子
+function TableTitleBar({ pagination, mode, activeTab, sortKey, direction, locale }) {
+  const { page, pageSize, totalRows } = pagination
+  const start = totalRows ? ((page - 1) * pageSize) + 1 : 0
+  const end = Math.min(page * pageSize, totalRows)
+  const currentMode = METRIC_MODES.find(item => item.id === mode) || METRIC_MODES[0]
+  const currentTab = LEADERBOARD_TABS.find(item => item.id === activeTab) || LEADERBOARD_TABS[0]
+  const modeLabel = locale === 'en-US' ? currentMode.en : currentMode.label
+  const tabLabel = locale === 'en-US' ? currentTab.en : currentTab.label
 
   return (
-    <div className={styles.wrap}>
-      <div className={styles.desktopTable}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th className={styles.rankCol}>
-                <SortHead label="排名" subLabel="RANK" sortKey="rank" activeKey={sortKey} direction={direction} onSort={onSort} align="center" />
-              </th>
-              <th className={styles.playerCol}>
-                <SortHead label="选手" subLabel="PLAYER" sortKey="display_name" activeKey={sortKey} direction={direction} onSort={onSort} align="left" />
-              </th>
-              <th className={styles.teamCol}>
-                <SortHead label="战队" subLabel="TEAM" sortKey="team_name" activeKey={sortKey} direction={direction} onSort={onSort} align="left" />
-              </th>
-              <th className={styles.roleCol}>
-                <SortHead label="位置" subLabel="ROLE" sortKey="role" activeKey={sortKey} direction={direction} onSort={onSort} align="center" />
-              </th>
-              <th>
-                <SortHead label="时长" subLabel="TIME" sortKey="raw_time_mins" activeKey={sortKey} direction={direction} onSort={onSort} />
-              </th>
-              <th>
-                <SortHead label="地图" subLabel="MAPS" sortKey="maps_played" activeKey={sortKey} direction={direction} onSort={onSort} />
-              </th>
-              <th className={styles.combatHead}>
-                <SortHead label="击杀 /10" subLabel="ELIM /10" sortKey="avg_elim" activeKey={sortKey} direction={direction} onSort={onSort} />
-              </th>
-              <th className={styles.combatHead}>
-                <SortHead label="助攻 /10" subLabel="AST /10" sortKey="avg_ast" activeKey={sortKey} direction={direction} onSort={onSort} />
-              </th>
-              <th className={styles.combatHead}>
-                <SortHead label="死亡 /10" subLabel="DTH /10" sortKey="avg_dth" activeKey={sortKey} direction={direction} onSort={onSort} />
-              </th>
-              <th className={styles.dmgHead}>
-                <SortHead label="伤害 /10" subLabel="DMG /10" sortKey="avg_dmg" activeKey={sortKey} direction={direction} onSort={onSort} />
-              </th>
-              <th className={styles.healHead}>
-                <SortHead label="治疗 /10" subLabel="HEAL /10" sortKey="avg_heal" activeKey={sortKey} direction={direction} onSort={onSort} />
-              </th>
-              <th className={styles.mitHead}>
-                <SortHead label="阻挡 /10" subLabel="BLOCK /10" sortKey="avg_block" activeKey={sortKey} direction={direction} onSort={onSort} />
-              </th>
-              <th className={styles.heroCol}>
-                <SortHead label="常用英雄" subLabel="MOST PLAYED" sortKey="most_played_hero" activeKey={sortKey} direction={direction} onSort={onSort} align="left" />
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {rows.length > 0 ? rows.map((row, index) => {
-              const topHeroes = Array.isArray(row.top_3_heroes) ? row.top_3_heroes.filter(Boolean).join(' / ') : ''
-              const isTop3 = index < 3 && sortKey === 'rank' && direction === 'asc'
-
-              const rowClass = [
-                styles.row,
-                styles.clickableRow, // 🌟 如果你的 CSS 里没有定义，可以加个 cursor: pointer
-                isTop3 ? styles.rowTop : '',
-                index === 0 && isTop3 ? styles.rowTop1 : '',
-                index === 1 && isTop3 ? styles.rowTop2 : '',
-                index === 2 && isTop3 ? styles.rowTop3 : ''
-              ].filter(Boolean).join(' ')
-
-              const rankBadgeClass = [
-                styles.rankBadge,
-                isTop3 ? styles.rankTop : '',
-                index === 0 && isTop3 ? styles.rankTop1 : '',
-                index === 1 && isTop3 ? styles.rankTop2 : '',
-                index === 2 && isTop3 ? styles.rankTop3 : ''
-              ].filter(Boolean).join(' ')
-
-              const roleFolder = getRoleFolder(row.role)
-              const heroFileName = formatHeroName(row.most_played_hero)
-              const heroAvatarUrl = `/heroes/${roleFolder}/${heroFileName}.png`
-
-              return (
-                <tr 
-                  key={`${row.player_id}_${row.role}`} // 🌟 修复关键：联合 ID 避免重复 key
-                  className={rowClass}
-                  onClick={() => navigate(`/players/${encodeURIComponent(row.player_id)}`)} // 🌟 增加点击跳转
-                  style={{ cursor: 'pointer' }} // 🌟 确保鼠标移上去是小手
-                >
-                  <td className={styles.rank}>
-                    <span className={rankBadgeClass}>{row.rank}</span>
-                  </td>
-
-                  <td className={styles.player}>
-                    <div className={styles.identityBlock}>
-                      <div className={styles.mainText}>{row.display_name || row.player_name || '-'}</div>
-                      <div className={styles.subText}>{row.player_name || '-'}</div>
-                    </div>
-                  </td>
-
-                  <td className={styles.team}>
-                    <div className={styles.identityBlock}>
-                      <div className={styles.mainText}>{row.team_short_name || row.team_name || '-'}</div>
-                      <div className={styles.subText}>{row.team_name || '-'}</div>
-                    </div>
-                  </td>
-
-                  <td className={styles.role}>
-                    <span className={`${styles.roleTag} ${styles[roleFolder] || ''}`}>
-                      {formatRoleText(row.role)}
-                    </span>
-                  </td>
-
-                  <td className={styles.dataCellStandard}>
-                    {row.total_time_played || `${Math.round(row.raw_time_mins || 0)}m`}
-                  </td>
-                  <td className={styles.dataCellStandard}>{formatInt(row.maps_played)}</td>
-
-                  <td className={`${styles.dataCellStandard} ${styles.cellCombat}`}>{formatNum(row.avg_elim)}</td>
-                  <td className={`${styles.dataCellStandard} ${styles.cellCombat}`}>{formatNum(row.avg_ast)}</td>
-                  <td className={`${styles.dataCellStandard} ${styles.cellCombat} ${styles.cellCombatDeath}`}>{formatNum(row.avg_dth)}</td>
-
-                  <td className={`${styles.dataCell} ${styles.cellDmg}`}>{formatNum(row.avg_dmg)}</td>
-                  <td className={`${styles.dataCell} ${styles.cellHeal}`}>{formatNum(row.avg_heal)}</td>
-                  <td className={`${styles.dataCell} ${styles.cellMit}`}>{formatNum(row.avg_block)}</td>
-
-                  <td className={styles.hero}>
-                    <div className={styles.heroWrap}>
-                      <div className={styles.avatarBox}>
-                        {row.most_played_hero && row.most_played_hero !== '-' ? (
-                          <img
-                            src={heroAvatarUrl}
-                            alt={row.most_played_hero}
-                            className={styles.avatarImg}
-                            onError={(e) => {
-                              e.target.style.display = 'none'
-                              e.target.parentElement.classList.add(styles.avatarFallbackState)
-                            }}
-                          />
-                        ) : (
-                          <div className={styles.avatarFallback}></div>
-                        )}
-                      </div>
-
-                      <div className={styles.heroTextGroup}>
-                        <div className={styles.mainText}>{row.most_played_hero || '-'}</div>
-                        <div className={styles.subText}>{topHeroes || '-'}</div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              )
-            }) : (
-              <tr>
-                <td colSpan="13" className={styles.empty}>
-                  暂无符合条件的选手数据
-                  <span className={styles.emptySub}>NO DATA MATCHES CURRENT FILTERS</span>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+    <div className={styles.tableTitleBar}>
+      <div className={styles.tableTitleText}>
+        <span>PLAYER × ROLE</span>
+        <strong>{locale === 'en-US' ? 'Full Ranking' : '完整排行榜'}</strong>
       </div>
-
-      <div className={styles.mobileList}>
-        {rows.length > 0 ? rows.map((row, index) => {
-          const topHeroes = Array.isArray(row.top_3_heroes) ? row.top_3_heroes.filter(Boolean).join(' / ') : ''
-          const isTop3 = index < 3 && sortKey === 'rank' && direction === 'asc'
-
-          const rankBadgeClass = [
-            styles.rankBadge,
-            isTop3 ? styles.rankTop : '',
-            index === 0 && isTop3 ? styles.rankTop1 : '',
-            index === 1 && isTop3 ? styles.rankTop2 : '',
-            index === 2 && isTop3 ? styles.rankTop3 : ''
-          ].filter(Boolean).join(' ')
-
-          const roleFolder = getRoleFolder(row.role)
-          const heroFileName = formatHeroName(row.most_played_hero)
-          const heroAvatarUrl = `/heroes/${roleFolder}/${heroFileName}.png`
-
-          return (
-            <article 
-              key={`${row.player_id}_${row.role}`} // 🌟 修复关键：移动端同样需要联合 ID
-              className={styles.mobileCard}
-              onClick={() => navigate(`/players/${encodeURIComponent(row.player_id)}`)} // 🌟 移动端增加点击跳转
-              style={{ cursor: 'pointer' }}
-            >
-              <div className={styles.mobileCardTop}>
-                <div className={styles.mobileRankBlock}>
-                  <span className={rankBadgeClass}>{row.rank}</span>
-                </div>
-
-                <div className={styles.mobileIdentity}>
-                  <div className={styles.mobilePlayerRow}>
-                    <span className={styles.mobilePlayerName}>{row.display_name || row.player_name || '-'}</span>
-                    <span className={`${styles.roleTag} ${styles[roleFolder] || ''}`}>
-                      {formatRoleText(row.role)}
-                    </span>
-                  </div>
-
-                  <div className={styles.mobileSubline}>
-                    <span>{row.player_name || '-'}</span>
-                    <span className={styles.mobileDivider}>/</span>
-                    <span>{row.team_short_name || row.team_name || '-'}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.mobileHeroRow}>
-                <div className={styles.avatarBox}>
-                  {row.most_played_hero && row.most_played_hero !== '-' ? (
-                    <img
-                      src={heroAvatarUrl}
-                      alt={row.most_played_hero}
-                      className={styles.avatarImg}
-                      onError={(e) => {
-                        e.target.style.display = 'none'
-                        e.target.parentElement.classList.add(styles.avatarFallbackState)
-                      }}
-                    />
-                  ) : (
-                    <div className={styles.avatarFallback}></div>
-                  )}
-                </div>
-
-                <div className={styles.mobileHeroText}>
-                  <div className={styles.mobileHeroMain}>{row.most_played_hero || '-'}</div>
-                  <div className={styles.mobileHeroSub}>{topHeroes || '-'}</div>
-                </div>
-              </div>
-
-              <div className={styles.mobileStatsGrid}>
-                <MobileStat label="时长" value={row.total_time_played || `${Math.round(row.raw_time_mins || 0)}m`} />
-                <MobileStat label="地图" value={formatInt(row.maps_played)} />
-                <MobileStat label="击杀 /10" value={formatNum(row.avg_elim)} />
-                <MobileStat label="助攻 /10" value={formatNum(row.avg_ast)} />
-                <MobileStat label="死亡 /10" value={formatNum(row.avg_dth)} />
-                <MobileStat label="伤害 /10" value={formatNum(row.avg_dmg)} tone="mobileDmg" />
-                <MobileStat label="治疗 /10" value={formatNum(row.avg_heal)} tone="mobileHeal" />
-                <MobileStat label="阻挡 /10" value={formatNum(row.avg_block)} tone="mobileMit" />
-              </div>
-            </article>
-          )
-        }) : (
-          <div className={styles.mobileEmpty}>
-            暂无符合条件的选手数据
-            <span className={styles.emptySub}>NO DATA MATCHES CURRENT FILTERS</span>
-          </div>
-        )}
+      <div className={styles.tableTitleMeta}>
+        <span>{tabLabel}</span>
+        <span>{modeLabel}</span>
+        <span>SORT / {getSortLabel(sortKey)} {direction === 'asc' ? 'ASC' : 'DESC'}</span>
+        <span>{start}-{end} / {totalRows}</span>
       </div>
     </div>
+  )
+}
+
+function formatEntryField(entry, column, mode, locale) {
+  if (column.id === 'score') return Number.isFinite(Number(entry.roleScore)) ? formatDecimal(entry.roleScore, 1, '-') : '-'
+  if (column.id === 'team') return `${entry.team_short_name || '-'} / ${entry.team_name || '-'}`
+  if (column.id === 'role') return locale === 'en-US' ? getRoleEnLabel(entry.role) : `${getRoleLabel(entry.role)} / ${getRoleEnLabel(entry.role)}`
+  if (column.id === 'maps') return formatInt(entry.roleMapsPlayed)
+  if (column.id === 'time') return formatPlayerTime({ raw_time_mins: entry.roleTimeMins, total_time_played: entry.total_time_played })
+  if (column.metricId) return formatLeaderboardStat(getEntryMetricValue(entry, column.metricId, mode), mode, column.metricId)
+  return '-'
+}
+
+function MobileRankingItem({
+  entry,
+  mode,
+  rankValue,
+  expanded,
+  isFavorite,
+  isCompareSelected,
+  compareDisabled,
+  onToggleExpanded,
+  onNavigate,
+  onToggleFavorite,
+  onToggleCompare,
+  locale
+}) {
+  const playerName = entry.nickname || entry.display_name || entry.player_name || entry.player_id || '-'
+  const metricIds = getRoleCoreMetricIds(entry.role, entry.most_played_hero).slice(0, 3)
+  const detailsId = `ranking-detail-${entry.entryKey.replace(/[^a-z0-9_-]/gi, '-')}`
+
+  return (
+    <article className={`${styles.mobileRankingItem} ${isCompareSelected ? styles.mobileRankingItemActive : ''}`}>
+      <button
+        type="button"
+        className={styles.mobileRankingSummary}
+        aria-expanded={expanded}
+        aria-controls={detailsId}
+        onClick={onToggleExpanded}
+      >
+        <span className={entry.eligible ? styles.rankBadge : styles.rankMuted}>
+          {entry.eligible ? rankValue : '-'}
+        </span>
+        <HeroAvatar entry={entry} />
+        <span className={styles.mobilePlayerText}>
+          <strong>{playerName}</strong>
+          <em>{entry.team_short_name || entry.team_name || '-'} / {getRoleEnLabel(entry.role)}</em>
+        </span>
+        <span className={styles.mobileScore}>
+          <b>{formatDecimal(entry.roleScore, 1, '-')}</b>
+          <em>SCORE</em>
+        </span>
+      </button>
+
+      <div className={styles.mobileMetricStrip}>
+        {metricIds.map(metricId => (
+          <span key={metricId}>
+            <b>{METRIC_LABELS[metricId]}</b>
+            {formatLeaderboardStat(getEntryMetricValue(entry, metricId, mode), mode, metricId)}
+          </span>
+        ))}
+      </div>
+
+      <div className={styles.mobileActions}>
+        <button type="button" onClick={() => onNavigate(entry)}>档案</button>
+        <label
+          className={`${styles.compareCheck} ${isCompareSelected ? styles.compareCheckActive : ''} ${compareDisabled ? styles.compareCheckBlocked : ''}`}
+          title={compareDisabled ? '仅支持同职责选手比较' : '加入比较'}
+        >
+          <input
+            type="checkbox"
+            aria-label={`${isCompareSelected ? '移出比较' : '加入比较'}：${playerName}`}
+            checked={isCompareSelected}
+            disabled={compareDisabled}
+            onChange={event => onToggleCompare(entry, event.target.checked)}
+          />
+          <span aria-hidden="true">VS</span>
+        </label>
+        <button
+          type="button"
+          className={`${styles.followButton} ${isFavorite ? styles.followButtonActive : ''}`}
+          aria-label={isFavorite ? `取消关注：${playerName}` : `关注选手：${playerName}`}
+          onClick={() => onToggleFavorite(entry)}
+        >
+          FAV
+        </button>
+      </div>
+
+      {expanded ? (
+        <div id={detailsId} className={styles.mobileDetails}>
+          <div>
+            <span>BattleTag</span>
+            <strong>{entry.battleTag || entry.player_name || entry.player_id || '-'}</strong>
+          </div>
+          <div>
+            <span>选手 ID</span>
+            <strong>{entry.player_id || '-'}</strong>
+          </div>
+          <div>
+            <span>常用英雄</span>
+            <strong>{entry.most_played_hero || '-'}</strong>
+          </div>
+          <div>
+            <span>英雄池</span>
+            <strong>{entry.top_3_heroes?.length ? entry.top_3_heroes.join(' / ') : '-'}</strong>
+          </div>
+          <div>
+            <span>排名状态</span>
+            <strong>{entry.eligible ? '正式排名' : '样本不足'}</strong>
+          </div>
+          {LEADERBOARD_COLUMNS.map(column => (
+            <div key={column.id}>
+              <span>{column.label}</span>
+              <strong>{formatEntryField(entry, column, mode, locale)}</strong>
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </article>
+  )
+}
+
+function MobileRankingList({
+  rows,
+  mode,
+  activeTab,
+  selectedCompareKeys,
+  compareRole,
+  isFavoritePlayer,
+  onNavigate,
+  onToggleFavorite,
+  onToggleCompare,
+  locale
+}) {
+  const [expandedKeys, setExpandedKeys] = useState(new Set())
+
+  const toggleExpanded = entryKey => {
+    setExpandedKeys(current => {
+      const next = new Set(current)
+      if (next.has(entryKey)) next.delete(entryKey)
+      else next.add(entryKey)
+      return next
+    })
+  }
+
+  return (
+    <div className={styles.mobileRankingList} aria-label="移动端排行榜列表">
+      {rows.map(entry => (
+        <MobileRankingItem
+          key={entry.entryKey}
+          entry={entry}
+          mode={mode}
+          rankValue={activeTab === 'overall' ? entry.overallRank : entry.roleRank}
+          expanded={expandedKeys.has(entry.entryKey)}
+          isFavorite={Boolean(isFavoritePlayer?.(entry))}
+          isCompareSelected={selectedCompareKeys.has(entry.entryKey)}
+          compareDisabled={Boolean(compareRole && compareRole !== entry.role)}
+          onToggleExpanded={() => toggleExpanded(entry.entryKey)}
+          onNavigate={onNavigate}
+          onToggleFavorite={onToggleFavorite}
+          onToggleCompare={onToggleCompare}
+          locale={locale}
+        />
+      ))}
+    </div>
+  )
+}
+
+export default function LeaderboardTable({
+  rows,
+  pagination,
+  visibleColumns,
+  mode,
+  sortKey,
+  direction,
+  activeRole,
+  activeTab,
+  selectedCompareKeys,
+  compareRole,
+  isFavoritePlayer,
+  onSort,
+  onPageChange,
+  onPageSizeChange,
+  pageSizeOptions,
+  onNavigate,
+  onToggleFavorite,
+  onToggleCompare,
+  locale = 'zh-CN'
+}) {
+  const visibleSet = new Set(visibleColumns)
+  const dataColumns = LEADERBOARD_COLUMNS.filter(column => visibleSet.has(column.id))
+  const scoreColumn = dataColumns.find(column => column.id === 'score')
+  const columns = [
+    ...(scoreColumn ? [scoreColumn] : []),
+    { id: 'player', label: '选手', en: 'PLAYER', sortable: true },
+    ...dataColumns.filter(column => column.id !== 'score')
+  ]
+
+  const rankColumn = {
+    id: 'rank',
+    label: '排名',
+    en: activeTab === 'overall' ? 'OVERALL' : 'ROLE',
+    sortable: true
+  }
+
+  return (
+    <section className={styles.tableSection}>
+      <TableTitleBar
+        pagination={pagination}
+        mode={mode}
+        activeTab={activeTab}
+        sortKey={sortKey}
+        direction={direction}
+        locale={locale}
+      />
+
+      {!rows.length ? (
+        <LeaderboardEmptyState />
+      ) : (
+        <>
+          <div className={styles.tableScroller} tabIndex={0} aria-label="排行榜横向滚动区域">
+            <table className={styles.leaderboardTable}>
+              <caption className={styles.srOnly}>Fries Cup 选手职责排行榜</caption>
+              <TableColGroup columns={columns} />
+              <TableHeader
+                columns={columns}
+                rankColumn={rankColumn}
+                sortKey={sortKey}
+                direction={direction}
+                activeRole={activeRole}
+                onSort={onSort}
+              />
+              <tbody>
+                {rows.map(entry => (
+                  <LeaderboardRow
+                    key={entry.entryKey}
+                    entry={entry}
+                    columns={columns}
+                    mode={mode}
+                    rankValue={activeTab === 'overall' ? entry.overallRank : entry.roleRank}
+                    isFavorite={Boolean(isFavoritePlayer?.(entry))}
+                    isCompareSelected={selectedCompareKeys.has(entry.entryKey)}
+                    compareDisabled={Boolean(compareRole && compareRole !== entry.role)}
+                    onNavigate={onNavigate}
+                    onToggleFavorite={event => {
+                      event.stopPropagation()
+                      onToggleFavorite(entry)
+                    }}
+                    onToggleCompare={onToggleCompare}
+                    locale={locale}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <MobileRankingList
+            rows={rows}
+            mode={mode}
+            activeTab={activeTab}
+            selectedCompareKeys={selectedCompareKeys}
+            compareRole={compareRole}
+            isFavoritePlayer={isFavoritePlayer}
+            onNavigate={onNavigate}
+            onToggleFavorite={onToggleFavorite}
+            onToggleCompare={onToggleCompare}
+            locale={locale}
+          />
+        </>
+      )}
+
+      <Pagination
+        {...pagination}
+        pageSizeOptions={pageSizeOptions}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
+    </section>
   )
 }

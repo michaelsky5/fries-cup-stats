@@ -1,556 +1,126 @@
 .shell {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
   min-width: 0;
-}
-
-/* ---------- hero ---------- */
-.hero {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1.18fr) minmax(360px, 0.92fr);
-  gap: 16px;
-  padding: 18px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.006) 100%),
-    #101010;
-  border: 1px solid rgba(255,255,255,0.12);
-  overflow: hidden;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 240px;
-  height: 2px;
-  background: linear-gradient(90deg, #f4c320 0%, rgba(244,195,32,0.34) 58%, transparent 100%);
-}
-
-.heroMain {
-  display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-  min-width: 0;
+  gap: 22px;
+  color: var(--portal-ink);
 }
 
-.heroKicker {
+.stickyRosterControls {
+  position: sticky;
+  top: 138px;
+  z-index: 20;
   display: flex;
-  align-items: baseline;
+  min-width: 0;
+  flex-direction: column;
   gap: 8px;
-  flex-wrap: wrap;
+  background: var(--portal-page);
+  padding-bottom: 0;
 }
 
-.heroKickerCn {
-  font-size: 11px;
-  font-weight: 900;
-  line-height: 1;
-  color: rgba(255,255,255,0.8);
-  letter-spacing: 0.08em;
+.roleTabs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  background: var(--portal-surface);
+  border: 2px solid var(--portal-border);
 }
 
-.heroKickerEn {
-  font-size: 8px;
-  font-weight: 800;
-  line-height: 1;
-  color: rgba(255,255,255,0.28);
-  letter-spacing: 0.16em;
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-}
-
-.heroTitle {
-  margin: 0;
-  font-size: 30px;
-  font-weight: 900;
-  line-height: 1.06;
-  color: #ffffff;
-  letter-spacing: 0.02em;
-}
-
-.heroDesc {
-  max-width: 680px;
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.7;
-  color: rgba(255,255,255,0.54);
-}
-
-.heroViewBar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 4px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255,255,255,0.08);
-}
-
-.heroViewLabel {
-  font-size: 9px;
-  font-weight: 900;
-  line-height: 1;
-  color: rgba(255,255,255,0.42);
-  letter-spacing: 0.12em;
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-}
-
-.heroViewValue {
-  min-height: 22px;
-  padding: 0 10px;
+.roleTab {
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(244,195,32,0.08);
-  border: 1px solid rgba(244,195,32,0.18);
-  color: #f4c320;
-  font-size: 10px;
-  font-weight: 900;
+  background: var(--portal-surface);
+  border: 0;
+  border-right: 1px solid var(--portal-border);
+  color: var(--portal-ink);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.06em;
   line-height: 1;
-  letter-spacing: 0.04em;
 }
 
-.heroMeta {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+.roleTab:last-child {
+  border-right: 0;
 }
 
-.heroMetaItem {
+.roleTab::after {
+  width: 42px;
+  height: 4px;
+  margin-left: 10px;
+  background: transparent;
+  content: "";
+}
+
+.roleTab[data-role="TANK"]::after {
+  background: #3978C5;
+}
+
+.roleTab[data-role="DPS"]::after {
+  background: #CC4944;
+}
+
+.roleTab[data-role="SUPPORT"]::after {
+  background: #3F9369;
+}
+
+.roleTabActive {
+  background: var(--portal-yellow);
+}
+
+.directorySection {
   display: flex;
+  min-width: 0;
   flex-direction: column;
-  justify-content: center;
-  gap: 8px;
-  min-height: 74px;
-  padding: 10px 12px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.022) 0%, rgba(255,255,255,0.008) 100%),
-    #141414;
-  border: 1px solid rgba(255,255,255,0.08);
-  border-left: 2px solid rgba(255,255,255,0.16);
+  gap: 18px;
+  scroll-margin-top: 280px;
 }
 
-.heroMetaLabel {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.metaCn {
-  font-size: 10px;
-  font-weight: 900;
-  line-height: 1;
-  color: rgba(255,255,255,0.78);
-}
-
-.metaEn {
-  font-size: 8px;
-  font-weight: 800;
-  line-height: 1;
-  color: rgba(255,255,255,0.26);
-  font-family: var(--font-mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.heroMetaValue {
-  font-size: 22px;
-  font-weight: 900;
-  line-height: 1;
-  color: #f4c320;
-  font-family: var(--font-mono);
-}
-
-.heroMetaValueText {
-  font-size: 15px;
-  font-weight: 900;
-  line-height: 1.2;
-  color: #f4c320;
-  word-break: break-word;
-}
-
-/* ---------- stat strip ---------- */
-.statStrip {
+.playerGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 18px;
 }
 
-.statStripItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  min-height: 42px;
-  padding: 0 14px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.016) 0%, rgba(255,255,255,0.004) 100%),
-    #101010;
-  border: 1px solid rgba(255,255,255,0.1);
+@media (min-width: 1440px) {
+  .playerGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
-.statStripLabel {
-  font-size: 9px;
-  font-weight: 900;
-  color: rgba(255,255,255,0.42);
-  letter-spacing: 0.12em;
-  font-family: var(--font-mono);
-  text-transform: uppercase;
+@media (max-width: 1180px) {
+  .stickyRosterControls {
+    position: static;
+  }
+
+  .directorySection {
+    scroll-margin-top: 24px;
+  }
 }
 
-.statStripValue {
-  font-size: 14px;
-  font-weight: 900;
-  color: #ffffff;
-  font-family: var(--font-mono);
-}
-
-/* ---------- toolbar ---------- */
-.toolbar {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 16px 18px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.016) 0%, rgba(255,255,255,0.004) 100%),
-    #101010;
-  border: 1px solid rgba(255,255,255,0.12);
-}
-
-.toolbarHead {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 14px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  flex-wrap: wrap;
-}
-
-.toolbarTitleGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.toolbarTitle {
-  font-size: 13px;
-  font-weight: 900;
-  line-height: 1;
-  color: #ffffff;
-  letter-spacing: 0.06em;
-}
-
-.toolbarSubTitle {
-  font-size: 8px;
-  font-weight: 800;
-  line-height: 1;
-  color: rgba(255,255,255,0.28);
-  font-family: var(--font-mono);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.resetBtn {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  min-width: 88px;
-  height: 34px;
-  padding: 0 14px;
-  border: 1px solid rgba(244,195,32,0.92);
-  background: transparent;
-  color: #f4c320;
-  cursor: pointer;
-  transition: background 0.16s ease, color 0.16s ease, transform 0.12s ease;
-}
-
-.resetBtn:hover {
-  background: #f4c320;
-  color: #111111;
-}
-
-.resetBtn:active {
-  transform: translateY(1px);
-}
-
-.resetBtnEn {
-  font-size: 8px;
-  font-weight: 800;
-  line-height: 1;
-  font-family: var(--font-mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  opacity: 0.82;
-}
-
-.toolbarMain {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.toolGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  align-items: end;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-}
-
-.searchField {
-  min-width: 0;
-}
-
-.label {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.labelCn {
-  font-size: 10px;
-  font-weight: 900;
-  line-height: 1;
-  color: rgba(255,255,255,0.82);
-}
-
-.labelEn {
-  font-size: 8px;
-  font-weight: 800;
-  line-height: 1;
-  color: rgba(255,255,255,0.28);
-  font-family: var(--font-mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.select,
-.input {
-  height: 38px;
-  padding: 0 12px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0) 100%),
-    #171717;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 800;
-  outline: none;
-  transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
-}
-
-.select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  padding-right: 38px;
-  cursor: pointer;
-  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="%23ffffff" stroke-width="1.5" stroke-linecap="square"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  background-size: 10px;
-}
-
-.select:hover,
-.input:hover {
-  border-color: rgba(255,255,255,0.26);
-}
-
-/* 🌟 已经为你修复了这里的选中状态连环爆炸 Bug */
-.select:focus,
-.input:focus {
-  border-color: #f4c320;
-  background-color: #111111; 
-  box-shadow: inset 0 0 0 1px rgba(244,195,32,0.18);
-}
-
-.select:focus {
-  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="%23f4c320" stroke-width="1.5" stroke-linecap="square"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  background-size: 10px;
-}
-
-.select option {
-  background: #111111;
-  color: #ffffff;
-}
-
-.input {
-  width: 100%;
-}
-
-.input::placeholder {
-  color: rgba(255,255,255,0.28);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-/* ---------- results ---------- */
-.resultsSection {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.resultsHead {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.resultsTitleGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.resultsTitle {
-  font-size: 13px;
-  font-weight: 900;
-  line-height: 1;
-  color: #ffffff;
-  letter-spacing: 0.06em;
-}
-
-.resultsSubTitle {
-  font-size: 8px;
-  font-weight: 800;
-  line-height: 1;
-  color: rgba(255,255,255,0.28);
-  font-family: var(--font-mono);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.resultsMeta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.resultPill {
-  min-height: 24px;
-  padding: 0 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,0.035);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.66);
-  font-size: 9px;
-  font-weight: 900;
-  font-family: var(--font-mono);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-/* ---------- grid ---------- */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 14px;
-}
-
-/* ---------- empty ---------- */
-.emptyState {
-  padding: 76px 20px;
-  background: #111111;
-  border: 1px dashed rgba(255,255,255,0.16);
-  text-align: center;
-}
-
-.emptyCn {
-  display: block;
-  font-size: 12px;
-  font-weight: 900;
-  color: rgba(255,255,255,0.5);
-}
-
-.emptyEn {
-  display: block;
-  margin-top: 6px;
-  font-size: 9px;
-  font-weight: 800;
-  color: rgba(255,255,255,0.24);
-  font-family: var(--font-mono);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.emptyHint {
-  display: block;
-  margin-top: 12px;
-  font-size: 11px;
-  line-height: 1.6;
-  color: rgba(255,255,255,0.34);
-}
-
-/* ---------- responsive ---------- */
-@media (max-width: 1200px) {
-  .toolGrid {
+@media (max-width: 1120px) {
+  .playerGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 980px) {
-  .hero {
+@media (max-width: 760px) {
+  .roleTabs {
     grid-template-columns: 1fr;
   }
 
-  .statStrip {
+  .roleTab {
+    justify-content: space-between;
+    padding: 0 14px;
+    border-right: 0;
+    border-bottom: 1px solid var(--portal-border);
+  }
+
+  .roleTab:last-child {
+    border-bottom: 0;
+  }
+
+  .playerGrid {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 720px) {
-  .heroTitle {
-    font-size: 26px;
-  }
-
-  .heroMeta {
-    grid-template-columns: 1fr;
-  }
-
-  .toolGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .resultsMeta {
-    width: 100%;
-  }
-}
-
-@media (max-width: 560px) {
-  .toolbar,
-  .hero {
-    padding: 16px;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .select,
-  .input {
-    height: 36px;
   }
 }

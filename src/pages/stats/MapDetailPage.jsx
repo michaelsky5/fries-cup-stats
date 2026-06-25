@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import { useParams, Link, useOutletContext } from 'react-router-dom'
+import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
 import styles from './MapDetailPage.module.css'
 import { getMapDetail, safeArr } from '../../lib/selectors'
 
@@ -58,7 +59,7 @@ function RankedBarItem({ rank, title, sub, rateText, width, barTone = 'yellow' }
 
 const MapDetailPage = () => {
   const { mapName } = useParams()
-  const { db } = useOutletContext()
+  const { db, withSeason = path => path } = useOutletContext()
   const decodedMapName = decodeURIComponent(mapName || '')
 
   const data = useMemo(() => {
@@ -122,14 +123,17 @@ const MapDetailPage = () => {
 
   if (!data || data.totalPlays === 0) {
     return (
-      <div className={styles.errorShell}>
-        <div className={styles.errorPanel}>
-          <div className={styles.errorKicker}>MAP INTEL</div>
-          <h2 className={styles.errorTitle}>暂无数据 / NO DATA AVAILABLE</h2>
-          <p className={styles.errorDesc}>该地图尚未进行任何有效对局，或地图名称与数据库记录不匹配。</p>
-          <Link to="/maps" className={styles.backBtn}>
-            ← 返回地图列表 / RETURN TO MAPS
-          </Link>
+      <div className={styles.shell}>
+        <DatabaseSubnav />
+        <div className={styles.errorShell}>
+          <div className={styles.errorPanel}>
+            <div className={styles.errorKicker}>MAP INTEL</div>
+            <h2 className={styles.errorTitle}>暂无数据 / NO DATA AVAILABLE</h2>
+            <p className={styles.errorDesc}>该地图尚未进行任何有效对局，或地图名称与数据库记录不匹配。</p>
+            <Link to={withSeason('/maps')} className={styles.backBtn}>
+              ← 返回地图列表 / RETURN TO MAPS
+            </Link>
+          </div>
         </div>
       </div>
     )
@@ -141,7 +145,8 @@ const MapDetailPage = () => {
 
   return (
     <div className={styles.shell}>
-      <Link to="/maps" className={styles.backLink}>
+      <DatabaseSubnav />
+      <Link to={withSeason('/maps')} className={styles.backLink}>
         ← 返回全联盟地图数据 / BACK TO ALL MAPS
       </Link>
 
@@ -332,7 +337,7 @@ const MapDetailPage = () => {
           {data.recentMatches.map((m, idx) => {
             const isDraw = m.winnerId === 'DRAW' || Number(m.scoreA) === Number(m.scoreB)
             return (
-              <Link to={`/matches/${m.matchId}`} key={`${m.matchId}-${idx}`} className={styles.matchCard}>
+              <Link to={withSeason(`/matches/${m.matchId}`)} key={`${m.matchId}-${idx}`} className={styles.matchCard}>
                 <div className={styles.matchMetaInfo}>
                   <span className={styles.matchStage}>
                     {m.stage} · {m.round}

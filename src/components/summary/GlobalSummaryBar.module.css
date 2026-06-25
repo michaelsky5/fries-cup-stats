@@ -12,15 +12,14 @@
   justify-content: space-between;
   min-height: 88px;
   padding: 12px 14px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0%, rgba(255, 255, 255, 0.004) 100%),
-    #101010;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface-card);
+  border: 1px solid var(--border-soft);
   overflow: hidden;
   transition:
     border-color 0.18s ease,
     background 0.18s ease,
-    transform 0.18s ease;
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .metricCard::before {
@@ -35,10 +34,9 @@
 }
 
 .metricCard:hover {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.006) 100%),
-    #121212;
-  border-color: rgba(255, 255, 255, 0.14);
+  background: var(--surface-card-hover);
+  border-color: var(--border-main);
+  box-shadow: var(--shadow-panel);
 }
 
 .metricCard:hover::before {
@@ -49,17 +47,17 @@
 .metricCardAccent {
   background:
     linear-gradient(180deg, rgba(244, 195, 32, 0.05) 0%, rgba(244, 195, 32, 0.008) 100%),
-    #101010;
-  border-color: rgba(244, 195, 32, 0.14);
+    var(--bg-panel);
+  border-color: var(--accent-border);
 }
 
 .metricCardAccent::before {
-  background: #f4c320;
+  background: var(--accent);
   width: 56px;
 }
 
 .metricCardAccent:hover {
-  border-color: rgba(244, 195, 32, 0.28);
+  border-color: var(--accent-border);
 }
 
 .metricCardAccent:hover::before {
@@ -67,10 +65,9 @@
 }
 
 .metricCardLive::before {
-  background: #4ade80;
+  background: var(--accent-live);
 }
 
-/* ---------- content ---------- */
 .metricTop {
   display: flex;
   flex-direction: column;
@@ -88,7 +85,7 @@
   font-weight: 900;
   line-height: 1;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--text-secondary);
 }
 
 .metricMeta {
@@ -97,8 +94,8 @@
   line-height: 1;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.24);
-  font-family: var(--font-mono);
+  color: var(--text-faint);
+  font-family: var(--font-mono, monospace);
 }
 
 .metricValue {
@@ -106,20 +103,18 @@
   font-size: 22px;
   line-height: 1;
   font-weight: 900;
-  letter-spacing: -0.03em;
-  color: #ffffff;
-  font-family: var(--font-mono);
+  color: var(--text-main);
+  font-family: var(--font-mono, monospace);
 }
 
 .valueLive {
-  color: #4ade80;
+  color: var(--accent-live);
 }
 
-/* ---------- live pulse ---------- */
 .pulseDot {
   width: 6px;
   height: 6px;
-  background-color: #4ade80;
+  background-color: var(--accent-live);
   border-radius: 50%;
   box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
   animation: pulse 1.5s infinite;
@@ -131,7 +126,6 @@
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
 }
 
-/* ---------- responsive ---------- */
 @media (max-width: 1280px) {
   .metrics {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -154,28 +148,24 @@
 }
 
 @media (max-width: 640px) {
-  /* 🌟 核心升级 1：放弃横向滑动，回归严谨的双列数据网格 */
   .metrics {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px; /* 缩小缝隙，提升模块整体感 */
+    gap: 8px;
   }
 
-  /* 如果是 7 个（单数），让最后一个横跨全屏作为稳固的底座 */
   .metricCard:last-child:nth-child(odd) {
     grid-column: 1 / -1;
   }
 
-  /* 🌟 核心升级 2：卡片内部由“垂直堆叠”压扁为“水平两端对齐” */
   .metricCard {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    min-height: 48px; /* ⚡️ 高度直接砍半 */
+    min-height: 48px;
     padding: 0 12px 0 14px;
   }
 
-  /* 🌟 核心升级 3：把原本在卡片顶部的亮色装饰条，移到左侧变成“状态指示灯” */
   .metricCard::before {
     width: 2px;
     height: 16px;
@@ -187,7 +177,7 @@
 
   .metricCard:hover::before {
     width: 2px;
-    height: 24px; /* 交互动画改为高度延伸 */
+    height: 24px;
   }
 
   .metricCardAccent::before {
@@ -200,7 +190,6 @@
     height: 32px;
   }
 
-  /* 重组内部文字标签布局 */
   .metricTop {
     flex-direction: row;
     align-items: center;
@@ -208,22 +197,22 @@
   }
 
   .metricLabelWrap {
-    flex-direction: column; /* 保持中英文上下堆叠，省横向空间 */
+    flex-direction: column;
     align-items: flex-start;
     gap: 2px;
   }
 
   .metricLabel {
-    font-size: 11px; /* 标签稍微放大，确保横向排版的可读性 */
+    font-size: 11px;
   }
 
   .metricMeta {
     font-size: 7px;
-    opacity: 0.6; /* 弱化英文，避免喧宾夺主 */
+    opacity: 0.6;
   }
 
   .metricValue {
-    margin-top: 0; /* 取消原本的顶部间距 */
-    font-size: 18px; /* 适配紧凑卡片字号 */
+    margin-top: 0;
+    font-size: 18px;
   }
 }

@@ -1,784 +1,516 @@
-import { useMemo, useEffect, useRef } from 'react'
-import { Link, useOutletContext, useParams, useNavigate } from 'react-router-dom'
-import { safeArr } from '../../lib/selectors.js'
-import PlayerCard from '../../components/players/PlayerCard.jsx'
+import { useEffect, useMemo } from 'react'
+import { Link, useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router-dom'
+import TeamLogo from '../../components/matches/TeamLogo.jsx'
+import RosterSubnav from '../../components/roster/RosterSubnav.jsx'
+import { PlayerAvatar } from '../../components/roster/PlayerDirectoryCard.jsx'
+import {
+  formatStaffPerson,
+  getPlayerAvatarSource,
+  getPlayerDirectory,
+  getPlayerDisplayIdentity,
+  getTeamDirectory,
+  getTeamRosterPlayers,
+  normalizeRosterRole,
+  safeArr
+} from '../../lib/rosterSelectors.js'
+import {
+  getMatchTimeLabel,
+  isFinishedMatch,
+  isLiveMatch,
+  isUpcomingMatch,
+  sortMatchesBySchedule
+} from '../../lib/matchesSelectors.js'
+import { getSwissStandings } from '../../lib/selectors.js'
 import styles from './TeamDetailPage.module.css'
 
-import { toPng } from 'html-to-image'
-import TeamShareCard from '../../components/teams/TeamShareCard.jsx'
+const TABS = [
+  { id: 'overview', label: '战队概览' },
+  { id: 'roster', label: '完整名单' },
+  { id: 'matches', label: '赛程赛果' },
+  { id: 'stats', label: '战队数据' }
+]
 
-function cleanStr(str) {
-  if (!str) return ''
-  return String(str).trim().toLowerCase()
+const ROLE_LABELS = {
+  TANK: 'TANK',
+  DPS: 'DPS',
+  SUP: 'SUP',
+  FLEX: 'FLEX'
 }
 
-function normalizeRole(role) {
-  const r = String(role || '').toUpperCase().trim()
-  if (r === 'SUPPORT' || r === 'HEALER' || r === '辅助') return 'SUP'
-  if (r === 'DAMAGE' || r === '输出') return 'DPS'
-  if (r === 'TANK' || r === '重装') return 'TANK'
-  return r || 'FLEX'
+function normalizeKey(value) {
+  return String(value ?? '').trim().toLowerCase()
 }
 
-function avgOf(rows, key) {
-  if (!rows.length) return 0
-  return rows.reduce((sum, row) => sum + (Number(row?.[key]) || 0), 0) / rows.length
+function compareName(a, b) {
+  return String(a || '').localeCompare(String(b || ''), 'zh-Hans-CN', { numeric: true })
 }
 
-function formatNum(value, digits = 1) {
-  const num = Number(value || 0)
-  return Number.isFinite(num) ? num.toFixed(digits) : '0.0'
+function teamIdentitySet(team) {
+  return new Set([
+    team?.team_id,
+    team?.id,
+    team?.routeId,
+    team?.shortName,
+    team?.fullName,
+    team?.team_short_name,
+    team?.team_name
+  ].map(normalizeKey).filter(Boolean))
 }
 
-function formatMinutes(value) {
-  const mins = Number(value || 0)
-  if (!Number.isFinite(mins) || mins <= 0) return '0m'
-  const h = Math.floor(mins / 60)
-  const m = Math.round(mins % 60)
-  if (h > 0) return `${h}h ${m}m`
-  return `${Math.round(mins)}m`
-}
+function matchTeamSide(match, teamKeys) {
+  const sideValues = side => [
+    match?.[side]?.id,
+    match?.[side]?.team_id,
+    match?.[side]?.short,
+    match?.[side]?.name,
+    match?.[side]?.team_short_name,
+    match?.[side]?.team_name
+  ].map(normalizeKey)
 
-function getStatusInfo(match, isMyTeamA) {
-  if (match.status === 'PENDING' || match.status === 'SCHEDULED') {
-    return { cn: '未开始', en: 'PENDING', className: styles.resTbd }
-  }
-
-  const myScore = isMyTeamA ? Number(match.team_a?.score || 0) : Number(match.team_b?.score || 0)
-  const opScore = isMyTeamA ? Number(match.team_b?.score || 0) : Number(match.team_a?.score || 0)
-
-  if (myScore > opScore) return { cn: '胜', en: 'WIN', className: styles.resWin }
-  if (myScore < opScore) return { cn: '负', en: 'LOSS', className: styles.resLoss }
-  if (myScore === 0 && opScore === 0) return { cn: '待定', en: 'TBD', className: styles.resTbd }
-  return { cn: '平', en: 'DRAW', className: styles.resDraw }
-}
-
-function getRoleThemeClass(role) {
-  if (role === 'TANK') return styles.roleTank
-  if (role === 'DPS') return styles.roleDps
-  if (role === 'SUP') return styles.roleSup
+  if (sideValues('team_a').some(value => teamKeys.has(value))) return 'team_a'
+  if (sideValues('team_b').some(value => teamKeys.has(value))) return 'team_b'
   return ''
 }
 
+function getOpponent(match, side) {
+  return side === 'team_a' ? match?.team_b : match?.team_a
+}
+
+function getTeamScore(match, side) {
+  const value = match?.[side]?.score
+  const number = Number(value)
+  return Number.isFinite(number) ? number : 0
+}
+
+function getMatchResult(match, side) {
+  if (!side || isUpcomingMatch(match) || isLiveMatch(match)) return { label: isLiveMatch(match) ? 'LIVE' : 'NEXT', tone: 'pending' }
+  const mine = getTeamScore(match, side)
+  const other = getTeamScore(match, side === 'team_a' ? 'team_b' : 'team_a')
+  if (mine > other) return { label: 'WIN', tone: 'win' }
+  if (mine < other) return { label: 'LOSS', tone: 'loss' }
+  return { label: 'DRAW', tone: 'draw' }
+}
+
+function getMatchScoreText(match, side) {
+  if (!side || isUpcomingMatch(match) || isLiveMatch(match)) return '- : -'
+  const mine = getTeamScore(match, side)
+  const other = getTeamScore(match, side === 'team_a' ? 'team_b' : 'team_a')
+  return `${mine} : ${other}`
+}
+
+function getMatchRound(match) {
+  return match?.round || match?.stage || '赛程待定'
+}
+
+function getTeamMatchRows(matches, team) {
+  const keys = teamIdentitySet(team)
+  return sortMatchesBySchedule(matches)
+    .map(match => {
+      const side = matchTeamSide(match, keys)
+      if (!side) return null
+      const opponent = getOpponent(match, side)
+      return {
+        match,
+        side,
+        opponent,
+        opponentLabel: opponent?.short || opponent?.team_short_name || opponent?.name || opponent?.team_name || 'TBD',
+        result: getMatchResult(match, side),
+        score: getMatchScoreText(match, side)
+      }
+    })
+    .filter(Boolean)
+}
+
+function getMatchSummary(rows) {
+  const finished = rows.filter(row => isFinishedMatch(row.match))
+  let wins = 0
+  let losses = 0
+  let draws = 0
+  let mapWins = 0
+  let mapLosses = 0
+
+  finished.forEach(row => {
+    if (row.result.tone === 'win') wins += 1
+    else if (row.result.tone === 'loss') losses += 1
+    else draws += 1
+
+    mapWins += getTeamScore(row.match, row.side)
+    mapLosses += getTeamScore(row.match, row.side === 'team_a' ? 'team_b' : 'team_a')
+  })
+
+  return {
+    wins,
+    losses,
+    draws,
+    mapWins,
+    mapLosses,
+    completed: finished.length,
+    pending: rows.filter(row => isUpcomingMatch(row.match)).length,
+    live: rows.filter(row => isLiveMatch(row.match)).length
+  }
+}
+
+function getMapTypeStats(rows) {
+  const stats = new Map()
+
+  rows.filter(row => isFinishedMatch(row.match)).forEach(row => {
+    safeArr(row.match?.maps).forEach(map => {
+      const type = map?.map_type || map?.type || 'UNKNOWN'
+      if (!type || String(type).toUpperCase() === 'UNKNOWN') return
+      if (!stats.has(type)) stats.set(type, { type, maps: 0, wins: 0, losses: 0 })
+
+      const record = stats.get(type)
+      const scoreA = Number(map?.score_a || 0)
+      const scoreB = Number(map?.score_b || 0)
+      const mine = row.side === 'team_a' ? scoreA : scoreB
+      const other = row.side === 'team_a' ? scoreB : scoreA
+      record.maps += 1
+      if (mine > other) record.wins += 1
+      else if (mine < other) record.losses += 1
+    })
+  })
+
+  return [...stats.values()].sort((a, b) => b.maps - a.maps || compareName(a.type, b.type))
+}
+
+function groupRosterByRole(roster) {
+  const groups = { TANK: [], DPS: [], SUP: [], FLEX: [] }
+  roster.forEach(player => {
+    const role = normalizeRosterRole(player.role)
+    const key = groups[role] ? role : 'FLEX'
+    groups[key].push(player)
+  })
+
+  Object.values(groups).forEach(rows => rows.sort((a, b) => compareName(a.identity?.primary, b.identity?.primary)))
+  return groups
+}
+
+function TeamMatchCard({ row, withSeason }) {
+  return (
+    <Link to={withSeason(`/matches/${row.match.match_id}`)} className={styles.matchCard}>
+      <span className={`${styles.matchResult} ${styles[row.result.tone]}`}>{row.result.label}</span>
+      <span className={styles.matchMain}>
+        <strong>{row.opponentLabel}</strong>
+        <em>{getMatchRound(row.match)} · {getMatchTimeLabel(row.match)}</em>
+      </span>
+      <span className={styles.matchScore}>{row.score}</span>
+    </Link>
+  )
+}
+
+function RosterPlayerRow({ player, withSeason }) {
+  return (
+    <Link to={withSeason(`/players/${player.identity.playerId || player.player_id}`)} className={styles.rosterPlayerRow}>
+      <PlayerAvatar avatar={player.avatar} name={player.identity.primary} />
+      <span className={styles.rosterPlayerName}>
+        <strong>{player.identity.primary}</strong>
+        {player.identity.secondary ? <em>{player.identity.secondary}</em> : null}
+      </span>
+      <span className={styles.rosterPlayerRole}>{player.role}</span>
+      <span className={styles.rosterPlayerHero}>
+        {player.hasStats && player.avatar?.heroName ? player.avatar.heroName : '比赛开始后生成数据'}
+      </span>
+    </Link>
+  )
+}
+
 export default function TeamDetailPage() {
-  const { db } = useOutletContext()
+  const {
+    db,
+    seasonId,
+    withSeason = path => path,
+    favorites,
+    favoriteLimits,
+    isFavoriteTeam,
+    toggleTeamFavorite
+  } = useOutletContext()
   const { teamId } = useParams()
   const navigate = useNavigate()
-  
-  const shareCardRef = useRef(null)
+  const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
     window.scrollTo(0, 0)
-  }, [])
+  }, [teamId])
+
+  const activeTab = TABS.some(tab => tab.id === searchParams.get('tab')) ? searchParams.get('tab') : 'overview'
+  const setActiveTab = tab => {
+    const next = new URLSearchParams(searchParams)
+    if (tab === 'overview') next.delete('tab')
+    else next.set('tab', tab)
+    setSearchParams(next, { replace: true })
+  }
+
+  const teams = useMemo(() => getTeamDirectory(db, favorites), [db, favorites])
+  const team = useMemo(() => {
+    const target = normalizeKey(teamId)
+    return teams.find(row => [
+      row.routeId,
+      row.team_id,
+      row.id,
+      row.shortName,
+      row.fullName,
+      row.team_short_name,
+      row.team_name
+    ].some(value => normalizeKey(value) === target))
+  }, [teamId, teams])
+
+  const playerDirectory = useMemo(() => getPlayerDirectory(db, favorites), [db, favorites])
+  const roster = useMemo(() => {
+    if (!team) return []
+    const byId = new Map(playerDirectory.map(player => [String(player.player_id || player.identity?.playerId), player]))
+    return getTeamRosterPlayers(db, team).map(player => {
+      const merged = byId.get(String(player.player_id))
+      if (merged) return merged
+      return {
+        ...player,
+        identity: getPlayerDisplayIdentity(player),
+        avatar: getPlayerAvatarSource(player),
+        role: normalizeRosterRole(player.role),
+        hasStats: Number(player.maps_played || 0) > 0 || Number(player.raw_time_mins || 0) > 0
+      }
+    })
+  }, [db, playerDirectory, team])
+
+  const rosterGroups = useMemo(() => groupRosterByRole(roster), [roster])
+  const matchRows = useMemo(() => getTeamMatchRows(safeArr(db?.matches), team), [db, team])
+  const matchSummary = useMemo(() => getMatchSummary(matchRows), [matchRows])
+  const mapTypeStats = useMemo(() => getMapTypeStats(matchRows), [matchRows])
+  const standings = useMemo(() => getSwissStandings(db), [db])
+  const standing = useMemo(() => {
+    if (!team) return null
+    const keys = teamIdentitySet(team)
+    return standings.find(row => [row.team_id, row.team_short_name, row.team_name].map(normalizeKey).some(value => keys.has(value))) || null
+  }, [standings, team])
+
+  const upcomingRows = matchRows.filter(row => isUpcomingMatch(row.match) || isLiveMatch(row.match))
+  const nextMatch = upcomingRows[0] || null
+  const finishedRows = matchRows.filter(row => isFinishedMatch(row.match)).reverse()
+  const currentRound = nextMatch?.match?.round || finishedRows[0]?.match?.round || ''
+  const currentRoundRows = currentRound ? matchRows.filter(row => row.match?.round === currentRound) : []
+  const corePlayers = [...roster]
+    .sort((a, b) => Number(b.raw_time_mins || 0) - Number(a.raw_time_mins || 0) || Number(b.maps_played || 0) - Number(a.maps_played || 0))
+    .slice(0, 5)
+
+  const teamFavorited = team ? Boolean(isFavoriteTeam?.(team)) : false
+  const favoriteCount = safeArr(favorites?.favoriteTeamIds).length
+  const favoriteLimitReached = !teamFavorited && favoriteCount >= (favoriteLimits?.teams || 5)
 
   const handleBack = () => {
     if (window.history.state && window.history.state.idx > 0) navigate(-1)
-    else navigate('/teams')
+    else navigate(withSeason('/teams'))
   }
-
-  const handleExportShareCard = async () => {
-    if (!shareCardRef.current || !team) return
-
-    try {
-      const dataUrl = await toPng(shareCardRef.current, {
-        cacheBust: true,
-        pixelRatio: 2,
-        backgroundColor: '#0f0f0f'
-      })
-
-      const link = document.createElement('a')
-      link.download = `${team.team_short_name || team.team_id || 'team'}-share-card.png`
-      link.href = dataUrl
-      link.click()
-    } catch (error) {
-      console.error('EXPORT_TEAM_SHARE_CARD_FAILED', error)
-    }
-  }
-
-  const team = useMemo(() => {
-    return safeArr(db?.teams).find(t => String(t.team_id) === String(teamId))
-  }, [db, teamId])
-
-  const roster = useMemo(() => {
-    if (!team) return []
-
-    const tId = cleanStr(team.team_id)
-    const tName = cleanStr(team.team_name)
-    const teamPlayerIds = new Set(safeArr(team.player_ids).map(id => String(id)))
-
-    const basePlayers = safeArr(db?.players).filter(player => {
-      const pId = String(player.player_id || '')
-      const pTId = cleanStr(player.team_id)
-      const pTName = cleanStr(player.team_name)
-
-      // 🌟 恢复：只要属于这个队伍都算作 roster 的一部分，不再剔除退赛选手
-      return teamPlayerIds.has(pId) || pTId === tId || (pTName && pTName === tName)
-    })
-
-    const totalsMap = new Map(
-      safeArr(db?.player_totals).map(pt => [String(pt.player_id), pt])
-    )
-
-    return basePlayers.map(player => {
-      const stats = totalsMap.get(String(player.player_id)) || {}
-      return { ...player, ...stats }
-    })
-  }, [db, team])
-
-  const teamMatches = useMemo(() => {
-    if (!team) return []
-    const targetId = String(teamId)
-    const statusOrder = { IN_PROGRESS: 0, PENDING: 1, SCHEDULED: 1, COMPLETE: 2, COMPLETED: 2 }
-
-    return safeArr(db?.matches)
-      .filter(match => String(match.team_a?.id) === targetId || String(match.team_b?.id) === targetId)
-      .sort((a, b) => {
-        const sa = statusOrder[a.status] ?? 99
-        const sb = statusOrder[b.status] ?? 99
-        if (sa !== sb) return sa - sb
-        return String(a.match_id || '').localeCompare(String(b.match_id || ''))
-      })
-  }, [db, team, teamId])
-
-  const staffInfo = useMemo(() => ({
-    coach: team?.team_coach || '-',
-    manager: team?.team_manager || '-',
-    club: team?.team_club || '-'
-  }), [team])
-
-  const matchSummary = useMemo(() => {
-    const completedMatches = teamMatches.filter(m => m.status === 'COMPLETE' || m.status === 'COMPLETED')
-
-    let wins = 0
-    let losses = 0
-    let draws = 0
-
-    completedMatches.forEach(match => {
-      const mineAsA = String(match.team_a?.id) === String(teamId)
-      const myScore = mineAsA ? Number(match.team_a?.score || 0) : Number(match.team_b?.score || 0)
-      const opScore = mineAsA ? Number(match.team_b?.score || 0) : Number(match.team_a?.score || 0)
-
-      if (myScore > opScore) wins += 1
-      else if (myScore < opScore) losses += 1
-      else draws += 1
-    })
-
-    const recentCompleted = [...completedMatches]
-      .sort((a, b) => {
-        const aTime = a.updated_at ? new Date(a.updated_at).getTime() : 0
-        const bTime = b.updated_at ? new Date(b.updated_at).getTime() : 0
-        if (aTime !== bTime) return bTime - aTime
-        return String(b.match_id || '').localeCompare(String(a.match_id || ''))
-      })
-      .slice(0, 5)
-
-    const recentForm = recentCompleted.map(match => {
-      const mineAsA = String(match.team_a?.id) === String(teamId)
-      const myScore = mineAsA ? Number(match.team_a?.score || 0) : Number(match.team_b?.score || 0)
-      const opScore = mineAsA ? Number(match.team_b?.score || 0) : Number(match.team_a?.score || 0)
-
-      if (myScore > opScore) return 'W'
-      if (myScore < opScore) return 'L'
-      return 'D'
-    })
-
-    const completed = completedMatches.length
-    const live = teamMatches.filter(m => m.status === 'IN_PROGRESS').length
-    const pending = teamMatches.filter(m => m.status === 'PENDING' || m.status === 'SCHEDULED').length
-    const winRate = completed > 0 ? Math.round((wins / completed) * 100) : 0
-
-    return { wins, losses, draws, completed, live, pending, winRate, recentForm }
-  }, [teamMatches, teamId])
-
-  const roleStructure = useMemo(() => {
-    const counts = { TANK: 0, DPS: 0, SUP: 0 }
-
-    roster.forEach(player => {
-      const role = normalizeRole(player.role)
-      if (role === 'TANK') counts.TANK += 1
-      if (role === 'DPS') counts.DPS += 1
-      if (role === 'SUP') counts.SUP += 1
-    })
-
-    return counts
-  }, [roster])
-
-  const rolePanels = useMemo(() => {
-    const makeRolePanel = (role, cn, en, metrics) => {
-      let rows = roster.filter(player => normalizeRole(player.role) === role && Number(player.raw_time_mins || 0) > 0)
-      if (!rows.length) rows = roster.filter(player => normalizeRole(player.role) === role)
-
-      return {
-        role,
-        cn,
-        en,
-        count: roleStructure[role] || 0,
-        metrics: metrics.map(metric => ({
-          ...metric,
-          value: rows.length > 0 ? avgOf(rows, metric.key) : null
-        }))
-      }
-    }
-
-    return [
-      makeRolePanel('TANK', '重装阵列', 'TANK UNIT', [
-        { label: '阻挡 /10', key: 'avg_block' },
-        { label: '伤害 /10', key: 'avg_dmg' },
-        { label: '阵亡 /10', key: 'avg_dth' }
-      ]),
-      makeRolePanel('DPS', '输出阵列', 'DPS UNIT', [
-        { label: '击杀 /10', key: 'avg_elim' },
-        { label: '伤害 /10', key: 'avg_dmg' },
-        { label: '阵亡 /10', key: 'avg_dth' }
-      ]),
-      makeRolePanel('SUP', '支援阵列', 'SUPPORT UNIT', [
-        { label: '治疗 /10', key: 'avg_heal' },
-        { label: '助攻 /10', key: 'avg_ast' },
-        { label: '阵亡 /10', key: 'avg_dth' }
-      ])
-    ]
-  }, [roster, roleStructure])
-
-  const teamProfile = useMemo(() => {
-    const tankPanel = rolePanels.find(panel => panel.role === 'TANK')
-    const dpsPanel = rolePanels.find(panel => panel.role === 'DPS')
-    const supPanel = rolePanels.find(panel => panel.role === 'SUP')
-
-    const tankScore =
-      (tankPanel?.count || 0) * 500 +
-      Number(tankPanel?.metrics?.[0]?.value || 0) +
-      Number(tankPanel?.metrics?.[1]?.value || 0) * 0.6
-
-    const dpsScore =
-      (dpsPanel?.count || 0) * 500 +
-      Number(dpsPanel?.metrics?.[0]?.value || 0) * 350 +
-      Number(dpsPanel?.metrics?.[1]?.value || 0)
-
-    const supScore =
-      (supPanel?.count || 0) * 500 +
-      Number(supPanel?.metrics?.[0]?.value || 0) +
-      Number(supPanel?.metrics?.[1]?.value || 0) * 450
-
-    if (dpsScore >= tankScore && dpsScore >= supScore) {
-      return {
-        tag: '进攻压制型',
-        en: 'OFFENSIVE PRESSURE',
-        desc: '更依赖输出位的火力制造节奏与压制，整体风格偏向主动进攻。',
-        hook: '以持续火力制造主动权，是一支更愿意先出手的队伍。'
-      }
-    }
-
-    if (tankScore >= dpsScore && tankScore >= supScore) {
-      return {
-        tag: '前线推进型',
-        en: 'FRONTLINE DRIVE',
-        desc: '以前排承压与空间推进构成队伍骨架，比赛节奏更偏向正面展开。',
-        hook: '胜负上限更多取决于前排空间质量与阵地推进效率。'
-      }
-    }
-
-    return {
-      tag: '运营支点型',
-      en: 'CONTROLLED SUPPORT',
-      desc: '队伍节奏更依赖支援与协同稳定性，整体表现偏向稳态运营。',
-      hook: '这支队伍更像一套稳定运转的系统，而不是只靠瞬时爆发取胜。'
-    }
-  }, [rolePanels])
-
-  const strongestRole = useMemo(() => {
-    const panels = rolePanels.map(panel => ({
-      role: panel.role,
-      cn: panel.cn,
-      en: panel.en,
-      score: (panel.count || 0) * 100 + panel.metrics.reduce((sum, metric) => sum + (Number(metric.value) || 0), 0)
-    })).sort((a, b) => b.score - a.score)
-
-    return panels[0] || { role: 'TANK', cn: '重装阵列', en: 'TANK UNIT', score: 0 }
-  }, [rolePanels])
-
-  const corePlayers = useMemo(() => {
-    const getCoreByRole = role => {
-      const rolePlayers = roster
-        .filter(player => normalizeRole(player.role) === role)
-        .sort((a, b) => {
-          const timeDiff = Number(b.raw_time_mins || 0) - Number(a.raw_time_mins || 0)
-          if (timeDiff !== 0) return timeDiff
-          return Number(b.maps_played || 0) - Number(a.maps_played || 0)
-        })
-
-      return rolePlayers[0] || null
-    }
-
-    return {
-      tank: getCoreByRole('TANK'),
-      dps: getCoreByRole('DPS'),
-      sup: getCoreByRole('SUP')
-    }
-  }, [roster])
-
-  const heroPool = useMemo(() => {
-    const poolMap = new Map()
-
-    roster.forEach(player => {
-      const logs = safeArr(player.match_logs?.length > 0 ? player.match_logs : player.live_match_logs)
-
-      if (logs.length > 0) {
-        logs.forEach(log => {
-          const hero = String(log.hero || '').trim()
-          if (!hero || hero === '-' || hero === 'UNKNOWN') return
-          const minutes = Number(log.playtimeMinutes || 0)
-          poolMap.set(hero, (poolMap.get(hero) || 0) + minutes)
-        })
-      } else {
-        const heroes = Array.isArray(player.top_3_heroes) ? player.top_3_heroes.filter(Boolean) : []
-        heroes.forEach((hero, idx) => {
-          poolMap.set(hero, (poolMap.get(hero) || 0) + Math.max(1, 3 - idx))
-        })
-        if ((!heroes.length) && player.most_played_hero) {
-          poolMap.set(player.most_played_hero, (poolMap.get(player.most_played_hero) || 0) + 1)
-        }
-      }
-    })
-
-    return [...poolMap.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 8)
-      .map(([hero, time]) => ({ hero, time }))
-  }, [roster])
-
-  const campaignSignals = useMemo(() => ([
-    { label: '已完结', value: matchSummary.completed },
-    { label: '进行中', value: matchSummary.live },
-    { label: '待开始', value: matchSummary.pending },
-    { label: '当前强项', value: strongestRole.cn }
-  ]), [matchSummary.completed, matchSummary.live, matchSummary.pending, strongestRole.cn])
 
   if (!team) {
     return (
       <div className={styles.shell}>
         <section className={styles.errorState}>
-          <div className={styles.errorKicker}>TEAM DOSSIER / ERROR</div>
-          <h1 className={styles.errorTitle}>未找到战队档案</h1>
-          <p className={styles.errorDesc}>
-            请求的战队编号 <span className={styles.errorCode}>[{teamId}]</span> 不存在，或未载入当前赛季数据库。
-          </p>
-          <button type="button" onClick={handleBack} className={styles.backLinkBtn}>
-            返回战队列表
-            <span className={styles.backLinkBtnEn}>TEAMS</span>
-          </button>
+          <div className={styles.sectionLabel}>TEAM DOSSIER</div>
+          <h1>未找到战队</h1>
+          <p>当前赛季中不存在编号或简称为 {teamId} 的战队。</p>
+          <button type="button" onClick={handleBack} className={styles.primaryButton}>返回战队目录</button>
         </section>
       </div>
     )
   }
 
-  const isMyTeamA = match => String(match.team_a?.id) === String(teamId)
-
   return (
     <div className={styles.shell}>
       <div className={styles.topbar}>
-        <div className={styles.topbarLeft}>
-          <button type="button" onClick={handleBack} className={styles.navBackBtn}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            <span className={styles.navBackText}>
-              <span className={styles.navBackCn}>返回</span>
-              <span className={styles.navBackEn}>BACK</span>
-            </span>
-          </button>
-
-          <div className={styles.topbarPathGroup}>
-            <div className={styles.topbarKicker}>
-              <span className={styles.topbarKickerCn}>战队档案</span>
-              <span className={styles.topbarKickerEn}>TEAM DOSSIER</span>
-            </div>
-            <div className={styles.topbarPath}>
-              <span className={styles.topbarDivider}>/</span>
-              <span className={styles.topbarCurrent}>{team.team_short_name || team.team_id}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.topbarRight}>
-          <button type="button" onClick={handleExportShareCard} className={styles.exportShareBtn}>
-            导出战队分享图
-            <span className={styles.exportShareBtnEn}>EXPORT TEAM CARD</span>
-          </button>
-        </div>
+        <button type="button" className={styles.backButton} onClick={handleBack}>← 返回</button>
+        <Link to={withSeason('/following?manage=1')} className={styles.manageLink}>管理关注 →</Link>
       </div>
 
-      <section className={styles.teamHero}>
-        <div className={styles.heroGlow}></div>
+      <RosterSubnav withSeason={withSeason} />
 
-        <div className={styles.heroContent}>
-          <div className={styles.heroLeft}>
-            <div className={styles.teamIdBox}>{team.team_id}</div>
-            <h1 className={styles.teamName}>{team.team_name || '未命名战队'}</h1>
-            <div className={styles.teamShortName}>{team.team_short_name || team.team_name}</div>
+      <section className={styles.teamHeader}>
+        <div className={styles.logoPanel}>
+          {teamFavorited ? <span className={styles.followingBadge}>FOLLOWING</span> : null}
+          <TeamLogo team={team} seasonId={seasonId} className={styles.detailLogo} large />
+        </div>
 
-            <div className={styles.profileBlock}>
-              <div className={styles.profileTag}>{teamProfile.tag}</div>
-              <div className={styles.profileTagEn}>{teamProfile.en}</div>
-              <p className={styles.profileDesc}>{teamProfile.desc}</p>
-              <p className={styles.profileHook}>{teamProfile.hook}</p>
-            </div>
-
-            <div className={styles.heroRoleStrip}>
-              <span className={styles.roleChip}>TANK {roleStructure.TANK}</span>
-              <span className={styles.roleChip}>DPS {roleStructure.DPS}</span>
-              <span className={styles.roleChip}>SUP {roleStructure.SUP}</span>
-              <span className={`${styles.roleChip} ${styles.roleChipStrong}`}>STRONGEST · {strongestRole.role}</span>
-            </div>
+        <div className={styles.teamIdentity}>
+          <div className={styles.sectionLabel}>TEAM DOSSIER</div>
+          <h1>{team.shortName}</h1>
+          <p>{team.fullName}</p>
+          <div className={styles.infoGrid}>
+            {team.club ? <span><strong>俱乐部</strong>{team.club}</span> : null}
+            {team.staff.managerLabel ? <span><strong>经理</strong>{team.staff.managerLabel}</span> : null}
+            {team.staff.coachLabel ? <span><strong>教练</strong>{team.staff.coachLabel}</span> : null}
+            <span><strong>名单</strong>{roster.length} 名选手</span>
           </div>
+        </div>
 
-          <div className={styles.heroRight}>
-            <div className={styles.heroStatsGrid}>
-              <div className={styles.statBox}>
-                <div className={styles.statLabel}>
-                  <span className={styles.statCn}>注册选手</span>
-                  <span className={styles.statEn}>TOTAL ROSTER</span>
-                </div>
-                <div className={styles.statValue}>{roster.length}</div>
-              </div>
-
-              <div className={styles.statBox}>
-                <div className={styles.statLabel}>
-                  <span className={styles.statCn}>总场次</span>
-                  <span className={styles.statEn}>MATCHES</span>
-                </div>
-                <div className={styles.statValue}>{teamMatches.length}</div>
-              </div>
-
-              <div className={styles.statBox}>
-                <div className={styles.statLabel}>
-                  <span className={styles.statCn}>胜场</span>
-                  <span className={styles.statEn}>WINS</span>
-                </div>
-                <div className={styles.statValue}>{matchSummary.wins}</div>
-              </div>
-
-              <div className={styles.statBox}>
-                <div className={styles.statLabel}>
-                  <span className={styles.statCn}>胜率</span>
-                  <span className={styles.statEn}>WIN RATE</span>
-                </div>
-                <div className={styles.statValue}>{matchSummary.winRate}%</div>
-              </div>
-            </div>
-
-            <div className={styles.heroFormPanel}>
-              <div className={styles.panelMiniHeader}>
-                <span className={styles.panelMiniTitle}>近期状态</span>
-                <span className={styles.panelMiniSub}>RECENT FORM</span>
-              </div>
-
-              <div className={styles.formList}>
-                {matchSummary.recentForm.length > 0 ? (
-                  matchSummary.recentForm.map((item, index) => (
-                    <span
-                      key={`${item}-${index}`}
-                      className={`${styles.formChip} ${item === 'W' ? styles.formWin : item === 'L' ? styles.formLoss : styles.formDraw}`}
-                    >
-                      {item}
-                    </span>
-                  ))
-                ) : (
-                  <span className={styles.formEmpty}>NO DATA</span>
-                )}
-              </div>
-
-              <div className={styles.formSummary}>
-                <span>{matchSummary.wins}W</span>
-                <span>{matchSummary.losses}L</span>
-                {matchSummary.draws > 0 ? <span>{matchSummary.draws}D</span> : null}
-              </div>
-            </div>
-          </div>
+        <div className={styles.headerActions}>
+          <button
+            type="button"
+            className={`${styles.primaryButton} ${teamFavorited ? styles.primaryButtonActive : ''}`}
+            onClick={() => toggleTeamFavorite?.(team)}
+            disabled={favoriteLimitReached}
+          >
+            {teamFavorited ? '取消关注' : favoriteLimitReached ? '关注已满' : '关注战队'}
+          </button>
         </div>
       </section>
 
-      <section className={styles.snapshotGrid}>
-        <div className={styles.infoPanel}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionKicker}>
-              <span className={styles.sectionKickerCn}>组织信息</span>
-              <span className={styles.sectionKickerEn}>TEAM STAFF</span>
-            </div>
-          </div>
+      <div className={styles.tabs} role="tablist" aria-label="Team dossier tabs">
+        {TABS.map(tab => (
+          <button
+            key={tab.id}
+            type="button"
+            className={activeTab === tab.id ? styles.tabActive : ''}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-          <div className={styles.staffGrid}>
-            <div className={styles.staffItem}>
-              <span className={styles.staffLabel}>主教练 / COACH</span>
-              <span className={styles.staffValue}>{staffInfo.coach}</span>
+      {activeTab === 'overview' ? (
+        <div className={styles.overviewGrid}>
+          <section className={styles.panel}>
+            <div className={styles.panelHead}>
+              <h2>队伍信息</h2>
+              <span>PROFILE</span>
             </div>
-            <div className={styles.staffItem}>
-              <span className={styles.staffLabel}>经理 / MANAGER</span>
-              <span className={styles.staffValue}>{staffInfo.manager}</span>
-            </div>
-            <div className={styles.staffItem}>
-              <span className={styles.staffLabel}>所属俱乐部 / CLUB</span>
-              <span className={styles.staffValue}>{staffInfo.club}</span>
-            </div>
-            <div className={styles.staffItem}>
-              <span className={styles.staffLabel}>最终排名 / FINAL</span>
-              <span className={styles.staffValue}>{team.final_rank || '-'}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.infoPanel}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionKicker}>
-              <span className={styles.sectionKickerCn}>队内核心结构</span>
-              <span className={styles.sectionKickerEn}>CORE STRUCTURE</span>
-            </div>
-          </div>
-
-          <div className={styles.coreGrid}>
-            <div className={`${styles.coreCard} ${styles.roleTank}`}>
-              <div className={styles.coreLabel}>前排核心 / TANK</div>
-              {corePlayers.tank ? (
-                <Link to={`/players/${corePlayers.tank.player_id}`} className={styles.coreName}>
-                  {corePlayers.tank.display_name || corePlayers.tank.player_name}
-                </Link>
-              ) : (
-                <span className={styles.coreName}>-</span>
-              )}
-              <div className={styles.coreMeta}>
-                {corePlayers.tank ? `${formatMinutes(corePlayers.tank.raw_time_mins)} · ${corePlayers.tank.maps_played || 0} MAPS` : 'NO DATA'}
-              </div>
-            </div>
-
-            <div className={`${styles.coreCard} ${styles.roleDps}`}>
-              <div className={styles.coreLabel}>输出核心 / DPS</div>
-              {corePlayers.dps ? (
-                <Link to={`/players/${corePlayers.dps.player_id}`} className={styles.coreName}>
-                  {corePlayers.dps.display_name || corePlayers.dps.player_name}
-                </Link>
-              ) : (
-                <span className={styles.coreName}>-</span>
-              )}
-              <div className={styles.coreMeta}>
-                {corePlayers.dps ? `${formatMinutes(corePlayers.dps.raw_time_mins)} · ${corePlayers.dps.maps_played || 0} MAPS` : 'NO DATA'}
-              </div>
-            </div>
-
-            <div className={`${styles.coreCard} ${styles.roleSup}`}>
-              <div className={styles.coreLabel}>支援核心 / SUPPORT</div>
-              {corePlayers.sup ? (
-                <Link to={`/players/${corePlayers.sup.player_id}`} className={styles.coreName}>
-                  {corePlayers.sup.display_name || corePlayers.sup.player_name}
-                </Link>
-              ) : (
-                <span className={styles.coreName}>-</span>
-              )}
-              <div className={styles.coreMeta}>
-                {corePlayers.sup ? `${formatMinutes(corePlayers.sup.raw_time_mins)} · ${corePlayers.sup.maps_played || 0} MAPS` : 'NO DATA'}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.roleAnalyticsSection}>
-        <div className={styles.sectionHeader}>
-          <div className={styles.sectionKicker}>
-            <span className={styles.sectionKickerCn}>职责数据面板</span>
-            <span className={styles.sectionKickerEn}>ROLE PANELS</span>
-          </div>
-          <div className={styles.sectionMeta}>
-            <span className={styles.sectionMetaLabel}>当前最强职责</span>
-            <span className={styles.sectionMetaValue}>{strongestRole.cn}</span>
-          </div>
-        </div>
-
-        <div className={styles.rolePanels}>
-          {rolePanels.map(panel => (
-            <div key={panel.role} className={`${styles.rolePanel} ${getRoleThemeClass(panel.role)}`}>
-              <div className={styles.rolePanelHead}>
-                <div className={styles.rolePanelTitleGroup}>
-                  <div className={styles.rolePanelTitle}>{panel.cn}</div>
-                  <div className={styles.rolePanelSub}>{panel.en}</div>
-                </div>
-                <div className={styles.rolePanelCount}>{panel.count}</div>
-              </div>
-
-              <div className={styles.roleMetrics}>
-                {panel.metrics.map(metric => (
-                  <div key={metric.label} className={styles.roleMetric}>
-                    <span className={styles.roleMetricLabel}>{metric.label}</span>
-                    <span className={styles.roleMetricValue}>
-                      {metric.value === null ? '-' : formatNum(metric.value)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <div className={styles.contentGrid}>
-        <div className={styles.mainColumn}>
-          <section className={styles.infoPanel}>
-            <div className={styles.sectionHeader}>
-              <div className={styles.sectionKicker}>
-                <span className={styles.sectionKickerCn}>团队资源与英雄池</span>
-                <span className={styles.sectionKickerEn}>TEAM HERO POOL</span>
-              </div>
-            </div>
-
-            <div className={styles.roleStrip}>
-              {heroPool.length > 0 ? (
-                heroPool.map(item => (
-                  <span key={item.hero} className={styles.roleChip}>
-                    {item.hero} · {formatMinutes(item.time)}
-                  </span>
-                ))
-              ) : (
-                <span className={styles.formEmpty}>NO HERO DATA</span>
-              )}
+            <div className={styles.profileList}>
+              <span><strong>简称</strong>{team.shortName}</span>
+              <span><strong>全称</strong>{team.fullName}</span>
+              <span><strong>经理</strong>{team.staff.managers.map(formatStaffPerson).join('、') || '-'}</span>
+              {team.staff.coaches.length ? <span><strong>教练</strong>{team.staff.coaches.map(formatStaffPerson).join('、')}</span> : null}
+              <span><strong>当前排名</strong>{team.final_rank_text || (standing ? `瑞士轮第 ${standing.rank}` : '待生成')}</span>
+              <span><strong>晋级状态</strong>{standing ? `${standing.match_wins || 0}-${standing.match_losses || 0}` : '随赛程生成'}</span>
             </div>
           </section>
 
-          <section className={styles.rosterSection}>
-            <div className={styles.sectionHeader}>
-              <div className={styles.sectionKicker}>
-                <span className={styles.sectionKickerCn}>战队花名册</span>
-                <span className={styles.sectionKickerEn}>TEAM ROSTER</span>
-              </div>
+          <section className={styles.panel}>
+            <div className={styles.panelHead}>
+              <h2>下一场比赛</h2>
+              <span>NEXT MATCH</span>
             </div>
-
-            {roster.length > 0 ? (
-              <div className={styles.rosterGrid}>
-                {/* 🌟 新增：动态排序与样式置灰 */}
-                {[...roster]
-                  .sort((a, b) => {
-                    const isExitedA = a.status === 'EXITED' || a.status === '已退赛'
-                    const isExitedB = b.status === 'EXITED' || b.status === '已退赛'
-                    return isExitedA === isExitedB ? 0 : isExitedA ? 1 : -1
-                  })
-                  .map(player => {
-                    const isExited = player.status === 'EXITED' || player.status === '已退赛'
-                    return (
-                      <div 
-                        key={player.player_id} 
-                        style={isExited ? { opacity: 0.45, filter: 'grayscale(1)' } : {}}
-                        title={isExited ? '该选手已退赛' : ''}
-                      >
-                        <PlayerCard player={player} />
-                      </div>
-                    )
-                  })}
-              </div>
+            {nextMatch ? (
+              <TeamMatchCard row={nextMatch} withSeason={withSeason} />
             ) : (
-              <div className={styles.emptyState}>
-                <span className={styles.emptyCn}>暂无名单数据</span>
-                <span className={styles.emptyEn}>NO ROSTER DATA</span>
-              </div>
+              <div className={styles.emptyPanel}>暂无待进行比赛</div>
             )}
           </section>
-        </div>
 
-        <div className={styles.sideColumn}>
-          <section className={styles.infoPanel}>
-            <div className={styles.sectionHeader}>
-              <div className={styles.sectionKicker}>
-                <span className={styles.sectionKickerCn}>赛季快照</span>
-                <span className={styles.sectionKickerEn}>CAMPAIGN SNAPSHOT</span>
-              </div>
+          <section className={styles.panel}>
+            <div className={styles.panelHead}>
+              <h2>最近赛果</h2>
+              <span>RECENT</span>
             </div>
-
-            <div className={styles.signalGrid}>
-              {campaignSignals.map(item => (
-                <div key={item.label} className={styles.signalItem}>
-                  <span className={styles.signalLabel}>{item.label}</span>
-                  <span className={styles.signalValue}>{item.value}</span>
-                </div>
-              ))}
+            <div className={styles.stack}>
+              {finishedRows.slice(0, 3).length ? finishedRows.slice(0, 3).map(row => (
+                <TeamMatchCard key={row.match.match_id} row={row} withSeason={withSeason} />
+              )) : <div className={styles.emptyPanel}>暂无已完成比赛</div>}
             </div>
           </section>
 
-          <section className={styles.matchesSection}>
-            <div className={styles.sectionHeader}>
-              <div className={styles.sectionKicker}>
-                <span className={styles.sectionKickerCn}>近期赛程</span>
-                <span className={styles.sectionKickerEn}>MATCH HISTORY</span>
-              </div>
+          <section className={styles.panel}>
+            <div className={styles.panelHead}>
+              <h2>核心数据摘要</h2>
+              <span>SUMMARY</span>
             </div>
-
-            <div className={styles.matchList}>
-              {teamMatches.length > 0 ? teamMatches.map(match => {
-                const mineAsA = isMyTeamA(match)
-                const statusInfo = getStatusInfo(match, mineAsA)
-
-                const myTeamObj = mineAsA ? match.team_a : match.team_b
-                const opTeamObj = mineAsA ? match.team_b : match.team_a
-
-                const myName = myTeamObj?.short || myTeamObj?.name || 'TBD'
-                const opName = opTeamObj?.short || opTeamObj?.name || 'TBD'
-
-                const isPending = match.status === 'PENDING' || match.status === 'SCHEDULED'
-                const myScore = isPending ? '-' : (myTeamObj?.score ?? '0')
-                const opScore = isPending ? '-' : (opTeamObj?.score ?? '0')
-
-                return (
-                  <Link key={match.match_id} to={`/matches/${match.match_id}`} className={styles.matchRow}>
-                    <div className={`${styles.matchResult} ${statusInfo.className}`}>
-                      <span className={styles.matchResultCn}>{statusInfo.cn}</span>
-                      <span className={styles.matchResultEn}>{statusInfo.en}</span>
-                    </div>
-
-                    <div className={styles.matchMain}>
-                      <div className={styles.matchMeta}>
-                        <span className={styles.matchStage}>{match.stage || 'TBD'}</span>
-                        <span className={styles.matchRound}>{match.round || '-'}</span>
-                      </div>
-
-                      <div className={styles.matchScoreboard}>
-                        <div className={styles.myTeam}>
-                          <span className={styles.teamText}>{myName}</span>
-                          <span className={statusInfo.en === 'WIN' ? styles.scoreWin : styles.scoreNormal}>{myScore}</span>
-                        </div>
-
-                        <div className={styles.vsDivider}>VS</div>
-
-                        <div className={styles.opTeam}>
-                          <span className={statusInfo.en === 'LOSS' ? styles.scoreWin : styles.scoreNormal}>{opScore}</span>
-                          <span className={styles.teamText}>{opName}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className={styles.matchArrow}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                        <path d="M9 18l6-6-6-6" />
-                      </svg>
-                    </div>
-                  </Link>
-                )
-              }) : (
-                <div className={styles.emptyState}>
-                  <span className={styles.emptyCn}>暂无比赛记录</span>
-                  <span className={styles.emptyEn}>NO MATCH HISTORY</span>
-                </div>
-              )}
+            <div className={styles.statGrid}>
+              <span><strong>{matchSummary.completed}</strong>已完成</span>
+              <span><strong>{matchSummary.wins}-{matchSummary.losses}</strong>胜负</span>
+              <span><strong>{matchSummary.mapWins}-{matchSummary.mapLosses}</strong>地图</span>
+              <span><strong>{roster.length}</strong>名单人数</span>
             </div>
           </section>
         </div>
-      </div>
-      
-      <div className={styles.shareRenderMount} aria-hidden="true">
-        <TeamShareCard
-          team={team}
-          teamProfile={teamProfile}
-          matchSummary={matchSummary}
-          strongestRole={strongestRole}
-          heroPool={heroPool}
-          corePlayers={corePlayers}
-          shareRef={shareCardRef}
-        />
-      </div>
+      ) : null}
+
+      {activeTab === 'roster' ? (
+        <section className={styles.panel}>
+          <div className={styles.panelHead}>
+            <h2>完整名单</h2>
+            <span>{roster.length} PLAYERS</span>
+          </div>
+          <div className={styles.roleGroups}>
+            {Object.entries(rosterGroups).filter(([, rows]) => rows.length).map(([role, rows]) => (
+              <div key={role} className={styles.roleGroup}>
+                <div className={styles.roleGroupHead}>{ROLE_LABELS[role] || role} · {rows.length}</div>
+                <div className={styles.rosterRows}>
+                  {rows.map(player => (
+                    <RosterPlayerRow key={player.identity?.playerId || player.player_id} player={player} withSeason={withSeason} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {activeTab === 'matches' ? (
+        <section className={styles.panel}>
+          <div className={styles.panelHead}>
+            <h2>赛程赛果</h2>
+            <Link to={withSeason(`/matches?team=${encodeURIComponent(team.shortName)}`)}>查看全部相关比赛 →</Link>
+          </div>
+          <div className={styles.matchSections}>
+            <div>
+              <h3>下一场</h3>
+              {nextMatch ? <TeamMatchCard row={nextMatch} withSeason={withSeason} /> : <div className={styles.emptyPanel}>暂无待进行比赛</div>}
+            </div>
+            <div>
+              <h3>当前比赛周</h3>
+              <div className={styles.stack}>
+                {currentRoundRows.length ? currentRoundRows.map(row => (
+                  <TeamMatchCard key={row.match.match_id} row={row} withSeason={withSeason} />
+                )) : <div className={styles.emptyPanel}>暂无当前轮次比赛</div>}
+              </div>
+            </div>
+            <div>
+              <h3>最近赛果</h3>
+              <div className={styles.stack}>
+                {finishedRows.slice(0, 5).length ? finishedRows.slice(0, 5).map(row => (
+                  <TeamMatchCard key={row.match.match_id} row={row} withSeason={withSeason} />
+                )) : <div className={styles.emptyPanel}>暂无已完成比赛</div>}
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {activeTab === 'stats' ? (
+        <section className={styles.panel}>
+          <div className={styles.panelHead}>
+            <h2>战队数据</h2>
+            <span>RELIABLE DERIVED DATA</span>
+          </div>
+          <div className={styles.statsLayout}>
+            <div className={styles.statGrid}>
+              <span><strong>{matchSummary.mapWins + matchSummary.mapLosses}</strong>地图数</span>
+              <span><strong>{matchSummary.wins}-{matchSummary.losses}</strong>胜负</span>
+              <span><strong>{matchSummary.pending}</strong>待赛</span>
+              <span><strong>{matchSummary.live}</strong>进行中</span>
+            </div>
+
+            <div className={styles.dataBlock}>
+              <h3>地图类型表现</h3>
+              {mapTypeStats.length ? mapTypeStats.map(row => (
+                <div key={row.type} className={styles.dataRow}>
+                  <span>{row.type}</span>
+                  <strong>{row.wins}-{row.losses}</strong>
+                  <em>{row.maps} maps</em>
+                </div>
+              )) : <div className={styles.emptyPanel}>暂无地图类型数据</div>}
+            </div>
+
+            <div className={styles.dataBlock}>
+              <h3>主要选手数据</h3>
+              {corePlayers.length ? corePlayers.map(player => (
+                <div key={player.identity?.playerId || player.player_id} className={styles.dataRow}>
+                  <span>{player.identity?.primary || player.display_name || player.player_name}</span>
+                  <strong>{player.maps_played || 0} maps</strong>
+                  <em>{player.avatar?.heroName || 'no hero data'}</em>
+                </div>
+              )) : <div className={styles.emptyPanel}>暂无选手数据</div>}
+            </div>
+          </div>
+        </section>
+      ) : null}
     </div>
   )
 }

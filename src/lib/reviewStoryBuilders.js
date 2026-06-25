@@ -220,14 +220,16 @@ function getRankMemoryLine(rankText, subject = '对手') {
   return ''
 }
 
-const DEFAULT_TEAM_LOGO = '/logos/OW.png'
+const DEFAULT_TEAM_LOGO = '/logos/fc_logo.png'
 
-function getSafeTeamLogo(teamLike) {
+function getSafeTeamLogo(teamLike, db) {
   const key = typeof teamLike === 'object'
     ? pickFirstValue(teamLike.short, teamLike.team_short_name, teamLike.team_name, teamLike.name)
     : String(teamLike || '').trim()
+  const team = key ? getTeamById(db, key) : null
+  const logoKey = pickFirstValue(team?.team_short_name, team?.short, team?.team_id, team?.id, key)
 
-  return key ? (getTeamLogo(key) || DEFAULT_TEAM_LOGO) : DEFAULT_TEAM_LOGO
+  return logoKey ? (getTeamLogo(logoKey, db) || DEFAULT_TEAM_LOGO) : DEFAULT_TEAM_LOGO
 }
 
 function getPlayerTotalForPlayer(db, player) {
@@ -247,31 +249,6 @@ function getPlayerTotalForPlayer(db, player) {
 
   const candidates = getIdentityValues(player)
   return safeArr(db?.player_totals).find(row => identityOverlaps(row, candidates)) || null
-}
-
-function getPlayerPrimaryHero(player, total) {
-  const logs = getValidLogs(player)
-  const topFromLogs = getHeroPool(logs)[0]
-  const hero = topFromLogs?.hero || pickFirstValue(
-    total?.top_hero,
-    total?.most_played_hero,
-    total?.main_hero,
-    total?.hero,
-    player?.top_hero,
-    player?.most_played_hero,
-    player?.main_hero,
-    player?.hero
-  )
-  const role = topFromLogs?.role || total?.role || player?.role
-
-  if (!hero) return null
-
-  return {
-    hero,
-    role,
-    minutes: topFromLogs?.minutes || 0,
-    count: topFromLogs?.count || 0
-  }
 }
 
 function getRosterPlayerName(player, total) {
@@ -2185,9 +2162,6 @@ export function buildPlayerStory(db, playerId) {
 
   const mainMetric = getRoleMainMetric(role)
   const mainMetricValue = pickNumber(source, [mainMetric.key], 0)
-  const damagePer10 = pickNumber(source, ['avg_dmg', 'avg_damage'], 0)
-  const healingPer10 = pickNumber(source, ['avg_heal', 'avg_healing'], 0)
-  const assistPer10 = pickNumber(source, ['avg_ast', 'avg_assist', 'avg_assists'], 0)
   const elimPer10 = pickNumber(source, ['avg_elim', 'avg_elims'], 0)
   const deathPer10 = pickNumber(source, ['avg_dth', 'avg_death', 'avg_deaths'], 0)
 
@@ -2247,7 +2221,7 @@ export function buildPlayerStory(db, playerId) {
       firstMatchLabel,
       lastMatchLabel,
       chips: [teamShort || '未知队伍', roleCn, finalRankText].filter(Boolean),
-      image: teamShort ? getSafeTeamLogo(teamShort) : DEFAULT_TEAM_LOGO,
+      image: teamShort ? getSafeTeamLogo(teamShort, db) : DEFAULT_TEAM_LOGO,
       storyQuote: {
         title: '你的赛季从这里被重新打开',
         body: '这不是一份冷冰冰的数据表，而是一段被比赛记录下来的个人轨迹。'
@@ -2378,7 +2352,7 @@ export function buildPlayerStory(db, playerId) {
       body: finalRankText
         ? '成绩是句号，但不是全部。真正被留下来的，是你曾经站在这里，和队伍一起，把一个赛季打完。'
         : '也许这个赛季没有一个漂亮的句号，但它仍然是一次完整的抵达。',
-      image: teamShort ? getSafeTeamLogo(teamShort) : DEFAULT_TEAM_LOGO,
+      image: teamShort ? getSafeTeamLogo(teamShort, db) : DEFAULT_TEAM_LOGO,
       storyQuote: {
         title: '你来过，你战斗过，你被记录了',
         body: finalRankText ? `最终成绩是 ${finalRankText}。但真正留在这里的，是你参与过这个赛季。` : '这段赛季没有被删除，它被写进了薯条杯的数据中心。'
@@ -2949,7 +2923,7 @@ export function buildTeamStory(db, teamId, as = 'team') {
       eyebrow: 'TEAM SEASON REVIEW',
       title: `${short || name} 的赛季旅程`,
       body: getPerspectiveCopy(as),
-      image: short ? getSafeTeamLogo(short) : DEFAULT_TEAM_LOGO,
+      image: short ? getSafeTeamLogo(short, db) : DEFAULT_TEAM_LOGO,
       teamFullName: name,
       teamShortName: short,
       team_short_name: short,
@@ -3207,7 +3181,7 @@ export function buildTeamStory(db, teamId, as = 'team') {
       title: rankStory.title,
       body: rankStory.body,
       watermark: getRankWatermark(finalRankText),
-      image: short ? getSafeTeamLogo(short) : DEFAULT_TEAM_LOGO,
+      image: short ? getSafeTeamLogo(short, db) : DEFAULT_TEAM_LOGO,
       storyQuote: {
         title: '这支队伍走完了自己的版本',
         body: rankStory.body
@@ -3427,7 +3401,7 @@ export function buildStaffStory(db, staffType, staffKey) {
       teamCards: safeArr(staff.teams_seen).slice(0, 6).map(team => ({
         title: team.name,
         value: `${team.count} 次`,
-        image: getSafeTeamLogo(team.name),
+        image: getSafeTeamLogo(team.name, db),
         note: getRankMemoryLine(getTeamFinalRankText(db, team.name), '这支队伍')
       })),
       chips: safeArr(staff.teams_seen).slice(0, 8).map(team => `${team.name} × ${team.count}`)
@@ -3518,10 +3492,6 @@ function getAllMatches(db) {
   return safeArr(db?.matches).filter(Boolean)
 }
 
-function getAllTeamReviews(db) {
-  return safeArr(db?.team_reviews).filter(Boolean)
-}
-
 function getTournamentStageStats(matches) {
   const map = new Map()
 
@@ -3585,7 +3555,7 @@ function getPlayoffTeamCards(db) {
     .map(item => ({
       title: item.teamName,
       value: item.rankText,
-      image: getSafeTeamLogo(item.teamName),
+      image: getSafeTeamLogo(item.teamName, db),
       note: getRankStory(item.rankText).label
     }))
 }

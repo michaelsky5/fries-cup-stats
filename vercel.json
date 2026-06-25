@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/admin-public/:path*",
+      "destination": "https://admin.fries-cup.com/api/public/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

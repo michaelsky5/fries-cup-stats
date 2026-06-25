@@ -409,7 +409,7 @@ export function processEventChoice(runState, optionType) {
       break;
 
     case 'RELIC':
-    case 'BLACK_MARKET_BUY_RELIC':
+    case 'BLACK_MARKET_BUY_RELIC': {
       const cost = optionType === 'BLACK_MARKET_BUY_RELIC' ? 300 : 0;
       if (runState.money >= cost) {
           const unownedRelics = RELICS_POOL.filter(r => !runState.relics.some(cr => cr.id === r.id));
@@ -428,6 +428,7 @@ export function processEventChoice(runState, optionType) {
           message = `资金不足 $300K，路霸一钩子把你赶了出去。`;
       }
       break;
+    }
 
     case 'LOSE_MONEY_100':
       if (runState.money >= 100) {
@@ -514,7 +515,9 @@ export function recordCareerRun(runState, resultText, finalPower) {
   let stats = { totalRuns: 0, wins: 0, losses: 0, maxOvr: 0, totalMoneySpent: 0, hallOfFame: [] };
   
   if (saved) {
-    try { stats = { ...stats, ...JSON.parse(saved) }; } catch (e) {}
+    try { stats = { ...stats, ...JSON.parse(saved) }; } catch {
+      // Ignore corrupt local career saves.
+    }
   }
 
   stats.totalRuns += 1;

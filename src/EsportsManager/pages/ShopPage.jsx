@@ -29,7 +29,7 @@ function getHeroAvatarUrl(role, heroName) {
     .toLowerCase()
     .replace(/[úü]/g, 'u')
     .replace(/ö/g, 'o')
-    .replace(/[\.\s:\-]/g, '_') 
+    .replace(/[.\s:-]/g, '_')
     .replace(/_+/g, '_'); 
 
   return `/heroes/${dir}/${cleanName}.png`

@@ -1,0 +1,42 @@
+export const DEFAULT_SHARE_ARTWORK_CROP = {
+  objectPosition: '50% 48%',
+  scale: 1.08,
+  translateX: '0px',
+  translateY: '0px',
+  overlayStrength: 0.66
+}
+
+export const HERO_SHARE_ARTWORK_CROPS = {
+  ana: { objectPosition: '48% 47%', scale: 1.08 },
+  anran: { objectPosition: '50% 46%', scale: 1.06 },
+  ashe: { objectPosition: '48% 47%', scale: 1.06 },
+  bastion: { objectPosition: '49% 48%', scale: 1.05 },
+  brigitte: { objectPosition: '50% 47%', scale: 1.07 },
+  cassidy: { objectPosition: '48% 47%', scale: 1.08 },
+  doomfist: { objectPosition: '47% 47%', scale: 1.08 },
+  dva: { objectPosition: '50% 48%', scale: 1.05 },
+  echo: { objectPosition: '50% 46%', scale: 1.08 },
+  genji: { objectPosition: '50% 47%', scale: 1.08 },
+  hazard: { objectPosition: '49% 47%', scale: 1.06 },
+  junker_queen: { objectPosition: '48% 47%', scale: 1.07 },
+  juno: { objectPosition: '50% 46%', scale: 1.08 },
+  lifeweaver: { objectPosition: '49% 46%', scale: 1.08 },
+  lucio: { objectPosition: '48% 47%', scale: 1.08 },
+  mauga: { objectPosition: '48% 48%', scale: 1.05 },
+  mercy: { objectPosition: '49% 46%', scale: 1.08 },
+  mizuki: { objectPosition: '50% 46%', scale: 1.05, overlayStrength: 0.72 },
+  pharah: { objectPosition: '43% 47%', scale: 1.05, overlayStrength: 0.68 },
+  ramattra: { objectPosition: '50% 47%', scale: 1.06 },
+  reaper: { objectPosition: '49% 47%', scale: 1.08 },
+  reinhardt: { objectPosition: '48% 48%', scale: 1.04 },
+  roadhog: { objectPosition: '48% 48%', scale: 1.04 },
+  sigma: { objectPosition: '50% 47%', scale: 1.06 },
+  soldier_76: { objectPosition: '48% 47%', scale: 1.07 },
+  sombra: { objectPosition: '49% 47%', scale: 1.08 },
+  symmetra: { objectPosition: '48% 46%', scale: 1.06, overlayStrength: 0.62 },
+  tracer: { objectPosition: '49% 46%', scale: 1.08 },
+  widowmaker: { objectPosition: '48% 46%', scale: 1.08 },
+  winston: { objectPosition: '48% 48%', scale: 1.04 },
+  wrecking_ball: { objectPosition: '50% 48%', scale: 1.03 },
+  zarya: { objectPosition: '50% 47%', scale: 1.05 }
+}

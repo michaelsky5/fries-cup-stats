@@ -1,0 +1,1278 @@
+.page {
+  position: relative;
+  display: grid;
+  gap: clamp(48px, 5.4vw, 82px);
+  padding: 0;
+  background: transparent;
+  color: #2a2a2a;
+}
+
+.saveToast {
+  position: fixed;
+  top: 92px;
+  right: clamp(24px, 4vw, 58px);
+  z-index: 90;
+  border: 2px solid #2a2a2a;
+  background: #f4c320;
+  color: #2a2a2a;
+  padding: 12px 16px;
+  font-weight: 1000;
+}
+
+.kicker,
+.sectionHeader span,
+.heroMatchHead span {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: #a47d00;
+  font-size: 12px;
+  font-weight: 1000;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.kicker::after,
+.sectionHeader span::after,
+.heroMatchHead span::after {
+  width: 42px;
+  height: 3px;
+  background: currentColor;
+  content: "";
+}
+
+.followingHero {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  min-height: clamp(470px, 54vh, 560px);
+  border: 2px solid #2a2a2a;
+  background: #ffffff;
+}
+
+.heroIdentityCard {
+  grid-column: span 4;
+  display: grid;
+  align-content: end;
+  justify-items: start;
+  gap: 18px;
+  min-width: 0;
+  padding: clamp(30px, 3.8vw, 56px);
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+.heroIdentityCard .kicker {
+  color: #f4c320;
+}
+
+.heroIdentityCard h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(54px, 5vw, 88px);
+  font-weight: 1000;
+  line-height: 0.9;
+}
+
+.heroTeamLogo {
+  width: clamp(118px, 9.5vw, 152px);
+  height: clamp(118px, 9.5vw, 152px);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.26);
+  background: #2a2a2a;
+}
+
+.heroTeamLogo img,
+.teamLogo img,
+.matchLogo img,
+.matchupLogo img {
+  max-width: 84%;
+  max-height: 84%;
+  object-fit: contain;
+}
+
+.heroTeamLogo b,
+.teamLogo b,
+.matchLogo b,
+.matchupLogo b {
+  color: #f4c320;
+  font-weight: 1000;
+}
+
+.heroTeamName {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.heroTeamName strong {
+  color: #ffffff;
+  font-size: clamp(46px, 4.3vw, 68px);
+  font-weight: 1000;
+  line-height: 0.9;
+}
+
+.heroTeamName span,
+.heroEmptyCopy span {
+  color: rgba(255, 255, 255, 0.74);
+  font-weight: 800;
+}
+
+.primaryBadge {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  background: #f4c320;
+  color: #2a2a2a;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 1000;
+}
+
+.darkLink,
+.heroEmptyCopy button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #f4c320;
+  background: #f4c320;
+  color: #2a2a2a;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 1000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.textAction,
+.sectionTextAction {
+  min-height: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  border: 0;
+  background: transparent;
+  color: #2a2a2a;
+  padding: 0;
+  font: inherit;
+  font-weight: 1000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.textAction:hover,
+.sectionTextAction:hover,
+.weekMoreLink:hover,
+.cardActions a:hover {
+  color: #a47d00;
+  transform: none;
+}
+
+.heroEmptyCopy {
+  display: grid;
+  gap: 12px;
+}
+
+.heroEmptyCopy strong {
+  color: #ffffff;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.heroMatchCard {
+  grid-column: span 8;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(18px, 2.4vw, 30px);
+  padding: clamp(30px, 3.8vw, 56px);
+  background: #f4c320;
+  color: #2a2a2a;
+}
+
+.heroMatchHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.heroMatchHead h2 {
+  margin: 12px 0 0;
+  color: #2a2a2a;
+  font-size: clamp(46px, 4.6vw, 78px);
+  font-weight: 1000;
+  line-height: 0.92;
+}
+
+.heroMatchHead button,
+.primaryAction,
+.inlineLink,
+.weekEmpty a,
+.emptyActions button,
+.emptyLinks a {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #2a2a2a;
+  background: #ffffff;
+  color: #2a2a2a;
+  padding: 0 14px;
+  font: inherit;
+  font-weight: 1000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.heroMatchHead button:hover,
+.primaryAction:hover,
+.inlineLink:hover,
+.weekEmpty a:hover,
+.emptyActions button:hover,
+.emptyLinks a:hover,
+.darkLink:hover,
+.heroEmptyCopy button:hover {
+  transform: translate(-2px, -2px);
+}
+
+.heroMatchBody {
+  align-self: center;
+  display: grid;
+  gap: 18px;
+}
+
+.heroMatchupCard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(58px, 6vw, 88px) minmax(0, 1fr);
+  align-items: stretch;
+  border: 2px solid #2a2a2a;
+  background: #ffffff;
+}
+
+.heroMatchTeam {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: clamp(58px, 6.5vw, 86px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(12px, 1.4vw, 18px);
+  border-left: 8px solid transparent;
+  padding: clamp(16px, 2.3vw, 28px);
+}
+
+.heroMatchTeam:last-child {
+  border-left: 2px solid #2a2a2a;
+}
+
+.heroMatchTeam[data-own="true"] {
+  border-left-color: #f4c320;
+}
+
+.matchupLogo {
+  width: clamp(58px, 6.5vw, 86px);
+  height: clamp(58px, 6.5vw, 86px);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #2a2a2a;
+}
+
+.heroMatchTeam div {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.heroMatchTeam strong {
+  overflow: hidden;
+  color: #2a2a2a;
+  font-size: clamp(34px, 4vw, 62px);
+  font-weight: 1000;
+  line-height: 0.92;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.heroMatchTeam span {
+  overflow: hidden;
+  color: rgba(42, 42, 42, 0.66);
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.heroVs {
+  display: grid;
+  place-items: center;
+  border-left: 2px solid #2a2a2a;
+  background: #2a2a2a;
+  color: #f4c320;
+  font-size: clamp(20px, 2.4vw, 34px);
+  font-weight: 1000;
+}
+
+.heroMatchBody p,
+.heroNoMatch span {
+  margin: 0;
+  color: rgba(42, 42, 42, 0.76);
+  font-size: 17px;
+  font-weight: 850;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.heroActions .primaryAction,
+.emptyActions button:first-child {
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+.heroNoMatch {
+  align-self: center;
+  display: grid;
+  gap: 10px;
+}
+
+.heroNoMatch strong {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.heroMetrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 2px solid #2a2a2a;
+  background: #ffffff;
+}
+
+.heroMetrics div {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-right: 2px solid #2a2a2a;
+}
+
+.heroMetrics div:last-child {
+  border-right: 0;
+}
+
+.heroMetrics span,
+.cardFacts dt,
+.playerSnapshot span {
+  color: #6a6257;
+  font-size: 12px;
+  font-weight: 1000;
+}
+
+.heroMetrics strong {
+  overflow: hidden;
+  color: #2a2a2a;
+  font-size: 22px;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sectionBlock,
+.weekPanel {
+  display: grid;
+  gap: 20px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 22px;
+  border-top: 2px solid #2a2a2a;
+  padding-top: 22px;
+}
+
+.sectionHeader h2 {
+  margin: 12px 0 0;
+  color: #2a2a2a;
+  font-size: clamp(38px, 4vw, 64px);
+  font-weight: 1000;
+  line-height: 0.95;
+}
+
+.sectionHeader p {
+  max-width: 680px;
+  margin: 9px 0 0;
+  color: rgba(42, 42, 42, 0.72);
+  font-weight: 750;
+  line-height: 1.6;
+}
+
+.weekPanel .sectionHeader h2 {
+  font-size: clamp(34px, 3.2vw, 52px);
+}
+
+.weekHeaderMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.weekHeaderMeta strong {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid #2a2a2a;
+  background: #2a2a2a;
+  color: #f4c320;
+  padding: 0 13px;
+  font-size: 13px;
+  font-weight: 1000;
+}
+
+.weekHeaderMeta a {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid #2a2a2a;
+  background: transparent;
+  color: #2a2a2a;
+  padding: 0 13px;
+  font-weight: 1000;
+  text-decoration: none;
+}
+
+.weekHeaderMeta a:hover {
+  background: #f4c320;
+}
+
+.weekScheduleBoard {
+  display: grid;
+  border: 2px solid #2a2a2a;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.weekBoardFrame {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 336px;
+  min-width: 0;
+}
+
+.weekProgramList {
+  min-width: 0;
+  display: grid;
+}
+
+.weekDateGroup + .weekDateGroup {
+  border-top: 2px solid #2a2a2a;
+}
+
+.weekDateGroup {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.weekDateBar {
+  position: relative;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 0;
+  border-bottom: 2px solid #2a2a2a;
+  background: #1f1f1f;
+  color: #ffffff;
+  padding: 0 18px;
+}
+
+.weekDateBar::before {
+  width: 42px;
+  height: 4px;
+  background: #f4c320;
+  content: "";
+}
+
+.weekDateBar h3 {
+  margin: 0 auto 0 0;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.weekDateBar span {
+  color: #f4c320;
+  font-size: 12px;
+  font-weight: 1000;
+  white-space: nowrap;
+}
+
+.weekTimeGroups {
+  min-height: 0;
+  display: grid;
+  align-content: stretch;
+}
+
+.weekTimeGroup {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  min-width: 0;
+}
+
+.weekTimeGroup + .weekTimeGroup {
+  border-top: 1px solid #2a2a2a;
+}
+
+.weekGroupTime {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  border-right: 1px solid #2a2a2a;
+  background: #f7f1e2;
+  color: #2a2a2a;
+  padding-top: 22px;
+  font-size: 16px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.weekTimeMatches {
+  min-width: 0;
+  display: grid;
+  grid-auto-rows: minmax(76px, 1fr);
+  align-content: stretch;
+}
+
+.matchRow {
+  position: relative;
+  min-width: 0;
+  min-height: 76px;
+  display: grid;
+  grid-template-columns: 64px minmax(430px, 1fr) 148px 50px;
+  align-items: center;
+  gap: 0;
+  border-left: 6px solid transparent;
+  background: #ffffff;
+  color: #2a2a2a;
+  padding: 0;
+  text-decoration: none;
+}
+
+.matchRow + .matchRow {
+  border-top: 1px solid #2a2a2a;
+}
+
+.matchRow[data-primary="true"] {
+  border-left-color: #f4c320;
+}
+
+.matchRow:focus-visible {
+  outline: 3px solid #f4c320;
+  outline-offset: -5px;
+}
+
+.matchRow:hover {
+  background: #fff8d7;
+}
+
+.matchIndex {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+}
+
+.matchIndex b {
+  min-width: 32px;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1f1f1f;
+  color: #f4c320;
+  font-size: 12px;
+  font-weight: 1000;
+}
+
+.matchIndex em {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  background: #f4c320;
+  color: #2a2a2a;
+  padding: 0 7px;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 1000;
+  white-space: nowrap;
+}
+
+.matchDuel {
+  justify-self: start;
+  min-width: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(162px, 1fr) 46px minmax(162px, 1fr);
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+}
+
+.matchTeam {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.matchTeam[data-align="left"] {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.matchTeam[data-align="right"] {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.matchTeamText {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.matchTeamText strong,
+.teamCardTop span {
+  overflow: hidden;
+  color: #2a2a2a;
+  font-weight: 1000;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.matchTeamText strong {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.matchTeamText small {
+  overflow: hidden;
+  color: rgba(42, 42, 42, 0.58);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.matchLogo {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #2a2a2a;
+}
+
+.teamLogo {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #2a2a2a;
+}
+
+.vs {
+  display: grid;
+  place-items: center;
+  color: #a47d00;
+  font-size: 12px;
+  font-weight: 1000;
+  text-align: center;
+}
+
+.matchMeta {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0 10px;
+  color: #2a2a2a;
+  font-size: 13px;
+  font-weight: 1000;
+}
+
+.matchFormat {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #2a2a2a;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 1000;
+}
+
+.matchStatus {
+  color: #2a2a2a;
+  font-size: 13px;
+  font-weight: 1000;
+}
+
+.rowLink {
+  justify-self: start;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  color: #2a2a2a;
+  font-size: 22px;
+  font-weight: 1000;
+}
+
+.matchRow:hover .rowLink {
+  border: 2px solid #2a2a2a;
+  background: #f4c320;
+  color: #2a2a2a;
+}
+
+.weekNoticeBoard {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 20px;
+  border-left: 2px solid #2a2a2a;
+  background: #1f1f1f;
+  color: #ffffff;
+  padding: 22px;
+}
+
+.weekNoticeBoard > div:first-child {
+  display: grid;
+  gap: 8px;
+}
+
+.weekNoticeBoard span,
+.weekNoticeStats dt,
+.weekNoticeHint {
+  color: #f4c320;
+  font-size: 12px;
+  font-weight: 1000;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.weekNoticeBoard strong {
+  color: #ffffff;
+  font-size: clamp(36px, 3vw, 54px);
+  font-weight: 1000;
+  line-height: 0.88;
+}
+
+.weekNoticeBoard p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 850;
+}
+
+.weekNoticeStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  border: 1px solid rgba(244, 195, 32, 0.72);
+}
+
+.weekNoticeStats div {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  padding: 12px 10px;
+  border-right: 1px solid rgba(244, 195, 32, 0.72);
+}
+
+.weekNoticeStats div:last-child {
+  border-right: 0;
+}
+
+.weekNoticeStats dd {
+  margin: 0;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.weekNoticeMain {
+  display: grid;
+  gap: 10px;
+  border: 2px solid #f4c320;
+  background: #f4c320;
+  color: #2a2a2a;
+  padding: 16px;
+}
+
+.weekNoticeMain span,
+.weekNoticeMain p {
+  color: #2a2a2a;
+}
+
+.weekNoticeMain strong {
+  overflow: hidden;
+  color: #2a2a2a;
+  font-size: 26px;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.weekNoticeHint {
+  border-top: 1px solid rgba(244, 195, 32, 0.56);
+  padding-top: 14px;
+  line-height: 1.5;
+}
+
+.weekMoreLink {
+  justify-self: start;
+  margin: 16px 18px 18px;
+  color: #2a2a2a;
+  font-weight: 1000;
+  text-decoration: none;
+}
+
+.inlineLink {
+  min-height: 34px;
+  justify-self: start;
+  border-width: 1px;
+}
+
+.weekEmpty,
+.miniEmpty,
+.emptyState {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  border: 2px solid #2a2a2a;
+  border-left: 8px solid #f4c320;
+  background: #ffffff;
+  padding: 22px;
+}
+
+.miniEmpty {
+  max-width: 420px;
+  padding: 18px;
+}
+
+.weekEmpty strong,
+.miniEmpty strong,
+.emptyState h1 {
+  margin: 0;
+  color: #2a2a2a;
+  font-size: 26px;
+  line-height: 1;
+}
+
+.emptyState {
+  max-width: 760px;
+}
+
+.emptyState h1 {
+  font-size: 42px;
+}
+
+.weekEmpty span,
+.miniEmpty span,
+.emptyState p {
+  margin: 0;
+  color: rgba(42, 42, 42, 0.68);
+  font-weight: 750;
+}
+
+.weekEmpty div,
+.emptyActions,
+.emptyLinks,
+.cardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.teamGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.teamCard,
+.playerCard {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  gap: 0;
+  border: 2px solid #2a2a2a;
+  background: #ffffff;
+  padding: 0;
+}
+
+.teamCard::before,
+.playerCard::before {
+  height: 6px;
+  display: block;
+  background: #2a2a2a;
+  content: "";
+}
+
+.teamCardMain {
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+  color: inherit;
+  padding: 18px;
+  text-decoration: none;
+}
+
+.teamCardTop,
+.playerHeader {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.playerHeader {
+  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) 56px;
+  border-bottom: 2px solid #2a2a2a;
+  padding: 16px 14px 16px 16px;
+}
+
+.teamCardTop div,
+.playerIdentity {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.teamCardTop strong,
+.playerHeader strong {
+  color: #2a2a2a;
+  font-size: 26px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.playerHeader strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teamCardTop span {
+  color: rgba(42, 42, 42, 0.62);
+  font-weight: 800;
+}
+
+.playerIdentity em {
+  overflow: hidden;
+  color: rgba(42, 42, 42, 0.72);
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 1000;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playerTags {
+  justify-self: end;
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.playerTeamBadge,
+.playerRoleBadge {
+  min-width: 50px;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #2a2a2a;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 1000;
+  line-height: 1;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.playerTeamBadge {
+  background: #2a2a2a;
+  color: #f4c320;
+}
+
+.playerRoleBadge {
+  background: #f4c320;
+  color: #2a2a2a;
+}
+
+.cardFacts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  border-top: 2px solid #2a2a2a;
+  padding-top: 0;
+}
+
+.cardFacts div {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  padding: 12px 12px 0 0;
+  border-right: 1px solid rgba(42, 42, 42, 0.42);
+}
+
+.cardFacts div + div {
+  padding-left: 12px;
+}
+
+.cardFacts div:last-child {
+  border-right: 0;
+}
+
+.cardFacts dd {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #2a2a2a;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardActions {
+  border-top: 1px solid #2a2a2a;
+  padding: 11px 18px 15px;
+}
+
+.cardActions a {
+  color: #2a2a2a;
+  font-size: 12px;
+  font-weight: 1000;
+  text-decoration: none;
+}
+
+.playerGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.playerMark {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  background: #2a2a2a;
+  color: #f4c320;
+  font-weight: 1000;
+}
+
+.playerSnapshot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+  border-top: 0;
+  border-bottom: 1px solid #2a2a2a;
+  padding: 13px 16px;
+}
+
+.playerSnapshot strong {
+  justify-self: start;
+  min-width: 0;
+  overflow: hidden;
+  color: #2a2a2a;
+  font-size: 13px;
+  font-weight: 1000;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playerCard .inlineLink {
+  justify-self: start;
+  min-height: auto;
+  border: 0;
+  background: transparent;
+  color: #2a2a2a;
+  padding: 0;
+  margin: 14px 16px 16px;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.playerCard .inlineLink:hover {
+  color: #a47d00;
+  transform: none;
+}
+
+@media (max-width: 1380px) {
+  .playerGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1180px) {
+  .followingHero {
+    grid-template-columns: 1fr;
+  }
+
+  .heroIdentityCard,
+  .heroMatchCard {
+    grid-column: auto;
+  }
+
+  .heroMetrics,
+  .cardFacts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .heroMetrics div:nth-child(2) {
+    border-right: 0;
+  }
+
+  .weekBoardFrame {
+    grid-template-columns: 1fr;
+  }
+
+  .weekNoticeBoard {
+    border-top: 2px solid #2a2a2a;
+    border-left: 0;
+  }
+
+  .matchRow {
+    grid-template-columns: 58px minmax(330px, 1fr) 136px 44px;
+  }
+
+  .matchDuel {
+    grid-template-columns: minmax(120px, 1fr) 38px minmax(120px, 1fr);
+    width: 100%;
+    padding-inline: 12px;
+  }
+
+  .heroMatchupCard {
+    grid-template-columns: 1fr;
+  }
+
+  .heroVs,
+  .heroMatchTeam:last-child {
+    border-left: 0;
+    border-top: 2px solid #2a2a2a;
+  }
+}
+
+@media (max-width: 860px) {
+  .teamGrid,
+  .playerGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .weekPanel .sectionHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .weekHeaderMeta {
+    justify-content: flex-start;
+  }
+
+  .weekDateBar {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: 14px;
+  }
+
+  .weekTimeGroup {
+    grid-template-columns: 1fr;
+  }
+
+  .weekGroupTime {
+    min-height: 42px;
+    align-items: center;
+    justify-content: flex-start;
+    border-right: 0;
+    border-bottom: 1px solid #2a2a2a;
+    padding: 0 12px;
+  }
+
+  .matchRow {
+    grid-template-columns: minmax(0, 1fr) 44px;
+    grid-template-areas:
+      "index action"
+      "teams teams"
+      "meta meta";
+    gap: 10px 12px;
+    padding: 12px;
+  }
+
+  .matchRow::after {
+    display: none;
+  }
+
+  .matchIndex {
+    grid-area: index;
+    padding: 0;
+  }
+
+  .matchDuel {
+    grid-area: teams;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) 36px minmax(0, 1fr);
+    padding: 0;
+  }
+
+  .weekTimeMatches {
+    grid-auto-rows: auto;
+  }
+
+  .matchMeta {
+    grid-area: meta;
+    padding: 0;
+  }
+
+  .rowLink {
+    grid-area: action;
+  }
+
+  .heroMetrics,
+  .cardFacts {
+    grid-template-columns: 1fr;
+  }
+
+  .heroMetrics div {
+    border-right: 0;
+    border-bottom: 2px solid #2a2a2a;
+  }
+
+  .heroMetrics div:last-child {
+    border-bottom: 0;
+  }
+}

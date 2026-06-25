@@ -1,21 +1,103 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  DEFAULT_SEASON_ID,
+  SEASONS,
+  getInitialSeasonId,
+  getSeasonById,
+  getSeasonSearch,
+  resolveSeasonFromUrl,
+  seasonHasReview,
+  setStoredSeasonId,
+  withSeason as buildSeasonLink
+} from '../config/seasons.js'
+import { createTranslator, getStoredLocale, setStoredLocale } from '../lib/i18n.js'
 import { getDb } from '../lib/db.js'
+import { formatUpdatedAt } from '../lib/format.js'
 import { getGlobalSummary } from '../lib/selectors.js'
-import GlobalSummaryBar from '../components/summary/GlobalSummaryBar.jsx'
+import { getSeasonStatus } from '../lib/homeSelectors.js'
+import { FavoritesProvider, normalizeSeasonId, useFavorites } from '../features/favorites/index.js'
+import EventContextBar from '../components/layout/EventContextBar.jsx'
+import { useLocaleDomTranslation } from '../hooks/useLocaleDomTranslation.js'
 import styles from './DataLayout.module.css'
 
+const PRIMARY_NAV = [
+  { to: '/', cn: '赛事总览', en: 'OVERVIEW', end: true, group: 'overview' },
+  { to: '/matches', cn: '赛程赛果', en: 'MATCHES', group: 'matches' },
+  { to: '/advance', cn: '晋级形势', en: 'ADVANCE', group: 'advance' },
+  { to: '/teams', cn: '参赛阵容', en: 'ROSTER', group: 'roster' },
+  { to: '/leaderboard', cn: '数据资料', en: 'DATABASE', group: 'database' },
+  { to: '/following', cn: '我的关注', en: 'FOLLOWING', group: 'following' }
+]
+
+function getNavActiveGroup(pathname, search = '') {
+  const params = new URLSearchParams(search)
+  const matchTab = String(params.get('tab') || '').toLowerCase()
+  const isFollowingView = params.get('following') === '1' || matchTab === 'following'
+
+  if (pathname === '/') return 'overview'
+  if (pathname.startsWith('/following')) return 'following'
+  if (pathname.startsWith('/matches') || pathname.startsWith('/schedule')) return isFollowingView ? 'following' : 'matches'
+  if (pathname.startsWith('/advance') || pathname.startsWith('/standings')) return 'advance'
+  if (pathname.startsWith('/teams') || pathname.startsWith('/players') || pathname.startsWith('/staff') || pathname.startsWith('/roster')) return 'roster'
+  if (pathname.startsWith('/leaderboard') || pathname.startsWith('/heroes') || pathname.startsWith('/maps')) return 'database'
+  return ''
+}
+
+function PortalNavItem({ item, activeGroup, locale, to }) {
+  const label = locale === 'en-US' ? item.en : item.cn
+
+  return (
+    <NavLink
+      to={to}
+      end={item.end}
+      className={() => [
+        styles.navLink,
+        activeGroup === item.group ? styles.navLinkActive : ''
+      ].filter(Boolean).join(' ')}
+    >
+      <span className={styles.navLabel}>{label}</span>
+    </NavLink>
+  )
+}
+
+function MobileNavItem({ item, activeGroup, locale, to }) {
+  const label = locale === 'en-US' ? item.en : item.cn
+
+  return (
+    <NavLink
+      to={to}
+      end={item.end}
+      className={() => [
+        styles.mobileNavLink,
+        activeGroup === item.group ? styles.mobileNavLinkActive : ''
+      ].filter(Boolean).join(' ')}
+    >
+      <span>{label}</span>
+      <em>{item.en}</em>
+    </NavLink>
+  )
+}
+
 export default function DataLayout() {
+  const shellRef = useRef(null)
+  const [seasonId, setSeasonId] = useState(() => getInitialSeasonId())
+  const [locale, setLocale] = useState(() => getStoredLocale())
   const [db, setDb] = useState(null)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const location = useLocation()
+  const navigate = useNavigate()
+
+  const t = useMemo(() => createTranslator(locale), [locale])
+  const season = useMemo(() => getSeasonById(seasonId), [seasonId])
+  const canonicalSeasonId = normalizeSeasonId(season?.publicCode || seasonId)
+  const favoritesApi = useFavorites(canonicalSeasonId, db)
 
   useEffect(() => {
     let alive = true
-    setIsLoading(true)
 
-    getDb()
+    getDb(seasonId)
       .then(data => {
         if (!alive) return
         setDb(data)
@@ -23,7 +105,8 @@ export default function DataLayout() {
       })
       .catch(err => {
         if (!alive) return
-        setError(err?.message || '获取失败')
+        setDb(null)
+        setError(err?.message || 'DB_LOAD_FAILED')
       })
       .finally(() => {
         if (!alive) return
@@ -33,136 +116,184 @@ export default function DataLayout() {
     return () => {
       alive = false
     }
-  }, [])
+  }, [seasonId])
 
   const summary = getGlobalSummary(db)
-  
-  // 用于保持导航栏在进入详情页时依然高亮
-  const isMatchDetail = location.pathname.startsWith('/matches/')
-  const isPlayerDetail = location.pathname.startsWith('/players/')
-  const isTeamDetail = location.pathname.startsWith('/teams/')
-  const isHeroes = location.pathname.startsWith('/heroes') 
-  const isMaps = location.pathname.startsWith('/maps') 
-  const isFantasy = location.pathname.startsWith('/fantasy') // ✨ 新增：电竞经理高亮状态
+  const seasonStatus = getSeasonStatus(db)
+  const updatedAtText = isLoading
+    ? t('layout.meta.loading')
+    : formatUpdatedAt(summary.updatedAt, t('layout.meta.empty'))
+  const reviewAvailable = seasonHasReview(season, db)
+  const activeGroup = getNavActiveGroup(location.pathname, location.search)
+  const activeNavItem = PRIMARY_NAV.find(item => item.group === activeGroup) || PRIMARY_NAV[0]
+  const activeNavLabel = locale === 'en-US' ? activeNavItem.en : activeNavItem.cn
+  const withSeason = useMemo(
+    () => path => buildSeasonLink(path, seasonId, location.search),
+    [seasonId, location.search]
+  )
+
+  useLocaleDomTranslation(locale, shellRef)
+
+  useEffect(() => {
+    document.documentElement.lang = locale
+  }, [locale])
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    if (!params.has('season')) return
+
+    const resolvedSeasonId = resolveSeasonFromUrl(params.get('season')) || DEFAULT_SEASON_ID
+    if (resolvedSeasonId === seasonId) return
+
+    setDb(null)
+    setError('')
+    setIsLoading(true)
+    setSeasonId(resolvedSeasonId)
+
+    if (resolveSeasonFromUrl(params.get('season'))) {
+      setStoredSeasonId(resolvedSeasonId)
+    }
+  }, [location.search, seasonId])
+
+  const handleSeasonChange = eventOrSeasonId => {
+    const rawSeasonId = eventOrSeasonId?.target ? eventOrSeasonId.target.value : eventOrSeasonId
+    const nextSeasonId = getSeasonById(rawSeasonId).id
+    if (nextSeasonId === seasonId) return
+    setDb(null)
+    setError('')
+    setIsLoading(true)
+    setStoredSeasonId(nextSeasonId)
+    setSeasonId(nextSeasonId)
+    const baseSearch = location.pathname === '/matches' || location.pathname === '/advance' || location.pathname === '/standings'
+      ? ''
+      : location.search
+    const nextSearch = getSeasonSearch(baseSearch, nextSeasonId)
+    navigate({
+      pathname: location.pathname,
+      search: nextSearch,
+      hash: location.hash
+    })
+  }
+
+  const handleLocaleChange = nextLocale => {
+    setStoredLocale(nextLocale)
+    setLocale(nextLocale)
+  }
+
+  const outletContext = {
+    db,
+    season,
+    seasonId,
+    canonicalSeasonId,
+    locale,
+    t,
+    updatedAtText,
+    reviewAvailable,
+    withSeason,
+    favorites: favoritesApi.favorites,
+    toggleTeamFavorite: favoritesApi.toggleTeamFavorite,
+    togglePlayerFavorite: favoritesApi.togglePlayerFavorite,
+    setPrimaryTeamFavorite: favoritesApi.setPrimaryTeamFavorite,
+    saveFavorites: favoritesApi.saveFavorites,
+    isFavoriteTeam: favoritesApi.isFavoriteTeam,
+    isPrimaryFavoriteTeam: favoritesApi.isPrimaryFavoriteTeam,
+    isFavoritePlayer: favoritesApi.isFavoritePlayer,
+    favoriteLimits: favoritesApi.favoriteLimits
+  }
 
   return (
-    <div className={styles.shell}>
-      {/* --- 左侧边栏 --- */}
-      <aside className={styles.sidebar}>
-        <div className={styles.sidebarInner}>
-          <header className={styles.brand}>
-            <div className={styles.brandKicker}>FriesCup 薯条杯</div>
-            <div className={styles.brandTitle}>数据中心</div>
-          </header>
+    <div className={styles.shell} ref={shellRef} data-locale={locale}>
+      <header className={styles.topShell}>
+        <div className={styles.topBar}>
+          <a href="https://fries-cup.com/" className={styles.brandLink} aria-label="FriesCup official site">
+            <span className={styles.brandEventMark} aria-hidden="true">
+              <img src="/logos/fc_logo.svg" alt="" />
+            </span>
+            <span className={styles.brandWordMark} aria-hidden="true">
+              <img src="/logos/fc_data_center.svg" alt="" />
+            </span>
+          </a>
 
-          <nav className={styles.nav}>
-            <div className={styles.navLabel}>公共枢纽</div>
-            
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) => `${styles.link} ${isActive ? styles.linkActive : ''}`}
-            >
-              <span className={styles.navMarker} />
-              全局总控
-            </NavLink>
-            
-            <NavLink
-              to="/matches"
-              className={({ isActive }) => `${styles.link} ${isActive || isMatchDetail ? styles.linkActive : ''}`}
-            >
-              <span className={styles.navMarker} />
-              赛事大厅
-            </NavLink>
-
-            <NavLink
-              to="/leaderboard"
-              className={({ isActive }) => `${styles.link} ${isActive ? styles.linkActive : ''}`}
-            >
-              <span className={styles.navMarker} />
-              数据排行
-            </NavLink>
-
-            <NavLink
-              to="/players"
-              className={({ isActive }) => `${styles.link} ${isActive || isPlayerDetail ? styles.linkActive : ''}`}
-            >
-              <span className={styles.navMarker} />
-              选手名录
-            </NavLink>
-
-            <NavLink
-              to="/teams"
-              className={({ isActive }) => `${styles.link} ${isActive || isTeamDetail ? styles.linkActive : ''}`}
-            >
-              <span className={styles.navMarker} />
-              战队总控
-            </NavLink>
-
-            <NavLink
-              to="/heroes"
-              className={({ isActive }) => `${styles.link} ${isActive || isHeroes ? styles.linkActive : ''}`}
-            >
-              <span className={styles.navMarker} />
-              英雄情报
-            </NavLink>
-
-            <NavLink
-              to="/maps"
-              className={({ isActive }) => `${styles.link} ${isActive || isMaps ? styles.linkActive : ''}`}
-            >
-              <span className={styles.navMarker} />
-              地图数据
-            </NavLink>
-
-            <NavLink
-              to="/standings"
-              className={({ isActive }) => `${styles.link} ${isActive ? styles.linkActive : ''}`}
-            >
-              <span className={styles.navMarker} />
-              战队排名
-            </NavLink>
-
-            {/* ✨ 新增：电竞经理入口 */}
-            <NavLink
-              to="/fantasy"
-              className={({ isActive }) => `${styles.link} ${isActive || isFantasy ? styles.linkActive : ''}`}
-            >
-              <span className={styles.navMarker} />
-              电竞经理(开发中)
-            </NavLink>
+          <nav className={styles.nav} aria-label="Data center navigation">
+            {PRIMARY_NAV.map(item => (
+              <PortalNavItem
+                key={item.group}
+                item={item}
+                activeGroup={activeGroup}
+                locale={locale}
+                to={buildSeasonLink(item.to, seasonId, '')}
+              />
+            ))}
           </nav>
 
-          <footer className={styles.sidebarFooter}>
-            <div className={styles.metaLabel}>最后同步</div>
-            <div className={`${styles.metaValue} ${isLoading ? styles.textPulse : ''}`}>
-              {isLoading ? '正在同步' : (summary.updatedAt || '暂无数据')}
+          <details className={styles.mobileNavMenu}>
+            <summary>
+              <span>{activeNavLabel}</span>
+              <b>MENU</b>
+            </summary>
+            <nav className={styles.mobileNavPanel} aria-label="Mobile data center navigation">
+              {PRIMARY_NAV.map(item => (
+                <MobileNavItem
+                  key={item.group}
+                  item={item}
+                  activeGroup={activeGroup}
+                  locale={locale}
+                  to={buildSeasonLink(item.to, seasonId, '')}
+                />
+              ))}
+            </nav>
+          </details>
+
+          <div className={styles.headerRight}>
+            <div className={styles.languageSwitch} aria-label="Language">
+              <button
+                type="button"
+                onClick={() => handleLocaleChange('zh-CN')}
+                className={locale === 'zh-CN' ? styles.languageActive : ''}
+              >
+                ZH
+              </button>
+              <span className={styles.languageDivider}>/</span>
+              <button
+                type="button"
+                onClick={() => handleLocaleChange('en-US')}
+                className={locale === 'en-US' ? styles.languageActive : ''}
+              >
+                EN
+              </button>
             </div>
-          </footer>
+          </div>
         </div>
-      </aside>
 
-      {/* --- 右侧主内容区 --- */}
-      <div className={styles.mainWrapper}>
-        <div className={styles.contentInner}>
-          <GlobalSummaryBar summary={summary} />
+        <EventContextBar
+          season={season}
+          seasonId={seasonId}
+          locale={locale}
+          seasons={SEASONS}
+          updatedAtText={updatedAtText}
+          seasonStatus={seasonStatus}
+          onSeasonChange={handleSeasonChange}
+        />
+      </header>
 
-          <main className={styles.main}>
-            {isLoading ? (
-              <div className={styles.systemBox}>
-                <div className={styles.loader}></div>
-                <div className={styles.systemText}>连接数据</div>
-              </div>
-            ) : error ? (
-              <div className={`${styles.systemBox} ${styles.errorBox}`}>
-                <div className={styles.errorTitle}>系统异常</div>
-                <div className={styles.errorText}>{error}</div>
-              </div>
-            ) : (
-              <Outlet context={{ db }} />
-            )}
-          </main>
-        </div>
+      <div className={styles.pageFrame}>
+        <main className={styles.main}>
+          {isLoading ? (
+            <div className={styles.systemBox}>
+              <div className={styles.loader}></div>
+              <div className={styles.systemText}>{t('layout.state.loading')}</div>
+            </div>
+          ) : error ? (
+            <div className={`${styles.systemBox} ${styles.errorBox}`}>
+              <div className={styles.errorTitle}>{t('layout.state.error')}</div>
+              <div className={styles.errorText}>{error}</div>
+            </div>
+          ) : (
+            <FavoritesProvider value={outletContext}>
+              <Outlet context={outletContext} />
+            </FavoritesProvider>
+          )}
+        </main>
       </div>
     </div>
   )

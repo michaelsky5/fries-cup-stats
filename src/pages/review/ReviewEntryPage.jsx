@@ -96,8 +96,10 @@ function getEmptyText(identity, query) {
 }
 
 function ViewerArchiveCard() {
+  const { withSeason = path => path } = useOutletContext()
+
   return (
-    <Link to="/review/story/tournament" className={styles.viewerCard}>
+    <Link to={withSeason('/review/story/tournament')} className={styles.viewerCard}>
       <div className={styles.viewerCardBg}>FCA26</div>
 
       <div className={styles.viewerCardTop}>
@@ -138,6 +140,10 @@ function ViewerArchiveCard() {
 export default function ReviewEntryPage() {
   const outlet = useOutletContext()
   const db = outlet?.db
+  const locale = outlet?.locale || 'zh-CN'
+  const reviewAvailable = outlet?.reviewAvailable
+  const seasonLabel = outlet?.season?.publicCode || outlet?.seasonId || 'FRIES CUP'
+  const withSeason = outlet?.withSeason || (path => path)
   const [identity, setIdentity] = useState('player')
   const [query, setQuery] = useState('')
   const searchPanelRef = useRef(null)
@@ -149,6 +155,20 @@ export default function ReviewEntryPage() {
     return getReviewSearchResults(db, identity, query)
   }, [db, identity, query, isViewer])
   const emptyText = getEmptyText(identity, query)
+
+  if (!reviewAvailable) {
+    return (
+      <div className={styles.shell}>
+        <section className={styles.searchPanel}>
+          <div className={styles.empty}>
+            <div className={styles.emptyMark}>{seasonLabel}</div>
+            <strong>{locale === 'en-US' ? 'No review data available for this season' : '当前赛季暂无回顾数据'}</strong>
+            <p>{locale === 'en-US' ? 'Season review content will appear here after it is published.' : '当前赛季还没有发布回顾内容。'}</p>
+          </div>
+        </section>
+      </div>
+    )
+  }
 
   function handleIdentitySelect(nextIdentity) {
     setIdentity(nextIdentity)
@@ -174,7 +194,7 @@ export default function ReviewEntryPage() {
 
         <div className={styles.heroTopline}>
           <div className={styles.kicker}>2026 FRIES CUP SEASON REVIEW</div>
-          <div className={styles.archiveTag}>DATA CENTER ARCHIVE</div>
+          <div className={styles.archiveTag}>SEASON REVIEW ARCHIVE</div>
         </div>
 
         <div className={styles.heroMain}>
@@ -293,7 +313,7 @@ export default function ReviewEntryPage() {
                 </div>
               ) : (
                 results.map((item, index) => (
-                  <Link key={item.id} to={item.to} className={styles.resultItem}>
+                  <Link key={item.id} to={withSeason(item.to)} className={styles.resultItem}>
                     <div className={styles.resultIndex}>{String(index + 1).padStart(2, '0')}</div>
 
                     <div className={styles.resultBadge}>{item.label}</div>

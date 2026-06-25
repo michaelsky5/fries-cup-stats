@@ -1,0 +1,1434 @@
+.shell {
+  width: 100%;
+  max-width: var(--portal-shell-width, 1760px);
+  margin: 0 auto;
+  padding: 56px 0 96px;
+  color: #2a2a2a;
+  box-sizing: border-box;
+}
+
+.posterShell,
+.analysisSection,
+.mapRecordsSection,
+.section {
+  scroll-margin-top: 230px;
+}
+
+.posterShell {
+  position: relative;
+}
+
+.posterBack,
+.textButton,
+.codeButton,
+.playerLink,
+.footerNavLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 2px solid #2a2a2a;
+  background: #ffffff;
+  color: #2a2a2a;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 1000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.posterBack:hover,
+.posterBack:focus-visible,
+.textButton:hover,
+.textButton:focus-visible,
+.codeButton:hover,
+.codeButton:focus-visible,
+.playerLink:hover,
+.playerLink:focus-visible,
+.footerNavLink:hover,
+.footerNavLink:focus-visible,
+.accordionButton:hover,
+.accordionButton:focus-visible,
+.seriesOverviewNode:hover,
+.seriesOverviewNode:focus-visible,
+.seriesMapNode:hover,
+.seriesMapNode:focus-visible {
+  outline: 3px solid #f4c320;
+  outline-offset: 2px;
+}
+
+.posterBack {
+  margin-bottom: 16px;
+}
+
+.posterFrame {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #2a2a2a;
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+.posterStage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 46px;
+  border-bottom: 1px solid #625d53;
+  color: #f4c320;
+  font-size: 12px;
+  font-weight: 1000;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.posterStage strong {
+  color: #ffffff;
+  font: inherit;
+}
+
+.posterBody {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px) minmax(0, 1fr);
+  min-height: 318px;
+}
+
+.posterTeam {
+  position: relative;
+  min-width: 0;
+  padding: 46px 44px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.posterTeam:first-child {
+  justify-content: flex-start;
+}
+
+.posterTeam:last-child {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.posterTeam[data-winner="true"]::before {
+  content: "";
+  position: absolute;
+  left: 44px;
+  right: 44px;
+  top: 0;
+  height: 6px;
+  background: #f4c320;
+}
+
+.posterWatermark {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  opacity: .14;
+  filter: grayscale(1);
+  pointer-events: none;
+}
+
+.posterTeam:first-child .posterWatermark {
+  right: -40px;
+}
+
+.posterTeam:last-child .posterWatermark {
+  left: -40px;
+}
+
+.posterWatermark img,
+.posterLogo img,
+.teamStatsLogo img,
+.performerAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.posterWatermark b,
+.posterLogo b,
+.teamStatsLogo b,
+.performerAvatar {
+  color: #f4c320;
+}
+
+.posterTeamIdentity {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.posterTeam:last-child .posterTeamIdentity {
+  flex-direction: row-reverse;
+}
+
+.posterLogo {
+  width: 92px;
+  height: 92px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a2a;
+  border: 2px solid #f4c320;
+}
+
+.winnerTag {
+  display: inline-flex;
+  margin-bottom: 8px;
+  padding: 4px 7px;
+  background: #f4c320;
+  color: #2a2a2a;
+  font-size: 10px;
+  font-weight: 1000;
+}
+
+.posterTeamIdentity strong {
+  display: block;
+  font-size: clamp(58px, 5.4vw, 98px);
+  line-height: .88;
+  font-weight: 1000;
+  overflow-wrap: anywhere;
+}
+
+.posterTeamIdentity span:not(.winnerTag) {
+  display: block;
+  margin-top: 10px;
+  color: #ded8c8;
+  font-size: 15px;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.posterScoreAxis {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.posterScoreAxis::before {
+  content: "";
+  position: absolute;
+  top: 26px;
+  bottom: 26px;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: #625d53;
+}
+
+.posterVersus,
+.posterMatchup {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  padding: 5px 8px;
+  background: #2a2a2a;
+  color: #f4c320;
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: .08em;
+}
+
+.posterScore {
+  position: relative;
+  z-index: 1;
+  margin: 18px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  font-size: clamp(86px, 8vw, 148px);
+  line-height: .82;
+  font-weight: 1000;
+  letter-spacing: 0;
+}
+
+.posterScore span[data-winner="true"] {
+  color: #f4c320;
+}
+
+.posterScore b {
+  color: #ffffff;
+}
+
+.posterInfoBand {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(220px, 1.2fr);
+  border-top: 2px solid #2a2a2a;
+  background: #f4c320;
+  color: #2a2a2a;
+}
+
+.posterInfoBand span,
+.posterInfoBand em {
+  min-width: 0;
+  padding: 14px 18px;
+  border-right: 1px solid #2a2a2a;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 1000;
+  overflow-wrap: anywhere;
+}
+
+.posterInfoBand em {
+  border-right: 0;
+  text-align: right;
+}
+
+.seriesRail {
+  position: sticky;
+  top: 138px;
+  z-index: 25;
+  margin-top: 22px;
+  background: #f4efe3;
+}
+
+.seriesRailHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 30px;
+  padding: 0;
+  color: #f4c320;
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: .08em;
+}
+
+.seriesRailHead strong {
+  color: #2a2a2a;
+}
+
+.seriesRailScroller {
+  border-top: 2px solid #2a2a2a;
+  border-bottom: 2px solid #2a2a2a;
+  background: #ffffff;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.seriesRailTrack {
+  position: relative;
+  min-width: calc(170px + (var(--map-count) * 140px));
+  display: grid;
+  grid-template-columns: 170px repeat(var(--map-count), minmax(140px, 1fr));
+}
+
+.seriesRailTrack::before {
+  content: "";
+  position: absolute;
+  left: 198px;
+  right: 24px;
+  top: 84px;
+  height: 2px;
+  background: #2a2a2a;
+}
+
+.seriesOverviewNode,
+.seriesMapNode {
+  position: relative;
+  z-index: 1;
+  min-height: 108px;
+  padding: 14px 16px;
+  border: 0;
+  background: #ffffff;
+  color: #2a2a2a;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.seriesOverviewNode {
+  border-right: 2px solid #2a2a2a;
+}
+
+.seriesMapNode[data-active="true"],
+.seriesOverviewNode[data-active="true"] {
+  background: #2a2a2a;
+  color: #f4c320;
+}
+
+.seriesMapNode::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 83px;
+  width: 26px;
+  height: 3px;
+  background: #f4c320;
+}
+
+.seriesMapNode span,
+.seriesOverviewNode span {
+  display: block;
+  color: #f4c320;
+  font-size: 12px;
+  font-weight: 1000;
+}
+
+.seriesMapNode strong,
+.seriesOverviewNode strong {
+  display: block;
+  margin-top: 7px;
+  color: inherit;
+  font-size: 14px;
+  font-weight: 1000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seriesMapNode b,
+.seriesOverviewNode b {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 1000;
+}
+
+.seriesMapNode em {
+  display: block;
+  margin-top: 17px;
+  padding-left: 34px;
+  color: inherit;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 1000;
+}
+
+.analysisSection,
+.mapRecordsSection {
+  margin-top: 48px;
+  border-top: 2px solid #2a2a2a;
+  padding-top: 24px;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.sectionEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #f4c320;
+  font-size: 13px;
+  font-weight: 1000;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.sectionEyebrow::after {
+  content: "";
+  width: 52px;
+  height: 3px;
+  background: #f4c320;
+}
+
+.sectionTitle {
+  margin: 8px 0 0;
+  font-size: clamp(36px, 3.2vw, 58px);
+  line-height: .95;
+  font-weight: 1000;
+  letter-spacing: 0;
+}
+
+.analysisFrame {
+  border: 2px solid #2a2a2a;
+  background: #ffffff;
+}
+
+.analysisGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(360px, 5fr);
+}
+
+.mirrorPanel {
+  min-width: 0;
+  border-right: 1px solid #2a2a2a;
+}
+
+.performancePanel {
+  min-width: 0;
+}
+
+.analysisSubhead {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px;
+  border-bottom: 1px solid #2a2a2a;
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+.analysisSubhead span {
+  color: #f4c320;
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: .08em;
+}
+
+.analysisSubhead strong {
+  font-size: 14px;
+  font-weight: 1000;
+}
+
+.mirrorTeams {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 14px 18px;
+  border-bottom: 1px solid #dfd8ca;
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.mirrorTeams span {
+  text-align: right;
+}
+
+.mirrorRows {
+  padding: 4px 0;
+}
+
+.mirrorRow {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 150px minmax(120px, 1fr);
+  align-items: center;
+  min-height: 52px;
+  padding: 0 18px;
+  border-bottom: 1px solid #dfd8ca;
+}
+
+.mirrorRow:last-child {
+  border-bottom: 0;
+}
+
+.mirrorValue,
+.mirrorValueRight {
+  position: relative;
+  font-size: 22px;
+  font-weight: 1000;
+}
+
+.mirrorValue {
+  text-align: right;
+  padding-right: 20px;
+}
+
+.mirrorValueRight {
+  text-align: left;
+  padding-left: 20px;
+}
+
+.mirrorValue[data-leader="true"],
+.mirrorValueRight[data-leader="true"] {
+  color: #2a2a2a;
+}
+
+.mirrorValue[data-leader="true"]::after,
+.mirrorValueRight[data-leader="true"]::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 4px;
+  background: #f4c320;
+  transform: translateY(-50%);
+}
+
+.mirrorValue[data-leader="true"]::after {
+  right: 0;
+}
+
+.mirrorValueRight[data-leader="true"]::before {
+  left: 0;
+}
+
+.mirrorMetric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  border-left: 1px solid #dfd8ca;
+  border-right: 1px solid #dfd8ca;
+  color: #6f6b61;
+  text-align: center;
+}
+
+.mirrorMetric small {
+  font-size: 10px;
+  font-weight: 1000;
+  letter-spacing: .08em;
+}
+
+.mirrorMetric strong {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 1000;
+}
+
+.topPerformer {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) 110px;
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  border-bottom: 1px solid #dfd8ca;
+}
+
+.performerAvatar {
+  width: 92px;
+  height: 92px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a2a;
+  color: #f4c320;
+  font-size: 24px;
+  font-weight: 1000;
+  overflow: hidden;
+}
+
+.topPerformerMain {
+  min-width: 0;
+}
+
+.performanceKicker {
+  display: block;
+  color: #f4c320;
+  font-size: 11px;
+  font-weight: 1000;
+}
+
+.topPerformerMain strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 32px;
+  line-height: .95;
+  font-weight: 1000;
+  overflow-wrap: anywhere;
+}
+
+.topPerformerMain em {
+  display: block;
+  margin: 8px 0;
+  color: #6f6b61;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.topPerformerScore {
+  text-align: right;
+}
+
+.topPerformerScore b {
+  display: block;
+  font-size: 48px;
+  line-height: .9;
+  font-weight: 1000;
+}
+
+.topPerformerScore span {
+  color: #6f6b61;
+  font-size: 11px;
+  font-weight: 1000;
+}
+
+.performanceStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #dfd8ca;
+}
+
+.performanceStats span,
+.roleLeaderStats span {
+  display: inline-flex;
+  padding: 4px 6px;
+  border: 1px solid #2a2a2a;
+  font-size: 10px;
+  font-weight: 1000;
+}
+
+.playerLink {
+  margin: 14px 18px 0;
+  min-height: 34px;
+  border-width: 1px;
+}
+
+.roleLeaderList {
+  margin-top: 14px;
+  border-top: 1px solid #dfd8ca;
+}
+
+.roleLeaderLine {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr) 54px 64px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 18px;
+  border-bottom: 1px solid #dfd8ca;
+}
+
+.roleLeaderLine strong {
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 1000;
+  overflow-wrap: anywhere;
+}
+
+.roleLeaderLine em {
+  color: #6f6b61;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.roleLeaderLine b {
+  font-size: 18px;
+  font-weight: 1000;
+  text-align: right;
+}
+
+.roleLeaderStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.performanceNote,
+.note {
+  margin: 0;
+  padding: 14px 18px;
+  color: #6f6b61;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.analysisFacts {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-top: 1px solid #2a2a2a;
+}
+
+.analysisFact {
+  min-width: 0;
+  padding: 14px 18px;
+  border-right: 1px solid #dfd8ca;
+}
+
+.analysisFact:last-child {
+  border-right: 0;
+}
+
+.analysisFact span {
+  display: block;
+  color: #f4c320;
+  font-size: 10px;
+  font-weight: 1000;
+  letter-spacing: .08em;
+}
+
+.analysisFact strong {
+  display: block;
+  margin-top: 5px;
+  color: #6f6b61;
+  font-size: 11px;
+  font-weight: 1000;
+  overflow-wrap: anywhere;
+}
+
+.analysisFact b {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 1000;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+
+.analysisFact em {
+  display: block;
+  margin-top: 7px;
+  color: #6f6b61;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 1000;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.analysisFact[data-tone="peak"] b {
+  display: inline;
+  font-size: 18px;
+}
+
+.analysisFact[data-tone="peak"] em {
+  display: inline;
+  margin-top: 0;
+  margin-left: 8px;
+  color: #2a2a2a;
+}
+
+.mapControls {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mapsStack {
+  display: grid;
+  gap: 14px;
+}
+
+.mapRecord {
+  border: 2px solid #2a2a2a;
+  background: #ffffff;
+  scroll-margin-top: 230px;
+}
+
+.accordionButton {
+  width: 100%;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: #ffffff;
+  color: #2a2a2a;
+  text-align: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.mapRecordHeader {
+  display: grid;
+  grid-template-columns: 150px minmax(180px, 1.05fr) minmax(240px, 1fr) 110px 110px 44px;
+  min-height: 86px;
+}
+
+.mapRecordId,
+.mapRecordName,
+.mapRecordScore,
+.mapRecordMeta,
+.mapRecordToggle {
+  min-width: 0;
+  padding: 14px 16px;
+  border-right: 1px solid #dfd8ca;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mapRecordId {
+  background: #2a2a2a;
+  color: #f4c320;
+}
+
+.mapRecordId span,
+.mapRecordMeta span {
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: .06em;
+}
+
+.mapRecordId strong,
+.mapRecordMeta strong {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 1000;
+}
+
+.mapRecordName strong {
+  font-size: 26px;
+  line-height: 1;
+  font-weight: 1000;
+  overflow-wrap: anywhere;
+}
+
+.mapRecordScore {
+  align-items: center;
+  flex-direction: row;
+  gap: 14px;
+  text-align: center;
+}
+
+.mapRecordScore span {
+  min-width: 44px;
+  font-size: 16px;
+  font-weight: 1000;
+}
+
+.mapRecordScore strong {
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 1000;
+  white-space: nowrap;
+}
+
+.mapRecordMeta span {
+  color: #6f6b61;
+}
+
+.mapRecordToggle {
+  align-items: center;
+  justify-content: center;
+  border-right: 0;
+  font-size: 26px;
+  font-weight: 1000;
+}
+
+.mapRecordBody {
+  border-top: 2px solid #2a2a2a;
+}
+
+.mapMetaStrip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(120px, 1fr)) minmax(240px, 1.3fr);
+  border-bottom: 2px solid #2a2a2a;
+}
+
+.mapMetaItem {
+  min-width: 0;
+  padding: 14px 16px;
+  border-right: 1px solid #dfd8ca;
+}
+
+.mapMetaItem:last-child {
+  border-right: 0;
+}
+
+.mapMetaItem span {
+  display: block;
+  color: #6f6b61;
+  font-size: 10px;
+  font-weight: 1000;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.mapMetaItem strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 15px;
+  font-weight: 1000;
+  overflow-wrap: anywhere;
+}
+
+.codeBlock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.codeValue {
+  font-size: 18px;
+  font-weight: 1000;
+}
+
+.codeButton {
+  min-height: 34px;
+  padding: 0 12px;
+  border-width: 1px;
+  background: #ffffff;
+}
+
+.toast {
+  margin-top: 8px;
+  color: #2a2a2a;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.dualStatsScroller {
+  overflow-x: auto;
+}
+
+.dualStatsGrid {
+  min-width: 1240px;
+  display: grid;
+  grid-template-columns: minmax(620px, 1fr) minmax(620px, 1fr);
+}
+
+.teamStatsPanel {
+  min-width: 0;
+  border-right: 2px solid #2a2a2a;
+}
+
+.teamStatsPanel:last-child {
+  border-right: 0;
+}
+
+.teamStatsHead {
+  min-height: 66px;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 44px minmax(160px, auto);
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #dfd8ca;
+}
+
+.teamStatsLogo {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a2a;
+  color: #f4c320;
+  overflow: hidden;
+}
+
+.teamStatsHead strong {
+  display: block;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.teamStatsHead span {
+  display: block;
+  margin-top: 4px;
+  color: #6f6b61;
+  font-size: 11px;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.teamStatsHead b {
+  font-size: 26px;
+  line-height: 1;
+  font-weight: 1000;
+  text-align: center;
+}
+
+.teamStatsHead em {
+  color: #6f6b61;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 1000;
+  text-align: right;
+}
+
+.statsTable {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.playerMetaCol {
+  width: 43%;
+}
+
+.compactStatCol {
+  width: 6.5%;
+}
+
+.wideStatCol {
+  width: 12.5%;
+}
+
+.statsTable th,
+.statsTable td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #dfd8ca;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.statsTable th {
+  background: #2a2a2a;
+  color: #ffffff;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 1000;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.statsTable th:first-child,
+.statsTable td:first-child {
+  text-align: left;
+}
+
+.statsTable th:nth-child(2),
+.statsTable td:nth-child(2),
+.statsTable th:nth-child(5),
+.statsTable td:nth-child(5) {
+  border-left: 1px solid #cfc7b8;
+}
+
+.statsTable th:nth-child(2),
+.statsTable th:nth-child(5) {
+  box-shadow: inset 1px 0 0 #625d53;
+}
+
+.statsTable td {
+  text-align: center;
+  font-weight: 900;
+}
+
+.playerMetaHead {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 92px;
+  align-items: center;
+  gap: 10px;
+}
+
+.playerMetaHead span:first-child,
+.playerMetaHead span:nth-child(3) {
+  text-align: center;
+}
+
+.playerMetaHead span:nth-child(2) {
+  text-align: left;
+}
+
+.playerMetaCell {
+  min-width: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 92px;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+}
+
+.playerIdentity {
+  min-width: 0;
+  flex: 0 1 auto;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.heroAvatar {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #2a2a2a;
+  color: #f4c320;
+  font-size: 12px;
+  font-weight: 1000;
+}
+
+.heroAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.playerName {
+  display: block;
+  font-size: 13px;
+  line-height: 1.1;
+  font-weight: 1000;
+  overflow-wrap: anywhere;
+}
+
+.playerSub {
+  display: block;
+  margin-top: 3px;
+  color: #6f6b61;
+  font-size: 10px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.ratingCluster {
+  display: grid;
+  grid-template-columns: 34px 38px;
+  align-items: center;
+  justify-content: end;
+  column-gap: 4px;
+  color: #2a2a2a;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.mvpSlot {
+  width: 34px;
+  display: inline-flex;
+  justify-content: flex-end;
+}
+
+.ratingValue {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 20px;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.ratingCluster[data-elite="true"] .ratingValue::after,
+.ratingCluster[data-featured="true"] .ratingValue::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 3px;
+  background: #f4c320;
+}
+
+.ratingCluster[data-empty="true"] .ratingValue {
+  color: #b8b0a2;
+}
+
+.roleSlot {
+  display: inline-flex;
+  justify-content: center;
+}
+
+.ratingCell {
+  display: inline-flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.mvpBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 18px;
+  padding: 0 5px;
+  background: #f4c320;
+  color: #2a2a2a;
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.roleLabel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 42px;
+  min-height: 22px;
+  padding: 0;
+  border: 1px solid currentColor;
+  background: #ffffff;
+  font-size: 10px;
+  font-weight: 1000;
+}
+
+.emptyText {
+  padding: 18px;
+  color: #6f6b61;
+  font-weight: 900;
+}
+
+.statePanel {
+  padding: 24px;
+  border: 2px solid #2a2a2a;
+  background: #ffffff;
+}
+
+.stateTitle {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 1000;
+}
+
+.stateBody {
+  margin: 10px 0 0;
+  color: #6f6b61;
+  font-weight: 800;
+}
+
+.rosterGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.rosterList {
+  border: 2px solid #2a2a2a;
+  background: #ffffff;
+}
+
+.rosterHead {
+  padding: 12px 14px;
+  background: #2a2a2a;
+  color: #ffffff;
+  font-weight: 1000;
+}
+
+.rosterPlayer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #dfd8ca;
+  font-weight: 900;
+}
+
+.rosterPlayer:last-child {
+  border-bottom: 0;
+}
+
+.footerNav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 36px;
+  border: 2px solid #2a2a2a;
+  background: #ffffff;
+}
+
+.footerNavLink {
+  min-width: 0;
+  min-height: 66px;
+  padding: 12px 16px;
+  border: 0;
+  border-right: 1px solid #2a2a2a;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #ffffff;
+}
+
+.footerNavLink:last-child {
+  border-right: 0;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.footerNavLink[data-primary="true"] {
+  align-items: center;
+  text-align: center;
+  background: #f4c320;
+}
+
+.footerNavLink span {
+  color: #6f6b61;
+  font-size: 11px;
+  font-weight: 1000;
+}
+
+.footerNavLink strong {
+  margin-top: 7px;
+  color: #2a2a2a;
+  font-size: 14px;
+  font-weight: 1000;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1500px) {
+  .posterBody {
+    grid-template-columns: minmax(0, 1fr) 330px minmax(0, 1fr);
+  }
+
+  .posterTeam {
+    padding: 38px 32px;
+  }
+
+  .posterLogo {
+    width: 76px;
+    height: 76px;
+  }
+
+  .analysisGrid {
+    grid-template-columns: minmax(0, 7fr) minmax(340px, 5fr);
+  }
+
+  .mapMetaStrip {
+    grid-template-columns: repeat(4, minmax(130px, 1fr)) minmax(240px, 1.2fr);
+  }
+}
+
+@media (max-width: 1180px) {
+  .shell {
+    padding-top: 36px;
+  }
+
+  .posterBody,
+  .analysisGrid,
+  .footerNav,
+  .rosterGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .posterTeam:last-child,
+  .posterTeam:last-child .posterTeamIdentity {
+    text-align: left;
+    flex-direction: row;
+  }
+
+  .posterScoreAxis {
+    min-height: 220px;
+    border-top: 1px solid #625d53;
+    border-bottom: 1px solid #625d53;
+  }
+
+  .posterInfoBand {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .posterInfoBand em {
+    text-align: left;
+  }
+
+  .seriesRail {
+    top: 118px;
+  }
+
+  .mirrorPanel {
+    border-right: 0;
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  .mapRecordHeader {
+    grid-template-columns: 120px minmax(160px, 1fr) minmax(210px, 1fr) 88px 88px 44px;
+  }
+
+  .mapMetaStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footerNavLink,
+  .footerNavLink:last-child {
+    border-right: 0;
+    border-bottom: 1px solid #2a2a2a;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .footerNavLink:last-child {
+    border-bottom: 0;
+  }
+}
