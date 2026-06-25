@@ -94,7 +94,9 @@ export default function EventContextBar({
 
       <div className={styles.eventMeta}>
         <span>状态：{statusLabel}</span>
-        <span>更新 {updatedAtText || '-'}</span>
+        <span>
+          更新 <span data-i18n-ignore>{updatedAtText || '-'}</span>
+        </span>
         <a href="https://fries-cup.com/" className={styles.homeLink}>
           HOME
         </a>
