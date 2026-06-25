@@ -349,7 +349,11 @@ function getWeekendStartKey(dateKey) {
   const date = dateFromKey(dateKey)
   if (!date) return ''
   const day = date.getUTCDay()
-  if (day === 0) return dateKeyFromDate(addDays(date, -1))
+  if (day === 4) return dateKeyFromDate(addDays(date, 2))
+  if (day === 5) return dateKeyFromDate(addDays(date, 1))
+  if (day === 0) return dateKey
+  if (day === 1) return dateKeyFromDate(addDays(date, -1))
+  if (day === 2) return dateKeyFromDate(addDays(date, -2))
   return dateKey
 }
 
