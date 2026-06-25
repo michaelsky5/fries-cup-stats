@@ -160,12 +160,12 @@ function RatingCluster({ impact, t, isTeamMvp = false }) {
   }
 
   const ratingLabel = t('matchDetail.mapRating', 'Match Rating')
-  const rawLabel = t('matchDetail.rawImpactScore', 'Raw Impact Score')
-  const note = t('matchDetail.ratingMappedFromImpact', 'Rating is mapped from this map player impact scores.')
+  const rawLabel = t('matchDetail.rawImpactScore', 'Base Rating Score')
+  const note = t('matchDetail.ratingMappedFromImpact', 'Rating is generated from player performance metrics on this map.')
   const displayRating = formatMapPlayerMatchRating(impact.matchRating)
   const rawPts = formatRating(impact.rawPts)
   const mvpLabel = t('matchDetail.teamMapMvpShort', 'MVP')
-  const mvpNote = t('matchDetail.teamMapMvpNote', 'Team-high map rating based on this map data; not an official MVP award.')
+  const mvpNote = t('matchDetail.teamMapMvpNote', 'Highest team rating on this map, for performance reference.')
   const title = `${ratingLabel}: ${displayRating}\n${rawLabel}: ${rawPts} PTS\n${note}${isTeamMvp ? `\n${mvpNote}` : ''}`
   const ariaLabel = isTeamMvp
     ? `${mvpLabel}. ${ratingLabel}: ${displayRating}. ${rawLabel}: ${rawPts} PTS. ${mvpNote}`

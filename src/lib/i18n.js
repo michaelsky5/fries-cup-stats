@@ -97,11 +97,15 @@ const dictionary = {
   },
   'layout.state.loading': {
     'zh-CN': '连接数据',
-    'en-US': 'Loading Data'
+    'en-US': 'Loading match data'
   },
   'layout.state.error': {
     'zh-CN': '数据加载异常',
     'en-US': 'Data Error'
+  },
+  'layout.state.errorDesc': {
+    'zh-CN': '赛事数据暂时无法载入，请稍后刷新重试。',
+    'en-US': 'Match data is temporarily unavailable. Please refresh and try again.'
   },
   'summary.teams': {
     'zh-CN': '参赛队伍',
@@ -300,8 +304,12 @@ const dictionary = {
     'en-US': 'Player Stats'
   },
   'matchDetail.dataPerformance': {
-    'zh-CN': '\u6570\u636e\u8868\u73b0\u8bc4\u5206',
-    'en-US': 'Data Performance'
+    'zh-CN': '\u8868\u73b0\u8bc4\u5206',
+    'en-US': 'Performance Rating'
+  },
+  'matchDetail.performanceKicker': {
+    'zh-CN': '\u8868\u73b0\u8bc4\u5206',
+    'en-US': 'Performance Rating'
   },
   'matchDetail.topRatedPlayer': {
     'zh-CN': '\u672c\u573a\u6700\u9ad8\u8bc4\u5206\u9009\u624b',
@@ -320,16 +328,16 @@ const dictionary = {
     'en-US': 'Map Impact'
   },
   'matchDetail.mapImpactStar': {
-    'zh-CN': '\u5355\u56fe\u6570\u636e\u4e4b\u661f',
-    'en-US': 'Map Data Star'
+    'zh-CN': '\u5355\u56fe\u8868\u73b0\u4e4b\u661f',
+    'en-US': 'Map Performance Star'
   },
   'matchDetail.mapImpactNote': {
-    'zh-CN': '\u6570\u636e\u53c2\u8003\uff0c\u975e\u5b98\u65b9 MVP\u3002',
-    'en-US': 'Data reference, not official MVP.'
+    'zh-CN': '\u7edf\u8ba1\u8bc4\u5206\u4ec5\u4f9b\u53c2\u8003\uff0c\u975e\u5b98\u65b9 MVP \u8bc4\u9009\u3002',
+    'en-US': 'Reference rating, not official MVP voting.'
   },
   'matchDetail.ratingNote': {
-    'zh-CN': '\u4ec5\u4f9d\u636e\u6bd4\u8d5b\u7edf\u8ba1\u8ba1\u7b97\uff0c\u4e0d\u4ee3\u8868\u5b98\u65b9 MVP \u8bc4\u9009\u3002',
-    'en-US': 'Calculated from match stats only; this is not an official MVP award.'
+    'zh-CN': '\u8bc4\u5206\u6839\u636e\u516c\u5f00\u6bd4\u8d5b\u7edf\u8ba1\u751f\u6210\uff0c\u4ec5\u4f9b\u53c2\u8003\u3002',
+    'en-US': 'Ratings are generated from match stats for reference.'
   },
   'matchDetail.seriesComparison': {
     'zh-CN': '\u6574\u573a\u961f\u4f0d\u6570\u636e\u5bf9\u6bd4',
@@ -448,20 +456,20 @@ const dictionary = {
     'en-US': 'Match Rating unavailable'
   },
   'matchDetail.rawImpactScore': {
-    'zh-CN': '\u539f\u59cb\u6570\u636e\u5206',
-    'en-US': 'Raw Impact Score'
+    'zh-CN': '\u57fa\u7840\u8bc4\u5206',
+    'en-US': 'Base Rating Score'
   },
   'matchDetail.teamMapMvpShort': {
     'zh-CN': 'MVP',
     'en-US': 'MVP'
   },
   'matchDetail.teamMapMvpNote': {
-    'zh-CN': '\u961f\u5185\u672c\u56fe\u6700\u9ad8\u8bc4\u5206\uff0c\u4ec5\u4f9d\u636e\u672c\u56fe\u6570\u636e\u8ba1\u7b97\uff0c\u4e0d\u4ee3\u8868\u5b98\u65b9 MVP \u8bc4\u9009\u3002',
-    'en-US': 'Team-high map rating based on this map data; not an official MVP award.'
+    'zh-CN': '\u961f\u5185\u672c\u56fe\u6700\u9ad8\u8bc4\u5206\uff0c\u4ec5\u4f9b\u8868\u73b0\u53c2\u8003\u3002',
+    'en-US': 'Highest team rating on this map, for performance reference.'
   },
   'matchDetail.ratingMappedFromImpact': {
-    'zh-CN': '\u8bc4\u5206\u7531\u672c\u5730\u56fe\u53c2\u8d5b\u9009\u624b\u6570\u636e\u5206\u6620\u5c04\u751f\u6210\u3002',
-    'en-US': 'Rating is mapped from this map player impact scores.'
+    'zh-CN': '\u8bc4\u5206\u7531\u672c\u56fe\u9009\u624b\u8868\u73b0\u6307\u6807\u751f\u6210\u3002',
+    'en-US': 'Rating is generated from player performance metrics on this map.'
   },
   'matchDetail.role': {
     'zh-CN': '\u804c\u8d23',
@@ -616,8 +624,8 @@ const dictionary = {
     'en-US': 'Swiss Stage Not Started'
   },
   'advance.swiss.notStartedDesc': {
-    'zh-CN': '比赛开始后，这里将展示完整积分榜、晋级区、突围区、竞争区、危险区、已出局队伍与同分规则。',
-    'en-US': 'Once matches begin, this hub will show the full standings, zones, eliminated teams, and tiebreakers.'
+    'zh-CN': '比赛开始后将展示完整积分榜、晋级区、突围区、竞争区、危险区、已出局队伍与同分规则。',
+    'en-US': 'Once matches begin, the full standings, zones, eliminated teams, and tiebreakers will be shown.'
   },
   'advance.swiss.teams': {
     'zh-CN': '参赛队伍',
@@ -836,8 +844,8 @@ const dictionary = {
     'en-US': 'No Bracket Yet'
   },
   'advance.bracket.emptyDesc': {
-    'zh-CN': '后台尚未提供该阶段对阵数据。',
-    'en-US': 'The backend has not provided bracket data for this phase.'
+    'zh-CN': '该阶段对阵尚未公布。',
+    'en-US': 'The bracket for this phase has not been announced yet.'
   },
   'advance.matchStatus.scheduled': {
     'zh-CN': '未开始',
@@ -975,13 +983,21 @@ const dictionary = {
     'zh-CN': 'PLAYER CARD',
     'en-US': 'PLAYER CARD'
   },
+  'playerShare.card.headerKicker': {
+    'zh-CN': 'FRIES CUP STATS',
+    'en-US': 'FRIES CUP STATS'
+  },
+  'playerShare.card.identityKicker': {
+    'zh-CN': 'PLAYER PROFILE',
+    'en-US': 'PLAYER PROFILE'
+  },
   'playerShare.card.seasonOvr': {
     'zh-CN': '赛季能力值',
     'en-US': 'SEASON OVR'
   },
   'playerShare.card.unrated': {
     'zh-CN': '未定级',
-    'en-US': 'UNRATED'
+    'en-US': 'Not Rated'
   },
   'playerShare.card.performanceFingerprint': {
     'zh-CN': '表现指纹',

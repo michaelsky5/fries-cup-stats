@@ -9,6 +9,7 @@ import {
 } from './matchesSelectors.js'
 import { formatMatchSchedule } from './scheduleFormat.js'
 import { normalizeLeaderboardRole } from './leaderboardSelectors.js'
+import { formatOwHeroName, formatOwMapMode, formatOwMapName } from './heroes.js'
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED'])
 const LIVE_STATUSES = new Set(['IN_PROGRESS', 'LIVE'])
@@ -194,11 +195,11 @@ function getPlayerIdentity(row, player) {
   }
 }
 
-function normalizeStatRow(row, side, map, match, playerDirectory, index) {
+function normalizeStatRow(row, side, map, match, playerDirectory, index, locale = 'zh-CN') {
   const role = normalizeLeaderboardRole(row?.role)
   const player = playerDirectory.get(normalizeKey(row?.player_id)) || playerDirectory.get(normalizeKey(row?.player_name))
   const identity = getPlayerIdentity(row, player)
-  const hero = cleanText(row?.heroes_played)
+  const rawHero = cleanText(row?.heroes_played)
 
   return {
     key: `${map.order}-${side}-${row?.player_id || row?.player_name || index}`,
@@ -211,7 +212,8 @@ function normalizeStatRow(row, side, map, match, playerDirectory, index) {
     rawName: identity.rawName,
     role,
     roleLabel: role === 'SUPPORT' ? 'SUPPORT' : role || '-',
-    hero,
+    hero: formatOwHeroName(rawHero, locale),
+    rawHero,
     eliminations: toFiniteNumber(row?.eliminations),
     assists: toFiniteNumber(row?.assists),
     deaths: toFiniteNumber(row?.deaths),
@@ -267,17 +269,19 @@ function getRosterForTeam(db, team) {
     }))
 }
 
-function normalizeMap(map, match, playerDirectory, index) {
+function normalizeMap(map, match, playerDirectory, index, locale = 'zh-CN') {
   const order = Number(map?.map_order || index + 1)
   const winnerSide = getWinnerSide(map, match)
   const scoreA = isKnownValue(map?.score_a) ? cleanText(map?.score_a) : '-'
   const scoreB = isKnownValue(map?.score_b) ? cleanText(map?.score_b) : '-'
+  const rawName = cleanText(map?.map_name)
+  const rawType = cleanText(map?.map_type)
   const teamAStats = sortPlayerRows(safeArr(map?.team_a_stats)
     .filter(hasStatSignal)
-    .map((row, rowIndex) => normalizeStatRow(row, 'A', { order }, match, playerDirectory, rowIndex)))
+    .map((row, rowIndex) => normalizeStatRow(row, 'A', { order }, match, playerDirectory, rowIndex, locale)))
   const teamBStats = sortPlayerRows(safeArr(map?.team_b_stats)
     .filter(hasStatSignal)
-    .map((row, rowIndex) => normalizeStatRow(row, 'B', { order }, match, playerDirectory, rowIndex)))
+    .map((row, rowIndex) => normalizeStatRow(row, 'B', { order }, match, playerDirectory, rowIndex, locale)))
   const hasResult = hasMapResult(map, match)
   const hasStats = teamAStats.length > 0 || teamBStats.length > 0
   const hasProvidedInfo = isKnownValue(map?.map_name) ||
@@ -296,8 +300,10 @@ function normalizeMap(map, match, playerDirectory, index) {
     key: `map-${order}`,
     order,
     orderLabel: String(order).padStart(2, '0'),
-    name: cleanText(map?.map_name) || `MAP ${String(order).padStart(2, '0')}`,
-    type: cleanText(map?.map_type),
+    name: rawName ? formatOwMapName(rawName, locale) : `MAP ${String(order).padStart(2, '0')}`,
+    rawName,
+    type: rawType ? formatOwMapMode(rawType, locale) : rawType,
+    rawType,
     matchTime: cleanText(map?.match_time),
     durationSeconds: parseDurationSeconds(map?.match_time),
     winnerSide,
@@ -311,9 +317,9 @@ function normalizeMap(map, match, playerDirectory, index) {
     isComplete: hasResult && hasStats,
     lobbyCode: cleanText(map?.lobby_code),
     notes: cleanText(map?.notes),
-    teamABan: cleanText(map?.team_a_ban),
+    teamABan: formatOwHeroName(cleanText(map?.team_a_ban), locale),
     teamABanRole: cleanText(map?.team_a_ban_role),
-    teamBBan: cleanText(map?.team_b_ban),
+    teamBBan: formatOwHeroName(cleanText(map?.team_b_ban), locale),
     teamBBanRole: cleanText(map?.team_b_ban_role),
     teamAStats,
     teamBStats,
@@ -529,7 +535,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
   const teamB = getTeamModel(match?.team_b, 'B')
   const players = safeArr(db?.players)
   const maps = safeArr(match?.maps).map((map, index) => {
-    const normalizedMap = normalizeMap(map, match, playerDirectory, index)
+    const normalizedMap = normalizeMap(map, match, playerDirectory, index, locale)
     if (!state.canShowResults || state.isForfeit || !normalizedMap.hasResult || !normalizedMap.hasStats) {
       return normalizedMap
     }

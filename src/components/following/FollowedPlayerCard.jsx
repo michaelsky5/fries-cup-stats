@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
+import { formatOwHeroNames } from '../../lib/heroes.js'
 import styles from '../../pages/following/FollowingPage.module.css'
 
-export default function FollowedPlayerCard({ overview, withSeason }) {
+export default function FollowedPlayerCard({ overview, withSeason, locale = 'zh-CN' }) {
   if (!overview) return null
 
   const heroes = overview.snapshot?.heroes || []
@@ -24,12 +25,12 @@ export default function FollowedPlayerCard({ overview, withSeason }) {
 
       <div className={styles.playerSnapshot}>
         <span>{coreMetric?.label || '核心指标'}</span>
-        <strong>{coreMetric?.value || '比赛开始后生成'}</strong>
+        <strong>{coreMetric?.value || '比赛开始后更新'}</strong>
       </div>
 
       <div className={styles.playerSnapshot}>
         <span>常用英雄</span>
-        <strong>{heroes.length ? heroes.slice(0, 2).join(' / ') : '暂无'}</strong>
+        <strong>{heroes.length ? formatOwHeroNames(heroes, locale, 2).join(' / ') : '暂无'}</strong>
       </div>
 
       <Link className={styles.inlineLink} to={withSeason(`/players/${encodeURIComponent(overview.playerId)}`)}>查看选手资料 →</Link>

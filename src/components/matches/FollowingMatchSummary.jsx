@@ -40,7 +40,7 @@ export default function FollowingMatchSummary({ hub }) {
 
   if (!primaryTeamId) {
     return (
-      <EmptyFollowing message="设置主关注队伍后，这里会展示你的下一场比赛。" />
+      <EmptyFollowing message="设置主关注队伍后，将优先展示你的下一场比赛。" />
     )
   }
 

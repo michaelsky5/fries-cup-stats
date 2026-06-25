@@ -226,7 +226,7 @@ export default function PlayerShareCard({ model, exportMode = false }) {
 
       <header className={styles.header}>
         <div>
-          <span>FRIES CUP DATA CENTER</span>
+          <span>{t('playerShare.card.headerKicker', 'FRIES CUP STATS')}</span>
           <strong>{model.season.label}</strong>
         </div>
         <div className={styles.roleBadge}>
@@ -243,7 +243,7 @@ export default function PlayerShareCard({ model, exportMode = false }) {
       </section>
 
       <section className={styles.identityText}>
-        <div className={styles.identityKicker}>PLAYER DOSSIER</div>
+        <div className={styles.identityKicker}>{t('playerShare.card.identityKicker', 'PLAYER PROFILE')}</div>
         <h1 className={playerNameClass(model.identity.nickname)}>{model.identity.nickname}</h1>
         {model.identity.battleTag ? <p>{model.identity.battleTag}</p> : null}
         <div className={styles.teamLine}>

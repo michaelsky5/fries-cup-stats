@@ -15,6 +15,7 @@ import {
   getOverviewStatus,
   safeArr
 } from '../../lib/homeSelectors.js'
+import { formatOwHeroName, formatOwMapName } from '../../lib/heroes.js'
 import styles from './HomePage.module.css'
 
 function routeId(entity) {
@@ -228,7 +229,7 @@ function CommandBoard({ overview, featuredMatches }) {
           )) : (
             <div className={styles.emptyMini}>
               <strong>暂无重点比赛</strong>
-              <span>赛程发布后会在这里展示当前轮次的代表性对阵。</span>
+              <span>赛程公布后将展示本轮代表性对阵。</span>
             </div>
           )}
         </div>
@@ -267,7 +268,7 @@ function RoundActivitySection({ round, slots }) {
           </article>
         ))}
       </div>
-      <p className={styles.scheduleHint}>赛程时间以页面最新数据为准。</p>
+      <p className={styles.scheduleHint}>赛程时间以最新公布信息为准。</p>
     </section>
   )
 }
@@ -287,7 +288,7 @@ function FollowingSection({ following }) {
         <div className={styles.followEmpty}>
           <div>
             <strong>我的关注</strong>
-            <span>关注队伍后，这里会优先展示你的下一场比赛和相关赛果。</span>
+            <span>关注队伍后，将优先显示你的下一场比赛和相关赛果。</span>
           </div>
           <div className={styles.followActions}>
             <Link to={withSeason('/following?manage=1')}>选择关注队伍</Link>
@@ -349,7 +350,7 @@ function FollowingSection({ following }) {
               </div>
             </div>
             <Link className={styles.followPrimaryAction} to={withSeason('/following')}>进入我的关注 →</Link>
-            <nav className={styles.followTextLinks} aria-label="关注入口">
+            <nav className={styles.followTextLinks} aria-label="关注管理">
               {match ? <Link to={matchPath}>比赛详情 →</Link> : null}
               {opponent ? <Link to={withSeason(`/teams/${routeId(opponent)}`)}>对手资料 →</Link> : null}
               {team ? <Link to={teamPath}>队伍资料 →</Link> : null}
@@ -383,7 +384,7 @@ function AdvancementResultsSection({ overview, advance, latest }) {
           <article>
             <span>数据状态</span>
             <strong>积分榜将在首轮比赛完成后生成。</strong>
-            <p>赛果将在比赛结束并完成数据录入后更新。</p>
+            <p>赛后完成核对后更新赛果与数据。</p>
           </article>
         </div>
       ) : (
@@ -399,7 +400,7 @@ function AdvancementResultsSection({ overview, advance, latest }) {
                 <div key={zone.key}>
                   <span>{zone.label}</span>
                   <strong>{zone.rows.length}</strong>
-                  <em>{zone.rows.slice(0, 3).map(formatTeamName).join(' / ') || '待生成'}</em>
+                  <em>{zone.rows.slice(0, 3).map(formatTeamName).join(' / ') || '待更新'}</em>
                 </div>
               ))}
             </div>
@@ -416,7 +417,7 @@ function AdvancementResultsSection({ overview, advance, latest }) {
             )) : (
               <div className={styles.emptyMini}>
                 <strong>暂无赛果</strong>
-                <span>赛后集中录入完成后会显示最近完成的比赛。</span>
+                <span>赛果确认后将显示最近完成的比赛。</span>
               </div>
             )}
           </article>
@@ -472,7 +473,7 @@ function OverviewNextMatch({ match, label = '快速进入下一场' }) {
     return (
       <div className={styles.overviewNoMatch}>
         <strong>下一场待定</strong>
-        <span>赛程发布后，这里只保留一场最关键的跳转。</span>
+        <span>赛程公布后将显示最值得关注的下一场比赛。</span>
       </div>
     )
   }
@@ -515,7 +516,7 @@ function OverviewDashboard({ overview, summary, latest }) {
         <div className={styles.overviewTitle}>
           <strong>{overview.eventCode}</strong>
           <h1>{overview.seasonName}</h1>
-          <p>这里保留赛事状态、数据摘要和入口导航；完整赛程、首轮看板与重点比赛统一进入赛程赛果。</p>
+          <p>跟进赛季进度与核心数据。赛程、赛果和关键对局可前往赛程赛果查看。</p>
         </div>
         <div className={styles.overviewActions}>
           <Link to={withSeason('/matches')}>进入赛程赛果</Link>
@@ -547,21 +548,21 @@ function getPlayerLabel(player) {
 }
 
 function DataPulseSection({ dataPulse }) {
-  const { withSeason = path => path } = useOutletContext()
+  const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
   const cards = [
     {
       key: 'ranking',
       label: 'PLAYER RANKING',
       title: '选手排行',
       value: dataPulse.topDamage ? getPlayerLabel(dataPulse.topDamage) : '等待数据',
-      meta: dataPulse.topDamage ? `伤害 ${Number(dataPulse.topDamage.avg_dmg || 0).toFixed(0)} /10` : '比赛数据生成后更新',
+      meta: dataPulse.topDamage ? `伤害 ${Number(dataPulse.topDamage.avg_dmg || 0).toFixed(0)} /10` : '比赛后更新',
       to: '/leaderboard'
     },
     {
       key: 'heroes',
       label: 'HERO META',
       title: '英雄数据',
-      value: dataPulse.topHero?.name || '等待数据',
+      value: dataPulse.topHero?.name ? formatOwHeroName(dataPulse.topHero.name, locale) : '等待数据',
       meta: dataPulse.topHero ? `${dataPulse.topHero.count} 次记录` : '英雄出场统计',
       to: '/heroes'
     },
@@ -569,7 +570,7 @@ function DataPulseSection({ dataPulse }) {
       key: 'maps',
       label: 'MAP META',
       title: '地图数据',
-      value: dataPulse.topMap?.name || '等待数据',
+      value: dataPulse.topMap?.name ? formatOwMapName(dataPulse.topMap.name, locale) : '等待数据',
       meta: dataPulse.topMap ? `${dataPulse.topMap.count} 次登场` : '地图登场统计',
       to: '/maps'
     }
@@ -577,13 +578,13 @@ function DataPulseSection({ dataPulse }) {
 
   return (
     <section className={styles.sectionBlock}>
-      <SectionHead eyebrow="DATABASE / PLAY" title="数据资料与玩法入口" />
+      <SectionHead eyebrow="STATS / PLAY" title="数据排行与电竞经理" />
       <div className={styles.dataPlayLayout}>
         <div className={styles.dataPulseGroup}>
           <div className={styles.dataGroupHead}>
-            <span>DATABASE</span>
-            <strong>数据资料</strong>
-            <em>比赛录入后沉淀为选手、英雄和地图数据。</em>
+            <span>STATS</span>
+            <strong>数据排行</strong>
+            <em>比赛结束后更新选手、英雄和地图数据。</em>
           </div>
           <div className={styles.dataPulseGrid}>
             {cards.map(card => (
@@ -599,8 +600,8 @@ function DataPulseSection({ dataPulse }) {
         <Link to={withSeason('/fantasy')} className={styles.playEntryCard}>
           <span>FANTASY MANAGER</span>
           <strong>电竞经理</strong>
-          <b>独立玩法入口</b>
-          <em>阵容经营 / 对战玩法，暂时保留在赛事总览中。</em>
+          <b>电竞经理玩法</b>
+          <em>阵容经营与对战挑战。</em>
         </Link>
       </div>
     </section>
@@ -608,20 +609,23 @@ function DataPulseSection({ dataPulse }) {
 }
 
 function OverviewGatewaySection({ overview, summary, latest }) {
-  const { withSeason = path => path } = useOutletContext()
+  const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const isEn = locale === 'en-US'
   const hasData = summary.maps > 0 || latest.completed > 0
-  const advanceStatus = latest.completed > 0 ? '更新中' : '首轮后生成'
+  const advanceStatus = latest.completed > 0
+    ? (isEn ? 'Updating' : '更新中')
+    : (isEn ? 'After round one' : '首轮后生成')
   const gateways = [
-    { key: 'matches', label: 'MATCHES', title: '赛程赛果', status: overview.statusText, text: '首轮看板、重点比赛、完整赛程与赛果。', to: '/matches', primary: true },
+    { key: 'matches', label: 'MATCHES', title: '赛程赛果', status: overview.statusText, text: '本轮赛程、重点对局与完整赛果。', to: '/matches', primary: true },
     { key: 'roster', label: 'ROSTER', title: '参赛阵容', status: `${summary.teams} 队 / ${summary.players} 人`, text: '参赛战队、选手与赛事职员目录。', to: '/teams' },
     { key: 'advance', label: 'ADVANCE', title: '晋级形势', status: advanceStatus, text: '瑞士轮排名、晋级区和后续阶段。', to: '/advance' },
-    { key: 'database', label: 'DATABASE', title: '数据资料', status: hasData ? `${summary.maps} 图已记录` : '比赛后更新', text: '选手排行、英雄数据和地图数据。', to: '/leaderboard' },
-    { key: 'fantasy', label: 'MANAGER', title: '电竞经理', status: '独立玩法', text: '暂作为独立玩法入口保留在总览中。', to: '/fantasy' }
+    { key: 'database', label: 'STATS', title: '数据排行', status: hasData ? `${summary.maps} 图已记录` : '比赛后更新', text: '选手排行、英雄数据和地图数据。', to: '/leaderboard' },
+    { key: 'fantasy', label: 'MANAGER', title: '电竞经理', status: '独立玩法', text: '阵容经营与对战挑战。', to: '/fantasy' }
   ]
 
   return (
     <section className={styles.sectionBlock}>
-      <SectionHead eyebrow="MODULE GATEWAY" title="模块入口" />
+      <SectionHead eyebrow="EVENT LINKS" title="赛事导航" />
       <div className={styles.gatewayGrid}>
         {gateways.map(item => (
           <Link
@@ -765,7 +769,7 @@ function ArchiveReview({ includeReview }) {
       <div className={styles.archiveReviewLead}>
         <span className={styles.eyebrow}>SEASON REVIEW</span>
         <h2>赛季回顾</h2>
-        <p>这是完结赛季最重要的叙事入口：冠军路径、经典对局、选手表现会在这里汇总成可回看的赛季故事。</p>
+        <p>回顾冠军路径、经典对局与选手表现，重温完整赛季故事。</p>
         <div className={styles.archiveReviewLinks}>
           {includeReview ? <Link to={withSeason('/review')}>进入回顾中心</Link> : null}
           <Link to={withSeason('/advance')}>晋级路线</Link>
@@ -847,8 +851,8 @@ function ArchiveResources({ includeReview }) {
       : { key: 'matches', label: 'MATCHES', title: '比赛档案', text: '完整比分、地图和比赛记录。', to: '/matches', primary: true },
     { key: 'matches', label: 'MATCHES', title: '赛程赛果', text: '完整比分、地图和比赛记录。', to: '/matches' },
     { key: 'advance', label: 'ADVANCE', title: '最终排名', text: '晋级路径与最终名次。', to: '/advance' },
-    { key: 'database', label: 'DATABASE', title: '数据排行', text: '选手、队伍和英雄数据。', to: '/leaderboard' },
-    { key: 'manager', label: 'MANAGER', title: '电竞经理', text: '独立玩法入口，完结赛季依然保留。', to: '/fantasy' }
+    { key: 'database', label: 'STATS', title: '数据排行', text: '选手、队伍和英雄数据。', to: '/leaderboard' },
+    { key: 'manager', label: 'MANAGER', title: '电竞经理', text: '阵容经营与对战挑战。', to: '/fantasy' }
   ]
 
   return <ResourcesSection resources={resources} />

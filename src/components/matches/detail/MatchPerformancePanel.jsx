@@ -7,6 +7,7 @@ import {
   getRoleColor,
   getRoleEnLabel
 } from '../../../lib/leaderboardSelectors.js'
+import { formatOwHeroName } from '../../../lib/heroes.js'
 import RoleLeaderRow from './RoleLeaderRow.jsx'
 import styles from './MatchDetail.module.css'
 
@@ -33,7 +34,7 @@ function PerformerAvatar({ entry }) {
   )
 }
 
-export default function MatchPerformancePanel({ dossier, withSeason, t }) {
+export default function MatchPerformancePanel({ dossier, withSeason, locale = 'zh-CN', t }) {
   const top = dossier.topRatedPlayer
   const roleLeaders = dossier.roleLeaders || {}
 
@@ -41,7 +42,7 @@ export default function MatchPerformancePanel({ dossier, withSeason, t }) {
     return (
       <section className={styles.performancePanel}>
         <header className={styles.analysisSubhead}>
-          <span>DATA PERFORMANCE</span>
+          <span>{t('matchDetail.performanceKicker', 'Performance Rating')}</span>
           <strong>{t('matchDetail.dataPerformance', 'Data Performance')}</strong>
         </header>
         <div className={styles.emptyText}>{t('matchDetail.noRating', 'Current stats are not sufficient for reliable data ratings.')}</div>
@@ -56,7 +57,7 @@ export default function MatchPerformancePanel({ dossier, withSeason, t }) {
   return (
     <section className={styles.performancePanel} aria-labelledby="match-performance-title">
       <header className={styles.analysisSubhead}>
-        <span>DATA PERFORMANCE</span>
+        <span>{t('matchDetail.performanceKicker', 'Performance Rating')}</span>
         <strong id="match-performance-title">{t('matchDetail.dataPerformance', 'Data Performance')}</strong>
       </header>
 
@@ -78,7 +79,7 @@ export default function MatchPerformancePanel({ dossier, withSeason, t }) {
         {coreStats.map(stat => (
           <span key={stat.metricId}>{stat.label} {formatInt(stat.value, '-')}</span>
         ))}
-        {top.most_played_hero ? <span>{top.most_played_hero}</span> : null}
+        {top.most_played_hero ? <span>{formatOwHeroName(top.most_played_hero, locale)}</span> : null}
       </div>
 
       {playerPath ? (
@@ -92,7 +93,7 @@ export default function MatchPerformancePanel({ dossier, withSeason, t }) {
       </div>
 
       <p className={styles.performanceNote}>
-        {t('matchDetail.ratingNote', 'Calculated from match stats only; this is not an official MVP award.')}
+        {t('matchDetail.ratingNote', 'Ratings are generated from match stats for reference.')}
       </p>
     </section>
   )

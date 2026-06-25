@@ -1,4 +1,5 @@
 import { getHeroAvatarSrc, normalizeLeaderboardRole } from '../../lib/leaderboardSelectors.js'
+import { formatOwHeroName } from '../../lib/heroes.js'
 import { getPlayerDossier, getPlayerRoleAnalysis } from '../../lib/playerDetailSelectors.js'
 import { getShareHeroArtwork } from './heroShareArtworkResolver.js'
 import { mapPercentileToOvr } from './playerShareOvr.js'
@@ -45,7 +46,7 @@ function compact(values) {
 }
 
 function percentLabel(percentile, locale) {
-  if (!Number.isFinite(Number(percentile))) return isZh(locale) ? '样本不足' : 'UNRATED'
+  if (!Number.isFinite(Number(percentile))) return isZh(locale) ? '样本不足' : 'Not Rated'
   const top = Math.max(1, 100 - Math.round(Number(percentile)))
   return isZh(locale) ? `前 ${top}%` : `TOP ${top}%`
 }
@@ -132,11 +133,12 @@ function buildHighlights({ attributes, heroPool, summary, locale }) {
   }
 
   const mainHero = heroPool[0]?.hero || summary.primaryHero || ''
+  const mainHeroLabel = formatOwHeroName(mainHero, locale)
   return {
     primary: {
       type: 'fallback',
       title: mainHero
-        ? (isZh(locale) ? `主力英雄 ${mainHero}` : `${mainHero} MAIN`)
+        ? (isZh(locale) ? `主力英雄 ${mainHeroLabel}` : `${mainHeroLabel} MAIN`)
         : (isZh(locale) ? '赛季职责档案' : 'ROLE DOSSIER'),
       detail: isZh(locale)
         ? `${summary.maps} 张地图 · ${summary.timeLabel}`
@@ -166,6 +168,7 @@ export function getPlayerShareCardModel({
   const summary = analysis.summary
   const identity = dossier.identity
   const hero = analysis.heroPool[0]?.hero || summary.primaryHero || ''
+  const heroLabel = formatOwHeroName(hero, locale)
   const eligible = Boolean(summary.eligible && Number.isFinite(Number(summary.scorePercentile)))
   const attributes = buildAttributes(analysis.radarData, summary.role, eligible, locale)
   const roleColor = ROLE_COLORS[summary.role] || '#f4c320'
@@ -180,7 +183,7 @@ export function getPlayerShareCardModel({
     locale,
     season: {
       code: seasonCode,
-      label: `${seasonCode} · PLAYER DOSSIER`
+      label: `${seasonCode} · ${isZh(locale) ? '选手卡' : 'Player Card'}`
     },
     identity: {
       nickname: identity.displayName,
@@ -194,7 +197,8 @@ export function getPlayerShareCardModel({
     },
     visuals: {
       roleColor,
-      hero,
+      hero: heroLabel,
+      rawHero: hero,
       heroArtwork: heroArtwork.src || resolveHeroArtwork(hero, summary.role),
       heroArtworkMeta: heroArtwork,
       heroPortrait: resolveHeroArtwork(hero, summary.role)
@@ -210,7 +214,7 @@ export function getPlayerShareCardModel({
       roleRank: eligible ? summary.rank : null,
       eligibleCount: summary.qualifiedSize,
       rankLabel: eligible ? summary.rankLabel : '—',
-      percentileLabel: eligible ? percentLabel(summary.scorePercentile, locale) : (isZh(locale) ? '未定级' : 'UNRATED'),
+      percentileLabel: eligible ? percentLabel(summary.scorePercentile, locale) : (isZh(locale) ? '未定级' : 'Not Rated'),
       ovr: eligible ? mapPercentileToOvr(summary.scorePercentile) : null
     },
     attributes,
@@ -223,7 +227,7 @@ export function getPlayerShareCardModel({
     footer: {
       mapsPlayed: summary.maps,
       timePlayed: summary.timeLabel,
-      mainHero: hero || '—',
+      mainHero: hero ? heroLabel : '—',
       team: identity.teamShort,
       updatedAt: updatedAtText || '—',
       disclaimer: isZh(locale)

@@ -81,7 +81,7 @@ export default function MatchHubBoard({ summary, featuredMatches = [] }) {
           <strong>赛程赛果</strong>
         </div>
         <p className={styles.roundMark}>{roundLabel} BOARD</p>
-        <h1>首轮看板</h1>
+        <h1>本轮赛程</h1>
         <p>
           本轮从 {firstLabel} 开始，
           {total} 场比赛分为 {slotCount} 个开赛时段进行。
@@ -112,7 +112,7 @@ export default function MatchHubBoard({ summary, featuredMatches = [] }) {
           )) : (
             <div className={styles.boardFeaturedEmpty}>
               <strong>暂无重点比赛</strong>
-              <span>赛程发布后，这里会优先展示当前轮次的代表性对阵。</span>
+              <span>赛程公布后将展示本轮代表性对阵。</span>
             </div>
           )}
         </div>

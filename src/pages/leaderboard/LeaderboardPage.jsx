@@ -130,7 +130,7 @@ export default function LeaderboardPage() {
   const entries = useMemo(() => getLeaderboardEntries(db, season), [db, season])
   const summary = useMemo(() => getLeaderboardSummary(entries, minTimeMins, db), [entries, minTimeMins, db])
   const highlights = useMemo(() => getLeaderboardHighlights(entries), [entries])
-  const options = useMemo(() => getLeaderboardOptions(entries, db), [entries, db])
+  const options = useMemo(() => getLeaderboardOptions(entries, db, locale), [entries, db, locale])
 
   const filteredRows = useMemo(() => (
     filterLeaderboardEntries(entries, filters, isFavoritePlayer)
@@ -291,6 +291,7 @@ export default function LeaderboardPage() {
       pageSize: parsedPageSize === LEADERBOARD_PAGE_SIZE ? null : parsedPageSize
     }, { resetPage: false })
   }
+  const isEn = locale === 'en-US'
 
   return (
     <div className={`${styles.shell} ${selectedCompareEntries.length ? styles.hasCompareBar : ''}`}>
@@ -307,29 +308,29 @@ export default function LeaderboardPage() {
       {!hasStatEntries ? (
         <section className={styles.dataPendingPanel}>
           <div className={styles.dataPendingMain}>
-            <span className={styles.panelKicker}>DATA STATUS</span>
-            <h2>赛事统计尚未生成</h2>
+            <span className={styles.panelKicker}>{isEn ? 'Stats Pending' : '统计待更新'}</span>
+            <h2>{isEn ? 'Match stats are not ready yet' : '赛事统计尚未生成'}</h2>
             <p>
-              当前赛季已载入 {summary.totalPlayers} 名选手，但数据包里还没有可用于 player × role
-              排行的职责出场时间、地图数或正数统计。等比赛统计发布后，这里会自动生成数据 MVP、
-              职责领跑者、完整排行榜和同职责比较。
+              {isEn
+                ? `The current season has ${summary.totalPlayers} registered players, but published match stats are not sufficient for player-role rankings yet. Once match records are available, highlights, role leaders, full rankings, and role comparisons will be available.`
+                : `当前赛季已收录 ${summary.totalPlayers} 名选手，但公开比赛统计还不足以支撑选手职责排行。等比赛统计发布后，将展示榜首表现、职责领跑者、完整排行榜和同职责比较。`}
             </p>
           </div>
           <div className={styles.dataPendingGrid}>
             <div>
-              <span>合格排行条目</span>
+              <span>{isEn ? 'Eligible Entries' : '合格排行条目'}</span>
               <strong>{summary.qualifiedEntries}</strong>
             </div>
             <div>
-              <span>可排行统计条目</span>
+              <span>{isEn ? 'Rankable Entries' : '可排行统计条目'}</span>
               <strong>{summary.totalEntries}</strong>
             </div>
             <div>
-              <span>全部选手</span>
+              <span>{isEn ? 'Players' : '全部选手'}</span>
               <strong>{summary.totalPlayers}</strong>
             </div>
             <div>
-              <span>正式排名门槛</span>
+              <span>{isEn ? 'Minimum Time' : '正式排名门槛'}</span>
               <strong>{summary.minTimeMins}m</strong>
             </div>
           </div>
@@ -337,7 +338,7 @@ export default function LeaderboardPage() {
       ) : (
         <>
           <section className={styles.highlightGrid} aria-label="榜首选手">
-            <DataMvpPanel entry={highlights.dataMvp} withSeason={withSeason} />
+            <DataMvpPanel entry={highlights.dataMvp} withSeason={withSeason} locale={locale} />
             <div className={styles.roleLeaderGrid}>
               {ROLE_ORDER.map((role, index) => (
                 <RoleLeaderCard
@@ -366,6 +367,7 @@ export default function LeaderboardPage() {
               onFilterChange={handleFilterChange}
               onReset={handleReset}
               onColumnsChange={handleColumnsChange}
+              locale={locale}
             />
           </section>
 

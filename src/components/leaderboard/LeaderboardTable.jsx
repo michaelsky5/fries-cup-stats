@@ -5,6 +5,8 @@ import {
   LEADERBOARD_TABS,
   METRIC_MODES,
   getEntryMetricValue,
+  getHeroDisplayList,
+  getHeroDisplayName,
   getRoleEnLabel,
   getRoleLabel
 } from '../../lib/leaderboardSelectors.js'
@@ -312,11 +314,11 @@ function MobileRankingItem({
           </div>
           <div>
             <span>常用英雄</span>
-            <strong>{entry.most_played_hero || '-'}</strong>
+            <strong>{entry.most_played_hero ? getHeroDisplayName(entry.most_played_hero, locale) : '-'}</strong>
           </div>
           <div>
             <span>英雄池</span>
-            <strong>{entry.top_3_heroes?.length ? entry.top_3_heroes.join(' / ') : '-'}</strong>
+            <strong>{entry.top_3_heroes?.length ? getHeroDisplayList(entry.top_3_heroes, locale).join(' / ') : '-'}</strong>
           </div>
           <div>
             <span>排名状态</span>
@@ -429,7 +431,7 @@ export default function LeaderboardTable({
       />
 
       {!rows.length ? (
-        <LeaderboardEmptyState />
+        <LeaderboardEmptyState locale={locale} />
       ) : (
         <>
           <div className={styles.tableScroller} tabIndex={0} aria-label="排行榜横向滚动区域">

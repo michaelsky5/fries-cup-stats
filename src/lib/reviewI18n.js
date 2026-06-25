@@ -1,3 +1,5 @@
+import { formatOwHeroName, formatOwMapMode, formatOwMapName } from './heroes.js'
+
 function normalizeKey(value) {
   return String(value ?? '')
     .normalize('NFD')
@@ -210,18 +212,24 @@ const STAGE_LOOKUP = buildLookup(STAGE_CN)
 export function heroCn(name) {
   const raw = String(name ?? '').trim()
   if (!raw) return '未知英雄'
+  const catalogName = formatOwHeroName(raw, 'zh-CN')
+  if (catalogName !== raw) return catalogName
   return HERO_LOOKUP[raw] || HERO_LOOKUP[normalizeKey(raw)] || raw
 }
 
 export function mapCn(name) {
   const raw = String(name ?? '').trim()
   if (!raw) return '未知地图'
+  const catalogName = formatOwMapName(raw, 'zh-CN')
+  if (catalogName !== raw) return catalogName
   return MAP_LOOKUP[raw] || MAP_LOOKUP[normalizeKey(raw)] || raw
 }
 
 export function mapTypeCn(type) {
   const raw = String(type ?? '').trim()
   if (!raw) return '未知模式'
+  const catalogName = formatOwMapMode(raw, 'zh-CN')
+  if (catalogName !== raw) return catalogName
   return MAP_TYPE_LOOKUP[raw] || MAP_TYPE_LOOKUP[normalizeKey(raw)] || raw
 }
 

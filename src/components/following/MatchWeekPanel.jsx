@@ -92,7 +92,7 @@ export default function MatchWeekPanel({ week, seasonId, withSeason, onManage })
                 <p>{mainMatch?.compactTime || mainMatch?.timeLabel || '时间待定'}</p>
               </div>
 
-              <p className={styles.weekNoticeHint}>赛程按后台最新开赛时间自动分组。</p>
+              <p className={styles.weekNoticeHint}>赛程已按开赛时间分组展示。</p>
             </aside>
           </div>
 

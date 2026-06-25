@@ -1,4 +1,5 @@
 import styles from './TeamShareCard.module.css'
+import { formatOwHeroNames } from '../../lib/heroes.js'
 
 function getCoreName(player) {
   if (!player) return '-'
@@ -25,7 +26,7 @@ export default function TeamShareCard({
 }) {
   if (!team) return null
 
-  const topHeroes = getTopHeroes(heroPool)
+  const topHeroes = formatOwHeroNames(getTopHeroes(heroPool), 'zh-CN')
   // 🌟 修复：增加对 damage 和 support 键名的兼容，防止获取不到数据
   const tankCore = getCoreName(corePlayers?.tank)
   const dpsCore = getCoreName(corePlayers?.dps || corePlayers?.damage)

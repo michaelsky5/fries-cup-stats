@@ -1036,7 +1036,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, onClose }) {
             ) : (
               <div className={styles.posterOutputEmpty}>
                 <b>PNG PREVIEW</b>
-                <span>生成后会在这里显示完整横版纪念票</span>
+                <span>生成后将显示完整横版纪念票</span>
               </div>
             )}
           </div>

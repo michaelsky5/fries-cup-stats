@@ -600,7 +600,7 @@ function getRoleCoreMetric(player, total) {
   if (!total || Number(total.maps_played || 0) <= 0) {
     return {
       label: role === 'SUP' ? '场均治疗' : role === 'TANK' ? '场均承伤' : '场均淘汰',
-      value: '比赛开始后生成数据'
+      value: '比赛开始后更新'
     }
   }
 

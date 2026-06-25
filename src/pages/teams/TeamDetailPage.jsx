@@ -20,6 +20,7 @@ import {
   isUpcomingMatch,
   sortMatchesBySchedule
 } from '../../lib/matchesSelectors.js'
+import { formatOwHeroName } from '../../lib/heroes.js'
 import { getSwissStandings } from '../../lib/selectors.js'
 import styles from './TeamDetailPage.module.css'
 
@@ -198,7 +199,7 @@ function TeamMatchCard({ row, withSeason }) {
   )
 }
 
-function RosterPlayerRow({ player, withSeason }) {
+function RosterPlayerRow({ player, withSeason, locale = 'zh-CN' }) {
   return (
     <Link to={withSeason(`/players/${player.identity.playerId || player.player_id}`)} className={styles.rosterPlayerRow}>
       <PlayerAvatar avatar={player.avatar} name={player.identity.primary} />
@@ -208,7 +209,7 @@ function RosterPlayerRow({ player, withSeason }) {
       </span>
       <span className={styles.rosterPlayerRole}>{player.role}</span>
       <span className={styles.rosterPlayerHero}>
-        {player.hasStats && player.avatar?.heroName ? player.avatar.heroName : '比赛开始后生成数据'}
+        {player.hasStats && player.avatar?.heroName ? formatOwHeroName(player.avatar.heroName, locale) : '比赛开始后更新'}
       </span>
     </Link>
   )
@@ -222,8 +223,10 @@ export default function TeamDetailPage() {
     favorites,
     favoriteLimits,
     isFavoriteTeam,
-    toggleTeamFavorite
+    toggleTeamFavorite,
+    locale = 'zh-CN'
   } = useOutletContext()
+  const isEn = locale === 'en-US'
   const { teamId } = useParams()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -377,7 +380,7 @@ export default function TeamDetailPage() {
               <span><strong>全称</strong>{team.fullName}</span>
               <span><strong>经理</strong>{team.staff.managers.map(formatStaffPerson).join('、') || '-'}</span>
               {team.staff.coaches.length ? <span><strong>教练</strong>{team.staff.coaches.map(formatStaffPerson).join('、')}</span> : null}
-              <span><strong>当前排名</strong>{team.final_rank_text || (standing ? `瑞士轮第 ${standing.rank}` : '待生成')}</span>
+              <span><strong>当前排名</strong>{team.final_rank_text || (standing ? `瑞士轮第 ${standing.rank}` : '待更新')}</span>
               <span><strong>晋级状态</strong>{standing ? `${standing.match_wins || 0}-${standing.match_losses || 0}` : '随赛程生成'}</span>
             </div>
           </section>
@@ -433,7 +436,7 @@ export default function TeamDetailPage() {
                 <div className={styles.roleGroupHead}>{ROLE_LABELS[role] || role} · {rows.length}</div>
                 <div className={styles.rosterRows}>
                   {rows.map(player => (
-                    <RosterPlayerRow key={player.identity?.playerId || player.player_id} player={player} withSeason={withSeason} />
+                    <RosterPlayerRow key={player.identity?.playerId || player.player_id} player={player} withSeason={withSeason} locale={locale} />
                   ))}
                 </div>
               </div>
@@ -476,8 +479,8 @@ export default function TeamDetailPage() {
       {activeTab === 'stats' ? (
         <section className={styles.panel}>
           <div className={styles.panelHead}>
-            <h2>战队数据</h2>
-            <span>RELIABLE DERIVED DATA</span>
+            <h2>{isEn ? 'Team Stats' : '战队数据'}</h2>
+            <span>{isEn ? 'Season performance' : '赛季表现'}</span>
           </div>
           <div className={styles.statsLayout}>
             <div className={styles.statGrid}>
@@ -504,7 +507,7 @@ export default function TeamDetailPage() {
                 <div key={player.identity?.playerId || player.player_id} className={styles.dataRow}>
                   <span>{player.identity?.primary || player.display_name || player.player_name}</span>
                   <strong>{player.maps_played || 0} maps</strong>
-                  <em>{player.avatar?.heroName || 'no hero data'}</em>
+                  <em>{player.avatar?.heroName ? formatOwHeroName(player.avatar.heroName, locale) : 'no hero data'}</em>
                 </div>
               )) : <div className={styles.emptyPanel}>暂无选手数据</div>}
             </div>

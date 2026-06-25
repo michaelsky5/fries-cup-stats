@@ -96,7 +96,7 @@ export default function RoundScheduleSection({ hub }) {
       )}
 
       <p className={styles.scheduleNote}>
-        赛程时间以页面最新数据为准。赛果与选手数据将在赛后完成录入后更新。
+        赛程时间以最新公布信息为准。赛果与选手数据将在赛后核对完成后更新。
       </p>
     </section>
   )

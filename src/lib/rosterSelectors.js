@@ -1,4 +1,5 @@
 import { getHeroAvatarSrc, getPlayerInitials, normalizeLeaderboardRole } from './leaderboardSelectors.js'
+import { formatOwHeroName, getOwNameSearchText } from './heroes.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
@@ -366,7 +367,15 @@ export function filterPlayers(players, filters = {}) {
       player.teamFullName,
       player.role,
       player.avatar?.heroName,
-      ...safeArr(player.heroNames)
+      formatOwHeroName(player.avatar?.heroName, 'zh-CN'),
+      formatOwHeroName(player.avatar?.heroName, 'en-US'),
+      getOwNameSearchText(player.avatar?.heroName, 'hero'),
+      ...safeArr(player.heroNames),
+      ...safeArr(player.heroNames).flatMap(heroName => [
+        formatOwHeroName(heroName, 'zh-CN'),
+        formatOwHeroName(heroName, 'en-US'),
+        getOwNameSearchText(heroName, 'hero')
+      ])
     ])
   })
 }

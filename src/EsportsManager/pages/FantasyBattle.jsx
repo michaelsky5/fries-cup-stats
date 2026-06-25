@@ -221,7 +221,7 @@ export default function FantasyBattle() {
     return sortedRoster.map((player, index) => ({
       ...player,
       slot: ROLE_SLOTS[index] || player.role,
-      hero: player.most_played_hero || 'UNKNOWN HERO',
+      hero: player.most_played_hero || '待确认英雄',
       avatar: getHeroAvatarUrl(player.role, player.most_played_hero),
       scoreValue: seriesStats[player.player_id]?.score || 0
     }))

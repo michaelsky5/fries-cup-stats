@@ -22,6 +22,7 @@ import {
   getPlayerDossier,
   getPlayerRoleAnalysis
 } from '../../lib/playerDetailSelectors.js'
+import { formatOwHeroName, formatOwMapName, formatOwNamesInText } from '../../lib/heroes.js'
 import styles from './PlayerDetailPage.module.css'
 
 function getRoleClass(role) {
@@ -37,9 +38,16 @@ function roleDisplay(role) {
   return normalized === 'SUPPORT' ? 'SUPPORT' : normalized || 'ROLE'
 }
 
-function HeroPortrait({ heroName, role, initials, large = false }) {
+function formatHeroLabel(value, locale) {
+  const text = String(value || '').trim()
+  if (!text || text === '-' || text === '—') return text
+  return text.split(/\s*\/\s*/).map(hero => formatOwHeroName(hero, locale)).join(' / ')
+}
+
+function HeroPortrait({ heroName, role, initials, large = false, locale = 'zh-CN' }) {
   const [failed, setFailed] = useState(false)
   const src = heroName ? getHeroAvatarSrc(heroName, role) : ''
+  const displayName = formatOwHeroName(heroName, locale)
 
   useEffect(() => {
     setFailed(false)
@@ -50,7 +58,7 @@ function HeroPortrait({ heroName, role, initials, large = false }) {
       {src && !failed ? (
         <img
           src={src}
-          alt={heroName}
+          alt={displayName}
           className={styles.portraitImg}
           loading="lazy"
           onError={() => setFailed(true)}
@@ -62,9 +70,10 @@ function HeroPortrait({ heroName, role, initials, large = false }) {
   )
 }
 
-function HeroThumb({ heroName, role }) {
+function HeroThumb({ heroName, role, locale = 'zh-CN' }) {
   const [failed, setFailed] = useState(false)
   const src = heroName ? getHeroAvatarSrc(heroName, role) : ''
+  const displayName = formatOwHeroName(heroName, locale)
 
   useEffect(() => {
     setFailed(false)
@@ -73,7 +82,7 @@ function HeroThumb({ heroName, role }) {
   return (
     <div className={styles.heroThumb}>
       {src && !failed ? (
-        <img src={src} alt={heroName} loading="lazy" onError={() => setFailed(true)} />
+        <img src={src} alt={displayName} loading="lazy" onError={() => setFailed(true)} />
       ) : (
         <span>{String(heroName || 'FC').slice(0, 2).toUpperCase()}</span>
       )}
@@ -180,26 +189,29 @@ function DossierHero({
   onExport,
   onFavorite,
   favoriteLabel,
-  favoriteDisabled
+  favoriteDisabled,
+  locale = 'zh-CN'
 }) {
   const { identity } = dossier
   const summary = analysis.summary
   const topHero = analysis.heroPool[0]?.hero || summary.primaryHero
+  const primaryHeroName = formatOwHeroName(summary.primaryHero, locale)
   const teamPath = identity.teamRouteId ? withSeason(`/teams/${encodeURIComponent(identity.teamRouteId)}`) : ''
+  const isEn = locale === 'en-US'
 
   return (
     <section className={`${styles.hero} ${getRoleClass(summary.role)}`}>
       <div className={styles.identityBlock}>
         <div className={styles.heroKicker}>
-          <span>PLAYER DOSSIER</span>
+          <span>{isEn ? 'Player Profile' : '选手档案'}</span>
           <i aria-hidden="true" />
         </div>
-        <HeroPortrait heroName={topHero} role={summary.role} initials={identity.initials} large />
+        <HeroPortrait heroName={topHero} role={summary.role} initials={identity.initials} large locale={locale} />
         <h1>{identity.displayName}</h1>
         {identity.battleTag ? <p className={styles.battleTag}>{identity.battleTag}</p> : null}
         <div className={styles.identityMeta}>
           <span>{identity.teamShort} · {identity.teamFull}</span>
-          <span>{dossier.isOverview ? '综合资料' : roleDisplay(summary.role)}</span>
+          <span>{dossier.isOverview ? (isEn ? 'Overview' : '综合资料') : roleDisplay(summary.role)}</span>
         </div>
         <div className={styles.heroActions}>
           <button type="button" onClick={onFavorite} disabled={favoriteDisabled}>
@@ -234,7 +246,7 @@ function DossierHero({
           </div>
           <div>
             <span>主力英雄</span>
-            <strong>{summary.primaryHero || '—'}</strong>
+            <strong>{summary.primaryHero ? primaryHeroName : '—'}</strong>
           </div>
           <div>
             <span>数据评分</span>
@@ -293,7 +305,7 @@ function ScoreRadarPanel({ analysis }) {
               </RadarChart>
             </ResponsiveContainer>
           ) : (
-            <div className={styles.inlineEmpty}>比赛开始后生成雷达数据</div>
+            <div className={styles.inlineEmpty}>比赛开始后更新雷达图</div>
           )}
         </div>
       </div>
@@ -301,15 +313,15 @@ function ScoreRadarPanel({ analysis }) {
   )
 }
 
-function Achievements({ achievements }) {
+function Achievements({ achievements, locale = 'zh-CN' }) {
   if (!achievements.length) return null
   return (
     <section className={styles.achievementStrip}>
       <span>SEASON ACHIEVEMENTS</span>
       {achievements.map(item => (
         <div key={`${item.label}-${item.value}`}>
-          <strong>{item.label}</strong>
-          {item.value ? <small>{item.value}</small> : null}
+          <strong>{formatOwNamesInText(item.label, locale)}</strong>
+          {item.value ? <small>{formatOwNamesInText(item.value, locale)}</small> : null}
         </div>
       ))}
     </section>
@@ -352,7 +364,7 @@ function CoreStats({ analysis, metricMode, onModeChange }) {
   )
 }
 
-function RecentMatches({ matches, withSeason, playerId, role }) {
+function RecentMatches({ matches, withSeason, playerId, role, locale = 'zh-CN' }) {
   return (
     <section className={styles.recentSection}>
       <SectionHeading kicker="RECENT MATCHES" title="最近比赛" meta="只统计当前选中职责的比赛记录。" />
@@ -367,7 +379,7 @@ function RecentMatches({ matches, withSeason, playerId, role }) {
               <span>{match.dateLabel}</span>
               <strong>vs {match.opponent.short}</strong>
               <em>{match.scoreLabel}</em>
-              <small>{roleDisplay(role)} · {match.heroLabel}</small>
+              <small>{roleDisplay(role)} · {formatHeroLabel(match.heroLabel, locale)}</small>
               <b>{match.coreMetric.label} {match.coreMetric.value}</b>
               <i aria-hidden="true">→</i>
             </Link>
@@ -380,7 +392,7 @@ function RecentMatches({ matches, withSeason, playerId, role }) {
   )
 }
 
-function HeroPool({ heroes, role }) {
+function HeroPool({ heroes, role, locale = 'zh-CN' }) {
   const primary = heroes[0]
   const rest = heroes.slice(1)
   return (
@@ -389,10 +401,10 @@ function HeroPool({ heroes, role }) {
       {primary ? (
         <div className={styles.heroPoolLayout}>
           <article className={styles.primaryHeroCard}>
-            <HeroThumb heroName={primary.hero} role={role} />
+            <HeroThumb heroName={primary.hero} role={role} locale={locale} />
             <div>
               <span>主力英雄</span>
-              <h3>{primary.hero}</h3>
+              <h3>{formatOwHeroName(primary.hero, locale)}</h3>
               <p>{primary.timeLabel} · {primary.usageLabel} · {primary.maps} 张地图</p>
             </div>
             <strong>{primary.coreMetric.label} {primary.coreMetric.value}</strong>
@@ -400,8 +412,8 @@ function HeroPool({ heroes, role }) {
           <div className={styles.secondaryHeroes}>
             {rest.length ? rest.map(hero => (
               <article key={hero.hero} className={styles.secondaryHeroCard}>
-                <HeroThumb heroName={hero.hero} role={role} />
-                <strong>{hero.hero}</strong>
+                <HeroThumb heroName={hero.hero} role={role} locale={locale} />
+                <strong>{formatOwHeroName(hero.hero, locale)}</strong>
                 <span>{hero.timeLabel}</span>
                 <small>{hero.usageLabel} · {hero.maps} 图</small>
               </article>
@@ -415,7 +427,7 @@ function HeroPool({ heroes, role }) {
   )
 }
 
-function MapPerformance({ rows, mapMetric, onMetricChange, withSeason }) {
+function MapPerformance({ rows, mapMetric, onMetricChange, withSeason, locale = 'zh-CN' }) {
   const metric = PLAYER_MAP_METRICS.find(item => item.id === mapMetric) || PLAYER_MAP_METRICS[0]
   return (
     <section className={styles.mapSection}>
@@ -444,10 +456,10 @@ function MapPerformance({ rows, mapMetric, onMetricChange, withSeason }) {
             <Link key={row.key} to={withSeason(`/matches/${encodeURIComponent(row.matchId)}`)} className={styles.mapRow}>
               <span className={styles.mapIndex}>{String(row.order).padStart(2, '0')}</span>
               <div className={styles.mapNameBlock}>
-                <strong>{row.mapName}</strong>
+                <strong>{formatOwMapName(row.mapName, locale)}</strong>
                 <small>vs {row.opponent} · {row.dateLabel}</small>
               </div>
-              <div className={styles.mapHero}>{row.hero}</div>
+              <div className={styles.mapHero}>{formatOwHeroName(row.hero, locale)}</div>
               <div className={styles.mapBar} aria-label={`${metric.label} ${row.valueLabel}`}>
                 <i style={{ width: `${Math.max(4, Math.min(100, (row.value / row.maxValue) * 100))}%` }} />
               </div>
@@ -463,26 +475,26 @@ function MapPerformance({ rows, mapMetric, onMetricChange, withSeason }) {
   )
 }
 
-function ScoutingNotes({ notes }) {
+function ScoutingNotes({ notes, locale = 'zh-CN' }) {
   return (
     <section className={styles.notesSection}>
       <details>
         <summary>
           <span>SCOUTING NOTES</span>
           <strong>数据观察</strong>
-          <em>根据赛事统计自动生成，仅供参考。</em>
+          <em>基于赛事统计整理，仅供参考。</em>
         </summary>
         {notes.length ? (
           <div className={styles.notesGrid}>
             {notes.map(note => (
               <article key={note.type}>
                 <span>{note.type}</span>
-                <p>{note.text}</p>
+                <p>{formatOwNamesInText(note.text, locale)}</p>
               </article>
             ))}
           </div>
         ) : (
-          <div className={styles.lightEmpty}>样本不足，暂不生成数据观察。</div>
+          <div className={styles.lightEmpty}>样本不足，暂不展示数据观察。</div>
         )}
       </details>
     </section>
@@ -545,10 +557,16 @@ export default function PlayerDetailPage() {
     return (
       <div className={styles.shell}>
         <section className={styles.errorState}>
-          <span>PLAYER DOSSIER / ERROR</span>
-          <h1>未找到该选手档案</h1>
-          <p>请求的选手编号不存在，或当前赛季数据库尚未载入。</p>
-          <button type="button" onClick={handleBack}>返回选手列表</button>
+          <span>{locale === 'en-US' ? 'Player Profile' : '选手档案'}</span>
+          <h1>{locale === 'en-US' ? 'Player profile not found' : '未找到该选手档案'}</h1>
+          <p>
+            {locale === 'en-US'
+              ? 'The requested player is not available in the current season records.'
+              : '请求的选手编号不存在，或当前赛季记录尚未载入。'}
+          </p>
+          <button type="button" onClick={handleBack}>
+            {locale === 'en-US' ? 'Back to players' : '返回选手列表'}
+          </button>
         </section>
       </div>
     )
@@ -571,6 +589,7 @@ export default function PlayerDetailPage() {
         onFavorite={() => togglePlayerFavorite?.(dossier.basePlayer)}
         favoriteLabel={playerFavorited ? '取消关注' : playerFavoriteLimitReached ? '关注已满' : '关注选手'}
         favoriteDisabled={playerFavoriteLimitReached}
+        locale={locale}
       />
 
       <RoleTabs roles={dossier.roles} activeView={dossier.selectedView} onChange={handleViewChange} />
@@ -580,12 +599,12 @@ export default function PlayerDetailPage() {
       ) : (
         <>
           <ScoreRadarPanel analysis={analysis} />
-          <Achievements achievements={analysis.achievements} />
+          <Achievements achievements={analysis.achievements} locale={locale} />
           <CoreStats analysis={analysis} metricMode={metricMode} onModeChange={setMetricMode} />
-          <RecentMatches matches={analysis.recentMatches} withSeason={withSeason} playerId={dossier.identity.playerId} role={analysis.summary.role} />
-          <HeroPool heroes={analysis.heroPool} role={analysis.summary.role} />
-          <MapPerformance rows={analysis.mapPerformance} mapMetric={mapMetric} onMetricChange={setMapMetric} withSeason={withSeason} />
-          <ScoutingNotes notes={analysis.scoutingNotes} />
+          <RecentMatches matches={analysis.recentMatches} withSeason={withSeason} playerId={dossier.identity.playerId} role={analysis.summary.role} locale={locale} />
+          <HeroPool heroes={analysis.heroPool} role={analysis.summary.role} locale={locale} />
+          <MapPerformance rows={analysis.mapPerformance} mapMetric={mapMetric} onMetricChange={setMapMetric} withSeason={withSeason} locale={locale} />
+          <ScoutingNotes notes={analysis.scoutingNotes} locale={locale} />
         </>
       )}
 

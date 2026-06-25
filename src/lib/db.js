@@ -111,7 +111,7 @@ export async function getDb(seasonId) {
 
   const data = await fetchFirstAvailable(
     getDbUrls(season),
-    'DB_LOAD_FAILED',
+    'DATA_LOAD_FAILED',
     payload => validatePublicDb(payload, season)
   )
   dbCache.set(season.id, data)

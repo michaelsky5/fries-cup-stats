@@ -94,7 +94,7 @@ export default function FollowingHero({
         ) : (
           <div className={styles.heroNoMatch}>
             <strong>{overview?.seasonFinished ? overview.finalRankText : '当前轮暂无比赛'}</strong>
-            <span>{overview ? '下一场比赛排定后会在这里显示。' : '关注队伍后会显示主关注队伍的下一场比赛。'}</span>
+            <span>{overview ? '下一场比赛排定后将优先显示。' : '关注队伍后会显示主关注队伍的下一场比赛。'}</span>
           </div>
         )}
 

@@ -856,15 +856,15 @@ export function getOverviewResources(db, season = null) {
     {
       key: 'database',
       title: '数据排行',
-      label: 'DATABASE',
-      text: '选手、队伍和英雄数据将在赛果录入后沉淀。',
+      label: 'STATS',
+      text: '选手、队伍和英雄数据将在赛果确认后更新。',
       to: '/leaderboard'
     },
     {
       key: 'heroes-maps',
       title: '英雄与地图',
       label: 'HEROES / MAPS',
-      text: '英雄使用、地图选择和比赛记录入口。',
+      text: '查看英雄使用、地图选择和比赛记录。',
       to: '/heroes'
     }
   ]

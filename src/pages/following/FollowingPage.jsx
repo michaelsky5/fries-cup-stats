@@ -190,7 +190,7 @@ export default function FollowingPage() {
             {playerOverviews.length ? (
               <div className={styles.playerGrid}>
                 {playerOverviews.map(player => (
-                  <FollowedPlayerCard key={player.playerId} overview={player} withSeason={pageLink} />
+                  <FollowedPlayerCard key={player.playerId} overview={player} withSeason={pageLink} locale={locale} />
                 ))}
               </div>
             ) : (

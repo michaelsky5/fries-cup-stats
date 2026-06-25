@@ -175,11 +175,11 @@ function MatchTeams({ match, score = false, seasonId }) {
 }
 
 function MatchRow({ match, compact = false }) {
-  const { withSeason = path => path, favorites, seasonId } = useOutletContext()
+  const { withSeason = path => path, favorites, seasonId, locale = 'zh-CN' } = useOutletContext()
   const location = useLocation()
   const status = getMatchStatus(match)
   const finished = status === 'finished'
-  const mapSummary = finished ? getMapSummary(match) : ''
+  const mapSummary = finished ? getMapSummary(match, locale) : ''
   const favorite = isFavoriteMatch(match, favorites)
 
   return (
@@ -228,7 +228,7 @@ function EmptyState({ tab, seasonId }) {
     return (
       <div className={styles.emptyState}>
         <strong>还没有关注队伍</strong>
-        <span>关注队伍后，这里会按时间展示相关赛程和赛果。</span>
+        <span>关注队伍后，将按时间展示相关赛程和赛果。</span>
         <div className={styles.emptyActions}>
           <Link to={withSeason('/following?manage=1')}>选择关注队伍</Link>
           <Link to={withSeason('/following?manage=1&tab=players')}>关注选手</Link>
@@ -264,10 +264,10 @@ function HubSection({ code, title, actionTo, actionText, children }) {
 }
 
 function FeaturedMatchCard({ match, primary = false }) {
-  const { withSeason = path => path, seasonId } = useOutletContext()
+  const { withSeason = path => path, seasonId, locale = 'zh-CN' } = useOutletContext()
   const location = useLocation()
   const teams = getMatchDisplayTeams(match)
-  const mapSummary = getMapSummary(match)
+  const mapSummary = getMapSummary(match, locale)
 
   return (
     <Link
@@ -326,7 +326,7 @@ function ArchiveStageHub({ hub }) {
   ]
 
   return (
-    <HubSection code="C / ARCHIVE" title="完整档案入口">
+    <HubSection code="C / ARCHIVE" title="完整比赛档案">
       <div className={styles.archiveGateway}>
         <div className={styles.archiveGatewayMain}>
           <span>MATCH ARCHIVE</span>

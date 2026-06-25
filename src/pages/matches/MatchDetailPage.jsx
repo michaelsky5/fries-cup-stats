@@ -199,7 +199,7 @@ export default function MatchDetailPage() {
       />
 
       {showResultSections ? (
-        <MatchAnalysisSection dossier={dossier} analysisRef={analysisRef} withSeason={withSeason} t={t} />
+        <MatchAnalysisSection dossier={dossier} analysisRef={analysisRef} withSeason={withSeason} locale={locale} t={t} />
       ) : (
         <MatchDetailEmptyState dossier={dossier} t={t} />
       )}

@@ -18,6 +18,7 @@ import {
   safeArr,
   sortPlayers
 } from '../../lib/rosterSelectors.js'
+import { formatOwHeroName } from '../../lib/heroes.js'
 import styles from './PlayersPage.module.css'
 
 const ROLE_TABS = [
@@ -71,7 +72,8 @@ export default function PlayersPage() {
     withSeason = path => path,
     favorites,
     favoriteLimits,
-    togglePlayerFavorite
+    togglePlayerFavorite,
+    locale = 'zh-CN'
   } = useOutletContext()
   const [searchParams, setSearchParams] = useSearchParams()
   const directoryRef = useRef(null)
@@ -106,9 +108,11 @@ export default function PlayersPage() {
     })
     return [
       { value: 'ALL', label: '全部英雄' },
-      ...[...heroes].sort((a, b) => a.localeCompare(b, 'zh-Hans-CN')).map(hero => ({ value: hero, label: hero }))
+      ...[...heroes]
+        .sort((a, b) => formatOwHeroName(a, locale).localeCompare(formatOwHeroName(b, locale), locale))
+        .map(hero => ({ value: hero, label: formatOwHeroName(hero, locale) }))
     ]
-  }, [players])
+  }, [locale, players])
   const sortOptions = useMemo(() => {
     const hasTimeData = players.some(player => Number(player.raw_time_mins || 0) > 0)
     return hasTimeData ? [...BASE_SORT_OPTIONS, { value: 'time', label: '出场时间' }] : BASE_SORT_OPTIONS
@@ -160,7 +164,7 @@ export default function PlayersPage() {
     } : null,
     queryState.hero !== 'ALL' ? {
       key: 'hero',
-      label: queryState.hero,
+      label: formatOwHeroName(queryState.hero, locale),
       onRemove: () => setQuery({ hero: { value: 'ALL', fallback: 'ALL' } })
     } : null,
     queryState.following === 'following' ? {
@@ -279,6 +283,7 @@ export default function PlayersPage() {
                 withSeason={withSeason}
                 onToggleFavorite={togglePlayerFavorite}
                 favoriteDisabled={!player.isFavorite && favoriteCount >= favoriteLimit}
+                locale={locale}
               />
             ))}
           </div>

@@ -26,7 +26,7 @@ const PRIMARY_NAV = [
   { to: '/matches', cn: '赛程赛果', en: 'MATCHES', group: 'matches' },
   { to: '/advance', cn: '晋级形势', en: 'ADVANCE', group: 'advance' },
   { to: '/teams', cn: '参赛阵容', en: 'ROSTER', group: 'roster' },
-  { to: '/leaderboard', cn: '数据资料', en: 'DATABASE', group: 'database' },
+  { to: '/leaderboard', cn: '数据排行', en: 'STATS', group: 'database' },
   { to: '/following', cn: '我的关注', en: 'FOLLOWING', group: 'following' }
 ]
 
@@ -106,7 +106,7 @@ export default function DataLayout() {
       .catch(err => {
         if (!alive) return
         setDb(null)
-        setError(err?.message || 'DB_LOAD_FAILED')
+        setError('DATA_LOAD_FAILED')
       })
       .finally(() => {
         if (!alive) return
@@ -286,7 +286,11 @@ export default function DataLayout() {
           ) : error ? (
             <div className={`${styles.systemBox} ${styles.errorBox}`}>
               <div className={styles.errorTitle}>{t('layout.state.error')}</div>
-              <div className={styles.errorText}>{error}</div>
+              <div className={styles.errorText}>
+                {error === 'DATA_LOAD_FAILED'
+                  ? t('layout.state.errorDesc', '赛事数据暂时无法载入，请稍后刷新重试。')
+                  : error}
+              </div>
             </div>
           ) : (
             <FavoritesProvider value={outletContext}>

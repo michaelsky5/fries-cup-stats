@@ -1,4 +1,5 @@
 import ColumnPicker from './ColumnPicker.jsx'
+import { formatOwHeroName } from '../../lib/heroes.js'
 import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
 
 const ROLE_OPTIONS = [
@@ -29,7 +30,8 @@ export default function LeaderboardToolbar({
   onAdvancedToggle,
   onFilterChange,
   onReset,
-  onColumnsChange
+  onColumnsChange,
+  locale = 'zh-CN'
 }) {
   const filterCount = getFilterCount(filters)
 
@@ -116,7 +118,7 @@ export default function LeaderboardToolbar({
             >
               <option value="ALL">全部英雄</option>
               {options.heroes.map(hero => (
-                <option key={hero} value={hero}>{hero}</option>
+                <option key={hero} value={hero}>{formatOwHeroName(hero, locale)}</option>
               ))}
             </select>
           </label>

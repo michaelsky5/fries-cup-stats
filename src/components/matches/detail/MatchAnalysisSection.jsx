@@ -2,7 +2,7 @@ import MatchPerformancePanel from './MatchPerformancePanel.jsx'
 import TeamMirrorComparison from './TeamMirrorComparison.jsx'
 import styles from './MatchDetail.module.css'
 
-export default function MatchAnalysisSection({ dossier, analysisRef, withSeason, t }) {
+export default function MatchAnalysisSection({ dossier, analysisRef, withSeason, locale = 'zh-CN', t }) {
   if (!dossier.state.canShowResults || dossier.state.isForfeit) {
     return (
       <section className={styles.analysisSection} ref={analysisRef} id="match-analysis">
@@ -34,7 +34,7 @@ export default function MatchAnalysisSection({ dossier, analysisRef, withSeason,
       <div className={styles.analysisFrame}>
         <div className={styles.analysisGrid}>
           <TeamMirrorComparison comparison={dossier.comparison} t={t} />
-          <MatchPerformancePanel dossier={dossier} withSeason={withSeason} t={t} />
+          <MatchPerformancePanel dossier={dossier} withSeason={withSeason} locale={locale} t={t} />
         </div>
 
         {dossier.analysisFacts?.length ? (

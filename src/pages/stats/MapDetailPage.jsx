@@ -3,10 +3,11 @@ import { useParams, Link, useOutletContext } from 'react-router-dom'
 import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
 import styles from './MapDetailPage.module.css'
 import { getMapDetail, safeArr } from '../../lib/selectors'
+import { formatOwHeroName, formatOwMapMode, formatOwMapName, getOwMapImageName, getOwMapModeFolder } from '../../lib/heroes.js'
 
 function formatMapFileName(name) {
   if (!name) return 'unknown'
-  return name.replace(/: /g, '_').replace(/ /g, '_')
+  return getOwMapImageName(name)
 }
 
 function SummaryCard({ labelCn, labelEn, value, meta, tone = 'default' }) {
@@ -22,13 +23,15 @@ function SummaryCard({ labelCn, labelEn, value, meta, tone = 'default' }) {
   )
 }
 
-function RecordCard({ label, value, player, hero, tone = '' }) {
+function RecordCard({ label, value, player, hero, tone = '', locale = 'zh-CN' }) {
+  const heroText = locale === 'en-US' ? `on ${hero}` : `使用 ${hero}`
+
   return (
     <div className={`${styles.recordCard} ${tone ? styles[tone] : ''}`}>
       <div className={styles.recordLabel}>{label}</div>
       <div className={styles.recordValue}>{value}</div>
       <div className={styles.recordPlayer}>
-        {player || '--'} {hero ? <span className={styles.dim}>on {hero}</span> : null}
+        {player || '--'} {hero ? <span className={styles.dim}>{heroText}</span> : null}
       </div>
     </div>
   )
@@ -59,8 +62,10 @@ function RankedBarItem({ rank, title, sub, rateText, width, barTone = 'yellow' }
 
 const MapDetailPage = () => {
   const { mapName } = useParams()
-  const { db, withSeason = path => path } = useOutletContext()
+  const { db, locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const isEn = locale === 'en-US'
   const decodedMapName = decodeURIComponent(mapName || '')
+  const displayMapName = formatOwMapName(decodedMapName, locale)
 
   const data = useMemo(() => {
     const baseData = getMapDetail(db, decodedMapName)
@@ -90,10 +95,10 @@ const MapDetailPage = () => {
 
       const allStats = [...safeArr(mapObj.team_a_stats), ...safeArr(mapObj.team_b_stats)]
       allStats.forEach(stat => {
-        if (!stat.heroes_played) return
-        const ast = Number(stat.assists) || 0
-        const mit = Number(stat.mitigation) || 0
-        const cleanName = (stat.player_name || 'Unknown').split('#')[0]
+      if (!stat.heroes_played) return
+      const ast = Number(stat.assists) || 0
+      const mit = Number(stat.mitigation) || 0
+      const cleanName = (stat.player_name || (isEn ? 'Unknown Player' : '未知选手')).split('#')[0]
 
         if (ast > maxAssists.value) maxAssists = { value: ast, player: cleanName, hero: stat.heroes_played }
         if (mit > maxMitigation.value) maxMitigation = { value: mit, player: cleanName, hero: stat.heroes_played }
@@ -111,7 +116,7 @@ const MapDetailPage = () => {
       },
       recentMatches
     }
-  }, [db, decodedMapName])
+  }, [db, decodedMapName, isEn])
 
   const mapType = useMemo(() => {
     const allMaps = safeArr(db?.matches).flatMap(match => safeArr(match?.maps))
@@ -119,7 +124,7 @@ const MapDetailPage = () => {
     return found?.map_type || 'UNKNOWN'
   }, [db, decodedMapName])
 
-  const mapImageUrl = `/maps/${mapType}/${formatMapFileName(decodedMapName)}.jpg`
+  const mapImageUrl = `/maps/${getOwMapModeFolder(mapType)}/${formatMapFileName(decodedMapName)}.jpg`
 
   if (!data || data.totalPlays === 0) {
     return (
@@ -127,11 +132,15 @@ const MapDetailPage = () => {
         <DatabaseSubnav />
         <div className={styles.errorShell}>
           <div className={styles.errorPanel}>
-            <div className={styles.errorKicker}>MAP INTEL</div>
-            <h2 className={styles.errorTitle}>暂无数据 / NO DATA AVAILABLE</h2>
-            <p className={styles.errorDesc}>该地图尚未进行任何有效对局，或地图名称与数据库记录不匹配。</p>
+            <div className={styles.errorKicker}>{isEn ? 'Map Report' : '地图报告'}</div>
+            <h2 className={styles.errorTitle}>{isEn ? 'No map records yet' : '暂无地图记录'}</h2>
+            <p className={styles.errorDesc}>
+              {isEn
+                ? 'This map has no valid match records yet, or its name does not match the current season data.'
+                : '该地图尚未进行任何有效对局，或地图名称与当前赛季记录不匹配。'}
+            </p>
             <Link to={withSeason('/maps')} className={styles.backBtn}>
-              ← 返回地图列表 / RETURN TO MAPS
+              {isEn ? '← Back to maps' : '← 返回地图列表'}
             </Link>
           </div>
         </div>
@@ -154,7 +163,7 @@ const MapDetailPage = () => {
         <div className={styles.heroBgWrapper}>
           <img
             src={mapImageUrl}
-            alt={decodedMapName}
+            alt={displayMapName}
             className={styles.heroBgImg}
             onError={e => {
               e.target.style.display = 'none'
@@ -169,10 +178,10 @@ const MapDetailPage = () => {
             <span className={styles.heroKickerEn}>MAP INTEL</span>
           </div>
 
-          <h1 className={styles.heroTitle}>{decodedMapName}</h1>
+          <h1 className={styles.heroTitle}>{displayMapName}</h1>
 
           <div className={styles.heroMeta}>
-            <span className={styles.metaBadge}>{String(mapType).toUpperCase()}</span>
+            <span className={styles.metaBadge}>{formatOwMapMode(mapType, locale).toUpperCase()}</span>
             <span className={styles.metaText}>
               PLAYS <strong>{data.totalPlays}</strong>
             </span>
@@ -182,7 +191,7 @@ const MapDetailPage = () => {
           </div>
 
           <p className={styles.heroDesc}>
-            本页展示该地图在当前赛事数据库中的综合表现，包括 <strong>出场频率</strong>、
+            查看该地图在当前赛季的综合表现，包括 <strong>出场频率</strong>、
             <strong>单图极值记录</strong>、<strong>英雄环境</strong>、
             <strong>战队胜率</strong> 与 <strong>近期战报</strong>。
           </p>
@@ -200,26 +209,30 @@ const MapDetailPage = () => {
             labelCn="总计出场"
             labelEn="TOTAL PLAYS"
             value={data.totalPlays}
-            meta="VALID MAP RECORDS"
+            meta={isEn ? 'Valid map records' : '有效地图记录'}
             tone="accent"
           />
           <SummaryCard
             labelCn="平均时长"
             labelEn="AVG TIME"
             value={avgTime}
-            meta="AVERAGE MAP DURATION"
+            meta={isEn ? 'Average map duration' : '平均单图时长'}
           />
           <SummaryCard
             labelCn="最常见英雄"
             labelEn="TOP HERO"
-            value={topHero?.hero || '--'}
-            meta={topHero ? `${topHero.count} PICKS` : 'NO DATA'}
+            value={topHero?.hero ? formatOwHeroName(topHero.hero, locale) : '--'}
+            meta={topHero
+              ? (isEn ? `${topHero.count} picks` : `${topHero.count} 次出场`)
+              : (isEn ? 'Awaiting records' : '等待记录')}
           />
           <SummaryCard
             labelCn="最佳战队"
             labelEn="TOP TEAM"
             value={topTeam?.name || '--'}
-            meta={topTeam ? `${(topTeam.winRate * 100).toFixed(1)}% WIN RATE` : 'NO DATA'}
+            meta={topTeam
+              ? (isEn ? `${(topTeam.winRate * 100).toFixed(1)}% win rate` : `${(topTeam.winRate * 100).toFixed(1)}% 胜率`)
+              : (isEn ? 'Awaiting records' : '等待记录')}
             tone="highlight"
           />
         </div>
@@ -239,32 +252,37 @@ const MapDetailPage = () => {
             label="最高击杀 / ELIMS"
             value={data.records.maxElims.value}
             player={data.records.maxElims.player}
-            hero={data.records.maxElims.hero}
+            hero={formatOwHeroName(data.records.maxElims.hero, locale)}
+            locale={locale}
             tone="recordAccent"
           />
           <RecordCard
             label="最多助攻 / ASSISTS"
             value={data.records.maxAssists.value}
             player={data.records.maxAssists.player}
-            hero={data.records.maxAssists.hero}
+            hero={formatOwHeroName(data.records.maxAssists.hero, locale)}
+            locale={locale}
           />
           <RecordCard
             label="最高伤害 / DAMAGE"
             value={Number(data.records.maxDamage.value || 0).toLocaleString()}
             player={data.records.maxDamage.player}
-            hero={data.records.maxDamage.hero}
+            hero={formatOwHeroName(data.records.maxDamage.hero, locale)}
+            locale={locale}
           />
           <RecordCard
             label="最高治疗 / HEALING"
             value={Number(data.records.maxHealing.value || 0).toLocaleString()}
             player={data.records.maxHealing.player}
-            hero={data.records.maxHealing.hero}
+            hero={formatOwHeroName(data.records.maxHealing.hero, locale)}
+            locale={locale}
           />
           <RecordCard
             label="最高阻挡 / MITIGATION"
             value={Number(data.records.maxMitigation.value || 0).toLocaleString()}
             player={data.records.maxMitigation.player}
-            hero={data.records.maxMitigation.hero}
+            hero={formatOwHeroName(data.records.maxMitigation.hero, locale)}
+            locale={locale}
           />
         </div>
       </section>
@@ -286,7 +304,7 @@ const MapDetailPage = () => {
                 <RankedBarItem
                   key={hero.hero}
                   rank={index + 1}
-                  title={hero.hero}
+                  title={formatOwHeroName(hero.hero, locale)}
                   sub={`${hero.count} 次出场`}
                   rateText={`${pickRatePercent}%`}
                   width={`${pickRatePercent}%`}

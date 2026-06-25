@@ -78,7 +78,7 @@ function getEmptyText(identity, query) {
   if (!identity) {
     return {
       title: '请选择身份',
-      body: '选择身份后，这里会出现可以开启的赛季回顾。'
+      body: '选择身份后，可开启对应的赛季回顾。'
     }
   }
 
@@ -91,7 +91,7 @@ function getEmptyText(identity, query) {
 
   return {
     title: '暂无推荐结果',
-    body: '当前身份下暂时没有可展示的默认回顾，可以输入关键词搜索。'
+    body: '当前身份下暂无推荐回顾，可以输入关键词搜索。'
   }
 }
 

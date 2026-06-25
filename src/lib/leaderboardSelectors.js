@@ -7,6 +7,13 @@ import {
   compareLeaderboardEntries,
   scoreLeaderboardEntries
 } from './leaderboardScoring.js'
+import {
+  formatOwHeroName,
+  formatOwHeroNames,
+  getOwHero,
+  getOwHeroAssetKey,
+  getOwNameSearchText
+} from './heroes.js'
 
 const DEFAULT_MIN_TIME_MINS = 30
 const PAGE_SIZE = 20
@@ -19,11 +26,6 @@ const ROLE_ALIAS = {
   SUP: 'SUPPORT',
   SUPPORT: 'SUPPORT',
   HEALER: 'SUPPORT'
-}
-
-const HERO_SLUG_ALIASES = {
-  d_va: 'dva',
-  dva: 'dva'
 }
 
 const entryCache = new WeakMap()
@@ -309,7 +311,15 @@ function createEntry(basePlayer, role, source, sourceType) {
       teamName,
       normalizedRole,
       mostPlayedHero,
-      ...topHeroes
+      formatOwHeroName(mostPlayedHero, 'zh-CN'),
+      formatOwHeroName(mostPlayedHero, 'en-US'),
+      getOwNameSearchText(mostPlayedHero, 'hero'),
+      ...topHeroes,
+      ...topHeroes.flatMap(hero => [
+        formatOwHeroName(hero, 'zh-CN'),
+        formatOwHeroName(hero, 'en-US'),
+        getOwNameSearchText(hero, 'hero')
+      ])
     ].map(normalizeSearchText).join(' ')
   }
 }
@@ -510,7 +520,7 @@ export function getLeaderboardHighlights(entries) {
   }
 }
 
-export function getLeaderboardOptions(entries, db) {
+export function getLeaderboardOptions(entries, db, locale = 'zh-CN') {
   const teams = safeArr(db?.teams)
     .map(team => ({
       value: normalizeText(team.team_id),
@@ -523,7 +533,7 @@ export function getLeaderboardOptions(entries, db) {
   const heroes = unique(entries.flatMap(entry => [
     entry.most_played_hero,
     ...safeArr(entry.top_3_heroes)
-  ])).sort((a, b) => a.localeCompare(b))
+  ])).sort((a, b) => formatOwHeroName(a, locale).localeCompare(formatOwHeroName(b, locale), locale))
 
   return { teams, heroes }
 }
@@ -612,15 +622,23 @@ export function getHeroSlug(heroName) {
   const text = normalizeText(heroName)
   if (!text || text === '-') return ''
 
-  const slug = text
+  if (getOwHero(text)) return getOwHeroAssetKey(text)
+
+  return text
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/&/g, 'and')
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '')
+}
 
-  return HERO_SLUG_ALIASES[slug] || slug
+export function getHeroDisplayName(heroName, locale = 'zh-CN') {
+  return formatOwHeroName(heroName, locale)
+}
+
+export function getHeroDisplayList(heroNames, locale = 'zh-CN', limit = Infinity) {
+  return formatOwHeroNames(heroNames, locale, limit)
 }
 
 export function getRoleHeroFolder(role) {

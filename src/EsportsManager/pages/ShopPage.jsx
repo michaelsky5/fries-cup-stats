@@ -735,7 +735,7 @@ export default function ShopPage() {
 
                   {matchOptions.event && (
                     <div className={styles.matchCardEvent}>
-                      <div className={styles.matchRiskUnknown}>UNKNOWN ANOMALY</div>
+                      <div className={styles.matchRiskUnknown}>事件待判明</div>
                       <div className={styles.matchCardBody}>
                         <div className={styles.matchCardTopline}>
                           <span className={styles.matchModeTag}>RANDOM ENCOUNTER</span>

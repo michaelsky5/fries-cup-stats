@@ -19,7 +19,7 @@ export default function SwissSummary({ overview, t, withSeason }) {
         <div className={styles.swissIntroLead}>
           <span className={styles.sectionLabel}>SWISS STAGE</span>
           <h2>{t('advance.swiss.notStartedTitle', '瑞士轮尚未开始')}</h2>
-          <p>{t('advance.swiss.notStartedDesc', '比赛开始后，这里将展示完整积分榜、晋级区、突围区、竞争区、危险区、已出局队伍与同分规则。')}</p>
+          <p>{t('advance.swiss.notStartedDesc', '比赛开始后将展示完整积分榜、晋级区、突围区、竞争区、危险区、已出局队伍与同分规则。')}</p>
         </div>
         <div className={styles.swissFactGrid}>
           <Fact label={t('advance.swiss.teams', '参赛队伍')} value={`${overview.teamCount} ${t('advance.unit.teams', '支队伍')}`} />

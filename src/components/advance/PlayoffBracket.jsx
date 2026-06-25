@@ -41,7 +41,7 @@ export default function PlayoffBracket({
       <AdvanceEmptyState
         eyebrow={eyebrow}
         title={t('advance.bracket.emptyTitle', '暂无晋级图')}
-        description={t('advance.bracket.emptyDesc', '后台尚未提供该阶段对阵数据。')}
+        description={t('advance.bracket.emptyDesc', '该阶段对阵尚未公布。')}
       />
     )
   }

@@ -3,10 +3,11 @@ import { Link, useOutletContext } from 'react-router-dom'
 import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
 import styles from './MapStatsPage.module.css'
 import { getMapStats } from '../../lib/selectors'
+import { formatOwMapMode, formatOwMapName, getOwMapImageName, getOwMapModeFolder } from '../../lib/heroes.js'
 
 function formatMapFileName(name) {
   if (!name) return 'unknown'
-  return name.replace(/: /g, '_').replace(/ /g, '_')
+  return getOwMapImageName(name)
 }
 
 const MODE_ORDER = ['Control', 'Hybrid', 'Flashpoint', 'Push', 'Escort', 'Clash']
@@ -25,7 +26,8 @@ function SummaryCard({ labelCn, labelEn, value, meta, tone = 'default' }) {
 }
 
 const MapStatsPage = () => {
-  const { db, withSeason = path => path } = useOutletContext()
+  const { db, locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const isEn = locale === 'en-US'
   const { totalValidMaps, groupedByType } = useMemo(() => getMapStats(db), [db])
 
   const sortedModes = useMemo(() => {
@@ -78,26 +80,28 @@ const MapStatsPage = () => {
             labelCn="有效地图总数"
             labelEn="TOTAL MAPS PLAYED"
             value={totalValidMaps}
-            meta="ALL VALID MAP RECORDS"
+            meta={isEn ? 'Valid map records' : '有效地图记录'}
             tone="accent"
           />
           <SummaryCard
             labelCn="模式分类"
             labelEn="MODE GROUPS"
             value={summary.modeCount}
-            meta="CONTROL / HYBRID / PUSH ..."
+            meta={isEn ? 'Control / Hybrid / Push ...' : '控制 / 混合 / 推进 ...'}
           />
           <SummaryCard
             labelCn="地图池规模"
             labelEn="UNIQUE MAPS"
             value={summary.totalUniqueMaps}
-            meta="MAPS IN DATABASE"
+            meta={isEn ? 'Map pool records' : '地图池记录'}
           />
           <SummaryCard
             labelCn="当前最热地图"
             labelEn="TOP MAP"
-            value={summary.topMap?.name || '--'}
-            meta={summary.topMap ? `${summary.topMap.playedCount} PLAYS` : 'NO DATA'}
+            value={summary.topMap?.name ? formatOwMapName(summary.topMap.name, locale) : '--'}
+            meta={summary.topMap
+              ? (isEn ? `${summary.topMap.playedCount} plays` : `${summary.topMap.playedCount} 次登场`)
+              : (isEn ? 'Awaiting records' : '等待记录')}
             tone="highlight"
           />
         </div>
@@ -107,13 +111,14 @@ const MapStatsPage = () => {
         {sortedModes.map(mode => {
           const mapsInMode = groupedByType[mode]
           const modeTotalPlays = mapsInMode.reduce((sum, map) => sum + map.playedCount, 0)
+          const modeDisplayName = formatOwMapMode(mode, locale)
 
           return (
             <section key={mode} className={styles.modeSection}>
               <div className={styles.modeHeader}>
                 <div className={styles.modeHeaderMain}>
                   <div className={styles.modeKicker}>MAP MODE</div>
-                  <h2 className={styles.modeTitle}>{mode.toUpperCase()}</h2>
+                  <h2 className={styles.modeTitle}>{modeDisplayName.toUpperCase()}</h2>
                 </div>
 
                 <div className={styles.modeMetaGroup}>
@@ -132,7 +137,8 @@ const MapStatsPage = () => {
                 {mapsInMode.map((map, index) => {
                   const relativePickRate = modeTotalPlays > 0 ? (map.playedCount / modeTotalPlays) * 100 : 0
                   const globalPickRate = map.pickRate * 100
-                  const mapImageUrl = `/maps/${map.type}/${formatMapFileName(map.name)}.jpg`
+                  const mapDisplayName = formatOwMapName(map.name, locale)
+                  const mapImageUrl = `/maps/${getOwMapModeFolder(map.type)}/${formatMapFileName(map.name)}.jpg`
 
                   return (
                     <Link
@@ -143,7 +149,7 @@ const MapStatsPage = () => {
                       <div className={styles.mapBgWrapper}>
                         <img
                           src={mapImageUrl}
-                          alt={map.name}
+                          alt={mapDisplayName}
                           className={styles.mapBgImg}
                           onError={e => {
                             e.target.style.display = 'none'
@@ -156,10 +162,10 @@ const MapStatsPage = () => {
                         <div className={styles.mapCardTop}>
                           <div className={styles.mapTitleBlock}>
                             <span className={styles.mapIndex}>{String(index + 1).padStart(2, '0')}</span>
-                            <span className={styles.mapName}>{map.name}</span>
+                            <span className={styles.mapName}>{mapDisplayName}</span>
                           </div>
 
-                          <div className={styles.mapPill}>{map.type.toUpperCase()}</div>
+                          <div className={styles.mapPill}>{formatOwMapMode(map.type, locale).toUpperCase()}</div>
                         </div>
 
                         <div className={styles.mapPrimaryRow}>

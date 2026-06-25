@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { formatOwHeroNames } from '../../lib/heroes.js'
 import styles from './RosterComponents.module.css'
 
 const ROLE_COLORS = {
@@ -55,7 +56,8 @@ export default function PlayerDirectoryCard({
   player,
   withSeason = path => path,
   onToggleFavorite,
-  favoriteDisabled = false
+  favoriteDisabled = false,
+  locale = 'zh-CN'
 }) {
   const playerPath = withSeason(`/players/${player.identity.playerId || player.player_id}`)
   const favoriteLabel = player.isFavorite ? '取消关注' : favoriteDisabled ? '关注已满' : '关注'
@@ -66,7 +68,7 @@ export default function PlayerDirectoryCard({
   const heroNames = player.hasStats
     ? (player.heroNames?.length ? player.heroNames : [player.avatar?.heroName].filter(Boolean))
     : []
-  const heroText = heroNames.length ? heroNames.slice(0, 3).join(' / ') : '比赛开始后生成数据'
+  const heroText = heroNames.length ? formatOwHeroNames(heroNames, locale, 3).join(' / ') : '比赛开始后更新'
 
   return (
     <article

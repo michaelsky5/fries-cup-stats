@@ -1,3 +1,5 @@
+import { formatOwMapName } from './heroes.js'
+
 export const safeArr = value => Array.isArray(value) ? value : []
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED'])
@@ -258,7 +260,7 @@ export function getRoundText(match) {
   return round || '赛事阶段待定'
 }
 
-export function getMapSummary(match) {
+export function getMapSummary(match, locale = 'zh-CN') {
   const maps = safeArr(match?.maps).filter(map => {
     const hasName = normalizeText(map?.map_name) && String(map?.map_type || '').toUpperCase() !== 'UNKNOWN'
     const hasScore = normalizeText(map?.score_a) || normalizeText(map?.score_b)
@@ -270,7 +272,8 @@ export function getMapSummary(match) {
     const name = normalizeText(map?.map_name) || normalizeText(map?.map_type) || 'MAP'
     const scoreA = normalizeText(map?.score_a)
     const scoreB = normalizeText(map?.score_b)
-    return scoreA || scoreB ? `${name} ${scoreA || 0}:${scoreB || 0}` : name
+    const displayName = formatOwMapName(name, locale)
+    return scoreA || scoreB ? `${displayName} ${scoreA || 0}:${scoreB || 0}` : displayName
   }).join(' / ')
 }
 

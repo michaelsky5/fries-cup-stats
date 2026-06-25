@@ -1,11 +1,14 @@
 import { useMemo, useState, useEffect } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
+import { formatOwHeroName, getOwHeroAssetKey } from '../../lib/heroes.js'
 import { safeArr } from '../../lib/selectors.js'
 import styles from './HeroesPage.module.css'
 
 function formatHeroName(name) {
   if (!name || name === '-') return 'unknown'
+  const assetKey = getOwHeroAssetKey(name)
+  if (assetKey) return assetKey
   return name.toLowerCase()
     .replace(/ú/g, 'u')
     .replace(/ö/g, 'o')
@@ -39,11 +42,11 @@ function getRoleLabel(role) {
   if (role === 'TANK') return { cn: '重装阵列', en: 'TANK' }
   if (role === 'DAMAGE' || role === 'DPS') return { cn: '输出阵列', en: 'DAMAGE' }
   if (role === 'SUPPORT' || role === 'SUP') return { cn: '支援阵列', en: 'SUPPORT' }
-  return { cn: '未知阵列', en: 'UNKNOWN' }
+  return { cn: '其他阵列', en: 'OTHER' }
 }
 
 export default function HeroesPage() {
-  const { db, withSeason = path => path } = useOutletContext()
+  const { db, locale = 'zh-CN', withSeason = path => path } = useOutletContext()
   const [activeRole, setActiveRole] = useState('ALL')
 
   useEffect(() => {
@@ -61,7 +64,6 @@ export default function HeroesPage() {
         const h = log.hero
         if (!h || h === '-' || h === 'UNKNOWN') return
 
-        // 🌟 修复：规范化 JSON 里的角色，统一变成标准大写
         let normalizedRole = String(log.role).toUpperCase()
         if (normalizedRole === 'DPS') normalizedRole = 'DAMAGE'
         if (normalizedRole === 'SUP') normalizedRole = 'SUPPORT'
@@ -162,7 +164,7 @@ export default function HeroesPage() {
               <span className={styles.metaCn}>头号热门</span>
               <span className={styles.metaEn}>TOP HERO</span>
             </div>
-            <div className={styles.metaValueText} title={summary.topHero}>{summary.topHero}</div>
+            <div className={styles.metaValueText} title={summary.topHero}>{formatOwHeroName(summary.topHero, locale)}</div>
           </div>
         </div>
       </section>
@@ -176,7 +178,6 @@ export default function HeroesPage() {
         </div>
 
         <div className={styles.roleFilter}>
-          {/* 🌟 修复：把筛选按钮变成统一的数据格式 */}
           {['ALL', 'TANK', 'DAMAGE', 'SUPPORT'].map(role => {
             const label = getRoleLabel(role)
             return (
@@ -200,6 +201,7 @@ export default function HeroesPage() {
             {filteredHeroes.map((hero, index) => {
               const roleFolder = getRoleFolder(hero.role)
               const heroFileName = formatHeroName(hero.name)
+              const heroDisplayName = formatOwHeroName(hero.name, locale)
               const pickRatePercent = Math.min(100, (hero.totalTime / maxTime) * 100)
 
               // 🌟 修复：匹配底层的新名字，不然颜色不对
@@ -214,7 +216,7 @@ export default function HeroesPage() {
                     <div className={styles.avatarBox}>
                       <img
                         src={`/heroes/${roleFolder}/${heroFileName}.png`}
-                        alt={hero.name}
+                        alt={heroDisplayName}
                         className={styles.avatarImg}
                         onError={(e) => {
                           e.target.style.display = 'none'
@@ -228,7 +230,7 @@ export default function HeroesPage() {
                         <span className={styles.heroRole}>{hero.role}</span>
                         <span className={styles.rankBadge}>TOP {index + 1}</span>
                       </div>
-                      <h2 className={styles.heroName}>{hero.name}</h2>
+                      <h2 className={styles.heroName}>{heroDisplayName}</h2>
                     </div>
                   </div>
 
@@ -263,8 +265,8 @@ export default function HeroesPage() {
           </div>
         ) : (
           <div className={styles.emptyState}>
-            <span className={styles.emptyCn}>暂无英雄出场记录</span>
-            <span className={styles.emptyEn}>NO HERO DATA AVAILABLE</span>
+            <span className={styles.emptyCn}>{locale === 'en-US' ? 'No hero records yet' : '暂无英雄出场记录'}</span>
+            <span className={styles.emptyEn}>{locale === 'en-US' ? 'Awaiting match stats' : '等待比赛统计'}</span>
           </div>
         )}
       </section>
