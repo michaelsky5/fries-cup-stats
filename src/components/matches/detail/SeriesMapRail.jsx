@@ -41,8 +41,10 @@ export default function SeriesMapRail({
             >
               <span>{map.orderLabel}</span>
               <strong title={map.name}>{map.name}</strong>
-              <b>{map.score}</b>
-              {map.winner ? <em>{map.winner}</em> : null}
+              <b>
+                <span>{map.score}</span>
+                {map.winner ? <em>{map.winner === 'DRAW' ? 'DRAW' : `${map.winner} WIN`}</em> : null}
+              </b>
             </button>
           ))}
         </div>

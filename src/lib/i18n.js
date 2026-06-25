@@ -451,6 +451,10 @@ const dictionary = {
     'zh-CN': '\u8bc4\u5206',
     'en-US': 'Rating'
   },
+  'matchDetail.highlightShort': {
+    'zh-CN': '\u4eae\u70b9',
+    'en-US': 'Highlight'
+  },
   'matchDetail.mapRatingUnavailable': {
     'zh-CN': '\u672c\u56fe\u8bc4\u5206\u6682\u4e0d\u53ef\u7528',
     'en-US': 'Match Rating unavailable'
@@ -466,6 +470,30 @@ const dictionary = {
   'matchDetail.teamMapMvpNote': {
     'zh-CN': '\u961f\u5185\u672c\u56fe\u6700\u9ad8\u8bc4\u5206\uff0c\u4ec5\u4f9b\u8868\u73b0\u53c2\u8003\u3002',
     'en-US': 'Highest team rating on this map, for performance reference.'
+  },
+  'matchDetail.awardTopEliminations': {
+    'zh-CN': '\u6700\u9ad8\u51fb\u6740',
+    'en-US': 'TOP ELIM'
+  },
+  'matchDetail.awardTopAssists': {
+    'zh-CN': '\u6700\u9ad8\u52a9\u653b',
+    'en-US': 'TOP AST'
+  },
+  'matchDetail.awardTopDamage': {
+    'zh-CN': '\u6700\u9ad8\u4f24\u5bb3',
+    'en-US': 'TOP DMG'
+  },
+  'matchDetail.awardTopHealing': {
+    'zh-CN': '\u6700\u9ad8\u6cbb\u7597',
+    'en-US': 'TOP HEAL'
+  },
+  'matchDetail.awardTopMitigation': {
+    'zh-CN': '\u6700\u9ad8\u963b\u6321',
+    'en-US': 'TOP MIT'
+  },
+  'matchDetail.awardTopRating': {
+    'zh-CN': '\u6700\u9ad8\u8bc4\u5206',
+    'en-US': 'TOP RATE'
   },
   'matchDetail.ratingMappedFromImpact': {
     'zh-CN': '\u8bc4\u5206\u7531\u672c\u56fe\u9009\u624b\u8868\u73b0\u6307\u6807\u751f\u6210\u3002',

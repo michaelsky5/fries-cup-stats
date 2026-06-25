@@ -72,6 +72,7 @@
   display: inline-flex;
   min-height: 34px;
   align-items: center;
+  gap: 4px;
   padding: 0 16px;
   border-left: 1px solid rgba(244, 195, 32, 0.24);
 }

@@ -45,6 +45,200 @@ function getRoleLabel(role) {
   return { cn: '其他阵列', en: 'OTHER' }
 }
 
+const RECORDED_ROLE_ORDER = {
+  TANK: 0,
+  DAMAGE: 1,
+  SUPPORT: 2
+}
+
+function normalizeRecordedRole(role) {
+  const normalized = String(role || '').toUpperCase()
+  if (normalized === 'DPS') return 'DAMAGE'
+  if (normalized === 'SUP') return 'SUPPORT'
+  return normalized
+}
+
+function getTopMapValue(map) {
+  return [...map.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || '-'
+}
+
+function getRecordedTeam(match, map, side, stats) {
+  const statTeam = stats.find(item => item.team_id || item.team_name || item.team_short_name) || {}
+  const fallbackTeam = side === 'team_a_stats' ? match?.team_a : match?.team_b
+
+  return {
+    name: statTeam.team_name || (side === 'team_a_stats' ? map?.team_a_name : map?.team_b_name) || fallbackTeam?.name || '',
+    short: statTeam.team_short_name || fallbackTeam?.short || statTeam.team_name || ''
+  }
+}
+
+function getRecordedCompositions(db, limit = 5) {
+  const compositionMap = new Map()
+  let totalRecords = 0
+
+  safeArr(db?.matches).forEach(match => {
+    const status = String(match?.status || '').toUpperCase()
+    if (status !== 'COMPLETE' && status !== 'COMPLETED') return
+
+    safeArr(match?.maps).forEach(map => {
+      const mapName = String(map?.map_name || '').trim()
+      const mapType = String(map?.map_type || 'UNKNOWN').trim()
+      if (!mapName || mapName.toLowerCase() === 'default win' || mapType.toUpperCase() === 'UNKNOWN') return
+
+      ;['team_a_stats', 'team_b_stats'].forEach(side => {
+        const rawStats = safeArr(map?.[side])
+        const recordedHeroes = rawStats
+          .map(stat => ({
+            hero: String(stat?.heroes_played || '').trim(),
+            role: normalizeRecordedRole(stat?.role)
+          }))
+          .filter(item => item.hero && item.hero !== '-' && item.hero !== 'UNKNOWN')
+          .sort((a, b) => {
+            const roleDiff = (RECORDED_ROLE_ORDER[a.role] ?? 9) - (RECORDED_ROLE_ORDER[b.role] ?? 9)
+            if (roleDiff !== 0) return roleDiff
+            return a.hero.localeCompare(b.hero)
+          })
+
+        const seenHeroes = new Set()
+        const composition = recordedHeroes.filter(item => {
+          const key = item.hero.toLowerCase()
+          if (seenHeroes.has(key)) return false
+          seenHeroes.add(key)
+          return true
+        }).slice(0, 5)
+
+        if (composition.length < 5) return
+
+        const key = composition.map(item => `${item.role}:${item.hero}`).join('|')
+        const team = getRecordedTeam(match, map, side, rawStats)
+
+        if (!compositionMap.has(key)) {
+          compositionMap.set(key, {
+            key,
+            heroes: composition,
+            count: 0,
+            maps: new Map(),
+            modes: new Map(),
+            teams: new Map()
+          })
+        }
+
+        const row = compositionMap.get(key)
+        row.count += 1
+        row.maps.set(mapName, (row.maps.get(mapName) || 0) + 1)
+        row.modes.set(mapType, (row.modes.get(mapType) || 0) + 1)
+
+        const teamLabel = team.short || team.name
+        if (teamLabel) row.teams.set(teamLabel, (row.teams.get(teamLabel) || 0) + 1)
+
+        totalRecords += 1
+      })
+    })
+  })
+
+  return {
+    totalRecords,
+    compositions: [...compositionMap.values()]
+      .map(row => ({
+        ...row,
+        share: totalRecords > 0 ? row.count / totalRecords : 0,
+        topMap: getTopMapValue(row.maps),
+        topMode: getTopMapValue(row.modes),
+        topTeam: getTopMapValue(row.teams)
+      }))
+      .sort((a, b) => b.count - a.count || a.key.localeCompare(b.key))
+      .slice(0, limit)
+  }
+}
+
+function RecordedHeroAvatar({ hero, role, locale }) {
+  const heroDisplayName = formatOwHeroName(hero, locale)
+
+  return (
+    <span className={styles.compHero}>
+      <span className={styles.compHeroAvatar}>
+        <img
+          src={`/heroes/${getRoleFolder(role)}/${formatHeroName(hero)}.png`}
+          alt=""
+          onError={(e) => {
+            e.target.style.display = 'none'
+          }}
+        />
+      </span>
+      <span className={styles.compHeroName} title={heroDisplayName}>{heroDisplayName}</span>
+      <span className={styles.compHeroRole}>{role}</span>
+    </span>
+  )
+}
+
+function RecordedCompsPanel({ data, locale }) {
+  const leader = data.compositions[0]
+  const rest = data.compositions.slice(1)
+
+  if (!leader) return null
+
+  return (
+    <section className={styles.compsPanel} aria-labelledby="recorded-comps-title">
+      <div className={styles.compsHeader}>
+        <div className={styles.compsTitleGroup}>
+          <span className={styles.compsKicker}>RECORDED COMPS</span>
+          <h2 id="recorded-comps-title">最终记录阵容</h2>
+        </div>
+        <p>基于每张地图双方队伍的最终记录英雄统计，不代表整局全程阵容。</p>
+      </div>
+
+      <div className={styles.compsBody}>
+        <article className={styles.compLeader}>
+          <div className={styles.compRank}>01</div>
+          <div className={styles.compMain}>
+            <div className={styles.compHeroes} aria-label="Top recorded composition">
+              {leader.heroes.map(item => (
+                <RecordedHeroAvatar key={`${item.role}-${item.hero}`} hero={item.hero} role={item.role} locale={locale} />
+              ))}
+            </div>
+
+            <div className={styles.compMetaGrid}>
+              <span>
+                <b>记录次数</b>
+                <strong>{leader.count}</strong>
+              </span>
+              <span>
+                <b>记录占比</b>
+                <strong>{(leader.share * 100).toFixed(1)}%</strong>
+              </span>
+              <span>
+                <b>常见地图</b>
+                <strong>{leader.topMap}</strong>
+              </span>
+              <span>
+                <b>样本总数</b>
+                <strong>{data.totalRecords}</strong>
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <div className={styles.compList}>
+          {rest.map((comp, index) => (
+            <article key={comp.key} className={styles.compListItem}>
+              <div className={styles.compListRank}>{String(index + 2).padStart(2, '0')}</div>
+              <div className={styles.compListHeroes}>
+                {comp.heroes.map(item => (
+                  <RecordedHeroAvatar key={`${item.role}-${item.hero}`} hero={item.hero} role={item.role} locale={locale} />
+                ))}
+              </div>
+              <div className={styles.compListStats}>
+                <strong>{comp.count}</strong>
+                <span>{(comp.share * 100).toFixed(1)}%</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function HeroesPage() {
   const { db, locale = 'zh-CN', withSeason = path => path } = useOutletContext()
   const [activeRole, setActiveRole] = useState('ALL')
@@ -116,6 +310,7 @@ export default function HeroesPage() {
   }, [heroStats, filteredHeroes])
 
   const activeRoleLabel = getRoleLabel(activeRole)
+  const recordedComps = useMemo(() => getRecordedCompositions(db, 5), [db])
 
   return (
     <div className={styles.shell}>
@@ -194,6 +389,8 @@ export default function HeroesPage() {
           })}
         </div>
       </section>
+
+      <RecordedCompsPanel data={recordedComps} locale={locale} />
 
       <section className={styles.gridSection}>
         {filteredHeroes.length > 0 ? (

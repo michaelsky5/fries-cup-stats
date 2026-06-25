@@ -28,6 +28,23 @@ const GAME_STAT_COLUMNS = [
   { key: 'mitigation', labelKey: 'matchDetail.mitigation', fallback: 'Mitigation', short: 'MIT' }
 ]
 
+const AWARD_DEFINITIONS = {
+  eliminations: { labelKey: 'matchDetail.awardTopEliminations', fallback: '最高击杀' },
+  assists: { labelKey: 'matchDetail.awardTopAssists', fallback: '最高助攻' },
+  damage: { labelKey: 'matchDetail.awardTopDamage', fallback: '最高伤害' },
+  healing: { labelKey: 'matchDetail.awardTopHealing', fallback: '最高治疗' },
+  mitigation: { labelKey: 'matchDetail.awardTopMitigation', fallback: '最高阻挡' },
+  rating: { labelKey: 'matchDetail.awardTopRating', fallback: '最高评分' }
+}
+
+const ROLE_AWARD_PRIORITY = {
+  TANK: ['mitigation', 'damage', 'eliminations', 'assists', 'healing'],
+  DPS: ['damage', 'eliminations', 'assists', 'mitigation', 'healing'],
+  DAMAGE: ['damage', 'eliminations', 'assists', 'mitigation', 'healing'],
+  SUPPORT: ['healing', 'assists', 'damage', 'eliminations', 'mitigation'],
+  SUP: ['healing', 'assists', 'damage', 'eliminations', 'mitigation']
+}
+
 function normalizeKey(value) {
   return String(value ?? '').trim().toLowerCase()
 }
@@ -41,6 +58,11 @@ function makeImpactKey(player, role) {
 function formatRating(value) {
   const num = Number(value)
   return Number.isFinite(num) ? num.toFixed(1) : '-'
+}
+
+function toNumber(value) {
+  const num = Number(value)
+  return Number.isFinite(num) ? num : 0
 }
 
 function getRoleSortValue(role) {
@@ -118,13 +140,49 @@ function buildDisplayRows(rows, impactIndex) {
     })
 }
 
-function getTeamMvpRowKey(displayRows) {
-  return displayRows.reduce((best, item) => {
+function getTopRatingRowKeys(displayRows) {
+  const best = displayRows.reduce((current, item) => {
     const rating = Number(item.impact?.matchRating)
-    if (!Number.isFinite(rating)) return best
-    if (!best || rating > best.rating) return { key: item.row.key, rating }
-    return best
-  }, null)?.key || ''
+    if (!Number.isFinite(rating)) return current
+    if (!current || rating > current.rating) return { rating }
+    return current
+  }, null)
+
+  if (!best || best.rating <= 0) {
+    return new Set()
+  }
+
+  return new Set(
+    displayRows
+      .filter(item => Number(item.impact?.matchRating) === best.rating)
+      .map(item => item.row.key)
+  )
+}
+
+function createAwardIndex(displayRows) {
+  const metricKeys = ['eliminations', 'assists', 'damage', 'healing', 'mitigation']
+  const topRatingRowKeys = getTopRatingRowKeys(displayRows)
+  const maxByMetric = metricKeys.reduce((acc, key) => {
+    acc[key] = Math.max(...displayRows.map(item => toNumber(item.row[key])), 0)
+    return acc
+  }, {})
+
+  return displayRows.reduce((acc, item) => {
+    const role = String(item.row.role || '').toUpperCase()
+    const priority = ROLE_AWARD_PRIORITY[role] || metricKeys
+    const metric = priority.find(key => maxByMetric[key] > 0 && toNumber(item.row[key]) === maxByMetric[key])
+    const isTopRating = topRatingRowKeys.has(item.row.key)
+    const awardKey = metric || (isTopRating ? 'rating' : '')
+
+    if (awardKey) {
+      acc.set(item.row.key, {
+        ...AWARD_DEFINITIONS[awardKey],
+        primary: isTopRating
+      })
+    }
+
+    return acc
+  }, new Map())
 }
 
 function PlayerAvatar({ row }) {
@@ -143,7 +201,19 @@ function PlayerAvatar({ row }) {
   )
 }
 
-function RatingCluster({ impact, t, isTeamMvp = false }) {
+function AwardBadge({ award, t }) {
+  if (!award) {
+    return <span className={styles.awardEmpty} aria-hidden="true"></span>
+  }
+
+  return (
+    <span className={styles.awardBadge} data-primary={award.primary ? 'true' : 'false'}>
+      {t(award.labelKey, award.fallback)}
+    </span>
+  )
+}
+
+function RatingCluster({ impact, t }) {
   if (!impact) {
     return (
       <span
@@ -151,9 +221,6 @@ function RatingCluster({ impact, t, isTeamMvp = false }) {
         data-empty="true"
         aria-label={t('matchDetail.mapRatingUnavailable', 'Match Rating unavailable')}
       >
-        <span className={styles.mvpSlot}>
-          {isTeamMvp ? <span className={styles.mvpBadge}>{t('matchDetail.teamMapMvpShort', 'MVP')}</span> : null}
-        </span>
         <strong className={styles.ratingValue}>-</strong>
       </span>
     )
@@ -164,12 +231,8 @@ function RatingCluster({ impact, t, isTeamMvp = false }) {
   const note = t('matchDetail.ratingMappedFromImpact', 'Rating is generated from player performance metrics on this map.')
   const displayRating = formatMapPlayerMatchRating(impact.matchRating)
   const rawPts = formatRating(impact.rawPts)
-  const mvpLabel = t('matchDetail.teamMapMvpShort', 'MVP')
-  const mvpNote = t('matchDetail.teamMapMvpNote', 'Highest team rating on this map, for performance reference.')
-  const title = `${ratingLabel}: ${displayRating}\n${rawLabel}: ${rawPts} PTS\n${note}${isTeamMvp ? `\n${mvpNote}` : ''}`
-  const ariaLabel = isTeamMvp
-    ? `${mvpLabel}. ${ratingLabel}: ${displayRating}. ${rawLabel}: ${rawPts} PTS. ${mvpNote}`
-    : `${ratingLabel}: ${displayRating}. ${rawLabel}: ${rawPts} PTS.`
+  const title = `${ratingLabel}: ${displayRating}\n${rawLabel}: ${rawPts} PTS\n${note}`
+  const ariaLabel = `${ratingLabel}: ${displayRating}. ${rawLabel}: ${rawPts} PTS.`
   const featured = Number(impact.matchRating) >= 8.5
 
   return (
@@ -180,24 +243,18 @@ function RatingCluster({ impact, t, isTeamMvp = false }) {
       title={title}
       aria-label={ariaLabel}
     >
-      <span className={styles.mvpSlot}>
-        {isTeamMvp ? <span className={styles.mvpBadge}>{mvpLabel}</span> : null}
-      </span>
       <strong className={styles.ratingValue}>{displayRating}</strong>
     </span>
   )
 }
 
-function TeamStatsPanel({ team, sourceTeam, score, rows, rating, impactIndex: providedImpactIndex, seasonId, t }) {
+function TeamStatsPanel({ team, sourceTeam, score, rows, displayRows, awardIndex, seasonId, t, winner = false }) {
   const totals = getTeamTotals(rows)
-  const impactIndex = providedImpactIndex || createImpactIndex(rating)
-  const displayRows = buildDisplayRows(rows, impactIndex)
-  const teamMvpRowKey = getTeamMvpRowKey(displayRows)
   const tail = getSummaryTail(totals)
 
   return (
     <section className={styles.teamStatsPanel} aria-label={`${team.short} player stats`}>
-      <header className={styles.teamStatsHead}>
+      <header className={styles.teamStatsHead} data-winner={winner ? 'true' : 'false'}>
         <TeamLogo
           team={sourceTeam}
           seasonId={seasonId}
@@ -232,6 +289,7 @@ function TeamStatsPanel({ team, sourceTeam, score, rows, rating, impactIndex: pr
               <span className={styles.playerMetaHead}>
                 <span>R</span>
                 <span>{t('matchDetail.player', 'Player')}</span>
+                <span>{t('matchDetail.highlightShort', 'Highlight')}</span>
                 <span>{t('matchDetail.ratingShort', 'Rating')}</span>
               </span>
             </th>
@@ -262,8 +320,11 @@ function TeamStatsPanel({ team, sourceTeam, score, rows, rating, impactIndex: pr
                         {row.battleTag ? <span className={styles.playerSub}>{row.battleTag}</span> : null}
                       </span>
                     </div>
+                    <span className={styles.awardCell}>
+                      <AwardBadge award={awardIndex.get(row.key)} t={t} />
+                    </span>
                     <span className={styles.ratingCell}>
-                      <RatingCluster impact={impact} t={t} isTeamMvp={row.key === teamMvpRowKey} />
+                      <RatingCluster impact={impact} t={t} />
                     </span>
                   </div>
                 </td>
@@ -284,6 +345,9 @@ function TeamStatsPanel({ team, sourceTeam, score, rows, rating, impactIndex: pr
 
 export default function DualTeamStatsTable({ map, dossier, seasonId, t }) {
   const impactIndex = createImpactIndex(map.rating)
+  const teamADisplayRows = buildDisplayRows(map.teamAStats, impactIndex)
+  const teamBDisplayRows = buildDisplayRows(map.teamBStats, impactIndex)
+  const awardIndex = createAwardIndex([...teamADisplayRows, ...teamBDisplayRows])
 
   return (
     <div className={styles.dualStatsScroller}>
@@ -294,10 +358,11 @@ export default function DualTeamStatsTable({ map, dossier, seasonId, t }) {
           side="A"
           score={map.scoreA}
           rows={map.teamAStats}
-          rating={map.rating}
-          impactIndex={impactIndex}
+          displayRows={teamADisplayRows}
+          awardIndex={awardIndex}
           seasonId={seasonId}
           t={t}
+          winner={map.winnerSide === 'A'}
         />
         <TeamStatsPanel
           team={dossier.teamB}
@@ -305,10 +370,11 @@ export default function DualTeamStatsTable({ map, dossier, seasonId, t }) {
           side="B"
           score={map.scoreB}
           rows={map.teamBStats}
-          rating={map.rating}
-          impactIndex={impactIndex}
+          displayRows={teamBDisplayRows}
+          awardIndex={awardIndex}
           seasonId={seasonId}
           t={t}
+          winner={map.winnerSide === 'B'}
         />
       </div>
     </div>

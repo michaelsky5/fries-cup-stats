@@ -262,6 +262,268 @@
   color: rgba(42, 42, 42, 0.62);
 }
 
+/* ---------- recorded comps ---------- */
+.compsPanel {
+  min-width: 0;
+  overflow: hidden;
+  background: var(--panel-background);
+  border: 2px solid var(--border-strong);
+}
+
+.compsHeader {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.86fr);
+  gap: 24px;
+  align-items: end;
+  padding: 13px 18px 11px;
+  background: var(--brand-black);
+  border-bottom: 4px solid var(--brand-yellow);
+  color: var(--brand-white);
+}
+
+.compsTitleGroup {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.compsKicker {
+  color: var(--brand-yellow);
+  font-size: 10px;
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.compsHeader h2 {
+  margin: 0;
+  color: var(--brand-white);
+  font-size: 22px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.compsHeader p {
+  max-width: 560px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.compsBody {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(380px, 0.92fr);
+}
+
+.compLeader {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  background: var(--brand-yellow);
+  border-right: 2px solid var(--border-strong);
+}
+
+.compRank {
+  display: grid;
+  place-items: center;
+  background: var(--brand-black);
+  border-right: 2px solid var(--border-strong);
+  color: var(--brand-yellow);
+  font-size: clamp(54px, 5.2vw, 80px);
+  font-weight: 950;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+
+.compMain {
+  min-width: 0;
+  display: grid;
+  align-content: stretch;
+  gap: 10px;
+  padding: 12px;
+}
+
+.compHeroes {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  background: rgba(255, 255, 255, 0.36);
+  border: 1px solid rgba(42, 42, 42, 0.3);
+}
+
+.compHero {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 6px;
+  padding: 8px;
+  border-right: 1px solid rgba(42, 42, 42, 0.22);
+}
+
+.compHero:last-child {
+  border-right: 0;
+}
+
+.compHeroAvatar {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--brand-black);
+  border: 2px solid var(--border-strong);
+}
+
+.compHeroAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.compHeroName {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--brand-black);
+  font-size: 13px;
+  font-weight: 950;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compHeroRole {
+  color: rgba(42, 42, 42, 0.58);
+  font-size: 9px;
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.compMetaGrid {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: rgba(255, 255, 255, 0.3);
+  border-top: 1px solid rgba(42, 42, 42, 0.3);
+  border-left: 1px solid rgba(42, 42, 42, 0.3);
+}
+
+.compMetaGrid span {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  padding: 9px 10px;
+  border-right: 1px solid rgba(42, 42, 42, 0.3);
+}
+
+.compMetaGrid b {
+  overflow: hidden;
+  color: rgba(42, 42, 42, 0.58);
+  font-size: 10px;
+  font-weight: 950;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compMetaGrid strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--brand-black);
+  font-size: 16px;
+  font-weight: 950;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compList {
+  min-width: 0;
+  display: grid;
+  background: var(--panel-background);
+}
+
+.compListItem {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr) 72px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.compListItem:last-child {
+  border-bottom: 0;
+}
+
+.compListRank {
+  display: grid;
+  place-items: center;
+  background: var(--surface-warm);
+  border-right: 2px solid var(--border-strong);
+  color: var(--brand-black);
+  font-size: 19px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.compListHeroes {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.compListHeroes .compHero {
+  gap: 4px;
+  justify-items: center;
+  padding: 6px 5px;
+  background: var(--panel-background);
+  border-right: 1px solid var(--border-light);
+}
+
+.compListHeroes .compHeroAvatar {
+  width: 30px;
+  height: 30px;
+  border-width: 1px;
+}
+
+.compListHeroes .compHeroName {
+  font-size: 9px;
+  text-align: center;
+}
+
+.compListHeroes .compHeroRole {
+  display: none;
+}
+
+.compListStats {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 5px;
+  border-left: 2px solid var(--border-strong);
+  color: var(--brand-black);
+}
+
+.compListStats strong {
+  font-size: 19px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.compListStats span {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 950;
+  line-height: 1;
+}
+
 /* ---------- grid ---------- */
 .gridSection {
   margin-top: 0;
@@ -566,6 +828,20 @@
     border-right: 0;
     border-bottom: 2px solid var(--border-strong);
   }
+
+  .compsHeader {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .compsBody {
+    grid-template-columns: 1fr;
+  }
+
+  .compLeader {
+    border-right: 0;
+    border-bottom: 2px solid var(--border-strong);
+  }
 }
 
 @media (max-width: 760px) {
@@ -618,6 +894,91 @@
     padding: 0 12px;
   }
 
+  .compsHeader {
+    padding: 14px 16px 12px;
+  }
+
+  .compsHeader h2 {
+    font-size: 20px;
+  }
+
+  .compsHeader p {
+    font-size: 11px;
+  }
+
+  .compLeader {
+    grid-template-columns: 62px minmax(0, 1fr);
+  }
+
+  .compRank {
+    font-size: 38px;
+  }
+
+  .compMain {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .compHeroes {
+    grid-template-columns: repeat(5, minmax(46px, 1fr));
+  }
+
+  .compHero {
+    gap: 5px;
+    padding: 7px 5px;
+  }
+
+  .compHeroAvatar {
+    width: 38px;
+    height: 38px;
+    border-width: 1px;
+  }
+
+  .compHeroName {
+    font-size: 10px;
+  }
+
+  .compMetaGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .compMetaGrid span {
+    padding: 9px 10px;
+  }
+
+  .compMetaGrid strong {
+    font-size: 15px;
+  }
+
+  .compListItem {
+    grid-template-columns: 44px minmax(0, 1fr) 58px;
+  }
+
+  .compListRank {
+    font-size: 17px;
+  }
+
+  .compListHeroes {
+    grid-template-columns: repeat(5, minmax(42px, 1fr));
+  }
+
+  .compListHeroes .compHero {
+    padding: 7px 4px;
+  }
+
+  .compListHeroes .compHeroAvatar {
+    width: 30px;
+    height: 30px;
+  }
+
+  .compListHeroes .compHeroName {
+    font-size: 9px;
+  }
+
+  .compListStats strong {
+    font-size: 17px;
+  }
+
   .heroGrid {
     grid-template-columns: 1fr;
   }
@@ -648,5 +1009,26 @@
 
   .statValue {
     font-size: 26px;
+  }
+
+  .compLeader {
+    grid-template-columns: 52px minmax(0, 1fr);
+  }
+
+  .compRank {
+    font-size: 30px;
+  }
+
+  .compHeroAvatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .compHeroName {
+    font-size: 9px;
+  }
+
+  .compListItem {
+    grid-template-columns: 38px minmax(0, 1fr) 52px;
   }
 }

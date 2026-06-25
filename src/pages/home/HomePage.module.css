@@ -317,6 +317,7 @@
 
 .gatewayStatus {
   width: fit-content;
+  max-width: 100%;
   min-height: 26px;
   display: inline-flex;
   align-items: center;
@@ -475,6 +476,7 @@
 .playEntryCard {
   min-width: 0;
   min-height: 100%;
+  position: relative;
   display: grid;
   align-content: end;
   gap: 14px;
@@ -498,11 +500,35 @@
   color: rgba(255, 255, 255, 0.68);
 }
 
+.playEntryCard:hover strong,
+.playEntryCard:hover b,
+.playEntryCard:hover em,
+.playEntryCard:focus-visible strong,
+.playEntryCard:focus-visible b,
+.playEntryCard:focus-visible em {
+  color: var(--portal-ink);
+}
+
+.playStatusBadge {
+  width: fit-content;
+  max-width: 100%;
+  min-height: 26px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 8px;
+  background: var(--portal-yellow);
+  color: var(--portal-ink);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 1000;
+  line-height: 1;
+}
+
 .commandBoard {
   position: relative;
-  min-height: 540px;
+  min-height: 520px;
   display: grid;
-  grid-template-columns: minmax(420px, 1fr) minmax(560px, 760px);
+  grid-template-columns: minmax(420px, 0.92fr) minmax(560px, 1.08fr);
   gap: 32px;
   align-items: stretch;
   overflow: hidden;
@@ -541,7 +567,7 @@
 .commandFacts dt,
 .commandFeaturedHead span,
 .matchMeta,
-.timeSlotCard header span,
+.eventTimelineMeta span,
 .followTeam span,
 .followMatch > span,
 .preDataGrid span,
@@ -550,8 +576,7 @@
 .resourceGrid span,
 .archiveConclusionGrid span,
 .archiveReviewLinks a,
-.rankingList span,
-.dataKingGrid span {
+.rankingList span {
   font-size: 12px;
   font-weight: 950;
   letter-spacing: 0;
@@ -658,6 +683,7 @@
   font-size: 13px;
   font-weight: 950;
   line-height: 1;
+  text-align: center;
   text-decoration: none;
   transition:
     background-color var(--transition-fast),
@@ -728,7 +754,6 @@
 }
 
 .commandFeaturedGrid,
-.timeSlotMatches,
 .archiveMatchGrid {
   display: grid;
   gap: 0;
@@ -1126,7 +1151,7 @@
   background: var(--fc-white);
 }
 
-.timeSlotGrid {
+.eventTimelineGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0;
@@ -1134,50 +1159,115 @@
   background: var(--fc-white);
 }
 
-.timeSlotCard {
+.eventTimelineCard {
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  min-height: 238px;
+  position: relative;
+  display: grid;
+  align-content: end;
+  gap: 14px;
+  padding: 24px;
   border-right: 1px solid var(--portal-border);
+  color: var(--portal-ink);
 }
 
-.timeSlotCard:last-child {
+.eventTimelineCard:last-child {
   border-right: 0;
 }
 
-.timeSlotCard header {
-  min-height: 78px;
-  display: grid;
-  align-content: center;
-  gap: 12px;
-  padding: 16px 18px;
-  background: var(--portal-black);
-  border-bottom: 2px solid var(--portal-border);
+.eventTimelineCardCurrent {
+  background: var(--portal-yellow);
 }
 
-.timeSlotCard time {
-  color: var(--fc-white);
-  font-size: 26px;
-  font-weight: 950;
+.eventTimelineIndex {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: var(--portal-black);
+  color: var(--portal-yellow);
+  font-size: 13px;
+  font-weight: 1000;
   line-height: 1;
 }
 
-.timeSlotCard header span {
-  width: fit-content;
-  min-height: 24px;
-  display: inline-grid;
-  place-items: center;
-  background: var(--portal-yellow);
+.eventTimelineCardCurrent .eventTimelineIndex {
+  background: var(--fc-white);
   color: var(--portal-ink);
-  padding: 0 8px;
-  font-size: 12px;
-  font-weight: 1000;
-  white-space: nowrap;
 }
 
-.timeSlotMatches {
-  align-content: start;
+.eventTimelineCard::after {
+  position: absolute;
+  top: 34px;
+  right: -18px;
+  z-index: 1;
+  width: 34px;
+  height: 2px;
+  background: var(--portal-border);
+  content: "";
+}
+
+.eventTimelineCard:last-child::after {
+  display: none;
+}
+
+.eventTimelineMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eventTimelineMeta span {
+  color: inherit;
+  opacity: 0.62;
+}
+
+.eventTimelineMeta strong {
+  min-height: 26px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 8px;
+  background: var(--portal-black);
+  color: var(--portal-yellow);
+  font-size: 11px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.eventTimelineCardCurrent .eventTimelineMeta strong {
+  background: var(--fc-white);
+  color: var(--portal-ink);
+}
+
+.eventTimelineCard h3 {
+  color: inherit;
+  font-size: 28px;
+  font-weight: 950;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.eventTimelineCard time {
+  color: inherit;
+  font-size: 22px;
+  font-weight: 950;
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+}
+
+.eventTimelineCard em {
+  color: inherit;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 850;
+  line-height: 1.48;
+  opacity: 0.68;
+  overflow-wrap: anywhere;
 }
 
 .scheduleHint {
@@ -1541,9 +1631,10 @@
 
 .preDataGrid strong {
   color: var(--portal-ink);
-  font-size: 30px;
+  font-size: 28px;
   font-weight: 950;
-  line-height: 1;
+  line-height: 1.06;
+  overflow-wrap: anywhere;
 }
 
 .preDataGrid p {
@@ -2037,6 +2128,118 @@
   opacity: 0.7;
 }
 
+.archiveVault {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.58fr) minmax(0, 1.42fr);
+  border: 2px solid var(--portal-border);
+  background: var(--fc-white);
+}
+
+.archiveVaultLead {
+  min-width: 0;
+  min-height: 230px;
+  display: grid;
+  align-content: end;
+  gap: 14px;
+  padding: 26px;
+  background: var(--portal-black);
+  color: var(--fc-white);
+}
+
+.archiveVaultLead span,
+.archiveVaultCard span {
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.archiveVaultLead span {
+  color: var(--portal-yellow);
+}
+
+.archiveVaultLead strong {
+  color: var(--fc-white);
+  font-size: 34px;
+  font-weight: 950;
+  line-height: 0.98;
+}
+
+.archiveVaultLead em {
+  max-width: 360px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 820;
+  line-height: 1.5;
+}
+
+.archiveVaultGrid {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.archiveVaultCard {
+  min-width: 0;
+  min-height: 230px;
+  display: grid;
+  align-content: space-between;
+  gap: 14px;
+  padding: 22px;
+  border-left: 1px solid rgba(42, 42, 42, 0.24);
+  color: var(--portal-ink);
+  text-decoration: none;
+}
+
+.archiveVaultCard:first-child {
+  background: var(--portal-yellow);
+  border-left: 2px solid var(--portal-border);
+}
+
+.archiveVaultCard:hover,
+.archiveVaultCard:focus-visible {
+  background: #fff7d8;
+  outline: 0;
+}
+
+.archiveVaultCard:first-child:hover,
+.archiveVaultCard:first-child:focus-visible {
+  background: var(--portal-black);
+  color: var(--fc-white);
+}
+
+.archiveVaultCard span {
+  color: inherit;
+  opacity: 0.66;
+}
+
+.archiveVaultCard strong {
+  color: inherit;
+  font-size: 18px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.archiveVaultCard b {
+  min-width: 0;
+  color: inherit;
+  font-size: 34px;
+  font-weight: 950;
+  line-height: 0.95;
+  overflow-wrap: anywhere;
+}
+
+.archiveVaultCard em {
+  color: inherit;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 850;
+  line-height: 1.42;
+  opacity: 0.68;
+}
+
 .archiveFinalShowcase {
   min-width: 0;
   display: grid;
@@ -2210,15 +2413,13 @@
   gap: 24px;
 }
 
-.rankingList,
-.dataKingGrid {
+.rankingList {
   display: grid;
   gap: 0;
   border-top: 2px solid var(--portal-border);
 }
 
-.rankingList a,
-.dataKingGrid a {
+.rankingList a {
   min-width: 0;
   min-height: 58px;
   display: grid;
@@ -2233,27 +2434,11 @@
   grid-template-columns: 54px minmax(0, 1fr) auto;
 }
 
-.dataKingGrid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  border-top: 0;
-}
-
-.dataKingGrid a {
-  min-height: 150px;
-  align-content: end;
-  padding: 18px;
-  background: var(--fc-white);
-  border: 2px solid rgba(42, 42, 42, 0.16);
-}
-
-.rankingList a:hover,
-.dataKingGrid a:hover {
+.rankingList a:hover {
   background: #fff7d8;
 }
 
-.rankingList strong,
-.dataKingGrid strong {
+.rankingList strong {
   min-width: 0;
   overflow: hidden;
   color: var(--portal-ink);
@@ -2268,12 +2453,180 @@
   font-size: 18px;
 }
 
-.rankingList em,
-.dataKingGrid em {
+.rankingList em {
   color: var(--portal-muted);
   font-size: 12px;
   font-style: normal;
   font-weight: 900;
+}
+
+.seasonAwardsPanel {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  background: var(--portal-black);
+  border: 2px solid var(--portal-border);
+  color: var(--fc-white);
+}
+
+.seasonAwardsHead {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(244, 195, 32, 0.38);
+}
+
+.seasonAwardsHead span,
+.seasonAwardMvp span,
+.seasonAwardBody em {
+  color: var(--portal-yellow);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.seasonAwardsHead strong {
+  color: var(--fc-white);
+  font-size: 27px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.seasonAwardsHead em {
+  max-width: 620px;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 820;
+  line-height: 1.45;
+}
+
+.seasonAwardMvp {
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+  padding: 22px 20px;
+  background: var(--portal-yellow);
+  border-bottom: 2px solid var(--portal-border);
+  color: var(--portal-ink);
+  text-decoration: none;
+}
+
+.seasonAwardMvp span {
+  color: rgba(42, 42, 42, 0.62);
+}
+
+.seasonAwardMvp strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--portal-ink);
+  font-size: 46px;
+  font-weight: 950;
+  line-height: 0.9;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seasonAwardMvp em {
+  min-width: 0;
+  color: rgba(42, 42, 42, 0.68);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.seasonAwardMvp:hover,
+.seasonAwardMvp:focus-visible {
+  background: var(--fc-white);
+  outline: 0;
+}
+
+.seasonAwardList {
+  min-width: 0;
+  display: grid;
+}
+
+.seasonAwardRow {
+  min-width: 0;
+  min-height: 66px;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) minmax(128px, auto);
+  gap: 14px;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(244, 195, 32, 0.26);
+  color: var(--fc-white);
+  text-decoration: none;
+}
+
+.seasonAwardRow:last-child {
+  border-bottom: 0;
+}
+
+.seasonAwardRow:hover,
+.seasonAwardRow:focus-visible {
+  background: var(--portal-yellow);
+  color: var(--portal-ink);
+  outline: 0;
+}
+
+.seasonAwardIndex {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: var(--portal-yellow);
+  color: var(--portal-ink);
+  font-size: 12px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.seasonAwardRow:hover .seasonAwardIndex,
+.seasonAwardRow:focus-visible .seasonAwardIndex {
+  background: var(--portal-black);
+  color: var(--portal-yellow);
+}
+
+.seasonAwardBody {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.seasonAwardBody strong {
+  min-width: 0;
+  overflow: hidden;
+  color: inherit;
+  font-size: 20px;
+  font-weight: 950;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seasonAwardRow b {
+  min-width: 0;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  font-weight: 950;
+  line-height: 1;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seasonAwardRow:hover b,
+.seasonAwardRow:focus-visible b,
+.seasonAwardRow:hover .seasonAwardBody em,
+.seasonAwardRow:focus-visible .seasonAwardBody em {
+  color: rgba(42, 42, 42, 0.68);
 }
 
 .archiveClassicLayout {
@@ -2380,6 +2733,7 @@
   .commandBoard,
   .archiveConclusion,
   .archiveReview,
+  .archiveVault,
   .archiveFinalShowcase,
   .archiveClassicLayout,
   .followEmpty,
@@ -2421,20 +2775,43 @@
     min-height: 180px;
   }
 
-  .timeSlotGrid,
+  .archiveVaultLead {
+    min-height: 190px;
+  }
+
+  .archiveVaultGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .archiveVaultCard,
+  .archiveVaultCard:first-child {
+    border-left: 0;
+    border-top: 1px solid rgba(42, 42, 42, 0.24);
+  }
+
+  .eventTimelineGrid,
   .preDataGrid,
   .resourceSecondaryGrid,
   .archiveMatchGrid {
     grid-template-columns: 1fr;
   }
 
-  .timeSlotCard {
+  .eventTimelineCard {
     border-right: 0;
     border-bottom: 1px solid var(--portal-border);
   }
 
-  .timeSlotCard:last-child {
+  .eventTimelineCard:last-child {
     border-bottom: 0;
+  }
+
+  .eventTimelineCard::after {
+    top: auto;
+    right: auto;
+    bottom: -18px;
+    left: 36px;
+    width: 2px;
+    height: 34px;
   }
 
   .followNext {
@@ -2447,11 +2824,13 @@
 
 @media (max-width: 760px) {
   .shell {
-    gap: 42px;
+    gap: 38px;
   }
 
   .commandBoard {
-    padding: 22px;
+    min-height: auto;
+    gap: 18px;
+    padding: 20px;
   }
 
   .overviewLead {
@@ -2484,6 +2863,95 @@
     font-size: 46px;
   }
 
+  .commandFeaturedHead {
+    padding: 18px;
+  }
+
+  .commandFeaturedHead strong {
+    font-size: 24px;
+  }
+
+  .matchBoardRow,
+  .matchBoardRowCompact {
+    min-height: 96px;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .boardIndex {
+    width: 30px;
+    height: 30px;
+    font-size: 11px;
+  }
+
+  .boardDuel,
+  .matchBoardRowCompact .boardDuel {
+    max-width: none;
+    grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .boardTeam,
+  .boardTeamRight,
+  .matchBoardRowCompact .boardTeam,
+  .matchBoardRowCompact .boardTeamRight {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 7px;
+  }
+
+  .boardTeamRight {
+    grid-template-columns: minmax(0, 1fr) 30px;
+  }
+
+  .boardTeamLogo,
+  .matchBoardRowCompact .boardTeamLogo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .boardTeamLogo img,
+  .matchBoardRowCompact .boardTeamLogo img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .boardTeamText strong,
+  .matchBoardRowCompact .boardTeamText strong {
+    font-size: 13px;
+  }
+
+  .boardTeamText em {
+    display: none;
+  }
+
+  .boardMeta {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+
+  .boardArrow {
+    display: none;
+  }
+
+  .eventTimelineCard {
+    min-height: 210px;
+    padding: 22px;
+  }
+
+  .eventTimelineIndex {
+    top: 16px;
+    left: 18px;
+  }
+
+  .eventTimelineCard h3 {
+    font-size: 24px;
+  }
+
+  .eventTimelineCard time {
+    font-size: 19px;
+  }
+
   .commandFacts,
   .archiveTrophyGrid,
   .archiveLegacyLine,
@@ -2491,8 +2959,45 @@
   .archiveFinalDuel,
   .zoneGrid,
   .archiveConclusionGrid,
+  .archiveVaultGrid,
   .dataKingGrid {
     grid-template-columns: 1fr;
+  }
+
+  .archiveVaultLead,
+  .archiveVaultCard {
+    min-height: 158px;
+    padding: 20px;
+  }
+
+  .archiveVaultLead strong {
+    font-size: 28px;
+  }
+
+  .archiveVaultCard b {
+    font-size: 30px;
+  }
+
+  .seasonAwardsHead,
+  .seasonAwardMvp {
+    padding: 18px;
+  }
+
+  .seasonAwardMvp strong {
+    font-size: 38px;
+  }
+
+  .seasonAwardRow {
+    min-height: 76px;
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 8px 12px;
+    padding: 14px;
+  }
+
+  .seasonAwardRow b {
+    grid-column: 2;
+    justify-self: start;
+    text-align: left;
   }
 
   .archiveReviewCards a,

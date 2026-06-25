@@ -1,6 +1,8 @@
 import styles from './MatchDetail.module.css'
 
 export default function MapRecordHeader({ map, dossier, expanded, t }) {
+  const winnerSide = map.winnerSide
+
   return (
     <div className={styles.mapRecordHeader}>
       <div className={styles.mapRecordId}>
@@ -11,9 +13,9 @@ export default function MapRecordHeader({ map, dossier, expanded, t }) {
         <strong>{map.name}</strong>
       </div>
       <div className={styles.mapRecordScore}>
-        <span>{dossier.teamA.short}</span>
+        <span data-winner={winnerSide === 'A' ? 'true' : 'false'}>{dossier.teamA.short}</span>
         <strong>{map.scoreA} : {map.scoreB}</strong>
-        <span>{dossier.teamB.short}</span>
+        <span data-winner={winnerSide === 'B' ? 'true' : 'false'}>{dossier.teamB.short}</span>
       </div>
       <div className={styles.mapRecordMeta}>
         <span>{t('matchDetail.winner', 'Winner')}</span>

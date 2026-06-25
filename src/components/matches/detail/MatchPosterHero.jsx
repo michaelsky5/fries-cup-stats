@@ -63,8 +63,12 @@ export default function MatchPosterHero({ dossier, seasonId, onBack, t }) {
             <span className={styles.posterVersus}>MATCH DOSSIER</span>
             <h1 id="match-dossier-title" className={styles.posterScore}>
               <span data-winner={winnerA ? 'true' : 'false'}>{score.left}</span>
-              <b>:</b>
-              <span data-winner={winnerB ? 'true' : 'false'}>{score.right}</span>
+              {score.right ? (
+                <>
+                  <b>:</b>
+                  <span data-winner={winnerB ? 'true' : 'false'}>{score.right}</span>
+                </>
+              ) : null}
             </h1>
             <span className={styles.posterMatchup}>{dossier.teamA.short} vs {dossier.teamB.short}</span>
           </div>

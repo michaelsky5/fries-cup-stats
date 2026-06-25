@@ -361,16 +361,6 @@
   color: #f4c320;
 }
 
-.seriesMapNode::after {
-  content: "";
-  position: absolute;
-  left: 18px;
-  top: 83px;
-  width: 26px;
-  height: 3px;
-  background: #f4c320;
-}
-
 .seriesMapNode span,
 .seriesOverviewNode span {
   display: block;
@@ -393,18 +383,22 @@
 
 .seriesMapNode b,
 .seriesOverviewNode b {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-top: 6px;
   font-size: 15px;
   font-weight: 1000;
 }
 
 .seriesMapNode em {
-  display: block;
-  margin-top: 17px;
-  padding-left: 34px;
-  color: inherit;
-  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 16px;
+  padding: 0 5px;
+  background: #f4c320;
+  color: #2a2a2a;
+  font-size: 10px;
   font-style: normal;
   font-weight: 1000;
 }
@@ -452,21 +446,24 @@
 
 .analysisFrame {
   border: 2px solid #2a2a2a;
-  background: #ffffff;
+  background: #2a2a2a;
 }
 
 .analysisGrid {
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(360px, 5fr);
+  background: #ffffff;
 }
 
 .mirrorPanel {
   min-width: 0;
   border-right: 1px solid #2a2a2a;
+  background: #f7f2e8;
 }
 
 .performancePanel {
   min-width: 0;
+  background: #f7f2e8;
 }
 
 .analysisSubhead {
@@ -493,13 +490,33 @@
 }
 
 .mirrorTeams {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  padding: 14px 18px;
-  border-bottom: 1px solid #dfd8ca;
+  padding: 16px 22px;
+  border-bottom: 2px solid #2a2a2a;
+  background: #ffffff;
   font-size: 24px;
   line-height: 1;
   font-weight: 1000;
+}
+
+.mirrorTeams::after {
+  content: "VS";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 24px;
+  background: #2a2a2a;
+  color: #f4c320;
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: .08em;
+  transform: translate(-50%, -50%);
 }
 
 .mirrorTeams span {
@@ -507,16 +524,21 @@
 }
 
 .mirrorRows {
-  padding: 4px 0;
+  padding: 0;
+  background: #ffffff;
 }
 
 .mirrorRow {
   display: grid;
-  grid-template-columns: minmax(120px, 1fr) 150px minmax(120px, 1fr);
+  grid-template-columns: minmax(120px, 1fr) 132px minmax(120px, 1fr);
   align-items: center;
   min-height: 52px;
-  padding: 0 18px;
   border-bottom: 1px solid #dfd8ca;
+  background: #ffffff;
+}
+
+.mirrorRow:nth-child(even) {
+  background: #fbf7ee;
 }
 
 .mirrorRow:last-child {
@@ -526,34 +548,38 @@
 .mirrorValue,
 .mirrorValueRight {
   position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
   font-size: 22px;
   font-weight: 1000;
 }
 
 .mirrorValue {
+  justify-content: flex-end;
   text-align: right;
-  padding-right: 20px;
+  padding: 0 30px 0 18px;
 }
 
 .mirrorValueRight {
+  justify-content: flex-start;
   text-align: left;
-  padding-left: 20px;
+  padding: 0 18px 0 30px;
 }
 
 .mirrorValue[data-leader="true"],
 .mirrorValueRight[data-leader="true"] {
-  color: #2a2a2a;
+  background: #fff3cf;
 }
 
 .mirrorValue[data-leader="true"]::after,
 .mirrorValueRight[data-leader="true"]::before {
   content: "";
   position: absolute;
-  top: 50%;
-  width: 16px;
-  height: 4px;
+  top: 0;
+  bottom: 0;
+  width: 6px;
   background: #f4c320;
-  transform: translateY(-50%);
 }
 
 .mirrorValue[data-leader="true"]::after {
@@ -564,19 +590,27 @@
   left: 0;
 }
 
+.mirrorNumber {
+  display: block;
+  min-width: 112px;
+  color: #2a2a2a;
+  font: inherit;
+}
+
 .mirrorMetric {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 34px;
-  border-left: 1px solid #dfd8ca;
-  border-right: 1px solid #dfd8ca;
-  color: #6f6b61;
+  align-self: stretch;
+  min-height: 52px;
+  background: #2a2a2a;
+  color: #ffffff;
   text-align: center;
 }
 
 .mirrorMetric small {
+  color: #f4c320;
   font-size: 10px;
   font-weight: 1000;
   letter-spacing: .08em;
@@ -594,7 +628,8 @@
   gap: 16px;
   align-items: center;
   padding: 18px;
-  border-bottom: 1px solid #dfd8ca;
+  border-bottom: 2px solid #2a2a2a;
+  background: #f4c320;
 }
 
 .performerAvatar {
@@ -607,6 +642,7 @@
   color: #f4c320;
   font-size: 24px;
   font-weight: 1000;
+  border: 2px solid #2a2a2a;
   overflow: hidden;
 }
 
@@ -616,7 +652,7 @@
 
 .performanceKicker {
   display: block;
-  color: #f4c320;
+  color: #2a2a2a;
   font-size: 11px;
   font-weight: 1000;
 }
@@ -633,13 +669,19 @@
 .topPerformerMain em {
   display: block;
   margin: 8px 0;
-  color: #6f6b61;
+  color: #2a2a2a;
   font-size: 12px;
   font-style: normal;
   font-weight: 900;
 }
 
 .topPerformerScore {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-left: 1px solid #2a2a2a;
+  padding-left: 14px;
   text-align: right;
 }
 
@@ -651,17 +693,18 @@
 }
 
 .topPerformerScore span {
-  color: #6f6b61;
+  color: #2a2a2a;
   font-size: 11px;
   font-weight: 1000;
 }
 
 .performanceStats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 14px 18px;
-  border-bottom: 1px solid #dfd8ca;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  padding: 0;
+  border-bottom: 1px solid #2a2a2a;
+  background: #2a2a2a;
 }
 
 .performanceStats span,
@@ -673,6 +716,43 @@
   font-weight: 1000;
 }
 
+.performanceStats span {
+  min-width: 0;
+  min-height: 48px;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  padding: 8px 12px;
+  border: 0;
+  border-right: 1px solid rgba(244, 195, 32, .38);
+  color: #ffffff;
+}
+
+.performanceStats span:last-child {
+  border-right: 0;
+}
+
+.performanceStats b {
+  overflow: hidden;
+  color: #f4c320;
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: .04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.performanceStats strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 1000;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .playerLink {
   margin: 14px 18px 0;
   min-height: 34px;
@@ -681,49 +761,170 @@
 
 .roleLeaderList {
   margin-top: 14px;
-  border-top: 1px solid #dfd8ca;
+  border-top: 1px solid #2a2a2a;
+  background: #ffffff;
 }
 
 .roleLeaderLine {
+  --role-accent: #f4c320;
+  --role-tint: #fff8dd;
+
+  position: relative;
   display: grid;
-  grid-template-columns: 70px minmax(0, 1fr) 54px 64px minmax(0, 1fr);
+  grid-template-columns: minmax(210px, max-content) 82px minmax(220px, 1fr);
   align-items: center;
-  gap: 10px;
-  min-height: 48px;
-  padding: 0 18px;
+  column-gap: 12px;
+  min-height: 54px;
+  padding: 0 16px 0 22px;
   border-bottom: 1px solid #dfd8ca;
+  background: var(--role-tint);
 }
 
-.roleLeaderLine strong {
+.roleLeaderLine::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 5px;
+  background: var(--role-accent);
+}
+
+.roleLeaderLine:nth-child(even) {
+  background: var(--role-tint);
+}
+
+.roleLeaderLine[data-role="TANK"] {
+  --role-accent: #3978c5;
+  --role-tint: rgba(57, 120, 197, .075);
+}
+
+.roleLeaderLine[data-role="DPS"],
+.roleLeaderLine[data-role="DAMAGE"] {
+  --role-accent: #cc4944;
+  --role-tint: rgba(204, 73, 68, .075);
+}
+
+.roleLeaderLine[data-role="SUPPORT"],
+.roleLeaderLine[data-role="SUP"] {
+  --role-accent: #3f9369;
+  --role-tint: rgba(63, 147, 105, .075);
+}
+
+.roleLeaderIdentity {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.roleLeaderPlayer {
+  min-width: 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.roleLeaderPlayer strong {
   min-width: 0;
   font-size: 13px;
   font-weight: 1000;
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.roleLeaderLine em {
+.roleLeaderPlayer em {
+  flex: 0 0 auto;
   color: #6f6b61;
   font-size: 11px;
   font-style: normal;
   font-weight: 900;
+  letter-spacing: .03em;
 }
 
-.roleLeaderLine b {
-  font-size: 18px;
+.roleLeaderScore {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  justify-items: end;
+  gap: 3px 4px;
+  padding: 0 12px 0 0;
+  border-right: 1px solid rgba(42, 42, 42, .22);
+  color: #2a2a2a;
+  white-space: nowrap;
+}
+
+.roleLeaderScoreLabel {
+  grid-column: 1 / -1;
+  color: #6f6b61;
+  font-size: 9px;
   font-weight: 1000;
-  text-align: right;
+  line-height: 1;
+  letter-spacing: .08em;
+}
+
+.roleLeaderScore b {
+  font-size: 24px;
+  font-weight: 1000;
+  line-height: .86;
+}
+
+.roleLeaderScore small {
+  color: #6f6b61;
+  font-size: 10px;
+  font-weight: 1000;
+  line-height: 1;
 }
 
 .roleLeaderStats {
-  display: flex;
-  flex-wrap: wrap;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
+}
+
+.roleLeaderStats span {
+  min-width: 0;
+  min-height: 34px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 5px 7px;
+  background: #ffffff;
+  border-color: color-mix(in srgb, var(--role-accent) 46%, #2a2a2a);
+}
+
+.roleLeaderStats em {
+  overflow: hidden;
+  color: #6f6b61;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 1000;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.roleLeaderStats strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #2a2a2a;
+  font-size: 12px;
+  font-weight: 1000;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .performanceNote,
 .note {
   margin: 0;
   padding: 14px 18px;
+  border-top: 1px solid #dfd8ca;
+  background: #f7f2e8;
   color: #6f6b61;
   font-size: 12px;
   font-weight: 800;
@@ -732,13 +933,20 @@
 .analysisFacts {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  border-top: 1px solid #2a2a2a;
+  border-top: 2px solid #2a2a2a;
+  background: #ffffff;
 }
 
 .analysisFact {
   min-width: 0;
+  min-height: 90px;
   padding: 14px 18px;
   border-right: 1px solid #dfd8ca;
+  background: #fbf7ee;
+}
+
+.analysisFact:nth-child(even) {
+  background: #ffffff;
 }
 
 .analysisFact:last-child {
@@ -787,11 +995,25 @@
   font-size: 18px;
 }
 
+.analysisFact[data-tone="peak"] {
+  border-right-color: #625d53;
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+.analysisFact[data-tone="peak"] strong {
+  color: #dfd8ca;
+}
+
+.analysisFact[data-tone="peak"] b {
+  color: #ffffff;
+}
+
 .analysisFact[data-tone="peak"] em {
   display: inline;
   margin-top: 0;
   margin-left: 8px;
-  color: #2a2a2a;
+  color: #f4c320;
 }
 
 .mapControls {
@@ -824,7 +1046,7 @@
 
 .mapRecordHeader {
   display: grid;
-  grid-template-columns: 150px minmax(180px, 1.05fr) minmax(240px, 1fr) 110px 110px 44px;
+  grid-template-columns: 150px minmax(220px, 1.15fr) minmax(260px, .95fr) 112px 112px 44px;
   min-height: 86px;
 }
 
@@ -846,6 +1068,10 @@
   color: #f4c320;
 }
 
+.mapRecordName {
+  background: #ffffff;
+}
+
 .mapRecordId span,
 .mapRecordMeta span {
   font-size: 11px;
@@ -861,7 +1087,7 @@
 }
 
 .mapRecordName strong {
-  font-size: 26px;
+  font-size: 28px;
   line-height: 1;
   font-weight: 1000;
   overflow-wrap: anywhere;
@@ -870,21 +1096,37 @@
 .mapRecordScore {
   align-items: center;
   flex-direction: row;
-  gap: 14px;
+  gap: 16px;
+  background: #2a2a2a;
+  color: #ffffff;
   text-align: center;
 }
 
 .mapRecordScore span {
   min-width: 44px;
+  color: rgba(255, 255, 255, .72);
   font-size: 16px;
   font-weight: 1000;
 }
 
+.mapRecordScore span[data-winner="true"] {
+  color: #f4c320;
+}
+
 .mapRecordScore strong {
-  font-size: 30px;
+  color: #ffffff;
+  font-size: 34px;
   line-height: 1;
   font-weight: 1000;
   white-space: nowrap;
+}
+
+.mapRecordMeta {
+  background: #fbf7ee;
+}
+
+.mapRecordMeta:nth-child(4) {
+  background: #fff3cf;
 }
 
 .mapRecordMeta span {
@@ -895,6 +1137,7 @@
   align-items: center;
   justify-content: center;
   border-right: 0;
+  background: #f4c320;
   font-size: 26px;
   font-weight: 1000;
 }
@@ -906,31 +1149,42 @@
 .mapMetaStrip {
   display: grid;
   grid-template-columns: repeat(6, minmax(120px, 1fr)) minmax(240px, 1.3fr);
+  background: #2a2a2a;
   border-bottom: 2px solid #2a2a2a;
 }
 
 .mapMetaItem {
   min-width: 0;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-right: 1px solid #dfd8ca;
+  background: #fbf7ee;
+}
+
+.mapMetaItem[data-wide="true"] {
+  background: #ffffff;
 }
 
 .mapMetaItem:last-child {
   border-right: 0;
 }
 
-.mapMetaItem span {
-  display: block;
-  color: #6f6b61;
+.mapMetaItem > span {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 18px;
+  align-items: center;
+  padding: 0 6px;
+  background: #2a2a2a;
+  color: #f4c320;
   font-size: 10px;
   font-weight: 1000;
   letter-spacing: .06em;
   text-transform: uppercase;
 }
 
-.mapMetaItem strong {
+.mapMetaItem > strong {
   display: block;
-  margin-top: 7px;
+  margin-top: 8px;
   font-size: 15px;
   font-weight: 1000;
   overflow-wrap: anywhere;
@@ -952,7 +1206,7 @@
   min-height: 34px;
   padding: 0 12px;
   border-width: 1px;
-  background: #ffffff;
+  background: #f4c320;
 }
 
 .toast {
@@ -988,7 +1242,13 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border-bottom: 1px solid #dfd8ca;
+  border-bottom: 2px solid #2a2a2a;
+  background: #fbf7ee;
+}
+
+.teamStatsHead[data-winner="true"] {
+  background: #fff3cf;
+  box-shadow: inset 5px 0 0 #f4c320;
 }
 
 .teamStatsLogo {
@@ -1019,6 +1279,13 @@
 }
 
 .teamStatsHead b {
+  min-width: 38px;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid #2a2a2a;
   font-size: 26px;
   line-height: 1;
   font-weight: 1000;
@@ -1041,15 +1308,15 @@
 }
 
 .playerMetaCol {
-  width: 43%;
+  width: 47%;
 }
 
 .compactStatCol {
-  width: 6.5%;
+  width: 6%;
 }
 
 .wideStatCol {
-  width: 12.5%;
+  width: 11.666%;
 }
 
 .statsTable th,
@@ -1092,16 +1359,21 @@
   font-weight: 900;
 }
 
+.statsTable tbody tr:hover {
+  background: rgba(244, 195, 32, .08);
+}
+
 .playerMetaHead {
   width: 100%;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 92px;
+  grid-template-columns: 48px minmax(0, 1fr) 78px 78px;
   align-items: center;
   gap: 10px;
 }
 
 .playerMetaHead span:first-child,
-.playerMetaHead span:nth-child(3) {
+.playerMetaHead span:nth-child(3),
+.playerMetaHead span:nth-child(4) {
   text-align: center;
 }
 
@@ -1113,7 +1385,7 @@
   min-width: 0;
   width: 100%;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 92px;
+  grid-template-columns: 48px minmax(0, 1fr) 78px 78px;
   align-items: center;
   gap: 10px;
   max-width: 100%;
@@ -1167,19 +1439,11 @@
 
 .ratingCluster {
   display: grid;
-  grid-template-columns: 34px 38px;
   align-items: center;
   justify-content: end;
-  column-gap: 4px;
   color: #2a2a2a;
   text-align: center;
   white-space: nowrap;
-}
-
-.mvpSlot {
-  width: 34px;
-  display: inline-flex;
-  justify-content: flex-end;
 }
 
 .ratingValue {
@@ -1216,20 +1480,42 @@
 .ratingCell {
   display: inline-flex;
   justify-content: center;
+  min-width: 64px;
+  padding: 2px 0;
+  background: rgba(244, 195, 32, .1);
   text-align: center;
 }
 
-.mvpBadge {
+.awardCell {
+  min-width: 0;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.awardBadge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 18px;
-  padding: 0 5px;
-  background: #f4c320;
+  min-width: 64px;
+  min-height: 22px;
+  padding: 0 6px;
+  border: 1px solid #2a2a2a;
+  background: #ffffff;
   color: #2a2a2a;
-  font-size: 9px;
+  font-size: 10px;
   line-height: 1;
   font-weight: 1000;
+  white-space: nowrap;
+}
+
+.awardBadge[data-primary="true"] {
+  background: #f4c320;
+}
+
+.awardEmpty {
+  display: inline-block;
+  min-width: 64px;
+  min-height: 22px;
 }
 
 .roleLabel {
@@ -1366,8 +1652,20 @@
     grid-template-columns: minmax(0, 7fr) minmax(340px, 5fr);
   }
 
+  .analysisFacts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .analysisFact:nth-child(4n) {
+    border-right: 0;
+  }
+
+  .analysisFact:nth-child(n+5) {
+    border-top: 1px solid #2a2a2a;
+  }
+
   .mapMetaStrip {
-    grid-template-columns: repeat(4, minmax(130px, 1fr)) minmax(240px, 1.2fr);
+    grid-template-columns: repeat(6, minmax(112px, 1fr)) minmax(220px, 1.25fr);
   }
 }
 
@@ -1412,6 +1710,18 @@
     border-bottom: 1px solid #2a2a2a;
   }
 
+  .analysisFacts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .analysisFact:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .analysisFact:nth-child(n+3) {
+    border-top: 1px solid #2a2a2a;
+  }
+
   .mapRecordHeader {
     grid-template-columns: 120px minmax(160px, 1fr) minmax(210px, 1fr) 88px 88px 44px;
   }
@@ -1430,5 +1740,33 @@
 
   .footerNavLink:last-child {
     border-bottom: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .roleLeaderLine {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+    min-height: auto;
+    padding: 10px 12px 10px 17px;
+  }
+
+  .roleLeaderIdentity {
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .roleLeaderPlayer {
+    display: grid;
+    gap: 3px;
+  }
+
+  .roleLeaderScore {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  .roleLeaderStats {
+    grid-column: 1 / -1;
   }
 }
