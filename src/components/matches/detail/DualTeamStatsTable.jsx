@@ -328,12 +328,11 @@ function TeamStatsPanel({ team, sourceTeam, score, rows, displayRows, awardIndex
                     </span>
                   </div>
                 </td>
-                <td>{formatInt(row.eliminations, '-')}</td>
-                <td>{formatInt(row.assists, '-')}</td>
-                <td>{formatInt(row.deaths, '-')}</td>
-                <td>{formatInt(row.damage, '-')}</td>
-                <td>{formatInt(row.healing, '-')}</td>
-                <td>{formatInt(row.mitigation, '-')}</td>
+                {GAME_STAT_COLUMNS.map(column => (
+                  <td key={column.key} data-label={column.short}>
+                    {formatInt(row[column.key], '-')}
+                  </td>
+                ))}
               </tr>
             )
           })}

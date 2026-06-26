@@ -1217,13 +1217,13 @@
 }
 
 .dualStatsScroller {
-  overflow-x: auto;
+  overflow-x: hidden;
 }
 
 .dualStatsGrid {
-  min-width: 1240px;
+  min-width: 0;
   display: grid;
-  grid-template-columns: minmax(620px, 1fr) minmax(620px, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .teamStatsPanel {
@@ -1730,6 +1730,19 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .dualStatsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .teamStatsPanel {
+    border-right: 0;
+    border-bottom: 2px solid #2a2a2a;
+  }
+
+  .teamStatsPanel:last-child {
+    border-bottom: 0;
+  }
+
   .footerNavLink,
   .footerNavLink:last-child {
     border-right: 0;
@@ -1744,6 +1757,191 @@
 }
 
 @media (max-width: 760px) {
+  .mapRecordHeader {
+    grid-template-columns: 82px minmax(0, 1fr) 88px 40px;
+    min-height: 74px;
+  }
+
+  .mapRecordId,
+  .mapRecordName,
+  .mapRecordScore,
+  .mapRecordToggle {
+    padding: 10px;
+  }
+
+  .mapRecordMeta {
+    display: none;
+  }
+
+  .mapRecordName strong {
+    font-size: 21px;
+  }
+
+  .mapRecordScore {
+    min-width: 0;
+    gap: 6px;
+  }
+
+  .mapRecordScore span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+  }
+
+  .mapRecordScore strong {
+    font-size: 22px;
+  }
+
+  .mapMetaStrip {
+    grid-template-columns: 1fr;
+  }
+
+  .mapMetaItem {
+    border-right: 0;
+    border-bottom: 1px solid #dfd8ca;
+  }
+
+  .mapMetaItem:last-child {
+    border-bottom: 0;
+  }
+
+  .teamStatsHead {
+    grid-template-columns: 36px minmax(0, 1fr) 38px;
+    gap: 10px;
+    min-height: 0;
+    padding: 10px 12px;
+  }
+
+  .teamStatsLogo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .teamStatsHead strong {
+    font-size: 16px;
+  }
+
+  .teamStatsHead b {
+    min-width: 34px;
+    min-height: 34px;
+    font-size: 22px;
+  }
+
+  .teamStatsHead em {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+
+  .statsTable {
+    display: block;
+  }
+
+  .statsTable colgroup,
+  .statsTable thead {
+    display: none;
+  }
+
+  .statsTable tbody {
+    display: grid;
+    gap: 10px;
+    padding: 10px;
+    background: #fbf7ee;
+  }
+
+  .statsTable tr {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border: 1px solid #dfd8ca;
+    background: #ffffff;
+  }
+
+  .statsTable td {
+    min-width: 0;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    border-right: 1px solid #dfd8ca;
+    border-bottom: 1px solid #dfd8ca;
+    font-size: 13px;
+    text-align: right;
+  }
+
+  .statsTable td:nth-child(4),
+  .statsTable td:nth-child(7) {
+    border-right: 0;
+  }
+
+  .statsTable td:nth-child(n+5) {
+    border-bottom: 0;
+  }
+
+  .statsTable th:nth-child(2),
+  .statsTable td:nth-child(2),
+  .statsTable th:nth-child(5),
+  .statsTable td:nth-child(5) {
+    border-left: 0;
+  }
+
+  .statsTable td::before {
+    content: attr(data-label);
+    color: #6f6b61;
+    font-size: 10px;
+    font-weight: 1000;
+    letter-spacing: .06em;
+  }
+
+  .statsTable td:first-child {
+    grid-column: 1 / -1;
+    display: block;
+    border-right: 0;
+    border-bottom: 2px solid #2a2a2a;
+    text-align: left;
+  }
+
+  .statsTable td:first-child::before {
+    display: none;
+  }
+
+  .playerMetaCell {
+    grid-template-columns: 44px minmax(0, 1fr) auto auto;
+    gap: 8px;
+  }
+
+  .playerMetaHead {
+    grid-template-columns: 44px minmax(0, 1fr) 64px 58px;
+    gap: 8px;
+  }
+
+  .roleLabel {
+    width: 40px;
+  }
+
+  .awardBadge {
+    min-width: 58px;
+    max-width: 76px;
+    min-height: 24px;
+    white-space: normal;
+    line-height: 1.1;
+    text-align: center;
+  }
+
+  .awardEmpty {
+    min-width: 0;
+  }
+
+  .ratingCell {
+    min-width: 54px;
+  }
+
+  .ratingValue {
+    font-size: 19px;
+  }
+
   .roleLeaderLine {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 8px 12px;
@@ -1768,5 +1966,190 @@
 
   .roleLeaderStats {
     grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 520px) {
+  .posterTeam {
+    padding: 28px 22px;
+  }
+
+  .posterWatermark {
+    width: 210px;
+    height: 210px;
+  }
+
+  .posterScoreAxis {
+    min-height: 176px;
+  }
+
+  .posterScore {
+    max-width: 100%;
+    gap: 12px;
+    margin: 14px 0;
+    font-size: 72px;
+  }
+
+  .posterLogo {
+    width: 58px;
+    height: 58px;
+  }
+
+  .posterTeamIdentity {
+    gap: 12px;
+  }
+
+  .posterTeamIdentity strong {
+    font-size: clamp(40px, 12vw, 56px);
+  }
+
+  .posterVersus,
+  .posterMatchup {
+    max-width: 100%;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .posterTeam:first-child .posterWatermark {
+    right: -18px;
+  }
+
+  .posterTeam:last-child .posterWatermark {
+    left: -18px;
+  }
+
+  .seriesRail {
+    position: static;
+  }
+
+  .seriesRailScroller {
+    overflow-x: hidden;
+  }
+
+  .seriesRailTrack {
+    min-width: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .seriesRailTrack::before {
+    display: none;
+  }
+
+  .seriesOverviewNode,
+  .seriesMapNode {
+    min-width: 0;
+    min-height: 78px;
+    padding: 12px 14px;
+    border-right: 0;
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  .seriesMapNode:last-child {
+    border-bottom: 0;
+  }
+
+  .seriesMapNode b,
+  .seriesOverviewNode b {
+    flex-wrap: wrap;
+  }
+
+  .mirrorTeams {
+    padding: 14px;
+    font-size: 20px;
+  }
+
+  .mirrorRow {
+    grid-template-columns: minmax(0, 1fr) 86px minmax(0, 1fr);
+    min-height: 48px;
+  }
+
+  .mirrorValue,
+  .mirrorValueRight {
+    min-width: 0;
+    padding: 0 10px;
+    font-size: 17px;
+  }
+
+  .mirrorNumber {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .mirrorMetric {
+    min-width: 0;
+    min-height: 48px;
+  }
+
+  .mirrorMetric small {
+    font-size: 9px;
+  }
+
+  .mapRecordHeader {
+    grid-template-columns: minmax(0, 1fr) 78px 38px;
+  }
+
+  .mapRecordId {
+    grid-column: 1 / -1;
+    min-height: 42px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    border-right: 0;
+    border-bottom: 1px solid #625d53;
+  }
+
+  .mapRecordId strong {
+    margin-top: 0;
+    text-align: right;
+  }
+
+  .mapRecordName strong {
+    font-size: 18px;
+  }
+
+  .mapRecordScore {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .mapRecordScore strong {
+    font-size: 18px;
+  }
+
+  .playerMetaCell {
+    grid-template-columns: 42px minmax(0, 1fr) 54px;
+    gap: 8px;
+  }
+
+  .awardCell {
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+  }
+
+  .ratingCell {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .statsTable tr {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .statsTable td:nth-child(3),
+  .statsTable td:nth-child(5) {
+    border-right: 0;
+  }
+
+  .statsTable td:nth-child(4) {
+    border-right: 1px solid #dfd8ca;
+  }
+
+  .statsTable td:nth-child(n+6) {
+    border-bottom: 0;
+  }
+
+  .teamStatsHead {
+    grid-template-columns: 34px minmax(0, 1fr) 34px;
   }
 }
