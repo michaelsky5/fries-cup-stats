@@ -30,7 +30,7 @@ export const OW_HEROES = [
   { id: 'sojourn', zh: '索杰恩', en: 'Sojourn', role: 'damage', assetKey: 'sojourn' },
   { id: 'soldier-76', zh: '士兵：76', en: 'Soldier: 76', role: 'damage', assetKey: 'soldier-76', aliases: ['Soldier 76', 'Soldier76'] },
   { id: 'sierra', zh: '西拉', en: 'Sierra', role: 'damage', assetKey: 'sierra' },
-  { id: 'shion', zh: '死怨', en: 'Shion', role: 'damage', assetKey: 'shion' },
+  { id: 'shion', zh: '死怨', en: 'Shion', role: 'damage', assetKey: 'shion', aliases: ['Shino', 'shino'] },
   { id: 'sombra', zh: '黑影', en: 'Sombra', role: 'damage', assetKey: 'sombra' },
   { id: 'symmetra', zh: '秩序之光', en: 'Symmetra', role: 'damage', assetKey: 'symmetra' },
   { id: 'torbjorn', zh: '托比昂', en: 'Torbjörn', role: 'damage', assetKey: 'torbjorn', aliases: ['Torbjorn'] },

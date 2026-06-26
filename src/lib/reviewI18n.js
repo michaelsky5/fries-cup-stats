@@ -64,6 +64,8 @@ export const HERO_CN = {
   Pharah: '法老之鹰',
   Reaper: '死神',
   Sierra: '西拉',
+  Shion: '死怨',
+  Shino: '死怨',
   Sojourn: '索杰恩',
   'Soldier: 76': '士兵：76',
   Soldier76: '士兵：76',

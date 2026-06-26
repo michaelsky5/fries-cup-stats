@@ -1,3 +1,5 @@
+import { getOwHeroAssetKey } from './heroes.js'
+
 export const ROLE_ORDER = ['TANK', 'DPS', 'SUPPORT']
 
 export const ROLE_COLORS = {
@@ -135,6 +137,12 @@ export const HERO_SCORE_PROFILES = {
       coreMetrics: ['elim', 'ast', 'dth'],
       weights: { elim: 0.30, ast: 0.18, dth: 0.24, dmg: 0.20, heal: 0.04, block: 0.04 }
     },
+    shion: {
+      label: 'flank_dps',
+      influence: 0.42,
+      coreMetrics: ['elim', 'dth', 'dmg'],
+      weights: { elim: 0.34, dth: 0.24, dmg: 0.24, ast: 0.10, heal: 0.04, block: 0.04 }
+    },
     tracer: {
       label: 'flank_dps',
       influence: 0.42,
@@ -271,6 +279,13 @@ function normalizeHeroKey(heroName) {
     .replace(/^_+|_+$/g, '')
 }
 
+function getHeroKeyCandidates(heroName) {
+  return Array.from(new Set([
+    getOwHeroAssetKey(heroName),
+    normalizeHeroKey(heroName)
+  ].filter(Boolean)))
+}
+
 function blendWeights(baseWeights, profileWeights, influence = 0.5) {
   const ratio = clamp(toFiniteNumber(influence, 0.5), 0, 1)
   const metricIds = Array.from(new Set([
@@ -287,8 +302,8 @@ function blendWeights(baseWeights, profileWeights, influence = 0.5) {
 }
 
 export function getHeroScoreProfile(role, heroName) {
-  const heroKey = normalizeHeroKey(heroName)
-  return HERO_SCORE_PROFILES[role]?.[heroKey] || null
+  const profiles = HERO_SCORE_PROFILES[role] || {}
+  return getHeroKeyCandidates(heroName).map(heroKey => profiles[heroKey]).find(Boolean) || null
 }
 
 export function getRoleScoreConfig(role, heroName = '') {

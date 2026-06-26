@@ -30,6 +30,7 @@ export const HERO_SHARE_ARTWORK_CROPS = {
   reaper: { objectPosition: '49% 47%', scale: 1.08 },
   reinhardt: { objectPosition: '48% 48%', scale: 1.04 },
   roadhog: { objectPosition: '48% 48%', scale: 1.04 },
+  shion: { objectPosition: '49% 46%', scale: 1.08 },
   sigma: { objectPosition: '50% 47%', scale: 1.06 },
   soldier_76: { objectPosition: '48% 47%', scale: 1.07 },
   sombra: { objectPosition: '49% 47%', scale: 1.08 },
