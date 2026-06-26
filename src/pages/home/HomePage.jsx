@@ -839,12 +839,12 @@ function ArchiveConclusion({ overview, archive, summary }) {
   )
 }
 
-function ArchiveFinalTeam({ team, champion }) {
+function ArchiveFinalTeam({ team, champion, side = 'left' }) {
   const { locale = 'zh-CN', seasonId } = useOutletContext()
   const winner = isSameTeam(team, champion)
 
   return (
-    <span className={`${styles.archiveFinalTeam} ${winner ? styles.archiveFinalTeamWinner : ''}`}>
+    <span className={`${styles.archiveFinalTeam} ${side === 'right' ? styles.archiveFinalTeamRight : ''} ${winner ? styles.archiveFinalTeamWinner : ''}`}>
       <TeamLogo team={team} seasonId={seasonId} className={styles.archiveFinalLogo} />
       <span>
         <strong>{formatTeamName(team)}</strong>
@@ -857,6 +857,12 @@ function ArchiveFinalTeam({ team, champion }) {
 
 function ArchiveFinal({ finalMatch, archive }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const champion = archive.champion
+  const runnerUp = finalMatch && champion
+    ? (isSameTeam(finalMatch.team_a, champion) ? finalMatch.team_b : finalMatch.team_a)
+    : finalMatch?.team_b
+  const championName = champion ? formatTeamName(champion) : homeText(locale, '冠军', 'Champion')
+  const runnerUpName = runnerUp ? formatTeamName(runnerUp) : homeText(locale, '亚军', 'Runner-up')
 
   return (
     <section className={styles.archiveBlock}>
@@ -868,12 +874,29 @@ function ArchiveFinal({ finalMatch, archive }) {
             <strong>{formatMatchScore(finalMatch)}</strong>
             <em>{getShortTime(finalMatch, locale)} · {finalMatch.format || 'FT4'}</em>
           </div>
-          <div className={styles.archiveFinalDuel}>
-            <ArchiveFinalTeam team={finalMatch.team_a} champion={archive.champion} />
-            <b>{formatMatchScore(finalMatch)}</b>
-            <ArchiveFinalTeam team={finalMatch.team_b} champion={archive.champion} />
+          <div className={styles.archiveFinalCenter}>
+            <div className={styles.archiveFinalSummary}>
+              <span>{homeText(locale, '冠军归档', 'Title Record')}</span>
+              <strong>{championName}</strong>
+              <em>
+                {isEnglishLocale(locale)
+                  ? `${championName} closed the season over ${runnerUpName}.`
+                  : `${championName} 击败 ${runnerUpName}，完成赛季收官。`}
+              </em>
+            </div>
+            <div className={styles.archiveFinalDuel}>
+              <ArchiveFinalTeam team={finalMatch.team_a} champion={champion} side="left" />
+              <span className={styles.archiveFinalResult}>
+                <b>{formatMatchScore(finalMatch)}</b>
+                <em>FINAL SCORE</em>
+              </span>
+              <ArchiveFinalTeam team={finalMatch.team_b} champion={champion} side="right" />
+            </div>
           </div>
-          <span className={styles.archiveFinalLink}>{homeText(locale, '查看总决赛档案 →', 'View Grand Final Dossier ->')}</span>
+          <span className={styles.archiveFinalLink}>
+            <em>MATCH DOSSIER</em>
+            <strong>{homeText(locale, '查看总决赛档案 →', 'View Grand Final Dossier ->')}</strong>
+          </span>
         </Link>
       ) : (
         <div className={styles.emptyMini}>
@@ -1071,6 +1094,52 @@ function ArchiveHonors({ archive, dataPulse }) {
   )
 }
 
+function ArchiveClassicFeature({ match }) {
+  const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  if (!match) return null
+
+  return (
+    <Link to={withSeason(`/matches/${matchRouteId(match)}`)} className={styles.archiveClassicFeature}>
+      <span>CHAMPION KEY MATCH</span>
+      <strong>{homeText(locale, '夺冠关键战', 'Title Key Match')}</strong>
+      <em>{homeText(locale, '冠军路线中最具代表性的胜场。', 'The defining win from the champion run.')}</em>
+      <div className={styles.archiveClassicFeatureBoard}>
+        <div className={styles.matchDuel}>
+          <TeamMark team={match.team_a} align="right" />
+          <b>{formatMatchScore(match)}</b>
+          <TeamMark team={match.team_b} />
+        </div>
+        <div className={styles.archiveClassicFeatureMeta}>
+          <span>{getShortTime(match, locale)}</span>
+          <span>{match.format || 'TBD'}</span>
+          <b>{homeText(locale, '详情', 'Details')}</b>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+function ArchiveClassicRow({ match, index }) {
+  const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  if (!match) return null
+
+  return (
+    <Link to={withSeason(`/matches/${matchRouteId(match)}`)} className={styles.archiveClassicRow}>
+      <span className={styles.archiveClassicIndex}>{String(index).padStart(2, '0')}</span>
+      <span className={styles.archiveClassicDuel}>
+        <TeamMark team={match.team_a} align="right" />
+        <b>{formatMatchScore(match)}</b>
+        <TeamMark team={match.team_b} />
+      </span>
+      <span className={styles.archiveClassicMeta}>
+        <em>{getShortTime(match, locale)}</em>
+        <strong>{match.format || 'TBD'}</strong>
+        <b>{homeText(locale, '详情 →', 'Details ->')}</b>
+      </span>
+    </Link>
+  )
+}
+
 function ArchiveClassicMatches({ matches }) {
   const { locale = 'zh-CN' } = useOutletContext()
   const [primary, ...secondary] = matches.slice(0, 5)
@@ -1079,16 +1148,15 @@ function ArchiveClassicMatches({ matches }) {
     <section className={styles.archiveBlock}>
       <SectionHead eyebrow="CLASSIC MATCHES" title={homeText(locale, '经典比赛', 'Classic Matches')} actionTo="/matches" actionText={homeText(locale, '全部赛果', 'All Results')} />
       <div className={styles.archiveClassicLayout}>
-        {primary ? (
-          <div className={styles.archiveClassicPrimary}>
-            <span>CHAMPION PATH</span>
-            <strong>{homeText(locale, '冠军之路精选', 'Champion Path Picks')}</strong>
-            <MatchCard match={primary} result />
-          </div>
-        ) : null}
-        <div className={styles.archiveMatchGrid}>
-          {secondary.map(match => (
-            <MatchCard key={matchRouteId(match)} match={match} result compact />
+        <ArchiveClassicFeature match={primary} />
+        <div className={styles.archiveClassicList}>
+          <header>
+            <span>MATCH LOG</span>
+            <strong>{homeText(locale, '关键对局档案', 'Key Match Archive')}</strong>
+            <em>{isEnglishLocale(locale) ? `${secondary.length} selected matches` : `${secondary.length} 场精选比赛`}</em>
+          </header>
+          {secondary.map((match, index) => (
+            <ArchiveClassicRow key={matchRouteId(match)} match={match} index={index + 2} />
           ))}
         </div>
       </div>
