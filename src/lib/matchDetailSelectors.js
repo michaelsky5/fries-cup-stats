@@ -561,7 +561,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     : {
         supported: false,
         level: 'match',
-        formulaSource: 'leaderboardScoring.scoreLeaderboardEntries',
+        formulaSource: 'ratingModel.v1',
         topEntries: [],
         roleLeaders: {},
         entries: []

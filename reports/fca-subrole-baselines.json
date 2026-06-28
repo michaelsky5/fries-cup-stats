@@ -1,0 +1,1715 @@
+{
+  "generatedAt": "2026-06-27T20:24:20.117Z",
+  "inputFile": "D:\\Fries Cup\\fries-cup-stats\\public\\data\\friescup_db_review_ready.json",
+  "seasonId": "FCA2026",
+  "metrics": [
+    "elimsPer10",
+    "assistsPer10",
+    "deathsPer10",
+    "damagePer10",
+    "healingPer10",
+    "blockedPer10"
+  ],
+  "subroles": [
+    {
+      "key": "FLEX_DPS",
+      "label": "FLEX_DPS",
+      "type": "subrole",
+      "sampleLogs": 698,
+      "sampleStatus": "OK",
+      "uniquePlayers": 69,
+      "uniqueTeams": 30,
+      "totalPlaytimeMinutes": 7665.8,
+      "heroes": [
+        "Anran",
+        "Echo",
+        "Genji",
+        "Mei",
+        "Pharah",
+        "Reaper",
+        "Sombra",
+        "Symmetra",
+        "Tracer",
+        "Vendetta",
+        "Venture"
+      ],
+      "officialRoles": [
+        "DAMAGE"
+      ],
+      "subroles": [
+        "FLEX_DPS"
+      ],
+      "scoringProfiles": [
+        "barrier_utility_flex",
+        "brawl_flex",
+        "flanker_flex",
+        "projectile_flex",
+        "utility_flex"
+      ],
+      "secondarySubroles": [],
+      "metrics": {
+        "elimsPer10": {
+          "rawPercentiles": {
+            "p10": 8.341,
+            "p25": 11.838,
+            "p50": 16.568,
+            "p75": 21.719,
+            "p90": 26.408,
+            "p95": 29.045,
+            "mean": 17.115,
+            "max": 52.174
+          },
+          "winsorizedPercentiles": {
+            "p10": 8.341,
+            "p25": 11.838,
+            "p50": 16.568,
+            "p75": 21.719,
+            "p90": 26.408,
+            "p95": 29.034,
+            "mean": 16.846,
+            "max": 29.045
+          }
+        },
+        "assistsPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0.703,
+            "p75": 2.228,
+            "p90": 3.925,
+            "p95": 5.351,
+            "mean": 1.451,
+            "max": 17.582
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0.703,
+            "p75": 2.228,
+            "p90": 3.925,
+            "p95": 5.332,
+            "mean": 1.302,
+            "max": 5.351
+          }
+        },
+        "deathsPer10": {
+          "rawPercentiles": {
+            "p10": 3.63,
+            "p25": 4.955,
+            "p50": 6.622,
+            "p75": 8.499,
+            "p90": 10.202,
+            "p95": 11.147,
+            "mean": 6.813,
+            "max": 15.652
+          },
+          "winsorizedPercentiles": {
+            "p10": 3.63,
+            "p25": 4.955,
+            "p50": 6.622,
+            "p75": 8.499,
+            "p90": 10.202,
+            "p95": 11.141,
+            "mean": 6.739,
+            "max": 11.147
+          }
+        },
+        "damagePer10": {
+          "rawPercentiles": {
+            "p10": 5316.09,
+            "p25": 6360.299,
+            "p50": 7572.853,
+            "p75": 8949.669,
+            "p90": 10099.106,
+            "p95": 10886.254,
+            "mean": 7650.441,
+            "max": 13974.684
+          },
+          "winsorizedPercentiles": {
+            "p10": 5316.09,
+            "p25": 6360.299,
+            "p50": 7572.853,
+            "p75": 8949.669,
+            "p90": 10099.106,
+            "p95": 10883.43,
+            "mean": 7594.535,
+            "max": 10886.254
+          }
+        },
+        "healingPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 65.611,
+            "p50": 203.793,
+            "p75": 514.775,
+            "p90": 1189.58,
+            "p95": 1497.634,
+            "mean": 413.827,
+            "max": 9528.458
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 65.611,
+            "p50": 203.793,
+            "p75": 514.775,
+            "p90": 1189.58,
+            "p95": 1493.169,
+            "mean": 373.337,
+            "max": 1497.634
+          }
+        },
+        "blockedPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 275.343,
+            "p75": 802.219,
+            "p90": 1498.322,
+            "p95": 1906.294,
+            "mean": 535.323,
+            "max": 7334.199
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 275.343,
+            "p75": 802.219,
+            "p90": 1498.322,
+            "p95": 1905.801,
+            "mean": 489.16,
+            "max": 1906.294
+          }
+        }
+      }
+    },
+    {
+      "key": "FLEX_SUPPORT",
+      "label": "FLEX_SUPPORT",
+      "type": "subrole",
+      "sampleLogs": 670,
+      "sampleStatus": "OK",
+      "uniquePlayers": 71,
+      "uniqueTeams": 30,
+      "totalPlaytimeMinutes": 7498.55,
+      "heroes": [
+        "Ana",
+        "Baptiste",
+        "Illari",
+        "Kiriko",
+        "Moira",
+        "Zenyatta"
+      ],
+      "officialRoles": [
+        "SUPPORT"
+      ],
+      "subroles": [
+        "FLEX_SUPPORT"
+      ],
+      "scoringProfiles": [
+        "damage_flex_support",
+        "hybrid_flex_support",
+        "utility_flex_support",
+        "volume_flex_support"
+      ],
+      "secondarySubroles": [],
+      "metrics": {
+        "elimsPer10": {
+          "rawPercentiles": {
+            "p10": 3.004,
+            "p25": 5.337,
+            "p50": 8.639,
+            "p75": 12.145,
+            "p90": 15.822,
+            "p95": 18.657,
+            "mean": 9.205,
+            "max": 28.458
+          },
+          "winsorizedPercentiles": {
+            "p10": 3.004,
+            "p25": 5.337,
+            "p50": 8.639,
+            "p75": 12.145,
+            "p90": 15.822,
+            "p95": 18.655,
+            "mean": 9.053,
+            "max": 18.657
+          }
+        },
+        "assistsPer10": {
+          "rawPercentiles": {
+            "p10": 6.212,
+            "p25": 10.093,
+            "p50": 15.053,
+            "p75": 20.741,
+            "p90": 26.896,
+            "p95": 30.182,
+            "mean": 15.915,
+            "max": 45.727
+          },
+          "winsorizedPercentiles": {
+            "p10": 6.212,
+            "p25": 10.093,
+            "p50": 15.053,
+            "p75": 20.741,
+            "p90": 26.896,
+            "p95": 30.138,
+            "mean": 15.691,
+            "max": 30.182
+          }
+        },
+        "deathsPer10": {
+          "rawPercentiles": {
+            "p10": 2.612,
+            "p25": 4.099,
+            "p50": 5.8,
+            "p75": 7.339,
+            "p90": 8.92,
+            "p95": 9.773,
+            "mean": 5.772,
+            "max": 13.043
+          },
+          "winsorizedPercentiles": {
+            "p10": 2.612,
+            "p25": 4.099,
+            "p50": 5.8,
+            "p75": 7.339,
+            "p90": 8.92,
+            "p95": 9.739,
+            "mean": 5.721,
+            "max": 9.773
+          }
+        },
+        "damagePer10": {
+          "rawPercentiles": {
+            "p10": 1897.19,
+            "p25": 2574.167,
+            "p50": 3484.691,
+            "p75": 4647.277,
+            "p90": 6085.456,
+            "p95": 7122.214,
+            "mean": 3782.255,
+            "max": 11794.248
+          },
+          "winsorizedPercentiles": {
+            "p10": 1897.19,
+            "p25": 2574.167,
+            "p50": 3484.691,
+            "p75": 4647.277,
+            "p90": 6085.456,
+            "p95": 7122.147,
+            "mean": 3736.926,
+            "max": 7122.214
+          }
+        },
+        "healingPer10": {
+          "rawPercentiles": {
+            "p10": 6231.564,
+            "p25": 7325.802,
+            "p50": 8716.776,
+            "p75": 10319.526,
+            "p90": 11643.621,
+            "p95": 12884.355,
+            "mean": 8910.577,
+            "max": 17087.623
+          },
+          "winsorizedPercentiles": {
+            "p10": 6231.564,
+            "p25": 7325.802,
+            "p50": 8716.776,
+            "p75": 10319.526,
+            "p90": 11643.621,
+            "p95": 12864.66,
+            "mean": 8854.429,
+            "max": 12884.355
+          }
+        },
+        "blockedPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0,
+            "p75": 0,
+            "p90": 589.532,
+            "p95": 869.495,
+            "mean": 163.833,
+            "max": 6601.435
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0,
+            "p75": 0,
+            "p90": 589.532,
+            "p95": 868.548,
+            "mean": 121.326,
+            "max": 869.495
+          }
+        }
+      }
+    },
+    {
+      "key": "TANK",
+      "label": "TANK",
+      "type": "subrole",
+      "sampleLogs": 602,
+      "sampleStatus": "OK",
+      "uniquePlayers": 44,
+      "uniqueTeams": 30,
+      "totalPlaytimeMinutes": 6603.3,
+      "heroes": [
+        "D.Va",
+        "Domina",
+        "Doomfist",
+        "Hazard",
+        "Junker Queen",
+        "Mauga",
+        "Orisa",
+        "Ramattra",
+        "Roadhog",
+        "Sigma",
+        "Winston",
+        "Wrecking Ball",
+        "Zarya"
+      ],
+      "officialRoles": [
+        "TANK"
+      ],
+      "subroles": [
+        "TANK"
+      ],
+      "scoringProfiles": [
+        "anchor_tank",
+        "brawl_tank",
+        "disrupt_tank",
+        "dive_tank",
+        "pick_tank",
+        "poke_tank",
+        "tempo_tank"
+      ],
+      "secondarySubroles": [],
+      "metrics": {
+        "elimsPer10": {
+          "rawPercentiles": {
+            "p10": 9.304,
+            "p25": 13.772,
+            "p50": 18.631,
+            "p75": 24.695,
+            "p90": 29.997,
+            "p95": 33.067,
+            "mean": 19.462,
+            "max": 48.485
+          },
+          "winsorizedPercentiles": {
+            "p10": 9.304,
+            "p25": 13.772,
+            "p50": 18.631,
+            "p75": 24.695,
+            "p90": 29.997,
+            "p95": 33.063,
+            "mean": 19.233,
+            "max": 33.067
+          }
+        },
+        "assistsPer10": {
+          "rawPercentiles": {
+            "p10": 1.908,
+            "p25": 3.782,
+            "p50": 6.552,
+            "p75": 10.948,
+            "p90": 14.774,
+            "p95": 18.338,
+            "mean": 7.785,
+            "max": 31.638
+          },
+          "winsorizedPercentiles": {
+            "p10": 1.908,
+            "p25": 3.782,
+            "p50": 6.552,
+            "p75": 10.948,
+            "p90": 14.774,
+            "p95": 18.321,
+            "mean": 7.585,
+            "max": 18.338
+          }
+        },
+        "deathsPer10": {
+          "rawPercentiles": {
+            "p10": 1.932,
+            "p25": 3.34,
+            "p50": 5.074,
+            "p75": 6.914,
+            "p90": 8.601,
+            "p95": 9.34,
+            "mean": 5.185,
+            "max": 15.652
+          },
+          "winsorizedPercentiles": {
+            "p10": 1.932,
+            "p25": 3.34,
+            "p50": 5.074,
+            "p75": 6.914,
+            "p90": 8.601,
+            "p95": 9.338,
+            "mean": 5.108,
+            "max": 9.34
+          }
+        },
+        "damagePer10": {
+          "rawPercentiles": {
+            "p10": 7004.596,
+            "p25": 8220.224,
+            "p50": 9494.679,
+            "p75": 10867.628,
+            "p90": 12110.494,
+            "p95": 13106.653,
+            "mean": 9567.355,
+            "max": 17761.886
+          },
+          "winsorizedPercentiles": {
+            "p10": 7004.596,
+            "p25": 8220.224,
+            "p50": 9494.679,
+            "p75": 10867.628,
+            "p90": 12110.494,
+            "p95": 13106.105,
+            "mean": 9494.585,
+            "max": 13106.653
+          }
+        },
+        "healingPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 367.954,
+            "p50": 1570.657,
+            "p75": 2309.316,
+            "p90": 2867.534,
+            "p95": 3194.132,
+            "mean": 1478.321,
+            "max": 7566.372
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 367.954,
+            "p50": 1570.657,
+            "p75": 2309.316,
+            "p90": 2867.534,
+            "p95": 3193.285,
+            "mean": 1438.853,
+            "max": 3194.132
+          }
+        },
+        "blockedPer10": {
+          "rawPercentiles": {
+            "p10": 4563.426,
+            "p25": 6319.42,
+            "p50": 8554.593,
+            "p75": 12306.022,
+            "p90": 14976.121,
+            "p95": 16587.599,
+            "mean": 9402.697,
+            "max": 21457.143
+          },
+          "winsorizedPercentiles": {
+            "p10": 4563.426,
+            "p25": 6319.42,
+            "p50": 8554.593,
+            "p75": 12306.022,
+            "p90": 14976.121,
+            "p95": 16583.917,
+            "mean": 9326.14,
+            "max": 16587.599
+          }
+        }
+      }
+    },
+    {
+      "key": "MAIN_SUPPORT",
+      "label": "MAIN_SUPPORT",
+      "type": "subrole",
+      "sampleLogs": 534,
+      "sampleStatus": "OK",
+      "uniquePlayers": 58,
+      "uniqueTeams": 30,
+      "totalPlaytimeMinutes": 5708.05,
+      "heroes": [
+        "Brigitte",
+        "Jetpack Cat",
+        "Juno",
+        "Lifeweaver",
+        "Lúcio",
+        "Mercy",
+        "Mizuki",
+        "Wuyang"
+      ],
+      "officialRoles": [
+        "SUPPORT"
+      ],
+      "subroles": [
+        "MAIN_SUPPORT"
+      ],
+      "scoringProfiles": [
+        "pocket_main_support",
+        "protector_main_support",
+        "tempo_main_support",
+        "utility_main_support"
+      ],
+      "secondarySubroles": [],
+      "metrics": {
+        "elimsPer10": {
+          "rawPercentiles": {
+            "p10": 4.406,
+            "p25": 7.284,
+            "p50": 11.18,
+            "p75": 15.694,
+            "p90": 19.458,
+            "p95": 22.02,
+            "mean": 11.75,
+            "max": 39
+          },
+          "winsorizedPercentiles": {
+            "p10": 4.406,
+            "p25": 7.284,
+            "p50": 11.18,
+            "p75": 15.694,
+            "p90": 19.458,
+            "p95": 22.015,
+            "mean": 11.518,
+            "max": 22.02
+          }
+        },
+        "assistsPer10": {
+          "rawPercentiles": {
+            "p10": 6.369,
+            "p25": 9.328,
+            "p50": 13.572,
+            "p75": 18.269,
+            "p90": 22.579,
+            "p95": 25.662,
+            "mean": 14.11,
+            "max": 45.059
+          },
+          "winsorizedPercentiles": {
+            "p10": 6.369,
+            "p25": 9.328,
+            "p50": 13.572,
+            "p75": 18.269,
+            "p90": 22.579,
+            "p95": 25.662,
+            "mean": 13.858,
+            "max": 25.662
+          }
+        },
+        "deathsPer10": {
+          "rawPercentiles": {
+            "p10": 2.59,
+            "p25": 4.142,
+            "p50": 6.085,
+            "p75": 7.773,
+            "p90": 9.314,
+            "p95": 10.239,
+            "mean": 6.034,
+            "max": 14.545
+          },
+          "winsorizedPercentiles": {
+            "p10": 2.59,
+            "p25": 4.142,
+            "p50": 6.085,
+            "p75": 7.773,
+            "p90": 9.314,
+            "p95": 10.236,
+            "mean": 5.96,
+            "max": 10.239
+          }
+        },
+        "damagePer10": {
+          "rawPercentiles": {
+            "p10": 1997.665,
+            "p25": 2710.74,
+            "p50": 3577.424,
+            "p75": 4507.117,
+            "p90": 5699.462,
+            "p95": 6537.77,
+            "mean": 3748.324,
+            "max": 11325.359
+          },
+          "winsorizedPercentiles": {
+            "p10": 1997.665,
+            "p25": 2710.74,
+            "p50": 3577.424,
+            "p75": 4507.117,
+            "p90": 5699.462,
+            "p95": 6513.828,
+            "mean": 3687.239,
+            "max": 6537.77
+          }
+        },
+        "healingPer10": {
+          "rawPercentiles": {
+            "p10": 5430.031,
+            "p25": 6282.921,
+            "p50": 7413.977,
+            "p75": 8775.175,
+            "p90": 9885.492,
+            "p95": 10892.15,
+            "mean": 7545.34,
+            "max": 16179.021
+          },
+          "winsorizedPercentiles": {
+            "p10": 5430.031,
+            "p25": 6282.921,
+            "p50": 7413.977,
+            "p75": 8775.175,
+            "p90": 9885.492,
+            "p95": 10880.252,
+            "mean": 7496.997,
+            "max": 10892.15
+          }
+        },
+        "blockedPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 387.971,
+            "p50": 1068.026,
+            "p75": 1786.417,
+            "p90": 2367.101,
+            "p95": 2869.464,
+            "mean": 1174.201,
+            "max": 5917.699
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 387.971,
+            "p50": 1068.026,
+            "p75": 1786.417,
+            "p90": 2367.101,
+            "p95": 2867.248,
+            "mean": 1134.928,
+            "max": 2869.464
+          }
+        }
+      }
+    },
+    {
+      "key": "HITSCAN",
+      "label": "HITSCAN",
+      "type": "subrole",
+      "sampleLogs": 504,
+      "sampleStatus": "OK",
+      "uniquePlayers": 54,
+      "uniqueTeams": 30,
+      "totalPlaytimeMinutes": 5514.667,
+      "heroes": [
+        "Ashe",
+        "Bastion",
+        "Cassidy",
+        "Emre",
+        "Freja",
+        "Hanzo",
+        "Sierra",
+        "Sojourn",
+        "Soldier: 76",
+        "Widowmaker"
+      ],
+      "officialRoles": [
+        "DAMAGE"
+      ],
+      "subroles": [
+        "HITSCAN"
+      ],
+      "scoringProfiles": [
+        "midrange_hitscan",
+        "poke_hitscan",
+        "rail_hitscan",
+        "sniper_hitscan",
+        "tracking_hitscan",
+        "turret_damage"
+      ],
+      "secondarySubroles": [],
+      "metrics": {
+        "elimsPer10": {
+          "rawPercentiles": {
+            "p10": 9.007,
+            "p25": 12.217,
+            "p50": 16.847,
+            "p75": 22.161,
+            "p90": 27.396,
+            "p95": 31.105,
+            "mean": 17.729,
+            "max": 49.5
+          },
+          "winsorizedPercentiles": {
+            "p10": 9.007,
+            "p25": 12.217,
+            "p50": 16.847,
+            "p75": 22.161,
+            "p90": 27.396,
+            "p95": 31.092,
+            "mean": 17.47,
+            "max": 31.105
+          }
+        },
+        "assistsPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0,
+            "p75": 0.973,
+            "p90": 2.441,
+            "p95": 3.587,
+            "mean": 0.701,
+            "max": 9.213
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0,
+            "p75": 0.973,
+            "p90": 2.441,
+            "p95": 3.58,
+            "mean": 0.63,
+            "max": 3.587
+          }
+        },
+        "deathsPer10": {
+          "rawPercentiles": {
+            "p10": 3.37,
+            "p25": 4.678,
+            "p50": 6.149,
+            "p75": 7.875,
+            "p90": 9.727,
+            "p95": 10.676,
+            "mean": 6.317,
+            "max": 13.235
+          },
+          "winsorizedPercentiles": {
+            "p10": 3.37,
+            "p25": 4.678,
+            "p50": 6.149,
+            "p75": 7.875,
+            "p90": 9.727,
+            "p95": 10.675,
+            "mean": 6.274,
+            "max": 10.676
+          }
+        },
+        "damagePer10": {
+          "rawPercentiles": {
+            "p10": 7078.501,
+            "p25": 8195.155,
+            "p50": 9464.816,
+            "p75": 11052.647,
+            "p90": 12580.457,
+            "p95": 13419.938,
+            "mean": 9640.113,
+            "max": 16047.12
+          },
+          "winsorizedPercentiles": {
+            "p10": 7078.501,
+            "p25": 8195.155,
+            "p50": 9464.816,
+            "p75": 11052.647,
+            "p90": 12580.457,
+            "p95": 13402.049,
+            "mean": 9599.023,
+            "max": 13419.938
+          }
+        },
+        "healingPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 200.589,
+            "p75": 585.995,
+            "p90": 848.664,
+            "p95": 1073.42,
+            "mean": 334.852,
+            "max": 2334.956
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 200.589,
+            "p75": 585.995,
+            "p90": 848.664,
+            "p95": 1072.292,
+            "mean": 321.652,
+            "max": 1073.42
+          }
+        },
+        "blockedPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0,
+            "p75": 130.903,
+            "p90": 528.117,
+            "p95": 1214.127,
+            "mean": 177.603,
+            "max": 2143.007
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0,
+            "p75": 130.903,
+            "p90": 528.117,
+            "p95": 1212.488,
+            "mean": 155.77,
+            "max": 1214.127
+          }
+        }
+      }
+    }
+  ],
+  "bySubrole": {
+    "FLEX_DPS": {
+      "key": "FLEX_DPS",
+      "label": "FLEX_DPS",
+      "type": "subrole",
+      "sampleLogs": 698,
+      "sampleStatus": "OK",
+      "uniquePlayers": 69,
+      "uniqueTeams": 30,
+      "totalPlaytimeMinutes": 7665.8,
+      "heroes": [
+        "Anran",
+        "Echo",
+        "Genji",
+        "Mei",
+        "Pharah",
+        "Reaper",
+        "Sombra",
+        "Symmetra",
+        "Tracer",
+        "Vendetta",
+        "Venture"
+      ],
+      "officialRoles": [
+        "DAMAGE"
+      ],
+      "subroles": [
+        "FLEX_DPS"
+      ],
+      "scoringProfiles": [
+        "barrier_utility_flex",
+        "brawl_flex",
+        "flanker_flex",
+        "projectile_flex",
+        "utility_flex"
+      ],
+      "secondarySubroles": [],
+      "metrics": {
+        "elimsPer10": {
+          "rawPercentiles": {
+            "p10": 8.341,
+            "p25": 11.838,
+            "p50": 16.568,
+            "p75": 21.719,
+            "p90": 26.408,
+            "p95": 29.045,
+            "mean": 17.115,
+            "max": 52.174
+          },
+          "winsorizedPercentiles": {
+            "p10": 8.341,
+            "p25": 11.838,
+            "p50": 16.568,
+            "p75": 21.719,
+            "p90": 26.408,
+            "p95": 29.034,
+            "mean": 16.846,
+            "max": 29.045
+          }
+        },
+        "assistsPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0.703,
+            "p75": 2.228,
+            "p90": 3.925,
+            "p95": 5.351,
+            "mean": 1.451,
+            "max": 17.582
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0.703,
+            "p75": 2.228,
+            "p90": 3.925,
+            "p95": 5.332,
+            "mean": 1.302,
+            "max": 5.351
+          }
+        },
+        "deathsPer10": {
+          "rawPercentiles": {
+            "p10": 3.63,
+            "p25": 4.955,
+            "p50": 6.622,
+            "p75": 8.499,
+            "p90": 10.202,
+            "p95": 11.147,
+            "mean": 6.813,
+            "max": 15.652
+          },
+          "winsorizedPercentiles": {
+            "p10": 3.63,
+            "p25": 4.955,
+            "p50": 6.622,
+            "p75": 8.499,
+            "p90": 10.202,
+            "p95": 11.141,
+            "mean": 6.739,
+            "max": 11.147
+          }
+        },
+        "damagePer10": {
+          "rawPercentiles": {
+            "p10": 5316.09,
+            "p25": 6360.299,
+            "p50": 7572.853,
+            "p75": 8949.669,
+            "p90": 10099.106,
+            "p95": 10886.254,
+            "mean": 7650.441,
+            "max": 13974.684
+          },
+          "winsorizedPercentiles": {
+            "p10": 5316.09,
+            "p25": 6360.299,
+            "p50": 7572.853,
+            "p75": 8949.669,
+            "p90": 10099.106,
+            "p95": 10883.43,
+            "mean": 7594.535,
+            "max": 10886.254
+          }
+        },
+        "healingPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 65.611,
+            "p50": 203.793,
+            "p75": 514.775,
+            "p90": 1189.58,
+            "p95": 1497.634,
+            "mean": 413.827,
+            "max": 9528.458
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 65.611,
+            "p50": 203.793,
+            "p75": 514.775,
+            "p90": 1189.58,
+            "p95": 1493.169,
+            "mean": 373.337,
+            "max": 1497.634
+          }
+        },
+        "blockedPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 275.343,
+            "p75": 802.219,
+            "p90": 1498.322,
+            "p95": 1906.294,
+            "mean": 535.323,
+            "max": 7334.199
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 275.343,
+            "p75": 802.219,
+            "p90": 1498.322,
+            "p95": 1905.801,
+            "mean": 489.16,
+            "max": 1906.294
+          }
+        }
+      }
+    },
+    "FLEX_SUPPORT": {
+      "key": "FLEX_SUPPORT",
+      "label": "FLEX_SUPPORT",
+      "type": "subrole",
+      "sampleLogs": 670,
+      "sampleStatus": "OK",
+      "uniquePlayers": 71,
+      "uniqueTeams": 30,
+      "totalPlaytimeMinutes": 7498.55,
+      "heroes": [
+        "Ana",
+        "Baptiste",
+        "Illari",
+        "Kiriko",
+        "Moira",
+        "Zenyatta"
+      ],
+      "officialRoles": [
+        "SUPPORT"
+      ],
+      "subroles": [
+        "FLEX_SUPPORT"
+      ],
+      "scoringProfiles": [
+        "damage_flex_support",
+        "hybrid_flex_support",
+        "utility_flex_support",
+        "volume_flex_support"
+      ],
+      "secondarySubroles": [],
+      "metrics": {
+        "elimsPer10": {
+          "rawPercentiles": {
+            "p10": 3.004,
+            "p25": 5.337,
+            "p50": 8.639,
+            "p75": 12.145,
+            "p90": 15.822,
+            "p95": 18.657,
+            "mean": 9.205,
+            "max": 28.458
+          },
+          "winsorizedPercentiles": {
+            "p10": 3.004,
+            "p25": 5.337,
+            "p50": 8.639,
+            "p75": 12.145,
+            "p90": 15.822,
+            "p95": 18.655,
+            "mean": 9.053,
+            "max": 18.657
+          }
+        },
+        "assistsPer10": {
+          "rawPercentiles": {
+            "p10": 6.212,
+            "p25": 10.093,
+            "p50": 15.053,
+            "p75": 20.741,
+            "p90": 26.896,
+            "p95": 30.182,
+            "mean": 15.915,
+            "max": 45.727
+          },
+          "winsorizedPercentiles": {
+            "p10": 6.212,
+            "p25": 10.093,
+            "p50": 15.053,
+            "p75": 20.741,
+            "p90": 26.896,
+            "p95": 30.138,
+            "mean": 15.691,
+            "max": 30.182
+          }
+        },
+        "deathsPer10": {
+          "rawPercentiles": {
+            "p10": 2.612,
+            "p25": 4.099,
+            "p50": 5.8,
+            "p75": 7.339,
+            "p90": 8.92,
+            "p95": 9.773,
+            "mean": 5.772,
+            "max": 13.043
+          },
+          "winsorizedPercentiles": {
+            "p10": 2.612,
+            "p25": 4.099,
+            "p50": 5.8,
+            "p75": 7.339,
+            "p90": 8.92,
+            "p95": 9.739,
+            "mean": 5.721,
+            "max": 9.773
+          }
+        },
+        "damagePer10": {
+          "rawPercentiles": {
+            "p10": 1897.19,
+            "p25": 2574.167,
+            "p50": 3484.691,
+            "p75": 4647.277,
+            "p90": 6085.456,
+            "p95": 7122.214,
+            "mean": 3782.255,
+            "max": 11794.248
+          },
+          "winsorizedPercentiles": {
+            "p10": 1897.19,
+            "p25": 2574.167,
+            "p50": 3484.691,
+            "p75": 4647.277,
+            "p90": 6085.456,
+            "p95": 7122.147,
+            "mean": 3736.926,
+            "max": 7122.214
+          }
+        },
+        "healingPer10": {
+          "rawPercentiles": {
+            "p10": 6231.564,
+            "p25": 7325.802,
+            "p50": 8716.776,
+            "p75": 10319.526,
+            "p90": 11643.621,
+            "p95": 12884.355,
+            "mean": 8910.577,
+            "max": 17087.623
+          },
+          "winsorizedPercentiles": {
+            "p10": 6231.564,
+            "p25": 7325.802,
+            "p50": 8716.776,
+            "p75": 10319.526,
+            "p90": 11643.621,
+            "p95": 12864.66,
+            "mean": 8854.429,
+            "max": 12884.355
+          }
+        },
+        "blockedPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0,
+            "p75": 0,
+            "p90": 589.532,
+            "p95": 869.495,
+            "mean": 163.833,
+            "max": 6601.435
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0,
+            "p75": 0,
+            "p90": 589.532,
+            "p95": 868.548,
+            "mean": 121.326,
+            "max": 869.495
+          }
+        }
+      }
+    },
+    "TANK": {
+      "key": "TANK",
+      "label": "TANK",
+      "type": "subrole",
+      "sampleLogs": 602,
+      "sampleStatus": "OK",
+      "uniquePlayers": 44,
+      "uniqueTeams": 30,
+      "totalPlaytimeMinutes": 6603.3,
+      "heroes": [
+        "D.Va",
+        "Domina",
+        "Doomfist",
+        "Hazard",
+        "Junker Queen",
+        "Mauga",
+        "Orisa",
+        "Ramattra",
+        "Roadhog",
+        "Sigma",
+        "Winston",
+        "Wrecking Ball",
+        "Zarya"
+      ],
+      "officialRoles": [
+        "TANK"
+      ],
+      "subroles": [
+        "TANK"
+      ],
+      "scoringProfiles": [
+        "anchor_tank",
+        "brawl_tank",
+        "disrupt_tank",
+        "dive_tank",
+        "pick_tank",
+        "poke_tank",
+        "tempo_tank"
+      ],
+      "secondarySubroles": [],
+      "metrics": {
+        "elimsPer10": {
+          "rawPercentiles": {
+            "p10": 9.304,
+            "p25": 13.772,
+            "p50": 18.631,
+            "p75": 24.695,
+            "p90": 29.997,
+            "p95": 33.067,
+            "mean": 19.462,
+            "max": 48.485
+          },
+          "winsorizedPercentiles": {
+            "p10": 9.304,
+            "p25": 13.772,
+            "p50": 18.631,
+            "p75": 24.695,
+            "p90": 29.997,
+            "p95": 33.063,
+            "mean": 19.233,
+            "max": 33.067
+          }
+        },
+        "assistsPer10": {
+          "rawPercentiles": {
+            "p10": 1.908,
+            "p25": 3.782,
+            "p50": 6.552,
+            "p75": 10.948,
+            "p90": 14.774,
+            "p95": 18.338,
+            "mean": 7.785,
+            "max": 31.638
+          },
+          "winsorizedPercentiles": {
+            "p10": 1.908,
+            "p25": 3.782,
+            "p50": 6.552,
+            "p75": 10.948,
+            "p90": 14.774,
+            "p95": 18.321,
+            "mean": 7.585,
+            "max": 18.338
+          }
+        },
+        "deathsPer10": {
+          "rawPercentiles": {
+            "p10": 1.932,
+            "p25": 3.34,
+            "p50": 5.074,
+            "p75": 6.914,
+            "p90": 8.601,
+            "p95": 9.34,
+            "mean": 5.185,
+            "max": 15.652
+          },
+          "winsorizedPercentiles": {
+            "p10": 1.932,
+            "p25": 3.34,
+            "p50": 5.074,
+            "p75": 6.914,
+            "p90": 8.601,
+            "p95": 9.338,
+            "mean": 5.108,
+            "max": 9.34
+          }
+        },
+        "damagePer10": {
+          "rawPercentiles": {
+            "p10": 7004.596,
+            "p25": 8220.224,
+            "p50": 9494.679,
+            "p75": 10867.628,
+            "p90": 12110.494,
+            "p95": 13106.653,
+            "mean": 9567.355,
+            "max": 17761.886
+          },
+          "winsorizedPercentiles": {
+            "p10": 7004.596,
+            "p25": 8220.224,
+            "p50": 9494.679,
+            "p75": 10867.628,
+            "p90": 12110.494,
+            "p95": 13106.105,
+            "mean": 9494.585,
+            "max": 13106.653
+          }
+        },
+        "healingPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 367.954,
+            "p50": 1570.657,
+            "p75": 2309.316,
+            "p90": 2867.534,
+            "p95": 3194.132,
+            "mean": 1478.321,
+            "max": 7566.372
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 367.954,
+            "p50": 1570.657,
+            "p75": 2309.316,
+            "p90": 2867.534,
+            "p95": 3193.285,
+            "mean": 1438.853,
+            "max": 3194.132
+          }
+        },
+        "blockedPer10": {
+          "rawPercentiles": {
+            "p10": 4563.426,
+            "p25": 6319.42,
+            "p50": 8554.593,
+            "p75": 12306.022,
+            "p90": 14976.121,
+            "p95": 16587.599,
+            "mean": 9402.697,
+            "max": 21457.143
+          },
+          "winsorizedPercentiles": {
+            "p10": 4563.426,
+            "p25": 6319.42,
+            "p50": 8554.593,
+            "p75": 12306.022,
+            "p90": 14976.121,
+            "p95": 16583.917,
+            "mean": 9326.14,
+            "max": 16587.599
+          }
+        }
+      }
+    },
+    "MAIN_SUPPORT": {
+      "key": "MAIN_SUPPORT",
+      "label": "MAIN_SUPPORT",
+      "type": "subrole",
+      "sampleLogs": 534,
+      "sampleStatus": "OK",
+      "uniquePlayers": 58,
+      "uniqueTeams": 30,
+      "totalPlaytimeMinutes": 5708.05,
+      "heroes": [
+        "Brigitte",
+        "Jetpack Cat",
+        "Juno",
+        "Lifeweaver",
+        "Lúcio",
+        "Mercy",
+        "Mizuki",
+        "Wuyang"
+      ],
+      "officialRoles": [
+        "SUPPORT"
+      ],
+      "subroles": [
+        "MAIN_SUPPORT"
+      ],
+      "scoringProfiles": [
+        "pocket_main_support",
+        "protector_main_support",
+        "tempo_main_support",
+        "utility_main_support"
+      ],
+      "secondarySubroles": [],
+      "metrics": {
+        "elimsPer10": {
+          "rawPercentiles": {
+            "p10": 4.406,
+            "p25": 7.284,
+            "p50": 11.18,
+            "p75": 15.694,
+            "p90": 19.458,
+            "p95": 22.02,
+            "mean": 11.75,
+            "max": 39
+          },
+          "winsorizedPercentiles": {
+            "p10": 4.406,
+            "p25": 7.284,
+            "p50": 11.18,
+            "p75": 15.694,
+            "p90": 19.458,
+            "p95": 22.015,
+            "mean": 11.518,
+            "max": 22.02
+          }
+        },
+        "assistsPer10": {
+          "rawPercentiles": {
+            "p10": 6.369,
+            "p25": 9.328,
+            "p50": 13.572,
+            "p75": 18.269,
+            "p90": 22.579,
+            "p95": 25.662,
+            "mean": 14.11,
+            "max": 45.059
+          },
+          "winsorizedPercentiles": {
+            "p10": 6.369,
+            "p25": 9.328,
+            "p50": 13.572,
+            "p75": 18.269,
+            "p90": 22.579,
+            "p95": 25.662,
+            "mean": 13.858,
+            "max": 25.662
+          }
+        },
+        "deathsPer10": {
+          "rawPercentiles": {
+            "p10": 2.59,
+            "p25": 4.142,
+            "p50": 6.085,
+            "p75": 7.773,
+            "p90": 9.314,
+            "p95": 10.239,
+            "mean": 6.034,
+            "max": 14.545
+          },
+          "winsorizedPercentiles": {
+            "p10": 2.59,
+            "p25": 4.142,
+            "p50": 6.085,
+            "p75": 7.773,
+            "p90": 9.314,
+            "p95": 10.236,
+            "mean": 5.96,
+            "max": 10.239
+          }
+        },
+        "damagePer10": {
+          "rawPercentiles": {
+            "p10": 1997.665,
+            "p25": 2710.74,
+            "p50": 3577.424,
+            "p75": 4507.117,
+            "p90": 5699.462,
+            "p95": 6537.77,
+            "mean": 3748.324,
+            "max": 11325.359
+          },
+          "winsorizedPercentiles": {
+            "p10": 1997.665,
+            "p25": 2710.74,
+            "p50": 3577.424,
+            "p75": 4507.117,
+            "p90": 5699.462,
+            "p95": 6513.828,
+            "mean": 3687.239,
+            "max": 6537.77
+          }
+        },
+        "healingPer10": {
+          "rawPercentiles": {
+            "p10": 5430.031,
+            "p25": 6282.921,
+            "p50": 7413.977,
+            "p75": 8775.175,
+            "p90": 9885.492,
+            "p95": 10892.15,
+            "mean": 7545.34,
+            "max": 16179.021
+          },
+          "winsorizedPercentiles": {
+            "p10": 5430.031,
+            "p25": 6282.921,
+            "p50": 7413.977,
+            "p75": 8775.175,
+            "p90": 9885.492,
+            "p95": 10880.252,
+            "mean": 7496.997,
+            "max": 10892.15
+          }
+        },
+        "blockedPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 387.971,
+            "p50": 1068.026,
+            "p75": 1786.417,
+            "p90": 2367.101,
+            "p95": 2869.464,
+            "mean": 1174.201,
+            "max": 5917.699
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 387.971,
+            "p50": 1068.026,
+            "p75": 1786.417,
+            "p90": 2367.101,
+            "p95": 2867.248,
+            "mean": 1134.928,
+            "max": 2869.464
+          }
+        }
+      }
+    },
+    "HITSCAN": {
+      "key": "HITSCAN",
+      "label": "HITSCAN",
+      "type": "subrole",
+      "sampleLogs": 504,
+      "sampleStatus": "OK",
+      "uniquePlayers": 54,
+      "uniqueTeams": 30,
+      "totalPlaytimeMinutes": 5514.667,
+      "heroes": [
+        "Ashe",
+        "Bastion",
+        "Cassidy",
+        "Emre",
+        "Freja",
+        "Hanzo",
+        "Sierra",
+        "Sojourn",
+        "Soldier: 76",
+        "Widowmaker"
+      ],
+      "officialRoles": [
+        "DAMAGE"
+      ],
+      "subroles": [
+        "HITSCAN"
+      ],
+      "scoringProfiles": [
+        "midrange_hitscan",
+        "poke_hitscan",
+        "rail_hitscan",
+        "sniper_hitscan",
+        "tracking_hitscan",
+        "turret_damage"
+      ],
+      "secondarySubroles": [],
+      "metrics": {
+        "elimsPer10": {
+          "rawPercentiles": {
+            "p10": 9.007,
+            "p25": 12.217,
+            "p50": 16.847,
+            "p75": 22.161,
+            "p90": 27.396,
+            "p95": 31.105,
+            "mean": 17.729,
+            "max": 49.5
+          },
+          "winsorizedPercentiles": {
+            "p10": 9.007,
+            "p25": 12.217,
+            "p50": 16.847,
+            "p75": 22.161,
+            "p90": 27.396,
+            "p95": 31.092,
+            "mean": 17.47,
+            "max": 31.105
+          }
+        },
+        "assistsPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0,
+            "p75": 0.973,
+            "p90": 2.441,
+            "p95": 3.587,
+            "mean": 0.701,
+            "max": 9.213
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0,
+            "p75": 0.973,
+            "p90": 2.441,
+            "p95": 3.58,
+            "mean": 0.63,
+            "max": 3.587
+          }
+        },
+        "deathsPer10": {
+          "rawPercentiles": {
+            "p10": 3.37,
+            "p25": 4.678,
+            "p50": 6.149,
+            "p75": 7.875,
+            "p90": 9.727,
+            "p95": 10.676,
+            "mean": 6.317,
+            "max": 13.235
+          },
+          "winsorizedPercentiles": {
+            "p10": 3.37,
+            "p25": 4.678,
+            "p50": 6.149,
+            "p75": 7.875,
+            "p90": 9.727,
+            "p95": 10.675,
+            "mean": 6.274,
+            "max": 10.676
+          }
+        },
+        "damagePer10": {
+          "rawPercentiles": {
+            "p10": 7078.501,
+            "p25": 8195.155,
+            "p50": 9464.816,
+            "p75": 11052.647,
+            "p90": 12580.457,
+            "p95": 13419.938,
+            "mean": 9640.113,
+            "max": 16047.12
+          },
+          "winsorizedPercentiles": {
+            "p10": 7078.501,
+            "p25": 8195.155,
+            "p50": 9464.816,
+            "p75": 11052.647,
+            "p90": 12580.457,
+            "p95": 13402.049,
+            "mean": 9599.023,
+            "max": 13419.938
+          }
+        },
+        "healingPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 200.589,
+            "p75": 585.995,
+            "p90": 848.664,
+            "p95": 1073.42,
+            "mean": 334.852,
+            "max": 2334.956
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 200.589,
+            "p75": 585.995,
+            "p90": 848.664,
+            "p95": 1072.292,
+            "mean": 321.652,
+            "max": 1073.42
+          }
+        },
+        "blockedPer10": {
+          "rawPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0,
+            "p75": 130.903,
+            "p90": 528.117,
+            "p95": 1214.127,
+            "mean": 177.603,
+            "max": 2143.007
+          },
+          "winsorizedPercentiles": {
+            "p10": 0,
+            "p25": 0,
+            "p50": 0,
+            "p75": 130.903,
+            "p90": 528.117,
+            "p95": 1212.488,
+            "mean": 155.77,
+            "max": 1214.127
+          }
+        }
+      }
+    }
+  }
+}

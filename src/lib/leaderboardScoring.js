@@ -1,4 +1,5 @@
 import { getOwHeroAssetKey } from './heroes.js'
+import { attachRatingModelScoreToLeaderboardRows } from './scoringEngineAdapter.js'
 
 export const ROLE_ORDER = ['TANK', 'DPS', 'SUPPORT']
 
@@ -453,7 +454,7 @@ export function compareLeaderboardEntries(a, b) {
   return String(a.player_id || a.entryKey).localeCompare(String(b.player_id || b.entryKey))
 }
 
-export function scoreLeaderboardEntries(entries, minTimeMins = 30) {
+export function scoreLeaderboardEntriesLegacy(entries, minTimeMins = 30) {
   const prepared = entries.map(entry => ({
     ...entry,
     eligible: toFiniteNumber(entry.roleTimeMins) >= minTimeMins,
@@ -524,4 +525,39 @@ export function scoreLeaderboardEntries(entries, minTimeMins = 30) {
     })
 
   return scored
+}
+
+export function scoreLeaderboardEntries(entries, minTimeMins = 30, options = {}) {
+  const legacyScored = scoreLeaderboardEntriesLegacy(entries, minTimeMins)
+  const ratingScored = attachRatingModelScoreToLeaderboardRows({
+    entries: legacyScored,
+    db: options.db,
+    players: options.players,
+    baselines: options.baselines,
+    season: options.season,
+    seasonId: options.seasonId,
+    scoreContext: options.scoreContext || 'season'
+  }).map(entry => ({
+    ...entry,
+    roleRank: null,
+    overallRank: null
+  }))
+
+  ROLE_ORDER.forEach(role => {
+    ratingScored
+      .filter(entry => entry.role === role && entry.eligible)
+      .sort(compareLeaderboardEntries)
+      .forEach((entry, index) => {
+        entry.roleRank = index + 1
+      })
+  })
+
+  ratingScored
+    .filter(entry => entry.eligible)
+    .sort(compareLeaderboardEntries)
+    .forEach((entry, index) => {
+      entry.overallRank = index + 1
+    })
+
+  return ratingScored
 }

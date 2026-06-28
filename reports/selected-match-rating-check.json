@@ -1,0 +1,2002 @@
+{
+  "generatedAt": "2026-06-28T05:43:57.729Z",
+  "source": "reports/scoring-engine-comparison-report.json",
+  "selectedMatches": [
+    {
+      "label": "?????",
+      "matchId": "FCA26-SWISS-R2-M11",
+      "displayName": "ROUND 02 / TF VS TCK",
+      "stage": "SWISS",
+      "round": "ROUND 2",
+      "score": "TF 2-0 TCK",
+      "validRows": 20,
+      "maps": 2,
+      "averageMapRating": 6.9,
+      "averageLegacyScore": 44.4,
+      "topPlayer": {
+        "player": "秋秋",
+        "team": "TF",
+        "hero": "Symmetra",
+        "map": "1 Lijiang Tower",
+        "legacyScore": 68.2,
+        "ratingV1RawScore": 89,
+        "mapRating": 8.6,
+        "delta": 20.7,
+        "flags": [
+          "delta 20.7",
+          "LOW_SAMPLE",
+          "very high mapRating",
+          "Sym blocked capped"
+        ]
+      },
+      "lowPlayer": {
+        "player": "普希希",
+        "team": "TCK",
+        "hero": "Orisa",
+        "map": "1 Lijiang Tower",
+        "legacyScore": 22.3,
+        "ratingV1RawScore": 10.1,
+        "mapRating": 5.7,
+        "delta": -12.2,
+        "flags": [
+          "LOW_SAMPLE",
+          "very low mapRating"
+        ]
+      },
+      "flaggedRows": [
+        {
+          "player": "小奇",
+          "team": "TF",
+          "hero": "Vendetta",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 63.2,
+          "ratingV1RawScore": 81,
+          "mapRating": 8.1,
+          "delta": 17.8,
+          "sampleStatus": "OK",
+          "flags": [
+            "delta 17.8"
+          ],
+          "metricSnapshot": "elim 100 / dmg 63 / surv 80 / ast 100 / block 8"
+        },
+        {
+          "player": "小奇",
+          "team": "TF",
+          "hero": "Vendetta",
+          "map": "2 Suravasa",
+          "legacyScore": 55.5,
+          "ratingV1RawScore": 71.5,
+          "mapRating": 7.7,
+          "delta": 15.9,
+          "sampleStatus": "OK",
+          "flags": [
+            "delta 15.9"
+          ],
+          "metricSnapshot": "elim 85 / dmg 32 / surv 82 / ast 100 / block 29"
+        },
+        {
+          "player": "秋秋",
+          "team": "TF",
+          "hero": "Symmetra",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 68.2,
+          "ratingV1RawScore": 89,
+          "mapRating": 8.6,
+          "delta": 20.7,
+          "sampleStatus": "LOW_SAMPLE",
+          "flags": [
+            "delta 20.7",
+            "LOW_SAMPLE",
+            "very high mapRating",
+            "Sym blocked capped"
+          ],
+          "metricSnapshot": "elim 100 / dmg 76 / surv 78 / ast 100 / block 95"
+        },
+        {
+          "player": "普希希",
+          "team": "TCK",
+          "hero": "Orisa",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 22.3,
+          "ratingV1RawScore": 10.1,
+          "mapRating": 5.7,
+          "delta": -12.2,
+          "sampleStatus": "LOW_SAMPLE",
+          "flags": [
+            "LOW_SAMPLE",
+            "very low mapRating"
+          ],
+          "metricSnapshot": "elim 26 / dmg 6 / surv 0 / ast 20 / block 8"
+        },
+        {
+          "player": "普希希",
+          "team": "TCK",
+          "hero": "Orisa",
+          "map": "2 Suravasa",
+          "legacyScore": 20.3,
+          "ratingV1RawScore": 8.9,
+          "mapRating": 5.7,
+          "delta": -11.4,
+          "sampleStatus": "LOW_SAMPLE",
+          "flags": [
+            "LOW_SAMPLE",
+            "very low mapRating"
+          ],
+          "metricSnapshot": "elim 10 / dmg 7 / surv 0 / ast 31 / block 9"
+        },
+        {
+          "player": "vv",
+          "team": "TCK",
+          "hero": "Symmetra",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 37.8,
+          "ratingV1RawScore": 38.5,
+          "mapRating": 6.7,
+          "delta": 0.6,
+          "sampleStatus": "LOW_SAMPLE",
+          "flags": [
+            "LOW_SAMPLE"
+          ],
+          "metricSnapshot": "elim 60 / dmg 16 / surv 0 / ast 93 / block 25"
+        },
+        {
+          "player": "vv",
+          "team": "TCK",
+          "hero": "Symmetra",
+          "map": "2 Suravasa",
+          "legacyScore": 20.8,
+          "ratingV1RawScore": 16.9,
+          "mapRating": 6,
+          "delta": -3.9,
+          "sampleStatus": "LOW_SAMPLE",
+          "flags": [
+            "LOW_SAMPLE"
+          ],
+          "metricSnapshot": "elim 7 / dmg 8 / surv 0 / ast 12 / block 92"
+        },
+        {
+          "player": "夜袭喵",
+          "team": "TCK",
+          "hero": "Vendetta",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 20.4,
+          "ratingV1RawScore": 11,
+          "mapRating": 5.8,
+          "delta": -9.4,
+          "sampleStatus": "OK",
+          "flags": [
+            "very low mapRating"
+          ],
+          "metricSnapshot": "elim 6 / dmg 5 / surv 0 / ast 49 / block 61"
+        },
+        {
+          "player": "猪角",
+          "team": "TCK",
+          "hero": "Moira",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 38.6,
+          "ratingV1RawScore": 39.7,
+          "mapRating": 6.8,
+          "delta": 1.1,
+          "sampleStatus": "LOW_SAMPLE",
+          "flags": [
+            "LOW_SAMPLE"
+          ],
+          "metricSnapshot": "elim 89 / dmg 82 / surv 0 / ast 22 / block 32"
+        },
+        {
+          "player": "猪角",
+          "team": "TCK",
+          "hero": "Moira",
+          "map": "2 Suravasa",
+          "legacyScore": 46.5,
+          "ratingV1RawScore": 51.1,
+          "mapRating": 7,
+          "delta": 4.5,
+          "sampleStatus": "LOW_SAMPLE",
+          "flags": [
+            "LOW_SAMPLE",
+            "high damage / low survival"
+          ],
+          "metricSnapshot": "elim 63 / dmg 91 / surv 0 / ast 21 / block 32"
+        },
+        {
+          "player": "随风",
+          "team": "TCK",
+          "hero": "Lúcio",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 29,
+          "ratingV1RawScore": 14.1,
+          "mapRating": 5.9,
+          "delta": -14.9,
+          "sampleStatus": "OK",
+          "flags": [
+            "very low mapRating"
+          ],
+          "metricSnapshot": "elim 10 / dmg 10 / surv 0 / ast 24 / block 33"
+        },
+        {
+          "player": "随风",
+          "team": "TCK",
+          "hero": "Lúcio",
+          "map": "2 Suravasa",
+          "legacyScore": 33,
+          "ratingV1RawScore": 14.2,
+          "mapRating": 5.9,
+          "delta": -18.8,
+          "sampleStatus": "OK",
+          "flags": [
+            "delta -18.8",
+            "very low mapRating"
+          ],
+          "metricSnapshot": "elim 23 / dmg 11 / surv 0 / ast 5 / block 64"
+        }
+      ],
+      "mapRows": [
+        {
+          "map": "1 Lijiang Tower",
+          "top": {
+            "player": "秋秋",
+            "team": "TF",
+            "hero": "Symmetra",
+            "mapRating": 8.6,
+            "legacyScore": 68.2,
+            "delta": 20.7
+          },
+          "low": {
+            "player": "普希希",
+            "team": "TCK",
+            "hero": "Orisa",
+            "mapRating": 5.7,
+            "legacyScore": 22.3,
+            "delta": -12.2
+          },
+          "rows": [
+            {
+              "playerId": "FCA26-P0106",
+              "player": "秋秋",
+              "team": "TF",
+              "hero": "Symmetra",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "barrier_utility_flex",
+              "legacyScore": 68.2,
+              "ratingV1RawScore": 89,
+              "mapRating": 8.6,
+              "delta": 20.7,
+              "sampleStatus": "LOW_SAMPLE",
+              "flags": [
+                "delta 20.7",
+                "LOW_SAMPLE",
+                "very high mapRating",
+                "Sym blocked capped"
+              ],
+              "metricSnapshot": "elim 100 / dmg 76 / surv 78 / ast 100 / block 95"
+            },
+            {
+              "playerId": "FCA26-P0105",
+              "player": "小奇",
+              "team": "TF",
+              "hero": "Vendetta",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "flanker_flex",
+              "legacyScore": 63.2,
+              "ratingV1RawScore": 81,
+              "mapRating": 8.1,
+              "delta": 17.8,
+              "sampleStatus": "OK",
+              "flags": [
+                "delta 17.8"
+              ],
+              "metricSnapshot": "elim 100 / dmg 63 / surv 80 / ast 100 / block 8"
+            },
+            {
+              "playerId": "FCA26-P0108",
+              "player": "堃堃",
+              "team": "TF",
+              "hero": "Lúcio",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "tempo_main_support",
+              "legacyScore": 60.2,
+              "ratingV1RawScore": 70.3,
+              "mapRating": 7.6,
+              "delta": 10.1,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 100 / dmg 98 / surv 94 / ast 100 / block 6"
+            },
+            {
+              "playerId": "FCA26-P0103",
+              "player": "littlelove",
+              "team": "TF",
+              "hero": "Zarya",
+              "subrole": "TANK",
+              "scoringProfile": "brawl_tank",
+              "legacyScore": 49.6,
+              "ratingV1RawScore": 56.4,
+              "mapRating": 7.2,
+              "delta": 6.8,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 100 / dmg 12 / surv 78 / ast 100 / block 11"
+            },
+            {
+              "playerId": "FCA26-P0107",
+              "player": "松雾",
+              "team": "TF",
+              "hero": "Kiriko",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 43.2,
+              "ratingV1RawScore": 42.6,
+              "mapRating": 6.8,
+              "delta": -0.6,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 98 / dmg 36 / surv 21 / ast 90 / block 37"
+            },
+            {
+              "playerId": "FCA26-P0093",
+              "player": "猪角",
+              "team": "TCK",
+              "hero": "Moira",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "volume_flex_support",
+              "legacyScore": 38.6,
+              "ratingV1RawScore": 39.7,
+              "mapRating": 6.8,
+              "delta": 1.1,
+              "sampleStatus": "LOW_SAMPLE",
+              "flags": [
+                "LOW_SAMPLE"
+              ],
+              "metricSnapshot": "elim 89 / dmg 82 / surv 0 / ast 22 / block 32"
+            },
+            {
+              "playerId": "FCA26-P0090",
+              "player": "vv",
+              "team": "TCK",
+              "hero": "Symmetra",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "barrier_utility_flex",
+              "legacyScore": 37.8,
+              "ratingV1RawScore": 38.5,
+              "mapRating": 6.7,
+              "delta": 0.6,
+              "sampleStatus": "LOW_SAMPLE",
+              "flags": [
+                "LOW_SAMPLE"
+              ],
+              "metricSnapshot": "elim 60 / dmg 16 / surv 0 / ast 93 / block 25"
+            },
+            {
+              "playerId": "FCA26-P0094",
+              "player": "随风",
+              "team": "TCK",
+              "hero": "Lúcio",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "tempo_main_support",
+              "legacyScore": 29,
+              "ratingV1RawScore": 14.1,
+              "mapRating": 5.9,
+              "delta": -14.9,
+              "sampleStatus": "OK",
+              "flags": [
+                "very low mapRating"
+              ],
+              "metricSnapshot": "elim 10 / dmg 10 / surv 0 / ast 24 / block 33"
+            },
+            {
+              "playerId": "FCA26-P0091",
+              "player": "夜袭喵",
+              "team": "TCK",
+              "hero": "Vendetta",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "flanker_flex",
+              "legacyScore": 20.4,
+              "ratingV1RawScore": 11,
+              "mapRating": 5.8,
+              "delta": -9.4,
+              "sampleStatus": "OK",
+              "flags": [
+                "very low mapRating"
+              ],
+              "metricSnapshot": "elim 6 / dmg 5 / surv 0 / ast 49 / block 61"
+            },
+            {
+              "playerId": "FCA26-P0089",
+              "player": "普希希",
+              "team": "TCK",
+              "hero": "Orisa",
+              "subrole": "TANK",
+              "scoringProfile": "anchor_tank",
+              "legacyScore": 22.3,
+              "ratingV1RawScore": 10.1,
+              "mapRating": 5.7,
+              "delta": -12.2,
+              "sampleStatus": "LOW_SAMPLE",
+              "flags": [
+                "LOW_SAMPLE",
+                "very low mapRating"
+              ],
+              "metricSnapshot": "elim 26 / dmg 6 / surv 0 / ast 20 / block 8"
+            }
+          ]
+        },
+        {
+          "map": "2 Suravasa",
+          "top": {
+            "player": "秋秋",
+            "team": "TF",
+            "hero": "Emre",
+            "mapRating": 8.2,
+            "legacyScore": 69.6,
+            "delta": 12.5
+          },
+          "low": {
+            "player": "普希希",
+            "team": "TCK",
+            "hero": "Orisa",
+            "mapRating": 5.7,
+            "legacyScore": 20.3,
+            "delta": -11.4
+          },
+          "rows": [
+            {
+              "playerId": "FCA26-P0106",
+              "player": "秋秋",
+              "team": "TF",
+              "hero": "Emre",
+              "subrole": "HITSCAN",
+              "scoringProfile": "midrange_hitscan",
+              "legacyScore": 69.6,
+              "ratingV1RawScore": 82.1,
+              "mapRating": 8.2,
+              "delta": 12.5,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 100 / dmg 96 / surv 70 / ast 27 / block 27"
+            },
+            {
+              "playerId": "FCA26-P0108",
+              "player": "堃堃",
+              "team": "TF",
+              "hero": "Lúcio",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "tempo_main_support",
+              "legacyScore": 71,
+              "ratingV1RawScore": 76.8,
+              "mapRating": 7.9,
+              "delta": 5.8,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 100 / dmg 91 / surv 85 / ast 100 / block 74"
+            },
+            {
+              "playerId": "FCA26-P0105",
+              "player": "小奇",
+              "team": "TF",
+              "hero": "Vendetta",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "flanker_flex",
+              "legacyScore": 55.5,
+              "ratingV1RawScore": 71.5,
+              "mapRating": 7.7,
+              "delta": 15.9,
+              "sampleStatus": "OK",
+              "flags": [
+                "delta 15.9"
+              ],
+              "metricSnapshot": "elim 85 / dmg 32 / surv 82 / ast 100 / block 29"
+            },
+            {
+              "playerId": "FCA26-P0103",
+              "player": "littlelove",
+              "team": "TF",
+              "hero": "Zarya",
+              "subrole": "TANK",
+              "scoringProfile": "brawl_tank",
+              "legacyScore": 54.6,
+              "ratingV1RawScore": 66.1,
+              "mapRating": 7.5,
+              "delta": 11.6,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 100 / dmg 41 / surv 92 / ast 94 / block 13"
+            },
+            {
+              "playerId": "FCA26-P0107",
+              "player": "松雾",
+              "team": "TF",
+              "hero": "Kiriko",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 58.5,
+              "ratingV1RawScore": 63.7,
+              "mapRating": 7.4,
+              "delta": 5.2,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 99 / dmg 54 / surv 94 / ast 99 / block 37"
+            },
+            {
+              "playerId": "FCA26-P0093",
+              "player": "猪角",
+              "team": "TCK",
+              "hero": "Moira",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "volume_flex_support",
+              "legacyScore": 46.5,
+              "ratingV1RawScore": 51.1,
+              "mapRating": 7,
+              "delta": 4.5,
+              "sampleStatus": "LOW_SAMPLE",
+              "flags": [
+                "LOW_SAMPLE",
+                "high damage / low survival"
+              ],
+              "metricSnapshot": "elim 63 / dmg 91 / surv 0 / ast 21 / block 32"
+            },
+            {
+              "playerId": "FCA26-P0091",
+              "player": "夜袭喵",
+              "team": "TCK",
+              "hero": "Vendetta",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "flanker_flex",
+              "legacyScore": 26.1,
+              "ratingV1RawScore": 20.4,
+              "mapRating": 6.2,
+              "delta": -5.7,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 12 / dmg 8 / surv 0 / ast 100 / block 44"
+            },
+            {
+              "playerId": "FCA26-P0090",
+              "player": "vv",
+              "team": "TCK",
+              "hero": "Symmetra",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "barrier_utility_flex",
+              "legacyScore": 20.8,
+              "ratingV1RawScore": 16.9,
+              "mapRating": 6,
+              "delta": -3.9,
+              "sampleStatus": "LOW_SAMPLE",
+              "flags": [
+                "LOW_SAMPLE"
+              ],
+              "metricSnapshot": "elim 7 / dmg 8 / surv 0 / ast 12 / block 92"
+            },
+            {
+              "playerId": "FCA26-P0094",
+              "player": "随风",
+              "team": "TCK",
+              "hero": "Lúcio",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "tempo_main_support",
+              "legacyScore": 33,
+              "ratingV1RawScore": 14.2,
+              "mapRating": 5.9,
+              "delta": -18.8,
+              "sampleStatus": "OK",
+              "flags": [
+                "delta -18.8",
+                "very low mapRating"
+              ],
+              "metricSnapshot": "elim 23 / dmg 11 / surv 0 / ast 5 / block 64"
+            },
+            {
+              "playerId": "FCA26-P0089",
+              "player": "普希希",
+              "team": "TCK",
+              "hero": "Orisa",
+              "subrole": "TANK",
+              "scoringProfile": "anchor_tank",
+              "legacyScore": 20.3,
+              "ratingV1RawScore": 8.9,
+              "mapRating": 5.7,
+              "delta": -11.4,
+              "sampleStatus": "LOW_SAMPLE",
+              "flags": [
+                "LOW_SAMPLE",
+                "very low mapRating"
+              ],
+              "metricSnapshot": "elim 10 / dmg 7 / surv 0 / ast 31 / block 9"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "????",
+      "matchId": "FCA26-SWISS-R2-M05",
+      "displayName": "ROUND 02 / FZ VS CUG",
+      "stage": "SWISS",
+      "round": "ROUND 2",
+      "score": "FZ 1-2 CUG",
+      "validRows": 30,
+      "maps": 3,
+      "averageMapRating": 7.2,
+      "averageLegacyScore": 50.2,
+      "topPlayer": {
+        "player": "Landon",
+        "team": "CUG",
+        "hero": "Kiriko",
+        "map": "3 Esperança",
+        "legacyScore": 74.6,
+        "ratingV1RawScore": 92.3,
+        "mapRating": 8.8,
+        "delta": 17.7,
+        "flags": [
+          "delta 17.7",
+          "very high mapRating"
+        ]
+      },
+      "lowPlayer": {
+        "player": "东方",
+        "team": "FZ",
+        "hero": "D.Va",
+        "map": "3 Esperança",
+        "legacyScore": 23.2,
+        "ratingV1RawScore": 8.8,
+        "mapRating": 5.7,
+        "delta": -14.4,
+        "flags": [
+          "very low mapRating"
+        ]
+      },
+      "flaggedRows": [
+        {
+          "player": "东方",
+          "team": "FZ",
+          "hero": "D.Va",
+          "map": "3 Esperança",
+          "legacyScore": 23.2,
+          "ratingV1RawScore": 8.8,
+          "mapRating": 5.7,
+          "delta": -14.4,
+          "sampleStatus": "OK",
+          "flags": [
+            "very low mapRating"
+          ],
+          "metricSnapshot": "elim 7 / dmg 8 / surv 0 / ast 9 / block 17"
+        },
+        {
+          "player": "莉拉斯",
+          "team": "FZ",
+          "hero": "Venture",
+          "map": "2 Aatlis",
+          "legacyScore": 66.8,
+          "ratingV1RawScore": 83.1,
+          "mapRating": 8.2,
+          "delta": 16.3,
+          "sampleStatus": "OK",
+          "flags": [
+            "delta 16.3"
+          ],
+          "metricSnapshot": "elim 78 / dmg 100 / surv 75 / ast 86 / block 89"
+        },
+        {
+          "player": "南南",
+          "team": "FZ",
+          "hero": "Zenyatta",
+          "map": "3 Esperança",
+          "legacyScore": 33.2,
+          "ratingV1RawScore": 30.8,
+          "mapRating": 6.5,
+          "delta": -2.4,
+          "sampleStatus": "LOW_SAMPLE",
+          "flags": [
+            "LOW_SAMPLE"
+          ],
+          "metricSnapshot": "elim 5 / dmg 24 / surv 37 / ast 17 / block 95"
+        },
+        {
+          "player": "魄魄子",
+          "team": "CUG",
+          "hero": "Winston",
+          "map": "3 Esperança",
+          "legacyScore": 70.5,
+          "ratingV1RawScore": 86.7,
+          "mapRating": 8.4,
+          "delta": 16.2,
+          "sampleStatus": "OK",
+          "flags": [
+            "delta 16.2"
+          ],
+          "metricSnapshot": "elim 94 / dmg 61 / surv 100 / ast 75 / block 95"
+        },
+        {
+          "player": "小K",
+          "team": "CUG",
+          "hero": "Cassidy",
+          "map": "3 Esperança",
+          "legacyScore": 67.5,
+          "ratingV1RawScore": 83.8,
+          "mapRating": 8.2,
+          "delta": 16.4,
+          "sampleStatus": "OK",
+          "flags": [
+            "delta 16.4"
+          ],
+          "metricSnapshot": "elim 92 / dmg 75 / surv 85 / ast 97 / block 78"
+        },
+        {
+          "player": "Landon",
+          "team": "CUG",
+          "hero": "Mizuki",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 74.1,
+          "ratingV1RawScore": 87.6,
+          "mapRating": 8.5,
+          "delta": 13.5,
+          "sampleStatus": "OK",
+          "flags": [
+            "very high mapRating"
+          ],
+          "metricSnapshot": "elim 78 / dmg 97 / surv 81 / ast 92 / block 69"
+        },
+        {
+          "player": "Landon",
+          "team": "CUG",
+          "hero": "Kiriko",
+          "map": "3 Esperança",
+          "legacyScore": 74.6,
+          "ratingV1RawScore": 92.3,
+          "mapRating": 8.8,
+          "delta": 17.7,
+          "sampleStatus": "OK",
+          "flags": [
+            "delta 17.7",
+            "very high mapRating"
+          ],
+          "metricSnapshot": "elim 79 / dmg 97 / surv 100 / ast 99 / block 37"
+        },
+        {
+          "player": "春江",
+          "team": "CUG",
+          "hero": "Kiriko",
+          "map": "2 Aatlis",
+          "legacyScore": 25.4,
+          "ratingV1RawScore": 12,
+          "mapRating": 5.8,
+          "delta": -13.3,
+          "sampleStatus": "OK",
+          "flags": [
+            "very low mapRating"
+          ],
+          "metricSnapshot": "elim 7 / dmg 9 / surv 12 / ast 16 / block 37"
+        }
+      ],
+      "mapRows": [
+        {
+          "map": "1 Lijiang Tower",
+          "top": {
+            "player": "Landon",
+            "team": "CUG",
+            "hero": "Mizuki",
+            "mapRating": 8.5,
+            "legacyScore": 74.1,
+            "delta": 13.5
+          },
+          "low": {
+            "player": "南南",
+            "team": "FZ",
+            "hero": "Mizuki",
+            "mapRating": 6.5,
+            "legacyScore": 37.4,
+            "delta": -7.8
+          },
+          "rows": [
+            {
+              "playerId": "FCA26-P0187",
+              "player": "Landon",
+              "team": "CUG",
+              "hero": "Mizuki",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "utility_main_support",
+              "legacyScore": 74.1,
+              "ratingV1RawScore": 87.6,
+              "mapRating": 8.5,
+              "delta": 13.5,
+              "sampleStatus": "OK",
+              "flags": [
+                "very high mapRating"
+              ],
+              "metricSnapshot": "elim 78 / dmg 97 / surv 81 / ast 92 / block 69"
+            },
+            {
+              "playerId": "FCA26-P0186",
+              "player": "小K",
+              "team": "CUG",
+              "hero": "Emre",
+              "subrole": "HITSCAN",
+              "scoringProfile": "midrange_hitscan",
+              "legacyScore": 65.2,
+              "ratingV1RawScore": 76.4,
+              "mapRating": 7.9,
+              "delta": 11.1,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 83 / dmg 98 / surv 64 / ast 27 / block 27"
+            },
+            {
+              "playerId": "FCA26-P0184",
+              "player": "魄魄子",
+              "team": "CUG",
+              "hero": "Ramattra",
+              "subrole": "TANK",
+              "scoringProfile": "tempo_tank",
+              "legacyScore": 61,
+              "ratingV1RawScore": 71.6,
+              "mapRating": 7.7,
+              "delta": 10.7,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 89 / dmg 51 / surv 65 / ast 59 / block 93"
+            },
+            {
+              "playerId": "FCA26-P0188",
+              "player": "春江",
+              "team": "CUG",
+              "hero": "Kiriko",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 62.1,
+              "ratingV1RawScore": 71.5,
+              "mapRating": 7.7,
+              "delta": 9.4,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 15 / dmg 9 / surv 79 / ast 90 / block 37"
+            },
+            {
+              "playerId": "FCA26-P0024",
+              "player": "东方",
+              "team": "FZ",
+              "hero": "D.Va",
+              "subrole": "TANK",
+              "scoringProfile": "dive_tank",
+              "legacyScore": 61.1,
+              "ratingV1RawScore": 69.8,
+              "mapRating": 7.6,
+              "delta": 8.7,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 53 / dmg 71 / surv 93 / ast 79 / block 49"
+            },
+            {
+              "playerId": "FCA26-P0185",
+              "player": "真真/拉扯",
+              "team": "CUG",
+              "hero": "Vendetta",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "flanker_flex",
+              "legacyScore": 56.1,
+              "ratingV1RawScore": 69.6,
+              "mapRating": 7.6,
+              "delta": 13.5,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 55 / dmg 68 / surv 77 / ast 92 / block 95"
+            },
+            {
+              "playerId": "FCA26-P0027",
+              "player": "青灯",
+              "team": "FZ",
+              "hero": "Lúcio",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "tempo_main_support",
+              "legacyScore": 53.6,
+              "ratingV1RawScore": 53.6,
+              "mapRating": 7.1,
+              "delta": 0,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 61 / dmg 68 / surv 17 / ast 34 / block 92"
+            },
+            {
+              "playerId": "FCA26-P0025",
+              "player": "莉拉斯",
+              "team": "FZ",
+              "hero": "Cassidy",
+              "subrole": "HITSCAN",
+              "scoringProfile": "midrange_hitscan",
+              "legacyScore": 43.5,
+              "ratingV1RawScore": 42.1,
+              "mapRating": 6.8,
+              "delta": -1.4,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 31 / dmg 61 / surv 20 / ast 66 / block 94"
+            },
+            {
+              "playerId": "FCA26-P0026",
+              "player": "朗读",
+              "team": "FZ",
+              "hero": "Tracer",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "flanker_flex",
+              "legacyScore": 38.6,
+              "ratingV1RawScore": 39.7,
+              "mapRating": 6.8,
+              "delta": 1.1,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 23 / dmg 87 / surv 41 / ast 16 / block 30"
+            },
+            {
+              "playerId": "FCA26-P0028",
+              "player": "南南",
+              "team": "FZ",
+              "hero": "Mizuki",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "utility_main_support",
+              "legacyScore": 37.4,
+              "ratingV1RawScore": 29.5,
+              "mapRating": 6.5,
+              "delta": -7.8,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 17 / dmg 33 / surv 3 / ast 12 / block 12"
+            }
+          ]
+        },
+        {
+          "map": "2 Aatlis",
+          "top": {
+            "player": "莉拉斯",
+            "team": "FZ",
+            "hero": "Venture",
+            "mapRating": 8.2,
+            "legacyScore": 66.8,
+            "delta": 16.3
+          },
+          "low": {
+            "player": "春江",
+            "team": "CUG",
+            "hero": "Kiriko",
+            "mapRating": 5.8,
+            "legacyScore": 25.4,
+            "delta": -13.3
+          },
+          "rows": [
+            {
+              "playerId": "FCA26-P0025",
+              "player": "莉拉斯",
+              "team": "FZ",
+              "hero": "Venture",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "brawl_flex",
+              "legacyScore": 66.8,
+              "ratingV1RawScore": 83.1,
+              "mapRating": 8.2,
+              "delta": 16.3,
+              "sampleStatus": "OK",
+              "flags": [
+                "delta 16.3"
+              ],
+              "metricSnapshot": "elim 78 / dmg 100 / surv 75 / ast 86 / block 89"
+            },
+            {
+              "playerId": "FCA26-P0028",
+              "player": "南南",
+              "team": "FZ",
+              "hero": "Mizuki",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "utility_main_support",
+              "legacyScore": 59.5,
+              "ratingV1RawScore": 71.6,
+              "mapRating": 7.7,
+              "delta": 12.1,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 75 / dmg 43 / surv 88 / ast 83 / block 56"
+            },
+            {
+              "playerId": "FCA26-P0027",
+              "player": "青灯",
+              "team": "FZ",
+              "hero": "Lúcio",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "tempo_main_support",
+              "legacyScore": 65.5,
+              "ratingV1RawScore": 71,
+              "mapRating": 7.6,
+              "delta": 5.5,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 77 / dmg 49 / surv 76 / ast 83 / block 89"
+            },
+            {
+              "playerId": "FCA26-P0026",
+              "player": "朗读",
+              "team": "FZ",
+              "hero": "Tracer",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "flanker_flex",
+              "legacyScore": 55.1,
+              "ratingV1RawScore": 67.9,
+              "mapRating": 7.5,
+              "delta": 12.7,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 92 / dmg 81 / surv 62 / ast 16 / block 16"
+            },
+            {
+              "playerId": "FCA26-P0024",
+              "player": "东方",
+              "team": "FZ",
+              "hero": "D.Va",
+              "subrole": "TANK",
+              "scoringProfile": "dive_tank",
+              "legacyScore": 50.4,
+              "ratingV1RawScore": 49,
+              "mapRating": 7,
+              "delta": -1.4,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 77 / dmg 9 / surv 47 / ast 85 / block 22"
+            },
+            {
+              "playerId": "FCA26-P0184",
+              "player": "魄魄子",
+              "team": "CUG",
+              "hero": "Ramattra",
+              "subrole": "TANK",
+              "scoringProfile": "tempo_tank",
+              "legacyScore": 39.9,
+              "ratingV1RawScore": 39.8,
+              "mapRating": 6.8,
+              "delta": -0.1,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 41 / dmg 74 / surv 27 / ast 21 / block 26"
+            },
+            {
+              "playerId": "FCA26-P0187",
+              "player": "Landon",
+              "team": "CUG",
+              "hero": "Mizuki",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "utility_main_support",
+              "legacyScore": 39,
+              "ratingV1RawScore": 36.3,
+              "mapRating": 6.7,
+              "delta": -2.6,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 22 / dmg 70 / surv 7 / ast 18 / block 56"
+            },
+            {
+              "playerId": "FCA26-P0185",
+              "player": "真真/拉扯",
+              "team": "CUG",
+              "hero": "Vendetta",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "flanker_flex",
+              "legacyScore": 37.1,
+              "ratingV1RawScore": 34.4,
+              "mapRating": 6.6,
+              "delta": -2.8,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 19 / dmg 59 / surv 12 / ast 56 / block 93"
+            },
+            {
+              "playerId": "FCA26-P0186",
+              "player": "小K",
+              "team": "CUG",
+              "hero": "Emre",
+              "subrole": "HITSCAN",
+              "scoringProfile": "midrange_hitscan",
+              "legacyScore": 37.5,
+              "ratingV1RawScore": 22.7,
+              "mapRating": 6.3,
+              "delta": -14.8,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 14 / dmg 34 / surv 14 / ast 27 / block 27"
+            },
+            {
+              "playerId": "FCA26-P0188",
+              "player": "春江",
+              "team": "CUG",
+              "hero": "Kiriko",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 25.4,
+              "ratingV1RawScore": 12,
+              "mapRating": 5.8,
+              "delta": -13.3,
+              "sampleStatus": "OK",
+              "flags": [
+                "very low mapRating"
+              ],
+              "metricSnapshot": "elim 7 / dmg 9 / surv 12 / ast 16 / block 37"
+            }
+          ]
+        },
+        {
+          "map": "3 Esperança",
+          "top": {
+            "player": "Landon",
+            "team": "CUG",
+            "hero": "Kiriko",
+            "mapRating": 8.8,
+            "legacyScore": 74.6,
+            "delta": 17.7
+          },
+          "low": {
+            "player": "东方",
+            "team": "FZ",
+            "hero": "D.Va",
+            "mapRating": 5.7,
+            "legacyScore": 23.2,
+            "delta": -14.4
+          },
+          "rows": [
+            {
+              "playerId": "FCA26-P0187",
+              "player": "Landon",
+              "team": "CUG",
+              "hero": "Kiriko",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 74.6,
+              "ratingV1RawScore": 92.3,
+              "mapRating": 8.8,
+              "delta": 17.7,
+              "sampleStatus": "OK",
+              "flags": [
+                "delta 17.7",
+                "very high mapRating"
+              ],
+              "metricSnapshot": "elim 79 / dmg 97 / surv 100 / ast 99 / block 37"
+            },
+            {
+              "playerId": "FCA26-P0184",
+              "player": "魄魄子",
+              "team": "CUG",
+              "hero": "Winston",
+              "subrole": "TANK",
+              "scoringProfile": "dive_tank",
+              "legacyScore": 70.5,
+              "ratingV1RawScore": 86.7,
+              "mapRating": 8.4,
+              "delta": 16.2,
+              "sampleStatus": "OK",
+              "flags": [
+                "delta 16.2"
+              ],
+              "metricSnapshot": "elim 94 / dmg 61 / surv 100 / ast 75 / block 95"
+            },
+            {
+              "playerId": "FCA26-P0186",
+              "player": "小K",
+              "team": "CUG",
+              "hero": "Cassidy",
+              "subrole": "HITSCAN",
+              "scoringProfile": "midrange_hitscan",
+              "legacyScore": 67.5,
+              "ratingV1RawScore": 83.8,
+              "mapRating": 8.2,
+              "delta": 16.4,
+              "sampleStatus": "OK",
+              "flags": [
+                "delta 16.4"
+              ],
+              "metricSnapshot": "elim 92 / dmg 75 / surv 85 / ast 97 / block 78"
+            },
+            {
+              "playerId": "FCA26-P0185",
+              "player": "真真/拉扯",
+              "team": "CUG",
+              "hero": "Vendetta",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "flanker_flex",
+              "legacyScore": 61.8,
+              "ratingV1RawScore": 72.7,
+              "mapRating": 7.7,
+              "delta": 10.9,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 77 / dmg 90 / surv 95 / ast 8 / block 95"
+            },
+            {
+              "playerId": "FCA26-P0188",
+              "player": "春江",
+              "team": "CUG",
+              "hero": "Ana",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 57.4,
+              "ratingV1RawScore": 70.3,
+              "mapRating": 7.6,
+              "delta": 12.9,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 49 / dmg 37 / surv 74 / ast 95 / block 39"
+            },
+            {
+              "playerId": "FCA26-P0025",
+              "player": "莉拉斯",
+              "team": "FZ",
+              "hero": "Reaper",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "brawl_flex",
+              "legacyScore": 32.1,
+              "ratingV1RawScore": 32.6,
+              "mapRating": 6.6,
+              "delta": 0.5,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 7 / dmg 69 / surv 26 / ast 25 / block 16"
+            },
+            {
+              "playerId": "FCA26-P0028",
+              "player": "南南",
+              "team": "FZ",
+              "hero": "Zenyatta",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "damage_flex_support",
+              "legacyScore": 33.2,
+              "ratingV1RawScore": 30.8,
+              "mapRating": 6.5,
+              "delta": -2.4,
+              "sampleStatus": "LOW_SAMPLE",
+              "flags": [
+                "LOW_SAMPLE"
+              ],
+              "metricSnapshot": "elim 5 / dmg 24 / surv 37 / ast 17 / block 95"
+            },
+            {
+              "playerId": "FCA26-P0026",
+              "player": "朗读",
+              "team": "FZ",
+              "hero": "Tracer",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "flanker_flex",
+              "legacyScore": 26.2,
+              "ratingV1RawScore": 21.6,
+              "mapRating": 6.2,
+              "delta": -4.6,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 8 / dmg 72 / surv 0 / ast 16 / block 34"
+            },
+            {
+              "playerId": "FCA26-P0027",
+              "player": "青灯",
+              "team": "FZ",
+              "hero": "Kiriko",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 30.7,
+              "ratingV1RawScore": 20.8,
+              "mapRating": 6.2,
+              "delta": -9.9,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 7 / dmg 32 / surv 15 / ast 3 / block 37"
+            },
+            {
+              "playerId": "FCA26-P0024",
+              "player": "东方",
+              "team": "FZ",
+              "hero": "D.Va",
+              "subrole": "TANK",
+              "scoringProfile": "dive_tank",
+              "legacyScore": 23.2,
+              "ratingV1RawScore": 8.8,
+              "mapRating": 5.7,
+              "delta": -14.4,
+              "sampleStatus": "OK",
+              "flags": [
+                "very low mapRating"
+              ],
+              "metricSnapshot": "elim 7 / dmg 8 / surv 0 / ast 9 / block 17"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "???",
+      "matchId": "FCA26-PLAYOFFS-R1-M07",
+      "displayName": "UB SF / W-M1 VS W-M2",
+      "stage": "PLAYOFFS",
+      "round": "UB SF",
+      "score": "NGP 0-3 HYW",
+      "validRows": 30,
+      "maps": 3,
+      "averageMapRating": 7.2,
+      "averageLegacyScore": 49.5,
+      "topPlayer": {
+        "player": "雪饼",
+        "team": "HYW",
+        "hero": "Reaper",
+        "map": "1 Lijiang Tower",
+        "legacyScore": 73.9,
+        "ratingV1RawScore": 91.4,
+        "mapRating": 8.7,
+        "delta": 17.5,
+        "flags": [
+          "delta 17.5",
+          "very high mapRating"
+        ]
+      },
+      "lowPlayer": {
+        "player": "sanstoi",
+        "team": "NGP",
+        "hero": "Reaper",
+        "map": "3 Suravasa",
+        "legacyScore": 31.4,
+        "ratingV1RawScore": 24.5,
+        "mapRating": 6.4,
+        "delta": -6.9,
+        "flags": []
+      },
+      "flaggedRows": [
+        {
+          "player": "nina",
+          "team": "NGP",
+          "hero": "Mauga",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 46.1,
+          "ratingV1RawScore": 51,
+          "mapRating": 7,
+          "delta": 4.9,
+          "sampleStatus": "OK",
+          "flags": [
+            "high damage / low survival"
+          ],
+          "metricSnapshot": "elim 35 / dmg 100 / surv 0 / ast 57 / block 51"
+        },
+        {
+          "player": "solife",
+          "team": "NGP",
+          "hero": "Lúcio",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 44.7,
+          "ratingV1RawScore": 46.3,
+          "mapRating": 6.9,
+          "delta": 1.6,
+          "sampleStatus": "OK",
+          "flags": [
+            "high damage / low survival"
+          ],
+          "metricSnapshot": "elim 65 / dmg 98 / surv 0 / ast 53 / block 55"
+        },
+        {
+          "player": "原神",
+          "team": "HYW",
+          "hero": "Mauga",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 56.2,
+          "ratingV1RawScore": 67.3,
+          "mapRating": 7.5,
+          "delta": 11.1,
+          "sampleStatus": "OK",
+          "flags": [
+            "high damage / low survival"
+          ],
+          "metricSnapshot": "elim 92 / dmg 100 / surv 29 / ast 81 / block 18"
+        },
+        {
+          "player": "雪饼",
+          "team": "HYW",
+          "hero": "Reaper",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 73.9,
+          "ratingV1RawScore": 91.4,
+          "mapRating": 8.7,
+          "delta": 17.5,
+          "sampleStatus": "OK",
+          "flags": [
+            "delta 17.5",
+            "very high mapRating"
+          ],
+          "metricSnapshot": "elim 100 / dmg 100 / surv 89 / ast 78 / block 16"
+        },
+        {
+          "player": "科比",
+          "team": "HYW",
+          "hero": "Cassidy",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 66.5,
+          "ratingV1RawScore": 85.1,
+          "mapRating": 8.3,
+          "delta": 18.6,
+          "sampleStatus": "OK",
+          "flags": [
+            "delta 18.6"
+          ],
+          "metricSnapshot": "elim 81 / dmg 95 / surv 80 / ast 93 / block 94"
+        },
+        {
+          "player": "Maki",
+          "team": "HYW",
+          "hero": "Zenyatta",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 61,
+          "ratingV1RawScore": 74.8,
+          "mapRating": 7.8,
+          "delta": 13.7,
+          "sampleStatus": "LOW_SAMPLE",
+          "flags": [
+            "LOW_SAMPLE",
+            "high damage / low survival"
+          ],
+          "metricSnapshot": "elim 89 / dmg 96 / surv 25 / ast 94 / block 26"
+        },
+        {
+          "player": "Maki",
+          "team": "HYW",
+          "hero": "Wuyang",
+          "map": "3 Suravasa",
+          "legacyScore": 62.6,
+          "ratingV1RawScore": 80.7,
+          "mapRating": 8.1,
+          "delta": 18,
+          "sampleStatus": "OK",
+          "flags": [
+            "delta 18.0"
+          ],
+          "metricSnapshot": "elim 44 / dmg 93 / surv 97 / ast 85 / block 50"
+        },
+        {
+          "player": "Jojo",
+          "team": "HYW",
+          "hero": "Kiriko",
+          "map": "1 Lijiang Tower",
+          "legacyScore": 72.9,
+          "ratingV1RawScore": 89.4,
+          "mapRating": 8.6,
+          "delta": 16.5,
+          "sampleStatus": "OK",
+          "flags": [
+            "delta 16.5",
+            "very high mapRating"
+          ],
+          "metricSnapshot": "elim 99 / dmg 72 / surv 81 / ast 99 / block 37"
+        }
+      ],
+      "mapRows": [
+        {
+          "map": "1 Lijiang Tower",
+          "top": {
+            "player": "雪饼",
+            "team": "HYW",
+            "hero": "Reaper",
+            "mapRating": 8.7,
+            "legacyScore": 73.9,
+            "delta": 17.5
+          },
+          "low": {
+            "player": "solife",
+            "team": "NGP",
+            "hero": "Lúcio",
+            "mapRating": 6.9,
+            "legacyScore": 44.7,
+            "delta": 1.6
+          },
+          "rows": [
+            {
+              "playerId": "FCA26-P0166",
+              "player": "雪饼",
+              "team": "HYW",
+              "hero": "Reaper",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "brawl_flex",
+              "legacyScore": 73.9,
+              "ratingV1RawScore": 91.4,
+              "mapRating": 8.7,
+              "delta": 17.5,
+              "sampleStatus": "OK",
+              "flags": [
+                "delta 17.5",
+                "very high mapRating"
+              ],
+              "metricSnapshot": "elim 100 / dmg 100 / surv 89 / ast 78 / block 16"
+            },
+            {
+              "playerId": "FCA26-P0170",
+              "player": "Jojo",
+              "team": "HYW",
+              "hero": "Kiriko",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 72.9,
+              "ratingV1RawScore": 89.4,
+              "mapRating": 8.6,
+              "delta": 16.5,
+              "sampleStatus": "OK",
+              "flags": [
+                "delta 16.5",
+                "very high mapRating"
+              ],
+              "metricSnapshot": "elim 99 / dmg 72 / surv 81 / ast 99 / block 37"
+            },
+            {
+              "playerId": "FCA26-P0167",
+              "player": "科比",
+              "team": "HYW",
+              "hero": "Cassidy",
+              "subrole": "HITSCAN",
+              "scoringProfile": "midrange_hitscan",
+              "legacyScore": 66.5,
+              "ratingV1RawScore": 85.1,
+              "mapRating": 8.3,
+              "delta": 18.6,
+              "sampleStatus": "OK",
+              "flags": [
+                "delta 18.6"
+              ],
+              "metricSnapshot": "elim 81 / dmg 95 / surv 80 / ast 93 / block 94"
+            },
+            {
+              "playerId": "FCA26-P0169",
+              "player": "Maki",
+              "team": "HYW",
+              "hero": "Zenyatta",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "damage_flex_support",
+              "legacyScore": 61,
+              "ratingV1RawScore": 74.8,
+              "mapRating": 7.8,
+              "delta": 13.7,
+              "sampleStatus": "LOW_SAMPLE",
+              "flags": [
+                "LOW_SAMPLE",
+                "high damage / low survival"
+              ],
+              "metricSnapshot": "elim 89 / dmg 96 / surv 25 / ast 94 / block 26"
+            },
+            {
+              "playerId": "FCA26-P0058",
+              "player": "sanstoi",
+              "team": "NGP",
+              "hero": "Reaper",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "brawl_flex",
+              "legacyScore": 59.1,
+              "ratingV1RawScore": 72.3,
+              "mapRating": 7.7,
+              "delta": 13.2,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 75 / dmg 100 / surv 47 / ast 78 / block 16"
+            },
+            {
+              "playerId": "FCA26-P0165",
+              "player": "原神",
+              "team": "HYW",
+              "hero": "Mauga",
+              "subrole": "TANK",
+              "scoringProfile": "brawl_tank",
+              "legacyScore": 56.2,
+              "ratingV1RawScore": 67.3,
+              "mapRating": 7.5,
+              "delta": 11.1,
+              "sampleStatus": "OK",
+              "flags": [
+                "high damage / low survival"
+              ],
+              "metricSnapshot": "elim 92 / dmg 100 / surv 29 / ast 81 / block 18"
+            },
+            {
+              "playerId": "FCA26-P0059",
+              "player": "chaozer",
+              "team": "NGP",
+              "hero": "Kiriko",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 52.2,
+              "ratingV1RawScore": 57.5,
+              "mapRating": 7.2,
+              "delta": 5.3,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 48 / dmg 77 / surv 6 / ast 52 / block 37"
+            },
+            {
+              "playerId": "FCA26-P0054",
+              "player": "nina",
+              "team": "NGP",
+              "hero": "Mauga",
+              "subrole": "TANK",
+              "scoringProfile": "brawl_tank",
+              "legacyScore": 46.1,
+              "ratingV1RawScore": 51,
+              "mapRating": 7,
+              "delta": 4.9,
+              "sampleStatus": "OK",
+              "flags": [
+                "high damage / low survival"
+              ],
+              "metricSnapshot": "elim 35 / dmg 100 / surv 0 / ast 57 / block 51"
+            },
+            {
+              "playerId": "FCA26-P0057",
+              "player": "CB",
+              "team": "NGP",
+              "hero": "Tracer",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "flanker_flex",
+              "legacyScore": 38.6,
+              "ratingV1RawScore": 45,
+              "mapRating": 6.9,
+              "delta": 6.4,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 40 / dmg 2 / surv 61 / ast 100 / block 16"
+            },
+            {
+              "playerId": "FCA26-P0060",
+              "player": "solife",
+              "team": "NGP",
+              "hero": "Lúcio",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "tempo_main_support",
+              "legacyScore": 44.7,
+              "ratingV1RawScore": 46.3,
+              "mapRating": 6.9,
+              "delta": 1.6,
+              "sampleStatus": "OK",
+              "flags": [
+                "high damage / low survival"
+              ],
+              "metricSnapshot": "elim 65 / dmg 98 / surv 0 / ast 53 / block 55"
+            }
+          ]
+        },
+        {
+          "map": "2 Midtown",
+          "top": {
+            "player": "科比",
+            "team": "HYW",
+            "hero": "Emre",
+            "mapRating": 7.4,
+            "legacyScore": 56.6,
+            "delta": 6.9
+          },
+          "low": {
+            "player": "chaozer",
+            "team": "NGP",
+            "hero": "Kiriko",
+            "mapRating": 6.7,
+            "legacyScore": 40.9,
+            "delta": -1.8
+          },
+          "rows": [
+            {
+              "playerId": "FCA26-P0167",
+              "player": "科比",
+              "team": "HYW",
+              "hero": "Emre",
+              "subrole": "HITSCAN",
+              "scoringProfile": "midrange_hitscan",
+              "legacyScore": 56.6,
+              "ratingV1RawScore": 63.5,
+              "mapRating": 7.4,
+              "delta": 6.9,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 53 / dmg 73 / surv 68 / ast 70 / block 27"
+            },
+            {
+              "playerId": "FCA26-P0165",
+              "player": "原神",
+              "team": "HYW",
+              "hero": "Ramattra",
+              "subrole": "TANK",
+              "scoringProfile": "tempo_tank",
+              "legacyScore": 46,
+              "ratingV1RawScore": 54.3,
+              "mapRating": 7.1,
+              "delta": 8.3,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 47 / dmg 47 / surv 71 / ast 72 / block 41"
+            },
+            {
+              "playerId": "FCA26-P0166",
+              "player": "雪饼",
+              "team": "HYW",
+              "hero": "Venture",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "brawl_flex",
+              "legacyScore": 44.1,
+              "ratingV1RawScore": 53.9,
+              "mapRating": 7.1,
+              "delta": 9.8,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 43 / dmg 55 / surv 77 / ast 38 / block 39"
+            },
+            {
+              "playerId": "FCA26-P0060",
+              "player": "solife",
+              "team": "NGP",
+              "hero": "Wuyang",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "utility_main_support",
+              "legacyScore": 44.5,
+              "ratingV1RawScore": 49.9,
+              "mapRating": 7,
+              "delta": 5.4,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 21 / dmg 40 / surv 55 / ast 22 / block 57"
+            },
+            {
+              "playerId": "FCA26-P0054",
+              "player": "nina",
+              "team": "NGP",
+              "hero": "Zarya",
+              "subrole": "TANK",
+              "scoringProfile": "brawl_tank",
+              "legacyScore": 42.4,
+              "ratingV1RawScore": 45.2,
+              "mapRating": 6.9,
+              "delta": 2.8,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 9 / dmg 47 / surv 66 / ast 27 / block 83"
+            },
+            {
+              "playerId": "FCA26-P0058",
+              "player": "sanstoi",
+              "team": "NGP",
+              "hero": "Venture",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "brawl_flex",
+              "legacyScore": 42.7,
+              "ratingV1RawScore": 47.4,
+              "mapRating": 6.9,
+              "delta": 4.7,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 50 / dmg 24 / surv 58 / ast 60 / block 87"
+            },
+            {
+              "playerId": "FCA26-P0170",
+              "player": "Jojo",
+              "team": "HYW",
+              "hero": "Kiriko",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 44.9,
+              "ratingV1RawScore": 44.9,
+              "mapRating": 6.9,
+              "delta": 0,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 41 / dmg 48 / surv 67 / ast 34 / block 37"
+            },
+            {
+              "playerId": "FCA26-P0057",
+              "player": "CB",
+              "team": "NGP",
+              "hero": "Tracer",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "flanker_flex",
+              "legacyScore": 37.7,
+              "ratingV1RawScore": 41.1,
+              "mapRating": 6.8,
+              "delta": 3.4,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 31 / dmg 66 / surv 42 / ast 16 / block 16"
+            },
+            {
+              "playerId": "FCA26-P0169",
+              "player": "Maki",
+              "team": "HYW",
+              "hero": "Baptiste",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "hybrid_flex_support",
+              "legacyScore": 38.4,
+              "ratingV1RawScore": 43.5,
+              "mapRating": 6.8,
+              "delta": 5.2,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 40 / dmg 74 / surv 51 / ast 10 / block 38"
+            },
+            {
+              "playerId": "FCA26-P0059",
+              "player": "chaozer",
+              "team": "NGP",
+              "hero": "Kiriko",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 40.9,
+              "ratingV1RawScore": 39.1,
+              "mapRating": 6.7,
+              "delta": -1.8,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 36 / dmg 39 / surv 37 / ast 6 / block 37"
+            }
+          ]
+        },
+        {
+          "map": "3 Suravasa",
+          "top": {
+            "player": "Maki",
+            "team": "HYW",
+            "hero": "Wuyang",
+            "mapRating": 8.1,
+            "legacyScore": 62.6,
+            "delta": 18
+          },
+          "low": {
+            "player": "sanstoi",
+            "team": "NGP",
+            "hero": "Reaper",
+            "mapRating": 6.4,
+            "legacyScore": 31.4,
+            "delta": -6.9
+          },
+          "rows": [
+            {
+              "playerId": "FCA26-P0169",
+              "player": "Maki",
+              "team": "HYW",
+              "hero": "Wuyang",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "utility_main_support",
+              "legacyScore": 62.6,
+              "ratingV1RawScore": 80.7,
+              "mapRating": 8.1,
+              "delta": 18,
+              "sampleStatus": "OK",
+              "flags": [
+                "delta 18.0"
+              ],
+              "metricSnapshot": "elim 44 / dmg 93 / surv 97 / ast 85 / block 50"
+            },
+            {
+              "playerId": "FCA26-P0170",
+              "player": "Jojo",
+              "team": "HYW",
+              "hero": "Kiriko",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 60.1,
+              "ratingV1RawScore": 69.2,
+              "mapRating": 7.6,
+              "delta": 9,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 44 / dmg 19 / surv 82 / ast 62 / block 37"
+            },
+            {
+              "playerId": "FCA26-P0166",
+              "player": "雪饼",
+              "team": "HYW",
+              "hero": "Reaper",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "brawl_flex",
+              "legacyScore": 52.5,
+              "ratingV1RawScore": 62.7,
+              "mapRating": 7.4,
+              "delta": 10.1,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 84 / dmg 57 / surv 64 / ast 25 / block 16"
+            },
+            {
+              "playerId": "FCA26-P0167",
+              "player": "科比",
+              "team": "HYW",
+              "hero": "Cassidy",
+              "subrole": "HITSCAN",
+              "scoringProfile": "midrange_hitscan",
+              "legacyScore": 50,
+              "ratingV1RawScore": 57.2,
+              "mapRating": 7.2,
+              "delta": 7.2,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 69 / dmg 46 / surv 59 / ast 58 / block 49"
+            },
+            {
+              "playerId": "FCA26-P0059",
+              "player": "chaozer",
+              "team": "NGP",
+              "hero": "Kiriko",
+              "subrole": "FLEX_SUPPORT",
+              "scoringProfile": "utility_flex_support",
+              "legacyScore": 51.2,
+              "ratingV1RawScore": 53.4,
+              "mapRating": 7.1,
+              "delta": 2.1,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 44 / dmg 77 / surv 33 / ast 23 / block 37"
+            },
+            {
+              "playerId": "FCA26-P0060",
+              "player": "solife",
+              "team": "NGP",
+              "hero": "Mizuki",
+              "subrole": "MAIN_SUPPORT",
+              "scoringProfile": "utility_main_support",
+              "legacyScore": 49.5,
+              "ratingV1RawScore": 53.4,
+              "mapRating": 7.1,
+              "delta": 3.9,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 33 / dmg 64 / surv 74 / ast 29 / block 37"
+            },
+            {
+              "playerId": "FCA26-P0057",
+              "player": "CB",
+              "team": "NGP",
+              "hero": "Cassidy",
+              "subrole": "HITSCAN",
+              "scoringProfile": "midrange_hitscan",
+              "legacyScore": 42.8,
+              "ratingV1RawScore": 39.4,
+              "mapRating": 6.7,
+              "delta": -3.4,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 24 / dmg 63 / surv 45 / ast 16 / block 11"
+            },
+            {
+              "playerId": "FCA26-P0165",
+              "player": "原神",
+              "team": "HYW",
+              "hero": "Mauga",
+              "subrole": "TANK",
+              "scoringProfile": "brawl_tank",
+              "legacyScore": 38.6,
+              "ratingV1RawScore": 36.1,
+              "mapRating": 6.7,
+              "delta": -2.5,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 34 / dmg 11 / surv 68 / ast 50 / block 21"
+            },
+            {
+              "playerId": "FCA26-P0054",
+              "player": "nina",
+              "team": "NGP",
+              "hero": "D.Va",
+              "subrole": "TANK",
+              "scoringProfile": "dive_tank",
+              "legacyScore": 35.3,
+              "ratingV1RawScore": 28.4,
+              "mapRating": 6.5,
+              "delta": -6.9,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 9 / dmg 42 / surv 30 / ast 49 / block 25"
+            },
+            {
+              "playerId": "FCA26-P0058",
+              "player": "sanstoi",
+              "team": "NGP",
+              "hero": "Reaper",
+              "subrole": "FLEX_DPS",
+              "scoringProfile": "brawl_flex",
+              "legacyScore": 31.4,
+              "ratingV1RawScore": 24.5,
+              "mapRating": 6.4,
+              "delta": -6.9,
+              "sampleStatus": "OK",
+              "flags": [],
+              "metricSnapshot": "elim 12 / dmg 31 / surv 24 / ast 25 / block 16"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

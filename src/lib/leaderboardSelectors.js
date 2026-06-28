@@ -474,7 +474,7 @@ export function getLeaderboardEntries(db, season) {
   if (cached?.minTimeMins === minTimeMins) return cached.entries
 
   const rawEntries = buildRawLeaderboardEntries(db)
-  const entries = scoreLeaderboardEntries(rawEntries, minTimeMins)
+  const entries = scoreLeaderboardEntries(rawEntries, minTimeMins, { db, season })
   entryCache.set(db, { minTimeMins, entries })
   return entries
 }

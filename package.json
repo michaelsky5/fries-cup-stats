@@ -6,6 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "analyze:fca-heroes": "node scripts/analyzeFcaHeroProfiles.mjs",
+    "replay:fca-rating": "node scripts/replayFcaRatingModel.mjs",
+    "test:rating-model": "node scripts/assertRatingModelConfig.mjs",
+    "test:scoring-integration": "node scripts/assertScoringEngineIntegration.mjs",
+    "compare:scoring": "node scripts/compareScoringEngines.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

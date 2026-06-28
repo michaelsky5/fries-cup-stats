@@ -283,14 +283,17 @@ export function getMatchRatingSummary(match, maps = [], players = []) {
     return {
       supported: false,
       level: 'match',
-      formulaSource: 'leaderboardScoring.scoreLeaderboardEntries',
+      formulaSource: 'ratingModel.v1',
       topEntries: [],
       roleLeaders: {},
       entries: []
     }
   }
 
-  const scoredEntries = scoreLeaderboardEntries(rawEntries, 0)
+  const scoredEntries = scoreLeaderboardEntries(rawEntries, 0, {
+    players,
+    scoreContext: maps.length === 1 ? 'map' : 'season'
+  })
     .filter(entry => entry.roleScore > 0)
     .sort(compareLeaderboardEntries)
     .map(decorateScoreEntry)
@@ -303,7 +306,7 @@ export function getMatchRatingSummary(match, maps = [], players = []) {
   return {
     supported: scoredEntries.length > 0,
     level: 'match',
-    formulaSource: 'leaderboardScoring.scoreLeaderboardEntries',
+    formulaSource: 'ratingModel.v1',
     topEntries: scoredEntries.slice(0, 3),
     roleLeaders,
     entries: scoredEntries
