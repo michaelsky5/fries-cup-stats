@@ -232,6 +232,8 @@ assertHeroResolution('\u897f\u62c9', 'HITSCAN', 'poke_hitscan', '西拉')
 
 const shion = assertHeroResolution('Shion', 'FLEX_DPS', 'projectile_flex')
 assert.ok(shion.secondarySubroles.includes('HITSCAN'))
+const shionSystemAlias = assertHeroResolution('Shino', 'FLEX_DPS', 'projectile_flex')
+assert.ok(shionSystemAlias.secondarySubroles.includes('HITSCAN'))
 const shionAlias = assertHeroResolution('\u6b7b\u6028', 'FLEX_DPS', 'projectile_flex', '死怨')
 assert.ok(shionAlias.secondarySubroles.includes('HITSCAN'))
 

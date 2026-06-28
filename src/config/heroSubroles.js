@@ -241,7 +241,7 @@ export const HERO_SUBROLE_CONFIG = {
     primarySubrole: 'FLEX_DPS',
     secondarySubroles: ['HITSCAN'],
     scoringProfile: 'projectile_flex',
-    aliases: ['死怨']
+    aliases: ['Shino', '死怨']
   },
 
   Lúcio: {
