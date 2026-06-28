@@ -84,6 +84,12 @@ function getSummaryTail(totals) {
   return ''
 }
 
+function getDisplayedMatchRating(entry, rawPts, participantScores) {
+  const modelMapRating = Number(entry?.mapRating)
+  if (Number.isFinite(modelMapRating)) return modelMapRating
+  return getMapPlayerMatchRating(rawPts, participantScores)
+}
+
 function createImpactIndex(rating) {
   const index = new Map()
   const entries = rating?.entries || []
@@ -92,7 +98,7 @@ function createImpactIndex(rating) {
   entries.forEach((entry, entryIndex) => {
     const rank = entryIndex + 1
     const rawPts = Number(entry.roleScore)
-    const matchRating = getMapPlayerMatchRating(rawPts, participantScores)
+    const matchRating = getDisplayedMatchRating(entry, rawPts, participantScores)
     const keys = [
       makeImpactKey(entry.player_id, entry.role),
       makeImpactKey(entry.player_name, entry.role),

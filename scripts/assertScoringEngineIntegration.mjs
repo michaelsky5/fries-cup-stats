@@ -147,6 +147,20 @@ function assertRuntimeDoesNotReadFcaReports() {
   })
 }
 
+function assertMatchDetailUsesRatingV1MapRating() {
+  const source = fs.readFileSync(path.join(ROOT_DIR, 'src/components/matches/detail/DualTeamStatsTable.jsx'), 'utf8')
+  assert.match(
+    source,
+    /Number\(entry\?\.mapRating\)/,
+    'map detail player rating should prefer Rating Model v1 mapRating before fallback remapping'
+  )
+  assert.match(
+    source,
+    /getDisplayedMatchRating\(entry, rawPts, participantScores\)/,
+    'map detail player rating should route display score through the mapRating-aware helper'
+  )
+}
+
 assert.equal(getActiveScoringEngine(), 'rating_v1')
 assert.equal(SCORING_ENGINE_CONFIG.activeEngine, 'rating_v1')
 assert.equal(SCORING_ENGINE_CONFIG.allowLegacyFallback, true)
@@ -226,6 +240,7 @@ assertHeroResolution('L\u00facio', 'MAIN_SUPPORT', 'tempo_main_support')
 assertHeroResolution('Kiriko', 'FLEX_SUPPORT', 'utility_flex_support')
 
 assertRuntimeDoesNotReadFcaReports()
+assertMatchDetailUsesRatingV1MapRating()
 
 console.log(JSON.stringify({
   activeEngine: getActiveScoringEngine(),
