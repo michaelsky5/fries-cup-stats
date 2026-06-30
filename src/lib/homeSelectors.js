@@ -149,16 +149,38 @@ function compareAscByTime(a, b) {
   return String(a?.match_id || '').localeCompare(String(b?.match_id || ''))
 }
 
-export function getSeasonStatus(db) {
+function getExpectedSwissMatchCount(db, season) {
+  const rules = getRules(season, db)
+  const swiss = rules?.advance?.swiss || {}
+  const swissStage = rules?.swissStage || {}
+  const expectedRounds = toNumber(swiss.rounds ?? swissStage.maxRounds ?? rules?.swiss?.round_count, 0)
+  const teamCount = safeArr(db?.teams).length
+  const matchesPerRound = toNumber(
+    swiss.matchesPerRound ?? swissStage.matchesPerRound,
+    teamCount > 1 ? Math.ceil(teamCount / 2) : 0
+  )
+
+  return expectedRounds > 0 && matchesPerRound > 0 ? expectedRounds * matchesPerRound : 0
+}
+
+function isSeasonCompleteByPublishedMatches(db, season, completedCount, matchCount) {
+  if (!matchCount || completedCount !== matchCount) return false
+
+  const expectedSwissMatches = getExpectedSwissMatchCount(db, season)
+  return !expectedSwissMatches || matchCount >= expectedSwissMatches
+}
+
+export function getSeasonStatus(db, season = null) {
   const matches = safeArr(db?.matches)
   const completed = matches.filter(isComplete)
   const live = matches.filter(isLive)
   const upcoming = matches.filter(match => !isComplete(match) && !isLive(match))
   const progress = matches.length ? Math.round((completed.length / matches.length) * 100) : 0
+  const isFinished = isSeasonCompleteByPublishedMatches(db, season, completed.length, matches.length)
 
   let phase = 'pending'
   let label = '等待赛程'
-  if (matches.length && completed.length === matches.length) {
+  if (isFinished) {
     phase = 'complete'
     label = '赛季已完结'
   } else if (live.length) {
@@ -682,7 +704,7 @@ export function getCurrentRoundSummary(db) {
 
 export function getOverviewStatus(db, season = null) {
   const summary = getHomeSummary(db)
-  const seasonStatus = getSeasonStatus(db)
+  const seasonStatus = getSeasonStatus(db, season)
   const round = getCurrentRoundSummary(db)
   const nextMatch = getUpcomingMatches(db, 1)[0] || round.nextMatch
   const rules = getRules(season, db)
