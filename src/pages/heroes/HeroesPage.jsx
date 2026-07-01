@@ -58,7 +58,7 @@ function normalizeRecordedRole(role) {
   return normalized
 }
 
-function getRecordedHeroKey(hero) {
+function getHeroStatKey(hero) {
   return getOwHeroAssetKey(hero) || normalizeOwLookupKey(hero)
 }
 
@@ -97,7 +97,7 @@ function getRecordedCompositions(db, limit = 5) {
             const role = normalizeRecordedRole(stat?.role) || normalizeRecordedRole(getOwHeroRole(hero))
             return {
               hero,
-              heroKey: getRecordedHeroKey(hero),
+              heroKey: getHeroStatKey(hero),
               role
             }
           })
@@ -264,15 +264,17 @@ export default function HeroesPage() {
       const logs = safeArr(p.match_logs?.length > 0 ? p.match_logs : p.live_match_logs)
 
       logs.forEach(log => {
-        const h = log.hero
+        const h = String(log.hero || '').trim()
         if (!h || h === '-' || h === 'UNKNOWN') return
 
-        let normalizedRole = String(log.role).toUpperCase()
-        if (normalizedRole === 'DPS') normalizedRole = 'DAMAGE'
-        if (normalizedRole === 'SUP') normalizedRole = 'SUPPORT'
+        const heroKey = getHeroStatKey(h)
+        if (!heroKey) return
 
-        if (!stats[h]) {
-          stats[h] = {
+        const normalizedRole = normalizeRecordedRole(log.role) || normalizeRecordedRole(getOwHeroRole(h))
+
+        if (!stats[heroKey]) {
+          stats[heroKey] = {
+            key: heroKey,
             name: h,
             role: normalizedRole,
             totalTime: 0,
@@ -281,10 +283,10 @@ export default function HeroesPage() {
         }
 
         const time = Number(log.playtimeMinutes) || 0
-        stats[h].totalTime += time
+        stats[heroKey].totalTime += time
 
-        if (!stats[h].players[p.player_id]) {
-          stats[h].players[p.player_id] = {
+        if (!stats[heroKey].players[p.player_id]) {
+          stats[heroKey].players[p.player_id] = {
             id: p.player_id,
             name: p.display_name || p.player_name,
             team: p.team_short_name || 'FREE',
@@ -292,7 +294,7 @@ export default function HeroesPage() {
           }
         }
 
-        stats[h].players[p.player_id].time += time
+        stats[heroKey].players[p.player_id].time += time
       })
     })
 
@@ -417,7 +419,7 @@ export default function HeroesPage() {
               if (hero.role === 'SUPPORT' || hero.role === 'SUP') roleClass = styles.borderSup
 
               return (
-                <div key={hero.name} className={`${styles.heroCard} ${roleClass}`}>
+                <div key={hero.key || hero.name} className={`${styles.heroCard} ${roleClass}`}>
                   <div className={styles.cardTop}>
                     <div className={styles.avatarBox}>
                       <img
