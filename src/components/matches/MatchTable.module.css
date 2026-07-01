@@ -140,6 +140,29 @@
   text-transform: uppercase;
 }
 
+.broadcastLink,
+.broadcastTag {
+  border-color: rgba(244, 195, 32, 0.42);
+  background: rgba(244, 195, 32, 0.1);
+  color: #f4c320;
+  text-decoration: none;
+}
+
+.broadcastLink:hover,
+.broadcastLink:focus-visible {
+  background: rgba(244, 195, 32, 0.18);
+  outline: 0;
+}
+
+.broadcastLine {
+  max-width: 100%;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
 /* ---------- stage ---------- */
 .stageCell {
   gap: 6px;

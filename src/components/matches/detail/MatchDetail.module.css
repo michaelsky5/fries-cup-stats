@@ -288,6 +288,64 @@
   text-align: right;
 }
 
+.posterBroadcast {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.2fr) repeat(2, minmax(0, 1fr));
+  border-top: 2px solid #2a2a2a;
+  background: #ffffff;
+  color: #2a2a2a;
+}
+
+.posterBroadcast a,
+.posterBroadcast span {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  align-content: center;
+  min-height: 58px;
+  padding: 12px 18px;
+  border-right: 1px solid #dfd8ca;
+  color: inherit;
+  text-decoration: none;
+}
+
+.posterBroadcast a {
+  background: #2a2a2a;
+  color: #f4c320;
+}
+
+.posterBroadcast a:hover,
+.posterBroadcast a:focus-visible {
+  background: #111111;
+  outline: 0;
+}
+
+.posterBroadcast a:last-child,
+.posterBroadcast span:last-child {
+  border-right: 0;
+}
+
+.posterBroadcast b {
+  color: #6f6b61;
+  font-size: 10px;
+  font-weight: 1000;
+  letter-spacing: .08em;
+  line-height: 1;
+}
+
+.posterBroadcast a b {
+  color: rgba(244, 195, 32, 0.7);
+}
+
+.posterBroadcast strong {
+  min-width: 0;
+  color: currentColor;
+  font-size: 13px;
+  font-weight: 1000;
+  line-height: 1.18;
+  overflow-wrap: anywhere;
+}
+
 .seriesRail {
   position: sticky;
   top: 138px;
@@ -1699,6 +1757,16 @@
 
   .posterInfoBand em {
     text-align: left;
+  }
+
+  .posterBroadcast {
+    grid-template-columns: 1fr;
+  }
+
+  .posterBroadcast a,
+  .posterBroadcast span {
+    border-right: 0;
+    border-bottom: 1px solid #dfd8ca;
   }
 
   .seriesRail {

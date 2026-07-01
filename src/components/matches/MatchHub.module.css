@@ -835,6 +835,28 @@
   font-weight: 950;
 }
 
+.followingBroadcast {
+  display: grid;
+  gap: 5px;
+  color: var(--portal-muted);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.followingBroadcast a,
+.followingBroadcast span {
+  min-width: 0;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+.followingBroadcast a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
 .followingSide {
   display: flex;
   flex-direction: column;

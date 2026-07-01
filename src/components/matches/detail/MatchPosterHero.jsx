@@ -37,6 +37,38 @@ function PosterTeam({ team, seasonId, winner }) {
   )
 }
 
+function BroadcastItem({ label, value, href }) {
+  if (!value) return null
+  const content = (
+    <>
+      <b>{label}</b>
+      <strong>{value}</strong>
+    </>
+  )
+
+  if (href) {
+    return (
+      <a href={href} target="_blank" rel="noreferrer">
+        {content}
+      </a>
+    )
+  }
+
+  return <span>{content}</span>
+}
+
+function PosterBroadcast({ broadcast }) {
+  if (!broadcast?.hasPublicInfo) return null
+
+  return (
+    <div className={styles.posterBroadcast}>
+      <BroadcastItem label={'\u76f4\u64ad\u95f4'} value={broadcast.streamUrl} href={broadcast.streamUrl} />
+      <BroadcastItem label={'\u89e3\u8bf4'} value={broadcast.casterText} />
+      <BroadcastItem label={'\u8d5b\u7ba1'} value={broadcast.refereeText} />
+    </div>
+  )
+}
+
 export default function MatchPosterHero({ dossier, seasonId, onBack, t }) {
   const score = splitScore(dossier.scoreLabel)
   const stage = dossier.match?.stage || 'MATCH'
@@ -83,6 +115,7 @@ export default function MatchPosterHero({ dossier, seasonId, onBack, t }) {
           <span>{dossier.mapCountLabel}</span>
           {dossier.internalId ? <em>{dossier.internalId}</em> : null}
         </div>
+        <PosterBroadcast broadcast={dossier.broadcast} />
       </div>
     </section>
   )

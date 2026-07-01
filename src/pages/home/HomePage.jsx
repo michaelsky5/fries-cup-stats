@@ -16,6 +16,7 @@ import {
   getOverviewStatus,
   safeArr
 } from '../../lib/homeSelectors.js'
+import { getBroadcastInfo } from '../../lib/broadcastSelectors.js'
 import { formatOwHeroName, formatOwMapName } from '../../lib/heroes.js'
 import { isEnglishLocale, pickLocale, translateLegacyText } from '../../lib/legacyI18n.js'
 import styles from './HomePage.module.css'
@@ -556,6 +557,7 @@ function OverviewMetric({ label, value, meta, tone = 'default' }) {
 
 function OverviewNextMatch({ match, label }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const broadcast = getBroadcastInfo(match)
   const nextLabel = label || homeText(locale, '快速进入下一场', 'Open Next Match')
 
   if (!match) {
@@ -580,6 +582,13 @@ function OverviewNextMatch({ match, label }) {
         <span>{match.format || 'TBD'}</span>
         <em>{getMatchStatusText(match, locale)}</em>
       </div>
+      {broadcast.hasPublicInfo ? (
+        <div className={styles.overviewBroadcast}>
+          {broadcast.streamUrl ? <span>{'\u76f4\u64ad\u95f4: '}{broadcast.streamUrl}</span> : null}
+          {broadcast.casterText ? <span>{'\u89e3\u8bf4: '}{broadcast.casterText}</span> : null}
+          {broadcast.refereeText ? <span>{'\u8d5b\u7ba1: '}{broadcast.refereeText}</span> : null}
+        </div>
+      ) : null}
     </Link>
   )
 }
