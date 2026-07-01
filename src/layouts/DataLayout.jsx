@@ -119,7 +119,7 @@ export default function DataLayout() {
   }, [seasonId])
 
   const summary = getGlobalSummary(db)
-  const seasonStatus = getSeasonStatus(db)
+  const seasonStatus = getSeasonStatus(db, season)
   const updatedAtText = isLoading
     ? t('layout.meta.loading')
     : formatUpdatedAt(summary.updatedAt, t('layout.meta.empty'))

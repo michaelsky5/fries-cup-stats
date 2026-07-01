@@ -688,6 +688,21 @@
     grid-template-columns: 1fr;
   }
 
+  .recentGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .matchMetaInfo {
+    min-width: 0;
+  }
+
+  .matchId {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .matchScoreboard {
     grid-template-columns: 1fr;
   }

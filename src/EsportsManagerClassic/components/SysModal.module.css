@@ -1,0 +1,90 @@
+.sysModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.sysModalBox {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(180deg, #18181b 0%, #0f0f13 100%);
+  border: 1px solid #3f3f46;
+  border-top: 4px solid #facc15;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.sysModalHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sysModalTitle {
+  font-size: 11px;
+  font-weight: 900;
+  color: #facc15;
+  letter-spacing: 0.16em;
+  font-family: var(--font-mono, monospace);
+  text-transform: uppercase;
+}
+
+.sysModalBody {
+  padding: 24px 20px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #e4e4e7;
+  text-align: center;
+}
+
+.sysModalFooter {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.btnModalCancel,
+.btnModalConfirm {
+  flex: 1;
+  min-height: 42px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  font-family: var(--font-mono, monospace);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnModalCancel {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #a1a1aa;
+}
+
+.btnModalCancel:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.btnModalConfirm {
+  background: #facc15;
+  border: 1px solid #facc15;
+  color: #000;
+}
+
+.btnModalConfirm:hover {
+  background: #fff;
+  border-color: #fff;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

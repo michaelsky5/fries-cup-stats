@@ -5,6 +5,7 @@ import {
   getMatchTimeLabel,
   safeArr
 } from '../../lib/matchesSelectors.js'
+import { getBroadcastInfo } from '../../lib/broadcastSelectors.js'
 import MatchHubSectionLabel from './MatchHubSectionLabel.jsx'
 import styles from './MatchHub.module.css'
 
@@ -56,6 +57,7 @@ export default function FollowingMatchSummary({ hub }) {
   const primaryMatchInRound = safeArr(hub?.currentRoundMatches)
     .some(row => row?.match_id === match.match_id)
   const otherRoundMatches = Math.max((hub?.followingRoundMatchCount || 0) - (primaryMatchInRound ? 1 : 0), 0)
+  const broadcast = getBroadcastInfo(match)
 
   return (
     <section className={styles.section} aria-labelledby="following-title" data-testid="following-section">
@@ -76,6 +78,17 @@ export default function FollowingMatchSummary({ hub }) {
             {getMatchTimeLabel(match)} · {match.format || 'TBD'}
           </p>
           <span className={styles.followingStatus}>{getMatchStatusText(match)}</span>
+          {broadcast.hasPublicInfo ? (
+            <div className={styles.followingBroadcast}>
+              {broadcast.streamUrl ? (
+                <a href={broadcast.streamUrl} target="_blank" rel="noreferrer">
+                  {'\u76f4\u64ad\u95f4: '}{broadcast.streamUrl}
+                </a>
+              ) : null}
+              {broadcast.casterText ? <span>{'\u89e3\u8bf4: '}{broadcast.casterText}</span> : null}
+              {broadcast.refereeText ? <span>{'\u8d5b\u7ba1: '}{broadcast.refereeText}</span> : null}
+            </div>
+          ) : null}
         </div>
         <div className={styles.followingSide}>
           <p>另外关注 {otherFavoriteTeams} 支队伍</p>

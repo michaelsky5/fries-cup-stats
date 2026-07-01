@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import {
@@ -16,6 +16,7 @@ import {
   getOverviewStatus,
   safeArr
 } from '../../lib/homeSelectors.js'
+import { getBroadcastInfo } from '../../lib/broadcastSelectors.js'
 import { formatOwHeroName, formatOwMapName } from '../../lib/heroes.js'
 import { isEnglishLocale, pickLocale, translateLegacyText } from '../../lib/legacyI18n.js'
 import styles from './HomePage.module.css'
@@ -121,6 +122,64 @@ function SectionHead({ eyebrow, title, actionTo, actionText }) {
       {actionTo && actionText ? (
         <Link to={withSeason(actionTo)} className={styles.textLink}>{actionText}</Link>
       ) : null}
+    </div>
+  )
+}
+
+function ManagerChoiceModal({ open, onClose }) {
+  const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+
+  if (!open) return null
+
+  const options = [
+    {
+      key: 'classic',
+      label: 'FANTASY MANAGER CLASSIC',
+      badge: homeText(locale, '经典版', 'Classic'),
+      title: homeText(locale, '电竞经理经典版', 'Fantasy Manager Classic'),
+      text: homeText(locale, '保留旧版玩法、本机存档和原有挑战。', 'Classic systems, local saves, and existing challenges stay here.'),
+      to: '/fantasy'
+    },
+    {
+      key: 'next',
+      label: 'FANTASY MANAGER NEXT',
+      badge: homeText(locale, '新版', 'Next'),
+      title: homeText(locale, '电竞经理新版', 'Fantasy Manager Next'),
+      text: homeText(locale, '新版玩法会继续在独立入口推进。', 'The next version continues in its own entry.'),
+      to: '/fantasy-next'
+    }
+  ]
+
+  return (
+    <div className={styles.managerChoiceBackdrop} onMouseDown={onClose}>
+      <section
+        className={styles.managerChoiceDialog}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="manager-choice-title"
+        onMouseDown={event => event.stopPropagation()}
+      >
+        <header>
+          <span>FANTASY MANAGER</span>
+          <h2 id="manager-choice-title">{homeText(locale, '选择电竞经理版本', 'Choose Manager Mode')}</h2>
+          <button type="button" onClick={onClose} aria-label={homeText(locale, '关闭', 'Close')}>×</button>
+        </header>
+        <div className={styles.managerChoiceGrid}>
+          {options.map(option => (
+            <Link
+              key={option.key}
+              to={withSeason(option.to)}
+              className={option.key === 'classic' ? styles.managerChoicePrimary : styles.managerChoiceOption}
+              onClick={onClose}
+            >
+              <span>{option.label}</span>
+              <b>{option.badge}</b>
+              <strong>{option.title}</strong>
+              <em>{option.text}</em>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   )
 }
@@ -517,6 +576,7 @@ function AdvancementResultsSection({ overview, advance, latest }) {
 
 function ResourcesSection({ resources }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const [managerChoiceOpen, setManagerChoiceOpen] = useState(false)
   const [primary, ...secondary] = resources
 
   return (
@@ -531,7 +591,18 @@ function ResourcesSection({ resources }) {
           </Link>
         ) : null}
         <div className={styles.resourceSecondaryGrid}>
-          {secondary.map(item => (
+          {secondary.map(item => item.action === 'managerChoice' ? (
+            <button
+              key={item.key}
+              type="button"
+              className={styles.managerChoiceTrigger}
+              onClick={() => setManagerChoiceOpen(true)}
+            >
+              <span>{item.label}</span>
+              <strong>{item.title}</strong>
+              <em>{item.text}</em>
+            </button>
+          ) : (
             <Link key={item.key} to={withSeason(item.to)}>
               <span>{item.label}</span>
               <strong>{item.title}</strong>
@@ -540,6 +611,7 @@ function ResourcesSection({ resources }) {
           ))}
         </div>
       </div>
+      <ManagerChoiceModal open={managerChoiceOpen} onClose={() => setManagerChoiceOpen(false)} />
     </section>
   )
 }
@@ -556,6 +628,7 @@ function OverviewMetric({ label, value, meta, tone = 'default' }) {
 
 function OverviewNextMatch({ match, label }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const broadcast = getBroadcastInfo(match)
   const nextLabel = label || homeText(locale, '快速进入下一场', 'Open Next Match')
 
   if (!match) {
@@ -580,6 +653,13 @@ function OverviewNextMatch({ match, label }) {
         <span>{match.format || 'TBD'}</span>
         <em>{getMatchStatusText(match, locale)}</em>
       </div>
+      {broadcast.hasPublicInfo ? (
+        <div className={styles.overviewBroadcast}>
+          {broadcast.streamUrl ? <span>{'\u76f4\u64ad\u95f4: '}{broadcast.streamUrl}</span> : null}
+          {broadcast.casterText ? <span>{'\u89e3\u8bf4: '}{broadcast.casterText}</span> : null}
+          {broadcast.refereeText ? <span>{'\u8d5b\u7ba1: '}{broadcast.refereeText}</span> : null}
+        </div>
+      ) : null}
     </Link>
   )
 }
@@ -638,6 +718,7 @@ function getPlayerLabel(player, locale = 'zh-CN') {
 
 function DataPulseSection({ dataPulse }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const [managerChoiceOpen, setManagerChoiceOpen] = useState(false)
   const cards = [
     {
       key: 'ranking',
@@ -688,20 +769,28 @@ function DataPulseSection({ dataPulse }) {
             ))}
           </div>
         </div>
-        <Link to={withSeason('/fantasy')} className={styles.playEntryCard}>
-          <span>FANTASY MANAGER</span>
-          <i className={styles.playStatusBadge}>{homeText(locale, '开发中', 'In Development')}</i>
-          <strong>{homeText(locale, '电竞经理', 'Fantasy Manager')}</strong>
-          <b>{homeText(locale, '电竞经理玩法', 'Fantasy Mode')}</b>
-          <em>{homeText(locale, '阵容经营与对战挑战会持续补全，当前先作为独立入口保留。', 'Roster building and challenge systems are still being expanded; this stays as the future mode entry.')}</em>
-        </Link>
+        <div className={styles.playEntryStack}>
+          <button
+            type="button"
+            className={`${styles.playEntryCard} ${styles.managerChoiceTrigger}`}
+            onClick={() => setManagerChoiceOpen(true)}
+          >
+            <span>FANTASY MANAGER</span>
+            <i className={styles.playStatusBadge}>{homeText(locale, '选择版本', 'Choose Mode')}</i>
+            <strong>{homeText(locale, '电竞经理', 'Fantasy Manager')}</strong>
+            <b>{homeText(locale, '经典版 / 新版', 'Classic / Next')}</b>
+            <em>{homeText(locale, '选择继续经典版，或进入新版独立入口。', 'Choose classic mode or open the next version entry.')}</em>
+          </button>
+        </div>
       </div>
+      <ManagerChoiceModal open={managerChoiceOpen} onClose={() => setManagerChoiceOpen(false)} />
     </section>
   )
 }
 
 function OverviewGatewaySection({ overview, summary, latest }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const [managerChoiceOpen, setManagerChoiceOpen] = useState(false)
   const isEn = locale === 'en-US'
   const hasData = summary.maps > 0 || latest.completed > 0
   const advanceStatus = latest.completed > 0
@@ -745,9 +834,9 @@ function OverviewGatewaySection({ overview, summary, latest }) {
       key: 'fantasy',
       label: 'MANAGER',
       title: homeText(locale, '电竞经理', 'Fantasy Manager'),
-      status: homeText(locale, '开发中', 'In development'),
-      text: homeText(locale, '独立玩法入口，后续继续补全。', 'Standalone mode entry, expanding later.'),
-      to: '/fantasy'
+      status: homeText(locale, '选择版本', 'Choose mode'),
+      text: homeText(locale, '经典版与新版入口统一从这里进入。', 'Classic and next entries start here.'),
+      action: 'managerChoice'
     }
   ]
 
@@ -755,7 +844,19 @@ function OverviewGatewaySection({ overview, summary, latest }) {
     <section className={styles.sectionBlock}>
       <SectionHead eyebrow="EVENT LINKS" title={homeText(locale, '赛事入口', 'Event Links')} />
       <div className={styles.gatewayGrid}>
-        {gateways.map(item => (
+        {gateways.map(item => item.action === 'managerChoice' ? (
+          <button
+            key={item.key}
+            type="button"
+            className={`${styles.gatewayCard} ${styles.managerChoiceTrigger}`}
+            onClick={() => setManagerChoiceOpen(true)}
+          >
+            <span>{item.label}</span>
+            <b className={styles.gatewayStatus}>{item.status}</b>
+            <strong>{item.title}</strong>
+            <em>{item.text}</em>
+          </button>
+        ) : (
           <Link
             key={item.key}
             to={withSeason(item.to)}
@@ -768,6 +869,7 @@ function OverviewGatewaySection({ overview, summary, latest }) {
           </Link>
         ))}
       </div>
+      <ManagerChoiceModal open={managerChoiceOpen} onClose={() => setManagerChoiceOpen(false)} />
     </section>
   )
 }
@@ -1209,8 +1311,8 @@ function ArchiveResources({ includeReview }) {
       key: 'manager',
       label: 'MANAGER',
       title: homeText(locale, '电竞经理', 'Fantasy Manager'),
-      text: homeText(locale, '阵容经营与对战挑战。', 'Roster management and battle challenges.'),
-      to: '/fantasy'
+      text: homeText(locale, '经典版与新版入口统一从这里进入。', 'Classic and next entries start here.'),
+      action: 'managerChoice'
     }
   ]
 

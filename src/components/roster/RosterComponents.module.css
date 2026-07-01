@@ -1205,6 +1205,10 @@
     grid-template-columns: 1fr;
   }
 
+  .toolbarCompact .formGrid {
+    grid-template-columns: 1fr;
+  }
+
   .summaryItem,
   .summaryItem:nth-child(2n),
   .summaryItem:nth-last-child(-n + 2),

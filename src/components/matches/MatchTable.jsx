@@ -1,4 +1,5 @@
 import { Link, useLocation, useOutletContext } from 'react-router-dom'
+import { getBroadcastInfo } from '../../lib/broadcastSelectors.js'
 import { formatMatchSchedule } from '../../lib/scheduleFormat.js'
 import styles from './MatchTable.module.css'
 
@@ -64,6 +65,7 @@ export default function MatchTable({ rows = [], locale = 'zh-CN' }) {
             const isWinnerB = isComplete && scoreB > scoreA
             const statusInfo = getStatusInfo(row.status, isForfeit)
             const schedule = formatMatchSchedule(row, { locale })
+            const broadcast = getBroadcastInfo(row)
 
             return (
               <div
@@ -79,8 +81,32 @@ export default function MatchTable({ rows = [], locale = 'zh-CN' }) {
                   <div className={styles.matchMetaRow}>
                     <span className={styles.miniTag}>{row.format || 'TBD'}</span>
                     <span className={styles.miniTag} title={schedule.title}>{schedule.compact}</span>
+                    {broadcast.streamUrl ? (
+                      <a
+                        className={`${styles.miniTag} ${styles.broadcastLink}`}
+                        href={broadcast.streamUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {'\u76f4\u64ad\u95f4'}
+                      </a>
+                    ) : broadcast.hasPublicInfo ? (
+                      <span className={`${styles.miniTag} ${styles.broadcastTag}`}>
+                        {'\u76f4\u64ad\u5b89\u6392'}
+                      </span>
+                    ) : null}
                     <span className={styles.miniTag} title={row.match_id}>{row.match_id}</span>
                   </div>
+                  {broadcast.casterText ? (
+                    <div className={styles.broadcastLine}>
+                      {'\u89e3\u8bf4: '}{broadcast.casterText}
+                    </div>
+                  ) : null}
+                  {broadcast.refereeText ? (
+                    <div className={styles.broadcastLine}>
+                      {'\u8d5b\u7ba1: '}{broadcast.refereeText}
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className={`${styles.stageCell} ${styles.alignCenter}`}>

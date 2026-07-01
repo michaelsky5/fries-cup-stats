@@ -1,4 +1,5 @@
 import { formatInt, formatScore, formatUpdatedAt } from './format.js'
+import { getBroadcastInfo } from './broadcastSelectors.js'
 import { getMatchRatingSummary } from './matchRatingAdapter.js'
 import {
   getMatchStatusText,
@@ -587,6 +588,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     teamB,
     title: `${teamA.short} vs ${teamB.short}`,
     fullTitle: `${teamA.full} vs ${teamB.full}`,
+    broadcast: getBroadcastInfo(match),
     breadcrumb: [match?.stage, match?.round].map(cleanText).filter(Boolean),
     scheduleLabel: getScheduleLabel(match, locale),
     scheduleCompact: formatMatchSchedule(match, { locale }).compact,

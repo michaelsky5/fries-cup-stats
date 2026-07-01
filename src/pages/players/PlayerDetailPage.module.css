@@ -1100,4 +1100,33 @@
   .primaryHeroCard {
     grid-template-columns: 1fr;
   }
+
+  .recentRow,
+  .mapRow {
+    gap: 8px 10px;
+    min-height: 76px;
+    padding: 12px;
+  }
+
+  .mapRow {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+
+  .mapIndex {
+    width: 30px;
+    height: 30px;
+  }
+
+  .mapHero,
+  .mapBar,
+  .mapRow b,
+  .mapRow em {
+    grid-column: 2;
+  }
+
+  .mapRow b,
+  .mapRow em {
+    justify-self: start;
+    text-align: left;
+  }
 }

@@ -254,3 +254,21 @@
     left: 16px;
   }
 }
+
+@media (max-width: 760px) {
+  .eventMeta {
+    position: relative;
+  }
+
+  .eventSwitcher {
+    position: static;
+  }
+
+  .switcherPanel {
+    left: 0;
+    width: min(420px, 100%);
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+    box-shadow: 6px 6px 0 rgba(244, 195, 32, 0.42);
+  }
+}

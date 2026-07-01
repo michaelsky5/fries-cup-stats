@@ -126,6 +126,20 @@ export function getSwissRules(season, db) {
   }
 }
 
+function getExpectedSwissMatchCount(db, season) {
+  const rules = getSwissRules(season, db)
+  return rules.maxRounds > 0 && rules.matchesPerRound > 0
+    ? rules.maxRounds * rules.matchesPerRound
+    : 0
+}
+
+function isSeasonCompleteByPublishedMatches(db, season, completedCount, matchCount) {
+  if (!matchCount || completedCount !== matchCount) return false
+
+  const expectedSwissMatches = getExpectedSwissMatchCount(db, season)
+  return !expectedSwissMatches || matchCount >= expectedSwissMatches
+}
+
 export function getSwissMatches(db) {
   return safeArr(db?.matches).filter(isSwissMatch).sort(compareAscByTime)
 }
@@ -152,7 +166,7 @@ export function getAdvancePhaseState(db, season) {
   const breakthroughFinished = Boolean(breakthroughMatches.length && breakthroughCompleted.length === breakthroughMatches.length)
   const playoffsStarted = playoffCompleted.length > 0 || playoffMatches.some(isLive)
   const playoffsFinished = Boolean(playoffMatches.length && playoffCompleted.length === playoffMatches.length)
-  const seasonFinished = Boolean(matches.length && completed.length === matches.length)
+  const seasonFinished = isSeasonCompleteByPublishedMatches(db, season, completed.length, matches.length)
 
   return {
     phases: ADVANCE_PHASES,

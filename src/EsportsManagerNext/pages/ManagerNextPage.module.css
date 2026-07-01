@@ -1,0 +1,1399 @@
+.page {
+  --game-bg: #071018;
+  --game-ink: #edf7ff;
+  --game-muted: rgba(237, 247, 255, 0.66);
+  --game-dim: rgba(237, 247, 255, 0.42);
+  --game-panel: rgba(13, 24, 34, 0.88);
+  --game-panel-strong: rgba(18, 33, 47, 0.96);
+  --game-line: rgba(144, 211, 224, 0.22);
+  --game-cyan: #2af1ff;
+  --game-gold: #f6c247;
+  --game-green: #47d990;
+  --game-red: #ff5d56;
+  --game-blue: #4ea3ff;
+
+  width: 100vw;
+  min-height: 100vh;
+  margin-inline: 0;
+  padding: 18px clamp(16px, 3vw, 44px) 48px;
+  background:
+    linear-gradient(180deg, rgba(7, 16, 24, 0.72), rgba(7, 16, 24, 0.98)),
+    url("../assets/manager-next-arena.svg") center top / cover no-repeat,
+    var(--game-bg);
+  color: var(--game-ink);
+  box-sizing: border-box;
+}
+
+.standaloneRoot {
+  min-height: 100vh;
+  background: #071018;
+  color: #edf7ff;
+  font-family: var(--font-sans, Inter, "Microsoft YaHei", "PingFang SC", Arial, sans-serif);
+}
+
+.bootScreen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(42, 241, 255, 0.16), transparent 36%),
+    linear-gradient(180deg, rgba(7, 16, 24, 0.82), #071018),
+    url("../assets/manager-next-arena.svg") center / cover no-repeat;
+  box-sizing: border-box;
+}
+
+.bootCard {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 14px;
+  padding: 28px;
+  border: 1px solid rgba(144, 211, 224, 0.3);
+  background: rgba(13, 24, 34, 0.9);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(14px);
+}
+
+.bootCard span {
+  color: #2af1ff;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.bootCard strong {
+  color: #edf7ff;
+  font-size: 24px;
+  font-weight: 1000;
+  line-height: 1.1;
+}
+
+.bootCard p {
+  margin: 0;
+  color: rgba(237, 247, 255, 0.66);
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.bootCard i {
+  width: 100%;
+  height: 8px;
+  display: block;
+  overflow: hidden;
+  border: 1px solid rgba(237, 247, 255, 0.18);
+  background: rgba(237, 247, 255, 0.06);
+}
+
+.bootCard i::before {
+  width: 36%;
+  height: 100%;
+  display: block;
+  background: linear-gradient(90deg, #2af1ff, #f6c247);
+  content: "";
+  animation: bootLoad 1.15s ease-in-out infinite;
+}
+
+.gameShell {
+  max-width: 1760px;
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+}
+
+.gameTopbar,
+.commandDock,
+.seasonMap,
+.stagePane,
+.runSidebar,
+.metaPanel {
+  border: 1px solid var(--game-line);
+  background: var(--game-panel);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(14px);
+}
+
+.gameTopbar {
+  min-height: 104px;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.22fr) minmax(0, 1fr) minmax(180px, 0.18fr);
+  gap: 12px;
+  align-items: stretch;
+  padding: 12px;
+}
+
+.gameBrand {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(42, 241, 255, 0.12), rgba(246, 194, 71, 0.08));
+  border: 1px solid rgba(42, 241, 255, 0.22);
+}
+
+.gameBrand span,
+.sideHead span,
+.stageHeader span,
+.panelHead span,
+.miniHead span,
+.statPill span,
+.commandButton span,
+.ticker,
+.routeNode span,
+.choiceCard span,
+.marketCard span,
+.playerRole,
+.logItem span,
+.modifierList article span,
+.perkItem span,
+.hallItem span,
+.metaPanel summary span,
+.marketTags i,
+.startCopy span,
+.quickHall span {
+  color: var(--game-cyan);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.gameBrand strong {
+  min-width: 0;
+  font-size: clamp(22px, 2.6vw, 42px);
+  font-weight: 1000;
+  letter-spacing: 0;
+  line-height: 0.92;
+}
+
+.gameBrand em {
+  color: var(--game-muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.hudBar {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.topActions {
+  min-width: 0;
+  display: grid;
+  align-content: stretch;
+  gap: 8px;
+}
+
+.classicLink {
+  min-width: 0;
+  min-height: 52px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(246, 194, 71, 0.36);
+  background: rgba(246, 194, 71, 0.1);
+  color: var(--game-gold);
+  font-size: 13px;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.classicLink:hover,
+.classicLink:focus-visible {
+  background: var(--game-gold);
+  color: #071018;
+  outline: 0;
+}
+
+.xpTrack {
+  align-self: end;
+  height: 12px;
+  border: 1px solid rgba(237, 247, 255, 0.18);
+  background: rgba(237, 247, 255, 0.08);
+}
+
+.xpTrack i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--game-cyan), var(--game-gold));
+}
+
+.statPill {
+  min-width: 0;
+  min-height: 78px;
+  display: grid;
+  align-content: space-between;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(237, 247, 255, 0.14);
+  background: rgba(237, 247, 255, 0.055);
+}
+
+.statPill strong {
+  min-width: 0;
+  color: var(--game-ink);
+  font-size: clamp(22px, 2vw, 32px);
+  font-weight: 1000;
+  line-height: 0.95;
+  overflow-wrap: anywhere;
+}
+
+.statPill em {
+  min-width: 0;
+  color: var(--game-muted);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 850;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.stat_gold strong,
+.stat_gold span {
+  color: var(--game-gold);
+}
+
+.stat_good strong,
+.stat_good span {
+  color: var(--game-green);
+}
+
+.stat_danger strong,
+.stat_danger span {
+  color: var(--game-red);
+}
+
+.commandDock {
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(150px, 0.16fr)) minmax(0, 1fr);
+  gap: 8px;
+  padding: 8px;
+}
+
+.commandButton,
+.bigStartButton,
+.deployButton,
+.marketHead button,
+.rowAction,
+.exportBox button,
+.importBox button,
+.importBox select {
+  min-width: 0;
+  border: 1px solid var(--game-line);
+  border-radius: 6px;
+  color: var(--game-ink);
+  font: inherit;
+}
+
+.commandButton {
+  min-height: 56px;
+  display: grid;
+  align-content: center;
+  gap: 7px;
+  padding: 10px 12px;
+  background: rgba(237, 247, 255, 0.07);
+  text-align: left;
+  cursor: pointer;
+}
+
+.commandButton strong {
+  color: var(--game-ink);
+  font-size: 16px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.command_primary {
+  border-color: rgba(246, 194, 71, 0.5);
+  background: rgba(246, 194, 71, 0.14);
+}
+
+.command_primary span,
+.command_primary strong {
+  color: var(--game-gold);
+}
+
+.command_danger {
+  border-color: rgba(255, 93, 86, 0.32);
+}
+
+.commandButton:hover,
+.commandButton:focus-visible,
+.bigStartButton:hover,
+.bigStartButton:focus-visible,
+.deployButton:hover,
+.deployButton:focus-visible,
+.marketHead button:hover,
+.marketHead button:focus-visible,
+.rowAction:hover,
+.rowAction:focus-visible,
+.exportBox button:hover,
+.exportBox button:focus-visible,
+.importBox button:hover,
+.importBox button:focus-visible {
+  border-color: var(--game-cyan);
+  background: rgba(42, 241, 255, 0.14);
+  outline: 0;
+}
+
+.commandButton:disabled,
+.bigStartButton:disabled,
+.deployButton:disabled,
+.marketHead button:disabled,
+.rowAction:disabled,
+.marketCard:disabled,
+.importBox button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.ticker {
+  min-width: 0;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border: 1px solid rgba(42, 241, 255, 0.18);
+  background: rgba(2, 7, 12, 0.36);
+  color: var(--game-muted);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.gameBoard {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(190px, 0.18fr) minmax(0, 1fr) minmax(320px, 0.25fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.seasonMap,
+.stagePane,
+.runSidebar {
+  min-width: 0;
+  min-height: 640px;
+}
+
+.seasonMap,
+.runSidebar {
+  padding: 14px;
+}
+
+.sideHead,
+.panelHead,
+.miniHead,
+.marketHead,
+.stageHeader {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.sideHead strong,
+.panelHead strong,
+.miniHead strong,
+.marketHead strong {
+  min-width: 0;
+  color: var(--game-ink);
+  font-size: 20px;
+  font-weight: 1000;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.emptyMap {
+  min-height: 520px;
+  display: grid;
+  place-items: center;
+  margin-top: 14px;
+  border: 1px dashed rgba(237, 247, 255, 0.22);
+  color: var(--game-dim);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+}
+
+.routeStack {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.routeNode {
+  position: relative;
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 8px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid rgba(237, 247, 255, 0.16);
+  background: rgba(237, 247, 255, 0.055);
+}
+
+.routeNode strong {
+  min-width: 0;
+  color: var(--game-ink);
+  font-size: 15px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.routeNode i {
+  width: 8px;
+  height: 36px;
+  background: rgba(237, 247, 255, 0.18);
+}
+
+.route_done {
+  background: rgba(71, 217, 144, 0.11);
+}
+
+.route_done i {
+  background: var(--game-green);
+}
+
+.route_current {
+  border-color: rgba(246, 194, 71, 0.64);
+  background: rgba(246, 194, 71, 0.16);
+}
+
+.route_current span,
+.route_current strong {
+  color: var(--game-gold);
+}
+
+.route_current i {
+  background: var(--game-gold);
+}
+
+.stagePane {
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+  background:
+    linear-gradient(180deg, rgba(12, 24, 36, 0.86), rgba(8, 16, 24, 0.94)),
+    var(--game-panel-strong);
+}
+
+.stagePane::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url("../assets/manager-next-arena.svg") center / cover no-repeat;
+  content: "";
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.stagePane > * {
+  position: relative;
+  z-index: 1;
+}
+
+.startPanel {
+  position: relative;
+  min-height: 520px;
+  display: grid;
+  grid-template-rows: minmax(240px, 260px) auto auto;
+  align-content: start;
+  gap: 12px;
+}
+
+.broadcastBackdrop {
+  grid-row: 1;
+  grid-column: 1;
+  min-height: 240px;
+  border: 1px solid rgba(42, 241, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(42, 241, 255, 0.02), rgba(246, 194, 71, 0.08)),
+    url("../assets/manager-next-arena.svg") center / cover no-repeat;
+}
+
+.startCopy {
+  z-index: 1;
+  grid-row: 1;
+  grid-column: 1;
+  align-self: end;
+  display: grid;
+  gap: 10px;
+  padding: clamp(16px, 2.4vw, 24px);
+  background: linear-gradient(180deg, rgba(7, 16, 24, 0), rgba(7, 16, 24, 0.9));
+}
+
+.startCopy h1 {
+  margin: 0;
+  color: var(--game-ink);
+  font-size: clamp(38px, 5.2vw, 72px);
+  font-weight: 1000;
+  letter-spacing: 0;
+  line-height: 0.9;
+}
+
+.startCopy p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--game-muted);
+  font-size: 14px;
+  font-weight: 820;
+  line-height: 1.45;
+}
+
+.startActions {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.32fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.bigStartButton {
+  min-height: 96px;
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  padding: 16px;
+  background: rgba(246, 194, 71, 0.16);
+  color: var(--game-gold);
+  text-align: left;
+  cursor: pointer;
+}
+
+.bigStartButton span {
+  color: var(--game-gold);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+}
+
+.bigStartButton strong {
+  font-size: 24px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.poolReadout,
+.sideStats,
+.reviewGrid,
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.quickHall {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.quickHall article,
+.hallItem,
+.perkItem {
+  min-width: 0;
+  display: grid;
+  gap: 9px;
+  padding: 14px;
+  border: 1px solid rgba(237, 247, 255, 0.14);
+  background: rgba(237, 247, 255, 0.055);
+}
+
+.quickHall strong,
+.hallItem strong,
+.perkItem strong {
+  min-width: 0;
+  color: var(--game-ink);
+  font-size: 17px;
+  font-weight: 1000;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.quickHall em,
+.hallItem em,
+.hallItem p,
+.perkItem em,
+.emptyText,
+.logItem em {
+  margin: 0;
+  color: var(--game-muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 820;
+  line-height: 1.42;
+  overflow-wrap: anywhere;
+}
+
+.encounterPanel,
+.reviewPanel,
+.builderPanel {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.stageHeader {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.stageHeader h2 {
+  margin: 0;
+  color: var(--game-ink);
+  font-size: clamp(30px, 4vw, 58px);
+  font-weight: 1000;
+  letter-spacing: 0;
+  line-height: 0.94;
+}
+
+.stageHeader b {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid rgba(246, 194, 71, 0.42);
+  color: var(--game-gold);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+}
+
+.encounterDesc {
+  max-width: 820px;
+  margin: 0;
+  color: var(--game-muted);
+  font-size: 14px;
+  font-weight: 820;
+  line-height: 1.55;
+}
+
+.matchBoard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.22fr) minmax(180px, 0.24fr);
+  gap: 12px;
+}
+
+.opponentCard,
+.powerCard,
+.matchButton,
+.choiceCard,
+.marketCard,
+.buildReport {
+  border: 1px solid rgba(237, 247, 255, 0.16);
+  background: rgba(237, 247, 255, 0.07);
+}
+
+.opponentCard,
+.powerCard,
+.matchButton {
+  min-height: 140px;
+  display: grid;
+  align-content: space-between;
+  gap: 12px;
+  padding: 16px;
+}
+
+.opponentCard span,
+.powerCard span,
+.matchButton span {
+  color: var(--game-cyan);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+}
+
+.opponentCard strong,
+.powerCard strong,
+.matchButton strong {
+  min-width: 0;
+  color: var(--game-ink);
+  font-size: 26px;
+  font-weight: 1000;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.opponentCard em,
+.powerCard em {
+  color: var(--game-muted);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 820;
+  line-height: 1.45;
+}
+
+.matchButton {
+  border-color: rgba(246, 194, 71, 0.44);
+  background: rgba(246, 194, 71, 0.15);
+  color: var(--game-gold);
+  text-align: left;
+  cursor: pointer;
+}
+
+.matchButton strong {
+  color: var(--game-gold);
+}
+
+.choiceGrid,
+.marketGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.choiceCard,
+.marketCard {
+  min-width: 0;
+  min-height: 190px;
+  display: grid;
+  align-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  color: var(--game-ink);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.choiceCard:hover,
+.choiceCard:focus-visible,
+.marketCard:hover,
+.marketCard:focus-visible {
+  border-color: var(--game-cyan);
+  background: rgba(42, 241, 255, 0.12);
+  outline: 0;
+}
+
+.choiceCard strong,
+.marketCard strong {
+  min-width: 0;
+  color: var(--game-ink);
+  font-size: 22px;
+  font-weight: 1000;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.choiceCard em,
+.marketCard em,
+.marketCard small {
+  min-width: 0;
+  color: var(--game-muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 820;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.marketCard b {
+  width: fit-content;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  border: 1px solid rgba(246, 194, 71, 0.42);
+  color: var(--game-gold);
+  font-size: 14px;
+  font-weight: 1000;
+}
+
+.marketTags,
+.traitList,
+.bonusList,
+.roleMeter {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.marketTags i,
+.traitList span,
+.bonusList b,
+.roleMeter span {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 7px;
+  border: 1px solid rgba(237, 247, 255, 0.12);
+  background: rgba(237, 247, 255, 0.07);
+  color: var(--game-muted);
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.roleMeter .roleFilled {
+  border-color: rgba(71, 217, 144, 0.48);
+  color: var(--game-green);
+}
+
+.builderGrid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.38fr) minmax(0, 1fr);
+  gap: 14px;
+}
+
+.rosterDraft,
+.marketPanel {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.buildReport {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  background: rgba(2, 7, 12, 0.44);
+}
+
+.buildReport strong {
+  min-width: 0;
+  color: var(--game-ink);
+  font-size: 24px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.buildReport em {
+  color: var(--game-muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 820;
+  line-height: 1.45;
+}
+
+.deployButton,
+.marketHead button,
+.rowAction {
+  min-height: 36px;
+  padding: 0 12px;
+  background: rgba(237, 247, 255, 0.07);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.deployButton {
+  border-color: rgba(246, 194, 71, 0.42);
+  color: var(--game-gold);
+}
+
+.marketHead {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.rosterList {
+  display: grid;
+  gap: 8px;
+}
+
+.playerRow {
+  min-width: 0;
+  min-height: 70px;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 52px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid rgba(237, 247, 255, 0.12);
+  background: rgba(237, 247, 255, 0.055);
+}
+
+.playerMain {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.playerMain strong {
+  min-width: 0;
+  color: var(--game-ink);
+  font-size: 16px;
+  font-weight: 1000;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.playerMain span {
+  color: var(--game-muted);
+  font-size: 11px;
+  font-weight: 820;
+  line-height: 1.25;
+}
+
+.playerPower {
+  min-height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(246, 194, 71, 0.42);
+  color: var(--game-gold);
+  font-size: 18px;
+  font-weight: 1000;
+}
+
+.traitList,
+.rowAction {
+  grid-column: 1 / -1;
+}
+
+.rowAction {
+  justify-self: start;
+  color: var(--game-muted);
+}
+
+.runSidebar {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.sideStats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sidebarBlock {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.compactRoster,
+.logList,
+.modifierStack,
+.modifierList {
+  display: grid;
+  gap: 8px;
+}
+
+.compactPlayer {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 38px;
+  gap: 8px;
+  align-items: center;
+  padding: 9px;
+  border: 1px solid rgba(237, 247, 255, 0.1);
+  background: rgba(237, 247, 255, 0.045);
+}
+
+.compactPlayer span {
+  color: var(--game-cyan);
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.compactPlayer strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--game-ink);
+  font-size: 13px;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compactPlayer em {
+  color: var(--game-gold);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 1000;
+  text-align: right;
+}
+
+.modifierGroup {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.modifierList article {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid rgba(237, 247, 255, 0.1);
+  background: rgba(237, 247, 255, 0.055);
+}
+
+.modifierList article strong {
+  min-width: 0;
+  color: var(--game-ink);
+  font-size: 14px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.modifierList article em {
+  color: var(--game-muted);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 820;
+  line-height: 1.35;
+}
+
+.modifierList .curseItem {
+  border-color: rgba(255, 93, 86, 0.24);
+  background: rgba(255, 93, 86, 0.08);
+}
+
+.logItem {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  padding: 9px;
+  border: 1px solid rgba(237, 247, 255, 0.1);
+  background: rgba(237, 247, 255, 0.045);
+}
+
+.reviewPanel {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(237, 247, 255, 0.12);
+  background: rgba(2, 7, 12, 0.36);
+}
+
+.reviewNotes {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.reviewNotes span {
+  padding: 10px;
+  color: var(--game-muted);
+  font-size: 12px;
+  font-weight: 820;
+  line-height: 1.4;
+  background: rgba(237, 247, 255, 0.055);
+}
+
+.metaConsole {
+  display: grid;
+  gap: 10px;
+}
+
+.metaPanel {
+  min-width: 0;
+}
+
+.metaPanel summary {
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 0 14px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.metaPanel summary::-webkit-details-marker {
+  display: none;
+}
+
+.metaPanel summary strong {
+  color: var(--game-ink);
+  font-size: 18px;
+  font-weight: 1000;
+}
+
+.metaGrid,
+.perkGrid,
+.saveToolGrid,
+.hallGrid {
+  padding: 14px;
+  border-top: 1px solid rgba(237, 247, 255, 0.12);
+}
+
+.perkGrid,
+.hallGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.perkItem b {
+  width: fit-content;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  border: 1px solid rgba(237, 247, 255, 0.12);
+  color: var(--game-muted);
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.perkUnlocked {
+  border-color: rgba(71, 217, 144, 0.32);
+}
+
+.perkUnlocked b {
+  color: var(--game-green);
+}
+
+.saveToolGrid {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.24fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.exportBox,
+.importBox {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.exportBox button,
+.importBox button,
+.importBox select {
+  min-height: 40px;
+  padding: 0 12px;
+  background: rgba(237, 247, 255, 0.07);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.importControls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.25fr);
+  gap: 10px;
+}
+
+.importBox textarea {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical;
+  padding: 12px;
+  border: 1px solid rgba(237, 247, 255, 0.16);
+  background: rgba(2, 7, 12, 0.5);
+  color: var(--game-ink);
+  font: 850 12px/1.45 ui-monospace, SFMono-Regular, Consolas, monospace;
+  box-sizing: border-box;
+}
+
+@keyframes bootLoad {
+  0% {
+    transform: translateX(-120%);
+  }
+
+  50% {
+    transform: translateX(105%);
+  }
+
+  100% {
+    transform: translateX(260%);
+  }
+}
+
+@media (max-width: 1080px) {
+  .gameTopbar,
+  .gameBoard {
+    grid-template-columns: 1fr;
+  }
+
+  .hudBar,
+  .poolReadout {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .seasonMap,
+  .stagePane,
+  .runSidebar {
+    min-height: 0;
+  }
+
+  .routeStack {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .page {
+    padding-inline: 14px;
+  }
+
+  .commandDock,
+  .builderGrid,
+  .matchBoard,
+  .startActions,
+  .saveToolGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .choiceGrid,
+  .marketGrid,
+  .perkGrid,
+  .hallGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .sideStats,
+  .reviewGrid,
+  .metaGrid,
+  .choiceGrid,
+  .marketGrid,
+  .perkGrid,
+  .hallGrid,
+  .routeStack,
+  .importControls {
+    grid-template-columns: 1fr;
+  }
+
+  .page {
+    padding: 10px 12px 36px;
+  }
+
+  .gameShell {
+    gap: 10px;
+  }
+
+  .gameTopbar,
+  .commandDock,
+  .stagePane,
+  .seasonMap,
+  .runSidebar {
+    padding: 10px;
+  }
+
+  .gameTopbar {
+    min-height: 0;
+    gap: 8px;
+  }
+
+  .gameBrand {
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .gameBrand strong {
+    font-size: 26px;
+    line-height: 1;
+  }
+
+  .hudBar,
+  .poolReadout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .statPill {
+    min-height: 58px;
+    gap: 4px;
+    padding: 9px;
+  }
+
+  .statPill strong {
+    font-size: 20px;
+  }
+
+  .topActions {
+    grid-template-columns: minmax(0, 1fr) 72px;
+    align-items: center;
+  }
+
+  .classicLink {
+    min-height: 42px;
+  }
+
+  .xpTrack {
+    align-self: center;
+    height: 8px;
+  }
+
+  .commandDock {
+    min-height: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .commandButton {
+    min-height: 54px;
+    gap: 4px;
+    padding: 7px;
+  }
+
+  .commandButton span {
+    font-size: 10px;
+  }
+
+  .commandButton strong {
+    font-size: 13px;
+    line-height: 1.1;
+  }
+
+  .ticker {
+    grid-column: 1 / -1;
+    min-height: 40px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .gameBoard {
+    gap: 10px;
+  }
+
+  .stagePane {
+    order: 1;
+  }
+
+  .seasonMap {
+    order: 2;
+  }
+
+  .runSidebar {
+    order: 3;
+  }
+
+  .emptyMap {
+    min-height: 72px;
+    margin-top: 8px;
+  }
+
+  .startPanel {
+    min-height: 0;
+    grid-template-rows: minmax(180px, 190px) auto auto;
+    gap: 10px;
+  }
+
+  .broadcastBackdrop {
+    min-height: 180px;
+  }
+
+  .startCopy {
+    padding: 14px;
+  }
+
+  .stageHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .startCopy h1 {
+    font-size: 34px;
+  }
+
+  .startCopy p {
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  .bigStartButton {
+    min-height: 76px;
+  }
+}

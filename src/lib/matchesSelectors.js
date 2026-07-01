@@ -1,3 +1,4 @@
+import { getSeasonById, getSeasonRules } from '../config/seasons.js'
 import { formatOwMapName } from './heroes.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
@@ -16,6 +17,33 @@ function normalizeKey(value) {
 function toNumber(value, fallback = 0) {
   const num = Number(value)
   return Number.isFinite(num) ? num : fallback
+}
+
+function resolveSeason(seasonOrId) {
+  if (seasonOrId && typeof seasonOrId === 'object') return seasonOrId
+  return getSeasonById(seasonOrId)
+}
+
+function getExpectedSwissMatchCount(db, seasonOrId) {
+  const season = resolveSeason(seasonOrId)
+  const rules = getSeasonRules(season, db)
+  const swiss = rules?.advance?.swiss || {}
+  const swissStage = rules?.swissStage || {}
+  const expectedRounds = toNumber(swiss.rounds ?? swissStage.maxRounds ?? rules?.swiss?.round_count, 0)
+  const teamCount = safeArr(db?.teams).length
+  const matchesPerRound = toNumber(
+    swiss.matchesPerRound ?? swissStage.matchesPerRound,
+    teamCount > 1 ? Math.ceil(teamCount / 2) : 0
+  )
+
+  return expectedRounds > 0 && matchesPerRound > 0 ? expectedRounds * matchesPerRound : 0
+}
+
+function isSeasonCompleteByPublishedMatches(db, seasonOrId, completedCount, matchCount) {
+  if (!matchCount || completedCount !== matchCount) return false
+
+  const expectedSwissMatches = getExpectedSwissMatchCount(db, seasonOrId)
+  return !expectedSwissMatches || matchCount >= expectedSwissMatches
 }
 
 function getMatchTime(match) {
@@ -594,8 +622,7 @@ export function getMatchHubData(db, seasonId, favorites = {}) {
   const recentFinishedMatches = getRecentFinishedMatches(matches, summary.round, 4)
   const primaryFollowingNextMatch = getPrimaryFollowingNextMatch(matches, favorites)
   const followingRoundMatchCount = getFollowingRoundMatchCount(matches, favorites, summary.round)
-  const roundCount = new Set(matches.map(match => roundKey(match?.round || match?.stage)).filter(Boolean)).size
-  const isArchive = Boolean(summary.total && summary.finished === summary.total && roundCount > 1)
+  const isArchive = isSeasonCompleteByPublishedMatches(db, seasonId, summary.finished, summary.total)
 
   return {
     seasonId,

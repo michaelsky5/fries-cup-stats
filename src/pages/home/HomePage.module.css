@@ -195,6 +195,20 @@
   border-color: transparent;
 }
 
+.overviewBroadcast {
+  display: grid;
+  gap: 5px;
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.overviewBroadcast span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .overviewNoMatch strong {
   color: var(--portal-ink);
   font-size: 24px;
@@ -362,6 +376,159 @@
   opacity: 0.74;
 }
 
+.managerChoiceTrigger {
+  width: 100%;
+  border-radius: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+}
+
+.managerChoiceBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(22, 22, 22, 0.58);
+}
+
+.managerChoiceDialog {
+  width: min(760px, 100%);
+  display: grid;
+  gap: 0;
+  background: var(--fc-white);
+  border: 2px solid var(--portal-border);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.25);
+}
+
+.managerChoiceDialog header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 18px;
+  align-items: start;
+  padding: 22px;
+  border-bottom: 2px solid var(--portal-border);
+}
+
+.managerChoiceDialog header span {
+  grid-column: 1;
+  color: var(--portal-yellow);
+  font-size: 12px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.managerChoiceDialog h2 {
+  grid-column: 1;
+  margin: 0;
+  color: var(--portal-ink);
+  font-size: 34px;
+  font-weight: 950;
+  line-height: 0.98;
+}
+
+.managerChoiceDialog header button {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  background: var(--portal-black);
+  border: 2px solid var(--portal-border);
+  color: var(--portal-yellow);
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.managerChoiceDialog header button:hover,
+.managerChoiceDialog header button:focus-visible {
+  background: var(--portal-yellow);
+  color: var(--portal-ink);
+  outline: 0;
+}
+
+.managerChoiceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.managerChoiceOption,
+.managerChoicePrimary {
+  min-width: 0;
+  min-height: 230px;
+  display: grid;
+  align-content: end;
+  gap: 12px;
+  padding: 24px;
+  color: var(--portal-ink);
+  text-decoration: none;
+}
+
+.managerChoicePrimary {
+  background: var(--portal-black);
+  color: var(--fc-white);
+}
+
+.managerChoiceOption {
+  background: var(--fc-white);
+  border-left: 2px solid var(--portal-border);
+}
+
+.managerChoiceOption:hover,
+.managerChoiceOption:focus-visible,
+.managerChoicePrimary:hover,
+.managerChoicePrimary:focus-visible {
+  background: #fff7d8;
+  color: var(--portal-ink);
+  outline: 0;
+}
+
+.managerChoiceOption span,
+.managerChoicePrimary span {
+  color: var(--portal-yellow);
+  font-size: 12px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.managerChoiceOption b,
+.managerChoicePrimary b {
+  width: fit-content;
+  min-height: 26px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 8px;
+  background: var(--portal-yellow);
+  color: var(--portal-ink);
+  font-size: 11px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.managerChoiceOption strong,
+.managerChoicePrimary strong {
+  color: inherit;
+  font-size: 32px;
+  font-weight: 950;
+  line-height: 0.98;
+}
+
+.managerChoiceOption em,
+.managerChoicePrimary em {
+  color: inherit;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 850;
+  line-height: 1.45;
+  opacity: 0.72;
+}
+
 .dataPlayLayout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(310px, 0.32fr);
@@ -431,6 +598,13 @@
 
 .dataPulseCard:last-child {
   border-right: 0;
+}
+
+.playEntryStack {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  gap: 14px;
 }
 
 .dataPulseCard:hover,
@@ -672,6 +846,7 @@
 .advanceCard a,
 .resultsCard header a,
 .resourceGrid a,
+.resourceGrid button,
 .archiveReviewLinks a {
   display: inline-flex;
   min-height: 42px;
@@ -707,6 +882,8 @@
 .advanceCard a:hover,
 .resultsCard header a:hover,
 .resourceGrid a:hover,
+.resourceGrid button:hover,
+.resourceGrid button:focus-visible,
 .archiveReviewLinks a:hover {
   background: var(--portal-black);
   box-shadow: none;
@@ -1757,16 +1934,23 @@
   gap: 20px;
 }
 
-.resourceGrid a {
+.resourceGrid a,
+.resourceGrid button {
   min-width: 0;
   align-items: flex-end;
   justify-content: flex-start;
   padding: 20px;
+  border: 2px solid var(--portal-border);
+  color: var(--portal-ink);
   text-align: left;
+  text-decoration: none;
 }
 
-.resourceGrid a:hover {
+.resourceGrid a:hover,
+.resourceGrid button:hover,
+.resourceGrid button:focus-visible {
   background: var(--portal-yellow);
+  outline: 0;
 }
 
 .resourcePrimary {
@@ -1795,7 +1979,8 @@
   gap: 14px;
 }
 
-.resourceSecondaryGrid a {
+.resourceSecondaryGrid a,
+.resourceSecondaryGrid button {
   min-height: 220px;
   display: grid;
   align-content: end;
@@ -3093,9 +3278,15 @@
 
   .eventTimelineGrid,
   .preDataGrid,
+  .managerChoiceGrid,
   .resourceSecondaryGrid,
   .archiveMatchGrid {
     grid-template-columns: 1fr;
+  }
+
+  .managerChoiceOption {
+    border-top: 2px solid var(--portal-border);
+    border-left: 0;
   }
 
   .eventTimelineCard {

@@ -16,11 +16,13 @@ import AdvancePage from '../pages/advance/AdvancePage.jsx'
 import MapStatsPage from '../pages/stats/MapStatsPage.jsx'
 import MapDetailPage from '../pages/stats/MapDetailPage.jsx'
 
-import FantasyPage from '../EsportsManager/pages/FantasyPage.jsx'
-import FantasyBattle from '../EsportsManager/pages/FantasyBattle.jsx'
-import ShopPage from '../EsportsManager/pages/ShopPage.jsx'
-import ChampionPage from '../EsportsManager/pages/ChampionPage.jsx'
-import CareerPage from '../EsportsManager/pages/CareerPage.jsx'
+import ClassicFantasyPage from '../EsportsManagerClassic/pages/FantasyPage.jsx'
+import ClassicFantasyBattle from '../EsportsManagerClassic/pages/FantasyBattle.jsx'
+import ClassicShopPage from '../EsportsManagerClassic/pages/ShopPage.jsx'
+import ClassicChampionPage from '../EsportsManagerClassic/pages/ChampionPage.jsx'
+import ClassicCareerPage from '../EsportsManagerClassic/pages/CareerPage.jsx'
+import ManagerNextStandaloneLayout from '../EsportsManagerNext/pages/ManagerNextStandaloneLayout.jsx'
+import ManagerNextPage from '../EsportsManagerNext/pages/ManagerNextPage.jsx'
 
 import ReviewEntryPage from '../pages/review/ReviewEntryPage.jsx'
 import ReviewStoryPage from '../pages/review/ReviewStoryPage.jsx'
@@ -39,6 +41,13 @@ function ScheduleRedirect() {
 }
 
 const router = createBrowserRouter([
+  {
+    path: '/fantasy-next',
+    element: <ManagerNextStandaloneLayout />,
+    children: [
+      { index: true, element: <ManagerNextPage /> }
+    ]
+  },
   {
     path: '/',
     element: <DataLayout />,
@@ -64,11 +73,12 @@ const router = createBrowserRouter([
 
       { path: 'review', element: <ReviewEntryPage /> },
 
-      { path: 'fantasy', element: <FantasyPage /> },
-      { path: 'fantasy/battle', element: <FantasyBattle /> },
-      { path: 'shop', element: <ShopPage /> },
-      { path: 'champion', element: <ChampionPage /> },
-      { path: 'career', element: <CareerPage /> }
+      { path: 'fantasy', element: <ClassicFantasyPage /> },
+      { path: 'fantasy-classic', element: <ClassicFantasyPage /> },
+      { path: 'fantasy/battle', element: <ClassicFantasyBattle /> },
+      { path: 'shop', element: <ClassicShopPage /> },
+      { path: 'champion', element: <ClassicChampionPage /> },
+      { path: 'career', element: <ClassicCareerPage /> }
     ]
   },
 
