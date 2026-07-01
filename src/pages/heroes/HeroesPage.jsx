@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
-import { formatOwHeroName, getOwHeroAssetKey } from '../../lib/heroes.js'
+import { formatOwHeroName, getOwHeroAssetKey, getOwHeroRole, normalizeOwLookupKey } from '../../lib/heroes.js'
 import { safeArr } from '../../lib/selectors.js'
 import styles from './HeroesPage.module.css'
 
@@ -58,6 +58,10 @@ function normalizeRecordedRole(role) {
   return normalized
 }
 
+function getRecordedHeroKey(hero) {
+  return getOwHeroAssetKey(hero) || normalizeOwLookupKey(hero)
+}
+
 function getTopMapValue(map) {
   return [...map.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || '-'
 }
@@ -88,20 +92,25 @@ function getRecordedCompositions(db, limit = 5) {
       ;['team_a_stats', 'team_b_stats'].forEach(side => {
         const rawStats = safeArr(map?.[side])
         const recordedHeroes = rawStats
-          .map(stat => ({
-            hero: String(stat?.heroes_played || '').trim(),
-            role: normalizeRecordedRole(stat?.role)
-          }))
+          .map(stat => {
+            const hero = String(stat?.heroes_played || '').trim()
+            const role = normalizeRecordedRole(stat?.role) || normalizeRecordedRole(getOwHeroRole(hero))
+            return {
+              hero,
+              heroKey: getRecordedHeroKey(hero),
+              role
+            }
+          })
           .filter(item => item.hero && item.hero !== '-' && item.hero !== 'UNKNOWN')
           .sort((a, b) => {
             const roleDiff = (RECORDED_ROLE_ORDER[a.role] ?? 9) - (RECORDED_ROLE_ORDER[b.role] ?? 9)
             if (roleDiff !== 0) return roleDiff
-            return a.hero.localeCompare(b.hero)
+            return a.heroKey.localeCompare(b.heroKey)
           })
 
         const seenHeroes = new Set()
         const composition = recordedHeroes.filter(item => {
-          const key = item.hero.toLowerCase()
+          const key = item.heroKey || item.hero.toLowerCase()
           if (seenHeroes.has(key)) return false
           seenHeroes.add(key)
           return true
@@ -109,7 +118,7 @@ function getRecordedCompositions(db, limit = 5) {
 
         if (composition.length < 5) return
 
-        const key = composition.map(item => `${item.role}:${item.hero}`).join('|')
+        const key = composition.map(item => `${item.role}:${item.heroKey || item.hero}`).join('|')
         const team = getRecordedTeam(match, map, side, rawStats)
 
         if (!compositionMap.has(key)) {
