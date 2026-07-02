@@ -12,6 +12,8 @@ import {
   formatOwHeroNames,
   getOwHero,
   getOwHeroAssetKey,
+  getOwHeroCanonicalKey,
+  getOwHeroCanonicalName,
   getOwNameSearchText
 } from './heroes.js'
 
@@ -82,8 +84,22 @@ function normalizeSearchText(value) {
   return normalizeText(value).toLowerCase()
 }
 
-function unique(values) {
-  return Array.from(new Set(values.filter(Boolean)))
+function uniqueCanonicalHeroes(values) {
+  const seen = new Set()
+
+  return safeArr(values).reduce((acc, value) => {
+    const key = getOwHeroCanonicalKey(value)
+    if (!key || seen.has(key)) return acc
+    seen.add(key)
+    acc.push(getOwHeroCanonicalName(value))
+    return acc
+  }, [])
+}
+
+function heroMatchesFilter(hero, filterHero) {
+  const filterKey = getOwHeroCanonicalKey(filterHero)
+  if (!filterKey) return false
+  return getOwHeroCanonicalKey(hero) === filterKey
 }
 
 export function normalizeLeaderboardRole(role) {
@@ -259,8 +275,8 @@ function createEntry(basePlayer, role, source, sourceType) {
   const roleTimeMins = toFiniteNumber(source.raw_time_mins ?? source.playtimeMinutes)
   const mapsPlayed = Math.max(0, Math.round(toFiniteNumber(source.maps_played ?? source.mapsPlayed)))
   const metrics = buildMetrics(source, roleTimeMins, mapsPlayed)
-  const topHeroes = safeArr(source.top_3_heroes).filter(Boolean)
-  const mostPlayedHero = normalizeText(source.most_played_hero || topHeroes[0] || '')
+  const topHeroes = uniqueCanonicalHeroes(source.top_3_heroes)
+  const mostPlayedHero = getOwHeroCanonicalName(source.most_played_hero || topHeroes[0] || '')
   const teamShortName = basePlayer.team_short_name || basePlayer.team_short || basePlayer.team_id || ''
   const teamName = basePlayer.team_name || basePlayer.team || teamShortName
   const playerName = normalizeText(basePlayer.player_name || basePlayer.battle_tag || basePlayer.battleTag)
@@ -363,16 +379,20 @@ function aggregateEntriesFromLogs(player) {
     ].join(':')
     if (mapKey.replace(/:/g, '')) current.maps.add(mapKey)
 
-    const hero = normalizeText(log.hero || log.heroes_played)
-    if (hero && hero !== '-') {
-      current.heroMinutes.set(hero, (current.heroMinutes.get(hero) || 0) + playtime)
+    const rawHero = normalizeText(log.hero || log.heroes_played)
+    const heroKey = getOwHeroCanonicalKey(rawHero)
+    if (heroKey && rawHero !== '-') {
+      const hero = getOwHeroCanonicalName(rawHero)
+      const currentHero = current.heroMinutes.get(heroKey) || { hero, minutes: 0 }
+      currentHero.minutes += playtime
+      current.heroMinutes.set(heroKey, currentHero)
     }
   })
 
   return Array.from(grouped.values()).map(source => {
-    const heroes = Array.from(source.heroMinutes.entries())
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .map(([hero]) => hero)
+    const heroes = Array.from(source.heroMinutes.values())
+      .sort((a, b) => b.minutes - a.minutes || a.hero.localeCompare(b.hero))
+      .map(item => item.hero)
 
     return {
       ...source,
@@ -530,7 +550,7 @@ export function getLeaderboardOptions(entries, db, locale = 'zh-CN') {
     .filter(team => team.value)
     .sort((a, b) => a.label.localeCompare(b.label))
 
-  const heroes = unique(entries.flatMap(entry => [
+  const heroes = uniqueCanonicalHeroes(entries.flatMap(entry => [
     entry.most_played_hero,
     ...safeArr(entry.top_3_heroes)
   ])).sort((a, b) => formatOwHeroName(a, locale).localeCompare(formatOwHeroName(b, locale), locale))
@@ -555,7 +575,7 @@ export function filterLeaderboardEntries(entries, filters, isFavoritePlayer) {
   return entries.filter(entry => {
     if (tabRole !== 'ALL' && entry.role !== tabRole) return false
     if (team !== 'ALL' && entry.team_id !== team) return false
-    if (hero !== 'ALL' && !safeArr(entry.top_3_heroes).concat(entry.most_played_hero).includes(hero)) return false
+    if (hero !== 'ALL' && !safeArr(entry.top_3_heroes).concat(entry.most_played_hero).some(item => heroMatchesFilter(item, hero))) return false
     if (minTime > 0 && entry.roleTimeMins < minTime) return false
     if (!showInsufficient && !entry.eligible) return false
     if (following && !isFavoritePlayer?.(entry)) return false

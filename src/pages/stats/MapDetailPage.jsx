@@ -3,7 +3,14 @@ import { useParams, Link, useOutletContext } from 'react-router-dom'
 import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
 import styles from './MapDetailPage.module.css'
 import { getMapDetail, safeArr } from '../../lib/selectors'
-import { formatOwHeroName, formatOwMapMode, formatOwMapName, getOwMapImageName, getOwMapModeFolder } from '../../lib/heroes.js'
+import {
+  formatOwHeroName,
+  formatOwMapMode,
+  formatOwMapName,
+  getOwHeroCanonicalName,
+  getOwMapImageName,
+  getOwMapModeFolder
+} from '../../lib/heroes.js'
 
 function formatMapFileName(name) {
   if (!name) return 'unknown'
@@ -98,10 +105,11 @@ const MapDetailPage = () => {
       if (!stat.heroes_played) return
       const ast = Number(stat.assists) || 0
       const mit = Number(stat.mitigation) || 0
+      const hero = getOwHeroCanonicalName(stat.heroes_played)
       const cleanName = (stat.player_name || (isEn ? 'Unknown Player' : '未知选手')).split('#')[0]
 
-        if (ast > maxAssists.value) maxAssists = { value: ast, player: cleanName, hero: stat.heroes_played }
-        if (mit > maxMitigation.value) maxMitigation = { value: mit, player: cleanName, hero: stat.heroes_played }
+        if (ast > maxAssists.value) maxAssists = { value: ast, player: cleanName, hero }
+        if (mit > maxMitigation.value) maxMitigation = { value: mit, player: cleanName, hero }
       })
     })
 

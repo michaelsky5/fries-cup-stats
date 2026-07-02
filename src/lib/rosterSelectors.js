@@ -1,5 +1,5 @@
 import { getHeroAvatarSrc, getPlayerInitials, normalizeLeaderboardRole } from './leaderboardSelectors.js'
-import { formatOwHeroName, getOwNameSearchText } from './heroes.js'
+import { formatOwHeroName, getOwHeroCanonicalKey, getOwHeroCanonicalName, getOwNameSearchText } from './heroes.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
@@ -31,6 +31,12 @@ function identityMatches(value, candidates) {
   const key = normalizeKey(value)
   if (!key) return false
   return safeArr(candidates).some(candidate => normalizeKey(candidate) === key)
+}
+
+function heroIdentityMatches(value, candidates) {
+  const key = getOwHeroCanonicalKey(value)
+  if (!key) return false
+  return safeArr(candidates).some(candidate => getOwHeroCanonicalKey(candidate) === key)
 }
 
 function isFavorite(favoriteIds, candidates) {
@@ -280,11 +286,12 @@ function getHeroesFromSource(source, limit = 3) {
   return heroes
     .map(normalize)
     .filter(hero => {
-      const key = normalizeKey(hero)
+      const key = getOwHeroCanonicalKey(hero)
       if (!key || seen.has(key)) return false
       seen.add(key)
       return true
     })
+    .map(getOwHeroCanonicalName)
     .slice(0, limit)
 }
 
@@ -354,7 +361,7 @@ export function filterPlayers(players, filters = {}) {
     if (filters.role && filters.role !== 'ALL' && player.role !== role) return false
     if (team !== 'ALL' && !identityMatches(team, [player.teamRouteId, player.teamShortName, player.teamFullName])) return false
     if (following === 'following' && !player.isFavorite) return false
-    if (hero !== 'ALL' && !identityMatches(hero, [player.avatar?.heroName, ...safeArr(player.heroNames), player.most_played_hero, ...safeArr(player.top_3_heroes)])) return false
+    if (hero !== 'ALL' && !heroIdentityMatches(hero, [player.avatar?.heroName, ...safeArr(player.heroNames), player.most_played_hero, ...safeArr(player.top_3_heroes)])) return false
 
     return includesQuery(query, [
       player.identity?.primary,

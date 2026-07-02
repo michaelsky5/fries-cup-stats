@@ -14,6 +14,7 @@ import {
 } from '../features/favorites/favoritesSelectors.js'
 import { formatMatchSchedule } from './scheduleFormat.js'
 import { calculateSwissStandings } from './swissEngine.js'
+import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 
 const safeArr = value => Array.isArray(value) ? value : []
 const SHANGHAI_TZ = 'Asia/Shanghai'
@@ -24,6 +25,19 @@ function normalize(value) {
 
 function normalizeKey(value) {
   return normalize(value).toLowerCase()
+}
+
+function uniqueCanonicalHeroes(values, limit = 3) {
+  const seen = new Set()
+
+  return safeArr(values).reduce((acc, value) => {
+    if (acc.length >= limit) return acc
+    const key = getOwHeroCanonicalKey(value)
+    if (!key || seen.has(key)) return acc
+    seen.add(key)
+    acc.push(getOwHeroCanonicalName(value))
+    return acc
+  }, [])
 }
 
 function toNumber(value) {
@@ -635,24 +649,28 @@ export function getPlayerRecentSnapshot(db, playerOrId) {
   const coreMetric = getRoleCoreMetric(player, total)
 
   if (recentLog?.matchId) {
+    const recentHero = getOwHeroCanonicalName(recentLog.hero)
+
     return {
       mode: 'recent',
       label: recentLog.matchDisplayName || recentLog.matchId,
       mapsPlayed: total?.maps_played || '',
-      heroes: [recentLog.hero, ...(total?.top_3_heroes || [])].filter(Boolean).slice(0, 3),
-      summary: recentLog.mapName ? `${recentLog.mapName} · ${recentLog.hero || '英雄未记录'}` : '最近比赛记录',
+      heroes: uniqueCanonicalHeroes([recentLog.hero, ...(total?.top_3_heroes || [])]),
+      summary: recentLog.mapName ? `${recentLog.mapName} · ${recentHero || '英雄未记录'}` : '最近比赛记录',
       coreMetric,
       total
     }
   }
 
   if (hasTotals) {
+    const mostPlayedHero = getOwHeroCanonicalName(total.most_played_hero)
+
     return {
       mode: 'season',
       label: '赛季累计',
       mapsPlayed: total.maps_played,
-      heroes: safeArr(total.top_3_heroes).slice(0, 3),
-      summary: `${total.maps_played} 张地图 · ${total.most_played_hero || '英雄未记录'}`,
+      heroes: uniqueCanonicalHeroes(total.top_3_heroes),
+      summary: `${total.maps_played} 张地图 · ${mostPlayedHero || '英雄未记录'}`,
       coreMetric,
       total
     }

@@ -1,7 +1,13 @@
 import { useMemo, useState, useEffect } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
-import { formatOwHeroName, getOwHeroAssetKey, getOwHeroRole, normalizeOwLookupKey } from '../../lib/heroes.js'
+import {
+  formatOwHeroName,
+  getOwHeroAssetKey,
+  getOwHeroCanonicalKey,
+  getOwHeroCanonicalName,
+  getOwHeroRole
+} from '../../lib/heroes.js'
 import { safeArr } from '../../lib/selectors.js'
 import styles from './HeroesPage.module.css'
 
@@ -59,7 +65,7 @@ function normalizeRecordedRole(role) {
 }
 
 function getHeroStatKey(hero) {
-  return getOwHeroAssetKey(hero) || normalizeOwLookupKey(hero)
+  return getOwHeroCanonicalKey(hero)
 }
 
 function getTopMapValue(map) {
@@ -270,12 +276,13 @@ export default function HeroesPage() {
         const heroKey = getHeroStatKey(h)
         if (!heroKey) return
 
+        const heroName = getOwHeroCanonicalName(h)
         const normalizedRole = normalizeRecordedRole(log.role) || normalizeRecordedRole(getOwHeroRole(h))
 
         if (!stats[heroKey]) {
           stats[heroKey] = {
             key: heroKey,
-            name: h,
+            name: heroName,
             role: normalizedRole,
             totalTime: 0,
             players: {}
