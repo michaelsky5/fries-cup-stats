@@ -635,6 +635,23 @@ function sortByScheduleDesc(matches) {
   return safeArr(matches).slice().sort(compareDescByTime)
 }
 
+function getDayRange(now = new Date()) {
+  const date = now instanceof Date ? new Date(now) : new Date(now)
+  if (Number.isNaN(date.getTime())) return { start: 0, end: 0 }
+  date.setHours(0, 0, 0, 0)
+  const start = date.getTime()
+  const endDate = new Date(start)
+  endDate.setDate(endDate.getDate() + 1)
+  return { start, end: endDate.getTime() }
+}
+
+function isMatchOnDay(match, now = new Date()) {
+  const time = getMatchTime(match)
+  if (!time) return false
+  const { start, end } = getDayRange(now)
+  return time >= start && time < end
+}
+
 function pickDiverseMatches(matches, limit, scorer = () => 0) {
   const rows = sortByScheduleAsc(matches)
   const slots = new Map()
@@ -756,28 +773,64 @@ export function getOverviewStatus(db, season = null) {
 export function getFeaturedCurrentMatches(db, options = {}) {
   const limit = toNumber(options.limit, 3)
   const round = options.round || getCurrentRoundSummary(db)
-  const candidates = round.matches.length ? round.matches : safeArr(db?.matches)
-  const manualMatches = findMatchesByIds(candidates, getManualFeaturedIds(options.season, db))
-  const withoutFavorites = candidates.filter(match => !matchHasFavoriteTeam(match, options.favorites))
-  const base = withoutFavorites.length >= limit ? withoutFavorites : candidates
+  const allMatches = sortByScheduleAsc(db?.matches)
+  const roundMatches = round.matches.length ? round.matches : allMatches
+  const nowDate = options.now instanceof Date ? options.now : new Date()
+  const todayMatches = allMatches.filter(match => isMatchOnDay(match, nowDate))
+  const todayIds = new Set(todayMatches.map(match => match?.match_id || match?.id).filter(Boolean))
+  const activeMatches = allMatches.filter(match => !isComplete(match) && !todayIds.has(match?.match_id || match?.id))
+  const finishedMatches = sortByScheduleDesc(
+    allMatches.filter(match => isComplete(match) && !todayIds.has(match?.match_id || match?.id))
+  )
+  const pools = todayMatches.length
+    ? [
+      { mode: 'today', matches: todayMatches },
+      { mode: 'active', matches: activeMatches },
+      { mode: 'finished', matches: finishedMatches }
+    ]
+    : activeMatches.length
+      ? [
+        { mode: 'active', matches: activeMatches },
+        { mode: 'finished', matches: finishedMatches }
+      ]
+      : [
+        { mode: 'finished', matches: finishedMatches },
+        { mode: 'round', matches: roundMatches }
+      ]
   const standingsMap = standingsByTeamIdentity(db)
   const hasStandings = [...standingsMap.values()].some(row => toNumber(row?.matches_played) > 0)
   const slots = getAdvancementSlots(options.season, db)
-  const now = options.now instanceof Date ? options.now.getTime() : Date.now()
+  const now = nowDate.getTime()
   const scorer = match => {
     const time = getMatchTime(match)
     const timeScore = time ? Math.max(0, 40 - Math.abs(time - now) / 3600000) : 0
     return (hasStandings ? getCurrentImportanceScore(match, standingsMap, slots) : 0) + timeScore
   }
-  const autoMatches = pickDiverseMatches(base, limit, scorer)
   const seen = new Set()
-
-  return [...manualMatches, ...autoMatches, ...sortByScheduleAsc(base)].filter(match => {
+  const selected = []
+  const manualIds = getManualFeaturedIds(options.season, db)
+  const addMatch = match => {
     const id = match?.match_id || match?.id
-    if (!id || seen.has(id)) return false
+    if (!id || seen.has(id) || selected.length >= limit) return
     seen.add(id)
-    return true
-  }).slice(0, limit)
+    selected.push(match)
+  }
+  const orderedForMode = (matches, mode) => mode === 'finished' ? sortByScheduleDesc(matches) : sortByScheduleAsc(matches)
+
+  pools.forEach(pool => {
+    if (selected.length >= limit || !pool.matches.length) return
+    const remaining = limit - selected.length
+    const manualMatches = findMatchesByIds(pool.matches, manualIds)
+    const withoutFavorites = pool.matches.filter(match => !matchHasFavoriteTeam(match, options.favorites))
+    const base = withoutFavorites.length >= remaining ? withoutFavorites : pool.matches
+    const autoMatches = pool.mode === 'finished'
+      ? orderedForMode(base, pool.mode).slice(0, remaining)
+      : pickDiverseMatches(base, remaining, scorer)
+
+    ;[...manualMatches, ...orderedForMode(autoMatches, pool.mode), ...orderedForMode(base, pool.mode)].forEach(addMatch)
+  })
+
+  return selected.slice(0, limit)
 }
 
 export function getRoundTimeSlots(db, options = {}) {
