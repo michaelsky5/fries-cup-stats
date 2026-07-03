@@ -584,7 +584,9 @@ function OverviewNextMatch({ match, label }) {
       </div>
       {broadcast.hasPublicInfo ? (
         <div className={styles.overviewBroadcast}>
-          {broadcast.streamUrl ? <span>{'\u76f4\u64ad\u95f4: '}{broadcast.streamUrl}</span> : null}
+          {broadcast.streamLinks.map((stream, index) => (
+            <span key={`${stream.url}-${index}`}>{stream.label || '\u76f4\u64ad\u95f4'}{': '}{stream.url}</span>
+          ))}
           {broadcast.casterText ? <span>{'\u89e3\u8bf4: '}{broadcast.casterText}</span> : null}
           {broadcast.refereeText ? <span>{'\u8d5b\u7ba1: '}{broadcast.refereeText}</span> : null}
         </div>

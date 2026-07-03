@@ -80,11 +80,11 @@ export default function FollowingMatchSummary({ hub }) {
           <span className={styles.followingStatus}>{getMatchStatusText(match)}</span>
           {broadcast.hasPublicInfo ? (
             <div className={styles.followingBroadcast}>
-              {broadcast.streamUrl ? (
-                <a href={broadcast.streamUrl} target="_blank" rel="noreferrer">
-                  {'\u76f4\u64ad\u95f4: '}{broadcast.streamUrl}
+              {broadcast.streamLinks.map((stream, index) => (
+                <a key={`${stream.url}-${index}`} href={stream.url} target="_blank" rel="noreferrer">
+                  {stream.label || '\u76f4\u64ad\u95f4'}{': '}{stream.url}
                 </a>
-              ) : null}
+              ))}
               {broadcast.casterText ? <span>{'\u89e3\u8bf4: '}{broadcast.casterText}</span> : null}
               {broadcast.refereeText ? <span>{'\u8d5b\u7ba1: '}{broadcast.refereeText}</span> : null}
             </div>
