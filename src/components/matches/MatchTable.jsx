@@ -81,16 +81,17 @@ export default function MatchTable({ rows = [], locale = 'zh-CN' }) {
                   <div className={styles.matchMetaRow}>
                     <span className={styles.miniTag}>{row.format || 'TBD'}</span>
                     <span className={styles.miniTag} title={schedule.title}>{schedule.compact}</span>
-                    {broadcast.streamUrl ? (
+                    {broadcast.streamLinks.length > 0 ? broadcast.streamLinks.map((stream, index) => (
                       <a
+                        key={`${stream.url}-${index}`}
                         className={`${styles.miniTag} ${styles.broadcastLink}`}
-                        href={broadcast.streamUrl}
+                        href={stream.url}
                         target="_blank"
                         rel="noreferrer"
                       >
-                        {'\u76f4\u64ad\u95f4'}
+                        {stream.label || '\u76f4\u64ad\u95f4'}
                       </a>
-                    ) : broadcast.hasPublicInfo ? (
+                    )) : broadcast.hasPublicInfo ? (
                       <span className={`${styles.miniTag} ${styles.broadcastTag}`}>
                         {'\u76f4\u64ad\u5b89\u6392'}
                       </span>

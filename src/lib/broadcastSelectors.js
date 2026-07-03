@@ -72,10 +72,75 @@ function formatPeople(people) {
   )).join(' / ')
 }
 
+function normalizeStreamLink(stream, fallbackLabel = '') {
+  if (!stream) return null
+  if (typeof stream !== 'object') {
+    const url = cleanText(stream)
+    return url ? { label: cleanText(fallbackLabel) || '直播间', url, staff: null } : null
+  }
+
+  const url = cleanText(
+    stream.stream_url ||
+    stream.streamUrl ||
+    stream.url ||
+    stream.live_url ||
+    stream.liveUrl ||
+    stream.room_url ||
+    stream.roomUrl ||
+    stream.room ||
+    stream.link ||
+    stream['\u76f4\u64ad\u95f4']
+  )
+  if (!url) return null
+
+  const staff = normalizePerson(stream.staff || stream.person || stream.caster || stream.host)
+  const label = cleanText(
+    stream.label ||
+    stream.name ||
+    stream.title ||
+    stream.room_name ||
+    stream.roomName ||
+    staff?.name ||
+    fallbackLabel ||
+    '直播间'
+  )
+
+  return {
+    label,
+    url,
+    staff
+  }
+}
+
+function collectStreamLinks(source, primaryUrl) {
+  const primary = primaryUrl
+    ? [{ label: cleanText(source.stream_label || source.streamLabel || source.label) || '官方直播间', url: primaryUrl, staff: null }]
+    : []
+  const extras = [
+    source.extra_streams,
+    source.extraStreams,
+    source.streams,
+    source.stream_links,
+    source.streamLinks,
+    source.rooms,
+    source.extra_rooms,
+    source.extraRooms
+  ].flatMap(value => asList(value)).map(stream => normalizeStreamLink(stream, '额外直播间')).filter(Boolean)
+  const seen = new Set()
+
+  return [...primary, ...extras].filter(stream => {
+    const key = normalizeKey(stream.url)
+    if (!key || seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
 function emptyBroadcastInfo() {
   return {
     isBroadcast: false,
     streamUrl: '',
+    streamLinks: [],
     casters: [],
     referees: [],
     casterText: '',
@@ -100,6 +165,7 @@ export function getBroadcastInfo(match = {}) {
     source.link ||
     source['\u76f4\u64ad\u95f4']
   )
+  const streamLinks = collectStreamLinks(source, streamUrl)
   const casters = collectPeople(
     source.casters,
     source.caster,
@@ -145,7 +211,7 @@ export function getBroadcastInfo(match = {}) {
   )
   const isBroadcast = !isExplicitFalse(source.is_broadcast ?? source.isBroadcast) && (
     Boolean(source.is_broadcast ?? source.isBroadcast) ||
-    Boolean(streamUrl) ||
+    streamLinks.length > 0 ||
     casters.length > 0 ||
     referees.length > 0
   )
@@ -155,10 +221,11 @@ export function getBroadcastInfo(match = {}) {
   return {
     isBroadcast,
     streamUrl,
+    streamLinks,
     casters,
     referees,
     casterText: formatPeople(casters),
     refereeText: formatPeople(referees),
-    hasPublicInfo: Boolean(streamUrl) || casters.length > 0 || referees.length > 0
+    hasPublicInfo: streamLinks.length > 0 || casters.length > 0 || referees.length > 0
   }
 }

@@ -62,7 +62,14 @@ function PosterBroadcast({ broadcast }) {
 
   return (
     <div className={styles.posterBroadcast}>
-      <BroadcastItem label={'\u76f4\u64ad\u95f4'} value={broadcast.streamUrl} href={broadcast.streamUrl} />
+      {broadcast.streamLinks.map((stream, index) => (
+        <BroadcastItem
+          key={`${stream.url}-${index}`}
+          label={stream.label || '\u76f4\u64ad\u95f4'}
+          value={stream.url}
+          href={stream.url}
+        />
+      ))}
       <BroadcastItem label={'\u89e3\u8bf4'} value={broadcast.casterText} />
       <BroadcastItem label={'\u8d5b\u7ba1'} value={broadcast.refereeText} />
     </div>
