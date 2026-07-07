@@ -21,6 +21,12 @@ import FollowingMatchSummary from '../../components/matches/FollowingMatchSummar
 import MatchHubBoard from '../../components/matches/MatchHubBoard.jsx'
 import RoundScheduleSection from '../../components/matches/RoundScheduleSection.jsx'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
+import {
+  getRestoreScrollY,
+  getReturnState,
+  restoreWindowScroll,
+  saveReturnScroll
+} from '../../lib/navigationState.js'
 import styles from './MatchesPage.module.css'
 
 const TABS = [
@@ -40,10 +46,6 @@ const STATUS_OPTIONS = [
 
 function cleanMatchesHubPath() {
   return '/matches'
-}
-
-function getReturnTo(location) {
-  return `${location.pathname}${location.search || ''}`
 }
 
 function cleanMatchesListPath(seasonIdOrParams, params = {}) {
@@ -185,7 +187,7 @@ function MatchRow({ match, compact = false }) {
   return (
     <Link
       to={withSeason(`/matches/${match.match_id}`)}
-      state={{ returnTo: getReturnTo(location) }}
+      state={getReturnState(location)}
       className={[
         styles.matchRow,
         compact ? styles.matchRowCompact : '',
@@ -194,6 +196,7 @@ function MatchRow({ match, compact = false }) {
       ].filter(Boolean).join(' ')}
       aria-label={`${getTeamFull(match?.team_a)} vs ${getTeamFull(match?.team_b)}，${match.format || 'TBD'}，${getMatchStatusText(match)}`}
       title={`${getTeamFull(match?.team_a)} vs ${getTeamFull(match?.team_b)}`}
+      onClick={() => saveReturnScroll(location)}
       onKeyDown={handleArchiveRowKeyDown}
     >
       <div className={styles.matchTime}>
@@ -272,8 +275,9 @@ function FeaturedMatchCard({ match, primary = false }) {
   return (
     <Link
       to={withSeason(`/matches/${match.match_id}`)}
-      state={{ returnTo: getReturnTo(location) }}
+      state={getReturnState(location)}
       className={`${styles.featuredMatchCard} ${primary ? styles.featuredMatchCardPrimary : ''}`}
+      onClick={() => saveReturnScroll(location)}
     >
       <span>{getRoundText(match)}</span>
       <LogoDuel match={match} seasonId={seasonId} score large={primary} />
@@ -543,7 +547,9 @@ function FullListView({ rows, groups, filters, options, activeTab, favoriteCount
 
 export default function MatchesPage() {
   const { db, favorites, seasonId } = useOutletContext()
+  const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
+  const restoreScrollY = getRestoreScrollY(location.state)
   const allMatches = getAllMatches(db)
   const options = getFilterOptions(allMatches)
   const hub = getMatchHubData(db, seasonId, favorites)
@@ -562,6 +568,11 @@ export default function MatchesPage() {
   const rows = filterMatches(tabRows, filters)
   const groups = getGroupedMatches(rows, hub.isArchive ? 'stage' : 'roundDate')
   const favoriteCount = safeArr(favorites?.favoriteTeamIds).length
+
+  useEffect(() => {
+    if (restoreScrollY === null) return
+    restoreWindowScroll(restoreScrollY)
+  }, [location.key, restoreScrollY])
 
   const updateQuery = patch => {
     const next = new URLSearchParams(searchParams)

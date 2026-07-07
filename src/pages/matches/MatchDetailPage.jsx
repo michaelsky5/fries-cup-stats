@@ -8,15 +8,16 @@ import MapRecordSection from '../../components/matches/detail/MapRecordSection.j
 import SeriesMapRail from '../../components/matches/detail/SeriesMapRail.jsx'
 import styles from '../../components/matches/detail/MatchDetail.module.css'
 import { getMatchDossier, getValidMapOrder } from '../../lib/matchDetailSelectors.js'
+import {
+  getRestoreScrollState,
+  getRestoreScrollY,
+  getReturnState,
+  readReturnState,
+  restoreWindowScroll,
+  saveReturnScroll
+} from '../../lib/navigationState.js'
 
-function safeReturnPath(value) {
-  const text = String(value || '').trim()
-  return text.startsWith('/matches') ? text : ''
-}
-
-function getMapOrdersKey(dossier) {
-  return dossier?.mapRecords?.map(map => map.order).join('|') || ''
-}
+const EMPTY_MAP_RECORDS = []
 
 export default function MatchDetailPage() {
   const context = useOutletContext() || {}
@@ -33,6 +34,7 @@ export default function MatchDetailPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const analysisRef = useRef(null)
   const mapRefs = useRef(new Map())
+  const sourceReturnRef = useRef(null)
   const [expandedMaps, setExpandedMaps] = useState(() => new Set())
   const [activeAnchor, setActiveAnchor] = useState('overview')
   const [collapseAllRequested, setCollapseAllRequested] = useState(false)
@@ -41,12 +43,23 @@ export default function MatchDetailPage() {
     () => getMatchDossier(db, matchId, { locale }),
     [db, matchId, locale]
   )
-  const mapOrdersKey = getMapOrdersKey(dossier)
+  const mapRecords = dossier?.mapRecords || EMPTY_MAP_RECORDS
+  const mapOrders = useMemo(() => mapRecords.map(map => map.order), [mapRecords])
   const requestedMap = searchParams.get('map')
   const expandAll = searchParams.get('expand') === 'all'
   const defaultMapOrder = getValidMapOrder(dossier, requestedMap)
-  const returnTo = safeReturnPath(location.state?.returnTo)
+  const incomingReturnState = readReturnState(location.state, { allowedPrefixes: ['/matches'] })
+  if (incomingReturnState.returnTo) sourceReturnRef.current = incomingReturnState
+  const sourceReturnState = sourceReturnRef.current || incomingReturnState
+  const returnTo = sourceReturnState.returnTo
+  const returnScrollY = sourceReturnState.returnScrollY
   const fallbackReturnTo = returnTo || withSeason('/matches')
+  const restoreScrollY = getRestoreScrollY(location.state)
+  const currentReturnState = {
+    ...getReturnState(location),
+    ...(returnTo ? { parentReturnTo: returnTo } : {}),
+    ...(Number.isFinite(Number(returnScrollY)) ? { parentReturnScrollY: returnScrollY } : {})
+  }
 
   const setMapRef = useCallback((order, node) => {
     if (node) mapRefs.current.set(order, node)
@@ -65,8 +78,13 @@ export default function MatchDetailPage() {
   }, [scrollToNode])
 
   useEffect(() => {
+    if (restoreScrollY !== null) {
+      restoreWindowScroll(restoreScrollY)
+      return
+    }
+
     window.scrollTo(0, 0)
-  }, [matchId])
+  }, [matchId, restoreScrollY])
 
   useEffect(() => {
     if (!dossier?.hasMapRecords) {
@@ -81,7 +99,7 @@ export default function MatchDetailPage() {
       return
     }
 
-    const allOrders = dossier.mapRecords.map(map => map.order)
+    const allOrders = mapOrders
     if (expandAll) {
       setExpandedMaps(new Set(allOrders))
       setActiveAnchor(defaultMapOrder || allOrders[0])
@@ -89,7 +107,7 @@ export default function MatchDetailPage() {
       setExpandedMaps(defaultMapOrder ? new Set([defaultMapOrder]) : new Set())
       setActiveAnchor(defaultMapOrder || 'overview')
     }
-  }, [dossier?.internalId, dossier?.hasMapRecords, mapOrdersKey, expandAll, defaultMapOrder, collapseAllRequested])
+  }, [dossier?.internalId, dossier?.hasMapRecords, mapOrders, expandAll, defaultMapOrder, collapseAllRequested])
 
   useEffect(() => {
     if (!dossier?.hasMapRecords || !requestedMap) return
@@ -102,13 +120,14 @@ export default function MatchDetailPage() {
   }, [dossier?.hasMapRecords, requestedMap, defaultMapOrder, searchParams, setSearchParams])
 
   useEffect(() => {
-    if (!dossier?.hasMapRecords || !requestedMap || !defaultMapOrder) return
+    if (restoreScrollY !== null || !dossier?.hasMapRecords || !requestedMap || !defaultMapOrder) return
     scrollToMap(defaultMapOrder)
-  }, [dossier?.internalId, dossier?.hasMapRecords, requestedMap, defaultMapOrder, scrollToMap])
+  }, [dossier?.internalId, dossier?.hasMapRecords, requestedMap, defaultMapOrder, restoreScrollY, scrollToMap])
 
   const handleBack = () => {
     if (returnTo) {
-      navigate(returnTo)
+      const restoreState = getRestoreScrollState(returnScrollY)
+      navigate(returnTo, restoreState ? { state: restoreState } : undefined)
       return
     }
     if (window.history.state && window.history.state.idx > 0) navigate(-1)
@@ -188,7 +207,15 @@ export default function MatchDetailPage() {
 
   return (
     <main className={styles.shell}>
-      <MatchPosterHero dossier={dossier} seasonId={seasonId} onBack={handleBack} t={t} />
+      <MatchPosterHero
+        dossier={dossier}
+        seasonId={seasonId}
+        withSeason={withSeason}
+        returnState={currentReturnState}
+        onBack={handleBack}
+        onTeamNavigate={() => saveReturnScroll(location)}
+        t={t}
+      />
       <SeriesMapRail
         dossier={dossier}
         activeMapOrder={typeof activeAnchor === 'number' ? activeAnchor : 0}
@@ -221,6 +248,7 @@ export default function MatchDetailPage() {
         adjacent={dossier.adjacent}
         withSeason={withSeason}
         returnTo={fallbackReturnTo}
+        returnScrollY={returnScrollY}
         locale={locale}
         t={t}
       />

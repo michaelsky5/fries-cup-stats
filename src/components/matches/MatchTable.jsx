@@ -1,5 +1,6 @@
 import { Link, useLocation, useOutletContext } from 'react-router-dom'
 import { getBroadcastInfo } from '../../lib/broadcastSelectors.js'
+import { getReturnState, saveReturnScroll } from '../../lib/navigationState.js'
 import { formatMatchSchedule } from '../../lib/scheduleFormat.js'
 import styles from './MatchTable.module.css'
 
@@ -38,7 +39,6 @@ function HeadLabel({ cn, en, align = 'center' }) {
 export default function MatchTable({ rows = [], locale = 'zh-CN' }) {
   const { withSeason = path => path } = useOutletContext()
   const location = useLocation()
-  const returnTo = `${location.pathname}${location.search || ''}`
 
   return (
     <div className={styles.tablePanel}>
@@ -145,8 +145,9 @@ export default function MatchTable({ rows = [], locale = 'zh-CN' }) {
                 <div className={`${styles.actionCell} ${styles.alignCenter}`}>
                   <Link
                     to={withSeason(`/matches/${row.match_id}`)}
-                    state={{ returnTo }}
+                    state={getReturnState(location)}
                     className={`${styles.actionBtn} ${isComplete ? styles.actionBtnSubtle : styles.actionBtnAccent}`}
+                    onClick={() => saveReturnScroll(location)}
                   >
                     <span className={styles.actionBtnCn}>查看详情</span>
                     <span className={styles.actionBtnEn}>DETAIL</span>

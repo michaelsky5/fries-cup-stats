@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import TeamLogo from '../TeamLogo.jsx'
 import styles from './MatchDetail.module.css'
 
@@ -7,7 +8,13 @@ function splitScore(scoreLabel) {
   return { left: parts[0], right: parts[1] }
 }
 
-function PosterTeam({ team, seasonId, winner }) {
+function getTeamPath(team, withSeason) {
+  const routeId = String(team?.id || team?.short || team?.full || '').trim()
+  if (!routeId || ['TBD', 'UNKNOWN', '-'].includes(routeId.toUpperCase())) return ''
+  return withSeason(`/teams/${encodeURIComponent(routeId)}`)
+}
+
+function PosterTeam({ team, seasonId, winner, teamPath, returnState, onTeamNavigate, t }) {
   return (
     <div className={styles.posterTeam} data-winner={winner ? 'true' : 'false'}>
       <TeamLogo
@@ -27,10 +34,25 @@ function PosterTeam({ team, seasonId, winner }) {
           className={styles.posterLogo}
           large
         />
-        <div>
+        <div className={styles.posterTeamText}>
           {winner ? <span className={styles.winnerTag}>WINNER</span> : null}
-          <strong>{team.short}</strong>
-          <span>{team.full}</span>
+          {teamPath ? (
+            <Link
+              to={teamPath}
+              state={returnState}
+              className={styles.posterTeamNameLink}
+              aria-label={`${t('matchDetail.viewTeam', '\u67e5\u770b\u961f\u4f0d')} ${team.full || team.short}`}
+              onClick={onTeamNavigate}
+            >
+              <strong>{team.short}</strong>
+              <span className={styles.posterTeamFullName}>{team.full}</span>
+            </Link>
+          ) : (
+            <>
+              <strong>{team.short}</strong>
+              <span className={styles.posterTeamFullName}>{team.full}</span>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -76,12 +98,22 @@ function PosterBroadcast({ broadcast }) {
   )
 }
 
-export default function MatchPosterHero({ dossier, seasonId, onBack, t }) {
+export default function MatchPosterHero({
+  dossier,
+  seasonId,
+  withSeason = path => path,
+  returnState,
+  onBack,
+  onTeamNavigate,
+  t = (key, fallback) => fallback || key
+}) {
   const score = splitScore(dossier.scoreLabel)
   const stage = dossier.match?.stage || 'MATCH'
   const round = dossier.match?.round || dossier.rawDisplayName || ''
   const winnerA = dossier.winnerSide === 'A'
   const winnerB = dossier.winnerSide === 'B'
+  const teamAPath = getTeamPath(dossier.teamA, withSeason)
+  const teamBPath = getTeamPath(dossier.teamB, withSeason)
 
   return (
     <section className={styles.posterShell} aria-labelledby="match-dossier-title">
@@ -96,7 +128,15 @@ export default function MatchPosterHero({ dossier, seasonId, onBack, t }) {
         </div>
 
         <div className={styles.posterBody}>
-          <PosterTeam team={dossier.teamA} seasonId={seasonId} winner={winnerA} />
+          <PosterTeam
+            team={dossier.teamA}
+            seasonId={seasonId}
+            winner={winnerA}
+            teamPath={teamAPath}
+            returnState={returnState}
+            onTeamNavigate={onTeamNavigate}
+            t={t}
+          />
 
           <div className={styles.posterScoreAxis}>
             <span className={styles.posterVersus}>MATCH DOSSIER</span>
@@ -112,7 +152,15 @@ export default function MatchPosterHero({ dossier, seasonId, onBack, t }) {
             <span className={styles.posterMatchup}>{dossier.teamA.short} vs {dossier.teamB.short}</span>
           </div>
 
-          <PosterTeam team={dossier.teamB} seasonId={seasonId} winner={winnerB} />
+          <PosterTeam
+            team={dossier.teamB}
+            seasonId={seasonId}
+            winner={winnerB}
+            teamPath={teamBPath}
+            returnState={returnState}
+            onTeamNavigate={onTeamNavigate}
+            t={t}
+          />
         </div>
 
         <div className={styles.posterInfoBand}>

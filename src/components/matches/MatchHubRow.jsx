@@ -5,6 +5,7 @@ import {
   getMatchStatusText,
   getRoundText
 } from '../../lib/matchesSelectors.js'
+import { getReturnState, saveReturnScroll } from '../../lib/navigationState.js'
 import TeamLogo from './TeamLogo.jsx'
 import styles from './MatchHub.module.css'
 
@@ -30,11 +31,12 @@ function ScheduleRow({ match, to, returnTo, seasonId, teams }) {
   return (
     <Link
       to={to}
-      state={{ returnTo }}
+      state={returnTo}
       className={styles.matchRow}
       data-testid="match-hub-row"
       aria-label={label}
       title={`${teams.teamA.full} vs ${teams.teamB.full}`}
+      onClick={() => saveReturnScroll(returnTo.returnTo)}
       onKeyDown={handleRowKeyDown}
     >
       <span className={styles.rowStage}>{getRoundBadge(match)}</span>
@@ -64,11 +66,12 @@ function ResultRow({ match, to, returnTo, teams }) {
   return (
     <Link
       to={to}
-      state={{ returnTo }}
+      state={returnTo}
       className={styles.resultRow}
       data-testid="match-result-row"
       aria-label={`${teams.teamA.full} ${score} ${teams.teamB.full}，${getRoundText(match)}`}
       title={`${teams.teamA.full} vs ${teams.teamB.full}`}
+      onClick={() => saveReturnScroll(returnTo.returnTo)}
       onKeyDown={handleRowKeyDown}
     >
       <span className={styles.resultDuel}>
@@ -87,7 +90,7 @@ export default function MatchHubRow({ match, variant = 'schedule' }) {
   const location = useLocation()
   const teams = getMatchDisplayTeams(match)
   const to = withSeason(`/matches/${match?.match_id}`)
-  const returnTo = `${location.pathname}${location.search || ''}`
+  const returnTo = getReturnState(location)
 
   if (variant === 'result') {
     return <ResultRow match={match} to={to} returnTo={returnTo} teams={teams} />

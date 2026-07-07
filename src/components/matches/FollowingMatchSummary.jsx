@@ -5,6 +5,7 @@ import {
   getMatchTimeLabel,
   safeArr
 } from '../../lib/matchesSelectors.js'
+import { getReturnState, saveReturnScroll } from '../../lib/navigationState.js'
 import { getBroadcastInfo } from '../../lib/broadcastSelectors.js'
 import MatchHubSectionLabel from './MatchHubSectionLabel.jsx'
 import styles from './MatchHub.module.css'
@@ -96,7 +97,8 @@ export default function FollowingMatchSummary({ hub }) {
           <div className={styles.followingActions}>
             <Link
               to={withSeason(`/matches/${match.match_id}`)}
-              state={{ returnTo: `${location.pathname}${location.search || ''}` }}
+              state={getReturnState(location)}
+              onClick={() => saveReturnScroll(location)}
             >
               比赛详情
             </Link>

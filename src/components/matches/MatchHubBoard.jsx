@@ -5,6 +5,7 @@ import {
   getMatchTimeLabel,
   getRoundText
 } from '../../lib/matchesSelectors.js'
+import { getReturnState, saveReturnScroll } from '../../lib/navigationState.js'
 import TeamLogo from './TeamLogo.jsx'
 import styles from './MatchHub.module.css'
 
@@ -44,9 +45,10 @@ function FeaturedBoardRow({ match, index }) {
   return (
     <Link
       to={withSeason(`/matches/${encodeURIComponent(matchId)}`)}
-      state={{ returnTo: `${location.pathname}${location.search || ''}` }}
+      state={getReturnState(location)}
       className={styles.boardFeaturedRow}
       title={`${teams.teamA.full} vs ${teams.teamB.full}`}
+      onClick={() => saveReturnScroll(location)}
     >
       <span className={styles.boardFeaturedIndex}>{String(index).padStart(2, '0')}</span>
       <span className={styles.boardFeaturedDuel}>

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { getMatchDisplayTeams } from '../../../lib/matchesSelectors.js'
 import { formatMatchSchedule } from '../../../lib/scheduleFormat.js'
 import { getMatchPath } from '../../../lib/matchDetailSelectors.js'
+import { getRestoreScrollState } from '../../../lib/navigationState.js'
 import styles from './MatchDetail.module.css'
 
 function getLabel(match, locale) {
@@ -11,14 +12,18 @@ function getLabel(match, locale) {
   return `${teams.teamA.short} vs ${teams.teamB.short} · ${schedule.compact || schedule.title}`
 }
 
-export default function MatchDetailFooterNav({ adjacent, withSeason, returnTo, locale, t }) {
+export default function MatchDetailFooterNav({ adjacent, withSeason, returnTo, returnScrollY, locale, t }) {
   const previousPath = adjacent.previous ? withSeason(getMatchPath(adjacent.previous)) : ''
   const nextPath = adjacent.next ? withSeason(getMatchPath(adjacent.next)) : ''
+  const returnState = returnTo
+    ? { returnTo, ...(Number.isFinite(Number(returnScrollY)) ? { returnScrollY } : {}) }
+    : undefined
+  const restoreState = getRestoreScrollState(returnScrollY)
 
   return (
     <nav className={styles.footerNav} aria-label="Match navigation">
       {previousPath ? (
-        <Link className={styles.footerNavLink} to={previousPath} state={{ returnTo }}>
+        <Link className={styles.footerNavLink} to={previousPath} state={returnState}>
           <span>{t('matchDetail.previous', 'Previous Match')}</span>
           <strong>{getLabel(adjacent.previous, locale)}</strong>
         </Link>
@@ -29,13 +34,13 @@ export default function MatchDetailFooterNav({ adjacent, withSeason, returnTo, l
         </span>
       )}
 
-      <Link className={styles.footerNavLink} data-primary="true" to={returnTo || withSeason('/matches')}>
+      <Link className={styles.footerNavLink} data-primary="true" to={returnTo || withSeason('/matches')} state={restoreState}>
         <span>{t('matchDetail.back', 'Back to Matches')}</span>
         <strong>MATCHES</strong>
       </Link>
 
       {nextPath ? (
-        <Link className={styles.footerNavLink} to={nextPath} state={{ returnTo }}>
+        <Link className={styles.footerNavLink} to={nextPath} state={returnState}>
           <span>{t('matchDetail.next', 'Next Match')}</span>
           <strong>{getLabel(adjacent.next, locale)}</strong>
         </Link>

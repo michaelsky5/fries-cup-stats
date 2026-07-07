@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from 'react'
-import { Link, useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router-dom'
+import { useEffect, useMemo, useRef } from 'react'
+import { Link, useLocation, useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router-dom'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import RosterSubnav from '../../components/roster/RosterSubnav.jsx'
 import { PlayerAvatar } from '../../components/roster/PlayerDirectoryCard.jsx'
@@ -22,6 +22,15 @@ import {
 } from '../../lib/matchesSelectors.js'
 import { formatOwHeroName } from '../../lib/heroes.js'
 import { getSwissStandings } from '../../lib/selectors.js'
+import {
+  getRestoreScrollState,
+  getRestoreScrollY,
+  getReturnState,
+  getSafeInternalPath,
+  readReturnState,
+  restoreWindowScroll,
+  saveReturnScroll
+} from '../../lib/navigationState.js'
 import styles from './TeamDetailPage.module.css'
 
 const TABS = [
@@ -36,6 +45,32 @@ const ROLE_LABELS = {
   DPS: 'DPS',
   SUP: 'SUP',
   FLEX: 'FLEX'
+}
+
+function toFiniteScrollY(value) {
+  const number = Number(value)
+  return Number.isFinite(number) && number >= 0 ? number : null
+}
+
+function readTeamSourceReturnState(state) {
+  const base = readReturnState(state)
+  return {
+    ...base,
+    parentReturnTo: getSafeInternalPath(state?.parentReturnTo),
+    parentReturnScrollY: toFiniteScrollY(state?.parentReturnScrollY)
+  }
+}
+
+function buildTeamBackState(sourceReturnState) {
+  const restoreState = getRestoreScrollState(sourceReturnState.returnScrollY) || {}
+  const parentState = sourceReturnState.parentReturnTo
+    ? {
+        returnTo: sourceReturnState.parentReturnTo,
+        ...(sourceReturnState.parentReturnScrollY === null ? {} : { returnScrollY: sourceReturnState.parentReturnScrollY })
+      }
+    : {}
+  const state = { ...restoreState, ...parentState }
+  return Object.keys(state).length ? state : undefined
 }
 
 function normalizeKey(value) {
@@ -187,8 +222,15 @@ function groupRosterByRole(roster) {
 }
 
 function TeamMatchCard({ row, withSeason }) {
+  const location = useLocation()
+
   return (
-    <Link to={withSeason(`/matches/${row.match.match_id}`)} className={styles.matchCard}>
+    <Link
+      to={withSeason(`/matches/${row.match.match_id}`)}
+      state={getReturnState(location)}
+      className={styles.matchCard}
+      onClick={() => saveReturnScroll(location)}
+    >
       <span className={`${styles.matchResult} ${styles[row.result.tone]}`}>{row.result.label}</span>
       <span className={styles.matchMain}>
         <strong>{row.opponentLabel}</strong>
@@ -229,11 +271,22 @@ export default function TeamDetailPage() {
   const isEn = locale === 'en-US'
   const { teamId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
+  const sourceReturnRef = useRef(null)
+  const incomingReturnState = readTeamSourceReturnState(location.state)
+  if (incomingReturnState.returnTo) sourceReturnRef.current = incomingReturnState
+  const sourceReturnState = sourceReturnRef.current || incomingReturnState
+  const restoreScrollY = getRestoreScrollY(location.state)
 
   useEffect(() => {
+    if (restoreScrollY !== null) {
+      restoreWindowScroll(restoreScrollY)
+      return
+    }
+
     window.scrollTo(0, 0)
-  }, [teamId])
+  }, [teamId, restoreScrollY])
 
   const activeTab = TABS.some(tab => tab.id === searchParams.get('tab')) ? searchParams.get('tab') : 'overview'
   const setActiveTab = tab => {
@@ -299,6 +352,12 @@ export default function TeamDetailPage() {
   const favoriteLimitReached = !teamFavorited && favoriteCount >= (favoriteLimits?.teams || 5)
 
   const handleBack = () => {
+    if (sourceReturnState.returnTo) {
+      const restoreState = buildTeamBackState(sourceReturnState)
+      navigate(sourceReturnState.returnTo, restoreState ? { state: restoreState } : undefined)
+      return
+    }
+
     if (window.history.state && window.history.state.idx > 0) navigate(-1)
     else navigate(withSeason('/teams'))
   }

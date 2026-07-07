@@ -192,6 +192,21 @@
   font-weight: 1000;
 }
 
+.posterTeamText {
+  min-width: 0;
+}
+
+.posterTeamNameLink {
+  display: block;
+  max-width: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.posterTeam:last-child .posterTeamNameLink {
+  margin-left: auto;
+}
+
 .posterTeamIdentity strong {
   display: block;
   font-size: clamp(58px, 5.4vw, 98px);
@@ -207,6 +222,20 @@
   font-size: 15px;
   font-weight: 900;
   overflow-wrap: anywhere;
+}
+
+.posterTeamNameLink:hover strong,
+.posterTeamNameLink:focus-visible strong {
+  color: #f4c320;
+}
+
+.posterTeamNameLink:hover .posterTeamFullName,
+.posterTeamNameLink:focus-visible .posterTeamFullName {
+  color: #ffffff;
+}
+
+.posterTeamNameLink:focus-visible {
+  outline: 0;
 }
 
 .posterScoreAxis {
