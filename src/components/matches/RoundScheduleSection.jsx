@@ -20,10 +20,10 @@ export default function RoundScheduleSection({ hub }) {
   const [expandedSlots, setExpandedSlots] = useState({})
   const sectionTitle = !hasUpcoming && hasResults ? '最近赛果' : '本轮赛程'
   const showTabs = hasUpcoming && hasResults
-  const resultLimit = !hasUpcoming ? 9 : 4
+  const resultLimit = 9
   const resultRowsClassName = [
     styles.resultRows,
-    !hasUpcoming ? styles.resultRowsGrid : ''
+    styles.resultRowsGrid
   ].filter(Boolean).join(' ')
 
   useEffect(() => {
