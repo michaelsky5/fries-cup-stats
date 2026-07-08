@@ -21,7 +21,7 @@ function getRoundBadge(match) {
   const roundNumber = round.match(/\d+/)?.[0]
   const stageLabel = stage || 'MATCH'
 
-  if (roundNumber) return `${stageLabel}-ROUND${roundNumber}`
+  if (roundNumber) return `${stageLabel} R${roundNumber}`
   return round ? `${stageLabel}-${round}` : stageLabel
 }
 
@@ -39,7 +39,7 @@ function ScheduleRow({ match, to, returnTo, seasonId, teams }) {
       onClick={() => saveReturnScroll(returnTo.returnTo)}
       onKeyDown={handleRowKeyDown}
     >
-      <span className={styles.rowStage}>{getRoundBadge(match)}</span>
+      <span className={styles.rowStage} title={getRoundText(match)}>{getRoundBadge(match)}</span>
       <span className={styles.rowDuel}>
         <span className={styles.rowTeam} title={teams.teamA.full}>
           <TeamLogo team={match?.team_a} seasonId={seasonId} className={styles.rowLogo} />
