@@ -56,10 +56,11 @@ function HeroArtwork({ model, exportMode = false }) {
     [artwork.fallbackSrc, artwork.src, model.visuals.heroArtwork, model.visuals.heroPortrait]
   )
   const [candidateIndex, setCandidateIndex] = useState(0)
+  const candidateKey = candidates.join('|')
 
   useEffect(() => {
     setCandidateIndex(0)
-  }, [candidates.join('|')])
+  }, [candidateKey])
 
   const src = candidates[candidateIndex]
   if (!src) {
