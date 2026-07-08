@@ -1,19 +1,45 @@
 import styles from './EventContextBar.module.css'
 import { pickLocale } from '../../lib/legacyI18n.js'
 
+const FALLBACK_CURRENT_SCALE = {
+  teamCount: 38,
+  playerCount: 251
+}
+
 function getSwitcherGroup(season) {
   return season?.reviewEnabled ? 'ARCHIVE' : 'CURRENT'
 }
 
-function getSwitcherMeta(season, currentSeasonId, seasonStatus, locale = 'zh-CN') {
+function toPositiveNumber(value) {
+  const number = Number(value)
+  return Number.isFinite(number) && number > 0 ? number : null
+}
+
+function getCurrentScale(activeSummary = null) {
+  return {
+    teamCount: toPositiveNumber(activeSummary?.teamCount) || FALLBACK_CURRENT_SCALE.teamCount,
+    playerCount: toPositiveNumber(activeSummary?.playerCount) || FALLBACK_CURRENT_SCALE.playerCount
+  }
+}
+
+function getCurrentScaleText(locale, activeSummary = null) {
+  const scale = getCurrentScale(activeSummary)
+  return pickLocale(
+    locale,
+    `${scale.teamCount} 队 · ${scale.playerCount} 选手`,
+    `${scale.teamCount} teams · ${scale.playerCount} players`
+  )
+}
+
+function getSwitcherMeta(season, currentSeasonId, seasonStatus, locale = 'zh-CN', activeSummary = null) {
   if (season?.id === currentSeasonId) {
     const status = getReadableStatus(seasonStatus, locale)
     if (season?.reviewEnabled) return pickLocale(locale, `${status} · 冠军 HYW · 127 场`, `${status} · Champion HYW · 127 matches`)
-    return pickLocale(locale, `${status} · 38 队 · 250 选手`, `${status} · 38 teams · 250 players`)
+    return `${status} · ${getCurrentScaleText(locale, activeSummary)}`
   }
 
   if (season?.reviewEnabled) return pickLocale(locale, '冠军 HYW · 127 场', 'Champion HYW · 127 matches')
-  return pickLocale(locale, '38 队 · 250 选手', '38 teams · 250 players')
+  return getCurrentScaleText(locale)
 }
 
 function getReadableStatus(seasonStatus, locale = 'zh-CN') {
@@ -24,7 +50,7 @@ function getReadableStatus(seasonStatus, locale = 'zh-CN') {
   return pickLocale(locale, '赛程待发布', 'Schedule Pending')
 }
 
-function EventSwitcher({ seasonId, seasons, locale, seasonStatus, onSeasonChange }) {
+function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary, onSeasonChange }) {
   const currentSeason = seasons.find(item => item.id === seasonId) || seasons[0]
   const currentItems = seasons.filter(item => getSwitcherGroup(item) === 'CURRENT')
   const archiveItems = seasons.filter(item => getSwitcherGroup(item) === 'ARCHIVE')
@@ -45,7 +71,7 @@ function EventSwitcher({ seasonId, seasons, locale, seasonStatus, onSeasonChange
       >
         <strong>{item.publicCode}</strong>
         <span>{name}</span>
-        <em>{getSwitcherMeta(item, seasonId, seasonStatus, locale)}</em>
+        <em>{getSwitcherMeta(item, seasonId, seasonStatus, locale, activeSummary)}</em>
       </button>
     )
   }
@@ -81,6 +107,7 @@ export default function EventContextBar({
   seasons = [],
   updatedAtText = '',
   seasonStatus,
+  activeSummary,
   onSeasonChange
 }) {
   const statusLabel = getReadableStatus(seasonStatus, locale)
@@ -106,6 +133,7 @@ export default function EventContextBar({
           seasons={seasons}
           locale={locale}
           seasonStatus={seasonStatus}
+          activeSummary={activeSummary}
           onSeasonChange={onSeasonChange}
         />
       </div>

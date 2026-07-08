@@ -23,7 +23,7 @@ const EXACT_TRANSLATIONS = new Map([
   ['ARCHIVE 赛季档案', 'ARCHIVE Season'],
   ['2026 薯条杯学院赛', 'Fries Cup Academy 2026'],
   ['2026 薯条杯常规赛', 'Fries Cup Regular 2026'],
-  ['38 队 · 250 选手', '38 teams · 250 players'],
+  ['38 队 · 251 选手', '38 teams · 251 players'],
   ['冠军 HYW · 127 场', 'Champion HYW · 127 matches'],
   ['赛程待发布 · 冠军 HYW · 127 场', 'Schedule Pending · Champion HYW · 127 matches'],
   ['赛季已归档 · 冠军 HYW · 127 场', 'Season Archived · Champion HYW · 127 matches'],

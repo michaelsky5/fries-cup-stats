@@ -272,6 +272,7 @@ export default function DataLayout() {
           seasons={SEASONS}
           updatedAtText={updatedAtText}
           seasonStatus={seasonStatus}
+          activeSummary={summary}
           onSeasonChange={handleSeasonChange}
         />
       </header>
