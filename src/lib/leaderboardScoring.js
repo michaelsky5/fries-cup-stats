@@ -1,5 +1,7 @@
 import { getOwHeroAssetKey } from './heroes.js'
 import { attachRatingModelScoreToLeaderboardRows } from './scoringEngineAdapter.js'
+import { mapRawScoreToOVR } from './ratingModel.js'
+import { SEASON_SCORE_CONFIG } from '../config/ratingModelConfig.js'
 
 export const ROLE_ORDER = ['TANK', 'DPS', 'SUPPORT']
 
@@ -418,6 +420,57 @@ function applySampleConfidence(score, confidence) {
   return SCORE_NEUTRAL_BASELINE + ((safeScore - SCORE_NEUTRAL_BASELINE) * safeConfidence)
 }
 
+function getRankPercentile(rank, total) {
+  if (!rank || total <= 0) return null
+  if (total === 1) return 100
+  return Math.round(((total - rank) / (total - 1)) * 100)
+}
+
+function applySeasonOvrConfidenceCap(ovr, confidence) {
+  const value = Number(ovr)
+  if (!Number.isFinite(value)) return null
+
+  const safeConfidence = toFiniteNumber(confidence, 1)
+  if (safeConfidence < SEASON_SCORE_CONFIG.solidConfidence) {
+    return Math.min(value, SEASON_SCORE_CONFIG.provisionalOvrCap)
+  }
+  if (safeConfidence < SEASON_SCORE_CONFIG.stableConfidence) {
+    return Math.min(value, SEASON_SCORE_CONFIG.solidOvrCap)
+  }
+  return value
+}
+
+function attachSeasonOvrFields(scored) {
+  const eligibleRows = scored.filter(entry => entry.eligible)
+  const overallTotal = eligibleRows.length
+
+  ROLE_ORDER.forEach(role => {
+    const roleRows = scored.filter(entry => entry.role === role && entry.eligible)
+    const roleTotal = roleRows.length
+
+    roleRows.forEach(entry => {
+      entry.seasonRolePercentile = getRankPercentile(entry.roleRank, roleTotal)
+      entry.seasonOverallPercentile = getRankPercentile(entry.overallRank, overallTotal)
+      const percentileOvr = Number.isFinite(Number(entry.seasonRolePercentile))
+        ? mapRawScoreToOVR(null, entry.seasonRolePercentile, { sampleStatus: 'OK' })
+        : null
+      entry.seasonOvr = applySeasonOvrConfidenceCap(percentileOvr, entry.seasonScoreConfidence)
+      entry.seasonOvrSource = 'role_percentile'
+    })
+  })
+
+  scored
+    .filter(entry => !entry.eligible)
+    .forEach(entry => {
+      entry.seasonRolePercentile = null
+      entry.seasonOverallPercentile = null
+      entry.seasonOvr = null
+      entry.seasonOvrSource = 'unrated'
+    })
+
+  return scored
+}
+
 export function getRoleConfig(role) {
   return ROLE_SCORE_CONFIG[role] || null
 }
@@ -536,7 +589,8 @@ export function scoreLeaderboardEntries(entries, minTimeMins = 30, options = {})
     baselines: options.baselines,
     season: options.season,
     seasonId: options.seasonId,
-    scoreContext: options.scoreContext || 'season'
+    scoreContext: options.scoreContext || 'season',
+    minTimeMins
   }).map(entry => ({
     ...entry,
     roleRank: null,
@@ -559,5 +613,5 @@ export function scoreLeaderboardEntries(entries, minTimeMins = 30, options = {})
       entry.overallRank = index + 1
     })
 
-  return ratingScored
+  return attachSeasonOvrFields(ratingScored)
 }

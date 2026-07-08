@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { formatDecimal, formatInt, formatPlayerTime } from '../../lib/format.js'
+import { formatInt, formatPlayerTime } from '../../lib/format.js'
 import {
+  formatEntrySeasonOvr,
   getEntryMetricValue,
   getHeroAvatarSrc,
   getPlayerInitials,
@@ -87,7 +88,7 @@ function DataCell({ entry, column, mode, locale }) {
   if (column.id === 'score') {
     return (
       <td className={`${styles.numericCell} ${styles.scoreCell} ${styles.scoreDataCell}`}>
-        {Number.isFinite(Number(entry.roleScore)) ? formatDecimal(entry.roleScore, 1, '-') : '-'}
+        {formatEntrySeasonOvr(entry)}
       </td>
     )
   }

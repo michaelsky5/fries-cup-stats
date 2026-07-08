@@ -312,6 +312,18 @@ export const OVR_CONFIG = {
   ]
 }
 
+export const SEASON_SCORE_CONFIG = {
+  neutralScore: 50,
+  confidenceFloor: 0.65,
+  timeTargetMultiplier: 3,
+  minMapCount: 2,
+  targetMapCount: 10,
+  solidConfidence: 0.85,
+  stableConfidence: 0.95,
+  provisionalOvrCap: 89,
+  solidOvrCap: 94
+}
+
 export const SUPPORT_MINIMUM_RULES = {
   enabled: true,
   subroles: ['MAIN_SUPPORT', 'FLEX_SUPPORT'],

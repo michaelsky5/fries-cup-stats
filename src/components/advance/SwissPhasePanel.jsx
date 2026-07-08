@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useMemo, useState } from 'react'
 import SwissSummary from './SwissSummary.jsx'
 import SwissZoneSummary from './SwissZoneSummary.jsx'
 import SwissStandingsTable from './SwissStandingsTable.jsx'
@@ -45,6 +46,15 @@ export default function SwissPhasePanel({
   t,
   withSeason
 }) {
+  const [activeZone, setActiveZone] = useState('all')
+  const visibleRows = useMemo(() => {
+    if (activeZone === 'all') return rows
+    return rows.filter(row => row.status === activeZone)
+  }, [activeZone, rows])
+  const handleZoneSelect = zone => {
+    setActiveZone(current => current === zone ? 'all' : zone)
+  }
+
   if (!overview.hasStarted) {
     return (
       <div className={styles.phaseStack}>
@@ -68,12 +78,23 @@ export default function SwissPhasePanel({
   return (
     <div className={styles.phaseStack}>
       <SwissSummary overview={overview} t={t} withSeason={withSeason} />
-      <SwissZoneSummary zones={zones} t={t} archive={overview.seasonFinished || overview.swissFinished} />
-      <SwissStandingsTable rows={rows} seasonId={seasonId} t={t} withSeason={withSeason} />
-      <div className={styles.infoGrid}>
-        <TiebreakerPanel rules={tiebreakers} t={t} />
-        <KeyMatches matches={keyMatches} t={t} withSeason={withSeason} />
-      </div>
+      <SwissZoneSummary
+        zones={zones}
+        t={t}
+        archive={overview.seasonFinished || overview.swissFinished}
+        activeZone={activeZone}
+        onZoneSelect={handleZoneSelect}
+      />
+      <SwissStandingsTable
+        rows={visibleRows}
+        allRows={rows}
+        activeZone={activeZone}
+        seasonId={seasonId}
+        t={t}
+        withSeason={withSeason}
+        tiebreakers={tiebreakers}
+      />
+      <KeyMatches matches={keyMatches} t={t} withSeason={withSeason} />
     </div>
   )
 }

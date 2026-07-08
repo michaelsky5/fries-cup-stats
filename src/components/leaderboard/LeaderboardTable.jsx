@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { formatDecimal, formatInt, formatPlayerTime } from '../../lib/format.js'
+import { formatInt, formatPlayerTime } from '../../lib/format.js'
 import {
   LEADERBOARD_COLUMNS,
   LEADERBOARD_TABS,
   METRIC_MODES,
+  formatEntrySeasonOvr,
   getEntryMetricValue,
   getHeroDisplayList,
   getHeroDisplayName,
@@ -61,7 +62,7 @@ function getColClass(columnId) {
 
 function getColumnGroup(columnId) {
   if (columnId === 'rank') return '排名'
-  if (columnId === 'score') return '综合评分'
+  if (columnId === 'score') return '赛季'
   if (columnId === 'player' || columnId === 'team' || columnId === 'role') return '选手信息'
   if (columnId === 'maps' || columnId === 'time') return '出场信息'
   if (columnId === 'actions') return '操作'
@@ -218,7 +219,7 @@ function TableTitleBar({ pagination, mode, activeTab, sortKey, direction, locale
 }
 
 function formatEntryField(entry, column, mode, locale) {
-  if (column.id === 'score') return Number.isFinite(Number(entry.roleScore)) ? formatDecimal(entry.roleScore, 1, '-') : '-'
+  if (column.id === 'score') return formatEntrySeasonOvr(entry)
   if (column.id === 'team') return `${entry.team_short_name || '-'} / ${entry.team_name || '-'}`
   if (column.id === 'role') return locale === 'en-US' ? getRoleEnLabel(entry.role) : `${getRoleLabel(entry.role)} / ${getRoleEnLabel(entry.role)}`
   if (column.id === 'maps') return formatInt(entry.roleMapsPlayed)
@@ -263,8 +264,8 @@ function MobileRankingItem({
           <em>{entry.team_short_name || entry.team_name || '-'} / {getRoleEnLabel(entry.role)}</em>
         </span>
         <span className={styles.mobileScore}>
-          <b>{formatDecimal(entry.roleScore, 1, '-')}</b>
-          <em>SCORE</em>
+          <b>{formatEntrySeasonOvr(entry)}</b>
+          <em>OVR</em>
         </span>
       </button>
 

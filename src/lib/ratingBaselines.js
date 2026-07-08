@@ -1,4 +1,5 @@
 import { normalizeSeasonId } from '../features/favorites/normalizeSeasonId.js'
+import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 import { resolveHeroSubrole } from './heroSubroleSelectors.js'
 
 const METRICS = [
@@ -149,7 +150,9 @@ export function collectRatingLogRowsFromPlayers(players, options = {}) {
 
     selected.logs.forEach((log, logIndex) => {
       const playtimeMinutes = toFiniteNumber(log?.playtimeMinutes ?? log?.raw_time_mins ?? log?.timeMins)
-      const hero = cleanText(log?.hero || log?.heroes_played || log?.heroName)
+      const rawHero = cleanText(log?.hero || log?.heroes_played || log?.heroName)
+      const heroKey = getOwHeroCanonicalKey(rawHero)
+      const hero = getOwHeroCanonicalName(rawHero)
       const role = cleanText(log?.role || log?.officialRole || player?.role)
       const totals = getTotals(log)
 
@@ -157,7 +160,7 @@ export function collectRatingLogRowsFromPlayers(players, options = {}) {
         cleaning.filteredPlaytimeNonPositive += 1
         return
       }
-      if (!hero) {
+      if (!heroKey) {
         cleaning.filteredHeroEmpty += 1
         return
       }
@@ -166,7 +169,7 @@ export function collectRatingLogRowsFromPlayers(players, options = {}) {
         return
       }
 
-      const key = dedupeKey(playerId, log, hero, role, playtimeMinutes, totals)
+      const key = dedupeKey(playerId, log, heroKey, role, playtimeMinutes, totals)
       if (seen.has(key)) {
         cleaning.dedupeRemoved += 1
         return

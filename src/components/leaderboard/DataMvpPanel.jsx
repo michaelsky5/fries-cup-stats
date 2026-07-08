@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { formatDecimal, formatInt, formatPlayerTime } from '../../lib/format.js'
 import {
+  formatEntrySeasonOvr,
+  getEntrySeasonScoreMeta,
   getEntryMetricValue,
   getRoleEnLabel,
   getRoleLabel
@@ -52,7 +54,7 @@ export default function DataMvpPanel({ entry, withSeason, locale = 'zh-CN' }) {
         <p>
           {isEn
             ? 'Once the ranking threshold is met, this panel will feature the top player-role entry.'
-            : '正式排名门槛达成后，将显示综合评分最高的选手职责条目。'}
+            : '正式排名门槛达成后，将显示赛季 OVR 领跑的选手职责条目。'}
         </p>
       </section>
     )
@@ -66,7 +68,7 @@ export default function DataMvpPanel({ entry, withSeason, locale = 'zh-CN' }) {
       <div className={styles.panelTopline}>
         <span className={styles.panelKicker}>{panelKicker}</span>
         <span className={styles.disclaimer}>
-          {isEn ? 'Reference rating' : '统计评分仅供参考'}
+          {isEn ? 'Reference OVR' : '赛季 OVR 仅供参考'}
         </span>
       </div>
 
@@ -79,9 +81,9 @@ export default function DataMvpPanel({ entry, withSeason, locale = 'zh-CN' }) {
           <em>{entry.team_short_name || entry.team_name || '-'} / {getRoleLabel(entry.role)}</em>
         </div>
         <div className={styles.mvpScore}>
-          <span>{isEn ? 'Rating' : '综合评分'}</span>
-          <strong>{formatDecimal(entry.roleScore, 1, '-')}</strong>
-          <em>{isEn ? `${getRoleEnLabel(entry.role)} score` : `${getRoleLabel(entry.role)}评分`}</em>
+          <span>{isEn ? 'Season OVR' : '赛季 OVR'}</span>
+          <strong>{formatEntrySeasonOvr(entry)}</strong>
+          <em>{getEntrySeasonScoreMeta(entry, locale) || (isEn ? `${getRoleEnLabel(entry.role)} OVR` : `${getRoleLabel(entry.role)} OVR`)}</em>
         </div>
       </div>
 

@@ -216,27 +216,22 @@
   width: 560px;
 }
 
-.identityText h1 {
+.playerName {
   margin: 14px 0 0;
-  max-width: 680px;
+  width: 540px;
+  max-width: 100%;
+  overflow: hidden;
   color: var(--share-white);
-  font-size: 118px;
+  font-size: var(--player-name-font-size, 118px);
   font-weight: 950;
-  line-height: 0.82;
+  line-height: 0.86;
   letter-spacing: 0;
   text-transform: uppercase;
   text-shadow: 10px 10px 0 rgba(0, 0, 0, 0.46);
-  overflow-wrap: anywhere;
-}
-
-.identityText .nameSmall {
-  font-size: 92px;
-  line-height: 0.9;
-}
-
-.identityText .nameTiny {
-  font-size: 72px;
-  line-height: 0.98;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .identityText p {

@@ -54,6 +54,13 @@ function assertRatingV1Fields(row, label) {
   assertOldScoreFields(row, label)
 }
 
+function assertSeasonOvrFields(row, label) {
+  assertInRange(row.seasonScore, 0, 100, `${label}.seasonScore`)
+  assertInRange(row.seasonScoreConfidence, 0, 1, `${label}.seasonScoreConfidence`)
+  assertInRange(row.seasonOvr, 60, 99, `${label}.seasonOvr`)
+  assertInRange(row.seasonRolePercentile, 0, 100, `${label}.seasonRolePercentile`)
+}
+
 function assertHeroResolution(heroName, expectedSubrole, expectedProfile, label = heroName) {
   const resolved = resolveHeroSubrole(heroName)
   assert.equal(resolved.resolvedSubrole, expectedSubrole, `${label} subrole`)
@@ -173,6 +180,7 @@ const legacyEntry = scoreLeaderboardEntriesLegacy([sampleEntry], 0)[0]
 
 const leaderboardRow = scoreLeaderboardEntries([sampleEntry], 0, { baselines })[0]
 assertRatingV1Fields(leaderboardRow, 'scoreLeaderboardEntries')
+assertSeasonOvrFields(leaderboardRow, 'scoreLeaderboardEntries')
 
 const attachedLeaderboardRow = attachRatingModelScoreToLeaderboardRows({ entries: [legacyEntry], baselines })[0]
 assertRatingV1Fields(attachedLeaderboardRow, 'attachRatingModelScoreToLeaderboardRows')
@@ -187,6 +195,8 @@ assertRatingV1Fields(playerDetailRow, 'attachRatingModelScoreToPlayerDetail')
 
 const seasonScore = calculateSeasonPlayerScoreV1({ entry: legacyEntry, baselines })
 assertInRange(seasonScore.rawScore, 0, 100, 'calculateSeasonPlayerScoreV1.rawScore')
+assertInRange(seasonScore.seasonScore, 0, 100, 'calculateSeasonPlayerScoreV1.seasonScore')
+assertInRange(seasonScore.seasonScoreConfidence, 0, 1, 'calculateSeasonPlayerScoreV1.seasonScoreConfidence')
 assertInRange(seasonScore.mapRating, 5.5, 9.8, 'calculateSeasonPlayerScoreV1.mapRating')
 
 const leaderboardScore = calculateLeaderboardScoreV1({ entry: legacyEntry, baselines })
@@ -248,6 +258,8 @@ console.log(JSON.stringify({
   activeEngine: getActiveScoringEngine(),
   runtimeBaselineLogs: baselines.logs.length,
   leaderboardRawScore: leaderboardRow.rawScore,
+  leaderboardSeasonScore: leaderboardRow.seasonScore,
+  leaderboardSeasonOvr: leaderboardRow.seasonOvr,
   mapRating: attachedMapRow.mapRating,
   sampleStatus: leaderboardRow.sampleStatus,
   fallbackAvailable: SCORING_ENGINE_CONFIG.allowLegacyFallback

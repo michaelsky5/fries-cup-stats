@@ -8,6 +8,7 @@ import {
   normalizeLeaderboardRole
 } from './leaderboardSelectors.js'
 import { PUBLIC_METRICS, ROLE_ORDER } from './leaderboardScoring.js'
+import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 
 const ROLE_RADAR_DIMENSIONS = {
   TANK: [
@@ -67,6 +68,18 @@ function normalizeKey(value) {
 
 function unique(values) {
   return Array.from(new Set(values.filter(Boolean)))
+}
+
+function uniqueCanonicalHeroes(values) {
+  const seen = new Set()
+
+  return safeArr(values).reduce((acc, value) => {
+    const key = getOwHeroCanonicalKey(value)
+    if (!key || seen.has(key)) return acc
+    seen.add(key)
+    acc.push(getOwHeroCanonicalName(value))
+    return acc
+  }, [])
 }
 
 function formatNumber(value, digits = 1) {
@@ -189,7 +202,7 @@ function getPlayerLogs(basePlayer) {
       log?.matchId || log?.match_id || log?.rawMatchId || log?.raw_match_id || '',
       log?.mapOrder || log?.map_order || '',
       log?.mapName || log?.map_name || '',
-      log?.hero || log?.heroes_played || '',
+      getOwHeroCanonicalKey(log?.hero || log?.heroes_played || '') || log?.hero || log?.heroes_played || '',
       role,
       log?.teamId || log?.team_id || ''
     ].map(normalizeKey).join('|')
@@ -390,12 +403,14 @@ export function getPlayerHeroPool(basePlayer, entry) {
   let totalMinutes = 0
 
   logs.forEach(log => {
-    const hero = normalize(log?.hero || log?.heroes_played || '未记录')
+    const rawHero = normalize(log?.hero || log?.heroes_played || '未记录')
+    const heroKey = getOwHeroCanonicalKey(rawHero)
+    const hero = getOwHeroCanonicalName(rawHero)
     const minutes = toNumber(log?.playtimeMinutes ?? log?.raw_time_mins)
-    if (!hero || hero === '-') return
+    if (!heroKey || rawHero === '-') return
     totalMinutes += minutes
-    if (!grouped.has(hero)) {
-      grouped.set(hero, {
+    if (!grouped.has(heroKey)) {
+      grouped.set(heroKey, {
         hero,
         minutes: 0,
         maps: new Set(),
@@ -403,7 +418,7 @@ export function getPlayerHeroPool(basePlayer, entry) {
       })
     }
 
-    const item = grouped.get(hero)
+    const item = grouped.get(heroKey)
     const totals = getLogMetricTotals(log)
     item.minutes += minutes
     Object.keys(item.totals).forEach(key => {
@@ -426,8 +441,7 @@ export function getPlayerHeroPool(basePlayer, entry) {
   })
 
   if (!heroes.length) {
-    heroes = safeArr(entry?.top_3_heroes)
-      .filter(Boolean)
+    heroes = uniqueCanonicalHeroes(entry?.top_3_heroes)
       .map((hero, index) => ({
         hero,
         minutes: index === 0 ? toNumber(entry?.roleTimeMins ?? entry?.raw_time_mins) : 0,
@@ -551,6 +565,12 @@ function getRadarData(entry, sample, heroPool) {
 
 function getRoleSummary(entry, sample, heroPool) {
   const primaryHero = heroPool[0]?.hero || entry?.most_played_hero || safeArr(entry?.top_3_heroes)[0] || ''
+  const seasonOvr = Number.isFinite(Number(entry?.seasonOvr)) ? Math.round(Number(entry.seasonOvr)) : null
+  const score = Number.isFinite(Number(entry?.roleScore)) ? Number(entry.roleScore) : null
+  const rawScore = Number.isFinite(Number(entry?.rawRoleScore ?? entry?.rawScore))
+    ? Number(entry.rawRoleScore ?? entry.rawScore)
+    : score
+
   return {
     role: normalizeLeaderboardRole(entry?.role),
     roleLabel: getRoleLabel(entry?.role),
@@ -559,8 +579,12 @@ function getRoleSummary(entry, sample, heroPool) {
     timeMins: toNumber(entry?.roleTimeMins ?? entry?.raw_time_mins),
     timeLabel: formatPlayerRoleTime(entry?.roleTimeMins ?? entry?.raw_time_mins, entry?.total_time_played),
     primaryHero,
-    score: Number.isFinite(Number(entry?.roleScore)) ? Number(entry.roleScore) : null,
-    scoreLabel: Number.isFinite(Number(entry?.roleScore)) ? Number(entry.roleScore).toFixed(1) : '—',
+    score,
+    rawScore,
+    seasonOvr,
+    scoreLabel: seasonOvr !== null ? String(seasonOvr) : '—',
+    scoreUnit: 'OVR',
+    scoreMetaLabel: score !== null ? `Score ${score.toFixed(1)}` : '',
     rank: sample.rank,
     rankTotal: sample.qualifiedSize,
     rankLabel: sample.rank ? `第 ${sample.rank} / ${sample.qualifiedSize}` : '—',
@@ -612,21 +636,25 @@ function getLatestMatches(db, basePlayer, entry) {
 
     const current = grouped.get(key)
     const minutes = toNumber(log?.playtimeMinutes ?? log?.raw_time_mins)
-    const hero = normalize(log?.hero || log?.heroes_played || '')
+    const rawHero = normalize(log?.hero || log?.heroes_played || '')
+    const heroKey = getOwHeroCanonicalKey(rawHero)
+    const hero = getOwHeroCanonicalName(rawHero)
     const totals = getLogMetricTotals(log)
     current.minutes += minutes
     current.maps.add(`${log?.mapOrder || ''}:${log?.mapName || ''}`)
     Object.keys(current.totals).forEach(metricId => {
       current.totals[metricId] += totals[metricId]
     })
-    if (hero && hero !== '-') {
-      current.heroes.set(hero, (current.heroes.get(hero) || 0) + minutes)
+    if (heroKey && rawHero !== '-') {
+      const currentHero = current.heroes.get(heroKey) || { hero, minutes: 0 }
+      currentHero.minutes += minutes
+      current.heroes.set(heroKey, currentHero)
     }
   })
 
   return Array.from(grouped.values())
     .map(item => {
-      const heroes = Array.from(item.heroes.entries()).sort((a, b) => b[1] - a[1]).map(([hero]) => hero)
+      const heroes = Array.from(item.heroes.values()).sort((a, b) => b.minutes - a.minutes).map(hero => hero.hero)
       return {
         ...item,
         primaryHero: heroes[0] || '—',
@@ -659,7 +687,7 @@ function getMapPerformance(db, basePlayer, entry, metricId = 'dmg') {
       opponent: opponentInfo.team ? teamShort(opponentInfo.team) : '—',
       dateLabel: formatDate(date),
       role,
-      hero: normalize(log?.hero || log?.heroes_played || '—'),
+      hero: getOwHeroCanonicalName(log?.hero || log?.heroes_played || '—'),
       minutes,
       value: per10,
       valueLabel: formatNumber(per10, metric.id === 'dmg' || metric.id === 'heal' || metric.id === 'block' ? 0 : 1),
@@ -682,8 +710,8 @@ function getAchievements(entry, sample, heroPool) {
   const achievements = []
   if (entry.eligible && sample.scorePercentile !== null && sample.scorePercentile >= 90) {
     achievements.push({
-      label: '同职责评分前 10%',
-      value: entry.roleScore ? Number(entry.roleScore).toFixed(1) : ''
+      label: '同职责 OVR 前 10%',
+      value: entry.seasonOvr ? `OVR ${Math.round(Number(entry.seasonOvr))}` : ''
     })
   }
 

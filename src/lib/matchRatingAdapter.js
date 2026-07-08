@@ -6,6 +6,7 @@ import {
   scoreLeaderboardEntries
 } from './leaderboardScoring.js'
 import { normalizeLeaderboardRole } from './leaderboardSelectors.js'
+import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 
 const METRIC_IDS = PUBLIC_METRICS.map(metric => metric.id)
 
@@ -84,10 +85,19 @@ function hasStatSignal(row) {
 }
 
 function getHeroList(row) {
+  const seen = new Set()
+
   return cleanText(row?.heroes_played)
     .split(/[，,/|]+/)
     .map(cleanText)
     .filter(hero => hero && hero !== '-' && hero.toUpperCase() !== 'UNKNOWN')
+    .reduce((acc, hero) => {
+      const key = getOwHeroCanonicalKey(hero)
+      if (!key || seen.has(key)) return acc
+      seen.add(key)
+      acc.push(getOwHeroCanonicalName(hero))
+      return acc
+    }, [])
 }
 
 function createPlayerDirectory(players = []) {
@@ -292,7 +302,7 @@ export function getMatchRatingSummary(match, maps = [], players = []) {
 
   const scoredEntries = scoreLeaderboardEntries(rawEntries, 0, {
     players,
-    scoreContext: maps.length === 1 ? 'map' : 'season'
+    scoreContext: maps.length === 1 ? 'map' : 'match'
   })
     .filter(entry => entry.roleScore > 0)
     .sort(compareLeaderboardEntries)

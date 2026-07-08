@@ -5,6 +5,7 @@
   --panel-background: #ffffff;
   --surface-warm: #fbf7ee;
   --surface-yellow: rgba(244, 195, 32, 0.12);
+  --surface-yellow-strong: rgba(244, 195, 32, 0.24);
   --text-primary: #2a2a2a;
   --text-secondary: rgba(42, 42, 42, 0.64);
   --text-muted: rgba(42, 42, 42, 0.42);
@@ -30,7 +31,8 @@
   transition:
     background-color 150ms ease,
     color 150ms ease,
-    border-color 150ms ease;
+    border-color 150ms ease,
+    transform 150ms ease;
 }
 
 .shell a:focus-visible {
@@ -80,10 +82,18 @@
 .summaryEn,
 .summaryMeta,
 .ruleChip,
+.overviewKicker,
+.overviewRank,
+.overviewMetric span,
+.overviewCardBody em,
+.modeShareStrip b,
 .modeKicker,
 .modeMetaLabel,
+.modeInsight span,
+.modeInsight em,
 .mapIndex,
 .mapPill,
+.mapSubline,
 .primaryMetricLabel,
 .statText,
 .statTextMuted {
@@ -105,7 +115,7 @@
 .heroTitle {
   margin: 0;
   color: var(--brand-yellow);
-  font-size: clamp(42px, 4.8vw, 68px);
+  font-size: 64px;
   font-weight: 950;
   line-height: 0.92;
 }
@@ -190,7 +200,7 @@
   min-width: 0;
   overflow: hidden;
   color: var(--brand-black);
-  font-size: clamp(26px, 2.9vw, 42px);
+  font-size: 40px;
   font-weight: 950;
   line-height: 0.94;
   overflow-wrap: anywhere;
@@ -200,11 +210,217 @@
   line-height: 1.25;
 }
 
+/* ---------- overview ---------- */
+.overviewPanel {
+  min-width: 0;
+  overflow: hidden;
+  background: var(--panel-background);
+  border: 2px solid var(--border-strong);
+}
+
+.overviewHead {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.8fr);
+  gap: 18px;
+  align-items: end;
+  padding: 14px 18px;
+  background: var(--brand-black);
+  border-bottom: 4px solid var(--brand-yellow);
+  color: var(--brand-white);
+}
+
+.overviewHead > div:first-child {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.overviewKicker {
+  color: var(--brand-yellow);
+}
+
+.overviewHead h2 {
+  margin: 0;
+  color: var(--brand-white);
+  font-size: 24px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.modeShareStrip {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid rgba(244, 195, 32, 0.38);
+}
+
+.modeShareStrip span {
+  min-width: 0;
+  min-height: 48px;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-right: 1px solid rgba(244, 195, 32, 0.24);
+}
+
+.modeShareStrip span:last-child {
+  border-right: 0;
+}
+
+.modeShareStrip b {
+  min-width: 0;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.64);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modeShareStrip strong {
+  color: var(--brand-yellow);
+  font-size: 18px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.overviewGrid {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  background: var(--brand-black);
+}
+
+.overviewCard {
+  position: relative;
+  min-width: 0;
+  min-height: 188px;
+  display: grid;
+  align-items: end;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--brand-black);
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--brand-white);
+  text-decoration: none;
+}
+
+.overviewCard:hover {
+  color: var(--brand-white);
+}
+
+.overviewImage,
+.overviewOverlay {
+  position: absolute;
+  inset: 0;
+}
+
+.overviewImage {
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(0.88) contrast(1.08);
+  transform: scale(1.01);
+  transition:
+    filter 180ms ease,
+    transform 180ms ease;
+}
+
+.overviewCard:hover .overviewImage {
+  filter: saturate(1.04) contrast(1.12);
+  transform: scale(1.05);
+}
+
+.overviewOverlay {
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(42, 42, 42, 0.12) 0%, rgba(42, 42, 42, 0.92) 100%),
+    linear-gradient(90deg, rgba(42, 42, 42, 0.74) 0%, rgba(42, 42, 42, 0.22) 70%);
+}
+
+.overviewCardBody {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px 12px;
+  align-items: end;
+  padding: 16px;
+}
+
+.overviewRank {
+  color: var(--brand-yellow);
+  font-size: 28px;
+  line-height: 0.9;
+}
+
+.overviewMapText {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.overviewMapText strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--brand-white);
+  font-size: 22px;
+  font-weight: 950;
+  line-height: 1.02;
+  overflow-wrap: anywhere;
+}
+
+.overviewMapText span {
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.overviewMetric {
+  display: grid;
+  justify-items: end;
+  gap: 5px;
+}
+
+.overviewMetric b {
+  color: var(--brand-yellow);
+  font-size: 26px;
+  font-weight: 950;
+  line-height: 0.95;
+}
+
+.overviewMetric span,
+.overviewCardBody em {
+  color: rgba(255, 255, 255, 0.68);
+  font-style: normal;
+}
+
+.overviewBar {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 5px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.overviewBar span {
+  display: block;
+  height: 100%;
+  background: var(--brand-yellow);
+}
+
+.overviewCardBody em {
+  grid-column: 1 / -1;
+}
+
 /* ---------- content ---------- */
 .content {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 22px;
 }
 
 .modeSection {
@@ -219,7 +435,7 @@
 .modeHeader {
   min-width: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, auto);
   gap: 16px;
   align-items: end;
   padding: 14px 18px;
@@ -247,12 +463,14 @@
 }
 
 .modeMetaGroup {
+  min-width: 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(92px, 1fr));
+  grid-template-columns: repeat(3, minmax(88px, 1fr));
   border: 1px solid rgba(244, 195, 32, 0.38);
 }
 
 .modeMetaCard {
+  min-width: 0;
   min-height: 46px;
   display: grid;
   align-content: center;
@@ -270,26 +488,56 @@
 }
 
 .modeMetaValue {
+  min-width: 0;
+  overflow: hidden;
   color: var(--brand-white);
   font-size: 18px;
   font-weight: 950;
   line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.modeInsight {
+  min-width: 0;
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 0 18px;
+  background: var(--surface-yellow);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.modeInsight span,
+.modeInsight em {
+  color: var(--text-muted);
+  font-style: normal;
+}
+
+.modeInsight strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 950;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ---------- map grid ---------- */
 .mapGrid {
   min-width: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   background: var(--panel-background);
 }
 
 .mapCard {
-  position: relative;
   min-width: 0;
-  min-height: 172px;
   display: grid;
+  grid-template-rows: 132px minmax(0, 1fr);
   overflow: hidden;
   background: var(--panel-background);
   border-right: 1px solid var(--border-light);
@@ -298,51 +546,71 @@
   text-decoration: none;
 }
 
-.mapCard::before {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 2;
-  height: 4px;
-  background: var(--brand-yellow);
-  content: "";
-  pointer-events: none;
-}
-
 .mapCard:hover {
   background: var(--surface-yellow);
 }
 
-.mapBgWrapper {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+.mapMedia {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--brand-black);
 }
 
-.mapBgImg {
+.mapMedia::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--brand-yellow);
+  content: "";
+}
+
+.mapImage,
+.mapImageOverlay {
+  position: absolute;
+  inset: 0;
+}
+
+.mapImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
-  filter: grayscale(92%);
-  opacity: 0.08;
+  filter: saturate(0.82) contrast(1.05);
+  transform: scale(1.01);
+  transition:
+    filter 180ms ease,
+    transform 180ms ease;
 }
 
-.mapBgOverlay {
+.mapCard:hover .mapImage {
+  filter: saturate(1) contrast(1.1);
+  transform: scale(1.05);
+}
+
+.mapImageOverlay {
+  background:
+    linear-gradient(180deg, rgba(42, 42, 42, 0.08) 0%, rgba(42, 42, 42, 0.82) 100%),
+    linear-gradient(90deg, rgba(42, 42, 42, 0.64) 0%, rgba(42, 42, 42, 0.12) 72%);
+}
+
+.mapIndex {
   position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.86);
+  left: 14px;
+  bottom: 14px;
+  color: var(--brand-yellow);
+  font-size: 34px;
+  line-height: 0.9;
 }
 
 .mapCardInner {
-  position: relative;
-  z-index: 1;
   min-width: 0;
   display: grid;
+  align-content: space-between;
   gap: 13px;
-  padding: 16px;
+  padding: 15px;
 }
 
 .mapCardTop {
@@ -356,38 +624,40 @@
 .mapTitleBlock {
   min-width: 0;
   display: grid;
-  gap: 7px;
-}
-
-.mapIndex {
-  color: var(--text-muted);
+  gap: 6px;
 }
 
 .mapName {
   min-width: 0;
   overflow: hidden;
   color: var(--text-primary);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 950;
-  line-height: 1.02;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
-  white-space: nowrap;
+  line-height: 1.04;
+  overflow-wrap: anywhere;
+}
+
+.mapSubline {
+  color: var(--text-muted);
 }
 
 .mapPill {
   min-height: 22px;
   display: inline-flex;
   align-items: center;
+  max-width: 112px;
   padding: 0 8px;
+  overflow: hidden;
   background: var(--brand-yellow);
   border: 1px solid var(--border-strong);
   color: var(--brand-black);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mapPrimaryRow {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0;
   border-top: 1px solid var(--border-light);
   border-left: 1px solid var(--border-light);
@@ -410,10 +680,13 @@
 }
 
 .primaryMetricValue {
+  min-width: 0;
+  overflow: hidden;
   color: var(--text-primary);
   font-size: 20px;
   font-weight: 950;
   line-height: 1;
+  overflow-wrap: anywhere;
 }
 
 .barContainer {
@@ -423,7 +696,7 @@
 
 .barTrack {
   width: 100%;
-  height: 5px;
+  height: 6px;
   overflow: hidden;
   background: rgba(42, 42, 42, 0.12);
 }
@@ -479,6 +752,11 @@
   .summaryCard:last-child {
     border-right: 0;
   }
+
+  .overviewHead {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
 }
 
 @media (max-width: 900px) {
@@ -489,6 +767,17 @@
 
   .modeMetaGroup {
     width: 100%;
+  }
+
+  .modeInsight {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 5px;
+    padding: 10px 18px;
+  }
+
+  .modeInsight strong {
+    white-space: normal;
   }
 }
 
@@ -532,15 +821,43 @@
   }
 
   .summaryValue {
-    font-size: 22px;
+    font-size: 24px;
   }
 
+  .overviewHead h2,
   .modeTitle {
     font-size: 24px;
   }
 
-  .mapGrid {
+  .modeShareStrip,
+  .modeMetaGroup {
     grid-template-columns: 1fr;
+  }
+
+  .modeShareStrip span,
+  .modeMetaCard {
+    border-right: 0;
+    border-bottom: 1px solid rgba(244, 195, 32, 0.24);
+  }
+
+  .modeShareStrip span:last-child,
+  .modeMetaCard:last-child {
+    border-bottom: 0;
+  }
+
+  .overviewCardBody {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .overviewMetric {
+    grid-column: 1 / -1;
+    justify-items: start;
+    grid-template-columns: auto auto;
+    align-items: end;
+  }
+
+  .mapCard {
+    grid-template-rows: 118px minmax(0, 1fr);
   }
 }
 
@@ -557,12 +874,13 @@
     min-height: 20px;
   }
 
+  .overviewCardBody,
   .mapCardInner {
     padding: 14px;
   }
 
   .mapName {
-    font-size: 18px;
+    font-size: 19px;
   }
 
   .mapPrimaryRow {

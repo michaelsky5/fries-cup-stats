@@ -62,12 +62,21 @@
   --fcup-white: var(--fc-white);
 
   /* Role colors */
-  --role-tank: #60a5fa;
-  --role-tank-rgb: 96, 165, 250;
-  --role-dps: #ff4d4f;
-  --role-dps-rgb: 255, 77, 79;
-  --role-support: #4ade80;
-  --role-support-rgb: 74, 222, 128;
+  --role-tank: #3b82f6;
+  --role-tank-rgb: 59, 130, 246;
+  --role-tank-soft: rgba(var(--role-tank-rgb), .14);
+  --role-tank-surface: rgba(var(--role-tank-rgb), .28);
+  --role-tank-border: rgba(var(--role-tank-rgb), .78);
+  --role-dps: #ef4444;
+  --role-dps-rgb: 239, 68, 68;
+  --role-dps-soft: rgba(var(--role-dps-rgb), .14);
+  --role-dps-surface: rgba(var(--role-dps-rgb), .28);
+  --role-dps-border: rgba(var(--role-dps-rgb), .78);
+  --role-support: #22c55e;
+  --role-support-rgb: 34, 197, 94;
+  --role-support-soft: rgba(var(--role-support-rgb), .14);
+  --role-support-surface: rgba(var(--role-support-rgb), .28);
+  --role-support-border: rgba(var(--role-support-rgb), .78);
   --role-flex: var(--fcup-yellow);
   --role-flex-rgb: 244, 195, 32;
 

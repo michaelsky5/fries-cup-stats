@@ -10,11 +10,19 @@ function formatMapFileName(name) {
   return getOwMapImageName(name)
 }
 
+function getMapImageUrl(map) {
+  return `/maps/${getOwMapModeFolder(map.type)}/${formatMapFileName(map.name)}.jpg`
+}
+
+function formatPercent(value) {
+  return `${Number(value || 0).toFixed(1)}%`
+}
+
 const MODE_ORDER = ['Control', 'Hybrid', 'Flashpoint', 'Push', 'Escort', 'Clash']
 
 function SummaryCard({ labelCn, labelEn, value, meta, tone = 'default' }) {
   return (
-    <div className={`${styles.summaryCard} ${styles[`summary_${tone}`]}`}>
+    <div className={[styles.summaryCard, styles[`summary_${tone}`]].filter(Boolean).join(' ')}>
       <div className={styles.summaryLabel}>
         <span className={styles.summaryCn}>{labelCn}</span>
         <span className={styles.summaryEn}>{labelEn}</span>
@@ -43,12 +51,29 @@ const MapStatsPage = () => {
     const allMaps = sortedModes.flatMap(mode => groupedByType[mode] || [])
     const totalUniqueMaps = allMaps.length
     const topMap = [...allMaps].sort((a, b) => b.playedCount - a.playedCount)[0]
+    const topMaps = [...allMaps].sort((a, b) => b.playedCount - a.playedCount).slice(0, 4)
+    const modeTotals = sortedModes
+      .map(mode => {
+        const maps = groupedByType[mode] || []
+        const plays = maps.reduce((sum, map) => sum + map.playedCount, 0)
+        return {
+          mode,
+          mapCount: maps.length,
+          plays,
+          share: totalValidMaps > 0 ? (plays / totalValidMaps) * 100 : 0,
+          topMap: maps[0] || null
+        }
+      })
+      .sort((a, b) => b.plays - a.plays)
+
     return {
       modeCount,
       totalUniqueMaps,
-      topMap
+      topMap,
+      topMaps,
+      modeTotals
     }
-  }, [groupedByType, sortedModes])
+  }, [groupedByType, sortedModes, totalValidMaps])
 
   return (
     <div className={styles.shell}>
@@ -107,11 +132,73 @@ const MapStatsPage = () => {
         </div>
       </section>
 
+      {summary.topMaps.length > 0 ? (
+        <section className={styles.overviewPanel} aria-labelledby="map-overview-title">
+          <div className={styles.overviewHead}>
+            <div>
+              <span className={styles.overviewKicker}>GLOBAL MAP RANK</span>
+              <h2 id="map-overview-title">{isEn ? 'Overall heat map' : '全局热度排行'}</h2>
+            </div>
+
+            <div className={styles.modeShareStrip}>
+              {summary.modeTotals.slice(0, 3).map(row => (
+                <span key={row.mode}>
+                  <b>{formatOwMapMode(row.mode, locale)}</b>
+                  <strong>{formatPercent(row.share)}</strong>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.overviewGrid}>
+            {summary.topMaps.map((map, index) => {
+              const mapDisplayName = formatOwMapName(map.name, locale)
+              const globalPickRate = map.pickRate * 100
+
+              return (
+                <Link
+                  key={map.name}
+                  to={withSeason(`/maps/${encodeURIComponent(map.name)}`)}
+                  className={styles.overviewCard}
+                >
+                  <img
+                    src={getMapImageUrl(map)}
+                    alt={mapDisplayName}
+                    className={styles.overviewImage}
+                    onError={e => {
+                      e.target.style.display = 'none'
+                    }}
+                  />
+                  <div className={styles.overviewOverlay} />
+                  <div className={styles.overviewCardBody}>
+                    <span className={styles.overviewRank}>{String(index + 1).padStart(2, '0')}</span>
+                    <div className={styles.overviewMapText}>
+                      <strong>{mapDisplayName}</strong>
+                      <span>{formatOwMapMode(map.type, locale)}</span>
+                    </div>
+                    <div className={styles.overviewMetric}>
+                      <b>{map.playedCount}</b>
+                      <span>{isEn ? 'PLAYS' : '登场'}</span>
+                    </div>
+                    <div className={styles.overviewBar}>
+                      <span style={{ width: `${globalPickRate}%` }} />
+                    </div>
+                    <em>{isEn ? 'Global share' : '全局占比'} {formatPercent(globalPickRate)}</em>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        </section>
+      ) : null}
+
       <section className={styles.content}>
         {sortedModes.map(mode => {
           const mapsInMode = groupedByType[mode]
           const modeTotalPlays = mapsInMode.reduce((sum, map) => sum + map.playedCount, 0)
+          const modeShareRate = totalValidMaps > 0 ? (modeTotalPlays / totalValidMaps) * 100 : 0
           const modeDisplayName = formatOwMapMode(mode, locale)
+          const modeLeader = mapsInMode[0]
 
           return (
             <section key={mode} className={styles.modeSection}>
@@ -130,15 +217,29 @@ const MapStatsPage = () => {
                     <span className={styles.modeMetaLabel}>TOTAL PLAYS</span>
                     <span className={styles.modeMetaValue}>{modeTotalPlays}</span>
                   </div>
+                  <div className={styles.modeMetaCard}>
+                    <span className={styles.modeMetaLabel}>MODE SHARE</span>
+                    <span className={styles.modeMetaValue}>{formatPercent(modeShareRate)}</span>
+                  </div>
                 </div>
               </div>
+
+              {modeLeader ? (
+                <div className={styles.modeInsight}>
+                  <span>{isEn ? 'Leading map' : '模式首选地图'}</span>
+                  <strong>{formatOwMapName(modeLeader.name, locale)}</strong>
+                  <em>
+                    {modeLeader.playedCount} {isEn ? 'plays' : '次登场'} / {formatPercent(modeShareRate)} {isEn ? 'global share' : '全局占比'}
+                  </em>
+                </div>
+              ) : null}
 
               <div className={styles.mapGrid}>
                 {mapsInMode.map((map, index) => {
                   const relativePickRate = modeTotalPlays > 0 ? (map.playedCount / modeTotalPlays) * 100 : 0
                   const globalPickRate = map.pickRate * 100
                   const mapDisplayName = formatOwMapName(map.name, locale)
-                  const mapImageUrl = `/maps/${getOwMapModeFolder(map.type)}/${formatMapFileName(map.name)}.jpg`
+                  const mapImageUrl = getMapImageUrl(map)
 
                   return (
                     <Link
@@ -146,23 +247,24 @@ const MapStatsPage = () => {
                       to={withSeason(`/maps/${encodeURIComponent(map.name)}`)}
                       className={styles.mapCard}
                     >
-                      <div className={styles.mapBgWrapper}>
+                      <div className={styles.mapMedia}>
                         <img
                           src={mapImageUrl}
                           alt={mapDisplayName}
-                          className={styles.mapBgImg}
+                          className={styles.mapImage}
                           onError={e => {
                             e.target.style.display = 'none'
                           }}
                         />
-                        <div className={styles.mapBgOverlay} />
+                        <div className={styles.mapImageOverlay} />
+                        <span className={styles.mapIndex}>{String(index + 1).padStart(2, '0')}</span>
                       </div>
 
                       <div className={styles.mapCardInner}>
                         <div className={styles.mapCardTop}>
                           <div className={styles.mapTitleBlock}>
-                            <span className={styles.mapIndex}>{String(index + 1).padStart(2, '0')}</span>
                             <span className={styles.mapName}>{mapDisplayName}</span>
+                            <span className={styles.mapSubline}>{isEn ? 'Map report available' : '可查看地图详情'}</span>
                           </div>
 
                           <div className={styles.mapPill}>{formatOwMapMode(map.type, locale).toUpperCase()}</div>
@@ -176,7 +278,12 @@ const MapStatsPage = () => {
 
                           <div className={styles.primaryMetric}>
                             <span className={styles.primaryMetricLabel}>MODE SHARE</span>
-                            <span className={styles.primaryMetricValue}>{relativePickRate.toFixed(1)}%</span>
+                            <span className={styles.primaryMetricValue}>{formatPercent(relativePickRate)}</span>
+                          </div>
+
+                          <div className={styles.primaryMetric}>
+                            <span className={styles.primaryMetricLabel}>GLOBAL</span>
+                            <span className={styles.primaryMetricValue}>{formatPercent(globalPickRate)}</span>
                           </div>
                         </div>
 
@@ -187,8 +294,8 @@ const MapStatsPage = () => {
                         </div>
 
                         <div className={styles.mapStats}>
-                          <span className={styles.statText}>MODE PICK RATE · {relativePickRate.toFixed(1)}%</span>
-                          <span className={styles.statTextMuted}>GLOBAL · {globalPickRate.toFixed(1)}%</span>
+                          <span className={styles.statText}>MODE PICK RATE · {formatPercent(relativePickRate)}</span>
+                          <span className={styles.statTextMuted}>GLOBAL · {formatPercent(globalPickRate)}</span>
                         </div>
                       </div>
                     </Link>

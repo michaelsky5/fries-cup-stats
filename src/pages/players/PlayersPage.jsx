@@ -18,7 +18,7 @@ import {
   safeArr,
   sortPlayers
 } from '../../lib/rosterSelectors.js'
-import { formatOwHeroName } from '../../lib/heroes.js'
+import { formatOwHeroName, getOwHeroCanonicalKey, getOwHeroCanonicalName } from '../../lib/heroes.js'
 import styles from './PlayersPage.module.css'
 
 const ROLE_TABS = [
@@ -69,6 +69,7 @@ function useQueryWriter(searchParams, setSearchParams) {
 export default function PlayersPage() {
   const {
     db,
+    season,
     withSeason = path => path,
     favorites,
     favoriteLimits,
@@ -82,8 +83,8 @@ export default function PlayersPage() {
 
   const summary = useMemo(() => getRosterSummary(db), [db])
   const players = useMemo(() => {
-    return getPlayerDirectory(db, favorites, { role: queryState.role })
-  }, [db, favorites, queryState.role])
+    return getPlayerDirectory(db, favorites, { role: queryState.role, season })
+  }, [db, favorites, queryState.role, season])
   const teamOptions = useMemo(() => {
     const map = new Map()
     players.forEach(player => {
@@ -100,15 +101,20 @@ export default function PlayersPage() {
     ]
   }, [players])
   const heroOptions = useMemo(() => {
-    const heroes = new Set()
+    const heroes = new Map()
+    const addHero = hero => {
+      const key = getOwHeroCanonicalKey(hero)
+      if (key && !heroes.has(key)) heroes.set(key, getOwHeroCanonicalName(hero))
+    }
+
     players.forEach(player => {
-      if (player.avatar?.heroName) heroes.add(player.avatar.heroName)
-      safeArr(player.heroNames).forEach(hero => hero && heroes.add(hero))
-      safeArr(player.top_3_heroes).forEach(hero => hero && heroes.add(hero))
+      addHero(player.avatar?.heroName)
+      safeArr(player.heroNames).forEach(addHero)
+      safeArr(player.top_3_heroes).forEach(addHero)
     })
     return [
       { value: 'ALL', label: '全部英雄' },
-      ...[...heroes]
+      ...[...heroes.values()]
         .sort((a, b) => formatOwHeroName(a, locale).localeCompare(formatOwHeroName(b, locale), locale))
         .map(hero => ({ value: hero, label: formatOwHeroName(hero, locale) }))
     ]

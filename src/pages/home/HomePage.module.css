@@ -1820,8 +1820,9 @@
 
 .advanceResultGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(410px, 0.95fr);
   gap: 24px;
+  align-items: stretch;
 }
 
 .advanceCard,
@@ -1829,56 +1830,167 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 24px;
-}
-
-.advanceCard {
-  background: var(--portal-yellow);
+  gap: 0;
+  overflow: hidden;
+  padding: 0;
   border-color: var(--portal-border);
 }
 
-.advanceCard header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px 18px;
-  align-items: end;
+.advanceCard {
+  background: var(--portal-black);
+  color: var(--fc-white);
 }
 
-.advanceCard header span {
-  grid-column: 1 / -1;
+.advanceCardHero {
+  min-height: 156px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: end;
+  padding: 26px 28px 24px;
+  background: var(--portal-yellow);
+  border-bottom: 2px solid var(--portal-border);
+  color: var(--portal-ink);
+}
+
+.advanceCardHero div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.advanceCardHero span {
   color: rgba(42, 42, 42, 0.62);
 }
 
-.advanceCard header strong {
+.advanceCardHero strong {
+  min-width: 0;
   color: var(--portal-ink);
-  font-size: 44px;
+  font-size: clamp(46px, 5vw, 72px);
   font-weight: 950;
-  line-height: 0.9;
+  line-height: 0.82;
+  overflow-wrap: anywhere;
 }
 
-.advanceCard header em {
+.advanceCardHero small {
+  width: fit-content;
+  max-width: 100%;
+  padding: 8px 10px;
+  background: rgba(42, 42, 42, 0.12);
   color: rgba(42, 42, 42, 0.68);
   font-size: 13px;
-  font-style: normal;
   font-weight: 900;
+  line-height: 1.2;
+}
+
+.advanceCardHero em {
+  align-self: end;
+  min-width: 128px;
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.32);
+  border: 2px solid rgba(42, 42, 42, 0.2);
+  color: rgba(42, 42, 42, 0.68);
+  font-style: normal;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.advanceCardHero em b {
+  color: var(--portal-ink);
+  font-size: 28px;
+  font-weight: 950;
+  line-height: 0.95;
+}
+
+.advanceCardHero em span {
+  color: rgba(42, 42, 42, 0.62);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.advanceRuleLine {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 16px 20px;
+  background: #2a2a2a;
+  border-bottom: 1px solid rgba(244, 195, 32, 0.38);
+}
+
+.advanceRuleLine span {
+  color: var(--portal-yellow);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.advanceRuleLine strong {
+  min-width: 0;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.advanceZoneBar {
+  display: flex;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border-bottom: 2px solid var(--portal-border);
+}
+
+.advanceZoneBar i {
+  flex: var(--zone-share) 1 0;
+  min-width: 8px;
+}
+
+.advanceZoneBar_direct {
+  background: var(--portal-yellow);
+}
+
+.advanceZoneBar_contest {
+  background: #ffe89c;
+}
+
+.advanceZoneBar_danger {
+  background: #f4d5a2;
 }
 
 .zoneGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 0;
+  background: var(--fc-white);
+  border-bottom: 2px solid var(--portal-border);
 }
 
 .zoneGrid div {
   min-width: 0;
-  min-height: 112px;
+  min-height: 120px;
   display: grid;
   align-content: space-between;
   gap: 8px;
-  padding: 14px;
-  background: rgba(255, 255, 255, 0.46);
-  border: 2px solid rgba(42, 42, 42, 0.18);
+  padding: 16px;
+  background: var(--fc-white);
+  border-right: 1px solid rgba(42, 42, 42, 0.18);
+}
+
+.zoneGrid div:first-child {
+  background: #fff6d4;
+}
+
+.zoneGrid div:last-child {
+  border-right: 0;
 }
 
 .zoneGrid span {
@@ -1906,26 +2018,122 @@
 }
 
 .advanceCard a {
+  margin: 18px 20px 20px;
   width: fit-content;
-  background: var(--fc-white);
+  background: var(--portal-yellow);
+  border-color: var(--portal-yellow);
 }
 
 .resultsCard header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 18px;
+  min-height: 70px;
+  padding: 14px 20px;
+  background: var(--portal-black);
+  border-bottom: 4px solid var(--portal-yellow);
 }
 
-.resultsCard header span {
-  color: var(--portal-muted);
+.resultsCardTitle {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.resultsCard header span,
+.resultsCardTitle span {
+  color: var(--portal-yellow);
+}
+
+.resultsCardTitle strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--fc-white);
+  font-size: 24px;
+  font-weight: 950;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .resultsCard header a {
   min-height: 36px;
   padding: 0 12px;
-  background: var(--fc-white);
+  flex: 0 0 auto;
+  background: var(--portal-yellow);
+  border-color: var(--portal-yellow);
   font-size: 12px;
+}
+
+.resultsList {
+  flex: 1 1 auto;
+  display: grid;
+  grid-auto-rows: minmax(68px, 1fr);
+  background: var(--fc-white);
+}
+
+.resultsList .matchCard {
+  min-height: 68px;
+  gap: 5px;
+  padding: 8px 16px;
+  background: var(--fc-white);
+  border: 0;
+  border-bottom: 1px solid rgba(42, 42, 42, 0.16);
+  transform: none;
+}
+
+.resultsList .matchCard:last-child {
+  border-bottom: 0;
+}
+
+.resultsList .matchCard:hover {
+  background: #fff8df;
+  transform: none;
+}
+
+.resultsList .matchDuel {
+  gap: 8px;
+}
+
+.resultsList .teamMark {
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.resultsList .teamMarkRight {
+  grid-template-columns: minmax(0, 1fr) 30px;
+}
+
+.resultsList .teamLogo {
+  width: 30px;
+  height: 30px;
+}
+
+.resultsList .teamLogo img {
+  width: 24px;
+  height: 24px;
+}
+
+.resultsList .teamMark strong {
+  font-size: 15px;
+}
+
+.resultsList .matchDuel b {
+  min-width: 52px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--portal-black);
+  border-bottom: 3px solid var(--portal-yellow);
+  color: var(--fc-white);
+  font-size: 16px;
+}
+
+.resultsList .matchMeta {
+  gap: 8px;
+  font-size: 10px;
+  line-height: 1;
 }
 
 .resourceGrid {
@@ -3455,6 +3663,45 @@
   .archiveVaultGrid,
   .dataKingGrid {
     grid-template-columns: 1fr;
+  }
+
+  .advanceCardHero {
+    min-height: auto;
+    grid-template-columns: 1fr;
+    padding: 22px;
+  }
+
+  .advanceCardHero em {
+    justify-self: start;
+    text-align: left;
+  }
+
+  .advanceRuleLine {
+    grid-template-columns: 1fr;
+  }
+
+  .advanceRuleLine strong {
+    text-align: left;
+    white-space: normal;
+  }
+
+  .zoneGrid div {
+    min-height: 94px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(42, 42, 42, 0.18);
+  }
+
+  .zoneGrid div:last-child {
+    border-bottom: 0;
+  }
+
+  .resultsCard header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .resultsCard header a {
+    width: 100%;
   }
 
   .archiveVaultLead,

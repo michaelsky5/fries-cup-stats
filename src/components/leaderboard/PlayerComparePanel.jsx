@@ -1,5 +1,6 @@
 import { formatDecimal, formatInt } from '../../lib/format.js'
 import {
+  formatEntrySeasonOvr,
   getEntryMetricValue,
   getRoleEnLabel,
   getRoleLabel
@@ -56,8 +57,8 @@ export default function PlayerComparePanel({ entries, mode, modeLabel, onClose }
             <div key={entry.entryKey} className={styles.comparePlayerCard}>
               <PlayerIdentity entry={entry} />
               <div className={styles.compareScore}>
-                <span>综合评分</span>
-                <strong>{formatDecimal(entry.roleScore, 1, '-')}</strong>
+                <span>赛季 OVR</span>
+                <strong>{formatEntrySeasonOvr(entry)}</strong>
               </div>
               {!entry.eligible ? <em>样本不足，比较结果仅作参考</em> : null}
             </div>

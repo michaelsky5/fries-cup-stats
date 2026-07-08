@@ -28,6 +28,7 @@ import {
   stageCn,
   roleDeepNarrative
 } from './reviewI18n.js'
+import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 
 function uniq(list) {
   return Array.from(new Set(safeArr(list).filter(Boolean).map(String)))
@@ -1422,9 +1423,9 @@ function getHeroPool(logs) {
   logs.forEach(log => {
     if (!log.hero) return
 
-    const key = heroNameToSlug(log.hero)
+    const key = getOwHeroCanonicalKey(log.hero) || heroNameToSlug(log.hero)
     const prev = map.get(key) || {
-      hero: log.hero,
+      hero: getOwHeroCanonicalName(log.hero),
       minutes: 0,
       count: 0,
       role: log.role
@@ -1489,8 +1490,8 @@ function getMapPool(logs) {
     if (log.mapType || log.map_type) prev.mapType = log.mapType || log.map_type
 
     if (log.hero) {
-      const heroKey = heroNameToSlug(log.hero)
-      const heroPrev = prev.heroes.get(heroKey) || { hero: log.hero, minutes: 0, count: 0 }
+      const heroKey = getOwHeroCanonicalKey(log.hero) || heroNameToSlug(log.hero)
+      const heroPrev = prev.heroes.get(heroKey) || { hero: getOwHeroCanonicalName(log.hero), minutes: 0, count: 0 }
 
       heroPrev.minutes += Number(log.playtimeMinutes || log.playtime_minutes || 0)
       heroPrev.count += 1

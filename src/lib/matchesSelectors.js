@@ -484,8 +484,20 @@ export function getUpcomingRoundMatches(matches = [], round = '') {
   return getMatchesByRound(matches, round).filter(isUpcomingMatch)
 }
 
-export function getRecentFinishedMatches(matches = [], round = '', limit = 4) {
-  return getFinishedMatches(getMatchesByRound(matches, round)).slice(0, limit)
+export function getRecentFinishedMatches(matches = [], round = '', limit = 9) {
+  const selected = []
+  const selectedIds = new Set()
+  const addMatch = match => {
+    const id = matchIdentity(match)
+    if (!id || selectedIds.has(id) || selected.length >= limit) return
+    selectedIds.add(id)
+    selected.push(match)
+  }
+
+  getFinishedMatches(getMatchesByRound(matches, round)).forEach(addMatch)
+  getFinishedMatches(matches).forEach(addMatch)
+
+  return selected
 }
 
 export function getPrimaryFollowingNextMatch(matches = [], favorites = {}) {
@@ -619,7 +631,7 @@ export function getMatchHubData(db, seasonId, favorites = {}) {
   const upcomingMatches = getUpcomingMatches(matches)
   const finishedMatches = getFinishedMatches(matches)
   const upcomingRoundMatches = getUpcomingRoundMatches(matches, summary.round)
-  const recentFinishedMatches = getRecentFinishedMatches(matches, summary.round, 4)
+  const recentFinishedMatches = getRecentFinishedMatches(matches, summary.round, 9)
   const primaryFollowingNextMatch = getPrimaryFollowingNextMatch(matches, favorites)
   const followingRoundMatchCount = getFollowingRoundMatchCount(matches, favorites, summary.round)
   const isArchive = isSeasonCompleteByPublishedMatches(db, seasonId, summary.finished, summary.total)

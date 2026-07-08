@@ -5,11 +5,30 @@ import { formatCardValue } from './playerShareOvr.js'
 import { DEFAULT_SHARE_ARTWORK_CROP } from './heroShareArtworkConfig.js'
 import styles from './PlayerShareCard.module.css'
 
-function playerNameClass(name) {
-  const length = String(name || '').length
-  if (length > 18) return styles.nameTiny
-  if (length > 12) return styles.nameSmall
-  return ''
+const PLAYER_NAME_BASE_SIZE = 118
+const PLAYER_NAME_MIN_SIZE = 54
+const PLAYER_NAME_MAX_WIDTH = 528
+
+function getPlayerNameCharUnits(char) {
+  if (/[\u2e80-\u9fff]/u.test(char)) return 1
+  if (/[MW]/u.test(char)) return 0.92
+  if (/[I1|!.,:;'`]/u.test(char)) return 0.34
+  if (/[#@&%]/u.test(char)) return 0.58
+  if (/[0-9]/u.test(char)) return 0.62
+  if (/[A-Z]/u.test(char)) return 0.68
+  return 0.62
+}
+
+function getPlayerNameFontSize(name) {
+  const units = Array.from(String(name || '').toUpperCase()).reduce(
+    (sum, char) => sum + getPlayerNameCharUnits(char),
+    0
+  )
+  if (!units) return PLAYER_NAME_BASE_SIZE
+  return Math.max(
+    PLAYER_NAME_MIN_SIZE,
+    Math.min(PLAYER_NAME_BASE_SIZE, Math.floor(PLAYER_NAME_MAX_WIDTH / units))
+  )
 }
 
 function unique(values) {
@@ -204,6 +223,9 @@ export default function PlayerShareCard({ model, exportMode = false }) {
   const t = createTranslator(model.locale)
   const artwork = model.visuals.heroArtworkMeta || {}
   const crop = artwork.crop || DEFAULT_SHARE_ARTWORK_CROP
+  const playerNameStyle = {
+    '--player-name-font-size': `${getPlayerNameFontSize(model.identity.nickname)}px`
+  }
   const ovrLabel = model.score.ovr === null ? '—' : formatCardValue(model.score.ovr)
   const ratedLabel = model.eligibility.eligible
     ? t('playerShare.card.seasonOvr', '赛季能力值')
@@ -244,7 +266,9 @@ export default function PlayerShareCard({ model, exportMode = false }) {
 
       <section className={styles.identityText}>
         <div className={styles.identityKicker}>{t('playerShare.card.identityKicker', 'PLAYER PROFILE')}</div>
-        <h1 className={playerNameClass(model.identity.nickname)}>{model.identity.nickname}</h1>
+        <h1 className={styles.playerName} style={playerNameStyle} title={model.identity.nickname}>
+          {model.identity.nickname}
+        </h1>
         {model.identity.battleTag ? <p>{model.identity.battleTag}</p> : null}
         <div className={styles.teamLine}>
           <TeamLogo

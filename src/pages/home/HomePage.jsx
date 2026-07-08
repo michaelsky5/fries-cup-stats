@@ -507,6 +507,7 @@ function FollowingSection({ following }) {
 
 function AdvancementResultsSection({ overview, advance, latest }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const isEnglish = isEnglishLocale(locale)
   const hasData = advance.hasStarted || latest.hasResults
   const zones = [
     { key: 'direct', label: homeText(locale, '晋级区', 'Advance Zone'), rows: safeArr(advance.zones?.direct) },
@@ -514,9 +515,21 @@ function AdvancementResultsSection({ overview, advance, latest }) {
     { key: 'danger', label: homeText(locale, '危险区', 'At Risk'), rows: safeArr(advance.zones?.danger) }
   ]
   const advanceLabel = advanceSlotsText(overview.advancementLabel, locale)
-  const ruleLine = isEnglishLocale(locale)
+  const ruleLine = isEnglish
     ? `${overview.expectedRounds} Swiss rounds · ${advanceLabel} advance`
     : `${overview.expectedRounds} 轮瑞士轮 · ${overview.advancementLabel} 晋级`
+  const zoneTotal = zones.reduce((sum, zone) => sum + zone.rows.length, 0)
+  const resultMatches = latest.matches.slice(0, 5)
+  const completedMatchLabel = isEnglish
+    ? `${latest.completed} matches`
+    : `${latest.completed} 场`
+  const totalScheduleLabel = isEnglish
+    ? `${latest.total} match records`
+    : `共 ${latest.total} 场赛程记录`
+  const roundProgressLabel = overview.roundProgressLabel || `${latest.completed} / ${latest.total}`
+  const resultCountLabel = isEnglish
+    ? `Latest ${resultMatches.length || 0}`
+    : `最近 ${resultMatches.length || 0} 场`
 
   return (
     <section className={styles.sectionBlock}>
@@ -537,11 +550,30 @@ function AdvancementResultsSection({ overview, advance, latest }) {
       ) : (
         <div className={styles.advanceResultGrid}>
           <article className={styles.advanceCard}>
-            <header>
-              <span>{homeText(locale, '晋级形势', 'Advance Picture')}</span>
-              <strong>{latest.completed} / {latest.total}</strong>
-              <em>{homeText(locale, '当前轮次进度', 'Current round progress')}</em>
+            <header className={styles.advanceCardHero}>
+              <div>
+                <span>{homeText(locale, '已完成比赛', 'Completed Matches')}</span>
+                <strong>{completedMatchLabel}</strong>
+                <small>{totalScheduleLabel}</small>
+              </div>
+              <em>
+                <b>{roundProgressLabel}</b>
+                <span>{homeText(locale, '本轮进度', 'Current round')}</span>
+              </em>
             </header>
+            <div className={styles.advanceRuleLine}>
+              <span>{homeText(locale, '赛制规则', 'Format Rule')}</span>
+              <strong>{ruleLine}</strong>
+            </div>
+            <div className={styles.advanceZoneBar} aria-hidden="true">
+              {zones.map(zone => (
+                <i
+                  key={zone.key}
+                  className={styles[`advanceZoneBar_${zone.key}`]}
+                  style={{ '--zone-share': zoneTotal ? zone.rows.length / zoneTotal : 1 / zones.length }}
+                />
+              ))}
+            </div>
             <div className={styles.zoneGrid}>
               {zones.map(zone => (
                 <div key={zone.key}>
@@ -556,12 +588,19 @@ function AdvancementResultsSection({ overview, advance, latest }) {
 
           <article className={styles.resultsCard}>
             <header>
-              <span>{homeText(locale, '最新赛果', 'Latest Results')}</span>
+              <div className={styles.resultsCardTitle}>
+                <span>{homeText(locale, '最新赛果', 'Latest Results')}</span>
+                <strong>{resultCountLabel}</strong>
+              </div>
               <Link to={withSeason('/matches?view=list&tab=finished')}>{homeText(locale, '查看全部赛果', 'View All Results')}</Link>
             </header>
-            {latest.matches.length ? latest.matches.slice(0, 3).map(match => (
-              <MatchCard key={matchRouteId(match)} match={match} result compact />
-            )) : (
+            {resultMatches.length ? (
+              <div className={styles.resultsList}>
+                {resultMatches.map(match => (
+                  <MatchCard key={matchRouteId(match)} match={match} result compact />
+                ))}
+              </div>
+            ) : (
               <div className={styles.emptyMini}>
                 <strong>{homeText(locale, '暂无赛果', 'No Results Yet')}</strong>
                 <span>{homeText(locale, '赛果确认后将显示最近完成的比赛。', 'Recently completed matches will appear after results are confirmed.')}</span>
@@ -1345,7 +1384,7 @@ export default function HomePage() {
 
   const overview = useMemo(() => getOverviewStatus(db, season), [db, season])
   const following = useMemo(() => getFollowingOverview(db, favorites), [db, favorites])
-  const latest = useMemo(() => getLatestResultSnapshot(db, 3), [db])
+  const latest = useMemo(() => getLatestResultSnapshot(db, 5), [db])
   const advance = useMemo(() => getAdvanceSnapshot(db, 8, season), [db, season])
   const archive = useMemo(() => getArchiveHighlights(db), [db])
   const archiveMatches = useMemo(() => getArchiveFeaturedMatches(db, season, 5), [db, season])

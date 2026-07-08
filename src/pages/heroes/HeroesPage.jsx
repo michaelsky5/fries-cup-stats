@@ -1,7 +1,13 @@
 import { useMemo, useState, useEffect } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
-import { formatOwHeroName, getOwHeroAssetKey } from '../../lib/heroes.js'
+import {
+  formatOwHeroName,
+  getOwHeroAssetKey,
+  getOwHeroCanonicalKey,
+  getOwHeroCanonicalName,
+  getOwHeroRole
+} from '../../lib/heroes.js'
 import { safeArr } from '../../lib/selectors.js'
 import styles from './HeroesPage.module.css'
 
@@ -58,6 +64,10 @@ function normalizeRecordedRole(role) {
   return normalized
 }
 
+function getHeroStatKey(hero) {
+  return getOwHeroCanonicalKey(hero)
+}
+
 function getTopMapValue(map) {
   return [...map.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || '-'
 }
@@ -88,20 +98,25 @@ function getRecordedCompositions(db, limit = 5) {
       ;['team_a_stats', 'team_b_stats'].forEach(side => {
         const rawStats = safeArr(map?.[side])
         const recordedHeroes = rawStats
-          .map(stat => ({
-            hero: String(stat?.heroes_played || '').trim(),
-            role: normalizeRecordedRole(stat?.role)
-          }))
+          .map(stat => {
+            const hero = String(stat?.heroes_played || '').trim()
+            const role = normalizeRecordedRole(stat?.role) || normalizeRecordedRole(getOwHeroRole(hero))
+            return {
+              hero,
+              heroKey: getHeroStatKey(hero),
+              role
+            }
+          })
           .filter(item => item.hero && item.hero !== '-' && item.hero !== 'UNKNOWN')
           .sort((a, b) => {
             const roleDiff = (RECORDED_ROLE_ORDER[a.role] ?? 9) - (RECORDED_ROLE_ORDER[b.role] ?? 9)
             if (roleDiff !== 0) return roleDiff
-            return a.hero.localeCompare(b.hero)
+            return a.heroKey.localeCompare(b.heroKey)
           })
 
         const seenHeroes = new Set()
         const composition = recordedHeroes.filter(item => {
-          const key = item.hero.toLowerCase()
+          const key = item.heroKey || item.hero.toLowerCase()
           if (seenHeroes.has(key)) return false
           seenHeroes.add(key)
           return true
@@ -109,7 +124,7 @@ function getRecordedCompositions(db, limit = 5) {
 
         if (composition.length < 5) return
 
-        const key = composition.map(item => `${item.role}:${item.hero}`).join('|')
+        const key = composition.map(item => `${item.role}:${item.heroKey || item.hero}`).join('|')
         const team = getRecordedTeam(match, map, side, rawStats)
 
         if (!compositionMap.has(key)) {
@@ -255,16 +270,19 @@ export default function HeroesPage() {
       const logs = safeArr(p.match_logs?.length > 0 ? p.match_logs : p.live_match_logs)
 
       logs.forEach(log => {
-        const h = log.hero
+        const h = String(log.hero || '').trim()
         if (!h || h === '-' || h === 'UNKNOWN') return
 
-        let normalizedRole = String(log.role).toUpperCase()
-        if (normalizedRole === 'DPS') normalizedRole = 'DAMAGE'
-        if (normalizedRole === 'SUP') normalizedRole = 'SUPPORT'
+        const heroKey = getHeroStatKey(h)
+        if (!heroKey) return
 
-        if (!stats[h]) {
-          stats[h] = {
-            name: h,
+        const heroName = getOwHeroCanonicalName(h)
+        const normalizedRole = normalizeRecordedRole(log.role) || normalizeRecordedRole(getOwHeroRole(h))
+
+        if (!stats[heroKey]) {
+          stats[heroKey] = {
+            key: heroKey,
+            name: heroName,
             role: normalizedRole,
             totalTime: 0,
             players: {}
@@ -272,10 +290,10 @@ export default function HeroesPage() {
         }
 
         const time = Number(log.playtimeMinutes) || 0
-        stats[h].totalTime += time
+        stats[heroKey].totalTime += time
 
-        if (!stats[h].players[p.player_id]) {
-          stats[h].players[p.player_id] = {
+        if (!stats[heroKey].players[p.player_id]) {
+          stats[heroKey].players[p.player_id] = {
             id: p.player_id,
             name: p.display_name || p.player_name,
             team: p.team_short_name || 'FREE',
@@ -283,7 +301,7 @@ export default function HeroesPage() {
           }
         }
 
-        stats[h].players[p.player_id].time += time
+        stats[heroKey].players[p.player_id].time += time
       })
     })
 
@@ -408,7 +426,7 @@ export default function HeroesPage() {
               if (hero.role === 'SUPPORT' || hero.role === 'SUP') roleClass = styles.borderSup
 
               return (
-                <div key={hero.name} className={`${styles.heroCard} ${roleClass}`}>
+                <div key={hero.key || hero.name} className={`${styles.heroCard} ${roleClass}`}>
                   <div className={styles.cardTop}>
                     <div className={styles.avatarBox}>
                       <img

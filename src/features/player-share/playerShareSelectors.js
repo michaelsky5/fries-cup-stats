@@ -215,7 +215,7 @@ export function getPlayerShareCardModel({
       eligibleCount: summary.qualifiedSize,
       rankLabel: eligible ? summary.rankLabel : '—',
       percentileLabel: eligible ? percentLabel(summary.scorePercentile, locale) : (isZh(locale) ? '未定级' : 'Not Rated'),
-      ovr: eligible ? mapPercentileToOvr(summary.scorePercentile) : null
+      ovr: eligible ? (summary.seasonOvr ?? mapPercentileToOvr(summary.scorePercentile)) : null
     },
     attributes,
     radar: {

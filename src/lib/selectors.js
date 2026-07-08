@@ -1,5 +1,6 @@
 // src/lib/selectors.js
 import { getLeaderboardRows as getRoleLeaderboardRows } from './leaderboardSelectors.js'
+import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 
 // 安全的数组转换辅助函数
 export const safeArr = v => Array.isArray(v) ? v : []
@@ -205,9 +206,9 @@ export function getMapDetail(db, mapName) {
   
   // 极值记录器
   let records = {
-    maxElims: { value: 0, player: '', hero: '', matchId: '' },
-    maxDamage: { value: 0, player: '', hero: '', matchId: '' },
-    maxHealing: { value: 0, player: '', hero: '', matchId: '' }
+    maxElims: { value: 0, player: '', playerId: '', hero: '', matchId: '', teamId: '', teamName: '', opponentId: '', opponentName: '', stage: '', round: '' },
+    maxDamage: { value: 0, player: '', playerId: '', hero: '', matchId: '', teamId: '', teamName: '', opponentId: '', opponentName: '', stage: '', round: '' },
+    maxHealing: { value: 0, player: '', playerId: '', hero: '', matchId: '', teamId: '', teamName: '', opponentId: '', opponentName: '', stage: '', round: '' }
   }
 
   matches.forEach(match => {
@@ -230,24 +231,44 @@ export function getMapDetail(db, mapName) {
     const teamBId = match.team_b?.id
 
     if (teamAId) {
-      if (!teamStats[teamAId]) teamStats[teamAId] = { name: mapData.team_a_name, wins: 0, plays: 0 }
+      if (!teamStats[teamAId]) teamStats[teamAId] = { id: teamAId, name: mapData.team_a_name, wins: 0, plays: 0 }
       teamStats[teamAId].plays++
       if (winnerId === teamAId) teamStats[teamAId].wins++
     }
     if (teamBId) {
-      if (!teamStats[teamBId]) teamStats[teamBId] = { name: mapData.team_b_name, wins: 0, plays: 0 }
+      if (!teamStats[teamBId]) teamStats[teamBId] = { id: teamBId, name: mapData.team_b_name, wins: 0, plays: 0 }
       teamStats[teamBId].plays++
       if (winnerId === teamBId) teamStats[teamBId].wins++
     }
 
     // 统计英雄出场与选手极值
-    const allStats = [...safeArr(mapData.team_a_stats), ...safeArr(mapData.team_b_stats)]
-    
-    allStats.forEach(stat => {
+    const statGroups = [
+      {
+        stats: safeArr(mapData.team_a_stats),
+        teamId: teamAId,
+        teamName: mapData.team_a_name || match.team_a?.short || match.team_a?.name || '',
+        opponentId: teamBId,
+        opponentName: mapData.team_b_name || match.team_b?.short || match.team_b?.name || ''
+      },
+      {
+        stats: safeArr(mapData.team_b_stats),
+        teamId: teamBId,
+        teamName: mapData.team_b_name || match.team_b?.short || match.team_b?.name || '',
+        opponentId: teamAId,
+        opponentName: mapData.team_a_name || match.team_a?.short || match.team_a?.name || ''
+      }
+    ]
+
+    statGroups.forEach(group => group.stats.forEach(stat => {
       if (!stat.heroes_played) return
       
-      const hero = stat.heroes_played
-      heroCounts[hero] = (heroCounts[hero] || 0) + 1
+      const rawHero = stat.heroes_played
+      const heroKey = getOwHeroCanonicalKey(rawHero)
+      if (!heroKey) return
+
+      const hero = getOwHeroCanonicalName(rawHero)
+      if (!heroCounts[heroKey]) heroCounts[heroKey] = { hero, count: 0 }
+      heroCounts[heroKey].count += 1
 
       const elims = Number(stat.eliminations) || 0
       const dmg = Number(stat.damage) || 0
@@ -255,23 +276,33 @@ export function getMapDetail(db, mapName) {
       
       // 取名字时去重 BattleTag (如 "User#1234" -> "User")
       const cleanName = (stat.player_name || 'Unknown').split('#')[0]
+      const playerId = stat.player_id || stat.playerId || ''
+      const recordContext = {
+        matchId: match.match_id,
+        teamId: group.teamId || stat.team_id || stat.teamId || '',
+        teamName: group.teamName,
+        opponentId: group.opponentId || '',
+        opponentName: group.opponentName,
+        stage: match.stage || '',
+        round: match.round || ''
+      }
 
       if (elims > records.maxElims.value) {
-        records.maxElims = { value: elims, player: cleanName, hero, matchId: match.match_id }
+        records.maxElims = { value: elims, player: cleanName, playerId, hero, ...recordContext }
       }
       if (dmg > records.maxDamage.value) {
-        records.maxDamage = { value: dmg, player: cleanName, hero, matchId: match.match_id }
+        records.maxDamage = { value: dmg, player: cleanName, playerId, hero, ...recordContext }
       }
       if (heal > records.maxHealing.value) {
-        records.maxHealing = { value: heal, player: cleanName, hero, matchId: match.match_id }
+        records.maxHealing = { value: heal, player: cleanName, playerId, hero, ...recordContext }
       }
-    })
+    }))
   })
 
   // 格式化输出数据
   // 英雄选择率 (一局比赛两支队伍最多可能出现 2 次该英雄，故分母为 totalPlays * 2)
-  const heroStats = Object.entries(heroCounts)
-    .map(([hero, count]) => ({
+  const heroStats = Object.values(heroCounts)
+    .map(({ hero, count }) => ({
       hero,
       count,
       pickRate: totalPlays > 0 ? (count / (totalPlays * 2)) : 0 

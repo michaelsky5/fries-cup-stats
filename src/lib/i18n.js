@@ -767,6 +767,10 @@ const dictionary = {
     'zh-CN': '胜负',
     'en-US': 'W-L'
   },
+  'advance.table.buchholz': {
+    'zh-CN': '对手分',
+    'en-US': 'Buchholz'
+  },
   'advance.table.mapRecord': {
     'zh-CN': '地图胜负',
     'en-US': 'Map W-L'
@@ -792,7 +796,7 @@ const dictionary = {
     'en-US': 'Match Wins'
   },
   'advance.tiebreaker.buchholz': {
-    'zh-CN': 'Buchholz',
+    'zh-CN': '对手分',
     'en-US': 'Buchholz'
   },
   'advance.tiebreaker.head_to_head': {

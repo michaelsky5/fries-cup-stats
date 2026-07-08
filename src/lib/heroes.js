@@ -193,6 +193,20 @@ export function getOwMap(value) {
   return key ? MAP_LOOKUP.get(key) || null : null
 }
 
+export function getOwHeroCanonicalKey(value) {
+  const raw = cleanText(value)
+  if (!raw) return ''
+  const hero = getOwHero(raw)
+  return hero?.assetKey || hero?.id || normalizeOwLookupKey(raw)
+}
+
+export function getOwHeroCanonicalName(value) {
+  const raw = cleanText(value)
+  if (!raw) return raw
+  const hero = getOwHero(raw)
+  return hero?.en || raw
+}
+
 export function formatOwHeroName(value, locale = 'zh-CN') {
   const raw = cleanText(value)
   if (!raw) return raw
@@ -202,8 +216,16 @@ export function formatOwHeroName(value, locale = 'zh-CN') {
 }
 
 export function formatOwHeroNames(values, locale = 'zh-CN', limit = Infinity) {
+  const seen = new Set()
+
   return (Array.isArray(values) ? values : [values])
     .filter(Boolean)
+    .filter(value => {
+      const key = getOwHeroCanonicalKey(value)
+      if (!key || seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
     .slice(0, limit)
     .map(value => formatOwHeroName(value, locale))
 }

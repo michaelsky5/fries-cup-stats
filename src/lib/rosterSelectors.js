@@ -1,5 +1,5 @@
-import { getHeroAvatarSrc, getPlayerInitials, normalizeLeaderboardRole } from './leaderboardSelectors.js'
-import { formatOwHeroName, getOwNameSearchText } from './heroes.js'
+import { getHeroAvatarSrc, getLeaderboardRows, getPlayerInitials, normalizeLeaderboardRole } from './leaderboardSelectors.js'
+import { formatOwHeroName, getOwHeroCanonicalKey, getOwHeroCanonicalName, getOwNameSearchText } from './heroes.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
@@ -31,6 +31,12 @@ function identityMatches(value, candidates) {
   const key = normalizeKey(value)
   if (!key) return false
   return safeArr(candidates).some(candidate => normalizeKey(candidate) === key)
+}
+
+function heroIdentityMatches(value, candidates) {
+  const key = getOwHeroCanonicalKey(value)
+  if (!key) return false
+  return safeArr(candidates).some(candidate => getOwHeroCanonicalKey(candidate) === key)
 }
 
 function isFavorite(favoriteIds, candidates) {
@@ -122,6 +128,32 @@ function buildTotalsLookup(db) {
     })
   })
   return value => map.get(normalizeKey(value)) || null
+}
+
+function buildRoleEntryResolver(db, season) {
+  const map = new Map()
+
+  safeArr(getLeaderboardRows(db, season)).forEach(entry => {
+    getPlayerIdentities(entry).forEach(identity => {
+      const key = normalizeKey(identity)
+      if (!key) return
+      if (!map.has(key)) map.set(key, [])
+      map.get(key).push(entry)
+    })
+  })
+
+  return player => {
+    const entries = new Map()
+
+    getPlayerIdentities(player).forEach(identity => {
+      safeArr(map.get(normalizeKey(identity))).forEach(entry => {
+        const key = entry?.entryKey || `${entry?.player_id || ''}:${entry?.role || ''}`
+        if (key && !entries.has(key)) entries.set(key, entry)
+      })
+    })
+
+    return [...entries.values()]
+  }
 }
 
 export function formatStaffPerson(person) {
@@ -280,16 +312,57 @@ function getHeroesFromSource(source, limit = 3) {
   return heroes
     .map(normalize)
     .filter(hero => {
-      const key = normalizeKey(hero)
+      const key = getOwHeroCanonicalKey(hero)
       if (!key || seen.has(key)) return false
       seen.add(key)
       return true
     })
+    .map(getOwHeroCanonicalName)
     .slice(0, limit)
 }
 
 function hasReliableStats(source) {
   return toNumber(source?.maps_played) > 0 || toNumber(source?.raw_time_mins) > 0 || toNumber(source?.roleTimeMins) > 0
+}
+
+function getRoleEntryTime(entry) {
+  return toNumber(entry?.roleTimeMins ?? entry?.raw_time_mins)
+}
+
+function getRoleEntryMaps(entry) {
+  return toNumber(entry?.roleMapsPlayed ?? entry?.maps_played)
+}
+
+function getRequestedRoleEntry(entries, role) {
+  const requestedRole = normalizeRoleForHero(role)
+  if (!requestedRole) return null
+  const matches = safeArr(entries).filter(entry => normalizeRoleForHero(entry?.role) === requestedRole)
+  return matches.find(hasReliableStats) || matches[0] || null
+}
+
+function getPrimaryRoleEntry(entries) {
+  return [...safeArr(entries)]
+    .sort((a, b) => (
+      Number(hasReliableStats(b)) - Number(hasReliableStats(a)) ||
+      getRoleEntryTime(b) - getRoleEntryTime(a) ||
+      getRoleEntryMaps(b) - getRoleEntryMaps(a) ||
+      getRoleRank(a?.role) - getRoleRank(b?.role)
+    ))[0] || null
+}
+
+function applyRoleEntryStats(player, entry) {
+  if (!entry) return player
+
+  return {
+    ...player,
+    role: entry.role || player?.role,
+    maps_played: entry.roleMapsPlayed ?? entry.maps_played ?? player?.maps_played,
+    raw_time_mins: entry.roleTimeMins ?? entry.raw_time_mins ?? player?.raw_time_mins,
+    roleTimeMins: entry.roleTimeMins ?? entry.raw_time_mins ?? player?.roleTimeMins,
+    total_time_played: entry.total_time_played || player?.total_time_played,
+    most_played_hero: entry.most_played_hero || player?.most_played_hero,
+    top_3_heroes: safeArr(entry.top_3_heroes).length ? entry.top_3_heroes : player?.top_3_heroes
+  }
 }
 
 export function getPlayerAvatarSource(player, options = {}) {
@@ -314,6 +387,8 @@ export function getPlayerAvatarSource(player, options = {}) {
 export function getPlayerDirectory(db, favorites = {}, options = {}) {
   const resolveTeam = buildTeamLookup(db)
   const resolveTotal = buildTotalsLookup(db)
+  const resolveRoleEntries = buildRoleEntryResolver(db, options.season)
+  const requestedRole = normalizeRoleForHero(options.role)
   const favoritePlayerIds = safeArr(favorites?.favoritePlayerIds)
 
   return safeArr(db?.players).map(player => {
@@ -323,21 +398,41 @@ export function getPlayerDirectory(db, favorites = {}, options = {}) {
     const identity = getPlayerDisplayIdentity(merged)
     const teamShortName = normalize(merged.team_short_name || team.team_short_name || team.short || merged.team_id || '-')
     const teamFullName = normalize(merged.team_name || team.team_name || team.name || teamShortName)
-    const avatar = getPlayerAvatarSource(merged, options)
+    const roleEntries = resolveRoleEntries(merged)
+    const requestedEntry = getRequestedRoleEntry(roleEntries, requestedRole)
+    const primaryEntry = getPrimaryRoleEntry(roleEntries)
+    const avatarEntry = requestedEntry || primaryEntry
+    const avatarSource = avatarEntry ? applyRoleEntryStats(merged, avatarEntry) : merged
+    const statsSource = requestedEntry || (!hasReliableStats(merged) ? primaryEntry : null)
+    const displaySource = statsSource ? applyRoleEntryStats(merged, statsSource) : merged
+    const avatar = getPlayerAvatarSource(avatarSource, { role: avatarEntry?.role || options.role })
     const heroNames = avatar.heroNames || []
+    const registeredRole = normalizeRosterRole(merged.role)
+    const playedRoles = roleEntries
+      .map(entry => normalizeRosterRole(entry.role))
+      .filter((role, index, list) => role && list.indexOf(role) === index)
+    const role = requestedRole && (requestedEntry || normalizeRoleForHero(merged.role) === requestedRole)
+      ? normalizeRosterRole(requestedRole)
+      : registeredRole
     const flexRoles = safeArr(merged.allowed_flex).map(normalizeRosterRole).filter(role => role && role !== normalizeRosterRole(merged.role))
 
     return {
       ...merged,
+      maps_played: displaySource.maps_played,
+      raw_time_mins: displaySource.raw_time_mins,
+      roleTimeMins: displaySource.roleTimeMins,
+      total_time_played: displaySource.total_time_played,
       identity,
       avatar,
       heroNames,
-      role: normalizeRosterRole(merged.role),
+      role,
+      registeredRole,
+      playedRoles,
       flexRoles,
       teamShortName,
       teamFullName,
       teamRouteId: normalize(team.team_id || team.id || merged.team_id || teamShortName),
-      hasStats: hasReliableStats(merged),
+      hasStats: hasReliableStats(displaySource) || hasReliableStats(avatarSource),
       isFavorite: isFavorite(favoritePlayerIds, getPlayerIdentities(merged))
     }
   })
@@ -351,10 +446,15 @@ export function filterPlayers(players, filters = {}) {
   const hero = normalize(filters.hero || 'ALL')
 
   return safeArr(players).filter(player => {
-    if (filters.role && filters.role !== 'ALL' && player.role !== role) return false
+    if (filters.role && filters.role !== 'ALL') {
+      const matchesRole = player.role === role ||
+        normalizeRosterRole(player.registeredRole) === role ||
+        safeArr(player.playedRoles).includes(role)
+      if (!matchesRole) return false
+    }
     if (team !== 'ALL' && !identityMatches(team, [player.teamRouteId, player.teamShortName, player.teamFullName])) return false
     if (following === 'following' && !player.isFavorite) return false
-    if (hero !== 'ALL' && !identityMatches(hero, [player.avatar?.heroName, ...safeArr(player.heroNames), player.most_played_hero, ...safeArr(player.top_3_heroes)])) return false
+    if (hero !== 'ALL' && !heroIdentityMatches(hero, [player.avatar?.heroName, ...safeArr(player.heroNames), player.most_played_hero, ...safeArr(player.top_3_heroes)])) return false
 
     return includesQuery(query, [
       player.identity?.primary,

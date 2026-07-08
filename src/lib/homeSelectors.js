@@ -1,4 +1,5 @@
 import { calculateSwissStandings } from './swissEngine.js'
+import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
@@ -396,8 +397,13 @@ export function getDataPulse(db) {
 
       const stats = [...safeArr(map?.team_a_stats), ...safeArr(map?.team_b_stats)]
       stats.forEach(row => {
-        const hero = normalizeText(row?.heroes_played)
-        if (hero) heroCounts.set(hero, (heroCounts.get(hero) || 0) + 1)
+        const rawHero = normalizeText(row?.heroes_played)
+        const heroKey = getOwHeroCanonicalKey(rawHero)
+        if (heroKey) {
+          const current = heroCounts.get(heroKey) || { name: getOwHeroCanonicalName(rawHero), count: 0 }
+          current.count += 1
+          heroCounts.set(heroKey, current)
+        }
       })
     })
   })
@@ -405,7 +411,7 @@ export function getDataPulse(db) {
   const topBy = (key) => [...playerTotals].sort((a, b) => toNumber(b?.[key]) - toNumber(a?.[key]))[0] || null
   const topEntry = map => [...map.entries()].sort((a, b) => b[1] - a[1])[0] || null
 
-  const topHero = topEntry(heroCounts)
+  const topHero = topEntry(new Map([...heroCounts.entries()].map(([key, value]) => [key, value.count])))
   const topMap = topEntry(mapCounts)
 
   return {
@@ -413,7 +419,7 @@ export function getDataPulse(db) {
     topHealing: topBy('avg_heal'),
     topBlock: topBy('avg_block'),
     topElim: topBy('avg_elim'),
-    topHero: topHero ? { name: topHero[0], count: topHero[1] } : null,
+    topHero: topHero ? { name: heroCounts.get(topHero[0])?.name || topHero[0], count: topHero[1] } : null,
     topMap: topMap ? { name: topMap[0], count: topMap[1] } : null,
     codeCount
   }

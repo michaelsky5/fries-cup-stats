@@ -13,16 +13,13 @@
   --border-light: rgba(42, 42, 42, 0.16);
   --border-medium: rgba(42, 42, 42, 0.36);
   --border-strong: #2a2a2a;
-  --role-tank: #3978c5;
-  --role-dps: #cc4944;
-  --role-support: #3f9369;
-  --metric-damage: #cc4944;
-  --metric-heal: #3f9369;
-  --metric-block: #3978c5;
+  --metric-damage: var(--role-dps, #ef4444);
+  --metric-heal: var(--role-support, #22c55e);
+  --metric-block: var(--role-tank, #3b82f6);
   --leaderboard-sticky-top: 138px;
-  --rank-width: 64px;
-  --score-width: 90px;
-  --player-width: 252px;
+  --rank-width: 58px;
+  --score-width: 4.2%;
+  --player-width: 15.4%;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -491,12 +488,23 @@
 }
 
 .roleLeaderStats div {
+  min-width: 0;
   min-height: 58px;
+  overflow: hidden;
   border-right: 1px solid var(--border-light);
 }
 
 .roleLeaderStats div:nth-child(2n) {
   border-right: 0;
+}
+
+.roleLeaderStats strong {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 20px;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .roleLeaderScore {
@@ -881,15 +889,14 @@
 .tableScroller {
   width: 100%;
   max-width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: visible;
   background: var(--panel-background);
-  scrollbar-gutter: stable;
 }
 
 .leaderboardTable {
-  width: max(100%, 1548px);
-  min-width: 1548px;
+  width: 100%;
+  min-width: 0;
   border-collapse: separate;
   border-spacing: 0;
   table-layout: fixed;
@@ -906,7 +913,7 @@
 }
 
 .colScore {
-  width: 96px;
+  width: var(--score-width);
 }
 
 .colPlayer {
@@ -914,27 +921,27 @@
 }
 
 .colTeam {
-  width: 126px;
+  width: 9.8%;
 }
 
 .colRole {
-  width: 84px;
+  width: 6%;
 }
 
 .colMetric {
-  width: 104px;
+  width: 6.3%;
 }
 
 .colMaps {
-  width: 86px;
+  width: 5.1%;
 }
 
 .colTime {
-  width: 108px;
+  width: 7.1%;
 }
 
 .colAction {
-  width: 94px;
+  width: 7.4%;
 }
 
 .leaderboardTable th {
@@ -961,7 +968,7 @@
 
 .leaderboardTable td {
   height: 48px;
-  padding: 6px 9px;
+  padding: 6px 7px;
   border-right: 1px solid rgba(42, 42, 42, 0.07);
   border-bottom: 1px solid rgba(42, 42, 42, 0.13);
   background: var(--panel-background);
@@ -1037,7 +1044,7 @@ td.stickyPlayer {
   display: grid;
   gap: 3px;
   align-content: center;
-  padding: 7px 9px;
+  padding: 7px 6px;
   color: rgba(255, 255, 255, 0.72);
   text-align: right;
 }
@@ -1053,7 +1060,7 @@ td.stickyPlayer {
 
 .sortButton span {
   color: var(--brand-white);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 950;
   line-height: 1;
 }
@@ -1085,6 +1092,12 @@ td.stickyPlayer {
 .numericHead,
 .numericCell {
   text-align: right;
+}
+
+.numericCell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .scoreHead .sortButton,
@@ -1202,8 +1215,8 @@ td.stickyPlayer {
 
 .roleTag {
   display: inline-grid;
-  width: 52px;
-  min-width: 52px;
+  width: 48px;
+  min-width: 48px;
   min-height: 28px;
   align-content: center;
   justify-items: center;
@@ -1317,7 +1330,6 @@ td.metricBlock {
 }
 
 .actionHead {
-  width: 94px;
   color: var(--brand-white);
   font-size: 11px;
   font-weight: 950;
@@ -1325,23 +1337,22 @@ td.metricBlock {
 }
 
 .actionCell {
-  width: 94px;
-  padding-inline: 7px;
+  padding-inline: 5px;
   text-align: center;
 }
 
 .actionGroup {
   display: grid;
-  grid-template-columns: repeat(2, 36px);
-  gap: 6px;
+  grid-template-columns: repeat(2, minmax(28px, 1fr));
+  gap: 4px;
   align-items: center;
   justify-content: center;
 }
 
 .compareCheck {
   position: relative;
-  width: 36px;
-  min-height: 30px;
+  width: 100%;
+  min-height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1382,10 +1393,10 @@ td.metricBlock {
 }
 
 .followButton {
-  width: 36px;
-  min-height: 30px;
+  width: 100%;
+  min-height: 28px;
   padding: 0;
-  font-size: 9px;
+  font-size: 8px;
 }
 
 .followButtonActive {

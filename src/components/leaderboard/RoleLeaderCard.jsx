@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { formatDecimal, formatInt } from '../../lib/format.js'
 import {
+  formatEntrySeasonOvr,
   getEntryMetricValue,
   getRoleEnLabel,
   getRoleLabel
@@ -13,6 +14,22 @@ const METRIC_LABELS = PUBLIC_METRICS.reduce((acc, metric) => {
   acc[metric.id] = metric.label
   return acc
 }, {})
+
+const COMPACT_METRICS = new Set(['dmg', 'heal', 'block'])
+
+function formatRoleLeaderMetricValue(value, metricId) {
+  const number = Number(value)
+
+  if (!Number.isFinite(number)) {
+    return '-'
+  }
+
+  if (COMPACT_METRICS.has(metricId) && Math.abs(number) >= 10000) {
+    return `${formatDecimal(number / 1000, 1, '-')}K`
+  }
+
+  return formatDecimal(number, 1, '-')
+}
 
 export default function RoleLeaderCard({ role, entry, withSeason, order = 1 }) {
   const roleCode = getRoleEnLabel(role)
@@ -50,8 +67,8 @@ export default function RoleLeaderCard({ role, entry, withSeason, order = 1 }) {
 
       <div className={styles.roleLeaderStats}>
         <div className={styles.roleLeaderScore}>
-          <span>评分</span>
-          <strong>{formatDecimal(entry.roleScore, 1, '-')}</strong>
+          <span>OVR</span>
+          <strong>{formatEntrySeasonOvr(entry)}</strong>
         </div>
         <div>
           <span>地图</span>
@@ -60,7 +77,7 @@ export default function RoleLeaderCard({ role, entry, withSeason, order = 1 }) {
         {metricIds.map(metricId => (
           <div key={metricId}>
             <span>{METRIC_LABELS[metricId]}</span>
-            <strong>{formatDecimal(getEntryMetricValue(entry, metricId, 'per10'), 1, '-')}</strong>
+            <strong>{formatRoleLeaderMetricValue(getEntryMetricValue(entry, metricId, 'per10'), metricId)}</strong>
           </div>
         ))}
       </div>

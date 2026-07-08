@@ -149,7 +149,7 @@ function OverviewPanel({ dossier, onChange }) {
       <SectionHeading
         kicker="ROLE FILES"
         title="综合资料"
-        meta="不同职责的出场时间、地图数、数据评分和正式排名分开记录。"
+        meta="不同职责的出场时间、地图数、赛季 OVR 和正式排名分开记录。"
       />
       <div className={styles.roleOverviewGrid}>
         {dossier.roleEntries.map(item => (
@@ -249,7 +249,7 @@ function DossierHero({
             <strong>{summary.primaryHero ? primaryHeroName : '—'}</strong>
           </div>
           <div>
-            <span>数据评分</span>
+            <span>赛季 OVR</span>
             <strong>{summary.scoreLabel}</strong>
           </div>
           <div>
@@ -262,7 +262,7 @@ function DossierHero({
           </div>
         </div>
 
-        <p className={styles.scoreNotice}>数据评分仅依据赛事统计计算，不代表官方 MVP 评选。</p>
+        <p className={styles.scoreNotice}>赛季 OVR 仅依据赛事统计计算，不代表官方 MVP 评选。</p>
       </div>
     </section>
   )
@@ -276,7 +276,7 @@ function ScoreRadarPanel({ analysis }) {
   return (
     <section className={`${styles.scorePanel} ${getRoleClass(summary.role)}`}>
       <div className={styles.scorePlate}>
-        <div className={styles.scoreLabel}>数据评分</div>
+        <div className={styles.scoreLabel}>SEASON OVR</div>
         <div className={styles.scoreValue}>{summary.scoreLabel}</div>
         <div className={styles.scoreRank}>
           {summary.eligible ? `${summary.rankLabel} · ${summary.scorePercentileLabel}` : '样本不足 · 不进入正式排名'}

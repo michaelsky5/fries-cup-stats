@@ -1,4 +1,5 @@
 import { SCORING_ENGINE_CONFIG } from '../config/scoringEngineConfig.js'
+import { SEASON_SCORE_CONFIG } from '../config/ratingModelConfig.js'
 import { buildRatingBaselinesFromDb, buildRatingBaselinesFromPlayerLogs } from './ratingBaselines.js'
 import { resolveHeroSubrole } from './heroSubroleSelectors.js'
 import {
@@ -41,6 +42,10 @@ function round(value, digits = 3) {
   return Number(number.toFixed(digits))
 }
 
+function clamp(value, min = 0, max = 1) {
+  return Math.min(max, Math.max(min, toFiniteNumber(value)))
+}
+
 function normalizeRole(value) {
   const key = cleanText(value).toUpperCase()
   return ROLE_ALIAS[key] || ''
@@ -52,7 +57,7 @@ function roleFromResolution(resolution) {
 }
 
 function devWarn(message, detail) {
-  if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'production') return
+  if (globalThis.process?.env?.NODE_ENV === 'production') return
   if (typeof console !== 'undefined' && typeof console.warn === 'function') {
     console.warn(`[scoringEngineAdapter] ${message}`, detail || '')
   }
@@ -190,6 +195,49 @@ function normalizeOutputScore(ratingSummary, legacyScore, scoreContext) {
   return round(ratingSummary.rawScore)
 }
 
+function getSeasonScoreConfidence(entry, minTimeMins = 30) {
+  const minTime = toFiniteNumber(minTimeMins)
+  if (minTime <= 0) return 1
+
+  const roleTimeMins = toFiniteNumber(entry?.roleTimeMins ?? entry?.raw_time_mins)
+  const mapsPlayed = toFiniteNumber(entry?.roleMapsPlayed ?? entry?.maps_played)
+  const targetTimeMins = minTime + (minTime * toFiniteNumber(SEASON_SCORE_CONFIG.timeTargetMultiplier, 3))
+
+  if (roleTimeMins <= 0) return 0
+
+  if (roleTimeMins < minTime) {
+    return round(
+      clamp((roleTimeMins / Math.max(1, minTime)) * SEASON_SCORE_CONFIG.confidenceFloor),
+      3
+    )
+  }
+
+  const timeProgress = targetTimeMins > minTime
+    ? clamp((roleTimeMins - minTime) / (targetTimeMins - minTime))
+    : 1
+  const mapProgress = mapsPlayed > 0
+    ? clamp((mapsPlayed - SEASON_SCORE_CONFIG.minMapCount) / Math.max(1, SEASON_SCORE_CONFIG.targetMapCount - SEASON_SCORE_CONFIG.minMapCount))
+    : timeProgress
+  const confidence = SEASON_SCORE_CONFIG.confidenceFloor +
+    ((1 - SEASON_SCORE_CONFIG.confidenceFloor) * Math.min(timeProgress, mapProgress))
+
+  return round(confidence, 3)
+}
+
+function applySeasonScoreConfidence(rawScore, confidence) {
+  if (!isFiniteScore(rawScore)) return null
+  const safeConfidence = clamp(confidence)
+  const neutral = toFiniteNumber(SEASON_SCORE_CONFIG.neutralScore, 50)
+  return round(neutral + ((Number(rawScore) - neutral) * safeConfidence))
+}
+
+function getSeasonScoreStatus(confidence) {
+  const value = toFiniteNumber(confidence)
+  if (value >= SEASON_SCORE_CONFIG.stableConfidence) return 'STABLE'
+  if (value >= SEASON_SCORE_CONFIG.solidConfidence) return 'SOLID'
+  return 'PROVISIONAL'
+}
+
 function buildRatingSummaryForEntry(entry, baselines) {
   const logRatings = buildEntryLogRatings(entry, baselines)
   const fallbackRating = logRatings.length ? null : calculateEntryFallbackRating(entry, baselines)
@@ -260,7 +308,14 @@ function attachRatingModelScore(entry, args = {}) {
 
   const baselines = getBaselines(args)
   const summary = buildRatingSummaryForEntry(entry, baselines)
-  const roleScore = normalizeOutputScore(summary, legacyScore, args.scoreContext)
+  const outputScore = normalizeOutputScore(summary, legacyScore, args.scoreContext)
+  const seasonScoreConfidence = args.scoreContext === 'season'
+    ? getSeasonScoreConfidence(entry, args.minTimeMins)
+    : 1
+  const seasonScore = args.scoreContext === 'season'
+    ? applySeasonScoreConfidence(summary?.rawScore, seasonScoreConfidence)
+    : summary?.rawScore
+  const roleScore = args.scoreContext === 'season' ? seasonScore : outputScore
 
   if (!summary || !isFiniteScore(roleScore)) {
     return withFallback(entry, legacyScore, args.scoreContext, 'rating_v1_unavailable')
@@ -273,6 +328,9 @@ function attachRatingModelScore(entry, args = {}) {
     legacyScore,
     legacyImpactScore: legacyScore,
     roleScore,
+    seasonScore,
+    seasonScoreConfidence,
+    seasonScoreStatus: getSeasonScoreStatus(seasonScoreConfidence),
     rawRoleScore: summary.rawScore,
     rawScore: summary.rawScore,
     mapRating: summary.mapRating,
@@ -311,12 +369,23 @@ export function getLegacyScore(args = {}) {
 
 export function calculateSeasonPlayerScoreV1(args = {}) {
   const entry = args.entry || args
-  return buildRatingSummaryForEntry(entry, getBaselines(args))
+  const summary = buildRatingSummaryForEntry(entry, getBaselines(args))
+  if (!summary) return null
+
+  const seasonScoreConfidence = getSeasonScoreConfidence(entry, args.minTimeMins)
+  const seasonScore = applySeasonScoreConfidence(summary.rawScore, seasonScoreConfidence)
+
+  return {
+    ...summary,
+    seasonScore,
+    seasonScoreConfidence,
+    seasonScoreStatus: getSeasonScoreStatus(seasonScoreConfidence)
+  }
 }
 
 export function calculateLeaderboardScoreV1(args = {}) {
   const summary = calculateSeasonPlayerScoreV1(args)
-  return summary ? round(summary.rawScore) : null
+  return summary ? round(summary.seasonScore ?? summary.rawScore) : null
 }
 
 export function calculateMatchPlayerScoreV1(args = {}) {

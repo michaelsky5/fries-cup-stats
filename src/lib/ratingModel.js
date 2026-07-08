@@ -34,7 +34,7 @@ function round(value, digits = 3) {
 }
 
 function devWarn(message, detail) {
-  if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'production') return
+  if (globalThis.process?.env?.NODE_ENV === 'production') return
   if (typeof console !== 'undefined' && typeof console.warn === 'function') {
     console.warn(`[ratingModel] ${message}`, detail || '')
   }

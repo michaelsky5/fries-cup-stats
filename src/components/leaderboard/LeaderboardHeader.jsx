@@ -27,8 +27,8 @@ export default function LeaderboardHeader({
         <h1 id="leaderboard-title">{isEn ? 'Leaderboard' : '数据排行'}</h1>
         <p>
           {isEn
-            ? 'Track role rankings, performance ratings, and player stat leaders from published match records.'
-            : '查看综合评分、职责排行与选手表现榜单，以公开赛事统计为准。'}
+            ? 'Track Season OVR, role rankings, and player stat leaders from published match records.'
+            : '查看赛季 OVR、职责排行与选手表现榜单，以公开赛事统计为准。'}
         </p>
         <div className={styles.headerRuleLine} aria-hidden="true" />
       </div>
