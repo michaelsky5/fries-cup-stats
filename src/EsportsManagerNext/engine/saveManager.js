@@ -534,51 +534,6 @@ export function createStarterRun(save, playerPool) {
   }
 }
 
-function createLegacyStarterRun(save, playerPool) {
-  const pool = Array.isArray(playerPool) ? playerPool : []
-  const starterRoster = pickStarterRoster(pool)
-  const now = new Date().toISOString()
-  const profile = save?.profile || {}
-  const level = getManagerLevel(profile)
-  const baseRun = {
-    id: `run-${Date.now()}`,
-    mode: 'node-alpha',
-    startedAt: now,
-    stage: 1,
-    targetStage: RUN_TARGET_STAGE,
-    route: [...ROUTE_TEMPLATE],
-    hp: 3,
-    funds: 1200 + Math.min(400, (level - 1) * 40),
-    morale: 72,
-    intel: Math.min(3, Math.floor(level / 2)),
-    tactic: DEFAULT_TACTIC,
-    tacticPower: 0,
-    roster: starterRoster,
-    relics: [],
-    curses: [],
-    temporaryBuffs: [],
-    sponsors: [
-      {
-        id: 'grassroot-backing',
-        name: '社区后援',
-        rarity: '基础',
-        desc: '每次胜利额外获得少量资金。',
-        effects: { winFunds: 35 }
-      }
-    ],
-    encounter: null,
-    lastReview: null,
-    history: [
-      {
-        type: 'start',
-        text: `新赛季启动，初始阵容战力 ${calculateRunPower(starterRoster)}。`
-      }
-    ]
-  }
-
-  return withFreshEncounter(baseRun, pool)
-}
-
 export function startNewRun(save, playerPool) {
   const normalized = normalizeSave(save)
   const nextSave = {
@@ -1577,7 +1532,7 @@ function tickTemporaryBuffs(buffs = []) {
 }
 
 function stripChoiceRuntime(choice = {}) {
-  const { rewardType, instant, ...rest } = choice
+  const { rewardType: _rewardType, instant: _instant, ...rest } = choice
   return rest
 }
 
@@ -1705,21 +1660,6 @@ function collectTraitCombos(traitCounts = {}) {
   }
 
   return bonuses
-}
-
-function pickStarterRoster(pool) {
-  const roles = {
-    TANK: pool.filter(player => player.role === 'TANK'),
-    DPS: pool.filter(player => player.role === 'DPS'),
-    SUP: pool.filter(player => player.role === 'SUP')
-  }
-
-  const pickRole = (role, count) => shuffle(roles[role].slice(0, 48)).slice(0, count)
-  return [
-    ...pickRole('TANK', 1),
-    ...pickRole('DPS', 2),
-    ...pickRole('SUP', 2)
-  ].map(player => ({ ...player }))
 }
 
 function normalizeRole(role) {

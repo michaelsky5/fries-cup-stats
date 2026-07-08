@@ -103,7 +103,7 @@ export default function DataLayout() {
         setDb(data)
         setError('')
       })
-      .catch(err => {
+      .catch(() => {
         if (!alive) return
         setDb(null)
         setError('DATA_LOAD_FAILED')
