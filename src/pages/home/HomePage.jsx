@@ -139,14 +139,6 @@ function ManagerChoiceModal({ open, onClose }) {
       title: homeText(locale, '电竞经理经典版', 'Fantasy Manager Classic'),
       text: homeText(locale, '保留旧版玩法、本机存档和原有挑战。', 'Classic systems, local saves, and existing challenges stay here.'),
       to: '/fantasy'
-    },
-    {
-      key: 'next',
-      label: 'FANTASY MANAGER NEXT',
-      badge: homeText(locale, '新版', 'Next'),
-      title: homeText(locale, '电竞经理新版', 'Fantasy Manager Next'),
-      text: homeText(locale, '新版玩法会继续在独立入口推进。', 'The next version continues in its own entry.'),
-      to: '/fantasy-next'
     }
   ]
 
@@ -161,7 +153,7 @@ function ManagerChoiceModal({ open, onClose }) {
       >
         <header>
           <span>FANTASY MANAGER</span>
-          <h2 id="manager-choice-title">{homeText(locale, '选择电竞经理版本', 'Choose Manager Mode')}</h2>
+          <h2 id="manager-choice-title">{homeText(locale, '进入电竞经理经典版', 'Open Fantasy Manager Classic')}</h2>
           <button type="button" onClick={onClose} aria-label={homeText(locale, '关闭', 'Close')}>×</button>
         </header>
         <div className={styles.managerChoiceGrid}>
@@ -817,10 +809,10 @@ function DataPulseSection({ dataPulse }) {
             onClick={() => setManagerChoiceOpen(true)}
           >
             <span>FANTASY MANAGER</span>
-            <i className={styles.playStatusBadge}>{homeText(locale, '选择版本', 'Choose Mode')}</i>
+            <i className={styles.playStatusBadge}>{homeText(locale, '经典版', 'Classic')}</i>
             <strong>{homeText(locale, '电竞经理', 'Fantasy Manager')}</strong>
-            <b>{homeText(locale, '经典版 / 新版', 'Classic / Next')}</b>
-            <em>{homeText(locale, '选择继续经典版，或进入新版独立入口。', 'Choose classic mode or open the next version entry.')}</em>
+            <b>{homeText(locale, '经典版入口', 'Classic Entry')}</b>
+            <em>{homeText(locale, '继续使用旧版玩法、本机存档和原有挑战。', 'Continue with the classic systems, local saves, and existing challenges.')}</em>
           </button>
         </div>
       </div>
@@ -875,8 +867,8 @@ function OverviewGatewaySection({ overview, summary, latest }) {
       key: 'fantasy',
       label: 'MANAGER',
       title: homeText(locale, '电竞经理', 'Fantasy Manager'),
-      status: homeText(locale, '选择版本', 'Choose mode'),
-      text: homeText(locale, '经典版与新版入口统一从这里进入。', 'Classic and next entries start here.'),
+      status: homeText(locale, '经典版', 'Classic'),
+      text: homeText(locale, '当前仅开放经典版入口。', 'Only the classic entry is currently open.'),
       action: 'managerChoice'
     }
   ]
@@ -1352,7 +1344,7 @@ function ArchiveResources({ includeReview }) {
       key: 'manager',
       label: 'MANAGER',
       title: homeText(locale, '电竞经理', 'Fantasy Manager'),
-      text: homeText(locale, '经典版与新版入口统一从这里进入。', 'Classic and next entries start here.'),
+      text: homeText(locale, '当前仅开放经典版入口。', 'Only the classic entry is currently open.'),
       action: 'managerChoice'
     }
   ]

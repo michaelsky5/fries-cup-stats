@@ -21,8 +21,6 @@ import ClassicFantasyBattle from '../EsportsManagerClassic/pages/FantasyBattle.j
 import ClassicShopPage from '../EsportsManagerClassic/pages/ShopPage.jsx'
 import ClassicChampionPage from '../EsportsManagerClassic/pages/ChampionPage.jsx'
 import ClassicCareerPage from '../EsportsManagerClassic/pages/CareerPage.jsx'
-import ManagerNextStandaloneLayout from '../EsportsManagerNext/pages/ManagerNextStandaloneLayout.jsx'
-import ManagerNextPage from '../EsportsManagerNext/pages/ManagerNextPage.jsx'
 
 import ReviewEntryPage from '../pages/review/ReviewEntryPage.jsx'
 import ReviewStoryPage from '../pages/review/ReviewStoryPage.jsx'
@@ -40,14 +38,13 @@ function ScheduleRedirect() {
   return <Navigate to={{ pathname: '/matches', search: `?${params.toString()}` }} replace />
 }
 
+function FantasyNextDisabledRedirect() {
+  const location = useLocation()
+  return <Navigate to={{ pathname: '/fantasy', search: location.search }} replace />
+}
+
 const router = createBrowserRouter([
-  {
-    path: '/fantasy-next',
-    element: <ManagerNextStandaloneLayout />,
-    children: [
-      { index: true, element: <ManagerNextPage /> }
-    ]
-  },
+  { path: '/fantasy-next', element: <FantasyNextDisabledRedirect /> },
   {
     path: '/',
     element: <DataLayout />,
