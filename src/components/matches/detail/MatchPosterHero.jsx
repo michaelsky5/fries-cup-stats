@@ -1,6 +1,9 @@
+import { useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../TeamLogo.jsx'
 import styles from './MatchDetail.module.css'
+
+const POSTER_SHORT_MIN_FONT_SIZE = 28
 
 function splitScore(scoreLabel) {
   const parts = String(scoreLabel || 'VS').split(':').map(part => part.trim())
@@ -12,6 +15,59 @@ function getTeamPath(team, withSeason) {
   const routeId = String(team?.id || team?.short || team?.full || '').trim()
   if (!routeId || ['TBD', 'UNKNOWN', '-'].includes(routeId.toUpperCase())) return ''
   return withSeason(`/teams/${encodeURIComponent(routeId)}`)
+}
+
+function PosterTeamShortName({ children }) {
+  const wrapRef = useRef(null)
+  const textRef = useRef(null)
+
+  useLayoutEffect(() => {
+    const wrap = wrapRef.current
+    const text = textRef.current
+    if (!wrap || !text) return undefined
+
+    let frame = 0
+    let active = true
+
+    const fit = () => {
+      if (!active) return
+      window.cancelAnimationFrame(frame)
+      frame = window.requestAnimationFrame(() => {
+        if (!active) return
+        const availableWidth = wrap.clientWidth
+        if (!availableWidth) return
+
+        text.style.fontSize = ''
+        const baseFontSize = Number.parseFloat(window.getComputedStyle(text).fontSize) || 98
+        const naturalWidth = text.scrollWidth
+        const fittedFontSize = naturalWidth > availableWidth
+          ? Math.max(POSTER_SHORT_MIN_FONT_SIZE, Math.floor(baseFontSize * (availableWidth / naturalWidth)))
+          : baseFontSize
+
+        text.style.fontSize = `${fittedFontSize}px`
+      })
+    }
+
+    fit()
+
+    const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(fit)
+    resizeObserver?.observe(wrap)
+    window.addEventListener('resize', fit)
+    document.fonts?.ready?.then(fit)
+
+    return () => {
+      active = false
+      window.cancelAnimationFrame(frame)
+      resizeObserver?.disconnect()
+      window.removeEventListener('resize', fit)
+    }
+  }, [children])
+
+  return (
+    <div className={styles.posterTeamShortWrap} ref={wrapRef}>
+      <strong ref={textRef}>{children}</strong>
+    </div>
+  )
 }
 
 function PosterTeam({ team, seasonId, winner, teamPath, returnState, onTeamNavigate, t }) {
@@ -44,12 +100,12 @@ function PosterTeam({ team, seasonId, winner, teamPath, returnState, onTeamNavig
               aria-label={`${t('matchDetail.viewTeam', '\u67e5\u770b\u961f\u4f0d')} ${team.full || team.short}`}
               onClick={onTeamNavigate}
             >
-              <strong>{team.short}</strong>
+              <PosterTeamShortName>{team.short}</PosterTeamShortName>
               <span className={styles.posterTeamFullName}>{team.full}</span>
             </Link>
           ) : (
             <>
-              <strong>{team.short}</strong>
+              <PosterTeamShortName>{team.short}</PosterTeamShortName>
               <span className={styles.posterTeamFullName}>{team.full}</span>
             </>
           )}
