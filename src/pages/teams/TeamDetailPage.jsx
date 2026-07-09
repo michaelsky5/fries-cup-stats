@@ -5,12 +5,13 @@ import RosterSubnav from '../../components/roster/RosterSubnav.jsx'
 import { PlayerAvatar } from '../../components/roster/PlayerDirectoryCard.jsx'
 import TeamShareDialog from '../../features/team-share/TeamShareDialog.jsx'
 import {
-  formatStaffPerson,
   getPlayerAvatarSource,
   getPlayerDirectory,
   getPlayerDisplayIdentity,
   getTeamDirectory,
   getTeamRosterPlayers,
+  getRosterRoleLabel,
+  normalizeStaffIdentity,
   normalizeRosterRole,
   safeArr
 } from '../../lib/rosterSelectors.js'
@@ -42,15 +43,23 @@ const TABS = [
 ]
 
 const ROLE_LABELS = {
-  TANK: 'TANK',
-  DPS: 'DPS',
-  SUP: 'SUP',
-  FLEX: 'FLEX'
+  TANK: '重装',
+  DPS: '输出',
+  SUP: '支援',
+  FLEX: '自由'
 }
 
 const ADVANCE_SLOTS = 8
 
-const ROLE_ORDER = ['TANK', 'DPS', 'SUP', 'FLEX']
+const ROLE_ORDER = ['TANK', 'DPS', 'SUP']
+
+const STARTING_FIVE_SLOTS = [
+  { id: 'tank', role: 'TANK', label: '重装' },
+  { id: 'dps-1', role: 'DPS', label: '输出' },
+  { id: 'dps-2', role: 'DPS', label: '输出' },
+  { id: 'sup-1', role: 'SUP', label: '支援' },
+  { id: 'sup-2', role: 'SUP', label: '支援' }
+]
 
 const FALLBACK_MAP_VISUAL = {
   displayName: '漓江塔',
@@ -80,6 +89,145 @@ function getFeaturedMapVisual(focusMatch, finishedRows, matchRows, locale = 'zh-
   return getMapVisual(map, locale)
 }
 
+function isKnownMapType(type) {
+  const value = String(type || '').trim()
+  return Boolean(value) && value.toUpperCase() !== 'UNKNOWN'
+}
+
+function hasScoreValue(value) {
+  const text = String(value ?? '').trim()
+  return text !== '' && Number.isFinite(Number(text))
+}
+
+function getMapRoundResult(map, side) {
+  if (!hasScoreValue(map?.score_a) || !hasScoreValue(map?.score_b)) {
+    return { hasScore: false, tone: 'pending', score: '- : -', mine: 0, other: 0 }
+  }
+
+  const scoreA = Number(map.score_a)
+  const scoreB = Number(map.score_b)
+  const mine = side === 'team_a' ? scoreA : scoreB
+  const other = side === 'team_a' ? scoreB : scoreA
+
+  if (mine > other) return { hasScore: true, tone: 'win', score: `${mine} : ${other}`, mine, other }
+  if (mine < other) return { hasScore: true, tone: 'loss', score: `${mine} : ${other}`, mine, other }
+  return { hasScore: true, tone: 'draw', score: `${mine} : ${other}`, mine, other }
+}
+
+function formatMapRecord(wins, losses, draws = 0) {
+  return draws ? `${wins}-${losses}-${draws}` : `${wins}-${losses}`
+}
+
+function getMatchScheduleTime(match) {
+  const raw = match?.scheduled_at ||
+    match?.match_date ||
+    match?.date ||
+    (match?.scheduled_date && match?.scheduled_time ? `${match.scheduled_date}T${match.scheduled_time}:00+08:00` : '')
+  const time = raw ? new Date(raw).getTime() : 0
+  return Number.isFinite(time) ? time : 0
+}
+
+function getRepresentativeMapSpotlight(rows, locale = 'zh-CN') {
+  const mapRecords = new Map()
+  const typeRecords = new Map()
+
+  rows.filter(row => isFinishedMatch(row.match)).forEach(row => {
+    safeArr(row.match?.maps).forEach(map => {
+      const name = String(map?.map_name || map?.name || '').trim()
+      const type = String(map?.map_type || map?.type || '').trim()
+      if (!name || !isKnownMapType(type)) return
+
+      const result = getMapRoundResult(map, row.side)
+      if (!result.hasScore) return
+
+      const visual = getMapVisual(map, locale)
+      const mapKey = normalizeKey(name)
+      const typeKey = normalizeKey(type)
+
+      if (!typeRecords.has(typeKey)) {
+        typeRecords.set(typeKey, {
+          type,
+          mode: visual.mode,
+          maps: 0,
+          wins: 0,
+          losses: 0,
+          draws: 0
+        })
+      }
+
+      if (!mapRecords.has(mapKey)) {
+        mapRecords.set(mapKey, {
+          ...visual,
+          type,
+          maps: 0,
+          wins: 0,
+          losses: 0,
+          draws: 0,
+          latestTime: 0,
+          latestResult: '',
+          latestOpponent: '',
+          latestRound: '',
+          latestScore: '',
+          latestTimeLabel: ''
+        })
+      }
+
+      const typeRecord = typeRecords.get(typeKey)
+      const mapRecord = mapRecords.get(mapKey)
+      const records = [typeRecord, mapRecord]
+      records.forEach(record => {
+        record.maps += 1
+        if (result.tone === 'win') record.wins += 1
+        else if (result.tone === 'loss') record.losses += 1
+        else record.draws += 1
+      })
+
+      const time = getMatchScheduleTime(row.match)
+      if (time >= mapRecord.latestTime) {
+        mapRecord.latestTime = time
+        mapRecord.latestResult = result.tone === 'win' ? 'WIN' : result.tone === 'loss' ? 'LOSS' : 'DRAW'
+        mapRecord.latestOpponent = row.opponentLabel
+        mapRecord.latestRound = getMatchRound(row.match)
+        mapRecord.latestScore = result.score
+        mapRecord.latestTimeLabel = getMatchTimeLabel(row.match)
+      }
+    })
+  })
+
+  const candidates = [...mapRecords.values()]
+    .map(record => ({
+      ...record,
+      hasData: true,
+      recordLabel: formatMapRecord(record.wins, record.losses, record.draws),
+      winRate: record.maps ? record.wins / record.maps : 0,
+      typeRecord: typeRecords.get(normalizeKey(record.type)) || null
+    }))
+    .sort((a, b) => b.maps - a.maps ||
+      b.wins - a.wins ||
+      b.latestTime - a.latestTime ||
+      compareName(a.displayName, b.displayName))
+
+  if (candidates.length) return candidates[0]
+
+  const fallback = getFeaturedMapVisual(null, [], rows, locale)
+  return {
+    ...fallback,
+    hasData: false,
+    maps: 0,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    recordLabel: '-',
+    winRate: 0,
+    typeRecord: null,
+    latestResult: '',
+    latestOpponent: '',
+    latestRound: '',
+    latestScore: '- : -',
+    latestTimeLabel: ''
+  }
+}
+
 function getPlayerName(player) {
   return player?.identity?.primary || player?.display_name || player?.player_name || player?.nickname || player?.player_id || '-'
 }
@@ -96,11 +244,39 @@ function getPlayerInitials(player) {
   return player?.avatar?.initials || String(getPlayerName(player)).slice(0, 2).toUpperCase()
 }
 
+function getPlayerRosterKey(player) {
+  return String(player?.identity?.playerId || player?.player_id || getPlayerName(player))
+}
+
+function getDistinctSecondaryName(primary, secondary) {
+  const value = String(secondary || '').trim()
+  if (!value || normalizeKey(value) === normalizeKey(primary)) return ''
+  return value
+}
+
+function sortCoreCandidates(a, b) {
+  return Number(b?.raw_time_mins || 0) - Number(a?.raw_time_mins || 0) ||
+    Number(b?.maps_played || 0) - Number(a?.maps_played || 0) ||
+    getPlayerName(a).localeCompare(getPlayerName(b))
+}
+
+function getStartingFiveSlots(roster) {
+  const rows = safeArr(roster).slice().sort(sortCoreCandidates)
+  const used = new Set()
+
+  return STARTING_FIVE_SLOTS.map(slot => {
+    const rolePick = rows.find(player => normalizeRosterRole(player?.role) === slot.role && !used.has(getPlayerRosterKey(player)))
+    const fallbackPick = rolePick || rows.find(player => !used.has(getPlayerRosterKey(player)))
+    if (fallbackPick) used.add(getPlayerRosterKey(fallbackPick))
+    return { ...slot, player: fallbackPick || null }
+  })
+}
+
 function buildSharePlayer(player, locale = 'zh-CN') {
   return {
     id: player?.identity?.playerId || player?.player_id || getPlayerName(player),
     name: getPlayerName(player),
-    role: player?.role || 'FLEX',
+    role: getRosterRoleLabel(player?.role, locale),
     hero: getPlayerHeroLabel(player, locale),
     avatarSrc: getPlayerAvatarSrc(player),
     initials: getPlayerInitials(player)
@@ -174,15 +350,15 @@ function getShareModel({
   }
 }
 
-function PlayerPortrait({ player, className = '' }) {
+function PlayerPortrait({ player, className = '', decorative = false }) {
   const src = getPlayerAvatarSrc(player)
   const name = getPlayerName(player)
   return (
-    <span className={className}>
+    <span className={className} aria-hidden={decorative ? 'true' : undefined}>
       {src ? (
         <img
           src={src}
-          alt={getPlayerHeroLabel(player)}
+          alt={decorative ? '' : getPlayerHeroLabel(player)}
           loading="lazy"
           onError={event => {
             event.currentTarget.style.display = 'none'
@@ -191,7 +367,7 @@ function PlayerPortrait({ player, className = '' }) {
       ) : (
         <b>{getPlayerInitials(player)}</b>
       )}
-      <em>{name}</em>
+      <em className={styles.portraitLabel}>{name}</em>
     </span>
   )
 }
@@ -266,6 +442,16 @@ function getOpponent(match, side) {
   return side === 'team_a' ? match?.team_b : match?.team_a
 }
 
+function getOpponentLabel(team) {
+  return team?.shortName || team?.short || team?.team_short_name || team?.id || team?.name || team?.team_name || 'TBD'
+}
+
+function getOpponentFullName(team, label = '') {
+  const fullName = String(team?.fullName || team?.full || team?.team_name || team?.name || '').trim()
+  if (!fullName || normalizeKey(fullName) === normalizeKey(label)) return ''
+  return fullName
+}
+
 function getTeamScore(match, side) {
   const value = match?.[side]?.score
   return toNumber(value)
@@ -298,11 +484,13 @@ function getTeamMatchRows(matches, team) {
       const side = matchTeamSide(match, keys)
       if (!side) return null
       const opponent = getOpponent(match, side)
+      const opponentLabel = getOpponentLabel(opponent)
       return {
         match,
         side,
         opponent,
-        opponentLabel: opponent?.short || opponent?.team_short_name || opponent?.name || opponent?.team_name || 'TBD',
+        opponentLabel,
+        opponentFullName: getOpponentFullName(opponent, opponentLabel),
         result: getMatchResult(match, side),
         score: getMatchScoreText(match, side)
       }
@@ -347,17 +535,17 @@ function getMapTypeStats(rows) {
   rows.filter(row => isFinishedMatch(row.match)).forEach(row => {
     safeArr(row.match?.maps).forEach(map => {
       const type = map?.map_type || map?.type || 'UNKNOWN'
-      if (!type || String(type).toUpperCase() === 'UNKNOWN') return
-      if (!stats.has(type)) stats.set(type, { type, maps: 0, wins: 0, losses: 0 })
+      if (!isKnownMapType(type)) return
+      const result = getMapRoundResult(map, row.side)
+      if (!result.hasScore) return
+
+      if (!stats.has(type)) stats.set(type, { type, maps: 0, wins: 0, losses: 0, draws: 0 })
 
       const record = stats.get(type)
-      const scoreA = Number(map?.score_a || 0)
-      const scoreB = Number(map?.score_b || 0)
-      const mine = row.side === 'team_a' ? scoreA : scoreB
-      const other = row.side === 'team_a' ? scoreB : scoreA
       record.maps += 1
-      if (mine > other) record.wins += 1
-      else if (mine < other) record.losses += 1
+      if (result.tone === 'win') record.wins += 1
+      else if (result.tone === 'loss') record.losses += 1
+      else record.draws += 1
     })
   })
 
@@ -464,6 +652,32 @@ function getTeamLeaders(roster, locale = 'zh-CN') {
   ].filter(item => item.player)
 }
 
+function getTrackedRosterMapCount(roster) {
+  const rows = safeArr(roster)
+  const totalMapAppearances = rows.reduce((sum, player) => sum + toNumber(player?.maps_played), 0)
+  const maxPlayerMaps = rows.reduce((max, player) => Math.max(max, toNumber(player?.maps_played)), 0)
+  const estimatedTeamMaps = Math.round(totalMapAppearances / 5)
+  return Math.max(maxPlayerMaps, estimatedTeamMaps)
+}
+
+function getLeaderBadgesByPlayer(teamLeaders) {
+  const badges = new Map()
+
+  safeArr(teamLeaders).forEach(item => {
+    if (!item?.player) return
+    const key = getPlayerRosterKey(item.player)
+    if (!key) return
+    if (!badges.has(key)) badges.set(key, [])
+
+    const rows = badges.get(key)
+    if (!rows.some(row => row.label === item.label)) {
+      rows.push({ label: item.label, valueLabel: item.valueLabel })
+    }
+  })
+
+  return badges
+}
+
 function HeaderMetric({ label, value, meta }) {
   return (
     <span className={styles.headerMetric}>
@@ -486,6 +700,35 @@ function FormStrip({ form }) {
   )
 }
 
+function StaffIdentityValue({ people }) {
+  const rows = safeArr(people)
+    .map(person => {
+      const identity = normalizeStaffIdentity(person)
+      const name = identity.name || identity.battleTag
+      return {
+        ...identity,
+        name,
+        battleTag: getDistinctSecondaryName(name, identity.battleTag)
+      }
+    })
+    .filter(identity => identity.name || identity.battleTag)
+
+  if (!rows.length) {
+    return <b className={`${styles.heroMetaValue} ${styles.heroMetaValueNoWrap}`}>-</b>
+  }
+
+  return (
+    <b className={`${styles.heroMetaValue} ${styles.staffIdentityList}`}>
+      {rows.map((identity, index) => (
+        <i className={styles.staffIdentityItem} key={`${identity.key || identity.name}-${index}`}>
+          {identity.name}
+          {identity.battleTag ? <small>{identity.battleTag}</small> : null}
+        </i>
+      ))}
+    </b>
+  )
+}
+
 function TeamMatchCard({ row, withSeason }) {
   const location = useLocation()
 
@@ -499,6 +742,7 @@ function TeamMatchCard({ row, withSeason }) {
       <span className={`${styles.matchResult} ${styles[row.result.tone]}`}>{row.result.label}</span>
       <span className={styles.matchMain}>
         <strong>{row.opponentLabel}</strong>
+        {row.opponentFullName ? <small>{row.opponentFullName}</small> : null}
         <em>{getMatchRound(row.match)} · {getMatchTimeLabel(row.match)}</em>
       </span>
       <span className={styles.matchScore}>{row.score}</span>
@@ -506,7 +750,57 @@ function TeamMatchCard({ row, withSeason }) {
   )
 }
 
-function TeamTimelineRow({ row, withSeason }) {
+function TeamFocusCard({ row, withSeason, seasonId, matchSummary, recentForm = [] }) {
+  const location = useLocation()
+  const isPending = row.result.tone === 'pending'
+  const summary = matchSummary || {}
+  const recordLabel = `${toNumber(summary.wins)}-${toNumber(summary.losses)}`
+  const mapRecordLabel = `${toNumber(summary.mapWins)}-${toNumber(summary.mapLosses)}`
+  const pendingLabel = `${toNumber(summary.pending)}`
+  const statusLabel = row.result.label === 'LIVE' ? '进行中' : isPending ? '等待开赛' : '已完成'
+
+  return (
+    <Link
+      to={withSeason(`/matches/${row.match.match_id}`)}
+      state={getReturnState(location)}
+      className={styles.focusMatchCard}
+      onClick={() => saveReturnScroll(location)}
+    >
+      <span className={`${styles.focusMatchBadge} ${styles[row.result.tone]}`}>
+        {isPending ? 'NEXT' : row.result.label}
+      </span>
+      <TeamLogo team={row.opponent} seasonId={seasonId} className={styles.focusMatchLogo} />
+      <span className={styles.focusMatchMain}>
+        <em>{isPending ? 'NEXT MATCH' : 'LATEST MATCH'}</em>
+        <strong>{row.opponentLabel}</strong>
+        {row.opponentFullName ? <small>{row.opponentFullName}</small> : null}
+        <b>{getMatchRound(row.match)} · {getMatchTimeLabel(row.match)}</b>
+      </span>
+      <span className={styles.focusMatchScore}>{row.score}</span>
+      <span className={styles.focusMatchHint}>
+        <em>{isPending ? 'MATCH STATUS' : 'MATCH RESULT'}</em>
+        <b>{isPending ? '赛前数据待更新' : '最近完成比赛'}</b>
+      </span>
+      <span className={styles.focusMatchPrep}>
+        <span>
+          <em>开赛状态</em>
+          <b>{statusLabel}</b>
+        </span>
+        <span>
+          <em>近期状态</em>
+          <FormStrip form={recentForm} />
+        </span>
+      </span>
+      <span className={styles.focusMatchStats}>
+        <span><b>{recordLabel}</b><em>比赛战绩</em></span>
+        <span><b>{mapRecordLabel}</b><em>地图战绩</em></span>
+        <span><b>{pendingLabel}</b><em>待赛</em></span>
+      </span>
+    </Link>
+  )
+}
+
+function TeamTimelineRow({ row, withSeason, seasonId }) {
   const location = useLocation()
 
   return (
@@ -517,8 +811,10 @@ function TeamTimelineRow({ row, withSeason }) {
       onClick={() => saveReturnScroll(location)}
     >
       <span className={`${styles.matchResult} ${styles[row.result.tone]}`}>{row.result.label}</span>
+      <TeamLogo team={row.opponent} seasonId={seasonId} className={styles.timelineLogo} />
       <span className={styles.timelineMain}>
         <strong>{row.opponentLabel}</strong>
+        {row.opponentFullName ? <small>{row.opponentFullName}</small> : null}
         <em>{getMatchRound(row.match)} · {getMatchTimeLabel(row.match)}</em>
       </span>
       <span className={styles.matchScore}>{row.score}</span>
@@ -534,7 +830,7 @@ function RosterPlayerRow({ player, withSeason, locale = 'zh-CN' }) {
         <strong>{player.identity.primary}</strong>
         {player.identity.secondary ? <em>{player.identity.secondary}</em> : null}
       </span>
-      <span className={styles.rosterPlayerRole}>{player.role}</span>
+      <span className={styles.rosterPlayerRole}>{getRosterRoleLabel(player.role, locale)}</span>
       <span className={styles.rosterPlayerHero}>
         {player.hasStats && player.avatar?.heroName ? formatOwHeroName(player.avatar.heroName, locale) : '比赛开始后更新'}
       </span>
@@ -621,6 +917,7 @@ export default function TeamDetailPage() {
   const matchRows = useMemo(() => getTeamMatchRows(safeArr(db?.matches), team), [db, team])
   const matchSummary = useMemo(() => getMatchSummary(matchRows), [matchRows])
   const mapTypeStats = useMemo(() => getMapTypeStats(matchRows), [matchRows])
+  const mapSpotlight = useMemo(() => getRepresentativeMapSpotlight(matchRows, locale), [matchRows, locale])
   const standings = useMemo(() => getSwissStandings(db), [db])
   const standing = useMemo(() => {
     if (!team) return null
@@ -632,12 +929,13 @@ export default function TeamDetailPage() {
   const todayRows = getTodayRows(matchRows)
   const nextMatch = upcomingRows[0] || null
   const finishedRows = matchRows.filter(row => isFinishedMatch(row.match)).reverse()
-  const corePlayers = [...roster]
-    .sort((a, b) => Number(b.raw_time_mins || 0) - Number(a.raw_time_mins || 0) || Number(b.maps_played || 0) - Number(a.maps_played || 0))
-    .slice(0, 5)
+  const startingFiveSlots = getStartingFiveSlots(roster)
+  const corePlayers = startingFiveSlots.map(slot => slot.player).filter(Boolean)
   const recentForm = getRecentForm(finishedRows)
   const advanceState = getAdvanceState(standing, team)
-  const teamLeaders = getTeamLeaders(roster, locale)
+  const teamLeaders = useMemo(() => getTeamLeaders(roster, locale), [roster, locale])
+  const leaderBadgesByPlayer = useMemo(() => getLeaderBadgesByPlayer(teamLeaders), [teamLeaders])
+  const trackedRosterMapCount = useMemo(() => getTrackedRosterMapCount(roster), [roster])
   const roleComposition = ROLE_ORDER
     .map(role => ({ role, count: rosterGroups[role]?.length || 0 }))
     .filter(item => item.count)
@@ -645,7 +943,7 @@ export default function TeamDetailPage() {
     nextMatch ||
     finishedRows[0] ||
     null
-  const featuredMap = getFeaturedMapVisual(focusMatch, finishedRows, matchRows, locale)
+  const featuredMap = mapSpotlight
   const teamShareModel = getShareModel({
     team,
     seasonId,
@@ -713,10 +1011,6 @@ export default function TeamDetailPage() {
         <div className={styles.heroLogoStage}>
           {teamFavorited ? <span className={styles.followingBadge}>FOLLOWING</span> : null}
           <TeamLogo team={team} seasonId={seasonId} className={styles.heroTeamLogo} large />
-          <div className={styles.heroMapLabel}>
-            <span>{featuredMap.mode}</span>
-            <strong>{featuredMap.displayName}</strong>
-          </div>
         </div>
 
         <div className={styles.heroMainStage}>
@@ -729,17 +1023,30 @@ export default function TeamDetailPage() {
           <p>{team.fullName}</p>
 
           <div className={styles.heroMetaStrip}>
-            {team.club ? <span><strong>俱乐部</strong>{team.club}</span> : null}
-            <span><strong>经理</strong>{team.staff.managerLabel || '-'}</span>
-            <span><strong>教练</strong>{team.staff.coachLabel || '-'}</span>
-            <span><strong>阵容</strong>{roleComposition.map(item => `${item.role} ${item.count}`).join(' / ') || `${roster.length} 名选手`}</span>
+            <span>
+              <strong>经理</strong>
+              <StaffIdentityValue people={team.staff.managers} />
+            </span>
+            <span>
+              <strong>教练</strong>
+              <StaffIdentityValue people={team.staff.coaches} />
+            </span>
+            <span className={styles.heroRosterMetaItem}>
+              <strong>阵容结构</strong>
+              <b className={styles.heroRolePills}>
+                {roleComposition.length ? roleComposition.map(item => (
+                  <i key={item.role}>
+                    {getRosterRoleLabel(item.role, locale)}
+                    <em>{item.count}</em>
+                  </i>
+                )) : `${roster.length} 名选手`}
+              </b>
+            </span>
           </div>
 
           <div className={styles.heroMetrics}>
             <HeaderMetric label="当前排名" value={advanceState.label} meta={advanceState.zone} />
             <HeaderMetric label="比赛战绩" value={`${matchSummary.wins}-${matchSummary.losses}`} meta={`${matchSummary.completed} 场已完成`} />
-            <HeaderMetric label="地图战绩" value={`${matchSummary.mapWins}-${matchSummary.mapLosses}`} meta={formatPercent(matchSummary.mapWinRate)} />
-            <HeaderMetric label="下一场" value={nextMatch ? nextMatch.opponentLabel : '待定'} meta={nextMatch ? getMatchTimeLabel(nextMatch.match) : '暂无赛程'} />
           </div>
         </div>
 
@@ -763,10 +1070,10 @@ export default function TeamDetailPage() {
           </div>
 
           <div className={styles.focusDossier}>
-            <span>{todayRows.length ? 'TODAY MATCH' : 'FOCUS MATCH'}</span>
-            <strong>{focusMatch ? focusMatch.opponentLabel : '暂无对手'}</strong>
-            <em>{focusMatch ? `${getMatchRound(focusMatch.match)} · ${getMatchTimeLabel(focusMatch.match)}` : '暂无赛程'}</em>
-            <b>{focusMatch ? focusMatch.score : '- : -'}</b>
+            <span>NEXT MATCH</span>
+            <strong>{nextMatch ? nextMatch.opponentLabel : '暂无对手'}</strong>
+            <em>{nextMatch ? `${getMatchRound(nextMatch.match)} · ${getMatchTimeLabel(nextMatch.match)}` : '暂无赛程'}</em>
+            <b>{nextMatch ? nextMatch.score : '- : -'}</b>
           </div>
 
           <div className={styles.heroFormBlock}>
@@ -774,18 +1081,19 @@ export default function TeamDetailPage() {
             <FormStrip form={recentForm} />
           </div>
 
-          <div className={styles.heroCoreStrip}>
-            {corePlayers.slice(0, 4).map(player => (
-              <Link
-                key={player.identity?.playerId || player.player_id}
-                to={withSeason(`/players/${player.identity?.playerId || player.player_id}`)}
-                className={styles.heroCorePlayer}
-              >
-                <PlayerPortrait player={player} className={styles.heroCoreAvatar} />
-                <strong>{getPlayerName(player)}</strong>
-                <em>{player.role} / {getPlayerHeroLabel(player, locale)}</em>
-              </Link>
-            ))}
+          <div className={styles.heroIntelFacts}>
+            <span>
+              <strong>{matchSummary.mapWins}-{matchSummary.mapLosses}</strong>
+              <em>地图战绩</em>
+            </span>
+            <span>
+              <strong>{formatPercent(matchSummary.mapWinRate)}</strong>
+              <em>地图胜率</em>
+            </span>
+            <span>
+              <strong>{matchSummary.pending || '-'}</strong>
+              <em>待赛</em>
+            </span>
           </div>
         </aside>
       </section>
@@ -832,104 +1140,162 @@ export default function TeamDetailPage() {
           <section className={`${styles.panel} ${styles.mapSpotlightPanel}`}>
             <div className={styles.panelHead}>
               <h2>赛场背景</h2>
-              <span>{featuredMap.mode}</span>
+              <span>BATTLEGROUND PROFILE</span>
             </div>
             <div className={styles.mapSpotlight}>
-              <img
-                src={featuredMap.imageUrl}
-                alt={featuredMap.displayName}
-                loading="lazy"
-                onError={event => {
-                  event.currentTarget.style.display = 'none'
-                }}
-              />
-              <div>
-                <span>MAP BACKDROP</span>
-                <strong>{featuredMap.displayName}</strong>
-                <em>{focusMatch ? `${focusMatch.opponentLabel} · ${getMatchTimeLabel(focusMatch.match)}` : '来自最近有效比赛记录'}</em>
+              <div className={styles.mapSpotlightVisual}>
+                <img
+                  src={featuredMap.imageUrl}
+                  alt={featuredMap.displayName}
+                  loading="lazy"
+                  onError={event => {
+                    event.currentTarget.style.display = 'none'
+                  }}
+                />
+                <div className={styles.mapSpotlightCaption}>
+                  <span>REPRESENTATIVE MAP</span>
+                  <strong>{featuredMap.displayName}</strong>
+                  <em>{featuredMap.hasData ? `${featuredMap.mode} · ${featuredMap.maps} maps tracked` : '暂无有效地图记录'}</em>
+                </div>
+              </div>
+              <div className={styles.mapSpotlightIntel}>
+                <span className={styles.mapIntelKicker}>TEAM ON THIS MAP</span>
+                <div className={styles.mapIntelTitle}>
+                  <strong>{featuredMap.displayName}</strong>
+                  <em>{featuredMap.mode}</em>
+                </div>
+                <div className={styles.mapIntelGrid}>
+                  <span>
+                    <b>{featuredMap.hasData ? featuredMap.maps : '-'}</b>
+                    <em>出场地图</em>
+                  </span>
+                  <span>
+                    <b>{featuredMap.recordLabel}</b>
+                    <em>地图战绩</em>
+                  </span>
+                  <span>
+                    <b>{featuredMap.hasData ? formatPercent(featuredMap.winRate) : '-'}</b>
+                    <em>地图胜率</em>
+                  </span>
+                  <span>
+                    <b>{featuredMap.typeRecord ? formatMapRecord(featuredMap.typeRecord.wins, featuredMap.typeRecord.losses, featuredMap.typeRecord.draws) : '-'}</b>
+                    <em>{featuredMap.typeRecord ? `${featuredMap.typeRecord.mode} 类型` : '类型战绩'}</em>
+                  </span>
+                </div>
+                <div className={styles.mapIntelNote}>
+                  <span>RECENT RECORD</span>
+                  {featuredMap.hasData ? (
+                    <strong>
+                      {featuredMap.latestResult} vs {featuredMap.latestOpponent} · {featuredMap.latestRound} · {featuredMap.latestScore}
+                    </strong>
+                  ) : (
+                    <strong>等待已完赛地图数据</strong>
+                  )}
+                  {featuredMap.latestTimeLabel ? <em>{featuredMap.latestTimeLabel}</em> : null}
+                </div>
               </div>
             </div>
           </section>
 
           <section className={`${styles.panel} ${styles.corePanel}`}>
             <div className={styles.panelHead}>
-              <h2>核心轮廓</h2>
-              <span>CORE FOUR</span>
+              <h2>核心五人</h2>
+              <span>STARTING FIVE</span>
             </div>
-            <div className={styles.corePortraitGrid}>
-              {corePlayers.slice(0, 4).length ? corePlayers.slice(0, 4).map(player => (
-                <Link
-                  key={player.identity?.playerId || player.player_id}
-                  to={withSeason(`/players/${player.identity?.playerId || player.player_id}`)}
-                  className={styles.corePortraitCard}
-                >
-                  <PlayerPortrait player={player} className={styles.corePortrait} />
-                  <span>
-                    <strong>{getPlayerName(player)}</strong>
-                    <em>{player.role} / {getPlayerHeroLabel(player, locale)}</em>
-                  </span>
-                </Link>
-              )) : <div className={styles.emptyPanel}>暂无核心出场数据</div>}
+            <div className={styles.coreRosterList}>
+              {startingFiveSlots.map((slot, index) => {
+                const player = slot.player
+                if (!player) {
+                  return (
+                    <div key={slot.id} className={`${styles.coreRosterCard} ${styles.coreRosterEmpty}`}>
+                      <span className={styles.coreSlotTop}>
+                        <b>{getRosterRoleLabel(slot.role, locale)}</b>
+                        <em>{String(index + 1).padStart(2, '0')}</em>
+                      </span>
+                      <span className={styles.coreRosterName}>
+                        <strong>待定</strong>
+                        <em>阵容待补充</em>
+                      </span>
+                    </div>
+                  )
+                }
+
+                const mapsPlayed = toNumber(player.maps_played)
+                const timeMins = toNumber(player.raw_time_mins)
+                const hasUsage = mapsPlayed > 0 || timeMins > 0
+                const awardBadges = leaderBadgesByPlayer.get(getPlayerRosterKey(player)) || []
+                const appearanceRate = trackedRosterMapCount ? Math.min(1, mapsPlayed / trackedRosterMapCount) : 0
+
+                return (
+                  <Link
+                    key={slot.id}
+                    to={withSeason(`/players/${player.identity?.playerId || player.player_id}`)}
+                    className={styles.coreRosterCard}
+                  >
+                    <PlayerPortrait player={player} className={styles.coreRosterHeroWash} decorative />
+                    <span className={styles.coreSlotTop}>
+                      <b>{getRosterRoleLabel(slot.role, locale)}</b>
+                      <em>{String(index + 1).padStart(2, '0')}</em>
+                    </span>
+                    <span className={styles.coreRosterMain}>
+                      <span className={styles.coreRosterName}>
+                        <strong>{getPlayerName(player)}</strong>
+                        {getDistinctSecondaryName(getPlayerName(player), player.identity?.secondary) ? (
+                          <small>{player.identity?.secondary}</small>
+                        ) : null}
+                      </span>
+                    </span>
+                    <span className={`${styles.coreAwardTags} ${awardBadges.length ? '' : styles.coreAwardTagsEmpty}`}>
+                      {awardBadges.map(badge => (
+                        <span key={badge.label} title={badge.valueLabel}>{badge.label}</span>
+                      ))}
+                    </span>
+                    {hasUsage ? (
+                      <span className={styles.coreRosterMeta}>
+                        <span><b>{formatPercent(appearanceRate)}</b><em>出场率</em></span>
+                        <span><b>{formatPlayerTime(timeMins)}</b><em>出场时长</em></span>
+                      </span>
+                    ) : (
+                      <span className={styles.coreRosterMeta}>
+                        <span className={styles.coreRosterMetaEmpty}>赛时待更新</span>
+                      </span>
+                    )}
+                  </Link>
+                )
+              })}
             </div>
           </section>
 
-          <section className={styles.panel}>
+          <section className={`${styles.panel} ${styles.schedulePanel}`}>
             <div className={styles.panelHead}>
-              <h2>队伍信息</h2>
-              <span>PROFILE</span>
+              <h2>赛程近况</h2>
+              <span>MATCH DESK</span>
             </div>
-            <div className={styles.profileList}>
-              <span><strong>简称</strong>{team.shortName}</span>
-              <span><strong>全称</strong>{team.fullName}</span>
-              <span><strong>经理</strong>{team.staff.managers.map(formatStaffPerson).join('、') || '-'}</span>
-              {team.staff.coaches.length ? <span><strong>教练</strong>{team.staff.coaches.map(formatStaffPerson).join('、')}</span> : null}
-              <span><strong>当前排名</strong>{advanceState.label}</span>
-              <span><strong>阵容结构</strong>{roleComposition.map(item => `${item.role} ${item.count}`).join(' / ') || '待补充'}</span>
-            </div>
-          </section>
-
-          <section className={`${styles.panel} ${styles.focusPanel}`}>
-            <div className={styles.panelHead}>
-              <h2>{todayRows.length ? '今日比赛' : '焦点比赛'}</h2>
-              <span>{todayRows.length ? 'TODAY' : 'FOCUS'}</span>
-            </div>
-            {focusMatch ? (
-              <TeamMatchCard row={focusMatch} withSeason={withSeason} />
-            ) : (
-              <div className={styles.emptyPanel}>暂无待进行比赛</div>
-            )}
-          </section>
-
-          <section className={styles.panel}>
-            <div className={styles.panelHead}>
-              <h2>最近赛果</h2>
-              <span>RECENT</span>
-            </div>
-            <div className={styles.stack}>
-              {finishedRows.slice(0, 3).length ? finishedRows.slice(0, 3).map(row => (
-                <TeamMatchCard key={row.match.match_id} row={row} withSeason={withSeason} />
-              )) : <div className={styles.emptyPanel}>暂无已完成比赛</div>}
-            </div>
-          </section>
-
-          <section className={`${styles.panel} ${styles.leadersPanel}`}>
-            <div className={styles.panelHead}>
-              <h2>队内代表</h2>
-              <span>TEAM LEADERS</span>
-            </div>
-            <div className={styles.leaderGrid}>
-              {teamLeaders.length ? teamLeaders.map(item => (
-                <Link
-                  key={item.label}
-                  to={withSeason(`/players/${item.player.identity?.playerId || item.player.player_id}`)}
-                  className={styles.leaderCard}
-                >
-                  <span>{item.label}</span>
-                  <strong>{item.player.identity?.primary || item.player.display_name || item.player.player_name}</strong>
-                  <em>{item.valueLabel}</em>
-                  <b>{item.heroLabel}</b>
-                </Link>
-              )) : <div className={styles.emptyPanel}>暂无队内数据</div>}
+            <div className={styles.scheduleBoard}>
+              <div className={styles.scheduleFocus}>
+                {focusMatch ? (
+                  <TeamFocusCard
+                    row={focusMatch}
+                    withSeason={withSeason}
+                    seasonId={seasonId}
+                    matchSummary={matchSummary}
+                    recentForm={recentForm}
+                  />
+                ) : (
+                  <div className={styles.emptyPanel}>暂无待进行比赛</div>
+                )}
+              </div>
+              <div className={styles.scheduleRecent}>
+                <div className={styles.scheduleSubhead}>
+                  <strong>最近赛果</strong>
+                  <span>RECENT RESULTS</span>
+                </div>
+                <div className={styles.recentTimeline}>
+                  {finishedRows.slice(0, 3).length ? finishedRows.slice(0, 3).map(row => (
+                    <TeamTimelineRow key={row.match.match_id} row={row} withSeason={withSeason} seasonId={seasonId} />
+                  )) : <div className={styles.emptyPanel}>暂无已完成比赛</div>}
+                </div>
+              </div>
             </div>
           </section>
         </div>
@@ -944,7 +1310,7 @@ export default function TeamDetailPage() {
           <div className={styles.roleGroups}>
             {Object.entries(rosterGroups).filter(([, rows]) => rows.length).map(([role, rows]) => (
               <div key={role} className={styles.roleGroup}>
-                <div className={styles.roleGroupHead}>{ROLE_LABELS[role] || role} · {rows.length}</div>
+                <div className={styles.roleGroupHead}>{ROLE_LABELS[role] || getRosterRoleLabel(role, locale)} · {rows.length}</div>
                 <div className={styles.rosterRows}>
                   {rows.map(player => (
                     <RosterPlayerRow key={player.identity?.playerId || player.player_id} player={player} withSeason={withSeason} locale={locale} />
@@ -971,7 +1337,7 @@ export default function TeamDetailPage() {
               <h3>队伍赛程线</h3>
               <div className={styles.matchTimeline}>
                 {matchRows.length ? matchRows.map(row => (
-                  <TeamTimelineRow key={row.match.match_id} row={row} withSeason={withSeason} />
+                  <TeamTimelineRow key={row.match.match_id} row={row} withSeason={withSeason} seasonId={seasonId} />
                 )) : <div className={styles.emptyPanel}>暂无相关比赛</div>}
               </div>
             </div>
