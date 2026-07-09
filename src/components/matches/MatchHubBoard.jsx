@@ -1,11 +1,8 @@
-import { Link, useLocation, useOutletContext } from 'react-router-dom'
+import { Link, useOutletContext } from 'react-router-dom'
 import {
   getMatchDisplayTeams,
-  getMatchStatusText,
-  getMatchTimeLabel,
-  getRoundText
+  getMatchStatusText
 } from '../../lib/matchesSelectors.js'
-import { getReturnState, saveReturnScroll } from '../../lib/navigationState.js'
 import TeamLogo from './TeamLogo.jsx'
 import styles from './MatchHub.module.css'
 
@@ -19,16 +16,29 @@ function BoardStat({ value, label, meta }) {
   )
 }
 
-function FeaturedBoardTeam({ team, seasonId, align = 'left' }) {
-  const display = {
-    short: team?.team_short_name || team?.short || team?.team_name || team?.name || 'TBD',
-    full: team?.team_name || team?.name || team?.team_short_name || team?.short || 'TBD'
-  }
+function splitDateTime(label) {
+  const parts = String(label || '').trim().split(/\s+/).filter(Boolean)
+  if (parts.length < 2) return { date: label || '待定', time: '' }
+  return { date: parts[0], time: parts.slice(1).join(' ') }
+}
 
+function getRoundPosterMark(label) {
+  const text = String(label || '').trim().toUpperCase()
+  const number = text.match(/\d+/)?.[0]
+
+  if (/GRAND|FINAL|总决|决赛/.test(text)) return 'FINALS'
+  if (/PLAY\s*OFF|PLAYOFF|季后/.test(text)) return 'PLAYOFFS'
+  if (/LCQ|LAST\s*CHANCE|突围/.test(text)) return 'LCQ'
+  if (/SWISS|ROUND|瑞士/.test(text) && number) return 'SWISS'
+  if (number) return `ROUND ${number}`
+  return text || 'MATCH'
+}
+
+function BoardNextTeam({ team, display, seasonId, align = 'left' }) {
   return (
-    <span className={`${styles.boardFeaturedTeam} ${align === 'right' ? styles.boardFeaturedTeamRight : ''}`}>
-      <TeamLogo team={team} seasonId={seasonId} className={styles.boardFeaturedLogo} />
-      <span>
+    <span className={`${styles.boardNextTeam} ${align === 'right' ? styles.boardNextTeamRight : ''}`} title={display.full}>
+      <TeamLogo team={team} seasonId={seasonId} className={styles.boardNextLogo} />
+      <span className={styles.boardNextTeamCopy}>
         <strong>{display.short}</strong>
         <em>{display.full}</em>
       </span>
@@ -36,89 +46,88 @@ function FeaturedBoardTeam({ team, seasonId, align = 'left' }) {
   )
 }
 
-function FeaturedBoardRow({ match, index }) {
-  const { withSeason = path => path, seasonId } = useOutletContext()
-  const location = useLocation()
-  const teams = getMatchDisplayTeams(match)
-  const matchId = match?.match_id || match?.id || ''
+function BoardNextTicket({ match, nextParts, seasonId }) {
+  const teams = match ? getMatchDisplayTeams(match) : null
 
   return (
-    <Link
-      to={withSeason(`/matches/${encodeURIComponent(matchId)}`)}
-      state={getReturnState(location)}
-      className={styles.boardFeaturedRow}
-      title={`${teams.teamA.full} vs ${teams.teamB.full}`}
-      onClick={() => saveReturnScroll(location)}
-    >
-      <span className={styles.boardFeaturedIndex}>{String(index).padStart(2, '0')}</span>
-      <span className={styles.boardFeaturedDuel}>
-        <FeaturedBoardTeam team={match?.team_a} seasonId={seasonId} align="right" />
-        <b>VS</b>
-        <FeaturedBoardTeam team={match?.team_b} seasonId={seasonId} />
-      </span>
-      <span className={styles.boardFeaturedMeta}>
-        <time>{getMatchTimeLabel(match)}</time>
-        <strong>{match?.format || 'TBD'}</strong>
-        <em>{getMatchStatusText(match)}</em>
-      </span>
-      <span className={styles.boardFeaturedArrow} aria-hidden="true">→</span>
-    </Link>
+    <div className={styles.boardNextTicket}>
+      <div className={styles.boardNextHead}>
+        <span>NEXT MATCH</span>
+        <em>下一开赛</em>
+      </div>
+      {teams ? (
+        <div className={styles.boardNextDuel}>
+          <BoardNextTeam team={match?.team_a} display={teams.teamA} seasonId={seasonId} align="right" />
+          <b>VS</b>
+          <BoardNextTeam team={match?.team_b} display={teams.teamB} seasonId={seasonId} />
+        </div>
+      ) : (
+        <div className={`${styles.boardNextDuel} ${styles.boardNextDuelEmpty}`}>
+          <strong>待定</strong>
+        </div>
+      )}
+      <div className={styles.boardNextMeta}>
+        <time>{nextParts.date}{nextParts.time ? ` ${nextParts.time}` : ''}</time>
+        {match?.format ? <span>{match.format}</span> : null}
+        {match ? <span>{getMatchStatusText(match)}</span> : null}
+      </div>
+    </div>
   )
 }
 
-export default function MatchHubBoard({ summary, featuredMatches = [] }) {
-  const { withSeason = path => path } = useOutletContext()
+function BoardProgress({ finished, total, progress }) {
+  const percentLabel = `${Math.round(progress)}%`
+
+  return (
+    <div className={`${styles.boardStat} ${styles.boardProgressStat}`} style={{ '--board-progress': `${progress}%` }}>
+      <strong>{percentLabel}</strong>
+      <span>本轮进度</span>
+      <em className={styles.boardProgressMeta}>{finished} / {total} 已完成</em>
+      <i aria-hidden="true" />
+    </div>
+  )
+}
+
+export default function MatchHubBoard({ summary }) {
+  const { withSeason = path => path, seasonId } = useOutletContext()
   const roundLabel = summary?.roundLabel || 'ROUND 1'
+  const roundMark = getRoundPosterMark(roundLabel)
   const total = summary?.totalMatches || 0
   const slotCount = summary?.timeSlotCount || 0
   const firstLabel = summary?.firstMatchLabel || '待定'
+  const nextMatch = summary?.nextMatch || null
   const nextLabel = summary?.nextMatchLabel || '待定'
-  const progressLabel = summary?.progress?.label || `0 / ${total}`
+  const nextParts = splitDateTime(nextLabel)
+  const finishedCount = summary?.progress?.finished || 0
+  const progressPercent = total ? Math.min(100, Math.max(0, (finishedCount / total) * 100)) : 0
 
   return (
     <section className={styles.board} aria-labelledby="match-hub-title" data-testid="match-hub-board">
-      <div className={styles.boardLead}>
+      <div className={styles.boardLead} data-round-mark={roundMark}>
         <div className={styles.boardTitle}>
           <span id="match-hub-title">MATCHES</span>
           <strong>赛程赛果</strong>
         </div>
-        <p className={styles.roundMark}>{roundLabel} BOARD</p>
+        <p className={styles.roundMark}>{roundLabel} MATCH DAY</p>
         <h1>本轮赛程</h1>
         <p>
           本轮从 {firstLabel} 开始，
           {total} 场比赛分为 {slotCount} 个开赛时段进行。
         </p>
         <nav className={styles.boardActions} aria-label="Match Hub actions">
-          <Link to={withSeason('/matches?view=list&tab=round')}>查看全部比赛</Link>
+          <Link to={withSeason('/matches?view=list&tab=round')}>查看完整赛程</Link>
           <Link to={withSeason('/following')}>我的关注</Link>
-          <Link to={withSeason('/matches?view=list&focus=search')}>查找比赛 →</Link>
         </nav>
       </div>
 
-      <div className={styles.boardStats} aria-label="Round 1 summary">
-        <BoardStat value={total} label="本轮比赛" meta="MATCHES" />
-        <BoardStat value={slotCount} label="开赛时段" meta="TIME SLOTS" />
-        <BoardStat value={nextLabel} label="下一开赛" meta="NEXT" />
-        <BoardStat value={progressLabel} label="本轮进度" meta="PROGRESS" />
-      </div>
-
-      <section className={styles.boardFeatured} aria-label="本轮重点比赛">
-        <header className={styles.boardFeaturedHead}>
-          <span>FEATURED MATCHES</span>
-          <strong>本轮重点比赛</strong>
-          <em>{roundLabel || getRoundText(featuredMatches[0])}</em>
-        </header>
-        <div className={styles.boardFeaturedRows}>
-          {featuredMatches.length ? featuredMatches.map((match, index) => (
-            <FeaturedBoardRow key={match?.match_id || match?.id || index} match={match} index={index + 1} />
-          )) : (
-            <div className={styles.boardFeaturedEmpty}>
-              <strong>暂无重点比赛</strong>
-              <span>赛程公布后将展示本轮代表性对阵。</span>
-            </div>
-          )}
+      <div className={styles.boardStats} aria-label={`${roundLabel} summary`}>
+        <BoardNextTicket match={nextMatch} nextParts={nextParts} seasonId={seasonId} />
+        <div className={styles.boardMetricGrid}>
+          <BoardStat value={total} label="本轮比赛" meta="MATCHES" />
+          <BoardStat value={slotCount} label="开赛时段" meta="TIME SLOTS" />
+          <BoardProgress finished={finishedCount} total={total} progress={progressPercent} />
         </div>
-      </section>
+      </div>
     </section>
   )
 }

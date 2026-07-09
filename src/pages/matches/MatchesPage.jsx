@@ -18,6 +18,7 @@ import {
   safeArr
 } from '../../lib/matchesSelectors.js'
 import FollowingMatchSummary from '../../components/matches/FollowingMatchSummary.jsx'
+import LiveBroadcastEntry from '../../components/matches/LiveBroadcastEntry.jsx'
 import MatchHubBoard from '../../components/matches/MatchHubBoard.jsx'
 import RoundScheduleSection from '../../components/matches/RoundScheduleSection.jsx'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
@@ -367,7 +368,7 @@ function MatchHub({ hub, seasonId }) {
           </div>
         </section>
       ) : (
-        <MatchHubBoard summary={hub.currentRoundSummary} featuredMatches={hub.featuredMatches} />
+        <MatchHubBoard summary={hub.currentRoundSummary} />
       )}
 
       {hub.isArchive ? (
@@ -378,6 +379,7 @@ function MatchHub({ hub, seasonId }) {
         </>
       ) : (
         <>
+          <LiveBroadcastEntry hub={hub} />
           <RoundScheduleSection hub={hub} />
           <FollowingMatchSummary hub={hub} />
         </>

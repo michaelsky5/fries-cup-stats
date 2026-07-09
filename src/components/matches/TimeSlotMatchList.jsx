@@ -1,7 +1,14 @@
 import MatchHubRow from './MatchHubRow.jsx'
 import styles from './MatchHub.module.css'
 
-export default function TimeSlotMatchList({ slot, expanded, onToggle }) {
+function getVisibleDefaultMatches(slot, visibleLimit) {
+  const defaultMatches = slot?.defaultMatches?.length ? slot.defaultMatches : slot?.matches || []
+
+  if (!Number.isFinite(visibleLimit)) return defaultMatches
+  return defaultMatches.slice(0, Math.max(0, visibleLimit))
+}
+
+export default function TimeSlotMatchList({ slot, expanded, onToggle, visibleLimit }) {
   if (!slot) {
     return (
       <div className={styles.timeSlotBody} data-testid="time-slot-match-list">
@@ -10,8 +17,10 @@ export default function TimeSlotMatchList({ slot, expanded, onToggle }) {
     )
   }
 
-  const matches = expanded ? slot.matches : slot.defaultMatches
-  const canToggle = slot.matchCount > slot.defaultMatches.length
+  const defaultMatches = getVisibleDefaultMatches(slot, visibleLimit)
+  const matches = expanded ? slot.matches : defaultMatches
+  const canToggle = slot.matchCount > defaultMatches.length
+  const remainingCount = Math.max(0, slot.matchCount - defaultMatches.length)
 
   return (
     <div className={styles.timeSlotBody} data-testid="time-slot-match-list">
@@ -22,7 +31,7 @@ export default function TimeSlotMatchList({ slot, expanded, onToggle }) {
       </div>
       {canToggle ? (
         <button type="button" className={styles.toggleButton} data-testid="time-slot-toggle" onClick={onToggle}>
-          {expanded ? '收起' : `展开全部 ${slot.matchCount} 场`}
+          {expanded ? '收起' : `展开剩余 ${remainingCount} 场`}
         </button>
       ) : null}
     </div>

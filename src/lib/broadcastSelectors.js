@@ -116,6 +116,35 @@ function collectStreamLinks(source, primaryUrl) {
   const primary = primaryUrl
     ? [{ label: cleanText(source.stream_label || source.streamLabel || source.label) || '官方直播间', url: primaryUrl, staff: null }]
     : []
+  const indexed = [
+    ['a', 'A'],
+    ['b', 'B'],
+    ['1', '1'],
+    ['2', '2']
+  ].map(([key, label]) => {
+    const url = cleanText(
+      source[`stream_url_${key}`] ||
+      source[`streamUrl${label}`] ||
+      source[`live_url_${key}`] ||
+      source[`liveUrl${label}`] ||
+      source[`room_url_${key}`] ||
+      source[`roomUrl${label}`]
+    )
+    if (!url) return null
+
+    const staff = normalizePerson(
+      source[`caster_${key}`] ||
+      source[`caster${label}`] ||
+      source[`commentator_${key}`] ||
+      source[`commentator${label}`]
+    )
+
+    return {
+      label: cleanText(source[`stream_label_${key}`] || source[`streamLabel${label}`]) || staff?.name || `直播间 ${label}`,
+      url,
+      staff
+    }
+  }).filter(Boolean)
   const extras = [
     source.extra_streams,
     source.extraStreams,
@@ -128,7 +157,7 @@ function collectStreamLinks(source, primaryUrl) {
   ].flatMap(value => asList(value)).map(stream => normalizeStreamLink(stream, '额外直播间')).filter(Boolean)
   const seen = new Set()
 
-  return [...primary, ...extras].filter(stream => {
+  return [...primary, ...indexed, ...extras].filter(stream => {
     const key = normalizeKey(stream.url)
     if (!key || seen.has(key)) return false
     seen.add(key)
