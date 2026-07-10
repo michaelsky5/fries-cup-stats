@@ -9,6 +9,7 @@ import {
   buildTournamentStory
 } from '../../lib/reviewStoryBuilders.js'
 import { generatePosterPng, getPosterPayload } from '../../lib/reviewPoster.js'
+import { buildFriesCupTitle, getReviewStoryPageLabel } from '../../lib/pageTitle.js'
 import styles from './ReviewStoryPage.module.css'
 
 const DEFAULT_LOGO = '/logos/fc_logo.png'
@@ -1076,6 +1077,10 @@ export default function ReviewStoryPage({ storyType }) {
   const [touchStartX, setTouchStartX] = useState(null)
   const [showPoster, setShowPoster] = useState(false)
   const storyScale = useStoryScale()
+
+  useEffect(() => {
+    document.title = buildFriesCupTitle(getReviewStoryPageLabel(storyType))
+  }, [storyType])
 
   useEffect(() => {
     let alive = true

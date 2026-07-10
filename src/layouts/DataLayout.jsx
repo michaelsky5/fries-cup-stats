@@ -16,6 +16,7 @@ import { getDb } from '../lib/db.js'
 import { formatUpdatedAt } from '../lib/format.js'
 import { getGlobalSummary } from '../lib/selectors.js'
 import { getSeasonStatus } from '../lib/homeSelectors.js'
+import { buildFriesCupTitle, getDataCenterPageLabel } from '../lib/pageTitle.js'
 import { FavoritesProvider, normalizeSeasonId, useFavorites } from '../features/favorites/index.js'
 import EventContextBar from '../components/layout/EventContextBar.jsx'
 import { useLocaleDomTranslation } from '../hooks/useLocaleDomTranslation.js'
@@ -137,6 +138,10 @@ export default function DataLayout() {
   useEffect(() => {
     document.documentElement.lang = locale
   }, [locale])
+
+  useEffect(() => {
+    document.title = buildFriesCupTitle(getDataCenterPageLabel(location.pathname, location.search))
+  }, [location.pathname, location.search])
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
