@@ -724,18 +724,18 @@
 .broadcastHead {
   min-width: 0;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 18px 22px;
+  padding: 16px 22px;
   background: var(--portal-black);
-  border-bottom: 5px solid var(--portal-yellow);
+  border-bottom: 4px solid var(--portal-yellow);
   color: var(--fc-white);
 }
 
 .broadcastHead > div {
   display: grid;
-  gap: 6px;
+  gap: 5px;
 }
 
 .broadcastHead span {
@@ -749,7 +749,7 @@
 .broadcastHead h2 {
   margin: 0;
   color: var(--fc-white);
-  font-size: clamp(30px, 2.6vw, 44px);
+  font-size: clamp(28px, 2.4vw, 40px);
   font-weight: 950;
   line-height: 0.98;
 }
@@ -763,6 +763,34 @@
   text-align: right;
 }
 
+.broadcastHeadMeta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.broadcastHeadToggle {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  background: var(--portal-yellow);
+  border: 2px solid var(--portal-yellow);
+  color: var(--portal-black);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.broadcastHeadToggle:hover {
+  background: var(--fc-white);
+  border-color: var(--fc-white);
+}
+
 .broadcastRows {
   min-width: 0;
   display: grid;
@@ -773,8 +801,8 @@
   position: relative;
   min-width: 0;
   display: grid;
-  grid-template-rows: auto minmax(104px, auto) auto;
-  min-height: 202px;
+  grid-template-rows: auto minmax(98px, auto) auto;
+  min-height: 210px;
   padding: 0;
   overflow: hidden;
   background: var(--fc-white);
@@ -790,43 +818,105 @@
   border-bottom: 0;
 }
 
-.broadcastCardTop {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  min-height: 48px;
-  padding: 8px 16px;
-  background: var(--portal-black);
-  border-bottom: 4px solid var(--portal-yellow);
+.broadcastCardLive {
+  box-shadow: inset 5px 0 0 var(--portal-yellow);
 }
 
-.broadcastCardTop span {
-  width: 32px;
-  height: 32px;
+.broadcastCardLive .broadcastCardTop {
+  background: #fff4c6;
+}
+
+.broadcastCardLive .broadcastCardState em {
+  background: var(--portal-yellow);
+  border-color: var(--portal-yellow);
+  color: var(--portal-black);
+}
+
+.broadcastCardFinished .broadcastCardState em {
+  background: #e7e5df;
+  border-color: #d1cec5;
+  color: #69665e;
+}
+
+.broadcastCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 52px;
+  padding: 8px 16px;
+  background: #f9f7f0;
+  border-bottom: 1px solid rgba(42, 42, 42, 0.2);
+}
+
+.broadcastCardMeta {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.broadcastCardMeta > span {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
   display: grid;
   place-items: center;
-  background: var(--portal-yellow);
-  color: var(--portal-black);
+  background: var(--portal-black);
+  color: var(--portal-yellow);
   font-size: 13px;
   font-weight: 950;
   line-height: 1;
 }
 
-.broadcastCardTop strong,
-.broadcastCardTop time,
-.broadcastCardTop em {
+.broadcastCardMeta > div {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.broadcastCardMeta strong,
+.broadcastCardMeta time,
+.broadcastCardState em,
+.broadcastCardState small {
+  min-width: 0;
+  overflow: hidden;
   color: var(--portal-muted);
   font-size: 11px;
   font-style: normal;
   font-weight: 950;
-  letter-spacing: 0.06em;
   line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.broadcastCardTop em {
-  margin-left: auto;
-  color: var(--portal-yellow);
+.broadcastCardMeta strong {
+  color: var(--portal-ink);
+}
+
+.broadcastCardMeta time {
+  letter-spacing: 0.04em;
+}
+
+.broadcastCardState {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.broadcastCardState em {
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 9px;
+  background: #fff3c1;
+  border: 1px solid rgba(184, 138, 19, 0.36);
+  color: #9a7000;
+}
+
+.broadcastCardState small {
+  color: var(--portal-muted);
 }
 
 .broadcastDuel {
@@ -835,17 +925,17 @@
   grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr);
   gap: 14px;
   align-items: center;
-  padding: 22px 22px 18px;
+  padding: 18px 20px;
 }
 
 .broadcastDuel b {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   display: grid;
   place-items: center;
-  background: #fff7d8;
-  border: 1px solid rgba(42, 42, 42, 0.18);
-  color: #b88a13;
+  background: var(--portal-black);
+  border: 1px solid var(--portal-black);
+  color: var(--portal-yellow);
   font-size: 14px;
   font-weight: 950;
   line-height: 1;
@@ -854,13 +944,13 @@
 .broadcastTeam {
   min-width: 0;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr);
-  gap: 12px;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 10px;
   align-items: center;
 }
 
 .broadcastTeamRight {
-  grid-template-columns: minmax(0, 1fr) 48px;
+  grid-template-columns: minmax(0, 1fr) 54px;
   text-align: right;
 }
 
@@ -869,8 +959,8 @@
 }
 
 .broadcastLogo {
-  width: 48px;
-  height: 48px;
+  width: 54px;
+  height: 54px;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -909,7 +999,7 @@
 
 .broadcastTeam strong {
   color: var(--portal-ink);
-  font-size: clamp(20px, 1.8vw, 28px);
+  font-size: clamp(21px, 1.8vw, 30px);
   font-weight: 950;
 }
 
@@ -920,19 +1010,32 @@
   font-weight: 850;
 }
 
+.broadcastFooter {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 14px;
+  background: #f9f7f0;
+  border-top: 1px solid rgba(42, 42, 42, 0.2);
+}
+
 .broadcastCrew {
   min-width: 0;
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 0;
   align-items: center;
-  padding: 0 22px 18px;
+  overflow: hidden;
+  background: var(--fc-white);
+  border: 1px solid rgba(42, 42, 42, 0.22);
 }
 
 .broadcastCrew span,
 .broadcastStaffLine p {
   min-width: 0;
-  min-height: 32px;
+  min-height: 28px;
   display: inline-flex;
   align-items: center;
   padding: 0 8px;
@@ -944,10 +1047,10 @@
 }
 
 .broadcastCrew span {
-  min-height: 32px;
+  min-height: 28px;
   justify-content: center;
   background: var(--portal-black);
-  border-color: var(--portal-black);
+  border: 0;
   color: var(--fc-white);
 }
 
@@ -955,13 +1058,15 @@
   min-width: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
+  gap: 0;
 }
 
 .broadcastStaffLine p {
   max-width: 100%;
   margin: 0;
-  background: #fbf3d6;
+  background: transparent;
+  border: 0;
+  border-left: 1px solid rgba(42, 42, 42, 0.18);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -986,20 +1091,19 @@
 
 .broadcastActions {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 8px;
   min-width: max-content;
 }
 
 .broadcastActions a,
 .broadcastActions span {
-  min-height: 28px;
+  min-height: 30px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 8px;
+  padding: 0 10px;
   background: var(--portal-yellow);
   border: 2px solid var(--portal-yellow);
   color: var(--portal-black);
@@ -1010,36 +1114,22 @@
 }
 
 .broadcastActions a:last-child {
-  background: transparent;
-  border-color: rgba(255, 255, 255, 0.48);
-  color: var(--fc-white);
+  background: var(--fc-white);
+  border-color: var(--portal-black);
+  color: var(--portal-black);
+}
+
+.broadcastActions .broadcastDetailLink {
+  width: 30px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
 }
 
 .broadcastActions span {
   background: transparent;
   border-color: transparent;
   color: rgba(255, 255, 255, 0.58);
-}
-
-.broadcastToggle {
-  min-height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 18px;
-  background: var(--fc-white);
-  border: 0;
-  border-top: 1px solid rgba(42, 42, 42, 0.22);
-  color: var(--portal-black);
-  cursor: pointer;
-  font: inherit;
-  font-size: 12px;
-  font-weight: 950;
-  letter-spacing: 0.04em;
-}
-
-.broadcastToggle:hover {
-  background: #fff7d8;
 }
 
 .section {
@@ -1266,7 +1356,7 @@
 .toggleButton:focus-visible,
 .boardActions a:focus-visible,
 .broadcastActions a:focus-visible,
-.broadcastToggle:focus-visible,
+.broadcastHeadToggle:focus-visible,
 .followingActions a:focus-visible {
   outline: 3px solid var(--portal-yellow);
   outline-offset: -3px;
@@ -1965,6 +2055,11 @@
     text-align: left;
   }
 
+  .broadcastHeadMeta {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .broadcastCard {
     padding: 0;
   }
@@ -1995,9 +2090,14 @@
     height: 42px;
   }
 
+  .broadcastFooter {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px 14px 14px;
+  }
+
   .broadcastCrew {
     grid-template-columns: 52px minmax(0, 1fr);
-    padding: 0 18px 14px;
   }
 
   .broadcastCrew span {
@@ -2005,7 +2105,6 @@
   }
 
   .broadcastActions {
-    grid-column: 1 / -1;
     justify-content: flex-start;
     min-width: 0;
   }

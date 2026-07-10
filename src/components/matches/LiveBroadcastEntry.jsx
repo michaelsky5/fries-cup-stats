@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation, useOutletContext } from 'react-router-dom'
 import {
   getMatchDisplayTeams,
+  getMatchStatus,
   getMatchStatusText,
   getMatchTimeLabel,
   getRoundText,
@@ -87,28 +88,31 @@ function BroadcastCard({ row, index }) {
   const primaryStream = broadcast.streamLinks[0] || null
   const roomCount = broadcast.streamLinks.length
   const staff = getBroadcastStaffGroups(broadcast)
+  const status = getMatchStatus(match)
+  const statusClass = status === 'live'
+    ? styles.broadcastCardLive
+    : status === 'finished'
+      ? styles.broadcastCardFinished
+      : ''
+  const streamLabel = status === 'finished'
+    ? '查看回放'
+    : status === 'live'
+      ? '观看直播'
+      : '进入直播间'
 
   return (
-    <article className={styles.broadcastCard}>
+    <article className={`${styles.broadcastCard} ${statusClass}`}>
       <div className={styles.broadcastCardTop}>
-        <span>{String(index + 1).padStart(2, '0')}</span>
-        <strong>{getRoundText(match)}</strong>
-        <time>{getMatchTimeLabel(match)}</time>
-        <em>{getMatchStatusText(match)}</em>
-        <div className={styles.broadcastActions}>
-          {primaryStream ? (
-            <a href={primaryStream.url} target="_blank" rel="noreferrer">
-              进入直播间 →
-            </a>
-          ) : null}
-          {roomCount > 1 ? <span>共 {roomCount} 个直播间</span> : null}
-          <Link
-            to={withSeason(`/matches/${encodeURIComponent(matchId)}`)}
-            state={getReturnState(location)}
-            onClick={() => saveReturnScroll(location)}
-          >
-            比赛详情 →
-          </Link>
+        <div className={styles.broadcastCardMeta}>
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <strong>{getRoundText(match)}</strong>
+            <time>{getMatchTimeLabel(match)}</time>
+          </div>
+        </div>
+        <div className={styles.broadcastCardState}>
+          {roomCount > 1 ? <small>{roomCount} 路直播</small> : null}
+          <em>{getMatchStatusText(match)}</em>
         </div>
       </div>
 
@@ -118,27 +122,51 @@ function BroadcastCard({ row, index }) {
         <BroadcastTeam team={teams.teamB} source={match?.team_b} seasonId={seasonId} />
       </div>
 
-      <div className={styles.broadcastCrew}>
-        <span>{match?.format || 'TBD'}</span>
-        {staff.casterText || staff.refereeText ? (
-          <div className={styles.broadcastStaffLine}>
-            {staff.casterText ? (
-              <p title={`解说 ${staff.casterText}`}>
-                <b>解说</b>
-                {staff.casterText}
-              </p>
-            ) : null}
-            {staff.refereeText ? (
-              <p title={`赛管 ${staff.refereeText}`}>
-                <b>赛管</b>
-                {staff.refereeText}
-              </p>
-            ) : null}
-          </div>
-        ) : (
-          <div className={styles.broadcastStaffLine} />
-        )}
-      </div>
+      <footer className={styles.broadcastFooter}>
+        <div className={styles.broadcastCrew}>
+          <span>{match?.format || 'TBD'}</span>
+          {staff.casterText || staff.refereeText ? (
+            <div className={styles.broadcastStaffLine}>
+              {staff.casterText ? (
+                <p title={`解说 ${staff.casterText}`}>
+                  <b>解说</b>
+                  {staff.casterText}
+                </p>
+              ) : null}
+              {staff.refereeText ? (
+                <p title={`赛管 ${staff.refereeText}`}>
+                  <b>赛管</b>
+                  {staff.refereeText}
+                </p>
+              ) : null}
+            </div>
+          ) : (
+            <div className={styles.broadcastStaffLine} />
+          )}
+        </div>
+        <div className={styles.broadcastActions}>
+          {primaryStream ? (
+            <a
+              className={styles.broadcastStreamLink}
+              href={primaryStream.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {streamLabel} →
+            </a>
+          ) : null}
+          <Link
+            className={styles.broadcastDetailLink}
+            to={withSeason(`/matches/${encodeURIComponent(matchId)}`)}
+            state={getReturnState(location)}
+            onClick={() => saveReturnScroll(location)}
+            aria-label="比赛详情"
+            title="比赛详情"
+          >
+            →
+          </Link>
+        </div>
+      </footer>
     </article>
   )
 }
@@ -157,27 +185,25 @@ export default function LiveBroadcastEntry({ hub }) {
           <span>LIVE DESK</span>
           <h2 id="live-broadcast-title">直播入口</h2>
         </div>
-        <p>
-          {rows.length > DEFAULT_VISIBLE_BROADCASTS
-            ? `默认显示 ${DEFAULT_VISIBLE_BROADCASTS} 场，可展开全部 ${rows.length} 场`
-            : `已公布直播信息的本轮比赛 · ${rows.length} 场`}
-        </p>
+        <div className={styles.broadcastHeadMeta}>
+          <p>当前显示 {visibleRows.length} / {rows.length} 场</p>
+          {rows.length > DEFAULT_VISIBLE_BROADCASTS ? (
+            <button
+              type="button"
+              className={styles.broadcastHeadToggle}
+              aria-expanded={expanded}
+              onClick={() => setExpanded(value => !value)}
+            >
+              {expanded ? '收起 −' : '全部直播 +'}
+            </button>
+          ) : null}
+        </div>
       </header>
       <div className={styles.broadcastRows}>
         {visibleRows.map((row, index) => (
           <BroadcastCard key={getMatchKey(row.match, index)} row={row} index={index} />
         ))}
       </div>
-      {rows.length > DEFAULT_VISIBLE_BROADCASTS ? (
-        <button
-          type="button"
-          className={styles.broadcastToggle}
-          aria-expanded={expanded}
-          onClick={() => setExpanded(value => !value)}
-        >
-          {expanded ? '收起直播场次' : `展开全部 ${rows.length} 场直播`}
-        </button>
-      ) : null}
     </section>
   )
 }
