@@ -146,29 +146,37 @@ function percentileFromStats(value, stats) {
   return clamp(points[points.length - 1].percentile)
 }
 
-function isLowSampleBaseline(baseline) {
-  if (!baseline) return true
-  return baseline.sampleStatus && baseline.sampleStatus !== SAMPLE_ELIGIBILITY_CONFIG.statuses.ok
-}
+function getBaselineMaturity(baseline, fallbackStatus = '') {
+  if (!baseline) return 0
 
-function getSourceWeights(sampleStatus, profileBaseline) {
-  const status = sampleStatus || SAMPLE_ELIGIBILITY_CONFIG.statuses.veryLow
-  let weights = status === SAMPLE_ELIGIBILITY_CONFIG.statuses.ok
-    ? { ...BASELINE_BLEND_CONFIG.HERO_OK }
-    : status === SAMPLE_ELIGIBILITY_CONFIG.statuses.low
-      ? { ...BASELINE_BLEND_CONFIG.HERO_LOW_SAMPLE }
-      : { ...BASELINE_BLEND_CONFIG.HERO_VERY_LOW_SAMPLE }
-
-  if (isLowSampleBaseline(profileBaseline)) {
-    if (weights.hero > 0) {
-      weights.subrole += weights.profile
-      weights.profile = 0
-    } else {
-      weights = { ...BASELINE_BLEND_CONFIG.PROFILE_LOW_SAMPLE }
-    }
+  const sampleLogs = toFiniteNumber(baseline.sampleLogs, NaN)
+  const totalPlaytimeMinutes = toFiniteNumber(baseline.totalPlaytimeMinutes, NaN)
+  if (Number.isFinite(sampleLogs) && Number.isFinite(totalPlaytimeMinutes)) {
+    const logTarget = Math.max(1, toFiniteNumber(SAMPLE_ELIGIBILITY_CONFIG.ok.minSampleLogs, 20))
+    const timeTarget = Math.max(1, toFiniteNumber(SAMPLE_ELIGIBILITY_CONFIG.ok.minTotalPlaytimeMinutes, 120))
+    return clamp(Math.min(sampleLogs / logTarget, totalPlaytimeMinutes / timeTarget))
   }
 
-  return weights
+  const status = fallbackStatus || baseline.sampleStatus
+  if (status === SAMPLE_ELIGIBILITY_CONFIG.statuses.ok) return 1
+  if (status === SAMPLE_ELIGIBILITY_CONFIG.statuses.low) return 0.25
+  return 0
+}
+
+function getSourceWeights(heroBaseline, profileBaseline, sampleStatus) {
+  const heroMaturity = getBaselineMaturity(heroBaseline, sampleStatus)
+  const profileMaturity = getBaselineMaturity(profileBaseline)
+  const maxHeroWeight = toFiniteNumber(BASELINE_BLEND_CONFIG.HERO_OK.hero, 0.5)
+  const profileShareWithoutHero = toFiniteNumber(BASELINE_BLEND_CONFIG.HERO_LOW_SAMPLE.profile, 0.6)
+  const hero = maxHeroWeight * heroMaturity
+  const remaining = 1 - hero
+  const profile = remaining * profileShareWithoutHero * profileMaturity
+
+  return {
+    hero,
+    profile,
+    subrole: Math.max(0, remaining - profile)
+  }
 }
 
 function normalizeWeightsForAvailableBaselines(weights, baselines) {
@@ -295,7 +303,7 @@ export function getBlendedMetricPercentile({
     subrole: subroleBaseline || null
   }
   const sourceWeights = normalizeWeightsForAvailableBaselines(
-    getSourceWeights(sampleStatus || heroBaseline?.sampleStatus, profileBaseline),
+    getSourceWeights(heroBaseline, profileBaseline, sampleStatus),
     baselines
   )
   const sourcePercentiles = {}

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 
-import { PROFILE_WEIGHTS, RATING_METRICS } from '../src/config/ratingModelConfig.js'
+import { PROFILE_WEIGHTS, RATING_METRICS, RATING_MODEL_VERSION } from '../src/config/ratingModelConfig.js'
 import {
   getHeroSubrole,
   getHeroSubroleConfig,
@@ -9,6 +9,7 @@ import {
 } from '../src/lib/heroSubroleSelectors.js'
 import {
   getPer10Stats,
+  getBlendedMetricPercentile,
   getSurvivalPercentile,
   mapRawScoreToMapRating,
   mapRawScoreToOVR
@@ -21,6 +22,8 @@ function sumWeights(weights) {
 Object.entries(PROFILE_WEIGHTS).forEach(([profile, config]) => {
   assert.equal(sumWeights(config.weights), 100, `${profile} weights must sum to 100`)
 })
+
+assert.equal(RATING_MODEL_VERSION, 'v1.1')
 
 listHeroSubroleEntries().forEach(hero => {
   assert.ok(
@@ -96,6 +99,41 @@ const deathsBaseline = {
 }
 
 assert.ok(getSurvivalPercentile(3, deathsBaseline) > getSurvivalPercentile(9, deathsBaseline))
+
+const percentileStats = {
+  rawPercentiles: { p10: 10, p25: 25, p50: 50, p75: 75, p90: 90, p95: 95, mean: 50, max: 100 },
+  winsorizedPercentiles: { p10: 10, p25: 25, p50: 50, p75: 75, p90: 90, p95: 95, mean: 50, max: 95 }
+}
+const makeDamageBaseline = (key, sampleLogs, totalPlaytimeMinutes) => ({
+  key,
+  sampleLogs,
+  totalPlaytimeMinutes,
+  sampleStatus: sampleLogs >= 20 && totalPlaytimeMinutes >= 120 ? 'OK' : 'LOW_SAMPLE',
+  metrics: { damagePer10: percentileStats }
+})
+const subroleBaseline = makeDamageBaseline('HITSCAN', 100, 1000)
+const profileBaseline = makeDamageBaseline('poke_hitscan', 20, 120)
+const halfMatureBlend = getBlendedMetricPercentile({
+  metric: 'damage',
+  value: 50,
+  heroBaseline: makeDamageBaseline('Sierra', 10, 60),
+  profileBaseline,
+  subroleBaseline
+})
+const matureBlend = getBlendedMetricPercentile({
+  metric: 'damage',
+  value: 50,
+  heroBaseline: makeDamageBaseline('Sierra', 20, 120),
+  profileBaseline,
+  subroleBaseline
+})
+
+assert.ok(Math.abs(halfMatureBlend.sourceWeights.hero - 0.25) < 0.0001)
+assert.ok(Math.abs(halfMatureBlend.sourceWeights.profile - 0.45) < 0.0001)
+assert.ok(Math.abs(halfMatureBlend.sourceWeights.subrole - 0.3) < 0.0001)
+assert.ok(Math.abs(matureBlend.sourceWeights.hero - 0.5) < 0.0001)
+assert.ok(Math.abs(matureBlend.sourceWeights.profile - 0.3) < 0.0001)
+assert.ok(Math.abs(matureBlend.sourceWeights.subrole - 0.2) < 0.0001)
 assert.equal(mapRawScoreToOVR(80, 80, { sampleStatus: 'LOW_SAMPLE' }), 'UNRATED')
 assert.ok(mapRawScoreToMapRating(101) <= 9.8)
 assert.ok(mapRawScoreToMapRating(-10) >= 5.5)

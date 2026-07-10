@@ -32,6 +32,7 @@ const EMPTY_STATS = {
 }
 
 const dbBaselineCache = new WeakMap()
+const playerBaselineCache = new WeakMap()
 
 function safeArr(value) {
   if (Array.isArray(value)) return value
@@ -362,8 +363,16 @@ function buildFromRows(rows, cleaning, options = {}) {
 }
 
 export function buildRatingBaselinesFromPlayerLogs(players, options = {}) {
+  const cacheKey = normalizeSeasonId(options.seasonId || options.season?.id || options.season?.publicCode || '') || 'default'
+  if (Array.isArray(players)) {
+    const cached = playerBaselineCache.get(players)
+    if (cached?.cacheKey === cacheKey) return cached.baselines
+  }
+
   const { rows, cleaning } = collectRatingLogRowsFromPlayers(players, options)
-  return buildFromRows(rows, cleaning, options)
+  const baselines = buildFromRows(rows, cleaning, options)
+  if (Array.isArray(players)) playerBaselineCache.set(players, { cacheKey, baselines })
+  return baselines
 }
 
 export function buildRatingBaselinesFromDb(db, options = {}) {

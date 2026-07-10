@@ -129,7 +129,8 @@ function createLogTimeIndex(players = [], match) {
   ].map(cleanText).filter(Boolean))
 
   safeArr(players).forEach(player => {
-    const logs = [...safeArr(player?.match_logs), ...safeArr(player?.live_match_logs)]
+    const matchLogs = safeArr(player?.match_logs)
+    const logs = matchLogs.length ? matchLogs : safeArr(player?.live_match_logs)
     logs.forEach(log => {
       if (!matchIds.has(cleanText(log?.matchId || log?.match_id || log?.rawMatchId || log?.raw_match_id))) return
 
@@ -142,7 +143,7 @@ function createLogTimeIndex(players = [], match) {
       if (!playerId) return
 
       const key = `${playerId}:${role}:${mapOrder}`
-      if (!index.has(key)) index.set(key, minutes)
+      index.set(key, toFiniteNumber(index.get(key)) + minutes)
     })
   })
 
@@ -185,11 +186,17 @@ function getMapResultContext(match, map) {
 }
 
 function finalizeEntry(group) {
-  const heroes = [...group.heroCounts.entries()]
+  const heroEntries = [...group.heroCounts.entries()]
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  const heroes = heroEntries
     .map(([hero]) => hero)
   const mapsPlayed = group.maps.size
-  const roleTimeMins = group.roleTimeMins
+  const roleTimeMins = [...group.mapMinutes.values()].reduce((sum, minutes) => sum + minutes, 0)
+  const ambiguousHeroMap = [...group.heroesByMap.values()].some(mapHeroes => mapHeroes.size > 1)
+  const topHeroWeight = toFiniteNumber(heroEntries[0]?.[1])
+  const secondHeroWeight = toFiniteNumber(heroEntries[1]?.[1])
+  const ambiguousHeroProfile = ambiguousHeroMap && secondHeroWeight > 0 && topHeroWeight <= secondHeroWeight * 1.25
+  const mostPlayedHero = ambiguousHeroProfile ? '' : heroes[0] || ''
   const metrics = buildMetrics(group.totals, roleTimeMins, mapsPlayed)
 
   return {
@@ -208,8 +215,9 @@ function finalizeEntry(group) {
     raw_time_mins: roleTimeMins,
     roleTimeMins,
     total_time_played: roleTimeMins > 0 ? `${Math.round(roleTimeMins)}m` : '0m',
-    most_played_hero: heroes[0] || '',
+    most_played_hero: mostPlayedHero,
     top_3_heroes: heroes.slice(0, 3),
+    ratingHeroProfileAmbiguous: ambiguousHeroProfile,
     metrics,
     total_elim: metrics.total.elim,
     total_ast: metrics.total.ast,
@@ -232,14 +240,24 @@ function buildMatchRatingEntries(match, maps = [], players = []) {
   const logTimeIndex = createLogTimeIndex(players, match)
   const groups = new Map()
 
-  safeArr(maps).forEach(map => {
+  safeArr(maps).forEach((map, mapIndex) => {
     const mapOrder = cleanText(map?.map_order)
+    const mapKey = mapOrder || `map-${mapIndex + 1}`
     const mapMinutes = parseTimeToMinutes(map?.match_time)
 
     const rows = [
       ...safeArr(map?.team_a_stats).map((row, index) => ({ row, side: 'A', index })),
       ...safeArr(map?.team_b_stats).map((row, index) => ({ row, side: 'B', index }))
     ]
+    const rowGroupCounts = rows.reduce((counts, { row, side, index }) => {
+      if (!hasStatSignal(row)) return counts
+      const role = normalizeLeaderboardRole(row?.role)
+      const playerId = cleanText(row?.player_id || `${side}-${index}`)
+      if (!role || !playerId) return counts
+      const key = `${playerId}:${role}`
+      counts.set(key, (counts.get(key) || 0) + 1)
+      return counts
+    }, new Map())
 
     rows.forEach(({ row, side, index }) => {
       if (!hasStatSignal(row)) return
@@ -267,9 +285,10 @@ function buildMatchRatingEntries(match, maps = [], players = []) {
           teamName,
           teamShortName,
           role,
-          roleTimeMins: 0,
           maps: new Set(),
+          mapMinutes: new Map(),
           heroCounts: new Map(),
+          heroesByMap: new Map(),
           totals: { elim: 0, ast: 0, dth: 0, dmg: 0, heal: 0, block: 0 }
         })
       }
@@ -277,13 +296,21 @@ function buildMatchRatingEntries(match, maps = [], players = []) {
       const group = groups.get(groupKey)
       const statTotals = getStatTotals(row)
       addTotals(group.totals, statTotals)
-      if (mapOrder) group.maps.add(mapOrder)
+      group.maps.add(mapKey)
 
       const logMinutes = logTimeIndex.get(`${playerId}:${role}:${mapOrder}`)
-      group.roleTimeMins += logMinutes || mapMinutes || 0
+      const resolvedMapMinutes = mapMinutes > 0
+        ? Math.min(toFiniteNumber(logMinutes, mapMinutes) || mapMinutes, mapMinutes)
+        : toFiniteNumber(logMinutes)
+      group.mapMinutes.set(mapKey, Math.max(toFiniteNumber(group.mapMinutes.get(mapKey)), resolvedMapMinutes))
 
-      getHeroList(row).forEach(hero => {
-        group.heroCounts.set(hero, (group.heroCounts.get(hero) || 0) + (logMinutes || mapMinutes || 1))
+      const heroes = getHeroList(row)
+      const rowCount = Math.max(1, rowGroupCounts.get(groupKey) || 1)
+      const heroWeight = (resolvedMapMinutes || mapMinutes || 1) / rowCount / Math.max(1, heroes.length)
+      if (!group.heroesByMap.has(mapKey)) group.heroesByMap.set(mapKey, new Set())
+      heroes.forEach(hero => {
+        group.heroCounts.set(hero, (group.heroCounts.get(hero) || 0) + heroWeight)
+        group.heroesByMap.get(mapKey).add(hero)
       })
     })
   })

@@ -426,18 +426,31 @@ function getRankPercentile(rank, total) {
   return Math.round(((total - rank) / (total - 1)) * 100)
 }
 
+export function getSeasonOvrConfidenceCap(confidence) {
+  const floorConfidence = toFiniteNumber(SEASON_SCORE_CONFIG.confidenceFloor, 0.65)
+  const solidConfidence = toFiniteNumber(SEASON_SCORE_CONFIG.solidConfidence, 0.85)
+  const stableConfidence = toFiniteNumber(SEASON_SCORE_CONFIG.stableConfidence, 0.95)
+  const provisionalCap = toFiniteNumber(SEASON_SCORE_CONFIG.provisionalOvrCap, 89)
+  const solidCap = toFiniteNumber(SEASON_SCORE_CONFIG.solidOvrCap, 94)
+  const stableCap = toFiniteNumber(SEASON_SCORE_CONFIG.stableOvrCap, 99)
+  const value = toFiniteNumber(confidence, floorConfidence)
+
+  if (value <= floorConfidence) return provisionalCap
+  if (value < solidConfidence) {
+    const progress = (value - floorConfidence) / Math.max(0.001, solidConfidence - floorConfidence)
+    return Math.round(provisionalCap + ((solidCap - provisionalCap) * progress))
+  }
+  if (value < stableConfidence) {
+    const progress = (value - solidConfidence) / Math.max(0.001, stableConfidence - solidConfidence)
+    return Math.round(solidCap + ((stableCap - solidCap) * progress))
+  }
+  return stableCap
+}
+
 function applySeasonOvrConfidenceCap(ovr, confidence) {
   const value = Number(ovr)
   if (!Number.isFinite(value)) return null
-
-  const safeConfidence = toFiniteNumber(confidence, 1)
-  if (safeConfidence < SEASON_SCORE_CONFIG.solidConfidence) {
-    return Math.min(value, SEASON_SCORE_CONFIG.provisionalOvrCap)
-  }
-  if (safeConfidence < SEASON_SCORE_CONFIG.stableConfidence) {
-    return Math.min(value, SEASON_SCORE_CONFIG.solidOvrCap)
-  }
-  return value
+  return Math.min(value, getSeasonOvrConfidenceCap(confidence))
 }
 
 function attachSeasonOvrFields(scored) {
@@ -449,12 +462,15 @@ function attachSeasonOvrFields(scored) {
     const roleTotal = roleRows.length
 
     roleRows.forEach(entry => {
+      entry.seasonScoreRoleRank = entry.roleRank
+      entry.seasonScoreOverallRank = entry.overallRank
       entry.seasonRolePercentile = getRankPercentile(entry.roleRank, roleTotal)
       entry.seasonOverallPercentile = getRankPercentile(entry.overallRank, overallTotal)
       const percentileOvr = Number.isFinite(Number(entry.seasonRolePercentile))
         ? mapRawScoreToOVR(null, entry.seasonRolePercentile, { sampleStatus: 'OK' })
         : null
       entry.seasonOvr = applySeasonOvrConfidenceCap(percentileOvr, entry.seasonScoreConfidence)
+      entry.seasonOvrCap = getSeasonOvrConfidenceCap(entry.seasonScoreConfidence)
       entry.seasonOvrSource = 'role_percentile'
     })
   })
@@ -465,6 +481,7 @@ function attachSeasonOvrFields(scored) {
       entry.seasonRolePercentile = null
       entry.seasonOverallPercentile = null
       entry.seasonOvr = null
+      entry.seasonOvrCap = null
       entry.seasonOvrSource = 'unrated'
     })
 
@@ -581,6 +598,7 @@ export function scoreLeaderboardEntriesLegacy(entries, minTimeMins = 30) {
 }
 
 export function scoreLeaderboardEntries(entries, minTimeMins = 30, options = {}) {
+  const scoreContext = options.scoreContext || 'season'
   const legacyScored = scoreLeaderboardEntriesLegacy(entries, minTimeMins)
   const ratingScored = attachRatingModelScoreToLeaderboardRows({
     entries: legacyScored,
@@ -589,7 +607,7 @@ export function scoreLeaderboardEntries(entries, minTimeMins = 30, options = {})
     baselines: options.baselines,
     season: options.season,
     seasonId: options.seasonId,
-    scoreContext: options.scoreContext || 'season',
+    scoreContext,
     winnerTeamKeys: options.winnerTeamKeys,
     mapWinDominance: options.mapWinDominance,
     minTimeMins
@@ -599,21 +617,46 @@ export function scoreLeaderboardEntries(entries, minTimeMins = 30, options = {})
     overallRank: null
   }))
 
+  assignEntryRanks(ratingScored, compareLeaderboardEntries)
+  if (scoreContext !== 'season') return ratingScored
+
+  const withSeasonOvr = attachSeasonOvrFields(ratingScored)
+  assignEntryRanks(withSeasonOvr, compareSeasonOvrEntries)
+  return withSeasonOvr
+}
+
+function compareSeasonOvrEntries(a, b) {
+  const aOvr = Number(a?.seasonOvr)
+  const bOvr = Number(b?.seasonOvr)
+  const aHasOvr = Number.isFinite(aOvr)
+  const bHasOvr = Number.isFinite(bOvr)
+
+  if (aHasOvr !== bHasOvr) return aHasOvr ? -1 : 1
+  if (aHasOvr && aOvr !== bOvr) return bOvr - aOvr
+  return compareLeaderboardEntries(a, b)
+}
+
+function assignEntryRanks(scored, comparator) {
+  scored.forEach(entry => {
+    entry.roleRank = null
+    entry.overallRank = null
+  })
+
   ROLE_ORDER.forEach(role => {
-    ratingScored
+    scored
       .filter(entry => entry.role === role && entry.eligible)
-      .sort(compareLeaderboardEntries)
+      .sort(comparator)
       .forEach((entry, index) => {
         entry.roleRank = index + 1
       })
   })
 
-  ratingScored
+  scored
     .filter(entry => entry.eligible)
-    .sort(compareLeaderboardEntries)
+    .sort(comparator)
     .forEach((entry, index) => {
       entry.overallRank = index + 1
     })
 
-  return attachSeasonOvrFields(ratingScored)
+  return scored
 }

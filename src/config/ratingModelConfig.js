@@ -1,4 +1,4 @@
-export const RATING_MODEL_VERSION = 'v1.0'
+export const RATING_MODEL_VERSION = 'v1.1'
 
 export const RATING_METRICS = [
   'elims',
@@ -321,7 +321,8 @@ export const SEASON_SCORE_CONFIG = {
   solidConfidence: 0.85,
   stableConfidence: 0.95,
   provisionalOvrCap: 89,
-  solidOvrCap: 94
+  solidOvrCap: 94,
+  stableOvrCap: 99
 }
 
 export const SUPPORT_MINIMUM_RULES = {

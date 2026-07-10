@@ -529,7 +529,7 @@ export function getLeaderboardSummary(entries, minTimeMins, db) {
 
 export function getLeaderboardHighlights(entries) {
   const qualified = entries.filter(entry => entry.eligible)
-  const overall = [...qualified].sort(compareLeaderboardEntries)
+  const overall = [...qualified].sort((a, b) => toFiniteNumber(a.overallRank, 999999) - toFiniteNumber(b.overallRank, 999999))
   const roleLeaders = ROLE_ORDER.reduce((acc, role) => {
     acc[role] = overall.find(entry => entry.role === role) || null
     return acc
@@ -629,7 +629,7 @@ export function getEntrySeasonScoreMeta(entry, locale = 'zh-CN') {
 
 function getSortValue(entry, sortKey, mode) {
   if (sortKey === 'rank') return entry.eligible ? entry.overallRank || entry.roleRank || 999999 : 999999
-  if (sortKey === 'score') return toFiniteNumber(entry.roleScore)
+  if (sortKey === 'score') return toFiniteNumber(entry.seasonOvr, toFiniteNumber(entry.roleScore))
   if (sortKey === 'player') return entry.display_name
   if (sortKey === 'team') return entry.team_short_name || entry.team_name
   if (sortKey === 'role') return ROLE_ORDER.indexOf(entry.role)

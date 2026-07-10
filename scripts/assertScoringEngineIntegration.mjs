@@ -5,9 +5,14 @@ import { fileURLToPath } from 'node:url'
 
 import { SCORING_ENGINE_CONFIG } from '../src/config/scoringEngineConfig.js'
 import { getHeroSubroleConfig, resolveHeroSubrole } from '../src/lib/heroSubroleSelectors.js'
-import { scoreLeaderboardEntries, scoreLeaderboardEntriesLegacy } from '../src/lib/leaderboardScoring.js'
-import { buildRatingBaselinesFromDb } from '../src/lib/ratingBaselines.js'
+import {
+  getSeasonOvrConfidenceCap,
+  scoreLeaderboardEntries,
+  scoreLeaderboardEntriesLegacy
+} from '../src/lib/leaderboardScoring.js'
+import { buildRatingBaselinesFromDb, buildRatingBaselinesFromPlayerLogs } from '../src/lib/ratingBaselines.js'
 import { getMatchRatingSummary } from '../src/lib/matchRatingAdapter.js'
+import { getLeaderboardEntries, sortLeaderboardEntries } from '../src/lib/leaderboardSelectors.js'
 import {
   attachRatingModelScoreToLeaderboardRows,
   attachRatingModelScoreToMapRows,
@@ -173,9 +178,31 @@ assert.equal(getActiveScoringEngine(), 'rating_v1')
 assert.equal(SCORING_ENGINE_CONFIG.activeEngine, 'rating_v1')
 assert.equal(SCORING_ENGINE_CONFIG.allowLegacyFallback, true)
 assert.equal(getLegacyScore({ entry: { roleScore: 77 } }), 77)
+assert.equal(getSeasonOvrConfidenceCap(0.65), 89)
+assert.equal(getSeasonOvrConfidenceCap(0.75), 92)
+assert.equal(getSeasonOvrConfidenceCap(0.85), 94)
+assert.equal(getSeasonOvrConfidenceCap(0.9), 97)
+assert.equal(getSeasonOvrConfidenceCap(0.95), 99)
 
 const db = readJsonIfExists('public/data/friescup_db_review_ready.json') || createSyntheticDb()
 const baselines = buildRatingBaselinesFromDb(db, { seasonId: 'FCA2026' })
+const fullLeaderboard = getLeaderboardEntries(db, { id: 'FCA2026', rankingMinTimeMins: 30 })
+const rankedLeaderboard = fullLeaderboard
+  .filter(entry => entry.eligible)
+  .sort((a, b) => a.overallRank - b.overallRank)
+const displayedScoreSort = sortLeaderboardEntries(fullLeaderboard, 'score', 'desc')
+
+rankedLeaderboard.slice(1).forEach((entry, index) => {
+  assert.ok(
+    Number(rankedLeaderboard[index].seasonOvr) >= Number(entry.seasonOvr),
+    'final overall rank must be monotonic by displayed season OVR'
+  )
+})
+assert.deepEqual(
+  displayedScoreSort.filter(entry => entry.eligible).map(entry => entry.entryKey),
+  rankedLeaderboard.map(entry => entry.entryKey),
+  'score-column sorting must match final OVR rank order'
+)
 const sampleEntry = createSampleEntry()
 const legacyEntry = scoreLeaderboardEntriesLegacy([sampleEntry], 0)[0]
 
@@ -193,6 +220,11 @@ assert.equal(attachedMapRow.score, attachedMapRow.mapRating)
 
 const syntheticDb = createSyntheticDb()
 const syntheticBaselines = buildRatingBaselinesFromDb(syntheticDb, { seasonId: 'ASSERT' })
+assert.equal(
+  buildRatingBaselinesFromPlayerLogs(syntheticDb.players, { seasonId: 'ASSERT' }),
+  buildRatingBaselinesFromPlayerLogs(syntheticDb.players, { seasonId: 'ASSERT' }),
+  'rating baselines should be reused for the same season player dataset'
+)
 const poorCurrentMapEntry = {
   ...createSampleEntry(),
   entryKey: 'ASSERT_PLAYER_1:DPS',
@@ -301,6 +333,82 @@ assert.equal(summaryWinner.mapResultAdjustment, 0.25)
 assert.equal(summaryLoser.ratingModelSourceScope, 'current_map')
 assert.equal(summaryLoser.mapResult, 'LOSS')
 assert.ok(summaryWinner.mapRating > summaryLoser.mapRating)
+
+const multiHeroPlayers = [
+  ...syntheticDb.players,
+  {
+    player_id: 'ASSERT_MULTI_HERO',
+    display_name: 'Assert Multi Hero',
+    team_id: 'B',
+    match_logs: [
+      {
+        matchId: 'ASSERT_MULTI_MATCH',
+        mapOrder: 2,
+        hero: 'Mizuki',
+        role: 'SUP',
+        playtimeMinutes: 4.1,
+        totals: { elims: 2, assists: 0, deaths: 3, damage: 1797, healing: 3868, blocked: 1006 }
+      },
+      {
+        matchId: 'ASSERT_MULTI_MATCH',
+        mapOrder: 2,
+        hero: 'Kiriko',
+        role: 'SUP',
+        playtimeMinutes: 4.1,
+        totals: { elims: 1, assists: 2, deaths: 3, damage: 1576, healing: 3157, blocked: 0 }
+      }
+    ]
+  }
+]
+const multiHeroSummary = getMatchRatingSummary({
+  match_id: 'ASSERT_MULTI_MATCH',
+  team_a: { id: 'A', name: 'Alpha', short: 'ALP' },
+  team_b: { id: 'B', name: 'Beta', short: 'BET' }
+}, [{
+  map_order: 2,
+  map_name: 'New Queen Street',
+  match_time: '4:06',
+  winner: 'A',
+  score_a: 1,
+  score_b: 0,
+  team_a_stats: [],
+  team_b_stats: [
+    {
+      player_id: 'ASSERT_MULTI_HERO',
+      player_name: 'Assert Multi Hero',
+      team_id: 'B',
+      team_name: 'Beta',
+      role: 'SUP',
+      heroes_played: 'Mizuki',
+      eliminations: 2,
+      assists: 0,
+      deaths: 3,
+      damage: 1797,
+      healing: 3868,
+      mitigation: 1006
+    },
+    {
+      player_id: 'ASSERT_MULTI_HERO',
+      player_name: 'Assert Multi Hero',
+      team_id: 'B',
+      team_name: 'Beta',
+      role: 'SUP',
+      heroes_played: 'Kiriko',
+      eliminations: 1,
+      assists: 2,
+      deaths: 3,
+      damage: 1576,
+      healing: 3157,
+      mitigation: 0
+    }
+  ]
+}], multiHeroPlayers)
+const multiHeroEntry = multiHeroSummary.entries.find(entry => entry.player_id === 'ASSERT_MULTI_HERO')
+
+assert.ok(Math.abs(multiHeroEntry.roleTimeMins - 4.1) < 0.001, 'multi-hero map time must be capped at official map duration')
+assert.equal(multiHeroEntry.metrics.total.heal, 7025)
+assert.equal(multiHeroEntry.most_played_hero, '')
+assert.equal(multiHeroEntry.ratingHeroProfileAmbiguous, true)
 
 const playerDetailRow = attachRatingModelScoreToPlayerDetail({ entry: legacyEntry, baselines })
 assertRatingV1Fields(playerDetailRow, 'attachRatingModelScoreToPlayerDetail')
