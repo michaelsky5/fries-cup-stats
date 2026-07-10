@@ -39,8 +39,8 @@ const MAP_POOL = [
 
 const TRAIT_ICONS = ['💎', '🩸', '🗡️', '🥊', '👼', '🔥', '🛡️', '🚜', '🃏', '🍼', '☢️', '♿', '🕸️', '🙈', '❓', '苟', '🗣️', '🛑', '💉', '⚡', '👁️', '🦍', '🎯', '🐼', '👽', '🟣', '🐸', '🔪', '🪟', '📊', '🐙', '😎'];
 
-const ROLE_SLOTS = ['TANK', 'DPS-1', 'DPS-2', 'SUP-1', 'SUP-2']
-const ENEMY_LABELS = ['FRONTLINE', 'DAMAGE-1', 'DAMAGE-2', 'MAIN SUPPORT', 'FLEX SUPPORT']
+const ROLE_SLOTS = ['重装', '输出 1', '输出 2', '支援 1', '支援 2']
+const ENEMY_LABELS = ['重装位', '输出 1', '输出 2', '主支援', '副支援']
 const ROLE_ORDER = { TANK: 1, DPS: 2, SUP: 3 }
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 const getMomentumJitter = () => (Math.random() - 0.5) * 150
@@ -75,15 +75,15 @@ function getHeroAvatarUrl(role, heroName) {
 }
 
 function getRoleLabel(role) {
-  if (role === 'TANK') return 'TANK'
-  if (role === 'SUP') return 'SUPPORT'
-  return 'DAMAGE'
+  if (role === 'TANK') return '重装'
+  if (role === 'SUP') return '支援'
+  return '输出'
 }
 
 function getRoleBadge(role) {
-  if (role === 'TANK') return 'T'
-  if (role === 'SUP') return 'S'
-  return 'D'
+  if (role === 'TANK') return '重'
+  if (role === 'SUP') return '援'
+  return '输'
 }
 
 function HudCard({ label, value, meta, tone = '' }) {
@@ -496,7 +496,7 @@ export default function FantasyBattle() {
                 {fmvpPlayer && (
                   <div className={styles.mvpBox}>
                     <div className={styles.mvpLabel}>队内最有价值选手 / FMVP</div>
-                    <div className={styles.mvpName}>{fmvpPlayer.display_name} ({fmvpPlayer.role})</div>
+                    <div className={styles.mvpName}>{fmvpPlayer.display_name} ({getRoleLabel(fmvpPlayer.role)})</div>
                     <div className={styles.mvpStats}>本场系列赛中贡献了全队最高的综合表现分。</div>
                   </div>
                 )}
@@ -521,7 +521,7 @@ export default function FantasyBattle() {
                         return (
                           <tr key={p.player_id} className={p.player_id === fmvpPlayer?.player_id ? styles.rowMvp : ''}>
                             <td className={styles.tdName}>{badge}{p.display_name} {p.player_id === fmvpPlayer?.player_id ? '🏆' : ''}</td>
-                            <td className={styles[p.role?.toLowerCase() || 'dps']}>{p.role}</td>
+                            <td className={styles[p.role?.toLowerCase() || 'dps']}>{getRoleLabel(p.role)}</td>
                             <td>{s?.elim}</td>
                             <td className={styles.textDmg}>{s?.dmg?.toLocaleString?.() ?? 0}</td>
                             <td className={styles.textHeal}>{s?.heal?.toLocaleString?.() ?? 0}</td>
@@ -617,7 +617,7 @@ export default function FantasyBattle() {
                             <div key={unit.id} className={`${styles.readyUnitCard} ${styles.readyUnitCardBoss}`}>
                               <div className={styles.readyUnitInfoBoss}>
                                 <div className={styles.readyUnitNameBoss}>{unit.label}</div>
-                                <div className={styles.readyUnitMetaBoss}>{unit.role} · {unit.power} PWR</div>
+                                <div className={styles.readyUnitMetaBoss}>{getRoleLabel(unit.role)} · {unit.power} PWR</div>
                               </div>
                               <div className={`${styles.readyEnemyCore} ${styles[unit.role.toLowerCase()]}`}>{getRoleBadge(unit.role)}</div>
                             </div>
@@ -758,7 +758,7 @@ export default function FantasyBattle() {
                                 <div className={styles.enemyUnitLabel}>{unit.label}</div>
                                 <div className={`${styles.rolePill} ${styles[unit.role.toLowerCase()]}`}>{getRoleLabel(unit.role)}</div>
                               </div>
-                              <div className={styles.enemyUnitMeta}>{unit.role} · {unit.power} PWR</div>
+                              <div className={styles.enemyUnitMeta}>{getRoleLabel(unit.role)} · {unit.power} PWR</div>
                             </div>
                             <div className={`${styles.enemyUnitCore} ${styles[unit.role.toLowerCase()]}`}>{getRoleBadge(unit.role)}</div>
                           </div>
@@ -799,7 +799,7 @@ export default function FantasyBattle() {
                   <span className={`${styles.roleScoutBadge} ${styles[unit.role.toLowerCase()]}`}>{getRoleBadge(unit.role)}</span>
                   <div className={styles.roleScoutInfo}>
                     <div className={styles.roleScoutTitle}>{unit.label}</div>
-                    <div className={styles.roleScoutMeta}>{unit.role} · {unit.power} PWR</div>
+                    <div className={styles.roleScoutMeta}>{getRoleLabel(unit.role)} · {unit.power} PWR</div>
                   </div>
                 </div>
               ))}

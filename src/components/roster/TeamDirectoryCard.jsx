@@ -28,9 +28,9 @@ function TeamRosterSplit({ team }) {
       <span className={styles.rosterSplitLabel}>选手</span>
       <span className={styles.rosterTotal}>{team.rosterSize}</span>
       <span className={styles.roleSplitRow}>
-        <b className={styles.roleTank} title="坦克">{counts.TANK || 0}</b>
+        <b className={styles.roleTank} title="重装">{counts.TANK || 0}</b>
         <b className={styles.roleDps} title="输出">{counts.DPS || 0}</b>
-        <b className={styles.roleSupport} title="辅助">{counts.SUP || 0}</b>
+        <b className={styles.roleSupport} title="支援">{counts.SUP || 0}</b>
       </span>
     </div>
   )

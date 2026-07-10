@@ -335,8 +335,8 @@
 
 .teamHero .heroMetrics {
   display: grid;
-  width: min(100%, 520px);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(100%, 720px);
+  grid-template-columns: minmax(180px, 1.25fr) repeat(2, minmax(130px, 1fr));
   gap: 8px;
   background: transparent;
   border: 0;
@@ -436,7 +436,7 @@
 
 .heroIntelFacts {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   margin-top: 18px;
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -446,7 +446,7 @@
   min-width: 0;
   display: grid;
   gap: 6px;
-  padding: 12px;
+  padding: 11px 10px;
   border-right: 1px solid rgba(255, 255, 255, 0.14);
 }
 
@@ -457,7 +457,7 @@
 .heroIntelFacts strong {
   min-width: 0;
   color: var(--fc-white);
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 950;
   line-height: 1;
   white-space: nowrap;
@@ -706,25 +706,6 @@
   gap: 18px;
 }
 
-.statusPanel {
-  grid-column: 1 / -1;
-  background: var(--team-dark-strong);
-  border-color: var(--team-dark-strong);
-  color: var(--fc-white);
-}
-
-.statusPanel .panelHead {
-  border-bottom-color: rgba(255, 255, 255, 0.24);
-}
-
-.statusPanel .panelHead h2 {
-  color: var(--fc-white);
-}
-
-.statusPanel .panelHead span {
-  color: var(--portal-yellow);
-}
-
 .panel {
   min-width: 0;
   display: flex;
@@ -733,12 +714,6 @@
   padding: 22px;
   background: var(--portal-surface);
   border: 2px solid var(--portal-border);
-}
-
-.panel.statusPanel {
-  background: var(--team-dark-strong);
-  border-color: var(--team-dark-strong);
-  color: var(--fc-white);
 }
 
 .panelHead {
@@ -1318,96 +1293,12 @@
   opacity: 0.72;
 }
 
-.statusBoard {
-  display: grid;
-  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1fr) minmax(220px, 0.5fr);
-  gap: 0;
-  background: var(--team-dark-strong);
-  border: 2px solid rgba(255, 255, 255, 0.18);
-}
-
-.statusLead,
-.formPanel {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 12px;
-  padding: 18px;
-  background: var(--team-dark-strong);
-}
-
-.statusLead strong {
-  color: var(--portal-ink);
-  font-size: 42px;
-  font-weight: 950;
-  line-height: 0.95;
-}
-
-.statusLead {
-  background: var(--portal-yellow);
-  color: var(--portal-ink);
-}
-
-.statusLead em,
-.formPanel span,
 .formEmpty {
-  color: var(--portal-muted);
+  color: rgba(255, 255, 255, 0.68);
   font-size: 12px;
   font-style: normal;
   font-weight: 900;
   line-height: 1.25;
-}
-
-.formPanel span,
-.formEmpty {
-  color: rgba(255, 255, 255, 0.68);
-}
-
-.statusBadge {
-  width: fit-content;
-  min-height: 26px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 8px;
-  border: 2px solid var(--portal-border);
-  color: var(--portal-ink);
-  font-size: 11px;
-  font-weight: 950;
-  line-height: 1;
-}
-
-.statusStats {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0;
-  background: var(--team-dark-strong);
-  border-left: 1px solid rgba(255, 255, 255, 0.18);
-  border-right: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.statusStats .headerMetric {
-  background: var(--team-dark-strong);
-  border-right: 1px solid rgba(255, 255, 255, 0.18);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.statusStats .headerMetric:nth-child(2n) {
-  border-right: 0;
-}
-
-.statusStats .headerMetric:nth-last-child(-n + 2) {
-  border-bottom: 0;
-}
-
-.statusStats .headerMetric strong {
-  color: var(--fc-white);
-}
-
-.statusStats .headerMetric em,
-.statusStats .headerMetric b {
-  color: rgba(255, 255, 255, 0.68);
 }
 
 .formStrip {
@@ -2284,8 +2175,6 @@
   .infoGrid,
   .heroMetaStrip,
   .heroMetrics,
-  .statusBoard,
-  .statusStats,
   .statGrid {
     grid-template-columns: 1fr;
   }
@@ -2431,8 +2320,7 @@
 
   .infoGrid span,
   .profileList span,
-  .heroMetrics .headerMetric,
-  .statusStats .headerMetric {
+  .heroMetrics .headerMetric {
     border-right: 0;
   }
 
@@ -2442,8 +2330,7 @@
   }
 
   .infoGrid span:last-child,
-  .profileList span:last-child,
-  .statusStats .headerMetric:last-child {
+  .profileList span:last-child {
     border-bottom: 0;
   }
 

@@ -5,7 +5,8 @@ import {
   getHeroAvatarSrc,
   getPlayerInitials,
   getRoleColor,
-  getRoleEnLabel
+  getRoleEnLabel,
+  getRoleLabel
 } from '../../../lib/leaderboardSelectors.js'
 import { formatOwHeroName } from '../../../lib/heroes.js'
 import RoleLeaderRow from './RoleLeaderRow.jsx'
@@ -90,6 +91,7 @@ export default function MatchPerformancePanel({ dossier, withSeason, locale = 'z
   }
 
   const roleColor = getRoleColor(top.role)
+  const topRoleLabel = locale === 'en-US' ? getRoleEnLabel(top.role) : getRoleLabel(top.role)
   const coreStats = (top.coreStats || []).filter(stat => Number(stat.value) > 0).slice(0, 2)
   const performanceStats = getPerformanceStats(top, coreStats, locale)
   const playerPath = top.player_id ? withSeason(`/players/${encodeURIComponent(top.player_id)}?role=${encodeURIComponent(top.role)}`) : ''
@@ -108,7 +110,7 @@ export default function MatchPerformancePanel({ dossier, withSeason, locale = 'z
           <span className={styles.performanceKicker}>{t('matchDetail.topRatedPlayer', 'Top Rated Player')}</span>
           <strong>{getEntryName(top)}</strong>
           <em>{top.battleTag || top.player_name} / {top.team_short_name || top.team_name}</em>
-          <span className={styles.roleLabel} style={{ color: roleColor }}>{getRoleEnLabel(top.role)}</span>
+          <span className={styles.roleLabel} style={{ color: roleColor }}>{topRoleLabel}</span>
         </div>
         <div
           className={styles.topPerformerScore}
@@ -136,7 +138,7 @@ export default function MatchPerformancePanel({ dossier, withSeason, locale = 'z
       ) : null}
 
       <div className={styles.roleLeaderList} aria-label={t('matchDetail.roleLeaders', 'Role Leaders')}>
-        {ROLE_KEYS.map(role => <RoleLeaderRow key={role} role={role} entry={roleLeaders[role]} />)}
+        {ROLE_KEYS.map(role => <RoleLeaderRow key={role} role={role} entry={roleLeaders[role]} locale={locale} />)}
       </div>
 
       <p className={styles.performanceNote}>

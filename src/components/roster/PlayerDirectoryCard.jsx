@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { formatOwHeroNames } from '../../lib/heroes.js'
+import { getRosterRoleLabel } from '../../lib/rosterSelectors.js'
 import styles from './RosterComponents.module.css'
 
 const ROLE_COLORS = {
@@ -10,8 +11,8 @@ const ROLE_COLORS = {
   FLEX: '#2a2a2a'
 }
 
-function displayRole(role) {
-  return role === 'SUP' ? 'SUPPORT' : role
+function displayRole(role, locale) {
+  return getRosterRoleLabel(role, locale)
 }
 
 function cleanLabel(value) {
@@ -61,8 +62,8 @@ export default function PlayerDirectoryCard({
 }) {
   const playerPath = withSeason(`/players/${player.identity.playerId || player.player_id}`)
   const favoriteLabel = player.isFavorite ? '取消关注' : favoriteDisabled ? '关注已满' : '关注'
-  const roleLabel = displayRole(player.role)
-  const flexRole = player.flexRoles?.[0] ? displayRole(player.flexRoles[0]) : ''
+  const roleLabel = displayRole(player.role, locale)
+  const flexRole = player.flexRoles?.[0] ? displayRole(player.flexRoles[0], locale) : ''
   const teamLabel = getTeamTagLabel(player)
   const teamTitle = [teamLabel, player.teamFullName].filter(Boolean).join(' · ')
   const heroNames = player.hasStats

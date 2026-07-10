@@ -750,7 +750,7 @@ function getScoutingNotes(entry, sample, heroPool) {
   if (strongest && strongest.percentile >= 60) {
     notes.push({
       type: '优势',
-      text: `${getRoleEnLabel(entry.role)} ${strongest.metric.label}处于同职责 P${strongest.percentile}。`
+      text: `${getRoleLabel(entry.role)} ${strongest.metric.label}处于同职责 P${strongest.percentile}。`
     })
   }
 

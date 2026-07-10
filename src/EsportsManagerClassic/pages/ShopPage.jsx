@@ -7,6 +7,27 @@ import { getRunState, initNewRun, hirePlayer, firePlayer, saveRun, generateMatch
 import { assignAdvancedTraits } from '../engine/traitAssigner'
 import SysModal from '../components/SysModal'
 
+const ROLE_DISPLAY_LABELS = {
+  ALL: '全部',
+  TANK: '重装',
+  DPS: '输出',
+  SUP: '支援'
+}
+
+const ROLE_SHORT_LABELS = {
+  TANK: '重',
+  DPS: '输',
+  SUP: '支'
+}
+
+function getRoleDisplayLabel(role) {
+  return ROLE_DISPLAY_LABELS[role] || role
+}
+
+function getRoleShortLabel(role) {
+  return ROLE_SHORT_LABELS[role] || getRoleDisplayLabel(role).slice(0, 1)
+}
+
 function getHeroAvatarUrl(role, heroName) {
   if (!heroName) return ''
   const dir = role === 'DPS' ? 'damage' : role === 'SUP' ? 'support' : 'tank'
@@ -118,11 +139,11 @@ export default function ShopPage() {
 
   const displaySlots = useMemo(() => {
     const slots = [
-      { role: 'TANK', label: 'TANK', player: null },
-      { role: 'DPS', label: 'DAMAGE-1', player: null },
-      { role: 'DPS', label: 'DAMAGE-2', player: null },
-      { role: 'SUP', label: 'SUPPORT-1', player: null },
-      { role: 'SUP', label: 'SUPPORT-2', player: null }
+      { role: 'TANK', label: '重装', player: null },
+      { role: 'DPS', label: '输出 1', player: null },
+      { role: 'DPS', label: '输出 2', player: null },
+      { role: 'SUP', label: '支援 1', player: null },
+      { role: 'SUP', label: '支援 2', player: null }
     ];
     
     const tempRoster = [...roster];
@@ -299,7 +320,7 @@ export default function ShopPage() {
           <SummaryCard label="CURRENT NODE" value={`STAGE ${runState.currentNode}`} meta="RUN PROGRESSION" />
           <SummaryCard label="TEAM LIVES" value={Array(runState.hp).fill('❤').join('')} meta="RUN HP" tone="summaryWarn" />
           <SummaryCard label="CLUB FUNDS" value={`$${runState.money}K`} meta={hasBlackCard ? 'BLACK CARD DISCOUNT ACTIVE' : 'STANDARD ECONOMY'} tone="summaryAccent" />
-          <SummaryCard label="ROSTER STATUS" value={`${roster.length}/5`} meta={`T ${roleCounts.TANK} · D ${roleCounts.DPS} · S ${roleCounts.SUP}`} />
+          <SummaryCard label="ROSTER STATUS" value={`${roster.length}/5`} meta={`重装 ${roleCounts.TANK} · 输出 ${roleCounts.DPS} · 支援 ${roleCounts.SUP}`} />
         </div>
       </header>
 
@@ -309,7 +330,7 @@ export default function ShopPage() {
             <PanelHeader
               kicker="BASE OPERATIONS"
               title="当前首发大名单"
-              desc="联赛规章要求 1 坦克、2 输出、2 辅助 首发。请注意选手特质的化学反应，构建战术闭环。"
+              desc="联赛规章要求 1 重装、2 输出、2 支援首发。请注意选手特质的化学反应，构建战术闭环。"
               right={
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <button
@@ -337,15 +358,15 @@ export default function ShopPage() {
 
             <div className={styles.rosterTopStats}>
               <div className={styles.roleMiniStat}>
-                <span className={styles.roleMiniLabel}>TANK</span>
+                <span className={styles.roleMiniLabel}>重装</span>
                 <span className={styles.roleMiniValue}>{roleCounts.TANK}/1</span>
               </div>
               <div className={styles.roleMiniStat}>
-                <span className={styles.roleMiniLabel}>DPS</span>
+                <span className={styles.roleMiniLabel}>输出</span>
                 <span className={styles.roleMiniValue}>{roleCounts.DPS}/2</span>
               </div>
               <div className={styles.roleMiniStat}>
-                <span className={styles.roleMiniLabel}>SUP</span>
+                <span className={styles.roleMiniLabel}>支援</span>
                 <span className={styles.roleMiniValue}>{roleCounts.SUP}/2</span>
               </div>
               <div className={styles.roleMiniStat}>
@@ -363,7 +384,7 @@ export default function ShopPage() {
                   <div key={p.player_id} className={styles.rosterSlot}>
                     <div className={styles.slotInfo}>
                       <span className={p.role === 'TANK' ? styles.roleTextTank : p.role === 'DPS' ? styles.roleTextDps : styles.roleTextSup}>
-                        {p.role}
+                        {getRoleDisplayLabel(p.role)}
                       </span>
 
                       {p.most_played_hero && (
@@ -415,7 +436,7 @@ export default function ShopPage() {
               <div className={styles.academyGrid}>
                 {YOUTH_TRAINEES.map(p => (
                   <button key={p.player_id} className={styles.btnTrainee} onClick={() => handleDraft(p)}>
-                    + {p.role} · OVR 45
+                    + {getRoleDisplayLabel(p.role)} · OVR 45
                   </button>
                 ))}
               </div>
@@ -518,7 +539,7 @@ export default function ShopPage() {
               <div className={styles.filterTabs}>
                 {['ALL', 'TANK', 'DPS', 'SUP'].map(role => (
                   <button key={role} className={filterRole === role ? styles.tabBtnActive : styles.tabBtn} onClick={() => setFilterRole(role)}>
-                    {role}
+                    {getRoleDisplayLabel(role)}
                   </button>
                 ))}
               </div>
@@ -536,7 +557,7 @@ export default function ShopPage() {
                       <div key={p.player_id} className={isDrafted ? styles.marketRowDrafted : styles.marketRow}>
                         <div className={styles.marketInfo}>
                           <div className={p.role === 'TANK' ? styles.roleBoxTank : p.role === 'DPS' ? styles.roleBoxDps : styles.roleBoxSup}>
-                            {p.role.charAt(0)}
+                            {getRoleShortLabel(p.role)}
                           </div>
 
                           {p.most_played_hero && <img src={getHeroAvatarUrl(p.role, p.most_played_hero)} className={styles.marketAvatar} alt="" />}

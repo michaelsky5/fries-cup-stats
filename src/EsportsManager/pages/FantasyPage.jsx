@@ -101,7 +101,7 @@ export default function FantasyPage() {
         {
           label: 'LINEUP',
           value: `${runSnapshot.roster?.length || 0}/5`,
-          meta: `T ${roleCounts.TANK} · D ${roleCounts.DPS} · S ${roleCounts.SUP}`
+          meta: `重装 ${roleCounts.TANK} · 输出 ${roleCounts.DPS} · 支援 ${roleCounts.SUP}`
         }
       ]
     }
@@ -120,7 +120,7 @@ export default function FantasyPage() {
       {
         label: 'LINEUP RULE',
         value: '5 PLAYERS',
-        meta: 'TANK ×1 / DPS ×2 / SUP ×2'
+        meta: '重装 ×1 / 输出 ×2 / 支援 ×2'
       },
       {
         label: 'RESOURCE MODEL',

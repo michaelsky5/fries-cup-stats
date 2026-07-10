@@ -397,7 +397,7 @@ export function roleDeepNarrative(role, profile = {}) {
     if (Number(deathsPer10) > 0 && Number(deathsPer10) <= 4.5 && Number(minutes) >= 30) {
       return {
         title: '你不是只是在前排，而是在替队伍争取空间',
-        body: `${playerName} 的赛季里，最值得注意的不是单一击杀，而是稳定。作为坦克，少死并不意味着保守，它往往意味着你知道什么时候该承压，什么时候该退，什么时候该重新开团。`
+        body: `${playerName} 的赛季里，最值得注意的不是单一击杀，而是稳定。作为重装，少死并不意味着保守，它往往意味着你知道什么时候该承压，什么时候该退，什么时候该重新开团。`
       }
     }
 
@@ -410,7 +410,7 @@ export function roleDeepNarrative(role, profile = {}) {
 
     return {
       title: '你站在队伍最先被看见的位置',
-      body: '坦克的赛季往往并不轻松。你承担开团、站位和失误成本，也承担队伍最直接的压力。这些东西不一定耀眼，但足够真实。'
+      body: '重装的赛季往往并不轻松。你承担开团、站位和失误成本，也承担队伍最直接的压力。这些东西不一定耀眼，但足够真实。'
     }
   }
 
@@ -418,7 +418,7 @@ export function roleDeepNarrative(role, profile = {}) {
     if (Number(deathsPer10) > 0 && Number(deathsPer10) <= 4.5 && Number(minutes) >= 30) {
       return {
         title: '你活下来的时间，也是在替队伍争取机会',
-        body: `${playerName} 的数据里，最有价值的不只是治疗量。辅助活着，队伍就还有下一轮资源；辅助倒下，团战往往就开始倾斜。你的稳定本身，就是队伍的一部分安全感。`
+        body: `${playerName} 的数据里，最有价值的不只是治疗量。支援活着，队伍就还有下一轮资源；支援倒下，团战往往就开始倾斜。你的稳定本身，就是队伍的一部分安全感。`
       }
     }
 
@@ -431,7 +431,7 @@ export function roleDeepNarrative(role, profile = {}) {
 
     return {
       title: '你的赛季不总是在镜头中央',
-      body: '辅助常常不是最先被看见的人，但很多比赛都在他们的技能、站位和生存里被悄悄改变。数据记录的是治疗，比赛记住的是支撑。'
+      body: '支援常常不是最先被看见的人，但很多比赛都在他们的技能、站位和生存里被悄悄改变。数据记录的是治疗，比赛记住的是支撑。'
     }
   }
 

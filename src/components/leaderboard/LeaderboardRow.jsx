@@ -54,10 +54,11 @@ export function HeroAvatar({ entry, className = '' }) {
   )
 }
 
-export function PlayerIdentity({ entry }) {
+export function PlayerIdentity({ entry, locale = 'zh-CN' }) {
   const primary = entry?.nickname || entry?.display_name || entry?.player_name || entry?.player_id || '-'
   const secondary = entry?.battleTag || entry?.player_name || ''
   const showSecondary = secondary && !isSameText(primary, secondary)
+  const roleLabel = locale === 'en-US' ? getRoleEnLabel(entry?.role) : getRoleLabel(entry?.role)
 
   return (
     <div className={styles.playerIdentity}>
@@ -66,7 +67,7 @@ export function PlayerIdentity({ entry }) {
         <strong title={primary}>{primary}</strong>
         {showSecondary ? <span title={secondary}>{secondary}</span> : <span>{entry?.player_id || '-'}</span>}
         <em title={entry?.team_name || entry?.team_short_name || ''}>
-          {entry?.team_short_name || entry?.team_name || '-'} / {getRoleEnLabel(entry?.role)}
+          {entry?.team_short_name || entry?.team_name || '-'} / {roleLabel}
         </em>
       </div>
     </div>
@@ -75,11 +76,12 @@ export function PlayerIdentity({ entry }) {
 
 export function RoleTag({ entry, locale = 'zh-CN' }) {
   const label = locale === 'en-US' ? getRoleEnLabel(entry.role) : getRoleLabel(entry.role)
+  const subLabel = locale === 'en-US' ? getRoleLabel(entry.role) : ''
 
   return (
     <span className={`${styles.roleTag} ${getRoleToneClass(entry.role)}`}>
       <span>{label}</span>
-      <b>{getRoleEnLabel(entry.role)}</b>
+      {subLabel ? <b>{subLabel}</b> : null}
     </span>
   )
 }
@@ -180,7 +182,7 @@ export default function LeaderboardRow({
         if (column.id === 'player') {
           return (
             <td key={column.id} className={`${styles.playerCell} ${styles.stickyPlayer}`}>
-              <PlayerIdentity entry={entry} />
+              <PlayerIdentity entry={entry} locale={locale} />
               {isFavorite ? <span className={styles.followingPill}>FOLLOWING</span> : null}
             </td>
           )

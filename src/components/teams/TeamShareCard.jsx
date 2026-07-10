@@ -105,15 +105,15 @@ export default function TeamShareCard({
 
               <div className={styles.coreList}>
                 <div className={styles.coreItem}>
-                  <span className={styles.coreRole}>TANK</span>
+                  <span className={styles.coreRole}>重装</span>
                   <span className={styles.coreName}>{tankCore}</span>
                 </div>
                 <div className={styles.coreItem}>
-                  <span className={styles.coreRole}>DPS</span>
+                  <span className={styles.coreRole}>输出</span>
                   <span className={styles.coreName}>{dpsCore}</span>
                 </div>
                 <div className={styles.coreItem}>
-                  <span className={styles.coreRole}>SUP</span>
+                  <span className={styles.coreRole}>支援</span>
                   <span className={styles.coreName}>{supCore}</span>
                 </div>
               </div>

@@ -752,9 +752,9 @@ function getStaffAliasName(value, fallback = '') {
 
 function getRosterRoleOrder(card) {
   const text = `${card?.role || ''} ${card?.meta || ''} ${card?.value || ''}`.toLowerCase()
-  if (text.includes('tank') || text.includes('坦克')) return 1
+  if (text.includes('tank') || text.includes('坦克') || text.includes('重装')) return 1
   if (text.includes('dps') || text.includes('damage') || text.includes('输出')) return 2
-  if (text.includes('support') || text.includes('sup') || text.includes('辅助') || text.includes('奶')) return 3
+  if (text.includes('support') || text.includes('sup') || text.includes('辅助') || text.includes('支援') || text.includes('奶')) return 3
   return 9
 }
 

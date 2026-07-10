@@ -9,7 +9,7 @@ import {
   sortMatchesBySchedule
 } from './matchesSelectors.js'
 import { formatMatchSchedule } from './scheduleFormat.js'
-import { normalizeLeaderboardRole } from './leaderboardSelectors.js'
+import { getRoleEnLabel, getRoleLabel, normalizeLeaderboardRole } from './leaderboardSelectors.js'
 import { formatOwHeroName, formatOwMapMode, formatOwMapName } from './heroes.js'
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED'])
@@ -212,7 +212,7 @@ function normalizeStatRow(row, side, map, match, playerDirectory, index, locale 
     battleTag: identity.battleTag,
     rawName: identity.rawName,
     role,
-    roleLabel: role === 'SUPPORT' ? 'SUPPORT' : role || '-',
+    roleLabel: locale === 'en-US' ? getRoleEnLabel(role) : getRoleLabel(role),
     hero: formatOwHeroName(rawHero, locale),
     rawHero,
     eliminations: toFiniteNumber(row?.eliminations),

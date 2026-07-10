@@ -4,7 +4,8 @@ import {
   getHeroAvatarSrc,
   getPlayerInitials,
   getRoleColor,
-  getRoleEnLabel
+  getRoleEnLabel,
+  getRoleLabel
 } from '../../../lib/leaderboardSelectors.js'
 import {
   formatMapPlayerMatchRating,
@@ -254,7 +255,7 @@ function RatingCluster({ impact, t }) {
   )
 }
 
-function TeamStatsPanel({ team, sourceTeam, score, rows, displayRows, awardIndex, seasonId, t, winner = false }) {
+function TeamStatsPanel({ team, sourceTeam, score, rows, displayRows, awardIndex, seasonId, locale = 'zh-CN', t, winner = false }) {
   const totals = getTeamTotals(rows)
   const tail = getSummaryTail(totals)
 
@@ -309,6 +310,7 @@ function TeamStatsPanel({ team, sourceTeam, score, rows, displayRows, awardIndex
         <tbody>
           {displayRows.map(({ row, impact }) => {
             const roleColor = getRoleColor(row.role)
+            const roleLabel = locale === 'en-US' ? getRoleEnLabel(row.role) : getRoleLabel(row.role)
 
             return (
               <tr key={row.key}>
@@ -316,7 +318,7 @@ function TeamStatsPanel({ team, sourceTeam, score, rows, displayRows, awardIndex
                   <div className={styles.playerMetaCell}>
                     <span className={styles.roleSlot}>
                       <span className={styles.roleLabel} style={{ color: roleColor }}>
-                        {getRoleEnLabel(row.role)}
+                        {roleLabel}
                       </span>
                     </span>
                     <div className={styles.playerIdentity}>
@@ -348,7 +350,7 @@ function TeamStatsPanel({ team, sourceTeam, score, rows, displayRows, awardIndex
   )
 }
 
-export default function DualTeamStatsTable({ map, dossier, seasonId, t }) {
+export default function DualTeamStatsTable({ map, dossier, seasonId, locale = 'zh-CN', t }) {
   const impactIndex = createImpactIndex(map.rating)
   const teamADisplayRows = buildDisplayRows(map.teamAStats, impactIndex)
   const teamBDisplayRows = buildDisplayRows(map.teamBStats, impactIndex)
@@ -366,6 +368,7 @@ export default function DualTeamStatsTable({ map, dossier, seasonId, t }) {
           displayRows={teamADisplayRows}
           awardIndex={awardIndex}
           seasonId={seasonId}
+          locale={locale}
           t={t}
           winner={map.winnerSide === 'A'}
         />
@@ -378,6 +381,7 @@ export default function DualTeamStatsTable({ map, dossier, seasonId, t }) {
           displayRows={teamBDisplayRows}
           awardIndex={awardIndex}
           seasonId={seasonId}
+          locale={locale}
           t={t}
           winner={map.winnerSide === 'B'}
         />

@@ -16,16 +16,16 @@ export const RELICS_POOL = [
   { id: 'COACH_BOARD', name: '全息战术沙盘', icon: '📋', desc: '绝对算力。阵容克制对方时，获得的额外压制分翻倍。' },
   { id: 'TACTICAL_VISOR', name: '士兵:76的战术目镜', icon: '🥽', desc: '“我看到你们了”。我方战术永远不会被敌方克制。' },
   { id: 'ACADEMY_GLORY', name: '挑战者杯的荣耀', icon: '🎓', desc: '莫欺少年穷。所有来自 YOUTH ACADEMY (青训营) 的选手在战斗中 OVR +25！' },
-  { id: 'ENERGY_DRINK', name: 'D.Va的纳米可乐', icon: '🥤', desc: 'APM 狂飙。全队输出位(DPS)战斗最终表现加成 15%。' },
-  { id: 'PROTEIN_BAR', name: '卢西奥的嗨爪麦片', icon: '🥣', desc: '节奏拉满。全队辅助位(SUP)战斗最终表现加成 15%。' },
-  { id: 'HEAVY_ARMOR', name: '托比昂的绝版护甲包', icon: '🦺', desc: '坚如磐石。全队坦克位(TANK)战斗最终表现加成 15%。' },
+  { id: 'ENERGY_DRINK', name: 'D.Va的纳米可乐', icon: '🥤', desc: 'APM 狂飙。全队输出位战斗最终表现加成 15%。' },
+  { id: 'PROTEIN_BAR', name: '卢西奥的嗨爪麦片', icon: '🥣', desc: '节奏拉满。全队支援位战斗最终表现加成 15%。' },
+  { id: 'HEAVY_ARMOR', name: '托比昂的绝版护甲包', icon: '🦺', desc: '坚如磐石。全队重装位战斗最终表现加成 15%。' },
   { id: 'LUCKY_COIN', name: '卡西迪的幸运硬币', icon: '🪙', desc: '天选之子。战斗中全队的随机浮动下限大幅度提高。' },
   { id: 'BOY_BAND', name: '造星计划', icon: '✨', desc: '全明星阵容。首发里每有一名 OVR > 85 的选手，全队额外 +2 OVR。' },
   { id: 'BLOOD_CONTRACT', name: '莫伊拉的生化实验', icon: '🧪', desc: '献祭生命。获得此遗物时全队 OVR 永久 +10，但只要输掉任意一局直接 GAME OVER。' },
   { id: 'SPONSOR_SHOE', name: '猎空的联名潮鞋', icon: '👟', desc: '时光回溯。获得此遗物时，直接恢复 1 滴战队生命值。' },
   { id: 'DRAGONS_MIRACLE', name: '上海龙的破釜沉舟', icon: '🐉', desc: '从 0-40 到总冠军！当你的战队 HP 只剩 1 滴血时，全队 OVR 永久 +15，并免疫一切掉分负面事件！' },
   { id: 'CHENGDU_ZONE', name: '欢迎来到成都区', icon: '🐼', desc: '只要你不选【地推阵地】战术，全队获得“快乐电竞”Buff，敌方的战术克制对你完全无效！' },
-  { id: 'PURPLE_MATRIX', name: '紫色巴蒂的矩阵', icon: '🪟', desc: '哈瓦那的奇迹！处于劣势时，我方辅助治疗和伤害翻倍，且极大概率触发锁血！' },
+  { id: 'PURPLE_MATRIX', name: '紫色巴蒂的矩阵', icon: '🪟', desc: '哈瓦那的奇迹！处于劣势时，我方支援治疗和伤害翻倍，且极大概率触发锁血！' },
   { id: 'PINE_WATERCUP', name: 'Big Boss的保温杯', icon: '🍵', desc: '深藏功与名。每次打赢一场比赛，所有带有【大心脏】和【玻璃大炮】特质的输出选手，永久额外 +3 OVR。' }
 ];
 
@@ -48,7 +48,7 @@ const LEGENDARY_POOL = [
   // 💉 SUP
   { player_id: 'L-SHU', display_name: 'Shu', player_name: 'Shu', role: 'SUP', most_played_hero: '安娜', ovr: 97, price: 850, team_short_name: 'GLA', upgradeLevel: 5, isAwakened: true, upgradeBonus: 15, awakenTrait: { id: 'AWK_CLUTCH', name: '🟣 哈瓦那奇迹', desc: '绝境锁血，单骑救主！' }, traits: [{ id: "MARTIAL_ARTIST", name: "武斗派", icon: "🥊", desc: "输出拉满。" }] },
   { player_id: 'L-ASTRO', display_name: 'FunnyAstro', player_name: 'FunnyAstro', role: 'SUP', most_played_hero: '卢西奥', ovr: 95, price: 700, team_short_name: 'PHI', upgradeLevel: 5, isAwakened: true, upgradeBonus: 15, awakenTrait: { id: 'AWK_LEADER', name: '🐸 顶级推推', desc: '永远掌握地形杀的主动权！' }, traits: [{ id: "PACIFIST", name: "医者仁心", icon: "👼", desc: "极限保人。" }] },
-  { player_id: 'L-VIOL2T', display_name: 'Viol2t', player_name: 'Viol2t', role: 'SUP', most_played_hero: '伊拉锐', ovr: 96, price: 800, team_short_name: 'SFS', upgradeLevel: 5, isAwakened: true, upgradeBonus: 15, awakenTrait: { id: 'AWK_BLOOD', name: '🔪 嗜血辅助', desc: '输出比自家C位还高！' }, traits: [{ id: "MARTIAL_ARTIST", name: "武斗派", icon: "🥊", desc: "纯粹的杀意。" }] },
+  { player_id: 'L-VIOL2T', display_name: 'Viol2t', player_name: 'Viol2t', role: 'SUP', most_played_hero: '伊拉锐', ovr: 96, price: 800, team_short_name: 'SFS', upgradeLevel: 5, isAwakened: true, upgradeBonus: 15, awakenTrait: { id: 'AWK_BLOOD', name: '🔪 嗜血支援', desc: '输出比自家C位还高！' }, traits: [{ id: "MARTIAL_ARTIST", name: "武斗派", icon: "🥊", desc: "纯粹的杀意。" }] },
   { player_id: 'L-LANDON', display_name: 'Landon', player_name: 'Landon', role: 'SUP', most_played_hero: '巴蒂斯特', ovr: 93, price: 600, team_short_name: 'LDN', upgradeLevel: 5, isAwakened: true, upgradeBonus: 15, awakenTrait: { id: 'AWK_SHIELD', name: '🪟 锁血维生', desc: '永远能在最极限的时间丢出维生立场。' }, traits: [{ id: "WALL_OF_SIGHS", name: "叹息之墙", icon: "🛡️", desc: "防线铁壁。" }] }
 ];
 
@@ -105,9 +105,9 @@ export const EVENTS_POOL = [
 // 👶 青训营保底名单
 // ==========================================
 export const YOUTH_TRAINEES = [
-  { player_id: 'y-1', display_name: '青训主坦', role: 'TANK', ovr: 45, price: 0, team_short_name: 'ACADEMY' },
+  { player_id: 'y-1', display_name: '青训重装', role: 'TANK', ovr: 45, price: 0, team_short_name: 'ACADEMY' },
   { player_id: 'y-2', display_name: '青训输出', role: 'DPS', ovr: 45, price: 0, team_short_name: 'ACADEMY' },
-  { player_id: 'y-3', display_name: '青训辅助', role: 'SUP', ovr: 45, price: 0, team_short_name: 'ACADEMY' }
+  { player_id: 'y-3', display_name: '青训支援', role: 'SUP', ovr: 45, price: 0, team_short_name: 'ACADEMY' }
 ];
 
 // ==========================================
@@ -232,9 +232,9 @@ export function hirePlayer(runState, player) {
   }
 
   const roleCount = runState.roster.filter(p => p.role === player.role).length;
-  if (player.role === 'TANK' && roleCount >= 1) return { success: false, msg: "战术限制：只能配置 1 名坦克选手！" };
+  if (player.role === 'TANK' && roleCount >= 1) return { success: false, msg: "战术限制：只能配置 1 名重装选手！" };
   if (player.role === 'DPS' && roleCount >= 2) return { success: false, msg: "战术限制：最多配置 2 名输出选手！" };
-  if (player.role === 'SUP' && roleCount >= 2) return { success: false, msg: "战术限制：最多配置 2 名辅助选手！" };
+  if (player.role === 'SUP' && roleCount >= 2) return { success: false, msg: "战术限制：最多配置 2 名支援选手！" };
 
   runState.money -= finalPrice;
   

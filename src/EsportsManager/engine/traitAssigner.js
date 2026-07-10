@@ -73,7 +73,7 @@ export function assignAdvancedTraits(players) {
       traits.push({ id: "BRAWLER_TANK", name: "伦敦之盾", icon: "🚜", desc: "纯正的地推浪漫！只打地推，创碎一切！" });
     } else if (nameLower.includes('viol2t') || nameLower === '紫罗兰') {
       isLegendary = true;
-      traits.push({ id: "MARTIAL_ARTIST", name: "嗜血辅助", icon: "🔪", desc: "纯粹的杀意。输出比自家C位还高的辅助，容易放生队友。" });
+      traits.push({ id: "MARTIAL_ARTIST", name: "嗜血支援", icon: "🔪", desc: "纯粹的杀意。输出比自家C位还高的支援，容易放生队友。" });
     } else if (nameLower.includes('landon')) {
       isLegendary = true;
       traits.push({ id: "WALL_OF_SIGHS", name: "锁血维生", icon: "🪟", desc: "永远能在最极限的时间丢出维生立场，防线铁壁。" });
@@ -147,7 +147,7 @@ export function assignAdvancedTraits(players) {
     }
 
     if (p.role === 'SUP' && dmgPct >= 0.75 && healPct <= 0.35) {
-      traits.push({ id: "MARTIAL_ARTIST", name: "武斗派", icon: "🥊", desc: "沉迷输出的辅助。执行【放狗体系】时战力大幅增强，但打【地推】时极易导致前排倒下。" });
+      traits.push({ id: "MARTIAL_ARTIST", name: "武斗派", icon: "🥊", desc: "沉迷输出的支援。执行【放狗体系】时战力大幅增强，但打【地推】时极易导致前排倒下。" });
     }
 
     if (p.role === 'SUP' && healPct >= 0.85 && dmgPct <= 0.20) {

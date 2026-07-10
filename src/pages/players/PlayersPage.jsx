@@ -13,6 +13,7 @@ import {
   filterPlayers,
   getPlayerDirectory,
   getRosterSummary,
+  getRosterRoleLabel,
   normalizeRosterRole,
   paginatePlayers,
   safeArr,
@@ -23,17 +24,17 @@ import styles from './PlayersPage.module.css'
 
 const ROLE_TABS = [
   { id: 'ALL', label: '全部' },
-  { id: 'TANK', label: 'TANK' },
-  { id: 'DPS', label: 'DPS' },
-  { id: 'SUPPORT', label: 'SUPPORT' },
+  { id: 'TANK', label: '重装' },
+  { id: 'DPS', label: '输出' },
+  { id: 'SUPPORT', label: '支援' },
   { id: 'following', label: '我的关注' }
 ]
 
 const ROLE_OPTIONS = [
   { value: 'ALL', label: '全部职责' },
-  { value: 'TANK', label: 'TANK' },
-  { value: 'DPS', label: 'DPS' },
-  { value: 'SUPPORT', label: 'SUPPORT' }
+  { value: 'TANK', label: '重装' },
+  { value: 'DPS', label: '输出' },
+  { value: 'SUPPORT', label: '支援' }
 ]
 
 const FOLLOWING_OPTIONS = [
@@ -49,7 +50,7 @@ const BASE_SORT_OPTIONS = [
 ]
 
 function displayRole(role) {
-  return normalizeRosterRole(role) === 'SUP' ? 'SUPPORT' : normalizeRosterRole(role)
+  return getRosterRoleLabel(role)
 }
 
 function useQueryWriter(searchParams, setSearchParams) {
@@ -186,9 +187,9 @@ export default function PlayersPage() {
       <RosterPageHeader
         stats={[
           { value: summary.totalPlayers, label: '参赛选手' },
-          { value: summary.roleCounts.TANK, label: 'TANK' },
-          { value: summary.roleCounts.DPS, label: 'DPS' },
-          { value: summary.roleCounts.SUPPORT, label: 'SUPPORT' }
+          { value: summary.roleCounts.TANK, label: '重装' },
+          { value: summary.roleCounts.DPS, label: '输出' },
+          { value: summary.roleCounts.SUPPORT, label: '支援' }
         ]}
       />
 

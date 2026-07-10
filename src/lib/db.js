@@ -44,7 +44,7 @@ async function fetchJson(url, errorCode) {
 
   try {
     const res = await fetch(url, {
-      cache: 'default',
+      cache: 'no-store',
       signal: controller.signal
     })
     if (!res.ok) throw new Error(`${errorCode}: ${res.status}`)

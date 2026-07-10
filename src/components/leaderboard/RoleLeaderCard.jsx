@@ -31,8 +31,8 @@ function formatRoleLeaderMetricValue(value, metricId) {
   return formatDecimal(number, 1, '-')
 }
 
-export default function RoleLeaderCard({ role, entry, withSeason, order = 1 }) {
-  const roleCode = getRoleEnLabel(role)
+export default function RoleLeaderCard({ role, entry, withSeason, order = 1, locale = 'zh-CN' }) {
+  const roleCode = locale === 'en-US' ? getRoleEnLabel(role) : getRoleLabel(role)
 
   if (!entry) {
     return (

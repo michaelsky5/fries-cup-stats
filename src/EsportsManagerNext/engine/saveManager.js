@@ -11,6 +11,14 @@ export const RUN_ROSTER_REQUIREMENTS = {
   DPS: 2,
   SUP: 2
 }
+
+function getRoleDisplayLabel(role) {
+  if (role === 'TANK') return '重装'
+  if (role === 'DPS') return '输出'
+  if (role === 'SUP') return '支援'
+  return role || '职责'
+}
+
 const OPENING_MARKET_SIZE = 8
 const STYLE_LABELS = {
   DIVE: '放狗冲锋',
@@ -523,7 +531,7 @@ export function createStarterRun(save, playerPool) {
     history: [
       {
         type: 'start',
-        text: `新赛季报名，启动预算 ${INITIAL_RUN_FUNDS}K。先签满 1T / 2D / 2S，再进入肉鸽路线。`
+        text: `新赛季报名，启动预算 ${INITIAL_RUN_FUNDS}K。先签满 1 重装 / 2 输出 / 2 支援，再进入肉鸽路线。`
       }
     ]
   }
@@ -575,7 +583,7 @@ export function hireRunPlayer(save, playerId, playerPool = []) {
   const roleCap = RUN_ROSTER_REQUIREMENTS[player.role] || 0
   const counts = getRoleCounts(run.roster)
   if (!roleCap) return { ok: false, save: normalized, message: '暂时不支持这个位置。' }
-  if (counts[player.role] >= roleCap) return { ok: false, save: normalized, message: `${player.role} 位置已经满员。` }
+  if (counts[player.role] >= roleCap) return { ok: false, save: normalized, message: `${getRoleDisplayLabel(player.role)}位置已经满员。` }
 
   const price = Math.max(0, Number(player.price || 0))
   if (Number(run.funds || 0) < price) {
@@ -587,7 +595,7 @@ export function hireRunPlayer(save, playerId, playerPool = []) {
     actualPaidPrice: price,
     acquiredAt: 'opening-market'
   }
-  const text = `签下 ${signedPlayer.role} ${signedPlayer.name}，花费 ${price}K。`
+  const text = `签下${getRoleDisplayLabel(signedPlayer.role)} ${signedPlayer.name}，花费 ${price}K。`
   const nextRun = {
     ...run,
     funds: Number(run.funds || 0) - price,
@@ -682,7 +690,7 @@ export function deployRunRoster(save, playerPool = []) {
     return {
       ok: false,
       save: normalized,
-      message: `首发还没满：TANK ${counts.TANK}/1，DPS ${counts.DPS}/2，SUP ${counts.SUP}/2。`
+      message: `首发还没满：重装 ${counts.TANK}/1，输出 ${counts.DPS}/2，支援 ${counts.SUP}/2。`
     }
   }
 
@@ -918,7 +926,7 @@ export function getRosterBuildReport(roster = [], sponsors = [], tactic = DEFAUL
       dominantStyle: null,
       bonuses: [],
       warnings: ['还没有首发选手。'],
-      summary: '先签下 1T / 2D / 2S，阵容方向才会开始成型。'
+      summary: '先签下 1 重装 / 2 输出 / 2 支援，阵容方向才会开始成型。'
     }
   }
 
@@ -1254,7 +1262,7 @@ function createDraftChoices(playerPool, run) {
   return shuffle(candidates).slice(0, 3).map(player => ({
     id: `draft-${player.id}`,
     name: player.name,
-    desc: `${player.role} / ${player.team} / ${player.ovr} OVR / ${player.traits?.join('、') || '体系拼图'}`,
+    desc: `${getRoleDisplayLabel(player.role)} / ${player.team} / ${player.ovr} OVR / ${player.traits?.join('、') || '体系拼图'}`,
     cost: player.price,
     player
   }))

@@ -4,9 +4,9 @@ import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
 
 const ROLE_OPTIONS = [
   { value: 'ALL', label: '全部职责', en: 'ALL' },
-  { value: 'TANK', label: '坦克', en: 'TANK' },
+  { value: 'TANK', label: '重装', en: 'TANK' },
   { value: 'DPS', label: '输出', en: 'DPS' },
-  { value: 'SUPPORT', label: '辅助', en: 'SUPPORT' }
+  { value: 'SUPPORT', label: '支援', en: 'SUPPORT' }
 ]
 
 function getFilterCount(filters) {

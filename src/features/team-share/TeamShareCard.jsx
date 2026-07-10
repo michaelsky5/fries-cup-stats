@@ -20,10 +20,17 @@ function Portrait({ player }) {
       )}
       <span>
         <strong>{player.name}</strong>
-        <em>{player.role} / {player.hero || 'HERO TBD'}</em>
+        <em>{getShareRoleLabel(player.role)} / {player.hero || 'HERO TBD'}</em>
       </span>
     </div>
   )
+}
+
+function getShareRoleLabel(role) {
+  if (role === 'TANK') return '重装'
+  if (role === 'DPS') return '输出'
+  if (role === 'SUP' || role === 'SUPPORT') return '支援'
+  return role || '职责'
 }
 
 function FormStrip({ form }) {

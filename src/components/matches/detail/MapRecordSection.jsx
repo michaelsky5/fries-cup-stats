@@ -11,6 +11,7 @@ export default function MapRecordSection({
   onCollapseAll,
   setMapRef,
   seasonId,
+  locale = 'zh-CN',
   t
 }) {
   const allExpanded = dossier.mapRecords.length > 0 && dossier.mapRecords.every(map => expandedMaps.has(map.order))
@@ -59,7 +60,7 @@ export default function MapRecordSection({
               {expanded ? (
                 <div id={`map-${map.order}-body`} className={styles.mapRecordBody}>
                   <MapMetaStrip map={map} dossier={dossier} t={t} />
-                  <DualTeamStatsTable map={map} dossier={dossier} seasonId={seasonId} t={t} />
+                  <DualTeamStatsTable map={map} dossier={dossier} seasonId={seasonId} locale={locale} t={t} />
                 </div>
               ) : null}
             </article>

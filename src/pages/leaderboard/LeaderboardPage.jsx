@@ -347,6 +347,7 @@ export default function LeaderboardPage() {
                   entry={highlights.roleLeaders[role]}
                   withSeason={withSeason}
                   order={index + 1}
+                  locale={locale}
                 />
               ))}
             </div>
@@ -404,6 +405,7 @@ export default function LeaderboardPage() {
               setCompareOpen(false)
             }}
             onOpen={handleOpenCompare}
+            locale={locale}
           />
 
           {compareOpen ? (
@@ -412,6 +414,7 @@ export default function LeaderboardPage() {
               mode={mode}
               modeLabel={getModeLabel(mode)}
               onClose={() => setCompareOpen(false)}
+              locale={locale}
             />
           ) : null}
         </>

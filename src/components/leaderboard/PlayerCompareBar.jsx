@@ -1,7 +1,7 @@
 import { getRoleEnLabel, getRoleLabel } from '../../lib/leaderboardSelectors.js'
 import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
 
-export default function PlayerCompareBar({ selectedEntries, modeLabel, warning, onClear, onOpen }) {
+export default function PlayerCompareBar({ selectedEntries, modeLabel, warning, onClear, onOpen, locale = 'zh-CN' }) {
   if (!selectedEntries.length) return null
 
   const role = selectedEntries[0]?.role
@@ -11,7 +11,7 @@ export default function PlayerCompareBar({ selectedEntries, modeLabel, warning, 
       <div className={styles.compareBarMain}>
         <div className={styles.compareBarMeta}>
           <span>已选 {selectedEntries.length} / 4</span>
-          <strong>{getRoleLabel(role)} / {getRoleEnLabel(role)}</strong>
+          <strong>{locale === 'en-US' ? getRoleEnLabel(role) : getRoleLabel(role)}</strong>
           <em>{modeLabel}</em>
         </div>
 

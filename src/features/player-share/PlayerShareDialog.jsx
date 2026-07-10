@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createTranslator } from '../../lib/i18n.js'
+import { getRoleEnLabel, getRoleLabel } from '../../lib/leaderboardSelectors.js'
 import PlayerShareCard from './PlayerShareCard.jsx'
 import { createPlayerShareFileName } from './playerShareFileName.js'
 import { exportPlayerSharePng } from './playerShareRenderer.js'
 import { getPlayerShareCardModel } from './playerShareSelectors.js'
 import styles from './PlayerShareDialog.module.css'
 
-function roleName(role) {
-  return role === 'SUPPORT' ? 'SUPPORT' : role || 'ROLE'
+function roleName(role, locale = 'zh-CN') {
+  return locale === 'en-US' ? getRoleEnLabel(role) : getRoleLabel(role)
 }
 
 export default function PlayerShareDialog({
@@ -64,7 +65,7 @@ export default function PlayerShareDialog({
       await exportPlayerSharePng(exportRef.current, createPlayerShareFileName({
         seasonCode: model.season.code,
         nickname: model.identity.nickname,
-        role: model.identity.role
+        role: model.identity.roleCode || selectedRole || model.identity.role
       }))
       setStatus(t('playerShare.dialog.exported', '分享图已导出。'))
     } catch (error) {
@@ -104,7 +105,7 @@ export default function PlayerShareDialog({
                     setStatus('')
                   }}
                 >
-                  {roleName(item.role)}
+                  {roleName(item.role, locale)}
                 </button>
               ))}
             </div>

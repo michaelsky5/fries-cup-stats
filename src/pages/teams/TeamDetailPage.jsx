@@ -1047,6 +1047,7 @@ export default function TeamDetailPage() {
           <div className={styles.heroMetrics}>
             <HeaderMetric label="当前排名" value={advanceState.label} meta={advanceState.zone} />
             <HeaderMetric label="比赛战绩" value={`${matchSummary.wins}-${matchSummary.losses}`} meta={`${matchSummary.completed} 场已完成`} />
+            <HeaderMetric label="比赛胜率" value={formatPercent(matchSummary.winRate)} meta={`${matchSummary.wins}-${matchSummary.losses}`} />
           </div>
         </div>
 
@@ -1091,6 +1092,10 @@ export default function TeamDetailPage() {
               <em>地图胜率</em>
             </span>
             <span>
+              <strong>{todayRows.length || '-'}</strong>
+              <em>今日赛程</em>
+            </span>
+            <span>
               <strong>{matchSummary.pending || '-'}</strong>
               <em>待赛</em>
             </span>
@@ -1113,30 +1118,6 @@ export default function TeamDetailPage() {
 
       {activeTab === 'overview' ? (
         <div className={styles.overviewGrid}>
-          <section className={`${styles.panel} ${styles.statusPanel}`}>
-            <div className={styles.panelHead}>
-              <h2>当前状态</h2>
-              <span>TEAM SNAPSHOT</span>
-            </div>
-            <div className={styles.statusBoard}>
-              <div className={styles.statusLead}>
-                <span className={`${styles.statusBadge} ${styles[advanceState.tone]}`}>{advanceState.zone}</span>
-                <strong>{advanceState.label}</strong>
-                <em>{standing ? `瑞士轮 ${standing.match_wins || 0}-${standing.match_losses || 0}` : '等待积分生成'}</em>
-              </div>
-              <div className={styles.statusStats}>
-                <HeaderMetric label="比赛胜率" value={formatPercent(matchSummary.winRate)} meta={`${matchSummary.wins}-${matchSummary.losses}`} />
-                <HeaderMetric label="地图胜率" value={formatPercent(matchSummary.mapWinRate)} meta={`${matchSummary.mapWins}-${matchSummary.mapLosses}`} />
-                <HeaderMetric label="今日比赛" value={todayRows.length || '-'} meta={todayRows.length ? '今日赛程' : '今日暂无'} />
-                <HeaderMetric label="待赛" value={matchSummary.pending} meta={matchSummary.live ? `${matchSummary.live} 场进行中` : '未开始'} />
-              </div>
-              <div className={styles.formPanel}>
-                <span>RECENT FORM</span>
-                <FormStrip form={recentForm} />
-              </div>
-            </div>
-          </section>
-
           <section className={`${styles.panel} ${styles.mapSpotlightPanel}`}>
             <div className={styles.panelHead}>
               <h2>赛场背景</h2>

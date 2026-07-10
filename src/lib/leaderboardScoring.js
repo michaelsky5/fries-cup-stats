@@ -30,7 +30,7 @@ const SAMPLE_CONFIDENCE_TARGET_MAPS = 10
 
 export const ROLE_SCORE_CONFIG = {
   TANK: {
-    label: '坦克',
+    label: '重装',
     en: 'TANK',
     color: ROLE_COLORS.TANK,
     coreMetrics: ['block', 'dth', 'elim'],
@@ -58,7 +58,7 @@ export const ROLE_SCORE_CONFIG = {
     }
   },
   SUPPORT: {
-    label: '辅助',
+    label: '支援',
     en: 'SUP',
     color: ROLE_COLORS.SUPPORT,
     coreMetrics: ['heal', 'ast', 'dth'],

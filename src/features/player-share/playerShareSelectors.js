@@ -1,4 +1,4 @@
-import { getHeroAvatarSrc, normalizeLeaderboardRole } from '../../lib/leaderboardSelectors.js'
+import { getHeroAvatarSrc, getRoleEnLabel, getRoleLabel, normalizeLeaderboardRole } from '../../lib/leaderboardSelectors.js'
 import { formatOwHeroName } from '../../lib/heroes.js'
 import { getPlayerDossier, getPlayerRoleAnalysis } from '../../lib/playerDetailSelectors.js'
 import { getShareHeroArtwork } from './heroShareArtworkResolver.js'
@@ -173,7 +173,8 @@ export function getPlayerShareCardModel({
   const attributes = buildAttributes(analysis.radarData, summary.role, eligible, locale)
   const roleColor = ROLE_COLORS[summary.role] || '#f4c320'
   const seasonCode = resolveSeasonCode(db, season, seasonId)
-  const teamLine = compact([identity.teamShort, summary.role]).join(' · ')
+  const roleLabel = isZh(locale) ? getRoleLabel(summary.role) : getRoleEnLabel(summary.role)
+  const teamLine = compact([identity.teamShort, roleLabel]).join(' · ')
   const heroArtwork = getShareHeroArtwork(hero, summary.role)
   const battleTag = identity.battleTag && identity.battleTag !== identity.displayName
     ? identity.battleTag
@@ -193,7 +194,8 @@ export function getPlayerShareCardModel({
       teamShortName: identity.teamShort,
       teamName: identity.teamFull,
       teamLine,
-      role: summary.role
+      role: roleLabel,
+      roleCode: summary.role
     },
     visuals: {
       roleColor,

@@ -579,7 +579,7 @@ export function normalizeHeroFolder(role, heroName = '') {
   const r = String(role ?? '').trim().toUpperCase()
 
   if (r === 'TANK' || r === '重装' || r === '坦克') return 'tank'
-  if (r === 'SUP' || r === 'SUPPORT' || r === '辅助') return 'support'
+  if (r === 'SUP' || r === 'SUPPORT' || r === '辅助' || r === '支援') return 'support'
   if (r === 'DPS' || r === 'DAMAGE' || r === '输出') return 'damage'
 
   return inferHeroFolder(heroName) || 'damage'
@@ -603,9 +603,9 @@ export function getPlayerDisplayName(player) {
 export function getRoleCn(role) {
   const r = String(role ?? '').toUpperCase()
 
-  if (r === 'TANK') return '坦克'
+  if (r === 'TANK') return '重装'
   if (r === 'DPS' || r === 'DAMAGE') return '输出'
-  if (r === 'SUP' || r === 'SUPPORT') return '辅助'
+  if (r === 'SUP' || r === 'SUPPORT') return '支援'
 
   return '自由人'
 }

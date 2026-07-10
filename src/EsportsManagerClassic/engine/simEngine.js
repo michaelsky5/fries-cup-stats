@@ -187,7 +187,7 @@ export function executeSimulation(myRoster, bossTeam, tacticId, mapName, current
              if (isUnderdog) { pRoll += 0.50; logs.push(`[📊 Fleta级指标] 队伍处于劣势，${p.display_name} 强行接管比赛，一人打出全队一半以上的输出！`); }
          }
          else if (t.id === 'DPS_ZEN') {
-             pRoll += 0.20; logs.push(`[🐙 嗜血武僧] ${p.display_name} 的伤害甚至超越了对面的 DPS，但在他身边的队友有点缺奶...`);
+             pRoll += 0.20; logs.push(`[🐙 嗜血武僧] ${p.display_name} 的伤害甚至超越了对面的输出位，但在他身边的队友有点缺奶...`);
          }
          else if (t.id === 'BIG_BOSS') {
              if (tacticId === 'POKE') { pRoll += 0.40; logs.push(`[😎 Big Boss] 完美的拉扯空间，${p.display_name} 犹如天神下凡枪枪爆头！`); }
@@ -256,8 +256,8 @@ export function executeSimulation(myRoster, bossTeam, tacticId, mapName, current
              }
          }
          else if (t.id === 'MARTIAL_ARTIST') {
-             if (tacticId === 'DIVE') { pRoll += 0.15; logs.push(`[武斗派🥊] ${p.display_name} 作为辅助居然带头冲锋，伤害拉满！`); }
-             if (tacticId === 'BRAWL' && !hasAwakenShield) { pRoll -= 0.15; logs.push(`[武斗派🥊] ${p.display_name} 沉迷点人忘记奶坦克，前排瞬间倒下...`); }
+             if (tacticId === 'DIVE') { pRoll += 0.15; logs.push(`[武斗派🥊] ${p.display_name} 作为支援居然带头冲锋，伤害拉满！`); }
+             if (tacticId === 'BRAWL' && !hasAwakenShield) { pRoll -= 0.15; logs.push(`[武斗派🥊] ${p.display_name} 沉迷点人忘记保重装，前排瞬间倒下...`); }
          }
          else if (t.id === 'SUPPRESSION') {
              if (tacticId === 'POKE') { pRoll += 0.15; logs.push(`[火力压制🔥] ${p.display_name} 完美的枪线压制让敌方痛不欲生！`); }

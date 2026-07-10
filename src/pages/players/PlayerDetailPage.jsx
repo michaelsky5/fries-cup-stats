@@ -33,9 +33,10 @@ function getRoleClass(role) {
   return styles.roleFlex
 }
 
-function roleDisplay(role) {
+function roleDisplay(role, locale = 'zh-CN') {
   const normalized = normalizeLeaderboardRole(role)
-  return normalized === 'SUPPORT' ? 'SUPPORT' : normalized || 'ROLE'
+  if (locale === 'en-US') return normalized || 'ROLE'
+  return getRoleLabel(normalized)
 }
 
 function formatHeroLabel(value, locale) {
@@ -119,11 +120,15 @@ function SectionHeading({ kicker, title, meta, action }) {
   )
 }
 
-function RoleTabs({ roles, activeView, onChange }) {
+function RoleTabs({ roles, activeView, onChange, locale = 'zh-CN' }) {
   const showOverview = roles.length > 1
   const tabs = [
     ...(showOverview ? [{ id: 'overview', label: '综合资料', en: 'OVERVIEW' }] : []),
-    ...roles.map(role => ({ id: role, label: roleDisplay(role), en: getRoleLabel(role) }))
+    ...roles.map(role => ({
+      id: role,
+      label: roleDisplay(role, locale),
+      en: locale === 'en-US' ? (normalizeLeaderboardRole(role) || 'ROLE') : '职责档案'
+    }))
   ]
 
   return (
@@ -143,7 +148,7 @@ function RoleTabs({ roles, activeView, onChange }) {
   )
 }
 
-function OverviewPanel({ dossier, onChange }) {
+function OverviewPanel({ dossier, onChange, locale = 'zh-CN' }) {
   return (
     <section className={styles.overviewPanel}>
       <SectionHeading
@@ -155,7 +160,7 @@ function OverviewPanel({ dossier, onChange }) {
         {dossier.roleEntries.map(item => (
           <article key={item.role} className={`${styles.roleOverviewCard} ${getRoleClass(item.role)}`}>
             <div className={styles.roleOverviewTop}>
-              <span>{roleDisplay(item.role)}</span>
+              <span>{roleDisplay(item.role, locale)}</span>
               <strong>{item.summary.scoreLabel}</strong>
             </div>
             <div className={styles.roleOverviewFacts}>
@@ -173,7 +178,7 @@ function OverviewPanel({ dossier, onChange }) {
               </span>
             </div>
             <button type="button" onClick={() => onChange(item.role)}>
-              进入 {roleDisplay(item.role)} 档案 →
+              进入 {roleDisplay(item.role, locale)} 档案 →
             </button>
           </article>
         ))}
@@ -211,7 +216,7 @@ function DossierHero({
         {identity.battleTag ? <p className={styles.battleTag}>{identity.battleTag}</p> : null}
         <div className={styles.identityMeta}>
           <span>{identity.teamShort} · {identity.teamFull}</span>
-          <span>{dossier.isOverview ? (isEn ? 'Overview' : '综合资料') : roleDisplay(summary.role)}</span>
+          <span>{dossier.isOverview ? (isEn ? 'Overview' : '综合资料') : roleDisplay(summary.role, locale)}</span>
         </div>
         <div className={styles.heroActions}>
           <button type="button" onClick={onFavorite} disabled={favoriteDisabled}>
@@ -228,7 +233,7 @@ function DossierHero({
         <div className={styles.summaryTop}>
           <div>
             <span className={styles.summaryKicker}>CURRENT ROLE</span>
-            <h2>{dossier.isOverview ? '综合资料' : roleDisplay(summary.role)}</h2>
+            <h2>{dossier.isOverview ? '综合资料' : roleDisplay(summary.role, locale)}</h2>
           </div>
           <span className={styles.sampleBadge}>
             门槛 {dossier.minTimeMins} 分钟
@@ -268,7 +273,7 @@ function DossierHero({
   )
 }
 
-function ScoreRadarPanel({ analysis }) {
+function ScoreRadarPanel({ analysis, locale = 'zh-CN' }) {
   const summary = analysis.summary
   const roleColor = getRoleColor(summary.role)
   const validRadar = analysis.radarData.some(item => item.available)
@@ -282,7 +287,7 @@ function ScoreRadarPanel({ analysis }) {
           {summary.eligible ? `${summary.rankLabel} · ${summary.scorePercentileLabel}` : '样本不足 · 不进入正式排名'}
         </div>
         <div className={styles.scoreMeta}>
-          <span>{roleDisplay(summary.role)}</span>
+          <span>{roleDisplay(summary.role, locale)}</span>
           <span>{summary.qualifiedSize} 名有效样本</span>
         </div>
       </div>
@@ -379,7 +384,7 @@ function RecentMatches({ matches, withSeason, playerId, role, locale = 'zh-CN' }
               <span>{match.dateLabel}</span>
               <strong>vs {match.opponent.short}</strong>
               <em>{match.scoreLabel}</em>
-              <small>{roleDisplay(role)} · {formatHeroLabel(match.heroLabel, locale)}</small>
+              <small>{roleDisplay(role, locale)} · {formatHeroLabel(match.heroLabel, locale)}</small>
               <b>{match.coreMetric.label} {match.coreMetric.value}</b>
               <i aria-hidden="true">→</i>
             </Link>
@@ -592,13 +597,13 @@ export default function PlayerDetailPage() {
         locale={locale}
       />
 
-      <RoleTabs roles={dossier.roles} activeView={dossier.selectedView} onChange={handleViewChange} />
+      <RoleTabs roles={dossier.roles} activeView={dossier.selectedView} onChange={handleViewChange} locale={locale} />
 
       {dossier.isOverview ? (
-        <OverviewPanel dossier={dossier} onChange={handleViewChange} />
+        <OverviewPanel dossier={dossier} onChange={handleViewChange} locale={locale} />
       ) : (
         <>
-          <ScoreRadarPanel analysis={analysis} />
+          <ScoreRadarPanel analysis={analysis} locale={locale} />
           <Achievements achievements={analysis.achievements} locale={locale} />
           <CoreStats analysis={analysis} metricMode={metricMode} onModeChange={setMetricMode} />
           <RecentMatches matches={analysis.recentMatches} withSeason={withSeason} playerId={dossier.identity.playerId} role={analysis.summary.role} locale={locale} />

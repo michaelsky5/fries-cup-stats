@@ -1,5 +1,5 @@
 import { formatInt } from '../../../lib/format.js'
-import { getRoleEnLabel } from '../../../lib/leaderboardSelectors.js'
+import { getRoleEnLabel, getRoleLabel } from '../../../lib/leaderboardSelectors.js'
 import styles from './MatchDetail.module.css'
 
 function formatRating(value) {
@@ -16,16 +16,17 @@ function getName(entry) {
   return entry?.display_name || entry?.nickname || entry?.player_name || entry?.player_id || '-'
 }
 
-export default function RoleLeaderRow({ role, entry }) {
+export default function RoleLeaderRow({ role, entry, locale = 'zh-CN' }) {
   if (!entry) return null
 
   const coreStats = (entry.coreStats || []).filter(stat => Number(stat.value) > 0).slice(0, 2)
+  const roleLabel = locale === 'en-US' ? getRoleEnLabel(role) : getRoleLabel(role)
 
   return (
     <div className={styles.roleLeaderLine} data-role={role}>
       <span className={styles.roleLeaderIdentity}>
         <span className={styles.roleLabel}>
-          {getRoleEnLabel(role)}
+          {roleLabel}
         </span>
         <span className={styles.roleLeaderPlayer}>
           <strong>{getName(entry)}</strong>

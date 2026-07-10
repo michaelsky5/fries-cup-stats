@@ -221,7 +221,7 @@ function TableTitleBar({ pagination, mode, activeTab, sortKey, direction, locale
 function formatEntryField(entry, column, mode, locale) {
   if (column.id === 'score') return formatEntrySeasonOvr(entry)
   if (column.id === 'team') return `${entry.team_short_name || '-'} / ${entry.team_name || '-'}`
-  if (column.id === 'role') return locale === 'en-US' ? getRoleEnLabel(entry.role) : `${getRoleLabel(entry.role)} / ${getRoleEnLabel(entry.role)}`
+  if (column.id === 'role') return locale === 'en-US' ? getRoleEnLabel(entry.role) : getRoleLabel(entry.role)
   if (column.id === 'maps') return formatInt(entry.roleMapsPlayed)
   if (column.id === 'time') return formatPlayerTime({ raw_time_mins: entry.roleTimeMins, total_time_played: entry.total_time_played })
   if (column.metricId) return formatLeaderboardStat(getEntryMetricValue(entry, column.metricId, mode), mode, column.metricId)
@@ -261,7 +261,7 @@ function MobileRankingItem({
         <HeroAvatar entry={entry} />
         <span className={styles.mobilePlayerText}>
           <strong>{playerName}</strong>
-          <em>{entry.team_short_name || entry.team_name || '-'} / {getRoleEnLabel(entry.role)}</em>
+          <em>{entry.team_short_name || entry.team_name || '-'} / {locale === 'en-US' ? getRoleEnLabel(entry.role) : getRoleLabel(entry.role)}</em>
         </span>
         <span className={styles.mobileScore}>
           <b>{formatEntrySeasonOvr(entry)}</b>

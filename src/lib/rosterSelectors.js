@@ -64,6 +64,20 @@ export function normalizeRosterRole(role) {
   return 'FLEX'
 }
 
+export function getRosterRoleLabel(role, locale = 'zh-CN') {
+  const normalized = normalizeRosterRole(role)
+  if (locale === 'en-US') {
+    return normalized === 'SUP' ? 'SUPPORT' : normalized || 'ROLE'
+  }
+
+  return {
+    TANK: '重装',
+    DPS: '输出',
+    SUP: '支援',
+    FLEX: '自由'
+  }[normalized] || '职责'
+}
+
 function getRoleRank(role) {
   const index = ROLE_ORDER.indexOf(normalizeRosterRole(role))
   return index >= 0 ? index : ROLE_ORDER.length
@@ -661,7 +675,7 @@ export function getActiveRosterFilters(state = {}) {
   const filters = []
   if (state.q) filters.push({ key: 'q', label: `搜索：${state.q}` })
   if (state.filter && state.filter !== 'all') filters.push({ key: 'filter', label: state.filter })
-  if (state.role && state.role !== 'ALL') filters.push({ key: 'role', label: normalizeRosterRole(state.role) === 'SUP' ? 'SUPPORT' : normalizeRosterRole(state.role) })
+  if (state.role && state.role !== 'ALL') filters.push({ key: 'role', label: getRosterRoleLabel(state.role) })
   if (state.type && state.type !== 'ALL') filters.push({ key: 'type', label: state.type === 'manager' ? '经理' : '教练' })
   if (state.team && state.team !== 'ALL') filters.push({ key: 'team', label: state.team })
   if (state.hero && state.hero !== 'ALL') filters.push({ key: 'hero', label: state.hero })

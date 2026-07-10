@@ -8,6 +8,20 @@ import { calculateTeamPower } from '../engine/managerEngine'
 
 const ROLE_ORDER = { TANK: 1, DPS: 2, SUP: 3 }
 
+function getRoleDisplayLabel(role) {
+  if (role === 'TANK') return '重装'
+  if (role === 'DPS') return '输出'
+  if (role === 'SUP') return '支援'
+  return role || '职责'
+}
+
+function getRoleFallbackLabel(role) {
+  if (role === 'TANK') return '重'
+  if (role === 'DPS') return '输'
+  if (role === 'SUP') return '援'
+  return String(role || '-').slice(0, 1)
+}
+
 function getHeroAvatarUrl(role, heroName) {
   if (!heroName) return ''
   const dir = role === 'DPS' ? 'damage' : role === 'SUP' ? 'support' : 'tank'
@@ -201,7 +215,7 @@ export default function ChampionPage() {
                   <span className={styles.sectionKicker}>STARTING FIVE</span>
                   <span className={styles.sectionTitle}>战队首发阵容</span>
                 </div>
-                <div className={styles.sectionMeta}>TANK ×1 / DPS ×2 / SUP ×2</div>
+                <div className={styles.sectionMeta}>重装 ×1 / 输出 ×2 / 支援 ×2</div>
               </div>
 
               <div className={styles.rosterGrid}>
@@ -211,13 +225,13 @@ export default function ChampionPage() {
                   return (
                     <div key={p.player_id} className={styles.playerCard}>
                       <div className={p.role === 'TANK' ? styles.roleBadgeTank : p.role === 'DPS' ? styles.roleBadgeDps : styles.roleBadgeSup}>
-                        {p.role}
+                        {getRoleDisplayLabel(p.role)}
                       </div>
 
                       {p.most_played_hero ? (
                         <img src={getHeroAvatarUrl(p.role, p.most_played_hero)} className={styles.playerAvatar} alt="hero" crossOrigin="anonymous" />
                       ) : (
-                        <div className={styles.playerAvatarFallback}>{p.role.charAt(0)}</div>
+                        <div className={styles.playerAvatarFallback}>{getRoleFallbackLabel(p.role)}</div>
                       )}
 
                       <div className={styles.playerInfo}>

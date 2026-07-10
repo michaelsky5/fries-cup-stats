@@ -315,7 +315,7 @@ function getPlayerRoleSummary(player, total) {
     return fallbackRole || ''
   }
 
-  const order = { 坦克: 1, 输出: 2, 辅助: 3 }
+  const order = { 重装: 1, 坦克: 1, 输出: 2, 支援: 3, 辅助: 3 }
 
   return Array.from(roleMap.entries())
     .sort((a, b) => {
@@ -407,9 +407,9 @@ function getLineupLogMinutes(log) {
 function getLineupRoleRank(role) {
   const text = String(role || '').toLowerCase()
 
-  if (text.includes('tank') || text.includes('坦克')) return 1
+  if (text.includes('tank') || text.includes('坦克') || text.includes('重装')) return 1
   if (text.includes('dps') || text.includes('damage') || text.includes('输出')) return 2
-  if (text.includes('support') || text.includes('辅助')) return 3
+  if (text.includes('support') || text.includes('辅助') || text.includes('支援')) return 3
 
   return 9
 }
@@ -1691,7 +1691,7 @@ function getRoleInsight(playerName, role, dataBars) {
   if (best.label.includes('治疗')) {
     return {
       title: '你最亮眼的地方，是让队友还有下一次机会',
-      body: `${best.label}是这份数据里最突出的部分。辅助不总在镜头中央，但很多比赛是在这样的支撑下才被继续打下去的。`
+      body: `${best.label}是这份数据里最突出的部分。支援不总在镜头中央，但很多比赛是在这样的支撑下才被继续打下去的。`
     }
   }
 
@@ -1803,7 +1803,7 @@ function getSeasonIdentitySummary({
   } else if (bestBar?.label?.includes('治疗')) {
     tag = '团队支撑点'
     title = '你的赛季标签，是让队友还有下一次机会'
-    body = `${bestBar.label}成为你这份记录里最突出的侧面。辅助不总在镜头中央，但很多团战能继续，是因为有人把队伍留在场上。`
+    body = `${bestBar.label}成为你这份记录里最突出的侧面。支援不总在镜头中央，但很多团战能继续，是因为有人把队伍留在场上。`
     quoteTitle = '支撑不是背景'
     quoteBody = '它是下一次进攻、下一次反打、下一次续住团战的前提。'
   } else if (bestBar?.label?.includes('生存')) {
@@ -1821,8 +1821,8 @@ function getSeasonIdentitySummary({
   } else if (r === 'SUP' || r === 'SUPPORT') {
     tag = '队伍支撑者'
     title = '你的赛季标签，是把队伍连接起来'
-    body = `${playerName} 的赛季不只在治疗数字里。辅助的位置，常常是在混乱里判断谁还能被留下、哪一次技能能改变下一波。`
-    quoteTitle = '辅助不是站在故事外面的人'
+    body = `${playerName} 的赛季不只在治疗数字里。支援的位置，常常是在混乱里判断谁还能被留下、哪一次技能能改变下一波。`
+    quoteTitle = '支援不是站在故事外面的人'
     quoteBody = '他们只是经常把别人送到镜头中央。'
   } else if (heroName) {
     tag = `${heroName} 使用者`
@@ -1867,7 +1867,7 @@ function getPeakText(log, role) {
       value: formatNum(totals.healing, 0),
       label: '单图治疗',
       title: '有一张地图，记住了你的支撑',
-      body: `在 ${mapName}，你使用 ${heroName} 留下了这个赛季最突出的支援记录。镜头可能不会总是追着辅助，但每一次被续住的团战，都不是凭空发生的。`
+      body: `在 ${mapName}，你使用 ${heroName} 留下了这个赛季最突出的支援记录。镜头可能不会总是追着支援，但每一次被续住的团战，都不是凭空发生的。`
     }
   }
 

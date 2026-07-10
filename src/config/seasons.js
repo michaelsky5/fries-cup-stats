@@ -2,6 +2,8 @@ export const DEFAULT_SEASON_ID = 'FCA26'
 export const SEASON_STORAGE_KEY = 'fries_cup_stats_active_season'
 export const SEASON_URL_PARAM = 'season'
 
+const PREFER_LOCAL_DATA = import.meta.env.VITE_PREFER_LOCAL_DATA === '1'
+
 export const SEASONS = [
   {
     id: 'FCR26',
@@ -20,7 +22,7 @@ export const SEASONS = [
     dataUrl: 'https://admin.fries-cup.com/api/public/seasons/FCR26/publish/latest/data',
     reportUrl: 'https://admin.fries-cup.com/api/public/seasons/FCR26/publish/latest/report',
     localDataUrl: '/data/fcr2026_local_public.json',
-    preferLocalData: import.meta.env.DEV,
+    preferLocalData: PREFER_LOCAL_DATA,
     reviewEnabled: false,
     rankingMinTimeMins: 30,
     rules: {
@@ -82,7 +84,7 @@ export const SEASONS = [
     reportUrl: 'https://admin.fries-cup.com/api/public/seasons/FCA26/publish/latest/report',
     localDataUrl: '/data/friescup_db_review_ready.json',
     localReportUrl: '/data/friescup_db_review_ready_report.json',
-    preferLocalData: import.meta.env.DEV,
+    preferLocalData: PREFER_LOCAL_DATA,
     reviewEnabled: true,
     rankingMinTimeMins: 30,
     rules: {

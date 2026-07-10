@@ -34,7 +34,7 @@ function getBarWidth(entry, metric, entries, mode) {
   return Math.max(6, Math.min(100, ratio * 100))
 }
 
-export default function PlayerComparePanel({ entries, mode, modeLabel, onClose }) {
+export default function PlayerComparePanel({ entries, mode, modeLabel, onClose, locale = 'zh-CN' }) {
   if (!entries.length) return null
 
   const role = entries[0].role
@@ -47,7 +47,7 @@ export default function PlayerComparePanel({ entries, mode, modeLabel, onClose }
           <div>
             <span>PLAYER COMPARE</span>
             <h2>{getRoleLabel(role)} 同职责比较</h2>
-            <p>{getRoleEnLabel(role)} / {modeLabel}</p>
+            <p>{locale === 'en-US' ? getRoleEnLabel(role) : getRoleLabel(role)} / {modeLabel}</p>
           </div>
           <button type="button" onClick={onClose}>关闭</button>
         </header>
@@ -55,7 +55,7 @@ export default function PlayerComparePanel({ entries, mode, modeLabel, onClose }
         <div className={styles.comparePlayerGrid}>
           {entries.map(entry => (
             <div key={entry.entryKey} className={styles.comparePlayerCard}>
-              <PlayerIdentity entry={entry} />
+              <PlayerIdentity entry={entry} locale={locale} />
               <div className={styles.compareScore}>
                 <span>赛季 OVR</span>
                 <strong>{formatEntrySeasonOvr(entry)}</strong>

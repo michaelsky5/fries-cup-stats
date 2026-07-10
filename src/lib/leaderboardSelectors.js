@@ -44,9 +44,9 @@ export const METRIC_MODES = [
 
 export const LEADERBOARD_TABS = [
   { id: 'overall', label: '综合榜', en: 'OVERALL', role: 'ALL' },
-  { id: 'tank', label: '坦克', en: 'TANK', role: 'TANK' },
+  { id: 'tank', label: '重装', en: 'TANK', role: 'TANK' },
   { id: 'dps', label: '输出', en: 'DPS', role: 'DPS' },
-  { id: 'support', label: '辅助', en: 'SUPPORT', role: 'SUPPORT' }
+  { id: 'support', label: '支援', en: 'SUPPORT', role: 'SUPPORT' }
 ]
 
 export const LEADERBOARD_COLUMNS = [
