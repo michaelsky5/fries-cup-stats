@@ -145,28 +145,74 @@ function buildTotalsLookup(db) {
 }
 
 function buildRoleEntryResolver(db, season) {
-  const map = new Map()
+  const entriesByPlayerId = new Map()
+  const entriesByIdentity = new Map()
+
+  const addEntry = (map, identity, entry) => {
+    const key = normalizeKey(identity)
+    if (!key) return
+    if (!map.has(key)) map.set(key, [])
+    map.get(key).push(entry)
+  }
+
+  const uniqueEntries = entries => {
+    const unique = new Map()
+    safeArr(entries).forEach(entry => {
+      const key = entry?.entryKey || `${entry?.player_id || entry?.id || ''}:${entry?.role || ''}`
+      if (key && !unique.has(key)) unique.set(key, entry)
+    })
+    return [...unique.values()]
+  }
+
+  const getEntryOwnerKey = entry => normalizeKey(
+    entry?.player_id ||
+    entry?.id ||
+    entry?.player_name ||
+    entry?.battleTag ||
+    entry?.battle_tag
+  )
+
+  const getTeamKeys = value => [
+    value?.team_id,
+    value?.team_short_name,
+    value?.team_name,
+    value?.teamShortName,
+    value?.teamFullName
+  ].map(normalizeKey).filter(Boolean)
+
+  const resolveUnambiguousEntries = (player, candidates) => {
+    const playerTeamKeys = new Set(getTeamKeys(player))
+    const sameTeam = playerTeamKeys.size
+      ? candidates.filter(entry => getTeamKeys(entry).some(key => playerTeamKeys.has(key)))
+      : []
+    const scoped = sameTeam.length ? sameTeam : candidates
+    const ownerKeys = new Set(scoped.map(getEntryOwnerKey).filter(Boolean))
+
+    return ownerKeys.size <= 1 ? uniqueEntries(scoped) : []
+  }
 
   safeArr(getLeaderboardRows(db, season)).forEach(entry => {
+    addEntry(entriesByPlayerId, entry?.player_id || entry?.id, entry)
     getPlayerIdentities(entry).forEach(identity => {
-      const key = normalizeKey(identity)
-      if (!key) return
-      if (!map.has(key)) map.set(key, [])
-      map.get(key).push(entry)
+      addEntry(entriesByIdentity, identity, entry)
     })
   })
 
   return player => {
-    const entries = new Map()
+    const playerIds = [
+      player?.player_id,
+      player?.id,
+      player?.identity?.playerId
+    ].map(normalizeKey).filter(Boolean)
+    const exactEntries = uniqueEntries(playerIds.flatMap(id => safeArr(entriesByPlayerId.get(id))))
 
-    getPlayerIdentities(player).forEach(identity => {
-      safeArr(map.get(normalizeKey(identity))).forEach(entry => {
-        const key = entry?.entryKey || `${entry?.player_id || ''}:${entry?.role || ''}`
-        if (key && !entries.has(key)) entries.set(key, entry)
-      })
-    })
+    if (exactEntries.length) return exactEntries
 
-    return [...entries.values()]
+    const candidates = uniqueEntries(getPlayerIdentities(player).flatMap(identity => (
+      safeArr(entriesByIdentity.get(normalizeKey(identity)))
+    )))
+
+    return resolveUnambiguousEntries(player, candidates)
   }
 }
 

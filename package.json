@@ -10,6 +10,7 @@
     "replay:fca-rating": "node scripts/replayFcaRatingModel.mjs",
     "test:rating-model": "node scripts/assertRatingModelConfig.mjs",
     "test:scoring-integration": "node scripts/assertScoringEngineIntegration.mjs",
+    "test:roster-identity": "node scripts/assertRosterIdentityResolution.mjs",
     "compare:scoring": "node scripts/compareScoringEngines.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
