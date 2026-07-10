@@ -7,6 +7,7 @@ import { SCORING_ENGINE_CONFIG } from '../src/config/scoringEngineConfig.js'
 import { getHeroSubroleConfig, resolveHeroSubrole } from '../src/lib/heroSubroleSelectors.js'
 import { scoreLeaderboardEntries, scoreLeaderboardEntriesLegacy } from '../src/lib/leaderboardScoring.js'
 import { buildRatingBaselinesFromDb } from '../src/lib/ratingBaselines.js'
+import { getMatchRatingSummary } from '../src/lib/matchRatingAdapter.js'
 import {
   attachRatingModelScoreToLeaderboardRows,
   attachRatingModelScoreToMapRows,
@@ -189,6 +190,117 @@ const attachedMapRow = attachRatingModelScoreToMapRows({ entries: [legacyEntry],
 assertRatingV1Fields(attachedMapRow, 'attachRatingModelScoreToMapRows')
 assert.equal(attachedMapRow.rating, attachedMapRow.mapRating)
 assert.equal(attachedMapRow.score, attachedMapRow.mapRating)
+
+const syntheticDb = createSyntheticDb()
+const syntheticBaselines = buildRatingBaselinesFromDb(syntheticDb, { seasonId: 'ASSERT' })
+const poorCurrentMapEntry = {
+  ...createSampleEntry(),
+  entryKey: 'ASSERT_PLAYER_1:DPS',
+  player_id: 'ASSERT_PLAYER_1',
+  team_id: 'WINNER',
+  team_name: 'Winner Team',
+  team_short_name: 'WIN',
+  metrics: {
+    total: { elim: 0, ast: 0, dth: 10, dmg: 0, heal: 0, block: 0 },
+    per10: { elim: 0, ast: 0, dth: 10, dmg: 0, heal: 0, block: 0 },
+    perMap: { elim: 0, ast: 0, dth: 10, dmg: 0, heal: 0, block: 0 }
+  }
+}
+const historicalSeasonRow = attachRatingModelScoreToLeaderboardRows({
+  entries: [poorCurrentMapEntry],
+  players: syntheticDb.players,
+  baselines: syntheticBaselines,
+  scoreContext: 'season'
+})[0]
+const currentMapRow = attachRatingModelScoreToMapRows({
+  entries: [poorCurrentMapEntry],
+  players: syntheticDb.players,
+  baselines: syntheticBaselines
+})[0]
+const currentMatchRow = scoreLeaderboardEntries([poorCurrentMapEntry], 0, {
+  players: syntheticDb.players,
+  baselines: syntheticBaselines,
+  scoreContext: 'match'
+})[0]
+
+assert.ok(historicalSeasonRow.ratingModelSourceLogs > 0, 'season rating should use season history logs')
+assert.equal(historicalSeasonRow.ratingModelSourceScope, 'season_logs')
+assert.equal(currentMapRow.ratingModelSourceLogs, 0, 'map rating must not reuse season history logs')
+assert.equal(currentMapRow.ratingModelSourceScope, 'current_map')
+assert.equal(currentMatchRow.ratingModelSourceLogs, 0, 'match rating must not reuse season history logs')
+assert.equal(currentMatchRow.ratingModelSourceScope, 'current_match')
+assert.ok(currentMapRow.rawScore < historicalSeasonRow.rawScore, 'poor current-map stats must score below strong season history')
+
+const winningMapRow = attachRatingModelScoreToMapRows({
+  entries: [poorCurrentMapEntry],
+  players: syntheticDb.players,
+  baselines: syntheticBaselines,
+  winnerTeamKeys: ['WINNER', 'WIN'],
+  mapWinDominance: 1
+})[0]
+const losingMapRow = attachRatingModelScoreToMapRows({
+  entries: [{ ...poorCurrentMapEntry, team_id: 'LOSER', team_name: 'Loser Team', team_short_name: 'LOS' }],
+  players: syntheticDb.players,
+  baselines: syntheticBaselines,
+  winnerTeamKeys: ['WINNER', 'WIN'],
+  mapWinDominance: 1
+})[0]
+
+assert.equal(winningMapRow.mapResult, 'WIN')
+assert.equal(winningMapRow.mapResultAdjustment, 0.25)
+assert.equal(losingMapRow.mapResult, 'LOSS')
+assert.equal(losingMapRow.mapResultAdjustment, 0)
+assert.ok(winningMapRow.mapRating > losingMapRow.mapRating, 'winning-side bonus should raise the displayed map rating')
+
+const mapSummary = getMatchRatingSummary({
+  match_id: 'ASSERT_MATCH',
+  team_a: { id: 'A', name: 'Alpha', short: 'ALP' },
+  team_b: { id: 'B', name: 'Beta', short: 'BET' }
+}, [{
+  map_order: 1,
+  map_name: 'Antarctic Peninsula',
+  match_time: '10:00',
+  winner: 'A',
+  score_a: 2,
+  score_b: 0,
+  team_a_stats: [{
+    player_id: 'ASSERT_PLAYER_1',
+    player_name: 'Assert Winner',
+    team_id: 'A',
+    team_name: 'Alpha',
+    role: 'DPS',
+    heroes_played: 'Sierra',
+    eliminations: 24,
+    assists: 8,
+    deaths: 1,
+    damage: 9200,
+    healing: 0,
+    mitigation: 0
+  }],
+  team_b_stats: [{
+    player_id: 'ASSERT_PLAYER_2',
+    player_name: 'Assert Loser',
+    team_id: 'B',
+    team_name: 'Beta',
+    role: 'DPS',
+    heroes_played: 'Symmetra',
+    eliminations: 2,
+    assists: 1,
+    deaths: 8,
+    damage: 1800,
+    healing: 0,
+    mitigation: 0
+  }]
+}], syntheticDb.players)
+const summaryWinner = mapSummary.entries.find(entry => entry.team_id === 'A')
+const summaryLoser = mapSummary.entries.find(entry => entry.team_id === 'B')
+
+assert.equal(summaryWinner.ratingModelSourceScope, 'current_map')
+assert.equal(summaryWinner.mapResult, 'WIN')
+assert.equal(summaryWinner.mapResultAdjustment, 0.25)
+assert.equal(summaryLoser.ratingModelSourceScope, 'current_map')
+assert.equal(summaryLoser.mapResult, 'LOSS')
+assert.ok(summaryWinner.mapRating > summaryLoser.mapRating)
 
 const playerDetailRow = attachRatingModelScoreToPlayerDetail({ entry: legacyEntry, baselines })
 assertRatingV1Fields(playerDetailRow, 'attachRatingModelScoreToPlayerDetail')

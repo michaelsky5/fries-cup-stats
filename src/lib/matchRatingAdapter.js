@@ -155,6 +155,35 @@ function getRoleSortValue(role) {
   return index === -1 ? 99 : index
 }
 
+function normalizeTeamKey(value) {
+  return cleanText(value).toLowerCase()
+}
+
+function getTeamKeys(team) {
+  return [team?.id, team?.name, team?.short].map(normalizeTeamKey).filter(Boolean)
+}
+
+function getMapResultContext(match, map) {
+  if (!map) return { winnerTeamKeys: [], mapWinDominance: 0 }
+
+  const teamAKeys = getTeamKeys(match?.team_a)
+  const teamBKeys = getTeamKeys(match?.team_b)
+  const winnerKeys = [map?.winner, map?.winner_label].map(normalizeTeamKey).filter(Boolean)
+  const scoreA = Number(map?.score_a)
+  const scoreB = Number(map?.score_b)
+  const hasScores = Number.isFinite(scoreA) && Number.isFinite(scoreB) && scoreA !== scoreB
+  const winnerMatchesA = winnerKeys.some(key => teamAKeys.includes(key))
+  const winnerMatchesB = winnerKeys.some(key => teamBKeys.includes(key))
+  const hasResolvedWinner = winnerMatchesA || winnerMatchesB
+  const winnerIsA = winnerMatchesA || (!hasResolvedWinner && hasScores && scoreA > scoreB)
+  const winnerIsB = winnerMatchesB || (!hasResolvedWinner && hasScores && scoreB > scoreA)
+  const resolvedWinnerKeys = winnerIsA ? teamAKeys : winnerIsB ? teamBKeys : []
+  const highScore = hasScores ? Math.max(Math.abs(scoreA), Math.abs(scoreB)) : 0
+  const mapWinDominance = highScore > 0 ? Math.min(1, Math.abs(scoreA - scoreB) / highScore) : 0
+
+  return { winnerTeamKeys: resolvedWinnerKeys, mapWinDominance }
+}
+
 function finalizeEntry(group) {
   const heroes = [...group.heroCounts.entries()]
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
@@ -300,9 +329,12 @@ export function getMatchRatingSummary(match, maps = [], players = []) {
     }
   }
 
+  const scoreContext = maps.length === 1 ? 'map' : 'match'
+  const resultContext = scoreContext === 'map' ? getMapResultContext(match, maps[0]) : {}
   const scoredEntries = scoreLeaderboardEntries(rawEntries, 0, {
     players,
-    scoreContext: maps.length === 1 ? 'map' : 'match'
+    scoreContext,
+    ...resultContext
   })
     .filter(entry => entry.roleScore > 0)
     .sort(compareLeaderboardEntries)

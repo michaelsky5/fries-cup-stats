@@ -590,6 +590,8 @@ export function scoreLeaderboardEntries(entries, minTimeMins = 30, options = {})
     season: options.season,
     seasonId: options.seasonId,
     scoreContext: options.scoreContext || 'season',
+    winnerTeamKeys: options.winnerTeamKeys,
+    mapWinDominance: options.mapWinDominance,
     minTimeMins
   }).map(entry => ({
     ...entry,
