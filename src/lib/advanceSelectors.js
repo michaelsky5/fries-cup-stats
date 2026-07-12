@@ -1,6 +1,7 @@
 import { getSeasonRules } from '../config/seasons.js'
 import { calculateSwissStandings } from './swissEngine.js'
 import { BRACKET_PHASES, adaptBracketFromDb, getBracketPhaseMatches } from './bracketAdapters.js'
+import { buildFourDivisionLcq } from './lcqBracket.js'
 
 export const ADVANCE_PHASES = ['swiss', 'breakthrough', 'playoffs', 'final']
 
@@ -214,8 +215,7 @@ export function getAdvanceStageRail(db, season, activePhase) {
   const phaseOrder = new Map(ADVANCE_PHASES.map((phase, index) => [phase, index]))
   const currentIndex = phaseOrder.get(defaultPhase) ?? 0
   const selectedIndex = phaseOrder.get(activePhase) ?? currentIndex
-  const phaseState = getAdvancePhaseState(db, season)
-  const pendingBreakthroughRules = !phaseState.breakthroughStarted && !phaseState.breakthroughFinished
+  const pendingBreakthroughRules = getBreakthroughState(db, season).status === 'pending_rules'
 
   return ADVANCE_PHASES.map((phase, index) => {
     let status = 'upcoming'
@@ -392,19 +392,30 @@ export function getBreakthroughState(db, season) {
   })
   const matches = getBracketPhaseMatches(db, BRACKET_PHASES.BREAKTHROUGH)
   const completed = matches.filter(isComplete)
-  const status = config.status === 'pending_rules' || (!matches.length && !bracket.rounds.length)
+  const formatPublished = Boolean(config.format)
+  const status = config.status === 'pending_rules' || (!formatPublished && !matches.length && !bracket.rounds.length)
     ? 'pending_rules'
     : matches.some(isLive)
       ? 'active'
       : matches.length && completed.length === matches.length
         ? 'completed'
         : 'ready'
+  const phaseState = getAdvancePhaseState(db, season)
+  const layout = config.format === 'four_division_single_elimination'
+    ? buildFourDivisionLcq({
+        config,
+        matches,
+        standings: getSwissStandingsRows(db, season),
+        swissFinished: phaseState.swissFinished
+      })
+    : null
 
   return {
     status,
     format: config.format || (bracket.rounds.length ? 'single_elimination' : null),
     bracketSource: config.bracketSource || 'backend',
     bracket,
+    layout,
     matches,
     completedMatches: completed.length
   }

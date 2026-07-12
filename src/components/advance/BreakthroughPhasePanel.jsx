@@ -1,4 +1,5 @@
 import AdvancePendingState from './AdvancePendingState.jsx'
+import FourDivisionLcqBracket from './FourDivisionLcqBracket.jsx'
 import PlayoffBracket from './PlayoffBracket.jsx'
 import styles from '../../pages/advance/AdvancePage.module.css'
 
@@ -23,6 +24,19 @@ export default function BreakthroughPhasePanel({
           t('advance.breakthrough.pendingSchedule', '比赛时间')
         ]}
       />
+    )
+  }
+
+  if (state.layout) {
+    return (
+      <div className={styles.phaseStack}>
+        <FourDivisionLcqBracket
+          layout={state.layout}
+          seasonId={seasonId}
+          withSeason={withSeason}
+          t={t}
+        />
+      </div>
     )
   }
 

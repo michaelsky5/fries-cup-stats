@@ -38,8 +38,8 @@ export const SEASONS = [
         swiss: {
           rounds: 6,
           matchesPerRound: 19,
-          directSlots: null,
-          breakthroughSlots: null,
+          directSlots: 4,
+          breakthroughSlots: 20,
           tiebreakers: [
             'match_wins',
             'buchholz',
@@ -49,9 +49,17 @@ export const SEASONS = [
           ]
         },
         breakthrough: {
-          status: 'pending_rules',
-          format: null,
-          bracketSource: 'backend'
+          status: 'ready',
+          format: 'four_division_single_elimination',
+          bracketSource: 'fixed_seeding',
+          participantCount: 20,
+          advanceSlots: 4,
+          bracketLocked: true,
+          rounds: {
+            playIn: { bestOf: 3 },
+            roundOf16: { bestOf: 3 },
+            qualification: { bestOf: 5 }
+          }
         },
         playoffs: {
           format: 'double_elimination',
