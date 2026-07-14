@@ -1,7 +1,8 @@
 import { getSeasonRules } from '../config/seasons.js'
-import { calculateSwissStandings } from './swissEngine.js'
+import { calculateSwissStandings, isByeTeam } from './swissEngine.js'
 import { BRACKET_PHASES, adaptBracketFromDb, getBracketPhaseMatches } from './bracketAdapters.js'
 import { buildFourDivisionLcq } from './lcqBracket.js'
+import { buildFixedDoubleEliminationPlayoff } from './playoffBracket.js'
 
 export const ADVANCE_PHASES = ['swiss', 'breakthrough', 'playoffs', 'final']
 
@@ -38,7 +39,10 @@ function compareAscByTime(a, b) {
 }
 
 function isComplete(match) {
-  return COMPLETE_STATUSES.has(normalizeText(match?.status).toUpperCase()) || Boolean(normalizeText(match?.winner))
+  const status = normalizeText(match?.status).toUpperCase()
+  if (COMPLETE_STATUSES.has(status)) return true
+  if (status) return false
+  return Boolean(normalizeText(match?.winner))
 }
 
 function isLive(match) {
@@ -70,6 +74,19 @@ function getTeamIdentityValues(team) {
     team?.team_name,
     team?.name
   ].map(normalizeKey).filter(Boolean)
+}
+
+function getWithdrawnTeamKeys(season, db) {
+  return new Set(getSwissRules(season, db).withdrawnTeams.map(normalizeKey).filter(Boolean))
+}
+
+function teamIsWithdrawn(team, season, db) {
+  const withdrawnTeamKeys = getWithdrawnTeamKeys(season, db)
+  return getTeamIdentityValues(team).some(value => withdrawnTeamKeys.has(value))
+}
+
+function matchContainsWithdrawnTeam(match, season, db) {
+  return teamIsWithdrawn(match?.team_a, season, db) || teamIsWithdrawn(match?.team_b, season, db)
 }
 
 function teamMatchesFavorite(team, favorites = {}) {
@@ -122,6 +139,7 @@ export function getSwissRules(season, db) {
     lcqSurvivalWins,
     directSlots,
     breakthroughSlots,
+    withdrawnTeams: safeArr(swiss.withdrawnTeams),
     eliminatedLosses: toNumber(swiss.eliminatedLosses, maxRounds - lcqSurvivalWins + 1),
     tiebreakers: safeArr(swiss.tiebreakers || swissStage.tiebreakers || rules?.tiebreakers)
   }
@@ -279,6 +297,7 @@ export function getSwissTeamStatus(row, season, db) {
   const wins = toNumber(row?.match_wins)
   const losses = toNumber(row?.match_losses)
 
+  if (teamIsWithdrawn(row, season, db)) return 'eliminated'
   if (wins >= rules.directAdvanceWins) return 'direct'
   if (wins >= rules.lcqSurvivalWins) return 'breakthrough'
   if (losses >= rules.eliminatedLosses) return 'eliminated'
@@ -288,12 +307,13 @@ export function getSwissTeamStatus(row, season, db) {
 
 export function getSwissStandingsRows(db, season, favorites = {}) {
   const rows = calculateSwissStandings(db)
-
-  return rows.map(row => {
+  const statusOrder = new Map(['direct', 'breakthrough', 'contending', 'danger', 'eliminated'].map((status, index) => [status, index]))
+  const decoratedRows = rows.map(row => {
     const status = getSwissTeamStatus(row, season, db)
     return {
       ...row,
       status,
+      withdrawn: teamIsWithdrawn(row, season, db),
       recordLabel: `${toNumber(row.match_wins)}-${toNumber(row.match_losses)}`,
       mapRecordLabel: `${toNumber(row.map_wins)}-${toNumber(row.map_losses)}`,
       mapDiffLabel: toNumber(row.map_diff) > 0 ? `+${toNumber(row.map_diff)}` : String(toNumber(row.map_diff)),
@@ -302,6 +322,91 @@ export function getSwissStandingsRows(db, season, favorites = {}) {
       isPrimaryFavorite: teamMatchesPrimary(row, favorites)
     }
   })
+
+  return decoratedRows
+    .sort((a, b) => {
+      const statusDelta = (statusOrder.get(a.status) ?? statusOrder.size) - (statusOrder.get(b.status) ?? statusOrder.size)
+      if (statusDelta !== 0) return statusDelta
+      return a.rank - b.rank
+    })
+    .map((row, index) => ({ ...row, rank: index + 1 }))
+}
+
+function simulatedSwissDatabase(db, unresolvedMatches, outcomeMask) {
+  const unresolvedIndex = new Map(unresolvedMatches.map((match, index) => [normalizeText(match?.match_id || match?.id), index]))
+
+  return {
+    ...db,
+    matches: safeArr(db?.matches).map(match => {
+      const key = normalizeText(match?.match_id || match?.id)
+      const index = unresolvedIndex.get(key)
+      if (index === undefined) return match
+
+      const teamAWins = (outcomeMask & (1 << index)) === 0
+      const winner = teamAWins ? match?.team_a : match?.team_b
+      return {
+        ...match,
+        status: 'COMPLETED',
+        winner: normalizeText(winner?.id || winner?.team_id),
+        team_a: { ...match?.team_a, score: teamAWins ? 2 : 0 },
+        team_b: { ...match?.team_b, score: teamAWins ? 0 : 2 }
+      }
+    })
+  }
+}
+
+function lockedRowsAtSeeds(scenarios, key, slotCount) {
+  if (!scenarios.length || slotCount <= 0) return []
+
+  return Array.from({ length: slotCount }, (_, index) => {
+    const rows = scenarios.map(scenario => scenario[key]?.[index]).filter(Boolean)
+    if (rows.length !== scenarios.length) return null
+    const identities = rows.map(row => normalizeKey(row?.team_id || row?.id))
+    if (!identities[0] || identities.some(identity => identity !== identities[0])) return null
+    return { seed: index + 1, team: rows[0] }
+  }).filter(Boolean)
+}
+
+export function getSwissSeedLocks(db, season) {
+  const rules = getSwissRules(season, db)
+  const directSlots = toNumber(rules.directSlots, 4)
+  const breakthroughSlots = toNumber(rules.breakthroughSlots, 20)
+  const unresolvedMatches = getSwissMatches(db).filter(match => (
+    !isComplete(match) &&
+    !isByeTeam(match?.team_a) &&
+    !isByeTeam(match?.team_b) &&
+    !matchContainsWithdrawnTeam(match, season, db) &&
+    getTeamIdentityValues(match?.team_a).length > 0 &&
+    getTeamIdentityValues(match?.team_b).length > 0
+  ))
+
+  if (unresolvedMatches.length > 6) {
+    return {
+      direct: [],
+      breakthrough: [],
+      unresolvedMatchCount: unresolvedMatches.length,
+      scenarioCount: 0
+    }
+  }
+
+  const scenarioCount = 2 ** unresolvedMatches.length
+  const scenarios = Array.from({ length: scenarioCount }, (_, outcomeMask) => {
+    const scenarioDb = unresolvedMatches.length
+      ? simulatedSwissDatabase(db, unresolvedMatches, outcomeMask)
+      : db
+    const rows = getSwissStandingsRows(scenarioDb, season)
+    return {
+      direct: rows.filter(row => row.status === 'direct').slice(0, directSlots),
+      breakthrough: rows.filter(row => row.status === 'breakthrough').slice(0, breakthroughSlots)
+    }
+  })
+
+  return {
+    direct: lockedRowsAtSeeds(scenarios, 'direct', directSlots),
+    breakthrough: lockedRowsAtSeeds(scenarios, 'breakthrough', breakthroughSlots),
+    unresolvedMatchCount: unresolvedMatches.length,
+    scenarioCount
+  }
 }
 
 export function getSwissZoneCounts(db, season, favorites = {}) {
@@ -346,7 +451,12 @@ export function getSwissKeyMatches(db, season, favorites = {}, limit = 3) {
   const roundMatches = overview.currentRoundLabel
     ? getSwissMatches(db).filter(match => getRoundKey(match?.round || match?.stage) === getRoundKey(overview.currentRoundLabel))
     : getSwissMatches(db)
-  const unfinished = roundMatches.filter(match => !isComplete(match))
+  const unfinished = roundMatches.filter(match => (
+    !isComplete(match) &&
+    !isByeTeam(match?.team_a) &&
+    !isByeTeam(match?.team_b) &&
+    !matchContainsWithdrawnTeam(match, season, db)
+  ))
   const standings = getSwissStandingsRows(db, season, favorites)
   const standingsByTeam = new Map()
 
@@ -401,12 +511,14 @@ export function getBreakthroughState(db, season) {
         ? 'completed'
         : 'ready'
   const phaseState = getAdvancePhaseState(db, season)
+  const seedLocks = getSwissSeedLocks(db, season)
   const layout = config.format === 'four_division_single_elimination'
     ? buildFourDivisionLcq({
         config,
         matches,
         standings: getSwissStandingsRows(db, season),
-        swissFinished: phaseState.swissFinished
+        swissFinished: phaseState.swissFinished,
+        lockedSeeds: seedLocks.breakthrough
       })
     : null
 
@@ -416,6 +528,7 @@ export function getBreakthroughState(db, season) {
     bracketSource: config.bracketSource || 'backend',
     bracket,
     layout,
+    seedLocks,
     matches,
     completedMatches: completed.length
   }
@@ -427,9 +540,27 @@ export function getBreakthroughBracket(db, season) {
 
 export function getPlayoffBracket(db, season) {
   const config = getConfiguredPhase(season, db, 'playoffs')
-  return adaptBracketFromDb(db, BRACKET_PHASES.PLAYOFFS, {
+  const bracket = adaptBracketFromDb(db, BRACKET_PHASES.PLAYOFFS, {
     bracketType: config.format || 'double_elimination'
   })
+  const useFixedLayout = config.format === 'double_elimination' && config.bracketSource === 'fixed_seeding'
+
+  if (!useFixedLayout) return { ...bracket, layout: null }
+
+  const phaseState = getAdvancePhaseState(db, season)
+  const breakthroughState = getBreakthroughState(db, season)
+
+  return {
+    ...bracket,
+    layout: buildFixedDoubleEliminationPlayoff({
+      config,
+      matches: getBracketPhaseMatches(db, BRACKET_PHASES.PLAYOFFS),
+      standings: getSwissStandingsRows(db, season),
+      lcqLayout: breakthroughState.layout,
+      swissFinished: phaseState.swissFinished,
+      lockedDirectSeeds: breakthroughState.seedLocks?.direct
+    })
+  }
 }
 
 export function getBracketRounds(bracket) {

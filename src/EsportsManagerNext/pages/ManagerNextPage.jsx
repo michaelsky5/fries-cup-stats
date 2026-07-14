@@ -50,10 +50,24 @@ function CommandButton({ label, value, onClick, disabled, tone = 'default' }) {
   )
 }
 
+function getManagerRoleLabel(role) {
+  if (role === 'TANK') return '重装'
+  if (role === 'DPS') return '输出'
+  if (role === 'SUP') return '支援'
+  return role || '职责'
+}
+
+function getManagerRoleShortLabel(role) {
+  if (role === 'TANK') return '重'
+  if (role === 'DPS') return '输'
+  if (role === 'SUP') return '援'
+  return String(role || '-').slice(0, 1)
+}
+
 function PlayerRow({ player, actionLabel, onAction }) {
   return (
     <div className={styles.playerRow}>
-      <div className={styles.playerRole}>{player.role}</div>
+      <div className={styles.playerRole}>{getManagerRoleLabel(player.role)}</div>
       <div className={styles.playerMain}>
         <strong>{player.name}</strong>
         <span>{player.team} / {player.hero || '未知英雄'} / {player.styleName || player.playstyle || '均衡'} / {player.risk || '常规'}</span>
@@ -114,7 +128,7 @@ function StartPanel({ onStart, disabled, poolCounts, playerPoolSize, hall }) {
       <div className={styles.startCopy}>
         <span>FRIES CUP ROGUE MANAGER</span>
         <h1>开局组队</h1>
-        <p>2000K 预算，组出 1T / 2D / 2S，然后把这支队伍推进赛季路线。</p>
+        <p>2000K 预算，组出 1 重装 / 2 输出 / 2 支援，然后把这支队伍推进赛季路线。</p>
       </div>
       <div className={styles.startActions}>
         <button type="button" className={styles.bigStartButton} onClick={onStart} disabled={disabled}>
@@ -123,9 +137,9 @@ function StartPanel({ onStart, disabled, poolCounts, playerPoolSize, hall }) {
         </button>
         <div className={styles.poolReadout}>
           <StatPill label="候选池" value={playerPoolSize} sub="当前赛季数据" />
-          <StatPill label="TANK" value={poolCounts.TANK} />
-          <StatPill label="DPS" value={poolCounts.DPS} />
-          <StatPill label="SUP" value={poolCounts.SUP} />
+          <StatPill label="重装" value={poolCounts.TANK} />
+          <StatPill label="输出" value={poolCounts.DPS} />
+          <StatPill label="支援" value={poolCounts.SUP} />
         </div>
       </div>
       {hall.length ? (
@@ -273,7 +287,7 @@ function BuilderPanel({ run, onHire, onSell, onRefresh, onDeploy }) {
           <div className={styles.roleMeter}>
             {Object.entries(RUN_ROSTER_REQUIREMENTS).map(([role, required]) => (
               <span key={role} className={counts[role] === required ? styles.roleFilled : ''}>
-                {role} {counts[role]}/{required}
+                {getManagerRoleLabel(role)} {counts[role]}/{required}
               </span>
             ))}
           </div>
@@ -329,7 +343,7 @@ function BuilderPanel({ run, onHire, onSell, onRefresh, onDeploy }) {
                     onClick={() => onHire(player.id)}
                     disabled={roleFull || tooExpensive}
                   >
-                    <span>{player.role} / {player.price}K / {preview?.fitLabel || '候选'}</span>
+                    <span>{getManagerRoleLabel(player.role)} / {player.price}K / {preview?.fitLabel || '候选'}</span>
                     <strong>{player.name}</strong>
                     <em>{player.team} / {player.hero || '未知英雄'} / {player.styleName || player.playstyle || '均衡'}</em>
                     <b>{preview ? `${preview.powerDelta >= 0 ? '+' : ''}${preview.powerDelta} 战力` : `${player.ovr} OVR`}</b>
@@ -376,7 +390,7 @@ function RunSidebar({ run, activePower, activeCounts }) {
         <StatPill label="战力" value={activePower} sub={`资金 ${run.funds}K`} tone="gold" />
         <StatPill label="生命" value={run.hp} sub={`士气 ${run.morale}`} tone={run.hp <= 1 ? 'danger' : 'good'} />
         <StatPill label="情报" value={run.intel} sub={`${run.sponsors?.length || 0} 赞助`} />
-        <StatPill label="首发" value={`${run.roster?.length || 0}/5`} sub={`T${activeCounts.TANK} D${activeCounts.DPS} S${activeCounts.SUP}`} />
+        <StatPill label="首发" value={`${run.roster?.length || 0}/5`} sub={`重装 ${activeCounts.TANK} · 输出 ${activeCounts.DPS} · 支援 ${activeCounts.SUP}`} />
       </div>
 
       <div className={styles.sidebarBlock}>
@@ -388,7 +402,7 @@ function RunSidebar({ run, activePower, activeCounts }) {
           {(run.roster || []).length ? (
             run.roster.map(player => (
               <div key={player.id} className={styles.compactPlayer}>
-                <span>{player.role}</span>
+                <span>{getManagerRoleShortLabel(player.role)}</span>
                 <strong>{player.name}</strong>
                 <em>{player.ovr}</em>
               </div>
@@ -567,7 +581,7 @@ export default function ManagerNextPage() {
 
   const handleStartRun = () => {
     if (!canStartRun) {
-      setMessage('当前数据不足以组建 1T / 2D / 2S 首发。')
+      setMessage('当前数据不足以组建 1 重装 / 2 输出 / 2 支援首发。')
       return
     }
 

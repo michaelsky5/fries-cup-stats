@@ -53,6 +53,9 @@ function normalizeTeam(team) {
 }
 
 function resolveWinnerId(match) {
+  const status = normalizeText(match?.status).toUpperCase()
+  if (status && !['COMPLETE', 'COMPLETED', 'FINISHED'].includes(status)) return ''
+
   const explicit = normalizeText(match?.winnerId || match?.winner_id || match?.winner_team_id)
   if (explicit) return explicit
 

@@ -277,75 +277,77 @@ function TeamStatsPanel({ team, sourceTeam, score, rows, displayRows, awardIndex
         <em>{formatInt(totals.eliminations, '-')} E / {formatInt(totals.damage, '-')} DMG{tail ? ` / ${tail}` : ''}</em>
       </header>
 
-      <table className={styles.statsTable}>
-        <colgroup>
-          <col className={styles.playerMetaCol} />
-          <col className={styles.compactStatCol} />
-          <col className={styles.compactStatCol} />
-          <col className={styles.compactStatCol} />
-          <col className={styles.wideStatCol} />
-          <col className={styles.wideStatCol} />
-          <col className={styles.wideStatCol} />
-        </colgroup>
-        <thead>
-          <tr>
-            <th
-              scope="col"
-              title={`${t('matchDetail.role', 'Role')} / ${t('matchDetail.player', 'Player')} / ${t('matchDetail.mapRating', 'Match Rating')}`}
-            >
-              <span className={styles.playerMetaHead}>
-                <span>R</span>
-                <span>{t('matchDetail.player', 'Player')}</span>
-                <span>{t('matchDetail.highlightShort', 'Highlight')}</span>
-                <span>{t('matchDetail.ratingShort', 'Rating')}</span>
-              </span>
-            </th>
-            {GAME_STAT_COLUMNS.map(column => (
-              <th key={column.key} scope="col" title={t(column.labelKey, column.fallback)}>
-                {column.short}
+      <div className={styles.statsTableScroller} tabIndex="0" role="region" aria-label={`${team.short} player stats table`}>
+        <table className={styles.statsTable}>
+          <colgroup>
+            <col className={styles.playerMetaCol} />
+            <col className={styles.compactStatCol} />
+            <col className={styles.compactStatCol} />
+            <col className={styles.compactStatCol} />
+            <col className={styles.wideStatCol} />
+            <col className={styles.wideStatCol} />
+            <col className={styles.wideStatCol} />
+          </colgroup>
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                title={`${t('matchDetail.role', 'Role')} / ${t('matchDetail.player', 'Player')} / ${t('matchDetail.mapRating', 'Match Rating')}`}
+              >
+                <span className={styles.playerMetaHead}>
+                  <span>R</span>
+                  <span>{t('matchDetail.player', 'Player')}</span>
+                  <span>{t('matchDetail.highlightShort', 'Highlight')}</span>
+                  <span>{t('matchDetail.ratingShort', 'Rating')}</span>
+                </span>
               </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {displayRows.map(({ row, impact }) => {
-            const roleColor = getRoleColor(row.role)
-            const roleLabel = locale === 'en-US' ? getRoleEnLabel(row.role) : getRoleLabel(row.role)
+              {GAME_STAT_COLUMNS.map(column => (
+                <th key={column.key} scope="col" title={t(column.labelKey, column.fallback)}>
+                  {column.short}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {displayRows.map(({ row, impact }) => {
+              const roleColor = getRoleColor(row.role)
+              const roleLabel = locale === 'en-US' ? getRoleEnLabel(row.role) : getRoleLabel(row.role)
 
-            return (
-              <tr key={row.key}>
-                <td>
-                  <div className={styles.playerMetaCell}>
-                    <span className={styles.roleSlot}>
-                      <span className={styles.roleLabel} style={{ color: roleColor }}>
-                        {roleLabel}
+              return (
+                <tr key={row.key}>
+                  <td>
+                    <div className={styles.playerMetaCell}>
+                      <span className={styles.roleSlot}>
+                        <span className={styles.roleLabel} style={{ color: roleColor }}>
+                          {roleLabel}
+                        </span>
                       </span>
-                    </span>
-                    <div className={styles.playerIdentity}>
-                      <PlayerAvatar row={row} />
-                      <span>
-                        <span className={styles.playerName}>{row.displayName}</span>
-                        {row.battleTag ? <span className={styles.playerSub}>{row.battleTag}</span> : null}
+                      <div className={styles.playerIdentity}>
+                        <PlayerAvatar row={row} />
+                        <span className={styles.playerText}>
+                          <span className={styles.playerName} title={row.displayName}>{row.displayName}</span>
+                          {row.battleTag ? <span className={styles.playerSub} title={row.battleTag}>{row.battleTag}</span> : null}
+                        </span>
+                      </div>
+                      <span className={styles.awardCell}>
+                        <AwardBadge award={awardIndex.get(row.key)} t={t} />
+                      </span>
+                      <span className={styles.ratingCell}>
+                        <RatingCluster impact={impact} t={t} />
                       </span>
                     </div>
-                    <span className={styles.awardCell}>
-                      <AwardBadge award={awardIndex.get(row.key)} t={t} />
-                    </span>
-                    <span className={styles.ratingCell}>
-                      <RatingCluster impact={impact} t={t} />
-                    </span>
-                  </div>
-                </td>
-                {GAME_STAT_COLUMNS.map(column => (
-                  <td key={column.key} data-label={column.short}>
-                    {formatInt(row[column.key], '-')}
                   </td>
-                ))}
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+                  {GAME_STAT_COLUMNS.map(column => (
+                    <td key={column.key} data-label={column.short}>
+                      {formatInt(row[column.key], '-')}
+                    </td>
+                  ))}
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
     </section>
   )
 }

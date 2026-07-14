@@ -1,7 +1,7 @@
 import { getOwHeroAssetKey } from './heroes.js'
 import { attachRatingModelScoreToLeaderboardRows } from './scoringEngineAdapter.js'
 import { mapRawScoreToOVR } from './ratingModel.js'
-import { SEASON_SCORE_CONFIG } from '../config/ratingModelConfig.js'
+import { OVR_CONFIG, SEASON_SCORE_CONFIG } from '../config/ratingModelConfig.js'
 
 export const ROLE_ORDER = ['TANK', 'DPS', 'SUPPORT']
 
@@ -447,10 +447,59 @@ export function getSeasonOvrConfidenceCap(confidence) {
   return stableCap
 }
 
+export function getSeasonPerformancePercentile(seasonScore) {
+  const points = OVR_CONFIG.seasonBlend?.performancePercentileCurve || []
+  const value = Number(seasonScore)
+  if (!Number.isFinite(value) || !points.length) return null
+  if (value <= points[0].score) return clamp(toFiniteNumber(points[0].percentile), 0, 100)
+
+  for (let index = 1; index < points.length; index += 1) {
+    const previous = points[index - 1]
+    const next = points[index]
+    if (value <= next.score) {
+      const span = toFiniteNumber(next.score) - toFiniteNumber(previous.score)
+      const progress = span > 0 ? (value - previous.score) / span : 0
+      return clamp(
+        toFiniteNumber(previous.percentile) +
+          ((toFiniteNumber(next.percentile) - toFiniteNumber(previous.percentile)) * progress),
+        0,
+        100
+      )
+    }
+  }
+
+  return clamp(toFiniteNumber(points[points.length - 1].percentile), 0, 100)
+}
+
+export function getSeasonOvrBlendPercentile(seasonScore, rolePercentile) {
+  const performancePercentile = getSeasonPerformancePercentile(seasonScore)
+  const roleValue = Number(rolePercentile)
+  if (!Number.isFinite(performancePercentile) || !Number.isFinite(roleValue)) return null
+
+  const performanceWeight = Math.max(0, toFiniteNumber(OVR_CONFIG.seasonBlend?.performanceWeight, 0.7))
+  const roleWeight = Math.max(0, toFiniteNumber(OVR_CONFIG.seasonBlend?.rolePercentileWeight, 0.3))
+  const weightTotal = performanceWeight + roleWeight
+  if (weightTotal <= 0) return null
+
+  return clamp(
+    ((performancePercentile * performanceWeight) + (clamp(roleValue, 0, 100) * roleWeight)) / weightTotal,
+    0,
+    100
+  )
+}
+
 function applySeasonOvrConfidenceCap(ovr, confidence) {
   const value = Number(ovr)
   if (!Number.isFinite(value)) return null
   return Math.min(value, getSeasonOvrConfidenceCap(confidence))
+}
+
+export function getSeasonOvrValue(seasonScore, rolePercentile, confidence) {
+  const blendedPercentile = getSeasonOvrBlendPercentile(seasonScore, rolePercentile)
+  const percentileOvr = Number.isFinite(blendedPercentile)
+    ? mapRawScoreToOVR(null, blendedPercentile, { sampleStatus: 'OK' })
+    : null
+  return applySeasonOvrConfidenceCap(percentileOvr, confidence)
 }
 
 function attachSeasonOvrFields(scored) {
@@ -466,12 +515,11 @@ function attachSeasonOvrFields(scored) {
       entry.seasonScoreOverallRank = entry.overallRank
       entry.seasonRolePercentile = getRankPercentile(entry.roleRank, roleTotal)
       entry.seasonOverallPercentile = getRankPercentile(entry.overallRank, overallTotal)
-      const percentileOvr = Number.isFinite(Number(entry.seasonRolePercentile))
-        ? mapRawScoreToOVR(null, entry.seasonRolePercentile, { sampleStatus: 'OK' })
-        : null
-      entry.seasonOvr = applySeasonOvrConfidenceCap(percentileOvr, entry.seasonScoreConfidence)
+      entry.seasonPerformancePercentile = getSeasonPerformancePercentile(entry.seasonScore)
+      entry.seasonOvrPercentile = getSeasonOvrBlendPercentile(entry.seasonScore, entry.seasonRolePercentile)
+      entry.seasonOvr = getSeasonOvrValue(entry.seasonScore, entry.seasonRolePercentile, entry.seasonScoreConfidence)
       entry.seasonOvrCap = getSeasonOvrConfidenceCap(entry.seasonScoreConfidence)
-      entry.seasonOvrSource = 'role_percentile'
+      entry.seasonOvrSource = 'performance_role_blend'
     })
   })
 
@@ -480,6 +528,8 @@ function attachSeasonOvrFields(scored) {
     .forEach(entry => {
       entry.seasonRolePercentile = null
       entry.seasonOverallPercentile = null
+      entry.seasonPerformancePercentile = null
+      entry.seasonOvrPercentile = null
       entry.seasonOvr = null
       entry.seasonOvrCap = null
       entry.seasonOvrSource = 'unrated'

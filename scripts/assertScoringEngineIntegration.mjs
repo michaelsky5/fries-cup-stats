@@ -6,7 +6,10 @@ import { fileURLToPath } from 'node:url'
 import { SCORING_ENGINE_CONFIG } from '../src/config/scoringEngineConfig.js'
 import { getHeroSubroleConfig, resolveHeroSubrole } from '../src/lib/heroSubroleSelectors.js'
 import {
+  getSeasonOvrBlendPercentile,
   getSeasonOvrConfidenceCap,
+  getSeasonOvrValue,
+  getSeasonPerformancePercentile,
   scoreLeaderboardEntries,
   scoreLeaderboardEntriesLegacy
 } from '../src/lib/leaderboardScoring.js'
@@ -183,6 +186,18 @@ assert.equal(getSeasonOvrConfidenceCap(0.75), 92)
 assert.equal(getSeasonOvrConfidenceCap(0.85), 94)
 assert.equal(getSeasonOvrConfidenceCap(0.9), 97)
 assert.equal(getSeasonOvrConfidenceCap(0.95), 99)
+assert.equal(getSeasonPerformancePercentile(25), 0)
+assert.equal(getSeasonPerformancePercentile(50), 50)
+assert.equal(getSeasonPerformancePercentile(65), 100)
+assert.equal(getSeasonOvrBlendPercentile(50, 75), 57.5)
+assert.ok(getSeasonOvrValue(55, 50, 0.95) > getSeasonOvrValue(45, 50, 0.95))
+
+const tankSizedPoolOvr = getSeasonOvrValue(50, 75, 0.95)
+const dpsSizedPoolOvr = getSeasonOvrValue(50, 87, 0.95)
+assert.ok(
+  Math.abs(tankSizedPoolOvr - dpsSizedPoolOvr) <= 2,
+  'same performance should not diverge sharply because role pool sizes differ'
+)
 
 const db = readJsonIfExists('public/data/friescup_db_review_ready.json') || createSyntheticDb()
 const baselines = buildRatingBaselinesFromDb(db, { seasonId: 'FCA2026' })
@@ -197,6 +212,11 @@ rankedLeaderboard.slice(1).forEach((entry, index) => {
     Number(rankedLeaderboard[index].seasonOvr) >= Number(entry.seasonOvr),
     'final overall rank must be monotonic by displayed season OVR'
   )
+})
+rankedLeaderboard.forEach(entry => {
+  assertInRange(entry.seasonPerformancePercentile, 0, 100, 'seasonPerformancePercentile')
+  assertInRange(entry.seasonOvrPercentile, 0, 100, 'seasonOvrPercentile')
+  assert.equal(entry.seasonOvrSource, 'performance_role_blend')
 })
 assert.deepEqual(
   displayedScoreSort.filter(entry => entry.eligible).map(entry => entry.entryKey),

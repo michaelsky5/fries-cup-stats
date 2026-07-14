@@ -1,9 +1,17 @@
+export const BROADCAST_REPLAY_ARCHIVE_URL = 'https://space.bilibili.com/3632300164123415'
+
+const FINISHED_MATCH_STATUSES = new Set(['COMPLETE', 'COMPLETED', 'FINISHED'])
+
 function cleanText(value) {
   return String(value ?? '').trim()
 }
 
 function normalizeKey(value) {
   return cleanText(value).toLowerCase()
+}
+
+function isFinishedMatch(match) {
+  return FINISHED_MATCH_STATUSES.has(cleanText(match?.status).toUpperCase())
 }
 
 function asList(value) {
@@ -194,7 +202,7 @@ export function getBroadcastInfo(match = {}) {
     source.link ||
     source['\u76f4\u64ad\u95f4']
   )
-  const streamLinks = collectStreamLinks(source, streamUrl)
+  const liveStreamLinks = collectStreamLinks(source, streamUrl)
   const casters = collectPeople(
     source.casters,
     source.caster,
@@ -240,16 +248,21 @@ export function getBroadcastInfo(match = {}) {
   )
   const isBroadcast = !isExplicitFalse(source.is_broadcast ?? source.isBroadcast) && (
     Boolean(source.is_broadcast ?? source.isBroadcast) ||
-    streamLinks.length > 0 ||
+    liveStreamLinks.length > 0 ||
     casters.length > 0 ||
     referees.length > 0
   )
 
   if (!isBroadcast) return emptyBroadcastInfo()
 
+  const isFinished = isFinishedMatch(match)
+  const streamLinks = isFinished
+    ? [{ label: '赛事回放', url: BROADCAST_REPLAY_ARCHIVE_URL, staff: null }]
+    : liveStreamLinks
+
   return {
     isBroadcast,
-    streamUrl,
+    streamUrl: isFinished ? BROADCAST_REPLAY_ARCHIVE_URL : streamUrl,
     streamLinks,
     casters,
     referees,

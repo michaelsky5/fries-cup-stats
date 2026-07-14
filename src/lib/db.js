@@ -105,15 +105,26 @@ async function fetchFirstAvailable(urls, errorCode, validate = data => data) {
   throw new Error(`${errorCode}: ${errors.join(' | ')}`)
 }
 
-export async function getDb(seasonId) {
-  const season = getSeasonById(seasonId || getStoredSeasonId())
-  if (dbCache.has(season.id)) return dbCache.get(season.id)
-
-  const data = await fetchFirstAvailable(
+async function fetchDb(season) {
+  return fetchFirstAvailable(
     getDbUrls(season),
     'DATA_LOAD_FAILED',
     payload => validatePublicDb(payload, season)
   )
+}
+
+export async function getDb(seasonId) {
+  const season = getSeasonById(seasonId || getStoredSeasonId())
+  if (dbCache.has(season.id)) return dbCache.get(season.id)
+
+  const data = await fetchDb(season)
+  dbCache.set(season.id, data)
+  return data
+}
+
+export async function refreshDb(seasonId) {
+  const season = getSeasonById(seasonId || getStoredSeasonId())
+  const data = await fetchDb(season)
   dbCache.set(season.id, data)
   return data
 }

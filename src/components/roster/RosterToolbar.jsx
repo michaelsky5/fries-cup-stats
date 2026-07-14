@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import ImeSafeInput from '../common/ImeSafeInput.jsx'
 import styles from './RosterComponents.module.css'
 
 function FieldControl({ field }) {
@@ -68,10 +69,10 @@ export default function RosterToolbar({
     >
       <label className={styles.field}>
         <span className={styles.fieldLabel}>{searchLabel}</span>
-        <input
+        <ImeSafeInput
           className={styles.input}
           value={searchValue}
-          onChange={event => onSearchChange?.(event.target.value)}
+          onValueChange={onSearchChange}
           placeholder={searchPlaceholder}
         />
       </label>

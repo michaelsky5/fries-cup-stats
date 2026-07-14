@@ -1,4 +1,5 @@
 import ColumnPicker from './ColumnPicker.jsx'
+import ImeSafeInput from '../common/ImeSafeInput.jsx'
 import { formatOwHeroName } from '../../lib/heroes.js'
 import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
 
@@ -40,9 +41,9 @@ export default function LeaderboardToolbar({
       <div className={styles.toolbarPrimary}>
         <label className={`${styles.field} ${styles.searchField}`}>
           <span>搜索选手</span>
-          <input
+          <ImeSafeInput
             value={filters.query}
-            onChange={event => onFilterChange({ query: event.target.value })}
+            onValueChange={value => onFilterChange({ query: value })}
             placeholder="昵称 / BattleTag / 队伍"
           />
         </label>

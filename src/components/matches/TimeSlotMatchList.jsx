@@ -29,11 +29,15 @@ export default function TimeSlotMatchList({ slot, expanded, onToggle, visibleLim
           <MatchHubRow key={match.match_id} match={match} />
         ))}
       </div>
-      {canToggle ? (
-        <button type="button" className={styles.toggleButton} data-testid="time-slot-toggle" onClick={onToggle}>
-          {expanded ? '收起' : `展开剩余 ${remainingCount} 场`}
-        </button>
-      ) : null}
+      <footer className={styles.timeSlotFooter}>
+        {canToggle ? (
+          <button type="button" className={styles.toggleButton} data-testid="time-slot-toggle" onClick={onToggle}>
+            {expanded ? '收起' : `展开剩余 ${remainingCount} 场`}
+          </button>
+        ) : (
+          <span>全部对阵已显示</span>
+        )}
+      </footer>
     </div>
   )
 }

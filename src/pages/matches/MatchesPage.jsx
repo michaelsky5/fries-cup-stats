@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useOutletContext, useSearchParams } from 'react-router-dom'
+import ImeSafeInput from '../../components/common/ImeSafeInput.jsx'
 import {
   filterMatches,
   getAllMatches,
@@ -405,10 +406,10 @@ function FilterBar({ filters, options, updateQuery, resetFilters, focusSearch = 
       <div className={styles.filterQuickRow}>
         <div className={`${styles.filterField} ${styles.searchField}`}>
           <label>队伍搜索 <span>TEAM</span></label>
-          <input
+          <ImeSafeInput
             ref={searchInputRef}
             value={filters.team}
-            onChange={event => updateQuery({ team: event.target.value })}
+            onValueChange={value => updateQuery({ team: value })}
             placeholder="输入队伍简称或名称"
           />
         </div>

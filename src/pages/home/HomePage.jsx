@@ -333,9 +333,9 @@ const EVENT_TIMELINE = [
     key: 'qualifier',
     label: 'OPEN QUALIFIER',
     title: { zh: '公开预选赛时间', en: 'Open Qualifier' },
-    range: { zh: '2026 年 6 月 26 日 - 7 月 19 日', en: 'June 26-July 19, 2026' },
+    range: { zh: '2026 年 6 月 26 日 - 7 月 26 日', en: 'June 26-July 26, 2026' },
     start: '2026-06-26T00:00:00+08:00',
-    end: '2026-07-19T23:59:59+08:00',
+    end: '2026-07-26T23:59:59+08:00',
     text: { zh: '公开预选赛阶段，具体对阵与赛果进入赛程赛果查看。', en: 'The qualifier window. Full pairings, filters, and match details live in Matches.' }
   },
   {

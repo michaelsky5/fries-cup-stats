@@ -204,7 +204,6 @@ export default function MatchDetailPage() {
 
   const showResultSections = dossier.state.canShowResults && !dossier.state.isForfeit
   const showMaps = showResultSections && dossier.hasMapRecords
-
   return (
     <main className={styles.shell}>
       <MatchPosterHero
@@ -228,7 +227,7 @@ export default function MatchDetailPage() {
       {showResultSections ? (
         <MatchAnalysisSection dossier={dossier} analysisRef={analysisRef} withSeason={withSeason} locale={locale} t={t} />
       ) : (
-        <MatchDetailEmptyState dossier={dossier} t={t} />
+        <MatchDetailEmptyState dossier={dossier} locale={locale} t={t} />
       )}
 
       {showMaps ? (
@@ -240,6 +239,7 @@ export default function MatchDetailPage() {
           onCollapseAll={handleCollapseAll}
           setMapRef={setMapRef}
           seasonId={seasonId}
+          locale={locale}
           t={t}
         />
       ) : null}

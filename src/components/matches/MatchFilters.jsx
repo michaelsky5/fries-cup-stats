@@ -1,3 +1,4 @@
+import ImeSafeInput from '../common/ImeSafeInput.jsx'
 import styles from './MatchFilters.module.css'
 
 function DualLabel({ cn, en }) {
@@ -100,10 +101,10 @@ export default function MatchFilters({
             <label className={styles.label}>
               <DualLabel cn="检索" en="SEARCH" />
             </label>
-            <input
+            <ImeSafeInput
               className={styles.input}
               value={filters.query}
-              onChange={e => update({ query: e.target.value })}
+              onValueChange={value => update({ query: value })}
               placeholder="输入队伍名称 / 赛段 / 比赛编号..."
             />
           </div>

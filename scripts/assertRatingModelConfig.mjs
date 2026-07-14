@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 
-import { PROFILE_WEIGHTS, RATING_METRICS, RATING_MODEL_VERSION } from '../src/config/ratingModelConfig.js'
+import { OVR_CONFIG, PROFILE_WEIGHTS, RATING_METRICS, RATING_MODEL_VERSION } from '../src/config/ratingModelConfig.js'
 import {
   getHeroSubrole,
   getHeroSubroleConfig,
@@ -23,7 +23,15 @@ Object.entries(PROFILE_WEIGHTS).forEach(([profile, config]) => {
   assert.equal(sumWeights(config.weights), 100, `${profile} weights must sum to 100`)
 })
 
-assert.equal(RATING_MODEL_VERSION, 'v1.1')
+assert.equal(RATING_MODEL_VERSION, 'v1.2')
+
+const seasonBlend = OVR_CONFIG.seasonBlend
+assert.equal(seasonBlend.performanceWeight + seasonBlend.rolePercentileWeight, 1)
+seasonBlend.performancePercentileCurve.slice(1).forEach((point, index) => {
+  const previous = seasonBlend.performancePercentileCurve[index]
+  assert.ok(point.score >= previous.score, 'OVR performance scores must be monotonic')
+  assert.ok(point.percentile >= previous.percentile, 'OVR performance percentiles must be monotonic')
+})
 
 listHeroSubroleEntries().forEach(hero => {
   assert.ok(
@@ -127,6 +135,13 @@ const matureBlend = getBlendedMetricPercentile({
   profileBaseline,
   subroleBaseline
 })
+const overMatureBlend = getBlendedMetricPercentile({
+  metric: 'damage',
+  value: 50,
+  heroBaseline: makeDamageBaseline('Sierra', 180, 1862),
+  profileBaseline: makeDamageBaseline('poke_hitscan', 500, 5000),
+  subroleBaseline
+})
 
 assert.ok(Math.abs(halfMatureBlend.sourceWeights.hero - 0.25) < 0.0001)
 assert.ok(Math.abs(halfMatureBlend.sourceWeights.profile - 0.45) < 0.0001)
@@ -134,6 +149,9 @@ assert.ok(Math.abs(halfMatureBlend.sourceWeights.subrole - 0.3) < 0.0001)
 assert.ok(Math.abs(matureBlend.sourceWeights.hero - 0.5) < 0.0001)
 assert.ok(Math.abs(matureBlend.sourceWeights.profile - 0.3) < 0.0001)
 assert.ok(Math.abs(matureBlend.sourceWeights.subrole - 0.2) < 0.0001)
+assert.ok(Math.abs(overMatureBlend.sourceWeights.hero - 0.5) < 0.0001)
+assert.ok(Math.abs(overMatureBlend.sourceWeights.profile - 0.3) < 0.0001)
+assert.ok(Math.abs(overMatureBlend.sourceWeights.subrole - 0.2) < 0.0001)
 assert.equal(mapRawScoreToOVR(80, 80, { sampleStatus: 'LOW_SAMPLE' }), 'UNRATED')
 assert.ok(mapRawScoreToMapRating(101) <= 9.8)
 assert.ok(mapRawScoreToMapRating(-10) >= 5.5)

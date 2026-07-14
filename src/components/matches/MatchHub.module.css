@@ -1196,75 +1196,80 @@
 
 .timeSlotGrid {
   display: grid;
-  grid-template-columns: repeat(var(--time-slot-columns, 3), minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   align-items: stretch;
+  gap: 1px;
   border: 2px solid var(--portal-border);
-  background: var(--fc-white);
+  background: rgba(42, 42, 42, 0.28);
 }
 
-.timeSlotStack {
+.timeSlotColumn {
+  grid-column: span 2;
   min-width: 0;
   position: relative;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   background: var(--fc-white);
-  border-right: 1px solid rgba(42, 42, 42, 0.28);
 }
 
-.timeSlotStackActive::before {
+.timeSlotColumn:nth-last-child(2):nth-child(3n + 1),
+.timeSlotColumn:last-child:nth-child(3n + 2) {
+  grid-column: span 3;
+}
+
+.timeSlotColumn:last-child:nth-child(3n + 1) {
+  grid-column: 1 / -1;
+}
+
+.timeSlotColumnActive::before {
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
-  z-index: 2;
-  height: 5px;
+  z-index: 3;
+  height: 4px;
   background: var(--portal-yellow);
   content: "";
 }
 
-.timeSlotStackGrouped .timeSlotColumn:not(:last-child) {
-  border-bottom-color: rgba(42, 42, 42, 0.42);
-}
-
-.timeSlotStack:last-child {
-  border-right: 0;
-}
-
-.timeSlotColumn {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  background: var(--fc-white);
-  border-bottom: 2px solid var(--portal-border);
-}
-
-.timeSlotColumn:last-child {
-  border-bottom: 0;
+.timeSlotColumnActive .timeSlotColumnHead {
+  background: #fff5ca;
 }
 
 .timeSlotColumnHead {
-  min-height: 56px;
+  min-height: 58px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 14px;
   padding: 0 16px;
-  border-bottom: 2px solid var(--portal-border);
+  background: #f9f7f0;
+  border-bottom: 1px solid rgba(42, 42, 42, 0.28);
   color: var(--portal-black);
-  font-size: 14px;
-  font-weight: 950;
 }
 
 .timeSlotColumnHead strong,
 .timeSlotColumnHead span {
   color: inherit;
-  font: inherit;
   line-height: 1;
   white-space: nowrap;
 }
 
-.timeSlotColumnHead span::before {
-  content: "· ";
+.timeSlotColumnHead strong {
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.timeSlotColumnHead span {
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  background: var(--fc-white);
+  border: 1px solid rgba(42, 42, 42, 0.2);
+  color: var(--portal-muted);
+  font-size: 10px;
+  font-weight: 950;
 }
 
 .scheduleCanvas,
@@ -1285,8 +1290,20 @@
   background: var(--fc-white);
 }
 
+.upcomingRowsGrid .upcomingRow {
+  min-height: 148px;
+}
+
 .timeSlotBody {
   min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 42px;
+}
+
+.timeSlotColumn .matchRows {
+  align-self: start;
+  width: 100%;
 }
 
 .matchRow,
@@ -1307,11 +1324,16 @@
 }
 
 .timeSlotColumn .matchRow {
-  min-height: 72px;
-  grid-template-columns: minmax(56px, 68px) minmax(0, 1fr) auto;
-  gap: 8px;
+  min-height: 88px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "stage aux"
+    "duel duel";
+  align-content: center;
+  column-gap: 12px;
+  row-gap: 10px;
   justify-items: stretch;
-  padding: 12px 14px;
+  padding: 11px 14px 13px;
 }
 
 .resultRow {
@@ -1373,8 +1395,9 @@
 }
 
 .timeSlotColumn .rowDuel {
-  grid-template-columns: minmax(104px, 1fr) auto minmax(104px, 1fr);
-  gap: 6px;
+  grid-area: duel;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 8px;
   justify-self: stretch;
   width: 100%;
 }
@@ -1397,9 +1420,11 @@
 
 .timeSlotColumn .rowStage {
   position: static;
+  grid-area: stage;
   align-self: center;
   justify-self: start;
-  max-width: 68px;
+  max-width: none;
+  padding-left: 2px;
   transform: none;
 }
 
@@ -1449,7 +1474,36 @@
 }
 
 .timeSlotColumn .rowTeam {
-  gap: 5px;
+  gap: 6px;
+}
+
+.upcomingVersus {
+  min-width: 58px;
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+}
+
+.upcomingVersus b {
+  min-width: 52px;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--portal-black);
+  color: var(--portal-yellow);
+  font-size: 16px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.upcomingVersus em {
+  color: var(--portal-muted);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 950;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .rowTeam:first-child {
@@ -1502,8 +1556,8 @@
 
 .timeSlotColumn .rowTeam strong {
   flex: 0 0 auto;
-  max-width: 7.2ch;
-  font-size: 16px;
+  max-width: 8ch;
+  font-size: 14px;
   text-overflow: clip;
 }
 
@@ -1520,8 +1574,9 @@
 
 .timeSlotColumn .rowAux {
   position: static;
+  grid-area: aux;
   justify-self: end;
-  gap: 7px;
+  gap: 8px;
   transform: none;
 }
 
@@ -1720,15 +1775,43 @@
   font-weight: 850;
 }
 
+.timeSlotFooter {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9f7f0;
+  border-top: 1px solid rgba(42, 42, 42, 0.22);
+}
+
+.resultRowsGrid .upcomingMeta time {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.timeSlotFooter > span {
+  color: var(--portal-muted);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
 .toggleButton {
   width: 100%;
-  min-height: 56px;
-  background: var(--fc-white);
+  min-height: 42px;
+  background: #fff4c6;
   border: 0;
-  border-top: 1px solid rgba(42, 42, 42, 0.22);
   color: var(--portal-black);
   font-size: 12px;
   font-weight: 950;
+}
+
+.toggleButton:hover {
+  background: var(--portal-yellow);
 }
 
 .scheduleNote {
@@ -1741,96 +1824,288 @@
 
 .followingCard,
 .followingEmpty {
-  display: grid;
-  gap: 18px;
   background: var(--fc-white);
   border: 2px solid var(--portal-border);
 }
 
 .followingCard {
-  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.36fr);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.3fr);
   align-items: stretch;
+  overflow: hidden;
 }
 
 .followingMain {
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 13px;
-  min-height: 210px;
-  padding: 24px;
+  min-height: 280px;
+  display: grid;
+  grid-template-rows: auto minmax(136px, 1fr) auto;
   border-right: 1px solid rgba(42, 42, 42, 0.22);
+}
+
+.followingMatchHead {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 10px 16px;
+  background: var(--portal-black);
+  border-bottom: 4px solid var(--portal-yellow);
+}
+
+.followingMatchHead > div {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.followingMatchHead strong,
+.followingMatchHead time {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .followingLabel {
   color: var(--portal-yellow);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 950;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.05em;
   line-height: 1;
 }
 
-.followingMatchTitle {
-  margin: 0;
-  color: var(--portal-ink);
-  font-size: clamp(32px, 3.2vw, 52px);
+.followingDuel {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  padding: 24px 28px;
+}
+
+.followingDuel > b {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: var(--portal-black);
+  color: var(--portal-yellow);
+  font-size: 14px;
   font-weight: 950;
-  letter-spacing: 0;
+  line-height: 1;
+}
+
+.followingTeam {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.followingTeamRight {
+  grid-template-columns: minmax(0, 1fr) 58px;
+  text-align: right;
+}
+
+.followingTeamRight .followingLogo {
+  order: 2;
+}
+
+.followingLogo {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--portal-black);
+}
+
+.followingLogo img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.followingLogo b {
+  color: var(--portal-yellow);
+  font-size: 11px;
+}
+
+.followingTeam > span {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.followingTeam strong,
+.followingTeam em {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.followingTeam strong {
+  color: var(--portal-ink);
+  font-size: clamp(26px, 2.5vw, 40px);
+  font-weight: 950;
   line-height: 0.94;
 }
 
-.followingMeta {
-  margin: 0;
+.followingTeam em {
   color: var(--portal-muted);
-  font-size: 15px;
-  font-weight: 900;
-  line-height: 1.35;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 850;
 }
 
 .followingStatus {
-  width: fit-content;
-  min-height: 30px;
+  min-height: 26px;
   display: inline-flex;
   align-items: center;
-  padding: 0 10px;
+  padding: 0 9px;
   background: var(--portal-yellow);
   color: var(--portal-black);
-  font-size: 12px;
+  font-size: 10px;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.followingMatchFooter {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 14px;
+  background: #f9f7f0;
+  border-top: 1px solid rgba(42, 42, 42, 0.22);
+}
+
+.followingFormat {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--portal-black);
+  color: var(--fc-white);
+  font-size: 11px;
   font-weight: 950;
 }
 
-.followingBroadcast {
-  display: grid;
-  gap: 5px;
-  color: var(--portal-muted);
-  font-size: 12px;
-  font-weight: 900;
-  line-height: 1.35;
-}
-
-.followingBroadcast a,
-.followingBroadcast span {
+.followingStaff {
   min-width: 0;
-  color: inherit;
-  overflow-wrap: anywhere;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid rgba(42, 42, 42, 0.2);
 }
 
-.followingBroadcast a {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+.followingStaff p {
+  min-width: 0;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0 9px;
+  overflow: hidden;
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.followingStaff p + p {
+  border-left: 1px solid rgba(42, 42, 42, 0.18);
+}
+
+.followingStaff b {
+  flex: 0 0 auto;
+  color: #a67a00;
+  font-size: 10px;
+  font-weight: 950;
+}
+
+.followingLiveLink {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  background: var(--portal-yellow);
+  border: 2px solid var(--portal-yellow);
+  color: var(--portal-black);
+  font-size: 11px;
+  font-weight: 950;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .followingSide {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 14px;
-  padding: 24px;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 18px;
+  padding: 22px;
+  background: var(--portal-black);
+  color: var(--fc-white);
 }
 
-.followingSide p,
+.followingSideLabel {
+  color: var(--portal-yellow);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+}
+
+.followingStats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.followingStats p {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 14px 12px 14px 0;
+}
+
+.followingStats p + p {
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.followingStats strong {
+  color: var(--fc-white);
+  font-size: 38px;
+  font-weight: 950;
+  line-height: 0.9;
+}
+
+.followingStats span {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 10px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.followingEmpty {
+  display: grid;
+  gap: 18px;
+}
+
 .followingEmpty p {
   margin: 0;
   color: var(--portal-muted);
@@ -1860,9 +2135,16 @@
   white-space: nowrap;
 }
 
-.followingActions a:nth-child(2) {
+.followingActions a:nth-child(2),
+.followingSide .followingActions a:first-child {
   background: var(--fc-white);
   color: var(--portal-black);
+}
+
+.followingSide .followingActions a:last-child {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.65);
+  color: var(--fc-white);
 }
 
 .followingEmpty {
@@ -1894,10 +2176,24 @@
   .board,
   .broadcastEntry,
   .followingCard,
-  .timeSlotGrid,
   .boardFeatured,
   .boardFeaturedRows {
     grid-template-columns: 1fr;
+  }
+
+  .timeSlotGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .timeSlotColumn,
+  .timeSlotColumn:nth-last-child(2):nth-child(3n + 1),
+  .timeSlotColumn:last-child:nth-child(3n + 2),
+  .timeSlotColumn:last-child:nth-child(3n + 1) {
+    grid-column: span 1;
+  }
+
+  .timeSlotColumn:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 
   .boardLead,
@@ -1906,6 +2202,12 @@
   .boardFeaturedHead {
     border-right: 0;
     border-bottom: 2px solid var(--portal-border);
+  }
+
+  .followingSide {
+    grid-template-columns: auto minmax(280px, 1fr) auto;
+    grid-template-rows: auto;
+    align-items: center;
   }
 
   .broadcastHead {
@@ -1966,17 +2268,21 @@
     grid-column: 1 / -1;
   }
 
-  .timeSlotStack,
-  .timeSlotStack:last-child {
-    border-right: 0;
-  }
-
-  .timeSlotStack + .timeSlotStack {
-    border-top: 2px solid var(--portal-border);
-  }
 }
 
 @media (max-width: 760px) {
+  .timeSlotGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .timeSlotColumn,
+  .timeSlotColumn:nth-last-child(2):nth-child(3n + 1),
+  .timeSlotColumn:last-child:nth-child(3n + 2),
+  .timeSlotColumn:last-child:nth-child(3n + 1),
+  .timeSlotColumn:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
   .boardNextDuel {
     grid-template-columns: 1fr;
     gap: 8px;
@@ -2035,10 +2341,60 @@
 
   .boardLead,
   .broadcastHead,
-  .followingMain,
   .followingSide,
   .followingEmpty {
     padding: 20px;
+  }
+
+  .followingMatchHead {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .followingMatchHead > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .followingDuel {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 20px;
+  }
+
+  .followingDuel > b {
+    width: auto;
+    height: 26px;
+  }
+
+  .followingTeam,
+  .followingTeamRight {
+    grid-template-columns: 46px minmax(0, 1fr);
+    text-align: left;
+  }
+
+  .followingTeamRight .followingLogo {
+    order: 0;
+  }
+
+  .followingLogo {
+    width: 46px;
+    height: 46px;
+  }
+
+  .followingMatchFooter {
+    grid-template-columns: 1fr;
+    padding: 12px 14px 14px;
+  }
+
+  .followingFormat {
+    width: 54px;
+  }
+
+  .followingSide {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
   }
 
   .boardLead {

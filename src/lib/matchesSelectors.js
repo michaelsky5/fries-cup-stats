@@ -3,7 +3,7 @@ import { formatOwMapName } from './heroes.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
-const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED'])
+const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED', 'FINISHED', 'FORFEIT', 'WALKOVER'])
 const LIVE_STATUSES = new Set(['IN_PROGRESS', 'LIVE'])
 
 function normalizeText(value) {
@@ -70,6 +70,10 @@ function matchTeamValues(match) {
   return [...teamIdentityValues(match?.team_a), ...teamIdentityValues(match?.team_b)]
 }
 
+export function isByeMatch(match) {
+  return matchTeamValues(match).some(value => value === 'bye')
+}
+
 function roundKey(value) {
   const text = normalizeText(value).toLowerCase()
   const number = text.match(/\d+/)?.[0]
@@ -93,7 +97,11 @@ function uniqueMatches(matches = []) {
 }
 
 export function isFinishedMatch(match) {
-  return COMPLETE_STATUSES.has(String(match?.status || '').toUpperCase()) || Boolean(normalizeText(match?.winner))
+  const status = String(match?.status || '').trim().toUpperCase()
+  if (match?.is_forfeit) return true
+  if (COMPLETE_STATUSES.has(status)) return true
+  if (status) return false
+  return Boolean(normalizeText(match?.winner))
 }
 
 export function isLiveMatch(match) {
@@ -117,10 +125,11 @@ export function getAllMatches(db) {
 }
 
 export function getCurrentRoundValue(matches = []) {
-  const active = sortMatchesBySchedule(matches).find(match => isLiveMatch(match) || isUpcomingMatch(match))
+  const displayMatches = safeArr(matches).filter(match => !isByeMatch(match))
+  const active = sortMatchesBySchedule(displayMatches).find(match => isLiveMatch(match) || isUpcomingMatch(match))
   if (active?.round) return active.round
-  const latest = sortMatchesBySchedule(matches).filter(isFinishedMatch).at(-1)
-  return latest?.round || safeArr(matches)[0]?.round || ''
+  const latest = sortMatchesBySchedule(displayMatches).filter(isFinishedMatch).at(-1)
+  return latest?.round || displayMatches[0]?.round || ''
 }
 
 export function getMatchesByRound(matches = [], round = '') {
@@ -131,12 +140,12 @@ export function getMatchesByRound(matches = [], round = '') {
 }
 
 export function getUpcomingMatches(matches = []) {
-  return sortMatchesBySchedule(matches).filter(isUpcomingMatch)
+  return sortMatchesBySchedule(matches).filter(match => !isByeMatch(match) && isUpcomingMatch(match))
 }
 
 export function getFinishedMatches(matches = []) {
   return safeArr(matches)
-    .filter(isFinishedMatch)
+    .filter(match => !isByeMatch(match) && isFinishedMatch(match))
     .sort((a, b) => {
       const timeDelta = getMatchTime(b) - getMatchTime(a)
       if (timeDelta !== 0) return timeDelta
@@ -165,6 +174,7 @@ export function getNextMatchForTeam(matches = [], teamId) {
   const target = new Set([normalizeKey(teamId)])
   if (!target.size) return null
   return sortMatchesBySchedule(matches).find(match => {
+    if (isByeMatch(match)) return false
     if (!isUpcomingMatch(match) && !isLiveMatch(match)) return false
     return matchTeamValues(match).some(value => target.has(value))
   }) || null
@@ -383,7 +393,7 @@ export function getGroupedMatches(matches = [], groupBy = 'date') {
 }
 
 export function getRoundProgress(matches = []) {
-  const rows = uniqueMatches(matches)
+  const rows = uniqueMatches(matches).filter(match => !isByeMatch(match))
   const finished = rows.filter(isFinishedMatch).length
 
   return {
@@ -396,7 +406,7 @@ export function getRoundProgress(matches = []) {
 export function getRoundTimeSlots(matches = []) {
   const groups = new Map()
 
-  sortMatchesBySchedule(uniqueMatches(matches)).forEach(match => {
+  sortMatchesBySchedule(uniqueMatches(matches).filter(match => !isByeMatch(match))).forEach(match => {
     const key = getDateGroupKey(match)
     if (!groups.has(key)) groups.set(key, [])
     groups.get(key).push(match)
@@ -461,6 +471,7 @@ export function getPrioritizedTimeSlotMatches(matches = [], favorites = {}, limi
 
 export function getFeaturedRoundMatches(matches = [], favorites = {}, round = '', limit = 3) {
   const roundMatches = getMatchesByRound(matches, round || getCurrentRoundValue(matches))
+    .filter(match => !isByeMatch(match))
   const activeRows = roundMatches.filter(match => isLiveMatch(match) || isUpcomingMatch(match))
   const sourceRows = activeRows.length ? activeRows : roundMatches
   const selected = []
@@ -509,7 +520,7 @@ export function getFollowingRoundMatchCount(matches = [], favorites = {}, round 
 }
 
 export function getCurrentRoundSummary(matches = []) {
-  const rows = getAllMatches({ matches })
+  const rows = getAllMatches({ matches }).filter(match => !isByeMatch(match))
   const currentRound = getCurrentRoundValue(rows)
   const roundMatches = getMatchesByRound(rows, currentRound)
   const timeSlots = getRoundTimeSlots(roundMatches)
@@ -618,11 +629,13 @@ export function getKeyArchiveMatches(matches = [], seasonOrLimit = {}, limitArg)
 }
 
 export function getMatchHubData(db, seasonId, favorites = {}) {
-  const matches = getAllMatches(db)
+  const allMatches = getAllMatches(db)
+  const matches = allMatches.filter(match => !isByeMatch(match))
   const summary = getMatchesSummary(matches)
   const currentRoundSummary = getCurrentRoundSummary(matches)
   const currentRoundMatches = currentRoundSummary.matches
-  const roundTimeSlots = currentRoundSummary.timeSlots.map(slot => ({
+  const activeRoundMatches = currentRoundMatches.filter(match => isLiveMatch(match) || isUpcomingMatch(match))
+  const roundTimeSlots = getRoundTimeSlots(activeRoundMatches).map(slot => ({
     ...slot,
     defaultMatches: getPrioritizedTimeSlotMatches(slot.matches, favorites, 4)
   }))
@@ -634,7 +647,12 @@ export function getMatchHubData(db, seasonId, favorites = {}) {
   const recentFinishedMatches = getRecentFinishedMatches(matches, summary.round, 9)
   const primaryFollowingNextMatch = getPrimaryFollowingNextMatch(matches, favorites)
   const followingRoundMatchCount = getFollowingRoundMatchCount(matches, favorites, summary.round)
-  const isArchive = isSeasonCompleteByPublishedMatches(db, seasonId, summary.finished, summary.total)
+  const isArchive = isSeasonCompleteByPublishedMatches(
+    db,
+    seasonId,
+    allMatches.filter(isFinishedMatch).length,
+    allMatches.length
+  )
 
   return {
     seasonId,
@@ -648,6 +666,7 @@ export function getMatchHubData(db, seasonId, favorites = {}) {
       defaultTimeSlot
     },
     currentRoundMatches,
+    activeRoundMatches,
     roundTimeSlots,
     defaultTimeSlot,
     roundProgress: currentRoundSummary.progress,
@@ -675,6 +694,7 @@ export function filterMatches(matches = [], filters = {}) {
   const team = normalizeKey(filters.team || filters.query)
 
   return safeArr(matches).filter(match => {
+    if (isByeMatch(match)) return false
     if (stage && stage !== 'ALL' && normalizeText(match?.stage) !== stage) return false
     if (round && round !== 'ALL' && roundKey(match?.round || match?.stage) !== roundKey(round)) return false
     if (format && format !== 'ALL' && normalizeText(match?.format) !== format) return false

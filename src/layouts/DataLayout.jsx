@@ -12,7 +12,7 @@ import {
   withSeason as buildSeasonLink
 } from '../config/seasons.js'
 import { createTranslator, getStoredLocale, setStoredLocale } from '../lib/i18n.js'
-import { getDb } from '../lib/db.js'
+import { getDb, refreshDb } from '../lib/db.js'
 import { formatUpdatedAt } from '../lib/format.js'
 import { getGlobalSummary } from '../lib/selectors.js'
 import { getSeasonStatus } from '../lib/homeSelectors.js'
@@ -30,6 +30,8 @@ const PRIMARY_NAV = [
   { to: '/leaderboard', cn: '数据排行', en: 'STATS', group: 'database' },
   { to: '/following', cn: '我的关注', en: 'FOLLOWING', group: 'following' }
 ]
+
+const DATA_REFRESH_INTERVAL_MS = 60_000
 
 function getNavActiveGroup(pathname, search = '') {
   const params = new URLSearchParams(search)
@@ -116,6 +118,39 @@ export default function DataLayout() {
 
     return () => {
       alive = false
+    }
+  }, [seasonId])
+
+  useEffect(() => {
+    let alive = true
+
+    const refreshPublishedData = () => {
+      if (document.visibilityState === 'hidden') return
+
+      refreshDb(seasonId)
+        .then(data => {
+          if (!alive) return
+          setDb(current => current?.updated_at === data?.updated_at ? current : data)
+          setError('')
+        })
+        .catch(() => {
+          // Keep the last valid public snapshot on screen when a background refresh fails.
+        })
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') refreshPublishedData()
+    }
+
+    const interval = globalThis.setInterval(refreshPublishedData, DATA_REFRESH_INTERVAL_MS)
+    globalThis.addEventListener('focus', refreshPublishedData)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      alive = false
+      globalThis.clearInterval(interval)
+      globalThis.removeEventListener('focus', refreshPublishedData)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [seasonId])
 
