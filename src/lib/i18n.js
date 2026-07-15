@@ -552,8 +552,8 @@ const dictionary = {
     'en-US': 'Swiss Standings'
   },
   'standings.desc': {
-    'zh-CN': '瑞士轮排名会优先比较战绩，再比较 Buchholz、直接交手和对手胜率。',
-    'en-US': 'Swiss ranking compares record first, then Buchholz, head-to-head, and opponent win rate.'
+    'zh-CN': '瑞士轮排名会依次比较战绩、Buchholz、直接交手、对手胜率和地图净胜。',
+    'en-US': 'Swiss ranking compares record, Buchholz, head-to-head, opponent win rate, then map differential.'
   },
   'standings.table': {
     'zh-CN': '排名明细',
@@ -806,6 +806,10 @@ const dictionary = {
   'advance.tiebreaker.opponent_win_rate': {
     'zh-CN': '对手胜率',
     'en-US': 'Opponent Win Rate'
+  },
+  'advance.tiebreaker.map_diff': {
+    'zh-CN': '地图净胜',
+    'en-US': 'Map Differential'
   },
   'advance.tiebreaker.tournament_ruling': {
     'zh-CN': '加赛或赛事方最终裁定',

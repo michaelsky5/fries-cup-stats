@@ -711,7 +711,7 @@ function SwissSnapshotPanel({ standings, swissRules, locale, displayCount, withS
 
       <div className={styles.swissSnapshotFoot}>
         <span>{ui(locale, '\u540c\u5206\u987a\u5e8f', 'Tiebreak')}</span>
-        <strong>BHZ / H2H / OMW</strong>
+        <strong>BHZ / H2H / OMW / MAP</strong>
         <em>{`TOP ${visibleStandings.length}`}</em>
       </div>
     </section>
