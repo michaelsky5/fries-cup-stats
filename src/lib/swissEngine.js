@@ -178,6 +178,7 @@ export function calculateSwissStandings(db) {
 
     group.sort((a, b) => {
       if (b.opponent_win_rate !== a.opponent_win_rate) return b.opponent_win_rate - a.opponent_win_rate
+      if (b.map_diff !== a.map_diff) return b.map_diff - a.map_diff
       return a.__seedOrder - b.__seedOrder
     })
 

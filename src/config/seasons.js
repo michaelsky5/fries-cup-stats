@@ -45,6 +45,7 @@ export const SEASONS = [
             'buchholz',
             'head_to_head',
             'opponent_win_rate',
+            'map_diff',
             'tournament_ruling'
           ]
         },

@@ -511,6 +511,9 @@ export function getSwissStandings(db) {
       // 3) 对手胜率
       if (b.opponent_win_rate !== a.opponent_win_rate) return b.opponent_win_rate - a.opponent_win_rate
 
+      // 4) 地图净胜
+      if (b.map_diff !== a.map_diff) return b.map_diff - a.map_diff
+
       // 非正式兜底：只为保持稳定顺序，不属于规则书
       return String(a.team_short_name || a.team_name).localeCompare(String(b.team_short_name || b.team_name))
     })
