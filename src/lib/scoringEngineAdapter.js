@@ -122,13 +122,63 @@ function weightedAverage(items, key, weightKey = 'minutes') {
   return weightedItems.reduce((sum, item) => sum + (Number(item.value) * item.weight), 0) / totalWeight
 }
 
-function buildEntryLogRatings(entry, baselines) {
+function normalizeLookupKey(value) {
+  return cleanText(value).toLowerCase()
+}
+
+function createLookupSet(values) {
+  return new Set((Array.isArray(values) ? values : []).map(normalizeLookupKey).filter(Boolean))
+}
+
+function getMapDuration(mapDurationsByOrder, mapOrder) {
+  const key = cleanText(mapOrder)
+  if (!key || !mapDurationsByOrder) return 0
+  if (mapDurationsByOrder instanceof Map) return toFiniteNumber(mapDurationsByOrder.get(key))
+  return toFiniteNumber(mapDurationsByOrder[key])
+}
+
+function capLogRatingMinutesByMap(items, mapDurationsByOrder) {
+  const groups = new Map()
+  items.forEach(item => {
+    const mapOrder = cleanText(item.mapOrder)
+    if (!mapOrder) return
+    if (!groups.has(mapOrder)) groups.set(mapOrder, [])
+    groups.get(mapOrder).push(item)
+  })
+
+  groups.forEach((mapItems, mapOrder) => {
+    const totalMinutes = mapItems.reduce((sum, item) => sum + toFiniteNumber(item.minutes), 0)
+    const mapDuration = getMapDuration(mapDurationsByOrder, mapOrder)
+    if (totalMinutes <= 0 || mapDuration <= 0 || totalMinutes <= mapDuration) return
+    const scale = mapDuration / totalMinutes
+    mapItems.forEach(item => {
+      item.minutes = toFiniteNumber(item.minutes) * scale
+    })
+  })
+
+  return items
+}
+
+function buildEntryLogRatings(entry, baselines, options = {}) {
   const playerId = cleanText(entry?.player_id)
   const role = normalizeRole(entry?.role)
   if (!playerId || !role) return []
 
-  return (baselines?.logs || [])
-    .filter(logRow => cleanText(logRow.playerId) === playerId && roleFromResolution(logRow.resolution) === role)
+  const matchIds = createLookupSet(options.currentMatchIds)
+  const mapOrders = createLookupSet(options.currentMapOrders)
+
+  const ratings = (baselines?.logs || [])
+    .filter(logRow => {
+      if (cleanText(logRow.playerId) !== playerId || roleFromResolution(logRow.resolution) !== role) return false
+      if (matchIds.size) {
+        const matchesCurrentMatch = [logRow.matchId, logRow.rawMatchId]
+          .map(normalizeLookupKey)
+          .some(matchId => matchIds.has(matchId))
+        if (!matchesCurrentMatch) return false
+      }
+      if (mapOrders.size && !mapOrders.has(normalizeLookupKey(logRow.mapOrder))) return false
+      return true
+    })
     .map(logRow => {
       const { heroBaseline, profileBaseline, subroleBaseline } = getRatingBaselinesForResolution(baselines, logRow.resolution)
       const rating = calculateRawProfileScore({
@@ -149,10 +199,13 @@ function buildEntryLogRatings(entry, baselines) {
         rawScore: rating.rawScore,
         mapRating: rating.mapRating,
         minutes: logRow.playtimeMinutes,
+        mapOrder: logRow.mapOrder,
         rating
       }
     })
     .filter(item => isFiniteScore(item.rawScore))
+
+  return capLogRatingMinutesByMap(ratings, options.mapDurationsByOrder)
 }
 
 function calculateEntryRating(entry, baselines) {
@@ -238,10 +291,13 @@ function getSeasonScoreStatus(confidence) {
   return 'PROVISIONAL'
 }
 
-function buildRatingSummaryForEntry(entry, baselines, scoreContext = 'season') {
+function buildRatingSummaryForEntry(entry, baselines, scoreContext = 'season', args = {}) {
   const usesCurrentPerformance = scoreContext === 'map' || scoreContext === 'match'
-  const logRatings = usesCurrentPerformance ? [] : buildEntryLogRatings(entry, baselines)
-  const entryRating = usesCurrentPerformance || !logRatings.length
+  const hasCurrentLogScope = Array.isArray(args.currentMatchIds) && args.currentMatchIds.length > 0
+  const logRatings = usesCurrentPerformance
+    ? hasCurrentLogScope ? buildEntryLogRatings(entry, baselines, args) : []
+    : buildEntryLogRatings(entry, baselines)
+  const entryRating = !logRatings.length
     ? calculateEntryRating(entry, baselines)
     : null
   const items = logRatings.length ? logRatings : [entryRating].filter(Boolean)
@@ -269,7 +325,11 @@ function buildRatingSummaryForEntry(entry, baselines, scoreContext = 'season') {
     effectiveScoringProfile: primaryEffectiveProfile,
     sampleStatus,
     sourceLogCount: logRatings.length,
-    sourceScope: usesCurrentPerformance ? `current_${scoreContext}` : logRatings.length ? 'season_logs' : 'season_entry',
+    sourceMinutes: round(items.reduce((sum, item) => sum + toFiniteNumber(item?.minutes), 0)),
+    sourceScope: usesCurrentPerformance
+      ? logRatings.length ? `current_${scoreContext}_hero_logs` : `current_${scoreContext}`
+      : logRatings.length ? 'season_logs' : 'season_entry',
+    aggregation: logRatings.length ? 'hero_log_time_weighted' : 'aggregate_entry',
     profileFallbackUsed: items.some(item => item.rating?.profileFallbackUsed)
   }
 }
@@ -296,12 +356,9 @@ function applyMapResultAdjustment(summary, entry, args = {}) {
   if (!winnerTeamKeys.length) return { ...summary, mapResultAdjustment: 0 }
 
   const wonMap = isWinningEntry(entry, winnerTeamKeys)
-  const dominance = clamp(args.mapWinDominance)
   const bonusConfig = MAP_RATING_CONFIG.winningSideBonus || {}
-  const minBonus = toFiniteNumber(bonusConfig.min)
-  const maxBonus = Math.max(minBonus, toFiniteNumber(bonusConfig.max, minBonus))
   const adjustment = wonMap
-    ? minBonus + ((maxBonus - minBonus) * dominance)
+    ? Math.abs(toFiniteNumber(bonusConfig.amount))
     : -Math.abs(toFiniteNumber(MAP_RATING_CONFIG.losingSidePenalty))
   const mapRating = round(
     Math.min(MAP_RATING_CONFIG.max, Math.max(MAP_RATING_CONFIG.min, Number(summary.mapRating) + adjustment)),
@@ -354,7 +411,7 @@ function attachRatingModelScore(entry, args = {}) {
   }
 
   const baselines = getBaselines(args)
-  const baseSummary = buildRatingSummaryForEntry(entry, baselines, scoreContext)
+  const baseSummary = buildRatingSummaryForEntry(entry, baselines, scoreContext, args)
   const summary = applyMapResultAdjustment(baseSummary, entry, { ...args, scoreContext })
   const outputScore = normalizeOutputScore(summary, legacyScore, scoreContext)
   const seasonScoreConfidence = scoreContext === 'season'
@@ -390,7 +447,12 @@ function attachRatingModelScore(entry, args = {}) {
     subrole: summary.subrole,
     sampleStatus: summary.sampleStatus,
     ratingModelSourceLogs: summary.sourceLogCount,
+    ratingModelSourceMinutes: summary.sourceMinutes,
     ratingModelSourceScope: summary.sourceScope,
+    ratingModelAggregation: summary.aggregation,
+    ratingBaselineMode: baselines.baselineMode || 'runtime',
+    ratingBaselineFreezeId: baselines.freezeId || null,
+    ratingBaselineSourceVersion: baselines.frozenBaselineSource?.publishVersion || null,
     mapResultAdjustment: summary.mapResultAdjustment ?? 0,
     mapResult: summary.mapResult || null,
     ratingProfileFallbackUsed: summary.profileFallbackUsed
@@ -420,7 +482,7 @@ export function getLegacyScore(args = {}) {
 
 export function calculateSeasonPlayerScoreV1(args = {}) {
   const entry = args.entry || args
-  const summary = buildRatingSummaryForEntry(entry, getBaselines(args), 'season')
+  const summary = buildRatingSummaryForEntry(entry, getBaselines(args), 'season', args)
   if (!summary) return null
 
   const seasonScoreConfidence = getSeasonScoreConfidence(entry, args.minTimeMins)
@@ -441,7 +503,7 @@ export function calculateLeaderboardScoreV1(args = {}) {
 
 export function calculateMatchPlayerScoreV1(args = {}) {
   const entry = args.entry || args
-  const summary = buildRatingSummaryForEntry(entry, getBaselines(args), 'match')
+  const summary = buildRatingSummaryForEntry(entry, getBaselines(args), 'match', args)
   return summary ? {
     ...summary,
     score: summary.rawScore,
@@ -451,7 +513,7 @@ export function calculateMatchPlayerScoreV1(args = {}) {
 
 export function calculateMapPlayerScoreV1(args = {}) {
   const entry = args.entry || args
-  const baseSummary = buildRatingSummaryForEntry(entry, getBaselines(args), 'map')
+  const baseSummary = buildRatingSummaryForEntry(entry, getBaselines(args), 'map', args)
   const summary = applyMapResultAdjustment(baseSummary, entry, { ...args, scoreContext: 'map' })
   return summary ? {
     ...summary,

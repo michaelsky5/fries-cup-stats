@@ -154,7 +154,7 @@ function getBaselineMaturity(baseline, fallbackStatus = '') {
   if (Number.isFinite(sampleLogs) && Number.isFinite(totalPlaytimeMinutes)) {
     const logTarget = Math.max(1, toFiniteNumber(SAMPLE_ELIGIBILITY_CONFIG.ok.minSampleLogs, 20))
     const timeTarget = Math.max(1, toFiniteNumber(SAMPLE_ELIGIBILITY_CONFIG.ok.minTotalPlaytimeMinutes, 120))
-    return clamp(Math.min(sampleLogs / logTarget, totalPlaytimeMinutes / timeTarget))
+    return clamp(Math.min(sampleLogs / logTarget, totalPlaytimeMinutes / timeTarget), 0, 1)
   }
 
   const status = fallbackStatus || baseline.sampleStatus

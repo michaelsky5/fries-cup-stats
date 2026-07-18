@@ -1,4 +1,5 @@
 import { normalizeSeasonId } from '../features/favorites/normalizeSeasonId.js'
+import { getFrozenRatingBaselineSnapshot } from '../config/frozenRatingBaselines.js'
 import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 import { resolveHeroSubrole } from './heroSubroleSelectors.js'
 
@@ -362,15 +363,46 @@ function buildFromRows(rows, cleaning, options = {}) {
   }
 }
 
+function applyFrozenBaselineSnapshot(runtimeBaselines, snapshot) {
+  if (!snapshot) return runtimeBaselines
+
+  const heroes = safeArr(snapshot.heroes)
+  const scoringProfiles = safeArr(snapshot.scoringProfiles)
+  const subroles = safeArr(snapshot.subroles)
+
+  return {
+    ...runtimeBaselines,
+    seasonId: normalizeSeasonId(snapshot.seasonId),
+    generatedFrom: 'frozen_swiss_snapshot',
+    baselineMode: 'frozen',
+    baselineFrozen: true,
+    freezeId: snapshot.freezeId,
+    frozenAt: snapshot.frozenAt,
+    frozenBaselineSource: snapshot.source,
+    frozenBaselineCleaning: snapshot.cleaning,
+    heroes,
+    scoringProfiles,
+    subroles,
+    byHero: byKey(heroes),
+    byScoringProfile: byKey(scoringProfiles),
+    bySubrole: byKey(subroles)
+  }
+}
+
 export function buildRatingBaselinesFromPlayerLogs(players, options = {}) {
-  const cacheKey = normalizeSeasonId(options.seasonId || options.season?.id || options.season?.publicCode || '') || 'default'
+  const seasonId = normalizeSeasonId(options.seasonId || options.season?.id || options.season?.publicCode || '')
+  const frozenSnapshot = options.useFrozenBaselines === false
+    ? null
+    : getFrozenRatingBaselineSnapshot(seasonId)
+  const cacheKey = `${seasonId || 'default'}:${frozenSnapshot?.freezeId || 'runtime'}`
   if (Array.isArray(players)) {
     const cached = playerBaselineCache.get(players)
     if (cached?.cacheKey === cacheKey) return cached.baselines
   }
 
   const { rows, cleaning } = collectRatingLogRowsFromPlayers(players, options)
-  const baselines = buildFromRows(rows, cleaning, options)
+  const runtimeBaselines = buildFromRows(rows, cleaning, options)
+  const baselines = applyFrozenBaselineSnapshot(runtimeBaselines, frozenSnapshot)
   if (Array.isArray(players)) playerBaselineCache.set(players, { cacheKey, baselines })
   return baselines
 }
@@ -380,13 +412,19 @@ export function buildRatingBaselinesFromDb(db, options = {}) {
     return buildRatingBaselinesFromPlayerLogs([], options)
   }
 
-  const cacheKey = options.seasonId || options.season?.id || options.season?.publicCode || db?.season?.id || db?.meta?.season_id || 'default'
+  const seasonId = normalizeSeasonId(
+    options.seasonId || options.season?.id || options.season?.publicCode || db?.season?.id || db?.meta?.season_id || ''
+  )
+  const frozenSnapshot = options.useFrozenBaselines === false
+    ? null
+    : getFrozenRatingBaselineSnapshot(seasonId)
+  const cacheKey = `${seasonId || 'default'}:${frozenSnapshot?.freezeId || 'runtime'}`
   const cached = dbBaselineCache.get(db)
   if (cached?.cacheKey === cacheKey) return cached.baselines
 
   const baselines = buildRatingBaselinesFromPlayerLogs(safeArr(db.players), {
     ...options,
-    seasonId: options.seasonId || db?.season?.id || db?.meta?.season_id || ''
+    seasonId
   })
   dbBaselineCache.set(db, { cacheKey, baselines })
   return baselines

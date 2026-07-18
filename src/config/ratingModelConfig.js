@@ -1,4 +1,4 @@
-export const RATING_MODEL_VERSION = 'v1.1'
+export const RATING_MODEL_VERSION = 'v1.2'
 
 export const RATING_METRICS = [
   'elims',
@@ -288,8 +288,7 @@ export const MAP_RATING_CONFIG = {
     { percentile: 100, value: 9.8 }
   ],
   winningSideBonus: {
-    min: 0.15,
-    max: 0.25,
+    amount: 0.2,
     enabledForSeasonScore: false
   },
   losingSidePenalty: 0
@@ -300,6 +299,23 @@ export const OVR_CONFIG = {
   max: 99,
   unratedValue: 'UNRATED',
   requireSampleStatus: 'OK',
+  seasonBlend: {
+    performanceWeight: 0.7,
+    rolePercentileWeight: 0.3,
+    performancePercentileCurve: [
+      { score: 0, percentile: 0 },
+      { score: 25, percentile: 0 },
+      { score: 35, percentile: 5 },
+      { score: 39, percentile: 10 },
+      { score: 44.5, percentile: 25 },
+      { score: 50, percentile: 50 },
+      { score: 53.5, percentile: 75 },
+      { score: 57, percentile: 90 },
+      { score: 60, percentile: 95 },
+      { score: 65, percentile: 100 },
+      { score: 100, percentile: 100 }
+    ]
+  },
   curve: [
     { percentile: 0, value: 60 },
     { percentile: 25, value: 70 },
