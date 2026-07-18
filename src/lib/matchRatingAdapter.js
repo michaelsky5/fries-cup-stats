@@ -7,6 +7,7 @@ import {
 } from './leaderboardScoring.js'
 import { normalizeLeaderboardRole } from './leaderboardSelectors.js'
 import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
+import { normalizeSeasonId } from '../features/favorites/normalizeSeasonId.js'
 
 const METRIC_IDS = PUBLIC_METRICS.map(metric => metric.id)
 
@@ -160,12 +161,19 @@ function normalizeTeamKey(value) {
   return cleanText(value).toLowerCase()
 }
 
+function getMatchSeasonId(match) {
+  const explicit = cleanText(match?.season_id || match?.seasonId || match?.context?.seasonId)
+  if (explicit) return normalizeSeasonId(explicit)
+  const matchIdPrefix = cleanText(match?.match_id || match?.raw_match_id || match?.id).split('-')[0]
+  return normalizeSeasonId(matchIdPrefix)
+}
+
 function getTeamKeys(team) {
   return [team?.id, team?.name, team?.short].map(normalizeTeamKey).filter(Boolean)
 }
 
 function getMapResultContext(match, map) {
-  if (!map) return { winnerTeamKeys: [], mapWinDominance: 0 }
+  if (!map) return { winnerTeamKeys: [] }
 
   const teamAKeys = getTeamKeys(match?.team_a)
   const teamBKeys = getTeamKeys(match?.team_b)
@@ -179,10 +187,23 @@ function getMapResultContext(match, map) {
   const winnerIsA = winnerMatchesA || (!hasResolvedWinner && hasScores && scoreA > scoreB)
   const winnerIsB = winnerMatchesB || (!hasResolvedWinner && hasScores && scoreB > scoreA)
   const resolvedWinnerKeys = winnerIsA ? teamAKeys : winnerIsB ? teamBKeys : []
-  const highScore = hasScores ? Math.max(Math.abs(scoreA), Math.abs(scoreB)) : 0
-  const mapWinDominance = highScore > 0 ? Math.min(1, Math.abs(scoreA - scoreB) / highScore) : 0
+  return { winnerTeamKeys: resolvedWinnerKeys }
+}
 
-  return { winnerTeamKeys: resolvedWinnerKeys, mapWinDominance }
+function getCurrentRatingScope(match, maps = []) {
+  const currentMatchIds = [match?.match_id, match?.raw_match_id, match?.id]
+    .map(cleanText)
+    .filter(Boolean)
+  const currentMapOrders = []
+  const mapDurationsByOrder = {}
+
+  safeArr(maps).forEach((map, mapIndex) => {
+    const mapOrder = cleanText(map?.map_order) || String(mapIndex + 1)
+    currentMapOrders.push(mapOrder)
+    mapDurationsByOrder[mapOrder] = parseTimeToMinutes(map?.match_time)
+  })
+
+  return { currentMatchIds, currentMapOrders, mapDurationsByOrder }
 }
 
 function finalizeEntry(group) {
@@ -358,9 +379,12 @@ export function getMatchRatingSummary(match, maps = [], players = []) {
 
   const scoreContext = maps.length === 1 ? 'map' : 'match'
   const resultContext = scoreContext === 'map' ? getMapResultContext(match, maps[0]) : {}
+  const currentRatingScope = getCurrentRatingScope(match, maps)
   const scoredEntries = scoreLeaderboardEntries(rawEntries, 0, {
     players,
+    seasonId: getMatchSeasonId(match),
     scoreContext,
+    ...currentRatingScope,
     ...resultContext
   })
     .filter(entry => entry.roleScore > 0)

@@ -258,6 +258,53 @@ const poorCurrentMapEntry = {
     perMap: { elim: 0, ast: 0, dth: 10, dmg: 0, heal: 0, block: 0 }
   }
 }
+
+function createEntryFromHeroLog(playerId, log) {
+  const minutes = Number(log.playtimeMinutes)
+  const totals = log.totals
+  const metricPairs = [
+    ['elim', 'elims'],
+    ['ast', 'assists'],
+    ['dth', 'deaths'],
+    ['dmg', 'damage'],
+    ['heal', 'healing'],
+    ['block', 'blocked']
+  ]
+  const total = {}
+  const per10 = {}
+
+  metricPairs.forEach(([metricId, totalKey]) => {
+    total[metricId] = Number(totals[totalKey] || 0)
+    per10[metricId] = minutes > 0 ? total[metricId] / minutes * 10 : 0
+  })
+
+  return {
+    entryKey: `${playerId}:${log.role}`,
+    player_id: playerId,
+    role: log.role,
+    roleTimeMins: minutes,
+    raw_time_mins: minutes,
+    most_played_hero: log.hero,
+    metrics: { total, per10, perMap: total }
+  }
+}
+
+function createMapStatRowFromHeroLog(playerId, teamId, log) {
+  return {
+    player_id: playerId,
+    player_name: playerId,
+    team_id: teamId,
+    team_name: teamId,
+    role: log.role,
+    heroes_played: log.hero,
+    eliminations: log.totals.elims,
+    assists: log.totals.assists,
+    deaths: log.totals.deaths,
+    damage: log.totals.damage,
+    healing: log.totals.healing,
+    mitigation: log.totals.blocked
+  }
+}
 const historicalSeasonRow = attachRatingModelScoreToLeaderboardRows({
   entries: [poorCurrentMapEntry],
   players: syntheticDb.players,
@@ -290,6 +337,13 @@ const winningMapRow = attachRatingModelScoreToMapRows({
   winnerTeamKeys: ['WINNER', 'WIN'],
   mapWinDominance: 1
 })[0]
+const narrowWinningMapRow = attachRatingModelScoreToMapRows({
+  entries: [poorCurrentMapEntry],
+  players: syntheticDb.players,
+  baselines: syntheticBaselines,
+  winnerTeamKeys: ['WINNER', 'WIN'],
+  mapWinDominance: 0
+})[0]
 const losingMapRow = attachRatingModelScoreToMapRows({
   entries: [{ ...poorCurrentMapEntry, team_id: 'LOSER', team_name: 'Loser Team', team_short_name: 'LOS' }],
   players: syntheticDb.players,
@@ -299,7 +353,9 @@ const losingMapRow = attachRatingModelScoreToMapRows({
 })[0]
 
 assert.equal(winningMapRow.mapResult, 'WIN')
-assert.equal(winningMapRow.mapResultAdjustment, 0.25)
+assert.equal(winningMapRow.mapResultAdjustment, 0.2)
+assert.equal(narrowWinningMapRow.mapResultAdjustment, 0.2)
+assert.equal(narrowWinningMapRow.mapRating, winningMapRow.mapRating)
 assert.equal(losingMapRow.mapResult, 'LOSS')
 assert.equal(losingMapRow.mapResultAdjustment, 0)
 assert.ok(winningMapRow.mapRating > losingMapRow.mapRating, 'winning-side bonus should raise the displayed map rating')
@@ -349,7 +405,7 @@ const summaryLoser = mapSummary.entries.find(entry => entry.team_id === 'B')
 
 assert.equal(summaryWinner.ratingModelSourceScope, 'current_map')
 assert.equal(summaryWinner.mapResult, 'WIN')
-assert.equal(summaryWinner.mapResultAdjustment, 0.25)
+assert.equal(summaryWinner.mapResultAdjustment, 0.2)
 assert.equal(summaryLoser.ratingModelSourceScope, 'current_map')
 assert.equal(summaryLoser.mapResult, 'LOSS')
 assert.ok(summaryWinner.mapRating > summaryLoser.mapRating)
@@ -424,11 +480,86 @@ const multiHeroSummary = getMatchRatingSummary({
   ]
 }], multiHeroPlayers)
 const multiHeroEntry = multiHeroSummary.entries.find(entry => entry.player_id === 'ASSERT_MULTI_HERO')
+const multiHeroBaselines = buildRatingBaselinesFromPlayerLogs(multiHeroPlayers, { seasonId: 'ASSERT_MULTI_MATCH' })
+const multiHeroLogRatings = multiHeroPlayers.at(-1).match_logs.map(log => calculateMapPlayerScoreV1({
+  entry: createEntryFromHeroLog('ASSERT_MULTI_HERO', log),
+  baselines: multiHeroBaselines
+}))
+const expectedMultiHeroRawScore = multiHeroLogRatings.reduce((sum, rating) => sum + rating.rawScore, 0) /
+  multiHeroLogRatings.length
 
 assert.ok(Math.abs(multiHeroEntry.roleTimeMins - 4.1) < 0.001, 'multi-hero map time must be capped at official map duration')
 assert.equal(multiHeroEntry.metrics.total.heal, 7025)
 assert.equal(multiHeroEntry.most_played_hero, '')
 assert.equal(multiHeroEntry.ratingHeroProfileAmbiguous, true)
+assert.equal(multiHeroEntry.ratingModelSourceScope, 'current_map_hero_logs')
+assert.equal(multiHeroEntry.ratingModelAggregation, 'hero_log_time_weighted')
+assert.equal(multiHeroEntry.ratingModelSourceLogs, 2)
+assert.ok(Math.abs(multiHeroEntry.ratingModelSourceMinutes - 4.1) < 0.001)
+assert.ok(
+  Math.abs(multiHeroEntry.rawScore - expectedMultiHeroRawScore) < 0.002,
+  'multi-hero map score must be the time-weighted average of its hero-log scores'
+)
+
+const weightedMatchLogs = [
+  {
+    matchId: 'ASSERT_WEIGHTED_MATCH',
+    mapOrder: 1,
+    hero: 'Sierra',
+    role: 'DPS',
+    playtimeMinutes: 5,
+    totals: { elims: 2, assists: 1, deaths: 5, damage: 1500, healing: 0, blocked: 0 }
+  },
+  {
+    matchId: 'ASSERT_WEIGHTED_MATCH',
+    mapOrder: 2,
+    hero: 'Symmetra',
+    role: 'DPS',
+    playtimeMinutes: 15,
+    totals: { elims: 30, assists: 12, deaths: 3, damage: 15000, healing: 0, blocked: 3000 }
+  }
+]
+const weightedMatchPlayers = [
+  ...syntheticDb.players,
+  {
+    player_id: 'ASSERT_WEIGHTED_PLAYER',
+    display_name: 'Assert Weighted Player',
+    team_id: 'A',
+    match_logs: weightedMatchLogs
+  }
+]
+const weightedMatchMaps = weightedMatchLogs.map(log => ({
+  map_order: log.mapOrder,
+  map_name: `Assert Map ${log.mapOrder}`,
+  match_time: log.mapOrder === 1 ? '5:00' : '15:00',
+  winner: 'A',
+  score_a: 1,
+  score_b: 0,
+  team_a_stats: [createMapStatRowFromHeroLog('ASSERT_WEIGHTED_PLAYER', 'A', log)],
+  team_b_stats: []
+}))
+const weightedMatchSummary = getMatchRatingSummary({
+  match_id: 'ASSERT_WEIGHTED_MATCH',
+  team_a: { id: 'A', name: 'Alpha', short: 'ALP' },
+  team_b: { id: 'B', name: 'Beta', short: 'BET' }
+}, weightedMatchMaps, weightedMatchPlayers)
+const weightedMatchEntry = weightedMatchSummary.entries.find(entry => entry.player_id === 'ASSERT_WEIGHTED_PLAYER')
+const weightedMatchBaselines = buildRatingBaselinesFromPlayerLogs(weightedMatchPlayers, { seasonId: 'ASSERT_WEIGHTED_MATCH' })
+const weightedMapRatings = weightedMatchLogs.map(log => calculateMapPlayerScoreV1({
+  entry: createEntryFromHeroLog('ASSERT_WEIGHTED_PLAYER', log),
+  baselines: weightedMatchBaselines
+}))
+const expectedWeightedMatchScore = (
+  (weightedMapRatings[0].rawScore * 5) + (weightedMapRatings[1].rawScore * 15)
+) / 20
+
+assert.equal(weightedMatchEntry.ratingModelSourceScope, 'current_match_hero_logs')
+assert.equal(weightedMatchEntry.ratingModelAggregation, 'hero_log_time_weighted')
+assert.equal(weightedMatchEntry.ratingModelSourceMinutes, 20)
+assert.ok(
+  Math.abs(weightedMatchEntry.rawScore - expectedWeightedMatchScore) < 0.002,
+  'whole-match score must weight each map/hero score by effective playtime'
+)
 
 const playerDetailRow = attachRatingModelScoreToPlayerDetail({ entry: legacyEntry, baselines })
 assertRatingV1Fields(playerDetailRow, 'attachRatingModelScoreToPlayerDetail')

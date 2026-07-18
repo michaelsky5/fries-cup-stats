@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict'
 
-import { OVR_CONFIG, PROFILE_WEIGHTS, RATING_METRICS, RATING_MODEL_VERSION } from '../src/config/ratingModelConfig.js'
+import {
+  MAP_RATING_CONFIG,
+  OVR_CONFIG,
+  PROFILE_WEIGHTS,
+  RATING_METRICS,
+  RATING_MODEL_VERSION
+} from '../src/config/ratingModelConfig.js'
 import {
   getHeroSubrole,
   getHeroSubroleConfig,
@@ -24,6 +30,8 @@ Object.entries(PROFILE_WEIGHTS).forEach(([profile, config]) => {
 })
 
 assert.equal(RATING_MODEL_VERSION, 'v1.2')
+assert.equal(MAP_RATING_CONFIG.winningSideBonus.amount, 0.2)
+assert.equal(MAP_RATING_CONFIG.losingSidePenalty, 0)
 
 const seasonBlend = OVR_CONFIG.seasonBlend
 assert.equal(seasonBlend.performanceWeight + seasonBlend.rolePercentileWeight, 1)

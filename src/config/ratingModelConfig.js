@@ -288,8 +288,7 @@ export const MAP_RATING_CONFIG = {
     { percentile: 100, value: 9.8 }
   ],
   winningSideBonus: {
-    min: 0.15,
-    max: 0.25,
+    amount: 0.2,
     enabledForSeasonScore: false
   },
   losingSidePenalty: 0

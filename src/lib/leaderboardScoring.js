@@ -659,7 +659,9 @@ export function scoreLeaderboardEntries(entries, minTimeMins = 30, options = {})
     seasonId: options.seasonId,
     scoreContext,
     winnerTeamKeys: options.winnerTeamKeys,
-    mapWinDominance: options.mapWinDominance,
+    currentMatchIds: options.currentMatchIds,
+    currentMapOrders: options.currentMapOrders,
+    mapDurationsByOrder: options.mapDurationsByOrder,
     minTimeMins
   }).map(entry => ({
     ...entry,
