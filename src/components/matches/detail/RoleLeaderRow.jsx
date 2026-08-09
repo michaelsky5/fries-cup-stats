@@ -30,7 +30,10 @@ export default function RoleLeaderRow({ role, entry, locale = 'zh-CN' }) {
         </span>
         <span className={styles.roleLeaderPlayer}>
           <strong>{getName(entry)}</strong>
-          <em>{entry.team_short_name || entry.team_name}</em>
+          <em>
+            {entry.team_short_name || entry.team_name}
+            {!entry.matchAwardEligible ? ` · ${locale === 'en-US' ? 'LOW SAMPLE' : '低样本'}` : ''}
+          </em>
         </span>
       </span>
       <span className={styles.roleLeaderScore} title={`Raw rating ${formatRating(entry.roleScore)} / 100`}>

@@ -14,7 +14,7 @@ import {
   scoreLeaderboardEntriesLegacy
 } from '../src/lib/leaderboardScoring.js'
 import { buildRatingBaselinesFromDb, buildRatingBaselinesFromPlayerLogs } from '../src/lib/ratingBaselines.js'
-import { getMatchRatingSummary } from '../src/lib/matchRatingAdapter.js'
+import { getMatchAwardMinimumMaps, getMatchRatingSummary } from '../src/lib/matchRatingAdapter.js'
 import { getLeaderboardEntries, sortLeaderboardEntries } from '../src/lib/leaderboardSelectors.js'
 import {
   attachRatingModelScoreToLeaderboardRows,
@@ -409,6 +409,88 @@ assert.equal(summaryWinner.mapResultAdjustment, 0.2)
 assert.equal(summaryLoser.ratingModelSourceScope, 'current_map')
 assert.equal(summaryLoser.mapResult, 'LOSS')
 assert.ok(summaryWinner.mapRating > summaryLoser.mapRating)
+assert.equal(mapSummary.awardEligibility.minimumMaps, 1)
+assert.equal(mapSummary.topEntries[0]?.matchAwardEligible, true, 'single-map matches must remain award eligible')
+
+assert.equal(getMatchAwardMinimumMaps(1), 1)
+assert.equal(getMatchAwardMinimumMaps(2), 2)
+assert.equal(getMatchAwardMinimumMaps(3), 2)
+assert.equal(getMatchAwardMinimumMaps(4), 2)
+assert.equal(getMatchAwardMinimumMaps(5), 3)
+
+const rotationMatchMaps = Array.from({ length: 4 }, (_, index) => {
+  const mapOrder = index + 1
+  const teamAPlayer = index === 0
+    ? {
+        player_id: 'ASSERT_PLAYER_1',
+        player_name: 'One Map Sub',
+        team_id: 'A',
+        team_name: 'Alpha',
+        role: 'DPS',
+        heroes_played: 'Sierra',
+        eliminations: 52,
+        assists: 18,
+        deaths: 0,
+        damage: 18000,
+        healing: 0,
+        mitigation: 0
+      }
+    : {
+        player_id: 'ASSERT_PLAYER_2',
+        player_name: 'Series Starter',
+        team_id: 'A',
+        team_name: 'Alpha',
+        role: 'DPS',
+        heroes_played: 'Sierra',
+        eliminations: 22,
+        assists: 7,
+        deaths: 4,
+        damage: 8200,
+        healing: 0,
+        mitigation: 0
+      }
+
+  return {
+    map_order: mapOrder,
+    map_name: `ASSERT ROTATION MAP ${mapOrder}`,
+    match_time: '10:00',
+    winner: 'A',
+    score_a: 1,
+    score_b: 0,
+    team_a_stats: [teamAPlayer],
+    team_b_stats: [{
+      player_id: 'ASSERT_PLAYER_4',
+      player_name: 'Full Series Opponent',
+      team_id: 'B',
+      team_name: 'Beta',
+      role: 'DPS',
+      heroes_played: 'Symmetra',
+      eliminations: 12,
+      assists: 4,
+      deaths: 8,
+      damage: 4600,
+      healing: 0,
+      mitigation: 0
+    }]
+  }
+})
+const rotationMatchSummary = getMatchRatingSummary({
+  match_id: 'ASSERT_ROTATION_MATCH',
+  team_a: { id: 'A', name: 'Alpha', short: 'ALP' },
+  team_b: { id: 'B', name: 'Beta', short: 'BET' }
+}, rotationMatchMaps, syntheticDb.players)
+const oneMapSubEntry = rotationMatchSummary.entries.find(entry => entry.player_id === 'ASSERT_PLAYER_1')
+const seriesStarterEntry = rotationMatchSummary.entries.find(entry => entry.player_id === 'ASSERT_PLAYER_2')
+
+assert.equal(rotationMatchSummary.awardEligibility.minimumMaps, 2)
+assert.ok(oneMapSubEntry.roleScore > seriesStarterEntry.roleScore, 'one-map substitute should own the highest raw match score in this fixture')
+assert.equal(oneMapSubEntry.matchAwardEligible, false)
+assert.equal(oneMapSubEntry.matchAwardMapsPlayed, 1)
+assert.equal(oneMapSubEntry.matchAwardMinimumMaps, 2)
+assert.ok(rotationMatchSummary.topEntries.length > 0)
+assert.ok(rotationMatchSummary.topEntries.every(entry => entry.matchAwardEligible))
+assert.notEqual(rotationMatchSummary.topEntries[0].player_id, oneMapSubEntry.player_id)
+assert.equal(rotationMatchSummary.roleLeaders.DPS.player_id, oneMapSubEntry.player_id, 'low-sample role leaders should remain visible')
 
 const multiHeroPlayers = [
   ...syntheticDb.players,
