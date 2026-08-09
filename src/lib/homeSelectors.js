@@ -1,5 +1,6 @@
 import { calculateSwissStandings } from './swissEngine.js'
 import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
+import { getMatchRoundScopeKey } from './matchRoundScope.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
@@ -525,12 +526,6 @@ function getRoundNumber(value) {
   return normalizeText(value).match(/\d+/)?.[0] || ''
 }
 
-function getRoundKey(value) {
-  const text = normalizeText(value).toLowerCase()
-  const number = getRoundNumber(text)
-  return number ? `round-${number}` : text
-}
-
 function getReadableRound(match) {
   const stage = normalizeText(match?.stage)
   const round = normalizeText(match?.round || match?.stage)
@@ -702,9 +697,9 @@ export function getCurrentRoundSummary(db) {
     sortByScheduleDesc(matches).find(isComplete) ||
     matches[0] ||
     null
-  const focusKey = getRoundKey(focusMatch?.round || focusMatch?.stage)
+  const focusKey = getMatchRoundScopeKey(focusMatch)
   const roundMatches = focusKey
-    ? matches.filter(match => getRoundKey(match?.round || match?.stage) === focusKey)
+    ? matches.filter(match => getMatchRoundScopeKey(match) === focusKey)
     : matches
   const completed = roundMatches.filter(isComplete).length
   const live = roundMatches.filter(isLive).length
