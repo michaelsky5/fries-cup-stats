@@ -59,6 +59,15 @@ function teamIdentityValues(team) {
   ].map(normalizeKey).filter(Boolean)
 }
 
+function comparableTeamIdentityValues(team) {
+  return teamIdentityValues(team).filter(value => !['tbd', 'tbc'].includes(value))
+}
+
+function isSameTeam(left, right) {
+  const rightKeys = new Set(comparableTeamIdentityValues(right))
+  return comparableTeamIdentityValues(left).some(value => rightKeys.has(value))
+}
+
 function normalizeTeam(team, extras = {}) {
   if (!team) return null
   const id = normalizeText(team.team_id || team.id)
@@ -189,6 +198,35 @@ function slotTeam(slot, teamBySeed, builtByNumber) {
   return (slot.winnerOf ? source?.winner : source?.loser) || sourcePlaceholder(slot)
 }
 
+function alignActualTeams(fallbackTeams, actualTeams) {
+  const usedActualIndexes = new Set()
+  const aligned = fallbackTeams.map(fallbackTeam => {
+    const actualIndex = actualTeams.findIndex((actualTeam, index) => (
+      !usedActualIndexes.has(index) && isSameTeam(actualTeam, fallbackTeam)
+    ))
+
+    if (actualIndex < 0) return null
+    usedActualIndexes.add(actualIndex)
+    const actualTeam = actualTeams[actualIndex]
+    return {
+      team: actualTeam.isTbd ? fallbackTeam : actualTeam,
+      actualIndex
+    }
+  })
+
+  return aligned.map((entry, index) => {
+    if (entry) return entry
+
+    const positionalTeam = actualTeams[index]
+    if (positionalTeam && !positionalTeam.isTbd && !usedActualIndexes.has(index)) {
+      usedActualIndexes.add(index)
+      return { team: positionalTeam, actualIndex: index }
+    }
+
+    return { team: fallbackTeams[index], actualIndex: -1 }
+  })
+}
+
 export function buildFixedDoubleEliminationPlayoff({
   config = {},
   matches = [],
@@ -211,7 +249,9 @@ export function buildFixedDoubleEliminationPlayoff({
     const actual = actualByNumber.get(definition.number)
     const fallbackTeams = definition.slots.map(slot => slotTeam(slot, teamBySeed, builtByNumber))
     const actualTeams = actual ? [normalizeTeam(actual.team_a), normalizeTeam(actual.team_b)] : []
-    const teams = fallbackTeams.map((team, index) => actualTeams[index] && !actualTeams[index].isTbd ? actualTeams[index] : team)
+    const alignedTeams = alignActualTeams(fallbackTeams, actualTeams)
+    const teams = alignedTeams.map(entry => entry.team)
+    const actualTeamRows = actual ? [actual.team_a, actual.team_b] : []
     const winner = winnerTeam(actual)
     const scheduledAt = matchTime(actual) || normalizeText(config?.schedule?.[definition.number])
     const match = {
@@ -227,8 +267,8 @@ export function buildFixedDoubleEliminationPlayoff({
       slots: definition.slots.map((slot, index) => ({ ...slot, team: teams[index] })),
       teamA: teams[0],
       teamB: teams[1],
-      scoreA: actual?.team_a?.score ?? null,
-      scoreB: actual?.team_b?.score ?? null,
+      scoreA: actualTeamRows[alignedTeams[0].actualIndex]?.score ?? null,
+      scoreB: actualTeamRows[alignedTeams[1].actualIndex]?.score ?? null,
       winner,
       loser: loserTeam(actual, winner),
       raw: actual || null

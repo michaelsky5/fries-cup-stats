@@ -14,6 +14,7 @@
     "check:fcr26-swiss-rating": "node scripts/freezeFcr26SwissBaselines.mjs --check",
     "test:frozen-rating-baseline": "node scripts/assertFrozenRatingBaseline.mjs",
     "test:roster-identity": "node scripts/assertRosterIdentityResolution.mjs",
+    "test:playoff-bracket": "node scripts/assertPlayoffBracket.mjs",
     "compare:scoring": "node scripts/compareScoringEngines.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
