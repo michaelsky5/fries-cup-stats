@@ -539,6 +539,67 @@ export function getBreakthroughBracket(db, season) {
   return getBreakthroughState(db, season).bracket
 }
 
+function getLcqLayoutMatches(layout) {
+  const matches = []
+
+  safeArr(layout?.divisions).forEach(division => {
+    if (division?.playInMatch) matches.push(division.playInMatch)
+    safeArr(division?.roundOf16Matches).forEach(match => matches.push(match))
+    if (division?.qualificationMatch) matches.push(division.qualificationMatch)
+  })
+
+  return matches
+}
+
+function resolvePublishedMatchTeam(rawTeam, slot) {
+  const team = slot?.team
+  if (!team || team.isTbd) return rawTeam
+
+  const id = normalizeText(team.id || team.team_id)
+  const short = normalizeText(team.short || team.team_short_name || team.name || team.team_name || id)
+  const name = normalizeText(team.name || team.team_name || short)
+
+  return {
+    ...rawTeam,
+    ...team,
+    id,
+    team_id: id,
+    short,
+    team_short_name: short,
+    name,
+    team_name: name,
+    score: rawTeam?.score
+  }
+}
+
+export function resolvePublishedAdvanceTeams(db, season) {
+  const layout = getBreakthroughState(db, season).layout
+  if (!layout) return db
+
+  const resolvedById = new Map(
+    getLcqLayoutMatches(layout)
+      .map(match => [normalizeText(match?.id || match?.raw?.match_id || match?.raw?.id), match])
+      .filter(([id]) => Boolean(id))
+  )
+
+  if (!resolvedById.size) return db
+
+  let changed = false
+  const matches = safeArr(db?.matches).map(match => {
+    const resolved = resolvedById.get(normalizeText(match?.match_id || match?.id))
+    if (!resolved) return match
+
+    const teamA = resolvePublishedMatchTeam(match?.team_a, resolved.slots?.[0])
+    const teamB = resolvePublishedMatchTeam(match?.team_b, resolved.slots?.[1])
+    if (teamA === match?.team_a && teamB === match?.team_b) return match
+
+    changed = true
+    return { ...match, team_a: teamA, team_b: teamB }
+  })
+
+  return changed ? { ...db, matches } : db
+}
+
 export function getPlayoffBracket(db, season) {
   const config = getConfiguredPhase(season, db, 'playoffs')
   const bracket = adaptBracketFromDb(db, BRACKET_PHASES.PLAYOFFS, {

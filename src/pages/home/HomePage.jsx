@@ -1157,6 +1157,8 @@ function ArchiveDataVault({ summary, dataPulse }) {
 
 function ArchiveHonors({ archive, dataPulse }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const finalRanking = archive.finalRanking.slice(0, 8)
+  const hasFinalRanking = finalRanking.length > 0
   const dataAwards = archive.dataKings.map(item => ({
     key: item.key,
     label: homeValue(item.label, locale),
@@ -1186,16 +1188,16 @@ function ArchiveHonors({ archive, dataPulse }) {
   return (
     <section className={styles.archiveBlock}>
       <SectionHead eyebrow="HONORS" title={homeText(locale, '赛季荣誉', 'Season Honors')} actionTo="/advance" actionText={homeText(locale, '完整排名', 'Full Ranking')} />
-      <div className={styles.honorGrid}>
-        <div className={styles.rankingList}>
-          {archive.finalRanking.slice(0, 8).map(team => (
+      <div className={`${styles.honorGrid} ${hasFinalRanking ? '' : styles.honorGridAwardsOnly}`}>
+        {hasFinalRanking ? <div className={styles.rankingList}>
+          {finalRanking.map(team => (
             <Link key={team.team_id || team.id} to={withSeason(`/teams/${routeId(team)}`)}>
               <span>{String(team.final_rank || '').padStart(2, '0')}</span>
               <strong>{formatTeamName(team)}</strong>
               <em>{homeValue(team.final_rank_text || '最终排名', locale)}</em>
             </Link>
           ))}
-        </div>
+        </div> : null}
         <aside className={styles.seasonAwardsPanel}>
           <header className={styles.seasonAwardsHead}>
             <span>SEASON AWARDS</span>
@@ -1378,10 +1380,10 @@ export default function HomePage() {
   const following = useMemo(() => getFollowingOverview(db, favorites), [db, favorites])
   const latest = useMemo(() => getLatestResultSnapshot(db, 5), [db])
   const advance = useMemo(() => getAdvanceSnapshot(db, 8, season), [db, season])
-  const archive = useMemo(() => getArchiveHighlights(db), [db])
+  const archive = useMemo(() => getArchiveHighlights(db, season), [db, season])
   const archiveMatches = useMemo(() => getArchiveFeaturedMatches(db, season, 5), [db, season])
   const summary = useMemo(() => getHomeSummary(db), [db])
-  const dataPulse = useMemo(() => getDataPulse(db), [db])
+  const dataPulse = useMemo(() => getDataPulse(db, season), [db, season])
   const featuredMatches = useMemo(
     () => getFeaturedCurrentMatches(db, { limit: 3, season, round: overview.round, favorites }),
     [db, season, overview.round, favorites]
@@ -1389,7 +1391,7 @@ export default function HomePage() {
   const includeReview = overview.variant === 'archive' && (reviewAvailable || season?.reviewEnabled)
 
   return (
-    <div className={styles.shell}>
+    <div className={`${styles.shell} ${overview.variant === 'archive' ? styles.archiveShell : ''}`}>
       {overview.variant === 'archive' ? (
         <ArchiveOverview
           overview={overview}

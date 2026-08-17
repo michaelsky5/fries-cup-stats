@@ -73,7 +73,7 @@ export default function AdvancePage() {
 
   return (
     <div className={styles.shell}>
-      <AdvanceHeader season={season} seasonId={seasonId} summary={summary} t={t} />
+      <AdvanceHeader season={season} seasonId={seasonId} summary={summary} result={finalResult} t={t} />
       <AdvanceStageRail items={rail} t={t} getHref={getPhaseHref} />
 
       {activePhase === 'swiss' ? (

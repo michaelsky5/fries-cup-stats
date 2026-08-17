@@ -1,4 +1,4 @@
-export const DEFAULT_SEASON_ID = 'FCA26'
+export const DEFAULT_SEASON_ID = 'FCR26'
 export const SEASON_STORAGE_KEY = 'fries_cup_stats_active_season'
 export const SEASON_URL_PARAM = 'season'
 
@@ -23,7 +23,7 @@ export const SEASONS = [
     reportUrl: 'https://admin.fries-cup.com/api/public/seasons/FCR26/publish/latest/report',
     localDataUrl: '/data/fcr2026_local_public.json',
     preferLocalData: PREFER_LOCAL_DATA,
-    reviewEnabled: false,
+    reviewEnabled: true,
     rankingMinTimeMins: 30,
     rules: {
       rankingMinTimeMins: 30,

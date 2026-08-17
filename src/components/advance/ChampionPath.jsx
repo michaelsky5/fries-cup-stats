@@ -24,7 +24,10 @@ export default function ChampionPath({ champion, path, seasonId, t, withSeason }
       <div className={styles.championPathList}>
         {path.map(item => (
           <Link key={item.matchId} to={withSeason(`/matches/${item.matchId}`)}>
-            <span>{item.stage}</span>
+            <span className={styles.championPathStage}>
+              <i className={item.won ? styles.championPathWin : styles.championPathLoss}>{item.won ? 'W' : 'L'}</i>
+              {item.stage}
+            </span>
             <strong>{teamShort(champion)} {item.scoreLabel} {teamShort(item.opponent)}</strong>
             <em>{t('advance.final.opponent', '对手')} {teamFull(item.opponent)}</em>
           </Link>

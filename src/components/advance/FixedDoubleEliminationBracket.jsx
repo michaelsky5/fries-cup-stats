@@ -169,6 +169,9 @@ function PlayoffLane({ type, matchesByNumber, cardProps, t }) {
 }
 
 function GrandFinalColumn({ match, cardProps, t }) {
+  const championName = match?.winner?.team_short_name || match?.winner?.short || match?.winner?.team_name || match?.winner?.name
+  const championFullName = match?.winner?.team_name || match?.winner?.name || ''
+
   return (
     <section className={styles.playoffGrandFinalColumn}>
       <header>
@@ -187,7 +190,8 @@ function GrandFinalColumn({ match, cardProps, t }) {
           <i className={styles.playoffGrandFinalToChampion} aria-hidden="true" />
           <div className={styles.playoffChampionTarget}>
             <span>WINNER</span>
-            <strong>{t('advance.playoffs.seasonChampion', '赛季总冠军')}</strong>
+            <strong>{championName || t('advance.playoffs.seasonChampion', '赛季总冠军')}</strong>
+            {championName && championFullName !== championName ? <em>{championFullName}</em> : null}
           </div>
         </div>
       </div>

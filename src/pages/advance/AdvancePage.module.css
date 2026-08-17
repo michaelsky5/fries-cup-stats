@@ -20,10 +20,10 @@
 .headerCopy {
   min-width: 0;
   display: grid;
-  align-content: end;
-  gap: 18px;
-  min-height: 218px;
-  padding: 28px;
+  align-content: center;
+  gap: 16px;
+  min-height: 206px;
+  padding: 30px 34px;
   background: transparent;
 }
 
@@ -79,10 +79,10 @@
 .headerCopy h1 {
   margin: 0;
   color: var(--portal-ink);
-  font-size: clamp(52px, 5.3vw, 86px);
+  font-size: clamp(50px, 4.9vw, 80px);
   font-weight: 950;
   letter-spacing: 0;
-  line-height: 0.82;
+  line-height: 0.88;
 }
 
 .headerCopy p {
@@ -109,8 +109,8 @@
   display: grid;
   align-content: space-between;
   gap: 16px;
-  min-height: 109px;
-  padding: 18px;
+  min-height: 103px;
+  padding: 17px 18px;
   border-right: 1px solid rgba(244, 195, 32, 0.38);
   border-bottom: 1px solid rgba(244, 195, 32, 0.38);
 }
@@ -124,7 +124,7 @@
   min-width: 0;
   overflow-wrap: anywhere;
   color: var(--fc-white);
-  font-size: clamp(19px, 1.6vw, 27px);
+  font-size: clamp(18px, 1.5vw, 25px);
   font-weight: 950;
   line-height: 1.02;
 }
@@ -183,12 +183,12 @@
 .stageNode {
   position: relative;
   min-width: 190px;
-  min-height: 72px;
+  min-height: 68px;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 8px 12px;
   align-content: center;
-  padding: 14px 18px 18px;
+  padding: 12px 18px 17px;
   border-right: 1px solid rgba(255, 255, 255, 0.22);
   background: var(--fc-white);
   color: var(--portal-ink);
@@ -319,6 +319,15 @@
   min-width: 0;
   background: var(--fc-white);
   border: 2px solid var(--portal-border);
+}
+
+.headerMetricAccent {
+  background: var(--portal-yellow);
+}
+
+.headerMetricAccent span,
+.headerMetricAccent strong {
+  color: var(--portal-black);
 }
 
 .phaseHero {
@@ -3039,6 +3048,17 @@
   line-height: 1;
 }
 
+.playoffChampionTarget em {
+  max-width: 100%;
+  overflow: hidden;
+  color: rgba(42, 42, 42, 0.68);
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .playoffFlowConnector {
   position: relative;
   z-index: 1;
@@ -3330,37 +3350,61 @@
 
 .finalHero {
   display: grid;
-  grid-template-columns: minmax(0, 0.54fr) minmax(0, 0.46fr);
+  grid-template-columns: minmax(0, 0.58fr) minmax(0, 0.42fr);
+  overflow: hidden;
 }
 
 .finalChampionBlock {
   min-width: 0;
   display: grid;
-  align-content: end;
-  gap: 14px;
-  min-height: 290px;
+  align-content: center;
+  gap: 20px;
+  min-height: 220px;
   background: var(--portal-yellow);
   border-right: 2px solid var(--portal-border);
-  padding: 24px;
+  padding: 26px 30px;
+}
+
+.finalChampionIdentity {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+}
+
+.finalChampionIdentity > div {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.finalChampionSeason {
+  color: rgba(42, 42, 42, 0.68);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+  line-height: 1;
 }
 
 .finalHeroLogo {
-  width: 92px;
-  height: 92px;
+  width: 78px;
+  height: 78px;
 }
 
 .finalHeroLogo img {
-  width: 76px;
-  height: 76px;
+  width: 66px;
+  height: 66px;
 }
 
 .finalChampionBlock h2 {
+  margin: 0;
   min-width: 0;
   overflow-wrap: anywhere;
   color: var(--portal-black);
-  font-size: clamp(58px, 7vw, 112px);
+  font-size: clamp(52px, 5.4vw, 82px);
   font-weight: 950;
-  line-height: 0.78;
+  line-height: 0.84;
 }
 
 .finalChampionBlock p {
@@ -3373,11 +3417,26 @@
 .finalMatchBlock {
   min-width: 0;
   display: grid;
-  align-content: end;
-  gap: 18px;
-  padding: 24px;
+  align-content: center;
+  gap: 14px;
+  padding: 26px 30px;
   background: var(--portal-black);
   color: var(--fc-white);
+}
+
+.finalMatchHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.finalMatchHeading em {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 950;
+  line-height: 1;
 }
 
 .finalMatchBlock span {
@@ -3388,7 +3447,7 @@
   min-width: 0;
   overflow-wrap: anywhere;
   color: var(--fc-white);
-  font-size: clamp(30px, 3vw, 48px);
+  font-size: clamp(30px, 3vw, 46px);
   font-weight: 950;
   line-height: 1;
 }
@@ -3399,7 +3458,7 @@
 }
 
 .championPath {
-  padding-bottom: 18px;
+  padding-bottom: 12px;
 }
 
 .championPathLead {
@@ -3407,7 +3466,7 @@
   grid-template-columns: 64px minmax(0, 1fr);
   gap: 14px;
   align-items: center;
-  padding: 18px 24px;
+  padding: 14px 24px;
   border-bottom: 1px solid var(--portal-border);
   background: var(--portal-cream);
 }
@@ -3447,13 +3506,46 @@
 .championPathList a {
   min-width: 0;
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr) minmax(180px, auto);
+  grid-template-columns: 168px minmax(0, 1fr) minmax(180px, auto);
   gap: 16px;
   align-items: center;
-  min-height: 64px;
+  min-height: 56px;
   border-bottom: 1px solid var(--portal-border-soft);
   color: var(--portal-ink);
   text-decoration: none;
+}
+
+.championPathList a:hover {
+  background: color-mix(in srgb, var(--portal-yellow) 14%, var(--fc-white));
+}
+
+.championPathStage {
+  min-width: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.championPathStage i {
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--portal-border);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 950;
+}
+
+.championPathWin {
+  background: var(--portal-yellow);
+  color: var(--portal-black);
+}
+
+.championPathLoss {
+  background: var(--portal-black);
+  color: var(--fc-white);
 }
 
 .championPathList strong {
@@ -3543,14 +3635,15 @@
   border-left: 6px solid var(--portal-yellow);
 }
 
+
 @media (max-width: 1366px) {
   .advanceHeader {
     grid-template-columns: minmax(0, 1fr) minmax(360px, 0.6fr);
   }
 
   .headerCopy {
-    min-height: 220px;
-    padding: 24px;
+    min-height: 206px;
+    padding: 28px;
   }
 
   .headerCopy h1 {
@@ -3639,6 +3732,10 @@
     border-right: 0;
   }
 
+  .finalMatchBlock {
+    min-height: 190px;
+  }
+
   .swissFactGrid,
   .zoneList,
   .swissSummary {
@@ -3703,6 +3800,18 @@
   }
 }
 
+.finalMatchBlock p {
+  min-width: 0;
+  overflow: hidden;
+  margin: -4px 0 2px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 760px) {
   .headerStatus,
   .swissFactGrid,
@@ -3718,6 +3827,57 @@
 
   .stageNode {
     min-width: 170px;
+  }
+
+
+  .headerStatus {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .headerCopy {
+    min-height: 184px;
+    padding: 24px 20px;
+  }
+
+  .headerCopy h1 {
+    font-size: 48px;
+  }
+
+  .headerMetric,
+  .headerChampion {
+    min-height: 84px;
+    padding: 14px;
+  }
+
+  .finalChampionBlock,
+  .finalMatchBlock {
+    min-height: 0;
+    padding: 22px 20px;
+  }
+
+  .finalChampionIdentity {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .finalHeroLogo {
+    width: 64px;
+    height: 64px;
+  }
+
+  .finalHeroLogo img {
+    width: 54px;
+    height: 54px;
+  }
+
+  .finalChampionBlock h2 {
+    font-size: 48px;
+  }
+
+  .finalMatchHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .lcqMetrics {
