@@ -202,8 +202,14 @@
 }
 
 .featuredMatchCardPrimary .logoDuel b {
+  width: auto;
+  min-height: 0;
+  padding: 0;
+  background: transparent;
   color: var(--portal-black);
-  font-size: clamp(34px, 4vw, 58px);
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .featuredMatchCard .logoDuel {
@@ -228,7 +234,7 @@
 .listSurface {
   display: flex;
   flex-direction: column;
-  gap: 34px;
+  gap: 30px;
   min-width: 0;
 }
 
@@ -237,27 +243,50 @@
 }
 
 .hubHero {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.58fr);
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.52fr);
+  gap: clamp(28px, 3vw, 48px);
   align-items: stretch;
-  padding: 26px;
-  background: var(--fc-white);
+  min-height: 300px;
+  overflow: hidden;
+  padding: clamp(30px, 3vw, 44px);
+  background:
+    linear-gradient(112deg, rgba(244, 195, 32, 0.075), transparent 38%),
+    var(--portal-black);
   border: 2px solid var(--portal-border);
+  box-shadow: 12px 12px 0 rgba(42, 42, 42, 0.075);
+}
+
+.hubHero::before {
+  position: absolute;
+  top: -92px;
+  right: 30%;
+  width: 240px;
+  height: 240px;
+  border: 48px solid rgba(244, 195, 32, 0.035);
+  content: "";
+  pointer-events: none;
+  transform: rotate(17deg);
+}
+
+.hubHero > * {
+  position: relative;
+  z-index: 1;
 }
 
 .hubHero > div:first-child {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  gap: 16px;
-  padding: 16px 0;
+  justify-content: center;
+  gap: 18px;
+  padding: 12px 0;
 }
 
 .hubHero h1 {
   margin: 0;
-  color: var(--portal-ink);
+  color: var(--fc-white);
   font-size: clamp(42px, 4vw, 68px);
   font-weight: 950;
   line-height: 0.94;
@@ -265,27 +294,58 @@
 
 .hubHero p {
   margin: 0;
-  color: var(--portal-muted);
+  color: rgba(255, 255, 255, 0.62);
   font-size: 18px;
   font-weight: 900;
 }
 
 .hubHeroMeta {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 28px;
-  min-height: 190px;
-  padding: 22px;
+  display: grid;
+  align-content: center;
+  gap: 16px;
+  min-height: 210px;
+  padding: 28px;
   background: var(--portal-yellow);
   border: 2px solid var(--portal-border);
 }
 
-.hubHeroMeta strong {
-  color: var(--portal-black);
-  font-size: clamp(25px, 2.25vw, 36px);
+.hubHeroMetaLabel {
+  color: rgba(42, 42, 42, 0.58);
+  font-size: 11px;
   font-weight: 950;
-  line-height: 1.08;
+  letter-spacing: 0.1em;
+  line-height: 1;
+}
+
+.hubHeroMetric {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.hubHeroMetric strong {
+  color: var(--portal-black);
+  font-size: clamp(58px, 5vw, 82px);
+  font-weight: 950;
+  letter-spacing: -0.05em;
+  line-height: 0.8;
+}
+
+.hubHeroMetric span {
+  padding-bottom: 4px;
+  color: rgba(42, 42, 42, 0.74);
+  font-size: 16px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.hubHeroMeta p {
+  max-width: 420px;
+  margin: 0;
+  color: rgba(42, 42, 42, 0.68);
+  font-size: 13px;
+  font-weight: 850;
+  line-height: 1.5;
 }
 
 .hubHeroMeta a,
@@ -303,14 +363,49 @@
   font-size: 12px;
   font-weight: 950;
   text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.hubHeroMeta a,
+.hubSectionHead > a {
+  gap: 10px;
+}
+
+.hubHeroMeta a b,
+.hubSectionHead > a span {
+  font-size: 16px;
+  line-height: 1;
+  transition: transform var(--transition-fast);
+}
+
+.hubHeroMeta a:hover,
+.hubHeroMeta a:focus-visible,
+.hubSectionHead > a:hover,
+.hubSectionHead > a:focus-visible,
+.archiveGatewayMain a:hover,
+.archiveGatewayMain a:focus-visible {
+  background: var(--fc-white);
+  color: var(--portal-black);
+  outline: 0;
+  transform: translate(-1px, -1px);
+}
+
+.hubHeroMeta a:hover b,
+.hubHeroMeta a:focus-visible b,
+.hubSectionHead > a:hover span,
+.hubSectionHead > a:focus-visible span {
+  transform: translateX(3px);
 }
 
 .hubSection {
   display: flex;
   flex-direction: column;
-  gap: 22px;
-  padding-top: 30px;
-  border-top: 2px solid var(--portal-border);
+  gap: 20px;
+  padding-top: 26px;
+  border-top: 1px solid rgba(42, 42, 42, 0.42);
 }
 
 .hubSectionHead {
@@ -334,7 +429,6 @@
 }
 
 .archiveGatewayMain > span,
-.archiveSideList > span,
 .featuredMatchCard > span {
   color: var(--portal-yellow);
   font-size: 12px;
@@ -364,19 +458,44 @@
 .archiveSideList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .archiveFeatureLayout {
   display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(380px, 0.88fr);
+  grid-template-columns: minmax(0, 1.02fr) minmax(440px, 0.98fr);
   gap: 18px;
+  align-items: stretch;
 }
 
 .archiveSideList {
-  padding: 20px;
+  padding: 18px;
   background: var(--fc-white);
   border: 2px solid rgba(42, 42, 42, 0.16);
+  box-shadow: 8px 8px 0 rgba(42, 42, 42, 0.04);
+}
+
+.archiveSideListHead {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 0 2px 10px;
+  border-bottom: 1px solid rgba(42, 42, 42, 0.16);
+}
+
+.archiveSideListHead span {
+  color: var(--portal-yellow);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+}
+
+.archiveSideListHead strong {
+  color: var(--portal-muted);
+  font-size: 12px;
+  font-weight: 900;
 }
 
 .classicGrid {
@@ -386,6 +505,7 @@
 }
 
 .featuredMatchCard {
+  position: relative;
   min-height: 172px;
   display: flex;
   flex-direction: column;
@@ -396,13 +516,52 @@
   border: 2px solid rgba(42, 42, 42, 0.14);
   color: var(--portal-ink);
   text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .featuredMatchCardPrimary {
-  min-height: 420px;
+  min-height: 390px;
+  justify-content: center;
   padding: 28px;
   background: var(--portal-yellow);
   border-color: var(--portal-border);
+  box-shadow: 10px 10px 0 rgba(42, 42, 42, 0.065);
+}
+
+.featuredMatchCardPrimary::after {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  color: rgba(42, 42, 42, 0.08);
+  content: "FINAL";
+  font-size: clamp(54px, 5vw, 82px);
+  font-weight: 950;
+  line-height: 0.8;
+  pointer-events: none;
+}
+
+.featuredMatchCard:hover,
+.featuredMatchCard:focus-visible {
+  background: #fff7d8;
+  border-color: rgba(42, 42, 42, 0.42);
+  box-shadow: 6px 6px 0 rgba(42, 42, 42, 0.06);
+  outline: 0;
+  transform: translate(-2px, -2px);
+}
+
+.featuredMatchCardPrimary:hover,
+.featuredMatchCardPrimary:focus-visible {
+  background: #ffd84b;
+}
+
+.featuredMatchCopy {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
 }
 
 .featuredMatchCard strong {
@@ -442,6 +601,69 @@
   color: var(--fc-white);
   font-size: 12px;
   font-weight: 950;
+}
+
+.featuredMatchCardCompact {
+  min-height: 108px;
+  display: grid;
+  grid-template-columns: minmax(132px, auto) minmax(0, 1fr) 36px;
+  grid-template-areas:
+    "stage stage action"
+    "duel copy action";
+  gap: 8px 14px;
+  align-items: center;
+  justify-content: stretch;
+  padding: 13px 14px;
+  background: var(--portal-cream);
+}
+
+.featuredMatchCardCompact > span {
+  grid-area: stage;
+  font-size: 10px;
+}
+
+.featuredMatchCardCompact .logoDuel {
+  grid-area: duel;
+}
+
+.featuredMatchCardCompact .featuredMatchCopy {
+  grid-area: copy;
+  gap: 6px;
+}
+
+.featuredMatchCardCompact .featuredMatchCopy strong {
+  font-size: 20px;
+}
+
+.featuredMatchCardCompact .featuredMatchCopy em {
+  display: none;
+}
+
+.featuredMatchCardCompact .featuredMatchCopy p {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 11px;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.featuredMatchCardCompact > b {
+  width: 34px;
+  min-height: 34px;
+  grid-area: action;
+  justify-content: center;
+  padding: 0;
+  font-size: 18px;
+}
+
+.featuredMatchCardCompact .teamLogo {
+  width: 38px;
+  height: 38px;
+}
+
+.featuredMatchCardCompact .logoDuel b {
+  font-size: 15px;
 }
 
 .archiveGateway {
@@ -497,11 +719,29 @@
   border: 2px solid rgba(42, 42, 42, 0.16);
   color: var(--portal-ink);
   text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .stageEntryGrid a:first-child {
   background: var(--portal-yellow);
   border-color: var(--portal-border);
+}
+
+.stageEntryGrid a:hover,
+.stageEntryGrid a:focus-visible {
+  background: #fff7d8;
+  border-color: rgba(42, 42, 42, 0.42);
+  outline: 0;
+  transform: translate(-1px, -1px);
+}
+
+.stageEntryGrid a:first-child:hover,
+.stageEntryGrid a:first-child:focus-visible {
+  background: var(--portal-black);
+  color: var(--fc-white);
 }
 
 .stageEntryGrid strong {
@@ -1119,6 +1359,10 @@
   .matchRow {
     grid-template-columns: 124px minmax(0, 1fr) 132px;
   }
+
+  .hubHero {
+    min-height: auto;
+  }
 }
 
 @media (max-width: 760px) {
@@ -1143,6 +1387,65 @@
   .hubHero,
   .archiveHeader {
     padding: 20px;
+  }
+
+  .hubHero {
+    gap: 20px;
+    box-shadow: 7px 7px 0 rgba(42, 42, 42, 0.075);
+  }
+
+  .hubHero h1 {
+    font-size: 46px;
+  }
+
+  .hubHeroMeta {
+    min-height: 190px;
+    padding: 22px;
+  }
+
+  .hubHeroMetric {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hubHeroMetric strong {
+    font-size: 64px;
+  }
+
+  .featuredMatchCardPrimary {
+    min-height: 330px;
+    padding: 22px;
+  }
+
+  .featuredMatchCardPrimary::after {
+    top: 20px;
+    right: 20px;
+    font-size: 48px;
+  }
+
+  .archiveSideList {
+    padding: 14px;
+  }
+
+  .archiveSideListHead {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+    padding-bottom: 12px;
+  }
+
+  .featuredMatchCardCompact {
+    min-height: 124px;
+    grid-template-columns: minmax(0, 1fr) 34px;
+    grid-template-areas:
+      "stage action"
+      "duel action"
+      "copy copy";
+  }
+
+  .featuredMatchCardCompact .featuredMatchCopy p {
+    white-space: normal;
   }
 
   .matchRow {

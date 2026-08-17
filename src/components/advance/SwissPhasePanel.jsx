@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useMemo, useState } from 'react'
+import AdvancePhaseHero from './AdvancePhaseHero.jsx'
 import SwissSummary from './SwissSummary.jsx'
 import SwissZoneSummary from './SwissZoneSummary.jsx'
 import SwissStandingsTable from './SwissStandingsTable.jsx'
@@ -54,11 +55,30 @@ export default function SwissPhasePanel({
   const handleZoneSelect = zone => {
     setActiveZone(current => current === zone ? 'all' : zone)
   }
+  const hero = (
+    <AdvancePhaseHero
+      eyebrow="SWISS STAGE"
+      title={t('advance.swiss.heroTitle', '瑞士轮积分榜')}
+      description={t('advance.swiss.heroDesc', '6 轮瑞士制 · 5 胜直通季后赛 · 3 胜进入突围赛 · 4 负出局')}
+      metrics={[
+        { value: overview.teamCount, label: t('advance.swiss.teams', '支队伍') },
+        { value: overview.rounds, label: t('advance.swiss.rounds', '轮比赛') },
+        {
+          value: `${overview.rules.directSlots || 4} / ${overview.rules.breakthroughSlots || 20}`,
+          label: t('advance.swiss.routeSlots', '直通 / 突围'),
+          accent: true
+        }
+      ]}
+    />
+  )
 
   if (!overview.hasStarted) {
     return (
       <div className={styles.phaseStack}>
-        <SwissSummary overview={overview} t={t} withSeason={withSeason} />
+        <section className={styles.swissDashboard}>
+          {hero}
+          <SwissSummary overview={overview} t={t} withSeason={withSeason} />
+        </section>
         <div className={styles.infoGrid}>
           <TiebreakerPanel rules={tiebreakers} t={t} />
           <section className={styles.futureList}>
@@ -77,14 +97,17 @@ export default function SwissPhasePanel({
 
   return (
     <div className={styles.phaseStack}>
-      <SwissSummary overview={overview} t={t} withSeason={withSeason} />
-      <SwissZoneSummary
-        zones={zones}
-        t={t}
-        archive={overview.seasonFinished || overview.swissFinished}
-        activeZone={activeZone}
-        onZoneSelect={handleZoneSelect}
-      />
+      <section className={styles.swissDashboard}>
+        {hero}
+        <SwissSummary overview={overview} t={t} withSeason={withSeason} />
+        <SwissZoneSummary
+          zones={zones}
+          t={t}
+          archive={overview.seasonFinished || overview.swissFinished}
+          activeZone={activeZone}
+          onZoneSelect={handleZoneSelect}
+        />
+      </section>
       <SwissStandingsTable
         rows={visibleRows}
         allRows={rows}

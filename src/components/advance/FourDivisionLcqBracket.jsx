@@ -1,16 +1,7 @@
-import { Link } from 'react-router-dom'
 import TeamLogo from '../matches/TeamLogo.jsx'
+import AdvancePhaseHero from './AdvancePhaseHero.jsx'
+import BracketMatchCard from './BracketMatchCard.jsx'
 import styles from '../../pages/advance/AdvancePage.module.css'
-
-function teamId(team) {
-  return team?.team_id || team?.id || ''
-}
-
-function sameTeam(left, right) {
-  const leftId = teamId(left)
-  const rightId = teamId(right)
-  return Boolean(leftId && rightId && leftId === rightId)
-}
 
 function formatSchedule(value) {
   if (!value) return 'TBD'
@@ -28,35 +19,6 @@ function formatSchedule(value) {
   return `${get('month')}/${get('day')} ${get('hour')}:${get('minute')}`
 }
 
-function SlotLine({ slot, score, winner, seasonId, withSeason, t }) {
-  const team = slot?.team
-  const isWinner = sameTeam(team, winner)
-  const placeholder = slot?.type === 'winner'
-    ? t('advance.lcq.winnerOf', `M${slot.winnerOf} 胜者`, { match: slot.winnerOf })
-    : t('advance.lcq.seedSlot', `LCQ #${slot?.seed}`, { seed: slot?.seed })
-  const content = (
-    <>
-      <span className={styles.lcqSlotSeed}>{slot?.type === 'seed' ? `#${slot.seed}` : 'W'}</span>
-      {team ? <TeamLogo team={team} seasonId={seasonId} className={styles.lcqTeamLogo} /> : <i className={styles.lcqTeamPlaceholder} />}
-      <strong>{team?.team_short_name || team?.short || team?.team_name || team?.name || placeholder}</strong>
-      <b>{score === '' || score === null || score === undefined ? '—' : score}</b>
-    </>
-  )
-
-  if (!teamId(team)) {
-    return <div className={`${styles.lcqSlot} ${isWinner ? styles.lcqSlotWinner : ''}`}>{content}</div>
-  }
-
-  return (
-    <Link
-      to={withSeason(`/teams/${teamId(team)}`)}
-      className={`${styles.lcqSlot} ${isWinner ? styles.lcqSlotWinner : ''}`}
-    >
-      {content}
-    </Link>
-  )
-}
-
 function LcqMatch({ match, seasonId, withSeason, t }) {
   const statusText = match.status === 'active'
     ? t('advance.matchStatus.active', '进行中')
@@ -64,28 +26,32 @@ function LcqMatch({ match, seasonId, withSeason, t }) {
       ? t('advance.matchStatus.completed', '已结束')
       : formatSchedule(match.scheduledAt)
 
+  const firstTo = Math.floor(Number(match.bestOf || 1) / 2) + 1
   return (
-    <article className={`${styles.lcqMatch} ${styles[`lcqMatch_${match.status}`] || ''} ${styles[`lcqMatch_${match.round}`] || ''}`}>
-      <header>
-        <span>{match.label}</span>
-        <b>BO{match.bestOf}</b>
-        <time>{statusText}</time>
-      </header>
-      <div>
-        {match.slots.map((slot, index) => (
-          <SlotLine
-            key={`${match.number}-${index}`}
-            slot={slot}
-            score={match.scores[index]}
-            winner={match.winner}
-            seasonId={seasonId}
-            withSeason={withSeason}
-            t={t}
-          />
-        ))}
-      </div>
-      {match.id ? <Link className={styles.lcqMatchLink} to={withSeason(`/matches/${match.id}`)}>{t('advance.common.details', '查看比赛')}</Link> : null}
-    </article>
+    <BracketMatchCard
+      label={match.label}
+      formatLabel={`FT${firstTo}`}
+      status={match.status}
+      statusText={statusText}
+      href={match.id ? withSeason(`/matches/${match.id}`) : ''}
+      slots={match.slots.map((slot, index) => {
+        const placeholder = slot?.type === 'winner'
+          ? t('advance.lcq.winnerOf', `M${slot.winnerOf} 胜者`, { match: slot.winnerOf })
+          : t('advance.lcq.seedSlot', `LCQ #${slot?.seed}`, { seed: slot?.seed })
+        return {
+          source: slot?.type === 'seed' ? `#${slot.seed}` : `W-M${slot.winnerOf}`,
+          team: slot.team,
+          name: slot.team?.team_short_name || slot.team?.short || slot.team?.team_name || slot.team?.name || placeholder,
+          detail: slot.team?.team_name || slot.team?.name || '',
+          score: match.scores[index]
+        }
+      })}
+      winner={match.winner}
+      accent={match.round}
+      seasonId={seasonId}
+      withSeason={withSeason}
+      t={t}
+    />
   )
 }
 
@@ -101,7 +67,10 @@ function Division({ division, seasonId, withSeason, t }) {
   const winner = division.qualificationMatch.winner
   const directSeeds = division.roundOf16Matches[1].slots
     .filter(slot => slot.type === 'seed')
-    .map(slot => `#${slot.seed}`)
+    .map(slot => {
+      const short = slot.team?.team_short_name || slot.team?.short
+      return short ? `#${slot.seed} ${short}` : `#${slot.seed}`
+    })
     .join(' / ')
   return (
     <section className={styles.lcqDivision}>
@@ -144,42 +113,55 @@ function Division({ division, seasonId, withSeason, t }) {
 export default function FourDivisionLcqBracket({ layout, seasonId, withSeason, t }) {
   return (
     <section className={styles.lcqSection}>
-      <header className={styles.sectionHeader}>
-        <div>
-          <span className={styles.sectionLabel}>LAST CHANCE QUALIFIER</span>
-          <h2>{t('advance.breakthrough.title', '突围赛晋级图')}</h2>
-        </div>
-        <div className={styles.lcqMetrics}>
-          <span><b>{layout.participantCount}</b>{t('advance.lcq.teams', '支队伍')}</span>
-          <span><b>{layout.totalMatches}</b>{t('advance.lcq.matches', '场比赛')}</span>
-          <span className={styles.lcqMetricAccent}><b>{layout.advanceSlots}</b>{t('advance.lcq.slots', '个名额')}</span>
-        </div>
-      </header>
+      <AdvancePhaseHero
+        eyebrow="LAST CHANCE QUALIFIER"
+        title={t('advance.breakthrough.title', '突围赛晋级图')}
+        description={t('advance.lcq.heroDesc', '20 支队伍 · 四分区单败 · 每区产生 1 个季后赛席位 · 固定签位')}
+        metrics={[
+          { value: layout.participantCount, label: t('advance.lcq.teams', '支队伍') },
+          { value: layout.totalMatches, label: t('advance.lcq.matches', '场比赛') },
+          { value: layout.advanceSlots, label: t('advance.lcq.slots', '个名额'), accent: true }
+        ]}
+      />
 
       <div className={styles.lcqRuleStrip}>
         <div>
           <span>01</span>
-          <strong>{t('advance.lcq.playIn', '入围赛')} · BO3</strong>
+          <strong>{t('advance.lcq.playIn', '入围赛')} · FT2</strong>
           <em>07/18 · 20:00 / 21:00</em>
         </div>
         <div>
           <span>02</span>
-          <strong>{t('advance.lcq.roundOf16', '16 强')} · BO3</strong>
+          <strong>{t('advance.lcq.roundOf16', '16 强')} · FT2</strong>
           <em>07/19 · 20:00 / 21:00</em>
         </div>
         <div>
           <span>03</span>
-          <strong>{t('advance.lcq.qualification', '晋级赛')} · BO5</strong>
+          <strong>{t('advance.lcq.qualification', '晋级赛')} · FT3</strong>
           <em>07/25–26 · 20:00 / 21:30</em>
         </div>
         <p>{layout.bracketLocked ? t('advance.lcq.locked', '固定签位 · 不重新排位') : null}</p>
       </div>
 
+      <p className={styles.bracketScheduleNoticeStrip}>
+        <span>{t('advance.scheduleNotice.label', '赛程时间说明')}</span>
+        <strong>{t('advance.scheduleNotice.delay', '赛程时间为计划开赛时间；同一直播间连续进行的场次，如前一场延时，后续比赛将依次顺延。')}</strong>
+      </p>
+
       <div className={styles.lcqPool}>
         <header>
           <div>
             <span className={styles.sectionLabel}>LCQ POOL</span>
-            <strong>{layout.rankingsLocked ? t('advance.lcq.finalSeeds', '瑞士轮最终种子') : t('advance.lcq.seedPending', '瑞士轮结束后锁定种子')}</strong>
+            <strong>
+              {layout.rankingsLocked
+                ? t('advance.lcq.finalSeeds', '瑞士轮最终种子')
+                : layout.lockedSeedCount
+                  ? t('advance.lcq.partialSeeds', `已锁定 ${layout.lockedSeedCount} / ${layout.participantCount} 个种子`, {
+                      locked: layout.lockedSeedCount,
+                      total: layout.participantCount
+                    })
+                  : t('advance.lcq.seedPending', '瑞士轮结束后锁定种子')}
+            </strong>
           </div>
           <em>{layout.completedMatches} / {layout.totalMatches}</em>
         </header>
@@ -195,7 +177,7 @@ export default function FourDivisionLcqBracket({ layout, seasonId, withSeason, t
 
       <div className={styles.lcqBracketLead}>
         <span>{t('advance.lcq.routeLabel', '固定晋级路径')}</span>
-        <strong>{t('advance.lcq.routeDesc', '#13–20 号种子先打入围赛；每个分区仅产生 1 个季后赛席位')}</strong>
+        <strong>{t('advance.lcq.routeDesc', '#13–20 号种子先打入围赛；每区产生 1 个季后赛席位；四个分区冠军按瑞士轮最终排名依次获得季后赛 #5–#8')}</strong>
         <em>{t('advance.bracket.scrollHint', '窄屏可横向滚动查看完整晋级图')}</em>
       </div>
       <div className={styles.lcqScroller}>
@@ -208,19 +190,19 @@ export default function FourDivisionLcqBracket({ layout, seasonId, withSeason, t
             <div>
               <span>01 · PLAY-IN</span>
               <strong>{t('advance.lcq.playIn', '入围赛')}</strong>
-              <em>4 MATCHES · BO3</em>
+              <em>4 MATCHES · FT2</em>
             </div>
             <i aria-hidden="true" />
             <div>
               <span>02 · ROUND OF 16</span>
               <strong>{t('advance.lcq.roundOf16', '16 强')}</strong>
-              <em>8 MATCHES · BO3</em>
+              <em>8 MATCHES · FT2</em>
             </div>
             <i aria-hidden="true" />
             <div>
               <span>03 · QUALIFICATION</span>
               <strong>{t('advance.lcq.qualification', '晋级赛')}</strong>
-              <em>4 MATCHES · BO5</em>
+              <em>4 MATCHES · FT3</em>
             </div>
             <i aria-hidden="true" />
             <div className={styles.lcqRoundGuideAdvance}>

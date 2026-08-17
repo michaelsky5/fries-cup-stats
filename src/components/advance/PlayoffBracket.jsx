@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import AdvanceEmptyState from './AdvanceEmptyState.jsx'
 import AdvancePhaseNav from './AdvancePhaseNav.jsx'
 import BracketRound from './BracketRound.jsx'
+import FixedDoubleEliminationBracket from './FixedDoubleEliminationBracket.jsx'
 import styles from '../../pages/advance/AdvancePage.module.css'
 
 function roundType(round) {
@@ -24,7 +25,7 @@ export default function PlayoffBracket({
   showFilter = true
 }) {
   const [filter, setFilter] = useState('all')
-  const rounds = bracket?.rounds || []
+  const rounds = useMemo(() => bracket?.rounds || [], [bracket?.rounds])
   const filteredRounds = useMemo(() => {
     if (filter === 'all') return rounds
     return rounds.filter(round => roundType(round) === filter)
@@ -35,6 +36,21 @@ export default function PlayoffBracket({
     { key: 'losers', label: t('advance.bracket.filter.losers', '败者组') },
     { key: 'final', label: t('advance.bracket.filter.final', '总决赛') }
   ]
+
+  if (bracket?.layout?.format === 'fixed_double_elimination') {
+    return (
+      <FixedDoubleEliminationBracket
+        layout={bracket.layout}
+        title={title}
+        eyebrow={eyebrow}
+        t={t}
+        seasonId={seasonId}
+        withSeason={withSeason}
+        isFavoriteTeam={isFavoriteTeam}
+        isPrimaryFavoriteTeam={isPrimaryFavoriteTeam}
+      />
+    )
+  }
 
   if (!rounds.length) {
     return (

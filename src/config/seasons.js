@@ -1,4 +1,4 @@
-export const DEFAULT_SEASON_ID = 'FCA26'
+export const DEFAULT_SEASON_ID = 'FCR26'
 export const SEASON_STORAGE_KEY = 'fries_cup_stats_active_season'
 export const SEASON_URL_PARAM = 'season'
 
@@ -23,7 +23,7 @@ export const SEASONS = [
     reportUrl: 'https://admin.fries-cup.com/api/public/seasons/FCR26/publish/latest/report',
     localDataUrl: '/data/fcr2026_local_public.json',
     preferLocalData: PREFER_LOCAL_DATA,
-    reviewEnabled: false,
+    reviewEnabled: true,
     rankingMinTimeMins: 30,
     rules: {
       rankingMinTimeMins: 30,
@@ -40,6 +40,14 @@ export const SEASONS = [
           matchesPerRound: 19,
           directSlots: 4,
           breakthroughSlots: 20,
+          withdrawnTeams: [
+            'FCR26-T031',
+            'FCR26-T023',
+            'FCR26-T005',
+            'FCR26-T003',
+            'FCR26-T014',
+            'FCR26-T030'
+          ],
           tiebreakers: [
             'match_wins',
             'buchholz',
@@ -64,8 +72,36 @@ export const SEASONS = [
         },
         playoffs: {
           format: 'double_elimination',
-          crossover: null,
-          bracketSource: 'backend'
+          participantCount: 8,
+          matchCount: 14,
+          crossover: 'opposite_half',
+          bracketSource: 'fixed_seeding',
+          bracketLocked: true,
+          eventWindow: {
+            start: '2026-08-08T19:30:00+08:00',
+            end: '2026-08-16T23:59:59+08:00',
+            dailyWindow: '19:30 / 21:30 · 08/15 加开 17:30 · GF 20:00'
+          },
+          schedule: {
+            1: '2026-08-08T19:30:00+08:00',
+            2: '2026-08-08T21:30:00+08:00',
+            3: '2026-08-08T21:30:00+08:00',
+            4: '2026-08-08T19:30:00+08:00',
+            5: '2026-08-09T19:30:00+08:00',
+            6: '2026-08-09T19:30:00+08:00',
+            7: '2026-08-09T21:30:00+08:00',
+            8: '2026-08-09T21:30:00+08:00',
+            9: '2026-08-14T20:00:00+08:00',
+            10: '2026-08-14T20:00:00+08:00',
+            11: '2026-08-15T17:30:00+08:00',
+            12: '2026-08-15T19:30:00+08:00',
+            13: '2026-08-15T21:30:00+08:00',
+            14: '2026-08-16T20:00:00+08:00'
+          },
+          rounds: {
+            standard: { firstTo: 3 },
+            grandFinal: { firstTo: 4 }
+          }
         }
       },
       playoffs: {

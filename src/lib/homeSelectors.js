@@ -1,5 +1,7 @@
 import { calculateSwissStandings } from './swissEngine.js'
 import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
+import { getRankingMinTimeMins } from './leaderboardSelectors.js'
+import { getMatchRoundScopeKey } from './matchRoundScope.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
@@ -382,8 +384,10 @@ export function getFavoritePlayerDashboard(db, favorites = {}) {
     }))
 }
 
-export function getDataPulse(db) {
-  const playerTotals = safeArr(db?.player_totals).filter(player => toNumber(player?.raw_time_mins) > 0)
+export function getDataPulse(db, season) {
+  const rankingMinTimeMins = getRankingMinTimeMins(season, db)
+  const playerTotals = safeArr(db?.player_totals)
+    .filter(player => toNumber(player?.raw_time_mins) >= rankingMinTimeMins)
   const completedMatches = safeArr(db?.matches).filter(isComplete)
   const heroCounts = new Map()
   const mapCounts = new Map()
@@ -425,7 +429,7 @@ export function getDataPulse(db) {
   }
 }
 
-export function getArchiveHighlights(db) {
+export function getArchiveHighlights(db, season) {
   const completedMatches = safeArr(db?.matches).filter(isComplete).sort(compareDescByTime)
   const playoffMatches = completedMatches.filter(match => {
     const stage = String(match?.stage || '').toUpperCase()
@@ -456,7 +460,7 @@ export function getArchiveHighlights(db) {
     .filter(match => match.lobbyCodes.length || match.mapCount >= 4)
     .slice(0, 4)
 
-  const pulse = getDataPulse(db)
+  const pulse = getDataPulse(db, season)
   const dataKings = [
     pulse.topElim ? { key: 'elim', label: '击杀火力', player: pulse.topElim, value: Number(pulse.topElim.avg_elim || 0).toFixed(1), unit: 'ELIM /10' } : null,
     pulse.topDamage ? { key: 'damage', label: '伤害压制', player: pulse.topDamage, value: Number(pulse.topDamage.avg_dmg || 0).toFixed(0), unit: 'DMG /10' } : null,
@@ -523,12 +527,6 @@ function getDateSlotKey(match) {
 
 function getRoundNumber(value) {
   return normalizeText(value).match(/\d+/)?.[0] || ''
-}
-
-function getRoundKey(value) {
-  const text = normalizeText(value).toLowerCase()
-  const number = getRoundNumber(text)
-  return number ? `round-${number}` : text
 }
 
 function getReadableRound(match) {
@@ -702,9 +700,9 @@ export function getCurrentRoundSummary(db) {
     sortByScheduleDesc(matches).find(isComplete) ||
     matches[0] ||
     null
-  const focusKey = getRoundKey(focusMatch?.round || focusMatch?.stage)
+  const focusKey = getMatchRoundScopeKey(focusMatch)
   const roundMatches = focusKey
-    ? matches.filter(match => getRoundKey(match?.round || match?.stage) === focusKey)
+    ? matches.filter(match => getMatchRoundScopeKey(match) === focusKey)
     : matches
   const completed = roundMatches.filter(isComplete).length
   const live = roundMatches.filter(isLive).length

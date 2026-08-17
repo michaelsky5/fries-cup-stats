@@ -1,4 +1,22 @@
 const safeArr = v => Array.isArray(v) ? v : []
+const BYE_TEAM_KEYS = new Set(['bye'])
+
+const normalizeKey = value => String(value ?? '').trim().toLowerCase()
+
+function getTeamIdentityValues(team) {
+  return [
+    team?.team_id,
+    team?.id,
+    team?.team_short_name,
+    team?.short,
+    team?.team_name,
+    team?.name
+  ].map(normalizeKey).filter(Boolean)
+}
+
+export function isByeTeam(team) {
+  return getTeamIdentityValues(team).some(value => BYE_TEAM_KEYS.has(value))
+}
 
 const toNumber = value => {
   const num = Number(value)
@@ -29,6 +47,7 @@ export function calculateSwissStandings(db) {
   const standings = {}
 
   teams.forEach((team, index) => {
+    if (isByeTeam(team)) return
     standings[team.team_id] = {
       ...team,
       __seedOrder: index,
@@ -49,7 +68,7 @@ export function calculateSwissStandings(db) {
 
   const ensureTeam = (id, shortName, fullName) => {
     const key = String(id || '').trim()
-    if (!key) return null
+    if (!key || isByeTeam({ id: key, short: shortName, name: fullName })) return null
 
     if (!standings[key]) {
       standings[key] = {
@@ -82,15 +101,31 @@ export function calculateSwissStandings(db) {
     const bId = String(match?.team_b?.id || '').trim()
     if (!aId || !bId) return
 
+    const teamAIsBye = isByeTeam(match?.team_a)
+    const teamBIsBye = isByeTeam(match?.team_b)
+    if (teamAIsBye && teamBIsBye) return
+
     const teamA = ensureTeam(aId, match?.team_a?.short, match?.team_a?.name)
     const teamB = ensureTeam(bId, match?.team_b?.short, match?.team_b?.name)
+
+    const scoreA = toNumber(match?.team_a?.score) ?? 0
+    const scoreB = toNumber(match?.team_b?.score) ?? 0
+
+    if (teamAIsBye || teamBIsBye) {
+      const realTeam = teamAIsBye ? teamB : teamA
+      if (!realTeam) return
+
+      const realScore = teamAIsBye ? scoreB : scoreA
+      const byeScore = teamAIsBye ? scoreA : scoreB
+      if (realScore > byeScore) realTeam.match_wins += 1
+      else if (byeScore > realScore) realTeam.match_losses += 1
+      return
+    }
+
     if (!teamA || !teamB) return
 
     teamA.played_opponents.push(bId)
     teamB.played_opponents.push(aId)
-
-    const scoreA = toNumber(match?.team_a?.score) ?? 0
-    const scoreB = toNumber(match?.team_b?.score) ?? 0
 
     teamA.map_wins += scoreA
     teamA.map_losses += scoreB
@@ -139,6 +174,7 @@ export function calculateSwissStandings(db) {
 
   const baseSorted = [...rows].sort((a, b) => {
     if (b.match_wins !== a.match_wins) return b.match_wins - a.match_wins
+    if (a.match_losses !== b.match_losses) return a.match_losses - b.match_losses
     if (b.buchholz !== a.buchholz) return b.buchholz - a.buchholz
     return 0
   })
@@ -154,6 +190,7 @@ export function calculateSwissStandings(db) {
     while (
       pointer < baseSorted.length &&
       baseSorted[pointer].match_wins === current.match_wins &&
+      baseSorted[pointer].match_losses === current.match_losses &&
       baseSorted[pointer].buchholz === current.buchholz
     ) {
       group.push(baseSorted[pointer])

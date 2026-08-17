@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { teamShort } from '../../lib/advanceSelectors.js'
 import styles from '../../pages/advance/AdvancePage.module.css'
 
 function Fact({ label, value }) {
@@ -15,12 +16,7 @@ export default function SwissSummary({ overview, t, withSeason }) {
 
   if (!overview.hasStarted) {
     return (
-      <section className={styles.swissIntro}>
-        <div className={styles.swissIntroLead}>
-          <span className={styles.sectionLabel}>SWISS STAGE</span>
-          <h2>{t('advance.swiss.notStartedTitle', '瑞士轮尚未开始')}</h2>
-          <p>{t('advance.swiss.notStartedDesc', '比赛开始后将展示完整积分榜、晋级区、突围区、竞争区、危险区、已出局队伍与同分规则。')}</p>
-        </div>
+      <section className={styles.swissPrestartPanel}>
         <div className={styles.swissFactGrid}>
           <Fact label={t('advance.swiss.teams', '参赛队伍')} value={`${overview.teamCount} ${t('advance.unit.teams', '支队伍')}`} />
           <Fact label={t('advance.swiss.rounds', '瑞士轮轮次')} value={`${rules.maxRounds} ${t('advance.unit.rounds', '轮')}`} />
@@ -37,45 +33,57 @@ export default function SwissSummary({ overview, t, withSeason }) {
 
   if (overview.seasonFinished || overview.swissFinished) {
     return (
-      <section className={styles.swissSummary}>
+      <section className={styles.swissRuleStrip}>
         <div>
-          <span>{t('advance.swiss.finalRounds', '瑞士轮轮次')}</span>
-          <strong>{overview.rounds} / {overview.rounds}</strong>
+          <span>01</span>
+          <strong>{t('advance.swiss.format', '瑞士制')} · {overview.rounds} {t('advance.unit.rounds', '轮')}</strong>
+          <em>{overview.teamCount} {t('advance.unit.teams', '支队伍')}</em>
         </div>
         <div>
-          <span>{t('advance.swiss.finalSchedule', '瑞士轮赛程')}</span>
-          <strong>{overview.completedMatches} / {overview.totalMatches}</strong>
+          <span>02</span>
+          <strong>{t('advance.swiss.directRule', '直通季后赛')} · {rules.directAdvanceWins} {t('advance.unit.wins', '胜')}</strong>
+          <em>{rules.directSlots || 4} {t('advance.unit.slots', '个名额')}</em>
         </div>
         <div>
-          <span>{t('advance.swiss.teams', '参赛队伍')}</span>
-          <strong>{overview.teamCount}</strong>
+          <span>03</span>
+          <strong>{t('advance.swiss.lcqRule', '进入突围赛')} · {rules.lcqSurvivalWins} {t('advance.unit.wins', '胜')}</strong>
+          <em>{rules.breakthroughSlots || 20} {t('advance.unit.slots', '个名额')}</em>
         </div>
-        <div>
-          <span>{t('advance.swiss.totalSlots', '最终晋级')}</span>
-          <strong>{rules.totalSlots}</strong>
-        </div>
+        <p>{t('advance.swiss.completed', '瑞士轮已结束')} · {overview.completedMatches} / {overview.totalMatches}</p>
       </section>
     )
   }
 
+  const nextMatch = overview.nextMatch
+  const nextMatchLabel = nextMatch
+    ? `${teamShort(nextMatch.team_a)} VS ${teamShort(nextMatch.team_b)} · ${overview.nextStart || t('advance.common.tbd', 'TBD')}`
+    : t('advance.common.tbd', 'TBD')
+
   return (
-    <section className={styles.swissSummary}>
-      <div>
-        <span>{t('advance.swiss.currentRound', '当前轮次')}</span>
-        <strong>{overview.currentRound} / {overview.rounds}</strong>
-      </div>
-      <div>
-        <span>{t('advance.swiss.roundProgress', '本轮进度')}</span>
-        <strong>{overview.roundProgressLabel}</strong>
-      </div>
-      <div>
-        <span>{t('advance.swiss.completedMatches', '已完成比赛')}</span>
-        <strong>{overview.completedMatches}</strong>
-      </div>
-      <div>
-        <span>{t('advance.swiss.nextStart', '下一开赛')}</span>
-        <strong>{overview.nextStart || t('advance.common.tbd', 'TBD')}</strong>
-      </div>
-    </section>
+    <>
+      <section className={styles.swissRuleStrip}>
+        <div>
+          <span>01</span>
+          <strong>{t('advance.swiss.format', '瑞士制')} · {overview.rounds} {t('advance.unit.rounds', '轮')}</strong>
+          <em>{overview.teamCount} {t('advance.unit.teams', '支队伍')} · {overview.completedMatches} / {overview.totalMatches} {t('advance.lcq.matches', '场比赛')}</em>
+        </div>
+        <div>
+          <span>02</span>
+          <strong>{t('advance.swiss.directRule', '直通季后赛')} · {rules.directAdvanceWins} {t('advance.unit.wins', '胜')}</strong>
+          <em>{rules.directSlots || 4} {t('advance.unit.slots', '个名额')}</em>
+        </div>
+        <div>
+          <span>03</span>
+          <strong>{t('advance.swiss.lcqRule', '进入突围赛')} · {rules.lcqSurvivalWins} {t('advance.unit.wins', '胜')}</strong>
+          <em>{rules.breakthroughSlots || 20} {t('advance.unit.slots', '个名额')}</em>
+        </div>
+        <p>{t('advance.swiss.roundShort', `第 ${overview.currentRound} / ${overview.rounds} 轮`, { current: overview.currentRound, total: overview.rounds })} · {overview.roundProgressLabel}</p>
+      </section>
+      <p className={styles.swissNextMatchStrip}>
+        <span>{t('advance.swiss.nextMatch', '最后一场')}</span>
+        <strong>{nextMatchLabel}</strong>
+        <em>{t('advance.swiss.seedLockNotice', '比赛结束后将自动锁定全部突围赛与季后赛种子')}</em>
+      </p>
+    </>
   )
 }

@@ -4,6 +4,10 @@
   gap: 68px;
 }
 
+.archiveShell {
+  gap: clamp(52px, 4vw, 64px);
+}
+
 .overviewBoard {
   display: grid;
   grid-template-columns: minmax(420px, 0.9fr) minmax(560px, 1.1fr);
@@ -1308,11 +1312,20 @@
   gap: 24px;
 }
 
+.archiveShell .archiveBlock {
+  gap: 20px;
+}
+
 .sectionHead {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px;
   align-items: end;
+}
+
+.archiveShell .sectionHead {
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(42, 42, 42, 0.24);
 }
 
 .sectionHead h2,
@@ -2222,20 +2235,43 @@
 }
 
 .archiveConclusion {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.82fr) minmax(620px, 1.18fr);
-  gap: 28px;
+  grid-template-columns: minmax(440px, 0.86fr) minmax(600px, 1.14fr);
+  gap: clamp(28px, 3vw, 48px);
   align-items: stretch;
-  padding: 34px;
-  background: var(--portal-black);
+  min-height: 370px;
+  overflow: hidden;
+  padding: clamp(30px, 3vw, 44px);
+  background:
+    linear-gradient(112deg, rgba(244, 195, 32, 0.07), transparent 38%),
+    var(--portal-black);
   color: var(--fc-white);
+  box-shadow: 12px 12px 0 rgba(42, 42, 42, 0.08);
+}
+
+.archiveConclusion::before {
+  position: absolute;
+  top: -70px;
+  right: 34%;
+  width: 220px;
+  height: 220px;
+  border: 44px solid rgba(244, 195, 32, 0.035);
+  content: "";
+  pointer-events: none;
+  transform: rotate(18deg);
+}
+
+.archiveConclusion > * {
+  position: relative;
+  z-index: 1;
 }
 
 .archiveHallLead {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .archiveConclusion h1 {
@@ -2245,7 +2281,7 @@
 .archiveConclusion p {
   margin: 0;
   color: rgba(255, 255, 255, 0.68);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 900;
 }
 
@@ -2253,14 +2289,14 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0;
-  margin-top: 24px;
+  margin-top: 28px;
   border-top: 2px solid rgba(244, 195, 32, 0.5);
   border-left: 2px solid rgba(244, 195, 32, 0.5);
 }
 
 .archiveLegacyLine span {
   min-width: 0;
-  min-height: 84px;
+  min-height: 80px;
   display: grid;
   align-content: end;
   gap: 10px;
@@ -2310,18 +2346,40 @@
   min-width: 0;
   display: grid;
   grid-template-columns: minmax(260px, 1.06fr) minmax(220px, 0.94fr);
-  gap: 14px;
+  gap: 16px;
 }
 
 .archiveChampionPanel,
 .archiveFinalRecord {
+  position: relative;
   min-width: 0;
   display: grid;
-  align-content: end;
+  align-content: center;
   gap: 12px;
-  padding: 22px;
+  overflow: hidden;
+  padding: 28px;
   color: var(--portal-ink);
   text-decoration: none;
+}
+
+.archiveChampionPanel::after,
+.archiveFinalRecord::after {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  color: rgba(42, 42, 42, 0.08);
+  font-size: 76px;
+  font-weight: 950;
+  line-height: 0.8;
+  pointer-events: none;
+}
+
+.archiveChampionPanel::after {
+  content: "01";
+}
+
+.archiveFinalRecord::after {
+  content: "FT";
 }
 
 .archiveChampionPanel {
@@ -2334,6 +2392,11 @@
   background: var(--fc-white);
   border-color: var(--portal-yellow);
   outline: 0;
+}
+
+.archiveChampionPanel:hover::after,
+.archiveChampionPanel:focus-visible::after {
+  color: rgba(244, 195, 32, 0.24);
 }
 
 .archiveFinalRecord {
@@ -2354,8 +2417,10 @@
 }
 
 .archiveChampionLogo {
-  width: 96px;
-  height: 96px;
+  position: relative;
+  z-index: 1;
+  width: 104px;
+  height: 104px;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -2364,8 +2429,8 @@
 
 .archiveChampionLogo img {
   display: block;
-  width: 82px;
-  height: 82px;
+  width: 90px;
+  height: 90px;
   object-fit: contain;
 }
 
@@ -2376,8 +2441,10 @@
 }
 
 .archiveChampionPanel strong {
+  position: relative;
+  z-index: 1;
   color: var(--portal-ink);
-  font-size: 56px;
+  font-size: clamp(46px, 4vw, 62px);
   font-weight: 950;
   line-height: 0.86;
   overflow-wrap: anywhere;
@@ -2440,8 +2507,10 @@
   grid-template-columns: minmax(360px, 0.72fr) minmax(0, 1.28fr);
   gap: 24px;
   align-items: stretch;
-  padding: 32px;
-  background: var(--portal-black);
+  padding: clamp(28px, 2.5vw, 38px);
+  background:
+    linear-gradient(120deg, rgba(244, 195, 32, 0.055), transparent 34%),
+    var(--portal-black);
   color: var(--fc-white);
 }
 
@@ -2475,7 +2544,7 @@
 
 .archiveReviewCards a {
   min-width: 0;
-  min-height: 188px;
+  min-height: 176px;
   display: grid;
   align-content: end;
   gap: 12px;
@@ -2494,6 +2563,21 @@
   background: var(--portal-yellow);
   color: var(--portal-ink);
   outline: 0;
+}
+
+.archiveReviewCards a::after {
+  width: 28px;
+  height: 2px;
+  margin-top: 2px;
+  background: currentColor;
+  content: "";
+  opacity: 0.42;
+  transition: width var(--transition-fast);
+}
+
+.archiveReviewCards a:hover::after,
+.archiveReviewCards a:focus-visible::after {
+  width: 48px;
 }
 
 .archiveReviewCards a:hover span,
@@ -2526,6 +2610,7 @@
   grid-template-columns: minmax(300px, 0.58fr) minmax(0, 1.42fr);
   border: 2px solid var(--portal-border);
   background: var(--fc-white);
+  box-shadow: 10px 10px 0 rgba(42, 42, 42, 0.055);
 }
 
 .archiveVaultLead {
@@ -2576,7 +2661,7 @@
 
 .archiveVaultCard {
   min-width: 0;
-  min-height: 230px;
+  min-height: 218px;
   display: grid;
   align-content: space-between;
   gap: 14px;
@@ -2639,17 +2724,24 @@
   grid-template-columns: minmax(230px, 0.28fr) minmax(0, 1fr) minmax(172px, 0.2fr);
   gap: 0;
   align-items: stretch;
-  min-height: 216px;
+  min-height: 208px;
   background: var(--fc-white);
   border: 2px solid var(--portal-border);
   color: var(--portal-ink);
   text-decoration: none;
+  box-shadow: 10px 10px 0 rgba(42, 42, 42, 0.055);
+  transition:
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .archiveFinalShowcase:hover,
 .archiveFinalShowcase:focus-visible {
   background: #fff7d8;
+  box-shadow: 6px 6px 0 rgba(42, 42, 42, 0.08);
   outline: 0;
+  transform: translate(2px, 2px);
 }
 
 .archiveFinalStage {
@@ -2901,6 +2993,33 @@
   gap: 24px;
 }
 
+.honorGridAwardsOnly {
+  grid-template-columns: 1fr;
+}
+
+.honorGridAwardsOnly .seasonAwardsPanel {
+  grid-template-areas:
+    "head list"
+    "mvp list";
+  grid-template-columns: minmax(300px, 0.78fr) minmax(520px, 1.22fr);
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.honorGridAwardsOnly .seasonAwardsHead {
+  grid-area: head;
+}
+
+.honorGridAwardsOnly .seasonAwardMvp {
+  grid-area: mvp;
+  align-content: center;
+  border-right: 2px solid var(--portal-border);
+  border-bottom: 0;
+}
+
+.honorGridAwardsOnly .seasonAwardList {
+  grid-area: list;
+}
+
 .rankingList {
   display: grid;
   gap: 0;
@@ -2955,6 +3074,7 @@
   background: var(--portal-black);
   border: 2px solid var(--portal-border);
   color: var(--fc-white);
+  box-shadow: 10px 10px 0 rgba(42, 42, 42, 0.06);
 }
 
 .seasonAwardsHead {
@@ -3134,12 +3254,18 @@
   border: 2px solid var(--portal-border);
   color: var(--portal-ink);
   text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .archiveClassicFeature:hover,
 .archiveClassicFeature:focus-visible {
   background: #ffd943;
+  box-shadow: 6px 6px 0 rgba(42, 42, 42, 0.08);
   outline: 0;
+  transform: translate(-2px, -2px);
 }
 
 .archiveClassicFeature > span {
@@ -3209,6 +3335,7 @@
   align-content: start;
   background: var(--fc-white);
   border: 2px solid rgba(42, 42, 42, 0.16);
+  box-shadow: 8px 8px 0 rgba(42, 42, 42, 0.045);
 }
 
 .archiveClassicList header {
@@ -3484,6 +3611,20 @@
     border-top: 1px solid rgba(42, 42, 42, 0.24);
   }
 
+  .honorGridAwardsOnly .seasonAwardsPanel {
+    grid-template-areas:
+      "head"
+      "mvp"
+      "list";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .honorGridAwardsOnly .seasonAwardMvp {
+    border-right: 0;
+    border-bottom: 2px solid var(--portal-border);
+  }
+
   .eventTimelineGrid,
   .preDataGrid,
   .managerChoiceGrid,
@@ -3528,10 +3669,35 @@
     gap: 38px;
   }
 
+  .archiveShell {
+    gap: 42px;
+  }
+
   .commandBoard {
     min-height: auto;
     gap: 18px;
     padding: 20px;
+  }
+
+  .archiveConclusion {
+    min-height: auto;
+    padding: 22px;
+    box-shadow: 7px 7px 0 rgba(42, 42, 42, 0.08);
+  }
+
+  .archiveConclusion::before {
+    right: -96px;
+  }
+
+  .archiveChampionPanel,
+  .archiveFinalRecord {
+    min-height: 220px;
+    padding: 22px;
+  }
+
+  .archiveChampionPanel::after,
+  .archiveFinalRecord::after {
+    font-size: 58px;
   }
 
   .overviewLead {

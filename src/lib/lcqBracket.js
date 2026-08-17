@@ -43,7 +43,11 @@ function normalizeTeam(team) {
   const short = normalizeText(team.team_short_name || team.short || team.team_name || team.name || id)
   const name = normalizeText(team.team_name || team.name || short)
   if (!id && !short) return null
-  return { ...team, id, team_id: id, short, team_short_name: short, name, team_name: name }
+  const placeholderText = `${id} ${short} ${name}`.toUpperCase()
+  const isTbd = Boolean(team.isTbd) ||
+    /(?:^|\s)TBD(?:$|\s)/.test(placeholderText) ||
+    /(?:^|\s)(?:#\d+|W-M\d+|L-M\d+)(?:$|\s)/.test(placeholderText)
+  return { ...team, id, team_id: id, short, team_short_name: short, name, team_name: name, isTbd }
 }
 
 function normalizedStatus(match) {
@@ -57,6 +61,8 @@ function normalizedStatus(match) {
 
 function winnerTeam(match) {
   if (!match) return null
+  const status = normalizeText(match.status).toUpperCase()
+  if (status && !['COMPLETE', 'COMPLETED', 'FINISHED'].includes(status)) return null
   const winner = normalizeText(match.winner || match.winner_id || match.winner_team_id).toLowerCase()
   const teams = [match.team_a, match.team_b]
   const explicit = teams.find(team => [
@@ -86,7 +92,13 @@ function getEligibleStandings(standings, participantCount) {
   return fallback.slice(0, participantCount)
 }
 
-export function buildFourDivisionLcq({ config = {}, matches = [], standings = [], swissFinished = false } = {}) {
+export function buildFourDivisionLcq({
+  config = {},
+  matches = [],
+  standings = [],
+  swissFinished = false,
+  lockedSeeds = []
+} = {}) {
   const participantCount = Number(config.participantCount) || 20
   const advanceSlots = Number(config.advanceSlots) || 4
   const actualByNumber = new Map()
@@ -96,7 +108,11 @@ export function buildFourDivisionLcq({ config = {}, matches = [], standings = []
   })
 
   const eligibleStandings = swissFinished ? getEligibleStandings(standings, participantCount) : []
-  const teamBySeed = new Map(eligibleStandings.map((row, index) => [index + 1, normalizeTeam(row)]))
+  const teamBySeed = swissFinished
+    ? new Map(eligibleStandings.map((row, index) => [index + 1, normalizeTeam(row)]))
+    : new Map(safeArr(lockedSeeds)
+        .map(slot => [Number(slot?.seed), normalizeTeam(slot?.team || slot)])
+        .filter(([seed, team]) => seed >= 1 && seed <= participantCount && team))
   const builtByNumber = new Map()
 
   const slotsFor = definition => {
@@ -122,7 +138,10 @@ export function buildFourDivisionLcq({ config = {}, matches = [], standings = []
       bestOf,
       scheduledAt: normalizeText(actual?.scheduled_at) || definition.scheduledAt,
       status: normalizedStatus(actual),
-      slots: fallbackSlots.map((slot, index) => ({ ...slot, team: actualTeams[index] || slot.team })),
+      slots: fallbackSlots.map((slot, index) => ({
+        ...slot,
+        team: actualTeams[index] && !actualTeams[index].isTbd ? actualTeams[index] : slot.team
+      })),
       scores: actual ? [actual?.team_a?.score, actual?.team_b?.score] : [null, null],
       winner: winnerTeam(actual),
       raw: actual || null
@@ -142,6 +161,7 @@ export function buildFourDivisionLcq({ config = {}, matches = [], standings = []
     advanceSlots,
     bracketLocked: config.bracketLocked !== false,
     rankingsLocked: swissFinished,
+    lockedSeedCount: teamBySeed.size,
     seededTeams: Array.from({ length: participantCount }, (_, index) => ({
       seed: index + 1,
       team: teamBySeed.get(index + 1) || null

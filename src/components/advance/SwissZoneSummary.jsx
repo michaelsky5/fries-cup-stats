@@ -4,17 +4,16 @@ export default function SwissZoneSummary({ zones, t, archive = false, activeZone
   const visibleZones = archive
     ? zones.filter(zone => zone.count > 0 || ['direct', 'breakthrough', 'eliminated'].includes(zone.key))
     : zones
-  const total = visibleZones.reduce((sum, zone) => sum + zone.count, 0)
   const selectedLabel = activeZone === 'all'
     ? t('advance.common.all', '全部')
     : t(`advance.zone.${activeZone}`, activeZone)
 
   return (
-    <section className={styles.zoneSummary}>
+    <section className={styles.swissZonePool}>
       <header>
         <div>
           <span className={styles.sectionLabel}>ZONE SUMMARY</span>
-          <h2>{archive ? t('advance.swiss.archiveZoneSummary', '瑞士轮最终分层') : t('advance.swiss.zoneSummary', '晋级区域统计')}</h2>
+          <strong>{archive ? t('advance.swiss.archiveZoneSummary', '瑞士轮最终分层') : t('advance.swiss.zoneSummary', '晋级区域')}</strong>
         </div>
         <button
           type="button"
@@ -24,20 +23,8 @@ export default function SwissZoneSummary({ zones, t, archive = false, activeZone
           {selectedLabel}
         </button>
       </header>
-      <div className={styles.zoneBar} aria-hidden="true">
-        {visibleZones.map(zone => {
-          const share = total ? Math.max(2, (zone.count / total) * 100) : 0
-          return (
-            <span
-              key={zone.key}
-              className={styles[`zone_${zone.tone}`]}
-              style={{ '--zone-share': `${share}%` }}
-            />
-          )
-        })}
-      </div>
-      <div className={styles.zoneList}>
-        {visibleZones.map(zone => (
+      <div>
+        {visibleZones.map((zone, index) => (
           <button
             key={zone.key}
             type="button"
@@ -47,8 +34,9 @@ export default function SwissZoneSummary({ zones, t, archive = false, activeZone
             ].filter(Boolean).join(' ')}
             onClick={() => onZoneSelect?.(zone.key)}
           >
-            <span>{t(`advance.zone.${zone.key}`, zone.key)}</span>
-            <strong>{zone.count}</strong>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <strong>{t(`advance.zone.${zone.key}`, zone.key)}</strong>
+            <b>{zone.count}</b>
             <em>{zone.rows.slice(0, 4).map(row => row.team_short_name || row.team_name).join(' / ') || t('advance.common.none', '暂无')}</em>
           </button>
         ))}

@@ -260,14 +260,18 @@ function HubSection({ code, title, actionTo, actionText, children }) {
           <SectionLabel code={code} title={title} />
           <h2>{title}</h2>
         </div>
-        {actionTo ? <Link to={cleanMatchesListPath(seasonId, actionTo)}>{actionText}</Link> : null}
+        {actionTo ? (
+          <Link to={cleanMatchesListPath(seasonId, actionTo)}>
+            {actionText}<span aria-hidden="true">→</span>
+          </Link>
+        ) : null}
       </div>
       {children}
     </section>
   )
 }
 
-function FeaturedMatchCard({ match, primary = false }) {
+function FeaturedMatchCard({ match, primary = false, compact = false }) {
   const { withSeason = path => path, seasonId, locale = 'zh-CN' } = useOutletContext()
   const location = useLocation()
   const teams = getMatchDisplayTeams(match)
@@ -277,15 +281,17 @@ function FeaturedMatchCard({ match, primary = false }) {
     <Link
       to={withSeason(`/matches/${match.match_id}`)}
       state={getReturnState(location)}
-      className={`${styles.featuredMatchCard} ${primary ? styles.featuredMatchCardPrimary : ''}`}
+      className={`${styles.featuredMatchCard} ${primary ? styles.featuredMatchCardPrimary : ''} ${compact ? styles.featuredMatchCardCompact : ''}`}
       onClick={() => saveReturnScroll(location)}
     >
       <span>{getRoundText(match)}</span>
-      <LogoDuel match={match} seasonId={seasonId} score large={primary} />
-      <strong>{teams.teamA.short} {getMatchScore(match)} {teams.teamB.short}</strong>
-      <em>{teams.teamA.full} vs {teams.teamB.full}</em>
-      <p>{match.format || 'TBD'} · {getMatchStatusText(match)}{mapSummary ? ` · ${mapSummary}` : ''}</p>
-      <b>{primary ? '冠军战 · 查看详情' : '查看详情'}</b>
+      <LogoDuel match={match} seasonId={seasonId} score={!primary} large={primary} />
+      <div className={styles.featuredMatchCopy}>
+        <strong>{teams.teamA.short} {getMatchScore(match)} {teams.teamB.short}</strong>
+        <em>{teams.teamA.full} vs {teams.teamB.full}</em>
+        <p>{match.format || 'TBD'} · {getMatchStatusText(match)}{mapSummary ? ` · ${mapSummary}` : ''}</p>
+      </div>
+      <b>{compact ? '→' : primary ? '冠军战 · 查看详情' : '查看详情'}</b>
     </Link>
   )
 }
@@ -300,8 +306,11 @@ function ArchiveFeaturedHub({ hub }) {
       <div className={styles.archiveFeatureLayout}>
         {primary ? <FeaturedMatchCard match={primary} primary /> : null}
         <div className={styles.archiveSideList}>
-          <span>PLAYOFF PICKS</span>
-          {secondary.map(match => <FeaturedMatchCard key={match.match_id} match={match} />)}
+          <div className={styles.archiveSideListHead}>
+            <span>PLAYOFF PICKS</span>
+            <strong>季后赛关键战</strong>
+          </div>
+          {secondary.map(match => <FeaturedMatchCard key={match.match_id} match={match} compact />)}
         </div>
       </div>
     </HubSection>
@@ -363,8 +372,13 @@ function MatchHub({ hub, seasonId }) {
             <p>{seasonId || 'FCA2026'} 赛季档案</p>
           </div>
           <div className={styles.hubHeroMeta}>
-            <strong>{hub.summary.finished} 场已完成 · 精选总决赛与季后赛关键战</strong>
-            <Link to={cleanMatchesListPath(seasonId, { tab: 'all' })}>查看完整比赛档案</Link>
+            <span className={styles.hubHeroMetaLabel}>ARCHIVE STATUS</span>
+            <div className={styles.hubHeroMetric}>
+              <strong>{hub.summary.finished}</strong>
+              <span>场比赛完成归档</span>
+            </div>
+            <p>精选总决赛、季后赛关键战与冠军晋级路径。</p>
+            <Link to={cleanMatchesListPath(seasonId, { tab: 'all' })}>查看完整比赛档案 <b aria-hidden="true">→</b></Link>
           </div>
         </section>
       ) : (

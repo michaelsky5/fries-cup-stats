@@ -2,18 +2,24 @@ import TeamLogo from '../matches/TeamLogo.jsx'
 import { teamShort } from '../../lib/advanceSelectors.js'
 import styles from '../../pages/advance/AdvancePage.module.css'
 
-function SummaryItem({ label, value }) {
+function SummaryItem({ label, value, accent = false }) {
   return (
-    <div className={styles.headerMetric}>
+    <div className={`${styles.headerMetric} ${accent ? styles.headerMetricAccent : ''}`}>
       <span>{label}</span>
       <strong>{value || '-'}</strong>
     </div>
   )
 }
 
-export default function AdvanceHeader({ seasonId, summary, t }) {
+export default function AdvanceHeader({ seasonId, summary, result, t }) {
   const isArchive = summary?.phaseState?.seasonFinished
   const champion = summary?.champion
+  const completedChampionMatches = (result?.championPath || []).filter(match => match.status === 'completed')
+  const championWins = completedChampionMatches.filter(match => match.won).length
+  const championLosses = completedChampionMatches.length - championWins
+  const championRecord = completedChampionMatches.length
+    ? `${championWins} ${t('advance.summary.wins', '胜')} · ${championLosses} ${t('advance.summary.losses', '负')}`
+    : '-'
 
   return (
     <section className={styles.advanceHeader}>
@@ -39,6 +45,11 @@ export default function AdvanceHeader({ seasonId, summary, t }) {
               </div>
             </div>
             <SummaryItem label={t('advance.summary.grandFinal', '总决赛')} value={summary?.grandFinalScore} />
+            <SummaryItem
+              label={t('advance.summary.championRecord', '夺冠战绩')}
+              value={championRecord}
+              accent
+            />
           </>
         ) : (
           <>

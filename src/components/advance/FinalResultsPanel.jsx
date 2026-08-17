@@ -27,15 +27,24 @@ export default function FinalResultsPanel({
       <section className={styles.finalHero}>
         <div className={styles.finalChampionBlock}>
           <span className={styles.sectionLabel}>CHAMPION</span>
-          <TeamLogo team={champion} seasonId={seasonId} className={styles.finalHeroLogo} />
-          <h2>{teamShort(champion)}</h2>
-          <p>{teamFull(champion)}</p>
+          <div className={styles.finalChampionIdentity}>
+            <TeamLogo team={champion} seasonId={seasonId} className={styles.finalHeroLogo} />
+            <div>
+              <span className={styles.finalChampionSeason}>{seasonId} · SEASON WINNER</span>
+              <h2>{teamShort(champion)}</h2>
+              <p>{teamFull(champion)}</p>
+            </div>
+          </div>
         </div>
         <div className={styles.finalMatchBlock}>
-          <span>{t('advance.final.grandFinal', '总决赛')}</span>
+          <div className={styles.finalMatchHeading}>
+            <span>{t('advance.final.grandFinal', '总决赛')}</span>
+            <em>GRAND FINAL · FT4</em>
+          </div>
           {finalMatch ? (
             <>
               <strong>{teamShort(finalMatch.team_a)} {result.scoreLabel} {teamShort(finalMatch.team_b)}</strong>
+              <p>{teamFull(finalMatch.team_a)} vs {teamFull(finalMatch.team_b)}</p>
               <Link to={withSeason(`/matches/${matchRouteId(finalMatch)}`)}>
                 {t('advance.common.details', '进入比赛详情')} →
               </Link>
