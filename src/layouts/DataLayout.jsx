@@ -33,6 +33,16 @@ const PRIMARY_NAV = [
 
 const DATA_REFRESH_INTERVAL_MS = 60_000
 
+function setMetaContent(selector, attributes, content) {
+  let node = document.head.querySelector(selector)
+  if (!node) {
+    node = document.createElement('meta')
+    Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value))
+    document.head.append(node)
+  }
+  node.setAttribute('content', content)
+}
+
 function getNavActiveGroup(pathname, search = '') {
   const params = new URLSearchParams(search)
   const matchTab = String(params.get('tab') || '').toLowerCase()
@@ -105,6 +115,15 @@ export default function DataLayout() {
         if (!alive) return
         setDb(data)
         setError('')
+
+        refreshDb(seasonId)
+          .then(freshData => {
+            if (!alive) return
+            setDb(current => current?.updated_at === freshData?.updated_at ? current : freshData)
+          })
+          .catch(() => {
+            // The bundled snapshot is already usable; keep it when the live refresh is unavailable.
+          })
       })
       .catch(() => {
         if (!alive) return
@@ -178,7 +197,20 @@ export default function DataLayout() {
     const partnerTitle = season?.kind === 'PARTNER'
       ? (locale === 'en-US' ? season?.name?.en : season?.name?.zh)
       : undefined
-    document.title = buildFriesCupTitle(getDataCenterPageLabel(location.pathname, location.search), partnerTitle)
+    const pageLabel = getDataCenterPageLabel(location.pathname, location.search)
+    const title = buildFriesCupTitle(pageLabel, partnerTitle)
+    const eventName = locale === 'en-US' ? season?.name?.en : season?.name?.zh
+    const description = locale === 'en-US'
+      ? `${eventName || 'Fries Cup'} schedule, standings, teams, players, and match data.`
+      : `${eventName || '赛事'}赛程赛果、晋级形势、战队阵容与比赛数据。`
+
+    document.title = title
+    setMetaContent('meta[name="description"]', { name: 'description' }, description)
+    setMetaContent('meta[property="og:title"]', { property: 'og:title' }, title)
+    setMetaContent('meta[property="og:description"]', { property: 'og:description' }, description)
+    setMetaContent('meta[property="og:site_name"]', { property: 'og:site_name' }, 'Fries Cup Data Center')
+    setMetaContent('meta[name="twitter:title"]', { name: 'twitter:title' }, title)
+    setMetaContent('meta[name="twitter:description"]', { name: 'twitter:description' }, description)
   }, [location.pathname, location.search, locale, season])
 
   useEffect(() => {

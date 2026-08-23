@@ -90,7 +90,7 @@ function BoardProgress({ finished, total, progress, label = '本轮进度' }) {
 }
 
 export default function MatchHubBoard({ summary }) {
-  const { withSeason = path => path, seasonId } = useOutletContext()
+  const { withSeason = path => path, seasonId, db } = useOutletContext()
   const isGroupStage = String(summary?.stage || '').toUpperCase() === 'GROUP'
   const roundLabel = summary?.roundLabel || 'ROUND 1'
   const roundMark = getRoundPosterMark(roundLabel)
@@ -102,6 +102,7 @@ export default function MatchHubBoard({ summary }) {
   const nextParts = splitDateTime(nextLabel)
   const finishedCount = summary?.progress?.finished || 0
   const progressPercent = total ? Math.min(100, Math.max(0, (finishedCount / total) * 100)) : 0
+  const publishedMatchCount = Array.isArray(db?.matches) ? db.matches.length : 0
 
   return (
     <section className={styles.board} aria-labelledby="match-hub-title" data-testid="match-hub-board">
@@ -117,7 +118,9 @@ export default function MatchHubBoard({ summary }) {
           {total} 场比赛分为 {slotCount} 个开赛时段进行。
         </p>
         <nav className={styles.boardActions} aria-label="Match Hub actions">
-          <Link to={withSeason('/matches?view=list&tab=round')}>查看完整赛程</Link>
+          <Link to={withSeason(isGroupStage ? '/matches?view=list&tab=all' : '/matches?view=list&tab=round')}>
+            {isGroupStage && publishedMatchCount ? `查看全部 ${publishedMatchCount} 场赛程` : '查看完整赛程'}
+          </Link>
           <Link to={withSeason('/following')}>我的关注</Link>
         </nav>
       </div>

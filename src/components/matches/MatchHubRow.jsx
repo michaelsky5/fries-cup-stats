@@ -4,6 +4,7 @@ import {
   getMatchScore,
   getMatchStatusText,
   getMatchTimeLabel,
+  getRoundBadgeText,
   getRoundText
 } from '../../lib/matchesSelectors.js'
 import { getReturnState, saveReturnScroll } from '../../lib/navigationState.js'
@@ -14,16 +15,6 @@ function handleRowKeyDown(event) {
   if (event.key !== ' ') return
   event.preventDefault()
   event.currentTarget.click()
-}
-
-function getRoundBadge(match) {
-  const stage = String(match?.stage || '').trim().toUpperCase()
-  const round = String(match?.round || '').trim().toUpperCase()
-  const roundNumber = round.match(/\d+/)?.[0]
-  const stageLabel = stage || 'MATCH'
-
-  if (roundNumber) return `${stageLabel} R${roundNumber}`
-  return round ? `${stageLabel}-${round}` : stageLabel
 }
 
 function ScheduleRow({ match, to, returnTo, seasonId, teams }) {
@@ -40,7 +31,7 @@ function ScheduleRow({ match, to, returnTo, seasonId, teams }) {
       onClick={() => saveReturnScroll(returnTo.returnTo)}
       onKeyDown={handleRowKeyDown}
     >
-      <span className={styles.rowStage} title={getRoundText(match)}>{getRoundBadge(match)}</span>
+      <span className={styles.rowStage} title={getRoundText(match)}>{getRoundBadgeText(match)}</span>
       <span className={styles.rowDuel}>
         <span className={styles.rowTeam} title={teams.teamA.full}>
           <TeamLogo team={match?.team_a} seasonId={seasonId} className={styles.rowLogo} />

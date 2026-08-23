@@ -138,6 +138,7 @@ export const SEASONS = [
     proxyDataUrl: '/api/admin-public/seasons/QGCS4/publish/latest/data',
     proxyReportUrl: '/api/admin-public/seasons/QGCS4/publish/latest/report',
     localDataUrl: '/data/qgcs4_preseason_public.json',
+    bootstrapLocalData: true,
     reviewEnabled: false,
     rankingMinTimeMins: 30,
     timeline: [

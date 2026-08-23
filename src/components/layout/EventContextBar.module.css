@@ -282,12 +282,80 @@
 }
 
 @media (max-width: 760px) {
+  .contextBar {
+    gap: 8px;
+    padding: 8px 0 10px;
+  }
+
+  .eventLead {
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+
+  .eventLogo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .eventIdentity {
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+
+  .eventCode {
+    font-size: 28px;
+  }
+
+  .partnerLabel {
+    min-height: 20px;
+    padding-inline: 7px;
+    font-size: 9px;
+  }
+
   .eventMeta {
     position: relative;
+    display: grid;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0;
+    align-items: stretch;
+    white-space: normal;
+  }
+
+  .eventMeta > span,
+  .homeLink,
+  .eventSwitcher {
+    min-height: 32px;
+    padding: 0 8px;
+    border-top: 1px solid rgba(244, 195, 32, 0.24);
+    border-left: 1px solid rgba(244, 195, 32, 0.24);
+  }
+
+  .eventMeta > span {
+    line-height: 1.25;
+  }
+
+  .eventMeta > span:nth-child(2n),
+  .eventSwitcher {
+    border-right: 1px solid rgba(244, 195, 32, 0.24);
+  }
+
+  .homeLink {
+    justify-content: center;
   }
 
   .eventSwitcher {
     position: static;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+  }
+
+  .eventSwitcher summary {
+    width: 100%;
+    min-height: 30px;
+    justify-content: center;
+    padding: 0 8px;
   }
 
   .switcherPanel {

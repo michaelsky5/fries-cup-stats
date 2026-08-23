@@ -164,8 +164,8 @@ export default function MatchPosterHero({
   t = (key, fallback) => fallback || key
 }) {
   const score = splitScore(dossier.scoreLabel)
-  const stage = dossier.match?.stage || 'MATCH'
-  const round = dossier.match?.round || dossier.rawDisplayName || ''
+  const stage = dossier.stageLabel || dossier.match?.stage || 'MATCH'
+  const round = dossier.roundLabel || dossier.match?.round || dossier.rawDisplayName || ''
   const winnerA = dossier.winnerSide === 'A'
   const winnerB = dossier.winnerSide === 'B'
   const teamAPath = getTeamPath(dossier.teamA, withSeason)

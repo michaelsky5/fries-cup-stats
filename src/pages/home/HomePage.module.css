@@ -1343,7 +1343,7 @@
 
 .eventTimelineGrid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--event-timeline-columns, 3), minmax(0, 1fr));
   gap: 0;
   border: 2px solid var(--portal-border);
   background: var(--fc-white);
@@ -3666,7 +3666,7 @@
 
 @media (max-width: 760px) {
   .shell {
-    gap: 38px;
+    gap: 32px;
   }
 
   .archiveShell {
@@ -3802,8 +3802,10 @@
   }
 
   .eventTimelineCard {
-    min-height: 210px;
-    padding: 22px;
+    min-height: 220px;
+    align-content: start;
+    gap: 10px;
+    padding: 58px 20px 18px;
   }
 
   .eventTimelineIndex {
@@ -3819,7 +3821,6 @@
     font-size: 19px;
   }
 
-  .commandFacts,
   .archiveTrophyGrid,
   .archiveLegacyLine,
   .archiveReviewCards,
@@ -3829,6 +3830,77 @@
   .archiveVaultGrid,
   .dataKingGrid {
     grid-template-columns: 1fr;
+  }
+
+  .commandFacts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .commandFacts div {
+    min-height: 72px;
+    padding: 11px;
+  }
+
+  .commandFacts dd {
+    font-size: 16px;
+  }
+
+  .eventTimelineGrid {
+    grid-template-columns: none;
+    grid-auto-columns: minmax(248px, 82vw);
+    grid-auto-flow: column;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
+  }
+
+  .eventTimelineCard {
+    border-right: 1px solid var(--portal-border);
+    border-bottom: 0;
+    scroll-snap-align: start;
+  }
+
+  .eventTimelineCard:last-child {
+    border-right: 0;
+  }
+
+  .eventTimelineCard::after {
+    top: 34px;
+    right: -18px;
+    bottom: auto;
+    left: auto;
+    width: 34px;
+    height: 2px;
+  }
+
+  .gatewayGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gatewayCard {
+    min-height: 126px;
+    gap: 12px;
+    padding: 16px;
+    border-right: 1px solid rgba(42, 42, 42, 0.24);
+    border-bottom: 1px solid rgba(42, 42, 42, 0.24);
+  }
+
+  .gatewayCard:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .gatewayCard:last-child {
+    grid-column: 1 / -1;
+    border-right: 0;
+    border-bottom: 0;
+  }
+
+  .gatewayGridPrestart .gatewayCard em {
+    display: none;
+  }
+
+  .gatewayCard strong {
+    font-size: 22px;
   }
 
   .advanceCardHero {

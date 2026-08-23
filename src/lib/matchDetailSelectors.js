@@ -3,6 +3,9 @@ import { getBroadcastInfo } from './broadcastSelectors.js'
 import { getMatchRatingSummary } from './matchRatingAdapter.js'
 import {
   getMatchStatusText,
+  getMatchCompetitionDay,
+  getMatchGroupLabel,
+  getRoundText,
   getTeamFullName,
   getTeamLabel,
   safeArr,
@@ -10,6 +13,7 @@ import {
 } from './matchesSelectors.js'
 import { formatMatchSchedule } from './scheduleFormat.js'
 import { getRoleEnLabel, getRoleLabel, normalizeLeaderboardRole } from './leaderboardSelectors.js'
+import { normalizeRosterRole } from './rosterSelectors.js'
 import { formatOwHeroName, formatOwMapMode, formatOwMapName } from './heroes.js'
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED'])
@@ -266,7 +270,7 @@ function getRosterForTeam(db, team) {
     .map(player => ({
       id: cleanText(player?.player_id),
       name: cleanText(player?.nickname || player?.display_name || player?.player_name || player?.player_id),
-      role: normalizeLeaderboardRole(player?.role)
+      role: normalizeRosterRole(player?.role)
     }))
 }
 
@@ -580,6 +584,16 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
   const mapCountLabel = state.canShowResults && !state.isForfeit
     ? `${completedMaps.length} / ${maps.length || completedMaps.length}`
     : maps.length ? `${maps.length}` : '—'
+  const isGroupStage = cleanText(match?.stage).toUpperCase() === 'GROUP'
+  const groupLabel = getMatchGroupLabel(match)
+  const competitionDay = getMatchCompetitionDay(match)
+  const stageLabel = isGroupStage
+    ? (groupLabel ? `${groupLabel} 组小组赛` : '小组赛')
+    : cleanText(match?.stage) || '—'
+  const roundLabel = isGroupStage && competitionDay > 0
+    ? `第 ${competitionDay} 比赛日`
+    : cleanText(match?.round) || '—'
+  const roundText = getRoundText(match)
 
   return {
     match,
@@ -589,7 +603,10 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     title: `${teamA.short} vs ${teamB.short}`,
     fullTitle: `${teamA.full} vs ${teamB.full}`,
     broadcast: getBroadcastInfo(match),
-    breadcrumb: [match?.stage, match?.round].map(cleanText).filter(Boolean),
+    breadcrumb: isGroupStage ? [stageLabel, roundLabel] : [match?.stage, match?.round].map(cleanText).filter(Boolean),
+    stageLabel,
+    roundLabel,
+    roundText,
     scheduleLabel: getScheduleLabel(match, locale),
     scheduleCompact: formatMatchSchedule(match, { locale }).compact,
     statusLabel: state.isForfeit ? '弃权' : getMatchStatusText(match),
@@ -602,8 +619,8 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     internalId: cleanText(match?.match_id || match?.raw_match_id),
     rawDisplayName: cleanText(match?.match_display_name),
     metaItems: [
-      { key: 'stage', label: '阶段', en: 'STAGE', value: cleanText(match?.stage) || '—' },
-      { key: 'round', label: '轮次', en: 'ROUND', value: cleanText(match?.round) || '—' },
+      { key: 'stage', label: '阶段', en: 'STAGE', value: stageLabel },
+      { key: 'round', label: '轮次', en: 'ROUND', value: roundLabel },
       { key: 'format', label: '赛制', en: 'FORMAT', value: cleanText(match?.format) || '—' },
       { key: 'status', label: '状态', en: 'STATUS', value: state.isForfeit ? '弃权' : getMatchStatusText(match), accent: true },
       { key: 'maps', label: '地图', en: 'MAPS', value: mapCountLabel },

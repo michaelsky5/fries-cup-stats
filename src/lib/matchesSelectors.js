@@ -355,18 +355,55 @@ export function getMatchTimeLabel(match) {
   return `${month}-${day} ${hour}:${minute}`
 }
 
+export function getMatchGroupLabel(match) {
+  const round = normalizeText(match?.round)
+  return normalizeText(match?.group_label || match?.groupLabel || round.match(/\bGROUP\s+([A-Z0-9]+)\b/i)?.[1]).toUpperCase()
+}
+
+export function getMatchCompetitionDay(match) {
+  const round = normalizeText(match?.round)
+  return toNumber(
+    match?.competition_day ??
+    match?.competitionDay ??
+    match?.schedule_day ??
+    match?.scheduleDay ??
+    round.match(/\bDAY\s+(\d+)\b/i)?.[1],
+    0
+  )
+}
+
 export function getRoundText(match) {
   const round = normalizeText(match?.round || match?.stage)
   const number = round.match(/\d+/)?.[0]
   if (String(match?.stage || '').toUpperCase() === 'GROUP') {
-    const competitionDay = toNumber(match?.competition_day ?? match?.competitionDay, 0)
+    const competitionDay = getMatchCompetitionDay(match)
+    const groupLabel = getMatchGroupLabel(match)
+    if (groupLabel && competitionDay > 0) return `${groupLabel} 组小组赛 · 第 ${competitionDay} 比赛日`
+    if (groupLabel) return `${groupLabel} 组小组赛`
     if (competitionDay > 0) return `小组赛第 ${competitionDay} 比赛日`
-    const groupLabel = normalizeText(match?.group_label || round.match(/\bGROUP\s+([A-D])\b/i)?.[1]).toUpperCase()
-    return groupLabel ? `${groupLabel} 组小组赛` : '小组赛'
+    return '小组赛'
   }
   if (String(match?.stage || '').toUpperCase() === 'SWISS' && number) return `瑞士轮第 ${number} 轮`
   if (/^ROUND\s*\d+/i.test(round) && number) return `瑞士轮第 ${number} 轮`
   return round || '赛事阶段待定'
+}
+
+export function getRoundBadgeText(match) {
+  if (String(match?.stage || '').toUpperCase() === 'GROUP') {
+    const groupLabel = getMatchGroupLabel(match)
+    const competitionDay = getMatchCompetitionDay(match)
+    if (groupLabel && competitionDay > 0) return `${groupLabel}组 · D${competitionDay}`
+    if (groupLabel) return `${groupLabel}组`
+    if (competitionDay > 0) return `小组赛 · D${competitionDay}`
+    return '小组赛'
+  }
+
+  const stage = normalizeText(match?.stage).toUpperCase()
+  const round = normalizeText(match?.round).toUpperCase()
+  const roundNumber = round.match(/\d+/)?.[0]
+  if (stage && roundNumber) return `${stage}-R${roundNumber}`
+  if (roundNumber) return `ROUND-${roundNumber}`
+  return round || stage || 'MATCH'
 }
 
 export function getMapSummary(match, locale = 'zh-CN') {

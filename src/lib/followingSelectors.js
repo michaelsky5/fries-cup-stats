@@ -15,6 +15,7 @@ import {
 import { formatMatchSchedule } from './scheduleFormat.js'
 import { calculateSwissStandings } from './swissEngine.js'
 import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
+import { getRoundText } from './matchesSelectors.js'
 
 const safeArr = value => Array.isArray(value) ? value : []
 const SHANGHAI_TZ = 'Asia/Shanghai'
@@ -91,7 +92,7 @@ function getMatchScore(match) {
 }
 
 function getRoundLabel(match) {
-  return normalize(match?.round || match?.stage || match?.match_display_name || '赛程')
+  return getRoundText(match)
 }
 
 function buildTeamIndex(db) {

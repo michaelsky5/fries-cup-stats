@@ -54,6 +54,7 @@ export default function TeamDirectoryCard({
 
       <div className={styles.teamBrandArea}>
         {team.isFavorite ? <span className={styles.favoriteBadge}>FOLLOWING</span> : null}
+        {team.groupLabel ? <span className={styles.teamGroupBadge}>{team.groupLabel} 组</span> : null}
         <button
           type="button"
           className={`${styles.favoriteButton} ${team.isFavorite ? styles.favoriteButtonActive : ''}`}

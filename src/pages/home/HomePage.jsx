@@ -395,7 +395,10 @@ function EventTimelineSection() {
         actionTo="/matches"
         actionText={homeText(locale, '查看赛程赛果', 'Open Matches')}
       />
-      <div className={styles.eventTimelineGrid}>
+      <div
+        className={styles.eventTimelineGrid}
+        style={{ '--event-timeline-columns': Math.min(Math.max(timeline.length, 1), 4) }}
+      >
         {timeline.map((item, index) => {
           const statusKey = getTimelineStatusKey(item)
           const status = getTimelineStatus(item, locale)
@@ -905,7 +908,7 @@ function OverviewGatewaySection({ overview, summary, latest }) {
   return (
     <section className={styles.sectionBlock}>
       <SectionHead eyebrow="EVENT LINKS" title={homeText(locale, '赛事入口', 'Event Links')} />
-      <div className={styles.gatewayGrid}>
+      <div className={`${styles.gatewayGrid} ${hasData ? '' : styles.gatewayGridPrestart}`}>
         {gateways.map(item => item.action === 'managerChoice' ? (
           <button
             key={item.key}
@@ -937,13 +940,15 @@ function OverviewGatewaySection({ overview, summary, latest }) {
 }
 
 function LiveOverview({ overview, following, advance, latest, summary, dataPulse, featuredMatches }) {
+  const hasCompetitionData = summary.maps > 0 || latest.completed > 0
+
   return (
     <>
       <CommandBoard overview={overview} featuredMatches={featuredMatches} />
       <EventTimelineSection />
       <AdvancementResultsSection overview={overview} advance={advance} latest={latest} />
       <OverviewGatewaySection overview={overview} summary={summary} latest={latest} />
-      <DataPulseSection dataPulse={dataPulse} />
+      {hasCompetitionData ? <DataPulseSection dataPulse={dataPulse} /> : null}
       <FollowingSection following={following} />
     </>
   )

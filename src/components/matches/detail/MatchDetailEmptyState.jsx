@@ -1,4 +1,5 @@
-import { getRoleColor, getRoleEnLabel, getRoleLabel } from '../../../lib/leaderboardSelectors.js'
+import { getRoleColor } from '../../../lib/leaderboardSelectors.js'
+import { getRosterRoleLabel } from '../../../lib/rosterSelectors.js'
 import styles from './MatchDetail.module.css'
 
 function Roster({ title, players, locale = 'zh-CN' }) {
@@ -9,7 +10,7 @@ function Roster({ title, players, locale = 'zh-CN' }) {
         <div key={player.id || player.name} className={styles.rosterPlayer}>
           <span>{player.name}</span>
           <span className={styles.roleLabel} style={{ color: getRoleColor(player.role) }}>
-            {locale === 'en-US' ? getRoleEnLabel(player.role) : getRoleLabel(player.role)}
+            {getRosterRoleLabel(player.role, locale)}
           </span>
         </div>
       )) : (

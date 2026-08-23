@@ -1,29 +1,39 @@
+import { lazy, Suspense } from 'react'
 import { Navigate, createBrowserRouter, useLocation } from 'react-router-dom'
 import DataLayout from '../layouts/DataLayout.jsx'
-import MatchesPage from '../pages/matches/MatchesPage.jsx'
-import MatchDetailPage from '../pages/matches/MatchDetailPage.jsx'
-import LeaderboardPage from '../pages/leaderboard/LeaderboardPage.jsx'
-import PlayersPage from '../pages/players/PlayersPage.jsx'
-import PlayerDetailPage from '../pages/players/PlayerDetailPage.jsx'
-import TeamsPage from '../pages/teams/TeamsPage.jsx'
-import TeamDetailPage from '../pages/teams/TeamDetailPage.jsx'
-import StaffPage from '../pages/staff/StaffPage.jsx'
 import HomePage from '../pages/home/HomePage.jsx'
-import FollowingPage from '../pages/following/FollowingPage.jsx'
-import HeroesPage from '../pages/heroes/HeroesPage.jsx'
-import StandingsPage from '../pages/standings/StandingsPage.jsx'
-import AdvancePage from '../pages/advance/AdvancePage.jsx'
-import MapStatsPage from '../pages/stats/MapStatsPage.jsx'
-import MapDetailPage from '../pages/stats/MapDetailPage.jsx'
 
-import ClassicFantasyPage from '../EsportsManagerClassic/pages/FantasyPage.jsx'
-import ClassicFantasyBattle from '../EsportsManagerClassic/pages/FantasyBattle.jsx'
-import ClassicShopPage from '../EsportsManagerClassic/pages/ShopPage.jsx'
-import ClassicChampionPage from '../EsportsManagerClassic/pages/ChampionPage.jsx'
-import ClassicCareerPage from '../EsportsManagerClassic/pages/CareerPage.jsx'
+const MatchesPage = lazy(() => import('../pages/matches/MatchesPage.jsx'))
+const MatchDetailPage = lazy(() => import('../pages/matches/MatchDetailPage.jsx'))
+const LeaderboardPage = lazy(() => import('../pages/leaderboard/LeaderboardPage.jsx'))
+const PlayersPage = lazy(() => import('../pages/players/PlayersPage.jsx'))
+const PlayerDetailPage = lazy(() => import('../pages/players/PlayerDetailPage.jsx'))
+const TeamsPage = lazy(() => import('../pages/teams/TeamsPage.jsx'))
+const TeamDetailPage = lazy(() => import('../pages/teams/TeamDetailPage.jsx'))
+const StaffPage = lazy(() => import('../pages/staff/StaffPage.jsx'))
+const FollowingPage = lazy(() => import('../pages/following/FollowingPage.jsx'))
+const HeroesPage = lazy(() => import('../pages/heroes/HeroesPage.jsx'))
+const StandingsPage = lazy(() => import('../pages/standings/StandingsPage.jsx'))
+const AdvancePage = lazy(() => import('../pages/advance/AdvancePage.jsx'))
+const MapStatsPage = lazy(() => import('../pages/stats/MapStatsPage.jsx'))
+const MapDetailPage = lazy(() => import('../pages/stats/MapDetailPage.jsx'))
 
-import ReviewEntryPage from '../pages/review/ReviewEntryPage.jsx'
-import ReviewStoryPage from '../pages/review/ReviewStoryPage.jsx'
+const ClassicFantasyPage = lazy(() => import('../EsportsManagerClassic/pages/FantasyPage.jsx'))
+const ClassicFantasyBattle = lazy(() => import('../EsportsManagerClassic/pages/FantasyBattle.jsx'))
+const ClassicShopPage = lazy(() => import('../EsportsManagerClassic/pages/ShopPage.jsx'))
+const ClassicChampionPage = lazy(() => import('../EsportsManagerClassic/pages/ChampionPage.jsx'))
+const ClassicCareerPage = lazy(() => import('../EsportsManagerClassic/pages/CareerPage.jsx'))
+
+const ReviewEntryPage = lazy(() => import('../pages/review/ReviewEntryPage.jsx'))
+const ReviewStoryPage = lazy(() => import('../pages/review/ReviewStoryPage.jsx'))
+
+function lazyPage(Component, props = {}) {
+  return (
+    <Suspense fallback={<div role="status" aria-live="polite">页面载入中…</div>}>
+      <Component {...props} />
+    </Suspense>
+  )
+}
 
 function RosterRedirect() {
   const location = useLocation()
@@ -52,37 +62,37 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
 
       { path: 'schedule', element: <ScheduleRedirect /> },
-      { path: 'matches', element: <MatchesPage /> },
-      { path: 'following', element: <FollowingPage /> },
-      { path: 'matches/:matchId', element: <MatchDetailPage /> },
-      { path: 'leaderboard', element: <LeaderboardPage /> },
-      { path: 'players', element: <PlayersPage /> },
-      { path: 'players/:playerId', element: <PlayerDetailPage /> },
-      { path: 'teams', element: <TeamsPage /> },
-      { path: 'teams/:teamId', element: <TeamDetailPage /> },
-      { path: 'staff', element: <StaffPage /> },
+      { path: 'matches', element: lazyPage(MatchesPage) },
+      { path: 'following', element: lazyPage(FollowingPage) },
+      { path: 'matches/:matchId', element: lazyPage(MatchDetailPage) },
+      { path: 'leaderboard', element: lazyPage(LeaderboardPage) },
+      { path: 'players', element: lazyPage(PlayersPage) },
+      { path: 'players/:playerId', element: lazyPage(PlayerDetailPage) },
+      { path: 'teams', element: lazyPage(TeamsPage) },
+      { path: 'teams/:teamId', element: lazyPage(TeamDetailPage) },
+      { path: 'staff', element: lazyPage(StaffPage) },
       { path: 'roster', element: <RosterRedirect /> },
-      { path: 'heroes', element: <HeroesPage /> },
-      { path: 'advance', element: <AdvancePage /> },
-      { path: 'standings', element: <StandingsPage /> },
-      { path: 'maps', element: <MapStatsPage /> },
-      { path: 'maps/:mapName', element: <MapDetailPage /> },
+      { path: 'heroes', element: lazyPage(HeroesPage) },
+      { path: 'advance', element: lazyPage(AdvancePage) },
+      { path: 'standings', element: lazyPage(StandingsPage) },
+      { path: 'maps', element: lazyPage(MapStatsPage) },
+      { path: 'maps/:mapName', element: lazyPage(MapDetailPage) },
 
-      { path: 'review', element: <ReviewEntryPage /> },
+      { path: 'review', element: lazyPage(ReviewEntryPage) },
 
-      { path: 'fantasy', element: <ClassicFantasyPage /> },
-      { path: 'fantasy-classic', element: <ClassicFantasyPage /> },
-      { path: 'fantasy/battle', element: <ClassicFantasyBattle /> },
-      { path: 'shop', element: <ClassicShopPage /> },
-      { path: 'champion', element: <ClassicChampionPage /> },
-      { path: 'career', element: <ClassicCareerPage /> }
+      { path: 'fantasy', element: lazyPage(ClassicFantasyPage) },
+      { path: 'fantasy-classic', element: lazyPage(ClassicFantasyPage) },
+      { path: 'fantasy/battle', element: lazyPage(ClassicFantasyBattle) },
+      { path: 'shop', element: lazyPage(ClassicShopPage) },
+      { path: 'champion', element: lazyPage(ClassicChampionPage) },
+      { path: 'career', element: lazyPage(ClassicCareerPage) }
     ]
   },
 
-  { path: '/review/story/tournament', element: <ReviewStoryPage storyType="tournament" /> },
-  { path: '/review/story/player/:playerId', element: <ReviewStoryPage storyType="player" /> },
-  { path: '/review/story/team/:teamId', element: <ReviewStoryPage storyType="team" /> },
-  { path: '/review/story/staff/:staffType/:staffKey', element: <ReviewStoryPage storyType="staff" /> }
+  { path: '/review/story/tournament', element: lazyPage(ReviewStoryPage, { storyType: 'tournament' }) },
+  { path: '/review/story/player/:playerId', element: lazyPage(ReviewStoryPage, { storyType: 'player' }) },
+  { path: '/review/story/team/:teamId', element: lazyPage(ReviewStoryPage, { storyType: 'team' }) },
+  { path: '/review/story/staff/:staffType/:staffKey', element: lazyPage(ReviewStoryPage, { storyType: 'staff' }) }
 ])
 
 export default router

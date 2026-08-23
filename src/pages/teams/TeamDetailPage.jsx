@@ -17,6 +17,7 @@ import {
 } from '../../lib/rosterSelectors.js'
 import {
   getMatchTimeLabel,
+  getRoundText,
   isFinishedMatch,
   isLiveMatch,
   isUpcomingMatch,
@@ -34,7 +35,7 @@ import {
   getOwMapImageName,
   getOwMapModeFolder
 } from '../../lib/heroes.js'
-import { getSwissStandingsRows } from '../../lib/advanceSelectors.js'
+import { getGroupStandings, getSwissStandingsRows } from '../../lib/advanceSelectors.js'
 import {
   getRestoreScrollState,
   getRestoreScrollY,
@@ -87,6 +88,12 @@ const FALLBACK_MAP_VISUAL = {
   imageUrl: '/maps/Control/Lijiang_Tower.jpg'
 }
 
+const PENDING_MAP_VISUAL = {
+  displayName: '比赛后生成',
+  mode: '暂无地图数据',
+  imageUrl: ''
+}
+
 function getMapVisual(map, locale = 'zh-CN') {
   const name = String(map?.map_name || map?.name || '').trim()
   const type = String(map?.map_type || map?.type || '').trim()
@@ -99,14 +106,6 @@ function getMapVisual(map, locale = 'zh-CN') {
     mode: formatOwMapMode(type, locale),
     imageUrl: `/maps/${getOwMapModeFolder(type)}/${getOwMapImageName(name)}.jpg`
   }
-}
-
-function getFeaturedMapVisual(focusMatch, finishedRows, matchRows, locale = 'zh-CN') {
-  const row = [focusMatch, ...safeArr(finishedRows), ...safeArr(matchRows)]
-    .filter(Boolean)
-    .find(item => safeArr(item.match?.maps).some(map => map?.map_name && String(map?.map_type || '').toUpperCase() !== 'UNKNOWN'))
-  const map = safeArr(row?.match?.maps).find(item => item?.map_name && String(item?.map_type || '').toUpperCase() !== 'UNKNOWN')
-  return getMapVisual(map, locale)
 }
 
 function isKnownMapType(type) {
@@ -229,9 +228,8 @@ function getRepresentativeMapSpotlight(rows, locale = 'zh-CN') {
 
   if (candidates.length) return candidates[0]
 
-  const fallback = getFeaturedMapVisual(null, [], rows, locale)
   return {
-    ...fallback,
+    ...PENDING_MAP_VISUAL,
     hasData: false,
     maps: 0,
     wins: 0,
@@ -531,7 +529,7 @@ function getMatchScoreText(match, side) {
 }
 
 function getMatchRound(match) {
-  return match?.round || match?.stage || '赛程待定'
+  return getRoundText(match)
 }
 
 function getTeamMatchRows(matches, team) {
@@ -1160,11 +1158,26 @@ function getAdvanceState(standing, team) {
     }
   }
 
-  if (!standing || !standing.matches_played) {
+  if (!standing) {
     return { label: '待生成', zone: '积分未生成', tone: 'pending' }
   }
 
-  const rank = toNumber(standing.rank, 999)
+  const groupLabel = String(standing.groupLabel || standing.group_label || team?.groupLabel || team?.group_label || '').trim().toUpperCase()
+  const matchesPlayed = toNumber(standing.matchesPlayed ?? standing.matches_played)
+  const rank = toNumber(standing.rank ?? standing.groupRank ?? standing.group_rank, 999)
+
+  if (groupLabel) {
+    const label = rank < 999 ? `${groupLabel} 组第 ${rank} 名` : `${groupLabel} 组`
+    if (!matchesPlayed) return { label, zone: '小组赛未开始', tone: 'pending' }
+    if (standing.requiresTiebreak || standing.requires_tiebreak) return { label, zone: '加赛待定', tone: 'draw' }
+    if (standing.qualified) return { label, zone: '已晋级', tone: 'win' }
+    if (standing.status === 'eliminated') return { label, zone: '已出局', tone: 'loss' }
+    if (standing.inAdvanceZone) return { label, zone: '晋级区', tone: 'win' }
+    return { label, zone: '小组当前排名', tone: 'pending' }
+  }
+
+  if (!matchesPlayed) return { label: '待生成', zone: '积分未生成', tone: 'pending' }
+
   const presentation = SWISS_STATUS_PRESENTATION[standing.status] || { zone: '当前排名', tone: 'pending' }
   return { label: `第 ${rank} 名`, ...presentation }
 }
@@ -1761,11 +1774,23 @@ export default function TeamDetailPage() {
     () => getCombatComparisons(teamCombatProfile, tournamentCombatBaseline, locale),
     [teamCombatProfile, tournamentCombatBaseline, locale]
   )
-  const standings = useMemo(() => getSwissStandingsRows(db, season), [db, season])
+  const standings = useMemo(() => {
+    if (season?.rules?.competitionFormat === 'GROUP') {
+      return getGroupStandings(db, season).flatMap(group => group.rows)
+    }
+    return getSwissStandingsRows(db, season)
+  }, [db, season])
   const standing = useMemo(() => {
     if (!team) return null
     const keys = teamIdentitySet(team)
-    return standings.find(row => [row.team_id, row.team_short_name, row.team_name].map(normalizeKey).some(value => keys.has(value))) || null
+    return standings.find(row => [
+      row.team_id,
+      row.teamId,
+      row.team_short_name,
+      row.teamShortName,
+      row.team_name,
+      row.teamName
+    ].map(normalizeKey).some(value => keys.has(value))) || null
   }, [standings, team])
 
   const upcomingRows = matchRows.filter(row => isUpcomingMatch(row.match) || isLiveMatch(row.match))
@@ -1876,15 +1901,17 @@ export default function TeamDetailPage() {
       <RosterSubnav withSeason={withSeason} />
 
       <section className={styles.teamHero}>
-        <img
-          className={styles.teamHeroMap}
-          src={featuredMap.imageUrl}
-          alt=""
-          loading="lazy"
-          onError={event => {
-            event.currentTarget.style.display = 'none'
-          }}
-        />
+        {featuredMap.imageUrl ? (
+          <img
+            className={styles.teamHeroMap}
+            src={featuredMap.imageUrl}
+            alt=""
+            loading="lazy"
+            onError={event => {
+              event.currentTarget.style.display = 'none'
+            }}
+          />
+        ) : null}
         <div className={styles.teamHeroOverlay} aria-hidden="true" />
 
         <div className={styles.heroLogoStage}>
@@ -1902,6 +1929,12 @@ export default function TeamDetailPage() {
           <p>{team.fullName}</p>
 
           <div className={styles.heroMetaStrip}>
+            {team.groupLabel ? (
+              <span>
+                <strong>赛事分组</strong>
+                <b>{team.groupLabel} 组</b>
+              </span>
+            ) : null}
             <span>
               <strong>经理</strong>
               <StaffIdentityValue people={team.staff.managers} />
@@ -2004,18 +2037,20 @@ export default function TeamDetailPage() {
             </div>
             <div className={styles.mapSpotlight}>
               <div className={styles.mapSpotlightVisual}>
-                <img
-                  src={featuredMap.imageUrl}
-                  alt={featuredMap.displayName}
-                  loading="lazy"
-                  onError={event => {
-                    event.currentTarget.style.display = 'none'
-                  }}
-                />
+                {featuredMap.imageUrl ? (
+                  <img
+                    src={featuredMap.imageUrl}
+                    alt={featuredMap.displayName}
+                    loading="lazy"
+                    onError={event => {
+                      event.currentTarget.style.display = 'none'
+                    }}
+                  />
+                ) : null}
                 <div className={styles.mapSpotlightCaption}>
-                  <span>REPRESENTATIVE MAP</span>
+                  <span>{featuredMap.hasData ? 'REPRESENTATIVE MAP' : 'MAP PROFILE PENDING'}</span>
                   <strong>{featuredMap.displayName}</strong>
-                  <em>{featuredMap.hasData ? `${featuredMap.mode} · ${featuredMap.maps} maps tracked` : '暂无有效地图记录'}</em>
+                  <em>{featuredMap.hasData ? `${featuredMap.mode} · ${featuredMap.maps} maps tracked` : '首场完赛后生成代表地图'}</em>
                 </div>
               </div>
               <div className={styles.mapSpotlightIntel}>

@@ -67,6 +67,10 @@ export default function TeamsPage() {
 
   const summary = useMemo(() => getRosterSummary(db), [db])
   const teams = useMemo(() => getTeamDirectory(db, favorites), [db, favorites])
+  const groupOptions = useMemo(() => {
+    const labels = Array.from(new Set(teams.map(team => team.groupLabel).filter(Boolean))).sort()
+    return [{ value: 'ALL', label: '全部分组' }, ...labels.map(label => ({ value: label, label: `${label} 组` }))]
+  }, [teams])
   const filteredTeams = useMemo(() => {
     return sortTeams(filterTeams(teams, queryState), queryState.sort)
   }, [queryState, teams])
@@ -82,10 +86,10 @@ export default function TeamsPage() {
 
   const favoriteCount = teams.filter(team => team.isFavorite).length
   const favoriteLimit = favoriteLimits?.teams || 5
-  const hasFilters = Boolean(queryState.q || queryState.filter !== 'all' || queryState.sort !== 'default')
+  const hasFilters = Boolean(queryState.q || queryState.filter !== 'all' || queryState.group !== 'ALL' || queryState.sort !== 'default')
   const reset = () => {
     const next = new URLSearchParams(searchParams)
-    ;['q', 'filter', 'sort', 'page', 'pageSize'].forEach(key => next.delete(key))
+    ;['q', 'filter', 'group', 'sort', 'page', 'pageSize'].forEach(key => next.delete(key))
     setSearchParams(next, { replace: true })
   }
   const activeFilters = [
@@ -98,6 +102,11 @@ export default function TeamsPage() {
       key: 'filter',
       label: FILTER_LABELS.get(queryState.filter) || queryState.filter,
       onRemove: () => setQuery({ filter: { value: 'all', fallback: 'all' } })
+    } : null,
+    queryState.group !== 'ALL' ? {
+      key: 'group',
+      label: `${queryState.group} 组`,
+      onRemove: () => setQuery({ group: { value: 'ALL', fallback: 'ALL' } })
     } : null
   ].filter(Boolean)
 
@@ -127,6 +136,13 @@ export default function TeamsPage() {
             </Link>
           )}
           fields={[
+            ...(groupOptions.length > 1 ? [{
+              name: 'group',
+              label: 'GROUP',
+              value: queryState.group,
+              onChange: value => setQuery({ group: { value, fallback: 'ALL' } }),
+              options: groupOptions
+            }] : []),
             {
               name: 'filter',
               label: 'FILTER',

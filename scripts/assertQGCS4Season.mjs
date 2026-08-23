@@ -10,8 +10,18 @@ import {
 } from '../src/lib/advanceSelectors.js'
 import { adaptBackendBracket } from '../src/lib/bracketAdapters.js'
 import { getCurrentRoundSummary as getHomeCurrentRoundSummary } from '../src/lib/homeSelectors.js'
+import { getMatchDossier } from '../src/lib/matchDetailSelectors.js'
+import { filterTeams, getTeamDirectory } from '../src/lib/rosterSelectors.js'
 import { calculateSwissStandings } from '../src/lib/swissEngine.js'
-import { getCurrentRoundSummary, getMatchHubData, getMatchesByRound, getRoundText, getTeamLogoCandidates } from '../src/lib/matchesSelectors.js'
+import {
+  getCurrentRoundSummary,
+  getGroupedMatches,
+  getMatchHubData,
+  getMatchesByRound,
+  getRoundBadgeText,
+  getRoundText,
+  getTeamLogoCandidates
+} from '../src/lib/matchesSelectors.js'
 import { getSeasonById, resolveSeasonFromUrl } from '../src/config/seasons.js'
 
 const fixturePath = path.resolve('public/data/qgcs4_preseason_public.json')
@@ -89,7 +99,12 @@ assert.equal(roundSummary.totalMatches, 10)
 assert.equal(roundSummary.timeSlotCount, 4)
 assert.equal(roundSummary.roundLabel, '小组赛第 1 比赛日')
 assert.equal(new Set(roundSummary.matches.map(match => match.scheduled_at.slice(0, 10))).size, 1)
-assert.equal(roundSummary.matches.some(match => getRoundText(match).includes('比赛日')), false)
+assert.equal(getRoundText(roundSummary.matches[0]), 'A 组小组赛 · 第 1 比赛日')
+assert.equal(getRoundBadgeText(roundSummary.matches[0]), 'A组 · D1')
+
+const firstDayGroups = getGroupedMatches(roundSummary.matches, 'date')
+assert.equal(firstDayGroups.length, 4)
+assert.deepEqual(firstDayGroups.map(group => group.matches.length).sort((a, b) => a - b), [2, 2, 3, 3])
 
 const allRoundMatches = getMatchesByRound(db.matches, 'ALL')
 assert.equal(allRoundMatches.length, 10)
@@ -103,6 +118,16 @@ assert.equal(new Set(homeRoundSummary.matches.map(match => match.scheduled_at.sl
 const hub = getMatchHubData(db, season.id)
 assert.equal(hub.currentRoundMatches.length, 10)
 assert.equal(hub.roundTimeSlots.length, 4)
+
+const teams = getTeamDirectory(db)
+assert.deepEqual(Array.from(new Set(teams.map(team => team.groupLabel))).sort(), ['A', 'B', 'C', 'D'])
+assert.equal(filterTeams(teams, { group: 'D' }).length, 4)
+
+const openingDossier = getMatchDossier(db, 'QGCS4-GROUP-R1-M01')
+const flexPlayer = openingDossier.rosters.teamB.find(player => player.name === '鸢尾')
+assert.equal(openingDossier.stageLabel, 'A 组小组赛')
+assert.equal(openingDossier.roundLabel, '第 1 比赛日')
+assert.equal(flexPlayer?.role, 'FLEX')
 
 const oneCompletedGroupMatch = {
   ...db,

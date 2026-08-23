@@ -46,7 +46,7 @@ function getEnvUrl(seasonId, kind) {
     ''
 }
 
-function getDbUrls(season) {
+function getDbUrls(season, { bootstrap = false } = {}) {
   const remoteUrls = [
     getEnvUrl(season.id, 'data'),
     season.proxyDataUrl,
@@ -54,7 +54,7 @@ function getDbUrls(season) {
   ]
   const localUrls = [season.localDataUrl]
 
-  return uniqueUrls(season?.preferLocalData
+  return uniqueUrls((season?.preferLocalData || (bootstrap && season?.bootstrapLocalData))
     ? [...localUrls, ...remoteUrls]
     : [...remoteUrls, ...localUrls])
 }
@@ -74,7 +74,7 @@ async function fetchJson(url, errorCode) {
 
   try {
     const res = await fetch(url, {
-      cache: 'no-store',
+      cache: 'no-cache',
       signal: controller.signal
     })
     if (!res.ok) throw new Error(`${errorCode}: ${res.status}`)
@@ -247,9 +247,9 @@ async function fetchFirstAvailable(urls, errorCode, validate = data => data) {
   throw new Error(`${errorCode}: ${errors.join(' | ')}`)
 }
 
-async function fetchDb(season) {
+async function fetchDb(season, options = {}) {
   const data = await fetchFirstAvailable(
-    getDbUrls(season),
+    getDbUrls(season, options),
     'DATA_LOAD_FAILED',
     payload => validatePublicDb(payload, season)
   )
@@ -261,7 +261,7 @@ export async function getDb(seasonId) {
   const season = getSeasonById(seasonId || getStoredSeasonId())
   if (dbCache.has(season.id)) return dbCache.get(season.id)
 
-  const data = await fetchDb(season)
+  const data = await fetchDb(season, { bootstrap: true })
   dbCache.set(season.id, data)
   return data
 }

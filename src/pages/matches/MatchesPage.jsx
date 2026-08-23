@@ -13,6 +13,7 @@ import {
   getMatchStatus,
   getMatchStatusText,
   getMatchTimeLabel,
+  getRoundBadgeText,
   getRoundText,
   getTabMatches,
   isFavoriteMatch,
@@ -119,15 +120,6 @@ function handleArchiveRowKeyDown(event) {
   event.currentTarget.click()
 }
 
-function getArchiveRoundBadge(match) {
-  const stage = String(match?.stage || '').trim().toUpperCase()
-  const round = String(match?.round || '').trim().toUpperCase()
-  const roundNumber = round.match(/\d+/)?.[0]
-  if (stage && roundNumber) return `${stage}-R${roundNumber}`
-  if (roundNumber) return `ROUND-${roundNumber}`
-  return round || stage || 'MATCH'
-}
-
 function TeamBlock({ team, source, seasonId, align = 'left' }) {
   return (
     <span className={`${styles.teamBlock} ${align === 'right' ? styles.teamBlockRight : ''}`} title={team.full}>
@@ -203,7 +195,7 @@ function MatchRow({ match, compact = false }) {
     >
       <div className={styles.matchTime}>
         <span>{getMatchTimeLabel(match)}</span>
-        <em>{getArchiveRoundBadge(match)}</em>
+        <em>{getRoundBadgeText(match)}</em>
       </div>
 
       <div className={styles.matchMain}>
@@ -586,7 +578,8 @@ export default function MatchesPage() {
   }
   const tabRows = getTabMatches(allMatches, activeTab, favorites, filters.round)
   const rows = filterMatches(tabRows, filters)
-  const groups = getGroupedMatches(rows, hub.isArchive ? 'stage' : 'roundDate')
+  const isGroupStage = String(hub?.currentRoundSummary?.stage || '').toUpperCase() === 'GROUP'
+  const groups = getGroupedMatches(rows, hub.isArchive ? 'stage' : isGroupStage ? 'date' : 'roundDate')
   const favoriteCount = safeArr(favorites?.favoriteTeamIds).length
 
   useEffect(() => {
@@ -636,7 +629,7 @@ export default function MatchesPage() {
           setTab={setTab}
           seasonId={seasonId}
           focusSearch={focusSearch}
-          isGroupStage={String(hub?.currentRoundSummary?.stage || '').toUpperCase() === 'GROUP'}
+          isGroupStage={isGroupStage}
         />
       ) : (
         <MatchHub hub={hub} seasonId={seasonId} />

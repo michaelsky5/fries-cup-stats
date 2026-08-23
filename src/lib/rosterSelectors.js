@@ -296,6 +296,7 @@ export function getTeamDirectory(db, favorites = {}) {
       routeId,
       shortName,
       fullName,
+      groupLabel: normalize(team.group_label || team.groupLabel).toUpperCase(),
       club: normalize(team.team_club || team.club),
       rosterSize: safeArr(team?.player_ids).length || rosterPlayers.length,
       roleCounts: getRoleCounts(rosterPlayers),
@@ -308,6 +309,7 @@ export function getTeamDirectory(db, favorites = {}) {
 export function filterTeams(teams, filters = {}) {
   const query = normalizeKey(filters.query ?? filters.q)
   const filter = filters.filter || 'all'
+  const group = normalize(filters.group || 'ALL').toUpperCase()
 
   return safeArr(teams).filter(team => {
     if (filter === 'following' && !team.isFavorite) return false
@@ -316,6 +318,7 @@ export function filterTeams(teams, filters = {}) {
     if (filter === 'roster7' && team.rosterSize !== 7) return false
     if (filter === 'hasCoach' && !team.staff.coaches.length) return false
     if (filter === 'noCoach' && team.staff.coaches.length) return false
+    if (group !== 'ALL' && normalize(team.groupLabel).toUpperCase() !== group) return false
 
     return includesQuery(query, [
       team.shortName,
@@ -708,6 +711,7 @@ export function buildRosterQueryState(searchParams, directory = 'teams') {
     filter: params.get('filter') || 'all',
     role,
     team: params.get('team') || 'ALL',
+    group: params.get('group') || 'ALL',
     hero: params.get('hero') || 'ALL',
     type,
     following: params.get('following') || 'all',
@@ -724,6 +728,7 @@ export function getActiveRosterFilters(state = {}) {
   if (state.role && state.role !== 'ALL') filters.push({ key: 'role', label: getRosterRoleLabel(state.role) })
   if (state.type && state.type !== 'ALL') filters.push({ key: 'type', label: state.type === 'manager' ? '经理' : '教练' })
   if (state.team && state.team !== 'ALL') filters.push({ key: 'team', label: state.team })
+  if (state.group && state.group !== 'ALL') filters.push({ key: 'group', label: `${state.group} 组` })
   if (state.hero && state.hero !== 'ALL') filters.push({ key: 'hero', label: state.hero })
   if (state.following === 'following') filters.push({ key: 'following', label: '只看关注' })
   return filters
