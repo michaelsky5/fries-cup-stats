@@ -8,7 +8,10 @@ function Roster({ title, players, locale = 'zh-CN' }) {
       <div className={styles.rosterHead}>{title}</div>
       {players.length ? players.map(player => (
         <div key={player.id || player.name} className={styles.rosterPlayer}>
-          <span>{player.name}</span>
+          <span className={styles.rosterPlayerIdentity}>
+            <strong>{player.name}</strong>
+            {player.battleTag ? <small title={player.battleTag}>{player.battleTag}</small> : null}
+          </span>
           <span className={styles.roleLabel} style={{ color: getRoleColor(player.role) }}>
             {getRosterRoleLabel(player.role, locale)}
           </span>

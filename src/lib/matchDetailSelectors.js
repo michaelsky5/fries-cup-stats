@@ -13,7 +13,7 @@ import {
 } from './matchesSelectors.js'
 import { formatMatchSchedule } from './scheduleFormat.js'
 import { getRoleEnLabel, getRoleLabel, normalizeLeaderboardRole } from './leaderboardSelectors.js'
-import { normalizeRosterRole } from './rosterSelectors.js'
+import { getPlayerDisplayIdentity, normalizeRosterRole } from './rosterSelectors.js'
 import { formatOwHeroName, formatOwMapMode, formatOwMapName } from './heroes.js'
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED'])
@@ -267,11 +267,16 @@ function getRosterForTeam(db, team) {
       player?.team_name,
       player?.team
     ].some(value => ids.has(normalizeKey(value))))
-    .map(player => ({
-      id: cleanText(player?.player_id),
-      name: cleanText(player?.nickname || player?.display_name || player?.player_name || player?.player_id),
-      role: normalizeRosterRole(player?.role)
-    }))
+    .map(player => {
+      const identity = getPlayerDisplayIdentity(player)
+
+      return {
+        id: cleanText(player?.player_id),
+        name: identity.primary,
+        battleTag: identity.secondary,
+        role: normalizeRosterRole(player?.role)
+      }
+    })
 }
 
 function normalizeMap(map, match, playerDirectory, index, locale = 'zh-CN') {

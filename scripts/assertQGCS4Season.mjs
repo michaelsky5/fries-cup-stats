@@ -125,9 +125,14 @@ assert.equal(filterTeams(teams, { group: 'D' }).length, 4)
 
 const openingDossier = getMatchDossier(db, 'QGCS4-GROUP-R1-M01')
 const flexPlayer = openingDossier.rosters.teamB.find(player => player.name === '鸢尾')
+const namedPlayer = openingDossier.rosters.teamA.find(player => player.name === 'suna')
+const battleTagOnlyPlayer = openingDossier.rosters.teamA.find(player => player.name === 'BLILoveLai30#5917')
 assert.equal(openingDossier.stageLabel, 'A 组小组赛')
 assert.equal(openingDossier.roundLabel, '第 1 比赛日')
 assert.equal(flexPlayer?.role, 'FLEX')
+assert.equal(flexPlayer?.battleTag, 'Iris#54201')
+assert.equal(namedPlayer?.battleTag, 'suna#51965')
+assert.equal(battleTagOnlyPlayer?.battleTag, '')
 assert.equal(getRosterRoleLabel(flexPlayer?.role), '灵活')
 
 const oneCompletedGroupMatch = {
