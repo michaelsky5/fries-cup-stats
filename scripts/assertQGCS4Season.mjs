@@ -134,6 +134,29 @@ assert.equal(flexPlayer?.battleTag, 'Iris#54201')
 assert.equal(namedPlayer?.battleTag, 'suna#51965')
 assert.equal(battleTagOnlyPlayer?.battleTag, '')
 assert.equal(getRosterRoleLabel(flexPlayer?.role), '灵活')
+assert.deepEqual(
+  openingDossier.rosters.teamA.map(player => [player.name, player.role]),
+  [
+    ['suna', 'TANK'],
+    ['BLILoveLai30#5917', 'TANK'],
+    ['鬼影', 'DPS'],
+    ['Moon1ightT', 'SUP'],
+    ['爱将', 'SUP'],
+    ['JUBE', 'SUP'],
+    ['小五', 'FLEX']
+  ]
+)
+assert.deepEqual(
+  openingDossier.rosters.teamB.map(player => [player.name, player.role]),
+  [
+    ['冷冰冰', 'TANK'],
+    ['黎明', 'DPS'],
+    ['小小冬', 'SUP'],
+    ['小源', 'SUP'],
+    ['抹茶冰沙', 'SUP'],
+    ['鸢尾', 'FLEX']
+  ]
+)
 
 const oneCompletedGroupMatch = {
   ...db,

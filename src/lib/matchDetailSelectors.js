@@ -21,6 +21,7 @@ const LIVE_STATUSES = new Set(['IN_PROGRESS', 'LIVE'])
 const POSTPONED_STATUSES = new Set(['POSTPONED', 'DELAYED', 'RESCHEDULED'])
 const CANCELLED_STATUSES = new Set(['CANCELLED', 'CANCELED'])
 const ROLE_ORDER = { TANK: 1, DPS: 2, SUPPORT: 3 }
+const ROSTER_ROLE_ORDER = { TANK: 1, DPS: 2, SUP: 3, FLEX: 4 }
 
 const TEAM_METRICS = [
   { key: 'mapWins', label: '地图胜利', en: 'MAPS' },
@@ -267,16 +268,27 @@ function getRosterForTeam(db, team) {
       player?.team_name,
       player?.team
     ].some(value => ids.has(normalizeKey(value))))
-    .map(player => {
+    .map((player, originalIndex) => {
       const identity = getPlayerDisplayIdentity(player)
 
       return {
         id: cleanText(player?.player_id),
         name: identity.primary,
         battleTag: identity.secondary,
-        role: normalizeRosterRole(player?.role)
+        role: normalizeRosterRole(player?.role),
+        originalIndex
       }
     })
+    .sort((a, b) => {
+      const roleDelta = (ROSTER_ROLE_ORDER[a.role] || 99) - (ROSTER_ROLE_ORDER[b.role] || 99)
+      return roleDelta || a.originalIndex - b.originalIndex
+    })
+    .map(player => ({
+      id: player.id,
+      name: player.name,
+      battleTag: player.battleTag,
+      role: player.role
+    }))
 }
 
 function normalizeMap(map, match, playerDirectory, index, locale = 'zh-CN') {
