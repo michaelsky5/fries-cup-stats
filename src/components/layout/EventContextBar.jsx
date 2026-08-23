@@ -31,14 +31,27 @@ function getCurrentScaleText(locale, activeSummary = null) {
   )
 }
 
+function getArchiveMetaText(season, locale = 'zh-CN', activeSummary = null) {
+  const championShort = String(season?.switcherMeta?.championShort || '').trim() || '-'
+  const matchCount = toPositiveNumber(activeSummary?.matchCount) ||
+    toPositiveNumber(season?.switcherMeta?.matchCount) ||
+    '-'
+
+  return pickLocale(
+    locale,
+    `冠军 ${championShort} · ${matchCount} 场`,
+    `Champion ${championShort} · ${matchCount} matches`
+  )
+}
+
 function getSwitcherMeta(season, currentSeasonId, seasonStatus, locale = 'zh-CN', activeSummary = null) {
   if (season?.id === currentSeasonId) {
     const status = getReadableStatus(seasonStatus, locale)
-    if (season?.reviewEnabled) return pickLocale(locale, `${status} · 冠军 HYW · 127 场`, `${status} · Champion HYW · 127 matches`)
+    if (season?.reviewEnabled) return `${status} · ${getArchiveMetaText(season, locale, activeSummary)}`
     return `${status} · ${getCurrentScaleText(locale, activeSummary)}`
   }
 
-  if (season?.reviewEnabled) return pickLocale(locale, '冠军 HYW · 127 场', 'Champion HYW · 127 matches')
+  if (season?.reviewEnabled) return getArchiveMetaText(season, locale)
   return getCurrentScaleText(locale)
 }
 
