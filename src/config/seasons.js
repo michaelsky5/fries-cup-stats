@@ -24,6 +24,10 @@ export const SEASONS = [
     localDataUrl: '/data/fcr2026_local_public.json',
     preferLocalData: PREFER_LOCAL_DATA,
     reviewEnabled: true,
+    switcherMeta: {
+      championShort: 'AIP',
+      matchCount: 137
+    },
     rankingMinTimeMins: 30,
     rules: {
       rankingMinTimeMins: 30,
@@ -267,6 +271,10 @@ export const SEASONS = [
     localReportUrl: '/data/friescup_db_review_ready_report.json',
     preferLocalData: PREFER_LOCAL_DATA,
     reviewEnabled: true,
+    switcherMeta: {
+      championShort: 'HYW',
+      matchCount: 127
+    },
     rankingMinTimeMins: 30,
     rules: {
       rankingMinTimeMins: 30,

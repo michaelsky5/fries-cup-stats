@@ -3674,6 +3674,10 @@
     gap: 42px;
   }
 
+  .archiveShell {
+    gap: 42px;
+  }
+
   .commandBoard {
     min-height: auto;
     gap: 18px;
