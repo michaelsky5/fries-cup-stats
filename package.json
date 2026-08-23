@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm run build:scouting-artifacts",
     "build": "vite build",
+    "build:scouting-artifacts": "node scripts/buildScoutingArtifacts.mjs",
     "analyze:fca-heroes": "node scripts/analyzeFcaHeroProfiles.mjs",
     "replay:fca-rating": "node scripts/replayFcaRatingModel.mjs",
     "test:rating-model": "node scripts/assertRatingModelConfig.mjs",
@@ -16,6 +18,8 @@
     "test:roster-identity": "node scripts/assertRosterIdentityResolution.mjs",
     "test:playoff-bracket": "node scripts/assertPlayoffBracket.mjs",
     "test:qgcs4-season": "node scripts/assertQGCS4Season.mjs",
+    "test:scouting-report": "node scripts/assertScoutingReport.mjs",
+    "scouting:create-share-link": "node scripts/createScoutingShareLink.mjs",
     "compare:scoring": "node scripts/compareScoringEngines.mjs",
     "lint": "eslint .",
     "preview": "vite preview"

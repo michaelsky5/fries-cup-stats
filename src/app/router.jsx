@@ -26,6 +26,11 @@ const ClassicCareerPage = lazy(() => import('../EsportsManagerClassic/pages/Care
 
 const ReviewEntryPage = lazy(() => import('../pages/review/ReviewEntryPage.jsx'))
 const ReviewStoryPage = lazy(() => import('../pages/review/ReviewStoryPage.jsx'))
+const ScoutingReportRoute = lazy(() => import('../pages/scouting/ScoutingReportRoute.jsx'))
+const ScoutingPlayerRoute = lazy(() => (
+  import('../pages/scouting/ScoutingReportRoute.jsx')
+    .then(module => ({ default: module.ScoutingPlayerRoute }))
+))
 
 function lazyPage(Component, props = {}) {
   return (
@@ -92,7 +97,9 @@ const router = createBrowserRouter([
   { path: '/review/story/tournament', element: lazyPage(ReviewStoryPage, { storyType: 'tournament' }) },
   { path: '/review/story/player/:playerId', element: lazyPage(ReviewStoryPage, { storyType: 'player' }) },
   { path: '/review/story/team/:teamId', element: lazyPage(ReviewStoryPage, { storyType: 'team' }) },
-  { path: '/review/story/staff/:staffType/:staffKey', element: lazyPage(ReviewStoryPage, { storyType: 'staff' }) }
+  { path: '/review/story/staff/:staffType/:staffKey', element: lazyPage(ReviewStoryPage, { storyType: 'staff' }) },
+  { path: '/scouting/:shareKey', element: lazyPage(ScoutingReportRoute) },
+  { path: '/scouting/:shareKey/players/:playerId', element: lazyPage(ScoutingPlayerRoute) }
 ])
 
 export default router

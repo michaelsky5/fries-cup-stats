@@ -1,4 +1,19 @@
 {
+  "headers": [
+    {
+      "source": "/scouting/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive, nosnippet"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/admin-public/:path*",
