@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
+import { access, readFile } from 'node:fs/promises'
 
 import { getSeasonById } from '../src/config/seasons.js'
+import { getHeroAvatarSrc } from '../src/lib/leaderboardSelectors.js'
 import {
   SCOUTING_CORE_SUBROLE_SLOT_PLAN,
   SCOUTING_DECISION_PROFILE,
@@ -38,6 +39,29 @@ const season = getSeasonById('FCR26')
 const report = buildScoutingReportModel(db, season)
 const selectionAudit = buildScoutingSelectionAudit(db, season)
 const artifacts = createScoutingArtifacts(report, db.meta)
+
+function getHeroRenderPath(hero, role) {
+  const avatarPath = getHeroAvatarSrc(hero, role)
+  assert.ok(avatarPath, `Missing hero avatar mapping for ${role}:${hero}`)
+  return avatarPath.replace('/heroes/', '/review/hero-renders/').replace(/_/g, '-')
+}
+
+const heroArtworkAssets = [...new Map(report.players.flatMap(player => {
+  const recommendations = player.performanceSignals.opponentStrength?.deploymentPlaybook?.recommendations || {}
+  return [
+    player.heroPool[0]?.hero || player.summary.primaryHero,
+    recommendations.primaryUse?.hero,
+    recommendations.secondaryUse?.hero,
+    recommendations.watchContext?.hero
+  ].filter(Boolean).map(hero => {
+    const assetPath = getHeroRenderPath(hero, player.role)
+    return [assetPath, { assetPath, hero, role: player.role }]
+  })
+})).values()]
+
+await Promise.all(heroArtworkAssets.map(({ assetPath }) => (
+  access(new URL(`../public${assetPath}`, import.meta.url))
+)))
 
 assert.equal(report.modelVersion, SCOUTING_MODEL_VERSION)
 assert.deepEqual(report.sampleGate, SCOUTING_SAMPLE_GATE)
@@ -466,5 +490,6 @@ console.log(JSON.stringify({
     added: addedInV2.map(playerId => report.players.find(player => player.playerId === playerId)?.identity?.displayName),
     removed: removedFromV1.map(playerId => selectionAudit.candidates.find(player => player.playerId === playerId)?.identity?.displayName)
   },
+  heroArtworkAssets: heroArtworkAssets.length,
   shortlist
 }, null, 2))
