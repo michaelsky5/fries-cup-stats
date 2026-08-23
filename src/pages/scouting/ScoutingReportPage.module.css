@@ -14,6 +14,215 @@
   background-size: auto, 80px 80px, 80px 80px, auto;
 }
 
+/* Credibility pass: expose rank scope, validation risk and a meeting-ready trial handoff. */
+.commandValidationStrip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, auto)) minmax(260px, 1fr);
+  gap: 1px;
+  margin-top: 10px;
+  border: 1px solid var(--report-line);
+  background: var(--report-line);
+}
+
+.commandValidationStrip > span,
+.commandValidationStrip > p {
+  min-width: 0;
+  padding: 11px 14px;
+  background: rgba(9, 12, 16, 0.96);
+}
+
+.commandValidationStrip > span { display: grid; gap: 4px; }
+.commandValidationStrip small { color: var(--report-muted); font-size: 10px; }
+.commandValidationStrip strong { color: #fff; font-size: 17px; }
+.commandValidationStrip > span:first-child strong { color: #ff9b78; }
+.commandValidationStrip > span:nth-child(2) strong { color: #72e39a; }
+.commandValidationStrip > p { display: flex; align-items: center; justify-content: flex-end; color: var(--report-muted); font-size: 11px; line-height: 1.55; text-align: right; }
+
+.roleCockpitRankGuide {
+  margin: 0;
+  padding: 9px 14px;
+  color: var(--report-muted);
+  border-bottom: 1px solid var(--report-line);
+  background: color-mix(in srgb, var(--slot-color) 4%, transparent);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.playerCard .playerCardTopline { display: grid; gap: 5px; justify-content: stretch; }
+.playerCard .playerCardTopline small { white-space: normal; line-height: 1.45; letter-spacing: 0.05em; }
+
+.roleCockpitLeaderIdentity small { white-space: normal; line-height: 1.55; }
+.roleCockpitCandidates[data-audience='manager'] > div > a > footer { grid-template-columns: minmax(0, 1fr) auto; align-items: center; border-top: 1px solid var(--report-line); }
+.roleCockpitCandidates[data-audience='manager'] > div > a > footer b { margin-top: 0; text-align: right; }
+
+.managerRankScopes {
+  width: 100%;
+  display: grid;
+  gap: 1px;
+  border: 1px solid color-mix(in srgb, var(--slot-color) 30%, var(--report-line));
+  background: var(--report-line);
+}
+
+.managerRankScopes > span {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 10px;
+  background: rgba(7, 9, 13, 0.94);
+  text-align: left;
+}
+
+.managerRankScopes small { color: var(--report-muted); font-size: 9px; line-height: 1.4; }
+.managerRankScopes b { color: rgba(255, 255, 255, 0.9); font-size: 11px; line-height: 1.35; text-align: right; }
+.managerRankScopes > span:first-child b { color: var(--slot-color); }
+.managerPlayerAnalysis .analysisScore > span { max-width: 250px; color: var(--report-muted); font-size: 10px; font-weight: 750; line-height: 1.5; text-align: right; }
+
+.managerTrialCard {
+  overflow: hidden;
+  scroll-margin-top: 150px;
+  border: 1px solid color-mix(in srgb, var(--slot-color) 38%, var(--report-line));
+  border-top: 4px solid var(--slot-color);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--slot-color) 7%, transparent), transparent 36%), rgba(10, 13, 18, 0.97);
+}
+
+.managerTrialCard > header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--report-line);
+}
+
+.managerTrialCard > header > div { display: grid; gap: 6px; }
+.managerTrialCard > header span,
+.managerTrialGrid > article > span,
+.managerTrialCard > footer > span { color: var(--slot-color); font-size: 9px; font-weight: 950; letter-spacing: 0.12em; text-transform: uppercase; }
+.managerTrialCard > header h3 { font-size: clamp(22px, 2.1vw, 32px); letter-spacing: -0.035em; }
+.managerTrialCard > header p { max-width: 920px; color: var(--report-muted); font-size: 13px; line-height: 1.65; }
+.managerTrialCard > header button { padding: 10px 13px; color: #0b0d11; border: 0; background: var(--slot-color); font-size: 10px; font-weight: 950; white-space: nowrap; }
+
+.managerTrialGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  background: var(--report-line);
+  gap: 1px;
+}
+
+.managerTrialGrid > article {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 18px 20px;
+  background: rgba(9, 12, 17, 0.98);
+}
+
+.managerTrialGrid > article > strong { color: #fff; font-size: 17px; line-height: 1.35; }
+.managerTrialGrid ol { display: grid; }
+.managerTrialGrid li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 9px; padding: 9px 0; border-bottom: 1px solid var(--report-line); }
+.managerTrialGrid li:last-child { border-bottom: 0; }
+.managerTrialGrid li > b { color: var(--slot-color); font: 900 9px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.managerTrialGrid li p { color: rgba(255, 255, 255, 0.76); font-size: 13px; line-height: 1.62; }
+.managerTrialUse > div { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 12px; align-items: center; }
+.managerTrialUse .heroIcon { width: 48px; height: 48px; }
+.managerTrialUse > div p { display: grid; gap: 5px; }
+.managerTrialUse > div p b { font-size: 15px; }
+.managerTrialUse > div p small { color: var(--report-muted); font-size: 10px; line-height: 1.55; }
+.managerTrialUse > footer { display: grid; gap: 6px; margin-top: auto; padding-top: 12px; border-top: 1px solid var(--report-line); }
+.managerTrialUse > footer span { display: flex; justify-content: space-between; gap: 12px; color: var(--report-muted); font-size: 10px; }
+.managerTrialUse > footer b { color: #fff; }
+.managerTrialQuestions,
+.managerTrialPass { grid-column: span 3; }
+.managerTrialQuestions ol,
+.managerTrialPass ol { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.managerTrialQuestions li,
+.managerTrialPass li { border-bottom: 0; }
+.managerTrialCard > footer { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; padding: 13px 20px; border-top: 1px solid var(--report-line); background: color-mix(in srgb, var(--slot-color) 5%, transparent); }
+.managerTrialCard > footer p { color: var(--report-muted); font-size: 12px; line-height: 1.55; text-align: right; }
+
+.managerDeepDive {
+  border: 1px solid var(--report-line);
+  background: rgba(8, 11, 15, 0.88);
+}
+
+.managerDeepDive > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  padding: 18px 20px;
+}
+
+.managerDeepDive > summary::-webkit-details-marker { display: none; }
+.managerDeepDive > summary > span { display: grid; gap: 5px; }
+.managerDeepDive > summary strong { font-size: 16px; }
+.managerDeepDive > summary small { color: var(--report-muted); font-size: 11px; line-height: 1.55; }
+.managerDeepDive > summary > b { color: var(--fc-yellow); font-size: 24px; transition: transform 0.18s ease; }
+.managerDeepDive[open] > summary > b { transform: rotate(45deg); }
+.managerDeepDive > div { display: grid; gap: 18px; padding: 0 18px 18px; }
+
+@media (max-width: 760px) {
+  .commandValidationStrip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .commandValidationStrip > p { grid-column: 1 / -1; justify-content: flex-start; text-align: left; }
+  .roleCockpitCandidates > header { flex-wrap: wrap; }
+  .roleCockpitCandidates > header small { line-height: 1.45; }
+  .roleCockpitRankGuide { font-size: 11px; }
+  .managerRankScopes > span { grid-template-columns: 1fr; gap: 4px; }
+  .managerRankScopes b { text-align: left; }
+  .managerPlayerAnalysis .analysisScore > span { text-align: left; }
+  .managerTrialCard > header { grid-template-columns: 1fr; }
+  .managerTrialCard > header button { width: 100%; }
+  .managerTrialGrid { grid-template-columns: 1fr; }
+  .managerTrialQuestions,
+  .managerTrialPass { grid-column: auto; }
+  .managerTrialQuestions ol,
+  .managerTrialPass ol { grid-template-columns: 1fr; gap: 0; }
+  .managerTrialQuestions li,
+  .managerTrialPass li { border-bottom: 1px solid var(--report-line); }
+  .managerTrialQuestions li:last-child,
+  .managerTrialPass li:last-child { border-bottom: 0; }
+  .managerTrialCard > footer { grid-template-columns: 1fr; gap: 6px; }
+  .managerTrialCard > footer p { text-align: left; }
+  .managerDeepDive > summary { align-items: flex-start; padding: 16px; }
+  .managerDeepDive > div { padding: 0 10px 10px; }
+}
+
+@media print {
+  .detailPage[data-audience='manager'] .managerDeepDive > summary { display: none !important; }
+  .detailPage[data-audience='manager'] .managerDeepDive > div { display: grid !important; padding: 0; }
+  .detailPage[data-audience='manager'] .managerDeepDive { border: 0; background: transparent; }
+  .detailPage[data-audience='manager'] .managerTrialCard { color: #111; border-color: #aaa; background: #fff !important; break-inside: avoid; }
+  .detailPage[data-audience='manager'] .managerTrialCard > header,
+  .detailPage[data-audience='manager'] .managerTrialCard > footer,
+  .detailPage[data-audience='manager'] .managerTrialGrid { border-color: #bbb; background: #bbb; }
+  .detailPage[data-audience='manager'] .managerTrialGrid > article,
+  .detailPage[data-audience='manager'] .managerTrialCard > header,
+  .detailPage[data-audience='manager'] .managerTrialCard > footer { color: #111; background: #fff !important; }
+  .detailPage[data-audience='manager'] .managerTrialCard :is(h3, strong, b) { color: #111 !important; }
+  .detailPage[data-audience='manager'] .managerTrialCard :is(p, small) { color: #444 !important; }
+  .detailPage[data-audience='manager'] .managerTrialCard > header button { display: none !important; }
+
+  .detailPage[data-print-mode='trial'] .managerPlayerAnalysis > :not(.managerTrialCard),
+  .detailPage[data-print-mode='trial'] .detailVersionFooter { display: none !important; }
+  .detailPage[data-print-mode='trial'] .managerPlayerAnalysis { display: block; }
+  .detailPage[data-print-mode='trial'] .managerTrialCard { zoom: 0.9; }
+  .detailPage[data-print-mode='trial'] .managerTrialGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .detailPage[data-print-mode='trial'] .managerTrialQuestions,
+  .detailPage[data-print-mode='trial'] .managerTrialPass { grid-column: span 3; }
+  .detailPage[data-print-mode='trial'] .managerTrialQuestions ol,
+  .detailPage[data-print-mode='trial'] .managerTrialPass ol { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4mm; }
+  .detailPage[data-print-mode='trial'] .managerTrialUse > footer span { color: #444 !important; }
+  .detailPage[data-print-mode='trial'] .managerTrialCard > header { padding: 5mm; }
+  .detailPage[data-print-mode='trial'] .managerTrialGrid > article { padding: 4mm; }
+  .detailPage[data-print-mode='trial'] .managerTrialGrid li { padding: 2.2mm 0; }
+  .detailPage[data-print-mode='trial'] .managerTrialCard > footer { padding: 3.5mm 5mm; }
+}
+
 .header {
   min-height: 76px;
   display: grid;
@@ -11304,6 +11513,62 @@
     border-right: 0;
   }
 
+  /* Manager PDF contract: page 1 is the decision brief; page 2 is the trial handoff. */
+  .detailPage[data-audience='manager'][data-print-mode='full'] .managerPlayerSnapshot {
+    min-height: 185mm;
+    display: grid;
+    grid-template-rows: minmax(62mm, auto) minmax(49mm, auto) minmax(38mm, auto);
+  }
+
+  .detailPage[data-audience='manager'] .managerRankScopes {
+    border-color: #bbb;
+    background: #bbb;
+  }
+
+  .detailPage[data-audience='manager'] .managerRankScopes > span {
+    background: #fff !important;
+  }
+
+  .detailPage[data-audience='manager'] .managerRankScopes small {
+    color: #444 !important;
+  }
+
+  .detailPage[data-audience='manager'] .managerRankScopes b,
+  .detailPage[data-audience='manager'] .managerRankScopes > span:first-child b {
+    color: #111 !important;
+  }
+
+  .detailPage[data-audience='manager'] .managerTrialGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .detailPage[data-audience='manager'] .managerTrialQuestions,
+  .detailPage[data-audience='manager'] .managerTrialPass {
+    grid-column: span 3;
+  }
+
+  .detailPage[data-audience='manager'] .managerTrialQuestions ol,
+  .detailPage[data-audience='manager'] .managerTrialPass ol {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4mm;
+  }
+
+  .detailPage[data-audience='manager'] .managerTrialUse > footer span {
+    color: #444 !important;
+  }
+
+  .detailPage[data-audience='manager'][data-print-mode='full'] .managerTrialCard {
+    break-before: page;
+    page-break-before: always;
+    break-inside: avoid-page;
+    zoom: 1;
+  }
+
+  .detailPage[data-audience='manager'][data-print-mode='full'] .managerDeepDive,
+  .detailPage[data-audience='manager'][data-print-mode='full'] .managerBoundary {
+    display: none !important;
+  }
+
   .detailPage[data-audience='manager'] .managerDecisionProfile {
     break-before: page;
     break-inside: avoid;
@@ -11421,6 +11686,8 @@
 
   .detailPage[data-audience='manager'] .detailVersionFooter {
     margin-top: 5mm;
+    break-before: avoid-page;
+    page-break-before: avoid;
   }
 
   /* Closed audit disclosures must still be complete in coach exports. */

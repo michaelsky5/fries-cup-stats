@@ -112,6 +112,10 @@ export function isEnglishLocale(locale) {
   return String(locale || '').toLowerCase().startsWith('en')
 }
 
+function usesEnglishOwNames(locale) {
+  return !String(locale || '').toLowerCase().startsWith('zh')
+}
+
 export function normalizeOwLookupKey(value) {
   return cleanText(value)
     .normalize('NFD')
@@ -212,7 +216,7 @@ export function formatOwHeroName(value, locale = 'zh-CN') {
   if (!raw) return raw
   const hero = getOwHero(raw)
   if (!hero) return raw
-  return isEnglishLocale(locale) ? hero.en : hero.zh
+  return usesEnglishOwNames(locale) ? hero.en : hero.zh
 }
 
 export function formatOwHeroNames(values, locale = 'zh-CN', limit = Infinity) {
@@ -245,7 +249,7 @@ export function formatOwMapName(value, locale = 'zh-CN') {
   if (!raw) return raw
   const map = getOwMap(raw)
   if (!map) return raw
-  return isEnglishLocale(locale) ? map.en : map.zh
+  return usesEnglishOwNames(locale) ? map.en : map.zh
 }
 
 export function getOwMapImageName(value) {
@@ -265,7 +269,7 @@ export function formatOwMapMode(value, locale = 'zh-CN') {
   const mode = getOwMapMode(value)
   if (!mode) return cleanText(value)
   const label = OW_MAP_MODE_LABELS[mode]
-  return isEnglishLocale(locale) ? label.en : label.zh
+  return usesEnglishOwNames(locale) ? label.en : label.zh
 }
 
 export function getOwMapModeFolder(value) {
@@ -292,7 +296,7 @@ const TEXT_NAME_ITEMS = [...OW_HEROES, ...OW_MAPS]
 export function formatOwNamesInText(value, locale = 'zh-CN') {
   let text = cleanText(value)
   if (!text) return text
-  const english = isEnglishLocale(locale)
+  const english = usesEnglishOwNames(locale)
 
   TEXT_NAME_ITEMS
     .flatMap(item => collectAliases(item).map(alias => ({

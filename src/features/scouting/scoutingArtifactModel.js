@@ -1,5 +1,5 @@
 export const SCOUTING_ARTIFACT_SCHEMA_VERSION = 'scouting-report-v2'
-export const SCOUTING_REPORT_VERSION = 'FCR26 Scouting v2.3'
+export const SCOUTING_REPORT_VERSION = 'FCR26 Scouting v2.4'
 
 function compactIdentity(identity, { includeBattleTag = false } = {}) {
   return {

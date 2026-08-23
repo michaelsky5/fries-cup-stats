@@ -28,7 +28,7 @@ import {
 } from '../../features/scouting/scoutingArtifactClient.js'
 import { getScoutingAccessRecord } from '../../features/scouting/scoutingAccess.js'
 import { getScoutingAnalystNote } from '../../features/scouting/scoutingAnalystNotes.js'
-import { formatOwHeroName } from '../../lib/heroes.js'
+import { formatOwHeroName, formatOwNamesInText } from '../../lib/heroes.js'
 import { getHeroAvatarSrc } from '../../lib/leaderboardSelectors.js'
 import { normalizeReviewLocale, REVIEW_LOCALES } from '../../lib/reviewLocale.js'
 import styles from './ScoutingReportPage.module.css'
@@ -46,10 +46,14 @@ const COPY = {
     sampleGate: '最低样本门槛',
     sampleGateValue: '20 地图 · 200 分钟 · 6 场',
     roleRank: '分路顺位',
+    shortlistRank: '当前公开候选顺位',
+    publicTier: '公开名单层级',
+    publishedCandidates: '公开候选',
+    rankScopeGuide: '大号顺位＝当前侧重下的公开 5 人顺序 · 名单层级＝固定公开分层 · 完整池＝全部合格选手顺位',
     subrole: '细分位置',
     subroleFit: '该分路出场',
     selectionScore: '模型基础分',
-    selectionScorePrimary: 'V2.4 证据收缩后基础分',
+    selectionScorePrimary: 'Selection v2.7 证据收缩后基础分',
     rawPerformance: '原始竞技表现',
     executiveTitle: '俱乐部决策摘要',
     executiveMeta: '按细分位置呈现 25 人技术名单：5 名技术首选、10 名核心候选、5 名延伸考察、5 名观察候选。',
@@ -110,6 +114,9 @@ const COPY = {
     commandStrong: '强敌',
     marketStructure: '候选结构',
     marketClearLeader: '领先明确',
+    marketFitLeadSupported: 'FIT 首位 · 证据稳健',
+    marketFitLeadOverlap: 'FIT 首位 · 区间重叠',
+    marketFitLeadReview: 'FIT 首位 · 顺位待复核',
     marketOpenRace: '前三接近',
     marketTierBreak: '前三形成梯队',
     marketCompetitive: '整体差距较小',
@@ -134,7 +141,7 @@ const COPY = {
     publicDossiers: '公开技术档案',
     stableSeats: '稳定席位',
     sensitiveSeats: '需留意席位',
-    scoreLegend: 'V2.4 按五个位置分别加权，并在地图、对手、己方强度基础上增加主要英雄与同图阵容环境的收缩校正；OVR 仅作为未拆分位置的赛季参考。',
+    scoreLegend: 'Selection v2.7 按五个位置分别加权，并在地图、对手、己方强度基础上增加主要英雄与同图阵容环境的收缩校正；OVR 仅作为未拆分位置的赛季参考。',
     selectionStability: '名单稳定度',
     preferenceSensitivity: '权重敏感度',
     preferenceSensitivityMeta: '七项权重各自在 ±30% 范围内变化、重复 5,000 次时，优先层保留前三、延伸层保留前四、观察层进入前四的比例；不是统计置信区间。',
@@ -301,6 +308,7 @@ const COPY = {
     previousPlayer: '上一位选手',
     nextPlayer: '下一位选手',
     reportVersion: '报告版本',
+    modelVersion: '评分模型',
     dataAsOf: '数据截至',
     invalidPlayer: '此选手不在当前 25 人公开分析名单中。',
     playoffMaps: '季后赛地图',
@@ -392,7 +400,7 @@ const COPY = {
     methodologyItems: [
       '只纳入至少 20 张地图、200 分钟和 6 场比赛的高样本选手。',
       '分析池固定为坦克、长枪、自由人、群辅、枪辅各 5 人；第 1 名为技术首选，第 2–3 名为核心候选，第 4 名为延伸层，第 5 名为观察层，并按英雄实际出场分钟的主要占比确定分路。',
-      'V2.4 只用该细分位置对应英雄的逐图表现，并为坦克、长枪、自由人、群辅和枪辅分别设置选拔权重；群辅提高竞技下限、稳定性与证据量，自由人提高英雄池迁移性，避免一套模板衡量所有位置。',
+      'Selection v2.7 只用该细分位置对应英雄的逐图表现，并为坦克、长枪、自由人、群辅和枪辅分别设置选拔权重；群辅提高竞技下限、稳定性与证据量，自由人提高英雄池迁移性，避免一套模板衡量所有位置。',
       '选手仍须先通过 20 图、200 分钟、6 场的职责总样本门槛；细分位置至少需要 10 图、100 分钟、4 场。未达到 20 图、200 分钟、6 场的完整细分位置证据时，模型分向中性值连续收缩，不使用硬断点拔高或淘汰。',
       '名单稳定度将七项权重各自在 ±30% 范围内变化并重复 5,000 次：前三候选统计保留前三，延伸层统计保留前四，观察层统计进入前四的比例。它衡量模型偏好敏感度，不是抽样置信区间。',
       '部署画像仍由基线可靠度、高压准备度和环境迁移性三个透明组合指标构成，但三项内部权重已按五个位置分别设置，并在数据产物中公开。',
@@ -414,7 +422,7 @@ const COPY = {
     win: '胜',
     loss: '负',
     draw: '平',
-    unknown: '未确认'
+    unknown: '赛果未记录'
   },
   'en-US': {
     access: 'Dedicated club access',
@@ -428,10 +436,14 @@ const COPY = {
     sampleGate: 'Minimum sample gate',
     sampleGateValue: '20 maps · 200 minutes · 6 matches',
     roleRank: 'Subrole rank',
+    shortlistRank: 'Current published-list rank',
+    publicTier: 'Published-list tier',
+    publishedCandidates: 'published candidates',
+    rankScopeGuide: 'Large rank = order among the published five for this emphasis · tier = fixed published-list tier · full pool = all qualified players',
     subrole: 'Subrole',
     subroleFit: 'Subrole usage',
     selectionScore: 'Base model score',
-    selectionScorePrimary: 'V2.4 evidence-shrunk base score',
+    selectionScorePrimary: 'Selection v2.7 evidence-shrunk base score',
     rawPerformance: 'Raw competitive output',
     executiveTitle: 'Club decision summary',
     executiveMeta: 'A 25-player technical pool by subrole: 5 technical primaries, 10 core candidates, 5 extended candidates and 5 watch candidates.',
@@ -492,6 +504,9 @@ const COPY = {
     commandStrong: 'Strong',
     marketStructure: 'Candidate structure',
     marketClearLeader: 'Clear separation',
+    marketFitLeadSupported: 'FIT leader · evidence supported',
+    marketFitLeadOverlap: 'FIT leader · intervals overlap',
+    marketFitLeadReview: 'FIT leader · order needs review',
     marketOpenRace: 'Top three close',
     marketTierBreak: 'Top-three tier formed',
     marketCompetitive: 'Small overall separation',
@@ -516,7 +531,7 @@ const COPY = {
     publicDossiers: 'Public technical dossiers',
     stableSeats: 'Stable seats',
     sensitiveSeats: 'Seats to review',
-    scoreLegend: 'V2.4 uses position-specific weights and adds shrinkage-adjusted primary-hero and same-map lineup context on top of map, opponent and own-team correction. OVR remains an unsplit season reference.',
+    scoreLegend: 'Selection v2.7 uses position-specific weights and adds shrinkage-adjusted primary-hero and same-map lineup context on top of map, opponent and own-team correction. OVR remains an unsplit season reference.',
     selectionStability: 'Roster stability',
     preferenceSensitivity: 'Weight sensitivity',
     preferenceSensitivityMeta: 'Across 5,000 ±30% weight reruns: priority measures top-three retention, extended top-four retention and watch top-four entry. This is not a statistical confidence interval.',
@@ -683,6 +698,7 @@ const COPY = {
     previousPlayer: 'Previous player',
     nextPlayer: 'Next player',
     reportVersion: 'Report version',
+    modelVersion: 'Scoring model',
     dataAsOf: 'Data as of',
     invalidPlayer: 'This player is not in the current public 25-player analysis pool.',
     playoffMaps: 'Playoff maps',
@@ -774,7 +790,7 @@ const COPY = {
     methodologyItems: [
       'Only players with at least 20 maps, 200 minutes and 6 matches enter the high-sample pool.',
       'The pool reserves five slots each for Tank, Hitscan, Flex DPS, Main Support and Flex Support. Rank 1 is the technical primary, ranks 2–3 are core candidates, rank 4 extended and rank 5 watch; primary subrole follows actual hero-minute share.',
-      'V2.4 scores only maps on heroes from the assigned subrole and uses separate selection weights for Tank, Hitscan, Flex DPS, Main Support and Flex Support. Main Support places more weight on floor, consistency and evidence; Flex DPS places more on portability.',
+      'Selection v2.7 scores only maps on heroes from the assigned subrole and uses separate selection weights for Tank, Hitscan, Flex DPS, Main Support and Flex Support. Main Support places more weight on floor, consistency and evidence; Flex DPS places more on portability.',
       'Players must first clear the 20-map, 200-minute, 6-match overall-role gate; a subrole requires at least 10 maps, 100 minutes and 4 matches. Until it reaches 20 maps, 200 minutes and 6 matches, the model score is continuously shrunk toward neutral instead of using a hard cliff.',
       'Roster stability varies each of the seven weights by ±30% across 5,000 reruns. The leading three use top-three retention, extended candidates top-four retention and watch candidates top-four entry rate. It measures preference sensitivity, not sampling confidence.',
       'The deployment profile keeps three transparent composites—baseline reliability, pressure readiness and context portability—but their internal weights now differ by position and are disclosed in the data artifact.',
@@ -796,7 +812,7 @@ const COPY = {
     win: 'Win',
     loss: 'Loss',
     draw: 'Draw',
-    unknown: 'Unverified'
+    unknown: 'Result not recorded'
   },
   'ko-KR': {
     access: '구단 전용 액세스',
@@ -810,10 +826,14 @@ const COPY = {
     sampleGate: '최소 표본 기준',
     sampleGateValue: '20개 전장 · 200분 · 6경기',
     roleRank: '세부 역할 순위',
+    shortlistRank: '현재 공개 후보 순위',
+    publicTier: '공개 명단 단계',
+    publishedCandidates: '공개 후보',
+    rankScopeGuide: '큰 순위 = 현재 평가 초점의 공개 5인 순서 · 명단 단계 = 고정 공개 분류 · 전체 후보군 = 모든 적격 선수 순위',
     subrole: '세부 역할',
     subroleFit: '세부 역할 출전',
     selectionScore: '기초 모델 점수',
-    selectionScorePrimary: 'V2.4 근거 축소 기초 점수',
+    selectionScorePrimary: 'Selection v2.7 근거 축소 기초 점수',
     rawPerformance: '원시 경기력',
     executiveTitle: '구단 의사결정 요약',
     executiveMeta: '세부 역할별 25인 기술 풀을 기술 1순위 5명, 핵심 후보 10명, 확장 후보 5명, 관찰 후보 5명으로 제시합니다.',
@@ -874,6 +894,9 @@ const COPY = {
     commandStrong: '강팀',
     marketStructure: '후보 구조',
     marketClearLeader: '1순위 우위 명확',
+    marketFitLeadSupported: 'FIT 1위 · 근거 안정',
+    marketFitLeadOverlap: 'FIT 1위 · 구간 중첩',
+    marketFitLeadReview: 'FIT 1위 · 순위 재검토',
     marketOpenRace: '상위 3명 근접',
     marketTierBreak: '상위 3명 티어 형성',
     marketCompetitive: '전체 격차 작음',
@@ -898,7 +921,7 @@ const COPY = {
     publicDossiers: '공개 기술 리포트',
     stableSeats: '안정 좌석',
     sensitiveSeats: '검토 필요 좌석',
-    scoreLegend: 'V2.4 선발 점수는 포지션별 가중치를 사용하고 전장·상대·소속 팀 보정 위에 주요 영웅과 같은 전장 라인업 환경의 축소 보정을 추가합니다. OVR은 역할 미분리 시즌 참고값입니다.',
+    scoreLegend: 'Selection v2.7 선발 점수는 포지션별 가중치를 사용하고 전장·상대·소속 팀 보정 위에 주요 영웅과 같은 전장 라인업 환경의 축소 보정을 추가합니다. OVR은 역할 미분리 시즌 참고값입니다.',
     selectionStability: '명단 안정도',
     preferenceSensitivity: '가중치 민감도',
     preferenceSensitivityMeta: '7개 가중치를 각각 ±30%로 바꾼 5,000회 반복에서 우선층은 상위 3위 유지, 확장층은 상위 4위 유지, 관찰층은 상위 4위 진입률을 사용합니다. 통계적 신뢰구간이 아닙니다.',
@@ -1065,6 +1088,7 @@ const COPY = {
     previousPlayer: '이전 선수',
     nextPlayer: '다음 선수',
     reportVersion: '보고서 버전',
+    modelVersion: '평가 모델',
     dataAsOf: '데이터 기준일',
     invalidPlayer: '현재 공개된 25인 분석 명단에 포함되지 않은 선수입니다.',
     playoffMaps: '플레이오프 전장',
@@ -1156,7 +1180,7 @@ const COPY = {
     methodologyItems: [
       '20개 전장, 200분, 6경기 이상을 기록한 선수만 고표본 후보군에 포함합니다.',
       '돌격, 히트스캔, 플렉스 DPS, 메인 서포트, 플렉스 서포트에 각 5자리를 배정합니다. 1위는 기술 1순위, 2–3위는 핵심 후보, 4위는 확장층, 5위는 관찰층이며 실제 영웅 출전 시간의 주 비중으로 세부 역할을 정합니다.',
-      'V2.4은 배정된 세부 역할 영웅의 전장만 사용하고 돌격, 히트스캔, 플렉스 DPS, 메인 서포트, 플렉스 서포트에 서로 다른 선발 가중치를 적용합니다. 메인 서포트는 하한·안정성·근거를, 플렉스 DPS는 전환성을 더 반영합니다.',
+      'Selection v2.7은 배정된 세부 역할 영웅의 전장만 사용하고 돌격, 히트스캔, 플렉스 DPS, 메인 서포트, 플렉스 서포트에 서로 다른 선발 가중치를 적용합니다. 메인 서포트는 하한·안정성·근거를, 플렉스 DPS는 전환성을 더 반영합니다.',
       '먼저 전체 역할 20개 전장, 200분, 6경기 기준을 통과해야 하며 세부 역할은 최소 10개 전장, 100분, 4경기가 필요합니다. 세부 역할 근거가 20개 전장, 200분, 6경기에 도달하기 전에는 점수를 중립값으로 연속 축소합니다.',
       '명단 안정도는 7개 가중치를 각각 ±30% 범위에서 바꾸며 5,000회 반복합니다. 상위 3명은 상위 3위 유지율, 확장층은 상위 4위 유지율, 관찰층은 상위 4위 진입률을 사용합니다. 표본 신뢰도가 아닌 모델 선호 민감도입니다.',
       '기용 프로필은 기준선 신뢰도, 압박 준비도, 환경 전환성의 세 투명 조합값을 유지하되 내부 가중치는 5개 포지션별로 다르게 설정하고 데이터 산출물에 공개합니다.',
@@ -1178,7 +1202,7 @@ const COPY = {
     win: '승',
     loss: '패',
     draw: '무',
-    unknown: '미확인'
+    unknown: '경기 결과 미기록'
   }
 }
 
@@ -1337,6 +1361,24 @@ function getManagerDossierCopy(locale) {
       strongOpponent: 'Strong-opponent test',
       evidence: 'Overall confidence',
       stability: 'Ranking stability',
+      trialEyebrow: 'ONE-PAGE TRIAL BRIEF',
+      trialTitle: name => `${name} · trial verification card`,
+      trialMeta: 'A meeting-ready handoff from statistical conclusion to club-run verification. Criteria below are suggestions, not recorded trial results.',
+      trialRecommendedRole: 'Recommended use',
+      trialStrengths: 'Two reasons to advance',
+      trialRisks: 'Two risks to verify',
+      trialQuestions: 'Three verification questions',
+      trialPass: 'Suggested pass criteria',
+      trialPassCriteria: [
+        'Deliver the assigned role across at least two map types while preserving the recorded strength direction.',
+        'The primary watchpoint does not become a repeated failure mode under pressure or an alternate-hero assignment.',
+        'The club independently clears coach review, communication assessment and trial evidence.'
+      ],
+      trialHumanEvidence: 'Human evidence status',
+      trialHumanEvidenceMeta: 'Not included in this report · VOD review, communication and trial outcomes are completed by the club.',
+      printTrial: 'Print one-page card',
+      deepDive: 'Open full technical evidence',
+      deepDiveMeta: 'Peer comparison, five-axis profile, professional role-shape reference, scenario sensitivity and evidence locator.',
       openCoach: 'Open coach evidence',
       openCoachMeta: 'Review the model path, deployment contexts and match-level evidence.',
       boundary: 'Technical evidence only. This brief does not assess signing interest, communication or future lineup chemistry.'
@@ -1380,6 +1422,24 @@ function getManagerDossierCopy(locale) {
       strongOpponent: '강팀 검증',
       evidence: '종합 신뢰도',
       stability: '순위 안정도',
+      trialEyebrow: 'ONE-PAGE TRIAL BRIEF',
+      trialTitle: name => `${name} · 테스트 검증 카드`,
+      trialMeta: '통계 결론을 구단 자체 검증으로 연결하는 회의용 1페이지입니다. 아래 기준은 제안이며 기록된 테스트 결과가 아닙니다.',
+      trialRecommendedRole: '권장 기용법',
+      trialStrengths: '진행 근거 2가지',
+      trialRisks: '검증할 위험 2가지',
+      trialQuestions: '검증 질문 3가지',
+      trialPass: '권장 통과 기준',
+      trialPassCriteria: [
+        '최소 두 가지 전장 유형에서 지정 역할을 수행하며 기록된 강점 방향을 유지합니다.',
+        '압박 또는 대체 영웅 기용에서 주요 확인 항목이 반복적인 실패 원인이 되지 않습니다.',
+        '코치 검토, 소통 평가와 테스트 근거를 구단이 독립적으로 통과 처리합니다.'
+      ],
+      trialHumanEvidence: '인적 검증 상태',
+      trialHumanEvidenceMeta: '본 보고서 미포함 · 영상 검토, 소통과 테스트 결과는 구단이 완료합니다.',
+      printTrial: '1페이지 카드 인쇄',
+      deepDive: '전체 기술 근거 펼치기',
+      deepDiveMeta: '후보 비교, 5축 프로필, 프로 역할 형태 참고, 평가 초점 민감도와 근거 위치.',
       openCoach: '코치 근거 펼치기',
       openCoachMeta: '모델 경로, 기용 환경과 경기 단위 근거를 확인합니다.',
       boundary: '기술 근거만 제시하며 영입 의사, 소통 또는 미래 라인업 시너지는 판단하지 않습니다.'
@@ -1422,6 +1482,24 @@ function getManagerDossierCopy(locale) {
     strongOpponent: '强敌检验',
     evidence: '总体可信度',
     stability: '顺位稳定度',
+    trialEyebrow: 'ONE-PAGE TRIAL BRIEF',
+    trialTitle: name => `${name} · 试训验证卡`,
+    trialMeta: '把统计结论交接给俱乐部自行验证的一页会议卡；以下是建议标准，不是已经发生的试训结论。',
+    trialRecommendedRole: '推荐用法',
+    trialStrengths: '两项推进依据',
+    trialRisks: '两项待验证风险',
+    trialQuestions: '三个验证问题',
+    trialPass: '建议通过标准',
+    trialPassCriteria: [
+      '至少在两种地图类型中完成预定职责，并保持已记录的核心优势方向。',
+      '主要观察项在高压或替代英雄任务中未成为重复性失分来源。',
+      '教练复核、沟通评估与试训证据均由俱乐部独立确认通过。'
+    ],
+    trialHumanEvidence: '人工证据状态',
+    trialHumanEvidenceMeta: '未纳入本报告 · 录像复核、沟通与试训结论由俱乐部完成。',
+    printTrial: '打印一页试训卡',
+    deepDive: '展开完整技术证据',
+    deepDiveMeta: '同组对比、五轴画像、职业角色形态参考、侧重敏感度与证据定位。',
     openCoach: '展开教练证据',
     openCoachMeta: '查看模型路径、部署情境与比赛级证据。',
     boundary: '仅呈现技术证据，不判断签约意愿、沟通能力或未来阵容化学反应。'
@@ -2022,8 +2100,8 @@ function PlayerCard({ player, locale, to, returnTo, stage = 'season', scenario =
     >
       <HeroArtwork hero={primaryHero} role={player.role} className={styles.playerCardArtwork} />
       <div className={styles.playerCardTopline}>
-        <span>{getSubroleLabel(player.subrole, locale)} · #{player.highSampleSubroleRank} · {getCandidateStatusLabel(player, locale)}</span>
-        <small>{player.identity.teamShort} · {getPlacementLabel(player.teamPlacement, locale)}</small>
+        <span>{getSubroleLabel(player.subrole, locale)} · {t.publicTier}：{getCandidateStatusLabel(player, locale)}</span>
+        <small>{t.shortlistRank} #{scenarioFit?.shortlistRank ?? player.highSampleSubroleRank}/{scenarioFit?.shortlistTotal ?? 5} · {t.poolRank} #{scenarioFit?.rank ?? player.highSampleSubroleRank}/{scenarioFit?.total ?? player.highSampleSubroleTotal}</small>
       </div>
       <div className={styles.playerIdentityRow}>
         <HeroIcon hero={primaryHero} role={player.role} locale={locale} />
@@ -2302,12 +2380,12 @@ function buildPlayerDecisionContract(player, locale, activeScenario, recruitment
   return {
     version: 'player-decision-contract-v2',
     archetype: analystNote?.archetype || getCandidateStatusLabel(player, locale),
-    managerSummary: analystNote?.managerSummary || analystNote?.verdict || getVerdict(player, locale),
-    verdict: analystNote?.verdict || getVerdict(player, locale),
+    managerSummary: formatOwNamesInText(analystNote?.managerSummary || analystNote?.verdict || getVerdict(player, locale), locale),
+    verdict: formatOwNamesInText(analystNote?.verdict || getVerdict(player, locale), locale),
     reasons,
     watchpoints: watchpoints.slice(0, 2),
-    tacticalHypothesis: analystNote?.tacticalHypothesis || '',
-    verificationQuestions: analystNote?.vodQuestions || [],
+    tacticalHypothesis: formatOwNamesInText(analystNote?.tacticalHypothesis || '', locale),
+    verificationQuestions: (analystNote?.vodQuestions || []).map(question => formatOwNamesInText(question, locale)),
     professionalReference: buildProfessionalReferenceRead(player, locale, professionalReferenceMeta)
   }
 }
@@ -2796,10 +2874,6 @@ function ManagerPlayerSnapshot({ player, locale, activeScenario, decision }) {
   const stability = player.selection?.preferenceSensitivity || {}
   const primaryUse = opponent.deploymentPlaybook?.recommendations?.primaryUse
   const evidenceShield = Math.min(Number(evidence.confidencePct) || 0, Number(stability.relevantPct) || 0)
-  const scenarioPositionLabel = getCandidateStatusLabel({
-    ...player,
-    highSampleSubroleRank: fit?.rank ?? player.highSampleSubroleRank
-  }, locale)
   const lenses = [
     {
       id: 'ready',
@@ -2833,8 +2907,12 @@ function ManagerPlayerSnapshot({ player, locale, activeScenario, decision }) {
         </div>
         <aside>
           <span>{copy.snapshotPosition}</span>
-          <strong>{scenarioPositionLabel}</strong>
-          <b>#{fit?.rank ?? player.highSampleSubroleRank}<small>/ {fit?.total ?? player.highSampleSubroleTotal}</small></b>
+          <strong>{scenarioCopy.label}</strong>
+          <div className={styles.managerRankScopes}>
+            <span><small>{t.shortlistRank}</small><b>#{fit?.shortlistRank ?? player.highSampleSubroleRank}/{fit?.shortlistTotal ?? 5}</b></span>
+            <span><small>{t.publicTier}</small><b>{getCandidateStatusLabel(player, locale)}</b></span>
+            <span><small>{t.poolRank}</small><b>#{fit?.rank ?? player.highSampleSubroleRank}/{fit?.total ?? player.highSampleSubroleTotal}</b></span>
+          </div>
           <p>{scenarioCopy.label} · {fit?.score ?? '—'} FIT</p>
         </aside>
       </header>
@@ -2980,12 +3058,86 @@ function ManagerPlayerPeerContext({ player, peers = [], locale, activeScenario, 
   )
 }
 
-function ManagerPlayerAnalysis({ player, locale, activeScenario, decision, coachHref, comparisonPeers, comparisonHref, getPlayerHref, onPrint }) {
+function getTrialVerificationQuestions(player, decision, locale) {
+  const primaryUse = player.performanceSignals.opponentStrength?.deploymentPlaybook?.recommendations?.primaryUse
+  const useLabel = primaryUse
+    ? `${formatOwHeroName(primaryUse.hero, locale)} × ${getMapTypeLabel(primaryUse.mapType, locale)}`
+    : getSubroleLabel(player.subrole, locale)
+  const fallbacks = locale === 'en-US'
+    ? [
+        `Does the recorded ${useLabel} strength transfer when the opponent changes the pace or composition?`,
+        'Can the player preserve the same role output on an alternate hero or map type?',
+        'Under pressure, are positioning, cooldown decisions and communication repeatable rather than isolated highlights?'
+      ]
+    : locale === 'ko-KR'
+      ? [
+          `상대가 템포나 조합을 바꿨을 때도 기록된 ${useLabel} 강점이 전환됩니까?`,
+          '대체 영웅 또는 다른 전장 유형에서도 같은 역할 산출을 유지할 수 있습니까?',
+          '압박 상황의 위치 선정, 쿨다운 판단과 소통이 일회성 장면이 아니라 반복 가능합니까?'
+        ]
+      : [
+          `对手改变节奏或阵容后，已记录的 ${useLabel} 优势能否迁移？`,
+          '切换替代英雄或地图类型后，能否保持相同职责产出？',
+          '高压情境中的站位、技能决策与沟通是否可重复，而非少数高光？'
+        ]
+  return [...(decision?.verificationQuestions || []), ...fallbacks].filter(Boolean).slice(0, 3)
+}
+
+function ManagerTrialCard({ player, locale, activeScenario, decision, onPrintTrial }) {
+  const t = getCopy(locale)
+  const copy = getManagerDossierCopy(locale)
+  const scenarioCopy = getRecruitmentScenarioCopy(activeScenario, locale)
+  const fit = getScenarioFit(player, activeScenario) || getScenarioFit(player, 'BALANCED')
+  const primaryUse = player.performanceSignals.opponentStrength?.deploymentPlaybook?.recommendations?.primaryUse
+  const reasons = (decision?.reasons || []).slice(0, 2)
+  const watchpoints = (decision?.watchpoints || []).slice(0, 2)
+  const questions = getTrialVerificationQuestions(player, decision, locale)
+
+  return (
+    <section className={styles.managerTrialCard} style={{ '--slot-color': SUBROLE_COLORS[player.subrole] }} aria-labelledby="manager-trial-card-title">
+      <header>
+        <div>
+          <span>{copy.trialEyebrow}</span>
+          <h3 id="manager-trial-card-title">{copy.trialTitle(player.identity.displayName)}</h3>
+          <p>{copy.trialMeta}</p>
+        </div>
+        <button type="button" onClick={onPrintTrial}>{copy.printTrial}</button>
+      </header>
+      <div className={styles.managerTrialGrid}>
+        <article className={styles.managerTrialUse}>
+          <span>01 · {copy.trialRecommendedRole}</span>
+          <strong>{getSubroleLabel(player.subrole, locale)} · {scenarioCopy.label}</strong>
+          {primaryUse ? (
+            <div><HeroIcon hero={primaryUse.hero} role={player.role} locale={locale} /><p><b>{formatOwHeroName(primaryUse.hero, locale)}</b><small>{getMapTypeLabel(primaryUse.mapType, locale)} · {primaryUse.retentionPct}% {t.contextRetention} · {primaryUse.confidencePct}% {t.contextConfidence}</small></p></div>
+          ) : <p>{copy.snapshotNoUse}</p>}
+          <footer><span>{t.shortlistRank} <b>#{fit?.shortlistRank ?? player.highSampleSubroleRank}/{fit?.shortlistTotal ?? 5}</b></span><span>{t.poolRank} <b>#{fit?.rank ?? player.highSampleSubroleRank}/{fit?.total ?? player.highSampleSubroleTotal}</b></span></footer>
+        </article>
+        <article>
+          <span>02 · {copy.trialStrengths}</span>
+          <ol>{reasons.map((reason, index) => <li key={`${index}-${reason}`}><b>{String(index + 1).padStart(2, '0')}</b><p>{reason}</p></li>)}</ol>
+        </article>
+        <article>
+          <span>03 · {copy.trialRisks}</span>
+          <ol>{watchpoints.map((item, index) => <li key={`${index}-${item}`}><b>{String(index + 1).padStart(2, '0')}</b><p>{item}</p></li>)}</ol>
+        </article>
+        <article className={styles.managerTrialQuestions}>
+          <span>04 · {copy.trialQuestions}</span>
+          <ol>{questions.map((question, index) => <li key={`${index}-${question}`}><b>{String(index + 1).padStart(2, '0')}</b><p>{question}</p></li>)}</ol>
+        </article>
+        <article className={styles.managerTrialPass}>
+          <span>05 · {copy.trialPass}</span>
+          <ol>{copy.trialPassCriteria.map((criterion, index) => <li key={`${index}-${criterion}`}><b>{String(index + 1).padStart(2, '0')}</b><p>{criterion}</p></li>)}</ol>
+        </article>
+      </div>
+      <footer><span>{copy.trialHumanEvidence}</span><p>{copy.trialHumanEvidenceMeta}</p></footer>
+    </section>
+  )
+}
+
+function ManagerPlayerAnalysis({ player, locale, activeScenario, decision, coachHref, comparisonPeers, comparisonHref, getPlayerHref, onPrint, onPrintTrial }) {
   const t = getCopy(locale)
   const copy = getManagerDossierCopy(locale)
   const fit = getScenarioFit(player, activeScenario) || getScenarioFit(player, 'BALANCED')
-  const reasons = decision?.reasons || []
-  const watchpoints = decision?.watchpoints || []
 
   return (
     <section id="summary" className={`${styles.playerAnalysis} ${styles.managerPlayerAnalysis}`}>
@@ -3004,53 +3156,47 @@ function ManagerPlayerAnalysis({ player, locale, activeScenario, decision, coach
         </div>
         <div className={styles.analysisScore}>
           <strong>{fit?.score ?? '—'}</strong><small>FIT</small>
-          <em>{t.roleRank} {fit?.rank ?? player.highSampleSubroleRank} / {fit?.total ?? player.highSampleSubroleTotal}</em>
+          <em>{t.poolRank} #{fit?.rank ?? player.highSampleSubroleRank}/{fit?.total ?? player.highSampleSubroleTotal}</em>
+          <span>{t.shortlistRank} #{fit?.shortlistRank ?? player.highSampleSubroleRank}/{fit?.shortlistTotal ?? 5} · {t.publicTier}：{getCandidateStatusLabel(player, locale)}</span>
         </div>
         <button type="button" className={styles.printButton} onClick={onPrint}>{t.printPdf}</button>
       </div>
 
       <ManagerPlayerSnapshot player={player} locale={locale} activeScenario={activeScenario} decision={decision} />
-      <ManagerPlayerPeerContext
-        player={player}
-        peers={comparisonPeers}
-        locale={locale}
-        activeScenario={activeScenario}
-        comparisonHref={comparisonHref}
-        getPlayerHref={getPlayerHref}
-      />
+      <ManagerTrialCard player={player} locale={locale} activeScenario={activeScenario} decision={decision} onPrintTrial={onPrintTrial} />
 
-      <ManagerDecisionProfile player={player} locale={locale} coachHref={coachHref} />
-      <ManagerProfessionalReference player={player} locale={locale} decision={decision} coachHref={coachHref} />
-
-      <div className={styles.managerDecisionColumns}>
-        <article>
-          <header><span>01</span><strong>{copy.reasons}</strong></header>
-          <ol>{reasons.map((reason, index) => <li key={`${index}-${reason}`}><b>{String(index + 1).padStart(2, '0')}</b><p>{reason}</p></li>)}</ol>
-        </article>
-        <article>
-          <header><span>02</span><strong>{copy.watchpoints}</strong></header>
-          <ol>{watchpoints.slice(0, 2).map((item, index) => <li key={`${index}-${item}`}><b>{String(index + 1).padStart(2, '0')}</b><p>{item}</p></li>)}</ol>
-        </article>
-      </div>
-
-      <section className={styles.managerScenarioSummary}>
-        <header><div><span>SELECTION LENS</span><h3>{copy.scenarioTitle}</h3></div><p>{copy.scenarioMeta}</p></header>
+      <details className={styles.managerDeepDive}>
+        <summary><span><strong>{copy.deepDive}</strong><small>{copy.deepDiveMeta}</small></span><b aria-hidden="true">＋</b></summary>
         <div>
-          {RECRUITMENT_SCENARIO_ORDER.map(item => {
-            const scenarioCopy = getRecruitmentScenarioCopy(item, locale)
-            const scenarioFit = getScenarioFit(player, item)
-            return (
-              <article key={item} data-active={activeScenario === item ? 'true' : 'false'}>
-                <span>{scenarioCopy.label}</span>
-                <strong>{scenarioFit?.score ?? '—'}<small>FIT</small></strong>
-                <p>#{scenarioFit?.rank ?? '—'} / {scenarioFit?.total ?? '—'}</p>
-              </article>
-            )
-          })}
+          <ManagerPlayerPeerContext
+            player={player}
+            peers={comparisonPeers}
+            locale={locale}
+            activeScenario={activeScenario}
+            comparisonHref={comparisonHref}
+            getPlayerHref={getPlayerHref}
+          />
+          <ManagerDecisionProfile player={player} locale={locale} coachHref={coachHref} />
+          <ManagerProfessionalReference player={player} locale={locale} decision={decision} coachHref={coachHref} />
+          <section className={styles.managerScenarioSummary}>
+            <header><div><span>SELECTION LENS</span><h3>{copy.scenarioTitle}</h3></div><p>{copy.scenarioMeta}</p></header>
+            <div>
+              {RECRUITMENT_SCENARIO_ORDER.map(item => {
+                const scenarioCopy = getRecruitmentScenarioCopy(item, locale)
+                const scenarioFit = getScenarioFit(player, item)
+                return (
+                  <article key={item} data-active={activeScenario === item ? 'true' : 'false'}>
+                    <span>{scenarioCopy.label}</span>
+                    <strong>{scenarioFit?.score ?? '—'}<small>FIT</small></strong>
+                    <p>{t.poolRank} #{scenarioFit?.rank ?? '—'}/{scenarioFit?.total ?? '—'}</p>
+                  </article>
+                )
+              })}
+            </div>
+          </section>
+          <DecisionEvidenceLocator player={player} locale={locale} coachHref={coachHref} />
         </div>
-      </section>
-
-      <DecisionEvidenceLocator player={player} locale={locale} coachHref={coachHref} />
+      </details>
 
       <Link className={styles.managerCoachLink} to={coachHref('summary')}>
         <span><strong>{copy.openCoach}</strong><small>{copy.openCoachMeta}</small></span><b>↗</b>
@@ -3128,7 +3274,7 @@ function PlayerDecisionTrail({ player, locale }) {
   return (
     <section className={styles.decisionTrail} aria-labelledby="decision-trail-title">
       <header>
-        <div><span>DECISION EVIDENCE · V2.4</span><h3 id="decision-trail-title">{t.decisionTrail}</h3></div>
+        <div><span>DECISION EVIDENCE · SELECTION V2.7</span><h3 id="decision-trail-title">{t.decisionTrail}</h3></div>
         <p>{t.decisionTrailMeta}</p>
       </header>
       <div className={styles.decisionTrailSteps}>
@@ -3235,6 +3381,33 @@ function getMarketStructureLabel(status, t) {
   return t.marketCompetitive
 }
 
+function getMarketDecisionLabel(structure, confidence, t) {
+  if (confidence?.status === 'SENSITIVE') return t.marketFitLeadReview
+  if (structure.status === 'CLEAR_LEADER') {
+    if (confidence?.rangesOverlap === true) return t.marketFitLeadOverlap
+    if (confidence?.status === 'CLEAR') return t.marketFitLeadSupported
+  }
+  return getMarketStructureLabel(structure.status, t)
+}
+
+function getValidationSummary(locale) {
+  if (locale === 'en-US') return {
+    temporal: 'Time-split Top-3 retention',
+    pairwise: 'Pairwise direction agreement',
+    boundary: 'Shadow validation only · does not change the published order'
+  }
+  if (locale === 'ko-KR') return {
+    temporal: '시간 분할 Top 3 유지율',
+    pairwise: '쌍대 방향 일치율',
+    boundary: '그림자 검증 전용 · 공개 순위에 미반영'
+  }
+  return {
+    temporal: '时间切分 Top 3 保留率',
+    pairwise: '两两方向一致度',
+    boundary: '影子验证 · 不参与公开顺位'
+  }
+}
+
 function getRobustnessLabel(status, t) {
   if (status === 'SENSITIVE') return t.stressSensitive
   if (status === 'FRAGILE') return t.stressFragile
@@ -3244,9 +3417,15 @@ function getRobustnessLabel(status, t) {
 function ExecutiveCommandView({ model, locale, audience = 'manager', scenario, onScenarioChange, activeSubrole, onRoleChange, getPlayerHref, returnTo }) {
   const t = getCopy(locale)
   const scenarioCopy = getRecruitmentScenarioCopy(scenario, locale)
+  const validationCopy = getValidationSummary(locale)
   const markets = SUBROLE_ORDER.map(subrole => {
     const players = getScenarioRolePlayers(model, subrole, scenario)
-    return { subrole, players, structure: getMarketStructure(players, scenario) }
+    return {
+      subrole,
+      players,
+      structure: getMarketStructure(players, scenario),
+      confidence: getComparisonDecisionConfidence(players, scenario, model.pairwiseBootstrap)
+    }
   })
 
   return (
@@ -3283,7 +3462,7 @@ function ExecutiveCommandView({ model, locale, audience = 'manager', scenario, o
       </div>
 
       <div key={scenario} className={styles.marketGrid}>
-        {markets.map(({ subrole, players, structure }, index) => {
+        {markets.map(({ subrole, players, structure, confidence }, index) => {
           const leader = players[0]
           const runnerUp = players[1]
           if (!leader) return null
@@ -3302,7 +3481,7 @@ function ExecutiveCommandView({ model, locale, audience = 'manager', scenario, o
               <button type="button" className={styles.marketCardMain} onClick={() => onRoleChange(subrole)} aria-pressed={isActive}>
                 <header className={styles.marketCardHeader}>
                   <span>{String(index + 1).padStart(2, '0')} · {getSubroleLabel(subrole, locale)}</span>
-                  <b>{getMarketStructureLabel(structure.status, t)}</b>
+                  <b>{getMarketDecisionLabel(structure, confidence, t)}</b>
                 </header>
                 <div className={styles.marketLeaderVisual}>
                   <HeroArtwork hero={primaryHero} role={leader.role} className={styles.marketHeroArtwork} loading="eager" />
@@ -3328,6 +3507,7 @@ function ExecutiveCommandView({ model, locale, audience = 'manager', scenario, o
                 </div>
                 <div className={styles.marketStress} data-density={audience} data-stress-status={robustness?.status || 'STABLE'}>
                   <span><small>{t.rankingStressTest}</small><strong>{getRobustnessLabel(robustness?.status, t)}</strong></span>
+                  <span><small>{t.comparisonIntervalStatus}</small><strong>{confidence?.rangesOverlap === true ? t.comparisonIntervalOverlap : confidence?.rangesOverlap === false ? t.comparisonIntervalSeparated : '—'}</strong></span>
                   {audience === 'coach' ? <span><small>{t.removeWeakOpponent}</small><b>{(robustness?.removeWeakestOpponent?.rankDelta || 0) > 0 ? `−${robustness.removeWeakestOpponent.rankDelta}` : '±0'}</b></span> : null}
                   {audience === 'coach' ? <span><small>{t.leaveOneMatchOut}</small><b>{(robustness?.leaveOneMatchOut?.rankDelta || 0) > 0 ? `−${robustness.leaveOneMatchOut.rankDelta}` : '±0'}</b></span> : null}
                 </div>
@@ -3346,6 +3526,11 @@ function ExecutiveCommandView({ model, locale, audience = 'manager', scenario, o
         })}
       </div>
 
+      <div className={styles.commandValidationStrip}>
+        <span><small>{validationCopy.temporal}</small><strong>{model.validationAudit?.temporal?.averageTopThreeRetentionPct ?? '—'}%</strong></span>
+        <span><small>{validationCopy.pairwise}</small><strong>{model.validationAudit?.pairwise?.concordancePct ?? '—'}%</strong></span>
+        <p>{validationCopy.boundary}</p>
+      </div>
       <footer className={styles.commandCaution}><span>{scenarioCopy.formula}</span><p>{t.commandCaution}</p></footer>
     </section>
   )
@@ -3379,7 +3564,9 @@ function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario,
   const players = getScenarioRolePlayers(model, subrole, scenario)
   const leader = players[0]
   const structure = getMarketStructure(players, scenario)
+  const confidence = getComparisonDecisionConfidence(players, scenario, model.pairwiseBootstrap)
   const leaderFit = getScenarioFit(leader, scenario)
+  const qualifiedCount = model.qualifiedPool.filter(player => player.subrole === subrole).length
   const primaryHero = leader?.heroPool[0]?.hero || leader?.summary?.primaryHero
   const evidence = leader?.performanceSignals?.opponentStrength?.evidenceQuality?.confidencePct || 0
   const evidenceGrade = leader?.performanceSignals?.opponentStrength?.evidenceQuality?.grade || '—'
@@ -3432,9 +3619,9 @@ function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario,
         <article className={styles.roleCockpitLeader} data-market-status={structure.status}>
           <HeroArtwork hero={primaryHero} role={leader.role} className={styles.roleCockpitArtwork} loading="eager" />
           <div className={styles.roleCockpitLeaderIdentity}>
-            <span>{t.marketVerdict} · {getMarketStructureLabel(structure.status, t)}</span>
+            <span>{t.marketVerdict} · {getMarketDecisionLabel(structure, confidence, t)}</span>
             <strong>{leader.identity.displayName}</strong>
-            <small>{leader.identity.teamShort} · {getCandidateStatusLabel(leader, locale)} · #{leader.highSampleSubroleRank}/{leader.highSampleSubroleTotal}</small>
+            <small>{leader.identity.teamShort} · {t.shortlistRank} #{leaderFit?.shortlistRank ?? 1}/{leaderFit?.shortlistTotal ?? players.length} · {t.publicTier}：{getCandidateStatusLabel(leader, locale)} · {t.poolRank} #{leaderFit?.rank ?? leader.highSampleSubroleRank}/{leaderFit?.total ?? leader.highSampleSubroleTotal}</small>
           </div>
           <div className={styles.roleCockpitFit}><strong>{leaderFit?.score ?? '—'}</strong><span>{t.scenarioFitScore} · /100</span></div>
           <p>{getRoleFocusRead(players, structure, scenario, locale)}</p>
@@ -3460,7 +3647,8 @@ function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario,
       </div>
 
       <div className={styles.roleCockpitCandidates} data-audience={audience}>
-        <header><span>{t.candidateDecisionStack}</span><small>{players.length} {t.deploymentCandidateCount} · {scenarioCopy.label}</small></header>
+        <header><span>{t.candidateDecisionStack}</span><small>{players.length} {t.publishedCandidates} · {qualifiedCount} {t.qualifiedCandidates} · {scenarioCopy.label}</small></header>
+        <p className={styles.roleCockpitRankGuide}>{t.rankScopeGuide}</p>
         <div>
           {players.map((player, index) => {
             const fit = getScenarioFit(player, scenario)
@@ -3478,9 +3666,9 @@ function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario,
                 onPointerEnter={() => preloadScoutingPlayer(player.playerId)}
                 onFocus={() => preloadScoutingPlayer(player.playerId)}
               >
-                <span className={styles.roleCockpitCandidateRank}>{String(index + 1).padStart(2, '0')}</span>
+                <span className={styles.roleCockpitCandidateRank} title={t.shortlistRank}>{String(index + 1).padStart(2, '0')}</span>
                 <HeroIcon hero={hero} role={player.role} locale={locale} />
-                <div className={styles.roleCockpitCandidateIdentity}><strong>{player.identity.displayName}</strong><small>{player.identity.teamShort} · {getCandidateStatusLabel(player, locale)}</small></div>
+                <div className={styles.roleCockpitCandidateIdentity}><strong>{player.identity.displayName}</strong><small title={`${t.publicTier}：${getCandidateStatusLabel(player, locale)}`}>{player.identity.teamShort} · {getCandidateStatusLabel(player, locale)}</small></div>
                 <b className={styles.roleCockpitCandidateFit}>
                   <small>{audience === 'manager' ? t.scenarioFitScore : 'FIT'}</small>
                   {fit?.score ?? '—'}
@@ -3502,14 +3690,14 @@ function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario,
                 )}
                 {audience === 'coach' ? (
                   <footer><span>{t.heroLineupAdjusted} · {formatPercentileRead(player.performanceSignals.opponentStrength?.adjustedPercentile, locale)}</span><span>{t.contextCoverage} {playerContext?.coveragePct ?? '—'}%</span><b>{t.openFullDossier} ↗</b></footer>
-                ) : <footer><b>{t.openFullDossier} ↗</b></footer>}
+                ) : <footer><span>{t.poolRank} #{fit?.rank ?? '—'}/{fit?.total ?? '—'}</span><b>{t.openFullDossier} ↗</b></footer>}
               </Link>
             )
           })}
         </div>
       </div>
 
-      <footer className={styles.roleCockpitCaution}><span>V2.4 · MODEL BOUNDARY</span><p>{t.roleFocusCaution}</p></footer>
+      <footer className={styles.roleCockpitCaution}><span>SELECTION V2.7 · MODEL BOUNDARY</span><p>{t.roleFocusCaution}</p></footer>
     </section>
   )
 }
@@ -4285,7 +4473,7 @@ function DeploymentPlaybook({ player, locale }) {
   return (
     <section className={styles.deploymentPlaybook} aria-labelledby="deployment-playbook-title">
       <div className={styles.playbookHeading}>
-        <div><span>DEPLOYMENT PLAYBOOK · V2.4</span><h3 id="deployment-playbook-title">{t.deploymentPlaybook}</h3><p>{t.deploymentPlaybookMeta}</p></div>
+        <div><span>DEPLOYMENT PLAYBOOK · SELECTION V2.7</span><h3 id="deployment-playbook-title">{t.deploymentPlaybook}</h3><p>{t.deploymentPlaybookMeta}</p></div>
         <aside>
           <span><small>{t.eligibleContexts}</small><strong>{playbook.eligibleHeroMapCells}</strong></span>
           <span><small>{t.contextCoverage}</small><strong>{playbook.coveragePct}%</strong></span>
@@ -4671,7 +4859,7 @@ function getComparisonDecisionConfidence(players, scenario, pairwiseBootstrap) {
 }
 
 function getComparisonDecisionNarrative(confidence, scenarioCopy, locale) {
-  const { leader, alternate, lead, evidenceFloor, stabilityFloor, bootstrap, status } = confidence
+  const { leader, alternate, lead, evidenceFloor, stabilityFloor, rangesOverlap, bootstrap, status } = confidence
   const bootstrapClause = Number.isFinite(Number(bootstrap?.probabilityPct))
     ? locale === 'en-US'
       ? ` Match-clustered resampling gives the leader a ${bootstrap.probabilityPct}% adjusted-performance win probability.`
@@ -4680,16 +4868,16 @@ function getComparisonDecisionNarrative(confidence, scenarioCopy, locale) {
         : `按比赛聚类重采样后，首位的校正表现胜出概率为 ${bootstrap.probabilityPct}%。`
     : ''
   if (locale === 'en-US') {
-    if (status === 'CLEAR') return `${leader.identity.displayName} leads ${alternate.identity.displayName} by ${lead} FIT under “${scenarioCopy.label}”. Evidence and ranking stability both support a clear technical lead.${bootstrapClause}`
+    if (status === 'CLEAR') return `${leader.identity.displayName} leads ${alternate.identity.displayName} by ${lead} FIT under “${scenarioCopy.label}”. Evidence and ranking stability support the current FIT order${rangesOverlap === true ? ', while the 90% performance intervals still overlap' : ''}.${bootstrapClause}`
     if (status === 'SENSITIVE') return `${leader.identity.displayName} currently leads by ${lead} FIT, but the evidence floor (${evidenceFloor}%) or ranking stability (${stabilityFloor}%) makes the order provisional.${bootstrapClause}`
     return `${leader.identity.displayName} leads ${alternate.identity.displayName} by ${lead} FIT under “${scenarioCopy.label}”. The gap is decision-relevant but not large enough to ignore the club's specific need.${bootstrapClause}`
   }
   if (locale === 'ko-KR') {
-    if (status === 'CLEAR') return `“${scenarioCopy.label}” 기준에서 ${leader.identity.displayName}이(가) ${alternate.identity.displayName}보다 ${lead} FIT 앞서며 근거와 순위 안정도가 명확한 기술 우위를 지지합니다.${bootstrapClause}`
+    if (status === 'CLEAR') return `“${scenarioCopy.label}” 기준에서 ${leader.identity.displayName}이(가) ${alternate.identity.displayName}보다 ${lead} FIT 앞서며 근거와 순위 안정도는 현재 FIT 순서를 지지합니다${rangesOverlap === true ? '. 다만 90% 경기력 구간은 여전히 중첩됩니다' : ''}${bootstrapClause}`
     if (status === 'SENSITIVE') return `${leader.identity.displayName}이(가) ${lead} FIT 앞서지만 근거 하한(${evidenceFloor}%) 또는 순위 안정도(${stabilityFloor}%) 때문에 현재 순서는 잠정적입니다.${bootstrapClause}`
     return `“${scenarioCopy.label}” 기준에서 ${leader.identity.displayName}이(가) ${alternate.identity.displayName}보다 ${lead} FIT 앞서지만 구단의 구체적 요구를 무시할 만큼 큰 차이는 아닙니다.${bootstrapClause}`
   }
-  if (status === 'CLEAR') return `在“${scenarioCopy.label}”侧重下，${leader.identity.displayName} 领先 ${alternate.identity.displayName} ${lead} 个 FIT；证据与顺位稳定度共同支持明确的技术领先。${bootstrapClause}`
+  if (status === 'CLEAR') return `在“${scenarioCopy.label}”侧重下，${leader.identity.displayName} 领先 ${alternate.identity.displayName} ${lead} 个 FIT；证据与顺位稳定度支持当前 FIT 顺序${rangesOverlap === true ? '，但两人的 90% 表现区间仍有重叠' : ''}。${bootstrapClause}`
   if (status === 'SENSITIVE') return `${leader.identity.displayName} 当前领先 ${lead} 个 FIT，但证据下限（${evidenceFloor}%）或顺位稳定度（${stabilityFloor}%）使这一顺序仍需谨慎复核。${bootstrapClause}`
   return `在“${scenarioCopy.label}”侧重下，${leader.identity.displayName} 领先 ${alternate.identity.displayName} ${lead} 个 FIT；差距足以形成顺序，但还不足以忽略俱乐部的具体需求。${bootstrapClause}`
 }
@@ -6183,11 +6371,18 @@ function ScoutingLoading({ locale, detail = false }) {
   )
 }
 
+function formatModelVersion(modelVersion) {
+  const value = String(modelVersion || '')
+  const match = value.match(/^scouting-selection-(v[\d.]+)$/i)
+  return match ? `Selection ${match[1]}` : value || 'Selection v2.7'
+}
+
 function ReportVersionStamp({ meta, locale }) {
   const t = getCopy(locale)
   return (
     <div className={styles.versionStamp}>
-      <span><small>{t.reportVersion}</small><b>{meta?.reportVersion || 'FCR26 Scouting v2.3'}</b></span>
+      <span><small>{t.reportVersion}</small><b>{meta?.reportVersion || 'FCR26 Scouting v2.4'}</b></span>
+      <span><small>{t.modelVersion}</small><b>{formatModelVersion(meta?.modelVersion)}</b></span>
       <span><small>{t.dataAsOf}</small><b>{formatDataAsOf(meta?.dataAsOf, locale)}</b></span>
     </div>
   )
@@ -6631,6 +6826,7 @@ export function ScoutingPlayerPage() {
   const locale = normalizeReviewLocale(searchParams.get('lang'))
   const scenario = normalizeRecruitmentScenario(searchParams.get('scenario'))
   const audience = searchParams.get('view') === 'coach' ? 'coach' : 'manager'
+  const [printMode, setPrintMode] = useState(() => searchParams.get('print') === 'trial' ? 'trial' : 'full')
   const accessRecord = useMemo(() => getScoutingAccessRecord(shareKey), [shareKey])
   const { index, player, error } = useScoutingPlayerBundle(playerId, Boolean(accessRecord))
   const t = getCopy(locale)
@@ -6699,6 +6895,12 @@ export function ScoutingPlayerPage() {
     return () => window.cancelAnimationFrame(frame)
   }, [audience, location.hash, player])
 
+  useEffect(() => {
+    const resetPrintMode = () => setPrintMode('full')
+    window.addEventListener('afterprint', resetPrintMode)
+    return () => window.removeEventListener('afterprint', resetPrintMode)
+  }, [])
+
   const changeLocale = nextLocale => {
     const nextParams = new URLSearchParams(searchParams)
     const value = getLocaleParam(nextLocale)
@@ -6727,10 +6929,15 @@ export function ScoutingPlayerPage() {
     }
   }
 
+  const printDossier = (mode = 'full') => {
+    flushSync(() => setPrintMode(mode))
+    window.requestAnimationFrame(() => window.print())
+  }
+
   if (!accessRecord) return <AccessDenied locale={locale} />
 
   return (
-    <div className={`${styles.page} ${styles.detailPage}`} data-locale={locale} data-audience={audience}>
+    <div className={`${styles.page} ${styles.detailPage}`} data-locale={locale} data-audience={audience} data-print-mode={printMode}>
       <ScoutingHeader accessRecord={accessRecord} locale={locale} onLocaleChange={changeLocale} />
       <main className={`${styles.main} ${styles.detailMain}`}>
         <nav className={styles.detailNavigation} aria-label={t.selectedDossiers}>
@@ -6780,11 +6987,12 @@ export function ScoutingPlayerPage() {
                 comparisonPeers={comparisonPeers}
                 comparisonHref={comparisonHref}
                 getPlayerHref={candidatePlayerId => buildPlayerHref(shareKey, candidatePlayerId, searchParams)}
-                onPrint={() => window.print()}
+                onPrint={() => printDossier('full')}
+                onPrintTrial={() => printDossier('trial')}
               />
             ) : (
               <>
-                <PlayerAnalysis player={player} locale={locale} activeScenario={scenario} decision={decision} onPrint={() => window.print()} />
+                <PlayerAnalysis player={player} locale={locale} activeScenario={scenario} decision={decision} onPrint={() => printDossier('full')} />
                 <Methodology id="method" locale={locale} validation={index.validationAudit} />
               </>
             )}

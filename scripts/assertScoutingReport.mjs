@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { access, readFile } from 'node:fs/promises'
 
 import { getSeasonById } from '../src/config/seasons.js'
+import { formatOwHeroName, formatOwNamesInText } from '../src/lib/heroes.js'
 import { getHeroAvatarSrc } from '../src/lib/leaderboardSelectors.js'
 import {
   SCOUTING_CORE_SUBROLE_SLOT_PLAN,
@@ -129,8 +130,11 @@ assert.ok(Object.values(selectionAudit.opponentStrength.subroleModels).every(mod
 )))
 
 assert.equal(SCOUTING_ARTIFACT_SCHEMA_VERSION, 'scouting-report-v2')
-assert.equal(SCOUTING_REPORT_VERSION, 'FCR26 Scouting v2.3')
+assert.equal(SCOUTING_REPORT_VERSION, 'FCR26 Scouting v2.4')
 assert.equal(artifacts.index.meta.modelVersion, SCOUTING_MODEL_VERSION)
+assert.equal(formatOwHeroName('Sojourn', 'zh-CN'), '索杰恩')
+assert.equal(formatOwHeroName('Sojourn', 'ko-KR'), 'Sojourn')
+assert.equal(formatOwNamesInText('Sojourn · Control', 'ko-KR'), 'Sojourn · Control')
 assert.ok(Buffer.byteLength(JSON.stringify(artifacts.index)) < 180_000)
 assert.equal(Object.keys(artifacts.details).length, 25)
 assert.ok(Object.values(artifacts.details).every(detail => Buffer.byteLength(JSON.stringify(detail)) < 23_000))
