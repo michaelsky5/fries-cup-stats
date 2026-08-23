@@ -832,6 +832,7 @@
   font-weight: 950;
   line-height: 1.06;
   overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .commandActions,

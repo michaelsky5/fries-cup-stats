@@ -127,6 +127,7 @@
   font-size: clamp(18px, 1.5vw, 25px);
   font-weight: 950;
   line-height: 1.02;
+  text-wrap: balance;
 }
 
 .headerChampion div {
