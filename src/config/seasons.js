@@ -2,7 +2,7 @@ export const DEFAULT_SEASON_ID = 'FCR26'
 export const SEASON_STORAGE_KEY = 'fries_cup_stats_active_season'
 export const SEASON_URL_PARAM = 'season'
 
-const PREFER_LOCAL_DATA = import.meta.env.VITE_PREFER_LOCAL_DATA === '1'
+const PREFER_LOCAL_DATA = typeof import.meta.env !== 'undefined' && import.meta.env.VITE_PREFER_LOCAL_DATA === '1'
 
 export const SEASONS = [
   {
@@ -108,6 +108,141 @@ export const SEASONS = [
         bracketType: 'DOUBLE_ELIMINATION',
         defaultFormat: 'FT3',
         grandFinalFormat: 'FT4'
+      }
+    }
+  },
+  {
+    id: 'QGCS4',
+    publicCode: 'QGCS4',
+    seriesCode: 'QGCS4',
+    kind: 'PARTNER',
+    organizer: '全高杯赛事组',
+    partnerLabel: {
+      zh: '合作赛事',
+      en: 'Partner Event'
+    },
+    logoUrl: '/logos/QGCS4/hammer-cup.jpg',
+    name: {
+      zh: '全高杯 S4',
+      en: 'Hammer Cup S4'
+    },
+    seriesName: {
+      zh: '全高杯 S4',
+      en: 'Hammer Cup S4'
+    },
+    switcherMeta: {
+      teamCount: 19,
+      playerCount: 116,
+      matchCount: 36
+    },
+    proxyDataUrl: '/api/admin-public/seasons/QGCS4/publish/latest/data',
+    proxyReportUrl: '/api/admin-public/seasons/QGCS4/publish/latest/report',
+    localDataUrl: '/data/qgcs4_preseason_public.json',
+    reviewEnabled: false,
+    rankingMinTimeMins: 30,
+    timeline: [
+      {
+        key: 'groups',
+        code: 'GROUP STAGE',
+        label: { zh: '小组赛', en: 'Group Stage' },
+        date: '08.24—08.27',
+        start: '2026-08-24T00:00:00+08:00',
+        end: '2026-08-27T23:59:59+08:00',
+        text: { zh: '19 支队伍分为 A—D 四组进行单循环比赛。', en: 'Nineteen teams play a round robin across Groups A-D.' },
+        status: 'current'
+      },
+      {
+        key: 'quarterfinals',
+        code: 'QUARTERFINALS',
+        label: { zh: '八强赛', en: 'Quarterfinals' },
+        date: '08.28',
+        start: '2026-08-28T00:00:00+08:00',
+        end: '2026-08-28T23:59:59+08:00',
+        text: { zh: '每组前二进入八强单败淘汰赛。', en: 'The top two teams from each group enter the single-elimination quarterfinals.' },
+        status: 'upcoming'
+      },
+      {
+        key: 'semifinals',
+        code: 'SEMIFINALS',
+        label: { zh: '半决赛', en: 'Semifinals' },
+        date: '08.29',
+        start: '2026-08-29T00:00:00+08:00',
+        end: '2026-08-29T23:59:59+08:00',
+        text: { zh: '八强胜者争夺总决赛席位。', en: 'Quarterfinal winners compete for grand-final places.' },
+        status: 'upcoming'
+      },
+      {
+        key: 'finals',
+        code: 'FINALS',
+        label: { zh: '季军赛 / 总决赛', en: 'Third Place / Grand Final' },
+        date: '08.30',
+        start: '2026-08-30T00:00:00+08:00',
+        end: '2026-08-30T23:59:59+08:00',
+        text: { zh: '季军赛与总决赛均为 FT4。', en: 'The third-place match and grand final are both FT4.' },
+        status: 'upcoming'
+      }
+    ],
+    rules: {
+      competitionFormat: 'GROUP',
+      rankingMinTimeMins: 30,
+      advancement: {
+        totalSlots: 8,
+        groupAdvanceCount: 2
+      },
+      groupStage: {
+        labels: ['A', 'B', 'C', 'D'],
+        sizes: [5, 5, 5, 4],
+        format: 'round_robin',
+        matchFormat: 'FT3',
+        advancePerGroup: 2,
+        expectedMatches: 36,
+        administrativeLossScore: [0, 3],
+        drawScore: [0, 0],
+        tiebreakers: [
+          'match_wins',
+          'map_differential',
+          'maps_won',
+          'head_to_head',
+          'tiebreak_match'
+        ],
+        unresolvedTieStatus: 'pending_tiebreak'
+      },
+      advance: {
+        phases: ['groups', 'playoffs', 'final'],
+        groups: {
+          format: 'four_group_round_robin',
+          groupCount: 4,
+          advancePerGroup: 2,
+          participantCount: 19,
+          matchCount: 36
+        },
+        playoffs: {
+          format: 'single_elimination',
+          participantCount: 8,
+          matchCount: 8,
+          bracketSource: 'backend',
+          bracketLocked: false,
+          seedOrder: ['A1', 'B1', 'D1', 'C1', 'D2', 'C2', 'A2', 'B2'],
+          eventWindow: {
+            start: '2026-08-28T18:00:00+08:00',
+            end: '2026-08-30T23:59:59+08:00'
+          },
+          rounds: {
+            quarterfinals: { firstTo: 3 },
+            semifinals: { firstTo: 3 },
+            thirdPlace: { firstTo: 4 },
+            grandFinal: { firstTo: 4 }
+          }
+        }
+      },
+      playoffs: {
+        bracketType: 'SINGLE_ELIMINATION',
+        defaultFormat: 'FT3',
+        thirdPlaceFormat: 'FT4',
+        grandFinalFormat: 'FT4'
+      },
+      heroBans: {
+        ruleset: 'FRIES_CUP'
       }
     }
   },

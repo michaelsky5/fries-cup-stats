@@ -266,17 +266,18 @@ function FollowDuelTeam({ team, align = 'left' }) {
 
 function CommandBoard({ overview, featuredMatches }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const isGroupFormat = overview.competitionFormat === 'GROUP'
   const facts = [
     { label: homeText(locale, '当前阶段', 'Current Stage'), value: homeValue(overview.currentStage, locale) },
     { label: homeText(locale, '赛事状态', 'Event Status'), value: homeValue(overview.statusText, locale) },
     { label: homeText(locale, '下一开赛', 'Next Start'), value: homeValue(overview.nextStartLabel, locale) },
-    { label: homeText(locale, '本轮进度', 'Round Progress'), value: homeValue(overview.roundProgressLabel, locale) },
+    { label: isGroupFormat ? homeText(locale, '本比赛日进度', 'Match Day Progress') : homeText(locale, '本轮进度', 'Round Progress'), value: homeValue(overview.roundProgressLabel, locale) },
     { label: homeText(locale, '赛季规模', 'Season Scale'), value: homeValue(overview.seasonScaleLabel, locale) },
     { label: homeText(locale, '晋级名额', 'Advance Slots'), value: advanceSlotsText(overview.advancementLabel, locale) }
   ]
 
   return (
-    <section className={styles.commandBoard}>
+    <section className={styles.commandBoard} data-event-mark={overview.eventCode}>
       <div className={styles.commandLead}>
         <span className={styles.commandKicker}>EVENT COMMAND BOARD</span>
         <div className={styles.commandTitle}>
@@ -292,7 +293,9 @@ function CommandBoard({ overview, featuredMatches }) {
           ))}
         </dl>
         <div className={styles.commandActions}>
-          <Link to={withSeason('/matches?view=list&tab=round')}>{homeText(locale, '查看本轮全部比赛', 'View This Round')}</Link>
+          <Link to={withSeason('/matches?view=list&tab=round')}>
+            {isGroupFormat ? homeText(locale, '查看本比赛日全部比赛', 'View This Match Day') : homeText(locale, '查看本轮全部比赛', 'View This Round')}
+          </Link>
           <Link to={withSeason('/advance')}>{homeText(locale, '查看晋级形势', 'View Advance Hub')}</Link>
           <Link to={withSeason('/following?manage=1')}>{homeText(locale, '管理关注', 'Manage Follows')}</Link>
         </div>
@@ -301,7 +304,7 @@ function CommandBoard({ overview, featuredMatches }) {
       <aside className={styles.commandFeatured}>
         <div className={styles.commandFeaturedHead}>
           <span>FEATURED MATCHES</span>
-          <strong>{homeText(locale, '本轮重点比赛', 'Featured Matches')}</strong>
+          <strong>{isGroupFormat ? homeText(locale, '本比赛日重点比赛', 'Featured Match Day') : homeText(locale, '本轮重点比赛', 'Featured Matches')}</strong>
           <em>{homeValue(overview.round.roundLabel, locale)}</em>
         </div>
         <div className={styles.commandFeaturedGrid}>
@@ -310,7 +313,10 @@ function CommandBoard({ overview, featuredMatches }) {
           )) : (
             <div className={styles.emptyMini}>
               <strong>{homeText(locale, '暂无重点比赛', 'No Featured Matches')}</strong>
-              <span>{homeText(locale, '赛程公布后将展示本轮代表性对阵。', 'Representative matches will appear after the schedule is published.')}</span>
+              <span>{isGroupFormat
+                ? homeText(locale, '赛程公布后将展示本比赛日代表性对阵。', 'Representative match-day pairings will appear after the schedule is published.')
+                : homeText(locale, '赛程公布后将展示本轮代表性对阵。', 'Representative matches will appear after the schedule is published.')}
+              </span>
             </div>
           )}
         </div>
@@ -370,7 +376,16 @@ function getTimelineStatus(item, locale = 'zh-CN') {
 }
 
 function EventTimelineSection() {
-  const { locale = 'zh-CN' } = useOutletContext()
+  const { locale = 'zh-CN', season } = useOutletContext()
+  const timeline = safeArr(season?.timeline).length
+    ? safeArr(season.timeline).map(item => ({
+        ...item,
+        label: item.code || item.label,
+        title: item.title || item.label,
+        range: item.range || { zh: item.date, en: item.date },
+        text: item.text || { zh: '', en: '' }
+      }))
+    : EVENT_TIMELINE
 
   return (
     <section className={styles.sectionBlock}>
@@ -381,7 +396,7 @@ function EventTimelineSection() {
         actionText={homeText(locale, '查看赛程赛果', 'Open Matches')}
       />
       <div className={styles.eventTimelineGrid}>
-        {EVENT_TIMELINE.map((item, index) => {
+        {timeline.map((item, index) => {
           const statusKey = getTimelineStatusKey(item)
           const status = getTimelineStatus(item, locale)
           const current = statusKey === 'soon' || statusKey === 'active'
@@ -500,6 +515,7 @@ function FollowingSection({ following }) {
 function AdvancementResultsSection({ overview, advance, latest }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
   const isEnglish = isEnglishLocale(locale)
+  const isGroupFormat = overview.competitionFormat === 'GROUP'
   const hasData = advance.hasStarted || latest.hasResults
   const zones = [
     { key: 'direct', label: homeText(locale, '晋级区', 'Advance Zone'), rows: safeArr(advance.zones?.direct) },
@@ -507,9 +523,13 @@ function AdvancementResultsSection({ overview, advance, latest }) {
     { key: 'danger', label: homeText(locale, '危险区', 'At Risk'), rows: safeArr(advance.zones?.danger) }
   ]
   const advanceLabel = advanceSlotsText(overview.advancementLabel, locale)
-  const ruleLine = isEnglish
-    ? `${overview.expectedRounds} Swiss rounds · ${advanceLabel} advance`
-    : `${overview.expectedRounds} 轮瑞士轮 · ${overview.advancementLabel} 晋级`
+  const ruleLine = isGroupFormat
+    ? isEnglish
+      ? `${overview.groupCount || 4} round-robin groups · top ${overview.advancePerGroup || 2} per group advance`
+      : `${overview.groupCount || 4} 组单循环 · 每组前 ${overview.advancePerGroup || 2} 晋级八强`
+    : isEnglish
+      ? `${overview.expectedRounds} Swiss rounds · ${advanceLabel} advance`
+      : `${overview.expectedRounds} 轮瑞士轮 · ${overview.advancementLabel} 晋级`
   const zoneTotal = zones.reduce((sum, zone) => sum + zone.rows.length, 0)
   const resultMatches = latest.matches.slice(0, 5)
   const completedMatchLabel = isEnglish
@@ -531,11 +551,17 @@ function AdvancementResultsSection({ overview, advance, latest }) {
           <article>
             <span>{homeText(locale, '晋级规则', 'Advance Rules')}</span>
             <strong>{ruleLine}</strong>
-            <p>{homeText(locale, '排名、Buchholz 和同分规则会在首轮完成后进入主要视图。', 'Standings, Buchholz, and tiebreakers move into the main view after round one.')}</p>
+            <p>{isGroupFormat
+              ? homeText(locale, '排名依次比较胜场、地图净胜、地图胜场与直接交手；仍同分时标记待加赛。', 'Rank by match wins, map differential, maps won, and head-to-head; unresolved ties are marked for a tiebreak match.')
+              : homeText(locale, '排名、Buchholz 和同分规则会在首轮完成后进入主要视图。', 'Standings, Buchholz, and tiebreakers move into the main view after round one.')}
+            </p>
           </article>
           <article>
             <span>{homeText(locale, '数据状态', 'Data Status')}</span>
-            <strong>{homeText(locale, '积分榜将在首轮比赛完成后生成。', 'Standings generate after round one is complete.')}</strong>
+            <strong>{isGroupFormat
+              ? homeText(locale, '积分榜将在首个比赛日完成后更新。', 'Standings update after the first match day is complete.')
+              : homeText(locale, '积分榜将在首轮比赛完成后生成。', 'Standings generate after round one is complete.')}
+            </strong>
             <p>{homeText(locale, '赛后完成核对后更新赛果与数据。', 'Results and stats update after post-match verification.')}</p>
           </article>
         </div>
@@ -550,7 +576,7 @@ function AdvancementResultsSection({ overview, advance, latest }) {
               </div>
               <em>
                 <b>{roundProgressLabel}</b>
-                <span>{homeText(locale, '本轮进度', 'Current round')}</span>
+                <span>{isGroupFormat ? homeText(locale, '本比赛日进度', 'Current match day') : homeText(locale, '本轮进度', 'Current round')}</span>
               </em>
             </header>
             <div className={styles.advanceRuleLine}>
@@ -825,10 +851,13 @@ function OverviewGatewaySection({ overview, summary, latest }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
   const [managerChoiceOpen, setManagerChoiceOpen] = useState(false)
   const isEn = locale === 'en-US'
+  const isGroupFormat = overview.competitionFormat === 'GROUP'
   const hasData = summary.maps > 0 || latest.completed > 0
   const advanceStatus = latest.completed > 0
     ? (isEn ? 'Updating' : '更新中')
-    : (isEn ? 'After round one' : '首轮后生成')
+    : isGroupFormat
+      ? (isEn ? 'After match day one' : '首个比赛日后生成')
+      : (isEn ? 'After round one' : '首轮后生成')
   const gateways = [
     {
       key: 'matches',

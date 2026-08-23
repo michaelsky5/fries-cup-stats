@@ -498,8 +498,11 @@ function GroupedMatchList({ groups }) {
   )
 }
 
-function FullListView({ rows, groups, filters, options, activeTab, favoriteCount, updateQuery, resetFilters, setTab, seasonId, focusSearch }) {
+function FullListView({ rows, groups, filters, options, activeTab, favoriteCount, updateQuery, resetFilters, setTab, seasonId, focusSearch, isGroupStage }) {
   const cleanMatchesPath = cleanMatchesListPath(seasonId, { tab: 'all' })
+  const tabItems = isGroupStage
+    ? TABS.map(tab => tab.key === 'round' ? { ...tab, title: '本比赛日比赛', label: 'MATCH DAY' } : tab)
+    : TABS
 
   return (
     <div className={styles.listSurface}>
@@ -513,7 +516,7 @@ function FullListView({ rows, groups, filters, options, activeTab, favoriteCount
       </section>
 
       <section className={styles.tabs} aria-label="Match views">
-        {TABS.map(tab => (
+        {tabItems.map(tab => (
           <button
             key={tab.key}
             type="button"
@@ -538,7 +541,7 @@ function FullListView({ rows, groups, filters, options, activeTab, favoriteCount
         <div className={styles.listHead}>
           <div>
             <SectionLabel code={activeTab.toUpperCase()} title="比赛列表" />
-            <h2>{TABS.find(tab => tab.key === activeTab)?.title || '全部比赛'}</h2>
+            <h2>{tabItems.find(tab => tab.key === activeTab)?.title || '全部比赛'}</h2>
           </div>
           <div className={styles.listMeta}>
             <span>{rows.length} 场显示</span>
@@ -633,6 +636,7 @@ export default function MatchesPage() {
           setTab={setTab}
           seasonId={seasonId}
           focusSearch={focusSearch}
+          isGroupStage={String(hub?.currentRoundSummary?.stage || '').toUpperCase() === 'GROUP'}
         />
       ) : (
         <MatchHub hub={hub} seasonId={seasonId} />

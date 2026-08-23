@@ -583,6 +583,10 @@ const dictionary = {
     'zh-CN': '查看公开预选赛、瑞士轮积分、突围赛对阵与季后赛晋级路径。',
     'en-US': 'Track the open qualifier, Swiss standings, breakthrough bracket, and playoff path.'
   },
+  'advance.header.groupDesc': {
+    'zh-CN': '查看四组单循环积分、同分判定、八强单败对阵与最终晋级路径。',
+    'en-US': 'Track four round-robin groups, tiebreak status, the top-eight single-elimination bracket, and final results.'
+  },
   'advance.header.archiveDesc': {
     'zh-CN': '查看最终排名、完整季后赛路径与冠军晋级历程。',
     'en-US': 'Review final ranking, playoff bracket, and the champion path.'
@@ -590,6 +594,10 @@ const dictionary = {
   'advance.phase.swiss': {
     'zh-CN': '瑞士轮',
     'en-US': 'Swiss'
+  },
+  'advance.phase.groups': {
+    'zh-CN': '小组赛',
+    'en-US': 'Groups'
   },
   'advance.phase.breakthrough': {
     'zh-CN': '突围赛',
@@ -611,6 +619,18 @@ const dictionary = {
     'zh-CN': '待确认',
     'en-US': 'Pending'
   },
+  'advance.status.current': {
+    'zh-CN': '当前',
+    'en-US': 'Current'
+  },
+  'advance.status.completed': {
+    'zh-CN': '已完成',
+    'en-US': 'Completed'
+  },
+  'advance.status.upcoming': {
+    'zh-CN': '未开始',
+    'en-US': 'Scheduled'
+  },
   'advance.summary.currentPhase': {
     'zh-CN': '当前阶段',
     'en-US': 'Current Phase'
@@ -619,9 +639,17 @@ const dictionary = {
     'zh-CN': '当前轮次',
     'en-US': 'Current Round'
   },
+  'advance.summary.currentMatchDay': {
+    'zh-CN': '当前比赛日',
+    'en-US': 'Current Match Day'
+  },
   'advance.summary.roundProgress': {
     'zh-CN': '本轮进度',
     'en-US': 'Round Progress'
+  },
+  'advance.summary.matchDayProgress': {
+    'zh-CN': '本比赛日进度',
+    'en-US': 'Match Day Progress'
   },
   'advance.summary.nextPhase': {
     'zh-CN': '下一阶段',
@@ -847,6 +875,18 @@ const dictionary = {
     'zh-CN': '季后赛双败淘汰图',
     'en-US': 'Double-elimination Playoffs'
   },
+  'advance.playoffs.singleElimTitle': {
+    'zh-CN': '八强单败淘汰图',
+    'en-US': 'Top-eight Single-elimination Bracket'
+  },
+  'advance.playoffs.groupEmptyTitle': {
+    'zh-CN': '八强对阵待公布',
+    'en-US': 'Quarterfinal Bracket Pending'
+  },
+  'advance.playoffs.groupEmptyDesc': {
+    'zh-CN': '小组赛各组前二确认后，由 System 发布八强单败对阵。八强赛与半决赛 FT3，季军赛与总决赛 FT4。',
+    'en-US': 'System publishes the single-elimination bracket after each group confirms its top two. Quarterfinals and semifinals are FT3; third place and the grand final are FT4.'
+  },
   'advance.playoffs.fullBracket': {
     'zh-CN': '完整季后赛晋级图',
     'en-US': 'Full Playoff Bracket'
@@ -926,6 +966,10 @@ const dictionary = {
   'advance.final.viewSwiss': {
     'zh-CN': '查看瑞士轮最终积分榜',
     'en-US': 'View Final Swiss Standings'
+  },
+  'advance.final.viewGroups': {
+    'zh-CN': '查看小组赛最终积分榜',
+    'en-US': 'View Final Group Standings'
   },
   'advance.common.tbd': {
     'zh-CN': 'TBD',

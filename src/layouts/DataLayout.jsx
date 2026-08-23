@@ -175,8 +175,11 @@ export default function DataLayout() {
   }, [locale])
 
   useEffect(() => {
-    document.title = buildFriesCupTitle(getDataCenterPageLabel(location.pathname, location.search))
-  }, [location.pathname, location.search])
+    const partnerTitle = season?.kind === 'PARTNER'
+      ? (locale === 'en-US' ? season?.name?.en : season?.name?.zh)
+      : undefined
+    document.title = buildFriesCupTitle(getDataCenterPageLabel(location.pathname, location.search), partnerTitle)
+  }, [location.pathname, location.search, locale, season])
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)

@@ -29,6 +29,7 @@ function getRoundPosterMark(label) {
   if (/GRAND|FINAL|总决|决赛/.test(text)) return 'FINALS'
   if (/PLAY\s*OFF|PLAYOFF|季后/.test(text)) return 'PLAYOFFS'
   if (/LCQ|LAST\s*CHANCE|突围/.test(text)) return 'LCQ'
+  if (/GROUP|小组/.test(text)) return 'GROUPS'
   if (/SWISS|ROUND|瑞士/.test(text) && number) return 'SWISS'
   if (number) return `ROUND ${number}`
   return text || 'MATCH'
@@ -75,13 +76,13 @@ function BoardNextTicket({ match, nextParts, seasonId }) {
   )
 }
 
-function BoardProgress({ finished, total, progress }) {
+function BoardProgress({ finished, total, progress, label = '本轮进度' }) {
   const percentLabel = `${Math.round(progress)}%`
 
   return (
     <div className={`${styles.boardStat} ${styles.boardProgressStat}`} style={{ '--board-progress': `${progress}%` }}>
       <strong>{percentLabel}</strong>
-      <span>本轮进度</span>
+      <span>{label}</span>
       <em className={styles.boardProgressMeta}>{finished} / {total} 已完成</em>
       <i aria-hidden="true" />
     </div>
@@ -90,6 +91,7 @@ function BoardProgress({ finished, total, progress }) {
 
 export default function MatchHubBoard({ summary }) {
   const { withSeason = path => path, seasonId } = useOutletContext()
+  const isGroupStage = String(summary?.stage || '').toUpperCase() === 'GROUP'
   const roundLabel = summary?.roundLabel || 'ROUND 1'
   const roundMark = getRoundPosterMark(roundLabel)
   const total = summary?.totalMatches || 0
@@ -109,9 +111,9 @@ export default function MatchHubBoard({ summary }) {
           <strong>赛程赛果</strong>
         </div>
         <p className={styles.roundMark}>{roundLabel} MATCH DAY</p>
-        <h1>本轮赛程</h1>
+        <h1>{isGroupStage ? '本比赛日赛程' : '本轮赛程'}</h1>
         <p>
-          本轮从 {firstLabel} 开始，
+          {isGroupStage ? '本比赛日' : '本轮'}从 {firstLabel} 开始，
           {total} 场比赛分为 {slotCount} 个开赛时段进行。
         </p>
         <nav className={styles.boardActions} aria-label="Match Hub actions">
@@ -123,9 +125,14 @@ export default function MatchHubBoard({ summary }) {
       <div className={styles.boardStats} aria-label={`${roundLabel} summary`}>
         <BoardNextTicket match={nextMatch} nextParts={nextParts} seasonId={seasonId} />
         <div className={styles.boardMetricGrid}>
-          <BoardStat value={total} label="本轮比赛" meta="MATCHES" />
+          <BoardStat value={total} label={isGroupStage ? '本比赛日比赛' : '本轮比赛'} meta="MATCHES" />
           <BoardStat value={slotCount} label="开赛时段" meta="TIME SLOTS" />
-          <BoardProgress finished={finishedCount} total={total} progress={progressPercent} />
+          <BoardProgress
+            finished={finishedCount}
+            total={total}
+            progress={progressPercent}
+            label={isGroupStage ? '本比赛日进度' : '本轮进度'}
+          />
         </div>
       </div>
     </section>

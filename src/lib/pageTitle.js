@@ -12,9 +12,10 @@ function isFollowingMatchView(search = '') {
   return params.get('following') === '1' || tab === 'following'
 }
 
-export function buildFriesCupTitle(pageLabel = DEFAULT_PAGE_LABEL) {
+export function buildFriesCupTitle(pageLabel = DEFAULT_PAGE_LABEL, titleSuffix = TITLE_SUFFIX) {
   const label = String(pageLabel || '').trim() || DEFAULT_PAGE_LABEL
-  return `${label} | ${TITLE_SUFFIX}`
+  const suffix = String(titleSuffix || '').trim() || TITLE_SUFFIX
+  return `${label} | ${suffix}`
 }
 
 export function getDataCenterPageLabel(pathname = '/', search = '') {

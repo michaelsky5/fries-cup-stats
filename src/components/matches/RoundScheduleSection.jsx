@@ -18,7 +18,8 @@ export default function RoundScheduleSection({ hub }) {
   const hasResults = Boolean(hub?.recentFinishedMatches?.length)
   const defaultPanel = getDefaultPanel(hasUpcoming, hasResults)
   const [activePanel, setActivePanel] = useState(defaultPanel)
-  const sectionTitle = !hasUpcoming && hasResults ? '最近赛果' : '本轮赛程'
+  const isGroupStage = String(hub?.currentRoundSummary?.stage || '').toUpperCase() === 'GROUP'
+  const sectionTitle = !hasUpcoming && hasResults ? '最近赛果' : isGroupStage ? '本比赛日赛程' : '本轮赛程'
   const showTabs = hasUpcoming && hasResults
   const resultLimit = 9
   const resultRowsClassName = [

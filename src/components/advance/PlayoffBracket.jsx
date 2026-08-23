@@ -22,7 +22,9 @@ export default function PlayoffBracket({
   withSeason,
   isFavoriteTeam,
   isPrimaryFavoriteTeam,
-  showFilter = true
+  showFilter = true,
+  emptyTitle,
+  emptyDescription
 }) {
   const [filter, setFilter] = useState('all')
   const rounds = useMemo(() => bracket?.rounds || [], [bracket?.rounds])
@@ -56,8 +58,8 @@ export default function PlayoffBracket({
     return (
       <AdvanceEmptyState
         eyebrow={eyebrow}
-        title={t('advance.bracket.emptyTitle', '暂无晋级图')}
-        description={t('advance.bracket.emptyDesc', '该阶段对阵尚未公布。')}
+        title={emptyTitle || t('advance.bracket.emptyTitle', '暂无晋级图')}
+        description={emptyDescription || t('advance.bracket.emptyDesc', '该阶段对阵尚未公布。')}
       />
     )
   }

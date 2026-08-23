@@ -2,6 +2,8 @@ import { calculateSwissStandings } from './swissEngine.js'
 import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 import { getRankingMinTimeMins } from './leaderboardSelectors.js'
 import { getMatchRoundScopeKey } from './matchRoundScope.js'
+import { getGroupStandings } from './advanceSelectors.js'
+import { getCompetitionDayCount, getCompetitionDayMatches, getCompetitionDayNumber } from './competitionDay.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
@@ -154,6 +156,10 @@ function compareAscByTime(a, b) {
 
 function getExpectedSwissMatchCount(db, season) {
   const rules = getRules(season, db)
+  if (normalizeText(rules?.competitionFormat || db?.season?.competition_format).toUpperCase() === 'GROUP') {
+    return toNumber(rules?.groupStage?.expectedMatches ?? rules?.advance?.groups?.matchCount, 0) +
+      toNumber(rules?.advance?.playoffs?.matchCount, 0)
+  }
   const swiss = rules?.advance?.swiss || {}
   const swissStage = rules?.swissStage || {}
   const expectedRounds = toNumber(swiss.rounds ?? swissStage.maxRounds ?? rules?.swiss?.round_count, 0)
@@ -262,7 +268,6 @@ export function getThisWeekMatches(db, limit = 6, now = new Date()) {
 }
 
 export function getAdvanceSnapshot(db, limit = 8, season = null) {
-  const standings = calculateSwissStandings(db)
   const matches = safeArr(db?.matches)
   const completedMatches = matches.filter(isComplete)
   const rules = {
@@ -270,6 +275,43 @@ export function getAdvanceSnapshot(db, limit = 8, season = null) {
     ...(db?.meta?.rules && typeof db.meta.rules === 'object' ? db.meta.rules : {}),
     ...(db?.season?.rules && typeof db.season.rules === 'object' ? db.season.rules : {})
   }
+  const competitionFormat = normalizeText(
+    rules?.competitionFormat || db?.season?.competition_format || db?.meta?.competition_format
+  ).toUpperCase()
+
+  if (competitionFormat === 'GROUP') {
+    const groups = getGroupStandings(db, season)
+    const rows = groups.flatMap(group => group.rows)
+    const advancePerGroup = toNumber(rules?.groupStage?.advancePerGroup ?? rules?.advancement?.groupAdvanceCount, 2)
+    const direct = rows.filter(row => row.rank <= advancePerGroup)
+    const contest = rows.filter(row => row.rank === advancePerGroup + 1)
+    const danger = rows.filter(row => row.rank > advancePerGroup + 1)
+    const hasStarted = completedMatches.some(match => String(match?.stage || '').toUpperCase() === 'GROUP')
+
+    return {
+      phase: hasStarted ? 'groups_active' : 'not_started',
+      format: 'groups',
+      hasStarted,
+      title: hasStarted ? '小组赛晋级形势' : '小组赛尚未开始',
+      overview: {
+        teamCount: safeArr(db?.teams).length,
+        groupCount: groups.length,
+        advancePerGroup,
+        advancementSlots: groups.length * advancePerGroup,
+        currentStatus: matches.length ? '赛程已发布' : '赛程待发布'
+      },
+      standings: rows.slice(0, limit),
+      zones: { direct, contest, danger, eliminated: [] },
+      rules: [
+        `${groups.length} 组单循环，每组前 ${advancePerGroup} 晋级`,
+        '同分依次比较胜场、地图净胜与地图胜场',
+        '两队同分时比较直接交手',
+        '仍无法区分时标记待加赛'
+      ]
+    }
+  }
+
+  const standings = calculateSwissStandings(db)
   const maxRounds = toNumber(rules?.swissStage?.maxRounds, 6)
   const totalSlots = toNumber(rules?.advancement?.totalSlots, 8)
   const directAdvanceWins = toNumber(rules?.advancement?.directAdvanceWins, 5)
@@ -533,6 +575,11 @@ function getReadableRound(match) {
   const stage = normalizeText(match?.stage)
   const round = normalizeText(match?.round || match?.stage)
   const number = getRoundNumber(round)
+  const groupDay = round.match(/\bDAY\s+(\d+)\b/i)?.[1]
+
+  if (stage.toUpperCase() === 'GROUP' && groupDay) {
+    return `小组赛第 ${Number(groupDay)} 比赛日`
+  }
 
   if ((stage.toUpperCase() === 'SWISS' || /^ROUND/i.test(round)) && number) {
     return `瑞士轮第 ${number} 轮`
@@ -701,9 +748,13 @@ export function getCurrentRoundSummary(db) {
     matches[0] ||
     null
   const focusKey = getMatchRoundScopeKey(focusMatch)
-  const roundMatches = focusKey
-    ? matches.filter(match => getMatchRoundScopeKey(match) === focusKey)
-    : matches
+  const isGroupStage = normalizeText(focusMatch?.stage).toUpperCase() === 'GROUP'
+  const roundMatches = isGroupStage
+    ? getCompetitionDayMatches(matches, focusMatch)
+    : focusKey
+      ? matches.filter(match => getMatchRoundScopeKey(match) === focusKey)
+      : matches
+  const competitionDay = isGroupStage ? getCompetitionDayNumber(matches, focusMatch) : 0
   const completed = roundMatches.filter(isComplete).length
   const live = roundMatches.filter(isLive).length
   const upcoming = roundMatches.length - completed - live
@@ -711,7 +762,7 @@ export function getCurrentRoundSummary(db) {
 
   return {
     round: focusMatch?.round || focusMatch?.stage || '',
-    roundLabel: getReadableRound(focusMatch),
+    roundLabel: isGroupStage ? `小组赛第 ${competitionDay || 1} 比赛日` : getReadableRound(focusMatch),
     matches: roundMatches,
     total: roundMatches.length,
     completed,
@@ -729,8 +780,16 @@ export function getOverviewStatus(db, season = null) {
   const round = getCurrentRoundSummary(db)
   const nextMatch = getUpcomingMatches(db, 1)[0] || round.nextMatch
   const rules = getRules(season, db)
-  const expectedRounds = toNumber(rules?.swissStage?.maxRounds, 6)
+  const competitionFormat = normalizeText(
+    rules?.competitionFormat || db?.season?.competition_format || db?.meta?.competition_format
+  ).toUpperCase()
+  const isGroupCompetition = competitionFormat === 'GROUP'
+  const expectedRounds = isGroupCompetition
+    ? Math.max(1, getCompetitionDayCount(db?.matches))
+    : toNumber(rules?.swissStage?.maxRounds, 6)
   const advancementSlots = getAdvancementSlots(season, db)
+  const groupCount = toNumber(rules?.advance?.groups?.groupCount ?? rules?.groupStage?.labels?.length, 0)
+  const advancePerGroup = toNumber(rules?.groupStage?.advancePerGroup ?? rules?.advancement?.groupAdvanceCount, 2)
   const variant = seasonStatus.isFinished
     ? 'archive'
     : seasonStatus.liveMatches || seasonStatus.completedMatches
@@ -753,16 +812,23 @@ export function getOverviewStatus(db, season = null) {
     eventCode: getSeasonDisplayCode(season, db),
     seasonName: getSeasonDisplayName(season, db),
     statusText,
-    currentStage: round.total ? round.roundLabel : `瑞士轮 · 预计 ${expectedRounds} 轮`,
+    currentStage: round.total
+      ? round.roundLabel
+      : isGroupCompetition
+        ? `${groupCount || 4} 组单循环 · 每组前 ${advancePerGroup}`
+        : `瑞士轮 · 预计 ${expectedRounds} 轮`,
     nextStartLabel: nextMatch ? getShortDateTime(nextMatch) : '待定',
     roundProgressLabel: round.progressLabel,
     seasonScaleLabel: `${summary.teams} 队 / ${summary.players} 选手`,
-    advancementLabel: `前 ${advancementSlots}`,
+    advancementLabel: isGroupCompetition ? `每组前 ${advancePerGroup}` : `前 ${advancementSlots}`,
     totalMatches: summary.matches,
     completedMatches: summary.completed,
     upcomingMatches: summary.upcoming,
     mapCount: summary.maps,
     expectedRounds,
+    competitionFormat: isGroupCompetition ? 'GROUP' : 'SWISS',
+    groupCount,
+    advancePerGroup,
     advancementSlots,
     round
   }

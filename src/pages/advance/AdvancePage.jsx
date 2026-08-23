@@ -4,6 +4,7 @@ import AdvanceHeader from '../../components/advance/AdvanceHeader.jsx'
 import AdvanceStageRail from '../../components/advance/AdvanceStageRail.jsx'
 import BreakthroughPhasePanel from '../../components/advance/BreakthroughPhasePanel.jsx'
 import FinalResultsPanel from '../../components/advance/FinalResultsPanel.jsx'
+import GroupPhasePanel from '../../components/advance/GroupPhasePanel.jsx'
 import PlayoffBracket from '../../components/advance/PlayoffBracket.jsx'
 import SwissPhasePanel from '../../components/advance/SwissPhasePanel.jsx'
 import {
@@ -12,6 +13,8 @@ import {
   getBreakthroughState,
   getDefaultAdvancePhase,
   getFinalResult,
+  getGroupOverview,
+  getGroupStandings,
   getPlayoffBracket,
   getSwissKeyMatches,
   getSwissOverview,
@@ -45,6 +48,7 @@ export default function AdvancePage() {
     db,
     season,
     seasonId,
+    locale,
     t,
     withSeason = path => path,
     favorites,
@@ -55,15 +59,18 @@ export default function AdvancePage() {
   const activePhase = useAdvancePhase(db, season)
 
   const summary = useMemo(() => getAdvanceSummary(db, season), [db, season])
+  const isGroupSeason = summary.competitionFormat === 'GROUP'
   const rail = useMemo(() => getAdvanceStageRail(db, season, activePhase), [db, season, activePhase])
-  const swissOverview = useMemo(() => getSwissOverview(db, season), [db, season])
-  const swissRows = useMemo(() => getSwissStandingsRows(db, season, favorites), [db, season, favorites])
-  const swissZones = useMemo(() => getSwissZoneCounts(db, season, favorites), [db, season, favorites])
-  const tiebreakers = useMemo(() => getSwissTiebreakers(season, db), [season, db])
-  const keyMatches = useMemo(() => getSwissKeyMatches(db, season, favorites, 3), [db, season, favorites])
-  const breakthroughState = useMemo(() => getBreakthroughState(db, season), [db, season])
+  const swissOverview = useMemo(() => isGroupSeason ? null : getSwissOverview(db, season), [db, season, isGroupSeason])
+  const swissRows = useMemo(() => isGroupSeason ? [] : getSwissStandingsRows(db, season, favorites), [db, season, favorites, isGroupSeason])
+  const swissZones = useMemo(() => isGroupSeason ? [] : getSwissZoneCounts(db, season, favorites), [db, season, favorites, isGroupSeason])
+  const tiebreakers = useMemo(() => isGroupSeason ? [] : getSwissTiebreakers(season, db), [season, db, isGroupSeason])
+  const keyMatches = useMemo(() => isGroupSeason ? [] : getSwissKeyMatches(db, season, favorites, 3), [db, season, favorites, isGroupSeason])
+  const breakthroughState = useMemo(() => isGroupSeason ? null : getBreakthroughState(db, season), [db, season, isGroupSeason])
   const playoffBracket = useMemo(() => getPlayoffBracket(db, season), [db, season])
   const finalResult = useMemo(() => getFinalResult(db), [db])
+  const groupOverview = useMemo(() => isGroupSeason ? getGroupOverview(db, season) : null, [db, season, isGroupSeason])
+  const groupStandings = useMemo(() => isGroupSeason ? getGroupStandings(db, season, favorites) : [], [db, season, favorites, isGroupSeason])
 
   const getPhaseHref = phase => {
     const params = new URLSearchParams(location.search)
@@ -73,8 +80,18 @@ export default function AdvancePage() {
 
   return (
     <div className={styles.shell}>
-      <AdvanceHeader season={season} seasonId={seasonId} summary={summary} result={finalResult} t={t} />
+      <AdvanceHeader season={season} seasonId={seasonId} summary={summary} result={finalResult} locale={locale} t={t} />
       <AdvanceStageRail items={rail} t={t} getHref={getPhaseHref} />
+
+      {activePhase === 'groups' ? (
+        <GroupPhasePanel
+          overview={groupOverview}
+          groups={groupStandings}
+          seasonId={seasonId}
+          withSeason={withSeason}
+          locale={locale}
+        />
+      ) : null}
 
       {activePhase === 'swiss' ? (
         <SwissPhasePanel
@@ -103,13 +120,18 @@ export default function AdvancePage() {
       {activePhase === 'playoffs' ? (
         <PlayoffBracket
           bracket={playoffBracket}
-          eyebrow="PLAYOFFS"
-          title={t('advance.playoffs.title', '季后赛双败淘汰图')}
+          eyebrow={isGroupSeason ? 'TOP 8 PLAYOFFS' : 'PLAYOFFS'}
+          title={isGroupSeason ? t('advance.playoffs.singleElimTitle', '八强单败淘汰图') : t('advance.playoffs.title', '季后赛双败淘汰图')}
           t={t}
           seasonId={seasonId}
           withSeason={withSeason}
           isFavoriteTeam={isFavoriteTeam}
           isPrimaryFavoriteTeam={isPrimaryFavoriteTeam}
+          showFilter={!isGroupSeason}
+          emptyTitle={isGroupSeason ? t('advance.playoffs.groupEmptyTitle', '八强对阵待公布') : undefined}
+          emptyDescription={isGroupSeason
+            ? t('advance.playoffs.groupEmptyDesc', '小组赛各组前二确认后，由 System 发布八强单败对阵。八强赛与半决赛 FT3，季军赛与总决赛 FT4。')
+            : undefined}
         />
       ) : null}
 
@@ -122,6 +144,8 @@ export default function AdvancePage() {
           withSeason={withSeason}
           isFavoriteTeam={isFavoriteTeam}
           isPrimaryFavoriteTeam={isPrimaryFavoriteTeam}
+          originPhase={isGroupSeason ? 'groups' : 'swiss'}
+          singleElimination={isGroupSeason}
         />
       ) : null}
     </div>

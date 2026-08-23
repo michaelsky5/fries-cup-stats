@@ -1,10 +1,12 @@
 import { getSeasonRules } from '../config/seasons.js'
+import { getCompetitionDayCount, getCompetitionDayMatches, getCompetitionDayNumber } from './competitionDay.js'
 import { calculateSwissStandings, isByeTeam } from './swissEngine.js'
 import { BRACKET_PHASES, adaptBracketFromDb, getBracketPhaseMatches } from './bracketAdapters.js'
 import { buildFourDivisionLcq } from './lcqBracket.js'
 import { buildFixedDoubleEliminationPlayoff } from './playoffBracket.js'
 
 export const ADVANCE_PHASES = ['swiss', 'breakthrough', 'playoffs', 'final']
+export const GROUP_ADVANCE_PHASES = ['groups', 'playoffs', 'final']
 
 const safeArr = value => Array.isArray(value) ? value : []
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED', 'FINISHED'])
@@ -53,6 +55,12 @@ function isSwissMatch(match) {
   const text = `${match?.stage || ''} ${match?.round || ''} ${match?.match_id || ''} ${match?.match_display_name || ''}`.toUpperCase()
   if (/LCQ|BREAKTHROUGH|PLAYOFF|GRAND|UB|LB|突围|季后|总决/.test(text)) return false
   return /SWISS|ROUND|瑞士/.test(text)
+}
+
+function isGroupMatch(match) {
+  const stage = normalizeText(match?.stage).toUpperCase()
+  const text = `${stage} ${match?.round || ''} ${match?.match_id || ''}`.toUpperCase()
+  return stage === 'GROUP' || /\bGROUP\s+[A-D]\b|小组赛/.test(text)
 }
 
 function getRoundNumber(value) {
@@ -119,6 +127,21 @@ function getRules(season, db) {
   return getSeasonRules(season, db)
 }
 
+export function isGroupCompetition(season, db) {
+  const format = normalizeText(
+    getRules(season, db)?.competitionFormat ||
+    db?.season?.competition_format ||
+    db?.meta?.competition_format
+  ).toUpperCase()
+  return format === 'GROUP'
+}
+
+export function getAdvancePhases(season, db) {
+  const configured = safeArr(getRules(season, db)?.advance?.phases)
+  if (configured.length) return configured
+  return isGroupCompetition(season, db) ? GROUP_ADVANCE_PHASES : ADVANCE_PHASES
+}
+
 export function getSwissRules(season, db) {
   const rules = getRules(season, db)
   const swiss = rules?.advance?.swiss || {}
@@ -163,8 +186,15 @@ export function getSwissMatches(db) {
   return safeArr(db?.matches).filter(isSwissMatch).sort(compareAscByTime)
 }
 
+export function getGroupMatches(db) {
+  return safeArr(db?.matches).filter(isGroupMatch).sort(compareAscByTime)
+}
+
 export function getAdvancePhaseState(db, season) {
   const matches = safeArr(db?.matches)
+  const phases = getAdvancePhases(season, db)
+  const groupCompetition = isGroupCompetition(season, db)
+  const groupMatches = getGroupMatches(db)
   const swissMatches = getSwissMatches(db)
   const breakthroughMatches = getBracketPhaseMatches(db, BRACKET_PHASES.BREAKTHROUGH)
   const playoffMatches = getBracketPhaseMatches(db, BRACKET_PHASES.PLAYOFFS)
@@ -173,6 +203,9 @@ export function getAdvancePhaseState(db, season) {
   const swissCompleted = swissMatches.filter(isComplete)
   const breakthroughCompleted = breakthroughMatches.filter(isComplete)
   const playoffCompleted = playoffMatches.filter(isComplete)
+  const groupCompleted = groupMatches.filter(isComplete)
+  const groupsStarted = groupCompleted.length > 0 || groupMatches.some(isLive)
+  const groupsFinished = Boolean(groupMatches.length && groupCompleted.length === groupMatches.length)
   const rules = getSwissRules(season, db)
   const swissRoundCount = new Set(swissMatches.map(match => getRoundKey(match.round || match.stage)).filter(Boolean)).size
   const swissStarted = swissCompleted.length > 0 || swissMatches.some(isLive)
@@ -184,13 +217,30 @@ export function getAdvancePhaseState(db, season) {
   const breakthroughStarted = breakthroughCompleted.length > 0 || breakthroughMatches.some(isLive)
   const breakthroughFinished = Boolean(breakthroughMatches.length && breakthroughCompleted.length === breakthroughMatches.length)
   const playoffsStarted = playoffCompleted.length > 0 || playoffMatches.some(isLive)
-  const playoffsFinished = Boolean(playoffMatches.length && playoffCompleted.length === playoffMatches.length)
-  const seasonFinished = isSeasonCompleteByPublishedMatches(db, season, completed.length, matches.length)
+  const groupRules = getRules(season, db)
+  const expectedPlayoffMatches = toNumber(groupRules?.advance?.playoffs?.matchCount, 0)
+  const playoffsFinished = Boolean(
+    playoffMatches.length &&
+    playoffCompleted.length === playoffMatches.length &&
+    (!groupCompetition || !expectedPlayoffMatches || playoffMatches.length >= expectedPlayoffMatches)
+  )
+  const expectedGroupSeasonMatches = toNumber(groupRules?.groupStage?.expectedMatches ?? groupRules?.advance?.groups?.matchCount, 0) +
+    toNumber(groupRules?.advance?.playoffs?.matchCount, 0)
+  const seasonFinished = groupCompetition
+    ? Boolean(
+        matches.length &&
+        completed.length === matches.length &&
+        playoffMatches.length &&
+        (!expectedGroupSeasonMatches || matches.length >= expectedGroupSeasonMatches)
+      )
+    : isSeasonCompleteByPublishedMatches(db, season, completed.length, matches.length)
 
   return {
-    phases: ADVANCE_PHASES,
+    phases,
     seasonFinished,
     seasonStarted: completed.length > 0 || live.length > 0,
+    groupsStarted,
+    groupsFinished,
     swissStarted,
     swissFinished,
     breakthroughStarted,
@@ -201,6 +251,8 @@ export function getAdvancePhaseState(db, season) {
       matches: matches.length,
       completed: completed.length,
       live: live.length,
+      groups: groupMatches.length,
+      groupsCompleted: groupCompleted.length,
       swiss: swissMatches.length,
       swissCompleted: swissCompleted.length,
       breakthrough: breakthroughMatches.length,
@@ -214,6 +266,14 @@ export function getAdvancePhaseState(db, season) {
 export function getDefaultAdvancePhase(db, season) {
   const state = getAdvancePhaseState(db, season)
 
+  if (isGroupCompetition(season, db)) {
+    if (state.seasonFinished) return 'final'
+    if (!state.groupsFinished) return 'groups'
+    if (state.playoffsStarted && !state.playoffsFinished) return 'playoffs'
+    if (state.playoffsFinished) return 'final'
+    return 'playoffs'
+  }
+
   if (state.seasonFinished) return 'final'
   if (!state.swissStarted || !state.swissFinished) return 'swiss'
   if (!state.breakthroughStarted || !state.breakthroughFinished) return 'breakthrough'
@@ -223,19 +283,18 @@ export function getDefaultAdvancePhase(db, season) {
 }
 
 export function isValidAdvancePhase(phase, season, db) {
-  const phases = safeArr(getRules(season, db)?.advance?.phases)
-  const allowed = phases.length ? phases : ADVANCE_PHASES
-  return allowed.includes(phase)
+  return getAdvancePhases(season, db).includes(phase)
 }
 
 export function getAdvanceStageRail(db, season, activePhase) {
   const defaultPhase = getDefaultAdvancePhase(db, season)
-  const phaseOrder = new Map(ADVANCE_PHASES.map((phase, index) => [phase, index]))
+  const phases = getAdvancePhases(season, db)
+  const phaseOrder = new Map(phases.map((phase, index) => [phase, index]))
   const currentIndex = phaseOrder.get(defaultPhase) ?? 0
   const selectedIndex = phaseOrder.get(activePhase) ?? currentIndex
-  const pendingBreakthroughRules = getBreakthroughState(db, season).status === 'pending_rules'
+  const pendingBreakthroughRules = phases.includes('breakthrough') && getBreakthroughState(db, season).status === 'pending_rules'
 
-  return ADVANCE_PHASES.map((phase, index) => {
+  return phases.map((phase, index) => {
     let status = 'upcoming'
     if (index < currentIndex) status = 'completed'
     if (index === currentIndex) status = 'current'
@@ -249,6 +308,142 @@ export function getAdvanceStageRail(db, season, activePhase) {
       isActualCurrent: phase === defaultPhase
     }
   })
+}
+
+function getGroupStageRules(season, db) {
+  const rules = getRules(season, db)
+  const groupStage = rules?.groupStage || rules?.advance?.groups || {}
+  return {
+    labels: safeArr(groupStage.labels).length ? safeArr(groupStage.labels).map(label => normalizeText(label).toUpperCase()) : ['A', 'B', 'C', 'D'],
+    sizes: safeArr(groupStage.sizes),
+    advancePerGroup: toNumber(groupStage.advancePerGroup ?? rules?.advancement?.groupAdvanceCount, 2),
+    expectedMatches: toNumber(groupStage.expectedMatches ?? rules?.advance?.groups?.matchCount, 0),
+    matchFormat: normalizeText(groupStage.matchFormat || 'FT3'),
+    administrativeLossScore: safeArr(groupStage.administrativeLossScore),
+    drawScore: safeArr(groupStage.drawScore),
+    tiebreakers: safeArr(groupStage.tiebreakers),
+    unresolvedTieStatus: normalizeText(groupStage.unresolvedTieStatus || 'pending_tiebreak')
+  }
+}
+
+function normalizeGroupStandingRow(raw, groupLabel, index, teamsById, rules, groupComplete, favorites) {
+  const teamId = normalizeText(raw?.team_id || raw?.id)
+  const sourceTeam = teamsById.get(normalizeKey(teamId)) || {}
+  const rank = toNumber(raw?.group_rank ?? raw?.rank, index + 1)
+  const matchesPlayed = toNumber(raw?.matches_played, toNumber(raw?.match_wins) + toNumber(raw?.match_losses))
+  const requiresTiebreak = Boolean(raw?.requires_tiebreak)
+  const inAdvanceZone = !requiresTiebreak && rank <= rules.advancePerGroup
+  const qualified = groupComplete && !requiresTiebreak && (Boolean(raw?.qualified) || inAdvanceZone)
+  const team = {
+    ...sourceTeam,
+    ...raw,
+    team_id: teamId || sourceTeam.team_id,
+    team_name: normalizeText(raw?.team_name || sourceTeam.team_name),
+    team_short_name: normalizeText(raw?.team_short_name || sourceTeam.team_short_name || raw?.team_name || sourceTeam.team_name)
+  }
+
+  return {
+    ...raw,
+    rank,
+    groupRank: rank,
+    groupLabel,
+    team,
+    teamId: team.team_id,
+    teamName: team.team_name,
+    teamShortName: team.team_short_name,
+    matchesPlayed,
+    matchWins: toNumber(raw?.match_wins),
+    matchLosses: toNumber(raw?.match_losses),
+    mapsWon: toNumber(raw?.maps_won),
+    mapsLost: toNumber(raw?.maps_lost),
+    mapDifferential: toNumber(raw?.map_differential, toNumber(raw?.maps_won) - toNumber(raw?.maps_lost)),
+    inAdvanceZone,
+    qualified,
+    requiresTiebreak,
+    status: requiresTiebreak
+      ? rules.unresolvedTieStatus
+      : qualified
+        ? 'qualified'
+        : groupComplete
+          ? 'eliminated'
+          : inAdvanceZone
+            ? 'advance_zone'
+            : matchesPlayed
+              ? 'active'
+              : 'scheduled',
+    isFavorite: teamMatchesFavorite(team, favorites),
+    isPrimaryFavorite: teamMatchesPrimary(team, favorites)
+  }
+}
+
+export function getGroupStandings(db, season, favorites = {}) {
+  const rules = getGroupStageRules(season, db)
+  const teams = safeArr(db?.teams)
+  const teamsById = new Map(teams.map(team => [normalizeKey(team?.team_id || team?.id), team]))
+  const publishedGroups = safeArr(db?.group_standings)
+  const publishedByLabel = new Map(publishedGroups.map(group => [normalizeText(group?.group_label).toUpperCase(), group]))
+  const teamLabels = teams.map(team => normalizeText(team?.group_label).toUpperCase()).filter(Boolean)
+  const labels = Array.from(new Set([...rules.labels, ...publishedByLabel.keys(), ...teamLabels])).filter(Boolean)
+
+  return labels.map((groupLabel, groupIndex) => {
+    const published = publishedByLabel.get(groupLabel)
+    const fallbackTeams = teams
+      .filter(team => normalizeText(team?.group_label).toUpperCase() === groupLabel)
+      .sort((a, b) => toNumber(a?.group_seed, 999) - toNumber(b?.group_seed, 999))
+    const sourceRows = safeArr(published?.teams).length ? safeArr(published.teams) : fallbackTeams
+    const expectedMatches = toNumber(
+      published?.expected_matches,
+      sourceRows.length * Math.max(0, sourceRows.length - 1) / 2
+    )
+    const completedMatches = toNumber(published?.completed_matches)
+    const complete = Boolean(published?.complete) || Boolean(expectedMatches && completedMatches >= expectedMatches)
+    const rows = sourceRows
+      .map((row, index) => normalizeGroupStandingRow(row, groupLabel, index, teamsById, rules, complete, favorites))
+      .sort((a, b) => a.rank - b.rank || a.teamShortName.localeCompare(b.teamShortName))
+
+    return {
+      groupLabel,
+      groupIndex: groupIndex + 1,
+      rows,
+      teamCount: rows.length,
+      completedMatches,
+      expectedMatches,
+      complete,
+      requiresTiebreak: Boolean(published?.requires_tiebreak) || rows.some(row => row.requiresTiebreak),
+      advancePerGroup: rules.advancePerGroup
+    }
+  }).filter(group => group.rows.length)
+}
+
+export function getGroupOverview(db, season) {
+  const matches = getGroupMatches(db)
+  const completed = matches.filter(isComplete)
+  const live = matches.filter(isLive)
+  const currentMatch = matches.find(match => isLive(match) || !isComplete(match)) || completed.at(-1) || matches[0] || null
+  const currentDay = Math.max(1, getCompetitionDayNumber(matches, currentMatch) || 1)
+  const dayCount = Math.max(1, getCompetitionDayCount(matches))
+  const dayMatches = getCompetitionDayMatches(matches, currentMatch)
+  const dayCompleted = dayMatches.filter(isComplete).length
+  const rules = getGroupStageRules(season, db)
+  const groups = getGroupStandings(db, season)
+
+  return {
+    hasStarted: completed.length > 0 || live.length > 0,
+    complete: Boolean(matches.length && completed.length === matches.length),
+    teamCount: safeArr(db?.teams).length,
+    groupCount: groups.length,
+    groups,
+    currentDay,
+    dayCount,
+    currentDayLabel: `DAY ${currentDay}`,
+    completedMatches: completed.length,
+    expectedMatches: rules.expectedMatches || matches.length,
+    dayCompleted,
+    dayMatches: dayMatches.length,
+    roundProgressLabel: dayMatches.length ? `${dayCompleted} / ${dayMatches.length}` : '-',
+    nextMatch: matches.find(match => !isComplete(match) && !isLive(match)) || null,
+    rules
+  }
 }
 
 export function getSwissOverview(db, season) {
@@ -672,7 +867,7 @@ function getLoserTeam(match) {
 
 function getGrandFinalMatch(db) {
   return getBracketPhaseMatches(db, BRACKET_PHASES.PLAYOFFS)
-    .filter(match => /GRAND|总决|FINAL/.test(`${match?.round || ''} ${match?.match_display_name || ''}`.toUpperCase()))
+    .filter(match => /GRAND|总决|(?:^|[^A-Z])FINALS?(?:[^A-Z]|$)/.test(`${match?.round || ''} ${match?.match_display_name || ''}`.toUpperCase()))
     .sort(compareAscByTime)
     .at(-1) || null
 }
@@ -722,6 +917,9 @@ function comparePlayoffRound(a, b) {
 function playoffRoundOrder(match) {
   const text = `${match?.round || ''} ${match?.match_display_name || ''}`.toUpperCase()
   const number = toNumber(text.match(/\d+/)?.[0], 0)
+  if (/QF|QUARTER|八强/.test(text)) return 10
+  if (/SF|SEMI|半决/.test(text)) return 30
+  if (/THIRD|3RD|季军/.test(text)) return 70
   if (/UB/.test(text) && /QF/.test(text)) return 10
   if (/LB/.test(text) && /R1/.test(text)) return 20
   if (/UB/.test(text) && /SF/.test(text)) return 30
@@ -749,22 +947,27 @@ export function getFinalResult(db) {
 
 export function getAdvanceSummary(db, season) {
   const phaseState = getAdvancePhaseState(db, season)
-  const overview = getSwissOverview(db, season)
   const finalResult = getFinalResult(db)
   const defaultPhase = getDefaultAdvancePhase(db, season)
-  const nextPhase = defaultPhase === 'swiss'
-    ? 'breakthrough'
-    : defaultPhase === 'breakthrough'
-      ? 'playoffs'
-      : defaultPhase === 'playoffs'
-        ? 'final'
-        : ''
+  const phases = getAdvancePhases(season, db)
+  const phaseIndex = phases.indexOf(defaultPhase)
+  const nextPhase = phaseIndex >= 0 ? phases[phaseIndex + 1] || '' : ''
+  const groupCompetition = isGroupCompetition(season, db)
+  const overview = groupCompetition ? getGroupOverview(db, season) : getSwissOverview(db, season)
+  const roundLabel = groupCompetition
+    ? `${overview.currentDay} / ${overview.dayCount}`
+    : overview.currentRound ? `${overview.currentRound} / ${overview.rounds}` : ''
+  const roundTitle = groupCompetition
+    ? `小组赛第 ${overview.currentDay} 比赛日`
+    : roundLabel ? `瑞士轮第 ${roundLabel}` : ''
 
   return {
     phase: defaultPhase,
     phaseState,
     currentStageLabel: defaultPhase,
-    roundLabel: overview.currentRound ? `${overview.currentRound} / ${overview.rounds}` : '',
+    competitionFormat: groupCompetition ? 'GROUP' : 'SWISS',
+    roundLabel,
+    roundTitle,
     roundProgressLabel: overview.roundProgressLabel,
     nextPhase,
     champion: finalResult.champion,

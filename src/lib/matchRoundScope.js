@@ -21,10 +21,19 @@ export function getRoundKey(value) {
     .replace(/^-+|-+$/g, '')
 }
 
+function getScopedRoundKey(value, stage) {
+  const raw = normalizeText(value)
+  const groupDay = getStageKey(stage) === 'group' ? raw.match(/\bDAY\s+(\d+)\b/i)?.[1] : ''
+  return groupDay ? `day-${Number(groupDay)}` : getRoundKey(raw)
+}
+
 export function getMatchRoundScope(match) {
+  const stage = getStageKey(match?.stage)
+  const rawRound = normalizeText(match?.round || match?.stage)
+
   return {
-    stage: getStageKey(match?.stage),
-    round: getRoundKey(match?.round || match?.stage)
+    stage,
+    round: getScopedRoundKey(rawRound, stage)
   }
 }
 
@@ -35,7 +44,7 @@ export function getMatchRoundScopeKey(match) {
 
 export function isMatchInRoundScope(match, scope = {}) {
   const targetStage = getStageKey(scope?.stage)
-  const targetRound = getRoundKey(scope?.round)
+  const targetRound = getScopedRoundKey(scope?.round, targetStage)
   if (!targetStage && !targetRound) return true
 
   const candidate = getMatchRoundScope(match)

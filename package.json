@@ -15,6 +15,7 @@
     "test:frozen-rating-baseline": "node scripts/assertFrozenRatingBaseline.mjs",
     "test:roster-identity": "node scripts/assertRosterIdentityResolution.mjs",
     "test:playoff-bracket": "node scripts/assertPlayoffBracket.mjs",
+    "test:qgcs4-season": "node scripts/assertQGCS4Season.mjs",
     "compare:scoring": "node scripts/compareScoringEngines.mjs",
     "lint": "eslint .",
     "preview": "vite preview"

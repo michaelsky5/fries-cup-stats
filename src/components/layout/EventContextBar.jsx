@@ -15,15 +15,15 @@ function toPositiveNumber(value) {
   return Number.isFinite(number) && number > 0 ? number : null
 }
 
-function getCurrentScale(activeSummary = null) {
+function getCurrentScale(activeSummary = null, season = null) {
   return {
-    teamCount: toPositiveNumber(activeSummary?.teamCount) || FALLBACK_CURRENT_SCALE.teamCount,
-    playerCount: toPositiveNumber(activeSummary?.playerCount) || FALLBACK_CURRENT_SCALE.playerCount
+    teamCount: toPositiveNumber(activeSummary?.teamCount) || toPositiveNumber(season?.switcherMeta?.teamCount) || FALLBACK_CURRENT_SCALE.teamCount,
+    playerCount: toPositiveNumber(activeSummary?.playerCount) || toPositiveNumber(season?.switcherMeta?.playerCount) || FALLBACK_CURRENT_SCALE.playerCount
   }
 }
 
-function getCurrentScaleText(locale, activeSummary = null) {
-  const scale = getCurrentScale(activeSummary)
+function getCurrentScaleText(locale, activeSummary = null, season = null) {
+  const scale = getCurrentScale(activeSummary, season)
   return pickLocale(
     locale,
     `${scale.teamCount} 队 · ${scale.playerCount} 选手`,
@@ -35,11 +35,11 @@ function getSwitcherMeta(season, currentSeasonId, seasonStatus, locale = 'zh-CN'
   if (season?.id === currentSeasonId) {
     const status = getReadableStatus(seasonStatus, locale)
     if (season?.reviewEnabled) return pickLocale(locale, `${status} · 冠军 HYW · 127 场`, `${status} · Champion HYW · 127 matches`)
-    return `${status} · ${getCurrentScaleText(locale, activeSummary)}`
+    return `${status} · ${getCurrentScaleText(locale, activeSummary, season)}`
   }
 
   if (season?.reviewEnabled) return pickLocale(locale, '冠军 HYW · 127 场', 'Champion HYW · 127 matches')
-  return getCurrentScaleText(locale)
+  return getCurrentScaleText(locale, null, season)
 }
 
 function getReadableStatus(seasonStatus, locale = 'zh-CN') {
@@ -115,8 +115,20 @@ export default function EventContextBar({
   return (
     <section className={styles.contextBar}>
       <div className={styles.eventLead}>
+        {season?.logoUrl ? (
+          <img
+            className={styles.eventLogo}
+            src={season.logoUrl}
+            alt={locale === 'en-US' ? season?.name?.en : season?.name?.zh}
+          />
+        ) : null}
         <div className={styles.eventIdentity}>
           <span className={styles.eventCode}>{season?.publicCode || seasonId}</span>
+          {season?.partnerLabel ? (
+            <span className={styles.partnerLabel}>
+              {locale === 'en-US' ? season.partnerLabel.en : season.partnerLabel.zh}
+            </span>
+          ) : null}
         </div>
       </div>
 

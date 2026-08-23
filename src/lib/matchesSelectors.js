@@ -1,4 +1,5 @@
 import { getSeasonById, getSeasonRules } from '../config/seasons.js'
+import { getCompetitionDayMatches, getCompetitionDayNumber } from './competitionDay.js'
 import { formatOwMapName } from './heroes.js'
 import { getRoundKey, isMatchInRoundScope } from './matchRoundScope.js'
 
@@ -6,6 +7,20 @@ export const safeArr = value => Array.isArray(value) ? value : []
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED', 'FINISHED', 'FORFEIT', 'WALKOVER'])
 const LIVE_STATUSES = new Set(['IN_PROGRESS', 'LIVE'])
+const QGCS4_TEAM_LOGO_FILES = Object.freeze({
+  'qgcs4-t01': 'NF.png',
+  'qgcs4-t03': 'WHG X SPC.png',
+  'qgcs4-t04': 'HUWET.png',
+  'qgcs4-t05': 'HCM.jpg',
+  'qgcs4-t06': 'SK.png',
+  'qgcs4-t09': '5FW.png',
+  'qgcs4-t11': 'ENPB.jpg',
+  'qgcs4-t12': 'RC.png',
+  'qgcs4-t14': 'SPS.png',
+  'qgcs4-t15': 'FUM.png',
+  'qgcs4-t16': 'SPSV.png',
+  'qgcs4-t19': 'NFA.png'
+})
 
 function normalizeText(value) {
   return String(value || '').trim()
@@ -28,6 +43,10 @@ function resolveSeason(seasonOrId) {
 function getExpectedSwissMatchCount(db, seasonOrId) {
   const season = resolveSeason(seasonOrId)
   const rules = getSeasonRules(season, db)
+  if (normalizeText(rules?.competitionFormat || db?.season?.competition_format).toUpperCase() === 'GROUP') {
+    return toNumber(rules?.groupStage?.expectedMatches ?? rules?.advance?.groups?.matchCount, 0) +
+      toNumber(rules?.advance?.playoffs?.matchCount, 0)
+  }
   const swiss = rules?.advance?.swiss || {}
   const swissStage = rules?.swissStage || {}
   const expectedRounds = toNumber(swiss.rounds ?? swissStage.maxRounds ?? rules?.swiss?.round_count, 0)
@@ -135,12 +154,36 @@ export function getCurrentRoundValue(matches = []) {
 export function getMatchesByRound(matches = [], round = '', stage = '') {
   const requested = normalizeText(round)
   const current = requested && requested !== 'ALL' ? null : getCurrentRoundMatch(matches)
+  if ((!requested || requested === 'ALL') && String(current?.stage || '').toUpperCase() === 'GROUP') {
+    const dayMatches = getCompetitionDayMatches(matches, current)
+    if (dayMatches.length) return sortMatchesBySchedule(dayMatches)
+  }
   const scope = {
     stage: normalizeText(stage || current?.stage),
     round: requested && requested !== 'ALL' ? requested : current?.round || current?.stage
   }
   if (!scope.stage && !scope.round) return sortMatchesBySchedule(matches)
   return sortMatchesBySchedule(matches).filter(match => isMatchInRoundScope(match, scope))
+}
+
+function getCurrentMatchScope(matches = []) {
+  const rows = getAllMatches({ matches }).filter(match => !isByeMatch(match))
+  const currentMatch = getCurrentRoundMatch(rows)
+  const currentRound = currentMatch?.round || currentMatch?.stage || ''
+  const currentStage = currentMatch?.stage || ''
+  const isGroupStage = String(currentStage).toUpperCase() === 'GROUP'
+  const roundMatches = isGroupStage
+    ? getCompetitionDayMatches(rows, currentMatch)
+    : getMatchesByRound(rows, currentRound, currentStage)
+
+  return {
+    rows,
+    currentMatch,
+    currentRound,
+    currentStage,
+    roundMatches: sortMatchesBySchedule(roundMatches),
+    competitionDay: isGroupStage ? getCompetitionDayNumber(rows, currentMatch) : 0
+  }
 }
 
 export function getUpcomingMatches(matches = []) {
@@ -185,10 +228,7 @@ export function getNextMatchForTeam(matches = [], teamId) {
 }
 
 export function getMatchesSummary(matches = []) {
-  const rows = safeArr(matches)
-  const currentMatch = getCurrentRoundMatch(rows)
-  const currentRound = currentMatch?.round || currentMatch?.stage || ''
-  const currentStage = currentMatch?.stage || ''
+  const { rows, currentRound, currentStage, roundMatches } = getCurrentMatchScope(matches)
   return {
     total: rows.length,
     upcoming: rows.filter(isUpcomingMatch).length,
@@ -196,7 +236,7 @@ export function getMatchesSummary(matches = []) {
     finished: rows.filter(isFinishedMatch).length,
     stage: currentStage,
     round: currentRound,
-    roundMatches: currentRound ? getMatchesByRound(rows, currentRound, currentStage).length : rows.length
+    roundMatches: currentRound ? roundMatches.length : rows.length
   }
 }
 
@@ -250,15 +290,33 @@ function logoStemCandidates(value) {
   ].filter(Boolean)))
 }
 
+function getQgcs4TeamLogoCandidates(team, seasonId) {
+  const seasonText = normalizeText(seasonId).toUpperCase()
+  const teamId = normalizeKey(team?.team_id || team?.id)
+  const isQgcs4Team = seasonText.startsWith('QGCS4') || teamId.startsWith('qgcs4-')
+  if (!isQgcs4Team) return []
+
+  const fileName = QGCS4_TEAM_LOGO_FILES[teamId]
+  return [
+    fileName ? `/logos/QGCS4/${encodeURIComponent(fileName)}` : '',
+    '/logos/QGCS4/OW.png'
+  ].filter(Boolean)
+}
+
 export function getTeamLogoCandidates(team, seasonId) {
   const directory = getTeamSeasonDirectory(team, seasonId)
-  if (!directory) return []
+  const directCandidates = [team?.team_logo, team?.logo_url, team?.logo]
+    .map(normalizeText)
+    .filter(Boolean)
+  const qgcs4Candidates = getQgcs4TeamLogoCandidates(team, seasonId)
+  if (!directory) return Array.from(new Set([...directCandidates, ...qgcs4Candidates]))
 
   const primaryCandidates = logoStemCandidates(getTeamLabel(team)).map(stem => {
     return `/logos/${directory}/${encodeURIComponent(stem)}.png`
   })
 
   return Array.from(new Set([
+    ...directCandidates,
     ...primaryCandidates,
     `/logos/${directory}/OW.png`
   ]))
@@ -300,6 +358,12 @@ export function getMatchTimeLabel(match) {
 export function getRoundText(match) {
   const round = normalizeText(match?.round || match?.stage)
   const number = round.match(/\d+/)?.[0]
+  if (String(match?.stage || '').toUpperCase() === 'GROUP') {
+    const competitionDay = toNumber(match?.competition_day ?? match?.competitionDay, 0)
+    if (competitionDay > 0) return `小组赛第 ${competitionDay} 比赛日`
+    const groupLabel = normalizeText(match?.group_label || round.match(/\bGROUP\s+([A-D])\b/i)?.[1]).toUpperCase()
+    return groupLabel ? `${groupLabel} 组小组赛` : '小组赛'
+  }
   if (String(match?.stage || '').toUpperCase() === 'SWISS' && number) return `瑞士轮第 ${number} 轮`
   if (/^ROUND\s*\d+/i.test(round) && number) return `瑞士轮第 ${number} 轮`
   return round || '赛事阶段待定'
@@ -476,9 +540,8 @@ export function getPrioritizedTimeSlotMatches(matches = [], favorites = {}, limi
   return sortedRows.filter(match => selectedIds.has(matchIdentity(match)))
 }
 
-export function getFeaturedRoundMatches(matches = [], favorites = {}, round = '', limit = 3, stage = '') {
-  const roundMatches = getMatchesByRound(matches, round, stage)
-    .filter(match => !isByeMatch(match))
+function selectFeaturedScopeMatches(scopeMatches = [], favorites = {}, limit = 3) {
+  const roundMatches = safeArr(scopeMatches).filter(match => !isByeMatch(match))
   const activeRows = roundMatches.filter(match => isLiveMatch(match) || isUpcomingMatch(match))
   const sourceRows = activeRows.length ? activeRows : roundMatches
   const selected = []
@@ -498,11 +561,15 @@ export function getFeaturedRoundMatches(matches = [], favorites = {}, round = ''
   return selected
 }
 
+export function getFeaturedRoundMatches(matches = [], favorites = {}, round = '', limit = 3, stage = '') {
+  return selectFeaturedScopeMatches(getMatchesByRound(matches, round, stage), favorites, limit)
+}
+
 export function getUpcomingRoundMatches(matches = [], round = '', stage = '') {
   return getMatchesByRound(matches, round, stage).filter(isUpcomingMatch)
 }
 
-export function getRecentFinishedMatches(matches = [], round = '', limit = 9, stage = '') {
+function getRecentFinishedMatchesFromScope(matches = [], scopeMatches = [], limit = 9) {
   const selected = []
   const selectedIds = new Set()
   const addMatch = match => {
@@ -512,10 +579,14 @@ export function getRecentFinishedMatches(matches = [], round = '', limit = 9, st
     selected.push(match)
   }
 
-  getFinishedMatches(getMatchesByRound(matches, round, stage)).forEach(addMatch)
+  getFinishedMatches(scopeMatches).forEach(addMatch)
   getFinishedMatches(matches).forEach(addMatch)
 
   return selected
+}
+
+export function getRecentFinishedMatches(matches = [], round = '', limit = 9, stage = '') {
+  return getRecentFinishedMatchesFromScope(matches, getMatchesByRound(matches, round, stage), limit)
 }
 
 export function getPrimaryFollowingNextMatch(matches = [], favorites = {}) {
@@ -527,13 +598,9 @@ export function getFollowingRoundMatchCount(matches = [], favorites = {}, round 
 }
 
 export function getCurrentRoundSummary(matches = []) {
-  const rows = getAllMatches({ matches }).filter(match => !isByeMatch(match))
-  const currentMatch = getCurrentRoundMatch(rows)
-  const currentRound = currentMatch?.round || currentMatch?.stage || ''
-  const currentStage = currentMatch?.stage || ''
-  const roundMatches = getMatchesByRound(rows, currentRound, currentStage)
+  const { currentRound, currentStage, roundMatches, competitionDay } = getCurrentMatchScope(matches)
   const timeSlots = getRoundTimeSlots(roundMatches)
-  const upcomingRoundMatches = getUpcomingRoundMatches(rows, currentRound, currentStage)
+  const upcomingRoundMatches = roundMatches.filter(isUpcomingMatch)
   const nextMatch = upcomingRoundMatches[0] || null
   const firstMatch = roundMatches.find(match => getMatchTime(match)) || roundMatches[0] || null
   const progress = getRoundProgress(roundMatches)
@@ -541,7 +608,9 @@ export function getCurrentRoundSummary(matches = []) {
   return {
     stage: currentStage,
     round: currentRound,
-    roundLabel: normalizeText(currentRound).toUpperCase() || 'ROUND',
+    roundLabel: String(currentStage).toUpperCase() === 'GROUP'
+      ? `小组赛第 ${competitionDay || 1} 比赛日`
+      : normalizeText(currentRound).toUpperCase() || 'ROUND',
     matches: roundMatches,
     totalMatches: roundMatches.length,
     timeSlots,
@@ -653,10 +722,10 @@ export function getMatchHubData(db, seasonId, favorites = {}) {
   const followingMatches = getFollowingMatches(matches, favorites)
   const upcomingMatches = getUpcomingMatches(matches)
   const finishedMatches = getFinishedMatches(matches)
-  const upcomingRoundMatches = getUpcomingRoundMatches(matches, summary.round, summary.stage)
-  const recentFinishedMatches = getRecentFinishedMatches(matches, summary.round, 9, summary.stage)
+  const upcomingRoundMatches = currentRoundMatches.filter(isUpcomingMatch)
+  const recentFinishedMatches = getRecentFinishedMatchesFromScope(matches, currentRoundMatches, 9)
   const primaryFollowingNextMatch = getPrimaryFollowingNextMatch(matches, favorites)
-  const followingRoundMatchCount = getFollowingRoundMatchCount(matches, favorites, summary.round, summary.stage)
+  const followingRoundMatchCount = getFavoriteMatches(currentRoundMatches, favorites).length
   const isArchive = isSeasonCompleteByPublishedMatches(
     db,
     seasonId,
@@ -689,7 +758,7 @@ export function getMatchHubData(db, seasonId, favorites = {}) {
     recentFinishedMatches,
     featuredMatches: isArchive
       ? getFeaturedMatches(matches, db?.season || db?.meta, 8)
-      : getFeaturedRoundMatches(matches, favorites, summary.round, 3, summary.stage),
+      : selectFeaturedScopeMatches(currentRoundMatches, favorites, 3),
     keyArchiveMatches: getKeyArchiveMatches(matches, db?.season || db?.meta, 8),
     stageGroups: getGroupedMatches(finishedMatches, 'stage'),
     dateGroups: getGroupedMatches(matches, 'date')

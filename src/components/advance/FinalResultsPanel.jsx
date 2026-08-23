@@ -17,7 +17,9 @@ export default function FinalResultsPanel({
   t,
   withSeason,
   isFavoriteTeam,
-  isPrimaryFavoriteTeam
+  isPrimaryFavoriteTeam,
+  originPhase = 'swiss',
+  singleElimination = false
 }) {
   const champion = result.champion
   const finalMatch = result.grandFinal
@@ -64,6 +66,7 @@ export default function FinalResultsPanel({
         withSeason={withSeason}
         isFavoriteTeam={isFavoriteTeam}
         isPrimaryFavoriteTeam={isPrimaryFavoriteTeam}
+        showFilter={!singleElimination}
       />
 
       <ChampionPath
@@ -83,8 +86,8 @@ export default function FinalResultsPanel({
         isPrimaryFavoriteTeam={isPrimaryFavoriteTeam}
       />
 
-      <Link to={withSeason('/advance?phase=swiss')} className={styles.secondaryAction}>
-        {t('advance.final.viewSwiss', '查看瑞士轮最终积分榜')} →
+      <Link to={withSeason(`/advance?phase=${originPhase}`)} className={styles.secondaryAction}>
+        {singleElimination ? t('advance.final.viewGroups', '查看小组赛最终积分榜') : t('advance.final.viewSwiss', '查看瑞士轮最终积分榜')} →
       </Link>
     </div>
   )

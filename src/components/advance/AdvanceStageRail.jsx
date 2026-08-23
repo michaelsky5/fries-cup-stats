@@ -10,7 +10,11 @@ function getStatusText(item, t) {
 
 export default function AdvanceStageRail({ items, t, getHref }) {
   return (
-    <nav className={styles.stageRail} aria-label={t('advance.stageRail', '晋级阶段')}>
+    <nav
+      className={styles.stageRail}
+      aria-label={t('advance.stageRail', '晋级阶段')}
+      style={{ '--advance-phase-count': items.length }}
+    >
       {items.map(item => (
         <Link
           key={item.phase}
