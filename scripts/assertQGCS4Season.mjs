@@ -11,7 +11,7 @@ import {
 import { adaptBackendBracket } from '../src/lib/bracketAdapters.js'
 import { getCurrentRoundSummary as getHomeCurrentRoundSummary } from '../src/lib/homeSelectors.js'
 import { getMatchDossier } from '../src/lib/matchDetailSelectors.js'
-import { filterTeams, getTeamDirectory } from '../src/lib/rosterSelectors.js'
+import { filterTeams, getRosterRoleLabel, getTeamDirectory } from '../src/lib/rosterSelectors.js'
 import { calculateSwissStandings } from '../src/lib/swissEngine.js'
 import {
   getCurrentRoundSummary,
@@ -128,6 +128,7 @@ const flexPlayer = openingDossier.rosters.teamB.find(player => player.name === '
 assert.equal(openingDossier.stageLabel, 'A 组小组赛')
 assert.equal(openingDossier.roundLabel, '第 1 比赛日')
 assert.equal(flexPlayer?.role, 'FLEX')
+assert.equal(getRosterRoleLabel(flexPlayer?.role), '灵活')
 
 const oneCompletedGroupMatch = {
   ...db,

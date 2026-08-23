@@ -74,7 +74,7 @@ export function getRosterRoleLabel(role, locale = 'zh-CN') {
     TANK: '重装',
     DPS: '输出',
     SUP: '支援',
-    FLEX: '自由'
+    FLEX: '灵活'
   }[normalized] || '职责'
 }
 
