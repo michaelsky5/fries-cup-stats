@@ -48,6 +48,9 @@ const COPY = {
     roleRank: '分路顺位',
     shortlistRank: '当前公开候选顺位',
     publicTier: '公开名单层级',
+    publicListOrder: '固定公开名单顺位',
+    publicListOrderShort: '名单',
+    emphasisRankShort: '侧重',
     publishedCandidates: '公开候选',
     rankScopeGuide: '大号顺位＝当前侧重下的公开 5 人顺序 · 名单层级＝固定公开分层 · 完整池＝全部合格选手顺位',
     subrole: '细分位置',
@@ -265,7 +268,7 @@ const COPY = {
     scenarioFitTitle: '不同用人侧重下的技术适配',
     scenarioFitMeta: '用同一组技术证据观察选手在四种用人侧重下的适配分，以及其在完整合格候选池中的同位置顺位。',
     slotPlan: '名单结构',
-    slotPlanMeta: '坦克、长枪、自由人、群辅、枪辅各 5 人；第 1 为技术首选，第 2–3 为核心候选，第 4 为延伸层，第 5 为观察层。',
+    slotPlanMeta: '固定公开名单层级按五个位置各 5 人设置：名单 #1 为技术首选，#2–3 为核心候选，#4 为延伸层，#5 为观察层；当前用人侧重顺位可以变化，但不会改写该层级。',
     selectionModel: '选拔模型',
     selectionModelMeta: '细分位置表现 25% · 环境校正 20% · 竞技下限 15% · 逐图稳定性 15% · 大赛阶段 10% · 分路证据 10% · 分路英雄池 5%；不足完整分路证据时向同位置中位（第 50 百分位）收缩。',
     slots: '席位',
@@ -292,7 +295,7 @@ const COPY = {
     error: '技术分析数据暂时无法载入。',
     invalidTitle: '此专属链接当前不可用',
     invalidBody: '链接可能已撤销、过期或输入不完整，请联系报告提供方获取新的访问地址。',
-    prototypeNote: '25 / 25 人均提供技术档案；各细分位置独立排序，第 1 名为技术首选，第 2–3 名为核心候选，第 4 名进入延伸层，第 5 名作为观察层。',
+    prototypeNote: '25 / 25 人均提供技术档案；其中名单 #1–#5 均指固定公开名单顺位：#1 为技术首选，#2–3 为核心候选，#4 为延伸层，#5 为观察层，不等同于当前用人侧重下的动态顺位。',
     talentMap: '人才分布图',
     talentMapMeta: '综合甄选评分 × 样本深度；评分已纳入对手强度、己方队伍环境与地图类型校正。',
     performance: '综合甄选评分',
@@ -422,7 +425,7 @@ const COPY = {
     win: '胜',
     loss: '负',
     draw: '平',
-    unknown: '赛果未记录'
+    unknown: '胜负标记未录入'
   },
   'en-US': {
     access: 'Dedicated club access',
@@ -438,6 +441,9 @@ const COPY = {
     roleRank: 'Subrole rank',
     shortlistRank: 'Current published-list rank',
     publicTier: 'Published-list tier',
+    publicListOrder: 'Fixed published-list order',
+    publicListOrderShort: 'LIST',
+    emphasisRankShort: 'EMPHASIS',
     publishedCandidates: 'published candidates',
     rankScopeGuide: 'Large rank = order among the published five for this emphasis · tier = fixed published-list tier · full pool = all qualified players',
     subrole: 'Subrole',
@@ -655,7 +661,7 @@ const COPY = {
     scenarioFitTitle: 'Technical fit by selection emphasis',
     scenarioFitMeta: 'The same technical evidence is read under four selection emphases, alongside the player’s position rank in the full qualified pool.',
     slotPlan: 'Roster structure',
-    slotPlanMeta: 'Five each: Tank, Hitscan, Flex DPS, Main Support and Flex Support. Rank 1 is the technical primary, ranks 2–3 core candidates, rank 4 extended and rank 5 watch.',
+    slotPlanMeta: 'The fixed published-list tier contains five players per position: list #1 is the technical primary, #2–3 core, #4 extended and #5 watch. Selection-emphasis order may move without rewriting this tier.',
     selectionModel: 'Selection model',
     selectionModelMeta: 'Subrole performance 25% · context adjustment 20% · competitive floor 15% · map consistency 15% · stage validation 10% · subrole evidence 10% · in-subrole hero pool 5%; incomplete evidence shrinks toward the position median (50th percentile).',
     slots: 'slots',
@@ -682,7 +688,7 @@ const COPY = {
     error: 'Technical analysis data is temporarily unavailable.',
     invalidTitle: 'This dedicated link is unavailable',
     invalidBody: 'The link may have been revoked, expired or entered incorrectly. Request a new access URL from the report provider.',
-    prototypeNote: 'All 25 players receive technical dossiers. Rank 1 is the technical primary, ranks 2–3 are core candidates, rank 4 extended and rank 5 watch in each subrole.',
+    prototypeNote: 'All 25 players receive technical dossiers. List #1–#5 here means fixed published-list order: #1 is the technical primary, #2–3 core, #4 extended and #5 watch—not the dynamic order under the current selection emphasis.',
     talentMap: 'Talent distribution',
     talentMapMeta: 'Selection score × sample depth. The score includes opponent strength, own-team environment and map-type adjustment.',
     performance: 'Selection score',
@@ -812,7 +818,7 @@ const COPY = {
     win: 'Win',
     loss: 'Loss',
     draw: 'Draw',
-    unknown: 'Result not recorded'
+    unknown: 'Win/loss flag not recorded'
   },
   'ko-KR': {
     access: '구단 전용 액세스',
@@ -828,6 +834,9 @@ const COPY = {
     roleRank: '세부 역할 순위',
     shortlistRank: '현재 공개 후보 순위',
     publicTier: '공개 명단 단계',
+    publicListOrder: '고정 공개 명단 순위',
+    publicListOrderShort: '명단',
+    emphasisRankShort: '초점',
     publishedCandidates: '공개 후보',
     rankScopeGuide: '큰 순위 = 현재 평가 초점의 공개 5인 순서 · 명단 단계 = 고정 공개 분류 · 전체 후보군 = 모든 적격 선수 순위',
     subrole: '세부 역할',
@@ -1045,7 +1054,7 @@ const COPY = {
     scenarioFitTitle: '평가 초점별 기술 적합도',
     scenarioFitMeta: '동일한 기술 근거를 네 가지 평가 초점으로 해석한 적합도와 전체 적격 후보군의 포지션 순위입니다.',
     slotPlan: '명단 구조',
-    slotPlanMeta: '각 포지션 5명이며 1위는 기술 1순위, 2–3위는 핵심 후보, 4위는 확장층, 5위는 관찰층입니다.',
+    slotPlanMeta: '고정 공개 명단 단계는 포지션별 5명으로 구성됩니다. 명단 #1은 기술 1순위, #2–3은 핵심 후보, #4는 확장층, #5는 관찰층이며 평가 초점 순위가 바뀌어도 이 단계는 바뀌지 않습니다.',
     selectionModel: '선발 모델',
     selectionModelMeta: '세부 역할 경기력 25% · 환경 보정 20% · 경기 하한 15% · 전장 안정성 15% · 큰 무대 검증 10% · 세부 역할 근거 10% · 역할 내 영웅 폭 5%; 근거가 완전하지 않으면 동일 포지션 중앙값(50백분위)으로 축소합니다.',
     slots: '자리',
@@ -1072,7 +1081,7 @@ const COPY = {
     error: '기술 분석 데이터를 일시적으로 불러올 수 없습니다.',
     invalidTitle: '현재 사용할 수 없는 전용 링크입니다',
     invalidBody: '링크가 취소 또는 만료되었거나 주소가 올바르지 않을 수 있습니다. 보고서 제공자에게 새 링크를 요청해 주세요.',
-    prototypeNote: '25명 모두 기술 프로필을 제공하며 각 세부 역할 1위는 기술 1순위, 2–3위는 핵심 후보, 4위는 확장층, 5위는 관찰층입니다.',
+    prototypeNote: '25명 모두 기술 프로필을 제공합니다. 여기서 명단 #1–#5는 고정 공개 명단 순위이며, #1은 기술 1순위, #2–3은 핵심 후보, #4는 확장층, #5는 관찰층으로 현재 평가 초점의 동적 순위와 다릅니다.',
     talentMap: '인재 분포도',
     talentMapMeta: '종합 선발 점수 × 표본 깊이. 상대 강도, 소속 팀 환경, 전장 유형 보정을 포함합니다.',
     performance: '종합 선발 점수',
@@ -1202,7 +1211,7 @@ const COPY = {
     win: '승',
     loss: '패',
     draw: '무',
-    unknown: '경기 결과 미기록'
+    unknown: '승패 표기 미입력'
   }
 }
 
@@ -3394,16 +3403,25 @@ function getValidationSummary(locale) {
   if (locale === 'en-US') return {
     temporal: 'Time-split Top-3 retention',
     pairwise: 'Pairwise direction agreement',
+    belowGate: 'Below gate',
+    singleGatePassed: 'Single gate passed',
+    gateLabel: 'Gate',
     boundary: 'Shadow validation only · does not change the published order'
   }
   if (locale === 'ko-KR') return {
     temporal: '시간 분할 Top 3 유지율',
     pairwise: '쌍대 방향 일치율',
+    belowGate: '기준 미달',
+    singleGatePassed: '단일 기준 통과',
+    gateLabel: '기준',
     boundary: '그림자 검증 전용 · 공개 순위에 미반영'
   }
   return {
     temporal: '时间切分 Top 3 保留率',
     pairwise: '两两方向一致度',
+    belowGate: '未达门槛',
+    singleGatePassed: '单项达标',
+    gateLabel: '门槛',
     boundary: '影子验证 · 不参与公开顺位'
   }
 }
@@ -3418,6 +3436,12 @@ function ExecutiveCommandView({ model, locale, audience = 'manager', scenario, o
   const t = getCopy(locale)
   const scenarioCopy = getRecruitmentScenarioCopy(scenario, locale)
   const validationCopy = getValidationSummary(locale)
+  const temporalValue = model.validationAudit?.temporal?.averageTopThreeRetentionPct
+  const pairwiseValue = model.validationAudit?.pairwise?.concordancePct
+  const temporalTarget = model.validationAudit?.promotionGate?.temporalTopThreeRetentionTargetPct ?? 80
+  const pairwiseTarget = model.validationAudit?.promotionGate?.pairwiseConcordanceTargetPct ?? 70
+  const temporalPassed = Number.isFinite(Number(temporalValue)) && Number(temporalValue) >= temporalTarget
+  const pairwisePassed = Number.isFinite(Number(pairwiseValue)) && Number(pairwiseValue) >= pairwiseTarget
   const markets = SUBROLE_ORDER.map(subrole => {
     const players = getScenarioRolePlayers(model, subrole, scenario)
     return {
@@ -3527,8 +3551,8 @@ function ExecutiveCommandView({ model, locale, audience = 'manager', scenario, o
       </div>
 
       <div className={styles.commandValidationStrip}>
-        <span><small>{validationCopy.temporal}</small><strong>{model.validationAudit?.temporal?.averageTopThreeRetentionPct ?? '—'}%</strong></span>
-        <span><small>{validationCopy.pairwise}</small><strong>{model.validationAudit?.pairwise?.concordancePct ?? '—'}%</strong></span>
+        <span data-state={temporalPassed ? 'passed' : 'review'}><small>{validationCopy.temporal}</small><strong>{temporalValue ?? '—'}%</strong><em>{temporalPassed ? validationCopy.singleGatePassed : validationCopy.belowGate} · {validationCopy.gateLabel} {temporalTarget}%</em></span>
+        <span data-state={pairwisePassed ? 'passed' : 'review'}><small>{validationCopy.pairwise}</small><strong>{pairwiseValue ?? '—'}%</strong><em>{pairwisePassed ? validationCopy.singleGatePassed : validationCopy.belowGate} · {validationCopy.gateLabel} {pairwiseTarget}%</em></span>
         <p>{validationCopy.boundary}</p>
       </div>
       <footer className={styles.commandCaution}><span>{scenarioCopy.formula}</span><p>{t.commandCaution}</p></footer>
@@ -5224,7 +5248,7 @@ function ComparisonDecisionBrief({ players, locale, stage, scenario = 'BALANCED'
         <p>{narrative}</p>
       </div>
       <div className={styles.comparisonDecisionStats}>
-        <article><span>{t.comparisonLeader}</span><strong>{leader.identity.displayName}</strong><small>{leaderFit} FIT · #{leader.highSampleSubroleRank}</small></article>
+        <article><span>{t.comparisonLeader}</span><strong>{leader.identity.displayName}</strong><small>{leaderFit} FIT · {t.emphasisRankShort} #{getScenarioFit(leader, scenario)?.rank ?? leader.highSampleSubroleRank}</small></article>
         <article><span>{t.comparisonAlternate}</span><strong>{alternate.identity.displayName}</strong><small>{alternateFit} FIT · −{lead}</small></article>
         <article><span>{t.comparisonLargestEdge}</span><strong>{largestEdge.label}</strong><small>{formatComparisonValue(largestEdge.leaderValue)} ↔ {formatComparisonValue(largestEdge.alternateValue)}</small></article>
         <article data-decision-status={status}><span>{copy.gapConfidence}</span><strong>{statusLabel}</strong><small>{copy.evidenceFloor} {evidenceFloor}% · {copy.stabilityFloor} {stabilityFloor}% · {rangesOverlap === null ? '—' : rangesOverlap ? copy.intervalOverlap : copy.intervalSeparated}</small>{bootstrap ? <em>{copy.bootstrapWin} {bootstrap.probabilityPct}% · Δ90% [{bootstrap.deltaLow90}, {bootstrap.deltaHigh90}] · {bootstrap.trials.toLocaleString()} {copy.bootstrapMeta}</em> : null}</article>
@@ -5650,7 +5674,7 @@ function ManagerComparisonWorkbench({ model, locale, subrole, scenario, selected
                   data-blocked={blocked || undefined}
                   onClick={() => togglePlayer(player)}
                 >
-                  <i aria-hidden="true" /><b>{player.identity.displayName}</b><small>#{getScenarioFit(player, scenario)?.rank || player.highSampleSubroleRank}</small>
+                  <i aria-hidden="true" /><b>{player.identity.displayName}</b><small title={t.shortlistRank}>{t.emphasisRankShort} #{getScenarioFit(player, scenario)?.rank || player.highSampleSubroleRank}</small>
                 </button>
               )
             })}
@@ -5748,7 +5772,7 @@ function ComparisonTable({ players, locale, initialSubrole = 'TANK', selectedPla
                 >
                   <i aria-hidden="true" />
                   <b>{player.identity.displayName}</b>
-                  <small>#{player.highSampleSubroleRank}</small>
+                  <small title={t.publicListOrder}>{t.publicListOrderShort} #{player.highSampleSubroleRank}</small>
                 </button>
               )
             })}

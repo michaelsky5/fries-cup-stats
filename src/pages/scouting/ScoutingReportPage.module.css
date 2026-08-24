@@ -34,8 +34,9 @@
 .commandValidationStrip > span { display: grid; gap: 4px; }
 .commandValidationStrip small { color: var(--report-muted); font-size: 10px; }
 .commandValidationStrip strong { color: #fff; font-size: 17px; }
-.commandValidationStrip > span:first-child strong { color: #ff9b78; }
-.commandValidationStrip > span:nth-child(2) strong { color: #72e39a; }
+.commandValidationStrip > span > em { color: var(--report-muted); font-size: 10px; font-style: normal; font-weight: 850; line-height: 1.4; }
+.commandValidationStrip > span[data-state='review'] :is(strong, em) { color: #ff9b78; }
+.commandValidationStrip > span[data-state='passed'] :is(strong, em) { color: #72e39a; }
 .commandValidationStrip > p { display: flex; align-items: center; justify-content: flex-end; color: var(--report-muted); font-size: 11px; line-height: 1.55; text-align: right; }
 
 .roleCockpitRankGuide {
