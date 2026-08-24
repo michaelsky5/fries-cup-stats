@@ -12381,7 +12381,11 @@
   }
 
   .marketCardFooter button,
-  .marketCardFooter a,
+  .marketCardFooter a {
+    min-height: 46px;
+    font-size: 11px;
+  }
+
   .filterButtons button,
   .compareSubroles button,
   .managerTrialCard > header button {
