@@ -3558,14 +3558,157 @@ function getRoleFocusRead(players, structure, scenario, locale) {
   return `${leader.identity.displayName} 以 ${leaderScore} FIT 暂列首位，领先 ${runnerUp?.identity.displayName || '下一名候选'} ${structure.topGap} 分；${fixedLeader ? '四种用人侧重下技术首选均保持不变。' : '用人侧重变化时，技术首选也会切换。'}`
 }
 
+const ROLE_COACH_AXIS_ORDER = ['baselineReliability', 'pressureReadiness', 'contextPortability']
+
+function getRoleCoachReadCopy(locale) {
+  if (locale === 'en-US') return {
+    summaryEyebrow: '30-SECOND POSITION READ',
+    summaryTitle: 'Set the action order before opening the evidence',
+    summaryMeta: 'This is a plain-language translation of the current FIT order, not an additional score.',
+    primary: 'Advance first',
+    parallel: 'Review in parallel',
+    confidence: 'Decision strength',
+    primaryMeta: (alternate, gap) => alternate ? `${gap} FIT ahead of ${alternate} under the current emphasis.` : 'Current technical primary.',
+    parallelMeta: gap => gap == null ? 'Keep the nearest alternatives in the same review track.' : `Second and third are separated by ${gap} FIT; compare their usage paths, not just the rank.`,
+    confidenceReads: {
+      CLEAR: { label: 'Order supported', meta: 'FIT separation, evidence and ranking stability support the current primary.' },
+      CLEAR_OVERLAP: { label: 'Lead, with overlap', meta: 'The FIT order is supported, while the top 90% performance ranges still overlap.' },
+      CONDITIONAL: { label: 'Direction, not closure', meta: 'The lead is decision-relevant, but the alternative path should stay open for trials.' },
+      SENSITIVE: { label: 'Order needs review', meta: 'Evidence or ranking stability makes this a trial priority, not a final verdict.' }
+    },
+    metricEyebrow: 'HOW TO READ THE THREE SIGNALS',
+    metricTitle: 'Plain language first; model term second',
+    metricMeta: 'All three are 0–100 usage indices compared only with players in the same position. Higher is better; they are not cross-position ability scores.',
+    axes: {
+      baselineReliability: { plain: 'Everyday stability', technical: 'Baseline reliability', meta: 'Can the player preserve a usable competitive floor and deliver consistently from map to map?' },
+      pressureReadiness: { plain: 'Strong-match retention', technical: 'Pressure readiness', meta: 'Does performance hold against stronger opponents and on the recorded playoff stage?' },
+      contextPortability: { plain: 'Tactical range', technical: 'Context portability', meta: 'Do hero breadth, map coverage and map balance support more than one deployment context?' }
+    },
+    candidateUse: 'Best current use',
+    candidateVerify: 'Verify first',
+    uses: {
+      CORE_READY: 'Advance as a regular core-rotation option.',
+      RELIABLE_BASE: 'Use as a stable everyday rotation option.',
+      PRESSURE_OPTION: 'Prioritise for strong-opponent or key-match tasks.',
+      BALANCED: 'Keep in the balanced parallel-review group.',
+      TARGETED_USE: 'Start with a defined hero or map assignment.'
+    },
+    verifies: {
+      baselineReliability: 'Whether the competitive floor and map-to-map delivery hold.',
+      pressureReadiness: 'Whether output holds against strong opponents and in playoffs.',
+      contextPortability: 'Whether hero and map responsibilities transfer beyond recorded contexts.'
+    }
+  }
+  if (locale === 'ko-KR') return {
+    summaryEyebrow: '30초 포지션 결론',
+    summaryTitle: '근거를 펼치기 전에 추진 순서를 먼저 확인하세요',
+    summaryMeta: '현재 FIT 순위를 쉬운 말로 옮긴 것이며 별도의 추가 점수가 아닙니다.',
+    primary: '우선 추진',
+    parallel: '병행 검토',
+    confidence: '결론 강도',
+    primaryMeta: (alternate, gap) => alternate ? `현재 평가 초점에서 ${alternate}보다 ${gap} FIT 앞섭니다.` : '현재 기술 1순위입니다.',
+    parallelMeta: gap => gap == null ? '가장 가까운 대안을 같은 검토 트랙에 유지합니다.' : `2위와 3위 차이는 ${gap} FIT입니다. 순위뿐 아니라 기용 경로를 비교하세요.`,
+    confidenceReads: {
+      CLEAR: { label: '순위 근거 충분', meta: 'FIT 격차, 근거량과 순위 안정도가 현재 1순위를 지지합니다.' },
+      CLEAR_OVERLAP: { label: '우위, 구간은 중첩', meta: 'FIT 순서는 지지되지만 상위 90% 경기력 구간은 여전히 중첩됩니다.' },
+      CONDITIONAL: { label: '방향성 확인', meta: '의미 있는 우위는 있으나 테스트 단계에서 대안 경로를 함께 유지해야 합니다.' },
+      SENSITIVE: { label: '순위 재검토 필요', meta: '근거량 또는 순위 안정도 때문에 최종 결론이 아닌 테스트 우선순위로 읽어야 합니다.' }
+    },
+    metricEyebrow: '세 가지 지표 읽는 법',
+    metricTitle: '쉬운 이름을 먼저, 모델 용어를 그다음에',
+    metricMeta: '세 지표는 같은 포지션 안에서만 비교하는 0–100 기용 지수입니다. 높을수록 좋으며 포지션 간 능력 점수가 아닙니다.',
+    axes: {
+      baselineReliability: { plain: '일상 안정성', technical: '기준선 신뢰도', meta: '사용 가능한 경기 하한과 전장 간 안정적 수행을 유지할 수 있는지 봅니다.' },
+      pressureReadiness: { plain: '강팀전 유지력', technical: '압박 준비도', meta: '강한 상대와 기록된 플레이오프 단계에서도 경기력이 유지되는지 봅니다.' },
+      contextPortability: { plain: '전술 적응 범위', technical: '환경 전환성', meta: '영웅 폭, 전장 범위와 균형이 여러 기용 환경을 뒷받침하는지 봅니다.' }
+    },
+    candidateUse: '현재 추천 기용',
+    candidateVerify: '우선 검증',
+    uses: {
+      CORE_READY: '정규 핵심 로테이션 후보로 우선 추진.',
+      RELIABLE_BASE: '일상 경기의 안정적 로테이션 옵션으로 기용.',
+      PRESSURE_OPTION: '강팀전 또는 중요 경기 과제로 우선 검증.',
+      BALANCED: '균형형 병행 검토군에 유지.',
+      TARGETED_USE: '특정 영웅 또는 전장 임무부터 시작.'
+    },
+    verifies: {
+      baselineReliability: '경기 하한과 전장 간 수행이 계속 유지되는지.',
+      pressureReadiness: '강팀전과 플레이오프에서도 출력이 유지되는지.',
+      contextPortability: '영웅·전장 임무가 기록 밖 환경으로 전환되는지.'
+    }
+  }
+  return {
+    summaryEyebrow: '30 秒岗位结论',
+    summaryTitle: '先确定推进顺序，再展开技术证据',
+    summaryMeta: '这里只把当前 FIT 顺位翻译成人话，不新增一套评分。',
+    primary: '优先推进',
+    parallel: '并行考察',
+    confidence: '结论强度',
+    primaryMeta: (alternate, gap) => alternate ? `当前侧重下领先 ${alternate} ${gap} FIT。` : '当前技术首选。',
+    parallelMeta: gap => gap == null ? '将最近的替代人选保留在同一考察路径。' : `第二与第三相差 ${gap} FIT；应比较使用路径，不只比较名次。`,
+    confidenceReads: {
+      CLEAR: { label: '顺位证据支持', meta: 'FIT 差距、证据量与顺位稳定度共同支持当前首选。' },
+      CLEAR_OVERLAP: { label: '首位领先，区间重叠', meta: 'FIT 顺位得到支持，但头部 90% 表现区间仍有重叠。' },
+      CONDITIONAL: { label: '方向明确，尚未定案', meta: '领先具备决策意义，但试训时仍应保留替代路径。' },
+      SENSITIVE: { label: '顺位需要复核', meta: '证据量或顺位稳定度不足，应把它当作试训优先级而非最终结论。' }
+    },
+    metricEyebrow: '三个指标怎么读',
+    metricTitle: '先看人话，再看模型名',
+    metricMeta: '三项均为同位置内部比较的 0–100 使用指数，越高越好；不能跨位置比较，也不是单独的能力总分。',
+    axes: {
+      baselineReliability: { plain: '日常稳定性', technical: '基线可靠度', meta: '看选手能否守住可用的竞技下限，并在不同地图持续稳定兑现。' },
+      pressureReadiness: { plain: '强局保持', technical: '高压准备度', meta: '看面对更强对手和已记录的季后赛阶段时，表现能否保持。' },
+      contextPortability: { plain: '战术适配范围', technical: '环境迁移性', meta: '看英雄宽度、地图覆盖与地图均衡能否支持多种使用环境。' }
+    },
+    candidateUse: '当前适合',
+    candidateVerify: '优先验证',
+    uses: {
+      CORE_READY: '按常规核心轮换候选优先推进。',
+      RELIABLE_BASE: '承担日常比赛的稳定轮换。',
+      PRESSURE_OPTION: '优先验证强敌或关键场次任务。',
+      BALANCED: '保留在均衡型并行考察组。',
+      TARGETED_USE: '先从明确的英雄或地图任务使用。'
+    },
+    verifies: {
+      baselineReliability: '竞技下限与地图间稳定性能否继续保持。',
+      pressureReadiness: '面对强敌和季后赛时输出能否保持。',
+      contextPortability: '英雄与地图职责能否迁移到已记录环境之外。'
+    }
+  }
+}
+
+function getRoleCoachConfidenceRead(confidence, copy) {
+  if (confidence?.status === 'CLEAR' && confidence.rangesOverlap === true) return copy.confidenceReads.CLEAR_OVERLAP
+  return copy.confidenceReads[confidence?.status] || copy.confidenceReads.CONDITIONAL
+}
+
+function getRoleCoachCandidateRead(profile, locale) {
+  const copy = getRoleCoachReadCopy(locale)
+  const axisScores = ROLE_COACH_AXIS_ORDER.map(axis => ({ axis, value: Number(profile?.[axis]) || 0 }))
+  const weakestAxis = [...axisScores].sort((a, b) => a.value - b.value)[0]?.axis || 'baselineReliability'
+  return {
+    use: copy.uses[profile?.mode] || copy.uses.TARGETED_USE,
+    verify: copy.verifies[weakestAxis]
+  }
+}
+
 function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario, subrole, onScenarioChange, onRoleChange, getPlayerHref, returnTo }) {
   const t = getCopy(locale)
+  const coachCopy = getRoleCoachReadCopy(locale)
   const scenarioCopy = getRecruitmentScenarioCopy(scenario, locale)
   const players = getScenarioRolePlayers(model, subrole, scenario)
   const leader = players[0]
+  const runnerUp = players[1]
+  const third = players[2]
   const structure = getMarketStructure(players, scenario)
   const confidence = getComparisonDecisionConfidence(players, scenario, model.pairwiseBootstrap)
   const leaderFit = getScenarioFit(leader, scenario)
+  const runnerUpFit = getScenarioFit(runnerUp, scenario)
+  const thirdFit = getScenarioFit(third, scenario)
+  const parallelGap = runnerUp && third
+    ? Number(((runnerUpFit?.score || 0) - (thirdFit?.score || 0)).toFixed(1))
+    : null
+  const confidenceRead = getRoleCoachConfidenceRead(confidence, coachCopy)
   const qualifiedCount = model.qualifiedPool.filter(player => player.subrole === subrole).length
   const primaryHero = leader?.heroPool[0]?.hero || leader?.summary?.primaryHero
   const evidence = leader?.performanceSignals?.opponentStrength?.evidenceQuality?.confidencePct || 0
@@ -3615,6 +3758,34 @@ function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario,
         ))}
       </nav>
 
+      {audience === 'coach' ? (
+        <section className={styles.roleCoachSummary} aria-labelledby="role-coach-summary-title">
+          <header>
+            <span>{coachCopy.summaryEyebrow}</span>
+            <strong id="role-coach-summary-title">{coachCopy.summaryTitle}</strong>
+            <p>{coachCopy.summaryMeta}</p>
+          </header>
+          <div>
+            <article data-priority="primary">
+              <small>{coachCopy.primary}</small>
+              <strong>{leader.identity.displayName}</strong>
+              <b>{leaderFit?.score ?? '—'} FIT</b>
+              <p>{coachCopy.primaryMeta(runnerUp?.identity.displayName, structure.topGap)}</p>
+            </article>
+            <article>
+              <small>{coachCopy.parallel}</small>
+              <strong>{[runnerUp, third].filter(Boolean).map(player => player.identity.displayName).join(' · ') || '—'}</strong>
+              <p>{coachCopy.parallelMeta(parallelGap)}</p>
+            </article>
+            <article data-status={confidence?.status || 'CONDITIONAL'}>
+              <small>{coachCopy.confidence}</small>
+              <strong>{confidenceRead.label}</strong>
+              <p>{confidenceRead.meta}</p>
+            </article>
+          </div>
+        </section>
+      ) : null}
+
       <div className={styles.roleCockpitLeadGrid}>
         <article className={styles.roleCockpitLeader} data-market-status={structure.status}>
           <HeroArtwork hero={primaryHero} role={leader.role} className={styles.roleCockpitArtwork} loading="eager" />
@@ -3646,6 +3817,25 @@ function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario,
         </aside>
       </div>
 
+      {audience === 'coach' ? (
+        <section className={styles.roleCoachMetricGuide} aria-labelledby="role-coach-metric-title">
+          <header>
+            <span>{coachCopy.metricEyebrow}</span>
+            <strong id="role-coach-metric-title">{coachCopy.metricTitle}</strong>
+            <p>{coachCopy.metricMeta}</p>
+          </header>
+          {ROLE_COACH_AXIS_ORDER.map(axis => {
+            const axisCopy = coachCopy.axes[axis]
+            return (
+              <article key={axis}>
+                <div><strong>{axisCopy.plain}</strong><small>{axisCopy.technical}</small></div>
+                <p>{axisCopy.meta}</p>
+              </article>
+            )
+          })}
+        </section>
+      ) : null}
+
       <div className={styles.roleCockpitCandidates} data-audience={audience}>
         <header><span>{t.candidateDecisionStack}</span><small>{players.length} {t.publishedCandidates} · {qualifiedCount} {t.qualifiedCandidates} · {scenarioCopy.label}</small></header>
         <p className={styles.roleCockpitRankGuide}>{t.rankScopeGuide}</p>
@@ -3657,6 +3847,7 @@ function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario,
             const hero = player.heroPool[0]?.hero || player.summary.primaryHero
             const strength = player.strengths[0]
             const risk = player.risks[0]
+            const coachRead = getRoleCoachCandidateRead(profile, locale)
             const gap = Math.max(0, Number(((leaderFit?.score || 0) - (fit?.score || 0)).toFixed(1)))
             return (
               <Link
@@ -3676,11 +3867,11 @@ function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario,
                 </b>
                 {audience === 'coach' ? (
                   <div className={styles.roleCockpitCandidateAxes}>
-                    {[
-                      [t.baselineReliability, profile?.baselineReliability || 0],
-                      [t.pressureReadiness, profile?.pressureReadiness || 0],
-                      [t.contextPortability, profile?.contextPortability || 0]
-                    ].map(([label, value]) => <span key={label}><small>{label}</small><i><em style={{ width: `${value}%` }} /></i><b>{value}</b></span>)}
+                    {ROLE_COACH_AXIS_ORDER.map(axis => {
+                      const axisCopy = coachCopy.axes[axis]
+                      const value = profile?.[axis] || 0
+                      return <span key={axis}><small title={`${axisCopy.technical} · ${axisCopy.meta}`}>{axisCopy.plain}</small><i><em style={{ width: `${value}%` }} /></i><b>{value}</b></span>
+                    })}
                   </div>
                 ) : (
                   <div className={styles.roleCockpitCandidateRead}>
@@ -3688,6 +3879,12 @@ function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario,
                     <span><small>{t.watchpoint}</small><b>{risk ? `${getMetricLabel(risk.metricId, locale)} · ${formatPercentileShort(risk.percentile, locale)}` : '—'}</b></span>
                   </div>
                 )}
+                {audience === 'coach' ? (
+                  <div className={styles.roleCockpitCandidateTranslation}>
+                    <span><small>{coachCopy.candidateUse}</small><b>{coachRead.use}</b></span>
+                    <span><small>{coachCopy.candidateVerify}</small><b>{coachRead.verify}</b></span>
+                  </div>
+                ) : null}
                 {audience === 'coach' ? (
                   <footer><span>{t.heroLineupAdjusted} · {formatPercentileRead(player.performanceSignals.opponentStrength?.adjustedPercentile, locale)}</span><span>{t.contextCoverage} {playerContext?.coveragePct ?? '—'}%</span><b>{t.openFullDossier} ↗</b></footer>
                 ) : <footer><span>{t.poolRank} #{fit?.rank ?? '—'}/{fit?.total ?? '—'}</span><b>{t.openFullDossier} ↗</b></footer>}
