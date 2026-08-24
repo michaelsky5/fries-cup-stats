@@ -12162,3 +12162,368 @@
     break-inside: avoid;
   }
 }
+
+/* Mobile report controls: preserve the full analysis while reducing sticky UI and drag-only navigation. */
+.mobileNavigationSelect,
+.mobileScrollHint,
+.navLabelCompact,
+.matchResultCompact {
+  display: none;
+}
+
+@media screen and (max-width: 720px) {
+  .mobileNavigationSelect {
+    min-height: 44px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    padding: 0 10px;
+    border-top: 1px solid var(--report-line);
+    background: rgba(255, 255, 255, 0.018);
+  }
+
+  .mobileNavigationSelect > span {
+    color: var(--report-muted);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  .mobileNavigationSelect select {
+    min-width: 0;
+    width: 100%;
+    min-height: 44px;
+    padding: 0 30px 0 8px;
+    color: #fff;
+    border: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1.2;
+  }
+
+  .mobileNavigationSelect select:focus-visible {
+    outline: 2px solid var(--slot-color, var(--fc-yellow));
+    outline-offset: -3px;
+  }
+
+  .mobileNavigationSelect option {
+    color: #111;
+    background: #fff;
+  }
+
+  .roleCockpitMobileSwitch {
+    margin-top: 20px;
+    border: 1px solid var(--report-line);
+  }
+
+  .roleCockpitRoleSwitch,
+  .roleWorkspaceTasks,
+  .detailSectionNav {
+    display: none;
+  }
+
+  .roleWorkspaceNav,
+  .detailContextNav {
+    margin-top: 10px;
+  }
+
+  .roleWorkspacePrimary,
+  .detailContextPrimary {
+    min-height: 44px;
+    grid-template-columns: 44px minmax(52px, 1fr) auto;
+  }
+
+  .roleWorkspaceBack,
+  .detailContextBack {
+    grid-column: 1;
+    grid-row: 1;
+    width: 44px;
+    min-height: 44px;
+    justify-content: center;
+    padding: 0;
+    border-right: 1px solid var(--report-line);
+    border-bottom: 0;
+    overflow: hidden;
+    font-size: 0;
+  }
+
+  .roleWorkspaceBack::before,
+  .detailContextBack::before {
+    content: '←';
+    font-size: 17px;
+    line-height: 1;
+  }
+
+  .roleWorkspaceIdentity,
+  .detailContextIdentity {
+    grid-column: 2;
+    grid-row: 1;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0 9px;
+  }
+
+  .roleWorkspaceIdentity strong,
+  .detailContextIdentity strong {
+    overflow: hidden;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .roleWorkspaceAudience {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .detailContextActions {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .roleWorkspaceAudience,
+  .detailAudienceButtons {
+    grid-template-columns: repeat(2, minmax(58px, 1fr));
+  }
+
+  .roleWorkspaceAudience button,
+  .detailAudienceButtons button {
+    min-height: 44px;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .detailAudienceButtons button[data-return='true'] {
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  .navLabelFull,
+  .matchResultFull {
+    display: none;
+  }
+
+  .navLabelCompact,
+  .matchResultCompact {
+    display: inline;
+  }
+
+  .page[data-role-focus='true'] .roleCockpit[id],
+  .page[data-role-focus='true'] .anchorSection[id],
+  .page[data-role-focus='true'] .coachTaskPanel[id],
+  .detailPage .anchorSection,
+  .detailPage .playerAnalysis,
+  .detailPage .methodology,
+  .detailPage .methodologyStack,
+  .detailPage .profileCard[id],
+  .detailPage .opponentEvidenceCard[id],
+  .detailPage .decisionView[id] {
+    scroll-margin-top: 104px;
+  }
+
+  .roleCockpitLeader {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .roleCockpitLeaderIdentity {
+    max-width: calc(100% - 104px);
+  }
+
+  .roleCockpitLeaderIdentity > strong {
+    overflow: visible;
+    font-size: clamp(32px, 10vw, 40px);
+    line-height: 0.98;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .roleCockpitFit {
+    position: absolute;
+    top: 18px;
+    right: 14px;
+    min-width: 88px;
+  }
+
+  .roleCockpitFit strong {
+    font-size: 34px;
+  }
+
+  .roleCockpitLeader > p {
+    grid-column: 1;
+    max-width: 90%;
+  }
+
+  .marketLeaderVisual {
+    height: 176px;
+  }
+
+  .marketCardHeader span,
+  .marketCardHeader b,
+  .marketLeaderVisual > span small,
+  .marketLeaderVisual > span em,
+  .marketLeaderVisual > b small,
+  .marketHeadGap small,
+  .marketStress small,
+  .marketCandidateBars small,
+  .marketCandidateBars strong {
+    font-size: 11px;
+  }
+
+  .marketCandidateBars b,
+  .marketStress strong,
+  .marketStress b {
+    font-size: 12px;
+  }
+
+  .marketCardFooter button,
+  .marketCardFooter a,
+  .filterButtons button,
+  .compareSubroles button,
+  .managerTrialCard > header button {
+    min-height: 44px;
+    font-size: 11px;
+  }
+
+  .managerProfessionalReference > footer a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .managerSnapshotRead nav a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .detailMain {
+    padding-top: 18px;
+  }
+
+  .detailNavigation {
+    grid-template-columns: minmax(92px, 0.7fr) minmax(0, 1.3fr);
+    gap: 8px;
+    align-items: stretch;
+    padding-bottom: 12px;
+  }
+
+  .detailRoleSequence {
+    align-content: center;
+  }
+
+  .adjacentPlayers {
+    gap: 6px;
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .adjacentPlayers[data-count='1'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .adjacentPlayers > span {
+    display: none;
+  }
+
+  .adjacentPlayers > a {
+    min-height: 52px;
+    gap: 3px;
+    padding: 7px 8px;
+  }
+
+  .adjacentPlayers small {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  .adjacentPlayers b {
+    font-size: 12px;
+  }
+
+  .matchRow {
+    grid-template-columns: 46px minmax(0, 1fr) auto;
+    gap: 9px;
+  }
+
+  .matchResult {
+    width: 44px;
+    height: 30px;
+    font-size: 10px;
+  }
+
+  .mobileScrollHint {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 12px;
+    color: var(--report-muted);
+    border-top: 1px solid var(--report-line);
+    border-bottom: 1px solid var(--report-line);
+    background: rgba(255, 255, 255, 0.018);
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.4;
+  }
+
+  .mobileScrollHint::after {
+    content: '↔';
+    flex: 0 0 auto;
+    color: var(--slot-color, var(--fc-yellow));
+    font-size: 16px;
+  }
+
+  .marketMatrixViewport,
+  .heroMapMatrixScroller {
+    overscroll-behavior-inline: contain;
+    scroll-behavior: smooth;
+    touch-action: pan-x pan-y;
+  }
+
+  .marketMatrix th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #0d1117;
+    box-shadow: 1px 0 0 var(--report-line);
+  }
+
+  .marketMatrix thead th:first-child {
+    z-index: 3;
+  }
+
+  .heroMapMatrix {
+    min-width: 680px;
+    grid-template-columns: minmax(132px, 1.15fr) repeat(var(--map-columns), minmax(104px, 1fr));
+  }
+
+  .heroMapCorner,
+  .heroMapHero {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #0d1117;
+    box-shadow: 1px 0 0 var(--report-line);
+  }
+
+  .heroMapCorner {
+    z-index: 3;
+  }
+
+  .detailPage {
+    --detail-prose-size: 14px;
+    --detail-support-size: 12px;
+    --detail-caption-size: 11px;
+  }
+
+  .methodology li p {
+    font-size: 12px;
+    line-height: 1.72;
+  }
+}

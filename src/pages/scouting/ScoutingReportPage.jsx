@@ -3318,6 +3318,40 @@ function getResultLabel(result, t) {
   return t.unknown
 }
 
+function getMobileUiCopy(locale) {
+  if (locale === 'en-US') return {
+    positionSwitch: 'Position',
+    sectionSelect: 'Jump to section',
+    swipeMatrix: 'Swipe horizontally to view the full matrix',
+    unknownResult: 'N/A'
+  }
+  if (locale === 'ko-KR') return {
+    positionSwitch: '포지션',
+    sectionSelect: '섹션 바로가기',
+    swipeMatrix: '좌우로 밀어 전체 매트릭스 보기',
+    unknownResult: '미표기'
+  }
+  return {
+    positionSwitch: '切换岗位',
+    sectionSelect: '快速跳转',
+    swipeMatrix: '左右滑动查看完整矩阵',
+    unknownResult: '未标注'
+  }
+}
+
+function MobileNavigationSelect({ className = '', label, value, items, onChange }) {
+  return (
+    <label className={[styles.mobileNavigationSelect, className].filter(Boolean).join(' ')}>
+      <span>{label}</span>
+      <select value={value} onChange={event => onChange(event.target.value)} aria-label={label}>
+        {items.map(([id, itemLabel], index) => (
+          <option key={id} value={id}>{String(index + 1).padStart(2, '0')} · {itemLabel}</option>
+        ))}
+      </select>
+    </label>
+  )
+}
+
 function DeploymentTooltip({ active, payload, locale }) {
   if (!active || !payload?.length) return null
   const row = payload[0]?.payload
@@ -3721,6 +3755,7 @@ function getRoleCoachCandidateRead(profile, locale) {
 
 function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario, subrole, onScenarioChange, onRoleChange, getPlayerHref, returnTo }) {
   const t = getCopy(locale)
+  const mobileCopy = getMobileUiCopy(locale)
   const coachCopy = getRoleCoachReadCopy(locale)
   const scenarioCopy = getRecruitmentScenarioCopy(scenario, locale)
   const players = getScenarioRolePlayers(model, subrole, scenario)
@@ -3784,6 +3819,13 @@ function RoleRecruitmentCockpit({ model, locale, audience = 'manager', scenario,
           </button>
         ))}
       </nav>
+      <MobileNavigationSelect
+        className={styles.roleCockpitMobileSwitch}
+        label={mobileCopy.positionSwitch}
+        value={subrole}
+        items={SUBROLE_ORDER.map(item => [item, getSubroleLabel(item, locale)])}
+        onChange={onRoleChange}
+      />
 
       {audience === 'coach' ? (
         <section className={styles.roleCoachSummary} aria-labelledby="role-coach-summary-title">
@@ -4021,6 +4063,7 @@ function getScenarioFit(player, scenario) {
 
 function MarketRankFlow({ model, locale, audience = 'manager', activeSubrole, activeScenario, getPlayerHref, returnTo, id }) {
   const t = getCopy(locale)
+  const mobileCopy = getMobileUiCopy(locale)
   const subroles = activeSubrole === 'ALL' ? SUBROLE_ORDER : [activeSubrole]
   const activeScenarioIndex = Math.max(0, RECRUITMENT_SCENARIO_ORDER.indexOf(activeScenario))
 
@@ -4126,8 +4169,10 @@ function MarketRankFlow({ model, locale, audience = 'manager', activeSubrole, ac
                   </div>
                 </div>
               ) : (
-                <div className={styles.marketMatrixViewport}>
-                <table className={styles.marketMatrix} aria-label={`${getSubroleLabel(subrole, locale)} · ${t.marketFlowTitle}`}>
+                <>
+                  <small className={styles.mobileScrollHint}>{mobileCopy.swipeMatrix}</small>
+                  <div className={styles.marketMatrixViewport}>
+                    <table className={styles.marketMatrix} aria-label={`${getSubroleLabel(subrole, locale)} · ${t.marketFlowTitle}`}>
                   <thead>
                     <tr>
                       <th scope="col">{t.marketMatrixCandidate}</th>
@@ -4188,8 +4233,9 @@ function MarketRankFlow({ model, locale, audience = 'manager', activeSubrole, ac
                       )
                     })}
                   </tbody>
-                </table>
-                </div>
+                    </table>
+                  </div>
+                </>
               )}
             </article>
           )
@@ -4683,6 +4729,7 @@ function ContextFitList({ title, contexts, locale }) {
 
 function DeploymentPlaybook({ player, locale }) {
   const t = getCopy(locale)
+  const mobileCopy = getMobileUiCopy(locale)
   const playbook = player.performanceSignals.opponentStrength?.deploymentPlaybook
   if (!playbook) return null
   const cells = playbook.heroMapCells || []
@@ -4717,8 +4764,10 @@ function DeploymentPlaybook({ player, locale }) {
           <small>{t.evidenceGate} · ≥{gate.minMaps || 2} {t.maps} · ≥{gate.minMatches || 2} {t.matches} · ≥{gate.minMinutes || 12} {t.minutes} · ≥{gate.minConfidencePct || 45}%</small>
         </header>
         {heroes.length && mapTypes.length ? (
-          <div className={styles.heroMapMatrixScroller}>
-            <div className={styles.heroMapMatrix} style={{ '--map-columns': mapTypes.length }}>
+          <>
+            <small className={styles.mobileScrollHint}>{mobileCopy.swipeMatrix}</small>
+            <div className={styles.heroMapMatrixScroller}>
+              <div className={styles.heroMapMatrix} style={{ '--map-columns': mapTypes.length }}>
               <span className={styles.heroMapCorner}>HERO / MAP</span>
               {mapTypes.map(mapType => <strong key={mapType}>{getMapTypeLabel(mapType, locale)}</strong>)}
               {heroes.map(hero => (
@@ -4736,8 +4785,9 @@ function DeploymentPlaybook({ player, locale }) {
                   })}
                 </div>
               ))}
+              </div>
             </div>
-          </div>
+          </>
         ) : <p className={styles.playbookNoContext}>{t.insufficientDeploymentContext}</p>}
       </article>
 
@@ -4849,6 +4899,7 @@ function DeploymentProfile({ player, locale, activeScenario = 'BALANCED' }) {
 
 function PlayerAnalysis({ player, locale, activeScenario, decision, onPrint }) {
   const t = getCopy(locale)
+  const mobileCopy = getMobileUiCopy(locale)
   const disclosure = getDisclosureCopy(locale)
   const riskItems = player.risks.length ? player.risks : []
   const isImpactTrend = player.trend.metricId === 'impact'
@@ -4974,7 +5025,10 @@ function PlayerAnalysis({ player, locale, activeScenario, decision, onPrint }) {
           <div className={styles.matchList}>
             {player.recentMatches.slice(0, 4).map(match => (
               <div key={match.matchId} className={styles.matchRow}>
-                <span className={`${styles.matchResult} ${styles[`result${match.result}`]}`}>{getResultLabel(match.result, t)}</span>
+                <span className={`${styles.matchResult} ${styles[`result${match.result}`]}`} title={getResultLabel(match.result, t)}>
+                  <span className={styles.matchResultFull}>{getResultLabel(match.result, t)}</span>
+                  <span className={styles.matchResultCompact}>{['win', 'loss', 'draw'].includes(match.result) ? getResultLabel(match.result, t) : mobileCopy.unknownResult}</span>
+                </span>
                 <div><strong>{match.opponent.short}</strong><span>{match.dateLabel} · {match.heroLabel} · {match.mapsPlayed} {t.maps}</span><small>{match.displayName}</small></div>
                 <b>{match.scoreLabel}</b>
               </div>
@@ -6028,7 +6082,9 @@ function getDossierNavigationCopy(locale) {
     returnManager: 'Back to manager conclusion',
     roleSequence: 'Browse this position',
     previousInRole: 'Previous in position',
-    nextInRole: 'Next in position'
+    nextInRole: 'Next in position',
+    previousShort: 'Previous',
+    nextShort: 'Next'
   }
   if (locale === 'ko-KR') return {
     backOverview: '포지션 전체 보기로',
@@ -6038,7 +6094,9 @@ function getDossierNavigationCopy(locale) {
     returnManager: '매니저 결론으로 돌아가기',
     roleSequence: '같은 포지션 후보 탐색',
     previousInRole: '같은 포지션 이전 후보',
-    nextInRole: '같은 포지션 다음 후보'
+    nextInRole: '같은 포지션 다음 후보',
+    previousShort: '이전',
+    nextShort: '다음'
   }
   return {
     backOverview: '返回五位置总览',
@@ -6048,7 +6106,9 @@ function getDossierNavigationCopy(locale) {
     returnManager: '返回经理结论',
     roleSequence: '同位置候选浏览',
     previousInRole: '上一位同位置候选',
-    nextInRole: '下一位同位置候选'
+    nextInRole: '下一位同位置候选',
+    previousShort: '上一位',
+    nextShort: '下一位'
   }
 }
 
@@ -6117,6 +6177,7 @@ function useActiveDetailSection(enabled, hash, documentKey) {
 
 function DetailSectionNav({ locale, activeSection }) {
   const t = getCopy(locale)
+  const mobileCopy = getMobileUiCopy(locale)
   const navRef = useRef(null)
   const items = getDetailSectionItems(locale)
 
@@ -6129,7 +6190,17 @@ function DetailSectionNav({ locale, activeSection }) {
     nav.scrollTo({ left: Math.max(0, left), behavior: reducedMotion ? 'auto' : 'smooth' })
   }, [activeSection])
 
-  return (
+  const openSection = id => {
+    window.location.hash = id
+  }
+
+  return (<>
+    <MobileNavigationSelect
+      label={mobileCopy.sectionSelect}
+      value={activeSection}
+      items={items}
+      onChange={openSection}
+    />
     <nav ref={navRef} className={styles.detailSectionNav} aria-label={t.decisionBrief}>
       {items.map(([id, label], index) => (
         <a
@@ -6143,7 +6214,7 @@ function DetailSectionNav({ locale, activeSection }) {
         </a>
       ))}
     </nav>
-  )
+  </>)
 }
 
 function DossierContextNav({ locale, audience, subrole, scenario, returnTo, activeSection, onAudienceChange }) {
@@ -6164,7 +6235,7 @@ function DossierContextNav({ locale, audience, subrole, scenario, returnTo, acti
         </div>
         <div className={styles.detailContextActions}>
           <div className={styles.detailAudienceButtons}>
-            <button type="button" aria-pressed={audience === 'manager'} data-active={audience === 'manager' ? 'true' : 'false'} data-return={audience === 'coach' ? 'true' : 'false'} onClick={() => onAudienceChange('manager')}>{audience === 'coach' ? `← ${copy.returnManager}` : t.managerView}</button>
+            <button type="button" aria-pressed={audience === 'manager'} data-active={audience === 'manager' ? 'true' : 'false'} data-return={audience === 'coach' ? 'true' : 'false'} onClick={() => onAudienceChange('manager')}><span className={styles.navLabelFull}>{audience === 'coach' ? `← ${copy.returnManager}` : t.managerView}</span><span className={styles.navLabelCompact}>{t.managerView}</span></button>
             <button type="button" aria-pressed={audience === 'coach'} data-active={audience === 'coach' ? 'true' : 'false'} onClick={() => onAudienceChange('coach')}>{t.coachView}</button>
           </div>
         </div>
@@ -6392,6 +6463,7 @@ function RoleWorkspaceNav({ locale, audience, subrole, scenario, activeSection, 
   const scenarioCopy = getRecruitmentScenarioCopy(scenario, locale)
   const navRef = useRef(null)
   const activeNavigationId = audience === 'coach' ? activeTask : activeSection
+  const mobileCopy = getMobileUiCopy(locale)
 
   useEffect(() => {
     const nav = navRef.current
@@ -6408,6 +6480,15 @@ function RoleWorkspaceNav({ locale, audience, subrole, scenario, activeSection, 
     window.requestAnimationFrame(() => section?.scrollIntoView({ block: 'start', behavior: 'instant' }))
   }
 
+  const openMobileTask = id => {
+    if (audience === 'coach') {
+      onTaskChange(id)
+      return
+    }
+    openTaskSection(id)
+    window.location.hash = id
+  }
+
   return (
     <aside className={styles.roleWorkspaceNav} style={{ '--slot-color': SUBROLE_COLORS[subrole] }} data-audience={audience} aria-label={copy.label}>
       <div className={styles.roleWorkspacePrimary}>
@@ -6420,6 +6501,12 @@ function RoleWorkspaceNav({ locale, audience, subrole, scenario, activeSection, 
           <button type="button" aria-pressed={audience === 'coach'} data-active={audience === 'coach' ? 'true' : 'false'} onClick={() => onAudienceChange('coach')}>{t.coachView}</button>
         </div>
       </div>
+      <MobileNavigationSelect
+        label={mobileCopy.sectionSelect}
+        value={activeNavigationId}
+        items={items}
+        onChange={openMobileTask}
+      />
       <nav ref={navRef} className={styles.roleWorkspaceTasks} aria-label={copy.label} role={audience === 'coach' ? 'tablist' : undefined} style={{ '--task-count': items.length }}>
         {items.map(([id, label], index) => audience === 'coach' ? (
           <button
@@ -7169,15 +7256,15 @@ export function ScoutingPlayerPage() {
             <span>{dossierNavigationCopy.roleSequence}</span>
             <strong>{getSubroleLabel(contextSubrole, locale)} · {scopedRosterIndex + 1}/{scopedRoster.length}</strong>
           </div>
-          <div className={styles.adjacentPlayers}>
+          <div className={styles.adjacentPlayers} data-count={(previous ? 1 : 0) + (next ? 1 : 0)}>
             {previous ? (
               <Link to={buildPlayerHref(shareKey, previous.playerId, searchParams)} state={{ returnTo }} onPointerEnter={() => preloadScoutingPlayer(previous.playerId)} onFocus={() => preloadScoutingPlayer(previous.playerId)}>
-                <small>{dossierNavigationCopy.previousInRole}</small><b>{previous.identity.displayName}</b>
+                <small><span className={styles.navLabelFull}>{dossierNavigationCopy.previousInRole}</span><span className={styles.navLabelCompact}>{dossierNavigationCopy.previousShort}</span></small><b>{previous.identity.displayName}</b>
               </Link>
             ) : <span />}
             {next ? (
               <Link to={buildPlayerHref(shareKey, next.playerId, searchParams)} state={{ returnTo }} onPointerEnter={() => preloadScoutingPlayer(next.playerId)} onFocus={() => preloadScoutingPlayer(next.playerId)}>
-                <small>{dossierNavigationCopy.nextInRole}</small><b>{next.identity.displayName}</b>
+                <small><span className={styles.navLabelFull}>{dossierNavigationCopy.nextInRole}</span><span className={styles.navLabelCompact}>{dossierNavigationCopy.nextShort}</span></small><b>{next.identity.displayName}</b>
               </Link>
             ) : <span />}
           </div>
