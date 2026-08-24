@@ -73,18 +73,18 @@ const COPY = {
     partnerContexts: '搭档环境',
     calibrationWeight: '校准权重',
     openFullDossier: '查看技术档案',
-    roleFocusCaution: '英雄与同图阵容环境以收缩方式参与评分，权重限制为 10%；本页只给出技术优先级，不判断签约意愿、沟通能力或未来阵容协同。',
+    roleFocusCaution: '英雄与同图阵容环境以收缩方式参与评分，权重限制为 10%；该排名只用于技术优先级，不判断签约意愿、沟通能力或未来阵容协同。',
     commandLineup: '本次用人侧重',
     commandPortfolio: '候选结构',
     commandEnvelope: '竞技上下限与强敌信号',
     commandEnvelopeMeta: '色带连接竞技下限与上限在同分路中的相对位置；白点为常态水平，菱形为强敌检验。',
     commandWatchRole: '首位领先',
     commandCaution: '五个位置独立分析；只呈现已记录比赛中的技术证据与模型敏感性，不推断阵容协同、沟通效果或签约意愿。',
-    audienceMode: '阅读层级',
+    audienceMode: '决策视角',
     managerView: '经理视图',
     coachView: '教练视图',
-    managerViewMeta: '先看候选结构、领先幅度与决策风险',
-    coachViewMeta: '展开完整技术证据、模型审计与方法',
+    managerViewMeta: '候选结构、领先幅度与决策风险',
+    coachViewMeta: '完整技术证据、模型审计与方法',
     marketFlowTitle: '不同用人侧重下的候选变化',
     marketFlowMeta: '横向查看同一选手在四种用人侧重下的顺位变化，纵向比较同一侧重下的候选优先级。',
     marketFlowLocked: '首选不变',
@@ -104,7 +104,7 @@ const COPY = {
     managerRankHowToRead: '上排＝四种侧重的技术首选 · 下排＝当前侧重前三候选及其顺位范围',
     poolRank: '同位置完整池顺位',
     decisionTrail: '模型判断依据',
-    decisionTrailMeta: '分别呈现环境校正、七因子合成、样本收缩与压力边界；不同量纲不再共用一条进度标尺。',
+    decisionTrailMeta: '环境校正、七因子合成、样本收缩与压力下限按各自量纲独立呈现。',
     rawSignal: '英雄与阵容环境校正',
     adjustedSignal: '七因子综合',
     evidenceShrinkage: '样本置信度收缩',
@@ -164,9 +164,9 @@ const COPY = {
     similarBand: '模型判断接近',
     clearModelLead: '模型明显领先',
     comparisonProfile: '同位置多维对照',
-    comparisonProfileMeta: '每行只比较一个同分路百分位指标（0–100，越高代表相对越靠前）；圆点位置、选手姓名和精确数值放在同一行，避免雷达面积造成误判。',
+    comparisonProfileMeta: '各行按同位置百分位（0–100，越高代表相对越靠前）比较，并同时标注选手姓名与精确数值。',
     comparisonModelAudit: '模型可信度审计',
-    comparisonModelAuditMeta: '把原始表现、环境校正、估计区间、证据量与权重敏感度拆开呈现，避免只看一个总分。',
+    comparisonModelAuditMeta: '原始表现、环境校正、估计区间、证据量与权重敏感度分别列示，用于复核总分结构。',
     comparisonDecision: '当前决策读取',
     comparisonLeader: '模型首选',
     comparisonAlternate: '最近替代',
@@ -180,7 +180,7 @@ const COPY = {
     comparisonAuditTableMeta: '汇总全部精确指标、模型区间与证据质量，供教练复核候选差异。',
     comparisonNeedTwo: '请至少选择 2 名同位置选手以生成决策结论。',
     deploymentMatrix: '位置使用地图',
-    deploymentMatrixMeta: '每个位置独立成图：横轴为日常稳定性，纵轴为强局保持；右侧单列英雄与地图环境适配范围。',
+    deploymentMatrixMeta: '每个位置独立成图：横轴为日常稳定性，纵轴为强局保持；环境迁移性按英雄与地图适配范围单独排序。',
     deploymentCandidateCount: '候选',
     deploymentCoreCount: '核心首发区',
     deploymentBestBalance: '综合部署领先',
@@ -235,7 +235,7 @@ const COPY = {
     deploymentRisk: '主要风险',
     noWatchContext: '没有达到样本门槛的明显低位情境。',
     insufficientDeploymentContext: '没有更多达到样本门槛的情境，不作方向性判断。',
-    contextAssociationCaution: '同图共现不是化学反应或因果协同证据；录像和沟通评估仍由俱乐部完成。',
+    contextAssociationCaution: '同图共现不是化学反应或因果协同证据；录像和沟通评估由俱乐部完成。',
     contextPrimary: '优势情境',
     contextStable: '稳定情境',
     contextConditional: '条件情境',
@@ -406,7 +406,7 @@ const COPY = {
       'Selection v2.7 只用该细分位置对应英雄的逐图表现，并为坦克、长枪、自由人、群辅和枪辅分别设置选拔权重；群辅提高竞技下限、稳定性与证据量，自由人提高英雄池迁移性，避免一套模板衡量所有位置。',
       '选手仍须先通过 20 图、200 分钟、6 场的职责总样本门槛；细分位置至少需要 10 图、100 分钟、4 场。未达到 20 图、200 分钟、6 场的完整细分位置证据时，模型分向中性值连续收缩，不使用硬断点拔高或淘汰。',
       '名单稳定度将七项权重各自在 ±30% 范围内变化并重复 5,000 次：前三候选统计保留前三，延伸层统计保留前四，观察层统计进入前四的比例。它衡量模型偏好敏感度，不是抽样置信区间。',
-      '部署画像仍由基线可靠度、高压准备度和环境迁移性三个透明组合指标构成，但三项内部权重已按五个位置分别设置，并在数据产物中公开。',
+      '部署画像由基线可靠度、高压准备度和环境迁移性三项组合指标构成；三项按五个位置分别加权，具体权重见方法附录。',
       '四种用人侧重均在完整 34 人合格池内按细分位置计算；同时报告完整池顺位与公开 5 人名单顺位，以保留专项候选的相对位置。',
       '部署说明书的英雄 × 地图单元至少需 2 图、2 场比赛、12 分钟且证据量达到 45%；阵容核心与同位置搭档环境至少需 3 图、2 场、20 分钟且达到 45%。通过门槛后仍向个人基线收缩；同图共现只描述条件相关性，不证明因果协同。',
       '队伍强度从 1500 起步，按时间顺序用逐图正常赛果更新；每张地图只读取开赛前评分，弃权和行政判罚不参与更新，避免未来信息泄漏。',
@@ -466,18 +466,18 @@ const COPY = {
     partnerContexts: 'partner contexts',
     calibrationWeight: 'calibration weight',
     openFullDossier: 'View technical dossier',
-    roleFocusCaution: 'Hero and same-map lineup context enter the score through shrinkage adjustment at a capped 10% weight. This page ranks technical priority only; it does not judge signing interest, communication or future lineup chemistry.',
+    roleFocusCaution: 'Hero and same-map lineup context enter the score through shrinkage adjustment at a capped 10% weight. The ranking covers technical priority only; it does not judge signing interest, communication or future lineup chemistry.',
     commandLineup: 'Selection emphasis',
     commandPortfolio: 'Candidate structure',
     commandEnvelope: 'Competitive range and pressure signal',
     commandEnvelopeMeta: 'The band connects the in-subrole positions of the competitive floor and ceiling; the white dot is typical level and the diamond is strong-opponent validation.',
     commandWatchRole: 'Primary lead',
     commandCaution: 'The five positions are analysed independently. This view reports recorded technical evidence and model sensitivity, not lineup chemistry, communication or signing interest.',
-    audienceMode: 'Reading layer',
+    audienceMode: 'Decision perspective',
     managerView: 'Manager view',
     coachView: 'Coach view',
-    managerViewMeta: 'Lead with candidate structure, separation and decision risk',
-    coachViewMeta: 'Open the complete technical evidence, model audit and method',
+    managerViewMeta: 'Candidate structure, separation and decision risk',
+    coachViewMeta: 'Complete technical evidence, model audit and method',
     marketFlowTitle: 'Candidate movement by selection emphasis',
     marketFlowMeta: 'Read across to see how one candidate moves under four selection emphases, and down to compare priorities under the same emphasis.',
     marketFlowLocked: 'Primary unchanged',
@@ -497,7 +497,7 @@ const COPY = {
     managerRankHowToRead: 'Top row = technical primary under each emphasis · lower row = current top three and their four-emphasis rank range',
     poolRank: 'Full-pool position rank',
     decisionTrail: 'Model decision evidence',
-    decisionTrailMeta: 'Shows context correction, seven-factor aggregation, sample shrinkage and downside stress separately; unlike scales are no longer drawn as one progress sequence.',
+    decisionTrailMeta: 'Context correction, seven-factor aggregation, sample shrinkage and downside stress are reported independently on their own scales.',
     rawSignal: 'Hero and lineup context correction',
     adjustedSignal: 'Seven-factor composite',
     evidenceShrinkage: 'Sample-confidence shrinkage',
@@ -557,9 +557,9 @@ const COPY = {
     similarBand: 'Similar model band',
     clearModelLead: 'Clear model lead',
     comparisonProfile: 'Subrole metric comparison',
-    comparisonProfileMeta: 'One subrole-relative percentile metric per row (0–100; higher means further ahead of peers), with dot position, player name and exact value together—without misleading radar area.',
+    comparisonProfileMeta: 'Each row compares one subrole-relative percentile metric (0–100; higher ranks further ahead), with player names and exact values shown on the same scale.',
     comparisonModelAudit: 'Model credibility audit',
-    comparisonModelAuditMeta: 'Separates raw output, context adjustment, model range, evidence and weight sensitivity so one total score never stands alone.',
+    comparisonModelAuditMeta: 'Raw output, context adjustment, model range, evidence and weight sensitivity are reported separately for review of the total-score structure.',
     comparisonDecision: 'Current decision read',
     comparisonLeader: 'Model primary',
     comparisonAlternate: 'Nearest alternative',
@@ -573,7 +573,7 @@ const COPY = {
     comparisonAuditTableMeta: 'Complete metrics, model intervals and evidence quality for coaching review.',
     comparisonNeedTwo: 'Select at least two players from the same subrole to generate a decision read.',
     deploymentMatrix: 'Position deployment maps',
-    deploymentMatrixMeta: 'Each position is charted independently: everyday stability on the x-axis, pressure-game retention on the y-axis, with hero and map portability ranked separately on the right.',
+    deploymentMatrixMeta: 'Each position is charted independently: everyday stability on the x-axis, pressure-game retention on the y-axis, and context portability ranked separately from hero and map coverage.',
     deploymentCandidateCount: 'candidates',
     deploymentCoreCount: 'core-starter zone',
     deploymentBestBalance: 'best deployment balance',
@@ -799,7 +799,7 @@ const COPY = {
       'Selection v2.7 scores only maps on heroes from the assigned subrole and uses separate selection weights for Tank, Hitscan, Flex DPS, Main Support and Flex Support. Main Support places more weight on floor, consistency and evidence; Flex DPS places more on portability.',
       'Players must first clear the 20-map, 200-minute, 6-match overall-role gate; a subrole requires at least 10 maps, 100 minutes and 4 matches. Until it reaches 20 maps, 200 minutes and 6 matches, the model score is continuously shrunk toward neutral instead of using a hard cliff.',
       'Roster stability varies each of the seven weights by ±30% across 5,000 reruns. The leading three use top-three retention, extended candidates top-four retention and watch candidates top-four entry rate. It measures preference sensitivity, not sampling confidence.',
-      'The deployment profile keeps three transparent composites—baseline reliability, pressure readiness and context portability—but their internal weights now differ by position and are disclosed in the data artifact.',
+      'The deployment profile combines baseline reliability, pressure readiness and context portability. Each position uses its own internal weights, documented in this methodology.',
       'All four selection emphases are calculated by subrole inside the complete 34-player qualified pool. Both full-pool and published-five ranks are reported to preserve each specialist’s relative position.',
       'A hero × map cell requires at least 2 maps, 2 matches, 12 minutes and 45% evidence; lineup-anchor and same-role partner contexts require 3 maps, 2 matches, 20 minutes and 45%. Eligible contexts remain shrunk toward the player baseline, and same-map co-occurrence does not establish causal synergy.',
       'Team strength starts at 1500 and updates chronologically from normal map results. Every map reads only the pre-match rating; forfeits and administrative rulings are excluded to prevent future-information leakage.',
@@ -859,18 +859,18 @@ const COPY = {
     partnerContexts: '파트너 환경',
     calibrationWeight: '보정 가중치',
     openFullDossier: '기술 리포트 보기',
-    roleFocusCaution: '영웅 및 동일 전장 라인업 환경은 축소 방식으로 점수에 반영되며 가중치는 10%로 제한됩니다. 이 페이지는 기술 우선순위만 제시하며 계약 의향, 소통 능력, 향후 라인업 시너지는 판단하지 않습니다.',
+    roleFocusCaution: '영웅 및 동일 전장 라인업 환경은 축소 방식으로 점수에 반영되며 가중치는 10%로 제한됩니다. 이 순위는 기술 우선순위만 제시하며 계약 의향, 소통 능력, 향후 라인업 시너지는 판단하지 않습니다.',
     commandLineup: '평가 초점',
     commandPortfolio: '후보 구조',
     commandEnvelope: '경기 범위와 강팀 신호',
     commandEnvelopeMeta: '색상 구간은 같은 세부 역할 내 경기 하한과 상한의 상대 위치를 연결합니다. 흰 점은 일반 수준, 마름모는 강팀 검증입니다.',
     commandWatchRole: '1순위 우위',
     commandCaution: '5개 포지션은 독립적으로 분석합니다. 기록된 기술 근거와 모델 민감도만 제시하며 라인업 시너지, 소통이나 계약 의향을 추론하지 않습니다.',
-    audienceMode: '읽기 단계',
+    audienceMode: '의사결정 관점',
     managerView: '매니저 화면',
     coachView: '코치 화면',
-    managerViewMeta: '후보 구조, 1순위 우위와 의사결정 위험을 먼저 확인',
-    coachViewMeta: '전체 기술 근거, 모델 감사와 방법론을 펼쳐 확인',
+    managerViewMeta: '후보 구조, 1순위 우위와 의사결정 위험',
+    coachViewMeta: '전체 기술 근거, 모델 감사와 방법론',
     marketFlowTitle: '평가 초점별 후보 변화',
     marketFlowMeta: '가로로는 한 후보가 네 가지 평가 초점에서 어떻게 이동하는지, 세로로는 같은 초점에서 후보 우선순위를 비교합니다.',
     marketFlowLocked: '1순위 유지',
@@ -890,7 +890,7 @@ const COPY = {
     managerRankHowToRead: '위 = 평가 초점별 기술 1순위 · 아래 = 현재 상위 3명과 네 가지 초점의 순위 범위',
     poolRank: '전체 후보군 포지션 순위',
     decisionTrail: '모델 판단 근거',
-    decisionTrailMeta: '환경 보정, 7개 요인 합성, 표본 축소와 하방 스트레스를 분리해 보여 주며 서로 다른 척도를 하나의 진행 막대로 표현하지 않습니다.',
+    decisionTrailMeta: '환경 보정, 7개 요인 합성, 표본 축소와 하방 스트레스를 각 척도에 따라 독립적으로 제시합니다.',
     rawSignal: '영웅·라인업 환경 보정',
     adjustedSignal: '7개 요인 종합',
     evidenceShrinkage: '표본 신뢰도 축소',
@@ -950,9 +950,9 @@ const COPY = {
     similarBand: '모델 판단 유사',
     clearModelLead: '모델상 명확한 우위',
     comparisonProfile: '동일 포지션 다면 비교',
-    comparisonProfileMeta: '동일 세부 역할 백분위 지표(0–100, 높을수록 동료보다 앞섬)를 행별로 비교하고 점 위치, 선수명과 정확한 값을 한 줄에 배치해 레이더 면적 오해를 없앴습니다.',
+    comparisonProfileMeta: '각 행은 동일 세부 역할 백분위 지표(0–100, 높을수록 상대 순위가 높음)를 비교하며 선수명과 정확한 값을 같은 척도에 표시합니다.',
     comparisonModelAudit: '모델 신뢰도 감사',
-    comparisonModelAuditMeta: '원시 성과, 환경 보정, 추정 구간, 근거량과 가중치 민감도를 분리해 하나의 총점만 보지 않도록 합니다.',
+    comparisonModelAuditMeta: '원시 성과, 환경 보정, 추정 구간, 근거량과 가중치 민감도를 각각 제시해 총점 구조를 검토합니다.',
     comparisonDecision: '현재 의사결정 해석',
     comparisonLeader: '모델 1순위',
     comparisonAlternate: '가장 가까운 대안',
@@ -966,7 +966,7 @@ const COPY = {
     comparisonAuditTableMeta: '후보 차이를 검토할 수 있도록 전체 정밀 지표, 모델 구간과 근거 품질을 제공합니다.',
     comparisonNeedTwo: '의사결정 해석을 만들려면 같은 세부 역할 선수 2명 이상을 선택하세요.',
     deploymentMatrix: '포지션 기용 지도',
-    deploymentMatrixMeta: '포지션별로 독립 표시합니다. 가로축은 일상 안정성, 세로축은 강한 경기 유지력이며 영웅·전장 환경 적응 범위는 오른쪽 순위에서 따로 비교합니다.',
+    deploymentMatrixMeta: '포지션별로 독립 표시합니다. 가로축은 일상 안정성, 세로축은 강한 경기 유지력이며 환경 전환성은 영웅·전장 적응 범위와 함께 별도 순위로 비교합니다.',
     deploymentCandidateCount: '후보',
     deploymentCoreCount: '핵심 선발 구역',
     deploymentBestBalance: '종합 기용 선두',
@@ -1192,7 +1192,7 @@ const COPY = {
       'Selection v2.7은 배정된 세부 역할 영웅의 전장만 사용하고 돌격, 히트스캔, 플렉스 DPS, 메인 서포트, 플렉스 서포트에 서로 다른 선발 가중치를 적용합니다. 메인 서포트는 하한·안정성·근거를, 플렉스 DPS는 전환성을 더 반영합니다.',
       '먼저 전체 역할 20개 전장, 200분, 6경기 기준을 통과해야 하며 세부 역할은 최소 10개 전장, 100분, 4경기가 필요합니다. 세부 역할 근거가 20개 전장, 200분, 6경기에 도달하기 전에는 점수를 중립값으로 연속 축소합니다.',
       '명단 안정도는 7개 가중치를 각각 ±30% 범위에서 바꾸며 5,000회 반복합니다. 상위 3명은 상위 3위 유지율, 확장층은 상위 4위 유지율, 관찰층은 상위 4위 진입률을 사용합니다. 표본 신뢰도가 아닌 모델 선호 민감도입니다.',
-      '기용 프로필은 기준선 신뢰도, 압박 준비도, 환경 전환성의 세 투명 조합값을 유지하되 내부 가중치는 5개 포지션별로 다르게 설정하고 데이터 산출물에 공개합니다.',
+      '기용 프로필은 기준선 신뢰도, 압박 준비도와 환경 전환성의 세 조합 지표로 구성됩니다. 포지션별 내부 가중치는 본 방법론에 명시합니다.',
       '네 가지 평가 초점은 전체 34인 적격 후보군에서 세부 역할별로 계산합니다. 전체 후보군 순위와 공개 5인 명단 순위를 함께 보고해 전문 후보의 상대 위치를 유지합니다.',
       '영웅 × 전장 셀은 최소 2개 전장, 2경기, 12분과 근거량 45%가 필요합니다. 라인업 축과 동일 역할 파트너 환경은 최소 3개 전장, 2경기, 20분과 45%가 필요합니다. 통과한 환경도 선수 기준선으로 축소하며 같은 전장 공존은 인과적 시너지를 증명하지 않습니다.',
       '팀 강도는 1500에서 시작해 시간순 정상 전장 결과로 갱신합니다. 각 전장은 경기 전 레이팅만 사용하며 몰수패와 행정 판정은 제외해 미래 정보 유출을 막습니다.',
@@ -1338,7 +1338,7 @@ function getManagerDossierCopy(locale) {
       currentRead: 'Current technical read',
       snapshotEyebrow: '30-SECOND PLAYER READ',
       snapshotTitle: name => `${name} in 30 seconds`,
-      snapshotMeta: 'Lead with role, readiness and usage. Open the five-axis profile and exact evidence below only when the decision needs deeper review.',
+      snapshotMeta: 'Role, rotation readiness, recommended use and decision evidence are summarised here; the five-axis profile provides the detailed breakdown.',
       snapshotPosition: 'Current technical position',
       snapshotReady: 'Immediate rotation readiness',
       snapshotReadyMeta: 'Baseline reliability inside the recorded sample',
@@ -1399,7 +1399,7 @@ function getManagerDossierCopy(locale) {
       currentRead: '현재 기술 판단',
       snapshotEyebrow: '30초 선수 판단',
       snapshotTitle: name => `30초로 보는 ${name}`,
-      snapshotMeta: '역할, 즉시 투입 준비도와 기용법을 먼저 보고 더 깊은 판단이 필요할 때 아래 5축 프로필과 정확한 근거를 확인합니다.',
+      snapshotMeta: '기술 포지션, 즉시 투입 준비도, 권장 기용법과 결론 근거를 요약하며 5축 프로필에서 세부 구조를 확인할 수 있습니다.',
       snapshotPosition: '현재 기술 포지션',
       snapshotReady: '즉시 로테이션 준비도',
       snapshotReadyMeta: '기록 표본 안의 기준선 신뢰도',
@@ -1459,7 +1459,7 @@ function getManagerDossierCopy(locale) {
     currentRead: '当前技术结论',
     snapshotEyebrow: '30秒个人结论',
     snapshotTitle: name => `30秒读懂 ${name}`,
-    snapshotMeta: '先看技术定位、即插即用程度和推荐用法；需要复核时，再下钻五轴画像与精确证据。',
+    snapshotMeta: '本节汇总技术定位、即插即用程度、推荐用法与结论证据；五维画像提供详细拆解。',
     snapshotPosition: '当前技术定位',
     snapshotReady: '立即进入轮换准备度',
     snapshotReadyMeta: '已记录样本中的基线可靠度',
@@ -1527,13 +1527,13 @@ function getDecisionProfileCopy(locale) {
   if (locale === 'en-US') return {
     eyebrow: 'ROLE-RELATIVE DECISION PROFILE',
     title: 'Five-axis decision profile',
-    meta: 'Read the shape first, then open the exact evidence from the axis list. The dashed polygon marks the same-position median at 50.',
+    meta: 'Five indicators use a same-position 0–100 index; the dashed polygon marks the median at 50, with exact evidence available for each axis.',
     profileRead: 'Profile read',
     confidence: 'Evidence confidence',
     median: 'Same-position median · 50',
     playerShape: 'Player profile',
     open: 'Open evidence',
-    boundary: 'Use this shape only inside the same position. It is not a cross-position score and confidence is deliberately kept outside the ability profile.',
+    boundary: 'This profile is for same-position comparison only, not a cross-position score; evidence confidence is assessed separately from ability.',
     axes: {
       adjustedPerformance: { label: 'Adjusted performance', short: 'Adjusted', meta: 'Same-position output after opponent, own-team and recorded lineup context adjustments.' },
       competitiveFloor: { label: 'Competitive floor', short: 'Floor', meta: 'Lower-quartile adjusted map performance benchmarked inside the position.' },
@@ -1545,13 +1545,13 @@ function getDecisionProfileCopy(locale) {
   if (locale === 'ko-KR') return {
     eyebrow: 'ROLE-RELATIVE DECISION PROFILE',
     title: '5축 의사결정 프로필',
-    meta: '먼저 형태를 읽고 오른쪽 축 목록에서 정확한 근거를 펼치세요. 점선 다각형은 동일 포지션 중앙값 50입니다.',
+    meta: '다섯 지표는 동일 포지션 0–100 지수로 표시하며 점선 다각형은 중앙값 50입니다. 각 축에서 정확한 근거를 확인할 수 있습니다.',
     profileRead: '프로필 해석',
     confidence: '근거 신뢰도',
     median: '동일 포지션 중앙값 · 50',
     playerShape: '선수 프로필',
     open: '근거 열기',
-    boundary: '동일 포지션 안에서만 사용하는 형태입니다. 포지션 간 점수가 아니며 근거 신뢰도는 능력 프로필과 분리했습니다.',
+    boundary: '이 프로필은 동일 포지션 비교 전용이며 포지션 간 점수가 아닙니다. 근거 신뢰도는 능력과 별도로 판단합니다.',
     axes: {
       adjustedPerformance: { label: '보정 경기력', short: '보정 경기력', meta: '상대·아군 강도와 기록된 조합 환경을 보정한 동일 포지션 경기력입니다.' },
       competitiveFloor: { label: '경기 하한', short: '경기 하한', meta: '환경 보정 전장 경기력의 하위 사분위를 동일 포지션 안에서 비교합니다.' },
@@ -1563,13 +1563,13 @@ function getDecisionProfileCopy(locale) {
   return {
     eyebrow: 'ROLE-RELATIVE DECISION PROFILE',
     title: '五维决策画像',
-    meta: '先看轮廓形状，再从右侧指标进入精确证据；虚线轮廓代表同位置中位参考 50。',
+    meta: '五项指标按同位置 0–100 指数呈现；虚线轮廓为同位置中位参考 50，各指标均可查看精确证据。',
     profileRead: '画像结论',
     confidence: '证据可信度',
     median: '同位置中位 · 50',
     playerShape: '选手画像',
     open: '查看证据',
-    boundary: '该轮廓只用于同位置内部阅读，不是跨位置总分；证据可信度刻意与能力画像分开。',
+    boundary: '五维画像仅用于同位置内部比较，不是跨位置总分；证据可信度与能力画像分别判断。',
     axes: {
       adjustedPerformance: { label: '校正后表现', short: '校正表现', meta: '校正对手、己方强度与已记录阵容环境后的同位置表现。' },
       competitiveFloor: { label: '竞技下限', short: '竞技下限', meta: '以环境校正地图表现的下四分位衡量低谷时的保留水平。' },
@@ -2261,11 +2261,12 @@ function getAdditionalWatchpoint(player, locale) {
 
 function getProfessionalReferenceCopy(locale) {
   if (locale === 'en-US') return {
-    eyebrow: 'EXTERNAL ROLE SHAPE · SHADOW ONLY',
+    eyebrow: 'PROFESSIONAL SAMPLE REFERENCE · NON-SCORING',
     title: 'Professional role-shape reference',
     managerTitle: 'Professional role shape',
-    meta: 'Same-map team-share structure is placed beside two same-position professional samples. No cross-competition strength conversion is made.',
-    currentRead: 'Same conclusion · external depth',
+    meta: 'Same-map team-share structure is compared with two professional same-position samples; no cross-competition strength conversion is made.',
+    currentRead: 'Professional sample comparison',
+    nonScoring: 'NON-SCORING',
     recent: 'Recent regional pro sample',
     elite: 'International elite sample',
     player: 'This event',
@@ -2280,14 +2281,15 @@ function getProfessionalReferenceCopy(locale) {
     ranking: 'This reference does not add FIT points or change shortlist order.',
     boundary: 'Contribution shape is not skill equivalence. Event strength, teammate quality, patch and regional style remain uncalibrated.',
     verification: 'Priority verification',
-    unavailable: 'The external role-shape pilot is not available for this profile.'
+    unavailable: 'A professional role-shape reference is not available for this profile.'
   }
   if (locale === 'ko-KR') return {
-    eyebrow: 'EXTERNAL ROLE SHAPE · SHADOW ONLY',
+    eyebrow: 'PROFESSIONAL SAMPLE REFERENCE · NON-SCORING',
     title: '프로 역할 형태 참고',
     managerTitle: '프로 역할 형태',
-    meta: '동일 전장 팀 기여 구조를 같은 포지션의 두 프로 표본과 나란히 봅니다. 대회 간 실력 환산은 하지 않습니다.',
-    currentRead: '같은 결론 · 외부 근거',
+    meta: '동일 전장 팀 기여 구조를 같은 포지션의 두 프로 표본과 비교하며 대회 간 실력 환산은 하지 않습니다.',
+    currentRead: '프로 표본 비교',
+    nonScoring: 'FIT 미반영',
     recent: '최근 지역 프로 표본',
     elite: '국제 엘리트 표본',
     player: '본 대회',
@@ -2302,14 +2304,15 @@ function getProfessionalReferenceCopy(locale) {
     ranking: '이 참고값은 FIT 점수나 후보 순위를 바꾸지 않습니다.',
     boundary: '기여 형태는 실력 등가가 아닙니다. 대회 강도, 동료 수준, 패치와 지역 스타일은 아직 교정되지 않았습니다.',
     verification: '우선 확인 항목',
-    unavailable: '이 프로필은 외부 역할 형태 파일럿을 사용할 수 없습니다.'
+    unavailable: '이 프로필에는 사용할 수 있는 프로 역할 형태 참고가 없습니다.'
   }
   return {
-    eyebrow: 'EXTERNAL ROLE SHAPE · SHADOW ONLY',
+    eyebrow: 'PROFESSIONAL SAMPLE REFERENCE · NON-SCORING',
     title: '职业角色形态参考',
     managerTitle: '职业角色形态',
-    meta: '把同图队内贡献结构与两组职业同位置样本并列，不进行跨赛事强度换算。',
-    currentRead: '同一结论 · 外部深度',
+    meta: '本赛事同图队内贡献结构与两组职业同位置样本进行对照，不进行跨赛事强度换算。',
+    currentRead: '职业样本对照',
+    nonScoring: '不参与 FIT',
     recent: '近期区域职业样本',
     elite: '国际精英样本',
     player: '本赛事选手',
@@ -2538,40 +2541,40 @@ const TEAM_SHARE_METRICS_BY_SUBROLE = {
 
 function getShadowValidationCopy(locale) {
   if (locale === 'en-US') return {
-    eyebrow: 'SHADOW VALIDATION · NOT IN FIT',
-    title: 'Does the conclusion travel beyond the headline score?',
-    meta: 'Two independent checks monitor role context and time drift without changing the published shortlist.',
+    eyebrow: 'INDEPENDENT ROBUSTNESS CHECK · NOT IN FIT',
+    title: 'Robustness beyond the headline score',
+    meta: 'Two independent checks assess role context and time stability without changing the current shortlist.',
     temporal: 'Chronological holdout',
     temporalMeta: 'First half of matches → second half, benchmarked inside the full same-position pool.',
     insufficient: 'Not enough match clusters for a 3 + 3 holdout.',
     contribution: 'Same-map team contribution',
     contributionMeta: 'Share of recorded team totals on the same map; 0–50% visual scale.',
     coverage: 'complete-lineup coverage',
-    noRanking: 'Shadow metrics are diagnostic only. They do not add points to FIT or alter shortlist order.'
+    noRanking: 'These diagnostics do not add FIT points or change candidate order.'
   }
   if (locale === 'ko-KR') return {
-    eyebrow: 'SHADOW VALIDATION · FIT 미반영',
-    title: '대표 점수 밖에서도 결론이 유지되는가?',
-    meta: '포지션 맥락과 시간 변화는 별도 검증하되 공개 후보 순위에는 반영하지 않습니다.',
+    eyebrow: '독립 안정성 검증 · FIT 미반영',
+    title: '대표 점수 밖의 결론 안정성',
+    meta: '두 가지 독립 검증으로 포지션 맥락과 시간 안정성을 평가하며 현재 후보 순위는 바꾸지 않습니다.',
     temporal: '시간 순서 홀드아웃',
     temporalMeta: '경기 전반부 → 후반부를 동일 포지션 전체 후보군 안에서 다시 비교합니다.',
     insufficient: '3 + 3 경기 클러스터 홀드아웃에 필요한 표본이 부족합니다.',
     contribution: '동일 전장 팀 기여 비중',
     contributionMeta: '같은 전장에서 기록된 팀 합계 중 비중이며 시각 척도는 0–50%입니다.',
     coverage: '완전 라인업 커버리지',
-    noRanking: '진단용 그림자 지표이며 FIT 점수나 후보 순위를 바꾸지 않습니다.'
+    noRanking: '진단 결과는 FIT 점수를 더하거나 후보 순위를 바꾸지 않습니다.'
   }
   return {
-    eyebrow: 'SHADOW VALIDATION · 不计入 FIT',
-    title: '离开单一总分，结论还能不能站住？',
-    meta: '用两组独立校验监控位置语境与时间漂移，但不改动已发布名单。',
+    eyebrow: '独立稳健性验证 · 不计入 FIT',
+    title: '总分之外的结论稳健性',
+    meta: '两项独立检验用于评估位置语境与时间稳定性，不改变当前候选顺位。',
     temporal: '时间留出验证',
     temporalMeta: '按比赛顺序以前半段预测后半段，并在同位置完整池重新比较。',
     insufficient: '比赛聚类不足，暂不形成 3 + 3 的时间留出判断。',
     contribution: '同图队内贡献占比',
     contributionMeta: '同一地图内占队伍已记录总量的比例；图形按 0–50% 尺度显示。',
     coverage: '完整阵容覆盖',
-    noRanking: '影子指标只用于诊断，不向 FIT 加分，也不改变候选顺序。'
+    noRanking: '这些诊断不向 FIT 加分，也不改变候选顺序。'
   }
 }
 
@@ -2713,7 +2716,7 @@ function ManagerProfessionalReference({ player, locale, decision, coachHref }) {
 
   return (
     <section className={styles.managerProfessionalReference} style={{ '--slot-color': SUBROLE_COLORS[player.subrole] }}>
-      <header><div><span>{copy.eyebrow}</span><h3>{copy.managerTitle}</h3></div><b>SHAPE ONLY</b></header>
+      <header><div><span>{copy.eyebrow}</span><h3>{copy.managerTitle}</h3></div><b>{copy.nonScoring}</b></header>
       <p>{reference.summary}</p>
       <div>
         {signalRows.map(row => (
@@ -3406,7 +3409,7 @@ function getValidationSummary(locale) {
     belowGate: 'Below gate',
     singleGatePassed: 'Single gate passed',
     gateLabel: 'Gate',
-    boundary: 'Shadow validation only · does not change the published order'
+    boundary: 'Independent validation · does not change candidate order'
   }
   if (locale === 'ko-KR') return {
     temporal: '시간 분할 Top 3 유지율',
@@ -3414,7 +3417,7 @@ function getValidationSummary(locale) {
     belowGate: '기준 미달',
     singleGatePassed: '단일 기준 통과',
     gateLabel: '기준',
-    boundary: '그림자 검증 전용 · 공개 순위에 미반영'
+    boundary: '독립 검증 · 후보 순위 미반영'
   }
   return {
     temporal: '时间切分 Top 3 保留率',
@@ -3422,7 +3425,7 @@ function getValidationSummary(locale) {
     belowGate: '未达门槛',
     singleGatePassed: '单项达标',
     gateLabel: '门槛',
-    boundary: '影子验证 · 不参与公开顺位'
+    boundary: '独立验证 · 不参与候选顺位'
   }
 }
 
@@ -3587,8 +3590,8 @@ const ROLE_COACH_AXIS_ORDER = ['baselineReliability', 'pressureReadiness', 'cont
 function getRoleCoachReadCopy(locale) {
   if (locale === 'en-US') return {
     summaryEyebrow: '30-SECOND POSITION READ',
-    summaryTitle: 'Set the action order before opening the evidence',
-    summaryMeta: 'This is a plain-language translation of the current FIT order, not an additional score.',
+    summaryTitle: 'Candidate priority and decision strength',
+    summaryMeta: 'This summary explains the current FIT order and does not introduce an additional score.',
     primary: 'Advance first',
     parallel: 'Review in parallel',
     confidence: 'Decision strength',
@@ -3600,8 +3603,8 @@ function getRoleCoachReadCopy(locale) {
       CONDITIONAL: { label: 'Direction, not closure', meta: 'The lead is decision-relevant, but the alternative path should stay open for trials.' },
       SENSITIVE: { label: 'Order needs review', meta: 'Evidence or ranking stability makes this a trial priority, not a final verdict.' }
     },
-    metricEyebrow: 'HOW TO READ THE THREE SIGNALS',
-    metricTitle: 'Plain language first; model term second',
+    metricEyebrow: 'THREE DECISION SIGNALS',
+    metricTitle: 'Decision label and model definition',
     metricMeta: 'All three are 0–100 usage indices compared only with players in the same position. Higher is better; they are not cross-position ability scores.',
     axes: {
       baselineReliability: { plain: 'Everyday stability', technical: 'Baseline reliability', meta: 'Can the player preserve a usable competitive floor and deliver consistently from map to map?' },
@@ -3625,8 +3628,8 @@ function getRoleCoachReadCopy(locale) {
   }
   if (locale === 'ko-KR') return {
     summaryEyebrow: '30초 포지션 결론',
-    summaryTitle: '근거를 펼치기 전에 추진 순서를 먼저 확인하세요',
-    summaryMeta: '현재 FIT 순위를 쉬운 말로 옮긴 것이며 별도의 추가 점수가 아닙니다.',
+    summaryTitle: '후보 추진 순서와 결론 강도',
+    summaryMeta: '현재 FIT 순위를 설명하는 요약이며 추가 점수를 만들지 않습니다.',
     primary: '우선 추진',
     parallel: '병행 검토',
     confidence: '결론 강도',
@@ -3638,8 +3641,8 @@ function getRoleCoachReadCopy(locale) {
       CONDITIONAL: { label: '방향성 확인', meta: '의미 있는 우위는 있으나 테스트 단계에서 대안 경로를 함께 유지해야 합니다.' },
       SENSITIVE: { label: '순위 재검토 필요', meta: '근거량 또는 순위 안정도 때문에 최종 결론이 아닌 테스트 우선순위로 읽어야 합니다.' }
     },
-    metricEyebrow: '세 가지 지표 읽는 법',
-    metricTitle: '쉬운 이름을 먼저, 모델 용어를 그다음에',
+    metricEyebrow: '세 가지 의사결정 지표',
+    metricTitle: '의사결정 명칭과 모델 정의',
     metricMeta: '세 지표는 같은 포지션 안에서만 비교하는 0–100 기용 지수입니다. 높을수록 좋으며 포지션 간 능력 점수가 아닙니다.',
     axes: {
       baselineReliability: { plain: '일상 안정성', technical: '기준선 신뢰도', meta: '사용 가능한 경기 하한과 전장 간 안정적 수행을 유지할 수 있는지 봅니다.' },
@@ -3663,8 +3666,8 @@ function getRoleCoachReadCopy(locale) {
   }
   return {
     summaryEyebrow: '30 秒岗位结论',
-    summaryTitle: '先确定推进顺序，再展开技术证据',
-    summaryMeta: '这里只把当前 FIT 顺位翻译成人话，不新增一套评分。',
+    summaryTitle: '候选推进顺序与结论强度',
+    summaryMeta: '本摘要解释当前 FIT 顺位，不构成新增评分。',
     primary: '优先推进',
     parallel: '并行考察',
     confidence: '结论强度',
@@ -3676,8 +3679,8 @@ function getRoleCoachReadCopy(locale) {
       CONDITIONAL: { label: '方向明确，尚未定案', meta: '领先具备决策意义，但试训时仍应保留替代路径。' },
       SENSITIVE: { label: '顺位需要复核', meta: '证据量或顺位稳定度不足，应把它当作试训优先级而非最终结论。' }
     },
-    metricEyebrow: '三个指标怎么读',
-    metricTitle: '先看人话，再看模型名',
+    metricEyebrow: '三个决策指标',
+    metricTitle: '决策名称与模型口径',
     metricMeta: '三项均为同位置内部比较的 0–100 使用指数，越高越好；不能跨位置比较，也不是单独的能力总分。',
     axes: {
       baselineReliability: { plain: '日常稳定性', technical: '基线可靠度', meta: '看选手能否守住可用的竞技下限，并在不同地图持续稳定兑现。' },
@@ -5867,9 +5870,9 @@ function ComparisonTable({ players, locale, initialSubrole = 'TANK', selectedPla
 
 function getModelValidationCopy(locale) {
   if (locale === 'en-US') return {
-    eyebrow: 'MODEL VALIDATION · SHADOW BACKTEST',
-    title: 'Hold the published weights',
-    meta: 'Pairwise evidence broadly agrees with FIT, but chronological rank stability is not yet strong enough to promote shadow metrics into the official model.',
+    eyebrow: 'MODEL VALIDATION · NON-SCORING BACKTEST',
+    title: 'Maintain the current formal weights',
+    meta: 'Pairwise evidence broadly agrees with FIT, but chronological rank stability does not yet meet the threshold for adding these diagnostics to the formal model.',
     temporal: 'Temporal Top 3 retention',
     temporalMeta: 'Adjusted-performance rank · first half → second half',
     pairwise: 'FIT / bootstrap agreement',
@@ -5883,15 +5886,15 @@ function getModelValidationCopy(locale) {
     shadow: 'Team-share ρ',
     belowGate: 'Below gate',
     singleGatePassed: 'Single gate passed',
-    shadowOnly: 'Shadow only',
+    shadowOnly: 'Diagnostic only',
     reviewFirst: 'Review first',
     readKey: 'Bar = observed result · tick = promotion gate. ρ shows directional association, not causation.',
-    gate: 'Promotion gate remains closed: external replication is unavailable and temporal retention is below target. No published rank or FIT weight is changed.'
+    gate: 'The inclusion threshold is not met: external replication is unavailable and temporal retention is below target. Candidate order and FIT weights remain unchanged.'
   }
   if (locale === 'ko-KR') return {
-    eyebrow: 'MODEL VALIDATION · SHADOW BACKTEST',
-    title: '공개 가중치 유지',
-    meta: '쌍별 근거는 FIT와 대체로 일치하지만 시간 순위 안정도가 그림자 지표를 공식 모델에 편입할 수준은 아닙니다.',
+    eyebrow: 'MODEL VALIDATION · 비채점 백테스트',
+    title: '현재 공식 가중치 유지',
+    meta: '쌍별 근거는 FIT와 대체로 일치하지만 시간 순위 안정도는 진단 지표를 공식 모델에 포함할 기준에 아직 미치지 못합니다.',
     temporal: '시간 Top 3 유지율',
     temporalMeta: '보정 경기력 순위 · 전반부 → 후반부',
     pairwise: 'FIT / 부트스트랩 일치도',
@@ -5905,15 +5908,15 @@ function getModelValidationCopy(locale) {
     shadow: '팀 점유율 ρ',
     belowGate: '기준 미달',
     singleGatePassed: '단일 기준 통과',
-    shadowOnly: '그림자 관찰',
+    shadowOnly: '진단 전용',
     reviewFirst: '우선 검토',
     readKey: '막대 = 관측 결과 · 눈금 = 편입 기준. ρ는 방향성 연관이며 인과가 아닙니다.',
-    gate: '외부 재현 표본이 없고 시간 유지율도 목표 미달이므로 편입 게이트는 닫혀 있습니다. 공개 순위와 FIT 가중치는 변경하지 않습니다.'
+    gate: '외부 재현 표본이 없고 시간 유지율도 목표 미달이므로 포함 기준을 충족하지 못했습니다. 후보 순위와 FIT 가중치는 변경하지 않습니다.'
   }
   return {
-    eyebrow: 'MODEL VALIDATION · 影子回测',
+    eyebrow: 'MODEL VALIDATION · 非计分回测',
     title: '维持当前正式权重',
-    meta: '两两证据与 FIT 整体方向基本一致，但时间顺位稳定度还不足以让影子指标进入正式模型。',
+    meta: '两两证据与 FIT 整体方向基本一致，但时间顺位稳定度尚未达到将诊断指标纳入正式模型的门槛。',
     temporal: '时间 Top 3 保留率',
     temporalMeta: '校正表现顺位 · 前半程 → 后半程',
     pairwise: 'FIT / Bootstrap 一致度',
@@ -5927,10 +5930,10 @@ function getModelValidationCopy(locale) {
     shadow: '队内占比 ρ',
     belowGate: '未达门槛',
     singleGatePassed: '单项达标',
-    shadowOnly: '仅作影子观察',
+    shadowOnly: '仅作诊断',
     reviewFirst: '优先复核',
     readKey: '条形＝实际结果 · 刻度＝晋级门槛；ρ 只表示同向程度，不代表因果。',
-    gate: '外部复现样本仍不可用，且时间保留率未达门槛；因此不改变公开顺位，也不调整 FIT 权重。'
+    gate: '外部复现样本仍不可用，且时间保留率未达门槛；因此不改变候选顺位，也不调整 FIT 权重。'
   }
 }
 
@@ -6186,7 +6189,7 @@ const COACH_ROLE_TASK_BY_SECTION = {
 
 function getRoleWorkspaceNavigationCopy(locale) {
   if (locale === 'en-US') return {
-    label: 'Position workspace navigation',
+    label: 'Position assessment sections',
     back: 'Back to all positions',
     currentRole: 'Current position',
     currentLens: 'Hiring priority',
@@ -6202,7 +6205,7 @@ function getRoleWorkspaceNavigationCopy(locale) {
     }
   }
   if (locale === 'ko-KR') return {
-    label: '포지션 평가 작업 탐색',
+    label: '포지션 평가 목차',
     back: '전체 포지션으로',
     currentRole: '현재 포지션',
     currentLens: '현재 선발 기준',
@@ -6218,7 +6221,7 @@ function getRoleWorkspaceNavigationCopy(locale) {
     }
   }
   return {
-    label: '岗位评估任务导航',
+    label: '岗位评估目录',
     back: '返回五位置总览',
     currentRole: '当前岗位',
     currentLens: '当前用人侧重',

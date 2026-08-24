@@ -25,16 +25,16 @@ const COPY = {
     eyebrow: 'CONFIDENTIAL · PERFORMANCE INTELLIGENCE',
     overviewLead: '薯条杯 2026',
     overviewTitle: '选手技术分析报告',
-    overviewMeta: '先呈现 25 人技术摘要，完整经理与教练分析随后自动加载。',
-    playerMeta: '选手身份与技术摘要已就绪，完整判断依据随后自动加载。',
-    shellPhase: '报告框架',
+    overviewMeta: '25 人技术摘要优先呈现，完整经理与教练判断依据正在准备。',
+    playerMeta: '选手身份与技术摘要已就绪，完整判断依据正在准备。',
+    shellPhase: '访问确认',
     summaryPhase: '技术摘要',
-    analysisPhase: '完整分析',
-    phaseLabel: '真实载入阶段',
-    indexLoading: '正在读取 25 人技术摘要',
-    playerLoading: '正在读取选手技术摘要',
-    analysisLoading: '摘要已就绪，深度分析加载中',
-    ready: '已就绪',
+    analysisPhase: '完整判断',
+    phaseLabel: '报告准备进度',
+    indexLoading: '正在准备 25 人技术摘要',
+    playerLoading: '正在准备选手技术摘要',
+    analysisLoading: '技术摘要已就绪，正在准备完整判断依据',
+    ready: '完成',
     dossierCount: '分析档案',
     priorityCount: '优先候选',
     extendedCount: '延伸考察',
@@ -45,6 +45,7 @@ const COPY = {
     nationality: '国籍',
     rank: '分路顺位',
     fit: '模型基础分',
+    fitShort: '基础分',
     invalid: '该专属链接不可用，请向报告提供方获取新的访问地址。',
     error: '技术分析数据暂时无法载入，请稍后重试。'
   },
@@ -54,16 +55,16 @@ const COPY = {
     eyebrow: 'CONFIDENTIAL · PERFORMANCE INTELLIGENCE',
     overviewLead: 'FRIES CUP 2026',
     overviewTitle: 'PLAYER PERFORMANCE REPORT',
-    overviewMeta: 'The 25-player technical summary appears first; full manager and coach analysis follows automatically.',
-    playerMeta: 'Player identity and the technical summary are ready; the full decision evidence follows automatically.',
-    shellPhase: 'Report shell',
+    overviewMeta: 'The 25-player technical summary appears first while full manager and coach evidence is prepared.',
+    playerMeta: 'Player identity and the technical summary are ready while the full decision evidence is prepared.',
+    shellPhase: 'Access confirmed',
     summaryPhase: 'Technical summary',
-    analysisPhase: 'Full analysis',
-    phaseLabel: 'Verified loading stages',
-    indexLoading: 'Loading the 25-player technical summary',
-    playerLoading: 'Loading the player technical summary',
-    analysisLoading: 'Summary ready · loading deep analysis',
-    ready: 'Ready',
+    analysisPhase: 'Full decision evidence',
+    phaseLabel: 'Report preparation',
+    indexLoading: 'Preparing the 25-player technical summary',
+    playerLoading: 'Preparing the player technical summary',
+    analysisLoading: 'Technical summary ready · preparing full decision evidence',
+    ready: 'Complete',
     dossierCount: 'Dossiers',
     priorityCount: 'Priority',
     extendedCount: 'Extended',
@@ -74,6 +75,7 @@ const COPY = {
     nationality: 'Nationality',
     rank: 'Position rank',
     fit: 'Base model score',
+    fitShort: 'Base score',
     invalid: 'This dedicated link is unavailable. Request a new access URL from the report provider.',
     error: 'Technical analysis data is temporarily unavailable. Please try again later.'
   },
@@ -83,16 +85,16 @@ const COPY = {
     eyebrow: 'CONFIDENTIAL · PERFORMANCE INTELLIGENCE',
     overviewLead: 'FRIES CUP 2026',
     overviewTitle: '선수 경기력 분석 보고서',
-    overviewMeta: '25인 기술 요약을 먼저 표시하고 전체 매니저·코치 분석은 이어서 자동으로 불러옵니다.',
-    playerMeta: '선수 신원과 기술 요약이 준비되었으며 전체 판단 근거를 이어서 불러옵니다.',
-    shellPhase: '보고서 프레임',
+    overviewMeta: '25인 기술 요약을 먼저 제공하며 전체 매니저·코치 판단 근거를 준비하고 있습니다.',
+    playerMeta: '선수 정보와 기술 요약이 준비되었으며 전체 판단 근거를 준비하고 있습니다.',
+    shellPhase: '접근 확인',
     summaryPhase: '기술 요약',
-    analysisPhase: '전체 분석',
-    phaseLabel: '실제 로딩 단계',
-    indexLoading: '25인 기술 요약을 불러오는 중',
-    playerLoading: '선수 기술 요약을 불러오는 중',
-    analysisLoading: '요약 준비 완료 · 심층 분석 로딩 중',
-    ready: '준비됨',
+    analysisPhase: '전체 판단 근거',
+    phaseLabel: '보고서 준비 진행',
+    indexLoading: '25인 기술 요약을 준비하는 중',
+    playerLoading: '선수 기술 요약을 준비하는 중',
+    analysisLoading: '기술 요약 준비 완료 · 전체 판단 근거 준비 중',
+    ready: '완료',
     dossierCount: '분석 프로필',
     priorityCount: '우선 후보',
     extendedCount: '확장 검토',
@@ -103,6 +105,7 @@ const COPY = {
     nationality: '국적',
     rank: '포지션 순위',
     fit: '기본 모델 점수',
+    fitShort: '기초 점수',
     invalid: '이 전용 링크를 사용할 수 없습니다. 보고서 제공자에게 새 링크를 요청하세요.',
     error: '기술 분석 데이터를 불러올 수 없습니다. 잠시 후 다시 시도하세요.'
   }
@@ -346,7 +349,7 @@ function PlayerSummary({ player, locale }) {
   return (
     <section className={styles.playerSummary}>
       <div>
-        <span>PLAYER DOSSIER · SUMMARY READY</span>
+        <span>PLAYER DOSSIER · TECHNICAL SUMMARY</span>
         <h1>{player.identity.displayName}</h1>
         <p>{getSubroleLabel(player.subrole, locale)} · {player.identity.teamShort}</p>
         <dl>
@@ -355,7 +358,7 @@ function PlayerSummary({ player, locale }) {
         </dl>
       </div>
       <aside>
-        <strong>{player.selection.score}</strong><small>BASE</small>
+        <strong>{player.selection.score}</strong><small>{t.fitShort}</small>
         <p>{t.rank} {player.highSampleSubroleRank} / {player.highSampleSubroleTotal}</p>
         <span>{t.fit}</span>
       </aside>

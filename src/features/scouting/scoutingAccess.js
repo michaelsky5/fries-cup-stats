@@ -1,6 +1,6 @@
 const DEFAULT_SCOUTING_ACCESS_RECORD = {
   key: 'fcr26-club-bf2ab4eb84ee0a8562a0617080b3996d5785',
-  label: 'FCR 2026 Club Preview'
+  label: 'FCR 2026 Scouting Report'
 }
 
 function parseConfiguredAccessRecords() {
