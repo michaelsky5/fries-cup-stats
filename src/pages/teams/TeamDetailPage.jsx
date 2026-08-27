@@ -2113,7 +2113,7 @@ export default function TeamDetailPage() {
 
                 return (
                   <Link
-                    key={slot.id}
+                    key={`${slot.id}:${getPlayerRosterKey(player)}`}
                     to={withSeason(`/players/${player.identity?.playerId || player.player_id}`)}
                     className={styles.coreRosterCard}
                   >
