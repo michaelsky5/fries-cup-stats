@@ -16,6 +16,7 @@
     "check:fcr26-swiss-rating": "node scripts/freezeFcr26SwissBaselines.mjs --check",
     "test:frozen-rating-baseline": "node scripts/assertFrozenRatingBaseline.mjs",
     "test:roster-identity": "node scripts/assertRosterIdentityResolution.mjs",
+    "test:legacy-i18n": "node scripts/assertLegacyI18n.mjs",
     "test:playoff-bracket": "node scripts/assertPlayoffBracket.mjs",
     "test:qgcs4-season": "node scripts/assertQGCS4Season.mjs",
     "test:scouting-report": "node scripts/assertScoutingReport.mjs",

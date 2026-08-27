@@ -1179,7 +1179,7 @@ function getTeamLeaders(roster, locale = 'zh-CN') {
       player,
       value,
       valueLabel: value ? formatter(value) : '暂无',
-      heroLabel: player?.avatar?.heroName ? formatOwHeroName(player.avatar.heroName, locale) : '英雄数据待更新'
+      heroLabel: player?.avatar?.heroName ? formatOwHeroName(player.avatar.heroName, locale) : '尚未出场'
     }
   }
 
@@ -1650,7 +1650,7 @@ function RosterPlayerRow({ player, withSeason, locale = 'zh-CN' }) {
         <em>{performanceMetric?.label || '角色表现'}</em>
         <span>
           <b>{performanceMetric?.valueLabel || '--'}</b>
-          <small>{performanceMetric?.unit || '待更新'}</small>
+          {performanceMetric ? <small data-i18n-ignore>{performanceMetric.unit}</small> : null}
         </span>
       </span>
       {hasUsage ? (
@@ -1660,7 +1660,9 @@ function RosterPlayerRow({ player, withSeason, locale = 'zh-CN' }) {
         </span>
       ) : (
         <span className={styles.rosterPlayerMeta}>
-          <span className={styles.rosterPlayerMetaEmpty}>赛时数据待更新</span>
+          <span className={styles.rosterPlayerMetaEmpty} data-i18n-ignore>
+            {locale === 'en-US' ? 'NOT YET PLAYED' : '尚未出场'}
+          </span>
         </span>
       )}
     </Link>
@@ -2142,7 +2144,9 @@ export default function TeamDetailPage() {
                       </span>
                     ) : (
                       <span className={styles.coreRosterMeta}>
-                        <span className={styles.coreRosterMetaEmpty}>赛时待更新</span>
+                        <span className={styles.coreRosterMetaEmpty} data-i18n-ignore>
+                          {locale === 'en-US' ? 'NOT YET PLAYED' : '尚未出场'}
+                        </span>
                       </span>
                     )}
                   </Link>

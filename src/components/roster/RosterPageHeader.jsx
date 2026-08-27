@@ -1,12 +1,13 @@
 import styles from './RosterComponents.module.css'
 
-export default function RosterPageHeader({ stats = [] }) {
+export default function RosterPageHeader({ stats = [], note = '' }) {
   return (
     <section className={styles.pageHeader}>
       <div className={styles.pageHeaderMain}>
         <div className={styles.sectionLabel}>ROSTER</div>
         <h1 className={styles.pageTitle}>参赛阵容</h1>
         <p className={styles.pageDesc}>浏览本届赛事的参赛战队、选手与赛事职员。</p>
+        {note ? <p className={styles.pageNote} data-i18n-ignore>{note}</p> : null}
       </div>
 
       <div className={styles.summaryGrid} aria-label="Roster summary">

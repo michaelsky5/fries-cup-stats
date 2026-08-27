@@ -30,6 +30,37 @@ function normalizeKey(value) {
   return normalizeText(value).toLowerCase()
 }
 
+function getAdministrativeForfeitKey(map) {
+  const resultMode = normalizeText(map?.result_mode || map?.resultMode).toUpperCase()
+  const reason = normalizeText(map?.reason || map?.administrativeReason).toUpperCase()
+  const forfeitedBy = normalizeKey(
+    map?.forfeited_by ||
+    map?.forfeitedBy ||
+    map?.forfeitedBySide ||
+    map?.forfeitedSide
+  )
+  const isAdministrative = map?.is_administrative === true ||
+    map?.isAdministrative === true ||
+    resultMode === 'FORFEIT' ||
+    reason === 'MAP_FORFEIT'
+
+  return isAdministrative ? forfeitedBy : ''
+}
+
+function getInferredForfeitKey(match) {
+  const status = normalizeText(match?.status).toUpperCase()
+  const resultMode = normalizeText(match?.result_mode || match?.resultMode).toUpperCase()
+  if (!COMPLETE_STATUSES.has(status) || (resultMode && resultMode !== 'NORMAL')) return ''
+
+  const maps = safeArr(match?.maps)
+  if (!maps.length) return ''
+
+  const forfeitedKeys = maps.map(getAdministrativeForfeitKey)
+  if (forfeitedKeys.some(key => !key)) return ''
+
+  return new Set(forfeitedKeys).size === 1 ? forfeitedKeys[0] : ''
+}
+
 function toNumber(value, fallback = 0) {
   const num = Number(value)
   return Number.isFinite(num) ? num : fallback
@@ -94,6 +125,11 @@ export function isByeMatch(match) {
   return matchTeamValues(match).some(value => value === 'bye')
 }
 
+export function isForfeitMatch(match) {
+  const resultMode = normalizeText(match?.result_mode || match?.resultMode).toUpperCase()
+  return Boolean(match?.is_forfeit) || resultMode === 'FORFEIT' || Boolean(getInferredForfeitKey(match))
+}
+
 function matchIdentity(match) {
   return normalizeText(match?.match_id || match?.id || match?.raw_match_id || match?.match_display_name)
 }
@@ -112,7 +148,7 @@ function uniqueMatches(matches = []) {
 
 export function isFinishedMatch(match) {
   const status = String(match?.status || '').trim().toUpperCase()
-  if (match?.is_forfeit) return true
+  if (isForfeitMatch(match)) return true
   if (COMPLETE_STATUSES.has(status)) return true
   if (status) return false
   return Boolean(normalizeText(match?.winner))
@@ -252,7 +288,7 @@ export function getMatchStatusText(match) {
   if (['POSTPONED', 'DELAYED'].includes(raw)) return '延期'
   if (['RESCHEDULED'].includes(raw)) return '已改期'
   if (['CANCELED', 'CANCELLED'].includes(raw)) return '取消'
-  if (match?.is_forfeit) return '弃权'
+  if (isForfeitMatch(match)) return '弃权'
   const status = getMatchStatus(match)
   if (status === 'finished') return '已完成'
   if (status === 'live') return '进行中'

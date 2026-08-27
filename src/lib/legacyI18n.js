@@ -33,6 +33,7 @@ const EXACT_TRANSLATIONS = new Map([
   ['时间待定', 'Time TBD'],
   ['待定', 'TBD'],
   ['待更新', 'Pending Update'],
+  ['尚未出场', 'Not Yet Played'],
   ['等待数据', 'Awaiting Data'],
   ['比赛后更新', 'Updates After Matches'],
   ['比赛开始后更新', 'Updates After Matches Begin'],
@@ -561,4 +562,23 @@ export function translateLegacyText(value, locale = DEFAULT_LOCALE) {
 
   const translated = translateCore(core)
   return translated === core ? value : preserveSpacing(source, translated)
+}
+
+export function resolveTrackedLegacyTranslation({ current, source, rendered, locale = DEFAULT_LOCALE }) {
+  const value = String(current ?? '')
+  if (!value.trim()) return null
+
+  const hasSource = typeof source === 'string'
+  if (!hasSource && !/[\u4e00-\u9fff]/.test(value)) return null
+
+  const expectedValue = hasSource ? translateLegacyText(source, locale) : undefined
+  const isTrackedRender = hasSource && (value === rendered || value === expectedValue)
+  const nextSource = isTrackedRender ? source : value
+  const nextValue = translateLegacyText(nextSource, locale)
+
+  return {
+    source: nextSource,
+    rendered: nextValue,
+    value: nextValue
+  }
 }

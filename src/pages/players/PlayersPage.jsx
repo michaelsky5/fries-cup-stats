@@ -181,6 +181,12 @@ export default function PlayersPage() {
     } : null
   ].filter(Boolean)
   const activeTab = queryState.following === 'following' ? 'following' : queryState.role
+  const unresolvedRoleCount = summary.roleCounts.FLEX || 0
+  const unresolvedRoleNote = unresolvedRoleCount
+    ? locale === 'en-US'
+      ? `${unresolvedRoleCount} player${unresolvedRoleCount === 1 ? '' : 's'} awaiting competition role confirmation`
+      : `另有 ${unresolvedRoleCount} 人职责待判定`
+    : ''
 
   return (
     <div className={styles.shell}>
@@ -191,6 +197,7 @@ export default function PlayersPage() {
           { value: summary.roleCounts.DPS, label: '输出' },
           { value: summary.roleCounts.SUPPORT, label: '支援' }
         ]}
+        note={unresolvedRoleNote}
       />
 
       <div className={styles.stickyRosterControls}>

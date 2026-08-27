@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
-import { LEGACY_I18N_ATTRIBUTES, translateLegacyText } from '../lib/legacyI18n.js'
+import { LEGACY_I18N_ATTRIBUTES, resolveTrackedLegacyTranslation } from '../lib/legacyI18n.js'
 
 const SOURCE_TEXT_KEY = '__friesCupSourceText'
+const RENDERED_TEXT_KEY = '__friesCupRenderedText'
 const SOURCE_ATTR_KEY = '__friesCupSourceAttrs'
+const RENDERED_ATTR_KEY = '__friesCupRenderedAttrs'
 const SKIP_SELECTOR = 'script, style, noscript, [data-i18n-ignore]'
-const CHINESE_RE = /[\u4e00-\u9fff]/
 
 function shouldSkipNode(node) {
   const element = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement
@@ -17,19 +18,17 @@ function translateTextNode(node, locale) {
   const current = node.nodeValue || ''
   if (!current.trim()) return
 
-  const source = node[SOURCE_TEXT_KEY]
-  if (!source && !CHINESE_RE.test(current)) return
+  const translation = resolveTrackedLegacyTranslation({
+    current,
+    source: node[SOURCE_TEXT_KEY],
+    rendered: node[RENDERED_TEXT_KEY],
+    locale
+  })
+  if (!translation) return
 
-  const translatedSource = source ? translateLegacyText(source, locale) : null
-
-  if (source && current === translatedSource) return
-  if (source && locale === 'en-US' && !CHINESE_RE.test(current)) return
-
-  const nextSource = source && locale !== 'en-US' && !CHINESE_RE.test(current) ? source : current
-  const nextValue = translateLegacyText(nextSource, locale)
-
-  node[SOURCE_TEXT_KEY] = nextSource
-  if (current !== nextValue) node.nodeValue = nextValue
+  node[SOURCE_TEXT_KEY] = translation.source
+  node[RENDERED_TEXT_KEY] = translation.rendered
+  if (current !== translation.value) node.nodeValue = translation.value
 }
 
 function getAttrSources(element) {
@@ -37,10 +36,16 @@ function getAttrSources(element) {
   return element[SOURCE_ATTR_KEY]
 }
 
+function getAttrRenderedValues(element) {
+  if (!element[RENDERED_ATTR_KEY]) element[RENDERED_ATTR_KEY] = new Map()
+  return element[RENDERED_ATTR_KEY]
+}
+
 function translateElementAttributes(element, locale) {
   if (shouldSkipNode(element)) return
 
   const sources = getAttrSources(element)
+  const renderedValues = getAttrRenderedValues(element)
 
   LEGACY_I18N_ATTRIBUTES.forEach(attr => {
     if (!element.hasAttribute(attr)) return
@@ -48,19 +53,17 @@ function translateElementAttributes(element, locale) {
     const current = element.getAttribute(attr) || ''
     if (!current.trim()) return
 
-    const source = sources.get(attr)
-    if (!source && !CHINESE_RE.test(current)) return
+    const translation = resolveTrackedLegacyTranslation({
+      current,
+      source: sources.get(attr),
+      rendered: renderedValues.get(attr),
+      locale
+    })
+    if (!translation) return
 
-    const translatedSource = source ? translateLegacyText(source, locale) : null
-
-    if (source && current === translatedSource) return
-    if (source && locale === 'en-US' && !CHINESE_RE.test(current)) return
-
-    const nextSource = source && locale !== 'en-US' && !CHINESE_RE.test(current) ? source : current
-    const nextValue = translateLegacyText(nextSource, locale)
-
-    sources.set(attr, nextSource)
-    if (current !== nextValue) element.setAttribute(attr, nextValue)
+    sources.set(attr, translation.source)
+    renderedValues.set(attr, translation.rendered)
+    if (current !== translation.value) element.setAttribute(attr, translation.value)
   })
 }
 

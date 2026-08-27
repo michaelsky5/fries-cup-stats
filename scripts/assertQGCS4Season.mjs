@@ -17,10 +17,12 @@ import {
   getCurrentRoundSummary,
   getGroupedMatches,
   getMatchHubData,
+  getMatchStatusText,
   getMatchesByRound,
   getRoundBadgeText,
   getRoundText,
-  getTeamLogoCandidates
+  getTeamLogoCandidates,
+  isForfeitMatch
 } from '../src/lib/matchesSelectors.js'
 import { getSeasonById, resolveSeasonFromUrl } from '../src/config/seasons.js'
 import { selectNewestDbSnapshot } from '../src/lib/db.js'
@@ -156,6 +158,45 @@ assert.deepEqual(
     ['小五', 'FLEX']
   ]
 )
+
+const inferredForfeitMatch = {
+  ...db.matches[0],
+  match_id: 'QGCS4-INFERRED-FORFEIT',
+  status: 'COMPLETE',
+  result_mode: 'NORMAL',
+  is_forfeit: false,
+  forfeited_by: null,
+  team_a: { ...db.matches[0].team_a, score: 3 },
+  team_b: { ...db.matches[0].team_b, score: 0 },
+  winner: db.matches[0].team_a.id,
+  maps: [1, 2, 3].map(mapOrder => ({
+    map_order: mapOrder,
+    map_name: 'Default Win',
+    map_type: 'ADMIN',
+    score_a: 1,
+    score_b: 0,
+    winner: db.matches[0].team_a.id,
+    is_administrative: true,
+    reason: 'MAP_FORFEIT',
+    forfeited_by: db.matches[0].team_b.short,
+    notes: `${db.matches[0].team_b.short}全场弃权`,
+    player_stats: [],
+    team_a_stats: [],
+    team_b_stats: []
+  }))
+}
+assert.equal(isForfeitMatch(inferredForfeitMatch), true)
+assert.equal(getMatchStatusText(inferredForfeitMatch), '弃权')
+const inferredForfeitDossier = getMatchDossier({ ...db, matches: [inferredForfeitMatch] }, inferredForfeitMatch.match_id)
+assert.equal(inferredForfeitDossier.state.isForfeit, true)
+assert.equal(inferredForfeitDossier.hasMapRecords, false)
+assert.equal(isForfeitMatch({
+  ...inferredForfeitMatch,
+  maps: [
+    inferredForfeitMatch.maps[0],
+    { ...inferredForfeitMatch.maps[1], is_administrative: false, reason: '', forfeited_by: null }
+  ]
+}), false)
 assert.deepEqual(
   openingDossier.rosters.teamB.map(player => [player.name, player.role]),
   [

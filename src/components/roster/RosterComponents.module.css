@@ -50,6 +50,18 @@
   line-height: 1.7;
 }
 
+.pageNote {
+  width: fit-content;
+  margin: -4px 0 0;
+  padding: 7px 10px;
+  background: rgba(244, 196, 48, 0.14);
+  border-left: 4px solid var(--portal-yellow);
+  color: var(--portal-ink-soft);
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.4;
+}
+
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

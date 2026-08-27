@@ -2,6 +2,7 @@ import { Link, useLocation, useOutletContext } from 'react-router-dom'
 import { getBroadcastInfo } from '../../lib/broadcastSelectors.js'
 import { getReturnState, saveReturnScroll } from '../../lib/navigationState.js'
 import { formatMatchSchedule } from '../../lib/scheduleFormat.js'
+import { isForfeitMatch } from '../../lib/matchesSelectors.js'
 import styles from './MatchTable.module.css'
 
 function displayScore(value) {
@@ -55,7 +56,7 @@ export default function MatchTable({ rows = [], locale = 'zh-CN' }) {
           {rows.length > 0 ? rows.map(row => {
             const isComplete = row.status === 'COMPLETE' || row.status === 'COMPLETED'
             const isProgress = row.status === 'IN_PROGRESS'
-            const isForfeit = row.is_forfeit
+            const isForfeit = isForfeitMatch(row)
             const matchTitle = row.match_display_name || row.match_id
             const teamAName = row?.team_a?.name || 'TBD'
             const teamBName = row?.team_b?.name || 'TBD'

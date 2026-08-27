@@ -5,6 +5,7 @@ import {
   getMatchStatusText,
   getMatchCompetitionDay,
   getMatchGroupLabel,
+  isForfeitMatch,
   getRoundText,
   getTeamFullName,
   getTeamLabel,
@@ -94,7 +95,7 @@ function formatDuration(seconds) {
 function getMatchState(match) {
   const status = cleanText(match?.status || 'PENDING').toUpperCase()
   const resultMode = cleanText(match?.result_mode).toUpperCase()
-  const isForfeit = Boolean(match?.is_forfeit) || resultMode === 'FORFEIT'
+  const isForfeit = isForfeitMatch(match)
   const isComplete = COMPLETE_STATUSES.has(status)
   const isCancelled = CANCELLED_STATUSES.has(status)
   const isPostponed = POSTPONED_STATUSES.has(status)

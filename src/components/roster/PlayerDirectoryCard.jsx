@@ -69,7 +69,9 @@ export default function PlayerDirectoryCard({
   const heroNames = player.hasStats
     ? (player.heroNames?.length ? player.heroNames : [player.avatar?.heroName].filter(Boolean))
     : []
-  const heroText = heroNames.length ? formatOwHeroNames(heroNames, locale, 3).join(' / ') : '比赛开始后更新'
+  const heroText = heroNames.length
+    ? formatOwHeroNames(heroNames, locale, 3).join(' / ')
+    : locale === 'en-US' ? 'NOT YET PLAYED' : '尚未出场'
 
   return (
     <article
@@ -114,7 +116,7 @@ export default function PlayerDirectoryCard({
 
         <div className={styles.playerHeroPanel}>
           <span>常用英雄</span>
-          <strong title={heroText}>{heroText}</strong>
+          <strong title={heroText} data-i18n-ignore>{heroText}</strong>
         </div>
 
         <Link to={playerPath} className={styles.cardTextLink}>查看选手 →</Link>

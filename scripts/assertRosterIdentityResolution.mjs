@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 
 import { getShareHeroArtwork } from '../src/features/player-share/heroShareArtworkResolver.js'
 import { formatOwHeroName, getOwHeroAssetKey, getOwHeroRole } from '../src/lib/heroes.js'
@@ -12,6 +12,12 @@ import {
   getRoleCounts,
   getTeamDirectory
 } from '../src/lib/rosterSelectors.js'
+
+function readPngDimensions(url) {
+  const png = readFileSync(url)
+  assert.deepEqual([...png.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10])
+  return [png.readUInt32BE(16), png.readUInt32BE(20)]
+}
 
 const sharedNickname = '小海'
 const db = {
@@ -352,5 +358,7 @@ assert.equal(getShareHeroArtwork('Jetpack Cat', 'FLEX').src, '/roster/support/je
 assert.equal(getShareHeroArtwork('Anran', 'FLEX').src, '/roster/damage/anran.png')
 assert.equal(existsSync(new URL('../public/heroes/tank/dmon.png', import.meta.url)), true)
 assert.equal(existsSync(new URL('../public/roster/tank/dmon.png', import.meta.url)), true)
+assert.deepEqual(readPngDimensions(new URL('../public/heroes/tank/dmon.png', import.meta.url)), [256, 256])
+assert.deepEqual(readPngDimensions(new URL('../public/roster/tank/dmon.png', import.meta.url)), [1920, 1080])
 
 console.log('Roster identity resolution assertions passed.')
