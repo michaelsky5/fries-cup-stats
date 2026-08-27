@@ -23,6 +23,7 @@ import {
   getTeamLogoCandidates
 } from '../src/lib/matchesSelectors.js'
 import { getSeasonById, resolveSeasonFromUrl } from '../src/config/seasons.js'
+import { selectNewestDbSnapshot } from '../src/lib/db.js'
 
 const fixturePath = path.resolve('public/data/qgcs4_preseason_public.json')
 const db = JSON.parse(fs.readFileSync(fixturePath, 'utf8'))
@@ -37,6 +38,13 @@ assert.equal(db.group_standings.length, 4)
 assert.equal(season.rules.competitionFormat, 'GROUP')
 assert.deepEqual(season.rules.groupStage.administrativeLossScore, [0, 3])
 assert.deepEqual(season.rules.groupStage.drawScore, [0, 0])
+
+const currentSnapshot = { updated_at: '2026-08-26T07:59:50.781Z' }
+const staleFallbackSnapshot = { updated_at: '2026-08-23T00:30:00+08:00' }
+assert.strictEqual(selectNewestDbSnapshot(currentSnapshot, staleFallbackSnapshot), currentSnapshot)
+assert.strictEqual(selectNewestDbSnapshot(staleFallbackSnapshot, currentSnapshot), currentSnapshot)
+assert.strictEqual(selectNewestDbSnapshot(currentSnapshot, { teams: [] }), currentSnapshot)
+assert.strictEqual(selectNewestDbSnapshot(null, staleFallbackSnapshot), staleFallbackSnapshot)
 
 const expectedTeamLogos = {
   'QGCS4-T01': 'NF.png',

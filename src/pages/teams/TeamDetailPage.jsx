@@ -8,6 +8,7 @@ import {
   getPlayerAvatarSource,
   getPlayerDirectory,
   getPlayerDisplayIdentity,
+  getPlayerRoleBreakdown,
   getTeamDirectory,
   getTeamRosterPlayers,
   getRosterRoleLabel,
@@ -280,13 +281,19 @@ function formatRosterPerformanceValue(value) {
 }
 
 function getRosterPerformanceMetric(player) {
-  const role = normalizeRosterRole(player?.role)
+  const registeredRole = normalizeRosterRole(player?.role)
+  const role = registeredRole === 'FLEX'
+    ? normalizeRosterRole(player?.performanceRole)
+    : registeredRole
+  if (role === 'FLEX') return null
+
+  const roleStats = getPlayerRoleBreakdown(player, role)
   const metric = role === 'TANK'
     ? { label: '阻挡 /10', unit: 'MIT', keys: ['avg_block'] }
     : role === 'SUP'
       ? { label: '治疗 /10', unit: 'HEAL', keys: ['avg_heal'] }
       : { label: '伤害 /10', unit: 'DMG', keys: ['avg_dmg'] }
-  const value = getPlayerMetric(player, metric.keys)
+  const value = getPlayerMetric(roleStats || player, metric.keys)
 
   return value ? { ...metric, valueLabel: formatRosterPerformanceValue(value) } : null
 }

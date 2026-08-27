@@ -646,7 +646,7 @@
 .roleSplitRow {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--role-split-count, 3), minmax(0, 1fr));
   margin: 4px -8px -8px;
   border-top: 1px solid var(--portal-border);
 }
@@ -677,6 +677,10 @@
 
 .roleSupport {
   color: #3F9369;
+}
+
+.roleFlex {
+  color: #9A72C7;
 }
 
 .metaLabel {

@@ -358,7 +358,7 @@ export function getPlayerDisplayIdentity(player) {
   }
 }
 
-function getRoleBreakdown(player, role) {
+export function getPlayerRoleBreakdown(player, role) {
   const normalized = normalizeRoleForHero(role)
   if (!normalized || normalized === 'ALL') return null
   const breakdown = player?.role_breakdown && typeof player.role_breakdown === 'object' ? player.role_breakdown : {}
@@ -430,7 +430,7 @@ function applyRoleEntryStats(player, entry) {
 
 export function getPlayerAvatarSource(player, options = {}) {
   const requestedRole = normalizeRoleForHero(options.role)
-  const roleSource = requestedRole ? getRoleBreakdown(player, requestedRole) : null
+  const roleSource = requestedRole ? getPlayerRoleBreakdown(player, requestedRole) : null
   const fallbackRole = normalizeRoleForHero(player?.role || player?.registeredRole)
   const heroSource = roleSource && hasReliableStats(roleSource) ? roleSource : player
   const heroRole = roleSource && hasReliableStats(roleSource) ? requestedRole : fallbackRole
@@ -464,20 +464,24 @@ export function getPlayerDirectory(db, favorites = {}, options = {}) {
     const roleEntries = resolveRoleEntries(merged)
     const requestedEntry = getRequestedRoleEntry(roleEntries, requestedRole)
     const primaryEntry = getPrimaryRoleEntry(roleEntries)
-    const avatarEntry = requestedEntry || primaryEntry
+    const registeredRole = normalizeRosterRole(player?.role || total?.role)
+    const registeredEntry = registeredRole !== 'FLEX'
+      ? getRequestedRoleEntry(roleEntries, registeredRole)
+      : null
+    const avatarEntry = requestedEntry || registeredEntry || primaryEntry
     const avatarSource = avatarEntry ? applyRoleEntryStats(merged, avatarEntry) : merged
     const statsSource = requestedEntry || (!hasReliableStats(merged) ? primaryEntry : null)
     const displaySource = statsSource ? applyRoleEntryStats(merged, statsSource) : merged
     const avatar = getPlayerAvatarSource(avatarSource, { role: avatarEntry?.role || options.role })
     const heroNames = avatar.heroNames || []
-    const registeredRole = normalizeRosterRole(merged.role)
     const playedRoles = roleEntries
       .map(entry => normalizeRosterRole(entry.role))
       .filter((role, index, list) => role && list.indexOf(role) === index)
-    const role = requestedRole && (requestedEntry || normalizeRoleForHero(merged.role) === requestedRole)
+    const role = requestedRole && (requestedEntry || normalizeRoleForHero(registeredRole) === requestedRole)
       ? normalizeRosterRole(requestedRole)
       : registeredRole
-    const flexRoles = safeArr(merged.allowed_flex).map(normalizeRosterRole).filter(role => role && role !== normalizeRosterRole(merged.role))
+    const performanceRole = normalizeRosterRole(avatarEntry?.role || registeredRole)
+    const flexRoles = safeArr(merged.allowed_flex).map(normalizeRosterRole).filter(role => role && role !== registeredRole)
 
     return {
       ...merged,
@@ -490,6 +494,7 @@ export function getPlayerDirectory(db, favorites = {}, options = {}) {
       heroNames,
       role,
       registeredRole,
+      performanceRole,
       playedRoles,
       flexRoles,
       teamShortName,

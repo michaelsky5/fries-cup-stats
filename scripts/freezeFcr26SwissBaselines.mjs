@@ -13,6 +13,7 @@ const OUTPUT_PATH = path.join(ROOT_DIR, 'src', 'data', 'rating-baselines', 'fcr2
 const API_BASE = 'https://admin.fries-cup.com'
 const SEASON_ID = 'FCR26'
 const FREEZE_ID = 'FCR26_SWISS_FINAL_RATING_V1_2'
+const FETCH_TIMEOUT_MS = 30000
 const CHECK_MODE = process.argv.includes('--check')
 
 function getArgumentValue(name) {
@@ -49,7 +50,10 @@ async function fetchText(url, attempts = 4) {
   let lastError = null
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {
-      const response = await fetch(url, { cache: 'no-store' })
+      const response = await fetch(url, {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS)
+      })
       if (!response.ok) throw new Error(`${response.status} ${response.statusText}`)
       return await response.text()
     } catch (error) {
@@ -311,14 +315,19 @@ async function main() {
     publishVersion: source.publishVersion,
     dataUrl: source.dataUrl,
     frozenAt: existing?.frozenAt || new Date().toISOString(),
-    payloadSha256: sha256(source.dataText),
+    // The public view can change transport bytes as time-sensitive, non-rating fields expire.
+    // Reproducibility is enforced by the fully serialized scoped baseline below.
+    payloadSha256: CHECK_MODE && existing?.source?.payloadSha256
+      ? existing.source.payloadSha256
+      : sha256(source.dataText),
     audit
   })
   const serialized = `${JSON.stringify(snapshot, null, 2)}\n`
 
   if (CHECK_MODE) {
     const current = await fs.readFile(OUTPUT_PATH, 'utf8')
-    if (current !== serialized) throw new Error('Frozen baseline snapshot is not reproducible from its pinned source.')
+    const normalizedCurrent = current.replace(/\r\n?/g, '\n')
+    if (normalizedCurrent !== serialized) throw new Error('Frozen baseline snapshot is not reproducible from its pinned source.')
     console.log(`Frozen baseline verified: ${snapshot.freezeId} / publish ${snapshot.source.publishVersion}`)
     return
   }

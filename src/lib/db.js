@@ -257,6 +257,25 @@ async function fetchDb(season, options = {}) {
   return hydrateReviewStaffPayload(data, season)
 }
 
+function getSnapshotTimestamp(data) {
+  const value = data?.updated_at || data?.updatedAt || data?.meta?.updated_at
+  const timestamp = Date.parse(value || '')
+  return Number.isFinite(timestamp) ? timestamp : null
+}
+
+export function selectNewestDbSnapshot(current, candidate) {
+  if (!current) return candidate
+  if (!candidate) return current
+
+  const currentTimestamp = getSnapshotTimestamp(current)
+  const candidateTimestamp = getSnapshotTimestamp(candidate)
+  if (currentTimestamp !== null && (candidateTimestamp === null || candidateTimestamp < currentTimestamp)) {
+    return current
+  }
+
+  return candidate
+}
+
 export async function getDb(seasonId) {
   const season = getSeasonById(seasonId || getStoredSeasonId())
   if (dbCache.has(season.id)) return dbCache.get(season.id)
@@ -268,7 +287,8 @@ export async function getDb(seasonId) {
 
 export async function refreshDb(seasonId) {
   const season = getSeasonById(seasonId || getStoredSeasonId())
-  const data = await fetchDb(season)
+  const fetchedData = await fetchDb(season)
+  const data = selectNewestDbSnapshot(dbCache.get(season.id), fetchedData)
   dbCache.set(season.id, data)
   return data
 }

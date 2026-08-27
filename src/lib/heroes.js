@@ -1,5 +1,6 @@
 export const OW_HEROES = [
   { id: 'domina', zh: '金驭', en: 'Domina', role: 'tank', assetKey: 'domina' },
+  { id: 'dmon', zh: 'D.Mon', en: 'D.Mon', role: 'tank', assetKey: 'dmon', aliases: ['DMon', 'DMON'] },
   { id: 'doomfist', zh: '末日铁拳', en: 'Doomfist', role: 'tank', assetKey: 'doomfist' },
   { id: 'dva', zh: 'D.Va', en: 'D.Va', role: 'tank', assetKey: 'dva', aliases: ['DVa', 'DVA'] },
   { id: 'hazard', zh: '骇灾', en: 'Hazard', role: 'tank', assetKey: 'hazard' },

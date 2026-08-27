@@ -22,15 +22,21 @@ function StaffBlock({ label, person }) {
 
 function TeamRosterSplit({ team }) {
   const counts = team.roleCounts || {}
+  const roles = [
+    { key: 'TANK', className: styles.roleTank, label: '重装' },
+    { key: 'DPS', className: styles.roleDps, label: '输出' },
+    { key: 'SUP', className: styles.roleSupport, label: '支援' },
+    ...(counts.FLEX ? [{ key: 'FLEX', className: styles.roleFlex, label: '灵活' }] : [])
+  ]
 
   return (
     <div className={styles.rosterSplit} aria-label={`选手 ${team.rosterSize}`}>
       <span className={styles.rosterSplitLabel}>选手</span>
       <span className={styles.rosterTotal}>{team.rosterSize}</span>
-      <span className={styles.roleSplitRow}>
-        <b className={styles.roleTank} title="重装">{counts.TANK || 0}</b>
-        <b className={styles.roleDps} title="输出">{counts.DPS || 0}</b>
-        <b className={styles.roleSupport} title="支援">{counts.SUP || 0}</b>
+      <span className={styles.roleSplitRow} style={{ '--role-split-count': roles.length }}>
+        {roles.map(role => (
+          <b className={role.className} title={role.label} key={role.key}>{counts[role.key] || 0}</b>
+        ))}
       </span>
     </div>
   )
