@@ -140,6 +140,8 @@ export const SEASONS = [
       matchCount: 36
     },
     proxyDataUrl: '/api/admin-public/seasons/QGCS4/publish/latest/data',
+    dataUrl: 'https://admin.fries-cup.com/api/public/seasons/QGCS4/publish/latest/data',
+    preferDirectData: true,
     proxyReportUrl: '/api/admin-public/seasons/QGCS4/publish/latest/report',
     localDataUrl: '/data/qgcs4_preseason_public.json',
     bootstrapLocalData: true,

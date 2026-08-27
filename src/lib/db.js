@@ -47,10 +47,12 @@ function getEnvUrl(seasonId, kind) {
 }
 
 function getDbUrls(season, { bootstrap = false } = {}) {
+  const configuredRemoteUrls = season?.preferDirectData
+    ? [season.dataUrl, season.proxyDataUrl]
+    : [season.proxyDataUrl, season.dataUrl]
   const remoteUrls = [
     getEnvUrl(season.id, 'data'),
-    season.proxyDataUrl,
-    season.dataUrl
+    ...configuredRemoteUrls
   ]
   const localUrls = [season.localDataUrl]
 
