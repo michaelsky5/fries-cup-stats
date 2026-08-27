@@ -5,6 +5,8 @@ import RosterSubnav from '../../components/roster/RosterSubnav.jsx'
 import { getShareHeroArtwork } from '../../features/player-share/heroShareArtworkResolver.js'
 import TeamShareDialog from '../../features/team-share/TeamShareDialog.jsx'
 import {
+  getCompetitiveRoleLabel,
+  getCoreRosterSlots,
   getPlayerAvatarSource,
   getPlayerDirectory,
   getPlayerDisplayIdentity,
@@ -65,14 +67,6 @@ const SWISS_STATUS_PRESENTATION = {
 }
 
 const ROLE_ORDER = ['TANK', 'DPS', 'SUP']
-
-const STARTING_FIVE_SLOTS = [
-  { id: 'tank', role: 'TANK', label: '重装' },
-  { id: 'dps-1', role: 'DPS', label: '输出' },
-  { id: 'dps-2', role: 'DPS', label: '输出' },
-  { id: 'sup-1', role: 'SUP', label: '支援' },
-  { id: 'sup-2', role: 'SUP', label: '支援' }
-]
 
 const TEAM_COMBAT_METRICS = [
   { id: 'damage', labelZh: '团队伤害', labelEn: 'Team Damage', unit: 'DMG', avgKeys: ['avg_dmg'], totalKeys: ['total_dmg', 'damage'], featured: true },
@@ -298,24 +292,6 @@ function getRosterPerformanceMetric(player) {
   return value ? { ...metric, valueLabel: formatRosterPerformanceValue(value) } : null
 }
 
-function sortCoreCandidates(a, b) {
-  return Number(b?.maps_played || 0) - Number(a?.maps_played || 0) ||
-    Number(b?.raw_time_mins || 0) - Number(a?.raw_time_mins || 0) ||
-    getPlayerName(a).localeCompare(getPlayerName(b))
-}
-
-function getStartingFiveSlots(roster) {
-  const rows = safeArr(roster).slice().sort(sortCoreCandidates)
-  const used = new Set()
-
-  return STARTING_FIVE_SLOTS.map(slot => {
-    const rolePick = rows.find(player => normalizeRosterRole(player?.role) === slot.role && !used.has(getPlayerRosterKey(player)))
-    const fallbackPick = rolePick || rows.find(player => !used.has(getPlayerRosterKey(player)))
-    if (fallbackPick) used.add(getPlayerRosterKey(fallbackPick))
-    return { ...slot, player: fallbackPick || null }
-  })
-}
-
 function buildSharePlayer(player, locale = 'zh-CN') {
   const artwork = getShareHeroArtwork(player?.avatar?.heroName, player?.role)
   const name = getPlayerName(player)
@@ -326,7 +302,7 @@ function buildSharePlayer(player, locale = 'zh-CN') {
     id: player?.identity?.playerId || player?.player_id || getPlayerName(player),
     name,
     battleTag: getDistinctSecondaryName(name, player?.identity?.secondary),
-    role: getRosterRoleLabel(player?.role, locale),
+    role: getCompetitiveRoleLabel(player?.role, locale),
     roleKey: normalizeRosterRole(player?.role),
     hero: getPlayerHeroLabel(player, locale),
     mapsPlayed,
@@ -1660,7 +1636,12 @@ function RosterPlayerRow({ player, withSeason, locale = 'zh-CN' }) {
     <Link to={withSeason(`/players/${player.identity?.playerId || player.player_id}`)} className={styles.rosterPlayerCard}>
       <RosterPlayerArtwork player={player} />
       <span className={styles.rosterPlayerShade} aria-hidden="true" />
-      <span className={styles.rosterPlayerRole}>{getRosterRoleLabel(player.role, locale)}</span>
+      <span
+        className={styles.rosterPlayerRole}
+        title={player.isRegisteredFlex ? (locale === 'en-US' ? 'Registered as FLEX' : '报名职责：灵活') : undefined}
+      >
+        {getCompetitiveRoleLabel(player.role, locale)}
+      </span>
       <span className={`${styles.rosterPlayerIdentity} ${hasLongName ? styles.rosterPlayerIdentityLong : ''}`}>
         <strong>{playerName}</strong>
         {secondaryName ? <small>{secondaryName}</small> : null}
@@ -1821,14 +1802,14 @@ export default function TeamDetailPage() {
     if (effectiveMatchFilter === 'pending') return isUpcomingMatch(row.match) || isLiveMatch(row.match)
     return true
   })
-  const startingFiveSlots = getStartingFiveSlots(roster)
+  const startingFiveSlots = getCoreRosterSlots(roster)
   const corePlayers = startingFiveSlots.map(slot => slot.player).filter(Boolean)
   const tacticalProfile = useMemo(
     () => getTeamTacticalProfile(combatComparisons, mapTypeStats, teamMapPool, roster, locale),
     [combatComparisons, mapTypeStats, teamMapPool, roster, locale]
   )
   const playerStyleProfiles = useMemo(
-    () => getPlayerStyleProfiles(getStartingFiveSlots(roster).map(slot => slot.player).filter(Boolean), playerDirectory, locale),
+    () => getPlayerStyleProfiles(getCoreRosterSlots(roster).map(slot => slot.player).filter(Boolean), playerDirectory, locale),
     [roster, playerDirectory, locale]
   )
   const recordedLineups = useMemo(
@@ -1847,7 +1828,9 @@ export default function TeamDetailPage() {
       .filter(([role]) => !ROLE_ORDER.includes(role))
       .map(([role, rows]) => ({ role, rows }))
   ].filter(group => group.rows.length)
-  const roleComposition = rosterDisplayGroups.map(group => ({ role: group.role, count: group.rows.length }))
+  const roleComposition = ROLE_ORDER
+    .map(role => ({ role, count: rosterGroups[role]?.length || 0 }))
+    .filter(group => group.count)
   const rosterDisplay = rosterDisplayGroups.flatMap(group => group.rows)
   const focusMatch = todayRows.find(row => isLiveMatch(row.match) || isUpcomingMatch(row.match)) ||
     nextMatch ||

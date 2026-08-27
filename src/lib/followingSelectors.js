@@ -16,6 +16,7 @@ import { formatMatchSchedule } from './scheduleFormat.js'
 import { calculateSwissStandings } from './swissEngine.js'
 import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 import { getRoundText } from './matchesSelectors.js'
+import { getPlayerDirectory } from './rosterSelectors.js'
 
 const safeArr = value => Array.isArray(value) ? value : []
 const SHANGHAI_TZ = 'Asia/Shanghai'
@@ -690,9 +691,18 @@ export function getPlayerRecentSnapshot(db, playerOrId) {
 
 export function getFavoritePlayersOverview(db, favorites) {
   const clean = sanitizeFavoritesForSeason(favorites, db)
+  const resolvedPlayers = getPlayerDirectory(db)
+  const resolvedPlayerIndex = new Map()
+  resolvedPlayers.forEach(player => {
+    getPlayerIdentityValues(player).forEach(identity => {
+      const key = normalizeKey(identity)
+      if (key && !resolvedPlayerIndex.has(key)) resolvedPlayerIndex.set(key, player)
+    })
+  })
+
   return clean.favoritePlayerIds
     .map((playerId, index) => {
-      const player = findPlayer(db, playerId)
+      const player = resolvedPlayerIndex.get(normalizeKey(playerId)) || findPlayer(db, playerId)
       if (!player) return null
       return {
         player,

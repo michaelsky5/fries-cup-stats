@@ -13,7 +13,7 @@ import {
 } from './matchesSelectors.js'
 import { formatMatchSchedule } from './scheduleFormat.js'
 import { getRoleEnLabel, getRoleLabel, normalizeLeaderboardRole } from './leaderboardSelectors.js'
-import { getPlayerDisplayIdentity, normalizeRosterRole } from './rosterSelectors.js'
+import { getPlayerDirectory, getPlayerDisplayIdentity, normalizeRosterRole } from './rosterSelectors.js'
 import { formatOwHeroName, formatOwMapMode, formatOwMapName } from './heroes.js'
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED'])
@@ -251,7 +251,7 @@ function addRowToTotals(totals, row) {
   totals.block += row.mitigation
 }
 
-function getRosterForTeam(db, team) {
+function getRosterForTeam(players, team) {
   const ids = new Set([
     team?.id,
     team?.team_id,
@@ -261,7 +261,7 @@ function getRosterForTeam(db, team) {
     team?.team_name
   ].map(normalizeKey).filter(Boolean))
 
-  return safeArr(db?.players)
+  return safeArr(players)
     .filter(player => [
       player?.team_id,
       player?.team_short_name,
@@ -553,6 +553,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
 
   const state = getMatchState(match)
   const playerDirectory = createPlayerDirectory(db)
+  const rosterDirectory = getPlayerDirectory(db)
   const teamA = getTeamModel(match?.team_a, 'A')
   const teamB = getTeamModel(match?.team_b, 'B')
   const players = safeArr(db?.players)
@@ -656,8 +657,8 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     seriesPeakPlayers,
     analysisFacts,
     rosters: {
-      teamA: getRosterForTeam(db, match?.team_a),
-      teamB: getRosterForTeam(db, match?.team_b)
+      teamA: getRosterForTeam(rosterDirectory, match?.team_a),
+      teamB: getRosterForTeam(rosterDirectory, match?.team_b)
     },
     statusNote: cleanText(match?.schedule_note || match?.note || match?.notes || match?.ruling?.note || match?.ruling?.reason),
     adjacent

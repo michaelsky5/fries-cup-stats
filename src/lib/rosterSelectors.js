@@ -10,6 +10,14 @@ export const STAFF_PAGE_SIZES = [20, 40]
 const ROLE_ORDER = ['TANK', 'DPS', 'SUP', 'FLEX']
 const STAFF_ROLE_ORDER = ['manager', 'coach']
 
+export const CORE_ROSTER_SLOTS = Object.freeze([
+  { id: 'tank', role: 'TANK' },
+  { id: 'dps-1', role: 'DPS' },
+  { id: 'dps-2', role: 'DPS' },
+  { id: 'sup-1', role: 'SUP' },
+  { id: 'sup-2', role: 'SUP' }
+])
+
 function normalize(value) {
   return String(value ?? '').trim()
 }
@@ -76,6 +84,12 @@ export function getRosterRoleLabel(role, locale = 'zh-CN') {
     SUP: '支援',
     FLEX: '灵活'
   }[normalized] || '职责'
+}
+
+export function getCompetitiveRoleLabel(role, locale = 'zh-CN') {
+  const normalized = normalizeRosterRole(role)
+  if (normalized === 'FLEX') return locale === 'en-US' ? 'PENDING' : '待定'
+  return getRosterRoleLabel(normalized, locale)
 }
 
 function getRoleRank(role) {
@@ -283,6 +297,14 @@ export function getTeamRosterSize(db, team) {
 
 export function getTeamDirectory(db, favorites = {}) {
   const favoriteTeamIds = safeArr(favorites?.favoriteTeamIds)
+  const resolvedPlayersByIdentity = new Map()
+
+  getPlayerDirectory(db).forEach(player => {
+    getPlayerIdentities(player).forEach(identity => {
+      const key = normalizeKey(identity)
+      if (key && !resolvedPlayersByIdentity.has(key)) resolvedPlayersByIdentity.set(key, player)
+    })
+  })
 
   return safeArr(db?.teams).map(team => {
     const routeId = getTeamRouteId(team)
@@ -290,6 +312,11 @@ export function getTeamDirectory(db, favorites = {}) {
     const fullName = getTeamFullName(team)
     const staff = getTeamStaff(team)
     const rosterPlayers = getTeamRosterPlayers(db, team)
+    const resolvedRosterPlayers = rosterPlayers.map(player => (
+      getPlayerIdentities(player)
+        .map(identity => resolvedPlayersByIdentity.get(normalizeKey(identity)))
+        .find(Boolean) || player
+    ))
 
     return {
       ...team,
@@ -299,7 +326,7 @@ export function getTeamDirectory(db, favorites = {}) {
       groupLabel: normalize(team.group_label || team.groupLabel).toUpperCase(),
       club: normalize(team.team_club || team.club),
       rosterSize: safeArr(team?.player_ids).length || rosterPlayers.length,
-      roleCounts: getRoleCounts(rosterPlayers),
+      roleCounts: getRoleCounts(resolvedRosterPlayers),
       staff,
       isFavorite: isFavorite(favoriteTeamIds, getTeamIdentities(team))
     }
@@ -405,8 +432,8 @@ function getRequestedRoleEntry(entries, role) {
 
 function getPrimaryRoleEntry(entries) {
   return [...safeArr(entries)]
+    .filter(hasReliableStats)
     .sort((a, b) => (
-      Number(hasReliableStats(b)) - Number(hasReliableStats(a)) ||
       getRoleEntryTime(b) - getRoleEntryTime(a) ||
       getRoleEntryMaps(b) - getRoleEntryMaps(a) ||
       getRoleRank(a?.role) - getRoleRank(b?.role)
@@ -468,19 +495,25 @@ export function getPlayerDirectory(db, favorites = {}, options = {}) {
     const registeredEntry = registeredRole !== 'FLEX'
       ? getRequestedRoleEntry(roleEntries, registeredRole)
       : null
-    const avatarEntry = requestedEntry || registeredEntry || primaryEntry
+    const reliableRequestedEntry = hasReliableStats(requestedEntry) ? requestedEntry : null
+    const reliableRegisteredEntry = hasReliableStats(registeredEntry) ? registeredEntry : null
+    const avatarEntry = reliableRequestedEntry || reliableRegisteredEntry || primaryEntry
     const avatarSource = avatarEntry ? applyRoleEntryStats(merged, avatarEntry) : merged
-    const statsSource = requestedEntry || (!hasReliableStats(merged) ? primaryEntry : null)
+    const statsSource = reliableRequestedEntry || (!hasReliableStats(merged) ? primaryEntry : null)
     const displaySource = statsSource ? applyRoleEntryStats(merged, statsSource) : merged
     const avatar = getPlayerAvatarSource(avatarSource, { role: avatarEntry?.role || options.role })
     const heroNames = avatar.heroNames || []
     const playedRoles = roleEntries
+      .filter(hasReliableStats)
       .map(entry => normalizeRosterRole(entry.role))
       .filter((role, index, list) => role && list.indexOf(role) === index)
-    const role = requestedRole && (requestedEntry || normalizeRoleForHero(registeredRole) === requestedRole)
-      ? normalizeRosterRole(requestedRole)
-      : registeredRole
     const performanceRole = normalizeRosterRole(avatarEntry?.role || registeredRole)
+    const effectiveRole = registeredRole === 'FLEX' || (!reliableRegisteredEntry && primaryEntry)
+      ? performanceRole
+      : registeredRole
+    const role = requestedRole && (reliableRequestedEntry || normalizeRoleForHero(registeredRole) === requestedRole)
+      ? normalizeRosterRole(requestedRole)
+      : effectiveRole
     const flexRoles = safeArr(merged.allowed_flex).map(normalizeRosterRole).filter(role => role && role !== registeredRole)
 
     return {
@@ -495,6 +528,9 @@ export function getPlayerDirectory(db, favorites = {}, options = {}) {
       role,
       registeredRole,
       performanceRole,
+      performanceMapsPlayed: getRoleEntryMaps(avatarEntry),
+      performanceTimeMins: getRoleEntryTime(avatarEntry),
+      isRegisteredFlex: registeredRole === 'FLEX',
       playedRoles,
       flexRoles,
       teamShortName,
@@ -570,6 +606,40 @@ export function getRoleCounts(source) {
   counts.SUPPORT = counts.SUP
 
   return counts
+}
+
+function getCoreRosterKey(player) {
+  return normalize(
+    player?.identity?.playerId ||
+    player?.player_id ||
+    player?.id ||
+    player?.identity?.secondary ||
+    player?.identity?.primary ||
+    player?.player_name
+  )
+}
+
+function compareCoreRosterCandidates(a, b) {
+  return toNumber(b?.performanceMapsPlayed ?? b?.maps_played) - toNumber(a?.performanceMapsPlayed ?? a?.maps_played) ||
+    toNumber(b?.performanceTimeMins ?? b?.roleTimeMins ?? b?.raw_time_mins) - toNumber(a?.performanceTimeMins ?? a?.roleTimeMins ?? a?.raw_time_mins) ||
+    compareText(a?.identity?.primary || a?.display_name || a?.player_name, b?.identity?.primary || b?.display_name || b?.player_name)
+}
+
+export function getCoreRosterSlots(source) {
+  const rows = safeArr(source)
+    .filter(player => ['TANK', 'DPS', 'SUP'].includes(normalizeRosterRole(player?.role)))
+    .slice()
+    .sort(compareCoreRosterCandidates)
+  const used = new Set()
+
+  return CORE_ROSTER_SLOTS.map(slot => {
+    const player = rows.find(candidate => (
+      normalizeRosterRole(candidate?.role) === slot.role &&
+      !used.has(getCoreRosterKey(candidate))
+    )) || null
+    if (player) used.add(getCoreRosterKey(player))
+    return { ...slot, player }
+  })
 }
 
 export function getStaffDirectory(db) {
@@ -741,7 +811,7 @@ export function getActiveRosterFilters(state = {}) {
 
 export function getRosterSummary(db) {
   const teams = getTeamDirectory(db)
-  const roleCounts = getRoleCounts(db)
+  const roleCounts = getRoleCounts(getPlayerDirectory(db))
   const staffCounts = getStaffCounts(db)
 
   return {

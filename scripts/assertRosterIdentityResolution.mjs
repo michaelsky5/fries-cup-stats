@@ -3,7 +3,15 @@ import { existsSync } from 'node:fs'
 
 import { getShareHeroArtwork } from '../src/features/player-share/heroShareArtworkResolver.js'
 import { formatOwHeroName, getOwHeroAssetKey, getOwHeroRole } from '../src/lib/heroes.js'
-import { getPlayerDirectory, getPlayerRoleBreakdown } from '../src/lib/rosterSelectors.js'
+import { getFavoritePlayersOverview } from '../src/lib/followingSelectors.js'
+import {
+  getCompetitiveRoleLabel,
+  getCoreRosterSlots,
+  getPlayerDirectory,
+  getPlayerRoleBreakdown,
+  getRoleCounts,
+  getTeamDirectory
+} from '../src/lib/rosterSelectors.js'
 
 const sharedNickname = '小海'
 const db = {
@@ -170,6 +178,7 @@ const roleAwareDb = {
     { player_id: 'PLAYER-EVER', player_name: 'EVER#53569', display_name: 'EVER', role: 'TANK' },
     { player_id: 'PLAYER-XIAOWAI', player_name: '小歪#52137', display_name: '小歪', role: 'DPS' },
     { player_id: 'PLAYER-FLEX', player_name: 'FlexPlayer#5000', display_name: 'FlexPlayer', role: 'FLEX' },
+    { player_id: 'PLAYER-FLEX-HYBRID', player_name: 'HybridFlex#5500', display_name: 'HybridFlex', role: 'FLEX' },
     { player_id: 'PLAYER-FIXED-SUPPORT', player_name: 'FixedSupport#6000', display_name: 'FixedSupport', role: 'SUP' }
   ],
   player_totals: [
@@ -210,6 +219,18 @@ const roleAwareDb = {
       }
     },
     {
+      player_id: 'PLAYER-FLEX-HYBRID',
+      role: 'DPS',
+      maps_played: 4,
+      raw_time_mins: 27.8,
+      most_played_hero: 'Hazard',
+      top_3_heroes: ['Hazard', 'Anran'],
+      role_breakdown: {
+        TANK: { maps_played: 2, raw_time_mins: 11.2, most_played_hero: 'Hazard', top_3_heroes: ['Hazard'] },
+        DPS: { maps_played: 2, raw_time_mins: 16.6, most_played_hero: 'Anran', top_3_heroes: ['Anran'] }
+      }
+    },
+    {
       player_id: 'PLAYER-FIXED-SUPPORT',
       role: 'DPS',
       maps_played: 5,
@@ -228,6 +249,7 @@ const roleAwareDirectory = getPlayerDirectory(roleAwareDb, {})
 const ever = roleAwareDirectory.find(player => player.player_id === 'PLAYER-EVER')
 const xiaowai = roleAwareDirectory.find(player => player.player_id === 'PLAYER-XIAOWAI')
 const flexPlayer = roleAwareDirectory.find(player => player.player_id === 'PLAYER-FLEX')
+const hybridFlex = roleAwareDirectory.find(player => player.player_id === 'PLAYER-FLEX-HYBRID')
 const fixedSupport = roleAwareDirectory.find(player => player.player_id === 'PLAYER-FIXED-SUPPORT')
 
 assert.equal(ever?.role, 'TANK')
@@ -236,13 +258,88 @@ assert.equal(getPlayerRoleBreakdown(ever, 'TANK')?.avg_block, '5904.396')
 assert.equal(xiaowai?.role, 'DPS')
 assert.equal(xiaowai?.avatar?.heroName, 'Tracer')
 assert.equal(getPlayerRoleBreakdown(xiaowai, 'DPS')?.avg_dmg, '6893.407')
-assert.equal(flexPlayer?.role, 'FLEX')
+assert.equal(flexPlayer?.role, 'SUP')
 assert.equal(flexPlayer?.registeredRole, 'FLEX')
 assert.equal(flexPlayer?.performanceRole, 'SUP')
 assert.equal(flexPlayer?.avatar?.heroName, 'Kiriko')
+assert.equal(flexPlayer?.isRegisteredFlex, true)
+assert.equal(getCompetitiveRoleLabel(flexPlayer?.role), '支援')
+assert.equal(hybridFlex?.role, 'DPS')
+assert.equal(hybridFlex?.registeredRole, 'FLEX')
+assert.equal(hybridFlex?.performanceRole, 'DPS')
+assert.equal(hybridFlex?.performanceMapsPlayed, 2)
+assert.equal(hybridFlex?.performanceTimeMins, 16.6)
+assert.equal(hybridFlex?.avatar?.heroName, 'Anran')
 assert.equal(fixedSupport?.role, 'SUP')
 assert.equal(fixedSupport?.performanceRole, 'SUP')
 assert.equal(fixedSupport?.avatar?.heroName, 'Juno')
+
+assert.deepEqual(getRoleCounts(roleAwareDirectory), {
+  TANK: 1,
+  DPS: 2,
+  SUP: 2,
+  SUPPORT: 2,
+  FLEX: 0
+})
+const roleTeamDb = {
+  ...roleAwareDb,
+  teams: [{
+    team_id: 'ROLE-TEAM',
+    team_name: 'Role Team',
+    team_short_name: 'ROLE',
+    player_ids: roleAwareDb.players.map(player => player.player_id)
+  }],
+  players: roleAwareDb.players.map(player => ({ ...player, team_id: 'ROLE-TEAM' }))
+}
+assert.deepEqual(getTeamDirectory(roleTeamDb)[0]?.roleCounts, {
+  TANK: 1,
+  DPS: 2,
+  SUP: 2,
+  SUPPORT: 2,
+  FLEX: 0
+})
+assert.equal(
+  getFavoritePlayersOverview(roleTeamDb, { favoritePlayerIds: ['PLAYER-FLEX'] })[0]?.role,
+  'SUP'
+)
+assert.deepEqual(
+  getCoreRosterSlots(roleAwareDirectory).map(slot => [slot.role, slot.player?.player_id || null]),
+  [
+    ['TANK', 'PLAYER-EVER'],
+    ['DPS', 'PLAYER-FLEX-HYBRID'],
+    ['DPS', 'PLAYER-XIAOWAI'],
+    ['SUP', 'PLAYER-FLEX'],
+    ['SUP', 'PLAYER-FIXED-SUPPORT']
+  ]
+)
+assert.equal(
+  getCoreRosterSlots(roleAwareDirectory.filter(player => player.player_id !== 'PLAYER-FIXED-SUPPORT'))[4].player,
+  null
+)
+
+const offRolePlayer = getPlayerDirectory({
+  teams: [],
+  players: [
+    { player_id: 'PLAYER-OFFROLE', player_name: 'OffRole#6500', display_name: 'OffRole', role: 'SUP' }
+  ],
+  player_totals: [
+    {
+      player_id: 'PLAYER-OFFROLE',
+      role: 'DPS',
+      maps_played: 3,
+      raw_time_mins: 30,
+      most_played_hero: 'Freja',
+      top_3_heroes: ['Freja'],
+      role_breakdown: {
+        DPS: { maps_played: 3, raw_time_mins: 30, most_played_hero: 'Freja', top_3_heroes: ['Freja'] }
+      }
+    }
+  ]
+})[0]
+assert.equal(offRolePlayer?.registeredRole, 'SUP')
+assert.equal(offRolePlayer?.performanceRole, 'DPS')
+assert.equal(offRolePlayer?.role, 'DPS')
+assert.equal(offRolePlayer?.avatar?.heroName, 'Freja')
 
 assert.equal(formatOwHeroName('D.Mon', 'zh-CN'), 'D.Mon')
 assert.equal(formatOwHeroName('DMon', 'en-US'), 'D.Mon')

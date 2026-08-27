@@ -11,6 +11,7 @@ import {
   parseSeasonFavoritesImport,
   sanitizeFavoritesForSeason
 } from '../index.js'
+import { getPlayerDirectory } from '../../../lib/rosterSelectors.js'
 import FavoritePlayerOption from './FavoritePlayerOption.jsx'
 import FavoriteSelectedPlayerRow from './FavoriteSelectedPlayerRow.jsx'
 import FavoriteSelectedTeamRow from './FavoriteSelectedTeamRow.jsx'
@@ -164,7 +165,7 @@ export default function FavoriteManagerDialog({
   }, [db])
 
   const allPlayers = useMemo(() => {
-    return safeArr(db?.players)
+    return getPlayerDirectory(db)
       .filter(player => getPlayerFavoriteId(player))
       .sort((a, b) => getPlayerDisplayName(a).localeCompare(getPlayerDisplayName(b)))
   }, [db])

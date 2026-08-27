@@ -1,5 +1,5 @@
 import { getRoleColor } from '../../../lib/leaderboardSelectors.js'
-import { getRosterRoleLabel } from '../../../lib/rosterSelectors.js'
+import { getCompetitiveRoleLabel } from '../../../lib/rosterSelectors.js'
 import styles from './MatchDetail.module.css'
 
 function Roster({ title, players, locale = 'zh-CN' }) {
@@ -13,7 +13,7 @@ function Roster({ title, players, locale = 'zh-CN' }) {
             {player.battleTag ? <small title={player.battleTag}>{player.battleTag}</small> : null}
           </span>
           <span className={styles.roleLabel} style={{ color: getRoleColor(player.role) }}>
-            {getRosterRoleLabel(player.role, locale)}
+            {getCompetitiveRoleLabel(player.role, locale)}
           </span>
         </div>
       )) : (

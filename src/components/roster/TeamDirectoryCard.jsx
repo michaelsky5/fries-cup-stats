@@ -25,8 +25,7 @@ function TeamRosterSplit({ team }) {
   const roles = [
     { key: 'TANK', className: styles.roleTank, label: '重装' },
     { key: 'DPS', className: styles.roleDps, label: '输出' },
-    { key: 'SUP', className: styles.roleSupport, label: '支援' },
-    ...(counts.FLEX ? [{ key: 'FLEX', className: styles.roleFlex, label: '灵活' }] : [])
+    { key: 'SUP', className: styles.roleSupport, label: '支援' }
   ]
 
   return (
