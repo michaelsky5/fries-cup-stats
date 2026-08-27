@@ -11,7 +11,7 @@ import {
   parseSeasonFavoritesImport,
   sanitizeFavoritesForSeason
 } from '../index.js'
-import { getPlayerDirectory } from '../../../lib/rosterSelectors.js'
+import { getCompetitiveRoleLabel, getPlayerDirectory } from '../../../lib/rosterSelectors.js'
 import FavoritePlayerOption from './FavoritePlayerOption.jsx'
 import FavoriteSelectedPlayerRow from './FavoriteSelectedPlayerRow.jsx'
 import FavoriteSelectedTeamRow from './FavoriteSelectedTeamRow.jsx'
@@ -19,6 +19,7 @@ import FavoriteTeamOption from './FavoriteTeamOption.jsx'
 import styles from './FavoriteManagerDialog.module.css'
 
 const safeArr = value => Array.isArray(value) ? value : []
+const COMPETITIVE_ROLE_FILTERS = ['TANK', 'DPS', 'SUP']
 
 function normalize(value) {
   return String(value ?? '').trim()
@@ -195,10 +196,6 @@ export default function FavoriteManagerDialog({
       label: getTeamShortName(team)
     }))
   }, [allTeams])
-
-  const roleFilterOptions = useMemo(() => {
-    return Array.from(new Set(allPlayers.map(player => player.role).filter(Boolean))).sort()
-  }, [allPlayers])
 
   const filteredPlayers = useMemo(() => {
     const query = normalizeKey(playerQuery)
@@ -471,8 +468,8 @@ export default function FavoriteManagerDialog({
                       <span>职责</span>
                       <select value={roleFilter} onChange={event => setRoleFilter(event.target.value)}>
                         <option value="ALL">全部职责</option>
-                        {roleFilterOptions.map(role => (
-                          <option key={role} value={role}>{role}</option>
+                        {COMPETITIVE_ROLE_FILTERS.map(role => (
+                          <option key={role} value={role}>{getCompetitiveRoleLabel(role)}</option>
                         ))}
                       </select>
                     </label>

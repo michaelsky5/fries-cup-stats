@@ -1,4 +1,5 @@
 import { getPlayerBattleTag, getPlayerDisplayName, getPlayerFavoriteId } from '../favoritesSelectors.js'
+import { getCompetitiveRoleLabel } from '../../../lib/rosterSelectors.js'
 import styles from './FavoriteManagerDialog.module.css'
 
 export default function FavoriteSelectedPlayerRow({
@@ -27,7 +28,7 @@ export default function FavoriteSelectedPlayerRow({
       <div className={styles.rowText}>
         <strong>{displayName}</strong>
         {battleTag ? <em>{battleTag}</em> : null}
-        <span>{player.team_short_name || player.team_name || 'TBD'} · {player.role || 'FLEX'}</span>
+        <span>{player.team_short_name || player.team_name || 'TBD'} · {getCompetitiveRoleLabel(player.role)}</span>
       </div>
       <div className={styles.rowActions}>
         <button type="button" className={styles.orderButton} onClick={() => onMove(index, index - 1)} disabled={index <= 0} aria-label="上移">↑</button>

@@ -4,6 +4,7 @@ import {
   getPlayerFavoriteId,
   getTeamShortName
 } from '../favoritesSelectors.js'
+import { getCompetitiveRoleLabel } from '../../../lib/rosterSelectors.js'
 import styles from './FavoriteManagerDialog.module.css'
 
 export default function FavoritePlayerOption({ player, team, selected, disabled, onToggle }) {
@@ -17,7 +18,7 @@ export default function FavoritePlayerOption({ player, team, selected, disabled,
       <div className={styles.optionText}>
         <strong>{displayName}</strong>
         {battleTag ? <em>{battleTag}</em> : null}
-        <span>{getTeamShortName(team || player)} · {player.role || 'FLEX'}</span>
+        <span>{getTeamShortName(team || player)} · {getCompetitiveRoleLabel(player.role)}</span>
       </div>
       <div className={styles.optionActionRail}>
         <button type="button" onClick={() => onToggle(playerId)} disabled={selected || (disabled && !selected)}>

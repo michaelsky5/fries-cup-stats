@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { formatOwHeroNames } from '../../lib/heroes.js'
+import { getCompetitiveRoleLabel } from '../../lib/rosterSelectors.js'
 import styles from '../../pages/following/FollowingPage.module.css'
 
 export default function FollowedPlayerCard({ overview, withSeason, locale = 'zh-CN' }) {
@@ -19,7 +20,7 @@ export default function FollowedPlayerCard({ overview, withSeason, locale = 'zh-
         </div>
         <div className={styles.playerTags}>
           <span className={styles.playerTeamBadge}>{overview.teamShortName || 'TBD'}</span>
-          <span className={styles.playerRoleBadge}>{overview.role}</span>
+          <span className={styles.playerRoleBadge}>{getCompetitiveRoleLabel(overview.role, locale)}</span>
         </div>
       </div>
 
