@@ -366,3 +366,41 @@
     box-shadow: 6px 6px 0 rgba(244, 195, 32, 0.42);
   }
 }
+
+.syncLine {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.syncLine span {
+  width: 34%;
+  height: 100%;
+  display: block;
+  background: var(--portal-yellow);
+  animation: contextSync 1.2s ease-in-out infinite;
+}
+
+.contextBar[data-syncing="true"] .eventMeta > span:first-child {
+  color: var(--portal-yellow);
+}
+
+@keyframes contextSync {
+  0% {
+    transform: translateX(-105%);
+  }
+
+  100% {
+    transform: translateX(295%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .syncLine span {
+    animation-duration: 2.4s;
+  }
+}

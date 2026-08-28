@@ -121,12 +121,15 @@ export default function EventContextBar({
   updatedAtText = '',
   seasonStatus,
   activeSummary,
+  isSyncing = false,
   onSeasonChange
 }) {
-  const statusLabel = getReadableStatus(seasonStatus, locale)
+  const statusLabel = isSyncing
+    ? pickLocale(locale, '正在同步数据', 'Syncing Data')
+    : getReadableStatus(seasonStatus, locale)
 
   return (
-    <section className={styles.contextBar}>
+    <section className={styles.contextBar} data-syncing={isSyncing ? 'true' : 'false'}>
       <div className={styles.eventLead}>
         {season?.logoUrl ? (
           <img
@@ -146,7 +149,7 @@ export default function EventContextBar({
       </div>
 
       <div className={styles.eventMeta}>
-        <span>{pickLocale(locale, '状态：', 'Status: ')}{statusLabel}</span>
+        <span aria-live="polite">{pickLocale(locale, '状态：', 'Status: ')}{statusLabel}</span>
         <span>
           {pickLocale(locale, '更新 ', 'Updated ')}<span data-i18n-ignore>{updatedAtText || '-'}</span>
         </span>
@@ -162,6 +165,7 @@ export default function EventContextBar({
           onSeasonChange={onSeasonChange}
         />
       </div>
+      {isSyncing ? <i className={styles.syncLine} aria-hidden="true"><span /></i> : null}
     </section>
   )
 }

@@ -3,6 +3,7 @@ import AdvanceEmptyState from './AdvanceEmptyState.jsx'
 import AdvancePhaseNav from './AdvancePhaseNav.jsx'
 import BracketRound from './BracketRound.jsx'
 import FixedDoubleEliminationBracket from './FixedDoubleEliminationBracket.jsx'
+import SingleEliminationBracket from './SingleEliminationBracket.jsx'
 import styles from '../../pages/advance/AdvancePage.module.css'
 
 function roundType(round) {
@@ -23,6 +24,8 @@ export default function PlayoffBracket({
   isFavoriteTeam,
   isPrimaryFavoriteTeam,
   showFilter = true,
+  singleElimination = false,
+  locale = 'zh-CN',
   emptyTitle,
   emptyDescription
 }) {
@@ -60,6 +63,22 @@ export default function PlayoffBracket({
         eyebrow={eyebrow}
         title={emptyTitle || t('advance.bracket.emptyTitle', '暂无晋级图')}
         description={emptyDescription || t('advance.bracket.emptyDesc', '该阶段对阵尚未公布。')}
+      />
+    )
+  }
+
+  if (singleElimination) {
+    return (
+      <SingleEliminationBracket
+        bracket={bracket}
+        title={title}
+        eyebrow={eyebrow}
+        locale={locale}
+        t={t}
+        seasonId={seasonId}
+        withSeason={withSeason}
+        isFavoriteTeam={isFavoriteTeam}
+        isPrimaryFavoriteTeam={isPrimaryFavoriteTeam}
       />
     )
   }

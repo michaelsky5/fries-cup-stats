@@ -12,7 +12,7 @@ import {
   withSeason as buildSeasonLink
 } from '../config/seasons.js'
 import { createTranslator, getStoredLocale, setStoredLocale } from '../lib/i18n.js'
-import { getDb, refreshDb } from '../lib/db.js'
+import { isLocalDbFallback, refreshDb } from '../lib/db.js'
 import { formatUpdatedAt } from '../lib/format.js'
 import { getGlobalSummary } from '../lib/selectors.js'
 import { getSeasonStatus } from '../lib/homeSelectors.js'
@@ -32,6 +32,7 @@ const PRIMARY_NAV = [
 ]
 
 const DATA_REFRESH_INTERVAL_MS = 60_000
+const FALLBACK_REFRESH_INTERVAL_MS = 15_000
 
 function setMetaContent(selector, attributes, content) {
   let node = document.head.querySelector(selector)
@@ -99,6 +100,8 @@ export default function DataLayout() {
   const [db, setDb] = useState(null)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isUsingFallback, setIsUsingFallback] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -110,24 +113,24 @@ export default function DataLayout() {
   useEffect(() => {
     let alive = true
 
-    getDb(seasonId)
+    setIsLoading(true)
+    setIsRefreshing(false)
+    setIsUsingFallback(false)
+    setError('')
+
+    refreshDb(seasonId)
       .then(data => {
         if (!alive) return
+        const fallback = isLocalDbFallback(data)
         setDb(data)
+        setIsUsingFallback(fallback)
+        setIsRefreshing(fallback)
         setError('')
-
-        refreshDb(seasonId)
-          .then(freshData => {
-            if (!alive) return
-            setDb(current => current?.updated_at === freshData?.updated_at ? current : freshData)
-          })
-          .catch(() => {
-            // The bundled snapshot is already usable; keep it when the live refresh is unavailable.
-          })
       })
       .catch(() => {
         if (!alive) return
         setDb(null)
+        setIsUsingFallback(false)
         setError('DATA_LOAD_FAILED')
       })
       .finally(() => {
@@ -142,18 +145,28 @@ export default function DataLayout() {
 
   useEffect(() => {
     let alive = true
+    let requestInFlight = false
+    let keepSyncing = isUsingFallback
 
     const refreshPublishedData = () => {
-      if (document.visibilityState === 'hidden') return
+      if (document.visibilityState === 'hidden' || requestInFlight) return
 
+      requestInFlight = true
+      setIsRefreshing(true)
       refreshDb(seasonId)
         .then(data => {
           if (!alive) return
+          keepSyncing = isLocalDbFallback(data)
           setDb(current => current?.updated_at === data?.updated_at ? current : data)
+          setIsUsingFallback(keepSyncing)
           setError('')
         })
         .catch(() => {
           // Keep the last valid public snapshot on screen when a background refresh fails.
+        })
+        .finally(() => {
+          requestInFlight = false
+          if (alive) setIsRefreshing(keepSyncing)
         })
     }
 
@@ -161,21 +174,28 @@ export default function DataLayout() {
       if (document.visibilityState === 'visible') refreshPublishedData()
     }
 
-    const interval = globalThis.setInterval(refreshPublishedData, DATA_REFRESH_INTERVAL_MS)
+    if (isUsingFallback) refreshPublishedData()
+    const interval = globalThis.setInterval(
+      refreshPublishedData,
+      isUsingFallback ? FALLBACK_REFRESH_INTERVAL_MS : DATA_REFRESH_INTERVAL_MS
+    )
     globalThis.addEventListener('focus', refreshPublishedData)
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
       alive = false
+      requestInFlight = false
       globalThis.clearInterval(interval)
       globalThis.removeEventListener('focus', refreshPublishedData)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [seasonId])
+  }, [isUsingFallback, seasonId])
 
-  const summary = getGlobalSummary(db)
-  const seasonStatus = getSeasonStatus(db, season)
-  const updatedAtText = isLoading
+  const visibleDb = isLoading ? null : db
+  const summary = getGlobalSummary(visibleDb)
+  const seasonStatus = getSeasonStatus(visibleDb, season)
+  const isSyncing = isLoading || isRefreshing || isUsingFallback
+  const updatedAtText = isSyncing
     ? t('layout.meta.loading')
     : formatUpdatedAt(summary.updatedAt, t('layout.meta.empty'))
   const reviewAvailable = seasonHasReview(season, db)
@@ -223,6 +243,7 @@ export default function DataLayout() {
     setDb(null)
     setError('')
     setIsLoading(true)
+    setIsUsingFallback(false)
     setSeasonId(resolvedSeasonId)
 
     if (resolveSeasonFromUrl(params.get('season'))) {
@@ -237,6 +258,7 @@ export default function DataLayout() {
     setDb(null)
     setError('')
     setIsLoading(true)
+    setIsUsingFallback(false)
     setStoredSeasonId(nextSeasonId)
     setSeasonId(nextSeasonId)
     const baseSearch = location.pathname === '/matches' || location.pathname === '/advance' || location.pathname === '/standings'
@@ -348,16 +370,29 @@ export default function DataLayout() {
           updatedAtText={updatedAtText}
           seasonStatus={seasonStatus}
           activeSummary={summary}
+          isSyncing={isSyncing}
           onSeasonChange={handleSeasonChange}
         />
       </header>
 
       <div className={styles.pageFrame}>
-        <main className={styles.main}>
+        <main className={styles.main} aria-busy={isLoading ? 'true' : 'false'}>
           {isLoading ? (
-            <div className={styles.systemBox}>
-              <div className={styles.loader}></div>
-              <div className={styles.systemText}>{t('layout.state.loading')}</div>
+            <div className={`${styles.systemBox} ${styles.syncBox}`} role="status" aria-live="polite">
+              <span className={styles.syncKicker}>LIVE DATA SYNC</span>
+              <div className={styles.syncMark} aria-hidden="true"><span /></div>
+              <strong className={styles.syncTitle}>{t('layout.state.loading')}</strong>
+              <p className={styles.syncDescription}>
+                {t('layout.state.loadingDesc', '正在核对最新发布版本、赛程、赛果与晋级状态，请稍候。')}
+              </p>
+              <div
+                className={styles.syncProgress}
+                role="progressbar"
+                aria-label={t('layout.state.loadingProgress', '赛事数据同步进度')}
+              >
+                <span />
+              </div>
+              <small>{locale === 'en-US' ? season?.name?.en : season?.name?.zh}</small>
             </div>
           ) : error ? (
             <div className={`${styles.systemBox} ${styles.errorBox}`}>
@@ -370,7 +405,17 @@ export default function DataLayout() {
             </div>
           ) : (
             <FavoritesProvider value={outletContext}>
-              <Outlet context={outletContext} />
+              <>
+                {isUsingFallback ? (
+                  <div className={styles.fallbackSyncNotice} role="status" aria-live="polite">
+                    <span>{t('layout.state.fallbackKicker', 'LIVE DATA SYNC')}</span>
+                    <strong>{t('layout.state.fallbackTitle', '正在同步最新发布数据')}</strong>
+                    <p>{t('layout.state.fallbackDesc', '当前暂时显示上次可用快照；同步完成后页面会自动更新。')}</p>
+                    <i aria-hidden="true"><span /></i>
+                  </div>
+                ) : null}
+                <Outlet context={outletContext} />
+              </>
             </FavoritesProvider>
           )}
         </main>

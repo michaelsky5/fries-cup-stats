@@ -96,8 +96,28 @@ const dictionary = {
     'en-US': 'No Data'
   },
   'layout.state.loading': {
-    'zh-CN': '连接数据',
-    'en-US': 'Loading match data'
+    'zh-CN': '正在同步最新赛事数据',
+    'en-US': 'Syncing the latest event data'
+  },
+  'layout.state.loadingDesc': {
+    'zh-CN': '正在核对最新发布版本、赛程、赛果与晋级状态，请稍候。',
+    'en-US': 'Checking the latest published version, schedule, results, and advancement status.'
+  },
+  'layout.state.loadingProgress': {
+    'zh-CN': '赛事数据同步进度',
+    'en-US': 'Event data sync progress'
+  },
+  'layout.state.fallbackKicker': {
+    'zh-CN': 'LIVE DATA SYNC',
+    'en-US': 'LIVE DATA SYNC'
+  },
+  'layout.state.fallbackTitle': {
+    'zh-CN': '正在同步最新发布数据',
+    'en-US': 'Syncing the latest published data'
+  },
+  'layout.state.fallbackDesc': {
+    'zh-CN': '当前暂时显示上次可用快照；同步完成后页面会自动更新。',
+    'en-US': 'The last available snapshot is shown temporarily and will update automatically when syncing finishes.'
   },
   'layout.state.error': {
     'zh-CN': '数据加载异常',

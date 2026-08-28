@@ -128,6 +128,8 @@ export default function AdvancePage() {
           isFavoriteTeam={isFavoriteTeam}
           isPrimaryFavoriteTeam={isPrimaryFavoriteTeam}
           showFilter={!isGroupSeason}
+          singleElimination={isGroupSeason}
+          locale={locale}
           emptyTitle={isGroupSeason ? t('advance.playoffs.groupEmptyTitle', '八强对阵待公布') : undefined}
           emptyDescription={isGroupSeason
             ? t('advance.playoffs.groupEmptyDesc', '小组赛各组前二确认后，由 System 发布八强单败对阵。八强赛与半决赛 FT3，季军赛与总决赛 FT4。')

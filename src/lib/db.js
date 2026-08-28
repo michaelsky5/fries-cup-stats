@@ -2,6 +2,7 @@ import { getSeasonById, getStoredSeasonId } from '../config/seasons.js'
 
 const dbCache = new Map()
 const reportCache = new Map()
+const dbSourceBySnapshot = new WeakMap()
 
 const REQUEST_TIMEOUT_MS = 12000
 const REVIEW_STAFF_FIELD_KEYS = [
@@ -235,12 +236,15 @@ function validatePublicDb(data, season) {
   return attachSeasonMeta(data, season)
 }
 
-async function fetchFirstAvailable(urls, errorCode, validate = data => data) {
+async function fetchFirstAvailableWithSource(urls, errorCode, validate = data => data) {
   const errors = []
 
   for (const url of urls) {
     try {
-      return validate(await fetchJson(url, errorCode))
+      return {
+        data: validate(await fetchJson(url, errorCode)),
+        sourceUrl: url
+      }
     } catch (error) {
       errors.push(`${url} (${error?.message || 'failed'})`)
     }
@@ -249,14 +253,29 @@ async function fetchFirstAvailable(urls, errorCode, validate = data => data) {
   throw new Error(`${errorCode}: ${errors.join(' | ')}`)
 }
 
+async function fetchFirstAvailable(urls, errorCode, validate = data => data) {
+  const result = await fetchFirstAvailableWithSource(urls, errorCode, validate)
+  return result.data
+}
+
+function markDbSource(data, sourceUrl, season) {
+  if (data && typeof data === 'object') {
+    dbSourceBySnapshot.set(data, {
+      kind: sourceUrl === season.localDataUrl ? 'local-fallback' : 'published',
+      sourceUrl
+    })
+  }
+  return data
+}
+
 async function fetchDb(season, options = {}) {
-  const data = await fetchFirstAvailable(
+  const { data, sourceUrl } = await fetchFirstAvailableWithSource(
     getDbUrls(season, options),
     'DATA_LOAD_FAILED',
     payload => validatePublicDb(payload, season)
   )
 
-  return hydrateReviewStaffPayload(data, season)
+  return markDbSource(await hydrateReviewStaffPayload(data, season), sourceUrl, season)
 }
 
 function getSnapshotTimestamp(data) {
@@ -276,6 +295,10 @@ export function selectNewestDbSnapshot(current, candidate) {
   }
 
   return candidate
+}
+
+export function isLocalDbFallback(data) {
+  return dbSourceBySnapshot.get(data)?.kind === 'local-fallback'
 }
 
 export async function getDb(seasonId) {
