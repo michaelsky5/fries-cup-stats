@@ -25,6 +25,36 @@ function getRoundTitle(round, locale) {
   return round?.label || round?.id || copy(locale, '淘汰赛', 'Playoffs')
 }
 
+function getRoundKicker(round, locale) {
+  const kind = getRoundKind(round)
+  if (kind === 'quarterfinal') return copy(locale, '八强阶段', 'Quarterfinals')
+  if (kind === 'semifinal') return copy(locale, '四强阶段', 'Semifinals')
+  if (kind === 'third') return copy(locale, '季军争夺', 'Third Place')
+  if (kind === 'grand') return copy(locale, '冠军争夺', 'Grand Finals')
+  return getRoundTitle(round, locale)
+}
+
+function getMatchCountLabel(count, locale) {
+  return copy(locale, `${count} 场比赛`, `${count} ${count === 1 ? 'match' : 'matches'}`)
+}
+
+function getTeamLabel(team, locale) {
+  return team?.short || team?.team_short_name || team?.name || team?.team_name || copy(locale, '待定', 'TBD')
+}
+
+function localizeMatch(match, round, locale) {
+  const roundTitle = getRoundTitle(round, locale)
+  const teamA = getTeamLabel(match?.teamA, locale)
+  const teamB = getTeamLabel(match?.teamB, locale)
+
+  return {
+    ...match,
+    round: roundTitle,
+    stage: roundTitle,
+    label: `${roundTitle} / ${teamA} ${copy(locale, '对阵', 'vs')} ${teamB}`
+  }
+}
+
 function isCompleted(match) {
   return ['completed', 'finished', 'final'].includes(String(match?.status || '').toLowerCase())
 }
@@ -55,16 +85,16 @@ function RoundColumn({
       <header className={styles.singleElimColumnHeader}>
         <b>{String(step).padStart(2, '0')}</b>
         <div>
-          <span>{round.id}</span>
+          <span>{getRoundKicker(round, locale)}</span>
           <strong>{getRoundTitle(round, locale)}</strong>
         </div>
-        <em>{round.matches.length} MATCHES</em>
+        <em>{getMatchCountLabel(round.matches.length, locale)}</em>
       </header>
       <div className={styles.singleElimMatches}>
         {round.matches.map(match => (
           <BracketMatchNode
             key={match.matchId || match.label}
-            match={match}
+            match={localizeMatch(match, round, locale)}
             seasonId={seasonId}
             t={t}
             withSeason={withSeason}
@@ -96,10 +126,10 @@ function MedalColumn({
       <header className={styles.singleElimColumnHeader}>
         <b>03</b>
         <div>
-          <span>FINALS DAY</span>
+          <span>{copy(locale, '奖牌赛', 'Finals Day')}</span>
           <strong>{copy(locale, '决赛日', 'Finals Day')}</strong>
         </div>
-        <em>{rounds.reduce((total, round) => total + round.matches.length, 0)} MATCHES</em>
+        <em>{getMatchCountLabel(rounds.reduce((total, round) => total + round.matches.length, 0), locale)}</em>
       </header>
       <div className={styles.singleElimMedalMatches}>
         {sortedRounds.map(round => {
@@ -107,13 +137,13 @@ function MedalColumn({
           return (
             <section key={round.id} className={styles[`singleElimMedal_${kind}`]}>
               <header>
-                <span>{round.id}</span>
+                <span>{getRoundKicker(round, locale)}</span>
                 <strong>{getRoundTitle(round, locale)}</strong>
               </header>
               {round.matches.map(match => (
                 <BracketMatchNode
                   key={match.matchId || match.label}
-                  match={match}
+                  match={localizeMatch(match, round, locale)}
                   seasonId={seasonId}
                   t={t}
                   withSeason={withSeason}
@@ -158,7 +188,7 @@ export default function SingleEliminationBracket({
     <div className={styles.phaseStack}>
       <section className={styles.singleElimDashboard}>
         <AdvancePhaseHero
-          eyebrow={eyebrow}
+          eyebrow={copy(locale, '八强季后赛', eyebrow || 'Top 8 Playoffs')}
           title={title}
           description={copy(
             locale,
@@ -181,14 +211,14 @@ export default function SingleEliminationBracket({
 
       <section className={styles.singleElimPath} aria-labelledby="single-elim-path-title">
         <header>
-          <span>ADVANCEMENT PATH</span>
+          <span>{copy(locale, '晋级路径', 'Advancement Path')}</span>
           <h2 id="single-elim-path-title">{copy(locale, '晋级路径', 'Advancement Path')}</h2>
         </header>
         <ol>
           {rounds.map((round, index) => (
             <li key={round.id}>
               <b>{String(index + 1).padStart(2, '0')}</b>
-              <span><strong>{getRoundTitle(round, locale)}</strong><em>{round.matches.length} {copy(locale, '场', 'matches')} · {index < 2 ? 'FT3' : 'FT4'}</em></span>
+              <span><strong>{getRoundTitle(round, locale)}</strong><em>{getMatchCountLabel(round.matches.length, locale)} · {index < 2 ? 'FT3' : 'FT4'}</em></span>
             </li>
           ))}
         </ol>
@@ -197,7 +227,7 @@ export default function SingleEliminationBracket({
       <section className={styles.singleElimBoard}>
         <header className={styles.sectionHeader}>
           <div>
-            <span className={styles.sectionLabel}>BRACKET ROUTE</span>
+            <span className={styles.sectionLabel}>{copy(locale, '晋级路线', 'Bracket Route')}</span>
             <h2>{copy(locale, '从八强到冠军', 'Road to the Championship')}</h2>
           </div>
           <p>{copy(locale, '对阵按真实晋级顺序排列；决赛日集中展示冠军与季军归属。', 'Matches follow the real advancement order, with both medal matches grouped on finals day.')}</p>

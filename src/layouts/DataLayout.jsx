@@ -100,7 +100,6 @@ export default function DataLayout() {
   const [db, setDb] = useState(null)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
-  const [isRefreshing, setIsRefreshing] = useState(false)
   const [isUsingFallback, setIsUsingFallback] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
@@ -114,7 +113,6 @@ export default function DataLayout() {
     let alive = true
 
     setIsLoading(true)
-    setIsRefreshing(false)
     setIsUsingFallback(false)
     setError('')
 
@@ -124,7 +122,6 @@ export default function DataLayout() {
         const fallback = isLocalDbFallback(data)
         setDb(data)
         setIsUsingFallback(fallback)
-        setIsRefreshing(fallback)
         setError('')
       })
       .catch(() => {
@@ -152,7 +149,6 @@ export default function DataLayout() {
       if (document.visibilityState === 'hidden' || requestInFlight) return
 
       requestInFlight = true
-      setIsRefreshing(true)
       refreshDb(seasonId)
         .then(data => {
           if (!alive) return
@@ -166,7 +162,6 @@ export default function DataLayout() {
         })
         .finally(() => {
           requestInFlight = false
-          if (alive) setIsRefreshing(keepSyncing)
         })
     }
 
@@ -194,7 +189,9 @@ export default function DataLayout() {
   const visibleDb = isLoading ? null : db
   const summary = getGlobalSummary(visibleDb)
   const seasonStatus = getSeasonStatus(visibleDb, season)
-  const isSyncing = isLoading || isRefreshing || isUsingFallback
+  // Keep routine refreshes invisible while the current snapshot remains usable.
+  // Only initial loading and local-fallback recovery need a visible sync state.
+  const isSyncing = isLoading || isUsingFallback
   const updatedAtText = isSyncing
     ? t('layout.meta.loading')
     : formatUpdatedAt(summary.updatedAt, t('layout.meta.empty'))
