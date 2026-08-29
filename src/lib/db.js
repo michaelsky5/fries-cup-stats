@@ -181,10 +181,15 @@ function getReportUrls(season) {
 
 async function fetchJson(url, errorCode, options = {}) {
   const controller = new AbortController()
+  const parentSignal = options.signal
+  const handleParentAbort = () => controller.abort(parentSignal?.reason)
   const timeout = globalThis.setTimeout(
     () => controller.abort(),
     options.timeoutMs || REQUEST_TIMEOUT_MS
   )
+
+  if (parentSignal?.aborted) controller.abort(parentSignal.reason)
+  else parentSignal?.addEventListener('abort', handleParentAbort, { once: true })
 
   try {
     const res = await fetch(url, {
@@ -195,6 +200,7 @@ async function fetchJson(url, errorCode, options = {}) {
     return await res.json()
   } finally {
     globalThis.clearTimeout(timeout)
+    parentSignal?.removeEventListener('abort', handleParentAbort)
   }
 }
 
@@ -364,6 +370,32 @@ async function fetchFirstAvailableWithSource(urls, errorCode, validate = data =>
   throw new Error(`${errorCode}: ${errors.join(' | ')}`)
 }
 
+async function fetchFastestAvailableWithSource(urls, errorCode, validate = data => data, fetchOptions = {}) {
+  const controller = new AbortController()
+  const errors = []
+
+  try {
+    return await Promise.any(urls.map(async url => {
+      try {
+        return {
+          data: validate(await fetchJson(url, errorCode, {
+            ...fetchOptions,
+            signal: controller.signal
+          })),
+          sourceUrl: url
+        }
+      } catch (error) {
+        errors.push(`${url}: ${error.message}`)
+        throw error
+      }
+    }))
+  } catch {
+    throw new Error(`${errorCode}: ${errors.join(' | ')}`)
+  } finally {
+    controller.abort()
+  }
+}
+
 async function fetchFirstAvailable(urls, errorCode, validate = data => data, fetchOptions = {}) {
   const result = await fetchFirstAvailableWithSource(urls, errorCode, validate, fetchOptions)
   return result.data
@@ -387,11 +419,15 @@ function markDbSource(data, sourceUrl, season, snapshot = {}) {
 }
 
 async function fetchDbFromUrls(season, urls, snapshot = {}, fetchOptions = {}) {
-  const { data, sourceUrl } = await fetchFirstAvailableWithSource(
+  const { strategy, ...requestOptions } = fetchOptions
+  const fetchAvailable = strategy === 'fastest'
+    ? fetchFastestAvailableWithSource
+    : fetchFirstAvailableWithSource
+  const { data, sourceUrl } = await fetchAvailable(
     urls,
     'DATA_LOAD_FAILED',
     payload => validatePublicDb(payload, season),
-    fetchOptions
+    requestOptions
   )
 
   return markDbSource(await hydrateReviewStaffPayload(data, season), sourceUrl, season, snapshot)
@@ -460,10 +496,12 @@ async function persistDb(data, season) {
   }
 }
 
-async function fetchPublishedDb(season, metadata, current) {
+async function fetchPublishedDb(season, metadata) {
   const urls = getVersionedDbUrls(season, metadata.version)
-  const requestUrls = current ? urls.slice(0, 1) : urls
-  const data = await fetchDbFromUrls(season, requestUrls, metadata, { cache: 'force-cache' })
+  const data = await fetchDbFromUrls(season, urls, metadata, {
+    cache: 'force-cache',
+    strategy: 'fastest'
+  })
   await persistDb(data, season)
   return data
 }
@@ -534,7 +572,7 @@ export async function refreshDb(seasonId) {
       if (current && getDbSnapshotVersion(current) === metadata.version) return current
 
       try {
-        const fetchedData = await fetchPublishedDb(season, metadata, current)
+        const fetchedData = await fetchPublishedDb(season, metadata)
         const data = selectNewestDbSnapshot(current, fetchedData)
         dbCache.set(season.id, data)
         return data
