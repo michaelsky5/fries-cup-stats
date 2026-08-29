@@ -135,7 +135,7 @@ function BroadcastItem({ label, value, href }) {
   return <span>{content}</span>
 }
 
-function PosterBroadcast({ broadcast }) {
+function PosterBroadcast({ broadcast, t }) {
   if (!broadcast?.hasPublicInfo) return null
 
   return (
@@ -143,13 +143,14 @@ function PosterBroadcast({ broadcast }) {
       {broadcast.streamLinks.map((stream, index) => (
         <BroadcastItem
           key={`${stream.url}-${index}`}
-          label={stream.label || '\u76f4\u64ad\u95f4'}
+          label={stream.label || t('broadcast.stream', '\u76f4\u64ad\u95f4')}
           value={stream.url}
           href={stream.url}
         />
       ))}
-      <BroadcastItem label={'\u89e3\u8bf4'} value={broadcast.casterText} />
-      <BroadcastItem label={'\u8d5b\u7ba1'} value={broadcast.refereeText} />
+      <BroadcastItem label={t('broadcast.caster', '\u89e3\u8bf4')} value={broadcast.casterText} />
+      <BroadcastItem label={t('broadcast.referee', '\u8d5b\u7ba1')} value={broadcast.refereeText} />
+      <BroadcastItem label={t('broadcast.director', '\u5bfc\u64ad')} value={broadcast.directorText} />
     </div>
   )
 }
@@ -226,7 +227,7 @@ export default function MatchPosterHero({
           <span>{dossier.mapCountLabel}</span>
           {dossier.internalId ? <em>{dossier.internalId}</em> : null}
         </div>
-        <PosterBroadcast broadcast={dossier.broadcast} />
+        <PosterBroadcast broadcast={dossier.broadcast} t={t} />
       </div>
     </section>
   )

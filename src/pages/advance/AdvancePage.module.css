@@ -3239,6 +3239,10 @@
   text-decoration: none;
 }
 
+.playoffTeamSlotResolved {
+  grid-template-columns: 24px minmax(0, 1fr) auto 18px;
+}
+
 .playoffTeamSlot:hover {
   background: color-mix(in srgb, var(--portal-yellow) 36%, var(--portal-cream));
 }
@@ -4694,20 +4698,70 @@
   padding-block: 88px;
 }
 
-.singleElimGrid .bracketNode {
+.singleElimGrid .playoffMatchCard {
   align-self: center;
-  min-height: 120px;
+  min-height: 132px;
   gap: 9px;
   padding: 11px;
+  border-width: 2px;
   box-shadow: 6px 6px 0 rgba(42, 42, 42, 0.1);
 }
 
-.singleElimGrid .bracketConnector {
-  display: none;
+.singleElimGrid .playoffMatchCard > header strong {
+  padding: 5px 7px;
+  font-size: 11px;
 }
 
-.singleElimGrid .bracketTeam {
-  min-height: 40px;
+.singleElimGrid .playoffMatchCard > header span,
+.singleElimGrid .playoffMatchCard > header time {
+  font-size: 9px;
+}
+
+.singleElimGrid .bracketMatchDetails {
+  min-height: 26px;
+  font-size: 9px;
+}
+
+.singleElimGrid .playoffMatchTeams {
+  gap: 6px;
+}
+
+.singleElimGrid .playoffTeamSlot {
+  min-height: 44px;
+  grid-template-columns: 48px 34px minmax(0, 1fr) auto 24px;
+  gap: 7px;
+  padding: 4px 7px;
+}
+
+.singleElimGrid .playoffTeamSlotResolved {
+  grid-template-columns: 34px minmax(0, 1fr) auto 24px;
+}
+
+.singleElimGrid .playoffSlotSource {
+  min-height: 24px;
+  font-size: 9px;
+}
+
+.singleElimGrid .playoffTeamLogo {
+  width: 34px;
+  height: 34px;
+}
+
+.singleElimGrid .playoffTeamLogo img {
+  width: 28px;
+  height: 28px;
+}
+
+.singleElimGrid .playoffTeamIdentity strong {
+  font-size: 14px;
+}
+
+.singleElimGrid .playoffTeamIdentity em {
+  font-size: 9px;
+}
+
+.singleElimGrid .playoffTeamSlot > b {
+  font-size: 17px;
 }
 
 .singleElimMedalMatches {
@@ -4759,7 +4813,7 @@
   color: var(--portal-black);
 }
 
-.singleElimMedalMatches .bracketNode {
+.singleElimMedalMatches .playoffMatchCard {
   border: 0;
   box-shadow: none;
 }

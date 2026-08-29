@@ -140,6 +140,7 @@ function normalizeMatch(match, roundLabel, phase) {
     stage: normalizeText(match?.stage),
     round: normalizeText(match?.round || roundLabel),
     label: normalizeText(match?.match_display_name || match?.label || match?.name || matchId),
+    format: normalizeText(match?.format || match?.series_format || match?.seriesFormat),
     scheduledAt: normalizeText(match?.scheduled_at || match?.scheduledAt || match?.match_date || match?.date),
     raw: match
   }

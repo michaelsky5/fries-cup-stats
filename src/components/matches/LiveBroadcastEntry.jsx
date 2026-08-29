@@ -63,7 +63,8 @@ function getNicknameList(people) {
 function getBroadcastStaffGroups(broadcast) {
   return {
     casterText: getNicknameList(broadcast?.casters),
-    refereeText: getNicknameList(broadcast?.referees)
+    refereeText: getNicknameList(broadcast?.referees),
+    directorText: getNicknameList(broadcast?.directors)
   }
 }
 
@@ -80,7 +81,7 @@ function BroadcastTeam({ team, source, seasonId, align = 'left' }) {
 }
 
 function BroadcastCard({ row, index }) {
-  const { withSeason = path => path, seasonId } = useOutletContext()
+  const { withSeason = path => path, seasonId, t = (key, fallback) => fallback || key } = useOutletContext()
   const location = useLocation()
   const { match, broadcast } = row
   const teams = getMatchDisplayTeams(match)
@@ -99,6 +100,9 @@ function BroadcastCard({ row, index }) {
     : status === 'live'
       ? '观看直播'
       : '进入直播间'
+  const casterLabel = t('broadcast.caster', '解说')
+  const refereeLabel = t('broadcast.referee', '赛管')
+  const directorLabel = t('broadcast.director', '导播')
 
   return (
     <article className={`${styles.broadcastCard} ${statusClass}`}>
@@ -125,18 +129,24 @@ function BroadcastCard({ row, index }) {
       <footer className={styles.broadcastFooter}>
         <div className={styles.broadcastCrew}>
           <span>{match?.format || 'TBD'}</span>
-          {staff.casterText || staff.refereeText ? (
+          {staff.casterText || staff.refereeText || staff.directorText ? (
             <div className={styles.broadcastStaffLine}>
               {staff.casterText ? (
-                <p title={`解说 ${staff.casterText}`}>
-                  <b>解说</b>
+                <p title={`${casterLabel} ${staff.casterText}`}>
+                  <b>{casterLabel}</b>
                   {staff.casterText}
                 </p>
               ) : null}
               {staff.refereeText ? (
-                <p title={`赛管 ${staff.refereeText}`}>
-                  <b>赛管</b>
+                <p title={`${refereeLabel} ${staff.refereeText}`}>
+                  <b>{refereeLabel}</b>
                   {staff.refereeText}
+                </p>
+              ) : null}
+              {staff.directorText ? (
+                <p title={`${directorLabel} ${staff.directorText}`}>
+                  <b>{directorLabel}</b>
+                  {staff.directorText}
                 </p>
               ) : null}
             </div>

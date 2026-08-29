@@ -53,6 +53,7 @@ export default function PlayoffBracket({
         withSeason={withSeason}
         isFavoriteTeam={isFavoriteTeam}
         isPrimaryFavoriteTeam={isPrimaryFavoriteTeam}
+        locale={locale}
       />
     )
   }

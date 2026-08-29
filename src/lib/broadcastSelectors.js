@@ -72,6 +72,13 @@ function collectPeople(...values) {
   })
 }
 
+function collectCrewPeople(source, roles) {
+  const acceptedRoles = new Set(roles.map(normalizeKey))
+  return asList(source?.crew)
+    .filter(entry => acceptedRoles.has(normalizeKey(entry?.role || entry?.type)))
+    .map(entry => entry?.staff || entry?.person || entry)
+}
+
 function formatPeople(people) {
   return people.map(person => (
     person.battleTag && normalizeKey(person.battleTag) !== normalizeKey(person.name)
@@ -180,8 +187,10 @@ function emptyBroadcastInfo() {
     streamLinks: [],
     casters: [],
     referees: [],
+    directors: [],
     casterText: '',
     refereeText: '',
+    directorText: '',
     hasPublicInfo: false
   }
 }
@@ -246,11 +255,24 @@ export function getBroadcastInfo(match = {}) {
     source.admin2,
     source['\u8d5b\u7ba1']
   )
+  const directors = collectPeople(
+    source.directors,
+    source.director,
+    source.director_names,
+    source.directorNames,
+    source.director_a,
+    source.directorA,
+    source.director_b,
+    source.directorB,
+    source['\u5bfc\u64ad'],
+    collectCrewPeople(source, ['DIRECTOR'])
+  )
   const isBroadcast = !isExplicitFalse(source.is_broadcast ?? source.isBroadcast) && (
     Boolean(source.is_broadcast ?? source.isBroadcast) ||
     liveStreamLinks.length > 0 ||
     casters.length > 0 ||
-    referees.length > 0
+    referees.length > 0 ||
+    directors.length > 0
   )
 
   if (!isBroadcast) return emptyBroadcastInfo()
@@ -266,8 +288,10 @@ export function getBroadcastInfo(match = {}) {
     streamLinks,
     casters,
     referees,
+    directors,
     casterText: formatPeople(casters),
     refereeText: formatPeople(referees),
-    hasPublicInfo: streamLinks.length > 0 || casters.length > 0 || referees.length > 0
+    directorText: formatPeople(directors),
+    hasPublicInfo: streamLinks.length > 0 || casters.length > 0 || referees.length > 0 || directors.length > 0
   }
 }

@@ -25,14 +25,16 @@ function BracketTeamSlot({
   const isWinner = sameTeam(team, winner)
   const isPrimary = isPrimaryFavoriteTeam?.(team)
   const isFavorite = isFavoriteTeam?.(team)
+  const hasSource = Boolean(slot.source)
   const className = [
     styles.playoffTeamSlot,
     isWinner ? styles.playoffTeamWinner : '',
-    slot.crossover ? styles.playoffCrossedSlot : ''
+    slot.crossover ? styles.playoffCrossedSlot : '',
+    !hasSource ? styles.playoffTeamSlotResolved : ''
   ].filter(Boolean).join(' ')
   const content = (
     <>
-      <span className={styles.playoffSlotSource}>{slot.source}</span>
+      {hasSource ? <span className={styles.playoffSlotSource}>{slot.source}</span> : null}
       {team && !team.isTbd ? (
         <TeamLogo team={team} seasonId={seasonId} className={styles.playoffTeamLogo} />
       ) : (

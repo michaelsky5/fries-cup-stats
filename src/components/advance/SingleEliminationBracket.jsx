@@ -1,5 +1,7 @@
 import AdvancePhaseHero from './AdvancePhaseHero.jsx'
-import BracketMatchNode from './BracketMatchNode.jsx'
+import BracketMatchCard from './BracketMatchCard.jsx'
+import { getMatchStatusLabelKey } from '../../lib/advanceSelectors.js'
+import { getBracketMatchStatusText } from '../../lib/bracketPresentation.js'
 import { pickLocale } from '../../lib/legacyI18n.js'
 import styles from '../../pages/advance/AdvancePage.module.css'
 
@@ -68,6 +70,89 @@ function getTeamKey(team) {
   return String(team.team_id || team.id || team.team_short_name || team.short || team.name || '')
 }
 
+function getMatchCode(match) {
+  const matchId = String(match?.matchId || match?.id || '')
+  const matchNumber = matchId.match(/(?:^|-)M0*(\d+)$/i)?.[1]
+  return matchNumber ? `M${Number(matchNumber)}` : matchId || 'MATCH'
+}
+
+function getFormatLabel(match, round) {
+  const raw = String(match?.format || '').trim().toUpperCase()
+  if (/^FT\d+$/.test(raw)) return raw
+  const bestOf = Number(raw.match(/^(?:BO|BEST\s+OF)\s*(\d+)$/)?.[1] || 0)
+  if (bestOf > 0) return `FT${Math.ceil(bestOf / 2)}`
+  return ['grand', 'third'].includes(getRoundKind(round)) ? 'FT4' : 'FT3'
+}
+
+function isUnresolvedTeam(team) {
+  const id = String(team?.team_id || team?.id || '').trim().toUpperCase()
+  const label = getTeamLabel(team, 'en-US').toUpperCase()
+  return Boolean(
+    team?.isTbd ||
+    !id ||
+    id === 'TBD' ||
+    /^(?:W|L)-?M\d+$/.test(label) ||
+    label === 'TBD'
+  )
+}
+
+function getWinnerTeam(match) {
+  const winnerId = String(match?.winnerId || '')
+  return [match?.teamA, match?.teamB].find(team => (
+    [team?.team_id, team?.id].filter(Boolean).some(id => String(id) === winnerId)
+  )) || null
+}
+
+function buildSlot(team, locale, score) {
+  const unresolved = isUnresolvedTeam(team)
+  return {
+    source: unresolved ? getTeamLabel(team, locale) : '',
+    team: unresolved ? { ...team, isTbd: true } : team,
+    name: unresolved ? copy(locale, '待定', 'TBD') : getTeamLabel(team, locale),
+    detail: unresolved
+      ? copy(locale, '等待上轮结果', 'Awaiting previous result')
+      : team?.name || team?.team_name || '',
+    score
+  }
+}
+
+function SingleEliminationMatchCard({
+  match,
+  round,
+  locale,
+  seasonId,
+  t,
+  withSeason,
+  isFavoriteTeam,
+  isPrimaryFavoriteTeam
+}) {
+  const localizedMatch = localizeMatch(match, round, locale)
+  const statusLabel = t(getMatchStatusLabelKey(localizedMatch.status), localizedMatch.status)
+  const matchHref = localizedMatch.matchId ? withSeason(`/matches/${localizedMatch.matchId}`) : ''
+  const kind = getRoundKind(round)
+
+  return (
+    <BracketMatchCard
+      label={getMatchCode(localizedMatch)}
+      formatLabel={getFormatLabel(localizedMatch, round)}
+      status={localizedMatch.status}
+      statusText={getBracketMatchStatusText(localizedMatch, statusLabel, locale)}
+      href={matchHref}
+      slots={[
+        buildSlot(localizedMatch.teamA, locale, localizedMatch.scoreA),
+        buildSlot(localizedMatch.teamB, locale, localizedMatch.scoreB)
+      ]}
+      winner={getWinnerTeam(localizedMatch)}
+      accent={kind === 'grand' ? 'grandFinal' : kind === 'third' ? 'lowerFinal' : ''}
+      seasonId={seasonId}
+      withSeason={withSeason}
+      isFavoriteTeam={isFavoriteTeam}
+      isPrimaryFavoriteTeam={isPrimaryFavoriteTeam}
+      t={t}
+    />
+  )
+}
+
 function RoundColumn({
   round,
   step,
@@ -92,9 +177,11 @@ function RoundColumn({
       </header>
       <div className={styles.singleElimMatches}>
         {round.matches.map(match => (
-          <BracketMatchNode
+          <SingleEliminationMatchCard
             key={match.matchId || match.label}
-            match={localizeMatch(match, round, locale)}
+            match={match}
+            round={round}
+            locale={locale}
             seasonId={seasonId}
             t={t}
             withSeason={withSeason}
@@ -141,9 +228,11 @@ function MedalColumn({
                 <strong>{getRoundTitle(round, locale)}</strong>
               </header>
               {round.matches.map(match => (
-                <BracketMatchNode
+                <SingleEliminationMatchCard
                   key={match.matchId || match.label}
-                  match={localizeMatch(match, round, locale)}
+                  match={match}
+                  round={round}
+                  locale={locale}
                   seasonId={seasonId}
                   t={t}
                   withSeason={withSeason}

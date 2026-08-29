@@ -4,7 +4,12 @@ const dbCache = new Map()
 const reportCache = new Map()
 const dbSourceBySnapshot = new WeakMap()
 
-const REQUEST_TIMEOUT_MS = 12000
+const REQUEST_TIMEOUT_MS = 25000
+const METADATA_REQUEST_TIMEOUT_MS = 6000
+const SNAPSHOT_DB_NAME = 'fries-cup-stats-public-snapshots'
+const SNAPSHOT_DB_VERSION = 1
+const SNAPSHOT_STORE_NAME = 'season-snapshots'
+let snapshotDbPromise = null
 const REVIEW_STAFF_FIELD_KEYS = [
   'admin',
   'admins',
@@ -40,6 +45,79 @@ function uniqueUrls(urls) {
   return Array.from(new Set(urls.filter(Boolean)))
 }
 
+function openSnapshotDb() {
+  if (!globalThis.indexedDB) return Promise.resolve(null)
+  if (snapshotDbPromise) return snapshotDbPromise
+
+  snapshotDbPromise = new Promise((resolve, reject) => {
+    const request = globalThis.indexedDB.open(SNAPSHOT_DB_NAME, SNAPSHOT_DB_VERSION)
+    request.onupgradeneeded = () => {
+      const database = request.result
+      if (!database.objectStoreNames.contains(SNAPSHOT_STORE_NAME)) {
+        database.createObjectStore(SNAPSHOT_STORE_NAME, { keyPath: 'seasonId' })
+      }
+    }
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  }).catch(error => {
+    snapshotDbPromise = null
+    throw error
+  })
+
+  return snapshotDbPromise
+}
+
+async function readSnapshotRecord(seasonId) {
+  const database = await openSnapshotDb()
+  if (!database) return null
+
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(SNAPSHOT_STORE_NAME, 'readonly')
+    const request = transaction.objectStore(SNAPSHOT_STORE_NAME).get(seasonId)
+    request.onsuccess = () => resolve(request.result || null)
+    request.onerror = () => reject(request.error)
+  })
+}
+
+async function writeSnapshotRecord(record) {
+  const database = await openSnapshotDb()
+  if (!database) return
+
+  await new Promise((resolve, reject) => {
+    const transaction = database.transaction(SNAPSHOT_STORE_NAME, 'readwrite')
+    transaction.objectStore(SNAPSHOT_STORE_NAME).put(record)
+    transaction.oncomplete = () => resolve()
+    transaction.onerror = () => reject(transaction.error)
+    transaction.onabort = () => reject(transaction.error)
+  })
+}
+
+async function deleteSnapshotRecord(seasonId) {
+  const database = await openSnapshotDb()
+  if (!database) return
+
+  await new Promise((resolve, reject) => {
+    const transaction = database.transaction(SNAPSHOT_STORE_NAME, 'readwrite')
+    transaction.objectStore(SNAPSHOT_STORE_NAME).delete(seasonId)
+    transaction.oncomplete = () => resolve()
+    transaction.onerror = () => reject(transaction.error)
+    transaction.onabort = () => reject(transaction.error)
+  })
+}
+
+async function clearSnapshotRecords() {
+  const database = await openSnapshotDb()
+  if (!database) return
+
+  await new Promise((resolve, reject) => {
+    const transaction = database.transaction(SNAPSHOT_STORE_NAME, 'readwrite')
+    transaction.objectStore(SNAPSHOT_STORE_NAME).clear()
+    transaction.oncomplete = () => resolve()
+    transaction.onerror = () => reject(transaction.error)
+    transaction.onabort = () => reject(transaction.error)
+  })
+}
+
 function getEnvUrl(seasonId, kind) {
   const upperKind = kind === 'report' ? 'REPORT' : 'DATA'
   return import.meta.env[`VITE_PUBLIC_${seasonId}_${upperKind}_URL`] ||
@@ -62,6 +140,36 @@ function getDbUrls(season, { bootstrap = false } = {}) {
     : [...remoteUrls, ...localUrls])
 }
 
+function toPublishMetadataUrl(url) {
+  return String(url || '').replace(/\/data(?:\?.*)?$/, '')
+}
+
+function toVersionedDataUrl(url, version) {
+  const text = String(url || '')
+  if (!text || !version) return ''
+  return text.replace(/\/publish\/latest\/data(?:\?.*)?$/, `/publish/${version}/data`)
+}
+
+function getPublishMetadataUrls(season) {
+  return uniqueUrls([
+    season.metadataUrl,
+    toPublishMetadataUrl(season.dataUrl),
+    toPublishMetadataUrl(getEnvUrl(season.id, 'data')),
+    season.proxyMetadataUrl,
+    toPublishMetadataUrl(season.proxyDataUrl)
+  ])
+}
+
+function getVersionedDbUrls(season, version) {
+  const configuredRemoteUrls = [
+    getEnvUrl(season.id, 'data'),
+    season.proxyDataUrl,
+    season.dataUrl
+  ]
+
+  return uniqueUrls(configuredRemoteUrls.map(url => toVersionedDataUrl(url, version)))
+}
+
 function getReportUrls(season) {
   return uniqueUrls([
     getEnvUrl(season.id, 'report'),
@@ -71,17 +179,20 @@ function getReportUrls(season) {
   ])
 }
 
-async function fetchJson(url, errorCode) {
+async function fetchJson(url, errorCode, options = {}) {
   const controller = new AbortController()
-  const timeout = globalThis.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+  const timeout = globalThis.setTimeout(
+    () => controller.abort(),
+    options.timeoutMs || REQUEST_TIMEOUT_MS
+  )
 
   try {
     const res = await fetch(url, {
-      cache: 'no-cache',
+      cache: options.cache || 'no-cache',
       signal: controller.signal
     })
     if (!res.ok) throw new Error(`${errorCode}: ${res.status}`)
-    return res.json()
+    return await res.json()
   } finally {
     globalThis.clearTimeout(timeout)
   }
@@ -236,13 +347,13 @@ function validatePublicDb(data, season) {
   return attachSeasonMeta(data, season)
 }
 
-async function fetchFirstAvailableWithSource(urls, errorCode, validate = data => data) {
+async function fetchFirstAvailableWithSource(urls, errorCode, validate = data => data, fetchOptions = {}) {
   const errors = []
 
   for (const url of urls) {
     try {
       return {
-        data: validate(await fetchJson(url, errorCode)),
+        data: validate(await fetchJson(url, errorCode, fetchOptions)),
         sourceUrl: url
       }
     } catch (error) {
@@ -253,29 +364,108 @@ async function fetchFirstAvailableWithSource(urls, errorCode, validate = data =>
   throw new Error(`${errorCode}: ${errors.join(' | ')}`)
 }
 
-async function fetchFirstAvailable(urls, errorCode, validate = data => data) {
-  const result = await fetchFirstAvailableWithSource(urls, errorCode, validate)
+async function fetchFirstAvailable(urls, errorCode, validate = data => data, fetchOptions = {}) {
+  const result = await fetchFirstAvailableWithSource(urls, errorCode, validate, fetchOptions)
   return result.data
 }
 
-function markDbSource(data, sourceUrl, season) {
+function normalizeSnapshotVersion(value) {
+  const version = Number(value)
+  return Number.isFinite(version) && version > 0 ? version : null
+}
+
+function markDbSource(data, sourceUrl, season, snapshot = {}) {
   if (data && typeof data === 'object') {
     dbSourceBySnapshot.set(data, {
-      kind: sourceUrl === season.localDataUrl ? 'local-fallback' : 'published',
-      sourceUrl
+      kind: snapshot.kind || (sourceUrl === season.localDataUrl ? 'local-fallback' : 'published'),
+      sourceUrl,
+      version: normalizeSnapshotVersion(snapshot.version),
+      checksum: String(snapshot.checksum || '')
     })
   }
   return data
 }
 
-async function fetchDb(season, options = {}) {
+async function fetchDbFromUrls(season, urls, snapshot = {}, fetchOptions = {}) {
   const { data, sourceUrl } = await fetchFirstAvailableWithSource(
-    getDbUrls(season, options),
+    urls,
     'DATA_LOAD_FAILED',
-    payload => validatePublicDb(payload, season)
+    payload => validatePublicDb(payload, season),
+    fetchOptions
   )
 
-  return markDbSource(await hydrateReviewStaffPayload(data, season), sourceUrl, season)
+  return markDbSource(await hydrateReviewStaffPayload(data, season), sourceUrl, season, snapshot)
+}
+
+async function fetchDb(season, options = {}) {
+  return fetchDbFromUrls(season, getDbUrls(season, options))
+}
+
+function validatePublishMetadata(payload) {
+  const published = payload?.publishVersion || payload
+  const version = normalizeSnapshotVersion(published?.version)
+  if (!version || String(published?.status || 'PUBLISHED').toUpperCase() !== 'PUBLISHED') {
+    throw new Error('PUBLISH_METADATA_INVALID')
+  }
+
+  return {
+    version,
+    checksum: String(published?.checksum || published?.contract?.checksum || ''),
+    publishedAt: String(published?.publishedAt || published?.createdAt || '')
+  }
+}
+
+async function fetchLatestPublishMetadata(season) {
+  const { data, sourceUrl } = await fetchFirstAvailableWithSource(
+    getPublishMetadataUrls(season),
+    'PUBLISH_METADATA_LOAD_FAILED',
+    validatePublishMetadata,
+    { timeoutMs: METADATA_REQUEST_TIMEOUT_MS }
+  )
+
+  return { ...data, sourceUrl }
+}
+
+async function readPersistedDb(season) {
+  try {
+    const record = await readSnapshotRecord(season.id)
+    if (!record?.data) return null
+    const data = validatePublicDb(record.data, season)
+    return markDbSource(data, record.sourceUrl || 'indexeddb', season, {
+      kind: 'persistent-cache',
+      version: record.version,
+      checksum: record.checksum
+    })
+  } catch (error) {
+    console.warn('Unable to read cached public snapshot:', error)
+    return null
+  }
+}
+
+async function persistDb(data, season) {
+  const snapshot = dbSourceBySnapshot.get(data)
+  if (!season.persistPublishedData || !snapshot?.version || snapshot.kind === 'local-fallback') return
+
+  try {
+    await writeSnapshotRecord({
+      seasonId: season.id,
+      version: snapshot.version,
+      checksum: snapshot.checksum,
+      sourceUrl: snapshot.sourceUrl,
+      savedAt: new Date().toISOString(),
+      data
+    })
+  } catch (error) {
+    console.warn('Unable to cache public snapshot:', error)
+  }
+}
+
+async function fetchPublishedDb(season, metadata, current) {
+  const urls = getVersionedDbUrls(season, metadata.version)
+  const requestUrls = current ? urls.slice(0, 1) : urls
+  const data = await fetchDbFromUrls(season, requestUrls, metadata, { cache: 'force-cache' })
+  await persistDb(data, season)
+  return data
 }
 
 function getSnapshotTimestamp(data) {
@@ -287,6 +477,15 @@ function getSnapshotTimestamp(data) {
 export function selectNewestDbSnapshot(current, candidate) {
   if (!current) return candidate
   if (!candidate) return current
+
+  const currentVersion = dbSourceBySnapshot.get(current)?.version
+  const candidateVersion = dbSourceBySnapshot.get(candidate)?.version
+  if (currentVersion !== null && currentVersion !== undefined) {
+    if (candidateVersion === null || candidateVersion === undefined || candidateVersion < currentVersion) {
+      return current
+    }
+    if (candidateVersion > currentVersion) return candidate
+  }
 
   const currentTimestamp = getSnapshotTimestamp(current)
   const candidateTimestamp = getSnapshotTimestamp(candidate)
@@ -301,9 +500,23 @@ export function isLocalDbFallback(data) {
   return dbSourceBySnapshot.get(data)?.kind === 'local-fallback'
 }
 
+export function getDbSnapshotVersion(data) {
+  return dbSourceBySnapshot.get(data)?.version || null
+}
+
 export async function getDb(seasonId) {
   const season = getSeasonById(seasonId || getStoredSeasonId())
   if (dbCache.has(season.id)) return dbCache.get(season.id)
+
+  if (season.persistPublishedData) {
+    const persisted = await readPersistedDb(season)
+    if (persisted) {
+      dbCache.set(season.id, persisted)
+      return persisted
+    }
+
+    return refreshDb(season.id)
+  }
 
   const data = await fetchDb(season, { bootstrap: true })
   dbCache.set(season.id, data)
@@ -312,6 +525,35 @@ export async function getDb(seasonId) {
 
 export async function refreshDb(seasonId) {
   const season = getSeasonById(seasonId || getStoredSeasonId())
+
+  if (season.persistPublishedData) {
+    const current = dbCache.get(season.id)
+
+    try {
+      const metadata = await fetchLatestPublishMetadata(season)
+      if (current && getDbSnapshotVersion(current) === metadata.version) return current
+
+      try {
+        const fetchedData = await fetchPublishedDb(season, metadata, current)
+        const data = selectNewestDbSnapshot(current, fetchedData)
+        dbCache.set(season.id, data)
+        return data
+      } catch (error) {
+        if (current) return current
+        if (!season.localDataUrl) throw error
+        const fallback = await fetchDbFromUrls(season, [season.localDataUrl])
+        dbCache.set(season.id, fallback)
+        return fallback
+      }
+    } catch (error) {
+      if (current) return current
+      if (!season.localDataUrl) throw error
+      const fallback = await fetchDbFromUrls(season, [season.localDataUrl])
+      dbCache.set(season.id, fallback)
+      return fallback
+    }
+  }
+
   const fetchedData = await fetchDb(season)
   const data = selectNewestDbSnapshot(dbCache.get(season.id), fetchedData)
   dbCache.set(season.id, data)
@@ -331,10 +573,16 @@ export function clearDbCache(seasonId) {
   if (!seasonId) {
     dbCache.clear()
     reportCache.clear()
+    void clearSnapshotRecords().catch(error => {
+      console.warn('Unable to clear cached public snapshots:', error)
+    })
     return
   }
 
   const season = getSeasonById(seasonId)
   dbCache.delete(season.id)
   reportCache.delete(season.id)
+  void deleteSnapshotRecord(season.id).catch(error => {
+    console.warn('Unable to clear cached public snapshot:', error)
+  })
 }

@@ -1,4 +1,5 @@
 import { getMatchStatusLabelKey } from '../../lib/advanceSelectors.js'
+import { getBracketMatchStatusText } from '../../lib/bracketPresentation.js'
 import AdvancePhaseHero from './AdvancePhaseHero.jsx'
 import BracketMatchCard from './BracketMatchCard.jsx'
 import styles from '../../pages/advance/AdvancePage.module.css'
@@ -7,22 +8,6 @@ function formatWindowDate(value) {
   const text = String(value || '')
   const match = text.match(/\d{4}-(\d{2})-(\d{2})/)
   return match ? `${match[1]}/${match[2]}` : '-'
-}
-
-function formatMatchTime(value) {
-  if (!value) return ''
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return String(value)
-  const parts = new Intl.DateTimeFormat('zh-CN', {
-    timeZone: 'Asia/Shanghai',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hourCycle: 'h23'
-  }).formatToParts(date)
-  const get = type => parts.find(part => part.type === type)?.value || ''
-  return `${get('month')}/${get('day')} ${get('hour')}:${get('minute')}`
 }
 
 function slotSourceLabel(slot) {
@@ -38,14 +23,12 @@ function PlayoffMatchCard({
   withSeason,
   isFavoriteTeam,
   isPrimaryFavoriteTeam,
+  locale,
   t
 }) {
-  const matchTime = formatMatchTime(match.scheduledAt)
   const matchHref = match.matchId ? withSeason(`/matches/${match.matchId}`) : ''
   const statusLabel = t(getMatchStatusLabelKey(match.status), match.status)
-  const statusText = ['active', 'completed', 'postponed', 'cancelled'].includes(match.status)
-    ? statusLabel
-    : matchTime || statusLabel
+  const statusText = getBracketMatchStatusText(match, statusLabel, locale)
 
   return (
     <BracketMatchCard
@@ -207,12 +190,13 @@ export default function FixedDoubleEliminationBracket({
   seasonId,
   withSeason,
   isFavoriteTeam,
-  isPrimaryFavoriteTeam
+  isPrimaryFavoriteTeam,
+  locale = 'zh-CN'
 }) {
   const eventWindow = layout.eventWindow || {}
   const dateRange = `${formatWindowDate(eventWindow.start)}–${formatWindowDate(eventWindow.end)}`
   const matchesByNumber = new Map(layout.matches.map(match => [match.number, match]))
-  const cardProps = { seasonId, withSeason, isFavoriteTeam, isPrimaryFavoriteTeam, t }
+  const cardProps = { seasonId, withSeason, isFavoriteTeam, isPrimaryFavoriteTeam, locale, t }
 
   return (
     <section className={styles.fixedPlayoffSection}>

@@ -235,6 +235,22 @@ const dictionary = {
     'zh-CN': '进行中',
     'en-US': 'Live'
   },
+  'broadcast.stream': {
+    'zh-CN': '直播间',
+    'en-US': 'Stream'
+  },
+  'broadcast.caster': {
+    'zh-CN': '解说',
+    'en-US': 'Caster'
+  },
+  'broadcast.referee': {
+    'zh-CN': '赛管',
+    'en-US': 'Referee'
+  },
+  'broadcast.director': {
+    'zh-CN': '导播',
+    'en-US': 'Director'
+  },
   'matchDetail.title': {
     'zh-CN': '\u6bd4\u8d5b\u6863\u6848',
     'en-US': 'Match Dossier'

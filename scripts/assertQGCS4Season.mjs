@@ -40,7 +40,8 @@ assert.equal(db.group_standings.length, 4)
 assert.equal(season.rules.competitionFormat, 'GROUP')
 assert.deepEqual(season.rules.groupStage.administrativeLossScore, [0, 3])
 assert.deepEqual(season.rules.groupStage.drawScore, [0, 0])
-assert.equal(season.preferDirectData, true)
+assert.equal(season.persistPublishedData, true)
+assert.notEqual(season.preferDirectData, true)
 assert.equal(season.dataUrl, 'https://admin.fries-cup.com/api/public/seasons/QGCS4/publish/latest/data')
 
 const currentSnapshot = { updated_at: '2026-08-26T07:59:50.781Z' }

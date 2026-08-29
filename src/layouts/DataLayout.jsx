@@ -12,7 +12,7 @@ import {
   withSeason as buildSeasonLink
 } from '../config/seasons.js'
 import { createTranslator, getStoredLocale, setStoredLocale } from '../lib/i18n.js'
-import { isLocalDbFallback, refreshDb } from '../lib/db.js'
+import { getDb, isLocalDbFallback, refreshDb } from '../lib/db.js'
 import { formatUpdatedAt } from '../lib/format.js'
 import { getGlobalSummary } from '../lib/selectors.js'
 import { getSeasonStatus } from '../lib/homeSelectors.js'
@@ -116,22 +116,32 @@ export default function DataLayout() {
     setIsUsingFallback(false)
     setError('')
 
-    refreshDb(seasonId)
+    getDb(seasonId)
       .then(data => {
         if (!alive) return
         const fallback = isLocalDbFallback(data)
         setDb(data)
         setIsUsingFallback(fallback)
         setError('')
+        setIsLoading(false)
+
+        if (!fallback) {
+          refreshDb(seasonId)
+            .then(refreshedData => {
+              if (!alive) return
+              setDb(current => current === refreshedData ? current : refreshedData)
+              setIsUsingFallback(isLocalDbFallback(refreshedData))
+            })
+            .catch(() => {
+              // The cached snapshot remains usable when a silent version check fails.
+            })
+        }
       })
       .catch(() => {
         if (!alive) return
         setDb(null)
         setIsUsingFallback(false)
         setError('DATA_LOAD_FAILED')
-      })
-      .finally(() => {
-        if (!alive) return
         setIsLoading(false)
       })
 
@@ -153,7 +163,7 @@ export default function DataLayout() {
         .then(data => {
           if (!alive) return
           keepSyncing = isLocalDbFallback(data)
-          setDb(current => current?.updated_at === data?.updated_at ? current : data)
+          setDb(current => current === data ? current : data)
           setIsUsingFallback(keepSyncing)
           setError('')
         })
