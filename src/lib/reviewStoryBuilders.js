@@ -228,9 +228,13 @@ function getSafeTeamLogo(teamLike, db) {
     ? pickFirstValue(teamLike.short, teamLike.team_short_name, teamLike.team_name, teamLike.name)
     : String(teamLike || '').trim()
   const team = key ? getTeamById(db, key) : null
-  const logoKey = pickFirstValue(team?.team_short_name, team?.short, team?.team_id, team?.id, key)
+  const logoSource = team || (typeof teamLike === 'object'
+    ? teamLike
+    : key
+      ? { team_short_name: key }
+      : null)
 
-  return logoKey ? (getTeamLogo(logoKey, db) || DEFAULT_TEAM_LOGO) : DEFAULT_TEAM_LOGO
+  return logoSource ? (getTeamLogo(logoSource, db) || DEFAULT_TEAM_LOGO) : DEFAULT_TEAM_LOGO
 }
 
 function getPlayerTotalForPlayer(db, player) {

@@ -1,3 +1,8 @@
+import {
+  getTeamLogo as resolveTeamLogo,
+  getTeamLogoCandidates as resolveTeamLogoCandidates
+} from './teamLogoResolver.js'
+
 export const safeArr = value => Array.isArray(value) ? value : []
 
 export const safeObj = value => value && typeof value === 'object' && !Array.isArray(value) ? value : {}
@@ -92,54 +97,12 @@ function encodePathSegment(value, fallback = 'UNKNOWN') {
   return encodeURIComponent(raw)
 }
 
-function getSeasonLogoDirectory(seasonLike) {
-  const seasonText = String(
-    seasonLike?.meta?.season_id ||
-    seasonLike?.meta?.season_code ||
-    seasonLike?.season?.id ||
-    seasonLike?.season_id ||
-    seasonLike?.season_code ||
-    seasonLike ||
-    ''
-  ).trim().toUpperCase()
-
-  if (seasonText.startsWith('FCR')) return 'FCR'
-  if (seasonText.startsWith('FCA')) return 'FCA'
-  return ''
+export function getTeamLogoCandidates(teamLike, seasonLike) {
+  return resolveTeamLogoCandidates(teamLike, seasonLike)
 }
 
-function logoStemCandidates(value) {
-  const stem = String(value ?? '').trim()
-  if (!stem || stem === 'TBD') return []
-
-  const alternateFirst = stem.includes('-') ? [stem.replace(/-/g, '.'), stem] : [stem]
-
-  return Array.from(new Set([
-    ...alternateFirst,
-    stem.replace(/\./g, '-'),
-    stem.replace(/\s+/g, ''),
-    stem.toUpperCase(),
-    stem.toLowerCase()
-  ].filter(Boolean)))
-}
-
-export function getTeamLogoCandidates(shortName, seasonLike) {
-  const directory = getSeasonLogoDirectory(seasonLike)
-  const stems = logoStemCandidates(shortName)
-  const seasonCandidates = directory
-    ? stems.map(stem => `/logos/${directory}/${encodePathSegment(stem)}.png`)
-    : []
-
-  return Array.from(new Set([
-    ...seasonCandidates,
-    ...stems.map(stem => `/logos/${encodePathSegment(stem)}.png`),
-    directory ? `/logos/${directory}/OW.png` : '',
-    '/logos/fc_logo.png'
-  ].filter(Boolean)))
-}
-
-export function getTeamLogo(shortName, seasonLike) {
-  return getTeamLogoCandidates(shortName, seasonLike)[0] || '/logos/fc_logo.png'
+export function getTeamLogo(teamLike, seasonLike) {
+  return resolveTeamLogo(teamLike, seasonLike)
 }
 
 /* -------------------------------------------------------------------------- */

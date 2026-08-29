@@ -193,6 +193,7 @@ export function getPlayerShareCardModel({
       teamId: identity.teamRouteId,
       teamShortName: identity.teamShort,
       teamName: identity.teamFull,
+      teamLogo: identity.teamLogo,
       teamLine,
       role: roleLabel,
       roleCode: summary.role

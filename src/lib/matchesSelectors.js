@@ -2,25 +2,12 @@ import { getSeasonById, getSeasonRules } from '../config/seasons.js'
 import { getCompetitionDayMatches, getCompetitionDayNumber } from './competitionDay.js'
 import { formatOwMapName } from './heroes.js'
 import { getRoundKey, isMatchInRoundScope } from './matchRoundScope.js'
+export { getTeamLogoCandidates } from './teamLogoResolver.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED', 'FINISHED', 'FORFEIT', 'WALKOVER'])
 const LIVE_STATUSES = new Set(['IN_PROGRESS', 'LIVE'])
-const QGCS4_TEAM_LOGO_FILES = Object.freeze({
-  'qgcs4-t01': 'NF.png',
-  'qgcs4-t03': 'WHG X SPC.png',
-  'qgcs4-t04': 'HUWET.png',
-  'qgcs4-t05': 'HCM.jpg',
-  'qgcs4-t06': 'SK.png',
-  'qgcs4-t09': '5FW.png',
-  'qgcs4-t11': 'ENPB.jpg',
-  'qgcs4-t12': 'RC.png',
-  'qgcs4-t14': 'SPS.png',
-  'qgcs4-t15': 'FUM.png',
-  'qgcs4-t16': 'SPSV.png',
-  'qgcs4-t19': 'NFA.png'
-})
 
 function normalizeText(value) {
   return String(value || '').trim()
@@ -301,61 +288,6 @@ export function getTeamLabel(team) {
 
 export function getTeamFullName(team) {
   return team?.team_name || team?.name || getTeamLabel(team)
-}
-
-function getTeamSeasonDirectory(team, seasonId) {
-  const seasonText = normalizeText(seasonId).toUpperCase()
-  const teamText = normalizeText(team?.team_id || team?.id).toUpperCase()
-
-  if (seasonText.startsWith('FCR') || teamText.startsWith('FCR')) return 'FCR'
-  if (seasonText.startsWith('FCA') || teamText.startsWith('FCA')) return 'FCA'
-  return ''
-}
-
-function logoStemCandidates(value) {
-  const stem = normalizeText(value)
-  if (!stem || stem === 'TBD') return []
-
-  return Array.from(new Set([
-    stem,
-    stem.replace(/-/g, '.'),
-    stem.replace(/\./g, '-'),
-    stem.replace(/\s+/g, ''),
-    stem.toUpperCase(),
-    stem.toLowerCase()
-  ].filter(Boolean)))
-}
-
-function getQgcs4TeamLogoCandidates(team, seasonId) {
-  const seasonText = normalizeText(seasonId).toUpperCase()
-  const teamId = normalizeKey(team?.team_id || team?.id)
-  const isQgcs4Team = seasonText.startsWith('QGCS4') || teamId.startsWith('qgcs4-')
-  if (!isQgcs4Team) return []
-
-  const fileName = QGCS4_TEAM_LOGO_FILES[teamId]
-  return [
-    fileName ? `/logos/QGCS4/${encodeURIComponent(fileName)}` : '',
-    '/logos/QGCS4/OW.png'
-  ].filter(Boolean)
-}
-
-export function getTeamLogoCandidates(team, seasonId) {
-  const directory = getTeamSeasonDirectory(team, seasonId)
-  const directCandidates = [team?.team_logo, team?.logo_url, team?.logo]
-    .map(normalizeText)
-    .filter(Boolean)
-  const qgcs4Candidates = getQgcs4TeamLogoCandidates(team, seasonId)
-  if (!directory) return Array.from(new Set([...directCandidates, ...qgcs4Candidates]))
-
-  const primaryCandidates = logoStemCandidates(getTeamLabel(team)).map(stem => {
-    return `/logos/${directory}/${encodeURIComponent(stem)}.png`
-  })
-
-  return Array.from(new Set([
-    ...directCandidates,
-    ...primaryCandidates,
-    `/logos/${directory}/OW.png`
-  ]))
 }
 
 export function getMatchDisplayTeams(match) {

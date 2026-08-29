@@ -821,6 +821,7 @@ export function getPlayerDossier(db, playerId, roleParam = '', season) {
       teamShort: teamShort(team, identitySource.team_short_name || identitySource.team_id),
       teamFull: teamFull(team, identitySource.team_name),
       teamRouteId: teamRouteId(team, identitySource.team_id || identitySource.team_short_name),
+      teamLogo: normalize(team?.team_logo || team?.teamLogo || team?.logo_url || team?.logoUrl || team?.logo),
       registeredRole: normalizeLeaderboardRole(basePlayer.role)
     },
     roles: safeRoles,

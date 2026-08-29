@@ -6,23 +6,24 @@ function getTeamShort(team, teamShortName, teamName) {
 }
 
 export default function TeamLogo({ team, seasonId, teamShortName, teamName, className = '', large = false }) {
-  const logoTeam = team || {
+  const logoTeam = useMemo(() => team || ({
     team_short_name: teamShortName,
     short: teamShortName,
     team_name: teamName,
     name: teamName
-  }
+  }), [team, teamName, teamShortName])
   const candidates = useMemo(
     () => getTeamLogoCandidates(logoTeam, seasonId),
-    [seasonId, logoTeam?.team_id, logoTeam?.id, logoTeam?.team_short_name, logoTeam?.short, logoTeam?.team_name, logoTeam?.name]
+    [logoTeam, seasonId]
   )
+  const candidateKey = candidates.join('|')
   const [index, setIndex] = useState(0)
   const src = candidates[index]
   const short = getTeamShort(team, teamShortName, teamName)
 
   useEffect(() => {
     setIndex(0)
-  }, [candidates.join('|')])
+  }, [candidateKey])
 
   return (
     <span className={className} data-size={large ? 'large' : 'default'}>

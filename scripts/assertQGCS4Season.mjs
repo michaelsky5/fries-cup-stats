@@ -70,12 +70,13 @@ for (const [teamId, fileName] of Object.entries(expectedTeamLogos)) {
   const team = db.teams.find(item => item.team_id === teamId)
   const expectedUrl = `/logos/QGCS4/${encodeURIComponent(fileName)}`
   assert.equal(getTeamLogoCandidates(team, season.id)[0], expectedUrl, `${teamId} logo mapping`)
-  assert.equal(getTeamLogoCandidates(team, season.id).at(-1), '/logos/QGCS4/OW.png', `${teamId} logo fallback`)
+  assert.equal(getTeamLogoCandidates(team, season.id).includes('/logos/QGCS4/OW.png'), true, `${teamId} season logo fallback`)
+  assert.equal(getTeamLogoCandidates(team, season.id).at(-1), '/logos/fc_logo.png', `${teamId} global logo fallback`)
   assert.equal(fs.existsSync(path.resolve('public/logos/QGCS4', fileName)), true, `${fileName} exists`)
 }
 
 const teamWithoutLogo = db.teams.find(team => team.team_id === 'QGCS4-T02')
-assert.deepEqual(getTeamLogoCandidates(teamWithoutLogo, season.id), ['/logos/QGCS4/OW.png'])
+assert.deepEqual(getTeamLogoCandidates(teamWithoutLogo, season.id), ['/logos/QGCS4/OW.png', '/logos/fc_logo.png'])
 assert.equal(fs.existsSync(path.resolve('public/logos/QGCS4/OW.png')), true, 'QGCS4 OW fallback exists')
 
 const groups = getGroupStandings(db, season)
