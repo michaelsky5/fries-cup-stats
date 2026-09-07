@@ -2,6 +2,8 @@ import { getOwHeroAssetKey } from './heroes.js'
 import { attachRatingModelScoreToLeaderboardRows } from './scoringEngineAdapter.js'
 import { mapRawScoreToOVR } from './ratingModel.js'
 import { OVR_CONFIG, SEASON_SCORE_CONFIG } from '../config/ratingModelConfig.js'
+import { getSeasonSample, SEASON_RATING_VERSION, SEASON_SAMPLE_POLICY } from './seasonRatingPolicy.js'
+import { applySeasonOpponentAdjustment } from './seasonOpponentStrength.js'
 
 export const ROLE_ORDER = ['TANK', 'DPS', 'SUPPORT']
 
@@ -533,6 +535,17 @@ function attachSeasonOvrFields(scored) {
       entry.seasonOvr = null
       entry.seasonOvrCap = null
       entry.seasonOvrSource = 'unrated'
+      entry.provisionalSeasonOvr = null
+      if (entry.seasonRatingStatus === 'PROVISIONAL') {
+        const performancePercentile = getSeasonPerformancePercentile(entry.seasonScore)
+        entry.seasonPerformancePercentile = performancePercentile
+        entry.provisionalSeasonOvr = Math.min(
+          SEASON_SAMPLE_POLICY.provisionalOvrCap,
+          mapRawScoreToOVR(null, performancePercentile, { sampleStatus: 'OK' })
+        )
+        entry.seasonOvrCap = SEASON_SAMPLE_POLICY.provisionalOvrCap
+        entry.seasonOvrSource = 'provisional_performance'
+      }
     })
 
   return scored
@@ -669,10 +682,20 @@ export function scoreLeaderboardEntries(entries, minTimeMins = 30, options = {})
     overallRank: null
   }))
 
+  if (scoreContext === 'season') {
+    ratingScored.forEach(entry => {
+      const sample = getSeasonSample(entry, minTimeMins)
+      entry.seasonRatingVersion = SEASON_RATING_VERSION
+      entry.seasonRatingStatus = sample.status
+      entry.seasonSample = sample
+      entry.eligible = sample.status === 'FORMAL'
+      entry.eligibilityReason = entry.eligible ? 'qualified' : sample.status === 'PROVISIONAL' ? 'provisional_sample' : 'insufficient_sample'
+    })
+  }
   assignEntryRanks(ratingScored, compareLeaderboardEntries)
   if (scoreContext !== 'season') return ratingScored
 
-  const withSeasonOvr = attachSeasonOvrFields(ratingScored)
+  const withSeasonOvr = attachSeasonOvrFields(ratingScored).map(applySeasonOpponentAdjustment)
   assignEntryRanks(withSeasonOvr, compareSeasonOvrEntries)
   return withSeasonOvr
 }

@@ -1,10 +1,11 @@
+import SeasonRating from '../../features/rating/SeasonRating.jsx'
+import { formatSeasonRatingValue, getSeasonRatingLabel, getSeasonRatingStatusLabel } from '../../lib/seasonRatingPolicy.js'
 import { useState } from 'react'
 import { formatInt, formatPlayerTime } from '../../lib/format.js'
 import {
   LEADERBOARD_COLUMNS,
   LEADERBOARD_TABS,
   METRIC_MODES,
-  formatEntrySeasonOvr,
   getEntryMetricValue,
   getHeroDisplayList,
   getHeroDisplayName,
@@ -219,7 +220,7 @@ function TableTitleBar({ pagination, mode, activeTab, sortKey, direction, locale
 }
 
 function formatEntryField(entry, column, mode, locale) {
-  if (column.id === 'score') return formatEntrySeasonOvr(entry)
+  if (column.id === 'score') return `${formatSeasonRatingValue(entry)} · ${getSeasonRatingStatusLabel(entry, locale)}`
   if (column.id === 'team') return `${entry.team_short_name || '-'} / ${entry.team_name || '-'}`
   if (column.id === 'role') return locale === 'en-US' ? getRoleEnLabel(entry.role) : getRoleLabel(entry.role)
   if (column.id === 'maps') return formatInt(entry.roleMapsPlayed)
@@ -264,8 +265,8 @@ function MobileRankingItem({
           <em>{entry.team_short_name || entry.team_name || '-'} / {locale === 'en-US' ? getRoleEnLabel(entry.role) : getRoleLabel(entry.role)}</em>
         </span>
         <span className={styles.mobileScore}>
-          <b>{formatEntrySeasonOvr(entry)}</b>
-          <em>OVR</em>
+          <b>{formatSeasonRatingValue(entry)}</b>
+          <em>{getSeasonRatingLabel(entry, locale)}</em>
         </span>
       </button>
 
@@ -323,8 +324,9 @@ function MobileRankingItem({
           </div>
           <div>
             <span>排名状态</span>
-            <strong>{entry.eligible ? '正式排名' : '样本不足'}</strong>
+            <strong>{getSeasonRatingStatusLabel(entry, locale)}</strong>
           </div>
+          <SeasonRating entry={entry} locale={locale} explanationOnly />
           {LEADERBOARD_COLUMNS.map(column => (
             <div key={column.id}>
               <span>{column.label}</span>

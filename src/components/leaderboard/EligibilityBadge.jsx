@@ -1,9 +1,10 @@
 import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
+import { getSeasonRatingStatusLabel } from '../../lib/seasonRatingPolicy.js'
 
-export default function EligibilityBadge({ eligible }) {
+export default function EligibilityBadge({ eligible, entry, locale = 'zh-CN' }) {
   return (
     <span className={`${styles.eligibilityBadge} ${eligible ? styles.eligible : styles.insufficient}`}>
-      {eligible ? '正式排名' : '样本不足'}
+      {getSeasonRatingStatusLabel(entry || { eligible }, locale)}
     </span>
   )
 }

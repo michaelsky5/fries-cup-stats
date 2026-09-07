@@ -10,6 +10,8 @@ import {
   Tooltip
 } from 'recharts'
 import PlayerShareDialog from '../../features/player-share/PlayerShareDialog.jsx'
+import SeasonRating from '../../features/rating/SeasonRating.jsx'
+import { formatSeasonSampleRequirements, getSeasonRatingLabel, getSeasonRatingStatusLabel } from '../../lib/seasonRatingPolicy.js'
 import {
   getHeroAvatarSrc,
   getRoleColor,
@@ -161,7 +163,7 @@ function OverviewPanel({ dossier, onChange, locale = 'zh-CN' }) {
           <article key={item.role} className={`${styles.roleOverviewCard} ${getRoleClass(item.role)}`}>
             <div className={styles.roleOverviewTop}>
               <span>{roleDisplay(item.role, locale)}</span>
-              <strong>{item.summary.scoreLabel}</strong>
+              <SeasonRating entry={item.entry} locale={locale} />
             </div>
             <div className={styles.roleOverviewFacts}>
               <span>
@@ -236,7 +238,7 @@ function DossierHero({
             <h2>{dossier.isOverview ? '综合资料' : roleDisplay(summary.role, locale)}</h2>
           </div>
           <span className={styles.sampleBadge}>
-            门槛 {dossier.minTimeMins} 分钟
+            {formatSeasonSampleRequirements(dossier.minTimeMins, locale)}
           </span>
         </div>
 
@@ -254,8 +256,8 @@ function DossierHero({
             <strong>{summary.primaryHero ? primaryHeroName : '—'}</strong>
           </div>
           <div>
-            <span>赛季 OVR</span>
-            <strong>{summary.scoreLabel}</strong>
+            <span>{getSeasonRatingLabel(analysis.entry, locale)}</span>
+            <SeasonRating entry={analysis.entry} locale={locale} />
           </div>
           <div>
             <span>同职责排名</span>
@@ -263,7 +265,7 @@ function DossierHero({
           </div>
           <div>
             <span>排名状态</span>
-            <strong>{summary.eligible ? summary.scorePercentileLabel : '样本不足'}</strong>
+            <strong>{summary.eligible ? summary.scorePercentileLabel : getSeasonRatingStatusLabel(analysis.entry, locale)}</strong>
           </div>
         </div>
 
@@ -281,10 +283,10 @@ function ScoreRadarPanel({ analysis, locale = 'zh-CN' }) {
   return (
     <section className={`${styles.scorePanel} ${getRoleClass(summary.role)}`}>
       <div className={styles.scorePlate}>
-        <div className={styles.scoreLabel}>SEASON OVR</div>
-        <div className={styles.scoreValue}>{summary.scoreLabel}</div>
+        <div className={styles.scoreLabel}>{getSeasonRatingLabel(analysis.entry, locale)}</div>
+        <div className={styles.scoreValue}><SeasonRating entry={analysis.entry} locale={locale} variant="large" /></div>
         <div className={styles.scoreRank}>
-          {summary.eligible ? `${summary.rankLabel} · ${summary.scorePercentileLabel}` : '样本不足 · 不进入正式排名'}
+          {summary.eligible ? `${summary.rankLabel} · ${summary.scorePercentileLabel}` : `${getSeasonRatingStatusLabel(analysis.entry, locale)} · ${locale === 'en-US' ? 'Excluded from official ranks' : '不进入正式排名'}`}
         </div>
         <div className={styles.scoreMeta}>
           <span>{roleDisplay(summary.role, locale)}</span>

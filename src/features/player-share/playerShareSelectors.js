@@ -46,7 +46,7 @@ function compact(values) {
 }
 
 function percentLabel(percentile, locale) {
-  if (!Number.isFinite(Number(percentile))) return isZh(locale) ? '样本不足' : 'Not Rated'
+  if (percentile == null || percentile === '' || !Number.isFinite(Number(percentile))) return isZh(locale) ? '样本不足' : 'Not Rated'
   const top = Math.max(1, 100 - Math.round(Number(percentile)))
   return isZh(locale) ? `前 ${top}%` : `TOP ${top}%`
 }
@@ -218,7 +218,7 @@ export function getPlayerShareCardModel({
       eligibleCount: summary.qualifiedSize,
       rankLabel: eligible ? summary.rankLabel : '—',
       percentileLabel: eligible ? percentLabel(summary.scorePercentile, locale) : (isZh(locale) ? '未定级' : 'Not Rated'),
-      ovr: eligible ? (summary.seasonOvr ?? mapPercentileToOvr(summary.scorePercentile)) : null
+      ovr: eligible ? summary.seasonOvr : null
     },
     attributes,
     radar: {

@@ -1,8 +1,11 @@
+import { mapRawScoreToMapRating } from './ratingModel.js'
+
 function safeArr(value) {
   return Array.isArray(value) ? value : []
 }
 
 function toFiniteNumber(value, fallback = NaN) {
+  if (value == null || (typeof value === 'string' && value.trim() === '')) return fallback
   const num = Number(value)
   return Number.isFinite(num) ? num : fallback
 }
@@ -52,7 +55,15 @@ export function getMapPlayerMatchRating(rawScore, mapParticipants = []) {
   return Number(clamp(rating, 5.6, 9.8).toFixed(1))
 }
 
+export function getMatchPlayerRating(entry) {
+  const modelRating = toFiniteNumber(entry?.mapRating)
+  if (Number.isFinite(modelRating)) return modelRating
+
+  const rawScore = toFiniteNumber(entry?.rawScore ?? entry?.roleScore)
+  return Number.isFinite(rawScore) ? mapRawScoreToMapRating(rawScore) : null
+}
+
 export function formatMapPlayerMatchRating(value, fallback = '-') {
-  const num = Number(value)
+  const num = toFiniteNumber(value)
   return Number.isFinite(num) ? num.toFixed(1) : fallback
 }

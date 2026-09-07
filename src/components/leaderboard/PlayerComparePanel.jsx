@@ -1,6 +1,7 @@
+import SeasonRating from '../../features/rating/SeasonRating.jsx'
+import { getSeasonRatingLabel, getSeasonRatingStatusLabel } from '../../lib/seasonRatingPolicy.js'
 import { formatDecimal, formatInt } from '../../lib/format.js'
 import {
-  formatEntrySeasonOvr,
   getEntryMetricValue,
   getRoleEnLabel,
   getRoleLabel
@@ -57,10 +58,10 @@ export default function PlayerComparePanel({ entries, mode, modeLabel, onClose, 
             <div key={entry.entryKey} className={styles.comparePlayerCard}>
               <PlayerIdentity entry={entry} locale={locale} />
               <div className={styles.compareScore}>
-                <span>赛季 OVR</span>
-                <strong>{formatEntrySeasonOvr(entry)}</strong>
+                <span>{getSeasonRatingLabel(entry, locale)}</span>
+                <SeasonRating entry={entry} locale={locale} />
               </div>
-              {!entry.eligible ? <em>样本不足，比较结果仅作参考</em> : null}
+              {!entry.eligible ? <em>{getSeasonRatingStatusLabel(entry, locale)} · {locale === 'en-US' ? 'Comparison for reference' : '比较结果仅作参考'}</em> : null}
             </div>
           ))}
         </div>

@@ -1,0 +1,40 @@
+{
+  "date": "2026-09-07",
+  "seasonRule": "v1.4",
+  "heroModel": "v1.2",
+  "seasons": {
+    "FCA26": {
+      "source": "published V5",
+      "inputSha256": "4c4fe834e880f04f384bc48e082736f6176c8e4f2c32ee43a5acc550df2c375e",
+      "entries": 194,
+      "sampleCounts": {
+        "FORMAL": 161,
+        "PROVISIONAL": 19,
+        "UNRATED": 14
+      },
+      "ratingSha256": "9e399ecc486a1e856ab1f3c6f8b63273462cc8e66d39737642ea018d1b4adc78"
+    },
+    "QGCS4": {
+      "source": "published V30",
+      "inputSha256": "0fa2375d06a2810f03ec52e131fbd9f528005428c914b3b78c63e7df6a399ec1",
+      "entries": 128,
+      "sampleCounts": {
+        "FORMAL": 73,
+        "PROVISIONAL": 27,
+        "UNRATED": 28
+      },
+      "ratingSha256": "cc7a831b46e32cf51b37a9ebd913b6c9370a4e73424360da3d04951746ecd155"
+    },
+    "FCR26": {
+      "source": "local fixed historical fixture",
+      "inputSha256": "a22f3f4c44c56e9349adfd7cf1bf93a1e7770a69913a02b5ef810673f485f08a",
+      "entries": 286,
+      "sampleCounts": {
+        "FORMAL": 155,
+        "PROVISIONAL": 54,
+        "UNRATED": 77
+      },
+      "ratingSha256": "939e294462dd5db99bf80803acc36c50e65db9468a602f00d9c8769495ffe805"
+    }
+  }
+}

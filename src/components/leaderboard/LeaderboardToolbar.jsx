@@ -1,4 +1,5 @@
 import ColumnPicker from './ColumnPicker.jsx'
+import { formatSeasonSampleRequirements } from '../../lib/seasonRatingPolicy.js'
 import ImeSafeInput from '../common/ImeSafeInput.jsx'
 import { formatOwHeroName } from '../../lib/heroes.js'
 import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
@@ -104,7 +105,7 @@ export default function LeaderboardToolbar({
 
       <div className={styles.toolbarStatusRow}>
         <span className={styles.thresholdInline}>
-          FILTER / MINIMUM PLAYTIME &gt;= {minTimeMins} MIN
+          {formatSeasonSampleRequirements(minTimeMins, locale)}
         </span>
         <span>当前筛选会即时同步到 URL，可刷新或分享当前视图。</span>
       </div>

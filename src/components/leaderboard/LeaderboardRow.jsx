@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { formatInt, formatPlayerTime } from '../../lib/format.js'
 import {
-  formatEntrySeasonOvr,
   getEntryMetricValue,
   getHeroAvatarSrc,
   getPlayerInitials,
@@ -10,6 +9,7 @@ import {
 } from '../../lib/leaderboardSelectors.js'
 import { isRoleCoreMetric } from '../../lib/leaderboardScoring.js'
 import EligibilityBadge from './EligibilityBadge.jsx'
+import SeasonRating from '../../features/rating/SeasonRating.jsx'
 import { formatLeaderboardStat } from './leaderboardFormat.js'
 import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
 
@@ -90,7 +90,7 @@ function DataCell({ entry, column, mode, locale }) {
   if (column.id === 'score') {
     return (
       <td className={`${styles.numericCell} ${styles.scoreCell} ${styles.scoreDataCell}`}>
-        {formatEntrySeasonOvr(entry)}
+        <SeasonRating entry={entry} locale={locale} />
       </td>
     )
   }
@@ -108,7 +108,7 @@ function DataCell({ entry, column, mode, locale }) {
     return (
       <td className={`${styles.roleCell} ${styles.roleDataCell}`}>
         <RoleTag entry={entry} locale={locale} />
-        {!entry.eligible ? <EligibilityBadge eligible={false} /> : null}
+        {!entry.eligible ? <EligibilityBadge eligible={false} entry={entry} locale={locale} /> : null}
       </td>
     )
   }

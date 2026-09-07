@@ -1,3 +1,5 @@
+import { SeasonRatingRules } from '../../features/rating/SeasonRating.jsx'
+import { formatSeasonSampleRequirements } from '../../lib/seasonRatingPolicy.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
 import DataMvpPanel from '../../components/leaderboard/DataMvpPanel.jsx'
@@ -305,6 +307,7 @@ export default function LeaderboardPage() {
         locale={locale}
       />
 
+      <SeasonRatingRules summary={summary} locale={locale} />
       {!hasStatEntries ? (
         <section className={styles.dataPendingPanel}>
           <div className={styles.dataPendingMain}>
@@ -331,7 +334,7 @@ export default function LeaderboardPage() {
             </div>
             <div>
               <span>{isEn ? 'Minimum Time' : '正式排名门槛'}</span>
-              <strong>{summary.minTimeMins}m</strong>
+              <strong>{formatSeasonSampleRequirements(summary.minTimeMins, locale)}</strong>
             </div>
           </div>
         </section>

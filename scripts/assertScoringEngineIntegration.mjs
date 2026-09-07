@@ -228,7 +228,10 @@ const legacyEntry = scoreLeaderboardEntriesLegacy([sampleEntry], 0)[0]
 
 const leaderboardRow = scoreLeaderboardEntries([sampleEntry], 0, { baselines })[0]
 assertRatingV1Fields(leaderboardRow, 'scoreLeaderboardEntries')
-assertSeasonOvrFields(leaderboardRow, 'scoreLeaderboardEntries')
+assert.equal(leaderboardRow.seasonRatingStatus, 'UNRATED', 'one map cannot qualify for a season rating even when the legacy time threshold is zero')
+assert.equal(leaderboardRow.seasonOvr, null)
+const qualifiedSample = { ...sampleEntry, roleMapsPlayed: 6, roleTimeMins: 60, roleMatchesPlayed: 3 }
+assertSeasonOvrFields(scoreLeaderboardEntries([qualifiedSample], 30, { baselines })[0], 'scoreLeaderboardEntries.formal')
 
 const attachedLeaderboardRow = attachRatingModelScoreToLeaderboardRows({ entries: [legacyEntry], baselines })[0]
 assertRatingV1Fields(attachedLeaderboardRow, 'attachRatingModelScoreToLeaderboardRows')

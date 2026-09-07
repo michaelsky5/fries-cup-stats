@@ -1,15 +1,11 @@
 import { formatInt } from '../../../lib/format.js'
 import { getRoleEnLabel, getRoleLabel } from '../../../lib/leaderboardSelectors.js'
+import { formatMapPlayerMatchRating, getMatchPlayerRating } from '../../../lib/matchRatingDisplay.js'
 import styles from './MatchDetail.module.css'
 
 function formatRating(value) {
   const num = Number(value)
   return Number.isFinite(num) ? num.toFixed(1) : '-'
-}
-
-function formatTenPointRating(value) {
-  const num = Number(value)
-  return Number.isFinite(num) ? (num / 10).toFixed(1) : '-'
 }
 
 function getName(entry) {
@@ -38,7 +34,7 @@ export default function RoleLeaderRow({ role, entry, locale = 'zh-CN' }) {
       </span>
       <span className={styles.roleLeaderScore} title={`Raw rating ${formatRating(entry.roleScore)} / 100`}>
         <span className={styles.roleLeaderScoreLabel}>RATING</span>
-        <b>{formatTenPointRating(entry.roleScore)}</b>
+        <b>{formatMapPlayerMatchRating(getMatchPlayerRating(entry), '—')}</b>
         <small>/10</small>
       </span>
       <span className={styles.roleLeaderStats}>

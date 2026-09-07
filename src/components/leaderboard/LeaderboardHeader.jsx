@@ -46,8 +46,8 @@ export default function LeaderboardHeader({
         </div>
         <div>
           <span>{isEn ? 'Minimum Time' : '排名门槛'}</span>
-          <strong>{summary.minTimeMins}m</strong>
-          <em>{isEn ? 'Min Time' : '最低时长'}</em>
+          <strong>{summary.sampleRequirements.formal.minutes}m</strong>
+          <em>{summary.sampleRequirements.formal.maps} {isEn ? 'maps' : '图'} / {summary.sampleRequirements.formal.matches} {isEn ? 'matches' : '场'}</em>
         </div>
         <div>
           <span>{isEn ? 'Metric Mode' : '统计口径'}</span>

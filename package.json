@@ -6,7 +6,7 @@
   "scripts": {
     "predev": "npm run build:team-logo-catalog",
     "dev": "vite",
-    "prebuild": "npm run build:team-logo-catalog && npm run build:scouting-artifacts",
+    "prebuild": "npm run test:rating-release && npm run build:team-logo-catalog && npm run build:scouting-artifacts",
     "build": "vite build",
     "build:team-logo-catalog": "node scripts/buildTeamLogoCatalog.mjs",
     "build:scouting-artifacts": "node scripts/buildScoutingArtifacts.mjs",
@@ -14,6 +14,7 @@
     "replay:fca-rating": "node scripts/replayFcaRatingModel.mjs",
     "test:rating-model": "node scripts/assertRatingModelConfig.mjs",
     "test:scoring-integration": "node scripts/assertScoringEngineIntegration.mjs",
+    "test:rating-release": "node --test scripts/assertRatingModelConfig.mjs scripts/assertFrozenRatingBaseline.mjs scripts/assertScoringEngineIntegration.mjs scripts/assertRatingDisplay.mjs scripts/assertRatingLogDeduplication.mjs scripts/assertSeasonRatingPolicy.mjs scripts/assertSeasonOpponentStrength.mjs",
     "freeze:fcr26-swiss-rating": "node scripts/freezeFcr26SwissBaselines.mjs",
     "check:fcr26-swiss-rating": "node scripts/freezeFcr26SwissBaselines.mjs --check",
     "test:frozen-rating-baseline": "node scripts/assertFrozenRatingBaseline.mjs",

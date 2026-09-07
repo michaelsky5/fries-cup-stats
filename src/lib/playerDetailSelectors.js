@@ -1,5 +1,8 @@
 import { safeArr } from './selectors.js'
 import {
+  formatEntrySeasonOvr,
+  getEntrySeasonOvr,
+  getEntrySeasonScore,
   getEntryMetricValue,
   getLeaderboardRows,
   getRankingMinTimeMins,
@@ -565,8 +568,8 @@ function getRadarData(entry, sample, heroPool) {
 
 function getRoleSummary(entry, sample, heroPool) {
   const primaryHero = heroPool[0]?.hero || entry?.most_played_hero || safeArr(entry?.top_3_heroes)[0] || ''
-  const seasonOvr = Number.isFinite(Number(entry?.seasonOvr)) ? Math.round(Number(entry.seasonOvr)) : null
-  const score = Number.isFinite(Number(entry?.roleScore)) ? Number(entry.roleScore) : null
+  const seasonOvr = getEntrySeasonOvr(entry)
+  const score = getEntrySeasonScore(entry)
   const rawScore = Number.isFinite(Number(entry?.rawRoleScore ?? entry?.rawScore))
     ? Number(entry.rawRoleScore ?? entry.rawScore)
     : score
@@ -582,7 +585,7 @@ function getRoleSummary(entry, sample, heroPool) {
     score,
     rawScore,
     seasonOvr,
-    scoreLabel: seasonOvr !== null ? String(seasonOvr) : '—',
+    scoreLabel: formatEntrySeasonOvr(entry),
     scoreUnit: 'OVR',
     scoreMetaLabel: score !== null ? `Score ${score.toFixed(1)}` : '',
     rank: sample.rank,
