@@ -1,0 +1,54 @@
+.compare { margin-bottom: 22px; padding: 16px 18px 20px; border-top: 2px solid var(--fc-data-ink); background: var(--fc-data-paper-raised); scroll-margin-top: var(--coach-section-offset); }
+.heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.heading > strong { display: flex; align-items: baseline; gap: 12px; font-size: 15px; }
+.heading > strong > span { font-size: 12px; font-weight: 400; color: var(--fc-data-text-muted); }
+.heading button { padding: 8px 0; border: 0; background: transparent; font-size: 12px; color: var(--fc-data-text-muted); }
+.actions { display: flex; align-items: center; gap: 20px; }
+.actions button:hover { color: var(--fc-data-ink); text-decoration: underline; text-underline-offset: 4px; }
+.actions button[aria-controls] { color: var(--fc-data-ink); }
+.controls { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin: 12px 0 18px; }
+.options { display: flex; gap: 2px; padding: 2px; border: 1px solid var(--fc-data-line); }
+.options button { display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 34px; padding: 6px 10px; border: 0; background: transparent; color: var(--fc-data-text-muted); font-size: 12px; }
+.options button[aria-pressed="true"] { background: var(--fc-data-ink); color: var(--fc-data-paper); }
+.options button:disabled { opacity: .5; cursor: default; }
+.options button > span { font-variant-numeric: tabular-nums; }
+.names { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--fc-data-line); }
+.identity { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.identity + .identity { border-left: 1px solid var(--fc-data-line); padding-left: 24px; }
+.player { display: grid; gap: 5px; min-width: 0; }
+.team { display: flex; align-items: baseline; gap: 10px; font-size: 12px; color: var(--fc-data-text-muted); }
+.team > span { font-size: 11px; }
+.player > strong { font-size: 20px; font-weight: 650; line-height: 1.3; overflow-wrap: anywhere; }
+.player > small { font-size: 12px; color: var(--fc-data-text-muted); overflow-wrap: anywhere; }
+.player [data-player-heroes] { margin-top: 3px; }
+.rating { display: grid; justify-items: end; gap: 7px; flex-shrink: 0; }
+.rating > span:first-child { font-size: 11px; color: var(--fc-data-text-muted); }
+.legend { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px 18px; padding: 12px 0; color: var(--fc-data-text-muted); font-size: 11px; }
+.metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 30px; margin: 0; }
+.metrics > div { display: grid; grid-template-columns: 1fr auto; min-width: 0; gap: 6px 10px; }
+.metrics dt { font-size: 12px; color: var(--fc-data-text-muted); }
+.metrics dd { margin: 0; font-variant-numeric: tabular-nums; }
+.delta { font-size: 12px; font-weight: 600; text-align: right; }
+.values { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 12px; font-size: 16px; font-weight: 600; }
+.bar { display: flex; grid-column: 1 / -1; height: 3px; gap: 3px; }
+.bar i:first-child { background: var(--fc-data-ink); }
+.bar i:last-child { flex: 1; background: var(--fc-data-text-muted); }
+.pending { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding-top: 12px; font-size: 13px; }
+.pending button, .empty button { padding: 9px 12px; border: 1px solid var(--fc-data-line-strong); background: transparent; color: var(--fc-data-ink); font-size: 12px; }
+.empty { padding: 12px 0; font-size: 13px; line-height: 1.7; }
+.empty button { margin-top: 12px; }
+@media (max-width: 760px) {
+  .compare { padding: 12px; }
+  .controls { gap: 8px; }
+  .options { flex: 1; }
+  .options button { flex: 1; padding-inline: 7px; white-space: nowrap; }
+  .names { gap: 12px; }
+  .identity { display: block; }
+  .identity + .identity { padding-left: 12px; }
+  .player > strong { font-size: 17px; }
+  .rating { display: flex; justify-content: flex-start; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
+  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .values { font-size: 14px; }
+  .delta { font-size: 11px; }
+}
+@media (pointer: coarse) { .options button, .heading button, .pending button, .empty button { min-height: 44px; } }

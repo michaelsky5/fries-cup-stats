@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Ramattra ceramic faceplate</title>
+  <desc id="desc">Nine red optical nodes identify a ceramic faceplate seated in a continuous mechanical chassis. A flat dark brow joins the short temple mounts, and the face flows into a compact grey jaw.</desc>
+  <defs>
+    <linearGradient id="ceramic" x1="133" y1="76" x2="209" y2="176" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e3dce9" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#b7aac8" stop-opacity="0.26"/>
+    </linearGradient>
+  </defs>
+  <path d="M139 73H221L232 90L238 121Q240 138 229 151L211 180L195 210H165L149 180L131 151Q120 138 122 121L128 90Z" fill="#756780" fill-opacity="0.22" stroke="#a79bb6" stroke-opacity="0.59" stroke-width="1.7" stroke-linejoin="round"/>
+  <path d="M139 147L160 167Q180 182 200 167L221 147L202 191L192 207H168L158 191Z" fill="#b3adbd" fill-opacity="0.26"/>
+  <path d="M134 91L145 84L153 86L157 96H203L207 86L215 84L226 91L232 120Q234 135 221 146L197 166Q180 181 163 166L139 146Q126 135 128 120Z" fill="url(#ceramic)" stroke="#d4cada" stroke-opacity="0.8" stroke-width="1.9" stroke-linejoin="round"/>
+  <path d="M146 152L160 178L170 204M214 152L200 178L190 204" fill="none" stroke="#c9bfd6" stroke-opacity="0.37" stroke-width="1.4" stroke-linecap="round"/>
+  <g fill="#d98b86" fill-opacity="0.86">
+    <circle cx="153" cy="111" r="3.3"/><circle cx="180" cy="109" r="3.3"/><circle cx="207" cy="111" r="3.3"/>
+    <circle cx="166" cy="127" r="3.3"/><circle cx="194" cy="127" r="3.3"/>
+    <circle cx="156" cy="145" r="3.3"/><circle cx="180" cy="144" r="3.3"/><circle cx="204" cy="145" r="3.3"/>
+    <circle cx="180" cy="162" r="3.3"/>
+  </g>
+</svg>

@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import AdvancePendingState from './AdvancePendingState.jsx'
 import FourDivisionLcqBracket from './FourDivisionLcqBracket.jsx'
 import PlayoffBracket from './PlayoffBracket.jsx'
@@ -11,12 +13,13 @@ export default function BreakthroughPhasePanel({
   isFavoriteTeam,
   isPrimaryFavoriteTeam
 }) {
+  const uiLocale = useUiLocale()
   if (state.status === 'pending_rules') {
     return (
       <AdvancePendingState
         eyebrow="BREAKTHROUGH"
-        title={t('advance.breakthrough.pendingTitle', '突围赛规则待确认')}
-        description={t('advance.breakthrough.pendingDesc', '瑞士轮结束后，赛事组将根据最终晋级情况公布突围赛赛制与对阵。')}
+        title={t('advance.breakthrough.pendingTitle', uiText("突围赛规则待确认", uiLocale))}
+        description={t('advance.breakthrough.pendingDesc', uiText("瑞士轮结束后，赛事组将根据最终晋级情况公布突围赛赛制与对阵。", uiLocale))}
         items={[
           t('advance.breakthrough.pendingFormat', '赛制'),
           t('advance.breakthrough.pendingBracket', '对阵'),
@@ -45,7 +48,7 @@ export default function BreakthroughPhasePanel({
       <PlayoffBracket
         bracket={state.bracket}
         eyebrow="BREAKTHROUGH"
-        title={t('advance.breakthrough.title', '突围赛晋级图')}
+        title={t('advance.breakthrough.title', uiText("突围赛晋级图", uiLocale))}
         t={t}
         seasonId={seasonId}
         withSeason={withSeason}

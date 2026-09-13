@@ -1,6 +1,9 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import React, { useMemo } from 'react'
 import { useParams, Link, useOutletContext } from 'react-router-dom'
 import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
+import SignalMapDetail from '../../features/map-atlas/SignalMapDetail.jsx'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import styles from './MapDetailPage.module.css'
 import { getMapDetail, safeArr } from '../../lib/selectors'
@@ -256,7 +259,7 @@ function RecordCard({
   locale = 'zh-CN',
   withSeason
 }) {
-  const heroText = hero ? (locale === 'en-US' ? `on ${hero}` : `使用 ${hero}`) : ''
+  const heroText = hero ? (locale === 'en-US' ? `on ${hero}` : uiText("使用 {0}", locale, [hero])) : ''
   const playerPath = getPlayerPath(playerId, withSeason)
 
   return (
@@ -380,11 +383,11 @@ function CompositionPanel({ stats, locale, isEn }) {
       <section className={styles.compositionSection}>
         <SectionHeader
           kicker="LINEUP META"
-          title={isEn ? 'Common Lineups' : '常见阵容'}
-          meta={isEn ? 'NO FULL LINEUP SAMPLES' : '暂无完整阵容样本'}
+          title={isEn ? 'Common Lineups' : uiText("常见阵容", locale)}
+          meta={isEn ? 'NO FULL LINEUP SAMPLES' : uiText("暂无完整阵容样本", locale)}
         />
         <div className={styles.compositionEmpty}>
-          {isEn ? 'No complete five-hero lineup samples on this map yet.' : '这张图暂时没有可统计的完整五英雄阵容样本。'}
+          {isEn ? 'No complete five-hero lineup samples on this map yet.' : uiText("这张图暂时没有可统计的完整五英雄阵容样本。", locale)}
         </div>
       </section>
     )
@@ -398,8 +401,8 @@ function CompositionPanel({ stats, locale, isEn }) {
     <section className={styles.compositionSection}>
       <SectionHeader
         kicker="LINEUP META"
-        title={isEn ? 'Common Lineups' : '常见阵容'}
-        meta={`${isEn ? `TOP ${visibleRows}` : `前 ${visibleRows}`} / ${stats.totalSamples} ${isEn ? 'TEAM-SIDE SAMPLES' : '单方阵容样本'}`}
+        title={isEn ? 'Common Lineups' : uiText("常见阵容", locale)}
+        meta={`${isEn ? `TOP ${visibleRows}` : uiText("前 {0}", locale, [visibleRows])} / ${stats.totalSamples} ${isEn ? 'TEAM-SIDE SAMPLES' : uiText("单方阵容样本", locale)}`}
       />
 
       <div className={styles.compositionBody}>
@@ -414,15 +417,15 @@ function CompositionPanel({ stats, locale, isEn }) {
 
             <div className={styles.compositionMetaGrid}>
               <span>
-                <b>{isEn ? 'Uses' : '出现次数'}</b>
+                <b>{isEn ? 'Uses' : uiText("出现次数", locale)}</b>
                 <strong>{leader.count}</strong>
               </span>
               <span>
-                <b>{isEn ? 'Share' : '阵容占比'}</b>
+                <b>{isEn ? 'Share' : uiText("阵容占比", locale)}</b>
                 <strong>{formatPercent(leader.share * 100)}</strong>
               </span>
               <span className={styles.compositionSeenCell}>
-                <b>{isEn ? 'Seen From' : '常见使用'}</b>
+                <b>{isEn ? 'Seen From' : uiText("常见使用", locale)}</b>
                 {leader.topTeams.length > 0 ? (
                   <strong className={styles.compositionSeenTeams}>
                     {leader.topTeams.map(team => (
@@ -430,11 +433,11 @@ function CompositionPanel({ stats, locale, isEn }) {
                     ))}
                   </strong>
                 ) : (
-                  <strong>{isEn ? 'Team-side samples' : '单方样本'}</strong>
+                  <strong>{isEn ? 'Team-side samples' : uiText("单方样本", locale)}</strong>
                 )}
               </span>
               <span>
-                <b>{isEn ? 'Samples' : '样本总数'}</b>
+                <b>{isEn ? 'Samples' : uiText("样本总数", locale)}</b>
                 <strong>{stats.totalSamples}</strong>
               </span>
             </div>
@@ -484,13 +487,14 @@ function HeroSpotlight({ hero, locale }) {
       <div className={styles.heroSpotlightCopy}>
         <span>TOP HERO</span>
         <strong>{heroDisplayName}</strong>
-        <em>{hero.count} {locale === 'en-US' ? 'picks' : '次出场'} / {formatPercent(hero.pickRate * 100)}</em>
+        <em>{hero.count} {locale === 'en-US' ? 'picks' : uiText("次出场", locale)} / {formatPercent(hero.pickRate * 100)}</em>
       </div>
     </div>
   )
 }
 
 function TeamSpotlight({ team, resolvedTeam, seasonId, isEn, teamTo = '' }) {
+  const uiLocale = useUiLocale()
   if (!team) return null
 
   const winRate = formatPercent(team.winRate * 100)
@@ -516,7 +520,7 @@ function TeamSpotlight({ team, resolvedTeam, seasonId, isEn, teamTo = '' }) {
           <strong>{team.name}</strong>
         )}
         <em>
-          {isEn ? `${team.wins}W / ${team.plays - team.wins}L` : `${team.wins}胜 / ${team.plays - team.wins}负`} · {winRate}
+          {isEn ? `${team.wins}W / ${team.plays - team.wins}L` : uiText("{0}胜 / {1}负", uiLocale, [team.wins, team.plays - team.wins])} · {winRate}
         </em>
         {sampleBadge ? <b>{sampleBadge}</b> : null}
       </div>
@@ -581,7 +585,7 @@ const MapDetailPage = () => {
         const ast = Number(stat.assists) || 0
         const mit = Number(stat.mitigation) || 0
         const hero = getOwHeroCanonicalName(stat.heroes_played)
-        const cleanName = (stat.player_name || (isEn ? 'Unknown Player' : '未知选手')).split('#')[0]
+        const cleanName = (stat.player_name || (isEn ? 'Unknown Player' : uiText("未知选手", locale))).split('#')[0]
         const playerId = stat.player_id || stat.playerId || ''
         const recordContext = {
           matchId: match.match_id,
@@ -625,15 +629,15 @@ const MapDetailPage = () => {
         <DatabaseSubnav />
         <div className={styles.errorShell}>
           <div className={styles.errorPanel}>
-            <div className={styles.errorKicker}>{isEn ? 'Map Report' : '地图报告'}</div>
-            <h2 className={styles.errorTitle}>{isEn ? 'No map records yet' : '暂无地图记录'}</h2>
+            <div className={styles.errorKicker}>{isEn ? 'Map Report' : uiText("地图报告", locale)}</div>
+            <h2 className={styles.errorTitle}>{isEn ? 'No map records yet' : uiText("暂无地图记录", locale)}</h2>
             <p className={styles.errorDesc}>
               {isEn
                 ? 'This map has no valid match records yet, or its name does not match the current season data.'
-                : '该地图尚未进行任何有效对局，或地图名称与当前赛季记录不匹配。'}
+                : uiText("该地图尚未进行任何有效对局，或地图名称与当前赛季记录不匹配。", locale)}
             </p>
             <Link to={withSeason('/maps')} className={styles.backBtn}>
-              {isEn ? 'Back to maps' : '返回地图列表'}
+              {isEn ? 'Back to maps' : uiText("返回地图列表", locale)}
             </Link>
           </div>
         </div>
@@ -664,7 +668,7 @@ const MapDetailPage = () => {
   })
   const recordItems = [
     {
-      labelCn: isEn ? 'Elims' : '最高击杀',
+      labelCn: isEn ? 'Elims' : uiText("最高击杀", locale),
       labelEn: 'ELIMS',
       value: formatNumber(data.records.maxElims.value),
       player: data.records.maxElims.player,
@@ -674,7 +678,7 @@ const MapDetailPage = () => {
       tone: 'recordAccent'
     },
     {
-      labelCn: isEn ? 'Assists' : '最多助攻',
+      labelCn: isEn ? 'Assists' : uiText("最多助攻", locale),
       labelEn: 'ASSISTS',
       value: formatNumber(data.records.maxAssists.value),
       player: data.records.maxAssists.player,
@@ -683,7 +687,7 @@ const MapDetailPage = () => {
       ...getRecordExtras(data.records.maxAssists)
     },
     {
-      labelCn: isEn ? 'Damage' : '最高伤害',
+      labelCn: isEn ? 'Damage' : uiText("最高伤害", locale),
       labelEn: 'DAMAGE',
       value: formatNumber(data.records.maxDamage.value),
       player: data.records.maxDamage.player,
@@ -692,7 +696,7 @@ const MapDetailPage = () => {
       ...getRecordExtras(data.records.maxDamage)
     },
     {
-      labelCn: isEn ? 'Healing' : '最高治疗',
+      labelCn: isEn ? 'Healing' : uiText("最高治疗", locale),
       labelEn: 'HEALING',
       value: formatNumber(data.records.maxHealing.value),
       player: data.records.maxHealing.player,
@@ -701,7 +705,7 @@ const MapDetailPage = () => {
       ...getRecordExtras(data.records.maxHealing)
     },
     {
-      labelCn: isEn ? 'Mitigation' : '最高承伤',
+      labelCn: isEn ? 'Mitigation' : uiText("最高承伤", locale),
       labelEn: 'MITIGATION',
       value: formatNumber(data.records.maxMitigation.value),
       player: data.records.maxMitigation.player,
@@ -715,7 +719,7 @@ const MapDetailPage = () => {
     <div className={styles.shell}>
       <DatabaseSubnav />
       <Link to={withSeason('/maps')} className={styles.backLink}>
-        {isEn ? 'Back to all maps' : '返回全联盟地图数据'} / BACK TO ALL MAPS
+        {isEn ? 'Back to all maps' : uiText("返回全联盟地图数据", locale)} / BACK TO ALL MAPS
       </Link>
 
       <section className={styles.heroSection}>
@@ -732,13 +736,13 @@ const MapDetailPage = () => {
           <div className={styles.heroVisualMeta}>
             <span>{formatOwMapMode(mapType, locale)}</span>
             <strong>{displayMapName}</strong>
-            <em>{data.totalPlays} {isEn ? 'plays' : '次登场'}</em>
+            <em>{data.totalPlays} {isEn ? 'plays' : uiText("次登场", locale)}</em>
           </div>
         </div>
 
         <div className={styles.heroPanel}>
           <div className={styles.heroKicker}>
-            <span className={styles.heroKickerCn}>{isEn ? 'Map Intel' : '地图情报页'}</span>
+            <span className={styles.heroKickerCn}>{isEn ? 'Map Intel' : uiText("地图情报页", locale)}</span>
             <span className={styles.heroKickerEn}>MAP INTEL</span>
           </div>
 
@@ -747,38 +751,38 @@ const MapDetailPage = () => {
           <p className={styles.heroDesc}>
             {isEn
               ? 'A compact readout of this map across valid matches: play volume, top picks, peak performances, team results and recent series.'
-              : '汇总该地图在当前赛季有效对局中的登场频率、英雄选择、单图极值、战队结果与近期交战。'}
+              : uiText("汇总该地图在当前赛季有效对局中的登场频率、英雄选择、单图极值、战队结果与近期交战。", locale)}
           </p>
 
           <div className={styles.heroSummary}>
             <SummaryCard
-              labelCn={isEn ? 'Total Plays' : '总计出场'}
+              labelCn={isEn ? 'Total Plays' : uiText("总计出场", locale)}
               labelEn="TOTAL PLAYS"
               value={data.totalPlays}
-              meta={isEn ? 'Valid map records' : '有效地图记录'}
+              meta={isEn ? 'Valid map records' : uiText("有效地图记录", locale)}
               tone="accent"
             />
             <SummaryCard
-              labelCn={isEn ? 'Avg Time' : '平均时长'}
+              labelCn={isEn ? 'Avg Time' : uiText("平均时长", locale)}
               labelEn="AVG TIME"
               value={avgTime}
-              meta={isEn ? 'Average duration' : '平均单图时长'}
+              meta={isEn ? 'Average duration' : uiText("平均单图时长", locale)}
             />
             <SummaryCard
-              labelCn={isEn ? 'Top Hero' : '最常见英雄'}
+              labelCn={isEn ? 'Top Hero' : uiText("最常见英雄", locale)}
               labelEn="TOP HERO"
               value={topHero?.hero ? formatOwHeroName(topHero.hero, locale) : '--'}
               meta={topHero
-                ? (isEn ? `${topHero.count} picks` : `${topHero.count} 次出场`)
-                : (isEn ? 'Awaiting records' : '等待记录')}
+                ? (isEn ? `${topHero.count} picks` : uiText("{0} 次出场", locale, [topHero.count]))
+                : (isEn ? 'Awaiting records' : uiText("等待记录", locale))}
             />
             <SummaryCard
-              labelCn={isEn ? 'Top Team' : '胜率领跑'}
+              labelCn={isEn ? 'Top Team' : uiText("胜率领跑", locale)}
               labelEn="TOP TEAM"
               value={topTeam?.name || '--'}
               meta={topTeam
-                ? (isEn ? `${formatPercent(topTeam.winRate * 100)} win rate` : `${formatPercent(topTeam.winRate * 100)} 胜率`)
-                : (isEn ? 'Awaiting records' : '等待记录')}
+                ? (isEn ? `${formatPercent(topTeam.winRate * 100)} win rate` : uiText("{0} 胜率", locale, [formatPercent(topTeam.winRate * 100)]))
+                : (isEn ? 'Awaiting records' : uiText("等待记录", locale))}
               tone="highlight"
               to={topTeamPath}
             />
@@ -789,7 +793,7 @@ const MapDetailPage = () => {
       <section className={styles.recordsSection}>
         <SectionHeader
           kicker="MAP RECORDS"
-          title={isEn ? 'Peak Records' : '极值记录'}
+          title={isEn ? 'Peak Records' : uiText("极值记录", locale)}
           meta="PEAK PERFORMANCES ON THIS MAP"
         />
 
@@ -806,7 +810,7 @@ const MapDetailPage = () => {
         <section className={styles.panelSection}>
           <SectionHeader
             kicker="HERO META"
-            title={isEn ? 'Hero Meta' : '英雄环境'}
+            title={isEn ? 'Hero Meta' : uiText("英雄环境", locale)}
             meta={`TOP ${heroMetaLimit} / ${data.heroStats.length}`}
           />
 
@@ -821,7 +825,7 @@ const MapDetailPage = () => {
                       key={hero.hero}
                       rank={index + 2}
                       title={formatOwHeroName(hero.hero, locale)}
-                    sub={isEn ? `${hero.count} picks` : `${hero.count} 次出场`}
+                    sub={isEn ? `${hero.count} picks` : uiText("{0} 次出场", locale, [hero.count])}
                     rateText={formatPercent(pickRatePercent)}
                     width={`${pickRatePercent}%`}
                     imageUrl={getHeroImageUrl(hero.hero)}
@@ -835,8 +839,8 @@ const MapDetailPage = () => {
         <section className={styles.panelSection}>
           <SectionHeader
             kicker="TEAM WIN RATES"
-            title={isEn ? 'Team Results' : '战队表现'}
-            meta={`TOP ${teamMetaLimit} / ${data.teamWinRates.length} · ${reliableTeamWinRates.length} ${isEn ? 'QUALIFIED' : '稳定样本'}`}
+            title={isEn ? 'Team Results' : uiText("战队表现", locale)}
+            meta={`TOP ${teamMetaLimit} / ${data.teamWinRates.length} · ${reliableTeamWinRates.length} ${isEn ? 'QUALIFIED' : uiText("稳定样本", locale)}`}
           />
 
           <div className={styles.metaPanelBody}>
@@ -859,7 +863,7 @@ const MapDetailPage = () => {
                     rank={index + 2}
                     title={team.name}
                     titleTo={teamPath}
-                    sub={isEn ? `${team.wins}W / ${team.plays - team.wins}L` : `${team.wins}胜 / ${team.plays - team.wins}负`}
+                    sub={isEn ? `${team.wins}W / ${team.plays - team.wins}L` : uiText("{0}胜 / {1}负", locale, [team.wins, team.plays - team.wins])}
                     badge={getSampleBadge(team.plays, isEn)}
                     rateText={formatPercent(winRatePercent)}
                     width={`${winRatePercent}%`}
@@ -884,7 +888,7 @@ const MapDetailPage = () => {
       <section className={styles.recentSection}>
         <SectionHeader
           kicker="RECENT MATCHES"
-          title={isEn ? 'Recent Matches' : '近期交战'}
+          title={isEn ? 'Recent Matches' : uiText("近期交战", locale)}
           meta={`RECENT ${visibleRecentMatches.length} / ${data.recentMatches.length}`}
         />
 
@@ -947,7 +951,7 @@ const MapDetailPage = () => {
                     </span>
                   )}
 
-                  <Link to={matchPath} className={styles.scoreBox} aria-label={isEn ? `Open match ${m.matchId}` : `查看比赛 ${m.matchId}`}>
+                  <Link to={matchPath} className={styles.scoreBox} aria-label={isEn ? `Open match ${m.matchId}` : uiText("查看比赛 {0}", locale, [m.matchId])}>
                     <span className={styles.scoreNum}>{m.scoreA}</span>
                     <span className={styles.scoreDiv}>-</span>
                     <span className={styles.scoreNum}>{m.scoreB}</span>
@@ -986,4 +990,7 @@ const MapDetailPage = () => {
   )
 }
 
-export default MapDetailPage
+export default function MapDetailRoute() {
+  const { isKprDesign = false } = useOutletContext()
+  return isKprDesign ? <SignalMapDetail /> : <MapDetailPage />
+}

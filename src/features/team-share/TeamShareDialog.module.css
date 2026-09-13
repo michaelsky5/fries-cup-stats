@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  z-index: 90;
+  z-index: 120;
   display: grid;
   place-items: center;
   padding: 24px;
@@ -11,7 +11,7 @@
 
 .dialog {
   width: min(1480px, calc(100vw - 48px));
-  height: min(840px, calc(100vh - 48px));
+  height: min(840px, calc(100dvh - 48px));
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   overflow: hidden;
@@ -73,6 +73,20 @@
   background: #fffaf0;
 }
 
+.toolArea {
+  position: relative;
+  z-index: 2;
+  background: #fffaf0;
+}
+
+.controlActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
 .metaPills {
   display: flex;
   align-items: center;
@@ -92,16 +106,33 @@
   font-weight: 950;
 }
 
-.exportButton {
+.exportButton,
+.editorButton,
+.autoButton {
   min-width: 132px;
   min-height: 40px;
   padding: 0 18px;
   border: 2px solid #2a2a2a;
-  background: #f4c320;
   color: #2a2a2a;
   cursor: pointer;
   font-size: 13px;
   font-weight: 950;
+}
+
+.exportButton {
+  background: #f4c320;
+}
+
+.editorButton,
+.autoButton {
+  min-width: 104px;
+  border-width: 1px;
+  background: #fffaf0;
+}
+
+.editorButton[aria-expanded='true'] {
+  background: #2a2a2a;
+  color: #fff;
 }
 
 .exportButton:hover:not(:disabled) {
@@ -109,9 +140,111 @@
   color: #f4c320;
 }
 
-.exportButton:disabled {
+.editorButton:hover:not(:disabled),
+.autoButton:hover:not(:disabled) {
+  background: #e8dfd0;
+}
+
+.exportButton:disabled,
+.editorButton:disabled,
+.autoButton:disabled {
   cursor: not-allowed;
   opacity: 0.52;
+}
+
+.heroEditor {
+  padding: 12px 32px 14px;
+  border-bottom: 2px solid #2a2a2a;
+  background: #eee5d7;
+}
+
+.heroEditor > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 10px;
+}
+
+.heroEditor > header > div {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.heroEditor > header strong {
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.heroEditor > header span,
+.heroEditor > header em {
+  color: rgba(42, 42, 42, 0.62);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.heroEditor > header em[data-warning='true'] {
+  color: #9d4d16;
+}
+
+.heroEditorGrid {
+  display: grid;
+  grid-template-columns: repeat(var(--hero-editor-count, 7), minmax(0, 1fr));
+  gap: 8px;
+}
+
+.heroEditorGrid label {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding-left: 8px;
+  border-left: 3px solid #f4c320;
+}
+
+.heroEditorGrid label > span {
+  display: grid;
+  min-width: 0;
+}
+
+.heroEditorGrid label b,
+.heroEditorGrid label em {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.heroEditorGrid label b {
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.heroEditorGrid label em {
+  color: rgba(42, 42, 42, 0.58);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.heroEditorGrid select {
+  width: 92px;
+  height: 34px;
+  min-width: 0;
+  border: 1px solid #2a2a2a;
+  border-radius: 0;
+  background: #fffaf0;
+  color: #2a2a2a;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.heroEditorGrid select:disabled {
+  border-color: rgba(42, 42, 42, 0.24);
+  color: rgba(42, 42, 42, 0.58);
 }
 
 .previewArea {
@@ -128,9 +261,8 @@
 }
 
 .previewFrame {
-  width: 896px;
-  height: 504px;
   overflow: hidden;
+  box-sizing: content-box;
   border: 2px solid #2a2a2a;
   background: #101010;
 }
@@ -138,7 +270,6 @@
 .previewScale {
   width: 1600px;
   height: 900px;
-  transform: scale(0.56);
   transform-origin: 0 0;
 }
 
@@ -193,32 +324,69 @@
     padding: 14px 28px;
   }
 
-  .previewFrame {
-    width: 768px;
-    height: 432px;
+  .heroEditor {
+    padding-right: 28px;
+    padding-left: 28px;
   }
 
-  .previewScale {
-    transform: scale(0.48);
+  .heroEditorGrid select {
+    width: 78px;
   }
+
 }
 
 @media (max-width: 1380px), (max-height: 760px) {
   .dialog {
     width: min(1320px, calc(100vw - 40px));
-    height: min(720px, calc(100vh - 40px));
+    height: min(720px, calc(100dvh - 40px));
   }
 
   .metaPills span:nth-child(3) {
     display: none;
   }
 
-  .previewFrame {
-    width: 736px;
-    height: 414px;
+  .editorButton,
+  .autoButton,
+  .exportButton {
+    min-width: 96px;
+    padding: 0 12px;
   }
 
-  .previewScale {
-    transform: scale(0.46);
+  .heroEditor > header span {
+    display: none;
   }
+
+  .heroEditorGrid label > span em {
+    display: none;
+  }
+
+}
+
+.dialog button:focus-visible,
+.dialog select:focus-visible { outline: 3px solid #806000; outline-offset: 2px; }
+.header button:focus-visible { outline-color: #f4c320; }
+.editorButton[aria-expanded='true']:hover:not(:disabled) { background: #2a2a2a; color: #fff; }
+
+@media (max-width: 760px) {
+  .overlay { padding: 12px; }
+  .dialog { width: calc(100vw - 24px); height: auto; max-height: calc(100dvh - 24px); }
+  .header { padding: 16px; gap: 12px; }
+  .header h2 { font-size: 26px; line-height: 1.2; }
+  .header button { width: 40px; height: 40px; flex: 0 0 40px; }
+  .controls { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px; }
+  .metaPills span { min-height: 26px; border: 0; padding: 0; font-size: 12px; }
+  .metaPills { gap: 16px; }
+  .controlActions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .controlActions button { min-width: 0; min-height: 44px; padding: 0 4px; font-size: 13px; }
+  .previewArea { padding: 12px; height: calc((100vw - 56px) * .5625 + 24px); box-sizing: border-box; }
+  .toolArea { max-height: 48dvh; overflow-y: auto; }
+  .heroEditor { max-height: 210px; padding: 12px; overflow-y: auto; }
+  .heroEditor > header { flex-wrap: wrap; gap: 8px; }
+  .heroEditorGrid { grid-template-columns: 1fr; }
+  .heroEditorGrid select { width: 130px; height: 40px; font-size: 13px; }
+  .heroEditorGrid label b { font-size: 13px; }
+  .heroEditorGrid label > span em { display: block; font-size: 11px; color: #66685f; }
+  .footer { min-height: 44px; padding: 10px 12px; }
+  .footer span { font-size: 12px; line-height: 1.5; }
+  .emptyState { min-width: 0; width: 100%; font-size: 14px; }
 }

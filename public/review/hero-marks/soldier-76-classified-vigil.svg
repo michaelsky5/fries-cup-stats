@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Soldier 76 tactical visor</title>
+  <desc id="desc">One uninterrupted red optical band is held inside a low, wide tactical frame. Motion belongs to the separate portrait background.</desc>
+
+  <path d="M87 101Q133 86 181 94Q229 86 274 101L262 142Q241 148 222 140L209 126Q181 116 154 127L140 141Q119 148 99 138Z" fill="#758aa2" fill-opacity="0.2" stroke="#bdcbd7" stroke-opacity="0.72" stroke-width="2.1" stroke-linejoin="round"/>
+  <path d="M97 106Q138 97 181 102Q226 97 264 106L255 120Q220 110 181 115Q141 110 106 121Z" fill="#ca6063" fill-opacity="0.62" stroke="#df9691" stroke-opacity="0.72" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M111 106Q147 101 181 106Q220 101 249 106" fill="none" stroke="#f1b5ad" stroke-opacity="0.56" stroke-width="1.2"/>
+  <path d="M93 110L102 114M266 111L258 116" stroke="#8fa8bb" stroke-opacity="0.6" stroke-width="2.4"/>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Torbjorn forged turret</title>
+  <desc id="desc">A compact twin-barrel head sits on a solid articulated chassis. Feet and negative spaces carry the machine's structure without blueprint axes.</desc>
+  <g stroke-linejoin="round">
+    <path d="M249 157L240 187H248L264 163H277L292 187H304L292 156Z" fill="#b17e55" fill-opacity="0.36" stroke="#d8ae7e" stroke-opacity="0.65" stroke-width="1.6"/>
+    <path d="M247 133H285L301 149L294 172H242L234 151Z" fill="#080a09"/>
+  <path d="M247 133H285L301 149L294 172H242L234 151Z" fill="#c18b59" fill-opacity="0.31" stroke="#e2b57c" stroke-opacity="0.75" stroke-width="1.7"/>
+    <path d="M248 106H286L299 116H326L338 122V130H298L287 138H248L239 128V115Z" fill="#080a09"/>
+  <path d="M248 106H286L299 116H326L338 122V130H298L287 138H248L239 128V115Z" fill="#cc995f" fill-opacity="0.4" stroke="#e8c18a" stroke-opacity="0.78" stroke-width="1.7"/>
+    <path d="M282 106H327L333 111V118H294Z" fill="#dfbb80" fill-opacity="0.43"/>
+    <path d="M302 122H337V127H302Z" fill="#e4c690" fill-opacity="0.58"/>
+    <path d="M251 141H284L293 151H242Z" fill="#e3b576" fill-opacity="0.22"/>
+  </g>
+  <circle cx="269" cy="153" r="10" fill="#121714" fill-opacity="0.73" stroke="#d6af78" stroke-opacity="0.6" stroke-width="1.5"/>
+  <path d="M266 149H272V157H266Z" fill="#daba80" fill-opacity="0.52"/>
+</svg>

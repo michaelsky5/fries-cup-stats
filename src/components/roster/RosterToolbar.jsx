@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useId, useState } from 'react'
+import { rosterText } from '../../features/roster-index/rosterCopy.js'
+import ImeSafeInput from '../common/ImeSafeInput.jsx'
 import styles from './RosterComponents.module.css'
 
-function FieldControl({ field }) {
+function FieldControl({ field, text = value => value }) {
   return (
     <label className={styles.field}>
-      <span className={styles.fieldLabel}>{field.label}</span>
+      <span className={styles.fieldLabel}>{text(field.label)}</span>
       <select
         className={styles.select}
         value={field.value}
@@ -12,7 +15,7 @@ function FieldControl({ field }) {
       >
         {field.options.map(option => (
           <option key={option.value} value={option.value}>
-            {option.label}
+            {text(option.label)}
           </option>
         ))}
       </select>
@@ -34,12 +37,22 @@ export default function RosterToolbar({
   onReset,
   actions = null,
   leadingControls = null,
-  compact = false
+  compact = false,
+  className = '',
+  presentation = 'default',
+  locale = 'zh-CN'
 }) {
+  const index = presentation === 'index'
+  const text = value => {
+    if (!index) return rosterText(value, locale)
+    const labels = { FILTER: ['筛选', 'Filter'], SORT: ['排序', 'Sort'], ROLE: ['职责', 'Role'], TEAM: ['队伍', 'Team'], HERO: ['英雄', 'Hero'], FOLLOWING: ['关注', 'Following'] }
+    return rosterText(labels[value]?.[locale === 'en-US' ? 1 : 0] || value, locale)
+  }
+  const advancedId = useId()
   const [advancedOpen, setAdvancedOpen] = useState(false)
   const hasAdvanced = advancedFields.length > 0
 
-  const actionControls = (
+  const actionControls = resultLabel || actions || hasAdvanced || onReset ? (
     <div className={styles.toolbarActions}>
       {resultLabel ? <span className={styles.resultPill}>{resultLabel}</span> : null}
       {actions}
@@ -49,17 +62,18 @@ export default function RosterToolbar({
           className={`${styles.secondaryAction} ${advancedOpen ? styles.secondaryActionActive : ''}`}
           onClick={() => setAdvancedOpen(value => !value)}
           aria-expanded={advancedOpen}
+          aria-controls={advancedId}
         >
-          高级筛选
+          {text(uiText("高级筛选", locale))}
         </button>
       ) : null}
       {onReset ? (
         <button type="button" className={styles.secondaryAction} onClick={onReset}>
-          清除筛选
+          {text(uiText("清除筛选", locale))}
         </button>
       ) : null}
     </div>
-  )
+  ) : null
 
   const formControls = (
     <div
@@ -67,25 +81,25 @@ export default function RosterToolbar({
       style={{ '--roster-toolbar-fields': Math.max(fields.length, 1) }}
     >
       <label className={styles.field}>
-        <span className={styles.fieldLabel}>{searchLabel}</span>
-        <input
+        <span className={styles.fieldLabel}>{index ? (locale === 'en-US' ? 'Search' : uiText("搜索", locale)) : searchLabel}</span>
+        <ImeSafeInput
           className={styles.input}
           value={searchValue}
-          onChange={event => onSearchChange?.(event.target.value)}
-          placeholder={searchPlaceholder}
+          onValueChange={onSearchChange}
+          placeholder={text(searchPlaceholder)}
         />
       </label>
 
       {fields.map(field => (
-        <FieldControl key={field.name} field={field} />
+        <FieldControl key={field.name} field={field} text={text} />
       ))}
     </div>
   )
 
   const advancedPanel = hasAdvanced && advancedOpen ? (
-    <div className={styles.advancedGrid}>
+    <div className={styles.advancedGrid} id={advancedId}>
       {advancedFields.map(field => (
-        <FieldControl key={field.name} field={field} />
+        <FieldControl key={field.name} field={field} text={text} />
       ))}
     </div>
   ) : null
@@ -99,12 +113,12 @@ export default function RosterToolbar({
           className={styles.filterChip}
           onClick={filter.onRemove}
         >
-          {filter.label} ×
+          {text(filter.label)} ×
         </button>
       ))}
       {onReset ? (
         <button type="button" className={styles.clearAllLink} onClick={onReset}>
-          清除全部筛选 →
+          {text(uiText("清除全部筛选", locale))} →
         </button>
       ) : null}
     </div>
@@ -112,7 +126,7 @@ export default function RosterToolbar({
 
   if (compact) {
     return (
-      <section className={`${styles.toolbar} ${styles.toolbarCompact}`}>
+      <section className={`${styles.toolbar} ${styles.toolbarCompact} ${index ? styles.toolbarIndex : ''} ${className}`.trim()} data-i18n-ignore={index || undefined}>
         <div className={`${styles.compactToolbarRow} ${leadingControls ? styles.compactToolbarRowWithLead : ''}`}>
           {leadingControls}
           {formControls}
@@ -125,7 +139,7 @@ export default function RosterToolbar({
   }
 
   return (
-    <section className={styles.toolbar}>
+    <section className={`${styles.toolbar} ${className}`.trim()}>
       <div className={styles.toolbarTop}>
         <div className={styles.toolbarTitleGroup}>
           <div className={styles.toolbarTitle}>{title}</div>

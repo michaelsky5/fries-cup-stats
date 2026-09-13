@@ -1,5 +1,16 @@
 @import './styles/tokens.css';
 @import './styles/globals.css';
+@import './styles/fries-cup-data-system.css';
+
+:root:lang(zh-TW) {
+  --font-sans: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', 'FCAHarmonySC', sans-serif;
+}
+
+:root:lang(ko) {
+  --font-sans: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', 'FCAHarmonySC', sans-serif;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
 
 .sys-booting {
   min-height: 100vh;
@@ -17,4 +28,38 @@
   background:
     repeating-linear-gradient(90deg, var(--grid-line-soft) 0 1px, transparent 1px 96px),
     var(--bg-page);
+}
+
+.sys-booting strong {
+  color: var(--text-main);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.sys-booting__track {
+  width: min(340px, calc(100vw - 48px));
+  height: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.sys-booting__track em {
+  display: block;
+  width: 38%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--accent) 32%, #fff 50%, var(--accent) 68%, transparent);
+  animation: routeLoadingProgress 1.25s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes routeLoadingProgress {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(265%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sys-booting__track em {
+    width: 100%;
+    animation: none;
+    opacity: 0.72;
+  }
 }

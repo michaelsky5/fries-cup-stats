@@ -1,3 +1,4 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useMemo, useState, useEffect } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
@@ -10,6 +11,12 @@ import {
 } from '../../lib/heroes.js'
 import { safeArr } from '../../lib/selectors.js'
 import styles from './HeroesPage.module.css'
+import SignalHeroIndex from '../../features/hero-data/SignalHeroIndex.jsx'
+
+export default function HeroesRoute() {
+  const { isKprDesign = false } = useOutletContext()
+  return isKprDesign ? <SignalHeroIndex /> : <HeroesPage />
+}
 
 function formatHeroName(name) {
   if (!name || name === '-') return 'unknown'
@@ -197,9 +204,9 @@ function RecordedCompsPanel({ data, locale }) {
       <div className={styles.compsHeader}>
         <div className={styles.compsTitleGroup}>
           <span className={styles.compsKicker}>RECORDED COMPS</span>
-          <h2 id="recorded-comps-title">最终记录阵容</h2>
+          <h2 id="recorded-comps-title">{uiText("最终记录阵容", locale)}</h2>
         </div>
-        <p>基于每张地图双方队伍的最终记录英雄统计，不代表整局全程阵容。</p>
+        <p>{uiText("基于每张地图双方队伍的最终记录英雄统计，不代表整局全程阵容。", locale)}</p>
       </div>
 
       <div className={styles.compsBody}>
@@ -214,19 +221,19 @@ function RecordedCompsPanel({ data, locale }) {
 
             <div className={styles.compMetaGrid}>
               <span>
-                <b>记录次数</b>
+                <b>{uiText("记录次数", locale)}</b>
                 <strong>{leader.count}</strong>
               </span>
               <span>
-                <b>记录占比</b>
+                <b>{uiText("记录占比", locale)}</b>
                 <strong>{(leader.share * 100).toFixed(1)}%</strong>
               </span>
               <span>
-                <b>常见地图</b>
+                <b>{uiText("常见地图", locale)}</b>
                 <strong>{leader.topMap}</strong>
               </span>
               <span>
-                <b>样本总数</b>
+                <b>{uiText("样本总数", locale)}</b>
                 <strong>{data.totalRecords}</strong>
               </span>
             </div>
@@ -254,7 +261,7 @@ function RecordedCompsPanel({ data, locale }) {
   )
 }
 
-export default function HeroesPage() {
+function HeroesPage() {
   const { db, locale = 'zh-CN', withSeason = path => path } = useOutletContext()
   const [activeRole, setActiveRole] = useState('ALL')
 
@@ -327,7 +334,7 @@ export default function HeroesPage() {
     return { totalHeroes, currentCount, totalPlaytime, topHero }
   }, [heroStats, filteredHeroes])
 
-  const activeRoleLabel = getRoleLabel(activeRole)
+  const activeRoleLabel = uiText(getRoleLabel(activeRole), locale)
   const recordedComps = useMemo(() => getRecordedCompositions(db, 5), [db])
 
   return (
@@ -336,21 +343,19 @@ export default function HeroesPage() {
       <section className={styles.heroSection}>
         <div className={styles.heroMain}>
           <div className={styles.heroKicker}>
-            <span className={styles.heroKickerCn}>英雄情报中心</span>
+            <span className={styles.heroKickerCn}>{uiText("英雄情报中心", locale)}</span>
             <span className={styles.heroKickerEn}>HERO META</span>
           </div>
 
-          <h1 className={styles.heroTitle}>版本答案分析台</h1>
+          <h1 className={styles.heroTitle}>{uiText("版本答案分析台", locale)}</h1>
 
-          <p className={styles.heroDesc}>
-            基于全联盟比赛日志生成的英雄环境总览。用于观察当前版本的出场倾向、热门英雄与对应专精选手。
-          </p>
+          <p className={styles.heroDesc}>{uiText("基于全联盟比赛日志生成的英雄环境总览。用于观察当前版本的出场倾向、热门英雄与对应专精选手。", locale)}</p>
         </div>
 
         <div className={styles.heroMeta}>
           <div className={styles.heroMetaItem}>
             <div className={styles.metaLabel}>
-              <span className={styles.metaCn}>英雄总数</span>
+              <span className={styles.metaCn}>{uiText("英雄总数", locale)}</span>
               <span className={styles.metaEn}>TOTAL HEROES</span>
             </div>
             <div className={styles.metaValue}>{summary.totalHeroes}</div>
@@ -358,7 +363,7 @@ export default function HeroesPage() {
 
           <div className={styles.heroMetaItem}>
             <div className={styles.metaLabel}>
-              <span className={styles.metaCn}>当前阵列</span>
+              <span className={styles.metaCn}>{uiText("当前阵列", locale)}</span>
               <span className={styles.metaEn}>{activeRoleLabel.en}</span>
             </div>
             <div className={styles.metaValue}>{summary.currentCount}</div>
@@ -366,7 +371,7 @@ export default function HeroesPage() {
 
           <div className={styles.heroMetaItem}>
             <div className={styles.metaLabel}>
-              <span className={styles.metaCn}>累计时长</span>
+              <span className={styles.metaCn}>{uiText("累计时长", locale)}</span>
               <span className={styles.metaEn}>TOTAL PLAYTIME</span>
             </div>
             <div className={styles.metaValue}>{formatTime(summary.totalPlaytime)}</div>
@@ -374,7 +379,7 @@ export default function HeroesPage() {
 
           <div className={styles.heroMetaItem}>
             <div className={styles.metaLabel}>
-              <span className={styles.metaCn}>头号热门</span>
+              <span className={styles.metaCn}>{uiText("头号热门", locale)}</span>
               <span className={styles.metaEn}>TOP HERO</span>
             </div>
             <div className={styles.metaValueText} title={summary.topHero}>{formatOwHeroName(summary.topHero, locale)}</div>
@@ -385,14 +390,14 @@ export default function HeroesPage() {
       <section className={styles.filterSection}>
         <div className={styles.filterHead}>
           <div className={styles.filterTitleGroup}>
-            <div className={styles.filterTitle}>阵列筛选</div>
+            <div className={styles.filterTitle}>{uiText("阵列筛选", locale)}</div>
             <div className={styles.filterSubTitle}>ROLE FILTER</div>
           </div>
         </div>
 
         <div className={styles.roleFilter}>
           {['ALL', 'TANK', 'DAMAGE', 'SUPPORT'].map(role => {
-            const label = getRoleLabel(role)
+            const label = uiText(getRoleLabel(role), locale)
             return (
               <button
                 key={role}
@@ -451,7 +456,7 @@ export default function HeroesPage() {
 
                   <div className={styles.cardMiddle}>
                     <div className={styles.statHead}>
-                      <span className={styles.statCn}>总出场时长</span>
+                      <span className={styles.statCn}>{uiText("总出场时长", locale)}</span>
                       <span className={styles.statEn}>TOTAL PLAYTIME</span>
                     </div>
 
@@ -464,7 +469,7 @@ export default function HeroesPage() {
 
                   <div className={styles.cardBottom}>
                     <div className={styles.bestPlayerLabel}>
-                      <span className={styles.bestPlayerCn}>最高熟练度选手</span>
+                      <span className={styles.bestPlayerCn}>{uiText("最高熟练度选手", locale)}</span>
                       <span className={styles.bestPlayerEn}>BEST SPECIALIST</span>
                     </div>
 
@@ -480,8 +485,8 @@ export default function HeroesPage() {
           </div>
         ) : (
           <div className={styles.emptyState}>
-            <span className={styles.emptyCn}>{locale === 'en-US' ? 'No hero records yet' : '暂无英雄出场记录'}</span>
-            <span className={styles.emptyEn}>{locale === 'en-US' ? 'Awaiting match stats' : '等待比赛统计'}</span>
+            <span className={styles.emptyCn}>{locale === 'en-US' ? 'No hero records yet' : uiText("暂无英雄出场记录", locale)}</span>
+            <span className={styles.emptyEn}>{locale === 'en-US' ? 'Awaiting match stats' : uiText("等待比赛统计", locale)}</span>
           </div>
         )}
       </section>

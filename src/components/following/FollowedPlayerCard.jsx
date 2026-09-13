@@ -1,8 +1,9 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import { Link } from 'react-router-dom'
 import { formatOwHeroNames } from '../../lib/heroes.js'
 import styles from '../../pages/following/FollowingPage.module.css'
 
-export default function FollowedPlayerCard({ overview, withSeason, locale = 'zh-CN' }) {
+export default function FollowedPlayerCard({ overview, withSeason, locale = 'zh-CN', relationLabel = '' }) {
   if (!overview) return null
 
   const heroes = overview.snapshot?.heroes || []
@@ -18,22 +19,23 @@ export default function FollowedPlayerCard({ overview, withSeason, locale = 'zh-
           {battleTag && battleTag !== overview.displayName ? <em>{battleTag}</em> : null}
         </div>
         <div className={styles.playerTags}>
+          {relationLabel ? <span className={styles.playerIdentityBadge}>{relationLabel}</span> : null}
           <span className={styles.playerTeamBadge}>{overview.teamShortName || 'TBD'}</span>
           <span className={styles.playerRoleBadge}>{overview.role}</span>
         </div>
       </div>
 
       <div className={styles.playerSnapshot}>
-        <span>{coreMetric?.label || '核心指标'}</span>
-        <strong>{coreMetric?.value || '比赛开始后更新'}</strong>
+        <span>{coreMetric?.label || uiText("核心指标", locale)}</span>
+        <strong>{coreMetric?.value || uiText("比赛开始后更新", locale)}</strong>
       </div>
 
       <div className={styles.playerSnapshot}>
-        <span>常用英雄</span>
-        <strong>{heroes.length ? formatOwHeroNames(heroes, locale, 2).join(' / ') : '暂无'}</strong>
+        <span>{uiText("常用英雄", locale)}</span>
+        <strong>{heroes.length ? formatOwHeroNames(heroes, locale, 2).join(' / ') : uiText("暂无", locale)}</strong>
       </div>
 
-      <Link className={styles.inlineLink} to={withSeason(`/players/${encodeURIComponent(overview.playerId)}`)}>查看选手资料 →</Link>
+      <Link className={styles.inlineLink} to={withSeason(`/players/${encodeURIComponent(overview.playerId)}`)}>{uiText("查看选手资料 →", locale)}</Link>
     </article>
   )
 }

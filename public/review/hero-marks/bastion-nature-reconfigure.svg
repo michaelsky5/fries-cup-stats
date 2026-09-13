@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Bastion's companion Ganymede</title>
+  <desc id="desc">A gold bird with a rust-colored crest rests on a simple perch, echoing the companion in Bastion's portrait. The complete silhouette is separate from the mechanical background lines.</desc>
+  <path d="M128 144L151 126C157 119 166 115 177 117C184 112 187 108 188 102L183 89L194 92L191 81L202 89C213 89 221 97 219 107L233 111L219 115C217 130 211 142 199 149C187 156 171 153 160 146L130 156L140 144Z" fill="#cbbb77" fill-opacity="0.36" stroke="#e0d3a0" stroke-opacity="0.77" stroke-width="1.65" stroke-linejoin="round"/>
+  <path d="M183 89L194 92L191 81L202 89L200 97L190 102Z" fill="#c48457" fill-opacity="0.47"/>
+  <path d="M153 130C165 121 180 120 194 128C184 141 170 146 155 141L140 148Z" fill="#8caa7b" fill-opacity="0.43" stroke="#c0c999" stroke-opacity="0.4" stroke-width="1.1" stroke-linejoin="round"/>
+  <path d="M202 101C208 101 213 104 216 107L210 111L202 109Z" fill="#182321" fill-opacity="0.68"/>
+  <circle cx="209" cy="105" r="1.5" fill="#e8e2b9" fill-opacity="0.8"/>
+  <path d="M182 153L178 167H187M195 152L191 165H199M160 174L216 165" fill="none" stroke="#c7c9a2" stroke-opacity="0.62" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

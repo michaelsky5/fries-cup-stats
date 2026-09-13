@@ -1,3 +1,23 @@
+.detailToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.detailToolbar .posterBack { margin: 0; }
+.detailActions { display: flex; gap: 8px; }
+.copyFeedback { margin: 0 0 14px; font-size: 13px; }
+.statsNotice { margin: 0; padding: 18px; font-size: 14px; line-height: 1.65; background: #fff5d2; color: #66440a; }
+.broadcastDetails { margin-top: 16px; border: 1px solid #b5b5ab; background: #f6f5ef; }
+.broadcastDetails summary { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 48px; padding: 0 18px; cursor: pointer; font-size: 14px; font-weight: 700; }
+.broadcastDetails summary > span { font-size: 12px; color: #66685f; }
+.broadcastDetails summary:focus-visible { outline: 2px solid #806000; outline-offset: 3px; }
+.posterInfoBand > span { display: flex; flex-direction: column; gap: 6px; }
+.posterInfoBand small { font-size: 11px; font-weight: 600; }
+
 .shell {
   width: 100%;
   max-width: var(--portal-shell-width, 1760px);
@@ -350,7 +370,7 @@
 
 .posterInfoBand {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(220px, 1.2fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   border-top: 2px solid #2a2a2a;
   background: #f4c320;
   color: #2a2a2a;
@@ -913,7 +933,7 @@
 
   position: relative;
   display: grid;
-  grid-template-columns: minmax(210px, max-content) 82px minmax(220px, 1fr);
+  grid-template-columns: minmax(0, 1fr) 72px minmax(148px, .8fr);
   align-items: center;
   column-gap: 12px;
   min-height: 54px;
@@ -1002,7 +1022,7 @@
 .roleLeaderScoreLabel {
   grid-column: 1 / -1;
   color: #6f6b61;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 1000;
   line-height: 1;
   letter-spacing: .08em;
@@ -1042,7 +1062,7 @@
 .roleLeaderStats em {
   overflow: hidden;
   color: #6f6b61;
-  font-size: 9px;
+  font-size: 10px;
   font-style: normal;
   font-weight: 1000;
   line-height: 1;
@@ -1449,16 +1469,28 @@
   background: #ffffff;
 }
 
+.statsTableScroller {
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-gutter: stable;
+}
+
+.statsTableScroller:focus-visible {
+  outline: 3px solid var(--fc-data-focus-on-light, #806000);
+  outline-offset: -3px;
+}
+
 .playerMetaCol {
-  width: 47%;
+  width: 54%;
 }
 
 .compactStatCol {
-  width: 6%;
+  width: 5%;
 }
 
 .wideStatCol {
-  width: 11.666%;
+  width: 10.333%;
 }
 
 .statsTable th,
@@ -1473,7 +1505,7 @@
   background: #2a2a2a;
   color: #ffffff;
   text-align: center;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 1000;
   letter-spacing: .06em;
   text-transform: uppercase;
@@ -1499,6 +1531,7 @@
 .statsTable td {
   text-align: center;
   font-weight: 900;
+  white-space: nowrap;
 }
 
 .statsTable tbody tr:hover {
@@ -1508,9 +1541,9 @@
 .playerMetaHead {
   width: 100%;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 78px 78px;
+  grid-template-columns: 42px minmax(96px, 1fr) 68px 58px;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
 
 .playerMetaHead span:first-child,
@@ -1527,19 +1560,22 @@
   min-width: 0;
   width: 100%;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 78px 78px;
+  grid-template-columns: 42px minmax(96px, 1fr) 68px 58px;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   max-width: 100%;
 }
 
 .playerIdentity {
   min-width: 0;
-  flex: 0 1 auto;
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr);
   align-items: center;
   gap: 8px;
+}
+
+.playerText {
+  min-width: 0;
 }
 
 .heroAvatar {
@@ -1564,19 +1600,25 @@
 
 .playerName {
   display: block;
+  min-width: 0;
+  overflow: hidden;
   font-size: 13px;
   line-height: 1.1;
   font-weight: 1000;
-  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .playerSub {
   display: block;
+  min-width: 0;
   margin-top: 3px;
+  overflow: hidden;
   color: #6f6b61;
   font-size: 10px;
   font-weight: 800;
-  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ratingCluster {
@@ -1672,6 +1714,7 @@
   background: #ffffff;
   font-size: 10px;
   font-weight: 1000;
+  white-space: nowrap;
 }
 
 .emptyText {
@@ -1808,6 +1851,19 @@
 
   .mapMetaStrip {
     grid-template-columns: repeat(6, minmax(112px, 1fr)) minmax(220px, 1.25fr);
+  }
+
+  .dualStatsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .teamStatsPanel {
+    border-right: 0;
+    border-bottom: 2px solid #2a2a2a;
+  }
+
+  .teamStatsPanel:last-child {
+    border-bottom: 0;
   }
 }
 
@@ -1986,77 +2042,19 @@
   }
 
   .statsTable {
-    display: block;
+    min-width: 700px;
   }
 
-  .statsTable colgroup,
-  .statsTable thead {
-    display: none;
+  .playerMetaCol {
+    width: 46%;
   }
 
-  .statsTable tbody {
-    display: grid;
-    gap: 10px;
-    padding: 10px;
-    background: #fbf7ee;
+  .compactStatCol {
+    width: 6%;
   }
 
-  .statsTable tr {
-    min-width: 0;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    border: 1px solid #dfd8ca;
-    background: #ffffff;
-  }
-
-  .statsTable td {
-    min-width: 0;
-    min-height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 8px 10px;
-    border-right: 1px solid #dfd8ca;
-    border-bottom: 1px solid #dfd8ca;
-    font-size: 13px;
-    text-align: right;
-  }
-
-  .statsTable td:nth-child(4),
-  .statsTable td:nth-child(7) {
-    border-right: 0;
-  }
-
-  .statsTable td:nth-child(n+5) {
-    border-bottom: 0;
-  }
-
-  .statsTable th:nth-child(2),
-  .statsTable td:nth-child(2),
-  .statsTable th:nth-child(5),
-  .statsTable td:nth-child(5) {
-    border-left: 0;
-  }
-
-  .statsTable td::before {
-    content: attr(data-label);
-    color: #6f6b61;
-    font-size: 10px;
-    font-weight: 1000;
-    letter-spacing: .06em;
-  }
-
-  .statsTable td:first-child {
-    grid-column: 1 / -1;
-    display: block;
-    border-right: 0;
-    border-bottom: 2px solid #2a2a2a;
-    text-align: left;
-  }
-
-  .statsTable td:first-child::before {
-    display: none;
+  .wideStatCol {
+    width: 12%;
   }
 
   .playerMetaCell {
@@ -2077,9 +2075,11 @@
     min-width: 58px;
     max-width: 76px;
     min-height: 24px;
-    white-space: normal;
+    overflow: hidden;
     line-height: 1.1;
     text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .awardEmpty {
@@ -2118,6 +2118,15 @@
 
   .roleLeaderStats {
     grid-column: 1 / -1;
+  }
+
+  .roleLeaderScoreLabel,
+  .roleLeaderStats em {
+    font-size: 11px;
+  }
+
+  .statsTable th {
+    font-size: 13px;
   }
 }
 
@@ -2233,7 +2242,7 @@
   }
 
   .mirrorMetric small {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .mapRecordHeader {
@@ -2270,35 +2279,8 @@
   }
 
   .playerMetaCell {
-    grid-template-columns: 42px minmax(0, 1fr) 54px;
-    gap: 8px;
-  }
-
-  .awardCell {
-    grid-column: 2 / -1;
-    justify-content: flex-start;
-  }
-
-  .ratingCell {
-    grid-column: 3;
-    grid-row: 1;
-  }
-
-  .statsTable tr {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .statsTable td:nth-child(3),
-  .statsTable td:nth-child(5) {
-    border-right: 0;
-  }
-
-  .statsTable td:nth-child(4) {
-    border-right: 1px solid #dfd8ca;
-  }
-
-  .statsTable td:nth-child(n+6) {
-    border-bottom: 0;
+    grid-template-columns: 42px minmax(96px, 1fr) 58px 54px;
+    gap: 6px;
   }
 
   .teamStatsHead {

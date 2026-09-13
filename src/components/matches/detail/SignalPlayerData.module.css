@@ -1,0 +1,13 @@
+.tagSuffix { white-space: nowrap; }
+.rating { position: relative; display: inline-flex; align-items: center; justify-content: center; color: var(--fc-data-ink); font-family: var(--fc-data-font-interface); font-variant-numeric: tabular-nums lining-nums; }
+.rating > strong { font-size: 16px; font-weight: 700; line-height: 1.2; }
+.rating[data-empty="true"] > strong { color: var(--fc-data-text-muted); font-weight: 400; }
+.rating[data-team-mvp="true"]::after { content: ''; position: absolute; top: calc(100% + 4px); left: 50%; width: 16px; height: 2px; transform: translateX(-50%); background: var(--fc-data-focus-on-light); }
+.hero { display: inline-grid; place-items: center; width: 25px; height: 28px; flex: 0 0 25px; overflow: hidden; color: var(--fc-data-text-muted); background: var(--fc-data-paper-deep); }
+.hero img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.heroes { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.roleRow { --row-role: var(--fc-data-text-muted); --row-tint-strength: 9%; --row-tone: color-mix(in srgb, var(--row-role) 60%, var(--fc-data-ink)); --row-surface: color-mix(in srgb, var(--row-tone) var(--row-tint-strength), var(--fc-data-paper-raised)); }
+.roleRow[data-role="TANK"] { --row-role: var(--fc-data-role-tank); }
+.roleRow[data-role="DPS"] { --row-role: var(--fc-data-role-damage); }
+.roleRow[data-role="SUPPORT"] { --row-role: var(--fc-data-role-support); }
+.roleRow:is(:hover, :focus-within) { --row-tint-strength: 13%; }

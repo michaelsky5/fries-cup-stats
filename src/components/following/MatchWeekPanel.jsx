@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link } from 'react-router-dom'
 import FollowingMatchRow from './FollowingMatchRow.jsx'
 import styles from '../../pages/following/FollowingPage.module.css'
@@ -7,6 +9,7 @@ function flattenGroups(groups) {
 }
 
 export default function MatchWeekPanel({ week, seasonId, withSeason, onManage }) {
+  const uiLocale = useUiLocale()
   const dateGroups = week?.matchGroups || []
   const visibleMatches = flattenGroups(dateGroups)
   const summaryMatches = week?.favoriteMatches?.length ? week.favoriteMatches : visibleMatches
@@ -22,12 +25,12 @@ export default function MatchWeekPanel({ week, seasonId, withSeason, onManage })
       <div className={styles.sectionHeader}>
         <div>
           <span>D / MATCH WEEK</span>
-          <h2>本比赛周</h2>
+          <h2>{uiText("本比赛周", uiLocale)}</h2>
           <p>{boardRangeText}</p>
         </div>
         <div className={styles.weekHeaderMeta}>
           {week ? <strong>{matchCountText}</strong> : null}
-          <Link to={withSeason('/matches?view=list&tab=following')}>查看全部 →</Link>
+          <Link to={withSeason('/matches?view=list&tab=following')}>{uiText("查看全部 →", uiLocale)}</Link>
         </div>
       </div>
 
@@ -62,7 +65,7 @@ export default function MatchWeekPanel({ week, seasonId, withSeason, onManage })
               ))}
             </div>
 
-            <aside className={styles.weekNoticeBoard} aria-label="比赛周公告">
+            <aside className={styles.weekNoticeBoard} aria-label={uiText("比赛周公告", uiLocale)}>
               <div>
                 <span>PROGRAM BOARD</span>
                 <strong>{week.roundBoardLabel || week.roundLabel}</strong>
@@ -71,44 +74,42 @@ export default function MatchWeekPanel({ week, seasonId, withSeason, onManage })
 
               <dl className={styles.weekNoticeStats}>
                 <div>
-                  <dt>关注比赛</dt>
+                  <dt>{uiText("关注比赛", uiLocale)}</dt>
                   <dd>{week.totalFavoriteMatches}</dd>
                 </div>
                 <div>
-                  <dt>时间段</dt>
+                  <dt>{uiText("时间段", uiLocale)}</dt>
                   <dd>{timeSlotCount}</dd>
                 </div>
                 <div>
-                  <dt>日期</dt>
+                  <dt>{uiText("日期", uiLocale)}</dt>
                   <dd>{dateGroups.length}</dd>
                 </div>
               </dl>
 
               <div className={styles.weekNoticeMain}>
-                <span>{primaryMatch ? '主关注比赛' : '下一场关注比赛'}</span>
+                <span>{primaryMatch ? uiText("主关注比赛", uiLocale) : uiText("下一场关注比赛", uiLocale)}</span>
                 <strong>
-                  {mainMatch ? `${mainMatch.teamA?.short || 'TBD'} VS ${mainMatch.teamB?.short || 'TBD'}` : '暂无'}
+                  {mainMatch ? `${mainMatch.teamA?.short || 'TBD'} VS ${mainMatch.teamB?.short || 'TBD'}` : uiText("暂无", uiLocale)}
                 </strong>
-                <p>{mainMatch?.compactTime || mainMatch?.timeLabel || '时间待定'}</p>
+                <p>{mainMatch?.compactTime || mainMatch?.timeLabel || uiText("时间待定", uiLocale)}</p>
               </div>
 
-              <p className={styles.weekNoticeHint}>赛程已按开赛时间分组展示。</p>
+              <p className={styles.weekNoticeHint}>{uiText("赛程已按开赛时间分组展示。", uiLocale)}</p>
             </aside>
           </div>
 
           {week.hasMore ? (
-            <Link className={styles.weekMoreLink} to={withSeason('/matches?view=list&tab=following')}>
-              查看全部 {week.totalFavoriteMatches} 场关注比赛 →
-            </Link>
+            <Link className={styles.weekMoreLink} to={withSeason('/matches?view=list&tab=following')}>{uiText("查看全部 ", uiLocale)}{week.totalFavoriteMatches}{uiText(" 场关注比赛 →", uiLocale)}</Link>
           ) : null}
         </div>
       ) : (
         <div className={styles.weekEmpty}>
-          <strong>本比赛周没有关注比赛</strong>
-          <span>可以查看完整赛程，或调整关注队伍。</span>
+          <strong>{uiText("本比赛周没有关注比赛", uiLocale)}</strong>
+          <span>{uiText("可以查看完整赛程，或调整关注队伍。", uiLocale)}</span>
           <div>
-            <Link to={withSeason('/matches')}>查看完整赛程 →</Link>
-            <button className={styles.textAction} type="button" onClick={onManage}>编辑关注 →</button>
+            <Link to={withSeason('/matches')}>{uiText("查看完整赛程 →", uiLocale)}</Link>
+            {onManage ? <button className={styles.textAction} type="button" onClick={onManage}>{uiText("编辑关注 →", uiLocale)}</button> : null}
           </div>
         </div>
       )}

@@ -1,3 +1,4 @@
+import { translateUiText as uiText } from '../../../lib/uiText.js'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { formatInt } from '../../../lib/format.js'
@@ -9,19 +10,15 @@ import {
   getRoleLabel
 } from '../../../lib/leaderboardSelectors.js'
 import { formatOwHeroName } from '../../../lib/heroes.js'
+import { formatMapPlayerMatchRating, getMatchPlayerRating } from '../../../lib/matchRatingDisplay.js'
 import RoleLeaderRow from './RoleLeaderRow.jsx'
-import styles from './MatchDetail.module.css'
+import styles from './matchDetailStyles.js'
 
 const ROLE_KEYS = ['TANK', 'DPS', 'SUPPORT']
 
 function formatRating(value) {
   const num = Number(value)
   return Number.isFinite(num) ? num.toFixed(1) : '-'
-}
-
-function formatTenPointRating(value) {
-  const num = Number(value)
-  return Number.isFinite(num) ? (num / 10).toFixed(1) : '-'
 }
 
 function formatMinutes(value) {
@@ -44,10 +41,10 @@ function getPerformanceStats(entry, coreStats, locale) {
   const isEn = locale === 'en-US'
   const items = [
     Number(entry?.maps_played) > 0
-      ? { key: 'maps', label: isEn ? 'MAPS' : '地图', value: formatInt(entry.maps_played, '-') }
+      ? { key: 'maps', label: isEn ? 'MAPS' : uiText("地图", locale), value: formatInt(entry.maps_played, '-') }
       : null,
     Number(entry?.roleTimeMins) > 0
-      ? { key: 'time', label: isEn ? 'TIME' : '时长', value: formatMinutes(entry.roleTimeMins) }
+      ? { key: 'time', label: isEn ? 'TIME' : uiText("时长", locale), value: formatMinutes(entry.roleTimeMins) }
       : null,
     ...coreStats.map(stat => ({
       key: stat.metricId,
@@ -55,7 +52,7 @@ function getPerformanceStats(entry, coreStats, locale) {
       value: formatInt(stat.value, '-')
     })),
     entry?.most_played_hero
-      ? { key: 'hero', label: isEn ? 'MAIN HERO' : '主用英雄', value: formatOwHeroName(entry.most_played_hero, locale) }
+      ? { key: 'hero', label: isEn ? 'MAIN HERO' : uiText("主用英雄", locale), value: formatOwHeroName(entry.most_played_hero, locale) }
       : null
   ]
 
@@ -91,11 +88,12 @@ export default function MatchPerformancePanel({ dossier, withSeason, locale = 'z
   }
 
   const roleColor = getRoleColor(top.role)
-  const topRoleLabel = locale === 'en-US' ? getRoleEnLabel(top.role) : getRoleLabel(top.role)
+  const topRoleLabel = locale === 'en-US' ? getRoleEnLabel(top.role) : uiText(getRoleLabel(top.role), locale)
   const coreStats = (top.coreStats || []).filter(stat => Number(stat.value) > 0).slice(0, 2)
   const performanceStats = getPerformanceStats(top, coreStats, locale)
   const playerPath = top.player_id ? withSeason(`/players/${encodeURIComponent(top.player_id)}?role=${encodeURIComponent(top.role)}`) : ''
   const rawRating = formatRating(top.roleScore)
+  const displayRating = formatMapPlayerMatchRating(getMatchPlayerRating(top), '—')
 
   return (
     <section className={styles.performancePanel} aria-labelledby="match-performance-title">
@@ -114,11 +112,11 @@ export default function MatchPerformancePanel({ dossier, withSeason, locale = 'z
         </div>
         <div
           className={styles.topPerformerScore}
-          title={locale === 'en-US' ? `Raw rating ${rawRating} / 100` : `原始评分 ${rawRating} / 100`}
-          aria-label={locale === 'en-US' ? `${formatTenPointRating(top.roleScore)} out of 10` : `${formatTenPointRating(top.roleScore)} 十分制`}
+          title={locale === 'en-US' ? `Raw rating ${rawRating} / 100` : uiText("原始评分 {0} / 100", locale, [rawRating])}
+          aria-label={locale === 'en-US' ? `${displayRating} out of 10` : uiText("{0} 十分制", locale, [displayRating])}
         >
-          <b>{formatTenPointRating(top.roleScore)}</b>
-          <span>{locale === 'en-US' ? 'RATING / 10' : '评分 / 10'}</span>
+          <b>{displayRating}</b>
+          <span>{locale === 'en-US' ? 'RATING / 10' : uiText("评分 / 10", locale)}</span>
         </div>
       </div>
 

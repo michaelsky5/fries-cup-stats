@@ -7,6 +7,13 @@ export const HERO_PRIMARY_SUBROLES = [
 ]
 
 export const HERO_SUBROLE_CONFIG = {
+  'D.Mon': {
+    officialRole: 'TANK',
+    primarySubrole: 'TANK',
+    secondarySubroles: [],
+    scoringProfile: 'brawl_tank',
+    aliases: ['DMon', 'DMON', 'dmon']
+  },
   'D.Va': {
     officialRole: 'TANK',
     primarySubrole: 'TANK',

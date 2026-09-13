@@ -8,8 +8,9 @@ export default function FavoriteTeamOption({
   selected,
   primary,
   disabled,
+  busy,
+  copy,
   onToggle,
-  onMakePrimary
 }) {
   const teamId = getTeamFavoriteId(team)
   const shortName = getTeamShortName(team)
@@ -28,13 +29,10 @@ export default function FavoriteTeamOption({
         <span>{getTeamFullName(team)}</span>
       </div>
       <div className={styles.optionActionRail}>
-        {primary ? <span className={styles.primaryPill}>主关注</span> : null}
-        <button type="button" onClick={() => onToggle(teamId)} disabled={selected || (disabled && !selected)}>
-          {selected ? '已关注' : disabled ? '已达上限' : '关注'}
+        {primary ? <span className={styles.primaryPill}>{copy.primary}</span> : null}
+        <button type="button" onClick={() => onToggle(teamId)} disabled={busy || selected || disabled} aria-label={selected ? copy.followed + ' ' + shortName : copy.followLabel(shortName)}>
+          {selected ? copy.followed : disabled ? copy.limit : copy.follow}
         </button>
-        {selected && !primary ? (
-          <button type="button" className={styles.primaryTextButton} onClick={() => onMakePrimary(teamId)}>设为主关注</button>
-        ) : null}
       </div>
     </article>
   )

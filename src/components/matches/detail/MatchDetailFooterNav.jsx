@@ -3,7 +3,7 @@ import { getMatchDisplayTeams } from '../../../lib/matchesSelectors.js'
 import { formatMatchSchedule } from '../../../lib/scheduleFormat.js'
 import { getMatchPath } from '../../../lib/matchDetailSelectors.js'
 import { getRestoreScrollState } from '../../../lib/navigationState.js'
-import styles from './MatchDetail.module.css'
+import styles from './matchDetailStyles.js'
 
 function getLabel(match, locale) {
   if (!match) return ''
@@ -12,7 +12,7 @@ function getLabel(match, locale) {
   return `${teams.teamA.short} vs ${teams.teamB.short} · ${schedule.compact || schedule.title}`
 }
 
-export default function MatchDetailFooterNav({ adjacent, withSeason, returnTo, returnScrollY, locale, t }) {
+export default function MatchDetailFooterNav({ adjacent, withSeason, returnTo, returnScrollY, backLabel, locale, t }) {
   const previousPath = adjacent.previous ? withSeason(getMatchPath(adjacent.previous)) : ''
   const nextPath = adjacent.next ? withSeason(getMatchPath(adjacent.next)) : ''
   const returnState = returnTo
@@ -35,8 +35,8 @@ export default function MatchDetailFooterNav({ adjacent, withSeason, returnTo, r
       )}
 
       <Link className={styles.footerNavLink} data-primary="true" to={returnTo || withSeason('/matches')} state={restoreState}>
-        <span>{t('matchDetail.back', 'Back to Matches')}</span>
-        <strong>MATCHES</strong>
+        <span>{backLabel || t('matchDetail.back', 'Back to Matches')}</span>
+        <strong>{returnTo?.startsWith('/teams') ? 'TEAM DOSSIER' : returnTo?.startsWith('/players') ? 'PLAYER DOSSIER' : 'MATCHES'}</strong>
       </Link>
 
       {nextPath ? (

@@ -1,7 +1,7 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useState } from 'react'
 import { formatInt, formatPlayerTime } from '../../lib/format.js'
 import {
-  formatEntrySeasonOvr,
   getEntryMetricValue,
   getHeroAvatarSrc,
   getPlayerInitials,
@@ -10,8 +10,9 @@ import {
 } from '../../lib/leaderboardSelectors.js'
 import { isRoleCoreMetric } from '../../lib/leaderboardScoring.js'
 import EligibilityBadge from './EligibilityBadge.jsx'
+import SeasonRating from '../../features/rating/SeasonRating.jsx'
 import { formatLeaderboardStat } from './leaderboardFormat.js'
-import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
+import styles from '../../features/fd-design/leaderboardStyles.js'
 
 function isSameText(a, b) {
   return String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase()
@@ -58,7 +59,7 @@ export function PlayerIdentity({ entry, locale = 'zh-CN' }) {
   const primary = entry?.nickname || entry?.display_name || entry?.player_name || entry?.player_id || '-'
   const secondary = entry?.battleTag || entry?.player_name || ''
   const showSecondary = secondary && !isSameText(primary, secondary)
-  const roleLabel = locale === 'en-US' ? getRoleEnLabel(entry?.role) : getRoleLabel(entry?.role)
+  const roleLabel = locale === 'en-US' ? getRoleEnLabel(entry?.role) : uiText(getRoleLabel(entry?.role), locale)
 
   return (
     <div className={styles.playerIdentity}>
@@ -75,8 +76,8 @@ export function PlayerIdentity({ entry, locale = 'zh-CN' }) {
 }
 
 export function RoleTag({ entry, locale = 'zh-CN' }) {
-  const label = locale === 'en-US' ? getRoleEnLabel(entry.role) : getRoleLabel(entry.role)
-  const subLabel = locale === 'en-US' ? getRoleLabel(entry.role) : ''
+  const label = locale === 'en-US' ? getRoleEnLabel(entry.role) : uiText(getRoleLabel(entry.role), locale)
+  const subLabel = locale === 'en-US' ? uiText(getRoleLabel(entry.role), locale) : ''
 
   return (
     <span className={`${styles.roleTag} ${getRoleToneClass(entry.role)}`}>
@@ -90,7 +91,7 @@ function DataCell({ entry, column, mode, locale }) {
   if (column.id === 'score') {
     return (
       <td className={`${styles.numericCell} ${styles.scoreCell} ${styles.scoreDataCell}`}>
-        {formatEntrySeasonOvr(entry)}
+        <SeasonRating entry={entry} locale={locale} />
       </td>
     )
   }
@@ -108,7 +109,7 @@ function DataCell({ entry, column, mode, locale }) {
     return (
       <td className={`${styles.roleCell} ${styles.roleDataCell}`}>
         <RoleTag entry={entry} locale={locale} />
-        {!entry.eligible ? <EligibilityBadge eligible={false} /> : null}
+        {!entry.eligible ? <EligibilityBadge entry={entry} locale={locale} /> : null}
       </td>
     )
   }
@@ -168,7 +169,7 @@ export default function LeaderboardRow({
       className={rowClass}
       tabIndex={0}
       role="link"
-      aria-label={`查看 ${playerName} 的选手详情`}
+      aria-label={uiText("查看 {0} 的选手详情", locale, [playerName])}
       onClick={() => onNavigate(entry)}
       onKeyDown={handleKeyDown}
     >
@@ -195,7 +196,7 @@ export default function LeaderboardRow({
         <div className={styles.actionGroup}>
           <label
             className={`${styles.compareCheck} ${isCompareSelected ? styles.compareCheckActive : ''} ${compareDisabled ? styles.compareCheckBlocked : ''}`}
-            title={compareDisabled ? '仅支持同职责选手比较' : '加入比较'}
+            title={compareDisabled ? uiText("仅支持同职责选手比较", locale) : uiText("加入比较", locale)}
           >
             <input
               type="checkbox"
@@ -209,8 +210,8 @@ export default function LeaderboardRow({
 
           <button
             type="button"
-            aria-label={isFavorite ? `取消关注：${playerName}` : `关注选手：${playerName}`}
-            title={isFavorite ? '取消关注' : '关注选手'}
+            aria-label={isFavorite ? uiText("取消关注：{0}", locale, [playerName]) : uiText("关注选手：{0}", locale, [playerName])}
+            title={isFavorite ? uiText("取消关注", locale) : uiText("关注选手", locale)}
             className={`${styles.followButton} ${isFavorite ? styles.followButtonActive : ''}`}
             onClick={onToggleFavorite}
           >

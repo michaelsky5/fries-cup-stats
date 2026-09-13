@@ -1,6 +1,6 @@
 // src/EsportsManager/pages/CareerPage.jsx
 import React, { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 import styles from './CareerPage.module.css'
 
 const DEFAULT_STATS = {
@@ -24,6 +24,7 @@ function SummaryCard({ label, value, meta = '', tone = '' }) {
 
 export default function CareerPage() {
   const navigate = useNavigate()
+  const { withSeason } = useOutletContext()
   const [stats, setStats] = useState(DEFAULT_STATS)
 
   useEffect(() => {
@@ -61,7 +62,7 @@ export default function CareerPage() {
     <div className={styles.container}>
       <header className={styles.heroSection}>
         <div className={styles.heroMain}>
-          <button onClick={() => navigate('/shop')} className={styles.btnBack}>
+          <button onClick={() => navigate(withSeason('/shop'))} className={styles.btnBack}>
             ← 返回大本营 / RETURN TO HUB
           </button>
 

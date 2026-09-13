@@ -357,14 +357,26 @@ function getCoreStats(entry) {
     }))
 }
 
-function decorateScoreEntry(entry) {
+export function getMatchAwardMinimumMaps(completedMapCount) {
+  const mapCount = Math.max(0, Math.floor(toFiniteNumber(completedMapCount)))
+  if (mapCount <= 1) return mapCount
+  return Math.max(2, Math.ceil(mapCount / 2))
+}
+
+function decorateScoreEntry(entry, minimumMaps) {
+  const mapsPlayed = Math.max(0, Math.floor(toFiniteNumber(entry?.maps_played ?? entry?.roleMapsPlayed)))
   return {
     ...entry,
-    coreStats: getCoreStats(entry)
+    coreStats: getCoreStats(entry),
+    matchAwardEligible: mapsPlayed >= minimumMaps,
+    matchAwardMapsPlayed: mapsPlayed,
+    matchAwardMinimumMaps: minimumMaps
   }
 }
 
 export function getMatchRatingSummary(match, maps = [], players = []) {
+  const completedMapCount = safeArr(maps).length
+  const minimumAwardMaps = getMatchAwardMinimumMaps(completedMapCount)
   const rawEntries = buildMatchRatingEntries(match, maps, players)
   if (!rawEntries.length) {
     return {
@@ -373,7 +385,11 @@ export function getMatchRatingSummary(match, maps = [], players = []) {
       formulaSource: 'ratingModel.v1',
       topEntries: [],
       roleLeaders: {},
-      entries: []
+      entries: [],
+      awardEligibility: {
+        completedMapCount,
+        minimumMaps: minimumAwardMaps
+      }
     }
   }
 
@@ -389,7 +405,9 @@ export function getMatchRatingSummary(match, maps = [], players = []) {
   })
     .filter(entry => entry.roleScore > 0)
     .sort(compareLeaderboardEntries)
-    .map(decorateScoreEntry)
+    .map(entry => decorateScoreEntry(entry, minimumAwardMaps))
+
+  const awardEligibleEntries = scoredEntries.filter(entry => entry.matchAwardEligible)
 
   const roleLeaders = ROLE_ORDER.reduce((acc, role) => {
     acc[role] = scoredEntries.find(entry => entry.role === role) || null
@@ -400,8 +418,12 @@ export function getMatchRatingSummary(match, maps = [], players = []) {
     supported: scoredEntries.length > 0,
     level: 'match',
     formulaSource: 'ratingModel.v1',
-    topEntries: scoredEntries.slice(0, 3),
+    topEntries: awardEligibleEntries.slice(0, 3),
     roleLeaders,
-    entries: scoredEntries
+    entries: scoredEntries,
+    awardEligibility: {
+      completedMapCount,
+      minimumMaps: minimumAwardMaps
+    }
   }
 }

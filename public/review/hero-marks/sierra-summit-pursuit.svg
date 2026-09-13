@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Sierra tracking helix lock</title>
+  <desc id="desc">Four Tracking Shot brackets converge on the spiral core of Sierra's Helix Rifle. The open corners preserve motion and avoid the former drone-like double circle.</desc>
+  <g fill="#9a7d66" fill-opacity="0.26" stroke="#e1c89f" stroke-opacity="0.78" stroke-width="2.2" stroke-linejoin="bevel">
+    <path d="M104 74L156 80L176 100L160 116L143 100L116 104Z"/>
+    <path d="M266 74L214 80L194 100L210 116L227 100L254 104Z"/>
+    <path d="M104 190L156 184L176 164L160 148L143 164L116 160Z"/>
+    <path d="M266 190L214 184L194 164L210 148L227 164L254 160Z"/>
+  </g>
+  <circle cx="185" cy="132" r="33" fill="#0a0b0a" fill-opacity="0.82" stroke="#d5a667" stroke-opacity="0.58" stroke-width="2"/>
+  <path d="M160 124C171 106 193 105 207 121C217 133 212 150 198 157" fill="none" stroke="#dfc394" stroke-opacity="0.86" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M210 140C199 158 177 159 163 143C153 131 158 114 172 107" fill="none" stroke="#9a7d66" stroke-opacity="0.9" stroke-width="3.2" stroke-linecap="round"/>
+  <circle cx="185" cy="132" r="8" fill="#d5a667" fill-opacity="0.62" stroke="#f0d5a9" stroke-opacity="0.75" stroke-width="1.5"/>
+</svg>

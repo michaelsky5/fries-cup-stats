@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Zenyatta harmony orbs</title>
+  <desc id="desc">Eight substantial mechanical orbs form a graduated prayer-bead arc, with larger lower spheres and a quiet open centre. Thin orbital guide lines and tiny route dots are removed.</desc>
+  <g fill="#c4a064" fill-opacity="0.34" stroke="#dfc98d" stroke-opacity="0.8" stroke-width="2">
+    <circle cx="180" cy="58" r="11"/>
+    <circle cx="141" cy="75" r="13"/>
+    <circle cx="218" cy="75" r="13"/>
+    <circle cx="117" cy="112" r="16"/>
+    <circle cx="243" cy="112" r="16"/>
+    <circle cx="128" cy="157" r="19"/>
+    <circle cx="230" cy="157" r="19"/>
+    <circle cx="180" cy="184" r="23"/>
+  </g>
+  <g fill="#15201e" fill-opacity="0.86" stroke="#daca9f" stroke-opacity="0.62" stroke-width="1.5">
+    <circle cx="128" cy="157" r="7"/>
+    <circle cx="230" cy="157" r="7"/>
+    <circle cx="180" cy="184" r="9"/>
+  </g>
+  <path d="M166 176A16 16 0 0 1 188 171M116 152A12 12 0 0 1 132 145M218 152A12 12 0 0 1 234 145" fill="none" stroke="#efdfb1" stroke-opacity="0.57" stroke-width="1.6" stroke-linecap="round"/>
+</svg>

@@ -1,35 +1,27 @@
 import { useEffect } from 'react'
-import { LEGACY_I18N_ATTRIBUTES, translateLegacyText } from '../lib/legacyI18n.js'
+import { LEGACY_I18N_ATTRIBUTES } from '../lib/legacyI18n.js'
+import { translateLegacyValue } from '../lib/legacyTranslationState.js'
 
 const SOURCE_TEXT_KEY = '__friesCupSourceText'
 const SOURCE_ATTR_KEY = '__friesCupSourceAttrs'
-const SKIP_SELECTOR = 'script, style, noscript, [data-i18n-ignore]'
-const CHINESE_RE = /[\u4e00-\u9fff]/
+const SKIP_SELECTOR = 'script, style, noscript, [contenteditable="true"], [data-i18n-ignore]'
 
 function shouldSkipNode(node) {
   const element = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement
   return Boolean(element?.closest(SKIP_SELECTOR))
 }
 
-function translateTextNode(node, locale) {
+function translateTextNode(node, locale, translate) {
   if (shouldSkipNode(node)) return
+  if (node.parentElement?.matches('textarea, input')) return
 
   const current = node.nodeValue || ''
   if (!current.trim()) return
 
-  const source = node[SOURCE_TEXT_KEY]
-  if (!source && !CHINESE_RE.test(current)) return
-
-  const translatedSource = source ? translateLegacyText(source, locale) : null
-
-  if (source && current === translatedSource) return
-  if (source && locale === 'en-US' && !CHINESE_RE.test(current)) return
-
-  const nextSource = source && locale !== 'en-US' && !CHINESE_RE.test(current) ? source : current
-  const nextValue = translateLegacyText(nextSource, locale)
-
-  node[SOURCE_TEXT_KEY] = nextSource
-  if (current !== nextValue) node.nodeValue = nextValue
+  const previous = node[SOURCE_TEXT_KEY]
+  const next = translateLegacyValue(current, previous, locale, translate)
+  node[SOURCE_TEXT_KEY] = next
+  if (current !== next.rendered) node.nodeValue = next.rendered
 }
 
 function getAttrSources(element) {
@@ -37,7 +29,7 @@ function getAttrSources(element) {
   return element[SOURCE_ATTR_KEY]
 }
 
-function translateElementAttributes(element, locale) {
+function translateElementAttributes(element, locale, translate) {
   if (shouldSkipNode(element)) return
 
   const sources = getAttrSources(element)
@@ -48,33 +40,24 @@ function translateElementAttributes(element, locale) {
     const current = element.getAttribute(attr) || ''
     if (!current.trim()) return
 
-    const source = sources.get(attr)
-    if (!source && !CHINESE_RE.test(current)) return
-
-    const translatedSource = source ? translateLegacyText(source, locale) : null
-
-    if (source && current === translatedSource) return
-    if (source && locale === 'en-US' && !CHINESE_RE.test(current)) return
-
-    const nextSource = source && locale !== 'en-US' && !CHINESE_RE.test(current) ? source : current
-    const nextValue = translateLegacyText(nextSource, locale)
-
-    sources.set(attr, nextSource)
-    if (current !== nextValue) element.setAttribute(attr, nextValue)
+    const previous = sources.get(attr)
+    const next = translateLegacyValue(current, previous, locale, translate)
+    sources.set(attr, next)
+    if (current !== next.rendered) element.setAttribute(attr, next.rendered)
   })
 }
 
-function translateTree(root, locale) {
+function translateTree(root, locale, translate) {
   if (!root) return
 
   if (root.nodeType === Node.TEXT_NODE) {
-    translateTextNode(root, locale)
+    translateTextNode(root, locale, translate)
     return
   }
 
   if (root.nodeType !== Node.ELEMENT_NODE) return
 
-  translateElementAttributes(root, locale)
+  translateElementAttributes(root, locale, translate)
 
   const walker = document.createTreeWalker(
     root,
@@ -88,13 +71,13 @@ function translateTree(root, locale) {
 
   let node = walker.nextNode()
   while (node) {
-    if (node.nodeType === Node.TEXT_NODE) translateTextNode(node, locale)
-    else translateElementAttributes(node, locale)
+    if (node.nodeType === Node.TEXT_NODE) translateTextNode(node, locale, translate)
+    else translateElementAttributes(node, locale, translate)
     node = walker.nextNode()
   }
 }
 
-export function useLocaleDomTranslation(locale, scopeRef) {
+export function useLocaleDomTranslation(locale, scopeRef, translate) {
   useEffect(() => {
     if (typeof window === 'undefined' || typeof MutationObserver === 'undefined') return undefined
     const scope = scopeRef.current
@@ -106,7 +89,7 @@ export function useLocaleDomTranslation(locale, scopeRef) {
       if (isTranslating) return
       isTranslating = true
       try {
-        translateTree(root, locale)
+        translateTree(root, locale, translate)
       } finally {
         isTranslating = false
       }
@@ -141,5 +124,5 @@ export function useLocaleDomTranslation(locale, scopeRef) {
     })
 
     return () => observer.disconnect()
-  }, [locale, scopeRef])
+  }, [locale, scopeRef, translate])
 }

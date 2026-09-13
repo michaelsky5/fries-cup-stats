@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Anran Zhuque fan</title>
+  <desc id="desc">A broad ceremonial fan has one open curved silhouette, five ribs and an ember at its pivot. Silk motion belongs to the portrait background.</desc>
+  <defs><linearGradient id="fan" x1="154" y1="98" x2="249" y2="179" gradientUnits="userSpaceOnUse"><stop stop-color="#f2b34f" stop-opacity="0.26"/><stop offset="1" stop-color="#ed7642" stop-opacity="0.08"/></linearGradient></defs>
+  <path d="M140 156A62 62 0 0 1 264 156L207 182H197Z" fill="url(#fan)" stroke="#e6b66d" stroke-opacity="0.78" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M202 175L147 148M202 175L164 112M202 175L202 96M202 175L240 112M202 175L257 148" fill="none" stroke="#df9861" stroke-opacity="0.5" stroke-width="1.1"/>
+  <path d="M202 143C213 152 213 162 202 170C193 163 190 156 196 150C196 155 199 157 201 158C204 153 205 149 202 143Z" fill="#df8854" fill-opacity="0.48" stroke="#f0c68a" stroke-opacity="0.76" stroke-width="1.2"/>
+</svg>

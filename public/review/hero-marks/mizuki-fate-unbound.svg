@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Mizuki healing kasa</title>
+  <desc id="desc">A low ceremonial kasa has a folded crown, a continuous luminous brim and one vermilion seal. Motion belongs to the separate portrait background.</desc>
+
+  <defs><linearGradient id="kasa" x1="119" y1="96" x2="258" y2="157" gradientUnits="userSpaceOnUse"><stop stop-color="#9bbfc0" stop-opacity="0.3"/><stop offset="1" stop-color="#527f85" stop-opacity="0.12"/></linearGradient></defs>
+  <path d="M92 135L140 103L164 83H203L226 103L281 135C249 159 125 164 92 135Z" fill="url(#kasa)" stroke="#98bfc1" stroke-opacity="0.76" stroke-width="2.1" stroke-linejoin="round"/>
+  <path d="M140 103L160 131H210L226 103M164 83L174 109H193L203 83" fill="none" stroke="#b8d3d2" stroke-opacity="0.53" stroke-width="1.4"/>
+  <path d="M95 136C136 152 236 154 278 136L276 145C229 166 137 163 99 144Z" fill="#89b8b9" fill-opacity="0.26" stroke="#bad8d6" stroke-opacity="0.59" stroke-width="1.4"/>
+  <path d="M179 91H190V103H179Z" fill="#be737a" fill-opacity="0.63"/>
+</svg>

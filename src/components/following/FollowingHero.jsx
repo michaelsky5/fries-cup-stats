@@ -1,3 +1,4 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import styles from '../../pages/following/FollowingPage.module.css'
@@ -7,8 +8,10 @@ export default function FollowingHero({
   favorites,
   favoriteLimits,
   seasonId,
+  locale = 'zh-CN',
   withSeason,
-  onManage
+  onManage,
+  primaryLabel = '主关注队伍'
 }) {
   const nextMatch = overview?.nextMatch
   const teamPath = overview?.teamRouteId || overview?.teamId
@@ -28,7 +31,7 @@ export default function FollowingHero({
     <section className={styles.followingHero}>
       <div className={styles.heroIdentityCard}>
         <p className={styles.kicker}>MY FOLLOWING</p>
-        <h1>我的关注</h1>
+        <h1>{uiText("我的关注", locale)}</h1>
         {overview ? (
           <>
             <TeamLogo
@@ -43,14 +46,14 @@ export default function FollowingHero({
               <strong>{overview.shortName}</strong>
               <span>{overview.fullName}</span>
             </div>
-            <span className={styles.primaryBadge}>主关注队伍</span>
-            <Link className={styles.darkLink} to={teamPath}>查看队伍资料 →</Link>
+            <span className={styles.primaryBadge}>{primaryLabel}</span>
+            <Link className={styles.darkLink} to={teamPath}>{uiText("查看队伍资料 →", locale)}</Link>
           </>
         ) : (
           <div className={styles.heroEmptyCopy}>
-            <strong>尚未设置主关注队伍</strong>
-            <span>打开管理关注，选择一支队伍作为赛事工作台主角。</span>
-            <button type="button" onClick={onManage}>编辑关注</button>
+            <strong>{uiText("尚未设置主关注队伍", locale)}</strong>
+            <span>{locale === 'zh-CN' ? uiText("选择主关注队伍后，在这里查看它的赛程、赛果与晋级进度。", locale) : 'Choose a primary team to see its schedule, results and advancement progress.'}</span>
+            <button type="button" onClick={onManage}>{uiText("编辑关注", locale)}</button>
           </div>
         )}
       </div>
@@ -61,7 +64,7 @@ export default function FollowingHero({
             <span>NEXT MATCH</span>
             <h2>{title}</h2>
           </div>
-          <button type="button" onClick={onManage}>编辑关注</button>
+          <button type="button" onClick={onManage}>{uiText("编辑关注", locale)}</button>
         </div>
 
         {nextMatch ? (
@@ -84,36 +87,36 @@ export default function FollowingHero({
               </div>
             </div>
             <p>{nextMatch.compactTime} · {nextMatch.format} · {nextMatch.stageLabel}</p>
-            <p>状态：{nextMatch.statusLabel}</p>
+            <p>{uiText("状态：", locale)}{nextMatch.statusLabel}</p>
             <div className={styles.heroActions}>
-              <Link className={styles.primaryAction} to={matchPath}>比赛详情</Link>
-              {nextMatch.opponent ? <Link className={styles.textAction} to={opponentPath}>查看对手 →</Link> : null}
-              <Link className={styles.textAction} to={teamPath}>队伍资料 →</Link>
+              <Link className={styles.primaryAction} to={matchPath}>{uiText("比赛详情", locale)}</Link>
+              {nextMatch.opponent ? <Link className={styles.textAction} to={opponentPath}>{uiText("查看对手 →", locale)}</Link> : null}
+              <Link className={styles.textAction} to={teamPath}>{uiText("队伍资料 →", locale)}</Link>
             </div>
           </div>
         ) : (
           <div className={styles.heroNoMatch}>
-            <strong>{overview?.seasonFinished ? overview.finalRankText : '当前轮暂无比赛'}</strong>
-            <span>{overview ? '下一场比赛排定后将优先显示。' : '关注队伍后会显示主关注队伍的下一场比赛。'}</span>
+            <strong>{overview?.seasonFinished ? overview.finalRankText : uiText("当前轮暂无比赛", locale)}</strong>
+            <span>{overview ? uiText("下一场比赛排定后将优先显示。", locale) : uiText("关注队伍后会显示主关注队伍的下一场比赛。", locale)}</span>
           </div>
         )}
 
         <div className={styles.heroMetrics}>
           <div>
-            <span>关注队伍</span>
+            <span>{uiText("关注队伍", locale)}</span>
             <strong>{favorites.favoriteTeamIds.length} / {favoriteLimits.teams}</strong>
           </div>
           <div>
-            <span>关注选手</span>
+            <span>{uiText("关注选手", locale)}</span>
             <strong>{favorites.favoritePlayerIds.length} / {favoriteLimits.players}</strong>
           </div>
           <div>
-            <span>最近赛果</span>
-            <strong>{overview?.latestResult ? `${overview.latestResult.score} · ${overview.latestResult.resultText || '已结束'}` : '暂无'}</strong>
+            <span>{uiText("最近赛果", locale)}</span>
+            <strong>{overview?.latestResult ? `${overview.latestResult.score} · ${overview.latestResult.resultText || '已结束'}` : uiText("暂无", locale)}</strong>
           </div>
           <div>
-            <span>排名 / 晋级</span>
-            <strong>{overview?.advance?.played ? `${overview.advance.label} · ${overview.advance.zone}` : '暂无'}</strong>
+            <span>{uiText("排名 / 晋级", locale)}</span>
+            <strong>{overview?.advance?.played ? `${overview.advance.label} · ${overview.advance.zone}` : uiText("暂无", locale)}</strong>
           </div>
         </div>
       </div>

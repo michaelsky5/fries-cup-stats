@@ -1,0 +1,364 @@
+.archive {
+  --stage-black: #141513;
+  --stage-paper: #eaeae3;
+  --stage-yellow: #f4c320;
+  --story-progress: 0;
+  --story-mix: 0;
+  --pointer-x: 0;
+  --pointer-y: 0;
+  background: var(--stage-paper);
+  color: var(--stage-black);
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+.archive * { box-sizing: border-box; }
+.archive :is(button, a) { -webkit-tap-highlight-color: transparent; }
+.archive :is(button, a):focus-visible { outline: 2px solid #ac8100; outline-offset: 5px; }
+.archive a { text-decoration: none; }
+.archive button { font-family: inherit; }
+.archive button:disabled { cursor: default; }
+.screenReader { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.track { position: relative; height: calc(198svh - var(--kpr-header-height)); }
+.stage {
+  position: sticky;
+  top: var(--kpr-header-height);
+  height: calc(100svh - var(--kpr-header-height));
+  min-height: 590px;
+  isolation: isolate;
+  overflow: clip;
+  color: var(--stage-paper);
+  background: var(--stage-black);
+}
+.stage :is(button, a):focus-visible { outline-color: var(--stage-yellow); }
+.stageLines { position: absolute; inset: 0 var(--kpr-gutter); display: flex; justify-content: space-between; pointer-events: none; z-index: -1; }
+.stageLines > span { height: 100%; width: 1px; background: #f6f6dd09; }
+.stageYear { position: absolute; top: 7%; right: 4%; z-index: -1; font-size: clamp(150px, 32vw, 650px); font-weight: 900; line-height: 1; letter-spacing: -.08em; color: #ffffff02; -webkit-text-stroke: 1px #ffffff0a; transform: translateY(calc(var(--story-mix) * -55px)); }
+.stageFloor { position: absolute; bottom: 7%; left: 13%; right: -20%; height: 28%; background: repeating-linear-gradient(90deg, #aaaa8810 0 1px, transparent 1px 180px), repeating-linear-gradient(0deg, #aaaa8810 0 1px, transparent 1px 50px); transform: perspective(450px) rotateX(65deg) rotateZ(-9deg); opacity: calc(.6 - var(--story-mix) * .6); mask-image: linear-gradient(transparent, black, transparent); }
+.artwork { position: absolute; width: 83%; height: 93%; right: 0; top: 0; z-index: -1; opacity: clamp(0, calc(1 - var(--story-mix) * 1.65), 1); transform: translate(calc(var(--pointer-x) * -12px + var(--story-mix) * 110px), calc(var(--pointer-y) * -7px + var(--story-mix) * 36px)) scale(calc(1 + var(--story-mix) * .12)); transition: transform .28s ease-out; }
+.artwork { mix-blend-mode: lighten; }
+.artwork img { width: 100%; height: 100%; display: block; object-fit: contain; max-width: none; }
+.imageVeil { position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, #141513 0%, #141513eb 18%, #14151366 40%, #14151300 60%), linear-gradient(0deg, #141513 0%, #14151300 23%); pointer-events: none; opacity: calc(1 - var(--story-mix)); }
+.topline { position: absolute; top: 22px; left: var(--kpr-gutter); right: var(--kpr-gutter); z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 18px; font-size: 9px; line-height: 1.4; letter-spacing: .09em; color: #b1b3a6; }
+.archiveCode { display: inline-flex; gap: 11px; align-items: center; }
+.archiveCode > i { width: 5px; height: 5px; background: var(--stage-yellow); }
+.archiveCode > b { color: #5f6158; font-weight: 400; }
+.toplineCenter { position: absolute; left: 48%; white-space: nowrap; transform: translateX(-50%); font-size: 8px; color: #7f8377; letter-spacing: .15em; }
+.motionButton { display: flex; align-items: center; gap: 8px; min-height: 32px; padding: 5px 0 5px 8px; border: 0; color: inherit; background: transparent; font-size: 9px; cursor: pointer; }
+.motionButton > i { color: var(--stage-yellow); font-size: 10px; font-style: normal; }
+.championCopy { position: absolute; top: 18%; left: var(--kpr-gutter); z-index: 3; width: 47%; opacity: clamp(0, calc(1 - var(--story-mix) * 2.6), 1); transform: translateX(calc(var(--story-mix) * -75px)); }
+.kicker { display: block; color: #b5b8a9; font-size: 10px; line-height: 1.5; letter-spacing: .11em; }
+.kicker > b { color: var(--stage-yellow); margin-right: 10px; font-weight: 500; }
+.championCopy h1 { margin: 19px 0 25px -8px; color: var(--stage-paper); font-size: clamp(115px, 17vw, 270px); line-height: .82; letter-spacing: -.075em; font-weight: 950; white-space: nowrap; }
+.championCopy h1 > i { color: var(--stage-yellow); font-style: normal; }
+.championCopy h1[data-long-name="true"] { font-size: clamp(55px, 8.2vw, 146px); white-space: normal; overflow-wrap: anywhere; }
+.championName { display: flex; align-items: center; gap: 14px; }
+.teamLogo { display: grid; place-items: center; flex: 0 0 42px; width: 42px; height: 42px; padding: 2px; border: 1px solid #ffffff20; background: #ffffff07; }
+.teamLogo img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.championName strong { display: block; font-size: clamp(13px, 1.3vw, 20px); letter-spacing: -.02em; font-weight: 500; }
+.championName div > span { display: block; margin-top: 7px; font-size: 9px; color: #919588; }
+.championName div > span > b { margin: 0 9px; color: #575b51; font-weight: 400; }
+.championStatement { margin: 23px 0 22px; color: #a4a797; font-size: 11px; line-height: 1.8; }
+.primaryLink { display: inline-flex; align-items: center; justify-content: space-between; gap: 46px; min-height: 45px; padding: 0 17px; color: var(--stage-black); background: var(--stage-yellow); border: 1px solid var(--stage-yellow); font-size: 12px; font-weight: 700; transition: background .2s, color .2s; }
+.primaryLink > span { font-size: 21px; line-height: 1; font-weight: 400; transition: transform .2s; }
+.primaryLink:hover { background: #ffdb5d; }
+.primaryLink:hover > span { transform: translate(2px, -2px); }
+.objectCaption { position: absolute; right: var(--kpr-gutter); top: 33%; display: grid; gap: 10px; max-width: 130px; opacity: clamp(0, calc(1 - var(--story-mix) * 3), 1); font-size: 8px; color: #8b8e7f; letter-spacing: .08em; }
+.objectCaption::before { content: '+'; font-size: 22px; font-weight: 300; color: var(--stage-yellow); margin-bottom: 10px; }
+.objectCaption > b { color: #c2c5b3; font-weight: 500; line-height: 1.65; }
+.objectCaption > i { margin-top: 5px; padding-top: 9px; border-top: 1px solid #ffffff24; font-style: normal; font-size: 7px; }
+.artworkNote { position: absolute; bottom: 103px; right: var(--kpr-gutter); color: #929586; font-size: 8px; letter-spacing: .04em; opacity: clamp(0, calc(1 - var(--story-mix) * 3), 1); }
+.finalScore { position: absolute; z-index: 4; left: var(--kpr-gutter); bottom: 106px; display: flex; align-items: center; gap: 30px; color: var(--stage-paper); opacity: clamp(0, calc(1 - var(--story-mix) * 3), 1); transform: translateY(calc(var(--story-mix) * 30px)); }
+.finalScore > div:first-child { padding-left: 12px; border-left: 2px solid var(--stage-yellow); }
+.finalScore > div > span { display: block; font-size: 8px; letter-spacing: .1em; }
+.finalScore small { display: block; margin-top: 7px; color: #929687; font-size: 8px; }
+.finalScore > strong { font-size: 47px; line-height: 1; letter-spacing: -.055em; font-weight: 800; }
+.finalScore > strong > i { padding: 0 13px; color: #75796b; font-size: .6em; font-weight: 400; font-style: normal; }
+.finalOpponent > b { display: block; font-size: 10px; font-weight: 500; }
+.finalOpponent > b > em { margin: 0 6px; font-size: 8px; font-weight: 400; font-style: normal; color: #717769; }
+.finalScore .finalOpponent > span { color: #a8ac9b; font-size: 8px; letter-spacing: 0; margin-top: 7px; }
+.finalOpponent > span > span { color: var(--stage-yellow); padding-left: 8px; }
+.finalScore:hover .finalOpponent > span { color: var(--stage-yellow); }
+.finalPending { position: absolute; bottom: 102px; left: var(--kpr-gutter); font-size: 11px; color: #a8ac9b; opacity: clamp(0, calc(1 - var(--story-mix) * 3), 1); }
+
+.spotlightBackground { position: absolute; top: 17%; right: 3%; font-size: clamp(85px, 16vw, 280px); font-weight: 950; line-height: .85; letter-spacing: -.065em; color: #ffffff04; opacity: var(--story-mix); pointer-events: none; transform: translateY(calc((1 - var(--story-mix)) * 80px)); }
+.spotlightBackground > span { position: absolute; right: 0; top: 0; font-size: 11px; color: #a0a38f; letter-spacing: .08em; }
+.spotlightCopy { position: absolute; top: 18%; left: var(--kpr-gutter); width: 43%; max-width: 700px; z-index: 4; opacity: clamp(0, calc(var(--story-mix) * 2.4 - 1.15), 1); transform: translateY(calc((1 - var(--story-mix)) * 55px)); }
+.awardTag { display: inline-block; margin-top: 21px; padding: 5px 8px; border: 1px solid #f4c32060; background: #f4c32010; color: var(--stage-yellow); font-size: 9px; letter-spacing: .03em; }
+.spotlightCopy h2 { margin: 19px 0 17px -4px; font-size: clamp(60px, 9vw, 145px); font-weight: 950; line-height: .98; letter-spacing: -.055em; overflow-wrap: anywhere; }
+.spotlightCopy h2[data-long-name="true"] { font-size: clamp(42px, 5.8vw, 85px); }
+.spotlightCopy h2 > i { font-style: normal; color: var(--stage-yellow); }
+.subjectIdentity { display: flex; gap: 14px; align-items: center; font-size: 11px; color: #b1b5a3; }
+.subjectIdentity > b { color: var(--stage-paper); font-weight: 500; }
+.subjectIdentity > span { color: #535748; }
+.spotlightCopy > p { max-width: 295px; margin: 22px 0 0; color: #a5aa98; font-size: 11px; line-height: 1.9; }
+.heroName { display: flex; gap: 13px; align-items: baseline; margin-top: 23px; }
+.heroName > span { color: #858b79; font-size: 9px; }
+.heroName > b { font-size: 11px; font-weight: 500; }
+.textLink { display: flex; align-items: center; justify-content: space-between; width: 191px; padding: 15px 0; margin-top: 20px; border-bottom: 1px solid #ffffff40; font-size: 11px; color: var(--stage-paper); }
+.textLink > span { color: var(--stage-yellow); font-size: 20px; line-height: 1; }
+.textLink:hover { border-color: var(--stage-yellow); }
+.recordScene { position: absolute; top: 14%; right: 12%; width: clamp(250px, 26vw, 450px); z-index: 3; perspective: 1100px; opacity: clamp(0, calc(var(--story-mix) * 2.2 - .9), 1); transform: translateX(calc((1 - var(--story-mix)) * 110px)) translateY(calc((1 - var(--story-mix)) * 30px)); }
+.recordShadow { position: absolute; left: -4%; right: -8%; top: 18%; bottom: -3%; background: #000; filter: blur(24px); opacity: .65; transform: rotate(-6deg); }
+.record { position: relative; padding: 21px 25px 23px; color: var(--stage-black); background: linear-gradient(125deg, #f6f6ec, #deded2 62%, #bfbfb2); border: 1px solid #faffdf94; box-shadow: -1px 2px 0 #818273, -3px 4px 0 #57594d, -5px 6px 0 #35392c, -7px 8px 0 #303329; transform: rotateY(calc(-12deg + var(--pointer-x) * 4deg)) rotateX(calc(4deg + var(--pointer-y) * -3deg)) rotateZ(-4deg); transition: transform .28s ease-out; }
+.recordEdge { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, transparent 30%, #ffffff48 43%, transparent 58%); }
+.recordHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 15px; border-bottom: 1px solid #14151355; font-size: 7px; letter-spacing: .075em; }
+.recordHeader > b { font-size: 11px; }
+.recordRole { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; margin-top: 26px; font-size: 8px; }
+.recordRole > b { font-size: 11px; font-weight: 500; }
+.recordOvr { position: relative; display: flex; align-items: baseline; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid #14151330; }
+.recordOvr > strong { font-size: clamp(94px, 12.5vw, 196px); font-weight: 900; letter-spacing: -.09em; line-height: 1.1; }
+.recordOvr > span { font-size: 14px; font-weight: 600; writing-mode: vertical-rl; transform: rotate(180deg); }
+.recordMetrics { padding-top: 17px; }
+.recordMetrics > .metricCaption { display: block; font-size: 7px; color: #60634f; letter-spacing: .055em; margin-bottom: 8px; }
+.recordMetrics > div { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #14151324; }
+.recordMetrics > div > span { font-size: 10px; }
+.recordMetrics > div > strong { font-size: clamp(18px, 2vw, 26px); font-weight: 700; line-height: 1.15; }
+.recordFooter { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-top: 18px; font-size: 7px; }
+.recordFooter > strong { font-size: 9px; font-weight: 600; }
+.recordFooter i { margin: 0 5px; font-style: normal; opacity: .4; }
+.recordNotch { position: absolute; right: 24px; top: -8px; width: 48px; height: 14px; background: var(--stage-yellow); border: 1px solid #eccd49; transform: skewY(-4deg); }
+.recordCaption { display: flex; justify-content: space-between; padding: 29px 8px 0; font-size: 8px; letter-spacing: .1em; color: #858b78; }
+.recordCaption > b { color: var(--stage-yellow); font-size: 7px; }
+.subjectPicker { position: absolute; bottom: 104px; left: var(--kpr-gutter); right: var(--kpr-gutter); z-index: 5; display: flex; align-items: center; gap: 20px; opacity: clamp(0, calc(var(--story-mix) * 3 - 2), 1); }
+.subjectPicker > span { color: #909680; font-size: 8px; }
+.subjectPicker > div { display: flex; gap: 5px; }
+.subjectPicker button { border: 1px solid #ffffff1d; padding: 9px 13px; min-height: 34px; background: transparent; color: #c6cbb9; cursor: pointer; font-size: 10px; transition: background .2s, color .2s; }
+.subjectPicker button[aria-pressed="true"] { color: var(--stage-black); border-color: var(--stage-yellow); background: var(--stage-yellow); }
+.subjectPicker button:hover:not(:disabled):not([aria-pressed="true"]) { border-color: #b8bb9b; color: #fff; }
+.subjectPicker button:disabled:not([aria-pressed="true"]) { opacity: .4; }
+.chapterBar { position: absolute; z-index: 12; bottom: 22px; left: var(--kpr-gutter); right: var(--kpr-gutter); display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #ffffff20; }
+.chapterBar > nav { display: flex; gap: 27px; }
+.chapterBar button { display: inline-flex; gap: 9px; align-items: center; min-height: 33px; padding: 0; color: #a0a68e; background: transparent; border: 0; font-size: 10px; cursor: pointer; }
+.chapterBar button > b { display: grid; width: 24px; height: 24px; place-items: center; font-size: 9px; font-weight: 500; }
+.chapterBar button[aria-current="step"] { color: #f3f4e7; }
+.chapterBar button[aria-current="step"] > b { background: var(--stage-yellow); color: var(--stage-black); }
+.scrollHint { display: flex; align-items: center; gap: 22px; font-size: 9px; color: #989f87; letter-spacing: .025em; }
+.scrollHint > b { font-size: 20px; font-weight: 400; color: #d5d8c5; }
+.progressRail { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #ffffff14; }
+.progressRail > span { display: block; width: 100%; height: 100%; transform-origin: left; transform: scaleX(var(--story-progress)); background: var(--stage-yellow); }
+
+.rosterSection { display: grid; grid-template-columns: 1fr 1.05fr; gap: 9%; padding: 83px var(--kpr-gutter) 82px; border-bottom: 1px solid #14151330; }
+.sectionHeading > span { color: #646958; font-size: 9px; letter-spacing: .08em; }
+.sectionHeading h2 { margin: 24px 0 18px; font-size: clamp(27px, 2.8vw, 45px); line-height: 1.3; font-weight: 800; letter-spacing: -.05em; }
+.sectionHeading > p { max-width: 370px; margin: 0; font-size: 11px; color: #656a59; line-height: 1.9; }
+.rosterTeamLink { display: flex; align-items: center; justify-content: space-between; gap: 20px; width: 170px; margin-top: 28px; padding: 12px 0; border-bottom: 1px solid #14151355; font-size: 11px; color: var(--stage-black); }
+.rosterTeamLink > span { font-size: 20px; }
+.rosterList { border-top: 1px solid var(--stage-black); }
+.rosterList > button { position: relative; display: grid; grid-template-columns: 22px minmax(0, 1fr) auto 22px; width: 100%; align-items: center; gap: 24px; padding: 17px 11px; border: 0; border-bottom: 1px solid #14151328; color: var(--stage-black); background: transparent; text-align: left; cursor: pointer; transition: background .2s, padding .2s; }
+.rosterList > button:not(:disabled):hover { background: #f4c32066; padding-left: 18px; }
+.rosterList > button[aria-pressed="true"] { background: var(--stage-yellow); }
+.rosterList > button > strong { font-size: 23px; font-weight: 700; letter-spacing: -.035em; overflow-wrap: anywhere; }
+.rosterNumber { font-size: 9px; color: #6b715c; }
+.rosterMeta { font-size: 10px; line-height: 1.55; text-align: right; }
+.rosterMeta small { display: block; font-size: 9px; color: #656a59; }
+.rosterList > button > span:last-child { text-align: right; font-size: 20px; }
+.rosterList > button:disabled:not([aria-pressed="true"]) { opacity: .45; }
+.journeySection { padding: 72px var(--kpr-gutter) 87px; }
+.journeyHeading { display: flex; justify-content: space-between; gap: 24px; align-items: end; margin-bottom: 36px; }
+.journeyHeading h2 { margin-bottom: 0; }
+.journeyHeading > p { color: #656a59; font-size: 10px; margin: 0 0 6px; }
+.journeyGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--stage-black); }
+.journeyGrid > a { padding: 23px 28px 27px; border-right: 1px solid #14151333; border-bottom: 1px solid #14151333; color: var(--stage-black); background: #ffffff14; transition: background .2s; }
+.journeyGrid > a:first-child { border-left: 1px solid #14151333; }
+.journeyGrid > a:hover { background: #d6d7c9; }
+.journeyGrid header { display: flex; align-items: center; justify-content: space-between; font-size: 9px; letter-spacing: .02em; }
+.journeyGrid header b { margin: 0 9px; color: #858970; font-weight: 400; }
+.journeyGrid header > span:last-child { font-size: 21px; }
+.journeyScore { font-size: clamp(57px, 6.2vw, 95px); line-height: 1; margin: 32px 0 24px; letter-spacing: -.065em; font-weight: 800; }
+.journeyScore > i { margin: 0 19px; font-size: .65em; font-style: normal; color: #929681; font-weight: 400; }
+.journeyGrid a > strong { display: block; font-size: 17px; font-weight: 700; }
+.journeyGrid a > strong > small { padding: 0 11px; color: #6b715b; font-size: 8px; font-weight: 400; }
+.journeyGrid time { display: block; margin-top: 12px; font-size: 9px; color: #6b715b; }
+.journeyGrid > .finalJourney { background: var(--stage-yellow); }
+.journeyGrid > .finalJourney:hover { background: #ffd34a; }
+.finalJourney .journeyScore > i { color: #665928; }
+.archiveFooter { display: flex; justify-content: space-between; gap: 40px; align-items: center; padding: 67px var(--kpr-gutter) 78px; color: var(--stage-paper); background: var(--stage-black); }
+.archiveFooter > div > span { color: #9fa68f; font-size: 9px; letter-spacing: .075em; }
+.archiveFooter h2 { margin: 21px 0 23px; font-size: clamp(27px, 3vw, 46px); font-weight: 800; letter-spacing: -.04em; }
+.archiveFooter p { color: #a4ab95; font-size: 10px; margin: 0; }
+.archiveFooter p > b { margin: 0 14px; font-weight: 400; color: #565e48; }
+.archiveFooter nav { width: 270px; }
+.archiveFooter nav > a { display: flex; justify-content: space-between; gap: 25px; align-items: center; padding: 18px 0; border-top: 1px solid #ffffff35; color: var(--stage-paper); font-size: 12px; }
+.archiveFooter nav > a > span { font-size: 22px; color: var(--stage-yellow); }
+
+@media (min-width: 1800px) {
+  .championCopy { top: 21%; }
+  .recordScene { top: 16%; right: 16%; }
+}
+@media (max-height: 820px) and (min-width: 761px) {
+  .stage { min-height: 510px; }
+  .championCopy { top: 16%; }
+  .championCopy h1 { font-size: clamp(95px, 15vw, 190px); margin-bottom: 19px; }
+  .championStatement { margin: 16px 0 17px; }
+  .finalScore { bottom: 87px; gap: 23px; }
+  .finalScore > strong { font-size: 39px; }
+  .artworkNote { bottom: 91px; }
+  .spotlightCopy { top: 14%; }
+  .awardTag { margin-top: 15px; }
+  .spotlightCopy h2 { font-size: clamp(58px, 8vw, 94px); margin-block: 15px; }
+  .spotlightCopy > p { margin-top: 16px; }
+  .heroName { margin-top: 16px; }
+  .textLink { margin-top: 10px; padding-block: 11px; }
+  .recordScene { width: 285px; top: 13%; right: 14%; }
+  .record { padding: 15px 21px; }
+  .recordRole { margin-top: 17px; }
+  .recordOvr > strong { font-size: 122px; }
+  .recordOvr { padding-bottom: 8px; }
+  .recordMetrics { padding-top: 12px; }
+  .recordMetrics > div { padding-block: 7px; }
+  .recordMetrics > div > strong { font-size: 20px; }
+  .recordFooter { padding-top: 13px; }
+  .recordCaption { padding-top: 24px; }
+  .subjectPicker { bottom: 87px; }
+  .chapterBar { bottom: 17px; padding-top: 12px; }
+}
+@media (max-width: 1080px) and (min-width: 761px) {
+  .objectCaption { display: none; }
+  .championCopy { width: 51%; }
+  .recordScene { width: 275px; right: 8%; }
+  .recordOvr > strong { font-size: 122px; }
+  .subjectPicker { gap: 14px; }
+  .subjectPicker button { padding-inline: 10px; }
+  .rosterSection { gap: 5%; }
+  .rosterList > button { gap: 13px; }
+}
+@media (max-width: 760px) {
+  .track { height: calc(198svh - var(--kpr-header-height)); }
+  .stage { min-height: 590px; }
+  .topline { top: 13px; font-size: 8px; gap: 8px; }
+  .archiveCode { gap: 8px; }
+  .toplineCenter { display: none; }
+  .motionButton { font-size: 8px; min-height: 33px; }
+  .championCopy { top: 11%; width: calc(100% - var(--kpr-gutter) * 2); }
+  .kicker { font-size: 8px; letter-spacing: .065em; }
+  .championCopy h1 { font-size: clamp(91px, 26vw, 166px); line-height: .82; margin: 17px 0 19px -4px; }
+  .championCopy h1[data-long-name="true"] { font-size: clamp(45px, 13vw, 85px); }
+  .championName { gap: 10px; }
+  .teamLogo { width: 33px; height: 33px; flex-basis: 33px; }
+  .championName strong { font-size: 12px; }
+  .championName div > span { font-size: 8px; margin-top: 4px; }
+  .championName div > span > b { margin-inline: 6px; }
+  .championStatement { display: none; }
+  .primaryLink { margin-top: 19px; min-height: 39px; padding-inline: 12px; gap: 20px; font-size: 10px; }
+  .primaryLink > span { font-size: 18px; }
+  .artwork { width: 146%; height: 75%; right: -21%; top: 21%; }
+  .artwork img { object-fit: contain; }
+  .imageVeil { background: linear-gradient(180deg, #141513 0%, #14151375 14%, transparent 48%, #141513 84%), linear-gradient(90deg, #141513 0%, #14151370 22%, transparent 52%); }
+  .stageYear { top: 23%; font-size: 66vw; right: 8%; }
+  .objectCaption { display: none; }
+  .artworkNote { right: var(--kpr-gutter); bottom: 163px; font-size: 7px; }
+  .finalScore { bottom: 88px; right: var(--kpr-gutter); justify-content: space-between; gap: 12px; }
+  .finalScore > div:first-child { padding-left: 8px; }
+  .finalScore > div > span { font-size: 7px; }
+  .finalScore small { font-size: 7px; margin-top: 5px; }
+  .finalScore > strong { font-size: 40px; }
+  .finalScore > strong > i { padding-inline: 9px; }
+  .finalOpponent > b { font-size: 9px; }
+  .finalScore .finalOpponent > span { font-size: 8px; }
+  .spotlightBackground { top: 22%; right: 0; font-size: 25vw; }
+  .spotlightCopy { top: 11%; width: calc(100% - var(--kpr-gutter) * 2); max-width: none; }
+  .awardTag { margin-top: 15px; font-size: 8px; padding: 5px 6px; }
+  .spotlightCopy h2 { font-size: clamp(52px, 15vw, 84px); margin: 16px 0 13px -2px; max-width: 100%; }
+  .spotlightCopy h2[data-long-name="true"] { font-size: 11vw; }
+  .subjectIdentity { gap: 10px; font-size: 9px; }
+  .spotlightCopy > p { max-width: 43%; font-size: 10px; line-height: 1.85; margin-top: 20px; }
+  .heroName { display: grid; gap: 8px; margin-top: 20px; max-width: 39%; }
+  .heroName > span { font-size: 8px; }
+  .heroName > b { font-size: 11px; }
+  .textLink { width: 41%; padding-block: 12px; margin-top: 16px; font-size: 10px; }
+  .textLink > span { font-size: 17px; }
+  .recordScene { top: 37%; right: 6%; width: 43%; max-width: 260px; }
+  .record { padding: 12px 12px 13px; }
+  .recordHeader { padding-bottom: 8px; font-size: 7px; gap: 6px; }
+  .recordHeader > b { font-size: 8px; }
+  .recordRole { margin-top: 12px; font-size: 8px; }
+  .recordRole > b { font-size: 8px; }
+  .recordOvr { gap: 7px; padding-bottom: 8px; }
+  .recordOvr > strong { font-size: clamp(54px, 18vw, 92px); }
+  .recordOvr > span { font-size: 9px; }
+  .recordMetrics { padding-top: 9px; }
+  .recordMetrics > .metricCaption { font-size: 7px; margin-bottom: 3px; }
+  .recordMetrics > div { padding-block: 6px; }
+  .recordMetrics > div > span { font-size: 10px; }
+  .recordMetrics > div > strong { font-size: 18px; }
+  .recordFooter { padding-top: 10px; font-size: 7px; gap: 4px; flex-wrap: wrap; }
+  .recordFooter > strong { font-size: 8px; }
+  .recordFooter i { margin-inline: 2px; }
+  .recordNotch { width: 30px; height: 9px; right: 16px; top: -5px; }
+  .recordCaption { padding: 17px 0 0; font-size: 6px; letter-spacing: .03em; }
+  .recordCaption > b { font-size: 6px; }
+  .subjectPicker { bottom: 91px; display: block; }
+  .subjectPicker > span { display: block; font-size: 7px; margin-bottom: 8px; }
+  .subjectPicker > div { gap: 4px; flex-wrap: wrap; }
+  .subjectPicker button { flex: 1 1 auto; min-height: 34px; padding: 7px 5px; font-size: 9px; }
+  .chapterBar { bottom: 19px; padding-top: 14px; }
+  .chapterBar > nav { gap: 20px; }
+  .chapterBar button { gap: 6px; font-size: 9px; min-height: 34px; }
+  .chapterBar button > b { width: 23px; height: 23px; font-size: 8px; }
+  .scrollHint { font-size: 0; gap: 0; }
+  .scrollHint > b { font-size: 19px; }
+  .rosterSection { grid-template-columns: 1fr; padding-block: 49px; gap: 29px; }
+  .sectionHeading > span { font-size: 8px; }
+  .sectionHeading h2 { font-size: 27px; margin: 17px 0 15px; }
+  .sectionHeading > p { font-size: 10px; max-width: 370px; }
+  .rosterTeamLink { margin-top: 17px; font-size: 10px; padding-block: 10px; }
+  .rosterList > button { gap: 15px; padding: 16px 8px; }
+  .rosterList > button > strong { font-size: 23px; }
+  .rosterMeta { font-size: 9px; }
+  .rosterMeta small { font-size: 8px; }
+  .journeySection { padding-block: 46px 52px; }
+  .journeyHeading { display: block; margin-bottom: 23px; }
+  .journeyHeading > p { font-size: 10px; margin-top: 14px; }
+  .journeyGrid { grid-template-columns: 1fr; }
+  .journeyGrid > a { position: relative; min-height: 145px; padding: 18px 20px; border-left: 1px solid #14151333; }
+  .journeyGrid header { width: 100%; font-size: 8px; }
+  .journeyGrid header > span:last-child { font-size: 19px; }
+  .journeyScore { position: absolute; top: 63px; right: 20px; font-size: 45px; margin: 0; }
+  .journeyScore > i { margin-inline: 10px; }
+  .journeyGrid a > strong { max-width: 65%; margin-top: 25px; font-size: 18px; }
+  .journeyGrid a > strong > small { font-size: 7px; padding-inline: 6px; }
+  .journeyGrid time { margin-top: 8px; font-size: 8px; }
+  .archiveFooter { flex-direction: column; align-items: stretch; padding-block: 47px 45px; gap: 33px; }
+  .archiveFooter > div > span { font-size: 8px; }
+  .archiveFooter h2 { font-size: 27px; margin: 19px 0; }
+  .archiveFooter nav { width: 100%; }
+  .archiveFooter nav > a { font-size: 11px; padding-block: 17px; }
+}
+@media (max-height: 790px) and (max-width: 760px) {
+  .stage { min-height: 475px; }
+  .championCopy { top: 12%; }
+  .championCopy h1 { font-size: clamp(83px, 22vw, 115px); margin-block: 13px; }
+  .championName strong { font-size: 10px; }
+  .teamLogo { width: 28px; height: 28px; flex-basis: 28px; }
+  .primaryLink { min-height: 35px; margin-top: 14px; }
+  .artwork { top: 15%; height: 80%; }
+  .artworkNote { bottom: 143px; font-size: 6px; }
+  .finalScore { bottom: 76px; }
+  .finalScore > strong { font-size: 34px; }
+  .chapterBar { bottom: 12px; padding-top: 9px; }
+  .spotlightCopy { top: 12%; }
+  .awardTag { margin-top: 10px; font-size: 7px; padding: 4px 5px; }
+  .spotlightCopy h2 { font-size: clamp(45px, 13vw, 70px); margin-block: 12px; }
+  .spotlightCopy > p { font-size: 9px; margin-top: 16px; line-height: 1.7; }
+  .heroName { gap: 5px; margin-top: 14px; }
+  .heroName > span { font-size: 7px; }
+  .heroName > b { font-size: 10px; }
+  .textLink { font-size: 9px; margin-top: 10px; padding-block: 9px; }
+  .recordScene { top: 33%; right: 5%; width: 42%; }
+  .record { padding: 10px 11px; }
+  .recordHeader { padding-bottom: 6px; }
+  .recordRole { margin-top: 6px; }
+  .recordOvr > strong { font-size: clamp(48px, 16vw, 70px); }
+  .recordMetrics { padding-top: 6px; }
+  .recordMetrics > div { padding-block: 5px; }
+  .recordFooter { padding-top: 7px; }
+  .recordCaption { display: none; }
+  .subjectPicker { bottom: 78px; }
+  .subjectPicker button { min-height: 30px; font-size: 8px; }
+  .subjectPicker > span { margin-bottom: 6px; font-size: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .archive *, .archive *::before, .archive *::after { animation: none !important; transition: none !important; }
+}
+.track[data-reduced-motion="true"] :is(.artwork, .record, .primaryLink, .primaryLink > span, .subjectPicker button) { transition: none; }

@@ -1,3 +1,4 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import { formatDecimal, formatInt } from '../../lib/format.js'
 import {
   formatEntrySeasonOvr,
@@ -7,7 +8,7 @@ import {
 } from '../../lib/leaderboardSelectors.js'
 import { PUBLIC_METRICS, getRoleCoreMetricIds } from '../../lib/leaderboardScoring.js'
 import { PlayerIdentity } from './LeaderboardRow.jsx'
-import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
+import styles from '../../features/fd-design/leaderboardStyles.js'
 
 function formatValue(value, mode, metricId) {
   const num = Number(value)
@@ -41,15 +42,15 @@ export default function PlayerComparePanel({ entries, mode, modeLabel, onClose, 
   const priorityMetrics = new Set(getRoleCoreMetricIds(role).slice(0, 2))
 
   return (
-    <div className={styles.compareOverlay} role="dialog" aria-modal="true" aria-label="选手比较面板">
+    <div className={styles.compareOverlay} role="dialog" aria-modal="true" aria-label={uiText("选手比较面板", locale)}>
       <section className={styles.comparePanel} style={{ '--compare-count': entries.length }}>
         <header className={styles.comparePanelHeader}>
           <div>
             <span>PLAYER COMPARE</span>
-            <h2>{getRoleLabel(role)} 同职责比较</h2>
-            <p>{locale === 'en-US' ? getRoleEnLabel(role) : getRoleLabel(role)} / {modeLabel}</p>
+            <h2>{uiText(getRoleLabel(role), locale)}{uiText(" 同职责比较", locale)}</h2>
+            <p>{locale === 'en-US' ? getRoleEnLabel(role) : uiText(getRoleLabel(role), locale)} / {modeLabel}</p>
           </div>
-          <button type="button" onClick={onClose}>关闭</button>
+          <button type="button" onClick={onClose}>{uiText("关闭", locale)}</button>
         </header>
 
         <div className={styles.comparePlayerGrid}>
@@ -57,10 +58,10 @@ export default function PlayerComparePanel({ entries, mode, modeLabel, onClose, 
             <div key={entry.entryKey} className={styles.comparePlayerCard}>
               <PlayerIdentity entry={entry} locale={locale} />
               <div className={styles.compareScore}>
-                <span>赛季 OVR</span>
+                <span>{uiText("赛季 OVR", locale)}</span>
                 <strong>{formatEntrySeasonOvr(entry)}</strong>
               </div>
-              {!entry.eligible ? <em>样本不足，比较结果仅作参考</em> : null}
+              {!entry.eligible ? <em>{uiText("样本不足，比较结果仅作参考", locale)}</em> : null}
             </div>
           ))}
         </div>

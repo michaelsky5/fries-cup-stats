@@ -1,5 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
+import { useAuth } from '../../features/auth/AuthProvider.jsx'
+import { fetchUserSave, saveUserSave } from '../../features/auth/userDataApi.js'
 import styles from './ManagerNextPage.module.css'
 import {
   buildExportFileName,
@@ -18,9 +20,11 @@ import {
   isRunRosterComplete,
   loadManagerSave,
   MARKET_REFRESH_COST,
+  normalizeSave,
   refreshRunMarket,
   resolveRunChoice,
   RUN_ROSTER_REQUIREMENTS,
+  saveManagerState,
   serializeManagerSave,
   simulateRunMatch,
   sellRunPlayer,
@@ -50,10 +54,24 @@ function CommandButton({ label, value, onClick, disabled, tone = 'default' }) {
   )
 }
 
+function getManagerRoleLabel(role) {
+  if (role === 'TANK') return '重装'
+  if (role === 'DPS') return '输出'
+  if (role === 'SUP') return '支援'
+  return role || '职责'
+}
+
+function getManagerRoleShortLabel(role) {
+  if (role === 'TANK') return '重'
+  if (role === 'DPS') return '输'
+  if (role === 'SUP') return '援'
+  return String(role || '-').slice(0, 1)
+}
+
 function PlayerRow({ player, actionLabel, onAction }) {
   return (
     <div className={styles.playerRow}>
-      <div className={styles.playerRole}>{player.role}</div>
+      <div className={styles.playerRole}>{getManagerRoleLabel(player.role)}</div>
       <div className={styles.playerMain}>
         <strong>{player.name}</strong>
         <span>{player.team} / {player.hero || '未知英雄'} / {player.styleName || player.playstyle || '均衡'} / {player.risk || '常规'}</span>
@@ -114,7 +132,7 @@ function StartPanel({ onStart, disabled, poolCounts, playerPoolSize, hall }) {
       <div className={styles.startCopy}>
         <span>FRIES CUP ROGUE MANAGER</span>
         <h1>开局组队</h1>
-        <p>2000K 预算，组出 1T / 2D / 2S，然后把这支队伍推进赛季路线。</p>
+        <p>2000K 预算，组出 1 重装 / 2 输出 / 2 支援，然后把这支队伍推进赛季路线。</p>
       </div>
       <div className={styles.startActions}>
         <button type="button" className={styles.bigStartButton} onClick={onStart} disabled={disabled}>
@@ -123,9 +141,9 @@ function StartPanel({ onStart, disabled, poolCounts, playerPoolSize, hall }) {
         </button>
         <div className={styles.poolReadout}>
           <StatPill label="候选池" value={playerPoolSize} sub="当前赛季数据" />
-          <StatPill label="TANK" value={poolCounts.TANK} />
-          <StatPill label="DPS" value={poolCounts.DPS} />
-          <StatPill label="SUP" value={poolCounts.SUP} />
+          <StatPill label="重装" value={poolCounts.TANK} />
+          <StatPill label="输出" value={poolCounts.DPS} />
+          <StatPill label="支援" value={poolCounts.SUP} />
         </div>
       </div>
       {hall.length ? (
@@ -273,7 +291,7 @@ function BuilderPanel({ run, onHire, onSell, onRefresh, onDeploy }) {
           <div className={styles.roleMeter}>
             {Object.entries(RUN_ROSTER_REQUIREMENTS).map(([role, required]) => (
               <span key={role} className={counts[role] === required ? styles.roleFilled : ''}>
-                {role} {counts[role]}/{required}
+                {getManagerRoleLabel(role)} {counts[role]}/{required}
               </span>
             ))}
           </div>
@@ -329,7 +347,7 @@ function BuilderPanel({ run, onHire, onSell, onRefresh, onDeploy }) {
                     onClick={() => onHire(player.id)}
                     disabled={roleFull || tooExpensive}
                   >
-                    <span>{player.role} / {player.price}K / {preview?.fitLabel || '候选'}</span>
+                    <span>{getManagerRoleLabel(player.role)} / {player.price}K / {preview?.fitLabel || '候选'}</span>
                     <strong>{player.name}</strong>
                     <em>{player.team} / {player.hero || '未知英雄'} / {player.styleName || player.playstyle || '均衡'}</em>
                     <b>{preview ? `${preview.powerDelta >= 0 ? '+' : ''}${preview.powerDelta} 战力` : `${player.ovr} OVR`}</b>
@@ -376,7 +394,7 @@ function RunSidebar({ run, activePower, activeCounts }) {
         <StatPill label="战力" value={activePower} sub={`资金 ${run.funds}K`} tone="gold" />
         <StatPill label="生命" value={run.hp} sub={`士气 ${run.morale}`} tone={run.hp <= 1 ? 'danger' : 'good'} />
         <StatPill label="情报" value={run.intel} sub={`${run.sponsors?.length || 0} 赞助`} />
-        <StatPill label="首发" value={`${run.roster?.length || 0}/5`} sub={`T${activeCounts.TANK} D${activeCounts.DPS} S${activeCounts.SUP}`} />
+        <StatPill label="首发" value={`${run.roster?.length || 0}/5`} sub={`重装 ${activeCounts.TANK} · 输出 ${activeCounts.DPS} · 支援 ${activeCounts.SUP}`} />
       </div>
 
       <div className={styles.sidebarBlock}>
@@ -388,7 +406,7 @@ function RunSidebar({ run, activePower, activeCounts }) {
           {(run.roster || []).length ? (
             run.roster.map(player => (
               <div key={player.id} className={styles.compactPlayer}>
-                <span>{player.role}</span>
+                <span>{getManagerRoleShortLabel(player.role)}</span>
                 <strong>{player.name}</strong>
                 <em>{player.ovr}</em>
               </div>
@@ -436,8 +454,11 @@ function MetaConsole({
   fileInputRef,
   importText,
   importMode,
+  cloudSave,
   onDownload,
   onCopySave,
+  onCloudDownload,
+  onCloudUpload,
   onImport,
   onFilePicked,
   onImportTextChange,
@@ -474,6 +495,22 @@ function MetaConsole({
           <strong>存档包</strong>
         </summary>
         <div className={styles.saveToolGrid}>
+          <div className={styles.cloudSaveBox}>
+            <div className={styles.cloudSaveHead}>
+              <span>CLOUD</span>
+              <strong>{cloudSave.isAuthenticated ? '云存档' : '登录后同步'}</strong>
+              <em>{cloudSave.label}</em>
+            </div>
+            {cloudSave.error ? <p className={styles.cloudSaveError}>{cloudSave.error}</p> : null}
+            <div className={styles.cloudSaveActions}>
+              <button type="button" onClick={onCloudUpload} disabled={!cloudSave.isAuthenticated || cloudSave.isBusy}>
+                上传当前存档
+              </button>
+              <button type="button" onClick={onCloudDownload} disabled={!cloudSave.isAuthenticated || cloudSave.isBusy}>
+                下载云存档
+              </button>
+            </div>
+          </div>
           <div className={styles.exportBox}>
             <button type="button" onClick={onDownload}>下载 JSON</button>
             <button type="button" onClick={onCopySave}>复制文本</button>
@@ -536,10 +573,13 @@ function getNodeLabel(type) {
 
 export default function ManagerNextPage() {
   const { db, withSeason = path => path } = useOutletContext() || {}
+  const { isAuthenticated, isBootstrapping, user } = useAuth()
   const fileInputRef = useRef(null)
   const [save, setSave] = useState(() => loadManagerSave())
   const [importText, setImportText] = useState('')
   const [importMode, setImportMode] = useState('replace')
+  const [cloudStatus, setCloudStatus] = useState('idle')
+  const [cloudError, setCloudError] = useState('')
   const [message, setMessage] = useState('经理终端已上线。')
 
   const playerPool = useMemo(() => buildNextPlayerPool(db), [db])
@@ -565,9 +605,55 @@ export default function ManagerNextPage() {
     setMessage(nextMessage)
   }
 
+  const getCloudErrorMessage = error => {
+    if (error?.status === 404) return '云端还没有这个存档。'
+    if (error?.status === 401) return '登录状态已失效，请重新登录。'
+    return error?.message || '云存档同步失败。'
+  }
+
+  const handleCloudUpload = async () => {
+    if (!isAuthenticated) return
+    setCloudStatus('uploading')
+    setCloudError('')
+
+    try {
+      await saveUserSave('manager-next', 'default', normalizeSave(save))
+      setCloudStatus('ready')
+      setMessage('当前 Manager Next 存档已上传到云端。')
+    } catch (error) {
+      setCloudStatus('error')
+      setCloudError(getCloudErrorMessage(error))
+    }
+  }
+
+  const handleCloudDownload = async () => {
+    if (!isAuthenticated) return
+    if (!window.confirm('下载云存档会覆盖当前本地 Manager Next 存档，继续吗？')) return
+
+    setCloudStatus('downloading')
+    setCloudError('')
+
+    try {
+      const cloudSave = await fetchUserSave('manager-next', 'default')
+      if (!cloudSave) {
+        setCloudStatus('ready')
+        setCloudError('云端还没有这个存档。')
+        return
+      }
+
+      const nextSave = saveManagerState(cloudSave)
+      setSave(nextSave)
+      setCloudStatus('ready')
+      setMessage('云端 Manager Next 存档已下载并覆盖本地。')
+    } catch (error) {
+      setCloudStatus('error')
+      setCloudError(getCloudErrorMessage(error))
+    }
+  }
+
   const handleStartRun = () => {
     if (!canStartRun) {
-      setMessage('当前数据不足以组建 1T / 2D / 2S 首发。')
+      setMessage('当前数据不足以组建 1 重装 / 2 输出 / 2 支援首发。')
       return
     }
 
@@ -762,8 +848,22 @@ export default function ManagerNextPage() {
           fileInputRef={fileInputRef}
           importText={importText}
           importMode={importMode}
+          cloudSave={{
+            error: cloudError,
+            isAuthenticated,
+            isBusy: isBootstrapping || cloudStatus === 'uploading' || cloudStatus === 'downloading',
+            label: isAuthenticated
+              ? cloudStatus === 'uploading'
+                ? '正在上传'
+                : cloudStatus === 'downloading'
+                  ? '正在下载'
+                  : user?.displayName || user?.email || '已登录'
+              : '登录 stats 账号后可同步 Manager Next 存档'
+          }}
           onDownload={handleDownload}
           onCopySave={handleCopySave}
+          onCloudDownload={handleCloudDownload}
+          onCloudUpload={handleCloudUpload}
           onImport={handleImport}
           onFilePicked={handleFilePicked}
           onImportTextChange={setImportText}

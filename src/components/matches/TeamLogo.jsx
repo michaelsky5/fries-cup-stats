@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getTeamLogoCandidates } from '../../lib/matchesSelectors.js'
 
 function getTeamShort(team, teamShortName, teamName) {
@@ -12,17 +12,15 @@ export default function TeamLogo({ team, seasonId, teamShortName, teamName, clas
     team_name: teamName,
     name: teamName
   }
-  const candidates = useMemo(
-    () => getTeamLogoCandidates(logoTeam, seasonId),
-    [seasonId, logoTeam?.team_id, logoTeam?.id, logoTeam?.team_short_name, logoTeam?.short, logoTeam?.team_name, logoTeam?.name]
-  )
+  const candidates = getTeamLogoCandidates(logoTeam, seasonId)
+  const candidateKey = candidates.join('|')
   const [index, setIndex] = useState(0)
   const src = candidates[index]
   const short = getTeamShort(team, teamShortName, teamName)
 
   useEffect(() => {
     setIndex(0)
-  }, [candidates.join('|')])
+  }, [candidateKey])
 
   return (
     <span className={className} data-size={large ? 'large' : 'default'}>

@@ -1,5 +1,7 @@
 import { SCORING_ENGINE_CONFIG } from '../config/scoringEngineConfig.js'
-import { MAP_RATING_CONFIG, SEASON_SCORE_CONFIG } from '../config/ratingModelConfig.js'
+import { MAP_RATING_CONFIG, RATING_METRICS, SEASON_SCORE_CONFIG } from '../config/ratingModelConfig.js'
+import { SEASON_SAMPLE_POLICY } from './seasonRatingPolicy.js'
+import { buildSeasonOpponentEvidence } from './seasonOpponentStrength.js'
 import { buildRatingBaselinesFromDb, buildRatingBaselinesFromPlayerLogs } from './ratingBaselines.js'
 import { resolveHeroSubrole } from './heroSubroleSelectors.js'
 import {
@@ -199,6 +201,11 @@ function buildEntryLogRatings(entry, baselines, options = {}) {
         rawScore: rating.rawScore,
         mapRating: rating.mapRating,
         minutes: logRow.playtimeMinutes,
+        // A current roster assignment cannot prove which team a historical log
+        // belongs to. Missing historical team IDs leave opponent strength neutral.
+        teamId: cleanText(logRow.rawLog ? logRow.rawLog.teamId || logRow.rawLog.team_id : logRow.teamId),
+        matchId: logRow.matchId || logRow.rawMatchId,
+        rawMatchId: logRow.rawMatchId,
         mapOrder: logRow.mapOrder,
         rating
       }
@@ -271,8 +278,11 @@ function getSeasonScoreConfidence(entry, minTimeMins = 30) {
   const mapProgress = mapsPlayed > 0
     ? clamp((mapsPlayed - SEASON_SCORE_CONFIG.minMapCount) / Math.max(1, SEASON_SCORE_CONFIG.targetMapCount - SEASON_SCORE_CONFIG.minMapCount))
     : timeProgress
+  const matchProgress = entry?.roleMatchesPlayed == null
+    ? 0
+    : clamp((toFiniteNumber(entry.roleMatchesPlayed) - 1) / (SEASON_SAMPLE_POLICY.targetMatches - 1))
   const confidence = SEASON_SCORE_CONFIG.confidenceFloor +
-    ((1 - SEASON_SCORE_CONFIG.confidenceFloor) * Math.min(timeProgress, mapProgress))
+    ((1 - SEASON_SCORE_CONFIG.confidenceFloor) * Math.min(timeProgress, mapProgress, matchProgress))
 
   return round(confidence, 3)
 }
@@ -291,6 +301,42 @@ function getSeasonScoreStatus(confidence) {
   return 'PROVISIONAL'
 }
 
+function countRatingMatches(items, fallback) {
+  if (!items.length) return cleanText(fallback) && Number.isFinite(Number(fallback)) && Number(fallback) >= 0 ? Number(fallback) : null
+  const aliases = new Map(items
+    .filter(item => item.matchId && item.rawMatchId && normalizeLookupKey(item.matchId) !== normalizeLookupKey(item.rawMatchId))
+    .map(item => [normalizeLookupKey(item.rawMatchId), normalizeLookupKey(item.matchId)]))
+  const keys = items.map(item => normalizeLookupKey(item.matchId)).filter(Boolean)
+  if (keys.length !== items.length) return null
+  return new Set(keys.map(key => aliases.get(key) || key)).size
+}
+
+function buildRatingEvidence(items) {
+  const totalMinutes = items.reduce((sum, item) => sum + toFiniteNumber(item.minutes), 0)
+  if (!totalMinutes || items.some(item => !item.rating?.weights || !item.rating?.metricPercentiles)) return null
+  const metrics = RATING_METRICS.map(metric => {
+    let weight = 0
+    let contribution = 0
+    items.forEach(item => {
+      const weights = item.rating.weights
+      const totalWeight = Object.values(weights).reduce((sum, value) => sum + toFiniteNumber(value), 0)
+      const share = item.minutes / totalMinutes
+      const metricWeight = totalWeight ? toFiniteNumber(weights[metric]) / totalWeight * 100 : 0
+      weight += metricWeight * share
+      contribution += metricWeight * toFiniteNumber(item.rating.metricPercentiles[metric]?.percentile, 50) / 100 * share
+    })
+    return { metric, weight: round(weight), percentile: weight > 0 ? round(contribution / weight * 100) : null, contribution: round(contribution), delta: round(contribution - weight / 2) }
+  })
+  const baselineMix = { hero: 0, profile: 0, subrole: 0 }
+  items.forEach(item => {
+    Object.keys(baselineMix).forEach(source => {
+      baselineMix[source] += toFiniteNumber(item.rating.metricPercentiles.elims?.sourceWeights?.[source]) * item.minutes / totalMinutes
+    })
+  })
+  const ruleAdjustment = items.reduce((sum, item) => sum + (toFiniteNumber(item.rawScore) - toFiniteNumber(item.rating.rawScoreBeforeCaps, item.rawScore)) * item.minutes / totalMinutes, 0)
+  return { metrics, baselineMix, ruleAdjustment: round(ruleAdjustment) }
+}
+
 function buildRatingSummaryForEntry(entry, baselines, scoreContext = 'season', args = {}) {
   const usesCurrentPerformance = scoreContext === 'map' || scoreContext === 'match'
   const hasCurrentLogScope = Array.isArray(args.currentMatchIds) && args.currentMatchIds.length > 0
@@ -305,7 +351,12 @@ function buildRatingSummaryForEntry(entry, baselines, scoreContext = 'season', a
   if (!items.length) return null
 
   const rawScore = weightedAverage(items, 'rawScore') ?? entryRating?.rawScore ?? null
-  const mapRating = weightedAverage(items, 'mapRating') ?? (isFiniteScore(rawScore) ? mapRawScoreToMapRating(rawScore) : null)
+  const mappedRawScore = isFiniteScore(rawScore) ? mapRawScoreToMapRating(rawScore) : null
+  // Keep series ranking on the time-weighted raw score, then apply the same
+  // display curve as a map. Averaging rounded map ratings can change that order.
+  const mapRating = scoreContext === 'match'
+    ? mappedRawScore
+    : weightedAverage(items, 'mapRating') ?? mappedRawScore
   const primarySubrole = getPrimaryByMinutes(items, 'subrole')
   const primaryProfile = getPrimaryByMinutes(items, 'scoringProfile')
   const primaryEffectiveProfile = getPrimaryByMinutes(items, 'effectiveScoringProfile') || primaryProfile
@@ -315,6 +366,7 @@ function buildRatingSummaryForEntry(entry, baselines, scoreContext = 'season', a
     : items.some(item => item.sampleStatus === 'LOW_SAMPLE')
       ? 'LOW_SAMPLE'
       : 'VERY_LOW_SAMPLE'
+  const sourceMinutes = items.reduce((sum, item) => sum + toFiniteNumber(item?.minutes), 0)
 
   return {
     rawScore: round(rawScore),
@@ -325,7 +377,10 @@ function buildRatingSummaryForEntry(entry, baselines, scoreContext = 'season', a
     effectiveScoringProfile: primaryEffectiveProfile,
     sampleStatus,
     sourceLogCount: logRatings.length,
-    sourceMinutes: round(items.reduce((sum, item) => sum + toFiniteNumber(item?.minutes), 0)),
+    sourceMatchCount: countRatingMatches(logRatings, entry?.roleMatchesPlayed),
+    evidence: scoreContext === 'season' ? buildRatingEvidence(items) : null,
+    opponentEvidence: scoreContext === 'season' ? buildSeasonOpponentEvidence({ db: args.db, logs: logRatings, totalMinutes: sourceMinutes }) : null,
+    sourceMinutes: round(sourceMinutes),
     sourceScope: usesCurrentPerformance
       ? logRatings.length ? `current_${scoreContext}_hero_logs` : `current_${scoreContext}`
       : logRatings.length ? 'season_logs' : 'season_entry',
@@ -415,7 +470,7 @@ function attachRatingModelScore(entry, args = {}) {
   const summary = applyMapResultAdjustment(baseSummary, entry, { ...args, scoreContext })
   const outputScore = normalizeOutputScore(summary, legacyScore, scoreContext)
   const seasonScoreConfidence = scoreContext === 'season'
-    ? getSeasonScoreConfidence(entry, args.minTimeMins)
+    ? getSeasonScoreConfidence({ ...entry, roleMatchesPlayed: summary?.sourceMatchCount }, args.minTimeMins)
     : 1
   const seasonScore = scoreContext === 'season'
     ? applySeasonScoreConfidence(summary?.rawScore, seasonScoreConfidence)
@@ -447,6 +502,9 @@ function attachRatingModelScore(entry, args = {}) {
     subrole: summary.subrole,
     sampleStatus: summary.sampleStatus,
     ratingModelSourceLogs: summary.sourceLogCount,
+    roleMatchesPlayed: summary.sourceMatchCount,
+    ratingEvidence: summary.evidence,
+    ...(scoreContext === 'season' ? { seasonOpponentEvidence: summary.opponentEvidence } : {}),
     ratingModelSourceMinutes: summary.sourceMinutes,
     ratingModelSourceScope: summary.sourceScope,
     ratingModelAggregation: summary.aggregation,
@@ -485,7 +543,7 @@ export function calculateSeasonPlayerScoreV1(args = {}) {
   const summary = buildRatingSummaryForEntry(entry, getBaselines(args), 'season', args)
   if (!summary) return null
 
-  const seasonScoreConfidence = getSeasonScoreConfidence(entry, args.minTimeMins)
+  const seasonScoreConfidence = getSeasonScoreConfidence({ ...entry, roleMatchesPlayed: summary.sourceMatchCount }, args.minTimeMins)
   const seasonScore = applySeasonScoreConfidence(summary.rawScore, seasonScoreConfidence)
 
   return {

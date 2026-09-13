@@ -1,9 +1,12 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { LEADERBOARD_TABS } from '../../lib/leaderboardSelectors.js'
-import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
+import styles from '../../features/fd-design/leaderboardStyles.js'
 
 export default function LeaderboardTabs({ activeTab, onChange, counts = {} }) {
+  const uiLocale = useUiLocale()
   return (
-    <div className={styles.tabRail} role="tablist" aria-label="排行榜分类">
+    <div className={styles.tabRail} role="tablist" aria-label={uiText("排行榜分类", uiLocale)}>
       {LEADERBOARD_TABS.map((tab, index) => {
         const active = activeTab === tab.id
         const count = tab.role === 'ALL' ? counts.overall || 0 : counts[tab.role] || 0

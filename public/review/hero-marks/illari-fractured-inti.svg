@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Illari captive sun</title>
+  <desc id="desc">A solid solar disc is surrounded by eight clean corona rays. Motion belongs to the separate portrait background.</desc>
+
+  <circle cx="180" cy="130" r="36" fill="#d8a34d" fill-opacity="0.27" stroke="#e6c17b" stroke-opacity="0.86" stroke-width="2.5"/>
+  <g fill="#d6a34e" fill-opacity="0.36" stroke="#dfbb72" stroke-opacity="0.7" stroke-width="1.3" stroke-linejoin="round">
+    <path d="M180 46L171 81H189Z"/><path d="M180 214L189 179H171Z"/>
+    <path d="M96 130L131 121V139Z"/><path d="M264 130L229 139V121Z"/>
+    <path d="M124 74L140 103L151 92Z"/><path d="M236 74L209 92L220 103Z"/>
+    <path d="M124 186L151 168L140 157Z"/><path d="M236 186L220 157L209 168Z"/>
+  </g>
+  <path d="M159 117A24 24 0 0 1 194 110" fill="none" stroke="#f2d89e" stroke-opacity="0.54" stroke-width="1.3" stroke-linecap="round"/>
+</svg>

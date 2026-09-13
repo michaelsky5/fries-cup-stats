@@ -709,7 +709,8 @@
   transition: opacity 0.18s ease;
 }
 
-.resultItem:hover {
+.resultItem:hover,
+.resultItemActive {
   border-color: rgba(244,195,32,0.48);
   background:
     radial-gradient(circle at right, rgba(244,195,32,0.08), transparent 36%),
@@ -717,7 +718,8 @@
   transform: translateX(2px);
 }
 
-.resultItem:hover::before {
+.resultItem:hover::before,
+.resultItemActive::before {
   opacity: 1;
 }
 
@@ -782,7 +784,8 @@
   transition: transform 0.18s ease;
 }
 
-.resultItem:hover .resultAction b {
+.resultItem:hover .resultAction b,
+.resultItemActive .resultAction b {
   transform: translateX(3px);
 }
 
@@ -1333,6 +1336,648 @@
 }
 
 /* -------------------------------------------------------------------------- */
+/* FCR26 cinema entry: search first, roles remain optional filters.            */
+/* -------------------------------------------------------------------------- */
+
+.cinemaShell {
+  --review-signal: #f4c320;
+  --review-paper: #f5f2e8;
+  --review-ink: #090a08;
+}
+
+.projectorLens {
+  position: absolute;
+  top: 88px;
+  right: 29%;
+  z-index: 1;
+  width: 112px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.72;
+  background:
+    radial-gradient(circle at 42% 42%, rgba(255,255,255,0.9) 0 2%, transparent 3%),
+    radial-gradient(circle, rgba(244,195,32,0.72) 0 5%, rgba(244,195,32,0.18) 18%, rgba(8,8,6,0.9) 51%, rgba(244,195,32,0.32) 54%, rgba(8,8,6,0.98) 70%);
+  box-shadow: 0 0 86px rgba(244,195,32,0.22);
+}
+
+.cinemaSearchPanel {
+  padding-top: 22px;
+  border-top: 4px solid var(--review-signal);
+  background:
+    linear-gradient(112deg, transparent 0 72%, rgba(244,195,32,0.055) 72% 72.25%, transparent 72.25%),
+    linear-gradient(90deg, rgba(244,195,32,0.03) 1px, transparent 1px),
+    #080a0a;
+  background-size: auto, 80px 100%, auto;
+}
+
+.cinemaFilters {
+  position: relative;
+  z-index: 3;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.cinemaFilters > span {
+  flex: 0 0 auto;
+  color: rgba(255,255,255,0.42);
+  font: 900 9px/1 var(--font-mono, monospace);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.cinemaFilters > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.cinemaFilters button {
+  min-height: 30px;
+  padding: 0 11px;
+  border: 1px solid rgba(255,255,255,0.13);
+  background: transparent;
+  color: rgba(255,255,255,0.58);
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.cinemaFilters button:hover,
+.cinemaFilters button[aria-pressed='true'] {
+  border-color: var(--review-signal);
+  background: var(--review-signal);
+  color: var(--review-ink);
+}
+
+.cinemaSearchPanel .searchBox {
+  border-left: 5px solid var(--review-signal);
+}
+
+.cinemaSearchPanel .searchInput {
+  height: 58px;
+  border-color: rgba(255,255,255,0.2);
+  background: var(--review-paper);
+  color: var(--review-ink);
+  font-size: 15px;
+}
+
+.cinemaSearchPanel .searchInput::placeholder {
+  color: rgba(9,10,8,0.5);
+}
+
+.cinemaSearchPanel .searchInput:focus {
+  border-color: var(--review-signal);
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.cinemaSearchPanel .clearBtn {
+  background: var(--review-signal);
+  border-color: var(--review-signal);
+  color: var(--review-ink);
+}
+
+@media (max-width: 900px) {
+  .projectorLens {
+    right: 11%;
+    opacity: 0.5;
+  }
+}
+
+/* Keep the FCR search-first treatment above the shared archive skin. */
+
+@media (max-width: 760px) {
+  .projectorLens {
+    top: 76px;
+    right: 8%;
+    width: 82px;
+    opacity: 0.36;
+  }
+
+  .cinemaFilters {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .cinemaFilters > div {
+    justify-content: flex-start;
+  }
+
+  .cinemaSearchPanel .searchInput {
+    height: 54px;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* FCR26 memory signal theme                                                  */
+/* FryDeck's broadcast grammar, softened into a season archive.               */
+/* -------------------------------------------------------------------------- */
+
+.shell {
+  --review-signal: #f4c320;
+  --review-signal-soft: rgba(244, 195, 32, 0.14);
+  --review-signal-faint: rgba(244, 195, 32, 0.07);
+  --review-paper: #e8e5da;
+  --review-paper-soft: #d7d5cc;
+  --review-ink: #0a0c0c;
+  --review-gold: #f4c320;
+  gap: 18px;
+}
+
+.hero {
+  min-height: 356px;
+  padding: 42px 38px 36px;
+  background:
+    linear-gradient(112deg, transparent 0 57%, rgba(244, 195, 32, 0.075) 57% 57.25%, transparent 57.25%),
+    radial-gradient(circle at 76% 28%, rgba(244, 195, 32, 0.13), transparent 30%),
+    radial-gradient(circle at 12% 100%, rgba(244, 195, 32, 0.1), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.03), transparent 44%),
+    #080a0a;
+  border-color: rgba(244, 195, 32, 0.25);
+  box-shadow: 0 24px 70px rgba(7, 9, 9, 0.14);
+  clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 28px 100%, 0 calc(100% - 28px));
+}
+
+.hero::before {
+  width: 36%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--review-signal), rgba(244,195,32,0.28), transparent);
+  box-shadow: 0 0 24px rgba(244,195,32,0.22);
+}
+
+.hero::after {
+  background:
+    linear-gradient(rgba(255,255,255,0.024) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(90deg, #000, rgba(0,0,0,0.55) 70%, transparent);
+  opacity: 0.52;
+}
+
+.heroSignal {
+  position: absolute;
+  top: 15px;
+  right: 36px;
+  left: 38px;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: auto minmax(36px, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255,255,255,0.38);
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.heroSignal span {
+  color: var(--review-signal);
+}
+
+.heroSignal i {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(90deg, var(--review-signal), rgba(255,255,255,0.12));
+}
+
+.heroSignal i::after {
+  position: absolute;
+  top: -3px;
+  left: 66%;
+  width: 7px;
+  height: 7px;
+  background: var(--review-signal);
+  box-shadow: 0 0 14px rgba(244,195,32,0.58);
+  content: '';
+}
+
+.heroTopline {
+  margin-top: 12px;
+  margin-bottom: 30px;
+}
+
+.kicker {
+  color: var(--review-signal);
+  font-size: 11px;
+}
+
+.archiveTag {
+  border-color: rgba(244,195,32,0.34);
+  background: rgba(244,195,32,0.08);
+  color: var(--review-signal);
+}
+
+.heroToplineActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reviewLocaleSwitch {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.26);
+}
+
+.reviewLocaleSwitch button {
+  min-width: 31px;
+  height: 23px;
+  padding: 0 7px;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.52);
+  font: 900 9px/1 var(--font-mono, monospace);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.reviewLocaleSwitch button:hover,
+.reviewLocaleSwitch .reviewLocaleActive {
+  background: #f4c320;
+  color: #101010;
+}
+
+.heroMain {
+  grid-template-columns: minmax(0, 1fr) 350px;
+  gap: 38px;
+}
+
+.hero h1 {
+  max-width: 720px;
+  font-size: clamp(44px, 4.2vw, 62px);
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.hero p {
+  max-width: 720px;
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.heroArchivePanel {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  align-items: stretch;
+  min-width: 0;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.2);
+  box-shadow: 0 18px 54px rgba(0,0,0,0.26);
+}
+
+.heroArchiveLogo {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.18), transparent 40%),
+    var(--review-paper);
+  color: var(--review-ink);
+  overflow: hidden;
+}
+
+.heroArchiveLogo::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--review-signal);
+  content: '';
+}
+
+.heroArchiveLogo img {
+  width: 88px;
+  max-height: 112px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.18));
+}
+
+.heroArchiveLogo span {
+  position: absolute;
+  right: 8px;
+  bottom: 9px;
+  color: rgba(10,12,12,0.42);
+  font-size: 8px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+}
+
+.heroStats {
+  gap: 0;
+}
+
+.heroStats div {
+  min-height: 66px;
+  border: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-left: 3px solid transparent;
+  background: linear-gradient(90deg, rgba(244,195,32,0.07), transparent);
+}
+
+.heroStats div:last-child {
+  border-bottom: 0;
+}
+
+.heroStats div:first-child {
+  border-left-color: var(--review-signal);
+}
+
+.heroStats strong {
+  font-size: 22px;
+}
+
+.identityGrid {
+  gap: 10px;
+}
+
+.identityCard {
+  min-height: 224px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.028), transparent 42%),
+    #090b0b;
+  border-color: rgba(255,255,255,0.11);
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+}
+
+.identityCard::before {
+  right: auto;
+  width: 46px;
+  height: 4px;
+  background: var(--review-signal);
+  box-shadow: 0 0 16px rgba(244,195,32,0.32);
+}
+
+.identityCard::after {
+  right: -42px;
+  bottom: -42px;
+  border-color: rgba(244,195,32,0.16);
+  border-radius: 0;
+  transform: rotate(14deg);
+}
+
+.identityCard:hover,
+.identityCardActive {
+  border-color: var(--review-signal);
+  background:
+    linear-gradient(112deg, transparent 0 64%, rgba(244,195,32,0.2) 64% 64.5%, transparent 64.5%),
+    var(--review-paper);
+  color: var(--review-ink);
+  box-shadow: 0 22px 56px rgba(0,0,0,0.2);
+}
+
+.identityCard:hover::after,
+.identityCardActive::after,
+.identityCardViewer:hover::after,
+.identityCardViewer.identityCardActive::after {
+  border-color: rgba(10,12,12,0.14);
+  opacity: 0.7;
+  transform: rotate(14deg) scale(1.08);
+}
+
+.identityNo {
+  color: rgba(255,255,255,0.32);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+}
+
+.identityEn {
+  color: var(--review-signal);
+}
+
+.identityCardActive .identityNo,
+.identityCard:hover .identityNo {
+  color: rgba(10,12,12,0.44);
+}
+
+.identityCardActive .identityEn,
+.identityCard:hover .identityEn {
+  color: #7a5d00;
+}
+
+.identityCardActive strong,
+.identityCard:hover strong {
+  color: var(--review-ink);
+}
+
+.identityCardActive p,
+.identityCard:hover p {
+  color: rgba(10,12,12,0.66);
+}
+
+.identityCardActive .identityHint span,
+.identityCard:hover .identityHint span {
+  border-color: rgba(10,12,12,0.13);
+  background: rgba(10,12,12,0.055);
+  color: rgba(10,12,12,0.56);
+}
+
+.searchPanel {
+  border-color: rgba(244,195,32,0.2);
+  background:
+    linear-gradient(90deg, rgba(244,195,32,0.035) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255,255,255,0.026), transparent),
+    #080a0a;
+  background-size: 80px 100%, auto, auto;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+}
+
+.panelGlow,
+.searchPanelViewer .panelGlow {
+  background: rgba(244,195,32,0.1);
+}
+
+.searchSub,
+.searchMeta span {
+  color: rgba(244,195,32,0.55);
+}
+
+.searchMeta {
+  border-color: rgba(244,195,32,0.2);
+  background: rgba(244,195,32,0.055);
+}
+
+.searchMeta strong,
+.resultsHead span,
+.resultAction,
+.emptyMark {
+  color: var(--review-signal);
+}
+
+.searchInput:focus {
+  border-color: var(--review-signal);
+  box-shadow: inset 4px 0 0 var(--review-signal);
+}
+
+.countPill,
+.resultBadge {
+  border-color: rgba(244,195,32,0.26);
+  background: rgba(244,195,32,0.075);
+  color: var(--review-signal);
+}
+
+.resultItem::before {
+  background: var(--review-signal);
+}
+
+.resultItem:hover,
+.resultItemActive {
+  border-color: rgba(244,195,32,0.46);
+  background:
+    radial-gradient(circle at right, rgba(244,195,32,0.09), transparent 36%),
+    #101313;
+}
+
+.viewerCard {
+  min-height: 310px;
+  background:
+    linear-gradient(108deg, transparent 0 70%, rgba(244,195,32,0.14) 70% 70.4%, transparent 70.4%),
+    radial-gradient(circle at 86% 16%, rgba(244,195,32,0.18), transparent 32%),
+    var(--review-paper);
+  border-color: rgba(10,12,12,0.15);
+  color: var(--review-ink);
+}
+
+.viewerCard::before {
+  width: 5px;
+  background: var(--review-signal);
+}
+
+.viewerCard::after {
+  border-color: rgba(10,12,12,0.12);
+}
+
+.viewerCard:hover {
+  border-color: rgba(244,195,32,0.86);
+  background:
+    linear-gradient(108deg, transparent 0 70%, rgba(244,195,32,0.2) 70% 70.4%, transparent 70.4%),
+    radial-gradient(circle at 86% 16%, rgba(244,195,32,0.24), transparent 34%),
+    #efede5;
+}
+
+.viewerCardBg {
+  color: rgba(10,12,12,0.045);
+}
+
+.viewerCardTop span {
+  color: #7a5d00;
+}
+
+.viewerCardTop b {
+  border-color: rgba(10,12,12,0.14);
+  background: rgba(10,12,12,0.05);
+  color: rgba(10,12,12,0.58);
+}
+
+.viewerCardMain h2,
+.viewerCardGrid strong {
+  color: var(--review-ink);
+}
+
+.viewerCardMain p {
+  color: rgba(10,12,12,0.66);
+}
+
+.viewerCardGrid div {
+  border-color: rgba(10,12,12,0.12);
+  border-left-color: var(--review-signal);
+  background: rgba(255,255,255,0.32);
+}
+
+.viewerCardGrid span {
+  color: rgba(10,12,12,0.48);
+}
+
+.viewerCardAction {
+  background: var(--review-ink);
+  color: var(--review-signal);
+}
+
+@media (max-width: 1180px) {
+  .heroMain {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+
+  .heroArchivePanel {
+    grid-template-columns: 112px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .heroMain {
+    grid-template-columns: 1fr;
+  }
+
+  .heroArchivePanel {
+    grid-template-columns: 132px minmax(0, 1fr);
+  }
+
+  .heroStats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .heroStats div {
+    border-right: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero {
+    min-height: 0;
+    padding: 34px 18px 22px;
+    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+  }
+
+  .heroSignal {
+    top: 12px;
+    right: 18px;
+    left: 18px;
+    font-size: 7px;
+  }
+
+  .heroTopline {
+    margin-top: 5px;
+  }
+
+  .kicker {
+    font-size: 9px;
+  }
+
+  .heroArchivePanel {
+    display: none;
+  }
+
+  .identityCard {
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  }
+
+  .identityCard:hover,
+  .identityCardActive {
+    transform: none;
+  }
+
+  .viewerCard {
+    background:
+      radial-gradient(circle at 88% 12%, rgba(244,195,32,0.2), transparent 34%),
+      var(--review-paper);
+  }
+}
+
+/* -------------------------------------------------------------------------- */
 /* Mobile poster actions: compact 2x2 button grid                             */
 /* Put this at the very bottom of ReviewStoryPage.module.css                   */
 /* -------------------------------------------------------------------------- */
@@ -1375,5 +2020,422 @@
     padding: 0 6px !important;
     font-size: 11px !important;
     letter-spacing: 0.02em !important;
+  }
+}
+
+.cinemaShell .cinemaSearchPanel {
+  padding-top: 22px;
+  border-top: 4px solid var(--review-signal);
+  background:
+    linear-gradient(112deg, transparent 0 72%, rgba(244,195,32,0.055) 72% 72.25%, transparent 72.25%),
+    linear-gradient(90deg, rgba(244,195,32,0.03) 1px, transparent 1px),
+    #080a0a;
+  background-size: auto, 80px 100%, auto;
+}
+
+.cinemaShell .cinemaSearchPanel .searchInput {
+  height: 58px;
+  border-color: rgba(255,255,255,0.2);
+  background: var(--review-paper);
+  color: var(--review-ink);
+  font-size: 15px;
+}
+
+.cinemaShell .cinemaSearchPanel .searchInput:focus {
+  border-color: var(--review-signal);
+  background: #ffffff;
+  box-shadow: none;
+}
+
+/* FCR26 search counter: one clear entry point instead of another stacked panel. */
+.cinemaShell .cinemaSearchPanel .searchBox {
+  display: grid;
+  grid-template-columns: 152px minmax(0, 1fr) auto;
+  gap: 0;
+  border: 1px solid var(--review-signal);
+  border-left: 0;
+  background: var(--review-paper);
+  box-shadow: 0 0 0 3px rgba(244, 195, 32, 0.08);
+}
+
+.searchCue {
+  min-width: 0;
+  min-height: 58px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  box-sizing: border-box;
+  background: var(--review-ink);
+  border-left: 5px solid var(--review-signal);
+  color: var(--review-paper);
+}
+
+.searchCue i {
+  position: relative;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: 2px solid var(--review-signal);
+  border-radius: 50%;
+}
+
+.searchCue i::after {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  width: 8px;
+  height: 2px;
+  background: var(--review-signal);
+  transform: rotate(45deg);
+  transform-origin: left center;
+  content: '';
+}
+
+.searchCue span {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.searchCue strong,
+.searchCue small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono, monospace);
+}
+
+.searchCue strong {
+  color: var(--review-signal);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.searchCue small {
+  color: rgba(255,255,255,0.36);
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.cinemaShell .cinemaSearchPanel .searchInput {
+  min-width: 0;
+  border: 0;
+  border-right: 1px solid rgba(9,10,8,0.14);
+}
+
+.cinemaShell .cinemaSearchPanel .clearBtn {
+  min-width: 76px;
+  border: 0;
+  border-left: 1px solid rgba(9,10,8,0.16);
+}
+
+.emptyIntro {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.cinemaEmpty {
+  min-height: 182px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(230px, 0.78fr) minmax(0, 2fr);
+  align-items: stretch;
+  border-style: solid;
+  border-color: rgba(244,195,32,0.18);
+  text-align: left;
+}
+
+.cinemaEmpty .emptyIntro {
+  align-items: flex-start;
+  padding: 24px;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+.cinemaEmpty .emptyMark {
+  margin-bottom: 18px;
+}
+
+.cinemaEmpty .emptyIntro p {
+  max-width: 300px;
+  margin-top: 10px;
+}
+
+.emptyGuideGrid {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.emptyGuide {
+  position: relative;
+  min-width: 0;
+  padding: 24px 18px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  border-right: 1px solid rgba(255,255,255,0.07);
+}
+
+.emptyGuide:last-child {
+  border-right: 0;
+}
+
+.emptyGuide > span {
+  margin-bottom: 22px;
+  color: rgba(244,195,32,0.46);
+  font: 900 22px/1 var(--font-mono, monospace);
+}
+
+.emptyGuide strong {
+  color: rgba(255,255,255,0.8);
+  font-size: 13px;
+}
+
+.emptyGuide p {
+  max-width: none;
+  margin-top: 7px;
+  color: rgba(255,255,255,0.34);
+  font-size: 10px;
+}
+
+@media (max-width: 760px) {
+  .cinemaShell .cinemaSearchPanel .searchBox {
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+  }
+
+  .searchCue {
+    min-height: 54px;
+    padding: 0;
+    justify-content: center;
+    border-left-width: 4px;
+  }
+
+  .searchCue span {
+    display: none;
+  }
+
+  .cinemaShell .cinemaSearchPanel .clearBtn {
+    min-width: 54px;
+  }
+
+  .cinemaEmpty {
+    min-height: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .cinemaEmpty .emptyIntro {
+    padding: 18px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .emptyGuideGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .emptyGuide {
+    min-height: 82px;
+    padding: 14px 16px 14px 62px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .emptyGuide:last-child {
+    border-bottom: 0;
+  }
+
+  .emptyGuide > span {
+    position: absolute;
+    left: 16px;
+    top: 18px;
+    margin: 0;
+    font-size: 18px;
+  }
+}
+
+.featuredViewerArchive {
+  position: relative;
+  z-index: 2;
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.featuredViewerLabel {
+  color: rgba(244,195,32,0.72);
+  font: 900 8px/1.2 var(--font-mono, monospace);
+  letter-spacing: 0.14em;
+}
+
+/* Leave more of the first screen for the actual archive search. */
+.cinemaShell .hero {
+  min-height: 0;
+  padding-top: 34px;
+  padding-bottom: 22px;
+}
+
+.cinemaShell .heroTopline {
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.cinemaShell .hero h1 {
+  font-size: clamp(36px, 3.4vw, 50px);
+}
+
+.cinemaShell .hero p {
+  margin-top: 12px;
+  line-height: 1.7;
+}
+
+.cinemaShell .heroStats div {
+  min-height: 46px;
+  padding: 8px 12px;
+}
+
+.cinemaShell .heroStats strong {
+  font-size: 20px;
+}
+
+.cinemaShell .heroStats span {
+  margin-top: 4px;
+}
+
+.cinemaShell .cinemaFilters {
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+}
+
+.cinemaShell .searchMeta {
+  padding: 6px 10px;
+}
+
+.cinemaShell .searchMeta strong {
+  margin-top: 3px;
+  font-size: 20px;
+}
+
+@media (max-width: 1180px) {
+  .cinemaShell .heroArchivePanel {
+    display: none;
+  }
+
+  .cinemaShell .heroMain {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .cinemaShell .hero {
+    min-height: 0;
+    padding: 22px 18px 16px;
+  }
+
+  .cinemaShell .heroTopline {
+    margin-top: 5px;
+    margin-bottom: 8px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .cinemaShell .heroMain {
+    min-height: 0;
+    gap: 14px;
+  }
+
+  .cinemaShell .heroMain h1 {
+    font-size: clamp(30px, 8.2vw, 36px);
+    line-height: 1.13;
+  }
+
+  .cinemaShell .heroMain p {
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .cinemaShell .cinemaFilters {
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+  }
+
+  .cinemaShell .cinemaFilters > span {
+    display: none;
+  }
+
+  .cinemaShell .cinemaFilters > div {
+    gap: 4px;
+  }
+
+  .cinemaShell .cinemaFilters button {
+    min-height: 32px;
+    padding-inline: 8px;
+    font-size: 11px;
+  }
+}
+
+.featuredViewerArchive .viewerCard {
+  min-height: 232px;
+  padding: 20px;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-rows: auto min-content 1fr;
+  gap: 14px 22px;
+  align-items: start;
+}
+
+.featuredViewerArchive .viewerCardGrid {
+  grid-column: 2;
+  grid-row: 2 / span 2;
+}
+
+.featuredViewerArchive .viewerCardAction {
+  grid-column: 1;
+  align-self: start;
+}
+
+.featuredViewerArchive .viewerCardMain h2 {
+  font-size: 28px;
+}
+
+.featuredViewerArchive .viewerCardGrid div {
+  min-height: 52px;
+  padding: 9px 10px;
+}
+
+@media (max-width: 900px) {
+  .featuredViewerArchive .viewerCard {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .featuredViewerArchive .viewerCardGrid {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .featuredViewerArchive .viewerCard {
+    min-height: 0;
+    padding: 16px;
+    grid-template-columns: 1fr;
+  }
+
+  .featuredViewerArchive .viewerCardMain h2 {
+    font-size: 21px;
+  }
+
+  .featuredViewerArchive .viewerCardGrid {
+    display: none;
   }
 }

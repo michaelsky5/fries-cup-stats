@@ -1,33 +1,66 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link, useLocation, useOutletContext } from 'react-router-dom'
 import {
   getMatchDisplayTeams,
+  getMatchStatus,
   getMatchStatusText,
   getMatchTimeLabel,
+  getRoundText,
   safeArr
 } from '../../lib/matchesSelectors.js'
 import { getReturnState, saveReturnScroll } from '../../lib/navigationState.js'
 import { getBroadcastInfo } from '../../lib/broadcastSelectors.js'
 import MatchHubSectionLabel from './MatchHubSectionLabel.jsx'
+import TeamLogo from './TeamLogo.jsx'
 import styles from './MatchHub.module.css'
 
+function getNicknameList(people) {
+  const seen = new Set()
+
+  return safeArr(people)
+    .map(person => String(typeof person === 'object' ? person?.name || person?.nickname || '' : person || '').trim())
+    .filter(Boolean)
+    .filter(name => {
+      const key = name.toLowerCase()
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+    .join(' / ')
+}
+
+function FollowingTeam({ team, source, seasonId, align = 'left' }) {
+  return (
+    <span className={`${styles.followingTeam} ${align === 'right' ? styles.followingTeamRight : ''}`}>
+      <TeamLogo team={source} seasonId={seasonId} className={styles.followingLogo} />
+      <span>
+        <strong>{team.short}</strong>
+        <em>{team.full}</em>
+      </span>
+    </span>
+  )
+}
+
 function EmptyFollowing({ message }) {
+  const uiLocale = useUiLocale()
   const { withSeason = path => path } = useOutletContext()
 
   return (
     <section className={styles.section} aria-labelledby="following-title" data-testid="following-section">
       <header className={styles.sectionHead}>
         <div>
-          <MatchHubSectionLabel code="B / FOLLOWING" title="我的关注" />
-          <h2 id="following-title">我的关注</h2>
+          <MatchHubSectionLabel code="B / FOLLOWING" title={uiText("我的关注", uiLocale)} />
+          <h2 id="following-title">{uiText("我的关注", uiLocale)}</h2>
         </div>
       </header>
 
       <div className={styles.followingEmpty} data-testid="following-summary">
-        <strong>主关注队伍下一场</strong>
+        <strong>{uiText("主关注队伍下一场", uiLocale)}</strong>
         <p>{message}</p>
         <div className={styles.followingActions}>
-          <Link to={withSeason('/following?manage=1')}>设置主关注</Link>
-          <Link to={withSeason('/following')}>前往我的关注 →</Link>
+          <Link to={withSeason('/me?section=following&manage=1')}>{uiText("设置主关注", uiLocale)}</Link>
+          <Link to={withSeason('/me?section=following')}>{uiText("前往我的关注 →", uiLocale)}</Link>
         </div>
       </div>
     </section>
@@ -35,20 +68,21 @@ function EmptyFollowing({ message }) {
 }
 
 export default function FollowingMatchSummary({ hub }) {
-  const { favorites, withSeason = path => path } = useOutletContext()
+  const uiLocale = useUiLocale()
+  const { favorites, seasonId, withSeason = path => path } = useOutletContext()
   const location = useLocation()
   const primaryTeamId = favorites?.primaryTeamId
   const match = hub?.primaryFollowingNextMatch || null
 
   if (!primaryTeamId) {
     return (
-      <EmptyFollowing message="设置主关注队伍后，将优先展示你的下一场比赛。" />
+      <EmptyFollowing message={uiText("设置主关注队伍后，将优先展示你的下一场比赛。", uiLocale)} />
     )
   }
 
   if (!match) {
     return (
-      <EmptyFollowing message="主关注队伍暂无下一场未开始比赛。" />
+      <EmptyFollowing message={uiText("主关注队伍暂无下一场未开始比赛。", uiLocale)} />
     )
   }
 
@@ -59,50 +93,81 @@ export default function FollowingMatchSummary({ hub }) {
     .some(row => row?.match_id === match.match_id)
   const otherRoundMatches = Math.max((hub?.followingRoundMatchCount || 0) - (primaryMatchInRound ? 1 : 0), 0)
   const broadcast = getBroadcastInfo(match)
+  const primaryStream = broadcast.streamLinks[0] || null
+  const casterText = getNicknameList(broadcast.casters)
+  const refereeText = getNicknameList(broadcast.referees)
+  const status = getMatchStatus(match)
+  const streamLabel = status === 'finished' ? '查看回放' : status === 'live' ? '观看直播' : '进入直播间'
 
   return (
     <section className={styles.section} aria-labelledby="following-title" data-testid="following-section">
       <header className={styles.sectionHead}>
         <div>
-          <MatchHubSectionLabel code="B / FOLLOWING" title="我的关注" />
-          <h2 id="following-title">我的关注</h2>
+          <MatchHubSectionLabel code="B / FOLLOWING" title={uiText("我的关注", uiLocale)} />
+          <h2 id="following-title">{uiText("我的关注", uiLocale)}</h2>
         </div>
       </header>
 
-      <div className={styles.followingCard} data-testid="following-summary">
+      <div
+        className={styles.followingCard}
+        data-testid="following-summary"
+        data-has-broadcast={broadcast.hasPublicInfo ? 'true' : 'false'}
+      >
         <div className={styles.followingMain}>
-          <span className={styles.followingLabel}>主关注队伍下一场</span>
-          <h3 className={styles.followingMatchTitle}>
-            {teams.teamA.short} vs {teams.teamB.short}
-          </h3>
-          <p className={styles.followingMeta}>
-            {getMatchTimeLabel(match)} · {match.format || 'TBD'}
-          </p>
-          <span className={styles.followingStatus}>{getMatchStatusText(match)}</span>
-          {broadcast.hasPublicInfo ? (
-            <div className={styles.followingBroadcast}>
-              {broadcast.streamLinks.map((stream, index) => (
-                <a key={`${stream.url}-${index}`} href={stream.url} target="_blank" rel="noreferrer">
-                  {stream.label || '\u76f4\u64ad\u95f4'}{': '}{stream.url}
-                </a>
-              ))}
-              {broadcast.casterText ? <span>{'\u89e3\u8bf4: '}{broadcast.casterText}</span> : null}
-              {broadcast.refereeText ? <span>{'\u8d5b\u7ba1: '}{broadcast.refereeText}</span> : null}
+          <header className={styles.followingMatchHead}>
+            <div>
+              <span className={styles.followingLabel}>{uiText("主关注队伍下一场", uiLocale)}</span>
+              <strong>{getRoundText(match)}</strong>
             </div>
-          ) : null}
+            <div>
+              <time>{getMatchTimeLabel(match)}</time>
+              <span className={styles.followingStatus}>{getMatchStatusText(match)}</span>
+            </div>
+          </header>
+
+          <div className={styles.followingDuel} title={`${teams.teamA.full} vs ${teams.teamB.full}`}>
+            <FollowingTeam
+              team={teams.teamA}
+              source={match?.team_a}
+              seasonId={seasonId}
+              align="right"
+            />
+            <b>VS</b>
+            <FollowingTeam team={teams.teamB} source={match?.team_b} seasonId={seasonId} />
+          </div>
+
+          <footer className={styles.followingMatchFooter}>
+            <span className={styles.followingFormat}>{match.format || 'TBD'}</span>
+            <div className={styles.followingStaff}>
+              {casterText ? <p><b>{uiText("解说", uiLocale)}</b>{casterText}</p> : null}
+              {refereeText ? <p><b>{uiText("赛管", uiLocale)}</b>{refereeText}</p> : null}
+              {!casterText && !refereeText ? <p>{uiText("直播人员待公布", uiLocale)}</p> : null}
+            </div>
+            {primaryStream ? (
+              <a
+                className={styles.followingLiveLink}
+                href={primaryStream.url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {streamLabel} →
+              </a>
+            ) : null}
+          </footer>
         </div>
         <div className={styles.followingSide}>
-          <p>另外关注 {otherFavoriteTeams} 支队伍</p>
-          <p>本轮还有 {otherRoundMatches} 场相关比赛</p>
+          <span className={styles.followingSideLabel}>FOLLOWING SNAPSHOT</span>
+          <div className={styles.followingStats}>
+            <p><strong>{otherFavoriteTeams}</strong><span>{uiText("另外关注队伍", uiLocale)}</span></p>
+            <p><strong>{otherRoundMatches}</strong><span>{uiText("本轮相关比赛", uiLocale)}</span></p>
+          </div>
           <div className={styles.followingActions}>
             <Link
               to={withSeason(`/matches/${match.match_id}`)}
               state={getReturnState(location)}
               onClick={() => saveReturnScroll(location)}
-            >
-              比赛详情
-            </Link>
-            <Link to={withSeason('/following')}>前往我的关注 →</Link>
+            >{uiText("比赛详情", uiLocale)}</Link>
+            <Link to={withSeason('/me?section=following')}>{uiText("前往我的关注 →", uiLocale)}</Link>
           </div>
         </div>
       </div>

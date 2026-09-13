@@ -88,7 +88,7 @@ function getMatchDiff(teamPower, enemyPower) {
 }
 
 export default function ShopPage() {
-  const { db } = useOutletContext()
+  const { db, withSeason } = useOutletContext()
   const navigate = useNavigate()
   const opsPanelRef = useRef(null)
 
@@ -245,7 +245,7 @@ export default function ShopPage() {
     localStorage.setItem('fca_my_roster', JSON.stringify(roster))
     localStorage.setItem('fca_my_power', teamData.powerScore.toString())
     localStorage.setItem('fca_current_match', JSON.stringify(selectedMatch))
-    navigate('/fantasy/battle')
+    navigate(withSeason('/fantasy/battle'))
   }
 
   const handleEventOptionClick = optionType => {
@@ -334,7 +334,7 @@ export default function ShopPage() {
               right={
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <button
-                    onClick={() => navigate('/career')}
+                    onClick={() => navigate(withSeason('/career'))}
                     className={styles.btnReset}
                     style={{ borderColor: '#facc15', color: '#facc15' }}
                   >

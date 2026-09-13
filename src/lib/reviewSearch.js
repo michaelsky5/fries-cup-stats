@@ -5,6 +5,7 @@ import {
   safeArr,
   splitStaffNames
 } from './reviewAssets.js'
+import { getReviewIdentityLabel, getReviewIdentityPortfolio } from './reviewIdentity.js'
 
 const STAFF_INDEX_CACHE = new WeakMap()
 const TEAM_INDEX_CACHE = new WeakMap()
@@ -88,29 +89,41 @@ function makeStaffNameEntry(value) {
     return name ? [{ name, fields: uniqueNames([name, ...fields]) }] : []
   }
 
-  return expandStaffNameValue(value).map(name => ({ name, fields: [name] }))
+  return expandStaffNameValue(value).map(rawName => {
+    const name = stripHashTag(rawName) || rawName
+    return { name, fields: uniqueNames([name, rawName]) }
+  })
 }
 
 function mergeStaffEntries(entries) {
-  const map = new Map()
+  const output = []
 
   safeArr(entries).forEach(entry => {
     const name = String(entry?.name || '').trim()
     if (!name) return
 
-    const key = normalizeSearch(name)
-    if (!key) return
-
-    const prev = map.get(key) || { name, fields: [] }
-    prev.fields = uniqueNames([
-      ...safeArr(prev.fields),
+    const current = {
       name,
-      ...safeArr(entry.fields)
+      fields: uniqueNames([
+        name,
+        ...safeArr(entry.fields)
+      ])
+    }
+    const existing = output.find(item => staffEntriesOverlap(item, current))
+
+    if (!existing) {
+      output.push(current)
+      return
+    }
+
+    existing.fields = uniqueNames([
+      ...safeArr(existing.fields),
+      name,
+      ...current.fields
     ])
-    map.set(key, prev)
   })
 
-  return [...map.values()]
+  return output
 }
 
 function staffEntriesOverlap(a, b) {
@@ -161,7 +174,7 @@ function matchQuery(fields, q) {
   return safeArr(fields).some(value => normalizeSearch(value).includes(q))
 }
 
-function collectBroadcastNames(match, keys) {
+function collectBroadcastEntries(match, keys) {
   const broadcast = match?.broadcast || {}
 
   const roots = [
@@ -173,53 +186,64 @@ function collectBroadcastNames(match, keys) {
     match?.officials
   ].filter(Boolean)
 
-  const names = roots.flatMap(root => {
+  const values = roots.flatMap(root => {
     return keys.flatMap(key => {
-      if (root?.[key] !== undefined) return expandStaffNameValue(root[key])
+      if (root?.[key] !== undefined) return [root[key]]
       return []
     })
   })
 
-  return uniqueNames(names)
+  return mergeStaffEntries(values.flatMap(value => {
+    if (Array.isArray(value)) return value.flatMap(makeStaffNameEntry)
+    return makeStaffNameEntry(value)
+  }))
 }
 
+function collectBroadcastNames(match, keys) {
+  return collectBroadcastEntries(match, keys).map(entry => entry.name)
+}
+
+const ADMIN_BROADCAST_KEYS = [
+  'admin',
+  'admins',
+  'admin_a',
+  'admin_b',
+  'referee',
+  'referees',
+  'judge',
+  'judges',
+  'director',
+  'directors',
+  'operator',
+  'operators',
+  'producer',
+  'producers',
+  'observer',
+  'observers',
+  '赛管',
+  '裁判',
+  '导播'
+]
+
+const CASTER_BROADCAST_KEYS = [
+  'caster',
+  'casters',
+  'caster_a',
+  'caster_b',
+  'commentator',
+  'commentators',
+  'host',
+  'hosts',
+  '解说',
+  '主持'
+]
+
 export function getAdminNamesFromMatch(match) {
-  return collectBroadcastNames(match, [
-    'admin',
-    'admins',
-    'admin_a',
-    'admin_b',
-    'referee',
-    'referees',
-    'judge',
-    'judges',
-    'director',
-    'directors',
-    'operator',
-    'operators',
-    'producer',
-    'producers',
-    'observer',
-    'observers',
-    '赛管',
-    '裁判',
-    '导播'
-  ])
+  return collectBroadcastNames(match, ADMIN_BROADCAST_KEYS)
 }
 
 export function getCasterNamesFromMatch(match) {
-  return collectBroadcastNames(match, [
-    'caster',
-    'casters',
-    'caster_a',
-    'caster_b',
-    'commentator',
-    'commentators',
-    'host',
-    'hosts',
-    '解说',
-    '主持'
-  ])
+  return collectBroadcastNames(match, CASTER_BROADCAST_KEYS)
 }
 
 function getTeamLabel(team) {
@@ -381,7 +405,7 @@ function getTeamRankText(team) {
 }
 
 function getTeamRankValue(team) {
-  const rank = Number(team?.final_rank ?? team?.rank ?? 999)
+  const rank = Number(team?.final_rank ?? team?.current_rank ?? team?.rank ?? 999)
 
   if (Number.isFinite(rank) && rank > 0) return rank
 
@@ -405,13 +429,25 @@ function makeTeamTitle(team) {
   return short || name || '未知队伍'
 }
 
-function makeTeamSubtitle(team, suffix = '经理 / 教练视角') {
+function makeTeamSubtitle(team, suffix = '队伍赛季回顾') {
   return `${getTeamRankText(team) || '最终成绩已归档'}｜${suffix}`
 }
 
 function makeTeamRoute(team, query = '') {
   const id = getBestTeamIdentity(team)
   return `/review/story/team/${routeSegment(id)}${query}`
+}
+
+function getStaffEntryRouteKey(entry) {
+  const fields = uniqueNames([entry?.name, ...safeArr(entry?.fields)])
+  return fields.find(value => /#\d+$/.test(String(value || '').trim())) || fields[0] || ''
+}
+
+function makeTeamPerspectiveRoute(team, perspective, entry) {
+  const params = new URLSearchParams({ as: perspective })
+  const identityKey = getStaffEntryRouteKey(entry)
+  if (identityKey) params.set('who', identityKey)
+  return makeTeamRoute(team, `?${params.toString()}`)
 }
 
 function getPlayerMatchLogCount(player) {
@@ -434,7 +470,27 @@ function getPlayerScore(player, totalMap) {
   return Number(total?.raw_time_mins || total?.playtimeMinutes || 0) || getPlayerMatchLogCount(player)
 }
 
-function makePlayerResult(player) {
+function makeUnifiedIdentityResult(db, identityKey) {
+  const portfolio = getReviewIdentityPortfolio(db, identityKey)
+  if (!portfolio?.isMultiple) return null
+
+  const identityLabels = uniqueNames(portfolio.entries.map(getReviewIdentityLabel))
+  const teamLabels = portfolio.teamNames
+
+  return {
+    id: `person-${normalizeSearch(portfolio.battleTag)}`,
+    label: portfolio.hasMultipleRoles ? '多重身份回顾' : '跨队伍回顾',
+    title: portfolio.displayName,
+    subtitle: [...teamLabels, ...identityLabels].join('｜'),
+    to: `/review/story/person/${encodeStaffKey(portfolio.battleTag)}`
+  }
+}
+
+function makePlayerResult(db, player) {
+  const battleTag = player?.battle_tag || player?.battleTag || player?.battletag || player?.player_name
+  const unified = makeUnifiedIdentityResult(db, battleTag)
+  if (unified) return unified
+
   const title = player?.display_name || player?.nickname || player?.player_name || '未知选手'
   const team = player?.team_short_name || player?.team_name || '未知队伍'
   const role = player?.role || 'FLEX'
@@ -458,33 +514,42 @@ function makeTeamResult(team) {
   }
 }
 
-function makeManagerResult(team, managerName) {
+function makeManagerResult(db, team, manager) {
+  const managerName = manager?.name || manager
+  const unified = makeUnifiedIdentityResult(db, getStaffEntryRouteKey(manager))
+  if (unified) return unified
   return {
     id: `manager-${getBestTeamIdentity(team)}-${managerName}`,
     label: '经理视角',
     title: managerName,
     subtitle: makeTeamTitle(team),
-    to: makeTeamRoute(team, '?as=manager')
+    to: makeTeamPerspectiveRoute(team, 'manager', manager)
   }
 }
 
-function makeCoachResult(team, coachName) {
+function makeCoachResult(db, team, coach) {
+  const coachName = coach?.name || coach
+  const unified = makeUnifiedIdentityResult(db, getStaffEntryRouteKey(coach))
+  if (unified) return unified
   return {
     id: `coach-${getBestTeamIdentity(team)}-${coachName}`,
     label: '教练视角',
     title: coachName,
     subtitle: makeTeamTitle(team),
-    to: makeTeamRoute(team, '?as=coach')
+    to: makeTeamPerspectiveRoute(team, 'coach', coach)
   }
 }
 
-function makeManagerCoachResult(team, name) {
+function makeManagerCoachResult(db, team, entry) {
+  const name = entry?.name || entry
+  const unified = makeUnifiedIdentityResult(db, getStaffEntryRouteKey(entry))
+  if (unified) return unified
   return {
     id: `manager-coach-${getBestTeamIdentity(team)}-${name}`,
     label: '经理 & 教练',
     title: name,
     subtitle: makeTeamTitle(team),
-    to: makeTeamRoute(team, '?as=manager-coach')
+    to: makeTeamPerspectiveRoute(team, 'manager-coach', entry)
   }
 }
 
@@ -508,8 +573,8 @@ export function buildStaffIndex(db) {
   const adminMap = new Map()
   const casterMap = new Map()
 
-  const ensure = (map, name, type) => {
-    const clean = String(name || '').trim()
+  const ensure = (map, entry, type) => {
+    const clean = String(entry?.name || entry || '').trim()
     if (!clean) return null
 
     const key = normalizeSearch(clean)
@@ -519,6 +584,7 @@ export function buildStaffIndex(db) {
         staff_key: clean,
         staff_name: clean,
         staff_type: type,
+        aliases: [],
         matches: [],
         teams_seen: new Map(),
         stages: new Map(),
@@ -526,11 +592,13 @@ export function buildStaffIndex(db) {
       })
     }
 
-    return map.get(key)
+    const row = map.get(key)
+    row.aliases = uniqueNames([...safeArr(row.aliases), ...safeArr(entry?.fields), clean])
+    return row
   }
 
-  const register = (map, name, type, match, namesInSameRole) => {
-    const row = ensure(map, name, type)
+  const register = (map, entry, type, match, entriesInSameRole) => {
+    const row = ensure(map, entry, type)
     if (!row) return
 
     row.matches.push(match)
@@ -543,19 +611,19 @@ export function buildStaffIndex(db) {
       row.teams_seen.set(teamName, (row.teams_seen.get(teamName) || 0) + 1)
     })
 
-    namesInSameRole
-      .filter(other => normalizeSearch(other) !== normalizeSearch(name))
+    entriesInSameRole
+      .filter(other => normalizeSearch(other?.name) !== normalizeSearch(entry?.name))
       .forEach(other => {
-        row.partners.set(other, (row.partners.get(other) || 0) + 1)
+        row.partners.set(other.name, (row.partners.get(other.name) || 0) + 1)
       })
   }
 
   safeArr(db?.matches).forEach(match => {
-    const admins = getAdminNamesFromMatch(match)
-    const casters = getCasterNamesFromMatch(match)
+    const admins = collectBroadcastEntries(match, ADMIN_BROADCAST_KEYS)
+    const casters = collectBroadcastEntries(match, CASTER_BROADCAST_KEYS)
 
-    admins.forEach(name => register(adminMap, name, 'admin', match, admins))
-    casters.forEach(name => register(casterMap, name, 'caster', match, casters))
+    admins.forEach(entry => register(adminMap, entry, 'admin', match, admins))
+    casters.forEach(entry => register(casterMap, entry, 'caster', match, casters))
   })
 
   const finalize = row => ({
@@ -589,7 +657,7 @@ export function getStaffReview(db, staffType, staffKey) {
   const index = buildStaffIndex(db)
   const list = staffType === 'caster' ? index.casters : index.admins
 
-  return list.find(item => normalizeSearch(item.staff_name) === normalizeSearch(decoded)) || null
+  return list.find(item => [item.staff_name, ...safeArr(item.aliases)].some(value => normalizeSearch(value) === normalizeSearch(decoded))) || null
 }
 
 function getDefaultResults(db, identity) {
@@ -600,7 +668,7 @@ function getDefaultResults(db, identity) {
       .filter(player => player?.player_id)
       .sort((a, b) => getPlayerScore(b, totalMap) - getPlayerScore(a, totalMap))
       .slice(0, 16)
-      .map(makePlayerResult)
+      .map(player => makePlayerResult(db, player))
   }
 
   if (identity === 'teamStaff') {
@@ -654,7 +722,7 @@ export function getReviewSearchResults(db, identity, query) {
       ]
 
       if (matchQuery(fields, q)) {
-        results.push(makePlayerResult(player))
+        results.push(makePlayerResult(db, player))
       }
     })
   }
@@ -664,18 +732,16 @@ export function getReviewSearchResults(db, identity, query) {
       const managers = collectTeamStaffEntries(team, 'manager')
       const coaches = collectTeamStaffEntries(team, 'coach')
 
-      const fields = [
+      const teamFields = [
         ...getTeamIdentityValues(team),
         team.team_club,
         team.club,
         getTeamRankText(team),
         team.final_rank,
-        team.rank,
-        ...managers.flatMap(entry => entry.fields),
-        ...coaches.flatMap(entry => entry.fields)
+        team.rank
       ]
 
-      const teamMatched = matchQuery(fields, q)
+      const teamMatched = matchQuery(teamFields, q)
       const matchedManagers = managers.filter(entry => matchQuery(entry.fields, q))
       const matchedCoaches = coaches.filter(entry => matchQuery(entry.fields, q))
 
@@ -688,19 +754,19 @@ export function getReviewSearchResults(db, identity, query) {
       })
 
       samePeople.forEach(entry => {
-        results.push(makeManagerCoachResult(team, entry.name))
+        results.push(makeManagerCoachResult(db, team, entry))
       })
 
       matchedManagers
         .filter(entry => !samePeople.some(same => staffEntriesOverlap(same, entry)))
         .forEach(entry => {
-          results.push(makeManagerResult(team, entry.name))
+          results.push(makeManagerResult(db, team, entry))
         })
 
       matchedCoaches
         .filter(entry => !samePeople.some(same => staffEntriesOverlap(same, entry)))
         .forEach(entry => {
-          results.push(makeCoachResult(team, entry.name))
+          results.push(makeCoachResult(db, team, entry))
         })
 
       if (teamMatched && (matchedManagers.length || matchedCoaches.length)) {
@@ -718,9 +784,7 @@ export function getReviewSearchResults(db, identity, query) {
         staff.staff_name,
         staff.staff_key,
         staff.staff_type,
-        ...safeArr(staff.teams_seen).map(team => team.name),
-        ...safeArr(staff.stages).map(stage => stage.name),
-        ...safeArr(staff.partners).map(partner => partner.name)
+        ...safeArr(staff.aliases)
       ]
 
       if (matchQuery(fields, q)) {
@@ -729,5 +793,41 @@ export function getReviewSearchResults(db, identity, query) {
     })
   }
 
-  return uniqueByKey(results, item => item.id).slice(0, 40)
+  return uniqueByKey(results, item => item.to || item.id).slice(0, 40)
+}
+
+export function getUnifiedReviewSearchResults(db, query) {
+  const cleanQuery = String(query || '').trim()
+  if (!cleanQuery) return []
+
+  const normalizedQuery = normalizeSearch(cleanQuery)
+  const rankResult = item => {
+    const title = normalizeSearch(item?.title)
+    const subtitle = normalizeSearch(item?.subtitle)
+    const firstTitleToken = title.split(/[｜|·/\s]+/).filter(Boolean)[0] || ''
+    const firstSubtitleToken = subtitle.split(/[｜|·/\s]+/).filter(Boolean)[0] || ''
+
+    if (title === normalizedQuery) return 0
+    if (firstTitleToken === normalizedQuery) return 1
+    if (title.startsWith(normalizedQuery)) return 2
+    if (firstSubtitleToken === normalizedQuery) return 3
+    if (subtitle.startsWith(normalizedQuery)) return 4
+    if (title.includes(normalizedQuery)) return 5
+    if (subtitle.includes(normalizedQuery)) return 6
+    return 7
+  }
+
+  const identities = ['player', 'teamStaff', 'admin', 'caster']
+  const results = identities.flatMap(identity => {
+    return getReviewSearchResults(db, identity, cleanQuery).map(item => ({
+      ...item,
+      identity
+    }))
+  })
+
+  return uniqueByKey(results, item => item.to || item.id)
+    .map((item, sourceIndex) => ({ item, sourceIndex, rank: rankResult(item) }))
+    .sort((a, b) => a.rank - b.rank || a.sourceIndex - b.sourceIndex)
+    .map(entry => entry.item)
+    .slice(0, 40)
 }

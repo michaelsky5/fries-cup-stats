@@ -1,8 +1,10 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useMemo, useState } from 'react'
 import AdvanceEmptyState from './AdvanceEmptyState.jsx'
 import AdvancePhaseNav from './AdvancePhaseNav.jsx'
 import BracketRound from './BracketRound.jsx'
 import FixedDoubleEliminationBracket from './FixedDoubleEliminationBracket.jsx'
+import SingleEliminationBracket from './SingleEliminationBracket.jsx'
 import styles from '../../pages/advance/AdvancePage.module.css'
 
 function roundType(round) {
@@ -22,7 +24,11 @@ export default function PlayoffBracket({
   withSeason,
   isFavoriteTeam,
   isPrimaryFavoriteTeam,
-  showFilter = true
+  showFilter = true,
+  singleElimination = false,
+  locale = 'zh-CN',
+  emptyTitle,
+  emptyDescription
 }) {
   const [filter, setFilter] = useState('all')
   const rounds = useMemo(() => bracket?.rounds || [], [bracket?.rounds])
@@ -31,10 +37,10 @@ export default function PlayoffBracket({
     return rounds.filter(round => roundType(round) === filter)
   }, [filter, rounds])
   const filters = [
-    { key: 'all', label: t('advance.bracket.filter.all', '全部') },
-    { key: 'winners', label: t('advance.bracket.filter.winners', '胜者组') },
-    { key: 'losers', label: t('advance.bracket.filter.losers', '败者组') },
-    { key: 'final', label: t('advance.bracket.filter.final', '总决赛') }
+    { key: 'all', label: t('advance.bracket.filter.all', uiText("全部", locale)) },
+    { key: 'winners', label: t('advance.bracket.filter.winners', uiText("胜者组", locale)) },
+    { key: 'losers', label: t('advance.bracket.filter.losers', uiText("败者组", locale)) },
+    { key: 'final', label: t('advance.bracket.filter.final', uiText("总决赛", locale)) }
   ]
 
   if (bracket?.layout?.format === 'fixed_double_elimination') {
@@ -56,8 +62,24 @@ export default function PlayoffBracket({
     return (
       <AdvanceEmptyState
         eyebrow={eyebrow}
-        title={t('advance.bracket.emptyTitle', '暂无晋级图')}
-        description={t('advance.bracket.emptyDesc', '该阶段对阵尚未公布。')}
+        title={emptyTitle || t('advance.bracket.emptyTitle', uiText("暂无晋级图", locale))}
+        description={emptyDescription || t('advance.bracket.emptyDesc', uiText("该阶段对阵尚未公布。", locale))}
+      />
+    )
+  }
+
+  if (singleElimination) {
+    return (
+      <SingleEliminationBracket
+        bracket={bracket}
+        title={title}
+        eyebrow={eyebrow}
+        locale={locale}
+        t={t}
+        seasonId={seasonId}
+        withSeason={withSeason}
+        isFavoriteTeam={isFavoriteTeam}
+        isPrimaryFavoriteTeam={isPrimaryFavoriteTeam}
       />
     )
   }
@@ -79,7 +101,7 @@ export default function PlayoffBracket({
         ) : null}
       </header>
 
-      <div className={styles.bracketScrollHint}>{t('advance.bracket.scrollHint', '横向滚动查看完整晋级图')}</div>
+      <div className={styles.bracketScrollHint}>{t('advance.bracket.scrollHint', uiText("横向滚动查看完整晋级图", locale))}</div>
       <div className={styles.bracketScroller}>
         <div className={styles.bracketCanvas}>
           {filteredRounds.map(round => (

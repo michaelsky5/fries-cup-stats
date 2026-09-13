@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Orisa energy javelin</title>
+  <desc id="desc">The established diagonal javelin keeps its full silhouette, with a firmer shaft, a compact collar and clearer blade facets. No motion lines or extra ornaments join the weapon.</desc>
+
+  <defs>
+    <linearGradient id="javelin" x1="100" y1="205" x2="295" y2="51" gradientUnits="userSpaceOnUse"><stop stop-color="#688956" stop-opacity="0.25"/><stop offset="0.72" stop-color="#a4c276" stop-opacity="0.48"/><stop offset="1" stop-color="#e8d99b" stop-opacity="0.6"/></linearGradient>
+  </defs>
+  <path d="M95 200L223 97L233 109L105 212Z" fill="#99b67a" fill-opacity="0.4" stroke="#b9cd94" stroke-opacity="0.69" stroke-width="1.7"/>
+  <path d="M221 103L244 75L298 46L269 98L235 115Z" fill="url(#javelin)" stroke="#d7dca0" stroke-opacity="0.83" stroke-width="2" stroke-linejoin="bevel"/>
+  <path d="M233 108L298 46L251 89Z" fill="#e3d594" fill-opacity="0.3"/>
+  <path d="M216 107L222 101L233 114L227 120Z" fill="#638a58" fill-opacity="0.56" stroke="#bdd493" stroke-opacity="0.71" stroke-width="1.5"/>
+  <path d="M108 190L116 199M120 180L128 189" stroke="#e5c65f" stroke-opacity="0.56" stroke-width="2" />
+  <path d="M95 200L105 212L88 217Z" fill="#c9c280" fill-opacity="0.56"/>
+</svg>

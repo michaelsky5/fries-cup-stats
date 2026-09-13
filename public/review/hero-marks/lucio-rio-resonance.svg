@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Lucio crossfade resonance</title>
+  <desc id="desc">Opposed crossfade arrows form a clean resonance loop around one shared beat.</desc>
+  <path d="M166 112C187 82 231 77 259 101L249 101L266 117L282 99H270C236 61 179 69 151 108" fill="#64c87a" fill-opacity="0.07" stroke="#b7f2c3" stroke-opacity="0.72" stroke-width="2.2" stroke-linejoin="bevel"/>
+  <path d="M282 145C259 176 216 181 188 157H199L182 141L166 159H178C211 196 269 188 297 149" fill="#64c87a" fill-opacity="0.05" stroke="#70df88" stroke-opacity="0.74" stroke-width="2.2" stroke-linejoin="bevel"/>
+  <circle cx="224" cy="130" r="23" fill="#64c87a" fill-opacity="0.025" stroke="#b7f2c3" stroke-opacity="0.34" stroke-width="1.2"/>
+  <circle cx="224" cy="130" r="5" fill="#70df88" fill-opacity="0.34" stroke="#d5f8dc" stroke-opacity="0.72" stroke-width="1.2"/>
+  <g fill="none" stroke="#d5f8dc" stroke-linecap="square" opacity="0.34">
+    <path d="M224 94V104M224 156V166M188 130H198M250 130H260" stroke-width="1"/>
+  </g>
+</svg>

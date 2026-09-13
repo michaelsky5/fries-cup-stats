@@ -1,0 +1,132 @@
+@font-face {
+  font-family: "FC Data Display";
+  src: url("/fonts/barlow-condensed/BarlowCondensed-Black.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 900;
+}
+
+/*
+ * Fries Cup Data Center — FC Signal
+ *
+ * Canonical visual tokens for the new Data Center language. The current
+ * `kpr` design key is kept as a preview compatibility boundary; `signal` is
+ * the long-term semantic key. Pages should consume the `--fc-data-*` tokens
+ * rather than treating KPR as the brand.
+ */
+:is([data-design="kpr"], [data-design="signal"]) {
+  /* Brand and surfaces */
+  --fc-data-signal: #f4c320;
+  --fc-data-signal-bright: #ffd64a;
+  --fc-data-signal-deep: #a77f00;
+  --fc-data-ink: #181a17;
+  --fc-data-ink-raised: #22231f;
+  --fc-data-ink-soft: #30322d;
+  --fc-data-paper: #eeede6;
+  --fc-data-paper-deep: #e4e3db;
+  --fc-data-paper-raised: #f6f5ef;
+  --fc-data-paper-muted: #deddd5;
+  --fc-data-on-signal: #181a17;
+  --fc-data-on-paper: #181a17;
+  --fc-data-on-ink: #eeede6;
+
+  /* Text and rules */
+  --fc-data-text-muted: #66685f;
+  --fc-data-text-faint: #898b80;
+  --fc-data-text-on-dark: #d3d5c8;
+  --fc-data-text-dark-muted: #a2a59a;
+  --fc-data-line: rgb(24 26 23 / 15%);
+  --fc-data-line-strong: rgb(24 26 23 / 38%);
+  --fc-data-line-on-dark: rgb(238 237 230 / 16%);
+  --fc-data-grid: rgb(119 121 106 / 9%);
+  --fc-data-grid-on-dark: rgb(238 237 230 / 5%);
+  --fc-data-focus-on-light: #806000;
+  --fc-data-focus-on-dark: #f4c320;
+  --fc-data-focus: var(--fc-data-focus-on-light);
+
+  /* Semantic states: base values are for paper surfaces, bright values for ink. */
+  --fc-data-status-live: #0f766e;
+  --fc-data-status-live-bright: #55cbb8;
+  --fc-data-status-success: #237a4b;
+  --fc-data-status-success-bright: #65c98c;
+  --fc-data-status-warning: #9a4d00;
+  --fc-data-status-warning-bright: #f0ac4e;
+  --fc-data-status-danger: #b33a32;
+  --fc-data-status-danger-bright: #ff776d;
+  --fc-data-status-info: #356f9a;
+  --fc-data-status-info-bright: #79b9e6;
+  --fc-data-status-archived: #5b625b;
+  --fc-data-status-archived-bright: #b8bcb4;
+
+  /* Role colors remain semantic and must be paired with a text or icon label. */
+  --fc-data-role-tank: var(--role-tank);
+  --fc-data-role-damage: var(--role-dps);
+  --fc-data-role-support: var(--role-support);
+
+  /* Type */
+  --fc-data-font-display: "FC Data Display", var(--font-sans);
+  --fc-data-font-interface: var(--font-sans);
+  --fc-data-font-system: var(--font-mono);
+  --fc-data-size-body: 14px;
+  --fc-data-size-secondary: 12px;
+  --fc-data-size-micro: 10px;
+  --fc-data-index-title-size: clamp(30px, 3.3vw, 46px);
+  --fc-data-index-title-compact-size: clamp(28px, 2.7vw, 38px);
+  --fc-data-index-title-leading: 1.2;
+  --fc-data-index-heading-space: 24px;
+  --fc-data-section-nav-height: 56px;
+
+  /* Grid and geometry */
+  --fc-data-gutter: clamp(20px, 3.4vw, 64px);
+  --fc-data-content-max: 1840px;
+  --fc-data-grid-unit: 8px;
+  --fc-data-radius-panel: 0px;
+  --fc-data-radius-control: 0px;
+  --fc-data-shadow-float: 0 24px 70px rgb(9 10 8 / 24%);
+
+  /* Motion */
+  --fc-data-motion-quick: 160ms;
+  --fc-data-motion-interface: 240ms;
+  --fc-data-motion-reveal: 620ms;
+  --fc-data-motion-scene: 900ms;
+  --fc-data-ease-standard: ease;
+  --fc-data-ease-out: cubic-bezier(.16, 1, .3, 1);
+
+  font-variant-numeric: tabular-nums lining-nums;
+
+  /* Compatibility aliases for the existing preview implementation. */
+  --kpr-yellow: var(--fc-data-signal);
+  --kpr-ink: var(--fc-data-ink);
+  --kpr-paper: var(--fc-data-paper);
+  --kpr-muted: var(--fc-data-text-muted);
+  --kpr-line: var(--fc-data-line);
+  --kpr-gutter: var(--fc-data-gutter);
+}
+
+@media (max-width: 600px) {
+  :is([data-design="kpr"], [data-design="signal"]) {
+    --fc-data-gutter: 16px;
+    --fc-data-size-body: 14px;
+    --fc-data-size-secondary: 12px;
+    --fc-data-size-micro: 11px;
+    --fc-data-index-title-size: 30px;
+    --fc-data-index-title-compact-size: 28px;
+    --fc-data-index-title-leading: 1.3;
+    --fc-data-index-heading-space: 20px;
+  }
+}
+
+@media (max-width: 760px) {
+  :is([data-design="kpr"], [data-design="signal"]) {
+    --fc-data-section-nav-height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is([data-design="kpr"], [data-design="signal"]) {
+    --fc-data-motion-quick: 1ms;
+    --fc-data-motion-interface: 1ms;
+    --fc-data-motion-reveal: 1ms;
+    --fc-data-motion-scene: 1ms;
+  }
+}

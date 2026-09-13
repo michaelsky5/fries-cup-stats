@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import AdvancePhaseHero from './AdvancePhaseHero.jsx'
 import BracketMatchCard from './BracketMatchCard.jsx'
@@ -64,6 +66,7 @@ function MergeConnector() {
 }
 
 function Division({ division, seasonId, withSeason, t }) {
+  const uiLocale = useUiLocale()
   const winner = division.qualificationMatch.winner
   const directSeeds = division.roundOf16Matches[1].slots
     .filter(slot => slot.type === 'seed')
@@ -86,7 +89,7 @@ function Division({ division, seasonId, withSeason, t }) {
         <div className={styles.lcqDirectEntry}>
           <span>DIRECT ENTRY</span>
           <strong>{directSeeds}</strong>
-          <em>{t('advance.lcq.directEntry', '直接进入 16 强')}</em>
+          <em>{t('advance.lcq.directEntry', uiText("直接进入 16 强", uiLocale))}</em>
         </div>
         <FlowArrow muted className={styles.lcqDirectEntryArrow} />
         <div className={`${styles.lcqFlowColumn} ${styles.lcqFlowColumnDouble}`}>
@@ -101,9 +104,9 @@ function Division({ division, seasonId, withSeason, t }) {
         <FlowArrow className={styles.lcqQualificationArrow} />
         <div className={styles.lcqAdvanceSlot}>
           <b>{String(division.number).padStart(2, '0')}</b>
-          <span>{t('advance.lcq.divisionWinner', '分区冠军')}</span>
+          <span>{t('advance.lcq.divisionWinner', uiText("分区冠军", uiLocale))}</span>
           {winner ? <TeamLogo team={winner} seasonId={seasonId} className={styles.lcqAdvanceLogo} /> : null}
-          <strong>{winner?.team_short_name || winner?.short || t('advance.lcq.toPlayoffs', '晋级季后赛')}</strong>
+          <strong>{winner?.team_short_name || winner?.short || t('advance.lcq.toPlayoffs', uiText("晋级季后赛", uiLocale))}</strong>
         </div>
       </div>
     </section>
@@ -111,41 +114,42 @@ function Division({ division, seasonId, withSeason, t }) {
 }
 
 export default function FourDivisionLcqBracket({ layout, seasonId, withSeason, t }) {
+  const uiLocale = useUiLocale()
   return (
     <section className={styles.lcqSection}>
       <AdvancePhaseHero
         eyebrow="LAST CHANCE QUALIFIER"
-        title={t('advance.breakthrough.title', '突围赛晋级图')}
-        description={t('advance.lcq.heroDesc', '20 支队伍 · 四分区单败 · 每区产生 1 个季后赛席位 · 固定签位')}
+        title={t('advance.breakthrough.title', uiText("突围赛晋级图", uiLocale))}
+        description={t('advance.lcq.heroDesc', uiText("20 支队伍 · 四分区单败 · 每区产生 1 个季后赛席位 · 固定签位", uiLocale))}
         metrics={[
-          { value: layout.participantCount, label: t('advance.lcq.teams', '支队伍') },
-          { value: layout.totalMatches, label: t('advance.lcq.matches', '场比赛') },
-          { value: layout.advanceSlots, label: t('advance.lcq.slots', '个名额'), accent: true }
+          { value: layout.participantCount, label: t('advance.lcq.teams', uiText("支队伍", uiLocale)) },
+          { value: layout.totalMatches, label: t('advance.lcq.matches', uiText("场比赛", uiLocale)) },
+          { value: layout.advanceSlots, label: t('advance.lcq.slots', uiText("个名额", uiLocale)), accent: true }
         ]}
       />
 
       <div className={styles.lcqRuleStrip}>
         <div>
           <span>01</span>
-          <strong>{t('advance.lcq.playIn', '入围赛')} · FT2</strong>
+          <strong>{t('advance.lcq.playIn', uiText("入围赛", uiLocale))} · FT2</strong>
           <em>07/18 · 20:00 / 21:00</em>
         </div>
         <div>
           <span>02</span>
-          <strong>{t('advance.lcq.roundOf16', '16 强')} · FT2</strong>
+          <strong>{t('advance.lcq.roundOf16', uiText("16 强", uiLocale))} · FT2</strong>
           <em>07/19 · 20:00 / 21:00</em>
         </div>
         <div>
           <span>03</span>
-          <strong>{t('advance.lcq.qualification', '晋级赛')} · FT3</strong>
+          <strong>{t('advance.lcq.qualification', uiText("晋级赛", uiLocale))} · FT3</strong>
           <em>07/25–26 · 20:00 / 21:30</em>
         </div>
-        <p>{layout.bracketLocked ? t('advance.lcq.locked', '固定签位 · 不重新排位') : null}</p>
+        <p>{layout.bracketLocked ? t('advance.lcq.locked', uiText("固定签位 · 不重新排位", uiLocale)) : null}</p>
       </div>
 
       <p className={styles.bracketScheduleNoticeStrip}>
-        <span>{t('advance.scheduleNotice.label', '赛程时间说明')}</span>
-        <strong>{t('advance.scheduleNotice.delay', '赛程时间为计划开赛时间；同一直播间连续进行的场次，如前一场延时，后续比赛将依次顺延。')}</strong>
+        <span>{t('advance.scheduleNotice.label', uiText("赛程时间说明", uiLocale))}</span>
+        <strong>{t('advance.scheduleNotice.delay', uiText("赛程时间为计划开赛时间；同一直播间连续进行的场次，如前一场延时，后续比赛将依次顺延。", uiLocale))}</strong>
       </p>
 
       <div className={styles.lcqPool}>
@@ -154,13 +158,13 @@ export default function FourDivisionLcqBracket({ layout, seasonId, withSeason, t
             <span className={styles.sectionLabel}>LCQ POOL</span>
             <strong>
               {layout.rankingsLocked
-                ? t('advance.lcq.finalSeeds', '瑞士轮最终种子')
+                ? t('advance.lcq.finalSeeds', uiText("瑞士轮最终种子", uiLocale))
                 : layout.lockedSeedCount
-                  ? t('advance.lcq.partialSeeds', `已锁定 ${layout.lockedSeedCount} / ${layout.participantCount} 个种子`, {
+                  ? t('advance.lcq.partialSeeds', uiText("已锁定 {0} / {1} 个种子", uiLocale, [layout.lockedSeedCount, layout.participantCount]), {
                       locked: layout.lockedSeedCount,
                       total: layout.participantCount
                     })
-                  : t('advance.lcq.seedPending', '瑞士轮结束后锁定种子')}
+                  : t('advance.lcq.seedPending', uiText("瑞士轮结束后锁定种子", uiLocale))}
             </strong>
           </div>
           <em>{layout.completedMatches} / {layout.totalMatches}</em>
@@ -176,38 +180,38 @@ export default function FourDivisionLcqBracket({ layout, seasonId, withSeason, t
       </div>
 
       <div className={styles.lcqBracketLead}>
-        <span>{t('advance.lcq.routeLabel', '固定晋级路径')}</span>
-        <strong>{t('advance.lcq.routeDesc', '#13–20 号种子先打入围赛；每区产生 1 个季后赛席位；四个分区冠军按瑞士轮最终排名依次获得季后赛 #5–#8')}</strong>
-        <em>{t('advance.bracket.scrollHint', '窄屏可横向滚动查看完整晋级图')}</em>
+        <span>{t('advance.lcq.routeLabel', uiText("固定晋级路径", uiLocale))}</span>
+        <strong>{t('advance.lcq.routeDesc', uiText("#13–20 号种子先打入围赛；每区产生 1 个季后赛席位；四个分区冠军按瑞士轮最终排名依次获得季后赛 #5–#8", uiLocale))}</strong>
+        <em>{t('advance.bracket.scrollHint', uiText("窄屏可横向滚动查看完整晋级图", uiLocale))}</em>
       </div>
       <div className={styles.lcqScroller}>
         <div className={styles.lcqCanvas}>
           <div className={styles.lcqRoundGuide}>
             <div className={styles.lcqRoundGuideIntro}>
               <span>FOUR DIVISIONS</span>
-              <strong>{t('advance.lcq.singleElimination', '单败淘汰')}</strong>
+              <strong>{t('advance.lcq.singleElimination', uiText("单败淘汰", uiLocale))}</strong>
             </div>
             <div>
               <span>01 · PLAY-IN</span>
-              <strong>{t('advance.lcq.playIn', '入围赛')}</strong>
+              <strong>{t('advance.lcq.playIn', uiText("入围赛", uiLocale))}</strong>
               <em>4 MATCHES · FT2</em>
             </div>
             <i aria-hidden="true" />
             <div>
               <span>02 · ROUND OF 16</span>
-              <strong>{t('advance.lcq.roundOf16', '16 强')}</strong>
+              <strong>{t('advance.lcq.roundOf16', uiText("16 强", uiLocale))}</strong>
               <em>8 MATCHES · FT2</em>
             </div>
             <i aria-hidden="true" />
             <div>
               <span>03 · QUALIFICATION</span>
-              <strong>{t('advance.lcq.qualification', '晋级赛')}</strong>
+              <strong>{t('advance.lcq.qualification', uiText("晋级赛", uiLocale))}</strong>
               <em>4 MATCHES · FT3</em>
             </div>
             <i aria-hidden="true" />
             <div className={styles.lcqRoundGuideAdvance}>
               <span>04 · ADVANCE</span>
-              <strong>{t('advance.lcq.playoffSlots', '季后赛席位')}</strong>
+              <strong>{t('advance.lcq.playoffSlots', uiText("季后赛席位", uiLocale))}</strong>
               <em>4 TEAMS</em>
             </div>
           </div>

@@ -1,0 +1,8 @@
+.control { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; min-height: 44px; padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--fc-data-ink); font: 12px/1.5 var(--fc-data-font-interface); text-align: left; cursor: pointer; }
+.track { position: relative; box-sizing: border-box; flex: 0 0 34px; width: 34px; height: 20px; border: 1px solid var(--fc-data-text-muted); border-radius: 0; background: var(--fc-data-paper-deep); }
+.track::before { content: ''; position: absolute; top: 3px; left: 3px; width: 12px; height: 12px; background: var(--fc-data-ink); }
+.control:hover .track { border-color: var(--fc-data-ink); }
+.control[aria-checked='true'] .track { border-color: var(--fc-data-ink); background: var(--fc-data-signal); }
+.control[aria-checked='true'] .track::before { transform: translateX(14px); }
+.control:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 4px; }
+.control:disabled { opacity: .5; cursor: default; }

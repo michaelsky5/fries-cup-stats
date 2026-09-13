@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Jetpack Cat lifeline paw</title>
+  <desc id="desc">One open paw print, with four separated toe pads and a soft central pad. Portrait motion is rendered in a separate background layer.</desc>
+  <g fill="#70b8d4" fill-opacity="0.22" stroke="#c4e6eb" stroke-opacity="0.69" stroke-width="1.8">
+    <path d="M158 132C164 118 175 115 183 125C187 130 192 131 198 133C215 139 215 159 201 166C193 170 184 165 180 165C172 165 163 171 154 165C141 157 145 141 158 132Z"/>
+    <ellipse cx="140" cy="111" rx="10" ry="15" transform="rotate(-26 140 111)"/>
+    <ellipse cx="164" cy="96" rx="11" ry="17" transform="rotate(-9 164 96)"/>
+    <ellipse cx="191" cy="98" rx="11" ry="17" transform="rotate(12 191 98)"/>
+    <ellipse cx="214" cy="115" rx="10" ry="15" transform="rotate(29 214 115)"/>
+  </g>
+</svg>

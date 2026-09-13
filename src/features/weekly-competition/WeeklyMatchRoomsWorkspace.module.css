@@ -1,0 +1,132 @@
+.workspace, .dialog { color: var(--fc-data-ink); font-family: var(--font-sans); }
+.workspace { display: grid; gap: 16px; min-width: 0; margin-bottom: 24px; container: weekly-rooms / inline-size; }
+.workHeader { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.workHeader > div > span { font: 800 13px/1.4 var(--fc-data-font-display); color: var(--fc-data-text-muted); }
+.workspace .workHeader h2 { margin: 4px 0 0; font-size: 24px; line-height: 1.4; }
+.headerActions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
+.headerActions .secondaryButton { background: transparent; border-color: transparent; font-weight: 500; }
+.primaryButton, .secondaryButton, .dangerButton { min-height: 44px; padding: 11px 16px; border: 1px solid var(--fc-data-line-strong); border-radius: 0; font: inherit; font-size: 13px; font-weight: 650; cursor: pointer; }
+.primaryButton { background: var(--fc-data-signal); border-color: var(--fc-data-signal); color: var(--fc-data-ink); }
+.secondaryButton { background: var(--fc-data-paper-raised); color: var(--fc-data-ink); }
+.dangerButton { background: transparent; border-color: var(--fc-data-status-danger); color: var(--fc-data-status-danger); }
+.workspace button:disabled, .dialog button:disabled { opacity: .5; cursor: not-allowed; }
+.workspace :is(a, button, textarea):focus-visible, .dialog button:focus-visible { outline: 2px solid var(--fc-data-focus); outline-offset: 3px; }
+.returnLinks { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; }
+.returnLinks a { display: inline-flex; align-items: center; min-height: 44px; color: var(--fc-data-text-muted); font-size: 13px; text-decoration: none; }
+.returnLinks a:hover { color: var(--fc-data-ink); text-decoration: underline; }
+.message { margin: 0; padding: 18px 22px; border: 1px solid var(--fc-data-line-strong); border-left: 3px solid var(--fc-data-status-success); color: var(--fc-data-ink); background: var(--fc-data-paper-raised); font-size: 14px; line-height: 1.8; }
+.message p { margin: 0; }
+.message a { display: inline-block; margin-top: 10px; color: inherit; font-size: 13px; font-weight: 650; }
+.message[data-error='true'] { border-left-color: var(--fc-data-status-danger); color: var(--fc-data-status-danger); }
+.state { display: grid; align-content: center; justify-items: start; gap: 12px; min-height: 200px; padding: 28px; border: 1px solid var(--fc-data-line); background: var(--fc-data-paper-raised); }
+.state > span, .eyebrow { color: var(--fc-data-text-muted); font: 850 18px/1.2 var(--fc-data-font-display); letter-spacing: .035em; }
+.state > strong { font-size: 21px; line-height: 1.5; }
+.state p { max-width: 620px; margin: 0; color: var(--fc-data-text-muted); font-size: 14px; line-height: 1.8; }
+.channelRail { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 20px; padding-block: 10px; border-block: 1px solid var(--fc-data-line); color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.7; }
+.channelRail strong { flex: 1 1 220px; color: var(--fc-data-ink); font-size: 14px; overflow-wrap: anywhere; }
+.roomSummary { display: grid; gap: 6px; padding: 4px 0 16px; font-size: 12px; color: var(--fc-data-text-muted); }
+.roomSummary strong { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; font-size: 14px; color: var(--fc-data-ink); }
+.roomSummary b { font: 750 20px/1 var(--fc-data-font-display); }
+.roomSummary [data-alert='true'] { color: var(--fc-data-status-danger); }
+.layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 24px; align-items: start; min-width: 0; }
+.roomIndex { min-width: 0; }
+.roomSwitcher { display: none; }
+.roomIndexContent { display: block; }
+.roomList { display: grid; gap: 0; min-width: 0; border-top: 1px solid var(--fc-data-line); }
+.roomList button { display: grid; gap: 7px; width: 100%; min-width: 0; padding: 16px 12px; border: 0; border-bottom: 1px solid var(--fc-data-line); color: var(--fc-data-ink); background: transparent; border-radius: 0; text-align: left; font: inherit; cursor: pointer; overflow-wrap: anywhere; }
+.roomList button[aria-pressed='true'] { background: var(--fc-data-paper-deep); box-shadow: inset 3px 0 var(--fc-data-signal); }
+.roomList span, .roomList small { color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.6; }
+.roomList button[aria-pressed='true'] :is(span, small, em) { color: var(--fc-data-ink); }
+.roomList strong { font-size: 15px; line-height: 1.4; }
+.roomList em { color: var(--fc-data-ink); font-size: 12px; font-style: normal; }
+.roomCard { min-width: 0; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised); scroll-margin-top: 120px; }
+.roomCard:focus { outline: none; }
+.matchHeader { padding: 18px 24px; color: var(--fc-data-paper); background: var(--fc-data-ink); }
+.matchMeta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; color: var(--fc-data-text-on-dark); font-size: 12px; line-height: 1.7; }
+.matchMeta > span { overflow-wrap: anywhere; }
+.matchMeta strong { padding: 6px 10px; border: 1px solid var(--fc-data-line-on-dark); font-size: 12px; }
+.workspace .matchHeader h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin: 10px 0; font: 850 clamp(26px, 3cqi, 34px)/1.2 var(--fc-data-font-display); }
+.matchHeader h3 span { min-width: 0; overflow-wrap: anywhere; }
+.matchHeader h3 b { padding: 3px 8px; color: var(--fc-data-text-on-dark); font: 700 .65em/1.2 var(--fc-data-font-display); white-space: nowrap; }
+.matchHeader p { margin: 0; color: var(--fc-data-text-on-dark); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.matchHeader [data-tone='yellow'] { color: var(--fc-data-signal); }
+.matchHeader [data-tone='mint'] { color: var(--fc-data-status-success-bright); }
+.matchHeader [data-tone='red'] { color: var(--fc-data-status-danger-bright); }
+.resultRoute { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; border-bottom: 1px solid var(--fc-data-line); background: var(--fc-data-paper); }
+.resultRoute li { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-right: 1px solid var(--fc-data-line); }
+.resultRoute li:last-child { border-right: 0; }
+.resultRoute span { color: var(--fc-data-text-muted); font: 700 14px/1.3 var(--fc-data-font-system); }
+.resultRoute strong { font-size: 12px; line-height: 1.6; }
+.resultRoute [data-state='current'] { box-shadow: inset 0 3px var(--fc-data-signal); }
+.resultRoute [data-state='done'] span { color: var(--fc-data-status-success); }
+.resultRoute [data-state='blocked'] strong { color: var(--fc-data-status-danger); }
+.roomNotice { margin: 16px 22px; padding: 10px 14px; border-left: 3px solid var(--fc-data-line-strong); background: var(--fc-data-paper); color: var(--fc-data-text-muted); font-size: 13px; line-height: 1.8; }
+.roomNotice[data-tone='yellow'] { border-color: var(--fc-data-signal); }
+.roomNotice[data-tone='red'] { border-color: var(--fc-data-status-danger); color: var(--fc-data-status-danger); }
+.roomNotice[data-tone='mint'] { border-color: var(--fc-data-status-success); }
+.responses { display: grid; gap: 18px; padding: 0 22px 22px; }
+.teamResponse, .opponentResponse { padding: 22px; border: 1px solid var(--fc-data-line); min-width: 0; }
+.teamResponse header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+.teamResponse header span, .opponentResponse > span { color: var(--fc-data-text-muted); font: 750 16px/1.2 var(--fc-data-font-display); letter-spacing: .02em; }
+.teamResponse h4, .opponentResponse h4 { margin: 9px 0; font-size: 20px; overflow-wrap: anywhere; }
+.teamResponse header > strong, .opponentResponse > strong { font-size: 13px; }
+.teamResponse [data-tone='red'], .opponentResponse [data-tone='red'] { color: var(--fc-data-status-danger); }
+.teamResponse [data-tone='mint'] { color: var(--fc-data-status-success); }
+.responseTime { color: var(--fc-data-text-muted); font-size: 12px; }
+.teamResponse blockquote { margin: 14px 0; padding: 14px; border-left: 2px solid var(--fc-data-line-strong); background: var(--fc-data-paper); font-size: 14px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.noteField { display: grid; gap: 9px; margin: 20px 0; }
+.noteField > span { font-size: 13px; font-weight: 650; }
+.noteField textarea { box-sizing: border-box; width: 100%; min-width: 0; min-height: 100px; padding: 12px 14px; border: 1px solid var(--fc-data-line-strong); border-radius: 0; background: var(--fc-data-paper); color: var(--fc-data-ink); font: inherit; font-size: 14px; line-height: 1.8; resize: vertical; }
+.noteField textarea::placeholder { color: var(--fc-data-text-muted); opacity: 1; }
+.noteField small, .opponentResponse > p { color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.8; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.readOnlyNotice { margin: 14px 0 0; color: var(--fc-data-text-muted); font-size: 14px; line-height: 1.8; }
+.savedDraft { margin-top: 18px; border-top: 1px solid var(--fc-data-line); padding-top: 18px; font-size: 14px; }
+.savedDraft > p { color: var(--fc-data-text-muted); font-size: 13px; line-height: 1.8; }
+.opponentResponse { background: var(--fc-data-paper); }
+.matchPreparation { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0 22px 22px; border: 1px solid var(--fc-data-line); }
+.matchPreparation > div { min-width: 0; padding: 22px; border-right: 1px solid var(--fc-data-line); }
+.matchPreparation > div:last-child { border-right: 0; }
+.matchPreparation span { display: block; color: var(--fc-data-text-muted); font-size: 12px; margin-bottom: 10px; }
+.matchPreparation strong { font-size: 19px; overflow-wrap: anywhere; }
+.matchPreparation p { margin: 12px 0 0; color: var(--fc-data-text-muted); font-size: 14px; line-height: 1.8; }
+.matchPreparation a { display: inline-block; margin-top: 12px; color: var(--fc-data-ink); font-size: 13px; }
+.matchFoot { padding: 16px 22px; border-top: 1px solid var(--fc-data-line); color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.8; }
+.matchFoot p { margin: 0; }
+.matchFoot a { display: inline-block; margin-top: 10px; padding-block: 8px; color: var(--fc-data-ink); font-size: 13px; font-weight: 650; }
+.dialog { box-sizing: border-box; width: min(560px, calc(100vw - 40px)); max-height: calc(100dvh - 40px); margin: auto; padding: 28px; border: 1px solid var(--fc-data-line-strong); border-top: 3px solid var(--fc-data-signal); background: var(--fc-data-paper-raised); overflow-y: auto; }
+.dialog::backdrop { background: #000b; }
+.dialog h2 { margin: 18px 0 12px; font-size: 23px; line-height: 1.5; overflow-wrap: anywhere; }
+.dialog p { font-size: 14px; line-height: 1.8; }
+.dialogResult { display: grid; gap: 10px; padding: 20px; color: var(--fc-data-paper); background: var(--fc-data-ink); }
+.dialogResult strong { font-size: 18px; overflow-wrap: anywhere; }
+.dialogResult span { color: var(--fc-data-text-on-dark); font-size: 13px; line-height: 1.7; }
+.dialogNote { max-height: 200px; overflow-y: auto; padding: 14px; background: var(--fc-data-paper); white-space: pre-wrap; overflow-wrap: anywhere; }
+.dialog .actions { justify-content: flex-end; margin-top: 24px; }
+@container weekly-rooms (max-width: 840px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .roomSwitcher { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: 100%; min-height: 44px; padding: 10px 14px; border: 1px solid var(--fc-data-line); color: var(--fc-data-ink); background: transparent; font: 600 13px/1.6 var(--font-sans); cursor: pointer; }
+  .roomSwitcher span { font-size: 12px; font-weight: 400; color: var(--fc-data-text-muted); }
+  .roomIndexContent { display: none; padding: 16px 0 8px; }
+  .roomIndexContent[data-expanded='true'] { display: block; }
+  .roomList { grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); }
+}
+@container weekly-rooms (max-width: 520px) {
+  .headerActions { gap: 4px 8px; justify-content: space-between; width: 100%; }
+  .returnLinks { gap: 12px; }
+  .headerActions .secondaryButton { padding-inline: 8px; }
+  .channelRail { gap: 4px 12px; }
+  .channelRail strong { flex-basis: 100%; }
+  .matchHeader { padding: 12px 16px; }
+  .matchMeta { gap: 6px 12px; }
+  .matchMeta strong { padding-block: 4px; }
+  .workspace .matchHeader h3 { font-size: 26px; gap: 10px; margin-block: 8px; }
+  .resultRoute li { display: grid; align-content: start; gap: 6px; padding: 10px; }
+  .resultRoute strong { font-size: 11px; }
+  .roomNotice { margin: 16px; }
+  .responses { padding: 0 16px 16px; }
+  .teamResponse, .opponentResponse { padding: 18px 16px; }
+  .matchFoot { padding: 12px 16px; }
+  .actions > button { flex: 1 1 150px; }
+}
+@media (max-width: 540px) { .dialog { padding: 22px 18px; } .dialog .actions > button { flex: 1 1 100%; } }

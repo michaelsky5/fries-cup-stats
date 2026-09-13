@@ -124,3 +124,1485 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* KPR / FC DATA SIGNAL — player archive */
+
+.hybridShell {
+  --player-ink: var(--fc-data-ink, #171817);
+  --player-ink-raised: var(--fc-data-ink-raised, #23241f);
+  --player-paper: var(--fc-data-paper, #eeede6);
+  --player-paper-raised: var(--fc-data-paper-raised, #f6f5ee);
+  --player-signal: var(--fc-data-signal, #f4c320);
+  --player-muted: var(--fc-data-text-muted, #66685f);
+  --player-line: var(--fc-data-line, rgba(23, 24, 23, 0.15));
+  --player-line-strong: var(--fc-data-line-strong, rgba(23, 24, 23, 0.38));
+  --player-line-dark: var(--fc-data-line-on-dark, rgba(238, 237, 230, 0.16));
+  --player-gutter: var(--kpr-gutter, clamp(20px, 3.4vw, 64px));
+  --player-display: var(--fc-data-font-display, var(--font-display));
+  gap: 0;
+  color: var(--player-ink);
+}
+
+.playerSignalHero {
+  position: relative;
+  isolation: isolate;
+  min-height: 600px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(560px, 1.12fr);
+  grid-template-rows: minmax(468px, 1fr) 112px;
+  overflow: hidden;
+  background: var(--player-ink);
+  color: var(--player-paper);
+}
+
+.playerSignalHero::before {
+  position: absolute;
+  top: 46px;
+  left: -0.04em;
+  z-index: -2;
+  color: rgba(238, 237, 230, 0.035);
+  content: "PLAYERS";
+  font: 900 clamp(118px, 16vw, 238px)/0.74 var(--player-display);
+  letter-spacing: -0.065em;
+  white-space: nowrap;
+}
+
+.playerSignalHero::after {
+  position: absolute;
+  top: -12%;
+  left: 34%;
+  z-index: -1;
+  width: 22%;
+  height: 120%;
+  background: linear-gradient(180deg, rgba(244, 195, 32, 0.16), rgba(244, 195, 32, 0.02));
+  clip-path: polygon(42% 0, 100% 0, 58% 100%, 0 100%);
+  content: "";
+}
+
+.playerSignalGrid {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background:
+    repeating-linear-gradient(90deg, transparent 0, transparent calc(12.5% - 1px), rgba(238, 237, 230, 0.055) calc(12.5% - 1px), rgba(238, 237, 230, 0.055) 12.5%),
+    repeating-linear-gradient(0deg, transparent 0, transparent 91px, rgba(238, 237, 230, 0.035) 91px, rgba(238, 237, 230, 0.035) 92px);
+}
+
+.playerSignalCopy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px var(--player-gutter) 42px;
+}
+
+.playerSignalEyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--player-signal);
+  font: 800 10px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.playerSignalEyebrow b {
+  font-size: 16px;
+}
+
+.playerSignalEyebrow i {
+  width: 62px;
+  border-top: 2px solid currentColor;
+}
+
+.playerSignalCopy h1 {
+  display: grid;
+  margin: 34px 0 24px;
+  font: 900 clamp(76px, 8.4vw, 128px)/0.72 var(--player-display);
+  letter-spacing: -0.055em;
+}
+
+.playerSignalCopy h1 span,
+.playerSignalCopy h1 strong {
+  font: inherit;
+}
+
+.playerSignalCopy h1 strong {
+  color: var(--player-signal);
+}
+
+.playerSignalCopy > p {
+  max-width: 450px;
+  margin: 0;
+  color: rgba(238, 237, 230, 0.68);
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.65;
+}
+
+.playerSignalCount {
+  width: fit-content;
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  margin-top: 42px;
+  padding-top: 20px;
+  border-top: 1px solid var(--player-line-dark);
+}
+
+.playerSignalCount > strong {
+  color: var(--player-paper);
+  font: 900 clamp(54px, 5vw, 82px)/0.72 var(--player-display);
+  letter-spacing: -0.045em;
+}
+
+.playerSignalCount > span {
+  display: grid;
+  gap: 6px;
+  padding-bottom: 2px;
+}
+
+.playerSignalCount b,
+.playerSignalCount em {
+  font-style: normal;
+}
+
+.playerSignalCount b {
+  color: var(--player-signal);
+  font: 800 10px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.playerSignalCount em {
+  color: rgba(238, 237, 230, 0.48);
+  font-size: 10px;
+}
+
+.playerRoleIndex {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 70px minmax(0, 1fr);
+  background: var(--player-ink-raised);
+  border-left: 1px solid var(--player-line-dark);
+}
+
+.playerRoleIndex > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 22px;
+  border-bottom: 1px solid var(--player-line-dark);
+}
+
+.playerRoleIndex > header span {
+  color: var(--player-signal);
+  font: 800 9px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.playerRoleIndex > header strong {
+  color: rgba(238, 237, 230, 0.72);
+  font-size: 11px;
+}
+
+.playerRoleGrid {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.playerRoleGrid > a {
+  --role-signal: var(--player-signal);
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  padding: 18px;
+  border-right: 1px solid var(--player-line-dark);
+  color: var(--player-paper);
+  text-decoration: none;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.playerRoleGrid > a[data-role="TANK"] { --role-signal: #3978c5; }
+.playerRoleGrid > a[data-role="DPS"] { --role-signal: #cc4944; }
+.playerRoleGrid > a[data-role="SUP"] { --role-signal: #3f9369; }
+
+.playerRoleGrid > a:last-child {
+  border-right: 0;
+}
+
+.playerRoleGrid > a::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 4px;
+  background: var(--role-signal);
+  content: "";
+  transform: scaleX(0.22);
+  transform-origin: left;
+  transition: transform 180ms ease;
+}
+
+.playerRoleGrid > a > b {
+  position: relative;
+  z-index: 3;
+  color: var(--player-signal);
+  font: 900 15px/1 var(--player-display);
+}
+
+.playerRoleAvatar {
+  position: absolute;
+  right: -9%;
+  bottom: 38px;
+  width: 118%;
+  height: 76%;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  filter: drop-shadow(0 18px 20px rgba(0, 0, 0, 0.32));
+  transition: transform 200ms ease;
+}
+
+.playerRoleAvatar img {
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.playerRoleGrid > a > div {
+  position: absolute;
+  top: 54px;
+  right: 16px;
+  left: 16px;
+  z-index: 3;
+  display: grid;
+  gap: 5px;
+}
+
+.playerRoleGrid > a > div span,
+.playerRoleGrid > a > div em {
+  font: 800 8px/1 var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.08em;
+}
+
+.playerRoleGrid > a > div span {
+  color: var(--role-signal);
+}
+
+.playerRoleGrid > a > div strong {
+  font: 900 clamp(30px, 2.8vw, 44px)/0.8 var(--player-display);
+}
+
+.playerRoleGrid > a > div em {
+  color: rgba(238, 237, 230, 0.46);
+}
+
+.playerRoleGrid > a > small {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.playerRoleGrid > a > small i {
+  color: var(--player-signal);
+  font-style: normal;
+}
+
+.playerRoleGrid > a:hover,
+.playerRoleGrid > a:focus-visible {
+  background: var(--role-signal);
+  color: var(--player-ink);
+  outline: 0;
+}
+
+.playerRoleGrid > a:hover::before,
+.playerRoleGrid > a:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.playerRoleGrid > a:hover .playerRoleAvatar,
+.playerRoleGrid > a:focus-visible .playerRoleAvatar {
+  transform: scale(1.06) translateY(-3px);
+}
+
+.playerRoleGrid > a:hover > b,
+.playerRoleGrid > a:focus-visible > b,
+.playerRoleGrid > a:hover > div span,
+.playerRoleGrid > a:focus-visible > div span,
+.playerRoleGrid > a:hover > div em,
+.playerRoleGrid > a:focus-visible > div em,
+.playerRoleGrid > a:hover > small i,
+.playerRoleGrid > a:focus-visible > small i {
+  color: var(--player-ink);
+}
+
+.playerSignalMetrics {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(220px, 0.8fr);
+  background: var(--player-paper-raised);
+  border-top: 1px solid var(--player-line-dark);
+  color: var(--player-ink);
+}
+
+.playerSignalMetrics > div,
+.playerSignalMetrics > a {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 24px auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 18px 20px;
+  border-right: 1px solid var(--player-line);
+}
+
+.playerSignalMetrics > div > b {
+  align-self: start;
+  color: var(--player-signal);
+  font: 900 13px/1 var(--player-display);
+}
+
+.playerSignalMetrics > div > strong {
+  font: 900 clamp(38px, 3.5vw, 56px)/0.8 var(--player-display);
+}
+
+.playerSignalMetrics > div > span {
+  display: grid;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.playerSignalMetrics > div > span em {
+  color: var(--player-muted);
+  font: 8px/1 var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.08em;
+}
+
+.playerSignalMetrics > a {
+  grid-template-columns: minmax(0, 1fr) auto;
+  background: var(--player-signal);
+  border-right: 0;
+  color: var(--player-ink);
+  font-size: 12px;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.playerSignalMetrics > a > b {
+  font-size: 22px;
+  transition: transform 180ms ease;
+}
+
+.playerSignalMetrics > a:hover > b,
+.playerSignalMetrics > a:focus-visible > b {
+  transform: translate(4px, -4px);
+}
+
+.hybridShell .stickyRosterControls {
+  position: static;
+  gap: 0;
+  padding: 0;
+  background: var(--player-ink);
+}
+
+.signalSubnav {
+  min-height: 76px;
+  background: var(--player-ink);
+  border: 0;
+  border-bottom: 1px solid var(--player-line-dark);
+}
+
+.signalSubnav > a {
+  min-height: 76px;
+  padding: 0 24px;
+  background: var(--player-ink);
+  border-right: 1px solid var(--player-line-dark);
+  color: var(--player-paper);
+}
+
+.signalSubnav > a[aria-current="page"],
+.signalSubnav > a:hover,
+.signalSubnav > a:focus-visible {
+  background: var(--player-signal);
+  color: var(--player-ink);
+  outline: 0;
+}
+
+.signalSubnav > a > span:last-child {
+  color: inherit;
+  font: 800 9px/1 var(--font-mono);
+  opacity: 0.52;
+}
+
+.signalRoleTabs {
+  min-height: 58px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  background: var(--player-ink-raised);
+  border: 0;
+  border-bottom: 1px solid var(--player-line-dark);
+}
+
+.signalRoleTabs .roleTab {
+  min-height: 58px;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: var(--player-ink-raised);
+  border-color: var(--player-line-dark);
+  color: var(--player-paper);
+}
+
+.signalRoleTabs .roleTabActive,
+.signalRoleTabs .roleTab:hover,
+.signalRoleTabs .roleTab:focus-visible {
+  background: var(--player-signal);
+  color: var(--player-ink);
+  outline: 0;
+}
+
+.signalToolbar {
+  padding: 18px var(--player-gutter);
+  background: var(--player-ink-raised);
+  border: 0;
+  border-bottom: 1px solid var(--player-line-dark);
+  color: var(--player-paper);
+}
+
+.signalToolbar label > span {
+  color: rgba(238, 237, 230, 0.48);
+  font: 800 8px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.signalToolbar input,
+.signalToolbar select {
+  height: 44px;
+  background: var(--player-ink);
+  border: 1px solid var(--player-line-dark);
+  color: var(--player-paper);
+}
+
+.signalToolbar input::placeholder {
+  color: rgba(238, 237, 230, 0.34);
+}
+
+.signalToolbar input:focus,
+.signalToolbar select:focus {
+  border-color: var(--player-signal);
+  outline: 1px solid var(--player-signal);
+}
+
+.hybridShell .directorySection {
+  gap: 28px;
+  padding: 72px var(--player-gutter) 48px;
+  background: var(--player-paper);
+  scroll-margin-top: 24px;
+}
+
+.signalDirectoryHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--player-line-strong);
+}
+
+.signalDirectoryHead > div > span {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--player-signal);
+  font: 800 9px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.signalDirectoryHead h2 {
+  margin: 0;
+  font: 900 clamp(56px, 6vw, 92px)/0.78 var(--player-display);
+  letter-spacing: -0.05em;
+}
+
+.signalDirectoryHead p {
+  margin: 18px 0 0;
+  color: var(--player-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.signalDirectoryHead > strong {
+  display: grid;
+  gap: 8px;
+  font: 900 clamp(52px, 5vw, 76px)/0.72 var(--player-display);
+  letter-spacing: -0.04em;
+  text-align: right;
+}
+
+.signalDirectoryHead > strong em {
+  color: var(--player-muted);
+  font: 8px/1 var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.1em;
+}
+
+.hybridShell .playerGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--player-line-strong);
+  border: 1px solid var(--player-line-strong);
+}
+
+.signalPagination {
+  margin: 0;
+  padding: 20px var(--player-gutter);
+  background: var(--player-ink);
+  border: 0;
+  color: var(--player-paper);
+}
+
+.signalPagination button:not(:disabled):hover,
+.signalPagination button:focus-visible {
+  background: var(--player-signal);
+  color: var(--player-ink);
+  outline: 0;
+}
+
+@media (max-width: 1100px) {
+  .playerSignalHero {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 360px auto;
+  }
+
+  .playerRoleIndex {
+    border-top: 1px solid var(--player-line-dark);
+    border-left: 0;
+  }
+
+  .playerSignalMetrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .playerSignalMetrics > :nth-child(2) {
+    border-right: 0;
+  }
+
+  .playerSignalMetrics > :nth-child(-n + 2) {
+    border-bottom: 1px solid var(--player-line);
+  }
+
+  .hybridShell .playerGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .playerSignalHero {
+    min-height: 0;
+    grid-template-rows: auto auto auto;
+  }
+
+  .playerSignalHero::before {
+    top: 64px;
+    font-size: 94px;
+  }
+
+  .playerSignalCopy {
+    padding: 42px 16px 36px;
+  }
+
+  .playerSignalCopy h1 {
+    margin-block: 30px 22px;
+    font-size: clamp(72px, 25vw, 98px);
+  }
+
+  .playerSignalCount {
+    width: 100%;
+  }
+
+  .playerRoleIndex {
+    grid-template-rows: 60px auto;
+  }
+
+  .playerRoleIndex > header {
+    padding-inline: 16px;
+  }
+
+  .playerRoleGrid {
+    display: flex;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .playerRoleGrid::-webkit-scrollbar,
+  .playerSignalMetrics::-webkit-scrollbar,
+  .signalSubnav::-webkit-scrollbar,
+  .signalRoleTabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .playerRoleGrid > a {
+    min-width: 244px;
+    min-height: 300px;
+    flex: 0 0 244px;
+  }
+
+  .playerSignalMetrics {
+    display: flex;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .playerSignalMetrics > div,
+  .playerSignalMetrics > a,
+  .playerSignalMetrics > :nth-child(2),
+  .playerSignalMetrics > :nth-child(-n + 2) {
+    min-width: 220px;
+    flex: 0 0 220px;
+    border-right: 1px solid var(--player-line);
+    border-bottom: 0;
+  }
+
+  .signalSubnav,
+  .signalRoleTabs {
+    display: flex;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .signalSubnav > a {
+    min-width: 170px;
+    flex: 0 0 170px;
+  }
+
+  .signalRoleTabs .roleTab {
+    min-width: 132px;
+    flex: 0 0 132px;
+    border-right: 1px solid var(--player-line-dark);
+    border-bottom: 0;
+  }
+
+  .signalToolbar {
+    padding: 16px;
+  }
+
+  .hybridShell .directorySection {
+    padding: 56px 16px 32px;
+  }
+
+  .signalDirectoryHead {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .signalDirectoryHead h2 {
+    font-size: 62px;
+  }
+
+  .signalDirectoryHead > strong {
+    text-align: left;
+  }
+
+  .hybridShell .playerGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .signalPagination {
+    padding: 18px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playerRoleGrid > a,
+  .playerRoleGrid > a::before,
+  .playerRoleAvatar,
+  .playerSignalMetrics > a > b {
+    transition: none;
+  }
+}
+
+/* PLAYER INDEX — one active dossier instead of a repeated card wall */
+
+.playerCommandDeck {
+  position: relative;
+  z-index: 5;
+  background: var(--player-ink);
+}
+
+.playerCommandDeck .signalSubnav {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  min-height: 62px;
+}
+
+.playerCommandDeck .signalSubnav > a {
+  min-height: 62px;
+}
+
+.playerCommandDeck .signalToolbar {
+  padding-block: 12px;
+}
+
+.playerCommandDeck .signalRoleTabs {
+  min-height: 44px;
+  border: 1px solid var(--player-line-dark);
+}
+
+.playerCommandDeck .signalRoleTabs .roleTab {
+  min-height: 42px;
+  padding-inline: 12px;
+  font-size: 11px;
+}
+
+.playerExplorer,
+.playerExplorerEmpty {
+  scroll-margin-top: 24px;
+  background: var(--player-paper);
+}
+
+.playerExplorer {
+  position: relative;
+  padding: 0 var(--player-gutter) var(--player-gutter);
+  overflow: clip;
+}
+
+.playerExplorer::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, transparent 0, transparent calc(12.5% - 1px), rgba(23, 24, 23, 0.055) calc(12.5% - 1px), rgba(23, 24, 23, 0.055) 12.5%);
+  content: "";
+}
+
+.playerExplorerHeader {
+  position: relative;
+  z-index: 1;
+  min-height: 210px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.75fr) auto;
+  gap: 40px;
+  align-items: end;
+  padding: 44px 0 32px;
+  border-bottom: 1px solid var(--player-line-strong);
+}
+
+.playerExplorerHeader > div > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--player-muted);
+  font: 800 10px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.playerExplorerHeader > div > span b {
+  color: var(--player-signal);
+  font-size: 16px;
+}
+
+.playerExplorerHeader h1 {
+  margin: 22px 0 0;
+  font: 900 clamp(54px, 6vw, 88px)/0.82 var(--player-display);
+  letter-spacing: -0.055em;
+}
+
+.playerExplorerHeader > p {
+  max-width: 420px;
+  margin: 0;
+  color: var(--player-muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.75;
+}
+
+.playerExplorerHeader > strong {
+  display: grid;
+  gap: 8px;
+  font: 900 clamp(48px, 5vw, 72px)/0.72 var(--player-display);
+  letter-spacing: -0.04em;
+  text-align: right;
+}
+
+.playerExplorerHeader > strong em {
+  color: var(--player-muted);
+  font: 800 8px/1 var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.1em;
+}
+
+.playerExplorerBody {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(340px, 0.76fr) minmax(0, 1.24fr);
+  align-items: start;
+  min-height: 720px;
+  border-right: 1px solid var(--player-line-strong);
+  border-bottom: 1px solid var(--player-line-strong);
+  border-left: 1px solid var(--player-line-strong);
+}
+
+.playerIndexPane {
+  min-width: 0;
+  height: 720px;
+  display: grid;
+  grid-template-rows: 52px minmax(0, 1fr);
+  background: var(--player-paper-raised);
+  border-right: 1px solid var(--player-line-strong);
+}
+
+.playerIndexMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--player-line);
+  color: var(--player-muted);
+  font: 800 8px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.playerIndexList {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-color: var(--player-signal) var(--player-ink);
+  scrollbar-width: thin;
+}
+
+.playerIndexRow {
+  position: relative;
+  width: 100%;
+  min-height: 68px;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 58px 38px 18px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 14px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--player-line);
+  color: var(--player-ink);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease, padding-left 180ms ease;
+}
+
+.playerIndexRow > b {
+  color: var(--player-signal);
+  font: 900 18px/1 var(--player-display);
+}
+
+.playerIndexRow > span {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.playerIndexRow > span strong,
+.playerIndexRow > span em,
+.playerIndexRow > i {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playerIndexRow > span strong {
+  font: 900 20px/0.95 var(--player-display);
+}
+
+.playerIndexRow > span em,
+.playerIndexRow > i,
+.playerIndexRow > small {
+  color: var(--player-muted);
+  font: 800 8px/1 var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.04em;
+}
+
+.playerIndexRow > small {
+  justify-self: center;
+}
+
+.playerIndexRow > u {
+  text-decoration: none;
+  opacity: 0;
+  transform: translateX(-5px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.playerIndexRow:hover,
+.playerIndexRow:focus-visible,
+.playerIndexRowActive {
+  padding-left: 20px;
+  background: var(--player-ink);
+  color: var(--player-paper);
+  outline: 0;
+}
+
+.playerIndexRow:hover > span em,
+.playerIndexRow:hover > i,
+.playerIndexRow:hover > small,
+.playerIndexRow:focus-visible > span em,
+.playerIndexRow:focus-visible > i,
+.playerIndexRow:focus-visible > small,
+.playerIndexRowActive > span em,
+.playerIndexRowActive > i,
+.playerIndexRowActive > small {
+  color: rgba(238, 237, 230, 0.58);
+}
+
+.playerIndexRow:hover > u,
+.playerIndexRow:focus-visible > u,
+.playerIndexRowActive > u {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.playerFocusStage {
+  --player-role-accent: #8a8e82;
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  height: 720px;
+  min-height: 720px;
+  overflow: hidden;
+  background: var(--player-ink);
+  color: var(--player-paper);
+}
+
+.playerExplorer[data-role="TANK"] .playerFocusStage {
+  --player-role-accent: #4d8fd8;
+}
+
+.playerExplorer[data-role="DPS"] .playerFocusStage {
+  --player-role-accent: #d75a52;
+}
+
+.playerExplorer[data-role="SUP"] .playerFocusStage,
+.playerExplorer[data-role="SUPPORT"] .playerFocusStage {
+  --player-role-accent: #59a77b;
+}
+
+.playerFocusStage::before {
+  position: absolute;
+  right: -0.04em;
+  bottom: 56px;
+  z-index: -2;
+  color: rgba(238, 237, 230, 0.045);
+  content: "PLAYER";
+  font: 900 clamp(130px, 16vw, 250px)/0.7 var(--player-display);
+  letter-spacing: -0.07em;
+  writing-mode: vertical-rl;
+}
+
+.playerFocusStage::after {
+  position: absolute;
+  top: -16%;
+  right: 12%;
+  bottom: -12%;
+  z-index: -1;
+  width: 30%;
+  background: color-mix(in srgb, var(--player-role-accent) 24%, transparent);
+  clip-path: polygon(42% 0, 100% 0, 58% 100%, 0 100%);
+  content: "";
+}
+
+.playerFocusGrid {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background:
+    repeating-linear-gradient(90deg, transparent 0, transparent calc(20% - 1px), rgba(238, 237, 230, 0.055) calc(20% - 1px), rgba(238, 237, 230, 0.055) 20%),
+    repeating-linear-gradient(0deg, transparent 0, transparent 95px, rgba(238, 237, 230, 0.045) 95px, rgba(238, 237, 230, 0.045) 96px);
+}
+
+.playerFocusSerial {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 3;
+  display: grid;
+  gap: 5px;
+  color: rgba(238, 237, 230, 0.48);
+  font: 800 8px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-align: right;
+}
+
+.playerFocusSerial b {
+  color: var(--player-role-accent);
+  font: 900 28px/0.8 var(--player-display);
+}
+
+.playerFocusIdentity {
+  position: relative;
+  z-index: 3;
+  max-width: 76%;
+  padding: 54px 42px 20px;
+  background: linear-gradient(90deg, rgba(23, 24, 23, 0.9) 0%, rgba(23, 24, 23, 0.54) 34%, rgba(23, 24, 23, 0.16) 66%, transparent 100%);
+}
+
+.playerFocusIdentity > span {
+  display: inline-flex;
+  padding: 8px 10px;
+  background: var(--player-role-accent);
+  color: var(--player-ink);
+  font: 900 9px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.playerFocusIdentity h2 {
+  margin: 22px 0 12px;
+  overflow-wrap: anywhere;
+  font: 900 clamp(62px, 7vw, 112px)/0.76 var(--player-display);
+  letter-spacing: -0.055em;
+  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.34);
+}
+
+.playerFocusIdentity p {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: rgba(238, 237, 230, 0.78);
+  font-size: 11px;
+  font-weight: 800;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.72);
+}
+
+.playerFocusIdentity p i {
+  color: var(--player-role-accent);
+  font-style: normal;
+}
+
+.playerFocusStage .playerFocusArtwork {
+  position: absolute;
+  right: -3%;
+  bottom: 66px;
+  z-index: 1;
+  width: 82%;
+  height: 84%;
+  overflow: visible;
+  background: transparent;
+  color: var(--player-role-accent);
+  opacity: 0.96;
+  pointer-events: none;
+  animation: player-focus-enter 420ms cubic-bezier(.2, .8, .2, 1) both;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+}
+
+.playerFocusStage .playerFocusArtwork img {
+  filter: drop-shadow(-18px 20px 22px rgba(0, 0, 0, 0.34));
+}
+
+.playerMissingHero {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  isolation: isolate;
+  pointer-events: none;
+}
+
+.playerMissingHero::before {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 7px, rgba(238, 237, 230, 0.018) 7px 8px),
+    linear-gradient(180deg, rgba(7, 9, 10, 0.04), rgba(7, 9, 10, 0.18) 54%, rgba(7, 9, 10, 0.9) 100%);
+  content: "";
+}
+
+.playerMissingHero::after {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(90deg, transparent 0 14%, color-mix(in srgb, var(--player-role-accent) 52%, transparent) 14% 68%, transparent 68%) 0 28% / 100% 2px no-repeat,
+    linear-gradient(90deg, transparent 0 48%, rgba(238, 237, 230, 0.12) 48% 91%, transparent 91%) 0 51% / 100% 1px no-repeat,
+    linear-gradient(90deg, transparent 0 24%, color-mix(in srgb, var(--player-role-accent) 42%, transparent) 24% 79%, transparent 79%) 0 73% / 100% 2px no-repeat;
+  content: "";
+  opacity: 0.62;
+}
+
+.playerMissingHero .playerMissingHeroArtwork {
+  position: absolute;
+  right: -3%;
+  bottom: 66px;
+  z-index: 1;
+  width: 82%;
+  height: 84%;
+  overflow: visible;
+  background: transparent;
+  color: var(--player-role-accent);
+  opacity: 0.94;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
+}
+
+.playerMissingHero .playerMissingHeroArtwork img {
+  filter:
+    grayscale(1)
+    brightness(0.12)
+    contrast(1.82)
+    drop-shadow(0 0 1px var(--player-role-accent))
+    drop-shadow(-12px 12px 24px color-mix(in srgb, var(--player-role-accent) 22%, transparent));
+  opacity: 0.96;
+}
+
+.playerMissingHeroStatus {
+  position: absolute;
+  right: 5%;
+  bottom: 176px;
+  z-index: 4;
+  width: min(38%, 330px);
+  min-width: 238px;
+  min-height: 72px;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  overflow: hidden;
+  padding: 11px 34px 11px 15px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--player-role-accent) 10%, rgba(7, 9, 10, 0.94)), rgba(7, 9, 10, 0.88));
+  border-top: 1px solid color-mix(in srgb, var(--player-role-accent) 66%, transparent);
+  border-bottom: 1px solid rgba(238, 237, 230, 0.1);
+  text-align: left;
+}
+
+.playerMissingHeroStatus::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--player-role-accent);
+  content: "";
+}
+
+.playerMissingHeroStatus span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(238, 237, 230, 0.56);
+  font: 800 8px/1 var(--font-mono);
+  letter-spacing: 0.09em;
+  white-space: nowrap;
+}
+
+.playerMissingHeroStatus span i {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  background: var(--player-role-accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--player-role-accent) 70%, transparent);
+}
+
+.playerMissingHeroStatus strong {
+  overflow: hidden;
+  color: var(--player-paper);
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.055em;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playerMissingHeroStatus em {
+  color: rgba(238, 237, 230, 0.42);
+  font: 750 9px/1 var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.04em;
+}
+
+.playerMissingHeroStatus > b {
+  position: absolute;
+  right: 12px;
+  bottom: 11px;
+  width: 18px;
+  height: 2px;
+  background: var(--player-role-accent);
+}
+
+.playerFocusReadout {
+  position: absolute;
+  right: 24px;
+  bottom: 92px;
+  left: 24px;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 82px 82px;
+  background: rgba(23, 24, 23, 0.86);
+  border: 1px solid var(--player-line-dark);
+  backdrop-filter: blur(8px);
+}
+
+.playerFocusReadout > div {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+  padding: 14px 16px;
+  border-right: 1px solid var(--player-line-dark);
+}
+
+.playerFocusReadout > div:last-child {
+  border-right: 0;
+}
+
+.playerFocusReadout span {
+  color: rgba(238, 237, 230, 0.42);
+  font: 800 8px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.playerFocusReadout strong {
+  overflow: hidden;
+  color: var(--player-paper);
+  font-size: 12px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playerFocusReadout > div:not(:first-child) strong {
+  color: var(--player-role-accent);
+  font: 900 28px/0.8 var(--player-display);
+}
+
+.playerFocusActions {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 4;
+  height: 68px;
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  border-top: 1px solid var(--player-line-dark);
+}
+
+.playerFocusActions button,
+.playerFocusActions a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border: 0;
+  color: var(--player-paper);
+  font-size: 11px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.playerFocusActions button {
+  background: transparent;
+  border-right: 1px solid var(--player-line-dark);
+}
+
+.playerFocusActions button:hover:not(:disabled),
+.playerFocusActions button:focus-visible {
+  background: var(--player-paper);
+  color: var(--player-ink);
+  outline: 0;
+}
+
+.playerFocusActions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.playerFocusActions a {
+  background: var(--player-signal);
+  color: var(--player-ink);
+}
+
+.playerFocusActions a b {
+  font-size: 20px;
+  transition: transform 180ms ease;
+}
+
+.playerFocusActions a:hover b,
+.playerFocusActions a:focus-visible b {
+  transform: translate(4px, -4px);
+}
+
+.playerExplorerEmpty {
+  padding: 64px var(--player-gutter);
+}
+
+@keyframes player-focus-enter {
+  from { opacity: 0; transform: translateX(28px) scale(1.02); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@media (max-width: 1120px) {
+  .playerCommandDeck .signalToolbar > div:first-child {
+    grid-template-columns: 1fr;
+  }
+
+  .playerExplorerHeader {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .playerExplorerHeader > p {
+    display: none;
+  }
+
+  .playerExplorerBody {
+    grid-template-columns: minmax(300px, 0.9fr) minmax(0, 1.1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .playerCommandDeck .signalSubnav {
+    display: flex;
+  }
+
+  .playerCommandDeck .signalSubnav > a {
+    min-width: 145px;
+  }
+
+  .playerCommandDeck .signalToolbar {
+    padding: 12px 16px;
+  }
+
+  .playerCommandDeck .signalRoleTabs {
+    display: flex;
+    overflow-x: auto;
+    border: 0;
+    scrollbar-width: none;
+  }
+
+  .playerCommandDeck .signalRoleTabs .roleTab {
+    min-width: 92px;
+  }
+
+  .playerExplorer {
+    padding: 0 16px 24px;
+  }
+
+  .playerExplorerHeader {
+    min-height: 174px;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    padding-block: 34px 24px;
+  }
+
+  .playerExplorerHeader h1 {
+    font-size: clamp(46px, 13vw, 62px);
+  }
+
+  .playerExplorerHeader > strong {
+    font-size: 44px;
+  }
+
+  .playerExplorerBody {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: stretch;
+    min-height: 0;
+    border-top: 0;
+  }
+
+  .playerIndexPane {
+    height: auto;
+    border-top: 1px solid var(--player-line-strong);
+    border-right: 0;
+  }
+
+  .playerIndexList {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .playerIndexRow {
+    grid-template-columns: 38px minmax(0, 1fr) 48px 32px 14px;
+    padding-inline: 10px;
+  }
+
+  .playerIndexRow:hover,
+  .playerIndexRow:focus-visible,
+  .playerIndexRowActive {
+    padding-left: 14px;
+  }
+
+  .playerFocusStage {
+    height: auto;
+    min-height: 540px;
+  }
+
+  .playerFocusIdentity {
+    max-width: 84%;
+    padding: 42px 22px 0;
+  }
+
+  .playerFocusIdentity h2 {
+    font-size: clamp(58px, 18vw, 82px);
+  }
+
+  .playerFocusStage .playerFocusArtwork {
+    right: -18%;
+    bottom: 104px;
+    width: 118%;
+    height: 72%;
+  }
+
+  .playerMissingHero .playerMissingHeroArtwork {
+    right: -20%;
+    bottom: 92px;
+    width: 122%;
+    height: 74%;
+  }
+
+  .playerMissingHeroStatus {
+    right: 14px;
+    bottom: 158px;
+    left: 14px;
+    width: auto;
+    min-width: 0;
+  }
+
+  .playerFocusReadout {
+    right: 12px;
+    bottom: 68px;
+    left: 12px;
+    grid-template-columns: minmax(0, 1fr) 64px 64px;
+  }
+
+  .playerFocusReadout > div {
+    padding: 11px 10px;
+  }
+
+  .playerFocusActions {
+    height: 56px;
+    grid-template-columns: 112px minmax(0, 1fr);
+  }
+
+  .playerFocusActions button,
+  .playerFocusActions a {
+    padding-inline: 12px;
+    font-size: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playerIndexRow,
+  .playerIndexRow > u,
+  .playerFocusStage .playerFocusArtwork,
+  .playerMissingHeroArtwork,
+  .playerFocusActions a b {
+    animation: none;
+    transition: none;
+  }
+}

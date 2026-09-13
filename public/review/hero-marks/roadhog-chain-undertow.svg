@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Roadhog forged chain hook</title>
+  <desc id="desc">A heavy open hook, a visible barb and two chain links retain a generous negative space. Motion belongs to the separate portrait background.</desc>
+
+  <defs>
+    <linearGradient id="iron" x1="122" y1="87" x2="211" y2="199" gradientUnits="userSpaceOnUse"><stop stop-color="#e0b77e" stop-opacity="0.42"/><stop offset="1" stop-color="#946d48" stop-opacity="0.18"/></linearGradient>
+  </defs>
+  <g fill="none" stroke="#bd9a6b" stroke-opacity="0.75" stroke-width="4">
+    <rect x="202" y="27" width="17" height="31" rx="8" transform="rotate(18 210 42)"/>
+    <rect x="198" y="47" width="17" height="29" rx="8"/>
+  </g>
+  <path d="M199 72H223V143C223 184 193 207 155 198C119 190 102 159 110 128C116 107 132 90 153 90L172 80L159 118L153 104C141 116 135 136 141 152C147 169 166 177 181 165C192 159 199 148 199 134Z" fill="url(#iron)" stroke="#d5b184" stroke-opacity="0.85" stroke-width="2.6" stroke-linejoin="round"/>
+  <path d="M211 84V141C211 173 186 191 158 184" fill="none" stroke="#f0cc98" stroke-opacity="0.48" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

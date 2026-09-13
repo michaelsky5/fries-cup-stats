@@ -1,0 +1,261 @@
+.hub {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
+  align-items: stretch;
+  gap: 22px 24px;
+  min-width: 0;
+  color: var(--review-ink);
+  scroll-margin-top: 150px;
+}
+
+.finder {
+  min-width: 0;
+  padding: 28px 30px;
+  border: 1px solid rgb(9 10 8 / 15%);
+  border-top: 3px solid var(--review-signal);
+  background: var(--review-paper);
+}
+
+.sectionLabel {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font: 700 11px/1.5 var(--font-mono, monospace);
+  letter-spacing: .1em;
+}
+
+.sectionLabel > span {
+  font-size: 18px;
+  letter-spacing: -.04em;
+}
+
+.finder h2,
+.eventCard h2 {
+  margin: 18px 0 10px;
+  font-size: clamp(25px, 2vw, 34px);
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: -.035em;
+  overflow-wrap: anywhere;
+}
+
+.subtitle,
+.eventCard p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.subtitle,
+.hint,
+.narrowHint,
+.resultSub,
+.empty p {
+  color: #62665e;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  margin-top: 28px;
+  border-bottom: 2px solid var(--review-ink);
+}
+
+.searchBox:focus-within {
+  box-shadow: 0 2px 0 var(--review-signal);
+}
+
+.searchBox > svg {
+  flex: 0 0 auto;
+}
+
+.searchBox input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  color: var(--review-ink);
+  font: inherit;
+  font-size: 16px;
+}
+
+.searchBox input::placeholder { color: #73766e; opacity: 1; }
+.searchBox input::-webkit-search-cancel-button { display: none; }
+
+.searchBox button {
+  flex: 0 0 40px;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.filters button,
+.empty button {
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid rgb(9 10 8 / 20%);
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.filters button[aria-pressed="true"] {
+  border-color: var(--review-ink);
+  background: var(--review-ink);
+  color: var(--review-paper);
+}
+
+.filters button:hover,
+.empty button:hover { border-color: var(--review-ink); }
+
+.hint,
+.narrowHint {
+  margin: 18px 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.eventCard {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 28px 30px 0;
+  border-top: 3px solid var(--review-signal);
+  background: var(--review-ink);
+  color: var(--review-paper);
+  text-decoration: none;
+}
+
+.eventCard .sectionLabel { color: var(--review-signal); }
+
+.eventIdentity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  color: #b6b8ae;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.eventIdentity img { width: 24px; height: 32px; object-fit: contain; }
+.eventCard h2 { margin-top: 12px; }
+.eventCard p { color: #b6b8ae; }
+
+.route {
+  margin: 20px 0;
+  color: var(--review-paper);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.eventAction {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 60px;
+  border-top: 1px solid rgb(245 242 232 / 20%);
+  color: var(--review-signal);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.eventAction b { font-size: 26px; }
+.eventCard:hover .eventAction { color: var(--review-paper); }
+
+.resultsPanel {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  min-width: 0;
+}
+
+.resultsHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgb(9 10 8 / 22%);
+}
+
+.resultsHead h3 { margin: 0; font-size: 16px; }
+.resultsHead > span { color: #62665e; font-size: 13px; }
+.narrowHint { margin: 10px 0; }
+.results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 20px; list-style: none; padding: 0; margin: 0; }
+.results[data-count="1"] { grid-template-columns: minmax(0, 1fr); }
+.results[data-count="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.results li { min-width: 0; }
+
+.results a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgb(9 10 8 / 15%);
+  color: inherit;
+  text-decoration: none;
+  scroll-margin-top: 150px;
+}
+
+.results a:hover,
+.results a.resultActive { background: var(--review-paper); box-shadow: inset 3px 0 var(--review-signal); }
+.resultCopy { display: grid; gap: 6px; min-width: 0; }
+.resultCopy strong { font-size: 22px; line-height: 1.25; overflow-wrap: anywhere; }
+.resultType { color: #747146; font-size: 12px; }
+.resultSub { font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.resultArrow { font-size: 25px; font-weight: 500; }
+
+.empty { padding: 30px 0; }
+.empty strong { font-size: 19px; }
+.empty p { font-size: 14px; line-height: 1.7; }
+.hub button:focus-visible,
+.hub a:focus-visible { outline: 2px solid #9c7714; outline-offset: 4px; }
+
+@media (max-width: 1100px) {
+  .hub { gap: 22px 18px; grid-template-columns: minmax(0, 1.3fr) minmax(290px, 1fr); }
+  .results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .finder,
+  .eventCard { padding-inline: 22px; }
+}
+
+@media (max-width: 760px) {
+  .hub { grid-template-columns: minmax(0, 1fr); gap: 18px; scroll-margin-top: 96px; }
+  .finder { padding: 22px 18px; }
+  .eventCard { grid-column: 1; grid-row: auto; order: 3; padding: 22px 18px 0; }
+  .resultsPanel { grid-row: auto; order: 2; padding-top: 0; }
+  .results[data-count] { grid-template-columns: minmax(0, 1fr); }
+  .finder h2,
+  .eventCard h2 { font-size: 26px; }
+  .searchBox { margin-top: 18px; gap: 10px; }
+  .filters button { min-height: 42px; padding-inline: 10px; }
+  .results a { padding: 18px 14px; scroll-margin-top: 96px; }
+}

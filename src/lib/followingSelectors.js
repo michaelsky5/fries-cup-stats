@@ -1,3 +1,4 @@
+import { translateUiText as formatUiText } from './uiText.js'
 import { getSeasonRules } from '../config/seasons.js'
 import {
   getPlayerDisplayName,
@@ -387,7 +388,7 @@ function formatDateRangeLabel(startDate, endDate, formatter) {
 
 function formatDateGroupLabel(dateKey, locale = 'zh-CN') {
   const date = dateFromKey(dateKey)
-  if (!date) return locale === 'en-US' ? 'TBD' : '待定'
+  if (!date) return formatUiText(locale === 'en-US' ? 'TBD' : '待定', locale)
   if (locale === 'en-US') {
     const month = new Intl.DateTimeFormat('en-US', {
       timeZone: SHANGHAI_TZ,
@@ -401,7 +402,7 @@ function formatDateGroupLabel(dateKey, locale = 'zh-CN') {
       timeZone: SHANGHAI_TZ,
       weekday: 'short'
     }).format(date).toUpperCase()
-    return `${month} ${day} ${weekday}`
+    return formatUiText(`${month} ${day} ${weekday}`, locale)
   }
 
   const [month, day] = normalize(dateKey).slice(5).split('-')
@@ -409,7 +410,7 @@ function formatDateGroupLabel(dateKey, locale = 'zh-CN') {
     timeZone: SHANGHAI_TZ,
     weekday: 'short'
   }).format(date)
-  return `${month}/${day} ${weekday}`
+  return formatUiText(`${month}/${day} ${weekday}`, locale)
 }
 
 function formatRoundNumberLabel(matches, fallback = '') {

@@ -282,6 +282,7 @@
 .deployButton,
 .marketHead button,
 .rowAction,
+.cloudSaveActions button,
 .exportBox button,
 .importBox button,
 .importBox select {
@@ -334,6 +335,8 @@
 .marketHead button:focus-visible,
 .rowAction:hover,
 .rowAction:focus-visible,
+.cloudSaveActions button:hover,
+.cloudSaveActions button:focus-visible,
 .exportBox button:hover,
 .exportBox button:focus-visible,
 .importBox button:hover,
@@ -349,6 +352,7 @@
 .marketHead button:disabled,
 .rowAction:disabled,
 .marketCard:disabled,
+.cloudSaveActions button:disabled,
 .importBox button:disabled {
   cursor: not-allowed;
   opacity: 0.48;
@@ -1146,8 +1150,68 @@
 
 .saveToolGrid {
   display: grid;
-  grid-template-columns: minmax(180px, 0.24fr) minmax(0, 1fr);
+  grid-template-columns: minmax(220px, 0.32fr) minmax(160px, 0.22fr) minmax(0, 1fr);
   gap: 12px;
+}
+
+.cloudSaveBox {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(42, 241, 255, 0.22);
+  background: rgba(42, 241, 255, 0.07);
+}
+
+.cloudSaveHead {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.cloudSaveHead span {
+  color: var(--game-cyan);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+}
+
+.cloudSaveHead strong {
+  min-width: 0;
+  color: var(--game-ink);
+  font-size: 18px;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.cloudSaveHead em,
+.cloudSaveError {
+  margin: 0;
+  color: var(--game-muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 820;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.cloudSaveError {
+  color: var(--game-red);
+}
+
+.cloudSaveActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cloudSaveActions button {
+  min-height: 40px;
+  padding: 0 10px;
+  background: rgba(237, 247, 255, 0.07);
+  font-size: 12px;
+  font-weight: 950;
 }
 
 .exportBox,

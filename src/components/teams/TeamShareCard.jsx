@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import styles from './TeamShareCard.module.css'
 import { formatOwHeroNames } from '../../lib/heroes.js'
 
@@ -24,6 +26,7 @@ export default function TeamShareCard({
   corePlayers,
   shareRef
 }) {
+  const uiLocale = useUiLocale()
   if (!team) return null
 
   const topHeroes = formatOwHeroNames(getTopHeroes(heroPool), 'zh-CN')
@@ -38,8 +41,8 @@ export default function TeamShareCard({
 
       <div className={styles.topRow}>
         <div className={styles.brandBlock}>
-          <div className={styles.brandCn}>薯条杯 2026</div>
-          <div className={styles.brandSub}>战队数据分享图</div>
+          <div className={styles.brandCn}>{uiText("薯条杯 2026", uiLocale)}</div>
+          <div className={styles.brandSub}>{uiText("战队数据分享图", uiLocale)}</div>
         </div>
 
         <div className={styles.teamShortTag}>
@@ -50,7 +53,7 @@ export default function TeamShareCard({
       <div className={styles.mainGrid}>
         <div className={styles.left}>
           <div className={styles.teamIdBox}>{team.team_id}</div>
-          <div className={styles.teamName}>{team.team_name || '未命名战队'}</div>
+          <div className={styles.teamName}>{team.team_name || uiText("未命名战队", uiLocale)}</div>
           <div className={styles.teamSubline}>
             <span className={styles.teamShortName}>{team.team_short_name || team.team_name || 'TEAM'}</span>
             <span className={styles.dot}>/</span>
@@ -58,27 +61,27 @@ export default function TeamShareCard({
           </div>
 
           <div className={styles.titleGroup}>
-            <div className={styles.titleBadge}>{teamProfile?.tag || '战队画像'}</div>
-            <div className={styles.titleSub}>赛季战队标签</div>
+            <div className={styles.titleBadge}>{teamProfile?.tag || uiText("战队画像", uiLocale)}</div>
+            <div className={styles.titleSub}>{uiText("赛季战队标签", uiLocale)}</div>
           </div>
 
           <p className={styles.desc}>
-            {teamProfile?.hook || teamProfile?.desc || '系统正在生成该战队的赛季数据摘要。'}
+            {teamProfile?.hook || teamProfile?.desc || uiText("系统正在生成该战队的赛季数据摘要。", uiLocale)}
           </p>
 
           <div className={styles.metaGrid}>
             <div className={styles.metaItem}>
-              <div className={styles.metaLabel}>当前强项</div>
+              <div className={styles.metaLabel}>{uiText("当前强项", uiLocale)}</div>
               <div className={styles.metaValueCn}>{strongestRole?.cn || '-'}</div>
             </div>
 
             <div className={styles.metaItem}>
-              <div className={styles.metaLabel}>近期状态</div>
+              <div className={styles.metaLabel}>{uiText("近期状态", uiLocale)}</div>
               <div className={styles.metaValueText}>{getRecentFormText(matchSummary?.recentForm)}</div>
             </div>
 
             <div className={styles.metaItem}>
-              <div className={styles.metaLabel}>英雄倾向</div>
+              <div className={styles.metaLabel}>{uiText("英雄倾向", uiLocale)}</div>
               <div className={styles.metaValueText}>
                 {topHeroes.length > 0 ? topHeroes.join(' · ') : '-'}
               </div>
@@ -89,31 +92,30 @@ export default function TeamShareCard({
         <div className={styles.right}>
           <div className={styles.statPanel}>
             <div className={styles.statPanelTop}>
-              <div className={styles.statLabel}>胜率</div>
+              <div className={styles.statLabel}>{uiText("胜率", uiLocale)}</div>
               <div className={styles.statValue}>{matchSummary?.winRate ?? 0}%</div>
-              <div className={styles.statText}>当前赛季完成对局</div>
+              <div className={styles.statText}>{uiText("当前赛季完成对局", uiLocale)}</div>
               <div className={styles.statSub}>
-                {matchSummary?.wins ?? 0}胜 / {matchSummary?.losses ?? 0}负
-                {matchSummary?.draws ? ` / ${matchSummary.draws}平` : ''}
+                {matchSummary?.wins ?? 0}{uiText("胜 / ", uiLocale)}{matchSummary?.losses ?? 0}{uiText("负", uiLocale)}{matchSummary?.draws ? uiText(" / {0}平", uiLocale, [matchSummary.draws]) : ''}
               </div>
             </div>
 
             <div className={styles.statDivider}></div>
 
             <div className={styles.secondRow}>
-              <div className={styles.secondLabel}>核心结构</div>
+              <div className={styles.secondLabel}>{uiText("核心结构", uiLocale)}</div>
 
               <div className={styles.coreList}>
                 <div className={styles.coreItem}>
-                  <span className={styles.coreRole}>重装</span>
+                  <span className={styles.coreRole}>{uiText("重装", uiLocale)}</span>
                   <span className={styles.coreName}>{tankCore}</span>
                 </div>
                 <div className={styles.coreItem}>
-                  <span className={styles.coreRole}>输出</span>
+                  <span className={styles.coreRole}>{uiText("输出", uiLocale)}</span>
                   <span className={styles.coreName}>{dpsCore}</span>
                 </div>
                 <div className={styles.coreItem}>
-                  <span className={styles.coreRole}>支援</span>
+                  <span className={styles.coreRole}>{uiText("支援", uiLocale)}</span>
                   <span className={styles.coreName}>{supCore}</span>
                 </div>
               </div>

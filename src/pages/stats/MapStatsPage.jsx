@@ -1,6 +1,8 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import React, { useMemo } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import DatabaseSubnav from '../../components/database/DatabaseSubnav.jsx'
+import SignalMapIndex from '../../features/map-atlas/SignalMapIndex.jsx'
 import styles from './MapStatsPage.module.css'
 import { getMapStats } from '../../lib/selectors'
 import { formatOwMapMode, formatOwMapName, getOwMapImageName, getOwMapModeFolder } from '../../lib/heroes.js'
@@ -81,16 +83,13 @@ const MapStatsPage = () => {
       <section className={styles.heroSection}>
         <div className={styles.heroMain}>
           <div className={styles.heroKicker}>
-            <span className={styles.heroKickerCn}>地图环境总览</span>
+            <span className={styles.heroKickerCn}>{uiText("地图环境总览", locale)}</span>
             <span className={styles.heroKickerEn}>MAP META REPORT</span>
           </div>
 
-          <h1 className={styles.heroTitle}>地图登场数据</h1>
+          <h1 className={styles.heroTitle}>{uiText("地图登场数据", locale)}</h1>
 
-          <p className={styles.heroDesc}>
-            本页统计当前赛季所有有效对局中的地图登场次数。可快速查看各模式下的
-            <strong> 热门地图分布</strong>、<strong>模式内部占比</strong> 与
-            <strong> 全局登场率</strong>。
+          <p className={styles.heroDesc}>{uiText("本页统计当前赛季所有有效对局中的地图登场次数。可快速查看各模式下的", locale)}<strong>{uiText(" 热门地图分布", locale)}</strong>、<strong>{uiText("模式内部占比", locale)}</strong>{uiText(" 与", locale)}<strong>{uiText(" 全局登场率", locale)}</strong>。
           </p>
 
           <div className={styles.ruleStrip}>
@@ -105,28 +104,28 @@ const MapStatsPage = () => {
             labelCn="有效地图总数"
             labelEn="TOTAL MAPS PLAYED"
             value={totalValidMaps}
-            meta={isEn ? 'Valid map records' : '有效地图记录'}
+            meta={isEn ? 'Valid map records' : uiText("有效地图记录", locale)}
             tone="accent"
           />
           <SummaryCard
             labelCn="模式分类"
             labelEn="MODE GROUPS"
             value={summary.modeCount}
-            meta={isEn ? 'Control / Hybrid / Push ...' : '控制 / 混合 / 推进 ...'}
+            meta={isEn ? 'Control / Hybrid / Push ...' : uiText("控制 / 混合 / 推进 ...", locale)}
           />
           <SummaryCard
             labelCn="地图池规模"
             labelEn="UNIQUE MAPS"
             value={summary.totalUniqueMaps}
-            meta={isEn ? 'Map pool records' : '地图池记录'}
+            meta={isEn ? 'Map pool records' : uiText("地图池记录", locale)}
           />
           <SummaryCard
             labelCn="当前最热地图"
             labelEn="TOP MAP"
             value={summary.topMap?.name ? formatOwMapName(summary.topMap.name, locale) : '--'}
             meta={summary.topMap
-              ? (isEn ? `${summary.topMap.playedCount} plays` : `${summary.topMap.playedCount} 次登场`)
-              : (isEn ? 'Awaiting records' : '等待记录')}
+              ? (isEn ? `${summary.topMap.playedCount} plays` : uiText("{0} 次登场", locale, [summary.topMap.playedCount]))
+              : (isEn ? 'Awaiting records' : uiText("等待记录", locale))}
             tone="highlight"
           />
         </div>
@@ -137,7 +136,7 @@ const MapStatsPage = () => {
           <div className={styles.overviewHead}>
             <div>
               <span className={styles.overviewKicker}>GLOBAL MAP RANK</span>
-              <h2 id="map-overview-title">{isEn ? 'Overall heat map' : '全局热度排行'}</h2>
+              <h2 id="map-overview-title">{isEn ? 'Overall heat map' : uiText("全局热度排行", locale)}</h2>
             </div>
 
             <div className={styles.modeShareStrip}>
@@ -178,12 +177,12 @@ const MapStatsPage = () => {
                     </div>
                     <div className={styles.overviewMetric}>
                       <b>{map.playedCount}</b>
-                      <span>{isEn ? 'PLAYS' : '登场'}</span>
+                      <span>{isEn ? 'PLAYS' : uiText("登场", locale)}</span>
                     </div>
                     <div className={styles.overviewBar}>
                       <span style={{ width: `${globalPickRate}%` }} />
                     </div>
-                    <em>{isEn ? 'Global share' : '全局占比'} {formatPercent(globalPickRate)}</em>
+                    <em>{isEn ? 'Global share' : uiText("全局占比", locale)} {formatPercent(globalPickRate)}</em>
                   </div>
                 </Link>
               )
@@ -226,10 +225,10 @@ const MapStatsPage = () => {
 
               {modeLeader ? (
                 <div className={styles.modeInsight}>
-                  <span>{isEn ? 'Leading map' : '模式首选地图'}</span>
+                  <span>{isEn ? 'Leading map' : uiText("模式首选地图", locale)}</span>
                   <strong>{formatOwMapName(modeLeader.name, locale)}</strong>
                   <em>
-                    {modeLeader.playedCount} {isEn ? 'plays' : '次登场'} / {formatPercent(modeShareRate)} {isEn ? 'global share' : '全局占比'}
+                    {modeLeader.playedCount} {isEn ? 'plays' : uiText("次登场", locale)} / {formatPercent(totalValidMaps > 0 ? (modeLeader.playedCount / totalValidMaps) * 100 : 0)} {isEn ? 'global share' : uiText("全局占比", locale)}
                   </em>
                 </div>
               ) : null}
@@ -264,7 +263,7 @@ const MapStatsPage = () => {
                         <div className={styles.mapCardTop}>
                           <div className={styles.mapTitleBlock}>
                             <span className={styles.mapName}>{mapDisplayName}</span>
-                            <span className={styles.mapSubline}>{isEn ? 'Map report available' : '可查看地图详情'}</span>
+                            <span className={styles.mapSubline}>{isEn ? 'Map report available' : uiText("可查看地图详情", locale)}</span>
                           </div>
 
                           <div className={styles.mapPill}>{formatOwMapMode(map.type, locale).toUpperCase()}</div>
@@ -310,4 +309,7 @@ const MapStatsPage = () => {
   )
 }
 
-export default MapStatsPage
+export default function MapStatsRoute() {
+  const { isKprDesign = false } = useOutletContext()
+  return isKprDesign ? <SignalMapIndex /> : <MapStatsPage />
+}

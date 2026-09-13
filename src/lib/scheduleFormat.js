@@ -1,3 +1,4 @@
+import { translateUiText as formatUiText } from './uiText.js'
 const SHANGHAI_TZ = 'Asia/Shanghai'
 
 function cleanValue(value) {
@@ -27,9 +28,9 @@ export function formatMatchSchedule(match, { locale = 'zh-CN', includeWeekday = 
     return {
       hasSchedule: false,
       isDateOnly: false,
-      label: locale === 'en-US' ? 'TBD' : '待定',
+      label: formatUiText(locale === 'en-US' ? 'TBD' : '待定', locale),
       compact: 'TBD',
-      title: note || (locale === 'en-US' ? 'Schedule TBD' : '赛程待定'),
+      title: note || formatUiText(locale === 'en-US' ? 'Schedule TBD' : '赛程待定', locale),
       note
     }
   }
@@ -73,8 +74,8 @@ export function formatMatchSchedule(match, { locale = 'zh-CN', includeWeekday = 
 
 export function getPublicStatusLabel(status, locale = 'zh-CN') {
   const normalized = String(status || '').toUpperCase()
-  if (normalized === 'COMPLETE' || normalized === 'COMPLETED') return locale === 'en-US' ? 'Completed' : '已完成'
-  if (normalized === 'IN_PROGRESS' || normalized === 'LIVE') return locale === 'en-US' ? 'Live' : '进行中'
-  if (normalized === 'CANCELLED') return locale === 'en-US' ? 'Cancelled' : '已取消'
-  return locale === 'en-US' ? 'Pending' : '未开始'
+  if (normalized === 'COMPLETE' || normalized === 'COMPLETED') return formatUiText(locale === 'en-US' ? 'Completed' : '已完成', locale)
+  if (normalized === 'IN_PROGRESS' || normalized === 'LIVE') return formatUiText(locale === 'en-US' ? 'Live' : '进行中', locale)
+  if (normalized === 'CANCELLED') return formatUiText(locale === 'en-US' ? 'Cancelled' : '已取消', locale)
+  return formatUiText(locale === 'en-US' ? 'Pending' : '未开始', locale)
 }

@@ -1,6 +1,9 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import ColumnPicker from './ColumnPicker.jsx'
+import ImeSafeInput from '../common/ImeSafeInput.jsx'
 import { formatOwHeroName } from '../../lib/heroes.js'
-import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
+import { formatSeasonSampleRequirements } from '../../lib/seasonRatingPolicy.js'
+import styles from '../../features/fd-design/leaderboardStyles.js'
 
 const ROLE_OPTIONS = [
   { value: 'ALL', label: '全部职责', en: 'ALL' },
@@ -36,24 +39,24 @@ export default function LeaderboardToolbar({
   const filterCount = getFilterCount(filters)
 
   return (
-    <section className={styles.toolbar} aria-label="排行榜筛选">
+    <section className={styles.toolbar} aria-label={uiText("排行榜筛选", locale)}>
       <div className={styles.toolbarPrimary}>
         <label className={`${styles.field} ${styles.searchField}`}>
-          <span>搜索选手</span>
-          <input
+          <span>{uiText("搜索选手", locale)}</span>
+          <ImeSafeInput
             value={filters.query}
-            onChange={event => onFilterChange({ query: event.target.value })}
-            placeholder="昵称 / BattleTag / 队伍"
+            onValueChange={value => onFilterChange({ query: value })}
+            placeholder={uiText("昵称 / BattleTag / 队伍", locale)}
           />
         </label>
 
         <label className={styles.field}>
-          <span>队伍</span>
+          <span>{uiText("队伍", locale)}</span>
           <select
             value={filters.team}
             onChange={event => onFilterChange({ team: event.target.value })}
           >
-            <option value="ALL">全部队伍</option>
+            <option value="ALL">{uiText("全部队伍", locale)}</option>
             {options.teams.map(team => (
               <option key={team.value} value={team.value}>
                 {team.label}
@@ -63,7 +66,7 @@ export default function LeaderboardToolbar({
         </label>
 
         <label className={styles.field}>
-          <span>职责</span>
+          <span>{uiText("职责", locale)}</span>
           <select
             value={filters.role}
             onChange={event => onFilterChange({ role: event.target.value })}
@@ -82,7 +85,7 @@ export default function LeaderboardToolbar({
             checked={filters.following}
             onChange={event => onFilterChange({ following: event.target.checked })}
           />
-          <span>只看关注</span>
+          <span>{uiText("只看关注", locale)}</span>
         </label>
 
         <button
@@ -90,33 +93,30 @@ export default function LeaderboardToolbar({
           className={styles.toolbarButton}
           aria-expanded={advancedOpen}
           onClick={onAdvancedToggle}
-        >
-          筛选 {filterCount ? `/${filterCount}` : ''}
+        >{uiText("筛选 ", locale)}{filterCount ? `/${filterCount}` : ''}
         </button>
 
         <ColumnPicker visibleColumns={visibleColumns} onChange={onColumnsChange} />
 
-        <button type="button" className={styles.resetButton} onClick={onReset}>
-          重置
-        </button>
+        <button type="button" className={styles.resetButton} onClick={onReset}>{uiText("重置", locale)}</button>
       </div>
 
       <div className={styles.toolbarStatusRow}>
         <span className={styles.thresholdInline}>
-          FILTER / MINIMUM PLAYTIME &gt;= {minTimeMins} MIN
+          {formatSeasonSampleRequirements(minTimeMins, locale)}
         </span>
-        <span>当前筛选会即时同步到 URL，可刷新或分享当前视图。</span>
+        <span>{uiText("当前筛选会即时同步到 URL，可刷新或分享当前视图。", locale)}</span>
       </div>
 
       {advancedOpen ? (
         <div className={styles.advancedFilters}>
           <label className={styles.field}>
-            <span>常用英雄</span>
+            <span>{uiText("常用英雄", locale)}</span>
             <select
               value={filters.hero}
               onChange={event => onFilterChange({ hero: event.target.value })}
             >
-              <option value="ALL">全部英雄</option>
+              <option value="ALL">{uiText("全部英雄", locale)}</option>
               {options.heroes.map(hero => (
                 <option key={hero} value={hero}>{formatOwHeroName(hero, locale)}</option>
               ))}
@@ -124,7 +124,7 @@ export default function LeaderboardToolbar({
           </label>
 
           <label className={styles.field}>
-            <span>最低出场时间</span>
+            <span>{uiText("最低出场时间", locale)}</span>
             <input
               type="number"
               min="0"
@@ -140,7 +140,7 @@ export default function LeaderboardToolbar({
               checked={filters.showInsufficient}
               onChange={event => onFilterChange({ showInsufficient: event.target.checked })}
             />
-            <span>显示样本不足</span>
+            <span>{locale === 'en-US' ? 'Include provisional / unrated' : uiText("显示暂定与未评级", locale)}</span>
           </label>
         </div>
       ) : null}

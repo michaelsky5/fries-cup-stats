@@ -5,6 +5,9 @@ import styles from './FavoriteManagerDialog.module.css'
 export default function FavoriteSelectedTeamRow({
   team,
   index,
+  total,
+  copy,
+  disabled,
   seasonId,
   primary,
   draggable,
@@ -30,13 +33,13 @@ export default function FavoriteSelectedTeamRow({
       <div className={styles.rowText}>
         <strong>{getTeamShortName(team)}</strong>
         <span>{getTeamFullName(team)}</span>
-        {primary ? <em>主关注</em> : null}
+        {primary ? <em>{copy.primary}</em> : null}
       </div>
       <div className={styles.rowActions}>
-        <button type="button" className={styles.orderButton} onClick={() => onMove(index, index - 1)} disabled={primary || index <= 1} aria-label="上移">↑</button>
-        <button type="button" className={styles.orderButton} onClick={() => onMove(index, index + 1)} disabled={primary} aria-label="下移">↓</button>
-        {!primary ? <button type="button" className={styles.primaryTextButton} onClick={() => onMakePrimary(id)}>设为主关注</button> : null}
-        <button type="button" className={styles.removeButton} onClick={() => onRemove(id)}>移除</button>
+        <button type="button" className={styles.orderButton} onClick={() => onMove(index, index - 1)} disabled={disabled || primary || index <= 1} aria-label={copy.up(getTeamShortName(team))}>↑</button>
+        <button type="button" className={styles.orderButton} onClick={() => onMove(index, index + 1)} disabled={disabled || primary || index >= total - 1} aria-label={copy.down(getTeamShortName(team))}>↓</button>
+        {!primary ? <button type="button" className={styles.primaryTextButton} disabled={disabled} onClick={() => onMakePrimary(id)}>{copy.makePrimary}</button> : null}
+        <button type="button" className={styles.removeButton} disabled={disabled} onClick={() => onRemove(id)} aria-label={copy.removeLabel(getTeamShortName(team))}>{copy.remove}</button>
       </div>
     </div>
   )

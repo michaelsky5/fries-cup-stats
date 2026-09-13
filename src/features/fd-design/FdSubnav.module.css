@@ -1,0 +1,18 @@
+:global([data-design="fd"][data-fd-page="sample"]) .subnav { display: flex; gap: 24px; min-height: 36px; padding: 0; border: 0; border-bottom: 1px solid var(--fd-line-dark); background: transparent; }
+:global([data-design="fd"][data-fd-page="sample"]) .subnavLink,
+:global([data-design="fd"][data-fd-page="sample"]) .subnavItem { display: inline-flex; min-height: 40px; align-items: center; justify-content: flex-start; gap: 8px; padding: 0 0 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--fd-muted); font-size: 12px; font-weight: 500; }
+:global([data-design="fd"][data-fd-page="sample"]) .subnavLabel { color: inherit; font-size: 12px; font-weight: 500; }
+:global([data-design="fd"][data-fd-page="sample"]) .subnavCode,
+:global([data-design="fd"][data-fd-page="sample"]) .subnavItem em { color: #929292; font-size: 9px; font-weight: 500; letter-spacing: .08em; }
+:global([data-design="fd"][data-fd-page="sample"]) .subnavActive,
+:global([data-design="fd"][data-fd-page="sample"]) .subnavItemActive { border-bottom-color: var(--fd-yellow); background: transparent; color: var(--fd-on-dark); }
+:global([data-design="fd"][data-fd-page="sample"]) .subnavActive .subnavCode,
+:global([data-design="fd"][data-fd-page="sample"]) .subnavItemActive em { color: var(--fd-yellow); }
+
+@media (max-width: 600px) {
+  :global([data-design="fd"][data-fd-page="sample"]) .subnav { gap: 20px; overflow-x: auto; }
+  :global([data-design="fd"][data-fd-page="sample"]) .subnavLink,
+  :global([data-design="fd"][data-fd-page="sample"]) .subnavItem { flex: 0 0 auto; min-height: 42px; font-size: 12px; }
+  :global([data-design="fd"][data-fd-page="sample"]) .subnavCode,
+  :global([data-design="fd"][data-fd-page="sample"]) .subnavItem em { display: none; }
+}

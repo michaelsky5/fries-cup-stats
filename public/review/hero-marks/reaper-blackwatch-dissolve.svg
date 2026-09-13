@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Reaper bone mask</title>
+  <desc id="desc">A bone faceplate, hollow eye sockets and the elongated beak form one mask. Wraith smoke remains behind the portrait, not in the seal.</desc>
+  <path d="M176 77C154 77 142 86 141 99L145 122L157 143L165 161L176 169L187 161L195 143L207 122L211 99C210 86 198 77 176 77Z" fill="#bdc6ce" fill-opacity="0.34" stroke="#dce2e7" stroke-opacity="0.75" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M176 79C194 79 205 87 207 99L199 118L187 141L181 159L176 165Z" fill="#e2e6e7" fill-opacity="0.18"/>
+  <path d="M147 101L170 110L164 124L151 117ZM205 101L182 110L188 124L201 117Z" fill="#0a0d0e" fill-opacity="0.95"/>
+  <path d="M170 124L176 112L182 124L181 142L176 162L171 142Z" fill="#dce4e8" fill-opacity="0.6"/>
+  <path d="M150 127L159 136L165 154M202 127L193 136L187 154" fill="none" stroke="#d2dbe0" stroke-opacity="0.4" stroke-width="1.2" stroke-linecap="round"/>
+</svg>

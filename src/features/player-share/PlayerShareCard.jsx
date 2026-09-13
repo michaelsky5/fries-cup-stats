@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useMemo, useState } from 'react'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import { createTranslator } from '../../lib/i18n.js'
@@ -104,6 +106,7 @@ function pointsToString(points) {
 }
 
 function RadarFingerprint({ model }) {
+  const uiLocale = useUiLocale()
   const t = createTranslator(model.locale)
   const labels = model.radar.labels
   const values = model.radar.playerValues
@@ -119,8 +122,8 @@ function RadarFingerprint({ model }) {
   return (
     <section className={styles.radarBlock}>
       <div className={styles.panelKicker}>PERFORMANCE FINGERPRINT</div>
-      <h3>{t('playerShare.card.performanceFingerprint', '表现指纹')}</h3>
-      <svg viewBox="0 0 540 500" role="img" aria-label={t('playerShare.card.radarAria', '表现指纹雷达图')}>
+      <h3>{t('playerShare.card.performanceFingerprint', uiText("表现指纹", uiLocale))}</h3>
+      <svg viewBox="0 0 540 500" role="img" aria-label={t('playerShare.card.radarAria', uiText("表现指纹雷达图", uiLocale))}>
         {[0.25, 0.5, 0.75, 1].map(step => (
           <polygon
             key={step}
@@ -184,11 +187,11 @@ function RadarFingerprint({ model }) {
         ) : null}
       </svg>
       <div className={styles.radarLegend}>
-        <span><i style={{ background: roleColor }} />{t('playerShare.card.playerRadar', '选手职责表现')}</span>
-        <span><i style={{ background: 'rgba(255,255,255,0.58)' }} />{t('playerShare.card.roleMedian', '同职责中位')}</span>
+        <span><i style={{ background: roleColor }} />{t('playerShare.card.playerRadar', uiText("选手职责表现", uiLocale))}</span>
+        <span><i style={{ background: 'rgba(255,255,255,0.58)' }} />{t('playerShare.card.roleMedian', uiText("同职责中位", uiLocale))}</span>
       </div>
       {availableCount < 3 ? (
-        <p className={styles.unratedNote}>{t('playerShare.card.radarInsufficient', '样本不足，暂不生成雷达图。')}</p>
+        <p className={styles.unratedNote}>{t('playerShare.card.radarInsufficient', uiText("样本不足，暂不生成雷达图。", uiLocale))}</p>
       ) : null}
     </section>
   )
@@ -220,6 +223,7 @@ function AttributeRail({ attributes }) {
 }
 
 export default function PlayerShareCard({ model, exportMode = false }) {
+  const uiLocale = useUiLocale()
   if (!model) return null
   const t = createTranslator(model.locale)
   const artwork = model.visuals.heroArtworkMeta || {}
@@ -274,8 +278,12 @@ export default function PlayerShareCard({ model, exportMode = false }) {
         <div className={styles.teamLine}>
           <TeamLogo
             seasonId={model.season.code}
-            teamShortName={model.identity.teamShortName}
-            teamName={model.identity.teamName}
+            team={{
+              team_id: model.identity.teamId,
+              team_short_name: model.identity.teamShortName,
+              team_name: model.identity.teamName,
+              team_logo: model.identity.teamLogo
+            }}
             className={styles.teamLogo}
           />
           <span>
@@ -307,23 +315,23 @@ export default function PlayerShareCard({ model, exportMode = false }) {
       <footer className={styles.footer}>
         <div>
           <strong>{model.footer.timePlayed}</strong>
-          <span>{t('playerShare.card.played', '出场时间')}</span>
+          <span>{t('playerShare.card.played', uiText("出场时间", uiLocale))}</span>
         </div>
         <div>
           <strong>{model.footer.mapsPlayed}</strong>
-          <span>{t('playerShare.card.maps', '地图数')}</span>
+          <span>{t('playerShare.card.maps', uiText("地图数", uiLocale))}</span>
         </div>
         <div>
           <strong>{model.footer.mainHero}</strong>
-          <span>{t('playerShare.card.mainHero', '主力英雄')}</span>
+          <span>{t('playerShare.card.mainHero', uiText("主力英雄", uiLocale))}</span>
         </div>
         <div>
           <strong>{model.footer.team}</strong>
-          <span>{t('playerShare.card.currentTeam', '当前队伍')}</span>
+          <span>{t('playerShare.card.currentTeam', uiText("当前队伍", uiLocale))}</span>
         </div>
         <div>
           <strong>{model.footer.updatedAt}</strong>
-          <span>{t('playerShare.card.updated', '数据截止')}</span>
+          <span>{t('playerShare.card.updated', uiText("数据截止", uiLocale))}</span>
         </div>
         <p>{model.footer.disclaimer}</p>
       </footer>

@@ -1,5 +1,5 @@
 import MapCodeBlock from './MapCodeBlock.jsx'
-import styles from './MatchDetail.module.css'
+import styles from './matchDetailStyles.js'
 
 function MetaItem({ label, value, children, wide = false }) {
   if (!value && !children) return null

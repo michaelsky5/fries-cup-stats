@@ -1,0 +1,26 @@
+.cycleBar { display: grid; min-width: 0; gap: 4px; font: 12px/1.5 var(--fc-data-font-interface); }
+.cycleBar:has(+ a) { border-right: 1px solid var(--fc-data-line); padding-right: 24px; }
+.cycleBar label { display: flex; align-items: center; gap: 12px; min-width: 0; color: var(--fc-data-text-muted); white-space: nowrap; }
+.cycleBar label select { box-sizing: border-box; min-width: 0; min-height: 44px; max-width: 240px; padding: 8px 24px 8px 8px; border: 0; border-bottom: 1px solid var(--fc-data-line-strong); border-radius: 0; background: transparent; color: var(--fc-data-ink); font: 700 14px/1.5 var(--fc-data-font-interface); cursor: pointer; }
+.cycleBar select:hover { border-bottom-color: var(--fc-data-ink); }
+.cycleBar select:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 3px; }
+.cycleBar select:disabled { cursor: default; }
+.cycleBar > span { color: var(--fc-data-text-muted); }
+.weekRail { display: grid; grid-auto-columns: minmax(150px, 1fr); grid-auto-flow: column; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--fc-data-line-strong) transparent; border-block: 1px solid var(--fc-data-line); }
+.weekRail .weekItem { justify-content: space-between; gap: 12px; }
+.weekItem > span { display: flex; gap: 12px; align-items: center; white-space: nowrap; }
+.weekItem b { color: var(--fc-data-text-muted); font: 900 16px var(--fc-data-font-display); }
+.weekItem small { color: var(--fc-data-text-muted); font-size: 11px; font-weight: 400; }
+.weekItem[aria-current] b { color: var(--fc-data-focus-on-light); }
+@media (max-width: 1100px) {
+  .weekRail .weekItem { flex-direction: column; align-items: flex-start; justify-content: center; gap: 6px; }
+  .weekItem > span { gap: 8px; }
+}
+@media (max-width: 600px) {
+  .cycleBar:has(+ a) { padding-right: 12px; }
+  .cycleBar label { gap: 8px; }
+  .cycleBar label select { max-width: 160px; padding-inline: 4px 16px; font-size: 16px; }
+  .weekRail { grid-auto-columns: minmax(112px, 1fr); }
+  .weekRail .weekItem { display: grid; min-height: 64px; gap: 6px; }
+  .weekItem > span { gap: 6px; }
+}

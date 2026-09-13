@@ -1,0 +1,273 @@
+export const REGION_GROUPS = [
+  {
+    value: 'ASIA_EAST_SE',
+    zh: '亚洲（东亚 / 东南亚）',
+    en: 'Asia (East / Southeast)',
+    options: [
+      { value: 'CN', zh: '中国大陆', en: 'Mainland China' },
+      { value: 'HK', zh: '中国香港', en: 'Hong Kong' },
+      { value: 'MO', zh: '中国澳门', en: 'Macau' },
+      { value: 'TW', zh: '中国台湾', en: 'Taiwan' },
+      { value: 'JP', zh: '日本', en: 'Japan' },
+      { value: 'KR', zh: '韩国', en: 'South Korea' },
+      { value: 'KP', zh: '朝鲜', en: 'North Korea' },
+      { value: 'MN', zh: '蒙古', en: 'Mongolia' },
+      { value: 'BN', zh: '文莱', en: 'Brunei' },
+      { value: 'KH', zh: '柬埔寨', en: 'Cambodia' },
+      { value: 'ID', zh: '印度尼西亚', en: 'Indonesia' },
+      { value: 'LA', zh: '老挝', en: 'Laos' },
+      { value: 'MY', zh: '马来西亚', en: 'Malaysia' },
+      { value: 'MM', zh: '缅甸', en: 'Myanmar' },
+      { value: 'PH', zh: '菲律宾', en: 'Philippines' },
+      { value: 'SG', zh: '新加坡', en: 'Singapore' },
+      { value: 'TH', zh: '泰国', en: 'Thailand' },
+      { value: 'TL', zh: '东帝汶', en: 'Timor-Leste' },
+      { value: 'VN', zh: '越南', en: 'Vietnam' }
+    ]
+  },
+  {
+    value: 'ASIA_OTHER',
+    zh: '亚洲（其他地区）',
+    en: 'Asia (Other)',
+    options: [
+      { value: 'AF', zh: '阿富汗', en: 'Afghanistan' },
+      { value: 'AM', zh: '亚美尼亚', en: 'Armenia' },
+      { value: 'AZ', zh: '阿塞拜疆', en: 'Azerbaijan' },
+      { value: 'BH', zh: '巴林', en: 'Bahrain' },
+      { value: 'BD', zh: '孟加拉国', en: 'Bangladesh' },
+      { value: 'BT', zh: '不丹', en: 'Bhutan' },
+      { value: 'CY', zh: '塞浦路斯', en: 'Cyprus' },
+      { value: 'GE', zh: '格鲁吉亚', en: 'Georgia' },
+      { value: 'IN', zh: '印度', en: 'India' },
+      { value: 'IR', zh: '伊朗', en: 'Iran' },
+      { value: 'IQ', zh: '伊拉克', en: 'Iraq' },
+      { value: 'IL', zh: '以色列', en: 'Israel' },
+      { value: 'JO', zh: '约旦', en: 'Jordan' },
+      { value: 'KZ', zh: '哈萨克斯坦', en: 'Kazakhstan' },
+      { value: 'KW', zh: '科威特', en: 'Kuwait' },
+      { value: 'KG', zh: '吉尔吉斯斯坦', en: 'Kyrgyzstan' },
+      { value: 'LB', zh: '黎巴嫩', en: 'Lebanon' },
+      { value: 'MV', zh: '马尔代夫', en: 'Maldives' },
+      { value: 'NP', zh: '尼泊尔', en: 'Nepal' },
+      { value: 'OM', zh: '阿曼', en: 'Oman' },
+      { value: 'PK', zh: '巴基斯坦', en: 'Pakistan' },
+      { value: 'PS', zh: '巴勒斯坦', en: 'Palestine' },
+      { value: 'QA', zh: '卡塔尔', en: 'Qatar' },
+      { value: 'SA', zh: '沙特阿拉伯', en: 'Saudi Arabia' },
+      { value: 'LK', zh: '斯里兰卡', en: 'Sri Lanka' },
+      { value: 'SY', zh: '叙利亚', en: 'Syria' },
+      { value: 'TJ', zh: '塔吉克斯坦', en: 'Tajikistan' },
+      { value: 'TR', zh: '土耳其', en: 'Turkey' },
+      { value: 'TM', zh: '土库曼斯坦', en: 'Turkmenistan' },
+      { value: 'AE', zh: '阿拉伯联合酋长国', en: 'United Arab Emirates' },
+      { value: 'UZ', zh: '乌兹别克斯坦', en: 'Uzbekistan' },
+      { value: 'YE', zh: '也门', en: 'Yemen' }
+    ]
+  },
+  {
+    value: 'EUROPE',
+    zh: '欧洲',
+    en: 'Europe',
+    options: [
+      { value: 'AL', zh: '阿尔巴尼亚', en: 'Albania' },
+      { value: 'AD', zh: '安道尔', en: 'Andorra' },
+      { value: 'AT', zh: '奥地利', en: 'Austria' },
+      { value: 'BY', zh: '白俄罗斯', en: 'Belarus' },
+      { value: 'BE', zh: '比利时', en: 'Belgium' },
+      { value: 'BA', zh: '波斯尼亚和黑塞哥维那', en: 'Bosnia and Herzegovina' },
+      { value: 'BG', zh: '保加利亚', en: 'Bulgaria' },
+      { value: 'HR', zh: '克罗地亚', en: 'Croatia' },
+      { value: 'CZ', zh: '捷克', en: 'Czechia' },
+      { value: 'DK', zh: '丹麦', en: 'Denmark' },
+      { value: 'EE', zh: '爱沙尼亚', en: 'Estonia' },
+      { value: 'FI', zh: '芬兰', en: 'Finland' },
+      { value: 'FR', zh: '法国', en: 'France' },
+      { value: 'DE', zh: '德国', en: 'Germany' },
+      { value: 'GR', zh: '希腊', en: 'Greece' },
+      { value: 'HU', zh: '匈牙利', en: 'Hungary' },
+      { value: 'IS', zh: '冰岛', en: 'Iceland' },
+      { value: 'IE', zh: '爱尔兰', en: 'Ireland' },
+      { value: 'IT', zh: '意大利', en: 'Italy' },
+      { value: 'XK', zh: '科索沃', en: 'Kosovo' },
+      { value: 'LV', zh: '拉脱维亚', en: 'Latvia' },
+      { value: 'LI', zh: '列支敦士登', en: 'Liechtenstein' },
+      { value: 'LT', zh: '立陶宛', en: 'Lithuania' },
+      { value: 'LU', zh: '卢森堡', en: 'Luxembourg' },
+      { value: 'MT', zh: '马耳他', en: 'Malta' },
+      { value: 'MD', zh: '摩尔多瓦', en: 'Moldova' },
+      { value: 'MC', zh: '摩纳哥', en: 'Monaco' },
+      { value: 'ME', zh: '黑山', en: 'Montenegro' },
+      { value: 'NL', zh: '荷兰', en: 'Netherlands' },
+      { value: 'MK', zh: '北马其顿', en: 'North Macedonia' },
+      { value: 'NO', zh: '挪威', en: 'Norway' },
+      { value: 'PL', zh: '波兰', en: 'Poland' },
+      { value: 'PT', zh: '葡萄牙', en: 'Portugal' },
+      { value: 'RO', zh: '罗马尼亚', en: 'Romania' },
+      { value: 'RU', zh: '俄罗斯', en: 'Russia' },
+      { value: 'SM', zh: '圣马力诺', en: 'San Marino' },
+      { value: 'RS', zh: '塞尔维亚', en: 'Serbia' },
+      { value: 'SK', zh: '斯洛伐克', en: 'Slovakia' },
+      { value: 'SI', zh: '斯洛文尼亚', en: 'Slovenia' },
+      { value: 'ES', zh: '西班牙', en: 'Spain' },
+      { value: 'SE', zh: '瑞典', en: 'Sweden' },
+      { value: 'CH', zh: '瑞士', en: 'Switzerland' },
+      { value: 'UA', zh: '乌克兰', en: 'Ukraine' },
+      { value: 'GB', zh: '英国', en: 'United Kingdom' },
+      { value: 'VA', zh: '梵蒂冈', en: 'Vatican City' }
+    ]
+  },
+  {
+    value: 'AFRICA',
+    zh: '非洲',
+    en: 'Africa',
+    options: [
+      { value: 'DZ', zh: '阿尔及利亚', en: 'Algeria' },
+      { value: 'AO', zh: '安哥拉', en: 'Angola' },
+      { value: 'BJ', zh: '贝宁', en: 'Benin' },
+      { value: 'BW', zh: '博茨瓦纳', en: 'Botswana' },
+      { value: 'BF', zh: '布基纳法索', en: 'Burkina Faso' },
+      { value: 'BI', zh: '布隆迪', en: 'Burundi' },
+      { value: 'CV', zh: '佛得角', en: 'Cape Verde' },
+      { value: 'CM', zh: '喀麦隆', en: 'Cameroon' },
+      { value: 'CF', zh: '中非共和国', en: 'Central African Republic' },
+      { value: 'TD', zh: '乍得', en: 'Chad' },
+      { value: 'KM', zh: '科摩罗', en: 'Comoros' },
+      { value: 'CG', zh: '刚果共和国', en: 'Congo' },
+      { value: 'CD', zh: '刚果民主共和国', en: 'Congo (DRC)' },
+      { value: 'CI', zh: '科特迪瓦', en: 'Cote d’Ivoire' },
+      { value: 'DJ', zh: '吉布提', en: 'Djibouti' },
+      { value: 'EG', zh: '埃及', en: 'Egypt' },
+      { value: 'GQ', zh: '赤道几内亚', en: 'Equatorial Guinea' },
+      { value: 'ER', zh: '厄立特里亚', en: 'Eritrea' },
+      { value: 'SZ', zh: '斯威士兰', en: 'Eswatini' },
+      { value: 'ET', zh: '埃塞俄比亚', en: 'Ethiopia' },
+      { value: 'GA', zh: '加蓬', en: 'Gabon' },
+      { value: 'GM', zh: '冈比亚', en: 'Gambia' },
+      { value: 'GH', zh: '加纳', en: 'Ghana' },
+      { value: 'GN', zh: '几内亚', en: 'Guinea' },
+      { value: 'GW', zh: '几内亚比绍', en: 'Guinea-Bissau' },
+      { value: 'KE', zh: '肯尼亚', en: 'Kenya' },
+      { value: 'LS', zh: '莱索托', en: 'Lesotho' },
+      { value: 'LR', zh: '利比里亚', en: 'Liberia' },
+      { value: 'LY', zh: '利比亚', en: 'Libya' },
+      { value: 'MG', zh: '马达加斯加', en: 'Madagascar' },
+      { value: 'MW', zh: '马拉维', en: 'Malawi' },
+      { value: 'ML', zh: '马里', en: 'Mali' },
+      { value: 'MR', zh: '毛里塔尼亚', en: 'Mauritania' },
+      { value: 'MU', zh: '毛里求斯', en: 'Mauritius' },
+      { value: 'MA', zh: '摩洛哥', en: 'Morocco' },
+      { value: 'MZ', zh: '莫桑比克', en: 'Mozambique' },
+      { value: 'NA', zh: '纳米比亚', en: 'Namibia' },
+      { value: 'NE', zh: '尼日尔', en: 'Niger' },
+      { value: 'NG', zh: '尼日利亚', en: 'Nigeria' },
+      { value: 'RW', zh: '卢旺达', en: 'Rwanda' },
+      { value: 'ST', zh: '圣多美和普林西比', en: 'Sao Tome and Principe' },
+      { value: 'SN', zh: '塞内加尔', en: 'Senegal' },
+      { value: 'SC', zh: '塞舌尔', en: 'Seychelles' },
+      { value: 'SL', zh: '塞拉利昂', en: 'Sierra Leone' },
+      { value: 'SO', zh: '索马里', en: 'Somalia' },
+      { value: 'ZA', zh: '南非', en: 'South Africa' },
+      { value: 'SS', zh: '南苏丹', en: 'South Sudan' },
+      { value: 'SD', zh: '苏丹', en: 'Sudan' },
+      { value: 'TZ', zh: '坦桑尼亚', en: 'Tanzania' },
+      { value: 'TG', zh: '多哥', en: 'Togo' },
+      { value: 'TN', zh: '突尼斯', en: 'Tunisia' },
+      { value: 'UG', zh: '乌干达', en: 'Uganda' },
+      { value: 'ZM', zh: '赞比亚', en: 'Zambia' },
+      { value: 'ZW', zh: '津巴布韦', en: 'Zimbabwe' }
+    ]
+  },
+  {
+    value: 'AMERICAS',
+    zh: '美洲',
+    en: 'Americas',
+    options: [
+      { value: 'AG', zh: '安提瓜和巴布达', en: 'Antigua and Barbuda' },
+      { value: 'AR', zh: '阿根廷', en: 'Argentina' },
+      { value: 'BS', zh: '巴哈马', en: 'Bahamas' },
+      { value: 'BB', zh: '巴巴多斯', en: 'Barbados' },
+      { value: 'BZ', zh: '伯利兹', en: 'Belize' },
+      { value: 'BO', zh: '玻利维亚', en: 'Bolivia' },
+      { value: 'BR', zh: '巴西', en: 'Brazil' },
+      { value: 'CA', zh: '加拿大', en: 'Canada' },
+      { value: 'CL', zh: '智利', en: 'Chile' },
+      { value: 'CO', zh: '哥伦比亚', en: 'Colombia' },
+      { value: 'CR', zh: '哥斯达黎加', en: 'Costa Rica' },
+      { value: 'CU', zh: '古巴', en: 'Cuba' },
+      { value: 'DM', zh: '多米尼克', en: 'Dominica' },
+      { value: 'DO', zh: '多米尼加共和国', en: 'Dominican Republic' },
+      { value: 'EC', zh: '厄瓜多尔', en: 'Ecuador' },
+      { value: 'SV', zh: '萨尔瓦多', en: 'El Salvador' },
+      { value: 'GD', zh: '格林纳达', en: 'Grenada' },
+      { value: 'GT', zh: '危地马拉', en: 'Guatemala' },
+      { value: 'GY', zh: '圭亚那', en: 'Guyana' },
+      { value: 'HT', zh: '海地', en: 'Haiti' },
+      { value: 'HN', zh: '洪都拉斯', en: 'Honduras' },
+      { value: 'JM', zh: '牙买加', en: 'Jamaica' },
+      { value: 'MX', zh: '墨西哥', en: 'Mexico' },
+      { value: 'NI', zh: '尼加拉瓜', en: 'Nicaragua' },
+      { value: 'PA', zh: '巴拿马', en: 'Panama' },
+      { value: 'PY', zh: '巴拉圭', en: 'Paraguay' },
+      { value: 'PE', zh: '秘鲁', en: 'Peru' },
+      { value: 'KN', zh: '圣基茨和尼维斯', en: 'Saint Kitts and Nevis' },
+      { value: 'LC', zh: '圣卢西亚', en: 'Saint Lucia' },
+      { value: 'VC', zh: '圣文森特和格林纳丁斯', en: 'Saint Vincent and the Grenadines' },
+      { value: 'SR', zh: '苏里南', en: 'Suriname' },
+      { value: 'TT', zh: '特立尼达和多巴哥', en: 'Trinidad and Tobago' },
+      { value: 'US', zh: '美国', en: 'United States' },
+      { value: 'UY', zh: '乌拉圭', en: 'Uruguay' },
+      { value: 'VE', zh: '委内瑞拉', en: 'Venezuela' }
+    ]
+  },
+  {
+    value: 'OCEANIA',
+    zh: '大洋洲',
+    en: 'Oceania',
+    options: [
+      { value: 'AU', zh: '澳大利亚', en: 'Australia' },
+      { value: 'FJ', zh: '斐济', en: 'Fiji' },
+      { value: 'KI', zh: '基里巴斯', en: 'Kiribati' },
+      { value: 'MH', zh: '马绍尔群岛', en: 'Marshall Islands' },
+      { value: 'FM', zh: '密克罗尼西亚', en: 'Micronesia' },
+      { value: 'NR', zh: '瑙鲁', en: 'Nauru' },
+      { value: 'NZ', zh: '新西兰', en: 'New Zealand' },
+      { value: 'PW', zh: '帕劳', en: 'Palau' },
+      { value: 'PG', zh: '巴布亚新几内亚', en: 'Papua New Guinea' },
+      { value: 'WS', zh: '萨摩亚', en: 'Samoa' },
+      { value: 'SB', zh: '所罗门群岛', en: 'Solomon Islands' },
+      { value: 'TO', zh: '汤加', en: 'Tonga' },
+      { value: 'TV', zh: '图瓦卢', en: 'Tuvalu' },
+      { value: 'VU', zh: '瓦努阿图', en: 'Vanuatu' }
+    ]
+  },
+  {
+    value: 'OTHER',
+    zh: '其他 / 未列出',
+    en: 'Other / Not Listed',
+    options: [
+      { value: 'OTHER', zh: '其他 / 未列出地区', en: 'Other / Not Listed' }
+    ]
+  }
+]
+
+export const DEFAULT_REGION_GROUP = REGION_GROUPS[0].value
+
+export function getRegionGroup(value) {
+  return REGION_GROUPS.find(group => group.value === value) || REGION_GROUPS[0]
+}
+
+export function getRegionOption(value) {
+  for (const group of REGION_GROUPS) {
+    const option = group.options.find(item => item.value === value)
+    if (option) return option
+  }
+  return REGION_GROUPS[0].options[0]
+}
+
+export function getRegionGroupValueForCode(value) {
+  return REGION_GROUPS.find(group => group.options.some(option => option.value === value))?.value || DEFAULT_REGION_GROUP
+}
+
+export function getLocalizedOption(option, locale) {
+  return locale === 'en-US' ? option.en : option.zh
+}

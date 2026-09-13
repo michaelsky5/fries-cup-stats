@@ -1,6 +1,7 @@
+import { translateUiText as uiText } from '../../../lib/uiText.js'
 import MatchPerformancePanel from './MatchPerformancePanel.jsx'
 import TeamMirrorComparison from './TeamMirrorComparison.jsx'
-import styles from './MatchDetail.module.css'
+import styles from './matchDetailStyles.js'
 
 export default function MatchAnalysisSection({ dossier, analysisRef, withSeason, locale = 'zh-CN', t }) {
   if (!dossier.state.canShowResults || dossier.state.isForfeit) {
@@ -31,11 +32,19 @@ export default function MatchAnalysisSection({ dossier, analysisRef, withSeason,
         </div>
       </header>
 
+      {!dossier.hasCompletePlayerStats ? (
+        <p className={styles.statsNotice} role="status">
+          {locale === 'en-US'
+            ? `Player statistics are incomplete. Published data covers ${dossier.statsMapCount} of ${dossier.completedMaps.length} recorded maps.`
+            : uiText("选手统计尚未齐全，目前有 {0} / {1} 张地图提供统计；下方仅汇总已发布数据。", locale, [dossier.statsMapCount, dossier.completedMaps.length])}
+        </p>
+      ) : null}
+
       <div className={styles.analysisFrame}>
-        <div className={styles.analysisGrid}>
+        {dossier.statsMapCount > 0 ? <div className={styles.analysisGrid}>
           <TeamMirrorComparison comparison={dossier.comparison} t={t} />
           <MatchPerformancePanel dossier={dossier} withSeason={withSeason} locale={locale} t={t} />
-        </div>
+        </div> : null}
 
         {dossier.analysisFacts?.length ? (
           <div className={styles.analysisFacts}>

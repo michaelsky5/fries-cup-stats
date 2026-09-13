@@ -1,3 +1,4 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useMemo, useRef } from 'react'
 import { useOutletContext, useSearchParams } from 'react-router-dom'
 import RosterPageHeader from '../../components/roster/RosterPageHeader.jsx'
@@ -21,6 +22,10 @@ import {
 } from '../../lib/rosterSelectors.js'
 import { formatOwHeroName, getOwHeroCanonicalKey, getOwHeroCanonicalName } from '../../lib/heroes.js'
 import styles from './PlayersPage.module.css'
+import { rosterText } from '../../features/roster-index/rosterCopy.js'
+import PlayerIndex, { PlayerIndexControls, PlayerIndexHeading } from '../../features/player-index/PlayerIndex.jsx'
+import directoryStyles from '../../features/roster-directory/RosterDirectory.module.css'
+import { playerIndexText } from '../../features/player-index/playerIndexCopy.js'
 
 const ROLE_TABS = [
   { id: 'ALL', label: '全部' },
@@ -53,6 +58,10 @@ function displayRole(role) {
   return getRosterRoleLabel(role)
 }
 
+function getPlayerKey(player) {
+  return player?.identity?.playerId || player?.player_id || player?.identity?.primary || ''
+}
+
 function useQueryWriter(searchParams, setSearchParams) {
   return (updates, { resetPage = true, replace = true } = {}) => {
     const next = new URLSearchParams(searchParams)
@@ -62,8 +71,8 @@ function useQueryWriter(searchParams, setSearchParams) {
       if (!value || value === fallback) next.delete(key)
       else next.set(key, String(value))
     })
-    if (resetPage) next.delete('page')
-    setSearchParams(next, { replace })
+    if (resetPage) { next.delete('page'); next.delete('rosterFocus') }
+    setSearchParams(next, { replace, preventScrollReset: true })
   }
 }
 
@@ -75,9 +84,13 @@ export default function PlayersPage() {
     favorites,
     favoriteLimits,
     togglePlayerFavorite,
-    locale = 'zh-CN'
+    locale = 'zh-CN',
+    isKprHybridDesign = false
   } = useOutletContext()
   const [searchParams, setSearchParams] = useSearchParams()
+  const focusedPlayerId = searchParams.get('rosterFocus') || ''
+  const setFocusedPlayerId = value => setQuery({ rosterFocus: value }, { resetPage: false })
+  const en = locale === 'en-US'
   const directoryRef = useRef(null)
   const setQuery = useQueryWriter(searchParams, setSearchParams)
   const queryState = useMemo(() => buildRosterQueryState(searchParams, 'players'), [searchParams])
@@ -97,7 +110,7 @@ export default function PlayersPage() {
       })
     })
     return [
-      { value: 'ALL', label: '全部队伍' },
+      { value: 'ALL', label: uiText("全部队伍", locale) },
       ...[...map.values()].sort((a, b) => a.label.localeCompare(b.label, 'zh-Hans-CN'))
     ]
   }, [players])
@@ -114,7 +127,7 @@ export default function PlayersPage() {
       safeArr(player.top_3_heroes).forEach(addHero)
     })
     return [
-      { value: 'ALL', label: '全部英雄' },
+      { value: 'ALL', label: uiText("全部英雄", locale) },
       ...[...heroes.values()]
         .sort((a, b) => formatOwHeroName(a, locale).localeCompare(formatOwHeroName(b, locale), locale))
         .map(hero => ({ value: hero, label: formatOwHeroName(hero, locale) }))
@@ -122,7 +135,7 @@ export default function PlayersPage() {
   }, [locale, players])
   const sortOptions = useMemo(() => {
     const hasTimeData = players.some(player => Number(player.raw_time_mins || 0) > 0)
-    return hasTimeData ? [...BASE_SORT_OPTIONS, { value: 'time', label: '出场时间' }] : BASE_SORT_OPTIONS
+    return hasTimeData ? [...BASE_SORT_OPTIONS, { value: 'time', label: uiText("出场时间", locale) }] : BASE_SORT_OPTIONS
   }, [players])
   const filteredPlayers = useMemo(() => {
     return sortPlayers(filterPlayers(players, queryState), queryState.sort)
@@ -130,6 +143,11 @@ export default function PlayersPage() {
   const pagination = useMemo(() => {
     return paginatePlayers(filteredPlayers, queryState.page, queryState.pageSize)
   }, [filteredPlayers, queryState.page, queryState.pageSize])
+  const focusedPlayer = useMemo(() => {
+    return pagination.items.find(player => getPlayerKey(player) === focusedPlayerId) ||
+      pagination.items[0] ||
+      null
+  }, [focusedPlayerId, pagination.items])
 
   useEffect(() => {
     if (pagination.page !== queryState.page) {
@@ -149,14 +167,14 @@ export default function PlayersPage() {
   )
   const reset = () => {
     const next = new URLSearchParams(searchParams)
-    ;['q', 'role', 'team', 'hero', 'following', 'sort', 'page', 'pageSize'].forEach(key => next.delete(key))
+    ;['q', 'role', 'team', 'hero', 'following', 'sort', 'page', 'pageSize', 'rosterFocus'].forEach(key => next.delete(key))
     setSearchParams(next, { replace: true })
   }
   const teamLabel = teamOptions.find(option => option.value === queryState.team)?.label || queryState.team
   const activeFilters = [
     queryState.q ? {
       key: 'q',
-      label: `搜索：${queryState.q}`,
+      label: uiText("搜索：{0}", locale, [queryState.q]),
       onRemove: () => setQuery({ q: { value: '', fallback: '' } })
     } : null,
     queryState.role !== 'ALL' ? {
@@ -176,51 +194,123 @@ export default function PlayersPage() {
     } : null,
     queryState.following === 'following' ? {
       key: 'following',
-      label: '只看关注',
+      label: uiText("只看关注", locale),
       onRemove: () => setQuery({ following: { value: 'all', fallback: 'all' } })
     } : null
   ].filter(Boolean)
   const activeTab = queryState.following === 'following' ? 'following' : queryState.role
+  const roleTabs = (
+    <div className={isKprHybridDesign ? directoryStyles.roleTabs : styles.roleTabs} role="group" aria-label={en ? 'Player role filters' : uiText("按选手职责筛选", locale)}>
+      {ROLE_TABS.map(tab => (
+        <button
+          key={tab.id}
+          type="button"
+          className={isKprHybridDesign ? undefined : `${styles.roleTab} ${activeTab === tab.id || (tab.id === 'SUPPORT' && normalizeRosterRole(activeTab) === 'SUP') ? styles.roleTabActive : ''}`}
+          aria-pressed={activeTab === tab.id || (tab.id === 'SUPPORT' && normalizeRosterRole(activeTab) === 'SUP')}
+          data-role={tab.id}
+          onClick={() => {
+            if (tab.id === 'following') {
+              setQuery({
+                following: { value: 'following', fallback: 'all' },
+                role: { value: 'ALL', fallback: 'ALL' }
+              })
+            } else {
+              setQuery({
+                role: { value: tab.id, fallback: 'ALL' },
+                following: { value: 'all', fallback: 'all' }
+              })
+            }
+          }}
+        >
+          {isKprHybridDesign ? playerIndexText(tab.label, locale) : rosterText(tab.label, locale)}
+        </button>
+      ))}
+    </div>
+  )
+  const toolbarFields = [
+    {
+      name: 'sort',
+      label: 'SORT',
+      value: queryState.sort,
+      onChange: value => setQuery({ sort: { value, fallback: 'default' } }),
+      options: sortOptions
+    }
+  ]
+  const advancedFields = [
+    {
+      name: 'role',
+      label: 'ROLE',
+      value: queryState.role,
+      onChange: value => setQuery({ role: { value, fallback: 'ALL' } }),
+      options: ROLE_OPTIONS
+    },
+    {
+      name: 'team',
+      label: 'TEAM',
+      value: queryState.team,
+      onChange: value => setQuery({ team: { value, fallback: 'ALL' } }),
+      options: teamOptions
+    },
+    {
+      name: 'hero',
+      label: 'HERO',
+      value: queryState.hero,
+      onChange: value => setQuery({ hero: { value, fallback: 'ALL' } }),
+      options: heroOptions
+    },
+    {
+      name: 'following',
+      label: 'FOLLOWING',
+      value: queryState.following,
+      onChange: value => setQuery({ following: { value, fallback: 'all' } }),
+      options: FOLLOWING_OPTIONS
+    }
+  ]
+
+  if (isKprHybridDesign) {
+    const seasonCode = season?.publicCode || season?.id || ''
+    const scopeLabel = queryState.role === 'ALL'
+      ? (en ? 'This season’s published records' : uiText("本届已发布记录", locale))
+      : (en ? 'Within the selected role' : uiText("当前职责筛选内的记录", locale))
+    return <div className={directoryStyles.shell} data-roster-directory="players" data-i18n-ignore>
+      <RosterSubnav presentation="index" />
+      <PlayerIndexHeading seasonCode={seasonCode} count={filteredPlayers.length} total={summary.totalPlayers} locale={locale} />
+      <PlayerIndex
+        directoryRef={directoryRef}
+        players={pagination.items}
+        focusedPlayer={focusedPlayer}
+        mobileExpanded={Boolean(focusedPlayerId)}
+        onFocusPlayer={setFocusedPlayerId}
+        startIndex={pagination.startIndex}
+        resultCount={filteredPlayers.length}
+        withSeason={withSeason}
+        seasonId={season?.id}
+        seasonCode={seasonCode}
+        scopeLabel={scopeLabel}
+        onToggleFavorite={togglePlayerFavorite}
+        favoriteDisabled={!focusedPlayer?.isFavorite && favoriteCount >= favoriteLimit}
+        locale={locale}
+        controls={<PlayerIndexControls roleTabs={roleTabs} locale={locale} searchValue={queryState.q} onSearchChange={value => setQuery({ q: value })} fields={toolbarFields} advancedFields={advancedFields} activeFilters={activeFilters} onReset={hasFilters ? reset : null} />}
+        emptyState={<RosterEmptyState title={en ? 'No matching players.' : uiText("没有找到匹配的选手。", locale)} onReset={reset} locale={locale} />}
+        pagination={<RosterPagination presentation="index" locale={locale} pagination={pagination} pageSizeOptions={PLAYER_PAGE_SIZES} scrollTargetRef={directoryRef} onPageChange={page => setQuery({ page: { value: page, fallback: 1 }, rosterFocus: '' }, { resetPage: false, replace: false })} onPageSizeChange={pageSize => setQuery({ pageSize: { value: pageSize, fallback: 24 } })} />}
+      />
+    </div>
+  }
 
   return (
     <div className={styles.shell}>
       <RosterPageHeader
         stats={[
-          { value: summary.totalPlayers, label: '参赛选手' },
-          { value: summary.roleCounts.TANK, label: '重装' },
-          { value: summary.roleCounts.DPS, label: '输出' },
-          { value: summary.roleCounts.SUPPORT, label: '支援' }
+          { value: summary.totalPlayers, label: uiText("参赛选手", locale) },
+          { value: summary.roleCounts.TANK, label: uiText("重装", locale) },
+          { value: summary.roleCounts.DPS, label: uiText("输出", locale) },
+          { value: summary.roleCounts.SUPPORT, label: uiText("支援", locale) }
         ]}
       />
 
       <div className={styles.stickyRosterControls}>
-        <RosterSubnav withSeason={withSeason} />
-
-        <div className={styles.roleTabs} role="tablist" aria-label="Player role filters">
-          {ROLE_TABS.map(tab => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`${styles.roleTab} ${activeTab === tab.id || (tab.id === 'SUPPORT' && normalizeRosterRole(activeTab) === 'SUP') ? styles.roleTabActive : ''}`}
-              data-role={tab.id}
-              onClick={() => {
-                if (tab.id === 'following') {
-                  setQuery({
-                    following: { value: 'following', fallback: 'all' },
-                    role: { value: 'ALL', fallback: 'ALL' }
-                  })
-                } else {
-                  setQuery({
-                    role: { value: tab.id, fallback: 'ALL' },
-                    following: { value: 'all', fallback: 'all' }
-                  })
-                }
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <RosterSubnav />
+        {roleTabs}
 
         <RosterToolbar
           compact
@@ -228,45 +318,8 @@ export default function PlayersPage() {
           searchPlaceholder="搜索昵称、BattleTag、队伍简称或全称"
           onSearchChange={value => setQuery({ q: { value, fallback: '' } })}
           resultLabel={`${filteredPlayers.length} 条结果`}
-          fields={[
-            {
-              name: 'sort',
-              label: 'SORT',
-              value: queryState.sort,
-              onChange: value => setQuery({ sort: { value, fallback: 'default' } }),
-              options: sortOptions
-            }
-          ]}
-          advancedFields={[
-            {
-              name: 'role',
-              label: 'ROLE',
-              value: queryState.role,
-              onChange: value => setQuery({ role: { value, fallback: 'ALL' } }),
-              options: ROLE_OPTIONS
-            },
-            {
-              name: 'team',
-              label: 'TEAM',
-              value: queryState.team,
-              onChange: value => setQuery({ team: { value, fallback: 'ALL' } }),
-              options: teamOptions
-            },
-            {
-              name: 'hero',
-              label: 'HERO',
-              value: queryState.hero,
-              onChange: value => setQuery({ hero: { value, fallback: 'ALL' } }),
-              options: heroOptions
-            },
-            {
-              name: 'following',
-              label: 'FOLLOWING',
-              value: queryState.following,
-              onChange: value => setQuery({ following: { value, fallback: 'all' } }),
-              options: FOLLOWING_OPTIONS
-            }
-          ]}
+          fields={toolbarFields}
+          advancedFields={advancedFields}
           activeFilters={activeFilters}
           onReset={hasFilters ? reset : null}
         />
@@ -275,18 +328,20 @@ export default function PlayersPage() {
       <section ref={directoryRef} className={styles.directorySection}>
         <div className={rosterStyles.directoryHead}>
           <div className={rosterStyles.directoryTitleGroup}>
-            <h2 className={rosterStyles.directoryTitle}>全部选手</h2>
+            <h2 className={rosterStyles.directoryTitle}>{uiText("全部选手", locale)}</h2>
             <div className={rosterStyles.directorySubtitle}>PLAYER DIRECTORY</div>
           </div>
-          <div className={rosterStyles.directoryCount}>{filteredPlayers.length} 条结果</div>
+          <div className={rosterStyles.directoryCount}>{filteredPlayers.length}{uiText(" 条结果", locale)}</div>
         </div>
 
         {pagination.items.length ? (
           <div className={styles.playerGrid}>
-            {pagination.items.map(player => (
+            {pagination.items.map((player, index) => (
               <PlayerDirectoryCard
                 key={player.identity.playerId || player.player_id}
                 player={player}
+                index={pagination.startIndex + index}
+                presentation="default"
                 withSeason={withSeason}
                 onToggleFavorite={togglePlayerFavorite}
                 favoriteDisabled={!player.isFavorite && favoriteCount >= favoriteLimit}
@@ -295,7 +350,7 @@ export default function PlayersPage() {
             ))}
           </div>
         ) : (
-          <RosterEmptyState title="未找到符合条件的选手。" onReset={reset} />
+          <RosterEmptyState title={uiText("未找到符合条件的选手。", locale)} onReset={reset} />
         )}
       </section>
 

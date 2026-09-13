@@ -1,4 +1,6 @@
-import { useMemo, useState } from 'react'
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import {
@@ -19,7 +21,13 @@ import {
 import { getBroadcastInfo } from '../../lib/broadcastSelectors.js'
 import { formatOwHeroName, formatOwMapName } from '../../lib/heroes.js'
 import { isEnglishLocale, pickLocale, translateLegacyText } from '../../lib/legacyI18n.js'
+import KprArchivePage from '../../features/kpr-design/KprArchivePage.jsx'
 import styles from './HomePage.module.css'
+import { isWeeklyOverview } from '../../features/weekly-overview/weeklyOverviewModel.js'
+
+const KprStageArchive = lazy(() => import('../../features/kpr-design/KprStageArchive.jsx'))
+const SignalWeeklyOverview = lazy(() => import('../../features/weekly-overview/SignalWeeklyOverview.jsx'))
+const KprImmersiveArchive = lazy(() => import('../../features/kpr-design/KprImmersiveArchive.jsx'))
 
 function homeText(locale, zh, en) {
   return pickLocale(locale, zh, en)
@@ -34,7 +42,7 @@ function countText(locale, count, zhUnit, enSingular, enPlural = `${enSingular}s
 }
 
 function teamPlayerScaleText(locale, teams, players) {
-  return isEnglishLocale(locale) ? `${teams} teams / ${players} players` : `${teams} 队 / ${players} 人`
+  return isEnglishLocale(locale) ? `${teams} teams / ${players} players` : uiText("{0} 队 / {1} 人", locale, [teams, players])
 }
 
 function advanceSlotsText(value, locale = 'zh-CN') {
@@ -136,8 +144,8 @@ function ManagerChoiceModal({ open, onClose }) {
       key: 'classic',
       label: 'FANTASY MANAGER CLASSIC',
       badge: homeText(locale, '经典版', 'Classic'),
-      title: homeText(locale, '电竞经理经典版', 'Fantasy Manager Classic'),
-      text: homeText(locale, '保留旧版玩法、本机存档和原有挑战。', 'Classic systems, local saves, and existing challenges stay here.'),
+      title: homeText(locale, uiText("电竞经理经典版", locale), 'Fantasy Manager Classic'),
+      text: homeText(locale, uiText("保留旧版玩法、本机存档和原有挑战。", locale), 'Classic systems, local saves, and existing challenges stay here.'),
       to: '/fantasy'
     }
   ]
@@ -153,8 +161,8 @@ function ManagerChoiceModal({ open, onClose }) {
       >
         <header>
           <span>FANTASY MANAGER</span>
-          <h2 id="manager-choice-title">{homeText(locale, '进入电竞经理经典版', 'Open Fantasy Manager Classic')}</h2>
-          <button type="button" onClick={onClose} aria-label={homeText(locale, '关闭', 'Close')}>×</button>
+          <h2 id="manager-choice-title">{homeText(locale, uiText("进入电竞经理经典版", locale), 'Open Fantasy Manager Classic')}</h2>
+          <button type="button" onClick={onClose} aria-label={homeText(locale, uiText("关闭", locale), 'Close')}>×</button>
         </header>
         <div className={styles.managerChoiceGrid}>
           {options.map(option => (
@@ -244,7 +252,7 @@ function MatchCard({ match, result = false, compact = false }) {
       <div className={styles.matchMeta}>
         <span>{getShortTime(match, locale)}</span>
         <span>{match.format || 'TBD'}</span>
-        <em>{homeText(locale, '详情', 'Details')}</em>
+        <em>{homeText(locale, uiText("详情", locale), 'Details')}</em>
       </div>
     </Link>
   )
@@ -266,17 +274,18 @@ function FollowDuelTeam({ team, align = 'left' }) {
 
 function CommandBoard({ overview, featuredMatches }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
+  const isGroupFormat = overview.competitionFormat === 'GROUP'
   const facts = [
-    { label: homeText(locale, '当前阶段', 'Current Stage'), value: homeValue(overview.currentStage, locale) },
-    { label: homeText(locale, '赛事状态', 'Event Status'), value: homeValue(overview.statusText, locale) },
-    { label: homeText(locale, '下一开赛', 'Next Start'), value: homeValue(overview.nextStartLabel, locale) },
-    { label: homeText(locale, '本轮进度', 'Round Progress'), value: homeValue(overview.roundProgressLabel, locale) },
-    { label: homeText(locale, '赛季规模', 'Season Scale'), value: homeValue(overview.seasonScaleLabel, locale) },
-    { label: homeText(locale, '晋级名额', 'Advance Slots'), value: advanceSlotsText(overview.advancementLabel, locale) }
+    { label: homeText(locale, uiText("当前阶段", locale), 'Current Stage'), value: homeValue(overview.currentStage, locale) },
+    { label: homeText(locale, uiText("赛事状态", locale), 'Event Status'), value: homeValue(overview.statusText, locale) },
+    { label: homeText(locale, uiText("下一开赛", locale), 'Next Start'), value: homeValue(overview.nextStartLabel, locale) },
+    { label: isGroupFormat ? homeText(locale, uiText("本比赛日进度", locale), 'Match Day Progress') : homeText(locale, uiText("本轮进度", locale), 'Round Progress'), value: homeValue(overview.roundProgressLabel, locale) },
+    { label: homeText(locale, uiText("赛季规模", locale), 'Season Scale'), value: homeValue(overview.seasonScaleLabel, locale) },
+    { label: homeText(locale, uiText("晋级名额", locale), 'Advance Slots'), value: advanceSlotsText(overview.advancementLabel, locale) }
   ]
 
   return (
-    <section className={styles.commandBoard}>
+    <section className={styles.commandBoard} data-event-mark={overview.eventCode}>
       <div className={styles.commandLead}>
         <span className={styles.commandKicker}>EVENT COMMAND BOARD</span>
         <div className={styles.commandTitle}>
@@ -292,16 +301,18 @@ function CommandBoard({ overview, featuredMatches }) {
           ))}
         </dl>
         <div className={styles.commandActions}>
-          <Link to={withSeason('/matches?view=list&tab=round')}>{homeText(locale, '查看本轮全部比赛', 'View This Round')}</Link>
-          <Link to={withSeason('/advance')}>{homeText(locale, '查看晋级形势', 'View Advance Hub')}</Link>
-          <Link to={withSeason('/following?manage=1')}>{homeText(locale, '管理关注', 'Manage Follows')}</Link>
+          <Link to={withSeason('/matches?view=list&tab=round')}>
+            {isGroupFormat ? homeText(locale, uiText("查看本比赛日全部比赛", locale), 'View This Match Day') : homeText(locale, uiText("查看本轮全部比赛", locale), 'View This Round')}
+          </Link>
+          <Link to={withSeason('/advance')}>{homeText(locale, uiText("查看晋级形势", locale), 'View Advance Hub')}</Link>
+          <Link to={withSeason('/me?section=following&manage=1')}>{homeText(locale, uiText("管理关注", locale), 'Manage Follows')}</Link>
         </div>
       </div>
 
       <aside className={styles.commandFeatured}>
         <div className={styles.commandFeaturedHead}>
           <span>FEATURED MATCHES</span>
-          <strong>{homeText(locale, '本轮重点比赛', 'Featured Matches')}</strong>
+          <strong>{isGroupFormat ? homeText(locale, uiText("本比赛日重点比赛", locale), 'Featured Match Day') : homeText(locale, uiText("本轮重点比赛", locale), 'Featured Matches')}</strong>
           <em>{homeValue(overview.round.roundLabel, locale)}</em>
         </div>
         <div className={styles.commandFeaturedGrid}>
@@ -309,8 +320,11 @@ function CommandBoard({ overview, featuredMatches }) {
             <MatchBoardRow key={matchRouteId(match)} match={match} index={index + 1} />
           )) : (
             <div className={styles.emptyMini}>
-              <strong>{homeText(locale, '暂无重点比赛', 'No Featured Matches')}</strong>
-              <span>{homeText(locale, '赛程公布后将展示本轮代表性对阵。', 'Representative matches will appear after the schedule is published.')}</span>
+              <strong>{homeText(locale, uiText("暂无重点比赛", locale), 'No Featured Matches')}</strong>
+              <span>{isGroupFormat
+                ? homeText(locale, uiText("赛程公布后将展示本比赛日代表性对阵。", locale), 'Representative match-day pairings will appear after the schedule is published.')
+                : homeText(locale, uiText("赛程公布后将展示本轮代表性对阵。", locale), 'Representative matches will appear after the schedule is published.')}
+              </span>
             </div>
           )}
         </div>
@@ -333,9 +347,9 @@ const EVENT_TIMELINE = [
     key: 'qualifier',
     label: 'OPEN QUALIFIER',
     title: { zh: '公开预选赛时间', en: 'Open Qualifier' },
-    range: { zh: '2026 年 6 月 26 日 - 7 月 19 日', en: 'June 26-July 19, 2026' },
+    range: { zh: '2026 年 6 月 26 日 - 7 月 26 日', en: 'June 26-July 26, 2026' },
     start: '2026-06-26T00:00:00+08:00',
-    end: '2026-07-19T23:59:59+08:00',
+    end: '2026-07-26T23:59:59+08:00',
     text: { zh: '公开预选赛阶段，具体对阵与赛果进入赛程赛果查看。', en: 'The qualifier window. Full pairings, filters, and match details live in Matches.' }
   },
   {
@@ -370,18 +384,27 @@ function getTimelineStatus(item, locale = 'zh-CN') {
 }
 
 function EventTimelineSection() {
-  const { locale = 'zh-CN' } = useOutletContext()
+  const { locale = 'zh-CN', season } = useOutletContext()
+  const timeline = safeArr(season?.timeline).length
+    ? safeArr(season.timeline).map(item => ({
+        ...item,
+        label: item.code || item.label,
+        title: item.title || item.label,
+        range: item.range || { zh: item.date, en: item.date },
+        text: item.text || { zh: '', en: '' }
+      }))
+    : EVENT_TIMELINE
 
   return (
     <section className={styles.sectionBlock}>
       <SectionHead
         eyebrow="EVENT TIMELINE"
-        title={homeText(locale, '赛事时间轴', 'Event Timeline')}
+        title={homeText(locale, uiText("赛事时间轴", locale), 'Event Timeline')}
         actionTo="/matches"
         actionText={homeText(locale, '查看赛程赛果', 'Open Matches')}
       />
       <div className={styles.eventTimelineGrid}>
-        {EVENT_TIMELINE.map((item, index) => {
+        {timeline.map((item, index) => {
           const statusKey = getTimelineStatusKey(item)
           const status = getTimelineStatus(item, locale)
           const current = statusKey === 'soon' || statusKey === 'active'
@@ -403,7 +426,7 @@ function EventTimelineSection() {
           )
         })}
       </div>
-      <p className={styles.scheduleHint}>{homeText(locale, '时间安排以赛事公告为准。', 'Dates are based on the official event announcement.')}</p>
+      <p className={styles.scheduleHint}>{homeText(locale, uiText("时间安排以赛事公告为准。", locale), 'Dates are based on the official event announcement.')}</p>
     </section>
   )
 }
@@ -413,21 +436,21 @@ function FollowingSection({ following }) {
   const team = following.primaryTeam
   const match = following.displayMatch
   const opponent = following.opponent
-  const teamPath = team ? withSeason(`/teams/${routeId(team)}`) : withSeason('/following?manage=1')
+  const teamPath = team ? withSeason(`/teams/${routeId(team)}`) : withSeason('/me?section=following&manage=1')
   const matchPath = match ? withSeason(`/matches/${matchRouteId(match)}`) : withSeason('/matches?view=list&tab=following')
 
   return (
     <section className={styles.sectionBlock}>
-      <SectionHead eyebrow="FOLLOWING" title={homeText(locale, '我的关注', 'My Follows')} />
+      <SectionHead eyebrow="FOLLOWING" title={homeText(locale, uiText("我的关注", locale), 'My Follows')} />
       {!following.hasFavorites ? (
         <div className={styles.followEmpty}>
           <div>
-            <strong>{homeText(locale, '我的关注', 'My Follows')}</strong>
-            <span>{homeText(locale, '关注队伍后，将优先显示你的下一场比赛和相关赛果。', 'Follow teams to surface your next match and related results first.')}</span>
+            <strong>{homeText(locale, uiText("我的关注", locale), 'My Follows')}</strong>
+            <span>{homeText(locale, uiText("关注队伍后，将优先显示你的下一场比赛和相关赛果。", locale), 'Follow teams to surface your next match and related results first.')}</span>
           </div>
           <div className={styles.followActions}>
-            <Link to={withSeason('/following?manage=1')}>{homeText(locale, '选择关注队伍', 'Choose Teams')}</Link>
-            <Link to={withSeason('/following?manage=1&tab=players')}>{homeText(locale, '关注选手', 'Follow Players')}</Link>
+            <Link to={withSeason('/me?section=following&manage=1')}>{homeText(locale, uiText("选择关注队伍", locale), 'Choose Teams')}</Link>
+            <Link to={withSeason('/me?section=following&manage=1&tab=players')}>{homeText(locale, uiText("关注选手", locale), 'Follow Players')}</Link>
           </div>
         </div>
       ) : (
@@ -443,14 +466,14 @@ function FollowingSection({ following }) {
                 teamName={getTeamTitle(team)}
               />
             ) : null}
-            <strong title={getTeamTitle(team)}>{team ? getTeamLabel(team) : homeText(locale, '未设置', 'Not Set')}</strong>
-            <em>{team ? getTeamTitle(team) : homeText(locale, '打开管理关注，选择主关注队伍。', 'Open follow management and choose a primary team.')}</em>
+            <strong title={getTeamTitle(team)}>{team ? getTeamLabel(team) : homeText(locale, uiText("未设置", locale), 'Not Set')}</strong>
+            <em>{team ? getTeamTitle(team) : homeText(locale, uiText("打开管理关注，选择主关注队伍。", locale), 'Open follow management and choose a primary team.')}</em>
           </Link>
 
           <div className={styles.followNext}>
             <div className={styles.followNextHead}>
               <span>NEXT FOLLOWING MATCH</span>
-              <strong>{homeText(locale, '下一场比赛', 'Next Match')}</strong>
+              <strong>{homeText(locale, uiText("下一场比赛", locale), 'Next Match')}</strong>
             </div>
 
             {match ? (
@@ -461,34 +484,34 @@ function FollowingSection({ following }) {
               </Link>
             ) : (
               <div className={styles.followNoMatch}>
-                <strong>{homeText(locale, '当前轮暂无比赛', 'No Match This Round')}</strong>
-                <span>{homeText(locale, '主关注队伍暂未出现在当前轮赛程中。', 'Your primary team is not scheduled in the current round.')}</span>
+                <strong>{homeText(locale, uiText("当前轮暂无比赛", locale), 'No Match This Round')}</strong>
+                <span>{homeText(locale, uiText("主关注队伍暂未出现在当前轮赛程中。", locale), 'Your primary team is not scheduled in the current round.')}</span>
               </div>
             )}
 
             <div className={styles.followNextMeta}>
-              <span>{match ? getShortTime(match, locale) : homeText(locale, '时间待定', 'Time TBD')}</span>
-              <span>{match?.format || homeText(locale, '赛制待定', 'Format TBD')}</span>
-              <span>{match ? getMatchStatusText(match, locale) : homeText(locale, '待排定', 'Pending')}</span>
+              <span>{match ? getShortTime(match, locale) : homeText(locale, uiText("时间待定", locale), 'Time TBD')}</span>
+              <span>{match?.format || homeText(locale, uiText("赛制待定", locale), 'Format TBD')}</span>
+              <span>{match ? getMatchStatusText(match, locale) : homeText(locale, uiText("待排定", locale), 'Pending')}</span>
             </div>
           </div>
 
           <aside className={styles.followSummaryPanel}>
             <div className={styles.followStats}>
               <div>
-                <span>{homeText(locale, '关注队伍', 'Teams')}</span>
+                <span>{homeText(locale, uiText("关注队伍", locale), 'Teams')}</span>
                 <strong>{following.favoriteTeamCount}</strong>
               </div>
               <div>
-                <span>{homeText(locale, '关注选手', 'Players')}</span>
+                <span>{homeText(locale, uiText("关注选手", locale), 'Players')}</span>
                 <strong>{following.favoritePlayerCount}</strong>
               </div>
             </div>
-            <Link className={styles.followPrimaryAction} to={withSeason('/following')}>{homeText(locale, '进入我的关注 →', 'Open Following ->')}</Link>
-            <nav className={styles.followTextLinks} aria-label={homeText(locale, '关注管理', 'Follow Management')}>
-              {match ? <Link to={matchPath}>{homeText(locale, '比赛详情 →', 'Match Details ->')}</Link> : null}
-              {opponent ? <Link to={withSeason(`/teams/${routeId(opponent)}`)}>{homeText(locale, '对手资料 →', 'Opponent Profile ->')}</Link> : null}
-              {team ? <Link to={teamPath}>{homeText(locale, '队伍资料 →', 'Team Profile ->')}</Link> : null}
+            <Link className={styles.followPrimaryAction} to={withSeason('/me?section=following')}>{homeText(locale, uiText("进入我的关注 →", locale), 'Open Following ->')}</Link>
+            <nav className={styles.followTextLinks} aria-label={homeText(locale, uiText("关注管理", locale), 'Follow Management')}>
+              {match ? <Link to={matchPath}>{homeText(locale, uiText("比赛详情 →", locale), 'Match Details ->')}</Link> : null}
+              {opponent ? <Link to={withSeason(`/teams/${routeId(opponent)}`)}>{homeText(locale, uiText("对手资料 →", locale), 'Opponent Profile ->')}</Link> : null}
+              {team ? <Link to={teamPath}>{homeText(locale, uiText("队伍资料 →", locale), 'Team Profile ->')}</Link> : null}
             </nav>
           </aside>
         </article>
@@ -500,43 +523,54 @@ function FollowingSection({ following }) {
 function AdvancementResultsSection({ overview, advance, latest }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
   const isEnglish = isEnglishLocale(locale)
+  const isGroupFormat = overview.competitionFormat === 'GROUP'
   const hasData = advance.hasStarted || latest.hasResults
   const zones = [
-    { key: 'direct', label: homeText(locale, '晋级区', 'Advance Zone'), rows: safeArr(advance.zones?.direct) },
-    { key: 'contest', label: homeText(locale, '竞争区', 'Bubble Zone'), rows: safeArr(advance.zones?.contest) },
-    { key: 'danger', label: homeText(locale, '危险区', 'At Risk'), rows: safeArr(advance.zones?.danger) }
+    { key: 'direct', label: homeText(locale, uiText("晋级区", locale), 'Advance Zone'), rows: safeArr(advance.zones?.direct) },
+    { key: 'contest', label: homeText(locale, uiText("竞争区", locale), 'Bubble Zone'), rows: safeArr(advance.zones?.contest) },
+    { key: 'danger', label: homeText(locale, uiText("危险区", locale), 'At Risk'), rows: safeArr(advance.zones?.danger) }
   ]
   const advanceLabel = advanceSlotsText(overview.advancementLabel, locale)
-  const ruleLine = isEnglish
-    ? `${overview.expectedRounds} Swiss rounds · ${advanceLabel} advance`
-    : `${overview.expectedRounds} 轮瑞士轮 · ${overview.advancementLabel} 晋级`
+  const ruleLine = isGroupFormat
+    ? isEnglish
+      ? `${overview.groupCount || 4} round-robin groups · top ${overview.advancePerGroup || 2} per group advance`
+      : uiText("{0} 组单循环 · 每组前 {1} 晋级八强", locale, [overview.groupCount || 4, overview.advancePerGroup || 2])
+    : isEnglish
+      ? `${overview.expectedRounds} Swiss rounds · ${advanceLabel} advance`
+      : uiText("{0} 轮瑞士轮 · {1} 晋级", locale, [overview.expectedRounds, overview.advancementLabel])
   const zoneTotal = zones.reduce((sum, zone) => sum + zone.rows.length, 0)
   const resultMatches = latest.matches.slice(0, 5)
   const completedMatchLabel = isEnglish
     ? `${latest.completed} matches`
-    : `${latest.completed} 场`
+    : uiText("{0} 场", locale, [latest.completed])
   const totalScheduleLabel = isEnglish
     ? `${latest.total} match records`
-    : `共 ${latest.total} 场赛程记录`
+    : uiText("共 {0} 场赛程记录", locale, [latest.total])
   const roundProgressLabel = overview.roundProgressLabel || `${latest.completed} / ${latest.total}`
   const resultCountLabel = isEnglish
     ? `Latest ${resultMatches.length || 0}`
-    : `最近 ${resultMatches.length || 0} 场`
+    : uiText("最近 {0} 场", locale, [resultMatches.length || 0])
 
   return (
     <section className={styles.sectionBlock}>
-      <SectionHead eyebrow="ADVANCE / RESULTS" title={homeText(locale, '晋级形势 / 最新赛果', 'Advance / Latest Results')} />
+      <SectionHead eyebrow="ADVANCE / RESULTS" title={homeText(locale, uiText("晋级形势 / 最新赛果", locale), 'Advance / Latest Results')} />
       {!hasData ? (
         <div className={styles.preDataGrid}>
           <article>
-            <span>{homeText(locale, '晋级规则', 'Advance Rules')}</span>
+            <span>{homeText(locale, uiText("晋级规则", locale), 'Advance Rules')}</span>
             <strong>{ruleLine}</strong>
-            <p>{homeText(locale, '排名、Buchholz 和同分规则会在首轮完成后进入主要视图。', 'Standings, Buchholz, and tiebreakers move into the main view after round one.')}</p>
+            <p>{isGroupFormat
+              ? homeText(locale, uiText("排名依次比较胜场、地图净胜、地图胜场与直接交手；仍同分时标记待加赛。", locale), 'Rank by match wins, map differential, maps won, and head-to-head; unresolved ties are marked for a tiebreak match.')
+              : homeText(locale, uiText("排名、Buchholz 和同分规则会在首轮完成后进入主要视图。", locale), 'Standings, Buchholz, and tiebreakers move into the main view after round one.')}
+            </p>
           </article>
           <article>
-            <span>{homeText(locale, '数据状态', 'Data Status')}</span>
-            <strong>{homeText(locale, '积分榜将在首轮比赛完成后生成。', 'Standings generate after round one is complete.')}</strong>
-            <p>{homeText(locale, '赛后完成核对后更新赛果与数据。', 'Results and stats update after post-match verification.')}</p>
+            <span>{homeText(locale, uiText("数据状态", locale), 'Data Status')}</span>
+            <strong>{isGroupFormat
+              ? homeText(locale, uiText("积分榜将在首个比赛日完成后更新。", locale), 'Standings update after the first match day is complete.')
+              : homeText(locale, uiText("积分榜将在首轮比赛完成后生成。", locale), 'Standings generate after round one is complete.')}
+            </strong>
+            <p>{homeText(locale, uiText("赛后完成核对后更新赛果与数据。", locale), 'Results and stats update after post-match verification.')}</p>
           </article>
         </div>
       ) : (
@@ -544,17 +578,17 @@ function AdvancementResultsSection({ overview, advance, latest }) {
           <article className={styles.advanceCard}>
             <header className={styles.advanceCardHero}>
               <div>
-                <span>{homeText(locale, '已完成比赛', 'Completed Matches')}</span>
+                <span>{homeText(locale, uiText("已完成比赛", locale), 'Completed Matches')}</span>
                 <strong>{completedMatchLabel}</strong>
                 <small>{totalScheduleLabel}</small>
               </div>
               <em>
                 <b>{roundProgressLabel}</b>
-                <span>{homeText(locale, '本轮进度', 'Current round')}</span>
+                <span>{isGroupFormat ? homeText(locale, uiText("本比赛日进度", locale), 'Current match day') : homeText(locale, uiText("本轮进度", locale), 'Current round')}</span>
               </em>
             </header>
             <div className={styles.advanceRuleLine}>
-              <span>{homeText(locale, '赛制规则', 'Format Rule')}</span>
+              <span>{homeText(locale, uiText("赛制规则", locale), 'Format Rule')}</span>
               <strong>{ruleLine}</strong>
             </div>
             <div className={styles.advanceZoneBar} aria-hidden="true">
@@ -571,20 +605,20 @@ function AdvancementResultsSection({ overview, advance, latest }) {
                 <div key={zone.key}>
                   <span>{zone.label}</span>
                   <strong>{zone.rows.length}</strong>
-                  <em>{zone.rows.slice(0, 3).map(formatTeamName).join(' / ') || homeText(locale, '待更新', 'Pending')}</em>
+                  <em>{zone.rows.slice(0, 3).map(formatTeamName).join(' / ') || homeText(locale, uiText("待更新", locale), 'Pending')}</em>
                 </div>
               ))}
             </div>
-            <Link to={withSeason('/advance')}>{homeText(locale, '查看完整晋级形势', 'View Full Advance Hub')}</Link>
+            <Link to={withSeason('/advance')}>{homeText(locale, uiText("查看完整晋级形势", locale), 'View Full Advance Hub')}</Link>
           </article>
 
           <article className={styles.resultsCard}>
             <header>
               <div className={styles.resultsCardTitle}>
-                <span>{homeText(locale, '最新赛果', 'Latest Results')}</span>
+                <span>{homeText(locale, uiText("最新赛果", locale), 'Latest Results')}</span>
                 <strong>{resultCountLabel}</strong>
               </div>
-              <Link to={withSeason('/matches?view=list&tab=finished')}>{homeText(locale, '查看全部赛果', 'View All Results')}</Link>
+              <Link to={withSeason('/matches?view=list&tab=finished')}>{homeText(locale, uiText("查看全部赛果", locale), 'View All Results')}</Link>
             </header>
             {resultMatches.length ? (
               <div className={styles.resultsList}>
@@ -594,8 +628,8 @@ function AdvancementResultsSection({ overview, advance, latest }) {
               </div>
             ) : (
               <div className={styles.emptyMini}>
-                <strong>{homeText(locale, '暂无赛果', 'No Results Yet')}</strong>
-                <span>{homeText(locale, '赛果确认后将显示最近完成的比赛。', 'Recently completed matches will appear after results are confirmed.')}</span>
+                <strong>{homeText(locale, uiText("暂无赛果", locale), 'No Results Yet')}</strong>
+                <span>{homeText(locale, uiText("赛果确认后将显示最近完成的比赛。", locale), 'Recently completed matches will appear after results are confirmed.')}</span>
               </div>
             )}
           </article>
@@ -612,7 +646,7 @@ function ResourcesSection({ resources }) {
 
   return (
     <section className={styles.sectionBlock}>
-      <SectionHead eyebrow="EVENT RESOURCES" title={homeText(locale, '赛事资料', 'Event Resources')} />
+      <SectionHead eyebrow="EVENT RESOURCES" title={homeText(locale, uiText("赛事资料", locale), 'Event Resources')} />
       <div className={styles.resourceGrid}>
         {primary ? (
           <Link to={withSeason(primary.to)} className={styles.resourcePrimary}>
@@ -665,8 +699,8 @@ function OverviewNextMatch({ match, label }) {
   if (!match) {
     return (
       <div className={styles.overviewNoMatch}>
-        <strong>{homeText(locale, '下一场待定', 'Next Match TBD')}</strong>
-        <span>{homeText(locale, '赛程公布后将显示最值得关注的下一场比赛。', 'The next key match appears after the schedule is published.')}</span>
+        <strong>{homeText(locale, uiText("下一场待定", locale), 'Next Match TBD')}</strong>
+        <span>{homeText(locale, uiText("赛程公布后将显示最值得关注的下一场比赛。", locale), 'The next key match appears after the schedule is published.')}</span>
       </div>
     )
   }
@@ -687,10 +721,10 @@ function OverviewNextMatch({ match, label }) {
       {broadcast.hasPublicInfo ? (
         <div className={styles.overviewBroadcast}>
           {broadcast.streamLinks.map((stream, index) => (
-            <span key={`${stream.url}-${index}`}>{stream.label || '\u76f4\u64ad\u95f4'}{': '}{stream.url}</span>
+            <span key={`${stream.url}-${index}`}>{stream.label || uiText("直播间", locale)}{': '}{stream.url}</span>
           ))}
-          {broadcast.casterText ? <span>{'\u89e3\u8bf4: '}{broadcast.casterText}</span> : null}
-          {broadcast.refereeText ? <span>{'\u8d5b\u7ba1: '}{broadcast.refereeText}</span> : null}
+          {broadcast.casterText ? <span>{uiText("解说: ", locale)}{broadcast.casterText}</span> : null}
+          {broadcast.refereeText ? <span>{uiText("赛管: ", locale)}{broadcast.refereeText}</span> : null}
         </div>
       ) : null}
     </Link>
@@ -698,17 +732,18 @@ function OverviewNextMatch({ match, label }) {
 }
 
 function OverviewDashboard({ overview, summary, latest }) {
+  const uiLocale = useUiLocale()
   const { withSeason = path => path } = useOutletContext()
   const nextMatch = overview.round?.nextMatch || null
   const statusMetrics = [
-    { label: '当前阶段', value: overview.currentStage, meta: 'STAGE', tone: 'strong' },
-    { label: '下一开赛', value: overview.nextStartLabel, meta: 'NEXT' },
-    { label: '本轮进度', value: overview.roundProgressLabel, meta: 'ROUND' }
+    { label: uiText("当前阶段", uiLocale), value: overview.currentStage, meta: 'STAGE', tone: 'strong' },
+    { label: uiText("下一开赛", uiLocale), value: overview.nextStartLabel, meta: 'NEXT' },
+    { label: uiText("本轮进度", uiLocale), value: overview.roundProgressLabel, meta: 'ROUND' }
   ]
   const baseMetrics = [
-    { label: '赛程规模', value: `${summary.matches} 场`, meta: 'MATCHES' },
-    { label: '参赛规模', value: `${summary.teams} 队 / ${summary.players} 人`, meta: 'ROSTER' },
-    { label: '数据状态', value: summary.maps ? `${summary.maps} 图` : '比赛后更新', meta: 'DATA' }
+    { label: uiText("赛程规模", uiLocale), value: `${summary.matches} 场`, meta: 'MATCHES' },
+    { label: uiText("参赛规模", uiLocale), value: `${summary.teams} 队 / ${summary.players} 人`, meta: 'ROSTER' },
+    { label: uiText("数据状态", uiLocale), value: summary.maps ? `${summary.maps} 图` : '比赛后更新', meta: 'DATA' }
   ]
 
   return (
@@ -718,20 +753,20 @@ function OverviewDashboard({ overview, summary, latest }) {
         <div className={styles.overviewTitle}>
           <strong>{overview.eventCode}</strong>
           <h1>{overview.seasonName}</h1>
-          <p>跟进赛季进度与核心数据。赛程、赛果和关键对局可前往赛程赛果查看。</p>
+          <p>{uiText("跟进赛季进度与核心数据。赛程、赛果和关键对局可前往赛程赛果查看。", uiLocale)}</p>
         </div>
         <div className={styles.overviewActions}>
-          <Link to={withSeason('/matches')}>进入赛程赛果</Link>
-          <Link to={withSeason('/advance')}>查看晋级形势</Link>
-          <Link to={withSeason('/following')}>我的关注</Link>
+          <Link to={withSeason('/matches')}>{uiText("进入赛程赛果", uiLocale)}</Link>
+          <Link to={withSeason('/advance')}>{uiText("查看晋级形势", uiLocale)}</Link>
+          <Link to={withSeason('/me')}>{uiText("我的空间", uiLocale)}</Link>
         </div>
       </div>
 
       <aside className={styles.overviewPanel}>
         <header className={styles.overviewPanelHead}>
           <span>EVENT STATUS</span>
-          <strong>赛事状态</strong>
-          <em>{latest.completed} / {latest.total} 已完成</em>
+          <strong>{uiText("赛事状态", uiLocale)}</strong>
+          <em>{latest.completed} / {latest.total}{uiText(" 已完成", uiLocale)}</em>
         </header>
         <div className={styles.overviewStatusGrid}>
           {statusMetrics.map(item => <OverviewMetric key={item.label} {...item} />)}
@@ -756,7 +791,7 @@ function DataPulseSection({ dataPulse }) {
     {
       key: 'ranking',
       label: 'PLAYER RANKING',
-      title: homeText(locale, '选手排行', 'Player Ranking'),
+      title: homeText(locale, uiText("选手排行", locale), 'Player Ranking'),
       value: dataPulse.topDamage ? getPlayerLabel(dataPulse.topDamage, locale) : homeText(locale, '等待数据', 'Awaiting Data'),
       meta: dataPulse.topDamage
         ? `${homeText(locale, '伤害', 'Damage')} ${Number(dataPulse.topDamage.avg_dmg || 0).toFixed(0)} /10`
@@ -766,7 +801,7 @@ function DataPulseSection({ dataPulse }) {
     {
       key: 'heroes',
       label: 'HERO META',
-      title: homeText(locale, '英雄数据', 'Hero Data'),
+      title: homeText(locale, uiText("英雄数据", locale), 'Hero Data'),
       value: dataPulse.topHero?.name ? formatOwHeroName(dataPulse.topHero.name, locale) : homeText(locale, '等待数据', 'Awaiting Data'),
       meta: dataPulse.topHero ? countText(locale, dataPulse.topHero.count, '次记录', 'record') : homeText(locale, '英雄出场统计', 'Hero pick stats'),
       to: '/heroes'
@@ -774,7 +809,7 @@ function DataPulseSection({ dataPulse }) {
     {
       key: 'maps',
       label: 'MAP META',
-      title: homeText(locale, '地图数据', 'Map Data'),
+      title: homeText(locale, uiText("地图数据", locale), 'Map Data'),
       value: dataPulse.topMap?.name ? formatOwMapName(dataPulse.topMap.name, locale) : homeText(locale, '等待数据', 'Awaiting Data'),
       meta: dataPulse.topMap ? countText(locale, dataPulse.topMap.count, '次登场', 'appearance') : homeText(locale, '地图登场统计', 'Map pick stats'),
       to: '/maps'
@@ -783,13 +818,13 @@ function DataPulseSection({ dataPulse }) {
 
   return (
     <section className={styles.sectionBlock}>
-      <SectionHead eyebrow="STATS / PLAY" title={homeText(locale, '数据排行与电竞经理', 'Stats & Fantasy Manager')} />
+      <SectionHead eyebrow="STATS / PLAY" title={homeText(locale, uiText("数据排行与电竞经理", locale), 'Stats & Fantasy Manager')} />
       <div className={styles.dataPlayLayout}>
         <div className={styles.dataPulseGroup}>
           <div className={styles.dataGroupHead}>
             <span>STATS</span>
-            <strong>{homeText(locale, '数据排行', 'Stats Hub')}</strong>
-            <em>{homeText(locale, '比赛结束后更新选手、英雄和地图数据。', 'Player, hero, and map stats update after matches.')}</em>
+            <strong>{homeText(locale, uiText("数据排行", locale), 'Stats Hub')}</strong>
+            <em>{homeText(locale, uiText("比赛结束后更新选手、英雄和地图数据。", locale), 'Player, hero, and map stats update after matches.')}</em>
           </div>
           <div className={styles.dataPulseGrid}>
             {cards.map(card => (
@@ -809,10 +844,10 @@ function DataPulseSection({ dataPulse }) {
             onClick={() => setManagerChoiceOpen(true)}
           >
             <span>FANTASY MANAGER</span>
-            <i className={styles.playStatusBadge}>{homeText(locale, '经典版', 'Classic')}</i>
-            <strong>{homeText(locale, '电竞经理', 'Fantasy Manager')}</strong>
-            <b>{homeText(locale, '经典版入口', 'Classic Entry')}</b>
-            <em>{homeText(locale, '继续使用旧版玩法、本机存档和原有挑战。', 'Continue with the classic systems, local saves, and existing challenges.')}</em>
+            <i className={styles.playStatusBadge}>{homeText(locale, uiText("经典版", locale), 'Classic')}</i>
+            <strong>{homeText(locale, uiText("电竞经理", locale), 'Fantasy Manager')}</strong>
+            <b>{homeText(locale, uiText("经典版入口", locale), 'Classic Entry')}</b>
+            <em>{homeText(locale, uiText("继续使用旧版玩法、本机存档和原有挑战。", locale), 'Continue with the classic systems, local saves, and existing challenges.')}</em>
           </button>
         </div>
       </div>
@@ -825,57 +860,60 @@ function OverviewGatewaySection({ overview, summary, latest }) {
   const { locale = 'zh-CN', withSeason = path => path } = useOutletContext()
   const [managerChoiceOpen, setManagerChoiceOpen] = useState(false)
   const isEn = locale === 'en-US'
+  const isGroupFormat = overview.competitionFormat === 'GROUP'
   const hasData = summary.maps > 0 || latest.completed > 0
   const advanceStatus = latest.completed > 0
-    ? (isEn ? 'Updating' : '更新中')
-    : (isEn ? 'After round one' : '首轮后生成')
+    ? (isEn ? 'Updating' : uiText("更新中", locale))
+    : isGroupFormat
+      ? (isEn ? 'After match day one' : uiText("首个比赛日后生成", locale))
+      : (isEn ? 'After round one' : uiText("首轮后生成", locale))
   const gateways = [
     {
       key: 'matches',
       label: 'MATCHES',
-      title: homeText(locale, '赛程赛果', 'Matches'),
+      title: homeText(locale, uiText("赛程赛果", locale), 'Matches'),
       status: homeValue(overview.statusText, locale),
-      text: homeText(locale, '进入完整赛程、赛果和比赛详情。', 'Full schedule, results, filters, and match dossiers.'),
+      text: homeText(locale, uiText("进入完整赛程、赛果和比赛详情。", locale), 'Full schedule, results, filters, and match dossiers.'),
       to: '/matches',
       primary: true
     },
     {
       key: 'roster',
       label: 'ROSTER',
-      title: homeText(locale, '参赛阵容', 'Roster'),
+      title: homeText(locale, uiText("参赛阵容", locale), 'Roster'),
       status: teamPlayerScaleText(locale, summary.teams, summary.players),
-      text: homeText(locale, '战队、选手与赛事职员目录。', 'Team, player, and staff directory.'),
+      text: homeText(locale, uiText("战队、选手与赛事职员目录。", locale), 'Team, player, and staff directory.'),
       to: '/teams'
     },
     {
       key: 'advance',
       label: 'ADVANCE',
-      title: homeText(locale, '晋级形势', 'Advance'),
+      title: homeText(locale, uiText("晋级形势", locale), 'Advance'),
       status: advanceStatus,
-      text: homeText(locale, '排名、晋级区与后续阶段。', 'Standings, advance zones, and later stages.'),
+      text: homeText(locale, uiText("排名、晋级区与后续阶段。", locale), 'Standings, advance zones, and later stages.'),
       to: '/advance'
     },
     {
       key: 'database',
       label: 'STATS',
-      title: homeText(locale, '数据排行', 'Stats'),
+      title: homeText(locale, uiText("数据排行", locale), 'Stats'),
       status: hasData ? homeText(locale, `${summary.maps} 图已记录`, `${summary.maps} maps recorded`) : homeText(locale, '比赛后更新', 'After matches'),
-      text: homeText(locale, '选手、英雄和地图数据入口。', 'Player, hero, and map data entry.'),
+      text: homeText(locale, uiText("选手、英雄和地图数据入口。", locale), 'Player, hero, and map data entry.'),
       to: '/leaderboard'
     },
     {
       key: 'fantasy',
       label: 'MANAGER',
-      title: homeText(locale, '电竞经理', 'Fantasy Manager'),
+      title: homeText(locale, uiText("电竞经理", locale), 'Fantasy Manager'),
       status: homeText(locale, '经典版', 'Classic'),
-      text: homeText(locale, '当前仅开放经典版入口。', 'Only the classic entry is currently open.'),
+      text: homeText(locale, uiText("当前仅开放经典版入口。", locale), 'Only the classic entry is currently open.'),
       action: 'managerChoice'
     }
   ]
 
   return (
     <section className={styles.sectionBlock}>
-      <SectionHead eyebrow="EVENT LINKS" title={homeText(locale, '赛事入口', 'Event Links')} />
+      <SectionHead eyebrow="EVENT LINKS" title={homeText(locale, uiText("赛事入口", locale), 'Event Links')} />
       <div className={styles.gatewayGrid}>
         {gateways.map(item => item.action === 'managerChoice' ? (
           <button
@@ -944,7 +982,7 @@ function ArchiveConclusion({ overview, archive, summary }) {
           </span>
           <span>
             <em>DATA KING</em>
-            <strong>{dataKing?.player ? getPlayerLabel(dataKing.player, locale) : homeText(locale, '等待数据', 'Awaiting Data')}</strong>
+            <strong>{dataKing?.player ? getPlayerLabel(dataKing.player, locale) : homeText(locale, uiText("等待数据", locale), 'Awaiting Data')}</strong>
           </span>
         </div>
         <div className={styles.archiveHallBadges}>
@@ -956,17 +994,17 @@ function ArchiveConclusion({ overview, archive, summary }) {
 
       <div className={styles.archiveTrophyGrid}>
         <Link to={withSeason(`/teams/${routeId(champion)}`)} className={styles.archiveChampionPanel}>
-          <span>{homeText(locale, '冠军', 'Champion')}</span>
+          <span>{homeText(locale, uiText("冠军", locale), 'Champion')}</span>
           <TeamLogo team={champion} seasonId={seasonId} className={styles.archiveChampionLogo} />
           <strong>{formatTeamName(champion)}</strong>
           <em>{formatTeamFullName(champion)}</em>
         </Link>
 
         <div className={styles.archiveFinalRecord}>
-          <span>{homeText(locale, '总决赛', 'Grand Final')}</span>
+          <span>{homeText(locale, uiText("总决赛", locale), 'Grand Final')}</span>
           <strong>{finalMatch ? formatMatchScore(finalMatch) : '-'}</strong>
           <em>
-            {champion ? formatTeamName(champion) : homeText(locale, '冠军', 'Champion')} vs {runnerUp ? formatTeamName(runnerUp) : homeText(locale, '亚军', 'Runner-up')}
+            {champion ? formatTeamName(champion) : homeText(locale, uiText("冠军", locale), 'Champion')} vs {runnerUp ? formatTeamName(runnerUp) : homeText(locale, uiText("亚军", locale), 'Runner-up')}
           </em>
         </div>
       </div>
@@ -985,7 +1023,7 @@ function ArchiveFinalTeam({ team, champion, side = 'left' }) {
         <strong>{formatTeamName(team)}</strong>
         <em>{formatTeamFullName(team)}</em>
       </span>
-      {winner ? <b>{homeText(locale, '冠军', 'Champion')}</b> : null}
+      {winner ? <b>{homeText(locale, uiText("冠军", locale), 'Champion')}</b> : null}
     </span>
   )
 }
@@ -1001,7 +1039,7 @@ function ArchiveFinal({ finalMatch, archive }) {
 
   return (
     <section className={styles.archiveBlock}>
-      <SectionHead eyebrow="GRAND FINAL" title={homeText(locale, '总决赛', 'Grand Final')} actionTo="/matches" actionText={homeText(locale, '比赛档案', 'Match Archive')} />
+      <SectionHead eyebrow="GRAND FINAL" title={homeText(locale, uiText("总决赛", locale), 'Grand Final')} actionTo="/matches" actionText={homeText(locale, '比赛档案', 'Match Archive')} />
       {finalMatch ? (
         <Link to={withSeason(`/matches/${matchRouteId(finalMatch)}`)} className={styles.archiveFinalShowcase}>
           <div className={styles.archiveFinalStage}>
@@ -1011,12 +1049,12 @@ function ArchiveFinal({ finalMatch, archive }) {
           </div>
           <div className={styles.archiveFinalCenter}>
             <div className={styles.archiveFinalSummary}>
-              <span>{homeText(locale, '冠军归档', 'Title Record')}</span>
+              <span>{homeText(locale, uiText("冠军归档", locale), 'Title Record')}</span>
               <strong>{championName}</strong>
               <em>
                 {isEnglishLocale(locale)
                   ? `${championName} closed the season over ${runnerUpName}.`
-                  : `${championName} 击败 ${runnerUpName}，完成赛季收官。`}
+                  : uiText("{0} 击败 {1}，完成赛季收官。", locale, [championName, runnerUpName])}
               </em>
             </div>
             <div className={styles.archiveFinalDuel}>
@@ -1030,13 +1068,13 @@ function ArchiveFinal({ finalMatch, archive }) {
           </div>
           <span className={styles.archiveFinalLink}>
             <em>MATCH DOSSIER</em>
-            <strong>{homeText(locale, '查看总决赛档案 →', 'View Grand Final Dossier ->')}</strong>
+            <strong>{homeText(locale, uiText("查看总决赛档案 →", locale), 'View Grand Final Dossier ->')}</strong>
           </span>
         </Link>
       ) : (
         <div className={styles.emptyMini}>
-          <strong>{homeText(locale, '暂无总决赛记录', 'No Grand Final Record')}</strong>
-          <span>{homeText(locale, '档案数据更新后会显示最终对局。', 'The final matchup appears after archive data updates.')}</span>
+          <strong>{homeText(locale, uiText("暂无总决赛记录", locale), 'No Grand Final Record')}</strong>
+          <span>{homeText(locale, uiText("档案数据更新后会显示最终对局。", locale), 'The final matchup appears after archive data updates.')}</span>
         </div>
       )}
     </section>
@@ -1048,20 +1086,20 @@ function ArchiveReview({ includeReview }) {
   const reviewItems = [
     {
       label: 'PATH',
-      title: homeText(locale, '冠军之路', 'Champion Path'),
-      text: homeText(locale, '回看冠军队伍从瑞士轮到决赛的关键节点。', 'Trace the champion team from Swiss rounds to the final.'),
+      title: homeText(locale, uiText("冠军之路", locale), 'Champion Path'),
+      text: homeText(locale, uiText("回看冠军队伍从瑞士轮到决赛的关键节点。", locale), 'Trace the champion team from Swiss rounds to the final.'),
       to: '/review'
     },
     {
       label: 'MATCHES',
-      title: homeText(locale, '关键比赛', 'Key Matches'),
-      text: homeText(locale, '复盘影响晋级、淘汰和冠军归属的代表性对局。', 'Revisit the matches that shaped advancement, eliminations, and the title.'),
+      title: homeText(locale, uiText("关键比赛", locale), 'Key Matches'),
+      text: homeText(locale, uiText("复盘影响晋级、淘汰和冠军归属的代表性对局。", locale), 'Revisit the matches that shaped advancement, eliminations, and the title.'),
       to: '/matches'
     },
     {
       label: 'STARS',
-      title: homeText(locale, '选手表现', 'Player Standouts'),
-      text: homeText(locale, '查看数据王、职责领跑者和赛季代表选手。', 'Review data leaders, role leaders, and season standouts.'),
+      title: homeText(locale, uiText("选手表现", locale), 'Player Standouts'),
+      text: homeText(locale, uiText("查看数据王、职责领跑者和赛季代表选手。", locale), 'Review data leaders, role leaders, and season standouts.'),
       to: '/leaderboard'
     }
   ]
@@ -1070,12 +1108,12 @@ function ArchiveReview({ includeReview }) {
     <section className={`${styles.archiveBlock} ${styles.archiveReview}`}>
       <div className={styles.archiveReviewLead}>
         <span className={styles.eyebrow}>SEASON REVIEW</span>
-        <h2>{homeText(locale, '赛季回顾', 'Season Review')}</h2>
-        <p>{homeText(locale, '回顾冠军路径、经典对局与选手表现，重温完整赛季故事。', 'Review the champion path, classic matches, and player performances across the season.')}</p>
+        <h2>{homeText(locale, uiText("赛季回顾", locale), 'Season Review')}</h2>
+        <p>{homeText(locale, uiText("回顾冠军路径、经典对局与选手表现，重温完整赛季故事。", locale), 'Review the champion path, classic matches, and player performances across the season.')}</p>
         <div className={styles.archiveReviewLinks}>
-          {includeReview ? <Link to={withSeason('/review')}>{homeText(locale, '进入回顾中心', 'Open Review Hub')}</Link> : null}
-          <Link to={withSeason('/advance')}>{homeText(locale, '晋级路线', 'Advance Path')}</Link>
-          <Link to={withSeason('/leaderboard')}>{homeText(locale, '数据排行', 'Leaderboard')}</Link>
+          {includeReview ? <Link to={withSeason('/review')}>{homeText(locale, uiText("进入回顾中心", locale), 'Open Review Hub')}</Link> : null}
+          <Link to={withSeason('/advance')}>{homeText(locale, uiText("晋级路线", locale), 'Advance Path')}</Link>
+          <Link to={withSeason('/leaderboard')}>{homeText(locale, uiText("数据排行", locale), 'Leaderboard')}</Link>
         </div>
       </div>
 
@@ -1100,23 +1138,23 @@ function ArchiveDataVault({ summary, dataPulse }) {
     {
       key: 'matches',
       label: 'MATCH ARCHIVE',
-      title: homeText(locale, '比赛档案', 'Match Archive'),
+      title: homeText(locale, uiText("比赛档案", locale), 'Match Archive'),
       value: countText(locale, summary.matches, '场', 'match'),
-      meta: isEnglishLocale(locale) ? `${summary.maps} maps recorded` : `${summary.maps} 张地图记录`,
+      meta: isEnglishLocale(locale) ? `${summary.maps} maps recorded` : uiText("{0} 张地图记录", locale, [summary.maps]),
       to: '/matches'
     },
     {
       key: 'players',
       label: 'PLAYER DATABASE',
-      title: homeText(locale, '选手数据库', 'Player Database'),
+      title: homeText(locale, uiText("选手数据库", locale), 'Player Database'),
       value: countText(locale, summary.players, '名', 'player'),
-      meta: isEnglishLocale(locale) ? `${summary.teams} teams entered` : `${summary.teams} 支队伍参赛`,
+      meta: isEnglishLocale(locale) ? `${summary.teams} teams entered` : uiText("{0} 支队伍参赛", locale, [summary.teams]),
       to: '/leaderboard'
     },
     {
       key: 'heroes',
       label: 'HERO META',
-      title: homeText(locale, '英雄热度', 'Hero Heat'),
+      title: homeText(locale, uiText("英雄热度", locale), 'Hero Heat'),
       value: topHero,
       meta: dataPulse.topHero ? countText(locale, dataPulse.topHero.count, '次记录', 'record') : homeText(locale, '英雄数据档案', 'Hero data archive'),
       to: '/heroes'
@@ -1124,7 +1162,7 @@ function ArchiveDataVault({ summary, dataPulse }) {
     {
       key: 'maps',
       label: 'MAP META',
-      title: homeText(locale, '地图热度', 'Map Heat'),
+      title: homeText(locale, uiText("地图热度", locale), 'Map Heat'),
       value: topMap,
       meta: dataPulse.topMap ? countText(locale, dataPulse.topMap.count, '次登场', 'appearance') : homeText(locale, '地图数据档案', 'Map data archive'),
       to: '/maps'
@@ -1133,12 +1171,12 @@ function ArchiveDataVault({ summary, dataPulse }) {
 
   return (
     <section className={styles.archiveBlock}>
-      <SectionHead eyebrow="DATA ARCHIVE" title={homeText(locale, '数据档案馆', 'Data Archive')} actionTo="/leaderboard" actionText={homeText(locale, '进入数据排行', 'Open Leaderboard')} />
+      <SectionHead eyebrow="DATA ARCHIVE" title={homeText(locale, uiText("数据档案馆", locale), 'Data Archive')} actionTo="/leaderboard" actionText={homeText(locale, '进入数据排行', 'Open Leaderboard')} />
       <div className={styles.archiveVault}>
         <div className={styles.archiveVaultLead}>
           <span>SEASON DATABASE</span>
-          <strong>{homeText(locale, '赛季数据已经归档', 'Season data is archived')}</strong>
-          <em>{homeText(locale, '集中浏览比赛记录、选手表现、英雄热度和地图使用。', 'Browse match records, player performance, hero heat, and map usage in one place.')}</em>
+          <strong>{homeText(locale, uiText("赛季数据已经归档", locale), 'Season data is archived')}</strong>
+          <em>{homeText(locale, uiText("集中浏览比赛记录、选手表现、英雄热度和地图使用。", locale), 'Browse match records, player performance, hero heat, and map usage in one place.')}</em>
         </div>
         <div className={styles.archiveVaultGrid}>
           {cards.map(card => (
@@ -1171,14 +1209,14 @@ function ArchiveHonors({ archive, dataPulse }) {
     ...secondaryDataAwards,
     dataPulse.topHero?.name ? {
       key: 'hero-heat',
-      label: homeText(locale, '英雄热度', 'Hero Heat'),
+      label: homeText(locale, uiText("英雄热度", locale), 'Hero Heat'),
       title: formatOwHeroName(dataPulse.topHero.name, locale),
       meta: countText(locale, dataPulse.topHero.count, '次记录', 'record'),
       to: '/heroes'
     } : null,
     dataPulse.topMap?.name ? {
       key: 'map-heat',
-      label: homeText(locale, '地图热度', 'Map Heat'),
+      label: homeText(locale, uiText("地图热度", locale), 'Map Heat'),
       title: formatOwMapName(dataPulse.topMap.name, locale),
       meta: countText(locale, dataPulse.topMap.count, '次登场', 'appearance'),
       to: '/maps'
@@ -1187,7 +1225,7 @@ function ArchiveHonors({ archive, dataPulse }) {
 
   return (
     <section className={styles.archiveBlock}>
-      <SectionHead eyebrow="HONORS" title={homeText(locale, '赛季荣誉', 'Season Honors')} actionTo="/advance" actionText={homeText(locale, '完整排名', 'Full Ranking')} />
+      <SectionHead eyebrow="HONORS" title={homeText(locale, uiText("赛季荣誉", locale), 'Season Honors')} actionTo="/advance" actionText={homeText(locale, '完整排名', 'Full Ranking')} />
       <div className={`${styles.honorGrid} ${hasFinalRanking ? '' : styles.honorGridAwardsOnly}`}>
         {hasFinalRanking ? <div className={styles.rankingList}>
           {finalRanking.map(team => (
@@ -1201,8 +1239,8 @@ function ArchiveHonors({ archive, dataPulse }) {
         <aside className={styles.seasonAwardsPanel}>
           <header className={styles.seasonAwardsHead}>
             <span>SEASON AWARDS</span>
-            <strong>{homeText(locale, '赛季奖项', 'Season Awards')}</strong>
-            <em>{homeText(locale, '数据奖项、英雄热度与地图热度的归档摘要。', 'Archived leaders across player stats, hero picks, and map picks.')}</em>
+            <strong>{homeText(locale, uiText("赛季奖项", locale), 'Season Awards')}</strong>
+            <em>{homeText(locale, uiText("数据奖项、英雄热度与地图热度的归档摘要。", locale), 'Archived leaders across player stats, hero picks, and map picks.')}</em>
           </header>
 
           {mvpAward ? (
@@ -1238,8 +1276,8 @@ function ArchiveClassicFeature({ match }) {
   return (
     <Link to={withSeason(`/matches/${matchRouteId(match)}`)} className={styles.archiveClassicFeature}>
       <span>CHAMPION KEY MATCH</span>
-      <strong>{homeText(locale, '夺冠关键战', 'Title Key Match')}</strong>
-      <em>{homeText(locale, '冠军路线中最具代表性的胜场。', 'The defining win from the champion run.')}</em>
+      <strong>{homeText(locale, uiText("夺冠关键战", locale), 'Title Key Match')}</strong>
+      <em>{homeText(locale, uiText("冠军路线中最具代表性的胜场。", locale), 'The defining win from the champion run.')}</em>
       <div className={styles.archiveClassicFeatureBoard}>
         <div className={styles.matchDuel}>
           <TeamMark team={match.team_a} align="right" />
@@ -1249,7 +1287,7 @@ function ArchiveClassicFeature({ match }) {
         <div className={styles.archiveClassicFeatureMeta}>
           <span>{getShortTime(match, locale)}</span>
           <span>{match.format || 'TBD'}</span>
-          <b>{homeText(locale, '详情', 'Details')}</b>
+          <b>{homeText(locale, uiText("详情", locale), 'Details')}</b>
         </div>
       </div>
     </Link>
@@ -1271,7 +1309,7 @@ function ArchiveClassicRow({ match, index }) {
       <span className={styles.archiveClassicMeta}>
         <em>{getShortTime(match, locale)}</em>
         <strong>{match.format || 'TBD'}</strong>
-        <b>{homeText(locale, '详情 →', 'Details ->')}</b>
+        <b>{homeText(locale, uiText("详情 →", locale), 'Details ->')}</b>
       </span>
     </Link>
   )
@@ -1283,14 +1321,14 @@ function ArchiveClassicMatches({ matches }) {
 
   return (
     <section className={styles.archiveBlock}>
-      <SectionHead eyebrow="CLASSIC MATCHES" title={homeText(locale, '经典比赛', 'Classic Matches')} actionTo="/matches" actionText={homeText(locale, '全部赛果', 'All Results')} />
+      <SectionHead eyebrow="CLASSIC MATCHES" title={homeText(locale, uiText("经典比赛", locale), 'Classic Matches')} actionTo="/matches" actionText={homeText(locale, '全部赛果', 'All Results')} />
       <div className={styles.archiveClassicLayout}>
         <ArchiveClassicFeature match={primary} />
         <div className={styles.archiveClassicList}>
           <header>
             <span>MATCH LOG</span>
-            <strong>{homeText(locale, '关键对局档案', 'Key Match Archive')}</strong>
-            <em>{isEnglishLocale(locale) ? `${secondary.length} selected matches` : `${secondary.length} 场精选比赛`}</em>
+            <strong>{homeText(locale, uiText("关键对局档案", locale), 'Key Match Archive')}</strong>
+            <em>{isEnglishLocale(locale) ? `${secondary.length} selected matches` : uiText("{0} 场精选比赛", locale, [secondary.length])}</em>
           </header>
           {secondary.map((match, index) => (
             <ArchiveClassicRow key={matchRouteId(match)} match={match} index={index + 2} />
@@ -1308,45 +1346,45 @@ function ArchiveResources({ includeReview }) {
       ? {
         key: 'review',
         label: 'REVIEW',
-        title: homeText(locale, '赛季回顾', 'Season Review'),
-        text: homeText(locale, '赛季故事、冠军路径和选手表现。', 'Season stories, champion path, and player performances.'),
+        title: homeText(locale, uiText("赛季回顾", locale), 'Season Review'),
+        text: homeText(locale, uiText("赛季故事、冠军路径和选手表现。", locale), 'Season stories, champion path, and player performances.'),
         to: '/review',
         primary: true
       }
       : {
         key: 'matches',
         label: 'MATCHES',
-        title: homeText(locale, '比赛档案', 'Match Archive'),
-        text: homeText(locale, '完整比分、地图和比赛记录。', 'Full scores, maps, and match records.'),
+        title: homeText(locale, uiText("比赛档案", locale), 'Match Archive'),
+        text: homeText(locale, uiText("完整比分、地图和比赛记录。", locale), 'Full scores, maps, and match records.'),
         to: '/matches',
         primary: true
       },
     {
       key: 'matches',
       label: 'MATCHES',
-      title: homeText(locale, '赛程赛果', 'Matches'),
-      text: homeText(locale, '完整比分、地图和比赛记录。', 'Full scores, maps, and match records.'),
+      title: homeText(locale, uiText("赛程赛果", locale), 'Matches'),
+      text: homeText(locale, uiText("完整比分、地图和比赛记录。", locale), 'Full scores, maps, and match records.'),
       to: '/matches'
     },
     {
       key: 'advance',
       label: 'ADVANCE',
-      title: homeText(locale, '最终排名', 'Final Ranking'),
-      text: homeText(locale, '晋级路径与最终名次。', 'Advance path and final placements.'),
+      title: homeText(locale, uiText("最终排名", locale), 'Final Ranking'),
+      text: homeText(locale, uiText("晋级路径与最终名次。", locale), 'Advance path and final placements.'),
       to: '/advance'
     },
     {
       key: 'database',
       label: 'STATS',
-      title: homeText(locale, '数据排行', 'Leaderboard'),
-      text: homeText(locale, '选手、队伍和英雄数据。', 'Player, team, and hero data.'),
+      title: homeText(locale, uiText("数据排行", locale), 'Leaderboard'),
+      text: homeText(locale, uiText("选手、队伍和英雄数据。", locale), 'Player, team, and hero data.'),
       to: '/leaderboard'
     },
     {
       key: 'manager',
       label: 'MANAGER',
-      title: homeText(locale, '电竞经理', 'Fantasy Manager'),
-      text: homeText(locale, '当前仅开放经典版入口。', 'Only the classic entry is currently open.'),
+      title: homeText(locale, uiText("电竞经理", locale), 'Fantasy Manager'),
+      text: homeText(locale, uiText("当前仅开放经典版入口。", locale), 'Only the classic entry is currently open.'),
       action: 'managerChoice'
     }
   ]
@@ -1369,7 +1407,19 @@ function ArchiveOverview({ overview, archive, archiveMatches, summary, dataPulse
 }
 
 export default function HomePage() {
+  const { db, season, isKprHybridDesign } = useOutletContext()
+  if (isKprHybridDesign && isWeeklyOverview(db, season)) {
+    return <Suspense fallback={<div role="status" style={{ padding: 32 }}>FRIES CUP / WEEKLY…</div>}><SignalWeeklyOverview key={season.id} /></Suspense>
+  }
+  return <StandardHomePage />
+}
+
+function StandardHomePage() {
   const {
+    isKprDesign = false,
+    isKprStageDesign = false,
+    isKprImmersiveDesign = false,
+    isKprHybridDesign = false,
     db,
     season,
     reviewAvailable,
@@ -1389,6 +1439,13 @@ export default function HomePage() {
     [db, season, overview.round, favorites]
   )
   const includeReview = overview.variant === 'archive' && (reviewAvailable || season?.reviewEnabled)
+
+  if (isKprDesign && overview.variant === 'archive') {
+    if (isKprHybridDesign) return <Suspense fallback={<div role="status" style={{ padding: 32 }}>FRIES CUP / LOADING HYBRID…</div>}><KprImmersiveArchive key={`${season?.id}:hybrid`} presentation="hybrid" archive={archive} overview={overview} summary={summary} includeReview={includeReview} /></Suspense>
+    if (isKprImmersiveDesign) return <Suspense fallback={<div role="status" style={{ padding: 32 }}>FRIES CUP / LOADING ARCHIVE…</div>}><KprImmersiveArchive key={`${season?.id}:immersive`} archive={archive} overview={overview} summary={summary} includeReview={includeReview} /></Suspense>
+    if (isKprStageDesign) return <Suspense fallback={<div role="status" style={{ padding: 32 }}>FRIES CUP / LOADING STAGE…</div>}><KprStageArchive key={season?.id} archive={archive} overview={overview} summary={summary} includeReview={includeReview} /></Suspense>
+    return <KprArchivePage archive={archive} overview={overview} summary={summary} includeReview={includeReview} />
+  }
 
   return (
     <div className={`${styles.shell} ${overview.variant === 'archive' ? styles.archiveShell : ''}`}>

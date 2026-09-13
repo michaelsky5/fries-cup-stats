@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Doomfist armoured gauntlet</title>
+  <desc id="desc">Four short bevelled knuckle plates, a folded thumb and a broad cuff form one armoured fist. Motion belongs to the separate portrait background.</desc>
+  <defs><linearGradient id="alloy" x1="119" y1="69" x2="230" y2="209" gradientUnits="userSpaceOnUse"><stop stop-color="#eac091" stop-opacity="0.3"/><stop offset="1" stop-color="#a85438" stop-opacity="0.12"/></linearGradient></defs>
+  <path d="M109 111L113 86L129 78H140L142 65H162L173 59H195L207 65H227L236 78V120L248 139L237 166L217 180L216 211H145L144 181L116 163L97 132L99 113Z" fill="url(#alloy)" stroke="#d8aa7c" stroke-opacity="0.79" stroke-width="2.3" stroke-linejoin="bevel"/>
+  <g fill="#d1a478" fill-opacity="0.15" stroke="#e9c098" stroke-opacity="0.62" stroke-width="1.65" stroke-linejoin="bevel">
+    <path d="M117 90L135 86L143 108L130 119L113 113Z"/>
+    <path d="M144 76H161L169 101L153 114L141 107Z"/>
+    <path d="M173 71H191L201 99L182 112L169 102Z"/>
+    <path d="M203 78H223L231 103L209 115L199 101Z"/>
+  </g>
+  <path d="M99 115L112 108L154 134L177 128L190 138L181 149L153 157L129 140L108 138Z" fill="#9b5b3a" fill-opacity="0.42" stroke="#dfad7d" stroke-opacity="0.73" stroke-width="1.9" stroke-linejoin="bevel"/>
+  <path d="M145 181H217L216 211H145Z" fill="#a77443" fill-opacity="0.18" stroke="#cda272" stroke-opacity="0.52" stroke-width="1.6"/>
+  <path d="M156 192H206M192 157H224" stroke="#e4bb8c" stroke-opacity="0.42" stroke-width="1.6"/>
+</svg>

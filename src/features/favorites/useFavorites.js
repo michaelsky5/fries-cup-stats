@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useAuth } from '../auth/AuthProvider.jsx'
+import { fetchUserFavorites, saveUserFavorites } from '../auth/userDataApi.js'
 import { FAVORITE_LIMITS, FAVORITES_STORAGE_KEY } from './favoritesConstants.js'
-import { readSeasonFavorites, writeSeasonFavorites } from './favoritesStorage.js'
+import { mergeSeasonFavorites, readSeasonFavorites, writeSeasonFavorites } from './favoritesStorage.js'
 import {
   favoriteIncludes,
   getPlayerFavoriteId,
@@ -29,11 +31,100 @@ function resolvePlayerId(playerOrId, db) {
 
 export default function useFavorites(seasonId, db) {
   const storageKey = normalizeSeasonId(seasonId)
+  const { isAuthenticated, user, accountCapabilities } = useAuth()
+  const cloudSyncAllowed = isAuthenticated && accountCapabilities?.canUseCloudFavorites === true
+  const userId = user?.id || ''
   const [favorites, setFavoritesState] = useState(() => readSeasonFavorites(storageKey, db))
+  const [syncStatus, setSyncStatus] = useState('local')
+  const [syncError, setSyncError] = useState('')
+  const favoritesRef = useRef(favorites)
+  const cloudSaveTimerRef = useRef(null)
 
   useEffect(() => {
-    setFavoritesState(readSeasonFavorites(storageKey, db))
+    favoritesRef.current = favorites
+  }, [favorites])
+
+  useEffect(() => () => {
+    if (cloudSaveTimerRef.current) {
+      window.clearTimeout(cloudSaveTimerRef.current)
+    }
+  }, [cloudSyncAllowed, storageKey, userId])
+
+  useEffect(() => {
+    const nextFavorites = readSeasonFavorites(storageKey, db)
+    favoritesRef.current = nextFavorites
+    setFavoritesState(nextFavorites)
   }, [storageKey, db])
+
+  const queueCloudSave = useCallback((nextFavorites) => {
+    if (!cloudSyncAllowed || !userId || !storageKey) {
+      setSyncStatus('local')
+      setSyncError('')
+      return
+    }
+
+    if (cloudSaveTimerRef.current) {
+      window.clearTimeout(cloudSaveTimerRef.current)
+    }
+
+    setSyncStatus('saving')
+    setSyncError('')
+    cloudSaveTimerRef.current = window.setTimeout(() => {
+      saveUserFavorites(storageKey, nextFavorites)
+        .then(() => {
+          setSyncStatus('ready')
+          setSyncError('')
+        })
+        .catch(error => {
+          setSyncStatus('error')
+          setSyncError(error?.message || 'SYNC_FAILED')
+        })
+    }, 450)
+  }, [cloudSyncAllowed, storageKey, userId])
+
+  useEffect(() => {
+    if (!cloudSyncAllowed || !userId || !storageKey) {
+      setSyncStatus('local')
+      setSyncError('')
+      return undefined
+    }
+
+    let cancelled = false
+    setSyncStatus('loading')
+    setSyncError('')
+
+    const localFavorites = readSeasonFavorites(storageKey, db)
+    const cloudFavoritesPromise = fetchUserFavorites(storageKey).catch(error => {
+      if (error?.status === 404) return null
+      throw error
+    })
+
+    cloudFavoritesPromise
+      .then(cloudFavorites => {
+        if (cancelled) return null
+
+        const merged = mergeSeasonFavorites(localFavorites, cloudFavorites, db)
+        const sanitized = writeSeasonFavorites(storageKey, merged, db)
+        favoritesRef.current = sanitized
+        setFavoritesState(sanitized)
+
+        return saveUserFavorites(storageKey, sanitized)
+      })
+      .then(() => {
+        if (cancelled) return
+        setSyncStatus('ready')
+        setSyncError('')
+      })
+      .catch(error => {
+        if (cancelled) return
+        setSyncStatus('error')
+        setSyncError(error?.message || 'SYNC_FAILED')
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [db, cloudSyncAllowed, storageKey, userId])
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined
@@ -48,18 +139,22 @@ export default function useFavorites(seasonId, db) {
   }, [storageKey, db])
 
   const persistFavorites = useCallback((updater) => {
-    setFavoritesState(current => {
-      const base = sanitizeFavoritesForSeason(current, db)
-      const next = typeof updater === 'function' ? updater(base) : updater
-      return writeSeasonFavorites(storageKey, next, db)
-    })
-  }, [storageKey, db])
+    const base = sanitizeFavoritesForSeason(favoritesRef.current, db)
+    const next = typeof updater === 'function' ? updater(base) : updater
+    const sanitized = writeSeasonFavorites(storageKey, next, db)
+
+    favoritesRef.current = sanitized
+    setFavoritesState(sanitized)
+    queueCloudSave(sanitized)
+  }, [storageKey, db, queueCloudSave])
 
   const saveFavorites = useCallback((nextFavorites) => {
-    const sanitized = writeSeasonFavorites(storageKey, nextFavorites, db)
+    const sanitized = writeSeasonFavorites(storageKey, nextFavorites, db, { requirePersistence: true })
+    favoritesRef.current = sanitized
     setFavoritesState(sanitized)
+    queueCloudSave(sanitized)
     return sanitized
-  }, [storageKey, db])
+  }, [storageKey, db, queueCloudSave])
 
   const toggleTeamFavorite = useCallback((teamOrId) => {
     const teamId = resolveTeamId(teamOrId, db)
@@ -157,6 +252,8 @@ export default function useFavorites(seasonId, db) {
   return useMemo(() => ({
     favorites,
     favoriteLimits: FAVORITE_LIMITS,
+    syncError,
+    syncStatus,
     saveFavorites,
     toggleTeamFavorite,
     setPrimaryTeamFavorite,
@@ -171,6 +268,8 @@ export default function useFavorites(seasonId, db) {
     isPrimaryFavoriteTeam,
     saveFavorites,
     setPrimaryTeamFavorite,
+    syncError,
+    syncStatus,
     togglePlayerFavorite,
     toggleTeamFavorite
   ])

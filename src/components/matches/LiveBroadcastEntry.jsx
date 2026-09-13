@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useState } from 'react'
 import { Link, useLocation, useOutletContext } from 'react-router-dom'
 import {
@@ -80,6 +82,7 @@ function BroadcastTeam({ team, source, seasonId, align = 'left' }) {
 }
 
 function BroadcastCard({ row, index }) {
+  const uiLocale = useUiLocale()
   const { withSeason = path => path, seasonId } = useOutletContext()
   const location = useLocation()
   const { match, broadcast } = row
@@ -111,7 +114,7 @@ function BroadcastCard({ row, index }) {
           </div>
         </div>
         <div className={styles.broadcastCardState}>
-          {roomCount > 1 ? <small>{roomCount} 路直播</small> : null}
+          {roomCount > 1 ? <small>{roomCount}{uiText(" 路直播", uiLocale)}</small> : null}
           <em>{getMatchStatusText(match)}</em>
         </div>
       </div>
@@ -128,14 +131,14 @@ function BroadcastCard({ row, index }) {
           {staff.casterText || staff.refereeText ? (
             <div className={styles.broadcastStaffLine}>
               {staff.casterText ? (
-                <p title={`解说 ${staff.casterText}`}>
-                  <b>解说</b>
+                <p title={uiText("解说 {0}", uiLocale, [staff.casterText])}>
+                  <b>{uiText("解说", uiLocale)}</b>
                   {staff.casterText}
                 </p>
               ) : null}
               {staff.refereeText ? (
-                <p title={`赛管 ${staff.refereeText}`}>
-                  <b>赛管</b>
+                <p title={uiText("赛管 {0}", uiLocale, [staff.refereeText])}>
+                  <b>{uiText("赛管", uiLocale)}</b>
                   {staff.refereeText}
                 </p>
               ) : null}
@@ -160,8 +163,8 @@ function BroadcastCard({ row, index }) {
             to={withSeason(`/matches/${encodeURIComponent(matchId)}`)}
             state={getReturnState(location)}
             onClick={() => saveReturnScroll(location)}
-            aria-label="比赛详情"
-            title="比赛详情"
+            aria-label={uiText("比赛详情", uiLocale)}
+            title={uiText("比赛详情", uiLocale)}
           >
             →
           </Link>
@@ -172,6 +175,7 @@ function BroadcastCard({ row, index }) {
 }
 
 export default function LiveBroadcastEntry({ hub }) {
+  const uiLocale = useUiLocale()
   const [expanded, setExpanded] = useState(false)
   const rows = getBroadcastMatches(hub)
   const visibleRows = expanded ? rows : rows.slice(0, DEFAULT_VISIBLE_BROADCASTS)
@@ -183,10 +187,10 @@ export default function LiveBroadcastEntry({ hub }) {
       <header className={styles.broadcastHead}>
         <div>
           <span>LIVE DESK</span>
-          <h2 id="live-broadcast-title">直播入口</h2>
+          <h2 id="live-broadcast-title">{uiText("直播入口", uiLocale)}</h2>
         </div>
         <div className={styles.broadcastHeadMeta}>
-          <p>当前显示 {visibleRows.length} / {rows.length} 场</p>
+          <p>{uiText("当前显示 ", uiLocale)}{visibleRows.length} / {rows.length}{uiText(" 场", uiLocale)}</p>
           {rows.length > DEFAULT_VISIBLE_BROADCASTS ? (
             <button
               type="button"
@@ -194,7 +198,7 @@ export default function LiveBroadcastEntry({ hub }) {
               aria-expanded={expanded}
               onClick={() => setExpanded(value => !value)}
             >
-              {expanded ? '收起 −' : '全部直播 +'}
+              {expanded ? uiText("收起 −", uiLocale) : uiText("全部直播 +", uiLocale)}
             </button>
           ) : null}
         </div>

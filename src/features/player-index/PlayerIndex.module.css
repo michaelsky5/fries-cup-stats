@@ -1,0 +1,107 @@
+.portraitTop i { display: inline-block; width: 14px; height: 1px; background: currentColor; vertical-align: middle; opacity: .5; }
+.portrait { --person-role: var(--fc-data-signal); position: relative; isolation: isolate; display: flex; flex-direction: column; height: var(--portrait-height); min-width: 0; background: var(--fc-data-ink); color: var(--fc-data-paper); animation: portrait-enter 300ms ease both; }
+.portrait[data-role="TANK"] { --person-role: var(--fc-data-role-tank); }
+.portrait[data-role="DPS"] { --person-role: var(--fc-data-role-damage); }
+.portrait[data-role="SUP"], .portrait[data-role="SUPPORT"] { --person-role: var(--fc-data-role-support); }
+.portraitTop { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; padding: 10px 26px; border-bottom: 1px solid var(--fc-data-line-on-dark); font-size: 11px; }
+.portraitTop > span { display: flex; gap: 10px; align-items: center; color: var(--fc-data-text-dark-muted); font-family: var(--font-mono); }
+.portraitTop b { display: flex; align-items: center; gap: 7px; font-size: 12px; }
+.portraitTop b::before { content: ''; width: 16px; height: 3px; background: var(--person-role); }
+.scene { position: relative; isolation: isolate; flex: 1; min-height: 360px; overflow: hidden; background: repeating-linear-gradient(90deg, transparent 0, transparent calc(25% - 1px), var(--fc-data-grid-on-dark) calc(25% - 1px), var(--fc-data-grid-on-dark) 25%); }
+.scene::before { content: ''; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 40%, color-mix(in srgb, var(--person-role) 12%, transparent) 40%, color-mix(in srgb, var(--person-role) 12%, transparent) 66%, transparent 66%); z-index: -1; }
+.teamEcho { position: absolute; left: 25px; bottom: 18px; max-width: 100%; color: rgb(238 237 230 / 5%); font: 900 clamp(120px, 15vw, 240px)/.8 var(--fc-data-font-display); letter-spacing: -.05em; white-space: nowrap; z-index: -1; }
+.artFrame { position: absolute; top: 76px; bottom: -12px; right: -1%; width: 78%; z-index: 1; pointer-events: none; mask-image: linear-gradient(0deg, transparent, black 16%); }
+.portrait[data-name-length="long"] .artFrame { top: 116px; }
+.scene::after { content: ''; position: absolute; inset: 55% 0 0; z-index: 2; pointer-events: none; background: linear-gradient(0deg, rgb(24 26 23 / 60%), transparent); }
+.artFrame .art { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.artFrame .art img { filter: drop-shadow(-15px 14px 18px rgb(0 0 0 / 25%)); }
+.identity { position: relative; z-index: 3; padding: 24px 30px 48px; background: linear-gradient(90deg, rgb(24 26 23 / 80%), transparent 88%); pointer-events: none; }
+.nameLabel { font-size: 11px; letter-spacing: .07em; color: var(--fc-data-signal); }
+.identity h2 { width: fit-content; max-width: 90%; margin: 12px 0 8px; font: 900 clamp(55px, 6.8vw, 104px)/1.02 var(--fc-data-font-display); letter-spacing: -.04em; overflow-wrap: anywhere; text-shadow: 0 3px 16px rgb(0 0 0 / 30%); }
+.identity h2[data-name-length="medium"] { font-size: clamp(45px, 5.5vw, 78px); }
+.identity h2[data-name-length="long"] { font-size: clamp(34px, 4vw, 55px); }
+.battleTag { margin: 0; color: var(--fc-data-text-on-dark); font: 12px/1.6 var(--font-mono); overflow-wrap: anywhere; }
+.teamCard { position: absolute; z-index: 4; left: 26px; bottom: 68px; display: flex; align-items: center; gap: 12px; max-width: 53%; padding: 10px 12px; border: 1px solid var(--fc-data-line-on-dark); background: rgb(24 26 23 / 92%); color: var(--fc-data-paper); text-decoration: none; }
+.teamMark { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; }
+.teamMark img { width: 100%; height: 100%; object-fit: contain; }
+.teamCard > span:nth-child(2) { display: grid; gap: 5px; min-width: 0; }
+.teamCard b { font: 900 24px/1 var(--fc-data-font-display); overflow-wrap: anywhere; }
+.teamCard small { color: var(--fc-data-text-dark-muted); font: 11px/1.5 var(--fc-data-font-interface); overflow-wrap: anywhere; }
+.teamCard i { font-style: normal; align-self: flex-start; font-size: 12px; color: var(--fc-data-signal); }
+.teamCard:hover { border-color: var(--fc-data-signal); }
+.artCaption { position: absolute; bottom: 20px; left: 28px; z-index: 3; display: grid; gap: 6px; }
+.artCaption span { color: var(--fc-data-text-dark-muted); font: 10px/1.2 var(--font-mono); }
+.artCaption b { font-size: 13px; }
+.identityArt { position: absolute; right: 5%; top: 32%; bottom: 8%; width: 44%; display: grid; grid-template-rows: minmax(0, 1fr) auto; place-items: center; gap: 8px; opacity: .85; }
+.identityArt > span { color: var(--fc-data-text-dark-muted); font: 9px/1.5 var(--font-mono); text-align: center; }
+.identityMark { display: grid; place-items: center; min-height: 0; width: 100%; height: 100%; }
+.identityMark img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 12px 18px rgb(0 0 0 / 24%)); }
+.identityMark > b { font: 900 100px/1 var(--fc-data-font-display); }
+.portrait[data-has-art="false"] .identity { padding-bottom: 28px; }
+.portrait[data-has-art="false"] .teamCard { bottom: 28px; max-width: 48%; }
+.recordEmpty { min-height: 96px; padding: 17px 26px; border-top: 1px solid var(--fc-data-line-on-dark); background: var(--fc-data-ink-raised); }
+.recordEmpty strong { font-size: 13px; }
+.recordEmpty p { margin: 7px 0 4px; color: var(--fc-data-text-dark-muted); font-size: 12px; }
+.recordEmpty small { color: var(--fc-data-text-dark-muted); font-size: 10px; }
+.recordStrip { display: grid; grid-template-columns: minmax(0, 1fr) 90px 100px; border-top: 1px solid var(--fc-data-line-on-dark); min-height: 107px; background: var(--fc-data-ink-raised); }
+.recordStrip > div { min-width: 0; padding: 16px 18px; border-right: 1px solid var(--fc-data-line-on-dark); }
+.recordStrip > div:last-child { border: 0; }
+.recordStrip span { display: block; color: var(--fc-data-text-dark-muted); font-size: 11px; line-height: 1.4; letter-spacing: 0; white-space: nowrap; }
+.recordStrip strong { display: block; margin-top: 10px; font-size: 13px; line-height: 1.5; }
+.recordStrip b { display: block; margin-top: 9px; font: 900 40px/.9 var(--fc-data-font-display); }
+.recordStrip small { display: block; margin-top: 7px; color: var(--fc-data-text-dark-muted); font-size: 10px; }
+.portraitActions { display: flex; min-height: 54px; border-top: 1px solid var(--fc-data-line-on-dark); }
+.portraitActions button { padding: 12px 22px; border: 0; color: var(--fc-data-paper); background: transparent; font: 12px var(--fc-data-font-interface); cursor: pointer; }
+.portraitActions button:disabled { opacity: .55; cursor: default; }
+.portraitActions a { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex: 1; padding: 16px 22px; background: var(--fc-data-signal); color: var(--fc-data-ink); font-size: 14px; font-weight: 800; text-decoration: none; }
+.portraitActions a:hover { background: var(--fc-data-signal-bright); }
+.portrait :is(button, a):focus-visible { outline: 2px solid var(--fc-data-signal-bright); outline-offset: -4px; }
+.portraitActions a:focus-visible { outline-color: var(--fc-data-ink); }
+@keyframes portrait-enter { from { opacity: .35; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+@media (min-width: 1500px) { .artFrame { top: 68px; } }
+@media (max-width: 1100px) {
+  .portraitTop { padding-inline: 20px; }
+  .identity { padding-inline: 22px; }
+  .identity h2 { font-size: 76px; }
+  .identity h2[data-name-length="medium"] { font-size: 55px; }
+  .identity h2[data-name-length="long"] { font-size: 43px; }
+  .artFrame { top: 112px; width: 90%; right: -6%; }
+  .portrait[data-name-length="long"] .artFrame { top: 150px; }
+  .teamCard { left: 20px; max-width: 69%; bottom: 72px; }
+  .teamMark { width: 36px; height: 36px; }
+  .recordStrip { grid-template-columns: minmax(0, 1fr) 74px 80px; }
+  .recordStrip > div { padding: 16px 12px; }
+  .portraitActions button { padding-inline: 16px; }
+}
+@media (max-width: 760px) {
+  .portrait { height: 560px; }
+  .portraitTop { min-height: 42px; padding: 12px 16px; }
+  .portraitTop > span { font-size: 10px; }
+  .scene { min-height: 290px; }
+  .identity { padding: 20px 18px 60px; }
+  .identity h2 { font-size: 60px; max-width: 95%; }
+  .identity h2[data-name-length="medium"] { font-size: 44px; }
+  .identity h2[data-name-length="long"] { font-size: 35px; }
+  .nameLabel { font-size: 10px; }
+  .battleTag { font-size: 11px; }
+  .artFrame { top: 84px; right: -9%; width: 94%; }
+  .portrait[data-name-length="long"] .artFrame { top: 116px; }
+  .teamCard { left: 14px; bottom: 60px; padding: 8px; gap: 8px; max-width: 60%; }
+  .teamCard b { font-size: 22px; }
+  .teamCard small { font-size: 10px; }
+  .teamMark { width: 28px; height: 28px; }
+  .identityArt { top: 38%; bottom: 10%; right: 5%; width: 42%; }
+  .portrait[data-has-art="false"] .teamCard { bottom: 20px; max-width: 55%; }
+  .recordEmpty { padding: 16px 18px; }
+  .artCaption { left: 18px; bottom: 14px; gap: 5px; }
+  .artCaption span { font-size: 9px; }
+  .artCaption b { font-size: 12px; }
+  .recordStrip { min-height: 100px; grid-template-columns: minmax(0, 1fr) 72px 76px; }
+  .recordStrip > div { padding: 14px 10px; }
+  .recordStrip strong { font-size: 12px; }
+  .recordStrip b { font-size: 34px; }
+  .recordStrip small { font-size: 9px; }
+  .portraitActions button { padding-inline: 14px; font-size: 11px; }
+  .portraitActions a { padding: 14px 16px; font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) { .portrait { animation: none; } }

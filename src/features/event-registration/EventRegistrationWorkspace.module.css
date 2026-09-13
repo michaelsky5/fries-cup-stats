@@ -1,0 +1,3131 @@
+.workspace {
+  display: grid;
+  gap: 16px;
+  margin: 0 0 32px;
+  color: #22201d;
+}
+
+.standalone {
+  width: min(1180px, calc(100% - 40px));
+  margin: 34px auto 70px;
+}
+
+.workspaceHeader,
+.sectionTitle,
+.teamHeading,
+.stateCard,
+.invitationCard,
+.personRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.workspaceHeader {
+  padding: 18px 22px;
+  border: 2px solid #24221f;
+  border-left: 8px solid #f5bf16;
+  background: #fffdf7;
+}
+
+.workspaceHeader span,
+.sectionTitle span,
+.teamHeading span,
+.stateCard span,
+.invitationCard span,
+.formHeading span {
+  color: #a67c00;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.workspaceHeader h2,
+.sectionTitle h3 {
+  margin: 4px 0;
+  font-size: clamp(24px, 3vw, 38px);
+  line-height: 1;
+}
+
+.workspaceHeader h2 {
+  font-size: clamp(27px, 2.7vw, 34px);
+}
+
+.workspaceHeader p,
+.teamHeading p,
+.stateCard p,
+.invitationCard p,
+.formHeading span,
+.personRow span {
+  margin: 0;
+  color: #6b665d;
+  font-size: 13px;
+}
+
+.workspace button,
+.workspace input,
+.workspace select,
+.workspace textarea {
+  min-height: 40px;
+  border: 1px solid #393630;
+  border-radius: 0;
+  background: #fff;
+  color: #22201d;
+  font: inherit;
+}
+
+.workspace button {
+  padding: 0 16px;
+  background: #24221f;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.workspace button:disabled {
+  cursor: not-allowed;
+  opacity: .48;
+}
+
+.workspace input,
+.workspace select,
+.workspace textarea {
+  width: 100%;
+  padding: 8px 10px;
+}
+
+.workspace textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+
+.roleSection {
+  display: grid;
+  gap: 14px;
+  padding-top: 18px;
+  border-top: 2px solid #24221f;
+  scroll-margin-top: 155px;
+}
+
+.playerFlowGroup {
+  display: grid;
+  border: 2px solid #302d28;
+  background: #f7f4ed;
+}
+
+.playerFlowGroup > header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 17px 19px;
+  border-bottom: 1px solid #302d28;
+  background: #fff;
+}
+
+.playerFlowGroup[data-tone="action"] > header {
+  background: #fff3b8;
+}
+
+.playerFlowGroup[data-tone="attention"] > header {
+  border-left: 7px solid #b82f2f;
+}
+
+.playerFlowGroup[data-tone="active"] > header {
+  border-left: 7px solid #5e8b3d;
+}
+
+.playerFlowGroup > header > div {
+  display: grid;
+  gap: 4px;
+}
+
+.playerFlowGroup > header span {
+  color: #a67c00;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: .1em;
+}
+
+.playerFlowGroup > header h4 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.05;
+}
+
+.playerFlowGroup > header p {
+  margin: 0;
+  color: #6b665d;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.playerFlowGroup > header > em {
+  flex: 0 0 auto;
+  border: 1px solid #302d28;
+  background: #fff;
+  padding: 7px 9px;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.playerFlowGroupBody {
+  display: grid;
+  gap: 13px;
+  padding: 16px;
+}
+
+.sectionTitle h3 {
+  font-size: 27px;
+}
+
+.sectionTitle p {
+  margin: 6px 0 0;
+  color: #6b665d;
+  font-size: 12px;
+}
+
+.statusChip {
+  padding: 6px 9px;
+  border: 1px solid #24221f;
+  background: #f5bf16;
+  color: #24221f;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.statusChip[data-status="REJECTED"],
+.statusChip[data-status="EXPIRED"],
+.statusChip[data-status="WITHDRAWN"],
+.statusChip[data-status="NOT_SELECTED"] {
+  background: #eee9df;
+}
+
+.statusChip[data-status="APPROVED"],
+.statusChip[data-status="ACCEPTED"],
+.statusChip[data-status="LOCKED"],
+.statusChip[data-status="ACTIVE"] {
+  background: #d9edca;
+}
+
+.notice,
+.error,
+.warning {
+  padding: 12px 14px;
+  border-left: 5px solid #5e8b3d;
+  background: #edf7e6;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.error {
+  border-color: #b82f2f;
+  background: #fff0ec;
+}
+
+.warning {
+  border-color: #d09300;
+  background: #fff5ce;
+}
+
+.registrationJourney {
+  overflow: hidden;
+  border: 2px solid #24221f;
+  background: #fff;
+}
+
+.registrationJourney[data-complete='true'] {
+  display: grid;
+  grid-template-columns: minmax(360px, .82fr) minmax(0, 1.18fr);
+}
+
+.registrationJourney[data-complete='true'] .journeyAction {
+  grid-template-columns: 1fr;
+  border-right: 2px solid #24221f;
+  border-bottom: 0;
+}
+
+.registrationJourney[data-complete='true'] .journeyMain {
+  min-height: 112px;
+  padding: 15px 18px;
+}
+
+.registrationJourney[data-complete='true'] .journeyMain > strong {
+  font-size: clamp(20px, 2vw, 27px);
+}
+
+.registrationJourney[data-complete='true'] .journeyMain > a {
+  margin-top: 2px;
+  padding: 6px 9px;
+}
+
+.registrationJourney[data-complete='true'] .journeyContext {
+  display: none;
+}
+
+.registrationJourney[data-complete='true'] ol {
+  align-self: stretch;
+}
+
+.registrationJourney[data-complete='true'] li {
+  align-content: center;
+  min-height: 112px;
+  padding: 12px 10px;
+}
+
+.journeyAction {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(260px, .8fr);
+  border-bottom: 2px solid #24221f;
+}
+
+.journeyAction > div {
+  display: grid;
+  gap: 5px;
+  padding: 18px 20px;
+  background: #24221f;
+  color: #fff;
+}
+
+.journeyMain > a {
+  justify-self: start;
+  margin-top: 7px;
+  border: 1px solid #f5bf16;
+  background: #f5bf16;
+  padding: 8px 11px;
+  color: #24221f;
+  font-size: 10px;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.journeyAction > div span,
+.journeyContext span,
+.registrationJourney li span,
+.eventFlowHeading span,
+.longTermManagement summary span {
+  color: #c39200;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.journeyAction > div strong {
+  font-size: clamp(20px, 2.5vw, 30px);
+  line-height: 1.1;
+}
+
+.journeyAction > div p,
+.journeyContext p,
+.registrationJourney li small,
+.eventFlowHeading p,
+.longTermManagement summary small {
+  margin: 0;
+  color: #777167;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.journeyAction > div p {
+  color: #c8c2b7;
+}
+
+.journeyContext {
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  padding: 18px 20px;
+  background: #f5bf16;
+}
+
+.journeyAction > .journeyContext {
+  background: #f5bf16;
+  color: #24221f;
+}
+
+.journeyAction > .journeyContext span {
+  color: #5d4900;
+}
+
+.journeyAction > .journeyContext strong {
+  font-size: 17px;
+}
+
+.journeyContext small {
+  color: #4f4632;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.journeyContext em {
+  justify-self: start;
+  margin-top: 5px;
+  border: 1px solid #24221f;
+  padding: 5px 7px;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 950;
+}
+
+.journeyContext p {
+  color: #4f4632;
+}
+
+.registrationJourney ol {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.registrationJourney li {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  gap: 2px 10px;
+  min-width: 0;
+  padding: 15px 13px;
+  border-right: 1px solid #c9c3b8;
+  background: #fff;
+}
+
+.registrationJourney li:last-child {
+  border-right: 0;
+}
+
+.registrationJourney li b {
+  grid-row: 1 / 3;
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid #302d28;
+  background: #eee9df;
+  font-size: 11px;
+}
+
+.registrationJourney li span {
+  overflow: hidden;
+  color: #302d28;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.registrationJourney li small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.registrationJourney li[data-state="done"] b {
+  background: #d9edca;
+}
+
+.registrationJourney li[data-state="current"] {
+  background: #fff4c3;
+  box-shadow: inset 0 -5px 0 #f5bf16;
+}
+
+.registrationJourney li[data-state="current"] b {
+  background: #f5bf16;
+}
+
+.registrationJourney li[data-state="attention"] {
+  background: #fff0ec;
+  box-shadow: inset 0 -5px 0 #b82f2f;
+}
+
+.registrationJourney li[data-state="attention"] b {
+  background: #f1b2a8;
+}
+
+.registrationJourney li[data-state="upcoming"] {
+  background: #f5f2eb;
+}
+
+.formCard,
+.managerCard,
+.stateCard,
+.invitationCard {
+  border: 1px solid #302d28;
+  background: #fff;
+}
+
+.formCard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 20px;
+}
+
+.formHeading {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 4px;
+}
+
+.formHeading strong {
+  font-size: 21px;
+}
+
+.formCard label,
+.inlineForm label {
+  display: grid;
+  gap: 6px;
+}
+
+.formCard label > span,
+.inlineForm label > span {
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.wideField {
+  grid-column: span 2;
+}
+
+.formCard > button {
+  align-self: end;
+}
+
+.managerCard {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.roleSection[data-complete='true'] {
+  gap: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.roleSection[data-complete='true'] > .sectionTitle {
+  display: none;
+}
+
+.managerCard[data-roster-status='LOCKED'] {
+  padding: 16px;
+}
+
+.managerCard[data-roster-status='LOCKED'] > .rosterEditor {
+  order: 1;
+  margin-top: 14px;
+}
+
+.managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot {
+  order: 2;
+  margin-top: 14px;
+}
+
+.managerCard[data-roster-status='LOCKED'] > .eventFlowHeading {
+  display: none;
+}
+
+.managerCard[data-roster-status='LOCKED'] > .registrationMeta,
+.managerCard[data-roster-status='LOCKED'] > .recruitmentActions {
+  order: 3;
+}
+
+.managerCard[data-roster-status='LOCKED'] > .twoColumns {
+  order: 4;
+}
+
+.managerCard[data-roster-status='LOCKED'] .managerTeamAction {
+  min-height: 126px;
+  padding: 17px 19px;
+}
+
+.managerCard[data-roster-status='LOCKED'] .managerTeamAction > strong {
+  font-size: clamp(21px, 2.2vw, 28px);
+}
+
+.managerTeamSnapshot {
+  order: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+  margin-top: 16px;
+  border: 2px solid #24221f;
+  background: #fff;
+}
+
+.managerTeamAction {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  min-height: 176px;
+  border-left: 7px solid #f5bf16;
+  background: #24221f;
+  color: #fff;
+  padding: 22px 24px;
+}
+
+.managerTeamSnapshot[data-tone='attention'] .managerTeamAction {
+  border-left-color: #b82f2f;
+}
+
+.managerTeamSnapshot[data-tone='done'] .managerTeamAction {
+  border-left-color: #5e8b3d;
+}
+
+.managerTeamAction > span {
+  color: #f5bf16;
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: .1em;
+}
+
+.managerTeamAction > strong {
+  font-size: clamp(23px, 2.6vw, 34px);
+  line-height: 1.06;
+}
+
+.managerTeamAction > p {
+  max-width: 660px;
+  margin: 0;
+  color: #c8c2b7;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.managerTeamAction > a {
+  justify-self: start;
+  margin-top: 4px;
+  border: 1px solid #f5bf16;
+  background: #f5bf16;
+  padding: 8px 11px;
+  color: #24221f;
+  font-size: 10px;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.managerTeamSnapshot > dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.managerTeamSnapshot > dl > div {
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 14px 16px;
+  border-left: 1px solid #24221f;
+  border-bottom: 1px solid #24221f;
+  background: #f5f2eb;
+}
+
+.managerTeamSnapshot > dl > div:nth-last-child(-n+2) {
+  border-bottom: 0;
+}
+
+.managerTeamSnapshot > dl > div[data-state='current'] {
+  background: #fff4c3;
+  box-shadow: inset 0 -5px #f5bf16;
+}
+
+.managerTeamSnapshot > dl > div[data-state='attention'] {
+  background: #fff0ec;
+  box-shadow: inset 0 -5px #b82f2f;
+}
+
+.managerTeamSnapshot > dl > div[data-state='done'] {
+  background: #edf7e6;
+}
+
+.managerTeamSnapshot dt {
+  color: #777167;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.managerTeamSnapshot dd {
+  margin: 0;
+  overflow: hidden;
+  font-size: clamp(15px, 1.6vw, 20px);
+  font-weight: 950;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.managerTeamSnapshot > nav {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 2px solid #24221f;
+}
+
+.managerTeamSnapshot > nav a,
+.managerTeamSnapshot > nav span {
+  min-height: 37px;
+  display: grid;
+  place-items: center;
+  border-right: 1px solid #24221f;
+  color: #24221f;
+  font-size: 10px;
+  font-weight: 950;
+  text-align: center;
+  text-decoration: none;
+}
+
+.managerTeamSnapshot > nav > :last-child {
+  border-right: 0;
+}
+
+.managerTeamSnapshot > nav a:hover {
+  background: #f5bf16;
+}
+
+.managerTeamSnapshot > nav span {
+  background: #eee9df;
+  color: #938d83;
+}
+
+.teamHeading {
+  align-items: flex-start;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #bdb7ac;
+}
+
+.teamHeading strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 30px;
+}
+
+.managerCard[data-roster-status='LOCKED'] .teamHeading {
+  padding-bottom: 11px;
+}
+
+.managerCard[data-roster-status='LOCKED'] .teamHeading strong {
+  font-size: 27px;
+}
+
+.eventFlowHeading {
+  display: flex;
+  order: 2;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-left: 7px solid #f5bf16;
+  background: #f5f2eb;
+}
+
+.eventFlowHeading > div {
+  display: grid;
+  gap: 3px;
+}
+
+.eventFlowHeading strong {
+  font-size: 20px;
+}
+
+.eventFlowHeading em {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border: 1px solid #24221f;
+  background: #f5bf16;
+  color: #24221f;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.managerCard > .inlineForm,
+.managerCard > .registrationMeta,
+.managerCard > .recruitmentActions {
+  order: 3;
+}
+
+.managerCard > .twoColumns {
+  order: 4;
+}
+
+.managerCard > .freeAgentList {
+  order: 5;
+}
+
+.managerCard > .rosterEditor {
+  order: 6;
+}
+
+.longTermManagement {
+  order: 7;
+  margin-top: 20px;
+  border-top: 2px solid #24221f;
+}
+
+.longTermManagement summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 15px 2px 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.longTermManagement summary::-webkit-details-marker {
+  display: none;
+}
+
+.longTermManagement summary > div {
+  display: grid;
+  gap: 3px;
+}
+
+.longTermManagement summary strong {
+  font-size: 18px;
+}
+
+.longTermManagement summary::after {
+  content: "展开设置 +";
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border: 1px solid #24221f;
+  background: #fff;
+  color: #24221f;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.longTermManagement[open] summary::after {
+  content: "收起设置 −";
+  background: #24221f;
+  color: #fff;
+}
+
+.inlineForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px 2fr auto;
+  gap: 12px;
+  padding-top: 16px;
+}
+
+.eventFlowHeading,
+.twoColumns,
+.rosterEditor,
+.longTermManagement {
+  scroll-margin-top: 165px;
+}
+
+.registrationMeta,
+.recruitmentActions,
+.applicationNote {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.registrationMeta span {
+  padding: 7px 9px;
+  background: #f1eee7;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.recruitmentActions button[data-active="true"] {
+  background: #f5bf16;
+  color: #24221f;
+}
+
+.twoColumns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.twoColumns h4,
+.freeAgentList h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.managerPeopleWorkspace {
+  display: block;
+  overflow: hidden;
+  border: 2px solid #24221f;
+  background: #fff;
+}
+
+.managerPeopleHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  border-bottom: 2px solid #24221f;
+  background: #f5f2eb;
+}
+
+.managerPeopleHeader > div:first-child {
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  min-height: 118px;
+  border-left: 7px solid #f5bf16;
+  padding: 18px 20px;
+}
+
+.managerPeopleWorkspace[data-tone='attention'] .managerPeopleHeader > div:first-child {
+  border-left-color: #b82f2f;
+  background: #fff0ec;
+}
+
+.managerPeopleWorkspace[data-tone='done'] .managerPeopleHeader > div:first-child {
+  border-left-color: #5e8b3d;
+  background: #edf7e6;
+}
+
+.managerPeopleHeader span,
+.peoplePanel > header span,
+.managerPersonRow > div:first-child > span,
+.managerTalentPool > header span {
+  color: #8b6a05;
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: .08em;
+}
+
+.managerPeopleHeader strong {
+  font-size: clamp(21px, 2.5vw, 31px);
+  line-height: 1.06;
+}
+
+.managerPeopleHeader p,
+.peoplePanel > header p,
+.managerPersonRow p,
+.managerTalentPool > header p {
+  margin: 0;
+  color: #6b665d;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.managerPeopleHeader > dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(92px, 1fr));
+  margin: 0;
+  border-left: 1px solid #24221f;
+}
+
+.managerPeopleHeader > dl > div {
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 13px 15px;
+  border-right: 1px solid #24221f;
+  background: #fff;
+}
+
+.managerPeopleHeader > dl > div:last-child {
+  border-right: 0;
+}
+
+.managerPeopleHeader dt {
+  color: #777167;
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.managerPeopleHeader dd {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.peopleFrozenNotice {
+  border-bottom: 1px solid #b58900;
+  background: #fff5ce;
+  padding: 10px 13px;
+  color: #665000;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.peopleColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.peoplePanel {
+  min-width: 0;
+  border-right: 1px solid #24221f;
+}
+
+.peoplePanel:last-child {
+  border-right: 0;
+}
+
+.peoplePanel > header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 83px;
+  padding: 13px 15px;
+  border-bottom: 1px solid #24221f;
+  background: #f5f2eb;
+}
+
+.peoplePanel[data-priority='true'] > header {
+  background: #fff4c3;
+}
+
+.peoplePanel > header > div {
+  display: grid;
+  gap: 3px;
+}
+
+.peoplePanel > header h4 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.peoplePanel > header > em,
+.managerTalentPool > header > em {
+  flex: 0 0 auto;
+  border: 1px solid #24221f;
+  background: #fff;
+  padding: 6px 8px;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 950;
+}
+
+.peoplePanelBody {
+  padding: 0 14px 13px;
+}
+
+.managerPersonRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 82px;
+  padding: 11px 0;
+  border-bottom: 1px solid #d1ccc2;
+}
+
+.managerPersonRow > div:first-child {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.managerPersonRow strong {
+  overflow: hidden;
+  font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.managerPersonRow > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.managerPersonRow button {
+  min-height: 31px;
+  padding-inline: 10px;
+  font-size: 10px;
+}
+
+.managerPersonRow .secondaryPeopleAction {
+  border-color: #777167;
+  background: #fff;
+  color: #24221f;
+}
+
+.managerTalentPool {
+  display: grid;
+  gap: 0;
+  border: 2px solid #24221f;
+  background: #fff;
+  padding: 0;
+}
+
+.managerTalentPool > header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 17px;
+  border-bottom: 1px solid #24221f;
+  background: #f5f2eb;
+}
+
+.managerTalentPool > header > div {
+  display: grid;
+  gap: 4px;
+}
+
+.managerTalentPool > header strong {
+  font-size: 19px;
+}
+
+.managerTalentPool > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 18px;
+  padding: 0 16px 12px;
+}
+
+.personRow {
+  min-height: 58px;
+  padding: 9px 0;
+  border-top: 1px solid #d1ccc2;
+}
+
+.personRow > div:first-child {
+  display: grid;
+  gap: 3px;
+}
+
+.personRow > div:last-child {
+  display: flex;
+  gap: 6px;
+}
+
+.personRow button {
+  min-height: 32px;
+}
+
+.personRow .privacyButton {
+  border-color: #8c7221;
+  background: #fff8dc;
+}
+
+.privateContactLine {
+  width: fit-content;
+  padding: 4px 7px;
+  border-left: 3px solid #f4c320;
+  background: #fff8dc;
+  color: #2f2a20;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.freeAgentList {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #bdb7ac;
+}
+
+.managerControlPanel {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 2px solid #24221f;
+  background: #fff7d8;
+}
+
+.managerControlHeader,
+.managerTransferPending,
+.managerTransferCard > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.managerControlHeader > div,
+.managerTransferPending > div:first-child,
+.managerTransferCard header > div {
+  display: grid;
+  gap: 4px;
+}
+
+.managerControlHeader span,
+.managerTransferPending span,
+.managerTransferCard header span,
+.managerTransferForm label > span,
+.managerTransferResponse label > span {
+  color: #8b6a05;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.managerControlHeader h4 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.managerControlHeader p,
+.managerTransferPending p,
+.managerTransferCard p {
+  margin: 0;
+  color: #6b665d;
+  font-size: 12px;
+}
+
+.managerTransferForm {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.managerTransferForm label,
+.managerTransferResponse label {
+  display: grid;
+  gap: 5px;
+}
+
+.managerTransferPending {
+  padding-top: 10px;
+  border-top: 1px solid #b8a963;
+}
+
+.managerTransferPending strong,
+.managerTransferCard header strong {
+  font-size: 20px;
+}
+
+.managerTransferCancel {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto;
+  gap: 8px;
+}
+
+.managerTransferCard {
+  display: grid;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 2px solid #24221f;
+  background: #fff7d8;
+}
+
+.managerTransferFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.managerTransferFacts span {
+  padding: 7px 9px;
+  background: #fff;
+  color: #5f584d;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.managerTransferResponse {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto auto;
+  gap: 9px;
+  align-items: end;
+}
+
+.coachManagerPanel {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #bdb7ac;
+  background: #f8f5ee;
+}
+
+.coachPanelHeader,
+.coachRelationshipRow,
+.coachSelfCard > header,
+.coachEventState {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.coachPanelHeader > div,
+.coachSelfCard header > div,
+.coachEventState > div {
+  display: grid;
+  gap: 4px;
+}
+
+.coachPanelHeader span,
+.coachSelfCard header span,
+.coachEventState span,
+.coachInviteForm label > span {
+  color: #8b6a05;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.coachPanelHeader h4 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.coachPanelHeader p,
+.coachSelfCard p,
+.coachEventState p {
+  margin: 0;
+  color: #6b665d;
+  font-size: 12px;
+}
+
+.coachPanelHeader > strong {
+  min-width: 76px;
+  display: grid;
+  gap: 2px;
+  padding: 9px 11px;
+  border: 1px solid #b8b1a5;
+  background: #fff;
+  font-size: 20px;
+}
+
+.coachPanelHeader small {
+  color: #706a60;
+  font-size: 9px;
+}
+
+.coachInviteForm {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.coachInviteForm label {
+  display: grid;
+  gap: 5px;
+}
+
+.coachRelationshipList {
+  border: solid #bdb7ac;
+  border-width: 1px 1px 0;
+  background: #fff;
+}
+
+.coachRelationshipRow {
+  min-height: 68px;
+  padding: 9px 11px;
+  border-bottom: 1px solid #bdb7ac;
+}
+
+.coachRelationshipRow > div:first-child {
+  min-width: 150px;
+  display: grid;
+  gap: 3px;
+}
+
+.coachRelationshipRow > div:first-child span {
+  color: #6b665d;
+  font-size: 11px;
+}
+
+.coachStatuses,
+.coachRowActions,
+.coachSelfActions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.coachStatuses small {
+  color: #777167;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.coachRowActions {
+  justify-content: flex-end;
+}
+
+.secondaryCoachAction {
+  border-color: #7d7569 !important;
+  background: #fff !important;
+  color: #393630 !important;
+}
+
+.coachSelfCard {
+  display: grid;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid #302d28;
+  background: #fff;
+}
+
+.coachSelfCard header strong,
+.coachEventState strong {
+  font-size: 20px;
+}
+
+.coachEventState {
+  padding: 13px;
+  border-left: 5px solid #f5bf16;
+  background: #f8f5ee;
+}
+
+.coachSelfActions {
+  justify-content: flex-end;
+}
+
+.rosterEditor {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 18px;
+  border: 2px solid #24221f;
+  background: #f8f5ee;
+}
+
+.rosterEditorHeader,
+.rosterCounts,
+.rosterSubmitBar,
+.rosterPendingBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.rosterEditorHeader > div:first-child {
+  display: grid;
+  gap: 4px;
+}
+
+.rosterEditorHeader span,
+.officerFields label > span,
+.rosterSubmitBar label > span {
+  color: #8b6a05;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.rosterEditorHeader h4 {
+  margin: 0;
+  font-size: 23px;
+}
+
+.rosterEditorHeader p {
+  margin: 0;
+  color: #6b665d;
+  font-size: 12px;
+}
+
+.rosterCounts strong {
+  min-width: 65px;
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid #b8b1a5;
+  background: #fff;
+  font-size: 19px;
+  line-height: 1;
+}
+
+.rosterCounts small {
+  color: #706a60;
+  font-size: 9px;
+}
+
+.rosterReviewNote {
+  display: grid;
+  gap: 4px;
+  padding: 11px 13px;
+  border-left: 5px solid #b82f2f;
+  background: #fff0ec;
+  font-size: 12px;
+}
+
+.rosterTable {
+  border: solid #bdb7ac;
+  border-width: 1px 1px 0;
+  background: #fff;
+}
+
+.rosterTableHead,
+.rosterTableRow {
+  display: grid;
+  grid-template-columns: 82px minmax(170px, 1fr) 150px;
+  gap: 10px;
+  align-items: center;
+  min-height: 54px;
+  padding: 8px 11px;
+  border-bottom: 1px solid #bdb7ac;
+}
+
+.rosterTableHead {
+  min-height: 34px;
+  background: #24221f;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.rosterTableRow[data-included='false'] {
+  background: #eeeae2;
+  opacity: .62;
+}
+
+.rosterTableRow > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.rosterTableRow small {
+  overflow: hidden;
+  color: #746e64;
+  font-size: 10px;
+  text-overflow: ellipsis;
+}
+
+.rosterRoleValue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  border: 1px solid #b8b1a5;
+  background: #f4f1ea;
+  padding: 6px 9px;
+  color: #3d3933;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.rosterEditor[data-status='LOCKED'] {
+  gap: 12px;
+  background: #fff;
+}
+
+.rosterEditor[data-status='LOCKED'] .rosterTableHead,
+.rosterEditor[data-status='LOCKED'] .rosterTableRow {
+  grid-template-columns: minmax(170px, 1fr) 150px;
+}
+
+.rosterEditor[data-status='LOCKED'] .rosterTableHead > span:first-child,
+.rosterEditor[data-status='LOCKED'] .checkField {
+  display: none;
+}
+
+.officerSummary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  border: solid #bdb7ac;
+  border-width: 1px 0 0 1px;
+}
+
+.officerSummary > div {
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  border: solid #bdb7ac;
+  border-width: 0 1px 1px 0;
+  background: #edf7e6;
+}
+
+.officerSummary dt {
+  color: #6f695f;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.officerSummary dd {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.teamHeadingIdentity {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.teamHeadingIdentity > div {
+  min-width: 0;
+}
+
+.managerTeamLogo {
+  flex: 0 0 auto;
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #24221f;
+  background: #f4f1ea;
+  box-shadow: 5px 5px 0 #f5bf16;
+  padding: 9px;
+}
+
+.managerTeamLogo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.managerTeamLogo b {
+  color: #24221f;
+  font-size: 18px;
+}
+
+.lockedRosterRegister {
+  overflow: hidden;
+  border: 1px solid #bdb7ac;
+  background: #fff;
+}
+
+.lockedRosterRegisterHead,
+.lockedRosterRegisterRow {
+  display: grid;
+  grid-template-columns: 62px minmax(220px, 1fr) minmax(120px, .34fr) minmax(120px, .34fr);
+  align-items: center;
+}
+
+.lockedRosterRegisterHead {
+  min-height: 34px;
+  background: #24221f;
+  color: #fff;
+}
+
+.lockedRosterRegisterHead span {
+  padding: 8px 12px;
+  color: rgba(255, 255, 255, .68);
+  font-size: 8px;
+  font-weight: 950;
+  letter-spacing: .08em;
+}
+
+.lockedRosterRegisterRow {
+  min-height: 62px;
+  border-bottom: 1px solid #d3cdc2;
+}
+
+.lockedRosterRegisterRow:last-child { border-bottom: 0; }
+.lockedRosterRegisterRow:hover { background: #fff9de; }
+
+.lockedRosterIndex {
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  border-right: 1px solid #d3cdc2;
+  background: #f4f1ea;
+  color: #7b7469;
+  font-size: 11px;
+  font-weight: 1000;
+}
+
+.lockedRosterIdentity {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 12px;
+}
+
+.lockedRosterIdentity > span {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #2a2a2a;
+  background: #2a2a2a;
+  color: #f5bf16;
+  font-size: 10px;
+  font-weight: 1000;
+}
+
+.lockedRosterIdentity > div { min-width: 0; display: grid; gap: 3px; }
+.lockedRosterIdentity strong,
+.lockedRosterIdentity small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lockedRosterIdentity strong { color: #2a2a2a; font-size: 14px; line-height: 1; }
+.lockedRosterIdentity small { color: #777167; font-size: 9px; font-weight: 800; }
+
+.lockedRosterRole,
+.lockedRosterState {
+  justify-self: start;
+  margin: 8px 12px;
+  border: 1px solid #bdb7ac;
+  background: #f4f1ea;
+  padding: 6px 9px;
+  color: #3d3933;
+  font-size: 9px;
+  font-weight: 950;
+}
+
+.lockedRosterState { border-color: #91a681; background: #edf7e6; color: #385028; }
+
+.checkField {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.checkField input {
+  width: 18px;
+  min-height: 18px;
+  accent-color: #f5bf16;
+}
+
+.officerFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.officerFields label,
+.rosterSubmitBar label {
+  display: grid;
+  gap: 5px;
+}
+
+.rosterSubmitBar {
+  align-items: end;
+  padding-top: 13px;
+  border-top: 1px solid #bdb7ac;
+}
+
+.rosterSubmitBar label {
+  width: min(330px, 100%);
+  margin-left: auto;
+}
+
+.primaryRosterAction {
+  background: #f5bf16 !important;
+  color: #24221f !important;
+}
+
+.rosterPendingBar,
+.rosterLocked {
+  padding: 12px 13px;
+  border-left: 5px solid #d09300;
+  background: #fff5ce;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.rosterLocked {
+  border-color: #5e8b3d;
+  background: #edf7e6;
+}
+
+.stateCard,
+.invitationCard {
+  padding: 18px 20px;
+}
+
+.rosterExclusionNotice {
+  display: grid;
+  gap: 4px;
+  padding: 12px 13px;
+  border-left: 5px solid #777167;
+  background: #eee9df;
+  font-size: 12px;
+}
+
+.rosterExclusionNotice[data-pending="true"] {
+  border-color: #b82f2f;
+  background: #fff0ec;
+}
+
+.rosterExclusionNotice span {
+  color: #6b665d;
+  line-height: 1.5;
+}
+
+.selectionOutcome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 20px;
+  border: 1px solid #302d28;
+  border-left: 7px solid #d09300;
+  background: #fff8df;
+}
+
+.selectionOutcome[data-final="true"] {
+  border-left-color: #777167;
+  background: #eee9df;
+}
+
+.selectionOutcome > div {
+  display: grid;
+  gap: 5px;
+}
+
+.selectionOutcome span {
+  color: #a67c00;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+
+.selectionOutcome strong {
+  font-size: 20px;
+}
+
+.selectionOutcome p {
+  margin: 0;
+  color: #6b665d;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.stateCard > div:first-child,
+.invitationCard > div:first-child {
+  display: grid;
+  gap: 5px;
+}
+
+.stateCard strong,
+.invitationCard strong {
+  font-size: 20px;
+}
+
+.invitationCard > div:last-child {
+  display: flex;
+  gap: 8px;
+}
+
+.applicationHistory {
+  margin-top: 10px;
+  border-top: 1px solid #d1ccc2;
+}
+
+.applicationHistory summary {
+  padding: 10px 0;
+  color: #6b665d;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.historyRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid #e6e0d6;
+  font-size: 12px;
+}
+
+.historyRow small {
+  color: #777167;
+}
+
+.playerHistory {
+  display: grid;
+  gap: 10px;
+  padding: 17px;
+  border: 1px solid #302d28;
+  background: #f7f4ed;
+}
+
+.playerHistoryHeading,
+.playerHistoryRow,
+.playerHistoryRow > div:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.playerHistoryHeading > div,
+.playerHistoryRow > div:first-child {
+  display: grid;
+  gap: 3px;
+}
+
+.playerHistoryHeading span,
+.playerHistoryRow span {
+  color: #a67c00;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+
+.playerHistoryHeading small,
+.playerHistoryRow small,
+.playerHistoryRow p {
+  margin: 0;
+  color: #6b665d;
+  font-size: 11px;
+}
+
+.playerHistory > div:last-child {
+  display: grid;
+  gap: 7px;
+}
+
+.playerHistoryRow {
+  padding: 11px 12px;
+  border: 1px solid #d1ccc2;
+  background: #fff;
+}
+
+.recruitingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.recruitingGrid > article {
+  display: grid;
+  gap: 13px;
+  padding: 17px;
+  border: 1px solid #302d28;
+  background: #fff;
+}
+
+.recruitingGrid strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 25px;
+}
+
+.recruitingGrid p {
+  margin: 0;
+  color: #6b665d;
+  font-size: 12px;
+}
+
+.recruitingGrid dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+}
+
+.recruitingGrid dl div {
+  display: grid;
+  gap: 3px;
+  padding: 8px;
+  border: 1px solid #d1ccc2;
+}
+
+.recruitingGrid dt {
+  color: #777167;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.recruitingGrid dd {
+  margin: 0;
+  font-weight: 900;
+}
+
+.applicationNote {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 10px;
+  padding: 13px;
+  border: 1px solid #302d28;
+  background: #fff3b8;
+}
+
+.applicationNote label {
+  display: grid;
+  gap: 5px;
+}
+
+.applicationNote label > span {
+  color: #6b665d;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.applicationRule {
+  margin: 0;
+  border-left: 5px solid #d09300;
+  background: #fff5ce;
+  padding: 10px 12px;
+  color: #665000;
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1.5;
+}
+
+.emptyBlock {
+  display: grid;
+  gap: 5px;
+  padding: 18px;
+  border: 1px dashed #8f887d;
+  background: #f7f4ed;
+}
+
+.emptyBlock span {
+  color: #726c62;
+  font-size: 12px;
+}
+
+.capabilityBlock {
+  padding: 11px 13px;
+  border: 1px solid #b58900;
+  border-left: 6px solid #f4c320;
+  background: #fff7d8;
+  color: #665000;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.capabilityInline {
+  display: block;
+  margin-top: 6px;
+  color: #8b281f;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/*
+ * Manager workspace
+ *
+ * The public team page is an identity-led dossier. The manager surface has a
+ * different job: keep the current decision, the team's state and the editable
+ * register visible at the same time. It therefore borrows the portal's type,
+ * colour and rule system without borrowing the public page's hero/player-wall
+ * composition.
+ */
+.workspace[data-workspace-mode='manager'] {
+  gap: 20px;
+}
+
+.workspace[data-workspace-mode='manager'] > .workspaceHeader {
+  position: relative;
+  min-height: 116px;
+  padding: 20px 22px 20px 26px;
+  border-width: 2px 0 1px;
+  border-left: 0;
+  background: transparent;
+}
+
+.workspace[data-workspace-mode='manager'] > .workspaceHeader::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  left: 0;
+  width: 6px;
+  background: #f5bf16;
+}
+
+.workspace[data-workspace-mode='manager'] > .workspaceHeader h2 {
+  font-size: clamp(30px, 3.2vw, 42px);
+  letter-spacing: -.035em;
+}
+
+.workspace[data-workspace-mode='manager'] > .workspaceHeader p {
+  max-width: 720px;
+  font-size: 12px;
+}
+
+.workspace[data-workspace-mode='manager'] > .workspaceHeader button {
+  min-width: 106px;
+  background: transparent;
+  color: #24221f;
+}
+
+.workspace[data-workspace-mode='manager'] > .workspaceHeader button:hover {
+  background: #24221f;
+  color: #fff;
+}
+
+.workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] {
+  grid-template-columns: minmax(285px, .72fr) minmax(0, 1.28fr);
+  border-width: 1px;
+  background: #fffdf7;
+}
+
+.workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] .journeyAction {
+  border-right-width: 1px;
+}
+
+.workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] .journeyMain {
+  position: relative;
+  min-height: 104px;
+  align-content: center;
+  padding: 17px 20px 17px 24px;
+  background: #f5bf16;
+  color: #24221f;
+}
+
+.workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] .journeyMain::after {
+  content: '05 / 05';
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  color: rgba(36, 34, 31, .42);
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: .12em;
+}
+
+.workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] .journeyMain > span {
+  color: rgba(36, 34, 31, .62);
+}
+
+.workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] .journeyMain > p {
+  max-width: 430px;
+  color: rgba(36, 34, 31, .72);
+}
+
+.workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] .journeyMain > a {
+  border-color: #24221f;
+  background: #24221f;
+  color: #fff;
+}
+
+.workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] li {
+  min-height: 104px;
+  align-content: center;
+  padding: 14px 12px;
+  background: #fffdf7;
+}
+
+.workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] li b {
+  border-color: #8fa27e;
+  background: #e6f1dc;
+  color: #314127;
+}
+
+.workspace[data-workspace-mode='manager'] > .roleSection[data-complete='true'] {
+  margin-top: 2px;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] {
+  display: grid;
+  grid-template-columns: minmax(238px, .34fr) minmax(0, 1fr);
+  align-items: start;
+  column-gap: 18px;
+  padding: 0 18px 18px;
+  border-width: 1px;
+  background: #fffdf7;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .teamHeading {
+  grid-column: 1 / -1;
+  margin: 0 -18px;
+  padding: 17px 20px;
+  border-bottom: 1px solid #bdb7ac;
+  background: #fff;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .teamHeadingIdentity {
+  gap: 13px;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .managerTeamLogo {
+  width: 62px;
+  height: 62px;
+  border-color: #8f887d;
+  background: #f4f1ea;
+  box-shadow: none;
+  padding: 7px;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .teamHeading strong {
+  font-size: 27px;
+  letter-spacing: -.02em;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot {
+  grid-column: 1;
+  order: 1;
+  display: flex;
+  align-self: start;
+  flex-direction: column;
+  margin-top: 18px;
+  border: 0;
+  background: #24221f;
+  color: #fff;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .managerTeamAction {
+  min-height: 0;
+  align-content: start;
+  padding: 20px 18px 18px;
+  border-left-width: 5px;
+  background: transparent;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .managerTeamAction > strong {
+  font-size: clamp(22px, 2vw, 29px);
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .managerTeamAction > a {
+  width: 100%;
+  justify-self: stretch;
+  text-align: center;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot > dl {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid rgba(255, 255, 255, .18);
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot > dl > div {
+  min-height: 72px;
+  padding: 12px 13px;
+  border-color: rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .035);
+  box-shadow: none;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot dt {
+  color: rgba(255, 255, 255, .5);
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot dd {
+  color: #fff;
+  font-size: 16px;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot > nav {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid rgba(255, 255, 255, .18);
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot > nav a,
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot > nav span {
+  min-height: 42px;
+  border-color: rgba(255, 255, 255, .18);
+  background: transparent;
+  color: rgba(255, 255, 255, .78);
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot > nav a:hover {
+  background: #f5bf16;
+  color: #24221f;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot > nav span {
+  color: rgba(255, 255, 255, .34);
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .rosterEditor {
+  grid-column: 2;
+  order: 2;
+  margin-top: 18px;
+  border-width: 1px;
+  background: #fff;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .rosterEditor .rosterEditorHeader {
+  margin: -18px -18px 2px;
+  padding: 18px;
+  border-bottom: 1px solid #c9c3b8;
+  background: #f5f2eb;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .rosterEditor .rosterEditorHeader > div:first-child {
+  min-width: 0;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .rosterEditor .rosterCounts,
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .rosterEditor .statusChip {
+  flex: 0 0 auto;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .rosterEditor .statusChip {
+  white-space: nowrap;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .lockedRosterRegister {
+  border-color: #c9c3b8;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .lockedRosterRegisterHead {
+  background: #35332f;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .lockedRosterRegisterRow {
+  min-height: 58px;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .lockedRosterRegisterRow:hover {
+  background: #fff7d8;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .eventFlowHeading,
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .registrationMeta,
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .recruitmentActions,
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .twoColumns,
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .freeAgentList,
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .longTermManagement {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1080px) {
+  .workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] {
+    grid-template-columns: minmax(210px, .3fr) minmax(0, 1fr);
+    column-gap: 14px;
+  }
+
+  .workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot > dl {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot > dl > div {
+    border-left: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] .journeyAction {
+    border-right: 0;
+    border-bottom: 1px solid #24221f;
+  }
+
+  .workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot,
+  .workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .rosterEditor {
+    grid-column: 1;
+  }
+
+  .workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot > dl {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .workspace[data-workspace-mode='manager'] > .workspaceHeader {
+    min-height: 0;
+    padding: 18px 0 18px 18px;
+  }
+
+  .workspace[data-workspace-mode='manager'] > .workspaceHeader::before {
+    top: 18px;
+    bottom: 18px;
+  }
+
+  .workspace[data-workspace-mode='manager'] > .workspaceHeader button {
+    align-self: flex-start;
+  }
+
+  .workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] ol {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] li,
+  .workspace[data-workspace-mode='manager'] > .registrationJourney[data-complete='true'] li:last-child {
+    min-height: 66px;
+    grid-column: auto;
+    border-right: 0;
+  }
+
+  .workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .managerTeamSnapshot > dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Manager hub: daily overview first, operational detail behind stable tabs. */
+.workspace[data-workspace-mode='manager'] {
+  gap: 18px;
+}
+
+.workspace[data-workspace-mode='manager'] > .workspaceHeader {
+  min-height: 0;
+  padding: 17px 20px;
+  border: 1px solid #24221f;
+  border-left: 6px solid #f5bf16;
+  background: #fffdf7;
+}
+
+.workspace[data-workspace-mode='manager'] > .workspaceHeader::before {
+  display: none;
+}
+
+.workspace[data-workspace-mode='manager'] > .workspaceHeader h2 {
+  font-size: clamp(28px, 3vw, 38px);
+}
+
+.workspace[data-workspace-mode='manager'] > .roleSection {
+  gap: 12px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.workspace[data-workspace-mode='manager'] > .roleSection > .sectionTitle {
+  display: none;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard,
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] {
+  display: block;
+  padding: 0;
+  border: 2px solid #24221f;
+  background: #f8f5ed;
+}
+
+.workspace[data-workspace-mode='manager'] .managerCard > .teamHeading,
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .teamHeading {
+  margin: 0;
+  padding: 15px 18px;
+  border-bottom: 1px solid #24221f;
+  background: #fff;
+}
+
+.workspace[data-workspace-mode='manager'] .managerTeamLogo,
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .managerTeamLogo {
+  width: 58px;
+  height: 58px;
+  padding: 6px;
+  border-color: #8f887d;
+  box-shadow: none;
+}
+
+.workspace[data-workspace-mode='manager'] .teamHeading strong,
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .teamHeading strong {
+  margin-top: 2px;
+  font-size: 26px;
+  letter-spacing: -.025em;
+}
+
+.managerSeasonState {
+  flex: 0 0 auto;
+  border: 1px solid #24221f;
+  padding: 7px 9px;
+  background: #f5f2eb;
+  color: #24221f;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 950;
+}
+
+.managerSeasonState[data-state='ready'] {
+  border-color: #71875d;
+  background: #e5f0dc;
+  color: #2f4825;
+}
+
+.managerSeasonState[data-state='action'] {
+  border-color: #a63a30;
+  background: #fff0ec;
+  color: #85261e;
+}
+
+.managerTabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-bottom: 2px solid #24221f;
+  background: #24221f;
+}
+
+.workspace .managerTabs > button {
+  min-height: 58px;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 3px;
+  padding: 9px 15px;
+  border: 0;
+  border-right: 1px solid #5a5650;
+  background: #24221f;
+  color: #fff;
+  text-align: left;
+}
+
+.workspace .managerTabs > button:last-child {
+  border-right: 0;
+}
+
+.workspace .managerTabs > button[data-active='true'] {
+  background: #f5bf16;
+  color: #24221f;
+  box-shadow: inset 0 -4px #a67c00;
+}
+
+.workspace .managerTabs > button:not(:disabled):not([data-active='true']):hover {
+  background: #34312d;
+}
+
+.workspace .managerTabs > button:disabled {
+  opacity: .46;
+}
+
+.managerTabs span {
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.managerTabs small {
+  color: #a9a39a;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.managerTabs button[data-active='true'] small {
+  color: #665000;
+}
+
+.workspace[data-workspace-mode='manager'] .managerPanel {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.workspace[data-workspace-mode='manager'] .managerPanel[hidden] {
+  display: none;
+}
+
+.managerOverviewFocus {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(250px, .45fr);
+  min-height: 218px;
+  border: 2px solid #24221f;
+  background: #24221f;
+}
+
+.managerOverviewPrimary {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 7px;
+  padding: 25px 28px;
+  border-left: 7px solid #f5bf16;
+  color: #fff;
+}
+
+.managerOverviewFocus[data-tone='attention'] .managerOverviewPrimary,
+.managerOverviewFocus[data-mode='task'][data-tone='attention'] .managerOverviewPrimary {
+  border-left-color: #b82f2f;
+}
+
+.managerOverviewPrimary > span,
+.managerMatchTime > span,
+.managerTaskSide > span,
+.managerPanelHeader span,
+.managerOverviewFacts span {
+  color: #f5bf16;
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: .11em;
+}
+
+.managerOverviewPrimary > strong {
+  font-size: clamp(29px, 4vw, 47px);
+  line-height: 1.02;
+  letter-spacing: -.035em;
+}
+
+.managerOverviewPrimary > strong b {
+  color: #f5bf16;
+  font-size: .43em;
+  letter-spacing: .08em;
+  vertical-align: middle;
+}
+
+.managerOverviewPrimary > p {
+  max-width: 680px;
+  margin: 0;
+  color: #c8c2b7;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.managerOverviewActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.managerOverviewPrimary > a,
+.managerOverviewActions a,
+.workspace .managerOverviewPrimary > button {
+  min-height: 36px;
+  display: grid;
+  place-items: center;
+  margin-top: 5px;
+  border: 1px solid #f5bf16;
+  background: #f5bf16;
+  padding: 8px 12px;
+  color: #24221f;
+  font-size: 10px;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.managerOverviewActions a + a {
+  background: transparent;
+  color: #f5bf16;
+}
+
+.managerMatchTime,
+.managerTaskSide {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 24px;
+  border-left: 2px solid #24221f;
+  background: #f5bf16;
+}
+
+.managerMatchTime > span,
+.managerTaskSide > span {
+  color: #665000;
+}
+
+.managerMatchTime > strong,
+.managerTaskSide > strong {
+  font-size: clamp(22px, 2.5vw, 31px);
+  line-height: 1.08;
+}
+
+.managerMatchTime > p,
+.managerTaskSide > p {
+  margin: 0;
+  color: #584a1a;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.managerMatchTime > small {
+  border-top: 1px solid rgba(36, 34, 31, .35);
+  padding-top: 8px;
+  color: #584a1a;
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.managerOverviewFocus[data-mode='task'] .managerTaskSide {
+  background: #fffdf7;
+}
+
+.managerOverviewFocus[data-mode='task'] .managerTaskSide > span,
+.managerOverviewFocus[data-mode='task'] .managerTaskSide > p {
+  color: #6b665d;
+}
+
+.managerOverviewFocus[data-mode='waiting'] .managerTaskSide {
+  background: #e8f1e0;
+}
+
+.managerOverviewFacts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid #24221f;
+  background: #fff;
+}
+
+.workspace .managerOverviewFacts > button {
+  min-height: 88px;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 4px;
+  padding: 13px 15px;
+  border: 0;
+  border-right: 1px solid #c8c2b8;
+  background: #fff;
+  color: #24221f;
+  text-align: left;
+}
+
+.workspace .managerOverviewFacts > button:last-child {
+  border-right: 0;
+}
+
+.workspace .managerOverviewFacts > button:not(:disabled):hover {
+  background: #fff4c3;
+}
+
+.managerOverviewFacts span {
+  color: #8b6a05;
+  letter-spacing: .06em;
+}
+
+.managerOverviewFacts strong {
+  overflow: hidden;
+  max-width: 100%;
+  font-size: 19px;
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.managerOverviewFacts small {
+  color: #777167;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.managerPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 15px 17px;
+  border: 1px solid #24221f;
+  border-left: 6px solid #f5bf16;
+  background: #fff;
+}
+
+.managerPanelHeader > div {
+  display: grid;
+  gap: 4px;
+}
+
+.managerPanelHeader strong {
+  font-size: 22px;
+}
+
+.managerPanelHeader p {
+  margin: 0;
+  color: #6b665d;
+  font-size: 11px;
+}
+
+.managerPanelHeader > small {
+  color: #777167;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.workspace[data-workspace-mode='manager'] .managerPanel > .eventFlowHeading {
+  margin-top: 0;
+  border: 1px solid #24221f;
+  border-left: 6px solid #f5bf16;
+  background: #fff;
+}
+
+.workspace[data-workspace-mode='manager'] .managerPanel > .inlineForm {
+  padding: 16px;
+  border: 1px solid #24221f;
+  background: #fff;
+}
+
+.workspace[data-workspace-mode='manager'] .managerPanel > .registrationMeta,
+.workspace[data-workspace-mode='manager'] .managerPanel > .recruitmentActions {
+  margin-top: 0;
+}
+
+.workspace[data-workspace-mode='manager'] .managerPanel > .rosterEditor,
+.workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] .managerPanel > .rosterEditor {
+  margin-top: 0;
+  border-width: 1px;
+  background: #fff;
+}
+
+.workspace[data-workspace-mode='manager'] .managerPanel > .managerPeopleWorkspace {
+  margin-top: 0;
+  border-width: 1px;
+}
+
+.workspace[data-workspace-mode='manager'] .managerPanel[data-panel='applications'] .peopleColumns {
+  grid-template-columns: 1fr;
+}
+
+.workspace[data-workspace-mode='manager'] .managerPanel > .managerTalentPool {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.workspace[data-workspace-mode='manager'] .managerPanel > .managerControlPanel,
+.workspace[data-workspace-mode='manager'] .managerPanel > .coachManagerPanel {
+  margin-top: 0;
+}
+
+@media (max-width: 900px) {
+  .managerOverviewFocus {
+    grid-template-columns: 1fr;
+  }
+
+  .managerMatchTime,
+  .managerTaskSide {
+    min-height: 130px;
+    border-top: 2px solid #24221f;
+    border-left: 0;
+  }
+
+  .managerOverviewFacts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workspace .managerOverviewFacts > button:nth-child(2) {
+    border-right: 0;
+  }
+
+  .workspace .managerOverviewFacts > button:nth-child(-n+2) {
+    border-bottom: 1px solid #c8c2b8;
+  }
+}
+
+@media (max-width: 640px) {
+  .workspace[data-workspace-mode='manager'] > .workspaceHeader {
+    padding: 15px 15px 15px 18px;
+  }
+
+  .workspace[data-workspace-mode='manager'] .managerCard > .teamHeading,
+  .workspace[data-workspace-mode='manager'] .managerCard[data-roster-status='LOCKED'] > .teamHeading,
+  .managerPanelHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .managerTabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workspace .managerTabs > button:nth-child(2) {
+    border-right: 0;
+  }
+
+  .workspace .managerTabs > button:nth-child(-n+2) {
+    border-bottom: 1px solid #5a5650;
+  }
+
+  .workspace[data-workspace-mode='manager'] .managerPanel {
+    padding: 12px;
+  }
+
+  .managerOverviewFocus {
+    min-height: 0;
+  }
+
+  .managerOverviewPrimary {
+    padding: 21px 18px;
+  }
+
+  .managerOverviewPrimary > strong {
+    font-size: clamp(27px, 10vw, 38px);
+  }
+
+  .managerOverviewFacts {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace .managerOverviewFacts > button,
+  .workspace .managerOverviewFacts > button:nth-child(2) {
+    min-height: 74px;
+    border-right: 0;
+    border-bottom: 1px solid #c8c2b8;
+  }
+
+  .workspace .managerOverviewFacts > button:last-child {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .registrationJourney[data-complete='true'] {
+    grid-template-columns: 1fr;
+  }
+
+  .registrationJourney[data-complete='true'] .journeyAction {
+    border-right: 0;
+    border-bottom: 2px solid #24221f;
+  }
+
+  .registrationJourney[data-complete='true'] .journeyMain {
+    min-height: 0;
+  }
+
+  .registrationJourney[data-complete='true'] li {
+    min-height: 86px;
+  }
+
+  .managerTeamSnapshot {
+    grid-template-columns: 1fr;
+  }
+
+  .managerTeamSnapshot > dl > div {
+    border-left: 0;
+    border-top: 1px solid #24221f;
+  }
+
+  .managerPeopleHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .managerPeopleHeader > dl {
+    border-top: 1px solid #24221f;
+    border-left: 0;
+  }
+
+  .peopleColumns,
+  .managerTalentPool > div {
+    grid-template-columns: 1fr;
+  }
+
+  .peoplePanel {
+    border-right: 0;
+    border-bottom: 1px solid #24221f;
+  }
+
+  .peoplePanel:last-child {
+    border-bottom: 0;
+  }
+
+  .registrationJourney ol {
+    grid-template-columns: repeat(5, minmax(150px, 1fr));
+    overflow-x: auto;
+  }
+
+  .formCard,
+  .inlineForm,
+  .twoColumns,
+  .recruitingGrid,
+  .officerFields,
+  .coachInviteForm,
+  .managerTransferForm,
+  .managerTransferResponse,
+  .applicationNote {
+    grid-template-columns: 1fr;
+  }
+
+  .rosterTableHead,
+  .rosterTableRow {
+    grid-template-columns: 62px minmax(130px, 1fr) 120px;
+  }
+
+  .rosterSubmitBar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .rosterSubmitBar label {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .wideField {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .standalone {
+    width: min(100% - 24px, 1180px);
+  }
+
+  .workspaceHeader,
+  .sectionTitle,
+  .teamHeading,
+  .eventFlowHeading,
+  .stateCard,
+  .invitationCard,
+  .selectionOutcome,
+  .personRow,
+  .coachPanelHeader,
+  .coachRelationshipRow,
+  .coachSelfCard > header,
+  .coachEventState,
+  .managerControlHeader,
+  .managerTransferPending,
+  .managerTransferCard > header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .playerFlowGroup > header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .playerFlowGroup > header > em {
+    align-self: flex-start;
+  }
+
+  .teamHeading > .statusChip {
+    align-self: flex-start;
+  }
+
+  .rosterEditorHeader,
+  .rosterPendingBar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .rosterCounts {
+    justify-content: flex-start;
+  }
+
+  .rosterTable {
+    overflow-x: auto;
+  }
+
+  .rosterTableHead,
+  .rosterTableRow {
+    min-width: 420px;
+  }
+
+  .rosterEditor[data-status='LOCKED'] .rosterTableHead,
+  .rosterEditor[data-status='LOCKED'] .rosterTableRow {
+    min-width: 330px;
+    grid-template-columns: minmax(150px, 1fr) 118px;
+  }
+
+  .officerSummary {
+    grid-template-columns: 1fr;
+  }
+
+  .applicationNote {
+    grid-template-columns: 1fr;
+  }
+
+  .journeyAction {
+    grid-template-columns: 1fr;
+  }
+
+  .registrationJourney ol {
+    display: block;
+    overflow: visible;
+  }
+
+  .registrationJourney[data-complete='true'] ol {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .registrationJourney[data-complete='true'] li {
+    min-height: 72px;
+    border-right: 1px solid #d1ccc2;
+  }
+
+  .registrationJourney[data-complete='true'] li:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .registrationJourney[data-complete='true'] li:last-child {
+    grid-column: 1 / -1;
+    border-right: 0;
+  }
+
+  .registrationJourney li {
+    border-right: 0;
+    border-bottom: 1px solid #d1ccc2;
+  }
+
+  .registrationJourney li:last-child {
+    border-bottom: 0;
+  }
+
+  .longTermManagement summary {
+    align-items: flex-start;
+  }
+
+  .longTermManagement summary small {
+    display: none;
+  }
+
+  .playerHistoryHeading,
+  .playerHistoryRow,
+  .playerHistoryRow > div:last-child {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .managerTransferCancel {
+    grid-template-columns: 1fr;
+  }
+
+  .managerTeamSnapshot > dl,
+  .managerTeamSnapshot > nav {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .managerTeamSnapshot > nav > :nth-child(2) {
+    border-right: 0;
+  }
+
+  .managerTeamSnapshot > nav > :nth-child(-n+2) {
+    border-bottom: 1px solid #24221f;
+  }
+
+  .managerPeopleHeader > dl {
+    grid-template-columns: 1fr;
+  }
+
+  .managerPeopleHeader > dl > div {
+    grid-template-columns: 1fr auto;
+    border-right: 0;
+    border-bottom: 1px solid #24221f;
+  }
+
+  .managerPeopleHeader > dl > div:last-child {
+    border-bottom: 0;
+  }
+
+  .peoplePanel > header,
+  .managerTalentPool > header,
+  .managerPersonRow {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .peoplePanel > header,
+  .managerTalentPool > header {
+    flex-direction: column;
+  }
+
+  .peoplePanel > header > em,
+  .managerTalentPool > header > em {
+    align-self: flex-start;
+  }
+
+  .managerPersonRow > div:last-child {
+    justify-content: flex-start;
+  }
+
+  .teamHeadingIdentity {
+    width: 100%;
+    gap: 12px;
+  }
+
+  .managerTeamLogo {
+    width: 62px;
+    height: 62px;
+    padding: 7px;
+  }
+
+  .lockedRosterRegisterHead { display: none; }
+
+  .lockedRosterRegister {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 7px;
+    border: 0;
+    background: transparent;
+  }
+
+  .lockedRosterRegisterRow {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    min-height: 58px;
+    border: 1px solid #c8c1b5;
+    background: #fff;
+  }
+
+  .lockedRosterIndex { grid-row: 1 / span 2; }
+  .lockedRosterIdentity { padding: 8px 10px; }
+  .lockedRosterRole { justify-self: end; margin: 8px 10px; }
+  .lockedRosterState { grid-column: 2 / -1; justify-self: stretch; margin: 0; border-width: 1px 0 0; padding: 5px 10px; text-align: right; }
+}

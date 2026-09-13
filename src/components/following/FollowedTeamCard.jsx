@@ -1,8 +1,11 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import styles from '../../pages/following/FollowingPage.module.css'
 
 export default function FollowedTeamCard({ overview, seasonId, withSeason }) {
+  const uiLocale = useUiLocale()
   if (!overview) return null
 
   const teamPath = withSeason(`/teams/${encodeURIComponent(overview.teamRouteId || overview.teamId)}`)
@@ -35,23 +38,23 @@ export default function FollowedTeamCard({ overview, seasonId, withSeason }) {
 
         <dl className={styles.cardFacts}>
           <div>
-            <dt>下一场</dt>
+            <dt>{uiText("下一场", uiLocale)}</dt>
             <dd>{matchText}</dd>
           </div>
           <div>
-            <dt>最近赛果</dt>
+            <dt>{uiText("最近赛果", uiLocale)}</dt>
             <dd>{resultText}</dd>
           </div>
           <div>
-            <dt>排名 / 晋级</dt>
+            <dt>{uiText("排名 / 晋级", uiLocale)}</dt>
             <dd>{advanceText}</dd>
           </div>
         </dl>
       </Link>
 
       <div className={styles.cardActions}>
-        <Link to={teamPath}>队伍资料 →</Link>
-        <Link to={withSeason('/matches?view=list&tab=following')}>相关比赛 →</Link>
+        <Link to={teamPath}>{uiText("队伍资料 →", uiLocale)}</Link>
+        <Link to={withSeason('/matches?view=list&tab=following')}>{uiText("相关比赛 →", uiLocale)}</Link>
       </div>
     </article>
   )

@@ -1,8 +1,32 @@
 {
+  "buildCommand": "npm run build:locales && npm run build:team-logo-catalog && npm run build:scouting-artifacts && node scripts/buildAccountJointCandidate.mjs",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+    },
+    {
+      "source": "/scouting/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive, nosnippet"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/admin-public/:path*",
-      "destination": "https://admin.fries-cup.com/api/public/:path*"
+      "destination": "https://test-admin.fries-cup.com/api/public/:path*"
+    },
+    {
+      "source": "/api/platform/:path*",
+      "destination": "https://test-admin.fries-cup.com/api/:path*"
     },
     {
       "source": "/(.*)",

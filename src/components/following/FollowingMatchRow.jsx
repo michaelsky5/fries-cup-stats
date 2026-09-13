@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import styles from '../../pages/following/FollowingPage.module.css'
@@ -19,6 +21,7 @@ function TeamSide({ team, seasonId, align = 'left' }) {
 }
 
 export default function FollowingMatchRow({ match, seasonId, withSeason }) {
+  const uiLocale = useUiLocale()
   const matchPath = match?.matchId
     ? withSeason(`/matches/${encodeURIComponent(match.matchId)}`)
     : withSeason('/matches')
@@ -28,11 +31,11 @@ export default function FollowingMatchRow({ match, seasonId, withSeason }) {
       className={styles.matchRow}
       data-primary={match?.isPrimaryMatch ? 'true' : 'false'}
       to={matchPath}
-      aria-label={`查看 ${match?.teamA?.short || 'TBD'} 对 ${match?.teamB?.short || 'TBD'} 比赛详情`}
+      aria-label={uiText("查看 {0} 对 {1} 比赛详情", uiLocale, [match?.teamA?.short || 'TBD', match?.teamB?.short || 'TBD'])}
     >
       <span className={styles.matchIndex}>
         <b>{match?.displayIndex || '--'}</b>
-        {match?.isPrimaryMatch ? <em>主关注</em> : null}
+        {match?.isPrimaryMatch ? <em>{uiText("主关注", uiLocale)}</em> : null}
       </span>
       <div className={styles.matchDuel}>
         <TeamSide team={match?.teamA} seasonId={seasonId} align="left" />
@@ -41,7 +44,7 @@ export default function FollowingMatchRow({ match, seasonId, withSeason }) {
       </div>
       <span className={styles.matchMeta}>
         <span className={styles.matchFormat}>{match?.format || 'FT2'}</span>
-        <span className={styles.matchStatus}>{match?.statusLabel || '未开始'}</span>
+        <span className={styles.matchStatus}>{match?.statusLabel || uiText("未开始", uiLocale)}</span>
       </span>
       <span className={styles.rowLink} aria-hidden="true">→</span>
     </Link>

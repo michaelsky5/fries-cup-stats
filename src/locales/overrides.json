@@ -1,0 +1,1223 @@
+{
+  "赛事中心": {
+    "ko-KR": "대회 센터",
+    "en-US": "Data Center",
+    "zh-TW": "賽事中心"
+  },
+  "赛事总览": {
+    "ko-KR": "대회 개요",
+    "en-US": "Overview",
+    "zh-TW": "賽事總覽"
+  },
+  "赛程赛果": {
+    "ko-KR": "일정 · 결과",
+    "en-US": "Matches",
+    "zh-TW": "賽程賽果"
+  },
+  "晋级形势": {
+    "ko-KR": "진출 현황",
+    "en-US": "Advancement",
+    "zh-TW": "晉級形勢"
+  },
+  "参赛阵容": {
+    "ko-KR": "참가 명단",
+    "en-US": "Roster",
+    "zh-TW": "參賽陣容"
+  },
+  "数据排行": {
+    "ko-KR": "데이터 순위",
+    "en-US": "Stats",
+    "zh-TW": "數據排行"
+  },
+  "我的关注": {
+    "ko-KR": "내 관심 목록",
+    "en-US": "My Following",
+    "zh-TW": "我的追蹤"
+  },
+  "我的空间": {
+    "ko-KR": "내 공간",
+    "en-US": "My Space",
+    "zh-TW": "我的空間"
+  },
+  "最新动态": {
+    "ko-KR": "최신 소식",
+    "en-US": "Latest updates",
+    "zh-TW": "最新動態"
+  },
+  "薯条杯": {
+    "ko-KR": "프라이즈 컵",
+    "en-US": "Fries Cup",
+    "zh-TW": "薯條杯"
+  },
+  "FriesCup 薯条杯": {
+    "ko-KR": "FriesCup",
+    "en-US": "FriesCup",
+    "zh-TW": "FriesCup 薯條盃"
+  },
+  "2026 薯条杯学院赛": {
+    "ko-KR": "프라이즈 컵 아카데미 2026",
+    "en-US": "Fries Cup Academy 2026",
+    "zh-TW": "2026 薯條盃學院賽"
+  },
+  "2026 薯条杯常规赛": {
+    "ko-KR": "프라이즈 컵 정규 대회 2026",
+    "en-US": "Fries Cup Regular 2026",
+    "zh-TW": "2026 薯條盃例行賽"
+  },
+  "2026 薯条杯系列赛": {
+    "ko-KR": "프라이즈 컵 시리즈 2026",
+    "en-US": "Fries Cup Series 2026",
+    "zh-TW": "2026 薯條盃系列賽"
+  },
+  "重装": {
+    "ko-KR": "돌격",
+    "en-US": "Tank",
+    "zh-TW": "肉盾"
+  },
+  "坦克": {
+    "ko-KR": "돌격",
+    "en-US": "Tank",
+    "zh-TW": "肉盾"
+  },
+  "输出": {
+    "ko-KR": "공격",
+    "en-US": "Damage",
+    "zh-TW": "攻擊"
+  },
+  "输出 1": {
+    "ko-KR": "공격 1",
+    "en-US": "Damage 1",
+    "zh-TW": "攻擊 1"
+  },
+  "输出 2": {
+    "ko-KR": "공격 2",
+    "en-US": "Damage 2",
+    "zh-TW": "攻擊 2"
+  },
+  "支援": {
+    "ko-KR": "지원",
+    "en-US": "Support",
+    "zh-TW": "輔助"
+  },
+  "支援 1": {
+    "ko-KR": "지원 1",
+    "en-US": "Support 1",
+    "zh-TW": "輔助 1"
+  },
+  "支援 2": {
+    "ko-KR": "지원 2",
+    "en-US": "Support 2",
+    "zh-TW": "輔助 2"
+  },
+  "职责": {
+    "ko-KR": "역할",
+    "en-US": "Role",
+    "zh-TW": "角色定位"
+  },
+  "全部职责": {
+    "ko-KR": "모든 역할",
+    "en-US": "All roles",
+    "zh-TW": "所有角色定位"
+  },
+  "当前职责": {
+    "ko-KR": "현재 역할",
+    "en-US": "Current role",
+    "zh-TW": "目前角色定位"
+  },
+  "自由人": {
+    "ko-KR": "플렉스",
+    "en-US": "Flex",
+    "zh-TW": "自由位"
+  },
+  "灵活": {
+    "ko-KR": "플렉스",
+    "en-US": "Flex",
+    "zh-TW": "彈性"
+  },
+  "选手": {
+    "ko-KR": "선수",
+    "en-US": "Player",
+    "zh-TW": "選手"
+  },
+  "参赛选手": {
+    "ko-KR": "참가 선수",
+    "en-US": "Players",
+    "zh-TW": "參賽選手"
+  },
+  "选手档案": {
+    "ko-KR": "선수 기록",
+    "en-US": "Player dossier",
+    "zh-TW": "選手檔案"
+  },
+  "选手名录": {
+    "ko-KR": "선수 명단",
+    "en-US": "Players",
+    "zh-TW": "選手名錄"
+  },
+  "全部选手": {
+    "ko-KR": "모든 선수",
+    "en-US": "All players",
+    "zh-TW": "所有選手"
+  },
+  "队伍": {
+    "ko-KR": "팀",
+    "en-US": "Team",
+    "zh-TW": "隊伍"
+  },
+  "战队": {
+    "ko-KR": "팀",
+    "en-US": "Team",
+    "zh-TW": "戰隊"
+  },
+  "参赛战队": {
+    "ko-KR": "참가 팀",
+    "en-US": "Teams",
+    "zh-TW": "參賽戰隊"
+  },
+  "全部队伍": {
+    "ko-KR": "모든 팀",
+    "en-US": "All teams",
+    "zh-TW": "所有隊伍"
+  },
+  "队长": {
+    "ko-KR": "주장",
+    "en-US": "Captain",
+    "zh-TW": "隊長"
+  },
+  "经理": {
+    "ko-KR": "매니저",
+    "en-US": "Manager",
+    "zh-TW": "經理"
+  },
+  "教练": {
+    "ko-KR": "코치",
+    "en-US": "Coach",
+    "zh-TW": "教練"
+  },
+  "裁判": {
+    "ko-KR": "심판",
+    "en-US": "Referee",
+    "zh-TW": "裁判"
+  },
+  "赛管": {
+    "ko-KR": "운영진",
+    "en-US": "Officials",
+    "zh-TW": "賽務"
+  },
+  "解说": {
+    "ko-KR": "중계진",
+    "en-US": "Casters",
+    "zh-TW": "主播賽評"
+  },
+  "导播": {
+    "ko-KR": "방송 연출",
+    "en-US": "Director",
+    "zh-TW": "導播"
+  },
+  "赛事职员": {
+    "ko-KR": "대회 스태프",
+    "en-US": "Event staff",
+    "zh-TW": "賽事工作人員"
+  },
+  "战队职员": {
+    "ko-KR": "팀 스태프",
+    "en-US": "Team staff",
+    "zh-TW": "戰隊職員"
+  },
+  "胜": {
+    "ko-KR": "승",
+    "en-US": "W",
+    "zh-TW": "勝"
+  },
+  "负": {
+    "ko-KR": "패",
+    "en-US": "L",
+    "zh-TW": "敗"
+  },
+  "平": {
+    "ko-KR": "무",
+    "en-US": "D",
+    "zh-TW": "和"
+  },
+  "平局": {
+    "ko-KR": "무승부",
+    "en-US": "Draw",
+    "zh-TW": "和局"
+  },
+  "胜负": {
+    "ko-KR": "승패",
+    "en-US": "W–L",
+    "zh-TW": "勝敗"
+  },
+  "冠军": {
+    "ko-KR": "우승",
+    "en-US": "Champion",
+    "zh-TW": "冠軍"
+  },
+  "亚军": {
+    "ko-KR": "준우승",
+    "en-US": "Runner-up",
+    "zh-TW": "亞軍"
+  },
+  "季军": {
+    "ko-KR": "3위",
+    "en-US": "Third place",
+    "zh-TW": "季軍"
+  },
+  "殿军": {
+    "ko-KR": "4위",
+    "en-US": "Fourth place",
+    "zh-TW": "殿軍"
+  },
+  "决赛": {
+    "ko-KR": "결승",
+    "en-US": "Final",
+    "zh-TW": "決賽"
+  },
+  "总决赛": {
+    "ko-KR": "그랜드 파이널",
+    "en-US": "Grand final",
+    "zh-TW": "總決賽"
+  },
+  "季后赛": {
+    "ko-KR": "플레이오프",
+    "en-US": "Playoffs",
+    "zh-TW": "季後賽"
+  },
+  "瑞士轮": {
+    "ko-KR": "스위스 라운드",
+    "en-US": "Swiss stage",
+    "zh-TW": "瑞士輪"
+  },
+  "瑞士": {
+    "ko-KR": "스위스",
+    "en-US": "Swiss",
+    "zh-TW": "瑞士"
+  },
+  "突围赛": {
+    "ko-KR": "최종 진출전",
+    "en-US": "Last-chance qualifier",
+    "zh-TW": "突圍賽"
+  },
+  "入围赛": {
+    "ko-KR": "플레이인",
+    "en-US": "Play-in",
+    "zh-TW": "入圍賽"
+  },
+  "小组赛": {
+    "ko-KR": "조별 리그",
+    "en-US": "Group stage",
+    "zh-TW": "小組賽"
+  },
+  "公开预选赛": {
+    "ko-KR": "오픈 예선",
+    "en-US": "Open qualifier",
+    "zh-TW": "公開預選賽"
+  },
+  "胜者组": {
+    "ko-KR": "승자조",
+    "en-US": "Upper bracket",
+    "zh-TW": "勝部"
+  },
+  "败者组": {
+    "ko-KR": "패자조",
+    "en-US": "Lower bracket",
+    "zh-TW": "敗部"
+  },
+  "胜者组半决赛": {
+    "ko-KR": "승자조 준결승",
+    "en-US": "Upper semifinal",
+    "zh-TW": "勝部準決賽"
+  },
+  "胜者组决赛": {
+    "ko-KR": "승자조 결승",
+    "en-US": "Upper final",
+    "zh-TW": "勝部決賽"
+  },
+  "败者组决赛": {
+    "ko-KR": "패자조 결승",
+    "en-US": "Lower final",
+    "zh-TW": "敗部決賽"
+  },
+  "赛季征程": {
+    "ko-KR": "시즌 여정",
+    "en-US": "Season journey",
+    "zh-TW": "賽季征程"
+  },
+  "竞技分析": {
+    "ko-KR": "경기력 분석",
+    "en-US": "Performance analysis",
+    "zh-TW": "競技分析"
+  },
+  "比赛": {
+    "ko-KR": "경기",
+    "en-US": "Match",
+    "zh-TW": "比賽"
+  },
+  "赛事": {
+    "ko-KR": "대회",
+    "en-US": "Event",
+    "zh-TW": "賽事"
+  },
+  "比赛详情": {
+    "ko-KR": "경기 상세",
+    "en-US": "Match details",
+    "zh-TW": "比賽詳情"
+  },
+  "比赛房间": {
+    "ko-KR": "경기 대기실",
+    "en-US": "Match room",
+    "zh-TW": "比賽房間"
+  },
+  "比赛档案": {
+    "ko-KR": "경기 기록",
+    "en-US": "Match archive",
+    "zh-TW": "比賽檔案"
+  },
+  "全部比赛": {
+    "ko-KR": "모든 경기",
+    "en-US": "All matches",
+    "zh-TW": "所有比賽"
+  },
+  "下一场比赛": {
+    "ko-KR": "다음 경기",
+    "en-US": "Next match",
+    "zh-TW": "下一場比賽"
+  },
+  "下一场": {
+    "ko-KR": "다음 경기",
+    "en-US": "Next match",
+    "zh-TW": "下一場"
+  },
+  "进行中": {
+    "ko-KR": "진행 중",
+    "en-US": "Live",
+    "zh-TW": "進行中"
+  },
+  "比赛进行中": {
+    "ko-KR": "경기 진행 중",
+    "en-US": "Live",
+    "zh-TW": "比賽進行中"
+  },
+  "已完成": {
+    "ko-KR": "종료",
+    "en-US": "Completed",
+    "zh-TW": "已完成"
+  },
+  "已结束": {
+    "ko-KR": "종료",
+    "en-US": "Finished",
+    "zh-TW": "已結束"
+  },
+  "未开始": {
+    "ko-KR": "예정",
+    "en-US": "Scheduled",
+    "zh-TW": "尚未開始"
+  },
+  "待赛": {
+    "ko-KR": "경기 대기",
+    "en-US": "Upcoming",
+    "zh-TW": "待賽"
+  },
+  "已取消": {
+    "ko-KR": "취소",
+    "en-US": "Cancelled",
+    "zh-TW": "已取消"
+  },
+  "延期": {
+    "ko-KR": "연기",
+    "en-US": "Postponed",
+    "zh-TW": "延期"
+  },
+  "弃权": {
+    "ko-KR": "기권",
+    "en-US": "Forfeit",
+    "zh-TW": "棄權"
+  },
+  "时间待定": {
+    "ko-KR": "시간 미정",
+    "en-US": "Time TBD",
+    "zh-TW": "時間未定"
+  },
+  "待定": {
+    "ko-KR": "미정",
+    "en-US": "TBD",
+    "zh-TW": "未定"
+  },
+  "待确认": {
+    "ko-KR": "확인 대기",
+    "en-US": "Unconfirmed",
+    "zh-TW": "待確認"
+  },
+  "暂无数据": {
+    "ko-KR": "데이터 없음",
+    "en-US": "No data",
+    "zh-TW": "暫無資料"
+  },
+  "暂无记录": {
+    "ko-KR": "기록 없음",
+    "en-US": "No records",
+    "zh-TW": "暫無紀錄"
+  },
+  "未记录": {
+    "ko-KR": "기록 없음",
+    "en-US": "Not recorded",
+    "zh-TW": "未記錄"
+  },
+  "全部": {
+    "ko-KR": "전체",
+    "en-US": "All",
+    "zh-TW": "全部"
+  },
+  "伤害": {
+    "ko-KR": "피해량",
+    "en-US": "Damage",
+    "zh-TW": "傷害"
+  },
+  "治疗": {
+    "ko-KR": "치유량",
+    "en-US": "Healing",
+    "zh-TW": "治療"
+  },
+  "消灭": {
+    "ko-KR": "처치",
+    "en-US": "Eliminations",
+    "zh-TW": "擊殺"
+  },
+  "助攻": {
+    "ko-KR": "도움",
+    "en-US": "Assists",
+    "zh-TW": "助攻"
+  },
+  "阵亡": {
+    "ko-KR": "죽음",
+    "en-US": "Deaths",
+    "zh-TW": "陣亡"
+  },
+  "阻挡": {
+    "ko-KR": "막은 피해",
+    "en-US": "Mitigation",
+    "zh-TW": "阻擋傷害"
+  },
+  "出场地图": {
+    "ko-KR": "출전 맵",
+    "en-US": "Maps played",
+    "zh-TW": "出賽地圖"
+  },
+  "出场时间": {
+    "ko-KR": "출전 시간",
+    "en-US": "Time played",
+    "zh-TW": "出賽時間"
+  },
+  "出场": {
+    "ko-KR": "출전",
+    "en-US": "Appearances",
+    "zh-TW": "出賽"
+  },
+  "常用英雄": {
+    "ko-KR": "주로 사용한 영웅",
+    "en-US": "Most played heroes",
+    "zh-TW": "常用英雄"
+  },
+  "主力英雄": {
+    "ko-KR": "주력 영웅",
+    "en-US": "Main hero",
+    "zh-TW": "主力英雄"
+  },
+  "地图": {
+    "ko-KR": "맵",
+    "en-US": "Map",
+    "zh-TW": "地圖"
+  },
+  "图": {
+    "ko-KR": "맵",
+    "en-US": "maps",
+    "zh-TW": "圖"
+  },
+  "场": {
+    "ko-KR": "경기",
+    "en-US": "matches",
+    "zh-TW": "場"
+  },
+  "场比赛": {
+    "ko-KR": "경기",
+    "en-US": "matches",
+    "zh-TW": "場比賽"
+  },
+  "张地图": {
+    "ko-KR": "맵",
+    "en-US": "maps",
+    "zh-TW": "張地圖"
+  },
+  "支队伍": {
+    "ko-KR": "팀",
+    "en-US": "teams",
+    "zh-TW": "支隊伍"
+  },
+  "名选手": {
+    "ko-KR": "명",
+    "en-US": "players",
+    "zh-TW": "名選手"
+  },
+  "个": {
+    "ko-KR": "개",
+    "en-US": "items",
+    "zh-TW": "個"
+  },
+  "每 10 分钟": {
+    "ko-KR": "10분당",
+    "en-US": "Per 10 minutes",
+    "zh-TW": "每 10 分鐘"
+  },
+  "{0} 场": {
+    "ko-KR": "{0}경기",
+    "en-US": "{0} matches",
+    "zh-TW": "{0} 場"
+  },
+  "{0} 场比赛": {
+    "ko-KR": "{0}경기",
+    "en-US": "{0} matches",
+    "zh-TW": "{0} 場比賽"
+  },
+  "{0} 张地图": {
+    "ko-KR": "{0}개 맵",
+    "en-US": "{0} maps",
+    "zh-TW": "{0} 張地圖"
+  },
+  "第 {0} 周": {
+    "ko-KR": "{0}주차",
+    "en-US": "Week {0}",
+    "zh-TW": "第 {0} 週"
+  },
+  "地图数据": {
+    "ko-KR": "맵 데이터",
+    "en-US": "Map data",
+    "zh-TW": "地圖數據"
+  },
+  "地图记录": {
+    "ko-KR": "맵 기록",
+    "en-US": "Map records",
+    "zh-TW": "地圖紀錄"
+  },
+  "统计口径": {
+    "ko-KR": "집계 기준",
+    "en-US": "Metric scope",
+    "zh-TW": "統計口徑"
+  },
+  "样本不足": {
+    "ko-KR": "표본 부족",
+    "en-US": "Insufficient sample",
+    "zh-TW": "樣本不足"
+  },
+  "正式排名": {
+    "ko-KR": "정식 순위",
+    "en-US": "Qualified ranking",
+    "zh-TW": "正式排名"
+  },
+  "暂定": {
+    "ko-KR": "잠정",
+    "en-US": "Provisional",
+    "zh-TW": "暫定"
+  },
+  "未评级": {
+    "ko-KR": "미평가",
+    "en-US": "Unrated",
+    "zh-TW": "未評級"
+  },
+  "同职责中位": {
+    "ko-KR": "동일 역할 중앙값",
+    "en-US": "Role median",
+    "zh-TW": "同定位中位數"
+  },
+  "关注": {
+    "ko-KR": "팔로우",
+    "en-US": "Follow",
+    "zh-TW": "追蹤"
+  },
+  "已关注": {
+    "ko-KR": "팔로우 중",
+    "en-US": "Following",
+    "zh-TW": "已追蹤"
+  },
+  "取消关注": {
+    "ko-KR": "팔로우 취소",
+    "en-US": "Unfollow",
+    "zh-TW": "取消追蹤"
+  },
+  "关注队伍": {
+    "ko-KR": "팀 팔로우",
+    "en-US": "Follow team",
+    "zh-TW": "追蹤隊伍"
+  },
+  "关注选手": {
+    "ko-KR": "선수 팔로우",
+    "en-US": "Follow player",
+    "zh-TW": "追蹤選手"
+  },
+  "管理关注": {
+    "ko-KR": "팔로우 관리",
+    "en-US": "Manage following",
+    "zh-TW": "管理追蹤"
+  },
+  "关注已满": {
+    "ko-KR": "팔로우 한도 도달",
+    "en-US": "Following limit reached",
+    "zh-TW": "追蹤已達上限"
+  },
+  "只看关注": {
+    "ko-KR": "팔로우만 보기",
+    "en-US": "Following only",
+    "zh-TW": "只看追蹤"
+  },
+  "语言": {
+    "ko-KR": "언어",
+    "en-US": "Language",
+    "zh-TW": "語言"
+  },
+  "登录": {
+    "ko-KR": "로그인",
+    "en-US": "Sign in",
+    "zh-TW": "登入"
+  },
+  "注册": {
+    "ko-KR": "회원 가입",
+    "en-US": "Sign up",
+    "zh-TW": "註冊"
+  },
+  "账号设置": {
+    "ko-KR": "계정 설정",
+    "en-US": "Account settings",
+    "zh-TW": "帳號設定"
+  },
+  "保存": {
+    "ko-KR": "저장",
+    "en-US": "Save",
+    "zh-TW": "儲存"
+  },
+  "取消": {
+    "ko-KR": "취소",
+    "en-US": "Cancel",
+    "zh-TW": "取消"
+  },
+  "关闭": {
+    "ko-KR": "닫기",
+    "en-US": "Close",
+    "zh-TW": "關閉"
+  },
+  "清除筛选": {
+    "ko-KR": "필터 초기화",
+    "en-US": "Clear filters",
+    "zh-TW": "清除篩選"
+  },
+  "更新失败": {
+    "ko-KR": "업데이트 실패",
+    "en-US": "Update failed",
+    "zh-TW": "更新失敗"
+  },
+  "重新获取数据": {
+    "ko-KR": "데이터 다시 불러오기",
+    "en-US": "Retry data sync",
+    "zh-TW": "重新取得資料"
+  },
+  "暂时无法取得最新数据，保留上次可用记录。": {
+    "ko-KR": "최신 데이터를 불러오지 못해 마지막으로 확인한 기록을 표시합니다.",
+    "en-US": "The latest data is unavailable. Showing the last available records.",
+    "zh-TW": "暫時無法取得最新資料，保留上次可用紀錄。"
+  },
+  "赛季已归档": {
+    "ko-KR": "시즌 아카이브 완료",
+    "en-US": "Season archived",
+    "zh-TW": "賽季已封存"
+  },
+  "赛季回顾": {
+    "ko-KR": "시즌 리뷰",
+    "en-US": "Season review",
+    "zh-TW": "賽季回顧"
+  },
+  "五局，都算数。": {
+    "ko-KR": "다섯 맵, 모두 중요합니다.",
+    "en-US": "Every map counts.",
+    "zh-TW": "五局，都算數。"
+  },
+  "从这一周的对阵，走向整个周期。": {
+    "ko-KR": "이번 주 대진에서 시즌 주기 전체로 이어집니다.",
+    "en-US": "This week’s matchups. A whole cycle to play for.",
+    "zh-TW": "從這一週的對戰，走向整個週期。"
+  },
+  "手机赛事导航": {
+    "ko-KR": "모바일 대회 메뉴",
+    "en-US": "Mobile event navigation"
+  },
+  "更多": {
+    "ko-KR": "더 보기",
+    "en-US": "More"
+  },
+  "继续逛薯条杯": {
+    "ko-KR": "프라이즈 컵 더 둘러보기",
+    "en-US": "Explore Fries Cup"
+  },
+  "全部赛事页面": {
+    "ko-KR": "모든 대회 페이지",
+    "en-US": "All event pages"
+  },
+  "找选手或队伍": {
+    "ko-KR": "선수 또는 팀 찾기",
+    "en-US": "Find a player or team"
+  },
+  "调整排序与数据显示": {
+    "ko-KR": "정렬 및 표시 설정",
+    "en-US": "Sort and display settings"
+  },
+  "筛选与显示": {
+    "ko-KR": "필터 및 표시",
+    "en-US": "Filters and display"
+  },
+  "查找范围": {
+    "ko-KR": "검색 범위",
+    "en-US": "Search scope"
+  },
+  "仅看关注选手": {
+    "ko-KR": "팔로우한 선수만 보기",
+    "en-US": "Followed players only"
+  },
+  "数据显示": {
+    "ko-KR": "데이터 표시",
+    "en-US": "Data display"
+  },
+  "排序方向": {
+    "ko-KR": "정렬 방향",
+    "en-US": "Sort direction"
+  },
+  "升序 ↑": {
+    "ko-KR": "오름차순 ↑",
+    "en-US": "Ascending ↑"
+  },
+  "降序 ↓": {
+    "ko-KR": "내림차순 ↓",
+    "en-US": "Descending ↓"
+  },
+  "展开完整数据表": {
+    "ko-KR": "전체 데이터 표 펼치기",
+    "en-US": "Expand the full data table"
+  },
+  "显示指标": {
+    "ko-KR": "표시할 지표",
+    "en-US": "Visible metrics"
+  },
+  "切换数据口径只影响具体统计，赛季总评和正式名次保持不变。": {
+    "ko-KR": "집계 기준을 바꾸면 세부 통계만 달라집니다. 시즌 종합 평가와 정식 순위는 유지됩니다.",
+    "en-US": "Changing the metric scope affects the statistics, while season ratings and qualified ranks stay the same."
+  },
+  "排名门槛与当前样本": {
+    "ko-KR": "순위 기준 및 현재 표본",
+    "en-US": "Ranking requirements and current sample"
+  },
+  "每条记录对应一名选手的一项职责；暂定与未评级记录不参与正式排名。": {
+    "ko-KR": "각 기록은 한 선수의 한 역할을 나타냅니다. 잠정 및 미평가 기록은 정식 순위에 포함되지 않습니다.",
+    "en-US": "Each record represents one player in one role. Provisional and unrated records are excluded from qualified rankings."
+  },
+  "查看 {0} 条记录": {
+    "ko-KR": "기록 {0}개 보기",
+    "en-US": "View {0} records"
+  },
+  "这一季的冠军": {
+    "ko-KR": "이번 시즌 우승팀",
+    "en-US": "This season’s champions"
+  },
+  "查看本届赛事": {
+    "ko-KR": "이 대회 살펴보기",
+    "en-US": "Explore this event"
+  },
+  "回看赛果": {
+    "ko-KR": "경기 결과 돌아보기",
+    "en-US": "Review the results"
+  },
+  "认识阵容": {
+    "ko-KR": "참가 명단 살펴보기",
+    "en-US": "Meet the roster"
+  },
+  "冠军人物": {
+    "ko-KR": "우승을 만든 선수들",
+    "en-US": "The champions"
+  },
+  "从一个名字，继续看。": {
+    "ko-KR": "한 이름에서 시작하는 이야기.",
+    "en-US": "Start with a name. Keep exploring."
+  },
+  "完整阵容": {
+    "ko-KR": "전체 명단",
+    "en-US": "Full roster"
+  },
+  "冠军成员": {
+    "ko-KR": "우승팀 선수",
+    "en-US": "Championship roster"
+  },
+  "同模式地图": {
+    "ko-KR": "같은 모드의 맵",
+    "en-US": "Maps in this mode"
+  },
+  "所有队伍从 {0} 起步。按本职责出场时间合并对手评级；对手历史不足 {1} 场，或选手本职责可确认的正常比赛不足 {2} 场时减弱影响，未知时段按中性处理。减弱后的评级差每 {3} 点折算 1 OVR，正负对称取整，并遵守原有样本上限。": {
+    "ko-KR": "모든 팀은 {0}에서 시작합니다. 해당 역할의 출전 시간으로 상대 레이팅을 가중합니다. 상대의 이전 기록이 {1}경기 미만이거나, 해당 역할에서 확인된 정상 경기가 {2}경기 미만이면 영향이 줄어듭니다. 확인되지 않은 시간은 중립으로 처리합니다. 감쇠한 레이팅 차이 {3}점당 1 OVR로 환산하며, 양수와 음수를 대칭으로 반올림하고 기존 표본 상한을 적용합니다.",
+    "en-US": "All teams start at {0}. Opponent ratings are weighted by playtime in this role. Fewer than {1} prior opponent matches or {2} confirmed normal matches in this role reduce the effect; unknown time is neutral. Each {3}-point difference after reduction equals 1 OVR, with symmetric rounding and the existing sample caps."
+  },
+  "本职责至少 {0} 图 · {1} 分钟 · {2} 场比赛": {
+    "ko-KR": "이 역할에서 최소 {0}개 맵 · {1}분 · {2}경기",
+    "en-US": "At least {0} maps · {1} minutes · {2} matches in this role"
+  },
+  "这一季，正在为你重新放映。": {
+    "ko-KR": "당신의 시즌을 다시 상영합니다.",
+    "en-US": "Your season, on screen again."
+  },
+  "找回属于你的赛季片段，也重看我们共同完成的这一届。": {
+    "ko-KR": "당신만의 시즌 장면을 찾고, 우리가 함께 완성한 대회를 돌아보세요.",
+    "en-US": "Find your own season moments and revisit the event we made together."
+  },
+  "打开 {0}见证回顾": {
+    "ko-KR": "{0} 관람객 리뷰 열기",
+    "en-US": "Open the {0} witness review"
+  },
+  "从{0}到季后淘汰赛，从瑞士轮、突围赛到冠军之路，回看这届比赛如何被选手、队伍、解说、赛管和每一位观众共同完成。": {
+    "ko-KR": "{0}부터 플레이오프까지, 스위스 라운드와 최종 진출전을 거쳐 우승에 이르기까지. 선수, 팀, 중계진, 운영진과 모든 관람객이 함께 만든 대회를 돌아봅니다.",
+    "en-US": "From {0} to the playoffs, through Swiss rounds and the last-chance qualifier to the title. Revisit the event made by players, teams, casters, officials and every viewer."
+  },
+  "瑞士轮 / 突围赛": {
+    "ko-KR": "스위스 라운드 / 최종 진출전",
+    "en-US": "Swiss / Last-chance qualifier"
+  },
+  "前八队伍 / 冠军之路": {
+    "ko-KR": "상위 8팀 / 우승의 길",
+    "en-US": "Top eight / Road to the title"
+  },
+  "共同记忆": {
+    "ko-KR": "함께한 기억",
+    "en-US": "Shared memories"
+  },
+  "地图 / 队伍 / 见证者": {
+    "ko-KR": "맵 / 팀 / 관람객",
+    "en-US": "Maps / Teams / Witnesses"
+  },
+  "同位置百分位 · 样本 {0} 人 · 至少出场 {1} 分钟": {
+    "ko-KR": "동일 역할 백분위 · 표본 {0}명 · 최소 {1}분 출전",
+    "en-US": "Role percentile · {0} players · At least {1} minutes played"
+  },
+  "档案依据": {
+    "ko-KR": "기록 근거",
+    "en-US": "Archive evidence"
+  },
+  "赛季记录完成": {
+    "ko-KR": "시즌 기록 완료",
+    "en-US": "Season record complete"
+  },
+  "但记忆不会停在这里": {
+    "ko-KR": "기억은 여기서 끝나지 않습니다",
+    "en-US": "The memories continue"
+  },
+  "观众 BattleTag / 昵称": {
+    "ko-KR": "관람객 배틀태그 / 닉네임",
+    "en-US": "Viewer BattleTag / nickname"
+  },
+  "昵称或 BattleTag": {
+    "ko-KR": "닉네임 또는 배틀태그",
+    "en-US": "Nickname or BattleTag"
+  },
+  "薯条杯 2026 官方纪念票": {
+    "ko-KR": "프라이즈 컵 2026 공식 기념 티켓",
+    "en-US": "Fries Cup 2026 official keepsake ticket"
+  },
+  "保存我的薯条杯 2026 官方纪念票": {
+    "ko-KR": "나의 프라이즈 컵 2026 기념 티켓 저장",
+    "en-US": "Save my Fries Cup 2026 keepsake ticket"
+  },
+  "这一季，已经成为你的电影。": {
+    "ko-KR": "이 시즌은 이제 당신의 영화입니다.",
+    "en-US": "This season is now your film."
+  },
+  "赛季放映档案": {
+    "ko-KR": "시즌 상영 기록",
+    "en-US": "Season screening archive"
+  },
+  "章节索引": {
+    "ko-KR": "장 목록",
+    "en-US": "Chapter index"
+  },
+  "正在放映": {
+    "ko-KR": "상영 중",
+    "en-US": "Now showing"
+  },
+  "最终幕": {
+    "ko-KR": "마지막 장면",
+    "en-US": "Final act"
+  },
+  "使用 ← → 或空格切换": {
+    "ko-KR": "← → 또는 스페이스로 이동",
+    "en-US": "Use ← → or Space to navigate"
+  },
+  "{0} 图制（BO{1}）": {
+    "ko-KR": "최대 {0}개 맵 (BO{1})",
+    "en-US": "{0}-map format (BO{1})"
+  },
+  "双方战至 {0}:{1}，{2} 拿下决胜图。": {
+    "ko-KR": "{0}:{1} 동점에서 {2}: 마지막 맵 승리.",
+    "en-US": "Tied {0}:{1}, {2} took the deciding map."
+  },
+  "冠军互动档案": {
+    "ko-KR": "우승팀 인터랙티브 아카이브",
+    "en-US": "Interactive champions archive"
+  },
+  "赛季典藏": {
+    "ko-KR": "시즌 아카이브",
+    "en-US": "Season archive"
+  },
+  "动态开启": {
+    "ko-KR": "모션 켜짐",
+    "en-US": "Motion on"
+  },
+  "动态关闭": {
+    "ko-KR": "모션 꺼짐",
+    "en-US": "Motion off"
+  },
+  "这一季，属于他们。": {
+    "ko-KR": "이번 시즌의 주인공들.",
+    "en-US": "This season belongs to them."
+  },
+  "赛季总冠军：": {
+    "ko-KR": "시즌 우승팀:",
+    "en-US": "Season champions:"
+  },
+  "赛季总冠军": {
+    "ko-KR": "시즌 우승팀",
+    "en-US": "Season champions"
+  },
+  "选择冠军选手进入人物镜头": {
+    "ko-KR": "우승팀 선수를 선택해 자세히 보기",
+    "en-US": "Choose a champion for their spotlight"
+  },
+  "进入人物镜头：{0}": {
+    "ko-KR": "{0} 선수 자세히 보기",
+    "en-US": "Open {0}’s spotlight"
+  },
+  "查看人物镜头：{0}": {
+    "ko-KR": "{0} 선수 미리 보기",
+    "en-US": "Preview {0}’s spotlight"
+  },
+  "冠军队伍选择英雄": {
+    "ko-KR": "우승팀이 선택한 영웅",
+    "en-US": "Heroes chosen by the champions"
+  },
+  "进入选手镜头": {
+    "ko-KR": "선수 자세히 보기",
+    "en-US": "Open player spotlight"
+  },
+  "冠军选手人物镜头": {
+    "ko-KR": "우승팀 선수 스포트라이트",
+    "en-US": "Champion spotlight"
+  },
+  "点击切换主镜头": {
+    "ko-KR": "선수를 선택해 화면 전환",
+    "en-US": "Select a player to change the spotlight"
+  },
+  "典藏章节": {
+    "ko-KR": "아카이브 목차",
+    "en-US": "Archive chapters"
+  },
+  "冠军群像": {
+    "ko-KR": "우승팀 선수들",
+    "en-US": "The champions"
+  },
+  "人物镜头": {
+    "ko-KR": "선수 스포트라이트",
+    "en-US": "Player spotlight"
+  },
+  "赛季图谱": {
+    "ko-KR": "시즌 한눈에 보기",
+    "en-US": "Season atlas"
+  },
+  "图谱": {
+    "ko-KR": "한눈에 보기",
+    "en-US": "Atlas"
+  },
+  "点击英雄进入人物镜头 · 向下滚动继续": {
+    "ko-KR": "영웅을 선택해 선수 보기 · 아래로 스크롤하여 계속",
+    "en-US": "Choose a hero for the player spotlight · Scroll to continue"
+  },
+  "把整个赛季，": {
+    "ko-KR": "시즌 전체를",
+    "en-US": "The whole season,"
+  },
+  "装进一张图谱。": {
+    "ko-KR": "한눈에 살펴보세요.",
+    "en-US": "in one atlas."
+  },
+  "场比赛档案": {
+    "ko-KR": "경기 기록",
+    "en-US": "match records"
+  },
+  "张地图数据": {
+    "ko-KR": "맵 데이터",
+    "en-US": "maps recorded"
+  },
+  "每一步，通向此刻。": {
+    "ko-KR": "모든 걸음이 이 순간으로.",
+    "en-US": "Every step led here."
+  },
+  "冠军最后三场已完成比赛": {
+    "ko-KR": "우승팀의 최근 완료된 세 경기",
+    "en-US": "The champions’ last three completed matches"
+  },
+  "进入比赛档案": {
+    "ko-KR": "경기 기록 보기",
+    "en-US": "Open match archive"
+  },
+  "走出冠军群像，继续认识这一季的选手。从重装、输出与支援的表现，发现更多值得回看的赛场记录。": {
+    "ko-KR": "우승팀을 넘어 이번 시즌의 선수들을 만나보세요. 돌격, 공격, 지원 역할의 활약 속에서 다시 볼 만한 경기 기록을 찾아보세요.",
+    "en-US": "Meet this season’s players beyond the champions. Explore tank, damage and support performances worth revisiting."
+  },
+  "三大职责领跑者 / 选手索引": {
+    "ko-KR": "역할별 선두 선수 / 선수 목록",
+    "en-US": "Role leaders / Player index"
+  },
+  "高光之后，数据继续。": {
+    "ko-KR": "명장면 뒤에도 기록은 이어집니다.",
+    "en-US": "The highlights end. The records continue."
+  },
+  "进入数据排行榜": {
+    "ko-KR": "데이터 순위 보기",
+    "en-US": "Explore the rankings"
+  },
+  "查看完整赛季回顾": {
+    "ko-KR": "시즌 전체 돌아보기",
+    "en-US": "Explore the season review"
+  },
+  "正式排名门槛": {
+    "ko-KR": "정식 순위 기준",
+    "en-US": "Qualified ranking requirements"
+  },
+  "查看完整选手档案": {
+    "ko-KR": "전체 선수 기록 보기",
+    "en-US": "Open the full player dossier"
+  },
+  "{0} 名注册选手 · 替补 {1} · 教练 {2} · 经理 {3}": {
+    "ko-KR": "등록 선수 {0}명 · 교체 선수 {1} · 코치 {2} · 매니저 {3}",
+    "en-US": "{0} registered players · Reserves {1} · Coaches {2} · Manager {3}"
+  },
+  "{0} 名注册 · {1} 名替补 · 教练 {2}": {
+    "ko-KR": "등록 {0}명 · 교체 선수 {1}명 · 코치 {2}",
+    "en-US": "{0} registered · {1} reserves · Coaches {2}"
+  },
+  "本届赛程赛果": {
+    "ko-KR": "이번 대회 일정과 결과",
+    "en-US": "This season, match by match"
+  },
+  "每一场，": {
+    "ko-KR": "모든 경기,",
+    "en-US": "Every match."
+  },
+  "都在这里。": {
+    "ko-KR": "여기에 기록됩니다.",
+    "en-US": "Still here."
+  },
+  "场已发布比赛": {
+    "ko-KR": "개의 공개 경기",
+    "en-US": "published matches"
+  },
+  "按队伍查找，按阶段回看。": {
+    "ko-KR": "팀으로 찾고, 단계별로 돌아보세요.",
+    "en-US": "Find a team. Explore a stage."
+  },
+  "查看比赛": {
+    "ko-KR": "경기 보기",
+    "en-US": "View match"
+  },
+  "查看比赛 ": {
+    "ko-KR": "경기 보기 ",
+    "en-US": "Open match "
+  },
+  "查找比赛": {
+    "ko-KR": "경기 찾기",
+    "en-US": "Find a match"
+  },
+  "已发布单图赛果": {
+    "ko-KR": "공개된 맵별 결과",
+    "en-US": "Published map results"
+  },
+  "单图赛果与比赛记录": {
+    "ko-KR": "맵별 결과 및 경기 기록",
+    "en-US": "Map results and match records"
+  },
+  "逐图查看比赛经过": {
+    "ko-KR": "맵별 경기 흐름 보기",
+    "en-US": "Follow the map-by-map results"
+  },
+  "值得回看的对阵": {
+    "ko-KR": "다시 볼 만한 경기",
+    "en-US": "Moments from the season"
+  },
+  "沿着赛季，继续回看。": {
+    "ko-KR": "시즌의 다른 경기도 돌아보세요.",
+    "en-US": "More of the season."
+  },
+  "从逐图赛果，看见比赛的经过。": {
+    "ko-KR": "맵별 결과로 경기의 흐름을 살펴보세요.",
+    "en-US": "Follow the story through the published map results."
+  },
+  "还有这些比赛": {
+    "ko-KR": "더 많은 경기",
+    "en-US": "More matches to revisit"
+  },
+  "从 {0} 到 {1}": {
+    "ko-KR": "{0}에서 {1}까지",
+    "en-US": "From {0} to {1}"
+  },
+  "{0} 从 {1} 落后追至 {2}，拿下系列赛。": {
+    "ko-KR": "{0}: {1}로 뒤지던 경기를 {2}로 뒤집고 시리즈 승리.",
+    "en-US": "{0} came back from {1} to win the series {2}."
+  },
+  "{0} 以 {1}:{2} 拿下系列赛。": {
+    "ko-KR": "{0}: {1}:{2}로 시리즈 승리.",
+    "en-US": "{0} won the series {1}:{2}."
+  },
+  "查看本场已发布记录。": {
+    "ko-KR": "이 경기의 공개 기록을 확인하세요.",
+    "en-US": "Revisit the published match record."
+  },
+  "判罚赛果": {
+    "ko-KR": "판정 결과",
+    "en-US": "Awarded result"
+  },
+  "保留已发布的判罚或弃权赛果。": {
+    "ko-KR": "공개된 판정 및 기권 결과를 그대로 표시합니다.",
+    "en-US": "Retained as a published awarded or forfeit result."
+  },
+  "打满 {0} 图": {
+    "ko-KR": "{0}개 맵을 모두 치른 경기",
+    "en-US": "All {0} maps"
+  },
+  "使用上下键选择队伍，Enter 查看赛程，Esc 关闭候选。": {
+    "ko-KR": "위아래 방향키로 팀을 선택하고 Enter로 일정을 확인하세요. Esc로 목록을 닫을 수 있습니다.",
+    "en-US": "Use Up and Down to select a team, Enter to view its schedule, and Escape to close suggestions."
+  },
+  "打开冠军档案。{0}": {
+    "ko-KR": "우승팀 기록 열기. {0}",
+    "en-US": "Open the champion archive. {0}"
+  },
+  "点击切换主镜头。": {
+    "ko-KR": "선수를 선택해 주인공을 바꿔 보세요.",
+    "en-US": "Select a player for the spotlight."
+  },
+  "击杀 / 10 分钟": {
+    "ko-KR": "처치 / 10분",
+    "en-US": "Eliminations / 10 min"
+  },
+  "死亡 / 10 分钟": {
+    "ko-KR": "사망 / 10분",
+    "en-US": "Deaths / 10 min"
+  },
+  "赛程待定": {
+    "ko-KR": "일정 미정",
+    "en-US": "Schedule TBD"
+  },
+  "选择语言": {
+    "ko-KR": "언어 선택",
+    "en-US": "Select language"
+  }
+}

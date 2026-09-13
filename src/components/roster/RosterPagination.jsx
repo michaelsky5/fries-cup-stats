@@ -1,3 +1,4 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useRef } from 'react'
 import styles from './RosterComponents.module.css'
 
@@ -32,7 +33,10 @@ export default function RosterPagination({
   pageSizeOptions = [],
   onPageChange,
   onPageSizeChange,
-  scrollTargetRef
+  scrollTargetRef,
+  className = '',
+  presentation = 'default',
+  locale = 'zh-CN'
 }) {
   const pendingPageScrollRef = useRef(false)
 
@@ -71,9 +75,9 @@ export default function RosterPagination({
   }
 
   return (
-    <nav className={styles.pagination} aria-label="Roster pagination">
+    <nav className={`${styles.pagination} ${presentation === 'index' ? styles.paginationIndex : ''} ${className}`.trim()} aria-label="Roster pagination">
       <div className={styles.paginationRange}>
-        第 {startIndex}–{endIndex} 项，共 {totalItems} 项
+        {locale === 'en-US' ? `${startIndex}–${endIndex} of ${totalItems}` : uiText("第 {0}–{1} 项，共 {2} 项", locale, [startIndex, endIndex, totalItems])}
       </div>
 
       <div className={styles.paginationControls}>
@@ -83,7 +87,7 @@ export default function RosterPagination({
           onClick={() => changePage(page - 1)}
           disabled={page <= 1}
         >
-          上一页
+          {locale === 'en-US' ? 'Previous' : uiText("上一页", locale)}
         </button>
 
         <div className={styles.pageNumbers}>
@@ -108,13 +112,13 @@ export default function RosterPagination({
           onClick={() => changePage(page + 1)}
           disabled={page >= totalPages}
         >
-          下一页
+          {locale === 'en-US' ? 'Next' : uiText("下一页", locale)}
         </button>
       </div>
 
       {pageSizeOptions.length ? (
         <label className={styles.pageSizeControl}>
-          <span>每页</span>
+          <span>{locale === 'en-US' ? 'Per page' : uiText("每页", locale)}</span>
           <select
             className={styles.pageSizeSelect}
             value={pageSize}
@@ -122,7 +126,7 @@ export default function RosterPagination({
           >
             {pageSizeOptions.map(option => (
               <option key={option} value={option}>
-                {option === 'all' ? '全部' : option}
+                {option === 'all' ? (locale === 'en-US' ? 'All' : uiText("全部", locale)) : option}
               </option>
             ))}
           </select>

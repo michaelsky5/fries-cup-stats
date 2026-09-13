@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Moira biotic schism</title>
+  <desc id="desc">Opposing organic energy curls balance a purple drain and amber recovery, with no reticle or progress ring. Portrait motion is rendered in a separate background layer.</desc>
+  <path d="M211 106C193 105 182 119 187 133C191 146 205 151 216 146C205 147 198 137 203 128C206 122 216 117 211 106Z" fill="#9f67bc" fill-opacity="0.3" stroke="#bb8cd0" stroke-opacity="0.73" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M222 154C241 155 252 141 246 126C241 114 226 110 215 116C226 114 235 125 229 135C226 142 216 146 222 154Z" fill="#cd935b" fill-opacity="0.3" stroke="#e1b27c" stroke-opacity="0.75" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M194 118Q191 129 199 136M239 144Q243 132 235 125" fill="none" stroke="#dfcde4" stroke-opacity="0.34" stroke-width="1"/>
+</svg>

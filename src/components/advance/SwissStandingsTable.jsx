@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import styles from '../../pages/advance/AdvancePage.module.css'
@@ -14,11 +16,12 @@ function getStatusCounts(rows = []) {
 }
 
 function TiebreakerStrip({ rules, t }) {
+  const uiLocale = useUiLocale()
   if (!rules?.length) return null
 
   return (
-    <aside className={styles.tiebreakerStrip} aria-label={t('advance.tiebreakers.title', '同分规则')}>
-      <span>{t('advance.tiebreakers.title', '同分规则')}</span>
+    <aside className={styles.tiebreakerStrip} aria-label={t('advance.tiebreakers.title', uiText("同分规则", uiLocale))}>
+      <span>{t('advance.tiebreakers.title', uiText("同分规则", uiLocale))}</span>
       <ol>
         {rules.map(rule => (
           <li key={`${rule.index}-${rule.key}`}>
@@ -32,11 +35,12 @@ function TiebreakerStrip({ rules, t }) {
 }
 
 function ZoneDivider({ status, count, t }) {
+  const uiLocale = useUiLocale()
   return (
     <tr className={[styles.zoneDividerRow, styles[`zoneDivider_${status}`]].filter(Boolean).join(' ')}>
       <td colSpan={8}>
         <span>{t(`advance.zone.${status}`, status)}</span>
-        <strong>{count} {t('advance.unit.teams', '支队伍')}</strong>
+        <strong>{count} {t('advance.unit.teams', uiText("支队伍", uiLocale))}</strong>
       </td>
     </tr>
   )
@@ -87,6 +91,7 @@ export default function SwissStandingsTable({
   withSeason,
   tiebreakers = []
 }) {
+  const uiLocale = useUiLocale()
   const statusCounts = getStatusCounts(allRows)
   const activeLabel = activeZone === 'all'
     ? t('advance.common.all', '全部')
@@ -106,7 +111,7 @@ export default function SwissStandingsTable({
       <header className={styles.sectionHeader}>
         <div>
           <span className={styles.sectionLabel}>SWISS STANDINGS</span>
-          <h2>{t('advance.swiss.fullStandings', '完整瑞士轮积分榜')}</h2>
+          <h2>{t('advance.swiss.fullStandings', uiText("完整瑞士轮积分榜", uiLocale))}</h2>
         </div>
         <div className={styles.standingsTools}>
           <span className={styles.standingsFilterTag}>{activeLabel}</span>
@@ -118,14 +123,14 @@ export default function SwissStandingsTable({
         <table className={styles.standingsTable}>
           <thead>
             <tr>
-              <th className={styles.colRank}>{t('advance.table.rank', '排名')}</th>
-              <th className={styles.colTeam}>{t('advance.table.team', '战队')}</th>
-              <th>{t('advance.table.matchRecord', '胜负')}</th>
-              <th>{t('advance.table.buchholz', '对手分')}</th>
-              <th>{t('advance.table.omw', '对手胜率')}</th>
-              <th>{t('advance.table.mapRecord', '地图胜负')}</th>
-              <th>{t('advance.table.mapDiff', '地图净胜')}</th>
-              <th className={styles.colStatus}>{t('advance.table.status', '当前状态')}</th>
+              <th className={styles.colRank}>{t('advance.table.rank', uiText("排名", uiLocale))}</th>
+              <th className={styles.colTeam}>{t('advance.table.team', uiText("战队", uiLocale))}</th>
+              <th>{t('advance.table.matchRecord', uiText("胜负", uiLocale))}</th>
+              <th>{t('advance.table.buchholz', uiText("对手分", uiLocale))}</th>
+              <th>{t('advance.table.omw', uiText("对手胜率", uiLocale))}</th>
+              <th>{t('advance.table.mapRecord', uiText("地图胜负", uiLocale))}</th>
+              <th>{t('advance.table.mapDiff', uiText("地图净胜", uiLocale))}</th>
+              <th className={styles.colStatus}>{t('advance.table.status', uiText("当前状态", uiLocale))}</th>
             </tr>
           </thead>
           <tbody>
@@ -136,7 +141,7 @@ export default function SwissStandingsTable({
             ))}
             {!rows.length ? (
               <tr className={styles.emptyStandingsRow}>
-                <td colSpan={8}>{t('advance.common.none', '暂无')}</td>
+                <td colSpan={8}>{t('advance.common.none', uiText("暂无", uiLocale))}</td>
               </tr>
             ) : null}
           </tbody>

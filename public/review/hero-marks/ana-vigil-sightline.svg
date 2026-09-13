@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Ana vigil eye</title>
+  <desc id="desc">One watchful eye has a swept upper lid and a descending tear-mark. The former enclosing hood is removed so the eye reads independently at small scale.</desc>
+  <path d="M98 119Q146 79 200 109Q227 123 270 101L253 122Q226 139 198 123Q153 101 113 125Z" fill="#87a8ba" fill-opacity="0.43" stroke="#c0d4df" stroke-opacity="0.73" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M112 127Q153 101 193 129Q153 153 112 127Z" fill="#64879b" fill-opacity="0.22" stroke="#bfd8e2" stroke-opacity="0.83" stroke-width="2.2"/>
+  <circle cx="153" cy="128" r="11" fill="#c0d6df" fill-opacity="0.62"/>
+  <circle cx="153" cy="128" r="4.5" fill="#14212a" fill-opacity="0.94"/>
+  <path d="M155 151V188Q155 201 141 201Q131 201 131 191Q132 183 139 183" fill="none" stroke="#acc9d7" stroke-opacity="0.78" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M180 148L214 172L206 180L173 156Z" fill="#88a8b7" fill-opacity="0.43" stroke="#c0d4df" stroke-opacity="0.53" stroke-width="1.3" stroke-linejoin="bevel"/>
+</svg>

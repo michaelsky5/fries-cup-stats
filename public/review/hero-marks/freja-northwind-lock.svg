@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Freja bola shot lock</title>
+  <desc id="desc">Three weighted Bola Shot heads orbit a Take Aim diamond. Their curved cords create a compact triangular read that cannot be mistaken for an aircraft.</desc>
+  <g fill="none" stroke="#c5e1ed" stroke-opacity="0.58" stroke-width="2.2" stroke-linecap="round">
+    <path d="M180 84C158 96 143 115 132 145"/>
+    <path d="M194 84C217 98 231 117 239 146"/>
+    <path d="M145 169C170 182 203 183 226 169"/>
+  </g>
+  <g fill="#87a7c2" fill-opacity="0.34" stroke="#d7e9ef" stroke-opacity="0.78" stroke-width="2">
+    <circle cx="187" cy="65" r="20"/>
+    <circle cx="124" cy="166" r="20"/>
+    <circle cx="244" cy="166" r="20"/>
+  </g>
+  <g fill="#e3eff3" fill-opacity="0.54">
+    <path d="M178 58L187 51L196 58L187 63Z"/>
+    <path d="M115 159L124 152L133 159L124 164Z"/>
+    <path d="M235 159L244 152L253 159L244 164Z"/>
+  </g>
+  <path d="M185 105L211 132L185 159L159 132Z" fill="#0a0c0d" fill-opacity="0.88" stroke="#c5e1ed" stroke-opacity="0.8" stroke-width="2.2"/>
+  <path d="M185 115L201 132L185 149L169 132Z" fill="#87a7c2" fill-opacity="0.45"/>
+  <path d="M176 132H194" stroke="#edf5f7" stroke-opacity="0.72" stroke-width="2.2" stroke-linecap="round"/>
+</svg>

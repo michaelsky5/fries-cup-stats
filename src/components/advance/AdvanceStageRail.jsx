@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link } from 'react-router-dom'
 import styles from '../../pages/advance/AdvancePage.module.css'
 
@@ -9,8 +11,13 @@ function getStatusText(item, t) {
 }
 
 export default function AdvanceStageRail({ items, t, getHref }) {
+  const uiLocale = useUiLocale()
   return (
-    <nav className={styles.stageRail} aria-label={t('advance.stageRail', '晋级阶段')}>
+    <nav
+      className={styles.stageRail}
+      aria-label={t('advance.stageRail', uiText("晋级阶段", uiLocale))}
+      style={{ '--advance-phase-count': items.length }}
+    >
       {items.map(item => (
         <Link
           key={item.phase}

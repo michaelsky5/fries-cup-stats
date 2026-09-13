@@ -1,4 +1,5 @@
-import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import styles from '../../features/fd-design/leaderboardStyles.js'
 
 export default function LeaderboardEmptyState({
   title = '暂无符合条件的排行条目',
@@ -9,9 +10,9 @@ export default function LeaderboardEmptyState({
 
   return (
     <div className={styles.emptyState}>
-      <span>{isEn ? 'No Results' : '暂无结果'}</span>
-      <strong>{isEn ? 'No leaderboard entries match these filters' : title}</strong>
-      <em>{isEn ? 'Try changing the search, team, or sample filters.' : note}</em>
+      <span>{isEn ? 'No Results' : uiText("暂无结果", locale)}</span>
+      <strong>{isEn ? 'No leaderboard entries match these filters' : uiText(title, locale)}</strong>
+      <em>{isEn ? 'Try changing the search, team, or sample filters.' : uiText(note, locale)}</em>
     </div>
   )
 }

@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import MatchHubRow from './MatchHubRow.jsx'
 import styles from './MatchHub.module.css'
 
@@ -9,10 +11,11 @@ function getVisibleDefaultMatches(slot, visibleLimit) {
 }
 
 export default function TimeSlotMatchList({ slot, expanded, onToggle, visibleLimit }) {
+  const uiLocale = useUiLocale()
   if (!slot) {
     return (
       <div className={styles.timeSlotBody} data-testid="time-slot-match-list">
-        <div className={styles.emptyCanvas}>暂无该时间段比赛。</div>
+        <div className={styles.emptyCanvas}>{uiText("暂无该时间段比赛。", uiLocale)}</div>
       </div>
     )
   }
@@ -29,11 +32,15 @@ export default function TimeSlotMatchList({ slot, expanded, onToggle, visibleLim
           <MatchHubRow key={match.match_id} match={match} />
         ))}
       </div>
-      {canToggle ? (
-        <button type="button" className={styles.toggleButton} data-testid="time-slot-toggle" onClick={onToggle}>
-          {expanded ? '收起' : `展开剩余 ${remainingCount} 场`}
-        </button>
-      ) : null}
+      <footer className={styles.timeSlotFooter}>
+        {canToggle ? (
+          <button type="button" className={styles.toggleButton} data-testid="time-slot-toggle" onClick={onToggle}>
+            {expanded ? uiText("收起", uiLocale) : uiText("展开剩余 {0} 场", uiLocale, [remainingCount])}
+          </button>
+        ) : (
+          <span>{uiText("全部对阵已显示", uiLocale)}</span>
+        )}
+      </footer>
     </div>
   )
 }

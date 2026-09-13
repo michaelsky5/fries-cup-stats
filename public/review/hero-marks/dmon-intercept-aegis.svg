@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">D.Mon Beast mecha face</title>
+  <desc id="desc">A low coral crown, cyan visor and solid cheek armour describe the mecha beside D.Mon. There is no enclosing shield, navigation arrow or targeting dot.</desc>
+  <path d="M124 91L148 71H212L236 91V136L212 166L180 186L147 166L123 136Z" fill="#8ca8b9" fill-opacity="0.18" stroke="#c2d8df" stroke-opacity="0.73" stroke-width="1.9" stroke-linejoin="bevel"/>
+  <path d="M124 91L148 71H212L236 91L218 110H142Z" fill="#ba7588" fill-opacity="0.36" stroke="#d5acb6" stroke-opacity="0.72" stroke-width="1.7" stroke-linejoin="bevel"/>
+  <path d="M110 96L124 91L134 135L146 161L127 155L111 133Z" fill="#a2b7c7" fill-opacity="0.31" stroke="#c6dde4" stroke-opacity="0.73" stroke-width="1.7" stroke-linejoin="bevel"/>
+  <path d="M236 91L250 96L249 133L233 155L214 161L226 135Z" fill="#819cac" fill-opacity="0.31" stroke="#bbd1da" stroke-opacity="0.7" stroke-width="1.7" stroke-linejoin="bevel"/>
+  <path d="M140 114L165 119L171 128L145 123ZM195 119L220 114L215 123L189 128Z" fill="#9dd9dc" fill-opacity="0.65"/>
+  <path d="M151 130L180 140L209 130L204 157L180 173L156 157Z" fill="#6d8fa3" fill-opacity="0.27" stroke="#afc7d6" stroke-opacity="0.56" stroke-width="1.5" stroke-linejoin="bevel"/>
+  <path d="M174 142H186L189 160L180 167L171 160Z" fill="#cfb778" fill-opacity="0.34"/>
+  <path d="M156 158L180 173L204 158L197 175L180 186L163 175Z" fill="#c18b9d" fill-opacity="0.25" stroke="#c6b3c2" stroke-opacity="0.48" stroke-width="1.5" stroke-linejoin="bevel"/>
+</svg>

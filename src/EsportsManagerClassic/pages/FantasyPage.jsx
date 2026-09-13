@@ -1,6 +1,6 @@
 // src/EsportsManager/pages/FantasyPage.jsx
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 import styles from './FantasyPage.module.css'
 import { getRunState } from '../engine/runEngine'
 
@@ -46,6 +46,7 @@ function FlowCard({ step, title, desc, tag }) {
 
 export default function FantasyPage() {
   const navigate = useNavigate()
+  const { withSeason } = useOutletContext()
   const overviewRef = useRef(null)
   const flowRef = useRef(null)
   const [runSnapshot, setRunSnapshot] = useState(null)
@@ -161,7 +162,7 @@ export default function FantasyPage() {
             <p className={styles.heroDesc}>{heroCopy.desc}</p>
 
             <div className={styles.heroActions}>
-              <button onClick={() => navigate('/shop')} className={styles.btnPrimary}>
+              <button onClick={() => navigate(withSeason('/shop'))} className={styles.btnPrimary}>
                 <div className={styles.btnMain}>
                   <span className={styles.btnTitle}>{hasActiveRun ? 'ENTER BASE CAMP' : 'INITIALIZE NEW RUN'}</span>
                   <span className={styles.btnDesc}>
@@ -211,7 +212,7 @@ export default function FantasyPage() {
               <div className={styles.championDesc}>系统访问已授权。你可以随时在此查阅自己的执教历史、巅峰阵容与冠军成就。</div>
               {/* 👇 核心修改：解锁生涯殿堂按钮，接入 /career 路由 */}
               <button
-                onClick={() => navigate('/career')}
+                onClick={() => navigate(withSeason('/career'))}
                 className={styles.btnSecondary}
               >
                 <span>查看生涯殿堂</span>

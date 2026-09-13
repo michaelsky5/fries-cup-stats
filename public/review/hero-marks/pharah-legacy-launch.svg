@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Pharah launch insignia</title>
+  <desc id="desc">One continuous rocket body incorporates its swept fins. Two quiet metal planes and a short gold exhaust keep the seal distinct from the portrait's launch trails.</desc>
+  <g transform="rotate(-20 246 126)" stroke-linejoin="round">
+    <path d="M246 50C240 61 233 75 233 88V117L218 142V165L233 153L239 163H253L259 153L274 165V142L259 117V88C259 75 252 61 246 50Z" fill="#7894be" fill-opacity="0.32" stroke="#c4d2e9" stroke-opacity="0.78" stroke-width="1.9"/>
+    <path d="M246 50C252 61 259 75 259 88V117L274 142V165L259 153L253 163H246Z" fill="#adc4e1" fill-opacity="0.17"/>
+    <path d="M236 85H256L259 92H233Z" fill="#dfc17d" fill-opacity="0.62"/>
+    <path d="M239 166L246 192L253 166Z" fill="#e7c47e" fill-opacity="0.4"/>
+    <path d="M240 98V135" fill="none" stroke="#deebf5" stroke-opacity="0.35" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M239 153H253" fill="none" stroke="#c8d8ed" stroke-opacity="0.64" stroke-width="2.2"/>
+  </g>
+</svg>

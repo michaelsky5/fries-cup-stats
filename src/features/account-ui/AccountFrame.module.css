@@ -1,0 +1,23 @@
+.frame[data-header-mode='account'] { --kpr-preview-height: 0px; min-height: 100dvh; display: flow-root; background: var(--fc-data-paper); color: var(--fc-data-ink); }
+.frame *, .frame *::before, .frame *::after { box-sizing: border-box; }
+.frame a { text-decoration: none; }
+.context, .main, .footer { width: calc(100% - var(--fc-data-gutter) * 2); max-width: 1840px; margin-inline: auto; }
+.context { display: flex; align-items: center; gap: 14px; padding-block: 22px; border-bottom: 1px solid var(--fc-data-line); font-size: 12px; }
+.context a { color: var(--fc-data-text-muted); }
+.context strong { font-weight: 650; }
+.scope { margin-left: auto; color: var(--fc-data-text-muted); }
+.main { padding-block: 34px 80px; min-height: calc(100dvh - 240px); }
+.intro { display: flex; justify-content: space-between; align-items: end; gap: 24px; padding-bottom: 30px; margin-bottom: 30px; border-bottom: 1px solid var(--fc-data-line-strong); }
+.eyebrow { font: 900 19px/1 var(--fc-data-font-display); letter-spacing: .055em; color: var(--fc-data-text-muted); }
+.intro h1 { margin: 12px 0 14px; font-size: clamp(30px, 3.6vw, 48px); font-weight: 850; letter-spacing: -.04em; line-height: 1.15; }
+.intro p { margin: 0; font-size: 14px; line-height: 1.8; color: var(--fc-data-text-muted); }
+.main[data-compact='true'] { padding-top: 24px; }
+.main[data-compact='true'] .intro { align-items: center; margin-bottom: 24px; padding-bottom: 24px; }
+.main[data-compact='true'] .intro h1 { font-size: clamp(28px, 2.4vw, 36px); margin-block: 8px; }
+.main[data-compact='true'] .eyebrow { font-size: 14px; }
+.footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding-block: 24px; border-top: 1px solid var(--fc-data-line); color: var(--fc-data-text-muted); font-size: 11px; }
+.footer b { margin-left: 8px; font-weight: 500; }
+.footer a { color: inherit; }
+.frame :is(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid var(--fc-data-focus); outline-offset: 4px; }
+@media (max-width: 680px) { .intro { display: grid; gap: 24px; padding-bottom: 24px; margin-bottom: 24px; } .main { padding-block: 24px 48px; } .context { padding-block: 18px; } .scope { display: none; } }
+@media (max-width: 680px) { .main[data-compact='true'] .intro { gap: 16px; padding-bottom: 16px; margin-bottom: 20px; } .main[data-compact='true'] .intro > div:first-child > p { display: none; } }

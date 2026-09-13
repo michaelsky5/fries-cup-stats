@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Ashe Viper recoil glyph</title>
+  <desc id="desc">The official Viper ability silhouette is reduced to a bold stock, receiver and open lever, ending in one restrained Coach Gun recoil spark.</desc>
+  <path d="M57 154L99 136L132 126L157 125L171 111L224 109L236 99L306 92L309 103L241 113L234 130L180 136L158 148L139 152L113 176L76 172L59 164Z" fill="#b87757" fill-opacity="0.18" stroke="#d6c0a0" stroke-opacity="0.82" stroke-width="2.1" stroke-linejoin="bevel"/>
+  <path d="M61 155L101 139L133 130L151 130L137 145L112 170L78 167L63 162Z" fill="#b87757" fill-opacity="0.38"/>
+  <path d="M169 113L224 111L235 102L240 113L233 129L180 134L159 146L149 140Z" fill="#d6c0a0" fill-opacity="0.22" stroke="#ead9bd" stroke-opacity="0.3" stroke-width="1.2"/>
+  <path d="M229 109L239 101L306 94L307 101L240 111Z" fill="#d6c0a0" fill-opacity="0.34"/>
+  <path d="M158 145L199 139L197 151Q195 166 180 168H168Q157 167 157 155Z" fill="none" stroke="#f0c928" stroke-opacity="0.78" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M178 137V149M204 106V112M242 116L300 108M87 150L89 167" fill="none" stroke="#ecd4b3" stroke-opacity="0.56" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M311 91L318 82M315 97L327 96M308 87L307 77M314 88L322 82" fill="none" stroke="#f0c928" stroke-opacity="0.78" stroke-width="1.8" stroke-linecap="round"/>
+  <circle cx="185" cy="144" r="2.4" fill="#f0c928" fill-opacity="0.78"/>
+</svg>

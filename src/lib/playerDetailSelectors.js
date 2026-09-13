@@ -1,6 +1,9 @@
 import { safeArr } from './selectors.js'
 import {
+  formatEntrySeasonOvr,
   getEntryMetricValue,
+  getEntrySeasonOvr,
+  getEntrySeasonScore,
   getLeaderboardRows,
   getRankingMinTimeMins,
   getRoleEnLabel,
@@ -267,14 +270,17 @@ function teamValues(team) {
   ].map(normalizeKey).filter(Boolean)
 }
 
-function getOpponentForLog(db, match, log, basePlayer) {
-  const playerTeamValues = [
+function getOpponentForLog(match, log, basePlayer) {
+  const logTeamValues = [
     log?.teamId,
-    log?.team_id,
+    log?.team_id
+  ].map(normalizeKey).filter(Boolean)
+  const fallbackTeamValues = [
     basePlayer?.team_id,
     basePlayer?.team_short_name,
     basePlayer?.team_name
   ].map(normalizeKey).filter(Boolean)
+  const playerTeamValues = logTeamValues.length ? logTeamValues : fallbackTeamValues
 
   const aValues = teamValues(match?.team_a)
   const bValues = teamValues(match?.team_b)
@@ -286,13 +292,62 @@ function getOpponentForLog(db, match, log, basePlayer) {
   return { team: null, side: '' }
 }
 
-function getMatchScoreLabel(match) {
+function getMatchOutcome(match, side) {
   const status = normalize(match?.status).toUpperCase()
-  const isDone = status === 'COMPLETE' || status === 'COMPLETED'
   const a = match?.team_a?.score
   const b = match?.team_b?.score
-  if (!isDone || a === '' || b === '' || a === undefined || b === undefined) return '—'
-  return `${a} : ${b}`
+  const completedStatuses = new Set([
+    'COMPLETE',
+    'COMPLETED',
+    'FINISHED',
+    'FINAL',
+    'DONE',
+    'FORFEIT',
+    'WALKOVER'
+  ])
+  const hasScoreValues = [a, b].every((value) => (
+    value !== ''
+    && value !== null
+    && value !== undefined
+    && Number.isFinite(Number(value))
+  ))
+  const scoreA = Number(a)
+  const scoreB = Number(b)
+  const hasExplicitResult = [
+    match?.winner,
+    match?.winner_id,
+    match?.winner_team_id,
+    match?.raw_result,
+    match?.result
+  ].some((value) => {
+    if (value && typeof value === 'object') return Object.keys(value).length > 0
+    const resultValue = normalize(value).toUpperCase()
+    return Boolean(resultValue && resultValue !== 'UNKNOWN' && resultValue !== 'PENDING')
+  })
+  const hasSettledScore = hasScoreValues && (scoreA > 0 || scoreB > 0)
+  const isDone = completedStatuses.has(status)
+    || Boolean(match?.is_forfeit)
+    || hasExplicitResult
+    || hasSettledScore
+
+  if (!isDone || !hasScoreValues) {
+    return { scoreLabel: '—', result: 'unknown' }
+  }
+
+  if (side !== 'A' && side !== 'B') {
+    return { scoreLabel: `${a} : ${b}`, result: 'unknown' }
+  }
+
+  const own = side === 'A' ? scoreA : scoreB
+  const opponent = side === 'A' ? scoreB : scoreA
+  if (!Number.isFinite(own) || !Number.isFinite(opponent)) {
+    return { scoreLabel: `${a} : ${b}`, result: 'unknown' }
+  }
+
+  return {
+    scoreLabel: `${own} : ${opponent}`,
+    result: own > opponent ? 'win' : own < opponent ? 'loss' : 'draw'
+  }
 }
 
 function createEmptyRoleEntry(basePlayer, role) {
@@ -565,8 +620,8 @@ function getRadarData(entry, sample, heroPool) {
 
 function getRoleSummary(entry, sample, heroPool) {
   const primaryHero = heroPool[0]?.hero || entry?.most_played_hero || safeArr(entry?.top_3_heroes)[0] || ''
-  const seasonOvr = Number.isFinite(Number(entry?.seasonOvr)) ? Math.round(Number(entry.seasonOvr)) : null
-  const score = Number.isFinite(Number(entry?.roleScore)) ? Number(entry.roleScore) : null
+  const seasonOvr = getEntrySeasonOvr(entry)
+  const score = getEntrySeasonScore(entry)
   const rawScore = Number.isFinite(Number(entry?.rawRoleScore ?? entry?.rawScore))
     ? Number(entry.rawRoleScore ?? entry.rawScore)
     : score
@@ -582,7 +637,7 @@ function getRoleSummary(entry, sample, heroPool) {
     score,
     rawScore,
     seasonOvr,
-    scoreLabel: seasonOvr !== null ? String(seasonOvr) : '—',
+    scoreLabel: formatEntrySeasonOvr(entry),
     scoreUnit: 'OVR',
     scoreMetaLabel: score !== null ? `Score ${score.toFixed(1)}` : '',
     rank: sample.rank,
@@ -607,7 +662,8 @@ function getLatestMatches(db, basePlayer, entry) {
     const key = normalize(log?.matchId || log?.match_id || match?.match_id || log?.rawMatchId || log?.raw_match_id || `log-${index}`)
     if (!grouped.has(key)) {
       const date = getMatchDate(match, log)
-      const opponentInfo = getOpponentForLog(db, match, log, basePlayer)
+      const opponentInfo = getOpponentForLog(match, log, basePlayer)
+      const outcome = getMatchOutcome(match, opponentInfo.side)
       grouped.set(key, {
         match,
         matchId: match?.match_id || log?.matchId || log?.rawMatchId || key,
@@ -624,7 +680,9 @@ function getLatestMatches(db, basePlayer, entry) {
           full: '—',
           routeId: ''
         },
-        scoreLabel: getMatchScoreLabel(match),
+        side: opponentInfo.side,
+        scoreLabel: outcome.scoreLabel,
+        result: outcome.result,
         role,
         heroes: new Map(),
         maps: new Set(),
@@ -641,7 +699,10 @@ function getLatestMatches(db, basePlayer, entry) {
     const hero = getOwHeroCanonicalName(rawHero)
     const totals = getLogMetricTotals(log)
     current.minutes += minutes
-    current.maps.add(`${log?.mapOrder || ''}:${log?.mapName || ''}`)
+    const mapOrder = log?.mapOrder ?? log?.map_order ?? ''
+    const mapName = log?.mapName ?? log?.map_name ?? ''
+    const mapKey = normalize(`${mapOrder}:${mapName}`)
+    current.maps.add(mapKey || `log-${index}`)
     Object.keys(current.totals).forEach(metricId => {
       current.totals[metricId] += totals[metricId]
     })
@@ -675,7 +736,7 @@ function getMapPerformance(db, basePlayer, entry, metricId = 'dmg') {
   const rows = logs.map((log, index) => {
     const match = findMatch(db, log)
     const date = getMatchDate(match, log)
-    const opponentInfo = getOpponentForLog(db, match, log, basePlayer)
+    const opponentInfo = getOpponentForLog(match, log, basePlayer)
     const minutes = toNumber(log?.playtimeMinutes ?? log?.raw_time_mins)
     const totals = getLogMetricTotals(log)
     const total = totals[metric.dataKey]
@@ -821,6 +882,7 @@ export function getPlayerDossier(db, playerId, roleParam = '', season) {
       teamShort: teamShort(team, identitySource.team_short_name || identitySource.team_id),
       teamFull: teamFull(team, identitySource.team_name),
       teamRouteId: teamRouteId(team, identitySource.team_id || identitySource.team_short_name),
+      teamLogo: normalize(team?.team_logo || team?.logo_url || team?.logo),
       registeredRole: normalizeLeaderboardRole(basePlayer.role)
     },
     roles: safeRoles,

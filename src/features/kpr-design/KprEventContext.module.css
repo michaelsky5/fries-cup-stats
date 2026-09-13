@@ -1,0 +1,755 @@
+:global([data-design="kpr"]) .contextBar { grid-template-columns: minmax(0, 1fr) auto; min-height: 40px; padding: 0; gap: 12px; border-top: 1px solid #ffffff20; background: transparent; }
+:global([data-design="kpr"]) .eventLead { gap: 8px; }
+:global([data-design="kpr"]) .eventLogo { width: 20px; height: 20px; border: 0; border-radius: 0; }
+:global([data-design="kpr"]) .eventCode { font-size: 13px; font-weight: 700; letter-spacing: .04em; }
+:global([data-design="kpr"]) .eventIdentity { gap: 12px; }
+:global([data-design="kpr"]) .partnerLabel { min-height: 18px; padding: 0 8px; border: 0; border-left: 1px solid #ffffff30; font-size: 9px; font-weight: 400; }
+:global([data-design="kpr"]) .eventMeta { flex-wrap: nowrap; color: #b7b8ae; font-size: 10px; font-weight: 400; }
+:global([data-design="kpr"]) .eventMeta > span { min-height: 22px; padding: 0 12px; border-left-color: #ffffff20; }
+:global([data-design="kpr"]) .eventMeta > span:first-child { border: 0; }
+:global([data-design="kpr"]) .homeLink { display: none; }
+:global([data-design="kpr"]) .eventSwitcher > summary { min-height: 30px; padding: 0 9px; border: 0; background: transparent; color: #e9e9e2; font-weight: 500; font-size: 10px; }
+:global([data-design="kpr"]) .eventSwitcher > summary strong { color: #f4c320; }
+:global([data-design="kpr"]) .switcherPanel { right: 0; left: auto; border: 1px solid #17181733; background: #e9e9e2; color: #171817; box-shadow: 0 16px 36px #0003; }
+:global([data-design="kpr"]) .switcherPanel button { border-width: 1px; }
+:global([data-design="kpr"]) .switcherPanel .switcherOptionActive { border-color: #9d7b0a; background: #f4c32040; }
+:global([data-design="kpr"]) .syncLine { height: 1px; }
+
+@media (max-width: 900px) {
+  :global([data-design="kpr"]) .eventMeta > span:nth-child(2) { display: none; }
+}
+@media (max-width: 600px) {
+  :global([data-design="kpr"]) .contextBar { min-height: 42px; gap: 6px; }
+  :global([data-design="kpr"]) .eventMeta > span { padding: 0 6px; font-size: 9px; }
+  :global([data-design="kpr"]) .partnerLabel { display: none; }
+  :global([data-design="kpr"]) .eventSwitcher > summary { min-height: 36px; padding: 0 3px; }
+  :global([data-design="kpr"]) .eventSwitcher > summary strong { display: none; }
+  :global([data-design="kpr"]) .switcherPanel { width: min(350px, calc(100vw - 32px)); }
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar {
+  position: relative;
+  grid-template-columns: minmax(160px, .64fr) minmax(190px, 1fr) auto;
+  width: var(--portal-shell-width);
+  min-height: 44px;
+  gap: clamp(16px, 2.2vw, 38px);
+  margin: 0 auto;
+  border-top: 1px solid #ffffff1e;
+  background: transparent;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-context-mode="overview"] {
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 34px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventLead {
+  gap: 8px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventLead::before {
+  min-height: 18px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 7px;
+  background: var(--kpr-yellow);
+  color: var(--kpr-ink);
+  content: attr(data-lifecycle);
+  font: 9px/1 var(--font-mono);
+  letter-spacing: .08em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventLogo { display: none; }
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventIdentity {
+  gap: 9px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventCode {
+  color: #d6d7ce;
+  font: 10px/1 var(--font-mono);
+  letter-spacing: .09em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .partnerLabel {
+  min-height: 18px;
+  padding-left: 9px;
+  border-left-color: #ffffff21;
+  color: #92958a;
+  font: 9px/1 var(--font-mono);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .pageContext {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #898c82;
+  text-align: center;
+  white-space: nowrap;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .pageContext::before,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .pageContext::after {
+  width: clamp(20px, 3vw, 58px);
+  height: 1px;
+  background: #ffffff17;
+  content: '';
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .pageContext > span {
+  color: var(--kpr-yellow);
+  font: 9px/1 var(--font-mono);
+  letter-spacing: .08em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .pageContext > strong {
+  overflow: hidden;
+  color: #d4d5cc;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: .05em;
+  text-overflow: ellipsis;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventMeta {
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  color: #96998e;
+  font: 9px/1 var(--font-mono);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventMeta > span {
+  min-height: 24px;
+  gap: 6px;
+  padding: 0 10px;
+  border-left-color: #ffffff1c;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .statusMeta > i {
+  width: 5px;
+  height: 5px;
+  display: inline-block;
+  border: 1px solid #a8aa9d;
+  border-radius: 50%;
+  background: #787b71;
+  box-shadow: 0 0 0 3px #ffffff08;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-syncing="true"] .statusMeta > i {
+  border-color: var(--kpr-yellow);
+  background: var(--kpr-yellow);
+  animation: kprContextPulse 1.2s ease-in-out infinite;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .updatedMeta {
+  color: #73766c;
+  letter-spacing: .08em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher {
+  min-height: 34px;
+  padding-left: 0;
+  border-left: 1px solid #ffffff1f;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher > summary {
+  min-height: 34px;
+  gap: 8px;
+  padding: 0 7px 0 13px;
+  border: 0;
+  background: transparent;
+  color: #d8d9cf;
+  font: 10px/1 var(--font-mono);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher > summary span {
+  color: #9a9c92;
+  font: inherit;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher > summary strong {
+  color: var(--kpr-yellow);
+  font: inherit;
+  letter-spacing: .08em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher[open] > summary,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher > summary:hover {
+  background: var(--kpr-yellow);
+  color: var(--kpr-ink);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher[open] > summary span,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher[open] > summary strong,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher > summary:hover span,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher > summary:hover strong,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher[open] > summary::after,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher > summary:hover::after {
+  color: var(--kpr-ink);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .switcherPanel {
+  position: fixed;
+  top: calc(var(--kpr-header-height) - var(--kpr-preview-height) - 1px);
+  right: var(--kpr-gutter);
+  left: auto;
+  width: min(470px, calc(100vw - var(--kpr-gutter) * 2));
+  max-height: calc(100dvh - var(--kpr-header-height) - 18px);
+  gap: 18px;
+  overflow-y: auto;
+  padding: 18px;
+  border: 1px solid #17181742;
+  background: #e9e9e2f7;
+  box-shadow: 0 30px 70px #0006;
+  backdrop-filter: blur(18px);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .switcherPanel h3 {
+  color: #6c6f64;
+  font: 8px/1 var(--font-mono);
+  letter-spacing: .11em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .switcherPanel button {
+  min-height: 82px;
+  grid-template-columns: 90px minmax(0, 1fr);
+  padding: 13px 15px;
+  border: 1px solid #1718172d;
+  background: #efeee8;
+  transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .switcherPanel button:hover {
+  border-color: #17181770;
+  background: #f4c320;
+  transform: translateX(-3px);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .switcherPanel .switcherOptionActive {
+  border-color: #9d7b0a;
+  background: #f4c32040;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-context-mode="overview"] .pageContext,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-context-mode="overview"] .statusMeta,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-context-mode="overview"] .updatedMeta {
+  display: none;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-context-mode="overview"] .eventMeta {
+  justify-self: end;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .syncLine {
+  height: 1px;
+  background: #ffffff0b;
+}
+
+@keyframes kprContextPulse {
+  0%, 100% { opacity: .42; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 1080px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar {
+    grid-template-columns: minmax(135px, .5fr) minmax(150px, 1fr) auto;
+    gap: 10px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .updatedMeta { display: none; }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .pageContext::before,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .pageContext::after { width: 20px; }
+}
+
+@media (max-width: 600px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-context-mode="overview"] {
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 36px;
+    gap: 6px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .pageContext,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .statusMeta,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .updatedMeta,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .partnerLabel {
+    display: none;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"][data-syncing="true"] .statusMeta {
+    min-height: 22px;
+    display: inline-flex;
+    padding: 0 4px;
+    border-left: 0;
+    color: #8d6d08;
+    font-size: 8px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .eventLead::before {
+    min-height: 16px;
+    padding-inline: 6px;
+    font-size: 6px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .eventCode { font-size: 8px; }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher {
+    min-height: 30px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher > summary {
+    width: 34px;
+    min-height: 30px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher > summary span,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .eventSwitcher > summary strong {
+    display: none;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .switcherPanel {
+    top: calc(var(--kpr-header-height) - var(--kpr-preview-height));
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-height: calc(100dvh - var(--kpr-header-height));
+    padding: 14px;
+    border-inline: 0;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .switcherPanel button {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-syncing="true"] .statusMeta > i {
+    animation: none;
+  }
+}
+
+/* The hybrid header keeps only the season switcher in the dark panel. */
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] {
+  width: auto;
+  min-height: 44px;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventMeta {
+  height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary {
+  min-width: 132px;
+  min-height: 44px;
+  gap: 9px;
+  justify-content: center;
+  padding: 0 12px;
+  border: 1px solid #f4c32078;
+  background: #f4c3200b;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary strong {
+  order: 1;
+  color: var(--kpr-paper);
+  font: 800 9px/1 var(--font-mono);
+  letter-spacing: .09em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary span {
+  order: 2;
+  min-height: 17px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  background: var(--kpr-yellow);
+  color: var(--kpr-ink);
+  font: 6px/1 var(--font-mono);
+  letter-spacing: .08em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary::after {
+  order: 3;
+  color: var(--kpr-yellow);
+  font-size: 8px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher[open] > summary,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary:hover {
+  border-color: var(--kpr-yellow);
+  background: var(--kpr-yellow);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher[open] > summary strong,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary:hover strong {
+  color: var(--kpr-ink);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher[open] > summary span,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary:hover span {
+  background: var(--kpr-ink);
+  color: var(--kpr-yellow);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .switcherPanel {
+  top: calc(var(--kpr-header-height) - 1px);
+  right: var(--kpr-gutter);
+  left: auto;
+  width: min(470px, calc(100vw - var(--kpr-gutter) * 2));
+  max-height: calc(100dvh - var(--kpr-header-height) - 18px);
+}
+
+/* Page status belongs to the light content canvas, not to global navigation. */
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  width: 100%;
+  min-height: 38px;
+  gap: clamp(14px, 2.2vw, 36px);
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid #17181720;
+  background: transparent;
+  color: var(--kpr-ink);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .eventLead::before {
+  color: var(--kpr-ink);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .eventCode {
+  color: #4e5148;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .partnerLabel {
+  border-left-color: #17181724;
+  color: #6d7067;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .pageContext {
+  color: #73766c;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .pageContext::before,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .pageContext::after {
+  background: #17181719;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .pageContext > strong {
+  color: #363831;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .eventMeta {
+  color: #66695f;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .eventMeta > span {
+  border-left-color: #17181720;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .statusMeta > i {
+  border-color: #8c8f84;
+  background: #6e7167;
+  box-shadow: 0 0 0 3px #17181708;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .updatedMeta {
+  color: #83867c;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .syncLine {
+  background: #17181710;
+}
+
+@media (max-width: 1080px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] {
+    display: block;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] {
+    min-height: 38px;
+    display: block;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventMeta,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher {
+    height: 38px;
+    min-height: 38px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary {
+    width: auto;
+    min-width: 76px;
+    min-height: 38px;
+    gap: 5px;
+    padding: 0 7px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary strong {
+    display: inline;
+    font-size: 7px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary span {
+    display: none;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .switcherPanel {
+    top: var(--kpr-header-height);
+    right: var(--kpr-gutter);
+    left: var(--kpr-gutter);
+    width: auto;
+    max-height: calc(100dvh - var(--kpr-header-height) - 10px);
+    padding: 14px;
+    border-inline: 1px solid #17181742;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] {
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 34px;
+  }
+}
+
+/* The season selector forms the first cell of the flat header control dock. */
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"],
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventMeta,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher {
+  height: 46px;
+  min-height: 46px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary {
+  width: 136px;
+  min-width: 136px;
+  height: 46px;
+  min-height: 46px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 10px;
+  grid-template-rows: auto auto;
+  align-content: center;
+  justify-content: stretch;
+  gap: 4px 7px;
+  padding: 0 10px 0 12px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary strong {
+  grid-column: 1;
+  grid-row: 1;
+  order: initial;
+  color: var(--kpr-paper);
+  font: 800 10px/1 var(--font-mono);
+  letter-spacing: .08em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary span {
+  grid-column: 1;
+  grid-row: 2;
+  order: initial;
+  min-height: 0;
+  display: block;
+  padding: 0;
+  background: transparent;
+  color: #777a70;
+  font: 9px/1 var(--font-mono);
+  letter-spacing: .12em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary::after {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  order: initial;
+  color: var(--kpr-yellow);
+  font-size: 10px;
+  transition: transform .16s ease;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher[open] > summary,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary:hover,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary:focus-visible {
+  border-color: transparent;
+  background: var(--kpr-yellow);
+  outline: 0;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher[open] > summary strong,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary:hover strong,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary:focus-visible strong,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher[open] > summary span,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary:hover span,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary:focus-visible span,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher[open] > summary::after,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary:hover::after,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary:focus-visible::after {
+  color: var(--kpr-ink);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .switcherPanel {
+  top: calc(100% + 10px);
+  right: -1px;
+  left: auto;
+  width: min(470px, calc(100vw - var(--kpr-gutter) * 2));
+  max-height: calc(100dvh - var(--kpr-header-height) - 18px);
+  gap: 11px;
+  padding: 13px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .switcherPanel section {
+  gap: 7px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .switcherPanel h3 {
+  margin: 0 0 2px;
+  color: #74776d;
+  font: 9px/1 var(--font-mono);
+  letter-spacing: .1em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .switcherPanel button {
+  grid-template-columns: 102px minmax(0, 1fr);
+  gap: 4px 13px;
+  min-height: 68px;
+  padding: 10px 12px;
+  border-width: 1px;
+  background: #f2f1e9;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .switcherPanel button strong {
+  font: 900 21px/.9 var(--font-sans);
+  letter-spacing: -.025em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .switcherPanel button span {
+  font-size: 12px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .switcherPanel button em {
+  font: normal 9px/1.3 var(--font-mono);
+  letter-spacing: .015em;
+}
+
+@media (min-width: 1280px) and (max-width: 1799px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary {
+    width: 112px;
+    min-width: 112px;
+    grid-template-rows: auto;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary span {
+    display: none;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary::after {
+    grid-row: 1;
+  }
+}
+
+@media (max-width: 980px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"],
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventMeta,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher {
+    height: 42px;
+    min-height: 42px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary {
+    width: 126px;
+    min-width: 126px;
+    height: 42px;
+    min-height: 42px;
+  }
+}
+
+@media (max-width: 600px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"],
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventMeta,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher {
+    height: 38px;
+    min-height: 38px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary {
+    width: 86px;
+    min-width: 86px;
+    height: 38px;
+    min-height: 38px;
+    gap: 3px 4px;
+    padding: 0 6px 0 8px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary strong {
+    display: block;
+    font-size: 9px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary span {
+    display: none;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .switcherPanel {
+    position: fixed;
+    top: var(--kpr-header-height);
+    right: var(--kpr-gutter);
+    left: var(--kpr-gutter);
+    width: auto;
+  }
+}
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .eventMeta {
+  flex-wrap: wrap;
+  row-gap: 3px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .updatedMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 7px;
+  color: #62665c;
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+@media (max-width: 600px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .eventMeta {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    padding-bottom: 8px;
+  }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="content"] .updatedMeta {
+    padding: 0;
+    border: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .contextBar[data-placement='header'] .eventSwitcher > summary { min-width: 96px; width: 96px; }
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .contextBar[data-placement='header'] .eventSwitcher > summary strong { font-size: 11px; }
+}

@@ -1,11 +1,14 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import styles from '../../pages/advance/AdvancePage.module.css'
 
 export default function TiebreakerPanel({ rules, t }) {
+  const uiLocale = useUiLocale()
   return (
     <aside className={styles.tiebreakerPanel}>
       <div className={styles.sectionHeaderCompact}>
         <span className={styles.sectionLabel}>TIEBREAKERS</span>
-        <h2>{t('advance.tiebreakers.title', '同分规则')}</h2>
+        <h2>{t('advance.tiebreakers.title', uiText("同分规则", uiLocale))}</h2>
       </div>
       <ol>
         {rules.map(rule => (

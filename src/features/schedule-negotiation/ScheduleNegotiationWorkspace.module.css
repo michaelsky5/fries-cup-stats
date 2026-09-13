@@ -1,0 +1,50 @@
+.workspace { display: grid; gap: 18px; margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--fc-data-line-strong); color: var(--fc-data-ink); scroll-margin-top: 18px; }
+.header, .matchHeading, .proposalHeading { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.header span, .matchHeading span, .proposalHeading span, .proposalForm span { color: #a27c00; font-size: 12px; font-weight: 900; letter-spacing: .08em; }
+.header h3 { margin: 4px 0; font-size: clamp(24px, 4vw, 38px); }
+.header p, .matchHeading p, .proposalHeading p, .proposalForm p, .candidateList p, .pendingAdmin p, .confirmed p { margin: 0; color: #6f685d; font-size: 12px; }
+.header button, .proposalForm button, .candidateActions button, .counterForm button { border: 1px solid var(--fc-data-ink); background: var(--fc-data-ink); color: var(--fc-data-paper-raised); padding: 10px 14px; font-weight: 800; }
+.notice, .error { padding: 12px 14px; border-left: 5px solid #f7c514; background: #fff8d3; font-size: 13px; }
+.error { border-color: #b43a2e; background: #fff0ed; color: #8b281f; }
+.capabilityBlock { padding: 11px 13px; border: 1px solid #b58900; border-left: 6px solid #f7c514; background: #fff7d8; color: #665000; font-size: 12px; font-weight: 800; }
+.empty, .readonly { display: grid; gap: 5px; padding: 16px; border: 1px dashed #8f887d; background: #f3eee4; color: #6f685d; font-size: 12px; }
+.matchList { display: grid; gap: 16px; }
+.matchCard { display: grid; gap: 14px; padding: 18px; border: 1px solid var(--fc-data-ink); background: var(--fc-data-paper-raised); }
+.matchHeading h4 { margin: 5px 0; font-size: 26px; }
+.matchHeading h4 b { color: #a27c00; font-size: 14px; }
+.officialTime { display: grid; gap: 4px; padding: 10px 12px; background: var(--fc-data-ink); color: var(--fc-data-paper-raised); text-align: right; }
+.officialTime span { color: #f7c514; }
+.policy { display: flex; flex-wrap: wrap; gap: 7px; }
+.policy span { padding: 6px 8px; border: 1px solid #aaa397; background: #f3eee4; font-size: 12px; font-weight: 800; }
+.proposalForm { display: grid; grid-template-columns: minmax(180px, 1.3fr) repeat(3, minmax(150px, 1fr)) auto; gap: 8px; padding: 14px; background: #f7c514; }
+.proposalForm input, .counterForm input { min-height: 38px; border: 1px solid var(--fc-data-ink); background: var(--fc-data-paper-raised); padding: 7px 9px; }
+.proposalForm .note { grid-column: 2 / 5; }
+.proposal { display: grid; gap: 12px; border-top: 1px solid #aaa397; padding-top: 14px; }
+.proposalHeading strong { display: block; font-size: 20px; }
+.proposalHeading em { padding: 7px 9px; background: var(--fc-data-ink); color: var(--fc-data-paper-raised); font-style: normal; font-size: 11px; font-weight: 900; }
+.proposalHeading em[data-status='PENDING_ADMIN'] { background: #a86617; }
+.proposalHeading em[data-status='CONFIRMED'] { background: #3c6f4a; }
+.candidateList { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; }
+.candidateList article { display: grid; gap: 9px; padding: 12px; border: 1px solid #aaa397; background: #faf8f3; }
+.candidateList article[data-agreed='true'] { border: 2px solid #3c6f4a; }
+.candidateList strong { display: block; margin: 3px 0; font-size: 17px; }
+.confirmations { display: flex; flex-wrap: wrap; gap: 5px; }
+.confirmations span { padding: 4px 6px; background: #e8e2d8; font-size: 12px; }
+.confirmations span[data-status='APPROVED'] { background: #dcebdd; color: #285c36; }
+.confirmations span[data-status='REJECTED'] { background: #f5d7d1; color: #8b281f; }
+.candidateActions { display: flex; gap: 6px; }
+.candidateActions button:last-child { background: var(--fc-data-paper-raised); color: var(--fc-data-ink); }
+.counterForm { display: flex; align-items: end; justify-content: flex-end; gap: 8px; }
+.counterForm label { display: grid; gap: 5px; color: #6f685d; font-size: 12px; font-weight: 800; }
+.pendingAdmin, .confirmed { padding: 12px; border-left: 6px solid #a86617; background: #fff3df; }
+.confirmed { border-color: #3c6f4a; background: #edf5ee; }
+@media (max-width: 1000px) { .proposalForm { grid-template-columns: 1fr 1fr; } .proposalForm .note { grid-column: auto; } }
+@media (max-width: 720px) { .header, .matchHeading, .proposalHeading { align-items: stretch; flex-direction: column; } .officialTime { text-align: left; } .proposalForm { grid-template-columns: 1fr; } .counterForm { align-items: stretch; flex-direction: column; } }
+
+/* FC Signal: account workspaces share the public paper and section rhythm. */
+.workspace { color: var(--fc-data-ink); font-family: var(--font-sans); border-top: 1px solid var(--fc-data-line); }
+.header { padding-bottom: 22px; border-bottom: 1px solid var(--fc-data-line); }
+.header h3 { margin: 8px 0 10px; font-size: 26px; line-height: 1.4; }
+.header p { font-size: 13px; line-height: 1.8; font-weight: 400; color: var(--fc-data-text-muted); }
+.header > div > span { color: var(--fc-data-text-muted); font: 900 17px/1.2 var(--fc-data-font-display); }
+.workspace :is(input,select,textarea,button) { border-radius: 0; min-height: 44px; font-size: 14px; }

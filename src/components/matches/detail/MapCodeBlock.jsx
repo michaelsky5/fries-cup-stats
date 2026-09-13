@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import styles from './MatchDetail.module.css'
+import styles from './matchDetailStyles.js'
 
 export default function MapCodeBlock({ code, t }) {
   const [message, setMessage] = useState('')

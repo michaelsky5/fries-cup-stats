@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict'
+import { getFinalRanking } from '../src/lib/advanceSelectors.js'
 import { buildFixedDoubleEliminationPlayoff } from '../src/lib/playoffBracket.js'
+import { buildSwissSignalFlow } from '../src/lib/swissSignalFlow.js'
 
 function team(id, short, name, score = '') {
   return { id, short, name, score }
@@ -59,4 +61,40 @@ assert.deepEqual(completedM9.slots.map(slot => slot.team.short), ['TNS', 'REG'])
 assert.deepEqual([completedM9.scoreA, completedM9.scoreB], ['1', '3'])
 assert.equal(completedM9.winner.short, 'REG')
 
-console.log('Playoff bracket slot alignment assertions passed.')
+const archivedTeams = [
+  { team_id: 'A', team_short_name: 'A', final_rank: '', current_rank: 2 },
+  { team_id: 'B', team_short_name: 'B', final_rank: '', current_rank: 1 }
+]
+
+assert.deepEqual(getFinalRanking({ teams: archivedTeams }), [])
+assert.deepEqual(
+  getFinalRanking({ teams: archivedTeams }, { seasonFinished: true }).map(row => [row.team_short_name, row.final_rank, row.final_rank_source]),
+  [['B', 1, 'current_rank'], ['A', 2, 'current_rank']]
+)
+assert.deepEqual(
+  getFinalRanking({ teams: archivedTeams.map(teamRow => ({ ...teamRow, final_rank: teamRow.current_rank })) }, { seasonFinished: true })
+    .map(row => [row.team_short_name, row.final_rank]),
+  [['B', 1], ['A', 2]]
+)
+assert.deepEqual(
+  getFinalRanking({ teams: archivedTeams.map(teamRow => ({ ...teamRow, current_rank: 1 })) }, { seasonFinished: true }),
+  []
+)
+
+const swissFlow = buildSwissSignalFlow(
+  [team('A', 'A', 'Team A'), team('B', 'B', 'Team B')],
+  [
+    { match_id: 'SWISS-R1-M1', round: 'ROUND 1', status: 'COMPLETE', team_a: { team_id: 'A', score: 2 }, team_b: { team_id: 'B', score: 0 } },
+    { match_id: 'SWISS-R2-BYE', round: 'ROUND 2', status: 'COMPLETE', team_a: { team_id: 'A', score: 2 }, team_b: { team_id: 'BYE', team_short_name: 'BYE', score: 0 } }
+  ],
+  2
+)
+
+assert.deepEqual(
+  swissFlow.rounds.map(round => [round.matches, round.records, round.byeRecords]),
+  [[1, 1, 0], [0, 1, 1]]
+)
+assert.equal(swissFlow.stepsByTeam.get('A').length, 2)
+assert.equal(swissFlow.stepsByTeam.get('A').at(-1).opponent.team_short_name, 'BYE')
+
+console.log('Playoff bracket, archived final-ranking, and Swiss BYE assertions passed.')

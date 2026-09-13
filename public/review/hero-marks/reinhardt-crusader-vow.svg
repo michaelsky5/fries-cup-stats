@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Reinhardt rocket hammer</title>
+  <desc id="desc">A broad steel striking head, a short rear rocket housing, and a long wrapped grip form one readable hammer. No surrounding arch or effect lines are included.</desc>
+  <g transform="translate(194 86) rotate(20)" stroke-linejoin="bevel">
+    <path d="M-6 24H6V126L0 140L-6 126Z" fill="#94a8ac" fill-opacity="0.4" stroke="#c2d1d2" stroke-opacity="0.7" stroke-width="1.9"/>
+    <path d="M40 -17H62L73 -9V10L62 18H40Z" fill="#a7976d" fill-opacity="0.28" stroke="#d3c7a3" stroke-opacity="0.64" stroke-width="1.9"/>
+    <path d="M-60 -31H33L49 -17V19L33 32H-60L-71 21V-20Z" fill="#99aeb8" fill-opacity="0.3" stroke="#c5d7dc" stroke-opacity="0.78" stroke-width="2.2"/>
+    <path d="M-60 -31H-45V32H-60L-71 21V-20Z" fill="#c0c9c7" fill-opacity="0.2" stroke="#d4ddd7" stroke-opacity="0.55" stroke-width="1.4"/>
+    <path d="M-31 -19H24L36 -9V10L24 20H-31Z" fill="#0c1215" fill-opacity="0.33" stroke="#b4c6cc" stroke-opacity="0.42" stroke-width="1.35"/>
+    <path d="M-17 -7H17V7H-17Z" fill="#c8ad75" fill-opacity="0.55"/>
+    <path d="M62 -8V9M-6 82H6M-6 96H6M-6 110H6" fill="none" stroke="#d7c19a" stroke-opacity="0.6" stroke-width="2.3"/>
+  </g>
+</svg>

@@ -25,7 +25,7 @@ export function getGlobalSummary(db) {
   const pending = matches.filter(m => !['COMPLETE', 'COMPLETED', 'IN_PROGRESS'].includes(m.status)).length
 
   return {
-    updatedAt: db?.updated_at || '',
+    updatedAt: db?.updated_at || db?.updatedAt || db?.meta?.updated_at || db?.meta?.ranking_as_of || '',
     teamCount: teams.length,
     playerCount: players.length,
     matchCount: matches.length,

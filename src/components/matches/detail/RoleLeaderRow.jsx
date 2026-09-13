@@ -1,15 +1,11 @@
 import { formatInt } from '../../../lib/format.js'
 import { getRoleEnLabel, getRoleLabel } from '../../../lib/leaderboardSelectors.js'
-import styles from './MatchDetail.module.css'
+import { formatMapPlayerMatchRating, getMatchPlayerRating } from '../../../lib/matchRatingDisplay.js'
+import styles from './matchDetailStyles.js'
 
 function formatRating(value) {
   const num = Number(value)
   return Number.isFinite(num) ? num.toFixed(1) : '-'
-}
-
-function formatTenPointRating(value) {
-  const num = Number(value)
-  return Number.isFinite(num) ? (num / 10).toFixed(1) : '-'
 }
 
 function getName(entry) {
@@ -21,6 +17,7 @@ export default function RoleLeaderRow({ role, entry, locale = 'zh-CN' }) {
 
   const coreStats = (entry.coreStats || []).filter(stat => Number(stat.value) > 0).slice(0, 2)
   const roleLabel = locale === 'en-US' ? getRoleEnLabel(role) : getRoleLabel(role)
+  const displayRating = formatMapPlayerMatchRating(getMatchPlayerRating(entry), '—')
 
   return (
     <div className={styles.roleLeaderLine} data-role={role}>
@@ -30,12 +27,15 @@ export default function RoleLeaderRow({ role, entry, locale = 'zh-CN' }) {
         </span>
         <span className={styles.roleLeaderPlayer}>
           <strong>{getName(entry)}</strong>
-          <em>{entry.team_short_name || entry.team_name}</em>
+          <em>
+            {entry.team_short_name || entry.team_name}
+            {!entry.matchAwardEligible ? ` · ${locale === 'en-US' ? 'LOW SAMPLE' : '低样本'}` : ''}
+          </em>
         </span>
       </span>
       <span className={styles.roleLeaderScore} title={`Raw rating ${formatRating(entry.roleScore)} / 100`}>
         <span className={styles.roleLeaderScoreLabel}>RATING</span>
-        <b>{formatTenPointRating(entry.roleScore)}</b>
+        <b>{displayRating}</b>
         <small>/10</small>
       </span>
       <span className={styles.roleLeaderStats}>

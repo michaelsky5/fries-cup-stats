@@ -1,4 +1,6 @@
+import { translateUiText as formatUiText } from './uiText.js'
 import { formatInt, formatScore, formatUpdatedAt } from './format.js'
+import { getMatchFormatLabel } from './matchFormat.js'
 import { getBroadcastInfo } from './broadcastSelectors.js'
 import { getMatchRatingSummary } from './matchRatingAdapter.js'
 import {
@@ -60,10 +62,10 @@ function getMatchById(db, matchId) {
 }
 
 function getScheduleLabel(match, locale = 'zh-CN') {
-  if (match?.scheduled_at) return formatUpdatedAt(match.scheduled_at)
-  if (match?.scheduled_date && match?.scheduled_time) return `${match.scheduled_date} ${match.scheduled_time}`
+  if (match?.scheduled_at) return formatUiText(formatUpdatedAt(match.scheduled_at), locale)
+  if (match?.scheduled_date && match?.scheduled_time) return formatUiText(`${match.scheduled_date} ${match.scheduled_time}`, locale)
   const schedule = formatMatchSchedule(match, { locale })
-  return schedule.hasSchedule ? schedule.label : schedule.title
+  return formatUiText(schedule.hasSchedule ? schedule.label : schedule.title, locale)
 }
 
 function parseDurationSeconds(value) {
@@ -89,23 +91,31 @@ function formatDuration(seconds) {
 function getMatchState(match) {
   const status = cleanText(match?.status || 'PENDING').toUpperCase()
   const resultMode = cleanText(match?.result_mode).toUpperCase()
-  const isForfeit = Boolean(match?.is_forfeit) || resultMode === 'FORFEIT'
-  const isComplete = COMPLETE_STATUSES.has(status)
+  const isWeekly = Boolean(match?.cycle_week_id) || cleanText(match?.stage).toUpperCase() === 'WEEKLY'
+  const isForfeit = Boolean(match?.is_forfeit) || resultMode === 'FORFEIT' || (isWeekly && status === 'FORFEIT')
+  const isRuling = isWeekly && status === 'ADMIN_COMPLETED'
+  const isComplete = COMPLETE_STATUSES.has(status) || (isWeekly && status === 'FINISHED')
   const isCancelled = CANCELLED_STATUSES.has(status)
   const isPostponed = POSTPONED_STATUSES.has(status)
   const isLive = LIVE_STATUSES.has(status)
-  const isUpcoming = !isForfeit && !isComplete && !isCancelled && !isPostponed && !isLive
+  const isReview = isWeekly && ['RESULT_REVIEW', 'PENDING_REVIEW'].includes(status)
+  const isUpcoming = !isForfeit && !isRuling && !isComplete && !isCancelled && !isPostponed && !isLive && !isReview
 
   return {
     status,
     resultMode,
+    isWeekly,
     isForfeit,
     isComplete,
     isCancelled,
     isPostponed,
     isLive,
+    isReview,
+    isRuling,
     isUpcoming,
-    canShowResults: (isComplete || isForfeit) && !isCancelled && !isPostponed
+    // Published weekly map results remain visible while the series continues.
+    // This is not a final result and must not produce a series winner or rating.
+    canShowResults: (isComplete || isForfeit || isRuling || (isWeekly && (isLive || isReview))) && !isCancelled && !isPostponed
   }
 }
 
@@ -315,7 +325,7 @@ function normalizeMap(map, match, playerDirectory, index, locale = 'zh-CN') {
     hasResult,
     hasStats,
     hasProvidedInfo,
-    isComplete: hasResult && hasStats,
+    isComplete: hasResult,
     lobbyCode: cleanText(map?.lobby_code),
     notes: cleanText(map?.notes),
     teamABan: formatOwHeroName(cleanText(map?.team_a_ban), locale),
@@ -537,7 +547,16 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
   const players = safeArr(db?.players)
   const maps = safeArr(match?.maps).map((map, index) => {
     const normalizedMap = normalizeMap(map, match, playerDirectory, index, locale)
-    if (!state.canShowResults || state.isForfeit || !normalizedMap.hasResult || !normalizedMap.hasStats) {
+    const partialWeekly = state.isWeekly && (state.isLive || state.isReview)
+    const mapStatus = cleanText(map?.status).toUpperCase()
+    const publishedWeeklyResult = !['LIVE', 'IN_PROGRESS', 'PENDING', 'SCHEDULED'].includes(mapStatus)
+      && (map?.is_administrative || ['COMPLETE', 'COMPLETED'].includes(mapStatus)
+        || (cleanText(map?.winner) && cleanText(map.winner).toUpperCase() !== 'UNKNOWN') || normalizedMap.durationSeconds > 0)
+    if (!state.canShowResults || (partialWeekly && !publishedWeeklyResult)) return {
+      ...normalizedMap, scoreA: '—', scoreB: '—', hasResult: false, isComplete: false,
+      winnerSide: '', winnerTeam: null, winnerLabel: '', hasStats: false, teamAStats: [], teamBStats: []
+    }
+    if (!state.isComplete || state.isForfeit || !normalizedMap.hasResult || !normalizedMap.hasStats) {
       return normalizedMap
     }
     return {
@@ -545,8 +564,8 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
       rating: getMatchRatingSummary(match, [normalizedMap.raw], players)
     }
   })
-  const completedMaps = maps.filter(map => map.hasResult && map.hasStats)
-  const displayMaps = state.canShowResults ? completedMaps : maps.filter(map => map.hasProvidedInfo)
+  const completedMaps = maps.filter(map => map.hasResult)
+  const displayMaps = state.isComplete || state.isForfeit ? completedMaps : maps.filter(map => map.hasProvidedInfo)
   const mapRecords = state.isForfeit ? [] : displayMaps
   const allDurationsPresent = completedMaps.length > 0 && completedMaps.every(map => map.durationSeconds > 0)
   const totalDurationSeconds = allDurationsPresent
@@ -557,7 +576,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
   const seriesPath = buildSeriesPath(mapRecords)
   const mapTypeResults = buildMapTypeResults(completedMaps, teamA, teamB)
   const seriesPeakPlayers = getSeriesPeakPlayers(completedMaps, teamA, teamB)
-  const rating = state.canShowResults && !state.isForfeit
+  const rating = state.isComplete && !state.isForfeit
     ? getMatchRatingSummary(match, completedMaps.map(map => map.raw), players)
     : {
         supported: false,
@@ -577,7 +596,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     seriesPeakPlayers
   })
   const adjacent = getAdjacentMatches(safeArr(db?.matches), match)
-  const mapCountLabel = state.canShowResults && !state.isForfeit
+  const mapCountLabel = state.isForfeit ? '—' : state.canShowResults
     ? `${completedMaps.length} / ${maps.length || completedMaps.length}`
     : maps.length ? `${maps.length}` : '—'
 
@@ -592,10 +611,10 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     breadcrumb: [match?.stage, match?.round].map(cleanText).filter(Boolean),
     scheduleLabel: getScheduleLabel(match, locale),
     scheduleCompact: formatMatchSchedule(match, { locale }).compact,
-    statusLabel: state.isForfeit ? '弃权' : getMatchStatusText(match),
-    statusEn: state.isComplete ? 'COMPLETED' : state.isLive ? 'LIVE' : state.isCancelled ? 'CANCELLED' : state.isPostponed ? 'POSTPONED' : 'PENDING',
+    statusLabel: state.isReview ? '结果待审核' : state.isForfeit ? '弃权' : state.isRuling ? '判定结束' : getMatchStatusText(match),
+    statusEn: state.isReview ? 'UNDER REVIEW' : state.isRuling ? 'BY RULING' : state.isComplete ? 'COMPLETED' : state.isLive ? 'LIVE' : state.isCancelled ? 'CANCELLED' : state.isPostponed ? 'POSTPONED' : 'PENDING',
     scoreLabel: state.canShowResults ? `${formatScore(match?.team_a?.score)} : ${formatScore(match?.team_b?.score)}` : 'VS',
-    winnerSide: getMatchWinnerSide(match),
+    winnerSide: (state.isComplete || state.isForfeit || state.isRuling) && !state.isCancelled && !state.isPostponed ? getMatchWinnerSide(match) : '',
     hasSeriesScore: state.canShowResults,
     mapCountLabel,
     totalDurationLabel,
@@ -604,8 +623,8 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     metaItems: [
       { key: 'stage', label: '阶段', en: 'STAGE', value: cleanText(match?.stage) || '—' },
       { key: 'round', label: '轮次', en: 'ROUND', value: cleanText(match?.round) || '—' },
-      { key: 'format', label: '赛制', en: 'FORMAT', value: cleanText(match?.format) || '—' },
-      { key: 'status', label: '状态', en: 'STATUS', value: state.isForfeit ? '弃权' : getMatchStatusText(match), accent: true },
+      { key: 'format', label: '赛制', en: 'FORMAT', value: getMatchFormatLabel(match) },
+      { key: 'status', label: '状态', en: 'STATUS', value: state.isReview ? '结果待审核' : state.isRuling ? '判定结束' : state.isForfeit ? '弃权' : getMatchStatusText(match), accent: true },
       { key: 'maps', label: '地图', en: 'MAPS', value: mapCountLabel },
       ...(totalDurationSeconds ? [{ key: 'duration', label: '系列赛总时长', en: 'DURATION', value: formatDuration(totalDurationSeconds) }] : [])
     ],
@@ -613,6 +632,9 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     completedMaps,
     mapRecords,
     hasMapRecords: mapRecords.length > 0,
+    statsMapCount: completedMaps.filter(map => map.hasStats).length,
+    hasCompletePlayerStats: completedMaps.length > 0 && completedMaps.every(map => map.teamAStats.length > 0 && map.teamBStats.length > 0),
+    formatLabel: getMatchFormatLabel(match),
     seriesPath,
     comparison,
     rating,
