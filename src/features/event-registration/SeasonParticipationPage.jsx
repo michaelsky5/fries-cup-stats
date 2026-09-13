@@ -127,11 +127,18 @@ function Workspace({ user, seasonId }) {
     {error && <p role="alert" className={styles.error}>{error}</p>}
     {savedMessage && <p role="status" className={styles.feedback}>{uiText(savedMessage, uiLocale)}</p>}
     {link && <InvitationLink invitation={link} />}
-    {workspace.notices.some(item => item.requiresAck && !item.acknowledgedAt) && <section className={styles.panel}><h2>{uiText("需要确认", uiLocale)}</h2>{workspace.notices.filter(item => item.requiresAck && !item.acknowledgedAt).map(item => <div className={styles.notice} key={item.id}><div><strong>{item.title}</strong><p>{item.message}</p></div><button disabled={busy} onClick={() => perform(`/notices/${item.id}/acknowledge`, {})}>{uiText("我已知悉", uiLocale)}</button></div>)}</section>}
     {!ownerRegistration && workspace.canCreate && <TeamForm policy={workspace.policy} organizations={workspace.organizations} busy={busy} onSave={input => perform('/drafts', input, 'POST', '队伍报名资料')} />}
     {workspace.registrations.map(record => <Registration key={`${record.id}:${record.revision}`} policy={workspace.policy} record={record} userId={user.id} owner={record.ownerUserId === user.id} canWrite={workspace.canWrite} busy={busy} perform={perform} onRefresh={async () => { if (await confirmDiscard()) setVersion(value => value + 1) }} />)}
     {!workspace.registrations.length && workspace.canWrite && !workspace.canCreate && <section className={styles.panel}><h2>{uiText("需要队伍负责人邀请", uiLocale)}</h2><p>{uiText("当前账号尚未接受本赛季的负责人邀请。请使用赛事负责人发给你的报名邀请链接；队员邀请只用于确认本人入队。", uiLocale)}</p></section>}
     {!workspace.registrations.length && !workspace.canWrite && <section className={styles.panel}><h2>{uiText("尚无报名", uiLocale)}</h2><p>{uiText("本赛季报名当前没有开放，请等待赛事负责人通知。", uiLocale)}</p></section>}
+    {workspace.notices.some(item => item.requiresAck && !item.acknowledgedAt) && <section className={styles.panel}>
+      <h2>{uiText("报名通知待阅", uiLocale)}</h2>
+      <p>{uiText("通知保留当时的处理记录。当前报名状态见上方队伍资料。", uiLocale)}</p>
+      {workspace.notices.filter(item => item.requiresAck && !item.acknowledgedAt).map(item => <div className={styles.notice} key={item.id}>
+        <div><time dateTime={item.createdAt}>{new Date(item.createdAt).toLocaleString()}</time><strong>{item.title}</strong><p>{item.message}</p></div>
+        <button disabled={busy} onClick={() => perform(`/notices/${item.id}/acknowledge`, {})}>{uiText("我已知悉", uiLocale)}</button>
+      </div>)}
+    </section>}
     {workspace.notices.length > 0 && <details className={styles.panel}><summary>{uiText("报名通知 · ", uiLocale)}{workspace.notices.length}</summary>{workspace.notices.map(item => <div className={styles.notice} key={item.id}><div><strong>{item.title}</strong><p>{item.message}</p></div><time>{new Date(item.createdAt).toLocaleString()}</time></div>)}</details>}
   </>
 }

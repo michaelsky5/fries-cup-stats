@@ -39,7 +39,7 @@
 .page summary { cursor: pointer; color: var(--fc-data-ink); font-size: 14px; }
 .details > section { margin-top: 14px; }
 .notice { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--fc-data-line); font-size: 14px; }
-.notice time { font-size: 12px; color: #999; }
+.notice time { display: block; margin-bottom: 6px; font-size: 12px; color: var(--fc-data-text-muted); }
 .guardDialog { background: var(--fc-data-paper-raised); color: var(--fc-data-ink); border: 1px solid var(--fc-data-line-strong); padding: 24px; width: min(480px, calc(100vw - 40px)); max-width: none; max-height: calc(100dvh - 40px); overflow: auto; box-sizing: border-box; }
 .guardDialog::backdrop { background: #000b; }
 .guardDialog h2 { font-size: 20px; margin-top: 0; }

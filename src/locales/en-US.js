@@ -3463,6 +3463,8 @@ export default {
   "报名账号 / 首发五人": "Registration account / starting five",
   "报名进度": "Registration progress",
   "报名通知 ·": "Registration Notice ·",
+  "报名通知待阅": "Registration notices to read",
+  "通知保留当时的处理记录。当前报名状态见上方队伍资料。": "Notices record earlier decisions. The team details above show your current registration status.",
   "报告框架": "Report shell",
   "报告版本": "Report version",
   "报告语言": "Report language",

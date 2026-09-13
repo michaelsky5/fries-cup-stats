@@ -22273,6 +22273,16 @@
     "en-US": "Registration Notice ·",
     "ko-KR": "등록 공지 ·"
   },
+  "报名通知待阅": {
+    "zh-TW": "報名通知待閱",
+    "en-US": "Registration notices to read",
+    "ko-KR": "확인할 등록 알림"
+  },
+  "通知保留当时的处理记录。当前报名状态见上方队伍资料。": {
+    "zh-TW": "通知保留當時的處理記錄。目前報名狀態見上方隊伍資料。",
+    "en-US": "Notices record earlier decisions. The team details above show your current registration status.",
+    "ko-KR": "알림에는 당시 처리 내역이 남아 있습니다. 현재 등록 상태는 위의 팀 정보에서 확인하세요."
+  },
   "报名通过后会继续同步你的队伍关系。": {
     "zh-TW": "報名通過後會繼續同步你的隊伍關係。"
   },
