@@ -1,9 +1,26 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { proxyRequest } from '../edge-functions/api/[[path]].js'
 const origin = 'https://hub-preview.fries-cup.com'
 const avatar = `/api/platform/media/avatars/${'a'.repeat(24)}/${'b'.repeat(32)}-96.webp`
 const request = (path, options) => new Request(origin + path, options)
+
+test('Pages response-header rules preserve public avatars and private account responses', async () => {
+  const config = JSON.parse(readFileSync(new URL('../edgeone.json', import.meta.url), 'utf8'))
+  for (const [path, contentType, expected] of [[avatar, 'image/webp', /public.*immutable/], ['/api/platform/me/profile', 'application/json', /private.*no-store/]]) {
+    const result = await proxyRequest(request(path), { fetchImpl: async () => new Response('payload', {
+      headers: { 'Content-Type': contentType, 'Cache-Control': 'public, max-age=31536000, immutable' }
+    }) })
+    const finalHeaders = new Headers(result.headers)
+    // Pages applies configured response headers after the function response.
+    for (const rule of config.headers) {
+      const pattern = '^' + rule.source.split('*').map(part => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*') + '$'
+      if (new RegExp(pattern).test(path)) for (const header of rule.headers) finalHeaders.set(header.key, header.value)
+    }
+    assert.match(finalHeaders.get('cache-control'), expected)
+  }
+})
 test('avatar caching omits credentials and caches only immutable WebP bytes', async () => {
   let cached, fetches = 0
   const cache = { match: async () => cached?.clone(), put: async (_key, value) => { cached = value.clone() } }
