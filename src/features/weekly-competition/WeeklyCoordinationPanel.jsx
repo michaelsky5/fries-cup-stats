@@ -3,6 +3,7 @@ import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { platformRequest } from '../auth/platformApi.js'
 import { useRegistrationDraft } from '../event-registration/registrationDraftGuard.jsx'
+import AccountAvatar from '../account-ui/AccountAvatar.jsx'
 import styles from './WeeklyCoordinationPanel.module.css'
 
 const statuses = { OPEN: '待赛管受理', IN_PROGRESS: '赛管处理中', RESOLVED: '已解决' }
@@ -16,7 +17,7 @@ function RequestThread({ record, disabled, busy, mutate }) {
   useRegistrationDraft(Boolean(body), { label: uiText("给赛管的补充：{0}", uiLocale, [record.title]), busy, discard: () => setBody('') })
   return <details className={styles.thread}>
     <summary><strong>{record.title}</strong><span data-state={record.status}>{statuses[record.status]}</span><small>{uiText("最近更新 ", uiLocale)}{time(record.updatedAt)} · {record.messages.length}{uiText(" 条记录", uiLocale)}</small></summary>
-    <ol>{record.messages.map(message => <li key={message.id} data-staff={message.staff}><header><strong>{message.staff ? uiText("赛管 · ", uiLocale) : uiText("队伍 · ", uiLocale)}{message.author}</strong><time>{time(message.createdAt)}</time></header><p>{message.body}</p>{message.staff && <small>{statuses[message.status]}</small>}</li>)}</ol>
+    <ol>{record.messages.map(message => <li key={message.id} data-staff={message.staff}><header><strong><AccountAvatar url={message.avatarUrl} name={message.author} size={28} />{message.staff ? uiText("赛管 · ", uiLocale) : uiText("队伍 · ", uiLocale)}{message.author}</strong><time>{time(message.createdAt)}</time></header><p>{message.body}</p>{message.staff && <small>{statuses[message.status]}</small>}</li>)}</ol>
     <form onSubmit={async event => {
       event.preventDefault()
       if (await mutate('/replies', { requestId: record.id, expectedRevision: record.revision, clientKey, body }, 'POST', value => value?.id === record.id, '补充已提交，赛管将在本条记录中回复。')) { setBody(''); setClientKey(crypto.randomUUID()) }

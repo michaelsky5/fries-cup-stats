@@ -19,7 +19,7 @@ import {
   revokeAccountSession, revokeOtherAccountSessions
 } from '../../features/account-security/accountSecurityApi.js'
 import {
-  accountSettingsError, buildAccountProfilePatch, createAccountProfileForm,
+  accountSettingsError, buildAccountProfilePatch, createAccountProfileForm, reconcileAccountProfileDraft,
   emailVerificationNotice, validateAccountPassword
 } from '../../features/account-security/accountFoundationSettings.js'
 import styles from './AccountSettingsPage.module.css'
@@ -50,7 +50,7 @@ function useMounted() {
 
 function ProfileSettings({ user, onDirtyChange }) {
   const uiLocale = useUiLocale()
-  const { refreshSession, clearRevokedSession } = useAuth()
+  const { refreshSession, clearRevokedSession, profileSnapshot } = useAuth()
   const [record, setRecord] = useState(null)
   const [savedAvatar, setSavedAvatar] = useState(null)
   const [avatarDraft, setAvatarDraft] = useState(null)
@@ -60,6 +60,7 @@ function ProfileSettings({ user, onDirtyChange }) {
   const [attempt, setAttempt] = useState(0)
   const [notice, setNotice] = useState(null)
   const lock = useRef(false)
+  const appliedSnapshot = useRef(null)
   const mounted = useMounted()
   const readOnly = ['GUEST', 'OPERATOR'].includes(user.role)
   const patch = form && record ? buildAccountProfilePatch(form, record) : {}
@@ -86,6 +87,19 @@ function ProfileSettings({ user, onDirtyChange }) {
     }).finally(() => { if (!controller.signal.aborted) setLoading(false) })
     return () => controller.abort()
   }, [attempt, user.id, refreshSession, clearRevokedSession])
+
+  useEffect(() => {
+    if (!profileSnapshot || profileSnapshot === appliedSnapshot.current || profileSnapshot.user.id !== user.id || !record || loading || busy) return
+    appliedSnapshot.current = profileSnapshot
+    const next = createAccountProfileForm(profileSnapshot.user, profileSnapshot.profile)
+    const nextAvatar = profileSnapshot.profile?.avatarUrl || null
+    const changed = Object.keys(buildAccountProfilePatch(next, record)).length > 0 || nextAvatar !== savedAvatar
+    if (!changed) return
+    setForm(current => reconcileAccountProfileDraft(current, record, next))
+    setRecord(next)
+    setSavedAvatar(nextAvatar)
+    if (dirty) setNotice({ tone: 'info', text: uiLocale === 'en' ? 'Your profile was updated in another tab. Your unsaved edits are still here; review them before saving.' : '资料已在其他页面更新。你尚未保存的修改已保留，请核对后再保存。' })
+  }, [profileSnapshot, user.id, record, savedAvatar, dirty, loading, busy, uiLocale])
 
   async function save(event) {
     event.preventDefault()

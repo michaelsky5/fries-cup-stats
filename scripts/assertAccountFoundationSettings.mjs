@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import {
-  accountSettingsError, buildAccountProfilePatch, createAccountProfileForm,
+  accountSettingsError, buildAccountProfilePatch, createAccountProfileForm, reconcileAccountProfileDraft,
   emailVerificationNotice, validateAccountPassword
 } from '../src/features/account-security/accountFoundationSettings.js'
 import { fetchAuthConfig } from '../src/features/auth/authService.js'
@@ -15,6 +15,13 @@ assert.deepEqual(buildAccountProfilePatch(original, original), {})
 assert.deepEqual(buildAccountProfilePatch({ ...original, nickname: '  ', displayName: ' 新名字 ' }, original), { displayName: '新名字', nickname: null })
 assert.equal(Object.hasOwn(buildAccountProfilePatch({ ...original, nickname: 'New' }, original), 'bio'), false, 'Unedited fields must not overwrite another profile edit')
 assert.deepEqual(createAccountProfileForm({}, null), { displayName: '', nickname: '', bio: '', regionCode: '' })
+
+const latestProfile = { ...original, displayName: '新显示名', bio: '另一页保存的介绍', nickname: '最新昵称' }
+assert.deepEqual(reconcileAccountProfileDraft(original, original, latestProfile), latestProfile)
+const draft = { ...original, bio: '我的未保存草稿', nickname: '  ' }
+const reconciled = reconcileAccountProfileDraft(draft, original, latestProfile)
+assert.deepEqual(reconciled, { ...latestProfile, bio: '我的未保存草稿', nickname: '  ' }, 'Profile sync preserves edited fields, including deliberate clearing')
+assert.deepEqual(buildAccountProfilePatch(reconciled, latestProfile), { nickname: null, bio: '我的未保存草稿' }, 'Saving after sync does not write stale untouched values')
 
 const password = { currentPassword: 'old-password', newPassword: 'new-password', confirmation: 'new-password' }
 assert.equal(validateAccountPassword(password), '')

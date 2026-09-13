@@ -1,6 +1,8 @@
 import { platformRequest } from './platformApi.js'
 import { normalizeAccountCompetitions } from '../my-space/accountCompetitionModel.js'
 
+export const ACCOUNT_PROFILE_SAVED = 'fries-cup:profile-saved'
+
 function normalizeFavoritesResponse(data) {
   if (!data || typeof data !== 'object') return null
   return data.favorites || data.payload || data.userFavorite?.payload || null
@@ -44,6 +46,7 @@ export async function updateUserProfile(payload) {
     method: 'PATCH',
     body: payload
   })
+  if (data?.user?.id && typeof window !== 'undefined') window.dispatchEvent(new Event(ACCOUNT_PROFILE_SAVED))
   return {
     user: data?.user || null,
     profile: data?.profile || null

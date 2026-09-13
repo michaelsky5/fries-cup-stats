@@ -77,3 +77,6 @@
   .readyAction { padding-top: 10px; }
 }
 @media (max-width: 640px) { .panel { padding: 12px 16px 0; } .panel .heading h3 { font-size: 16px; } }
+
+.thread li header strong { display: inline-flex; align-items: center; gap: 8px; min-width: 0; overflow-wrap: anywhere; }
+.thread li header { align-items: center; }

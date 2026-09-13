@@ -12,11 +12,13 @@ import {
   requestEmailVerification as requestEmailVerificationApi
 } from './authService.js'
 import {
+  ACCOUNT_PROFILE_SAVED,
   fetchUserIdentityBundle,
   fetchUserProfile,
   fetchVerificationRequests,
   updatePrimaryIdentityPreference
 } from './userDataApi.js'
+import { fetchAccountProfile } from '../account-security/accountSecurityApi.js'
 
 const AuthContext = createContext(null)
 
@@ -37,6 +39,7 @@ export function AuthProvider({ children }) {
   const [authConfigError, setAuthConfigError] = useState(null)
   const [authConfigAttempt, setAuthConfigAttempt] = useState(0)
   const [accountState, setAccountState] = useState(emptyAccountState)
+  const [profileSnapshot, setProfileSnapshot] = useState(null)
   const [emailVerificationState, setEmailVerificationState] = useState({
     status: 'IDLE',
     result: null,
@@ -59,6 +62,7 @@ export function AuthProvider({ children }) {
   const accountRequest = useRef(0)
   const currentUserId = useRef('')
   const sessionChannel = useRef(null)
+  const profileRequest = useRef(0)
 
   const resetEmailStates = useCallback(() => {
     setEmailVerificationState({ status: 'IDLE', result: null, error: null })
@@ -82,9 +86,11 @@ export function AuthProvider({ children }) {
     if (currentUserId.current !== (user?.id || '')) resetEmailStates()
     sessionEpoch.current += 1
     accountRequest.current += 1
+    profileRequest.current += 1
     currentUserId.current = user?.id || ''
     clearStoredAuth()
     setAuthState({ user: user || null, isBootstrapping: false })
+    setProfileSnapshot(null)
     setAccountState({ ...emptyAccountState(), isLoading: Boolean(user?.id) })
   }, [resetEmailStates])
 
@@ -96,16 +102,36 @@ export function AuthProvider({ children }) {
   // Account settings remain usable independently of season/identity services.
   const refreshSession = useCallback(async () => {
     const epoch = sessionEpoch.current
+    const profileVersion = profileRequest.current
     try {
       const user = await fetchCurrentUser()
       if (epoch !== sessionEpoch.current) return null
       if (user?.id !== currentUserId.current) installSession(user)
-      else setAuthState({ user, isBootstrapping: false })
+      else if (profileVersion === profileRequest.current) setAuthState({ user, isBootstrapping: false })
       return user
     } catch (error) {
       if (epoch !== sessionEpoch.current) return null
       if (error?.status === 401) clearRevokedSession()
       throw error
+    }
+  }, [clearRevokedSession, installSession])
+
+  // Profile invalidation must not unmount forms or reset the authenticated tab.
+  const refreshProfile = useCallback(async () => {
+    const userId = currentUserId.current
+    if (!userId) return
+    const epoch = sessionEpoch.current
+    const requestId = ++profileRequest.current
+    const isCurrent = () => epoch === sessionEpoch.current && requestId === profileRequest.current
+    try {
+      const snapshot = await fetchAccountProfile()
+      if (!isCurrent()) return
+      if (snapshot.user.id !== userId) { installSession(snapshot.user); return }
+      setAuthState(current => ({ ...current, user: { ...current.user, ...snapshot.user } }))
+      setAccountState(current => ({ ...current, profile: snapshot.profile }))
+      setProfileSnapshot(snapshot)
+    } catch (error) {
+      if (isCurrent() && error?.status === 401) clearRevokedSession()
     }
   }, [clearRevokedSession, installSession])
 
@@ -137,22 +163,32 @@ export function AuthProvider({ children }) {
     // Every tab must resolve the new account from the HttpOnly cookie itself.
     const channel = typeof BroadcastChannel === 'function' ? new BroadcastChannel('fries-cup:session') : null
     sessionChannel.current = channel
-    if (channel) channel.onmessage = event => { if (event.data === 'SESSION_CHANGED') syncCookieSession() }
+    if (channel) channel.onmessage = event => {
+      if (event.data === 'SESSION_CHANGED') syncCookieSession()
+      else if (event.data === 'PROFILE_CHANGED') refreshProfile()
+    }
+    const profileSaved = () => {
+      channel?.postMessage('PROFILE_CHANGED')
+      refreshProfile()
+    }
+    window.addEventListener(ACCOUNT_PROFILE_SAVED, profileSaved)
     syncCookieSession()
     return () => {
       controller?.abort()
       channel?.close()
+      window.removeEventListener(ACCOUNT_PROFILE_SAVED, profileSaved)
       sessionChannel.current = null
       sessionEpoch.current += 1
       accountRequest.current += 1
     }
-  }, [installSession, resetEmailStates])
+  }, [installSession, resetEmailStates, refreshProfile])
 
   const refreshAccountData = useCallback(async () => {
     const userId = currentUserId.current
     if (!userId) return emptyAccountState()
     const epoch = sessionEpoch.current
     const requestId = ++accountRequest.current
+    const profileVersion = profileRequest.current
     const isCurrent = () => epoch === sessionEpoch.current && requestId === accountRequest.current && userId === currentUserId.current
     setAccountState(current => ({ ...current, isLoading: true, error: null }))
 
@@ -173,7 +209,9 @@ export function AuthProvider({ children }) {
         ? await fetchVerificationRequests()
         : []
       if (!isCurrent()) return null
-      setAuthState({ user: currentUser, isBootstrapping: false })
+      // An older identity read must not restore a replaced avatar or profile.
+      const profileIsCurrent = profileVersion === profileRequest.current
+      setAuthState(current => ({ user: profileIsCurrent ? currentUser : { ...currentUser, displayName: current.user.displayName, avatarUrl: current.user.avatarUrl }, isBootstrapping: false }))
       const nextState = {
         profile,
         requests,
@@ -184,7 +222,7 @@ export function AuthProvider({ children }) {
         isLoading: false,
         error: null
       }
-      setAccountState(nextState)
+      setAccountState(current => ({ ...nextState, profile: profileIsCurrent ? profile : current.profile }))
       return nextState
     } catch (error) {
       if (!isCurrent()) return null
@@ -383,6 +421,7 @@ export function AuthProvider({ children }) {
     refreshSession,
     clearRevokedSession,
     accountProfile: accountState.profile,
+    profileSnapshot,
     accountRequests: accountState.requests,
     accountIdentities: accountState.identities,
     accountCompetitions: accountState.competitionSeasons,
@@ -399,7 +438,7 @@ export function AuthProvider({ children }) {
     setPrimaryIdentity,
     register,
     requestEmailVerification
-  }), [accountState, authState, authConfig, authConfigError, retryAuthConfig, refreshSession, clearRevokedSession, emailAppealState, emailChangeState, emailVerificationState, login, logout, refreshAccountData, register, requestEmailVerification, setPrimaryIdentity])
+  }), [accountState, profileSnapshot, authState, authConfig, authConfigError, retryAuthConfig, refreshSession, clearRevokedSession, emailAppealState, emailChangeState, emailVerificationState, login, logout, refreshAccountData, register, requestEmailVerification, setPrimaryIdentity])
 
   return (
     <AuthContext.Provider value={value}>

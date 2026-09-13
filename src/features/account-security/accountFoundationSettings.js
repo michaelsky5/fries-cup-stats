@@ -32,6 +32,11 @@ export function buildAccountProfilePatch(form, original) {
   }))
 }
 
+export function reconcileAccountProfileDraft(form, original, latest) {
+  const edited = buildAccountProfilePatch(form, original)
+  return Object.fromEntries(Object.keys(latest).map(key => [key, Object.hasOwn(edited, key) ? form[key] : latest[key]]))
+}
+
 export function validateAccountPassword({ currentPassword = '', newPassword = '', confirmation = '' }) {
   if (!currentPassword) return '请填写当前密码。'
   if (newPassword.length < 8) return '新密码至少需要 8 位。'
