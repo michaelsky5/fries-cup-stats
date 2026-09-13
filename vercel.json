@@ -1,4 +1,6 @@
 {
+  "env": { "ACCOUNT_API_ORIGIN": "https://test-admin.fries-cup.com" },
+  "functions": { "api/account.js": { "regions": ["hkg1"], "maxDuration": 15 } },
   "buildCommand": "npm run build:locales && npm run build:team-logo-catalog && npm run build:scouting-artifacts && node scripts/buildAccountJointCandidate.mjs",
   "headers": [
     {
@@ -20,6 +22,14 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/api/platform/auth/:path*",
+      "destination": "/api/account?accountPath=auth/:path*"
+    },
+    {
+      "source": "/api/platform/me/:path*",
+      "destination": "/api/account?accountPath=me/:path*"
+    },
     {
       "source": "/api/admin-public/:path*",
       "destination": "https://test-admin.fries-cup.com/api/public/:path*"
