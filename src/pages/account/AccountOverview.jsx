@@ -1,3 +1,4 @@
+import AccountAvatar from '../../features/account-ui/AccountAvatar.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useState } from 'react'
@@ -39,7 +40,7 @@ export default function AccountOverview({ user, spaceHref }) {
     <div className={styles.overviewHeading}><div><h2 id="overview-title" tabIndex={-1}>{uiText("账号概览", uiLocale)}</h2><p>{uiText("个人资料、登录与验证状态，都在这里。", uiLocale)}</p></div><span className={styles.kicker} aria-hidden="true">YOUR ACCOUNT</span></div>
     <div className={styles.overviewGrid}>
       <section className={styles.accountSummary} aria-label={uiText("当前账号", uiLocale)}>
-        <span className={styles.summaryAvatar} aria-hidden="true">{String(user.displayName || 'FC').slice(0, 2)}</span>
+        <AccountAvatar className={styles.summaryAvatar} user={user} />
         <h3 data-i18n-ignore>{user.displayName || user.username || '—'}</h3>
         <dl><div><dt>{uiText("登录邮箱", uiLocale)}</dt><dd data-i18n-ignore>{user.email || '—'}</dd></div><div><dt>{uiText("用户名", uiLocale)}</dt><dd data-i18n-ignore>{user.username || '—'}</dd></div></dl>
         <Link to={href('profile')}>{profileReadOnly ? uiText("查看个人资料", uiLocale) : uiText("编辑个人资料", uiLocale)} <span aria-hidden="true">↗</span></Link>

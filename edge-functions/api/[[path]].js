@@ -27,6 +27,9 @@ function resolveRoute(url) {
   if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/publish\/latest\/(data|report)$/.test(pathname)) {
     return { public: true, url: `${PUBLIC_ORIGIN}${pathname.replace('/api/admin-public/', '/api/public/')}${url.search}` }
   }
+  if (/^\/api\/platform\/media\/avatars\/[a-f0-9]{24}\/[a-f0-9]{32}-(256|96)\.webp$/.test(pathname)) {
+    return { public: true, avatar: true, url: `${PLATFORM_ORIGIN}${pathname.replace('/api/platform/', '/api/')}` }
+  }
   if (/^\/api\/platform\/[^/].*$/.test(pathname)) {
     return { public: false, url: `${PLATFORM_ORIGIN}${url.pathname.replace('/api/platform/', '/api/')}${url.search}` }
   }
@@ -78,13 +81,14 @@ export async function proxyRequest(request, { fetchImpl = fetch, cache, waitUnti
   }
   headers.set('accept-encoding', 'identity')
 
+  const bodyLimit = request.method === 'PATCH' && url.pathname === '/api/platform/me/profile' ? 3 * MAX_BODY_BYTES : MAX_BODY_BYTES
   let body
   if (!READ_METHODS.has(request.method)) {
-    if (Number(request.headers.get('content-length')) > MAX_BODY_BYTES) {
-      return problem(413, 'REQUEST_TOO_LARGE', 'This endpoint accepts requests up to 1 MiB.')
+    if (Number(request.headers.get('content-length')) > bodyLimit) {
+      return problem(413, 'REQUEST_TOO_LARGE', 'Request exceeds the size limit.')
     }
     body = await request.arrayBuffer()
-    if (body.byteLength > MAX_BODY_BYTES) return problem(413, 'REQUEST_TOO_LARGE', 'This endpoint accepts requests up to 1 MiB.')
+    if (body.byteLength > bodyLimit) return problem(413, 'REQUEST_TOO_LARGE', 'Request exceeds the size limit.')
   }
 
   let upstream
@@ -114,7 +118,7 @@ export async function proxyRequest(request, { fetchImpl = fetch, cache, waitUnti
   }
   responseHeaders.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet')
   responseHeaders.set('X-Content-Type-Options', 'nosniff')
-  responseHeaders.set('X-Fries-Backend', route.public ? 'published-snapshots' : 'staging')
+  responseHeaders.set('X-Fries-Backend', route.avatar ? 'staging-media' : route.public ? 'published-snapshots' : 'staging')
   if (!route.public || !upstream.ok) responseHeaders.set('Cache-Control', 'private, no-store')
   if (route.public) {
     responseHeaders.delete('set-cookie')
@@ -131,7 +135,7 @@ export async function proxyRequest(request, { fetchImpl = fetch, cache, waitUnti
   const cacheControl = responseHeaders.get('cache-control') || ''
   if (canReadCache && upstream.status === 200 && /\bpublic\b/i.test(cacheControl)
     && !/private|no-store|no-cache/i.test(cacheControl) && !upstream.headers.has('set-cookie')
-    && /application\/json/i.test(responseHeaders.get('content-type') || '')) {
+    && (route.avatar ? /^image\/webp$/i : /application\/json/i).test(responseHeaders.get('content-type') || '')) {
     const report = url.pathname.endsWith('/report')
     const task = cache.put(cacheKey, response.clone()).then(() => {
       if (report) response.headers.set('X-Fries-Cache-Write', 'completed')

@@ -1,3 +1,5 @@
+import AccountAvatar from './AccountAvatar.jsx'
+import { useAuth } from '../auth/AuthProvider.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -12,7 +14,8 @@ const formatTime = (value, fallback = '时间待定') => value && Number.isFinit
 const teamName = team => team?.shortName || team?.short || team?.name || team?.full || '对手待定'
 
 export function SpaceIdentity({ context, locale = 'zh-CN', following = false, withSeason = path => path }) {
-  const user = context?.user || {}
+  const { user: sessionUser } = useAuth()
+  const user = { ...context?.user, ...(sessionUser?.id === context?.user?.id ? sessionUser : {}) }
   const identities = context?.identities || []
   const en = locale === 'en-US'
   const labels = en ? { PLAYER: 'Player', MANAGER: 'Captain / Manager', CAPTAIN: 'Captain', REFEREE: 'Referee', CASTER: 'Caster', COACH: 'Coach', VIEWER: 'Viewer' } : roleLabels
@@ -24,7 +27,7 @@ export function SpaceIdentity({ context, locale = 'zh-CN', following = false, wi
     <div data-i18n-ignore><span className={styles.eyebrow}>{following ? 'MY FOLLOWING' : 'MY SPACE'}</span><h1>{title}</h1></div>
     <details className={styles.person} data-i18n-ignore>
       <summary aria-label={`${name} · ${en ? 'Account menu' : uiText("账号菜单", locale)}${emailPending ? en ? ' · Email unverified' : uiText(" · 邮箱待验证", locale) : ''}`}>
-        <span className={styles.avatar} aria-hidden="true">{Array.from(String(user.displayName || 'FC'))[0]}{emailPending ? <i /> : null}</span>
+        <AccountAvatar className={styles.avatar} user={user}>{emailPending ? <i /> : null}</AccountAvatar>
         <span className={styles.accountName}><strong>{name}</strong><small>{en ? 'Account' : uiText("账号", locale)}</small></span>
         <svg className={styles.accountChevron} viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
       </summary>

@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useBlocker, useLocation } from 'react-router-dom'
 import AccountFrame from '../../features/account-ui/AccountFrame.jsx'
 import AccountOverview from './AccountOverview.jsx'
+import AccountAvatar from '../../features/account-ui/AccountAvatar.jsx'
+import AvatarEditor from '../../features/account-ui/AvatarEditor.jsx'
 import { translateAccountSettingsText } from '../../features/account-ui/accountSettingsCopy.js'
 import { getStoredLocale } from '../../lib/i18n.js'
 import useAccountCompetition from '../../features/my-space/useAccountCompetition.js'
@@ -50,6 +52,8 @@ function ProfileSettings({ user, onDirtyChange }) {
   const uiLocale = useUiLocale()
   const { refreshSession, clearRevokedSession } = useAuth()
   const [record, setRecord] = useState(null)
+  const [savedAvatar, setSavedAvatar] = useState(null)
+  const [avatarDraft, setAvatarDraft] = useState(null)
   const [form, setForm] = useState(null)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
@@ -59,6 +63,7 @@ function ProfileSettings({ user, onDirtyChange }) {
   const mounted = useMounted()
   const readOnly = ['GUEST', 'OPERATOR'].includes(user.role)
   const patch = form && record ? buildAccountProfilePatch(form, record) : {}
+  if (avatarDraft) patch.avatar = avatarDraft.command
   const dirty = Object.keys(patch).length > 0
   useEffect(() => { onDirtyChange(dirty); return () => onDirtyChange(false) }, [dirty, onDirtyChange])
 
@@ -72,6 +77,8 @@ function ProfileSettings({ user, onDirtyChange }) {
       const next = createAccountProfileForm(data.user, data.profile)
       setRecord(next)
       setForm(next)
+      setSavedAvatar(data.profile?.avatarUrl || null)
+      setAvatarDraft(null)
     }).catch(error => {
       if (controller.signal.aborted) return
       if (error?.status === 401) clearRevokedSession()
@@ -93,6 +100,8 @@ function ProfileSettings({ user, onDirtyChange }) {
       const next = createAccountProfileForm(result.user, result.profile)
       setForm(next)
       setRecord(next)
+      setSavedAvatar(result.profile?.avatarUrl || null)
+      setAvatarDraft(null)
       setNotice({ tone: 'success', text: uiText("个人资料已保存。", uiLocale) })
       try { await refreshSession() } catch {
         if (mounted.current) setNotice({ tone: 'info', text: uiText("资料已保存，账号显示信息暂未刷新；稍后重新读取即可。", uiLocale) })
@@ -100,7 +109,7 @@ function ProfileSettings({ user, onDirtyChange }) {
     } catch (error) {
       if (!mounted.current) return
       if (error?.status === 401) clearRevokedSession()
-      setNotice({ tone: 'error', text: accountSettingsError(error) })
+      setNotice({ tone: 'error', text: accountSettingsError(error, uiLocale) })
     } finally {
       lock.current = false
       if (mounted.current) setBusy(false)
@@ -112,6 +121,7 @@ function ProfileSettings({ user, onDirtyChange }) {
     <Notice notice={notice} />
     {loading ? <p role="status">{uiText("正在读取个人资料…", uiLocale)}</p> : !form ? <button type="button" className={styles.secondary} onClick={() => setAttempt(value => value + 1)}>{uiText("重新读取资料", uiLocale)}</button> : <form onSubmit={save}>
       {readOnly && <p className={styles.hint}>{uiText("当前账号的个人资料为只读。", uiLocale)}</p>}
+      <AvatarEditor user={user} savedUrl={savedAvatar} draft={avatarDraft} onChange={value => { setAvatarDraft(value); setNotice(null) }} disabled={busy || readOnly} locale={uiLocale} />
       <div className={styles.profileLayout}>
       <fieldset disabled={busy || readOnly} className={styles.fields}>
         <label>{uiText("显示名称", uiLocale)}<input name="displayName" autoComplete="nickname" required maxLength={40} aria-describedby="display-name-hint" {...field('displayName')} /><small id="display-name-hint" className={styles.fieldHint}>{uiText("账号入口与站内交流时显示的名字", uiLocale)}</small></label>
@@ -119,9 +129,9 @@ function ProfileSettings({ user, onDirtyChange }) {
         <label>{uiText("国家／地区", uiLocale)}<select name="regionCode" {...field('regionCode')}><option value="">{uiText("未设置", uiLocale)}</option>{form.regionCode && !REGION_GROUPS.some(group => group.options.some(option => option.value === form.regionCode)) && <option value={form.regionCode}>{form.regionCode}</option>}{REGION_GROUPS.map(group => <optgroup key={group.value} label={group.zh}>{group.options.map(option => <option key={option.value} value={option.value}>{option.zh}</option>)}</optgroup>)}</select></label>
         <label className={styles.wide}>{uiText("个人介绍", uiLocale)}<textarea name="bio" rows={3} maxLength={280} {...field('bio')} /><small>{form.bio.length} / 280</small></label>
       </fieldset>
-      <aside className={styles.profilePreview} aria-label={uiText("个人资料预览", uiLocale)}><div className={styles.previewHeading}><span>{uiText("展示预览", uiLocale)}</span><small>{dirty ? uiText("尚未保存", uiLocale) : uiText("已保存的资料", uiLocale)}</small></div><span className={styles.previewAvatar} aria-hidden="true">{String(form.displayName || 'FC').slice(0, 2)}</span><strong data-i18n-ignore>{form.displayName.trim() || '—'}</strong>{form.nickname.trim() && <span data-i18n-ignore>{form.nickname}</span>}<p data-i18n-ignore>{form.bio.trim() || '—'}</p><small>{uiText("这里只预览账号资料；赛事档案与出赛名单不会随之修改。", uiLocale)}</small></aside>
+      <aside className={styles.profilePreview} aria-label={uiText("个人资料预览", uiLocale)}><div className={styles.previewHeading}><span>{uiText("展示预览", uiLocale)}</span><small>{dirty ? uiText("尚未保存", uiLocale) : uiText("已保存的资料", uiLocale)}</small></div><AccountAvatar className={styles.previewAvatar} url={avatarDraft ? avatarDraft.url : savedAvatar} name={form.displayName} thumbnail={false} /><strong data-i18n-ignore>{form.displayName.trim() || '—'}</strong>{form.nickname.trim() && <span data-i18n-ignore>{form.nickname}</span>}<p data-i18n-ignore>{form.bio.trim() || '—'}</p><small>{uiText("这里只预览账号资料；赛事档案与出赛名单不会随之修改。", uiLocale)}</small></aside>
       </div>
-      <div className={styles.saveBar}><span className={styles.hint} aria-live="polite">{dirty ? uiText("有尚未保存的修改", uiLocale) : readOnly ? uiText("只读资料", uiLocale) : uiText("资料已同步，可继续编辑", uiLocale)}</span><div className={styles.inlineActions}><button type="button" className={styles.secondary} disabled={busy || !dirty} onClick={() => { setForm(record); setNotice(null) }}>{uiText("撤销修改", uiLocale)}</button><button className={styles.primary} disabled={busy || !dirty || readOnly}>{busy ? uiText("正在保存…", uiLocale) : uiText("保存资料", uiLocale)}</button></div></div>
+      <div className={styles.saveBar}><span className={styles.hint} aria-live="polite">{dirty ? uiText("有尚未保存的修改", uiLocale) : readOnly ? uiText("只读资料", uiLocale) : uiText("资料已同步，可继续编辑", uiLocale)}</span><div className={styles.inlineActions}><button type="button" className={styles.secondary} disabled={busy || !dirty} onClick={() => { setForm(record); setAvatarDraft(null); setNotice(null) }}>{uiText("撤销修改", uiLocale)}</button><button className={styles.primary} disabled={busy || !dirty || readOnly}>{busy ? uiText("正在保存…", uiLocale) : uiText("保存资料", uiLocale)}</button></div></div>
     </form>}
   </Section>
 }
@@ -381,10 +391,10 @@ export default function AccountSettingsPage() {
     document.title = `${translateAccountSettingsText('账号设置', locale)} | 薯条杯`
     return () => { document.title = previousTitle }
   }, [locale])
-  return <AccountFrame compact title={uiText("账号设置", locale)} eyebrow="ACCOUNT SETTINGS" description={uiText("管理你的个人资料与账号安全。", locale)} aside={<div className={styles.identity}><span className={styles.avatar} aria-hidden="true" data-i18n-ignore>{String(user?.displayName || 'FC').slice(0, 2)}</span><div><strong data-i18n-ignore={user ? '' : undefined}>{user?.displayName || (isBootstrapping ? uiText("正在核对账号…", locale) : uiText("受邀账号", locale))}</strong><span data-i18n-ignore={user ? '' : undefined}>{user?.email || uiText("登录后管理账号", locale)}</span></div></div>}>
+  return <AccountFrame compact title={uiText("账号设置", locale)} eyebrow="ACCOUNT SETTINGS" description={uiText("管理你的个人资料与账号安全。", locale)} aside={<div className={styles.identity}><AccountAvatar className={styles.avatar} user={user} /><div><strong data-i18n-ignore={user ? '' : undefined}>{user?.displayName || (isBootstrapping ? uiText("正在核对账号…", locale) : uiText("受邀账号", locale))}</strong><span data-i18n-ignore={user ? '' : undefined}>{user?.email || uiText("登录后管理账号", locale)}</span></div></div>}>
     <div className={styles.page}>
       {isBootstrapping ? <section className={styles.guest} role="status"><h2>{uiText("正在核对登录状态…", locale)}</h2></section> : user ? <SettingsWorkspace key={user.id} user={user} onRevoked={setSignedOutNotice} /> : <section className={styles.guest}>
-        <span className={styles.kicker}>ACCOUNT ACCESS</span><h2>{uiText("欢迎回到薯条杯", locale)}</h2><Notice notice={signedOutNotice ? { tone: 'success', text: signedOutNotice } : accountDataError ? { tone: 'error', text: accountSettingsError(accountDataError) } : null} /><p>{uiText("使用受邀邮箱登录，即可管理资料和安全设置。首次参加，请打开赛事负责人或队长提供的邀请链接。", locale)}</p><button type="button" className={styles.primary} onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText("登录账号 →", locale)}</button><Link className={styles.guestLink} to={withSeason('/me', getInitialSeasonId(), location.search)}>{uiText("前往我的空间 ↗", locale)}</Link>
+        <span className={styles.kicker}>ACCOUNT ACCESS</span><h2>{uiText("欢迎回到薯条杯", locale)}</h2><Notice notice={signedOutNotice ? { tone: 'success', text: signedOutNotice } : accountDataError ? { tone: 'error', text: accountSettingsError(accountDataError, locale) } : null} /><p>{uiText("使用受邀邮箱登录，即可管理资料和安全设置。首次参加，请打开赛事负责人或队长提供的邀请链接。", locale)}</p><button type="button" className={styles.primary} onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText("登录账号 →", locale)}</button><Link className={styles.guestLink} to={withSeason('/me', getInitialSeasonId(), location.search)}>{uiText("前往我的空间 ↗", locale)}</Link>
       </section>}
     </div>
   </AccountFrame>

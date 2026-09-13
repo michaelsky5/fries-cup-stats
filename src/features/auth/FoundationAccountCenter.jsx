@@ -1,3 +1,4 @@
+import AccountAvatar from '../account-ui/AccountAvatar.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useState } from 'react'
 import { useAuth } from './AuthProvider.jsx'
@@ -21,7 +22,7 @@ export default function FoundationAccountCenter({ locale = 'zh-CN', onLogout }) 
   return (
     <section className={styles.accountCenter} aria-label={isEn ? 'Account status' : uiText("账号状态", locale)} aria-busy={isAccountDataLoading}>
       <div className={styles.profileCard}>
-        <span className={styles.accountAvatar} aria-hidden="true">{String(user?.displayName || user?.email || '?').slice(0, 1)}</span>
+        <AccountAvatar className={styles.accountAvatar} user={user} />
         <div className={styles.profileMain}>
           <div className={styles.profileTitle}><strong>{user?.displayName || user?.email}</strong><em className={styles.statusBadge}>{isEn ? 'SIGNED IN' : uiText("已登录", locale)}</em></div>
           <span>{user?.email}</span>

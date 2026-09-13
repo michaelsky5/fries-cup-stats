@@ -1,3 +1,4 @@
+import AccountAvatar from '../account-ui/AccountAvatar.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -25,10 +26,6 @@ function createLocalAuthError(code) {
   }
 }
 
-function getInitial(user) {
-  const source = user?.username || user?.displayName || user?.email || 'FC'
-  return String(source).trim().slice(0, 1) || 'F'
-}
 
 const QQ_FIRST_REGION_CODES = new Set(['CN', 'HK', 'MO', 'TW'])
 
@@ -626,7 +623,7 @@ export default function AuthButton({ locale = 'zh-CN', dialogOnly = false }) {
         aria-controls={isAuthenticated ? "account-navigation" : undefined}
         disabled={isBootstrapping}
       >
-        <span className={styles.avatar} aria-hidden="true">{isAuthenticated ? getInitial(user) : 'FC'}</span>
+        <AccountAvatar className={styles.avatar} user={isAuthenticated ? user : null} />
         <span className={styles.authCopy}>
           <span className={styles.authName}>{isBootstrapping ? (isEn ? 'CHECKING' : uiText("检查中", locale)) : label}</span>
           <small className={styles.authMode}>{accountModeLabel}</small>

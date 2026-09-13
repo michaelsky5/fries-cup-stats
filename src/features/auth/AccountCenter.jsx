@@ -1,3 +1,4 @@
+import AccountAvatar from '../account-ui/AccountAvatar.jsx'
 import { useEffect, useMemo, useState } from 'react'
 import { SEASONS, getSeasonLabel } from '../../config/seasons.js'
 import {
@@ -102,10 +103,6 @@ function formatDateTime(value, locale) {
   return date.toLocaleString(locale === 'en-US' ? 'en-US' : 'zh-CN', { hour12: false })
 }
 
-function getInitial(user) {
-  const source = user?.displayName || user?.username || user?.email || 'FC'
-  return String(source).trim().slice(0, 1) || 'F'
-}
 
 function getProfileContact(profile, type) {
   if (!profile) return ''
@@ -629,7 +626,7 @@ export default function AccountCenter({
       const result = await updateUserProfile({
         displayName: profileForm.displayName.trim(),
         nickname: profileForm.displayName.trim(),
-        avatarUrl: profileForm.avatarUrl.trim() || null,
+        ...(profileForm.avatarUrl !== (profile?.avatarUrl || '') ? { avatarUrl: profileForm.avatarUrl.trim() || null } : {}),
         regionCode: profileForm.regionCode,
         qqContact: profileForm.qqContact.trim() || null,
         discordContact: profileForm.discordContact.trim() || null,
@@ -788,7 +785,7 @@ export default function AccountCenter({
     <div className={styles.accountCenter}>
       <section className={styles.profileCard}>
         <span className={styles.accountAvatar} aria-hidden="true">
-          {profile?.avatarUrl ? <img src={profile.avatarUrl} alt="" /> : getInitial(user)}
+          <AccountAvatar user={user} url={profile?.avatarUrl} size="100%" />
         </span>
         <div className={styles.profileMain}>
           <div className={styles.profileTitle}>
@@ -966,7 +963,7 @@ export default function AccountCenter({
                 </div>
                 <label className={styles.fullField}>
                   <span>{ui(locale, '头像地址', 'Avatar URL')}</span>
-                  <input type="url" maxLength={500} value={profileForm.avatarUrl} onChange={event => handleProfileFieldChange('avatarUrl', event.target.value)} placeholder="https://…" />
+                  <input type="text" maxLength={500} value={profileForm.avatarUrl} onChange={event => handleProfileFieldChange('avatarUrl', event.target.value)} placeholder="https://…" />
                 </label>
                 <div className={styles.formGrid}>
                   <label>

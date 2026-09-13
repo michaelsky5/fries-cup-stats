@@ -1,4 +1,5 @@
-export function accountSettingsError(error) {
+export function accountSettingsError(error, locale) {
+  if (String(error?.data?.error || '').startsWith('AVATAR_')) return locale === 'en-US' ? ({ AVATAR_TOO_LARGE: 'Choose an image smaller than 2 MB.', AVATAR_FORMAT: 'Use a JPG, PNG or static WebP. Animated images are not supported.', AVATAR_BUSY: 'Another image is being processed. Please try saving again shortly.', AVATAR_CROP: 'The crop is outside the image. Adjust it and try again.', AVATAR_STORAGE: 'The avatar could not be saved. Your changes are still here; try again shortly.' }[error.data.error] || 'This image could not be saved. Choose a readable static image up to 16 megapixels and try again.') : error.data.message
   const messages = {
     PASSWORD_INVALID: '当前密码不正确，请重新输入。',
     ACCOUNT_CREDENTIALS_CHANGED: '账号凭据已经变化，请重新登录后再操作。',
