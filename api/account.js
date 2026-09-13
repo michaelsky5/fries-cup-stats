@@ -30,7 +30,7 @@ function httpsFetch(url, options, phases) {
     })
     req.on('socket', socket => {
       phases.push('socket')
-      socket.once('lookup', error => phases.push(error ? 'dns_error' : 'dns'))
+      socket.once('lookup', (error, address, family) => phases.push(error ? 'dns_error' : {dns: address, family}))
       socket.once('connect', () => phases.push('tcp'))
       socket.once('secureConnect', () => phases.push('tls'))
     })
