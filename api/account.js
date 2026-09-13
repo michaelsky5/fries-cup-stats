@@ -1,17 +1,23 @@
 import { randomUUID } from 'node:crypto'
 import { Buffer } from 'node:buffer'
 import process from 'node:process'
-import { request as httpsRequest } from 'node:https'
+import { Agent, request as httpsRequest } from 'node:https'
 
 const COOKIE_NAMES = new Set(['__Host-fries_session', 'fries_session'])
 const METHODS = new Set(['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'])
 const MAX_BODY_BYTES = 2 * 1024 * 1024
 
-// A bounded HTTP/1.1 transport exposes the failed connection phase without logging account data.
-function httpsFetch(url, options, phases) {
+const accountAgent = new Agent({ keepAlive: true, maxSockets: 4, maxFreeSockets: 2, timeout: 5000 })
+
+// Only a TCP connection that never opened can be retried. Submitted writes are never replayed.
+export function createHttpsTransport({ requestImpl = httpsRequest, connectionTimeoutMs = 2500, maxConnectAttempts = 3 } = {}) {
+  return function httpsFetch(url, options, phases) {
   return new Promise((resolve, reject) => {
-    const req = httpsRequest(url, { method: options.method, headers: Object.fromEntries(options.headers),
-      signal: options.signal, agent: false }, res => {
+    const attempt = number => {
+    let connected = false
+    let connectTimer
+    const req = requestImpl(url, { method: options.method, headers: Object.fromEntries(options.headers),
+      signal: options.signal, agent: accountAgent }, res => {
       phases.push('headers')
       const chunks = []
       let size = 0
@@ -29,15 +35,27 @@ function httpsFetch(url, options, phases) {
       })
     })
     req.on('socket', socket => {
-      phases.push('socket')
+      phases.push({attempt: number})
+      if (!socket.connecting) { connected = true; phases.push('reused') }
+      else connectTimer = setTimeout(() => req.destroy(new Error('ACCOUNT_PROXY_CONNECT_TIMEOUT')), connectionTimeoutMs)
       socket.once('lookup', (error, address, family) => phases.push(error ? 'dns_error' : {dns: address, family}))
-      socket.once('connect', () => phases.push('tcp'))
+      socket.once('connect', () => { connected = true; clearTimeout(connectTimer); phases.push('tcp') })
       socket.once('secureConnect', () => phases.push('tls'))
     })
-    req.on('error', reject)
+    req.on('error', error => {
+      clearTimeout(connectTimer)
+      if (!connected && !options.signal.aborted && error.message === 'ACCOUNT_PROXY_CONNECT_TIMEOUT' && number < maxConnectAttempts) attempt(number + 1)
+      else reject(error)
+    })
+    req.on('close', () => clearTimeout(connectTimer))
     req.end(options.body)
+    }
+    attempt(1)
   })
+  }
 }
+
+const httpsFetch = createHttpsTransport()
 
 function sessionCookies(value = '') {
   return String(value).split(';').map(cookie => cookie.trim())
