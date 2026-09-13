@@ -114,6 +114,7 @@ export function createAccountProxy({ origin, fetchImpl = httpsFetch, timeoutMs =
     let reason
     let dispatched = false
     const phases = []
+    let diagnosticEgress
     response.setHeader('Cache-Control', 'private, no-store, max-age=0')
     response.setHeader('CDN-Cache-Control', 'no-store')
     response.setHeader('Vercel-CDN-Cache-Control', 'no-store')
@@ -153,6 +154,14 @@ export function createAccountProxy({ origin, fetchImpl = httpsFetch, timeoutMs =
       response.end(method === 'HEAD' ? undefined : bytes)
     } catch (error) {
       reason = error.name === 'TimeoutError' || error.name === 'AbortError' ? 'ACCOUNT_PROXY_TIMEOUT' : error.message
+      if (reason === 'ACCOUNT_PROXY_CONNECT_TIMEOUT' && process.env.ACCOUNT_PROXY_DIAGNOSTICS === 'true') {
+        try {
+          // Preview-only network diagnosis: no account headers, cookies, payload or URL are sent.
+          const check = await fetch('https://api.ipify.org?format=json', {signal: AbortSignal.timeout(1500), redirect: 'error'})
+          const address = (await check.json()).ip
+          if (typeof address === 'string' && /^(\d{1,3}\.){3}\d{1,3}$/.test(address)) diagnosticEgress = address
+        } catch { diagnosticEgress = 'unavailable' }
+      }
       status = reason === 'ACCOUNT_PROXY_PATH' ? 400 : reason === 'ACCOUNT_PROXY_METHOD' ? 405
         : reason === 'ACCOUNT_PROXY_BODY_TOO_LARGE' ? 413 : reason === 'ACCOUNT_PROXY_CONFIGURATION' ? 503
           : reason === 'ACCOUNT_PROXY_TIMEOUT' ? 504 : 502
@@ -166,6 +175,7 @@ export function createAccountProxy({ origin, fetchImpl = httpsFetch, timeoutMs =
     } finally {
       log(JSON.stringify({event: 'account_proxy', requestId, method, path: target?.pathname || '/invalid',
         region: process.env.VERCEL_REGION || 'local', phases,
+        ...(diagnosticEgress ? {diagnosticEgress} : {}),
         status, elapsedMs: Date.now() - started, ...(reason ? {reason: reason?.startsWith('ACCOUNT_PROXY_') ? reason : 'UPSTREAM_ERROR'} : {})}))
     }
   }

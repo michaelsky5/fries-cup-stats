@@ -1,5 +1,5 @@
 {
-  "env": { "ACCOUNT_API_ORIGIN": "https://test-admin.fries-cup.com" },
+  "env": { "ACCOUNT_API_ORIGIN": "https://test-admin.fries-cup.com", "ACCOUNT_PROXY_DIAGNOSTICS": "true" },
   "functions": { "api/account.js": { "regions": ["sin1"], "maxDuration": 15 } },
   "buildCommand": "npm run build:locales && npm run build:team-logo-catalog && npm run build:scouting-artifacts && node scripts/buildAccountJointCandidate.mjs",
   "headers": [
