@@ -15,6 +15,7 @@ if (execFileSync('git', ['status', '--porcelain'], { cwd: root, encoding: 'utf8'
 }
 for (const key of Object.keys(process.env)) if (key.startsWith('VITE_')) delete process.env[key]
 process.env.VITE_PLATFORM_API_BASE_URL = '/api/platform'
+process.env.VITE_ACCOUNT_WEEKLY_REHEARSAL = '1'
 await build({ root, configFile: false, envDir: false, plugins: [react()], build: { outDir: out } })
 fs.copyFileSync(path.join(root, 'edgeone.json'), path.join(out, 'edgeone.json'))
 fs.cpSync(path.join(root, 'edge-functions'), path.join(out, 'edge-functions'), { recursive: true })

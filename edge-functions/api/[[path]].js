@@ -25,7 +25,8 @@ function resolveRoute(url) {
   try { pathname = decodeURIComponent(url.pathname) } catch { return null }
   if (pathname.split('/').some(part => part === '.' || part === '..') || pathname.includes('\\')) return null
   if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/publish\/latest\/(data|report)$/.test(pathname)) {
-    return { public: true, url: `${PUBLIC_ORIGIN}${pathname.replace('/api/admin-public/', '/api/public/')}${url.search}` }
+    const snapshotOrigin = pathname.startsWith('/api/admin-public/seasons/WEBWEEK20260914/') ? PLATFORM_ORIGIN : PUBLIC_ORIGIN
+    return { public: true, url: `${snapshotOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}${url.search}` }
   }
   if (/^\/api\/platform\/media\/avatars\/[a-f0-9]{24}\/[a-f0-9]{32}-(256|96)\.webp$/.test(pathname)) {
     return { public: true, avatar: true, url: `${PLATFORM_ORIGIN}${pathname.replace('/api/platform/', '/api/')}` }

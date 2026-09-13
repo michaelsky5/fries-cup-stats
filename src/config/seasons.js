@@ -357,6 +357,17 @@ if (import.meta.env?.DEV && import.meta.env?.VITE_WEEKLY_PREVIEW === '1') {
   })
 }
 
+// Only the explicit account-staging package exposes the real staging publication.
+if (import.meta.env?.VITE_ACCOUNT_WEEKLY_REHEARSAL === '1') {
+  SEASONS.push({
+    id: 'WEBWEEK20260914', publicCode: 'WEBWEEK20260914', lifecycle: 'ACTIVE', competitionFormat: 'WEEKLY',
+    name: { zh: '周赛验收 · 合成赛事', en: 'Weekly Rehearsal · Synthetic Event' },
+    proxyDataUrl: '/api/admin-public/seasons/WEBWEEK20260914/publish/latest/data',
+    proxyReportUrl: '/api/admin-public/seasons/WEBWEEK20260914/publish/latest/report',
+    reviewEnabled: false, rules: { weeklyCompetition: { enabled: true } }
+  })
+}
+
 export function getSeasonById(seasonId) {
   const id = String(seasonId || '').trim().toUpperCase()
   return SEASONS.find(season => season.id === id || String(season.publicCode).toUpperCase() === id) ||

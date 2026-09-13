@@ -20,6 +20,20 @@ test('public snapshots use production with query intact, without credentials or 
   assert.deepEqual(await result.json(), { version: 30 })
 })
 
+test('only the named synthetic weekly publication uses staging and remains public read-only', async () => {
+  for (const [seasonId, upstream] of [['WEBWEEK20260914', 'test-admin'], ['WEBWEEK20260914-OTHER', 'admin']]) {
+    const path = `/api/admin-public/seasons/${seasonId}/publish/latest/data`
+    let call
+    const result = await proxyRequest(request(path, { headers: { cookie: 'session=secret', authorization: 'Bearer secret', origin } }), {
+      fetchImpl: async (url, options) => { call = { url, options }; return json({ seasonId }) }
+    })
+    assert.equal(call.url, `https://${upstream}.fries-cup.com/api/public/seasons/${seasonId}/publish/latest/data`)
+    for (const header of ['cookie', 'authorization', 'origin']) assert.equal(call.options.headers.get(header), null)
+    assert.equal(result.status, 200)
+    assert.equal((await proxyRequest(request(path, { method: 'POST', headers: { origin } }), { fetchImpl: mustNotFetch })).status, 405)
+  }
+})
+
 test('account writes use staging, preserving method, bytes, Origin and Cookie', async () => {
   let call
   const body = JSON.stringify({ favorites: { favoriteTeamIds: ['T01'] } })
