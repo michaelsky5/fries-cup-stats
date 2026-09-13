@@ -1,10 +1,43 @@
 import { randomUUID } from 'node:crypto'
 import { Buffer } from 'node:buffer'
 import process from 'node:process'
+import { request as httpsRequest } from 'node:https'
 
 const COOKIE_NAMES = new Set(['__Host-fries_session', 'fries_session'])
 const METHODS = new Set(['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'])
 const MAX_BODY_BYTES = 2 * 1024 * 1024
+
+// A bounded HTTP/1.1 transport exposes the failed connection phase without logging account data.
+function httpsFetch(url, options, phases) {
+  return new Promise((resolve, reject) => {
+    const req = httpsRequest(url, { method: options.method, headers: Object.fromEntries(options.headers),
+      signal: options.signal, agent: false }, res => {
+      phases.push('headers')
+      const chunks = []
+      let size = 0
+      res.on('data', chunk => {
+        size += chunk.length
+        if (size > 4 * 1024 * 1024) req.destroy(new Error('ACCOUNT_PROXY_RESPONSE_TOO_LARGE'))
+        else chunks.push(chunk)
+      })
+      res.on('error', reject)
+      res.on('end', () => {
+        const headers = new Headers()
+        for (let i = 0; i < res.rawHeaders.length; i += 2) headers.append(res.rawHeaders[i], res.rawHeaders[i + 1])
+        const bytes = Buffer.concat(chunks)
+        resolve({ status: res.statusCode, headers, arrayBuffer: async () => bytes })
+      })
+    })
+    req.on('socket', socket => {
+      phases.push('socket')
+      socket.once('lookup', error => phases.push(error ? 'dns_error' : 'dns'))
+      socket.once('connect', () => phases.push('tcp'))
+      socket.once('secureConnect', () => phases.push('tls'))
+    })
+    req.on('error', reject)
+    req.end(options.body)
+  })
+}
 
 function sessionCookies(value = '') {
   return String(value).split(';').map(cookie => cookie.trim())
@@ -52,7 +85,7 @@ async function requestBody(request) {
   return body.length ? body : undefined
 }
 
-export function createAccountProxy({ origin, fetchImpl = fetch, timeoutMs = 10000, log = console.info } = {}) {
+export function createAccountProxy({ origin, fetchImpl = httpsFetch, timeoutMs = 10000, log = console.info } = {}) {
   return async function accountProxy(request, response) {
     const requestId = randomUUID()
     const started = Date.now()
@@ -62,6 +95,7 @@ export function createAccountProxy({ origin, fetchImpl = fetch, timeoutMs = 1000
     let status = 502
     let reason
     let dispatched = false
+    const phases = []
     response.setHeader('Cache-Control', 'private, no-store, max-age=0')
     response.setHeader('CDN-Cache-Control', 'no-store')
     response.setHeader('Vercel-CDN-Cache-Control', 'no-store')
@@ -83,7 +117,7 @@ export function createAccountProxy({ origin, fetchImpl = fetch, timeoutMs = 1000
       const upstream = await fetchImpl(target, {
         method, headers, body, redirect: 'manual', cache: 'no-store',
         signal: AbortSignal.timeout(timeoutMs)
-      })
+      }, phases)
       if (upstream.status >= 300 && upstream.status < 400) throw new Error('ACCOUNT_PROXY_REDIRECT')
       const contentType = upstream.headers.get('content-type') || ''
       if (upstream.status !== 204 && method !== 'HEAD' && !contentType.includes('application/json')) {
@@ -113,6 +147,7 @@ export function createAccountProxy({ origin, fetchImpl = fetch, timeoutMs = 1000
       }))
     } finally {
       log(JSON.stringify({event: 'account_proxy', requestId, method, path: target?.pathname || '/invalid',
+        region: process.env.VERCEL_REGION || 'local', phases,
         status, elapsedMs: Date.now() - started, ...(reason ? {reason: reason?.startsWith('ACCOUNT_PROXY_') ? reason : 'UPSTREAM_ERROR'} : {})}))
     }
   }
