@@ -25,6 +25,7 @@ export function weeklyTeamDestination(cycleId, entryId, weekId, step) {
 export function getWeeklyFocusStep(plan, requestedStep) {
   const steps = ['core', 'participation', 'roster']
   if (requestedStep && !steps.includes(requestedStep)) return null
+  if (requestedStep === 'core' && plan?.stages && !plan.stages.some(stage => stage.key === 'core')) return plan.next?.key || 'participation'
   return requestedStep || plan?.next?.key || plan?.stages?.find(stage => ['blocked', 'waiting'].includes(stage.state))?.key || 'roster'
 }
 
@@ -67,6 +68,8 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
     && teamAccess?.accessMode === 'WRITE' && ['LEADER', 'MANAGER'].includes(teamAccess.role)
   const window = weeklyConfirmationWindow(week, now)
   const core = entry.coreSelections?.find(item => item.status === 'LOCKED')
+  const previousAppearance = (record?.rules || cycle.rules)?.rosterContinuityMode === 'PREVIOUS_APPEARANCE'
+  const coreReady = previousAppearance || core
   const coreDraft = entry.coreSelections?.find(item => item.status === 'DRAFT')
   const roster = participation?.rosters?.find(item => item.status === 'LOCKED')
     || participation?.rosters?.find(item => ['DRAFT', 'SUBMITTED'].includes(item.status))
@@ -102,7 +105,7 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
       key: 'roster', title: '出赛名单',
       state: declined ? 'quiet' : roster?.status === 'LOCKED' ? 'done' : terminal ? 'quiet'
         : !confirmed ? 'waiting' : roster?.status === 'SUBMITTED' ? 'waiting'
-          : window === 'closed' ? 'blocked' : window === 'open' && core && writable ? 'action' : 'waiting',
+          : window === 'closed' ? 'blocked' : window === 'open' && coreReady && writable ? 'action' : 'waiting',
       label: declined ? '本周无需提交' : roster?.status === 'LOCKED' ? '管理员已锁定'
         : terminal ? roster?.status === 'SUBMITTED' ? '已提交 · 未锁定' : '未提交正式名单'
           : !confirmed ? window === 'closed' ? '本周未提交' : '确认参赛后开放' : roster?.status === 'SUBMITTED' ? '已提交 · 等待锁定'
@@ -111,10 +114,10 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
         : terminal ? terminalDetail : !confirmed ? window === 'closed' ? '未完成当周参赛确认，名单未提交。' : '由队长或经理确认参赛后，继续准备名单。'
           : roster?.status === 'SUBMITTED' ? `${members(roster).length} 人 · 等待周赛管理员锁定。`
             : terminal || window !== 'open' ? windowDetail
-              : !core ? '先完成周期核心锁定，再提交本周名单。'
+              : !coreReady ? '先完成周期核心锁定，再提交本周名单。'
                 : `${roster ? `已保存 ${members(roster).length} 人，` : ''}${writable ? '核对后正式提交；保存草稿不会完成此步骤。' : '等待队长或经理提交名单。'}`
     }
-  ].map(stage => ({ ...stage, actionUrl: weeklyTeamDestination(cycle.id, entry.id, week?.id, stage.key) }))
+  ].filter(stage => !previousAppearance || stage.key !== 'core').map(stage => ({ ...stage, actionUrl: weeklyTeamDestination(cycle.id, entry.id, week?.id, stage.key) }))
   const next = stages.find(stage => stage.state === 'action')
   const issue = stages.find(stage => stage.state === 'blocked')
   const readyForSchedule = !terminal && !declined && stages.every(stage => stage.state === 'done')
@@ -123,7 +126,7 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
       : issue ? '需要管理员协助' : readyForSchedule ? '本周名单准备已完成'
         : roster?.status === 'SUBMITTED' ? '等待管理员锁定名单' : !week ? '等待周次公布'
           : window === 'unknown' ? '确认状态待同步' : window === 'upcoming' ? '等待确认窗口开放'
-            : !core ? '等待队长或经理锁定核心' : !confirmed ? '等待队长或经理确认参赛' : '等待队长或经理提交名单'
+            : !coreReady ? '等待队长或经理锁定核心' : !confirmed ? '等待队长或经理确认参赛' : '等待队长或经理提交名单'
   const guidance = terminal ? { label: '记录状态', detail: terminalDetail }
     : declined ? { label: '当前安排', detail: window === 'open' ? `本周无需提交名单。${writable ? '如计划有变，可在截止前调整参赛意向。' : '如计划有变，请联系队长或经理。'}` : `本周无需提交名单。${windowDetail}` }
       : issue ? { label: '需要协助', detail: issue.key === 'core' ? '可在下方队伍准备页提交问题，由赛管核对周期核心名单。' : '确认期已结束，可在队伍准备页提交问题并跟踪处理。' }
@@ -146,7 +149,14 @@ export function buildWeeklyPreparation(workspace, { seasonId, userId, readOnly =
   })).sort((a, b) => Number(a.terminal) - Number(b.terminal) || Number(!a.next) - Number(!b.next)
     || weekRank(a.week, now) - weekRank(b.week, now))
   const seen = new Set()
-  const tasks = plans.flatMap(plan => plan.stages.filter(stage => stage.state === 'action').flatMap(stage => {
+  const enrollmentTasks = !readOnly && workspace.accessMode === 'WRITE' && workspace.season.status !== 'ARCHIVED'
+    ? workspace.cycles.filter(cycle => !TERMINAL.has(cycle.status) && cycle.enrollmentOpen).flatMap(cycle => (cycle.eligibleTeams || [])
+      .filter(team => workspace.teams.some(access => access.team?.id === team.id && access.accessMode === 'WRITE' && ['LEADER', 'MANAGER'].includes(access.role)))
+      .map(team => ({ id: `weekly-enrollment:${cycle.id}:${team.id}`, status: 'OPEN', identityType: 'MANAGER', priority: 'HIGH', requiresSourceResolution: true,
+        taskType: 'WEEKLY_PREPARATION_ENROLLMENT', sourceType: 'WEEKLY_PREPARATION', sourceId: `enrollment:${cycle.id}:${team.id}`,
+        title: `${team.shortName || team.name} · 登记参赛周期`, body: `${cycle.name}。队伍资格已通过，登记后继续确认每周参赛。`,
+        teamOrganization: team, dueAt: cycle.endsAt || null, actionUrl: '/me?section=team#weekly-enrollment-title' }))) : []
+  const tasks = [...enrollmentTasks, ...plans.flatMap(plan => plan.stages.filter(stage => stage.state === 'action').flatMap(stage => {
     const sourceId = stage.key === 'core' ? plan.entry.id : `${plan.entry.id}:${plan.week.id}`
     const id = `weekly-${stage.key}:${sourceId}`
     if (seen.has(id)) return []
@@ -156,6 +166,6 @@ export function buildWeeklyPreparation(workspace, { seasonId, userId, readOnly =
       title: `${plan.team.shortName || plan.team.name || '本队'} · ${stage.key === 'core' ? '锁定周期核心' : stage.key === 'participation' ? '确认当周参赛' : '提交出赛名单'}`,
       body: `${plan.cycle.name}${stage.key !== 'core' && plan.week ? ` · ${plan.week.label || `第 ${plan.week.weekNumber} 周`}` : ''}。${stage.detail}`,
       teamOrganization: plan.team, dueAt: stage.key === 'core' ? null : plan.dueAt, actionUrl: stage.actionUrl }]
-  }))
+  }))]
   return { plans, tasks }
 }

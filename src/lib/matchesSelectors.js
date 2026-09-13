@@ -2,6 +2,7 @@ import { getSeasonById, getSeasonRules } from '../config/seasons.js'
 import { getCompetitionDayMatches, getCompetitionDayNumber } from './competitionDay.js'
 import { formatOwMapName } from './heroes.js'
 import { getRoundKey, isMatchInRoundScope } from './matchRoundScope.js'
+import { getExplicitWeeklyCompletion } from './weeklySeasonLifecycle.js'
 
 export { getTeamLogoCandidates } from './teamLogoResolver.js'
 
@@ -48,6 +49,8 @@ function getExpectedSwissMatchCount(db, seasonOrId) {
 }
 
 function isSeasonCompleteByPublishedMatches(db, seasonOrId, completedCount, matchCount) {
+  const weeklyFinished = getExplicitWeeklyCompletion(db, resolveSeason(seasonOrId))
+  if (weeklyFinished !== null) return weeklyFinished
   if (!matchCount || completedCount !== matchCount) return false
 
   const expectedSwissMatches = getExpectedSwissMatchCount(db, seasonOrId)

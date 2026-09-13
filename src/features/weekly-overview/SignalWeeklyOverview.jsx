@@ -73,11 +73,11 @@ export default function SignalWeeklyOverview() {
             <div className={styles.score}><strong>{renderScore(focus)}</strong><span>{focus.state === 'live' ? t(uiText("比赛仍在继续", locale), 'Still in play') : status(focus.state)}</span></div>
           </div>
           {maps.length > 0 && <div className={styles.mapsSection}>
-            <div className={styles.mapHeading}><b>{rr5 ? t(uiText("五局进程", locale), 'Five-map series') : t(uiText("地图记录", locale), 'Map records')}</b><span>{rr5 ? t(uiText("RR5 · 无论比分，都打满五局", locale), 'RR5 · All five maps are played') : getMatchFormatLabel(focus)}</span></div>
+            <div className={styles.mapHeading}><b>{rr5 ? t(uiText("五局进程", locale), 'Five-map series') : t(uiText("地图记录", locale), 'Map records')}</b><span>{focus.state === 'ruling' ? t(uiText("保留实际比分", locale), 'Actual scores retained') : rr5 ? t(uiText("RR5 · 无论比分，都打满五局", locale), 'RR5 · All five maps are played') : getMatchFormatLabel(focus)}</span></div>
             <ol className={styles.mapRail} style={{ '--map-count': maps.length }}>
               {maps.map(({ order, map, state }) => <li key={order} data-map-state={state}>
-                <span className={styles.mapNumber}>{String(order).padStart(2, '0')}</span><b>{formatOwMapName(map?.map_name, locale) || t(uiText("地图待公布", locale), 'Map TBA')}</b>
-                <span>{state === 'recorded' ? t(uiText("已记录", locale), 'Recorded') : state === 'ruling' ? t(uiText("判定记录", locale), 'By ruling') : state === 'live' ? t(uiText("进行中", locale), 'In progress') : t(uiText("待记录", locale), 'Pending')}</span>
+                <span className={styles.mapNumber}>{String(order).padStart(2, '0')}</span><b>{state === 'not-played' ? t(uiText("因弃权未进行", locale), 'Not played · forfeit') : formatOwMapName(map?.map_name, locale) || t(uiText("地图待公布", locale), 'Map TBA')}</b>
+                <span>{state === 'not-played' ? '—' : state === 'recorded' ? t(uiText("已记录", locale), 'Recorded') : state === 'ruling' ? t(uiText("判定记录", locale), 'By ruling') : state === 'live' ? t(uiText("进行中", locale), 'In progress') : t(uiText("待记录", locale), 'Pending')}</span>
                 {state === 'recorded' && <small>{map.winner === idOf(focus.team_a) ? `${shortName(focus.team_a)} ${t('胜', 'win')}` : map.winner === idOf(focus.team_b) ? `${shortName(focus.team_b)} ${t('胜', 'win')}` : t(uiText("结果见详情", locale), 'See result')}</small>}
               </li>)}
             </ol>

@@ -1,4 +1,5 @@
 import { getRoleColor, getRoleEnLabel, getRoleLabel } from '../../../lib/leaderboardSelectors.js'
+import { translateUiText as uiText } from '../../../lib/uiText.js'
 import styles from './matchDetailStyles.js'
 
 function Roster({ title, players, locale = 'zh-CN' }) {
@@ -22,7 +23,9 @@ function Roster({ title, players, locale = 'zh-CN' }) {
 export default function MatchDetailEmptyState({ dossier, locale = 'zh-CN', t }) {
   const message = dossier.state.isUpcoming
     ? t('matchDetail.pendingNotice', 'This match has not started; only published matchup, schedule, and roster information is shown.')
-    : (dossier.statusNote || t('matchDetail.unavailableNotice', 'This match currently does not generate map or stat records.'))
+    : (dossier.statusNote || (dossier.state.isForfeit && dossier.hasMapRecords
+      ? locale === 'en-US' ? 'Completed map results are preserved below. The remaining maps were not played due to the forfeit.' : uiText('下方保留已完成地图的赛果，其余地图因弃权未进行。', locale)
+      : t('matchDetail.unavailableNotice', 'This match currently does not generate map or stat records.')))
 
   return (
     <section className={styles.section}>

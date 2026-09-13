@@ -65,13 +65,16 @@ export function getParticipationView(items, params) {
   return { filter, visible, selected, unavailable: Boolean(requested && !selected), counts: summarizeParticipation(items).counts }
 }
 
-export function getWeeklyRosterCheck(ids, coreIds, rules, players) {
+export function getWeeklyRosterCheck(ids, coreIds, rules, players, continuity) {
   const chosen = new Set(ids)
   const coreCount = [...chosen].filter(id => coreIds.has(id)).length
   const known = new Set(players.map(player => player.id))
   const errors = []
   if ([...chosen].some(id => !known.has(id))) errors.push('名单含有当前队伍不可用的选手，请重新核对。')
   if (chosen.size < rules.rosterMin || chosen.size > rules.rosterMax) errors.push(`需要选择 ${rules.rosterMin}–${rules.rosterMax} 人，当前 ${chosen.size} 人。`)
-  if (coreCount < rules.minimumCoreInWeeklyRoster) errors.push(`至少需要 ${rules.minimumCoreInWeeklyRoster} 名已锁定核心，当前 ${coreCount} 名。`)
+  if (rules.rosterContinuityMode === 'PREVIOUS_APPEARANCE') {
+    if (!continuity || continuity.status === 'MISSING_ROSTER') errors.push('最近一次参赛名单尚未核实，请刷新或联系赛管。')
+    else if (coreCount < continuity.required) errors.push(`与最近一次实际参赛名单仅重合 ${coreCount} 人，至少需要 ${continuity.required} 人。若按新队伍参赛，须先完成资格审核。`)
+  } else if (coreCount < rules.minimumCoreInWeeklyRoster) errors.push(`至少需要 ${rules.minimumCoreInWeeklyRoster} 名已锁定核心，当前 ${coreCount} 名。`)
   return { count: chosen.size, coreCount, errors, canSubmit: errors.length === 0 }
 }

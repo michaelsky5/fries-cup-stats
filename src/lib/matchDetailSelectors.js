@@ -287,6 +287,7 @@ function normalizeMap(map, match, playerDirectory, index, locale = 'zh-CN') {
   const scoreB = isKnownValue(map?.score_b) ? cleanText(map?.score_b) : '-'
   const rawName = cleanText(map?.map_name)
   const rawType = cleanText(map?.map_type)
+  const durationSeconds = parseDurationSeconds(map?.match_time)
   const teamAStats = sortPlayerRows(safeArr(map?.team_a_stats)
     .filter(hasStatSignal)
     .map((row, rowIndex) => normalizeStatRow(row, 'A', { order }, match, playerDirectory, rowIndex, locale)))
@@ -315,8 +316,8 @@ function normalizeMap(map, match, playerDirectory, index, locale = 'zh-CN') {
     rawName,
     type: rawType ? formatOwMapMode(rawType, locale) : rawType,
     rawType,
-    matchTime: cleanText(map?.match_time),
-    durationSeconds: parseDurationSeconds(map?.match_time),
+    matchTime: durationSeconds > 0 ? cleanText(map?.match_time) : '',
+    durationSeconds,
     winnerSide,
     winnerTeam,
     winnerLabel: cleanText(map?.winner_label) || winnerTeam?.short || '',
@@ -375,7 +376,12 @@ function buildTeamComparison(teamA, teamB, maps) {
   }
 }
 
-function getMatchWinnerSide(match) {
+function getMatchWinnerSide(match, state) {
+  // Weekly rulings retain the played score, which may favor the forfeiting team.
+  if (state.isWeekly && (state.isForfeit || state.isRuling)) {
+    const side = getWinnerSide({ winner: match?.winner }, match)
+    return ['A', 'B'].includes(side) ? side : ''
+  }
   const scoreA = toFiniteNumber(match?.team_a?.score, NaN)
   const scoreB = toFiniteNumber(match?.team_b?.score, NaN)
   if (!Number.isFinite(scoreA) || !Number.isFinite(scoreB)) return ''
@@ -541,6 +547,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
   if (!match) return null
 
   const state = getMatchState(match)
+  const preservesForfeitMaps = state.isWeekly && state.isForfeit && getMatchFormatLabel(match).toUpperCase() === 'RR5'
   const playerDirectory = createPlayerDirectory(db)
   const teamA = getTeamModel(match?.team_a, 'A')
   const teamB = getTeamModel(match?.team_b, 'B')
@@ -552,7 +559,9 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     const publishedWeeklyResult = !['LIVE', 'IN_PROGRESS', 'PENDING', 'SCHEDULED'].includes(mapStatus)
       && (map?.is_administrative || ['COMPLETE', 'COMPLETED'].includes(mapStatus)
         || (cleanText(map?.winner) && cleanText(map.winner).toUpperCase() !== 'UNKNOWN') || normalizedMap.durationSeconds > 0)
-    if (!state.canShowResults || (partialWeekly && !publishedWeeklyResult)) return {
+    const unplayedForfeitMap = preservesForfeitMaps && (!publishedWeeklyResult || map?.is_administrative
+      || !['A', 'B', 'DRAW'].includes(normalizedMap.winnerSide))
+    if (!state.canShowResults || (partialWeekly && !publishedWeeklyResult) || unplayedForfeitMap) return {
       ...normalizedMap, scoreA: '—', scoreB: '—', hasResult: false, isComplete: false,
       winnerSide: '', winnerTeam: null, winnerLabel: '', hasStats: false, teamAStats: [], teamBStats: []
     }
@@ -566,7 +575,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
   })
   const completedMaps = maps.filter(map => map.hasResult)
   const displayMaps = state.isComplete || state.isForfeit ? completedMaps : maps.filter(map => map.hasProvidedInfo)
-  const mapRecords = state.isForfeit ? [] : displayMaps
+  const mapRecords = state.isForfeit && !preservesForfeitMaps ? [] : displayMaps
   const allDurationsPresent = completedMaps.length > 0 && completedMaps.every(map => map.durationSeconds > 0)
   const totalDurationSeconds = allDurationsPresent
     ? completedMaps.reduce((sum, map) => sum + map.durationSeconds, 0)
@@ -596,7 +605,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     seriesPeakPlayers
   })
   const adjacent = getAdjacentMatches(safeArr(db?.matches), match)
-  const mapCountLabel = state.isForfeit ? '—' : state.canShowResults
+  const mapCountLabel = state.isForfeit ? (preservesForfeitMaps ? String(mapRecords.length) : '—') : state.canShowResults
     ? `${completedMaps.length} / ${maps.length || completedMaps.length}`
     : maps.length ? `${maps.length}` : '—'
 
@@ -612,13 +621,16 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     scheduleLabel: getScheduleLabel(match, locale),
     scheduleCompact: formatMatchSchedule(match, { locale }).compact,
     statusLabel: state.isReview ? '结果待审核' : state.isForfeit ? '弃权' : state.isRuling ? '判定结束' : getMatchStatusText(match),
-    statusEn: state.isReview ? 'UNDER REVIEW' : state.isRuling ? 'BY RULING' : state.isComplete ? 'COMPLETED' : state.isLive ? 'LIVE' : state.isCancelled ? 'CANCELLED' : state.isPostponed ? 'POSTPONED' : 'PENDING',
+    statusEn: state.isForfeit ? 'FORFEIT' : state.isReview ? 'UNDER REVIEW' : state.isRuling ? 'BY RULING' : state.isComplete ? 'COMPLETED' : state.isLive ? 'LIVE' : state.isCancelled ? 'CANCELLED' : state.isPostponed ? 'POSTPONED' : 'PENDING',
     scoreLabel: state.canShowResults ? `${formatScore(match?.team_a?.score)} : ${formatScore(match?.team_b?.score)}` : 'VS',
-    winnerSide: (state.isComplete || state.isForfeit || state.isRuling) && !state.isCancelled && !state.isPostponed ? getMatchWinnerSide(match) : '',
+    winnerSide: (state.isComplete || state.isForfeit || state.isRuling) && !state.isCancelled && !state.isPostponed ? getMatchWinnerSide(match, state) : '',
     hasSeriesScore: state.canShowResults,
     mapCountLabel,
     totalDurationLabel,
     internalId: cleanText(match?.match_id || match?.raw_match_id),
+    roomPath: state.isWeekly
+      ? match?.raw_match_id ? `/me/matches/${encodeURIComponent(match.raw_match_id)}/room` : '/me?section=matches'
+      : `/matches/${encodeURIComponent(match?.match_id || match?.raw_match_id)}/room`,
     rawDisplayName: cleanText(match?.match_display_name),
     metaItems: [
       { key: 'stage', label: '阶段', en: 'STAGE', value: cleanText(match?.stage) || '—' },
@@ -631,6 +643,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     maps,
     completedMaps,
     mapRecords,
+    preservesForfeitMaps,
     hasMapRecords: mapRecords.length > 0,
     statsMapCount: completedMaps.filter(map => map.hasStats).length,
     hasCompletePlayerStats: completedMaps.length > 0 && completedMaps.every(map => map.teamAStats.length > 0 && map.teamBStats.length > 0),

@@ -117,7 +117,7 @@
 .workHeader > div > span { font: 800 13px/1.4 var(--fc-data-font-display); color: var(--fc-data-text-muted); }
 .workHeader h2 { margin: 4px 0 0; font-size: 24px; }
 .workHeader button { background: transparent; border-color: transparent; font-weight: 500; }
-.stepRail { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--fc-data-line); }
+.stepRail { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); border: 1px solid var(--fc-data-line); }
 .stepRail a { display: flex; align-items: center; gap: 14px; padding: 14px 20px; min-width: 0; color: var(--fc-data-ink); background: var(--fc-data-paper-raised); border-right: 1px solid var(--fc-data-line); }
 .stepRail a:last-child { border-right: 0; }
 .stepRail a[aria-current] { background: var(--fc-data-ink); color: var(--fc-data-paper); box-shadow: inset 0 -3px var(--fc-data-signal); }
@@ -165,3 +165,13 @@
   .playerColumns, .playerRow { gap: 8px; grid-template-columns: 18px minmax(0, 1fr) 32px 48px; padding-inline: 6px; }
   .playerColumns { font-size: 11px; }
 }
+.enrollment { border: 1px solid var(--fc-data-line); border-top: 3px solid var(--fc-data-signal); background: var(--fc-data-paper-raised); padding: 24px; margin: 16px 0 24px; }
+.enrollment header > span { color: var(--fc-data-text-muted); font-size: 12px; letter-spacing: .1em; }
+.enrollment h3 { font-size: 24px; margin: 8px 0; }
+.enrollment p { line-height: 1.6; color: var(--fc-data-text-muted); }
+.enrollmentOptions article { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 18px 0; border-top: 1px solid var(--fc-data-line); }
+.enrollmentOptions article > div { display: grid; gap: 6px; }
+.enrollmentOptions .primaryButton { min-height: 44px; padding: 12px 20px; background: var(--fc-data-signal); color: var(--fc-data-ink); border: 1px solid var(--fc-data-signal); font-weight: 700; }
+.enrollmentOptions .primaryButton:focus-visible { outline: 2px solid var(--fc-data-focus); outline-offset: 3px; }
+.enrollmentOptions strong { font-size: 19px; }.enrollmentOptions small { color: var(--fc-data-text-muted); }
+@media (max-width: 600px) { .enrollment { padding: 16px; }.enrollmentOptions article { align-items: stretch; flex-direction: column; } }

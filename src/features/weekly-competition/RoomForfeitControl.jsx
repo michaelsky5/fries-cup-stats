@@ -13,12 +13,15 @@ export function ForfeitSummary({ data, expanded = false }) {
   if (!record) return null
   const team = side => side === 'A' ? data.match.teamA.name : data.match.teamB.name
   const opponentEarned = record.winnerSide === 'A' ? record.earnedA : record.earnedB
+  const forfeitedPoints = record.forfeitedSide === 'A' ? record.pointsA : record.pointsB
+  const opponentPoints = record.winnerSide === 'A' ? record.pointsA : record.pointsB
   const pendingReview = record.status === 'PENDING_REVIEW'
   return <section className={frame.forfeitSummary} aria-label={uiText("弃权裁定与积分依据", uiLocale)}>
     {pendingReview && record.correction && <div className={frame.recoveryProjection}><strong>{record.correction.hadSettlement ? uiText("原结算已冲正 · 更正待复核", uiLocale) : uiText("裁定更正待复核", uiLocale)}</strong><small>{uiText("旧审核与双方响应已失效。请按本次更正重新核对，当前预计积分尚未生效。", uiLocale)}</small></div>}
     <strong>{team(record.forfeitedSide)}{uiText(" 弃权", uiLocale)}{record.status === 'APPROVED' ? uiText(" · {0} 获判胜", uiLocale, [team(record.winnerSide)]) : uiText(" · 等待管理员复核", uiLocale)}</strong>
     <p>{uiText("已完成 ", uiLocale)}{record.completedMaps}{uiText(" / 5 图", uiLocale)}{record.completedMaps ? uiText("，实际比分 {0} : {1}", uiLocale, [record.scoreA, record.scoreB]) : uiText("，尚未产生实际比分", uiLocale)}{uiText("。剩余 ", uiLocale)}{record.remainingMaps}{uiText(" 图因弃权未完成，不生成小分或选手数据。", uiLocale)}</p>
-    <dl><div><dt>{team(record.forfeitedSide)}</dt><dd>{pendingReview ? uiText("拟记 0 分 · 待复核", uiLocale) : uiText("0 分 · 全场弃权", uiLocale)}</dd></div><div><dt>{team(record.winnerSide)}</dt><dd>{pendingReview ? uiText("拟计：", uiLocale) : ''}{data.forfeit.countsTowardStandings ? uiText("{0} 已得积分 + {1} 未完成图补分 = {2} 分", uiLocale, [opponentEarned, record.remainingMaps, opponentEarned + record.remainingMaps]) : uiText("0 分 · 本周期不计入积分", uiLocale)}</dd></div></dl>
+    <dl><div><dt>{team(record.forfeitedSide)}</dt><dd>{pendingReview ? uiText("拟计：", uiLocale) : ''}{data.forfeit.countsTowardStandings ? uiText(record.legacyPolicy ? "{0} 分 · 旧规则记录" : "{0} 分 · 保留已完成地图积分", uiLocale, [forfeitedPoints]) : uiText("0 分 · 本周期不计入积分", uiLocale)}</dd></div><div><dt>{team(record.winnerSide)}</dt><dd>{pendingReview ? uiText("拟计：", uiLocale) : ''}{data.forfeit.countsTowardStandings ? uiText("{0} 已得积分 + {1} 未完成图补分 = {2} 分", uiLocale, [opponentEarned, opponentPoints - opponentEarned, opponentPoints]) : uiText("0 分 · 本周期不计入积分", uiLocale)}</dd></div></dl>
+    <p>{record.legacyPolicy ? uiText("旧规则记录仅供核对；已结算积分不会自动改变，未结算裁定须更正并重新复核。", uiLocale) : uiText("双方保留已完成地图的胜／负／平积分；剩余地图弃权方每图 0 分，对手每图 2 分。", uiLocale)}</p>
     <details open={expanded}><summary>{uiText("查看弃权原因与复核记录", uiLocale)}</summary><p>{uiText("公开原因：", uiLocale)}{record.reason}</p><small>{record.proposedBy} · {new Date(record.proposedAt).toLocaleString('zh-CN')}{record.reviewedBy ? uiText(" · {0} 已复核", uiLocale, [record.reviewedBy]) : ''}</small>
       {record.reviewReason && <p>{uiText("复核说明：", uiLocale)}{record.reviewReason}</p>}
     </details>
@@ -42,7 +45,7 @@ export default function RoomForfeitControl({ data, disabled, mutate }) {
     <ForfeitHistory data={data} />
     <RoomForfeitRecovery data={data} disabled={disabled} mutate={mutate} />
     {access.canPropose && <><button disabled={disabled} onClick={() => open('PROPOSE')}>{uiText("记录全场弃权", uiLocale)}</button><small>{uiText("需填写公开原因，由管理员复核。", uiLocale)}</small></>}
-    {access.canReview && <><button className={styles.primary} disabled={disabled} onClick={() => open('APPROVE')}>{uiText("复核并确认弃权", uiLocale)}</button><button disabled={disabled} onClick={() => open('REJECT')}>{uiText("撤回记录，重新核对比赛", uiLocale)}</button></>}
+    {access.canReview && <>{!access.record?.legacyPolicy && <button className={styles.primary} disabled={disabled} onClick={() => open('APPROVE')}>{uiText("复核并确认弃权", uiLocale)}</button>}<button disabled={disabled} onClick={() => open('REJECT')}>{uiText("撤回记录，重新核对比赛", uiLocale)}</button></>}
     <dialog ref={dialog} className={`${styles.dialog} ${surfaces.paper}`} aria-labelledby="rr5-forfeit-title" onCancel={event => { if (disabled) event.preventDefault(); else setAction('') }}><form onSubmit={async event => {
       event.preventDefault(); setError('')
       pending.current ||= { action, ...(action === 'PROPOSE' ? { forfeitedSide: side } : {}), reason: reason.trim(), ...viewed.current, clientKey: crypto.randomUUID() }

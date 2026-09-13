@@ -1,5 +1,10 @@
 import { platformRequest } from '../auth/platformApi.js'
 
+export async function enrollMyWeeklyCycle(cycleId, teamId) {
+  const data = await platformRequest(`/me/weekly-cycles/${encodeURIComponent(cycleId)}/enrollment`, { method: 'PUT', body: { teamId } })
+  return data.entry
+}
+
 export async function fetchMyWeeklyCompetition(seasonId, options = {}) {
   return platformRequest(`/me/weekly-competition?seasonId=${encodeURIComponent(seasonId)}`, options)
 }

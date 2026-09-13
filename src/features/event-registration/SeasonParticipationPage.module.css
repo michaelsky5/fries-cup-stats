@@ -52,3 +52,13 @@
 @media (max-width: 560px) { .header, .row, .notice { flex-direction: column; } .fields { grid-template-columns: 1fr; } .panel, .login { padding: 15px; } .context { gap: 14px; } .page h1 { font-size: 24px; } }
 
 .header { padding: 0 0 18px; } .header > div:first-child { display: flex; gap: 14px; align-items: center; font-size: 13px; } .header > div > span { color: var(--fc-data-text-muted); } .login { margin: 24px 0; padding: clamp(24px, 4vw, 42px); } .kicker { display: block; font: 900 19px/1 var(--fc-data-font-display); color: var(--fc-data-text-muted); margin-bottom: 20px; } .login h2 { font-size: 26px; } .login button { margin-top: 20px; } .panel { padding: 28px; } .page .error { background: #b33a320a; color: var(--fc-data-status-danger); border-color: currentColor; } .page .feedback { background: #9a4d000a; color: var(--fc-data-status-warning); border-color: currentColor; } .journey { margin: 20px 0 28px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; padding: 0; border: 1px solid var(--fc-data-line); } .journey li { display: grid; gap: 10px; padding: 18px; border-right: 1px solid var(--fc-data-line); font-size: 13px; color: var(--fc-data-text-muted); } .journey li:last-child { border-right: 0; } .journey li[data-state='current'] { background: var(--fc-data-signal); color: var(--fc-data-ink); } .journey li[data-state='done'] { color: var(--fc-data-status-success); } .journey span { font: 900 24px/1 var(--fc-data-font-display); } @media (max-width: 600px) { .panel { padding: 20px 16px; } .journey { grid-template-columns: 1fr 1fr; } .journey li { border-bottom: 1px solid var(--fc-data-line); } .journey li:nth-child(2) { border-right: 0; } .journey li:nth-child(n+3) { border-bottom: 0; } }
+.eligibilityFields { border: 1px solid var(--fc-data-line); margin: 20px 0; padding: 20px; min-width: 0; }
+.eligibilityFields legend { font-weight: 700; padding: 0 8px; }
+.eligibilityFields p { color: var(--fc-data-text-muted); line-height: 1.6; margin: 0 0 14px; }
+.eligibilityFields a { display: inline-block; margin: 12px 0; text-underline-offset: 4px; }
+.eligibilityEditor { border-block: 1px solid var(--fc-data-line); padding: 16px 0; margin: 20px 0; }
+.eligibilityEditor summary { cursor: pointer; font-weight: 700; }
+.submitChecklist { padding: 16px 20px; margin: 16px 0; border-left: 3px solid var(--fc-data-signal); background: var(--fc-data-paper-deep); line-height: 1.6; }
+.submitChecklist p { margin: 5px 0; }
+.nextAction { display: inline-flex; align-items: center; padding: 12px 18px; background: var(--fc-data-signal); color: var(--fc-data-ink); font-weight: 700; text-decoration: none; }
+@media (max-width: 600px) { .eligibilityFields { padding: 14px; } .submitChecklist { padding: 14px; } }
