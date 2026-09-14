@@ -212,3 +212,11 @@
 .listHeading .scheduleLink { font-size: 11px; color: var(--muted); text-decoration: none; white-space: nowrap; }
 .advanceLink { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 17px 0; border-top: 1px solid var(--line); font-size: 12px; font-weight: 700; }
 .advanceLink > span { color: var(--fc-data-focus-on-light, #806000); font-size: 20px; }
+.registration dl { display: grid; gap: 18px; margin: 28px 0; }
+.registration dl > div { display: grid; gap: 7px; }
+.registration dt { font-size: 12px; color: var(--muted); }
+.registration dd { margin: 0; font-size: clamp(16px, 2vw, 22px); font-weight: 700; line-height: 1.5; }
+.registration dd small { font-size: 11px; font-weight: 400; }
+.registrationLink { display: inline-flex; min-height: 46px; align-items: center; gap: 20px; padding: 10px 20px; background: var(--fc-data-accent, #edc644); color: #181a18; text-decoration: none; font-weight: 700; }
+.registration .registrationNote { max-width: 62ch; font-size: 12px; line-height: 1.8; }
+.registrationLink:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
