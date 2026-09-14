@@ -1,4 +1,5 @@
 import { Buffer } from 'node:buffer'
+import process from 'node:process'
 import { proxyRequest } from '../edge-functions/api/[[path]].js'
 import { createHttpsTransport } from './account.js'
 
@@ -9,6 +10,7 @@ export function createProductionFetch({ transport = createHttpsTransport(), log 
   return async (url, options) => {
     const phases = []
     const started = Date.now()
+    let diagnosticEgress
     try {
       const upstream = await transport(url, {
         ...options, body: options.body ? Buffer.from(options.body) : undefined
@@ -16,9 +18,19 @@ export function createProductionFetch({ transport = createHttpsTransport(), log 
       const bytes = await upstream.arrayBuffer()
       return new Response(options.method === 'HEAD' || upstream.status === 204 ? null : bytes,
         { status: upstream.status, headers: upstream.headers })
+    } catch (error) {
+      if (process.env.VERCEL_ENV === 'preview' && error.message === 'ACCOUNT_PROXY_CONNECT_TIMEOUT') {
+        try {
+          const probe = await fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(1500), redirect: 'error' })
+          const address = (await probe.json()).ip
+          if (/^(\d{1,3}\.){3}\d{1,3}$/.test(address || '')) diagnosticEgress = address
+        } catch { diagnosticEgress = 'unavailable' }
+      }
+      throw error
     } finally {
       // Connection phases only. Never include a URL, identity, headers or body.
-      log(JSON.stringify({ event: 'platform_connection', phases, elapsedMs: Date.now() - started }))
+      log(JSON.stringify({ event: 'platform_connection', phases, elapsedMs: Date.now() - started,
+        ...(diagnosticEgress ? { diagnosticEgress } : {}) }))
     }
   }
 }
