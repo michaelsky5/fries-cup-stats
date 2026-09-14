@@ -2,7 +2,22 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createServer } from 'node:http'
 import { once } from 'node:events'
-import { createPlatformHandler } from '../api/platform.js'
+import { createPlatformHandler, createProductionFetch } from '../api/platform.js'
+
+test('production transport adapts binary bodies and independent cookies without losing the response', async () => {
+  const body = new Uint8Array([1, 2, 3]).buffer
+  const fetchImpl = createProductionFetch({ log: () => {}, transport: async (_url, options) => {
+    assert.ok(Buffer.isBuffer(options.body))
+    assert.deepEqual([...options.body], [1, 2, 3])
+    return { status: 200, headers: new Headers([
+      ['Set-Cookie', '__Host-fries_session=example; Secure; HttpOnly; Path=/'],
+      ['Set-Cookie', 'fries_session=; Max-Age=0; Path=/']
+    ]), arrayBuffer: async () => Buffer.from([4, 5, 6]) }
+  } })
+  const response = await fetchImpl('https://admin.fries-cup.com/api/me/profile', { method: 'PATCH', body })
+  assert.equal(response.headers.getSetCookie().length, 2)
+  assert.deepEqual([...new Uint8Array(await response.arrayBuffer())], [4, 5, 6])
+})
 
 test('production HTTP adapter preserves session, upload, cache and failure boundaries', async t => {
   const calls = []

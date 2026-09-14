@@ -27,7 +27,7 @@ jobs:
         run: npm run test:account-ui
 
       - name: Check production account proxy
-        run: node --test scripts/productionPlatformProxy.test.mjs scripts/edgeOneProxy.test.mjs scripts/accountAvatarProxy.test.mjs
+        run: node --test scripts/testAccountTransport.mjs scripts/productionPlatformProxy.test.mjs scripts/edgeOneProxy.test.mjs scripts/accountAvatarProxy.test.mjs
 
       - name: Lint source files
         run: npm run lint

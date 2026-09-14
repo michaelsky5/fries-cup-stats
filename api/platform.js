@@ -1,12 +1,33 @@
 import { Buffer } from 'node:buffer'
 import { proxyRequest } from '../edge-functions/api/[[path]].js'
+import { createHttpsTransport } from './account.js'
 
 const ORIGIN = 'https://admin.fries-cup.com'
 const BODY_LIMIT = 3 * 1024 * 1024
 
+export function createProductionFetch({ transport = createHttpsTransport(), log = console.info } = {}) {
+  return async (url, options) => {
+    const phases = []
+    const started = Date.now()
+    try {
+      const upstream = await transport(url, {
+        ...options, body: options.body ? Buffer.from(options.body) : undefined
+      }, phases)
+      const bytes = await upstream.arrayBuffer()
+      return new Response(options.method === 'HEAD' || upstream.status === 204 ? null : bytes,
+        { status: upstream.status, headers: upstream.headers })
+    } finally {
+      // Connection phases only. Never include a URL, identity, headers or body.
+      log(JSON.stringify({ event: 'platform_connection', phases, elapsedMs: Date.now() - started }))
+    }
+  }
+}
+
+const productionFetch = createProductionFetch()
+
 // Share the accepted proxy's permission, upload and cache policy. Published
 // snapshots retain Vercel's native external rewrite for large archived payloads.
-export function createPlatformHandler({ fetchImpl = fetch } = {}) {
+export function createPlatformHandler({ fetchImpl = productionFetch } = {}) {
   return async function handler(req, res) {
     res.setHeader('Cache-Control', 'private, no-store')
     res.setHeader('CDN-Cache-Control', 'no-store')
