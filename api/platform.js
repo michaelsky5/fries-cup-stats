@@ -55,6 +55,9 @@ export function createPlatformHandler({ fetchImpl = productionFetch } = {}) {
       }
       input.pathname = `/api/platform/${paths[0]}`
       input.searchParams.delete('platformPath')
+      // Vercel also appends the :path* capture as a query value. It is routing
+      // metadata, not an API filter; strict season queries must not receive it.
+      input.searchParams.delete('path')
       for (const key of ['_vercel_share', 'x-vercel-protection-bypass', 'x-vercel-set-bypass-cookie']) input.searchParams.delete(key)
       const headers = new Headers()
       for (const [key, value] of Object.entries(req.headers)) if (typeof value === 'string') headers.set(key, value)

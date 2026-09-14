@@ -69,6 +69,12 @@ test('production HTTP adapter preserves session, upload, cache and failure bound
       assert.match(response.headers.get('cache-control'),/no-store/)
       assert.equal(calls.at(-1).url,'https://admin.fries-cup.com/api/me/weekly/matches/TEST/room')
     })
+    await t.test('Vercel route captures do not contaminate strict API query schemas', async () => {
+      reply = () => new Response('{}', {headers:{'Content-Type':'application/json'}})
+      const response = await send('me/space-context&seasonId=FCR26&path=me%2Fspace-context')
+      assert.equal(response.status,200)
+      assert.equal(calls.at(-1).url,'https://admin.fries-cup.com/api/me/space-context?seasonId=FCR26')
+    })
     await t.test('duplicate and nested paths cannot choose another upstream', async () => {
       const count = calls.length
       for(const path of ['auth/login&platformPath=me/profile','..%2fauth/login','auth%252flogin','https:%2f%2fevil.example']) assert.equal((await send(path)).status,400)
