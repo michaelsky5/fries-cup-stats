@@ -1,5 +1,5 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useOutletContext, useSearchParams } from 'react-router-dom'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import { formatOwMapName } from '../../lib/heroes.js'
@@ -21,6 +21,8 @@ export default function SignalWeeklyOverview() {
   const location = useLocation()
   const focusRef = useRef(null)
   const en = String(locale).startsWith('en')
+  const [now, setNow] = useState(Date.now)
+  useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 30_000); return () => clearInterval(timer) }, [])
   const t = (zh, english) => en ? english : zh
   const status = key => weeklyStatusLabel(key, locale)
   const followedIds = (db?.teams || []).filter(team => isFavoriteTeam?.(idOf(team))).map(idOf)
@@ -30,6 +32,12 @@ export default function SignalWeeklyOverview() {
   const requestedMatch = params.get('match')
   const model = useMemo(() => buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch, followedTeamIds: followedKey ? followedKey.split('|') : [] }), [db, cycleId, weekId, requestedMatch, followedKey])
   const { cycles, cycle, weeks, week, matches, focus, standings, isPilot } = model
+  const registration = !cycles.length ? db?.weekly_competition?.registration : null
+  const registrationClosed = registration?.closes_at && Date.parse(registration.closes_at) <= now
+  const registrationUpcoming = registration?.opens_at && Date.parse(registration.opens_at) > now
+  const registrationLabel = registrationClosed ? t('报名已截止', 'Registration closed') : registrationUpcoming ? t('报名即将开放', 'Registration opening soon') : t('报名中', 'Registration open')
+  const registrationDate = (value, includeTime = false) => value && Number.isFinite(Date.parse(value))
+    ? new Intl.DateTimeFormat(en ? 'en-GB' : 'zh-CN', { timeZone: 'Asia/Shanghai', dateStyle: 'medium', ...(includeTime ? { timeStyle: 'short', hour12: false } : {}) }).format(new Date(value)) : t('待公布', 'To be announced')
   const maps = weeklyMapSlots(focus)
   const rr5 = String(focus?.format).toUpperCase() === 'RR5'
   const currentWeek = Number(week?.week_number) || 1
@@ -61,7 +69,7 @@ export default function SignalWeeklyOverview() {
 
     <div className={styles.mainGrid}>
       <section className={styles.matchSection} aria-labelledby="weekly-focus-title">
-        <div className={styles.sectionBar}><h2 id="weekly-focus-title">{week ? weekTitle : t(uiText("本周对阵", locale), 'This week')}</h2><span>{matches.length ? t(uiText("{0} 场对阵 · {1} 场已结束", locale, [matches.length, model.complete]), `${matches.length} matches · ${model.complete} final`) : t(uiText("等待赛程公布", locale), 'Awaiting publication')}</span></div>
+        <div className={styles.sectionBar}><h2 id="weekly-focus-title">{week ? weekTitle : registration ? t('首周参赛', 'Opening week') : t(uiText("本周对阵", locale), 'This week')}</h2><span>{matches.length ? t(uiText("{0} 场对阵 · {1} 场已结束", locale, [matches.length, model.complete]), `${matches.length} matches · ${model.complete} final`) : registration ? registrationLabel : t(uiText("等待赛程公布", locale), 'Awaiting publication')}</span></div>
         {focus ? <div className={styles.spotlight} id="weekly-focus" ref={focusRef} data-match-state={focus.state}>
           <div className={styles.matchTop}><span className={styles.state} data-state={focus.state}><i />{status(focus.state)}</span><span>{dateText(focus, true)} <small>UTC+8</small></span><span>{getMatchFormatLabel(focus)}</span></div>
           <div className={styles.scoreboard}>
@@ -83,6 +91,13 @@ export default function SignalWeeklyOverview() {
             </ol>
           </div>}
           <div className={styles.matchFooter}><span>{focus.state === 'live' ? t(uiText("进行中的比分尚未计入周期积分。", locale), 'Live scores are not added to the published cycle points.') : focus.state === 'ruling' ? t(uiText("按赛事判定记录，积分以公布榜单为准。", locale), 'A ruling applies. Points follow the published standings.') : t(uiText("地图记录与结果以公布内容为准。", locale), 'Map records and results follow the published data.')}</span><Link to={withSeason(`/matches/${encodeURIComponent(focus.id)}`)} {...returnProps}>{t(uiText("比赛详情", locale), 'Match details')} <span aria-hidden="true">↗</span></Link></div>
+        </div> : registration ? <div className={`${styles.empty} ${styles.registration}`}>
+          <span>WEEK 0{registration.week_number} / {registrationLabel}</span>
+          <h3>{registration.label}</h3>
+          <p>{registration.counts_toward_standings ? t('这一周正式计入周期积分。每场固定打满五张地图。', 'This week awards cycle points. Each series consists of five maps.') : t('这一周保留比赛记录，不计入正式周期积分。', 'Match records are retained without formal cycle points.')}</p>
+          <dl><div><dt>{t('比赛日期', 'Match dates')}</dt><dd>{registrationDate(registration.match_window_starts_at)} — {registrationDate(registration.match_window_ends_at)}</dd></div><div><dt>{t('报名截止', 'Registration deadline')}</dt><dd>{registrationDate(registration.closes_at, true)} <small>UTC+8</small></dd></div></dl>
+          <Link className={styles.registrationLink} to={withSeason(`/participate/${seasonId}`)}>{t('进入网页报名', 'Open registration')} ↗</Link>
+          <p className={styles.registrationNote}>{t('由赛管邀请队伍负责人，负责人在网页邀请选手、提交报名。对阵审核公布后会出现在这里。', 'An organizer invites each team representative, who invites players and submits the roster online. Approved fixtures will appear here.')}</p>
         </div> : <div className={styles.empty}><span>WEEKLY / NEXT UP</span><h3>{t(uiText("下一场，等你上场。", locale), 'The next match is ahead.')}</h3><p>{t(uiText("公开赛程尚未公布，公布后可在这里查看对阵与五局进程。", locale), 'Fixtures and map records will appear once the schedule is published.')}</p></div>}
       </section>
       {matches.length > 0 && <section className={styles.matchList} aria-labelledby="weekly-matches-title">
@@ -108,10 +123,10 @@ export default function SignalWeeklyOverview() {
       </aside>
     </div>
 
-    <section className={styles.followingSection} id="weekly-following">
+    {(db?.teams || []).length > 0 && <section className={styles.followingSection} id="weekly-following">
       <div><p className={styles.eyebrow}>KEEP UP WITH YOUR TEAM</p><h2>{t(uiText("下一周，还想看谁？", locale), 'Who will you follow next?')}</h2><p>{followedIds.length ? t(uiText("已关注 {0} 支队伍。下次打开，优先呈现关注队伍的进行中比赛。", locale, [followedIds.length]), `Following ${followedIds.length} teams. Their live matches take priority when you return.`) : t(uiText("关注队伍，把每一周连起来。", locale), 'Follow a team from one week to the next.')}</p></div>
       <div className={styles.followTeams}>{(db?.teams || []).map(team => <button type="button" key={idOf(team)} aria-pressed={!!isFavoriteTeam?.(idOf(team))} onClick={() => toggleTeamFavorite(idOf(team))}><TeamLogo team={team} seasonId={seasonId} className={styles.rowLogo} /><b>{shortName(team)}</b><span aria-hidden="true">{isFavoriteTeam?.(idOf(team)) ? '★' : '☆'}</span></button>)}</div>
-    </section>
+    </section>}
     <footer className={styles.pathway}><div><span>01</span><b>{t(uiText("每周上场", locale), 'Weekly play')}</b><small>{t(uiText("五局累计周期积分", locale), 'Five maps, cycle points')}</small></div><i aria-hidden="true">→</i><div><span>02</span><b>{t(uiText("周期季后赛", locale), 'Cycle playoffs')}</b><small>{t(uiText("双败淘汰，继续向前", locale), 'Double elimination')}</small></div><i aria-hidden="true">→</i><div><span>03</span><b>Weekly Major</b><small>{t(uiText("走向更大的赛场", locale), 'The next stage')}</small></div><p>{t(uiText("晋级名额与日期，以当期公示为准。", locale), 'Qualification places and dates follow the current announcement.')}</p></footer>
   </div>
 }

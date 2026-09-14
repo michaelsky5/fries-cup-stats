@@ -9,6 +9,15 @@ const PREFER_LOCAL_DATA = typeof import.meta.env !== 'undefined' && import.meta.
 
 export const SEASONS = [
   {
+    id: 'FCW26', lifecycle: 'ACTIVE', publicCode: 'FCW2026', competitionFormat: 'WEEKLY',
+    name: { zh: '2026 薯条杯周赛', en: 'Fries Cup Weekly 2026' },
+    proxyDataUrl: '/api/admin-public/seasons/FCW26/publish/latest/data',
+    proxyReportUrl: '/api/admin-public/seasons/FCW26/publish/latest/report',
+    dataUrl: 'https://admin.fries-cup.com/api/public/seasons/FCW26/publish/latest/data',
+    reportUrl: 'https://admin.fries-cup.com/api/public/seasons/FCW26/publish/latest/report',
+    reviewEnabled: false, rules: { weeklyCompetition: { enabled: true } }
+  },
+  {
     id: 'FCR26',
     lifecycle: 'ARCHIVED',
     publicCode: 'FCR2026',
@@ -349,7 +358,7 @@ export const SEASONS = [
 
 // Only the isolated weekly design server exposes this fictional public snapshot.
 if (import.meta.env?.DEV && import.meta.env?.VITE_WEEKLY_PREVIEW === '1') {
-  SEASONS.push({
+  Object.assign(SEASONS.find(season => season.id === 'FCW26'), {
     id: 'FCW26', publicCode: 'FCW2026', lifecycle: 'ACTIVE', competitionFormat: 'WEEKLY',
     name: { zh: '2026 薯条杯周赛', en: 'Fries Cup Weekly 2026' },
     localDataUrl: '/__weekly-overview/data.json', preferLocalData: true, reviewEnabled: false,

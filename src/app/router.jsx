@@ -107,6 +107,7 @@ const router = createBrowserRouter([
       return null
     }, children: [
   ...developmentRoutes,
+  { path: '/auth/weekly-admin', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/auth/WeeklyAdminInvitationPage.jsx')) },
   { path: '/account', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/account/AccountSettingsPage.jsx')) },
   { path: '/me/matches/:matchId/room', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/weekly-competition/WeeklyLiveRoomPage.jsx')) },
   { path: '/participate/:seasonId', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/event-registration/SeasonParticipationPage.jsx')) },
