@@ -10,8 +10,8 @@ import { formatPlayerMatchStage, getPlayerPrimaryRole } from './playerDossierPre
 import styles from './SignalPlayerProfileSections.module.css'
 
 const text = (en, zh, english) => en ? english : zh
-const roleLabel = (role, en) => en ? getRoleEnLabel(role) : getRoleLabel(role)
-const resultLabel = (result, en) => ({ win: text(en, '胜', 'W'), loss: text(en, '负', 'L'), draw: text(en, '平', 'D'), pending: text(en, '进行中', 'LIVE'), unknown: '—' })[result] || '—'
+const roleLabel = (role, en, labelLocale = 'zh-CN') => uiText(en ? getRoleEnLabel(role) : getRoleLabel(role), labelLocale)
+const resultLabel = (result, en, labelLocale = 'zh-CN') => uiText(({ win: text(en, '胜', 'W'), loss: text(en, '负', 'L'), draw: text(en, '平', 'D'), pending: text(en, '进行中', 'LIVE'), unknown: '—' })[result] || '—', labelLocale)
 const score = match => match.scoreFor != null && match.scoreAgainst != null ? `${match.scoreFor} : ${match.scoreAgainst}` : '—'
 
 export function PlayerRolePortfolio({ dossier, journey, en, analysisLink }) {
@@ -24,7 +24,7 @@ export function PlayerRolePortfolio({ dossier, journey, en, analysisLink }) {
     <header className={styles.chapterHeading}><p>01 / ON THE ROSTER</p><h2 id="player-role-portfolio-title">{text(en, uiText("赛场角色", uiLocale), 'On the roster')}</h2><span>{text(en, uiText("按本季出场时长", uiLocale), 'By time played this season')}</span></header>
     <div className={styles.roleCards}>
       {entries.map(item => <Link key={item.role} {...analysisLink({ role: item.role, pview: 'performance', phero: '', pmap: '', presult: '', popen: '' })} className={styles.roleCard} data-role={item.role}>
-        <div><span>{roleLabel(item.role, en)}</span><small>{item.role === primary.role ? text(en, uiText("主要职责", uiLocale), 'Primary role') : text(en, uiText("出场职责", uiLocale), 'Also played')}</small><b aria-hidden="true">↗</b></div>
+        <div><span>{roleLabel(item.role, en, uiLocale)}</span><small>{item.role === primary.role ? text(en, uiText("主要职责", uiLocale), 'Primary role') : text(en, uiText("出场职责", uiLocale), 'Also played')}</small><b aria-hidden="true">↗</b></div>
         <p><strong>{item.summary.maps}</strong><span>{text(en, uiText("图", uiLocale), 'maps')}</span><em>{item.summary.timeLabel}</em></p>
         <span className={styles.roleTimeTrack} aria-hidden="true"><i style={{ width: `${totalTime > 0 ? item.summary.timeMins / totalTime * 100 : 0}%` }} /></span>
       </Link>)}
@@ -46,10 +46,10 @@ export function PlayerSeasonJourney({ journey, en, seasonId, linkProps, phaseKey
       <div className={styles.phaseContent} id="player-phase-content">
         <header><div><p>{text(en, uiText("出场记录", uiLocale), 'MATCH APPEARANCES')}</p><h3>{formatPlayerMatchStage(selected.phase, en) || text(en, uiText("赛事记录", uiLocale), 'Tournament')}</h3></div><span>{selected.matches[0].dateLabel.split(' ')[0]} — {selected.latest.dateLabel.split(' ')[0]}</span></header>
         <div className={styles.phaseScoreline} aria-label={text(en, uiText("本阶段比赛结果", uiLocale), 'Stage results')}>
-          {selected.matches.map(match => <Link key={match.matchId} {...linkProps(`/matches/${encodeURIComponent(match.matchId)}`)} data-result={match.result} aria-label={`${match.opponent.short} · ${score(match)} · ${resultLabel(match.result, en)}`}><b>{resultLabel(match.result, en)}</b><span>{match.opponent.short}</span></Link>)}
+          {selected.matches.map(match => <Link key={match.matchId} {...linkProps(`/matches/${encodeURIComponent(match.matchId)}`)} data-result={match.result} aria-label={`${match.opponent.short} · ${score(match)} · ${resultLabel(match.result, en, uiLocale)}`}><b>{resultLabel(match.result, en, uiLocale)}</b><span>{match.opponent.short}</span></Link>)}
         </div>
         <div className={styles.journeyMatches}>{[...selected.matches].reverse().map(match => <Link key={match.matchId} {...linkProps(`/matches/${encodeURIComponent(match.matchId)}`)} className={styles.journeyMatch}>
-          <time dateTime={match.date}>{match.dateLabel}</time><TeamLogo team={match.opponent} seasonId={seasonId} className={styles.teamLogo} /><strong><small>vs</small> {match.opponent.short}</strong><b>{score(match)}</b><span data-result={match.result}>{resultLabel(match.result, en)}</span><i aria-hidden="true">↗</i>
+          <time dateTime={match.date}>{match.dateLabel}</time><TeamLogo team={match.opponent} seasonId={seasonId} className={styles.teamLogo} /><strong><small>vs</small> {match.opponent.short}</strong><b>{score(match)}</b><span data-result={match.result}>{resultLabel(match.result, en, uiLocale)}</span><i aria-hidden="true">↗</i>
         </Link>)}</div>
       </div>
     </div> : <div className={styles.empty}><strong>{text(en, uiText("暂无出场记录", uiLocale), 'No recorded appearances')}</strong><p>{text(en, uiText("本赛季暂无已公开的比赛数据。", uiLocale), 'No published match data for this season.')}</p></div>}
@@ -71,11 +71,11 @@ export function PlayerHeroCollection({ heroes, en, locale, analysisLink, selecte
   </Link>
   return <section id="player-hero-collection" className={styles.collection} aria-labelledby="player-hero-collection-title">
     <header className={styles.collectionHeading}><div className={styles.chapterHeading}><p>03 / HERO COLLECTION</p><h2 id="player-hero-collection-title">{text(en, uiText("本季英雄图鉴", locale), 'Heroes this season')}</h2></div><span>{heroes.length} {text(en, uiText("位出场英雄", locale), heroes.length === 1 ? 'recorded hero' : 'recorded heroes')}</span></header>
-    {roles.length > 1 && <div className={styles.collectionFilters} aria-label={text(en, uiText("图鉴职责", locale), 'Collection roles')}>{['', ...roles].map(value => <button type="button" key={value} aria-pressed={role === value} onClick={() => onRoleChange(value)}>{value ? roleLabel(value, en) : text(en, uiText("全部英雄", locale), 'All heroes')}<small>{value ? heroes.filter(hero => hero.roles.includes(value)).length : heroes.length}</small></button>)}</div>}
+    {roles.length > 1 && <div className={styles.collectionFilters} aria-label={text(en, uiText("图鉴职责", locale), 'Collection roles')}>{['', ...roles].map(value => <button type="button" key={value} aria-pressed={role === value} onClick={() => onRoleChange(value)}>{value ? roleLabel(value, en, locale) : text(en, uiText("全部英雄", locale), 'All heroes')}<small>{value ? heroes.filter(hero => hero.roles.includes(value)).length : heroes.length}</small></button>)}</div>}
     <div className={styles.collectionBody} data-single={visible.length === 1 || undefined} data-compact={compact || undefined} style={{ '--hero-count': visible.length, '--hero-list-columns': visible.length >= 7 ? 2 : 1 }}>
       {(compact ? visible : [featured]).map(featureCard)}
       {!compact && <div className={styles.heroCollection}>{visible.slice(1).map((hero, index) => <Link key={hero.key} {...heroLink(hero)} data-role={hero.roles[0]}>
-        <small>{String(index + 2).padStart(2, '0')}</small><SignalHeroPortrait hero={hero.hero} role={hero.roles[0]} description={formatOwHeroName(hero.hero, locale)} /><div><strong>{formatOwHeroName(hero.hero, locale)}</strong><span>{hero.roles.map(item => roleLabel(item, en)).join(' / ')}</span></div><span className={styles.collectionCount}><strong>{hero.maps}</strong><small>{text(en, uiText("图", locale), hero.maps === 1 ? 'map' : 'maps')}</small></span><b aria-hidden="true">↗</b>
+        <small>{String(index + 2).padStart(2, '0')}</small><SignalHeroPortrait hero={hero.hero} role={hero.roles[0]} description={formatOwHeroName(hero.hero, locale)} /><div><strong>{formatOwHeroName(hero.hero, locale)}</strong><span>{hero.roles.map(item => roleLabel(item, en, locale)).join(' / ')}</span></div><span className={styles.collectionCount}><strong>{hero.maps}</strong><small>{text(en, uiText("图", locale), hero.maps === 1 ? 'map' : 'maps')}</small></span><b aria-hidden="true">↗</b>
       </Link>)}</div>}
     </div>
   </section>

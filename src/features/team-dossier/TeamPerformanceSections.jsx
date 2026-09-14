@@ -163,7 +163,7 @@ export function MemberSection({ report, team, rolePeers, ...context }) {
         <p>
           {report.members.filter((member) => member.maps).length} / {report.members.length}{' '}
           {en ? 'listed players with appearances' : uiText("位名单成员有出场记录", uiLocale)}
-          <small className={readingStyles.roleComposition}>{['TANK', 'DPS', 'SUP', 'UNKNOWN'].filter(role => report.members.some(member => member.role === role)).map(role => `${roleLabel(role, en)} ${report.members.filter(member => member.role === role).length}`).join(' / ')}</small>
+          <small className={readingStyles.roleComposition}>{['TANK', 'DPS', 'SUP', 'UNKNOWN'].filter(role => report.members.some(member => member.role === role)).map(role => `${roleLabel(role, en, uiLocale)} ${report.members.filter(member => member.role === role).length}`).join(' / ')}</small>
         </p>
         <MetricChoice
           id={en ? 'Player metric' : uiText("成员指标", uiLocale)}
@@ -175,7 +175,7 @@ export function MemberSection({ report, team, rolePeers, ...context }) {
       </div>
       {chosen ? <label className={styles.memberPicker}>{en ? 'Player' : uiText("查看成员", uiLocale)}
         <select aria-label={en ? 'Selected player' : uiText("查看成员", uiLocale)} value={chosen.id} onChange={event => updateQuery({ member: event.target.value, performanceMember: null })}>
-          {report.members.map(member => <option key={member.id} value={member.id}>{member.name} · {roleLabel(member.role, en)} · {member.maps} {en ? 'maps' : uiText("图", uiLocale)}</option>)}
+          {report.members.map(member => <option key={member.id} value={member.id}>{member.name} · {roleLabel(member.role, en, uiLocale)} · {member.maps} {en ? 'maps' : uiText("图", uiLocale)}</option>)}
         </select>
       </label> : null}
       <div className={styles.membersLayout}>
@@ -206,7 +206,7 @@ export function MemberSection({ report, team, rolePeers, ...context }) {
                 <span>
                   <b>{member.name}</b>
                   <small>
-                    {roleLabel(member.role, en)}
+                    {roleLabel(member.role, en, uiLocale)}
                     {member.roles.length > 1 ? (en ? ' · multiple roles recorded' : uiText(" · 有跨职责记录", uiLocale)) : ''}
                   </small>
                   <em className={styles.rowAction}>
@@ -232,7 +232,7 @@ export function MemberSection({ report, team, rolePeers, ...context }) {
         {chosen ? (
           <aside id="performance-member-reading" className={styles.memberReading} aria-live="polite">
             <span>
-              {team.shortName} / {roleLabel(chosen.role, en)}
+              {team.shortName} / {roleLabel(chosen.role, en, uiLocale)}
             </span>
             <h3>{chosen.name}</h3>
             {chosen.maps ? (
@@ -467,7 +467,7 @@ export function TrendSection({ report, research, team, ...context }) {
       {report.series.length ? (
         <>
           <SeriesChart series={report.series} metric={metric.id} en={en} />
-          <PerformanceEvidence id="trend-series" title={en ? 'Inspect all ' + report.series.length + ' series values' : '核对全部 ' + report.series.length + ' 场逐场数据'} {...context}>
+          <PerformanceEvidence id="trend-series" title={en ? 'Inspect all ' + report.series.length + ' series values' : uiText("核对全部 {0} 场逐场数据", locale, [report.series.length])} {...context}>
           <div className={styles.seriesRows}>
             {report.series.map((item) => (
               <Link
@@ -482,7 +482,7 @@ export function TrendSection({ report, research, team, ...context }) {
                   <small>{item.row.roundLabel}</small>
                 </span>
                 <strong>{item.row.scoreLabel}</strong>
-                <span data-result={item.row.tone}>{resultLabel(item.row.tone, en)}</span>
+                <span data-result={item.row.tone}>{resultLabel(item.row.tone, en, locale)}</span>
                 <span>
                   {valueLabel(item.paired[metric.id].own.value)}
                   <small>{en ? 'team' : uiText("本队", locale)}</small>

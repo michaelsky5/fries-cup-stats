@@ -403,7 +403,7 @@
 
 :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher[open] > summary span,
 :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary:hover span {
-  background: var(--kpr-ink);
+  background: transparent;
   color: var(--kpr-yellow);
 }
 
@@ -752,4 +752,17 @@
 @media (max-width: 600px) {
   :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .contextBar[data-placement='header'] .eventSwitcher > summary { min-width: 96px; width: 96px; }
   :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .contextBar[data-placement='header'] .eventSwitcher > summary strong { font-size: 11px; }
+}
+
+/* Event ownership is independent from the lifecycle shown on each entry. */
+:global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .switcherPanel h3 { font: 700 12px/1.4 var(--font-sans); letter-spacing: 0; color: var(--kpr-ink); }
+:global([data-design='kpr'][data-design-edition='hybrid']) .switcherPanel h3 small { color: var(--kpr-muted); font-weight: 400; }
+:global([data-design='kpr'][data-design-edition='hybrid']) .switcherPanel section + section { border-color: var(--kpr-line); padding-top: 14px; }
+:global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .switcherPanel button em { white-space: normal; line-height: 1.5; }
+.directoryIdentity .eventKindLabel { color: var(--kpr-muted); font-size: 11px; }
+
+@media (max-width: 600px) {
+  :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .switcherPanel { max-height: calc(100dvh - var(--kpr-header-height) - var(--fc-mobile-navigation-height, 0px) - 20px); overflow-y: auto; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .switcherPanel button { grid-template-columns: 88px minmax(0, 1fr); gap: 5px 10px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .switcherPanel button strong { font-size: 18px; }
 }

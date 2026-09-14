@@ -68,6 +68,8 @@ export const LEADERBOARD_COLUMNS = [
 ]
 
 export const ALWAYS_VISIBLE_COLUMNS = ['rank', 'player']
+// Team and role already appear beneath the player's name in the Signal table.
+export const SIGNAL_LEADERBOARD_COLUMNS = LEADERBOARD_COLUMNS.filter(column => !['team', 'role'].includes(column.id))
 export const DEFAULT_VISIBLE_COLUMNS = LEADERBOARD_COLUMNS.map(column => column.id)
 
 function safeArr(value) {

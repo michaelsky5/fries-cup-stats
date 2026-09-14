@@ -125,7 +125,7 @@ export default function SignalWeeklySchedule() {
       <button type="button" className={styles.reset} disabled={!model.hasFilters} onClick={reset}>{t(uiText("重置", locale), 'Reset')} ↺</button>
     </div>
     <div className={styles.statusBar}>
-      <nav className={styles.statusTabs} aria-label={t(uiText("比赛状态", locale), 'Match status')}>{shownStatuses.map(key => <button key={key} type="button" aria-pressed={model.activeStatus === key} onClick={() => change({ status: key === 'all' ? null : key })}>{statusNames[key][en ? 1 : 0]} <b>{counts[key]}</b></button>)}</nav>
+      <nav className={styles.statusTabs} aria-label={t(uiText("比赛状态", locale), 'Match status')}>{shownStatuses.map(key => <button key={key} type="button" aria-pressed={model.activeStatus === key} onClick={() => change({ status: key === 'all' ? null : key })}>{uiText(statusNames[key][en ? 1 : 0], locale)} <b>{counts[key]}</b></button>)}</nav>
       <span className={styles.timezone}>UTC+8</span>
     </div>
     <div className={styles.listHeading}>

@@ -14,7 +14,7 @@ export default function RouteErrorPage({ notFound = false }) {
   const seasonId = resolveSeasonFromUrl(params.get('season')) || getInitialSeasonId()
   const locale = normalizeReviewLocale(params.get('lang'), getStoredLocale())
   const missing = notFound || (isRouteErrorResponse(error) && error.status === 404)
-  const text = (zh, en, ko) => locale === 'ko-KR' ? ko : locale === 'en-US' ? en : zh
+  const text = (zh, en, ko) => locale === 'ko-KR' ? ko : locale === 'en-US' ? en : uiText(zh, locale)
   const title = missing
     ? text('这个页面不存在', 'Page not found', '페이지를 찾을 수 없습니다')
     : text('页面暂时无法载入', 'This page could not be loaded', '페이지를 불러올 수 없습니다')
@@ -28,7 +28,7 @@ export default function RouteErrorPage({ notFound = false }) {
   return (
     <main className={styles.shell} lang={locale}>
       <div className={styles.panel}>
-        <span className={styles.brand}>FRIES CUP DATA CENTER</span>
+        <span className={styles.brand}>FRIES CUP EVENT CENTER</span>
         <span className={styles.code}>{missing ? '404' : 'UNAVAILABLE'}</span>
         <h1 ref={headingRef} tabIndex={-1}>{title}</h1>
         <p>{missing

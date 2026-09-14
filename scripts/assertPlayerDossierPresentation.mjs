@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
-import { collectPlayerAppearances, filterPlayerAppearances, getPlayerAppearances, getPlayerMapProfiles, getPlayerPrimaryRole, getPlayerRecentForm, getPlayerSeasonJourney, getRecordedPlayerHeroes, playerComparisonPath, playerContextPath, playerMapKey, playerPagePath, playerRecordMatches } from '../src/features/player-dossier/playerDossierPresentation.js'
+import { collectPlayerAppearances, filterPlayerAppearances, formatPlayerMatchStage, getPlayerAppearances, getPlayerMapProfiles, getPlayerPrimaryRole, getPlayerRecentForm, getPlayerSeasonJourney, getRecordedPlayerHeroes, playerComparisonPath, playerContextPath, playerMapKey, playerPagePath, playerRecordMatches } from '../src/features/player-dossier/playerDossierPresentation.js'
 import { getMatchDossier } from '../src/lib/matchDetailSelectors.js'
 import { getMatchReviewPlayers } from '../src/lib/matchReviewSelectors.js'
 import { getPlayerDossier } from '../src/lib/playerDetailSelectors.js'
@@ -192,5 +192,12 @@ check('real role map atlas traces every rating back to a published map', () => {
     assert.equal(filterPlayerAppearances(support, { map: profile.key }).length, new Set(profile.records.map(record => record.match.matchId)).size)
     assert.ok(profile.records.every(record => playerMapKey(record.map.name) === profile.key))
   }
+})
+check('partner event stage names localize without inferring unspecified rounds', () => {
+  assert.equal(formatPlayerMatchStage('GROUP · GROUP A / DAY 1'), '小组赛 · A 组 / 第 1 比赛日')
+  assert.equal(formatPlayerMatchStage('PLAYOFFS · SEMIFINALS'), '季后赛 · 半决赛')
+  assert.equal(formatPlayerMatchStage('PLAYOFFS · QUARTERFINALS'), '季后赛 · 四分之一决赛')
+  assert.equal(formatPlayerMatchStage('PLAYOFFS · Unspecified'), '季后赛 · Unspecified')
+  assert.equal(formatPlayerMatchStage('GROUP · GROUP A / DAY 1', true), 'GROUP · GROUP A / DAY 1')
 })
 console.log(`${assertions} player dossier checks passed`)

@@ -519,7 +519,7 @@ function WitnessMemoryLedger({ items, prompt, locale, viewerId, onViewerIdChange
       : uiText("昵称或 BattleTag", locale)
 
   return (
-    <section className={styles.witnessMemoryLedger} aria-label="Season witness archive">
+    <section className={styles.witnessMemoryLedger} aria-label={uiText('赛事见证档案', locale)}>
       {entries.length ? (
         <div className={styles.witnessMemoryStats}>
           {entries.map((item, index) => (
@@ -737,7 +737,7 @@ function PlayerCoverArchive({ scene }) {
     <div className={cx(styles.coverArchive, hasHero ? styles.coverArchiveHasHero : styles.coverArchiveTeamOnly)}>
       <div className={styles.coverArchiveMeta}>
         <span>PLAYER DOSSIER</span>
-        <b>FCR / 2026</b>
+        <b>{scene.seasonMark || 'SEASON ARCHIVE'}</b>
       </div>
 
       <div className={styles.coverArchiveStage}>
@@ -833,7 +833,7 @@ function StoryScene({ scene, sceneKey, locale, direction, totalScenes, viewerId,
         <div className={styles.actSlate}>
           <div className={styles.actSlateTop}>
             <span>{scene.actCode}</span>
-            <b>FCR 2026 / SEASON PICTURE</b>
+            <b>{scene.seasonMark || 'SEASON ARCHIVE'} / SEASON PICTURE</b>
           </div>
 
           <div className={styles.actNumber}>ACT {scene.actNo}</div>
@@ -1418,7 +1418,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
   const isMovieTicket = outputFormat === 'movieTicket'
   const isDirectorCut = outputFormat === 'directorCut'
   const isWideBoarding = outputFormat === 'ticket' && payload.cardKind === 'player' && payload.seasonId === 'FCR26'
-  const isRefinedKeepsake = profile.isRegular && !isDirectorCut
+  const isRefinedKeepsake = profile.usesRegularTemplate && !isDirectorCut
   const keepsakePreviewUrl = isRefinedKeepsake ? pngUrl || liveKeepsakeUrl : liveKeepsakeUrl
   const directorHeroOptions = useMemo(() => getDirectorCutHeroOptions(locale), [locale])
   const directorHeroGroups = useMemo(() => ['tank', 'damage', 'support'].map(role => ({
@@ -1487,7 +1487,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
         ? reviewText(locale, 'directorCutFormat')
       : isMovieTicket
         ? reviewText(locale, 'movieTicketFormat')
-      : profile.isRegular
+      : profile.usesRegularTemplate
         ? reviewText(locale, 'ticketFormat')
         : baseMeta.label,
     badge: isFilmPoster
@@ -1496,7 +1496,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
         ? "DIRECTOR'S CUT TICKET"
       : isMovieTicket
         ? 'PREMIERE MOVIE TICKET'
-        : profile.isRegular
+        : profile.usesRegularTemplate
           ? 'SEASON BOARDING PASS'
           : baseMeta.badge,
     output: reviewText(locale, isFilmPoster ? 'posterOutputPortrait' : isWideBoarding ? 'posterOutputBoarding' : 'posterOutputLandscape')
@@ -1712,8 +1712,8 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
       >
         <div className={styles.posterHead}>
           <div>
-            <div className={styles.posterKicker}>{profile.isRegular ? 'OFFICIAL PREMIERE KEEPSAKE' : 'OFFICIAL TICKET ISSUER'}</div>
-            <h2 id="review-keepsake-title">{reviewText(locale, isViewerPoster ? 'viewerPosterTitle' : profile.isRegular ? 'keepsakeTitle' : 'posterTitle')}</h2>
+            <div className={styles.posterKicker}>{profile.usesRegularTemplate ? 'OFFICIAL PREMIERE KEEPSAKE' : 'OFFICIAL TICKET ISSUER'}</div>
+            <h2 id="review-keepsake-title">{reviewText(locale, isViewerPoster ? 'viewerPosterTitle' : profile.usesRegularTemplate ? 'keepsakeTitle' : 'posterTitle')}</h2>
             <div className={styles.posterArchiveId}>{payload.archiveId || `${profile.shortMark}-ARCHIVE`}</div>
           </div>
           <button ref={closeButtonRef} type="button" onClick={onClose}>{reviewText(locale, 'close')}</button>
@@ -1730,8 +1730,8 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
                   ? 'LIVE MOVIE TICKET PREVIEW'
                   : 'LIVE BOARDING PASS PREVIEW'}
             </div>
-            {profile.isRegular ? (
-              <div className={styles.posterFormatSwitch} aria-label="Keepsake format" aria-describedby="review-format-help">
+            {profile.usesRegularTemplate ? (
+              <div className={styles.posterFormatSwitch} aria-label={uiText('纪念图格式', locale)} aria-describedby="review-format-help">
                 <button type="button" aria-pressed={outputFormat === 'ticket'} onClick={() => setOutputFormat('ticket')}>
                   {reviewText(locale, 'ticketFormat')}
                 </button>
@@ -1840,7 +1840,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
 
               <div className={`${styles.posterFilmBilling}${payload.cardKind === 'team' ? ` ${styles.posterFilmBillingTeam}` : ''}${filmUsesDefaultTeamMark ? ` ${styles.posterFilmBillingDefaultTeam}` : ''}`}>
                 <span>{filmRoleLabel}</span>
-                <b>“{filmBillingTitle}” / FCR 2026 SEASON ARCHIVE</b>
+                <b>“{filmBillingTitle}” / {payload.seasonMark || profile.mark} SEASON ARCHIVE</b>
                 {hasFilmTeamCredits ? (
                   <div className={styles.posterFilmCredits}>
                     <i>STARRING</i>
@@ -2052,7 +2052,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
                     ? 'generateDirectorCutPng'
                   : isMovieTicket
                     ? 'generateMovieTicketPng'
-                  : profile.isRegular
+                  : profile.usesRegularTemplate
                     ? 'generateTicketPng'
                     : 'generatePng')}
             </button>
@@ -2066,7 +2066,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
                     ? 'downloadDirectorCutPng'
                   : isMovieTicket
                     ? 'downloadMovieTicketPng'
-                    : profile.isRegular
+                    : profile.usesRegularTemplate
                       ? 'downloadTicketPng'
                       : 'download')}
               </a>
@@ -2104,7 +2104,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
                     ? 'previewEmptyDirectorCut'
                   : isMovieTicket
                     ? 'previewEmptyMovieTicket'
-                    : profile.isRegular
+                    : profile.usesRegularTemplate
                       ? 'previewEmptyTicket'
                       : 'previewEmpty')}</span>
               </div>
@@ -2113,7 +2113,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
         </section>
 
         <div className={styles.posterTip}>
-          {reviewText(locale, isRefinedKeepsake ? 'keepsakeSaveHint' : isViewerPoster ? 'viewerPosterTip' : profile.isRegular ? 'keepsakeTip' : 'posterTip')}
+          {reviewText(locale, isRefinedKeepsake ? 'keepsakeSaveHint' : isViewerPoster ? 'viewerPosterTip' : profile.usesRegularTemplate ? 'keepsakeTip' : 'posterTip')}
         </div>
       </div>
     </div>
@@ -2223,11 +2223,11 @@ export default function ReviewStoryPage({ storyType }) {
 
   useEffect(() => {
     document.title = locale === 'ko-KR'
-      ? '프라이즈 컵 2026 시즌 리뷰'
+      ? `${localizedProfile.eventTitle} 시즌 리뷰`
       : locale === 'en-US'
-        ? 'Fries Cup 2026 Season Review'
+        ? `${localizedProfile.eventTitle} Season Review`
         : buildFriesCupTitle(getReviewStoryPageLabel(storyType), locale)
-  }, [locale, storyType])
+  }, [locale, storyType, localizedProfile.eventTitle])
 
   function handleLocaleChange(nextLocale) {
     const normalized = normalizeReviewLocale(nextLocale)
@@ -2279,8 +2279,8 @@ export default function ReviewStoryPage({ storyType }) {
     [locale, localizedProfile, sourceScenes]
   )
   const scenes = useMemo(
-    () => buildCinemaReviewScenes(localizedScenes, { isRegular: profile.isRegular, locale }),
-    [localizedScenes, locale, profile.isRegular]
+    () => buildCinemaReviewScenes(localizedScenes, { isRegular: profile.usesRegularTemplate, isPartner: profile.isPartner, locale }),
+    [localizedScenes, locale, profile.usesRegularTemplate, profile.isPartner]
   )
 
   useEffect(() => {
@@ -2313,6 +2313,7 @@ export default function ReviewStoryPage({ storyType }) {
     : locale === 'en-US'
       ? { archive: 'SEASON ARCHIVE', chapters: 'CHAPTER INDEX', now: 'NOW PLAYING', next: 'NEXT SCENE', final: 'FINAL REEL', qualifier: 'OPEN QUALIFIER', playoffs: 'PLAYOFFS', controls: 'USE ← → OR SPACE' }
       : { archive: uiText("赛季放映档案", locale), chapters: uiText("章节索引", locale), now: uiText("正在放映", locale), next: uiText("下一幕", locale), final: uiText("最终幕", locale), qualifier: uiText("公开预选赛", locale), playoffs: uiText("季后淘汰赛", locale), controls: uiText("使用 ← → 或空格切换", locale) }
+  if (profile.isPartner) desktopRailCopy.qualifier = localizedProfile.routeLabel
   const storyPhase = current?.visualType === 'organizer'
     ? 'letter'
     : current?.kind === 'ending'
@@ -2414,7 +2415,7 @@ export default function ReviewStoryPage({ storyType }) {
       data-review-kind={current.kind || 'narrative'}
       data-review-visual={current.visualType || 'archive'}
       data-review-phase={storyPhase}
-      data-review-act={profile.isRegular ? activeSeasonAct : undefined}
+      data-review-act={profile.usesRegularTemplate ? activeSeasonAct : undefined}
       data-review-direction={direction}
       data-review-locale={locale}
       data-review-has-note={Boolean(current.recordNote)}
@@ -2429,7 +2430,7 @@ export default function ReviewStoryPage({ storyType }) {
       <div inert={showPoster}>
         <div className={styles.bgGlow}></div>
         <div className={styles.storyToolbar}>
-          <div className={styles.storyLocaleSwitch} aria-label="Review language">
+          <div className={styles.storyLocaleSwitch} aria-label={uiText('回顾语言', locale)}>
             {REVIEW_LOCALES.map(item => (
               <button
                 key={item.id}
@@ -2461,7 +2462,7 @@ export default function ReviewStoryPage({ storyType }) {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="m10 13 4-4M8 16l-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 1 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" transform="translate(1 0)" /></svg>
             <span>{reviewText(locale, 'copyScene')}</span>
           </button>
-          <Link to={reviewEntryPath} className={styles.closeBtn}>{reviewText(locale, 'exit')}</Link>
+          <Link to={reviewEntryPath} state={{ returnTo: location.state?.parentReturnTo, returnScrollY: location.state?.parentReturnScrollY }} className={styles.closeBtn}>{reviewText(locale, 'exit')}</Link>
         </div>
 
         {copyState ? <div className={styles.sceneCopyFeedback} role="status">
@@ -2561,8 +2562,8 @@ export default function ReviewStoryPage({ storyType }) {
               <div className={styles.progressText}>
                 <span className={styles.brandStack}>
                   <b>{profile.mark}</b>
-                  <small title={profile.isRegular ? `ACT I ${desktopRailCopy.qualifier} / ACT II ${desktopRailCopy.playoffs}` : 'SEASON ARCHIVE'}>
-                    {profile.isRegular
+                  <small title={profile.usesRegularTemplate ? `ACT I ${desktopRailCopy.qualifier} / ACT II ${desktopRailCopy.playoffs}` : 'SEASON ARCHIVE'}>
+                    {profile.usesRegularTemplate
                       ? activeSeasonAct === 'playoffs'
                         ? `ACT II · ${desktopRailCopy.playoffs}`
                         : `ACT I · ${desktopRailCopy.qualifier}`

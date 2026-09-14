@@ -1,9 +1,9 @@
 import { convertTraditionalCopy } from './localeCatalog.js'
 import { translateUiText } from './uiText.js'
-import { formatOwHeroName, formatOwMapName } from './heroes.js'
+import { formatOwHeroName, formatOwMapName, formatOwNamesInText } from './heroes.js'
 
 const escape = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-const identityField = /^(?:name|playerName|player_name|teamName|team_name|teamShortName|team_short_name|shortName|short_name|battleTag|battletag|battle_tag|nickname|staffName|staff_name|casterName|coach|manager|callsign|callSign|issuedTo|issued_to|author|signature|subject|subjectName|identityName|coverName|displayName|display_name|watermark)$/
+const identityField = /^(?:name|playerName|player_name|teamName|team_name|teamShortName|team_short_name|shortName|short_name|battleTag|battletag|battle_tag|nickname|staffName|staff_name|casterName|coach|manager|callsign|callSign|issuedTo|issued_to|author|signature|subject|subjectName|identityName|coverName|displayName|display_name)$/
 const technicalField = /(?:^id$|Id$|_id$|^key$|^type$|^kind$|^code$|^eyebrow$|^locale$|^source|^raw|^href$|^url$|Url$|^src$|^path$|Path$|^asset|^image|^portrait|^logo|^color|^font)/
 
 // Used only for authored review copy. The identity values are shielded before
@@ -26,7 +26,7 @@ export function createTraditionalReviewTranslator(value, extraNames = []) {
     const values = []
     const shielded = pattern ? text.replace(pattern, name => `\uE000${values.push(name) - 1}\uE001`) : text
     const localized = translateUiText(shielded, 'zh-TW')
-    const result = localized === shielded ? convertTraditionalCopy(shielded) : localized
+    const result = convertTraditionalCopy(formatOwNamesInText(localized, 'zh-TW'))
     return result.replace(/\uE000(\d+)\uE001/g, (_, index) => values[index])
   }
 }

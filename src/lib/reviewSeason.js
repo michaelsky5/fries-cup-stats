@@ -9,6 +9,16 @@ import {
 const REVIEW_DB_CACHE = new WeakMap()
 
 const SEASON_PROFILES = {
+  QGCS4: {
+    id: 'QGCS4', publicCode: 'QGCS4', mark: 'QGCS4', shortMark: 'QGCS4',
+    eventTitle: '全高杯 S4', eventNoun: '全高杯 S4',
+    logo: '/logos/QGCS4/hammer-cup.jpg', routeLabel: '小组赛',
+    organizerDate: '', isRegular: false, isPartner: true, usesRegularTemplate: true,
+    localizedCopy: {
+      'en-US': { eventTitle: 'Hammer Cup S4', eventNoun: 'Hammer Cup S4', routeLabel: 'Group stage' },
+      'ko-KR': { eventTitle: '해머 컵 S4', eventNoun: '해머 컵 S4', routeLabel: '조별 리그' }
+    }
+  },
   FCR26: {
     id: 'FCR26',
     publicCode: 'FCR2026',
@@ -20,6 +30,7 @@ const SEASON_PROFILES = {
     routeLabel: '公开预选赛',
     organizerDate: '2026年8月17日',
     isRegular: true,
+    usesRegularTemplate: true,
     localizedCopy: {
       'en-US': {
         eventTitle: '2026 Fries Cup Regular Season',
@@ -65,6 +76,7 @@ const SEASON_PROFILES = {
 
 function normalizeSeasonId(value) {
   const raw = String(value || '').trim().toUpperCase()
+  if (raw.startsWith('QGCS4')) return 'QGCS4'
   if (raw.startsWith('FCR')) return 'FCR26'
   if (raw.startsWith('FCA')) return 'FCA26'
   return ''
@@ -359,12 +371,12 @@ export function prepareReviewDb(db) {
   if (REVIEW_DB_CACHE.has(db)) return REVIEW_DB_CACHE.get(db)
 
   const profile = getReviewSeasonProfile(db)
-  if (!profile.isRegular) {
+  if (!profile.isRegular && !profile.isPartner) {
     REVIEW_DB_CACHE.set(db, db)
     return db
   }
 
-  const rosterDb = applyFcr26ReviewRosterOverrides(db)
+  const rosterDb = profile.isRegular ? applyFcr26ReviewRosterOverrides(db) : db
   const standings = getStandingMap(rosterDb)
   const teams = (Array.isArray(rosterDb.teams) ? rosterDb.teams : []).map(row => enrichTeamRow(row, standings.get(String(row?.team_id || ''))))
   const reviews = (Array.isArray(rosterDb.team_reviews) ? rosterDb.team_reviews : []).map(row => enrichTeamRow(row, standings.get(String(row?.team_id || ''))))
@@ -400,11 +412,11 @@ export function prepareReviewDb(db) {
 }
 
 function adaptString(value, profile) {
-  if (!profile.isRegular) return value
+  if (!profile.isRegular && !profile.isPartner) return value
 
   return String(value)
     .replaceAll('2026 薯条杯学院赛', profile.eventTitle)
-    .replaceAll('薯条杯学院赛', '薯条杯常规赛')
+    .replaceAll('薯条杯学院赛', profile.isPartner ? profile.eventTitle : '薯条杯常规赛')
     .replaceAll('学院赛', profile.eventNoun)
     .replaceAll('公开预选赛阶段', profile.routeLabel)
     .replaceAll('公开预选赛', profile.routeLabel)
@@ -429,7 +441,8 @@ export function adaptReviewText(value, source) {
 
 export function adaptReviewScenes(scenes, db) {
   const profile = getReviewSeasonProfile(db)
-  const adapted = adaptValue(Array.isArray(scenes) ? scenes : [], profile)
+  const source = (Array.isArray(scenes) ? scenes : []).filter(scene => !profile.isPartner || (scene.kind !== 'organizer' && scene.eyebrow !== 'LCQ'))
+  const adapted = adaptValue(source, profile)
 
   return adapted.map(scene => ({
     ...scene,

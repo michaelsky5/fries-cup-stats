@@ -1,6 +1,7 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { lazy, Suspense, useEffect, useMemo } from 'react'
-import { useLocation, useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useNavigationType, useOutletContext, useSearchParams } from 'react-router-dom'
+import { getLocationPath, getRestoreScrollY, getSavedReturnScroll, restoreWindowScroll } from '../../lib/navigationState.js'
 import AdvanceHeader from '../../components/advance/AdvanceHeader.jsx'
 import AdvanceSignalFinal from '../../components/advance/AdvanceSignalFinal.jsx'
 import AdvanceSignalBreakthrough from '../../components/advance/AdvanceSignalBreakthrough.jsx'
@@ -76,6 +77,9 @@ function StandardAdvancePage() {
   } = useOutletContext()
   const location = useLocation()
   const activePhase = useAdvancePhase(db, season)
+  const navigationType = useNavigationType()
+  const restoreY = getRestoreScrollY(location.state) ?? (navigationType === 'POP' ? getSavedReturnScroll(getLocationPath(location)) : null)
+  useEffect(() => { if (restoreY !== null) restoreWindowScroll(restoreY) }, [location.key, restoreY])
 
   const summary = useMemo(() => getAdvanceSummary(db, season), [db, season])
   const isGroupSeason = summary.competitionFormat === 'GROUP'

@@ -17,13 +17,13 @@ export default function TeamAnalysisPlayerPeek({ report, params, updateQuery, on
     <header className={styles.playerHeader}>
       <div><span>PLAYER CHECK</span><h2 id="analysis-player-title">{en ? 'The player, in context.' : uiText("把表现，放回选手身上。", locale)}</h2></div>
       <label>{en ? 'Player' : uiText("查看成员", locale)}<select aria-label={en ? 'Overview player' : uiText("速览成员", locale)} value={member.id} onChange={event => updateQuery({ member: event.target.value, performanceMember: null, analysisView: 'brief' })}>
-        {report.members.map(player => <option value={player.id} key={player.id}>{player.name} · {roleLabel(player.role, en)}</option>)}
+        {report.members.map(player => <option value={player.id} key={player.id}>{player.name} · {roleLabel(player.role, en, locale)}</option>)}
       </select></label>
     </header>
     <div className={styles.playerBody} aria-live="polite">
       <div className={styles.playerIdentity}>
         <div className={styles.playerArt} data-missing={!hero}>{hero ? <HeroArtwork hero={hero} variant="spotlight" decorative locale={locale} /> : <MissingHeroPortrait locale={locale} />}</div>
-        <div className={styles.playerName}><span>{roleLabel(member.role, en)}</span><h3>{member.name}</h3><p>{member.maps ? (en ? `${member.maps} / ${report.records.length} maps · ${Math.round(reading.appearance * 100)}% appearance share` : uiText("{0} / {1} 图出场 · 占比 {2}%", locale, [member.maps, report.records.length, Math.round(reading.appearance * 100)])) : (en ? 'No recorded appearances in this scope.' : uiText("当前范围暂无出场记录。", locale))}</p></div>
+        <div className={styles.playerName}><span>{roleLabel(member.role, en, locale)}</span><h3>{member.name}</h3><p>{member.maps ? (en ? `${member.maps} / ${report.records.length} maps · ${Math.round(reading.appearance * 100)}% appearance share` : uiText("{0} / {1} 图出场 · 占比 {2}%", locale, [member.maps, report.records.length, Math.round(reading.appearance * 100)])) : (en ? 'No recorded appearances in this scope.' : uiText("当前范围暂无出场记录。", locale))}</p></div>
         <small className={styles.heroNote}>{hero ? (en ? 'Most recorded hero · ' : uiText("记录最多的英雄 · ", locale)) + formatOwHeroName(hero, locale) : (en ? 'No hero data' : uiText("暂无英雄数据", locale))}</small>
       </div>
       {member.maps ? <div className={styles.playerMeasures}>

@@ -86,7 +86,7 @@ function makeStaffNameEntry(value) {
   if (isObject(value) && !Array.isArray(value)) {
     const fields = expandStaffNameValue(value)
     const name = pickStaffObjectDisplay(value) || stripHashTag(pickStaffObjectFullTag(value)) || fields[0] || ''
-    return name ? [{ name, fields: uniqueNames([name, ...fields]) }] : []
+    return name ? [{ name, fields: uniqueNames([name, ...fields]), avatar: value.avatar || value.avatar_url || '' }] : []
   }
 
   return expandStaffNameValue(value).map(rawName => {
@@ -104,6 +104,8 @@ function mergeStaffEntries(entries) {
 
     const current = {
       name,
+      avatar: entry.avatar || '',
+      duties: uniqueNames(entry.duties),
       fields: uniqueNames([
         name,
         ...safeArr(entry.fields)
@@ -121,6 +123,8 @@ function mergeStaffEntries(entries) {
       name,
       ...current.fields
     ])
+    existing.duties = uniqueNames([...existing.duties, ...current.duties])
+    existing.avatar ||= current.avatar
   })
 
   return output
@@ -186,17 +190,33 @@ function collectBroadcastEntries(match, keys) {
     match?.officials
   ].filter(Boolean)
 
-  const values = roots.flatMap(root => {
+  const entries = roots.flatMap(root => {
     return keys.flatMap(key => {
-      if (root?.[key] !== undefined) return [root[key]]
+      if (root?.[key] !== undefined) {
+        const values = Array.isArray(root[key]) ? root[key] : [root[key]]
+        return values.flatMap(makeStaffNameEntry).map(entry => ({ ...entry, duties: [getCreditDuty(key)] }))
+      }
       return []
     })
   })
-
-  return mergeStaffEntries(values.flatMap(value => {
-    if (Array.isArray(value)) return value.flatMap(makeStaffNameEntry)
-    return makeStaffNameEntry(value)
+  const isCaster = keys === CASTER_BROADCAST_KEYS
+  roots.forEach(root => safeArr(root.crew).forEach(person => {
+    const duty = getCreditDuty(person.role)
+    if (!duty || (duty === 'CASTER') !== isCaster) return
+    entries.push(...makeStaffNameEntry(person).map(entry => ({ ...entry, duties: [duty] })))
   }))
+  return mergeStaffEntries(entries)
+}
+
+function getCreditDuty(value) {
+  const role = String(value || '').toUpperCase()
+  if (/CASTER|COMMENTATOR|HOST|解说|主持/.test(role)) return 'CASTER'
+  if (/VOICE_REFEREE/.test(role)) return 'VOICE_REFEREE'
+  if (/REFEREE|JUDGE|裁判/.test(role)) return 'REFEREE'
+  if (/DIRECTOR|PRODUCER|导播/.test(role)) return 'DIRECTOR'
+  if (/OBSERVER|^OB$/.test(role)) return 'OB'
+  if (/ADMIN|OPERATOR|OFFICIAL|^STAFF$|赛管/.test(role)) return 'ADMIN'
+  return ''
 }
 
 function collectBroadcastNames(match, keys) {
@@ -210,6 +230,8 @@ const ADMIN_BROADCAST_KEYS = [
   'admin_b',
   'referee',
   'referees',
+  'voice_referee',
+  'voice_referees',
   'judge',
   'judges',
   'director',
@@ -585,6 +607,8 @@ export function buildStaffIndex(db) {
         staff_name: clean,
         staff_type: type,
         aliases: [],
+        duties: new Set(),
+        avatar: '',
         matches: [],
         teams_seen: new Map(),
         stages: new Map(),
@@ -594,6 +618,8 @@ export function buildStaffIndex(db) {
 
     const row = map.get(key)
     row.aliases = uniqueNames([...safeArr(row.aliases), ...safeArr(entry?.fields), clean])
+    safeArr(entry?.duties).filter(Boolean).forEach(duty => row.duties.add(duty))
+    row.avatar ||= entry?.avatar || ''
     return row
   }
 
@@ -628,6 +654,7 @@ export function buildStaffIndex(db) {
 
   const finalize = row => ({
     ...row,
+    duties: [...row.duties],
     match_count: row.matches.length,
     teams_seen: [...row.teams_seen.entries()]
       .sort((a, b) => b[1] - a[1])

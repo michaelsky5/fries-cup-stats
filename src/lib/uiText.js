@@ -10,7 +10,7 @@ function getIndex(catalog) {
   const exact = new Map()
   const patterns = []
   for (const [source, translated] of Object.entries(catalog)) {
-    if (!/\{\d+\}/.test(source)) exact.set(whitespace(source), translated)
+    if (!/\{\d+\}/.test(source)) exact.set(whitespace(source), translated.trim())
     else if (source.replace(/\{\d+\}/g, '').trim().length >= 2) {
       const indices = [...source.matchAll(/\{(\d+)\}/g)].map(match => Number(match[1]))
       const expression = escape(whitespace(source)).replace(/\\\{\d+\\\}/g, '(.+?)')

@@ -8,6 +8,8 @@
 .root[data-variant="index"] input { min-height: 40px; padding-block: 9px; font-size: 13px; }
 .inputRow :is(input, button):focus-visible { outline: 3px solid var(--fc-data-focus); outline-offset: 2px; }
 .submit { align-self: stretch; flex-shrink: 0; width: 46px; border: 0; background: var(--fc-data-signal); color: var(--fc-data-on-signal); font-size: 23px; cursor: pointer; }
+.clear { align-self: stretch; flex: 0 0 40px; border: 0; background: transparent; color: var(--fc-data-text-muted); font-size: 22px; cursor: pointer; }
+.clear:hover { background: var(--fc-data-paper-deep); color: var(--fc-data-ink); }
 .popup { position: absolute; top: calc(100% + 5px); left: 0; right: 0; z-index: 30; border: 1px solid var(--fc-data-line-strong); border-top: 3px solid var(--fc-data-signal); background: var(--fc-data-paper-raised); box-shadow: 0 12px 28px rgb(0 0 0 / 14%); }
 .popupHeading { padding: 9px 12px; color: var(--fc-data-text-muted); font-size: 12px; border-bottom: 1px solid var(--fc-data-line); }
 .popup ul { list-style: none; padding: 0; margin: 0; }

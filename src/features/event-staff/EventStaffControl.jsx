@@ -1,6 +1,7 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { pickUiLocale } from '../../lib/uiText.js'
 import {
   fetchEventStaffContext,
   respondToEventStaffInvitation,
@@ -16,13 +17,13 @@ import styles from './EventStaffControl.module.css'
 
 const ROLE_LABELS = { REFEREE: '赛管', CASTER: '解说' }
 const STATUS_LABELS = {
-  PENDING: 'System 审核中',
+  PENDING: '审核中',
   INVITED: '待你确认',
   ACTIVE: '本届已生效',
   DECLINED: '已拒绝',
   REJECTED: '未通过',
   WITHDRAWN: '已退出',
-  REVOKED: 'System 已撤销'
+  REVOKED: '已撤销'
 }
 
 function errorText(error) {
@@ -63,10 +64,6 @@ function dateLabel(value) {
 
 function slotKey(slot) {
   return `${slot.date}__${slot.time}`
-}
-
-function openAccountCenter() {
-  window.dispatchEvent(new CustomEvent('fries-cup:open-account'))
 }
 
 function AvailabilityCard({ form, staffContext, onSaved, capabilityAccess }) {
@@ -175,30 +172,46 @@ function AvailabilityCard({ form, staffContext, onSaved, capabilityAccess }) {
   )
 }
 
-export default function EventStaffControl({ seasonId, role, onContextChange, capabilitySnapshot = null }) {
+export default function EventStaffControl(props) {
+  return <EventStaffSession key={`${props.seasonId}:${props.role}`} {...props} />
+}
+
+function EventStaffSession({ seasonId, role, onContextChange, capabilitySnapshot = null }) {
   const uiLocale = useUiLocale()
+  const text = (zh, en, ko, tw) => pickUiLocale(uiLocale, zh, en, ko, tw)
+  const roleLabel = role === 'CASTER' ? text('解说', 'caster', '해설', '解說') : text('赛管', 'official', '운영', '賽管')
   const [context, setContext] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
+  const requestSequence = useRef(0)
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
 
   const refresh = useCallback(async () => {
+    const requestId = ++requestSequence.current
     setLoading(true)
-    setError('')
+    setLoadError('')
     try {
-      setContext(await fetchEventStaffContext(seasonId))
+      const next = await fetchEventStaffContext(seasonId)
+      if (!Array.isArray(next?.participations) || next.seasonId !== seasonId) throw new Error('EVENT_STAFF_CONTEXT_INVALID')
+      if (requestId === requestSequence.current) setContext(next)
     } catch (loadError) {
-      setError(errorText(loadError))
+      if (requestId === requestSequence.current) setLoadError(errorText(loadError))
     } finally {
-      setLoading(false)
+      if (requestId === requestSequence.current) setLoading(false)
     }
   }, [seasonId])
 
-  useEffect(() => { refresh() }, [refresh])
+  useEffect(() => { refresh(); return () => { requestSequence.current += 1 } }, [refresh])
   const participation = context?.participations?.find(item => item.role === role) || null
   const relationshipAccess = resolveCapabilityAccess(capabilitySnapshot, 'staff.event.respond')
   const availabilityAccess = resolveCapabilityAccess(capabilitySnapshot, 'staff.availability.submit')
+  const blocked = loading || Boolean(loadError) || Boolean(busy)
+  const statusLabel = loading ? text('正在同步', 'Syncing', '동기화 중', '正在同步')
+    : loadError ? text('状态未同步', 'Status unavailable', '상태 확인 불가', '狀態未同步')
+      : participation ? (uiLocale === 'en-US' ? ({ PENDING: 'Under review', INVITED: 'Awaiting your response', ACTIVE: 'Active in this event', DECLINED: 'Declined', REJECTED: 'Not approved', WITHDRAWN: 'Withdrawn', REVOKED: 'Revoked' }[participation.status] || 'Status unknown') : uiText(STATUS_LABELS[participation.status] || '状态待确认', uiLocale))
+        : text('暂无本届关系', 'Not linked to this event', '대회 역할 연결 없음', '暫無本屆關係')
 
   const runAction = async (key, task, success) => {
     setBusy(key)
@@ -218,16 +231,18 @@ export default function EventStaffControl({ seasonId, role, onContextChange, cap
 
   return (
     <div className={styles.control}>
-      <section className={styles.relationshipCard} data-status={participation?.status || 'NONE'}>
-        <header><div><span>EVENT STAFF RELATION</span><h2>{uiText("本届", uiLocale)}{ROLE_LABELS[role]}{uiText("关系", uiLocale)}</h2></div><em>{loading ? uiText("同步中", uiLocale) : STATUS_LABELS[participation?.status] || uiText("尚未申请", uiLocale)}</em></header>
-        {participation ? <div className={styles.relationshipBody}><dl><div><dt>{uiText("来源", uiLocale)}</dt><dd>{participation.source === 'SYSTEM_INVITE' ? uiText("赛事方邀请", uiLocale) : uiText("本人申请", uiLocale)}</dd></div><div><dt>BattleTag</dt><dd>{participation.battleTag || uiText("待补充", uiLocale)}</dd></div><div><dt>{uiText("提交时间", uiLocale)}</dt><dd>{new Date(participation.createdAt).toLocaleString('zh-CN', { hour12: false })}</dd></div></dl>{participation.applicationNote ? <p>{participation.applicationNote}</p> : null}{participation.reviewNote ? <p>{participation.reviewNote}</p> : null}</div> : <p>{uiText("长期身份与本届关系分开确认。请在账号中心选择“", uiLocale)}{ROLE_LABELS[role]}{uiText("”提交本届申请。", uiLocale)}</p>}
+      <section className={styles.relationshipCard} data-event-staff-relation data-status={loading ? 'LOADING' : loadError ? 'ERROR' : participation?.status || 'NONE'} aria-busy={loading}>
+        <header><div><span>EVENT STAFF / {seasonId}</span><h2>{uiLocale === 'en-US' ? `Your ${roleLabel} role` : text('本届', 'Event', '이번 대회 ', '本屆') + roleLabel + text('身份', ' role', ' 역할', '身份')}</h2></div><em role="status">{statusLabel}</em></header>
+        {participation ? <div className={styles.relationshipBody}><dl><div><dt>{uiText("来源", uiLocale)}</dt><dd>{participation.source === 'SYSTEM_INVITE' ? text('赛事负责人邀请', 'Organizer invitation', '대회 담당자 초대', '賽事負責人邀請') : participation.source === 'SELF_APPLICATION' ? uiText("本人申请", uiLocale) : '—'}</dd></div><div><dt>BattleTag</dt><dd>{participation.battleTag || uiText("待补充", uiLocale)}</dd></div><div><dt>{uiText("提交时间", uiLocale)}</dt><dd>{participation.createdAt && Number.isFinite(Date.parse(participation.createdAt)) ? new Date(participation.createdAt).toLocaleString(uiLocale, { hour12: false }) : '—'}</dd></div></dl>{participation.applicationNote ? <p>{participation.applicationNote}</p> : null}{participation.reviewNote ? <p>{participation.reviewNote}</p> : null}</div> : !loading && !loadError ? <p>{text('本届身份由赛事负责人邀请关联。请联系负责人确认邀请，并使用受邀账号登录；收到邀请后，可在这里确认。', 'The organizer links your role by invitation. Confirm the invitation with them and sign in with the invited account; you can respond here when it arrives.', '대회 담당자의 초대로 역할을 연결합니다. 초대받은 계정으로 로그인하면 여기에서 확인할 수 있습니다.', '本屆身份由賽事負責人邀請關聯。請聯繫負責人確認邀請，並使用受邀帳號登入；收到邀請後，可在這裡確認。')}</p> : null}
         {participation && ['INVITED', 'ACTIVE'].includes(participation.status) && !relationshipAccess.allowed ? <p className={styles.capabilityBlock}>{capabilityBlockText(relationshipAccess)}</p> : null}
-        {participation?.status === 'INVITED' ? <div className={styles.actions}><button type="button" title={capabilityBlockText(relationshipAccess)} disabled={!relationshipAccess.allowed || Boolean(busy)} onClick={() => runAction('accept', () => respondToEventStaffInvitation(participation.id, 'accept'), `已接受本届${ROLE_LABELS[role]}邀请。`)}>{uiText("接受邀请", uiLocale)}</button><button type="button" title={capabilityBlockText(relationshipAccess)} disabled={!relationshipAccess.allowed || Boolean(busy)} onClick={() => runAction('reject', () => respondToEventStaffInvitation(participation.id, 'reject'), '已拒绝邀请。')}>{uiText("拒绝", uiLocale)}</button></div> : null}
-        {participation?.status === 'ACTIVE' ? <div className={styles.actions}><button type="button" className={styles.secondaryAction} title={capabilityBlockText(relationshipAccess)} disabled={!relationshipAccess.allowed || Boolean(busy)} onClick={() => runAction('withdraw', () => withdrawEventStaffParticipation(participation.id, '本人退出本届工作人员关系'), `已退出本届${ROLE_LABELS[role]}关系。`)}>{uiText("退出本届", uiLocale)}</button></div> : null}
-        {!participation || ['DECLINED', 'REJECTED', 'WITHDRAWN', 'REVOKED'].includes(participation.status) ? <button type="button" className={styles.primaryAction} onClick={openAccountCenter}>{uiText("前往账号中心申请", uiLocale)}</button> : null}
+        {participation?.status === 'INVITED' ? <div className={styles.actions}><button type="button" title={capabilityBlockText(relationshipAccess)} disabled={!relationshipAccess.allowed || blocked} onClick={() => runAction('accept', () => respondToEventStaffInvitation(participation.id, 'accept'), text('已接受本届邀请。', 'Invitation accepted.', '초대를 수락했습니다.', '已接受本屆邀請。'))}>{uiText("接受邀请", uiLocale)}</button><button type="button" title={capabilityBlockText(relationshipAccess)} disabled={!relationshipAccess.allowed || blocked} onClick={() => runAction('reject', () => respondToEventStaffInvitation(participation.id, 'reject'), text('已拒绝邀请。', 'Invitation declined.', '초대를 거절했습니다.', '已拒絕邀請。'))}>{text("拒绝邀请", "Decline invitation", "초대 거절", "拒絕邀請")}</button></div> : null}
+        {participation?.status === 'ACTIVE' ? <div className={styles.actions}><button type="button" className={styles.secondaryAction} title={capabilityBlockText(relationshipAccess)} disabled={!relationshipAccess.allowed || blocked} onClick={() => runAction('withdraw', () => withdrawEventStaffParticipation(participation.id, '本人退出本届工作人员关系'), text('已退出本届身份。', 'You have left this event role.', '대회 역할에서 탈퇴했습니다.', '已退出本屆身份。'))}>{text("退出本届", "Leave this event role", "대회 역할 탈퇴", "退出本屆")}</button></div> : null}
+        {!loading && !loadError && ['DECLINED', 'REJECTED', 'WITHDRAWN', 'REVOKED'].includes(participation?.status) ? <p>{text('需要重新参与本届工作，请联系赛事负责人确认安排。', 'Contact the organizer if you need to rejoin this event’s staff.', '다시 참여하려면 대회 담당자에게 문의하세요.', '需要重新參與本屆工作，請聯繫賽事負責人確認安排。')}</p> : null}
+        {loadError ? <p className={styles.error} role="alert">{context ? text('本次刷新未成功。下方保留上次记录，重新同步后才能操作。', 'Refresh failed. Previous records remain visible; sync again before taking action.', '새로고침에 실패했습니다. 이전 기록을 표시하며 다시 동기화한 후 작업할 수 있습니다.', '本次刷新未成功。下方保留上次記錄，重新同步後才能操作。') : text('暂时无法确认本届身份，请重新同步。', 'Your event role could not be checked. Please retry.', '대회 역할을 확인할 수 없습니다. 다시 시도하세요.', '暫時無法確認本屆身份，請重新同步。')}</p> : null}
+        <button type="button" className={styles.refreshAction} disabled={loading || Boolean(busy)} onClick={refresh}>{loading ? text('正在同步…', 'Syncing…', '동기화 중…', '正在同步…') : text('重新同步身份', 'Refresh event role', '역할 다시 동기화', '重新同步身份')} <span aria-hidden="true">↻</span></button>
         {error ? <p className={styles.error}>{error}</p> : null}{notice ? <p className={styles.notice}>{notice}</p> : null}
       </section>
-      {participation?.status === 'ACTIVE' ? <section className={styles.formsSection}><header><div><span>MY AVAILABILITY</span><h2>{uiText("本届档期", uiLocale)}</h2><p>{uiText("只填写你确定可以工作的时段；正式排班发布后会出现在上方任务列表。", uiLocale)}</p></div><em>{context?.forms?.filter(form => form.status === 'OPEN').length || 0} OPEN</em></header>{context?.forms?.length ? context.forms.map(form => <AvailabilityCard key={form.id} form={form} staffContext={context} capabilityAccess={availabilityAccess} onSaved={refresh} />) : <div className={styles.empty}>{uiText("当前没有开放的档期表。", uiLocale)}</div>}</section> : null}
+      {participation?.status === 'ACTIVE' ? <section className={styles.formsSection}><header><div><span>MY AVAILABILITY</span><h2>{uiText("本届档期", uiLocale)}</h2><p>{uiText("只填写你确定可以工作的时段；正式排班发布后会出现在上方任务列表。", uiLocale)}</p></div><em>{context?.forms?.filter(form => form.status === 'OPEN').length || 0} OPEN</em></header>{context?.forms?.length ? context.forms.map(form => <AvailabilityCard key={form.id} form={form} staffContext={context} capabilityAccess={blocked ? { ...availabilityAccess, allowed: false } : availabilityAccess} onSaved={refresh} />) : <div className={styles.empty}>{uiText("当前没有开放的档期表。", uiLocale)}</div>}</section> : null}
     </div>
   )
 }

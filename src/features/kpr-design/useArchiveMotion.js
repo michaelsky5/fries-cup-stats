@@ -71,8 +71,14 @@ export default function useArchiveMotion(rootRef, chapterIdsKey, reducedMotion) 
     }
   }, [chapterIdsKey, reducedMotion, rootRef])
 
-  const scrollToChapter = useCallback(id => {
-    document.getElementById(id)?.scrollIntoView({
+  const scrollToChapter = useCallback((id, { focus = false } = {}) => {
+    const section = document.getElementById(id)
+    if (focus && section) {
+      const heading = section.querySelector('h1, h2') || section
+      heading.setAttribute('tabindex', '-1')
+      heading.focus({ preventScroll: true })
+    }
+    section?.scrollIntoView({
       behavior: reducedMotion ? 'auto' : 'smooth',
       block: 'start'
     })

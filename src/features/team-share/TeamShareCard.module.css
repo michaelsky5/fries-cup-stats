@@ -336,12 +336,15 @@
 
 .standingBlock > strong {
   margin-top: 7px;
-  overflow: hidden;
   font-size: 56px;
   font-weight: 950;
-  line-height: 0.9;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.card:lang(en) .standingBlock > strong,
+.card:lang(ko) .standingBlock > strong {
+  font-size: 42px;
 }
 
 .standingBlock > em {

@@ -1,4 +1,17 @@
 // Reading actions preserve the match, event, filters and map disclosure state.
+export function getCompactMapSelection(maps, requestedOrder) {
+  const index = maps.findIndex(map => map.order === Number(requestedOrder))
+  const selectedIndex = index >= 0 ? index : 0
+  return { map: maps[selectedIndex], previous: maps[selectedIndex - 1], next: maps[selectedIndex + 1] }
+}
+
+export function getMatchStatsViewSearch(search, full) {
+  const next = new URLSearchParams(search)
+  if (full) next.set('mapStats', 'full')
+  else next.delete('mapStats')
+  return next
+}
+
 export function getMatchAnalysisSearch(search, { findPlayer = false } = {}) {
   const next = new URLSearchParams(search)
   next.set('analysis', '1')

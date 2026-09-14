@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { reviewText } from '../../lib/reviewLocale.js'
+import { localizeUiCopy } from '../../lib/uiText.js'
 import styles from './ReviewArchiveSearch.module.css'
 
 const COPY = {
@@ -73,7 +74,16 @@ export default function ReviewArchiveSearch({
   searchPanelRef, searchInputRef, onIdentityChange, onQueryChange, onClear,
   onSearchKeyDown, onActiveResultChange, reviewPath, returnState, getIdentityTitle
 }) {
-  const copy = COPY[locale] || COPY['zh-CN']
+  const copy = { ...(COPY[locale] || localizeUiCopy(COPY['zh-CN'], locale)) }
+  if (profile.isPartner) {
+    copy.eventBody = locale === 'en-US' ? 'From the group stage to the title run, revisit the matches and people of Hammer Cup S4.'
+      : locale === 'ko-KR' ? '조별 리그부터 우승의 길까지, 해머 컵 S4의 경기와 사람들을 다시 만나보세요.'
+        : locale === 'zh-TW' ? '從小組賽到冠軍之路，重溫全高杯 S4 的比賽與參與其中的人。'
+          : '从小组赛到冠军之路，重温全高杯 S4 的比赛与参与其中的人。'
+    copy.route = locale === 'en-US' ? 'Group stage → Single-elimination playoffs'
+      : locale === 'ko-KR' ? '조별 리그 → 싱글 엘리미네이션 플레이오프'
+        : locale === 'zh-TW' ? '小組賽 → 單敗淘汰賽' : '小组赛 → 单败淘汰赛'
+  }
   const filters = [{ id: 'all', shortTitle: copy.all }, ...identities.filter(item => item.id !== 'viewer')]
   const hasResultsContext = Boolean(query.trim()) || identity !== 'all'
 

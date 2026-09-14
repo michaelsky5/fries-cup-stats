@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { LOCALES, LOCALE_STORAGE_KEY, LEGACY_REVIEW_LOCALE_STORAGE_KEY, normalizeLocale, getLocaleParam, withLocale, getStoredLocale, setStoredLocale, getActiveLocale } from '../src/lib/locales.js'
-import { ensureUiLocale, getUiCatalog } from '../src/lib/localeCatalog.js'
+import { ensureUiLocale, getUiCatalog, ensureTraditionalReview } from '../src/lib/localeCatalog.js'
 import { translateUiText } from '../src/lib/uiText.js'
 import { createPublicTextTranslator } from '../src/lib/publicText.js'
 import { translateLegacyValue } from '../src/lib/legacyTranslationState.js'
@@ -11,6 +11,11 @@ import { OW_HEROES, OW_MAPS, formatOwHeroName, formatOwMapName, formatOwMapMode,
 import { getPublicDataStatus } from '../src/lib/publicDataStatus.js'
 import { formatMatchSchedule } from '../src/lib/scheduleFormat.js'
 import { buildReviewSceneUrl, buildReviewEntryPath } from '../src/lib/reviewNavigation.js'
+import { getNavigationSearch } from '../src/components/layout/publicNavigation.js'
+import { buildCinemaReviewScenes } from '../src/lib/reviewCinema.js'
+import { getPosterPayload } from '../src/lib/reviewPoster.js'
+import { REVIEW_SOURCE_SCENE } from '../src/lib/reviewSource.js'
+import { getReviewIdentities } from '../src/lib/reviewLocale.js'
 
 assert.deepEqual(LOCALES.map(item => item.id), ['zh-CN', 'zh-TW', 'ko-KR', 'en-US'])
 for (const value of ['zh-TW', 'ZH_tw', 'zh-Hant', 'zh-Hant-TW', 'zh-HK']) assert.equal(normalizeLocale(value), 'zh-TW')
@@ -40,6 +45,9 @@ try {
 assert.equal(getUiCatalog('zh-CN'), undefined, 'Simplified Chinese needs no extra dictionary')
 await Promise.all(LOCALES.map(item => ensureUiLocale(item.id)))
 await Promise.all([ensureUiLocale('ko'), ensureUiLocale('zh-TW'), ensureUiLocale('en')])
+assert.equal(translateUiText('赛管', 'zh-TW'), '賽管')
+assert.equal(translateUiText('我是赛管', 'zh-TW'), '我是賽管')
+assert.ok(translateUiText('{0} 人 · 等待周赛管理员锁定。', 'zh-TW', [3]).includes('周賽管理員'))
 const catalog = JSON.parse(readFileSync(new URL('../src/locales/ui.json', import.meta.url), 'utf8'))
 const placeholders = value => [...value.matchAll(/\{\d+\}/g)].map(match => match[0]).sort()
 let checkedMessages = 0
@@ -52,6 +60,10 @@ for (const [source, translations] of Object.entries(catalog)) {
 }
 
 for (const { id: locale } of LOCALES) {
+  const navigation = new URLSearchParams(getNavigationSearch('season=FCR26&team=爱将', 'original', locale))
+  assert.equal(navigation.get('lang'), getLocaleParam(locale), 'Navigation must include a saved language even when entry URL omitted it')
+  assert.equal(navigation.get('team'), '爱将')
+  assert.equal(navigation.get('design'), 'original')
   const link = new URL(withLocale('/matches?season=QGCS4&stage=GROUP&team=爱将#round-2', locale), 'https://test.invalid')
   assert.equal(link.searchParams.get('lang'), getLocaleParam(locale))
   assert.equal(link.searchParams.get('team'), '爱将')
@@ -101,6 +113,11 @@ const translateLoadedPlayer = createPublicTextTranslator({ players: [{ name: '�
 assert.equal(translateLegacyValue('石头', legacy, 'en-US', translateLoadedPlayer).rendered, '石头', 'Newly loaded data must replace a translated placeholder')
 
 const record = { id: 'player-1', title: '石头 的赛季回顾', playerName: '石头', teamName: '爱将', body: '石头 为爱将出场 0 场比赛。', image: '/assets/石头.png', heroName: '天使', mapName: '艾兴瓦尔德', playerCards: [{ title: '小鸟', value: 0 }] }
+await ensureTraditionalReview()
+assert.equal(getReviewIdentities('zh-TW').find(item => item.id === 'admin').title, '我是賽管')
+const namedStaff = localizeTraditionalReview({ staffName: '賽務', body: '賽務 的赛管记录' })
+assert.equal(namedStaff.staffName, '賽務', 'Role copy changes must not rename a public identity')
+assert.ok(namedStaff.body.includes('賽務') && namedStaff.body.includes('賽管'))
 const traditional = localizeTraditionalReview(record)
 assert.equal(traditional.playerName, '石头')
 assert.equal(traditional.teamName, '爱将')
@@ -112,6 +129,12 @@ assert.equal(traditional.mapName, '愛西瓦德')
 assert.ok(traditional.title.includes('石头') && traditional.title.includes('回顧'))
 assert.ok(traditional.body.includes('石头') && traditional.body.includes('爱将') && traditional.body.includes('0'))
 assert.equal(record.title, '石头 的赛季回顾', 'Localization must not mutate the source')
+const sourceCover = { kind: 'cover', cardKind: 'tournament', title: '赛事回顾', viewerId: '' }
+const namedCover = { ...sourceCover, title: '賽事回顧', viewerId: '石头#12345', [REVIEW_SOURCE_SCENE]: sourceCover }
+assert.equal(getPosterPayload([namedCover]).scenes[0].viewerId, '石头#12345', 'The viewer name entered after localization must reach the poster')
+const cinema = buildCinemaReviewScenes([sourceCover, {kind:'narrative', title:'公开预选赛'}, {kind:'narrative',title:'季後淘汰賽',[REVIEW_SOURCE_SCENE]:{kind:'narrative',title:'季后淘汰赛'}}], {isRegular:true,locale:'zh-TW'})
+assert.deepEqual(cinema.filter(scene=>scene.kind==='act').map(scene=>scene.title), ['公開預選賽','季後淘汰賽'])
+assert.ok(localizeTraditionalReview({ title: '最常被记录的地图\n皇家赛道', body: '这是一段关于常规赛的记忆。' }).title.includes('皇家賽道'))
 
 const painted = []
 const measured = []

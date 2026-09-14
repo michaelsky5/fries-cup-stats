@@ -1,6 +1,7 @@
 import { translateUiText as formatUiText } from '../../lib/uiText.js'
 import { DEFAULT_PUBLIC_DESIGN } from '../../features/fd-design/designPreview.js'
 import { translateUiText } from '../../lib/uiText.js'
+import { getLocaleParam } from '../../lib/locales.js'
 
 export const PRIMARY_NAV = [
   { to: '/', cn: '赛事总览', en: 'OVERVIEW', ko: '대회 개요', end: true, group: 'overview' },
@@ -23,8 +24,9 @@ export function getPrimaryNavigation(isAuthenticated = false) {
 
 // Ordinary public links use the build default without adding preview parameters.
 // Explicit versions and pages that override that default retain their context.
-export function getNavigationSearch(search = '', design = '') {
+export function getNavigationSearch(search = '', design = '', locale) {
   const params = new URLSearchParams(search)
+  if (locale) params.set('lang', getLocaleParam(locale))
   if (design && (design !== DEFAULT_PUBLIC_DESIGN || params.has('design'))) params.set('design', design)
   return params.toString()
 }

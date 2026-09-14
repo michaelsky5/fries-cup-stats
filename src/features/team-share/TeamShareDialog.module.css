@@ -13,7 +13,7 @@
   width: min(1480px, calc(100vw - 48px));
   height: min(840px, calc(100dvh - 48px));
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
   overflow: hidden;
   border: 2px solid #2a2a2a;
   background: #f1ebdf;
@@ -78,6 +78,18 @@
   z-index: 2;
   background: #fffaf0;
 }
+.header { grid-row: 1; }
+.toolArea { grid-row: 2; }
+.toolArea[hidden] { display: none; }
+.previewTools { grid-row: 3; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 6px 32px; background: var(--fc-data-paper, #f1ebdf); }
+.previewTools > span { color: #66685f; font-size: 12px; }
+.previewTools button { min-height: 44px; padding: 8px 0; border: 0; border-radius: 0; color: #2a2a2a; background: transparent; font: 700 13px var(--fc-data-font-interface); cursor: pointer; }
+.previewTools button:disabled { opacity: .5; cursor: default; }
+.previewTools button > span { margin-left: 8px; }
+.previewArea { grid-row: 4; }
+.footer { grid-row: 5; }
+.previewArea[data-zoomed] { display: block; place-items: start; overflow: auto; overscroll-behavior: contain; }
+.previewArea:focus-visible { outline: 3px solid #806000; outline-offset: -3px; }
 
 .controlActions {
   display: flex;
@@ -121,6 +133,10 @@
 
 .exportButton {
   background: #f4c320;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .editorButton,
@@ -288,8 +304,10 @@
 .footer {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   min-height: 48px;
-  padding: 0 32px;
+  padding: 12px 32px;
   border-top: 2px solid #2a2a2a;
   background: #fff;
 }
@@ -361,7 +379,10 @@
   }
 
 }
+.footer > :is(button, a) { flex-shrink: 0; min-height: 44px; }
+.dialog button { border-radius: 0; }
 
+.dialog a:focus-visible,
 .dialog button:focus-visible,
 .dialog select:focus-visible { outline: 3px solid #806000; outline-offset: 2px; }
 .header button:focus-visible { outline-color: #f4c320; }
@@ -376,9 +397,13 @@
   .controls { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px; }
   .metaPills span { min-height: 26px; border: 0; padding: 0; font-size: 12px; }
   .metaPills { gap: 16px; }
-  .controlActions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .controlActions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
   .controlActions button { min-width: 0; min-height: 44px; padding: 0 4px; font-size: 13px; }
   .previewArea { padding: 12px; height: calc((100vw - 56px) * .5625 + 24px); box-sizing: border-box; }
+  .previewTools { padding: 4px 12px; }
+  .previewTools > span, .previewTools button { font-size: 12px; }
+  .dialog[data-expanded] { height: calc(100dvh - 24px); }
+  .previewArea[data-zoomed] { height: auto; }
   .toolArea { max-height: 48dvh; overflow-y: auto; }
   .heroEditor { max-height: 210px; padding: 12px; overflow-y: auto; }
   .heroEditor > header { flex-wrap: wrap; gap: 8px; }
@@ -386,7 +411,8 @@
   .heroEditorGrid select { width: 130px; height: 40px; font-size: 13px; }
   .heroEditorGrid label b { font-size: 13px; }
   .heroEditorGrid label > span em { display: block; font-size: 11px; color: #66685f; }
-  .footer { min-height: 44px; padding: 10px 12px; }
+  .footer { min-height: 44px; padding: 12px; flex-wrap: wrap; gap: 10px; }
+  .footer > :is(button, a) { width: 100%; }
   .footer span { font-size: 12px; line-height: 1.5; }
   .emptyState { min-width: 0; width: 100%; font-size: 14px; }
 }

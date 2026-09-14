@@ -1,7 +1,8 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
-import { buildReviewEntryPath, buildReviewPath } from '../../lib/reviewNavigation.js'
+import { Link, useLocation, useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
+import { buildReviewEntryPath, buildReviewPath, getReviewOverviewReturnState } from '../../lib/reviewNavigation.js'
+import { getRestoreScrollState } from '../../lib/navigationState.js'
 import { getReviewSearchResults, getUnifiedReviewSearchResults } from '../../lib/reviewSearch.js'
 import {
   REVIEW_LOCALES,
@@ -45,7 +46,7 @@ function getResultIdentityTitle(item, identities, locale) {
   if (isGenericTeamReview) {
     if (locale === 'en-US') return 'Team'
     if (locale === 'ko-KR') return '팀'
-    return '队伍'
+    return uiText('队伍', locale)
   }
 
   return identities.find(entry => entry.id === item?.identity)?.shortTitle || item?.identity
@@ -67,7 +68,7 @@ function ViewerArchiveCard({ profile, locale, to, returnState }) {
       <div className={styles.viewerCardMain}>
         <h2>{isEn ? `Open the ${profile.eventTitle} witness review` : isKo ? `${profile.eventTitle} 목격자 리뷰 열기` : uiText("打开 {0}见证回顾", locale, [profile.eventTitle])}</h2>
         <p>
-          {isEn
+          {profile.isPartner ? (isEn ? 'From the group stage to the single-elimination playoffs, revisit the matches and people of Hammer Cup S4.' : isKo ? '조별 리그부터 싱글 엘리미네이션 플레이오프까지, 해머 컵 S4의 경기와 사람들을 다시 만나보세요.' : uiText('从小组赛到单败淘汰赛，重看全高杯 S4 的比赛与参与其中的人。', locale)) : isEn
             ? 'From the Swiss Round and LCQ to the playoffs and the champion road, look back at the event the players, teams, casters, staff, and every viewer completed together.'
             : isKo
               ? '스위스 라운드와 최종 선발전부터 플레이오프와 우승의 길까지, 선수와 팀, 중계진, 스태프, 그리고 모든 관람객이 함께 완성한 대회를 돌아봅니다.'
@@ -78,7 +79,7 @@ function ViewerArchiveCard({ profile, locale, to, returnState }) {
       <div className={styles.viewerCardGrid}>
         <div>
           <strong>{profile.routeLabel}</strong>
-          <span>{isEn ? 'Swiss Round / LCQ' : isKo ? '스위스 라운드 / 최종 선발전' : uiText("瑞士轮 / 突围赛", locale)}</span>
+          <span>{profile.isPartner ? (isEn ? 'Four groups / eight playoff spots' : isKo ? '4개 조 / 플레이오프 8자리' : uiText('四个小组 / 八个晋级席位', locale)) : isEn ? 'Swiss Round / LCQ' : isKo ? '스위스 라운드 / 최종 선발전' : uiText("瑞士轮 / 突围赛", locale)}</span>
         </div>
         <div>
           <strong>{isEn ? 'Playoffs' : isKo ? '플레이오프' : uiText("季后淘汰赛", locale)}</strong>
@@ -101,6 +102,7 @@ function ViewerArchiveCard({ profile, locale, to, returnState }) {
 export default function ReviewEntryPage() {
   const outlet = useOutletContext()
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
   const db = useMemo(() => prepareReviewDb(outlet?.db), [outlet?.db])
   const requestedLocale = searchParams.get('lang')
@@ -113,7 +115,7 @@ export default function ReviewEntryPage() {
     () => getLocalizedReviewSeasonProfile(outlet?.season?.id || outlet?.seasonId || db, locale),
     [outlet?.season?.id, outlet?.seasonId, db, locale]
   )
-  const isCinemaReview = profile.isRegular
+  const isCinemaReview = profile.usesRegularTemplate
   const cinemaCopy = useMemo(() => getCinemaEntryCopy(locale), [locale])
   const requestedIdentity = searchParams.get('identity')
   const allowedIdentities = isCinemaReview
@@ -130,16 +132,23 @@ export default function ReviewEntryPage() {
     [locale, profile.id, searchParams, query, identity]
   )
   const [activeResultIndex, setActiveResultIndex] = useState(-1)
+  const overviewReturn = getReviewOverviewReturnState(location.state, profile.id, locale, searchParams.toString())
+  const storyReturnState = {
+    returnTo: reviewEntryPath,
+    parentReturnTo: overviewReturn.returnTo,
+    ...(overviewReturn.returnScrollY === undefined ? {} : { parentReturnScrollY: overviewReturn.returnScrollY })
+  }
   const searchPanelRef = useRef(null)
   const searchInputRef = useRef(null)
 
   useEffect(() => {
     setStoredReviewLocale(locale)
+    if (!reviewAvailable) return
     const cleanSearch = reviewEntryPath.split('?')[1] || ''
     if (searchParams.toString() === cleanSearch) return
     const next = new URLSearchParams(cleanSearch)
-    setSearchParams(next, { replace: true })
-  }, [locale, reviewEntryPath, searchParams, setSearchParams])
+    setSearchParams(next, { replace: true, state: location.state })
+  }, [locale, reviewAvailable, reviewEntryPath, searchParams, setSearchParams, location.state])
 
   const identities = useMemo(() => getReviewIdentities(locale, profile.eventNoun), [locale, profile.eventNoun])
   const selected = identities.find(item => item.id === identity)
@@ -180,17 +189,20 @@ export default function ReviewEntryPage() {
     const normalized = normalizeReviewLocale(nextLocale)
     const nextPath = buildReviewEntryPath(profile.id, normalized, searchParams.toString(), { query, identity })
     const next = new URLSearchParams(nextPath.split('?')[1] || '')
-    setSearchParams(next, { replace: true })
+    setSearchParams(next, { replace: true, state: location.state })
   }
 
   if (!reviewAvailable) {
     return (
       <div className={styles.shell} data-i18n-ignore>
-        <section className={styles.searchPanel}>
-          <div className={styles.empty}>
+        <section className={styles.unavailable}>
+          <div>
             <div className={styles.emptyMark}>{seasonLabel}</div>
-            <strong>{reviewText(locale, 'noReview')}</strong>
+            <h1>{reviewText(locale, 'noReview')}</h1>
             <p>{reviewText(locale, 'noReviewBody')}</p>
+            <Link to={outlet.withSeason('/')}>
+              {locale === 'en-US' ? 'Back to this event' : locale === 'ko-KR' ? '대회 개요로 돌아가기' : uiText('返回本届赛事', locale)} <span aria-hidden="true">↗</span>
+            </Link>
           </div>
         </section>
       </div>
@@ -218,7 +230,7 @@ export default function ReviewEntryPage() {
 
   function updateSearch(nextQuery, nextIdentity = identity) {
     const nextPath = buildReviewEntryPath(profile.id, locale, searchParams.toString(), { query: nextQuery, identity: nextIdentity })
-    setSearchParams(new URLSearchParams(nextPath.split('?')[1]), { replace: true, preventScrollReset: true })
+    setSearchParams(new URLSearchParams(nextPath.split('?')[1]), { replace: true, preventScrollReset: true, state: location.state })
     setActiveResultIndex(-1)
   }
 
@@ -260,12 +272,15 @@ export default function ReviewEntryPage() {
     if (event.key === 'Enter') {
       event.preventDefault()
       const result = visibleResults[activeResultIndex >= 0 ? activeResultIndex : 0]
-      if (result?.to) navigate(reviewPath(result.to), { state: { returnTo: reviewEntryPath } })
+      if (result?.to) navigate(reviewPath(result.to), { state: storyReturnState })
     }
   }
 
   return (
     <div className={`${styles.shell} ${isCinemaReview ? styles.cinemaShell : ''}`} data-i18n-ignore>
+      <Link className={styles.overviewReturn} to={overviewReturn.returnTo} state={getRestoreScrollState(overviewReturn.returnScrollY)}>
+        <span aria-hidden="true">←</span> {locale === 'en-US' ? 'Back to overview' : locale === 'ko-KR' ? '대회 개요로 돌아가기' : uiText('返回赛事总览', locale)}
+      </Link>
       <section className={styles.hero}>
         <div className={styles.heroBgText}>REVIEW</div>
         {isCinemaReview ? <div className={styles.projectorLens} aria-hidden="true" /> : null}
@@ -277,9 +292,9 @@ export default function ReviewEntryPage() {
         </div>
 
         <div className={styles.heroTopline}>
-          <div className={styles.kicker}>{isCinemaReview ? 'FCR26 / NOW SHOWING' : 'FCA26 / MEMORY SIGNAL'}</div>
+          <div className={styles.kicker}>{profile.shortMark} / {isCinemaReview ? 'NOW SHOWING' : 'MEMORY SIGNAL'}</div>
           <div className={styles.heroToplineActions}>
-            <div className={styles.reviewLocaleSwitch} aria-label="Review language">
+            <div className={styles.reviewLocaleSwitch} aria-label={uiText('回顾语言', locale)}>
               {REVIEW_LOCALES.map(item => (
                 <button
                   key={item.id}
@@ -381,7 +396,7 @@ export default function ReviewEntryPage() {
           onSearchKeyDown={handleSearchKeyDown}
           onActiveResultChange={setActiveResultIndex}
           reviewPath={reviewPath}
-          returnState={{ returnTo: reviewEntryPath }}
+          returnState={storyReturnState}
           getIdentityTitle={item => getResultIdentityTitle(item, identities, locale)}
         />
       ) : (
@@ -401,7 +416,7 @@ export default function ReviewEntryPage() {
         </div>
 
         {isViewer ? (
-          <ViewerArchiveCard profile={profile} locale={locale} to={reviewPath('/review/story/tournament')} returnState={{ returnTo: reviewEntryPath }} />
+          <ViewerArchiveCard profile={profile} locale={locale} to={reviewPath('/review/story/tournament')} returnState={storyReturnState} />
         ) : (
           <>
             <div className={styles.searchBox}>
@@ -460,7 +475,7 @@ export default function ReviewEntryPage() {
                     id={`review-search-result-${index}`}
                     key={item.id}
                     to={reviewPath(item.to)}
-                    state={{ returnTo: reviewEntryPath }}
+                    state={storyReturnState}
                     className={`${styles.resultItem} ${activeResultIndex === index ? styles.resultItemActive : ''}`}
                     onMouseEnter={() => setActiveResultIndex(index)}
                     onFocus={() => setActiveResultIndex(index)}

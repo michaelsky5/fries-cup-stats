@@ -12,7 +12,7 @@ import { PlayerHeroCollection, PlayerRolePortfolio, PlayerSeasonJourney } from '
 import pages from './SignalPlayerPages.module.css'
 
 const text = (en, zh, english) => en ? english : zh
-const roleLabel = (role, en) => en ? getRoleEnLabel(role) : getRoleLabel(role)
+const roleLabel = (role, en, labelLocale = 'zh-CN') => uiText(en ? getRoleEnLabel(role) : getRoleLabel(role), labelLocale)
 
 export default function SignalPlayerProfile({ dossier, appearances, season, seasonId, locale, linkProps, analysisLink, onFavorite, favorited, favoriteDisabled, onShare }) {
   const en = locale === 'en-US'
@@ -67,6 +67,6 @@ export default function SignalPlayerProfile({ dossier, appearances, season, seas
     <PlayerSeasonJourney journey={journey} en={en} seasonId={seasonId} linkProps={linkProps} phaseKey={params.get('pstage')} onPhaseChange={phase => change({ pstage: phase })} />
     <PlayerHeroCollection heroes={heroes} en={en} locale={locale} analysisLink={analysisLink} selectedRole={params.get('crole')} onRoleChange={role => change({ crole: role })} />
 
-    <footer className={pages.profileFooter}><div><span>{text(en, uiText("所属战队", locale), 'Team')}</span><Link {...linkProps(`/teams/${encodeURIComponent(identity.teamRouteId)}`)}>{identity.teamShort} ↗</Link></div><div><span>{text(en, journey.roles.length ? uiText("本季出场职责", locale) : uiText("登记职责", locale), journey.roles.length ? 'Roles played this season' : 'Registered roles')}</span><strong>{(journey.roles.length ? journey.roles : dossier.roles).map(role => roleLabel(role, en)).join(' / ')}</strong></div><Link {...analysisLink()}>{text(en, uiText("完整数据与比赛记录", locale), 'Statistics and match records')} ↗</Link></footer>
+    <footer className={pages.profileFooter}><div><span>{text(en, uiText("所属战队", locale), 'Team')}</span><Link {...linkProps(`/teams/${encodeURIComponent(identity.teamRouteId)}`)}>{identity.teamShort} ↗</Link></div><div><span>{text(en, journey.roles.length ? uiText("本季出场职责", locale) : uiText("登记职责", locale), journey.roles.length ? 'Roles played this season' : 'Registered roles')}</span><strong>{(journey.roles.length ? journey.roles : dossier.roles).map(role => roleLabel(role, en, locale)).join(' / ')}</strong></div><Link {...analysisLink()}>{text(en, uiText("完整数据与比赛记录", locale), 'Statistics and match records')} ↗</Link></footer>
   </section>
 }

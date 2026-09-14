@@ -1,5 +1,7 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
-import { Link } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
+import Link from './AdvanceRecordLink.jsx'
+import { updateAdvanceReadingSearch } from './advanceReadingState.js'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import { formatShortDateTime, teamShort } from '../../lib/advanceSelectors.js'
 import styles from './AdvanceSignal.module.css'
@@ -37,9 +39,9 @@ function statusLabel(row, locale) {
   return copy(locale, '待开赛', 'SCHEDULED')
 }
 
-function GroupIndex({ group, seasonId, withSeason, locale }) {
+function GroupIndex({ group, seasonId, withSeason, locale, selected }) {
   return (
-    <article className={styles.groupIndex}>
+    <article className={styles.groupIndex} data-selected={selected || undefined}>
       <header>
         <div>
           <span>GROUP {group.groupLabel}</span>
@@ -91,6 +93,8 @@ function GroupIndex({ group, seasonId, withSeason, locale }) {
 }
 
 export default function AdvanceSignalGroup({ overview, groups, seasonId, withSeason, locale = 'zh-CN' }) {
+  const [params, setParams] = useSearchParams()
+  const selectedGroup = groups.find(group => String(group.groupLabel) === params.get('group'))?.groupLabel || groups[0]?.groupLabel
   const nextMatch = overview?.nextMatch
   const nextMatchId = matchRouteId(nextMatch)
   const tiebreakers = (overview?.rules?.tiebreakers || []).map(key => {
@@ -103,7 +107,7 @@ export default function AdvanceSignalGroup({ overview, groups, seasonId, withSea
       <header className={styles.chapterIntro}>
         <div>
           <span>01 / GROUP STAGE / {seasonId}</span>
-          <h2>{copy(locale, <>{uiText("从四个小组，", locale)}<em>{uiText("走出八支队伍。", locale)}</em></>, <>Four groups.<em>Eight teams move on.</em></>)}</h2>
+          <h2>{copy(locale, <>{uiText("从四个小组，", locale)}<em>{uiText("走出八支队伍。", locale)}</em></>, <>Four groups.{' '}<em>Eight teams move on.</em></>)}</h2>
         </div>
         <p>{copy(locale, uiText("先把每一场胜负放回小组里，再看晋级边界如何一点点变清晰。", locale), 'Put every result back into its group, then watch the qualification line come into focus.')}</p>
       </header>
@@ -113,9 +117,12 @@ export default function AdvanceSignalGroup({ overview, groups, seasonId, withSea
           <span id="signal-group-standings-title">GROUP STANDINGS × {String(groups.length).padStart(2, '0')}</span>
           <p>{copy(locale, uiText("黄色细线标记当前晋级边界；排名按官方小组积分更新。", locale), 'The yellow signal line marks the current qualification boundary.')} <b aria-hidden="true">↘</b></p>
         </header>
+        <nav className={styles.mobileGroupTabs} style={{ '--advance-group-count': groups.length }} aria-label={copy(locale, uiText('选择小组', locale), 'Choose a group')}>
+          {groups.map(group => <button key={group.groupLabel} type="button" aria-pressed={group.groupLabel === selectedGroup} onClick={() => setParams(updateAdvanceReadingSearch(params, { group: group.groupLabel }), { replace: true, preventScrollReset: true })}>{copy(locale, uiText('{0} 组', locale, [group.groupLabel]), `Group ${group.groupLabel}`)}</button>)}
+        </nav>
         <div className={styles.groupIndexGrid}>
           {groups.map(group => (
-            <GroupIndex key={group.groupLabel} group={group} seasonId={seasonId} withSeason={withSeason} locale={locale} />
+            <GroupIndex key={group.groupLabel} group={group} seasonId={seasonId} withSeason={withSeason} locale={locale} selected={group.groupLabel === selectedGroup} />
           ))}
         </div>
       </section>
@@ -126,7 +133,7 @@ export default function AdvanceSignalGroup({ overview, groups, seasonId, withSea
           <div className={styles.phaseReadout} data-step="01">
             <span>{copy(locale, uiText("当前比赛日", locale), 'MATCH DAY')}</span>
             <strong>DAY {overview.currentDay}<small>/ {overview.dayCount}</small></strong>
-            <p>{copy(locale, uiText("小组赛进行中", locale), 'GROUP STAGE ACTIVE')}</p>
+            <p>{overview.complete ? copy(locale, uiText('小组赛已结束', locale), 'GROUP STAGE COMPLETE') : overview.hasStarted ? copy(locale, uiText('小组赛进行中', locale), 'GROUP STAGE ACTIVE') : copy(locale, uiText('小组赛尚未开始', locale), 'GROUP STAGE UPCOMING')}</p>
           </div>
           <dl className={styles.phaseMetrics}>
             <div><dt>{copy(locale, uiText("总进度", locale), 'TOTAL')}</dt><dd>{overview.completedMatches}<small>/ {overview.expectedMatches}</small></dd></div>
@@ -146,7 +153,7 @@ export default function AdvanceSignalGroup({ overview, groups, seasonId, withSea
               ) : (
                 <p>{teamShort(nextMatch.team_a)} VS {teamShort(nextMatch.team_b)}</p>
               )
-            ) : <p>{copy(locale, uiText("对阵待确认", locale), 'MATCHUP PENDING')}</p>}
+            ) : <p>{overview.complete ? copy(locale, uiText('小组赛已全部结束', locale), 'All group matches are complete') : copy(locale, uiText('对阵待确认', locale), 'MATCHUP PENDING')}</p>}
           </section>
 
           <section className={styles.ruleIndex}>

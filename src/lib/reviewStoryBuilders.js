@@ -4242,7 +4242,7 @@ export function buildStaffStory(db, staffType, staffKey) {
   const firstMatch = matches[0]
   const lastMatch = matches[matches.length - 1]
   const topMatch = getTopStaffMatch(db, matches)
-  const avatar = getStaffAvatar(staffName)
+  const avatar = staff.avatar || getStaffAvatar(staffName)
 
   const firstMatchCard = firstMatch ? buildMatchCard(db, firstMatch, [], {
     title: isCaster ? '第一次开麦记录' : '第一次赛管记录',
@@ -4579,7 +4579,7 @@ function getTopPlayerCards(db) {
       }
     })
 
-  if (getReviewSeasonProfile(db).isRegular) {
+  if (getReviewSeasonProfile(db).usesRegularTemplate) {
     return ['TANK', 'DPS', 'SUP'].flatMap(role => rows
       .filter(row => row.role === role)
       .sort((a, b) => b.scoreValue - a.scoreValue)
@@ -4685,7 +4685,7 @@ export function buildTournamentStory(db) {
   const firstChampionMatch = playedChampionMatches[0] || sortedChampionMatches[0]
   const lastChampionMatch = playedChampionMatches[playedChampionMatches.length - 1] || sortedChampionMatches[sortedChampionMatches.length - 1]
   const championCandidates = getTeamCandidateValues(championReview?.team_id || championShort, championTeam, championReview)
-  const championLoss = playedChampionMatches.find(match => getMatchResultText(match, championCandidates) === '失利') || null
+  const championLoss = profile.isPartner ? null : playedChampionMatches.find(match => getMatchResultText(match, championCandidates) === '失利') || null
   const championLossOpponent = championLoss ? getOpponentByCandidates(championLoss, championCandidates) : null
   const grandFinalMatch = getGrandFinalMatch(matches)
   const grandFinalCard = grandFinalMatch ? buildMatchCard(db, grandFinalMatch, [], {

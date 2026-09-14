@@ -14,7 +14,7 @@ export default function ExhibitionWordmark({ name }) {
       frame = 0
       if (!active) return
       const available = container.clientWidth
-      const maximum = window.innerWidth <= 700 ? 230 : window.innerHeight <= 900 ? 310 : 400
+      const maximum = window.innerWidth <= 760 ? 80 : window.innerHeight <= 900 ? 310 : 400
       title.style.setProperty('--wordmark-size', maximum + 'px')
       const naturalWidth = title.getBoundingClientRect().width
       title.style.setProperty('--wordmark-size', Math.min(maximum, maximum * available / Math.max(1, naturalWidth)).toFixed(2) + 'px')

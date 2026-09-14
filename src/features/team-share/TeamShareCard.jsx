@@ -1,6 +1,7 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
+import { getTeamShareRoster } from './teamShareHeroSelection.js'
 import styles from './TeamShareCard.module.css'
 
 const ROLE_LABELS = {
@@ -28,11 +29,6 @@ function getPlayerNameSize(name, count) {
 
 function getRoleLabel(player) {
   return ROLE_LABELS[player?.roleKey] || player?.role || '选手'
-}
-
-function hasRecordedAppearance(player) {
-  if (typeof player?.hasAppearance === 'boolean') return player.hasAppearance
-  return Number(player?.mapsPlayed || 0) > 0 || Number(player?.timeMins || 0) > 0
 }
 
 function RosterPlayer({ player, index, count, team, seasonId }) {
@@ -80,8 +76,8 @@ function RosterPlayer({ player, index, count, team, seasonId }) {
             <TeamLogo team={team} seasonId={seasonId} className={styles.fallbackLogo} large />
           </div>
           <div className={styles.fallbackStamp}>
-            <span>ROSTER VERIFIED</span>
-            <em>{uiText("定妆照待补充", uiLocale)}</em>
+            <span>ON THE ROSTER</span>
+            <em>{pickUiLocale(uiLocale, '暂无英雄画面', 'Hero image unavailable', '영웅 이미지 없음', '暫無英雄畫面')}</em>
           </div>
         </div>
       </div>
@@ -115,13 +111,11 @@ export default function TeamShareCard({ model }) {
   const uiLocale = useUiLocale()
   if (!model) return null
 
-  const registeredPlayers = (model.rosterPlayers?.length ? model.rosterPlayers : model.corePlayers).slice(0, 7)
-  const rosterPlayers = registeredPlayers.filter(hasRecordedAppearance)
-  const unplayedPlayers = registeredPlayers.filter(player => !hasRecordedAppearance(player))
+  const { registered: registeredPlayers, appeared, featured: rosterPlayers, additional, unplayed: unplayedPlayers } = getTeamShareRoster(model)
   const focus = model.focusMatch
 
   return (
-    <article className={styles.card} data-roster-count={registeredPlayers.length}>
+    <article className={styles.card} data-roster-count={registeredPlayers.length} lang={uiLocale}>
       <img
         className={styles.mapImage}
         src={model.featuredMap.imageUrl}
@@ -140,10 +134,10 @@ export default function TeamShareCard({ model }) {
       <header className={styles.masthead}>
         <div className={styles.brandLockup}>
           <span>FRIES CUP</span>
-          <strong>DATA CENTER</strong>
+          <strong>EVENT CENTER</strong>
         </div>
         <div className={styles.dossierMark}>
-          <span>DATA CENTER / ROSTER FILE</span>
+          <span>EVENT CENTER / ROSTER FILE</span>
           <strong>{model.seasonLabel}</strong>
         </div>
       </header>
@@ -153,7 +147,7 @@ export default function TeamShareCard({ model }) {
           <TeamLogo team={model.team.raw} seasonId={model.seasonId} className={styles.logo} large />
         </div>
         <div className={styles.titleBlock}>
-          <span className={styles.eyebrow}>OFFICIAL TEAM DOSSIER / {registeredPlayers.length} PLAYERS</span>
+          <span className={styles.eyebrow}>SEASON ROSTER / {registeredPlayers.length} PLAYERS</span>
           <h1 style={{ fontSize: `${getTeamNameSize(model.team.shortName)}px` }}>{model.team.shortName}</h1>
           <p>{model.team.fullName}</p>
           <div className={styles.identityRule} aria-hidden="true"><i /><span>{model.advance.isArchived ? 'SEASON ARCHIVE // COMPLETE' : 'TEAM FORMATION // READY'}</span></div>
@@ -174,7 +168,7 @@ export default function TeamShareCard({ model }) {
           <span>SQUAD FORMATION</span>
           <strong>{uiText("赛季出场阵线", uiLocale)}</strong>
           <em>
-            {String(rosterPlayers.length).padStart(2, '0')} APPEARED
+            {String(appeared.length).padStart(2, '0')} APPEARED
             {unplayedPlayers.length ? ` // ${String(unplayedPlayers.length).padStart(2, '0')} REGISTERED` : ''}
           </em>
         </div>
@@ -192,7 +186,7 @@ export default function TeamShareCard({ model }) {
               team={model.team.raw}
               seasonId={model.seasonId}
             />
-          )) : <div className={styles.rosterEmpty}>ROSTER DATA PENDING</div>}
+          )) : <div className={styles.rosterEmpty}>{pickUiLocale(uiLocale, '暂无已发布的出场记录', 'No published appearances', '공개된 출전 기록 없음', '暫無已發布的出場記錄')}</div>}
         </div>
       </section>
 
@@ -203,6 +197,10 @@ export default function TeamShareCard({ model }) {
             <p>{uiText("经理 ", uiLocale)}<strong>{model.staff.manager || uiText("待定", uiLocale)}</strong></p>
             <p>{uiText("教练 ", uiLocale)}<strong>{model.staff.coach || uiText("待定", uiLocale)}</strong></p>
           </div>
+          {additional.length ? <div className={styles.unplayedRoster}>
+            <em>{pickUiLocale(uiLocale, '其他出场成员', 'Also appeared', '추가 출전 선수', '其他出場成員')}</em>
+            <div>{additional.map(player => <span key={player.id || player.name}><b>{player.name}</b><small>{uiText(getRoleLabel(player), uiLocale)}</small></span>)}</div>
+          </div> : null}
           {unplayedPlayers.length ? (
             <div className={styles.unplayedRoster}>
               <em>{uiText("注册未出场", uiLocale)}</em>

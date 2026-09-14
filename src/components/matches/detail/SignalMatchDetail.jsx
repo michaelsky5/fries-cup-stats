@@ -18,7 +18,7 @@ import { getMatchReviewPlayers, getMatchReviewProgress, getReviewFormat, REVIEW_
 import { getRestoreScrollState } from '../../../lib/navigationState.js'
 import { formatInt } from '../../../lib/format.js'
 import styles from './SignalMatchDetail.module.css'
-import { getMatchAnalysisSearch, getMatchMapDataSearch } from './matchReadingState.js'
+import { getCompactMapSelection, getMatchAnalysisSearch, getMatchMapDataSearch } from './matchReadingState.js'
 import { getMatchPhasePresentation } from './matchPhasePresentation.js'
 import { SignalMatchPhaseProgress, SignalMatchPreparation } from './SignalMatchPhase.jsx'
 
@@ -185,6 +185,9 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
   const allProgress = useMemo(() => getMatchReviewProgress(dossier), [dossier])
   const phase = useMemo(() => getMatchPhasePresentation(dossier, allProgress, locale), [dossier, allProgress, locale])
   const progress = phase.active ? phase.records : allProgress
+  const compact = useCompactMatchLayout()
+  const compactSelection = getCompactMapSelection(progress, searchParams.get('map'))
+  const visibleMaps = compact ? (compactSelection.map ? [compactSelection.map] : []) : progress
   const collapsibleOrders = progress.filter(map => map.hasStats).map(map => map.order)
   const collapsedKey = searchParams.get('collapsed') || ''
   const collapsedOrders = new Set(collapsedKey.split(','))
@@ -227,16 +230,16 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
     }
-  }, [progress, analysisExpanded, collapsedKey])
+  }, [progress, analysisExpanded, collapsedKey, compact, compactSelection.map?.order])
 
-  const currentOrder = visibleOrder ?? (typeof activeAnchor === 'number' ? activeAnchor : progress[0]?.order)
+  const currentOrder = compact ? compactSelection.map?.order : visibleOrder ?? (typeof activeAnchor === 'number' ? activeAnchor : progress[0]?.order)
   useEffect(() => {
     const rail = railRef.current
     const active = rail?.querySelector('[aria-current="location"]')
     if (!active || rail.scrollWidth <= rail.clientWidth) return
     const offset = active.getBoundingClientRect().left - rail.getBoundingClientRect().left + rail.scrollLeft
     rail.scrollTo({ left: offset - (rail.clientWidth - active.clientWidth) / 2, behavior: 'auto' })
-  }, [currentOrder])
+  }, [currentOrder, dossier.internalId])
 
   const canAnalyze = phase.canAnalyze
   const matchFact = useMemo(() => getScheduleHighlightFact(dossier.match, locale), [dossier.match, locale])
@@ -269,7 +272,7 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
           <TeamIdentity team={dossier.teamB} logoTeam={dossier.match.team_b} side="B" seasonId={seasonId} winner={dossier.hasSeriesScore && dossier.winnerSide === 'B'} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} />
         </div>
         {summary ? <p className={styles.matchSummary} data-match-summary={matchFact.kind}>{summary}</p> : null}
-        {phase.active ? <><p className={styles.phaseCaption}>{phase.caption}</p><SignalMatchPhaseProgress phase={phase} onSelectMap={onSelectMap} en={en} /></> : <SeriesProgress maps={progress} currentOrder={currentOrder} onSelectMap={onSelectMap} en={en} />}
+        {phase.active ? <><p className={styles.phaseCaption}>{phase.caption}</p><SignalMatchPhaseProgress key={dossier.internalId} phase={phase} onSelectMap={onSelectMap} en={en} /></> : <SeriesProgress key={dossier.internalId} maps={progress} currentOrder={currentOrder} onSelectMap={onSelectMap} en={en} />}
         <footer className={styles.heroFooter}><span>{en ? 'SCHEDULE' : uiText("比赛时间", locale)}<strong>{phase.active ? phase.scheduleLabel : dossier.scheduleLabel}</strong>{phase.active ? <small>UTC+8</small> : null}</span>{dossier.totalDurationLabel ? <span>{phase.active ? (en ? 'RECORDED TIME' : uiText("已记录时长", locale)) : (en ? 'IN-GAME TIME' : uiText("局内总时长", locale))}<strong>{dossier.totalDurationLabel}</strong></span> : null}{!phase.active || phase.recordedCount ? <span>{en ? 'MAPS RECORDED' : uiText("地图记录", locale)}<strong>{phase.active ? phase.recordedCount : dossier.mapRecords.length}</strong></span> : null}</footer>
         {!phase.active ? <SignalMatchSpotlight dossier={dossier} locale={locale} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} /> : null}
       </div>
@@ -288,9 +291,12 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
         {canAnalyze ? <a className={styles.analysisLink} href="#series-analysis" onClick={openAnalysis}>{en ? 'Series statistics' : uiText("全场统计与对比", locale)} ↘</a> : null}
       </aside>
       <div className={styles.chapters}>
-        <header className={styles.recordsHeading}><div><h2 id="map-records-title">{en ? 'Map by map' : uiText("逐图战报", locale)}</h2><p>{en ? `${progress.length} map records · Follow the match in order` : uiText("{0} 张地图记录 · 按比赛顺序阅读", locale, [progress.length])}</p></div>{collapsibleOrders.length > 1 ? <div className={styles.mapDataControls} role="group" aria-label={en ? 'All map statistics' : uiText("全部地图数据", locale)}><button type="button" disabled={!collapsibleOrders.some(order => collapsedOrders.has(String(order)))} onClick={() => setAllMapData(true)}>{en ? 'Expand all' : uiText("展开全部", locale)}</button><button type="button" disabled={!collapsibleOrders.some(order => !collapsedOrders.has(String(order)))} onClick={() => setAllMapData(false)}>{en ? 'Collapse stats' : uiText("收起数据", locale)}</button></div> : null}</header>
+        <header className={styles.recordsHeading}><div><h2 id="map-records-title">{en ? 'Map by map' : uiText("逐图战报", locale)}</h2><p>{compact ? (en ? `${progress.length} maps · Select a map above` : uiText("{0} 张地图 · 点选上方地图查看", locale, [progress.length])) : en ? `${progress.length} map records · Follow the match in order` : uiText("{0} 张地图记录 · 按比赛顺序阅读", locale, [progress.length])}</p></div>{!compact && collapsibleOrders.length > 1 ? <div className={styles.mapDataControls} role="group" aria-label={en ? 'All map statistics' : uiText("全部地图数据", locale)}><button type="button" disabled={!collapsibleOrders.some(order => collapsedOrders.has(String(order)))} onClick={() => setAllMapData(true)}>{en ? 'Expand all' : uiText("展开全部", locale)}</button><button type="button" disabled={!collapsibleOrders.some(order => !collapsedOrders.has(String(order)))} onClick={() => setAllMapData(false)}>{en ? 'Collapse stats' : uiText("收起数据", locale)}</button></div> : null}</header>
         {canAnalyze && hasMissingPlayerStats ? <p className={styles.notice} role="status">{en ? 'Player statistics are incomplete. Only published records are shown below.' : uiText("选手统计尚未齐全，以下展示各图已发布的记录。", locale)}</p> : null}
-        {progress.map((map, index) => <SignalMapChapter key={dossier.internalId + '-' + map.key} map={map} dossier={dossier} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} setMapRef={registerMap} video={video} previousMap={progress[index - 1]} nextMap={progress[index + 1]} onSelectMap={onSelectMap} activeMatch={phase.active} />)}
+        {visibleMaps.map(map => {
+          const selection = getCompactMapSelection(progress, map.order)
+          return <SignalMapChapter key={dossier.internalId + '-' + map.key} map={map} dossier={dossier} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} setMapRef={registerMap} video={video} previousMap={selection.previous} nextMap={selection.next} onSelectMap={onSelectMap} activeMatch={phase.active} />
+        })}
       </div>
     </section> : !phase.active ? <section className={styles.emptyReview} ref={analysisRef}><PendingRoster dossier={dossier} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} /></section> : null}
 

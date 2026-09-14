@@ -3349,7 +3349,7 @@ a.matchIndexCard:hover {
 .routePageHero {
   position: relative;
   min-height: 620px;
-  height: max(620px, calc(100svh - var(--kpr-header-height, 141px)));
+  height: clamp(620px, 44vw, 720px);
   isolation: isolate;
   overflow: hidden;
   background: #0d0f0c;
@@ -7556,6 +7556,7 @@ a.lcqSignalMatch:hover {
   align-self: stretch;
   grid-column: 3;
   grid-row: 2;
+  grid-template-columns: minmax(0, .75fr) minmax(0, .65fr) minmax(0, 1.4fr);
   border-top: 0;
   border-left: 1px solid #181a1738;
 }
@@ -7578,6 +7579,13 @@ a.lcqSignalMatch:hover {
 .swissLedgerDetail .swissTraceIdentity > div > p,
 .swissLedgerDetail .swissTraceIdentity dd {
   font-size: 12px;
+}
+
+.swissLedgerDetail .swissTraceIdentity dd {
+  overflow: visible;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
 }
 
 .swissTraceProfileLink {
@@ -7988,4 +7996,178 @@ a.lcqSignalMatch:hover {
   .swissLedgerDetail .swissTraceStep > div > b {
     font-size: 19px;
   }
+}
+
+/* Phone reading order: phase, team, real match records, then the full field. */
+.mobileHeroTitle,
+.routeHeroStatement > .mobileHeroSummary,
+.mobileTeamPicker,
+.mobileGroupTabs,
+.mobileScoreNote,
+.mobilePlayoffRoute,
+.mobileBracketDisclosure,
+.swissMobileField {
+  display: none;
+}
+.swissLedgerTable { order: 0; }
+.swissLedgerDetail { order: 1; }
+.finalWorkspace > .routeSection { order: 0; }
+.finalWorkspace > .championAside { order: 1; }
+
+@media (max-width: 760px) {
+  .routePageHero {
+    height: auto;
+    min-height: 0;
+    padding: 22px 16px;
+    border-top: 2px solid var(--signal-yellow);
+  }
+
+  .routeHeroGrid,
+  .routeHeroTrace,
+  .routeHeroVertical,
+  .routeHeroTopline,
+  .routeHeroChampion,
+  .routeHeroFooter,
+  .routeHeroStatement > span,
+  .routeHeroStatement > p:not(.mobileHeroSummary),
+  .routeHeroStatement .desktopHeroTitle {
+    display: none;
+  }
+  .routeHeroChampion::before, .routePageHero::after { display: none; }
+
+  .routeHeroStatement { position: static; width: auto; }
+  .routeHeroStatement h1 { margin: 0; font: 900 30px/1.15 var(--font-sans); letter-spacing: -.035em; }
+  .mobileHeroTitle { display: inline; }
+  .routeHeroStatement > .mobileHeroSummary { display: block; max-width: none; margin: 9px 0 0; font-size: 12px; line-height: 1.6; }
+
+  .phaseIndex { display: block; min-height: 0; padding: 0; }
+  .phaseIndexLabel, .phaseStamp { display: none; }
+  .phaseLinks { display: grid; grid-template-columns: repeat(var(--advance-phase-count), minmax(0, 1fr)); width: 100%; }
+  .phaseLinks > a { min-height: 67px; padding: 12px 8px; gap: 7px; }
+  .phaseLinks > a > span { font-size: 12px; line-height: 1.4; white-space: normal; overflow: visible; text-overflow: clip; }
+  .phaseLinks > a > small { font-size: 10px; }
+
+  .playoffWorkspace, .groupWorkspace, .finalIndex { padding: 20px 16px 30px; }
+  .routeChapterHeading, .phaseSignalHeading { min-height: 0; padding: 20px 16px; gap: 12px; }
+  .routeChapterHeading { padding: 20px 16px; }
+  .routeChapterHeading::after, .phaseSignalHeading::after,
+  .routeChapterHeading > span, .phaseSignalHeading > span,
+  .chapterIntro > div > span,
+  .routeChapterHeading > p, .phaseSignalHeading > div > p, .chapterIntro > p { display: none; }
+  .routeChapterHeading h2, .phaseSignalHeading h2, .chapterIntro h2 { font: 900 24px/1.25 var(--font-sans); letter-spacing: -.035em; }
+  .routeChapterHeading h2 > em, .phaseSignalHeading h2 > em, .chapterIntro h2 > em { display: inline; margin-left: .15em; }
+  .chapterIntro { min-height: 0; gap: 0; padding: 0; margin-bottom: 20px; }
+  .chapterIntro h2 > em::after { display: none; }
+  .phaseSignalSummary { gap: 0; margin: 0; }
+  .phaseSignalSummary > div { padding: 10px 12px; }
+  .phaseSignalSummary dt { font-size: 10px; }
+  .phaseSignalSummary dd { display: flex; align-items: baseline; gap: 4px; font-size: 21px; line-height: 1.2; }
+  .phaseSignalSummary dd > small { font-size: 12px; }
+
+  .mobileTeamPicker { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px; padding: 14px 16px; color: var(--signal-paper); background: var(--signal-ink); }
+  .mobileTeamPicker > label { font-size: 12px; white-space: nowrap; }
+  .mobileTeamPicker > div { position: relative; min-width: 0; }
+  .mobileTeamPicker select { display: block; width: 100%; min-width: 0; min-height: 46px; padding: 10px 32px 10px 12px; border: 1px solid var(--signal-yellow); border-radius: 0; appearance: none; background: var(--signal-paper); color: var(--signal-ink); font: 700 16px/1.3 var(--font-sans); text-overflow: ellipsis; }
+  .mobileTeamPicker select:focus-visible { outline: 2px solid var(--signal-yellow); outline-offset: 3px; }
+  .mobileTeamPicker > div > span { position: absolute; inset: 50% 10px auto auto; transform: translateY(-60%); color: var(--signal-ink); pointer-events: none; }
+
+  .routeTeamDock, .routeStoryHeader > div:first-child, .routeStoryHeader dl > div:last-child { display: none; }
+  .routeStoryHeader { display: grid; min-height: 0; grid-template-columns: minmax(0, 1fr) auto; margin-inline: 16px; }
+  .routeStoryHeader dl { grid-area: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 0; }
+  .routeStoryHeader dl > div { padding: 12px 8px; gap: 7px; }
+  .routeStoryHeader > a { grid-area: auto; padding: 10px; }
+  .routeStoryHeader > a > span { font-size: 12px; }
+  .routeStoryBody { min-height: 0; margin-inline: 16px; }
+  .routeIdentity { min-height: 0; padding: 16px; display: flex; align-items: center; gap: 14px; }
+  .routeIdentity::before, .routeIdentitySeed, .routeIdentityGhost { display: none; }
+  .routeIdentityLogo { position: static; width: 50px; height: 50px; flex: 0 0 50px; }
+  .routeIdentity > div { position: static; min-width: 0; }
+  .routeIdentity > div > strong { display: block; font-size: 32px; line-height: 1.05; margin-top: 6px; }
+  .routeIdentity > div > p { margin-top: 6px; font-size: 11px; }
+  .mobileScoreNote { display: block; margin: 14px 0 0; color: var(--signal-dark-muted, #a2a59a); font-size: 11px; }
+  .journeyNodes { padding: 12px 0 16px; }
+  .journeyNodes > li > a, .journeyNodes > li > div { min-height: 104px; }
+  .routeStoryFooter { min-height: 0; padding: 14px 16px; }
+  .routeStoryFooter > strong { display: none; }
+  .fullBracketDisclosure > summary { min-height: 68px; grid-template-columns: minmax(0, 1fr) 24px; padding: 14px; }
+
+  .mobilePlayoffRoute { display: block; background: var(--signal-ink); color: var(--signal-paper); }
+  .lcqSignalWorkspace > .mobilePlayoffRoute, .lcqSignalWorkspace > .mobileBracketDisclosure { margin-inline: 16px; }
+  .mobileRouteIdentity { display: flex; align-items: center; gap: 10px; margin: 0 16px; padding: 15px 0; border-block: 1px solid #efeddb2d; }
+  .mobileRouteIdentity > strong { font: 900 30px/1 var(--signal-display); }
+  .mobileRouteIdentity > span { margin-left: auto; font-size: 12px; }
+  .mobilePlayoffRoute > ol { list-style: none; margin: 0; padding: 0 16px 16px; }
+  .mobilePlayoffRoute h3 { font-size: 13px; margin: 18px 0 10px; }
+  .mobilePlayoffRoute .matchIndexCard { width: 100%; color: var(--signal-ink); }
+  .mobilePlayoffRoute .matchIndexCard:hover { color: var(--signal-paper); }
+  .desktopBracket { display: none; }
+  .mobileBracketDisclosure { display: block; margin-top: 16px; border-block: 1px solid var(--signal-line); }
+  .mobileBracketDisclosure > summary, .swissMobileField > summary { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 48px; padding: 14px 16px; font-size: 13px; cursor: pointer; list-style: none; }
+  .mobileBracketDisclosure > summary::-webkit-details-marker, .swissMobileField > summary::-webkit-details-marker { display: none; }
+  .mobileBracketDisclosure[open] > summary > span, .swissMobileField[open] > summary > span { transform: rotate(45deg); }
+
+  .swissSignalBoard > .signalBoardHeader, .swissTeamDock, .swissFlowPrompt { display: none; }
+  .swissMobileField { display: block; border-block: 1px solid #efeddb2d; }
+  .swissSignalBoard[data-has-selection="true"] .swissMobileField[open] .swissFlowMobileRounds { display: grid; }
+  .swissFlowMobileOutcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); min-height: 0; }
+  .swissFlowMobileOutcomes > button { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 56px; padding: 10px; }
+  .swissFlowMobileOutcomes > button > span { font-size: 11px; overflow-wrap: anywhere; }
+  .swissFlowMobileOutcomes > button > strong { font-size: 24px; }
+  .swissFlowMobileOutcomes > button > small { display: none; }
+  .swissLedger { display: flex; flex-direction: column; padding-top: 18px; }
+  .swissLedgerWorkspace { display: contents; }
+  .swissLedger > .signalIndexHeader { order: 1; padding-block: 20px 12px; }
+  .swissLedgerTable { order: 2; }
+  .swissLedgerDetail[data-selected="true"] { order: -1; scroll-margin-top: 78px; }
+  .swissLedgerDetail:not([data-selected="true"]) { display: none; }
+  .swissLedgerDetail > .swissTraceIdentity { min-height: 0; flex-basis: auto; padding: 16px; }
+  .swissTraceKicker { display: none; }
+  .swissLedgerDetail .swissTraceIdentity > div > strong { font-size: 32px; }
+  .swissLedgerDetail .swissTraceIdentity > dl { margin-top: 14px; }
+  .swissLedgerDetailBody > header { padding: 14px 16px; }
+  .swissLedgerDetailBody > header > span, .swissLedgerDetailBody > header > p { display: none; }
+  .swissLedgerDetailBody > header > strong { font-size: 16px; }
+  .swissLedgerDetailSteps { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .swissLedgerDetailSteps > li { border: 0; border-top: 1px solid #181a1726; }
+  .swissLedgerDetail a.swissTraceStep, .swissLedgerDetail div.swissTraceStep { min-height: 0; gap: 10px; padding: 13px 16px; }
+  .swissLedgerDetail .swissTraceStep > div > strong { font-size: 15px; }
+  .swissLedgerDetail .swissTraceStep > div > b { font-size: 24px; }
+  .swissLedgerScroller { height: auto; max-height: none; overflow: visible; }
+  .swissLedgerScrollFooter > p { display: none; }
+
+  .groupIndexTable { min-width: 0; width: 100%; }
+  .mobileGroupTabs { display: grid; grid-template-columns: repeat(var(--advance-group-count, 4), minmax(0, 1fr)); margin-bottom: 16px; border: 1px solid var(--signal-line); }
+  .mobileGroupTabs > button { min-height: 48px; border: 0; border-right: 1px solid var(--signal-line); border-radius: 0; background: transparent; color: var(--signal-ink); font: 700 13px/1.3 var(--font-sans); cursor: pointer; }
+  .mobileGroupTabs > button:last-child { border-right: 0; }
+  .mobileGroupTabs > button[aria-pressed="true"] { color: var(--signal-paper); background: var(--signal-ink); box-shadow: inset 0 -3px var(--signal-yellow); }
+  .groupIndex:not([data-selected="true"]) { display: none; }
+  .groupStandings > .sectionEyebrow { display: none; }
+  .groupIndexTable td { font-size: 13px; }
+  .groupIndexTable td > span { font-size: 11px; }
+  .groupIndexTable th, .groupIndexTable td { padding-inline: 6px; }
+  .groupIndexTable td:nth-child(2) small { display: none; }
+  .groupIndexTable td:nth-child(2) a { gap: 7px; }
+  .groupIndexTable .groupLogo { width: 24px; height: 24px; flex-basis: 24px; }
+
+  .finalIndex > .chapterIntro { display: none; }
+  .finalWorkspace > .championAside { order: -1; }
+  .championDossier { position: static; display: grid; grid-template-columns: 88px minmax(0, 1fr); }
+  .championDossier > header { grid-column: 1 / -1; }
+  .championVisual { grid-column: 1; grid-row: 2; min-height: 106px; padding: 12px; background: none; }
+  .championRankMark { display: none; }
+  .championLogo { width: 52px; height: 52px; }
+  .championVisual > small { font-size: 9px; }
+  .championVisual > small > i { display: none; }
+  .championIdentity { grid-column: 2; grid-row: 2; align-self: center; border: 0; padding: 14px 14px 14px 0; }
+  .championIdentity > span { display: none; }
+  .championIdentity > h2 { margin: 0 0 8px; font-size: 36px; line-height: 1; }
+  .championIdentity > p { font-size: 12px; }
+  .championDossier > .finalScore, .championDossier > .championMetrics { grid-column: 1 / -1; }
+  .championDossier > .finalScore { padding: 12px 16px; }
+  .finalScore > strong { font-size: 16px; white-space: normal; line-height: 1.4; }
+  .championMetrics > span, .championDossier > .dossierActions, .championAside > .dossierHint { display: none; }
+  .championMetrics > dl { margin: 0; }
+  .championMetrics > dl > div { min-height: 64px; gap: 6px; padding: 12px; }
+  .championMetrics dd { font-size: 24px; }
+  .finalWorkspace .sectionEyebrow > p { font-size: 12px; }
 }

@@ -21,11 +21,11 @@ const INDEX_NAV_ITEMS = [
   { to: '/staff?group=event', label: '赛事职员', english: 'Event staff', code: 'EVENT STAFF', match: '/staff', group: 'event' }
 ]
 
-export default function RosterSubnav({ className = '', presentation = 'default' }) {
+export default function RosterSubnav({ className = '', presentation = 'default', staffGroupOverride }) {
   const location = useLocation()
   const { withSeason, locale = 'zh-CN' } = useOutletContext()
   const navRef = useRef(null)
-  const staffGroup = getStaffDirectoryGroup(location.search)
+  const staffGroup = staffGroupOverride || getStaffDirectoryGroup(location.search)
 
   useEffect(() => {
     const nav = navRef.current

@@ -3,6 +3,7 @@ import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getStaffAvatar } from '../../lib/reviewAssets.js'
+import { getStaffProfilePath } from '../../lib/staffProfiles.js'
 import styles from './RosterComponents.module.css'
 
 function StaffPortrait({ name }) {
@@ -31,8 +32,8 @@ export default function StaffDirectoryItem({
   const uiLocale = useUiLocale()
   const navigate = useNavigate()
   const isEventStaff = Boolean(staff.storyPath)
-  const targetPath = withSeason(staff.storyPath || `/teams/${staff.team?.routeId || ''}`)
-  const actionLabel = isEventStaff ? '查看赛季回顾' : '查看战队资料'
+  const targetPath = withSeason(getStaffProfilePath(staff))
+  const actionLabel = uiLocale === 'en-US' ? 'Open staff profile' : uiText('查看职员档案', uiLocale)
   const roleCode = staff.role === 'caster'
     ? 'CASTER'
     : staff.role === 'admin'

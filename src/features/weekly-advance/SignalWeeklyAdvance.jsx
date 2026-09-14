@@ -100,6 +100,7 @@ export default function SignalWeeklyAdvance() {
       </div>
 
       <aside className={styles.journey} ref={journeyRef} aria-labelledby="weekly-team-title" data-selected-team={selected?.id}>
+        <a className={styles.mobileStandingsReturn} href="#weekly-points">{isPilot ? t(uiText('返回队伍列表', locale), 'Back to team list') : t(uiText('返回积分榜选队', locale), 'Back to team standings')} <span aria-hidden="true">↑</span></a>
         {selected ? <>
           <div className={styles.journeyTop}><span>{t(uiText("这支队伍的周期", locale), 'THIS TEAM’S CYCLE')}</span><button type="button" className={styles.followTeam} aria-label={`${t('关注队伍', 'Follow team')} ${weeklyTeamShort(selected.team)}`} aria-pressed={isFollowing} onClick={() => toggleTeamFavorite(selected.id)}>{isFollowing ? '★' : '☆'}<span>{isFollowing ? t(uiText("已关注", locale), 'Following') : t(uiText("关注队伍", locale), 'Follow team')}</span></button></div>
           <div className={styles.teamIdentity}><TeamLogo team={selected.team} seasonId={seasonId} className={styles.heroLogo} /><div><h2 id="weekly-team-title">{weeklyTeamShort(selected.team)}</h2><p>{selected.team?.name || selected.team?.team_name}</p></div>{standing && <div className={styles.heroPoints}><strong>{weeklyScore(standing.points)}</strong><small>{t(uiText("周期积分", locale), 'Cycle points')}</small></div>}</div>

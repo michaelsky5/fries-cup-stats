@@ -1,18 +1,18 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
-import { Link } from 'react-router-dom'
+import Link from './ArchiveRecordLink.jsx'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import HeroArtwork from '../../components/media/HeroArtwork.jsx'
 import { formatTeamFullName, formatTeamName } from '../../lib/homeSelectors.js'
 import { playerLabel, presentationHero } from './kprSelectors.js'
 import styles from './MobileSeasonArchive.module.css'
 
-export default function MobileSeasonArchive({ archive, story, summary, code, seasonId, locale, withSeason, finalResult, includeReview }) {
+export default function MobileSeasonArchive({ archive, story, summary, code, seasonId, locale, withSeason, finalResult, includeReview, eventKindLabel }) {
   const isEn = locale === 'en-US'
   const spotlight = story.officialFmvp || story.cast[0]
   const championPath = withSeason(story.championId ? `/teams/${encodeURIComponent(story.championId)}` : '/teams')
   const finalId = archive.finalMatch?.match_id || archive.finalMatch?.id
   return <div className={styles.cover} data-mobile-season-archive>
-    <header className={styles.heading}><span>{code}</span><span>{isEn ? 'Season archived' : uiText("赛季已归档", locale)}</span></header>
+    <header className={styles.heading}><span>{code}{eventKindLabel ? <small> · {eventKindLabel}</small> : null}</span><span>{isEn ? 'Season archived' : uiText("赛季已归档", locale)}</span></header>
     <Link className={styles.champion} to={championPath}>
       <span className={styles.watermark} aria-hidden="true">CHAMPIONS</span>
       <span className={styles.championLabel}>{isEn ? 'SEASON CHAMPIONS' : uiText("这一季的冠军", locale)}</span>

@@ -45,6 +45,12 @@
 .related a > div { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
 .related time { color: var(--fc-data-text-muted); font-size: 13px; }
 .related b { font: 800 24px/1.2 var(--fc-data-font-display); white-space: nowrap; }
+.quietUpdate summary { display: flex; align-items: center; justify-content: space-between; min-height: 44px; gap: 12px; cursor: pointer; color: var(--fc-data-text-muted); font-size: 13px; list-style: none; }
+.quietUpdate summary::-webkit-details-marker { display: none; }
+.quietUpdate summary::after { content: '+'; font-size: 18px; }
+.quietUpdate[open] summary::after { content: '−'; }
+.quietUpdate p { margin: 0 0 8px; }
+.updates[data-quiet='true'] { padding-block: 4px; }
 .next a:hover strong, .changeList a:hover strong { text-decoration: underline; text-underline-offset: 4px; }
 .updates { grid-column: 1 / -1; min-width: 0; padding: 16px 24px; border-top: 1px solid var(--fc-data-line); }
 .updates header, .discovery header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
@@ -84,23 +90,42 @@
 .more { width: 100%; margin-top: 16px; }
 @media (max-width: 1000px) { .discoveryList { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 700px) {
-  .briefing { grid-template-columns: minmax(0, 1fr); }
+  .briefing { grid-template-columns: minmax(0, 1fr); scroll-margin-top: 76px; }
   .next { border-right: 0; border-bottom: 1px solid var(--fc-data-line); }
   .next, .updates, .discovery { padding: 16px; }
   .attention { padding-inline: 16px; }
-  .leadTeams { gap: 12px; }
-  .leadTeams strong { font-size: 22px; }
-  .leadTeams b { font-size: 28px; }
-  .related { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .related a { padding: 16px; border-bottom: 0; border-right: 1px solid var(--fc-data-line); }
-  .related a:last-child { border-right: 0; }
+  .next > a { gap: 14px; margin-top: 12px; }
+  .next > header { gap: 8px; }
+  .leadMeta { gap: 4px 12px; font-size: 12px; }
+  .leadTeams { gap: 8px; }
+  .leadTeams > div { gap: 8px; }
+  .leadTeams strong { font-size: 20px; }
+  .leadTeams b { font-size: 36px; }
+  .leadLogo { width: 40px; height: 40px; padding: 4px; }
+  .leadFoot { margin-top: 12px; padding-top: 10px; gap: 8px; }
+  .leadFoot > span { flex: 1 1 130px; font-size: 12px; }
+  .leadFoot > a { padding: 8px 12px; font-size: 13px; }
+  .next .matchCaption { margin: 10px 0; }
+  .related { grid-template-columns: minmax(0, 1fr); }
+  .related a { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 12px 16px; border-right: 0; }
+  .related a > span { grid-column: 1 / -1; font-size: 12px; }
+  .related strong { grid-column: 1; grid-row: 2; }
+  .related a > div { display: contents; }
+  .related time { grid-column: 1; grid-row: 3; font-size: 12px; }
+  .related b { grid-column: 2; grid-row: 2 / 4; align-self: center; }
   .related strong { font-size: 16px; }
+  .updates[data-quiet='true'] { padding-block: 0; }
+  .briefing .updates h2 { font-size: 19px; }
   .discovery header { align-items: start; flex-wrap: wrap; }
-  .discovery h2 { font-size: 24px; }
+  .discovery header > div > span { display: none; }
+  .discovery h2 { font-size: 20px; margin: 0 0 6px; }
+  .discovery header p { font-size: 13px; }
+  .discoveryTools { gap: 12px; margin-top: 16px; }
   .discoveryTools label { flex-basis: 100%; order: 2; }
   .discoveryTools input { font-size: 16px; }
   .discoveryTools > span { margin-left: auto; }
-  .discoveryList article { column-gap: 8px; }
+  .discoveryList article { column-gap: 8px; padding: 14px 0; }
   .discoveryList a > span, .discoveryList small { font-size: 13px; }
+  .discoveryList small { display: none; }
   .discoveryList button { padding-inline: 8px; }
 }

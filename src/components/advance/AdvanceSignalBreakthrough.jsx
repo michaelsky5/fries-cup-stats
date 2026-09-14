@@ -1,7 +1,10 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
+import Link from './AdvanceRecordLink.jsx'
+import { updateAdvanceReadingSearch } from './advanceReadingState.js'
 import TeamLogo from '../matches/TeamLogo.jsx'
+import PlayoffBracket from './PlayoffBracket.jsx'
+import { PublishedTeamRoute } from './AdvanceSignalPlayoffs.jsx'
 import { getMatchStatusLabelKey, teamFull, teamShort } from '../../lib/advanceSelectors.js'
 import styles from './AdvanceSignal.module.css'
 
@@ -77,7 +80,9 @@ function LcqSignalMatchCard({ match, seasonId, locale, withSeason, t }) {
 export default function AdvanceSignalBreakthrough({ state, seasonId, locale = 'zh-CN', t, withSeason, getPhaseHref }) {
   const layout = state?.layout
   const divisions = layout?.divisions || []
-  const [selectedDivision, setSelectedDivision] = useState(divisions[0]?.number || 1)
+  const [params, setParams] = useSearchParams()
+  const selectedDivision = Number(params.get('division')) || divisions[0]?.number || 1
+  const setSelectedDivision = division => setParams(updateAdvanceReadingSearch(params, { division }), { replace: true, preventScrollReset: true })
   const activeDivision = divisions.find(division => division.number === selectedDivision) || divisions[0]
   const matches = layout
     ? divisions.flatMap(division => [division.playInMatch, ...division.roundOf16Matches, division.qualificationMatch].filter(Boolean))
@@ -91,12 +96,33 @@ export default function AdvanceSignalBreakthrough({ state, seasonId, locale = 'z
   const activeComplete = isComplete(activeDivision?.qualificationMatch)
   const activeNumber = activeDivision?.number || 1
 
+  // The four-division route belongs to the Regular format. Other seasons
+  // retain their published bracket instead of showing an unannounced route.
+  if (!layout && state?.bracket?.rounds?.length) return (
+    <div className={styles.lcqSignalWorkspace} data-chapter="02">
+      <header className={styles.phaseSignalHeading} data-phase="breakthrough">
+        <span>02 / BREAKTHROUGH / {seasonId}</span>
+        <div>
+          <h2>{copy(locale, <>{uiText('突围之路，', locale)}<em>{uiText('逐场回看。', locale)}</em></>, <>The breakthrough.{' '}<em>Match by match.</em></>)}</h2>
+          <p>{copy(locale, uiText('按本届已发布的轮次与赛果，回看队伍的突围过程。', locale), 'Follow the published rounds and results from this event.')}</p>
+        </div>
+        <dl className={styles.phaseSignalSummary}><div><dt>{copy(locale, uiText('比赛', locale), 'MATCHES')}</dt><dd>{state.completedMatches}<small>/ {matches.length}</small></dd></div></dl>
+      </header>
+      <PublishedTeamRoute matches={state.bracket.rounds.flatMap(round => round.matches.map(match => ({ ...match, roundLabel: round.label })))} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason} />
+      <div className={styles.desktopBracket}><PlayoffBracket bracket={state.bracket} eyebrow="BREAKTHROUGH" title={copy(locale, uiText('突围赛晋级图', locale), 'Breakthrough bracket')} t={t} seasonId={seasonId} locale={locale} withSeason={withSeason} showFilter={false} /></div>
+      <details className={styles.mobileBracketDisclosure} open={params.get('lcqBracket') === 'full'} onToggle={event => {
+        const open = event.currentTarget.open
+        if (open !== (params.get('lcqBracket') === 'full')) setParams(updateAdvanceReadingSearch(params, { lcqBracket: open ? 'full' : null }), { replace: true, preventScrollReset: true })
+      }}><summary>{copy(locale, uiText('完整突围赛签表', locale), 'Complete breakthrough bracket')} <span aria-hidden="true">＋</span></summary><PlayoffBracket bracket={state.bracket} eyebrow="BREAKTHROUGH" title={copy(locale, uiText('突围赛晋级图', locale), 'Breakthrough bracket')} t={t} seasonId={seasonId} locale={locale} withSeason={withSeason} showFilter={false} /></details>
+    </div>
+  )
+
   return (
     <div className={styles.lcqSignalWorkspace} data-chapter="02">
       <header className={styles.phaseSignalHeading} data-phase="breakthrough">
         <span>02 / BREAKTHROUGH / {seasonId}</span>
         <div>
-          <h2>{copy(locale, <>{uiText("四条路线，", locale)}<em>{uiText("四个出口。", locale)}</em></>, <>Four routes.<em>Four exits.</em></>)}</h2>
+          <h2>{copy(locale, <>{uiText("四条路线，", locale)}<em>{uiText("四个出口。", locale)}</em></>, <>Four routes.{' '}<em>Four exits.</em></>)}</h2>
           <p>{copy(locale, uiText("每个分区五支队，任何一次失利都会结束突围。选择一条路线，看它如何收束成一个季后赛席位。", locale), 'Five teams enter each division and one loss ends the run. Choose a route and see how it narrows into one playoff berth.')}</p>
         </div>
         <dl className={styles.phaseSignalSummary}>

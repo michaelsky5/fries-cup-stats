@@ -60,7 +60,7 @@ export default function SignalMapIndex() {
     <div className={styles.indexToolbar}>
       <label className={styles.searchField}>
         <svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m15 15 5 5" stroke="currentColor" strokeWidth="1.5" /></svg>
-        <ImeSafeInput aria-label={isEn ? 'Find a map' : uiText("搜索地图", locale)} aria-controls="map-results" placeholder={isEn ? 'Find a map…' : uiText("搜索地图中英文名称…", locale)} value={search} onValueChange={value => updateFilters({ mapSearch: value })} />
+        <ImeSafeInput aria-label={isEn ? 'Find a map' : uiText("搜索地图", locale)} aria-controls="map-results" placeholder={isEn ? 'Find a map…' : uiText("搜索地图", locale) + "…"} value={search} onValueChange={value => updateFilters({ mapSearch: value })} />
         {search ? <button type="button" onClick={() => updateFilters({ mapSearch: '' })} aria-label={isEn ? 'Clear search' : uiText("清除搜索", locale)}>×</button> : null}
       </label>
       <select aria-label={isEn ? 'Sort maps' : uiText("地图排序", locale)} value={sort} onChange={event => updateFilters({ mapSort: event.target.value })}>
@@ -71,6 +71,7 @@ export default function SignalMapIndex() {
       <section className={styles.indexMain} id="map-results" aria-label={isEn ? 'Map index' : uiText("地图索引", locale)}>
         <header className={styles.indexHeading}><div><h2>{search.trim() ? (isEn ? 'Matching maps' : uiText("搜索结果", locale)) : mode ? formatOwMapMode(mode, locale) : (isEn ? 'Season map index' : uiText("赛季地图索引", locale))}</h2><span role="status" aria-live="polite">{visibleMaps.length} / {atlas.maps.length} {isEn ? 'maps' : uiText("张地图", locale)}</span></div>{filtered ? <button type="button" onClick={() => updateFilters({ mapMode: '', mapSearch: '' })}>{isEn ? 'Clear filters' : uiText("清除筛选", locale)} ×</button> : <span className={styles.previewHint}>{isEn ? 'Point to preview · select to explore' : uiText("指向预览 · 点选展开档案", locale)}</span>}</header>
         <div className={styles.indexReading}><p>{isEn ? `Season share uses all ${atlas.totalRecords} map records, including when filtered.` : uiText("赛季占比以全部 {0} 条地图记录为分母，筛选后保持不变。", locale, [atlas.totalRecords])}</p><a href="#map-method">{isEn ? 'About the data' : uiText("统计口径", locale)}<Arrow down /></a></div>
+        <a className={styles.mobileMethodLink} href="#map-method">{isEn ? 'About the data' : uiText('统计口径', locale)}<Arrow down /></a>
         <div className={styles.indexColumns} aria-hidden="true"><span>{isEn ? 'MAP / MODE' : uiText("地图 / 模式", locale)}</span><span>{showDuration ? (isEn ? 'AVG. TIME' : uiText("平均时长", locale)) : (isEn ? 'COUNT' : uiText("记录数", locale))}</span><span>{isEn ? 'SEASON SHARE' : uiText("赛季占比", locale)}</span></div>
         {visibleMaps.length ? <ol className={styles.mapRows}>
           {visibleMaps.map((map, index) => <li key={map.name} data-selected={selected?.name === map.name} onMouseEnter={() => setPreviewName(map.name)} onFocusCapture={() => setPreviewName(map.name)}>
@@ -95,6 +96,6 @@ export default function SignalMapIndex() {
         </div>
       </aside> : null}
     </div>
-    <details className={styles.method} id="map-method" open={location.hash === '#map-method' || undefined}><summary>{isEn ? 'About these records' : uiText("关于这些记录", locale)}</summary><p>{isEn ? 'Only completed series with a named, known-mode map are included. Administrative map results remain in the record count; they do not contribute to play time or hero samples. Map share reflects published results, not map-selection or ban probability.' : uiText("仅统计已结束系列赛中具名且模式明确的地图。单图裁决保留在记录数中，不计入时长和英雄样本。地图占比反映已发布赛果中的分布，不代表选图或禁图概率。", locale)}</p></details>
+    <details className={styles.method} id="map-method" open={location.hash === '#map-method' || undefined}><summary>{isEn ? 'About these records' : uiText("关于这些记录", locale)}</summary><p>{isEn ? `Season share uses all ${atlas.totalRecords} map records, including when filtered.` : uiText("赛季占比以全部 {0} 条地图记录为分母，筛选后保持不变。", locale, [atlas.totalRecords])}</p><p>{isEn ? 'Only completed series with a named, known-mode map are included. Administrative map results remain in the record count; they do not contribute to play time or hero samples. Map share reflects published results, not map-selection or ban probability.' : uiText("仅统计已结束系列赛中具名且模式明确的地图。单图裁决保留在记录数中，不计入时长和英雄样本。地图占比反映已发布赛果中的分布，不代表选图或禁图概率。", locale)}</p></details>
   </div>
 }

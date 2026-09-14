@@ -22,11 +22,21 @@ function getCandidates(player) {
   }]
 }
 
+export function getTeamShareRoster(model) {
+  const source = model?.rosterPlayers?.length ? model.rosterPlayers : model?.corePlayers
+  const registered = Array.isArray(source) ? source : []
+  const appeared = registered.filter(hasRecordedAppearance)
+  return {
+    registered,
+    appeared,
+    featured: appeared.slice(0, 7),
+    additional: appeared.slice(7),
+    unplayed: registered.filter(player => !hasRecordedAppearance(player))
+  }
+}
+
 export function getShareAppearedPlayers(model) {
-  const registeredPlayers = model?.rosterPlayers?.length ? model.rosterPlayers : model?.corePlayers
-  return (Array.isArray(registeredPlayers) ? registeredPlayers : [])
-    .slice(0, 7)
-    .filter(hasRecordedAppearance)
+  return getTeamShareRoster(model).featured
 }
 
 export function createAutomaticHeroSelections(model) {

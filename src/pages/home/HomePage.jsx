@@ -1,4 +1,4 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
@@ -377,10 +377,10 @@ function getTimelineStatusKey(item) {
 
 function getTimelineStatus(item, locale = 'zh-CN') {
   const status = getTimelineStatusKey(item)
-  if (status === 'ended') return homeText(locale, '已结束', 'Completed')
-  if (status === 'active') return homeText(locale, '进行中', 'In Progress')
-  if (status === 'soon') return homeText(locale, '即将开始', 'Starting Soon')
-  return homeText(locale, '未开始', 'Upcoming')
+  if (status === 'ended') return pickUiLocale(locale, '计划日期已过', 'Scheduled dates passed', '예정 날짜 지남', '計劃日期已過')
+  if (status === 'active') return pickUiLocale(locale, '计划时段内', 'Within scheduled dates', '예정 기간 중', '計劃時段內')
+  if (status === 'soon') return pickUiLocale(locale, '计划日期临近', 'Scheduled dates approaching', '예정 날짜 임박', '計劃日期臨近')
+  return pickUiLocale(locale, '计划待开始', 'Scheduled for later', '예정 기간 전', '計劃待開始')
 }
 
 function EventTimelineSection() {
@@ -426,7 +426,7 @@ function EventTimelineSection() {
           )
         })}
       </div>
-      <p className={styles.scheduleHint}>{homeText(locale, uiText("时间安排以赛事公告为准。", locale), 'Dates are based on the official event announcement.')}</p>
+      <p className={styles.scheduleHint}>{pickUiLocale(locale, '按公告日期展示计划进度；实际赛况以已发布赛果为准。', 'This timeline follows the announced dates. Published results confirm actual match progress.', '공식 일정에 따른 예정 진행 상황입니다. 실제 경기 진행은 공개된 결과를 기준으로 확인하세요.', '按公告日期展示計劃進度；實際賽況以已發布賽果為準。')}</p>
     </section>
   )
 }
@@ -986,7 +986,7 @@ function ArchiveConclusion({ overview, archive, summary }) {
           </span>
         </div>
         <div className={styles.archiveHallBadges}>
-          <span>{countText(locale, summary.matches, '场比赛', 'match')}</span>
+          <span>{countText(locale, summary.matches, '场比赛', 'match', 'matches')}</span>
           <span>{countText(locale, summary.maps, '张地图', 'map')}</span>
           <span>{teamPlayerScaleText(locale, summary.teams, summary.players)}</span>
         </div>
@@ -1139,7 +1139,7 @@ function ArchiveDataVault({ summary, dataPulse }) {
       key: 'matches',
       label: 'MATCH ARCHIVE',
       title: homeText(locale, uiText("比赛档案", locale), 'Match Archive'),
-      value: countText(locale, summary.matches, '场', 'match'),
+      value: countText(locale, summary.matches, '场', 'match', 'matches'),
       meta: isEnglishLocale(locale) ? `${summary.maps} maps recorded` : uiText("{0} 张地图记录", locale, [summary.maps]),
       to: '/matches'
     },

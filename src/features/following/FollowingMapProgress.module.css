@@ -24,7 +24,9 @@
 .progress[data-compact='true'] li :is(small, span) { color: var(--fc-data-text-muted); font-size: 10px; }
 .progress[data-compact='true'] li[data-map-state='recorded'] span { color: var(--fc-data-ink); }
 @media (max-width: 700px) {
-  .progress li > :is(a, div) { padding: 10px 6px; min-height: 110px; }
+  .progress { margin-top: 16px; }
+  .heading { margin-bottom: 8px; }
+  .progress li > :is(a, div) { padding: 8px 5px; min-height: 88px; gap: 6px; }
   .progress strong { font-size: 12px; }
   .progress li span { font-size: 11px; }
   .progress[data-compact='true'] li :is(small, span) { font-size: 11px; }

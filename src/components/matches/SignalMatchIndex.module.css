@@ -19,7 +19,8 @@
 .modes button { min-height: 42px; padding: 10px 15px; font-size: 13px; font-weight: 600; border: 0; background: transparent; color: var(--fc-data-text-muted); white-space: nowrap; }
 .modes button[aria-pressed="true"] { color: var(--fc-data-ink); background: var(--fc-data-signal); }
 .filterButton { min-height: 42px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--fc-data-line-strong); padding: 10px 14px; background: transparent; color: var(--fc-data-ink); font-size: 13px !important; white-space: nowrap; }
-.filterButton b { font-size: 11px; padding: 2px 5px; background: var(--fc-data-ink); color: var(--fc-data-paper); }
+.filterButton b { display: grid; place-items: center; flex: 0 0 18px; height: 18px; font-size: 11px; background: var(--fc-data-ink); color: var(--fc-data-paper); }
+.filterButton b[data-active="false"] { background: transparent; color: inherit; }
 .activeFilters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--fc-data-line); }
 .activeFilters button { display: flex; align-items: center; gap: 12px; max-width: 100%; min-height: 34px; padding: 6px 10px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised); color: var(--fc-data-ink); text-align: left; font-size: 12px; overflow-wrap: anywhere; }
 .activeFilters button > span { font-size: 17px; line-height: 1; }
@@ -90,15 +91,23 @@
   .stages button { padding-inline: 14px; }
 }
 @media (max-width: 760px) {
-  .header { flex-direction: column; align-items: start; gap: 12px; padding: 20px 0 22px; }
-  .header h1 { font-size: clamp(32px, 8vw, 40px); }
-  .stages button { flex: 1 1 auto; display: grid; align-content: center; justify-items: start; min-height: 62px; padding: 10px 9px; gap: 5px; }
-  .stages strong { font-size: 13px; line-height: 1.4; white-space: nowrap; }
+  .header { padding: 16px 0 18px; }
+  .header .kicker, .header > p { display: none; }
+  .header h1 { margin: 0; font-size: clamp(30px, 8vw, 36px); }
+  .stages { display: grid; grid-template-columns: repeat(var(--stage-count), minmax(0, 1fr)); }
+  .stages button { display: grid; align-content: center; justify-items: start; min-width: 0; min-height: 62px; padding: 10px 9px; gap: 5px; }
+  .stages strong { font-size: 13px; line-height: 1.4; white-space: normal; }
+  .stages[data-paired="true"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stages[data-paired="true"] button { display: flex; align-items: center; min-height: 46px; padding-block: 8px; border-bottom: 1px solid var(--fc-data-line); }
+  .stages[data-paired="true"] button:nth-child(even) { border-right: 0; }
   .stages span { font-size: 11px; }
-  .filterBar { flex-wrap: wrap; gap: 10px; padding-block: 12px; }
-  .modes { width: 100%; }
+  .filterBar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding-block: 12px; }
+  .filterBar > form[role="search"] { min-width: 0; }
+  .modes { grid-column: 1 / -1; width: 100%; }
   .modes button { padding: 9px 14px; min-height: 38px; }
   .filterButton { padding-inline: 12px; }
+  .activeFilters[data-expanded="false"] { display: none; }
+  .activeFilters[data-expanded="true"] { padding: 0 14px 14px; background: var(--fc-data-paper-deep); }
   .resultsMeta { padding: 14px 0; font-size: 12px; align-items: baseline; }
   .resultsMeta > span { text-align: right; }
   .workspace { display: block; }

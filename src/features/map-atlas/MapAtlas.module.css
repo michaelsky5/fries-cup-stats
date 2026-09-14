@@ -545,3 +545,66 @@
   .recordOrder > button { margin-left: auto; }
   .detailContents a { line-height: 1.4; text-align: center; padding: 8px 2px; }
 }
+
+.mobileMethodLink, .mobileDisclosure, .textButton[data-mobile-only="true"] { display: none; }
+
+/* Keep map identity, evidence and onward routes together on a phone. */
+@media (max-width: 600px) {
+  .shell :is(input, select) { font-size: 16px; border-radius: 0; }
+  .indexToolbar select { max-width: 148px; }
+  .indexMain { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; }
+  .indexMain > * { grid-column: 1 / -1; }
+  .indexMain > .indexHeading { display: block; grid-column: 1; grid-row: 1; }
+  .indexHeading > div { display: flex; }
+  .indexHeading > div > span { margin: 0; }
+  .indexReading { display: none; }
+  .indexMain > .mobileMethodLink { display: inline-flex; grid-column: 2; grid-row: 1; align-self: start; align-items: center; gap: 5px; min-height: 44px; font-size: 12px; color: var(--atlas-muted); }
+  .mobileMethodLink svg { width: 13px; }
+  .detailHero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(100px, .7fr); gap: 18px 14px; padding: 20px 0 0; }
+  .mapIdentity h1 { font-size: 30px; line-height: 1.15; margin-top: 12px; overflow-wrap: anywhere; }
+  .mapEnglish { font-size: 18px; }
+  .heroStatistic { margin: 18px 0 0; gap: 8px; flex-wrap: wrap; }
+  .heroStatistic > strong { font-size: 46px; }
+  .heroStatistic > p { font-size: 12px; line-height: 1.5; }
+  .heroStatistic small { margin-top: 4px; font-size: 11px; }
+  .mapLandscape { min-height: 180px; }
+  .landscapeCaption { padding: 10px; }
+  .landscapeCaption > span { display: none; }
+  .heroSummary { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 0 !important; padding: 14px 0 0; }
+  .heroSummary > div:first-child { display: none; }
+  .heroSummary dt { font-size: 11px; line-height: 1.5; }
+  .heroSummary dd { font-size: 28px; padding-top: 4px; }
+  .heroSummary small { font-size: 11px; line-height: 1.5; padding-top: 4px; }
+  .modeContext { grid-column: 1 / -1; border-top: 1px solid var(--atlas-line); padding: 0; }
+  .modeContextHeading { align-items: center; gap: 0 12px; margin: 0; }
+  .modeContextHeading h2 { flex: 1; }
+  .mobileDisclosure { display: inline-flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; padding: 0 2px; color: var(--atlas-ink); font-size: 12px; }
+  .modeContextHeading > span { width: 100%; order: 3; padding: 0 0 12px; }
+  .modeContext[data-expanded="false"] .modeContextHeading > span,
+  .modeContext[data-expanded="false"] .modeComparison { display: none; }
+  .modeComparison { padding-bottom: 14px; }
+  .detailContents { gap: 0; }
+  .chapter { padding-top: 22px; }
+  .chapterHeading { margin-bottom: 14px; gap: 8px 12px; }
+  .chapterHeading h2 { font-size: 22px; }
+  .chapterMeta { font-size: 12px; }
+  .environmentToolbar { margin-bottom: 12px; }
+  .roleSwitch { gap: 0; justify-content: space-between; width: 100%; }
+  .roleSwitch button { min-height: 44px; }
+  .heroColumns[data-single="false"] .roleRunners { display: none; }
+  .heroColumns[data-single="false"] .heroRoleColumn + .heroRoleColumn { margin-top: 16px; }
+  .heroColumns[data-single="false"] .roleLeader { gap: 12px; padding: 12px 0; }
+  .heroColumns[data-single="false"] .leaderPortrait { width: 52px; height: 62px; }
+  .heroColumns[data-single="false"] .leaderIdentity { display: grid; flex: 1; grid-template-columns: minmax(0, 1fr) auto; column-gap: 10px; align-items: center; }
+  .heroColumns[data-single="false"] .leaderIdentity > small { grid-column: 1; font-size: 11px; }
+  .heroColumns[data-single="false"] .leaderIdentity > strong { grid-column: 1; grid-row: 2; font-size: 17px; }
+  .heroColumns[data-single="false"] .leaderIdentity > b { grid-column: 2; grid-row: 1 / span 2; font-size: 28px; margin: 0; }
+  .heroColumns[data-single="false"] .leaderIdentity > span { grid-column: 2; text-align: right; font-size: 11px; }
+  .textButton[data-mobile-only="true"] { display: inline-flex; }
+  .heroRoleColumn > .textButton { min-height: 44px; }
+  .recordHighlights { margin-bottom: 16px; }
+  .recordHighlights > h3 { display: flex; align-items: center; gap: 8px; padding: 4px 12px; }
+  .recordHighlights > h3 > small { margin-left: 0; font-size: 10px; }
+  .recordHighlights .mobileDisclosure { margin-left: auto; }
+  .recordHighlights[data-expanded="false"] .extremes { display: none; }
+}

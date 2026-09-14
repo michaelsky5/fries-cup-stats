@@ -182,7 +182,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
             {isKprHybridDesign ? (
               <span className={styles.brandTypeLockup} aria-hidden="true" data-i18n-ignore>
                 <strong>FRIES CUP</strong>
-                <small lang={layoutLocale}>{pickUiLocale(layoutLocale, '赛事中心', 'DATA CENTER', '대회 센터', '賽事中心')}</small>
+                <small lang={layoutLocale}>{pickUiLocale(layoutLocale, '赛事中心', 'EVENT CENTER', '대회 센터', '賽事中心')}</small>
               </span>
             ) : (
               <span className={styles.brandWordMark} aria-hidden="true">
@@ -260,7 +260,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
             ) : null : (
               <div
                 className={`${styles.languageSwitch} ${isReviewEntryRoute ? styles.reviewLanguageSwitch : ''}`}
-                aria-label="Language"
+                aria-label={uiText('语言', layoutLocale)}
               >
                 {LANGUAGE_OPTIONS.map(option => <button
                   key={option.id}

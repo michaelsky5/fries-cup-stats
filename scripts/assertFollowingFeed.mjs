@@ -165,3 +165,22 @@ assert.equal(getFollowingBriefing({ archived: true, groups: briefingGroups }).le
 assert.deepEqual(getFollowingBriefing({ archived: true, groups: briefingGroups }).related.map(item => item.id), ['earlier', 'oldest'])
 assert.equal(getFollowingBriefing({ groups: { pending: [{ id: 'tbd' }] } }).lead, null, 'an unscheduled record is not promoted to a confirmed next match')
 assert.equal(getFollowingBriefing({ groups: { pending: [{ id: 'tbd' }] } }).attention.length, 1)
+
+// The phone collection is a reading choice, independent of the match filter.
+const collectionFeed = { ...playerFeed, teams: [{ id: 'A', short: 'A' }] }
+assert.equal(getFollowingView(playerFeed, '').collection, 'players', 'player-only following opens the populated collection')
+assert.equal(getFollowingView(collectionFeed, '').collection, 'teams')
+assert.equal(getFollowingView(collectionFeed, 'followCollection=unknown').collection, 'teams')
+const collectionSearch = updateFollowingSearch('season=event-a&lang=en&cycle=cycle-a&followLimit=12', { collection: 'players' })
+assert.equal(getFollowingView(collectionFeed, collectionSearch).collection, 'players')
+assert.equal(collectionSearch.get('followLimit'), '12', 'changing the collection preserves expanded match records')
+const subjectSearch = updateFollowingSearch(collectionSearch, { subjectKey: 'player:p', view: 'matches', state: 'results' })
+const collectionReturn = getMySpaceSourceLocation({ pathname: '/me', search: `?${subjectSearch}` }, 'following')
+const restoredCollection = getFollowingView(collectionFeed, collectionReturn.search)
+assert.equal(restoredCollection.collection, 'players', 'profile and match returns preserve the selected collection')
+assert.equal(restoredCollection.subjectKey, 'player:p')
+assert.equal(restoredCollection.state, 'results')
+assert.equal(new URLSearchParams(collectionReturn.search).get('lang'), 'en')
+assert.equal(new URLSearchParams(collectionReturn.search).get('cycle'), 'cycle-a')
+assert.equal(getFollowingView(collectionFeed, updateFollowingSearch(subjectSearch, { view: 'overview', subjectKey: '', state: 'all' })).collection, 'players')
+console.log('Following mobile reading checks passed: populated defaults, collection switching, match filters and return context.')

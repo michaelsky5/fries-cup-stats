@@ -62,13 +62,14 @@ export default function MatchDetailPage() {
   useEffect(() => { setCopyMessage('') }, [matchId, requestedMap])
   const expandAll = searchParams.get('expand') === 'all'
   const defaultMapOrder = getValidMapOrder(dossier, requestedMap)
-  const incomingReturnState = readReturnState(location.state, { allowedPrefixes: ['/', '/advance', '/roster', '/matches', '/teams', '/players', '/heroes', '/maps', '/me', '/following'] })
+  const incomingReturnState = readReturnState(location.state, { allowedPrefixes: ['/', '/advance', '/roster', '/staff', '/matches', '/teams', '/players', '/heroes', '/maps', '/me', '/following'] })
   if (incomingReturnState.returnTo) sourceReturnRef.current = incomingReturnState
   const sourceReturnState = sourceReturnRef.current || incomingReturnState
   const returnTo = sourceReturnState.returnTo
   const returnScrollY = sourceReturnState.returnScrollY
   const fallbackReturnTo = returnTo || withSeason('/matches')
-  const backLabel = getMySpaceReturnLabel(returnTo, locale) || (isKprHybridDesign ? getScheduleReturnLabel(returnTo, locale) : '') || (returnTo?.startsWith('/teams') ? (isEn ? 'Back to team' : uiText("返回队伍档案", locale))
+  const backLabel = getMySpaceReturnLabel(returnTo, locale) || (isKprHybridDesign ? getScheduleReturnLabel(returnTo, locale, { weekly: dossier?.match?.stage === 'WEEKLY' }) : '') || (returnTo?.startsWith('/teams') ? (isEn ? 'Back to team' : uiText("返回队伍档案", locale))
+    : returnTo?.startsWith('/staff/') ? (isEn ? 'Back to staff profile' : uiText('返回职员档案', locale))
     : returnTo?.startsWith('/advance') ? (isEn ? 'Back to advancement' : uiText("返回晋级形势", locale))
     : returnTo?.startsWith('/roster') ? (isEn ? 'Back to roster overview' : uiText("返回阵容总览", locale))
     : returnTo?.startsWith('/maps') ? (isEn ? 'Back to map' : uiText("返回地图档案", locale))
@@ -156,7 +157,7 @@ export default function MatchDetailPage() {
   const handleBack = () => {
     if (returnTo) {
       const restoreState = getRestoreScrollState(returnScrollY)
-      const parentReturn = readReturnState({ returnTo: location.state?.parentReturnTo, returnScrollY: location.state?.parentReturnScrollY }, { allowedPrefixes: ['/matches', '/teams', '/players', '/leaderboard', '/heroes', '/maps', '/me', '/following'] })
+      const parentReturn = readReturnState({ returnTo: location.state?.parentReturnTo, returnScrollY: location.state?.parentReturnScrollY }, { allowedPrefixes: ['/', '/staff', '/matches', '/teams', '/players', '/leaderboard', '/heroes', '/maps', '/me', '/following'] })
       navigate(returnTo, { state: { ...restoreState, ...(parentReturn.returnTo ? parentReturn : {}) } })
       return
     }

@@ -340,3 +340,58 @@
 @media (prefers-reduced-motion: reduce) {
   .spotlightMain .spotlightArt { transition: none; }
 }
+
+.spotlightPortrait, .mobileMethodLink { display: none; }
+
+/* Phones lead with a usable directory and the people behind each hero. */
+@media (max-width: 600px) {
+  .shell :is(input, select) { font-size: 16px; }
+  .searchControls select { max-width: 152px; }
+  .overview { padding: 14px 0 18px; }
+  .overviewHeading { align-items: center; }
+  .overviewHeading h2 { padding: 0; font-size: 15px; }
+  .spotlights { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .spotlight { display: block; min-width: 0; background: var(--hero-tone); }
+  .spotlightTop { min-height: 30px; padding: 7px 9px; border-left: 0; border-top: 2px solid var(--hero-accent); font-size: 12px; }
+  .spotlightTop i, .spotlightArtWindow { display: none; }
+  .spotlightMain { display: grid; justify-items: start; align-content: start; height: auto; min-height: 0; padding: 3px 9px 10px; }
+  .spotlightPortrait { display: block; width: 32px; height: 32px; }
+  .spotlightCopy { width: 100%; padding: 8px 0 0; }
+  .spotlightCopy h3 { font-size: 15px; line-height: 1.3; overflow-wrap: anywhere; }
+  .spotlightMetric { position: static; padding-top: 5px; gap: 4px; }
+  .spotlightMetric > strong { font-size: 29px; }
+  .spotlightMetric > span { font-size: 10px; white-space: normal; }
+  .results { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; padding-top: 12px; }
+  .results > * { grid-column: 1 / -1; }
+  .results > .directoryHeading { grid-column: 1; grid-row: 1; display: block; padding-bottom: 12px; }
+  .directoryHeading h2 { font-size: 20px; }
+  .directoryHeading > div { display: flex; gap: 4px 10px; }
+  .directoryReading { display: none; }
+  .results > .mobileMethodLink { grid-column: 2; grid-row: 1; display: inline-flex; align-items: center; align-self: start; gap: 5px; min-height: 44px; font-size: 12px; color: var(--fc-data-text-muted); }
+  .mobileMethodLink svg { width: 13px; }
+  .heroRow { min-height: 78px; gap: 10px; }
+  .dossierHero { min-height: 222px; margin-top: 14px; }
+  .dossierCopy { width: 70%; padding: 18px 14px; }
+  .dossierCopy h1 { margin-top: 17px; font-size: 36px; overflow-wrap: anywhere; }
+  .dossierEnglish { font-size: 20px; }
+  .dossierRate { margin-top: 22px; gap: 8px; }
+  .dossierRate > strong { font-size: 46px; }
+  .dossierRate small { margin-top: 4px; font-size: 11px; white-space: normal; }
+  .dossierHero .dossierArt { height: 268px; width: 88%; top: 12px; right: -26%; mask-image: linear-gradient(to right, transparent 10%, rgb(0 0 0 / 28%) 39%, #000 66%); }
+  .dossierRole { display: none; }
+  .dossierWatermark { font-size: 100px; }
+  .dossierFacts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dossierFacts > p { display: none; }
+  .dossierFacts > a { padding: 13px 10px; border-bottom: 0; border-right: 1px solid var(--fc-data-line-on-dark); }
+  .dossierFacts > a:last-child { border-right: 0; }
+  .dossierFacts strong { font-size: 30px; }
+  .dossierFacts span { font-size: 11px; line-height: 1.5; }
+  .dossierReading { display: none; }
+  .chapterNav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; padding: 0; }
+  .chapterNav a { display: flex; align-items: center; justify-content: center; min-height: 50px; padding: 8px 5px; text-align: center; line-height: 1.5; }
+  .footprint { padding-top: 16px; }
+  .footprint > .sectionTitle { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .analysisPanel > header { padding-bottom: 12px; gap: 10px; }
+  .analysisPanel h3 { font-size: 17px; }
+  .recordToolbar select { font-size: 16px; }
+}

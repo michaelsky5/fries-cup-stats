@@ -116,7 +116,7 @@ function RatingExplanation({ entry, locale, onClose, signal }) {
         <h3>{en ? '02 / Where the performance comes from' : uiText("02 / 表现来自哪些指标", locale)}</h3>
         <p>{en ? 'Each hero segment is evaluated per 10 minutes and weighted by playtime. These contributions are relative to a neutral raw score of 50, before the Season OVR conversion.' : uiText("先比较每段英雄记录的每 10 分钟数据，再按出场时间合并。下方为相对中性原始分 50 的贡献，不是 OVR 的直接加减分。", locale)}</p>
         {evidence ? <div className={styles.metrics}>{evidence.metrics.map(metric => <div className={styles.metric} key={metric.metric}>
-          <span>{METRIC_NAMES[metric.metric]?.[en ? 1 : 0] || metric.metric}<small>{en ? 'Weight' : uiText("权重", locale)} {fmt(metric.weight)}%</small></span>
+          <span>{uiText(METRIC_NAMES[metric.metric]?.[en ? 1 : 0], locale) || metric.metric}<small>{en ? 'Weight' : uiText("权重", locale)} {fmt(metric.weight)}%</small></span>
           <div className={styles.track} aria-hidden="true"><i style={{ width: `${Math.min(50, Math.abs(metric.delta) / 20 * 50)}%`, left: metric.delta >= 0 ? '50%' : undefined, right: metric.delta < 0 ? '50%' : undefined }} data-positive={metric.delta >= 0} /></div>
           <b data-positive={metric.delta >= 0}>{metric.delta > 0 ? '+' : ''}{fmt(metric.delta)}</b>
         </div>)}</div> : <p className={styles.notice}>{en ? 'The published data does not support a metric breakdown for this rating.' : uiText("当前公开数据不足以拆解这项评分的指标贡献。", locale)}</p>}

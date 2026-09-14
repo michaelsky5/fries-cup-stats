@@ -109,9 +109,9 @@
   .viewBar { flex-wrap: wrap; gap: 0; }
   .resultMeta { padding-bottom: 8px; }
   .pairPicker { grid-template-columns: 1fr; gap: 12px; padding: 14px; }
-  .pairSide { grid-template-columns: 82px minmax(0, 1fr); gap: 10px; }
-  .pairSide > span { min-width: 0; }
-  .pairSide strong { font-size: 21px; overflow-wrap: anywhere; }
+  .pairSide { grid-template-columns: 105px minmax(0, 1fr); gap: 10px; }
+  .pairSide > span { min-width: 0; gap: 6px; }
+  .pairSide strong { font-size: 20px; overflow-wrap: anywhere; }
   .pairSide .pickerLogo { width: 24px; height: 24px; flex-shrink: 0; }
   .pairSide select { padding-inline: 8px; font-size: 16px; }
   .opponentChoices > button { width: 100%; }

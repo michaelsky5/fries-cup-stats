@@ -7,7 +7,7 @@ import { buildCinemaReviewScenes } from '../src/lib/reviewCinema.js'
 import { getReviewIdentityEntries, getReviewIdentityPortfolio } from '../src/lib/reviewIdentity.js'
 import { getReviewReadiness } from '../src/lib/reviewReadiness.js'
 import { localizeReviewScenes, reviewText } from '../src/lib/reviewLocale.js'
-import { ensureUiLocale } from '../src/lib/localeCatalog.js'
+import { ensureUiLocale, ensureTraditionalReview } from '../src/lib/localeCatalog.js'
 import { buildReviewEntryPath, buildReviewPath } from '../src/lib/reviewNavigation.js'
 import { DIRECTOR_CUT_HERO_MARKS, getCinemaTicketData, getDirectorCutEmblemLayout, getDirectorCutIdentityLayout, getDirectorCutFooterLayout, getDirectorCutPortraitMask, getFilmStageLabels, getPosterPayload } from '../src/lib/reviewPoster.js'
 import { getStaffAvatar, getTeamLogoCandidates, heroNameToSlug } from '../src/lib/reviewAssets.js'
@@ -39,6 +39,7 @@ import {
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 await Promise.all(['en-US', 'ko-KR', 'zh-TW'].map(ensureUiLocale))
+await ensureTraditionalReview()
 const snapshotPath = path.join(repoRoot, 'public', 'data', 'fcr2026_local_public.json')
 const publicRoot = path.join(repoRoot, 'public')
 const errors = []

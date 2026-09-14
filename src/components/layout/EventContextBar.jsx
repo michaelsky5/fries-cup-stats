@@ -1,12 +1,19 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useRef } from 'react'
 import styles from '../../features/fd-design/eventContextStyles.js'
 import { pickLocale } from '../../lib/legacyI18n.js'
-import { getSeasonLifecycleGroup } from '../../lib/publicDataStatus.js'
+import { getSeasonLifecycleGroup, getSeasonStatusKey } from '../../lib/publicDataStatus.js'
+import { getSeasonEventKind, getSeasonEventGroups } from '../../config/seasons.js'
 
 function contextText(locale, zh, en, ko = en) {
   if (locale === 'ko-KR') return ko
   return pickLocale(locale, zh, en)
+}
+
+function getEventKindLabel(season, locale) {
+  return getSeasonEventKind(season) === 'PARTNER'
+    ? contextText(locale, uiText('合作赛事', locale), 'Partner event', '협력 대회')
+    : contextText(locale, uiText('官方赛事', locale), 'Official event', '공식 대회')
 }
 
 function toPositiveNumber(value) {
@@ -25,7 +32,7 @@ function getCurrentScaleText(locale, activeSummary = null, season = null) {
   const scale = getCurrentScale(activeSummary, season)
   return contextText(
     locale,
-    `${scale.teamCount} 队 · ${scale.playerCount} 选手`,
+    `${scale.teamCount} ${uiText('队', locale)} · ${scale.playerCount} ${uiText('选手', locale)}`,
     `${scale.teamCount} teams · ${scale.playerCount} players`,
     `${scale.teamCount}개 팀 · ${scale.playerCount}명 선수`
   )
@@ -39,37 +46,36 @@ function getArchiveMetaText(season, locale = 'zh-CN', activeSummary = null) {
 
   return contextText(
     locale,
-    `${championShort ? `冠军 ${championShort} · ` : ''}${matchCount} 场`,
-    `${championShort ? `Champion ${championShort} · ` : ''}${matchCount} matches`,
-    `${championShort ? `우승 ${championShort} · ` : ''}${matchCount}경기`
+    `${championShort ? `${uiText('冠军', locale)} ${championShort} · ` : ''}${matchCount} ${pickUiLocale(locale, '条赛程记录', 'schedule records', '일정 기록', '條賽程記錄')}`,
+    `${championShort ? `Champion ${championShort} · ` : ''}${matchCount} schedule records`,
+    `${championShort ? `우승 ${championShort} · ` : ''}일정 기록 ${matchCount}건`
   )
 }
 
 function getSwitcherMeta(season, currentSeasonId, seasonStatus, locale = 'zh-CN', activeSummary = null) {
   if (season?.id === currentSeasonId) {
-    const status = getReadableStatus(seasonStatus, locale)
+    const status = getReadableStatus(seasonStatus, locale, season)
     if (getSeasonLifecycleGroup(season, seasonStatus) === 'ARCHIVE') return `${status} · ${getArchiveMetaText(season, locale, activeSummary)}`
     return `${status} · ${getCurrentScaleText(locale, activeSummary, season)}`
   }
 
-  if (getSeasonLifecycleGroup(season) === 'ARCHIVE') return getArchiveMetaText(season, locale)
+  if (getSeasonLifecycleGroup(season) === 'ARCHIVE') return `${getReadableStatus(null, locale, season)} · ${getArchiveMetaText(season, locale)}`
   return getCurrentScaleText(locale, null, season)
 }
 
-function getReadableStatus(seasonStatus, locale = 'zh-CN') {
-  if (seasonStatus?.isFinished) return contextText(locale, '赛季已归档', 'Season Archived', '시즌 아카이브 완료')
-  if (seasonStatus?.liveMatches) return contextText(locale, '比赛进行中', 'Live', '경기 진행 중')
-  if (seasonStatus?.completedMatches) return contextText(locale, '赛事进行中', 'Season Active', '시즌 진행 중')
-  if (seasonStatus?.totalMatches) return contextText(locale, '赛程已发布', 'Schedule Published', '일정 공개')
-  return contextText(locale, '赛程待发布', 'Schedule Pending', '일정 공개 대기')
+function getReadableStatus(seasonStatus, locale = 'zh-CN', season = null) {
+  const key = getSeasonStatusKey(season, seasonStatus)
+  if (key === 'archive') return contextText(locale, uiText('赛季已归档', locale), 'Season Archived', '시즌 아카이브 완료')
+  if (key === 'live') return contextText(locale, uiText('比赛进行中', locale), 'Live', '경기 진행 중')
+  if (key === 'active') return contextText(locale, uiText('赛事进行中', locale), 'Season Active', '시즌 진행 중')
+  if (key === 'scheduled') return contextText(locale, uiText('赛程已发布', locale), 'Schedule Published', '일정 공개')
+  return contextText(locale, uiText('赛程待发布', locale), 'Schedule Pending', '일정 공개 대기')
 }
 
 function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary, onSeasonChange, compact = false }) {
   const detailsRef = useRef(null)
   const currentSeason = seasons.find(item => item.id === seasonId) || seasons[0]
-  const groupFor = item => getSeasonLifecycleGroup(item, item.id === seasonId ? seasonStatus : null)
-  const currentItems = seasons.filter(item => groupFor(item) === 'CURRENT')
-  const archiveItems = seasons.filter(item => groupFor(item) === 'ARCHIVE')
+  const eventGroups = getSeasonEventGroups(seasons)
 
   useEffect(() => {
     const closeMenu = event => {
@@ -103,6 +109,8 @@ function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary,
         key={item.id}
         type="button"
         className={isActive ? styles.switcherOptionActive : ''}
+        aria-current={isActive ? 'true' : undefined}
+        data-season-option={item.id}
         onClick={event => {
           event.currentTarget.closest('details')?.removeAttribute('open')
           onSeasonChange?.(item.id)
@@ -121,7 +129,7 @@ function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary,
         {compact ? (
           <>
             <strong>{currentSeason?.publicCode || seasonId}</strong>
-            <span>{groupFor(currentSeason)}</span>
+            <span>{getSeasonEventKind(currentSeason)}</span>
           </>
         ) : (
           <>
@@ -131,18 +139,12 @@ function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary,
         )}
       </summary>
       <div className={styles.switcherPanel}>
-        {currentItems.length ? (
-          <section>
-            <h3>{contextText(locale, uiText("CURRENT 当前赛事", locale), 'CURRENT Event', 'CURRENT 진행 중')}</h3>
-            {currentItems.map(renderSeasonButton)}
+        {eventGroups.map(group => (
+          <section key={group.kind} data-event-kind={group.kind}>
+            <h3><span>{getEventKindLabel(group.seasons[0], locale)}</span><small>{group.kind} / {String(group.seasons.length).padStart(2, '0')}</small></h3>
+            {group.seasons.map(renderSeasonButton)}
           </section>
-        ) : null}
-        {archiveItems.length ? (
-          <section>
-            <h3>{contextText(locale, uiText("ARCHIVE 赛季档案", locale), 'ARCHIVE Season', 'ARCHIVE 시즌 아카이브')}</h3>
-            {archiveItems.map(renderSeasonButton)}
-          </section>
-        ) : null}
+        ))}
       </div>
     </details>
   )
@@ -171,7 +173,7 @@ export default function EventContextBar({
   const lifecycle = getSeasonLifecycleGroup(season, seasonStatus)
   const statusLabel = dataStatus?.key === 'loading'
     ? contextText(locale, '正在载入赛事状态', 'Loading event status', '대회 상태 불러오는 중')
-    : getReadableStatus(seasonStatus, locale)
+    : getReadableStatus(seasonStatus, locale, season)
   const directoryNotice = [
     isPreview && dataStatus?.key === 'local' ? '' : dataStatus?.notice,
     isPreview ? contextText(locale, '设计样例 · 对阵、比分与积分均为演示', 'Design sample · fictional fixtures, scores and points', '디자인 예시 · 대진, 점수 및 순위 점수는 가상입니다') : ''
@@ -181,6 +183,7 @@ export default function EventContextBar({
     <section className={styles.directoryContext} data-directory-context data-source={dataStatus?.key} data-i18n-ignore aria-label={contextText(locale, uiText("赛事与数据状态", locale), 'Event and data status', '대회 및 데이터 상태')}>
       <div className={styles.directoryIdentity}>
         <strong>{season?.publicCode || seasonId}</strong>
+        <small className={styles.eventKindLabel}>{getEventKindLabel(season, locale)}</small>
         <span>{statusLabel}</span>
       </div>
       <div className={styles.directoryData} role="status">
@@ -210,11 +213,7 @@ export default function EventContextBar({
         ) : null}
         <div className={styles.eventIdentity}>
           <span className={styles.eventCode}>{season?.publicCode || seasonId}</span>
-          {season?.partnerLabel ? (
-            <span className={styles.partnerLabel}>
-              {locale === 'zh-CN' ? uiText(season.partnerLabel.zh, locale) : season.partnerLabel.en}
-            </span>
-          ) : null}
+          <span className={styles.partnerLabel}>{getEventKindLabel(season, locale)}</span>
         </div>
       </div> : null}
 

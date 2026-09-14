@@ -1,0 +1,112 @@
+.analysis { min-width: 0; }
+.analysisHeading { display: grid; grid-template-columns: minmax(0,1fr) minmax(285px,.36fr); border-top: 3px solid var(--fc-data-signal); background: var(--fc-data-paper-deep); }
+.analysisIdentity { min-width: 0; padding: 26px 32px 0; }
+.analysisIdentity > p:first-child { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; font-size: 11px; letter-spacing: .06em; color: var(--fc-data-text-muted); }
+.analysisIdentity > p:first-child a { font-size: 14px; font-weight: 700; color: var(--fc-data-ink); }
+.analysisIdentity h1 { font: 800 clamp(38px,4vw,64px)/1.13 var(--fc-data-font-display),var(--fc-data-font-interface); margin: 18px 0 10px; overflow-wrap: anywhere; }
+.analysisIdentity > p:last-of-type { color: var(--fc-data-text-muted); font-size: 13px; overflow-wrap: anywhere; }
+.analysisActions { grid-column: 1; grid-row: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 28px; padding: 12px 32px 22px; }
+.analysisActions > :is(a,button) { min-height: 40px; padding: 9px 0; border: 0; background: transparent; font-size: 13px; }
+.analysisActions a { font-weight: 700; }
+.analysisActions :is(a,button):hover { text-decoration: underline; text-underline-offset: 5px; }
+.analysisRating { grid-column: 2; grid-row: 1/3; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-width: 0; padding: 25px 30px; background: var(--fc-data-ink); color: var(--fc-data-paper); }
+.analysisRating > p { display: flex; justify-content: space-between; gap: 24px; width: 100%; font-size: 11px; letter-spacing: .06em; color: var(--fc-data-text-on-dark); }
+.analysisRating > p span { color: var(--fc-data-signal); font-size: 13px; }
+.ratingValue { display: flex; align-items: center; gap: 24px; width: 100%; padding: 15px 0; }
+.ratingValue > strong { font: 800 94px/.95 var(--fc-data-font-display); color: var(--fc-data-signal); }
+.ratingValue > span { display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
+.ratingValue b { font: 700 30px/1.15 var(--fc-data-font-display); }
+.ratingValue small { font: 400 11px/1.5 var(--fc-data-font-interface); color: var(--fc-data-text-on-dark); }
+.ratingValue b > small:last-child { display: block; margin-top: 4px; }
+.analysisRating > button { color: var(--fc-data-paper); border: 0; background: transparent; min-height: 36px; padding: 8px 0; font-size: 12px; }
+.analysisRating > button:focus-visible { outline-color: var(--fc-data-focus-on-dark); }
+.scopeBar { grid-column: 1/-1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px 36px; padding: 20px 30px; background: var(--fc-data-paper-raised); border: 1px solid var(--fc-data-line); border-top: 0; }
+.roleScope { display: flex; align-items: center; gap: 20px; }
+.roleScope > span { font-size: 11px; color: var(--fc-data-text-muted); white-space: nowrap; }
+.analysisSample { flex: 0 1 50%; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 30px; }
+.analysisSample > div { padding-left: 30px; border-left: 1px solid var(--fc-data-line); }
+.analysisSample dt { font-size: 11px; color: var(--fc-data-text-muted); margin-bottom: 6px; }
+.analysisSample dd { font: 600 24px/1.2 var(--fc-data-font-display); white-space: nowrap; }
+.analysisSample small,.analysisSample dd > span { font: 400 11px/1.4 var(--fc-data-font-interface); color: var(--fc-data-text-muted); margin-left: 4px; }
+.analysisTabs { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); margin: 24px 0; border-bottom: 1px solid var(--fc-data-line); }
+.analysisTabs button { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 16px 22px; min-height: 56px; border: 0; border-bottom: 3px solid transparent; border-right: 1px solid var(--fc-data-line); background: transparent; color: var(--fc-data-text-muted); font-size: 14px; text-align: left; }
+.analysisTabs button:last-child { border-right: 0; }
+.analysisTabs button[aria-pressed="true"] { background: var(--fc-data-paper-raised); color: var(--fc-data-ink); border-bottom-color: var(--fc-data-ink); font-weight: 700; }
+.analysisTabs button:hover { color: var(--fc-data-ink); background: var(--fc-data-paper-raised); }
+.analysisTabs small { font: 500 14px/1 var(--fc-data-font-display); color: var(--fc-data-text-muted); }
+.analysisContent { min-width: 0; }
+.analysisContent > section { margin-top: 0; }
+.analysisContent > section + section { margin-top: 28px; }
+.historyHeading { display: flex; align-items: end; justify-content: space-between; gap: 16px; padding: 8px 0 24px; }
+.historyHeading h2 { font-size: 28px; font-weight: 800; margin-top: 8px; }
+.historyHeading p { font-size: 12px; color: var(--fc-data-text-muted); }
+.historyHeading > div > p { font-size: 11px; letter-spacing: .08em; }
+.historySelects { display: flex; gap: 18px; min-width: 0; }
+.recordNote { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 3px 0 14px; }
+.recordNote p { font-size: 12px; color: var(--fc-data-text-muted); }
+.recordNote button { flex-shrink: 0; border: 0; background: transparent; min-height: 40px; padding: 8px 0; font-size: 12px; }
+.recordNote button:not(:disabled) { text-decoration: underline; text-underline-offset: 4px; }
+.recordNote button:disabled { opacity: .45; }
+@media (max-width: 1100px) {
+  .scopeBar { align-items: stretch; }
+  .analysisSample { flex: 1; gap: 20px; }
+  .analysisSample > div { padding-left: 20px; }
+  .roleScope { flex-wrap: wrap; gap: 12px; }
+  .historySelects { gap: 12px; }
+}
+@media (max-width: 760px) {
+  .analysisHeading { grid-template-columns: minmax(0,1fr) minmax(120px,.65fr); }
+  .analysisIdentity { padding: 20px 18px; }
+  .analysisIdentity h1 { font-size: clamp(30px,8.8vw,44px); margin-block: 16px 8px; }
+  .analysisIdentity > p:first-child { flex-direction: column; align-items: start; gap: 8px; }
+  .analysisIdentity > p:first-child > span { font-size: 9px; }
+  .analysisIdentity > p:last-of-type { font-size: 11px; }
+  .analysisActions { grid-column: 1/-1; grid-row: 2; padding: 6px 18px; gap: 20px; border-bottom: 1px solid var(--fc-data-line); }
+  .analysisActions > :is(a,button) { font-size: 12px; }
+  .analysisRating { grid-row: 1; padding: 17px 15px 12px; gap: 0; justify-content: start; }
+  .analysisRating > p { flex-wrap: wrap; gap: 5px 10px; font-size: 9px; }
+  .analysisRating > p span { font-size: 10px; }
+  .ratingValue { display: block; padding: 10px 0 4px; }
+  .ratingValue > strong { font-size: 57px; }
+  .ratingValue > span { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 5px 8px; font-size: 10px; margin-top: 7px; }
+  .ratingValue b { font-size: 19px; }
+  .ratingValue b > small { font-size: 10px; }
+  .ratingValue b > small:last-child { display: none; }
+  .ratingValue > span > small { font-size: 10px; }
+  .analysisRating > button { font-size: 10px; min-height: 32px; padding: 7px 0; }
+  .scopeBar { display: block; padding: 14px 16px; }
+  .roleScope { flex-wrap: nowrap; gap: 12px; }
+  .roleScope > span { font-size: 10px; }
+  .analysisSample { grid-template-columns: repeat(3,minmax(0,1fr)); margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--fc-data-line); gap: 12px; }
+  .analysisSample > div { padding-left: 12px; min-width: 0; }
+  .analysisSample > div:first-child { border-left: 0; padding-left: 0; }
+  .analysisSample dt { font-size: 10px; }
+  .analysisSample dd { font-size: 22px; white-space: normal; }
+  .analysisSample small { font-size: 10px; margin-left: 2px; }
+  .analysisTabs { margin: 20px 0; }
+  .analysisTabs button { align-items: center; justify-content: center; padding: 12px 6px; min-height: 52px; font-size: 12px; gap: 5px; }
+  .analysisTabs small { font-size: 12px; }
+  .historyHeading { align-items: start; gap: 14px; }
+  .historyHeading h2 { font-size: 25px; }
+  .historyHeading > p { font-size: 11px; text-align: right; }
+  .historySelects { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); width: 100%; }
+  .historySelects label { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; min-width: 0; }
+  .historySelects select { width: 100%; min-width: 0; max-width: 100%; font-size: 12px; }
+  .recordNote { align-items: flex-start; gap: 16px; }
+  .recordNote p { font-size: 11px; line-height: 1.7; }
+  .recordNote button { font-size: 11px; min-height: 34px; }
+}
+@media (max-width: 380px) {
+  .analysisIdentity { padding-inline: 15px; }
+  .analysisRating { padding-inline: 14px; }
+  .roleScope { flex-wrap: wrap; gap: 8px; }
+  .roleScope > span { width: 100%; }
+  .roleScope > div { display: grid; grid-template-columns: repeat(var(--player-role-count,1),minmax(0,1fr)); width: 100%; }
+  .roleScope[data-count="1"] > div { width: auto; }
+  .roleScope > div > button { display: grid; grid-template-columns: 3px minmax(0,1fr); gap: 5px 8px; padding: 9px 10px; text-align: left; }
+  .roleScope i { grid-column: 1; grid-row: 1/3; }
+  .roleScope small { grid-column: 2; }
+  .analysisTabs button { flex-direction: column; gap: 4px; line-height: 1.4; }
+  .analysisSample { column-gap: 8px; }
+  .analysisSample > div { padding-left: 8px; }
+}

@@ -97,7 +97,7 @@ test('the timeout also covers downloading the body and releases the pending requ
 })
 
 test('validated season refresh preserves identity, updates validators, and keeps failures visible', async t => {
-  const fixture = JSON.parse(await readFile(new URL('../public/data/qgcs4_preseason_public.json', import.meta.url), 'utf8'))
+  const fixture = JSON.parse(await readFile(new URL('../public/data/qgcs4_review_public.json', import.meta.url), 'utf8'))
   const season = getSeasonById('QGCS4')
   const calls = []
   let response = 'first'

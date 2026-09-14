@@ -1,5 +1,5 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
-import { Link } from 'react-router-dom'
+import Link from './AdvanceRecordLink.jsx'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import { teamFull, teamShort } from '../../lib/advanceSelectors.js'
 import styles from './AdvanceSignal.module.css'
@@ -45,12 +45,55 @@ export default function AdvanceSignalFinal({
       <header className={styles.chapterIntro}>
         <div>
           <span>{singleElimination ? '03' : '04'} / TITLE RECORD / {seasonId}</span>
-          <h2>{copy(locale, <>{uiText("每一步，", locale)}<em>{uiText("通向此刻。", locale)}</em></>, <>Every round.<em>Led to this moment.</em></>)}</h2>
+          <h2>{copy(locale, <>{uiText("每一步，", locale)}<em>{uiText("通向此刻。", locale)}</em></>, <>Every round.{' '}<em>Led to this moment.</em></>)}</h2>
         </div>
         <p>{copy(locale, uiText("冠军不是一张结果卡，而是一条可以从头重新走过的完整比赛路径。", locale), 'A champion is not a result card, but a complete match route that can be retraced from the start.')}</p>
       </header>
 
       <div className={styles.finalWorkspace}>
+        <aside className={styles.championAside} aria-label={copy(locale, uiText("冠军档案", locale), 'Champion dossier')}>
+          <div className={styles.championDossier}>
+            <header>
+              <span>CHAMPION DOSSIER <b>/</b> {seasonId}</span>
+              <em>★</em>
+            </header>
+
+            <div className={styles.championVisual}>
+              <span className={styles.championRankMark} aria-hidden="true">01</span>
+              <TeamLogo team={champion} seasonId={seasonId} className={styles.championLogo} />
+              <small>{copy(locale, uiText("赛季冠军", locale), 'SEASON CHAMPION')} <i aria-hidden="true">↘</i></small>
+            </div>
+
+            <div className={styles.championIdentity}>
+              <span>{seasonId} <b>/</b> WINNER</span>
+              <h2>{teamShort(champion)}</h2>
+              <p>{teamFull(champion)}</p>
+            </div>
+
+            <div className={styles.finalScore}>
+              <span>{copy(locale, uiText("总决赛", locale), 'GRAND FINAL')}</span>
+              <strong>{grandFinalLabel}</strong>
+            </div>
+
+            <div className={styles.championMetrics}>
+              <span>{copy(locale, uiText("夺冠路径", locale), 'TITLE RUN')} <b>{String(completedPath.length).padStart(2, '0')} MATCHES</b></span>
+              <dl>
+                <div><dt>{copy(locale, uiText("比赛", locale), 'MATCHES')}</dt><dd>{completedPath.length || '—'}</dd></div>
+                <div><dt>{copy(locale, uiText("胜场", locale), 'WINS')}</dt><dd>{completedPath.length ? wins : '—'}</dd></div>
+                <div><dt>{copy(locale, uiText("负场", locale), 'LOSSES')}</dt><dd>{completedPath.length ? losses : '—'}</dd></div>
+              </dl>
+            </div>
+
+            <nav className={styles.dossierActions} aria-label={copy(locale, uiText("冠军档案相关入口", locale), 'Champion dossier links')}>
+              <Link to={getPhaseHref('playoffs')}>
+                <span>{copy(locale, uiText("查看完整季后赛晋级图", locale), 'Open full playoff bracket')}</span>
+                <b aria-hidden="true">↗</b>
+              </Link>
+            </nav>
+          </div>
+          <p className={styles.dossierHint}>{copy(locale, uiText("一个冠军，一条完整路径。", locale), 'ONE CHAMPION. EVERY STEP.')}</p>
+        </aside>
+
         <section className={styles.routeSection} aria-labelledby="signal-champion-route-title">
           <header className={styles.sectionEyebrow}>
             <span>CHAMPION ROUTE × {String(path.length).padStart(2, '0')}</span>
@@ -95,48 +138,7 @@ export default function AdvanceSignalFinal({
           </div>
         </section>
 
-        <aside className={styles.championAside} aria-label={copy(locale, uiText("冠军档案", locale), 'Champion dossier')}>
-          <div className={styles.championDossier}>
-            <header>
-              <span>CHAMPION DOSSIER <b>/</b> {seasonId}</span>
-              <em>★</em>
-            </header>
 
-            <div className={styles.championVisual}>
-              <span className={styles.championRankMark} aria-hidden="true">01</span>
-              <TeamLogo team={champion} seasonId={seasonId} className={styles.championLogo} />
-              <small>{copy(locale, uiText("赛季冠军", locale), 'SEASON CHAMPION')} <i aria-hidden="true">↘</i></small>
-            </div>
-
-            <div className={styles.championIdentity}>
-              <span>{seasonId} <b>/</b> WINNER</span>
-              <h2>{teamShort(champion)}</h2>
-              <p>{teamFull(champion)}</p>
-            </div>
-
-            <div className={styles.finalScore}>
-              <span>{copy(locale, uiText("总决赛", locale), 'GRAND FINAL')}</span>
-              <strong>{grandFinalLabel}</strong>
-            </div>
-
-            <div className={styles.championMetrics}>
-              <span>{copy(locale, uiText("夺冠路径", locale), 'TITLE RUN')} <b>{String(completedPath.length).padStart(2, '0')} MATCHES</b></span>
-              <dl>
-                <div><dt>{copy(locale, uiText("比赛", locale), 'MATCHES')}</dt><dd>{completedPath.length || '—'}</dd></div>
-                <div><dt>{copy(locale, uiText("胜场", locale), 'WINS')}</dt><dd>{completedPath.length ? wins : '—'}</dd></div>
-                <div><dt>{copy(locale, uiText("负场", locale), 'LOSSES')}</dt><dd>{completedPath.length ? losses : '—'}</dd></div>
-              </dl>
-            </div>
-
-            <nav className={styles.dossierActions} aria-label={copy(locale, uiText("冠军档案相关入口", locale), 'Champion dossier links')}>
-              <Link to={getPhaseHref('playoffs')}>
-                <span>{copy(locale, uiText("查看完整季后赛晋级图", locale), 'Open full playoff bracket')}</span>
-                <b aria-hidden="true">↗</b>
-              </Link>
-            </nav>
-          </div>
-          <p className={styles.dossierHint}>{copy(locale, uiText("一个冠军，一条完整路径。", locale), 'ONE CHAMPION. EVERY STEP.')}</p>
-        </aside>
       </div>
 
       {ranking.length ? (
