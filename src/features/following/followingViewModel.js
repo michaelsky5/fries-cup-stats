@@ -20,6 +20,7 @@ export function getFollowingView(feed, search) {
   const subject = subjects.find(item => item.key === subjectKey) || null
   const missingSubject = Boolean(subjectKey && !subject)
   const state = matchStates.includes(params.get('followState')) ? params.get('followState') : 'all'
+  const collection = ['teams', 'players'].includes(params.get('followCollection')) ? params.get('followCollection') : feed.teams.length ? 'teams' : 'players'
   const matches = !subjectKey ? feed.matches : missingSubject ? [] : feed.matches.filter(item => item.relations.some(reason => (
     reason.id === subject.id && (subject.type === 'team' ? reason.type === 'team' : ['appearance', 'player-team'].includes(reason.type))
   )))
@@ -27,11 +28,15 @@ export function getFollowingView(feed, search) {
   const entries = state === 'all' ? matches : matches.filter(item => item.group === state)
   // Keep an explicitly selected empty state visible, including links from an earlier season state.
   const filters = ['all', ...matchStates.filter(key => key === state || (['live', 'upcoming'].includes(key) ? !feed.archived : key === 'results' || counts[key] > 0))]
-  return { subjectKey, subject, subjects, missingSubject, state, counts, entries, filters, limit: readLimit(params.get('followLimit')) }
+  return { subjectKey, subject, subjects, missingSubject, state, collection, counts, entries, filters, limit: readLimit(params.get('followLimit')) }
 }
 
 export function updateFollowingSearch(search, patch) {
   const params = new URLSearchParams(search)
+  if ('collection' in patch) {
+    if (['teams', 'players'].includes(patch.collection)) params.set('followCollection', patch.collection)
+    else params.delete('followCollection')
+  }
   if ('cycleId' in patch) {
     if (patch.cycleId) params.set('cycle', patch.cycleId)
     else params.delete('cycle')

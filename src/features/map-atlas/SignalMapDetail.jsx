@@ -5,6 +5,7 @@ import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import ImeSafeInput from '../../components/common/ImeSafeInput.jsx'
 import SignalSwitch from '../../components/common/SignalSwitch.jsx'
 import { formatOwHeroName, formatOwMapMode, formatOwMapName } from '../../lib/heroes.js'
+import { withLocale } from '../../lib/locales.js'
 import { getLocationPath, getRestoreScrollState, getRestoreScrollY, getReturnState, getSavedReturnScroll, readReturnState, restoreWindowScroll, saveReturnScroll } from '../../lib/navigationState.js'
 import { buildMapAtlas, findAtlasMap, formatMapDuration, HERO_ROLES, mapImageUrl } from './mapAtlasModel.js'
 import { Arrow, AtlasEmpty, AtlasImage, AtlasNav, ChapterHeading, HeroPortrait, percent, useAtlasQuery } from './MapAtlasShared.jsx'
@@ -13,20 +14,20 @@ import styles from './MapAtlas.module.css'
 const ROLE_NAMES = { tank: ['重装', 'Tank'], damage: ['输出', 'Damage'], support: ['支援', 'Support'], other: ['其他', 'Other'] }
 const METRIC_NAMES = { eliminations: ['最高消灭', 'Eliminations'], assists: ['最多助攻', 'Assists'], damage: ['最高伤害', 'Damage'], healing: ['最高治疗', 'Healing'], mitigation: ['最高减伤', 'Mitigation'] }
 
-function stageLabel(value, isEn) {
-  if (isEn) return value
-  return { SWISS: '瑞士轮', LCQ: '突围赛', PLAYOFFS: '季后赛', GROUP: '小组赛', GROUP_STAGE: '小组赛' }[value] || value
+function stageLabel(value, isEn, labelLocale = 'zh-CN') {
+  if (isEn) return uiText(value, labelLocale)
+  return uiText({ SWISS: '瑞士轮', LCQ: '突围赛', PLAYOFFS: '季后赛', GROUP: '小组赛', GROUP_STAGE: '小组赛' }[value] || value, labelLocale)
 }
 
-function roundLabel(value, isEn) {
-  if (isEn) return value
+function roundLabel(value, isEn, labelLocale = 'zh-CN') {
+  if (isEn) return uiText(value, labelLocale)
   const labels = { 'GRAND FINALS': '总决赛', FINALS: '决赛', SEMIFINALS: '半决赛', QUARTERFINALS: '八强赛', 'PLAY-IN': '入围赛', QUALIFICATION: '资格赛', 'UB QF': '胜者组八强赛', 'UB SF': '胜者组半决赛', 'UB FINAL': '胜者组决赛', 'LB FINAL': '败者组决赛' }
-  return labels[value.toUpperCase()] || value.replace(/^ROUND OF\s*(\d+)$/i, '$1 强赛').replace(/^ROUND\s*0?(\d+)$/i, '第 $1 轮').replace(/^LB R(\d+)$/i, '败者组第 $1 轮').replace(/^GROUP\s+(\w+)\s*\/\s*DAY\s+(\d+)$/i, '$1 组 · 第 $2 比赛日')
+  return uiText(labels[value.toUpperCase()] || value.replace(/^ROUND OF\s*(\d+)$/i, '$1 强赛').replace(/^ROUND\s*0?(\d+)$/i, '第 $1 轮').replace(/^LB R(\d+)$/i, '败者组第 $1 轮').replace(/^GROUP\s+(\w+)\s*\/\s*DAY\s+(\d+)$/i, '$1 组 · 第 $2 比赛日'), labelLocale)
 }
 
 function recordDate(value, locale) {
   if (!value) return '—'
-  return new Intl.DateTimeFormat(locale === 'en-US' ? 'en-GB' : 'zh-CN', { month: '2-digit', day: '2-digit', timeZone: 'Asia/Shanghai' }).format(new Date(value))
+  return new Intl.DateTimeFormat(locale === 'en-US' ? 'en-GB' : locale, { month: '2-digit', day: '2-digit', timeZone: 'Asia/Shanghai' }).format(new Date(value))
 }
 
 function MapEnvironment({ map, locale, onExplore }) {
@@ -54,7 +55,7 @@ function MapEnvironment({ map, locale, onExplore }) {
       </div>
       {view === 'heroes' ? <div className={styles.roleSwitch} aria-label={isEn ? 'Hero role' : uiText("英雄职责", locale)}>
         <button type="button" aria-pressed={role === 'all'} onClick={() => setRole('all')}>{isEn ? 'All roles' : uiText("全部职责", locale)}</button>
-        {availableRoles.map(item => <button ref={node => { roleButtonRefs.current[item] = node }} type="button" key={item} aria-pressed={role === item} onClick={() => setRole(item)}>{ROLE_NAMES[item][isEn ? 1 : 0]}</button>)}
+        {availableRoles.map(item => <button ref={node => { roleButtonRefs.current[item] = node }} type="button" key={item} aria-pressed={role === item} onClick={() => setRole(item)}>{uiText(ROLE_NAMES[item][isEn ? 1 : 0], locale)}</button>)}
       </div> : <span className={styles.muted}>{map.lineupSamples} {isEn ? 'five-hero records' : uiText("个五英雄阵容样本", locale)}</span>}
     </div>
     {view === 'heroes' ? map.heroStats.length ? <>
@@ -65,7 +66,7 @@ function MapEnvironment({ map, locale, onExplore }) {
           const visible = role === 'all' ? all.slice(1, 4) : all.slice(1)
           const tied = leader && all[1]?.count === leader.count
           return <div className={styles.heroRoleColumn} key={item}>
-            <h3><span>{ROLE_NAMES[item][isEn ? 1 : 0]}</span><small>{all.length} {isEn ? 'heroes' : uiText("位英雄", locale)}</small></h3>
+            <h3><span>{uiText(ROLE_NAMES[item][isEn ? 1 : 0], locale)}</span><small>{all.length} {isEn ? 'heroes' : uiText("位英雄", locale)}</small></h3>
             {leader ? <button type="button" className={styles.roleLeader} onClick={() => onExplore({ type: 'hero', key: leader.key, label: formatOwHeroName(leader.name, locale) })} aria-label={`${formatOwHeroName(leader.name, locale)} · ${percent(leader.rate)} · ${isEn ? 'view matches' : uiText("查看相关比赛", locale)}`}>
               <HeroPortrait name={leader.name} className={styles.leaderPortrait} />
               <span className={styles.leaderIdentity}><small>{tied ? (isEn ? 'Joint most recorded' : uiText("并列出场最多", locale)) : (isEn ? 'Most recorded' : uiText("出场最多", locale))}</small><strong>{formatOwHeroName(leader.name, locale)}</strong><b>{percent(leader.rate)}</b><span>{leader.count} / {map.heroSamples} {isEn ? 'samples' : uiText("份记录", locale)}</span></span>
@@ -75,7 +76,7 @@ function MapEnvironment({ map, locale, onExplore }) {
               <HeroPortrait name={hero.name} className={styles.heroAvatar} />
               <span className={styles.heroPresenceInfo}><span><strong>{formatOwHeroName(hero.name, locale)}</strong><b>{percent(hero.rate)}</b></span><span className={styles.heroTrack} aria-hidden="true"><i style={{ width: percent(hero.rate) }} /></span><small>{hero.count} / {map.heroSamples} {isEn ? 'samples' : uiText("样本", locale)}</small></span><Arrow />
             </button>)}</div>
-            {role === 'all' && all.length > visible.length + 1 ? <button type="button" className={styles.textButton} onClick={() => { setRole(item); roleButtonRefs.current[item]?.focus() }}>{isEn ? `All ${all.length} heroes` : uiText("查看全部 {0} 位", locale, [all.length])}<Arrow /></button> : null}
+            {role === 'all' && all.length > 1 ? <button type="button" className={styles.textButton} data-mobile-only={all.length <= visible.length + 1} onClick={() => { setRole(item); roleButtonRefs.current[item]?.focus() }}>{isEn ? `All ${all.length} heroes` : uiText("查看全部 {0} 位", locale, [all.length])}<Arrow /></button> : null}
           </div>
         })}
       </div>
@@ -87,7 +88,7 @@ function MapEnvironment({ map, locale, onExplore }) {
     </> : <AtlasEmpty title={isEn ? 'Hero records are not available yet' : uiText("尚无英雄统计", locale)}>{isEn ? 'Map results remain available below.' : uiText("仍可在下方查看已发布的地图赛果。", locale)}</AtlasEmpty> : composition ? <div className={styles.compositionLayout}>
       <div className={styles.compositionFeature}>
         <div className={styles.compositionHeadline}><span>{isEn ? 'RECORDED COMPOSITION' : uiText("记录中的阵容", locale)}</span><strong>{composition.count}<small>{isEn ? 'appearances' : uiText("次出现", locale)}</small></strong></div>
-        <div className={styles.lineupPortraits}>{composition.heroes.map(hero => <div key={hero.key}><HeroPortrait name={hero.name} /><strong>{formatOwHeroName(hero.name, locale)}</strong><small>{ROLE_NAMES[hero.role]?.[isEn ? 1 : 0] || ''}</small></div>)}</div>
+        <div className={styles.lineupPortraits}>{composition.heroes.map(hero => <div key={hero.key}><HeroPortrait name={hero.name} /><strong>{formatOwHeroName(hero.name, locale)}</strong><small>{uiText(ROLE_NAMES[hero.role]?.[isEn ? 1 : 0], locale) || ''}</small></div>)}</div>
         <p>{percent(composition.share)} {isEn ? 'of complete composition samples' : uiText("的完整阵容样本", locale)}<span>{composition.teamNames.slice(0, 3).join(' / ')}</span></p>
         <button type="button" className={styles.textButton} onClick={() => onExplore({ type: 'lineup', key: composition.key, label: isEn ? 'Selected composition' : uiText("所选阵容", locale) })}>{isEn ? 'Explore its matches' : uiText("查看这套阵容的比赛", locale)}<Arrow down /></button>
       </div>
@@ -138,26 +139,27 @@ function MapRecords({ map, locale, withSeason, filter, onClear, returnState, onN
   const search = params.get('mapRecordSearch') || ''
   const limit = Math.min(map.records.length, Math.max(8, Number(params.get('mapRecordLimit')) || 8))
   const stage = params.get('mapStage') || ''
+  const showExtremes = params.get('mapExtremes') === 'all'
   const stages = [...new Set(map.records.map(record => record.stage))].filter(Boolean)
   const query = search.trim().toLowerCase()
   const rows = map.records.filter(record => {
     const matchesHero = filter?.type !== 'hero' || record.heroKeys.has(filter.key)
     const matchesLineup = filter?.type !== 'lineup' || record.compositionKeys.has(filter.key)
     const matchesTeam = filter?.type !== 'team' || record.teamKeys.has(filter.key)
-    return matchesHero && matchesLineup && matchesTeam && (!stage || record.stage === stage) && (!query || [record.a.name, record.a.short, record.b.name, record.b.short, record.stage, record.round, stageLabel(record.stage, isEn), roundLabel(record.round, isEn)].join(' ').toLowerCase().includes(query))
+    return matchesHero && matchesLineup && matchesTeam && (!stage || record.stage === stage) && (!query || [record.a.name, record.a.short, record.b.name, record.b.short, record.stage, record.round, stageLabel(record.stage, isEn, locale), roundLabel(record.round, isEn, locale)].join(' ').toLowerCase().includes(query))
   })
   const toRecord = record => withSeason(`/matches/${encodeURIComponent(record.matchId)}?map=${record.order}`)
   return <section className={styles.chapter}>
     <ChapterHeading number="03" english="BACK TO THE MATCHES" title={isEn ? 'Matches & map records.' : uiText("比赛与单图纪录。", locale)}><span role="status" aria-live="polite">{rows.length} {isEn ? 'map records' : uiText("条地图记录", locale)}</span></ChapterHeading>
-    {!filter && !query && !stage && map.extremes.length ? <div className={styles.recordHighlights}><h3>{isEn ? 'Single-map records' : uiText("单图纪录", locale)}<small>{isEn ? 'RAW TOTALS' : uiText("原始总量", locale)}</small></h3><div className={styles.extremes} aria-label={isEn ? 'Map-wide single-game records, raw totals' : uiText("本地图单图极值，原始总量", locale)}>{map.extremes.map(record => <div key={record.metric}><span>{METRIC_NAMES[record.metric][isEn ? 1 : 0]}</span><strong>{record.value.toLocaleString()}</strong><div><HeroPortrait name={record.hero} /><span>{record.playerId ? <Link to={withSeason(`/players/${encodeURIComponent(record.playerId)}`)} state={returnState} onClick={onNavigate}>{record.player || record.playerId}</Link> : record.player || '—'}<small>{formatOwHeroName(record.hero, locale)}</small></span></div><Link className={styles.recordSource} to={toRecord(record.record)} state={returnState} onClick={onNavigate}>{isEn ? 'View match' : uiText("查看比赛", locale)}<Arrow /></Link></div>)}</div></div> : null}
+    {!filter && !query && !stage && map.extremes.length ? <div className={styles.recordHighlights} data-expanded={showExtremes}><h3>{isEn ? 'Single-map records' : uiText("单图纪录", locale)}<small>{isEn ? 'RAW TOTALS' : uiText("原始总量", locale)}</small><button type="button" className={styles.mobileDisclosure} aria-expanded={showExtremes} aria-controls="map-extremes" aria-label={isEn ? "Single-map records" : uiText("单图纪录", locale)} onClick={() => update({ mapExtremes: showExtremes ? "" : "all" })}>{showExtremes ? (isEn ? "Less" : uiText("收起", locale)) : (isEn ? "Explore" : uiText("展开", locale))}<span aria-hidden="true">{showExtremes ? "−" : "+"}</span></button></h3><div id="map-extremes" className={styles.extremes} aria-label={isEn ? 'Map-wide single-game records, raw totals' : uiText("本地图单图极值，原始总量", locale)}>{map.extremes.map(record => <div key={record.metric}><span>{uiText(METRIC_NAMES[record.metric][isEn ? 1 : 0], locale)}</span><strong>{record.value.toLocaleString()}</strong><div><HeroPortrait name={record.hero} /><span>{record.playerId ? <Link to={withSeason(`/players/${encodeURIComponent(record.playerId)}`)} state={returnState} onClick={onNavigate}>{record.player || record.playerId}</Link> : record.player || '—'}<small>{formatOwHeroName(record.hero, locale)}</small></span></div><Link className={styles.recordSource} to={toRecord(record.record)} state={returnState} onClick={onNavigate}>{isEn ? 'View match' : uiText("查看比赛", locale)}<Arrow /></Link></div>)}</div></div> : null}
     <div className={styles.recordToolbar}>
       <label className={styles.searchField}><ImeSafeInput aria-label={isEn ? 'Find a team or round' : uiText("搜索战队或轮次", locale)} placeholder={isEn ? 'Find a team or round…' : uiText("搜索战队或轮次…", locale)} value={search} onValueChange={value => update({ mapRecordSearch: value, mapRecordLimit: '' })} />{search ? <button type="button" aria-label={isEn ? 'Clear match search' : uiText("清除比赛搜索", locale)} onClick={() => update({ mapRecordSearch: '', mapRecordLimit: '' })}>×</button> : null}</label>
       {filter ? <button type="button" className={styles.filterChip} onClick={onClear} aria-label={`${isEn ? 'Clear filter' : uiText("清除筛选", locale)}：${filter.label}`}>{filter.label}<span aria-hidden="true">×</span></button> : null}
-      {stages.length > 1 || stage ? <select aria-label={isEn ? 'Filter match stage' : uiText("筛选比赛阶段", locale)} value={stage} onChange={event => update({ mapStage: event.target.value, mapRecordLimit: '' })}><option value="">{isEn ? 'All stages' : uiText("全部阶段", locale)}</option>{stage && !stages.includes(stage) ? <option value={stage}>{stageLabel(stage, isEn)}</option> : null}{stages.map(item => <option key={item} value={item}>{stageLabel(item, isEn)}</option>)}</select> : null}
+      {stages.length > 1 || stage ? <select aria-label={isEn ? 'Filter match stage' : uiText("筛选比赛阶段", locale)} value={stage} onChange={event => update({ mapStage: event.target.value, mapRecordLimit: '' })}><option value="">{isEn ? 'All stages' : uiText("全部阶段", locale)}</option>{stage && !stages.includes(stage) ? <option value={stage}>{stageLabel(stage, isEn, locale)}</option> : null}{stages.map(item => <option key={item} value={item}>{stageLabel(item, isEn, locale)}</option>)}</select> : null}
     </div>
     <div className={styles.recordOrder}><p>{isEn ? 'Newest first · map scores' : uiText("按比赛时间倒序 · 显示本图比分", locale)}</p>{filter?.type === 'hero' ? <Link to={withSeason(`/heroes?hero=${encodeURIComponent(filter.key)}&heroMap=${encodeURIComponent(map.name)}`)} state={returnState} onClick={onNavigate}>{isEn ? 'Explore hero profile' : uiText("查看英雄档案", locale)}<Arrow /></Link> : null}{filter || query || stage ? <button type="button" onClick={() => update({ mapHero: '', mapTeam: '', mapLineup: '', mapRecordSearch: '', mapStage: '', mapRecordLimit: '' })}>{isEn ? 'Clear all filters' : uiText("清除全部筛选", locale)} ×</button> : null}</div>
     {rows.length ? <div className={styles.matchRecords}>{rows.slice(0, limit).map(record => <Link className={styles.matchRecord} to={toRecord(record)} state={returnState} onClick={onNavigate} key={record.id}>
-      <span className={styles.matchRecordMeta}><strong>{recordDate(record.date, locale)}</strong><small>{stageLabel(record.stage, isEn)} · {roundLabel(record.round, isEn)}</small></span>
+      <span className={styles.matchRecordMeta}><strong>{recordDate(record.date, locale)}</strong><small>{stageLabel(record.stage, isEn, locale)} · {roundLabel(record.round, isEn, locale)}</small></span>
       <span className={styles.matchRecordTeams}><span data-winner={record.winner === 'A'}>{record.a.short || '—'}</span><strong><b data-winner={record.winner === 'A'}>{record.scoreA ?? '—'}</b><i>:</i><b data-winner={record.winner === 'B'}>{record.scoreB ?? '—'}</b></strong><span data-winner={record.winner === 'B'}>{record.b.short || '—'}</span></span>
       <span className={styles.matchRecordTime}>{record.administrative ? <span className={styles.ruling}>{isEn ? 'Ruling' : uiText("裁决", locale)}</span> : formatMapDuration(record.duration)}<small>{isEn ? `Map ${record.order}` : uiText("第 {0} 图", locale, [record.order])}</small></span><Arrow />
     </Link>)}</div> : <AtlasEmpty title={isEn ? 'No matching records' : uiText("没有匹配的比赛记录", locale)}>{isEn ? 'Try another search or stage, or clear the current filter.' : uiText("试试其他搜索词或比赛阶段，或清除当前筛选。", locale)}</AtlasEmpty>}
@@ -172,6 +174,7 @@ function MapDetailView({ map, atlas, locale, seasonId, withSeason, backTo, backS
   const heroFilter = params.get('mapHero')
   const teamFilter = params.get('mapTeam')
   const lineupFilter = params.get('mapLineup')
+  const showContext = params.get('mapContext') === 'full'
   const recordFilter = heroFilter ? { type: 'hero', key: heroFilter, label: formatOwHeroName(map.heroStats.find(hero => hero.key === heroFilter)?.name || heroFilter, locale) }
     : teamFilter ? { type: 'team', key: teamFilter, label: map.teams.find(team => team.key === teamFilter)?.short || teamFilter }
     : lineupFilter ? { type: 'lineup', key: lineupFilter, label: isEn ? 'Selected composition' : uiText("所选阵容", locale) } : null
@@ -204,13 +207,13 @@ function MapDetailView({ map, atlas, locale, seasonId, withSeason, backTo, backS
         <div><dt>{isEn ? 'Average map time' : uiText("平均单图时长", locale)}</dt><dd>{formatMapDuration(map.avgDuration)}</dd><small>{map.durationSamples} {isEn ? 'timed records' : uiText("份时长样本", locale)}</small></div>
         <div><dt><a href="#map-teams">{isEn ? 'Teams recorded' : uiText("参赛队伍", locale)}<Arrow down /></a></dt><dd>{map.teams.length}</dd><small>{isEn ? 'teams on this map' : uiText("支队伍留下记录", locale)}</small></div>
       </dl>
-      <section className={styles.modeContext} aria-label={isEn ? 'Other maps in this mode' : uiText("同模式地图比较", locale)}>
-        <div className={styles.modeContextHeading}><h2>{isEn ? `${formatOwMapMode(map.type, locale)} in context` : uiText("同模式地图", locale)}</h2><span>{isEn ? `Records / share of ${mode.count} in this mode` : uiText("记录数 / 占同模式 {0} 条的比例", locale, [mode.count])}</span></div>
-        <div className={styles.modeComparison}>{mode.maps.map(item => <Link to={withSeason(`/maps/${encodeURIComponent(item.routeName)}`)} state={sourceState} key={item.name} className={styles.modeComparisonRow} aria-current={item.name === map.name ? 'page' : undefined}><span>{formatOwMapName(item.name, locale)}</span><span aria-hidden="true"><i style={{ width: percent(item.count / topModeCount) }} /></span><strong>{item.count}</strong><small>{percent(item.modeShare)}</small></Link>)}</div>
+      <section className={styles.modeContext} data-expanded={showContext} aria-label={isEn ? 'Other maps in this mode' : uiText("同模式地图比较", locale)}>
+        <div className={styles.modeContextHeading}><h2>{isEn ? `${formatOwMapMode(map.type, locale)} in context` : uiText("同模式地图", locale)}</h2><button type="button" className={styles.mobileDisclosure} aria-expanded={showContext} aria-controls="map-mode-comparison" aria-label={isEn ? "Other maps in this mode" : uiText("同模式地图比较", locale)} onClick={() => update({ mapContext: showContext ? "" : "full" })}>{showContext ? (isEn ? "Less" : uiText("收起", locale)) : (isEn ? "Compare" : uiText("展开比较", locale))}<span aria-hidden="true">{showContext ? "−" : "+"}</span></button><span>{isEn ? `Records / share of ${mode.count} in this mode` : uiText("记录数 / 占同模式 {0} 条的比例", locale, [mode.count])}</span></div>
+        <div id="map-mode-comparison" className={styles.modeComparison}>{mode.maps.map(item => <Link to={withSeason(`/maps/${encodeURIComponent(item.routeName)}`)} state={sourceState} key={item.name} className={styles.modeComparisonRow} aria-current={item.name === map.name ? 'page' : undefined}><span>{formatOwMapName(item.name, locale)}</span><span aria-hidden="true"><i style={{ width: percent(item.count / topModeCount) }} /></span><strong>{item.count}</strong><small>{percent(item.modeShare)}</small></Link>)}</div>
       </section>
     </header>
 
-    <div className={styles.detailContents} aria-label={isEn ? 'On this page' : uiText("本页内容", locale)}><span>{isEn ? 'ON THIS MAP' : uiText("沿着地图读比赛", locale)}</span><a href="#map-environment">01 {isEn ? 'Heroes & lineups' : uiText("英雄与阵容", locale)}</a><a href="#map-teams">02 {isEn ? 'Team results' : uiText("战队表现", locale)}</a><a href="#map-records">03 {isEn ? 'Match records' : uiText("比赛记录", locale)}</a></div>
+    <nav className={styles.detailContents} aria-label={isEn ? 'On this page' : uiText("本页内容", locale)}><span>{isEn ? 'ON THIS MAP' : uiText("沿着地图读比赛", locale)}</span><a href="#map-environment">01 {isEn ? 'Heroes & lineups' : uiText("英雄与阵容", locale)}</a><a href="#map-teams">02 {isEn ? 'Team results' : uiText("战队表现", locale)}</a><a href="#map-records">03 {isEn ? 'Match records' : uiText("比赛记录", locale)}</a></nav>
 
     <MapEnvironment map={map} locale={locale} onExplore={explore} />
     <MapTeams map={map} locale={locale} seasonId={seasonId} withSeason={withSeason} onExplore={explore} returnState={returnState} onNavigate={onNavigate} />
@@ -232,7 +235,7 @@ export default function SignalMapDetail() {
   const [retainedSource, setRetainedSource] = useState(sourceCandidate)
   if (incomingSource.returnTo && ['returnTo', 'returnScrollY', 'parentReturnTo', 'parentReturnScrollY'].some(key => sourceCandidate[key] !== retainedSource[key])) setRetainedSource(sourceCandidate)
   const sourceState = incomingSource.returnTo ? sourceCandidate : retainedSource
-  const backTo = sourceState.returnTo || withSeason('/maps')
+  const backTo = withLocale(sourceState.returnTo || withSeason('/maps'), locale)
   const parentState = readReturnState({ returnTo: sourceState.parentReturnTo, returnScrollY: sourceState.parentReturnScrollY }, { allowedPrefixes: ['/maps', '/heroes'] })
   const backState = { ...getRestoreScrollState(sourceState.returnScrollY), ...(parentState.returnTo ? parentState : {}) }
   const backLabel = backTo.startsWith('/heroes') ? (locale === 'en-US' ? 'Back to hero' : uiText("返回英雄档案", locale)) : (locale === 'en-US' ? 'Back to all maps' : uiText("返回地图索引", locale))

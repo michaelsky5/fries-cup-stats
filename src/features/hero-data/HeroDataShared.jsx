@@ -4,21 +4,24 @@ import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { SignalDataNav } from '../../components/database/SignalDataHeader.jsx'
 import { getRestoreScrollState, readReturnState } from '../../lib/navigationState.js'
+import { withLocale } from '../../lib/locales.js'
 import styles from './HeroData.module.css'
 
-export const roleLabel = (role, isEn) => isEn ? role.toUpperCase() : ({ tank: '重装', damage: '输出', support: '支援' }[role] || role)
+export const roleLabel = (role, locale) => locale === 'en-US' ? role.toUpperCase() : uiText({ tank: '重装', damage: '输出', support: '支援' }[role] || role, locale)
 export const percentage = value => `${(value * 100).toFixed(1)}%`
 
 export function HeroDataNav({ withSeason, isEn, backTo }) {
   const uiLocale = useUiLocale()
   const location = useLocation()
-  const incoming = backTo ? readReturnState(location.state, { allowedPrefixes: ['/maps'] }) : {}
+  const candidateSource = backTo ? readReturnState(location.state, { allowedPrefixes: ['/maps', '/heroes'] }) : {}
+  const fromHeroIndex = /^\/heroes(?:\?|$)/.test(candidateSource.returnTo || '') && !new URLSearchParams(candidateSource.returnTo?.split('?')[1]?.split('#')[0]).has('hero')
+  const incoming = candidateSource.returnTo?.startsWith('/maps') || fromHeroIndex ? candidateSource : {}
   const candidate = { ...incoming, parentReturnTo: location.state?.parentReturnTo, parentReturnScrollY: location.state?.parentReturnScrollY }
   const [retained, setRetained] = useState(candidate)
   if (incoming.returnTo && ['returnTo', 'returnScrollY', 'parentReturnTo', 'parentReturnScrollY'].some(key => candidate[key] !== retained[key])) setRetained(candidate)
   const source = backTo ? (incoming.returnTo ? candidate : retained) : {}
   const parent = readReturnState({ returnTo: source.parentReturnTo, returnScrollY: source.parentReturnScrollY }, { allowedPrefixes: ['/maps', '/heroes'] })
-  return <SignalDataNav active="heroes" withSeason={withSeason} isEn={isEn} activeHref={backTo} backTo={source.returnTo || backTo} backState={source.returnTo ? { ...getRestoreScrollState(source.returnScrollY), ...(parent.returnTo ? parent : {}) } : undefined} backLabel={source.returnTo ? (isEn ? 'Back to map' : uiText('返回地图档案', uiLocale)) : (isEn ? 'Back to all heroes' : uiText('返回英雄索引', uiLocale))} />
+  return <SignalDataNav active="heroes" withSeason={withSeason} isEn={isEn} activeHref={backTo} backTo={backTo ? withLocale(source.returnTo || backTo, uiLocale) : undefined} backState={source.returnTo ? { ...getRestoreScrollState(source.returnScrollY), ...(parent.returnTo ? parent : {}) } : undefined} backLabel={source.returnTo?.startsWith('/maps') ? (isEn ? 'Back to map' : uiText('返回地图档案', uiLocale)) : (isEn ? 'Back to all heroes' : uiText('返回英雄索引', uiLocale))} />
 }
 
 export function GuideMethod({ isEn, guide }) {

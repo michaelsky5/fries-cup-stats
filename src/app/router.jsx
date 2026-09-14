@@ -2,7 +2,7 @@ import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router
 import RouteErrorPage from '../pages/errors/RouteErrorPage.jsx'
 import { getStoredLocale } from '../lib/i18n.js'
 import { normalizeLocale } from '../lib/locales.js'
-import { ensureUiLocale } from '../lib/localeCatalog.js'
+import { ensureUiLocale, ensureTraditionalReview } from '../lib/localeCatalog.js'
 
 export function RouteFallback() {
   const location = useLocation()
@@ -18,7 +18,7 @@ export function RouteFallback() {
 
   return (
     <div className="sys-booting" role="status" aria-live="polite" aria-busy="true">
-      <span>{isScoutingRoute ? 'FRIES CUP · PERFORMANCE INTELLIGENCE' : 'FRIES CUP DATA CENTER'}</span>
+      <span>{isScoutingRoute ? 'FRIES CUP · PERFORMANCE INTELLIGENCE' : 'FRIES CUP EVENT CENTER'}</span>
       <strong>{loadingLabel}</strong>
       <i className="sys-booting__track" aria-hidden="true"><em /></i>
     </div>
@@ -102,8 +102,17 @@ const developmentRoutes = import.meta.env.DEV ? [
 
 const router = createBrowserRouter([
   { element: <Outlet />, errorElement: <RouteErrorPage />, HydrateFallback: RouteFallback,
+    // A sibling navigation can reuse this root without rerunning its loader.
+    // Review copy needs its converter even when the language query stays the same.
+    shouldRevalidate: ({ currentUrl, nextUrl, defaultShouldRevalidate }) =>
+      defaultShouldRevalidate || currentUrl.pathname !== nextUrl.pathname,
     loader: async ({ request }) => {
-      await ensureUiLocale(new URL(request.url).searchParams.get('lang') || getStoredLocale())
+      const url = new URL(request.url)
+      const locale = normalizeLocale(url.searchParams.get('lang') || getStoredLocale())
+      await Promise.all([
+        ensureUiLocale(locale),
+        locale === 'zh-TW' && /(?:^\/review(?:\/|$)|^\/dev\/review-poster-qa)/.test(url.pathname) ? ensureTraditionalReview() : null
+      ])
       return null
     }, children: [
   ...developmentRoutes,
@@ -129,12 +138,14 @@ const router = createBrowserRouter([
       { path: 'leaderboard', lazy: lazyDefault(() => import('../pages/leaderboard/LeaderboardPage.jsx')) },
       { path: 'players', lazy: lazyDefault(() => import('../pages/players/PlayersPage.jsx')) },
       { path: 'players/:playerId', lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
+      { path: 'players/:playerId/journey', lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
       { path: 'players/:playerId/analysis', lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
       { path: 'teams', lazy: lazyDefault(() => import('../pages/teams/TeamsPage.jsx')) },
       { path: 'teams/:teamId', lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
       { path: 'teams/:teamId/journey', lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
       { path: 'teams/:teamId/analysis', lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
       { path: 'staff', lazy: lazyDefault(() => import('../pages/staff/StaffPage.jsx')) },
+      { path: 'staff/:staffId', lazy: lazyDefault(() => import('../pages/staff/StaffDetailPage.jsx')) },
       { path: 'roster', lazy: lazyDefault(() => import('../pages/roster/RosterHubPage.jsx')) },
       { path: 'heroes', lazy: lazyDefault(() => import('../pages/heroes/HeroesPage.jsx')) },
       { path: 'advance', lazy: lazyDefault(() => import('../pages/advance/AdvancePage.jsx')) },

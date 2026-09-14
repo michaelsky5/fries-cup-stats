@@ -51,6 +51,7 @@ export function collectPlayerAppearances(dossiers, player) {
           result: outcome(map.winnerSide, row.side),
           scoreFor: score(map[`score${row.side}`]),
           scoreAgainst: score(map[`score${opponentSide}`]),
+          companions: mapPlayers.get(map.order).filter(candidate => candidate.side === row.side && !playerRecordMatches(candidate, player)).map(candidate => ({ playerId: candidate.playerId, displayName: candidate.displayName, battleTag: candidate.battleTag, role: candidate.role, heroes: candidate.heroes })),
           minutes: Number(record.ratingEntry?.roleTimeMins) > 0 ? Number(record.ratingEntry.roleTimeMins) : null
         }]
       })
@@ -191,7 +192,7 @@ export function playerPagePath(playerId, page, search, changes = {}) {
     if (value) params.set(name, value)
     else params.delete(name)
   }
-  const pathname = `/players/${encodeURIComponent(playerId)}${page === 'analysis' ? '/analysis' : ''}`
+  const pathname = `/players/${encodeURIComponent(playerId)}${['analysis', 'journey'].includes(page) ? `/${page}` : ''}`
   return `${pathname}${params.size ? `?${params}` : ''}`
 }
 
@@ -202,12 +203,15 @@ export function playerComparisonPath(entry, search, mode = 'per10') {
 
 export function formatPlayerMatchStage(value, en = false) {
   if (en) return value
-  const labels = { SWISS: '瑞士轮', QUALIFIERS: '瑞士轮', LCQ: '突围赛', PLAYOFFS: '季后赛', GROUP: '小组赛', 'UB QF': '胜者组四分之一决赛', 'UB SF': '胜者组半决赛', 'UB FINAL': '胜者组决赛', 'LB FINAL': '败者组决赛', 'GRAND FINALS': '总决赛', 'ROUND OF 16': '十六强赛', QUALIFICATION: '晋级赛', 'PLAY-IN': '入围赛' }
+  const labels = { SWISS: '瑞士轮', QUALIFIERS: '瑞士轮', LCQ: '突围赛', PLAYOFFS: '季后赛', GROUP: '小组赛', SEMIFINALS: '半决赛', QUARTERFINALS: '四分之一决赛', 'UB QF': '胜者组四分之一决赛', 'UB SF': '胜者组半决赛', 'UB FINAL': '胜者组决赛', 'LB FINAL': '败者组决赛', 'GRAND FINALS': '总决赛', 'ROUND OF 16': '十六强赛', QUALIFICATION: '晋级赛', 'PLAY-IN': '入围赛' }
   return String(value || '').split(' · ').map(part => {
-    if (labels[part]) return labels[part]
-    const lower = /^LB R(\d+)$/.exec(part)
+    const normalized = part.trim().toUpperCase()
+    if (labels[normalized]) return labels[normalized]
+    const groupDay = /^GROUP\s+([A-Z])(?:\s*\/\s*DAY\s+(\d+))?$/.exec(normalized)
+    if (groupDay) return `${groupDay[1]} 组${groupDay[2] ? ` / 第 ${groupDay[2]} 比赛日` : ''}`
+    const lower = /^LB R(\d+)$/.exec(normalized)
     if (lower) return `败者组第 ${lower[1]} 轮`
-    const round = /^ROUND\s+(\d+)$/.exec(part)
+    const round = /^ROUND\s+(\d+)$/.exec(normalized)
     return round ? `第 ${round[1]} 轮` : part
   }).join(' · ')
 }

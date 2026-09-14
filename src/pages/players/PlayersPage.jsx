@@ -113,7 +113,7 @@ export default function PlayersPage() {
       { value: 'ALL', label: uiText("全部队伍", locale) },
       ...[...map.values()].sort((a, b) => a.label.localeCompare(b.label, 'zh-Hans-CN'))
     ]
-  }, [players])
+  }, [players, locale])
   const heroOptions = useMemo(() => {
     const heroes = new Map()
     const addHero = hero => {
@@ -136,7 +136,7 @@ export default function PlayersPage() {
   const sortOptions = useMemo(() => {
     const hasTimeData = players.some(player => Number(player.raw_time_mins || 0) > 0)
     return hasTimeData ? [...BASE_SORT_OPTIONS, { value: 'time', label: uiText("出场时间", locale) }] : BASE_SORT_OPTIONS
-  }, [players])
+  }, [players, locale])
   const filteredPlayers = useMemo(() => {
     return sortPlayers(filterPlayers(players, queryState), queryState.sort)
   }, [players, queryState])

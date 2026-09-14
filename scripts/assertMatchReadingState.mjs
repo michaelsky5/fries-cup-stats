@@ -1,6 +1,26 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { getMatchAnalysisSearch, getMatchMapDataSearch } from '../src/components/matches/detail/matchReadingState.js'
+import { getCompactMapSelection, getMatchAnalysisSearch, getMatchMapDataSearch, getMatchStatsViewSearch } from '../src/components/matches/detail/matchReadingState.js'
+
+test('phone navigation keeps the chosen map and its real neighbours, including gaps', () => {
+  const maps = [{ order: 1 }, { order: 3 }, { order: 5 }]
+  assert.deepEqual(getCompactMapSelection(maps, '3'), { map: maps[1], previous: maps[0], next: maps[2] })
+  assert.deepEqual(getCompactMapSelection(maps, '5'), { map: maps[2], previous: maps[1], next: undefined })
+  for (const requested of [null, '', 'missing', 2]) {
+    assert.deepEqual(getCompactMapSelection(maps, requested), { map: maps[0], previous: undefined, next: maps[1] })
+  }
+  assert.deepEqual(getCompactMapSelection([], 3), { map: undefined, previous: undefined, next: undefined })
+})
+
+test('phone statistics view round-trips without losing map, filters or return context', () => {
+  const search = new URLSearchParams('season=FCA2026&lang=en&map=3&collapsed=1&analysis=1&pquery=player&compareA=a')
+  const full = getMatchStatsViewSearch(search, true)
+  assert.equal(full.get('mapStats'), 'full')
+  for (const [key, value] of search) assert.equal(full.get(key), value)
+  assert.equal(getMatchStatsViewSearch(full, false).toString(), search.toString())
+  assert.equal(search.has('mapStats'), false)
+  assert.equal(getMatchAnalysisSearch(full, { findPlayer: true }).get('mapStats'), 'full')
+})
 
 test('opening player data preserves event, chosen map, disclosure and player filters', () => {
   const search = new URLSearchParams('season=FCR2026&lang=zh&design=kpr5&map=5&collapsed=1,3&pquery=3e&prole=SUPPORT&pside=A&analysis=0')

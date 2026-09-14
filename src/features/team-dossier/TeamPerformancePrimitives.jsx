@@ -12,15 +12,15 @@ export const valueLabel = (value) =>
     : Number(value).toLocaleString('en-US', { maximumFractionDigits: Math.abs(value) >= 1000 ? 0 : 1 })
 export const rateLabel = (value) =>
   value === null || value === undefined ? '—' : `${(value * 100).toFixed(1)}%`
-export const resultLabel = (value, en) =>
-  ({ win: en ? 'W' : '胜', loss: en ? 'L' : '负', draw: en ? 'D' : '平' })[value] || '—'
-export const roleLabel = (role, en) =>
-  ({
+export const resultLabel = (value, en, labelLocale = 'zh-CN') =>
+  uiText(({ win: en ? 'W' : '胜', loss: en ? 'L' : '负', draw: en ? 'D' : '平' })[value] || '—', labelLocale)
+export const roleLabel = (role, en, labelLocale = 'zh-CN') =>
+  uiText(({
     TANK: en ? 'Tank' : '重装',
     DPS: en ? 'Damage' : '输出',
     SUP: en ? 'Support' : '支援',
     UNKNOWN: en ? 'Unassigned' : '职责待定'
-  })[role] || role
+  })[role] || role, labelLocale)
 
 export function PerformanceHeading({ index, title, note, id }) {
   return (
@@ -80,7 +80,7 @@ export function PerformanceRecords({ records, en, withSeason, returnState, onLea
               </small>
             </span>
             <strong>{record.mapScore}</strong>
-            <span data-result={record.mapOutcome}>{resultLabel(record.mapOutcome, en)} ↗</span>
+            <span data-result={record.mapOutcome}>{resultLabel(record.mapOutcome, en, uiLocale)} ↗</span>
           </Link>
         ))
       ) : (

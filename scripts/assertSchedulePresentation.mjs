@@ -68,6 +68,14 @@ test('detail return text distinguishes full schedule from highlights without cla
   assert.equal(getScheduleReturnLabel('/teams/id/matches?view=list'), '')
 })
 
+test('weekly match returns name the weekly hub without replacing explicit list or profile destinations', () => {
+  assert.equal(getScheduleReturnLabel('/matches?season=FCW2026', 'zh-CN', { weekly: true }), '返回周赛赛程')
+  assert.equal(getScheduleReturnLabel('/matches?season=FCW2026', 'en-US', { weekly: true }), 'Back to weekly schedule')
+  assert.equal(getScheduleReturnLabel('/matches?cycle=c1&week=w3', 'en-US'), 'Back to weekly schedule')
+  assert.equal(getScheduleReturnLabel('/matches?view=list&team=AIP', 'en-US', { weekly: true }), 'Back to full schedule')
+  assert.equal(getScheduleReturnLabel('/teams/AIP', 'en-US', { weekly: true }), '')
+})
+
 test('synthetic schedule times stay pending while published exact times are shown', () => {
   const dateOnly = { scheduled_at: '2026-09-11T00:00:00Z', schedule_meta: { syntheticSortTime: true } }
   assert.match(getScheduleTimeLabel(dateOnly, 'en-US'), /09\/11 TBD/)

@@ -1,13 +1,12 @@
+import { normalizeLocale } from './locales.js'
+import { localizeUiCopy } from './uiText.js'
+import { adaptPartnerReviewScene } from './reviewPartner.js'
+import { REVIEW_SOURCE_SCENE } from './reviewSource.js'
+
 const NEUTRAL_SCENE_KINDS = new Set(['cover', 'pause', 'ending', 'organizer'])
 
-function normalizeLocale(locale) {
-  const raw = String(locale || '').toLowerCase()
-  if (raw.startsWith('en')) return 'en-US'
-  if (raw.startsWith('ko')) return 'ko-KR'
-  return 'zh-CN'
-}
-
 export function isPlayoffReviewScene(scene) {
+  scene = scene?.[REVIEW_SOURCE_SCENE] || scene
   if (!scene || scene.kind === 'cover' || scene.kind === 'pause' || scene.kind === 'organizer') return false
   if (scene.seasonAct === 'playoffs' || scene.visualType === 'playoffs') return true
 
@@ -28,6 +27,7 @@ export function isPlayoffReviewScene(scene) {
 
 function isPlayoffIntroductionStory(scenes) {
   return scenes.some(scene => {
+    scene = scene?.[REVIEW_SOURCE_SCENE] || scene
     if (!scene) return false
     if (String(scene.joinStage || '').toUpperCase() === 'PLAYOFFS') return true
     if (String(scene.rosterStatus || '').toUpperCase() === 'PLAYOFF_INTRODUCTION') return true
@@ -98,7 +98,7 @@ function getActCopy(locale, act) {
     }
   }
 
-  return copy[normalizeLocale(locale)][act]
+  return (copy[normalizeLocale(locale)] || localizeUiCopy(copy['zh-CN'], locale))[act]
 }
 
 function makeActScene(act, locale) {
@@ -165,5 +165,5 @@ export function buildCinemaReviewScenes(scenes, options = {}) {
     output.push(...tagScenes(list.slice(contentStart), firstAct))
   }
 
-  return output.map((scene, index) => ({ ...scene, sceneNo: index + 1 }))
+  return output.map((scene, index) => ({ ...(options.isPartner && scene.kind === 'act' ? adaptPartnerReviewScene(scene, options.locale) : scene), sceneNo: index + 1 }))
 }

@@ -113,7 +113,7 @@ export function filterHeroRecords(hero, { map = '', player = '', search = '' } =
 
 export function heroGuideHref(params, hero = '', hash = '') {
   const next = new URLSearchParams(params)
-  ;['hero', 'heroMap', 'heroPlayer', 'heroRecordSearch'].forEach(key => next.delete(key))
+  ;['hero', 'heroMap', 'heroPlayer', 'heroRecordSearch', 'heroRecordLimit', 'heroPlayers', 'heroMaps'].forEach(key => next.delete(key))
   if (hero) next.set('hero', hero)
   const query = next.toString()
   return `/heroes${query ? `?${query}` : ''}${hash}`

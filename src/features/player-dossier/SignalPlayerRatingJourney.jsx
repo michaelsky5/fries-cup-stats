@@ -13,7 +13,7 @@ const text = (en, zh, english) => en ? english : zh
 const initialChartSize = { width: 640, height: 300 }
 const rating = value => Number.isFinite(value) ? value.toFixed(1) : '—'
 const score = match => match.scoreFor != null && match.scoreAgainst != null ? `${match.scoreFor} : ${match.scoreAgainst}` : '—'
-const resultLabel = (value, en) => ({ win: text(en, '胜', 'W'), loss: text(en, '负', 'L'), draw: text(en, '平', 'D'), pending: text(en, '进行中', 'LIVE'), unknown: '—' })[value] || '—'
+const resultLabel = (value, en, labelLocale = 'zh-CN') => uiText(({ win: text(en, '胜', 'W'), loss: text(en, '负', 'L'), draw: text(en, '平', 'D'), pending: text(en, '进行中', 'LIVE'), unknown: '—' })[value] || '—', labelLocale)
 
 function RatingDot({ cx, cy, payload, selectedKey, onSelect, en }) {
   if (!Number.isFinite(cx) || !Number.isFinite(cy) || !Number.isFinite(payload?.rating)) return null
@@ -53,7 +53,7 @@ export default function SignalPlayerRatingJourney({ matches, en, locale, seasonI
   const lastTime = data.at(-1)?.timestamp
   const domain = firstTime === lastTime ? [firstTime - 3600000, lastTime + 3600000] : ['dataMin', 'dataMax']
 
-  return <section className={styles.journey} aria-labelledby="player-trend-title">
+  return <section id="player-rating-journey" className={styles.journey} aria-labelledby="player-trend-title">
     <header className={styles.heading}><div><p>MATCH PERFORMANCE</p><h2 id="player-trend-title">{matches.length === 1 ? text(en, uiText("单场比赛表现", locale), 'Match performance') : text(en, uiText("比赛评分走势", locale), 'Match rating journey')}</h2></div><span>{ratedCount} {text(en, uiText("场有评分", locale), ratedCount === 1 ? 'rated match' : 'rated matches')} / {matches.length} {text(en, uiText("场出场", locale), matches.length === 1 ? 'appearance' : 'appearances')}</span></header>
     {selected ? <div className={styles.board}>
       {matches.length === 1 ? <p className={styles.singleMatchNote}>{text(en, uiText("目前仅有 1 场出场记录，以下为当场表现。", locale), 'One recorded appearance so far. Explore that match below.')}</p> : <div className={styles.timeline}>
@@ -62,7 +62,7 @@ export default function SignalPlayerRatingJourney({ matches, en, locale, seasonI
           {plottedCount > 0 ? <div className={styles.chart} aria-label={text(en, uiText("按比赛日期排列的全场评分，满分 10 分", locale), 'Match ratings by date, out of 10')}>
             <ResponsiveContainer width="100%" height="100%" minWidth={0} initialDimension={initialChartSize}>
               <LineChart data={data} margin={{ top: 20, right: 24, bottom: 8, left: 0 }} accessibilityLayer>
-                <CartesianGrid vertical={false} stroke="var(--fc-data-border, #cbccc3)" />
+                <CartesianGrid vertical={false} stroke="var(--fc-data-line, #cbccc3)" />
                 <XAxis dataKey="timestamp" type="number" domain={domain} ticks={firstTime === lastTime ? [firstTime] : undefined} tickFormatter={formatDate} minTickGap={45} tick={{ fontSize: 12, fill: 'var(--fc-data-text-muted)' }} axisLine={false} tickLine={false} padding={{ left: 15, right: 15 }} />
                 <YAxis domain={[0, 10]} ticks={[0, 5, 10]} width={28} tick={{ fontSize: 12, fill: 'var(--fc-data-text-muted)' }} axisLine={false} tickLine={false} />
                 {datedSelection && <ReferenceLine x={datedSelection.timestamp} stroke="var(--fc-data-text-muted)" strokeDasharray="4 5" />}
@@ -76,7 +76,7 @@ export default function SignalPlayerRatingJourney({ matches, en, locale, seasonI
           <div className={styles.indexHeading}><span>{text(en, uiText("按比赛查看", locale), 'Explore matches')}</span><span>{text(en, uiText("最近在前", locale), 'Latest first')}</span></div>
           <div className={styles.matchSelector} aria-label={text(en, uiText("选择走势比赛", locale), 'Select a match in the journey')}>
             {matches.map(match => <button type="button" key={match.key} aria-pressed={selected.key === match.key} aria-controls="player-trend-match" onClick={() => chooseMatch(match.key)} aria-label={`${match.opponent.short} · ${match.dateLabel}`} data-result={match.result}>
-              <time dateTime={match.date}>{match.dateLabel.split(' ')[0]}</time><strong>{match.opponent.short}</strong><b>{rating(match.rating)}</b><small>{resultLabel(match.result, en)}</small>
+              <time dateTime={match.date}>{match.dateLabel.split(' ')[0]}</time><strong>{match.opponent.short}</strong><b>{rating(match.rating)}</b><small>{resultLabel(match.result, en, locale)}</small>
             </button>)}
           </div>
         </div>
@@ -84,7 +84,7 @@ export default function SignalPlayerRatingJourney({ matches, en, locale, seasonI
       <section id="player-trend-match" ref={detailRef} className={styles.detail} aria-label={text(en, uiText("所选比赛", locale), 'Selected match')}>
         <div className={styles.matchSummary}>
           <div className={styles.matchMeta}><span>{formatPlayerMatchStage(selected.stage, en)}</span><time dateTime={selected.date}>{selected.dateLabel}</time></div>
-          <div className={styles.matchTitle}><TeamLogo team={selected.opponent} seasonId={seasonId} className={styles.logo} /><div><span>{text(en, uiText("对阵", locale), 'VERSUS')}</span><strong>{selected.opponent.short}</strong></div><div className={styles.result} data-result={selected.result}><strong>{score(selected)}</strong><span>{resultLabel(selected.result, en)}</span></div></div>
+          <div className={styles.matchTitle}><TeamLogo team={selected.opponent} seasonId={seasonId} className={styles.logo} /><div><span>{text(en, uiText('对阵', locale), 'VERSUS')}</span><strong>{selected.opponent.short}</strong></div><div className={styles.result} data-result={selected.result}><strong>{score(selected)}</strong><span>{resultLabel(selected.result, en, locale)} · {text(en, uiText('本队在前', locale), 'our team first')}</span></div></div>
           <div className={styles.matchRating}><span>{text(en, uiText("全场评分", locale), 'Match rating')}<small>{text(en, uiText("满分 10 分", locale), 'Out of 10')}</small></span><strong>{rating(selected.rating)}</strong></div>
           <Link {...linkProps(`/matches/${encodeURIComponent(selected.matchId)}`)} className={styles.report}>{text(en, uiText("完整比赛战报", locale), 'Full match report')} <span aria-hidden="true">↗</span></Link>
         </div>

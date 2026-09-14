@@ -1,0 +1,40 @@
+.card { position:relative;isolation:isolate;width:1600px;height:900px;overflow:hidden;box-sizing:border-box;background:#181a17;color:#eeede6;border-top:7px solid #f4c320;font-family:var(--fc-data-font-interface,sans-serif);font-variant-numeric:tabular-nums; }
+.card * { box-sizing:border-box; }
+.card :where(h1,h2,p,dl,dd) { margin:0; }
+.top { position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;margin:38px 54px 0;padding-bottom:24px;border-bottom:1px solid #eeede62a; }
+.top>strong { font-size:31px;line-height:1;letter-spacing:-.03em; }
+.top>strong>span { display:block;font-size:13px;font-weight:600;letter-spacing:.07em;margin-top:10px;color:#f4c320; }
+.top>span { font-size:21px;display:flex;align-items:center;gap:25px; }
+.top b { font-size:17px;font-weight:600;color:#d3d5c8;border-left:1px solid #eeede64a;padding-left:25px; }
+.artwork { position:absolute;z-index:-1;inset:124px 0 70px 760px;overflow:hidden;background:#22231f; }
+.artwork:after { content:'';position:absolute;inset:0;background:linear-gradient(90deg,#181a17,transparent 27%),linear-gradient(0deg,#181a17 0%,#181a1788 18%,transparent 46%); }
+.artwork>img { width:100%;height:100%;object-fit:cover; }
+.teamFallback { width:360px;height:360px;position:absolute;top:110px;left:240px; }
+.teamFallback img { width:100%;height:100%;object-fit:contain; }
+.copy { position:relative;width:900px;padding:44px 0 0 54px; }
+.identity { display:flex;align-items:center;gap:17px;font-size:22px; }
+.identity i { color:#a2a59a;margin-inline:12px;font-style:normal; }
+.logo { width:44px;height:44px; }
+.logo img { width:100%;height:100%;object-fit:contain; }
+.copy h1 { font-weight:900;line-height:1.1;letter-spacing:-.025em;margin:20px 0 12px;max-height:178px;overflow-wrap:anywhere; }
+.tag { font-size:18px;color:#a2a59a;overflow-wrap:anywhere; }
+.story { margin-top:40px; }
+.story h2 { font-size:42px;font-weight:800;line-height:1.2;color:#f4c320;max-width:800px;overflow-wrap:anywhere; }
+.story>p { margin-top:13px;color:#d3d5c8;font-size:20px;line-height:1.6; }
+.seriesScore { font:900 67px/1.1 var(--fc-data-font-display,sans-serif);display:block;margin-top:12px; }
+.facts { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:38px!important;padding-top:26px;border-top:1px solid #eeede64a; }
+.facts>div { min-width:0; }
+.facts dd { font:900 67px/1.05 var(--fc-data-font-display,sans-serif);overflow-wrap:anywhere; }
+.facts dd[data-compact] { font-size:37px;line-height:1.25; }
+.facts dd small { font:500 21px/1 var(--fc-data-font-interface,sans-serif);margin-left:9px;color:#a2a59a; }
+.facts dt { font-size:15px;line-height:1.5;color:#d3d5c8;margin-top:12px; }
+.artCaption { position:absolute;right:54px;bottom:117px;max-width:480px;text-align:right; }
+.artCaption>span { display:block;color:#d3d5c8;font-size:16px; }
+.artCaption>strong { display:block;font-size:32px;margin-top:12px; }
+.artCaption .seasonRating { display:flex;align-items:baseline;justify-content:end;gap:12px;margin-top:22px;font-size:14px; }
+.seasonRating b { font:900 44px/1 var(--fc-data-font-display,sans-serif);color:#f4c320; }
+.seasonRating small { font-size:14px; }
+.footer { position:absolute;bottom:0;left:54px;right:54px;height:82px;display:flex;align-items:center;justify-content:space-between;gap:40px;border-top:1px solid #eeede63a; }
+.footer p { font-size:16px;line-height:1.6;color:#a2a59a;max-width:1230px; }
+.footer strong { font-size:18px;white-space:nowrap; }
+.footer strong span { margin-left:24px;color:#f4c320;font-size:32px; }

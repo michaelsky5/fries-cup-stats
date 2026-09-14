@@ -96,7 +96,7 @@ test('unavailable optional browser storage does not prevent data loading', async
 })
 
 test('network fallback, refresh failure, recovery and explicit preview stay distinguishable', async () => {
-  const fixture = JSON.parse(await readFile(new URL('../public/data/qgcs4_preseason_public.json', import.meta.url), 'utf8'))
+  const fixture = JSON.parse(await readFile(new URL('../public/data/qgcs4_review_public.json', import.meta.url), 'utf8'))
   const season = getSeasonById('QGCS4')
   const previousFetch = globalThis.fetch
   const calls = []

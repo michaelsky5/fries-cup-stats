@@ -87,14 +87,16 @@ test('bilingual search and role sorting keep a consistent denominator', () => {
 })
 
 test('hero navigation retains index state and season while clearing dossier filters', () => {
-  const params = new URLSearchParams('season=FCR2026&design=kpr5&lang=zh&heroRole=support&heroSearch=雾子&heroSort=players&hero=kiriko&heroMap=Ilios&heroPlayer=id:P1&heroRecordSearch=AA')
+  const params = new URLSearchParams('season=FCR2026&design=kpr5&lang=zh&heroRole=support&heroSearch=雾子&heroSort=players&hero=kiriko&heroMap=Ilios&heroPlayer=id:P1&heroRecordSearch=AA&heroPlayers=all&heroMaps=all&heroRecordLimit=24')
   const detail = new URL(heroGuideHref(params, 'lucio'), 'https://example.test')
   assert.equal(detail.searchParams.get('hero'), 'lucio')
   assert.equal(detail.searchParams.get('heroRole'), 'support')
   assert.equal(detail.searchParams.get('heroSearch'), '雾子')
   assert.equal(detail.searchParams.get('heroPlayer'), null)
+  for (const key of ['heroPlayers', 'heroMaps', 'heroRecordLimit']) assert.equal(detail.searchParams.get(key), null)
   const back = new URL(heroGuideHref(params, '', '#hero-directory'), 'https://example.test')
   assert.equal(back.searchParams.get('hero'), null)
+  for (const key of ['heroPlayers', 'heroMaps', 'heroRecordLimit']) assert.equal(back.searchParams.get(key), null)
   assert.equal(back.searchParams.get('season'), 'FCR2026')
   assert.equal(back.hash, '#hero-directory')
 })

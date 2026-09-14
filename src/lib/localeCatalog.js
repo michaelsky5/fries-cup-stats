@@ -3,6 +3,7 @@ import { normalizeLocale } from './locales.js'
 const catalogs = new Map()
 const pending = new Map()
 let traditionalConverter
+let traditionalPending
 const loaders = {
   'zh-TW': () => import('../locales/zh-TW.js'),
   'ko-KR': () => import('../locales/ko-KR.js'),
@@ -20,16 +21,20 @@ export function ensureUiLocale(locale) {
   const language = normalizeLocale(locale)
   if (language === 'zh-CN' || catalogs.has(language)) return Promise.resolve()
   if (!pending.has(language)) {
-    const request = Promise.all([
-      loaders[language](),
-      language === 'zh-TW' ? import('./traditionalConverter.js') : null
-    ]).then(([module, converter]) => {
-      if (converter) traditionalConverter = converter.convertTraditional
+    const request = loaders[language]().then(module => {
       catalogs.set(language, module.default)
     }).finally(() => pending.delete(language))
     pending.set(language, request)
   }
   return pending.get(language)
+}
+
+export function ensureTraditionalReview() {
+  if (traditionalConverter) return Promise.resolve()
+  traditionalPending ||= import('./traditionalConverter.js')
+    .then(module => { traditionalConverter = module.convertTraditional })
+    .finally(() => { traditionalPending = null })
+  return traditionalPending
 }
 
 export function convertTraditionalCopy(text) {

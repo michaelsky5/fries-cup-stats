@@ -9,7 +9,7 @@ const PREFER_LOCAL_DATA = typeof import.meta.env !== 'undefined' && import.meta.
 
 export const SEASONS = [
   {
-    id: 'FCW26', lifecycle: 'ACTIVE', publicCode: 'FCW2026', competitionFormat: 'WEEKLY',
+    id: 'FCW26', kind: 'OFFICIAL', lifecycle: 'ACTIVE', publicCode: 'FCW2026', competitionFormat: 'WEEKLY',
     name: { zh: '2026 薯条杯周赛', en: 'Fries Cup Weekly 2026' },
     proxyDataUrl: '/api/admin-public/seasons/FCW26/publish/latest/data',
     proxyReportUrl: '/api/admin-public/seasons/FCW26/publish/latest/report',
@@ -19,6 +19,7 @@ export const SEASONS = [
   },
   {
     id: 'FCR26',
+    kind: 'OFFICIAL',
     lifecycle: 'ARCHIVED',
     publicCode: 'FCR2026',
     seriesCode: 'FCS2026',
@@ -176,8 +177,14 @@ export const SEASONS = [
     },
     proxyDataUrl: '/api/admin-public/seasons/QGCS4/publish/latest/data',
     proxyReportUrl: '/api/admin-public/seasons/QGCS4/publish/latest/report',
-    localDataUrl: '/data/qgcs4_preseason_public.json',
-    reviewEnabled: false,
+    localDataUrl: '/data/qgcs4_review_public.json',
+    reviewEnabled: true,
+    reviewRequirements: {
+      minimumCounts: { teams: 19, teamReviews: 19, players: 116, matches: 44 },
+      stageMatches: { GROUP: 36, PLAYOFFS: 8 },
+      requiredRounds: ['GRAND FINALS', '3RD PLACE'],
+      requireAllMatchesComplete: true
+    },
     rankingMinTimeMins: 30,
     timeline: [
       {
@@ -287,6 +294,7 @@ export const SEASONS = [
   },
   {
     id: 'FCA26',
+    kind: 'OFFICIAL',
     lifecycle: 'ARCHIVED',
     publicCode: 'FCA2026',
     seriesCode: 'FCS2026',
@@ -359,7 +367,7 @@ export const SEASONS = [
 // Only the isolated weekly design server exposes this fictional public snapshot.
 if (import.meta.env?.DEV && import.meta.env?.VITE_WEEKLY_PREVIEW === '1') {
   Object.assign(SEASONS.find(season => season.id === 'FCW26'), {
-    id: 'FCW26', publicCode: 'FCW2026', lifecycle: 'ACTIVE', competitionFormat: 'WEEKLY',
+    id: 'FCW26', publicCode: 'FCW2026', kind: 'OFFICIAL', lifecycle: 'ACTIVE', competitionFormat: 'WEEKLY',
     name: { zh: '2026 薯条杯周赛', en: 'Fries Cup Weekly 2026' },
     localDataUrl: '/__weekly-overview/data.json', preferLocalData: true, reviewEnabled: false,
     rules: { weeklyCompetition: { enabled: true } }
@@ -487,4 +495,15 @@ export function getSeasonRules(season, db) {
 
 export function seasonHasReview(season, db) {
   return isReviewReady(season, db)
+}
+
+export function getSeasonEventKind(season) {
+  return season?.kind === 'PARTNER' ? 'PARTNER' : 'OFFICIAL'
+}
+
+export function getSeasonEventGroups(seasons = SEASONS) {
+  return ['OFFICIAL', 'PARTNER'].map(kind => ({
+    kind,
+    seasons: seasons.filter(season => getSeasonEventKind(season) === kind)
+  })).filter(group => group.seasons.length > 0)
 }

@@ -64,6 +64,25 @@ a.identity:hover strong { text-decoration: underline; }
 .totals .value { padding-block: 4px; }
 .table .empty { text-align: left; font-size: 13px; padding: 16px; white-space: normal; }
 .placeholder td { color: var(--fc-data-text-muted); text-align: center; background: var(--fc-data-paper); }
+.statsView { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 12px; gap: 1px; background: var(--fc-data-paper-deep); }
+.statsView button { min-height: 42px; padding: 9px 12px; border: 1px solid var(--fc-data-line-strong); border-radius: 0; color: var(--fc-data-ink); background: transparent; font: 600 13px/1.4 var(--fc-data-font-interface); cursor: pointer; }
+.statsView button[aria-pressed="true"] { border-color: var(--fc-data-ink); background: var(--fc-data-ink); color: var(--fc-data-paper); box-shadow: inset 0 -3px var(--fc-data-signal); }
+.compactPlayers { list-style: none; padding: 0; margin: 0; }
+.compactPlayer { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 9px 12px; padding: 12px; background: var(--row-surface); border-bottom: 1px solid var(--fc-data-line); }
+.compactPlayer[data-team-best="true"] { box-shadow: inset 2px 0 var(--fc-data-focus-on-light); }
+.compactIdentity { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.compactIdentity > span:last-child { display: grid; gap: 4px; min-width: 0; }
+.compactIdentity strong { font-size: 15px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+.compactIdentity small { color: var(--fc-data-text-muted); font-size: 11px; line-height: 1.4; overflow-wrap: anywhere; }
+.compactIdentity:hover strong { text-decoration: underline; }
+.compactRating { display: grid; align-content: center; justify-items: end; gap: 4px; }
+.compactRating > span { color: var(--fc-data-text-muted); font-size: 10px; }
+.compactRating strong { font-size: 26px; }
+.compactMetrics { grid-column: 1 / -1; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 5px 16px; margin: 0; padding-left: 41px; font-variant-numeric: tabular-nums; }
+.compactMetrics > div { display: flex; align-items: baseline; gap: 7px; }
+.compactMetrics dt { color: var(--fc-data-text-muted); font-size: 10px; }
+.compactMetrics dd { margin: 0; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.compactEmpty { margin: 0; padding: 16px 12px; font-size: 13px; line-height: 1.7; }
 @container map-stats (min-width: 1218px) {
   .table :is(th, td) { padding-inline: 10px; }
   .table .activity { padding-inline: 6px; }

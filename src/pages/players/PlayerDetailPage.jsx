@@ -876,14 +876,16 @@ export default function PlayerDetailPage() {
   const location = useLocation()
   const navigationType = useNavigationType()
   const [searchParams, setSearchParams] = useSearchParams()
-  const sourceReturn = readReturnState(location.state, { allowedPrefixes: ['/roster', '/matches', '/teams', '/players', '/leaderboard', '/heroes', '/maps', '/me', '/following'] })
+  const sourceReturn = readReturnState(location.state, { allowedPrefixes: ['/', '/staff', '/roster', '/matches', '/teams', '/players', '/leaderboard', '/heroes', '/maps', '/me', '/following'] })
   const backLabel = getMySpaceReturnLabel(sourceReturn.returnTo, locale) || (sourceReturn.returnTo.startsWith('/matches/') ? copy(locale, '返回比赛战报', 'Back to match')
+    : sourceReturn.returnTo.startsWith('/staff/') ? copy(locale, '返回职员档案', 'Back to staff profile')
     : sourceReturn.returnTo.startsWith('/roster') ? copy(locale, '返回阵容总览', 'Back to roster overview')
     : sourceReturn.returnTo.startsWith('/teams/') ? copy(locale, '返回队伍档案', 'Back to team')
     : /^\/teams(?:[?#]|$)/.test(sourceReturn.returnTo) ? copy(locale, '返回参赛队伍', 'Back to teams')
     : sourceReturn.returnTo.startsWith('/leaderboard') ? copy(locale, '返回选手排行', 'Back to rankings')
     : sourceReturn.returnTo.startsWith('/maps') ? copy(locale, '返回地图档案', 'Back to map')
     : sourceReturn.returnTo.startsWith('/heroes') ? copy(locale, '返回英雄档案', 'Back to hero')
+    : /^\/(?:[?#]|$)/.test(sourceReturn.returnTo) ? copy(locale, '返回赛事总览', 'Back to overview')
       : copy(locale, '返回选手列表', 'Back to players'))
   const roleParam = normalizeLeaderboardRole(searchParams.get('role'))
   const [metricMode, setMetricMode] = useState('per10')
@@ -912,7 +914,7 @@ export default function PlayerDetailPage() {
 
   const handleBack = () => {
     if (sourceReturn.returnTo) {
-      const parentReturn = readReturnState({ returnTo: location.state?.parentReturnTo, returnScrollY: location.state?.parentReturnScrollY }, { allowedPrefixes: ['/roster', '/matches', '/teams', '/players', '/leaderboard', '/heroes', '/maps', '/me', '/following'] })
+      const parentReturn = readReturnState({ returnTo: location.state?.parentReturnTo, returnScrollY: location.state?.parentReturnScrollY }, { allowedPrefixes: ['/', '/staff', '/roster', '/matches', '/teams', '/players', '/leaderboard', '/heroes', '/maps', '/me', '/following'] })
       navigate(sourceReturn.returnTo, { state: { ...getRestoreScrollState(sourceReturn.returnScrollY), ...(parentReturn.returnTo ? parentReturn : {}) } })
       return
     }

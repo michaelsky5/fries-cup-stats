@@ -1,12 +1,12 @@
 import { getPlayerDirectory, getPlayerDisplayIdentity, getRoleCounts, getStaffCounts, getStaffDirectory, getTeamDirectory, normalizeRosterRole, sortTeams } from '../../lib/rosterSelectors.js'
 import { buildStaffIndex } from '../../lib/reviewSearch.js'
 import { getPlayerRosterChange } from '../../lib/rosterStage.js'
+import { getStaffProfilePath } from '../../lib/staffProfiles.js'
 
 const key = value => String(value ?? '').normalize('NFKC').trim().toLowerCase()
 const array = value => Array.isArray(value) ? value : []
 const roleOrder = ['TANK', 'DPS', 'SUP', 'FLEX']
 const compareNames = (a, b) => a.localeCompare(b, 'zh-Hans-CN', { numeric: true })
-const pathWithQuery = (path, params) => `${path}?${new URLSearchParams(params)}`
 const recordedNumber = value => value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value)) && Number(value) >= 0 ? Number(value) : null
 
 export function getOverviewTeamRoster(db, team) {
@@ -24,8 +24,7 @@ export function getOverviewTeamRoster(db, team) {
 }
 
 export function staffOverviewHref(staff, role) {
-  if (staff.team) return pathWithQuery('/staff', { group: 'team', team: staff.team.routeId, q: staff.name, rosterFocus: staff.id })
-  return pathWithQuery('/staff', { group: 'event', type: role, q: staff.staff_name, rosterFocus: `event:${role}:${staff.staff_key}` })
+  return getStaffProfilePath(staff.team ? staff : { id: `event:${role}:${staff.staff_key}` })
 }
 
 export function buildRosterOverview(db, season) {

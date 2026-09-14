@@ -1,12 +1,14 @@
 import { translateUiText as uiText } from '../../../lib/uiText.js'
 import { useUiLocale } from '../../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import TeamLogo from '../TeamLogo.jsx'
 import { formatInt } from '../../../lib/format.js'
 import { getReviewBanOrder, getReviewMapRating, getReviewTeamMvpKeys } from '../../../lib/matchReviewSelectors.js'
 import { getHeroAvatarSrc, getRoleEnLabel, getRoleLabel } from '../../../lib/leaderboardSelectors.js'
 import { SignalBattleTag, SignalRating } from './SignalPlayerData.jsx'
+import useCompactMatchLayout from './useCompactMatchLayout.js'
+import { getMatchStatsViewSearch } from './matchReadingState.js'
 import dataStyles from './SignalPlayerData.module.css'
 import styles from './SignalMapStats.module.css'
 
@@ -74,7 +76,35 @@ function PlayerRow({ entry, slot, height, mvp, awardIndex, columns, metricStart,
   </tr>
 }
 
+function CompactPlayers({ rows, participantScores, mvpKeys, columns, locale, t, withSeason, returnState, onPlayerNavigate }) {
+  const en = locale === 'en-US'
+  const valueLabel = value => value == null || value === '' ? '—' : formatInt(value, '—')
+  if (!rows.length) return <p className={styles.compactEmpty}>{en ? 'This team’s player statistics have not been published.' : uiText('本队选手统计尚未发布。', locale)}</p>
+  return <ul className={styles.compactPlayers}>
+    {rows.map(({ row, impact }) => {
+      const role = en ? getRoleEnLabel(row.role) : uiText(getRoleLabel(row.role), locale)
+      const metricKey = row.role === 'SUPPORT' ? 'healing' : row.role === 'TANK' ? 'mitigation' : 'damage'
+      const metric = columns.find(column => column.key === metricKey)
+      const description = [row.displayName, row.battleTag, role, row.hero].filter(Boolean).join(' · ')
+      const identity = <><Avatar row={row} /><span><strong>{row.displayName}</strong><small>{[role, row.hero].filter(Boolean).join(' · ')}</small></span></>
+      return <li key={row.key} className={`${styles.compactPlayer} ${dataStyles.roleRow}`} data-role={row.role} data-team-best={mvpKeys.has(row.key) || undefined}>
+        {row.playerId ? <Link className={styles.compactIdentity} to={withSeason(`/players/${encodeURIComponent(row.playerId)}?role=${encodeURIComponent(row.role)}`)} state={returnState} onClick={onPlayerNavigate} aria-label={description}>{identity}</Link> : <span className={styles.compactIdentity}>{identity}</span>}
+        <div className={styles.compactRating}><span>{en ? 'Rating' : uiText('本图评分', locale)}</span><SignalRating value={getReviewMapRating(impact?.entry, participantScores)} /></div>
+        <dl className={styles.compactMetrics}>
+          <div><dt>{en ? 'E / A / D' : uiText('消灭 / 助攻 / 阵亡', locale)}</dt><dd>{ACTIVITY_KEYS.map(key => valueLabel(row[key])).join(' / ')}</dd></div>
+          {metric ? <div><dt>{t(metric.labelKey, metric.fallback)}</dt><dd>{valueLabel(row[metric.key])}</dd></div> : null}
+        </dl>
+      </li>
+    })}
+  </ul>
+}
+
 export default function SignalMapStats({ map, dossier, teamADisplayRows, teamBDisplayRows, awardIndex, columns, seasonId, locale, t, withSeason, returnState, onPlayerNavigate }) {
+  const compact = useCompactMatchLayout()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const location = useLocation()
+  const showFullStats = !compact || searchParams.get('mapStats') === 'full'
+  const setStatsView = full => setSearchParams(getMatchStatsViewSearch(searchParams, full), { replace: true, state: { ...location.state, restoreScrollY: undefined } })
   const [focusedMetric, setFocusedMetric] = useState('')
   const duelRef = useRef(null)
   const [rowHeights, setRowHeights] = useState({})
@@ -107,7 +137,7 @@ export default function SignalMapStats({ map, dossier, teamADisplayRows, teamBDi
     duel.querySelectorAll(`.${styles.identity}`).forEach(node => observer.observe(node))
     schedule()
     return () => { observer.disconnect(); window.cancelAnimationFrame(frame) }
-  }, [map.key, teamADisplayRows, teamBDisplayRows])
+  }, [map.key, teamADisplayRows, teamBDisplayRows, showFullStats])
   const en = locale === 'en-US'
   const allRows = [...teamADisplayRows, ...teamBDisplayRows]
   const maxima = Object.fromEntries(columns.map(column => [column.key, Math.max(0, ...allRows.map(({ row }) => Number(row[column.key]) || 0))]))
@@ -126,6 +156,7 @@ export default function SignalMapStats({ map, dossier, teamADisplayRows, teamBDi
   const columnCount = orderedColumns.length + 2
 
   return <div className={styles.shell} data-map-stats="duel" data-focused-metric={focusedMetric}>
+    {compact ? <div className={styles.statsView} role="group" aria-label={en ? 'Map statistics view' : uiText('本图数据视图', locale)}><button type="button" aria-pressed={!showFullStats} onClick={() => setStatsView(false)}>{en ? 'Players' : uiText('选手表现', locale)}</button><button type="button" aria-pressed={showFullStats} onClick={() => setStatsView(true)}>{en ? 'Full statistics' : uiText('完整数据', locale)}</button></div> : null}
     <div className={styles.duel} ref={duelRef}>
       {['A', 'B'].map(side => {
         const team = dossier[`team${side}`]
@@ -133,7 +164,7 @@ export default function SignalMapStats({ map, dossier, teamADisplayRows, teamBDi
         const totals = Object.fromEntries(columns.map(column => [column.key, displayRows.length ? displayRows.reduce((total, { row }) => total + (Number(row[column.key]) || 0), 0) : null]))
         return <section key={side} className={styles.team} data-stats-side={side} aria-label={`${team.short} ${en ? 'map statistics' : uiText("本图数据", locale)}`}>
           <TeamHeading side={side} map={map} dossier={dossier} seasonId={seasonId} en={en} bestPlayers={displayRows.filter(({ row }) => teamMvpKeys[side].has(row.key))} />
-          <div className={styles.scroller} data-map-table-scroll onScroll={syncTableScroll} tabIndex={0} role="region" aria-label={`${team.short} · ${map.name} ${en ? 'player statistics' : uiText("选手统计", locale)}`}>
+          {!showFullStats ? <CompactPlayers rows={roles.flatMap(role => displayRows.filter(entry => roleOf(entry) === role))} participantScores={participantScores} mvpKeys={teamMvpKeys[side]} columns={columns} locale={locale} t={t} withSeason={withSeason} returnState={returnState} onPlayerNavigate={onPlayerNavigate} /> : <div className={styles.scroller} data-map-table-scroll onScroll={syncTableScroll} tabIndex={0} role="region" aria-label={`${team.short} · ${map.name} ${en ? 'player statistics' : uiText("选手统计", locale)}`}>
             <table className={styles.table}>
               <caption>{team.short} · {map.name} · {en ? 'Complete per-map player statistics' : uiText("完整单图选手统计", locale)}</caption>
               <colgroup><col className={styles.playerColumn} />{activityColumns.map(column => <col key={column.key} className={styles.activityColumn} />)}{metricColumns.map(column => <col key={column.key} className={styles.metricColumn} />)}<col className={styles.ratingColumn} /></colgroup>
@@ -150,11 +181,11 @@ export default function SignalMapStats({ map, dossier, teamADisplayRows, teamBDi
               {!displayRows.length ? <tbody><tr><td className={styles.empty} colSpan={columnCount}>{en ? 'This team’s player statistics have not been published.' : uiText("本队选手统计尚未发布。", locale)}</td></tr></tbody> : null}
               <tfoot><tr className={styles.totals}><th scope="row" className={styles.identityCell}>{en ? 'Team total' : uiText("队伍合计", locale)}</th>{orderedColumns.map(column => <StatCell key={column.key} row={totals} column={column} maxima={maxima} t={t} focusedMetric={focusedMetric} groupStart={column.key === metricStart} total />)}<td className={styles.rating}>—</td></tr></tfoot>
             </table>
-          </div>
+          </div>}
         </section>
       })}
     </div>
-    {focusedTotals && teamADisplayRows.length > 0 && teamBDisplayRows.length > 0 ? <div className={styles.metricComparison} data-map-metric-comparison role="status"><strong>{t(focusedColumn.labelKey, focusedColumn.fallback)}</strong><span>{dossier.teamA.short}<b>{formatInt(focusedTotals[0])}</b></span><span>{dossier.teamB.short}<b>{formatInt(focusedTotals[1])}</b></span><span className={styles.difference}>{dossier.teamA.short} − {dossier.teamB.short}<b>{focusedTotals[0] > focusedTotals[1] ? '+' : ''}{formatInt(focusedTotals[0] - focusedTotals[1])}</b></span></div> : null}
-    <span className={styles.announcement} role="status">{focusedColumn ? `${en ? 'Comparing: ' : uiText("对照：", locale)}${t(focusedColumn.labelKey, focusedColumn.fallback)}` : ''}</span>
+    {showFullStats && focusedTotals && teamADisplayRows.length > 0 && teamBDisplayRows.length > 0 ? <div className={styles.metricComparison} data-map-metric-comparison role="status"><strong>{t(focusedColumn.labelKey, focusedColumn.fallback)}</strong><span>{dossier.teamA.short}<b>{formatInt(focusedTotals[0])}</b></span><span>{dossier.teamB.short}<b>{formatInt(focusedTotals[1])}</b></span><span className={styles.difference}>{dossier.teamA.short} − {dossier.teamB.short}<b>{focusedTotals[0] > focusedTotals[1] ? '+' : ''}{formatInt(focusedTotals[0] - focusedTotals[1])}</b></span></div> : null}
+    <span className={styles.announcement} role="status">{showFullStats && focusedColumn ? `${en ? 'Comparing: ' : uiText("对照：", locale)}${t(focusedColumn.labelKey, focusedColumn.fallback)}` : ''}</span>
   </div>
 }

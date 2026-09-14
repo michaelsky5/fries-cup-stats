@@ -1,5 +1,5 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
-import { useId, useMemo, useRef, useState } from 'react'
+import { useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import CollapsibleFilterRail from '../account-ui/CollapsibleFilterRail.jsx'
@@ -22,7 +22,7 @@ import FollowingPlayerPortrait from './FollowingPlayerPortrait.jsx'
 const copyFor = locale => locale === 'en-US' ? {
   title: 'My Following', intro: 'Your teams, players and the matches that connect them.', manage: 'Manage following', manageShort: 'Manage', players: 'Players', teams: 'Teams',
   all: 'All', live: 'Live', review: 'Under review', postponed: 'Postponed', upcoming: 'Upcoming', results: 'Recent results', finished: 'Finished', pending: 'Schedule updates', cancelled: 'Cancelled',
-  archive: 'Season review', activity: 'Matches to follow', archiveIntro: 'Final results and recorded appearances from this season.', activityIntro: 'Live matches first, followed by upcoming games and recent results.',
+  archive: 'Followed match records', activity: 'Matches to follow', archiveIntro: 'Final results and recorded appearances from this season.', activityIntro: 'Live matches first, followed by upcoming games and recent results.',
   local: 'Saved in this browser', ready: 'Synced to your account', saving: 'Syncing following…', loading: 'Loading account following…', error: 'Cloud sync unavailable. Check your connection and try again.',
   login: 'Sign in', guest: 'Follow without signing in.', emptyTitle: 'Build your own match list', emptyText: 'Choose teams or players to bring their matches here.', addTeams: 'Choose teams', addPlayers: 'Choose players',
   noMatches: 'No matches in this view', noMatchesText: 'Player results appear when official match records are available. Upcoming matches follow their current team.',
@@ -34,9 +34,9 @@ const copyFor = locale => locale === 'en-US' ? {
   matchCount: count => `${count} related ${count === 1 ? 'match' : 'matches'}`, shown: count => `${count} shown`,
   loadingData: 'Loading season records…', publicTime: 'Times shown in Beijing time', related: 'View team profile', changeTeams: 'Manage teams', changePlayers: 'Manage players', roles: { TANK: 'Tank', DPS: 'Damage', SUP: 'Support', SUPPORT: 'Support', FLEX: 'Flex' }, noRole: 'Role not listed'
 } : {
-  title: uiText("我的关注", locale), intro: uiText("关注队伍与选手，把相关比赛放在一起。", locale), manage: uiText("管理关注", locale), manageShort: uiText("管理关注", locale), players: uiText("选手", locale), teams: uiText("队伍", locale),
+  title: uiText("我的关注", locale), intro: uiText("关注队伍与选手，把相关比赛放在一起。", locale), manage: uiText("管理关注", locale), manageShort: uiText("管理", locale), players: uiText("选手", locale), teams: uiText("队伍", locale),
   all: uiText("全部", locale), live: uiText("正在进行", locale), review: uiText("待审核", locale), postponed: uiText("已延期", locale), upcoming: uiText("待赛", locale), results: uiText("最近赛果", locale), finished: uiText("已结束", locale), pending: uiText("赛程待更新", locale), cancelled: uiText("已取消", locale),
-  archive: uiText("赛季回顾", locale), activity: uiText("关注比赛", locale), archiveIntro: uiText("回看本赛季的最终成绩与正式出场记录。", locale), activityIntro: uiText("优先看进行中的比赛，再查看接下来的赛程与最近赛果。", locale),
+  archive: uiText("关注比赛记录", locale), activity: uiText("关注比赛", locale), archiveIntro: uiText("回看本赛季的最终成绩与正式出场记录。", locale), activityIntro: uiText("优先看进行中的比赛，再查看接下来的赛程与最近赛果。", locale),
   local: uiText("保存在此浏览器", locale), ready: uiText("已同步至账号", locale), saving: uiText("正在同步关注…", locale), loading: uiText("正在读取账号关注…", locale), error: uiText("云同步暂不可用，请检查连接后重试。", locale),
   login: uiText("登录账号", locale), guest: uiText("无需登录即可使用关注。", locale), emptyTitle: uiText("从你关心的队伍或选手开始", locale), emptyText: uiText("选择关注后，相关赛程和赛果会汇集在这里。", locale), addTeams: uiText("选择队伍", locale), addPlayers: uiText("选择选手", locale),
   noMatches: uiText("当前分类暂无相关比赛", locale), noMatchesText: uiText("选手赛果在正式出场记录公布后显示；未来赛程按当前所属队伍关联。", locale),
@@ -85,8 +85,11 @@ export default function FollowingWorkspace({ db, favorites, favoriteLimits = { t
   const copy = copyFor(locale)
   const location = useLocation()
   const subjectId = useId()
+  const discoveryId = useId()
+  const collectionId = useId()
   const feedRef = useRef(null)
   const briefingRef = useRef(null)
+  const pendingFocus = useRef(null)
   const [discoveryOpen, setDiscoveryOpen] = useState(false)
   const view = useMemo(() => getFollowingView(feed, searchParams), [feed, searchParams])
   const matchesView = searchParams.get('followView') === 'matches' || Boolean(view.subjectKey) || view.state !== 'all'
@@ -94,24 +97,42 @@ export default function FollowingWorkspace({ db, favorites, favoriteLimits = { t
   const teamSummaries = useMemo(() => getFollowingTeamSummaries(db, season, feed.teams, locale, cycleId), [db, season, feed.teams, locale, cycleId])
   const Title = standalone ? 'h1' : 'h2'
   const SectionTitle = 'h2'
-  const changeView = patch => setSearchParams(updateFollowingSearch(searchParams, patch), { replace: true, state: { ...location.state, restoreScrollY: undefined } })
+  const changeView = patch => setSearchParams(updateFollowingSearch(searchParams, patch), { replace: true, preventScrollReset: true, flushSync: true, state: { ...location.state, restoreScrollY: undefined } })
   const showSubject = subjectKey => {
+    pendingFocus.current = 'matches'
     changeView({ subjectKey, state: 'all', view: 'matches' })
-    requestAnimationFrame(() => { feedRef.current?.focus({ preventScroll: true }); feedRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' }) })
   }
   const syncLabel = syncError || syncStatus === 'error' ? copy.error : copy[syncStatus] || copy.local
+  const syncFailed = Boolean(syncError || syncStatus === 'error')
+  const discoveryVisible = discoveryOpen || (!feed.hasFavorites && !view.subjectKey)
+  useLayoutEffect(() => {
+    const requested = pendingFocus.current
+    if (!requested || (requested === 'matches') !== matchesView || discoveryVisible) return
+    const target = requested === 'matches' ? feedRef.current : briefingRef.current
+    if (!target) return
+    pendingFocus.current = null
+    target.focus({ preventScroll: true })
+    target.scrollIntoView({ block: 'start', behavior: 'auto' })
+  }, [location.key, matchesView, discoveryVisible])
   const storage = <div className={styles.storage} data-error={Boolean(syncError || syncStatus === 'error')}><span role={syncError || syncStatus === 'error' ? 'alert' : 'status'}><i aria-hidden="true" />{syncLabel}</span>{!isAuthenticated ? <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('fries-cup:open-account'))}>{copy.login} ↗</button> : null}</div>
   return <section className={styles.workspace} data-embedded={!standalone} data-i18n-ignore aria-label={copy.title}>
     <header className={styles.pageHeader}>
       {standalone ? <div><span className={styles.eyebrow}>MY FOLLOWING</span><Title>{copy.title}</Title><p>{copy.intro}</p></div> : null}
-      <div className={styles.headerActions}><div className={styles.followingSummary}><span>{feed.teams.length} / {favoriteLimits.teams} {copy.teams} · {feed.players.length} / {favoriteLimits.players} {copy.players}</span>{storage}</div><div className={styles.manageActions} data-has-following={feed.hasFavorites}><button type="button" className={styles.discoverButton} onClick={() => setDiscoveryOpen(value => !value)}>{locale === 'en-US' ? 'Find following' : uiText("发现关注", locale)} ＋</button><button type="button" aria-label={copy.manage} onClick={onManageTeams}><span className={styles.manageLabel}>{copy.manage}</span><span className={styles.manageShort}>{copy.manageShort}</span><span aria-hidden="true"> ↗</span></button></div></div>
+      <div className={styles.headerActions}>
+        <div className={styles.followingSummary}><span><b>{feed.teams.length}</b><span className={styles.quota}> / {favoriteLimits.teams}</span> {locale === 'en-US' && feed.teams.length === 1 ? 'Team' : copy.teams} · <b>{feed.players.length}</b><span className={styles.quota}> / {favoriteLimits.players}</span> {locale === 'en-US' && feed.players.length === 1 ? 'Player' : copy.players}</span><div className={styles.desktopStorage}>{storage}</div></div>
+        <div className={styles.manageActions} data-has-following={feed.hasFavorites}>
+          {feed.hasFavorites && <button type="button" className={styles.discoverButton} aria-label={locale === 'en-US' ? 'Find following' : uiText("发现关注", locale)} aria-expanded={discoveryVisible} aria-controls={discoveryId} onClick={() => setDiscoveryOpen(value => !value)}><span className={styles.manageLabel}>{locale === 'en-US' ? 'Find following' : uiText("发现关注", locale)}</span><span className={styles.manageShort}>{locale === 'en-US' ? 'Add' : uiText("添加", locale)}</span> ＋</button>}
+          <button type="button" aria-label={copy.manage} onClick={onManageTeams}><span className={styles.manageLabel}>{copy.manage}</span><span className={styles.manageShort}>{copy.manageShort}</span><span aria-hidden="true"> ↗</span></button>
+        </div>
+      </div>
     </header>
+    {syncFailed && <div className={styles.mobileStorage}>{storage}</div>}
     {!feed.loaded ? <p className={styles.notice}>{copy.loadingData}</p> : <>
       {feed.weekly && <div className={styles.cycleContext}>
         <WeeklyCyclePicker cycles={feed.weekly.cycles} cycle={feed.weekly.cycle} locale={locale} onChange={cycleId => changeView({ cycleId })} />
         <p>{locale === 'en-US' ? 'Published matches across this cycle. Following stays with the season.' : uiText("汇集本周期已公布比赛，关注名单按赛季保留。", locale)}</p>
       </div>}
-      {(discoveryOpen || (!feed.hasFavorites && !view.subjectKey)) && <FollowingDiscovery db={db} favorites={favorites} excludedFavorites={excludedFavorites} seasonId={season?.id} locale={locale} withSeason={withSeason} onSave={onSave} onInteract={() => setDiscoveryOpen(true)} onClose={() => { setDiscoveryOpen(false); const target = briefingRef.current || feedRef.current; target?.focus({ preventScroll: true }); target?.scrollIntoView({ block: 'start', behavior: 'auto' }) }} hasFavorites={feed.hasFavorites} />}
+      <div id={discoveryId} hidden={!discoveryVisible} className={styles.discoveryPanel}>{discoveryVisible && <FollowingDiscovery db={db} favorites={favorites} excludedFavorites={excludedFavorites} seasonId={season?.id} locale={locale} withSeason={withSeason} onSave={onSave} onInteract={() => setDiscoveryOpen(true)} onClose={() => { pendingFocus.current = matchesView ? 'matches' : 'overview'; setDiscoveryOpen(false) }} hasFavorites={feed.hasFavorites} />}</div>
       {(feed.hasFavorites || view.subjectKey) ? <>
       <nav className={`${styles.viewSwitch} ${sectionStyles.root}`} aria-label={locale === 'en-US' ? 'Following views' : uiText("关注视图", locale)}><button type="button" className={sectionStyles.item} aria-pressed={!matchesView} onClick={() => changeView({ view: 'overview', subjectKey: '', state: 'all' })}>{locale === 'en-US' ? 'Latest & collections' : uiText("近况与关注对象", locale)}</button><button type="button" className={sectionStyles.item} aria-pressed={matchesView} onClick={() => changeView({ view: 'matches' })}>{locale === 'en-US' ? 'All linked matches' : uiText("全部关联比赛", locale)} <span>{feed.matches.length}</span></button></nav>
       {feed.hasFavorites && !matchesView && <FollowingBriefing focusRef={briefingRef} feed={feed} observation={observation} locale={locale} withSeason={withSeason} seasonId={season?.id} />}
@@ -133,8 +154,9 @@ export default function FollowingWorkspace({ db, favorites, favoriteLimits = { t
           : view.entries.length ? <div className={styles.matchList}>{view.entries.slice(0, view.limit).map(item => <MatchRow key={item.id} item={item} seasonId={season?.id} withSeason={withSeason} copy={copy} locale={locale} />)}</div> : <div className={styles.notice}><strong>{copy.noMatches}</strong><p>{copy.noMatchesText}</p></div>}
         {view.entries.length > view.limit ? <button type="button" className={styles.more} onClick={() => changeView({ limit: Math.min(view.limit + FOLLOWING_PAGE_SIZE, view.entries.length) })}>{copy.more} <span>{Math.min(view.limit, view.entries.length)} / {view.entries.length}</span> ↓</button> : null}
       </section>
-      <div hidden={matchesView} className={styles.collections} data-only={!feed.players.length ? 'teams' : !feed.teams.length ? 'players' : undefined}>
-        <section><header className={styles.collectionHeader}><SectionTitle>{copy.teams} <span>{feed.teams.length}</span></SectionTitle><button type="button" onClick={onManageTeams}>{copy.changeTeams} ↗</button></header>
+      <div hidden={matchesView} className={styles.collections} data-collection={view.collection} data-only={!feed.players.length ? 'teams' : !feed.teams.length ? 'players' : undefined}>
+        <div className={styles.collectionSwitch} role="group" aria-label={locale === 'en-US' ? 'Followed profiles' : uiText("关注对象", locale)}>{['teams', 'players'].map(type => <button key={type} type="button" aria-pressed={view.collection === type} aria-controls={`${collectionId}-${type}`} onClick={() => changeView({ collection: type })}>{copy[type]} <span>{feed[type].length}</span></button>)}</div>
+        <section id={`${collectionId}-teams`} className={styles.teamCollection}><header className={styles.collectionHeader}><SectionTitle>{copy.teams} <span>{feed.teams.length}</span></SectionTitle><button type="button" onClick={onManageTeams}>{copy.changeTeams} ↗</button></header>
           {feed.teams.length ? <div className={styles.directory}>{feed.teams.map(team => {
             const summary = teamSummaries.get(team.id)
             return <article className={styles.directoryCard} key={team.id} data-selected={view.subjectKey === `team:${team.id}`}>
@@ -145,9 +167,9 @@ export default function FollowingWorkspace({ db, favorites, favoriteLimits = { t
             </article>
           })}</div> : <p className={styles.notice}>{copy.noTeams}</p>}
         </section>
-        <section><header className={styles.collectionHeader}><SectionTitle>{copy.players} <span>{feed.players.length}</span></SectionTitle><button type="button" onClick={onManagePlayers}>{copy.changePlayers} ↗</button></header>
+        <section id={`${collectionId}-players`} className={styles.playerCollection}><header className={styles.collectionHeader}><SectionTitle>{copy.players} <span>{feed.players.length}</span></SectionTitle><button type="button" onClick={onManagePlayers}>{copy.changePlayers} ↗</button></header>
           {feed.players.length ? <div className={styles.directory}>{feed.players.map(player => <article className={styles.directoryCard} key={player.id} data-selected={view.subjectKey === `player:${player.id}`}>
-            <FollowingLink className={styles.directoryRow} to={withSeason(`/players/${encodeURIComponent(player.id)}`)}><FollowingPlayerPortrait player={player.player} db={db} locale={locale} className={styles.playerMark} /><div><strong>{player.name}</strong><span>{player.team ? getTeamLabel(player.team) : '—'} · {copy.roles[String(player.role).toUpperCase()] || player.role || copy.noRole}</span><small>{copy.profile}</small></div><b aria-hidden="true">↗</b></FollowingLink>
+            <FollowingLink className={styles.directoryRow} to={withSeason(`/players/${encodeURIComponent(player.id)}`)}><FollowingPlayerPortrait player={player.player} db={db} locale={locale} className={styles.playerMark} /><div><strong>{player.name}</strong><span>{player.team ? getTeamLabel(player.team) : '—'} · {locale === 'en-US' ? 'Registered: ' : uiText('登记职责：', locale)}{copy.roles[String(player.role).toUpperCase()] || player.role || copy.noRole}</span><small>{copy.profile}</small></div><b aria-hidden="true">↗</b></FollowingLink>
             <SubjectOutlook feed={feed} type="player" id={player.id} locale={locale} />
             <div className={styles.directoryActions}><button type="button" aria-label={`${player.name} · ${copy.showMatches}`} onClick={() => showSubject(`player:${player.id}`)}>{copy.showMatches} ↑</button></div>
           </article>)}</div> : <p className={styles.notice}>{copy.noPlayers}</p>}
@@ -155,6 +177,7 @@ export default function FollowingWorkspace({ db, favorites, favoriteLimits = { t
       </div>
       </> : null}
     </>}
+    {!syncFailed && <footer className={styles.mobileStorage}>{storage}</footer>}
   </section>
 }
 

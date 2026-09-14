@@ -1,7 +1,8 @@
 .cover { display: none; }
 @media (max-width: 600px) {
   .cover { display: block; padding: 16px; color: var(--fc-data-ink); font: 14px/1.5 var(--fc-data-font-interface); }
-  .heading { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 14px; font-size: 12px; color: var(--fc-data-text-muted); }
+  .heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; margin-bottom: 14px; font-size: 12px; color: var(--fc-data-text-muted); }
+  .heading small { font-size: 11px; font-weight: 400; color: var(--fc-data-text-muted); }
   .heading > span:first-child { color: var(--fc-data-ink); font-weight: 700; }
   .cover .champion { position: relative; display: block; overflow: hidden; padding: 20px; border-top: 3px solid var(--fc-data-signal); background: var(--fc-data-ink); color: var(--fc-data-paper); }
   .watermark { position: absolute; right: -8px; bottom: 40px; font: 900 70px/1 var(--fc-data-font-display); color: #ffffff08; pointer-events: none; }

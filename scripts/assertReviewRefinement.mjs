@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import fs from 'node:fs'
-import { buildReviewEntryPath, getReviewEntryReturnPath, buildReviewSceneUrl } from '../src/lib/reviewNavigation.js'
+import { buildReviewEntryPath, getReviewEntryReturnPath, getReviewOverviewReturnState, buildReviewSceneUrl } from '../src/lib/reviewNavigation.js'
 import { localizeReviewScenes, localizeReviewSearchResult, reviewText } from '../src/lib/reviewLocale.js'
 import { getLocalizedReviewSeasonProfile, prepareReviewDb } from '../src/lib/reviewSeason.js'
 import { buildPlayerStory, buildStaffStory, buildTeamStory, buildTournamentStory } from '../src/lib/reviewStoryBuilders.js'
@@ -9,6 +9,22 @@ import { buildStaffIndex, getReviewSearchResults } from '../src/lib/reviewSearch
 
 const db = prepareReviewDb(JSON.parse(fs.readFileSync(new URL('../public/data/fcr2026_local_public.json', import.meta.url), 'utf8')))
 const locales = ['zh-CN', 'en-US', 'ko-KR']
+
+test('the overview return keeps reading position through a language change without copying story or search parameters', () => {
+  const state = getReviewOverviewReturnState({ returnTo: '/?season=FCR2026&design=kpr5&lang=zh', returnScrollY: 2800 }, 'FCR26', 'en-US', 'design=kpr5&lang=en&q=SKY&identity=admin&scene=3')
+  const url = new URL(state.returnTo, 'https://review.invalid')
+  assert.equal(url.pathname, '/')
+  assert.deepEqual(Object.fromEntries(url.searchParams), { design: 'kpr5', lang: 'en', season: 'FCR2026' })
+  assert.equal(state.returnScrollY, 2800)
+})
+
+test('the overview return ignores other events, non-home routes and external sources', () => {
+  for (const returnTo of ['/players/one?season=FCR2026', '/?season=FCA2026', '//example.com/?season=FCR2026', 'https://example.com/?season=FCR2026', undefined]) {
+    const state = getReviewOverviewReturnState({ returnTo, returnScrollY: 2800 }, 'FCR26', 'zh-CN', 'design=kpr5')
+    assert.equal(new URL(state.returnTo, 'https://review.invalid').pathname, '/')
+    assert.equal(state.returnScrollY, undefined)
+  }
+})
 
 test('leaving a story restores its entry search in the current language and season', () => {
   const entry = buildReviewEntryPath('FCR26', 'zh-CN', 'design=kpr5&scene=3&as=coach&who=someone', { query: 'SKY#123 & FF', identity: 'admin' })

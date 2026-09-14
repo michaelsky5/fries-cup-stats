@@ -21,6 +21,7 @@
 .archive a, .archive button { -webkit-tap-highlight-color: transparent; }
 .archive a:focus-visible, .archive button:focus-visible { outline: 3px solid #b78b00; outline-offset: 4px; }
 .archive button:disabled { cursor: default; opacity: .5; }
+.mobileChapters { display: none; }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 .track { position: relative; height: calc(202svh - var(--kpr-header-height)); }
@@ -1232,4 +1233,141 @@
   .signalGateBrand > b, .signalGate > strong { display: none; }
   .signalGateTrack > i { padding-right: 28px; animation-duration: 14s; }
   .seriesBackdrop, .seasonAtlas::before, .journeySection::before, .dossierSection::before, .seasonReviewBackdrop { translate: 0 0; }
+}
+
+/* Phone chapters follow the records, with a single reading navigator. */
+@media (max-width: 600px) {
+  .hybrid { --kpr-gutter: 16px; }
+  .hybrid [data-archive-section] { scroll-margin-top: calc(var(--kpr-header-height, 56px) + 64px); }
+  .hybrid .mobileChapters {
+    position: sticky;
+    top: var(--kpr-header-height, 56px);
+    z-index: 30;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    min-height: 52px;
+    padding: 0 16px;
+    border-block: 1px solid var(--fc-data-line-strong);
+    background: var(--archive-paper);
+    color: var(--archive-ink);
+    font-size: 12px;
+  }
+  .mobileChapters > label { color: var(--fc-data-text-muted); }
+  .mobileChapters > div { position: relative; min-width: 0; }
+  .mobileChapters select {
+    appearance: none;
+    width: 100%;
+    min-height: 48px;
+    padding: 0 22px 0 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: 700 14px var(--fc-data-font-interface);
+    cursor: pointer;
+  }
+  .mobileChapters select:focus-visible { outline: 2px solid var(--archive-ink); outline-offset: -3px; }
+  .mobileChapters > div > span { position: absolute; right: 3px; top: 45%; width: 7px; height: 7px; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: translateY(-50%) rotate(45deg); pointer-events: none; }
+  .mobileChapterCount { color: var(--fc-data-text-muted); font-variant-numeric: tabular-nums; }
+
+  .hybrid :is(.seriesSection, .seasonAtlas, .journeySection, .dossierSection, .seasonReview) { padding: 32px 16px; min-height: 0; }
+  .hybrid .seriesBackdrop, .hybrid .seriesSection::before, .hybrid .seriesSection::after,
+  .hybrid .seasonAtlas::before, .hybrid .journeySection::before, .hybrid .dossierSection::before,
+  .hybrid .seasonReviewBackdrop, .hybrid .seasonReview::before { display: none; }
+  .hybrid :is(.seriesHeading, .seasonAtlasHeading, .dossierHeading) { gap: 16px; margin-bottom: 20px; }
+  .hybrid :is(.seriesHeading h2, .seasonAtlasHeading h2, .dossierHeading h2, .seasonReviewHeading h2, .sectionHeading h2) { margin: 10px 0 0; font-size: 30px; line-height: 1.2; letter-spacing: -.025em; }
+  .hybrid :is(.seriesHeading h2 > span, .seasonAtlasHeading h2 > span, .dossierHeading h2[data-locale='zh'] > span) { font-size: 1em; white-space: normal; }
+  .hybrid :is(.seriesHeading > div:first-child > span, .seasonAtlasHeading > div > span, .dossierHeading > div:first-child > span, .sectionHeading > span, .seasonReviewHeading > span) { font-size: 11px; line-height: 1.5; letter-spacing: .03em; }
+  .hybrid :is(.seasonAtlasHeading > p, .dossierIntro p, .seasonReviewHeading p) { padding: 0; border: 0; font-size: 13px; line-height: 1.75; }
+  .hybrid .seriesContext { gap: 12px; }
+  .hybrid .seriesEquation { min-height: 42px; font-size: 11px; }
+  .hybrid .seriesPodium { grid-template-columns: 1fr; }
+  .hybrid .seriesPodium > article {
+    display: grid;
+    grid-template: auto auto / 36px 48px minmax(0, 1fr);
+    align-content: center;
+    align-items: center;
+    gap: 4px 16px;
+    min-height: 90px;
+    padding: 14px 16px;
+  }
+  .hybrid .seriesPodium > article[data-rank='1'] { grid-column: auto; min-height: 108px; }
+  .hybrid .podiumRank { display: contents; }
+  .hybrid .podiumRank > b { grid-column: 1; grid-row: 1 / span 2; font-size: 34px; line-height: 1; }
+  .hybrid .podiumRank > small { grid-column: 3; grid-row: 2; max-width: none; padding: 0; font: 12px/1.4 var(--fc-data-font-interface); text-align: left; letter-spacing: 0; }
+  .hybrid .podiumLogo { position: static; grid-column: 2; grid-row: 1 / span 2; width: 48px; height: 48px; transform: none; }
+  .hybrid .podiumLogo::before, .hybrid .podiumMark { display: none; }
+  .hybrid .seriesPodium > article > strong { grid-column: 3; grid-row: 1; align-self: center; font-size: 32px; line-height: 1; }
+  .hybrid .seriesEligibility { gap: 6px; padding: 14px 0 0; border: 0; }
+  .hybrid .seriesEligibility > span { font-size: 11px; }
+
+  .hybrid .atlasCanvas { display: block; margin: 0; padding: 0; border: 0; background: transparent; overflow: visible; }
+  .hybrid .atlasCore, .hybrid .atlasOrbit, .hybrid .atlasCanvas::before, .hybrid .atlasCanvas::after { display: none; }
+  .hybrid .atlasNodes { grid-template: none / repeat(2, minmax(0, 1fr)); margin: 0; }
+  .hybrid .atlasNodes > a[data-node] { min-height: 144px; gap: 12px; padding: 14px 12px; border: 0; backdrop-filter: none; }
+  .hybrid .atlasNodes > a > span { font-size: 11px; gap: 7px; }
+  .hybrid .atlasNodes > a > span > b { display: none; }
+  .hybrid .atlasNodes > a > strong { font-size: 32px; line-height: 1.15; }
+  .hybrid .atlasNodes > a > strong > i { margin-inline: 5px; }
+  .hybrid .atlasNodes > a[data-node='bracket'] > strong { font-size: 25px; }
+  .hybrid .atlasNodes > a > small { font: 12px/1.5 var(--fc-data-font-interface); letter-spacing: 0; gap: 5px; }
+  .hybrid .atlasReviewSignal { display: none; }
+
+  .hybrid .journeyHeading { margin-bottom: 16px; gap: 8px; }
+  .hybrid .journeyHeading > span { font-size: 12px; line-height: 1.5; }
+  .hybrid .journeyRoute { gap: 0; padding: 0; border-top: 1px solid var(--fc-data-line-strong); }
+  .hybrid .journeyLine, .hybrid .journeyNode > i { display: none; }
+  .hybrid .journeyRoute > a { min-height: 0; padding: 12px 12px 12px 38px; border: 0; border-bottom: 1px solid var(--fc-data-line-strong); background: transparent; box-shadow: none; }
+  .hybrid .journeyRoute > .finalJourney { background: var(--archive-yellow); }
+  .hybrid .journeyNode { top: 14px; left: 8px; width: 22px; height: 22px; border: 0; border-radius: 0; background: transparent; transform: none; }
+  .hybrid .journeyNode > b { font-size: 11px; }
+  .hybrid .journeyRoute header { min-height: 24px; font: 12px/1.5 var(--fc-data-font-interface); letter-spacing: 0; }
+  .hybrid .matchResult { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 10px; margin: 12px 0; }
+  .hybrid .matchResult > span { font: 700 16px/1.3 var(--fc-data-font-interface); }
+  .hybrid .matchResult > span:last-child { text-align: right; }
+  .hybrid .matchResult > strong { font-size: 36px; line-height: 1; }
+  .hybrid .matchResult > strong > i { padding-inline: 5px; }
+  .hybrid .journeyRoute footer { padding-top: 10px; font: 11px/1.5 var(--fc-data-font-interface); }
+
+  .hybrid .dossierIntro { gap: 8px; padding: 0; border: 0; }
+  .hybrid .dossierIntro > a { min-height: 44px; font: 13px/1.5 var(--fc-data-font-interface); }
+  .hybrid .dossierAdditions, .hybrid .dossierStarters { padding: 16px; }
+  .hybrid .dossierAdditions > header { flex-wrap: wrap; gap: 6px 12px; min-height: 0; padding-bottom: 12px; }
+  .hybrid :is(.dossierAdditions, .dossierStarters) > header > span { font-size: 11px; line-height: 1.5; letter-spacing: 0; }
+  .hybrid .dossierLeaderFeature { display: grid; grid-template: 1fr auto / minmax(0, 1fr); align-items: end; gap: 10px; min-height: 216px; padding: 20px 0 0; }
+  .hybrid .dossierLeaderFeature .dossierFeatureIdentity { width: 68%; max-width: 68%; gap: 8px; }
+  .hybrid .dossierLeaderFeature .dossierFeatureIdentity > strong { font-size: 36px; line-height: 1.15; white-space: normal; overflow-wrap: anywhere; }
+  .hybrid .dossierFeatureIdentity > small { font-size: 11px; line-height: 1.5; }
+  .hybrid .dossierFeatureIdentity > span { font-size: 12px; }
+  .hybrid .dossierLeaderScore { top: 12px; right: 0; min-width: 48px; min-height: 52px; }
+  .hybrid .dossierLeaderScore > b { font-size: 28px; }
+  .hybrid .dossierLeaderScore > small { font-size: 10px; }
+  .hybrid .dossierLeaderFeature .dossierFeatureCta { grid-column: 1; width: 72%; min-height: 44px; margin-top: 0; font-size: 12px; }
+  .hybrid .dossierStarters > header { min-height: 32px; gap: 10px; }
+  .hybrid .dossierStarters > div > a { grid-template-columns: 22px minmax(0, 1fr) auto; min-height: 80px; gap: 8px; padding-block: 10px; }
+  .hybrid .dossierStarters > div > a > b { font-size: 12px; }
+  .hybrid .dossierStarters > div > a > span > strong { white-space: normal; overflow-wrap: anywhere; }
+  .hybrid .dossierStarters > div > a > span > small { font-size: 12px; line-height: 1.5; }
+  .hybrid .dossierStarters > div > a > em { display: block; font-size: 12px; }
+  .hybrid .dossierStarters > div > a > span:last-child { display: none; }
+  .hybrid .dossierFooter { padding-top: 12px; min-height: 0; border: 0; font: 12px/1.75 var(--fc-data-font-interface); letter-spacing: 0; }
+  .hybrid .dossierFooter i { flex-shrink: 0; }
+
+  .hybrid .seasonReview { gap: 18px; }
+  .hybrid .seasonReviewHeading p { margin-top: 12px; }
+  .hybrid .seasonReviewChapters { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 18px; padding-top: 14px; }
+  .hybrid .seasonReviewChapters > span { font-size: 12px; }
+  .hybrid .seasonReviewPortal { min-height: 0; gap: 16px; padding: 16px; }
+  .hybrid .seasonReviewPortal::after, .hybrid .seasonReviewLogo, .hybrid .seasonReviewMeta { display: none; }
+  .hybrid .seasonReviewPortal > strong { font-size: 26px; line-height: 1.25; }
+  .hybrid .seasonReviewCta { min-height: 44px; font-size: 13px; }
+  .hybrid .archiveFooter { padding: 28px 16px; gap: 12px; }
+  .hybrid .archiveFooter h2 { margin-block: 12px; font-size: 23px; line-height: 1.4; }
+  .hybrid .archiveFooter p { font-size: 12px; line-height: 1.75; }
+  .hybrid .archiveFooter p > b { margin-inline: 8px; }
+  .hybrid :is(.seriesPodium > article, .atlasNodes > a, .journeyRoute > a, .seasonReviewPortal):hover { transform: none; }
+  .hybrid .journeyRoute > a:hover { color: var(--archive-ink); }
+  .hybrid .journeyRoute > a:hover :is(header, footer) { color: #55584e; }
 }

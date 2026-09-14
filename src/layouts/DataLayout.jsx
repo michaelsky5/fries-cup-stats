@@ -103,8 +103,9 @@ export default function DataLayout() {
   const location = useLocation()
   const isReviewEntryRoute = /^\/review\/?$/.test(location.pathname)
   const [seasonId, setSeasonId] = useState(() => getInitialSeasonId())
+  const season = useMemo(() => getSeasonById(seasonId), [seasonId])
   const locale = getStoredLocale()
-  const publicData = usePublicSeasonData(seasonId, { reviewArchive: isReviewEntryRoute })
+  const publicData = usePublicSeasonData(seasonId, { reviewArchive: isReviewEntryRoute && season.reviewEnabled })
   const { db, error, isLoading, isRefreshing, retry } = publicData
   const [accountAttentionContext, setAccountAttentionContext] = useState(null)
   const navigate = useNavigate()
@@ -133,7 +134,7 @@ export default function DataLayout() {
   const isMapDataRoute = isKprHybridDesign && /^\/maps(?:\/|$)/.test(location.pathname)
   const isTeamArchiveRoute = isKprHybridDesign && /^\/teams\/[^/]+(?:\/(?:journey|analysis))?\/?$/.test(location.pathname)
   const isTeamExhibitionRoute = isTeamArchiveRoute && getDossierView(location.pathname, location.search) === 'gallery'
-  const isPlayerArchiveRoute = isKprHybridDesign && /^\/players\/[^/]+(?:\/analysis)?\/?$/.test(location.pathname)
+  const isPlayerArchiveRoute = isKprHybridDesign && /^\/players\/[^/]+(?:\/(?:analysis|journey))?\/?$/.test(location.pathname)
   const isKprSamplePage = /^(?:\/|\/leaderboard\/?)$/.test(location.pathname) ||
     (isKprHybridDesign && /^\/(?:matches|advance)(?:\/)?$/.test(location.pathname))
   const isFdSamplePage = /^(?:\/leaderboard|\/teams\/[^/]+)\/?$/.test(location.pathname)
@@ -156,7 +157,6 @@ export default function DataLayout() {
     section: new URLSearchParams(location.search).get('section'),
     isAuthenticated
   })
-  const season = useMemo(() => getSeasonById(seasonId), [seasonId])
   const isWeeklyAdvanceRoute = isKprHybridDesign && /^\/advance\/?$/.test(location.pathname) && isWeeklyOverview(db, season)
   const isWeeklyHomeRoute = isKprHybridDesign && location.pathname === '/' && isWeeklyOverview(db, season)
   const isAdvanceIndexRoute = isKprHybridDesign && /^\/advance\/?$/.test(location.pathname)
@@ -236,7 +236,7 @@ export default function DataLayout() {
     [accountAttentionContext, compatibleLayoutLocale]
   )
   const isMatchRoomRoute = /^\/matches\/[^/]+\/room\/?$/.test(location.pathname)
-  const navigationSearch = getNavigationSearch(location.search, designPreview)
+  const navigationSearch = getNavigationSearch(location.search, designPreview, layoutLocale)
   const withSeason = useMemo(
     () => path => withAccountCompetition(buildSeasonLink(path, seasonId, navigationSearch), competition.navigationId, navigationSearch),
     [seasonId, navigationSearch, competition.navigationId]
@@ -312,7 +312,7 @@ export default function DataLayout() {
     if (nextSeasonId === seasonId) return
     setStoredSeasonId(nextSeasonId)
     setSeasonId(nextSeasonId)
-    const nextPath = location.pathname.replace(/^(\/(?:matches|players|teams))\/[^/]+(?:\/(?:room|journey|analysis))?\/?$/, '$1')
+    const nextPath = location.pathname.replace(/^(\/(?:matches|players|teams|staff))\/[^/]+(?:\/(?:room|journey|analysis))?\/?$/, '$1')
     navigate(buildSeasonLink(nextPath, nextSeasonId, navigationSearch))
   }
 

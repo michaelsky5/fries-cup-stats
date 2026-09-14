@@ -1567,7 +1567,7 @@ export function getPosterPayload(scenes) {
   const spotlight = list.find(scene => scene.kind === 'spotlight') || null
   const roleScene = list.find(scene => String(scene.eyebrow || '').toUpperCase().includes('ROLE')) || null
   const cardKind = inferCardKind(first, list)
-  const cardType = inferCardType(first, list)
+  const cardType = first.isPartner ? inferCardType(first, list).replace('OFFICIAL', 'PARTNER') : inferCardType(first, list)
   const metric = pickMetricScene(list, cardKind)
   const subject = cleanPosterSubject(first.title || '')
   const playerTicket = cardKind === 'player' ? getPlayerTicketData(list) : null
@@ -1575,6 +1575,8 @@ export function getPosterPayload(scenes) {
   const posterImage = pickPosterImage(list, cardKind)
 
   const payload = {
+    isPartner: Boolean(first.isPartner),
+    usesRegularTemplate: Boolean(first.usesRegularTemplate),
     seasonId: first.seasonId || first.season_id || 'FCA26',
     seasonCode: first.seasonCode || first.season_code || 'FCA2026',
     seasonMark: first.seasonMark || first.season_mark || 'FCA 2026',
@@ -1957,7 +1959,7 @@ function drawBoardingRosterEntry(ctx, data, images, accent, copy, x, y, w, h, ma
 function drawPlayerTicketPoster(ctx, payload, images, accent) {
   const width = ctx.canvas.width
   const height = ctx.canvas.height
-  const isWideBoarding = payload.seasonId === 'FCR26'
+  const isWideBoarding = payload.usesRegularTemplate || payload.seasonId === 'FCR26'
   const ticketWidth = isWideBoarding ? 2080 : 1680
   const ticketHeight = isWideBoarding ? 800 : 900
   const ticket = document.createElement('canvas')
@@ -3814,7 +3816,7 @@ function drawSeasonFilmPoster(ctx, payload, images, accent) {
   const width = ctx.canvas.width
   const height = ctx.canvas.height
   const data = getFilmPosterData(payload)
-  const brandAccent = payload.seasonId === 'FCR26' ? '#f4c320' : accent
+  const brandAccent = payload.usesRegularTemplate || payload.seasonId === 'FCR26' ? '#f4c320' : accent
   const heroRender = images.heroRender || null
   const primaryVisual = heroRender || images.mainImage || null
   const heroBounds = heroRender ? getVisibleImageBounds(heroRender) : null
@@ -4005,7 +4007,7 @@ function drawSeasonFilmPoster(ctx, payload, images, accent) {
     font: `900 14px ${FONT_MONO}`,
     fill: brandAccent
   })
-  drawText(ctx, 'FRIES CUP 2026  /  OFFICIAL ARCHIVE EDITION', width - 82, 1838, {
+  drawText(ctx, payload.isPartner ? 'FRIES CUP  /  PARTNER ARCHIVE EDITION' : 'FRIES CUP 2026  /  OFFICIAL ARCHIVE EDITION', width - 82, 1838, {
     font: `900 13px ${FONT_MONO}`,
     fill: 'rgba(255,247,220,0.34)',
     align: 'right'
@@ -4310,6 +4312,11 @@ export function getCinemaTicketData(payload) {
   const directorCut = payload.directorCut || {}
   const locale = payload.locale || 'zh-CN'
   const copy = getCinemaTicketCopy(locale)
+  if (payload.isPartner) {
+    copy.selection = locale === 'en-US' ? 'PARTNER ARCHIVE'
+      : locale === 'ko-KR' ? '파트너 대회 아카이브 / PARTNER ARCHIVE'
+        : locale === 'zh-TW' ? '合作賽事檔案 / PARTNER ARCHIVE' : '合作赛事档案 / PARTNER ARCHIVE'
+  }
   const sourceStats = safeArr(source.stats)
   let stats = []
 
@@ -9000,10 +9007,10 @@ export async function generatePosterPng(payload, options = {}) {
   const isHorizontalTicket = isPlayerTicket || isIdentityTicket
   const isMovieTicket = outputFormat === 'movieTicket'
   const isDirectorCut = outputFormat === 'directorCut'
-  const isWideBoarding = outputFormat === 'ticket' && isPlayerTicket && payload.seasonId === 'FCR26'
+  const isWideBoarding = outputFormat === 'ticket' && isPlayerTicket && (payload.usesRegularTemplate || payload.seasonId === 'FCR26')
   const width = isWideBoarding ? 2400 : outputFormat === 'poster' ? 1080 : (isMovieTicket || isDirectorCut || isHorizontalTicket) ? 1920 : 1080
   const height = isWideBoarding ? 960 : outputFormat === 'poster' ? 1920 : (isMovieTicket || isDirectorCut || isHorizontalTicket) ? 1080 : 1920
-  const accent = payload.seasonId === 'FCR26' ? TONE_COLORS.gold : TONE_COLORS[payload.tone] || TONE_COLORS.gold
+  const accent = payload.usesRegularTemplate || payload.seasonId === 'FCR26' ? TONE_COLORS.gold : TONE_COLORS[payload.tone] || TONE_COLORS.gold
 
   canvas.width = width
   canvas.height = height

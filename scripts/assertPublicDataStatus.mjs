@@ -1,6 +1,42 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { getPublicDataStatus } from '../src/lib/publicDataStatus.js'
+import { getPublicDataStatus, getSeasonStatusKey } from '../src/lib/publicDataStatus.js'
+import { SEASONS, getSeasonById, getSeasonEventGroups } from '../src/config/seasons.js'
+import { getSeasonStatus } from '../src/lib/homeSelectors.js'
+import { ensureUiLocale } from '../src/lib/localeCatalog.js'
+
+test('a failed first load never claims an update or previously available records', async () => {
+  await ensureUiLocale('zh-TW')
+  for (const [locale, label] of [['zh-CN', '加载失败'], ['zh-TW', '載入失敗'], ['en-US', 'Load failed'], ['ko-KR', '데이터 로드 실패']]) {
+    const failed = getPublicDataStatus({ error: 'DATA_LOAD_FAILED', db: null }, locale)
+    assert.equal(failed.key, 'error')
+    assert.equal(failed.label, label)
+    assert.equal(failed.notice, '')
+    assert.ok(failed.retryLabel)
+    assert.equal(getPublicDataStatus({ error: 'DATA_LOAD_FAILED', isLoading: true }, locale).key, 'loading')
+    assert.equal(getPublicDataStatus({ error: '', dataSource: { kind: 'published' } }, locale).key, 'ready')
+  }
+})
+
+test('official and partner events remain separate regardless of selection or lifecycle', () => {
+  const before = SEASONS.map(season => season.id)
+  assert.deepEqual(getSeasonEventGroups().map(group => [group.kind, group.seasons.map(season => season.id)]), [
+    ['OFFICIAL', ['FCR26', 'FCA26']],
+    ['PARTNER', ['QGCS4']]
+  ])
+  assert.deepEqual(SEASONS.map(season => season.id), before)
+  assert.deepEqual(getSeasonEventGroups([getSeasonById('QGCS4')]).map(group => group.kind), ['PARTNER'])
+})
+
+test('an archived event does not become schedule-pending while its snapshot loads', () => {
+  for (const season of SEASONS) {
+    assert.equal(getSeasonStatusKey(season, getSeasonStatus(null, season)), 'archive')
+  }
+  assert.equal(getSeasonStatusKey({ lifecycle: 'ACTIVE' }, { totalMatches: 0 }), 'pending')
+  assert.equal(getSeasonStatusKey({ lifecycle: 'ACTIVE' }, { totalMatches: 3 }), 'scheduled')
+  assert.equal(getSeasonStatusKey({ lifecycle: 'ARCHIVED' }, { totalMatches: 3, liveMatches: 1 }), 'live')
+  assert.equal(getSeasonStatusKey({ lifecycle: 'ACTIVE' }, { totalMatches: 3, isFinished: true }), 'archive')
+})
 
 test('retrying cached data replaces a stale failure label while retaining a useful notice', () => {
   const failed = { refreshError: true, dataSource: { kind: 'cache' } }

@@ -1,6 +1,8 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
+import AdvanceRecordLink from './AdvanceRecordLink.jsx'
+import AdvanceTeamPicker from './AdvanceTeamPicker.jsx'
+import { playoffRouteOutcome, publishedPlayoffWinnerId, resolveAdvanceTeam, updateAdvanceReadingSearch } from './advanceReadingState.js'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import { getMatchStatusLabelKey, teamFull, teamShort } from '../../lib/advanceSelectors.js'
 import { getMatchFormatLabel } from '../../lib/matchFormat.js'
@@ -30,6 +32,39 @@ const FIXED_MATCH_POSITIONS = {
 
 function copy(locale, zh, en) {
   return locale === 'en-US' ? en : zh
+}
+
+function publishedRoundLabel(label, locale) {
+  const names = {
+    'UB QF': ['胜者组首轮', 'Upper quarterfinals'],
+    'UB SF': ['胜者组半决赛', 'Upper semifinals'],
+    'UB FINAL': ['胜者组决赛', 'Upper final'],
+    'LB R1': ['败者组第一轮', 'Lower round 1'],
+    'LB R2': ['败者组第二轮', 'Lower round 2'],
+    'LB R3': ['败者组第三轮', 'Lower round 3'],
+    'LB FINAL': ['败者组决赛', 'Lower final'],
+    QUARTERFINALS: ['四分之一决赛', 'Quarterfinals'],
+    SEMIFINALS: ['半决赛', 'Semifinals'],
+    '3RD PLACE': ['季军赛', 'Third-place match'],
+    'GRAND FINALS': ['总决赛', 'Grand final']
+  }
+  const pair = names[String(label || '').toUpperCase()]
+  return pair ? copy(locale, uiText(pair[0], locale), pair[1]) : label
+}
+
+function journeyResultText(match, won, lost, locale) {
+  const labels = {
+    champion: ['胜 / 夺冠', 'WIN / CHAMPION'],
+    'runner-up': ['负 / 亚军', 'LOSS / RUNNER-UP'],
+    win: ['胜 / 晋级', 'WIN / ADVANCE'],
+    drop: ['负 / 转入败者组', 'LOSS / LOWER BRACKET'],
+    out: ['负 / 止步', 'LOSS / ELIMINATED'],
+    loss: ['负', 'LOSS'],
+    live: ['进行中', 'LIVE'],
+    pending: ['待赛', 'UP NEXT']
+  }
+  const [zh, en] = labels[playoffRouteOutcome({ won, lost, round: match.round, status: match.status })]
+  return copy(locale, uiText(zh, locale), en)
 }
 
 function matchRouteId(match) {
@@ -82,7 +117,7 @@ function formatMatchTime(value) {
 
 function MatchIndexCard({ match, seasonId, withSeason, t, locale = 'zh-CN', activeTeamKey = '' }) {
   const slots = matchSlots(match, locale)
-  const winnerKey = teamKey(match?.winner)
+  const winnerKey = publishedPlayoffWinnerId(match)
   const href = matchRouteId(match) ? withSeason(`/matches/${matchRouteId(match)}`) : ''
   const status = String(match?.status || 'scheduled').toLowerCase()
   const isOnActiveRoute = Boolean(activeTeamKey && slots.some(slot => teamKey(slot.team) === activeTeamKey))
@@ -113,7 +148,7 @@ function MatchIndexCard({ match, seasonId, withSeason, t, locale = 'zh-CN', acti
   )
 
   return href ? (
-    <Link className={styles.matchIndexCard} to={href} data-status={status} data-route-active={isOnActiveRoute ? 'true' : undefined}>{content}</Link>
+    <AdvanceRecordLink className={styles.matchIndexCard} to={href} data-status={status} data-route-active={isOnActiveRoute ? 'true' : undefined}>{content}</AdvanceRecordLink>
   ) : (
     <div className={styles.matchIndexCard} data-status={status} data-route-active={isOnActiveRoute ? 'true' : undefined}>{content}</div>
   )
@@ -255,6 +290,7 @@ function TeamJourneyStage({ matches, activeTeamKey, seasonId, locale, withSeason
 
   return (
     <div className={styles.journeyMapViewport} tabIndex={0} aria-label={copy(locale, uiText("{0} 的季后赛路线", locale, [teamShort(activeTeam)]), `${teamShort(activeTeam)} playoff journey`)}>
+      <p className={styles.mobileScoreNote}>{copy(locale, uiText('比分以 {0} 在前', locale, [teamShort(activeTeam)]), `${teamShort(activeTeam)}’s score is shown first`)}</p>
       <div className={styles.journeyMapCanvas}>
         <div className={styles.journeyLaneLabel} data-lane="upper"><span>UPPER</span><small>{copy(locale, uiText("胜者路线", locale), 'WINNERS ROUTE')}</small></div>
         <div className={styles.journeyLaneLabel} data-lane="lower"><span>LOWER</span><small>{copy(locale, uiText("背水一战", locale), 'ONE LIFE LEFT')}</small></div>
@@ -291,7 +327,7 @@ function TeamJourneyStage({ matches, activeTeamKey, seasonId, locale, withSeason
                   <b>{teamShort(opponent?.team) || 'TBD'}</b>
                 </span>
                 <span className={styles.journeyScore}><b>{own?.score ?? '—'}</b><i>:</i><b>{opponent?.score ?? '—'}</b></span>
-                <em className={styles.journeyResult}>{won ? copy(locale, uiText("胜 / 前进", locale), 'WIN / ADVANCE') : lost ? copy(locale, uiText("负 / 落位", locale), 'LOSS / DROP') : copy(locale, uiText("待赛", locale), 'UP NEXT')}</em>
+                <em className={styles.journeyResult}>{journeyResultText(point.match, won, lost, locale)}</em>
               </>
             )
 
@@ -302,7 +338,7 @@ function TeamJourneyStage({ matches, activeTeamKey, seasonId, locale, withSeason
                 data-lane={point.lane}
                 data-result={won ? 'win' : lost ? 'loss' : 'pending'}
               >
-                {href ? <Link to={href}>{content}</Link> : <div>{content}</div>}
+                {href ? <AdvanceRecordLink to={href}>{content}</AdvanceRecordLink> : <div>{content}</div>}
               </li>
             )
           })}
@@ -427,7 +463,7 @@ function genericLanes(bracket) {
   return [{
     id: 'route',
     label: 'PLAYOFF ROUTE',
-    note: 'SINGLE ELIMINATION',
+    note: bracket?.bracketType === 'double_elimination' ? 'DOUBLE ELIMINATION' : 'SINGLE ELIMINATION',
     rounds: (bracket?.rounds || []).map(round => ({
       id: round.id,
       label: round.label || round.id,
@@ -452,7 +488,7 @@ function GenericBracket({ bracket, seasonId, locale, t, withSeason }) {
                 <section key={round.id} className={styles.playoffRound}>
                   <header>
                     <span>{String(index + 1).padStart(2, '0')} / {round.id}</span>
-                    <strong>{round.label}</strong>
+                    <strong>{publishedRoundLabel(round.label, locale)}</strong>
                     {index < lane.rounds.length - 1 ? <i aria-hidden="true">→</i> : null}
                   </header>
                   <div>
@@ -470,6 +506,26 @@ function GenericBracket({ bracket, seasonId, locale, t, withSeason }) {
   )
 }
 
+export function PublishedTeamRoute({ matches, seasonId, locale, t, withSeason, preferredTeamId = '' }) {
+  const [params, setParams] = useSearchParams()
+  const teams = [...new Map(matches.flatMap(match => matchSlots(match, locale)
+    .filter(slot => (slot.team?.id || slot.team?.team_id) && !slot.team?.isTbd)
+    .map(slot => [teamKey(slot.team), slot.team]))).values()]
+  const selected = resolveAdvanceTeam(params.get('teamId'), teams.map(teamKey), preferredTeamId)
+  const activeTeam = teams.find(team => teamKey(team) === selected)
+  const route = selected ? matches.filter(match => matchSlots(match, locale).some(slot => teamKey(slot.team) === selected)) : []
+  const wins = route.filter(match => publishedPlayoffWinnerId(match) === selected).length
+  const losses = route.filter(match => publishedPlayoffWinnerId(match) && publishedPlayoffWinnerId(match) !== selected).length
+
+  return <section className={styles.mobilePlayoffRoute} aria-label={copy(locale, uiText('队伍比赛路径', locale), 'Team match route')}>
+    {activeTeam ? <>
+      <AdvanceTeamPicker teams={teams.map(team => ({ id: teamKey(team), label: `${teamShort(team)} · ${teamFull(team)}` }))} value={selected} onChange={teamId => setParams(updateAdvanceReadingSearch(params, { teamId }), { replace: true, preventScrollReset: true })} locale={locale} />
+      <div className={styles.mobileRouteIdentity}><TeamLogo team={activeTeam} seasonId={seasonId} className={styles.routeDockLogo} /><strong>{teamShort(activeTeam)}</strong><span>{wins + losses ? `${wins}W · ${losses}L` : copy(locale, uiText('赛果待确认', locale), 'Results pending')}</span></div>
+      <ol>{route.map(match => <li key={matchRouteId(match) || match.label}><h3>{publishedRoundLabel(match.roundLabel, locale)}</h3><MatchIndexCard match={match} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason} activeTeamKey={selected} /></li>)}</ol>
+    </> : <p className={styles.journeyEmpty}>{copy(locale, uiText('参赛队伍待公布', locale), 'Participating teams are to be announced')}</p>}
+  </section>
+}
+
 export default function AdvanceSignalPlayoffs({
   bracket,
   seasonId,
@@ -479,21 +535,27 @@ export default function AdvanceSignalPlayoffs({
   getPhaseHref,
   singleElimination = false
 }) {
-  const [routeSelection, setRouteSelection] = useState('')
+  const [params, setParams] = useSearchParams()
+  const fullBracketOpen = params.get('bracket') === 'full'
+  const toggleFullBracket = event => {
+    const open = event.currentTarget.open
+    if (open !== fullBracketOpen) setParams(updateAdvanceReadingSearch(params, { bracket: open ? 'full' : null }), { replace: true, preventScrollReset: true })
+  }
+  const routeSelection = params.get('teamId') || ''
+  const setRouteSelection = teamId => setParams(updateAdvanceReadingSearch(params, { teamId }), { replace: true, preventScrollReset: true })
   const layout = bracket?.layout?.format === 'fixed_double_elimination' ? bracket.layout : null
-  const allMatches = layout?.matches || (bracket?.rounds || []).flatMap(round => round.matches || [])
+  const allMatches = layout?.matches || (bracket?.rounds || []).flatMap(round => (round.matches || []).map(match => ({ ...match, roundLabel: round.label || round.id })))
   const completedMatches = allMatches.filter(isComplete).length
   const participantCount = layout?.participantCount || new Set(allMatches.flatMap(match => matchSlots(match, locale).map(slot => teamKey(slot.team))).filter(Boolean)).size
   const lastMatch = layout ? layout.matches.find(match => match.number === 14) : allMatches.at(-1)
-  const champion = lastMatch?.winner
+  const champion = matchSlots(lastMatch, locale).find(slot => teamKey(slot.team) === publishedPlayoffWinnerId(lastMatch))?.team
   const phaseComplete = Boolean(allMatches.length && completedMatches === allMatches.length)
-  const seeds = layout?.seededTeams || []
-  const selectedExists = seeds.some(seed => teamKey(seed) === routeSelection)
-  const activeTeamKey = selectedExists ? routeSelection : (teamKey(champion) || teamKey(seeds[0]))
+  const seeds = layout?.seededTeams || [...new Map(allMatches.flatMap(match => matchSlots(match, locale).filter(slot => teamKey(slot.team)).map(slot => [teamKey(slot.team), slot.team]))).values()]
+  const activeTeamKey = resolveAdvanceTeam(routeSelection, seeds.map(teamKey), teamKey(champion))
   const activeTeam = seeds.find(seed => teamKey(seed) === activeTeamKey) || champion || seeds[0]
   const activeRoute = allMatches.filter(match => matchSlots(match, locale).some(slot => teamKey(slot.team) === activeTeamKey))
-  const activeWins = activeRoute.filter(match => teamKey(match?.winner) === activeTeamKey).length
-  const activeLosses = activeRoute.filter(match => isComplete(match) && teamKey(match?.winner) && teamKey(match?.winner) !== activeTeamKey).length
+  const activeWins = activeRoute.filter(match => publishedPlayoffWinnerId(match) === activeTeamKey).length
+  const activeLosses = activeRoute.filter(match => publishedPlayoffWinnerId(match) && publishedPlayoffWinnerId(match) !== activeTeamKey).length
   const activeSeed = activeTeam?.seed || seeds.findIndex(seed => teamKey(seed) === activeTeamKey) + 1
 
   if (!allMatches.length) {
@@ -514,11 +576,13 @@ export default function AdvanceSignalPlayoffs({
         <header className={styles.chapterIntro}>
           <div>
             <span>{singleElimination ? '02' : '03'} / PLAYOFFS / {seasonId}</span>
-            <h2>{copy(locale, <>{uiText("八支队伍，", locale)}<em>{uiText("一条冠军路。", locale)}</em></>, <>Eight teams.<em>One road to the title.</em></>)}</h2>
+            <h2>{copy(locale, <>{uiText("八支队伍，", locale)}<em>{uiText("一条冠军路。", locale)}</em></>, <>Eight teams.{' '}<em>One road to the title.</em></>)}</h2>
           </div>
           <p>{copy(locale, uiText("胜者逐轮向冠军推进；其他名次赛按已发布赛程展示。", locale), 'Winners advance round by round toward the title. Placement matches follow the published schedule.')}</p>
         </header>
-        <GenericBracket bracket={bracket} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason} />
+        <PublishedTeamRoute matches={allMatches} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason} preferredTeamId={teamKey(champion)} />
+        <div className={styles.desktopBracket}><GenericBracket bracket={bracket} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason} /></div>
+        <details className={styles.mobileBracketDisclosure} open={fullBracketOpen} onToggle={toggleFullBracket}><summary>{copy(locale, uiText('完整季后赛签表', locale), 'Complete playoff bracket')} <span aria-hidden="true">＋</span></summary><GenericBracket bracket={bracket} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason} /></details>
       </div>
     )
   }
@@ -527,11 +591,12 @@ export default function AdvanceSignalPlayoffs({
     <div className={styles.playoffWorkspace} data-chapter="03">
       <header className={styles.routeChapterHeading}>
         <span>03 / PLAYOFFS / {seasonId}</span>
-        <h2 id="signal-playoff-route-title">{copy(locale, <>{uiText("选一支队，", locale)}<em>{uiText("走完它的赛季。", locale)}</em></>, <>Choose a team.<em>Follow the whole run.</em></>)}</h2>
+        <h2 id="signal-playoff-route-title">{copy(locale, <>{uiText("选一支队，", locale)}<em>{uiText("走完它的赛季。", locale)}</em></>, <>Choose a team.{' '}<em>Follow the whole run.</em></>)}</h2>
         <p>{copy(locale, uiText("全胜可以直达终局，一次失利会改写方向。选择一个名字，读取它如何晋级、落位，或告别赛季。", locale), 'An unbeaten run reaches the final directly; one loss rewrites the route. Choose a name and read how it advanced, dropped, or exited the season.')}</p>
       </header>
 
       <section className={styles.routeStory} aria-labelledby="signal-playoff-route-title">
+        <AdvanceTeamPicker teams={seeds.map(team => ({ id: teamKey(team), label: `${teamShort(team)} · ${teamFull(team)}` }))} value={activeTeamKey} onChange={setRouteSelection} locale={locale} />
         <header className={styles.routeStoryHeader}>
           <div>
             <span>PLAYOFF TRANSMISSION / {String(activeSeed || '—').padStart(2, '0')}</span>
@@ -588,7 +653,7 @@ export default function AdvanceSignalPlayoffs({
         </footer>
       </section>
 
-      <details className={styles.fullBracketDisclosure}>
+      <details className={styles.fullBracketDisclosure} open={fullBracketOpen} onToggle={toggleFullBracket}>
         <summary>
           <span><b>FULL SYSTEM</b>{copy(locale, uiText("完整双败签表", locale), 'FULL DOUBLE-ELIMINATION BRACKET')}</span>
           <span>{participantCount || '—'} {copy(locale, uiText("支队伍", locale), 'TEAMS')} / {allMatches.length} {copy(locale, uiText("场比赛", locale), 'MATCHES')} / {getMatchFormatLabel(lastMatch)} FINAL</span>

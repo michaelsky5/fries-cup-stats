@@ -202,7 +202,7 @@
   "赛管": {
     "ko-KR": "운영진",
     "en-US": "Officials",
-    "zh-TW": "賽務"
+    "zh-TW": "賽管"
   },
   "解说": {
     "ko-KR": "중계진",
@@ -592,7 +592,7 @@
   "地图数据": {
     "ko-KR": "맵 데이터",
     "en-US": "Map data",
-    "zh-TW": "地圖數據"
+    "zh-TW": "地圖資料"
   },
   "地图记录": {
     "ko-KR": "맵 기록",
@@ -1219,5 +1219,409 @@
   "选择语言": {
     "ko-KR": "언어 선택",
     "en-US": "Select language"
+  },
+  "数据资料导航": {
+    "ko-KR": "데이터 탐색",
+    "en-US": "Data navigation",
+    "zh-TW": "資料導覽"
+  },
+  "使用上下键选择队伍，按回车查看赛程，按 Esc 关闭候选。": {
+    "ko-KR": "위아래 방향키로 팀을 선택하고 Enter로 일정을 확인하세요. Esc로 목록을 닫을 수 있습니다.",
+    "en-US": "Use arrow keys to choose a team, Enter to open its fixtures, or Escape to close suggestions.",
+    "zh-TW": "使用上下方向鍵選擇隊伍，按 Enter 檢視賽程，按 Esc 關閉清單。"
+  },
+  "综合榜": {
+    "ko-KR": "종합",
+    "en-US": "Overall",
+    "zh-TW": "綜合榜"
+  },
+  "总评": {
+    "ko-KR": "종합 평가",
+    "en-US": "Overall rating",
+    "zh-TW": "總評"
+  },
+  "条正式排名": {
+    "ko-KR": "개 정식 순위 기록",
+    "en-US": "qualified entries",
+    "zh-TW": "筆正式排名"
+  },
+  "不同职责，各有锋芒。": {
+    "ko-KR": "각자의 역할에서 빛나는 선수들.",
+    "en-US": "Different roles. Distinct strengths."
+  },
+  "只看正式排名": {
+    "ko-KR": "정식 순위만 표시",
+    "en-US": "Qualified rankings only"
+  },
+  "预览选手": {
+    "ko-KR": "선수 미리보기",
+    "en-US": "Preview player"
+  },
+  "点击名字，继续看他的赛季。": {
+    "ko-KR": "이름을 선택해 선수의 시즌 기록을 확인하세요.",
+    "en-US": "Select a name to explore their season."
+  },
+  "本届参赛阵容": {
+    "ko-KR": "이번 대회 참가 명단",
+    "en-US": "The people of this season"
+  },
+  "这一届，": {
+    "ko-KR": "이번 대회,",
+    "en-US": "This season,"
+  },
+  "由我们组成。": {
+    "ko-KR": "우리가 함께 만듭니다.",
+    "en-US": "made by us."
+  },
+  "选手与队伍，经理与教练，赛管与解说。一起组成这一届薯条杯。": {
+    "ko-KR": "선수와 팀, 매니저와 코치, 운영진과 중계진. 모두가 함께 이번 프라이즈 컵을 만듭니다.",
+    "en-US": "The players, teams, managers, coaches, officials and casters who make this Fries Cup together."
+  },
+  "支参赛队伍": {
+    "ko-KR": "참가 팀",
+    "en-US": "teams"
+  },
+  "位选手 · 全季收录": {
+    "ko-KR": "시즌 전체 등록 선수",
+    "en-US": "players across the season"
+  },
+  "份战队职员档案": {
+    "ko-KR": "팀 스태프 기록",
+    "en-US": "team staff records"
+  },
+  "份赛事职员档案": {
+    "ko-KR": "대회 스태프 기록",
+    "en-US": "event staff records"
+  },
+  "位": {
+    "ko-KR": "명",
+    "en-US": "players"
+  },
+  " 人报名": {
+    "ko-KR": "명 등록",
+    "en-US": " registered players"
+  },
+  " 人收录": {
+    "ko-KR": "명 수록",
+    "en-US": " archived players"
+  },
+  "让比赛发生的人。": {
+    "ko-KR": "경기를 만들어 가는 사람들.",
+    "en-US": "The names behind the match."
+  },
+  "从一场比赛，认识参与其中的赛管与解说。": {
+    "ko-KR": "공개된 경기 기록에서 운영진과 중계진을 만나 보세요.",
+    "en-US": "Meet the officials and casters through their published match credits."
+  },
+  "场比赛署名": {
+    "ko-KR": "경기 참여 기록",
+    "en-US": "credited matches"
+  },
+  "署名比赛": {
+    "ko-KR": "참여한 경기",
+    "en-US": "Matches on record"
+  },
+  "来自已发布比赛的署名": {
+    "ko-KR": "공개된 경기의 참여 기록",
+    "en-US": "Source · Published match credits"
+  },
+  "查看完整署名": {
+    "ko-KR": "전체 참여 기록 보기",
+    "en-US": "View all credits"
+  },
+  "全季选手名录": {
+    "ko-KR": "시즌 전체 선수 명단",
+    "en-US": "Season player archive"
+  },
+  "全季选手职责分布": {
+    "ko-KR": "시즌 전체 선수 역할 분포",
+    "en-US": "Player roles · Full season"
+  },
+  "按全季收录选手的报名职责统计，含名单变更前后的选手。": {
+    "ko-KR": "시즌 중 합류하거나 떠난 선수를 모두 포함해 등록된 역할로 집계합니다.",
+    "en-US": "Registered roles across the full season, including players who joined or left."
+  },
+  "初始报名人数": {
+    "ko-KR": "최초 등록 인원",
+    "en-US": "Opening roster sizes"
+  },
+  "按初始名单统计；季后赛加入与退出已在全季名录中标明。": {
+    "ko-KR": "최초 등록 명단 기준입니다. 플레이오프 합류와 이탈은 시즌 전체 명단에 표시되어 있습니다.",
+    "en-US": "Based on the opening roster. Playoff arrivals and departures are marked in the full-season archive."
+  },
+  "从一支队伍开始": {
+    "ko-KR": "팀부터 살펴보세요",
+    "en-US": "Pick a team"
+  },
+  "点选队徽，查看完整阵容": {
+    "ko-KR": "팀 로고를 선택해 전체 명단을 확인하세요",
+    "en-US": "Select a crest to explore the roster"
+  },
+  "展开全部 {0} 支队伍": {
+    "ko-KR": "전체 {0}개 팀 보기",
+    "en-US": "Show all {0} teams"
+  },
+  "查看全部 {0} 条结果": {
+    "ko-KR": "결과 {0}개 모두 보기",
+    "en-US": "View all {0} results"
+  },
+  "初始报名 {0} 人": {
+    "ko-KR": "최초 등록 {0}명",
+    "en-US": "Opening roster: {0}"
+  },
+  "全季收录 {0} 人": {
+    "ko-KR": "시즌 전체 {0}명",
+    "en-US": "{0} players across the season"
+  },
+  "已提供 {0} / {1} 位赛季收录选手的资料。": {
+    "ko-KR": "시즌 등록 선수 {1}명 중 {0}명의 기록이 공개되어 있습니다.",
+    "en-US": "{0} of {1} archived player records available."
+  },
+  "{0} 场署名": {
+    "ko-KR": "{0}경기 참여 기록",
+    "en-US": "{0} credited matches"
+  },
+  "再次相遇，{0}。": {
+    "ko-KR": "다시 만난 {0}.",
+    "en-US": "Meeting {0} again."
+  },
+  "比分以 {0} 为左侧。": {
+    "ko-KR": "{0}의 점수가 왼쪽에 표시됩니다.",
+    "en-US": "Scores show {0} on the left."
+  },
+  "{0} 场比赛的逐图记录完整，且与系列赛比分一致。": {
+    "ko-KR": "{0}경기의 맵별 기록이 완전하며 시리즈 점수와 일치합니다.",
+    "en-US": "{0} matches have complete map records consistent with their series score."
+  },
+  "展开这 {0} 场比赛": {
+    "ko-KR": "{0}경기 펼쳐 보기",
+    "en-US": "Show these {0} matches"
+  },
+  "另有 {0} 场对手身份未明确，未合并进此表。": {
+    "ko-KR": "상대가 확인되지 않은 {0}경기는 이 표에서 제외했습니다.",
+    "en-US": "Another {0} matches have an unidentified opponent and are excluded from this table."
+  },
+  "{0} 图 {1} 胜。": {
+    "ko-KR": "{0}개 맵, {1}승.",
+    "en-US": "{0} maps, {1} wins."
+  },
+  "出场次数并列最多 · {0} 图并列": {
+    "ko-KR": "최다 출전 공동 1위 · {0}개 맵",
+    "en-US": "Tied for most played · {0} maps"
+  },
+  "展开{0}的 {1} 份记录": {
+    "ko-KR": "{0} 기록 {1}개 보기",
+    "en-US": "Show {1} records for {0}"
+  },
+  "把{0}拿近一点看。": {
+    "ko-KR": "{0}, 자세히 살펴보세요.",
+    "en-US": "A closer look at {0}."
+  },
+  "{0} 张地图不足 3 份记录，暂不据此指定队伍的弱图。": {
+    "ko-KR": "{0}개 맵은 기록이 3개 미만이므로 팀의 취약 맵을 판단하지 않습니다.",
+    "en-US": "{0} maps have fewer than 3 records, so no weak map is identified from them."
+  },
+  "{0} 图出场 · {1} 场比赛": {
+    "ko-KR": "{0}개 맵 출전 · {1}경기",
+    "en-US": "{0} maps played · {1} matches"
+  },
+  "全队记录：共同出场最多的五人组合，留下 {0} 图记录。": {
+    "ko-KR": "가장 많이 함께 출전한 5인 조합: {0}개 맵 기록.",
+    "en-US": "Team record: the most-used five-player lineup left {0} map records."
+  },
+  "{0} 位成员留下了出场记录。": {
+    "ko-KR": "{0}명의 출전 기록이 있습니다.",
+    "en-US": "{0} members have recorded appearances."
+  },
+  "核对全部 {0} 场逐场数据": {
+    "ko-KR": "전체 {0}경기 데이터 확인",
+    "en-US": "Check all {0} match records"
+  },
+  "已关注 {0} 支": {
+    "ko-KR": "{0}개 팀 팔로우 중",
+    "en-US": "Following {0} teams"
+  },
+  "{0} 张可选": {
+    "ko-KR": "{0}개 선택 가능",
+    "en-US": "{0} available"
+  },
+  "官方赛事": {
+    "zh-TW": "官方賽事",
+    "ko-KR": "공식 대회",
+    "en-US": "Official event"
+  },
+  "当前署名": {
+    "ko-KR": "선택한 참여 기록",
+    "en-US": "Selected credit"
+  },
+  "返回本届赛事": {
+    "zh-TW": "返回本屆賽事",
+    "ko-KR": "이번 대회로 돌아가기",
+    "en-US": "Back to this event"
+  },
+  "回顾语言": {
+    "zh-TW": "回顧語言",
+    "ko-KR": "리뷰 언어",
+    "en-US": "Review language"
+  },
+  "每一次胜负，": {
+    "ko-KR": "매 경기의 승패가,"
+  },
+  "都有去向。": {
+    "ko-KR": "다음 길을 정합니다."
+  },
+  "选择一支队伍，系统会把整段季后赛压缩成一条路径；从第一场出发，沿每一次胜负抵达它的终点。": {
+    "ko-KR": "팀을 선택하면 플레이오프 여정을 한눈에 볼 수 있습니다. 첫 경기부터 마지막 경기까지 각 결과를 따라가 보세요."
+  },
+  "选择一支队伍，沿每一次胜负，查看它的晋级去向和后续赛程。": {
+    "ko-KR": "팀을 선택해 경기 결과에 따른 진출 경로와 다음 일정을 확인하세요."
+  },
+  "档案信号已锁定": {
+    "ko-KR": "시즌 기록 확정"
+  },
+  "最终抵达": {
+    "ko-KR": "마지막 도착점"
+  },
+  "胜者继续前进": {
+    "ko-KR": "승자는 다음 라운드로"
+  },
+  "败者止步冠军争夺": {
+    "ko-KR": "패자는 우승 경쟁에서 탈락"
+  },
+  "败者转入下一条生路": {
+    "ko-KR": "패자는 패자조로"
+  },
+  "向下选择阶段": {
+    "ko-KR": "아래에서 단계 선택"
+  },
+  "每一步，": {
+    "ko-KR": "모든 경기가,"
+  },
+  "通向此刻。": {
+    "ko-KR": "이 순간으로 이어졌습니다."
+  },
+  "冠军不是一张结果卡，而是一条可以从头重新走过的完整比赛路径。": {
+    "ko-KR": "첫 경기부터 우승까지, 모든 경기를 따라 그 여정을 다시 살펴보세요."
+  },
+  "沿比赛顺序读取冠军路径，点击任一场进入比赛档案。": {
+    "ko-KR": "우승까지의 경기를 순서대로 살펴보세요. 경기를 선택하면 상세 기록을 볼 수 있습니다."
+  },
+  "冠军比赛路径": {
+    "ko-KR": "우승까지의 경기 기록"
+  },
+  "阶段 / 比赛": {
+    "ko-KR": "단계 / 경기"
+  },
+  "负场": {
+    "ko-KR": "패배"
+  },
+  "冠军档案相关入口": {
+    "ko-KR": "우승팀 관련 기록"
+  },
+  "查看完整季后赛晋级图": {
+    "ko-KR": "전체 플레이오프 대진표 보기"
+  },
+  "一个冠军，一条完整路径。": {
+    "ko-KR": "우승까지의 모든 발걸음."
+  },
+  "赛季最终名次按官方发布顺序归档。": {
+    "ko-KR": "공식 발표된 시즌 최종 순위입니다."
+  },
+  "突围之路，": {
+    "zh-TW": "突圍之路，",
+    "ko-KR": "최종 진출까지,",
+    "en-US": "The road through LCQ,"
+  },
+  "逐场回看。": {
+    "zh-TW": "逐場回看。",
+    "ko-KR": "경기마다 돌아봅니다.",
+    "en-US": "match by match."
+  },
+  "按本届已发布的轮次与赛果，回看队伍的突围过程。": {
+    "zh-TW": "依本屆已公布的輪次與賽果，回看隊伍的突圍過程。",
+    "ko-KR": "공개된 라운드와 경기 결과를 따라 팀의 최종 진출 과정을 돌아보세요.",
+    "en-US": "Revisit each team’s LCQ journey through the published rounds and results."
+  },
+  "{0} 图": {
+    "ko-KR": "{0}개 맵",
+    "en-US": "{0} maps"
+  },
+  "{0} 图 · {1} 场": {
+    "ko-KR": "{0}개 맵 · {1}경기",
+    "en-US": "{0} maps · {1} matches"
+  },
+  "/5 图": {
+    "ko-KR": "/5개 맵",
+    "en-US": "/5 maps"
+  },
+  "单图数据表现": {
+    "ko-KR": "맵별 경기력",
+    "en-US": "Map performance"
+  },
+  "图只用于计算补分，不补造比分。": {
+    "ko-KR": "맵은 보정 점수 계산에만 사용하며 경기 점수를 만들어 넣지 않습니다.",
+    "en-US": "maps are used only for adjustment points; no match score is invented."
+  },
+  "图符合当前范围": {
+    "ko-KR": "개 맵이 현재 범위에 해당",
+    "en-US": "maps in the current scope"
+  },
+  "当前图禁用": {
+    "ko-KR": "현재 맵에서 금지됨",
+    "en-US": "Banned on this map"
+  },
+  "确认本图结果": {
+    "ko-KR": "이 맵의 결과 확인",
+    "en-US": "Confirm map result"
+  },
+  "记录本图结果": {
+    "ko-KR": "이 맵의 결과 기록",
+    "en-US": "Record map result"
+  },
+  "第五图结果已保存。五图完成，请核对并整理战报。": {
+    "ko-KR": "5번째 맵 결과를 저장했습니다. 5개 맵이 모두 끝났으니 결과를 확인하고 경기 보고서를 정리해 주세요.",
+    "en-US": "The fifth map result was saved. All five maps are complete; review the results and prepare the match report."
+  },
+  "查看全部 {0} 位": {
+    "ko-KR": "전체 {0}명 보기",
+    "en-US": "View all {0} people"
+  },
+  "位累计收录": {
+    "ko-KR": "명 누적 수록",
+    "en-US": "people archived across the season"
+  },
+  "自由位": {
+    "ko-KR": "플렉스",
+    "en-US": "Flex"
+  },
+  "全高杯 S4": {
+    "ko-KR": "해머 컵 S4",
+    "en-US": "Hammer Cup S4"
+  },
+  "每张地图": {
+    "ko-KR": "맵당",
+    "en-US": "Per map"
+  },
+  "正在生成分享图…": {
+    "ko-KR": "공유 이미지 생성 중…",
+    "en-US": "Creating share image…"
+  },
+  "至少 8 位，最多 72 个 UTF-8 字节；中文等字符占多个字节。": {
+    "ko-KR": "8자 이상, UTF-8 기준 최대 72바이트입니다. 한글이나 중국어 등은 한 글자가 여러 바이트를 차지합니다.",
+    "en-US": "At least 8 characters and at most 72 UTF-8 bytes. Characters such as Chinese and Korean use multiple bytes."
+  },
+  "查看赛季 OVR、职责排行与选手表现榜单，以公开赛事统计为准。": {
+    "ko-KR": "공개된 대회 기록으로 시즌 OVR, 역할별 순위와 선수 경기력을 확인하세요.",
+    "en-US": "Track Season OVR, role rankings, and player stat leaders from published match records."
+  },
+  "赛事见证档案": {
+    "zh-TW": "賽事見證檔案",
+    "ko-KR": "대회 관람 기록",
+    "en-US": "Season witness archive"
+  },
+  "纪念图格式": {
+    "zh-TW": "紀念圖格式",
+    "ko-KR": "기념 이미지 형식",
+    "en-US": "Keepsake format"
   }
 }

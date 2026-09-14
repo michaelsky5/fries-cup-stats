@@ -613,7 +613,7 @@ const MapDetailPage = () => {
       },
       recentMatches
     }
-  }, [db, decodedMapName, isEn])
+  }, [db, decodedMapName, isEn, locale])
 
   const mapType = useMemo(() => {
     const allMaps = safeArr(db?.matches).flatMap(match => safeArr(match?.maps))

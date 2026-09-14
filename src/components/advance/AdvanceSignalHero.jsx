@@ -37,7 +37,8 @@ export default function AdvanceSignalHero({ seasonId, summary, result, bracketTy
 
       <div className={styles.routeHeroStatement}>
         <span>THE ROAD TO THE TITLE</span>
-        <h1 id="advance-signal-title">{copy(locale, <>{uiText("每一次胜负，", locale)}<em>{uiText("都有去向。", locale)}</em></>, <>EVERY RESULT<em>HAS A DESTINATION.</em></>)}</h1>
+        <h1 id="advance-signal-title"><span className={styles.mobileHeroTitle}>{copy(locale, uiText('晋级形势', locale), 'Advancement')}</span><span className={styles.desktopHeroTitle}>{copy(locale, uiText('每一次胜负，', locale), 'EVERY RESULT')}</span><em className={styles.desktopHeroTitle}>{copy(locale, uiText('都有去向。', locale), 'HAS A DESTINATION.')}</em></h1>
+        <p className={styles.mobileHeroSummary}>{copy(locale, uiText('查看各阶段排名、对阵与队伍去向。', locale), 'Standings, matchups and each team’s route.')}</p>
         <p>{isArchive
           ? copy(locale, uiText("选择一支队伍，系统会把整段季后赛压缩成一条路径；从第一场出发，沿每一次胜负抵达它的终点。", locale), 'Choose a team and the system compresses its postseason into one route—from the opening match through every result to its destination.')
           : copy(locale, uiText("选择一支队伍，沿每一次胜负，查看它的晋级去向和后续赛程。", locale), 'Choose a team and follow every result to see its advancement route and next matches.')}</p>

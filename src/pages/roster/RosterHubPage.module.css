@@ -1,6 +1,9 @@
 .shell { min-width: 0; }
-.hero { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); margin-top: 20px; background: var(--fc-data-ink); color: var(--fc-data-paper); }
-.intro { display: flex; flex-direction: column; min-width: 0; padding: 32px; animation: arrive 480ms ease both; }
+.hero { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); grid-template-areas: 'intro ensemble' 'metrics ensemble' 'search ensemble'; grid-template-rows: auto auto 1fr; margin-top: 20px; background: var(--fc-data-ink); color: var(--fc-data-paper); }
+.intro { grid-area: intro; display: flex; flex-direction: column; min-width: 0; padding: 32px 32px 0; animation: arrive 480ms ease both; }
+.hero > .searchArea { grid-area: search; min-width: 0; margin: auto 32px 32px; }
+.hero > .metrics { grid-area: metrics; margin-inline: 32px; }
+.ensemble { grid-area: ensemble; }
 .eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; color: var(--fc-data-text-dark-muted); font: 11px/1.5 var(--font-mono); letter-spacing: .04em; }
 .eyebrow i { width: 18px; height: 1px; background: var(--fc-data-signal); }
 .intro h1 { margin: 24px 0 18px; font: 900 clamp(42px, 4.1vw, 72px)/1.12 var(--fc-data-font-interface); letter-spacing: -.045em; }
@@ -170,10 +173,12 @@
 @media (min-width: 1101px) {
   .members [data-hero-active] .memberEntry::before { content: ''; position: absolute; top: 8px; left: -7px; width: 2px; height: 16px; background: var(--fc-data-signal-deep); }
 }
-@media (min-width: 1500px) { .teamGrid { grid-template-columns: repeat(10, minmax(0, 1fr)); } .teamGrid button { min-height: 65px; } .intro { padding: 36px; } .teamCopy { width: 70%; padding: 20px; } .members strong { font-size: 15px; } .teamIdentity h2 { font-size: 40px; } }
+@media (min-width: 1500px) { .teamGrid { grid-template-columns: repeat(10, minmax(0, 1fr)); } .teamGrid button { min-height: 65px; } .intro { padding: 36px 36px 0; } .hero > .metrics { margin-inline: 36px; } .hero > .searchArea { margin: auto 36px 36px; } .teamCopy { width: 70%; padding: 20px; } .members strong { font-size: 15px; } .teamIdentity h2 { font-size: 40px; } }
 @media (max-width: 1100px) {
   .hero { grid-template-columns: minmax(0, .83fr) minmax(0, 1.17fr); }
-  .intro { padding: 24px; }
+  .intro { padding: 24px 24px 0; }
+  .hero > .searchArea { margin: auto 24px 24px; }
+  .hero > .metrics { margin-inline: 24px; }
   .intro h1 { font-size: 43px; }
   .intro > p { font-size: 13px; }
   .metrics { margin: 24px 0; gap: 18px 18px; }
@@ -193,24 +198,28 @@
   .staffMark[data-large] { width: 48px; height: 48px; }
 }
 @media (max-width: 760px) {
-  .hero { grid-template-columns: 1fr; margin-top: 14px; }
-  .intro { padding: 22px 20px; }
+  .hero { grid-template-columns: 1fr; grid-template-areas: 'intro' 'search' 'ensemble' 'metrics'; grid-template-rows: auto; margin-top: 14px; }
+  .intro { padding: 18px 16px 0; }
   .eyebrow { font-size: 10px; }
-  .intro h1 { margin: 16px 0 12px; font-size: clamp(36px, 8.5vw, 54px); }
-  .intro > p { font-size: 12px; line-height: 1.7; }
-  .metrics { margin: 20px 0 14px; gap: 13px 24px; }
+  .intro h1 { margin: 10px 0 0; font-size: clamp(28px, 7.6vw, 38px); line-height: 1.22; }
+  .intro > p { display: none; }
+  .hero > .searchArea { margin: 16px 16px 18px; }
+  .hero > .metrics { margin: 0 16px; padding: 20px 0; border-top: 1px solid var(--fc-data-line-on-dark); gap: 16px 24px; }
   .metrics > div { padding-bottom: 10px; }
-  .metrics b { font-size: 43px; }
-  .metrics dt { font-size: 11px; }
+  .metrics b { font-size: 34px; }
+  .metrics dt { font-size: 12px; }
   .metrics dd { margin-bottom: 5px; }
   .searchArea { padding-top: 0; }
   .searchResults, .searchResults[data-placement="above"] { position: relative; top: auto; bottom: auto; margin-top: 6px; max-height: 440px; box-shadow: none; }
   .search input { font-size: 16px; }
-  .ensemble { padding: 18px 16px 16px; border-left: 0; border-top: 1px solid var(--fc-data-line-on-dark); }
-  .fieldHeading { gap: 6px; margin-bottom: 12px; font-size: 11px; }
-  .teamGrid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .teamGrid[data-expanded="false"] button:nth-child(n+11):not([aria-pressed="true"]) { display: none; }
-  .expandTeams { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 42px; padding: 10px 5px; border: 0; border-bottom: 1px solid var(--fc-data-line-on-dark); color: var(--fc-data-text-on-dark); background: transparent; font: 11px/1.5 var(--fc-data-font-interface); cursor: pointer; }
+  .ensemble { padding: 16px; border-left: 0; border-top: 1px solid var(--fc-data-line-on-dark); }
+  .fieldHeading { gap: 6px; margin-bottom: 10px; font-size: 12px; }
+  .fieldHeading > span:last-child { display: none; }
+  .teamGrid { display: flex; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--fc-data-signal-deep) transparent; padding-bottom: 6px; }
+  .teamGrid button { flex: 0 0 62px; min-height: 62px; animation: none; }
+  .teamGrid[data-expanded="true"] { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: visible; }
+  .teamGrid button:hover { transform: none; }
+  .expandTeams { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; padding: 10px 5px; border: 0; border-bottom: 1px solid var(--fc-data-line-on-dark); color: var(--fc-data-text-on-dark); background: transparent; font: 12px/1.5 var(--fc-data-font-interface); cursor: pointer; }
   .selectedTeam { margin-top: 14px; }
   .teamCopy { padding: 15px 13px; }
   .teamIdentity { grid-template-columns: 36px minmax(0, 1fr) 30px; }

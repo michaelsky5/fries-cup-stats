@@ -4,6 +4,7 @@ import { LOCALES, normalizeLocale, getLocaleParam, getStoredLocale, setStoredLoc
 import { translateUiText } from './uiText.js'
 import { localizeTraditionalReview } from './traditionalText.js'
 import { REVIEW_SOURCE_SCENE } from './reviewSource.js'
+import { adaptPartnerReviewScene } from './reviewPartner.js'
 
 export const REVIEW_LOCALES = LOCALES.map(item => ({ ...item, label: item.shortLabel }))
 
@@ -1267,12 +1268,14 @@ export function localizeReviewScenes(scenes, locale, profile = {}) {
   const normalized = normalizeReviewLocale(locale)
   if (normalized === 'zh-TW') {
     const identity = getSceneContext(scenes, { ...profile, locale: 'zh-CN' })
+    const isTournament = scenes[0]?.storyType === 'tournament' || /TOURNAMENT/.test(scenes[0]?.eyebrow || '')
     return localizeTraditionalReview(localizeReviewScenes(scenes, 'zh-CN', profile),
-      [identity.subject, identity.team, identity.partner, identity.companion])
+      isTournament ? [] : [identity.subject, identity.team, identity.partner, identity.companion])
       .map((scene, index) => ({ ...scene, [REVIEW_SOURCE_SCENE]: scenes[index] }))
   }
   const ctx = getSceneContext(scenes, { ...profile, locale: normalized })
-  if (normalized === 'zh-CN') return scenes.map(scene => refineReviewScene(scene, scene, normalized, ctx))
+  const finish = scene => profile.isPartner ? adaptPartnerReviewScene(scene, normalized) : scene
+  if (normalized === 'zh-CN') return scenes.map(scene => finish(refineReviewScene(scene, scene, normalized, ctx)))
 
   return scenes.map(scene => {
     const copy = getSceneCopy(scene, normalized, ctx)
@@ -1328,7 +1331,7 @@ export function localizeReviewScenes(scenes, locale, profile = {}) {
         ...getLocalizedStoryQuote(scene, normalized, ctx)
       } : null
     }
-    return refineReviewScene(scene, localized, normalized, ctx)
+    return finish(refineReviewScene(scene, localized, normalized, ctx))
   })
 }
 

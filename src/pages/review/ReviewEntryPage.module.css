@@ -789,6 +789,18 @@
   transform: translateX(3px);
 }
 
+.unavailable {
+  padding: clamp(28px, 5vw, 72px);
+  border-top: 3px solid var(--review-signal, #edc948);
+  background: var(--review-ink, #181b16);
+  color: var(--review-paper, #eeede5);
+}
+
+.unavailable h1 { margin: 0; font-size: clamp(26px, 4vw, 44px); line-height: 1.2; }
+.unavailable p { margin: 18px 0 28px; color: #d4d5cb; line-height: 1.7; }
+.unavailable a { display: inline-flex; align-items: center; gap: 32px; min-height: 44px; border-bottom: 1px solid currentColor; color: var(--review-signal, #edc948); }
+.unavailable a:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
+
 .empty {
   min-height: 150px;
   padding: 22px;
@@ -1490,6 +1502,20 @@
   --review-gold: #f4c320;
   gap: 18px;
 }
+
+.overviewReturn {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  padding-inline: 2px;
+  color: var(--fc-data-text-muted);
+  font: 13px/1.5 var(--fc-data-font-interface);
+  text-decoration: none;
+}
+.overviewReturn:hover { color: var(--fc-data-ink); }
+.overviewReturn:focus-visible { outline: 2px solid var(--fc-data-ink); outline-offset: 2px; }
 
 .hero {
   min-height: 356px;

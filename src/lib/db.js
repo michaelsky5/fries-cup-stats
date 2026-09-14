@@ -8,6 +8,8 @@ const reportCache = new Map()
 const dbSourceBySnapshot = new WeakMap()
 
 const REVIEW_STAFF_FIELD_KEYS = [
+  'crew',
+  'voice_referees',
   'admin',
   'admins',
   'admin_a',

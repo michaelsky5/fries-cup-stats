@@ -8,6 +8,7 @@ import { formatStaffPerson, getRosterRoleLabel } from '../../lib/rosterSelectors
 import { formatOwHeroName } from '../../lib/heroes.js'
 import { getLocationPath, getRestoreScrollY, getSavedReturnScroll, getReturnState, restoreWindowScroll, saveReturnScroll } from '../../lib/navigationState.js'
 import { rosterText } from './rosterCopy.js'
+import { getStaffProfilePath } from '../../lib/staffProfiles.js'
 import styles from './RosterIndex.module.css'
 
 const teamKey = team => team?.routeId || team?.team_id || team?.shortName || ''
@@ -128,7 +129,7 @@ export function PlayerArchiveExplorer({ directoryRef, players, focusedPlayer, on
 
 function StaffPreview({ staff, withSeason, en, locale }) {
   const event = Boolean(staff.storyPath)
-  const to = withSeason(staff.storyPath || `/teams/${staff.team?.routeId || ''}`)
+  const to = withSeason(getStaffProfilePath(staff))
   return <article className={`${styles.preview} ${styles.staffPreview}`} aria-label={en ? 'Selected staff member' : uiText("当前职员", locale)}>
     <div className={styles.previewKicker}>{en ? 'EVENT CREDIT' : uiText("赛事署名", locale)}<span>{rosterText(staff.roleLabel, locale)}</span></div>
     <div className={styles.staffMonogram} aria-hidden="true">{String(staff.name).slice(0, 2)}</div>
@@ -140,7 +141,7 @@ function StaffPreview({ staff, withSeason, en, locale }) {
       <div><dt>{en ? 'Team' : uiText("所属队伍", locale)}</dt><dd>{staff.team?.shortName || '—'}</dd></div>
       <div><dt>{en ? 'Public roles' : uiText("公开职务", locale)}</dt><dd>{rosterText(staff.roleLabel, locale)}</dd></div>
     </>}</dl>
-    <footer className={styles.previewActions}><ArchiveLink to={to}>{event ? (en ? 'Season review' : uiText("查看赛季回顾", locale)) : (en ? 'Team archive' : uiText("查看队伍档案", locale))}</ArchiveLink></footer>
+    <footer className={styles.previewActions}><ArchiveLink to={to}>{en ? 'Staff profile' : uiText("查看职员档案", locale)}</ArchiveLink></footer>
   </article>
 }
 
@@ -159,7 +160,7 @@ export function StaffSignalDirectory({ items, startIndex, focusedStaff, onFocus,
             <button type="button" className={styles.personSelect} onClick={() => onFocus(row.id)} aria-pressed={selected} aria-label={`${en ? 'Preview staff member' : uiText("预览职员", locale)} ${row.name}`}>
               <span className={styles.serial}>{String(startIndex + index).padStart(2, '0')}</span><span className={styles.personName}><strong>{row.name}</strong><small>{rosterText(row.roleLabel, locale)}</small></span><span className={styles.personMeta}><b>{scope}</b></span>
             </button>
-            <ArchiveLink to={withSeason(row.storyPath || `/teams/${row.team?.routeId || ''}`)} className={styles.entryLink} label={`${en ? 'Open record' : uiText("打开相关档案", locale)} ${row.name}`} />
+            <ArchiveLink to={withSeason(getStaffProfilePath(row))} className={styles.entryLink} label={`${en ? 'Open record' : uiText("打开相关档案", locale)} ${row.name}`} />
           </div>
           {selected && mobileExpanded ? <div className={styles.mobilePreview}>{preview}</div> : null}
         </li>

@@ -25,6 +25,9 @@ export default function PlayerShareDialog({
   locale = 'zh'
 }) {
   const exportRef = useRef(null)
+  const previewRef = useRef(null)
+  const dialogRef = useRef(null)
+  const [previewScale, setPreviewScale] = useState(0)
   const [selectedRole, setSelectedRole] = useState(currentRole || roleEntries[0]?.role || '')
   const [status, setStatus] = useState('')
   const [exporting, setExporting] = useState(false)
@@ -38,12 +41,39 @@ export default function PlayerShareDialog({
 
   useEffect(() => {
     if (!open) return undefined
+    const opener = document.activeElement
+    const previousOverflow = document.body.style.overflow
+    const buttons = () => [...(dialogRef.current?.querySelectorAll('button:not(:disabled), a[href], [tabindex="0"]') || [])]
+    document.body.style.overflow = 'hidden'
+    buttons()[0]?.focus()
     const handleKeyDown = event => {
       if (event.key === 'Escape') onClose?.()
+      if (event.key === 'Tab') {
+        const elements = buttons()
+        const destination = event.shiftKey ? elements.at(-1) : elements[0]
+        if (event.shiftKey ? document.activeElement === elements[0] : document.activeElement === elements.at(-1)) {
+          event.preventDefault()
+          destination?.focus()
+        }
+      }
     }
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = previousOverflow
+      if (opener instanceof HTMLElement && document.contains(opener)) opener.focus({ preventScroll: true })
+    }
   }, [onClose, open])
+
+  useEffect(() => {
+    if (!open || !previewRef.current) return undefined
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setPreviewScale(Math.max(0, Math.min((width - 4) / 1600, (height - 4) / 900, 0.66)))
+    })
+    observer.observe(previewRef.current)
+    return () => observer.disconnect()
+  }, [open])
 
   const model = useMemo(
     () => getPlayerShareCardModel({
@@ -81,7 +111,7 @@ export default function PlayerShareDialog({
 
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-label={t('playerShare.dialog.aria', uiText("导出分享图", locale))}>
-      <section className={styles.dialog}>
+      <section className={styles.dialog} ref={dialogRef}>
         <header className={styles.header}>
           <div>
             <span>PLAYER SHARE</span>
@@ -125,10 +155,10 @@ export default function PlayerShareDialog({
           </button>
         </div>
 
-        <div className={styles.previewArea}>
+        <div className={styles.previewArea} ref={previewRef}>
           {model ? (
-            <div className={styles.previewFrame}>
-              <div className={styles.previewScale}>
+            <div className={styles.previewFrame} style={{ width: 1600 * previewScale + 4, height: 900 * previewScale + 4 }}>
+              <div className={styles.previewScale} style={{ transform: `scale(${previewScale})` }}>
                 <PlayerShareCard model={model} />
               </div>
             </div>
@@ -138,7 +168,7 @@ export default function PlayerShareDialog({
         </div>
 
         <footer className={styles.footer}>
-          <span>{status || t('playerShare.dialog.previewNote', uiText("预览与导出使用同一卡面，导出尺寸固定为 1600 × 900。", locale))}</span>
+          <span role="status">{status || t('playerShare.dialog.previewNote', uiText("预览与导出使用同一卡面，导出尺寸固定为 1600 × 900。", locale))}</span>
         </footer>
       </section>
 

@@ -38,13 +38,15 @@ export function getDataCenterPageLabel(pathname = '/', search = '') {
   if (path === '/standings') return '积分排名'
   if (path === '/leaderboard') return '数据排行'
   if (path === '/players') return '参赛选手'
-  if (/^\/players\/[^/]+\/analysis$/.test(path)) return '选手数据分析'
+  if (/^\/players\/[^/]+\/analysis$/.test(path)) return getDesignPreview(search) === 'original' ? '选手数据分析' : '竞技分析'
+  if (/^\/players\/[^/]+\/journey$/.test(path)) return '赛季征程'
   if (/^\/players\/[^/]+$/.test(path)) return '选手详情'
   if (path === '/roster') return '参赛阵容'
   if (path === '/teams') return '参赛战队'
   if (/^\/teams\/[^/]+\/journey$/.test(path)) return '赛季征程'
   if (/^\/teams\/[^/]+\/analysis$/.test(path)) return '竞技分析'
   if (/^\/teams\/[^/]+$/.test(path)) return '战队详情'
+  if (/^\/staff\/[^/]+$/.test(path)) return '职员档案'
   if (path === '/staff') {
     const params = new URLSearchParams(search)
     const design = getDesignPreview(search)

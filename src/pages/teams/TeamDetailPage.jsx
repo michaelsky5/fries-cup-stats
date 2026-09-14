@@ -446,13 +446,13 @@ function getShareModel({
       time: getMatchTimeLabel(row.match)
     })),
     corePlayers: safeArr(corePlayers).slice(0, 5).map(player => buildSharePlayer(player, locale)),
-    rosterPlayers: safeArr(rosterPlayers).slice(0, 7).map(player => buildSharePlayer(player, locale)),
+    rosterPlayers: safeArr(rosterPlayers).map(player => buildSharePlayer(player, locale)),
     leaders: safeArr(teamLeaders).slice(0, 4).map(item => ({
       label: item.label,
       name: getPlayerName(item.player),
       value: item.valueLabel
     })),
-    footerText: 'Generated from official match records'
+    footerText: 'Generated from published match records'
   }
 }
 

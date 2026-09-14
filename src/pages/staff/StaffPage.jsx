@@ -17,9 +17,7 @@ import {
   paginateStaff,
   sortStaff
 } from '../../lib/rosterSelectors.js'
-import { encodeStaffKey } from '../../lib/reviewAssets.js'
-import { buildStaffIndex } from '../../lib/reviewSearch.js'
-import { getMatchArchiveStages } from '../../lib/matchArchiveStages.js'
+import { getEventStaffDirectory } from '../../lib/staffProfiles.js'
 import { normalizeStaffDirectorySearch } from '../../lib/staffDirectoryGroups.js'
 import styles from './StaffPage.module.css'
 import { StaffSignalDirectory } from '../../features/roster-index/RosterIndex.jsx'
@@ -52,33 +50,6 @@ const SORT_OPTIONS = [
   { value: 'team', label: '队伍 / 赛事' }
 ]
 
-function makeEventStaffRows(db) {
-  const index = buildStaffIndex(db)
-  const makeRow = (entry, role) => {
-    const battleTag = entry.aliases?.find(alias => /#\d+$/.test(String(alias || ''))) || ''
-    return {
-      id: `event:${role}:${entry.staff_key}`,
-      name: entry.staff_name,
-      battleTag,
-      roles: [role],
-      role,
-      roleLabel: role === 'caster' ? '解说' : '赛管',
-      identityKey: `${role}:${entry.staff_key}`,
-      team: null,
-      matchCount: entry.match_count || 0,
-      stageCount: entry.stages?.length || 0,
-      stages: getMatchArchiveStages(entry.matches),
-      teamCount: entry.teams_seen?.length || 0,
-      storyPath: `/review/story/staff/${role}/${encodeStaffKey(entry.staff_key)}`
-    }
-  }
-
-  return [
-    ...index.admins.map(entry => makeRow(entry, 'admin')),
-    ...index.casters.map(entry => makeRow(entry, 'caster'))
-  ]
-}
-
 function useQueryWriter(searchParams, setSearchParams) {
   return useCallback((updates, { resetPage = true, replace = true } = {}) => {
     const next = new URLSearchParams(searchParams)
@@ -108,7 +79,7 @@ export default function StaffPage() {
   }), [directoryParams, defaultSort])
 
   const teamStaff = useMemo(() => getStaffDirectory(db), [db])
-  const eventStaff = useMemo(() => makeEventStaffRows(db), [db])
+  const eventStaff = useMemo(() => getEventStaffDirectory(db), [db])
   const staff = useMemo(() => [...teamStaff, ...eventStaff], [eventStaff, teamStaff])
   const directoryStaff = isKprHybridDesign ? isTeamStaff ? teamStaff : eventStaff : staff
   const teamCounts = useMemo(() => getStaffCounts(teamStaff), [teamStaff])
@@ -135,7 +106,7 @@ export default function StaffPage() {
       { value: 'ALL', label: uiText("全部战队", locale) },
       ...[...map.values()].sort((a, b) => a.label.localeCompare(b.label, 'zh-Hans-CN'))
     ]
-  }, [staff])
+  }, [staff, locale])
   const filteredStaff = useMemo(() => {
     return sortStaff(filterStaff(directoryStaff, queryState), queryState.sort)
   }, [queryState, directoryStaff])

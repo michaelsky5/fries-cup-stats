@@ -10992,6 +10992,24 @@
   }
 }
 
+@media (max-width: 600px) {
+  .storyToolbar { grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; }
+  .storyToolbar .storyLocaleSwitch { grid-column: 1; grid-row: 1; justify-self: start; }
+  .storyToolbar .copySceneButton { grid-column: 2; grid-row: 1; }
+  .storyToolbar .closeBtn { grid-column: 3; grid-row: 1; }
+  .storyToolbar .mobileChapterNav { grid-column: 1 / -1; grid-row: 2; height: 44px; padding-inline: 12px; }
+  .mobileChapterNav select { font-size: 14px; border-radius: 0; }
+  .mobileChapterNav:focus-within { outline: 2px solid #f4c320; outline-offset: 2px; }
+  .storyStage {
+    top: calc(var(--review-viewport-top, 0px) + max(12px, env(safe-area-inset-top)) + 108px);
+    height: max(80px, calc(var(--review-viewport-height, 100dvh) - max(12px, env(safe-area-inset-top)) - max(12px, env(safe-area-inset-bottom)) - 176px));
+  }
+  .fullscreen[data-review-has-note='true'] .storyStage {
+    height: max(80px, calc(var(--review-viewport-height, 100dvh) - max(12px, env(safe-area-inset-top)) - max(12px, env(safe-area-inset-bottom)) - 206px));
+  }
+  .sceneCopyFeedback { top: calc(var(--review-viewport-top, 0px) + max(12px, env(safe-area-inset-top)) + 108px); }
+}
+
 /* Regular keepsakes share one full-size preview. Director's Cut stays on its
    existing preview and art-direction layout. */
 .posterPanel.posterPanelRefined {

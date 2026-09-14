@@ -56,7 +56,7 @@ export default function SignalRatingSummary({ entry, locale, sample }) {
   const provisional = sample.status === 'PROVISIONAL'
   const evidence = entry.ratingEvidence
   const metrics = evidence?.metrics || []
-  const nameOf = metric => METRIC_NAMES[metric]?.[en ? 1 : 0] || metric
+  const nameOf = metric => uiText(METRIC_NAMES[metric]?.[en ? 1 : 0], locale) || metric
   const knownMetrics = metrics.filter(metric => hasNumber(metric.delta))
   const positive = knownMetrics.filter(metric => Number(metric.delta) >= 0.05)
     .sort((a, b) => Number(b.delta) - Number(a.delta)).slice(0, 2)

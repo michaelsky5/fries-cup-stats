@@ -48,7 +48,7 @@ export default function TeamHeroAnalysis({ report, ...context }) {
   const grid = all => <div className={styles.heroGrid} data-member={Boolean(member)}>{['TANK', 'DPS', 'SUP'].filter(role => !member || heroes.some(hero => hero.role === role)).map(role => {
     const choices = heroes.filter(hero => hero.role === role)
     return <div key={role} className={styles.roleColumn}>
-      <header><b>{roleLabel(role, en)}</b><span>{choices.length} {en ? 'heroes' : uiText("位英雄", locale)}</span></header>
+      <header><b>{roleLabel(role, en, locale)}</b><span>{choices.length} {en ? 'heroes' : uiText("位英雄", locale)}</span></header>
       {(all ? choices : choices.slice(0, 5)).map((hero, index) => heroButton(hero, index))}
       {!choices.length ? <p className={styles.roleEmpty}>{en ? 'No hero records in this role.' : uiText("当前职责暂无英雄记录。", locale)}</p> : null}
     </div>

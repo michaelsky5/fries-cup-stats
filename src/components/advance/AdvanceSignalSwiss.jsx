@@ -1,6 +1,9 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useMemo, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import AdvanceRecordLink from './AdvanceRecordLink.jsx'
+import AdvanceTeamPicker from './AdvanceTeamPicker.jsx'
+import { resolveAdvanceTeam, updateAdvanceReadingSearch } from './advanceReadingState.js'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import { formatShortDateTime, teamShort } from '../../lib/advanceSelectors.js'
 import { buildSwissSignalFlow } from '../../lib/swissSignalFlow.js'
@@ -139,7 +142,7 @@ function SwissTraceStep({ step, seasonId, locale, withSeason }) {
   )
 
   return step.matchId
-    ? <Link className={styles.swissTraceStep} data-result={step.result} to={withSeason(`/matches/${step.matchId}`)}>{content}</Link>
+    ? <AdvanceRecordLink className={styles.swissTraceStep} data-result={step.result} to={withSeason(`/matches/${step.matchId}`)}>{content}</AdvanceRecordLink>
     : <div className={styles.swissTraceStep} data-result={step.result}>{content}</div>
 }
 
@@ -155,8 +158,12 @@ export default function AdvanceSignalSwiss({
   t,
   withSeason
 }) {
-  const [activeZone, setActiveZone] = useState('all')
-  const [selectedTeamId, setSelectedTeamId] = useState(() => teamRouteId(rows[0]))
+  const [params, setParams] = useSearchParams()
+  const detailRef = useRef(null)
+  const activeZone = zones.some(zone => zone.key === params.get('zone')) ? params.get('zone') : 'all'
+  const requestedTeam = params.get('teamId')
+  const selectedTeamId = requestedTeam === 'all' || (activeZone !== 'all' && !requestedTeam) ? '' : resolveAdvanceTeam(requestedTeam, rows.map(teamRouteId))
+  const change = patch => setParams(updateAdvanceReadingSearch(params, patch), { replace: true, preventScrollReset: true })
   const visibleRows = useMemo(
     () => activeZone === 'all' ? rows : rows.filter(row => row.status === activeZone),
     [activeZone, rows]
@@ -177,13 +184,11 @@ export default function AdvanceSignalSwiss({
   const roundCount = flow.rounds.length
 
   const selectTeam = teamId => {
-    setSelectedTeamId(teamId)
-    setActiveZone('all')
+    change({ teamId: teamId || 'all', zone: null })
   }
 
   const selectOutcome = zone => {
-    setSelectedTeamId('')
-    setActiveZone(zone)
+    change({ teamId: 'all', zone })
   }
 
   return (
@@ -191,7 +196,7 @@ export default function AdvanceSignalSwiss({
       <header className={styles.phaseSignalHeading} data-phase="swiss">
         <span>01 / SWISS STAGE / {seasonId}</span>
         <div>
-          <h2>{copy(locale, <>{rows.length}{uiText(" 个信号，", locale)}<em>{uiText("六轮分流。", locale)}</em></>, <>{rows.length} signals.<em>Six rounds of separation.</em></>)}</h2>
+          <h2>{copy(locale, <>{rows.length}{uiText(" 个信号，", locale)}<em>{uiText("六轮分流。", locale)}</em></>, <>{rows.length} signals.{' '}<em>Six rounds of separation.</em></>)}</h2>
           <p>{copy(locale, uiText("胜者向上，败者向下；每一场都在改变下一站。选择一支队伍，就能读出它的完整瑞士轮轨迹。", locale), 'Winners rise and losers fall. Every match changes the next stop; choose a team to trace its complete Swiss journey.')}</p>
         </div>
         <dl className={styles.phaseSignalSummary}>
@@ -202,6 +207,7 @@ export default function AdvanceSignalSwiss({
       </header>
 
       <section className={styles.swissSignalBoard} data-has-selection={selectedRow ? 'true' : 'false'} aria-labelledby="signal-swiss-board-title">
+        <AdvanceTeamPicker teams={rows.map(row => ({ id: teamRouteId(row), label: `${teamShort(row)} · ${row.team_name || row.team_short_name}` }))} value={selectedTeamId} onChange={selectTeam} locale={locale} allLabel={copy(locale, uiText('全部队伍', locale), 'All teams')} />
         <header className={styles.signalBoardHeader}>
           <div>
             <span>SWISS SIGNAL FIELD / 01</span>
@@ -351,6 +357,8 @@ export default function AdvanceSignalSwiss({
           </div>
         </div>
 
+        <details className={styles.swissMobileField}>
+          <summary>{copy(locale, uiText('各轮战绩分布', locale), 'Records by round')} <span aria-hidden="true">＋</span></summary>
         <ol className={styles.swissFlowMobileRounds} aria-label={copy(locale, uiText("各轮战绩编组", locale), 'Record groups by round')}>
           {flow.rounds.map(round => (
             <li key={round.round}>
@@ -359,6 +367,7 @@ export default function AdvanceSignalSwiss({
             </li>
           ))}
         </ol>
+        </details>
 
         <nav className={styles.swissFlowMobileOutcomes} aria-label={copy(locale, uiText("按最终去向筛选", locale), 'Filter by final outcome')}>
           {zoneItems.map(zone => (
@@ -389,37 +398,7 @@ export default function AdvanceSignalSwiss({
         </header>
 
         <div className={styles.swissLedgerWorkspace}>
-          <div className={styles.swissLedgerTable}>
-            <div className={styles.swissLedgerHead} aria-hidden="true">
-              <span>NO.</span><span>{copy(locale, uiText("战队", locale), 'TEAM')}</span><span>{copy(locale, uiText("胜负", locale), 'W—L')}</span><span>{copy(locale, uiText("对手分", locale), 'BUCHHOLZ')}</span><span>{copy(locale, uiText("对手胜率", locale), 'OMW')}</span><span>{copy(locale, uiText("净胜", locale), 'DIFF')}</span><span>{copy(locale, uiText("去向", locale), 'OUTCOME')}</span>
-            </div>
-            <div
-              className={styles.swissLedgerScroller}
-              tabIndex={0}
-              aria-label={copy(locale, uiText("{0}，共 {1} 支队伍", locale, [activeLabel, visibleRows.length]), `${activeLabel}, ${visibleRows.length} teams`)}
-            >
-              <ol className={styles.swissLedgerRows}>
-                {visibleRows.map(row => (
-                  <SwissStandingRow
-                    key={teamRouteId(row)}
-                    row={row}
-                    seasonId={seasonId}
-                    locale={locale}
-                    t={t}
-                    selected={teamRouteId(row) === selectedTeamId}
-                    onSelect={setSelectedTeamId}
-                  />
-                ))}
-              </ol>
-              {!visibleRows.length ? <p className={styles.swissLedgerEmpty}>{copy(locale, uiText("这一区域目前没有队伍。", locale), 'There are currently no teams in this outcome.')}</p> : null}
-            </div>
-            <footer className={styles.swissLedgerScrollFooter}>
-              <span>{String(visibleRows.length).padStart(2, '0')} TEAMS / COMPACT INDEX</span>
-              <p>{copy(locale, uiText("在此区域上下滚动查看完整排名", locale), 'Scroll this panel for the complete order')} <b aria-hidden="true">↕</b></p>
-            </footer>
-          </div>
-
-          <aside className={styles.swissLedgerDetail} aria-live="polite">
+          <aside className={styles.swissLedgerDetail} ref={detailRef} aria-live="polite" data-selected={selectedRow ? 'true' : undefined}>
             {selectedRow ? (
               <>
                 <div className={styles.swissTraceIdentity}>
@@ -431,9 +410,9 @@ export default function AdvanceSignalSwiss({
                     <div><dt>{copy(locale, uiText("排名", locale), 'RANK')}</dt><dd>{String(selectedRow.rank).padStart(2, '0')}</dd></div>
                     <div><dt>{copy(locale, uiText("去向", locale), 'OUTCOME')}</dt><dd>{t(`advance.zone.${selectedRow.status}`, selectedRow.status)}</dd></div>
                   </dl>
-                  <Link className={styles.swissTraceProfileLink} to={withSeason(`/teams/${teamRouteId(selectedRow)}`)}>
+                  <AdvanceRecordLink className={styles.swissTraceProfileLink} to={withSeason(`/teams/${teamRouteId(selectedRow)}`)}>
                     <span>{copy(locale, uiText("查看队伍档案", locale), 'Open team profile')}</span><b aria-hidden="true">↗</b>
-                  </Link>
+                  </AdvanceRecordLink>
                 </div>
                 <div className={styles.swissLedgerDetailBody}>
                   <header>
@@ -455,6 +434,41 @@ export default function AdvanceSignalSwiss({
               </div>
             )}
           </aside>
+
+          <div className={styles.swissLedgerTable}>
+            <div className={styles.swissLedgerHead} aria-hidden="true">
+              <span>NO.</span><span>{copy(locale, uiText("战队", locale), 'TEAM')}</span><span>{copy(locale, uiText("胜负", locale), 'W—L')}</span><span>{copy(locale, uiText("对手分", locale), 'BUCHHOLZ')}</span><span>{copy(locale, uiText("对手胜率", locale), 'OMW')}</span><span>{copy(locale, uiText("净胜", locale), 'DIFF')}</span><span>{copy(locale, uiText("去向", locale), 'OUTCOME')}</span>
+            </div>
+            <div
+              className={styles.swissLedgerScroller}
+              tabIndex={0}
+              aria-label={copy(locale, uiText("{0}，共 {1} 支队伍", locale, [activeLabel, visibleRows.length]), `${activeLabel}, ${visibleRows.length} teams`)}
+            >
+              <ol className={styles.swissLedgerRows}>
+                {visibleRows.map(row => (
+                  <SwissStandingRow
+                    key={teamRouteId(row)}
+                    row={row}
+                    seasonId={seasonId}
+                    locale={locale}
+                    t={t}
+                    selected={teamRouteId(row) === selectedTeamId}
+                    onSelect={teamId => {
+                      change({ teamId })
+                      if (window.matchMedia('(max-width: 760px)').matches) detailRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' })
+                    }}
+                  />
+                ))}
+              </ol>
+              {!visibleRows.length ? <p className={styles.swissLedgerEmpty}>{copy(locale, uiText("这一区域目前没有队伍。", locale), 'There are currently no teams in this outcome.')}</p> : null}
+            </div>
+            <footer className={styles.swissLedgerScrollFooter}>
+              <span>{String(visibleRows.length).padStart(2, '0')} TEAMS / COMPACT INDEX</span>
+              <p>{copy(locale, uiText("在此区域上下滚动查看完整排名", locale), 'Scroll this panel for the complete order')} <b aria-hidden="true">↕</b></p>
+            </footer>
+          </div>
+
+
         </div>
       </section>
 
@@ -472,11 +486,11 @@ export default function AdvanceSignalSwiss({
           <aside className={styles.swissKeyMatches}>
             <span>KEY MATCHES</span>
             {keyMatches.map(match => (
-              <Link key={matchRouteId(match)} to={withSeason(`/matches/${matchRouteId(match)}`)}>
+              <AdvanceRecordLink key={matchRouteId(match)} to={withSeason(`/matches/${matchRouteId(match)}`)}>
                 <strong>{teamShort(match.team_a)} <i>VS</i> {teamShort(match.team_b)}</strong>
                 <small>{formatShortDateTime(match) || copy(locale, uiText("待定", locale), 'TBD')}</small>
                 <b aria-hidden="true">↗</b>
-              </Link>
+              </AdvanceRecordLink>
             ))}
           </aside>
         ) : null}

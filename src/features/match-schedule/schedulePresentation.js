@@ -31,11 +31,11 @@ export function resetScheduleSearch(search) {
   return params
 }
 
-export function getScheduleReturnLabel(path, locale = 'zh-CN') {
+export function getScheduleReturnLabel(path, locale = 'zh-CN', { weekly = false } = {}) {
   if (!/^\/matches(?:[?#]|$)/.test(path || '')) return formatUiText('', locale)
   const search = (path.split('?')[1] || '').split('#')[0]
   const params = new URLSearchParams(search)
-  if (params.has('cycle') || params.has('week')) return formatUiText(locale === 'en-US' ? 'Back to weekly schedule' : '返回周赛赛程', locale)
+  if (params.has('cycle') || params.has('week') || (weekly && !isScheduleListSearch(search))) return formatUiText(locale === 'en-US' ? 'Back to weekly schedule' : '返回周赛赛程', locale)
   return formatUiText(isScheduleListSearch(search)
     ? locale === 'en-US' ? 'Back to full schedule' : '返回完整赛程'
     : locale === 'en-US' ? 'Back to match highlights' : '返回赛事精选', locale)

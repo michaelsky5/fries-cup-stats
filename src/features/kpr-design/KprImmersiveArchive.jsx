@@ -1,7 +1,9 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useOutletContext } from 'react-router-dom'
+import { useLocation, useNavigationType, useOutletContext } from 'react-router-dom'
+import Link from './ArchiveRecordLink.jsx'
+import { getLocationPath, getRestoreScrollY, getSavedReturnScroll, restoreWindowScroll } from '../../lib/navigationState.js'
 import HeroArtwork from '../../components/media/HeroArtwork.jsx'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import { formatLeaderboardStat } from '../../components/leaderboard/leaderboardFormat.js'
@@ -16,6 +18,8 @@ import useKprStory from './useKprStory.js'
 import useArchiveMotion from './useArchiveMotion.js'
 import useStagePointer from './useStagePointer.js'
 import MobileSeasonArchive from './MobileSeasonArchive.jsx'
+import ArchiveCredits from './ArchiveCredits.jsx'
+import { getScheduleRoundLabel } from '../match-schedule/schedulePresentation.js'
 import styles from './KprImmersiveArchive.module.css'
 
 const Arrow = () => <span aria-hidden="true">↗</span>
@@ -69,8 +73,17 @@ export default function KprImmersiveArchive({ archive, overview, summary, includ
   const { db, season, seasonId, locale = 'zh-CN', withSeason = path => path, dataStatus, updatedAtText } = useOutletContext()
   const isEn = locale === 'en-US'
   const isHybrid = presentation === 'hybrid'
+  const isPartner = season?.kind === 'PARTNER'
+  const eventKindLabel = isPartner ? (isEn ? 'Partner event' : uiText('合作赛事', locale)) : (isEn ? 'Official event' : uiText('官方赛事', locale))
+  const seriesLabel = isPartner ? `${season?.name?.en || season?.publicCode} · PARTNER EVENT` : 'FRIES CUP SERIES'
   const [isPhone, setIsPhone] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 600px)').matches)
   const isPhoneArchive = isHybrid && isPhone
+  const location = useLocation()
+  const navigationType = useNavigationType()
+  useEffect(() => {
+    const scrollY = getRestoreScrollY(location.state) ?? (navigationType === 'POP' ? getSavedReturnScroll(getLocationPath(location)) : null)
+    if (scrollY !== null) restoreWindowScroll(scrollY)
+  }, [location, navigationType])
   useEffect(() => {
     const media = window.matchMedia('(max-width: 600px)')
     const onChange = event => setIsPhone(event.matches)
@@ -90,15 +103,15 @@ export default function KprImmersiveArchive({ archive, overview, summary, includ
   const journeyRef = useRef(null)
   const { trackRef, stageRef, act, goToAct, reducedMotion, motionPaused, setMotionPaused, prefersReducedMotion } = useKprStory({ enabled: !isPhoneArchive })
   const chapterItems = [
-    { id: 'archive-champions', number: '01', label: isEn ? 'CHAMPIONS' : uiText("冠军", locale) },
-    ...(seriesArchive ? [{ id: 'archive-series-podium', number: '02', label: isEn ? 'SERIES' : uiText("系列赛", locale) }] : []),
-    { id: 'archive-season-atlas', number: String(atlasChapter).padStart(2, '0'), label: isEn ? 'ATLAS' : uiText("图谱", locale) },
-    { id: 'archive-title-road', number: String(journeyChapter).padStart(2, '0'), label: isEn ? 'ROAD' : uiText("征程", locale) },
-    { id: 'archive-player-files', number: String(dossierChapter).padStart(2, '0'), label: isEn ? 'PLAYERS' : uiText("人物", locale) },
-    ...(includeReview ? [{ id: 'archive-season-review', number: String(reviewChapter).padStart(2, '0'), label: isEn ? 'REVIEW' : uiText("回顾", locale) }] : [])
+    { id: 'archive-champions', number: '01', label: pickUiLocale(locale, '冠军', 'CHAMPIONS', '우승', '冠軍') },
+    ...(seriesArchive ? [{ id: 'archive-series-podium', number: '02', label: pickUiLocale(locale, '系列赛', 'SERIES', '시리즈', '系列賽') }] : []),
+    { id: 'archive-season-atlas', number: String(atlasChapter).padStart(2, '0'), label: pickUiLocale(locale, '图谱', 'ATLAS', '시즌 기록', '圖譜') },
+    { id: 'archive-title-road', number: String(journeyChapter).padStart(2, '0'), label: pickUiLocale(locale, '征程', 'ROAD', '우승 여정', '征程') },
+    { id: 'archive-player-files', number: String(dossierChapter).padStart(2, '0'), label: pickUiLocale(locale, '人物', 'PLAYERS', '선수', '人物') },
+    ...(includeReview ? [{ id: 'archive-season-review', number: String(reviewChapter).padStart(2, '0'), label: pickUiLocale(locale, '回顾', 'REVIEW', '시즌 회고', '回顧') }] : [])
   ]
   const chapterIdsKey = chapterItems.map(item => item.id).join('|')
-  const { activeChapter, scrollToChapter } = useArchiveMotion(archiveRootRef, chapterIdsKey, reducedMotion)
+  const { activeChapter, scrollToChapter } = useArchiveMotion(archiveRootRef, chapterIdsKey, reducedMotion || isPhoneArchive)
   const activeChapterIndex = Math.max(0, chapterItems.findIndex(item => item.id === activeChapter))
   useStagePointer(stageRef, reducedMotion || isPhoneArchive)
 
@@ -250,7 +263,7 @@ export default function KprImmersiveArchive({ archive, overview, summary, includ
   // This view owns its translations. Legacy DOM translation must not restore
   // a previous Chinese player name when the next selected name is Latin.
   return (
-    <div ref={archiveRootRef} className={`${styles.archive} ${isHybrid ? styles.hybrid : ''}`} data-kpr-immersive-archive data-kpr-hybrid-archive={isHybrid ? 'true' : undefined} data-reduced-motion={reducedMotion} data-active-chapter={activeChapter} data-i18n-ignore>
+    <div ref={archiveRootRef} className={`${styles.archive} ${isHybrid ? styles.hybrid : ''}`} data-kpr-immersive-archive data-kpr-hybrid-archive={isHybrid ? 'true' : undefined} data-reduced-motion={reducedMotion || isPhoneArchive} data-active-chapter={activeChapter} data-i18n-ignore>
       {isHybrid ? <nav className={styles.archiveRail} aria-label={isEn ? 'Season archive chapters' : uiText("赛季档案章节", locale)}>
         <span className={styles.railBrand}><img src="/logos/fries-cup-symbol.png" alt="" /><small>DATA SIGNAL</small></span>
         {chapterItems.map(item => <a
@@ -262,7 +275,7 @@ export default function KprImmersiveArchive({ archive, overview, summary, includ
         <span className={styles.railMeter}><b>{String(activeChapterIndex + 1).padStart(2, '0')} / {String(chapterItems.length).padStart(2, '0')}</b><i><span /></i><small>ARCHIVE</small></span>
       </nav> : null}
       <section className={styles.track} id="archive-champions" ref={trackRef} data-archive-section data-act={act} data-reduced-motion={reducedMotion} aria-label={isEn ? 'Interactive champion archive' : uiText("冠军互动档案", locale)}>
-        {isHybrid ? <MobileSeasonArchive archive={archive} story={story} summary={summary} code={code} seasonId={seasonId} locale={locale} withSeason={withSeason} finalResult={finalResult} includeReview={includeReview} /> : null}
+        {isHybrid ? <MobileSeasonArchive archive={archive} story={story} summary={summary} code={code} seasonId={seasonId} locale={locale} withSeason={withSeason} finalResult={finalResult} includeReview={includeReview} eventKindLabel={eventKindLabel} /> : null}
         <div className={styles.stage} ref={stageRef}>
           <div className={styles.darkSurface} aria-hidden="true" />
           <div className={styles.paper} aria-hidden="true" />
@@ -274,7 +287,7 @@ export default function KprImmersiveArchive({ archive, overview, summary, includ
           <span className={styles.crossRight} aria-hidden="true">+</span>
 
           <div className={styles.topline}>
-            <span><i />{code}<b>/</b>{isEn ? 'THE SEASON ARCHIVE' : uiText("赛季典藏", locale)}</span>
+            <span><i />{code}<b>/</b>{eventKindLabel} · {isEn ? 'THE SEASON ARCHIVE' : uiText("赛季典藏", locale)}</span>
             <span className={styles.edition}>{isHybrid ? 'THE TEAM. THEN THE PLAYER.' : 'KEEP THE MOMENT.'}</span>
             <button type="button" className={styles.motionButton} onClick={() => setMotionPaused(!motionPaused)} aria-pressed={reducedMotion} disabled={prefersReducedMotion}>
               <i aria-hidden="true">{reducedMotion ? 'Ⅱ' : '◉'}</i>{reducedMotion ? (isEn ? 'MOTION OFF' : uiText("动态关闭", locale)) : (isEn ? 'MOTION ON' : uiText("动态开启", locale))}
@@ -383,9 +396,20 @@ export default function KprImmersiveArchive({ archive, overview, summary, includ
         </div>
       </section>
 
+      {isHybrid ? <nav className={styles.mobileChapters} aria-label={pickUiLocale(locale, '赛季章节', 'Season chapters', '시즌 챕터', '賽季章節')}>
+        <label htmlFor="mobile-archive-chapter">{pickUiLocale(locale, '赛季章节', 'Season chapters', '시즌 챕터', '賽季章節')}</label>
+        <div>
+          <select id="mobile-archive-chapter" value={activeChapter} onChange={event => scrollToChapter(event.target.value, { focus: true })}>
+            {chapterItems.map(item => <option key={item.id} value={item.id}>{item.number} / {item.label}</option>)}
+          </select>
+          <span aria-hidden="true" />
+        </div>
+        <span className={styles.mobileChapterCount} aria-hidden="true">{activeChapterIndex + 1} / {chapterItems.length}</span>
+      </nav> : null}
+
       {isHybrid ? <div className={styles.signalGate} aria-hidden="true">
         <span className={styles.signalGateBrand}><img src="/logos/fries-cup-symbol.png" alt="" /><b>FC / ARCHIVE LINK</b></span>
-        <span className={styles.signalGateTrack}><i>FRIES CUP SERIES · COMPETITION DATA · {code} · THE TEAM · THE PLAYER · </i><i>FRIES CUP SERIES · COMPETITION DATA · {code} · THE TEAM · THE PLAYER · </i></span>
+        <span className={styles.signalGateTrack}><i>{seriesLabel} · COMPETITION DATA · {code} · THE TEAM · THE PLAYER · </i><i>{seriesLabel} · COMPETITION DATA · {code} · THE TEAM · THE PLAYER · </i></span>
         <strong>01 → {seriesArchive ? '02' : String(atlasChapter).padStart(2, '0')}</strong>
       </div> : null}
 
@@ -433,7 +457,7 @@ export default function KprImmersiveArchive({ archive, overview, summary, includ
             const isFinal = matchId === finalId
             return <Link key={matchId} to={withSeason(`/matches/${encodeURIComponent(matchId)}`)} className={isFinal ? styles.finalJourney : ''} data-step={index + 1}>
               <span className={styles.journeyNode}><i /><b>{String(index + 1).padStart(2, '0')}</b></span>
-              <header><span>{isFinal ? 'GRAND FINAL' : match.round || match.stage || 'MATCH'}</span><Arrow /></header>
+              <header><span>{isFinal ? (isEn ? 'Grand final' : uiText('总决赛', locale)) : getScheduleRoundLabel(match, locale)}</span><Arrow /></header>
               <div className={styles.matchResult}><span>{formatTeamName(result.own)}</span><strong>{result.score}<i>:</i>{result.opponentScore}</strong><span>{formatTeamName(result.opponent)}</span></div>
               <footer><time>{formatMatchDate(match).slice(0, 10).replaceAll('-', '.')}</time><span>{isEn ? 'OPEN MATCH RECORD' : uiText("进入比赛档案", locale)}</span></footer>
             </Link>
@@ -452,11 +476,7 @@ export default function KprImmersiveArchive({ archive, overview, summary, includ
           {!isHybrid || !includeReview ? <Link to={withSeason(includeReview ? '/review' : '/matches')}>{includeReview ? (isEn ? 'Season archive' : uiText("查看完整赛季回顾", locale)) : (isEn ? 'Match results' : uiText("赛程赛果", locale))}<Arrow /></Link> : null}
         </nav>
       </footer>
-      <div className={styles.credits}>
-        <span>{isEn ? 'Unofficial community site. Overwatch artwork © Blizzard Entertainment.' : uiText("非官方社区网站。守望先锋美术素材版权归 Blizzard Entertainment 所有。", locale)}</span>
-        <span className={styles.creditsResources}>{isEn ? 'Uses ' : uiText("使用字体：", locale)}<a href="/fonts/harmonyos/LICENSE.txt" target="_blank" rel="noreferrer">HarmonyOS Sans</a> / <a href="/fonts/barlow-condensed/OFL.txt" target="_blank" rel="noreferrer">Barlow Condensed</a><b>·</b><a href="https://ambientcg.com/view?id=Paper001" target="_blank" rel="noreferrer">Paper 001 / CC0</a></span>
-        {isHybrid ? <span className={styles.creditsStatus} data-archive-data-status data-source={dataStatus?.key}><span>{dataStatus?.label || (isEn ? 'Updated' : uiText("数据更新于", locale))}</span><time>{updatedAtText || '—'}</time></span> : null}
-      </div>
+      <ArchiveCredits locale={locale} dataStatus={dataStatus} updatedAtText={updatedAtText} showStatus={isHybrid} />
     </div>
   )
 }
