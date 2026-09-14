@@ -53,3 +53,13 @@ test('avatar endpoints are read-only and private errors never enter the cache', 
   const result = await proxyRequest(request(avatar), options)
   assert.equal(result.status, 404); assert.match(result.headers.get('cache-control'), /no-store/); assert.equal(puts, 0)
 })
+
+test('registration draft images allow 2 MiB sources plus base64 overhead only on draft writes', async () => {
+  const body = JSON.stringify({ logoImage: 'a'.repeat(Math.ceil(2 * 1024 * 1024 / 3) * 4), name: 'Logo team' })
+  const options = { fetchImpl: async (_url, init) => { assert.equal(init.body.byteLength, body.length); return new Response('{}', { headers: { 'Content-Type': 'application/json' } }) } }
+  for (const [method, path] of [['POST', '/api/platform/seasons/FCW26/registration/drafts'], ['PATCH', '/api/platform/seasons/FCW26/registration/drafts/test-id']]) {
+    assert.equal((await proxyRequest(request(path, { method, headers: { origin }, body }), options)).status, 200)
+    assert.equal((await proxyRequest(request(path, { method, headers: { origin }, body: 'a'.repeat(3 * 1024 * 1024 + 1) }), options)).status, 413)
+  }
+  assert.equal((await proxyRequest(request('/api/platform/seasons/FCW26/registration/drafts/test-id/submit', { method: 'POST', headers: { origin }, body }), options)).status, 413)
+})
