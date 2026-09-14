@@ -36,6 +36,7 @@
     "test:season-rating": "node scripts/assertSeasonRatingPolicy.mjs",
     "test:season-opponents": "node scripts/assertSeasonOpponentStrength.mjs",
     "test:review-season": "node scripts/assertReviewSeason.mjs",
+    "test:season-switch": "node scripts/assertSeasonSwitchStability.mjs",
     "build:qgcs4-preseason": "node scripts/buildQgcs4PreseasonFixture.mjs",
     "test:account-identity": "node scripts/assertAccountIdentity.mjs",
     "test:match-room-lifecycle": "node scripts/assertMatchRoomLifecycle.mjs",

@@ -418,13 +418,16 @@ export function resolveSeasonFromUrl(value) {
   return SEASON_URL_ALIASES[alias] || null
 }
 
-export function getInitialSeasonId() {
-  if (typeof window === 'undefined') return getStoredSeasonId()
-
-  const params = new URLSearchParams(window.location.search)
-  if (!params.has(SEASON_URL_PARAM)) return getStoredSeasonId()
+export function resolveSeasonFromSearch(search, fallbackSeasonId = DEFAULT_SEASON_ID) {
+  const params = new URLSearchParams(search || '')
+  if (!params.has(SEASON_URL_PARAM)) return getSeasonById(fallbackSeasonId).id
 
   return resolveSeasonFromUrl(params.get(SEASON_URL_PARAM)) || DEFAULT_SEASON_ID
+}
+
+export function getInitialSeasonId() {
+  if (typeof window === 'undefined') return getStoredSeasonId()
+  return resolveSeasonFromSearch(window.location.search, getStoredSeasonId())
 }
 
 export function getSeasonSearch(search, seasonId) {

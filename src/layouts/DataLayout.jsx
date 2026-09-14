@@ -2,10 +2,10 @@ import { translateUiText as uiText } from '../lib/uiText.js'
 import { Outlet, useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
-  DEFAULT_SEASON_ID,
   SEASONS,
   getInitialSeasonId,
   getSeasonById,
+  resolveSeasonFromSearch,
   resolveSeasonFromUrl,
   seasonHasReview,
   setStoredSeasonId,
@@ -102,7 +102,11 @@ export default function DataLayout() {
   const mobileMenuRef = useRef(null)
   const location = useLocation()
   const isReviewEntryRoute = /^\/review\/?$/.test(location.pathname)
-  const [seasonId, setSeasonId] = useState(() => getInitialSeasonId())
+  const [fallbackSeasonId, setFallbackSeasonId] = useState(() => getInitialSeasonId())
+  const seasonId = useMemo(
+    () => resolveSeasonFromSearch(location.search, fallbackSeasonId),
+    [fallbackSeasonId, location.search]
+  )
   const season = useMemo(() => getSeasonById(seasonId), [seasonId])
   const locale = getStoredLocale()
   const publicData = usePublicSeasonData(seasonId, { reviewArchive: isReviewEntryRoute && season.reviewEnabled })
@@ -291,27 +295,24 @@ export default function DataLayout() {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
-    if (!params.has('season')) return
-
     const requestedSeasonId = resolveSeasonFromUrl(params.get('season'))
-    const resolvedSeasonId = requestedSeasonId || DEFAULT_SEASON_ID
+    if (!requestedSeasonId) return
 
     // Persist a valid URL selection even when it already matches the initial
     // render. Account email links intentionally omit the season, so the next
     // navigation must inherit the season the user was actually viewing.
-    if (requestedSeasonId) setStoredSeasonId(requestedSeasonId)
-    if (resolvedSeasonId === seasonId) return
-
-    setSeasonId(resolvedSeasonId)
-
-  }, [location.search, seasonId])
+    setStoredSeasonId(requestedSeasonId)
+    setFallbackSeasonId(currentSeasonId => (
+      currentSeasonId === requestedSeasonId ? currentSeasonId : requestedSeasonId
+    ))
+  }, [location.search])
 
   const handleSeasonChange = eventOrSeasonId => {
     const rawSeasonId = eventOrSeasonId?.target ? eventOrSeasonId.target.value : eventOrSeasonId
     const nextSeasonId = getSeasonById(rawSeasonId).id
     if (nextSeasonId === seasonId) return
     setStoredSeasonId(nextSeasonId)
-    setSeasonId(nextSeasonId)
+    setFallbackSeasonId(nextSeasonId)
     const nextPath = location.pathname.replace(/^(\/(?:matches|players|teams|staff))\/[^/]+(?:\/(?:room|journey|analysis))?\/?$/, '$1')
     navigate(buildSeasonLink(nextPath, nextSeasonId, navigationSearch))
   }
