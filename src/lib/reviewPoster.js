@@ -3609,13 +3609,14 @@ function drawFilmMarkVisual(ctx, image, x, y, width, height) {
 function drawVisibleImageContained(ctx, image, x, y, width, height, options = {}) {
   if (!image) return
 
-  const { alpha = 1 } = options
+  const { alpha = 1, scale = 1, offsetX = 0, offsetY = 0 } = options
   const bounds = getVisibleImageBounds(image) || { x: 0, y: 0, width: image.width, height: image.height }
-  const ratio = Math.min(width / bounds.width, height / bounds.height)
+  const safeScale = Math.max(0.1, Math.min(3, Number(scale) || 1))
+  const ratio = Math.min(width / bounds.width, height / bounds.height) * safeScale
   const imageWidth = image.width * ratio
   const imageHeight = image.height * ratio
-  const imageX = x + ((width - (bounds.width * ratio)) / 2) - (bounds.x * ratio)
-  const imageY = y + ((height - (bounds.height * ratio)) / 2) - (bounds.y * ratio)
+  const imageX = x + ((width - (bounds.width * ratio)) / 2) - (bounds.x * ratio) + (Number(offsetX) || 0)
+  const imageY = y + ((height - (bounds.height * ratio)) / 2) - (bounds.y * ratio) + (Number(offsetY) || 0)
 
   ctx.save()
   ctx.globalAlpha = alpha
@@ -4474,9 +4475,15 @@ function drawCinemaTicketArtwork(ctx, payload, images, accent, x, y, width, heig
   ctx.stroke()
 
   if (heroRender) {
+    const artworkScale = Math.max(0.85, Math.min(1.4, Number(payload.movieTicketArtwork?.scale) || 1))
+    const artworkOffsetY = Math.max(-100, Math.min(80, Number(payload.movieTicketArtwork?.offsetY) || 0))
     ctx.shadowColor = 'rgba(0,0,0,0.48)'
     ctx.shadowBlur = 24
-    drawVisibleImageContained(ctx, heroRender, x + 8, y + 12, width - 16, height + 72, { alpha: 1 })
+    drawVisibleImageContained(ctx, heroRender, x + 8, y + 12, width - 16, height + 72, {
+      alpha: 1,
+      scale: artworkScale,
+      offsetY: artworkOffsetY
+    })
   } else if (isTeam && primary) {
     ctx.shadowColor = 'rgba(0,0,0,0.25)'
     ctx.shadowBlur = 20

@@ -126,6 +126,57 @@ function clampPercent(value) {
   return Math.max(0, Math.min(100, num))
 }
 
+const MOVIE_TICKET_ART_DEFAULTS = Object.freeze({ scale: 100, offsetY: 0 })
+
+function clampMovieTicketArtValue(value, min, max, fallback) {
+  const num = Number(value)
+  if (!Number.isFinite(num)) return fallback
+  return Math.max(min, Math.min(max, num))
+}
+
+function getMovieTicketArtCopy(locale) {
+  if (locale === 'en-US') return {
+    kicker: 'HERO COMPOSITION',
+    title: 'Fine-tune hero render',
+    scale: 'Size',
+    offsetY: 'Vertical position',
+    reset: 'Reset',
+    up: 'up',
+    down: 'down',
+    centered: 'centered'
+  }
+  if (locale === 'ko-KR') return {
+    kicker: '영웅 구도 / HERO COMPOSITION',
+    title: '영웅 렌더 미세 조정',
+    scale: '크기',
+    offsetY: '세로 위치',
+    reset: '초기화',
+    up: '위',
+    down: '아래',
+    centered: '가운데'
+  }
+  if (locale === 'zh-TW') return {
+    kicker: '英雄構圖 / HERO COMPOSITION',
+    title: '微調英雄立繪',
+    scale: '立繪大小',
+    offsetY: '上下位置',
+    reset: '重設',
+    up: '上移',
+    down: '下移',
+    centered: '居中'
+  }
+  return {
+    kicker: '英雄构图 / HERO COMPOSITION',
+    title: '微调英雄立绘',
+    scale: '立绘大小',
+    offsetY: '上下位置',
+    reset: '重置',
+    up: '上移',
+    down: '下移',
+    centered: '居中'
+  }
+}
+
 function handleImageFallback(event, fallback = '') {
   const img = event.currentTarget
   if (!img) return
@@ -1398,6 +1449,8 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
   const dialogRef = useRef(null)
   const generationRef = useRef(0)
   const [outputFormat, setOutputFormat] = useState(initialOutputFormat)
+  const [movieTicketArtScale, setMovieTicketArtScale] = useState(MOVIE_TICKET_ART_DEFAULTS.scale)
+  const [movieTicketArtOffsetY, setMovieTicketArtOffsetY] = useState(MOVIE_TICKET_ART_DEFAULTS.offsetY)
   const { pathname } = useLocation()
   const payload = useMemo(() => {
     const next = buildReviewPosterPayload(scenes, { storyType, perspective, staffType, viewerId, locale })
@@ -1439,9 +1492,20 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
     .map(id => directorHeroOptions.find(hero => hero.id === id))
     .filter(Boolean)
     .slice(0, 3), [directorAutoSelection.heroId, directorHeroOptions, directorSeasonHeroIds])
+  const movieTicketArtCopy = useMemo(() => getMovieTicketArtCopy(locale), [locale])
   const renderPayload = useMemo(
-    () => isDirectorCut ? applyDirectorCutSelection(payload, directorSelection) : payload,
-    [isDirectorCut, payload, directorSelection]
+    () => {
+      const selectedPayload = isDirectorCut ? applyDirectorCutSelection(payload, directorSelection) : payload
+      if (!isMovieTicket || !selectedPayload.heroRender) return selectedPayload
+      return {
+        ...selectedPayload,
+        movieTicketArtwork: {
+          scale: movieTicketArtScale / 100,
+          offsetY: movieTicketArtOffsetY
+        }
+      }
+    },
+    [directorSelection, isDirectorCut, isMovieTicket, movieTicketArtOffsetY, movieTicketArtScale, payload]
   )
   const directorRequiresHero = isDirectorCut && !directorSelection.ready
 
@@ -1477,6 +1541,11 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
   useEffect(() => {
     setDirectorHeroChoice(payload.cardKind === 'player' && directorAutoSelection.ready ? 'auto' : '')
   }, [directorAutoSelection.ready, payload.archiveId, payload.cardKind])
+
+  useEffect(() => {
+    setMovieTicketArtScale(MOVIE_TICKET_ART_DEFAULTS.scale)
+    setMovieTicketArtOffsetY(MOVIE_TICKET_ART_DEFAULTS.offsetY)
+  }, [payload.archiveId, payload.heroRender])
 
   const baseMeta = { ...getPosterKindMeta(payload.cardKind), ...getReviewPosterMeta(payload.cardKind, locale) }
   const meta = {
@@ -1893,6 +1962,63 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
               </div>
             )
           )}
+
+          {isMovieTicket && payload.heroRender ? (
+            <div className={styles.movieTicketArtControls}>
+              <div className={styles.movieTicketArtControlHead}>
+                <div>
+                  <span>{movieTicketArtCopy.kicker}</span>
+                  <strong>{movieTicketArtCopy.title}</strong>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMovieTicketArtScale(MOVIE_TICKET_ART_DEFAULTS.scale)
+                    setMovieTicketArtOffsetY(MOVIE_TICKET_ART_DEFAULTS.offsetY)
+                  }}
+                  disabled={movieTicketArtScale === MOVIE_TICKET_ART_DEFAULTS.scale && movieTicketArtOffsetY === MOVIE_TICKET_ART_DEFAULTS.offsetY}
+                >
+                  {movieTicketArtCopy.reset}
+                </button>
+              </div>
+              <div className={styles.movieTicketArtControlGrid}>
+                <label>
+                  <span>{movieTicketArtCopy.scale}</span>
+                  <div>
+                    <input
+                      type="range"
+                      min="85"
+                      max="140"
+                      step="1"
+                      value={movieTicketArtScale}
+                      onChange={event => setMovieTicketArtScale(clampMovieTicketArtValue(event.target.value, 85, 140, MOVIE_TICKET_ART_DEFAULTS.scale))}
+                    />
+                    <output>{movieTicketArtScale}%</output>
+                  </div>
+                </label>
+                <label>
+                  <span>{movieTicketArtCopy.offsetY}</span>
+                  <div>
+                    <input
+                      type="range"
+                      min="-100"
+                      max="80"
+                      step="2"
+                      value={movieTicketArtOffsetY}
+                      onChange={event => setMovieTicketArtOffsetY(clampMovieTicketArtValue(event.target.value, -100, 80, MOVIE_TICKET_ART_DEFAULTS.offsetY))}
+                    />
+                    <output>
+                      {movieTicketArtOffsetY < 0
+                        ? `${movieTicketArtCopy.up} ${Math.abs(movieTicketArtOffsetY)}`
+                        : movieTicketArtOffsetY > 0
+                          ? `${movieTicketArtCopy.down} ${movieTicketArtOffsetY}`
+                          : movieTicketArtCopy.centered}
+                    </output>
+                  </div>
+                </label>
+              </div>
+            </div>
+          ) : null}
 
           {!isRefinedKeepsake ? <>
           <div className={styles.posterKeepsakeNote}>
