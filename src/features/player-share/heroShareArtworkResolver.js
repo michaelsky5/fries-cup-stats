@@ -1,4 +1,5 @@
 import { getHeroAvatarSrc, getHeroSlug, getRoleHeroFolder } from '../../lib/leaderboardSelectors.js'
+import { getOwHeroRole } from '../../lib/heroes.js'
 import { DEFAULT_SHARE_ARTWORK_CROP, HERO_SHARE_ARTWORK_CROPS } from './heroShareArtworkConfig.js'
 
 export function getShareHeroArtwork(heroName, role) {
@@ -17,10 +18,11 @@ export function getShareHeroArtwork(heroName, role) {
     ...DEFAULT_SHARE_ARTWORK_CROP,
     ...(HERO_SHARE_ARTWORK_CROPS[slug] || {})
   }
+  const assetRole = getOwHeroRole(heroName) || role
 
   return {
     type: 'roster',
-    src: `/roster/${getRoleHeroFolder(role)}/${slug}.png`,
+    src: `/roster/${getRoleHeroFolder(assetRole)}/${slug}.png`,
     fallbackSrc: getHeroAvatarSrc(heroName, role),
     slug,
     crop

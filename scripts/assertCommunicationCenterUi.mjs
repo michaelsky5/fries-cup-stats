@@ -90,6 +90,6 @@ const headerSource = readFileSync(new URL('../src/components/layout/PublicHeader
 assert.equal(headerSource.includes('<AccountAttentionBadge attention={accountAttention} />'), true)
 assert.equal(layoutSource.includes('accountAttention={accountAttention}'), true)
 assert.equal(layoutSource.includes('fetchMySpaceContext(seasonId)'), true)
-assert.equal(layoutSource.includes('<UrgentAnnouncementGate\n        seasonId={seasonId}'), true)
+assert.match(layoutSource, /<UrgentAnnouncementGate\s+seasonId=\{seasonId\}/)
 
 console.log('Communication center UI assertions passed.')

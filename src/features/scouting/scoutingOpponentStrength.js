@@ -1,6 +1,7 @@
 import { buildRatingBaselinesFromDb } from '../../lib/ratingBaselines.js'
 import { normalizeLeaderboardRole } from '../../lib/leaderboardSelectors.js'
 import { calculateMapPlayerScoreV1 } from '../../lib/scoringEngineAdapter.js'
+import { isForfeitMatch } from '../../lib/matchesSelectors.js'
 
 export const SCOUTING_TEAM_RATING_CONFIG = Object.freeze({
   initialRating: 1500,
@@ -133,7 +134,7 @@ function buildTeamRatingTimeline(db) {
     const ratingEligible = (
       cleanText(match?.status).toUpperCase() === 'COMPLETE' &&
       cleanText(match?.result_mode).toUpperCase() === 'NORMAL' &&
-      !match?.is_forfeit
+      !isForfeitMatch(match)
     )
     if (!ratingEligible) return
 

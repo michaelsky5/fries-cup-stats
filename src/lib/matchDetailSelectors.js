@@ -5,6 +5,7 @@ import { getBroadcastInfo } from './broadcastSelectors.js'
 import { getMatchRatingSummary } from './matchRatingAdapter.js'
 import {
   getMatchStatusText,
+  isForfeitMatch,
   getTeamFullName,
   getTeamLabel,
   safeArr,
@@ -92,7 +93,7 @@ function getMatchState(match) {
   const status = cleanText(match?.status || 'PENDING').toUpperCase()
   const resultMode = cleanText(match?.result_mode).toUpperCase()
   const isWeekly = Boolean(match?.cycle_week_id) || cleanText(match?.stage).toUpperCase() === 'WEEKLY'
-  const isForfeit = Boolean(match?.is_forfeit) || resultMode === 'FORFEIT' || (isWeekly && status === 'FORFEIT')
+  const isForfeit = isForfeitMatch(match) || (isWeekly && status === 'FORFEIT')
   const isRuling = isWeekly && status === 'ADMIN_COMPLETED'
   const isComplete = COMPLETE_STATUSES.has(status) || (isWeekly && status === 'FINISHED')
   const isCancelled = CANCELLED_STATUSES.has(status)
