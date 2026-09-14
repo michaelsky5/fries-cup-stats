@@ -1,5 +1,5 @@
 {
-  "functions": { "api/platform.js": { "regions": ["sin1"], "maxDuration": 20 } },
+  "functions": { "api/platform.js": { "regions": ["hkg1"], "maxDuration": 20 } },
   "buildCommand": "npm run build:locales && npm run build:team-logo-catalog && npm run build:scouting-artifacts && node scripts/buildAccountProduction.mjs",
   "headers": [
     { "source": "/account/:path*", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }, { "key": "Referrer-Policy", "value": "no-referrer" }] },
