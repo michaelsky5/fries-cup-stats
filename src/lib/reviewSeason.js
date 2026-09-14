@@ -448,6 +448,8 @@ export function adaptReviewScenes(scenes, db) {
     ...scene,
     seasonId: profile.id,
     season_id: profile.id,
+    isPartner: Boolean(profile.isPartner),
+    usesRegularTemplate: Boolean(profile.usesRegularTemplate),
     seasonCode: profile.publicCode,
     season_code: profile.publicCode,
     seasonMark: profile.mark,

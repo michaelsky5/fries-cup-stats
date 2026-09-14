@@ -1401,9 +1401,9 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
   const { pathname } = useLocation()
   const payload = useMemo(() => {
     const next = buildReviewPosterPayload(scenes, { storyType, perspective, staffType, viewerId, locale })
-    if (next.cardKind !== 'player' || next.seasonId !== 'FCR26') return next
+    if (next.cardKind !== 'player' || !profile.usesRegularTemplate) return next
     return { ...next, reviewUrl: buildBoardingReviewUrl(pathname, next.seasonId, locale) }
-  }, [scenes, storyType, perspective, staffType, viewerId, locale, pathname])
+  }, [scenes, storyType, perspective, staffType, viewerId, locale, pathname, profile.usesRegularTemplate])
   const [pngUrl, setPngUrl] = useState('')
   const [liveKeepsakeUrl, setLiveKeepsakeUrl] = useState('')
   const [isLiveKeepsakeRendering, setIsLiveKeepsakeRendering] = useState(false)
@@ -1417,7 +1417,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
   const isFilmPoster = outputFormat === 'poster'
   const isMovieTicket = outputFormat === 'movieTicket'
   const isDirectorCut = outputFormat === 'directorCut'
-  const isWideBoarding = outputFormat === 'ticket' && payload.cardKind === 'player' && payload.seasonId === 'FCR26'
+  const isWideBoarding = outputFormat === 'ticket' && payload.cardKind === 'player' && profile.usesRegularTemplate
   const isRefinedKeepsake = profile.usesRegularTemplate && !isDirectorCut
   const keepsakePreviewUrl = isRefinedKeepsake ? pngUrl || liveKeepsakeUrl : liveKeepsakeUrl
   const directorHeroOptions = useMemo(() => getDirectorCutHeroOptions(locale), [locale])
@@ -1712,7 +1712,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
       >
         <div className={styles.posterHead}>
           <div>
-            <div className={styles.posterKicker}>{profile.usesRegularTemplate ? 'OFFICIAL PREMIERE KEEPSAKE' : 'OFFICIAL TICKET ISSUER'}</div>
+            <div className={styles.posterKicker}>{profile.isPartner ? 'PARTNER PREMIERE KEEPSAKE' : profile.usesRegularTemplate ? 'OFFICIAL PREMIERE KEEPSAKE' : 'OFFICIAL TICKET ISSUER'}</div>
             <h2 id="review-keepsake-title">{reviewText(locale, isViewerPoster ? 'viewerPosterTitle' : profile.usesRegularTemplate ? 'keepsakeTitle' : 'posterTitle')}</h2>
             <div className={styles.posterArchiveId}>{payload.archiveId || `${profile.shortMark}-ARCHIVE`}</div>
           </div>
@@ -1860,7 +1860,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
 
               <div className={styles.posterFilmFooter}>
                 <span>{payload.archiveId}</span>
-                <b>FRIES CUP 2026 / OFFICIAL ARCHIVE</b>
+                <b>{profile.isPartner ? 'FRIES CUP / PARTNER ARCHIVE' : 'FRIES CUP 2026 / OFFICIAL ARCHIVE'}</b>
               </div>
             </div>
             )

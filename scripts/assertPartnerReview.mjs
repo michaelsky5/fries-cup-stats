@@ -9,6 +9,7 @@ import { buildCinemaReviewScenes } from '../src/lib/reviewCinema.js'
 import { buildStaffIndex } from '../src/lib/reviewSearch.js'
 import { ensureUiLocale, ensureTraditionalReview } from '../src/lib/localeCatalog.js'
 import { SIGNAL_LEADERBOARD_COLUMNS } from '../src/lib/leaderboardSelectors.js'
+import { getPosterPayload, getCinemaTicketData } from '../src/lib/reviewPoster.js'
 
 await Promise.all(['en-US', 'ko-KR', 'zh-TW'].map(ensureUiLocale))
 await ensureTraditionalReview()
@@ -39,6 +40,11 @@ for (const [name, source] of stories) {
     assert.ok(!/undefined|NaN|\[object Object\]/.test(copy), `${name}/${locale}: invalid data`)
     assert.ok(!/瑞士|突围|突圍|双败|雙敗|败者组|敗者組|学院赛|學院賽|Swiss|LCQ|double.elimination|스위스|더블 엘리미네이션/.test(copy), `${name}/${locale}: incorrect format: ${copy.match(/.{0,50}(?:瑞士|突围|突圍|双败|雙敗|败者组|敗者組|学院赛|學院賽|Swiss|LCQ|double.elimination|스위스|더블 엘리미네이션).{0,90}/)?.[0]}`)
     assert.ok(scenes.some(scene => scene.kind === 'act'), `${name}/${locale}: same cinema chapters`)
+    const poster = { ...getPosterPayload(localized), locale }
+    assert.equal(poster.seasonId, 'QGCS4', `${name}/${locale}: keepsake belongs to the selected event`)
+    assert.equal(poster.usesRegularTemplate, true, `${name}/${locale}: keepsake shares the regular template`)
+    assert.match(poster.cardType, /PARTNER/, `${name}/${locale}: partner keepsake branding`)
+    assert.match(getCinemaTicketData(poster).copy.selection, /PARTNER ARCHIVE/, `${name}/${locale}: cinema export branding`)
     checked++
   }
 }
