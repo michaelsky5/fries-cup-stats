@@ -177,6 +177,13 @@ function getMovieTicketArtCopy(locale) {
   }
 }
 
+function getBoardingPassVersionCopy(locale) {
+  if (locale === 'en-US') return { label: 'BOARDING PASS EDITION', modern: 'New edition', classic: 'Classic edition' }
+  if (locale === 'ko-KR') return { label: '탑승권 버전', modern: '신형', classic: '구형' }
+  if (locale === 'zh-TW') return { label: '登機牌版本', modern: '新版', classic: '舊版' }
+  return { label: '机票版本', modern: '新版', classic: '旧版' }
+}
+
 function handleImageFallback(event, fallback = '') {
   const img = event.currentTarget
   if (!img) return
@@ -1449,12 +1456,13 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
   const dialogRef = useRef(null)
   const generationRef = useRef(0)
   const [outputFormat, setOutputFormat] = useState(initialOutputFormat)
+  const [boardingPassVersion, setBoardingPassVersion] = useState('modern')
   const [movieTicketArtScale, setMovieTicketArtScale] = useState(MOVIE_TICKET_ART_DEFAULTS.scale)
   const [movieTicketArtOffsetY, setMovieTicketArtOffsetY] = useState(MOVIE_TICKET_ART_DEFAULTS.offsetY)
   const { pathname } = useLocation()
   const payload = useMemo(() => {
     const next = buildReviewPosterPayload(scenes, { storyType, perspective, staffType, viewerId, locale })
-    if (next.cardKind !== 'player' || !profile.usesRegularTemplate) return next
+    if (!profile.usesRegularTemplate) return next
     return { ...next, reviewUrl: buildBoardingReviewUrl(pathname, next.seasonId, locale) }
   }, [scenes, storyType, perspective, staffType, viewerId, locale, pathname, profile.usesRegularTemplate])
   const [pngUrl, setPngUrl] = useState('')
@@ -1470,7 +1478,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
   const isFilmPoster = outputFormat === 'poster'
   const isMovieTicket = outputFormat === 'movieTicket'
   const isDirectorCut = outputFormat === 'directorCut'
-  const isWideBoarding = outputFormat === 'ticket' && payload.cardKind === 'player' && profile.usesRegularTemplate
+  const isWideBoarding = outputFormat === 'ticket' && boardingPassVersion === 'modern' && profile.usesRegularTemplate
   const isRefinedKeepsake = profile.usesRegularTemplate && !isDirectorCut
   const keepsakePreviewUrl = isRefinedKeepsake ? pngUrl || liveKeepsakeUrl : liveKeepsakeUrl
   const directorHeroOptions = useMemo(() => getDirectorCutHeroOptions(locale), [locale])
@@ -1493,9 +1501,13 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
     .filter(Boolean)
     .slice(0, 3), [directorAutoSelection.heroId, directorHeroOptions, directorSeasonHeroIds])
   const movieTicketArtCopy = useMemo(() => getMovieTicketArtCopy(locale), [locale])
+  const boardingPassVersionCopy = useMemo(() => getBoardingPassVersionCopy(locale), [locale])
   const renderPayload = useMemo(
     () => {
       const selectedPayload = isDirectorCut ? applyDirectorCutSelection(payload, directorSelection) : payload
+      if (outputFormat === 'ticket') {
+        return { ...selectedPayload, boardingPassVersion }
+      }
       if (!isMovieTicket || !selectedPayload.heroRender) return selectedPayload
       return {
         ...selectedPayload,
@@ -1505,7 +1517,7 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
         }
       }
     },
-    [directorSelection, isDirectorCut, isMovieTicket, movieTicketArtOffsetY, movieTicketArtScale, payload]
+    [boardingPassVersion, directorSelection, isDirectorCut, isMovieTicket, movieTicketArtOffsetY, movieTicketArtScale, outputFormat, payload]
   )
   const directorRequiresHero = isDirectorCut && !directorSelection.ready
 
@@ -1820,6 +1832,20 @@ function PosterModal({ scenes, storyType, perspective, staffType, profile, local
           <p id="review-format-help" className={styles.posterFormatHint}>
             {reviewText(locale, isFilmPoster ? 'posterUse' : isDirectorCut ? 'directorCutUse' : isMovieTicket ? 'movieTicketUse' : 'ticketUse')}
           </p>
+
+          {outputFormat === 'ticket' && profile.usesRegularTemplate ? (
+            <div className={styles.boardingPassVersionRow}>
+              <span>{boardingPassVersionCopy.label}</span>
+              <div className={styles.boardingPassVersionSwitch} aria-label={boardingPassVersionCopy.label}>
+                <button type="button" aria-pressed={boardingPassVersion === 'modern'} onClick={() => setBoardingPassVersion('modern')}>
+                  {boardingPassVersionCopy.modern}
+                </button>
+                <button type="button" aria-pressed={boardingPassVersion === 'classic'} onClick={() => setBoardingPassVersion('classic')}>
+                  {boardingPassVersionCopy.classic}
+                </button>
+              </div>
+            </div>
+          ) : null}
 
           {isFilmPoster ? (
             keepsakePreviewUrl ? (

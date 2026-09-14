@@ -1941,6 +1941,40 @@ function getBoardingCopy(locale) {
   }
 }
 
+function buildModernIdentityBoardingPayload(payload) {
+  const identity = payload.identityTicket || {}
+  const config = identity.config || getIdentityTicketConfig(payload.cardKind)
+  const stamps = safeArr(identity.stamps).slice(0, 3)
+
+  return {
+    ...payload,
+    playerTicket: {
+      identityKind: identity.kind || payload.cardKind,
+      passengerLabel: config.classValue || config.passTop || 'CREW',
+      playerName: identity.callsign || identity.issuedTo || config.issuedFallback,
+      battleTag: identity.issuedTo || identity.callsign || config.issuedFallback,
+      team: identity.team || config.teamFallback,
+      teamFullName: identity.teamFullName || config.teamFullFallback || identity.team,
+      role: config.classValue || config.passTop,
+      seasonId: identity.seasonId || payload.seasonId,
+      seasonCode: identity.seasonCode || payload.seasonCode,
+      routeDateRange: identity.routeDateRange,
+      routeStartLabel: identity.routeStartLabel,
+      routeEndLabel: identity.routeEndLabel,
+      rank: identity.dest || payload.achievement,
+      memory: identity.memory,
+      stats: safeArr(identity.stats).slice(0, 3),
+      routeStops: safeArr(identity.routeStops),
+      stampsLabel: config.stampTitle || 'ARCHIVE STAMPS',
+      heroes: stamps.map(stamp => ({ title: stamp.title, src: stamp.image })),
+      passType: `${config.passTop || 'SEASON'} ${config.passBottom || 'PASS'}`,
+      passTitle: identity.ticketType || config.ticketType,
+      resultLabel: config.noteTitle || 'SEASON RESULT',
+      footerLabel: `${config.routeTitle || 'SEASON ROUTE'} / PUBLIC ARCHIVE`
+    }
+  }
+}
+
 function drawBoardingRosterEntry(ctx, data, images, accent, copy, x, y, w, h, markSize = 168) {
   const center = x + w / 2
   drawBoardingText(ctx, 'TEAM CREST / ROSTER ARCHIVE', center, y + 24, {
@@ -1959,7 +1993,7 @@ function drawBoardingRosterEntry(ctx, data, images, accent, copy, x, y, w, h, ma
 function drawPlayerTicketPoster(ctx, payload, images, accent) {
   const width = ctx.canvas.width
   const height = ctx.canvas.height
-  const isWideBoarding = payload.usesRegularTemplate || payload.seasonId === 'FCR26'
+  const isWideBoarding = payload.boardingPassVersion !== 'classic' && (payload.usesRegularTemplate || payload.seasonId === 'FCR26')
   const ticketWidth = isWideBoarding ? 2080 : 1680
   const ticketHeight = isWideBoarding ? 800 : 900
   const ticket = document.createElement('canvas')
@@ -2110,11 +2144,13 @@ function drawBoardingPrintSeal(ctx, x, y, radius, accent) {
 function drawBoardingColumnContent(ctx, payload, images, accent) {
   const data = payload.playerTicket || {}
   const copy = getBoardingCopy(payload.locale)
-  const rosterOnly = data.coverageLevel === 'roster' || parsePosterNumber(data.mapCount) <= 0
+  const isIdentityBoarding = Boolean(data.identityKind)
+  const rosterOnly = !isIdentityBoarding && (data.coverageLevel === 'roster' || parsePosterNumber(data.mapCount) <= 0)
   const companions = safeArr(data.coStars).filter(Boolean).slice(0, 3)
   const heroList = safeArr(data.heroes).slice(0, 3)
   const issuedTo = safeText(data.battleTag, data.playerName)
   const callsign = safeText(data.playerName, issuedTo.replace(/#\d+$/g, ''))
+  const passengerLabel = safeText(data.passengerLabel, copy.passenger)
   const flight = safeText(data.seasonId, payload.seasonId || 'FCR26')
   const archiveId = safeText(payload.archiveId, flight)
   const left = 76
@@ -2148,7 +2184,7 @@ function drawBoardingColumnContent(ctx, payload, images, accent) {
   ctx.restore()
 
   // Passenger details and shared memories stay together in the left column.
-  drawBoardingPrintText(ctx, `PASSENGER / ${copy.passenger}`, left, 161, {
+  drawBoardingPrintText(ctx, `PASSENGER / ${passengerLabel}`, left, 161, {
     size: 16, weight: 400, fill: labelFill, maxWidth: passengerWidth
   })
   drawBoardingPrintText(ctx, callsign, left - 4, 244, {
@@ -2210,24 +2246,30 @@ function drawBoardingColumnContent(ctx, payload, images, accent) {
       size: 21, minSize: 17, weight: 600, fill: secondaryFill, maxWidth: mainRight - 852
     })
   } else {
-    const stats = [
-      ['MAPS', data.mapCount || payload.metricValue, accent],
-      ['MATCHES', data.matchCount, '#ffffff'],
-      ['MINUTES', data.minutes, '#ffffff']
-    ]
+    const identityStats = safeArr(data.stats).slice(0, 3)
+    const stats = identityStats.length
+      ? identityStats.map((item, index) => [safeText(item.label, `RECORD ${index + 1}`).toLocaleUpperCase('en-US'), item.value, index === 0 ? accent : '#ffffff'])
+      : [
+          ['MAPS', data.mapCount || payload.metricValue, accent],
+          ['MATCHES', data.matchCount, '#ffffff'],
+          ['MINUTES', data.minutes, '#ffffff']
+        ]
     const columnWidth = (mainRight - routeX) / stats.length
     stats.forEach(([label, value, fill], index) => drawBoardingPrintField(ctx, label, value, routeX + index * columnWidth, 396, columnWidth - 36, {
       size: 40, minSize: 24, weight: 500, family: BOARDING_MONO_FONT, fill
     }))
-    drawBoardingPrintField(ctx, 'FIRST MAP', getRouteStopValue(data.firstMoment), routeX, 497, 360, { size: 29, weight: 500 })
-    drawBoardingPrintField(ctx, 'MOST PLAYED MAP', getRouteStopValue(data.topMap, '-'), routeX, 584, 360, { size: 29, weight: 500 })
+    const routeStops = safeArr(data.routeStops)
+    const firstRecord = routeStops[0]
+    const lastRecord = routeStops[routeStops.length - 1]
+    drawBoardingPrintField(ctx, safeText(firstRecord?.label, 'FIRST MAP').toLocaleUpperCase('en-US'), firstRecord?.value || getRouteStopValue(data.firstMoment), routeX, 497, 360, { size: 29, weight: 500 })
+    drawBoardingPrintField(ctx, safeText(lastRecord?.label, 'MOST PLAYED MAP').toLocaleUpperCase('en-US'), lastRecord?.value || getRouteStopValue(data.topMap, '-'), routeX, 584, 360, { size: 29, weight: 500 })
 
     if (heroList.length) {
       const heroWidth = 132
       const heroHeight = 156
       const heroStep = 148
       const stampsX = mainRight - heroWidth - heroStep * 2
-      drawBoardingPrintText(ctx, 'HERO STAMPS', stampsX, 497, {
+      drawBoardingPrintText(ctx, safeText(data.stampsLabel, 'HERO STAMPS'), stampsX, 497, {
         size: 15, weight: 400, fill: labelFill, maxWidth: mainRight - stampsX
       })
       heroList.forEach((hero, index) => {
@@ -2250,7 +2292,7 @@ function drawBoardingColumnContent(ctx, payload, images, accent) {
   }
 
   // The detachable copy keeps its own identity, route and archive reference.
-  drawBoardingPrintText(ctx, 'PASSENGER', stubLeft, 161, { size: 15, weight: 400, fill: labelFill, maxWidth: stubContentWidth })
+  drawBoardingPrintText(ctx, `PASSENGER / ${passengerLabel}`, stubLeft, 161, { size: 15, weight: 400, fill: labelFill, maxWidth: stubContentWidth })
   drawBoardingPrintText(ctx, callsign, stubLeft, 213, { size: 42, minSize: 22, weight: 700, maxWidth: stubContentWidth })
   drawBoardingPrintText(ctx, issuedTo, stubLeft, 248, { size: 18, minSize: 13, weight: 400, fill: secondaryFill, maxWidth: stubContentWidth })
   drawBoardingPrintField(ctx, 'TEAM', data.team, stubLeft, 314, 154, { size: 29, family: /^[\x20-\x7e]+$/.test(data.team || '') ? BOARDING_MONO_FONT : BOARDING_SANS_FONT })
@@ -2284,7 +2326,7 @@ function drawBoardingColumnContent(ctx, payload, images, accent) {
     ctx.stroke()
     ctx.restore()
 
-    drawBoardingPrintText(ctx, copy.teamResult, stubLeft, 469, {
+    drawBoardingPrintText(ctx, safeText(data.resultLabel, copy.teamResult), stubLeft, 469, {
       size: 15, minSize: 12, weight: 400, fill: secondaryFill, maxWidth: 174
     })
     drawBoardingPrintText(ctx, 'SEASON ARCHIVED', stubLeft, 491, {
@@ -2316,7 +2358,7 @@ function drawBoardingColumnContent(ctx, payload, images, accent) {
     })
   } else {
     drawBoardingPrintSeal(ctx, stubCenter, 512, 82, accent)
-    drawBoardingPrintText(ctx, copy.teamResult, stubCenter, 483, {
+    drawBoardingPrintText(ctx, safeText(data.resultLabel, copy.teamResult), stubCenter, 483, {
       size: 14, minSize: 11, weight: 400, align: 'center', fill: secondaryFill, maxWidth: 136
     })
     drawBoardingPrintText(ctx, safeText(data.rank || payload.achievement, 'SEASON'), stubCenter, 524, {
@@ -2344,7 +2386,7 @@ function drawBoardingColumnContent(ctx, payload, images, accent) {
   const peakNote = peakValue && peakValue !== '-' && peakValue !== '—'
     ? `${safeText(data.peakLabel, 'PEAK')} · ${formattedPeakValue} / `
     : ''
-  const footer = rosterOnly ? copy.rosterDetail : `${peakNote}PUBLIC MATCH ARCHIVE`
+  const footer = rosterOnly ? copy.rosterDetail : safeText(data.footerLabel, `${peakNote}PUBLIC MATCH ARCHIVE`)
   drawBoardingPrintText(ctx, footer, left, 752, { size: 17, minSize: 14, weight: 400, fill: labelFill, maxWidth: 1080 })
   drawBoardingPrintText(ctx, archiveId, mainRight, 752, { size: 18, family: BOARDING_MONO_FONT, fill: accent, align: 'right', maxWidth: 330 })
 }
@@ -2352,7 +2394,8 @@ function drawBoardingColumnContent(ctx, payload, images, accent) {
 function drawLandscapePlayerTicket(ctx, width, height, payload, images, accent) {
   const data = payload.playerTicket || {}
   const heroList = safeArr(data.heroes).slice(0, 3)
-  const rosterOnly = data.coverageLevel === 'roster' || parsePosterNumber(data.mapCount) <= 0
+  const isIdentityBoarding = Boolean(data.identityKind)
+  const rosterOnly = !isIdentityBoarding && (data.coverageLevel === 'roster' || parsePosterNumber(data.mapCount) <= 0)
   const copy = getBoardingCopy(payload.locale)
   const companions = safeArr(data.coStars).filter(Boolean).slice(0, 3)
   const ticketX = 24
@@ -2367,6 +2410,7 @@ function drawLandscapePlayerTicket(ctx, width, height, payload, images, accent) 
   const mainRight = stubX - 56
   const issuedTo = safeText(data.battleTag, data.playerName)
   const callsign = safeText(data.playerName, issuedTo.replace(/#\d+$/g, ''))
+  const passengerLabel = safeText(data.passengerLabel, copy.passenger)
   const flight = safeText(data.seasonId, payload.seasonId || 'FCR26')
   const archiveId = safeText(payload.archiveId, flight)
   const year = String(data.routeDateRange || data.seasonCode || '').match(/20\d{2}/)?.[0] || '2026'
@@ -2434,10 +2478,10 @@ function drawLandscapePlayerTicket(ctx, width, height, payload, images, accent) 
   drawBoardingAircraft(ctx, 100, headerTitleY, compact ? 0.45 : 0.55, '#121209')
   headerText(ctx, 'FRIES CUP', 146, headerTitleY - 1, { size: compact ? 26 : 29, weight: compact ? 700 : 900, fill: '#121209', maxWidth: 380 })
   headerText(ctx, `${year} / SEASON ARCHIVE`, 146, headerSubY - 1, { size: compact ? 14 : 16, fill: '#393313', maxWidth: 420 })
-  headerText(ctx, rosterOnly ? 'ROSTER BOARDING PASS' : 'BOARDING PASS', mainRight, headerTitleY, {
+  headerText(ctx, safeText(data.passType, rosterOnly ? 'ROSTER BOARDING PASS' : 'BOARDING PASS'), mainRight, headerTitleY, {
     size: compact ? 28 : 35, weight: compact ? 700 : 900, fill: '#121209', align: 'right', maxWidth: 690
   })
-  headerText(ctx, copy.passTitle, mainRight, headerSubY, {
+  headerText(ctx, safeText(data.passTitle, copy.passTitle), mainRight, headerSubY, {
     size: compact ? 15 : 18, fill: '#393313', align: 'right', maxWidth: 690
   })
   headerText(ctx, 'PASSENGER COPY', stubCenter, headerTitleY - 6, {
@@ -2452,7 +2496,7 @@ function drawLandscapePlayerTicket(ctx, width, height, payload, images, accent) 
     return
   }
 
-  drawBoardingText(ctx, `PASSENGER / ${copy.passenger}`, mainX, passengerY, {
+  drawBoardingText(ctx, `PASSENGER / ${passengerLabel}`, mainX, passengerY, {
     size: 18, fill: 'rgba(255,255,255,0.67)', maxWidth: 430
   })
   drawBoardingText(ctx, callsign, mainX - 4, passengerY + (compact ? 80 : 86), {
@@ -2780,8 +2824,9 @@ function drawIdentityStampCard(ctx, card, image, x, y, w, h, accent, index) {
 function drawIdentityTicketPoster(ctx, payload, images, accent) {
   const width = ctx.canvas.width
   const height = ctx.canvas.height
-  const ticketWidth = 1680
-  const ticketHeight = 900
+  const isModernBoarding = payload.boardingPassVersion !== 'classic' && (payload.usesRegularTemplate || payload.seasonId === 'FCR26')
+  const ticketWidth = isModernBoarding ? 2080 : 1680
+  const ticketHeight = isModernBoarding ? 800 : 900
   const ticket = document.createElement('canvas')
   const tctx = getPosterLocaleContext(ticket, payload)
 
@@ -2799,7 +2844,14 @@ function drawIdentityTicketPoster(ctx, payload, images, accent) {
   ctx.fillRect(0, 0, width, height)
 
   drawGrid(ctx, width, height)
-  drawLandscapeIdentityTicket(tctx, ticketWidth, ticketHeight, payload, images, accent)
+  if (isModernBoarding) {
+    drawLandscapePlayerTicket(tctx, ticketWidth, ticketHeight, buildModernIdentityBoardingPayload(payload), {
+      ...images,
+      heroImages: images.stampImages
+    }, accent)
+  } else {
+    drawLandscapeIdentityTicket(tctx, ticketWidth, ticketHeight, payload, images, accent)
+  }
 
   const scale = Math.min((width - 96) / ticketWidth, (height - 96) / ticketHeight)
   const drawW = ticketWidth * scale
@@ -2812,6 +2864,11 @@ function drawIdentityTicketPoster(ctx, payload, images, accent) {
   ctx.shadowBlur = 44
   ctx.drawImage(ticket, drawX, drawY, drawW, drawH)
   ctx.restore()
+
+  if (isModernBoarding && images.boardingQr) {
+    const { x, y, size } = BOARDING_QR_SLOT
+    drawBoardingQr(ctx, images.boardingQr, drawX + x * scale, drawY + y * scale, size * scale)
+  }
 }
 
 function drawLandscapeIdentityTicket(ctx, width, height, payload, images, accent) {
@@ -9014,7 +9071,7 @@ export async function generatePosterPng(payload, options = {}) {
   const isHorizontalTicket = isPlayerTicket || isIdentityTicket
   const isMovieTicket = outputFormat === 'movieTicket'
   const isDirectorCut = outputFormat === 'directorCut'
-  const isWideBoarding = outputFormat === 'ticket' && isPlayerTicket && (payload.usesRegularTemplate || payload.seasonId === 'FCR26')
+  const isWideBoarding = outputFormat === 'ticket' && isHorizontalTicket && payload.boardingPassVersion !== 'classic' && (payload.usesRegularTemplate || payload.seasonId === 'FCR26')
   const width = isWideBoarding ? 2400 : outputFormat === 'poster' ? 1080 : (isMovieTicket || isDirectorCut || isHorizontalTicket) ? 1920 : 1080
   const height = isWideBoarding ? 960 : outputFormat === 'poster' ? 1920 : (isMovieTicket || isDirectorCut || isHorizontalTicket) ? 1080 : 1920
   const accent = payload.usesRegularTemplate || payload.seasonId === 'FCR26' ? TONE_COLORS.gold : TONE_COLORS[payload.tone] || TONE_COLORS.gold
@@ -9075,14 +9132,23 @@ export async function generatePosterPng(payload, options = {}) {
     ])
     drawPlayerTicketPoster(ctx, payload, { mainImage: image, fcaLogo: eventLogo, teamLogo, heroImages, boardingQr }, accent)
   } else if (isIdentityTicket) {
-    const stampImages = await Promise.all(
-      safeArr(payload.identityTicket?.stamps).slice(0, 8).map(async stamp => {
+    const [eventLogo, teamLogo, boardingQr, ...stampImages] = await Promise.all([
+      loadImage(payload.eventLogo || DEFAULT_EVENT_LOGO),
+      loadImage(payload.identityTicket?.teamLogo),
+      isWideBoarding ? createBoardingQr(payload.reviewUrl) : null,
+      ...safeArr(payload.identityTicket?.stamps).slice(0, 8).map(async stamp => {
         const image = await loadImage(stamp.image || DEFAULT_TEAM_LOGO)
         return image || await loadImage(DEFAULT_TEAM_LOGO)
       })
-    )
+    ])
 
-    drawIdentityTicketPoster(ctx, payload, { mainImage: image, stampImages }, accent)
+    drawIdentityTicketPoster(ctx, payload, {
+      mainImage: image,
+      fcaLogo: eventLogo,
+      teamLogo,
+      boardingQr,
+      stampImages
+    }, accent)
   } else {
     drawLegacyPoster(ctx, payload, image, accent)
   }

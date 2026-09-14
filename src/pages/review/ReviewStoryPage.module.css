@@ -11126,6 +11126,50 @@
   background: rgba(255,255,255,0.025);
 }
 
+.boardingPassVersionRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-height: 38px;
+}
+
+.boardingPassVersionRow > span {
+  color: rgba(255,255,255,0.5);
+  font: 800 9px/1.2 var(--font-mono, monospace);
+  letter-spacing: 0.08em;
+}
+
+.boardingPassVersionSwitch {
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(76px, 1fr));
+  border: 1px solid rgba(255,255,255,0.16);
+}
+
+.boardingPassVersionSwitch button {
+  min-height: 34px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(255,255,255,0.58);
+  font: 750 11px/1 var(--font-review-sans, sans-serif);
+  cursor: pointer;
+}
+
+.boardingPassVersionSwitch button + button {
+  border-left: 1px solid rgba(255,255,255,0.16);
+}
+
+.boardingPassVersionSwitch button:hover {
+  color: #ffffff;
+}
+
+.boardingPassVersionSwitch button[aria-pressed='true'] {
+  background: #f4c320;
+  color: #11120e;
+}
+
 .movieTicketArtControlHead {
   min-width: 0;
   display: flex;
@@ -11318,6 +11362,14 @@
   .movieTicketArtControls {
     gap: 14px;
     padding: 13px 12px;
+  }
+
+  .boardingPassVersionRow {
+    justify-content: space-between;
+  }
+
+  .boardingPassVersionSwitch {
+    flex: 0 0 auto;
   }
 
   .posterOverlay .posterPanel.posterPanelRefined .posterActions button,
