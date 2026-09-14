@@ -61,4 +61,16 @@
 .submitChecklist { padding: 16px 20px; margin: 16px 0; border-left: 3px solid var(--fc-data-signal); background: var(--fc-data-paper-deep); line-height: 1.6; }
 .submitChecklist p { margin: 5px 0; }
 .nextAction { display: inline-flex; align-items: center; padding: 12px 18px; background: var(--fc-data-signal); color: var(--fc-data-ink); font-weight: 700; text-decoration: none; }
+.logoField { border: 1px solid var(--fc-data-line); padding: 20px; min-width: 0; }
+.logoField legend { padding: 0 8px; font-weight: 700; }
+.logoEditor { display: flex; gap: 24px; align-items: flex-start; }
+.logoPreview { width: 112px; height: 112px; flex: 0 0 112px; display: grid; place-items: center; background: var(--fc-data-paper-deep); border: 1px solid var(--fc-data-line); font-size: 12px; color: var(--fc-data-text-muted); }
+.logoPreview img, .savedLogo { width: 96px; height: 96px; object-fit: contain; }
+.savedLogo { display: block; margin-bottom: 16px; }
+.logoControls { min-width: 0; flex: 1; }
+.logoControls input { max-width: 100%; }
+.logoControls p { margin: 8px 0; font-size: 13px; line-height: 1.6; color: var(--fc-data-text-muted); }
+.logoField details { margin-top: 16px; }
+.logoField details label { margin-top: 12px; }
+@media (max-width: 600px) { .logoEditor { flex-direction: column; gap: 12px; } .logoField { padding: 14px; } .logoControls { width: 100%; } }
 @media (max-width: 600px) { .eligibilityFields { padding: 14px; } .submitChecklist { padding: 14px; } }

@@ -86,7 +86,9 @@ export async function proxyRequest(request, {
   }
   headers.set('accept-encoding', 'identity')
 
-  const bodyLimit = request.method === 'PATCH' && url.pathname === '/api/platform/me/profile' ? 3 * MAX_BODY_BYTES : MAX_BODY_BYTES
+  const registrationImage = (request.method === 'POST' && /^\/api\/platform\/seasons\/[^/]+\/registration\/drafts$/.test(url.pathname))
+    || (request.method === 'PATCH' && /^\/api\/platform\/seasons\/[^/]+\/registration\/drafts\/[^/]+$/.test(url.pathname))
+  const bodyLimit = registrationImage || (request.method === 'PATCH' && url.pathname === '/api/platform/me/profile') ? 3 * MAX_BODY_BYTES : MAX_BODY_BYTES
   let body
   if (!READ_METHODS.has(request.method)) {
     if (Number(request.headers.get('content-length')) > bodyLimit) {
