@@ -1,46 +1,14 @@
 {
-  "env": { "ACCOUNT_API_ORIGIN": "https://test-admin.fries-cup.com", "ACCOUNT_PROXY_DIAGNOSTICS": "true" },
-  "functions": { "api/account.js": { "regions": ["sin1"], "maxDuration": 15 } },
-  "buildCommand": "npm run build:locales && npm run build:team-logo-catalog && npm run build:scouting-artifacts && node scripts/buildAccountJointCandidate.mjs",
+  "functions": { "api/platform.js": { "regions": ["sin1"], "maxDuration": 20 } },
+  "buildCommand": "npm run build:locales && npm run build:team-logo-catalog && npm run build:scouting-artifacts && node scripts/buildAccountProduction.mjs",
   "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
-    },
-    {
-      "source": "/scouting/:path*",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive, nosnippet"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "no-referrer"
-        }
-      ]
-    }
+    { "source": "/account/:path*", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }, { "key": "Referrer-Policy", "value": "no-referrer" }] },
+    { "source": "/auth/:path*", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }, { "key": "Referrer-Policy", "value": "no-referrer" }] },
+    { "source": "/scouting/:path*", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }, { "key": "Referrer-Policy", "value": "no-referrer" }] }
   ],
   "rewrites": [
-    {
-      "source": "/api/platform/auth/:path*",
-      "destination": "/api/account?accountPath=auth/:path*"
-    },
-    {
-      "source": "/api/platform/me/:path*",
-      "destination": "/api/account?accountPath=me/:path*"
-    },
-    {
-      "source": "/api/admin-public/:path*",
-      "destination": "https://test-admin.fries-cup.com/api/public/:path*"
-    },
-    {
-      "source": "/api/platform/:path*",
-      "destination": "https://test-admin.fries-cup.com/api/:path*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/api/admin-public/:path*", "destination": "https://admin.fries-cup.com/api/public/:path*" },
+    { "source": "/api/platform/:path*", "destination": "/api/platform?platformPath=:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

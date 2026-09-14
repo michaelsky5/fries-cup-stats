@@ -18,28 +18,32 @@ function problem(status, error, message, outcomeUnknown = false) {
   })
 }
 
-function resolveRoute(url) {
+function resolveRoute(url, { platformOrigin, publicOrigin, rehearsal }) {
   // Refuse encoded separators and nested escapes before any upstream URL parsing.
   if (/%(?:2f|5c|25|00)/i.test(url.pathname)) return null
   let pathname
   try { pathname = decodeURIComponent(url.pathname) } catch { return null }
   if (pathname.split('/').some(part => part === '.' || part === '..') || pathname.includes('\\')) return null
   if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/publish\/latest\/(data|report)$/.test(pathname)) {
-    const snapshotOrigin = pathname.startsWith('/api/admin-public/seasons/WEBWEEK20260914/') ? PLATFORM_ORIGIN : PUBLIC_ORIGIN
+    const snapshotOrigin = rehearsal && pathname.startsWith('/api/admin-public/seasons/WEBWEEK20260914/') ? platformOrigin : publicOrigin
     return { public: true, url: `${snapshotOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}${url.search}` }
   }
   if (/^\/api\/platform\/media\/avatars\/[a-f0-9]{24}\/[a-f0-9]{32}-(256|96)\.webp$/.test(pathname)) {
-    return { public: true, avatar: true, url: `${PLATFORM_ORIGIN}${pathname.replace('/api/platform/', '/api/')}` }
+    return { public: true, avatar: true, url: `${platformOrigin}${pathname.replace('/api/platform/', '/api/')}` }
   }
   if (/^\/api\/platform\/[^/].*$/.test(pathname)) {
-    return { public: false, url: `${PLATFORM_ORIGIN}${url.pathname.replace('/api/platform/', '/api/')}${url.search}` }
+    return { public: false, url: `${platformOrigin}${url.pathname.replace('/api/platform/', '/api/')}${url.search}` }
   }
   return null
 }
 
-export async function proxyRequest(request, { fetchImpl = fetch, cache, waitUntil } = {}) {
+export async function proxyRequest(request, {
+  fetchImpl = fetch, cache, waitUntil,
+  platformOrigin = PLATFORM_ORIGIN, publicOrigin = PUBLIC_ORIGIN, rehearsal = true,
+  environment = 'staging'
+} = {}) {
   const url = new URL(request.url)
-  const route = resolveRoute(url)
+  const route = resolveRoute(url, { platformOrigin, publicOrigin, rehearsal })
   if (!route) return problem(404, 'API_ROUTE_NOT_FOUND', 'Unknown API route.')
   if (!METHODS.has(request.method) || (route.public && !['GET', 'HEAD'].includes(request.method))) {
     return problem(405, 'METHOD_NOT_ALLOWED', 'This API route does not accept that method.')
@@ -119,7 +123,7 @@ export async function proxyRequest(request, { fetchImpl = fetch, cache, waitUnti
   }
   responseHeaders.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet')
   responseHeaders.set('X-Content-Type-Options', 'nosniff')
-  responseHeaders.set('X-Fries-Backend', route.avatar ? 'staging-media' : route.public ? 'published-snapshots' : 'staging')
+  responseHeaders.set('X-Fries-Backend', route.avatar ? `${environment}-media` : route.public ? 'published-snapshots' : environment)
   if (!route.public || !upstream.ok) responseHeaders.set('Cache-Control', 'private, no-store')
   if (route.public) {
     responseHeaders.delete('set-cookie')
