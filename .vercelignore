@@ -1,6 +1,11 @@
 .git
 .agents
 .codex
+.codex-tmp
+.edgeone
+artifacts
+.env
+.env.*
 .codex-remote-attachments
 .env.local
 .env.*.local
