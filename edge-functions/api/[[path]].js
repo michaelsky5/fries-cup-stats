@@ -1,5 +1,6 @@
-// Migration preview: account writes go only to the existing isolated test backend.
-const PLATFORM_ORIGIN = 'https://test-admin.fries-cup.com'
+// Production defaults to the live account API. Preview deployments can set
+// FRIES_PLATFORM_ORIGIN to the isolated staging backend.
+const PLATFORM_ORIGIN = globalThis.process?.env?.FRIES_PLATFORM_ORIGIN || 'https://admin.fries-cup.com'
 const PUBLIC_ORIGIN = 'https://admin.fries-cup.com'
 const MAX_BODY_BYTES = 1024 * 1024
 const READ_METHODS = new Set(['GET', 'HEAD', 'OPTIONS'])
@@ -39,8 +40,8 @@ function resolveRoute(url, { platformOrigin, publicOrigin, rehearsal }) {
 
 export async function proxyRequest(request, {
   fetchImpl = fetch, cache, waitUntil,
-  platformOrigin = PLATFORM_ORIGIN, publicOrigin = PUBLIC_ORIGIN, rehearsal = true,
-  environment = 'staging'
+  platformOrigin = PLATFORM_ORIGIN, publicOrigin = PUBLIC_ORIGIN, rehearsal = false,
+  environment = 'production'
 } = {}) {
   const url = new URL(request.url)
   const route = resolveRoute(url, { platformOrigin, publicOrigin, rehearsal })
