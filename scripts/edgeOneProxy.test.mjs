@@ -25,6 +25,8 @@ test('only the named synthetic weekly publication uses staging and remains publi
     const path = `/api/admin-public/seasons/${seasonId}/publish/latest/data`
     let call
     const result = await proxyRequest(request(path, { headers: { cookie: 'session=secret', authorization: 'Bearer secret', origin } }), {
+      platformOrigin: 'https://test-admin.fries-cup.com',
+      rehearsal: true,
       fetchImpl: async (url, options) => { call = { url, options }; return json({ seasonId }) }
     })
     assert.equal(call.url, `https://${upstream}.fries-cup.com/api/public/seasons/${seasonId}/publish/latest/data`)
@@ -39,7 +41,7 @@ test('account writes use staging, preserving method, bytes, Origin and Cookie', 
   const body = JSON.stringify({ favorites: { favoriteTeamIds: ['T01'] } })
   const result = await proxyRequest(request('/api/platform/me/favorites/QGCS4', {
     method: 'PUT', body, headers: { origin, 'content-type': 'application/json', cookie: '__Host-fries_session=test', 'sec-fetch-site': 'same-origin', 'x-forwarded-for': '1.2.3.4' }
-  }), { fetchImpl: async (url, options) => { call = { url, options }; return json({ saved: true }, { headers: { 'cache-control': 'public, max-age=999' } }) } })
+    }), { platformOrigin: 'https://test-admin.fries-cup.com', fetchImpl: async (url, options) => { call = { url, options }; return json({ saved: true }, { headers: { 'cache-control': 'public, max-age=999' } }) } })
   assert.equal(call.url, 'https://test-admin.fries-cup.com/api/me/favorites/QGCS4')
   assert.equal(call.options.method, 'PUT')
   assert.equal(new TextDecoder().decode(call.options.body), body)

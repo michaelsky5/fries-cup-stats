@@ -30,7 +30,7 @@ test('avatar caching omits credentials and caches only immutable WebP bytes', as
     for (const key of ['cookie', 'authorization', 'origin', 'referer']) assert.equal(headers.get(key), null)
     return new Response(new Uint8Array([1, 2, 3]), { headers: { 'Content-Type': 'image/webp', 'Cache-Control': 'public, max-age=31536000, immutable' } })
   }
-  const options = { fetchImpl, cache }
+  const options = { platformOrigin: 'https://test-admin.fries-cup.com', fetchImpl, cache }
   const first = await proxyRequest(request(avatar, { headers: { cookie: 'secret', authorization: 'Bearer secret', origin } }), options)
   assert.equal(first.status, 200); assert.match(first.headers.get('cache-control'), /immutable/)
   const second = await proxyRequest(request(avatar), options)
