@@ -5,6 +5,9 @@ import { getBroadcastInfo } from './broadcastSelectors.js'
 import { getMatchRatingSummary } from './matchRatingAdapter.js'
 import {
   getMatchStatusText,
+  getMatchCompetitionDay,
+  getMatchGroupLabel,
+  getRoundText,
   getTeamFullName,
   getTeamLabel,
   safeArr,
@@ -12,6 +15,7 @@ import {
 } from './matchesSelectors.js'
 import { formatMatchSchedule } from './scheduleFormat.js'
 import { getRoleEnLabel, getRoleLabel, normalizeLeaderboardRole } from './leaderboardSelectors.js'
+import { getPlayerDirectory, getPlayerDisplayIdentity, normalizeRosterRole } from './rosterSelectors.js'
 import { formatOwHeroName, formatOwMapMode, formatOwMapName } from './heroes.js'
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED'])
@@ -19,6 +23,7 @@ const LIVE_STATUSES = new Set(['IN_PROGRESS', 'LIVE'])
 const POSTPONED_STATUSES = new Set(['POSTPONED', 'DELAYED', 'RESCHEDULED'])
 const CANCELLED_STATUSES = new Set(['CANCELLED', 'CANCELED'])
 const ROLE_ORDER = { TANK: 1, DPS: 2, SUPPORT: 3 }
+const ROSTER_ROLE_ORDER = { TANK: 1, DPS: 2, SUP: 3, FLEX: 4 }
 
 const TEAM_METRICS = [
   { key: 'mapWins', label: '地图胜利', en: 'MAPS' },
@@ -266,18 +271,20 @@ function getRosterForTeam(db, team) {
     team?.team_name
   ].map(normalizeKey).filter(Boolean))
 
-  return safeArr(db?.players)
+  return getPlayerDirectory(db)
     .filter(player => [
       player?.team_id,
       player?.team_short_name,
       player?.team_name,
       player?.team
     ].some(value => ids.has(normalizeKey(value))))
-    .map(player => ({
-      id: cleanText(player?.player_id),
-      name: cleanText(player?.nickname || player?.display_name || player?.player_name || player?.player_id),
-      role: normalizeLeaderboardRole(player?.role)
-    }))
+    .map((player, originalIndex) => {
+      const identity = getPlayerDisplayIdentity(player)
+      return { id: cleanText(player?.player_id), name: identity.primary,
+        battleTag: identity.secondary, role: normalizeRosterRole(player?.role), originalIndex }
+    })
+    .sort((a, b) => ((ROSTER_ROLE_ORDER[a.role] || 99) - (ROSTER_ROLE_ORDER[b.role] || 99)) || a.originalIndex - b.originalIndex)
+    .map(({ id, name, battleTag, role }) => ({ id, name, battleTag, role }))
 }
 
 function normalizeMap(map, match, playerDirectory, index, locale = 'zh-CN') {
@@ -287,6 +294,7 @@ function normalizeMap(map, match, playerDirectory, index, locale = 'zh-CN') {
   const scoreB = isKnownValue(map?.score_b) ? cleanText(map?.score_b) : '-'
   const rawName = cleanText(map?.map_name)
   const rawType = cleanText(map?.map_type)
+  const durationSeconds = parseDurationSeconds(map?.match_time)
   const teamAStats = sortPlayerRows(safeArr(map?.team_a_stats)
     .filter(hasStatSignal)
     .map((row, rowIndex) => normalizeStatRow(row, 'A', { order }, match, playerDirectory, rowIndex, locale)))
@@ -315,8 +323,8 @@ function normalizeMap(map, match, playerDirectory, index, locale = 'zh-CN') {
     rawName,
     type: rawType ? formatOwMapMode(rawType, locale) : rawType,
     rawType,
-    matchTime: cleanText(map?.match_time),
-    durationSeconds: parseDurationSeconds(map?.match_time),
+    matchTime: durationSeconds > 0 ? cleanText(map?.match_time) : '',
+    durationSeconds,
     winnerSide,
     winnerTeam,
     winnerLabel: cleanText(map?.winner_label) || winnerTeam?.short || '',
@@ -375,7 +383,12 @@ function buildTeamComparison(teamA, teamB, maps) {
   }
 }
 
-function getMatchWinnerSide(match) {
+function getMatchWinnerSide(match, state) {
+  // Weekly rulings retain the played score, which may favor the forfeiting team.
+  if (state.isWeekly && (state.isForfeit || state.isRuling)) {
+    const side = getWinnerSide({ winner: match?.winner }, match)
+    return ['A', 'B'].includes(side) ? side : ''
+  }
   const scoreA = toFiniteNumber(match?.team_a?.score, NaN)
   const scoreB = toFiniteNumber(match?.team_b?.score, NaN)
   if (!Number.isFinite(scoreA) || !Number.isFinite(scoreB)) return ''
@@ -541,6 +554,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
   if (!match) return null
 
   const state = getMatchState(match)
+  const preservesForfeitMaps = state.isWeekly && state.isForfeit && getMatchFormatLabel(match).toUpperCase() === 'RR5'
   const playerDirectory = createPlayerDirectory(db)
   const teamA = getTeamModel(match?.team_a, 'A')
   const teamB = getTeamModel(match?.team_b, 'B')
@@ -600,6 +614,12 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     ? `${completedMaps.length} / ${maps.length || completedMaps.length}`
     : maps.length ? `${maps.length}` : '—'
 
+  const isGroupStage = cleanText(match?.stage).toUpperCase() === 'GROUP'
+  const groupLabel = getMatchGroupLabel(match)
+  const competitionDay = getMatchCompetitionDay(match)
+  const stageLabel = isGroupStage ? (groupLabel ? `${groupLabel} 组小组赛` : '小组赛') : cleanText(match?.stage) || '—'
+  const roundLabel = isGroupStage && competitionDay > 0 ? `第 ${competitionDay} 比赛日` : cleanText(match?.round) || '—'
+
   return {
     match,
     state,
@@ -608,7 +628,10 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     title: `${teamA.short} vs ${teamB.short}`,
     fullTitle: `${teamA.full} vs ${teamB.full}`,
     broadcast: getBroadcastInfo(match),
-    breadcrumb: [match?.stage, match?.round].map(cleanText).filter(Boolean),
+    breadcrumb: isGroupStage ? [stageLabel, roundLabel] : [match?.stage, match?.round].map(cleanText).filter(Boolean),
+    stageLabel,
+    roundLabel,
+    roundText: getRoundText(match),
     scheduleLabel: getScheduleLabel(match, locale),
     scheduleCompact: formatMatchSchedule(match, { locale }).compact,
     statusLabel: state.isReview ? '结果待审核' : state.isForfeit ? '弃权' : state.isRuling ? '判定结束' : getMatchStatusText(match),
@@ -619,6 +642,9 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     mapCountLabel,
     totalDurationLabel,
     internalId: cleanText(match?.match_id || match?.raw_match_id),
+    roomPath: state.isWeekly
+      ? match?.raw_match_id ? `/me/matches/${encodeURIComponent(match.raw_match_id)}/room` : '/me?section=matches'
+      : `/matches/${encodeURIComponent(match?.match_id || match?.raw_match_id)}/room`,
     rawDisplayName: cleanText(match?.match_display_name),
     metaItems: [
       { key: 'stage', label: '阶段', en: 'STAGE', value: cleanText(match?.stage) || '—' },
@@ -631,6 +657,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     maps,
     completedMaps,
     mapRecords,
+    preservesForfeitMaps,
     hasMapRecords: mapRecords.length > 0,
     statsMapCount: completedMaps.filter(map => map.hasStats).length,
     hasCompletePlayerStats: completedMaps.length > 0 && completedMaps.every(map => map.teamAStats.length > 0 && map.teamBStats.length > 0),

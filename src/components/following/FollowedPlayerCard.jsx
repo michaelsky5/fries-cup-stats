@@ -1,6 +1,7 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { Link } from 'react-router-dom'
 import { formatOwHeroNames } from '../../lib/heroes.js'
+import { getCompetitiveRoleLabel } from '../../lib/rosterSelectors.js'
 import styles from '../../pages/following/FollowingPage.module.css'
 
 export default function FollowedPlayerCard({ overview, withSeason, locale = 'zh-CN', relationLabel = '' }) {
@@ -21,7 +22,7 @@ export default function FollowedPlayerCard({ overview, withSeason, locale = 'zh-
         <div className={styles.playerTags}>
           {relationLabel ? <span className={styles.playerIdentityBadge}>{relationLabel}</span> : null}
           <span className={styles.playerTeamBadge}>{overview.teamShortName || 'TBD'}</span>
-          <span className={styles.playerRoleBadge}>{overview.role}</span>
+          <span className={styles.playerRoleBadge}>{getCompetitiveRoleLabel(overview.role, locale)}</span>
         </div>
       </div>
 

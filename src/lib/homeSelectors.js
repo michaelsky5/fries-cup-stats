@@ -4,6 +4,7 @@ import { getRankingMinTimeMins } from './leaderboardSelectors.js'
 import { getMatchRoundScopeKey } from './matchRoundScope.js'
 import { getGroupStandings } from './advanceSelectors.js'
 import { isByeMatch } from './matchesSelectors.js'
+import { getExplicitWeeklyCompletion } from './weeklySeasonLifecycle.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
@@ -173,6 +174,8 @@ function getExpectedSwissMatchCount(db, season) {
 }
 
 function isSeasonCompleteByPublishedMatches(db, season, completedCount, matchCount) {
+  const weeklyFinished = getExplicitWeeklyCompletion(db, season)
+  if (weeklyFinished !== null) return weeklyFinished
   if (!matchCount || completedCount !== matchCount) return false
 
   const expectedSwissMatches = getExpectedSwissMatchCount(db, season)

@@ -2,6 +2,7 @@ import { getSeasonById, getSeasonRules } from '../config/seasons.js'
 import { getCompetitionDayMatches, getCompetitionDayNumber } from './competitionDay.js'
 import { formatOwMapName } from './heroes.js'
 import { getRoundKey, isMatchInRoundScope } from './matchRoundScope.js'
+import { getExplicitWeeklyCompletion } from './weeklySeasonLifecycle.js'
 
 export { getTeamLogoCandidates } from './teamLogoResolver.js'
 
@@ -16,6 +17,37 @@ function normalizeText(value) {
 
 function normalizeKey(value) {
   return normalizeText(value).toLowerCase()
+}
+
+function getAdministrativeForfeitKey(map) {
+  const resultMode = normalizeText(map?.result_mode || map?.resultMode).toUpperCase()
+  const reason = normalizeText(map?.reason || map?.administrativeReason).toUpperCase()
+  const forfeitedBy = normalizeKey(
+    map?.forfeited_by ||
+    map?.forfeitedBy ||
+    map?.forfeitedBySide ||
+    map?.forfeitedSide
+  )
+  const isAdministrative = map?.is_administrative === true ||
+    map?.isAdministrative === true ||
+    resultMode === 'FORFEIT' ||
+    reason === 'MAP_FORFEIT'
+
+  return isAdministrative ? forfeitedBy : ''
+}
+
+function getInferredForfeitKey(match) {
+  const status = normalizeText(match?.status).toUpperCase()
+  const resultMode = normalizeText(match?.result_mode || match?.resultMode).toUpperCase()
+  if (!COMPLETE_STATUSES.has(status) || (resultMode && resultMode !== 'NORMAL')) return ''
+
+  const maps = safeArr(match?.maps)
+  if (!maps.length) return ''
+
+  const forfeitedKeys = maps.map(getAdministrativeForfeitKey)
+  if (forfeitedKeys.some(key => !key)) return ''
+
+  return new Set(forfeitedKeys).size === 1 ? forfeitedKeys[0] : ''
 }
 
 function toNumber(value, fallback = 0) {
@@ -48,6 +80,8 @@ function getExpectedSwissMatchCount(db, seasonOrId) {
 }
 
 function isSeasonCompleteByPublishedMatches(db, seasonOrId, completedCount, matchCount) {
+  const weeklyFinished = getExplicitWeeklyCompletion(db, resolveSeason(seasonOrId))
+  if (weeklyFinished !== null) return weeklyFinished
   if (!matchCount || completedCount !== matchCount) return false
 
   const expectedSwissMatches = getExpectedSwissMatchCount(db, seasonOrId)
@@ -80,6 +114,12 @@ function matchTeamValues(match) {
 
 export function isByeMatch(match) {
   return matchTeamValues(match).some(value => value === 'bye')
+}
+
+export function isForfeitMatch(match) {
+  const resultMode = normalizeText(match?.result_mode || match?.resultMode).toUpperCase()
+  if (match?.is_forfeit === true || resultMode === 'FORFEIT') return true
+  return Boolean(getInferredForfeitKey(match)) || safeArr(match?.maps).some(map => Boolean(getAdministrativeForfeitKey(map)))
 }
 
 function matchIdentity(match) {
@@ -240,7 +280,7 @@ export function getMatchStatusText(match) {
   if (['POSTPONED', 'DELAYED'].includes(raw)) return '延期'
   if (['RESCHEDULED'].includes(raw)) return '已改期'
   if (['CANCELED', 'CANCELLED'].includes(raw)) return '取消'
-  if (match?.is_forfeit) return '弃权'
+  if (isForfeitMatch(match)) return '弃权'
   const status = getMatchStatus(match)
   if (status === 'finished') return '已完成'
   if (status === 'live') return '进行中'
@@ -288,6 +328,23 @@ export function getMatchTimeLabel(match) {
   return `${month}-${day} ${hour}:${minute}`
 }
 
+export function getMatchGroupLabel(match) {
+  const round = normalizeText(match?.round)
+  return normalizeText(match?.group_label || match?.groupLabel || round.match(/\bGROUP\s+([A-Z0-9]+)\b/i)?.[1]).toUpperCase()
+}
+
+export function getMatchCompetitionDay(match) {
+  const round = normalizeText(match?.round)
+  return toNumber(
+    match?.competition_day ??
+    match?.competitionDay ??
+    match?.schedule_day ??
+    match?.scheduleDay ??
+    round.match(/\bDAY\s+(\d+)\b/i)?.[1],
+    0
+  )
+}
+
 export function getRoundText(match) {
   const round = normalizeText(match?.round || match?.stage)
   const number = round.match(/\d+/)?.[0]
@@ -296,6 +353,24 @@ export function getRoundText(match) {
   if (String(match?.stage || '').toUpperCase() === 'SWISS' && number) return `瑞士轮第 ${number} 轮`
   if (/^ROUND\s*\d+/i.test(round) && number) return `瑞士轮第 ${number} 轮`
   return round || '赛事阶段待定'
+}
+
+export function getRoundBadgeText(match) {
+  if (String(match?.stage || '').toUpperCase() === 'GROUP') {
+    const groupLabel = getMatchGroupLabel(match)
+    const competitionDay = getMatchCompetitionDay(match)
+    if (groupLabel && competitionDay > 0) return `${groupLabel}组 · D${competitionDay}`
+    if (groupLabel) return `${groupLabel}组`
+    if (competitionDay > 0) return `小组赛 · D${competitionDay}`
+    return '小组赛'
+  }
+
+  const stage = normalizeText(match?.stage).toUpperCase()
+  const round = normalizeText(match?.round).toUpperCase()
+  const roundNumber = round.match(/\d+/)?.[0]
+  if (stage && roundNumber) return `${stage}-R${roundNumber}`
+  if (roundNumber) return `ROUND-${roundNumber}`
+  return round || stage || 'MATCH'
 }
 
 export function getMapSummary(match, locale = 'zh-CN') {

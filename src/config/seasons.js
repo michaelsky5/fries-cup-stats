@@ -9,6 +9,15 @@ const PREFER_LOCAL_DATA = typeof import.meta.env !== 'undefined' && import.meta.
 
 export const SEASONS = [
   {
+    id: 'FCW26', kind: 'OFFICIAL', lifecycle: 'ACTIVE', publicCode: 'FCW2026', competitionFormat: 'WEEKLY',
+    name: { zh: '2026 薯条杯周赛', en: 'Fries Cup Weekly 2026' },
+    proxyDataUrl: '/api/admin-public/seasons/FCW26/publish/latest/data',
+    proxyReportUrl: '/api/admin-public/seasons/FCW26/publish/latest/report',
+    dataUrl: 'https://admin.fries-cup.com/api/public/seasons/FCW26/publish/latest/data',
+    reportUrl: 'https://admin.fries-cup.com/api/public/seasons/FCW26/publish/latest/report',
+    reviewEnabled: false, rules: { weeklyCompetition: { enabled: true } }
+  },
+  {
     id: 'FCR26',
     kind: 'OFFICIAL',
     lifecycle: 'ARCHIVED',

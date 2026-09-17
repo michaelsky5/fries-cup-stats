@@ -35,6 +35,7 @@ const EXACT_TRANSLATIONS = new Map([
   ['时间待定', 'Time TBD'],
   ['待定', 'TBD'],
   ['待更新', 'Pending Update'],
+  ['尚未出场', 'Not Yet Played'],
   ['等待数据', 'Awaiting Data'],
   ['比赛后更新', 'Updates After Matches'],
   ['比赛开始后更新', 'Updates After Matches Begin'],

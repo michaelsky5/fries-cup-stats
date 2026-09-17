@@ -4,6 +4,7 @@ import { calculateSwissStandings, isByeTeam } from './swissEngine.js'
 import { BRACKET_PHASES, adaptBracketFromDb, getBracketPhaseMatches } from './bracketAdapters.js'
 import { buildFourDivisionLcq } from './lcqBracket.js'
 import { buildFixedDoubleEliminationPlayoff } from './playoffBracket.js'
+import { getExplicitWeeklyCompletion } from './weeklySeasonLifecycle.js'
 
 export const ADVANCE_PHASES = ['swiss', 'breakthrough', 'playoffs', 'final']
 export const GROUP_ADVANCE_PHASES = ['groups', 'playoffs', 'final']
@@ -176,6 +177,8 @@ function getExpectedSwissMatchCount(db, season) {
 }
 
 function isSeasonCompleteByPublishedMatches(db, season, completedCount, matchCount) {
+  const weeklyFinished = getExplicitWeeklyCompletion(db, season)
+  if (weeklyFinished !== null) return weeklyFinished
   if (!matchCount || completedCount !== matchCount) return false
 
   const expectedSwissMatches = getExpectedSwissMatchCount(db, season)

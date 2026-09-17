@@ -277,6 +277,12 @@ export default function PlayerShareCard({ model, exportMode = false }) {
         {model.identity.battleTag ? <p>{model.identity.battleTag}</p> : null}
         <div className={styles.teamLine}>
           <TeamLogo
+            team={{
+              team_id: model.identity.teamId,
+              team_short_name: model.identity.teamShortName,
+              team_name: model.identity.teamName,
+              team_logo: model.identity.teamLogo
+            }}
             seasonId={model.season.code}
             team={{
               team_id: model.identity.teamId,
