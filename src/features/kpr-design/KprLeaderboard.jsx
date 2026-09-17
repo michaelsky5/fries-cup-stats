@@ -256,3 +256,4 @@ export default function KprLeaderboard({
     <KprComparePanel open={compareOpen} onClose={onCloseCompare} entries={selectedCompareEntries} mode={mode} onModeChange={onModeChange} locale={locale} withSeason={withSeason} returnState={getReturnState(location)} onProfileNavigate={onProfileNavigate} />
   </div>
 }
+

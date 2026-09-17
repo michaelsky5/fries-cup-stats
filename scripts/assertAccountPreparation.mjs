@@ -17,15 +17,6 @@ import { requiresParticipationAccess, requiresPublicSnapshot } from '../src/feat
 
 const now = Date.parse('2026-09-06T12:00:00Z')
 const options = { seasonId: 'season-a', userId: 'user-a', readOnly: false, now }
-
-const continuityRules = { rosterContinuityMode: 'PREVIOUS_APPEARANCE', rosterMin: 5, rosterMax: 7 }
-const seasonalPlayers = 'abcdefgh'.split('').map(id => ({ id }))
-const previousRoster = { status: 'AVAILABLE', required: 3, playerIds: 'abcde'.split('') }
-assert.equal(getWeeklyRosterCheck('abcfg'.split(''), new Set(previousRoster.playerIds), continuityRules, seasonalPlayers, previousRoster).canSubmit, true, 'three retained players may include two replacements')
-assert.equal(getWeeklyRosterCheck('abfgh'.split(''), new Set(previousRoster.playerIds), continuityRules, seasonalPlayers, previousRoster).canSubmit, false, 'two retained players require a new-team review')
-assert.equal(getWeeklyRosterCheck('abcde'.split(''), new Set(), continuityRules, seasonalPlayers, { status: 'FIRST_APPEARANCE', required: 0 }).canSubmit, true, 'first appearance needs no monthly core')
-assert.equal(getWeeklyRosterCheck('abcde'.split(''), new Set(), continuityRules, seasonalPlayers, { status: 'MISSING_ROSTER', required: 3 }).canSubmit, false, 'missing historical data is not a first appearance')
-assert.equal(getWeeklyRosterCheck('abcde'.split(''), new Set(previousRoster.playerIds), continuityRules, seasonalPlayers, undefined).canSubmit, false, 'unknown continuity cannot enable submit')
 function fixture() {
   const team = { id: 'team-a', name: 'Alpha' }
   const week = { id: 'week-4', weekNumber: 4, label: '第 4 周', status: 'CONFIRMATION_OPEN', confirmationOpensAt: '2026-09-06T10:00:00Z', confirmationDeadlineAt: '2026-09-06T14:00:00Z' }
@@ -46,19 +37,6 @@ assert.equal(weeklyConfirmationWindow({ ...fixture().week, confirmationDeadlineA
 assert.equal(weeklyConfirmationWindow({ ...fixture().week, status: 'CANCELLED' }, now), 'closed')
 
 let data = fixture()
-const rotating = fixture()
-rotating.cycle.rules = continuityRules
-rotating.entry.coreSelections = []
-assert.deepEqual(buildWeeklyPreparation(rotating.workspace, options).plans[0].stages.map(stage => stage.key), ['participation', 'roster'], 'rotating weekly rosters have no core-registration step')
-assert.equal(buildWeeklyPreparation(rotating.workspace, options).plans[0].next.key, 'roster', 'confirmed teams proceed straight to the weekly roster')
-const awaitingCycle = fixture()
-awaitingCycle.cycle.entries = []
-awaitingCycle.cycle.enrollmentOpen = true
-awaitingCycle.cycle.eligibleTeams = [awaitingCycle.workspace.teams[0].team]
-assert.equal(buildWeeklyPreparation(awaitingCycle.workspace, options).tasks[0].taskType, 'WEEKLY_PREPARATION_ENROLLMENT', 'approved managers see the next step before a cycle entry exists')
-assert.equal(buildWeeklyPreparation(awaitingCycle.workspace, { ...options, readOnly: true }).tasks.length, 0)
-awaitingCycle.workspace.teams[0].role = 'PLAYER'
-assert.equal(buildWeeklyPreparation(awaitingCycle.workspace, options).tasks.length, 0, 'players cannot enroll a team')
 let prepared = buildWeeklyPreparation(data.workspace, options)
 assert.equal(prepared.plans[0].next.key, 'roster')
 assert.equal(prepared.tasks.length, 1, 'a saved draft still requires submission')

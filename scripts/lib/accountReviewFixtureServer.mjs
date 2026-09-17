@@ -7,6 +7,8 @@ let loggedIn = true
 let favorites = { primaryTeamId: 'BANANA', favoriteTeamIds: ['BANANA'], favoritePlayerIds: ['FCR26-P0111'] }
 let supportRequests = []
 let preparationReady = false
+const staffReads = new Map()
+const staffRelations = new Map()
 let sessions = [{ id: 'preview-current', deviceName: 'Windows · Edge', current: true, ipAddress: '127.0.0.1', createdAt: new Date().toISOString(), lastSeenAt: new Date().toISOString() }, { id: 'preview-phone', deviceName: 'iPhone · Safari', current: false, ipAddress: '192.0.2.10', createdAt: new Date(Date.now() - 86400000).toISOString(), lastSeenAt: new Date(Date.now() - 3600000).toISOString() }]
 const identities = ['MANAGER', 'PLAYER', 'CASTER'].map((type,i) => ({ id: `preview-${type}`, type, status:'ACTIVE', isVerified:true, isPrimary: i === 0 }))
 const weeklyRooms = [
@@ -28,6 +30,7 @@ Object.assign(scenarioLabels, { 'match-live':'比赛进行中', 'match-confirmed
 let launchHoldUntil = 0
 Object.assign(scenarioLabels, { core: '周期核心', activation: '邀请认领', 'activation-expired': '邀请过期', support: '站内处理记录', caster: '解说工作台', referee: '赛管工作台' })
 Object.assign(scenarioLabels, { 'email-verified': '邮箱已验证', 'devices-unavailable': '设备读取失败', 'profile-readonly': '只读账号资料' })
+Object.assign(scenarioLabels, { 'staff-none': '未关联本届职员', 'staff-invited': '本届职员邀请', 'staff-active': '本届职员已生效', 'staff-error': '本届身份读取失败', 'staff-refresh-error': '本届身份刷新失败' })
 Object.assign(scenarioLabels, { 'activation-existing':'已有账号邀请', 'activation-used':'邀请已认领', 'activation-revoked':'邀请已撤销', 'activation-unavailable':'邀请读取失败', 'recovery-unavailable':'邮件找回未开放' })
 let invitationClaimed = false
 let passwordResetUsed = false
@@ -41,6 +44,8 @@ function setScenario(value) {
   for (const response of pendingPreviewReads) { response.writeHead(503); response.end() }
   pendingPreviewReads.clear()
   scenario = Object.hasOwn(scenarioLabels, value) ? value : 'preparing'
+  staffReads.clear()
+  staffRelations.clear()
   user.emailVerified = scenario === 'email-verified'
   user.role = scenario === 'profile-readonly' ? 'OPERATOR' : 'USER'
   launchHoldUntil = Date.now() + 14000
@@ -134,6 +139,26 @@ const handle = async (req,res) => {
   }
   if(path === '/preview/reset') {loggedIn=true;return send({reset:true})}
   if(!loggedIn) return send({error:'UNAUTHORIZED'},401)
+  if(path === '/me/event-staff-context') {
+    const seasonId = new URL(req.url, 'http://local').searchParams.get('seasonId')
+    const count = (staffReads.get(seasonId) || 0) + 1
+    staffReads.set(seasonId, count)
+    if ((scenario === 'staff-error' && count <= 2) || (scenario === 'staff-refresh-error' && count === 3)) return send({ error: 'PREVIEW_STAFF_CONTEXT_UNAVAILABLE' }, 503)
+    if (!staffRelations.has(seasonId)) {
+      const status = scenario === 'staff-invited' ? 'INVITED' : ['staff-active', 'staff-refresh-error'].includes(scenario) ? 'ACTIVE' : null
+      staffRelations.set(seasonId, status ? ['CASTER','REFEREE'].map(role => ({ id: `preview-staff-${seasonId}-${role}`, seasonId, role, status, source:'SYSTEM_INVITE', battleTag:'Yuzu#10000', createdAt:'2026-09-12T12:00:00.000Z' })) : [])
+    }
+    return send({seasonId,participations:staffRelations.get(seasonId),staff:null,forms:[],partners:[]})
+  }
+  if(path.startsWith('/me/event-staff-participations/') && req.method === 'POST') {
+    const parts = path.split('/')
+    const record = [...staffRelations.values()].flat().find(item => item.id === parts[3])
+    if(!record) return send({error:'EVENT_STAFF_PARTICIPATION_NOT_FOUND'},404)
+    const action=parts[4]
+    if(action==='withdraw' ? record.status!=='ACTIVE' : record.status!=='INVITED') return send({error:'EVENT_STAFF_PARTICIPATION_STALE'},409)
+    record.status = {accept:'ACTIVE',reject:'DECLINED',withdraw:'WITHDRAWN'}[action] || record.status
+    return send({participation:record})
+  }
   if (path === '/me/profile' && req.method === 'PATCH' && scenario === 'profile-readonly') return send({error:'FORBIDDEN'},403)
   if (path === '/me/sessions' && scenario === 'devices-unavailable') return send({error:'PREVIEW_DEVICE_SERVICE_UNAVAILABLE'},503)
   if(path === '/auth/me') return send({user})
@@ -182,7 +207,7 @@ const handle = async (req,res) => {
   if(path === '/me/predictions') return send({predictions:[]})
   if(path.endsWith('/prediction-board')) return send({matches:[],policy:{winnerPoints:3,exactScoreBonus:2},eligibility:{eligible:false}})
   if(path.endsWith('/prediction-leaderboard')) return send({leaderboard:[],viewer:null,participants:0})
-  if(path === '/me/space-context') {const seasonId=new URL(req.url,'http://local').searchParams.get('seasonId');const context=buildAccountDesignPreviewFixture('locked',scenario === 'viewer' ? 'VIEWER' : scenario === 'caster' ? 'CASTER' : scenario === 'referee' ? 'REFEREE' : scenario === 'player' ? 'PLAYER' : 'MULTI').spaceContext;Object.assign(context,{seasonId,user:{...user,emailVerified:false},contract:'ACCOUNT_FOUNDATION_V1',competitionKind:'WEEKLY'});context.overview={...context.overview,tasks:[],openTaskCount:0,nextTeamMatch:null,nextStaffAssignment:null};context.teamContexts=context.teamContexts.map(team=>({...team,matches:[]}));return send({context})}
+  if(path === '/me/space-context') {const seasonId=new URL(req.url,'http://local').searchParams.get('seasonId');const context=buildAccountDesignPreviewFixture('locked',scenario === 'viewer' ? 'VIEWER' : scenario === 'caster' || ['staff-none','staff-error','staff-invited'].includes(scenario) ? 'CASTER' : scenario === 'referee' || ['staff-active','staff-refresh-error'].includes(scenario) ? 'REFEREE' : scenario === 'player' ? 'PLAYER' : 'MULTI').spaceContext;Object.assign(context,{seasonId,user:{...user,emailVerified:false},contract:'ACCOUNT_FOUNDATION_V1',competitionKind:'WEEKLY'});context.overview={...context.overview,tasks:[],openTaskCount:0,nextTeamMatch:null,nextStaffAssignment:null};if(scenario.startsWith('staff-'))context.staffContext={refereeAssignments:[],broadcastRefereeAssignments:[],casterAssignments:[],availability:[]};context.teamContexts=context.teamContexts.map(team=>({...team,matches:[]}));return send({context})}
   if(path === '/me/weekly-match-rooms') {const seasonId=new URL(req.url,'http://local').searchParams.get('seasonId');return send({season:{id:seasonId,name:'周赛设计示例',status:'ACTIVE',timezone:'Asia/Shanghai'},accessMode:'WRITE',featureAccess:'WRITE',teams:[weeklyRooms[0].myTeams[0]],rooms:weeklyRooms.map(room => ({...room,myTeams:room.myTeams.map(side=>({...side,preparation:{ready:preparationReady,canConfirm:room.status==='PENDING' && ['locked','support'].includes(scenario),reason:''}}))}))})}
   if(path.startsWith('/me/weekly-match-rooms/') && req.method==='PUT'){
     const room=weeklyRooms.find(item=>item.id===path.split('/')[3])

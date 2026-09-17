@@ -30,7 +30,7 @@ export function getDataCenterPageLabel(pathname = '/', search = '') {
   if (path === '/') return DEFAULT_PAGE_LABEL
   if (path === '/schedule') return '赛程赛果'
   if (path === '/matches') return isFollowingMatchView(search) ? '我的关注' : '赛程赛果'
-  if (/^\/matches\/[^/]+\/room$/.test(path)) return '比赛房间'
+  if (/^\/me\/matches\/[^/]+\/room$/.test(path)) return '比赛房间'
   if (/^\/matches\/[^/]+$/.test(path)) return '比赛详情'
   if (path === '/me') return '我的空间'
   if (path === '/following') return '我的关注'
@@ -59,7 +59,7 @@ export function getDataCenterPageLabel(pathname = '/', search = '') {
   if (path === '/maps') return '地图数据'
   if (/^\/maps\/[^/]+$/.test(path)) return '地图详情'
   if (path === '/review') return '赛季回顾'
-  if (path === '/fantasy' || path === '/fantasy-classic' || path === '/fantasy-next') return '梦幻经理'
+  if (path === '/fantasy' || path === '/fantasy-classic') return '梦幻经理'
   if (path === '/fantasy/battle') return '梦幻对战'
   if (path === '/shop') return '经理商店'
   if (path === '/champion') return '冠军殿堂'

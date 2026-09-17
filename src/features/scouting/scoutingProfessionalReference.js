@@ -172,3 +172,4 @@ export function buildScoutingProfessionalReference(player) {
     metrics
   }
 }
+

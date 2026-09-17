@@ -7,7 +7,6 @@ import {
   getMatchStatusText,
   getMatchCompetitionDay,
   getMatchGroupLabel,
-  isForfeitMatch,
   getRoundText,
   getTeamFullName,
   getTeamLabel,
@@ -98,7 +97,7 @@ function getMatchState(match) {
   const status = cleanText(match?.status || 'PENDING').toUpperCase()
   const resultMode = cleanText(match?.result_mode).toUpperCase()
   const isWeekly = Boolean(match?.cycle_week_id) || cleanText(match?.stage).toUpperCase() === 'WEEKLY'
-  const isForfeit = isForfeitMatch(match) || (isWeekly && status === 'FORFEIT')
+  const isForfeit = Boolean(match?.is_forfeit) || resultMode === 'FORFEIT' || (isWeekly && status === 'FORFEIT')
   const isRuling = isWeekly && status === 'ADMIN_COMPLETED'
   const isComplete = COMPLETE_STATUSES.has(status) || (isWeekly && status === 'FINISHED')
   const isCancelled = CANCELLED_STATUSES.has(status)
@@ -567,9 +566,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     const publishedWeeklyResult = !['LIVE', 'IN_PROGRESS', 'PENDING', 'SCHEDULED'].includes(mapStatus)
       && (map?.is_administrative || ['COMPLETE', 'COMPLETED'].includes(mapStatus)
         || (cleanText(map?.winner) && cleanText(map.winner).toUpperCase() !== 'UNKNOWN') || normalizedMap.durationSeconds > 0)
-    const unplayedForfeitMap = preservesForfeitMaps && (!publishedWeeklyResult || map?.is_administrative
-      || !['A', 'B', 'DRAW'].includes(normalizedMap.winnerSide))
-    if (!state.canShowResults || (partialWeekly && !publishedWeeklyResult) || unplayedForfeitMap) return {
+    if (!state.canShowResults || (partialWeekly && !publishedWeeklyResult)) return {
       ...normalizedMap, scoreA: '—', scoreB: '—', hasResult: false, isComplete: false,
       winnerSide: '', winnerTeam: null, winnerLabel: '', hasStats: false, teamAStats: [], teamBStats: []
     }
@@ -583,7 +580,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
   })
   const completedMaps = maps.filter(map => map.hasResult)
   const displayMaps = state.isComplete || state.isForfeit ? completedMaps : maps.filter(map => map.hasProvidedInfo)
-  const mapRecords = state.isForfeit && !preservesForfeitMaps ? [] : displayMaps
+  const mapRecords = state.isForfeit ? [] : displayMaps
   const allDurationsPresent = completedMaps.length > 0 && completedMaps.every(map => map.durationSeconds > 0)
   const totalDurationSeconds = allDurationsPresent
     ? completedMaps.reduce((sum, map) => sum + map.durationSeconds, 0)
@@ -613,7 +610,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     seriesPeakPlayers
   })
   const adjacent = getAdjacentMatches(safeArr(db?.matches), match)
-  const mapCountLabel = state.isForfeit ? (preservesForfeitMaps ? String(mapRecords.length) : '—') : state.canShowResults
+  const mapCountLabel = state.isForfeit ? '—' : state.canShowResults
     ? `${completedMaps.length} / ${maps.length || completedMaps.length}`
     : maps.length ? `${maps.length}` : '—'
 
@@ -638,9 +635,9 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     scheduleLabel: getScheduleLabel(match, locale),
     scheduleCompact: formatMatchSchedule(match, { locale }).compact,
     statusLabel: state.isReview ? '结果待审核' : state.isForfeit ? '弃权' : state.isRuling ? '判定结束' : getMatchStatusText(match),
-    statusEn: state.isForfeit ? 'FORFEIT' : state.isReview ? 'UNDER REVIEW' : state.isRuling ? 'BY RULING' : state.isComplete ? 'COMPLETED' : state.isLive ? 'LIVE' : state.isCancelled ? 'CANCELLED' : state.isPostponed ? 'POSTPONED' : 'PENDING',
+    statusEn: state.isReview ? 'UNDER REVIEW' : state.isRuling ? 'BY RULING' : state.isComplete ? 'COMPLETED' : state.isLive ? 'LIVE' : state.isCancelled ? 'CANCELLED' : state.isPostponed ? 'POSTPONED' : 'PENDING',
     scoreLabel: state.canShowResults ? `${formatScore(match?.team_a?.score)} : ${formatScore(match?.team_b?.score)}` : 'VS',
-    winnerSide: (state.isComplete || state.isForfeit || state.isRuling) && !state.isCancelled && !state.isPostponed ? getMatchWinnerSide(match, state) : '',
+    winnerSide: (state.isComplete || state.isForfeit || state.isRuling) && !state.isCancelled && !state.isPostponed ? getMatchWinnerSide(match) : '',
     hasSeriesScore: state.canShowResults,
     mapCountLabel,
     totalDurationLabel,
@@ -650,8 +647,8 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
       : `/matches/${encodeURIComponent(match?.match_id || match?.raw_match_id)}/room`,
     rawDisplayName: cleanText(match?.match_display_name),
     metaItems: [
-      { key: 'stage', label: '阶段', en: 'STAGE', value: stageLabel },
-      { key: 'round', label: '轮次', en: 'ROUND', value: roundLabel },
+      { key: 'stage', label: '阶段', en: 'STAGE', value: cleanText(match?.stage) || '—' },
+      { key: 'round', label: '轮次', en: 'ROUND', value: cleanText(match?.round) || '—' },
       { key: 'format', label: '赛制', en: 'FORMAT', value: getMatchFormatLabel(match) },
       { key: 'status', label: '状态', en: 'STATUS', value: state.isReview ? '结果待审核' : state.isRuling ? '判定结束' : state.isForfeit ? '弃权' : getMatchStatusText(match), accent: true },
       { key: 'maps', label: '地图', en: 'MAPS', value: mapCountLabel },

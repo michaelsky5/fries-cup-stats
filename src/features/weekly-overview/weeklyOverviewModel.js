@@ -31,12 +31,11 @@ export function weeklyScore(value) {
 export function weeklyMapSlots(match) {
   const maps = list(match?.maps)
   const rr5 = upper(match?.format) === 'RR5'
-  const forfeited = weeklyMatchState(match) === 'ruling' && (match?.is_forfeit || upper(match?.status) === 'FORFEIT')
   const count = rr5 ? 5 : maps.length
   return Array.from({ length: count }, (_, index) => {
     const order = index + 1
     const map = maps.find((item, mapIndex) => (Number(item.map_order) > 0 ? Number(item.map_order) : mapIndex + 1) === order)
-    const state = !map ? forfeited ? 'not-played' : 'pending' : map.is_administrative ? 'ruling'
+    const state = !map ? 'pending' : map.is_administrative ? 'ruling'
       : ['LIVE', 'IN_PROGRESS'].includes(upper(map.status)) ? 'live'
         : map.winner || ['COMPLETE', 'COMPLETED'].includes(upper(map.status)) || /[1-9]/.test(text(map.match_time || map.time)) ? 'recorded' : 'pending'
     return { order, map, state }

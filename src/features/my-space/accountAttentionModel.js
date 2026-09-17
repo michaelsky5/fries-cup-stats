@@ -24,3 +24,4 @@ export function buildAccountAttention(context, locale = 'zh-CN') {
       : `${openTaskCount} 项待办，${unreadNotificationCount} 条未读消息`
   }
 }
+

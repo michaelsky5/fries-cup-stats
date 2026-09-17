@@ -1785,6 +1785,11 @@
   "{0} 伤害 /10": {
     "zh-TW": "{0} 傷害 /10"
   },
+  "{0} 位成员留下了出场记录。": {
+    "zh-TW": "{0} 位成員留下了出場記錄。",
+    "ko-KR": "{0}명의 출전 기록이 있습니다.",
+    "en-US": "{0} members have recorded appearances."
+  },
   "{0} 使用占比 {1}": {
     "zh-TW": "{0} 使用佔比 {1}",
     "en-US": "{0} usage ratio {1}",
@@ -1936,6 +1941,11 @@
     "en-US": "{0} maps",
     "ko-KR": "{0}개 맵"
   },
+  "{0} 图 {1} 胜。": {
+    "zh-TW": "{0} 圖 {1} 勝。",
+    "ko-KR": "{0}개 맵, {1}승.",
+    "en-US": "{0} maps, {1} wins."
+  },
   "{0} 图 · {1} 场": {
     "zh-TW": "{0} 圖 · {1} 場",
     "en-US": "{0} maps · {1} matches",
@@ -1943,6 +1953,11 @@
   },
   "{0} 图 · 保持个人基线 {1}%": {
     "zh-TW": "{0} 圖 · 保持個人基線 {1}%"
+  },
+  "{0} 图出场 · {1} 场比赛": {
+    "zh-TW": "{0} 圖出場 · {1} 場比賽",
+    "ko-KR": "{0}개 맵 출전 · {1}경기",
+    "en-US": "{0} maps played · {1} matches"
   },
   "{0} 图制（BO{1}）": {
     "zh-TW": "{0} 圖制（BO{1}）",
@@ -2064,6 +2079,11 @@
   "{0} 场比赛来自公开赛程；经理与教练身份来自最终名单。": {
     "zh-TW": "{0} 場比賽來自公開賽程；經理與教練身份來自最終名單。"
   },
+  "{0} 场比赛的逐图记录完整，且与系列赛比分一致。": {
+    "zh-TW": "{0} 場比賽的逐圖記錄完整，且與系列賽比分一致。",
+    "ko-KR": "{0}경기의 맵별 기록이 완전하며 시리즈 점수와 일치합니다.",
+    "en-US": "{0} matches have complete map records consistent with their series score."
+  },
   "{0} 场比赛，也值得被好好讲完": {
     "zh-TW": "{0} 場比賽，也值得被好好講完"
   },
@@ -2087,6 +2107,11 @@
     "zh-TW": "{0} 場精選比賽",
     "en-US": "{0} featured matches",
     "ko-KR": "추천 경기 {0}개"
+  },
+  "{0} 场署名": {
+    "zh-TW": "{0} 場署名",
+    "ko-KR": "{0}경기 참여 기록",
+    "en-US": "{0} credited matches"
   },
   "{0} 场解说记录，已经足够确认你曾在这里": {
     "zh-TW": "{0} 場解說記錄，已經足夠確認你曾在這裡"
@@ -2192,6 +2217,11 @@
   "{0} 张": {
     "zh-TW": "{0} 張"
   },
+  "{0} 张可选": {
+    "zh-TW": "{0} 張可選",
+    "ko-KR": "{0}개 선택 가능",
+    "en-US": "{0} available"
+  },
   "{0} 张地图": {
     "zh-TW": "{0} 張地圖",
     "en-US": "{0} maps",
@@ -2207,6 +2237,11 @@
   },
   "{0} 张地图不是一个偶然数字。它说明你不是短暂路过，而是在这届学院赛里持续出现、持续被记录。": {
     "zh-TW": "{0} 張地圖不是一個偶然數字。它說明你不是短暫路過，而是在這屆學院賽裡持續出現、持續被記錄。"
+  },
+  "{0} 张地图不足 3 份记录，暂不据此指定队伍的弱图。": {
+    "zh-TW": "{0} 張地圖不足 3 份記錄，暫不據此指定隊伍的弱圖。",
+    "ko-KR": "{0}개 맵은 기록이 3개 미만이므로 팀의 취약 맵을 판단하지 않습니다.",
+    "en-US": "{0} maps have fewer than 3 records, so no weak map is identified from them."
   },
   "{0} 张地图不足 {1} 份记录。高胜率仍需更多比赛，才能判断是否稳定。": {
     "zh-TW": "{0} 張地圖不足 {1} 份記錄。高勝率仍需更多比賽，才能判斷是否穩定。",
@@ -3994,11 +4029,6 @@
     "en-US": "Drop-down selection",
     "ko-KR": "드롭다운 선택"
   },
-  "下方保留已完成地图的赛果，其余地图因弃权未进行。": {
-    "zh-TW": "下方保留已完成地圖的賽果，其餘地圖因棄權未進行。",
-    "en-US": "Completed map results are preserved below. The remaining maps were not played due to the forfeit.",
-    "ko-KR": "완료된 맵 결과는 아래에 보존됩니다. 나머지 맵은 기권으로 진행되지 않았습니다."
-  },
   "下方可查看已发布的地图赛果，选手统计尚未提供。": {
     "zh-TW": "下方可檢視已公佈的地圖賽果，選手統計尚未提供。",
     "en-US": "Map results are available below. Player statistics have not been published.",
@@ -5124,6 +5154,16 @@
     "en-US": "Talent distribution",
     "ko-KR": "인재 분포도"
   },
+  "人报名": {
+    "zh-TW": "人報名",
+    "ko-KR": "명 등록",
+    "en-US": " registered players"
+  },
+  "人收录": {
+    "zh-TW": "人收錄",
+    "ko-KR": "명 수록",
+    "en-US": " archived players"
+  },
   "人物": {
     "zh-TW": "人物",
     "en-US": "PLAYERS",
@@ -6129,6 +6169,11 @@
     "zh-TW": "位註冊選手",
     "en-US": "registered players",
     "ko-KR": "등록된 선수"
+  },
+  "位累计收录": {
+    "zh-TW": "位累計收錄",
+    "ko-KR": "명 누적 수록",
+    "en-US": "people archived across the season"
   },
   "位置": {
     "zh-TW": "位置"
@@ -8014,6 +8059,11 @@
     "en-US": "All seasons included",
     "ko-KR": "모든 계절 포함"
   },
+  "全季收录 {0} 人": {
+    "zh-TW": "全季收錄 {0} 人",
+    "ko-KR": "시즌 전체 {0}명",
+    "en-US": "{0} players across the season"
+  },
   "全季收录选手": {
     "zh-TW": "全季收錄選手",
     "en-US": "Players across the season",
@@ -8303,6 +8353,11 @@
     "zh-TW": "全隊記錄：共同出場最多的五人組合，留下 ",
     "en-US": "Team record: The five-man combination with the most appearances together, left",
     "ko-KR": "팀 기록: 최다 출전 5인 조합, 왼쪽"
+  },
+  "全队记录：共同出场最多的五人组合，留下 {0} 图记录。": {
+    "zh-TW": "全隊記錄：共同出場最多的五人組合，留下 {0} 圖記錄。",
+    "ko-KR": "가장 많이 함께 출전한 5인 조합: {0}개 맵 기록.",
+    "en-US": "Team record: the most-used five-player lineup left {0} map records."
   },
   "全队通宵直播打排位赚了 $300K，但疲劳导致全队 OVR -1。": {
     "zh-TW": "全隊通宵直播打排位賺了 $300K，但疲勞導致全隊 OVR -1。"
@@ -9729,6 +9784,11 @@
     "en-US": "Tied for the most appearances ·",
     "ko-KR": "최다 출연 공동 기록 ·"
   },
+  "出场次数并列最多 · {0} 图并列": {
+    "zh-TW": "出場次數並列最多 · {0} 圖並列",
+    "ko-KR": "최다 출전 공동 1위 · {0}개 맵",
+    "en-US": "Tied for most played · {0} maps"
+  },
   "出场比赛": {
     "zh-TW": "出場比賽",
     "en-US": "Matches",
@@ -9823,8 +9883,8 @@
   },
   "出赛名单": {
     "zh-TW": "出賽名單",
-    "en-US": "Match roster",
-    "ko-KR": "출전 명단"
+    "en-US": "Playlist",
+    "ko-KR": "재생 목록"
   },
   "出赛名单核对与提交": {
     "zh-TW": "出賽名單核對與提交",
@@ -10143,6 +10203,11 @@
     "zh-TW": "初始報名 ",
     "en-US": "Initial Registration",
     "ko-KR": "초기 등록"
+  },
+  "初始报名 {0} 人": {
+    "zh-TW": "初始報名 {0} 人",
+    "ko-KR": "최초 등록 {0}명",
+    "en-US": "Opening roster: {0}"
   },
   "初始报名人数": {
     "zh-TW": "初始報名人數",
@@ -11999,6 +12064,11 @@
     "en-US": "There are {0} additional rounds waiting to be announced",
     "ko-KR": "발표 대기 중인 라운드가 {0}개 더 있습니다."
   },
+  "另有 {0} 场对手身份未明确，未合并进此表。": {
+    "zh-TW": "另有 {0} 場對手身份未明確，未合併進此表。",
+    "ko-KR": "상대가 확인되지 않은 {0}경기는 이 표에서 제외했습니다.",
+    "en-US": "Another {0} matches have an unidentified opponent and are excluded from this table."
+  },
   "另有 {n} 次边界并列": {
     "zh-TW": "另有 {n} 次邊界並列",
     "en-US": "Plus {n} cutoff tie",
@@ -12982,7 +13052,7 @@
   "名单": {
     "zh-TW": "名單",
     "en-US": "Roster",
-    "ko-KR": "명단"
+    "ko-KR": "목록"
   },
   "名单与转会": {
     "zh-TW": "名單與轉會",
@@ -13054,8 +13124,8 @@
   },
   "名单已提交，等待周赛管理员锁定；无需重复提交。": {
     "zh-TW": "名單已提交，等待周賽管理員鎖定；無需重複提交。",
-    "en-US": "Your roster is submitted and awaiting the weekly administrator’s lock. No need to submit again.",
-    "ko-KR": "명단이 제출되어 주간 대회 관리자의 확정을 기다리고 있습니다. 다시 제출할 필요가 없습니다."
+    "en-US": "The list has been submitted and is waiting to be locked by the weekly competition administrator; no need to resubmit.",
+    "ko-KR": "목록이 제출되었으며 주간 대회 관리자에 의해 잠기기를 기다리고 있습니다. 다시 제출할 필요가 없습니다."
   },
   "名单已收录 · 不代表实际出场": {
     "zh-TW": "名單已收錄 · 不代表實際出場"
@@ -13074,9 +13144,9 @@
     "zh-TW": "名單已鎖定"
   },
   "名单已锁定，请留意赛程发布与比赛安排。": {
-    "zh-TW": "名單已鎖定，請留意賽程發佈與比賽安排。",
-    "en-US": "Your roster is locked. Watch for the schedule and match arrangements.",
-    "ko-KR": "명단이 확정되었습니다. 대진 발표와 경기 일정을 확인해 주세요."
+    "zh-TW": "名單已鎖定，請留意賽程公佈與比賽安排。",
+    "en-US": "The roster has been locked, please pay attention to the schedule release and competition arrangements.",
+    "ko-KR": "명단이 잠겨 있습니다. 일정 공개 및 대회 준비에 주의하시기 바랍니다."
   },
   "名单待同步": {
     "zh-TW": "名單待同步",
@@ -13884,6 +13954,11 @@
     "zh-TW": "回顧章節",
     "en-US": "Review chapters",
     "ko-KR": "리뷰 장면"
+  },
+  "回顾语言": {
+    "zh-TW": "回顧語言",
+    "ko-KR": "리뷰 언어",
+    "en-US": "Review language"
   },
   "因弃权未完成": {
     "zh-TW": "因棄權未完成",
@@ -16556,6 +16631,11 @@
     "en-US": "Official keepsake ticket",
     "ko-KR": "공식 기념 티켓"
   },
+  "官方赛事": {
+    "zh-TW": "官方賽事",
+    "ko-KR": "공식 대회",
+    "en-US": "Official event"
+  },
   "官方赛果": {
     "zh-TW": "官方賽果",
     "en-US": "Official results",
@@ -17730,6 +17810,11 @@
     "en-US": "Show",
     "ko-KR": "확장"
   },
+  "展开{0}的 {1} 份记录": {
+    "zh-TW": "展開{0}的 {1} 份記錄",
+    "ko-KR": "{0} 기록 {1}개 보기",
+    "en-US": "Show {1} records for {0}"
+  },
   "展开与这位对手的全部地图记录": {
     "zh-TW": "展開與這位對手的全部地圖記錄",
     "en-US": "Open every map against this opponent",
@@ -17754,6 +17839,11 @@
     "zh-TW": "展開全部 {0} 張地圖",
     "en-US": "Show all {0} maps",
     "ko-KR": "모든 {0} 맵 확장"
+  },
+  "展开全部 {0} 支队伍": {
+    "zh-TW": "展開全部 {0} 支隊伍",
+    "ko-KR": "전체 {0}개 팀 보기",
+    "en-US": "Show all {0} teams"
   },
   "展开全部 {0} 条记录": {
     "zh-TW": "展開全部 {0} 條記錄",
@@ -17853,6 +17943,11 @@
     "zh-TW": "展開這 ",
     "en-US": "Expand this",
     "ko-KR": "이것을 확장하세요"
+  },
+  "展开这 {0} 场比赛": {
+    "zh-TW": "展開這 {0} 場比賽",
+    "ko-KR": "{0}경기 펼쳐 보기",
+    "en-US": "Show these {0} matches"
   },
   "展开逐图记录": {
     "zh-TW": "展開逐圖記錄",
@@ -18054,6 +18149,11 @@
     "zh-TW": "已追蹤",
     "en-US": "Following",
     "ko-KR": "팔로우 중"
+  },
+  "已关注 {0} 支": {
+    "zh-TW": "已追蹤 {0} 支",
+    "ko-KR": "{0}개 팀 팔로우 중",
+    "en-US": "Following {0} teams"
   },
   "已关注 {0} 支队伍。下次打开，优先呈现关注队伍的进行中比赛。": {
     "zh-TW": "已追蹤 {0} 支隊伍。下次開啟，優先呈現追蹤隊伍的進行中比賽。",
@@ -18471,8 +18571,8 @@
   },
   "已提交 · 等待锁定": {
     "zh-TW": "已提交 · 等待鎖定",
-    "en-US": "Submitted · Awaiting lock",
-    "ko-KR": "제출 완료 · 확정 대기"
+    "en-US": "Submitted · Waiting for lock",
+    "ko-KR": "제출됨 · 잠금 대기 중"
   },
   "已提交且尚未锁盘的预测会出现在这里。": {
     "zh-TW": "已提交且尚未鎖盤的預測會出現在這裡。",
@@ -18503,6 +18603,11 @@
     "zh-TW": "已提供 ",
     "en-US": "Provided",
     "ko-KR": "제공됨"
+  },
+  "已提供 {0} / {1} 位赛季收录选手的资料。": {
+    "zh-TW": "已提供 {0} / {1} 位賽季收錄選手的資料。",
+    "ko-KR": "시즌 등록 선수 {1}명 중 {0}명의 기록이 공개되어 있습니다.",
+    "en-US": "{0} of {1} archived player records available."
   },
   "已提出争议": {
     "zh-TW": "已提出爭議",
@@ -18663,7 +18768,7 @@
   "已确认参赛": {
     "zh-TW": "已確認參賽",
     "en-US": "Participation confirmed",
-    "ko-KR": "참가 확정"
+    "ko-KR": "참여가 확인되었습니다."
   },
   "已移除 {0} · 当前 {1}/3": {
     "zh-TW": "已移除 {0} · 當前 {1}/3"
@@ -20685,6 +20790,11 @@
     "en-US": "Current stats are not sufficient for reliable data ratings.",
     "ko-KR": "현재 통계는 신뢰할 수 있는 데이터 점수를 생성하기에 충분하지 않습니다."
   },
+  "当前署名": {
+    "zh-TW": "當前署名",
+    "ko-KR": "선택한 참여 기록",
+    "en-US": "Selected credit"
+  },
   "当前署名 ": {
     "zh-TW": "當前署名 ",
     "en-US": "Selected credit",
@@ -21288,8 +21398,8 @@
   },
   "当周参赛": {
     "zh-TW": "當週參賽",
-    "en-US": "Weekly participation",
-    "ko-KR": "주간 참가"
+    "en-US": "Contest this week",
+    "ko-KR": "이번 주 콘테스트"
   },
   "当周参赛确认": {
     "zh-TW": "當週參賽確認"
@@ -21594,8 +21704,8 @@
   },
   "待确认参赛": {
     "zh-TW": "待確認參賽",
-    "en-US": "Confirm participation",
-    "ko-KR": "참가 확인 필요"
+    "en-US": "Pending confirmation of participation",
+    "ko-KR": "참여 확인 보류 중"
   },
   "待确认的经理交接": {
     "zh-TW": "待確認的經理交接",
@@ -22915,6 +23025,11 @@
     "en-US": "put",
     "ko-KR": "넣다"
   },
+  "把{0}拿近一点看。": {
+    "zh-TW": "把{0}拿近一點看。",
+    "ko-KR": "{0}, 자세히 살펴보세요.",
+    "en-US": "A closer look at {0}."
+  },
   "把一个赛季，留给这个名字。": {
     "zh-TW": "把一個賽季，留給這個名字。",
     "en-US": "A defining player. A season to remember.",
@@ -23166,16 +23281,6 @@
     "zh-TW": "報名通知 ·",
     "en-US": "Registration Notice ·",
     "ko-KR": "등록 공지 ·"
-  },
-  "报名通知待阅": {
-    "zh-TW": "報名通知待閱",
-    "en-US": "Registration notices to read",
-    "ko-KR": "확인할 등록 알림"
-  },
-  "通知保留当时的处理记录。当前报名状态见上方队伍资料。": {
-    "zh-TW": "通知保留當時的處理記錄。目前報名狀態見上方隊伍資料。",
-    "en-US": "Notices record earlier decisions. The team details above show your current registration status.",
-    "ko-KR": "알림에는 당시 처리 내역이 남아 있습니다. 현재 등록 상태는 위의 팀 정보에서 확인하세요."
   },
   "报名通过后会继续同步你的队伍关系。": {
     "zh-TW": "報名通過後會繼續同步你的隊伍關係。",
@@ -23556,6 +23661,11 @@
     "zh-TW": "按本季出場時長",
     "en-US": "By time played this season",
     "ko-KR": "이번 시즌 경기 시간 기준"
+  },
+  "按本届已发布的轮次与赛果，回看队伍的突围过程。": {
+    "zh-TW": "依本屆已公布的輪次與賽果，回看隊伍的突圍過程。",
+    "ko-KR": "공개된 라운드와 경기 결과를 따라 팀의 최종 진출 과정을 돌아보세요.",
+    "en-US": "Revisit each team’s LCQ journey through the published rounds and results."
   },
   "按本届规则填写双方应得积分。比分不等于积分。": {
     "zh-TW": "按本屆規則填寫雙方應得積分。比分不等於積分。",
@@ -28557,8 +28667,8 @@
   },
   "本周不参赛": {
     "zh-TW": "本週不參賽",
-    "en-US": "Sitting out this week",
-    "ko-KR": "이번 주 불참"
+    "en-US": "Not participating this week",
+    "ko-KR": "이번 주에는 경쟁이 없습니다."
   },
   "本周全部对阵": {
     "zh-TW": "本週全部對陣",
@@ -30732,6 +30842,11 @@
     "en-US": "All {0} teams",
     "ko-KR": "{0}개 팀 모두 보기"
   },
+  "查看全部 {0} 条结果": {
+    "zh-TW": "檢視全部 {0} 條結果",
+    "ko-KR": "결과 {0}개 모두 보기",
+    "en-US": "View all {0} results"
+  },
   "查看全部 →": {
     "zh-TW": "檢視全部 →",
     "en-US": "View all →",
@@ -31941,6 +32056,11 @@
     "zh-TW": "核對全部 ",
     "en-US": "Check all",
     "ko-KR": "모두 확인"
+  },
+  "核对全部 {0} 场逐场数据": {
+    "zh-TW": "核對全部 {0} 場逐場資料",
+    "ko-KR": "전체 {0}경기 데이터 확인",
+    "en-US": "Check all {0} match records"
   },
   "核对全部 {0} 张地图 · 成员、阵容与禁用": {
     "zh-TW": "核對全部 {0} 張地圖 · 成員、陣容與停用",
@@ -33788,6 +33908,11 @@
     "zh-TW": "比分以 ",
     "en-US": "The score ends with",
     "ko-KR": "점수는 다음으로 끝납니다."
+  },
+  "比分以 {0} 为左侧。": {
+    "zh-TW": "比分以 {0} 為左側。",
+    "ko-KR": "{0}의 점수가 왼쪽에 표시됩니다.",
+    "en-US": "Scores show {0} on the left."
   },
   "比分以 {0} 在前": {
     "zh-TW": "比分以 {0} 在前",
@@ -35642,6 +35767,11 @@
     "en-US": "Right side to continue · left side to go back · keyboard ← →",
     "ko-KR": "오른쪽을 누르면 계속 · 왼쪽을 누르면 이전 · 키보드 ← →"
   },
+  "点击名字，继续看他的赛季。": {
+    "zh-TW": "點選名字，繼續看他的賽季。",
+    "ko-KR": "이름을 선택해 선수의 시즌 기록을 확인하세요.",
+    "en-US": "Select a name to explore their season."
+  },
   "点击次数，核对比赛": {
     "zh-TW": "點選次數，核對比賽",
     "en-US": "Select a count to inspect maps",
@@ -37199,8 +37329,8 @@
   },
   "确认参赛后开放": {
     "zh-TW": "確認參賽後開放",
-    "en-US": "Available after participation confirmation",
-    "ko-KR": "참가 확정 후 이용 가능"
+    "en-US": "Open after confirmation of participation",
+    "ko-KR": "참여 확인 후 오픈"
   },
   "确认参赛，提交出赛名单": {
     "zh-TW": "確認參賽，提交出賽名單",
@@ -37886,6 +38016,11 @@
   },
   "突围": {
     "zh-TW": "突圍"
+  },
+  "突围之路，": {
+    "zh-TW": "突圍之路，",
+    "ko-KR": "최종 진출까지,",
+    "en-US": "The road through LCQ,"
   },
   "突围区": {
     "zh-TW": "突圍區",
@@ -39126,8 +39261,8 @@
   },
   "管理员已锁定": {
     "zh-TW": "管理員已鎖定",
-    "en-US": "Locked by administrator",
-    "ko-KR": "관리자가 확정함"
+    "en-US": "Administrator locked",
+    "ko-KR": "관리자가 잠겼습니다."
   },
   "管理员已锁定，正式出赛名单已确认。": {
     "zh-TW": "管理員已鎖定，正式出賽名單已確認。",
@@ -39403,6 +39538,11 @@
     "zh-TW": "約旦",
     "en-US": "Jordan",
     "ko-KR": "요르단"
+  },
+  "纪念图格式": {
+    "zh-TW": "紀念圖格式",
+    "ko-KR": "기념 이미지 형식",
+    "en-US": "Keepsake format"
   },
   "纪念放映 · 非实体入场凭证": {
     "zh-TW": "紀念放映 · 非實體入場憑證"
@@ -41267,8 +41407,8 @@
   },
   "草稿待提交": {
     "zh-TW": "草稿待提交",
-    "en-US": "Draft · Not submitted",
-    "ko-KR": "초안 · 미제출"
+    "en-US": "Draft pending submission",
+    "ko-KR": "초안 제출 보류 중"
   },
   "草稿待锁定": {
     "zh-TW": "草稿待鎖定",
@@ -44153,6 +44293,11 @@
   "赛事见证、冠军之路、共同记忆": {
     "zh-TW": "賽事見證、冠軍之路、共同記憶"
   },
+  "赛事见证档案": {
+    "zh-TW": "賽事見證檔案",
+    "ko-KR": "대회 관람 기록",
+    "en-US": "Season witness archive"
+  },
   "赛事见证票": {
     "zh-TW": "賽事見證票",
     "en-US": "Season witness ticket",
@@ -46134,6 +46279,11 @@
     "zh-TW": "返回晉級形勢",
     "en-US": "Back to advancement",
     "ko-KR": "진출 상황으로 돌아가기"
+  },
+  "返回本届赛事": {
+    "zh-TW": "返回本屆賽事",
+    "ko-KR": "이번 대회로 돌아가기",
+    "en-US": "Back to this event"
   },
   "返回本次参赛进度 →": {
     "zh-TW": "返回本次參賽進度 →",
@@ -48585,6 +48735,11 @@
     "zh-TW": "逐圖記錄暫未公佈。",
     "en-US": "Map records have not been published.",
     "ko-KR": "Picture by Picture 녹화가 아직 출시되지 않았습니다."
+  },
+  "逐场回看。": {
+    "zh-TW": "逐場回看。",
+    "ko-KR": "경기마다 돌아봅니다.",
+    "en-US": "match by match."
   },
   "逐场留一删除": {
     "zh-TW": "逐場留一刪除",
@@ -51090,8 +51245,8 @@
   },
   "需要选择 {0}–{1} 人，当前 {2} 人。": {
     "zh-TW": "需要選擇 {0}–{1} 人，當前 {2} 人。",
-    "en-US": "Select {0}–{1} players. Currently selected: {2}.",
-    "ko-KR": "{0}~{1}명을 선택하세요. 현재 {2}명입니다."
+    "en-US": "Need to select {0}–{1} people, currently {2} people.",
+    "ko-KR": "{0}~{1}명을 선택해야 하며 현재는 {2}명입니다."
   },
   "霓虹枢纽": {
     "zh-TW": "霓虹交叉口",
@@ -52260,525 +52415,5 @@
     "zh-TW": "D.Va",
     "ko-KR": "D.Va",
     "en-US": "D.Va"
-  },
-  "需要队伍负责人邀请": {
-    "en-US": "Team manager invitation required",
-    "ko-KR": "팀 담당자 초대가 필요합니다",
-    "zh-TW": "需要隊伍負責人邀請"
-  },
-  "当前账号尚未接受本赛季的负责人邀请。请使用赛事负责人发给你的报名邀请链接；队员邀请只用于确认本人入队。": {
-    "en-US": "Accept the organizer’s manager invitation for this season. Player invitations only confirm the invited player’s place on a roster.",
-    "ko-KR": "이번 시즌의 팀 담당자 초대를 수락해 주세요. 선수 초대는 본인의 명단 합류 확인에만 사용됩니다.",
-    "zh-TW": "當前賬號尚未接受本賽季的負責人邀請。請使用賽事負責人發給你的報名邀請鏈接；隊員邀請只用於確認本人入隊。"
-  },
-  "队伍参赛资料": {
-    "en-US": "Team eligibility",
-    "ko-KR": "팀 참가 정보",
-    "zh-TW": "隊伍參賽資料"
-  },
-  "赛区用于核对首发资格；实力与历史成绩用于安排合适的对手。没有段位报名门槛。": {
-    "en-US": "Region is used to check starting-lineup eligibility. Ranks and past results help with seeding; there is no minimum rank.",
-    "ko-KR": "지역은 선발 자격 확인에, 실력과 이전 성적은 대진 배정에 사용됩니다. 최소 티어 제한은 없습니다.",
-    "zh-TW": "賽區用於核對首發資格；實力與歷史成績用於安排合適的對手。沒有段位報名門檻。"
-  },
-  "队伍所属赛区": {
-    "en-US": "Team region",
-    "ko-KR": "팀 지역",
-    "zh-TW": "隊伍所屬賽區"
-  },
-  "中国（含港澳台）": {
-    "en-US": "China (including Hong Kong, Macao and Taiwan)",
-    "ko-KR": "중국(홍콩·마카오·대만 포함)",
-    "zh-TW": "中國（含港澳臺）"
-  },
-  "东南亚 SEA": {
-    "en-US": "Southeast Asia · SEA",
-    "ko-KR": "동남아시아 · SEA",
-    "zh-TW": "東南亞 SEA"
-  },
-  "大洋洲 OCE": {
-    "en-US": "Oceania · OCE",
-    "ko-KR": "오세아니아 · OCE",
-    "zh-TW": "大洋洲 OCE"
-  },
-  "韩国 KR": {
-    "en-US": "Korea · KR",
-    "ko-KR": "한국 · KR",
-    "zh-TW": "韓國 KR"
-  },
-  "日本 JP": {
-    "en-US": "Japan · JP",
-    "ko-KR": "일본 · JP",
-    "zh-TW": "日本 JP"
-  },
-  "队伍 Logo 链接（可选）": {
-    "en-US": "Team logo URL (optional)",
-    "ko-KR": "팀 로고 URL(선택)",
-    "zh-TW": "隊伍 Logo 鏈接（可選）"
-  },
-  "历史赛事表现": {
-    "en-US": "Past tournament results",
-    "ko-KR": "이전 대회 성적",
-    "zh-TW": "歷史賽事表現"
-  },
-  "填写赛事名称与成绩；没有参赛经历可填无": {
-    "en-US": "List events and results, or enter “None”.",
-    "ko-KR": "대회명과 성적을 입력하세요. 참가 이력이 없으면 “없음”을 입력하세요.",
-    "zh-TW": "填寫賽事名稱與成績；沒有參賽經歷可填無"
-  },
-  "教练称呼（可选）": {
-    "en-US": "Coach name (optional)",
-    "ko-KR": "코치 이름(선택)",
-    "zh-TW": "教練稱呼（可選）"
-  },
-  "教练备用联系方式（可选）": {
-    "en-US": "Coach backup contact (optional)",
-    "ko-KR": "코치 예비 연락처(선택)",
-    "zh-TW": "教練備用聯繫方式（可選）"
-  },
-  "备用联系邮箱或其他联系方式，仅赛管可见": {
-    "en-US": "Backup email or contact, visible to tournament staff only",
-    "ko-KR": "대회 운영진만 볼 수 있는 예비 이메일 또는 연락처",
-    "zh-TW": "備用聯繫郵箱或其他聯繫方式，僅賽管可見"
-  },
-  "本赛季报名已通过": {
-    "en-US": "Season registration approved",
-    "ko-KR": "시즌 참가 신청 승인 완료",
-    "zh-TW": "本賽季報名已通過"
-  },
-  "下一步：登记开放中的参赛周期，再确认本周是否参赛并提交名单。": {
-    "en-US": "Next: enroll in an open cycle, confirm weekly participation, then submit your roster.",
-    "ko-KR": "다음 단계: 열린 주기에 등록하고 이번 주 참가 여부와 명단을 제출하세요.",
-    "zh-TW": "下一步：登記開放中的參賽週期，再確認本週是否參賽並提交名單。"
-  },
-  "继续登记周期与本周参赛 →": {
-    "en-US": "Continue to cycle and weekly entry →",
-    "ko-KR": "주기 등록 및 주간 참가로 이동 →",
-    "zh-TW": "繼續登記週期與本週參賽 →"
-  },
-  "提交前检查": {
-    "en-US": "Before you submit",
-    "ko-KR": "제출 전 확인",
-    "zh-TW": "提交前檢查"
-  },
-  "人 · 本人确认": {
-    "en-US": " players · Confirmed",
-    "ko-KR": "명 · 본인 확인",
-    "zh-TW": "人 · 本人確認"
-  },
-  "请补齐队伍所属赛区和历史赛事表现。": {
-    "en-US": "Add the team’s region and past results.",
-    "ko-KR": "팀 지역과 이전 대회 성적을 입력하세요.",
-    "zh-TW": "請補齊隊伍所屬賽區和歷史賽事表現。"
-  },
-  "资格资料待本人确认：": {
-    "en-US": "Awaiting personal eligibility confirmation: ",
-    "ko-KR": "본인 자격 확인 대기: ",
-    "zh-TW": "資格資料待本人確認："
-  },
-  "KR、JP 队伍的名单至少需要两名中国（含港澳台）选手。": {
-    "en-US": "KR and JP rosters need at least two players from China (including Hong Kong, Macao and Taiwan).",
-    "ko-KR": "KR·JP 명단에는 중국(홍콩·마카오·대만 포함) 선수가 최소 2명 필요합니다.",
-    "zh-TW": "KR、JP 隊伍的名單至少需要兩名中國（含港澳臺）選手。"
-  },
-  "本人确认并保存资料": {
-    "en-US": "Confirm and save my details",
-    "ko-KR": "본인 확인 후 저장",
-    "zh-TW": "本人確認並保存資料"
-  },
-  "本人参赛资格": {
-    "en-US": "My eligibility",
-    "ko-KR": "본인 참가 자격",
-    "zh-TW": "本人參賽資格"
-  },
-  "用于赛事资格核验与对阵分档，仅本人、队伍负责人和有权限的赛管可查看。周赛不设段位门槛。": {
-    "en-US": "Used for eligibility checks and seeding. Only you, your team manager and authorized tournament staff can view this. There is no minimum rank.",
-    "ko-KR": "참가 자격 확인과 대진 배정에 사용됩니다. 본인, 팀 담당자 및 권한이 있는 운영진만 볼 수 있습니다. 최소 티어 제한은 없습니다.",
-    "zh-TW": "用於賽事資格核驗與對陣分檔，僅本人、隊伍負責人和有權限的賽管可查看。周賽不設段位門檻。"
-  },
-  "国籍／地区范围": {
-    "en-US": "Nationality / region group",
-    "ko-KR": "국적 / 지역 구분",
-    "zh-TW": "國籍／地區範圍"
-  },
-  "OWCS 2026 参赛经历": {
-    "en-US": "OWCS 2026 participation",
-    "ko-KR": "OWCS 2026 참가 이력",
-    "zh-TW": "OWCS 2026 參賽經歷"
-  },
-  "没有参加": {
-    "en-US": "Did not participate",
-    "ko-KR": "참가한 적 없음",
-    "zh-TW": "沒有參加"
-  },
-  "仅海选／公开预选，未进入正赛名单": {
-    "en-US": "Open qualifiers only; no main-event roster",
-    "ko-KR": "공개 예선만 참가, 본선 명단에는 포함되지 않음",
-    "zh-TW": "僅海選／公開預選，未進入正賽名單"
-  },
-  "进入过任一赛区正赛大名单": {
-    "en-US": "Listed on a main-event roster in any region",
-    "ko-KR": "어느 지역이든 본선 명단에 포함된 적 있음",
-    "zh-TW": "進入過任一賽區正賽大名單"
-  },
-  "进入过 OWCS 2026 正赛大名单的选手不符合本届周赛资格。KR、JP 队伍每张地图的首发须包含至少两名中国（含港澳台）选手。": {
-    "en-US": "Players listed on an OWCS 2026 main-event roster are ineligible. KR and JP teams must start at least two players from China (including Hong Kong, Macao and Taiwan) on every map.",
-    "ko-KR": "OWCS 2026 본선 명단에 포함된 선수는 참가할 수 없습니다. KR·JP 팀은 매 전장 선발에 중국(홍콩·마카오·대만 포함) 선수를 최소 2명 포함해야 합니다.",
-    "zh-TW": "進入過 OWCS 2026 正賽大名單的選手不符合本屆周賽資格。KR、JP 隊伍每張地圖的首發須包含至少兩名中國（含港澳臺）選手。"
-  },
-  "{0}当前段位": {
-    "en-US": "Current {0} rank",
-    "ko-KR": "현재 {0} 티어",
-    "zh-TW": "{0}當前段位"
-  },
-  "例如：大师 3；未定级请填未定级": {
-    "en-US": "For example: Master 3 or Unranked",
-    "ko-KR": "예: 마스터 3. 배치 전이면 미배치로 입력하세요.",
-    "zh-TW": "例如：大師 3；未定級請填未定級"
-  },
-  "阅读周赛 V1.9 规则书 ↗": {
-    "en-US": "Read weekly rules V1.9 ↗",
-    "ko-KR": "주간 대회 V1.9 규정 보기 ↗",
-    "zh-TW": "閱讀周賽 V1.9 規則書 ↗"
-  },
-  "我已阅读规则，以上资料真实，且使用本人战网账号参赛。": {
-    "en-US": "I have read the rules, these details are accurate, and I will use my own Battle.net account.",
-    "ko-KR": "규정을 읽었으며, 위 정보는 사실이고 본인 Battle.net 계정으로 참가합니다.",
-    "zh-TW": "我已閱讀規則，以上資料真實，且使用本人戰網賬號參賽。"
-  },
-  "登记参赛周期": {
-    "en-US": "Enroll in a cycle",
-    "ko-KR": "참가 주기 등록",
-    "zh-TW": "登記參賽週期"
-  },
-  "队伍资格已通过。登记周期后，每周可自行选择是否参赛；登记本身不会确认出场。": {
-    "en-US": "Your team is approved. After enrolling, choose whether to participate each week. Cycle enrollment does not confirm weekly attendance.",
-    "ko-KR": "팀 자격이 승인되었습니다. 주기 등록 후 매주 참가 여부를 선택할 수 있으며, 등록만으로 주간 참가가 확정되지는 않습니다.",
-    "zh-TW": "隊伍資格已通過。登記週期後，每週可自行選擇是否參賽；登記本身不會確認出場。"
-  },
-  "查看或更新我的参赛资格资料": {
-    "en-US": "View or update my eligibility details",
-    "ko-KR": "내 참가 자격 정보 보기 / 수정",
-    "zh-TW": "查看或更新我的參賽資格資料"
-  },
-  "补齐我的参赛资格资料": {
-    "en-US": "Complete my eligibility details",
-    "ko-KR": "내 참가 자격 정보 입력",
-    "zh-TW": "補齊我的參賽資格資料"
-  },
-  "周期登记已保存，但最新资料读取失败。请刷新资料后继续。": {
-    "en-US": "Cycle enrollment was saved, but refresh failed. Reload the data to continue.",
-    "ko-KR": "주기 등록은 저장되었지만 최신 정보를 불러오지 못했습니다. 새로고침 후 계속하세요.",
-    "zh-TW": "週期登記已保存，但最新資料讀取失敗。請刷新資料後繼續。"
-  },
-  "暂时无法确认登记结果，请刷新资料核对后再试。": {
-    "en-US": "Enrollment could not be confirmed. Refresh and check before trying again.",
-    "ko-KR": "등록 결과를 확인할 수 없습니다. 새로고침하여 확인한 후 다시 시도하세요.",
-    "zh-TW": "暫時無法確認登記結果，請刷新資料核對後再試。"
-  },
-  "周期报名开放": {
-    "en-US": "Cycle enrollment open",
-    "ko-KR": "주기 등록 접수 중",
-    "zh-TW": "週期報名開放"
-  },
-  "本周接受新队伍登记": {
-    "en-US": "New teams accepted this week",
-    "ko-KR": "이번 주 신규 팀 등록 가능",
-    "zh-TW": "本週接受新隊伍登記"
-  },
-  "正在登记…": {
-    "en-US": "Enrolling…",
-    "ko-KR": "등록 중…",
-    "zh-TW": "正在登記…"
-  },
-  "登记并继续 →": {
-    "en-US": "Enroll and continue →",
-    "ko-KR": "등록 후 계속 →",
-    "zh-TW": "登記並繼續 →"
-  },
-  "本人参赛资料已保存，队长可以继续核对报名。": {
-    "en-US": "Your eligibility details are saved. Your captain can continue reviewing the application.",
-    "ko-KR": "본인 참가 정보가 저장되었습니다. 주장이 신청을 계속 확인할 수 있습니다.",
-    "zh-TW": "本人參賽資料已保存，隊長可以繼續核對報名。"
-  },
-  "报名已提交，接下来由赛事负责人审核。": {
-    "en-US": "Application submitted. The organizer will review it next.",
-    "ko-KR": "참가 신청이 제출되었습니다. 대회 담당자의 심사를 기다려 주세요.",
-    "zh-TW": "報名已提交，接下來由賽事負責人審核。"
-  },
-  "更改已保存。": {
-    "en-US": "Changes saved.",
-    "ko-KR": "변경 사항이 저장되었습니다.",
-    "zh-TW": "更改已保存。"
-  },
-  "上次参赛": {
-    "en-US": "Last appearance",
-    "ko-KR": "최근 참가",
-    "zh-TW": "上次參賽"
-  },
-  "与最近参赛重合": {
-    "en-US": "Retained from last appearance",
-    "ko-KR": "최근 참가 명단에서 유지",
-    "zh-TW": "與最近參賽重合"
-  },
-  "✓ 人数与名单延续符合要求": {
-    "en-US": "✓ Roster size and continuity meet the requirements",
-    "ko-KR": "✓ 인원수와 명단 유지 조건을 충족합니다",
-    "zh-TW": "✓ 人數與名單延續符合要求"
-  },
-  "首次实际参赛，无需固定核心。以后每周与最近一次实际参赛名单至少保留 3 人。": {
-    "en-US": "First appearance: no fixed core is required. Future rosters must retain at least three players from the latest actual appearance.",
-    "ko-KR": "첫 참가에는 고정 핵심 선수가 필요 없습니다. 이후에는 최근 실제 참가 명단에서 최소 3명을 유지해야 합니다.",
-    "zh-TW": "首次實際參賽，無需固定核心。以後每週與最近一次實際參賽名單至少保留 3 人。"
-  },
-  "核对基准：{0}。至少保留 3 人；正常休赛不清积分，也不替换这份基准名单。": {
-    "en-US": "Reference: {0}. Retain at least three players. A normal week off preserves points and this reference roster.",
-    "ko-KR": "기준: {0}. 최소 3명을 유지하세요. 정상 휴식 주에는 포인트와 기준 명단이 유지됩니다.",
-    "zh-TW": "核對基準：{0}。至少保留 3 人；正常休賽不清積分，也不替換這份基準名單。"
-  },
-  "最近一次实际参赛名单尚未核实，请联系赛管。": {
-    "en-US": "The latest actual roster has not been verified. Contact tournament staff.",
-    "ko-KR": "최근 실제 참가 명단이 확인되지 않았습니다. 운영진에 문의하세요.",
-    "zh-TW": "最近一次實際參賽名單尚未核實，請聯繫賽管。"
-  },
-  "请选择上方开放中的周期完成登记；若暂未开放，请等待周赛管理员公布周期。": {
-    "en-US": "Enroll in an open cycle above. If none is open, wait for the organizer to announce one.",
-    "ko-KR": "위에서 접수 중인 주기에 등록하세요. 열린 주기가 없으면 운영진의 공지를 기다려 주세요.",
-    "zh-TW": "請選擇上方開放中的週期完成登記；若暫未開放，請等待周賽管理員公佈週期。"
-  },
-  "报名资料、本人确认和人数均符合要求后可以提交。": {
-    "en-US": "Submit once eligibility details, personal confirmations and roster size meet the requirements.",
-    "ko-KR": "참가 정보, 본인 확인 및 인원수 조건을 모두 충족하면 제출할 수 있습니다.",
-    "zh-TW": "報名資料、本人確認和人數均符合要求後可以提交。"
-  },
-  "本队资格已关联，当前尚无开放中的参赛周期。周期开放后可在此登记。": {
-    "zh-TW": "本隊資格已關聯，當前尚無開放中的參賽週期。週期開放後可在此登記。",
-    "en-US": "Your team is linked. No cycle is currently open; enroll here when registration opens.",
-    "ko-KR": "팀 자격이 연결되었습니다. 현재 접수 중인 주기가 없으며, 접수가 열리면 여기서 등록할 수 있습니다."
-  },
-  "与最近一次实际参赛名单仅重合 {0} 人，至少需要 {1} 人。若按新队伍参赛，须先完成资格审核。": {
-    "zh-TW": "與最近一次實際參賽名單僅重合 {0} 人，至少需要 {1} 人。若按新隊伍參賽，須先完成資格審核。",
-    "en-US": "Only {0} players are retained from the last actual appearance; at least {1} are required. Entering as a new team requires eligibility review.",
-    "ko-KR": "최근 실제 참가 명단에서 {0}명만 유지되었습니다. 최소 {1}명이 필요합니다. 신규 팀으로 참가하려면 자격 심사가 필요합니다."
-  },
-  "最近一次参赛名单尚未核实，请刷新或联系赛管。": {
-    "zh-TW": "最近一次參賽名單尚未核實，請刷新或聯繫賽管。",
-    "en-US": "The last roster has not been verified. Refresh or contact tournament staff.",
-    "ko-KR": "최근 참가 명단이 확인되지 않았습니다. 새로고침하거나 운영진에 문의하세요."
-  },
-  "已选 {0} 人 · 重合 {1} 人{2}": {
-    "zh-TW": "已選 {0} 人 · 重合 {1} 人{2}",
-    "en-US": "{0} selected · {1} retained{2}",
-    "ko-KR": "{0}명 선택 · {1}명 유지{2}"
-  },
-  "首次参赛": {
-    "zh-TW": "首次參賽",
-    "en-US": "First appearance",
-    "ko-KR": "첫 참가"
-  },
-  "已选 {0} 人 · 首次参赛{1}": {
-    "zh-TW": "已選 {0} 人 · 首次參賽{1}",
-    "en-US": "{0} selected · First appearance{1}",
-    "ko-KR": "{0}명 선택 · 첫 참가{1}"
-  },
-  "{0} · 登记参赛周期": {
-    "zh-TW": "{0} · 登記參賽週期",
-    "en-US": "{0} · Enroll in a cycle",
-    "ko-KR": "{0} · 참가 주기 등록"
-  },
-  "{0}。队伍资格已通过，登记后继续确认每周参赛。": {
-    "zh-TW": "{0}。隊伍資格已通過，登記後繼續確認每週參賽。",
-    "en-US": "{0}. Team eligibility is approved. Enroll, then confirm participation each week.",
-    "ko-KR": "{0}. 팀 참가 자격이 승인되었습니다. 주기를 등록한 후 매주 참가 여부를 확인하세요."
-  },
-  "{0} 分 · 旧规则记录": {
-    "en-US": "{0} points · Legacy ruling",
-    "ko-KR": "{0}점 · 이전 규정 기록",
-    "zh-TW": "{0} 分 · 舊規則記錄"
-  },
-  "{0} 分 · 保留已完成地图积分": {
-    "en-US": "{0} points · Earned map points retained",
-    "ko-KR": "{0}점 · 완료된 전장의 점수 유지",
-    "zh-TW": "{0} 分 · 保留已完成地圖積分"
-  },
-  "旧规则记录仅供核对；已结算积分不会自动改变，未结算裁定须更正并重新复核。": {
-    "en-US": "This uses a previous rule. Posted points stay unchanged; unsettled rulings require correction and a new review.",
-    "ko-KR": "이전 규정에 따른 기록입니다. 정산된 점수는 자동으로 바뀌지 않으며, 미정산 판정은 수정 후 재검토해야 합니다.",
-    "zh-TW": "舊規則記錄僅供核對；已結算積分不會自動改變，未結算裁定須更正並重新複核。"
-  },
-  "双方保留已完成地图的胜／负／平积分；剩余地图弃权方每图 0 分，对手每图 2 分。": {
-    "en-US": "Both teams keep points earned on completed maps. For each remaining map, the forfeiting team gets 0 points and its opponent gets 2.",
-    "ko-KR": "양 팀은 완료된 전장의 승리·패배·무승부 점수를 유지합니다. 남은 전장마다 기권 팀은 0점, 상대 팀은 2점을 받습니다.",
-    "zh-TW": "雙方保留已完成地圖的勝／負／平積分；剩餘地圖棄權方每圖 0 分，對手每圖 2 分。"
-  },
-  "{0} 位成员留下了出场记录。": {
-    "zh-TW": "{0} 位成員留下了出場記錄。",
-    "ko-KR": "{0}명의 출전 기록이 있습니다.",
-    "en-US": "{0} members have recorded appearances."
-  },
-  "{0} 图 {1} 胜。": {
-    "zh-TW": "{0} 圖 {1} 勝。",
-    "ko-KR": "{0}개 맵, {1}승.",
-    "en-US": "{0} maps, {1} wins."
-  },
-  "{0} 图出场 · {1} 场比赛": {
-    "zh-TW": "{0} 圖出場 · {1} 場比賽",
-    "ko-KR": "{0}개 맵 출전 · {1}경기",
-    "en-US": "{0} maps played · {1} matches"
-  },
-  "{0} 场比赛的逐图记录完整，且与系列赛比分一致。": {
-    "zh-TW": "{0} 場比賽的逐圖記錄完整，且與系列賽比分一致。",
-    "ko-KR": "{0}경기의 맵별 기록이 완전하며 시리즈 점수와 일치합니다.",
-    "en-US": "{0} matches have complete map records consistent with their series score."
-  },
-  "{0} 场署名": {
-    "zh-TW": "{0} 場署名",
-    "ko-KR": "{0}경기 참여 기록",
-    "en-US": "{0} credited matches"
-  },
-  "{0} 张可选": {
-    "zh-TW": "{0} 張可選",
-    "ko-KR": "{0}개 선택 가능",
-    "en-US": "{0} available"
-  },
-  "{0} 张地图不足 3 份记录，暂不据此指定队伍的弱图。": {
-    "zh-TW": "{0} 張地圖不足 3 份記錄，暫不據此指定隊伍的弱圖。",
-    "ko-KR": "{0}개 맵은 기록이 3개 미만이므로 팀의 취약 맵을 판단하지 않습니다.",
-    "en-US": "{0} maps have fewer than 3 records, so no weak map is identified from them."
-  },
-  "人报名": {
-    "zh-TW": "人報名",
-    "ko-KR": "명 등록",
-    "en-US": " registered players"
-  },
-  "人收录": {
-    "zh-TW": "人收錄",
-    "ko-KR": "명 수록",
-    "en-US": " archived players"
-  },
-  "位累计收录": {
-    "zh-TW": "位累計收錄",
-    "ko-KR": "명 누적 수록",
-    "en-US": "people archived across the season"
-  },
-  "全季收录 {0} 人": {
-    "zh-TW": "全季收錄 {0} 人",
-    "ko-KR": "시즌 전체 {0}명",
-    "en-US": "{0} players across the season"
-  },
-  "全队记录：共同出场最多的五人组合，留下 {0} 图记录。": {
-    "zh-TW": "全隊記錄：共同出場最多的五人組合，留下 {0} 圖記錄。",
-    "ko-KR": "가장 많이 함께 출전한 5인 조합: {0}개 맵 기록.",
-    "en-US": "Team record: the most-used five-player lineup left {0} map records."
-  },
-  "出场次数并列最多 · {0} 图并列": {
-    "zh-TW": "出場次數並列最多 · {0} 圖並列",
-    "ko-KR": "최다 출전 공동 1위 · {0}개 맵",
-    "en-US": "Tied for most played · {0} maps"
-  },
-  "初始报名 {0} 人": {
-    "zh-TW": "初始報名 {0} 人",
-    "ko-KR": "최초 등록 {0}명",
-    "en-US": "Opening roster: {0}"
-  },
-  "另有 {0} 场对手身份未明确，未合并进此表。": {
-    "zh-TW": "另有 {0} 場對手身份未明確，未合併進此表。",
-    "ko-KR": "상대가 확인되지 않은 {0}경기는 이 표에서 제외했습니다.",
-    "en-US": "Another {0} matches have an unidentified opponent and are excluded from this table."
-  },
-  "回顾语言": {
-    "zh-TW": "回顧語言",
-    "ko-KR": "리뷰 언어",
-    "en-US": "Review language"
-  },
-  "官方赛事": {
-    "zh-TW": "官方賽事",
-    "ko-KR": "공식 대회",
-    "en-US": "Official event"
-  },
-  "展开{0}的 {1} 份记录": {
-    "zh-TW": "展開{0}的 {1} 份記錄",
-    "ko-KR": "{0} 기록 {1}개 보기",
-    "en-US": "Show {1} records for {0}"
-  },
-  "展开全部 {0} 支队伍": {
-    "zh-TW": "展開全部 {0} 支隊伍",
-    "ko-KR": "전체 {0}개 팀 보기",
-    "en-US": "Show all {0} teams"
-  },
-  "展开这 {0} 场比赛": {
-    "zh-TW": "展開這 {0} 場比賽",
-    "ko-KR": "{0}경기 펼쳐 보기",
-    "en-US": "Show these {0} matches"
-  },
-  "已关注 {0} 支": {
-    "zh-TW": "已追蹤 {0} 支",
-    "ko-KR": "{0}개 팀 팔로우 중",
-    "en-US": "Following {0} teams"
-  },
-  "已提供 {0} / {1} 位赛季收录选手的资料。": {
-    "zh-TW": "已提供 {0} / {1} 位賽季收錄選手的資料。",
-    "ko-KR": "시즌 등록 선수 {1}명 중 {0}명의 기록이 공개되어 있습니다.",
-    "en-US": "{0} of {1} archived player records available."
-  },
-  "当前署名": {
-    "zh-TW": "當前署名",
-    "ko-KR": "선택한 참여 기록",
-    "en-US": "Selected credit"
-  },
-  "把{0}拿近一点看。": {
-    "zh-TW": "把{0}拿近一點看。",
-    "ko-KR": "{0}, 자세히 살펴보세요.",
-    "en-US": "A closer look at {0}."
-  },
-  "按本届已发布的轮次与赛果，回看队伍的突围过程。": {
-    "zh-TW": "依本屆已公布的輪次與賽果，回看隊伍的突圍過程。",
-    "ko-KR": "공개된 라운드와 경기 결과를 따라 팀의 최종 진출 과정을 돌아보세요.",
-    "en-US": "Revisit each team’s LCQ journey through the published rounds and results."
-  },
-  "查看全部 {0} 条结果": {
-    "zh-TW": "檢視全部 {0} 條結果",
-    "ko-KR": "결과 {0}개 모두 보기",
-    "en-US": "View all {0} results"
-  },
-  "核对全部 {0} 场逐场数据": {
-    "zh-TW": "核對全部 {0} 場逐場資料",
-    "ko-KR": "전체 {0}경기 데이터 확인",
-    "en-US": "Check all {0} match records"
-  },
-  "比分以 {0} 为左侧。": {
-    "zh-TW": "比分以 {0} 為左側。",
-    "ko-KR": "{0}의 점수가 왼쪽에 표시됩니다.",
-    "en-US": "Scores show {0} on the left."
-  },
-  "点击名字，继续看他的赛季。": {
-    "zh-TW": "點選名字，繼續看他的賽季。",
-    "ko-KR": "이름을 선택해 선수의 시즌 기록을 확인하세요.",
-    "en-US": "Select a name to explore their season."
-  },
-  "突围之路，": {
-    "zh-TW": "突圍之路，",
-    "ko-KR": "최종 진출까지,",
-    "en-US": "The road through LCQ,"
-  },
-  "纪念图格式": {
-    "zh-TW": "紀念圖格式",
-    "ko-KR": "기념 이미지 형식",
-    "en-US": "Keepsake format"
-  },
-  "赛事见证档案": {
-    "zh-TW": "賽事見證檔案",
-    "ko-KR": "대회 관람 기록",
-    "en-US": "Season witness archive"
-  },
-  "返回本届赛事": {
-    "zh-TW": "返回本屆賽事",
-    "ko-KR": "이번 대회로 돌아가기",
-    "en-US": "Back to this event"
-  },
-  "逐场回看。": {
-    "zh-TW": "逐場回看。",
-    "ko-KR": "경기마다 돌아봅니다.",
-    "en-US": "match by match."
   }
 }

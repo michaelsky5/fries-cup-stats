@@ -66,3 +66,4 @@ export default function KprComparePanel({ open, onClose, entries, mode, onModeCh
     </div>
   </KprDialog>
 }
+

@@ -58,6 +58,15 @@ const ROLE_OPTIONS = [
   { value: 'FLEX', label: '补位' }
 ]
 
+function readImageAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result || '').split(',')[1] || '')
+    reader.onerror = () => reject(new Error('图片读取失败，请重新选择文件。'))
+    reader.readAsDataURL(file)
+  })
+}
+
 const STATUS_LABELS = {
   DRAFT: '草稿',
   SUBMITTED: '审核中',
@@ -157,12 +166,31 @@ function errorText(error) {
   const copy = {
     EMAIL_VERIFICATION_REQUIRED: '请先完成邮箱验证。',
     TEAM_CLAIM_PENDING: '已有相同的队伍创建或认领申请正在审核。',
+    TEAM_LOGO_INVALID: '图片无法读取，请重新选择 PNG、JPG 或静态 WebP。',
+    TEAM_LOGO_FORMAT: '仅支持 PNG、JPG 和静态 WebP，不支持动图。',
+    TEAM_LOGO_TOO_LARGE: '队伍 Logo 原图不能超过 2 MB。',
+    TEAM_LOGO_TOO_COMPLEX: 'Logo 压缩后仍过大，请换一张更简单的图片。',
+    TEAM_LOGO_STORAGE: '队伍 Logo 暂时无法保存，请稍后重试。',
     TEAM_ALREADY_CLAIMED: '这支历史队伍已经被认领。',
     TEAM_ALREADY_REGISTERED: '该长期队伍已经提交本届赛事报名。',
     PLAYER_APPLICATION_EXISTS: '你在本届赛事已有一个待处理的主动申请。',
     PLAYER_ALREADY_ON_EVENT_TEAM: '你已经进入本届赛事另一支队伍的候选阵容。',
     CROSS_TEAM_ROLE_FORBIDDEN: '同一账号本届赛事默认不能跨队担任选手、经理或教练。',
     TEAM_NOT_ACCEPTING_APPLICATIONS: '这支队伍当前不接受公开申请。',
+    REGISTRATION_ACCESS_FORBIDDEN: '当前账号尚未获得本届报名权限。',
+    REGISTRATION_READ_ONLY: '本届报名当前为只读状态，暂不能提交修改。',
+    REGISTRATION_CLOSED: '本届报名入口已关闭，请联系赛事负责人处理。',
+    REGISTRATION_DEADLINE: '报名已经截止，请联系赛事负责人处理补报或变更。',
+    REGISTRATION_CHANGED: '报名资料刚刚发生变化，请刷新后再操作。',
+    REGISTRATION_FROZEN: '这份报名已经提交或结束，当前不能直接修改。',
+    ROSTER_FULL: '报名人数已达到上限，请先移除一名草稿成员。',
+    MEMBER_ALREADY_CONFIRMED: '这名选手已经确认，需先撤回本人确认后才能修改。',
+    MEMBER_NOT_FOUND: '报名中找不到这名选手，请刷新后重试。',
+    OWNER_INVITATION_REQUIRED: '创建报名需要先接受本届负责人邀请。',
+    PLAYER_CONSENT_REQUIRED: '所有选手都需要使用本人账号确认后才能提交。',
+    DUPLICATE_PLAYER: '名单中存在重复选手或 BattleTag，请检查后重试。',
+    INVALID_INPUT: '请检查必填信息、联系方式和格式。',
+    INVALID_LOGO_URL: '队伍 Logo 必须使用有效的 http 或 https 图片地址。',
     PLAYER_INVITATION_EXISTS: '该选手已经收到本队尚未处理的邀请。',
     INVITATION_EXPIRED: '邀请已经过期。',
     APPLICATION_NOT_PENDING: '这条申请已经被处理，请查看最新状态。',
@@ -309,6 +337,8 @@ export default function EventRegistrationWorkspace({
     name: '',
     shortName: '',
     slug: '',
+    logoUrl: '',
+    logoImage: '',
     proof: ''
   })
   const [registrationForms, setRegistrationForms] = useState({})
@@ -567,7 +597,10 @@ export default function EventRegistrationWorkspace({
                 targetSeasonTeamId: claimForm.requestType === 'CLAIM' ? claimForm.targetSeasonTeamId : undefined,
                 name: claimForm.requestType === 'CREATE' ? claimForm.name : undefined,
                 shortName: claimForm.requestType === 'CREATE' ? claimForm.shortName : undefined,
-                slug: claimForm.slug || undefined
+                slug: claimForm.slug.trim() || undefined,
+                logoUrl: claimForm.logoUrl.trim() || undefined,
+                logoImage: claimForm.logoImage || undefined,
+                proof: claimForm.proof.trim()
               }), '队伍申请已提交，等待 system 审核。')
             }}>
               <div className={styles.formHeading}><strong>{uiText("创建或认领长期队伍", uiLocale)}</strong><span>{uiText("首次通过后会建立长期经理关系。", uiLocale)}</span></div>
@@ -578,6 +611,8 @@ export default function EventRegistrationWorkspace({
                 <><label><span>{uiText("队伍全称", uiLocale)}</span><input required value={claimForm.name} onChange={event => setClaimForm(current => ({ ...current, name: event.target.value }))} /></label><label><span>{uiText("队伍简称", uiLocale)}</span><input required value={claimForm.shortName} onChange={event => setClaimForm(current => ({ ...current, shortName: event.target.value }))} /></label></>
               )}
               <label><span>{uiText("队伍标识", uiLocale)}</span><input placeholder={uiText("例如 team-banana", uiLocale)} value={claimForm.slug} onChange={event => setClaimForm(current => ({ ...current, slug: event.target.value }))} /></label>
+              <label><span>{uiText("队伍 Logo URL（可选）", uiLocale)}</span><input type="url" placeholder="https://..." value={claimForm.logoUrl} onChange={event => setClaimForm(current => ({ ...current, logoUrl: event.target.value }))} /><small>{uiText("可填写公开可访问的 http/https 图片地址，也可以直接选择本地图片。", uiLocale)}</small></label>
+              <label><span>{uiText("上传队伍 Logo（可选）", uiLocale)}</span><input type="file" accept="image/png,image/jpeg,image/webp" onChange={async event => { const file = event.target.files?.[0]; if (!file) return; try { const logoImage = await readImageAsBase64(file); setClaimForm(current => ({ ...current, logoImage, logoUrl: '' })) } catch (uploadError) { setError(uploadError) } }} /><small>{uiText("支持 PNG、JPG、静态 WebP，原图不超过 2 MB。", uiLocale)}</small></label>
               <label className={styles.wideField}><span>{uiText("证明或说明", uiLocale)}</span><textarea value={claimForm.proof} onChange={event => setClaimForm(current => ({ ...current, proof: event.target.value }))} /></label>
               <button type="submit" disabled={actionKey === 'claim' || !context?.emailVerified}>{actionKey === 'claim' ? uiText("提交中…", uiLocale) : uiText("提交队伍申请", uiLocale)}</button>
             </form>

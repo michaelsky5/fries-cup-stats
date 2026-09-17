@@ -32,7 +32,9 @@ const readDraft = key => { try { return JSON.parse(sessionStorage.getItem(key)) 
 function Team({ team, data, disabled, mutate }) {
   const uiLocale = useUiLocale()
   const roster = data.rosters.find(item => item.teamId === team?.id), side = data.preparation.sides.find(item => item.team.id === team?.id)
-  return <aside id={`room-team-${team?.id}`} tabIndex={-1} className={`${styles.team} ${frame.teamSheet}`} aria-label={name(team)} data-own={data.access.teamIds.includes(team?.id)}>
+  const canSetLineup = data.phase === 'PREPARING' && data.opening?.phase === 'BANNING' && data.access.representativeTeams.includes(team?.id)
+  const setLineup = (action, extra) => mutate(() => liveRoomWrite(data.match.id, '/commands', { action, clientKey: crypto.randomUUID(), expectedRevision: data.revision, matchRevision: data.match.revision, draftRevision: data.draftRevision, ...extra }), '本图五人上场名单已保存。')
+  return <><aside id={`room-team-${team?.id}`} tabIndex={-1} className={`${styles.team} ${frame.teamSheet}`} aria-label={name(team)} data-own={data.access.teamIds.includes(team?.id)}>
     <header><div className={styles.teamEyebrow}><small>{data.access.teamIds.includes(team?.id) ? uiText("我的队伍", uiLocale) : uiText("参赛队伍", uiLocale)}</small><span>{team?.id === data.match.teamA?.id ? 'TEAM A' : 'TEAM B'}</span></div><h2>{name(team)}</h2></header>
     <RoomRepresentative team={team} data={data} disabled={disabled} mutate={mutate} />
     <div className={styles.rosterHeading}><strong>{uiText("本周出赛名单", uiLocale)}</strong><span>{roster?.status === 'LOCKED' ? uiText("已锁定", uiLocale) : roster?.status === 'SUBMITTED' ? uiText("已提交", uiLocale) : uiText("待提交", uiLocale)}</span></div>
@@ -42,7 +44,7 @@ function Team({ team, data, disabled, mutate }) {
     }) : <p>{uiText("本周名单尚未提交。", uiLocale)}</p>}</div>
     <footer><strong data-ready={side?.ready}>{data.phase === 'PREPARING' ? side?.ready ? uiText("本队已准备", uiLocale) : side?.stale ? uiText("安排变化，需重新确认", uiLocale) : uiText("等待准备确认", uiLocale) : side?.ready ? uiText("开赛前已核对", uiLocale) : uiText("准备记录待核对", uiLocale)}</strong><small>{side?.confirmedBy ? `${side.confirmedBy} · ${time(side.updatedAt)}` : uiText("由本场操作代表核对游戏进房", uiLocale)}</small><p>{uiText("当前图阵容以赛管核对为准。", uiLocale)}</p></footer>
     <div className={styles.ban}><small>{uiText("当前图禁用", uiLocale)}</small><strong>{formatOwHeroName(team?.id === data.match.teamA?.id ? data.map?.banA : data.map?.banB) || uiText("尚未记录", uiLocale)}</strong></div>
-  </aside>
+  </aside>{canSetLineup ? <TeamLineupControl data={data} side={{ team, key: team.id === data.match.teamA.id ? 'A' : 'B' }} disabled={disabled} command={setLineup} /> : null}</>
 }
 
 function RoomCommunication({ data, disabled, mutate, expanded, setExpanded, channel, setChannel, messageLoader = fetchRoomMessages }) {
@@ -121,6 +123,24 @@ function RoomCommunication({ data, disabled, mutate, expanded, setExpanded, chan
       {channel === 'SUPPORT' && !request && !data.access.staff && <>{data.access.teamIds.length > 1 && <label>{uiText("代表队伍", uiLocale)}<select value={teamId} onChange={e => setTeamId(e.target.value)}>{data.access.teamIds.map(id => <option key={id} value={id}>{name([data.match.teamA, data.match.teamB].find(team => team.id === id))}</option>)}</select></label>}<label>{uiText("问题概述", uiLocale)}<input value={draft.title} onChange={e => edit({ title: e.target.value })} maxLength={100} required minLength={2} disabled={disabled} placeholder={uiText("例如：队员掉线，需要赛管协助", uiLocale)} /></label></>}
       {channel !== 'SUPPORT' || request || !data.access.staff ? <><label className={styles.inputLabel}>{channel === 'SUPPORT' ? request ? uiText("补充或回复协助", uiLocale) : uiText("具体情况", uiLocale) : uiText("发送比赛沟通消息", uiLocale)}<textarea value={draft.body} maxLength={2000} minLength={channel === 'SUPPORT' ? 2 : 1} onChange={e => edit({ body: e.target.value })} disabled={disabled || !visibleChannel} placeholder={data.archived ? uiText("已归档，记录只读", uiLocale) : channel === 'SUPPORT' ? uiText("填写具体情况；私密内容仅相关队伍和赛管可见…", uiLocale) : uiText("向当前范围内的人员发送消息…", uiLocale)} /></label><div className={styles.sendRow}><small>{draft.body ? uiText("草稿保留在本机", uiLocale) : data.archived ? uiText("记录只读", uiLocale) : uiText("已保存不等于对方已阅", uiLocale)}</small>{channel === 'SUPPORT' && request && data.access.staff && <select name="result" aria-label={uiText("协助处理状态", uiLocale)} disabled={disabled}><option value="IN_PROGRESS">{uiText("受理 / 继续处理", uiLocale)}</option><option value="RESOLVED">{uiText("问题已解决", uiLocale)}</option></select>}<button className={styles.primary} disabled={disabled || !draft.body.trim() || !!feedError || (channel === 'SUPPORT' && !request && draft.title.trim().length < 2)}>{disabled && data.archived ? uiText("已归档", uiLocale) : channel === 'SUPPORT' ? uiText("提交协助记录", uiLocale) : uiText("发送消息 ↗", uiLocale)}</button></div></> : <p className={styles.empty}>{uiText("选择一条协助记录，受理或回复相关队伍。", uiLocale)}</p>}
     </form>
+  </section>
+}
+
+function TeamLineupControl({ data, side, disabled, command }) {
+  const uiLocale = useUiLocale()
+  const teamId = side.team.id
+  const roster = data.rosters.find(item => item.teamId === teamId)
+  const saved = data.map?.[side.key === 'A' ? 'lineupA' : 'lineupB'] || []
+  const [selected, setSelected] = useState(() => saved.map(item => item.playerId))
+  const savedIds = saved.map(item => item.playerId).join(',')
+  useEffect(() => { setSelected(savedIds ? savedIds.split(',') : []) }, [data.map?.order, savedIds])
+  const toggle = playerId => setSelected(current => current.includes(playerId) ? current.filter(id => id !== playerId) : current.length >= 5 ? current : [...current, playerId])
+  const canSubmit = selected.length === 5
+  return <section className={frame.lineupEditor} aria-label={uiText("本图上场名单", uiLocale)}>
+    <header><strong>{name(side.team)}</strong><span>{selected.length}/5 {uiText("本图首发", uiLocale)}</span></header>
+      <div className={frame.lineupChoices}>{(roster?.members || []).map(member => <label key={member.id} data-selected={selected.includes(member.id)}><input type="checkbox" checked={selected.includes(member.id)} onChange={() => toggle(member.id)} disabled={disabled || (!selected.includes(member.id) && selected.length >= 5)} /><span>{member.name}</span><small>{roleName(member.role)}</small></label>)}
+      </div>
+    <button type="button" disabled={disabled || !canSubmit} onClick={() => command('SET_LINEUP', { teamId, playerIds: selected })}>{canSubmit ? uiText("保存本图五人", uiLocale) : uiText("请选择五人", uiLocale)}</button>
   </section>
 }
 

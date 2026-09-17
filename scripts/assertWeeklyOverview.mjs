@@ -73,14 +73,6 @@ test('empty or administrative maps never become played maps', () => {
   assert.equal(slots[0].state, 'pending')
   assert.equal(slots[1].state, 'ruling')
 })
-
-test('forfeit stops unplayed maps without manufacturing scores or leaving them pending', () => {
-  const match = { format: 'RR5', status: 'COMPLETE', is_forfeit: true, maps: [{ map_order: 1, status: 'COMPLETE', score_a: 2, score_b: 0 }] }
-  const slots = weeklyMapSlots(match)
-  assert.deepEqual(slots.map(slot => slot.state), ['recorded', 'not-played', 'not-played', 'not-played', 'not-played'])
-  assert.ok(slots.slice(1).every(slot => slot.map === undefined))
-  assert.equal(weeklyMapSlots({ ...match, status: 'CANCELLED' })[1].state, 'pending')
-})
 test('playoff formats do not inherit the fixed-five-map rule', () => assert.equal(weeklyMapSlots({ format: 'FT3', maps: [{}] }).length, 1))
 test('unknown future schemas remain an explicit empty state', () => {
   assert.equal(buildWeeklyOverview({ weekly_competition: { schema_version: 'v99', cycles: db.weekly_competition.cycles } }).cycles.length, 0)

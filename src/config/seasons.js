@@ -366,22 +366,11 @@ export const SEASONS = [
 
 // Only the isolated weekly design server exposes this fictional public snapshot.
 if (import.meta.env?.DEV && import.meta.env?.VITE_WEEKLY_PREVIEW === '1') {
-  Object.assign(SEASONS.find(season => season.id === 'FCW26'), {
+  SEASONS.push({
     id: 'FCW26', publicCode: 'FCW2026', kind: 'OFFICIAL', lifecycle: 'ACTIVE', competitionFormat: 'WEEKLY',
     name: { zh: '2026 薯条杯周赛', en: 'Fries Cup Weekly 2026' },
     localDataUrl: '/__weekly-overview/data.json', preferLocalData: true, reviewEnabled: false,
     rules: { weeklyCompetition: { enabled: true } }
-  })
-}
-
-// Only the explicit account-staging package exposes the real staging publication.
-if (import.meta.env?.VITE_ACCOUNT_WEEKLY_REHEARSAL === '1') {
-  SEASONS.push({
-    id: 'WEBWEEK20260914', publicCode: 'WEBWEEK20260914', lifecycle: 'ACTIVE', competitionFormat: 'WEEKLY',
-    name: { zh: '周赛验收 · 合成赛事', en: 'Weekly Rehearsal · Synthetic Event' },
-    proxyDataUrl: '/api/admin-public/seasons/WEBWEEK20260914/publish/latest/data',
-    proxyReportUrl: '/api/admin-public/seasons/WEBWEEK20260914/publish/latest/report',
-    reviewEnabled: false, rules: { weeklyCompetition: { enabled: true } }
   })
 }
 

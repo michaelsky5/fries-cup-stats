@@ -109,16 +109,16 @@ export function createSeasonReportPage(adapter) {
       return () => window.cancelAnimationFrame(frame)
     }, [detail, targetId])
   }
-
+  
   function ReviewBadge({ player, lang }) {
     const stable = player.review.retained === player.review.total
     return <span className={styles.reviewBadge} data-stable={stable}>{textFor(lang, stable ? 'steady' : 'sensitive')}</span>
   }
-
+  
   function AudienceButtons({ lang, detail, onChange, className }) {
     return <div className={className} role="group" aria-label={textFor(lang, 'readingDepth')}>{[false, true].map(value => <button type="button" key={String(value)} aria-pressed={detail === value} data-active={String(detail === value)} onClick={() => onChange(value)}>{textFor(lang, value ? 'analysis' : 'conclusion')}</button>)}</div>
   }
-
+  
   function Overview({ navigation, onDepthChange, onQueryChange }) {
     const { lang, detail, focus } = navigation
     return <>
@@ -167,7 +167,7 @@ export function createSeasonReportPage(adapter) {
       <Methodology data={data} lang={lang} />
     </>
   }
-
+  
   function CandidateCard({ player, navigation }) {
     const { lang } = navigation
     const notes = PLAYER_COPY[player.id]
@@ -182,7 +182,7 @@ export function createSeasonReportPage(adapter) {
       <footer><span>{textFor(lang, 'appearance')} {textFor(lang, 'maps', { n: player.scope.maps })} · {textFor(lang, 'series', { n: player.scope.matches })}</span><Link to={previewLink({ ...navigation, playerId: player.id })}>{textFor(lang, 'profile')} ↗</Link></footer>
     </article>
   }
-
+  
   function BoundaryComparison({ position, navigation }) {
     const { lang, detail } = navigation
     return <ReportDisclosure id="role-ranking" title={textFor(lang, 'boundaryTitle')} meta={localize(POSITION_COPY[position].boundary, lang)} kicker="SHORTLIST BOUNDARY" open={detail}>
@@ -196,7 +196,7 @@ export function createSeasonReportPage(adapter) {
       <p className={styles.fine}>{textFor(lang, 'retentionMeaning')}</p><p className={styles.fine}>{textFor(lang, 'noAutomatic')}</p>
     </ReportDisclosure>
   }
-
+  
   function CandidateStrip({ players, navigation }) {
     const { lang, detail } = navigation
     return <div className={report.roleCockpitCandidates + ' ' + styles.fourCandidates} data-audience={detail ? 'coach' : 'manager'}>
@@ -213,7 +213,7 @@ export function createSeasonReportPage(adapter) {
       })}</div>
     </div>
   }
-
+  
   function PositionPage({ position, navigation, onDepthChange, onQueryChange, onRoleChange }) {
     const { lang, detail, focus } = navigation
     const players = getPositionPlayers(data, position)
@@ -315,7 +315,7 @@ export function createSeasonReportPage(adapter) {
       <Methodology id="role-method" data={data} lang={lang} />
     </>
   }
-
+  
   function PlayerSnapshot({ player, lang }) {
     const notes = PLAYER_COPY[player.id]
     const bandFor = value => {
@@ -362,7 +362,7 @@ export function createSeasonReportPage(adapter) {
       ]}
     />
   }
-
+  
   function PlayerPage({ player, navigation, onDepthChange }) {
     const { lang, detail } = navigation
     const notes = PLAYER_COPY[player.id]
@@ -410,7 +410,7 @@ export function createSeasonReportPage(adapter) {
       <Methodology data={data} lang={lang} />
     </>
   }
-
+  
   function SeasonReportPage() {
     const { positionSlug, playerId } = useParams()
     const [searchParams, setSearchParams] = useSearchParams()

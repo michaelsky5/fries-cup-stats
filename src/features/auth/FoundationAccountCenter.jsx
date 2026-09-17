@@ -48,3 +48,4 @@ export default function FoundationAccountCenter({ locale = 'zh-CN', onLogout }) 
     </section>
   )
 }
+

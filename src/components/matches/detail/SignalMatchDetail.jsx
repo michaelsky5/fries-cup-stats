@@ -96,11 +96,9 @@ function RegisteredRosters({ dossier, withSeason, returnState, onNavigate, en })
 
 function PendingRoster({ dossier, withSeason, returnState, onNavigate, en }) {
   const uiLocale = useUiLocale()
-  const forfeitNotice = dossier.state.isForfeit && dossier.hasMapRecords
-    ? (en ? 'Completed map results are preserved below. The remaining maps were not played due to the forfeit.' : uiText('下方保留已完成地图的赛果，其余地图因弃权未进行。', uiLocale)) : ''
   return <div className={styles.pending}>
     <h2>{dossier.state.isForfeit ? (en ? 'Forfeit result' : uiText("弃权赛果", uiLocale)) : en ? dossier.statusEn : dossier.statusLabel}</h2>
-    <p>{dossier.statusNote || forfeitNotice || (dossier.state.isUpcoming ? (en ? 'Published match arrangements are shown below. Player statistics will be available after results are published.' : uiText("以下为已发布的比赛安排，选手统计将在赛果发布后提供。", uiLocale)) : dossier.mapRecords?.length ? (en ? 'Map results are available below. Player statistics have not been published.' : uiText("下方可查看已发布的地图赛果，选手统计尚未提供。", uiLocale)) : (en ? 'No played-map or player statistics are available for this result.' : uiText("当前结果没有可供查看的实赛地图或选手统计。", uiLocale)))}</p>
+    <p>{dossier.statusNote || (dossier.state.isUpcoming ? (en ? 'Published match arrangements are shown below. Player statistics will be available after results are published.' : uiText("以下为已发布的比赛安排，选手统计将在赛果发布后提供。", uiLocale)) : dossier.mapRecords?.length ? (en ? 'Map results are available below. Player statistics have not been published.' : uiText("下方可查看已发布的地图赛果，选手统计尚未提供。", uiLocale)) : (en ? 'No played-map or player statistics are available for this result.' : uiText("当前结果没有可供查看的实赛地图或选手统计。", uiLocale)))}</p>
     <h3>{en ? 'Registered rosters' : uiText("已登记队伍阵容", uiLocale)}</h3><p className={styles.rosterNote}>{en ? 'These are team rosters, not a confirmed match lineup.' : uiText("以下为队伍登记名单，本场实际出场名单以比赛记录为准。", uiLocale)}</p>
     <RegisteredRosters dossier={dossier} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} />
   </div>

@@ -45,7 +45,7 @@ export function getMatchReviewProgress(dossier) {
   let a = 0
   let b = 0
   let previousOrder = 0
-  let known = Boolean(dossier?.state.canShowResults && (!dossier?.state.isForfeit || dossier.preservesForfeitMaps))
+  let known = Boolean(dossier?.state.canShowResults && !dossier?.state.isForfeit)
   return [...(dossier?.mapRecords || [])].sort((left, right) => left.order - right.order).map(map => {
     if (map.order !== previousOrder + 1) known = false
     previousOrder = map.order

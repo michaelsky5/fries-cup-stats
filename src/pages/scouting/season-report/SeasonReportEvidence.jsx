@@ -9,13 +9,13 @@ export function createSeasonReportEvidence(adapter) {
   const { ReportDisclosure, ReportSectionHeading } = createSeasonReportPrimitives(adapter)
 
   const localeOf = lang => ({ zh: 'zh-CN', en: 'en-US', ko: 'ko-KR' }[lang])
-
+  
   function HeroIcon({ name, size = 36 }) {
     const hero = getOwHero(name)
     if (!hero) return null
     return <span className={report.heroIcon} style={{ width: size, height: size }}><img src={`/heroes/${hero.role}/${hero.assetKey.replace(/-/g, '_')}.png`} width={size} height={size} loading="lazy" decoding="async" alt="" /></span>
   }
-
+  
   function StageStatus({ player, lang, explanation = false }) {
     const status = player.stage.playoff.status
     return <div className={styles.stageStatus} data-status={status}>
@@ -23,7 +23,7 @@ export function createSeasonReportEvidence(adapter) {
       {explanation ? <p>{textFor(lang, `stageDesc_${status}`)}</p> : null}
     </div>
   }
-
+  
   function HeroRecords({ player, lang, compact = false }) {
     const heroes = compact ? player.heroes.slice(0, 2) : player.heroes
     if (!compact) return <div className={report.heroPoolList}>{heroes.map(hero => <div className={report.heroPoolRow} key={hero.hero}>
@@ -39,7 +39,7 @@ export function createSeasonReportEvidence(adapter) {
       </div>)}
     </div>
   }
-
+  
   function HeroMapMatches({ player, selected, lang, id }) {
     return <div id={id} className={styles.heroMapMatches} aria-live="polite"><div><span>{textFor(lang, 'heroMapSelected')}</span><h3>{formatOwHeroName(selected.hero, localeOf(lang))} · {formatOwMapName(selected.map, localeOf(lang))}</h3></div><ul>{selected.matchIds.map(matchId => {
       const match = player.matches.find(item => item.id === matchId)
@@ -47,7 +47,7 @@ export function createSeasonReportEvidence(adapter) {
       return <li key={matchId}><a href={match.url} target="_blank" rel="noopener noreferrer"><span>{textFor(lang, match.stage === 'PLAYOFFS' ? 'playoffs' : 'group')}</span><strong>vs {match.opponent}</strong><small>{textFor(lang, 'mapOrders', { maps: orders })}</small><b aria-hidden="true">↗</b></a></li>
     })}</ul></div>
   }
-
+  
   function HeroMapEvidence({ player, lang, detail }) {
     const records = getHeroMapRecords(player)
     const evidenceId = useId()
@@ -69,7 +69,7 @@ export function createSeasonReportEvidence(adapter) {
       <p className={styles.fine}>{textFor(lang, 'heroMeasure')}</p>
     </ReportDisclosure>
   }
-
+  
   function MetricTable({ data, player, lang }) {
     const keys = POSITION_CONFIG[player.position].metrics
     return <>
@@ -85,7 +85,7 @@ export function createSeasonReportEvidence(adapter) {
       <p className={styles.fine}>{textFor(lang, 'metricRankNote')}</p>
     </>
   }
-
+  
   function PlayerRadar({ data, player, lang }) {
     const titleId = useId()
     const keys = POSITION_CONFIG[player.position].metrics
@@ -116,7 +116,7 @@ export function createSeasonReportEvidence(adapter) {
       <MetricTable data={data} player={player} lang={lang} />
     </section>
   }
-
+  
   function PositionComparison({ data, players, lang }) {
     const keys = POSITION_CONFIG[players[0].position].metrics
     return <section>
@@ -131,7 +131,7 @@ export function createSeasonReportEvidence(adapter) {
       <p className={styles.fine}>{textFor(lang, 'comparisonCaution')}</p>
     </section>
   }
-
+  
   function MatchCard({ match, lang }) {
     const date = new Date(match.scheduledAt).toLocaleDateString(localeOf(lang), { month: 'short', day: 'numeric', timeZone: 'Asia/Singapore' })
     return <article className={`${report.profileCard} ${styles.matchCard}`}>
@@ -142,7 +142,7 @@ export function createSeasonReportEvidence(adapter) {
       <a href={match.url} target="_blank" rel="noopener noreferrer">{textFor(lang, 'matchCta')} <span aria-hidden="true">↗</span></a>
     </article>
   }
-
+  
   function MatchEvidence({ player, lang }) {
     return <section className={styles.evidenceSection} id="match-evidence">
       <ReportSectionHeading title={textFor(lang, 'evidenceTitle')} meta={textFor(lang, 'evidenceHint')} eyebrow="MATCH EVIDENCE" />
@@ -157,7 +157,7 @@ export function createSeasonReportEvidence(adapter) {
       </ReportDisclosure>
     </section>
   }
-
+  
   function ModelEvidence({ player, lang, detail }) {
     const neutralStage = player.stage.playoff.status !== 'COMPARABLE' && player.stage.change.status !== 'COMPARABLE'
     return <ReportDisclosure title={textFor(lang, 'modelTitle')} meta={`${textFor(lang, 'technicalIndex')} ${formatNumber(player.score, lang)}`} kicker="MODEL EXPLANATION" open={detail}>
@@ -168,7 +168,7 @@ export function createSeasonReportEvidence(adapter) {
       </div>)}</div>
     </ReportDisclosure>
   }
-
+  
   function ContextEvidence({ player, lang, detail }) {
     const [low, high] = player.context.interval90
     return <ReportDisclosure id="context-evidence" title={textFor(lang, 'contextTitle')} kicker="CONTEXT & UNCERTAINTY" open={detail}>
@@ -189,7 +189,7 @@ export function createSeasonReportEvidence(adapter) {
       <p className={styles.fine}>{textFor(lang, 'pressureHint')}</p>
     </ReportDisclosure>
   }
-
+  
   function StabilityEvidence({ player, lang, detail }) {
     const review = player.review
     return <ReportDisclosure title={textFor(lang, 'reviewTitle')} kicker="SHORTLIST STABILITY" open={detail}>
@@ -200,7 +200,7 @@ export function createSeasonReportEvidence(adapter) {
       <div className={styles.weightReview}><h3>{textFor(lang, 'weightReview')}</h3><strong>{formatNumber(review.weightRetained, lang, Number.isInteger(review.weightRetained) ? 0 : 1)} / {formatNumber(review.weightTrials, lang, 0)}</strong><p className={styles.fine}>{textFor(lang, 'weightReviewHint')}</p></div>
     </ReportDisclosure>
   }
-
+  
   function Methodology({ id, data, lang }) {
     return <ReportDisclosure id={id} title={textFor(lang, 'methodology')} kicker="METHODOLOGY">
       <p className={styles.subheading}>{textFor(lang, 'methodologyIntro')}</p>

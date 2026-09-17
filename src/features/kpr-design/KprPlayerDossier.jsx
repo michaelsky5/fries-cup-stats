@@ -40,3 +40,4 @@ export default function KprPlayerDossier({ entry, rank, rankScope, mode, modeLab
     })}</dl></div>
   </article>
 }
+

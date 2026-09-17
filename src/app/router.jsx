@@ -59,11 +59,6 @@ function FollowingRedirect() {
   return <Navigate to={{ pathname: '/me', search: `?${params.toString()}` }} replace />
 }
 
-function FantasyNextDisabledRedirect() {
-  const location = useLocation()
-  return <Navigate to={{ pathname: '/fantasy', search: location.search }} replace />
-}
-
 const developmentRoutes = import.meta.env.DEV ? [
   {
     path: '/dev/account-review',
@@ -116,12 +111,10 @@ const router = createBrowserRouter([
       return null
     }, children: [
   ...developmentRoutes,
-  { path: '/auth/weekly-admin', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/auth/WeeklyAdminInvitationPage.jsx')) },
   { path: '/account', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/account/AccountSettingsPage.jsx')) },
   { path: '/me/matches/:matchId/room', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/weekly-competition/WeeklyLiveRoomPage.jsx')) },
   { path: '/participate/:seasonId', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/event-registration/SeasonParticipationPage.jsx')) },
   { path: '/activate-weekly', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/auth/WeeklyAccountActivationPage.jsx')) },
-  { path: '/fantasy-next', element: <FantasyNextDisabledRedirect /> },
   {
     path: '/',
     HydrateFallback: RouteFallback,
@@ -133,7 +126,6 @@ const router = createBrowserRouter([
       { path: 'matches', lazy: lazyDefault(() => import('../pages/matches/MatchesPage.jsx')) },
       { path: 'me', lazy: lazyDefault(() => import('../pages/me/MySpacePage.jsx')) },
       { path: 'following', element: <FollowingRedirect /> },
-      { path: 'matches/:matchId/room', lazy: lazyDefault(() => import('../pages/matches/MatchRoomPage.jsx')) },
       { path: 'matches/:matchId', lazy: lazyDefault(() => import('../pages/matches/MatchDetailPage.jsx')) },
       { path: 'leaderboard', lazy: lazyDefault(() => import('../pages/leaderboard/LeaderboardPage.jsx')) },
       { path: 'players', lazy: lazyDefault(() => import('../pages/players/PlayersPage.jsx')) },

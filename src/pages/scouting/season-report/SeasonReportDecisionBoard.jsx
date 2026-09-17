@@ -33,7 +33,7 @@ export function createSeasonReportDecisionBoard(adapter) {
       </div>
     </div>
   }
-
+  
   function PressureComparison({ players, navigation }) {
     const { lang } = navigation
     return <div className={styles.focusCards}>{players.map(player => {
@@ -46,7 +46,7 @@ export function createSeasonReportDecisionBoard(adapter) {
       </article>
     })}</div>
   }
-
+  
   function HeroComparison({ players, navigation }) {
     const { lang } = navigation
     const locale = { zh: 'zh-CN', en: 'en-US', ko: 'ko-KR' }[lang]
@@ -59,7 +59,7 @@ export function createSeasonReportDecisionBoard(adapter) {
       </article>
     })}</div>
   }
-
+  
   function SeasonReportDecisionBoard({ data, position, navigation, onQueryChange }) {
     const { lang, detail, compare } = navigation
     const feedbackId = useId()

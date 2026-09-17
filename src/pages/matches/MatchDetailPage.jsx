@@ -246,8 +246,8 @@ export default function MatchDetailPage() {
   }
 
   const showResultSections = dossier.state.canShowResults && !dossier.state.isForfeit
-  const showMaps = dossier.hasMapRecords
-  const roomPath = withSeason(dossier.roomPath)
+  const showMaps = !dossier.state.isForfeit && dossier.hasMapRecords
+  const roomPath = withSeason(`/matches/${encodeURIComponent(dossier.internalId || matchId)}/room`)
 
   if (isKprHybridDesign) return <SignalMatchDetail
     dossier={dossier} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason}

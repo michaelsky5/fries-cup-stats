@@ -16,3 +16,4 @@ export function acceptWeeklyAccountInvitation({ token, password }, options = {})
     body: { token, password }
   })
 }
+

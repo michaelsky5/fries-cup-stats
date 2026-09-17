@@ -1,14 +1,31 @@
 {
-  "functions": { "api/platform.js": { "regions": ["iad1"], "maxDuration": 20 } },
-  "buildCommand": "npm run build:locales && npm run build:team-logo-catalog && npm run build:scouting-artifacts && node scripts/buildAccountProduction.mjs",
   "headers": [
-    { "source": "/account/:path*", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }, { "key": "Referrer-Policy", "value": "no-referrer" }] },
-    { "source": "/auth/:path*", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }, { "key": "Referrer-Policy", "value": "no-referrer" }] },
-    { "source": "/scouting/:path*", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }, { "key": "Referrer-Policy", "value": "no-referrer" }] }
+    {
+      "source": "/scouting/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive, nosnippet"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
+    }
   ],
   "rewrites": [
-    { "source": "/api/admin-public/:path*", "destination": "https://admin.fries-cup.com/api/public/:path*" },
-    { "source": "/api/platform/:path*", "destination": "/api/platform?platformPath=:path*" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/api/admin-public/:path*",
+      "destination": "https://admin.fries-cup.com/api/public/:path*"
+    },
+    {
+      "source": "/api/platform/:path*",
+      "destination": "https://admin.fries-cup.com/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }

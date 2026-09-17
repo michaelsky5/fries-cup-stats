@@ -5,6 +5,13 @@ const settings = '/account?season=FCR2026&lang=zh'
 const item = (id, label, scenario, href, role, description, note = '') => ({ id, label, scenario, href, role, description, note })
 
 export const ACCOUNT_REVIEW_GROUPS = [
+  { id: 'staff-relationship', label: '职员身份与恢复', items: [
+    item('staff-none', '尚未关联本届', 'staff-none', `${space}&section=caster`, '解说', '邀请引导，不展示不存在的自助申请入口。'),
+    item('staff-invited', '本届邀请待确认', 'staff-invited', `${space}&section=caster`, '解说', '使用本机样例确认或拒绝邀请。'),
+    item('staff-active', '本届身份已生效', 'staff-active', `${space}&section=referee`, '赛管', '已生效关系和档期空状态。'),
+    item('staff-error', '身份读取失败', 'staff-error', `${space}&section=caster`, '解说', '首次读取失败，重新同步后恢复。'),
+    item('staff-refresh-error', '保留上次职员记录', 'staff-refresh-error', `${space}&section=referee`, '赛管', '第一次刷新失败，保留记录并阻止操作，再次同步恢复。')
+  ] },
   { id: 'entry', label: '进入与认领', items: [
     item('login', '登录与找回密码', 'guest', '/dev/account-review?surface=login', '游客', '受邀邮箱登录；可切换到忘记密码。'),
     item('activation', '邀请认领', 'activation', '/activate-weekly#token=account-review-invitation-token', '受邀队长', '核对队伍和身份，设置账号密码。'),

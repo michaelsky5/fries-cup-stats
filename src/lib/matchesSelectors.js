@@ -1,8 +1,9 @@
 import { getSeasonById, getSeasonRules } from '../config/seasons.js'
-import { getExplicitWeeklyCompletion } from './weeklySeasonLifecycle.js'
 import { getCompetitionDayMatches, getCompetitionDayNumber } from './competitionDay.js'
 import { formatOwMapName } from './heroes.js'
 import { getRoundKey, isMatchInRoundScope } from './matchRoundScope.js'
+import { getExplicitWeeklyCompletion } from './weeklySeasonLifecycle.js'
+
 export { getTeamLogoCandidates } from './teamLogoResolver.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
@@ -117,7 +118,8 @@ export function isByeMatch(match) {
 
 export function isForfeitMatch(match) {
   const resultMode = normalizeText(match?.result_mode || match?.resultMode).toUpperCase()
-  return Boolean(match?.is_forfeit) || resultMode === 'FORFEIT' || Boolean(getInferredForfeitKey(match))
+  if (match?.is_forfeit === true || resultMode === 'FORFEIT') return true
+  return Boolean(getInferredForfeitKey(match)) || safeArr(match?.maps).some(map => Boolean(getAdministrativeForfeitKey(map)))
 }
 
 function matchIdentity(match) {
@@ -138,7 +140,7 @@ function uniqueMatches(matches = []) {
 
 export function isFinishedMatch(match) {
   const status = String(match?.status || '').trim().toUpperCase()
-  if (isForfeitMatch(match)) return true
+  if (match?.is_forfeit) return true
   if (COMPLETE_STATUSES.has(status)) return true
   if (status) return false
   return Boolean(normalizeText(match?.winner))
@@ -180,7 +182,7 @@ export function getCurrentRoundValue(matches = []) {
 export function getMatchesByRound(matches = [], round = '', stage = '') {
   const requested = normalizeText(round)
   const current = requested && requested !== 'ALL' ? null : getCurrentRoundMatch(matches)
-  if ((!requested || requested === 'ALL') && String(current?.stage || '').toUpperCase() === 'GROUP') {
+  if (!requested && String(current?.stage || '').toUpperCase() === 'GROUP') {
     const dayMatches = getCompetitionDayMatches(matches, current)
     if (dayMatches.length) return sortMatchesBySchedule(dayMatches)
   }
@@ -346,14 +348,8 @@ export function getMatchCompetitionDay(match) {
 export function getRoundText(match) {
   const round = normalizeText(match?.round || match?.stage)
   const number = round.match(/\d+/)?.[0]
-  if (String(match?.stage || '').toUpperCase() === 'GROUP') {
-    const competitionDay = getMatchCompetitionDay(match)
-    const groupLabel = getMatchGroupLabel(match)
-    if (groupLabel && competitionDay > 0) return `${groupLabel} 组小组赛 · 第 ${competitionDay} 比赛日`
-    if (groupLabel) return `${groupLabel} 组小组赛`
-    if (competitionDay > 0) return `小组赛第 ${competitionDay} 比赛日`
-    return '小组赛'
-  }
+  const groupDay = round.match(/\bDAY\s+(\d+)\b/i)?.[1]
+  if (String(match?.stage || '').toUpperCase() === 'GROUP' && groupDay) return `小组赛第 ${Number(groupDay)} 比赛日`
   if (String(match?.stage || '').toUpperCase() === 'SWISS' && number) return `瑞士轮第 ${number} 轮`
   if (/^ROUND\s*\d+/i.test(round) && number) return `瑞士轮第 ${number} 轮`
   return round || '赛事阶段待定'
@@ -606,9 +602,9 @@ export function getFollowingRoundMatchCount(matches = [], favorites = {}, round 
 }
 
 export function getCurrentRoundSummary(matches = []) {
-  const { currentRound, currentStage, roundMatches, competitionDay } = getCurrentMatchScope(matches)
+  const { rows, currentRound, currentStage, roundMatches, competitionDay } = getCurrentMatchScope(matches)
   const timeSlots = getRoundTimeSlots(roundMatches)
-  const upcomingRoundMatches = roundMatches.filter(isUpcomingMatch)
+  const upcomingRoundMatches = getUpcomingRoundMatches(rows, currentRound, currentStage)
   const nextMatch = upcomingRoundMatches[0] || null
   const firstMatch = roundMatches.find(match => getMatchTime(match)) || roundMatches[0] || null
   const progress = getRoundProgress(roundMatches)
