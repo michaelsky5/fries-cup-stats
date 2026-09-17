@@ -1,0 +1,13 @@
+.git
+.agents
+.codex
+.codex-remote-attachments
+.codex-tmp
+artifacts
+.env.local
+.env.*.local
+dist
+node_modules
+reports
+tmp
+*.log

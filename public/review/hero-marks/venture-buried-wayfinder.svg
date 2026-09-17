@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Venture spiral drill</title>
+  <desc id="desc">Three broad helical cutting faces form the drill, with dark flutes between them. Geological motion stays in the separate portrait layer.</desc>
+  <path d="M147 108L155 101H174V159H155L147 152Z" fill="#b38658" fill-opacity="0.34" stroke="#dabb85" stroke-opacity="0.72" stroke-width="1.7" stroke-linejoin="round"/>
+  <path d="M174 100L285 130L174 160Z" fill="#aa794a" fill-opacity="0.27" stroke="#deb980" stroke-opacity="0.72" stroke-width="1.7" stroke-linejoin="round"/>
+  <path d="M175 103L195 108C210 115 191 137 193 152L176 157C177 142 197 119 175 103Z" fill="#e4bd7b" fill-opacity="0.45"/>
+  <path d="M205 109L224 114C236 121 219 135 222 144L206 149C205 135 223 121 205 109Z" fill="#d7a963" fill-opacity="0.47"/>
+  <path d="M237 118L253 122C262 127 249 131 253 136L237 140C235 132 251 126 237 118Z" fill="#edce8e" fill-opacity="0.47"/>
+  <path d="M155 109V150" fill="none" stroke="#e2c08a" stroke-opacity="0.38" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

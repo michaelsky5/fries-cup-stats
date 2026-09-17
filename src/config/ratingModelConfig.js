@@ -70,7 +70,7 @@ export const PROFILE_WEIGHTS = {
   },
   brawl_tank: {
     subrole: 'TANK',
-    appliesTo: ['Hazard', 'Junker Queen', 'Mauga', 'Reinhardt', 'Zarya'],
+    appliesTo: ['D.Mon', 'Hazard', 'Junker Queen', 'Mauga', 'Reinhardt', 'Zarya'],
     weights: { elims: 22, assists: 12, survival: 22, damage: 24, blocked: 15, healing: 5 }
   },
   poke_tank: {

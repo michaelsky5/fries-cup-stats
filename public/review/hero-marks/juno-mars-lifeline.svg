@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Juno Martian helmet</title>
+  <desc id="desc">Juno's tall transparent visor is held by a narrow crown and swept side equipment. One coral-tipped antenna, an offset ear shell and a curved lower rim distinguish her helmet without a filled face, boxy headphones or heavy collar.</desc>
+  <defs>
+    <linearGradient id="visor-glass" x1="0.1" y1="0.1" x2="0.9" y2="0.9" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#b3e3eb" stop-opacity="0.17"/>
+      <stop offset="0.4" stop-color="#7cbeda" stop-opacity="0.025"/>
+      <stop offset="0.66" stop-color="#7cbeda" stop-opacity="0.045"/>
+      <stop offset="1" stop-color="#7cbeda" stop-opacity="0.14"/>
+    </linearGradient>
+  </defs>
+  <path d="M115 116L105 127L104 151L116 167L122 154L120 128Z" fill="#9aa5c2" fill-opacity="0.24" stroke="#c5d2df" stroke-opacity="0.65" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M128 169C143 194 173 204 198 189L203 198C174 219 136 202 122 178Z" fill="#a6b2c8" fill-opacity="0.25" stroke="#c8d7e3" stroke-opacity="0.72" stroke-width="1.7" stroke-linejoin="round"/>
+  <path d="M180 54C146 51 121 77 115 113C109 148 126 182 157 194C187 206 220 184 229 150C240 112 217 60 180 54Z" fill="url(#visor-glass)" stroke="#afdbe8" stroke-opacity="0.83" stroke-width="2.6"/>
+  <path d="M115 104C120 74 142 52 169 49C201 46 226 68 234 101L226 103C218 74 198 57 173 58C148 58 129 79 124 106Z" fill="#b8c1d6" fill-opacity="0.29" stroke="#d1dbe8" stroke-opacity="0.71" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M229 118L245 106L256 126L246 157L223 169L218 155Z" fill="#9ba8c8" fill-opacity="0.29" stroke="#c6d2e3" stroke-opacity="0.76" stroke-width="1.7" stroke-linejoin="round"/>
+  <path d="M236 127L245 65L252 51L249 118Z" fill="#b9c7d9" fill-opacity="0.35" stroke="#d1dbe5" stroke-opacity="0.72" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M245 65L248 46L253 40L252 59Z" fill="#c88e89" fill-opacity="0.53" stroke="#dfb3ad" stroke-opacity="0.76" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M136 94C144 78 156 69 170 68" fill="none" stroke="#d7edf0" stroke-opacity="0.48" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M233 153L243 147L247 135" fill="none" stroke="#dfa9a8" stroke-opacity="0.61" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

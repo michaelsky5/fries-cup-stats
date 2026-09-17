@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Hanzo recurved bow</title>
+  <desc id="desc">Sculpted bow limbs and a wrapped grip frame an open string space. The arrow is secondary; no targeting node or motion trail is embedded in the emblem.</desc>
+  <path d="M94 37C127 53 149 82 155 110L161 119L155 127V137L161 145C153 179 128 211 94 224L106 207C126 186 138 164 141 145L135 138V123L141 116C137 89 125 66 105 49Z" fill="#6fa4ac" fill-opacity="0.35" stroke="#c0dce0" stroke-opacity="0.72" stroke-width="1.7" stroke-linejoin="round"/>
+  <path d="M105 49C127 63 143 89 148 111M149 151C142 174 124 200 106 211" fill="none" stroke="#c3e2e5" stroke-opacity="0.4" stroke-width="2" stroke-linecap="round"/>
+  <path d="M96 42L103 130L96 218" fill="none" stroke="#a8c6cb" stroke-opacity="0.5" stroke-width="1.25"/>
+  <path d="M94 130H224" fill="none" stroke="#a7d0d6" stroke-opacity="0.72" stroke-width="2"/>
+  <path d="M214 123L231 130L214 137L218 130Z" fill="#a6cbd1" fill-opacity="0.6"/>
+  <path d="M139 119L155 123V139L141 145L137 137V126Z" fill="#d4dfd6" fill-opacity="0.48"/>
+  <path d="M141 128L153 132M141 135L153 139" stroke="#15272b" stroke-opacity="0.7" stroke-width="1.4"/>
+</svg>

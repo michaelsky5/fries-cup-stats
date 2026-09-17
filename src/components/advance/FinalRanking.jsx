@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import { teamFull, teamShort } from '../../lib/advanceSelectors.js'
@@ -8,6 +10,7 @@ function routeId(team) {
 }
 
 export default function FinalRanking({ rows, seasonId, t, withSeason, isFavoriteTeam, isPrimaryFavoriteTeam }) {
+  const uiLocale = useUiLocale()
   if (!rows.length) return null
 
   return (
@@ -15,7 +18,7 @@ export default function FinalRanking({ rows, seasonId, t, withSeason, isFavorite
       <header className={styles.sectionHeader}>
         <div>
           <span className={styles.sectionLabel}>FINAL RANKING</span>
-          <h2>{t('advance.final.rankingTitle', '最终排名')}</h2>
+          <h2>{t('advance.final.rankingTitle', uiText("最终排名", uiLocale))}</h2>
         </div>
       </header>
       <div className={styles.finalRankingList}>

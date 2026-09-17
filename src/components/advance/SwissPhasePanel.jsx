@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link } from 'react-router-dom'
 import { useMemo, useState } from 'react'
 import AdvancePhaseHero from './AdvancePhaseHero.jsx'
@@ -13,6 +15,7 @@ function matchRouteId(match) {
 }
 
 function KeyMatches({ matches, t, withSeason }) {
+  const uiLocale = useUiLocale()
   if (!matches.length) return null
 
   return (
@@ -20,9 +23,9 @@ function KeyMatches({ matches, t, withSeason }) {
       <header className={styles.sectionHeader}>
         <div>
           <span className={styles.sectionLabel}>KEY MATCHES</span>
-          <h2>{t('advance.swiss.keyMatches', '本轮关键比赛')}</h2>
+          <h2>{t('advance.swiss.keyMatches', uiText("本轮关键比赛", uiLocale))}</h2>
         </div>
-        <Link to={withSeason('/matches?view=list&tab=round')}>{t('advance.common.allMatches', '完整比赛')}</Link>
+        <Link to={withSeason('/matches?view=list&tab=round')}>{t('advance.common.allMatches', uiText("完整比赛", uiLocale))}</Link>
       </header>
       <div className={styles.keyMatchGrid}>
         {matches.map(match => (
@@ -47,6 +50,7 @@ export default function SwissPhasePanel({
   t,
   withSeason
 }) {
+  const uiLocale = useUiLocale()
   const [activeZone, setActiveZone] = useState('all')
   const visibleRows = useMemo(() => {
     if (activeZone === 'all') return rows
@@ -58,14 +62,14 @@ export default function SwissPhasePanel({
   const hero = (
     <AdvancePhaseHero
       eyebrow="SWISS STAGE"
-      title={t('advance.swiss.heroTitle', '瑞士轮积分榜')}
-      description={t('advance.swiss.heroDesc', '6 轮瑞士制 · 5 胜直通季后赛 · 3 胜进入突围赛 · 4 负出局')}
+      title={t('advance.swiss.heroTitle', uiText("瑞士轮积分榜", uiLocale))}
+      description={t('advance.swiss.heroDesc', uiText("6 轮瑞士制 · 5 胜直通季后赛 · 3 胜进入突围赛 · 4 负出局", uiLocale))}
       metrics={[
-        { value: overview.teamCount, label: t('advance.swiss.teams', '支队伍') },
-        { value: overview.rounds, label: t('advance.swiss.rounds', '轮比赛') },
+        { value: overview.teamCount, label: t('advance.swiss.teams', uiText("支队伍", uiLocale)) },
+        { value: overview.rounds, label: t('advance.swiss.rounds', uiText("轮比赛", uiLocale)) },
         {
           value: `${overview.rules.directSlots || 4} / ${overview.rules.breakthroughSlots || 20}`,
-          label: t('advance.swiss.routeSlots', '直通 / 突围'),
+          label: t('advance.swiss.routeSlots', uiText("直通 / 突围", uiLocale)),
           accent: true
         }
       ]}
@@ -83,11 +87,11 @@ export default function SwissPhasePanel({
           <TiebreakerPanel rules={tiebreakers} t={t} />
           <section className={styles.futureList}>
             <span className={styles.sectionLabel}>AFTER START</span>
-            <h2>{t('advance.swiss.afterStartTitle', '比赛开始后展示')}</h2>
+            <h2>{t('advance.swiss.afterStartTitle', uiText("比赛开始后展示", uiLocale))}</h2>
             <ul>
-              <li>{t('advance.swiss.afterStartStandings', '完整积分榜')}</li>
-              <li>{t('advance.swiss.afterStartZones', '晋级区 / 突围区 / 竞争区 / 危险区 / 已出局队伍')}</li>
-              <li>{t('advance.swiss.afterStartTiebreakers', '同分规则与当前关键比赛')}</li>
+              <li>{t('advance.swiss.afterStartStandings', uiText("完整积分榜", uiLocale))}</li>
+              <li>{t('advance.swiss.afterStartZones', uiText("晋级区 / 突围区 / 竞争区 / 危险区 / 已出局队伍", uiLocale))}</li>
+              <li>{t('advance.swiss.afterStartTiebreakers', uiText("同分规则与当前关键比赛", uiLocale))}</li>
             </ul>
           </section>
         </div>

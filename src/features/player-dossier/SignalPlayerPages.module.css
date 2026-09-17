@@ -1,0 +1,247 @@
+.pageTop { display: grid; grid-template-columns: minmax(140px,1fr) minmax(420px,1.4fr); align-items: center; gap: 4px 24px; border-bottom: 1px solid var(--fc-data-line); margin-bottom: 24px; }
+.pageTop > button { background: transparent; border: 0; padding: 10px 0; min-height: 40px; color: var(--fc-data-text-muted); font-size: 13px; }
+.pageTop > button { justify-self: start; text-align: left; }
+.pageNav { min-width: 0; }
+.pageNav > div { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); }
+.profile { min-width: 0; }
+.profileIndex { display: flex; flex-wrap: wrap; gap: 12px 40px; padding: 16px 0; border-bottom: 1px solid var(--fc-data-line); }
+.profileIndex a { display: inline-flex; gap: 10px; align-items: baseline; font-size: 14px; padding-block: 6px; }
+.profileIndex small { color: var(--fc-data-text-muted); font: 700 15px/1 var(--fc-data-font-display); }
+.profileIndex a:hover { text-decoration: underline; text-underline-offset: 5px; }
+.profileCover { display: grid; grid-template-columns: minmax(0,1.12fr) minmax(0,1fr); background: var(--fc-data-ink); color: var(--fc-data-paper); }
+.profileCover :is(a,button):focus-visible { outline-color: var(--fc-data-signal); }
+.profileCopy { min-width: 0; display: flex; flex-direction: column; padding: clamp(26px,3vw,48px); }
+.coverTop { display: flex; align-items: center; justify-content: space-between; gap: 22px; }
+.coverTop > a { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.coverTop b { font: 800 25px/1.1 var(--fc-data-font-display); letter-spacing: .01em; overflow-wrap: anywhere; }
+.coverTop > span { color: var(--fc-data-text-on-dark); font-size: 12px; letter-spacing: .08em; flex-shrink: 0; }
+.profileTeamLogo { display: flex; width: 37px; height: 40px; flex: 0 0 37px; align-items: center; justify-content: center; }
+.profileTeamLogo img { width: 100%; height: 100%; object-fit: contain; }
+.profileName { padding: 36px 0 30px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.profileName > p:first-child { font-size: 12px; color: var(--fc-data-text-on-dark); letter-spacing: .09em; }
+.profileName h1 { font: 900 clamp(64px,7.5vw,138px)/1.08 var(--fc-data-font-display),var(--fc-data-font-interface); letter-spacing: -.025em; margin: 5px 0 16px; overflow-wrap: anywhere; }
+.profileName h1[data-name-size="short"] { font-size: clamp(120px,16vw,260px); line-height: .97; }
+.profileName h1[data-name-size="long"] { font-size: clamp(40px,4.4vw,78px); }
+.profileTag { color: var(--fc-data-text-on-dark); font-size: 17px; overflow-wrap: anywhere; }
+.profileCoverBottom { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.profileCoverBottom > p { max-width: 46%; color: var(--fc-data-text-on-dark); font-size: 13px; overflow-wrap: anywhere; }
+.primaryAction { display: inline-flex; align-items: center; justify-content: space-between; gap: 32px; min-height: 48px; padding: 13px 18px; color: var(--fc-data-on-signal) !important; background: var(--fc-data-signal); font-size: 14px; font-weight: 700; white-space: nowrap; }
+.primaryAction > span { font-size: 24px; font-weight: 400; line-height: 1; }
+.primaryAction:hover { background: var(--fc-data-paper); }
+.profileActions { display: flex; flex-wrap: wrap; gap: 25px; border-top: 1px solid #42473c; padding-top: 17px; margin-top: 25px; }
+.profileActions button { padding: 6px 0; border: 0; background: transparent; color: var(--fc-data-text-on-dark); font-size: 12px; }
+.profileActions button:hover { color: var(--fc-data-paper); text-decoration: underline; text-underline-offset: 5px; }
+.profileActions button[aria-pressed="true"] { color: var(--fc-data-signal); }
+.profilePortrait { position: relative; min-width: 0; min-height: 450px; overflow: hidden; margin: 18px 18px 18px 0; background: #d9ddd2; color: var(--fc-data-ink); isolation: isolate; }
+.portraitWordmark { position: absolute; top: 10%; left: 6%; right: 6%; font: 900 clamp(74px,11vw,196px)/1 var(--fc-data-font-display); letter-spacing: -.03em; color: #b8c2af; overflow-wrap: anywhere; max-height: 50%; overflow: hidden; }
+.portraitArtwork { position: absolute; inset: 10% 0 75px; height: auto; }
+.portraitHeading { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 18px 23px; font-size: 11px; letter-spacing: .07em; }
+.portraitChoices { position: absolute; z-index: 2; display: flex; gap: 6px; left: 23px; bottom: 77px; }
+.portraitChoices button { padding: 3px; background: #e8ebe3; border: 1px solid #878e7f; min-width: 44px; min-height: 48px; }
+.portraitChoices button[aria-pressed="true"] { background: var(--fc-data-ink); border-color: var(--fc-data-ink); }
+.portraitChoices [data-hero] { width: 33px; height: 38px; }
+.portraitChoices button:focus-visible { outline-color: var(--fc-data-focus-on-light); }
+.profilePortrait figcaption { position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; min-height: 58px; padding: 15px 23px; background: #cbd2c2; z-index: 1; font-size: 12px; }
+.profilePortrait figcaption > a { display: flex; align-items: baseline; gap: 12px; }
+.profilePortrait figcaption > a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.profilePortrait figcaption b { font-size: 16px; font-weight: 700; }
+.profilePortrait figcaption small { font-size: 12px; color: #535e4b; }
+.profilePortrait figcaption :is(a,button):focus-visible { outline-color: var(--fc-data-focus-on-light); }
+.portraitTeamFallback { position: absolute; inset: 30% 30% 25%; display: flex; align-items: center; justify-content: center; }
+.portraitTeamFallback img { width: 100%; height: 100%; object-fit: contain; }
+.seasonSummary { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.05fr); gap: 36px; align-items: center; padding: 26px 0; border-bottom: 1px solid var(--fc-data-line); }
+.seasonIdentity p { color: var(--fc-data-text-muted); font-size: 12px; letter-spacing: .06em; margin-bottom: 5px; }
+.seasonIdentity strong { font-size: 16px; font-weight: 600; }
+.seasonSummary dl { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 25px; }
+.seasonSummary dl > div { display: flex; flex-direction: row-reverse; justify-content: flex-end; align-items: baseline; gap: 12px; }
+.seasonSummary dt { font-size: 12px; color: var(--fc-data-text-muted); }
+.seasonSummary dd { font: 700 46px/1 var(--fc-data-font-display); }
+.profileChapterHeading > p { color: var(--fc-data-text-muted); font-size: 12px; letter-spacing: .09em; margin-bottom: 8px; }
+.profileChapterHeading h2 { font-size: 29px; font-weight: 800; }
+.profileChapterHeading > span { display: block; font-size: 13px; margin-top: 12px; color: var(--fc-data-text-muted); }
+.profileChapterHeading > a { display: inline-block; font-size: 13px; margin-top: 20px; }
+.journey { display: grid; grid-template-columns: 185px minmax(0,1fr); gap: 42px; padding: 46px 0; }
+.journeyPhases { display: grid; grid-template-columns: repeat(auto-fit,minmax(205px,1fr)); gap: 24px; min-width: 0; }
+.journeyPhase { min-width: 0; border-top: 3px solid var(--fc-data-ink); }
+.journeyPhase > header { display: flex; align-items: start; gap: 15px; padding: 20px 0; }
+.journeyPhase > header > span { font: 700 37px/1 var(--fc-data-font-display); color: #7b8473; }
+.journeyPhase h3 { font-size: 18px; font-weight: 700; }
+.journeyPhase header p { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; color: var(--fc-data-text-muted); font-size: 12px; }
+.journeyPhase header p b { color: var(--fc-data-ink); font-weight: 400; }
+.journeyMatch { display: block; padding: 16px 18px; background: var(--fc-data-paper-raised); }
+.journeyMatch:hover { background: var(--fc-data-paper-deep); }
+.journeyDate { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; color: var(--fc-data-text-muted); font-size: 12px; }
+.journeyMatchBody { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+.journeyLogo { display: flex; align-items: center; justify-content: center; width: 40px; height: 46px; flex: 0 0 40px; }
+.journeyLogo img { width: 100%; height: 100%; object-fit: contain; }
+.journeyMatchBody > div { min-width: 0; }
+.journeyMatchBody > div > span { display: block; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+.journeyMatchBody strong { display: block; font: 700 48px/1.1 var(--fc-data-font-display); white-space: nowrap; }
+.journeyResult { font-size: 12px; margin-left: auto; align-self: flex-end; margin-bottom: 7px; color: var(--fc-data-text-muted); white-space: nowrap; }
+.journeyResult[data-result="win"] { color: var(--fc-data-status-success); }
+.journeyLink { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--fc-data-line); padding-top: 13px; font-size: 12px; }
+.journeyLink > span { font-size: 19px; line-height: 1; }
+.emptyJourney { display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 28px; background: var(--fc-data-paper-deep); }
+.emptyJourney strong { font-size: 22px; }
+.emptyJourney p { color: var(--fc-data-text-muted); font-size: 14px; }
+.honor { display: flex; align-items: center; gap: 26px; margin-top: 24px; padding: 20px 28px; background: var(--fc-data-paper-deep); border-left: 4px solid var(--fc-data-signal); }
+.honor > strong { font: 800 52px/1 var(--fc-data-font-display); }
+.honor p { font-size: 17px; font-weight: 700; }
+.honor span { color: var(--fc-data-text-muted); font-size: 13px; }
+.signatureHeroes { display: grid; grid-template-columns: 185px minmax(0,1fr); gap: 42px; background: var(--fc-data-paper-deep); padding: 30px; }
+.signatureHeroes .profileChapterHeading h2 { font-size: 24px; }
+.signatureList { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 28px; align-items: center; }
+.signatureHero { display: flex; align-items: center; gap: 13px; min-width: 0; padding: 12px 0; }
+.signatureHero > [data-hero] { width: 50px; height: 56px; flex: 0 0 50px; }
+.signatureHero > div { min-width: 0; }
+.signatureHero strong { display: block; font-size: 17px; font-weight: 700; overflow-wrap: anywhere; }
+.signatureHero > div > span { display: flex; flex-wrap: wrap; gap: 3px 9px; margin-top: 5px; color: var(--fc-data-text-muted); font-size: 12px; }
+.signatureHero > span:last-child { font-size: 21px; margin-left: auto; }
+.signatureHero:hover strong { text-decoration: underline; text-underline-offset: 5px; }
+.profileFooter { display: flex; align-items: center; gap: 42px; flex-wrap: wrap; padding-top: 28px; margin-top: 28px; border-top: 1px solid var(--fc-data-line); }
+.profileFooter > div { display: flex; flex-direction: column; gap: 6px; }
+.profileFooter > div > span { color: var(--fc-data-text-muted); font-size: 12px; }
+.profileFooter > div :is(a,strong) { font-size: 15px; font-weight: 600; }
+.profileFooter > a { margin-left: auto; font-size: 14px; font-weight: 600; }
+.analysis { min-width: 0; }
+.analysisHeading { display: grid; grid-template-columns: minmax(0,1fr) auto auto; gap: 42px; align-items: center; padding: 26px 30px; background: var(--fc-data-paper-deep); border-top: 3px solid var(--fc-data-ink); }
+.analysisIdentity > p { color: var(--fc-data-text-muted); font-size: 13px; }
+.analysisIdentity h1 { font: 800 clamp(35px,4.1vw,64px)/1.15 var(--fc-data-font-display),var(--fc-data-font-interface); margin: 6px 0 8px; overflow-wrap: anywhere; }
+.analysisIdentity > p:last-child { overflow-wrap: anywhere; }
+.analysisRating { display: flex; gap: 20px; align-items: center; }
+.analysisRating > strong { font: 800 74px/1 var(--fc-data-font-display); }
+.analysisRating > div > p { color: var(--fc-data-text-muted); font-size: 12px; }
+.analysisRating > div > span { display: flex; flex-wrap: wrap; gap: 5px 14px; font-size: 13px; margin: 6px 0 2px; }
+.analysisRating small { color: var(--fc-data-text-muted); font-size: 12px; font-weight: 400; }
+.analysisRating button { margin-left: -5px; font-size: 12px; }
+.analysisActions { display: flex; align-items: flex-start; flex-direction: column; gap: 14px; }
+.analysisActions > a { display: block; padding: 11px 18px; color: var(--fc-data-on-paper); border: 1px solid var(--fc-data-ink); font-size: 14px; font-weight: 600; white-space: nowrap; }
+.analysisActions > a:hover { color: var(--fc-data-on-ink); background: var(--fc-data-ink); }
+.analysisActions > button { background: transparent; border: 0; font-size: 12px; padding: 3px 0; }
+.analysisSample { flex-wrap: wrap; }
+.analysisTabs { display: flex; gap: 32px; border-bottom: 1px solid var(--fc-data-line); margin-bottom: 24px; }
+.analysisTabs button { display: flex; align-items: baseline; gap: 9px; padding: 13px 0; background: transparent; border: 0; border-bottom: 3px solid transparent; font-size: 15px; color: var(--fc-data-text-muted); }
+.analysisTabs button[aria-pressed="true"] { border-bottom-color: var(--fc-data-ink); color: var(--fc-data-ink); font-weight: 700; }
+.analysisTabs small { font-size: 12px; font-weight: 400; }
+.analysisContent { min-width: 0; }
+.analysisContent > section { margin-top: 0; }
+.analysisContent > section + section { margin-top: 28px; }
+.analysisContent > div + section { margin-top: 28px; }
+.historySelects { display: flex; flex-wrap: wrap; gap: 16px; min-width: 0; }
+.historyHeading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin: 24px 0 16px; }
+.historyHeading h2 { font-size: 25px; font-weight: 700; }
+.historyHeading p { font-size: 13px; color: var(--fc-data-text-muted); }
+@media (max-width: 1280px) {
+  .profileCopy { padding: 30px; }
+  .profileCoverBottom { align-items: flex-start; flex-direction: column; gap: 15px; }
+  .profileCoverBottom > p { max-width: 100%; }
+  .profilePortrait { min-height: 440px; }
+  .journey { grid-template-columns: 145px minmax(0,1fr); gap: 28px; }
+  .journeyPhases { grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 18px; }
+  .journeyMatch { padding-inline: 14px; }
+  .signatureHeroes { grid-template-columns: 145px minmax(0,1fr); gap: 28px; }
+  .signatureList { gap: 20px; }
+  .signatureHero { gap: 10px; }
+  .signatureHero > [data-hero] { width: 40px; height: 46px; flex-basis: 40px; }
+  .signatureHero strong { font-size: 15px; }
+  .analysisHeading { gap: 26px; }
+  .analysisRating { gap: 12px; }
+}
+@media (max-width: 980px) {
+  .profileName h1[data-name-size="short"] { font-size: 144px; }
+  .seasonSummary { gap: 28px; }
+  .seasonSummary dl { gap: 12px; }
+  .seasonSummary dl > div { flex-direction: column-reverse; align-items: start; gap: 8px; }
+  .journey { display: block; }
+  .profileChapterHeading { margin-bottom: 25px; }
+  .profileChapterHeading > span { margin-top: 6px; }
+  .journeyPhases { grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); }
+  .signatureHeroes { display: block; }
+  .signatureHeroes .profileChapterHeading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px 20px; margin-bottom: 14px; }
+  .signatureHeroes .profileChapterHeading > p { display: none; }
+  .signatureHeroes .profileChapterHeading > a { margin-top: 0; margin-left: auto; }
+  .analysisHeading { grid-template-columns: minmax(0,1fr) auto; gap: 22px; }
+  .analysisActions { grid-column: 1/-1; flex-direction: row; align-items: center; gap: 25px; }
+}
+@media (max-width: 640px) {
+  .profileIndex { justify-content: space-between; gap: 8px; }
+  .profileIndex a { font-size: 12px; gap: 6px; }
+  .profileIndex small { font-size: 12px; }
+  .pageTop { grid-template-columns: minmax(0,1fr); margin-bottom: 16px; gap: 0; }
+  .pageTop > button { font-size: 12px; }
+  .pageNav { gap: 4px 12px; }
+  .pageNav > p { font-size: 12px; max-width: 45%; }
+  .pageNav > div { gap: 0; }
+  .pageNav a { font-size: 12px; padding: 12px 8px; white-space: normal; }
+  .pageNav a small { display: none; }
+  .profileCover { grid-template-columns: minmax(0,1fr); }
+  .profileCopy { padding: 24px; }
+  .profileName { padding: 28px 0 24px; }
+  .profileName h1 { font-size: 66px; }
+  .profileName h1[data-name-size="short"] { font-size: 154px; }
+  .profileName h1[data-name-size="long"] { font-size: 40px; }
+  .profileTag { font-size: 16px; }
+  .profileCoverBottom { flex-direction: row; align-items: center; gap: 14px; }
+  .profileCoverBottom > p { max-width: 46%; font-size: 12px; }
+  .primaryAction { font-size: 13px; gap: 14px; padding-inline: 13px; }
+  .profileActions { padding-top: 10px; margin-top: 20px; }
+  .profilePortrait { min-height: 350px; margin: 0 14px 14px; }
+  .portraitWordmark { font-size: 100px; }
+  .portraitArtwork { inset: 8% 0 75px; }
+  .portraitHeading { padding: 15px 16px; font-size: 10px; }
+  .portraitChoices { left: 16px; bottom: 70px; }
+  .profilePortrait figcaption { padding: 12px 16px; min-height: 50px; gap: 5px 10px; }
+  .profilePortrait figcaption > a { gap: 8px; }
+  .profilePortrait figcaption b { font-size: 15px; }
+  .seasonSummary { grid-template-columns: minmax(0,1fr); gap: 22px; padding: 24px 0; }
+  .seasonIdentity strong { font-size: 15px; }
+  .seasonSummary dl > div { flex-direction: row-reverse; align-items: baseline; justify-content: flex-end; gap: 9px; }
+  .seasonSummary dd { font-size: 36px; }
+  .journey { padding: 32px 0; }
+  .profileChapterHeading h2 { font-size: 25px; }
+  .profileChapterHeading { margin-bottom: 20px; }
+  .journeyPhases { grid-template-columns: minmax(0,1fr); gap: 24px; }
+  .journeyPhase > header { padding-block: 15px; }
+  .journeyPhase h3 { font-size: 19px; }
+  .journeyMatchBody { margin: 14px 0; }
+  .journeyMatchBody > div { display: flex; align-items: center; justify-content: space-between; flex: 1; gap: 16px; }
+  .journeyMatchBody strong { font-size: 40px; }
+  .journeyResult { margin-left: 5px; }
+  .signatureHeroes { padding: 24px; }
+  .signatureHeroes .profileChapterHeading { align-items: start; flex-direction: column; gap: 6px; }
+  .signatureHeroes .profileChapterHeading > a { margin-left: 0; }
+  .signatureList { grid-template-columns: minmax(0,1fr); gap: 0; }
+  .signatureHero { padding-block: 16px; border-bottom: 1px solid var(--fc-data-line); gap: 14px; }
+  .signatureHero:last-child { border-bottom: 0; }
+  .signatureHero > [data-hero] { width: 46px; height: 52px; flex-basis: 46px; }
+  .signatureHero strong { font-size: 17px; }
+  .profileFooter { gap: 22px 30px; }
+  .profileFooter > a { margin-left: 0; width: 100%; }
+  .honor { padding: 20px; gap: 18px; }
+  .honor > strong { font-size: 42px; }
+  .honor p { font-size: 15px; }
+  .analysisHeading { align-items: start; gap: 22px 18px; padding: 22px 18px; }
+  .analysisIdentity h1 { font-size: 42px; }
+  .analysisIdentity > p { font-size: 12px; }
+  .analysisRating { flex-direction: column; align-items: flex-start; gap: 8px; max-width: 150px; }
+  .analysisRating > strong { font-size: 58px; }
+  .analysisRating > div > p { font-size: 11px; }
+  .analysisRating > div > span { font-size: 12px; gap: 4px 8px; }
+  .analysisActions { gap: 24px; }
+  .analysisActions > a { font-size: 13px; }
+  .analysisTabs { gap: 18px; margin-bottom: 20px; }
+  .historySelects { width: 100%; }
+  .analysisTabs button { font-size: 13px; gap: 5px; }
+  .analysisTabs small { font-size: 12px; }
+  .historyHeading h2 { font-size: 23px; }
+  .historyHeading p { font-size: 12px; }
+}
+@media (max-width: 380px) {
+  .profileCopy { padding-inline: 20px; }
+  .profileCoverBottom { align-items: start; flex-direction: column; }
+  .profileCoverBottom > p { max-width: 100%; }
+  .seasonSummary dl > div { gap: 6px; }
+  .seasonSummary dt { font-size: 11px; }
+  .analysisTabs { gap: 20px; }
+  .analysisTabs button { font-size: 13px; gap: 5px; }
+}

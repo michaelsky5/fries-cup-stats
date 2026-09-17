@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Winston primal spectacles</title>
+  <desc id="desc">Rounded rectangular lenses, a clear bridge and a single contained Tesla glint. Portrait motion is rendered in a separate background layer.</desc>
+  <g fill="#819bb5" fill-opacity="0.085" stroke="#b5cad8" stroke-opacity="0.72" stroke-width="2.1" stroke-linejoin="round">
+    <path d="M165 88Q165 80 173 80H196Q205 80 206 89L202 104Q201 112 192 112H179Q173 112 171 105Z"/>
+    <path d="M212 88Q212 80 220 80H243Q252 80 253 89L249 104Q248 112 239 112H226Q220 112 218 105Z"/>
+  </g>
+  <path d="M204 94Q209 91 215 94M166 88L155 81M253 88L265 81" fill="none" stroke="#b5cad8" stroke-width="2.1" stroke-linecap="round" opacity="0.62"/>
+  <path d="M236 85L228 94H236L230 104" fill="none" stroke="#e7b053" stroke-width="1.7" stroke-linejoin="bevel" opacity="0.72"/>
+</svg>

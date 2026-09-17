@@ -1,4 +1,4 @@
-import styles from './MatchDetail.module.css'
+import styles from './matchDetailStyles.js'
 
 export default function SeriesMapRail({
   dossier,
@@ -22,6 +22,7 @@ export default function SeriesMapRail({
             type="button"
             className={styles.seriesOverviewNode}
             data-active={overviewActive ? 'true' : 'false'}
+            aria-pressed={overviewActive}
             onClick={onOverview}
           >
             <span>MATCH</span>
@@ -35,6 +36,7 @@ export default function SeriesMapRail({
               key={map.key}
               className={styles.seriesMapNode}
               data-active={activeMapOrder === map.order ? 'true' : 'false'}
+              aria-pressed={activeMapOrder === map.order}
               data-complete={map.complete ? 'true' : 'false'}
               onClick={() => onSelectMap(map.order)}
               aria-current={activeMapOrder === map.order ? 'step' : undefined}

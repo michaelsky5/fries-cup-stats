@@ -1,4 +1,6 @@
 import { formatPlayerTime } from './format.js'
+import { getSeasonRatingValue, getSeasonSampleRequirements } from './seasonRatingPolicy.js'
+import { getPlayerMatchLogs } from './playerMatchLogs.js'
 import {
   PUBLIC_METRICS,
   ROLE_COLORS,
@@ -66,6 +68,8 @@ export const LEADERBOARD_COLUMNS = [
 ]
 
 export const ALWAYS_VISIBLE_COLUMNS = ['rank', 'player']
+// Team and role already appear beneath the player's name in the Signal table.
+export const SIGNAL_LEADERBOARD_COLUMNS = LEADERBOARD_COLUMNS.filter(column => !['team', 'role'].includes(column.id))
 export const DEFAULT_VISIBLE_COLUMNS = LEADERBOARD_COLUMNS.map(column => column.id)
 
 function safeArr(value) {
@@ -198,10 +202,7 @@ function createPlayerResolver(db) {
 }
 
 function getPlayerLogs(player) {
-  return [
-    ...safeArr(player?.match_logs),
-    ...safeArr(player?.live_match_logs)
-  ]
+  return getPlayerMatchLogs(player).logs
 }
 
 function getLogStat(log, names) {
@@ -300,6 +301,7 @@ function createEntry(basePlayer, role, source, sourceType) {
     role: normalizedRole,
     maps_played: mapsPlayed,
     roleMapsPlayed: mapsPlayed,
+    roleMatchesPlayed: source.matches_played ?? source.matchesPlayed ?? null,
     raw_time_mins: roleTimeMins,
     roleTimeMins,
     total_time_played: source.total_time_played || formatRoleTime(roleTimeMins),
@@ -341,10 +343,10 @@ function createEntry(basePlayer, role, source, sourceType) {
   }
 }
 
-function aggregateEntriesFromLogs(player) {
+function aggregateEntriesFromLogs(player, logs = getPlayerLogs(player)) {
   const grouped = new Map()
 
-  getPlayerLogs(player).forEach(log => {
+  logs.forEach(log => {
     const role = normalizeLeaderboardRole(log.role)
     const playtime = toFiniteNumber(log.playtimeMinutes ?? log.raw_time_mins)
     if (!role || playtime <= 0) return
@@ -425,8 +427,19 @@ function buildRawLeaderboardEntries(db) {
       ? total.role_breakdown
       : {}
 
+    // Old published totals can already contain the same imported-map copies.
+    // Repair affected players from the surviving logs so minutes, map counts,
+    // displayed statistics and rating eligibility use the same sample.
+    const selectedLogs = getPlayerMatchLogs(basePlayer)
+    const repairedRoles = selectedLogs.duplicateLogs.some(log => toFiniteNumber(log.playtimeMinutes ?? log.raw_time_mins ?? log.timeMins) > 0)
+      ? new Map(aggregateEntriesFromLogs(basePlayer, selectedLogs.logs).map(source => [source.role, source]))
+      : new Map()
+
     const roleSources = Object.entries(roleBreakdown)
-      .map(([role, source]) => [normalizeLeaderboardRole(role), source])
+      .map(([role, source]) => {
+        const normalizedRole = normalizeLeaderboardRole(role)
+        return [normalizedRole, repairedRoles.get(normalizedRole) || source]
+      })
       .filter(([role, source]) => role && toFiniteNumber(source?.raw_time_mins) > 0)
 
     if (roleSources.length) {
@@ -522,6 +535,9 @@ export function getLeaderboardSummary(entries, minTimeMins, db) {
     qualifiedEntries: qualified.length,
     totalPlayers: Math.max(playerIds.size, directoryPlayerCount),
     qualifiedPlayers: qualifiedPlayerIds.size,
+    provisionalEntries: entries.filter(entry => entry.seasonRatingStatus === 'PROVISIONAL').length,
+    unratedEntries: entries.filter(entry => entry.seasonRatingStatus === 'UNRATED').length,
+    sampleRequirements: getSeasonSampleRequirements(minTimeMins),
     minTimeMins,
     roleCounts
   }
@@ -591,23 +607,29 @@ export function getEntryMetricValue(entry, metricId, mode = 'per10') {
 }
 
 export function getEntrySeasonOvr(entry) {
-  const value = Number(entry?.seasonOvr)
-  return Number.isFinite(value) ? value : null
+  return toNullableScore(entry?.seasonOvr)
 }
 
 export function getEntrySeasonScore(entry) {
-  const value = Number(entry?.seasonScore ?? entry?.roleScore)
-  return Number.isFinite(value) ? value : null
+  return toNullableScore(entry?.seasonScore ?? entry?.roleScore)
 }
 
-export function formatEntrySeasonOvr(entry, fallback = '-') {
+function toNullableScore(value) {
+  if (value == null || (typeof value === 'string' && value.trim() === '')) return null
+  const number = Number(value)
+  return Number.isFinite(number) ? number : null
+}
+
+export function formatEntrySeasonOvr(entry, fallback = '—') {
   const value = getEntrySeasonOvr(entry)
   return value === null ? fallback : String(Math.round(value))
 }
 
 export function getEntrySeasonScoreMeta(entry, locale = 'zh-CN') {
-  const confidence = Number(entry?.seasonScoreConfidence)
-  const percentile = Number(entry?.seasonRolePercentile)
+  if (entry?.seasonRatingStatus === 'PROVISIONAL') return locale === 'en-US' ? 'PROVISIONAL · NOT RANKED' : '暂定评分 · 未入榜'
+  if (entry?.seasonRatingStatus === 'UNRATED') return locale === 'en-US' ? 'UNRATED' : '未评级'
+  const confidence = toNullableScore(entry?.seasonScoreConfidence)
+  const percentile = toNullableScore(entry?.seasonRolePercentile)
   const isEn = locale === 'en-US'
   const parts = []
 
@@ -629,7 +651,7 @@ export function getEntrySeasonScoreMeta(entry, locale = 'zh-CN') {
 
 function getSortValue(entry, sortKey, mode) {
   if (sortKey === 'rank') return entry.eligible ? entry.overallRank || entry.roleRank || 999999 : 999999
-  if (sortKey === 'score') return toFiniteNumber(entry.seasonOvr, toFiniteNumber(entry.roleScore))
+  if (sortKey === 'score') return getSeasonRatingValue(entry) ?? -1
   if (sortKey === 'player') return entry.display_name
   if (sortKey === 'team') return entry.team_short_name || entry.team_name
   if (sortKey === 'role') return ROLE_ORDER.indexOf(entry.role)

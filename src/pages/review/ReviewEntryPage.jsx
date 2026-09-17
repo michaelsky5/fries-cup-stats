@@ -1,106 +1,64 @@
-import { useMemo, useRef, useState } from 'react'
-import { Link, useOutletContext } from 'react-router-dom'
-import { getReviewSearchResults } from '../../lib/reviewSearch.js'
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useLocation, useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
+import { buildReviewEntryPath, buildReviewPath, getReviewOverviewReturnState } from '../../lib/reviewNavigation.js'
+import { getRestoreScrollState } from '../../lib/navigationState.js'
+import { getReviewSearchResults, getUnifiedReviewSearchResults } from '../../lib/reviewSearch.js'
+import {
+  REVIEW_LOCALES,
+  getReviewIdentities,
+  getReviewPlaceholder,
+  getStoredReviewLocale,
+  localizeReviewSearchResult,
+  normalizeReviewLocale,
+  reviewText,
+  setStoredReviewLocale
+} from '../../lib/reviewLocale.js'
+import { getLocalizedReviewSeasonProfile, prepareReviewDb } from '../../lib/reviewSeason.js'
+import ReviewArchiveSearch from './ReviewArchiveSearch.jsx'
 import styles from './ReviewEntryPage.module.css'
 
-const IDENTITIES = [
-  {
-    id: 'player',
-    no: '01',
-    title: '我是选手',
-    shortTitle: '选手',
-    en: 'PLAYER',
-    desc: '回看你的英雄、地图、数据与赛季轨迹。',
-    hint: '英雄池、出场地图、代表瞬间'
-  },
-  {
-    id: 'teamStaff',
-    no: '02',
-    title: '我是经理 / 教练',
-    shortTitle: '经理 / 教练',
-    en: 'MANAGER / COACH',
-    desc: '打开你带过的队伍，回看它怎么走完这个赛季。',
-    hint: '队伍旅程、阶段战绩、最终排名'
-  },
-  {
-    id: 'admin',
-    no: '03',
-    title: '我是赛管',
-    shortTitle: '赛管',
-    en: 'STAFF',
-    desc: '回看你参与过的比赛、阶段、队伍与协作记录。',
-    hint: '幕后场次、参与阶段、协作记录'
-  },
-  {
-    id: 'caster',
-    no: '04',
-    title: '我是解说',
-    shortTitle: '解说',
-    en: 'CASTER',
-    desc: '回看你解说过的比赛、阶段、队伍与搭档。',
-    hint: '解说场次、见证队伍、搭档回顾'
-  },
-  {
-    id: 'viewer',
-    no: '05',
-    title: '我是观众',
-    shortTitle: '观众',
-    en: 'WITNESS',
-    desc: '作为见证者，回看这届学院赛如何被所有人共同完成。',
-    hint: '赛事见证、冠军之路、共同记忆'
-  }
-]
-
-function getPlaceholder(identity) {
-  if (identity === 'player') return '输入选手昵称 / 战网 ID / 队伍简称'
-  if (identity === 'teamStaff') return '输入经理 / 教练 / 队伍名 / 队伍简称'
-  if (identity === 'admin') return '输入赛管名字'
-  if (identity === 'caster') return '输入解说名字'
-  if (identity === 'viewer') return '观众回顾不需要搜索，直接开启赛事见证回顾'
-  return '先选择身份'
-}
-
-function getPanelTitle(selected, query) {
-  if (!selected) return '先选择你的身份'
-  if (selected.id === 'viewer') return '开启赛事见证回顾'
-  if (query.trim()) return `搜索你的${selected.shortTitle}回顾`
-  return `${selected.shortTitle}推荐回顾`
-}
-
-function getPanelSub(selected, query) {
-  if (!selected) return 'SELECT YOUR ROLE FIRST'
-  if (selected.id === 'viewer') return 'SEASON WITNESS ARCHIVE'
-  if (query.trim()) return 'MATCHED SEASON ARCHIVES'
-  return 'FEATURED SEASON ARCHIVES'
-}
-
-function getEmptyText(identity, query) {
-  if (!identity) {
+function getCinemaEntryCopy(locale) {
+  if (locale === 'en-US') {
     return {
-      title: '请选择身份',
-      body: '选择身份后，可开启对应的赛季回顾。'
+      title: 'This season is playing back for you.',
+      body: 'Find your place in the season, or revisit the event we made together.',
     }
   }
 
-  if (query.trim()) {
+  if (locale === 'ko-KR') {
     return {
-      title: '没有找到结果',
-      body: '可以试试战网 ID、队伍简称、中文名，或输入更短的关键词。'
+      title: '이번 시즌을 당신을 위해 다시 상영합니다.',
+      body: '내가 남긴 기록을 찾거나, 함께 만든 대회를 다시 만나보세요.',
     }
   }
 
   return {
-    title: '暂无推荐结果',
-    body: '当前身份下暂无推荐回顾，可以输入关键词搜索。'
+    title: uiText("这一季，正在为你重新放映。", locale),
+    body: uiText("找回属于你的赛季片段，也重看我们共同完成的这一届。", locale),
   }
 }
 
-function ViewerArchiveCard() {
-  const { withSeason = path => path } = useOutletContext()
+function getResultIdentityTitle(item, identities, locale) {
+  const isGenericTeamReview = item?.identity === 'teamStaff'
+    && /^\/review\/story\/team\/[^?]+$/.test(String(item?.to || ''))
+
+  if (isGenericTeamReview) {
+    if (locale === 'en-US') return 'Team'
+    if (locale === 'ko-KR') return '팀'
+    return uiText('队伍', locale)
+  }
+
+  return identities.find(entry => entry.id === item?.identity)?.shortTitle || item?.identity
+}
+
+function ViewerArchiveCard({ profile, locale, to, returnState }) {
+  const isEn = locale === 'en-US'
+  const isKo = locale === 'ko-KR'
 
   return (
-    <Link to={withSeason('/review/story/tournament')} className={styles.viewerCard}>
-      <div className={styles.viewerCardBg}>FCA26</div>
+    <Link to={to} state={returnState} className={styles.viewerCard}>
+      <div className={styles.viewerCardBg}>{profile.shortMark}</div>
 
       <div className={styles.viewerCardTop}>
         <span>SEASON WITNESS</span>
@@ -108,29 +66,33 @@ function ViewerArchiveCard() {
       </div>
 
       <div className={styles.viewerCardMain}>
-        <h2>打开 2026 薯条杯学院赛见证回顾</h2>
+        <h2>{isEn ? `Open the ${profile.eventTitle} witness review` : isKo ? `${profile.eventTitle} 목격자 리뷰 열기` : uiText("打开 {0}见证回顾", locale, [profile.eventTitle])}</h2>
         <p>
-          从公开预选赛到季后淘汰赛，从瑞士轮、突围赛到冠军之路，回看这届比赛如何被选手、队伍、解说、赛管和每一位观众共同完成。
+          {profile.isPartner ? (isEn ? 'From the group stage to the single-elimination playoffs, revisit the matches and people of Hammer Cup S4.' : isKo ? '조별 리그부터 싱글 엘리미네이션 플레이오프까지, 해머 컵 S4의 경기와 사람들을 다시 만나보세요.' : uiText('从小组赛到单败淘汰赛，重看全高杯 S4 的比赛与参与其中的人。', locale)) : isEn
+            ? 'From the Swiss Round and LCQ to the playoffs and the champion road, look back at the event the players, teams, casters, staff, and every viewer completed together.'
+            : isKo
+              ? '스위스 라운드와 최종 선발전부터 플레이오프와 우승의 길까지, 선수와 팀, 중계진, 스태프, 그리고 모든 관람객이 함께 완성한 대회를 돌아봅니다.'
+              : uiText("从{0}到季后淘汰赛，从瑞士轮、突围赛到冠军之路，回看这届比赛如何被选手、队伍、解说、赛管和每一位观众共同完成。", locale, [profile.routeLabel])}
         </p>
       </div>
 
       <div className={styles.viewerCardGrid}>
         <div>
-          <strong>公开预选赛</strong>
-          <span>瑞士轮 / 突围赛</span>
+          <strong>{profile.routeLabel}</strong>
+          <span>{profile.isPartner ? (isEn ? 'Four groups / eight playoff spots' : isKo ? '4개 조 / 플레이오프 8자리' : uiText('四个小组 / 八个晋级席位', locale)) : isEn ? 'Swiss Round / LCQ' : isKo ? '스위스 라운드 / 최종 선발전' : uiText("瑞士轮 / 突围赛", locale)}</span>
         </div>
         <div>
-          <strong>季后淘汰赛</strong>
-          <span>前八队伍 / 冠军之路</span>
+          <strong>{isEn ? 'Playoffs' : isKo ? '플레이오프' : uiText("季后淘汰赛", locale)}</strong>
+          <span>{isEn ? 'Top eight / champion road' : isKo ? '8강 / 우승의 길' : uiText("前八队伍 / 冠军之路", locale)}</span>
         </div>
         <div>
-          <strong>共同记忆</strong>
-          <span>地图 / 队伍 / 见证者</span>
+          <strong>{isEn ? 'Shared memory' : isKo ? '함께 만든 기억' : uiText("共同记忆", locale)}</strong>
+          <span>{isEn ? 'Maps / teams / witnesses' : isKo ? '전장 / 팀 / 목격자' : uiText("地图 / 队伍 / 见证者", locale)}</span>
         </div>
       </div>
 
       <div className={styles.viewerCardAction}>
-        <span>开启赛事见证回顾</span>
+        <span>{reviewText(locale, 'viewerStart')}</span>
         <b>→</b>
       </div>
     </Link>
@@ -139,31 +101,108 @@ function ViewerArchiveCard() {
 
 export default function ReviewEntryPage() {
   const outlet = useOutletContext()
-  const db = outlet?.db
-  const locale = outlet?.locale || 'zh-CN'
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const db = useMemo(() => prepareReviewDb(outlet?.db), [outlet?.db])
+  const requestedLocale = searchParams.get('lang')
+  const locale = requestedLocale
+    ? normalizeReviewLocale(requestedLocale)
+    : getStoredReviewLocale(outlet?.locale || 'zh-CN')
   const reviewAvailable = outlet?.reviewAvailable
   const seasonLabel = outlet?.season?.publicCode || outlet?.seasonId || 'FRIES CUP'
-  const withSeason = outlet?.withSeason || (path => path)
-  const [identity, setIdentity] = useState('player')
-  const [query, setQuery] = useState('')
+  const profile = useMemo(
+    () => getLocalizedReviewSeasonProfile(outlet?.season?.id || outlet?.seasonId || db, locale),
+    [outlet?.season?.id, outlet?.seasonId, db, locale]
+  )
+  const isCinemaReview = profile.usesRegularTemplate
+  const cinemaCopy = useMemo(() => getCinemaEntryCopy(locale), [locale])
+  const requestedIdentity = searchParams.get('identity')
+  const allowedIdentities = isCinemaReview
+    ? ['player', 'teamStaff', 'admin', 'caster']
+    : ['player', 'teamStaff', 'admin', 'caster', 'viewer']
+  const identity = allowedIdentities.includes(requestedIdentity) ? requestedIdentity : isCinemaReview ? 'all' : 'player'
+  const query = searchParams.get('q') || ''
+  const reviewPath = useMemo(
+    () => path => buildReviewPath(path, profile.id, locale, searchParams.toString()),
+    [locale, profile.id, searchParams]
+  )
+  const reviewEntryPath = useMemo(
+    () => buildReviewEntryPath(profile.id, locale, searchParams.toString(), { query, identity }),
+    [locale, profile.id, searchParams, query, identity]
+  )
+  const [activeResultIndex, setActiveResultIndex] = useState(-1)
+  const overviewReturn = getReviewOverviewReturnState(location.state, profile.id, locale, searchParams.toString())
+  const storyReturnState = {
+    returnTo: reviewEntryPath,
+    parentReturnTo: overviewReturn.returnTo,
+    ...(overviewReturn.returnScrollY === undefined ? {} : { parentReturnScrollY: overviewReturn.returnScrollY })
+  }
   const searchPanelRef = useRef(null)
+  const searchInputRef = useRef(null)
 
-  const selected = IDENTITIES.find(item => item.id === identity)
+  useEffect(() => {
+    setStoredReviewLocale(locale)
+    if (!reviewAvailable) return
+    const cleanSearch = reviewEntryPath.split('?')[1] || ''
+    if (searchParams.toString() === cleanSearch) return
+    const next = new URLSearchParams(cleanSearch)
+    setSearchParams(next, { replace: true, state: location.state })
+  }, [locale, reviewAvailable, reviewEntryPath, searchParams, setSearchParams, location.state])
+
+  const identities = useMemo(() => getReviewIdentities(locale, profile.eventNoun), [locale, profile.eventNoun])
+  const selected = identities.find(item => item.id === identity)
   const isViewer = identity === 'viewer'
   const results = useMemo(() => {
     if (isViewer || !db) return []
-    return getReviewSearchResults(db, identity, query)
-  }, [db, identity, query, isViewer])
-  const emptyText = getEmptyText(identity, query)
+    const rawResults = isCinemaReview && identity === 'all'
+      ? getUnifiedReviewSearchResults(db, query)
+      : getReviewSearchResults(db, identity, query)
+    return rawResults.map(item => ({
+      ...localizeReviewSearchResult(item, locale),
+      identity: item.identity
+    }))
+  }, [db, identity, query, isViewer, isCinemaReview, locale])
+  const visibleResults = useMemo(() => {
+    if (!isCinemaReview) return results
+    const limit = query.trim().length <= 1 ? 12 : 24
+    return results.slice(0, limit)
+  }, [isCinemaReview, query, results])
+
+  useEffect(() => {
+    setActiveResultIndex(current => current >= visibleResults.length ? visibleResults.length - 1 : current)
+  }, [visibleResults.length])
+  const emptyText = !identity
+    ? { title: reviewText(locale, 'emptyChoose'), body: reviewText(locale, 'emptyChooseBody') }
+    : query.trim()
+      ? { title: reviewText(locale, 'emptySearch'), body: reviewText(locale, 'emptySearchBody') }
+      : { title: reviewText(locale, 'emptyFeatured'), body: reviewText(locale, 'emptyFeaturedBody') }
+  const panelTitle = !selected
+    ? reviewText(locale, 'chooseRole')
+    : selected.id === 'viewer'
+      ? reviewText(locale, 'viewerStart')
+      : query.trim()
+        ? `${reviewText(locale, 'searchPrefix')}${selected.shortTitle}${locale === 'en-US' ? ' reviews' : locale === 'ko-KR' ? ' 리뷰' : uiText("回顾", locale)}`
+        : `${selected.shortTitle}${reviewText(locale, 'featuredSuffix')}`
+
+  function handleLocaleChange(nextLocale) {
+    const normalized = normalizeReviewLocale(nextLocale)
+    const nextPath = buildReviewEntryPath(profile.id, normalized, searchParams.toString(), { query, identity })
+    const next = new URLSearchParams(nextPath.split('?')[1] || '')
+    setSearchParams(next, { replace: true, state: location.state })
+  }
 
   if (!reviewAvailable) {
     return (
-      <div className={styles.shell}>
-        <section className={styles.searchPanel}>
-          <div className={styles.empty}>
+      <div className={styles.shell} data-i18n-ignore>
+        <section className={styles.unavailable}>
+          <div>
             <div className={styles.emptyMark}>{seasonLabel}</div>
-            <strong>{locale === 'en-US' ? 'No review data available for this season' : '当前赛季暂无回顾数据'}</strong>
-            <p>{locale === 'en-US' ? 'Season review content will appear here after it is published.' : '当前赛季还没有发布回顾内容。'}</p>
+            <h1>{reviewText(locale, 'noReview')}</h1>
+            <p>{reviewText(locale, 'noReviewBody')}</p>
+            <Link to={outlet.withSeason('/')}>
+              {locale === 'en-US' ? 'Back to this event' : locale === 'ko-KR' ? '대회 개요로 돌아가기' : uiText('返回本届赛事', locale)} <span aria-hidden="true">↗</span>
+            </Link>
           </div>
         </section>
       </div>
@@ -171,8 +210,10 @@ export default function ReviewEntryPage() {
   }
 
   function handleIdentitySelect(nextIdentity) {
-    setIdentity(nextIdentity)
-    setQuery('')
+    updateSearch(!isCinemaReview || nextIdentity === 'viewer' ? '' : query, nextIdentity)
+    setActiveResultIndex(-1)
+
+    if (isCinemaReview) return
 
     if (typeof window === 'undefined') return
 
@@ -187,49 +228,128 @@ export default function ReviewEntryPage() {
     })
   }
 
+  function updateSearch(nextQuery, nextIdentity = identity) {
+    const nextPath = buildReviewEntryPath(profile.id, locale, searchParams.toString(), { query: nextQuery, identity: nextIdentity })
+    setSearchParams(new URLSearchParams(nextPath.split('?')[1]), { replace: true, preventScrollReset: true, state: location.state })
+    setActiveResultIndex(-1)
+  }
+
+  function clearSearch() {
+    updateSearch('')
+    setActiveResultIndex(-1)
+    window.requestAnimationFrame(() => searchInputRef.current?.focus())
+  }
+
+  function handleSearchKeyDown(event) {
+    if (event.nativeEvent?.isComposing) return
+
+    if (event.key === 'Escape' && query) {
+      event.preventDefault()
+      clearSearch()
+      return
+    }
+
+    if (!visibleResults.length) return
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      const direction = event.key === 'ArrowDown' ? 1 : -1
+      if (isCinemaReview) {
+        const nextIndex = activeResultIndex < 0
+          ? direction > 0 ? 0 : visibleResults.length - 1
+          : (activeResultIndex + direction + visibleResults.length) % visibleResults.length
+        setActiveResultIndex(nextIndex)
+        document.getElementById(`review-search-result-${nextIndex}`)?.focus()
+        return
+      }
+      setActiveResultIndex(current => {
+        if (current < 0) return direction > 0 ? 0 : visibleResults.length - 1
+        return (current + direction + visibleResults.length) % visibleResults.length
+      })
+      return
+    }
+
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      const result = visibleResults[activeResultIndex >= 0 ? activeResultIndex : 0]
+      if (result?.to) navigate(reviewPath(result.to), { state: storyReturnState })
+    }
+  }
+
   return (
-    <div className={styles.shell}>
+    <div className={`${styles.shell} ${isCinemaReview ? styles.cinemaShell : ''}`} data-i18n-ignore>
+      <Link className={styles.overviewReturn} to={overviewReturn.returnTo} state={getRestoreScrollState(overviewReturn.returnScrollY)}>
+        <span aria-hidden="true">←</span> {locale === 'en-US' ? 'Back to overview' : locale === 'ko-KR' ? '대회 개요로 돌아가기' : uiText('返回赛事总览', locale)}
+      </Link>
       <section className={styles.hero}>
         <div className={styles.heroBgText}>REVIEW</div>
+        {isCinemaReview ? <div className={styles.projectorLens} aria-hidden="true" /> : null}
+
+        <div className={styles.heroSignal} aria-hidden="true">
+          <span>SIGNAL FOUND</span>
+          <i />
+          <b>{profile.mark}</b>
+        </div>
 
         <div className={styles.heroTopline}>
-          <div className={styles.kicker}>2026 FRIES CUP SEASON REVIEW</div>
-          <div className={styles.archiveTag}>SEASON REVIEW ARCHIVE</div>
+          <div className={styles.kicker}>{profile.shortMark} / {isCinemaReview ? 'NOW SHOWING' : 'MEMORY SIGNAL'}</div>
+          <div className={styles.heroToplineActions}>
+            <div className={styles.reviewLocaleSwitch} aria-label={uiText('回顾语言', locale)}>
+              {REVIEW_LOCALES.map(item => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={item.id === locale ? styles.reviewLocaleActive : ''}
+                  aria-pressed={item.id === locale}
+                  onClick={() => handleLocaleChange(item.id)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+            <div className={styles.archiveTag}>{isCinemaReview ? 'SEASON PICTURE ARCHIVE' : 'SEASON ARCHIVE // ONLINE'}</div>
+          </div>
         </div>
 
         <div className={styles.heroMain}>
           <div>
-            <h1>这一次，不只是看数据。</h1>
-            <p>
-              选择你的身份，找到你的名字。薯条杯会把你的比赛、队伍、解说、赛管记录，或作为见证者看见的整届赛事，整理成一段可以一页页看完的赛季故事。
-            </p>
+            <h1>{isCinemaReview ? cinemaCopy.title : reviewText(locale, 'heroTitle')}</h1>
+            <p>{isCinemaReview ? cinemaCopy.body : reviewText(locale, 'heroBody')}</p>
           </div>
 
-          <div className={styles.heroStats} aria-hidden="true">
-            <div>
-              <strong>2026</strong>
-              <span>SEASON</span>
+          <div className={styles.heroArchivePanel} aria-hidden="true">
+            <div className={styles.heroArchiveLogo}>
+              <img src={profile.logo} alt="" />
+              <span>{profile.shortMark}</span>
             </div>
-            <div>
-              <strong>5</strong>
-              <span>IDENTITIES</span>
-            </div>
-            <div>
-              <strong>STORY</strong>
-              <span>FULLSCREEN REVIEW</span>
+
+            <div className={styles.heroStats}>
+              <div>
+                <strong>2026</strong>
+                <span>SEASON</span>
+              </div>
+              <div>
+                <strong>{isCinemaReview ? '2' : '5'}</strong>
+                <span>{isCinemaReview ? 'ACTS' : 'IDENTITIES'}</span>
+              </div>
+              <div>
+                <strong>{isCinemaReview ? 'PREMIERE' : 'STORY'}</strong>
+                <span>{isCinemaReview ? 'SEASON FILM' : 'MEMORY SIGNAL'}</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className={styles.identitySection} aria-label="选择你的赛季回顾身份">
+      {!isCinemaReview ? (
+      <section className={styles.identitySection} aria-label={reviewText(locale, 'selectIdentity')}>
         <div className={styles.mobileIdentityHead}>
-          <span>选择身份</span>
-          <b>左右滑动</b>
+          <span>{reviewText(locale, 'selectIdentity')}</span>
+          <b>{reviewText(locale, 'swipe')}</b>
         </div>
 
         <div className={styles.identityGrid}>
-          {IDENTITIES.map(item => {
+          {identities.map(item => {
             const active = identity === item.id
 
             return (
@@ -241,7 +361,7 @@ export default function ReviewEntryPage() {
                 onClick={() => handleIdentitySelect(item.id)}
               >
                 <div className={styles.identityHead}>
-                  <span className={styles.identityNo}>{item.no}</span>
+                  <span className={styles.identityNo}>CH {item.no}</span>
                   <span className={styles.identityEn}>{item.en}</span>
                 </div>
 
@@ -256,14 +376,37 @@ export default function ReviewEntryPage() {
           })}
         </div>
       </section>
+      ) : null}
 
+      {isCinemaReview ? (
+        <ReviewArchiveSearch
+          profile={profile}
+          locale={locale}
+          identity={identity}
+          identities={identities}
+          query={query}
+          results={results}
+          visibleResults={visibleResults}
+          activeResultIndex={activeResultIndex}
+          searchPanelRef={searchPanelRef}
+          searchInputRef={searchInputRef}
+          onIdentityChange={handleIdentitySelect}
+          onQueryChange={updateSearch}
+          onClear={clearSearch}
+          onSearchKeyDown={handleSearchKeyDown}
+          onActiveResultChange={setActiveResultIndex}
+          reviewPath={reviewPath}
+          returnState={storyReturnState}
+          getIdentityTitle={item => getResultIdentityTitle(item, identities, locale)}
+        />
+      ) : (
       <section ref={searchPanelRef} className={`${styles.searchPanel} ${isViewer ? styles.searchPanelViewer : ''}`}>
         <div className={styles.panelGlow} />
 
         <div className={styles.searchHead}>
           <div>
-            <div className={styles.searchTitle}>{getPanelTitle(selected, query)}</div>
-            <div className={styles.searchSub}>{getPanelSub(selected, query)}</div>
+            <div className={styles.searchTitle}>{panelTitle}</div>
+            <div className={styles.searchSub}>{!selected ? 'SELECT YOUR ROLE FIRST' : selected.id === 'viewer' ? 'SEASON WITNESS ARCHIVE' : query.trim() ? 'MATCHED SEASON ARCHIVES' : 'FEATURED SEASON ARCHIVES'}</div>
           </div>
 
           <div className={styles.searchMeta}>
@@ -273,15 +416,25 @@ export default function ReviewEntryPage() {
         </div>
 
         {isViewer ? (
-          <ViewerArchiveCard />
+          <ViewerArchiveCard profile={profile} locale={locale} to={reviewPath('/review/story/tournament')} returnState={storyReturnState} />
         ) : (
           <>
             <div className={styles.searchBox}>
               <input
+                ref={searchInputRef}
                 className={styles.searchInput}
                 value={query}
-                onChange={event => setQuery(event.target.value)}
-                placeholder={getPlaceholder(identity)}
+                onChange={event => {
+                  updateSearch(event.target.value)
+                  setActiveResultIndex(-1)
+                }}
+                onKeyDown={handleSearchKeyDown}
+                placeholder={getReviewPlaceholder(locale, identity)}
+                aria-label={getReviewPlaceholder(locale, identity)}
+                aria-controls="review-search-results"
+                aria-activedescendant={activeResultIndex >= 0 ? `review-search-result-${activeResultIndex}` : undefined}
+                autoComplete="off"
+                spellCheck="false"
                 disabled={!identity}
               />
 
@@ -289,9 +442,9 @@ export default function ReviewEntryPage() {
                 <button
                   type="button"
                   className={styles.clearBtn}
-                  onClick={() => setQuery('')}
+                  onClick={clearSearch}
                 >
-                  清空
+                  {reviewText(locale, 'clear')}
                 </button>
               ) : null}
             </div>
@@ -299,24 +452,41 @@ export default function ReviewEntryPage() {
             <div className={styles.resultsHead}>
               <div>
                 <span>{query.trim() ? 'SEARCH RESULTS' : 'RECOMMENDED'}</span>
-                <strong>{query.trim() ? '根据关键词匹配你的赛季档案' : '先从推荐名单开始，也可以直接搜索'}</strong>
+                <strong>{reviewText(locale, query.trim() ? 'matchedHint' : 'resultsHint')}</strong>
               </div>
-              <div className={styles.countPill}>{results.length} RESULTS</div>
+              <div className={styles.countPill} aria-live="polite" aria-atomic="true">
+                {results.length} RESULTS
+              </div>
             </div>
 
-            <div className={styles.results}>
+            <div id="review-search-results" className={styles.results} aria-live="polite">
               {!identity || results.length === 0 ? (
                 <div className={styles.empty}>
-                  <div className={styles.emptyMark}>FCA26</div>
-                  <strong>{emptyText.title}</strong>
-                  <p>{emptyText.body}</p>
+                  <div className={styles.emptyIntro}>
+                    <div className={styles.emptyMark}>{profile.shortMark}</div>
+                    <strong>{emptyText.title}</strong>
+                    <p>{emptyText.body}</p>
+                  </div>
+
                 </div>
               ) : (
-                results.map((item, index) => (
-                  <Link key={item.id} to={withSeason(item.to)} className={styles.resultItem}>
+                visibleResults.map((item, index) => (
+                  <Link
+                    id={`review-search-result-${index}`}
+                    key={item.id}
+                    to={reviewPath(item.to)}
+                    state={storyReturnState}
+                    className={`${styles.resultItem} ${activeResultIndex === index ? styles.resultItemActive : ''}`}
+                    onMouseEnter={() => setActiveResultIndex(index)}
+                    onFocus={() => setActiveResultIndex(index)}
+                  >
                     <div className={styles.resultIndex}>{String(index + 1).padStart(2, '0')}</div>
 
-                    <div className={styles.resultBadge}>{item.label}</div>
+                    <div className={styles.resultBadge}>
+                      {item.identity
+                        ? `${getResultIdentityTitle(item, identities, locale)} · ${item.label}`
+                        : item.label}
+                    </div>
 
                     <div className={styles.resultMain}>
                       <div className={styles.resultTitle}>{item.title}</div>
@@ -324,7 +494,7 @@ export default function ReviewEntryPage() {
                     </div>
 
                     <div className={styles.resultAction}>
-                      <span>开启回顾</span>
+                      <span>{reviewText(locale, 'openReview')}</span>
                       <b>→</b>
                     </div>
                   </Link>
@@ -334,6 +504,7 @@ export default function ReviewEntryPage() {
           </>
         )}
       </section>
+      )}
     </div>
   )
 }

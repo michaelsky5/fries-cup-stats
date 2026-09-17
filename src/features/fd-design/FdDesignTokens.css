@@ -1,0 +1,33 @@
+[data-design="fd"] {
+  --fd-yellow: #f4c320;
+  --fd-ink: #141414;
+  --fd-ink-raised: #222222;
+  --fd-paper: #eaeae6;
+  --fd-paper-bright: #f5f5f1;
+  --fd-paper-muted: #dadad6;
+  --fd-on-dark: #f5f5f1;
+  --fd-muted: #b1b1ab;
+  --fd-muted-ink: #62625d;
+  --fd-line: #c9c9c3;
+  --fd-line-dark: #3a3a36;
+  --portal-page: var(--fd-ink);
+  --portal-cream: var(--fd-paper);
+  --portal-paper: var(--fd-paper-bright);
+  --portal-ink: var(--fd-ink);
+  --portal-border: var(--fd-line-dark);
+  --portal-muted: var(--fd-muted-ink);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+[data-design="fd"] :is(button, a, input, select, summary):focus-visible {
+  outline: 2px solid #c39409;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-design="fd"] *, [data-design="fd"] *::before, [data-design="fd"] *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

@@ -1,10 +1,15 @@
 import { getSeasonById, getStoredSeasonId } from '../config/seasons.js'
+import { resolvePublishedAdvanceTeams } from './advanceSelectors.js'
+import { readPublicSnapshot, savePublicSnapshot } from './publicSnapshotCache.js'
+import { requestPublicJson } from './publicJsonRequest.js'
 
 const dbCache = new Map()
 const reportCache = new Map()
+const dbSourceBySnapshot = new WeakMap()
 
-const REQUEST_TIMEOUT_MS = 12000
 const REVIEW_STAFF_FIELD_KEYS = [
+  'crew',
+  'voice_referees',
   'admin',
   'admins',
   'admin_a',
@@ -41,8 +46,8 @@ function uniqueUrls(urls) {
 
 function getEnvUrl(seasonId, kind) {
   const upperKind = kind === 'report' ? 'REPORT' : 'DATA'
-  return import.meta.env[`VITE_PUBLIC_${seasonId}_${upperKind}_URL`] ||
-    import.meta.env[`VITE_PUBLIC_${upperKind}_URL`] ||
+  return import.meta.env?.[`VITE_PUBLIC_${seasonId}_${upperKind}_URL`] ||
+    import.meta.env?.[`VITE_PUBLIC_${upperKind}_URL`] ||
     ''
 }
 
@@ -69,19 +74,7 @@ function getReportUrls(season) {
 }
 
 async function fetchJson(url, errorCode) {
-  const controller = new AbortController()
-  const timeout = globalThis.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
-
-  try {
-    const res = await fetch(url, {
-      cache: 'no-store',
-      signal: controller.signal
-    })
-    if (!res.ok) throw new Error(`${errorCode}: ${res.status}`)
-    return res.json()
-  } finally {
-    globalThis.clearTimeout(timeout)
-  }
+  return (await requestPublicJson(url, errorCode)).data
 }
 
 function attachSeasonMeta(data, season) {
@@ -230,15 +223,20 @@ function validatePublicDb(data, season) {
     }
   }
 
-  return attachSeasonMeta(data, season)
+  return resolvePublishedAdvanceTeams(attachSeasonMeta(data, season), season)
 }
 
-async function fetchFirstAvailable(urls, errorCode, validate = data => data) {
+async function fetchFirstAvailableWithSource(urls, errorCode, validate = data => data, cached) {
   const errors = []
 
   for (const url of urls) {
     try {
-      return validate(await fetchJson(url, errorCode))
+      const response = await requestPublicJson(url, errorCode, { cached })
+      return {
+        data: validate(response.data),
+        sourceUrl: url,
+        etag: response.etag
+      }
     } catch (error) {
       errors.push(`${url} (${error?.message || 'failed'})`)
     }
@@ -247,16 +245,116 @@ async function fetchFirstAvailable(urls, errorCode, validate = data => data) {
   throw new Error(`${errorCode}: ${errors.join(' | ')}`)
 }
 
-export async function getDb(seasonId) {
-  const season = getSeasonById(seasonId || getStoredSeasonId())
-  if (dbCache.has(season.id)) return dbCache.get(season.id)
+async function fetchFirstAvailable(urls, errorCode, validate = data => data) {
+  const result = await fetchFirstAvailableWithSource(urls, errorCode, validate)
+  return result.data
+}
 
-  const data = await hydrateReviewStaffPayload(await fetchFirstAvailable(
-    getDbUrls(season),
+function markDbSource(data, sourceUrl, season, fromCache = false, etag = '') {
+  if (data && typeof data === 'object') {
+    dbSourceBySnapshot.set(data, {
+      kind: sourceUrl === season.localDataUrl
+        ? (season.preferLocalData ? 'local-preview' : 'local-fallback')
+        : 'published',
+      sourceUrl,
+      fromCache,
+      etag
+    })
+  }
+  return data
+}
+
+async function fetchDb(season, { allowFallback = true, cached } = {}) {
+  const urls = getDbUrls(season).filter(url => allowFallback || season.preferLocalData || url !== season.localDataUrl)
+  const { data, sourceUrl, etag } = await fetchFirstAvailableWithSource(
+    urls,
     'DATA_LOAD_FAILED',
-    payload => validatePublicDb(payload, season)
-  ), season)
-  dbCache.set(season.id, data)
+    payload => validatePublicDb(payload, season),
+    cached && { data: cached, ...getDbSource(cached) }
+  )
+
+  const snapshot = markDbSource(await hydrateReviewStaffPayload(data, season), sourceUrl, season, false, etag)
+  return snapshot
+}
+
+function getSnapshotTimestamp(data) {
+  const value = data?.updated_at || data?.updatedAt || data?.meta?.updated_at || data?.meta?.ranking_as_of
+  const timestamp = Date.parse(value || '')
+  return Number.isFinite(timestamp) ? timestamp : null
+}
+
+export function selectNewestDbSnapshot(current, candidate) {
+  if (!current) return candidate
+  if (!candidate) return current
+  if (current === candidate) return current
+  if (isLocalDbFallback(current) && getDbSource(candidate).kind === 'published') return candidate
+
+  const currentTimestamp = getSnapshotTimestamp(current)
+  const candidateTimestamp = getSnapshotTimestamp(candidate)
+  if (currentTimestamp !== null && (candidateTimestamp === null || candidateTimestamp < currentTimestamp)) {
+    return current
+  }
+  // Preserve memoized selectors and in-progress screens when the publication
+  // is unchanged, without hiding edits to snapshots that have no timestamp.
+  if (currentTimestamp === candidateTimestamp && JSON.stringify(current) === JSON.stringify(candidate)) {
+    if (dbSourceBySnapshot.has(candidate)) dbSourceBySnapshot.set(current, getDbSource(candidate))
+    return current
+  }
+
+  return candidate
+}
+
+export function isLocalDbFallback(data) {
+  return dbSourceBySnapshot.get(data)?.kind === 'local-fallback'
+}
+
+export function getDbSource(data) {
+  return dbSourceBySnapshot.get(data) || {}
+}
+
+export async function getDb(seasonId, options = {}) {
+  const season = getSeasonById(seasonId || getStoredSeasonId())
+  const preferLocalData = options?.preferLocalData === true || season.preferLocalData
+  const cacheKey = preferLocalData ? `${season.id}:local-first` : season.id
+  const sourceSeason = preferLocalData && !season.preferLocalData
+    ? { ...season, preferLocalData: true }
+    : season
+  if (dbCache.has(cacheKey)) {
+    const cached = dbCache.get(cacheKey)
+    dbSourceBySnapshot.set(cached, { ...getDbSource(cached), fromCache: true })
+    return cached
+  }
+
+  if (!preferLocalData) {
+    const stored = await readPublicSnapshot(season.id)
+    if (stored?.data && stored.sourceUrl && stored.sourceUrl !== season.localDataUrl) {
+      try {
+        const cached = markDbSource(validatePublicDb(stored.data, season), stored.sourceUrl, season, true, stored.etag)
+        dbCache.set(cacheKey, cached)
+        return cached
+      } catch { /* Old or incomplete cache entries fall through to the API. */ }
+    }
+  }
+
+  const data = await fetchDb(sourceSeason)
+  dbCache.set(cacheKey, data)
+  if (getDbSource(data).kind === 'published') void savePublicSnapshot(season.id, data, getDbSource(data).sourceUrl, getDbSource(data).etag)
+  return data
+}
+
+export async function refreshDb(seasonId, options = {}) {
+  const season = getSeasonById(seasonId || getStoredSeasonId())
+  const preferLocalData = options?.preferLocalData === true || season.preferLocalData
+  const cacheKey = preferLocalData ? `${season.id}:local-first` : season.id
+  const sourceSeason = preferLocalData && !season.preferLocalData
+    ? { ...season, preferLocalData: true }
+    : season
+  // A failed refresh must remain a failure, even if a bundled file is readable.
+  // The caller keeps its existing snapshot and offers retry.
+  const fetchedData = await fetchDb(sourceSeason, { allowFallback: false, cached: dbCache.get(cacheKey) })
+  const data = selectNewestDbSnapshot(dbCache.get(cacheKey), fetchedData)
+  dbCache.set(cacheKey, data)
+  if (getDbSource(data).kind === 'published') void savePublicSnapshot(season.id, data, getDbSource(data).sourceUrl, getDbSource(data).etag)
   return data
 }
 
@@ -278,5 +376,6 @@ export function clearDbCache(seasonId) {
 
   const season = getSeasonById(seasonId)
   dbCache.delete(season.id)
+  dbCache.delete(`${season.id}:local-first`)
   reportCache.delete(season.id)
 }

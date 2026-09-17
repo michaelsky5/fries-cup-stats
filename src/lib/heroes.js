@@ -1,5 +1,9 @@
+import { OW_HERO_TW_BY_ID, OW_MAP_TW_BY_ID, OW_MAP_MODE_TW_BY_ID } from './owTraditionalNames.js'
+import { normalizeLocale } from './locales.js'
+
 export const OW_HEROES = [
   { id: 'domina', zh: '金驭', en: 'Domina', role: 'tank', assetKey: 'domina' },
+  { id: 'dmon', zh: 'D.Mon', en: 'D.Mon', role: 'tank', assetKey: 'dmon' },
   { id: 'doomfist', zh: '末日铁拳', en: 'Doomfist', role: 'tank', assetKey: 'doomfist' },
   { id: 'dva', zh: 'D.Va', en: 'D.Va', role: 'tank', assetKey: 'dva', aliases: ['DVa', 'DVA'] },
   { id: 'hazard', zh: '骇灾', en: 'Hazard', role: 'tank', assetKey: 'hazard' },
@@ -104,6 +108,39 @@ export const OW_MAP_MODE_LABELS = {
   clash: { zh: '冲突模式', en: 'Clash', folder: 'Clash' }
 }
 
+const OW_HERO_KO_BY_ID = {
+  domina: '도미나', dmon: 'D.Mon', doomfist: '둠피스트', dva: 'D.Va', hazard: '해저드',
+  'junker-queen': '정커퀸', mauga: '마우가', orisa: '오리사', ramattra: '라마트라',
+  reinhardt: '라인하르트', roadhog: '로드호그', sigma: '시그마', winston: '윈스턴',
+  'wrecking-ball': '레킹볼', zarya: '자리야', anran: '안란', ashe: '애쉬', bastion: '바스티온',
+  cassidy: '캐서디', echo: '에코', emre: '엠레', freja: '프레야', genji: '겐지', hanzo: '한조',
+  junkrat: '정크랫', mei: '메이', pharah: '파라', reaper: '리퍼', sojourn: '소전',
+  'soldier-76': '솔저: 76', sierra: '시에라', shion: '시온', sombra: '솜브라',
+  symmetra: '시메트라', torbjorn: '토르비욘', tracer: '트레이서', vendetta: '벤데타',
+  venture: '벤처', widowmaker: '위도우메이커', ana: '아나', baptiste: '바티스트',
+  brigitte: '브리기테', illari: '일리아리', 'jetpack-cat': '제트팩 캣', juno: '주노',
+  kiriko: '키리코', lifeweaver: '라이프위버', lucio: '루시우', mercy: '메르시',
+  mizuki: '미즈키', moira: '모이라', wuyang: '우양', zenyatta: '젠야타'
+}
+
+const OW_MAP_KO_BY_ID = {
+  ilios: '일리오스', 'lijiang-tower': '리장 타워', nepal: '네팔', oasis: '오아시스',
+  busan: '부산', 'antarctic-peninsula': '남극 반도', samoa: '사모아', dorado: '도라도',
+  'route-66': '66번 국도', 'watchpoint-gibraltar': '감시 기지: 지브롤터', havana: '하바나',
+  junkertown: '쓰레기촌', rialto: '리알토', 'shambali-monastery': '샴발리 수도원',
+  'circuit-royal': '서킷 로얄', 'blizzard-world': '블리자드 월드', eichenwalde: '아이헨발데',
+  hollywood: '할리우드', 'kings-row': '왕의 길', numbani: '눔바니', midtown: '미드타운',
+  'neon-junction': '네온 정션', paraiso: '파라이수', colosseo: '콜로세오',
+  'new-queen-street': '뉴 퀸 스트리트', esperanca: '이스페란사', runasapi: '루나사피',
+  suravasa: '수라바사', 'new-junk-city': '뉴 정크 시티', aatlis: '아틀리스',
+  hanaoka: '하나오카', 'throne-of-anubis': '아누비스의 왕좌'
+}
+
+const OW_MAP_MODE_KO_BY_ID = {
+  control: '쟁탈', escort: '호위', hybrid: '혼합', push: '밀기',
+  flashpoint: '플래시포인트', clash: '격돌'
+}
+
 function cleanText(value) {
   return String(value ?? '').trim()
 }
@@ -112,14 +149,19 @@ export function isEnglishLocale(locale) {
   return String(locale || '').toLowerCase().startsWith('en')
 }
 
+export function isKoreanLocale(locale) {
+  return String(locale || '').toLowerCase().startsWith('ko')
+}
+
 export function normalizeOwLookupKey(value) {
   return cleanText(value)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
+    .normalize('NFC')
     .replace(/[’'`]/g, '')
     .replace(/[：:]/g, '')
     .replace(/&/g, 'and')
-    .replace(/[^a-zA-Z0-9\u4e00-\u9fff]+/g, '')
+    .replace(/[^a-zA-Z0-9\u4e00-\u9fff\uac00-\ud7a3]+/g, '')
     .toLowerCase()
 }
 
@@ -133,12 +175,14 @@ function fallbackImageName(value) {
     .replace(/^_+|_+$/g, '')
 }
 
-function collectAliases(item) {
+function collectAliases(item, localizedName = '') {
   const aliases = new Set([
     item.id,
     item.assetKey,
     item.en,
     item.zh,
+    OW_HERO_TW_BY_ID[item.id] || OW_MAP_TW_BY_ID[item.id],
+    localizedName,
     item.imageName,
     item.id?.replace(/-/g, '_'),
     item.id?.replace(/-/g, ' '),
@@ -155,10 +199,10 @@ function collectAliases(item) {
   return [...aliases].filter(Boolean)
 }
 
-function buildLookup(items) {
+function buildLookup(items, localizedNames = {}) {
   const lookup = new Map()
   items.forEach(item => {
-    collectAliases(item).forEach(alias => {
+    collectAliases(item, localizedNames[item.id]).forEach(alias => {
       const key = normalizeOwLookupKey(alias)
       if (key && !lookup.has(key)) lookup.set(key, item)
     })
@@ -166,8 +210,8 @@ function buildLookup(items) {
   return lookup
 }
 
-const HERO_LOOKUP = buildLookup(OW_HEROES)
-const MAP_LOOKUP = buildLookup(OW_MAPS)
+const HERO_LOOKUP = buildLookup(OW_HEROES, OW_HERO_KO_BY_ID)
+const MAP_LOOKUP = buildLookup(OW_MAPS, OW_MAP_KO_BY_ID)
 
 export const HERO_NAME_ZH = OW_HEROES.reduce((acc, hero) => {
   collectAliases(hero).forEach(alias => {
@@ -212,6 +256,8 @@ export function formatOwHeroName(value, locale = 'zh-CN') {
   if (!raw) return raw
   const hero = getOwHero(raw)
   if (!hero) return raw
+  if (normalizeLocale(locale) === 'zh-TW') return OW_HERO_TW_BY_ID[hero.id] || hero.en
+  if (isKoreanLocale(locale)) return OW_HERO_KO_BY_ID[hero.id] || hero.en
   return isEnglishLocale(locale) ? hero.en : hero.zh
 }
 
@@ -245,6 +291,8 @@ export function formatOwMapName(value, locale = 'zh-CN') {
   if (!raw) return raw
   const map = getOwMap(raw)
   if (!map) return raw
+  if (normalizeLocale(locale) === 'zh-TW') return OW_MAP_TW_BY_ID[map.id] || map.en
+  if (isKoreanLocale(locale)) return OW_MAP_KO_BY_ID[map.id] || map.en
   return isEnglishLocale(locale) ? map.en : map.zh
 }
 
@@ -258,13 +306,21 @@ export function getOwMapMode(value) {
   const raw = cleanText(value)
   const key = normalizeOwLookupKey(raw)
   if (!key) return ''
-  return Object.keys(OW_MAP_MODE_LABELS).find(mode => normalizeOwLookupKey(mode) === key || normalizeOwLookupKey(OW_MAP_MODE_LABELS[mode].en) === key) || ''
+  return Object.keys(OW_MAP_MODE_LABELS).find(mode => [
+    mode,
+    OW_MAP_MODE_LABELS[mode].en,
+    OW_MAP_MODE_LABELS[mode].zh,
+    OW_MAP_MODE_TW_BY_ID[mode],
+    OW_MAP_MODE_KO_BY_ID[mode]
+  ].some(label => normalizeOwLookupKey(label) === key)) || ''
 }
 
 export function formatOwMapMode(value, locale = 'zh-CN') {
   const mode = getOwMapMode(value)
   if (!mode) return cleanText(value)
   const label = OW_MAP_MODE_LABELS[mode]
+  if (normalizeLocale(locale) === 'zh-TW') return OW_MAP_MODE_TW_BY_ID[mode] || label.en
+  if (isKoreanLocale(locale)) return OW_MAP_MODE_KO_BY_ID[mode] || label.en
   return isEnglishLocale(locale) ? label.en : label.zh
 }
 
@@ -277,7 +333,7 @@ export function getOwNameSearchText(value, type = 'hero') {
   const item = type === 'map' ? getOwMap(value) : getOwHero(value)
   const raw = cleanText(value)
   if (!item) return normalizeOwLookupKey(raw)
-  return [raw, item.id, item.en, item.zh, item.assetKey, ...(item.aliases || [])]
+  return [raw, ...collectAliases(item, OW_HERO_KO_BY_ID[item.id] || OW_MAP_KO_BY_ID[item.id])]
     .map(normalizeOwLookupKey)
     .filter(Boolean)
     .join(' ')
@@ -293,11 +349,16 @@ export function formatOwNamesInText(value, locale = 'zh-CN') {
   let text = cleanText(value)
   if (!text) return text
   const english = isEnglishLocale(locale)
+  const korean = isKoreanLocale(locale)
 
   TEXT_NAME_ITEMS
     .flatMap(item => collectAliases(item).map(alias => ({
       source: alias,
-      target: english ? item.en : item.zh
+      target: normalizeLocale(locale) === 'zh-TW'
+        ? (OW_HERO_TW_BY_ID[item.id] || OW_MAP_TW_BY_ID[item.id] || item.en)
+        : korean
+        ? (OW_HERO_KO_BY_ID[item.id] || OW_MAP_KO_BY_ID[item.id] || item.en)
+        : english ? item.en : item.zh
     })))
     .filter(item => item.source && item.source !== item.target)
     .sort((a, b) => b.source.length - a.source.length)

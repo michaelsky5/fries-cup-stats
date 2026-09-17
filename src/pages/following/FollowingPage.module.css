@@ -19,6 +19,156 @@
   font-weight: 1000;
 }
 
+.accountBar {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.8fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: center;
+  border: 2px solid #2a2a2a;
+  border-left: 10px solid #f4c320;
+  background: #ffffff;
+  padding: clamp(22px, 3vw, 38px);
+}
+
+.accountBar[data-status="APPROVED"] {
+  background: linear-gradient(105deg, #ffffff 0%, #ffffff 70%, #fff4bd 100%);
+}
+
+.accountBarCopy {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.accountBarCopy > span {
+  color: #a47d00;
+  font-size: 12px;
+  font-weight: 1000;
+}
+
+.accountBarCopy h2 {
+  margin: 0;
+  color: var(--fc-data-ink);
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.accountBarCopy p {
+  max-width: 820px;
+  margin: 0;
+  color: rgba(42, 42, 42, 0.7);
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.accountBarMeta {
+  min-width: 0;
+  display: grid;
+  justify-items: end;
+  gap: 16px;
+}
+
+.accountBadges,
+.accountActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.identitySwitcher {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.identitySwitcher > span,
+.identitySwitcher button {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #2a2a2a;
+  padding: 0 9px;
+  font-size: 10px;
+  font-weight: 1000;
+}
+
+.identitySwitcher > span {
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+.identitySwitcher button {
+  background: #ffffff;
+  color: #2a2a2a;
+  cursor: pointer;
+}
+
+.identitySwitcher button[data-active="true"] {
+  background: #f4c320;
+}
+
+.identitySwitcher button:disabled {
+  cursor: wait;
+}
+
+.accountBadges em {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #2a2a2a;
+  background: #f7f1e2;
+  color: #2a2a2a;
+  padding: 0 9px;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 1000;
+}
+
+.accountBadges em[data-tone="verified"],
+.accountBadges em[data-tone="ready"] {
+  background: #f4c320;
+}
+
+.accountBadges em[data-tone="working"] {
+  border-style: dashed;
+}
+
+.accountBadges em[data-tone="error"] {
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+.accountActions a,
+.accountActions button {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #2a2a2a;
+  background: #2a2a2a;
+  color: #ffffff;
+  padding: 0 13px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 1000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.accountActions a:hover,
+.accountActions button:hover {
+  background: #f4c320;
+  color: #2a2a2a;
+}
+
+.accountActions .accountSecondaryAction {
+  background: #ffffff;
+  color: #2a2a2a;
+}
+
 .kicker,
 .sectionHeader span,
 .heroMatchHead span {
@@ -879,7 +1029,7 @@
 
 .weekEmpty strong,
 .miniEmpty strong,
-.emptyState h1 {
+.emptyState h2 {
   margin: 0;
   color: #2a2a2a;
   font-size: 26px;
@@ -890,7 +1040,7 @@
   max-width: 760px;
 }
 
-.emptyState h1 {
+.emptyState h2 {
   font-size: 42px;
 }
 
@@ -1005,7 +1155,8 @@
 }
 
 .playerTeamBadge,
-.playerRoleBadge {
+.playerRoleBadge,
+.playerIdentityBadge {
   min-width: 50px;
   min-height: 28px;
   display: inline-flex;
@@ -1028,6 +1179,11 @@
 
 .playerRoleBadge {
   background: #f4c320;
+  color: #2a2a2a;
+}
+
+.playerIdentityBadge {
+  background: #ffffff;
   color: #2a2a2a;
 }
 
@@ -1140,6 +1296,19 @@
 }
 
 @media (max-width: 1180px) {
+  .accountBar {
+    grid-template-columns: 1fr;
+  }
+
+  .accountBarMeta {
+    justify-items: start;
+  }
+
+  .accountBadges,
+  .accountActions {
+    justify-content: flex-start;
+  }
+
   .followingHero {
     grid-template-columns: 1fr;
   }
@@ -1189,6 +1358,10 @@
 }
 
 @media (max-width: 860px) {
+  .accountBar {
+    border-left-width: 6px;
+  }
+
   .teamGrid,
   .playerGrid {
     grid-template-columns: 1fr;

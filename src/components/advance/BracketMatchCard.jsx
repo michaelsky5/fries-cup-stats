@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import styles from '../../pages/advance/AdvancePage.module.css'
@@ -66,6 +68,7 @@ export default function BracketMatchCard({
   isPrimaryFavoriteTeam,
   t
 }) {
+  const uiLocale = useUiLocale()
   return (
     <article className={[
       styles.playoffMatchCard,
@@ -82,9 +85,9 @@ export default function BracketMatchCard({
           <Link
             className={styles.bracketMatchDetails}
             to={href}
-            aria-label={t('advance.common.details', '详情')}
+            aria-label={t('advance.common.details', uiText("详情", uiLocale))}
           >
-            {t('advance.common.details', '详情')}<i aria-hidden="true">→</i>
+            {t('advance.common.details', uiText("详情", uiLocale))}<i aria-hidden="true">→</i>
           </Link>
         ) : null}
       </header>

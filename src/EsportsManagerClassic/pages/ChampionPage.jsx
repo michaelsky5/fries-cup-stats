@@ -1,6 +1,7 @@
 // src/EsportsManager/pages/ChampionPage.jsx
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
+import { getInitialSeasonId, withSeason as buildSeasonLink } from '../../config/seasons.js'
 import html2canvas from 'html2canvas'
 import styles from './ChampionPage.module.css'
 import { getRunState } from '../engine/runEngine'
@@ -61,7 +62,7 @@ function HeroStat({ label, value, meta, accent = false }) {
 }
 
 export default function ChampionPage() {
-  const { db } = useOutletContext()
+  const { db, withSeason } = useOutletContext()
   const navigate = useNavigate()
   const posterRef = useRef(null)
 
@@ -72,7 +73,7 @@ export default function ChampionPage() {
   useEffect(() => {
     const state = getRunState()
     if (!state || state.roster.length < 5) {
-      navigate('/shop')
+      navigate(buildSeasonLink('/shop', getInitialSeasonId(), window.location.search))
       return
     }
     setRunState(state)
@@ -112,7 +113,7 @@ export default function ChampionPage() {
     }
   }
 
-  const handleContinue = () => navigate('/shop')
+  const handleContinue = () => navigate(withSeason('/shop'))
 
   if (!runState || !teamData) return null
 

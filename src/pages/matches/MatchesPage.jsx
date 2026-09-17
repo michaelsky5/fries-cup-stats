@@ -1,5 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { isWeeklyOverview } from '../../features/weekly-overview/weeklyOverviewModel.js'
+import { getMatchArchiveStages } from '../../lib/matchArchiveStages.js'
 import { Link, useLocation, useOutletContext, useSearchParams } from 'react-router-dom'
+import ImeSafeInput from '../../components/common/ImeSafeInput.jsx'
 import {
   filterMatches,
   getAllMatches,
@@ -22,6 +27,9 @@ import LiveBroadcastEntry from '../../components/matches/LiveBroadcastEntry.jsx'
 import MatchHubBoard from '../../components/matches/MatchHubBoard.jsx'
 import RoundScheduleSection from '../../components/matches/RoundScheduleSection.jsx'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
+import SignalMatchIndex from '../../components/matches/SignalMatchIndex.jsx'
+import SignalScheduleFeatured from '../../features/match-schedule/SignalScheduleFeatured.jsx'
+import { isScheduleListSearch, resetScheduleSearch } from '../../features/match-schedule/schedulePresentation.js'
 import {
   getRestoreScrollY,
   getReturnState,
@@ -36,6 +44,11 @@ const TABS = [
   { key: 'following', title: '我的关注', label: 'FOLLOWING' },
   { key: 'upcoming', title: '未开始', label: 'UPCOMING' },
   { key: 'finished', title: '已完成', label: 'FINISHED' }
+]
+
+const ARCHIVE_MODE_TABS = [
+  { key: 'all', title: '全部档案', label: 'ALL RECORDS' },
+  { key: 'following', title: '我的关注', label: 'FOLLOWING' }
 ]
 
 const STATUS_OPTIONS = [
@@ -224,6 +237,7 @@ function MatchRow({ match, compact = false }) {
 }
 
 function EmptyState({ tab, seasonId }) {
+  const uiLocale = useUiLocale()
   const { withSeason = path => path } = useOutletContext()
   const isFollowing = tab === 'following'
   const cleanMatchesPath = cleanMatchesListPath(seasonId, { tab: 'all' })
@@ -231,12 +245,12 @@ function EmptyState({ tab, seasonId }) {
   if (isFollowing) {
     return (
       <div className={styles.emptyState}>
-        <strong>还没有关注队伍</strong>
-        <span>关注队伍后，将按时间展示相关赛程和赛果。</span>
+        <strong>{uiText("还没有关注队伍", uiLocale)}</strong>
+        <span>{uiText("关注队伍后，将按时间展示相关赛程和赛果。", uiLocale)}</span>
         <div className={styles.emptyActions}>
-          <Link to={withSeason('/following?manage=1')}>选择关注队伍</Link>
-          <Link to={withSeason('/following?manage=1&tab=players')}>关注选手</Link>
-          <Link to={withSeason('/following')}>进入我的关注</Link>
+          <Link to={withSeason('/me?section=following&manage=1')}>{uiText("选择关注队伍", uiLocale)}</Link>
+          <Link to={withSeason('/me?section=following&manage=1&tab=players')}>{uiText("关注选手", uiLocale)}</Link>
+          <Link to={withSeason('/me?section=following')}>{uiText("进入我的关注", uiLocale)}</Link>
         </div>
       </div>
     )
@@ -244,24 +258,24 @@ function EmptyState({ tab, seasonId }) {
 
   return (
     <div className={styles.emptyState}>
-      <strong>??????</strong>
-      <span>?????????????????????????</span>
-      <Link to={cleanMatchesPath}>??????</Link>
+      <strong>{uiText("没有符合条件的比赛", uiLocale)}</strong>
+      <span>{uiText("当前筛选组合没有找到比赛记录，可以调整条件或回到完整档案。", uiLocale)}</span>
+      <Link to={withSeason(cleanMatchesPath)}>{uiText("清除筛选", uiLocale)}</Link>
     </div>
   )
 }
 
-function HubSection({ code, title, actionTo, actionText, children }) {
-  const { seasonId } = useOutletContext()
+function HubSection({ id, code, title, actionTo, actionText, tone = 'light', children }) {
+  const { seasonId, withSeason = path => path } = useOutletContext()
   return (
-    <section className={styles.hubSection}>
+    <section id={id} className={`${styles.hubSection} ${tone === 'dark' ? styles.hubSectionDark : ''}`} data-tone={tone}>
       <div className={styles.hubSectionHead}>
         <div>
           <SectionLabel code={code} title={title} />
           <h2>{title}</h2>
         </div>
         {actionTo ? (
-          <Link to={cleanMatchesListPath(seasonId, actionTo)}>
+          <Link to={withSeason(cleanMatchesListPath(seasonId, actionTo))}>
             {actionText}<span aria-hidden="true">→</span>
           </Link>
         ) : null}
@@ -276,53 +290,67 @@ function FeaturedMatchCard({ match, primary = false, compact = false }) {
   const location = useLocation()
   const teams = getMatchDisplayTeams(match)
   const mapSummary = getMapSummary(match, locale)
+  const status = getMatchStatus(match)
+  const matchCode = match?.match_id || match?.match_display_name || match?.raw_match_id || 'MATCH RECORD'
 
   return (
     <Link
       to={withSeason(`/matches/${match.match_id}`)}
       state={getReturnState(location)}
       className={`${styles.featuredMatchCard} ${primary ? styles.featuredMatchCardPrimary : ''} ${compact ? styles.featuredMatchCardCompact : ''}`}
+      data-status={status}
       onClick={() => saveReturnScroll(location)}
     >
-      <span>{getRoundText(match)}</span>
-      <LogoDuel match={match} seasonId={seasonId} score={!primary} large={primary} />
+      <span className={styles.featuredCardEyebrow}>
+        <i>{primary ? 'TITLE MATCH' : getRoundText(match)}</i>
+        <em>{matchCode}</em>
+      </span>
+      <LogoDuel match={match} seasonId={seasonId} score large={primary} />
       <div className={styles.featuredMatchCopy}>
-        <strong>{teams.teamA.short} {getMatchScore(match)} {teams.teamB.short}</strong>
+        <strong>{primary ? uiText("总决赛最终记录", locale) : `${teams.teamA.short} / ${teams.teamB.short}`}</strong>
         <em>{teams.teamA.full} vs {teams.teamB.full}</em>
         <p>{match.format || 'TBD'} · {getMatchStatusText(match)}{mapSummary ? ` · ${mapSummary}` : ''}</p>
       </div>
-      <b>{compact ? '→' : primary ? '冠军战 · 查看详情' : '查看详情'}</b>
+      <b>
+        {compact ? null : primary ? uiText("打开冠军战记录", locale) : uiText("查看比赛记录", locale)}
+        <span aria-hidden="true">{compact ? '→' : '↗'}</span>
+      </b>
     </Link>
   )
 }
 
 function ArchiveFeaturedHub({ hub }) {
+  const uiLocale = useUiLocale()
+  const { isKprHybridDesign = false } = useOutletContext()
   const rows = hub.keyArchiveMatches
   const primary = rows[0]
   const secondary = rows.slice(1, 4)
 
   return (
-    <HubSection code="A / FEATURED" title="赛季精选回顾" actionTo={{ tab: 'finished' }} actionText="完整档案">
-      <div className={styles.archiveFeatureLayout}>
+    <HubSection id="match-title-game" code={isKprHybridDesign ? '02 / KEY MATCHES' : '02 / TITLE MATCH'} title={isKprHybridDesign ? uiText("季后赛关键战", uiLocale) : uiText("决赛与关键战", uiLocale)} actionTo={{ tab: 'finished' }} actionText="完整档案" tone="dark">
+      {isKprHybridDesign ? <div className={styles.archiveKeyGrid}>
+        {secondary.map(match => <FeaturedMatchCard key={match.match_id} match={match} />)}
+      </div> : <div className={styles.archiveFeatureLayout}>
         {primary ? <FeaturedMatchCard match={primary} primary /> : null}
         <div className={styles.archiveSideList}>
           <div className={styles.archiveSideListHead}>
             <span>PLAYOFF PICKS</span>
-            <strong>季后赛关键战</strong>
+            <strong>{uiText("季后赛关键战", uiLocale)}</strong>
           </div>
           {secondary.map(match => <FeaturedMatchCard key={match.match_id} match={match} compact />)}
         </div>
-      </div>
+      </div>}
     </HubSection>
   )
 }
 
 function ArchiveClassicHub({ hub }) {
+  const uiLocale = useUiLocale()
   const rows = hub.keyArchiveMatches.slice(4, 8)
   if (!rows.length) return null
 
   return (
-    <HubSection code="B / CLASSIC" title="经典比赛 / 冠军路径" actionTo={{ tab: 'finished' }} actionText="查看档案">
+    <HubSection id="match-turning-points" code="03 / TURNING POINTS" title={uiText("冠军路上的转折点", uiLocale)} actionTo={{ tab: 'finished' }} actionText="查看档案">
       <div className={styles.classicGrid}>
         {rows.map(match => <FeaturedMatchCard key={match.match_id} match={match} />)}
       </div>
@@ -331,28 +359,39 @@ function ArchiveClassicHub({ hub }) {
 }
 
 function ArchiveStageHub({ hub }) {
-  const { seasonId } = useOutletContext()
-  const links = [
-    { title: '总决赛', label: 'GRAND FINALS', params: { tab: 'finished', round: 'GRAND FINALS' } },
-    { title: '季后赛', label: 'PLAYOFFS', params: { tab: 'finished', stage: 'PLAYOFFS' } },
-    { title: '瑞士轮第 6 轮', label: 'SWISS R6', params: { tab: 'finished', round: 'ROUND 6' } },
-    { title: '瑞士轮第 5 轮', label: 'SWISS R5', params: { tab: 'finished', round: 'ROUND 5' } }
-  ]
+  const uiLocale = useUiLocale()
+  const { seasonId, withSeason = path => path } = useOutletContext()
+  const links = getArchiveStageEntries(hub, seasonId).slice(0, 3)
 
   return (
-    <HubSection code="C / ARCHIVE" title="完整比赛档案">
+    <HubSection
+      id="match-index"
+      code="04 / MATCH INDEX"
+      title={uiText("比赛档案", uiLocale)}
+      actionTo={{ tab: 'all' }}
+      actionText={`浏览全部 ${hub.summary.total} 场`}
+      tone="dark"
+    >
       <div className={styles.archiveGateway}>
-        <div className={styles.archiveGatewayMain}>
-          <span>MATCH ARCHIVE</span>
-          <strong>查看全部 {hub.summary.total} 场比赛</strong>
-          <p>按阶段、轮次、状态和队伍筛选完整赛程赛果档案。</p>
-          <Link to={cleanMatchesListPath(seasonId, { tab: 'all' })}>进入完整列表</Link>
+        <div className={styles.archiveGatewayMain} data-total={hub.summary.total}>
+          <span>{String(getMatchArchiveStages(hub.matches).length).padStart(2, '0')} STAGES / {hub.summary.total} RECORDS</span>
+          <strong>{uiText("按阶段回看", uiLocale)}</strong>
+          <p>{uiText("沿各个比赛阶段，回看这个赛季的完整比赛档案。", uiLocale)}</p>
+          <Link to={withSeason(cleanMatchesListPath(seasonId, { tab: 'all' }))}>{uiText("查看全部比赛 ", uiLocale)}<span aria-hidden="true">↗</span>
+          </Link>
         </div>
         <div className={styles.stageEntryGrid}>
           {links.map(link => (
-            <Link key={`${link.title}-${link.label}`} to={cleanMatchesListPath(seasonId, link.params)}>
-              <strong>{link.title}</strong>
-              <span>{link.label}</span>
+            <Link key={`${link.title}-${link.label}`} to={withSeason(link.to)}>
+              <header>
+                <span>{link.index}</span>
+                <b>{String(link.count).padStart(2, '0')}</b>
+              </header>
+              <div>
+                <strong>{link.title}</strong>
+                <span>{link.label}</span>
+              </div>
+              <i aria-hidden="true">↗</i>
             </Link>
           ))}
         </div>
@@ -361,26 +400,100 @@ function ArchiveStageHub({ hub }) {
   )
 }
 
+function getArchiveStageEntries(hub, seasonId) {
+  const rows = safeArr(hub?.matches)
+  const stages = getMatchArchiveStages(rows)
+  return [
+    ...stages.map((stage, index) => ({ ...stage, index: String(index + 1).padStart(2, '0'),
+      to: cleanMatchesListPath(seasonId, { tab: 'finished', stage: stage.value }) })),
+    {
+      index: String(stages.length + 1).padStart(2, '0'),
+      title: '全部比赛',
+      label: 'ALL RECORDS',
+      value: 'ALL',
+      count: hub?.summary?.total || rows.length,
+      to: cleanMatchesListPath(seasonId, { tab: 'all' })
+    }
+  ]
+}
+
+function ArchiveHero({ hub, seasonId }) {
+  const { withSeason = path => path, locale = 'zh-CN' } = useOutletContext()
+  const location = useLocation()
+  const finalMatch = hub.keyArchiveMatches[0]
+  const mapSummary = finalMatch ? getMapSummary(finalMatch, locale) : ''
+  const stageEntries = getArchiveStageEntries(hub, seasonId)
+
+  return (
+    <section id="match-overview" className={styles.archiveHero} aria-labelledby="match-archive-title">
+      <span className={styles.archiveHeroGrid} aria-hidden="true" />
+      <span className={styles.archiveHeroOrbit} aria-hidden="true"><i /><i /><b>FRIES CUP / MATCH SIGNAL / {seasonId || 'FCR2026'}</b></span>
+      <header className={styles.archiveHeroSignal}>
+        <span><i />01 / MATCH ARCHIVE</span>
+        <em>{seasonId || 'FCR2026'} · ARCHIVED</em>
+      </header>
+
+      <div className={styles.archiveHeroMain}>
+        <div className={styles.archiveHeroCopy}>
+          <span>{uiText("SEASON RECORD / 赛程赛果", locale)}</span>
+          <h1 id="match-archive-title"><span>MATCHES</span><strong>{uiText("每一场都有坐标。", locale)}</strong></h1>
+          <p>{uiText("比分停在终场，比赛仍留在档案里。沿着阶段、对手与时间，重新进入这个赛季。", locale)}</p>
+          <div className={styles.archiveHeroSummary}>
+            <span><strong>{hub.summary.finished}</strong><em>{uiText("场正式比赛完成归档", locale)}</em></span>
+            <Link to={withSeason(cleanMatchesListPath(seasonId, { tab: 'all' }))}>{uiText("浏览完整档案 ", locale)}<b aria-hidden="true">↗</b></Link>
+          </div>
+        </div>
+
+        {finalMatch ? (
+          <Link
+            to={withSeason(`/matches/${finalMatch.match_id}`)}
+            state={getReturnState(location)}
+            className={styles.archiveFinalTicket}
+            onClick={() => saveReturnScroll(location)}
+          >
+            <header><span>LAST RECORD</span><strong>{getRoundText(finalMatch)}</strong></header>
+            <LogoDuel match={finalMatch} seasonId={seasonId} score large />
+            <p>{finalMatch.format || 'TBD'} · {getMatchStatusText(finalMatch)}{mapSummary ? ` · ${mapSummary}` : ''}</p>
+            <footer><span>{getMatchTimeLabel(finalMatch)}</span><strong>OPEN MATCH <i aria-hidden="true">↗</i></strong></footer>
+          </Link>
+        ) : null}
+      </div>
+
+      <nav className={styles.archiveStageRail} aria-label={uiText("比赛档案阶段索引", locale)}>
+        {stageEntries.map(entry => (
+          <Link key={entry.index} to={withSeason(entry.to)}>
+            <span>{entry.index}</span>
+            <strong>{entry.title}<em>{entry.label}</em></strong>
+            <b>{String(entry.count).padStart(2, '0')}</b>
+          </Link>
+        ))}
+      </nav>
+      <footer className={styles.archiveHeroFooter}>
+        <nav aria-label={uiText("比赛页面章节", locale)}>
+          <a href="#match-overview" aria-current="location"><b>01</b>{uiText("赛季坐标", locale)}</a>
+          <a href="#match-title-game"><b>02</b>{uiText("关键比赛", locale)}</a>
+          <a href="#match-turning-points"><b>03</b>{uiText("关键转折", locale)}</a>
+          <a href="#match-index"><b>04</b>{uiText("完整索引", locale)}</a>
+        </nav>
+        <span>{uiText("向下滚动，沿比赛继续 ", locale)}<b aria-hidden="true">↓</b></span>
+      </footer>
+    </section>
+  )
+}
+
 function MatchHub({ hub, seasonId }) {
+  const uiLocale = useUiLocale()
   return (
     <div className={styles.hubSurface}>
+      {hub.isArchive ? <nav className={styles.matchArchiveRail} aria-label={uiText("比赛档案章节索引", uiLocale)}>
+        <span><img src="/logos/fries-cup-symbol.png" alt="" /><small>MATCH SIGNAL</small></span>
+        <a href="#match-overview"><b>01</b><span>{uiText("赛季坐标", uiLocale)}</span></a>
+        <a href="#match-title-game"><b>02</b><span>{uiText("关键比赛", uiLocale)}</span></a>
+        <a href="#match-turning-points"><b>03</b><span>{uiText("关键转折", uiLocale)}</span></a>
+        <a href="#match-index"><b>04</b><span>{uiText("完整索引", uiLocale)}</span></a>
+      </nav> : null}
       {hub.isArchive ? (
-        <section className={styles.hubHero}>
-          <div>
-            <SectionLabel code="SEASON ARCHIVE" title="赛程赛果" />
-            <h1>精选回顾</h1>
-            <p>{seasonId || 'FCA2026'} 赛季档案</p>
-          </div>
-          <div className={styles.hubHeroMeta}>
-            <span className={styles.hubHeroMetaLabel}>ARCHIVE STATUS</span>
-            <div className={styles.hubHeroMetric}>
-              <strong>{hub.summary.finished}</strong>
-              <span>场比赛完成归档</span>
-            </div>
-            <p>精选总决赛、季后赛关键战与冠军晋级路径。</p>
-            <Link to={cleanMatchesListPath(seasonId, { tab: 'all' })}>查看完整比赛档案 <b aria-hidden="true">→</b></Link>
-          </div>
-        </section>
+        <ArchiveHero hub={hub} seasonId={seasonId} />
       ) : (
         <MatchHubBoard summary={hub.currentRoundSummary} />
       )}
@@ -402,9 +515,49 @@ function MatchHub({ hub, seasonId }) {
   )
 }
 
-function FilterBar({ filters, options, updateQuery, resetFilters, focusSearch = false }) {
-  const advancedDirty = ['stage', 'round', 'status', 'format'].some(key => filters[key] && filters[key] !== 'ALL')
-  const hasAnyFilter = advancedDirty || Boolean(filters.team)
+function ArchiveStageNav({ hub, filters, updateQuery, seasonId }) {
+  const uiLocale = useUiLocale()
+  const entries = getArchiveStageEntries(hub, seasonId)
+  const allEntry = entries.find(entry => entry.value === 'ALL')
+  const stageEntries = [
+    allEntry ? { ...allEntry, index: '00', title: uiText("全部档案", uiLocale) } : null,
+    ...entries.filter(entry => entry.value !== 'ALL')
+  ].filter(Boolean)
+  const activeStage = String(filters.stage || 'ALL').toUpperCase()
+
+  return (
+    <nav className={styles.archiveStageNav} aria-label={uiText("比赛档案阶段", uiLocale)}>
+      {stageEntries.map(entry => (
+        <button
+          key={entry.value}
+          type="button"
+          className={activeStage === entry.value ? styles.archiveStageNavActive : ''}
+          onClick={() => updateQuery({ stage: entry.value, tab: 'all', status: '' })}
+        >
+          <span><b>{entry.index}</b><em>{entry.label}</em></span>
+          <strong>{entry.title}</strong>
+          <i>{String(entry.count).padStart(2, '0')}</i>
+        </button>
+      ))}
+    </nav>
+  )
+}
+
+function FilterBar({
+  filters,
+  options,
+  updateQuery,
+  resetFilters,
+  focusSearch = false,
+  isArchive = false,
+  activeTab = 'all',
+  setTab = () => {}
+}) {
+  const uiLocale = useUiLocale()
+  const advancedKeys = isArchive ? ['round', 'status', 'format'] : ['stage', 'round', 'status', 'format']
+  const advancedDirty = advancedKeys.some(key => filters[key] && filters[key] !== 'ALL')
+  const hasStageFilter = isArchive && filters.stage && filters.stage !== 'ALL'
+  const hasAnyFilter = advancedDirty || hasStageFilter || Boolean(filters.team || filters.teamId)
   const [advancedOpen, setAdvancedOpen] = useState(advancedDirty)
   const searchInputRef = useRef(null)
   const showAdvanced = advancedOpen || advancedDirty
@@ -415,23 +568,41 @@ function FilterBar({ filters, options, updateQuery, resetFilters, focusSearch = 
   }, [focusSearch])
 
   return (
-    <section className={styles.filters}>
+    <section className={styles.filters} data-archive={isArchive ? 'true' : undefined}>
       <div className={styles.filterQuickRow}>
+        {isArchive ? (
+          <div className={styles.archiveModeToggle} aria-label={uiText("档案查看模式", uiLocale)}>
+            {ARCHIVE_MODE_TABS.map(tab => {
+              const selected = tab.key === 'following'
+                ? activeTab === 'following'
+                : activeTab !== 'following'
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  className={selected ? styles.archiveModeToggleActive : ''}
+                  onClick={() => setTab(tab.key)}
+                >
+                  {tab.title}<span>{tab.label}</span>
+                </button>
+              )
+            })}
+          </div>
+        ) : null}
         <div className={`${styles.filterField} ${styles.searchField}`}>
-          <label>队伍搜索 <span>TEAM</span></label>
-          <input
+          <label>{uiText("队伍搜索 ", uiLocale)}<span>TEAM</span></label>
+          <ImeSafeInput
             ref={searchInputRef}
             value={filters.team}
-            onChange={event => updateQuery({ team: event.target.value })}
-            placeholder="输入队伍简称或名称"
+            onValueChange={value => updateQuery({ team: value, teamId: null, query: null })}
+            placeholder={uiText("输入队伍简称或名称", uiLocale)}
           />
         </div>
         <button
           type="button"
           className={styles.advancedToggle}
           onClick={() => setAdvancedOpen(open => !open)}
-        >
-          高级筛选 <span>{showAdvanced ? 'HIDE' : 'FILTERS'}</span>
+        >{uiText("高级筛选 ", uiLocale)}<span>{showAdvanced ? 'HIDE' : 'FILTERS'}</span>
         </button>
         {hasAnyFilter ? (
           <button
@@ -441,35 +612,36 @@ function FilterBar({ filters, options, updateQuery, resetFilters, focusSearch = 
               setAdvancedOpen(false)
               resetFilters()
             }}
-          >
-            重置筛选 <span>RESET</span>
+          >{uiText("重置筛选 ", uiLocale)}<span>RESET</span>
           </button>
         ) : null}
       </div>
       {showAdvanced ? (
         <div className={styles.advancedFilters}>
+          {!isArchive ? (
+            <div className={styles.filterField}>
+              <label>{uiText("阶段 ", uiLocale)}<span>STAGE</span></label>
+              <select value={filters.stage} onChange={event => updateQuery({ stage: event.target.value })}>
+                {options.stages.map(value => <option key={value} value={value}>{value === 'ALL' ? uiText("全部阶段", uiLocale) : value}</option>)}
+              </select>
+            </div>
+          ) : null}
           <div className={styles.filterField}>
-            <label>阶段 <span>STAGE</span></label>
-            <select value={filters.stage} onChange={event => updateQuery({ stage: event.target.value })}>
-              {options.stages.map(value => <option key={value} value={value}>{value === 'ALL' ? '全部阶段' : value}</option>)}
-            </select>
-          </div>
-          <div className={styles.filterField}>
-            <label>轮次 <span>ROUND</span></label>
+            <label>{uiText("轮次 ", uiLocale)}<span>ROUND</span></label>
             <select value={filters.round} onChange={event => updateQuery({ round: event.target.value })}>
-              {options.rounds.map(value => <option key={value} value={value}>{value === 'ALL' ? '全部轮次' : value}</option>)}
+              {options.rounds.map(value => <option key={value} value={value}>{value === 'ALL' ? uiText("全部轮次", uiLocale) : value}</option>)}
             </select>
           </div>
           <div className={styles.filterField}>
-            <label>状态 <span>STATUS</span></label>
+            <label>{uiText("状态 ", uiLocale)}<span>STATUS</span></label>
             <select value={filters.status} onChange={event => updateQuery({ status: event.target.value })}>
               {STATUS_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </select>
           </div>
           <div className={styles.filterField}>
-            <label>赛制 <span>FORMAT</span></label>
+            <label>{uiText("赛制 ", uiLocale)}<span>FORMAT</span></label>
             <select value={filters.format} onChange={event => updateQuery({ format: event.target.value })}>
-              {options.formats.map(value => <option key={value} value={value}>{value === 'ALL' ? '全部赛制' : value}</option>)}
+              {options.formats.map(value => <option key={value} value={value}>{value === 'ALL' ? uiText("全部赛制", uiLocale) : value}</option>)}
             </select>
           </div>
         </div>
@@ -478,8 +650,62 @@ function FilterBar({ filters, options, updateQuery, resetFilters, focusSearch = 
   )
 }
 
-function GroupedMatchList({ groups }) {
+function ArchiveGroupedMatchList({ groups }) {
+  const uiLocale = useUiLocale()
+  const [activeGroupKey, setActiveGroupKey] = useState(groups[0]?.key || '')
+
   if (!groups.length) return null
+  const activeGroup = groups.find(group => group.key === activeGroupKey) || groups[0]
+  const activeIndex = groups.findIndex(group => group.key === activeGroup.key)
+
+  return (
+    <div className={styles.archiveGroupedList}>
+      <aside className={styles.archiveRoundIndex}>
+        <header>
+          <span>ROUND INDEX</span>
+          <strong>{String(groups.length).padStart(2, '0')}{uiText(" 个轮次", uiLocale)}</strong>
+        </header>
+        <nav aria-label={uiText("轮次索引", uiLocale)}>
+          {groups.map((group, index) => (
+            <button
+              key={group.key}
+              type="button"
+              className={group.key === activeGroup.key ? styles.archiveRoundActive : ''}
+              aria-pressed={group.key === activeGroup.key}
+              onClick={() => setActiveGroupKey(group.key)}
+            >
+              <b>{String(index + 1).padStart(2, '0')}</b>
+              <span><strong>{group.title}</strong><em>{group.subtitle}</em></span>
+              <i aria-hidden="true">→</i>
+            </button>
+          ))}
+        </nav>
+      </aside>
+
+      <section className={styles.archiveMatchPanel} aria-live="polite">
+        <header>
+          <div>
+            <span>SELECTED ROUND / {String(activeIndex + 1).padStart(2, '0')}</span>
+            <h3>{activeGroup.title}</h3>
+          </div>
+          <strong>{String(activeGroup.matches.length).padStart(2, '0')}<em>MATCHES</em></strong>
+        </header>
+        <div className={styles.matchList}>
+          {activeGroup.matches.map(match => <MatchRow key={match.match_id} match={match} />)}
+        </div>
+        <footer className={styles.archiveRoundRecord} aria-hidden="true">
+          <span>ROUND ARCHIVE / {String(activeIndex + 1).padStart(2, '0')}</span>
+          <strong>{activeGroup.title}</strong>
+          <em>{String(activeGroup.matches.length).padStart(2, '0')} MATCH RECORDS</em>
+        </footer>
+      </section>
+    </div>
+  )
+}
+
+function GroupedMatchList({ groups, archiveWorkspace = false }) {
+  if (!groups.length) return null
+  if (archiveWorkspace) return <ArchiveGroupedMatchList groups={groups} />
   return (
     <div className={styles.groupedList}>
       {groups.map(group => (
@@ -497,33 +723,53 @@ function GroupedMatchList({ groups }) {
   )
 }
 
-function FullListView({ rows, groups, filters, options, activeTab, favoriteCount, updateQuery, resetFilters, setTab, seasonId, focusSearch }) {
-  const cleanMatchesPath = cleanMatchesListPath(seasonId, { tab: 'all' })
+function FullListView({ rows, groups, filters, options, activeTab, favoriteCount, updateQuery, resetFilters, setTab, seasonId, focusSearch, hub }) {
+  const uiLocale = useUiLocale()
+  const { withSeason = path => path } = useOutletContext()
+  const cleanMatchesPath = withSeason(cleanMatchesListPath(seasonId, { tab: 'all' }))
+  const isArchive = Boolean(hub?.isArchive)
+  const archiveEntries = isArchive ? getArchiveStageEntries(hub, seasonId) : []
+  const activeStageValue = String(filters.stage || 'ALL').toUpperCase()
+  const activeStageEntry = archiveEntries.find(entry => entry.value === activeStageValue) ||
+    archiveEntries.find(entry => entry.value === 'ALL')
+  const archiveScopeTitle = activeStageEntry?.value === 'ALL' ? '比赛档案' : activeStageEntry?.title || '比赛档案'
 
   return (
     <div className={styles.listSurface}>
       <section className={styles.archiveHeader}>
-        <div>
-          <SectionLabel code="MATCH ARCHIVE" title="完整比赛档案" />
-          <h2>完整比赛档案</h2>
-          <p>用于查找具体比赛，支持阶段、轮次、状态、赛制和队伍搜索。</p>
+        <span className={styles.archiveHeaderBackdrop} aria-hidden="true">ARCHIVE</span>
+        <div className={styles.archiveHeaderCopy}>
+          <SectionLabel code="02 / MATCH ARCHIVE" title={activeStageEntry?.label || uiText("完整比赛档案", uiLocale)} />
+          <h2>{archiveScopeTitle}</h2>
+          <strong className={styles.archiveHeaderStatement}>{uiText("找到每一场。", uiLocale)}</strong>
+          <p>{uiText("按阶段、轮次、状态、赛制或队伍，定位这个赛季里的具体比赛记录。", uiLocale)}</p>
         </div>
-        <Link to={cleanMatchesHubPath()}>返回 Match Hub</Link>
+        <div className={styles.archiveHeaderMetric}>
+          <span>VISIBLE RECORDS <em>{activeStageEntry?.label || 'CURRENT SCOPE'}</em></span>
+          <strong>{String(rows.length).padStart(2, '0')}</strong>
+          <em>{hub?.summary?.total || rows.length}{uiText(" TOTAL / 当前筛选结果", uiLocale)}</em>
+          <Link to={withSeason(cleanMatchesHubPath())} state={{ restoreScrollY: 0 }}>{uiText("返回精选回顾 ", uiLocale)}<b aria-hidden="true">↗</b></Link>
+        </div>
       </section>
 
-      <section className={styles.tabs} aria-label="Match views">
-        {TABS.map(tab => (
-          <button
-            key={tab.key}
-            type="button"
-            className={activeTab === tab.key ? styles.tabActive : ''}
-            onClick={() => setTab(tab.key)}
-          >
-            <span>{tab.title}</span>
-            <em>{tab.label}</em>
-          </button>
-        ))}
-      </section>
+      {isArchive ? (
+        <ArchiveStageNav hub={hub} filters={filters} updateQuery={updateQuery} seasonId={seasonId} />
+      ) : (
+        <section className={styles.tabs} aria-label="Match views">
+          {TABS.map((tab, index) => (
+            <button
+              key={tab.key}
+              type="button"
+              className={activeTab === tab.key ? styles.tabActive : ''}
+              onClick={() => setTab(tab.key)}
+            >
+              <b>{String(index + 1).padStart(2, '0')}</b>
+              <span>{tab.title}</span>
+              <em>{tab.label}</em>
+            </button>
+          ))}
+        </section>
+      )}
 
       <FilterBar
         filters={filters}
@@ -531,30 +777,33 @@ function FullListView({ rows, groups, filters, options, activeTab, favoriteCount
         updateQuery={updateQuery}
         resetFilters={resetFilters}
         focusSearch={focusSearch}
+        isArchive={isArchive}
+        activeTab={activeTab}
+        setTab={setTab}
       />
 
       <section className={styles.listSection}>
         <div className={styles.listHead}>
           <div>
-            <SectionLabel code={activeTab.toUpperCase()} title="比赛列表" />
-            <h2>{TABS.find(tab => tab.key === activeTab)?.title || '全部比赛'}</h2>
+            <SectionLabel code={activeStageEntry?.label || activeTab.toUpperCase()} title={uiText("比赛列表", uiLocale)} />
+            <h2>{isArchive ? activeStageEntry?.title || uiText("全部比赛", uiLocale) : TABS.find(tab => tab.key === activeTab)?.title || uiText("全部比赛", uiLocale)}</h2>
           </div>
           <div className={styles.listMeta}>
-            <span>{rows.length} 场显示</span>
-            {activeTab === 'following' ? <em>{favoriteCount} 个关注队伍</em> : null}
+            <span>{rows.length}{uiText(" 场显示", uiLocale)}</span>
+            {activeTab === 'following' ? <em>{favoriteCount}{uiText(" 个关注队伍", uiLocale)}</em> : null}
           </div>
         </div>
 
         {rows.length ? (
-          <GroupedMatchList groups={groups} />
+          <GroupedMatchList groups={groups} archiveWorkspace={isArchive} />
         ) : (
           <EmptyState tab={activeTab} seasonId={seasonId} />
         )}
 
         <div className={styles.detailNote}>
-          <strong>赛后资料</strong>
-          <span>完整地图结果和回放信息会在比赛详情页集中查看。</span>
-          <Link to={cleanMatchesPath}>全部比赛</Link>
+          <strong>{uiText("赛后资料", uiLocale)}</strong>
+          <span>{uiText("完整地图结果和回放信息会在比赛详情页集中查看。", uiLocale)}</span>
+          <Link to={cleanMatchesPath}>{uiText("全部比赛", uiLocale)}</Link>
         </div>
       </section>
     </div>
@@ -562,15 +811,23 @@ function FullListView({ rows, groups, filters, options, activeTab, favoriteCount
 }
 
 export default function MatchesPage() {
-  const { db, favorites, seasonId } = useOutletContext()
+  const { db, season, isKprHybridDesign } = useOutletContext()
+  if (isKprHybridDesign && isWeeklyOverview(db, season)) return <Suspense fallback={null}><SignalWeeklySchedule /></Suspense>
+  return <StandardMatchesPage />
+}
+
+const SignalWeeklySchedule = lazy(() => import('../../features/match-schedule/SignalWeeklySchedule.jsx'))
+
+function StandardMatchesPage() {
+  const { db, favorites, seasonId, isKprHybridDesign = false } = useOutletContext()
   const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
   const restoreScrollY = getRestoreScrollY(location.state)
   const allMatches = getAllMatches(db)
   const options = getFilterOptions(allMatches)
   const hub = getMatchHubData(db, seasonId, favorites)
-  const hasListQuery = ['tab', 'status', 'stage', 'round', 'format', 'team', 'query', 'following'].some(key => searchParams.has(key))
-  const isListView = searchParams.get('view') === 'list' || hasListQuery
+  const hasListQuery = ['tab', 'status', 'stage', 'round', 'format', 'team', 'teamId', 'query', 'following'].some(key => searchParams.has(key))
+  const isListView = isKprHybridDesign ? isScheduleListSearch(searchParams) : searchParams.get('view') === 'list' || hasListQuery
   const focusSearch = searchParams.get('focus') === 'search'
   const activeTab = normalizeTab(searchParams)
   const filters = {
@@ -578,7 +835,8 @@ export default function MatchesPage() {
     round: resolveRoundValue(queryValue(searchParams, 'round'), options.rounds),
     status: resolveStatusValue(queryValue(searchParams, 'status')),
     format: queryValue(searchParams, 'format'),
-    team: searchParams.get('team') || searchParams.get('query') || ''
+    team: searchParams.get('team') || searchParams.get('query') || '',
+    teamId: searchParams.get('teamId') || ''
   }
   const tabRows = getTabMatches(allMatches, activeTab, favorites, filters.round)
   const rows = filterMatches(tabRows, filters)
@@ -598,7 +856,7 @@ export default function MatchesPage() {
       if (!normalized || normalized === 'ALL') next.delete(key)
       else next.set(key, normalized)
     })
-    setSearchParams(next)
+    setSearchParams(next, isKprHybridDesign ? { replace: true, preventScrollReset: true } : undefined)
   }
 
   const setTab = key => {
@@ -606,21 +864,28 @@ export default function MatchesPage() {
     next.set('view', 'list')
     next.set('tab', key)
     next.delete('following')
+    next.delete('roundView')
     if (key === 'upcoming' || key === 'finished') next.delete('status')
-    setSearchParams(next)
+    setSearchParams(next, isKprHybridDesign ? { preventScrollReset: true } : undefined)
   }
 
   const resetFilters = () => {
+    if (isKprHybridDesign) {
+      setSearchParams(resetScheduleSearch(searchParams), { replace: true, preventScrollReset: true })
+      return
+    }
     const next = new URLSearchParams(searchParams)
     next.set('view', 'list')
-    ;['stage', 'round', 'status', 'format', 'team', 'query'].forEach(key => next.delete(key))
+    ;['stage', 'round', 'status', 'format', 'team', 'teamId', 'query', 'roundView'].forEach(key => next.delete(key))
     setSearchParams(next)
   }
 
+  const ListView = isKprHybridDesign ? SignalMatchIndex : FullListView
+
   return (
-    <div className={styles.shell}>
+    <div className={isKprHybridDesign && (isListView || hub.isArchive) ? undefined : `${styles.shell} ${isKprHybridDesign ? styles.hybridShell : ''}`}>
       {isListView ? (
-        <FullListView
+        <ListView
           rows={rows}
           groups={groups}
           filters={filters}
@@ -632,9 +897,11 @@ export default function MatchesPage() {
           setTab={setTab}
           seasonId={seasonId}
           focusSearch={focusSearch}
+          hub={hub}
+          stageEntries={getArchiveStageEntries(hub, seasonId)}
         />
       ) : (
-        <MatchHub hub={hub} seasonId={seasonId} />
+        isKprHybridDesign && hub.isArchive ? <SignalScheduleFeatured hub={hub} /> : <MatchHub hub={hub} seasonId={seasonId} />
       )}
     </div>
   )

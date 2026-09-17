@@ -107,6 +107,9 @@ function roundOrder(label, index = 0) {
     return 60 + index
   }
 
+  if (/THIRD|3RD|季军/.test(text)) return 70 + index
+  if (/QF|QUARTER|八强/.test(text)) return 10 + index
+  if (/SF|SEMI|半决/.test(text)) return 30 + index
   if (/GRAND|总决|FINAL/.test(text)) return 90 + index
   if (/LCQ|BREAKTHROUGH|突围/.test(text)) return 100 + number + index
   if (number) return 100 + number + index

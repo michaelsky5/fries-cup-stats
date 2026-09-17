@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Symmetra hard-light portal</title>
+  <desc id="desc">An architectural hard-light aperture keeps its centre open. Faceted jambs, one pale crown and a small gold base replace the generic solid cube.</desc>
+  <path d="M180 51L246 111V178L216 215H144L114 178V111ZM180 78L136 120V170L154 193H206L224 170V120Z" fill="#77b9cf" fill-opacity="0.3" fill-rule="evenodd" stroke="#b9dfe9" stroke-opacity="0.77" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M114 111L136 120V170L154 193L144 215L114 178Z" fill="#80aec0" fill-opacity="0.2"/>
+  <path d="M180 51L246 111L224 120L180 78Z" fill="#c5e6ed" fill-opacity="0.25"/>
+  <path d="M155 214H205L196 223H164Z" fill="#d3b979" fill-opacity="0.49"/>
+  <path d="M180 87L216 121" fill="none" stroke="#d9eff2" stroke-opacity="0.34" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

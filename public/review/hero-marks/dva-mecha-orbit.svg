@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">D.Va self-destruct bunny</title>
+  <desc id="desc">A long-eared bunny with the confident, narrowed eyes of D.Va's self-destruct mark. The emblem is independent of the portrait's motion lines.</desc>
+  <path d="M211 128C207 116 201 100 201 88C201 83 204 81 207 84C215 92 220 108 224 125C227 124 231 124 234 125C238 108 243 92 251 84C254 81 257 83 257 88C257 100 251 116 247 128C257 133 263 141 263 150C263 165 249 174 229 174C209 174 195 165 195 150C195 141 201 133 211 128Z" fill="#d48cae" fill-opacity="0.34" stroke="#f0bed5" stroke-opacity="0.76" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M208 143L224 150C222 156 212 157 209 151ZM250 143L234 150C236 156 246 157 249 151Z" fill="#090b0b" stroke="#e6b6cd" stroke-opacity="0.67" stroke-width="1" stroke-linejoin="round"/>
+  <path d="M226 160H232L229 164Z" fill="#e6b6cd" fill-opacity="0.66"/>
+</svg>

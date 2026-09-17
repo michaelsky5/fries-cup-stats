@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Kiriko torii seal</title>
+  <desc id="desc">A broad, lightly upswept roof rests on slender splayed pillars. The continuous lower beam leaves an open gateway and one uninterrupted gap above it, without a plaque, arrow or decorative grid.</desc>
+  <g fill="#bd7168" fill-opacity="0.25" stroke="#dba396" stroke-opacity="0.77" stroke-width="1.7" stroke-linejoin="round">
+    <path d="M105 89H255V96H238L239 117H257V125H240L248 209H237L229 125H131L123 209H112L120 125H103V117H121L122 96H105ZM133 96L132 117H228L227 96Z" fill-rule="evenodd"/>
+    <path d="M82 66C122 79 238 79 278 66L271 79C254 84 243 87 229 89H131C117 87 106 84 89 79Z" fill-opacity="0.34"/>
+  </g>
+</svg>

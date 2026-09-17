@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import { getMatchStatusLabelKey } from '../../lib/advanceSelectors.js'
@@ -41,6 +43,7 @@ export default function BracketMatchNode({
   isFavoriteTeam,
   isPrimaryFavoriteTeam
 }) {
+  const uiLocale = useUiLocale()
   const matchHref = match.matchId ? withSeason(`/matches/${match.matchId}`) : ''
   const statusLabel = t(getMatchStatusLabelKey(match.status), match.status)
   const teamAFavorite = isFavoriteTeam?.(match.teamA)
@@ -78,7 +81,7 @@ export default function BracketMatchNode({
       </div>
       <footer>
         <span>{match.label}</span>
-        {matchHref ? <Link to={matchHref}>{t('advance.common.details', '详情')}</Link> : null}
+        {matchHref ? <Link to={matchHref}>{t('advance.common.details', uiText("详情", uiLocale))}</Link> : null}
       </footer>
       {match.hasConnection ? <i aria-hidden="true" className={styles.bracketConnector} /> : null}
     </article>

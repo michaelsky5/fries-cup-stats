@@ -1,0 +1,77 @@
+.folio { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: var(--portrait-height); color: var(--fc-data-paper); background: var(--fc-data-ink); animation: credit-enter 300ms ease both; }
+.folioTop { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 44px; padding: 10px 26px; border-bottom: 1px solid var(--fc-data-line-on-dark); font-size: 11px; }
+.folioTop > span { display: flex; align-items: center; gap: 10px; color: var(--fc-data-text-dark-muted); font-family: var(--font-mono); }
+.folioTop i { width: 14px; height: 1px; background: currentColor; opacity: .5; }
+.folioTop b { display: flex; align-items: center; gap: 7px; font-size: 12px; }
+.folioTop b::before { content: ''; width: 16px; height: 3px; background: var(--fc-data-signal); }
+.scene { position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1fr) minmax(120px, .58fr); align-items: center; gap: 24px; padding: 30px 26px; min-height: 280px; flex: 1; overflow: hidden; background: repeating-linear-gradient(90deg, transparent 0, transparent calc(25% - 1px), var(--fc-data-grid-on-dark) calc(25% - 1px), var(--fc-data-grid-on-dark) 25%); }
+.scene::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(120deg, transparent 40%, rgb(232 225 91 / 7%) 40%, rgb(232 225 91 / 7%) 66%, transparent 66%); }
+.backprint { position: absolute; z-index: -1; left: 25px; bottom: 15px; color: rgb(238 237 230 / 5%); font: 900 clamp(120px, 15vw, 240px)/.8 var(--fc-data-font-display); letter-spacing: -.05em; white-space: nowrap; }
+.identity { min-width: 0; }
+.identity > span { color: var(--fc-data-signal); font-size: 11px; letter-spacing: .06em; }
+.identity h2 { margin: 18px 0 10px; font: 900 clamp(50px, 6.2vw, 90px)/1.08 var(--fc-data-font-display); letter-spacing: -.05em; overflow-wrap: anywhere; }
+.identity h2[data-name-length="medium"] { font-size: clamp(40px, 4.5vw, 65px); }
+.identity h2[data-name-length="long"] { font-size: clamp(30px, 3.3vw, 48px); }
+.identity p { margin: 0; color: var(--fc-data-text-dark-muted); font: 12px/1.6 var(--font-mono); overflow-wrap: anywhere; }
+.role { display: block; width: fit-content; margin-top: 24px; padding-top: 10px; border-top: 3px solid var(--fc-data-signal); font-size: 16px; line-height: 1.6; }
+.visual { position: relative; width: 100%; max-width: 190px; justify-self: end; margin: 0; }
+.visual > img, .initial { display: grid; place-items: center; width: 100%; aspect-ratio: 1; border: 1px solid var(--fc-data-line-on-dark); object-fit: contain; background: var(--fc-data-ink-raised); }
+.visual > img { padding: 6px; }
+.visual[data-kind="team"] > img { padding: 16px; background: var(--fc-data-paper); }
+.visual::before { content: ''; position: absolute; top: -6px; right: -6px; width: 28px; height: 28px; border-top: 1px solid var(--fc-data-signal); border-right: 1px solid var(--fc-data-signal); pointer-events: none; }
+.initial { color: var(--fc-data-paper); font: 900 clamp(28px, 4vw, 60px)/1.1 var(--fc-data-font-display); overflow-wrap: anywhere; text-align: center; padding: 12px; }
+.visual figcaption { padding-top: 10px; color: var(--fc-data-text-dark-muted); font: 9px/1.4 var(--font-mono); text-align: right; letter-spacing: .06em; }
+.recordNumbers, .teamRecord { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); min-height: 76px; border-block: 1px solid var(--fc-data-line-on-dark); }
+.recordNumbers > div, .teamRecord > div { padding: 13px 26px; min-width: 0; border-right: 1px solid var(--fc-data-line-on-dark); }
+.recordNumbers > div:last-child, .teamRecord > div:last-child { border: 0; }
+.recordNumbers span, .teamRecord span { display: block; color: var(--fc-data-text-dark-muted); font-size: 11px; line-height: 1.5; }
+.recordNumbers b, .teamRecord b { display: block; margin-top: 6px; font: 800 28px/1 var(--fc-data-font-display); }
+.teamRecord { grid-template-columns: minmax(0, 1fr) minmax(110px, .38fr); }
+.teamRecord strong { display: block; margin-top: 10px; font: 900 32px/1 var(--fc-data-font-display); overflow-wrap: anywhere; }
+.teamRecord p { margin: 7px 0 0; color: var(--fc-data-text-dark-muted); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.stages { padding: 16px 26px 0; }
+.stages > span { color: var(--fc-data-text-dark-muted); font: 10px/1.5 var(--font-mono); letter-spacing: .04em; }
+.stages ul { list-style: none; padding: 0; margin: 9px 0 0; }
+.stages li { display: flex; justify-content: space-between; gap: 14px; padding: 9px 0; border-top: 1px solid var(--fc-data-line-on-dark); font-size: 13px; line-height: 1.5; }
+.stages b { font: 500 12px var(--font-mono); white-space: nowrap; }
+.stages small { color: var(--fc-data-text-dark-muted); font: 10px var(--fc-data-font-interface); }
+.source { margin: 0; padding: 16px 26px 20px; color: var(--fc-data-text-dark-muted); font: 10px/1.7 var(--fc-data-font-interface); }
+.folioFooter { border-top: 1px solid var(--fc-data-line-on-dark); }
+.folioFooter > a { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 54px; padding: 16px 22px; background: var(--fc-data-signal); color: var(--fc-data-ink); font-size: 14px; font-weight: 800; text-decoration: none; }
+.folioFooter > a:hover { background: var(--fc-data-signal-bright); }
+.unavailable { display: block; padding: 18px 26px; color: var(--fc-data-text-dark-muted); font-size: 12px; }
+.folio a:focus-visible { outline: 2px solid var(--fc-data-signal-bright); outline-offset: -4px; }
+.folioFooter a:focus-visible { outline-color: var(--fc-data-ink); }
+.method { margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--fc-data-line); color: var(--fc-data-text-muted); font-size: 11px; }
+.method summary { cursor: pointer; padding: 6px 0; }
+.method p { max-width: 850px; margin: 10px 0 0; line-height: 1.8; }
+@keyframes credit-enter { from { opacity: .35; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 1100px) {
+  .folioTop { padding-inline: 20px; }
+  .scene { padding: 26px 22px; gap: 14px; grid-template-columns: minmax(0, 1fr) minmax(100px, .52fr); }
+  .identity h2 { font-size: 60px; }
+  .identity h2[data-name-length="medium"] { font-size: 45px; }
+  .identity h2[data-name-length="long"] { font-size: 34px; }
+  .recordNumbers > div, .teamRecord > div { padding-inline: 18px; }
+  .stages, .source { padding-inline: 22px; }
+}
+@media (max-width: 760px) {
+  .folio { min-height: 560px; }
+  .folioTop { min-height: 42px; padding: 12px 16px; }
+  .folioTop > span { font-size: 10px; }
+  .scene { min-height: 240px; padding: 24px 18px; grid-template-columns: minmax(0, 1fr) 104px; }
+  .identity h2 { font-size: clamp(34px, 10vw, 42px); text-wrap: balance; }
+  .identity h2[data-name-length="medium"] { font-size: 38px; }
+  .identity h2[data-name-length="long"] { font-size: 29px; }
+  .identity > span, .identity p { font-size: 10px; }
+  .role { margin-top: 20px; font-size: 12px; }
+  .visual figcaption { font-size: 8px; }
+  .visual[data-kind="team"] > img { padding: 10px; }
+  .recordNumbers > div, .teamRecord > div { padding: 13px 14px; }
+  .recordNumbers b, .teamRecord b { font-size: 26px; }
+  .recordNumbers span, .teamRecord span { font-size: 10px; }
+  .stages { padding: 18px 18px 0; }
+  .source { padding: 14px 18px 18px; }
+  .folioFooter > a { font-size: 13px; padding: 14px 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .folio { animation: none; } }

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Brigitte rocket flail</title>
+  <desc id="desc">A forged flail head, three physical chain links and a wrapped grip form one complete weapon silhouette. No shield badge or surrounding motion lines.</desc>
+  <g fill="none" stroke="#d2c5a8" stroke-opacity="0.78" stroke-width="3.2">
+    <rect x="151" y="108" width="24" height="12" rx="6" transform="rotate(40 163 114)"/>
+    <rect x="168" y="120" width="24" height="12" rx="6" transform="rotate(40 180 126)"/>
+    <rect x="185" y="132" width="20" height="10" rx="5" transform="rotate(40 195 137)"/>
+  </g>
+  <path d="M187 140L198 129L252 179L241 191Z" fill="#84949c" fill-opacity="0.34" stroke="#c0cbd0" stroke-opacity="0.77" stroke-width="1.8" stroke-linejoin="bevel"/>
+  <path d="M232 180L244 168L259 183L247 196Z" fill="#bc945f" fill-opacity="0.4" stroke="#e3c38b" stroke-opacity="0.78" stroke-width="1.8" stroke-linejoin="bevel"/>
+  <path d="M210 148L199 159M220 157L209 168M230 166L219 177" fill="none" stroke="#d9d2bc" stroke-opacity="0.43" stroke-width="2.4"/>
+  <path d="M105 74L119 58H145L161 75V111L146 129H118L103 113Z" fill="#b89561" fill-opacity="0.32" stroke="#e5c58d" stroke-opacity="0.81" stroke-width="2" stroke-linejoin="bevel"/>
+  <path d="M106 75L119 62V125L107 112Z" fill="#d1bb8c" fill-opacity="0.25"/>
+  <path d="M121 74H146V112H121Z" fill="#7e969d" fill-opacity="0.28" stroke="#c5d2d0" stroke-opacity="0.61" stroke-width="1.7"/>
+  <path d="M126 82H137L143 92L137 103H126L120 92Z" fill="#101514" fill-opacity="0.86" stroke="#eddaa9" stroke-opacity="0.78" stroke-width="1.8" stroke-linejoin="bevel"/>
+</svg>

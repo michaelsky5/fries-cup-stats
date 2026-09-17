@@ -1,0 +1,35 @@
+/* Reuse the Data Center palette; surface hierarchy does not introduce a room theme. */
+.paper {
+  --fc-data-room-canvas:var(--fc-data-paper-raised,#f6f5ef);
+  --fc-data-room-surface:var(--fc-data-paper,#eeede6);
+  --fc-data-room-raised:var(--fc-data-paper-raised,#f6f5ef);
+  --fc-data-room-inset:var(--fc-data-paper-deep,#e4e3db);
+  --fc-data-room-line:var(--fc-data-line,rgb(24 26 23 / 15%));
+  --fc-data-room-control:var(--fc-data-text-muted,#66685f);
+  --fc-data-room-text:var(--fc-data-on-paper,#181a17);
+  --fc-data-room-muted:var(--fc-data-text-muted,#66685f);
+  --fc-data-room-faint:var(--fc-data-text-muted,#66685f);
+  --fc-data-room-accent:var(--fc-data-on-paper,#181a17);
+  --fc-data-room-selection:var(--fc-data-signal,#f4c320);
+  --fc-data-room-accent-line:var(--fc-data-line-strong,rgb(24 26 23 / 38%));
+  --fc-data-room-focus:var(--fc-data-focus-on-light,#806000);
+  --fc-data-room-success:var(--fc-data-status-success,#237a4b);
+  --fc-data-room-success-bg:rgb(35 122 75 / 8%);
+  --fc-data-room-success-line:rgb(35 122 75 / 40%);
+  --fc-data-room-warning:var(--fc-data-status-warning,#9a4d00);
+  --fc-data-room-warning-bg:rgb(154 77 0 / 7%);
+  --fc-data-room-warning-line:rgb(154 77 0 / 42%);
+  --fc-data-room-danger:var(--fc-data-status-danger,#b33a32);
+  --fc-data-room-danger-bg:rgb(179 58 50 / 7%);
+  --fc-data-room-danger-line:rgb(179 58 50 / 40%);
+  --fc-data-room-live:var(--fc-data-status-live,#0f766e);
+  --fc-data-room-live-line:rgb(15 118 110 / 42%);
+  --fc-data-room-archived:var(--fc-data-status-archived,#5b625b);
+  --ink:var(--fc-data-room-canvas);
+  --line:var(--fc-data-room-line);
+  --muted:var(--fc-data-room-muted);
+  --text:var(--fc-data-room-text);
+  --yellow:var(--fc-data-room-accent);
+  color:var(--fc-data-room-text);
+  color-scheme:light;
+}

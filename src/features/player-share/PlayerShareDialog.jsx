@@ -1,3 +1,4 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createTranslator } from '../../lib/i18n.js'
 import { getRoleEnLabel, getRoleLabel } from '../../lib/leaderboardSelectors.js'
@@ -8,7 +9,7 @@ import { getPlayerShareCardModel } from './playerShareSelectors.js'
 import styles from './PlayerShareDialog.module.css'
 
 function roleName(role, locale = 'zh-CN') {
-  return locale === 'en-US' ? getRoleEnLabel(role) : getRoleLabel(role)
+  return locale === 'en-US' ? getRoleEnLabel(role) : uiText(getRoleLabel(role), locale)
 }
 
 export default function PlayerShareDialog({
@@ -24,6 +25,9 @@ export default function PlayerShareDialog({
   locale = 'zh'
 }) {
   const exportRef = useRef(null)
+  const previewRef = useRef(null)
+  const dialogRef = useRef(null)
+  const [previewScale, setPreviewScale] = useState(0)
   const [selectedRole, setSelectedRole] = useState(currentRole || roleEntries[0]?.role || '')
   const [status, setStatus] = useState('')
   const [exporting, setExporting] = useState(false)
@@ -37,12 +41,39 @@ export default function PlayerShareDialog({
 
   useEffect(() => {
     if (!open) return undefined
+    const opener = document.activeElement
+    const previousOverflow = document.body.style.overflow
+    const buttons = () => [...(dialogRef.current?.querySelectorAll('button:not(:disabled), a[href], [tabindex="0"]') || [])]
+    document.body.style.overflow = 'hidden'
+    buttons()[0]?.focus()
     const handleKeyDown = event => {
       if (event.key === 'Escape') onClose?.()
+      if (event.key === 'Tab') {
+        const elements = buttons()
+        const destination = event.shiftKey ? elements.at(-1) : elements[0]
+        if (event.shiftKey ? document.activeElement === elements[0] : document.activeElement === elements.at(-1)) {
+          event.preventDefault()
+          destination?.focus()
+        }
+      }
     }
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = previousOverflow
+      if (opener instanceof HTMLElement && document.contains(opener)) opener.focus({ preventScroll: true })
+    }
   }, [onClose, open])
+
+  useEffect(() => {
+    if (!open || !previewRef.current) return undefined
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setPreviewScale(Math.max(0, Math.min((width - 4) / 1600, (height - 4) / 900, 0.66)))
+    })
+    observer.observe(previewRef.current)
+    return () => observer.disconnect()
+  }, [open])
 
   const model = useMemo(
     () => getPlayerShareCardModel({
@@ -79,20 +110,20 @@ export default function PlayerShareDialog({
   if (!open) return null
 
   return (
-    <div className={styles.overlay} role="dialog" aria-modal="true" aria-label={t('playerShare.dialog.aria', '导出分享图')}>
-      <section className={styles.dialog}>
+    <div className={styles.overlay} role="dialog" aria-modal="true" aria-label={t('playerShare.dialog.aria', uiText("导出分享图", locale))}>
+      <section className={styles.dialog} ref={dialogRef}>
         <header className={styles.header}>
           <div>
             <span>PLAYER SHARE</span>
-            <h2>{t('playerShare.dialog.title', '导出分享图')}</h2>
+            <h2>{t('playerShare.dialog.title', uiText("导出分享图", locale))}</h2>
           </div>
-          <button type="button" onClick={onClose} aria-label={t('playerShare.dialog.close', '关闭')}>×</button>
+          <button type="button" onClick={onClose} aria-label={t('playerShare.dialog.close', uiText("关闭", locale))}>×</button>
         </header>
 
         <div className={styles.controls}>
           <div className={styles.roleControl}>
-            <span>{t('playerShare.dialog.role', '职责')}</span>
-            <div role="tablist" aria-label={t('playerShare.dialog.roleAria', '选择职责')}>
+            <span>{t('playerShare.dialog.role', uiText("职责", locale))}</span>
+            <div role="tablist" aria-label={t('playerShare.dialog.roleAria', uiText("选择职责", locale))}>
               {roleEntries.map(item => (
                 <button
                   key={item.role}
@@ -111,7 +142,7 @@ export default function PlayerShareDialog({
             </div>
           </div>
           <div className={styles.metaPills}>
-            <span>{t('playerShare.dialog.highlightAuto', '赛季高光：自动选择')}</span>
+            <span>{t('playerShare.dialog.highlightAuto', uiText("赛季高光：自动选择", locale))}</span>
             <span>1600 × 900</span>
           </div>
           <button
@@ -120,24 +151,24 @@ export default function PlayerShareDialog({
             onClick={handleExport}
             disabled={!model || exporting}
           >
-            {exporting ? t('playerShare.dialog.generating', '正在生成') : t('playerShare.dialog.exportPng', '导出 PNG')}
+            {exporting ? t('playerShare.dialog.generating', uiText("正在生成", locale)) : t('playerShare.dialog.exportPng', uiText("导出 PNG", locale))}
           </button>
         </div>
 
-        <div className={styles.previewArea}>
+        <div className={styles.previewArea} ref={previewRef}>
           {model ? (
-            <div className={styles.previewFrame}>
-              <div className={styles.previewScale}>
+            <div className={styles.previewFrame} style={{ width: 1600 * previewScale + 4, height: 900 * previewScale + 4 }}>
+              <div className={styles.previewScale} style={{ transform: `scale(${previewScale})` }}>
                 <PlayerShareCard model={model} />
               </div>
             </div>
           ) : (
-            <div className={styles.emptyState}>{t('playerShare.dialog.empty', '当前职责暂无可导出的数据。')}</div>
+            <div className={styles.emptyState}>{t('playerShare.dialog.empty', uiText("当前职责暂无可导出的数据。", locale))}</div>
           )}
         </div>
 
         <footer className={styles.footer}>
-          <span>{status || t('playerShare.dialog.previewNote', '预览与导出使用同一卡面，导出尺寸固定为 1600 × 900。')}</span>
+          <span role="status">{status || t('playerShare.dialog.previewNote', uiText("预览与导出使用同一卡面，导出尺寸固定为 1600 × 900。", locale))}</span>
         </footer>
       </section>
 

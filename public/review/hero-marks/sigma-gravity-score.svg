@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Sigma paired hyperspheres</title>
+  <desc id="desc">Two floating, armoured spheres have a clear front and rear scale. Curved shell plates follow their volume; one quiet undercurrent supports the pair instead of a field of orbital paths.</desc>
+  <defs>
+    <radialGradient id="sphere-metal" cx="31%" cy="24%" r="78%">
+      <stop offset="0" stop-color="#b6cddc" stop-opacity="0.59"/>
+      <stop offset="0.46" stop-color="#68859c" stop-opacity="0.33"/>
+      <stop offset="1" stop-color="#293d52" stop-opacity="0.2"/>
+    </radialGradient>
+    <g id="hypersphere-shell">
+      <circle r="43" fill="url(#sphere-metal)" stroke="#b1ccdc" stroke-opacity="0.78" stroke-width="1.8"/>
+      <g fill="#b6c9d7" fill-opacity="0.4" stroke="#c8d9e3" stroke-opacity="0.47" stroke-width="1.2" stroke-linejoin="round">
+        <path d="M-8-42C8-45 27-33 37-16L21-21L9-12L10-31Z"/>
+        <path d="M42 1C42 21 28 37 10 42L18 27L10 16L31 13Z"/>
+        <path d="M-16 40C-33 33-44 17-42-3L-30 7L-18 3L-21 24Z"/>
+      </g>
+      <circle r="7.5" fill="#253d54" fill-opacity="0.32" stroke="#c0d5df" stroke-opacity="0.42" stroke-width="1.2"/>
+    </g>
+  </defs>
+  <path d="M112 202C153 211 217 180 244 144" fill="none" stroke="#779ab5" stroke-opacity="0.27" stroke-width="1.5" stroke-linecap="round"/>
+  <use href="#hypersphere-shell" transform="translate(220 96) scale(0.74)"/>
+  <use href="#hypersphere-shell" transform="translate(148 153)"/>
+</svg>

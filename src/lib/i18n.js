@@ -1,10 +1,6 @@
-export const LOCALE_STORAGE_KEY = 'fries_cup_stats_locale'
-export const DEFAULT_LOCALE = 'zh-CN'
-
-export const LOCALES = [
-  { id: 'zh-CN', label: '中文' },
-  { id: 'en-US', label: 'English' }
-]
+import { DEFAULT_LOCALE, normalizeLocale } from './locales.js'
+import { translateUiText } from './uiText.js'
+export { DEFAULT_LOCALE, LOCALES, LOCALE_STORAGE_KEY, normalizeLocale, getStoredLocale, setStoredLocale } from './locales.js'
 
 const dictionary = {
   'layout.brand.kicker': {
@@ -12,7 +8,7 @@ const dictionary = {
     'en-US': 'FriesCup'
   },
   'layout.brand.title': {
-    'zh-CN': '数据中心',
+    'zh-CN': '赛事中心',
     'en-US': 'Data Center'
   },
   'layout.nav.public': {
@@ -96,8 +92,28 @@ const dictionary = {
     'en-US': 'No Data'
   },
   'layout.state.loading': {
-    'zh-CN': '连接数据',
-    'en-US': 'Loading match data'
+    'zh-CN': '正在同步最新赛事数据',
+    'en-US': 'Syncing the latest event data'
+  },
+  'layout.state.loadingDesc': {
+    'zh-CN': '正在核对最新发布版本、赛程、赛果与晋级状态，请稍候。',
+    'en-US': 'Checking the latest published version, schedule, results, and advancement status.'
+  },
+  'layout.state.loadingProgress': {
+    'zh-CN': '赛事数据同步进度',
+    'en-US': 'Event data sync progress'
+  },
+  'layout.state.fallbackKicker': {
+    'zh-CN': 'LIVE DATA SYNC',
+    'en-US': 'LIVE DATA SYNC'
+  },
+  'layout.state.fallbackTitle': {
+    'zh-CN': '正在同步最新发布数据',
+    'en-US': 'Syncing the latest published data'
+  },
+  'layout.state.fallbackDesc': {
+    'zh-CN': '当前暂时显示上次可用快照；同步完成后页面会自动更新。',
+    'en-US': 'The last available snapshot is shown temporarily and will update automatically when syncing finishes.'
   },
   'layout.state.error': {
     'zh-CN': '数据加载异常',
@@ -336,8 +352,8 @@ const dictionary = {
     'en-US': 'Reference rating, not official MVP voting.'
   },
   'matchDetail.ratingNote': {
-    'zh-CN': '\u8bc4\u5206\u6839\u636e\u516c\u5f00\u6bd4\u8d5b\u7edf\u8ba1\u751f\u6210\uff0c\u4ec5\u4f9b\u53c2\u8003\u3002',
-    'en-US': 'Ratings are generated from match stats for reference.'
+    'zh-CN': '全场与单图评分使用同一刻度。全场先按职责和出场时间汇总表现，再换算评分；单图胜方加分不计入多图全场评分。评分仅供参考。',
+    'en-US': 'Match and map ratings use the same scale. Full-match performance is weighted by playtime within each role, then converted to a rating. Map win bonuses do not carry into multi-map match ratings. Ratings are for reference.'
   },
   'matchDetail.seriesComparison': {
     'zh-CN': '\u6574\u573a\u961f\u4f0d\u6570\u636e\u5bf9\u6bd4',
@@ -583,6 +599,10 @@ const dictionary = {
     'zh-CN': '查看公开预选赛、瑞士轮积分、突围赛对阵与季后赛晋级路径。',
     'en-US': 'Track the open qualifier, Swiss standings, breakthrough bracket, and playoff path.'
   },
+  'advance.header.groupDesc': {
+    'zh-CN': '查看四组单循环积分、同分判定、八强单败对阵与最终晋级路径。',
+    'en-US': 'Track four round-robin groups, tiebreak status, the top-eight single-elimination bracket, and final results.'
+  },
   'advance.header.archiveDesc': {
     'zh-CN': '查看最终排名、完整季后赛路径与冠军晋级历程。',
     'en-US': 'Review final ranking, playoff bracket, and the champion path.'
@@ -590,6 +610,10 @@ const dictionary = {
   'advance.phase.swiss': {
     'zh-CN': '瑞士轮',
     'en-US': 'Swiss'
+  },
+  'advance.phase.groups': {
+    'zh-CN': '小组赛',
+    'en-US': 'Groups'
   },
   'advance.phase.breakthrough': {
     'zh-CN': '突围赛',
@@ -611,6 +635,18 @@ const dictionary = {
     'zh-CN': '待确认',
     'en-US': 'Pending'
   },
+  'advance.status.current': {
+    'zh-CN': '当前',
+    'en-US': 'Current'
+  },
+  'advance.status.completed': {
+    'zh-CN': '已完成',
+    'en-US': 'Completed'
+  },
+  'advance.status.upcoming': {
+    'zh-CN': '未开始',
+    'en-US': 'Scheduled'
+  },
   'advance.summary.currentPhase': {
     'zh-CN': '当前阶段',
     'en-US': 'Current Phase'
@@ -619,9 +655,17 @@ const dictionary = {
     'zh-CN': '当前轮次',
     'en-US': 'Current Round'
   },
+  'advance.summary.currentMatchDay': {
+    'zh-CN': '当前比赛日',
+    'en-US': 'Current Match Day'
+  },
   'advance.summary.roundProgress': {
     'zh-CN': '本轮进度',
     'en-US': 'Round Progress'
+  },
+  'advance.summary.matchDayProgress': {
+    'zh-CN': '本比赛日进度',
+    'en-US': 'Match Day Progress'
   },
   'advance.summary.nextPhase': {
     'zh-CN': '下一阶段',
@@ -847,6 +891,18 @@ const dictionary = {
     'zh-CN': '季后赛双败淘汰图',
     'en-US': 'Double-elimination Playoffs'
   },
+  'advance.playoffs.singleElimTitle': {
+    'zh-CN': '八强单败淘汰图',
+    'en-US': 'Top-eight Single-elimination Bracket'
+  },
+  'advance.playoffs.groupEmptyTitle': {
+    'zh-CN': '八强对阵待公布',
+    'en-US': 'Quarterfinal Bracket Pending'
+  },
+  'advance.playoffs.groupEmptyDesc': {
+    'zh-CN': '小组赛各组前二确认后，由 System 发布八强单败对阵。八强赛与半决赛 FT3，季军赛与总决赛 FT4。',
+    'en-US': 'System publishes the single-elimination bracket after each group confirms its top two. Quarterfinals and semifinals are FT3; third place and the grand final are FT4.'
+  },
   'advance.playoffs.fullBracket': {
     'zh-CN': '完整季后赛晋级图',
     'en-US': 'Full Playoff Bracket'
@@ -926,6 +982,10 @@ const dictionary = {
   'advance.final.viewSwiss': {
     'zh-CN': '查看瑞士轮最终积分榜',
     'en-US': 'View Final Swiss Standings'
+  },
+  'advance.final.viewGroups': {
+    'zh-CN': '查看小组赛最终积分榜',
+    'en-US': 'View Final Group Standings'
   },
   'advance.common.tbd': {
     'zh-CN': 'TBD',
@@ -1077,24 +1137,10 @@ const dictionary = {
   }
 }
 
-export function normalizeLocale(locale) {
-  return LOCALES.some(item => item.id === locale) ? locale : DEFAULT_LOCALE
-}
-
-export function getStoredLocale() {
-  if (typeof window === 'undefined') return DEFAULT_LOCALE
-  return normalizeLocale(window.localStorage.getItem(LOCALE_STORAGE_KEY))
-}
-
-export function setStoredLocale(locale) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(LOCALE_STORAGE_KEY, normalizeLocale(locale))
-}
-
 export function createTranslator(locale = DEFAULT_LOCALE) {
   const safeLocale = normalizeLocale(locale)
   return (key, fallback = key) => {
     const entry = dictionary[key]
-    return entry?.[safeLocale] || entry?.[DEFAULT_LOCALE] || fallback
+    return entry?.[safeLocale] || translateUiText(entry?.[DEFAULT_LOCALE] || fallback, safeLocale)
   }
 }

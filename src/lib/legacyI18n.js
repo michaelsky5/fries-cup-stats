@@ -1,4 +1,6 @@
+import { translateUiText as formatUiText } from './uiText.js'
 import { DEFAULT_LOCALE, normalizeLocale } from './i18n.js'
+import { pickUiLocale, translateUiText } from './uiText.js'
 
 export const LEGACY_I18N_ATTRIBUTES = ['aria-label', 'title', 'placeholder', 'alt']
 
@@ -549,16 +551,18 @@ export function isEnglishLocale(locale) {
 }
 
 export function pickLocale(locale, zh, en) {
-  return isEnglishLocale(locale) ? en : zh
+  return pickUiLocale(locale, zh, en)
 }
 
 export function translateLegacyText(value, locale = DEFAULT_LOCALE) {
-  if (!isEnglishLocale(locale) || value === null || value === undefined) return value
+  const localized = translateUiText(value, locale)
+  if (localized !== value) return formatUiText(localized, locale)
+  if (!isEnglishLocale(locale) || value === null || value === undefined) return formatUiText(value, locale)
 
   const source = String(value)
   const core = source.trim().replace(/\s+/g, ' ')
-  if (!core || !/[\u4e00-\u9fff]/.test(core)) return value
+  if (!core || !/[\u4e00-\u9fff]/.test(core)) return formatUiText(value, locale)
 
   const translated = translateCore(core)
-  return translated === core ? value : preserveSpacing(source, translated)
+  return formatUiText(translated === core ? value : preserveSpacing(source, translated), locale)
 }

@@ -1,0 +1,81 @@
+.shell:global([data-design="fd"]) {
+  --portal-shell-width: min(1440px, calc(100vw - 64px));
+  min-height: 100dvh;
+  background: var(--fd-ink);
+  color: var(--fd-on-dark);
+}
+
+:global([data-design="fd"]) .topShell { border-bottom: 1px solid var(--fd-line-dark); background: var(--fd-ink); }
+:global([data-design="fd"]) .topBar { position: relative; grid-template-columns: auto minmax(0, 1fr) auto; width: var(--portal-shell-width); min-height: 72px; gap: 28px; padding: 0; }
+:global([data-design="fd"]) .brandLink { gap: 8px; }
+:global([data-design="fd"]) .brandEventMark { width: 54px; height: 38px; }
+:global([data-design="fd"]) .brandEventMark img { width: 65px; height: 65px; }
+:global([data-design="fd"]) .brandWordMark { width: 105px; height: 38px; }
+:global([data-design="fd"]) .brandWordMark img { width: 115px; height: 115px; }
+:global([data-design="fd"]) .nav { justify-content: center; gap: 4px; }
+:global([data-design="fd"]) .navLink { min-width: 0; min-height: 44px; gap: 7px; padding: 0 15px; border-right: 0; color: #b6b6b6; font-size: 13px; font-weight: 500; }
+:global([data-design="fd"]) .navLink::before { min-width: 16px; height: auto; background: none; color: #8a8a8a; font-size: 9px; }
+:global([data-design="fd"]) .navLink::after { right: 15px; bottom: 0; left: 15px; height: 2px; }
+:global([data-design="fd"]) .navLinkActive { background: #e9e9e906; color: var(--fd-on-dark); }
+:global([data-design="fd"]) .navLinkActive::before { color: var(--fd-yellow); }
+:global([data-design="fd"]) .headerRight { position: static; gap: 10px; }
+:global([data-design="fd"]) .languageSwitch { width: 66px; font-size: 11px; font-weight: 500; }
+:global([data-design="fd"]) .languageSwitch .languageActive { background: transparent; color: var(--fd-yellow); }
+:global([data-design="fd"]) .pageFrame { padding: 28px 0 64px; }
+:global([data-design="fd"]) .main { width: var(--portal-shell-width); max-width: none; margin: 0 auto; padding: 0; }
+:global([data-design="fd"][data-fd-page="legacy"]) .pageFrame {
+  --portal-page: #f5efe3;
+  --portal-cream: #fbf7ee;
+  --portal-ink: #2a2a2a;
+  --portal-border: #2a2a2a;
+  --portal-muted: rgba(42, 42, 42, .56);
+  width: 100%;
+  min-height: calc(100dvh - 118px);
+  background: var(--portal-page);
+  color: var(--portal-ink);
+}
+:global([data-design="fd"]) .systemBox { border: 1px solid var(--fd-line-dark); background: var(--fd-ink-raised); color: var(--fd-on-dark); }
+:global([data-design="fd"]) .syncTitle { color: var(--fd-on-dark); }
+:global([data-design="fd"]) .syncDescription { color: var(--fd-muted); }
+:global([data-design="fd"]) .fallbackSyncNotice { border: 1px solid #f4c32055; background: #f4c3200a; color: var(--fd-on-dark); box-shadow: none; }
+:global([data-design="fd"]) .fallbackSyncNotice p { color: var(--fd-muted); }
+
+@media (max-width: 1180px) {
+  :global([data-design="fd"]) .topBar { gap: 16px; }
+  :global([data-design="fd"]) .navLink { padding: 0 10px; gap: 5px; font-size: 12px; }
+}
+
+@media (max-width: 980px) {
+  .shell:global([data-design="fd"]) { --portal-shell-width: calc(100vw - 40px); }
+  :global([data-design="fd"]) .topBar { grid-template-columns: auto minmax(0, 1fr) auto; min-height: 64px; }
+  :global([data-design="fd"]) .nav { display: none; }
+  :global([data-design="fd"]) .mobileNavMenu { position: static; display: block; min-width: 0; justify-self: end; }
+  :global([data-design="fd"]) .mobileNavMenu > summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; min-height: 42px; padding: 0 10px; border: 1px solid var(--fd-line-dark); background: transparent; color: var(--fd-on-dark); cursor: pointer; list-style: none; }
+  :global([data-design="fd"]) .mobileNavMenu > summary::-webkit-details-marker { display: none; }
+  :global([data-design="fd"]) .mobileNavCurrent { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 700; }
+  :global([data-design="fd"]) .mobileNavSummaryMeta,
+  :global([data-design="fd"]) .mobileNavItemMeta { display: inline-flex; align-items: center; gap: 6px; }
+  :global([data-design="fd"]) .mobileMenuLabel { color: var(--fd-yellow); font-size: 10px; font-weight: 700; }
+  :global([data-design="fd"]) .mobileNavMenu[open] > summary { background: var(--fd-yellow); color: var(--fd-ink); }
+  :global([data-design="fd"]) .mobileNavMenu[open] .mobileMenuLabel { color: var(--fd-ink); }
+  :global([data-design="fd"]) .mobileNavPanel { position: absolute; inset: calc(100% + 4px) 0 auto auto; z-index: 60; display: grid; width: min(360px, calc(100vw - 28px)); border: 1px solid var(--fd-line-dark); background: var(--fd-ink-raised); color: var(--fd-on-dark); }
+  :global([data-design="fd"]) .mobileNavLink { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; min-height: 48px; padding: 0 14px; border-bottom: 1px solid var(--fd-line-dark); color: var(--fd-on-dark); font-size: 13px; font-weight: 500; text-decoration: none; }
+  :global([data-design="fd"]) .mobileNavLinkActive { background: var(--fd-yellow); color: var(--fd-ink); }
+  :global([data-design="fd"]) .mobileNavItemEnglish { color: var(--fd-muted); font-size: 9px; font-style: normal; font-weight: 500; }
+  :global([data-design="fd"]) .mobileNavLinkActive .mobileNavItemEnglish { color: var(--fd-muted-ink); }
+}
+
+@media (max-width: 600px) {
+  .shell:global([data-design="fd"]) { --portal-shell-width: calc(100vw - 28px); }
+  :global([data-design="fd"]) .topBar { gap: 10px; min-height: 62px; }
+  :global([data-design="fd"]) .brandEventMark { width: 43px; }
+  :global([data-design="fd"]) .brandEventMark img { width: 55px; height: 55px; }
+  :global([data-design="fd"]) .brandWordMark { width: 76px; }
+  :global([data-design="fd"]) .brandWordMark img { width: 87px; height: 87px; }
+  :global([data-design="fd"]) .headerRight { gap: 6px; }
+  :global([data-design="fd"]) .languageSwitch { width: 64px; gap: 2px; font-size: 10px; }
+  :global([data-design="fd"]) .languageSwitch button { min-width: 27px; padding: 0 3px; }
+  :global([data-design="fd"]) .mobileNavCurrent { font-size: 12px; }
+  :global([data-design="fd"]) .mobileMenuLabel { font-size: 9px; }
+  :global([data-design="fd"]) .pageFrame { padding: 18px 0 40px; }
+}

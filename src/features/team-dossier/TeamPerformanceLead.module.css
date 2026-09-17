@@ -1,0 +1,1041 @@
+.cover {
+  min-width: 0;
+  padding-top: 0;
+}
+.masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 0;
+}
+.teamIdentity {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+.crest {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.teamIdentity h1 {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  min-width: 0;
+  line-height: 1;
+}
+.teamIdentity h1 strong {
+  font: 900 clamp(42px, 5vw, 66px)/1 var(--fc-data-font-display);
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+.teamIdentity h1 > span {
+  font: 750 clamp(20px, 2vw, 28px)/1.3 var(--fc-data-font-interface);
+  letter-spacing: -0.03em;
+}
+.scope {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.scope > span {
+  line-height: 1.5;
+}
+.scope small {
+  display: block;
+  color: var(--fc-data-text-muted);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.scope select {
+  min-width: 138px;
+}
+.recordRail {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: stretch;
+  border-block: 1px solid var(--fc-data-line-strong);
+}
+.record {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--fc-data-ink);
+  color: var(--fc-data-on-ink);
+  padding: 14px 20px;
+}
+.record > span:first-child {
+  font-size: 12px;
+}
+.record > strong {
+  font: 900 38px/1 var(--fc-data-font-display);
+  white-space: nowrap;
+}
+.record strong small {
+  font: 12px var(--fc-data-font-interface);
+  margin-left: 5px;
+  color: var(--fc-data-text-on-dark);
+}
+.winRate {
+  font-size: 14px;
+  padding-left: 16px;
+  border-left: 1px solid var(--fc-data-line-on-dark);
+}
+.winRate small {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--fc-data-text-on-dark);
+}
+.coverage {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 22px;
+  padding: 14px 24px;
+  font-size: 12px;
+}
+.coverage > span,
+.coverage > button {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+.coverage b {
+  font-size: 22px;
+  font-weight: 650;
+}
+.coverage button {
+  border: 1px solid var(--fc-data-line-strong);
+  padding: 8px 10px;
+  min-height: 44px;
+  background: var(--fc-data-paper-raised);
+}
+.coverage button i {
+  font-style: normal;
+  margin-left: 2px;
+}
+.coverage button:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.recent {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 10px 0 10px 22px;
+  border-left: 1px solid var(--fc-data-line);
+}
+.recent > span {
+  font-size: 12px;
+  white-space: nowrap;
+}
+.recent > span small {
+  display: block;
+  font-size: 10px;
+  margin-top: 6px;
+  color: var(--fc-data-text-muted);
+}
+.recent > div {
+  display: flex;
+  gap: 5px;
+}
+.recent a {
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 44px;
+  padding: 5px 2px;
+  font-size: 12px;
+  border-bottom: 2px dashed var(--fc-data-text-muted);
+}
+.recent a small {
+  font-size: 10px;
+  max-width: 55px;
+  overflow-wrap: anywhere;
+}
+.recent a[data-result='win'] {
+  border-bottom: 3px solid var(--fc-data-ink);
+}
+.recent a:hover {
+  background: var(--fc-data-signal);
+  color: var(--fc-data-on-signal);
+}
+.scopeFoot {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 6px 0 8px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.scopeFoot > p {
+  color: var(--fc-data-text-muted);
+}
+.scopeFoot details {
+  max-width: 400px;
+  flex-shrink: 0;
+  text-align: right;
+}
+.scopeFoot summary {
+  display: inline-flex;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+  min-height: 44px;
+  align-items: center;
+}
+.scopeFoot summary::-webkit-details-marker {
+  display: none;
+}
+.scopeFoot details[open] p {
+  padding: 8px 0;
+  text-align: left;
+}
+.analysisSpread {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.4fr) minmax(0, 1fr);
+  border-block: 2px solid var(--fc-data-ink);
+}
+.reading {
+  position: relative;
+  background: var(--fc-data-ink);
+  color: var(--fc-data-on-ink);
+  display: flex;
+  flex-direction: column;
+  padding: 25px 26px;
+  min-width: 0;
+  scroll-margin-top: var(--performance-scroll);
+}
+.readingTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--fc-data-text-on-dark);
+  font: 11px var(--fc-data-font-system);
+  letter-spacing: 0.04em;
+}
+.readingTop > span:first-child::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--fc-data-signal);
+  margin-right: 8px;
+}
+.readingHeadline {
+  margin-top: 32px;
+}
+.readingHeadline h3 {
+  font-size: 27px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+.difference {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  color: var(--fc-data-signal);
+  font: 900 clamp(58px, 6.2vw, 96px)/1.08 var(--fc-data-font-display);
+  white-space: nowrap;
+  margin-top: 12px;
+  letter-spacing: -0.02em;
+}
+.difference i {
+  font: 300 0.38em var(--fc-data-font-interface);
+}
+.readingHeadline > p {
+  font-size: 17px;
+  line-height: 1.7;
+  margin-top: 6px;
+}
+.readingValues {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 28px 0 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--fc-data-line-on-dark);
+}
+.readingValues dt {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--fc-data-text-on-dark);
+}
+.readingValues dd {
+  font: 600 clamp(20px, 2vw, 28px)/1.3 var(--fc-data-font-interface);
+  margin: 8px 0 0;
+}
+.unit {
+  color: var(--fc-data-text-on-dark);
+  font-size: 11px;
+}
+.reading .metricNote {
+  font-size: 13px;
+  color: var(--fc-data-text-on-dark);
+  line-height: 1.8;
+  padding: 17px 0 24px;
+}
+.readingFooter {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--fc-data-line-on-dark);
+  margin-top: auto;
+}
+.readingFooter > span {
+  font-size: 11px;
+  line-height: 1.9;
+  color: var(--fc-data-text-on-dark);
+}
+.readingFooter > button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: space-between;
+  min-height: 44px;
+  background: var(--fc-data-signal);
+  color: var(--fc-data-on-signal);
+  border: 0;
+  padding: 10px 12px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.readingFooter > button:hover {
+  background: var(--fc-data-signal-bright);
+}
+.reading :is(button, a):focus-visible {
+  outline-color: var(--fc-data-focus-on-dark);
+}
+.comparison {
+  min-width: 0;
+  padding: 25px 28px 20px;
+  background: var(--fc-data-paper-raised);
+}
+.comparisonTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 22px;
+  margin-bottom: 24px;
+}
+.comparisonTop h2 {
+  font-size: clamp(23px, 2.5vw, 34px);
+  line-height: 1.3;
+  font-weight: 750;
+  letter-spacing: -0.04em;
+}
+.comparisonTop h2 small {
+  display: block;
+  font: 11px/1.3 var(--fc-data-font-system);
+  letter-spacing: 0.03em;
+  margin-bottom: 12px;
+  color: var(--fc-data-text-muted);
+}
+.chooseHint {
+  font-size: 12px;
+  color: var(--fc-data-text-muted);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.chooseHint i {
+  font-size: 21px;
+  font-style: normal;
+}
+.modeChoice {
+  display: flex;
+  align-items: stretch;
+  gap: 3px;
+  width: fit-content;
+  padding: 3px;
+  border: 1px solid var(--fc-data-line-strong);
+  background: var(--fc-data-paper);
+}
+.modeChoice > button {
+  border: 0;
+  background: transparent;
+  padding: 9px 14px;
+  font-size: 14px;
+  min-height: 44px;
+}
+.modeChoice > button[aria-pressed='true'] {
+  background: var(--fc-data-ink);
+  color: var(--fc-data-paper);
+  font-weight: 750;
+}
+.modeChoice > button:not([aria-pressed='true']):hover {
+  background: var(--fc-data-paper-deep);
+}
+.chart {
+  --chart-columns: minmax(65px, 0.65fr) minmax(120px, 2.5fr) minmax(70px, 0.65fr) minmax(80px, 0.7fr);
+}
+.columnLabels,
+.chartRow {
+  display: grid;
+  grid-template-columns: var(--chart-columns);
+  gap: 14px;
+  align-items: center;
+}
+.columnLabels {
+  padding: 24px 12px 14px;
+  font-size: 11px;
+  color: var(--fc-data-text-muted);
+  line-height: 1.5;
+}
+.columnLabels > span:nth-child(n + 3) {
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.columnLabels small {
+  display: block;
+  font-size: 10px;
+}
+.axisLabels {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  align-items: center;
+}
+.axisLabels b {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--fc-data-ink);
+}
+.chartRows {
+  border-bottom: 1px solid var(--fc-data-line-strong);
+}
+.chartRow {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid var(--fc-data-line);
+  min-height: 63px;
+  background: transparent;
+  padding: 0 12px;
+  text-align: left;
+  position: relative;
+}
+.chartRow:hover {
+  background: var(--fc-data-paper-deep);
+}
+.chartRow[aria-pressed='true'] {
+  background: var(--fc-data-signal);
+  color: var(--fc-data-on-signal);
+  border-color: transparent;
+}
+.metricName {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.metricName::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border: 1px solid var(--fc-data-text-muted);
+  border-radius: 50%;
+}
+.chartRow[aria-pressed='true'] .metricName::before {
+  background: var(--fc-data-ink);
+  border-color: var(--fc-data-ink);
+  box-shadow: inset 0 0 0 2px var(--fc-data-signal);
+}
+.metricName small {
+  font-size: 10px;
+  color: var(--fc-data-text-muted);
+}
+.metricName b {
+  font-size: 15px;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.compactLabel {
+  display: none;
+}
+.metricName i {
+  display: none;
+  font-style: normal;
+}
+.chartRow[aria-pressed='true'] .metricName small {
+  color: inherit;
+}
+.plot {
+  height: 62px;
+  display: block;
+  position: relative;
+  min-width: 0;
+}
+.plotGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--fc-data-line), var(--fc-data-line)),
+    linear-gradient(var(--fc-data-line), var(--fc-data-line));
+  background-size:
+    1px 100%,
+    1px 100%;
+  background-position:
+    4% 0,
+    96% 0;
+  background-repeat: no-repeat;
+}
+.plotGrid::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 100%;
+  border-left: 1px dashed var(--fc-data-text-muted);
+}
+.plotRange {
+  position: absolute;
+  height: 3px;
+  top: 37px;
+  background: var(--fc-data-ink);
+}
+.plotDot {
+  position: absolute;
+  top: 34px;
+  height: 9px;
+  width: 9px;
+  transform: translateX(-50%);
+  background: var(--fc-data-ink);
+  border-radius: 50%;
+}
+.plotValue {
+  position: absolute;
+  top: 12px;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1;
+  white-space: nowrap;
+}
+.plotValue[data-side='left'] {
+  transform: translateX(-100%);
+}
+.missingPlot {
+  display: block;
+  text-align: center;
+  padding-top: 23px;
+  color: var(--fc-data-text-muted);
+}
+.ownValue,
+.referenceValue {
+  text-align: right;
+}
+.ownValue > b,
+.referenceValue > b {
+  font: 600 18px/1.2 var(--fc-data-font-interface);
+  white-space: nowrap;
+}
+.referenceValue > b {
+  font-weight: 400;
+  color: var(--fc-data-text-muted);
+}
+.chartRow[aria-pressed='true'] .referenceValue > b {
+  color: inherit;
+}
+.ownValue > small,
+.referenceValue > small {
+  display: none;
+}
+.chartFoot {
+  display: flex;
+  justify-content: space-between;
+  padding: 13px 0 0;
+  font-size: 11px;
+  color: var(--fc-data-text-muted);
+}
+.comparison .chartNote {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--fc-data-text-muted);
+  padding-top: 17px;
+}
+.combat {
+  scroll-margin-top: var(--performance-scroll);
+}
+.combatContext {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 16px 0;
+  font-size: 13px;
+  color: var(--fc-data-text-muted);
+  line-height: 1.8;
+  border-bottom: 1px solid var(--fc-data-line);
+}
+.combatContext > p {
+  max-width: 65em;
+}
+.combatContext > span {
+  font-size: 11px;
+  white-space: nowrap;
+}
+@media (max-width: 1250px) {
+  .coverage {
+    flex-direction: column;
+    align-items: start;
+    gap: 3px;
+    padding-block: 8px;
+  }
+  .coverage b {
+    font-size: 17px;
+  }
+  .coverage button {
+    min-height: 44px;
+  }
+  .record {
+    gap: 12px;
+    padding-inline: 16px;
+  }
+  .recent {
+    gap: 12px;
+  }
+  .recent a {
+    min-width: 44px;
+  }
+  .comparison {
+    padding-inline: 22px;
+  }
+  .comparisonTop {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .chart {
+    --chart-columns: minmax(60px, 0.65fr) minmax(105px, 2.5fr) minmax(65px, 0.65fr) minmax(70px, 0.7fr);
+  }
+  .columnLabels,
+  .chartRow {
+    gap: 10px;
+    padding-inline: 8px;
+  }
+  .metricName {
+    gap: 6px;
+  }
+  .metricName small {
+    display: none;
+  }
+  .ownValue > b,
+  .referenceValue > b {
+    font-size: 17px;
+  }
+  .reading {
+    padding-inline: 22px;
+  }
+}
+@media (max-width: 950px) {
+  .analysisSpread {
+    grid-template-columns: minmax(210px, 0.4fr) minmax(0, 1fr);
+  }
+  .reading {
+    padding: 23px 18px;
+  }
+  .difference {
+    font-size: 64px;
+    gap: 5px;
+  }
+  .readingFooter {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .readingValues {
+    gap: 8px;
+  }
+  .recordRail {
+    grid-template-columns: auto 1fr;
+  }
+  .recent {
+    grid-column: 1/-1;
+    justify-content: space-between;
+    border-top: 1px solid var(--fc-data-line);
+    border-left: 0;
+    padding: 8px 0;
+  }
+  .recent > span {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+  }
+  .recent > span small {
+    margin: 0;
+  }
+  .recent > div {
+    gap: 10px;
+  }
+  .recent a {
+    flex-direction: row;
+    gap: 8px;
+    min-height: 32px;
+  }
+  .coverage {
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+  .scope {
+    gap: 8px;
+  }
+  .comparison {
+    padding-inline: 16px;
+  }
+  .modeChoice {
+    gap: 2px;
+  }
+  .modeChoice > button {
+    font-size: 13px;
+  }
+}
+@media (max-width: 800px) {
+  .masthead {
+    gap: 18px;
+    padding: 18px 0;
+  }
+  .teamIdentity {
+    gap: 12px;
+  }
+  .crest {
+    width: 42px;
+    height: 42px;
+  }
+  .teamIdentity h1 {
+    gap: 6px 10px;
+  }
+  .teamIdentity h1 strong {
+    font-size: 44px;
+  }
+  .teamIdentity h1 > span {
+    font-size: 22px;
+  }
+  .scope > span {
+    display: none;
+  }
+  .scope select {
+    min-width: 120px;
+  }
+  .analysisSpread {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .reading {
+    padding: 18px 22px;
+  }
+  .readingTop {
+    display: none;
+  }
+  .readingHeadline {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 16px;
+    align-items: center;
+    margin: 0;
+  }
+  .readingHeadline h3 {
+    font-size: 25px;
+  }
+  .difference {
+    grid-column: 2;
+    grid-row: 1/3;
+    font-size: 62px;
+    margin: 0;
+  }
+  .readingHeadline > p {
+    grid-column: 1;
+    font-size: 14px;
+    margin: 0;
+  }
+  .readingValues,
+  .unit {
+    display: none;
+  }
+  .reading .metricNote {
+    padding: 12px 0 0;
+    font-size: 13px;
+  }
+  .readingFooter {
+    flex-direction: row;
+    align-items: center;
+    padding-top: 8px;
+    margin-top: 8px;
+    border: 0;
+  }
+  .comparison {
+    padding: 22px;
+  }
+  .comparisonTop {
+    margin-bottom: 14px;
+  }
+  .comparisonTop h2 {
+    font-size: 27px;
+  }
+  .comparisonTop h2 small {
+    display: none;
+  }
+  .chart {
+    --chart-columns: 80px minmax(105px, 2fr) 80px 92px;
+  }
+  .columnLabels {
+    padding-top: 18px;
+  }
+  .columnLabels,
+  .chartRow {
+    gap: 16px;
+  }
+  .scopeFoot {
+    gap: 12px;
+    padding-bottom: 15px;
+  }
+  .scopeFoot details {
+    max-width: 48%;
+  }
+  .combatContext {
+    font-size: 12px;
+  }
+  .combatContext > span {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .masthead {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .teamIdentity {
+    flex: 1;
+  }
+  .teamIdentity h1 {
+    display: block;
+  }
+  .teamIdentity h1 strong {
+    font-size: 42px;
+  }
+  .teamIdentity h1 > span {
+    display: block;
+    margin-top: 5px;
+    font-size: 17px;
+    white-space: normal;
+  }
+  .crest {
+    width: 40px;
+    height: 40px;
+  }
+  .scope select {
+    min-width: 110px;
+    width: 110px;
+    font-size: 13px;
+    padding-left: 8px;
+  }
+  .recordRail {
+    grid-template-columns: 1fr;
+  }
+  .record {
+    justify-content: start;
+    gap: 16px;
+    padding: 10px 14px;
+  }
+  .record > strong {
+    font-size: 34px;
+  }
+  .record > span:first-child {
+    font-size: 12px;
+  }
+  .winRate {
+    margin-left: auto;
+  }
+  .coverage {
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--fc-data-line);
+  }
+  .coverage b {
+    font-size: 17px;
+  }
+  .coverage button {
+    min-height: 44px;
+  }
+  .recent {
+    display: none;
+  }
+  .scopeFoot {
+    padding: 8px 0 14px;
+    font-size: 12px;
+  }
+  .scopeFoot > p {
+    max-width: 65%;
+  }
+  .scopeFoot details {
+    max-width: 33%;
+  }
+  .scopeFoot details[open] {
+    max-width: 55%;
+  }
+  .reading {
+    padding: 17px 16px;
+  }
+  .difference {
+    font-size: 58px;
+    gap: 6px;
+  }
+  .difference i {
+    font-size: 25px;
+  }
+  .readingHeadline h3 {
+    font-size: 24px;
+  }
+  .readingHeadline > p {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .reading .metricNote {
+    font-size: 13px;
+    padding-top: 10px;
+  }
+  .readingFooter {
+    padding-top: 8px;
+    margin-top: 3px;
+  }
+  .readingFooter > button {
+    font-size: 13px;
+  }
+  .comparison {
+    padding: 18px 14px;
+  }
+  .comparisonTop h2 {
+    font-size: 25px;
+  }
+  .modeChoice {
+    gap: 2px;
+  }
+  .modeChoice > button {
+    font-size: 13px;
+    padding: 9px 10px;
+  }
+  .chart {
+    --chart-columns: minmax(60px, 0.75fr) minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .columnLabels {
+    grid-template-columns: minmax(60px, 0.75fr) minmax(0, 2fr);
+    gap: 12px;
+    padding: 23px 6px 12px;
+  }
+  .columnLabels > span:nth-child(n + 3) {
+    display: none;
+  }
+  .columnLabels .axisLabels {
+    margin-inline: 5px;
+    font-size: 11px;
+  }
+  .axisLabels b {
+    font-size: 11px;
+  }
+  .chartRow {
+    gap: 0 9px;
+    padding: 0 6px 12px;
+    min-height: 92px;
+  }
+  .metricName {
+    grid-column: 1;
+    grid-row: 1/3;
+  }
+  .metricName b {
+    font-size: 14px;
+  }
+  .fullLabel {
+    display: none;
+  }
+  .compactLabel {
+    display: inline;
+  }
+  .plot {
+    grid-column: 2/-1;
+    height: 48px;
+    margin-inline: 5px;
+  }
+  .plotRange {
+    top: 30px;
+  }
+  .plotDot {
+    top: 27px;
+  }
+  .plotValue {
+    top: 7px;
+    font-size: 12px;
+  }
+  .plotGrid {
+    background-image: none;
+  }
+  .ownValue,
+  .referenceValue {
+    grid-row: 2;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .ownValue {
+    grid-column: 2;
+  }
+  .referenceValue {
+    grid-column: 3;
+    text-align: right;
+  }
+  .ownValue > small,
+  .referenceValue > small {
+    display: block;
+    font-size: 11px;
+    color: var(--fc-data-text-muted);
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  .chartRow[aria-pressed='true'] :is(.ownValue, .referenceValue) > small {
+    color: inherit;
+  }
+  .ownValue > b,
+  .referenceValue > b {
+    font-size: 16px;
+  }
+  .chartFoot {
+    font-size: 11px;
+  }
+  .comparison .chartNote {
+    font-size: 12px;
+  }
+  .reading:lang(en) .readingHeadline h3 {
+    grid-column: 1/-1;
+  }
+  .reading:lang(en) .readingHeadline .difference {
+    grid-row: 2;
+  }
+  .reading:lang(en) .readingHeadline > p {
+    grid-row: 2;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .chartRow,
+  .modeChoice > button {
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease;
+  }
+}

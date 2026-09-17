@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import { formatStaffPerson, normalizeStaffIdentity } from '../../lib/rosterSelectors.js'
@@ -21,16 +23,23 @@ function StaffBlock({ label, person }) {
 }
 
 function TeamRosterSplit({ team }) {
+  const uiLocale = useUiLocale()
   const counts = team.roleCounts || {}
+  const roles = [
+    { key: 'TANK', className: styles.roleTank, label: uiText("重装", uiLocale) },
+    { key: 'DPS', className: styles.roleDps, label: uiText("输出", uiLocale) },
+    { key: 'SUP', className: styles.roleSupport, label: uiText("支援", uiLocale) },
+    ...(counts.FLEX ? [{ key: 'FLEX', className: styles.roleFlex, label: uiText("灵活", uiLocale) }] : [])
+  ]
 
   return (
-    <div className={styles.rosterSplit} aria-label={`选手 ${team.rosterSize}`}>
-      <span className={styles.rosterSplitLabel}>选手</span>
+    <div className={styles.rosterSplit} aria-label={uiText("选手 {0}", uiLocale, [team.rosterSize])}>
+      <span className={styles.rosterSplitLabel}>{uiText("选手", uiLocale)}</span>
       <span className={styles.rosterTotal}>{team.rosterSize}</span>
-      <span className={styles.roleSplitRow}>
-        <b className={styles.roleTank} title="重装">{counts.TANK || 0}</b>
-        <b className={styles.roleDps} title="输出">{counts.DPS || 0}</b>
-        <b className={styles.roleSupport} title="支援">{counts.SUP || 0}</b>
+      <span className={styles.roleSplitRow} style={{ '--role-split-count': roles.length }}>
+        {roles.map(role => (
+          <b className={role.className} title={role.label} key={role.key}>{counts[role.key] || 0}</b>
+        ))}
       </span>
     </div>
   )
@@ -38,21 +47,25 @@ function TeamRosterSplit({ team }) {
 
 export default function TeamDirectoryCard({
   team,
+  index = 1,
+  presentation = 'default',
   seasonId,
   withSeason = path => path,
   onToggleFavorite,
   favoriteDisabled = false
 }) {
+  const uiLocale = useUiLocale()
   const teamPath = withSeason(`/teams/${team.routeId}`)
   const favoriteLabel = team.isFavorite ? '取消关注' : favoriteDisabled ? '关注已满' : '关注'
   const manager = team.staff?.managers?.[0]
   const coach = team.staff?.coaches?.[0]
 
   return (
-    <article className={`${styles.teamCard} ${team.isFavorite ? styles.teamCardFavorite : ''}`}>
-      <Link to={teamPath} className={styles.cardLinkOverlay} aria-label={`查看战队 ${team.shortName}`} />
+    <article className={`${styles.teamCard} ${presentation === 'signal' ? styles.teamCardSignal : ''} ${team.isFavorite ? styles.teamCardFavorite : ''}`}>
+      <Link to={teamPath} className={styles.cardLinkOverlay} aria-label={uiText("查看战队 {0}", uiLocale, [team.shortName])} />
 
-      <div className={styles.teamBrandArea}>
+      <div className={styles.teamBrandArea} data-team-code={team.shortName}>
+        {presentation === 'signal' ? <span className={styles.teamFileIndex}>{String(index).padStart(2, '0')}</span> : null}
         {team.isFavorite ? <span className={styles.favoriteBadge}>FOLLOWING</span> : null}
         <button
           type="button"
@@ -65,7 +78,7 @@ export default function TeamDirectoryCard({
           disabled={favoriteDisabled}
           aria-label={favoriteLabel}
         >
-          {team.isFavorite ? '已关注' : '关注'}
+          {team.isFavorite ? uiText("已关注", uiLocale) : uiText("关注", uiLocale)}
         </button>
         <TeamLogo team={team} seasonId={seasonId} className={styles.teamLogo} large />
       </div>
@@ -80,11 +93,11 @@ export default function TeamDirectoryCard({
         </div>
 
         <div className={styles.teamStaffGrid}>
-          <StaffBlock label="经理" person={manager} />
-          <StaffBlock label="教练" person={coach} />
+          <StaffBlock label={uiText("经理", uiLocale)} person={manager} />
+          <StaffBlock label={uiText("教练", uiLocale)} person={coach} />
         </div>
 
-        <span className={styles.cardTextLink}>查看战队 →</span>
+        <span className={styles.cardTextLink}>{uiText("查看战队 →", uiLocale)}</span>
       </div>
     </article>
   )

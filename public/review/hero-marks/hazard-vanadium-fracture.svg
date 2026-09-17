@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Hazard vanadium back-spikes</title>
+  <desc id="desc">One tall vanadium spike and two outward-facing side spikes form Hazard's jagged silhouette. Broad facets preserve the shape at sharing size; motion belongs to the separate portrait background.</desc>
+  <g stroke="#b59bcc" stroke-opacity="0.76" stroke-width="1.8" stroke-linejoin="bevel">
+    <path d="M137 80L181 111L204 188L173 167Z" fill="#9364b5" fill-opacity="0.3"/>
+    <path d="M285 84L265 155L229 186L245 123Z" fill="#9364b5" fill-opacity="0.3"/>
+  </g>
+  <path d="M137 80L185 148L204 188L173 167Z" fill="#c3a1df" fill-opacity="0.13"/>
+  <path d="M285 84L253 150L229 186L265 155Z" fill="#c3a1df" fill-opacity="0.13"/>
+  <path d="M218 42L241 110L226 201L193 177L191 125Z" fill="#9874bb" fill-opacity="0.36" stroke="#ccb2e2" stroke-opacity="0.82" stroke-width="2.2" stroke-linejoin="bevel"/>
+  <path d="M218 42L211 127L226 201L193 177L191 125Z" fill="#c3a1df" fill-opacity="0.2"/>
+  <path d="M218 42L211 127L226 201" fill="none" stroke="#dfc7f0" stroke-opacity="0.48" stroke-width="1.2" stroke-linejoin="bevel"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Zarya particle barrier</title>
+  <desc id="desc">A faceted particle bubble, inspired by the shield's hexagonal panels. The closed circular shell is the emblem; no orbit, central jewel, or background trail is attached.</desc>
+  <defs>
+    <clipPath id="barrier-shell"><circle cx="185" cy="132" r="72"/></clipPath>
+  </defs>
+  <circle cx="185" cy="132" r="72" fill="#ce8bb5" fill-opacity="0.13"/>
+  <g clip-path="url(#barrier-shell)" transform="rotate(-10 185 132)">
+    <path d="M185 104L209 118V146L185 160L161 146V118Z" fill="#d1a0bd" fill-opacity="0.27"/>
+    <path d="M185 104V76L209 62L233 76V104L209 118Z" fill="#d1a0bd" fill-opacity="0.11"/>
+    <path d="M161 146L137 160V188L161 202L185 188V160Z" fill="#bb6fa3" fill-opacity="0.12"/>
+    <path d="M185 104L209 118V146L185 160L161 146V118ZM185 104V76L161 62M185 76L209 62M209 118L233 104V76M233 104L257 118M209 146L233 160L257 146M233 160V188M185 160V188L209 202M185 188L161 202M161 146L137 160V188M137 160L113 146M161 118L137 104L113 118M137 104V76" fill="none" stroke="#d5aec6" stroke-opacity="0.56" stroke-width="1.65" stroke-linejoin="round"/>
+  </g>
+  <circle cx="185" cy="132" r="72" fill="none" stroke="#e2b4d0" stroke-opacity="0.73" stroke-width="2.3"/>
+</svg>

@@ -1,0 +1,108 @@
+:global([data-design="kpr"]) .shell {
+  padding-top: 24px;
+  color: var(--fc-data-ink);
+}
+
+:global([data-design="kpr"]) .posterFrame { border: 0; background: var(--fc-data-ink); }
+:global([data-design="kpr"]) .posterStage { min-height: 38px; font-size: 12px; border-color: #494c43; }
+:global([data-design="kpr"]) .posterBody { grid-template-columns: minmax(0, 1fr) minmax(160px, .7fr) minmax(0, 1fr); min-height: 250px; }
+:global([data-design="kpr"]) .posterTeam { padding: 28px 24px; }
+:global([data-design="kpr"]) .posterTeamIdentity,
+:global([data-design="kpr"]) .posterTeam:last-child .posterTeamIdentity { flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+:global([data-design="kpr"]) .posterTeam:last-child { text-align: center; }
+:global([data-design="kpr"]) .posterLogo { width: 68px; height: 68px; padding: 6px; border: 1px solid #646653; background: #252820; }
+:global([data-design="kpr"]) .posterTeamIdentity strong { font-family: var(--fc-data-font-display); font-size: clamp(36px, 4.5vw, 70px); line-height: 1; white-space: normal; overflow-wrap: anywhere; }
+:global([data-design="kpr"]) .posterTeamFullName { margin-top: 5px; font-size: 14px; line-height: 1.4; color: var(--fc-data-text-on-dark); }
+:global([data-design="kpr"]) .posterWatermark { width: 200px; height: 200px; opacity: .09; }
+:global([data-design="kpr"]) .winnerTag { position: absolute; top: 0; right: 0; font-size: 11px; margin: 0; }
+:global([data-design="kpr"]) .posterTeam[data-winner="true"]::before { left: 24px; right: 24px; height: 3px; }
+:global([data-design="kpr"]) .posterScoreAxis { min-height: 0; padding: 20px 0; border: 0; }
+:global([data-design="kpr"]) .posterScore { margin: 12px 0; gap: 10px; font-family: var(--fc-data-font-display); font-size: clamp(76px, 9.5vw, 144px); line-height: 1; }
+:global([data-design="kpr"]) .posterVersus,
+:global([data-design="kpr"]) .posterMatchup { font-size: 11px; letter-spacing: .06em; }
+:global([data-design="kpr"]) .posterInfoBand { grid-template-columns: minmax(180px, 1.5fr) repeat(3, minmax(0, 1fr)); border-top: 1px solid #494c43; background: #22251f; }
+:global([data-design="kpr"]) .posterInfoBand > span { min-width: 0; min-height: 68px; justify-content: center; padding: 12px 18px; border-color: #494c43; color: var(--fc-data-paper); font-size: 14px; line-height: 1.4; }
+:global([data-design="kpr"]) .posterInfoBand small { color: var(--fc-data-text-on-dark); font-size: 11px; }
+:global([data-design="kpr"]) .posterInfoBand > [data-status="live"] { color: var(--fc-data-status-live-bright); }
+:global([data-design="kpr"]) .posterInfoBand > [data-status="completed"] { color: var(--fc-data-status-success-bright); }
+:global([data-design="kpr"]) .posterInfoBand > [data-status="forfeit"] { color: var(--fc-data-status-warning-bright); }
+:global([data-design="kpr"]) .seriesRail { margin-top: 18px; top: calc(var(--kpr-header-height, 92px) + 12px); border: 1px solid var(--fc-data-ink); box-shadow: none; }
+:global([data-design="kpr"]) .seriesRailHead { min-height: 34px; padding: 8px 14px; gap: 12px; }
+:global([data-design="kpr"]) .seriesRailHead span { font-size: 11px; color: var(--fc-data-text-muted); }
+:global([data-design="kpr"]) .seriesRailHead strong { font-size: 13px; }
+:global([data-design="kpr"]) .seriesRailScroller { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
+:global([data-design="kpr"]) .seriesRailTrack { min-width: calc(140px + var(--map-count) * 128px); grid-template-columns: 140px repeat(var(--map-count), minmax(128px, 1fr)); }
+:global([data-design="kpr"]) .seriesRailTrack::before { display: none; }
+:global([data-design="kpr"]) .seriesOverviewNode,
+:global([data-design="kpr"]) .seriesMapNode { min-height: 90px; padding: 12px 14px; border-bottom: 0; border-right: 1px solid #888b7f; }
+:global([data-design="kpr"]) .seriesMapNode strong,
+:global([data-design="kpr"]) .seriesOverviewNode strong { font-size: 14px; }
+:global([data-design="kpr"]) .seriesMapNode > span,
+:global([data-design="kpr"]) .seriesOverviewNode > span,
+:global([data-design="kpr"]) .seriesMapNode em { font-size: 11px; }
+:global([data-design="kpr"]) .broadcastDetails { margin-top: 12px; }
+:global([data-design="kpr"]) .posterBroadcast { background: var(--fc-data-paper-raised); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+:global([data-design="kpr"]) .posterBroadcast a,
+:global([data-design="kpr"]) .posterBroadcast span { min-width: 0; padding: 16px; font-size: 13px; line-height: 1.6; }
+:global([data-design="kpr"]) .analysisSection,
+:global([data-design="kpr"]) .mapRecordsSection { margin-top: 32px; scroll-margin-top: calc(var(--kpr-header-height, 92px) + 180px); }
+:global([data-design="kpr"]) .mapRecord { scroll-margin-top: calc(var(--kpr-header-height, 92px) + 180px); }
+:global([data-design="kpr"]) .sectionTitle { font-size: 30px; }
+:global([data-design="kpr"]) .mapMetaStrip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+:global([data-design="kpr"]) .mapMetaItem { min-width: 0; min-height: 76px; padding: 12px 16px; }
+:global([data-design="kpr"]) .mapMetaItem[data-wide="true"] { grid-column: span 2; }
+:global([data-design="kpr"]) .mapMetaItem > span { font-size: 11px; }
+:global([data-design="kpr"]) .mapMetaItem > strong { font-size: 15px; }
+
+@media (max-width: 760px) {
+  :global([data-design="kpr"]) .shell { padding-top: 16px; }
+  :global([data-design="kpr"]) .detailToolbar { gap: 8px; margin-bottom: 12px; }
+  :global([data-design="kpr"]) .detailToolbar button,
+  :global([data-design="kpr"]) .detailToolbar a { min-height: 42px; padding: 0 10px; font-size: 12px; border-width: 1px; }
+  :global([data-design="kpr"]) .posterBody { grid-template-columns: minmax(0, 1fr) 94px minmax(0, 1fr); min-height: 204px; }
+  :global([data-design="kpr"]) .posterTeam { padding: 22px 8px 18px; }
+  :global([data-design="kpr"]) .posterTeamIdentity,
+  :global([data-design="kpr"]) .posterTeam:last-child .posterTeamIdentity { gap: 12px; }
+  :global([data-design="kpr"]) .posterLogo { width: 48px; height: 48px; padding: 4px; }
+  :global([data-design="kpr"]) .posterTeamIdentity strong { font-size: 34px; }
+  :global([data-design="kpr"]) .posterTeamFullName { font-size: 12px; line-height: 1.4; }
+  :global([data-design="kpr"]) .posterTeam[data-winner="true"]::before { left: 8px; right: 8px; }
+  :global([data-design="kpr"]) .winnerTag { top: -16px; right: 0; font-size: 11px; padding: 2px 4px; }
+  :global([data-design="kpr"]) .posterScore { gap: 4px; font-size: 58px; }
+  :global([data-design="kpr"]) .posterVersus { font-size: 11px; }
+  :global([data-design="kpr"]) .posterMatchup { display: none; }
+  :global([data-design="kpr"]) .posterInfoBand { grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); }
+  :global([data-design="kpr"]) .posterInfoBand > span { min-height: 58px; padding: 10px 12px; font-size: 13px; }
+  :global([data-design="kpr"]) .posterInfoBand > span:nth-child(-n+2) { border-bottom: 1px solid #494c43; }
+  :global([data-design="kpr"]) .seriesRail { position: static; margin-top: 12px; }
+  :global([data-design="kpr"]) .seriesRailTrack { min-width: calc(116px + var(--map-count) * 120px); grid-template-columns: 116px repeat(var(--map-count), minmax(120px, 1fr)); }
+  :global([data-design="kpr"]) .seriesOverviewNode,
+  :global([data-design="kpr"]) .seriesMapNode { min-height: 86px; padding: 10px 12px; }
+  :global([data-design="kpr"]) .posterBroadcast { grid-template-columns: 1fr; }
+  :global([data-design="kpr"]) .broadcastDetails summary { padding: 0 12px; font-size: 13px; }
+  :global([data-design="kpr"]) .analysisSection,
+  :global([data-design="kpr"]) .mapRecordsSection,
+  :global([data-design="kpr"]) .mapRecord { scroll-margin-top: calc(var(--kpr-header-height, 92px) + 24px); }
+  :global([data-design="kpr"]) .sectionTitle { font-size: 26px; }
+  :global([data-design="kpr"]) .mapMetaStrip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  :global([data-design="kpr"]) .mapMetaItem { min-height: 70px; padding: 10px 12px; border-bottom: 1px solid #d4d5ca; }
+  :global([data-design="kpr"]) .mapMetaItem:nth-child(2n) { border-right: 0; }
+  :global([data-design="kpr"]) .mapMetaItem[data-wide="true"] { grid-column: 1 / -1; }
+}
+
+/* Preserve legible supporting match metadata. */
+:global([data-design="kpr"]) .winnerTag,
+:global([data-design="kpr"]) .posterBroadcast b,
+:global([data-design="kpr"]) .seriesMapNode em,
+:global([data-design="kpr"]) .mirrorMetric small,
+:global([data-design="kpr"]) .performanceStats span,
+:global([data-design="kpr"]) .roleLeaderStats span,
+:global([data-design="kpr"]) .performanceStats b,
+:global([data-design="kpr"]) .roleLeaderScoreLabel,
+:global([data-design="kpr"]) .roleLeaderScore small,
+:global([data-design="kpr"]) .roleLeaderStats em,
+:global([data-design="kpr"]) .analysisFact span,
+:global([data-design="kpr"]) .mapMetaItem > span,
+:global([data-design="kpr"]) .playerSub,
+:global([data-design="kpr"]) .awardBadge,
+:global([data-design="kpr"]) .roleLabel { font-size: 11px; }

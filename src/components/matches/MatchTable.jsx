@@ -1,3 +1,4 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import { Link, useLocation, useOutletContext } from 'react-router-dom'
 import { getBroadcastInfo } from '../../lib/broadcastSelectors.js'
 import { getReturnState, saveReturnScroll } from '../../lib/navigationState.js'
@@ -89,23 +90,23 @@ export default function MatchTable({ rows = [], locale = 'zh-CN' }) {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        {stream.label || '\u76f4\u64ad\u95f4'}
+                        {stream.label || uiText("直播间", locale)}
                       </a>
                     )) : broadcast.hasPublicInfo ? (
                       <span className={`${styles.miniTag} ${styles.broadcastTag}`}>
-                        {'\u76f4\u64ad\u5b89\u6392'}
+                        {uiText("直播安排", locale)}
                       </span>
                     ) : null}
                     <span className={styles.miniTag} title={row.match_id}>{row.match_id}</span>
                   </div>
                   {broadcast.casterText ? (
                     <div className={styles.broadcastLine}>
-                      {'\u89e3\u8bf4: '}{broadcast.casterText}
+                      {uiText("解说: ", locale)}{broadcast.casterText}
                     </div>
                   ) : null}
                   {broadcast.refereeText ? (
                     <div className={styles.broadcastLine}>
-                      {'\u8d5b\u7ba1: '}{broadcast.refereeText}
+                      {uiText("赛管: ", locale)}{broadcast.refereeText}
                     </div>
                   ) : null}
                 </div>
@@ -149,7 +150,7 @@ export default function MatchTable({ rows = [], locale = 'zh-CN' }) {
                     className={`${styles.actionBtn} ${isComplete ? styles.actionBtnSubtle : styles.actionBtnAccent}`}
                     onClick={() => saveReturnScroll(location)}
                   >
-                    <span className={styles.actionBtnCn}>查看详情</span>
+                    <span className={styles.actionBtnCn}>{uiText("查看详情", locale)}</span>
                     <span className={styles.actionBtnEn}>DETAIL</span>
                   </Link>
                 </div>
@@ -157,7 +158,7 @@ export default function MatchTable({ rows = [], locale = 'zh-CN' }) {
             )
           }) : (
             <div className={styles.emptyState}>
-              <span className={styles.emptyCn}>暂无匹配的比赛记录</span>
+              <span className={styles.emptyCn}>{uiText("暂无匹配的比赛记录", locale)}</span>
               <span className={styles.emptyEn}>NO MATCHES FOUND</span>
             </div>
           )}

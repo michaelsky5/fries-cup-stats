@@ -1,6 +1,7 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { NavLink, useLocation, useOutletContext } from 'react-router-dom'
-import { withSeason as buildSeasonLink } from '../../config/seasons.js'
-import styles from './DatabaseSubnav.module.css'
+import styles from '../../features/fd-design/databaseSubnavStyles.js'
 
 const ITEMS = [
   { to: '/leaderboard', label: '选手排行', meta: 'RANKING', group: 'leaderboard' },
@@ -15,22 +16,23 @@ function getActiveGroup(pathname) {
 }
 
 export default function DatabaseSubnav() {
+  const uiLocale = useUiLocale()
   const location = useLocation()
-  const { seasonId } = useOutletContext()
+  const { withSeason } = useOutletContext()
   const activeGroup = getActiveGroup(location.pathname)
 
   return (
-    <nav className={styles.subnav} aria-label="数据资料导航">
+    <nav className={styles.subnav} aria-label={uiText("数据资料导航", uiLocale)}>
       {ITEMS.map(item => (
         <NavLink
           key={item.group}
-          to={buildSeasonLink(item.to, seasonId, '')}
+          to={withSeason(item.to)}
           className={[
             styles.subnavItem,
             activeGroup === item.group ? styles.subnavItemActive : ''
           ].filter(Boolean).join(' ')}
         >
-          <span>{item.label}</span>
+          <span>{uiText(item.label, uiLocale)}</span>
           <em>{item.meta}</em>
         </NavLink>
       ))}

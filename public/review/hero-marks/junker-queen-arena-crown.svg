@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Junker Queen Carnage axe</title>
+  <desc id="desc">A salvaged arena axe: a heavy, hooked cutting blade and a wrapped handle. Its asymmetrical silhouette replaces the generic crown without adding a frame or motion trail.</desc>
+  <g transform="translate(267 72) rotate(36)" stroke-linejoin="bevel">
+    <path d="M-4 -25H4V51L0 59L-4 51Z" fill="#8f999a" fill-opacity="0.32" stroke="#c3c6ba" stroke-opacity="0.66" stroke-width="1.35"/>
+    <path d="M-14 -29L0 -36L12 -32L10 -22C21 -25 31 -30 37 -34L35 -23L43 -25C46 -8 42 12 27 27L18 16C25 7 29 -3 27 -13L10 -7L-2 -14L-16 -13Z" fill="#b18462" fill-opacity="0.34" stroke="#d9c9ae" stroke-opacity="0.76" stroke-width="1.5"/>
+    <path d="M35 -23L43 -25C46 -8 42 12 27 27L23 22C36 8 40 -6 35 -23Z" fill="#d1d5c6" fill-opacity="0.32"/>
+    <path d="M-8 -22L2 -25L10 -18L2 -14Z" fill="#c47655" fill-opacity="0.54"/>
+    <path d="M-4 23L4 27M-4 30L4 34M-4 37L4 41" fill="none" stroke="#d6ad84" stroke-opacity="0.62" stroke-width="1.5"/>
+  </g>
+</svg>

@@ -1,9 +1,12 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../matches/TeamLogo.jsx'
 import { teamFull, teamShort } from '../../lib/advanceSelectors.js'
 import styles from '../../pages/advance/AdvancePage.module.css'
 
 export default function ChampionPath({ champion, path, seasonId, t, withSeason }) {
+  const uiLocale = useUiLocale()
   if (!champion || !path.length) return null
 
   return (
@@ -11,7 +14,7 @@ export default function ChampionPath({ champion, path, seasonId, t, withSeason }
       <header className={styles.sectionHeader}>
         <div>
           <span className={styles.sectionLabel}>CHAMPION PATH</span>
-          <h2>{t('advance.final.championPath', '冠军路径')}</h2>
+          <h2>{t('advance.final.championPath', uiText("冠军路径", uiLocale))}</h2>
         </div>
       </header>
       <div className={styles.championPathLead}>
@@ -29,7 +32,7 @@ export default function ChampionPath({ champion, path, seasonId, t, withSeason }
               {item.stage}
             </span>
             <strong>{teamShort(champion)} {item.scoreLabel} {teamShort(item.opponent)}</strong>
-            <em>{t('advance.final.opponent', '对手')} {teamFull(item.opponent)}</em>
+            <em>{t('advance.final.opponent', uiText("对手", uiLocale))} {teamFull(item.opponent)}</em>
           </Link>
         ))}
       </div>

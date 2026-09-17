@@ -1,7 +1,8 @@
+import { translateUiText as uiText } from '../../../lib/uiText.js'
 import { useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../TeamLogo.jsx'
-import styles from './MatchDetail.module.css'
+import styles from './matchDetailStyles.js'
 
 const POSTER_SHORT_MIN_FONT_SIZE = 28
 
@@ -135,22 +136,26 @@ function BroadcastItem({ label, value, href }) {
   return <span>{content}</span>
 }
 
-function PosterBroadcast({ broadcast }) {
+export function PosterBroadcast({ broadcast, locale = 'zh-CN' }) {
   if (!broadcast?.hasPublicInfo) return null
+  const en = locale === 'en-US'
 
   return (
-    <div className={styles.posterBroadcast}>
+    <details className={styles.broadcastDetails}>
+      <summary>{en ? 'Video & match staff' : uiText("录像与比赛人员", locale)}<span>{en ? 'View details' : uiText("查看资料", locale)} ↗</span></summary>
+      <div className={styles.posterBroadcast}>
       {broadcast.streamLinks.map((stream, index) => (
         <BroadcastItem
           key={`${stream.url}-${index}`}
-          label={stream.label || '\u76f4\u64ad\u95f4'}
-          value={stream.url}
+          label={stream.kind === 'archive' ? (en ? 'Tournament video archive' : uiText("赛事录像库", locale)) : stream.kind === 'replay' ? (en ? 'Match replay' : uiText("本场录像", locale)) : (en ? 'Live broadcast' : uiText("直播间", locale))}
+          value={stream.kind === 'archive' ? (en ? 'Browse the event channel · search by opponent and date' : uiText("前往赛事账号，按对阵和日期查找", locale)) : (en ? 'Open video ↗' : uiText("打开观看 ↗", locale))}
           href={stream.url}
         />
       ))}
-      <BroadcastItem label={'\u89e3\u8bf4'} value={broadcast.casterText} />
-      <BroadcastItem label={'\u8d5b\u7ba1'} value={broadcast.refereeText} />
-    </div>
+      <BroadcastItem label={en ? 'Casters' : uiText("解说", locale)} value={broadcast.casterText} />
+      <BroadcastItem label={en ? 'Officials' : uiText("赛管", locale)} value={broadcast.refereeText} />
+      </div>
+    </details>
   )
 }
 
@@ -159,8 +164,8 @@ export default function MatchPosterHero({
   seasonId,
   withSeason = path => path,
   returnState,
-  onBack,
   onTeamNavigate,
+  locale = 'zh-CN',
   t = (key, fallback) => fallback || key
 }) {
   const score = splitScore(dossier.scoreLabel)
@@ -170,13 +175,10 @@ export default function MatchPosterHero({
   const winnerB = dossier.winnerSide === 'B'
   const teamAPath = getTeamPath(dossier.teamA, withSeason)
   const teamBPath = getTeamPath(dossier.teamB, withSeason)
+  const en = locale === 'en-US'
 
   return (
     <section className={styles.posterShell} aria-labelledby="match-dossier-title">
-      <button type="button" className={styles.posterBack} onClick={onBack}>
-        {t('matchDetail.back', 'Back to Matches')} {'->'}
-      </button>
-
       <div className={styles.posterFrame}>
         <div className={styles.posterStage}>
           <span>{stage}</span>
@@ -196,7 +198,7 @@ export default function MatchPosterHero({
 
           <div className={styles.posterScoreAxis}>
             <span className={styles.posterVersus}>MATCH DOSSIER</span>
-            <h1 id="match-dossier-title" className={styles.posterScore}>
+            <h1 id="match-dossier-title" className={styles.posterScore} aria-label={`${dossier.title} · ${dossier.scoreLabel}`}>
               <span data-winner={winnerA ? 'true' : 'false'}>{score.left}</span>
               {score.right ? (
                 <>
@@ -220,13 +222,11 @@ export default function MatchPosterHero({
         </div>
 
         <div className={styles.posterInfoBand}>
-          <span>{dossier.scheduleLabel}</span>
-          <span>{dossier.match?.format || '-'}</span>
-          <span>{dossier.statusLabel}</span>
-          <span>{dossier.mapCountLabel}</span>
-          {dossier.internalId ? <em>{dossier.internalId}</em> : null}
+          <span><small>{en ? 'SCHEDULE' : uiText("比赛时间", locale)}</small>{dossier.scheduleLabel}</span>
+          <span><small>{en ? 'FORMAT' : uiText("比赛赛制", locale)}</small>{dossier.formatLabel}</span>
+          <span data-status={dossier.state.isForfeit ? 'forfeit' : dossier.statusEn.toLowerCase()}><small>{en ? 'STATUS' : uiText("比赛状态", locale)}</small>{en ? (dossier.state.isForfeit ? 'Forfeit' : dossier.statusEn) : dossier.statusLabel}</span>
+          <span><small>{en ? 'MAP RECORDS' : uiText("地图记录", locale)}</small>{dossier.mapCountLabel}</span>
         </div>
-        <PosterBroadcast broadcast={dossier.broadcast} />
       </div>
     </section>
   )

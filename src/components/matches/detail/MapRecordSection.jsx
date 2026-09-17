@@ -1,7 +1,8 @@
+import { translateUiText as uiText } from '../../../lib/uiText.js'
 import DualTeamStatsTable from './DualTeamStatsTable.jsx'
 import MapMetaStrip from './MapMetaStrip.jsx'
 import MapRecordHeader from './MapRecordHeader.jsx'
-import styles from './MatchDetail.module.css'
+import styles from './matchDetailStyles.js'
 
 export default function MapRecordSection({
   dossier,
@@ -60,7 +61,11 @@ export default function MapRecordSection({
               {expanded ? (
                 <div id={`map-${map.order}-body`} className={styles.mapRecordBody}>
                   <MapMetaStrip map={map} dossier={dossier} t={t} />
-                  <DualTeamStatsTable map={map} dossier={dossier} seasonId={seasonId} locale={locale} t={t} />
+                  {map.hasStats ? <DualTeamStatsTable map={map} dossier={dossier} seasonId={seasonId} locale={locale} t={t} /> : (
+                    <p className={styles.statsNotice}>{dossier.state.canShowResults
+                      ? (locale === 'en-US' ? 'The map result is published. Player statistics are not available yet.' : uiText("本图赛果已发布，选手统计尚未提供。", locale))
+                      : (locale === 'en-US' ? 'Player statistics will be available after play begins.' : uiText("本图选手统计将在比赛开始后更新。", locale))}</p>
+                  )}
                 </div>
               ) : null}
             </article>

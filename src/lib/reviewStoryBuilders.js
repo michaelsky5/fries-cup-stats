@@ -1,6 +1,7 @@
 import {
   formatNum,
   getHeroImage,
+  getHeroRenderImage,
   getMapImage,
   getMatchById,
   getMatchWinnerId,
@@ -20,7 +21,13 @@ import {
   normalizeText,
   safeArr
 } from './reviewAssets.js'
-import { getStaffReview } from './reviewSearch.js'
+import {
+  getAdminNamesFromMatch,
+  getCasterNamesFromMatch,
+  getStaffReview
+} from './reviewSearch.js'
+import { getReviewIdentityLabel, getReviewIdentityPortfolio } from './reviewIdentity.js'
+import { adaptReviewScenes, getReviewSeasonProfile, isReviewByeMatch } from './reviewSeason.js'
 import {
   heroCn,
   mapCn,
@@ -123,7 +130,7 @@ function getRankStory(rankText) {
     return {
       label: '冠军',
       title: '你们把这个赛季走到了最后',
-      body: '冠军不是某一个瞬间突然发生的。它由每一场比赛、每一张地图、每一次等待和每一个站上赛场的人共同组成。'
+      body: '冠军不是某一个瞬间突然发生的。它由每一场比赛、每一张地图、每一次对阵和每一个站上赛场的人共同组成。'
     }
   }
 
@@ -163,7 +170,7 @@ function getRankStory(rankText) {
     return {
       label: '公开预选赛',
       title: '你们把故事留在了公开预选赛',
-      body: '公开预选赛不是背景。瑞士轮、突围赛、等待、对阵和结算，都是这届学院赛真正发生过的一部分。不是每支队伍都会走到最后，但每支队伍都让这届比赛变得完整。'
+      body: '公开预选赛不是背景。瑞士轮、突围赛、每一场对阵和最终结算，都是这届学院赛真正发生过的一部分。不是每支队伍都会走到最后，但每支队伍都让这届比赛变得完整。'
     }
   }
 
@@ -196,7 +203,7 @@ function getPlayoffStory(rankText) {
   if (rank && rank <= 4) {
     return {
       title: '你们进入了季后淘汰赛深处',
-      body: '四强附近的比赛，往往会留下更重的记忆。胜负会被记录，但那些接近终局的地图，也会被参与者记住。'
+      body: `最终排名进入前四，说明这支队伍一直打到淘汰赛后段。这个位置来自此前各阶段已经发生的胜负，也把队伍的路线准确留在了距离终局很近的地方。`
     }
   }
 
@@ -222,15 +229,20 @@ function getRankMemoryLine(rankText, subject = '对手') {
 }
 
 const DEFAULT_TEAM_LOGO = '/logos/fc_logo.png'
+const DEFAULT_OW_TEAM_LOGO = '/logos/FCR/OW.png'
 
 function getSafeTeamLogo(teamLike, db) {
   const key = typeof teamLike === 'object'
     ? pickFirstValue(teamLike.short, teamLike.team_short_name, teamLike.team_name, teamLike.name)
     : String(teamLike || '').trim()
   const team = key ? getTeamById(db, key) : null
-  const logoKey = pickFirstValue(team?.team_short_name, team?.short, team?.team_id, team?.id, key)
+  const logoSource = team || (typeof teamLike === 'object'
+    ? teamLike
+    : key
+      ? { team_short_name: key }
+      : null)
 
-  return logoKey ? (getTeamLogo(logoKey, db) || DEFAULT_TEAM_LOGO) : DEFAULT_TEAM_LOGO
+  return logoSource ? (getTeamLogo(logoSource, db) || DEFAULT_TEAM_LOGO) : DEFAULT_TEAM_LOGO
 }
 
 function getPlayerTotalForPlayer(db, player) {
@@ -352,6 +364,88 @@ function buildTeamRosterCards(db, players) {
       role: roleText
     }
   })
+}
+
+function getCompanionMatchKey(log) {
+  return normalizeText(pickFirstValue(
+    log?.match_id,
+    log?.matchId,
+    log?.match_code,
+    log?.matchCode,
+    log?.series_id,
+    log?.seriesId,
+    log?.match_name,
+    log?.matchName,
+    log?.match,
+    log?.fixture_id,
+    log?.fixtureId
+  ))
+}
+
+function countSharedKeys(left, right) {
+  if (!left.size || !right.size) return 0
+  let count = 0
+
+  left.forEach(key => {
+    if (right.has(key)) count += 1
+  })
+
+  return count
+}
+
+function getPlayerCompanionMemory(db, player, teammates) {
+  const ownLogs = getValidLogs(player)
+  const ownMapKeys = new Set(ownLogs.map(getLineupGroupKey).filter(Boolean))
+  const ownMatchKeys = new Set(ownLogs.map(getCompanionMatchKey).filter(Boolean))
+
+  const cards = safeArr(teammates).map(teammate => {
+    const card = buildTeamRosterCards(db, [teammate])[0]
+    const teammateLogs = getValidLogs(teammate)
+    const teammateMapKeys = new Set(teammateLogs.map(getLineupGroupKey).filter(Boolean))
+    const teammateMatchKeys = new Set(teammateLogs.map(getCompanionMatchKey).filter(Boolean))
+    const sharedMapCount = countSharedKeys(ownMapKeys, teammateMapKeys)
+    const sharedMatchCount = countSharedKeys(ownMatchKeys, teammateMatchKeys)
+
+    return {
+      ...card,
+      sharedMapCount,
+      sharedMatchCount,
+      value: sharedMapCount
+        ? `并肩 ${sharedMapCount} 张地图`
+        : sharedMatchCount
+          ? `同场 ${sharedMatchCount} 场比赛`
+          : card?.value || '同队阵容'
+    }
+  }).sort((a, b) => {
+    const sharedMapDiff = Number(b.sharedMapCount || 0) - Number(a.sharedMapCount || 0)
+    if (sharedMapDiff !== 0) return sharedMapDiff
+
+    const sharedMatchDiff = Number(b.sharedMatchCount || 0) - Number(a.sharedMatchCount || 0)
+    if (sharedMatchDiff !== 0) return sharedMatchDiff
+
+    const roleDiff = getLineupRoleRank(a.role || a.meta) - getLineupRoleRank(b.role || b.meta)
+    if (roleDiff !== 0) return roleDiff
+    return String(a.title || '').localeCompare(String(b.title || ''), 'zh-Hans-CN')
+  })
+
+  const top = cards.find(card => Number(card.sharedMapCount || card.sharedMatchCount || 0) > 0) || null
+  const isTopCompanion = card => Boolean(
+    top &&
+    Number(card.sharedMapCount || 0) === Number(top.sharedMapCount || 0) &&
+    Number(card.sharedMatchCount || 0) === Number(top.sharedMatchCount || 0)
+  )
+  const decoratedCards = cards.map(card => (
+    isTopCompanion(card)
+      ? { ...card, note: '公开记录里并肩最多' }
+      : card
+  ))
+  const topGroup = top ? decoratedCards.filter(isTopCompanion) : []
+
+  return {
+    cards: decoratedCards,
+    top: top ? decoratedCards[0] : null,
+    topGroup
+  }
 }
 
 function getLineupGroupKey(log) {
@@ -555,7 +649,7 @@ function getTeamKeyMatch(matches, candidates) {
 function cleanBattleTag(value) {
   const raw = String(value ?? '').trim()
   if (!raw) return ''
-  if (/^FCA26-P\d+$/i.test(raw)) return ''
+  if (/^FC[AR]26-P\d+$/i.test(raw)) return ''
   return raw
 }
 
@@ -706,84 +800,11 @@ function buildPartnerCard(person) {
 }
 
 function getMatchCasterNames(match) {
-  const broadcast = match?.broadcast || {}
-
-  return splitNames([
-    match?.casters,
-    match?.caster,
-    match?.commentators,
-    match?.commentator,
-    match?.commentary,
-    match?.caster_names,
-    match?.commentator_names,
-    match?.casterName,
-    match?.commentatorName,
-    match?.caster_1,
-    match?.caster_2,
-    match?.caster1,
-    match?.caster2,
-    match?.解说,
-    broadcast?.casters,
-    broadcast?.caster,
-    broadcast?.commentators,
-    broadcast?.commentator,
-    broadcast?.caster_names,
-    broadcast?.commentator_names,
-    broadcast?.caster_a,
-    broadcast?.caster_b,
-    broadcast?.casterA,
-    broadcast?.casterB,
-    broadcast?.caster_1,
-    broadcast?.caster_2,
-    broadcast?.caster1,
-    broadcast?.caster2,
-    broadcast?.解说
-  ])
+  return getCasterNamesFromMatch(match)
 }
 
 function getMatchStaffNames(match) {
-  const broadcast = match?.broadcast || {}
-
-  return splitNames([
-    match?.staffs,
-    match?.staff,
-    match?.admins,
-    match?.admin,
-    match?.referees,
-    match?.referee,
-    match?.observers,
-    match?.observer,
-    match?.operators,
-    match?.operator,
-    match?.staff_names,
-    match?.admin_names,
-    match?.staffName,
-    match?.adminName,
-    match?.staff_1,
-    match?.staff_2,
-    match?.admin_1,
-    match?.admin_2,
-    match?.admin1,
-    match?.admin2,
-    match?.赛管,
-    broadcast?.staffs,
-    broadcast?.staff,
-    broadcast?.admins,
-    broadcast?.admin,
-    broadcast?.staff_names,
-    broadcast?.admin_names,
-    broadcast?.staffName,
-    broadcast?.adminName,
-    broadcast?.admin_a,
-    broadcast?.admin_b,
-    broadcast?.adminA,
-    broadcast?.adminB,
-    broadcast?.admin_1,
-    broadcast?.admin_2,
-    broadcast?.admin1,
-    broadcast?.admin2,
-    broadcast?.赛管
-  ])
+  return getAdminNamesFromMatch(match)
 }
 
 function mergeNameCount(map, name, increment = 1) {
@@ -1325,9 +1346,22 @@ function resolveMatch(db, item) {
 
 function sortMatches(matches) {
   return safeArr(matches).filter(Boolean).sort((a, b) => {
-    const timeA = String(getScheduledText(a) || a.scheduled_at || a.match_id || '')
-    const timeB = String(getScheduledText(b) || b.scheduled_at || b.match_id || '')
-    return timeA.localeCompare(timeB)
+    const getSortValue = match => {
+      const direct = Date.parse(match?.scheduled_at || match?.scheduledAt || '')
+      if (Number.isFinite(direct)) return direct
+
+      const dateText = [
+        match?.scheduled_date,
+        match?.scheduled_time,
+        getScheduledText(match)
+      ].filter(Boolean).join(' ')
+      const parsed = Date.parse(dateText)
+      return Number.isFinite(parsed) ? parsed : Number.MAX_SAFE_INTEGER
+    }
+
+    const timeDiff = getSortValue(a) - getSortValue(b)
+    if (timeDiff !== 0) return timeDiff
+    return String(a?.match_id || '').localeCompare(String(b?.match_id || ''))
   })
 }
 
@@ -1341,9 +1375,10 @@ function getHydratedLogs(db, logs) {
     const match = getMatchById(db, log.matchId)
     return { log, match, index }
   }).sort((a, b) => {
-    const timeA = String(getScheduledText(a.match) || a.match?.match_id || a.index)
-    const timeB = String(getScheduledText(b.match) || b.match?.match_id || b.index)
-    return timeA.localeCompare(timeB)
+    const sorted = sortMatches([a.match, b.match])
+    if (sorted[0] === a.match && sorted[1] === b.match) return -1
+    if (sorted[0] === b.match && sorted[1] === a.match) return 1
+    return a.index - b.index
   })
 }
 
@@ -1388,6 +1423,21 @@ function parseRouteDateText(value) {
   }
 
   return null
+}
+
+function getRecordedMatchMeta(firstMatch, lastMatch, matches) {
+  const firstMatchTime = getScheduledText(firstMatch)
+  const lastMatchTime = getScheduledText(lastMatch)
+
+  return {
+    firstMatchId: firstMatch?.match_id || firstMatch?.id || '',
+    lastMatchId: lastMatch?.match_id || lastMatch?.id || '',
+    firstMatchTime,
+    lastMatchTime,
+    routeStartDate: parseRouteDateText(firstMatchTime)?.display || '',
+    routeEndDate: parseRouteDateText(lastMatchTime)?.display || '',
+    recordedStages: uniq(safeArr(matches).map(match => String(match?.stage || '').toUpperCase()))
+  }
 }
 
 function getPlayerRouteDateRows(hydratedLogs) {
@@ -1514,6 +1564,30 @@ function getMapPool(logs) {
   }).sort((a, b) => b.count - a.count || b.minutes - a.minutes)
 }
 
+function getTeamReviewMapPool(review, logs) {
+  const loggedPool = getMapPool(logs)
+  const loggedByMap = new Map(loggedPool.map(item => [mapNameToFileName(item.mapName), item]))
+  const archivedRows = safeArr(review?.top_maps)
+
+  if (!archivedRows.length) return loggedPool
+
+  return archivedRows
+    .map(row => {
+      const mapName = row?.map_name || row?.mapName || row?.name || ''
+      const logged = loggedByMap.get(mapNameToFileName(mapName)) || {}
+      const count = Number(row?.count ?? row?.maps ?? row?.value ?? 0)
+
+      return {
+        ...logged,
+        mapName: mapName || logged.mapName,
+        mapType: row?.map_type || row?.mapType || logged.mapType,
+        count: Number.isFinite(count) ? count : 0
+      }
+    })
+    .filter(item => item.mapName && item.count > 0)
+    .sort((a, b) => b.count - a.count || Number(b.minutes || 0) - Number(a.minutes || 0))
+}
+
 function getMapTypeDistribution(logs) {
   const map = new Map()
 
@@ -1539,6 +1613,55 @@ function getMapTypeDistribution(logs) {
   }))
 }
 
+function getDistinctMapTypeDistribution(logs) {
+  const map = new Map()
+
+  safeArr(logs).forEach(log => {
+    const instanceKey = getMapInstanceKey(log)
+    if (!instanceKey) return
+
+    const type = mapTypeCn(log.mapType || log.map_type || 'UNKNOWN')
+    const prev = map.get(type) || { label: type, instances: new Set() }
+    prev.instances.add(instanceKey)
+    map.set(type, prev)
+  })
+
+  const rows = [...map.values()]
+    .map(item => ({ label: item.label, count: item.instances.size }))
+    .filter(item => item.count > 0)
+    .sort((a, b) => b.count - a.count)
+  const max = Math.max(...rows.map(item => item.count), 1)
+
+  return rows.map(item => ({
+    label: item.label,
+    value: item.count,
+    displayValue: `${item.count} 张`,
+    score: Math.round((item.count / max) * 100),
+    note: '去重地图记录'
+  }))
+}
+
+function getTeamReviewMapTypeDistribution(review, logs) {
+  const archivedRows = safeArr(review?.top_map_types)
+    .map(row => ({
+      label: mapTypeCn(row?.map_type || row?.mapType || row?.name || 'UNKNOWN'),
+      count: Number(row?.count ?? row?.maps ?? row?.value ?? 0)
+    }))
+    .filter(item => item.count > 0)
+    .sort((a, b) => b.count - a.count)
+
+  if (!archivedRows.length) return getDistinctMapTypeDistribution(logs)
+
+  const max = Math.max(...archivedRows.map(item => item.count), 1)
+  return archivedRows.map(item => ({
+    label: item.label,
+    value: item.count,
+    displayValue: `${item.count} 张`,
+    score: Math.round((item.count / max) * 100),
+    note: '去重地图记录'
+  }))
+}
+
 function getHeroGalleryItems(heroPool, role) {
   return safeArr(heroPool).slice(0, 4).map((item, index) => ({
     src: getHeroImage(item.hero, item.role || role),
@@ -1554,12 +1677,16 @@ function getMapVisualImage(mapItem) {
   return getMapImage(mapItem.mapType, mapItem.mapName)
 }
 
-function getMapCards(mapPool) {
+function getMapCards(mapPool, options = {}) {
+  const minutesPrefix = String(options.minutesPrefix || '').trim()
+
   return safeArr(mapPool).slice(0, 3).map(item => ({
     title: mapCn(item.mapName),
     meta: mapTypeCn(item.mapType),
     value: `${item.count} 次`,
-    sub: `${formatNum(item.minutes, 1)} 分钟`,
+    sub: Number(item.minutes || 0) > 0
+      ? [minutesPrefix, `${formatNum(item.minutes, 1)} 分钟`].filter(Boolean).join(' ')
+      : '',
     image: getMapVisualImage(item),
     note: item.topHero ? `最常使用：${heroCn(item.topHero.hero)}` : ''
   }))
@@ -1646,9 +1773,10 @@ function getRoleDataBars(db, source, role) {
       ]
 
   const maxValue = Math.max(...metrics.map(item => item.value), 1)
+  const usesPercentile = pool.length >= 4
 
   return metrics.map(item => {
-    const score = pool.length >= 4
+    const score = usesPercentile
       ? getMetricPercentile(pool, item.key, item.value, item.lowerIsBetter)
       : Math.round((item.value / maxValue) * 100)
 
@@ -1657,6 +1785,9 @@ function getRoleDataBars(db, source, role) {
       value: item.value,
       displayValue: item.display,
       score: Math.max(8, Math.min(100, score)),
+      comparisonKind: usesPercentile ? 'role-percentile' : 'relative-scale',
+      comparisonSampleSize: pool.length,
+      comparisonMinimumMinutes: 20,
       lowerIsBetter: Boolean(item.lowerIsBetter)
     }
   }).filter(item => Number(item.value) > 0 || item.lowerIsBetter)
@@ -1751,7 +1882,7 @@ function getSeasonIdentitySummary({
     title = '你的赛季标签，是冠军队伍的一部分'
     body = `最终成绩写成了 ${rankText}，但这不是这段旅程的全部。你在 ${mapCount || 0} 张地图里留下过出场记录，也和队伍一起把这个赛季走到了最高处。`
     quoteTitle = '冠军不是一个人的名字'
-    quoteBody = '它由很多场比赛、很多次等待、很多张地图和很多个被记录下来的名字组成。'
+    quoteBody = '它由很多场比赛、很多张地图、很多次对阵和很多个被记录下来的名字组成。'
   } else if (rankText.includes('亚军')) {
     tag = '决赛路上的参与者'
     title = '你的赛季标签，是走到终局附近'
@@ -1773,7 +1904,7 @@ function getSeasonIdentitySummary({
   } else if (getRankNumber(rankText) && getRankNumber(rankText) > 8) {
     tag = getCompetitionPhaseLabel(rankText)
     title = '你的赛季标签，是公开预选赛里的名字'
-    body = `最终成绩是 ${rankText}。这说明你们没有进入季后淘汰赛，但你仍然完整参与了公开预选赛阶段。瑞士轮、突围赛、等待、对阵和结算，都是这届学院赛真正发生过的一部分。`
+    body = `最终成绩是 ${rankText}。这说明你们没有进入季后淘汰赛，但你仍然完整参与了公开预选赛阶段。瑞士轮、突围赛、每一场对阵和最终结算，都是这届学院赛真正发生过的一部分。`
     quoteTitle = '公开预选赛不是背景'
     quoteBody = '它是所有故事开始的地方。不是每支队伍都会走到最后，但每个进入赛程的人，都让这届比赛变得更完整。'
   } else if (Number(mapCount) >= 30) {
@@ -1787,7 +1918,7 @@ function getSeasonIdentitySummary({
     title = '你的赛季标签，是把时间真正留在比赛里'
     body = `${formatNum(minutes, 1)} 分钟不是冷冰冰的时长。它意味着你真的把一部分时间交给了这届比赛，也把自己留在了这份记录里。`
     quoteTitle = '时间会被结算，但也会被保存'
-    quoteBody = '每一分钟都曾经发生在一张地图、一次团战、一次等待和一次结果之间。'
+    quoteBody = '每一分钟都曾经发生在一张地图、一次对阵、一次团战和一次结果之间。'
   } else if (bestBar?.label?.includes('持续火力')) {
     tag = '持续火力点'
     title = '你的赛季标签，是持续制造压力'
@@ -1968,14 +2099,19 @@ function pickFinalRankTone(rankText) {
   return 'gold'
 }
 
-function getOrganizerMessageScene() {
+function getOrganizerMessageScene(db) {
+  const profile = getReviewSeasonProfile(db)
+  const body = profile.isRegular
+    ? '比赛总会结束，\n排名也终会被归档。\n\n以前我总觉得，\n薯条杯只是一个人也能做完的小比赛。\n后来越来越多人走进来，我才明白：\n它早已不只是一场比赛，\n而是许多普通人一起，\n把原本做不到的事慢慢做成了。\n\n当你翻到这里，\n希望你记住的不只是排名。\n也许是一张地图、一次团战，\n一个并肩战斗的名字，\n或者某个你觉得“还好我来过”的瞬间。\n\n谢谢你参加\n2026 薯条杯常规赛。\n\nmichaelsky5\n2026年8月17日'
+    : '比赛总会结束，赛程表也总会被归档。\n\n但我希望，当你翻到这里的时候，\n你能想起某一张地图、某一次团战、\n某一个队友、某一场遗憾，\n或者某一个你觉得“还好我来过”的瞬间。\n\n谢谢你参加 2026 薯条杯学院赛。\n正是因为你们的存在，薯条杯才成为薯条杯。\n不止比赛，更是热爱。\n\nmichaelsky5\n2026年5月18日'
+
   return {
     kind: 'organizer',
     tone: 'gold',
     eyebrow: 'FINAL ARCHIVE',
     title: '写在归档之前',
-    body: '比赛总会结束，赛程表也总会被归档。\n\n但我希望，当你翻到这里的时候，\n你能想起某一张地图、某一次团战、\n某一个队友、某一场遗憾，\n或者某一个你觉得“还好我来过”的瞬间。\n\n谢谢你参加 2026 薯条杯学院赛。\n正是因为你们的存在，薯条杯才成为薯条杯。\n不止比赛，更是热爱。\n\nmichaelsky5\n2026年5月18日',
-    chips: ['薯条杯学院赛', '2026', '谢谢你来过'],
+    body,
+    chips: [`薯条杯${profile.eventNoun}`, '2026', '谢谢你来过'],
     storyQuote: {
       title: '这不是最完美的一届比赛',
       body: '但它是我们一起完成的一届比赛。'
@@ -1992,6 +2128,7 @@ function inferVisualType(scene, profile = {}) {
   if (kind === 'organizer') return 'organizer'
   if (kind === 'cover') return 'cover'
   if (kind === 'ending') return 'final'
+  if (kind === 'pause') return 'pause'
   if (kind === 'spotlight') return 'spotlight'
   if (eyebrow.includes('ONE MAP') || eyebrow.includes('PEAK')) return 'peakHighlight'
   if (eyebrow.includes('OPPONENT')) return 'keyMatch'
@@ -2015,6 +2152,7 @@ function inferBadge(scene, profile = {}) {
   const eyebrow = String(scene?.eyebrow || '').toUpperCase()
 
   if (scene?.kind === 'organizer') return 'FROM ORGANIZER'
+  if (scene?.kind === 'pause') return 'QUIET FRAME'
   if (eyebrow.includes('PLAYOFFS')) return 'PLAYOFFS'
   if (eyebrow.includes('FIRST')) return 'FIRST STEP'
   if (eyebrow.includes('KEY')) return 'KEY MATCH'
@@ -2038,6 +2176,7 @@ function inferWatermark(scene, profile = {}) {
   const eyebrow = String(scene?.eyebrow || '').toUpperCase()
 
   if (scene?.kind === 'organizer') return 'THANK YOU'
+  if (scene?.kind === 'pause') return 'REMEMBER'
   if (title.includes('冠军')) return 'CHAMPION'
   if (title.includes('亚军')) return 'FINALIST'
   if (title.includes('季军')) return 'PODIUM'
@@ -2059,6 +2198,7 @@ function inferBackgroundWords(scene, profile = {}) {
   const visualType = inferVisualType(scene, profile)
 
   if (visualType === 'organizer') return ['THANKS', 'ARCHIVE', 'TOGETHER', 'MEMORY']
+  if (visualType === 'pause') return ['BREATHE', 'TOGETHER', 'STILL HERE', 'REMEMBER']
   if (visualType === 'cover') return ['FRIES CUP', '2026', 'SEASON', 'REVIEW']
   if (visualType === 'dataImpact') return ['DATA', 'MATCH', 'MAPS', 'RECORDED']
   if (visualType === 'spotlight') return ['HERO', 'SIGNATURE', 'TIME', 'MEMORY']
@@ -2077,13 +2217,56 @@ function inferBackgroundWords(scene, profile = {}) {
   return ['ARCHIVE', 'STORY', 'SEASON', 'MEMORY']
 }
 
+function inferEvidenceTags(scene, profile = {}) {
+  if (scene?.evidenceTags?.length) return scene.evidenceTags
+
+  const eyebrow = String(scene?.eyebrow || '').toUpperCase()
+  const storyType = scene?.storyType || profile.storyType || ''
+
+  if (scene?.kind === 'organizer' || eyebrow === 'FINAL ARCHIVE') return ['主办方寄语']
+  if (scene?.kind === 'pause') return ['前述赛季记录']
+
+  if (scene?.kind === 'cover') {
+    if (storyType === 'staff') return ['解说与赛管记录']
+    if (storyType === 'team') return ['最终名单', '最终排名']
+    if (storyType === 'tournament') return ['公开赛程与赛果']
+    return ['最终名单', '公开比赛数据']
+  }
+
+  if (/IDENTITY|POSTSEASON ROSTER|BEYOND THE NUMBERS|NAMES ON THE SAME ROSTER/.test(eyebrow)) {
+    return scene?.statLines?.length || scene?.mapCards?.length
+      ? ['最终名单', '公开比赛数据']
+      : ['最终名单']
+  }
+
+  if (/FIRST|KEY MATCH|REGRET|LAST MATCH|LAST RECORD|SEASON OPPONENT|THE ROAD|STAGE BY STAGE|PLAYOFFS|GRAND FINAL|CHAMPION ROAD|REGULAR SEASON|OPEN QUALIFIER|SWISS ROUND|LCQ/.test(eyebrow)) {
+    return ['公开赛程与赛果']
+  }
+
+  if (/FINAL RESULT|FRIES CUP ARCHIVE|SEASON TAG/.test(eyebrow) || scene?.kind === 'ending') {
+    return ['最终排名', storyType === 'staff' ? '解说与赛管记录' : '公开比赛数据']
+  }
+
+  if (storyType === 'staff' || /CASTER|STAFF|VOICE AND STAFF|PARTNER/.test(eyebrow)) {
+    return ['解说与赛管记录']
+  }
+
+  if (/YOU WERE THERE|SIGNATURE|ROLE MEMORY|ONE MAP|MAP MEMORY|MAPS REMEMBER|THE NAMES BESIDE YOU|NOT ALONE|LINEUP|PLAYERS REMEMBERED|ADJUSTMENT/.test(eyebrow) || scene?.metric || scene?.dataBars?.length || scene?.mapCards?.length) {
+    return ['公开比赛数据']
+  }
+
+  return ['公开赛程与赛果']
+}
+
 function withVisualMeta(scenes, profile = {}) {
   return safeArr(scenes).map((scene, index) => ({
     ...scene,
+    storyType: scene.storyType || profile.storyType || '',
     visualType: scene.visualType || inferVisualType(scene, profile),
     badge: scene.badge || inferBadge(scene, profile),
     watermark: scene.watermark || inferWatermark(scene, profile),
     backgroundWords: scene.backgroundWords || inferBackgroundWords(scene, profile),
+    evidenceTags: inferEvidenceTags(scene, profile),
     sceneNo: index + 1
   }))
 }
@@ -2092,6 +2275,7 @@ export function buildPlayerStory(db, playerId) {
   const player = getPlayerById(db, playerId)
   const total = getPlayerTotalById(db, playerId)
   const source = total || player
+  const seasonProfile = getReviewSeasonProfile(db)
 
   if (!source) return []
 
@@ -2109,9 +2293,15 @@ export function buildPlayerStory(db, playerId) {
   const matchCount = uniqueCount(logs.map(log => log.matchId)) || toNumber(source.matches_played || source.match_count, 0)
   const mapCount = logs.length || toNumber(source.maps_played || source.map_count, 0)
   const minutes = logs.reduce((sum, log) => sum + Number(log.playtimeMinutes || 0), 0) || toNumber(source.raw_time_mins || source.playtimeMinutes, 0)
+  const coverageLevel = mapCount <= 0
+    ? 'roster'
+    : mapCount <= 4 || minutes < 30
+      ? 'brief'
+      : 'full'
 
   const team = getTeamById(db, source.team_id || player?.team_id || source.team_short_name || player?.team_short_name)
   const teamReview = getTeamReviewById(db, source.team_id || player?.team_id || source.team_short_name || player?.team_short_name)
+  const competitionSize = Math.max(safeArr(db?.team_reviews).length, safeArr(db?.teams).length)
   const role = source.role || player?.role || 'FLEX'
   const roleCn = getRoleCn(role)
   const tone = getRoleTone(role)
@@ -2122,24 +2312,68 @@ export function buildPlayerStory(db, playerId) {
   const playerName = getPlayerDisplayName(source)
   const playerTag = getPlayerBattleTag(player, source)
   const shouldShowPlayerTag = playerTag && normalizeText(playerTag) !== normalizeText(playerName)
+  const joinStage = pickFirstValue(source?.join_stage, source?.joinStage, player?.join_stage, player?.joinStage)
+  const rosterStatus = pickFirstValue(source?.roster_status, source?.rosterStatus, player?.roster_status, player?.rosterStatus)
+  const exitStage = pickFirstValue(source?.exit_stage, source?.exitStage, player?.exit_stage, player?.exitStage)
+  const isPlayoffIntroduction = String(joinStage).toUpperCase() === 'PLAYOFFS' || String(rosterStatus).toUpperCase() === 'PLAYOFF_INTRODUCTION'
+  const isPlayoffWithdrawal = String(rosterStatus).toUpperCase() === 'PLAYOFF_WITHDRAWAL' || String(exitStage).toUpperCase() === 'PLAYOFFS'
+  const rosterJourneyChip = isPlayoffIntroduction
+    ? '季后赛引入'
+    : isPlayoffWithdrawal
+      ? '个人记录截至常规阶段'
+      : ''
+  const playerIdentityValues = uniq([
+    player?.player_id,
+    player?.id,
+    player?.display_name,
+    player?.nickname,
+    player?.player_name,
+    source?.player_id,
+    source?.id,
+    source?.display_name,
+    source?.nickname,
+    source?.player_name,
+    playerTag,
+    playerName
+  ])
+  const teammatePlayers = getTeamPlayers(db, source.team_id || player?.team_id || teamShort)
+    .filter(teammate => !identityOverlaps(teammate, playerIdentityValues))
+  const companionMemory = getPlayerCompanionMemory(db, player, teammatePlayers)
+  const teammateCards = companionMemory.cards.slice(0, 6)
+  const topCompanion = companionMemory.top
+  const topCompanionGroup = companionMemory.topGroup || []
+  const topCompanionNames = topCompanionGroup.length > 3
+    ? `${topCompanionGroup.slice(0, 3).map(card => card.title).join('、')} 等 ${topCompanionGroup.length} 位队友`
+    : topCompanionGroup.map(card => card.title).join('、')
+  const topCompanionTraceText = topCompanion
+    ? topCompanion.sharedMapCount
+      ? `${topCompanion.sharedMapCount} 张地图${topCompanion.sharedMatchCount ? `、${topCompanion.sharedMatchCount} 场比赛` : ''}`
+      : `${topCompanion.sharedMatchCount} 场比赛`
+    : ''
 
   const firstRow = hydratedLogs.find(row => row.match) || hydratedLogs[0]
   const firstLog = firstRow?.log || logs[0]
   const firstMatch = firstRow?.match || (firstLog ? getMatchById(db, firstLog.matchId) : null)
   const firstTime = firstMatch ? getScheduledText(firstMatch) : ''
+  const teamSchedule = sortMatches(getTeamMatches(db, source.team_id || player?.team_id || teamShort))
+    .filter(match => !isReviewByeMatch(match))
+  const ticketFirstMatch = firstMatch || teamSchedule[0] || null
+  const ticketFirstMatchTime = ticketFirstMatch ? getScheduledText(ticketFirstMatch) : ''
 
   const routeDateRows = getPlayerRouteDateRows(hydratedLogs)
-  const routeStartDate = routeDateRows[0]?.display || parseRouteDateText(firstTime)?.display || ''
-  const routeEndDate = routeDateRows[routeDateRows.length - 1]?.display || routeStartDate
-  const routeFrom = '2026 薯条杯学院赛'
+  const lastRouteMatch = routeDateRows[routeDateRows.length - 1]?.match || null
+  const ticketLastMatch = lastRouteMatch || teamSchedule[teamSchedule.length - 1] || ticketFirstMatch
+  const ticketLastMatchTime = ticketLastMatch ? getScheduledText(ticketLastMatch) : ticketFirstMatchTime
+  const routeStartDate = routeDateRows[0]?.display || parseRouteDateText(ticketFirstMatchTime)?.display || ''
+  const routeEndDate = routeDateRows[routeDateRows.length - 1]?.display || parseRouteDateText(ticketLastMatchTime)?.display || routeStartDate
+  const routeFrom = seasonProfile.eventTitle
   const routeTo = finalRankText || '赛季归档'
   const firstMatchLabel = firstMatch ? getMatchDisplayName(firstMatch) : ''
-  const lastRouteMatch = routeDateRows[routeDateRows.length - 1]?.match || null
   const lastMatchLabel = lastRouteMatch ? getMatchDisplayName(lastRouteMatch) : ''
 
   const firstMatchCard = firstMatch ? buildMatchCard(db, firstMatch, teamCandidates, {
     title: '第一次出场记录',
-    note: '这是你在薯条杯学院赛里被记录下来的第一场比赛。'
+    note: `这是你在薯条杯${seasonProfile.eventNoun}里被记录下来的第一场比赛。`
   }) : null
   const firstOpponentMemory = firstMatchCard?.opponentMemory || ''
   const firstOpponentName = firstMatchCard?.opponent || ''
@@ -2157,16 +2391,22 @@ export function buildPlayerStory(db, playerId) {
     playerMatchRows.push(match)
   })
 
-  const playerWins = playerMatchRows.filter(match => getMatchResultText(match, teamCandidates) === '胜利').length
-  const playerLosses = playerMatchRows.filter(match => getMatchResultText(match, teamCandidates) === '失利').length
-  const seasonRecordText = playerMatchRows.length ? `${playerWins}W-${playerLosses}L` : ''
+  const orderedPlayerMatches = sortMatches(playerMatchRows)
+  const matchResultSequence = orderedPlayerMatches
+    .map(match => {
+      const result = getMatchResultText(match, teamCandidates)
+      return result === '胜利' ? 'W' : result === '失利' ? 'L' : 'D'
+    })
+  const playerWins = matchResultSequence.filter(result => result === 'W').length
+  const playerLosses = matchResultSequence.filter(result => result === 'L').length
+  const seasonRecordText = orderedPlayerMatches.length ? `${playerWins}W-${playerLosses}L` : ''
 
   const mainMetric = getRoleMainMetric(role)
   const mainMetricValue = pickNumber(source, [mainMetric.key], 0)
   const elimPer10 = pickNumber(source, ['avg_elim', 'avg_elims'], 0)
   const deathPer10 = pickNumber(source, ['avg_dth', 'avg_death', 'avg_deaths'], 0)
 
-  const roleBars = getRoleDataBars(db, source, role)
+  const roleBars = coverageLevel === 'roster' ? [] : getRoleDataBars(db, source, role)
   const roleInsight = getRoleInsight(playerName, role, roleBars)
 
   const deepRoleCopy = roleDeepNarrative(role, {
@@ -2196,16 +2436,81 @@ export function buildPlayerStory(db, playerId) {
     roleBars,
     keyMemory
   })
+  const rosterChangeScene = isPlayoffIntroduction
+    ? {
+        kind: 'narrative',
+        tone,
+        eyebrow: 'POSTSEASON ROSTER',
+        title: '你的赛季，从季后赛这一章开始',
+        body: `${teamShort || teamFullName || '这支队伍'} 走完常规阶段后，季后赛名单第一次写下了你的名字。${mapCount > 0 ? `此后，公开记录留下了你的 ${mapCount} 张地图、${formatNum(minutes, 1)} 分钟。` : '公开比赛数据没有继续留下地图记录，但季后赛阵容仍然确认了你的加入。'}你的 2026 没有从赛季开头开始，却从最接近最终结果的章节拥有了自己的位置。`,
+        matchCard: firstMatchCard,
+        statLines: [
+          { label: '加入阶段', value: '季后赛', sub: 'PLAYOFFS' },
+          { label: '出场地图', value: mapCount || 0, sub: 'MAPS RECORDED' },
+          { label: '队伍成绩', value: finalRankText || '-', sub: 'TEAM RESULT' }
+        ],
+        storyQuote: {
+          title: '有些旅程从第一场开始，有些从最后一章开始',
+          body: `加入得晚，没有让这段记录失去意义。它只是让 ${playerName} 的赛季拥有了不同的起点。`
+        },
+        chips: ['季后赛引入', teamShort, finalRankText].filter(Boolean)
+      }
+    : isPlayoffWithdrawal
+      ? {
+          kind: 'narrative',
+          tone,
+          eyebrow: 'POSTSEASON ROSTER',
+          title: '你的个人记录，停在季后赛之前',
+          body: `季后赛阵容变更记录显示，你的赛季在常规阶段结束。此前，公开数据留下了你的 ${matchCount} 场比赛、${mapCount} 张地图和 ${formatNum(minutes, 1)} 分钟。${finalRankText ? `${teamShort || teamFullName || '队伍'} 后来以${finalRankText}完成赛季，那是队伍继续走出的结果；属于你的记录，仍然完整停在离开阵容以前。` : '后来的赛程属于继续前行的队伍，而这些已经发生过的比赛仍然属于你。'}`,
+          matchCard: firstMatchCard,
+          statLines: [
+            { label: '记录阶段', value: '常规阶段', sub: 'REGULAR SEASON' },
+            { label: '出场地图', value: mapCount || 0, sub: 'MAPS RECORDED' },
+            { label: '阵容变更', value: '季后赛前', sub: 'PLAYOFF WITHDRAWAL' }
+          ],
+          storyQuote: {
+            title: '结束得更早，不会改写已经发生的部分',
+            body: `${playerName} 留下的比赛、地图和同场名字，都不会因为阵容后来改变而从档案里消失。`
+          },
+          chips: ['季后赛阵容变更', `${mapCount} 张地图`, teamShort].filter(Boolean)
+        }
+      : null
 
+  const playerCoverMeta = {
+    ...getRecordedMatchMeta(ticketFirstMatch, ticketLastMatch, hydratedLogs.map(row => row.match)),
+    coverLayout: 'player',
+    coverIdentity: playerName,
+    coverRole: roleCn,
+    coverTeam: teamShort || teamFullName || '未知队伍',
+    coverHeroName: topHero ? heroCn(topHero.hero) : '',
+    coverHeroImage: topHero ? getHeroRenderImage(topHero.hero, topHero.role || role) : '',
+    coverHeroPortrait: topHero ? getHeroImage(topHero.hero, topHero.role || role) : '',
+    coverTeamLogo: teamShort ? getSafeTeamLogo(teamShort, db) : DEFAULT_TEAM_LOGO,
+    competitionSize,
+    competition_size: competitionSize,
+    coverageLevel,
+    coverage_level: coverageLevel,
+    firstMatchTime: ticketFirstMatchTime,
+    first_match_time: ticketFirstMatchTime,
+    lastMatchTime: ticketLastMatchTime,
+    last_match_time: ticketLastMatchTime,
+    matchResultSequence,
+    match_result_sequence: matchResultSequence,
+    coverStats: [
+      { label: 'RECORD', value: seasonRecordText || `${matchCount} 场` },
+      { label: 'MAPS', value: String(mapCount) },
+      { label: 'MINUTES', value: formatNum(minutes, 1) }
+    ]
+  }
 
-  return withVisualMeta([
+  const fullScenes = [
     {
       kind: 'cover',
       tone: pickFinalRankTone(finalRankText),
       eyebrow: '2026 FRIES CUP',
-      title: `${playerName}，这是你的学院赛`,
+      title: `${playerName}，这是你的${seasonProfile.eventNoun}`,
       subTitle: shouldShowPlayerTag ? playerTag : '',
-      body: '比赛已经结束，但你的名字还留在这里。接下来这几页，不只是数据，而是你在薯条杯走过的路。',
+      body: `${seasonProfile.eventNoun}已经结束。${matchCount} 场比赛、${mapCount} 张地图、${formatNum(minutes, 1)} 分钟，已经从“正在发生”变成档案。但它们拼起来，就是你真的在这里度过的一段时间。`,
       teamFullName,
       routeStartDate,
       routeEndDate,
@@ -2221,11 +2526,12 @@ export function buildPlayerStory(db, playerId) {
       season_record_text: seasonRecordText,
       firstMatchLabel,
       lastMatchLabel,
-      chips: [teamShort || '未知队伍', roleCn, finalRankText].filter(Boolean),
+      ...playerCoverMeta,
+      chips: [teamShort || '未知队伍', roleCn, rosterJourneyChip, finalRankText].filter(Boolean),
       image: teamShort ? getSafeTeamLogo(teamShort, db) : DEFAULT_TEAM_LOGO,
       storyQuote: {
-        title: '你的赛季从这里被重新打开',
-        body: '这不是一份冷冰冰的数据表，而是一段被比赛记录下来的个人轨迹。'
+        title: '这不是评价，是一次重放',
+        body: '我们不想用一个排名定义你，只想把那些确实发生过的比赛，再陪你看一遍。'
       }
     },
     {
@@ -2234,11 +2540,12 @@ export function buildPlayerStory(db, playerId) {
       eyebrow: 'FIRST RECORDED MOMENT',
       title: firstTime ? `记录从 ${firstTime} 开始` : '你的名字，进入了赛季档案',
       body: firstLog
-        ? `第一次被记录下来的出场，是 ${getMatchDisplayName(firstMatch) || firstLog.matchDisplayName || firstLog.matchId}。${firstOpponentMemory ? `${firstOpponentMemory}，让这场比赛在回看时多了一层意义。` : '当时没人知道这个赛季会怎样结束，但这一刻已经足够说明：你来了。'}`
+        ? `公开数据第一次记住你，是 ${getMatchDisplayName(firstMatch) || firstLog.matchDisplayName || firstLog.matchId}。${firstOpponentMemory ? `${firstOpponentMemory}，让这场比赛在今天看来多了一层意义。` : '那时没人知道赛季会怎样结束。房间打开、地图载入、你的名字亮起——故事就这样开始了。'}`
         : '有些故事不一定从第一张地图开始。但只要名字被留下，就说明你曾经是这届薯条杯的一部分。',
       matchCard: firstMatchCard,
       chips: firstLog ? [mapCn(firstLog.mapName), heroCn(firstLog.hero), firstMatchCard?.opponentMemory].filter(Boolean) : []
     },
+    ...(rosterChangeScene ? [rosterChangeScene] : []),
     {
       kind: 'metric',
       tone,
@@ -2247,8 +2554,9 @@ export function buildPlayerStory(db, playerId) {
       metric: String(mapCount),
       metricLabel: 'MAPS RECORDED',
       body: mapCards.length
-        ? `这些地图组成了你的赛季轨迹。你最常出现的地图是 ${mapCards[0].title}，它和另外 ${Math.max(0, mapCards.length - 1)} 张地图一起，把你的比赛足迹留了下来。`
-        : '这些地图组成了你的赛季轨迹。它们里面有胜利、失误、等待、压力，也有别人未必看见的坚持。',
+        ? `这些地图组成了你的赛季轨迹。你最常出现的地图是 ${mapCards[0].title}${topMap ? `，共被记录 ${topMap.count} 次${topMap.topHero ? `，最常使用 ${heroCn(topMap.topHero.hero)}` : ''}` : ''}。它和另外 ${Math.max(0, mapCards.length - 1)} 张地图一起，把赛季总数重新变成可以指认的具体地点。`
+        : '这些地图组成了你的赛季轨迹。公开记录未必保存了每个细节，但它确认了你在这些比赛里的出场。',
+      mapImage: getMapVisualImage(topMap),
       statLines: [
         { label: '比赛场次', value: matchCount },
         { label: '出场时间', value: formatNum(minutes, 1), sub: '分钟' },
@@ -2258,9 +2566,36 @@ export function buildPlayerStory(db, playerId) {
       dataBars: mapTypeBars,
       storyQuote: {
         title: '地图不是背景，而是记忆发生的地方',
-        body: topMap ? `${mapCn(topMap.mapName)} 是你这个赛季最常被记录的地图。` : '每一张地图都保存着不同的交火、等待和结算。'
+        body: topMap ? `${mapCn(topMap.mapName)} 是你最常被记录的地图；你和队友共同出现在这里的次数，也让它成为这段赛季最清晰的坐标。` : '每一张地图都保存着一段可被确认的出场记录。'
       }
     },
+    ...(teammateCards.length ? [{
+      kind: 'narrative',
+      visualType: 'roster',
+      tone,
+      eyebrow: 'THE NAMES BESIDE YOU',
+      title: topCompanion
+        ? topCompanionGroup.length > 1
+          ? '这些名字，和你并肩走过了最多的地图'
+          : `公开记录里，和你并肩最多的是 ${topCompanion.title}`
+        : '这个赛季，你不是一个人走过的',
+      body: topCompanion
+        ? `公开记录里，你和 ${topCompanionNames || topCompanion.title} 共同出现在 ${topCompanionTraceText}里。这不是对关系的猜测，而是一段可以被确认的同行：在这些比赛和地图上，你们的名字确实被写在一起。`
+        : `数据会把表现拆成一列列个人数字，但阵容记录也把你和 ${teamShort || teamFullName || '队伍'} 的这些名字留在了同一段赛程里。`,
+      rosterTitle: topCompanion
+        ? `${teamShort || 'TEAM'} / MOST TOGETHER`
+        : `${teamShort || 'TEAM'} / BESIDE YOU`,
+      rosterCards: teammateCards,
+      chips: teammateCards.slice(0, 4).map(item => item.title),
+      storyQuote: {
+        title: topCompanion
+          ? topCompanionGroup.length > 1
+            ? '这份记录记住了你们一起站进地图的次数'
+            : `这份记录记住了你和 ${topCompanion.title} 的同场`
+          : '以后最先想起的，未必是一串数字',
+        body: '它无法替你解释彼此的关系，却能证明那段路上，确实有人和你一起出现在同一张地图。'
+      }
+    }] : []),
     {
       kind: 'spotlight',
       tone,
@@ -2280,6 +2615,13 @@ export function buildPlayerStory(db, playerId) {
       title: roleInsight.title || deepRoleCopy.title,
       body: roleInsight.body || deepRoleCopy.body,
       dataBars: roleBars,
+      dataComparison: roleBars[0]
+        ? {
+            kind: roleBars[0].comparisonKind,
+            sampleSize: roleBars[0].comparisonSampleSize,
+            minimumMinutes: roleBars[0].comparisonMinimumMinutes
+          }
+        : null,
       storyQuote: roleInsight,
       statLines: [
         { label: mainMetric.label, value: formatNum(mainMetricValue, 2), sub: mainMetric.en },
@@ -2296,11 +2638,11 @@ export function buildPlayerStory(db, playerId) {
       metric: peak?.value || '—',
       metricLabel: peak?.label || 'PEAK MOMENT',
       peak,
-      body: peak?.body || '也许某些瞬间没有被完整记录，但它们曾经发生在比赛里，也发生在你的赛季里。',
+      body: peak?.body || '现有公开数据不足以确认一张代表性的单图。这一页保留空白，也不替你补写一个没有依据的高光。',
       matchCard: peakMatchCard,
       storyQuote: {
         title: '这不是赛季平均值，而是一个具体瞬间',
-        body: peakLog ? `${mapCn(peakLog.mapName)}、${heroCn(peakLog.hero)}、${getMatchDisplayName(peakMatch)}，一起组成了你的单图高光。` : '高光不一定每次都被看见，但数据会把它留下来。'
+        body: peakLog ? `${mapCn(peakLog.mapName)}、${heroCn(peakLog.hero)}、${getMatchDisplayName(peakMatch)}，一起组成了你的单图高光。` : '现有公开数据不足以确认一张代表性的单图，我们不替你虚构它。'
       },
       chips: peakLog ? [
         mapCn(peakLog.mapName),
@@ -2327,8 +2669,8 @@ export function buildPlayerStory(db, playerId) {
       eyebrow: 'MAP MEMORY',
       title: topMap ? `你最常出现的地图是\n${mapCn(topMap.mapName)}` : '每一张地图，都是赛季的一小块切片',
       body: topMap
-        ? `${mapCn(topMap.mapName)} 出现了 ${topMap.count} 次。${topMap.topHero ? `在这张地图上，你最常使用的是 ${heroCn(topMap.topHero.hero)}。` : '也许你已经记不清每一次交火，但这张地图确实反复出现在你的学院赛里。'}`
-        : '地图不只是背景。它们是每一场推进、团战、等待和结算真正发生的地方。',
+        ? `${mapCn(topMap.mapName)} 出现了 ${topMap.count} 次。${topMap.topHero ? `在这张地图上，你最常使用的是 ${heroCn(topMap.topHero.hero)}。` : '公开记录没有保存更细的英雄数据，但这张地图确实反复出现在你的赛季里。'}`
+        : '地图不只是背景。每一张都有可以核对的对手、结果、英雄与个人出场时间。',
       mapImage: getMapVisualImage(topMap),
       mapCards,
       chips: topMap ? [mapTypeCn(topMap.mapType), `${formatNum(topMap.minutes, 1)} 分钟`, topMap.topHero ? heroCn(topMap.topHero.hero) : ''].filter(Boolean) : []
@@ -2343,25 +2685,285 @@ export function buildPlayerStory(db, playerId) {
       chips: keyMemory.chips
     }] : []),
     {
+      kind: 'pause',
+      visualType: 'pause',
+      tone,
+      eyebrow: 'A QUIET FRAME',
+      title: '后来先回来的，可能不是比分',
+      body: topCompanion
+        ? topCompanionGroup.length > 1
+          ? `也许是这些和你同场最多的名字，或是你反复走进的 ${topMap ? mapCn(topMap.mapName) : '某张地图'}。档案不能替你决定什么最值得记住，但能把那段共同出现过的坐标交还给你。`
+          : `也许是 ${topCompanion.title} 这个名字，或是你们共同出现过的 ${topCompanion.sharedMapCount || 0} 张地图。档案不能替你解释那段经历，却能把它准确地指给你看。`
+        : `也许是你出场过的 ${mapCount} 张地图，或是队伍最终写下的 ${finalRankText || '赛季结果'}。我们只保存能够确认的坐标，把它们的意义留给当时的你。`,
+      memoryCoordinates: [
+        {
+          label: 'MOST TOGETHER',
+          value: topCompanionNames || topCompanion?.title || teamShort || 'TEAM',
+          meta: topCompanionTraceText || '同一段赛季记录'
+        },
+        {
+          label: 'RETURNED TO',
+          value: topMap ? mapCn(topMap.mapName) : finalRankText || '赛季归档',
+          meta: topMap ? `${topMap.count} 次记录` : '最终坐标'
+        },
+        {
+          label: 'RECORDED',
+          value: `${mapCount} 张地图`,
+          meta: `${matchCount} 场比赛`
+        }
+      ],
+      watermark: 'REMEMBER',
+      backgroundWords: ['BREATHE', 'TOGETHER', 'ONE MORE MAP', 'REMEMBER']
+    },
+    {
       kind: 'ending',
       tone: pickFinalRankTone(finalRankText),
       eyebrow: 'FRIES CUP ARCHIVE',
-      title: `你和 ${teamShort || '队伍'}，走完了这个赛季`,
+      title: isPlayoffWithdrawal
+        ? `${playerName}，你的个人赛季停在这里`
+        : `你和 ${teamShort || '队伍'}，走完了这个赛季`,
       metric: finalRankText || '',
       metricLabel: finalRankText ? 'FINAL RESULT' : '',
       watermark: getRankWatermark(finalRankText),
-      body: finalRankText
-        ? '成绩是句号，但不是全部。真正被留下来的，是你曾经站在这里，和队伍一起，把一个赛季打完。'
-        : '也许这个赛季没有一个漂亮的句号，但它仍然是一次完整的抵达。',
+      body: isPlayoffWithdrawal
+        ? `${teamShort || teamFullName || '队伍'} 后来把赛季写到了${finalRankText || '归档时刻'}，你的个人记录则停在季后赛之前。两者属于同一支队伍的不同章节。这里保存的，是你离开阵容以前真正参加过的 ${mapCount} 张地图。`
+        : finalRankText
+          ? `最终成绩写作 ${finalRankText}。它是队伍赛季的句号，却不是对你个人的定义。你的 ${mapCount} 张地图、${formatNum(minutes, 1)} 分钟和同场出现过的名字，才让这个名次重新变成一段属于你的旅程。`
+          : '也许这个赛季没有一个漂亮的句号，但它仍然是一次完整的抵达。',
       image: teamShort ? getSafeTeamLogo(teamShort, db) : DEFAULT_TEAM_LOGO,
       storyQuote: {
-        title: '你来过，你战斗过，你被记录了',
-        body: finalRankText ? `最终成绩是 ${finalRankText}。但真正留在这里的，是你参与过这个赛季。` : '这段赛季没有被删除，它被写进了薯条杯的数据中心。'
+        title: isPlayoffWithdrawal ? '结束得更早，不会改写已经发生的部分' : seasonIdentity.quoteTitle || '数字会被归档，经历不会',
+        body: isPlayoffWithdrawal
+          ? `谢谢你把 ${formatNum(minutes, 1)} 分钟留在这里。阵容后来改变，但这些已经发生过的比赛仍然属于你。`
+          : seasonIdentity.quoteBody || `谢谢你把 ${formatNum(minutes, 1)} 分钟留在这里。它们已经结束，也已经成为只属于你们的过去。`
       },
-      chips: ['你来过', '你战斗过', '你被记录了']
+      chips: uniq([teamShort, rosterJourneyChip, finalRankText, ...safeArr(seasonIdentity.chips), '谢谢你把时间留在这里'])
     },
-    getOrganizerMessageScene()
-  ], {
+    getOrganizerMessageScene(db)
+  ]
+
+  const fullRhythmScenes = fullScenes.filter(scene => {
+    if (scene.eyebrow === 'SEASON TAG' || scene.eyebrow === 'MAP MEMORY') return false
+    if (rosterChangeScene && (scene.eyebrow === 'FIRST RECORDED MOMENT' || scene.eyebrow === 'A QUIET FRAME')) return false
+    return true
+  })
+
+  const firstRecordedScene = fullScenes.find(scene => scene.eyebrow === 'FIRST RECORDED MOMENT')
+  const teammateScene = fullScenes.find(scene => scene.eyebrow === 'THE NAMES BESIDE YOU')
+  const organizerScene = getOrganizerMessageScene(db)
+  const firstMatchKey = pickFirstValue(firstMatch?.match_id, firstMatch?.id, firstLog?.matchId)
+  const keyMemoryMatchKey = pickFirstValue(keyMemory?.match?.match_id, keyMemory?.match?.id, keyMemory?.log?.matchId)
+  const hasDistinctKeyMemory = Boolean(
+    keyMemory &&
+    keyMemoryMatchKey &&
+    (!firstMatchKey || normalizeText(keyMemoryMatchKey) !== normalizeText(firstMatchKey))
+  )
+
+  const briefScenes = [
+    {
+      kind: 'cover',
+      tone: pickFinalRankTone(finalRankText),
+      eyebrow: '2026 FRIES CUP',
+      title: `${playerName}，这几张地图也属于你`,
+      subTitle: shouldShowPlayerTag ? playerTag : '',
+      body: `公开数据为你留下了 ${mapCount} 张地图、${formatNum(minutes, 1)} 分钟。它不是一段漫长的主角叙事，但短暂不等于没有发生。`,
+      teamFullName,
+      routeStartDate,
+      routeEndDate,
+      routeFrom,
+      routeTo,
+      firstOpponentName,
+      first_opponent_name: firstOpponentName,
+      lastOpponentName,
+      last_opponent_name: lastOpponentName,
+      firstOpponentRankLine,
+      first_opponent_rank_line: firstOpponentRankLine,
+      seasonRecordText,
+      season_record_text: seasonRecordText,
+      firstMatchLabel,
+      lastMatchLabel,
+      ...playerCoverMeta,
+      chips: [teamShort || '未知队伍', roleCn, rosterJourneyChip, `${mapCount} 张地图`].filter(Boolean),
+      image: teamShort ? getSafeTeamLogo(teamShort, db) : DEFAULT_TEAM_LOGO,
+      storyQuote: {
+        title: '我们不会把短暂写成传奇',
+        body: '只把确实发生过的那一点时间，好好地还给你。'
+      }
+    },
+    rosterChangeScene ? null : firstRecordedScene,
+    rosterChangeScene,
+    {
+      kind: 'metric',
+      tone,
+      eyebrow: 'A SHORT TRACE',
+      title: `公开数据记住了 ${mapCount} 张地图`,
+      metric: String(mapCount),
+      metricLabel: 'MAPS RECORDED',
+      body: `出场不多，所以每一张都更具体。${topMap ? `${mapCn(topMap.mapName)}、${topHero ? heroCn(topHero.hero) : roleCn}，以及那场已经结束的比赛，构成了你在这届${seasonProfile.eventNoun}里被看见的一小段。` : '它们未必能概括你的全部，却足够证明这段时间真实存在。'}`,
+      statLines: [
+        { label: '比赛场次', value: matchCount },
+        { label: '出场时间', value: formatNum(minutes, 1), sub: '分钟' },
+        { label: '队伍', value: teamShort || '-' }
+      ],
+      mapCards,
+      storyQuote: {
+        title: '少，不代表轻',
+        body: '有些赛季用很多场比赛被记住，有些只留下一个清晰切片。两者都曾经发生。'
+      }
+    },
+    teammateScene,
+    {
+      kind: 'spotlight',
+      tone,
+      eyebrow: 'ONE CLEAR FRAME',
+      title: topHero && topMap
+        ? `${heroCn(topHero.hero)} 和 ${mapCn(topMap.mapName)}，记住了你`
+        : '公开数据留下了你的一个片段',
+      body: topHero && topMap
+        ? `在这段不长的出场里，你最常使用 ${heroCn(topHero.hero)}，地图是 ${mapCn(topMap.mapName)}。我们不把它放大成整季定义，只把这一帧留在这里。`
+        : '这份记录不足以概括你的整个赛季，所以我们只保存能确认的部分。',
+      image: topHero ? getHeroImage(topHero.hero, topHero.role || role) : '',
+      images: getHeroGalleryItems(heroPool, role),
+      chips: [topHero ? heroCn(topHero.hero) : '', topMap ? mapCn(topMap.mapName) : '', `${formatNum(minutes, 1)} 分钟`].filter(Boolean)
+    },
+    ...(hasDistinctKeyMemory ? [{
+      kind: 'narrative',
+      tone,
+      eyebrow: keyMemory.title.includes('差') || keyMemory.title.includes('最后') ? 'REGRET / KEY MATCH' : 'KEY MATCH MEMORY',
+      title: keyMemory.title,
+      body: keyMemory.body,
+      matchCard: keyMemory.matchCard,
+      chips: keyMemory.chips
+    }] : []),
+    ...(!rosterChangeScene && !hasDistinctKeyMemory ? [{
+      kind: 'pause',
+      visualType: 'pause',
+      tone,
+      eyebrow: 'A QUIET FRAME',
+      title: '后来先回来的，可能不是比分',
+      body: topCompanion
+        ? topCompanionGroup.length > 1
+          ? `也许是这些和你同场最多的名字，或是你反复走进的 ${topMap ? mapCn(topMap.mapName) : '某张地图'}。档案不能替你决定什么最值得记住，但能把那段共同出现过的坐标交还给你。`
+          : `也许是 ${topCompanion.title} 这个名字，或是你们共同出现过的 ${topCompanion.sharedMapCount || 0} 张地图。档案不能替你解释那段经历，却能把它准确地指给你看。`
+        : `也许是你出场过的 ${mapCount} 张地图，或是队伍最终写下的 ${finalRankText || '赛季结果'}。我们只保存能够确认的坐标，把它们的意义留给当时的你。`,
+      memoryCoordinates: [
+        {
+          label: 'MOST TOGETHER',
+          value: topCompanionNames || topCompanion?.title || teamShort || 'TEAM',
+          meta: topCompanionTraceText || '同一段赛季记录'
+        },
+        {
+          label: 'RETURNED TO',
+          value: topMap ? mapCn(topMap.mapName) : finalRankText || '赛季归档',
+          meta: topMap ? `${topMap.count} 次记录` : '最终坐标'
+        },
+        {
+          label: 'RECORDED',
+          value: `${mapCount} 张地图`,
+          meta: `${matchCount} 场比赛`
+        }
+      ],
+      watermark: 'REMEMBER',
+      backgroundWords: ['BREATHE', 'TOGETHER', 'ONE MORE MAP', 'REMEMBER']
+    }] : []),
+    {
+      kind: 'ending',
+      tone: pickFinalRankTone(finalRankText),
+      eyebrow: 'FRIES CUP ARCHIVE',
+      title: isPlayoffWithdrawal ? `${playerName}，你的个人记录停在这里` : '这几张地图，也属于你的赛季',
+      metric: finalRankText || '',
+      metricLabel: finalRankText ? 'TEAM FINAL RESULT' : '',
+      watermark: getRankWatermark(finalRankText),
+      body: isPlayoffWithdrawal
+        ? `${teamShort || '你的队伍'} 后来走到了${finalRankText || '赛季归档'}，你的个人记录停在季后赛之前。这 ${mapCount} 张地图不需要被放大，也不会被后来的阵容变化抹去。`
+        : `${teamShort || '你的队伍'} 最终走到了${finalRankText || '赛季归档'}。你的公开出场很短，它不代表你为队伍做过的全部，也不需要被包装成夸张的高光。它只需要被诚实地记住。`,
+      image: teamShort ? getSafeTeamLogo(teamShort, db) : DEFAULT_TEAM_LOGO,
+      storyQuote: {
+        title: '短暂，不等于不存在',
+        body: '当你以后重新看见这些名字和地图，希望你还认得当时的自己。'
+      },
+      chips: [teamShort, rosterJourneyChip, finalRankText, '这几张地图属于你'].filter(Boolean)
+    },
+    organizerScene
+  ].filter(Boolean)
+
+  const rosterScenes = [
+    {
+      kind: 'cover',
+      tone: pickFinalRankTone(finalRankText),
+      eyebrow: '2026 FRIES CUP',
+      title: `${playerName}，这一页也为你留下`,
+      subTitle: shouldShowPlayerTag ? playerTag : '',
+      body: `不是每一段参与，都会被地图和数字完整照亮。公开数据没能替你留下足够的出场片段，但在 ${teamShort || teamFullName || '队伍'} 的赛季名单里，我们仍然找到了你的名字。`,
+      teamFullName,
+      routeStartDate,
+      routeEndDate,
+      routeFrom,
+      routeTo,
+      seasonRecordText,
+      season_record_text: seasonRecordText,
+      ...playerCoverMeta,
+      chips: [teamShort || '未知队伍', roleCn, rosterJourneyChip, '阵容留名'].filter(Boolean),
+      image: teamShort ? getSafeTeamLogo(teamShort, db) : DEFAULT_TEAM_LOGO,
+      storyQuote: {
+        title: '没有出场数据，也不等于名单上没有你的名字',
+        body: '这一页只记录最终名单能够证明的部分，其余内容留给你自己的记忆。'
+      }
+    },
+    ...(rosterChangeScene ? [rosterChangeScene] : []),
+    {
+      kind: 'narrative',
+      visualType: 'dataImpact',
+      tone,
+      eyebrow: 'BEYOND THE NUMBERS',
+      title: '数据没有记全的，也是真实发生过的',
+      body: `最终名单没有告诉我们你在镜头之外做过什么，所以这一页不替你补写。它只确认一件事：${playerName}，你以 ${roleCn} 的身份出现在 ${teamShort || teamFullName || '这支队伍'} 的赛季名单里。`,
+      statLines: [
+        { label: '赛季位置', value: '阵容中的一员', sub: 'ROSTERED' },
+        { label: '队伍', value: teamShort || '-', sub: teamFullName || '' },
+        { label: '共同抵达', value: finalRankText || '-', sub: 'TEAM RESULT' }
+      ],
+      chips: ['名字被留下', '故事由你来讲']
+    },
+    ...(teammateCards.length ? [{
+      kind: 'narrative',
+      visualType: 'roster',
+      tone,
+      eyebrow: 'NAMES ON THE SAME ROSTER',
+      title: '至少这张名单，还记得你们在一起',
+      body: `公开数据没能替你重放这个赛季，但 ${teamShort || '这支队伍'} 的阵容名单仍然把这些名字放在你的身边。它无法说清你们之间发生过什么，却记得你们曾属于同一支队伍。`,
+      rosterTitle: `${teamShort || 'TEAM'} / ROSTER MEMORY`,
+      rosterCards: teammateCards,
+      chips: teammateCards.slice(0, 4).map(item => item.title)
+    }] : []),
+    {
+      kind: 'ending',
+      tone: pickFinalRankTone(finalRankText),
+      eyebrow: 'FRIES CUP ARCHIVE',
+      title: isPlayoffWithdrawal ? `${playerName}，你的个人记录停在这里` : `${teamShort || '队伍'} 的这一页，也留给你`,
+      metric: finalRankText || '',
+      metricLabel: finalRankText ? 'TEAM FINAL RESULT' : '',
+      watermark: getRankWatermark(finalRankText),
+      body: isPlayoffWithdrawal
+        ? `${teamShort || '你的队伍'} 后来走到了${finalRankText || '归档时刻'}，你的个人阵容记录则停在季后赛之前。公开数据没有留下地图，但名单仍然确认：在赛季较早的章节里，这支队伍有过你的名字。`
+        : `${teamShort || '你的队伍'} 最终走到了${finalRankText || '归档时刻'}。这是队伍共同抵达的位置，不是对你个人经历的评语。数据留下了空白，但这片空白有一个名字，也有只属于你的记忆。`,
+      image: teamShort ? getSafeTeamLogo(teamShort, db) : DEFAULT_TEAM_LOGO,
+      storyQuote: {
+        title: '没有被数据拍到，也值得被温柔地留下',
+        body: '谢谢你曾经在这支队伍里。愿你看到这里时，想起的是属于你自己的那一部分。'
+      },
+      chips: [teamShort, rosterJourneyChip, finalRankText, '谢谢你来过'].filter(Boolean)
+    },
+    organizerScene
+  ]
+
+  const selectedScenes = coverageLevel === 'roster'
+    ? rosterScenes
+    : coverageLevel === 'brief'
+      ? briefScenes
+      : fullRhythmScenes
+
+  return withVisualMeta(adaptReviewScenes(selectedScenes, db), {
     storyType: 'player',
     cardBadge: 'PLAYER OFFICIAL CARD',
     coverWatermark: playerName,
@@ -2369,13 +2971,173 @@ export function buildPlayerStory(db, playerId) {
   })
 }
 
-function getPerspectiveCopy(as) {
+export function buildPersonStory(db, identityKey) {
+  const portfolio = getReviewIdentityPortfolio(db, identityKey)
+  if (!portfolio) return []
+
+  if (!portfolio.isMultiple) {
+    const only = portfolio.entries[0]
+    if (only?.identityType === 'player' && only?.playerId) return buildPlayerStory(db, only.playerId)
+    if ((only?.identityType === 'coach' || only?.identityType === 'manager') && only?.teamId) {
+      return buildTeamStory(db, only.teamId, only.identityType, portfolio.battleTag)
+    }
+  }
+
+  const entries = [...portfolio.entries].sort((a, b) => {
+    const stageA = String(a?.joinStage || '').toUpperCase() === 'PLAYOFFS' ? 1 : 0
+    const stageB = String(b?.joinStage || '').toUpperCase() === 'PLAYOFFS' ? 1 : 0
+    if (stageA !== stageB) return stageA - stageB
+    return String(a?.teamName || '').localeCompare(String(b?.teamName || ''), 'zh-Hans-CN')
+  })
+  const primary = entries.find(entry => entry.identityType === 'player') || entries[0]
+  const hasManager = entries.some(entry => entry.identityType === 'manager')
+  const hasCoach = entries.some(entry => entry.identityType === 'coach')
+  const posterCardKind = hasManager && hasCoach ? 'managerCoach' : hasManager ? 'manager' : hasCoach ? 'coach' : 'player'
+  const teamCount = portfolio.teamNames.length
+  const rankTexts = uniq(entries.map(entry => entry.finalRankText))
+  const finalRankText = rankTexts[0] || ''
+  const identityCards = entries.map(entry => {
+    const isPlayoffJoin = String(entry.joinStage || '').toUpperCase() === 'PLAYOFFS'
+    const isWithdrawal = String(entry.rosterStatus || '').toUpperCase() === 'PLAYOFF_WITHDRAWAL'
+    const detail = entry.identityType === 'player'
+      ? `${entry.mapsPlayed || 0} 张地图${entry.minutes ? ` / ${formatNum(entry.minutes, 1)} 分钟` : ''}`
+      : entry.teamMatches
+        ? `队伍赛季 ${entry.teamMatches} 场`
+        : '身份记录'
+
+    return {
+      title: entry.teamShortName || entry.teamName,
+      value: getReviewIdentityLabel(entry),
+      meta: isPlayoffJoin ? '季后赛引入' : isWithdrawal ? '记录截至常规阶段' : '常规赛身份',
+      note: detail,
+      image: getSafeTeamLogo(entry.teamShortName || entry.teamName, db)
+    }
+  })
+  const chapterScenes = entries.map((entry, index) => {
+    const label = getReviewIdentityLabel(entry)
+    const teamLabel = entry.teamShortName || entry.teamName || '这支队伍'
+    const isPlayer = entry.identityType === 'player'
+    const isPlayoffJoin = String(entry.joinStage || '').toUpperCase() === 'PLAYOFFS'
+    const isWithdrawal = String(entry.rosterStatus || '').toUpperCase() === 'PLAYOFF_WITHDRAWAL'
+    const chapterTitle = isPlayoffJoin
+      ? `${teamLabel} 的季后赛名单，写下了你的${label}身份`
+      : isWithdrawal
+        ? `在 ${teamLabel}，你的记录停在季后赛之前`
+        : `在 ${teamLabel}，你以${label}的身份被记录`
+    const body = isPlayer
+      ? isPlayoffJoin
+        ? `这段记录从季后赛开始，共留下 ${entry.mapsPlayed || 0} 张地图${entry.minutes ? `、${formatNum(entry.minutes, 1)} 分钟` : ''}。它与更早的身份属于同一个人，却拥有不同的队伍和起点。`
+        : isWithdrawal
+          ? `季后赛阵容变更以前，你在这里留下了 ${entry.mapsPlayed || 0} 张地图${entry.minutes ? `、${formatNum(entry.minutes, 1)} 分钟` : ''}。队伍后来的成绩没有被写成你的个人参与，但此前发生过的部分仍然完整属于你。`
+          : `公开数据在这里留下了 ${entry.mapsPlayed || 0} 张地图${entry.minutes ? `、${formatNum(entry.minutes, 1)} 分钟` : ''}。这是同一个战网ID在本赛季留下的第 ${index + 1} 个身份坐标。`
+      : isPlayoffJoin
+        ? `队伍完成常规阶段后，最终名单才把 ${portfolio.battleTag} 写进教练一栏。此前的赛程属于队伍如何抵达季后赛；从这里开始，这个教练席位才与你有关。`
+        : `${portfolio.battleTag} 同时被记录在 ${teamLabel} 的${label}一栏。比赛数据属于场上的选手，身份档案则保存了你在这支队伍中的位置。`
+
+    return {
+      kind: 'narrative',
+      tone: 'gold',
+      eyebrow: 'IDENTITY CHAPTER',
+      title: chapterTitle,
+      body,
+      statLines: [
+        { label: '队伍', value: teamLabel, sub: entry.teamName || '' },
+        { label: '身份', value: label, sub: entry.identityType.toUpperCase() },
+        isPlayer
+          ? { label: '地图记录', value: entry.mapsPlayed || 0, sub: 'MAPS' }
+          : { label: '加入阶段', value: isPlayoffJoin ? '季后赛' : '常规阶段', sub: isPlayoffJoin ? 'PLAYOFFS' : 'SEASON' },
+        { label: '队伍成绩', value: entry.finalRankText || '-', sub: 'TEAM RESULT' }
+      ],
+      storyQuote: {
+        title: isPlayoffJoin ? '同一个名字，也可以在赛季后半段拥有新的起点' : '身份不同，留下记录的方式也不同',
+        body: isPlayer
+          ? '地图记录保存你站进比赛的部分；队伍与阶段，则说明这段出场发生在旅程的哪里。'
+          : '你没有被写进选手数据，但最终名单仍然给这个身份留下了明确署名。'
+      },
+      chips: [teamLabel, label, isPlayoffJoin ? '季后赛引入' : null, isWithdrawal ? '季后赛阵容变更' : null].filter(Boolean)
+    }
+  })
+
+  const scenes = [
+    {
+      kind: 'cover',
+      tone: pickFinalRankTone(finalRankText),
+      eyebrow: 'IDENTITY ARCHIVE',
+      posterCardKind,
+      title: `${portfolio.displayName}，你的赛季不只发生在一个位置`,
+      subTitle: portfolio.battleTag,
+      body: `最终名单把同一个战网ID写进了 ${entries.length} 条身份记录，横跨 ${teamCount} 支队伍。它们不是需要被删除的重复项，而是你的 2026 确实拥有过的不同章节。`,
+      issuedTo: portfolio.battleTag,
+      issued_to: portfolio.battleTag,
+      battleTag: portfolio.battleTag,
+      callsign: portfolio.displayName,
+      identityClass: portfolio.hasMultipleRoles ? '多重身份' : '跨队伍选手',
+      identity_class: portfolio.hasMultipleRoles ? '多重身份' : '跨队伍选手',
+      teamFullName: portfolio.teamNames.join(' / '),
+      teamShortName: uniq(entries.map(entry => entry.teamShortName || entry.teamName)).join(' / '),
+      routeTo: finalRankText,
+      image: getSafeTeamLogo(primary?.teamShortName || primary?.teamName, db),
+      chips: [portfolio.hasMultipleRoles ? '多重身份' : '跨队伍', `${entries.length} 条记录`, `${teamCount} 支队伍`],
+      storyQuote: {
+        title: '我们不会把你拆成几个不同的人',
+        body: '每一种身份分别保留事实，再把它们放回同一个人的赛季里。'
+      }
+    },
+    {
+      kind: 'narrative',
+      visualType: 'roster',
+      tone: 'gold',
+      eyebrow: 'MORE THAN ONE PLACE',
+      title: `同一个名字，在赛季里留下了 ${entries.length} 个坐标`,
+      body: portfolio.hasMultipleRoles
+        ? '选手、教练或经理看到的是不同的比赛切面。最终名单把这些身份分开记录，而这份回顾把它们重新放回同一段人生经历。'
+        : '队伍发生了变化，身份仍由同一个战网ID连接。每一段记录都有自己的起点、地图和队友，它们合起来才是完整的赛季。',
+      rosterTitle: 'SEASON IDENTITY MAP',
+      rosterCards: identityCards,
+      chips: portfolio.teamNames
+    },
+    ...chapterScenes,
+    {
+      kind: 'ending',
+      tone: pickFinalRankTone(finalRankText),
+      eyebrow: 'ONE PERSON, ONE SEASON',
+      title: `${portfolio.displayName}，这些身份共同组成了你的 2026`,
+      body: `档案需要把队伍和职责分别写清，但回忆不必把一个人拆开。${portfolio.teamNames.join('、')}，${entries.map(getReviewIdentityLabel).join('、')}——这些名称指向的，始终是同一个曾经来过这里的你。`,
+      image: getSafeTeamLogo(primary?.teamShortName || primary?.teamName, db),
+      storyQuote: {
+        title: '身份可以有很多个，旅程只有这一段',
+        body: '谢谢你用不止一种方式，把自己的名字留在这届常规赛里。'
+      },
+      chips: [...portfolio.teamNames, ...uniq(entries.map(getReviewIdentityLabel)), 'SEASON REVIEW COMPLETE']
+    },
+    getOrganizerMessageScene(db)
+  ]
+
+  return withVisualMeta(adaptReviewScenes(scenes, db), {
+    storyType: 'player',
+    cardBadge: 'SEASON IDENTITY ARCHIVE',
+    coverWatermark: portfolio.displayName,
+    endWatermark: 'ONE PERSON'
+  })
+}
+
+function getPerspectiveCopy(as, identity = {}) {
+  const isPlayoffIntroduction = String(identity?.joinStage || '').toUpperCase() === 'PLAYOFFS' || String(identity?.rosterStatus || '').toUpperCase() === 'PLAYOFF_INTRODUCTION'
+
+  if (isPlayoffIntroduction && as === 'coach') {
+    return '队伍走完常规阶段后，季后赛名单才第一次把你的名字写进教练一栏。你没有参与这段旅程的开头，却在距离最终结果最近的章节拥有了自己的位置。'
+  }
+
   if (as === 'manager') {
-    return '这个赛季，你做的不只是报名、沟通和确认赛程。你把一支队伍带进了赛场，也陪他们走完了属于自己的旅程。'
+    return '最终名单记住了你的经理身份，公开赛程记住了队伍走过的比赛。这份回顾把两组记录放在一起：它无法复原镜头之外的全部工作，但不会让你的名字只停在报名表的一行。'
   }
 
   if (as === 'coach') {
-    return '这个赛季，你参与的是那些不一定会出现在数据里的部分：准备、调整、复盘、沟通，以及一次次重新开始。'
+    return '比分表记录队伍的胜负，最终名单记录你的教练身份。这份回顾不替你虚构没有进入公开数据的过程，只把可以确认的比赛、阵容和最终结果重新放回你的名字旁边。'
+  }
+
+  if (as === 'manager-coach') {
+    return '最终名单在同一个名字旁记录了经理与教练两个身份，公开赛程则保存了队伍真正完成的比赛。这份回顾把它们保留为两个章节，也确认它们属于同一个人的 2026。'
   }
 
   return '这个赛季，这支队伍把自己的名字写进了薯条杯学院赛。'
@@ -2566,13 +3328,50 @@ function pickIdentityDisplayFromRows(rows) {
   return ''
 }
 
+function getIdentityRowValues(row) {
+  if (row === undefined || row === null || row === '') return []
+  if (typeof row !== 'object') return [String(row)]
+
+  return uniq([
+    getIdentityCandidateText(row),
+    getIdentityDisplayText(row),
+    row.battle_tag,
+    row.battleTag,
+    row.battletag,
+    row.display_name,
+    row.displayName,
+    row.nickname,
+    row.name
+  ])
+}
+
+function selectIdentityRows(rows, identityKey) {
+  const requested = normalizeText(identityKey)
+  if (!requested) return rows
+
+  const exact = safeArr(rows).filter(row => (
+    getIdentityRowValues(row).some(value => normalizeText(value) === requested)
+  ))
+
+  if (exact.length) return exact
+
+  const matched = safeArr(rows).filter(row => (
+    getIdentityRowValues(row).some(value => {
+      const normalized = normalizeText(value)
+      return normalized.includes(requested) || requested.includes(normalized)
+    })
+  ))
+
+  return matched.length ? matched : rows
+}
+
 function cleanIdentityCallsign(value, fallback = '') {
   const text = String(value || '').trim()
   if (!text) return fallback
   return getPublicName(text, text) || fallback
 }
 
-function getTeamRoleIdentity(team, review, as, fallbackShort = '', fallbackName = '') {
+function getTeamRoleIdentity(team, review, as, fallbackShort = '', fallbackName = '', identityKey = '') {
   const sources = [
     review,
     review?.staff,
@@ -2588,8 +3387,8 @@ function getTeamRoleIdentity(team, review, as, fallbackShort = '', fallbackName 
     team?.teamStaff
   ].filter(Boolean)
 
-  const managerRows = collectRoleIdentityRows(sources, 'manager')
-  const coachRows = collectRoleIdentityRows(sources, 'coach')
+  const managerRows = selectIdentityRows(collectRoleIdentityRows(sources, 'manager'), identityKey)
+  const coachRows = selectIdentityRows(collectRoleIdentityRows(sources, 'coach'), identityKey)
 
   const managerKeys = [
     'manager_battle_tag',
@@ -2741,6 +3540,11 @@ function getTeamRoleIdentity(team, review, as, fallbackShort = '', fallbackName 
   issuedTo = cleanBattleTag(issuedTo) || fallbackShort || fallbackName || ''
   const callsign = cleanIdentityCallsign(explicitCallsign, getPublicName(issuedTo, fallbackShort || fallbackName || issuedTo))
   const classLabel = getPerspectiveClassLabel(as)
+  const selectedRow = as === 'coach'
+    ? coachRows[0]
+    : as === 'manager'
+      ? managerRows[0]
+      : managerRows[0] || coachRows[0]
 
   return {
     issuedTo,
@@ -2749,7 +3553,13 @@ function getTeamRoleIdentity(team, review, as, fallbackShort = '', fallbackName 
     classLabel,
     managerTag,
     coachTag,
-    dualTag
+    managerCallsign,
+    coachCallsign,
+    dualTag,
+    joinStage: pickFirstValue(selectedRow?.join_stage, selectedRow?.joinStage),
+    rosterStatus: pickFirstValue(selectedRow?.roster_status, selectedRow?.rosterStatus),
+    status: pickFirstValue(selectedRow?.status),
+    identityKey: identityKey || issuedTo
   }
 }
 function isManagerPerspective(as) {
@@ -2766,32 +3576,36 @@ function isManagerCoachPerspective(as) {
 
 function getFirstStepBody(as, firstMatch, firstOpponentRankLine) {
   if (!firstMatch) {
-    return '有些赛季不是从一场比赛开始的，而是从报名、确认和等待开始的。'
+    return '现有公开数据没有提供一场可以确认的起点，因此这一页不替这段赛季补写日期。'
   }
 
   const base = `那一场发生在 ${getScheduledText(firstMatch) || '赛程记录中'}。`
 
   if (as === 'coach') {
-    return `${base} 对教练来说，第一场不是简单的开始，而是第一次看到准备、判断和队伍执行真正接受比赛检验。${firstOpponentRankLine ? `后来回看，${firstOpponentRankLine}，这也让这场开局多了一层记忆。` : ''}`
+    return `${base} 这是赛程第一次把你的教练身份与一场具体比赛放在同一条时间线上。${firstOpponentRankLine ? `后来回看，${firstOpponentRankLine}，这也让这个起点拥有了更明确的赛季坐标。` : ''}`
   }
 
   if (as === 'manager') {
-    return `${base} 对经理来说，第一场不只是开赛，而是此前所有报名、排期、沟通终于落到了现实里。${firstOpponentRankLine ? `后来回看，${firstOpponentRankLine}，这也让这场开局多了一层记忆。` : ''}`
+    return `${base} 从这一天起，最终名单里的经理身份与队伍的实际赛程第一次重合。${firstOpponentRankLine ? `后来回看，${firstOpponentRankLine}，这也让这个起点拥有了更明确的赛季坐标。` : ''}`
   }
 
   return `${base} 从这里开始，这支队伍真正进入了赛场。${firstOpponentRankLine ? firstOpponentRankLine : ''}`
 }
 
-function getRosterBody(as) {
+function getRosterBody(as, teamLabel = '这支队伍') {
+  if (as === 'team') {
+    return `最终名单把这些名字列在 ${teamLabel} 的阵容中，公开比赛数据再为他们留下位置、地图和英雄记录。这里不替队伍补写职责细节，只保存可以核对的名单与出场连接。`
+  }
+
   if (as === 'coach') {
-    return '教练看到的，往往不是名单，而是每个位置如何被安排，每个选手如何进入体系，以及每一场之后还能怎么调整。'
+    return `最终名单把这些名字列在 ${teamLabel} 的阵容中，公开比赛数据再为他们留下位置、地图和英雄记录。它不说明教练如何安排，只确认这就是与你的教练署名放在同一页的阵容。`
   }
 
   if (as === 'manager') {
-    return '经理看到的，往往不只是单个选手的数据，而是这些人如何被组织起来，如何确认时间，如何一起走进赛场。'
+    return `最终名单把这些名字列在 ${teamLabel} 的阵容中，公开比赛数据再为他们留下位置、地图和英雄记录。它不复原具体管理过程，只确认这些名字与经理署名共同组成了队伍档案。`
   }
 
-  return '一支队伍不是一个缩写。它由这些名字、位置、英雄和出场记录组成。'
+  return `最终名单同时确认你的两个身份，也把这些名字列在 ${teamLabel} 的阵容中。这里不补写职责细节，只按公开记录保存身份、选手与出场数据之间的连接。`
 }
 
 function getStageTimeline(stageEntries) {
@@ -2818,29 +3632,42 @@ function getStageBars(stageEntries) {
   }))
 }
 
-export function buildTeamStory(db, teamId, as = 'team') {
+export function buildTeamStory(db, teamId, as = 'team', identityKey = '') {
   const team = getTeamById(db, teamId)
   const review = getTeamReviewById(db, teamId)
   const players = getTeamPlayers(db, teamId)
   const matches = getTeamMatches(db, teamId)
   const record = review?.season_record || {}
+  const seasonProfile = getReviewSeasonProfile(db)
 
   if (!team && !review) return []
 
   const name = getTeamFullName(team, review)
   const short = getTeamShortName(team, review)
   const finalRankText = review?.final_rank_text || team?.final_rank_text || ''
-  const perspectiveIdentity = getTeamRoleIdentity(team, review, as, short, name)
+  const perspectiveIdentity = getTeamRoleIdentity(team, review, as, short, name, identityKey)
+  const isPerspectivePlayoffIntroduction = String(perspectiveIdentity.joinStage || '').toUpperCase() === 'PLAYOFFS' || String(perspectiveIdentity.rosterStatus || '').toUpperCase() === 'PLAYOFF_INTRODUCTION'
+  const hasPersonalIdentity = Boolean(
+    perspectiveIdentity.callsign &&
+    normalizeText(perspectiveIdentity.callsign) !== normalizeText(short) &&
+    normalizeText(perspectiveIdentity.callsign) !== normalizeText(name)
+  )
+  const perspectiveTitle = hasPersonalIdentity
+    ? `${perspectiveIdentity.callsign}，这是你陪 ${short || name} 走过的赛季`
+    : `${short || name} 的赛季旅程`
   const stageRecord = review?.stage_record || {}
   const stageEntries = Object.entries(stageRecord)
   const teamCandidates = getTeamCandidateValues(teamId, team, review)
 
   const sortedMatches = sortMatches(matches)
-  const firstMatch = sortedMatches[0]
-  const lastMatch = sortedMatches[sortedMatches.length - 1]
+  const playedMatches = sortedMatches.filter(match => !isReviewByeMatch(match))
+  const firstTeamMatch = playedMatches[0] || sortedMatches[0]
+  const firstPlayoffMatch = playedMatches.find(match => String(match?.stage || '').toUpperCase().includes('PLAYOFF'))
+  const firstMatch = isPerspectivePlayoffIntroduction ? firstPlayoffMatch || firstTeamMatch : firstTeamMatch
+  const lastMatch = playedMatches[playedMatches.length - 1] || sortedMatches[sortedMatches.length - 1]
   const routeStartDate = parseRouteDateText(getScheduledText(firstMatch))?.display || ''
   const routeEndDate = parseRouteDateText(getScheduledText(lastMatch))?.display || routeStartDate
-  const routeFrom = '2026 薯条杯学院赛'
+  const routeFrom = seasonProfile.eventTitle
   const routeTo = finalRankText || '赛季归档'
   const firstMatchLabel = firstMatch ? getMatchDisplayName(firstMatch) : ''
   const lastMatchLabel = lastMatch ? getMatchDisplayName(lastMatch) : ''
@@ -2865,12 +3692,12 @@ export function buildTeamStory(db, teamId, as = 'team') {
 
   const keyMatches = review?.key_matches || {}
   const keyMatchId = keyMatches.championship_match || keyMatches.final_match || keyMatches.hardest_match || keyMatches.first_match
-  const resolvedKeyMatch = keyMatchId ? getMatchById(db, keyMatchId) : null
-  const keyMatch = resolvedKeyMatch || getTeamKeyMatch(sortedMatches, teamCandidates) || lastMatch || firstMatch
+  const resolvedKeyMatch = keyMatchId ? resolveMatch(db, keyMatchId) : null
+  const keyMatch = resolvedKeyMatch || getTeamKeyMatch(playedMatches, teamCandidates) || lastMatch || firstMatch
   const keyOpponent = keyMatch ? getOpponentByCandidates(keyMatch, teamCandidates) : null
   const keyMatchCard = keyMatch ? buildMatchCard(db, keyMatch, teamCandidates, {
     title: resolvedKeyMatch ? '队伍关键比赛' : '代表这段旅程的一场比赛',
-    note: resolvedKeyMatch ? '这场比赛适合作为这支队伍赛季的切片。' : '系统没有找到指定关键战，因此选取了这支队伍赛季中最有代表性的一场。'
+    note: resolvedKeyMatch ? '这场比赛适合作为这支队伍赛季的切片。' : '如果要从漫长赛程里留下一页，这一场最接近你们共同走过的样子。'
   }) : null
 
   const rankStory = getRankStory(finalRankText)
@@ -2888,7 +3715,7 @@ export function buildTeamStory(db, teamId, as = 'team') {
   })
   const playoffTeamCards = getPlayoffTeamCards(db)
   const seasonOpponent = isManagerPerspective(as)
-    ? getTeamSeasonOpponent(db, sortedMatches, teamCandidates, keyMatch, lastMatch)
+    ? getTeamSeasonOpponent(db, playedMatches, teamCandidates, keyMatch, lastMatch)
     : null
 
   const seasonOpponentRank = getRankNumber(seasonOpponent?.rankText)
@@ -2912,19 +3739,40 @@ export function buildTeamStory(db, teamId, as = 'team') {
     : null
 
   const teamLogs = safeArr(players).flatMap(player => getValidLogs(player))
-  const teamMapPool = getMapPool(teamLogs)
-  const teamMapCards = getMapCards(teamMapPool)
-  const teamMapTypeBars = getMapTypeDistribution(teamLogs)
+  const teamMapPool = getTeamReviewMapPool(review, teamLogs)
+  const teamMapCards = getMapCards(teamMapPool, { minutesPrefix: '队员累计' })
+  const teamMapTypeBars = getTeamReviewMapTypeDistribution(review, teamLogs)
   const topTeamMap = teamMapPool[0] || null
-
-  return withVisualMeta([
+  const perspectiveRosterScene = isPerspectivePlayoffIntroduction
+    ? {
+        kind: 'narrative',
+        tone: 'gold',
+        eyebrow: 'POSTSEASON ROSTER',
+        title: '你的教练记录，从季后赛开始',
+        body: `${short || name || '这支队伍'} 完成常规阶段后，季后赛名单第一次在教练一栏写下 ${perspectiveIdentity.callsign || perspectiveIdentity.issuedTo}。此前的比赛解释了队伍如何抵达这里；从 ${firstMatch ? getMatchDisplayName(firstMatch) : '季后赛首场'} 开始，才是这份教练身份记录真正属于你的部分。`,
+        matchCard: firstMatchCard,
+        statLines: [
+          { label: '加入阶段', value: '季后赛', sub: 'PLAYOFFS' },
+          { label: '队伍赛季', value: `${played} 场`, sub: 'TEAM RECORD' },
+          { label: '最终成绩', value: finalRankText || '-', sub: 'FINAL RESULT' }
+        ],
+        storyQuote: {
+          title: '你没有参与这段路的开头，却在最后一章留下了署名',
+          body: '常规阶段属于队伍更早的旅程；季后赛名单更新以后，这个教练席位才开始与你有关。'
+        },
+        chips: ['季后赛引入', '教练', finalRankText].filter(Boolean)
+      }
+    : null
+  const fullScenes = [
     {
       kind: 'cover',
       tone: pickFinalRankTone(finalRankText),
       eyebrow: 'TEAM SEASON REVIEW',
-      title: `${short || name} 的赛季旅程`,
-      body: getPerspectiveCopy(as),
+      title: perspectiveTitle,
+      body: getPerspectiveCopy(as, perspectiveIdentity),
       image: short ? getSafeTeamLogo(short, db) : DEFAULT_TEAM_LOGO,
+      visualFallback: short || name || 'TEAM',
+      visualFallbackLabel: 'TEAM ARCHIVE',
       teamFullName: name,
       teamShortName: short,
       team_short_name: short,
@@ -2936,8 +3784,13 @@ export function buildTeamStory(db, teamId, as = 'team') {
       identity_class: perspectiveIdentity.classLabel,
       managerTag: perspectiveIdentity.managerTag,
       coachTag: perspectiveIdentity.coachTag,
+      managerCallsign: perspectiveIdentity.managerCallsign,
+      coachCallsign: perspectiveIdentity.coachCallsign,
       routeStartDate,
       routeEndDate,
+      ...getRecordedMatchMeta(firstMatch, lastMatch, isPerspectivePlayoffIntroduction
+        ? playedMatches.filter(match => String(match?.stage || '').toUpperCase().includes('PLAYOFF'))
+        : playedMatches),
       routeFrom,
       routeTo,
       firstMatchLabel,
@@ -2950,10 +3803,24 @@ export function buildTeamStory(db, teamId, as = 'team') {
       last_opponent_name: lastOpponentName,
       seasonRecordText,
       season_record_text: seasonRecordText,
-      chips: [name, finalRankText, getPerspectiveChip(as)].filter(Boolean),
+      chips: [name, finalRankText, getPerspectiveChip(as), isPerspectivePlayoffIntroduction ? '季后赛引入' : null].filter(Boolean),
       storyQuote: {
-        title: as === 'coach' ? '你参与的是队伍如何被调整' : '你见证的是队伍如何被带进赛场',
-        body: getPerspectiveCopy(as)
+        title: isPerspectivePlayoffIntroduction
+          ? '你的教练署名，从季后赛名单这一页开始'
+          : as === 'team'
+            ? '最终名单把每一个名字留在队伍档案里'
+          : as === 'coach'
+            ? '最终名单把你的教练身份留在队伍旁边'
+          : as === 'manager-coach'
+            ? '同一个名字，在最终名单里留下了两个身份'
+            : '最终名单把你的经理身份留在队伍旁边',
+        body: isPerspectivePlayoffIntroduction
+          ? `最终名单只从季后赛这一章确认你的${getPerspectiveClassLabel(as)}身份；${short || name} 更早的常规阶段，不会被写成你的个人经历。`
+          : as === 'team'
+            ? `${short || name} 的 ${played} 场赛程记录、${mapsPlayed} 张地图与最终名单，共同组成这份不绑定个人身份的队伍档案。`
+          : as === 'manager-coach'
+            ? `最终名单把同一个名字同时记录为经理与教练；${played} 场比赛和${finalRankText || '最终归档'}，是这两个身份共同连接到的队伍档案。`
+            : `最终名单确认你的${getPerspectiveClassLabel(as)}身份；${short || name} 的 ${played} 场比赛与${finalRankText || '最终归档'}，是和你的名字放在同一页保存的队伍记录。`
       }
     },
     {
@@ -2965,6 +3832,7 @@ export function buildTeamStory(db, teamId, as = 'team') {
       matchCard: firstMatchCard,
       chips: firstMatch ? [stageCn(firstMatch.stage), getRoundDisplay(firstMatch.round), firstOpponentRankLine].filter(Boolean) : []
     },
+    ...(perspectiveRosterScene ? [perspectiveRosterScene] : []),
     {
       kind: 'metric',
       tone: 'gold',
@@ -2972,7 +3840,9 @@ export function buildTeamStory(db, teamId, as = 'team') {
       title: `你们一共打了 ${played} 场比赛`,
       metric: String(played),
       metricLabel: 'MATCHES PLAYED',
-      body: '这不是一个人的路线。每一场比赛背后都有选手、经理、教练、赛管和对手。你们从其中穿过，留下了自己的版本。',
+      body: isPerspectivePlayoffIntroduction
+        ? `这 ${played} 场是 ${short || name || '队伍'} 的完整赛季记录，不等同于你的个人任期。它保存了队伍如何从常规阶段抵达季后赛；你的教练记录，从最后这个阶段才开始。`
+        : `这 ${played} 场不是赛程表上连续的格子。每一场背后都有约好的时间、临时的变化、比赛前的准备，以及结束后还要重新面对的下一场。你陪 ${short || name || '队伍'} 从其中走过，才有了现在这条完整的路线。`,
       statLines: [
         { label: '胜场', value: wins },
         { label: '负场', value: losses },
@@ -2991,7 +3861,9 @@ export function buildTeamStory(db, teamId, as = 'team') {
       eyebrow: 'STAGE BY STAGE',
       title: stageEntries.length ? '你们不是突然走到这里的' : '这段旅程被完整归档',
       body: stageEntries.length
-        ? `你们经过了 ${stageEntries.map(([stage]) => stageCn(stage)).join('、')}。每个阶段都有不同的压力，也有不同的答案。`
+        ? isPerspectivePlayoffIntroduction
+          ? `${short || name || '队伍'} 经过了 ${stageEntries.map(([stage]) => stageCn(stage)).join('、')}。这些阶段组成队伍的完整路线，但名单确认你的教练身份从季后赛才开始。`
+          : `公开赛程把 ${short || name || '队伍'} 的比赛分在 ${stageEntries.map(([stage]) => stageCn(stage)).join('、')}。下面的胜负与地图数，保存了每个阶段实际完成的部分。`
         : '这支队伍的赛季数据已经被保存下来。后续可以继续加入更详细的阶段叙事。',
       timeline: stageTimeline,
       dataBars: stageBars,
@@ -3003,26 +3875,25 @@ export function buildTeamStory(db, teamId, as = 'team') {
       visualType: coachMostUsedLineup ? 'lineup' : 'roleMemory',
       eyebrow: 'MANAGER / COACH',
       title: coachMostUsedLineup
-        ? '一边组织，一边决定阵容'
-        : '你把队伍带进赛场，也陪它准备下一场',
+        ? '两个身份，与一套最常出现的五人组合'
+        : '最终名单记录了两个身份，赛程记录了队伍路线',
       rosterTitle: coachMostUsedLineup ? 'MOST USED LINEUP' : '',
       rosterCards: coachMostUsedLineup?.players || [],
       body: coachMostUsedLineup
-        ? `这个赛季，你不只负责报名、排期和沟通，也参与复盘、准备和阵容选择。${short || name || '这支队伍'} 要站上赛场，也要找到最稳定的五人组合。最终，这套阵容被拿出 ${coachMostUsedLineup.count} 次，成为队伍最熟悉的比赛形状。`
-        : `这个赛季，你不只负责让 ${short || name || '这支队伍'} 站上赛场，也陪他们完成每一场比赛前后的准备。组织、沟通、复盘和调整，都压在同一个身份里。`,
+        ? `最终名单同时记录你的经理与教练身份；公开出场数据则显示，这套五人组合共同出现了 ${coachMostUsedLineup.count} 次。数据不能把每次同阵归因于某一种职责，所以这里只保存两个身份与这项重复记录。`
+        : `最终名单同时记录你的经理与教练身份，公开赛程保存了 ${played} 场比赛和${finalRankText || '最终归档'}。过程没有进入数据的部分保持空白，两个身份则分别保留。`,
       storyQuote: {
-        title: '你做的是两份工作',
-        body: seasonOpponent
-          ? `你要处理赛程，也要处理阵容；你要面对队伍内部，也要面对 ${seasonOpponent.name} 这样的赛季对手。`
-          : '你要处理赛程，也要处理阵容；你要把队伍组织起来，也要陪他们找到下一场比赛的答案。'
+        title: '两个身份没有被合并成一个标签',
+        body: coachMostUsedLineup
+          ? `${coachMostUsedLineup.count} 次同阵来自公开出场数据；经理与教练身份来自最终名单。`
+          : `${played} 场比赛来自公开赛程；经理与教练身份来自最终名单。`
       },
       chips: [
         '双重身份',
         coachMostUsedLineup ? `同阵 ${coachMostUsedLineup.count} 次` : null,
         seasonOpponent?.name ? `对手：${seasonOpponent.name}` : null,
-        '组织',
-        '准备',
-        '调整'
+        '最终名单',
+        '公开出场记录'
       ].filter(Boolean)
     }] : []),
     ...(as === 'coach' ? [{
@@ -3031,27 +3902,26 @@ export function buildTeamStory(db, teamId, as = 'team') {
   visualType: 'lineup',
   eyebrow: 'ADJUSTMENT',
   title: coachMostUsedLineup
-    ? '最常被你们拿出的五人'
-    : '真正难的，是下一场怎么打',
+    ? `${coachMostUsedLineup.count} 次，是公开记录里最常出现的五人组合`
+    : '公开数据没有形成稳定的五人组合',
   rosterTitle: coachMostUsedLineup ? 'MOST USED LINEUP' : '',
   rosterCards: coachMostUsedLineup?.players || [],
   body: coachMostUsedLineup
-    ? `这个赛季，教练面对的不是比分本身，而是下一场要怎么准备、谁该被放到哪里、哪五个人最适合一起上场。最终，这套五人组合被你们拿出了 ${coachMostUsedLineup.count} 次，成为这支队伍最熟悉的比赛形状。`
-    : `每一场结束后，教练面对的不是比分本身，而是下一场要怎么准备、谁该被放到哪里、哪张地图还要不要继续选择。这个赛季，${short || name || '这支队伍'} 打了 ${played} 场比赛。胜负会被记录下来，但调整往往发生在那些没有被写进比分的地方。`,
+    ? `公开出场数据显示，这五名选手同时出现了 ${coachMostUsedLineup.count} 次，是 ${short || name || '队伍'} 本赛季最常见的五人组合。这不直接等于某一次教练选择，也不能还原当时策略；它只说明这套组合在可核对的记录中出现最多。`
+    : `${short || name || '队伍'} 完成了 ${played} 场比赛，但现有公开出场记录不足以形成一套明确的最高频五人组合。这一页不替教练过程补写答案。`,
   storyQuote: {
     title: coachMostUsedLineup
-      ? '阵容不是名单，而是答案'
-      : '复盘不是为了证明过去',
+      ? '数据记录重复出现，不替过程下结论'
+      : '没有足够记录时，空白也应该被保留',
     body: coachMostUsedLineup
-      ? `这套阵容出现了 ${coachMostUsedLineup.count} 次。它记录的是教练最常交出的那份选择。`
-      : '它是为了让下一场比赛，有新的答案。'
+      ? `这 ${coachMostUsedLineup.count} 次同阵，是这份回顾能够确认的事实。`
+      : '最终名单确认教练身份，公开赛程确认队伍比赛；其余部分不被虚构。'
   },
   chips: [
     coachMostUsedLineup ? `${coachMostUsedLineup.count} 次使用` : null,
     coachMostUsedLineup?.stageLabel,
-    '阵容选择',
-    '复盘',
-    '调整'
+    '最常同阵',
+    '公开出场记录'
   ].filter(Boolean)
 }] : []),
     ...(playoffStory ? [{
@@ -3064,7 +3934,7 @@ export function buildTeamStory(db, teamId, as = 'team') {
       storyQuote: {
         title: '从这里开始，每一场都更接近终局',
         body: finalRankText
-          ? `${short || name || '这支队伍'} 最终留下的成绩是 ${finalRankText}。这不是单独一场比赛决定的，而是整个赛季一步步走出来的结果。`
+          ? `${short || name || '这支队伍'} 最终留下的成绩是${finalRankText}。这个结果对应的是整段公开赛程，而不是某一张地图的单独结论。`
           : '季后淘汰赛不是另一个背景，而是这支队伍赛季里最靠近终局的章节。'
       },
       chips: [
@@ -3091,13 +3961,13 @@ export function buildTeamStory(db, teamId, as = 'team') {
       mapCards: teamMapCards,
       dataBars: teamMapTypeBars,
       storyQuote: {
-        title: '地图不是背景，而是队伍记忆发生的地方',
-        body: topTeamMap ? `${mapCn(topTeamMap.mapName)} 是这支队伍最常被记录的地图。` : '每一张地图都保存着不同的交火、等待和结算。'
+        title: '地图把总比分拆回真正发生过的比赛单位',
+        body: topTeamMap ? `${mapCn(topTeamMap.mapName)} 是这支队伍最常被记录的地图。` : '每一张地图都有可以核对的对手、结果与地图记录。'
       },
       chips: topTeamMap ? [
         mapCn(topTeamMap.mapName),
         mapTypeCn(topTeamMap.mapType),
-        `${formatNum(topTeamMap.minutes, 1)} 分钟`
+        Number(topTeamMap.minutes || 0) > 0 ? `队员累计 ${formatNum(topTeamMap.minutes, 1)} 分钟` : null
       ].filter(Boolean) : []
     },
     {
@@ -3106,8 +3976,8 @@ export function buildTeamStory(db, teamId, as = 'team') {
       eyebrow: 'KEY MATCH',
       title: keyMatch ? '有一场比赛，适合作为你们的赛季切片' : '总会有一场比赛，代表这段旅程',
       body: keyMatch
-        ? `那是 ${getMatchDisplayName(keyMatch)}。对手是 ${getTeamDisplay(keyOpponent)}。在这样的比赛里，队伍不只是打出结果，也打出记忆。`
-        : '有些比赛不一定因为比分被记住，而是因为它让队伍真正成为队伍。',
+        ? `那是 ${getMatchDisplayName(keyMatch)}，对手是 ${getTeamDisplay(keyOpponent)}，比分是 ${getScoreText(keyMatch) || '已归档'}。按赛程阶段与比赛节点排序，它被选作这支队伍的一张代表切片。`
+        : '公开赛程没有选出唯一的代表场次，因此这一页不替队伍指定一段不存在的记忆。',
       matchCard: keyMatchCard,
       statLines: keyMatch ? [
         { label: '阶段', value: stageCn(keyMatch.stage) || '-' },
@@ -3125,8 +3995,8 @@ export function buildTeamStory(db, teamId, as = 'team') {
         : `有些对手，是这支队伍赛季里的参照`,
       watermark: seasonOpponent.name,
       body: seasonOpponent.rankText && String(seasonOpponent.rankText).includes('冠军')
-        ? `这个赛季，${short || name || '你们'} 和 ${seasonOpponent.name} 在赛程里相遇了 ${seasonOpponent.count} 次。后来，${seasonOpponent.name} 走到了最后。对经理来说，这样的对手不只是赛程表另一边的名字，它也会改变等待、沟通、确认和赛季记忆的形状。`
-        : `这个赛季，${short || name || '你们'} 和 ${seasonOpponent.name} 在赛程里相遇了 ${seasonOpponent.count} 次。对经理来说，对手不只是赛程表另一边的名字，它也会改变等待、沟通、确认和赛季记忆的形状。`,
+        ? `公开赛程记录了 ${short || name || '你们'} 与 ${seasonOpponent.name} 的 ${seasonOpponent.count} 次相遇；最终排名又确认 ${seasonOpponent.name} 后来夺得冠军。这两项数据让这组对阵在回看时拥有了更明确的赛季坐标。`
+        : `公开赛程记录了 ${short || name || '你们'} 与 ${seasonOpponent.name} 的 ${seasonOpponent.count} 次相遇，最终排名是${seasonOpponent.rankText || '已归档'}。这不说明赛场外发生过什么，只保存这组对阵在本赛季反复出现的事实。`,
       statLines: [
         { label: '相遇次数', value: seasonOpponent.count },
         { label: '代表比赛', value: getMatchStoryTitle(seasonOpponent.representativeMatch) || '-' },
@@ -3138,7 +4008,7 @@ export function buildTeamStory(db, teamId, as = 'team') {
           : '对手也是赛季记忆的一部分',
         body: seasonOpponent.rankText && String(seasonOpponent.rankText).includes('冠军')
           ? `${seasonOpponent.name} 后来拿到了冠军。现在回看，这次相遇也成了你们赛季里更特殊的一页。`
-          : '每一个对手，都会让这支队伍的赛季有不同的形状。'
+          : `${seasonOpponent.count} 次相遇与${seasonOpponent.rankText || '最终排名'}，都来自公开赛程和最终归档。`
       },
       chips: [
         seasonOpponent.name,
@@ -3150,8 +4020,14 @@ export function buildTeamStory(db, teamId, as = 'team') {
       kind: 'narrative',
       tone: 'gold',
       eyebrow: 'NOT ALONE',
-      title: `${players.length} 名选手组成了队伍的名单`,
-      body: getRosterBody(as),
+      title: as === 'team'
+        ? '最终名单把这些名字留在同一份队伍档案里'
+        : as === 'coach'
+        ? '最终名单与出场记录，把这些名字放在同一页'
+        : as === 'manager-coach'
+          ? '两个身份，与同一份最终阵容记录'
+          : '最终名单把这些名字留在经理署名旁边',
+      body: getRosterBody(as, short || name || '这支队伍'),
       rosterCards,
       chips: rosterCards.map(player => player.title)
     },
@@ -3170,27 +4046,98 @@ export function buildTeamStory(db, teamId, as = 'team') {
         { label: '比分', value: getScoreText(lastMatch) || '-' }
       ] : [],
       storyQuote: {
-        title: '最后一战不是全部，但它是句点',
-        body: lastMatch ? `对阵 ${getTeamDisplay(lastOpponent)} 的这场比赛，成为了这支队伍本届学院赛的最后一个比赛节点。` : '每支队伍都会有自己的结尾，而结尾也应该被记录。'
+        title: '最后一战不是全部，但它给公开赛程画下句点',
+        body: lastMatch ? `按公开时间排序，对阵 ${getTeamDisplay(lastOpponent)} 是这支队伍本赛季的最后一场记录。` : '现有数据没有标出唯一的最后一场，因此这里只保存已经确认的赛季终点。'
       },
       chips: lastMatch ? [stageCn(lastMatch.stage), getRoundDisplay(lastMatch.round), getScoreText(lastMatch)].filter(Boolean) : []
+    },
+    {
+      kind: 'pause',
+      visualType: 'pause',
+      tone: 'gold',
+      eyebrow: 'A QUIET FRAME',
+      title: as === 'team'
+        ? '这些名字，最后落在同一段队伍记录里'
+        : as === 'coach'
+        ? '比分之外，教练身份也被留在了名单里'
+        : as === 'manager-coach'
+          ? '两个身份，最后落在同一段队伍记录里'
+          : '每一场被完成的比赛，也是一段组织工作的结果',
+      body: as === 'team'
+        ? `${short || name || '这支队伍'} 的 ${played} 场比赛、${mapsPlayed} 张地图和最终名单共同组成了这段队伍档案。公开数据无法复原每一次沟通，但能确认这些名字确实一起完成了这段赛程。`
+        : as === 'coach'
+        ? `公开数据记录了 ${short || name || '队伍'} 的 ${played} 场比赛和 ${mapsPlayed} 张地图，最终名单记录了你的教练身份。它没有保存复盘和调整的过程，所以我们不替你补写；但这两组记录放在一起，已经足以确认你曾以教练身份属于这段赛季。`
+        : as === 'manager-coach'
+          ? `最终名单同时保存了你的管理与教练身份，赛程则保存了 ${played} 场比赛、${mapsPlayed} 张地图。过程没有全部进入公开数据，但你承担过的两个位置没有被合并或省略。`
+          : `最终名单记录了你的经理身份，赛程记录了 ${played} 场比赛、${mapsPlayed} 张地图。它们无法复原每一次协调，但能确认这些名字最终组成队伍，并完成了这段赛程。`,
+      memoryCoordinates: [
+        {
+          label: 'TEAM',
+          value: short || name || '队伍',
+          meta: finalRankText || '赛季归档'
+        },
+        {
+          label: as === 'team' ? 'ROSTER' : 'ROLE',
+          value: as === 'team'
+            ? `${rosterCards.length} 个名字`
+            : as === 'coach'
+              ? '教练'
+              : as === 'manager-coach'
+                ? '经理与教练'
+                : '经理',
+          meta: as === 'team' ? '最终名单' : '最终名单署名'
+        },
+        {
+          label: 'RECORDED',
+          value: `${played} 场比赛`,
+          meta: `${mapsPlayed} 张地图`
+        }
+      ],
+      watermark: 'TOGETHER',
+      backgroundWords: ['READY', 'ROSTER', 'ONE TEAM', 'REMEMBER']
     },
     {
       kind: 'ending',
       tone: pickFinalRankTone(finalRankText),
       eyebrow: 'FINAL RESULT',
-      title: rankStory.title,
-      body: rankStory.body,
+      title: isPerspectivePlayoffIntroduction
+        ? `${short || name}以${finalRankText || '最终结果'}归档，你的教练署名从季后赛开始`
+        : hasPersonalIdentity
+        ? `${perspectiveIdentity.callsign}，你和 ${short || name} 走到了${finalRankText || '这里'}`
+        : rankStory.title,
+      body: as === 'team'
+        ? `${rankStory.body} 这个结果属于整支队伍。${played} 场比赛、${mapsPlayed} 张地图和最终名单，把这段旅程完整留在了赛季档案里。`
+        : as === 'coach'
+        ? isPerspectivePlayoffIntroduction
+          ? `${short || name || '这支队伍'} 最终抵达 ${finalRankText || '赛季归档'}。队伍的完整成绩从常规阶段开始，而你的教练署名从季后赛才进入档案；这份回顾把两者放在一起，也清楚记住它们不同的起点。`
+          : `${rankStory.body} 这个结果属于整支队伍；最终名单里的教练署名，则让它也成为你个人赛季档案的一部分。`
+        : as === 'manager-coach'
+          ? `${rankStory.body} 最终名单同时记录了你的两个身份，所以这个结果不会只在队伍页出现，也会被带回你的个人旅程。`
+          : `${rankStory.body} 这个结果属于整支队伍；最终名单里的经理署名，也把你的名字留在了它抵达这里的记录中。`,
       watermark: getRankWatermark(finalRankText),
       image: short ? getSafeTeamLogo(short, db) : DEFAULT_TEAM_LOGO,
+      imageFallback: DEFAULT_OW_TEAM_LOGO,
       storyQuote: {
-        title: '这支队伍走完了自己的版本',
-        body: rankStory.body
+        title: '成绩写下句号，名单留下每一个名字',
+        body: as === 'team'
+          ? `谢谢 ${short || name || '这支队伍'} 的每一个名字，共同完成这段 2026 赛季记录。`
+          : `谢谢你以${as === 'coach' ? '教练' : as === 'manager-coach' ? '经理与教练' : '经理'}身份出现在 ${short || name || '这支队伍'} 的 2026 赛季记录里。`
       },
-      chips: lastMatch ? [`最后一战：${getTeamDisplay(lastOpponent)}`, rankStory.label, 'TEAM REVIEW COMPLETE'] : [rankStory.label, 'TEAM REVIEW COMPLETE'].filter(Boolean)
+      chips: lastMatch
+        ? [`最后一战：${getTeamDisplay(lastOpponent)}`, isPerspectivePlayoffIntroduction ? '季后赛引入' : null, rankStory.label, 'TEAM REVIEW COMPLETE'].filter(Boolean)
+        : [isPerspectivePlayoffIntroduction ? '季后赛引入' : null, rankStory.label, 'TEAM REVIEW COMPLETE'].filter(Boolean)
     },
-    getOrganizerMessageScene()
-  ], {
+    getOrganizerMessageScene(db)
+  ]
+
+  const pacedScenes = fullScenes.filter(scene => {
+    if (scene.eyebrow === 'THE ROAD') return false
+    if (isPerspectivePlayoffIntroduction && scene.eyebrow === 'THE FIRST STEP') return false
+    if ((isPerspectivePlayoffIntroduction || playoffStory || shouldShowSeasonOpponent) && scene.eyebrow === 'A QUIET FRAME') return false
+    return true
+  })
+
+  return withVisualMeta(adaptReviewScenes(pacedScenes, db), {
     storyType: 'team',
     cardBadge: 'TEAM OFFICIAL CARD',
     coverWatermark: short || name || 'TEAM',
@@ -3253,6 +4200,8 @@ export function buildStaffStory(db, staffType, staffKey) {
   const collaboration = getStaffCollaborationGroups(staff, matches, isCaster)
   const sameRolePartners = collaboration.sameRolePartners
   const crossRolePartners = collaboration.crossRolePartners
+  const stageCount = safeArr(staff.stages).length
+  const teamCount = safeArr(staff.teams_seen).length
   const topPartner = sameRolePartners[0] || normalizePartnerRows(staff.partners)[0] || null
   const topCrossPartner = crossRolePartners[0] || null
 
@@ -3282,18 +4231,18 @@ export function buildStaffStory(db, staffType, staffKey) {
   const topOverallPartnerBody = topOverallPartner
     ? isCaster
       ? topOverallPartner.partnerRole === 'caster'
-        ? `你和 ${topOverallPartner.publicName} 在这个赛季共同出现了 ${topOverallPartner.count} 次。解说不是一个人的独白，很多比赛的节奏、情绪和记忆，是由搭档一起托起来的。`
-        : `你和 ${topOverallPartner.publicName} 在这个赛季协作了 ${topOverallPartner.count} 次。解说的声音被观众听见之前，也需要有人确认流程、处理等待，把比赛稳稳送到台前。`
+        ? `公开协作记录显示，你和 ${topOverallPartner.publicName} 同时出现在 ${topOverallPartner.count} 场比赛的解说栏。这是本赛季与你共同记录比赛次数最多的解说搭档。`
+        : `公开协作记录显示，你和 ${topOverallPartner.publicName} 同时出现在 ${topOverallPartner.count} 场比赛的解说与赛管记录中。数据不说明镜头外的细节，但确认你们曾在同一批比赛里承担不同职责。`
       : topOverallPartner.partnerRole === 'caster'
-        ? `你和 ${topOverallPartner.publicName} 在这个赛季协作了 ${topOverallPartner.count} 次。赛事执行不只发生在后台，也会和解说、直播和观众看到的比赛节奏连接在一起。`
-        : `你和 ${topOverallPartner.publicName} 在这个赛季共同执行了 ${topOverallPartner.count} 次。确认、记录、等待和处理，往往都不是一个人完成的。`
+        ? `公开协作记录显示，你和 ${topOverallPartner.publicName} 同时出现在 ${topOverallPartner.count} 场比赛的赛管与解说记录中。数据不替你们补写分工，只保留这 ${topOverallPartner.count} 次同场。`
+        : `公开协作记录显示，你和 ${topOverallPartner.publicName} 同时出现在 ${topOverallPartner.count} 场比赛的赛管栏。这是本赛季与你同场记录次数最多的赛管搭档。`
     : isCaster
-      ? '这个赛季里，你用自己的声音参与比赛。即使没有固定搭档，每一次开口都让比赛多了一层被观看的方式。'
-      : '这个赛季里，你参与的是幕后运行。即使没有固定搭档，每一次执行也都让比赛更接近顺利完成。'
+      ? `这 ${staff.match_count} 场公开记录没有形成固定解说搭档，但每一场都确认：你的名字曾经出现在解说栏。`
+      : `这 ${staff.match_count} 场公开记录没有形成固定赛管搭档，但每一场都确认：你的名字曾经出现在赛管栏。`
   const firstMatch = matches[0]
   const lastMatch = matches[matches.length - 1]
   const topMatch = getTopStaffMatch(db, matches)
-  const avatar = getStaffAvatar(staffName)
+  const avatar = staff.avatar || getStaffAvatar(staffName)
 
   const firstMatchCard = firstMatch ? buildMatchCard(db, firstMatch, [], {
     title: isCaster ? '第一次开麦记录' : '第一次赛管记录',
@@ -3301,8 +4250,8 @@ export function buildStaffStory(db, staffType, staffKey) {
   }) : null
 
   const topMatchCard = topMatch ? buildMatchCard(db, topMatch, [], {
-    title: isCaster ? '最高规格解说场次' : '最高规格赛管场次',
-    note: isCaster ? '这场比赛是你这届赛事里最有分量的解说记录之一。' : '这场比赛是你这届赛事里最有分量的赛管记录之一。'
+    title: isCaster ? '最高阶段解说场次' : '最高阶段赛管场次',
+    note: isCaster ? '按赛程阶段排序，这是你最接近赛事终局的解说记录之一。' : '按赛程阶段排序，这是你最接近赛事终局的赛管记录之一。'
   }) : null
 
   const lastMatchCard = lastMatch ? buildMatchCard(db, lastMatch, [], {
@@ -3311,7 +4260,7 @@ export function buildStaffStory(db, staffType, staffKey) {
   }) : null
 
 
-  return withVisualMeta([
+  const fullScenes = [
     {
       kind: 'cover',
       tone: isCaster ? 'purple' : 'blue',
@@ -3324,12 +4273,16 @@ export function buildStaffStory(db, staffType, staffKey) {
       posterCardKind: isCaster ? 'caster' : 'staff',
       poster_card_kind: isCaster ? 'caster' : 'staff',
       eyebrow: isCaster ? 'CASTER SEASON REVIEW' : 'STAFF SEASON REVIEW',
-      title: `${publicStaffName} 的赛季回顾`,
+      title: isCaster
+        ? `${publicStaffName}，你的声音也在这一季里`
+        : `${publicStaffName}，这届比赛也有你托住的一部分`,
       subTitle: fullStaffTag !== publicStaffName ? fullStaffTag : '',
       body: isCaster
-        ? '这个赛季，你用声音陪比赛走过了一段路。每一次推进、反打、暂停和终局，都曾经通过你的表达被看见。'
-        : '这个赛季，你站在赛事背后，让一场场比赛能够顺利发生。镜头不一定总会拍到幕后，但比赛能完成，本身就有你的痕迹。',
+        ? `公开记录里有 ${staff.match_count} 场比赛把你的名字写进解说栏，横跨 ${stageCount} 个阶段、涉及 ${teamCount} 支队伍。数据不能保存你说过的每一句话，但它确认：这些比赛发生时，你以解说身份在那里。`
+        : `公开记录里有 ${staff.match_count} 场比赛把你的名字写进赛管栏，横跨 ${stageCount} 个阶段、涉及 ${teamCount} 支队伍。数据不能说明幕后的每个细节，但它确认：这些比赛发生时，你以赛管身份在那里。`,
       image: avatar,
+      visualFallback: publicStaffName,
+      visualFallbackLabel: isCaster ? 'VOICE ARCHIVE' : 'BEHIND THE MATCH',
       issuedTo: fullStaffTag || staffKey,
       issued_to: fullStaffTag || staffKey,
       battleTag: fullStaffTag || staffKey,
@@ -3340,17 +4293,18 @@ export function buildStaffStory(db, staffType, staffKey) {
       casterTag: isCaster ? (fullStaffTag || staffKey) : '',
       identityClass: staffLabel,
       identity_class: staffLabel,
+      ...getRecordedMatchMeta(firstMatch, lastMatch, matches),
       chips: [staffLabel, `${staff.match_count} 场比赛`, fullStaffTag !== publicStaffName ? fullStaffTag : ''].filter(Boolean),
       storyQuote: {
-        title: isCaster ? '你不是比赛的一方，但你见证了比赛被讲述' : '你不在比分里，但你让比赛得以发生',
-        body: isCaster ? '声音不会出现在比分表里，但它会决定比赛如何被观看、被理解、被记住。' : '真正顺利的比赛，往往看起来什么都没有发生。但那正是赛管工作的意义。'
+        title: isCaster ? '比分记录结果，解说记录也留下讲述它的人' : '比赛表记录对阵，赛管表也记录谁曾在场',
+        body: isCaster ? `这 ${staff.match_count} 场比赛旁边，都有一条可以核对的解说署名。` : `这 ${staff.match_count} 场比赛旁边，都有一条可以核对的赛管署名。`
       }
     },
     {
       kind: 'narrative',
       tone: isCaster ? 'purple' : 'blue',
       eyebrow: isCaster ? 'FIRST CAST' : 'FIRST STAFF RECORD',
-      title: firstMatch ? `第一次记录，是从 ${getMatchStoryTitle(firstMatch)} 开始` : `你的${staffLabel}记录从这里开始`,
+      title: firstMatch ? `第一次记录，是从${getMatchStoryTitle(firstMatch)}开始` : `你的${staffLabel}记录从这里开始`,
       body: firstMatch
         ? isCaster
           ? `那场比赛发生在 ${getScheduledText(firstMatch) || '赛程记录中'}。从这场开始，你的声音进入了 2026 薯条杯学院赛。`
@@ -3367,8 +4321,8 @@ export function buildStaffStory(db, staffType, staffKey) {
       metric: String(staff.match_count),
       metricLabel: 'MATCHES',
       body: isCaster
-        ? '每一场被你解说过的比赛，都不只是赛程表上的一行。它们曾经通过你的声音，被更多人看见。'
-        : '这些比赛背后有确认、记录、等待和执行。它们不总是出现在镜头里，但比赛能开始，本身就是一种结果。',
+        ? `这 ${staff.match_count} 场公开数据把你的名字留在解说栏。每场比赛都有明确的对阵和结果；这份回顾再把负责讲述它的人写回旁边。`
+        : `这 ${staff.match_count} 场公开数据把你的名字留在赛管栏，覆盖 ${stageCount} 个阶段和 ${teamCount} 支队伍。比分不说明具体工作内容，所以这里只确认你的公开参与。`,
       statLines: [
         { label: '涉及阶段', value: safeArr(staff.stages).length },
         { label: '见证队伍', value: safeArr(staff.teams_seen).length },
@@ -3381,8 +4335,8 @@ export function buildStaffStory(db, staffType, staffKey) {
       eyebrow: 'STAGE MEMORY',
       title: topStage ? `你参与最多的阶段是 ${stageCn(topStage.name)}` : '你参与过这个赛季的不同阶段',
       body: topStage
-        ? `这个阶段里，你出现了 ${topStage.count} 次。它可能不是最轻松的部分，但它构成了你在薯条杯里的主要记忆。`
-        : '不同阶段有不同的压力，而你参与的是让这些阶段真正运转起来的部分。',
+        ? `这个阶段里，你被记录了 ${topStage.count} 场，占全部 ${staff.match_count} 场中的 ${Math.round((Number(topStage.count || 0) / Math.max(1, Number(staff.match_count || 0))) * 100)}%。这不是对工作轻重的猜测，只是公开记录中你的名字最密集的一段。`
+        : `公开记录把你的 ${staff.match_count} 场参与分布在 ${stageCount} 个阶段；这份回顾只按已经发布的场次逐段保存。`,
       dataBars: getStaffStageBars(staff.stages),
       timeline: safeArr(staff.stages).slice(0, 6).map(stage => ({
         label: stageCn(stage.name),
@@ -3397,8 +4351,8 @@ export function buildStaffStory(db, staffType, staffKey) {
       eyebrow: 'TEAMS SEEN',
       title: topTeam ? `你最常见证的队伍是 ${topTeam.name}` : '你见证了很多队伍的赛季',
       body: topTeam
-        ? `你和 ${topTeam.name} 在赛程里多次相遇。对他们来说，那是比赛；对你来说，那也是你赛季记录的一部分。`
-        : '你不属于某一支队伍，但你见证了许多队伍如何走进赛场。',
+        ? `你在涉及 ${topTeam.name} 的比赛记录里出现了 ${topTeam.count} 次。它不代表你属于这支队伍，只说明在你的公开档案中，这是相遇次数最多的名字。`
+        : `你的公开记录涉及 ${teamCount} 支队伍。这里不推测你与它们的关系，只保存你们曾在同一场比赛记录里出现。`,
       teamCards: safeArr(staff.teams_seen).slice(0, 6).map(team => ({
         title: team.name,
         value: `${team.count} 次`,
@@ -3434,14 +4388,14 @@ export function buildStaffStory(db, staffType, staffKey) {
       kind: 'narrative',
       tone: isCaster ? 'purple' : 'blue',
       eyebrow: isCaster ? 'BIGGEST STAGE' : 'KEY STAFF MATCH',
-      title: topMatch ? `你参与过的最高规格比赛，是${getMatchStoryTitle(topMatch)}` : '有些比赛，会成为一届赛事的节点',
+      title: topMatch ? `按赛程阶段，你最接近终局的一场是${getMatchStoryTitle(topMatch)}` : '公开记录没有选出唯一的最高阶段场次',
       body: topMatch
         ? isCaster
-          ? `这场比赛发生在 ${stageCn(topMatch.stage)}。当比赛越接近终局，解说的声音也越像是在替这届赛事做记录。`
-          : `这场比赛发生在 ${stageCn(topMatch.stage)}。越接近关键节点，赛事运行就越需要有人把它稳稳托住。`
+          ? `这场比赛发生在 ${stageCn(topMatch.stage)}。按赛程阶段排序，这是你的解说记录里最接近赛事终局的一场；因此它被单独放在这里。`
+          : `这场比赛发生在 ${stageCn(topMatch.stage)}。按赛程阶段排序，这是你的赛管记录里最接近赛事终局的一场；因此它被单独放在这里。`
         : isCaster
-          ? '并不是每一次解说都在最高舞台，但每一次开口都让比赛多了一层被看见的方式。'
-          : '并不是每一次赛管记录都在最高舞台，但每一次执行都让比赛更接近顺利完成。',
+          ? `公开数据没有选出唯一的最高阶段场次，但仍保留了你参与的 ${staff.match_count} 场解说记录。`
+          : `公开数据没有选出唯一的最高阶段场次，但仍保留了你参与的 ${staff.match_count} 场赛管记录。`,
       matchCard: topMatchCard,
       chips: topMatch ? [stageCn(topMatch.stage), getRoundDisplay(topMatch.round), getScheduledText(topMatch), getMatchDisplayName(topMatch)].filter(Boolean) : []
     },
@@ -3456,31 +4410,120 @@ export function buildStaffStory(db, staffType, staffKey) {
         : '每一段参与，都会有自己的最后一页',
       body: lastMatch
         ? isCaster
-          ? '那是你这份解说记录里的最后一场。比赛会结束，但声音曾经在那里出现过。'
-          : '那是你这份赛管记录里的最后一场。比赛会结束，但它能被完整记录下来，本身就有你的参与。'
-        : '有些结尾不一定响亮，但它仍然属于这届赛事的一部分。',
+          ? `按公开时间排序，那是你这份解说记录里的最后一场。记录在这里结束，也在这里确认你确实来过。`
+          : `按公开时间排序，那是你这份赛管记录里的最后一场。记录在这里结束，也在这里确认你确实来过。`
+        : `公开数据没有标出唯一的最后一场，但你的 ${staff.match_count} 场参与仍然完整保留在档案里。`,
       matchCard: lastMatchCard,
       chips: lastMatch ? [stageCn(lastMatch.stage), getRoundDisplay(lastMatch.round), getScheduledText(lastMatch), getMatchDisplayName(lastMatch)].filter(Boolean) : []
     },
     {
+      kind: 'pause',
+      visualType: 'pause',
+      tone: isCaster ? 'purple' : 'blue',
+      eyebrow: 'A QUIET FRAME',
+      title: isCaster
+        ? `如果要往回想，可以从这 ${staff.match_count} 场开始`
+        : `如果要往回想，可以从这 ${staff.match_count} 场开始`,
+      body: isCaster
+        ? topOverallPartner
+          ? `公开记录里，你和 ${topOverallPartner.publicName} 同场 ${topOverallPartner.count} 次。数据没有保存当时说过什么，却替这段共同出现的事实留下了入口。`
+          : `公开记录没有保存你说过的具体内容，只保留了 ${staff.match_count} 场解说署名。回忆可以从其中任何一场重新开始。`
+        : topOverallPartner
+          ? `公开记录里，你和 ${topOverallPartner.publicName} 同场 ${topOverallPartner.count} 次。数据没有说明当时如何分工，却替这段共同出现的事实留下了入口。`
+          : `公开记录没有保存具体执行过程，只保留了 ${staff.match_count} 场赛管署名。回忆可以从其中任何一场重新开始。`,
+      memoryCoordinates: [
+        {
+          label: 'MOST TOGETHER',
+          value: topOverallPartner ? topOverallPartner.publicName : staffLabel,
+          meta: topOverallPartner ? `${topOverallPartner.count} 次同场` : '公开署名'
+        },
+        {
+          label: 'STAGES',
+          value: `${stageCount} 个阶段`,
+          meta: `${teamCount} 支队伍`
+        },
+        {
+          label: 'RECORDED',
+          value: `${staff.match_count} 场比赛`,
+          meta: isCaster ? '解说记录' : '赛管记录'
+        }
+      ],
+      watermark: isCaster ? 'VOICE' : 'BEHIND',
+      backgroundWords: isCaster
+        ? ['VOICE', 'LIVE', 'TOGETHER', 'REMEMBER']
+        : ['READY', 'CHECK', 'BEHIND', 'REMEMBER']
+    },
+    {
       kind: 'ending',
+      finalLayout: 'staff',
       tone: isCaster ? 'purple' : 'blue',
       eyebrow: 'FRIES CUP ARCHIVE',
       title: isCaster
-        ? '你的声音，留在了赛季里'
-        : '幕后，也有被记住的痕迹',
+        ? '你的声音，已经和这些比赛留在了一起'
+        : '当比赛被记住，也别忘了托住它的人',
       body: isCaster
-        ? '谢谢你把比赛讲给大家听。那些团战，不只存在于比分里，也曾被你的声音记录。2026 薯条杯学院赛，也有你留下的一部分。'
-        : '谢谢你让比赛稳定运行着。那些比赛得以被确认、被记录、被执行，也被顺利地完成。2026 薯条杯学院赛，也有你留下的一部分。',
+        ? `谢谢你以解说身份出现在这 ${staff.match_count} 场比赛里。公开数据无法保存声音，只能保存场次和名字；正因为如此，这份回顾把你的名字重新放回这些比赛旁边。`
+        : `谢谢你以赛管身份出现在这 ${staff.match_count} 场比赛里。公开数据无法说明镜头外的过程，只能保存场次和名字；正因为如此，这份回顾把你的名字重新放回这些比赛旁边。`,
       image: avatar,
+      visualFallback: publicStaffName,
+      visualFallbackLabel: isCaster ? 'VOICE ARCHIVE' : 'BEHIND THE MATCH',
       storyQuote: {
-        title: isCaster ? '你用声音见证过这届赛事' : '你用执行托住过这届赛事',
-        body: isCaster ? '比赛会结束，回放会沉下去，但有些声音会和那场比赛一起被记住。' : '没有人会记住每一次确认和等待，但比赛能够完成，就是这份工作的痕迹。'
+        title: isCaster ? `${staff.match_count} 场解说记录，已经足够确认你曾在这里` : `${staff.match_count} 场赛管记录，已经足够确认你曾在这里`,
+        body: `它们横跨 ${stageCount} 个阶段，涉及 ${teamCount} 支队伍；每一项都来自已经发布的赛事记录。`
       },
       chips: lastMatch ? [stageCn(lastMatch.stage), getScheduledText(lastMatch), 'SEASON REVIEW COMPLETE'].filter(Boolean) : ['SEASON REVIEW COMPLETE']
     },
-    getOrganizerMessageScene()
-  ], {
+    getOrganizerMessageScene(db)
+  ]
+
+  const firstStaffScene = fullScenes.find(scene => scene.eyebrow === (isCaster ? 'FIRST CAST' : 'FIRST STAFF RECORD'))
+  const staffMetricScene = fullScenes.find(scene => scene.eyebrow === 'YOU WERE THERE')
+  const teamsSeenScene = fullScenes.find(scene => scene.eyebrow === 'TEAMS SEEN')
+  const partnersScene = fullScenes.find(scene => scene.eyebrow === (isCaster ? 'CASTER PARTNERS' : 'STAFF PARTNERS'))
+  const briefStaffScenes = [
+    fullScenes[0],
+    firstStaffScene,
+    staffMetricScene ? {
+      ...staffMetricScene,
+      title: isCaster
+        ? `${staff.match_count} 场比赛，也值得被好好讲完`
+        : `${staff.match_count} 场比赛，也有人在幕后把它托住`,
+      body: isCaster
+        ? `你的公开记录停在这 ${staff.match_count} 场。它们不需要被写成漫长赛季才有分量；当比赛发生时，你确实在那里，用声音陪它走到了结尾。`
+        : `你的公开记录停在这 ${staff.match_count} 场。数量不多，但每一场都把你的名字写进赛管栏；这就是这份回顾能够确认、也应该认真保存的部分。`,
+      storyQuote: {
+        title: '少，不代表没有记录',
+        body: isCaster ? `这 ${staff.match_count} 场比赛都留下了你的解说署名。` : `这 ${staff.match_count} 场比赛都留下了你的赛管署名。`
+      }
+    } : null,
+    teamsSeenScene,
+    partnersScene && (sameRolePartners.length || crossRolePartners.length) ? partnersScene : null,
+    {
+      kind: 'ending',
+      finalLayout: 'staff',
+      tone: isCaster ? 'purple' : 'blue',
+      eyebrow: 'FRIES CUP ARCHIVE',
+      title: isCaster
+        ? `这 ${staff.match_count} 场比赛，记得你的声音`
+        : `这 ${staff.match_count} 场比赛，记得你在幕后`,
+      body: isCaster
+        ? `谢谢你以解说身份出现在这 ${staff.match_count} 场比赛里。公开数据没有保存具体语句，但完整保留了你的解说署名。`
+        : `谢谢你以赛管身份出现在这 ${staff.match_count} 场比赛里。公开数据没有保存具体过程，但完整保留了你的赛管署名。`,
+      image: avatar,
+      visualFallback: publicStaffName,
+      visualFallbackLabel: isCaster ? 'VOICE ARCHIVE' : 'BEHIND THE MATCH',
+      storyQuote: {
+        title: isCaster ? '短短几场，也有属于你的声音' : '短短几场，也有你照看过的赛场',
+        body: '不必把短暂写得夸张。我们只想认真告诉你：这一页没有忘记你。'
+      },
+      chips: [staffLabel, `${staff.match_count} 场`, '谢谢你来过']
+    },
+    getOrganizerMessageScene(db)
+  ].filter(Boolean)
+
+  const selectedStaffScenes = Number(staff.match_count || 0) <= 2 ? briefStaffScenes : fullScenes
+
+  return withVisualMeta(adaptReviewScenes(selectedStaffScenes, db), {
     storyType: 'staff',
     cardBadge: isCaster ? 'CASTER OFFICIAL CARD' : 'STAFF OFFICIAL CARD',
     staffBadge: isCaster ? 'CASTER ARCHIVE' : 'STAFF ARCHIVE',
@@ -3519,7 +4562,7 @@ function getTournamentMapPool(db) {
 }
 
 function getTopPlayerCards(db) {
-  return safeArr(db?.player_totals)
+  const rows = safeArr(db?.player_totals)
     .filter(row => Number(row.raw_time_mins || 0) >= 20)
     .map(row => {
       const role = String(row.role || '').toUpperCase()
@@ -3530,12 +4573,20 @@ function getTopPlayerCards(db) {
         title: getPlayerDisplayName(row),
         value: `${formatNum(value, 2)}`,
         meta: mainMetric.label,
-        note: [row.team_short_name || row.team_name, getRoleCn(row.role)].filter(Boolean).join(' / '),
+        note: [row.team_short_name || row.team_name, getRoleCn(row.role), '位置数据记忆'].filter(Boolean).join(' / '),
+        role,
         scoreValue: value
       }
     })
-    .sort((a, b) => b.scoreValue - a.scoreValue)
-    .slice(0, 6)
+
+  if (getReviewSeasonProfile(db).usesRegularTemplate) {
+    return ['TANK', 'DPS', 'SUP'].flatMap(role => rows
+      .filter(row => row.role === role)
+      .sort((a, b) => b.scoreValue - a.scoreValue)
+      .slice(0, 2))
+  }
+
+  return rows.sort((a, b) => b.scoreValue - a.scoreValue).slice(0, 6)
 }
 
 function getPlayoffTeamCards(db) {
@@ -3566,36 +4617,6 @@ function getChampionReview(db) {
     const text = String(row.final_rank_text || row.rank_text || '')
     return getRankNumber(text) === 1 || text.includes('冠军')
   }) || null
-}
-
-function splitNames(value) {
-  if (value === undefined || value === null || value === '') return []
-
-  if (Array.isArray(value)) {
-    return value.flatMap(item => splitNames(item))
-  }
-
-  if (typeof value === 'object') {
-    return splitNames(pickFirstValue(
-      value.name,
-      value.publicName,
-      value.staff_name,
-      value.caster_name,
-      value.commentator_name,
-      value.admin_name,
-      value.display_name,
-      value.nickname,
-      value.label,
-      value.value
-    ))
-  }
-
-  const splitter = new RegExp('[、,，/|;；\\s]+', 'g')
-
-  return String(value || '')
-    .split(splitter)
-    .map(name => name.trim())
-    .filter(Boolean)
 }
 
 function getTournamentStaffSummary(db, matches) {
@@ -3644,12 +4665,14 @@ function getTournamentStaffSummary(db, matches) {
 }
 
 export function buildTournamentStory(db) {
+  const profile = getReviewSeasonProfile(db)
   const matches = sortMatches(getAllMatches(db))
+  const playedMatches = matches.filter(match => !isReviewByeMatch(match))
   const teamReviews = getAllTeamLikeRows(db)
   const teamCount = teamReviews.length || safeArr(db?.teams).length
   const matchCount = matches.length
   const mapPool = getTournamentMapPool(db)
-  const mapCards = getMapCards(mapPool)
+  const mapCards = getMapCards(mapPool, { minutesPrefix: '选手累计' })
   const topMap = mapPool[0] || null
   const playoffTeamCards = getPlayoffTeamCards(db)
   const championReview = getChampionReview(db)
@@ -3658,8 +4681,12 @@ export function buildTournamentStory(db) {
   const championTeam = championShort ? getTeamById(db, championShort) : null
   const championMatches = championShort ? getTeamMatches(db, championShort) : []
   const sortedChampionMatches = sortMatches(championMatches)
-  const firstChampionMatch = sortedChampionMatches[0]
-  const lastChampionMatch = sortedChampionMatches[sortedChampionMatches.length - 1]
+  const playedChampionMatches = sortedChampionMatches.filter(match => !isReviewByeMatch(match))
+  const firstChampionMatch = playedChampionMatches[0] || sortedChampionMatches[0]
+  const lastChampionMatch = playedChampionMatches[playedChampionMatches.length - 1] || sortedChampionMatches[sortedChampionMatches.length - 1]
+  const championCandidates = getTeamCandidateValues(championReview?.team_id || championShort, championTeam, championReview)
+  const championLoss = profile.isPartner ? null : playedChampionMatches.find(match => getMatchResultText(match, championCandidates) === '失利') || null
+  const championLossOpponent = championLoss ? getOpponentByCandidates(championLoss, championCandidates) : null
   const grandFinalMatch = getGrandFinalMatch(matches)
   const grandFinalCard = grandFinalMatch ? buildMatchCard(db, grandFinalMatch, [], {
     title: '最后一场比赛',
@@ -3669,32 +4696,37 @@ export function buildTournamentStory(db) {
   const topPlayerCards = getTopPlayerCards(db)
   const staffSummary = getTournamentStaffSummary(db, matches)
 
-  return withVisualMeta([
+  const tournamentScenes = [
     {
       kind: 'cover',
       tone: 'gold',
       eyebrow: 'TOURNAMENT REVIEW',
-      title: '2026 薯条杯学院赛',
-      body: '这是属于整届比赛的回顾。从公开预选赛到季后淘汰赛，从第一场对阵到最后一次归档，这里保存的是所有人一起完成的一届比赛。',
-      image: '/logos/fca_logo.png',
+      title: '这一次，轮到我们一起回头看',
+      body: `你不需要出现在比分表里，才拥有一段关于${profile.eventNoun}的记忆。从第一场对阵到最后一次归档，这里保存的不只是冠军之路，也是所有人一起完成的一届比赛。`,
+      image: profile.logo,
+      routeStartDate: parseRouteDateText(getScheduledText(playedMatches[0]))?.display || '',
+      routeEndDate: parseRouteDateText(getScheduledText(playedMatches[playedMatches.length - 1]))?.display || '',
+      ...getRecordedMatchMeta(playedMatches[0], playedMatches[playedMatches.length - 1], playedMatches),
+      routeFrom: profile.eventTitle,
+      routeTo: championRankText,
       chips: ['公开预选赛', '季后淘汰赛', '赛事总回顾'],
       storyQuote: {
-        title: '这不是某一个人的回顾',
-        body: '这是这届薯条杯学院赛被重新打开后的完整故事。'
+        title: '当一届比赛被重新打开，每个人都会想起不同的一页',
+        body: '有人记得冠军，有人记得遗憾，也有人只记得某个晚上，自己刚好在看。'
       }
     },
     {
       kind: 'metric',
       tone: 'gold',
       eyebrow: 'OPEN QUALIFIER',
-      title: '所有故事，都从公开预选赛开始',
+      title: profile.isRegular ? `${teamCount} 支队伍，从瑞士轮写下第一行` : '所有故事，都从公开预选赛开始',
       metric: String(teamCount || '—'),
       metricLabel: 'TEAMS',
       body: '公开预选赛由瑞士轮和突围赛组成。不是每支队伍都会进入季后淘汰赛，但每支队伍都让这届比赛从一张报名表变成了真正发生过的赛程。',
       statLines: [
         { label: '队伍数量', value: teamCount || '-' },
         { label: '比赛场次', value: matchCount || '-' },
-        { label: '阶段', value: '瑞士轮 / 突围赛' }
+        { label: '地图记录', value: db?.meta?.map_count || mapPool.reduce((sum, row) => sum + Number(row.count || 0), 0) || '-' }
       ],
       dataBars: stageBars,
       chips: ['瑞士轮', '突围赛', '公开预选赛']
@@ -3704,7 +4736,7 @@ export function buildTournamentStory(db) {
       tone: 'gold',
       eyebrow: 'SWISS ROUND',
       title: '瑞士轮，是很多队伍第一次进入赛程的地方',
-      body: '瑞士轮不是背景板。它承载了最早的试探、磨合、等待和第一批胜负。很多故事没有走到最后，但它们确实从这里开始。',
+      body: '瑞士轮不是背景板。公开赛程在这里留下第一批对阵、地图和胜负；很多队伍没有走到最后，但它们的赛季起点都能被准确找到。',
       dataBars: stageBars.filter(row => String(row.label).includes('瑞士') || String(row.label).toUpperCase().includes('SWISS')),
       storyQuote: {
         title: '第一阶段也值得被记住',
@@ -3730,7 +4762,9 @@ export function buildTournamentStory(db) {
       tone: 'gold',
       eyebrow: 'PLAYOFFS',
       title: '八支队伍，进入季后淘汰赛',
-      body: '季后淘汰赛不是另一个赛季，而是公开预选赛之后被筛出来的终局部分。进入前八的队伍，把自己的故事延伸到了更残酷、更接近结尾的阶段。',
+      body: profile.isRegular
+        ? '双败淘汰给了队伍一次重新站起来的机会，也让每一次跌落都更接近真正的告别。进入前八的队伍，把自己的故事延伸到了更残酷、更接近结尾的阶段。'
+        : '季后淘汰赛不是另一个赛季，而是公开预选赛之后被筛出来的终局部分。进入前八的队伍，把自己的故事延伸到了更残酷、更接近结尾的阶段。',
       teamCards: playoffTeamCards,
       chips: playoffTeamCards.map(card => card.title).filter(Boolean)
     },
@@ -3740,13 +4774,20 @@ export function buildTournamentStory(db) {
       eyebrow: 'CHAMPION ROAD',
       title: championShort ? `${championShort}，走到了最后` : '冠军之路，被写进归档',
       body: championShort
-        ? `${championShort} 最终获得了 ${championRankText}。冠军不是一场比赛决定的，而是从第一场到最后一场之间，所有地图、对手和结果共同写出来的。`
+        ? profile.isRegular && championLoss
+          ? `${championShort} 曾在季后赛负于 ${getTeamDisplay(championLossOpponent)}，跌入败者组。此后他们没有再输：一场场打回来，直到在总决赛举起冠军。冠军不是没有跌倒，而是跌倒以后，仍有人愿意一起站起来。`
+          : `${championShort} 最终获得了 ${championRankText}。冠军不是一场比赛决定的，而是从第一场到最后一场之间，所有地图、对手和结果共同写出来的。`
         : '冠军之路不是凭空出现的。它从公开预选赛开始，在季后淘汰赛完成，最后被写进这届赛事的归档。',
       timeline: [
         firstChampionMatch ? {
           label: '第一场',
           value: getMatchDisplayName(firstChampionMatch),
           meta: getScheduledText(firstChampionMatch)
+        } : null,
+        championLoss ? {
+          label: '重新出发',
+          value: `对阵 ${getTeamDisplay(championLossOpponent)}`,
+          meta: '跌入败者组'
         } : null,
         lastChampionMatch ? {
           label: '最后一战',
@@ -3779,21 +4820,23 @@ export function buildTournamentStory(db) {
       kind: 'narrative',
       tone: 'green',
       eyebrow: 'MAP MEMORY',
-      title: topMap ? `最常被记录的地图是 ${mapCn(topMap.mapName)}` : '地图记住了这届比赛的发生地点',
+      title: topMap ? `最常被记录的地图\n${mapCn(topMap.mapName)}` : '地图记住了这届比赛的发生地点',
       body: topMap
-        ? `${mapCn(topMap.mapName)} 在数据中出现了 ${topMap.count} 次。地图不只是背景，它是团战、等待、推进、失误和翻盘真正发生的地方。`
+        ? `${mapCn(topMap.mapName)} 在数据中出现了 ${topMap.count} 次。地图不只是背景；每次出现都连接着一场可以核对的对阵、结果与选手累计出场时间。`
         : '每一张地图都保存着不同的比赛痕迹。它们不是背景，而是记忆发生的地方。',
       mapImage: getMapVisualImage(topMap),
       mapCards,
-      chips: topMap ? [mapTypeCn(topMap.mapType), `${topMap.count} 次`, `${formatNum(topMap.minutes, 1)} 分钟`].filter(Boolean) : []
+      chips: topMap ? [mapTypeCn(topMap.mapType), `${topMap.count} 次`, `选手累计 ${formatNum(topMap.minutes, 1)} 分钟`].filter(Boolean) : []
     },
     {
       kind: 'narrative',
       tone: 'red',
       visualType: 'playersRemembered',
       eyebrow: 'PLAYERS REMEMBERED',
-      title: '这些名字，构成了比赛里的高光',
-      body: '排行榜能显示谁更高，但赛季回顾想保存的是另一件事：这些数字背后，每一个名字都曾经站在地图里，参与过某一场真实发生的比赛。',
+      title: profile.isRegular ? '这些名字，留下了各自位置的数据记忆' : '这些名字，构成了比赛里的高光',
+      body: profile.isRegular
+        ? '这不是官方奖项，也不是对选手的最终定义。它只是数据中心保存下来的几个侧影：这些名字曾经站在地图里，用自己的位置完成过真实发生的比赛。'
+        : '排行榜能显示谁更高，但赛季回顾想保存的是另一件事：这些数字背后，每一个名字都曾经站在地图里，参与过某一场真实发生的比赛。',
       playerCards: topPlayerCards,
       chips: topPlayerCards.slice(0, 6).map(player => player.title)
     },
@@ -3803,7 +4846,7 @@ export function buildTournamentStory(db) {
       visualType: 'partners',
       eyebrow: 'VOICE AND STAFF',
       title: '比赛被看见，也被托住',
-      body: '一届社区赛事不只由选手完成。有人讲述比赛，有人确认流程，有人处理等待，也有人把每一场比赛托到能够开始、能够结束、能够归档的位置。',
+      body: '公开档案不只有选手数据。解说与赛管记录也把名字和场次留在比赛旁边，让这届赛事的归档能够同时看见赛场内外的公开参与。',
       partnerGroups: [
         {
           title: '解说出场',
@@ -3824,11 +4867,70 @@ export function buildTournamentStory(db) {
         ...safeArr(staffSummary.staffNames).slice(0, 2)
       ].filter(Boolean)
     },
-    getOrganizerMessageScene()
-  ], {
+    {
+      kind: 'pause',
+      visualType: 'pause',
+      tone: 'green',
+      eyebrow: 'A QUIET FRAME',
+      title: '最后一场结束以后，还有人没有立刻关掉页面',
+      body: '有人在等最后的结算，有人在看选手退房，也有人只是想让这个赛季再多停留一会儿。比赛结束得很快，真正告别却需要一点时间。',
+      memoryCoordinates: [
+        {
+          label: 'FINAL FRAME',
+          value: championShort || championTeam?.name || '冠军归档',
+          meta: championRankText
+        },
+        {
+          label: 'RETURNED TO',
+          value: topMap ? mapCn(topMap.mapName) : '赛季地图',
+          meta: topMap ? `${topMap.count} 次记录` : '公开赛程'
+        },
+        {
+          label: 'RECORDED',
+          value: `${matchCount} 场比赛`,
+          meta: `${teamCount} 支队伍`
+        }
+      ],
+      watermark: 'STAY',
+      backgroundWords: ['STILL HERE', 'LAST MATCH', 'TOGETHER', 'REMEMBER']
+    },
+    {
+      kind: 'ending',
+      visualType: 'final',
+      tone: 'green',
+      eyebrow: 'WITNESS MEMORY',
+      title: '这届比赛，也有你看见的那一部分',
+      body: `赛事数据不能确认你看过哪一场，也不会替你指定应该记住什么。因此这一页只把公开赛程、地图、最终排名和参与者名字重新交给你；属于观众的意义，留给真正看过比赛的人自己补上。`,
+      image: profile.logo,
+      watermark: 'TOGETHER',
+      archiveBridgeLabel: 'WITNESS ENTRY / 2026',
+      witnessStats: [
+        { label: '比赛归档', value: matchCount, meta: '场公开记录' },
+        { label: '队伍归档', value: teamCount, meta: '支参赛队伍' },
+        { label: '地图坐标', value: mapPool.length, meta: '张被记录的地图' }
+      ],
+      witnessPrompt: {
+        label: 'YOUR FRAME',
+        title: '最后，在见证票上签下自己的名字',
+        body: '它不会声称你看过哪一场，只确认这届比赛曾经被你看见。'
+      },
+      storyQuote: {
+        title: '谢谢你曾经把目光留在这里',
+        body: '当比赛结束以后，仍愿意记得，本身就是一种陪伴。'
+      },
+      chips: ['你看见过', '你在意过', '你也在这届比赛里']
+    },
+    getOrganizerMessageScene(db)
+  ]
+
+  const pacedTournamentScenes = tournamentScenes.filter(scene => (
+    scene.eyebrow !== 'SWISS ROUND' && scene.eyebrow !== 'A QUIET FRAME'
+  ))
+
+  return withVisualMeta(adaptReviewScenes(pacedTournamentScenes, db), {
     storyType: 'tournament',
     cardBadge: 'TOURNAMENT OFFICIAL REVIEW',
-    coverWatermark: 'FCA 2026',
+    coverWatermark: profile.mark,
     endWatermark: 'ARCHIVE'
   })
 }

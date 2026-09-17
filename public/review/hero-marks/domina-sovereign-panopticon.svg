@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Domina sovereign crystal</title>
+  <desc id="desc">A single gold crystal has an offset raised ridge and a narrow polished bevel. Unequal satin faces give the object depth without nested diamond frames or a targeting dot.</desc>
+  <path d="M180 49L239 110L246 134L181 210L113 137L120 110Z" fill="#b59954" fill-opacity="0.17" stroke="#deca8b" stroke-opacity="0.76" stroke-width="2" stroke-linejoin="bevel"/>
+  <path d="M180 49L193 124L128 128L184 64Z" fill="#d6bb76" fill-opacity="0.3"/>
+  <path d="M180 49L239 110L193 124Z" fill="#b2944e" fill-opacity="0.2"/>
+  <path d="M193 124L246 134L181 210Z" fill="#c5a663" fill-opacity="0.26"/>
+  <path d="M128 128L193 124L181 210L113 137Z" fill="#776339" fill-opacity="0.16"/>
+  <path d="M180 49L184 64L128 128L113 137L120 110Z" fill="#f0d993" fill-opacity="0.34"/>
+  <path d="M239 110L246 134L193 124Z" fill="#e2c986" fill-opacity="0.15"/>
+  <path d="M184 64L128 128L193 124L239 110M193 124L246 134" fill="none" stroke="#ddc991" stroke-opacity="0.42" stroke-width="1.4" stroke-linejoin="round"/>
+  <path d="M180 60L193 124L183 195" fill="none" stroke="#eddaa2" stroke-opacity="0.53" stroke-width="1.7" stroke-linecap="round"/>
+</svg>

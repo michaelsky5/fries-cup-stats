@@ -1,0 +1,1061 @@
+.shell:global([data-design="kpr"]) {
+  --kpr-yellow: var(--fc-data-signal, #f4c320);
+  --kpr-ink: var(--fc-data-ink, #171817);
+  --kpr-paper: var(--fc-data-paper, #eeede6);
+  --kpr-muted: var(--fc-data-text-muted, #66685f);
+  --kpr-line: var(--fc-data-line, #17181726);
+  --kpr-gutter: var(--fc-data-gutter, clamp(20px, 3.4vw, 64px));
+  --kpr-header-height: 141px;
+  --portal-shell-width: calc(100% - var(--kpr-gutter) * 2);
+  background: var(--kpr-paper);
+  color: var(--kpr-ink);
+}
+
+.brandArchiveMeta, .brandTypeLockup { display: none; }
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup small[lang="zh-CN"] { font: 600 12px/1.2 var(--font-sans); letter-spacing: .2em; }
+.contentContextDock { display: none; }
+
+:global([data-design="kpr"]) .topShell { top: 36px; border-bottom: 1px solid #ffffff20; background: #171817; }
+:global([data-design="kpr"]) .topBar { position: relative; min-height: 64px; gap: 24px; }
+:global([data-design="kpr"]) .brandLink { gap: 7px; }
+:global([data-design="kpr"]) .brandEventMark { width: 42px; height: 34px; }
+:global([data-design="kpr"]) .brandEventMark img { width: 54px; height: 54px; }
+:global([data-design="kpr"]) .brandWordMark { width: 97px; height: 34px; }
+:global([data-design="kpr"]) .brandWordMark img { width: 108px; height: 108px; }
+:global([data-design="kpr"]) .nav { justify-content: center; gap: 4px; }
+:global([data-design="kpr"]) .navLink { min-width: 0; min-height: 40px; padding: 0 12px; border: 0; gap: 6px; font-size: 12px; font-weight: 500; }
+:global([data-design="kpr"]) .navLink::before { min-width: 15px; height: auto; background: none; color: #8c8d82; font: 10px var(--font-mono); }
+:global([data-design="kpr"]) .navLinkActive::before { color: #f4c320; }
+:global([data-design="kpr"]) .navLink::after { bottom: 0; right: 12px; left: 12px; height: 1px; }
+:global([data-design="kpr"]) .headerRight { position: static; gap: 8px; }
+:global([data-design="kpr"]) .languageSwitch { width: 68px; gap: 3px; font-size: 10px; font-weight: 500; }
+:global([data-design="kpr"]) .languageSwitch .languageActive { background: none; color: #f4c320; }
+:global([data-design="kpr"]) .pageFrame { width: 100%; padding: 0 0 48px; }
+:global([data-design="kpr"]) .main { width: 100%; min-width: 0; margin: 0; padding: 0; }
+:global([data-design="kpr"][data-kpr-page="legacy"]) .pageFrame { width: var(--portal-shell-width); padding: 36px 0 64px; }
+:global([data-design="kpr"][data-design-edition="hybrid"]) .pageFrame[data-team-archive="true"] { padding-top: 10px; }
+:global([data-design="kpr"]) .fallbackSyncNotice { min-height: 0; margin: 0; padding: 9px var(--kpr-gutter); display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; border: 0; border-bottom: 1px solid #17181726; background: #f4c32020; box-shadow: none; }
+:global([data-design="kpr"]) .fallbackSyncNotice > span { font-size: 9px; }
+:global([data-design="kpr"]) .fallbackSyncNotice > strong { font-size: 11px; }
+:global([data-design="kpr"]) .fallbackSyncNotice > p { margin: 0; color: #66685f; font-size: 10px; }
+:global([data-design="kpr"]) .fallbackSyncNotice > i { position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; }
+:global([data-design="kpr"]) .systemBox { margin: 32px var(--kpr-gutter); box-shadow: none; border-width: 1px; }
+
+@media (max-width: 1120px) {
+  :global([data-design="kpr"]) .topBar { gap: 12px; }
+  :global([data-design="kpr"]) .navLink { padding: 0 7px; font-size: 11px; }
+}
+
+@media (max-width: 980px) {
+  :global([data-design="kpr"]) .nav { display: none; }
+  :global([data-design="kpr"]) .mobileNavMenu { position: static; display: block; min-width: 0; justify-self: end; }
+  :global([data-design="kpr"]) .mobileNavMenu > summary { display: flex; min-height: 40px; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid #ffffff30; color: #e9e9e2; background: transparent; cursor: pointer; list-style: none; }
+  :global([data-design="kpr"]) .mobileNavMenu > summary::-webkit-details-marker { display: none; }
+  :global([data-design="kpr"]) .mobileNavCurrent { font-size: 12px; }
+  :global([data-design="kpr"]) .mobileMenuLabel { color: #f4c320; font-size: 9px; }
+  :global([data-design="kpr"]) .mobileNavPanel { position: absolute; z-index: 60; inset: calc(100% + 2px) 0 auto auto; width: min(360px, calc(100vw - 32px)); border: 1px solid #ffffff30; background: #171817; color: #e9e9e2; }
+  :global([data-design="kpr"]) .mobileNavLink { display: flex; justify-content: space-between; align-items: center; min-height: 48px; padding: 0 18px; border-bottom: 1px solid #ffffff20; color: #e9e9e2; font-size: 13px; text-decoration: none; }
+  :global([data-design="kpr"]) .mobileNavLinkActive { background: #f4c320; color: #171817; }
+  :global([data-design="kpr"]) .mobileNavItemEnglish { margin-left: 8px; font-size: 9px; font-style: normal; opacity: .7; }
+}
+
+@media (max-width: 600px) {
+  .shell:global([data-design="kpr"]) { --kpr-gutter: 16px; --kpr-header-height: 143px; }
+  :global([data-design="kpr"]) .topShell { top: 40px; }
+  :global([data-design="kpr"]) .topBar { min-height: 60px; gap: 6px; }
+  :global([data-design="kpr"]) .brandWordMark { display: none; }
+  :global([data-design="kpr"]) .brandEventMark { width: 42px; }
+  :global([data-design="kpr"]) .mobileNavMenu > summary { padding: 0 8px; gap: 6px; }
+  :global([data-design="kpr"]) .languageSwitch { width: 60px; }
+  :global([data-design="kpr"]) .languageSwitch button { padding: 0 3px; }
+}
+
+/* Hybrid archive: a quiet global frame above an adaptive season dock. */
+.shell:global([data-design="kpr"][data-design-edition="hybrid"]) {
+  --kpr-header-height: 146px;
+  --kpr-preview-height: 36px;
+}
+
+.shell:global([data-design="kpr"][data-design-edition="hybrid"])[data-header-mode="overview"] {
+  --kpr-header-height: 136px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .topShell {
+  isolation: isolate;
+  border-bottom: 1px solid #f4c3205c;
+  background: #141513f7;
+  box-shadow: 0 14px 34px #090a0824;
+  backdrop-filter: blur(18px);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .topShell::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: repeating-linear-gradient(90deg, transparent 0, transparent calc(12.5% - 1px), #ffffff0a calc(12.5% - 1px), #ffffff0a 12.5%);
+  content: '';
+  pointer-events: none;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .topBar {
+  position: relative;
+  z-index: 2;
+  grid-template-columns: minmax(178px, .72fr) minmax(480px, 1.9fr) auto;
+  min-height: 66px;
+  gap: clamp(18px, 2.4vw, 42px);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandLink {
+  align-self: stretch;
+  grid-template-columns: 38px 108px;
+  gap: 11px;
+  min-width: 0;
+  padding-right: 22px;
+  border-right: 1px solid #ffffff20;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandEventMark {
+  width: 38px;
+  height: 38px;
+  overflow: visible;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandEventMark img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup {
+  width: 108px;
+  min-width: 108px;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup strong {
+  width: 100%;
+  color: #f2f2e9;
+  font: 900 18px/.78 var(--font-sans);
+  letter-spacing: -.03em;
+  white-space: nowrap;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup small {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  color: var(--kpr-yellow);
+  font: 7px/1 var(--font-mono);
+  letter-spacing: .09em;
+  white-space: nowrap;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .nav {
+  align-self: stretch;
+  justify-content: center;
+  gap: clamp(4px, .7vw, 12px);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .navLink {
+  min-height: 66px;
+  gap: 8px;
+  padding-inline: clamp(8px, .95vw, 16px);
+  border: 0;
+  color: #a5a79d;
+  font-size: 11px;
+  font-weight: 650;
+  transition: color .18s ease, transform .18s ease;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .navLink::before {
+  color: #74776d;
+  font: 8px/1 var(--font-mono);
+  transition: color .18s ease, transform .18s ease;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .navLink::after {
+  right: clamp(8px, .95vw, 16px);
+  bottom: 0;
+  left: clamp(8px, .95vw, 16px);
+  height: 2px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .navLink:hover,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .navLinkActive {
+  background: transparent;
+  color: var(--kpr-paper);
+  transform: translateY(-1px);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .navLink:hover::before,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .navLinkActive::before {
+  background: transparent;
+  color: var(--kpr-yellow);
+  transform: translateX(-2px);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .headerRight {
+  align-self: stretch;
+  gap: 0;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageSwitch {
+  width: 58px;
+  min-height: 66px;
+  gap: 0;
+  border-left: 1px solid #ffffff20;
+  font: 8px/1 var(--font-mono);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageSwitch button {
+  min-width: 26px;
+  padding: 0 4px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountCluster {
+  min-height: 66px;
+  display: flex;
+  align-items: stretch;
+  border-left: 1px solid #ffffff20;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountSpaceLink {
+  position: relative;
+  width: 42px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  border-left: 1px solid #ffffff20;
+  color: #8f9187;
+  text-decoration: none;
+  transition: background-color .18s ease, color .18s ease;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountSpaceLink > span {
+  font: 6px/1 var(--font-mono);
+  letter-spacing: .08em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountSpaceLink > b {
+  color: var(--kpr-yellow);
+  font: 10px/1 var(--font-mono);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountSpaceLink .navAttention {
+  position: absolute;
+  top: 5px;
+  right: 4px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountSpaceLink:hover,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountSpaceLink:focus-visible {
+  background: var(--kpr-yellow);
+  color: var(--kpr-ink);
+  outline: 0;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountSpaceLink:hover > b,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountSpaceLink:focus-visible > b {
+  color: var(--kpr-ink);
+}
+
+@media (max-width: 1180px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .topBar {
+    grid-template-columns: minmax(164px, .65fr) minmax(430px, 1.75fr) auto;
+    gap: 10px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandLink {
+    grid-template-columns: 35px 94px;
+    padding-right: 10px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandEventMark,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandEventMark img {
+    width: 35px;
+    height: 35px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup {
+    width: 94px;
+    min-width: 94px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup strong { font-size: 16px; }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .navLink { padding-inline: 7px; font-size: 10px; }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .accountSpaceLink { width: 36px; }
+}
+
+@media (max-width: 980px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .topBar {
+    grid-template-columns: minmax(155px, 1fr) minmax(150px, auto) auto;
+    gap: 10px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavMenu {
+    justify-self: center;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavMenu > summary {
+    min-width: 150px;
+    min-height: 40px;
+    border: 0;
+    border-bottom: 1px solid #ffffff28;
+    background: transparent;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavPanel {
+    top: calc(100% + 1px);
+    width: min(390px, calc(100vw - 32px));
+    counter-reset: mobile-data-nav;
+    border-color: #ffffff22;
+    box-shadow: 0 24px 54px #0007;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavLink {
+    grid-template-columns: 26px minmax(0, 1fr) auto;
+    counter-increment: mobile-data-nav;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavLink::before {
+    color: #777a70;
+    content: '0' counter(mobile-data-nav);
+    font: 8px/1 var(--font-mono);
+  }
+}
+
+/* Hybrid archive / round 2: a single inset navigation panel. */
+.shell:global([data-design="kpr"][data-design-edition="hybrid"]),
+.shell:global([data-design="kpr"][data-design-edition="hybrid"])[data-header-mode="overview"] {
+  display: flow-root;
+  --kpr-header-height: calc(88px + var(--kpr-preview-height));
+  --kpr-preview-height: 36px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .topShell {
+  top: var(--kpr-preview-height);
+  width: var(--portal-shell-width);
+  margin: 14px auto 0;
+  overflow: visible;
+  border: 1px solid #ffffff24;
+  background: #11120ff2;
+  box-shadow: 0 18px 42px #090a0838;
+  backdrop-filter: blur(20px);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .topShell::before {
+  top: -1px;
+  right: auto;
+  bottom: auto;
+  left: -1px;
+  width: clamp(112px, 15vw, 240px);
+  height: 2px;
+  background: var(--kpr-yellow);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .topBar {
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
+  min-height: 72px;
+  gap: clamp(16px, 1.2vw, 28px);
+  padding: 0 clamp(18px, 1.4vw, 28px);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandLink {
+  grid-template-columns: 34px 124px;
+  justify-self: start;
+  gap: 12px;
+  padding: 0;
+  border: 0;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandEventMark,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandEventMark img {
+  width: 34px;
+  height: 34px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup {
+  width: 124px;
+  min-width: 124px;
+  gap: 6px;
+  justify-items: start;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup strong {
+  width: auto;
+  font-size: 19px;
+  letter-spacing: -.025em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup small {
+  width: auto;
+  display: block;
+  color: var(--kpr-yellow);
+  font: 9px/1 var(--font-mono);
+  letter-spacing: .11em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .nav {
+  min-width: 0;
+  justify-content: center;
+  gap: clamp(8px, .9vw, 18px);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .navLink {
+  min-height: 72px;
+  gap: 8px;
+  padding-inline: clamp(10px, .65vw, 14px);
+  color: #b7b9af;
+  font-size: clamp(14px, .9vw, 15px);
+  white-space: nowrap;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .navLink:hover,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .navLink[aria-current="page"] {
+  color: var(--kpr-paper);
+  transform: none;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .navLink::before {
+  font-size: 10px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .navLink::after {
+  right: clamp(7px, .78vw, 13px);
+  bottom: -1px;
+  left: clamp(7px, .78vw, 13px);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .headerRight {
+  min-height: 72px;
+  align-self: stretch;
+  justify-self: end;
+  gap: 8px;
+  padding-left: clamp(10px, 1vw, 18px);
+  border-left: 1px solid #ffffff17;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageSwitch {
+  width: 54px;
+  min-height: 44px;
+  border: 0;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountCluster {
+  position: relative;
+  min-height: 44px;
+  align-items: center;
+  border: 0;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountCluster > .navAttention {
+  position: absolute;
+  z-index: 2;
+  top: 7px;
+  right: 4px;
+  pointer-events: none;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountSpaceLink {
+  display: none;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .contentContextDock {
+  width: var(--portal-shell-width);
+  display: block;
+  margin: 18px auto 0;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .main {
+  position: relative;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .fallbackSyncNotice {
+  position: absolute;
+  z-index: 12;
+  top: 4px;
+  left: var(--kpr-gutter);
+  width: max-content;
+  max-width: calc(100% - var(--kpr-gutter) * 2);
+  min-height: 28px;
+  margin: 0;
+  padding: 3px 10px 3px 3px;
+  flex-wrap: nowrap;
+  gap: 9px;
+  border: 1px solid #1718172b;
+  background: #e9e9e2e8;
+  box-shadow: 0 10px 28px #17181715;
+  backdrop-filter: blur(12px);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .fallbackSyncNotice > span {
+  min-height: 22px;
+  padding-inline: 7px;
+  font-size: 9px;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .fallbackSyncNotice > strong {
+  font: 700 10px/1 var(--font-mono);
+  white-space: nowrap;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .fallbackSyncNotice > p {
+  display: none;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .fallbackSyncNotice > i {
+  height: 1px;
+}
+
+@media (max-width: 1180px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .topBar {
+    grid-template-columns: 150px minmax(0, 1fr) auto;
+    gap: 10px;
+    padding-inline: 14px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandLink {
+    grid-template-columns: 32px 110px;
+    gap: 9px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandEventMark,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandEventMark img {
+    width: 32px;
+    height: 32px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup {
+    width: 110px;
+    min-width: 110px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup strong { font-size: 17px; }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .navLink { padding-inline: 6px; font-size: 11px; }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .headerRight { padding-left: 8px; }
+}
+
+@media (max-width: 980px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .topBar {
+    grid-template-columns: minmax(164px, 1fr) minmax(142px, auto) auto;
+    gap: 10px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavMenu {
+    justify-self: center;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavMenu > summary {
+    min-width: 142px;
+    min-height: 42px;
+    border: 1px solid #ffffff1d;
+    background: #ffffff05;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavPanel {
+    top: calc(100% + 1px);
+    width: min(390px, calc(100vw - 32px));
+    counter-reset: mobile-data-nav;
+    border-color: #ffffff22;
+    box-shadow: 0 24px 54px #0007;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavLink {
+    grid-template-columns: 26px minmax(0, 1fr) auto;
+    counter-increment: mobile-data-nav;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavLink::before {
+    color: #777a70;
+    content: '0' counter(mobile-data-nav);
+    font: 8px/1 var(--font-mono);
+  }
+}
+
+@media (max-width: 600px) {
+  .shell:global([data-design="kpr"][data-design-edition="hybrid"]),
+  .shell:global([data-design="kpr"][data-design-edition="hybrid"])[data-header-mode="overview"] {
+    --kpr-gutter: 12px;
+    --kpr-header-height: calc(68px + var(--kpr-preview-height));
+    --kpr-preview-height: 40px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .topShell {
+    margin-top: 8px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .topBar {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    min-height: 58px;
+    gap: 7px;
+    padding: 0 8px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandLink {
+    grid-template-columns: 32px;
+    gap: 0;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandEventMark,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandEventMark img {
+    width: 32px;
+    height: 32px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .languageSwitch {
+    display: none;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavMenu { width: 100%; }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavMenu > summary {
+    width: 100%;
+    min-width: 0;
+    min-height: 38px;
+    padding-inline: 8px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavPanel {
+    position: fixed;
+    top: var(--kpr-header-height);
+    right: var(--kpr-gutter);
+    left: var(--kpr-gutter);
+    width: auto;
+    max-height: calc(100dvh - var(--kpr-header-height) - 10px);
+    overflow-y: auto;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavLink {
+    min-height: 54px;
+    padding-inline: 18px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .headerRight {
+    min-height: 58px;
+    gap: 5px;
+    padding-left: 6px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .accountCluster {
+    min-height: 40px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .contentContextDock {
+    margin-top: 12px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .fallbackSyncNotice {
+    top: 4px;
+    left: var(--kpr-gutter);
+    max-width: calc(100% - var(--kpr-gutter) * 2);
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .fallbackSyncNotice > strong {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 600px) {
+  .shell:global([data-design="kpr"][data-design-edition="hybrid"]),
+  .shell:global([data-design="kpr"][data-design-edition="hybrid"])[data-header-mode="overview"] {
+    --kpr-header-height: calc(96px + var(--kpr-preview-height));
+    --kpr-preview-height: 40px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .topBar {
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+    min-height: 60px;
+    gap: 8px;
+    padding: 0;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandLink {
+    display: grid;
+    grid-template-columns: 34px;
+    gap: 0;
+    padding: 0;
+    border-right: 0;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandEventMark,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandEventMark img {
+    width: 34px;
+    height: 34px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .brandTypeLockup,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .languageSwitch,
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .accountSpaceLink {
+    display: none;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavMenu {
+    width: 100%;
+    position: static;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavMenu > summary {
+    width: 100%;
+    min-width: 0;
+    min-height: 38px;
+    padding-inline: 8px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavPanel {
+    position: absolute;
+    top: calc(100% + 1px);
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-height: calc(100dvh - var(--kpr-preview-height) - 80px);
+    overflow-y: auto;
+    border-inline: 0;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavLink {
+    min-height: 54px;
+    padding-inline: 18px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .accountCluster {
+    min-height: 60px;
+    border-left: 0;
+  }
+}
+
+/* Hybrid archive / round 3: Marathon-inspired flat control dock. */
+.languageMenu,
+.mobileLanguageMenu {
+  display: none;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .headerRight {
+  height: 48px;
+  min-height: 48px;
+  align-self: center;
+  gap: 0;
+  padding-left: 0;
+  border: 1px solid #ffffff26;
+  background: #090a081f;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu {
+  position: relative;
+  width: 108px;
+  height: 46px;
+  display: block;
+  flex: 0 0 auto;
+  border-left: 1px solid #ffffff1e;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu > summary {
+  position: relative;
+  width: 100%;
+  height: 46px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 10px;
+  grid-template-rows: auto auto;
+  align-content: center;
+  gap: 4px 7px;
+  padding: 0 10px 0 12px;
+  color: #f2f2e9;
+  cursor: pointer;
+  list-style: none;
+  transition: background-color .16s ease, color .16s ease;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu > summary::-webkit-details-marker {
+  display: none;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu > summary strong {
+  grid-column: 1;
+  color: inherit;
+  font: 800 10px/1 var(--font-mono);
+  letter-spacing: .08em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu > summary span {
+  grid-column: 1;
+  color: #777a70;
+  font: 9px/1 var(--font-mono);
+  letter-spacing: .12em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu > summary::after {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  color: var(--kpr-yellow);
+  content: '▾';
+  font: 10px/1 var(--font-mono);
+  transition: transform .16s ease;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu[open] > summary,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu > summary:hover,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu > summary:focus-visible {
+  background: var(--kpr-yellow);
+  color: var(--kpr-ink);
+  outline: 0;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu[open] > summary span,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu > summary:hover span,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu > summary:focus-visible span,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu[open] > summary::after,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu > summary:hover::after,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu > summary:focus-visible::after {
+  color: var(--kpr-ink);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenuPanel {
+  position: absolute;
+  z-index: 80;
+  top: calc(100% + 10px);
+  right: -1px;
+  width: 228px;
+  border: 1px solid #17181752;
+  background: var(--kpr-paper);
+  color: var(--kpr-ink);
+  box-shadow: 0 20px 46px #0004;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenuPanel > header {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 13px;
+  border-bottom: 1px solid #17181724;
+  color: #70736a;
+  font: 9px/1 var(--font-mono);
+  letter-spacing: .12em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenuPanel > header strong {
+  color: var(--kpr-ink);
+  font: 800 9px/1 var(--font-mono);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageOption {
+  position: relative;
+  width: 100%;
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 0 13px;
+  border: 0;
+  border-bottom: 1px solid #17181718;
+  background: transparent;
+  color: var(--kpr-ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageOption:last-child {
+  border-bottom: 0;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageOption > span {
+  color: #73766d;
+  font: 9px/1 var(--font-mono);
+  letter-spacing: .08em;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageOption > strong {
+  color: inherit;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageOption > i {
+  color: #92958a;
+  font: normal 9px/1 var(--font-mono);
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageOption:hover,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageOption:focus-visible,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageOptionActive {
+  background: #f4c32024;
+  box-shadow: inset 3px 0 0 var(--kpr-yellow);
+  outline: 0;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageOptionActive > i {
+  color: #aa8200;
+}
+
+:global([data-design="kpr"][data-design-edition="hybrid"]) .accountCluster {
+  height: 46px;
+  min-height: 46px;
+  border-left: 1px solid #ffffff1e;
+}
+
+@media (max-width: 1180px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu {
+    width: 100px;
+  }
+}
+
+@media (max-width: 1279px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .headerRight {
+    height: 44px;
+    min-height: 44px;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu {
+    display: none;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileLanguageMenu {
+    display: grid;
+    gap: 0;
+    border-top: 4px solid #0f100e;
+    background: #e9e9e2;
+    color: var(--kpr-ink);
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileLanguageHeader {
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    border-bottom: 1px solid #17181724;
+    color: #6f7268;
+    font: 9px/1 var(--font-mono);
+    letter-spacing: .11em;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileLanguageHeader strong {
+    color: var(--kpr-ink);
+    font: 800 10px/1 var(--font-mono);
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileLanguageOptions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileLanguageOptions .languageOption {
+    min-height: 56px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    gap: 4px 8px;
+    padding: 0 18px;
+    border-right: 1px solid #1718171c;
+    border-bottom: 0;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileLanguageOptions .languageOption > span {
+    grid-column: 1;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileLanguageOptions .languageOption > strong {
+    grid-column: 1;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileLanguageOptions .languageOption > i {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .accountCluster {
+    height: 42px;
+    min-height: 42px;
+  }
+}
+
+@media (max-width: 600px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .headerRight {
+    height: 40px;
+    min-height: 40px;
+    padding-left: 0;
+  }
+
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .accountCluster {
+    height: 38px;
+    min-height: 38px;
+    border-left: 1px solid #ffffff1e;
+  }
+}
+
+:global([data-design='kpr'][data-design-edition='hybrid']) .mobileNavMenu[open] .mobileMenuLabel { color: var(--fc-data-signal); }
+
+/* Compact auxiliary controls before reducing space between global destinations. */
+@media (min-width: 1280px) and (max-width: 1799px) {
+  :global([data-design='kpr'][data-design-edition='hybrid']) .languageMenu { width: 76px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .languageMenu > summary { grid-template-rows: auto; padding-inline: 10px; gap: 5px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .languageMenu > summary span { display: none; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .languageMenu > summary::after { grid-row: 1; }
+}
+
+@media (min-width: 1280px) and (max-width: 1535px) {
+  :global([data-design='kpr'][data-design-edition='hybrid']) .navLink::before { display: none; }
+}
+
+/* Six global destinations stay readable before switching to the shared menu. */
+@media (min-width: 981px) and (max-width: 1279px) {
+  :global([data-design='kpr'][data-design-edition='hybrid']) .topBar { grid-template-columns: minmax(170px, 1fr) auto auto; gap: 16px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .nav { display: none; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .languageMenu { display: none; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .mobileNavMenu { position: relative; display: block; min-width: 0; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .mobileNavMenu > summary { display: flex; min-width: 142px; min-height: 42px; align-items: center; justify-content: space-between; gap: 12px; padding: 0 12px; border: 1px solid #ffffff30; color: var(--fc-data-paper); background: transparent; cursor: pointer; list-style: none; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .mobileNavMenu > summary::-webkit-details-marker { display: none; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .mobileNavCurrent { font-size: 12px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .mobileMenuLabel { color: var(--fc-data-signal); font-size: 9px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .mobileNavPanel { position: absolute; z-index: 60; top: calc(100% + 15px); right: 0; width: min(390px, calc(100vw - 32px)); max-height: calc(100dvh - var(--kpr-preview-height) - 100px); overflow-y: auto; border: 1px solid #ffffff30; background: var(--fc-data-ink); color: var(--fc-data-paper); }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .mobileNavLink { display: flex; justify-content: space-between; align-items: center; min-height: 48px; padding: 0 18px; border-bottom: 1px solid #ffffff20; color: var(--fc-data-paper); font-size: 13px; text-decoration: none; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .mobileNavLinkActive { background: var(--fc-data-signal); color: var(--fc-data-ink); }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .mobileNavItemEnglish { margin-left: 8px; font-size: 9px; font-style: normal; opacity: .7; }
+}
+
+/* Exhibition: integrated masthead, with all global controls retained. */
+.shell:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) { --kpr-header-height: 92px; }
+:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .topShell { width: 100%; margin: 0; box-shadow: none; border-inline: 0; }
+:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .topBar { min-height: 56px; padding-inline: 4.5vw; }
+:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .navLink { min-height: 56px; }
+:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .headerRight { min-height: 56px; }
+:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .pageFrame[data-team-archive='true'] { width: 100%; padding-top: 0; }
+:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .dataNotice { margin-inline: 4.5vw; }
+:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .contentContextDock { margin-block: 28px; }
+@media (max-width: 700px) {
+  .shell:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) { --kpr-header-height: 96px; }
+  :global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .topBar { padding-inline: 16px; }
+}
+
+/* Phone public navigation has its own order; tablet and desktop retain the masthead. */
+@media (max-width: 600px) {
+  .shell:global([data-design='kpr'][data-design-edition='hybrid']):has([data-phone-navigation='true']) {
+    --kpr-header-height: calc(56px + var(--kpr-preview-height));
+    --fc-mobile-navigation-height: calc(63px + env(safe-area-inset-bottom));
+    padding-bottom: var(--fc-mobile-navigation-height);
+  }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .topShell[data-phone-navigation='true'] { width: 100%; margin: 0; border: 0; box-shadow: none; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) [data-phone-navigation='true'] .topBar { grid-template-columns: minmax(0, 1fr) auto; min-height: 56px; padding: 0 16px; gap: 10px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) [data-phone-navigation='true'] .brandLink { grid-template-columns: 24px auto; gap: 8px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) [data-phone-navigation='true'] :is(.brandEventMark, .brandEventMark img) { width: 24px; height: 28px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) [data-phone-navigation='true'] .brandTypeLockup { display: grid; min-width: 0; gap: 4px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) [data-phone-navigation='true'] .brandTypeLockup strong { font-size: 15px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) [data-phone-navigation='true'] .brandTypeLockup small { font-size: 10px; letter-spacing: .08em; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) [data-phone-navigation='true'] .mobileNavMenu { display: none; }
+  .shell:global([data-design='kpr'][data-design-edition='hybrid']):has([data-mobile-season-archive]) .dataNotice { margin: 8px 16px 0; }
+}
+
+/* The archive owns its footer; its final surface also carries the phone dock clearance. */
+.shell:global([data-design='kpr'][data-design-edition='hybrid'][data-archive-home='true']) { padding-bottom: 0; }
+:global([data-design='kpr'][data-design-edition='hybrid'][data-archive-home='true']) .pageFrame { padding-bottom: 0; }

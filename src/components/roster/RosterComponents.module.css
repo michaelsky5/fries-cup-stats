@@ -94,7 +94,7 @@
 
 .subnav {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   background: var(--portal-surface);
   border: 2px solid var(--portal-border);
 }
@@ -629,7 +629,7 @@
 .roleSplitRow {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--role-split-count, 3), minmax(0, 1fr));
   margin: 4px -8px -8px;
   border-top: 1px solid var(--portal-border);
 }
@@ -660,6 +660,10 @@
 
 .roleSupport {
   color: #3F9369;
+}
+
+.roleFlex {
+  color: #9A72C7;
 }
 
 .metaLabel {
@@ -1245,3 +1249,861 @@
     flex-direction: column;
   }
 }
+
+/* Team directory signal cards are opt-in so player and staff directories keep
+   their current layout until their own redesign pass. */
+
+.teamCardSignal {
+  min-height: 430px;
+  overflow: hidden;
+  background: var(--fc-data-paper-raised, #f6f5ee);
+  border: 0;
+  color: var(--fc-data-ink, #171817);
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.teamCardSignal::before {
+  width: 100%;
+  height: 4px;
+  background: var(--fc-data-signal, #f4c320);
+  opacity: 1;
+  transform: scaleX(0.2);
+  transform-origin: left center;
+  transition: transform 220ms ease;
+}
+
+.teamCardSignal .teamBrandArea {
+  min-height: 188px;
+  overflow: hidden;
+  padding: 28px;
+  background: var(--fc-data-ink, #171817);
+  border-bottom: 1px solid var(--fc-data-line-strong, rgba(23, 24, 23, 0.38));
+}
+
+.teamCardSignal .teamBrandArea::before {
+  position: absolute;
+  top: -22%;
+  left: 54%;
+  width: 28%;
+  height: 145%;
+  background: linear-gradient(180deg, rgba(244, 195, 32, 0.18), rgba(244, 195, 32, 0));
+  clip-path: polygon(45% 0, 100% 0, 55% 100%, 0 100%);
+  content: "";
+}
+
+.teamCardSignal .teamBrandArea::after {
+  position: absolute;
+  right: -0.04em;
+  bottom: -0.12em;
+  max-width: 92%;
+  overflow: hidden;
+  color: rgba(238, 237, 230, 0.055);
+  content: attr(data-team-code);
+  font: 900 100px/0.75 var(--fc-data-font-display, var(--font-display));
+  letter-spacing: -0.065em;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.teamCardSignal .teamLogo {
+  position: relative;
+  z-index: 2;
+  width: 116px;
+  height: 116px;
+  transition: transform 220ms ease;
+}
+
+.teamFileIndex {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 4;
+  color: var(--fc-data-signal, #f4c320);
+  font: 900 22px/1 var(--fc-data-font-display, var(--font-display));
+}
+
+.teamFileIndex::after {
+  margin-left: 8px;
+  color: rgba(238, 237, 230, 0.42);
+  content: "/ TEAM FILE";
+  font: 800 7px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.teamCardSignal .favoriteBadge {
+  top: 50px;
+  left: 18px;
+  min-height: 19px;
+  background: transparent;
+  border-left: 2px solid var(--fc-data-signal, #f4c320);
+  color: var(--fc-data-signal, #f4c320);
+  font: 800 7px/1 var(--font-mono);
+}
+
+.teamCardSignal .favoriteButton {
+  top: 16px;
+  right: 16px;
+  min-height: 32px;
+  background: transparent;
+  border: 1px solid rgba(238, 237, 230, 0.26);
+  color: var(--fc-data-paper, #eeede6);
+  font-size: 10px;
+}
+
+.teamCardSignal .favoriteButton:hover,
+.teamCardSignal .favoriteButton:focus-visible,
+.teamCardSignal .favoriteButtonActive {
+  background: var(--fc-data-signal, #f4c320);
+  border-color: var(--fc-data-signal, #f4c320);
+  color: var(--fc-data-ink, #171817);
+  outline: 0;
+}
+
+.teamCardSignal .teamBody {
+  min-height: 240px;
+  gap: 18px;
+  padding: 22px;
+  background: var(--fc-data-paper-raised, #f6f5ee);
+}
+
+.teamCardSignal .teamShortName {
+  color: var(--fc-data-ink, #171817);
+  font: 900 clamp(38px, 3.4vw, 54px)/0.82 var(--fc-data-font-display, var(--font-display));
+  letter-spacing: -0.04em;
+}
+
+.teamCardSignal .teamFullName {
+  margin-top: 10px;
+  color: var(--fc-data-text-muted, #66685f);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+.teamCardSignal .rosterSplit {
+  min-width: 82px;
+  padding: 7px;
+  background: transparent;
+  border: 1px solid var(--fc-data-line-strong, rgba(23, 24, 23, 0.38));
+}
+
+.teamCardSignal .rosterTotal {
+  font-family: var(--fc-data-font-display, var(--font-display));
+  font-size: 36px;
+}
+
+.teamCardSignal .roleSplitRow {
+  margin: 4px -7px -7px;
+  border-top-color: var(--fc-data-line, rgba(23, 24, 23, 0.15));
+}
+
+.teamCardSignal .roleSplitRow b {
+  border-right-color: var(--fc-data-line, rgba(23, 24, 23, 0.15));
+}
+
+.teamCardSignal .teamStaffGrid {
+  min-height: 58px;
+  padding-top: 14px;
+  border-top: 1px solid var(--fc-data-line, rgba(23, 24, 23, 0.15));
+}
+
+.teamCardSignal .staffBlock .metaLabel {
+  color: var(--fc-data-text-muted, #66685f);
+  font: 800 8px/1 var(--font-mono);
+}
+
+.teamCardSignal .staffBlock strong {
+  color: var(--fc-data-ink, #171817);
+  font-size: 12px;
+}
+
+.teamCardSignal .staffBlock em {
+  color: var(--fc-data-text-muted, #66685f);
+  font-size: 9px;
+}
+
+.teamCardSignal .cardTextLink {
+  width: 100%;
+  min-height: 38px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--fc-data-line, rgba(23, 24, 23, 0.15));
+  color: var(--fc-data-ink, #171817);
+  font: 900 10px/1 var(--font-mono);
+  letter-spacing: 0.05em;
+}
+
+.teamCardSignal .cardTextLink::after {
+  content: "↗";
+  color: var(--fc-data-signal, #f4c320);
+  font-size: 20px;
+  transition: transform 180ms ease;
+}
+
+.teamCardSignal:hover,
+.teamCardSignal:focus-within {
+  background: var(--fc-data-signal, #f4c320);
+  transform: translateY(-5px);
+}
+
+.teamCardSignal:hover::before,
+.teamCardSignal:focus-within::before {
+  transform: scaleX(1);
+}
+
+.teamCardSignal:hover .teamLogo,
+.teamCardSignal:focus-within .teamLogo {
+  transform: scale(1.075) rotate(-2deg);
+}
+
+.teamCardSignal:hover .cardTextLink,
+.teamCardSignal:focus-within .cardTextLink {
+  color: var(--fc-data-ink, #171817);
+}
+
+.teamCardSignal:hover .cardTextLink::after,
+.teamCardSignal:focus-within .cardTextLink::after {
+  transform: translate(4px, -4px);
+}
+
+@media (max-width: 760px) {
+  .teamCardSignal {
+    min-height: 400px;
+  }
+
+  .teamCardSignal .teamBrandArea {
+    min-height: 170px;
+  }
+
+  .teamCardSignal .teamBody {
+    min-height: 226px;
+    padding: 20px 18px;
+  }
+
+  .teamCardSignal .teamShortName {
+    font-size: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .teamCardSignal,
+  .teamCardSignal::before,
+  .teamCardSignal .teamLogo,
+  .teamCardSignal .cardTextLink::after {
+    transition: none;
+  }
+}
+
+/* Player-file cards use the same signal system with the hero portrait as the
+   primary navigation cue. */
+
+.playerCardSignal {
+  min-height: 438px;
+  display: grid;
+  grid-template-rows: 224px minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--fc-data-paper-raised, #f6f5ee);
+  border: 0;
+  color: var(--fc-data-ink, #171817);
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.playerCardSignal::before {
+  z-index: 6;
+  width: 100%;
+  height: 4px;
+  background: var(--roster-role-color, var(--fc-data-signal, #f4c320));
+  opacity: 1;
+  transform: scaleX(0.22);
+  transform-origin: left center;
+  transition: transform 220ms ease;
+}
+
+.playerSignalVisual {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(238, 237, 230, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(238, 237, 230, 0.05) 1px, transparent 1px),
+    var(--fc-data-ink, #171817);
+  background-size: 54px 54px;
+  border-bottom: 1px solid var(--fc-data-line-strong, rgba(23, 24, 23, 0.38));
+}
+
+.playerSignalVisual::before {
+  position: absolute;
+  top: -18%;
+  left: 54%;
+  width: 30%;
+  height: 145%;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--roster-role-color) 24%, transparent), transparent);
+  clip-path: polygon(42% 0, 100% 0, 58% 100%, 0 100%);
+  content: "";
+}
+
+.playerSignalVisual::after {
+  position: absolute;
+  right: -0.04em;
+  bottom: -0.12em;
+  max-width: 110%;
+  overflow: hidden;
+  color: rgba(238, 237, 230, 0.055);
+  content: attr(data-player-name);
+  font: 900 74px/0.76 var(--fc-data-font-display, var(--font-display));
+  letter-spacing: -0.06em;
+  text-overflow: clip;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.playerFileIndex,
+.playerSignalRole {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--fc-data-signal, #f4c320);
+  font: 900 20px/1 var(--fc-data-font-display, var(--font-display));
+}
+
+.playerFileIndex {
+  top: 18px;
+  left: 18px;
+}
+
+.playerFileIndex i,
+.playerSignalRole i {
+  color: rgba(238, 237, 230, 0.42);
+  font: 800 7px/1 var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.08em;
+}
+
+.playerSignalRole {
+  bottom: 16px;
+  left: 18px;
+  padding-left: 10px;
+  border-left: 3px solid var(--roster-role-color, var(--fc-data-signal, #f4c320));
+  color: var(--fc-data-paper, #eeede6);
+  font-size: 16px;
+}
+
+.playerCardSignal .playerSignalAvatar {
+  position: absolute;
+  z-index: 2;
+  right: 12%;
+  bottom: -2px;
+  width: 184px;
+  height: 184px;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  filter: drop-shadow(0 20px 22px rgba(0, 0, 0, 0.3));
+  transition: transform 220ms ease;
+}
+
+.playerCardSignal .playerSignalAvatar img {
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.playerCardSignal .favoriteButton {
+  top: 16px;
+  right: 16px;
+  min-height: 32px;
+  background: transparent;
+  border: 1px solid rgba(238, 237, 230, 0.28);
+  color: var(--fc-data-paper, #eeede6);
+  font-size: 10px;
+}
+
+.playerCardSignal .favoriteButton:hover,
+.playerCardSignal .favoriteButton:focus-visible,
+.playerCardSignal .favoriteButtonActive {
+  background: var(--fc-data-signal, #f4c320);
+  border-color: var(--fc-data-signal, #f4c320);
+  color: var(--fc-data-ink, #171817);
+  outline: 0;
+}
+
+.playerCardSignal .favoriteBadge {
+  top: auto;
+  right: 16px;
+  bottom: 16px;
+  left: auto;
+  background: transparent;
+  border-right: 2px solid var(--fc-data-signal, #f4c320);
+  color: var(--fc-data-signal, #f4c320);
+}
+
+.playerSignalBody {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 20px 18px;
+}
+
+.playerSignalTeam {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--fc-data-line, rgba(23, 24, 23, 0.15));
+}
+
+.playerSignalTeam b {
+  color: var(--fc-data-signal-ink, #ae8200);
+  font: 900 13px/1 var(--fc-data-font-display, var(--font-display));
+}
+
+.playerSignalTeam span,
+.playerSignalIdentity span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--fc-data-text-muted, #66685f);
+  font-size: 9px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playerSignalIdentity {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.playerSignalIdentity strong {
+  overflow: hidden;
+  color: var(--fc-data-ink, #171817);
+  font: 900 clamp(34px, 3vw, 48px)/0.82 var(--fc-data-font-display, var(--font-display));
+  letter-spacing: -0.045em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playerSignalHeroes {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.playerSignalHeroes span {
+  color: var(--fc-data-text-muted, #66685f);
+  font: 800 7px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.playerSignalHeroes strong {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playerSignalLink {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 13px;
+  border-top: 1px solid var(--fc-data-line, rgba(23, 24, 23, 0.15));
+  color: var(--fc-data-ink, #171817);
+  font: 900 10px/1 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.playerSignalLink span {
+  color: var(--fc-data-signal, #f4c320);
+  font-size: 20px;
+  transition: transform 180ms ease;
+}
+
+.playerCardSignal:hover,
+.playerCardSignal:focus-within {
+  background: var(--fc-data-signal, #f4c320);
+  transform: translateY(-5px);
+}
+
+.playerCardSignal:hover::before,
+.playerCardSignal:focus-within::before {
+  transform: scaleX(1);
+}
+
+.playerCardSignal:hover .playerSignalAvatar,
+.playerCardSignal:focus-within .playerSignalAvatar {
+  transform: scale(1.07) translateY(-3px);
+}
+
+.playerCardSignal:hover .playerSignalLink span,
+.playerCardSignal:focus-within .playerSignalLink span {
+  transform: translate(4px, -4px);
+}
+
+@media (max-width: 760px) {
+  .playerCardSignal {
+    min-height: 424px;
+    grid-template-rows: 216px minmax(0, 1fr);
+  }
+
+  .playerCardSignal .playerSignalAvatar {
+    right: 8%;
+    width: 178px;
+    height: 178px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playerCardSignal,
+  .playerCardSignal::before,
+  .playerCardSignal .playerSignalAvatar,
+  .playerSignalLink span {
+    transition: none;
+  }
+}
+
+/* Credits cards combine team staff and match-operation records without losing
+   the source-specific destination for each person. */
+
+.staffItemSignal {
+  --staff-accent: var(--fc-data-signal, #f4c320);
+  position: relative;
+  min-width: 0;
+  min-height: 408px;
+  display: grid;
+  grid-template-rows: 188px minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--fc-data-paper-raised, #f6f5ee);
+  color: var(--fc-data-ink, #171817);
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.staffItemSignal[data-staff-role="manager"] { --staff-accent: #f4c320; }
+.staffItemSignal[data-staff-role="coach"] { --staff-accent: #d6a916; }
+.staffItemSignal[data-staff-role="admin"] { --staff-accent: #4fb1c4; }
+.staffItemSignal[data-staff-role="caster"] { --staff-accent: #d169a8; }
+
+.staffItemSignal::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 6;
+  height: 4px;
+  background: var(--staff-accent);
+  content: "";
+  transform: scaleX(0.22);
+  transform-origin: left;
+  transition: transform 220ms ease;
+}
+
+.staffSignalVisual {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(238, 237, 230, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(238, 237, 230, 0.05) 1px, transparent 1px),
+    var(--fc-data-ink, #171817);
+  background-size: 52px 52px;
+  border-bottom: 1px solid var(--fc-data-line-strong, rgba(23, 24, 23, 0.38));
+}
+
+.staffSignalVisual::before {
+  position: absolute;
+  top: -28%;
+  left: 56%;
+  width: 28%;
+  height: 160%;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--staff-accent) 25%, transparent), transparent);
+  clip-path: polygon(40% 0, 100% 0, 60% 100%, 0 100%);
+  content: "";
+}
+
+.staffSignalVisual::after {
+  position: absolute;
+  right: -0.04em;
+  bottom: -0.12em;
+  max-width: 104%;
+  overflow: hidden;
+  color: rgba(238, 237, 230, 0.055);
+  content: attr(data-staff-name);
+  font: 900 68px/0.76 var(--fc-data-font-display, var(--font-display));
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.staffFileIndex,
+.staffSignalRole {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.staffFileIndex {
+  top: 18px;
+  left: 18px;
+  color: var(--staff-accent);
+  font: 900 20px/1 var(--fc-data-font-display, var(--font-display));
+}
+
+.staffFileIndex i,
+.staffSignalRole i {
+  color: rgba(238, 237, 230, 0.42);
+  font: 800 7px/1 var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.08em;
+}
+
+.staffSignalRole {
+  bottom: 16px;
+  left: 18px;
+  padding-left: 10px;
+  border-left: 3px solid var(--staff-accent);
+  color: var(--fc-data-paper, #eeede6);
+  font: 900 14px/1 var(--fc-data-font-display, var(--font-display));
+}
+
+.staffSignalPortrait {
+  position: absolute;
+  right: 9%;
+  bottom: 0;
+  z-index: 2;
+  width: 154px;
+  height: 154px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--staff-accent);
+  filter: drop-shadow(0 18px 20px rgba(0, 0, 0, 0.3));
+  transition: transform 220ms ease;
+}
+
+.staffSignalPortrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.staffSignalPortrait b {
+  padding-bottom: 32px;
+  font: 900 54px/0.76 var(--fc-data-font-display, var(--font-display));
+}
+
+.staffSignalBody {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px;
+}
+
+.staffSignalScope {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--fc-data-line, rgba(23, 24, 23, 0.15));
+}
+
+.staffSignalScope b {
+  color: var(--staff-accent);
+  font: 900 9px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.staffSignalScope span {
+  overflow: hidden;
+  color: var(--fc-data-text-muted, #66685f);
+  font-size: 9px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staffSignalIdentity {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.staffSignalIdentity strong {
+  overflow: hidden;
+  font: 900 clamp(30px, 2.8vw, 44px)/0.84 var(--fc-data-font-display, var(--font-display));
+  letter-spacing: -0.04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staffSignalIdentity span {
+  overflow: hidden;
+  color: var(--fc-data-text-muted, #66685f);
+  font-size: 9px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staffSignalStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--fc-data-line, rgba(23, 24, 23, 0.15));
+}
+
+.staffSignalStats > div {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 7px;
+  align-items: center;
+  padding: 8px;
+  border-right: 1px solid var(--fc-data-line, rgba(23, 24, 23, 0.15));
+}
+
+.staffSignalStats > div:last-child {
+  border-right: 0;
+}
+
+.staffSignalStats strong {
+  font: 900 25px/0.8 var(--fc-data-font-display, var(--font-display));
+}
+
+.staffSignalStats span {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.staffSignalStats em {
+  overflow: hidden;
+  color: var(--fc-data-text-muted, #66685f);
+  font: 6px/1 var(--font-mono);
+  font-style: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staffSignalStats .staffSignalWideStat {
+  grid-column: span 2;
+}
+
+.staffSignalStats .staffSignalWideStat strong {
+  max-width: 84px;
+  overflow: hidden;
+  font-size: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staffSignalLink {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--fc-data-line, rgba(23, 24, 23, 0.15));
+  color: var(--fc-data-ink, #171817);
+  font: 900 10px/1 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.staffSignalLink span {
+  color: var(--staff-accent);
+  font-size: 20px;
+  transition: transform 180ms ease;
+}
+
+.staffItemSignal:hover,
+.staffItemSignal:focus-within {
+  background: var(--fc-data-signal, #f4c320);
+  transform: translateY(-5px);
+}
+
+.staffItemSignal:hover::before,
+.staffItemSignal:focus-within::before {
+  transform: scaleX(1);
+}
+
+.staffItemSignal:hover .staffSignalPortrait,
+.staffItemSignal:focus-within .staffSignalPortrait {
+  transform: scale(1.06) translateY(-3px);
+}
+
+.staffItemSignal:hover .staffSignalLink span,
+.staffItemSignal:focus-within .staffSignalLink span {
+  transform: translate(4px, -4px);
+}
+
+@media (max-width: 760px) {
+  .staffItemSignal {
+    min-height: 396px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .staffItemSignal,
+  .staffItemSignal::before,
+  .staffSignalPortrait,
+  .staffSignalLink span {
+    transition: none;
+  }
+}
+
+.toolbar.toolbarIndex {
+  padding: 0 0 18px;
+  margin-bottom: 4px;
+  border: 0;
+  background: transparent;
+  color: var(--fc-data-ink);
+}
+.toolbarIndex .compactToolbarRow { display: flex; flex-wrap: wrap; gap: 14px; align-items: end; }
+.toolbarIndex .formGrid { display: grid; flex: 1 1 500px; min-width: 0; grid-template-columns: minmax(160px, 1fr) repeat(var(--roster-toolbar-fields), minmax(130px, .45fr)); gap: 14px; }
+.toolbarIndex .field { min-width: 0; gap: 5px; }
+.toolbarIndex .fieldLabel { font-size: 12px; color: var(--fc-data-text-muted); letter-spacing: 0; }
+.toolbarIndex :is(.input, .select) { min-width: 0; width: 100%; height: 42px; background: transparent; border: 0; border-bottom: 1px solid var(--fc-data-line-strong); color: var(--fc-data-ink); font-size: 14px; padding: 8px 4px; }
+.toolbarIndex .input::placeholder { color: var(--fc-data-text-muted); opacity: 1; }
+.toolbarIndex .select option { background: var(--fc-data-paper); color: var(--fc-data-ink); }
+.toolbarIndex .toolbarActions { flex-wrap: wrap; justify-content: start; align-self: end; }
+.toolbarIndex .secondaryAction { min-height: 42px; background: transparent; border: 1px solid var(--fc-data-line-strong); color: var(--fc-data-ink); font-size: 13px; font-weight: 600; }
+.toolbarIndex .secondaryActionActive { background: var(--fc-data-ink); color: var(--fc-data-paper); }
+.toolbarIndex .advancedGrid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.toolbarIndex .filterChip { border: 1px solid var(--fc-data-line); background: var(--fc-data-paper-raised); color: var(--fc-data-ink); font-size: 12px; }
+.toolbarIndex .clearAllLink { color: var(--fc-data-text-muted); }
+@media (max-width: 600px) {
+  .toolbarIndex .compactToolbarRow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .toolbarIndex .formGrid { display: contents; }
+  .toolbarIndex .formGrid > .field:first-child { grid-column: 1 / -1; }
+  .toolbarIndex .toolbarActions { width: auto; justify-content: end; }
+}
+
+.pagination.paginationIndex { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; padding: 16px 0; border: 0; border-top: 1px solid var(--fc-data-line); background: transparent; color: var(--fc-data-ink); gap: 14px; flex-wrap: wrap; }
+.paginationIndex :is(.pageButton, .pageNumber, .pageSizeSelect) { min-height: 38px; border: 1px solid var(--fc-data-line); background: transparent; color: var(--fc-data-ink); }
+.paginationIndex .pageNumberActive { background: var(--fc-data-signal); }
+.paginationIndex :is(.paginationRange, .pageSizeControl) { color: var(--fc-data-text-muted); font-size: 12px; }
+@media (max-width: 600px) { .paginationIndex .paginationControls { flex-wrap: wrap; justify-content: start; } }

@@ -1,3 +1,4 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
 import DataMvpPanel from '../../components/leaderboard/DataMvpPanel.jsx'
@@ -30,7 +31,12 @@ import {
   sortLeaderboardEntries
 } from '../../lib/leaderboardSelectors.js'
 import { ROLE_ORDER } from '../../lib/leaderboardScoring.js'
-import styles from './LeaderboardPage.module.css'
+import FdLeaderboardSpotlight from '../../features/fd-design/FdLeaderboardSpotlight.jsx'
+import KprLeaderboard from '../../features/kpr-design/KprLeaderboard.jsx'
+import { sanitizeComparisonKeys } from '../../features/kpr-design/rankingPresentation.js'
+import { SeasonRatingRules } from '../../features/rating/SeasonRating.jsx'
+import { formatSeasonSampleRequirements } from '../../lib/seasonRatingPolicy.js'
+import styles from '../../features/fd-design/leaderboardStyles.js'
 
 const VALID_SORT_KEYS = new Set(['rank', 'player', 'team', 'role', 'maps', 'time', 'score', 'elim', 'ast', 'dth', 'dmg', 'heal', 'block'])
 const FILTER_KEYS = new Set(['q', 'team', 'role', 'following', 'hero', 'minTime', 'insufficient'])
@@ -69,6 +75,8 @@ function getDefaultDirection(sortKey) {
 
 export default function LeaderboardPage() {
   const {
+    isFdDesign = false,
+    isKprDesign = false,
     db,
     season,
     locale = 'zh-CN',
@@ -80,7 +88,7 @@ export default function LeaderboardPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
   const [advancedOpen, setAdvancedOpen] = useState(false)
-  const [selectedCompareKeys, setSelectedCompareKeys] = useState([])
+  const [legacyCompareKeys, setLegacyCompareKeys] = useState([])
   const [compareOpen, setCompareOpen] = useState(false)
   const [compareWarning, setCompareWarning] = useState('')
   const tableTopRef = useRef(null)
@@ -108,23 +116,16 @@ export default function LeaderboardPage() {
     minTimeMins: searchParams.get('minTime') || ''
   }), [activeRole, activeTab, searchParams])
 
-  const updateQuery = (patch, { resetPage = true } = {}) => {
-    const next = new URLSearchParams(searchParams)
-
-    Object.entries(patch).forEach(([key, value]) => {
-      if (value === null || value === undefined || value === '' || value === 'ALL' || value === false) {
-        next.delete(key)
-        return
-      }
-
-      next.set(key, String(value))
-    })
-
-    if (resetPage && Object.keys(patch).some(key => FILTER_KEYS.has(key) || key === 'tab' || key === 'mode')) {
-      next.delete('page')
-    }
-
-    setSearchParams(next)
+  const updateQuery = (patch, { resetPage = true, replace = false } = {}) => {
+    setSearchParams(previous => {
+      const next = new URLSearchParams(previous)
+      Object.entries(patch).forEach(([key, value]) => {
+        if (value === null || value === undefined || value === '' || value === 'ALL' || value === false) next.delete(key)
+        else next.set(key, String(value))
+      })
+      if (resetPage && Object.keys(patch).some(key => FILTER_KEYS.has(key) || key === 'tab' || key === 'mode')) next.delete('page')
+      return next
+    }, isKprDesign ? { replace, preventScrollReset: true, flushSync: true } : undefined)
   }
 
   const entries = useMemo(() => getLeaderboardEntries(db, season), [db, season])
@@ -135,6 +136,8 @@ export default function LeaderboardPage() {
   const filteredRows = useMemo(() => (
     filterLeaderboardEntries(entries, filters, isFavoritePlayer)
   ), [entries, filters, isFavoritePlayer])
+
+  const ratingResultSummary = useMemo(() => getLeaderboardSummary(filteredRows, minTimeMins), [filteredRows, minTimeMins])
 
   const sortedRows = useMemo(() => (
     sortLeaderboardEntries(filteredRows, sortKey, direction, mode)
@@ -150,6 +153,23 @@ export default function LeaderboardPage() {
     return map
   }, [entries])
 
+  const selectedCompareKeys = isKprDesign
+    ? sanitizeComparisonKeys(searchParams.getAll('compare'), entryByKey)
+    : legacyCompareKeys
+  const setSelectedCompareKeys = update => {
+    if (!isKprDesign) {
+      setLegacyCompareKeys(update)
+      return
+    }
+    setSearchParams(previous => {
+      const current = sanitizeComparisonKeys(previous.getAll('compare'), entryByKey)
+      const keys = sanitizeComparisonKeys(typeof update === 'function' ? update(current) : update, entryByKey)
+      const next = new URLSearchParams(previous)
+      next.delete('compare')
+      keys.forEach(key => next.append('compare', key))
+      return next
+    }, { replace: true, preventScrollReset: true, flushSync: true })
+  }
   const selectedCompareEntries = selectedCompareKeys
     .map(key => entryByKey.get(key))
     .filter(Boolean)
@@ -178,7 +198,7 @@ export default function LeaderboardPage() {
     window.requestAnimationFrame(() => {
       tableTopRef.current?.scrollIntoView({ block: 'start' })
     })
-  }, [pagination.page])
+  }, [pagination.page, pagination.pageSize])
 
   const handleTabChange = tab => {
     const role = getTabRole(tab)
@@ -189,18 +209,12 @@ export default function LeaderboardPage() {
   }
 
   const handleFilterChange = patch => {
+    const queryPatch = {}
     if (Object.prototype.hasOwnProperty.call(patch, 'role')) {
       const role = normalizeLeaderboardRole(patch.role)
-      if (!role) {
-        updateQuery({ tab: 'overall', role: null })
-        return
-      }
-      const roleTab = role === 'TANK' ? 'tank' : role === 'DPS' ? 'dps' : 'support'
-      updateQuery({ tab: roleTab, role })
-      return
+      queryPatch.tab = !role ? 'overall' : role === 'TANK' ? 'tank' : role === 'DPS' ? 'dps' : 'support'
+      queryPatch.role = role || null
     }
-
-    const queryPatch = {}
 
     if (Object.prototype.hasOwnProperty.call(patch, 'query')) queryPatch.q = patch.query
     if (Object.prototype.hasOwnProperty.call(patch, 'team')) queryPatch.team = patch.team
@@ -209,7 +223,7 @@ export default function LeaderboardPage() {
     if (Object.prototype.hasOwnProperty.call(patch, 'showInsufficient')) queryPatch.insufficient = patch.showInsufficient ? null : '0'
     if (Object.prototype.hasOwnProperty.call(patch, 'minTimeMins')) queryPatch.minTime = patch.minTimeMins
 
-    updateQuery(queryPatch)
+    updateQuery(queryPatch, { replace: Object.hasOwn(patch, 'query') || Object.hasOwn(patch, 'minTimeMins') })
   }
 
   const handleReset = () => {
@@ -293,6 +307,54 @@ export default function LeaderboardPage() {
   }
   const isEn = locale === 'en-US'
 
+  if (isKprDesign) {
+    return <KprLeaderboard
+      season={season}
+      locale={locale}
+      updatedAtText={updatedAtText}
+      withSeason={withSeason}
+      summary={summary}
+      pagination={pagination}
+      allColumns={searchParams.get('metrics') === 'all'}
+      previewKey={searchParams.get('preview') || ''}
+      onViewChange={patch => updateQuery(patch, { resetPage: false, replace: true })}
+      ratingResultSummary={ratingResultSummary}
+      activeTab={activeTab}
+      activeRole={activeRole}
+      roleCounts={roleCounts}
+      mode={mode}
+      sortKey={sortKey}
+      direction={direction}
+      filters={filters}
+      options={options}
+      minTimeMins={minTimeMins}
+      visibleColumns={visibleColumns}
+      advancedOpen={advancedOpen}
+      selectedCompareEntries={selectedCompareEntries}
+      selectedCompareKeys={selectedCompareKeySet}
+      compareRole={compareRole}
+      compareOpen={compareOpen}
+      compareWarning={compareWarning}
+      tableTopRef={tableTopRef}
+      pageSizeOptions={LEADERBOARD_PAGE_SIZE_OPTIONS}
+      isFavoritePlayer={isFavoritePlayer}
+      onToggleFavorite={entry => togglePlayerFavorite?.(entry)}
+      onToggleCompare={handleToggleCompare}
+      onOpenCompare={handleOpenCompare}
+      onCloseCompare={() => setCompareOpen(false)}
+      onClearCompare={() => { setSelectedCompareKeys([]); setCompareOpen(false) }}
+      onTabChange={handleTabChange}
+      onModeChange={handleModeChange}
+      onFilterChange={handleFilterChange}
+      onReset={handleReset}
+      onSort={handleSort}
+      onColumnsChange={handleColumnsChange}
+      onAdvancedToggle={() => setAdvancedOpen(current => !current)}
+      onPageChange={handlePageChange}
+      onPageSizeChange={handlePageSizeChange}
+    />
+  }
+
   return (
     <div className={`${styles.shell} ${selectedCompareEntries.length ? styles.hasCompareBar : ''}`}>
       <DatabaseSubnav />
@@ -308,37 +370,40 @@ export default function LeaderboardPage() {
       {!hasStatEntries ? (
         <section className={styles.dataPendingPanel}>
           <div className={styles.dataPendingMain}>
-            <span className={styles.panelKicker}>{isEn ? 'Stats Pending' : '统计待更新'}</span>
-            <h2>{isEn ? 'Match stats are not ready yet' : '赛事统计尚未生成'}</h2>
+            <span className={styles.panelKicker}>{isEn ? 'Stats Pending' : uiText("统计待更新", locale)}</span>
+            <h2>{isEn ? 'Match stats are not ready yet' : uiText("赛事统计尚未生成", locale)}</h2>
             <p>
               {isEn
                 ? `The current season has ${summary.totalPlayers} registered players, but published match stats are not sufficient for player-role rankings yet. Once match records are available, highlights, role leaders, full rankings, and role comparisons will be available.`
-                : `当前赛季已收录 ${summary.totalPlayers} 名选手，但公开比赛统计还不足以支撑选手职责排行。等比赛统计发布后，将展示榜首表现、职责领跑者、完整排行榜和同职责比较。`}
+                : uiText("当前赛季已收录 {0} 名选手，但公开比赛统计还不足以支撑选手职责排行。等比赛统计发布后，将展示榜首表现、职责领跑者、完整排行榜和同职责比较。", locale, [summary.totalPlayers])}
             </p>
           </div>
           <div className={styles.dataPendingGrid}>
             <div>
-              <span>{isEn ? 'Eligible Entries' : '合格排行条目'}</span>
+              <span>{isEn ? 'Eligible Entries' : uiText("合格排行条目", locale)}</span>
               <strong>{summary.qualifiedEntries}</strong>
             </div>
             <div>
-              <span>{isEn ? 'Rankable Entries' : '可排行统计条目'}</span>
+              <span>{isEn ? 'Rankable Entries' : uiText("可排行统计条目", locale)}</span>
               <strong>{summary.totalEntries}</strong>
             </div>
             <div>
-              <span>{isEn ? 'Players' : '全部选手'}</span>
+              <span>{isEn ? 'Players' : uiText("全部选手", locale)}</span>
               <strong>{summary.totalPlayers}</strong>
             </div>
             <div>
-              <span>{isEn ? 'Minimum Time' : '正式排名门槛'}</span>
-              <strong>{summary.minTimeMins}m</strong>
+              <span>{isEn ? 'Minimum Time' : uiText("正式排名门槛", locale)}</span>
+              <strong>{formatSeasonSampleRequirements(summary.minTimeMins, locale)}</strong>
             </div>
           </div>
         </section>
       ) : (
         <>
-          <section className={styles.highlightGrid} aria-label="榜首选手">
-            <DataMvpPanel entry={highlights.dataMvp} withSeason={withSeason} locale={locale} />
+          <SeasonRatingRules summary={summary} locale={locale} />
+          <section className={styles.highlightGrid} aria-label={uiText("榜首选手", locale)}>
+            {isFdDesign ? (
+              <FdLeaderboardSpotlight entry={highlights.dataMvp} withSeason={withSeason} locale={locale} />
+            ) : <DataMvpPanel entry={highlights.dataMvp} withSeason={withSeason} locale={locale} />}
             <div className={styles.roleLeaderGrid}>
               {ROLE_ORDER.map((role, index) => (
                 <RoleLeaderCard
@@ -348,6 +413,7 @@ export default function LeaderboardPage() {
                   withSeason={withSeason}
                   order={index + 1}
                   locale={locale}
+                  isFdDesign={isFdDesign}
                 />
               ))}
             </div>

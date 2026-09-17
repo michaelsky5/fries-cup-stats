@@ -1,40 +1,101 @@
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
+import { getTeamShareRoster } from './teamShareHeroSelection.js'
 import styles from './TeamShareCard.module.css'
 
-function Portrait({ player }) {
+const ROLE_LABELS = {
+  TANK: '重装',
+  DPS: '输出',
+  SUP: '支援',
+  SUPPORT: '支援'
+}
+
+function getTeamNameSize(name) {
+  const length = String(name || '').length
+  if (length >= 12) return 78
+  if (length >= 9) return 92
+  if (length >= 7) return 108
+  return 128
+}
+
+function getPlayerNameSize(name, count) {
+  const length = String(name || '').length
+  if (count >= 7 && length >= 7) return 22
+  if (length >= 8) return 24
+  if (length >= 6) return 27
+  return count >= 7 ? 30 : 34
+}
+
+function getRoleLabel(player) {
+  return ROLE_LABELS[player?.roleKey] || player?.role || '选手'
+}
+
+function RosterPlayer({ player, index, count, team, seasonId }) {
+  const uiLocale = useUiLocale()
   if (!player) return null
 
+  const artwork = player.artwork || {}
+  const crop = artwork.crop || {}
+  const src = artwork.src || artwork.fallbackSrc || player.avatarSrc
+  const hasArtwork = Boolean(src && player.hasArtwork !== false)
+
   return (
-    <div className={styles.portrait}>
-      {player.avatarSrc ? (
-        <img
-          src={player.avatarSrc}
-          alt={player.hero || player.name}
-          loading="eager"
-          onError={event => {
-            event.currentTarget.style.display = 'none'
-          }}
-        />
-      ) : (
-        <b>{player.initials || String(player.name || 'FC').slice(0, 2).toUpperCase()}</b>
-      )}
-      <span>
-        <strong>{player.name}</strong>
-        <em>{getShareRoleLabel(player.role)} / {player.hero || 'HERO TBD'}</em>
-      </span>
+    <div
+      className={styles.player}
+      data-role={player.roleKey || ''}
+      data-art={hasArtwork ? 'true' : 'false'}
+      data-player-card
+    >
+      <div className={styles.playerArt}>
+        {hasArtwork ? (
+          <img
+            src={src}
+            alt=""
+            loading="eager"
+            style={{
+              '--art-position': crop.objectPosition || '50% 48%',
+              '--art-scale': crop.scale || 1.06,
+              '--art-x': crop.translateX || '0px',
+              '--art-y': crop.translateY || '0px'
+            }}
+            data-fallback-src={artwork.fallbackSrc || player.avatarSrc || ''}
+            onError={event => {
+              const fallback = event.currentTarget.dataset.fallbackSrc
+              if (fallback && event.currentTarget.src !== new URL(fallback, window.location.href).href) {
+                event.currentTarget.src = fallback
+              } else {
+                event.currentTarget.closest('[data-player-card]')?.setAttribute('data-art', 'false')
+                event.currentTarget.style.display = 'none'
+              }
+            }}
+          />
+        ) : null}
+        <div className={styles.playerFallback} aria-hidden="true">
+          <div className={styles.fallbackTeamMark}>
+            <TeamLogo team={team} seasonId={seasonId} className={styles.fallbackLogo} large />
+          </div>
+          <div className={styles.fallbackStamp}>
+            <span>ON THE ROSTER</span>
+            <em>{pickUiLocale(uiLocale, '暂无英雄画面', 'Hero image unavailable', '영웅 이미지 없음', '暫無英雄畫面')}</em>
+          </div>
+        </div>
+      </div>
+      <div className={styles.playerShade} aria-hidden="true" />
+      <div className={styles.playerTopline}>
+        <span>{uiText(getRoleLabel(player), uiLocale)}</span>
+        <em>{String(index + 1).padStart(2, '0')}</em>
+      </div>
+      <div className={styles.playerIdentity}>
+        <strong style={{ fontSize: `${getPlayerNameSize(player.name, count)}px` }}>{player.name}</strong>
+        {player.battleTag ? <small>{player.battleTag}</small> : null}
+      </div>
     </div>
   )
 }
 
-function getShareRoleLabel(role) {
-  if (role === 'TANK') return '重装'
-  if (role === 'DPS') return '输出'
-  if (role === 'SUP' || role === 'SUPPORT') return '支援'
-  return role || '职责'
-}
-
 function FormStrip({ form }) {
-  const rows = Array.isArray(form) ? form : []
+  const rows = Array.isArray(form) ? form.slice(0, 5) : []
   if (!rows.length) return <span className={styles.formEmpty}>NO RECORD</span>
 
   return (
@@ -46,25 +107,15 @@ function FormStrip({ form }) {
   )
 }
 
-function MiniResult({ result }) {
-  if (!result) return null
-  return (
-    <div className={styles.resultRow}>
-      <span>{result.result}</span>
-      <strong>{result.opponent}</strong>
-      <em>{result.score}</em>
-    </div>
-  )
-}
-
 export default function TeamShareCard({ model }) {
+  const uiLocale = useUiLocale()
   if (!model) return null
 
-  const leaders = model.leaders.slice(0, 4)
-  const corePlayers = model.corePlayers.slice(0, 4)
+  const { registered: registeredPlayers, appeared, featured: rosterPlayers, additional, unplayed: unplayedPlayers } = getTeamShareRoster(model)
+  const focus = model.focusMatch
 
   return (
-    <article className={styles.card}>
+    <article className={styles.card} data-roster-count={registeredPlayers.length} lang={uiLocale}>
       <img
         className={styles.mapImage}
         src={model.featuredMap.imageUrl}
@@ -75,91 +126,109 @@ export default function TeamShareCard({ model }) {
         }}
       />
       <div className={styles.mapVeil} aria-hidden="true" />
-      <div className={styles.grid} aria-hidden="true" />
-      <div className={styles.watermark}>{model.team.shortName}</div>
+      <div className={styles.posterGrid} aria-hidden="true" />
+      <div className={styles.posterBands} aria-hidden="true" />
+      <div className={styles.speedLines} aria-hidden="true" />
+      <div className={styles.backgroundWord} aria-hidden="true">{model.team.shortName}</div>
 
-      <header className={styles.header}>
-        <div>
-          <span>FRIES CUP DATA CENTER</span>
-          <strong>{model.seasonLabel}</strong>
+      <header className={styles.masthead}>
+        <div className={styles.brandLockup}>
+          <span>FRIES CUP</span>
+          <strong>EVENT CENTER</strong>
         </div>
-        <div className={styles.headerMeta}>
-          <b>TEAM DOSSIER</b>
-          <em>{model.featuredMap.mode} / {model.featuredMap.displayName}</em>
+        <div className={styles.dossierMark}>
+          <span>EVENT CENTER / ROSTER FILE</span>
+          <strong>{model.seasonLabel}</strong>
         </div>
       </header>
 
-      <section className={styles.identity}>
-        <div className={styles.logoFrame}>
+      <section className={styles.heroIdentity}>
+        <div className={styles.logoStage}>
           <TeamLogo team={model.team.raw} seasonId={model.seasonId} className={styles.logo} large />
         </div>
-
-        <div className={styles.identityText}>
-          <span>{model.advance.zone}</span>
-          <h1>{model.team.shortName}</h1>
+        <div className={styles.titleBlock}>
+          <span className={styles.eyebrow}>SEASON ROSTER / {registeredPlayers.length} PLAYERS</span>
+          <h1 style={{ fontSize: `${getTeamNameSize(model.team.shortName)}px` }}>{model.team.shortName}</h1>
           <p>{model.team.fullName}</p>
-          <div className={styles.staffLine}>
-            <b>{model.staff.manager || '经理待定'}</b>
-            <em>{model.staff.coach || '教练待定'}</em>
-            <strong>{model.rosterSize} PLAYERS</strong>
-          </div>
+          <div className={styles.identityRule} aria-hidden="true"><i /><span>{model.advance.isArchived ? 'SEASON ARCHIVE // COMPLETE' : 'TEAM FORMATION // READY'}</span></div>
         </div>
-      </section>
-
-      <section className={styles.scoreboard}>
-        <div className={styles.rankBlock}>
-          <span>CURRENT RANK</span>
+        <div className={styles.standingBlock}>
+          <span>{model.advance.code}</span>
           <strong>{model.advance.label}</strong>
           <em>{model.advance.zone}</em>
-        </div>
-        <div>
-          <span>MATCH RECORD</span>
-          <strong>{model.matchRecord}</strong>
-          <em>{model.completedLabel}</em>
-        </div>
-        <div>
-          <span>MAP RECORD</span>
-          <strong>{model.mapRecord}</strong>
-          <em>{model.mapWinRate}</em>
-        </div>
-        <div>
-          <span>NEXT / FOCUS</span>
-          <strong>{model.focusMatch?.opponent || '待定'}</strong>
-          <em>{model.focusMatch?.time || '暂无赛程'}</em>
+          <div className={styles.standingStats}>
+            <span><b>{model.matchRecord}</b>{model.matchRecordLabel || uiText("比赛战绩", uiLocale)}</span>
+            <span><b>{model.mapWinRate.split(' ')[0]}</b>{uiText("地图胜率", uiLocale)}</span>
+          </div>
         </div>
       </section>
 
-      <section className={styles.lowerGrid}>
-        <div className={styles.corePanel}>
-          <div className={styles.panelLabel}>CORE LINEUP</div>
-          <div className={styles.portraits}>
-            {corePlayers.length ? corePlayers.map(player => <Portrait key={player.id || player.name} player={player} />) : (
-              <div className={styles.empty}>阵容数据待更新</div>
-            )}
-          </div>
+      <section className={styles.rosterStage}>
+        <div className={styles.rosterHeader}>
+          <span>SQUAD FORMATION</span>
+          <strong>{uiText("赛季出场阵线", uiLocale)}</strong>
+          <em>
+            {String(appeared.length).padStart(2, '0')} APPEARED
+            {unplayedPlayers.length ? ` // ${String(unplayedPlayers.length).padStart(2, '0')} REGISTERED` : ''}
+          </em>
         </div>
-
-        <div className={styles.formPanel}>
-          <div className={styles.panelLabel}>RECENT FORM</div>
-          <FormStrip form={model.recentForm} />
-          <div className={styles.results}>
-            {model.latestResults.slice(0, 3).map(result => (
-              <MiniResult key={`${result.opponent}-${result.score}-${result.time}`} result={result} />
-            ))}
-          </div>
+        <div
+          className={styles.players}
+          data-count={rosterPlayers.length}
+          style={{ '--roster-count': Math.max(rosterPlayers.length, 1) }}
+        >
+          {rosterPlayers.length ? rosterPlayers.map((player, index) => (
+            <RosterPlayer
+              key={player.id || player.name}
+              player={player}
+              index={index}
+              count={rosterPlayers.length}
+              team={model.team.raw}
+              seasonId={model.seasonId}
+            />
+          )) : <div className={styles.rosterEmpty}>{pickUiLocale(uiLocale, '暂无已发布的出场记录', 'No published appearances', '공개된 출전 기록 없음', '暫無已發布的出場記錄')}</div>}
         </div>
+      </section>
 
-        <div className={styles.leaderPanel}>
-          <div className={styles.panelLabel}>TEAM LEADERS</div>
-          <div className={styles.leaders}>
-            {leaders.length ? leaders.map(item => (
-              <div key={item.label} className={styles.leaderItem}>
-                <span>{item.label}</span>
-                <strong>{item.name}</strong>
-                <em>{item.value}</em>
+      <section className={styles.briefingStrip}>
+        <div className={styles.staffBlock}>
+          <span>TEAM STAFF</span>
+          <div className={styles.staffMembers}>
+            <p>{uiText("经理 ", uiLocale)}<strong>{model.staff.manager || uiText("待定", uiLocale)}</strong></p>
+            <p>{uiText("教练 ", uiLocale)}<strong>{model.staff.coach || uiText("待定", uiLocale)}</strong></p>
+          </div>
+          {additional.length ? <div className={styles.unplayedRoster}>
+            <em>{pickUiLocale(uiLocale, '其他出场成员', 'Also appeared', '추가 출전 선수', '其他出場成員')}</em>
+            <div>{additional.map(player => <span key={player.id || player.name}><b>{player.name}</b><small>{uiText(getRoleLabel(player), uiLocale)}</small></span>)}</div>
+          </div> : null}
+          {unplayedPlayers.length ? (
+            <div className={styles.unplayedRoster}>
+              <em>{uiText("注册未出场", uiLocale)}</em>
+              <div>
+                {unplayedPlayers.map(player => (
+                  <span key={player.id || player.name}>
+                    <b>{player.name}</b>
+                    {player.battleTag ? <small>{player.battleTag}</small> : null}
+                  </span>
+                ))}
               </div>
-            )) : <div className={styles.empty}>暂无队内数据</div>}
-          </div>
+            </div>
+          ) : null}
+        </div>
+        <div className={styles.recordBlock}>
+          <span>SEASON RECORD</span>
+          <strong>{model.matchRecord}</strong>
+          <em>{model.mapRecord}{uiText(" 地图战绩", uiLocale)}</em>
+        </div>
+        <div className={styles.formBlock}>
+          <span>RECENT FORM</span>
+          <FormStrip form={model.recentForm} />
+        </div>
+        <div className={styles.nextBlock}>
+          <span>{focus?.kind === 'final' ? 'FINAL APPEARANCE' : focus?.kind === 'next' ? 'NEXT MATCH' : focus?.kind === 'live' ? 'LIVE MATCH' : 'LATEST MATCH'}</span>
+          <strong>{focus?.opponent || uiText("暂无对手", uiLocale)}</strong>
+          <em>{focus ? `${focus.round} · ${focus.time}` : uiText("暂无赛程", uiLocale)}</em>
+          <b>{focus?.score || '- : -'}</b>
         </div>
       </section>
 

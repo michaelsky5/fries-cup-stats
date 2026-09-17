@@ -1,4 +1,4 @@
-import styles from './MatchDetail.module.css'
+import styles from './matchDetailStyles.js'
 
 export default function TeamMirrorComparison({ comparison, t }) {
   return (

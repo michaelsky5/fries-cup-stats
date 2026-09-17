@@ -1,3 +1,4 @@
+import { translateUiText as formatUiText } from './uiText.js'
 import { getHeroAvatarSrc, getLeaderboardRows, getPlayerInitials, normalizeLeaderboardRole } from './leaderboardSelectors.js'
 import { formatOwHeroName, getOwHeroCanonicalKey, getOwHeroCanonicalName, getOwNameSearchText } from './heroes.js'
 
@@ -8,7 +9,7 @@ export const PLAYER_PAGE_SIZES = [24, 48]
 export const STAFF_PAGE_SIZES = [20, 40]
 
 const ROLE_ORDER = ['TANK', 'DPS', 'SUP', 'FLEX']
-const STAFF_ROLE_ORDER = ['manager', 'coach']
+const STAFF_ROLE_ORDER = ['manager', 'coach', 'admin', 'caster']
 
 function normalize(value) {
   return String(value ?? '').trim()
@@ -67,15 +68,15 @@ export function normalizeRosterRole(role) {
 export function getRosterRoleLabel(role, locale = 'zh-CN') {
   const normalized = normalizeRosterRole(role)
   if (locale === 'en-US') {
-    return normalized === 'SUP' ? 'SUPPORT' : normalized || 'ROLE'
+    return formatUiText(normalized === 'SUP' ? 'SUPPORT' : normalized || 'ROLE', locale)
   }
 
-  return {
+  return formatUiText({
     TANK: '重装',
     DPS: '输出',
     SUP: '支援',
-    FLEX: '自由'
-  }[normalized] || '职责'
+    FLEX: '灵活'
+  }[normalized] || '职责', locale)
 }
 
 function getRoleRank(role) {
@@ -355,7 +356,7 @@ export function getPlayerDisplayIdentity(player) {
   }
 }
 
-function getRoleBreakdown(player, role) {
+export function getPlayerRoleBreakdown(player, role) {
   const normalized = normalizeRoleForHero(role)
   if (!normalized || normalized === 'ALL') return null
   const breakdown = player?.role_breakdown && typeof player.role_breakdown === 'object' ? player.role_breakdown : {}
@@ -427,7 +428,7 @@ function applyRoleEntryStats(player, entry) {
 
 export function getPlayerAvatarSource(player, options = {}) {
   const requestedRole = normalizeRoleForHero(options.role)
-  const roleSource = requestedRole ? getRoleBreakdown(player, requestedRole) : null
+  const roleSource = requestedRole ? getPlayerRoleBreakdown(player, requestedRole) : null
   const fallbackRole = normalizeRoleForHero(player?.role || player?.registeredRole)
   const heroSource = roleSource && hasReliableStats(roleSource) ? roleSource : player
   const heroRole = roleSource && hasReliableStats(roleSource) ? requestedRole : fallbackRole
@@ -461,20 +462,24 @@ export function getPlayerDirectory(db, favorites = {}, options = {}) {
     const roleEntries = resolveRoleEntries(merged)
     const requestedEntry = getRequestedRoleEntry(roleEntries, requestedRole)
     const primaryEntry = getPrimaryRoleEntry(roleEntries)
-    const avatarEntry = requestedEntry || primaryEntry
+    const registeredRole = normalizeRosterRole(player?.role || total?.role)
+    const registeredEntry = registeredRole !== 'FLEX'
+      ? getRequestedRoleEntry(roleEntries, registeredRole)
+      : null
+    const avatarEntry = requestedEntry || registeredEntry || primaryEntry
     const avatarSource = avatarEntry ? applyRoleEntryStats(merged, avatarEntry) : merged
     const statsSource = requestedEntry || (!hasReliableStats(merged) ? primaryEntry : null)
     const displaySource = statsSource ? applyRoleEntryStats(merged, statsSource) : merged
     const avatar = getPlayerAvatarSource(avatarSource, { role: avatarEntry?.role || options.role })
     const heroNames = avatar.heroNames || []
-    const registeredRole = normalizeRosterRole(merged.role)
     const playedRoles = roleEntries
       .map(entry => normalizeRosterRole(entry.role))
       .filter((role, index, list) => role && list.indexOf(role) === index)
-    const role = requestedRole && (requestedEntry || normalizeRoleForHero(merged.role) === requestedRole)
+    const role = requestedRole && (requestedEntry || normalizeRoleForHero(registeredRole) === requestedRole)
       ? normalizeRosterRole(requestedRole)
       : registeredRole
-    const flexRoles = safeArr(merged.allowed_flex).map(normalizeRosterRole).filter(role => role && role !== normalizeRosterRole(merged.role))
+    const performanceRole = normalizeRosterRole(avatarEntry?.role || registeredRole)
+    const flexRoles = safeArr(merged.allowed_flex).map(normalizeRosterRole).filter(role => role && role !== registeredRole)
 
     return {
       ...merged,
@@ -487,6 +492,7 @@ export function getPlayerDirectory(db, favorites = {}, options = {}) {
       heroNames,
       role,
       registeredRole,
+      performanceRole,
       playedRoles,
       flexRoles,
       teamShortName,
@@ -621,9 +627,12 @@ export function filterStaff(staff, filters = {}) {
 
 export function sortStaff(staff, sort = 'default') {
   return [...safeArr(staff)].sort((a, b) => {
+    if (sort === 'matches') return toNumber(b.matchCount) - toNumber(a.matchCount) || compareText(a.name, b.name) || compareText(a.id, b.id)
     if (sort === 'name') return compareText(a.name, b.name) || compareText(a.team?.shortName, b.team?.shortName)
-    if (sort === 'role') return STAFF_ROLE_ORDER.indexOf(a.role) - STAFF_ROLE_ORDER.indexOf(b.role) || compareText(a.team?.shortName, b.team?.shortName) || compareText(a.name, b.name)
-    return compareText(a.team?.shortName, b.team?.shortName) || STAFF_ROLE_ORDER.indexOf(a.role) - STAFF_ROLE_ORDER.indexOf(b.role) || compareText(a.name, b.name)
+    if (sort === 'team') {
+      return Number(!a.team) - Number(!b.team) || compareText(a.team?.shortName, b.team?.shortName) || STAFF_ROLE_ORDER.indexOf(a.role) - STAFF_ROLE_ORDER.indexOf(b.role) || compareText(a.name, b.name)
+    }
+    return STAFF_ROLE_ORDER.indexOf(a.role) - STAFF_ROLE_ORDER.indexOf(b.role) || compareText(a.team?.shortName, b.team?.shortName) || compareText(a.name, b.name)
   })
 }
 

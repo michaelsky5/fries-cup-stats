@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Shion execution seal</title><desc id="desc">A closed four-point execution seal keeps its negative core. Redaction motion is drawn in the portrait background.</desc>
+  <path d="M148 75L212 97L277 75L255 130L277 188L212 166L148 188L169 130Z" fill="#d44d5c" fill-opacity="0.14" stroke="#df7b86" stroke-opacity="0.76" stroke-width="2.1" stroke-linejoin="bevel"/>
+  <path d="M212 110L234 131L212 153L190 131Z" fill="#0a0709" fill-opacity="0.9" stroke="#f0a0a8" stroke-opacity="0.55" stroke-width="1.3"/>
+  <path d="M158 85L197 100M265 86L228 100M159 176L196 163M265 177L228 163" fill="none" stroke="#f0a0a8" stroke-opacity="0.32" stroke-width="1"/>
+</svg>

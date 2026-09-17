@@ -2,6 +2,7 @@ import { normalizeSeasonId } from '../features/favorites/normalizeSeasonId.js'
 import { getFrozenRatingBaselineSnapshot } from '../config/frozenRatingBaselines.js'
 import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 import { resolveHeroSubrole } from './heroSubroleSelectors.js'
+import { getMatchLogDedupKey, selectPlayerMatchLogs } from './playerMatchLogs.js'
 
 const METRICS = [
   { id: 'elimsPer10', totalKey: 'elims', names: ['elims', 'eliminations', 'total_elim', 'elim'] },
@@ -64,13 +65,6 @@ function getPlayerTeamId(player) {
   return cleanText(player?.team_id || player?.teamId || player?.team_short_name || player?.teamName)
 }
 
-function getLogField(log, names) {
-  for (const name of names) {
-    if (log?.[name] !== undefined) return log[name]
-  }
-  return undefined
-}
-
 function getLogTotal(log, metric) {
   const totals = log?.totals && typeof log.totals === 'object' ? log.totals : {}
   for (const name of metric.names) {
@@ -100,27 +94,6 @@ function getPer10(totals, playtimeMinutes) {
   }, {})
 }
 
-function dedupeKey(playerId, log, hero, role, playtimeMinutes, totals) {
-  return [
-    playerId,
-    getLogField(log, ['matchId', 'match_id', 'matchID']) || '',
-    getLogField(log, ['rawMatchId', 'raw_match_id', 'rawMatchID']) || '',
-    getLogField(log, ['mapOrder', 'map_order', 'gameNumber']) || '',
-    hero,
-    role,
-    playtimeMinutes,
-    ...METRICS.map(metric => totals[metric.totalKey])
-  ].map(value => cleanText(value).toLowerCase()).join('|')
-}
-
-function getSelectedLogs(player) {
-  const matchLogs = safeArr(player?.match_logs)
-  const liveMatchLogs = safeArr(player?.live_match_logs)
-  if (matchLogs.length) return { source: 'match_logs', logs: matchLogs, skippedLiveLogs: liveMatchLogs.length }
-  if (liveMatchLogs.length) return { source: 'live_match_logs', logs: liveMatchLogs, skippedLiveLogs: 0 }
-  return { source: 'none', logs: [], skippedLiveLogs: 0 }
-}
-
 export function collectRatingLogRowsFromPlayers(players, options = {}) {
   const seasonId = normalizeSeasonId(options.seasonId || options.season?.id || options.season?.publicCode || '') || ''
   const cleaning = {
@@ -142,7 +115,7 @@ export function collectRatingLogRowsFromPlayers(players, options = {}) {
   safeArr(players).forEach((player, playerIndex) => {
     const playerId = getPlayerId(player, playerIndex)
     const playerTeamId = getPlayerTeamId(player)
-    const selected = getSelectedLogs(player)
+    const selected = selectPlayerMatchLogs(player)
 
     if (selected.source === 'match_logs') cleaning.playersUsingMatchLogs += 1
     if (selected.source === 'live_match_logs') cleaning.playersUsingLiveMatchLogs += 1
@@ -171,12 +144,12 @@ export function collectRatingLogRowsFromPlayers(players, options = {}) {
         return
       }
 
-      const key = dedupeKey(playerId, log, heroKey, role, playtimeMinutes, totals)
-      if (seen.has(key)) {
+      const key = getMatchLogDedupKey(log, { player_id: playerId, role })
+      if (key != null && seen.has(key)) {
         cleaning.dedupeRemoved += 1
         return
       }
-      seen.add(key)
+      if (key != null) seen.add(key)
 
       const teamId = cleanText(log?.teamId || log?.team_id || playerTeamId)
       const resolution = resolveHeroSubrole(hero, {

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Sombra hack skull</title>
+  <desc id="desc">A single skull silhouette contains angular eye sockets, an open nasal notch and three squared teeth. Portrait motion is rendered in a separate background layer.</desc>
+  <path d="M196 104Q209 88 229 90Q249 88 263 104L270 129L258 148V165H246V173H235V164H225V173H214V165H203V148L189 129Z" fill="#a85ac7" fill-opacity="0.11" stroke="#bd86ce" stroke-opacity="0.7" stroke-width="1.9" stroke-linejoin="bevel"/>
+  <path d="M203 114L219 111L223 126L208 131L200 125ZM255 114L240 111L235 126L250 131L259 125Z" fill="#c190d3" fill-opacity="0.32" stroke="#d7aae3" stroke-opacity="0.72" stroke-width="1.2"/>
+  <path d="M229 132L235 142H224Z" fill="#c190d3" fill-opacity="0.34"/>
+  <path d="M213 151H246" stroke="#c39bd0" stroke-opacity="0.43" stroke-width="1.2"/>
+</svg>

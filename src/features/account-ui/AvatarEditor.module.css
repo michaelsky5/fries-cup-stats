@@ -1,0 +1,53 @@
+.editor { display: flex; align-items: center; gap: 20px; padding: 0 0 24px; margin-bottom: 28px; border-bottom: 1px solid var(--fc-data-line); }
+.identity { display: grid; gap: 6px; flex: 1; min-width: 0; }
+.editor > span { background: var(--fc-data-ink); color: var(--fc-data-signal); }
+.identity strong { font-size: 16px; }
+.identity span, .identity small { font-size: 12px; line-height: 1.6; color: var(--fc-data-text-muted); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.editor button { min-height: 42px; padding: 10px 15px; color: var(--fc-data-ink); background: transparent; border: 1px solid var(--fc-data-line-strong); font: inherit; font-size: 13px; cursor: pointer; border-radius: 0; }
+.editor button:disabled { opacity: .5; cursor: not-allowed; }
+.editor button:focus-visible, .dialog :is(input, select):focus-visible { outline: 2px solid var(--fc-data-ink); outline-offset: 3px; }
+.editor button:hover:not(:disabled) { background: var(--fc-data-paper-deep); }
+.dialog { width: min(780px, calc(100vw - 32px)); max-height: min(850px, calc(100dvh - 32px)); margin: auto; padding: 0; color: var(--fc-data-ink, #191a18); background: var(--fc-data-paper, #efeee7); border: 1px solid var(--fc-data-line-strong, #96968f); overflow: auto; box-shadow: 0 24px 96px #0005; }
+.dialog[open] { display: flex; flex-direction: column; }
+.dialog::backdrop { background: #101110b3; }
+.dialog > header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px 28px; border-top: 4px solid var(--fc-data-signal); }
+.dialog h2 { margin: 6px 0 0; font-size: 26px; }
+.dialog header small { font-size: 11px; letter-spacing: .08em; color: var(--fc-data-text-muted); }
+.editor .close { font-size: 26px; width: 42px; padding: 0; }
+.tabs { display: flex; padding: 0 28px; border-bottom: 1px solid var(--fc-data-line); }
+.editor .tabs button { border: 0; border-bottom: 3px solid transparent; min-height: 48px; padding-inline: 20px; }
+.editor .tabs button[aria-pressed=true] { border-bottom-color: var(--fc-data-ink); font-weight: 750; background: var(--fc-data-signal); }
+.body { padding: 24px 28px; overflow-y: auto; min-height: 0; }
+.filters { display: grid; grid-template-columns: 1fr 150px; gap: 12px; margin-bottom: 20px; }
+.filters :is(input, select) { min-width: 0; min-height: 44px; padding: 10px 12px; font: inherit; font-size: 13px; color: inherit; background: var(--fc-data-paper-raised); border: 1px solid var(--fc-data-line-strong); border-radius: 0; }
+.gallery { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+.editor .gallery button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 12px 4px; border: 1px solid var(--fc-data-line); background: var(--fc-data-paper-raised); }
+.gallery button > span:last-of-type { font-size: 12px; line-height: 1.3; }
+.editor .gallery button[aria-pressed=true] { background: var(--fc-data-signal); border-color: var(--fc-data-ink); box-shadow: inset 0 0 0 1px var(--fc-data-ink); }
+.gallery i { position: absolute; top: 3px; right: 5px; font-style: normal; }
+.upload { display: grid; gap: 14px; padding: 24px; border: 1px dashed var(--fc-data-line-strong); font-weight: 650; background: var(--fc-data-paper-raised); }
+.upload input { font: inherit; font-size: 13px; min-width: 0; max-width: 100%; }
+.upload small { color: var(--fc-data-text-muted); font-size: 12px; font-weight: 400; }
+.crop { display: grid; grid-template-columns: minmax(0, 256px) minmax(0, 1fr); gap: 28px; align-items: center; margin-top: 24px; }
+.crop canvas { width: 100%; max-width: 256px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-deep); }
+.crop p { font-size: 12px; color: var(--fc-data-text-muted); line-height: 1.7; }
+.crop label { display: grid; gap: 10px; margin-top: 18px; font-size: 13px; }
+.crop input { width: 100%; accent-color: var(--fc-data-ink); }
+.error { padding: 12px; border-left: 3px solid var(--fc-data-ink); background: var(--fc-data-signal); color: var(--fc-data-ink); font-size: 13px; line-height: 1.7; }
+.dialog footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 20px 28px; border-top: 1px solid var(--fc-data-line); }
+.dialog footer p { margin: 0; font-size: 12px; line-height: 1.6; color: var(--fc-data-text-muted); max-width: 300px; }
+.dialog footer p span { display: block; color: var(--fc-data-ink); margin-top: 4px; }
+.dialog footer > div { display: flex; gap: 10px; flex-shrink: 0; }
+.editor .primary { background: var(--fc-data-signal); border-color: var(--fc-data-ink); font-weight: 700; }
+@media (max-width: 640px) {
+  .editor { gap: 14px; flex-wrap: wrap; }.identity { flex-basis: calc(100% - 90px); }.actions { padding-left: 86px; }
+  .dialog > header, .body, .dialog footer { padding: 18px; }.tabs { padding-inline: 18px; }.gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .filters { grid-template-columns: minmax(0, 1fr) 110px; }.crop { grid-template-columns: 1fr; gap: 18px; }.crop canvas { justify-self: center; }
+  .dialog footer { flex-wrap: wrap; gap: 12px; }.dialog footer > div { width: 100%; justify-content: flex-end; }
+}
+
+.upload input { color: var(--fc-data-ink); background: transparent; }
+.upload input::file-selector-button { padding: 10px 16px; margin-right: 12px; color: var(--fc-data-ink); background: var(--fc-data-paper); border: 1px solid var(--fc-data-line-strong); font: inherit; cursor: pointer; }
+
+.filters input::placeholder { color: var(--fc-data-text-muted); opacity: 1; }

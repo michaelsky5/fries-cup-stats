@@ -1,0 +1,744 @@
+{
+  "domina": [
+    {
+      "src": "/hero-artwork/tank/domina-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 44314
+    },
+    {
+      "src": "/hero-artwork/tank/domina-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 102328
+    }
+  ],
+  "dmon": [
+    {
+      "src": "/hero-artwork/tank/dmon-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 40190
+    },
+    {
+      "src": "/hero-artwork/tank/dmon-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 88588
+    }
+  ],
+  "doomfist": [
+    {
+      "src": "/hero-artwork/tank/doomfist-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 23398
+    },
+    {
+      "src": "/hero-artwork/tank/doomfist-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 50584
+    }
+  ],
+  "dva": [
+    {
+      "src": "/hero-artwork/tank/dva-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 50016
+    },
+    {
+      "src": "/hero-artwork/tank/dva-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 119348
+    }
+  ],
+  "hazard": [
+    {
+      "src": "/hero-artwork/tank/hazard-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 36562
+    },
+    {
+      "src": "/hero-artwork/tank/hazard-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 84816
+    }
+  ],
+  "junker-queen": [
+    {
+      "src": "/hero-artwork/tank/junker-queen-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 30466
+    },
+    {
+      "src": "/hero-artwork/tank/junker-queen-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 75060
+    }
+  ],
+  "mauga": [
+    {
+      "src": "/hero-artwork/tank/mauga-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 35252
+    },
+    {
+      "src": "/hero-artwork/tank/mauga-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 81506
+    }
+  ],
+  "orisa": [
+    {
+      "src": "/hero-artwork/tank/orisa-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 39956
+    },
+    {
+      "src": "/hero-artwork/tank/orisa-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 94104
+    }
+  ],
+  "ramattra": [
+    {
+      "src": "/hero-artwork/tank/ramattra-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 41300
+    },
+    {
+      "src": "/hero-artwork/tank/ramattra-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 94674
+    }
+  ],
+  "reinhardt": [
+    {
+      "src": "/hero-artwork/tank/reinhardt-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 34556
+    },
+    {
+      "src": "/hero-artwork/tank/reinhardt-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 80018
+    }
+  ],
+  "roadhog": [
+    {
+      "src": "/hero-artwork/tank/roadhog-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 39112
+    },
+    {
+      "src": "/hero-artwork/tank/roadhog-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 93272
+    }
+  ],
+  "sigma": [
+    {
+      "src": "/hero-artwork/tank/sigma-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 38232
+    },
+    {
+      "src": "/hero-artwork/tank/sigma-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 84746
+    }
+  ],
+  "winston": [
+    {
+      "src": "/hero-artwork/tank/winston-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27446
+    },
+    {
+      "src": "/hero-artwork/tank/winston-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 63812
+    }
+  ],
+  "wrecking-ball": [
+    {
+      "src": "/hero-artwork/tank/wrecking-ball-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 17196
+    },
+    {
+      "src": "/hero-artwork/tank/wrecking-ball-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 38116
+    }
+  ],
+  "zarya": [
+    {
+      "src": "/hero-artwork/tank/zarya-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27546
+    },
+    {
+      "src": "/hero-artwork/tank/zarya-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 64344
+    }
+  ],
+  "anran": [
+    {
+      "src": "/hero-artwork/damage/anran-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 32842
+    },
+    {
+      "src": "/hero-artwork/damage/anran-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 75236
+    }
+  ],
+  "ashe": [
+    {
+      "src": "/hero-artwork/damage/ashe-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 17266
+    },
+    {
+      "src": "/hero-artwork/damage/ashe-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 41810
+    }
+  ],
+  "bastion": [
+    {
+      "src": "/hero-artwork/damage/bastion-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 31090
+    },
+    {
+      "src": "/hero-artwork/damage/bastion-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 71058
+    }
+  ],
+  "cassidy": [
+    {
+      "src": "/hero-artwork/damage/cassidy-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 19790
+    },
+    {
+      "src": "/hero-artwork/damage/cassidy-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 45936
+    }
+  ],
+  "echo": [
+    {
+      "src": "/hero-artwork/damage/echo-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 18442
+    },
+    {
+      "src": "/hero-artwork/damage/echo-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 42902
+    }
+  ],
+  "emre": [
+    {
+      "src": "/hero-artwork/damage/emre-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 18128
+    },
+    {
+      "src": "/hero-artwork/damage/emre-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 41228
+    }
+  ],
+  "freja": [
+    {
+      "src": "/hero-artwork/damage/freja-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 34596
+    },
+    {
+      "src": "/hero-artwork/damage/freja-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 83200
+    }
+  ],
+  "genji": [
+    {
+      "src": "/hero-artwork/damage/genji-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 24830
+    },
+    {
+      "src": "/hero-artwork/damage/genji-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 55504
+    }
+  ],
+  "hanzo": [
+    {
+      "src": "/hero-artwork/damage/hanzo-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 15810
+    },
+    {
+      "src": "/hero-artwork/damage/hanzo-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 38860
+    }
+  ],
+  "junkrat": [
+    {
+      "src": "/hero-artwork/damage/junkrat-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 28292
+    },
+    {
+      "src": "/hero-artwork/damage/junkrat-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 64550
+    }
+  ],
+  "mei": [
+    {
+      "src": "/hero-artwork/damage/mei-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 22206
+    },
+    {
+      "src": "/hero-artwork/damage/mei-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 54212
+    }
+  ],
+  "pharah": [
+    {
+      "src": "/hero-artwork/damage/pharah-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 35080
+    },
+    {
+      "src": "/hero-artwork/damage/pharah-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 81032
+    }
+  ],
+  "reaper": [
+    {
+      "src": "/hero-artwork/damage/reaper-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 23636
+    },
+    {
+      "src": "/hero-artwork/damage/reaper-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 54308
+    }
+  ],
+  "sojourn": [
+    {
+      "src": "/hero-artwork/damage/sojourn-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 17476
+    },
+    {
+      "src": "/hero-artwork/damage/sojourn-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 39280
+    }
+  ],
+  "soldier-76": [
+    {
+      "src": "/hero-artwork/damage/soldier-76-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 22770
+    },
+    {
+      "src": "/hero-artwork/damage/soldier-76-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 52902
+    }
+  ],
+  "sierra": [
+    {
+      "src": "/hero-artwork/damage/sierra-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 17892
+    },
+    {
+      "src": "/hero-artwork/damage/sierra-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 40172
+    }
+  ],
+  "shion": [
+    {
+      "src": "/hero-artwork/damage/shion-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 23710
+    },
+    {
+      "src": "/hero-artwork/damage/shion-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 53908
+    }
+  ],
+  "sombra": [
+    {
+      "src": "/hero-artwork/damage/sombra-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 28168
+    },
+    {
+      "src": "/hero-artwork/damage/sombra-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 68046
+    }
+  ],
+  "symmetra": [
+    {
+      "src": "/hero-artwork/damage/symmetra-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 22270
+    },
+    {
+      "src": "/hero-artwork/damage/symmetra-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 52082
+    }
+  ],
+  "torbjorn": [
+    {
+      "src": "/hero-artwork/damage/torbjorn-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 32122
+    },
+    {
+      "src": "/hero-artwork/damage/torbjorn-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 75138
+    }
+  ],
+  "tracer": [
+    {
+      "src": "/hero-artwork/damage/tracer-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 22982
+    },
+    {
+      "src": "/hero-artwork/damage/tracer-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 53648
+    }
+  ],
+  "vendetta": [
+    {
+      "src": "/hero-artwork/damage/vendetta-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 35612
+    },
+    {
+      "src": "/hero-artwork/damage/vendetta-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 78070
+    }
+  ],
+  "venture": [
+    {
+      "src": "/hero-artwork/damage/venture-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 22216
+    },
+    {
+      "src": "/hero-artwork/damage/venture-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 52426
+    }
+  ],
+  "widowmaker": [
+    {
+      "src": "/hero-artwork/damage/widowmaker-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 15214
+    },
+    {
+      "src": "/hero-artwork/damage/widowmaker-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 34596
+    }
+  ],
+  "ana": [
+    {
+      "src": "/hero-artwork/support/ana-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 25930
+    },
+    {
+      "src": "/hero-artwork/support/ana-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 57398
+    }
+  ],
+  "baptiste": [
+    {
+      "src": "/hero-artwork/support/baptiste-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 23038
+    },
+    {
+      "src": "/hero-artwork/support/baptiste-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 53618
+    }
+  ],
+  "brigitte": [
+    {
+      "src": "/hero-artwork/support/brigitte-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 29280
+    },
+    {
+      "src": "/hero-artwork/support/brigitte-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 68106
+    }
+  ],
+  "illari": [
+    {
+      "src": "/hero-artwork/support/illari-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 18776
+    },
+    {
+      "src": "/hero-artwork/support/illari-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 43558
+    }
+  ],
+  "jetpack-cat": [
+    {
+      "src": "/hero-artwork/support/jetpack-cat-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27022
+    },
+    {
+      "src": "/hero-artwork/support/jetpack-cat-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 65256
+    }
+  ],
+  "juno": [
+    {
+      "src": "/hero-artwork/support/juno-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 29044
+    },
+    {
+      "src": "/hero-artwork/support/juno-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 66372
+    }
+  ],
+  "kiriko": [
+    {
+      "src": "/hero-artwork/support/kiriko-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 21048
+    },
+    {
+      "src": "/hero-artwork/support/kiriko-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 47490
+    }
+  ],
+  "lifeweaver": [
+    {
+      "src": "/hero-artwork/support/lifeweaver-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 33142
+    },
+    {
+      "src": "/hero-artwork/support/lifeweaver-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 77268
+    }
+  ],
+  "lucio": [
+    {
+      "src": "/hero-artwork/support/lucio-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 21256
+    },
+    {
+      "src": "/hero-artwork/support/lucio-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 48780
+    }
+  ],
+  "mercy": [
+    {
+      "src": "/hero-artwork/support/mercy-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 50926
+    },
+    {
+      "src": "/hero-artwork/support/mercy-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 119610
+    }
+  ],
+  "mizuki": [
+    {
+      "src": "/hero-artwork/support/mizuki-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 25498
+    },
+    {
+      "src": "/hero-artwork/support/mizuki-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 57378
+    }
+  ],
+  "moira": [
+    {
+      "src": "/hero-artwork/support/moira-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 30344
+    },
+    {
+      "src": "/hero-artwork/support/moira-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 72020
+    }
+  ],
+  "wuyang": [
+    {
+      "src": "/hero-artwork/support/wuyang-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 18918
+    },
+    {
+      "src": "/hero-artwork/support/wuyang-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 43316
+    }
+  ],
+  "zenyatta": [
+    {
+      "src": "/hero-artwork/support/zenyatta-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27640
+    },
+    {
+      "src": "/hero-artwork/support/zenyatta-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 66068
+    }
+  ]
+}

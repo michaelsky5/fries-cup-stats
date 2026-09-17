@@ -1,3 +1,4 @@
+import { translateUiText as formatUiText } from '../../lib/uiText.js'
 import { getHeroAvatarSrc, getRoleEnLabel, getRoleLabel, normalizeLeaderboardRole } from '../../lib/leaderboardSelectors.js'
 import { formatOwHeroName } from '../../lib/heroes.js'
 import { getPlayerDossier, getPlayerRoleAnalysis } from '../../lib/playerDetailSelectors.js'
@@ -46,16 +47,16 @@ function compact(values) {
 }
 
 function percentLabel(percentile, locale) {
-  if (!Number.isFinite(Number(percentile))) return isZh(locale) ? '样本不足' : 'Not Rated'
+  if (!Number.isFinite(Number(percentile))) return formatUiText(isZh(locale) ? '样本不足' : 'Not Rated', locale)
   const top = Math.max(1, 100 - Math.round(Number(percentile)))
-  return isZh(locale) ? `前 ${top}%` : `TOP ${top}%`
+  return formatUiText(isZh(locale) ? `前 ${top}%` : `TOP ${top}%`, locale)
 }
 
 function getAttributeLabel(role, subject, locale) {
   const normalizedRole = normalizeLeaderboardRole(role) || 'DPS'
   const labels = ATTRIBUTE_LABELS[normalizedRole]?.[subject]
-  if (!labels) return subject
-  return isZh(locale) ? labels[0] : labels[1]
+  if (!labels) return formatUiText(subject, locale)
+  return formatUiText(isZh(locale) ? labels[0] : labels[1], locale)
 }
 
 function resolveSeasonCode(db, season, seasonId) {
@@ -193,6 +194,7 @@ export function getPlayerShareCardModel({
       teamId: identity.teamRouteId,
       teamShortName: identity.teamShort,
       teamName: identity.teamFull,
+      teamLogo: identity.teamLogo,
       teamLine,
       role: roleLabel,
       roleCode: summary.role

@@ -1,9 +1,17 @@
+export const BROADCAST_REPLAY_ARCHIVE_URL = 'https://space.bilibili.com/3632300164123415'
+
+const FINISHED_MATCH_STATUSES = new Set(['COMPLETE', 'COMPLETED', 'FINISHED'])
+
 function cleanText(value) {
   return String(value ?? '').trim()
 }
 
 function normalizeKey(value) {
   return cleanText(value).toLowerCase()
+}
+
+function isFinishedMatch(match) {
+  return FINISHED_MATCH_STATUSES.has(cleanText(match?.status).toUpperCase())
 }
 
 function asList(value) {
@@ -20,7 +28,7 @@ function normalizePerson(person) {
   if (!person) return null
   if (typeof person !== 'object') {
     const name = cleanText(person)
-    return name ? { name, battleTag: '' } : null
+    return name ? { name: name.replace(/#\d+$/, ''), battleTag: /#\d+$/.test(name) ? name : '' } : null
   }
 
   const battleTag = cleanText(
@@ -54,14 +62,19 @@ function collectPeople(...values) {
     .flatMap(value => asList(value))
     .map(normalizePerson)
     .filter(Boolean)
-  const seen = new Set()
-
-  return people.filter(person => {
-    const key = `${normalizeKey(person.name)}::${normalizeKey(person.battleTag)}`
-    if (seen.has(key)) return false
-    seen.add(key)
-    return true
-  })
+  const result = []
+  for (const person of people) {
+    const tag = normalizeKey(person.battleTag)
+    const name = normalizeKey(person.name)
+    const duplicate = result.findIndex(existing => (
+      (tag && (tag === normalizeKey(existing.battleTag) || tag === normalizeKey(existing.name))) ||
+      (name === normalizeKey(existing.name) && (!tag || !existing.battleTag || tag === normalizeKey(existing.battleTag))) ||
+      name === normalizeKey(existing.battleTag)
+    ))
+    if (duplicate < 0) result.push(person)
+    else if ((!result[duplicate].battleTag && tag) || (result[duplicate].name === result[duplicate].battleTag && person.name !== person.battleTag)) result[duplicate] = person
+  }
+  return result
 }
 
 function formatPeople(people) {
@@ -172,6 +185,7 @@ function emptyBroadcastInfo() {
     streamLinks: [],
     casters: [],
     referees: [],
+    staffGroups: [],
     casterText: '',
     refereeText: '',
     hasPublicInfo: false
@@ -179,8 +193,11 @@ function emptyBroadcastInfo() {
 }
 
 export function getBroadcastInfo(match = {}) {
-  const source = match?.broadcast || match?.stream || match?.live
-  if (!source || typeof source !== 'object') return emptyBroadcastInfo()
+  const candidate = match?.broadcast || match?.stream || match?.live
+  const source = candidate && typeof candidate === 'object' ? candidate : {}
+  const replayUrl = cleanText(source.replay_url || source.replayUrl || source.vod_url || source.vodUrl ||
+    match.replay_url || match.replayUrl || match.vod_url || match.vodUrl)
+  const validReplayUrl = /^https?:\/\//i.test(replayUrl) ? replayUrl : ''
 
   const streamUrl = cleanText(
     source.stream_url ||
@@ -194,8 +211,11 @@ export function getBroadcastInfo(match = {}) {
     source.link ||
     source['\u76f4\u64ad\u95f4']
   )
-  const streamLinks = collectStreamLinks(source, streamUrl)
+  const liveStreamLinks = collectStreamLinks(source, streamUrl)
+  const crew = asList(source.crew)
+  const crewInRole = role => crew.filter(person => cleanText(person?.role).toUpperCase() === role)
   const casters = collectPeople(
+    crewInRole('CASTER'),
     source.casters,
     source.caster,
     source.commentators,
@@ -215,6 +235,7 @@ export function getBroadcastInfo(match = {}) {
     source['\u89e3\u8bf4']
   )
   const referees = collectPeople(
+    crewInRole('REFEREE'),
     source.referees,
     source.referee,
     source.staff,
@@ -238,23 +259,38 @@ export function getBroadcastInfo(match = {}) {
     source.admin2,
     source['\u8d5b\u7ba1']
   )
+  const staffGroups = [
+    { role: 'CASTER', people: casters },
+    { role: 'REFEREE', people: referees },
+    { role: 'VOICE_REFEREE', people: collectPeople(source.voice_referees, crewInRole('VOICE_REFEREE')) },
+    { role: 'DIRECTOR', people: collectPeople(source.directors, crewInRole('DIRECTOR')) },
+    { role: 'OB', people: collectPeople(source.observers, crewInRole('OB')) }
+  ].filter(group => group.people.length)
   const isBroadcast = !isExplicitFalse(source.is_broadcast ?? source.isBroadcast) && (
     Boolean(source.is_broadcast ?? source.isBroadcast) ||
-    streamLinks.length > 0 ||
+    liveStreamLinks.length > 0 ||
+    validReplayUrl ||
     casters.length > 0 ||
-    referees.length > 0
+    staffGroups.length > 0
   )
 
   if (!isBroadcast) return emptyBroadcastInfo()
 
+  const isFinished = isFinishedMatch(match)
+  const streamLinks = isFinished
+    ? [{ label: validReplayUrl ? '本场录像' : '赛事录像库', url: validReplayUrl || BROADCAST_REPLAY_ARCHIVE_URL, staff: null,
+      kind: validReplayUrl ? 'replay' : 'archive' }]
+    : liveStreamLinks
+
   return {
     isBroadcast,
-    streamUrl,
+    streamUrl: isFinished ? validReplayUrl || BROADCAST_REPLAY_ARCHIVE_URL : streamUrl,
     streamLinks,
     casters,
     referees,
+    staffGroups,
     casterText: formatPeople(casters),
     refereeText: formatPeople(referees),
-    hasPublicInfo: streamLinks.length > 0 || casters.length > 0 || referees.length > 0
+    hasPublicInfo: streamLinks.length > 0 || staffGroups.length > 0
   }
 }

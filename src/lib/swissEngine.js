@@ -37,7 +37,7 @@ function isSwissMatch(match) {
   const excluded = ['LCQ', 'PLAYOFF', '季后赛', '最后资格赛', '淘汰', 'ELIMINATION', 'QUARTER', 'SEMI', 'FINAL', '八强', '四强', '-WB-', '-LB-', '-GF-']
   if (excluded.some(keyword => text.includes(keyword))) return false
 
-  if (stage === 'SWISS' || stage === 'QUALIFIERS' || stage === 'GROUP') return true
+  if (stage === 'SWISS' || stage === 'QUALIFIERS') return true
   return text.includes('SWISS') || text.includes('瑞士')
 }
 

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Mercy Valkyrie flight vanes</title>
+  <desc id="desc">Two mechanical wings spread into three distinct rigid flight vanes each. Clear slots and restrained leading-edge details replace the former continuous leaf-shaped outlines.</desc>
+  <g fill="#e0cea0" fill-opacity="0.32" stroke="#e2d3a7" stroke-opacity="0.79" stroke-width="1.8" stroke-linejoin="bevel">
+    <path d="M165 157L143 139L97 52L70 40L106 122L149 169Z"/>
+    <path d="M151 178L124 155L98 109L78 83L88 123L111 160L140 190Z"/>
+    <path d="M146 195L122 181L100 150L76 135L82 159L111 191L135 206Z"/>
+    <path d="M195 157L217 139L263 52L290 40L254 122L211 169Z"/>
+    <path d="M209 178L236 155L262 109L282 83L272 123L249 160L220 190Z"/>
+    <path d="M214 195L238 181L260 150L284 135L278 159L249 191L225 206Z"/>
+  </g>
+  <path d="M100 76L129 132L149 153M260 76L231 132L211 153" fill="none" stroke="#e6e1c7" stroke-opacity="0.49" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

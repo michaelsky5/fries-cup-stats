@@ -1,3 +1,8 @@
+import {
+  getTeamLogo as resolveTeamLogo,
+  getTeamLogoCandidates as resolveTeamLogoCandidates
+} from './teamLogoResolver.js'
+
 export const safeArr = value => Array.isArray(value) ? value : []
 
 export const safeObj = value => value && typeof value === 'object' && !Array.isArray(value) ? value : {}
@@ -92,54 +97,12 @@ function encodePathSegment(value, fallback = 'UNKNOWN') {
   return encodeURIComponent(raw)
 }
 
-function getSeasonLogoDirectory(seasonLike) {
-  const seasonText = String(
-    seasonLike?.meta?.season_id ||
-    seasonLike?.meta?.season_code ||
-    seasonLike?.season?.id ||
-    seasonLike?.season_id ||
-    seasonLike?.season_code ||
-    seasonLike ||
-    ''
-  ).trim().toUpperCase()
-
-  if (seasonText.startsWith('FCR')) return 'FCR'
-  if (seasonText.startsWith('FCA')) return 'FCA'
-  return ''
+export function getTeamLogoCandidates(teamLike, seasonLike) {
+  return resolveTeamLogoCandidates(teamLike, seasonLike)
 }
 
-function logoStemCandidates(value) {
-  const stem = String(value ?? '').trim()
-  if (!stem || stem === 'TBD') return []
-
-  const alternateFirst = stem.includes('-') ? [stem.replace(/-/g, '.'), stem] : [stem]
-
-  return Array.from(new Set([
-    ...alternateFirst,
-    stem.replace(/\./g, '-'),
-    stem.replace(/\s+/g, ''),
-    stem.toUpperCase(),
-    stem.toLowerCase()
-  ].filter(Boolean)))
-}
-
-export function getTeamLogoCandidates(shortName, seasonLike) {
-  const directory = getSeasonLogoDirectory(seasonLike)
-  const stems = logoStemCandidates(shortName)
-  const seasonCandidates = directory
-    ? stems.map(stem => `/logos/${directory}/${encodePathSegment(stem)}.png`)
-    : []
-
-  return Array.from(new Set([
-    ...seasonCandidates,
-    ...stems.map(stem => `/logos/${encodePathSegment(stem)}.png`),
-    directory ? `/logos/${directory}/OW.png` : '',
-    '/logos/fc_logo.png'
-  ].filter(Boolean)))
-}
-
-export function getTeamLogo(shortName, seasonLike) {
-  return getTeamLogoCandidates(shortName, seasonLike)[0] || '/logos/fc_logo.png'
+export function getTeamLogo(teamLike, seasonLike) {
+  return resolveTeamLogo(teamLike, seasonLike)
 }
 
 /* -------------------------------------------------------------------------- */
@@ -153,6 +116,49 @@ function normalizeAssetKey(value) {
     .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '')
     .trim()
 }
+
+const FCR26_STAFF_PORTRAIT_BASE = '/review/staff-portraits/fcr26'
+
+const RAW_FCR26_STAFF_PORTRAITS = {
+  Dechart滴查: 'C001.jpg',
+  Dechart: 'C001.jpg',
+  滴查: 'C001.jpg',
+  Ghost: 'C002.jpg',
+  GHOST: 'C002.jpg',
+  HAJIMI: 'C003.jpg',
+  Maverick: 'C004.webp',
+  michaelsky5: 'C005.jpg',
+  SKY: 'C005.jpg',
+  Petr0: 'C007.png',
+  ROYA: 'C008.png',
+  Roya: 'C008.png',
+  Vinlix: 'C009.jpeg',
+  YEYA: 'C010.jpg',
+  大堡垒: 'C011.jpg',
+  缚虎: 'C012.jpg',
+  井习木: 'C013.jpg',
+  雷军: 'C014.jpg',
+  莫德: 'C015.jpg',
+  南宫: 'C016.jpg',
+  南宫丶: 'C016.jpg',
+  牛萨库斯: 'C017.png',
+  桑榆: 'C018.jpg',
+  丧命: 'C019.jpg',
+  烧肉粽: 'C020.jpg',
+  锡兰: 'C021.jpg',
+  小云: 'C022.jpg',
+  小枝: 'C023.jpeg',
+  云海: 'C024.jpg',
+  照井龙: 'C025.webp',
+  做个良良子: 'C026.jpg',
+  coda: 'C027.jpg'
+}
+
+const FCR26_STAFF_PORTRAITS = Object.fromEntries(
+  Object.entries(RAW_FCR26_STAFF_PORTRAITS).map(([key, file]) => [normalizeAssetKey(key), file])
+)
+
+const STAFF_WITH_INTENTIONAL_TYPOGRAPHIC_POSTERS = new Set(['star'])
 
 const RAW_STAFF_AVATAR_ALIASES = {
   michaelsky5: 'SKY.jpg',
@@ -193,7 +199,7 @@ const STAFF_AVATAR_ALIASES = Object.fromEntries(
   Object.entries(RAW_STAFF_AVATAR_ALIASES).map(([key, file]) => [normalizeAssetKey(key), file])
 )
 
-export function getStaffAvatar(staffName) {
+export function getStaffAvatar(staffName, { knownOnly = false } = {}) {
   const raw = String(staffName ?? '').trim()
   if (!raw) return ''
 
@@ -201,13 +207,24 @@ export function getStaffAvatar(staffName) {
   const key = normalizeAssetKey(raw)
   const cleanKey = normalizeAssetKey(clean)
 
+  if (STAFF_WITH_INTENTIONAL_TYPOGRAPHIC_POSTERS.has(key) || STAFF_WITH_INTENTIONAL_TYPOGRAPHIC_POSTERS.has(cleanKey)) {
+    return ''
+  }
+
+  const officialFile =
+    FCR26_STAFF_PORTRAITS[key] ||
+    FCR26_STAFF_PORTRAITS[cleanKey] ||
+    ''
+
+  if (officialFile) return `${FCR26_STAFF_PORTRAIT_BASE}/${encodePathSegment(officialFile)}`
+
   const file =
     STAFF_AVATAR_ALIASES[key] ||
     STAFF_AVATAR_ALIASES[cleanKey] ||
     ''
 
   if (file) return `/casters/${encodePathSegment(file)}`
-  return clean ? `/casters/${encodePathSegment(clean)}.jpg` : ''
+  return !knownOnly && clean ? `/casters/${encodePathSegment(clean)}.jpg` : ''
 }
 
 /* -------------------------------------------------------------------------- */
@@ -268,7 +285,10 @@ const MAP_FILE_ALIASES = {
   'route_66': 'Route_66',
   '66号公路': 'Route_66',
   shambali: 'Shambali',
+  'shambali monastery': 'Shambali',
+  shambali_monastery: 'Shambali',
   '香巴里': 'Shambali',
+  '香巴里寺院': 'Shambali',
   'watchpoint gibraltar': 'Watchpoint_Gibraltar',
   'watchpoint_gibraltar': 'Watchpoint_Gibraltar',
   '监测站直布罗陀': 'Watchpoint_Gibraltar',
@@ -289,9 +309,9 @@ const MAP_FILE_ALIASES = {
   '中城': 'Midtown',
   numbani: 'Numbani',
   '努巴尼': 'Numbani',
-  paraiso: 'Paraiso',
-  'paraíso': 'Paraiso',
-  '帕拉伊苏': 'Paraiso',
+  paraiso: 'Paraíso',
+  'paraíso': 'Paraíso',
+  '帕拉伊苏': 'Paraíso',
 
   colosseo: 'Colosseo',
   '斗兽场': 'Colosseo',
@@ -366,6 +386,8 @@ const HERO_SLUGS = {
   DVA: 'dva',
   'd.va': 'dva',
   Dva: 'dva',
+  'D.Mon': 'dmon',
+  DMon: 'dmon',
   '金驭': 'domina',
   Domina: 'domina',
   '末日铁拳': 'doomfist',
@@ -449,6 +471,7 @@ const HERO_SLUGS = {
   '猎空': 'tracer',
   Vendetta: 'vendetta',
   '仇怨': 'vendetta',
+  '斩仇': 'vendetta',
   Venture: 'venture',
   '探奇': 'venture',
   Widowmaker: 'widowmaker',
@@ -491,6 +514,7 @@ const HERO_SLUGS = {
 
 const HERO_ROLE_BY_SLUG = {
   dva: 'tank',
+  dmon: 'tank',
   domina: 'tank',
   doomfist: 'tank',
   hazard: 'tank',
@@ -589,6 +613,12 @@ export function getHeroImage(heroName, role) {
   const slug = heroNameToSlug(heroName)
   const folder = normalizeHeroFolder(role, heroName)
   return `/heroes/${encodePathSegment(folder)}/${encodePathSegment(slug)}.png`
+}
+
+export function getHeroRenderImage(heroName, role) {
+  const slug = heroNameToSlug(heroName).replace(/_/g, '-')
+  const folder = normalizeHeroFolder(role, heroName)
+  return `/review/hero-renders/${encodePathSegment(folder)}/${encodePathSegment(slug)}.png`
 }
 
 /* -------------------------------------------------------------------------- */
@@ -789,5 +819,22 @@ export function getScheduledText(match) {
   if (date && time) return `${date} ${time}`
   if (date && weekday) return `${date} ${weekday}`
 
-  return date || time || at || ''
+  if (date || time) return date || time
+
+  const timestamp = Date.parse(at)
+  if (!Number.isFinite(timestamp)) return at || ''
+
+  const parts = new Intl.DateTimeFormat('zh-CN', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    weekday: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23'
+  }).formatToParts(new Date(timestamp))
+  const values = Object.fromEntries(parts.map(part => [part.type, part.value]))
+
+  return `${values.year}-${values.month}-${values.day} ${values.weekday} ${values.hour}:${values.minute}`
 }

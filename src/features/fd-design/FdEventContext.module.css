@@ -1,0 +1,38 @@
+:global([data-design="fd"]) .contextBar { grid-template-columns: minmax(0, 1fr) auto; width: var(--portal-shell-width); min-height: 46px; margin: 0 auto; padding: 0; gap: 20px; border-top: 1px solid var(--fd-line-dark); background: transparent; }
+:global([data-design="fd"]) .eventLead { gap: 12px; }
+:global([data-design="fd"]) .eventLogo { width: 26px; height: 26px; border: 0; border-radius: 0; background: var(--fd-paper); }
+:global([data-design="fd"]) .eventCode { font-size: 18px; letter-spacing: -.02em; font-weight: 900; }
+:global([data-design="fd"]) .eventIdentity { gap: 12px; }
+:global([data-design="fd"]) .partnerLabel { min-height: 20px; border: 0; border-left: 1px solid var(--fd-line-dark); padding-left: 12px; font-size: 10px; font-weight: 500; }
+:global([data-design="fd"]) .eventMeta { flex-wrap: nowrap; color: #b3b3b3; font-size: 11px; font-weight: 400; }
+:global([data-design="fd"]) .eventMeta > span { min-height: 26px; padding: 0 14px; border-left-color: var(--fd-line-dark); }
+:global([data-design="fd"]) .eventMeta > span:first-child { border-left: 0; }
+:global([data-design="fd"]) .homeLink { display: none; }
+:global([data-design="fd"]) .eventSwitcher > summary { min-height: 34px; padding: 0 12px; border: 1px solid var(--fd-line-dark); background: transparent; color: var(--fd-on-dark); font-weight: 500; }
+:global([data-design="fd"]) .eventSwitcher > summary strong { color: var(--fd-yellow); }
+:global([data-design="fd"]) .switcherPanel { right: 0; left: auto; border: 1px solid var(--fd-line); background: var(--fd-paper-bright); box-shadow: 0 16px 36px #0006; color: var(--fd-ink); }
+:global([data-design="fd"]) .switcherPanel h3 { font-weight: 700; }
+:global([data-design="fd"]) .switcherPanel button { border: 1px solid var(--fd-line); background: var(--fd-paper); font-weight: 500; }
+:global([data-design="fd"]) .switcherPanel button em { color: var(--fd-muted-ink); font-weight: 400; }
+:global([data-design="fd"]) .switcherPanel .switcherOptionActive { border-color: #a8881a; background: #f4c32026; }
+:global([data-design="fd"]) .syncLine { height: 2px; }
+
+@media (max-width: 760px) {
+  :global([data-design="fd"]) .eventMeta > span:nth-child(2) { display: none; }
+  :global([data-design="fd"]) .eventMeta > span { padding: 0 8px; }
+}
+
+@media (max-width: 600px) {
+  :global([data-design="fd"]) .contextBar { grid-template-columns: minmax(0, 1fr) auto; min-height: 48px; gap: 8px; }
+  :global([data-design="fd"]) .eventLead { gap: 8px; }
+  :global([data-design="fd"]) .eventCode { font-size: 17px; }
+  :global([data-design="fd"]) .partnerLabel { display: none; }
+  :global([data-design="fd"]) .eventMeta > span { font-size: 10px; }
+  :global([data-design="fd"]) .eventSwitcher > summary { min-height: 40px; padding: 0 9px; }
+  :global([data-design="fd"]) .eventSwitcher > summary strong { display: none; }
+  :global([data-design="fd"]) .switcherPanel { right: 0; width: min(350px, calc(100vw - 28px)); }
+}
+
+@media (max-width: 360px) {
+  :global([data-design="fd"]) .eventMeta > span { padding: 0 5px; font-size: 9px; }
+}

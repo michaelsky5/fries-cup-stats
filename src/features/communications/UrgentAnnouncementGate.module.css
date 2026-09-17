@@ -1,0 +1,18 @@
+.backdrop { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; background: rgba(20, 20, 20, .78); padding: 18px; }
+.dialog { width: min(680px, 100%); display: grid; gap: 18px; border: 3px solid #2a2a2a; border-top: 10px solid #e85d47; background: #f7f1e5; color: #2a2a2a; padding: clamp(22px, 4vw, 38px); box-shadow: 12px 12px 0 #f4c320; }
+.dialog header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.dialog header span { color: #b43d2b; font-size: 11px; font-weight: 1000; letter-spacing: .1em; }
+.dialog header b { border: 2px solid #b43d2b; color: #b43d2b; padding: 5px 8px; font-size: 10px; }
+.dialog h2 { margin: 0; font-size: clamp(28px, 5vw, 48px); line-height: 1.02; }
+.dialog p { max-height: 36vh; margin: 0; overflow: auto; white-space: pre-wrap; line-height: 1.75; }
+.dialog small { font-weight: 900; }
+.dialog footer { display: flex; align-items: center; justify-content: flex-end; gap: 9px; border-top: 2px solid #2a2a2a; padding-top: 16px; }
+.dialog footer a, .dialog footer button { min-height: 44px; display: inline-flex; align-items: center; border: 2px solid #2a2a2a; background: #fff; color: #2a2a2a; padding: 0 15px; font: inherit; font-size: 12px; font-weight: 1000; text-decoration: none; cursor: pointer; }
+.dialog footer button { background: #f4c320; }
+.dialog footer button:disabled { opacity: .55; cursor: wait; }
+.error { border: 2px solid #b43d2b; color: #a52e1d; padding: 10px; font-weight: 900; }
+.loader { width: 28px; height: 28px; border: 3px solid rgba(42, 42, 42, .25); border-top-color: #b43d2b; animation: announcement-spin .8s linear infinite; }
+.dialog[data-state="loading"] { min-height: 270px; align-content: center; }
+.dialog[data-state="error"] { border-top-color: #b43d2b; }
+@keyframes announcement-spin { to { transform: rotate(360deg); } }
+@media (max-width: 560px) { .dialog { box-shadow: 6px 6px 0 #f4c320; } .dialog footer { align-items: stretch; flex-direction: column; } .dialog footer a, .dialog footer button { justify-content: center; } }

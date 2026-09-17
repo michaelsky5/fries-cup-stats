@@ -192,6 +192,7 @@ export const MAP_TYPE_CN = {
 
 export const STAGE_CN = {
   QUALIFIERS: '瑞士轮',
+  GROUP: '小组赛',
   SWISS: '瑞士轮',
   LCQ: '突围赛',
   PLAY_IN: '突围赛',

@@ -1,0 +1,82 @@
+.panel { padding: 18px 22px 0; border-top: 1px solid var(--fc-data-line); background: var(--fc-data-paper-raised); min-width: 0; container: weekly-coordination / inline-size; }
+.heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.panel .heading h3 { margin: 0; font-size: 17px; }
+.panel button { padding: 10px 16px; min-height: 44px; border: 1px solid var(--fc-data-line-strong); background: transparent; color: var(--fc-data-ink); font: inherit; font-size: 13px; cursor: pointer; }
+.panel button.primary { background: var(--fc-data-signal); border-color: var(--fc-data-signal); font-weight: 700; }
+.heading button { border-color: transparent; padding-inline: 8px; color: var(--fc-data-text-muted); }
+.loading { padding: 20px; color: var(--fc-data-text-muted); background: var(--fc-data-paper); font-size: 14px; }
+.loading[data-preparation='true'] { min-height: 330px; }
+.panel button:disabled { opacity: .5; cursor: default; }
+.panel :is(button, summary, input, textarea):focus-visible { outline: 2px solid var(--fc-data-ink); outline-offset: 3px; }
+.matchSetup { display: grid; grid-template-columns: minmax(0, 1fr) minmax(270px, .9fr); border: 1px solid var(--fc-data-line); }
+.brief { padding: 22px; min-width: 0; color: var(--fc-data-paper); background: var(--fc-data-ink); }
+.brief span { display: block; color: var(--fc-data-text-on-dark); font-size: 12px; }
+.brief .kicker { margin-bottom: 10px; }
+.brief > strong { display: block; font-size: 20px; line-height: 1.5; overflow-wrap: anywhere; }
+.panel p { font-size: 14px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.roomCode { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 14px; }
+.roomCode code { color: var(--fc-data-signal); font: 600 17px/1.5 var(--fc-data-font-system); overflow-wrap: anywhere; }
+.instructions { border-top: 1px solid var(--fc-data-line-on-dark); padding-top: 16px; margin-top: 18px; }
+.instructionsHeader { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 10px; }
+.brief .instructions p { margin: 8px 0; font-size: 13px; }
+.brief small { color: var(--fc-data-text-on-dark); }
+.readinessPanel { display: grid; grid-template-rows: auto auto 1fr; padding: 22px; min-width: 0; }
+.readinessPanel h4 { margin: 0 0 12px; font-size: 13px; }
+.readiness { display: grid; gap: 0; }
+.readiness > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 12px 0; min-width: 0; border-bottom: 1px solid var(--fc-data-line); overflow-wrap: anywhere; }
+.readiness > div > div { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.readiness strong { font-size: 14px; }
+.readiness em { font-size: 11px; color: var(--fc-data-text-muted); font-style: normal; }
+.readiness span, .muted { color: var(--fc-data-text-muted); font-size: 13px; }
+.readiness > div > span { text-align: right; max-width: 155px; }
+.readiness [data-ready='true'] > span { color: var(--fc-data-status-success); }
+.readiness small { grid-column: 1 / -1; color: var(--fc-data-text-muted); }
+.readyAction { align-self: end; padding-top: 14px; }
+.panel .readyAction p { margin: 0 0 12px; color: var(--fc-data-text-muted); font-size: 13px; line-height: 1.7; }
+.readyAction button { width: 100%; }
+.panel small { font-size: 12px; line-height: 1.7; }
+.support { margin-top: 16px; }
+.help { border-top: 1px solid var(--fc-data-line); }
+.help > summary { display: flex; flex-wrap: wrap; gap: 12px; padding: 18px 0; font-weight: 650; cursor: pointer; }
+.help > summary span { color: var(--fc-data-text-muted); font-size: 13px; font-weight: 400; }
+.panel form { display: grid; gap: 14px; }
+.panel label { display: grid; gap: 8px; font-size: 13px; }
+.panel input, .panel textarea { box-sizing: border-box; width: 100%; min-width: 0; padding: 12px; color: var(--fc-data-ink); background: var(--fc-data-paper); border: 1px solid var(--fc-data-line-strong); border-radius: 0; font: inherit; line-height: 1.7; }
+.panel textarea { min-height: 100px; resize: vertical; }
+.panel input::placeholder, .panel textarea::placeholder { color: var(--fc-data-text-muted); opacity: 1; }
+.panel form > button { justify-self: start; }
+.help form { margin-bottom: 20px; }
+.receipt, .error { padding: 12px 16px; background: var(--fc-data-paper); border-left: 3px solid var(--fc-data-signal); }
+.error { border-color: var(--fc-data-status-danger); }
+.records { padding-bottom: 12px; }
+.records h4 { font-size: 16px; }
+.thread { border-top: 1px solid var(--fc-data-line); }
+.thread > summary { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; padding: 16px 0; cursor: pointer; overflow-wrap: anywhere; }
+.thread > summary strong { flex: 1 1 200px; font-size: 15px; }
+.thread > summary span { font-size: 13px; }
+.thread > summary small { color: var(--fc-data-text-muted); }
+.thread [data-state='RESOLVED'] { color: var(--fc-data-status-success); }
+.thread ol { list-style: none; padding: 0; display: grid; gap: 12px; }
+.thread li { padding: 16px; background: var(--fc-data-paper); border-left: 2px solid var(--fc-data-line-strong); }
+.thread li[data-staff='true'] { border-color: var(--fc-data-signal); }
+.thread li header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; font-size: 12px; }
+.thread li p { margin-bottom: 0; }
+.thread form { margin-bottom: 20px; }
+@container weekly-coordination (max-width: 600px) {
+  .loading[data-preparation='true'] { min-height: 540px; }
+  .matchSetup { grid-template-columns: minmax(0, 1fr); }
+  .brief { padding: 16px; }
+  .brief .kicker { margin-bottom: 6px; }
+  .brief > strong { font-size: 18px; }
+  .roomCode { margin-top: 10px; }
+  .instructions { padding-top: 8px; margin-top: 12px; }
+  .brief .instructions p { margin-bottom: 0; }
+  .readinessPanel { padding: 14px 16px 16px; }
+  .readinessPanel h4 { margin-bottom: 4px; }
+  .readiness > div { padding-block: 8px; }
+  .readyAction { padding-top: 10px; }
+}
+@media (max-width: 640px) { .panel { padding: 12px 16px 0; } .panel .heading h3 { font-size: 16px; } }
+
+.thread li header strong { display: inline-flex; align-items: center; gap: 8px; min-width: 0; overflow-wrap: anywhere; }
+.thread li header { align-items: center; }

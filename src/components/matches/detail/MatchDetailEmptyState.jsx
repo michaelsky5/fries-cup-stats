@@ -1,5 +1,5 @@
 import { getRoleColor, getRoleEnLabel, getRoleLabel } from '../../../lib/leaderboardSelectors.js'
-import styles from './MatchDetail.module.css'
+import styles from './matchDetailStyles.js'
 
 function Roster({ title, players, locale = 'zh-CN' }) {
   return (

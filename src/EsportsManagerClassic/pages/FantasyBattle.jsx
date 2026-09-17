@@ -1,6 +1,7 @@
 // src/EsportsManager/pages/FantasyBattle.jsx
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
+import { getInitialSeasonId, withSeason as buildSeasonLink } from '../../config/seasons.js'
 import styles from './FantasyBattle.module.css'
 import { getRandomBossTeam, calculateTeamPower } from '../engine/managerEngine'
 import { TACTICS, executeSimulation } from '../engine/simEngine'
@@ -97,7 +98,7 @@ function HudCard({ label, value, meta, tone = '' }) {
 }
 
 export default function FantasyBattle() {
-  const { db } = useOutletContext()
+  const { db, withSeason } = useOutletContext()
   const navigate = useNavigate()
   const logEndRef = useRef(null)
 
@@ -125,12 +126,12 @@ export default function FantasyBattle() {
 
   useEffect(() => {
     const state = getRunState()
-    if (!state) return navigate('/shop')
+    if (!state) return navigate(buildSeasonLink('/shop', getInitialSeasonId(), window.location.search))
     setRunState(state)
 
     const savedRoster = localStorage.getItem('fca_my_roster')
     const savedPower = localStorage.getItem('fca_my_power')
-    if (!savedRoster || !savedPower) return navigate('/shop')
+    if (!savedRoster || !savedPower) return navigate(buildSeasonLink('/shop', getInitialSeasonId(), window.location.search))
 
     const roster = JSON.parse(savedRoster)
     setMyRoster(roster)
@@ -363,7 +364,7 @@ export default function FantasyBattle() {
           '🎉 正在为您生成阶段性纪念海报...'
         ])
         localStorage.removeItem('fca_current_match')
-        setTimeout(() => navigate('/champion'), 3000)
+        setTimeout(() => navigate(withSeason('/champion')), 3000)
         return
       }
 
@@ -776,7 +777,7 @@ export default function FantasyBattle() {
           <div className={styles.controls}>
             {phase === 'READY' && <button className={styles.btnPlay} onClick={playNextMap}>{currentMapNum === 1 ? '启动对决 / START MATCH' : `进入第 ${currentMapNum} 局`}</button>}
             {(phase === 'PICKING' || phase === 'CLASHING' || phase === 'TACTIC_REVEAL' || phase === 'RESULT') && <button className={styles.btnDisabled} disabled>模拟演算中...</button>}
-            {phase === 'END' && <button className={styles.btnReturn} onClick={() => navigate('/shop')}>返回战队大本营 / RETURN TO HUB</button>}
+            {phase === 'END' && <button className={styles.btnReturn} onClick={() => navigate(withSeason('/shop'))}>返回战队大本营 / RETURN TO HUB</button>}
           </div>
         </section>
 

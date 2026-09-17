@@ -1,10 +1,11 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useState } from 'react'
 import { formatInt, formatPlayerTime } from '../../lib/format.js'
 import {
   LEADERBOARD_COLUMNS,
   LEADERBOARD_TABS,
   METRIC_MODES,
-  formatEntrySeasonOvr,
   getEntryMetricValue,
   getHeroDisplayList,
   getHeroDisplayName,
@@ -13,9 +14,11 @@ import {
 } from '../../lib/leaderboardSelectors.js'
 import { PUBLIC_METRICS, getRoleCoreMetricIds, isRoleCoreMetric } from '../../lib/leaderboardScoring.js'
 import LeaderboardEmptyState from './LeaderboardEmptyState.jsx'
+import SeasonRating from '../../features/rating/SeasonRating.jsx'
+import { formatSeasonRatingValue, getSeasonRatingLabel, getSeasonRatingStatusLabel } from '../../lib/seasonRatingPolicy.js'
 import LeaderboardRow, { HeroAvatar } from './LeaderboardRow.jsx'
 import { formatLeaderboardStat } from './leaderboardFormat.js'
-import styles from '../../pages/leaderboard/LeaderboardPage.module.css'
+import styles from '../../features/fd-design/leaderboardStyles.js'
 
 const METRIC_LABELS = PUBLIC_METRICS.reduce((acc, metric) => {
   acc[metric.id] = metric.label
@@ -23,6 +26,7 @@ const METRIC_LABELS = PUBLIC_METRICS.reduce((acc, metric) => {
 }, {})
 
 function SortButton({ column, sortKey, direction, onSort, activeRole }) {
+  const uiLocale = useUiLocale()
   const active = sortKey === column.id
   const priority = column.metricId && activeRole !== 'ALL' && isRoleCoreMetric(activeRole, column.metricId)
   const metricTone = getMetricToneClass(column.metricId)
@@ -31,7 +35,7 @@ function SortButton({ column, sortKey, direction, onSort, activeRole }) {
     <button
       type="button"
       className={`${styles.sortButton} ${active ? styles.sortButtonActive : ''} ${priority ? styles.priorityHead : ''} ${metricTone}`}
-      aria-label={`按${column.label}排序${active ? `，当前${direction === 'asc' ? '升序' : '降序'}` : ''}`}
+      aria-label={uiText("按{0}排序{1}", uiLocale, [column.label, active ? `，当前${direction === 'asc' ? '升序' : '降序'}` : ''])}
       onClick={() => onSort(column.id)}
     >
       <span>{column.label}</span>
@@ -119,6 +123,7 @@ function HeaderGroups({ columns }) {
 }
 
 function TableHeader({ columns, rankColumn, sortKey, direction, activeRole, onSort }) {
+  const uiLocale = useUiLocale()
   return (
     <thead>
       <HeaderGroups columns={columns} />
@@ -152,13 +157,14 @@ function TableHeader({ columns, rankColumn, sortKey, direction, activeRole, onSo
           </th>
         ))}
 
-        <th scope="col" className={styles.actionHead}>操作</th>
+        <th scope="col" className={styles.actionHead}>{uiText("操作", uiLocale)}</th>
       </tr>
     </thead>
   )
 }
 
 function Pagination({ page, totalPages, totalRows, pageSize, pageSizeOptions = [], onPageChange, onPageSizeChange }) {
+  const uiLocale = useUiLocale()
   const start = totalRows ? ((page - 1) * pageSize) + 1 : 0
   const end = Math.min(page * pageSize, totalRows)
 
@@ -167,10 +173,10 @@ function Pagination({ page, totalPages, totalRows, pageSize, pageSizeOptions = [
       <span className={styles.paginationMeta}>
         <strong>{start}-{end}</strong>
         <em>/ {totalRows}</em>
-        <b>每页 {pageSize} 条</b>
+        <b>{uiText("每页 ", uiLocale)}{pageSize}{uiText(" 条", uiLocale)}</b>
       </span>
       {pageSizeOptions.length ? (
-        <div className={styles.pageSizeSwitch} aria-label="每页显示数量">
+        <div className={styles.pageSizeSwitch} aria-label={uiText("每页显示数量", uiLocale)}>
           {pageSizeOptions.map(option => (
             <button
               key={option}
@@ -185,9 +191,9 @@ function Pagination({ page, totalPages, totalRows, pageSize, pageSizeOptions = [
         </div>
       ) : null}
       <div className={styles.paginationActions}>
-        <button type="button" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>上一页</button>
+        <button type="button" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>{uiText("上一页", uiLocale)}</button>
         <strong>{page} / {totalPages}</strong>
-        <button type="button" disabled={page >= totalPages} onClick={() => onPageChange(page + 1)}>下一页</button>
+        <button type="button" disabled={page >= totalPages} onClick={() => onPageChange(page + 1)}>{uiText("下一页", uiLocale)}</button>
       </div>
     </div>
   )
@@ -199,14 +205,14 @@ function TableTitleBar({ pagination, mode, activeTab, sortKey, direction, locale
   const end = Math.min(page * pageSize, totalRows)
   const currentMode = METRIC_MODES.find(item => item.id === mode) || METRIC_MODES[0]
   const currentTab = LEADERBOARD_TABS.find(item => item.id === activeTab) || LEADERBOARD_TABS[0]
-  const modeLabel = locale === 'en-US' ? currentMode.en : currentMode.label
-  const tabLabel = locale === 'en-US' ? currentTab.en : currentTab.label
+  const modeLabel = locale === 'en-US' ? currentMode.en : uiText(currentMode.label, locale)
+  const tabLabel = locale === 'en-US' ? currentTab.en : uiText(currentTab.label, locale)
 
   return (
     <div className={styles.tableTitleBar}>
       <div className={styles.tableTitleText}>
         <span>PLAYER × ROLE</span>
-        <strong>{locale === 'en-US' ? 'Full Ranking' : '完整排行榜'}</strong>
+        <strong>{locale === 'en-US' ? 'Full Ranking' : uiText("完整排行榜", locale)}</strong>
       </div>
       <div className={styles.tableTitleMeta}>
         <span>{tabLabel}</span>
@@ -219,9 +225,9 @@ function TableTitleBar({ pagination, mode, activeTab, sortKey, direction, locale
 }
 
 function formatEntryField(entry, column, mode, locale) {
-  if (column.id === 'score') return formatEntrySeasonOvr(entry)
+  if (column.id === 'score') return `${formatSeasonRatingValue(entry)} · ${getSeasonRatingLabel(entry, locale)}`
   if (column.id === 'team') return `${entry.team_short_name || '-'} / ${entry.team_name || '-'}`
-  if (column.id === 'role') return locale === 'en-US' ? getRoleEnLabel(entry.role) : getRoleLabel(entry.role)
+  if (column.id === 'role') return locale === 'en-US' ? getRoleEnLabel(entry.role) : uiText(getRoleLabel(entry.role), locale)
   if (column.id === 'maps') return formatInt(entry.roleMapsPlayed)
   if (column.id === 'time') return formatPlayerTime({ raw_time_mins: entry.roleTimeMins, total_time_played: entry.total_time_played })
   if (column.metricId) return formatLeaderboardStat(getEntryMetricValue(entry, column.metricId, mode), mode, column.metricId)
@@ -261,11 +267,11 @@ function MobileRankingItem({
         <HeroAvatar entry={entry} />
         <span className={styles.mobilePlayerText}>
           <strong>{playerName}</strong>
-          <em>{entry.team_short_name || entry.team_name || '-'} / {locale === 'en-US' ? getRoleEnLabel(entry.role) : getRoleLabel(entry.role)}</em>
+          <em>{entry.team_short_name || entry.team_name || '-'} / {locale === 'en-US' ? getRoleEnLabel(entry.role) : uiText(getRoleLabel(entry.role), locale)}</em>
         </span>
         <span className={styles.mobileScore}>
-          <b>{formatEntrySeasonOvr(entry)}</b>
-          <em>OVR</em>
+          <b>{formatSeasonRatingValue(entry)}</b>
+          <em>{getSeasonRatingLabel(entry, locale)}</em>
         </span>
       </button>
 
@@ -279,10 +285,11 @@ function MobileRankingItem({
       </div>
 
       <div className={styles.mobileActions}>
-        <button type="button" onClick={() => onNavigate(entry)}>档案</button>
+        <SeasonRating entry={entry} locale={locale} explanationOnly />
+        <button type="button" onClick={() => onNavigate(entry)}>{uiText("档案", locale)}</button>
         <label
           className={`${styles.compareCheck} ${isCompareSelected ? styles.compareCheckActive : ''} ${compareDisabled ? styles.compareCheckBlocked : ''}`}
-          title={compareDisabled ? '仅支持同职责选手比较' : '加入比较'}
+          title={compareDisabled ? uiText("仅支持同职责选手比较", locale) : uiText("加入比较", locale)}
         >
           <input
             type="checkbox"
@@ -296,7 +303,7 @@ function MobileRankingItem({
         <button
           type="button"
           className={`${styles.followButton} ${isFavorite ? styles.followButtonActive : ''}`}
-          aria-label={isFavorite ? `取消关注：${playerName}` : `关注选手：${playerName}`}
+          aria-label={isFavorite ? uiText("取消关注：{0}", locale, [playerName]) : uiText("关注选手：{0}", locale, [playerName])}
           onClick={() => onToggleFavorite(entry)}
         >
           FAV
@@ -310,20 +317,20 @@ function MobileRankingItem({
             <strong>{entry.battleTag || entry.player_name || entry.player_id || '-'}</strong>
           </div>
           <div>
-            <span>选手 ID</span>
+            <span>{uiText("选手 ID", locale)}</span>
             <strong>{entry.player_id || '-'}</strong>
           </div>
           <div>
-            <span>常用英雄</span>
+            <span>{uiText("常用英雄", locale)}</span>
             <strong>{entry.most_played_hero ? getHeroDisplayName(entry.most_played_hero, locale) : '-'}</strong>
           </div>
           <div>
-            <span>英雄池</span>
+            <span>{uiText("英雄池", locale)}</span>
             <strong>{entry.top_3_heroes?.length ? getHeroDisplayList(entry.top_3_heroes, locale).join(' / ') : '-'}</strong>
           </div>
           <div>
-            <span>排名状态</span>
-            <strong>{entry.eligible ? '正式排名' : '样本不足'}</strong>
+            <span>{uiText("排名状态", locale)}</span>
+            <strong>{getSeasonRatingStatusLabel(entry, locale)}</strong>
           </div>
           {LEADERBOARD_COLUMNS.map(column => (
             <div key={column.id}>
@@ -361,7 +368,7 @@ function MobileRankingList({
   }
 
   return (
-    <div className={styles.mobileRankingList} aria-label="移动端排行榜列表">
+    <div className={styles.mobileRankingList} aria-label={uiText("移动端排行榜列表", locale)}>
       {rows.map(entry => (
         <MobileRankingItem
           key={entry.entryKey}
@@ -409,13 +416,13 @@ export default function LeaderboardTable({
   const scoreColumn = dataColumns.find(column => column.id === 'score')
   const columns = [
     ...(scoreColumn ? [scoreColumn] : []),
-    { id: 'player', label: '选手', en: 'PLAYER', sortable: true },
+    { id: 'player', label: uiText("选手", locale), en: 'PLAYER', sortable: true },
     ...dataColumns.filter(column => column.id !== 'score')
   ]
 
   const rankColumn = {
     id: 'rank',
-    label: '排名',
+    label: uiText("排名", locale),
     en: activeTab === 'overall' ? 'OVERALL' : 'ROLE',
     sortable: true
   }
@@ -435,9 +442,9 @@ export default function LeaderboardTable({
         <LeaderboardEmptyState locale={locale} />
       ) : (
         <>
-          <div className={styles.tableScroller} tabIndex={0} aria-label="排行榜横向滚动区域">
+          <div className={styles.tableScroller} tabIndex={0} aria-label={uiText("排行榜横向滚动区域", locale)}>
             <table className={styles.leaderboardTable}>
-              <caption className={styles.srOnly}>Fries Cup 选手职责排行榜</caption>
+              <caption className={styles.srOnly}>{uiText("Fries Cup 选手职责排行榜", locale)}</caption>
               <TableColGroup columns={columns} />
               <TableHeader
                 columns={columns}

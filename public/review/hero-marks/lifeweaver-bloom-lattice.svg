@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Lifeweaver healing lotus</title>
+  <desc id="desc">Five broad, separated petals rise from a shallow blossom cup. A coherent lotus replaces the scattered leaves and glowing gemstone; growth lines stay behind the portrait.</desc>
+  <g fill="#bf88a5" fill-opacity="0.28" stroke="#dfb2c9" stroke-opacity="0.73" stroke-width="1.9" stroke-linejoin="round">
+    <path d="M91 122C121 116 145 128 170 156C133 161 103 148 91 122Z"/>
+    <path d="M269 122C239 116 215 128 190 156C227 161 257 148 269 122Z"/>
+  </g>
+  <g fill="#d5a0bb" fill-opacity="0.29" stroke="#efc6da" stroke-opacity="0.76" stroke-width="2" stroke-linejoin="round">
+    <path d="M129 81C152 87 169 111 174 141C145 137 128 112 129 81Z"/>
+    <path d="M231 81C208 87 191 111 186 141C215 137 232 112 231 81Z"/>
+  </g>
+  <path d="M180 51C159 73 156 98 180 132C204 98 201 73 180 51Z" fill="#e1b0c8" fill-opacity="0.39" stroke="#f1cee0" stroke-opacity="0.84" stroke-width="2.2"/>
+  <path d="M137 168Q180 155 223 168Q180 195 137 168Z" fill="#c08ca7" fill-opacity="0.27" stroke="#e4b8cf" stroke-opacity="0.71" stroke-width="1.8"/>
+</svg>

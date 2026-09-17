@@ -1,0 +1,73 @@
+.lineupSection { min-width: 0; background: var(--fc-data-paper-raised); border-top: 4px solid var(--fc-data-ink); padding: 30px 32px 22px; margin-top: 36px; }
+.eyebrow { display: block; font: 12px/1.5 var(--fc-data-font-system); letter-spacing: .06em; color: var(--fc-data-text-muted); margin-bottom: 10px; }
+.lineupHeading { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 28px; }
+.lineupHeading h3 { font-size: clamp(26px,2.6vw,36px); line-height: 1.25; font-weight: 800; letter-spacing: -.035em; }
+.lineupHeading p { margin-top: 12px !important; color: var(--fc-data-text-muted); font-size: 13px; line-height: 1.8; }
+.lineupTotal { text-align: right; flex-shrink: 0; }
+.lineupTotal strong { display: block; font: 900 52px/1 var(--fc-data-font-display); }
+.lineupTotal small { font: 13px var(--fc-data-font-interface); margin-left: 8px; }
+.lineupTotal > span { display: block; margin-top: 10px; color: var(--fc-data-text-muted); font-size: 13px; }
+.lineup { display: grid; grid-template-columns: 100px minmax(0,1fr) minmax(170px,.4fr); gap: 14px 32px; align-items: center; border-top: 1px solid var(--fc-data-line-strong); padding-block: 26px; }
+.lineup > header { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 12px; grid-row: 1/3; align-self: center; }
+.lineup > header > span { font: 12px var(--fc-data-font-system); color: var(--fc-data-text-muted); }
+.lineup > header > b { font: 900 54px/1 var(--fc-data-font-display); }
+.lineup > header small { font: 12px/1.5 var(--fc-data-font-interface); display: block; margin-top: 8px; color: var(--fc-data-text-muted); }
+.lineup > header .lineupSample { font: 12px/1.7 var(--fc-data-font-interface); }
+.lineupHeroes { display: flex; gap: 18px; min-width: 0; grid-row: 1/3; }
+.roleGroup { min-width: 0; border-top: 2px solid var(--fc-data-line-strong); padding-top: 12px; }
+.roleGroup > span { display: block; font-size: 13px; color: var(--fc-data-text-muted); margin-bottom: 16px; }
+.roleGroup > div { display: grid; gap: 12px; }
+.roleGroup > div > span { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; }
+.roleGroup > div > span > :first-child { width: min(64px,100%); height: auto; aspect-ratio: 1; object-fit: cover; }
+.roleGroup b { font-size: 14px; font-weight: 650; line-height: 1.4; overflow-wrap: anywhere; }
+.lineup > dl { display: grid; gap: 12px; min-width: 0; padding-left: 24px; border-left: 1px solid var(--fc-data-line); margin: 0; }
+.lineup > dl dt { font-size: 12px; color: var(--fc-data-text-muted); }
+.lineup > dl dd { font-size: 14px; font-weight: 650; line-height: 1.7; margin: 5px 0 0; overflow-wrap: anywhere; }
+.lineup > dl > div:first-child dd { font-size: 18px; }
+.commonMap { display: inline-block; max-width: 100%; }
+.commonMap:not(:last-child)::after { content: ' / '; white-space: pre; }
+.lineup > details { min-width: 0; grid-column: 3; border: 0; align-self: end; }
+.lineup > details > summary { font-size: 13px; min-height: 44px; padding: 10px 12px; border: 1px solid var(--fc-data-line-strong); gap: 12px; }
+.lineup > details > summary:hover { background: var(--fc-data-signal); }
+.lineup:has(> details[open]) > header, .lineup:has(> details[open]) .lineupHeroes { grid-row: 1; }
+.lineup > details[open] { grid-column: 1/-1; padding: 18px 20px; background: var(--fc-data-paper-deep); border-left: 2px solid var(--fc-data-line-strong); margin-top: 4px; }
+.lineup > details[open] > summary { border: 0; padding: 0 0 12px; border-bottom: 1px solid var(--fc-data-line-strong); }
+.lineupNote { font-size: 13px; line-height: 1.8; color: var(--fc-data-text-muted); margin-top: 18px !important; }
+.lineupEmpty { padding: 18px 0; font-size: 14px; color: var(--fc-data-text-muted); }
+.lineupSection > details { border-top: 1px solid var(--fc-data-line-strong); }
+.lineupSection > details > summary { font-size: 14px; }
+.lineupSection > details > .lineup:first-of-type { border-top: 0; }
+@media(max-width:1050px) {
+  .lineup { grid-template-columns: 80px minmax(0,1fr) 170px; gap: 16px 20px; }
+  .lineupHeroes { gap: 12px; }
+  .roleGroup > div { gap: 8px; }
+  .lineup > dl { padding-left: 16px; }
+}
+@media(max-width:850px) {
+  .lineup { grid-template-columns: 82px minmax(0,1fr); }
+  .lineup > header, .lineupHeroes { grid-row: 1; }
+  .lineup > dl { grid-column: 2; grid-template-columns: minmax(70px,.7fr) minmax(0,1.3fr); border-left: 0; padding: 0; }
+  .lineup > details { grid-column: 2; }
+}
+@media(max-width:700px) {
+  .lineupSection { padding: 24px 16px 20px; margin-top: 28px; }
+  .lineupHeading { align-items: flex-start; gap: 14px; }
+  .lineupHeading h3 { font-size: 26px; }
+  .lineupTotal strong { font-size: 40px; }
+  .lineupTotal small { display: block; margin: 6px 0 0; font-size: 12px; }
+  .lineupTotal > span { font-size: 12px; max-width: 8em; line-height: 1.6; }
+  .lineup { display: block; padding-block: 22px; }
+  .lineup > header { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 8px 14px; }
+  .lineup > header > b { text-align: right; font-size: 44px; grid-column: 2; grid-row: 1/3; }
+  .lineup > header .lineupSample { grid-column: 1; grid-row: 2; }
+  .lineupHeroes { gap: 12px; margin-block: 22px; }
+  .roleGroup { padding-top: 10px; }
+  .roleGroup > span { margin-bottom: 12px; }
+  .roleGroup > div { gap: 8px; }
+  .roleGroup > div > span { gap: 8px; }
+  .roleGroup > div > span > :first-child { width: min(48px,100%); }
+  .roleGroup b { font-size: 13px; }
+  .lineup > dl { grid-template-columns: minmax(75px,.7fr) minmax(0,1.3fr); border-top: 1px solid var(--fc-data-line); padding-top: 16px; }
+  .lineup > details { margin-top: 16px; }
+  .lineup > details[open] { margin-top: 16px; padding: 14px 10px; }
+}

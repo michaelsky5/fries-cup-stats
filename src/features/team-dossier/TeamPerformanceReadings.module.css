@@ -1,0 +1,34 @@
+.roleComposition { display: block; font: 11px/1.7 var(--fc-data-font-interface); color: var(--fc-data-text-muted); margin-top: 7px; }
+.roleChoices { display: flex; gap: 5px; margin-top: 20px; }
+.roleChoices button { border: 1px solid var(--fc-data-line-strong); background: transparent; min-height: 42px; padding: 9px 14px; font-size: 12px; flex: 1; }
+.roleChoices button[aria-pressed='true'] { background: var(--fc-data-ink); color: var(--fc-data-paper); }
+.roleChoices button:hover:not([aria-pressed='true']) { background: var(--fc-data-paper); }
+.peerPosition { margin-block: 20px; padding: 15px 0; border-block: 1px solid var(--fc-data-line-strong); }
+.peerPosition > div { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 5px 20px; align-items: center; }
+.peerPosition span { font-size: 12px; }
+.peerPosition strong { grid-column: 2; grid-row: 1/3; font: 900 38px var(--fc-data-font-display); }
+.peerPosition small { font-size: 11px; color: var(--fc-data-text-muted); }
+.peerPosition summary { font-size: 11px; cursor: pointer; padding-top: 12px; min-height: 36px; }
+.peerPosition details p { font-size: 11px !important; margin-top: 9px !important; }
+.seasonRecords { padding: 26px 0 32px; margin-block: 15px 22px; border-top: 3px solid var(--fc-data-ink); }
+.seasonRecords > header { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; margin-bottom: 24px; }
+.seasonRecords > header span { font: 11px var(--fc-data-font-system); color: var(--fc-data-text-muted); }
+.seasonRecords h2 { font-size: clamp(24px,2.6vw,35px); letter-spacing: -.04em; }
+.seasonFigures { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); border-block: 1px solid var(--fc-data-line-strong); }
+.seasonFigures > div { padding: 20px 18px; border-left: 1px solid var(--fc-data-line); min-width: 0; }
+.seasonFigures > div:first-child { padding-left: 0; border-left: 0; }
+.seasonFigures span { font-size: 12px; }
+.seasonFigures strong { display: block; font: 900 clamp(44px,5vw,66px)/1 var(--fc-data-font-display); margin-block: 12px 10px; }
+.seasonFigures small { display: block; font-size: 11px; color: var(--fc-data-text-muted); line-height: 1.7; }
+.seasonRecords > p { font-size: 11px; color: var(--fc-data-text-muted); line-height: 1.8; margin-top: 16px !important; }
+.recordDetails { border-bottom: 1px solid var(--fc-data-line-strong); }
+.recordDetails > summary { display: flex; align-items: center; justify-content: space-between; min-height: 48px; cursor: pointer; font-size: 12px; list-style: none; }
+.recordDetails > summary::-webkit-details-marker { display: none; }
+.recordDetails summary > span { border: 1px solid var(--fc-data-line-strong); display: grid; place-items: center; width: 26px; height: 26px; }
+.recordDetails[open] summary > span { transform: rotate(45deg); }
+.recordColumns { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 12px 0 25px; }
+.recordColumns h3 { font-size: 14px; margin-bottom: 12px !important; }
+.recordColumns a { display: flex; justify-content: space-between; align-items: center; min-height: 44px; border-bottom: 1px solid var(--fc-data-line); gap: 12px; font-size: 12px; }
+.recordColumns a:hover { background: var(--fc-data-paper-deep); }
+.recordColumns b { white-space: nowrap; font: 900 24px var(--fc-data-font-display); }
+.recordColumns p { font-size: 12px; color: var(--fc-data-text-muted); }

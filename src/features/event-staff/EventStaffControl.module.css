@@ -1,0 +1,62 @@
+.control { display: grid; gap: 22px; margin-bottom: 22px; }
+.relationshipCard, .availabilityCard { border: 2px solid #2a2a2a; background: #fff; padding: 18px; }
+.relationshipCard > header, .availabilityCard > header, .formsSection > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.relationshipCard header span, .availabilityCard header span, .formsSection header span { color: #9a7800; font-size: 9px; font-weight: 950; letter-spacing: .08em; }
+.relationshipCard h2, .formsSection h2 { margin: 5px 0 0; font-size: 25px; }
+.availabilityCard h3 { margin: 5px 0 0; font-size: 21px; }
+.relationshipCard header em, .availabilityCard header em, .formsSection header em { border: 1px solid #2a2a2a; padding: 7px 9px; font-size: 9px; font-style: normal; font-weight: 950; }
+.relationshipCard[data-status='ACTIVE'] { border-left: 8px solid #f4c320; }
+.relationshipCard > p, .relationshipBody > p, .availabilityCard header p, .formsSection header p, .formNote { margin: 9px 0 0; color: #6f6f6f; font-size: 11px; line-height: 1.55; }
+.relationshipBody { display: grid; gap: 11px; margin-top: 15px; }
+.relationshipBody dl { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border: 1px solid #2a2a2a; }
+.relationshipBody dl > div { padding: 10px; border-right: 1px solid #2a2a2a; }
+.relationshipBody dl > div:last-child { border-right: 0; }
+.relationshipBody dt { color: #777; font-size: 8px; }
+.relationshipBody dd { margin: 5px 0 0; font-size: 11px; font-weight: 900; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.actions button, .primaryAction { border: 1px solid #2a2a2a; background: #f4c320; padding: 9px 12px; color: inherit; font-size: 10px; font-weight: 950; cursor: pointer; }
+.actions .secondaryAction, .actions button + button { background: #fff; }
+.relationshipCard > .primaryAction { margin-top: 14px; }
+.formsSection { display: grid; gap: 15px; border-top: 2px solid #2a2a2a; padding-top: 18px; }
+.availabilityCard { display: grid; gap: 15px; }
+.slotGrid { display: grid; grid-template-columns: minmax(100px, 1.2fr) repeat(var(--slot-count), minmax(70px, 1fr)); border: 1px solid #2a2a2a; overflow-x: auto; }
+.slotGrid > * { min-height: 39px; display: grid; place-items: center; margin: 0; border: 0; border-right: 1px solid #2a2a2a; border-bottom: 1px solid #2a2a2a; background: #fff; font-size: 9px; }
+.slotGrid button { cursor: pointer; }
+.slotGrid button[data-selected='true'] { background: #f4c320; font-weight: 950; }
+.slotCorner, .slotGrid > strong { background: #2a2a2a; color: #fff; font-weight: 950; }
+.preferenceGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.preferenceGrid label, .wideField { display: grid; gap: 6px; }
+.preferenceGrid span, .wideField span, .partnerPicker > span { font-size: 9px; font-weight: 900; }
+.preferenceGrid input, .preferenceGrid select, .wideField input, .wideField textarea { min-height: 38px; border: 1px solid #2a2a2a; background: #fff; padding: 8px; font: inherit; }
+.wideField textarea { min-height: 70px; resize: vertical; }
+.checkRow { display: flex; flex-wrap: wrap; gap: 14px; font-size: 10px; }
+.checkRow label { display: flex; align-items: center; gap: 6px; }
+.partnerPicker { display: grid; gap: 8px; }
+.partnerPicker > div { display: flex; flex-wrap: wrap; gap: 7px; }
+.partnerPicker button { border: 1px solid #2a2a2a; background: #fff; padding: 7px 9px; font-size: 9px; cursor: pointer; }
+.partnerPicker button[data-selected='true'] { background: #2a2a2a; color: #fff; }
+.error, .notice { margin: 0; border-left: 4px solid #b02a20; background: #fff0ed; padding: 9px 11px; color: #8f2119; font-size: 10px; }
+.notice { border-left-color: #f4c320; background: #fff7c9; color: #4a3b00; }
+.capabilityBlock { margin: 14px 0 0; border-left: 4px solid #2a2a2a; background: #f1f1f1; padding: 9px 11px; color: #555; font-size: 10px; line-height: 1.5; }
+.empty { border: 2px solid #2a2a2a; background: #fff; padding: 20px; color: #777; font-size: 11px; }
+.relationshipCard { border: 1px solid var(--fc-data-line, #d6d5ce); border-top: 3px solid var(--fc-data-signal, #efc842); background: var(--fc-data-paper, #eeede6); padding: 24px; min-width: 0; }
+.relationshipCard > header { flex-wrap: wrap; }
+.relationshipCard header span { font-size: 11px; }
+.relationshipCard h2 { font-size: 25px; }
+.relationshipCard header em { font-size: 12px; font-weight: 700; padding: 9px 12px; border-color: var(--fc-data-line, #d6d5ce); }
+.relationshipCard[data-status='ACTIVE'] { border-left: 1px solid var(--fc-data-line, #d6d5ce); }
+.relationshipCard[data-status='ACTIVE'] header em { background: #191c17; color: #eeede6; }
+.relationshipCard[data-status='ERROR'] header em { color: #805219; background: #f1e8d8; }
+.relationshipCard > p, .relationshipBody > p { max-width: 780px; margin-top: 18px; font-size: 14px; line-height: 1.8; color: #555b50; }
+.relationshipBody dl { border-color: var(--fc-data-line, #d6d5ce); }
+.relationshipBody dl > div { padding: 14px; border-color: var(--fc-data-line, #d6d5ce); min-width: 0; }
+.relationshipBody dt { font-size: 12px; }
+.relationshipBody dd { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.relationshipCard .actions button, .refreshAction { display: inline-flex; align-items: center; gap: 18px; min-height: 44px; border: 1px solid var(--fc-data-line, #d6d5ce); border-radius: 0; font: inherit; font-size: 14px; padding: 10px 16px; cursor: pointer; }
+.refreshAction { margin-top: 18px; background: transparent; color: inherit; }
+.relationshipCard button:disabled { opacity: .5; cursor: not-allowed; }
+.relationshipCard button:focus-visible { outline: 2px solid #9c7912; outline-offset: 3px; }
+.relationshipCard > p.error { color: #8f2119; }
+.relationshipCard > p.notice { color: #4a3b00; }
+@media (max-width: 760px) { .relationshipCard { padding: 20px 16px; } .relationshipCard h2 { font-size: 23px; } }
+@media (max-width: 760px) { .relationshipBody dl, .preferenceGrid { grid-template-columns: 1fr; } .relationshipBody dl > div { border-right: 0; border-bottom: 1px solid #2a2a2a; } .relationshipBody dl > div:last-child { border-bottom: 0; } .slotGrid { min-width: 520px; } .availabilityCard { overflow-x: auto; } }

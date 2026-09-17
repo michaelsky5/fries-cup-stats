@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { getMatchStatusLabelKey } from '../../lib/advanceSelectors.js'
 import AdvancePhaseHero from './AdvancePhaseHero.jsx'
 import BracketMatchCard from './BracketMatchCard.jsx'
@@ -103,34 +105,35 @@ function LaneGuide({ items }) {
 }
 
 function PlayoffLane({ type, matchesByNumber, cardProps, t }) {
+  const uiLocale = useUiLocale()
   const isUpper = type === 'upper'
   const guideItems = isUpper
     ? [
-        { key: 'upper-r1', english: 'UPPER ROUND 1', label: t('advance.playoffs.round.upperRound1', '胜者组首轮'), meta: 'M1–M4 · FT3' },
-        { key: 'upper-sf', english: 'UPPER SEMIFINAL', label: t('advance.playoffs.round.upperSemifinal', '胜者组半决赛'), meta: 'M7–M8 · FT3' },
-        { key: 'upper-final', english: 'UPPER FINAL', label: t('advance.playoffs.round.upperFinal', '胜者组决赛'), meta: 'M11 · FT3' }
+        { key: 'upper-r1', english: 'UPPER ROUND 1', label: t('advance.playoffs.round.upperRound1', uiText("胜者组首轮", uiLocale)), meta: 'M1–M4 · FT3' },
+        { key: 'upper-sf', english: 'UPPER SEMIFINAL', label: t('advance.playoffs.round.upperSemifinal', uiText("胜者组半决赛", uiLocale)), meta: 'M7–M8 · FT3' },
+        { key: 'upper-final', english: 'UPPER FINAL', label: t('advance.playoffs.round.upperFinal', uiText("胜者组决赛", uiLocale)), meta: 'M11 · FT3' }
       ]
     : [
-        { key: 'lower-r1', english: 'LOWER ROUND 1', label: t('advance.playoffs.round.lowerRound1', '败者组第一轮'), meta: 'M5–M6 · FT3' },
+        { key: 'lower-r1', english: 'LOWER ROUND 1', label: t('advance.playoffs.round.lowerRound1', uiText("败者组第一轮", uiLocale)), meta: 'M5–M6 · FT3' },
         {
           key: 'lower-r2',
           english: 'LOWER ROUND 2',
-          label: t('advance.playoffs.round.lowerRound2', '败者组第二轮'),
+          label: t('advance.playoffs.round.lowerRound2', uiText("败者组第二轮", uiLocale)),
           meta: 'M9–M10 · FT3',
           badge: t('advance.playoffs.crossoverShort', '上下半区交叉')
         },
-        { key: 'lower-r3', english: 'LOWER ROUND 3', label: t('advance.playoffs.round.lowerRound3', '败者组第三轮'), meta: 'M12 · FT3' },
-        { key: 'lower-final', english: 'LOWER FINAL', label: t('advance.playoffs.round.lowerFinal', '败者组决赛'), meta: 'M13 · FT3' }
+        { key: 'lower-r3', english: 'LOWER ROUND 3', label: t('advance.playoffs.round.lowerRound3', uiText("败者组第三轮", uiLocale)), meta: 'M12 · FT3' },
+        { key: 'lower-final', english: 'LOWER FINAL', label: t('advance.playoffs.round.lowerFinal', uiText("败者组决赛", uiLocale)), meta: 'M13 · FT3' }
       ]
 
   return (
     <section className={`${styles.playoffFlowLane} ${isUpper ? styles.playoffUpperLane : styles.playoffLowerLane}`}>
       <aside className={styles.playoffLaneLabel}>
         <span>{isUpper ? 'UPPER' : 'LOWER'}</span>
-        <strong>{isUpper ? t('advance.bracket.filter.winners', '胜者组') : t('advance.bracket.filter.losers', '败者组')}</strong>
+        <strong>{isUpper ? t('advance.bracket.filter.winners', uiText("胜者组", uiLocale)) : t('advance.bracket.filter.losers', uiText("败者组", uiLocale))}</strong>
         <em>{isUpper
-          ? t('advance.playoffs.upperHint', '保持全胜，直通总决赛')
-          : t('advance.playoffs.crossoverNote', 'M9 / M10 交换上下半区')}
+          ? t('advance.playoffs.upperHint', uiText("保持全胜，直通总决赛", uiLocale))
+          : t('advance.playoffs.crossoverNote', uiText("M9 / M10 交换上下半区", uiLocale))}
         </em>
       </aside>
       <div className={styles.playoffLaneContent}>
@@ -169,6 +172,7 @@ function PlayoffLane({ type, matchesByNumber, cardProps, t }) {
 }
 
 function GrandFinalColumn({ match, cardProps, t }) {
+  const uiLocale = useUiLocale()
   const championName = match?.winner?.team_short_name || match?.winner?.short || match?.winner?.team_name || match?.winner?.name
   const championFullName = match?.winner?.team_name || match?.winner?.name || ''
 
@@ -176,21 +180,21 @@ function GrandFinalColumn({ match, cardProps, t }) {
     <section className={styles.playoffGrandFinalColumn}>
       <header>
         <span>04 · GRAND FINAL</span>
-        <strong>{t('advance.playoffs.round.grandFinal', '总决赛')}</strong>
+        <strong>{t('advance.playoffs.round.grandFinal', uiText("总决赛", uiLocale))}</strong>
         <em>M14 · FT4</em>
       </header>
       <div className={styles.playoffGrandFinalBody}>
         <div className={styles.playoffGrandFinalStage}>
           <div className={styles.playoffGrandFinalRoute}>
-            <span><b>W-M11</b>{t('advance.playoffs.upperChampion', '胜者组冠军')}</span>
+            <span><b>W-M11</b>{t('advance.playoffs.upperChampion', uiText("胜者组冠军", uiLocale))}</span>
             <i>VS</i>
-            <span><b>W-M13</b>{t('advance.playoffs.lowerChampion', '败者组冠军')}</span>
+            <span><b>W-M13</b>{t('advance.playoffs.lowerChampion', uiText("败者组冠军", uiLocale))}</span>
           </div>
           <MatchPosition className={styles.playoffGrandFinalMatch} match={match} cardProps={cardProps} />
           <i className={styles.playoffGrandFinalToChampion} aria-hidden="true" />
           <div className={styles.playoffChampionTarget}>
             <span>WINNER</span>
-            <strong>{championName || t('advance.playoffs.seasonChampion', '赛季总冠军')}</strong>
+            <strong>{championName || t('advance.playoffs.seasonChampion', uiText("赛季总冠军", uiLocale))}</strong>
             {championName && championFullName !== championName ? <em>{championFullName}</em> : null}
           </div>
         </div>
@@ -209,6 +213,7 @@ export default function FixedDoubleEliminationBracket({
   isFavoriteTeam,
   isPrimaryFavoriteTeam
 }) {
+  const uiLocale = useUiLocale()
   const eventWindow = layout.eventWindow || {}
   const dateRange = `${formatWindowDate(eventWindow.start)}–${formatWindowDate(eventWindow.end)}`
   const matchesByNumber = new Map(layout.matches.map(match => [match.number, match]))
@@ -219,25 +224,25 @@ export default function FixedDoubleEliminationBracket({
       <AdvancePhaseHero
         eyebrow={eyebrow}
         title={title}
-        description={t('advance.playoffs.fixedDesc', '8 支队伍 · 固定种子双败 · 败者组交叉落位 · 无重置赛')}
+        description={t('advance.playoffs.fixedDesc', uiText("8 支队伍 · 固定种子双败 · 败者组交叉落位 · 无重置赛", uiLocale))}
         metrics={[
-          { value: layout.participantCount, label: t('advance.playoffs.teams', '支队伍') },
-          { value: layout.totalMatches, label: t('advance.playoffs.matches', '场比赛') },
-          { value: 'FT3', label: t('advance.playoffs.grandFinalFt4', '总决赛 FT4'), accent: true }
+          { value: layout.participantCount, label: t('advance.playoffs.teams', uiText("支队伍", uiLocale)) },
+          { value: layout.totalMatches, label: t('advance.playoffs.matches', uiText("场比赛", uiLocale)) },
+          { value: 'FT3', label: t('advance.playoffs.grandFinalFt4', uiText("总决赛 FT4", uiLocale)), accent: true }
         ]}
       />
 
       <div className={styles.playoffRuleStrip}>
-        <div><span>01</span><strong>{t('advance.playoffs.openingDay', '胜者组首轮')} · FT3</strong><em>08/08 · 19:30 / 21:30</em></div>
-        <div><span>02</span><strong>{t('advance.playoffs.eliminationDay', '胜者组半决赛 / 败者组')} · FT3</strong><em>08/09 · 19:30 / 21:30</em></div>
-        <div><span>03</span><strong>{t('advance.playoffs.finalWeekend', '决赛周末')} · FT3</strong><em>08/14 · 20:00 双台 · 08/15 · 17:30 / 19:30 / 21:30</em></div>
-        <div><span>04</span><strong>{t('advance.playoffs.grandFinal', '总决赛')} · FT4</strong><em>08/16 · 20:00</em></div>
-        <p>{layout.bracketLocked ? t('advance.playoffs.lockedRule', '固定签位 · 无重置赛') : null}</p>
+        <div><span>01</span><strong>{t('advance.playoffs.openingDay', uiText("胜者组首轮", uiLocale))} · FT3</strong><em>08/08 · 19:30 / 21:30</em></div>
+        <div><span>02</span><strong>{t('advance.playoffs.eliminationDay', uiText("胜者组半决赛 / 败者组", uiLocale))} · FT3</strong><em>08/09 · 19:30 / 21:30</em></div>
+        <div><span>03</span><strong>{t('advance.playoffs.finalWeekend', uiText("决赛周末", uiLocale))} · FT3</strong><em>{uiText("08/14 · 20:00 双台 · 08/15 · 17:30 / 19:30 / 21:30", uiLocale)}</em></div>
+        <div><span>04</span><strong>{t('advance.playoffs.grandFinal', uiText("总决赛", uiLocale))} · FT4</strong><em>08/16 · 20:00</em></div>
+        <p>{layout.bracketLocked ? t('advance.playoffs.lockedRule', uiText("固定签位 · 无重置赛", uiLocale)) : null}</p>
       </div>
 
       <p className={styles.bracketScheduleNoticeStrip}>
-        <span>{t('advance.scheduleNotice.label', '赛程时间说明')}</span>
-        <strong>{t('advance.scheduleNotice.delay', '赛程时间为计划开赛时间；同一直播间连续进行的场次，如前一场延时，后续比赛将依次顺延。')}</strong>
+        <span>{t('advance.scheduleNotice.label', uiText("赛程时间说明", uiLocale))}</span>
+        <strong>{t('advance.scheduleNotice.delay', uiText("赛程时间为计划开赛时间；同一直播间连续进行的场次，如前一场延时，后续比赛将依次顺延。", uiLocale))}</strong>
       </p>
 
       <div className={`${styles.lcqPool} ${styles.playoffSeedPool}`}>
@@ -245,7 +250,7 @@ export default function FixedDoubleEliminationBracket({
           <div>
             <span className={styles.sectionLabel}>PLAYOFF SEEDS</span>
             <strong>
-              {t('advance.playoffs.seedRanking', `已锁定 ${layout.lockedSeedCount} / ${layout.participantCount} 个种子`, {
+              {t('advance.playoffs.seedRanking', uiText("已锁定 {0} / {1} 个种子", uiLocale, [layout.lockedSeedCount, layout.participantCount]), {
                 locked: layout.lockedSeedCount,
                 total: layout.participantCount
               })}
@@ -259,7 +264,7 @@ export default function FixedDoubleEliminationBracket({
               <span>{String(team.seed).padStart(2, '0')}</span>
               <strong>
                 {team.isTbd
-                  ? t('advance.playoffs.seedSlot', `季后赛 #${team.seed}`, { seed: team.seed })
+                  ? t('advance.playoffs.seedSlot', uiText("季后赛 #{0}", uiLocale, [team.seed]), { seed: team.seed })
                   : team.team_short_name || team.short || team.team_name || team.name}
               </strong>
             </div>
@@ -268,9 +273,9 @@ export default function FixedDoubleEliminationBracket({
       </div>
 
       <div className={styles.playoffBracketLead}>
-        <span>{t('advance.playoffs.routeLabel', '双败晋级路径')}</span>
-        <strong>{t('advance.playoffs.flowHint', 'W = 胜者 · L = 败者；M9 / M10 采用反半区落位，避免同路径过早重赛')}</strong>
-        <em>{t('advance.bracket.scrollHint', '窄屏可横向滚动查看完整晋级图')}</em>
+        <span>{t('advance.playoffs.routeLabel', uiText("双败晋级路径", uiLocale))}</span>
+        <strong>{t('advance.playoffs.flowHint', uiText("W = 胜者 · L = 败者；M9 / M10 采用反半区落位，避免同路径过早重赛", uiLocale))}</strong>
+        <em>{t('advance.bracket.scrollHint', uiText("窄屏可横向滚动查看完整晋级图", uiLocale))}</em>
       </div>
 
       <div className={styles.fixedPlayoffScroller}>

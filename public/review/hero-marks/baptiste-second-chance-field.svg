@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260" role="img" aria-labelledby="title desc">
+  <title id="title">Baptiste field emitter</title>
+  <desc id="desc">A broad suspended emitter and one luminous lower core replace the oversized framing brackets. Protection lines remain in the portrait background.</desc>
+  <path d="M214 119L232 103H285L303 119L286 130H232Z" fill="#ce9d65" fill-opacity="0.37" stroke="#e3c299" stroke-opacity="0.76" stroke-width="1.7" stroke-linejoin="round"/>
+  <path d="M232 105H285L294 115H224Z" fill="#e6c99c" fill-opacity="0.23"/>
+  <path d="M229 130H289L279 147H239Z" fill="#79aeb5" fill-opacity="0.34" stroke="#b6d7d9" stroke-opacity="0.7" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M249 140H269L274 153L265 175H253L244 153Z" fill="#080a09"/>
+  <path d="M249 140H269L274 153L265 175H253L244 153Z" fill="#b9d9d9" fill-opacity="0.33" stroke="#d1e5e3" stroke-opacity="0.75" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M256 145H263V160L260 166L256 160Z" fill="#e6e9d9" fill-opacity="0.63"/>
+  <path d="M239 120H277" fill="none" stroke="#f0d6ad" stroke-opacity="0.55" stroke-width="1.7"/>
+</svg>

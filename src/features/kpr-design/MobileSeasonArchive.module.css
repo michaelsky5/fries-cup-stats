@@ -1,0 +1,41 @@
+.cover { display: none; }
+@media (max-width: 600px) {
+  .cover { display: block; padding: 16px; color: var(--fc-data-ink); font: 14px/1.5 var(--fc-data-font-interface); }
+  .heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; margin-bottom: 14px; font-size: 12px; color: var(--fc-data-text-muted); }
+  .heading small { font-size: 11px; font-weight: 400; color: var(--fc-data-text-muted); }
+  .heading > span:first-child { color: var(--fc-data-ink); font-weight: 700; }
+  .cover .champion { position: relative; display: block; overflow: hidden; padding: 20px; border-top: 3px solid var(--fc-data-signal); background: var(--fc-data-ink); color: var(--fc-data-paper); }
+  .watermark { position: absolute; right: -8px; bottom: 40px; font: 900 70px/1 var(--fc-data-font-display); color: #ffffff08; pointer-events: none; }
+  .championLabel { position: relative; color: var(--fc-data-signal); font-size: 12px; letter-spacing: .05em; }
+  .identity { position: relative; display: flex; align-items: center; gap: 16px; margin: 20px 0; }
+  .identity .logo { flex: 0 0 60px; width: 60px; height: 60px; }
+  .identity > div { min-width: 0; }
+  .identity h1 { margin: 0; overflow-wrap: anywhere; font: 900 50px/.95 var(--fc-data-font-display); }
+  .identity p { margin: 8px 0 0; color: var(--fc-data-text-dark-muted); font-size: 13px; overflow-wrap: anywhere; }
+  .championCta { display: flex; justify-content: space-between; align-items: center; min-height: 32px; padding-top: 12px; border-top: 1px solid var(--fc-data-line-on-dark); font-size: 13px; }
+  .championCta b { font-size: 20px; color: var(--fc-data-signal); }
+  .cover .final { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 78px; padding: 12px 4px; border-bottom: 1px solid var(--fc-data-line-strong); }
+  .final > span:first-child { font-weight: 700; font-size: 13px; }
+  .final small { display: block; font-size: 12px; color: var(--fc-data-text-muted); font-weight: 400; }
+  .final > div { display: flex; align-items: center; justify-content: center; gap: 10px; min-width: 0; }
+  .final strong { font-size: 12px; overflow-wrap: anywhere; }
+  .final b { white-space: nowrap; font: 900 32px/1 var(--fc-data-font-display); }
+  .final i { font-style: normal; padding: 0 4px; color: var(--fc-data-text-muted); }
+  .entries { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0 0 26px; border-bottom: 1px solid var(--fc-data-line-strong); }
+  .entries a { position: relative; padding: 16px 12px 16px 4px; }
+  .entries a + a { padding-left: 16px; border-left: 1px solid var(--fc-data-line); }
+  .entries a > span { display: block; font-size: 13px; }
+  .entries strong { display: flex; align-items: baseline; gap: 8px; margin-top: 10px; font: 900 32px/1 var(--fc-data-font-display); }
+  .entries small { color: var(--fc-data-text-muted); font: 12px/1.4 var(--fc-data-font-interface); }
+  .entries i { position: absolute; right: 12px; top: 14px; font-style: normal; }
+  .sectionHeading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .sectionHeading h2 { font-size: 17px; font-weight: 700; margin: 0; }
+  .sectionHeading a { flex-shrink: 0; display: grid; align-items: center; min-height: 44px; font-size: 12px; color: var(--fc-data-text-muted); }
+  .cover .player { position: relative; display: flex; align-items: center; min-height: 180px; background: var(--fc-data-paper-deep); overflow: hidden; }
+  .player .portrait { position: absolute; right: -14%; top: 0; width: 70%; height: 210px; }
+  .player > div { position: relative; width: 65%; padding: 20px 16px; background: linear-gradient(90deg, var(--fc-data-paper-deep) 55%, transparent); }
+  .player span { font-size: 12px; }
+  .player strong { display: block; font-size: 25px; margin: 10px 0 20px; line-height: 1.3; overflow-wrap: anywhere; }
+  .player small { font-size: 12px; }
+  .review { display: flex; align-items: center; justify-content: space-between; min-height: 52px; border-bottom: 1px solid var(--fc-data-line-strong); font-weight: 700; }
+}

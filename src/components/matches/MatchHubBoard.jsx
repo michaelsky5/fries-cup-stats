@@ -1,3 +1,5 @@
+import { translateUiText as uiText } from '../../lib/uiText.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link, useOutletContext } from 'react-router-dom'
 import {
   getMatchDisplayTeams,
@@ -29,6 +31,7 @@ function getRoundPosterMark(label) {
   if (/GRAND|FINAL|总决|决赛/.test(text)) return 'FINALS'
   if (/PLAY\s*OFF|PLAYOFF|季后/.test(text)) return 'PLAYOFFS'
   if (/LCQ|LAST\s*CHANCE|突围/.test(text)) return 'LCQ'
+  if (/GROUP|小组/.test(text)) return 'GROUP'
   if (/SWISS|ROUND|瑞士/.test(text) && number) return 'SWISS'
   if (number) return `ROUND ${number}`
   return text || 'MATCH'
@@ -47,13 +50,14 @@ function BoardNextTeam({ team, display, seasonId, align = 'left' }) {
 }
 
 function BoardNextTicket({ match, nextParts, seasonId }) {
+  const uiLocale = useUiLocale()
   const teams = match ? getMatchDisplayTeams(match) : null
 
   return (
     <div className={styles.boardNextTicket}>
       <div className={styles.boardNextHead}>
         <span>NEXT MATCH</span>
-        <em>下一开赛</em>
+        <em>{uiText("下一开赛", uiLocale)}</em>
       </div>
       {teams ? (
         <div className={styles.boardNextDuel}>
@@ -63,7 +67,7 @@ function BoardNextTicket({ match, nextParts, seasonId }) {
         </div>
       ) : (
         <div className={`${styles.boardNextDuel} ${styles.boardNextDuelEmpty}`}>
-          <strong>待定</strong>
+          <strong>{uiText("待定", uiLocale)}</strong>
         </div>
       )}
       <div className={styles.boardNextMeta}>
@@ -75,20 +79,22 @@ function BoardNextTicket({ match, nextParts, seasonId }) {
   )
 }
 
-function BoardProgress({ finished, total, progress }) {
+function BoardProgress({ finished, total, progress, label = '本轮进度' }) {
+  const uiLocale = useUiLocale()
   const percentLabel = `${Math.round(progress)}%`
 
   return (
     <div className={`${styles.boardStat} ${styles.boardProgressStat}`} style={{ '--board-progress': `${progress}%` }}>
       <strong>{percentLabel}</strong>
-      <span>本轮进度</span>
-      <em className={styles.boardProgressMeta}>{finished} / {total} 已完成</em>
+      <span>{uiText(label, uiLocale)}</span>
+      <em className={styles.boardProgressMeta}>{finished} / {total}{uiText(" 已完成", uiLocale)}</em>
       <i aria-hidden="true" />
     </div>
   )
 }
 
 export default function MatchHubBoard({ summary }) {
+  const uiLocale = useUiLocale()
   const { withSeason = path => path, seasonId } = useOutletContext()
   const roundLabel = summary?.roundLabel || 'ROUND 1'
   const roundMark = getRoundPosterMark(roundLabel)
@@ -100,32 +106,36 @@ export default function MatchHubBoard({ summary }) {
   const nextParts = splitDateTime(nextLabel)
   const finishedCount = summary?.progress?.finished || 0
   const progressPercent = total ? Math.min(100, Math.max(0, (finishedCount / total) * 100)) : 0
+  const isGroupDay = String(summary?.stage || '').toUpperCase() === 'GROUP'
 
   return (
     <section className={styles.board} aria-labelledby="match-hub-title" data-testid="match-hub-board">
       <div className={styles.boardLead} data-round-mark={roundMark}>
         <div className={styles.boardTitle}>
           <span id="match-hub-title">MATCHES</span>
-          <strong>赛程赛果</strong>
+          <strong>{uiText("赛程赛果", uiLocale)}</strong>
         </div>
-        <p className={styles.roundMark}>{roundLabel} MATCH DAY</p>
-        <h1>本轮赛程</h1>
+        <p className={styles.roundMark}>{roundLabel}</p>
+        <h1>{isGroupDay ? uiText("小组赛赛程", uiLocale) : uiText("本轮赛程", uiLocale)}</h1>
         <p>
-          本轮从 {firstLabel} 开始，
-          {total} 场比赛分为 {slotCount} 个开赛时段进行。
-        </p>
+          {isGroupDay ? uiText("本比赛日", uiLocale) : uiText("本轮", uiLocale)}{uiText("从 ", uiLocale)}{firstLabel}{uiText(" 开始，", uiLocale)}{total}{uiText(" 场比赛分为 ", uiLocale)}{slotCount}{uiText(" 个开赛时段进行。", uiLocale)}</p>
         <nav className={styles.boardActions} aria-label="Match Hub actions">
-          <Link to={withSeason('/matches?view=list&tab=round')}>查看完整赛程</Link>
-          <Link to={withSeason('/following')}>我的关注</Link>
+          <Link to={withSeason('/matches?view=list&tab=round')}>{uiText("查看完整赛程", uiLocale)}</Link>
+          <Link to={withSeason('/me')}>{uiText("我的空间", uiLocale)}</Link>
         </nav>
       </div>
 
       <div className={styles.boardStats} aria-label={`${roundLabel} summary`}>
         <BoardNextTicket match={nextMatch} nextParts={nextParts} seasonId={seasonId} />
         <div className={styles.boardMetricGrid}>
-          <BoardStat value={total} label="本轮比赛" meta="MATCHES" />
-          <BoardStat value={slotCount} label="开赛时段" meta="TIME SLOTS" />
-          <BoardProgress finished={finishedCount} total={total} progress={progressPercent} />
+          <BoardStat value={total} label={isGroupDay ? uiText("当日比赛", uiLocale) : uiText("本轮比赛", uiLocale)} meta="MATCHES" />
+          <BoardStat value={slotCount} label={uiText("开赛时段", uiLocale)} meta="TIME SLOTS" />
+          <BoardProgress
+            finished={finishedCount}
+            total={total}
+            progress={progressPercent}
+            label={isGroupDay ? uiText("本比赛日进度", uiLocale) : uiText("本轮进度", uiLocale)}
+          />
         </div>
       </div>
     </section>
