@@ -17,6 +17,7 @@ import { formatMatchSchedule } from './scheduleFormat.js'
 import { getRoleEnLabel, getRoleLabel, normalizeLeaderboardRole } from './leaderboardSelectors.js'
 import { getPlayerDirectory, getPlayerDisplayIdentity, normalizeRosterRole } from './rosterSelectors.js'
 import { formatOwHeroName, formatOwMapMode, formatOwMapName } from './heroes.js'
+import { resolvePublicMatchIdentity } from './publicMatchIdentity.js'
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED'])
 const LIVE_STATUSES = new Set(['IN_PROGRESS', 'LIVE'])
@@ -129,6 +130,7 @@ function getTeamModel(team, side) {
   const full = getTeamFullName(team)
   return {
     side,
+    logoTeam: team,
     id: cleanText(team?.id || team?.team_id),
     short,
     full,
@@ -550,7 +552,7 @@ function getAdjacentMatches(matches, match) {
 }
 
 export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
-  const match = getMatchById(db, matchId)
+  const match = resolvePublicMatchIdentity(getMatchById(db, matchId), db?.teams)
   if (!match) return null
 
   const state = getMatchState(match)

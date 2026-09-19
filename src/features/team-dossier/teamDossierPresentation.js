@@ -4,7 +4,7 @@ import { formatOwMapName, formatOwMapMode, getOwMap, getOwMapImageName, getOwMap
 
 const STAGES = {
   GROUP: ['小组赛', 'Group stage'], SWISS: ['瑞士轮', 'Swiss stage'],
-  LCQ: ['突围赛', 'Breakthrough'], PLAYOFFS: ['季后赛', 'Playoffs']
+  LCQ: ['突围赛', 'Breakthrough'], PLAYOFFS: ['季后赛', 'Playoffs'], WEEKLY: ['周赛', 'Weekly']
 }
 const ROUNDS = {
   'grand final': '总决赛', 'grand finals': '总决赛', 'wb final': '胜者组决赛', 'ub final': '胜者组决赛',

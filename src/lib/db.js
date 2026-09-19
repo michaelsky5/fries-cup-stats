@@ -2,6 +2,7 @@ import { getSeasonById, getStoredSeasonId } from '../config/seasons.js'
 import { resolvePublishedAdvanceTeams } from './advanceSelectors.js'
 import { readPublicSnapshot, savePublicSnapshot } from './publicSnapshotCache.js'
 import { requestPublicJson } from './publicJsonRequest.js'
+import { resolvePublicMatchIdentities } from './publicMatchIdentity.js'
 
 const dbCache = new Map()
 const reportCache = new Map()
@@ -223,7 +224,7 @@ function validatePublicDb(data, season) {
     }
   }
 
-  return resolvePublishedAdvanceTeams(attachSeasonMeta(data, season), season)
+  return resolvePublicMatchIdentities(resolvePublishedAdvanceTeams(attachSeasonMeta(data, season), season))
 }
 
 async function fetchFirstAvailableWithSource(urls, errorCode, validate = data => data, cached) {

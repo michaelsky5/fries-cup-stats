@@ -30,7 +30,10 @@ function resolveRoute(url, { platformOrigin, publicOrigin, rehearsal }) {
     return { public: true, url: `${snapshotOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}${url.search}` }
   }
   if (/^\/api\/platform\/media\/avatars\/[a-f0-9]{24}\/[a-f0-9]{32}-(256|96)\.webp$/.test(pathname)) {
-    return { public: true, avatar: true, url: `${platformOrigin}${pathname.replace('/api/platform/', '/api/')}` }
+    return { public: true, media: true, url: `${platformOrigin}${pathname.replace('/api/platform/', '/api/')}` }
+  }
+  if (/^\/api\/platform\/media\/team-logos\/[a-f0-9]{24}\/[a-f0-9]{32}\.webp$/.test(pathname)) {
+    return { public: true, media: true, url: `${platformOrigin}${pathname.replace('/api/platform/', '/api/')}` }
   }
   if (/^\/api\/platform\/[^/].*$/.test(pathname)) {
     return { public: false, url: `${platformOrigin}${url.pathname.replace('/api/platform/', '/api/')}${url.search}` }
@@ -126,7 +129,7 @@ export async function proxyRequest(request, {
   }
   responseHeaders.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet')
   responseHeaders.set('X-Content-Type-Options', 'nosniff')
-  responseHeaders.set('X-Fries-Backend', route.avatar ? `${environment}-media` : route.public ? 'published-snapshots' : environment)
+  responseHeaders.set('X-Fries-Backend', route.media ? `${environment}-media` : route.public ? 'published-snapshots' : environment)
   if (!route.public || !upstream.ok) responseHeaders.set('Cache-Control', 'private, no-store')
   if (route.public) {
     responseHeaders.delete('set-cookie')
@@ -143,7 +146,7 @@ export async function proxyRequest(request, {
   const cacheControl = responseHeaders.get('cache-control') || ''
   if (canReadCache && upstream.status === 200 && /\bpublic\b/i.test(cacheControl)
     && !/private|no-store|no-cache/i.test(cacheControl) && !upstream.headers.has('set-cookie')
-    && (route.avatar ? /^image\/webp$/i : /application\/json/i).test(responseHeaders.get('content-type') || '')) {
+    && (route.media ? /^image\/webp$/i : /application\/json/i).test(responseHeaders.get('content-type') || '')) {
     const report = url.pathname.endsWith('/report')
     const task = cache.put(cacheKey, response.clone()).then(() => {
       if (report) response.headers.set('X-Fries-Cache-Write', 'completed')
