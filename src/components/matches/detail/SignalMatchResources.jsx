@@ -60,7 +60,7 @@ export default function SignalMatchResources({ dossier, roomPath, en, onSelectMa
         <summary onClick={event => { event.preventDefault(); setStaffExpanded(!staffOpen) }}><h3>{en ? 'Match staff' : uiText("比赛人员", uiLocale)}</h3>{staffCount > 0 ? <span className={styles.staffCount}>{staffCount} {en ? 'people' : uiText("人", uiLocale)}</span> : null}<span className={styles.staffToggle} aria-hidden="true">{staffOpen ? '−' : '＋'}</span></summary>
         {groups.length ? <dl className={styles.crew}>{groups.map(group => <div key={group.role}><dt>{uiText(STAFF_ROLES[group.role]?.[en ? 1 : 0], uiLocale) || group.role}</dt><dd>{group.people.map(person => <div className={styles.person} key={`${person.name}:${person.battleTag}`}><strong>{person.name}</strong>{person.battleTag && person.battleTag !== person.name ? <small><SignalBattleTag value={person.battleTag} en={en} /></small> : null}</div>)}</dd></div>)}</dl> : <p className={styles.staffEmpty}>{en ? 'Staff not published' : uiText("人员尚未发布", uiLocale)}</p>}
         </details>
-        <Link className={styles.room} to={roomPath}><span>{en ? 'PARTICIPANTS' : uiText("参赛入口", uiLocale)}</span><strong>{en ? 'Match room' : uiText("比赛房间", uiLocale)}<span aria-hidden="true">↗</span></strong></Link>
+        {roomPath && <Link className={styles.room} to={roomPath}><span>{en ? 'PARTICIPANTS' : uiText("参赛入口", uiLocale)}</span><strong>{en ? 'Match room' : uiText("比赛房间", uiLocale)}<span aria-hidden="true">↗</span></strong></Link>}
       </aside>
     </div>
   </section>

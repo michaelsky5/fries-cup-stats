@@ -53,7 +53,7 @@
 .playerRow[data-read-only='true'] { cursor: default; background: transparent; }
 .playerRow:not([data-read-only='true']):hover { background: var(--fc-data-paper-deep); }
 .playerRow:focus-within { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: -2px; }
-.playerRow input { width: 18px; height: 18px; min-height: 0; margin: 0; accent-color: var(--fc-data-ink); }
+.playerRow input { width: 18px; height: 18px; min-height: 0; margin: 0; accent-color: var(--fc-data-signal); }
 .playerIdentity { display: grid; grid-template-columns: minmax(70px, .65fr) minmax(0, 1fr); align-items: center; gap: 8px 16px; min-width: 0; }
 .playerIdentity strong { font-size: 15px; font-weight: 650; overflow-wrap: anywhere; }
 .playerIdentity small { color: var(--fc-data-text-muted); font: 400 12px/1.6 var(--fc-data-font-system); overflow-wrap: anywhere; }

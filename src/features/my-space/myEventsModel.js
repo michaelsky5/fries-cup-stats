@@ -24,11 +24,14 @@ const SEASON_STATUS_LABELS = {
 
 export const EVENT_REGISTRATION_STATUS = {
   DRAFT: '报名草稿',
+  RETURNED: '需要修改',
   SUBMITTED: '报名审核中',
   APPROVED: '报名已通过',
   LOCKED: '赛事关系已锁定',
   REJECTED: '报名已退回',
-  WITHDRAWN: '报名已撤回'
+  WITHDRAWN: '报名已撤回',
+  INVITED: '等待本人确认',
+  CONFIRMED: '本人已确认'
 }
 
 export const EVENT_ROSTER_STATUS = {
@@ -37,6 +40,16 @@ export const EVENT_ROSTER_STATUS = {
   LOCKED: '正式名单已锁定',
   REJECTED: '名单已退回',
   SUPERSEDED: '历史名单'
+}
+
+export function getRegistrationStatusLabel(value, fallback = '状态待同步') {
+  const status = normalized(value)
+  return EVENT_REGISTRATION_STATUS[status] || fallback
+}
+
+export function getRosterStatusLabel(value, fallback = '状态待同步') {
+  const status = normalized(value)
+  return EVENT_ROSTER_STATUS[status] || fallback
 }
 
 function normalized(value) {

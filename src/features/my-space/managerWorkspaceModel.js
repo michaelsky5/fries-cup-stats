@@ -1,19 +1,12 @@
-const REGISTRATION_LABELS = {
-  DRAFT: '报名草稿',
-  SUBMITTED: '报名审核中',
-  APPROVED: '报名已通过',
-  LOCKED: '赛事关系已锁定',
-  REJECTED: '报名已退回',
-  WITHDRAWN: '报名已撤回'
-}
+import {
+  EVENT_REGISTRATION_STATUS,
+  EVENT_ROSTER_STATUS,
+  getRegistrationStatusLabel,
+  getRosterStatusLabel
+} from './myEventsModel.js'
 
-const ROSTER_LABELS = {
-  DRAFT: '名单草稿',
-  SUBMITTED: '名单审核中',
-  LOCKED: '正式名单已锁定',
-  REJECTED: '名单已退回',
-  SUPERSEDED: '历史名单'
-}
+const REGISTRATION_LABELS = EVENT_REGISTRATION_STATUS
+const ROSTER_LABELS = EVENT_ROSTER_STATUS
 
 const STEP_DEFINITIONS = [
   { key: 'registration', label: '队伍报名' },
@@ -87,8 +80,8 @@ export function buildManagerWorkspaceStatus(context) {
       tone: activeTeam ? 'done' : 'pending', steps, completedCount: steps.filter(step => step.state === 'done').length
     }
   }
-  const registrationLabel = REGISTRATION_LABELS[registrationStatus] || (activeTeam ? '报名状态待同步' : '尚未报名')
-  const rosterLabel = ROSTER_LABELS[rosterStatus] || (activeTeam?.roster ? '名单状态待同步' : '尚未建立')
+  const registrationLabel = getRegistrationStatusLabel(registrationStatus, activeTeam ? '报名状态待同步' : '尚未报名')
+  const rosterLabel = getRosterStatusLabel(rosterStatus, activeTeam?.roster ? '名单状态待同步' : '尚未建立')
   const values = [
     activeTeam ? registrationLabel : '提交本届赛事报名',
     activeTeam && ['APPROVED', 'LOCKED'].includes(registrationStatus) ? `${candidateCount} 名候选选手` : '报名通过后开放',

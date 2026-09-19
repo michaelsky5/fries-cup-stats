@@ -26,7 +26,7 @@ assert.equal(resolve({ competitions: null, search: '?competition=WEEKLY' }).id, 
 assert.equal(withAccountCompetition('/account?lang=en#email', 'WEEKLY'), '/account?lang=en&competition=WEEKLY#email')
 assert.equal(withAccountCompetition('/me?section=team', 'WEEKLY'), '/me?section=team&competition=WEEKLY')
 assert.equal(withAccountCompetition('/me?competition=ARCHIVE', 'WEEKLY'), '/me?competition=ARCHIVE')
-assert.equal(withAccountCompetition('/matches/m/room', 'WEEKLY'), '/matches/m/room?competition=WEEKLY')
+assert.equal(withAccountCompetition('/me/matches/m/room', 'WEEKLY'), '/me/matches/m/room?competition=WEEKLY')
 for (const path of ['/matches', '/players/p', '/teams/t', '/']) {
   assert.equal(withAccountCompetition(`${path}?competition=WEEKLY&season=FCR2026`, 'WEEKLY'), `${path}?season=FCR2026`, 'public routes must stay in the public archive')
 }

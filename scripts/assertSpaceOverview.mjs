@@ -15,7 +15,7 @@ assert.equal(view.next.canEnterRoom, false, 'staff summary alone never invents r
 assert.equal(view.taskCount, 2)
 context.overview.nextStaffAssignment = null
 view = buildSpaceOverview(context, { now })
-assert.equal(view.next.canEnterRoom, true)
+assert.equal(view.next.canEnterRoom, false, 'legacy summaries do not expose a retired room')
 assert.equal(buildSpaceOverview(context, { now: new Date('2026-09-06T11:00:00Z') }).next.canEnterRoom, false, 'future rooms respect their opening window')
 context.teamContexts[0].capabilities.canEnterMatchRoom = false
 assert.equal(buildSpaceOverview(context, { now }).next.canEnterRoom, false, 'membership does not imply room access')

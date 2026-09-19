@@ -1,4 +1,10 @@
-import { buildPlayerEventEligibility, EVENT_REGISTRATION_STATUS, EVENT_ROSTER_STATUS } from './myEventsModel.js'
+import {
+  buildPlayerEventEligibility,
+  EVENT_REGISTRATION_STATUS,
+  EVENT_ROSTER_STATUS,
+  getRegistrationStatusLabel,
+  getRosterStatusLabel
+} from './myEventsModel.js'
 
 function normalized(value) {
   return String(value || '').trim().toUpperCase()
@@ -72,7 +78,7 @@ export function buildPlayerWorkspaceStatus(context = {}, dossier = {}) {
   const ownMember = activeContext?.roster?.ownMember || null
   const ownMemberRemoved = normalized(ownMember?.status) === 'REMOVED'
   const currentTeamLabel = eligibility.teamLabel || teamLabel(activeContext)
-  const registrationLabel = EVENT_REGISTRATION_STATUS[registrationStatus] || '本届关系已建立'
+  const registrationLabel = getRegistrationStatusLabel(registrationStatus, '本届关系已建立')
   const registeredRole = eligibility.roleLabel || ownMember?.role || dossierRole(dossier)
   const base = {
     key: 'TEAM_RELATION',
@@ -81,7 +87,7 @@ export function buildPlayerWorkspaceStatus(context = {}, dossier = {}) {
     description: '报名、阵容和赛程状态会随 System 审核结果自动更新。',
     teamLabel: currentTeamLabel,
     registrationLabel,
-    rosterLabel: activeContext.roster ? EVENT_ROSTER_STATUS[rosterStatus] || rosterStatus : '正式名单待建立',
+    rosterLabel: activeContext.roster ? getRosterStatusLabel(rosterStatus, rosterStatus) : '正式名单待建立',
     roleLabel: registeredRole,
     matchCount,
     actionLabel: '查看我的赛事',

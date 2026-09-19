@@ -153,7 +153,8 @@ async function collectFingerprints() {
     if (visited.has(key)) return
     assert.ok(!key.startsWith('..') && !isAbsolute(key), 'Fingerprint path must stay inside the repository')
     const source = await readFile(url, 'utf8')
-    visited.set(key, hash(source))
+    // Git checkout line endings must not change the frozen source identity.
+    visited.set(key, hash(source.replace(/\r\n/g, '\n')))
     if (!/\.(?:m?js|jsx)$/.test(path)) return
     for (const match of source.matchAll(/(?:from\s+|import\s*)['"](\.[^'"]+)['"]/g)) {
       const dependency = new URL(match[1], url)

@@ -165,4 +165,12 @@ test('completed archive matches retain their full analysis and recorded maps', (
   assert.equal(phase.slots.length, 0)
   assert.equal(phase.recordedCount, progress.length)
   assert.equal(phase.liveStreams.length, 0)
+  assert.equal(dossier.roomPath, null, 'archives must not link to the retired room')
+})
+
+test('weekly public details route by the raw System ID without inventing an account match ID', () => {
+  const { dossier, match, db } = scenario(LIVE_ID, match => { match.raw_match_id = 'system-match-42' })
+  assert.equal(dossier.roomPath, '/me/matches/system-match-42/room')
+  delete match.raw_match_id
+  assert.equal(getMatchDossier(db, LIVE_ID).roomPath, '/me?section=matches')
 })

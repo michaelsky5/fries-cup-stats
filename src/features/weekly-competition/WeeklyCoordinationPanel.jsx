@@ -94,8 +94,8 @@ export default function WeeklyCoordinationPanel({ weekId, teamId, matchId, readO
     {match && showPreparation && <div className={styles.matchSetup}>
       <div className={styles.brief}>
         <span className={styles.kicker}>{uiText("比赛房间", uiLocale)}</span><strong>{match.brief?.roomName || uiText("等待赛管发布", uiLocale)}</strong>
-        {match.brief?.roomCode && <div className={styles.roomCode}><span>{uiText("房间口令", uiLocale)}</span><code>{match.brief.roomCode}</code></div>}
-        <div className={styles.instructions}><div className={styles.instructionsHeader}><span>{uiText("赛管安排", uiLocale)}</span>{match.brief && <small>{uiText("更新于 ", uiLocale)}{time(match.brief.updatedAt)}</small>}</div><p>{match.brief?.instructions || uiText("赛管尚未补充本场说明。安排发布后会在这里更新。", uiLocale)}</p></div>
+        {match.brief?.roomCode && <div className={styles.roomCode}><span>{uiText("比赛房间设置码", uiLocale)}</span><code>{match.brief.roomCode}</code></div>}
+        <div className={styles.instructions}><div className={styles.instructionsHeader}><span>{uiText("赛管安排", uiLocale)}</span>{match.brief?.updatedAt && <small>{uiText("更新于 ", uiLocale)}{time(match.brief.updatedAt)}</small>}</div><p>{match.brief?.instructions || uiText("赛管尚未补充本场说明。安排发布后会在这里更新。", uiLocale)}</p></div>
       </div>
       <div className={styles.readinessPanel}>
         <h4>{uiText("双方准备状态", uiLocale)}</h4>

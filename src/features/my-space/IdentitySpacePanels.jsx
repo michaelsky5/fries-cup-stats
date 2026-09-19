@@ -25,7 +25,6 @@ const IDENTITY_COPY = {
 }
 
 const TASK_PRIORITY = { URGENT: '紧急', HIGH: '重要', NORMAL: '普通', LOW: '低' }
-const ROSTER_STATUS = { DRAFT: '名单草稿', SUBMITTED: '名单审核中', LOCKED: '正式名单已锁定' }
 const STAFF_MATCH_STATUS = {
   SUBMITTED: '结果审核中',
   COMPLETE: '比赛已结束',
@@ -83,7 +82,7 @@ function TeamContextCard({ teamContext, withSeason }) {
   const team = teamContext.seasonTeam || teamContext.teamOrganization
   const permissions = teamContext.capabilities || {}
   const ownMember = teamContext.roster?.ownMember
-  const rosterStatusLabel = EVENT_ROSTER_STATUS[teamContext.roster?.status] || ROSTER_STATUS[teamContext.roster?.status] || teamContext.roster?.status
+  const rosterStatusLabel = EVENT_ROSTER_STATUS[teamContext.roster?.status] || teamContext.roster?.status
   const rosterSummary = !teamContext.roster
     ? '尚未提交'
     : ownMember
@@ -332,7 +331,6 @@ export function RelationshipMatchesPanel({ context, withSeason }) {
             </div>
             <div className={styles.nextMatchActions}>
               <Link to={withSeason(`/matches/${encodeURIComponent(nextMatch.id)}`)}>{uiText("查看比赛资料 →", uiLocale)}</Link>
-              {nextMatch.roomAccess.canEnter ? <Link data-room-state={nextMatch.roomAccess.state} to={withSeason(`/matches/${encodeURIComponent(nextMatch.id)}/room`)}>{nextMatch.roomAccess.actionLabel} →</Link> : <span className={styles.matchActionLocked}>{nextMatch.roomAccess.actionLabel}</span>}
               {nextMatch.canNegotiateSchedule ? <Link to={withSeason('/me?section=matches#schedule-negotiation')}>{uiText("赛程协商 →", uiLocale)}</Link> : null}
             </div>
           </div>
@@ -361,7 +359,7 @@ function MatchCollection({ title, eyebrow, description, matches, withSeason, neg
           <div className={styles.matchCollectionTime}><span>{match.timeState.label}</span><strong>{formatTime(match.scheduledAt)}</strong></div>
           <div className={styles.matchCollectionTeams}><strong>{match.matchup}</strong><span>{match.displayName || `${match.stage || '赛事阶段'} · ${match.roundLabel || '轮次待定'}`}</span></div>
           <div className={styles.matchCollectionState}><em>{match.statusLabel}</em>{history && match.score ? <strong>{match.score}</strong> : <span>{match.roomAccess.label}</span>}</div>
-          <div className={styles.matchCollectionActions}><Link to={withSeason(`/matches/${encodeURIComponent(match.id)}`)}>{uiText("比赛资料 →", uiLocale)}</Link>{match.roomAccess.canEnter ? <Link to={withSeason(`/matches/${encodeURIComponent(match.id)}/room`)}>{match.roomAccess.isReadOnly ? uiText("比赛记录", uiLocale) : uiText("比赛房间", uiLocale)} →</Link> : null}{negotiation ? <Link to={withSeason('/me?section=matches#schedule-negotiation')}>{uiText("协商工作台 →", uiLocale)}</Link> : null}</div>
+          <div className={styles.matchCollectionActions}><Link to={withSeason(`/matches/${encodeURIComponent(match.id)}`)}>{uiText("比赛资料 →", uiLocale)}</Link>{negotiation ? <Link to={withSeason('/me?section=matches#schedule-negotiation')}>{uiText("协商工作台 →", uiLocale)}</Link> : null}</div>
         </article>
       ))}</div>
     </section>

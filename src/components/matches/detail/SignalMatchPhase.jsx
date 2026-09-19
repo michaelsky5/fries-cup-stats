@@ -41,7 +41,7 @@ export function SignalMatchPreparation({ dossier, phase, weeklyPeriod, locale, w
       </div>
       <aside className={styles.participants}>
         <span className={styles.eyebrow}>PARTICIPANTS</span><h3>{t(uiText("选手与工作人员", locale), 'Players & match staff')}</h3><p>{t(uiText("从比赛房间查看本场参赛与执行安排。", locale), 'Open the match room for participation and match operations.')}</p>
-        <Link className={styles.room} to={roomPath}>{t(uiText("进入比赛房间", locale), 'Open match room')} <span aria-hidden="true">↗</span></Link>
+        {roomPath && <Link className={styles.room} to={roomPath}>{t(uiText("进入比赛房间", locale), 'Open match room')} <span aria-hidden="true">↗</span></Link>}
         {weeklyPeriod ? <div className={styles.periodLinks}><Link to={withSeason(`/matches?${cycleQuery}`)}>{t(uiText("本周赛程", locale), 'This week’s fixtures')} ↗</Link><Link to={withSeason(`/advance?${cycleQuery}`)}>{t(uiText("周期积分", locale), 'Cycle standings')} ↗</Link></div> : null}
       </aside>
     </div>

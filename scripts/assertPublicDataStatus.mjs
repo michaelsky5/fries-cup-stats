@@ -21,15 +21,17 @@ test('a failed first load never claims an update or previously available records
 test('official and partner events remain separate regardless of selection or lifecycle', () => {
   const before = SEASONS.map(season => season.id)
   assert.deepEqual(getSeasonEventGroups().map(group => [group.kind, group.seasons.map(season => season.id)]), [
-    ['OFFICIAL', ['FCR26', 'FCA26']],
+    ['OFFICIAL', ['FCW26', 'FCR26', 'FCA26']],
     ['PARTNER', ['QGCS4']]
   ])
   assert.deepEqual(SEASONS.map(season => season.id), before)
+  assert.equal(new Set(before).size, before.length, 'each event has one canonical ID')
+  assert.equal(getSeasonStatusKey(getSeasonById('FCW26'), getSeasonStatus(null, getSeasonById('FCW26'))), 'pending')
   assert.deepEqual(getSeasonEventGroups([getSeasonById('QGCS4')]).map(group => group.kind), ['PARTNER'])
 })
 
 test('an archived event does not become schedule-pending while its snapshot loads', () => {
-  for (const season of SEASONS) {
+  for (const season of SEASONS.filter(item => item.lifecycle === 'ARCHIVED')) {
     assert.equal(getSeasonStatusKey(season, getSeasonStatus(null, season)), 'archive')
   }
   assert.equal(getSeasonStatusKey({ lifecycle: 'ACTIVE' }, { totalMatches: 0 }), 'pending')

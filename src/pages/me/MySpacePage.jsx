@@ -1,3 +1,4 @@
+import SeasonRegistrationEntry from '../../features/event-registration/SeasonRegistrationEntry.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
@@ -18,7 +19,6 @@ import {
 import { buildPlayerSpaceDossier, shouldExposeTeamSpace } from '../../lib/mySpaceSelectors.js'
 import { getPlayerDossier } from '../../lib/playerDetailSelectors.js'
 import { formatStaffPerson, getTeamRosterPlayers, getTeamStaff } from '../../lib/rosterSelectors.js'
-import EventRegistrationWorkspace from '../../features/event-registration/EventRegistrationWorkspace.jsx'
 import ScheduleNegotiationWorkspace from '../../features/schedule-negotiation/ScheduleNegotiationWorkspace.jsx'
 import { fetchNotificationSummary } from '../../features/tasks/taskNotificationApi.js'
 import { mergeOperationalSummary } from '../../features/tasks/taskNotificationModel.js'
@@ -77,7 +77,7 @@ const SPACE_NAV_GROUPS = [
   { id: 'workspace', label: '工作台', en: 'WORKSPACE', sectionIds: ['referee', 'caster'] }
 ]
 
-export function buildSpaceSections({ player = false, team = false, manager = false, referee = false, caster = false, weekly = false, weeklyRooms = false, publicStats = true, launch = null } = {}) {
+export function buildSpaceSections({ player = false, team = false, manager = false, referee = false, caster = false, weekly = false, weeklyRooms = false, registration = false, publicStats = true, launch = null } = {}) {
   const communicationsVisible = !launch || hasAccountFeatureAccess(launch, 'communications')
   const teamOperationsVisible = !launch || hasAccountFeatureAccess(launch, 'teamOperations')
   const weeklyCompetitionVisible = !launch || hasAccountFeatureAccess(launch, 'weeklyCompetition')
@@ -87,7 +87,7 @@ export function buildSpaceSections({ player = false, team = false, manager = fal
     ...(communicationsVisible || (weekly && (team || player || manager) && (weeklyCompetitionVisible || matchRoomVisible)) ? [SPACE_SECTION_DEFINITIONS.tasks] : []),
     ...(!weekly ? [SPACE_SECTION_DEFINITIONS.events] : []),
     ...(team || player || ((manager || weeklyRooms) && matchRoomVisible) ? [SPACE_SECTION_DEFINITIONS.matches] : []),
-    ...((team && teamOperationsVisible) || (manager && weeklyCompetitionVisible) || (player && weeklyCompetitionVisible)
+    ...(((team || registration) && teamOperationsVisible) || (manager && weeklyCompetitionVisible) || (player && weeklyCompetitionVisible)
       ? [SPACE_SECTION_DEFINITIONS.team]
       : []),
     ...(referee ? [SPACE_SECTION_DEFINITIONS.referee] : []),
@@ -642,7 +642,9 @@ function MySpaceContent() {
       viewer: verifiedIdentityTypes.size === 0
     }
   }, [accountCapabilities.canAccessTeamSpace, authUser, currentSpaceContext, fallbackPrimaryIdentityType, isVerifiedPlayer, seasonId, verifiedIdentityTypes])
+  const canShowRegistrationEntry = effectiveSpaceContext.contract === 'ACCOUNT_FOUNDATION_V1' && hasAccountFeatureAccess(accountLaunch, 'teamOperations')
   const spaceSections = useMemo(() => buildSpaceSections({
+    registration: canShowRegistrationEntry,
     publicStats: hasMatchingPublicSeason,
     player: isVerifiedPlayer && (
       effectiveSpaceContext.capabilitySnapshot
@@ -668,7 +670,7 @@ function MySpaceContent() {
     weekly: effectiveSpaceContext.competitionKind === 'WEEKLY',
     weeklyRooms: Boolean(effectiveSpaceContext.sections?.weeklyRooms),
     launch: accountLaunch
-  }), [accountCapabilities.canAccessTeamSpace, accountLaunch, effectiveSpaceContext, isVerifiedPlayer, hasMatchingPublicSeason])
+  }), [accountCapabilities.canAccessTeamSpace, accountLaunch, effectiveSpaceContext, isVerifiedPlayer, hasMatchingPublicSeason, canShowRegistrationEntry])
   const playerWorkspaceStatusBase = buildPlayerWorkspaceStatus(effectiveSpaceContext, dossier)
   const hydratedPlayerTeamLabel = getHydratedSeasonTeamLabel(effectiveSpaceContext, 'PLAYER')
   const playerStatusTeamLabel = hydratedPlayerTeamLabel
@@ -689,9 +691,7 @@ function MySpaceContent() {
   const isPrimaryManager = primarySpaceIdentityType === 'MANAGER'
   const activeSection = spaceSections.some(section => section.id === requestedSection) ? requestedSection : 'overview'
   const showIdentityContext = spaceContextLoading || Boolean(spaceContextError)
-  const hasRegistrationEntry = effectiveSpaceContext.contract === 'ACCOUNT_FOUNDATION_V1' && hasAccountFeatureAccess(accountLaunch, 'teamOperations')
-  const registrationEntry = hasRegistrationEntry ? <section className={styles.spaceContextState}><strong>{uiText("本赛季报名", locale)}</strong><p>{uiText("创建队伍、邀请队员本人确认，提交后查看赛事负责人的审核结果。", locale)}</p><Link to={`/participate/${encodeURIComponent(seasonId)}`}>{uiText("进入报名与确认", locale)}</Link></section> : null
-  const canWriteTeamOperations = effectiveSpaceContext.contract !== 'ACCOUNT_FOUNDATION_V1' && hasAccountFeatureAccess(accountLaunch, 'teamOperations', 'WRITE')
+  const registrationEntry = canShowRegistrationEntry ? <SeasonRegistrationEntry seasonId={seasonId} withSeason={pageLink} className={styles.spaceContextState} /> : null
   const canViewWeeklyCompetition = hasAccountFeatureAccess(accountLaunch, 'weeklyCompetition') &&
     (effectiveSpaceContext.identities || []).some(identity => ['MANAGER', 'PLAYER'].includes(String(identity.type || identity.identityType || '').toUpperCase()))
   const canWriteWeeklyCompetition = hasAccountFeatureAccess(accountLaunch, 'weeklyCompetition', 'WRITE')
@@ -780,13 +780,12 @@ function MySpaceContent() {
         {showIdentityContext && needsParticipationAccess ? <IdentityContextStrip context={effectiveSpaceContext} loading={spaceContextLoading} error={spaceContextError} /> : null}
         <SpaceTabs key={activeSection} activeSection={activeSection} withSeason={pageLink} sections={spaceSections} overview={navigationSummary} locale={locale} />
       </SpaceHeader>
-      {['overview', 'tasks'].includes(activeSection) ? <AccountActivityWorkspace key={`${seasonId}:${authUser?.id || ''}`} view={activeSection} activity={activity} locale={locale} context={effectiveSpaceContext} withSeason={pageLink} sections={spaceSections} registrationEntry={registrationEntry} followingSummary={followingSummary} managerStatus={isPrimaryManager ? managerWorkspaceStatus : null} playerStatus={isPrimaryPlayer ? playerWorkspaceStatus : null} genericTasks={hasAccountFeatureAccess(accountLaunch, 'communications')} weeklyPreparation={isWeekly && canViewWeeklyCompetition && spaceSections.some(section => section.id === 'team')} weeklyRooms={isWeekly && canViewWeeklyMatchRooms && spaceSections.some(section => section.id === 'matches')} roomsReadOnly={!canWriteMatchRooms} /> : null}
-      {activeSection === 'events' || (activeSection === 'team' && !canViewWeeklyCompetition) ? registrationEntry : null}
+      {['overview', 'tasks'].includes(activeSection) ? <AccountActivityWorkspace key={`${seasonId}:${authUser?.id || ''}`} view={activeSection} activity={activity} locale={locale} context={effectiveSpaceContext} withSeason={pageLink} sections={spaceSections} followingSummary={followingSummary} managerStatus={isPrimaryManager ? managerWorkspaceStatus : null} playerStatus={isPrimaryPlayer ? playerWorkspaceStatus : null} genericTasks={hasAccountFeatureAccess(accountLaunch, 'communications')} weeklyPreparation={isWeekly && canViewWeeklyCompetition && spaceSections.some(section => section.id === 'team')} weeklyRooms={isWeekly && canViewWeeklyMatchRooms && spaceSections.some(section => section.id === 'matches')} roomsReadOnly={!canWriteMatchRooms} /> : null}
       {activeSection === 'events' ? <MyEventsPanel context={effectiveSpaceContext} withSeason={pageLink} /> : null}
       {activeSection === 'communications' ? <AccountCommunicationsCenter seasonId={seasonId} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} withSeason={pageLink} onSummaryChange={handleTaskSummaryChange} /> : null}
       {activeSection === 'matches' ? <>{matchesWorkspace}{canUseScheduleNegotiation ? <ScheduleNegotiationWorkspace seasonId={seasonId} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} /> : null}</> : null}
       {activeSection === 'stats' ? <><WorkspaceSectionHeader eyebrow="MY STATS" title={uiText("我的数据", locale)} description={uiText("正式出场、职责样本、排名和英雄池都从本届公开比赛数据自动生成。", locale)} badge={playerStatsWorkspace.status.key === 'RANKED' ? `${playerStatsWorkspace.totals.rankedRoles} RANKED ROLES` : playerStatsWorkspace.status.key.replaceAll('_', ' ')} /><PerformancePanel dossier={dossier} statsWorkspace={playerStatsWorkspace} withSeason={pageLink} expanded /></> : null}
-      {activeSection === 'team' ? <>{hasRegistrationEntry ? registrationEntry : null}{canViewWeeklyCompetition ? <WeeklyCompetitionWorkspace seasonId={seasonId} readOnly={!canWriteWeeklyCompetition} onActivityChange={activity.refresh} /> : null}{canWriteTeamOperations ? <EventRegistrationWorkspace seasonId={seasonId} existingTeams={db?.teams || []} identities={accountIdentities} teamContexts={effectiveSpaceContext.teamContexts} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} onContextChange={refreshSpaceContext} /> : !canViewWeeklyCompetition && !hasRegistrationEntry ? <ReadOnlyWorkspaceNotice title={uiText("队伍与名单暂为只读", locale)} description={uiText("当前队伍资料仅供查看。如需更新参赛名单，请联系周赛管理员核对本届权限。", locale)} /> : null}{teamOverview?.team ? <TeamPanel db={db} teamOverview={teamOverview} seasonId={seasonId} withSeason={pageLink} /> : null}</> : null}
+      {activeSection === 'team' ? <>{canShowRegistrationEntry ? registrationEntry : null}{canViewWeeklyCompetition ? <WeeklyCompetitionWorkspace seasonId={seasonId} readOnly={!canWriteWeeklyCompetition} onActivityChange={activity.refresh} /> : null}{!canViewWeeklyCompetition && !canShowRegistrationEntry ? <ReadOnlyWorkspaceNotice title={uiText("队伍与名单暂为只读", locale)} description={uiText("当前队伍资料仅供查看。如需更新参赛名单，请联系周赛管理员核对本届权限。", locale)} /> : null}{teamOverview?.team ? <TeamPanel db={db} teamOverview={teamOverview} seasonId={seasonId} withSeason={pageLink} /> : null}</> : null}
       {activeSection === 'referee' ? <RefereeWorkspace context={effectiveSpaceContext} withSeason={pageLink} onContextChange={refreshSpaceContext} /> : null}
       {activeSection === 'caster' ? <CasterWorkspace context={effectiveSpaceContext} withSeason={pageLink} onContextChange={refreshSpaceContext} /> : null}
       {activeSection === 'following' ? <FollowingWorkspace key={`${seasonId}:${authUser?.id || ''}`} db={db} favorites={manualFavorites} favoriteLimits={favoriteLimits} locale={locale} season={season} withSeason={pageLink} isAuthenticated accountId={authUser?.id} onSave={handleSave} excludedFavorites={identityFavorites} syncStatus={context.favoritesSyncStatus} syncError={context.favoritesSyncError} onManageTeams={() => openManager('teams')} onManagePlayers={() => openManager('players')} /> : null}

@@ -26,7 +26,6 @@ import { isWeeklyOverview } from '../features/weekly-overview/weeklyOverviewMode
 import { buildFriesCupTitle, getDataCenterPageLabel } from '../lib/pageTitle.js'
 import { getRestoreScrollY } from '../lib/navigationState.js'
 import { FavoritesProvider, normalizeSeasonId, useFavorites } from '../features/favorites/index.js'
-import AuthButton from '../features/auth/AuthDialog.jsx'
 import { useAuth } from '../features/auth/AuthProvider.jsx'
 import { buildAccountIdentity, findVerifiedAccountIdentity, getAccountCapabilities, resolveAccountIdentityTarget } from '../features/auth/accountIdentity.js'
 import PublicHeader from '../components/layout/PublicHeader.jsx'
@@ -39,6 +38,8 @@ import { requiresPublicSnapshot } from '../features/my-space/personalSpacePolicy
 import useAccountCompetition from '../features/my-space/useAccountCompetition.js'
 import { withAccountCompetition } from '../features/my-space/accountCompetitionModel.js'
 import { buildAccountAttention } from '../features/my-space/accountAttentionModel.js'
+import { fetchMyWeeklyCompetition } from '../features/weekly-competition/weeklyCompetitionApi.js'
+import { buildWeeklyPreparation } from '../features/weekly-competition/weeklyPreparationModel.js'
 import { useLocaleDomTranslation } from '../hooks/useLocaleDomTranslation.js'
 import { createPublicTextTranslator } from '../lib/publicText.js'
 import DesignPreviewBar from '../features/fd-design/DesignPreviewBar.jsx'
@@ -167,6 +168,8 @@ export default function DataLayout() {
   const isPublicFollowingRoute = isAccountSpaceRoute && (!isAuthenticated || location.pathname.startsWith('/following') || new URLSearchParams(location.search).get('section') === 'following')
   const isCompactContextRoute = isRosterDirectoryRoute || isScheduleDirectoryRoute || isPublicMatchDetailRoute || isPlayerRankingsRoute || isHeroDataRoute || isMapDataRoute || isAdvanceIndexRoute || isWeeklyHomeRoute || isPublicFollowingRoute || isPlayerArchiveRoute || (isTeamArchiveRoute && !isTeamExhibitionRoute)
   const competition = useAccountCompetition(season.id)
+  const attentionSeasonId = competition.navigationId || seasonId
+  const weeklyAttention = competition.selected?.competitionKind === 'WEEKLY'
   const canonicalSeasonId = normalizeSeasonId(season?.publicCode || seasonId)
   const favoritesApi = useFavorites(canonicalSeasonId, db)
 
@@ -174,7 +177,7 @@ export default function DataLayout() {
     let alive = true
     let requestInFlight = false
 
-    if (!isAuthenticated || !seasonId || accountApiCapabilities?.canReadOperationalSummary !== true) {
+    if (!isAuthenticated || !attentionSeasonId || (!weeklyAttention && accountApiCapabilities?.canReadOperationalSummary !== true)) {
       setAccountAttentionContext(null)
       return () => { alive = false }
     }
@@ -184,9 +187,15 @@ export default function DataLayout() {
     const refreshAccountAttention = () => {
       if (document.visibilityState === 'hidden' || requestInFlight) return
       requestInFlight = true
-      fetchMySpaceContext(seasonId)
-        .then(context => {
-          if (alive) setAccountAttentionContext(context)
+      Promise.allSettled([
+        accountApiCapabilities?.canReadOperationalSummary === true ? fetchMySpaceContext(attentionSeasonId) : Promise.resolve(null),
+        weeklyAttention ? fetchMyWeeklyCompetition(attentionSeasonId) : Promise.resolve(null)
+      ])
+        .then(([contextResult, weeklyResult]) => {
+          const context = contextResult.status === 'fulfilled' ? contextResult.value : null
+          const workspace = weeklyResult.status === 'fulfilled' ? weeklyResult.value : null
+          const preparation = buildWeeklyPreparation(workspace, { seasonId: attentionSeasonId, userId: authUser?.id, readOnly: false })
+          if (alive) setAccountAttentionContext({ overview: { ...context?.overview, openTaskCount: Number(context?.overview?.openTaskCount || 0) + preparation.tasks.length } })
         })
         .catch(() => {
           // The navigation remains usable and simply omits its optional counters.
@@ -203,15 +212,17 @@ export default function DataLayout() {
     refreshAccountAttention()
     const interval = globalThis.setInterval(refreshAccountAttention, ACCOUNT_ATTENTION_REFRESH_INTERVAL_MS)
     globalThis.addEventListener('focus', refreshAccountAttention)
+    globalThis.addEventListener('fc:account-activity-changed', refreshAccountAttention)
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
       alive = false
       globalThis.clearInterval(interval)
       globalThis.removeEventListener('focus', refreshAccountAttention)
+      globalThis.removeEventListener('fc:account-activity-changed', refreshAccountAttention)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [accountApiCapabilities?.canReadOperationalSummary, authUser?.id, isAuthenticated, seasonId])
+  }, [accountApiCapabilities?.canReadOperationalSummary, authUser?.id, isAuthenticated, attentionSeasonId, weeklyAttention])
 
   const visibleDb = isLoading ? null : db
   const summary = getGlobalSummary(visibleDb)
@@ -239,7 +250,6 @@ export default function DataLayout() {
     () => buildAccountAttention(accountAttentionContext, compatibleLayoutLocale),
     [accountAttentionContext, compatibleLayoutLocale]
   )
-  const isMatchRoomRoute = /^\/matches\/[^/]+\/room\/?$/.test(location.pathname)
   const navigationSearch = getNavigationSearch(location.search, designPreview, layoutLocale)
   const withSeason = useMemo(
     () => path => withAccountCompetition(buildSeasonLink(path, seasonId, navigationSearch), competition.navigationId, navigationSearch),
@@ -412,7 +422,6 @@ export default function DataLayout() {
       data-fd-page={isFdDesign ? (isFdSamplePage ? 'sample' : 'legacy') : undefined}
       data-kpr-page={isKprDesign ? (isKprSamplePage ? 'sample' : 'legacy') : undefined}
       data-locale={layoutLocale}
-      data-room-route={isMatchRoomRoute ? 'true' : 'false'}
       data-header-mode={headerContextMode}
       data-archive-home={isArchivedHomeRoute || undefined}
       data-compact-context={isCompactContextRoute || undefined}
@@ -425,7 +434,6 @@ export default function DataLayout() {
       data-hero-data={isHeroDataRoute || undefined} data-map-data={isMapDataRoute || undefined}
     >
       {showDesignPreview && <DesignPreviewBar design={designPreview} locale={compatibleLayoutLocale} />}
-      {!isMatchRoomRoute ? (
       <PublicHeader
         isKprHybridDesign={isKprHybridDesign} mobileMenuRef={mobileMenuRef}
         activeGroup={activeGroup} layoutLocale={layoutLocale} compatibleLayoutLocale={compatibleLayoutLocale}
@@ -435,9 +443,6 @@ export default function DataLayout() {
         handleSeasonChange={handleSeasonChange} headerContextMode={headerContextMode}
         isReviewEntryRoute={isReviewEntryRoute} handleLocaleChange={handleLocaleChange} activeSection={activeSection}
       />
-      ) : null}
-
-      {isMatchRoomRoute ? <AuthButton dialogOnly locale={compatibleLayoutLocale} seasonId={seasonId} teams={db?.teams || []} /> : null}
 
       {!isTeamExhibitionRoute && !(isAuthenticated && /^\/me\/?$/.test(location.pathname) && new URLSearchParams(location.search).get('section') !== 'following') ? eventContextDock : null}
 
