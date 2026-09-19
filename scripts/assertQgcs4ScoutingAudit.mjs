@@ -85,7 +85,7 @@ for (const candidate of audit.candidates) {
 // hand-written review, rather than checking only the analytical JSON.
 for (const [key, filename] of [['report', 'scoutingReportModel.js'], ['opponent', 'scoutingOpponentStrength.js']]) {
   const code = await readFile(new URL(`../src/features/scouting/${filename}`, import.meta.url), 'utf8')
-  assert.equal(audit.methodology.sourceFingerprint[key], createHash('sha256').update(code).digest('hex'),
+  assert.equal(audit.methodology.sourceFingerprint[key], createHash('sha256').update(code.replace(/\r\n/g, '\n')).digest('hex'),
     `The ${key} engine changed after the frozen review was computed`)
 }
 const document = await readFile(new URL('../docs/scouting/qgcs4-review-v30.md', import.meta.url), 'utf8')

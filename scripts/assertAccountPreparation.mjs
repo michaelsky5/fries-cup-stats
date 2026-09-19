@@ -22,7 +22,7 @@ function fixture() {
   const week = { id: 'week-4', weekNumber: 4, label: '第 4 周', status: 'CONFIRMATION_OPEN', confirmationOpensAt: '2026-09-06T10:00:00Z', confirmationDeadlineAt: '2026-09-06T14:00:00Z' }
   const participation = { id: 'participation-a', status: 'CONFIRMED', rosters: [{ status: 'DRAFT', members: [{ playerId: 'a' }] }] }
   const entry = { id: 'entry-a', status: 'ACTIVE', seasonTeamId: team.id, team, accessMode: 'WRITE', coreSelections: [{ status: 'LOCKED', members: [{ playerId: 'a' }] }], weeks: [{ week, participation }] }
-  const cycle = { id: 'cycle-a', name: '九月周期', status: 'ACTIVE', entries: [entry] }
+  const cycle = { rules: { rosterContinuityMode: 'FIXED_CORE' }, id: 'cycle-a', name: '九月周期', status: 'ACTIVE', entries: [entry] }
   const workspace = { userId: 'user-a', season: { id: 'season-a', status: 'ACTIVE' }, accessMode: 'WRITE', teams: [{ team, role: 'MANAGER', accessMode: 'WRITE' }], cycles: [cycle] }
   return { workspace, cycle, entry, week, participation }
 }
@@ -230,7 +230,7 @@ assert.equal(actionHref.searchParams.get('lang'), 'en')
 assert.equal(actionHref.searchParams.has('task'), false)
 assert.equal(actionHref.searchParams.has('weeklyMatch'), false)
 
-const rosterRules = { rosterMin: 5, rosterMax: 7, minimumCoreInWeeklyRoster: 3 }
+const rosterRules = { rosterContinuityMode: 'FIXED_CORE', rosterMin: 5, rosterMax: 7, minimumCoreInWeeklyRoster: 3 }
 const rosterPlayers = Array.from({ length: 8 }, (_, i) => ({ id: String(i) }))
 const coreIds = new Set(['0', '1', '2'])
 assert.equal(getWeeklyRosterCheck(['0', '1', '2', '3', '4'], coreIds, rosterRules, rosterPlayers).canSubmit, true)
@@ -249,3 +249,10 @@ assert.equal(requiresPublicSnapshot({ pathname: '/me', section: 'overview', isAu
 assert.equal(requiresPublicSnapshot({ pathname: '/matches', isAuthenticated: true }), true, 'public match pages retain their own data boundary')
 for (const section of ['overview', 'tasks', 'team', 'matches', 'referee', 'caster', 'unknown']) assert.equal(requiresParticipationAccess(section), true)
 console.log('Participation continuity checks passed: stable records, handoff, read-only access, scoped response history, selection recovery and roster preflight.')
+
+const continuityRules = { ...rosterRules, rosterContinuityMode: 'PREVIOUS_APPEARANCE', previousAppearancePlayerIds: ['0', '1', '2', '3', '4'], previousAppearanceRequired: 3 }
+assert.equal(getWeeklyRosterCheck(['0', '1', '2', '5', '6'], new Set(), continuityRules, rosterPlayers).canSubmit, true)
+assert.equal(getWeeklyRosterCheck(['0', '1', '5', '6', '7'], coreIds, continuityRules, rosterPlayers).canSubmit, false)
+const currentRules = fixture()
+currentRules.cycle.rules.rosterContinuityMode = 'PREVIOUS_APPEARANCE'
+assert.deepEqual(buildWeeklyPreparation(currentRules.workspace, options).plans[0].stages.map(stage => stage.key), ['participation', 'roster'])

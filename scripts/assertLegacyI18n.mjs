@@ -1,66 +1,14 @@
 import assert from 'node:assert/strict'
+import { translateLegacyValue } from '../src/lib/legacyTranslationState.js'
 
-import { resolveTrackedLegacyTranslation } from '../src/lib/legacyI18n.js'
-
-const initialChinese = resolveTrackedLegacyTranslation({
-  current: '待更新',
-  locale: 'zh-CN'
-})
-assert.deepEqual(initialChinese, {
-  source: '待更新',
-  rendered: '待更新',
-  value: '待更新'
-})
-
-const liveMetricUpdate = resolveTrackedLegacyTranslation({
-  current: 'DMG',
-  source: initialChinese.source,
-  rendered: initialChinese.rendered,
-  locale: 'zh-CN'
-})
-assert.deepEqual(liveMetricUpdate, {
-  source: 'DMG',
-  rendered: 'DMG',
-  value: 'DMG'
-})
-
-const initialEnglish = resolveTrackedLegacyTranslation({
-  current: '待更新',
-  locale: 'en-US'
-})
-assert.deepEqual(initialEnglish, {
-  source: '待更新',
-  rendered: 'Pending Update',
-  value: 'Pending Update'
-})
-
-const backToChinese = resolveTrackedLegacyTranslation({
-  current: initialEnglish.value,
-  source: initialEnglish.source,
-  rendered: initialEnglish.rendered,
-  locale: 'zh-CN'
-})
-assert.equal(backToChinese.source, '待更新')
-assert.equal(backToChinese.value, '待更新')
-
-const componentLocaleUpdate = resolveTrackedLegacyTranslation({
-  current: 'Pending Update',
-  source: '待更新',
-  rendered: '待更新',
-  locale: 'en-US'
-})
-assert.equal(componentLocaleUpdate.source, '待更新')
-assert.equal(componentLocaleUpdate.value, 'Pending Update')
-
-const newChineseSource = resolveTrackedLegacyTranslation({
-  current: '尚未出场',
-  source: initialEnglish.source,
-  rendered: initialEnglish.rendered,
-  locale: 'en-US'
-})
-assert.equal(newChineseSource.source, '尚未出场')
-assert.equal(newChineseSource.value, 'Not Yet Played')
-
-assert.equal(resolveTrackedLegacyTranslation({ current: 'DMG', locale: 'zh-CN' }), null)
-
-console.log('Legacy DOM translation state assertions passed.')
+const chinese = translateLegacyValue('待更新', null, 'zh-CN')
+assert.deepEqual(chinese, { source: '待更新', rendered: '待更新' })
+const english = translateLegacyValue(chinese.rendered, chinese, 'en-US')
+assert.deepEqual(english, { source: '待更新', rendered: 'Pending Update' })
+assert.deepEqual(translateLegacyValue(english.rendered, english, 'zh-CN'), chinese)
+assert.deepEqual(translateLegacyValue('DMG', chinese, 'zh-CN'), { source: 'DMG', rendered: 'DMG' })
+assert.deepEqual(translateLegacyValue('尚未出场', english, 'en-US'), { source: '尚未出场', rendered: 'Not Yet Played' })
+// React-owned replacements become the new source, including translated labels and real names.
+assert.deepEqual(translateLegacyValue('Pending Update', chinese, 'en-US'), { source: 'Pending Update', rendered: 'Pending Update' })
+assert.deepEqual(translateLegacyValue('示例选手#1234', english, 'zh-CN'), { source: '示例选手#1234', rendered: '示例选手#1234' })
+console.log('Legacy translation uses the shared state adapter and preserves React updates.')

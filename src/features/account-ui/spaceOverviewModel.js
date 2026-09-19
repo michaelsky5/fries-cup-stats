@@ -31,7 +31,7 @@ export function buildSpaceOverview(context, { now = new Date(), sections, weekly
     .map(match => ({ match, isStaff: false, role: '', canEnterRoom: false, actionLabel: '查看周赛比赛', actionUrl: `/me?section=matches&weeklyMatch=${encodeURIComponent(match.id)}` }))
   const candidates = [
     ...weeklyCandidates,
-    teamMatch && !weeklyCandidates.some(item => item.match.id === teamMatch.id) && { match: teamMatch, isStaff: false, role: '', canEnterRoom: Boolean(related?.roomAccess?.canEnter && allowed('matches')) },
+    teamMatch && !weeklyCandidates.some(item => item.match.id === teamMatch.id) && { match: teamMatch, isStaff: false, role: '', canEnterRoom: false },
     staff?.match && { match: staff.match, isStaff: true, role: staff.assignmentType, canEnterRoom: false }
   ].filter(item => item && !finished.has(item.match.status))
   candidates.sort((a, b) => Number(b.match.status === 'IN_PROGRESS') - Number(a.match.status === 'IN_PROGRESS') || time(a.match.scheduledAt) - time(b.match.scheduledAt))

@@ -68,10 +68,13 @@ export function getParticipationView(items, params) {
 export function getWeeklyRosterCheck(ids, coreIds, rules, players) {
   const chosen = new Set(ids)
   const coreCount = [...chosen].filter(id => coreIds.has(id)).length
+  const previousIds = new Set(rules.previousAppearancePlayerIds || [])
+  const retainedCount = [...chosen].filter(id => previousIds.has(id)).length
   const known = new Set(players.map(player => player.id))
   const errors = []
   if ([...chosen].some(id => !known.has(id))) errors.push('名单含有当前队伍不可用的选手，请重新核对。')
   if (chosen.size < rules.rosterMin || chosen.size > rules.rosterMax) errors.push(`需要选择 ${rules.rosterMin}–${rules.rosterMax} 人，当前 ${chosen.size} 人。`)
-  if (coreCount < rules.minimumCoreInWeeklyRoster) errors.push(`至少需要 ${rules.minimumCoreInWeeklyRoster} 名已锁定核心，当前 ${coreCount} 名。`)
-  return { count: chosen.size, coreCount, errors, canSubmit: errors.length === 0 }
+  if (rules.rosterContinuityMode === 'PREVIOUS_APPEARANCE' && retainedCount < (rules.previousAppearanceRequired || 0)) errors.push(`至少需要保留最近一次实际参赛名单中的 ${rules.previousAppearanceRequired} 人，当前保留 ${retainedCount} 人。`)
+  if (rules.rosterContinuityMode === 'FIXED_CORE' && coreCount < rules.minimumCoreInWeeklyRoster) errors.push(`至少需要 ${rules.minimumCoreInWeeklyRoster} 名已锁定核心，当前 ${coreCount} 名。`)
+  return { count: chosen.size, coreCount, retainedCount, errors, canSubmit: errors.length === 0 }
 }

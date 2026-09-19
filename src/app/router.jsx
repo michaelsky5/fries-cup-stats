@@ -1,4 +1,4 @@
-import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, createBrowserRouter, redirect, useLocation } from 'react-router-dom'
 import RouteErrorPage from '../pages/errors/RouteErrorPage.jsx'
 import { getStoredLocale } from '../lib/i18n.js'
 import { normalizeLocale } from '../lib/locales.js'
@@ -89,6 +89,11 @@ const developmentRoutes = import.meta.env.DEV ? [
     lazy: async () => ({ Component: (await import('../pages/dev/AccountDesignPreviewPage.jsx')).default })
   },
   {
+    path: '/dev/weekly-room-preview',
+    HydrateFallback: RouteFallback,
+    lazy: async () => ({ Component: (await import('../pages/dev/WeeklyRoomDesignPreview.jsx')).default })
+  },
+  {
     path: '/dev/review-poster-qa',
     HydrateFallback: RouteFallback,
     lazy: async () => ({ Component: (await import('../pages/dev/ReviewPosterQaPage.jsx')).default })
@@ -112,6 +117,8 @@ const router = createBrowserRouter([
     }, children: [
   ...developmentRoutes,
   { path: '/account', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/account/AccountSettingsPage.jsx')) },
+  // Retired room bookmarks resolve to public details; no legacy room component or API.
+  { path: '/matches/:matchId/room', loader: ({ params, request }) => redirect(`/matches/${encodeURIComponent(params.matchId)}${new URL(request.url).search}`) },
   { path: '/me/matches/:matchId/room', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/weekly-competition/WeeklyLiveRoomPage.jsx')) },
   { path: '/participate/:seasonId', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/event-registration/SeasonParticipationPage.jsx')) },
   { path: '/activate-weekly', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/auth/WeeklyAccountActivationPage.jsx')) },

@@ -143,14 +143,19 @@
 .team>header { padding:16px 16px 12px;background:var(--fc-data-room-canvas);border-bottom:0; }
 .team[data-own=true]>header { box-shadow:inset 3px 0 var(--yellow); }
 .team h2 { margin:7px 0 0;font:700 28px/1.1 "Barlow Condensed",Arial,sans-serif; }
-.teamEyebrow { display:flex;justify-content:space-between;gap:8px;align-items:center; }
+.teamEyebrow { display:flex;justify-content:flex-start;gap:9px;align-items:baseline;min-width:0; }
 .teamEyebrow>span { font-size:10px;color:var(--fc-data-room-faint);letter-spacing:.08em; }
+.teamEyebrow>strong { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 28px/1.1 "Barlow Condensed",Arial,sans-serif; }
+.teamEyebrow>small { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--fc-data-room-faint);font-size:11px; }
 .representative { display:grid;gap:5px;padding:12px 16px 14px;background:var(--fc-data-room-surface);border-block:1px solid var(--line); }
 .representativeHeading { display:flex;align-items:center;flex-wrap:wrap;gap:6px;justify-content:space-between; }
 .representativeHeading em { color:var(--yellow);font-size:10px;font-style:normal; }
+.representativeHeadingActions { display:flex;align-items:center;gap:7px;min-width:0; }
+.room .representativeHeadingActions > button { min-height:28px;padding:3px 8px;background:transparent;border-color:var(--line);font-size:10px; }
+.room .representativeHeadingActions > button:hover:not(:disabled) { border-color:var(--yellow);color:var(--yellow); }
 .representativePerson { display:flex;align-items:baseline;gap:7px;flex-wrap:wrap; }
 .representativePerson>strong { font-size:14px;overflow-wrap:anywhere; }
-.representativePerson>span { font-size:11px;color:var(--fc-data-room-faint); }
+.representativePerson>small { font-size:10px;color:var(--fc-data-room-faint);overflow-wrap:anywhere; }
 .representative>p,.representative>small { font-size:11px;line-height:1.6;color:var(--fc-data-room-faint); }
 .room .representative>button { display:flex;justify-content:space-between;align-items:center;text-align:left;width:100%;margin-top:5px;min-height:36px;padding:6px 10px;background:transparent;font-size:12px;border-color:var(--line); }
 .representative[data-active=false]>button { color:var(--yellow);border-color:var(--fc-data-room-accent-line); }
@@ -160,12 +165,52 @@
 .rosterGroup { margin:0; }
 .rosterGroup>h3 { display:flex;gap:7px;align-items:center;font-size:10px;letter-spacing:.06em;color:var(--fc-data-room-faint);font-weight:400;padding:6px 0;border-bottom:1px solid var(--line); }
 .rosterGroup>h3>span { font-variant-numeric:tabular-nums; }
-.playerRow { display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;align-items:center;min-height:55px;border-bottom:1px solid var(--line);padding:9px 0; }
+.playerRow { position:relative;display:grid;grid-template-columns:42px minmax(0,1fr);gap:10px;align-items:center;min-width:0;max-width:100%;min-height:55px;border-bottom:1px solid var(--line);padding:9px 70px 9px 5px;overflow:hidden; }
 .playerRow:last-child { border-bottom:0; }
 .playerRow>div { min-width:0;display:grid;gap:3px; }
 .playerRow strong { font-size:14px;line-height:1.3;overflow-wrap:anywhere; }
 .playerRow code { font:11px/1.4 "HarmonyOS Sans SC",Arial,sans-serif;overflow-wrap:anywhere;color:var(--fc-data-room-faint); }
-.playerRole { font-size:11px;color:var(--fc-data-room-faint); }
+.checkInRow { display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px;min-height:28px; }
+.checkInRow > span { font-size:11px;color:var(--fc-data-room-warning); }
+.checkInRow > span[data-check-in='PRESENT'] { color:var(--fc-data-room-success); }
+.checkInRow > span[data-check-in='ABSENT'] { color:var(--fc-data-room-danger); }
+.srOnly { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
+.checkInStatus { display:block;width:50px;text-align:center;font-size:11px;line-height:28px;white-space:nowrap; }
+.checkInStatus[data-check-in='PRESENT'] { color:var(--fc-data-room-success); }
+.checkInStatus[data-check-in='ABSENT'] { color:var(--fc-data-room-danger); }
+.checkInStatus[data-check-in='PENDING'] { color:var(--fc-data-room-warning); }
+.room .checkInRow button { min-height:28px;padding:3px 7px;font-size:10px;background:transparent;border-color:var(--line); }
+.room .checkInRow button:hover:not(:disabled) { border-color:var(--yellow);color:var(--yellow); }
+.playerRow > div { min-width:0;display:grid;gap:2px; }
+.playerIdentity { min-width:0;display:grid;grid-template-columns:minmax(0,1fr);align-items:baseline;gap:7px;line-height:1.25; }
+.playerInfo { min-width:0;max-width:100%; }
+.playerAction { position:absolute;right:6px;top:50%;width:50px;min-width:50px;display:flex;justify-content:flex-end;align-self:center;transform:translateY(-50%);overflow:hidden; }
+.playerAction:empty { width:0; }
+.room .playerAction button { width:50px;min-width:50px;max-width:50px;min-height:28px;padding:2px 3px;font-size:11px;overflow:visible;white-space:nowrap; }
+.playerIdentity strong { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.playerIdentity code { min-width:0;overflow-wrap:anywhere;white-space:normal;color:var(--fc-data-room-text); }
+.playerRow[data-role='STAFF'] .playerIdentity code { overflow:visible;text-overflow:clip;white-space:nowrap;font-size:10px; }
+.room .playerIdentity > button { flex:none;min-height:24px;padding:2px 7px;margin-left:auto;background:transparent;border-color:var(--line);font-size:10px;line-height:1; }
+.room .playerIdentity > button:hover:not(:disabled) { border-color:var(--yellow);color:var(--yellow); }
+.playerRow[data-starter='true'][data-role='TANK'] .playerRole { color:#65b7ff; }
+.playerRow[data-starter='true'][data-role='DPS'] .playerRole { color:#ff7770; }
+.playerRow[data-starter='true'][data-role='SUP'] .playerRole,
+.playerRow[data-starter='true'][data-role='SUPPORT'] .playerRole { color:#65c98c; }
+.playerRow[data-starter='false'] .playerRole { color:#f0c34e; }
+.playerRow[data-check-in='PENDING'],
+.playerRow[data-check-in='ABSENT'] { background:color-mix(in srgb, #969b9b 10%, var(--fc-data-room-canvas)); }
+.playerRow[data-starter='true'][data-role='TANK'][data-check-in='PRESENT'] { background:color-mix(in srgb, #2f8fd4 18%, var(--fc-data-room-canvas)); }
+.playerRow[data-starter='true'][data-role='DPS'][data-check-in='PRESENT'] { background:color-mix(in srgb, #d95757 16%, var(--fc-data-room-canvas)); }
+.playerRow[data-starter='true'][data-role='SUP'][data-check-in='PRESENT'],
+.playerRow[data-starter='true'][data-role='SUPPORT'][data-check-in='PRESENT'] { background:color-mix(in srgb, #42ad75 17%, var(--fc-data-room-canvas)); }
+.playerRow[data-starter='false'][data-check-in='PRESENT'] { background:color-mix(in srgb, #f0c34e 18%, var(--fc-data-room-canvas)); }
+.teamNote { margin-top:2px;font-size:11px;color:var(--fc-data-room-faint); }
+.teamNote summary { cursor:pointer;display:inline-flex;min-height:24px;align-items:center; }
+.teamNote p { margin-top:5px;max-width:34ch; }
+.taskDetails { color:var(--fc-data-room-faint);font-size:11px; }
+.taskDetails summary { cursor:pointer;display:inline-flex;min-height:24px;align-items:center; }
+.taskDetails p { margin-top:6px;max-width:72ch;line-height:1.6; }
+.playerRole { width:42px;font-size:11px;color:var(--fc-data-room-faint);white-space:nowrap; }
 .playerRow em { font-style:normal;font-size:10px;color:var(--yellow);margin-left:4px; }
 .team footer { padding:12px 16px;margin-top:10px;background:var(--fc-data-room-surface);border-top:1px solid var(--line); }
 .team footer strong { font-size:12px; }
@@ -260,7 +305,7 @@
   .rosterHeading { padding:12px 10px 8px;flex-wrap:wrap; }
   .players { padding:0 10px; }
   .rosterGroup>h3 { font-size:11px; }
-  .playerRow { grid-template-columns:25px minmax(0,1fr);gap:6px;min-height:60px; }
+  .playerRow { grid-template-columns:38px minmax(0,1fr);gap:7px;min-height:60px;padding-right:70px; }
   .playerRow strong { font-size:13px; }
   .representativePerson>span { display:none; }
   .representativeHeading { display:grid; }
@@ -294,4 +339,52 @@
   .room[data-opening=true] .footer { padding-top:7px; }
   .room[data-opening=true] .footer .maps>div { padding:5px 12px; }
   .room[data-opening=true] .meta summary { min-height:32px; }
+}
+
+/* Compact desktop spacing; the document must scroll when content exceeds the viewport. */
+@media(min-width:1181px) {
+  .room[data-opening=true] {
+    height:auto;
+    min-height:100dvh;
+    max-height:none;
+    overflow:visible;
+    padding:8px 16px 6px;
+    gap:5px;
+  }
+  .room[data-opening=true] .workspace {
+    min-height:0;
+    overflow:visible;
+    grid-template-columns:minmax(230px,.9fr) minmax(390px,2.25fr) minmax(230px,.9fr);
+    gap:8px;
+  }
+  .room[data-opening=true] .team {
+    min-height:0;
+    max-height:100%;
+    overflow:auto;
+    scrollbar-width:thin;
+  }
+  .room[data-opening=true] .center {
+    min-height:0;
+    overflow:visible;
+    gap:6px;
+  }
+  .room[data-opening=true] .communication {
+    min-height:240px;
+    height:240px;
+    flex:0 0 240px;
+  }
+  .room[data-opening=true] .task {
+    min-height:0;
+    overflow:auto;
+  }
+
+  .room[data-opening=true] .playerRow {
+    min-height:42px;
+    padding-block:5px;
+  }
+
+  .room[data-opening=true] .playerIdentity strong,
+  .room[data-opening=true] .playerIdentity code {
+    font-size:11px;
+  }
 }

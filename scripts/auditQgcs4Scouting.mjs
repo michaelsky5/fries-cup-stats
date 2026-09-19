@@ -149,7 +149,7 @@ export async function loadResearchEngine({ gate = PRIMARY_GATE, subroleGate = { 
   assert.ok(report.includes(OPPONENT_URL.href), 'Opponent import changed')
   report = report.replace(OPPONENT_URL.href, opponentUrl)
   const [model, opponentModel] = await Promise.all([import(dataModule(report)), import(opponentUrl)])
-  return { model, opponentModel, fingerprint: { report: hash(reportSource), opponent: hash(opponentSource) } }
+  return { model, opponentModel, fingerprint: { report: hash(reportSource.replace(/\r\n/g, '\n')), opponent: hash(opponentSource.replace(/\r\n/g, '\n')) } }
 }
 
 export function evidenceSeparatedDiagnostic(player, weights) {

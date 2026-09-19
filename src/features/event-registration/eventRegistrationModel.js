@@ -30,21 +30,10 @@ export function buildManagerApplicationQueue(applications) {
   }
 }
 
-const MANAGER_REGISTRATION_LABELS = {
-  DRAFT: '报名草稿',
-  SUBMITTED: '报名审核中',
-  APPROVED: '报名已通过',
-  LOCKED: '赛事关系已锁定',
-  REJECTED: '报名已退回',
-  WITHDRAWN: '报名已撤回'
-}
+import { EVENT_REGISTRATION_STATUS, EVENT_ROSTER_STATUS } from '../my-space/myEventsModel.js'
 
-const MANAGER_ROSTER_LABELS = {
-  DRAFT: '名单草稿',
-  SUBMITTED: '名单审核中',
-  LOCKED: '正式名单已锁定',
-  REJECTED: '名单已退回'
-}
+const MANAGER_REGISTRATION_LABELS = EVENT_REGISTRATION_STATUS
+const MANAGER_ROSTER_LABELS = EVENT_ROSTER_STATUS
 
 export function buildManagerTeamOperationsView(item = {}) {
   const registration = item?.registration || null

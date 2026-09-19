@@ -366,7 +366,8 @@ export const SEASONS = [
 
 // Only the isolated weekly design server exposes this fictional public snapshot.
 if (import.meta.env?.DEV && import.meta.env?.VITE_WEEKLY_PREVIEW === '1') {
-  SEASONS.push({
+  const weeklySeason = SEASONS.find(season => season.id === 'FCW26')
+  Object.assign(weeklySeason, {
     id: 'FCW26', publicCode: 'FCW2026', kind: 'OFFICIAL', lifecycle: 'ACTIVE', competitionFormat: 'WEEKLY',
     name: { zh: '2026 薯条杯周赛', en: 'Fries Cup Weekly 2026' },
     localDataUrl: '/__weekly-overview/data.json', preferLocalData: true, reviewEnabled: false,

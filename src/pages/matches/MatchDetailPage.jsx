@@ -247,7 +247,7 @@ export default function MatchDetailPage() {
 
   const showResultSections = dossier.state.canShowResults && !dossier.state.isForfeit
   const showMaps = !dossier.state.isForfeit && dossier.hasMapRecords
-  const roomPath = withSeason(`/matches/${encodeURIComponent(dossier.internalId || matchId)}/room`)
+  const roomPath = dossier.roomPath ? withSeason(dossier.roomPath) : null
 
   if (isKprHybridDesign) return <SignalMatchDetail
     dossier={dossier} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason}
@@ -264,7 +264,7 @@ export default function MatchDetailPage() {
         <button type="button" className={styles.posterBack} onClick={handleBack}>← {backLabel}</button>
         <div className={styles.detailActions}>
           <button type="button" className={styles.textButton} onClick={handleCopyLink}>{isEn ? 'Copy link' : uiText("复制链接", locale)}</button>
-          <Link className={styles.roomActionLink} to={roomPath}>{isEn ? 'Match room' : uiText("比赛房间", locale)} ↗</Link>
+          {roomPath && <Link className={styles.roomActionLink} to={roomPath}>{isEn ? 'Match room' : uiText("比赛房间", locale)} ↗</Link>}
         </div>
       </div>
       {copyMessage ? <p className={styles.copyFeedback} role="status">{copyMessage}</p> : null}

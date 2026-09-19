@@ -637,14 +637,14 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     statusLabel: state.isReview ? '结果待审核' : state.isForfeit ? '弃权' : state.isRuling ? '判定结束' : getMatchStatusText(match),
     statusEn: state.isReview ? 'UNDER REVIEW' : state.isRuling ? 'BY RULING' : state.isComplete ? 'COMPLETED' : state.isLive ? 'LIVE' : state.isCancelled ? 'CANCELLED' : state.isPostponed ? 'POSTPONED' : 'PENDING',
     scoreLabel: state.canShowResults ? `${formatScore(match?.team_a?.score)} : ${formatScore(match?.team_b?.score)}` : 'VS',
-    winnerSide: (state.isComplete || state.isForfeit || state.isRuling) && !state.isCancelled && !state.isPostponed ? getMatchWinnerSide(match) : '',
+    winnerSide: (state.isComplete || state.isForfeit || state.isRuling) && !state.isCancelled && !state.isPostponed ? getMatchWinnerSide(match, state) : '',
     hasSeriesScore: state.canShowResults,
     mapCountLabel,
     totalDurationLabel,
     internalId: cleanText(match?.match_id || match?.raw_match_id),
     roomPath: state.isWeekly
       ? match?.raw_match_id ? `/me/matches/${encodeURIComponent(match.raw_match_id)}/room` : '/me?section=matches'
-      : `/matches/${encodeURIComponent(match?.match_id || match?.raw_match_id)}/room`,
+      : null,
     rawDisplayName: cleanText(match?.match_display_name),
     metaItems: [
       { key: 'stage', label: '阶段', en: 'STAGE', value: cleanText(match?.stage) || '—' },

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import EventRegistrationWorkspace from '../../features/event-registration/EventRegistrationWorkspace.jsx'
+import SeasonRegistrationEntry from '../../features/event-registration/SeasonRegistrationEntry.jsx'
 import {
   CasterWorkspace,
   GeneralSpaceOverview,
@@ -21,7 +21,7 @@ import {
 import styles from './AccountDesignPreviewPage.module.css'
 import spaceStyles from '../me/MySpacePage.module.css'
 import SpaceOverview, { SpaceIdentity } from '../../features/account-ui/SpaceOverview.jsx'
-import MatchRoomDesignPreview from './MatchRoomDesignPreview.jsx'
+import WeeklyRoomDesignPreview from './WeeklyRoomDesignPreview.jsx'
 
 const VIEW_OPTIONS = [
   { id: 'overview', label: '身份空间首页' },
@@ -49,8 +49,8 @@ function PreviewSurface({ scenarioId, viewId, identityType }) {
     if (next.overview.nextTeamMatch) next.overview.nextTeamMatch.scheduledAt = kickoff
     for (const team of next.teamContexts || []) for (const match of team.matches || []) match.scheduledAt = kickoff
     next.overview.tasks = ['MANAGER', 'MULTI'].includes(identityType)
-      ? [{ id: 'lineup', title: '确认本队首发名单', priority: 'HIGH', identityType: 'MANAGER', dueAt: kickoff, actionUrl: '/matches/DESIGN-PREVIEW/room' }]
-      : identityType === 'PLAYER' ? [{ id: 'check-in', title: '查看本队比赛安排并签到', priority: 'HIGH', identityType: 'PLAYER', dueAt: kickoff, actionUrl: '/matches/DESIGN-PREVIEW/room' }]
+      ? [{ id: 'lineup', title: '确认本队首发名单', priority: 'HIGH', identityType: 'MANAGER', dueAt: kickoff, actionUrl: '/dev/weekly-room-preview' }]
+      : identityType === 'PLAYER' ? [{ id: 'check-in', title: '查看本队比赛安排并签到', priority: 'HIGH', identityType: 'PLAYER', dueAt: kickoff, actionUrl: '/dev/weekly-room-preview' }]
         : ['REFEREE', 'CASTER'].includes(identityType) ? [{ id: 'assignment', title: '确认下一轮执赛安排', priority: 'NORMAL', identityType, actionUrl: `/me?section=${identityType.toLowerCase()}` }] : []
     if (identityType === 'MULTI') next.overview.tasks.push({ id: 'staff', title: '确认下一轮执赛安排', priority: 'NORMAL', identityType: 'CASTER', actionUrl: '/me?section=caster' })
     next.overview.openTaskCount = next.overview.tasks.length
@@ -80,7 +80,7 @@ function PreviewSurface({ scenarioId, viewId, identityType }) {
     setNavigationNotice('设计预览：页面跳转已拦截。可使用上方“预览页面”切换当前区域。')
   }
 
-  if (viewId === 'room') return <MatchRoomDesignPreview />
+  if (viewId === 'room') return <WeeklyRoomDesignPreview />
 
   return (
     <main data-design="signal" className={styles.previewSurface} onClickCapture={interceptApplicationNavigation}>
@@ -89,13 +89,13 @@ function PreviewSurface({ scenarioId, viewId, identityType }) {
         <SpaceIdentity context={context} />
         <SpaceTabs activeSection={activeSection} withSeason={withSeason} sections={sections} overview={context.overview} />
         {viewId === 'overview' ? <SpaceOverview context={context} sections={sections} withSeason={withSeason} managerStatus={isManager ? managerStatus : null} playerStatus={isPlayer ? playerStatus : null} /> : null}
-        {viewId === 'workspace' && isManager ? <EventRegistrationWorkspace seasonId="FCR26" existingTeams={fixture.existingTeams} identities={fixture.identities} teamContexts={fixture.teamContexts} previewData={fixture.eventRegistration} /> : null}
+        {viewId === 'workspace' && isManager ? <SeasonRegistrationEntry seasonId="FCR26" withSeason={withSeason} className={styles.previewUnsupported} /> : null}
         {viewId === 'workspace' && identityType === 'REFEREE' ? <RefereeWorkspace context={fixture.spaceContext} withSeason={withSeason} preview /> : null}
         {viewId === 'workspace' && identityType === 'CASTER' ? <CasterWorkspace context={fixture.spaceContext} withSeason={withSeason} preview /> : null}
         {viewId === 'workspace' && ['PLAYER', 'COACH'].includes(identityType) ? <MyEventsPanel context={fixture.spaceContext} withSeason={withSeason} /> : null}
         {viewId === 'workspace' && identityType === 'VIEWER' ? <GeneralSpaceOverview context={fixture.spaceContext} withSeason={withSeason} /> : null}
         {viewId === 'team' && (isManager || ['PLAYER', 'COACH'].includes(identityType)) ? (isManager
-          ? <EventRegistrationWorkspace seasonId="FCR26" existingTeams={fixture.existingTeams} identities={fixture.identities} teamContexts={fixture.teamContexts} previewData={fixture.eventRegistration} />
+          ? <SeasonRegistrationEntry seasonId="FCR26" withSeason={withSeason} className={styles.previewUnsupported} />
           : <MyEventsPanel context={fixture.spaceContext} withSeason={withSeason} />) : null}
         {viewId === 'team' && !isManager && !['PLAYER', 'COACH'].includes(identityType) ? <section className={styles.previewUnsupported}><span>CONDITIONAL ENTRY</span><strong>当前身份没有队伍工作区</strong><p>真实页面同样不会向该身份显示“队伍与名单”入口。</p></section> : null}
       </div>

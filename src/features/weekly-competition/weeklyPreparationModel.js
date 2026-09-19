@@ -23,7 +23,7 @@ export function weeklyTeamDestination(cycleId, entryId, weekId, step) {
 }
 
 export function getWeeklyFocusStep(plan, requestedStep) {
-  const steps = ['core', 'participation', 'roster']
+  const steps = plan?.stages?.map(stage => stage.key) || ['participation', 'roster']
   if (requestedStep && !steps.includes(requestedStep)) return null
   return requestedStep || plan?.next?.key || plan?.stages?.find(stage => ['blocked', 'waiting'].includes(stage.state))?.key || 'roster'
 }
@@ -60,14 +60,16 @@ export function isWeeklyPreparationWorkspace(workspace, seasonId, userId) {
 function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
   const week = record?.week
   const participation = record?.participation
+  const rules = cycle.rules || {}
+  const fixedCore = rules.rosterContinuityMode === 'FIXED_CORE'
   const team = entry.team || {}
   const teamAccess = workspace.teams.find(item => item.team?.id === (entry.seasonTeamId || team.id))
   const terminal = TERMINAL.has(cycle.status) || TERMINAL.has(week?.status) || workspace.season.status === 'ARCHIVED' || (entry.status && entry.status !== 'ACTIVE')
   const writable = !readOnly && !terminal && workspace.accessMode === 'WRITE' && entry.accessMode === 'WRITE'
     && teamAccess?.accessMode === 'WRITE' && ['LEADER', 'MANAGER'].includes(teamAccess.role)
   const window = weeklyConfirmationWindow(week, now)
-  const core = entry.coreSelections?.find(item => item.status === 'LOCKED')
-  const coreDraft = entry.coreSelections?.find(item => item.status === 'DRAFT')
+  const core = fixedCore ? entry.coreSelections?.find(item => item.status === 'LOCKED') : null
+  const coreDraft = fixedCore ? entry.coreSelections?.find(item => item.status === 'DRAFT') : null
   const roster = participation?.rosters?.find(item => item.status === 'LOCKED')
     || participation?.rosters?.find(item => ['DRAFT', 'SUBMITTED'].includes(item.status))
   const confirmed = participation?.status === 'CONFIRMED'
@@ -81,13 +83,13 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
       : window === 'unknown' ? '确认时间尚未同步，请刷新后核对。'
         : window === 'missing' ? '周次公布后显示当周确认与名单。' : '确认窗口尚未开放。'
   const stages = [
-    {
+    ...(fixedCore ? [{
       key: 'core', title: '周期核心',
       state: core ? 'done' : terminal ? 'quiet' : cycle.status === 'REGISTRATION' ? writable ? 'action' : 'waiting' : 'blocked',
       label: core ? '已锁定' : coreDraft ? '草稿待锁定' : '尚未登记',
       detail: core ? `${members(core).length} 人 · 核心名单已锁定`
         : terminal ? terminalDetail : cycle.status === 'REGISTRATION' ? `${owner}，选定核心后确认锁定。` : '需要周赛管理员核对核心名单。'
-    },
+    }] : []),
     {
       key: 'participation', title: '当周参赛',
       state: confirmed ? 'done' : declined || terminal ? 'quiet' : window === 'open' ? writable ? 'action' : 'waiting' : window === 'closed' ? 'blocked' : 'waiting',
@@ -102,7 +104,7 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
       key: 'roster', title: '出赛名单',
       state: declined ? 'quiet' : roster?.status === 'LOCKED' ? 'done' : terminal ? 'quiet'
         : !confirmed ? 'waiting' : roster?.status === 'SUBMITTED' ? 'waiting'
-          : window === 'closed' ? 'blocked' : window === 'open' && core && writable ? 'action' : 'waiting',
+          : window === 'closed' ? 'blocked' : window === 'open' && (!fixedCore || core) && writable ? 'action' : 'waiting',
       label: declined ? '本周无需提交' : roster?.status === 'LOCKED' ? '管理员已锁定'
         : terminal ? roster?.status === 'SUBMITTED' ? '已提交 · 未锁定' : '未提交正式名单'
           : !confirmed ? window === 'closed' ? '本周未提交' : '确认参赛后开放' : roster?.status === 'SUBMITTED' ? '已提交 · 等待锁定'
@@ -110,8 +112,8 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
       detail: declined ? '不计入本周参赛准备。' : roster?.status === 'LOCKED' ? `${members(roster).length} 人 · 正式名单已锁定`
         : terminal ? terminalDetail : !confirmed ? window === 'closed' ? '未完成当周参赛确认，名单未提交。' : '由队长或经理确认参赛后，继续准备名单。'
           : roster?.status === 'SUBMITTED' ? `${members(roster).length} 人 · 等待周赛管理员锁定。`
-            : terminal || window !== 'open' ? windowDetail
-              : !core ? '先完成周期核心锁定，再提交本周名单。'
+              : terminal || window !== 'open' ? windowDetail
+                : fixedCore && !core ? '先完成周期核心锁定，再提交本周名单。'
                 : `${roster ? `已保存 ${members(roster).length} 人，` : ''}${writable ? '核对后正式提交；保存草稿不会完成此步骤。' : '等待队长或经理提交名单。'}`
     }
   ].map(stage => ({ ...stage, actionUrl: weeklyTeamDestination(cycle.id, entry.id, week?.id, stage.key) }))
@@ -122,8 +124,8 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
     : declined ? participation.status === 'WITHDRAWN' ? '已撤回当周参赛' : '本周不参赛' : next ? `下一步：${next.title}`
       : issue ? '需要管理员协助' : readyForSchedule ? '本周名单准备已完成'
         : roster?.status === 'SUBMITTED' ? '等待管理员锁定名单' : !week ? '等待周次公布'
-          : window === 'unknown' ? '确认状态待同步' : window === 'upcoming' ? '等待确认窗口开放'
-            : !core ? '等待队长或经理锁定核心' : !confirmed ? '等待队长或经理确认参赛' : '等待队长或经理提交名单'
+            : window === 'unknown' ? '确认状态待同步' : window === 'upcoming' ? '等待确认窗口开放'
+            : fixedCore && !core ? '等待队长或经理锁定核心' : !confirmed ? '等待队长或经理确认参赛' : '等待队长或经理提交名单'
   const guidance = terminal ? { label: '记录状态', detail: terminalDetail }
     : declined ? { label: '当前安排', detail: window === 'open' ? `本周无需提交名单。${writable ? '如计划有变，可在截止前调整参赛意向。' : '如计划有变，请联系队长或经理。'}` : `本周无需提交名单。${windowDetail}` }
       : issue ? { label: '需要协助', detail: issue.key === 'core' ? '可在下方队伍准备页提交问题，由赛管核对周期核心名单。' : '确认期已结束，可在队伍准备页提交问题并跟踪处理。' }

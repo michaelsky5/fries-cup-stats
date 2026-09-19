@@ -166,7 +166,7 @@ export default function FollowingAccountBar({
             <Link to={withSeason(`/teams/${encodeURIComponent(teamRouteId)}`)}>{uiText("我的队伍", locale)}</Link>
           ) : null}
           {['MANAGER', 'COACH'].includes(identityType) && nextMatchId ? (
-            <Link to={withSeason(`/matches/${encodeURIComponent(nextMatchId)}/room`)}>{uiText("下一场比赛房", locale)}</Link>
+            <Link to={withSeason(`/matches/${encodeURIComponent(nextMatchId)}`)}>{uiText("下一场比赛资料", locale)}</Link>
           ) : null}
           {['CASTER', 'REFEREE'].includes(identityType) ? (
             <Link to={withSeason('/matches')}>{uiText("查看赛事列表", locale)}</Link>

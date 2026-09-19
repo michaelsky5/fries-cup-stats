@@ -1,0 +1,97 @@
+.viewport.viewport { max-width:none;min-height:100dvh;padding:12px 18px;gap:8px; }
+.columns { display:grid;grid-template-columns:minmax(190px,230px) minmax(0,1fr) minmax(190px,230px);gap:12px;flex:1;min-height:0; }
+.center { min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px; }
+.team { min-width:0;display:flex;flex-direction:column;border:1px solid var(--line);background:var(--fc-data-room-surface); }
+.team>header { padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:3px 8px;border-top:3px solid var(--fc-data-room-action-bg);border-bottom:1px solid var(--line); }
+.team>header>small { grid-column:1/-1;font-size:9px;letter-spacing:.16em; }
+.team>header>h2 { font-size:22px;line-height:1.15;overflow-wrap:anywhere; }
+.team>header>span { grid-column:1/-1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;color:var(--muted); }
+.rosterLabel { padding:7px 10px 4px;display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--muted); }
+.rosterLabel strong { color:var(--text);font-size:11px; }
+.rosterLabel small { font-size:9px; }
+.roster { padding:0 10px; }
+.person { display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:6px;align-items:center;min-height:40px;padding:5px 0;border-bottom:1px solid var(--line); }
+.role { display:grid;place-items:center;font-size:11px;font-weight:800;min-height:27px;background:var(--fc-data-room-inset); }
+.person[data-role=DPS] .role { border-left:2px solid #b66235; }.person[data-role=TANK] .role { border-left:2px solid #397f93; }.person[data-role=SUP] .role { border-left:2px solid #648654; }
+.identity { display:grid;min-width:0;gap:1px; }.identity b { font-size:12px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }.identity small { font-size:9px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.viewport .person button { font-size:10px;padding:3px 5px;min-height:28px; }.person[data-check-in=PRESENT] button,.person[data-check-in=PRESENT]>small { color:var(--fc-data-room-success); }
+.team>footer { display:grid;gap:2px;margin-top:auto;padding:9px 10px;background:var(--fc-data-room-inset);border-top:1px solid var(--line); }
+.team>footer strong { font-size:11px; }.team>footer small { font-size:9px; }.team>footer[data-ready=true] strong { color:var(--fc-data-room-success); }
+.viewport [data-room-slot=representative] { margin:0;padding:8px 10px;border-inline:0;border-bottom:1px solid var(--line);background:transparent; }
+.viewport [data-room-slot=representative]>div:first-child { gap:5px; }.viewport [data-room-slot=representative]>div:first-child small { font-size:9px; }
+.viewport [data-room-slot=representative]>div:first-child button { min-height:24px;padding:2px 5px;font-size:10px; }.viewport [data-room-slot=representative] em { font-size:9px; }
+.viewport [data-room-slot=representative]>div:nth-child(2) { padding-top:3px;gap:2px; }.viewport [data-room-slot=representative]>div:nth-child(2) strong { font-size:12px; }.viewport [data-room-slot=representative]>div:nth-child(2) small { font-size:9px; }
+.viewport [data-room-slot=header] { min-height:48px;padding:0 0 8px;gap:16px;grid-template-columns:180px minmax(0,1fr) 230px; }
+.viewport [data-room-slot=facts] { min-height:28px;padding:0 0 6px;font-size:11px; }
+.viewport [data-room-slot=series] { padding:0;min-height:50px;gap:12px; }
+.viewport [data-room-slot=series] ol { min-height:46px;gap:6px; }.viewport [data-room-slot=series] li>button,.viewport [data-room-slot=series] li>div { min-height:46px;padding:5px 8px; }.viewport [data-room-slot=series] li small { font-size:9px; }
+.viewport [data-room-slot=stages] { margin:0;min-height:42px;flex:none;gap:2px;padding:0; }
+.viewport [data-room-slot=stages] button { min-height:40px;padding:4px 3px;font-size:11px;gap:3px;line-height:1.3; }
+.viewport [data-room-slot=stages] button>span:first-child { font-size:10px; }
+.viewport [data-room-slot=stage-summary] { margin:0;font-size:11px; }
+.center>section[aria-label="首发确认"] { flex:1;min-height:0;gap:8px;padding:14px 16px; }
+.lineupEditor { display:flex;flex-direction:column;gap:8px;min-height:0; }
+.lineupEditor>header { display:flex;justify-content:space-between;gap:12px;align-items:center;padding:6px 0;font-size:13px;border-bottom:1px solid var(--line); }.lineupEditor>header span { font-size:11px;color:var(--muted); }
+.lineupChoices { display:grid;grid-template-columns:1fr 1fr;gap:6px; }
+.lineupChoices>div { display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px;border:1px solid var(--line);background:var(--fc-data-room-inset);min-width:0; }
+.lineupChoices>div[data-selected=true] { border-color:var(--fc-data-room-accent);background:var(--fc-data-room-selection); }
+.lineupChoices label { display:flex;gap:7px;align-items:center;min-width:0;cursor:pointer; }.lineupChoices input { width:16px;height:16px;accent-color:var(--fc-data-ink,#181a17); }.lineupChoices label>span { display:grid;min-width:0; }.lineupChoices b { font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }.lineupChoices small { font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.viewport .lineupChoices select { font-size:11px;padding:5px;min-height:31px;max-width:112px; }
+.lobbyOrder { display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px; }.lobbyOrder>div { display:grid;gap:4px;padding:8px;background:var(--fc-data-room-inset);border-bottom:2px solid var(--fc-data-room-warning);min-width:0; }.lobbyOrder>div[data-valid=true] { border-color:var(--fc-data-room-success); }.lobbyOrder b { font-size:11px; }.lobbyOrder span { font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; }
+.lineupEditor>footer { display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:6px; }.lineupEditor>footer small { font-size:11px; }.lineupEditor>footer button { background:var(--fc-data-room-action-bg);color:var(--fc-data-room-action-text);font-size:12px;white-space:nowrap; }
+.waiting { display:grid;gap:12px;align-content:center;flex:1;padding:30px 20px;background:var(--fc-data-room-inset); }.waiting strong { font-size:18px; }
+.toolbar { display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;min-height:32px;flex:none; }.toolbar>div { display:flex;align-items:center;gap:8px; }.viewport .toolbar button { min-height:30px;padding:4px 9px;font-size:11px; }.toolbar>a,.toolbar>div>a { padding:4px 0 4px 8px;font-size:11px; }
+.panelDialog { width:min(960px,calc(100vw - 40px));max-height:calc(100dvh - 40px);padding:0;background:var(--fc-data-room-surface);color:var(--text);border:1px solid var(--line); }
+.panelDialog::backdrop { background:var(--fc-data-room-scrim); }.panelDialog>header { display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 18px;border-bottom:1px solid var(--line); }.panelDialog>header h2 { font-size:18px; }.panelBody { padding:16px;max-height:calc(100dvh - 120px);overflow:auto; }.panelBody>section { min-height:0; }.panelBody>details { padding:10px 0; }.panelBody :is(input,textarea,select) { max-width:100%; }.panelBody [id=room-communication] { height: min(620px,calc(100dvh - 170px));min-height:300px; }
+@media(min-width:1180px) and (min-height:640px) {
+  .viewport.viewport { height:calc(100dvh - var(--room-preview-toolbar,0px));min-height:0;max-height:calc(100dvh - var(--room-preview-toolbar,0px));padding:10px 16px;gap:7px; }
+  .columns { grid-template-columns:clamp(190px,17.2vw,260px) minmax(0,1fr) clamp(190px,17.2vw,260px); }
+  .center>section { flex:1;min-height:0; }.center>div:not([role=status]) { flex:none; }
+  .center>section[aria-label="当前任务"] { align-content:center; }
+  .viewport [data-room-slot=opening] { min-height:0;display:flex;flex-direction:column; }
+}
+@media(min-width:1180px) and (max-height:800px) {
+  .viewport.viewport { padding:8px 12px;gap:5px; }.columns { gap:10px; }.person { min-height:35px;padding:3px 0; }.team>header { padding:7px 10px; }.team>header h2 { font-size:19px; }.rosterLabel { padding-top:5px; }.team>footer { padding:6px 10px; }.viewport [data-room-slot=representative] { padding:6px 10px; }
+  .viewport [data-room-slot=header] { min-height:44px;padding-bottom:5px; }.viewport [data-room-slot=facts] { min-height:23px;padding-bottom:3px; }.viewport [data-room-slot=series] { min-height:42px; }.viewport [data-room-slot=series] li>button,.viewport [data-room-slot=series] li>div { min-height:42px;padding:3px 6px; }
+  .center>section[aria-label="首发确认"] { padding:10px 12px;gap:6px; }.lineupChoices>div { padding:5px 7px; }.lineupEditor { gap:6px; }.lobbyOrder>div { padding:6px; }.lineupEditor>header { padding:3px 0; }
+}
+@media(max-width:1179px) {
+  .columns { grid-template-columns:minmax(160px,1fr) minmax(0,2.5fr) minmax(160px,1fr);gap:8px; }.viewport.viewport { padding:12px; }.viewport [data-room-slot=header] { grid-template-columns:150px minmax(0,1fr) 180px;gap:10px; }.lineupChoices { grid-template-columns:1fr; }.toolbar { flex-wrap:wrap; }
+}
+@media(max-width:900px) {
+  .columns { grid-template-columns:1fr 1fr; }.center { grid-column:1/-1;grid-row:1; }.team { grid-row:2; }.viewport [data-room-slot=header] { grid-template-columns:1fr auto; }.viewport [data-room-slot=header]>div:first-of-type { grid-column:1/-1;grid-row:2; }.viewport [data-room-slot=header]>div:last-child { width:auto; }.viewport [data-room-slot=facts] { flex-wrap:wrap; }.viewport [data-room-slot=stages] { display:grid;grid-template-columns:repeat(4,minmax(0,1fr)); }.lineupChoices { grid-template-columns:1fr 1fr; }.toolbar>div { flex-wrap:wrap; }.panelDialog { width:calc(100vw - 24px); }.viewport [data-room-slot=series] { display:block; }.viewport [data-room-slot=series] ol { margin-top:6px;overflow-x:auto; }
+}
+@media(max-width:540px) {
+  .viewport.viewport { padding:10px; }.columns { grid-template-columns:1fr; }.team { grid-row:auto; }.center { grid-row:1; }.lineupChoices { grid-template-columns:1fr; }.lobbyOrder { gap:3px; }.lobbyOrder>div { padding:5px; }.lineupEditor>footer { flex-direction:column;align-items:stretch; }.toolbar>span { width:100%; }.toolbar>div { gap:6px; }.viewport .toolbar button { min-height:40px; }.team>header h2 { font-size:24px; }.person { min-height:44px; }.identity b { font-size:14px; }.identity small { font-size:11px; }.panelBody { padding:10px; }.viewport [data-room-slot=header] { gap:8px; }.viewport [data-room-slot=header]>a { max-width:150px; }.viewport [data-room-slot=header]>div:last-child { max-width:145px; }.viewport [data-room-slot=facts]>div { flex-wrap:wrap; }
+}
+.preflight { padding:10px 12px;background:var(--fc-data-room-inset);border:1px solid var(--line);display:grid;gap:8px; }.preflight strong { font-size:12px; }.preflight>div { display:flex;flex-wrap:wrap;gap:6px 14px; }.preflight label { display:flex;align-items:center;gap:6px;font-size:11px; }.preflight input { width:15px;height:15px;accent-color:var(--fc-data-signal); }.viewport .preflight button { justify-self:end;min-height:30px;padding:4px 9px;font-size:11px; }
+@media(min-width:1180px) and (max-height:760px) {
+  .viewport .center>section[aria-label="当前任务"] { align-content:start; }
+  .viewport .person { min-height:26px;padding:1px 0; }.viewport .role { min-height:22px; }
+  .viewport .identity { gap:0; }.viewport .identity b { line-height:1.15; }.viewport .identity small { line-height:1.1; }
+  .viewport .person button { min-height:22px;padding:1px 4px; }
+  .viewport .lineupChoices input { min-height:16px; }
+  .viewport .lineupChoices b,.viewport .lineupChoices small { line-height:1.2; }
+  .viewport .lineupChoices>div { padding-block:2px; }
+  .viewport [data-room-slot=representative] { gap:1px;padding:4px 8px; }
+  .viewport [data-room-slot=representative]>div:nth-child(2) { line-height:1.2; }
+  .preflight { grid-template-columns:1fr auto;padding:6px 10px;gap:4px;align-items:center; }
+  .preflight>div { grid-column:1/-1;grid-row:2;gap:4px 12px; }
+  .viewport .preflight button { grid-column:2;grid-row:1;min-height:26px; }
+  .viewport .preflight input { padding:0;min-height:15px; }
+}
+@media(min-width:1180px) and (min-height:640px) {
+  .columns { grid-template-rows:minmax(0,1fr); }
+  .viewport [data-room-slot=stages] { height:42px;grid-template-rows:42px; }
+  .viewport [data-room-slot=stages] li { min-height:0; }
+  .viewport [data-room-slot=stages] li button { height:42px;min-height:0; }
+}
+@media(min-width:1180px) and (max-height:800px) {
+  .person { min-height:31px;padding:2px 0; }
+  .team>header { padding:5px 10px;gap:2px 8px; }
+  .team>header>small { line-height:1.2; }.team>header>span { line-height:1.2; }
+  .rosterLabel { padding:4px 8px 2px;font-size:9px;line-height:1.2; }.rosterLabel strong { font-size:10px; }
+  .viewport [data-room-slot=representative] { padding:5px 8px; }
+  .team>footer { padding:5px 8px; }.team>footer strong { line-height:1.3; }.team>footer small { line-height:1.3; }
+  .lineupChoices>div { padding:3px 7px; }.lineupEditor>footer { padding-top:2px; }.lineupEditor { gap:5px; }
+}

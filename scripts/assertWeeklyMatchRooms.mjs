@@ -136,6 +136,8 @@ const apiSource = read('../src/features/weekly-competition/weeklyMatchRoomsApi.j
 const workspaceSource = read('../src/features/weekly-competition/WeeklyMatchRoomsWorkspace.jsx')
 const dialogSource = read('../src/features/weekly-competition/WeeklyMatchResponseDialog.jsx')
 const mySpaceSource = read('../src/pages/me/MySpacePage.jsx')
+const liveRoomSource = read('../src/features/weekly-competition/WeeklyLiveRoomPage.jsx')
+const roomRulesSource = read('../src/features/weekly-competition/RoomRulesPanel.jsx')
 assert.match(apiSource, /\/me\/weekly-match-rooms\?seasonId=/)
 assert.match(apiSource, /\/me\/weekly-match-rooms\/\$\{encodeURIComponent\(matchId\)\}\/confirmation/)
 assert.match(apiSource, /method: 'PUT'/)
@@ -152,6 +154,14 @@ assert.doesNotMatch(workspaceSource, /response\?\.note|response\.note|response\.
 assert.match(dialogSource, /dialog\.showModal\(\)/)
 assert.match(dialogSource, /aria-labelledby=\{titleId\}/)
 assert.match(dialogSource, /pending\.input\.expectedRevision/)
+assert.match(liveRoomSource, /\/check-ins/)
+assert.match(liveRoomSource, /签到/)
+assert.match(liveRoomSource, /缺席/)
+assert.match(liveRoomSource, /最终开赛确认由赛管完成/)
+assert.match(liveRoomSource, /checkInSummary/)
+assert.match(roomRulesSource, /实际游戏 1V1/)
+assert.match(roomRulesSource, /图一固定为占领要点/)
+assert.match(read('../src/features/weekly-competition/WeeklyLiveRoomPage.module.css'), /checkInRow/)
 const sectionKeys = ['overview', 'tasks', 'events', 'matches', 'team', 'referee', 'caster', 'stats', 'following', 'communications', 'security']
 const sectionSource = mySpaceSource.match(/export function buildSpaceSections\([\s\S]*?\n\}/)?.[0]
 assert.ok(sectionSource, 'My Space section builder exists')
@@ -168,3 +178,6 @@ assert.match(mySpaceSource, /<WeeklyMatchRoomsWorkspace key=\{`\$\{seasonId\}:\$
 assert.match(mySpaceSource, /readOnly=\{!canWriteMatchRooms\}/)
 
 console.log('Weekly match-room payload, role/state gates, privacy, deep links, and account integration checks passed.')
+
+assert.equal(buildSections({ registration: true, launch: { features: { teamOperations: 'WRITE' } } }).some(section => section.id === 'team'), true, 'a new registrant can discover the canonical entry without a verified team identity')
+assert.equal(buildSections({ registration: true, launch: { features: { teamOperations: 'HIDDEN' } } }).some(section => section.id === 'team'), false)

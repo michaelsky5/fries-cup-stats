@@ -449,7 +449,7 @@ assert.equal(mySpacePageSource.includes("closest('details')?.removeAttribute('op
 assert.equal(/<SpaceIdentity\b[^>]*context=\{effectiveSpaceContext\}/.test(mySpacePageSource), true, 'all account identities must use one compact space header')
 assert.equal(identityPanelSource.includes("withSeason('/me?section=team')}>赛程协商"), false, 'match scheduling actions must stay inside My Matches')
 assert.equal(identityPanelSource.includes('/me?section=matches#schedule-negotiation'), true, 'match scheduling actions must target the on-page workspace')
-assert.equal(identityPanelSource.includes('nextMatch.roomAccess.canEnter'), true, 'next match must expose the room lifecycle action')
+assert.doesNotMatch(identityPanelSource, /`\/matches\/[^`]*\/room`/, 'legacy summaries must not link to the retired room')
 assert.equal(identityPanelSource.includes('本届正式参赛资格已确认'), false, 'eligibility copy must come from the event model rather than be hard-coded into the page')
 assert.equal(identityPanelSource.includes('PLAYER EVENT ARCHIVE'), true, 'player events must expose a read-only season archive')
 assert.equal(identityPanelSource.includes('OFFICIAL APPEARANCE'), true, 'player eligibility must distinguish formal map appearances from roster membership')
