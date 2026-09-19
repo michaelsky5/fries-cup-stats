@@ -26,6 +26,9 @@ jobs:
       - name: Check account UI contracts
         run: npm run test:account-ui
 
+      - name: Check weekly public pages and media
+        run: npm run test:weekly-public-ui
+
       - name: Lint source files
         run: npm run lint
 

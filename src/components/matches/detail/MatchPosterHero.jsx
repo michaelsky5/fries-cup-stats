@@ -3,6 +3,7 @@ import { useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../TeamLogo.jsx'
 import styles from './matchDetailStyles.js'
+import { getScheduleStageLabel } from '../../../features/match-schedule/schedulePresentation.js'
 
 const POSTER_SHORT_MIN_FONT_SIZE = 28
 
@@ -75,7 +76,7 @@ function PosterTeam({ team, seasonId, winner, teamPath, returnState, onTeamNavig
   return (
     <div className={styles.posterTeam} data-winner={winner ? 'true' : 'false'}>
       <TeamLogo
-        team={{ id: team.id, short: team.short, name: team.full }}
+        team={team.logoTeam || { id: team.id, short: team.short, name: team.full }}
         seasonId={seasonId}
         teamShortName={team.short}
         teamName={team.full}
@@ -84,7 +85,7 @@ function PosterTeam({ team, seasonId, winner, teamPath, returnState, onTeamNavig
       />
       <div className={styles.posterTeamIdentity}>
         <TeamLogo
-          team={{ id: team.id, short: team.short, name: team.full }}
+          team={team.logoTeam || { id: team.id, short: team.short, name: team.full }}
           seasonId={seasonId}
           teamShortName={team.short}
           teamName={team.full}
@@ -169,7 +170,7 @@ export default function MatchPosterHero({
   t = (key, fallback) => fallback || key
 }) {
   const score = splitScore(dossier.scoreLabel)
-  const stage = dossier.match?.stage || 'MATCH'
+  const stage = dossier.state.isWeekly ? getScheduleStageLabel(dossier.match?.stage, locale) : dossier.match?.stage || 'MATCH'
   const round = dossier.match?.round || dossier.rawDisplayName || ''
   const winnerA = dossier.winnerSide === 'A'
   const winnerB = dossier.winnerSide === 'B'

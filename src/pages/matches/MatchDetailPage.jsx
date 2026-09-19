@@ -68,7 +68,7 @@ export default function MatchDetailPage() {
   const returnTo = sourceReturnState.returnTo
   const returnScrollY = sourceReturnState.returnScrollY
   const fallbackReturnTo = returnTo || withSeason('/matches')
-  const backLabel = getMySpaceReturnLabel(returnTo, locale) || (isKprHybridDesign ? getScheduleReturnLabel(returnTo, locale, { weekly: dossier?.match?.stage === 'WEEKLY' }) : '') || (returnTo?.startsWith('/teams') ? (isEn ? 'Back to team' : uiText("返回队伍档案", locale))
+  const backLabel = getMySpaceReturnLabel(returnTo, locale) || (isKprHybridDesign ? getScheduleReturnLabel(dossier?.state?.isWeekly ? fallbackReturnTo : returnTo, locale, { weekly: dossier?.state?.isWeekly }) : '') || (returnTo?.startsWith('/teams') ? (isEn ? 'Back to team' : uiText("返回队伍档案", locale))
     : returnTo?.startsWith('/staff/') ? (isEn ? 'Back to staff profile' : uiText('返回职员档案', locale))
     : returnTo?.startsWith('/advance') ? (isEn ? 'Back to advancement' : uiText("返回晋级形势", locale))
     : returnTo?.startsWith('/roster') ? (isEn ? 'Back to roster overview' : uiText("返回阵容总览", locale))

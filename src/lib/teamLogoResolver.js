@@ -111,6 +111,17 @@ function getDirectLogoValues(team) {
   ].map(text))
 }
 
+export function getPublishedTeamLogo(team) {
+  return getDirectLogoValues(team)[0] || ''
+}
+
+function getPublicLogoSources(source) {
+  // These immutable uploads are already public. Serve them through the same
+  // origin/cache as avatars, with the original URL retained as a fallback.
+  const match = source.match(/^https:\/\/admin\.fries-cup\.com(\/api\/media\/team-logos\/[a-f0-9]{24}\/[a-f0-9]{32}\.webp)$/)
+  return match ? [match[1].replace('/api/', '/api/platform/'), source] : [source]
+}
+
 function getTeamIdentityValues(team) {
   if (typeof team === 'string' || typeof team === 'number') return [text(team)]
   if (!team || typeof team !== 'object') return []
@@ -204,7 +215,7 @@ export function getTeamLogoCandidates(team, seasonLike) {
   const identityValues = getTeamIdentityValues(logoTeam)
 
   return unique([
-    ...getDirectLogoValues(logoTeam),
+    ...getDirectLogoValues(logoTeam).flatMap(getPublicLogoSources),
     ...directories.flatMap(directory => getCatalogMatches(directory, identityValues)),
     ...directories.flatMap(directory => getConventionCandidates(directory, identityValues)),
     ...(directories.length ? [] : getRootLegacyCandidates(identityValues)),

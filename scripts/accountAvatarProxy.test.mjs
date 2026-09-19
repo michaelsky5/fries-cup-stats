@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import { proxyRequest } from '../edge-functions/api/[[path]].js'
 const origin = 'https://hub-preview.fries-cup.com'
 const avatar = `/api/platform/media/avatars/${'a'.repeat(24)}/${'b'.repeat(32)}-96.webp`
+const teamLogo = `/api/platform/media/team-logos/${'a'.repeat(24)}/${'b'.repeat(32)}.webp`
 const request = (path, options) => new Request(origin + path, options)
 
 test('Pages response-header rules preserve public avatars and private account responses', async () => {
@@ -36,6 +37,31 @@ test('avatar caching omits credentials and caches only immutable WebP bytes', as
   const second = await proxyRequest(request(avatar), options)
   assert.equal(second.headers.get('x-fries-public-cache'), 'HIT'); assert.equal(fetches, 1)
   assert.deepEqual([...new Uint8Array(await second.arrayBuffer())], [1, 2, 3])
+})
+
+test('public team logo bytes use the media cache without forwarding account credentials', async () => {
+  let stored, calls = 0
+  const options = {
+    cache: { match: async () => stored?.clone(), put: async (_key, value) => { stored = value.clone() } },
+    fetchImpl: async (url, { headers }) => {
+      calls++
+      assert.equal(url, `https://admin.fries-cup.com${teamLogo.replace('/platform/', '/')}`)
+      for (const key of ['cookie', 'authorization', 'origin', 'referer']) assert.equal(headers.get(key), null)
+      return new Response(new Uint8Array([10, 20, 30]), { headers: { 'Content-Type': 'image/webp', 'Cache-Control': 'public, max-age=31536000, immutable' } })
+    }
+  }
+  const result = await proxyRequest(request(teamLogo, { headers: { cookie: 'private', authorization: 'Bearer private', origin } }), options)
+  assert.equal(result.status, 200)
+  assert.equal(result.headers.get('x-fries-backend'), 'production-media')
+  const cached = await proxyRequest(request(teamLogo), options)
+  assert.equal(cached.headers.get('x-fries-public-cache'), 'HIT')
+  assert.deepEqual([...new Uint8Array(await cached.arrayBuffer())], [10, 20, 30])
+  assert.equal(calls, 1)
+  assert.equal((await proxyRequest(request(teamLogo, { method: 'DELETE', headers: { origin } }), options)).status, 405)
+  for (const [status, type] of [[404, 'application/json'], [200, 'application/json']]) {
+    const failure = await proxyRequest(request(teamLogo), { cache: { match: async () => null, put: async () => assert.fail('Non-image responses cannot enter the media cache') }, fetchImpl: async () => new Response('{}', { status, headers: { 'Content-Type': type, 'Cache-Control': 'public, max-age=100' } }) })
+    if (status === 404) assert.match(failure.headers.get('cache-control'), /no-store/)
+  }
 })
 test('profile upload allows a bounded base64 body while unrelated writes retain their 1 MiB limit', async () => {
   const body = JSON.stringify({ avatar: { type: 'upload', image: 'a'.repeat(2.8 * 1024 * 1024) } })
