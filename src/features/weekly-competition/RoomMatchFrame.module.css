@@ -119,6 +119,17 @@
 .readiness b { font-size:14px;color:var(--fc-data-room-text); }
 .frame .taskActions { display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:12px;border-top:1px solid var(--fc-data-room-line); }
 .frame .taskActions>button { min-height:40px; }
+@media(min-width:1180px) and (max-height:760px) {
+  .frame[data-room-layout=workspace] .decisionTask { padding:6px 14px;gap:4px; }
+  .frame[data-room-layout=workspace] .decisionTitle h2 { font-size:20px; }
+  .frame[data-room-layout=workspace] .phaseViewHeader { padding-bottom:6px; }
+  .frame[data-room-layout=workspace] .phaseViewHeader h2 { font-size:20px; }
+  .frame[data-room-layout=workspace] .phaseViewHeader small { font-size:10px;line-height:1.2; }
+  .frame[data-room-layout=workspace] .readiness { padding-block:7px;margin-block:0; }
+  .frame[data-room-layout=workspace] .readiness>span { gap:2px; }
+  .frame[data-room-layout=workspace] .taskActions { padding-top:6px;gap:6px; }
+  .frame[data-room-layout=workspace] .taskActions>button { min-height:32px;padding:5px 9px;font-size:12px; }
+}
 .frame .communicationPanel { min-height:320px;height:320px;flex:1 0 320px; }
 .frame .communicationPanel>header { padding:11px 16px;border-bottom:0; }
 .frame .communicationPanel>header h2 { font-size:18px; }

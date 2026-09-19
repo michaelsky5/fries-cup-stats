@@ -65,6 +65,21 @@
   .viewport.viewport { padding:10px; }.columns { grid-template-columns:1fr; }.team { grid-row:auto; }.center { grid-row:1; }.lineupChoices { grid-template-columns:1fr; }.lobbyOrder { gap:3px; }.lobbyOrder>div { padding:5px; }.lineupEditor>footer { flex-direction:column;align-items:stretch; }.toolbar>span { width:100%; }.toolbar>div { gap:6px; }.viewport .toolbar button { min-height:40px; }.team>header h2 { font-size:24px; }.person { min-height:44px; }.identity b { font-size:14px; }.identity small { font-size:11px; }.panelBody { padding:10px; }.viewport [data-room-slot=header] { gap:8px; }.viewport [data-room-slot=header]>a { max-width:150px; }.viewport [data-room-slot=header]>div:last-child { max-width:145px; }.viewport [data-room-slot=facts]>div { flex-wrap:wrap; }
 }
 .preflight { padding:10px 12px;background:var(--fc-data-room-inset);border:1px solid var(--line);display:grid;gap:8px; }.preflight strong { font-size:12px; }.preflight>div { display:flex;flex-wrap:wrap;gap:6px 14px; }.preflight label { display:flex;align-items:center;gap:6px;font-size:11px; }.preflight input { width:15px;height:15px;accent-color:var(--fc-data-signal); }.viewport .preflight button { justify-self:end;min-height:30px;padding:4px 9px;font-size:11px; }
+@media(min-width:1180px) and (max-height:760px) {
+  .viewport .center>section[aria-label="当前任务"] { align-content:start; }
+  .viewport .person { min-height:26px;padding:1px 0; }.viewport .role { min-height:22px; }
+  .viewport .identity { gap:0; }.viewport .identity b { line-height:1.15; }.viewport .identity small { line-height:1.1; }
+  .viewport .person button { min-height:22px;padding:1px 4px; }
+  .viewport .lineupChoices input { min-height:16px; }
+  .viewport .lineupChoices b,.viewport .lineupChoices small { line-height:1.2; }
+  .viewport .lineupChoices>div { padding-block:2px; }
+  .viewport [data-room-slot=representative] { gap:1px;padding:4px 8px; }
+  .viewport [data-room-slot=representative]>div:nth-child(2) { line-height:1.2; }
+  .preflight { grid-template-columns:1fr auto;padding:6px 10px;gap:4px;align-items:center; }
+  .preflight>div { grid-column:1/-1;grid-row:2;gap:4px 12px; }
+  .viewport .preflight button { grid-column:2;grid-row:1;min-height:26px; }
+  .viewport .preflight input { padding:0;min-height:15px; }
+}
 @media(min-width:1180px) and (min-height:640px) {
   .columns { grid-template-rows:minmax(0,1fr); }
   .viewport [data-room-slot=stages] { height:42px;grid-template-rows:42px; }

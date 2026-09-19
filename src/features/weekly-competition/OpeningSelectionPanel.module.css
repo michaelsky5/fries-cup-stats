@@ -261,3 +261,6 @@
   :global([data-room-layout=workspace]) .opening .heroes span { font-size:10px; }
   :global([data-room-layout=workspace]) .opening .heroes small { display:none; }
 }
+@media(min-width:1180px) and (max-height:760px) {
+  :global([data-room-layout=workspace]) .opening .heroes { grid-template-columns:repeat(8,minmax(0,1fr)); }
+}
