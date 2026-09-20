@@ -1,4 +1,39 @@
 {
+  "生成并复制链接": {
+    "zh-TW": "產生並複製連結",
+    "en-US": "Generate and copy link",
+    "ko-KR": "링크 생성 및 복사"
+  },
+  "上次参赛": {
+    "zh-TW": "上次參賽",
+    "en-US": "Last played",
+    "ko-KR": "이전 출전"
+  },
+  "已参赛": {
+    "zh-TW": "已參賽",
+    "en-US": "Played",
+    "ko-KR": "출전"
+  },
+  "与最近参赛重合": {
+    "zh-TW": "與最近參賽重合",
+    "en-US": "Retained from last appearance",
+    "ko-KR": "최근 출전 명단 유지"
+  },
+  "首次参赛": {
+    "zh-TW": "首次參賽",
+    "en-US": "First appearance",
+    "ko-KR": "첫 출전"
+  },
+  "首次参赛，无需保留历史出赛名单。": {
+    "zh-TW": "首次參賽，無需保留歷史出賽名單。",
+    "en-US": "First appearance; no previous roster to retain.",
+    "ko-KR": "첫 출전으로 이전 출전 명단 유지 조건이 없습니다."
+  },
+  "已选 {0} 人 · 首次参赛{1}": {
+    "zh-TW": "已選 {0} 人 · 首次參賽{1}",
+    "en-US": "{0} selected · First appearance{1}",
+    "ko-KR": "{0}명 선택 · 첫 출전{1}"
+  },
   " / 10 分钟": {
     "zh-TW": " / 10 分鐘",
     "en-US": " / 10 MIN",
