@@ -65,6 +65,12 @@ export function getParticipationView(items, params) {
   return { filter, visible, selected, unavailable: Boolean(requested && !selected), counts: summarizeParticipation(items).counts }
 }
 
+export function getWeeklyRosterContext(cycle, weekRecord) {
+  const rules = { rosterContinuityMode: 'PREVIOUS_APPEARANCE', corePlayerCount: 3, rosterMin: 5, rosterMax: 7, minimumCoreInWeeklyRoster: 3, ...cycle?.rules, ...weekRecord?.rules }
+  const continuity = weekRecord?.continuity || weekRecord?.participation?.continuity || null
+  return { rules, continuity, checkRules: { ...rules, previousAppearancePlayerIds: continuity?.playerIds || [], previousAppearanceRequired: continuity?.required || 0, previousAppearanceStatus: continuity?.status } }
+}
+
 export function getWeeklyRosterCheck(ids, coreIds, rules, players) {
   const chosen = new Set(ids)
   const coreCount = [...chosen].filter(id => coreIds.has(id)).length
@@ -75,6 +81,7 @@ export function getWeeklyRosterCheck(ids, coreIds, rules, players) {
   if ([...chosen].some(id => !known.has(id))) errors.push('名单含有当前队伍不可用的选手，请重新核对。')
   if (chosen.size < rules.rosterMin || chosen.size > rules.rosterMax) errors.push(`需要选择 ${rules.rosterMin}–${rules.rosterMax} 人，当前 ${chosen.size} 人。`)
   if (rules.rosterContinuityMode === 'PREVIOUS_APPEARANCE' && retainedCount < (rules.previousAppearanceRequired || 0)) errors.push(`至少需要保留最近一次实际参赛名单中的 ${rules.previousAppearanceRequired} 人，当前保留 ${retainedCount} 人。`)
+  if (rules.rosterContinuityMode === 'PREVIOUS_APPEARANCE' && rules.previousAppearanceStatus === 'MISSING_ROSTER') errors.unshift('最近一次参赛的正式名单缺失，请联系赛管核对后继续。')
   if (rules.rosterContinuityMode === 'FIXED_CORE' && coreCount < rules.minimumCoreInWeeklyRoster) errors.push(`至少需要 ${rules.minimumCoreInWeeklyRoster} 名已锁定核心，当前 ${coreCount} 名。`)
   return { count: chosen.size, coreCount, retainedCount, errors, canSubmit: errors.length === 0 }
 }

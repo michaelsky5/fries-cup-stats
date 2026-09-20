@@ -12,7 +12,7 @@ assert.match(buildWeeklyResultTasks(readyTaskWorkspace, { seasonId: 'LOCAL', rea
 delete readyTaskWorkspace.rooms[0].myTeams[0].preparation
 assert.equal(buildWeeklyResultTasks(readyTaskWorkspace, { seasonId: 'LOCAL', readOnly: false }).length, 0, 'unknown coordination must not invent a task')
 import { buildSpaceOverview } from '../src/features/account-ui/spaceOverviewModel.js'
-import { buildParticipationJourneys, getParticipationView, getWeeklyRosterCheck } from '../src/features/account-ui/participationJourneyModel.js'
+import { buildParticipationJourneys, getParticipationView, getWeeklyRosterCheck, getWeeklyRosterContext } from '../src/features/account-ui/participationJourneyModel.js'
 import { requiresParticipationAccess, requiresPublicSnapshot } from '../src/features/my-space/personalSpacePolicy.js'
 
 const now = Date.parse('2026-09-06T12:00:00Z')
@@ -256,3 +256,22 @@ assert.equal(getWeeklyRosterCheck(['0', '1', '5', '6', '7'], coreIds, continuity
 const currentRules = fixture()
 currentRules.cycle.rules.rosterContinuityMode = 'PREVIOUS_APPEARANCE'
 assert.deepEqual(buildWeeklyPreparation(currentRules.workspace, options).plans[0].stages.map(stage => stage.key), ['participation', 'roster'])
+
+// Match the actual System /me/weekly-competition response: rules and continuity
+// belong to the week wrapper, alongside participation (not inside it).
+const weeklyContext = getWeeklyRosterContext({ rules: { rosterContinuityMode: 'FIXED_CORE', rosterMin: 6 } }, {
+  rules: { rosterContinuityMode: 'PREVIOUS_APPEARANCE', rosterMin: 5, rosterMax: 7 },
+  continuity: { status: 'AVAILABLE', required: 3, playerIds: ['0', '1', '2', '3', '4'] },
+  participation: { status: 'CONFIRMED', rosters: [] }
+})
+assert.equal(weeklyContext.rules.rosterMin, 5, 'weekly override takes precedence over cycle rules')
+assert.equal(weeklyContext.rules.rosterContinuityMode, 'PREVIOUS_APPEARANCE')
+assert.equal(getWeeklyRosterCheck(['0', '1', '5', '6', '7'], coreIds, weeklyContext.checkRules, rosterPlayers).canSubmit, false, 'two retained players must fail before posting to System')
+assert.equal(getWeeklyRosterCheck(['0', '1', '2', '5', '6'], coreIds, weeklyContext.checkRules, rosterPlayers).canSubmit, true)
+const firstContext = getWeeklyRosterContext(null, { continuity: { status: 'FIRST_APPEARANCE', required: 0, playerIds: [] } })
+assert.equal(firstContext.continuity.status, 'FIRST_APPEARANCE')
+assert.equal(getWeeklyRosterCheck(['0', '1', '2', '3', '4'], new Set(), firstContext.checkRules, rosterPlayers).canSubmit, true)
+const missingContext = getWeeklyRosterContext(null, { continuity: { status: 'MISSING_ROSTER', required: 3, playerIds: [] } })
+const missingCheck = getWeeklyRosterCheck(['0', '1', '2', '3', '4'], new Set(), missingContext.checkRules, rosterPlayers)
+assert.equal(missingCheck.canSubmit, false)
+assert.match(missingCheck.errors[0], /正式名单缺失/)
