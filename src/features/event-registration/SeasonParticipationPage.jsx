@@ -9,6 +9,7 @@ import { RegistrationDraftGuard, useRegistrationDraft, useRegistrationDraftActio
 import styles from './SeasonParticipationPage.module.css'
 import AccountFrame from '../account-ui/AccountFrame.jsx'
 import RegistrationLogoField from './RegistrationLogoField.jsx'
+import ApprovedTeamLogoEditor from './ApprovedTeamLogoEditor.jsx'
 import WeeklyEligibilityFields, { MemberEligibilityEditor, readWeeklyEligibility } from './WeeklyEligibilityFields.jsx'
 import { describeRegistrationError as describeError } from './registrationErrors.js'
 const emptyDetails = { region: '', history: '', logoUrl: '', coachName: '', coachContact: '' }
@@ -135,7 +136,7 @@ function Workspace({ user, seasonId }) {
         setLink(result.invitation)
         if (result.invitation.memberId) setInvitationLinks(current => ({ ...current, [result.invitation.memberId]: result.invitation }))
       }
-      setNotice(suffix.endsWith('/submit') ? '报名已成功提交！现在等待赛事负责人审核，无需重复提交。' : suffix.endsWith('/eligibility') ? '本人的报名资料已保存。队伍仍需由负责人提交审核。' : method === 'PATCH' ? '队伍报名资料已保存。全部队员确认后，请继续提交赛事负责人审核。' : '')
+      setNotice(suffix.endsWith('/logo') ? '队标已保存，报名与队员确认状态保持不变。' : suffix.endsWith('/submit') ? '报名已成功提交！现在等待赛事负责人审核，无需重复提交。' : suffix.endsWith('/eligibility') ? '本人的报名资料已保存。队伍仍需由负责人提交审核。' : method === 'PATCH' ? '队伍报名资料已保存。全部队员确认后，请继续提交赛事负责人审核。' : '')
       setVersion(current => current + 1)
       return result
     } catch (failure) { setError(describeError(failure)); return false } finally { mutation.current = false; setBusy(false) }
@@ -143,14 +144,14 @@ function Workspace({ user, seasonId }) {
   if (!workspace) return <section className={styles.panel}>{error ? <p role="alert" className={styles.error}>{error}</p> : <p role="status">{uiText("正在读取本赛季报名…", uiLocale)}</p>}<button type="button" onClick={() => setVersion(value => value + 1)}>{uiText("重新读取", uiLocale)}</button></section>
   const ownerRegistration = workspace.registrations.find(item => item.ownerUserId === user.id && item.status !== 'WITHDRAWN')
   return <>
-    <div className={styles.context}><div><span>{uiText("当前赛季", uiLocale)}</span><strong>{workspace.season.name}</strong></div><div><span>{uiText("报名人数", uiLocale)}</span><strong>{workspace.policy.rosterMin}–{workspace.policy.rosterMax}{uiText(" 人", uiLocale)}</strong></div><div><span>{uiText("报名截止", uiLocale)}</span><strong>{workspace.policy.closesAt ? new Date(workspace.policy.closesAt).toLocaleString() : uiText("以赛事通知为准", uiLocale)}</strong></div><span>{workspace.canWrite ? uiText("报名开放", uiLocale) : uiText("当前只读", uiLocale)}</span></div>
+    <div className={styles.context}><div><span>{uiText("当前赛季", uiLocale)}</span><strong>{workspace.season.name}</strong></div><div><span>{uiText("报名人数", uiLocale)}</span><strong>{workspace.policy.rosterMin}–{workspace.policy.rosterMax}{uiText(" 人", uiLocale)}</strong></div><div><span>{uiText("报名截止", uiLocale)}</span><strong>{workspace.policy.closesAt ? new Date(workspace.policy.closesAt).toLocaleString() : uiText("以赛事通知为准", uiLocale)}</strong></div><span>{workspace.canWrite ? uiText("报名开放", uiLocale) : uiText(workspace.canManageLogo && workspace.registrations.some(record => record.status === "APPROVED" && record.ownerUserId === user.id) ? "报名只读，队标可更新" : "当前只读", uiLocale)}</span></div>
     {workspace.policy.rulebook && <p><a className={styles.rulebookLink} href={workspace.policy.rulebook.url} target="_blank" rel="noreferrer">{uiText("当前规则书 {0} · 下载阅读", uiLocale, [workspace.policy.rulebook.label])} ↗</a></p>}
     {(error || notice) && <p ref={feedback} tabIndex={-1} role={error ? "alert" : "status"} className={error ? styles.error : styles.success}>{error || notice}</p>}
     {link && <InvitationLink invitation={link} />}
     {workspace.notices.some(item => item.requiresAck && !item.acknowledgedAt) && <section className={styles.panel}><h2>{uiText("需要确认", uiLocale)}</h2>{workspace.notices.filter(item => item.requiresAck && !item.acknowledgedAt).map(item => <div className={styles.notice} key={item.id}><div><strong>{item.title}</strong><p>{item.message}</p></div><button disabled={busy} onClick={() => perform(`/notices/${item.id}/acknowledge`, {})}>{uiText("我已知悉", uiLocale)}</button></div>)}</section>}
     {!ownerRegistration && workspace.canCreate && <TeamForm eligibilityRequired={workspace.policy.eligibilityRequired} organizations={workspace.organizations} busy={busy} onSave={input => perform('/drafts', input, 'POST', '队伍报名资料')} />}
     {!workspace.registrations.length && workspace.canWrite && !workspace.canCreate && <section className={styles.panel}><h2>{uiText('需要队伍负责人邀请', uiLocale)}</h2><p>{uiText('请联系赛事负责人获取本赛季队伍负责人邀请链接，接受后即可创建报名。队员请使用队长发送的入队邀请链接。', uiLocale)}</p></section>}
-    {workspace.registrations.map(record => <Registration rulebook={workspace.policy.rulebook} key={record.id} eligibilityRequired={workspace.policy.eligibilityRequired} record={record} userId={user.id} owner={record.ownerUserId === user.id} canWrite={workspace.canWrite} busy={busy} perform={perform} invitationLinks={invitationLinks} rosterMin={workspace.policy.rosterMin} rosterMax={workspace.policy.rosterMax} onRefresh={async () => { if (await confirmDiscard()) setVersion(value => value + 1) }} />)}
+    {workspace.registrations.map(record => <Registration rulebook={workspace.policy.rulebook} key={record.id} eligibilityRequired={workspace.policy.eligibilityRequired} record={record} userId={user.id} owner={record.ownerUserId === user.id} canWrite={workspace.canWrite} canManageLogo={workspace.canManageLogo} busy={busy} perform={perform} invitationLinks={invitationLinks} rosterMin={workspace.policy.rosterMin} rosterMax={workspace.policy.rosterMax} onRefresh={async () => { if (await confirmDiscard()) setVersion(value => value + 1) }} />)}
     {!workspace.registrations.length && !workspace.canWrite && <section className={styles.panel}><h2>{uiText("尚无报名", uiLocale)}</h2><p>{uiText("本赛季报名当前没有开放，请等待赛事负责人通知。", uiLocale)}</p></section>}
     {workspace.notices.length > 0 && <details className={styles.panel}><summary>{uiText("报名通知 · ", uiLocale)}{workspace.notices.length}</summary>{workspace.notices.map(item => <div className={styles.notice} key={item.id}><div><strong>{item.title}</strong><p>{item.message}</p></div><time>{new Date(item.createdAt).toLocaleString()}</time></div>)}</details>}
   </>
@@ -195,7 +196,7 @@ function TeamForm({ organizations = [], record, busy, onSave, eligibilityRequire
   </form></section>
 }
 
-function Registration({ rulebook, eligibilityRequired, record, userId, owner, canWrite, busy, perform, invitationLinks, rosterMin = 1, rosterMax = 7, onRefresh }) {
+function Registration({ rulebook, eligibilityRequired, record, userId, owner, canWrite, canManageLogo, busy, perform, invitationLinks, rosterMin = 1, rosterMax = 7, onRefresh }) {
   const uiLocale = useUiLocale()
   const [player, setPlayer] = useState(emptyPlayer)
   const [copyNotice, setCopyNotice] = useState('')
@@ -227,7 +228,8 @@ function Registration({ rulebook, eligibilityRequired, record, userId, owner, ca
     <div className={styles.row}><div><h2>{record.name} <span className={styles.tag}>{statusLabel(record.status)}</span></h2><p>{owner ? uiText("你负责这份队伍报名", uiLocale) : uiText("队伍负责人：{0}", uiLocale, [record.ownerName])} · {record.members.filter(member => member.status === 'CONFIRMED').length}/{record.members.length}{uiText(" 人已确认", uiLocale)}</p></div><button disabled={busy} onClick={onRefresh}>{uiText("刷新确认状态", uiLocale)}</button></div>
     {editable && <button type="button" disabled={busy} aria-expanded={editingTeam} onClick={() => setEditingTeam(value => !value)}>{uiText("修改队伍资料", uiLocale)}</button>}
     {editable && <div hidden={!editingTeam}><TeamForm eligibilityRequired={eligibilityRequired} record={record} busy={busy} onSave={input => perform(prefix, input, 'PATCH', '队伍报名资料')} /></div>}
-    {owner && !editable && <p className={styles.feedback}>{uiText(record.status === 'SUBMITTED' ? '需要修改队伍资料？点击“撤回并修改”，修改后重新提交审核。' : record.status === 'APPROVED' ? '队伍资料已审核。联系方式、队标或经历有变更时，请联系赛事管理员更新队伍资料；每周出赛阵容在“队伍与报名”中管理。' : '当前报名不可编辑，请核对报名开放时间或联系赛事管理员。', uiLocale)}</p>}
+    {owner && !editable && <p className={styles.feedback}>{uiText(record.status === 'SUBMITTED' ? '需要修改队伍资料？点击“撤回并修改”，修改后重新提交审核。' : record.status === 'APPROVED' ? (canManageLogo ? '队伍资料已审核。队标可在下方独立更新；其他资料变更请联系赛事管理员，每周出赛阵容在“队伍与报名”中管理。' : '队伍资料已审核。联系方式、队标或经历有变更时，请联系赛事管理员更新队伍资料；每周出赛阵容在“队伍与报名”中管理。') : '当前报名不可编辑，请核对报名开放时间或联系赛事管理员。', uiLocale)}</p>}
+    {owner && canManageLogo && record.status === 'APPROVED' && <ApprovedTeamLogoEditor key={record.logoUrl || 'no-logo'} logoUrl={record.logoUrl || ''} busy={busy} onSave={input => perform(`${prefix}/logo`, input, 'PUT', '队伍队标')} />}
     <ol className={styles.journey} aria-label={uiText("报名进度", uiLocale)}>{stageLabels.map((label, index) => <li key={index} data-state={record.status === 'WITHDRAWN' ? 'inactive' : index < stage || record.status === 'APPROVED' ? 'done' : index === stage ? 'current' : 'upcoming'} aria-current={record.status !== 'WITHDRAWN' && index === stage ? 'step' : undefined}><span>{String(index + 1).padStart(2, '0')}</span><strong>{label}</strong></li>)}</ol>
     {record.reviewNote && <p className={styles.feedback}>{uiText("审核意见：", uiLocale)}{record.reviewNote}</p>}
     {record.status === 'APPROVED' && <p className={styles.feedback}>{uiText("本赛季报名已通过。周期登记和每周名单请按赛事安排处理。", uiLocale)}</p>}

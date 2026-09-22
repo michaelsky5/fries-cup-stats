@@ -8916,5 +8916,18 @@ export default {
   "确认窗口与截止时间以参赛页面为准。": "Check the participation page for the confirmation window and deadline.",
   "需要队伍负责人邀请": "Team owner invitation required",
   "请联系赛事负责人获取本赛季队伍负责人邀请链接，接受后即可创建报名。队员请使用队长发送的入队邀请链接。": "Ask the organizer for a team owner invitation for this season. Accept it to create a registration. Players should use the team invitation sent by their captain.",
-  "请先登录参赛账号，登录后继续确认本周参赛并提交出赛名单。": "Sign in with your participant account to continue confirming this week’s participation and submitting your roster."
+  "请先登录参赛账号，登录后继续确认本周参赛并提交出赛名单。": "Sign in with your participant account to continue confirming this week’s participation and submitting your roster.",
+  "上传或更换队标": "Upload or replace team logo",
+  "保存队标": "Save team logo",
+  "队标已保存，报名与队员确认状态保持不变。": "Team logo saved. Registration and player confirmations are unchanged.",
+  "已选择新图片，点击“保存队标”后生效。": "New image selected. Click Save team logo to apply it.",
+  "队标可独立更新，无需撤回报名或重新确认队员。公开页面将在刷新后同步，缓存可能延迟约一分钟。": "Update the logo without withdrawing registration or reconfirming players. Public pages update on refresh; caching may delay changes by about a minute.",
+  "队伍资料已审核。队标可在下方独立更新；其他资料变更请联系赛事管理员，每周出赛阵容在“队伍与报名”中管理。": "Team registration is approved. Update the logo below; contact the organizer for other profile changes. Manage weekly lineups in Team & registration.",
+  "队伍 Logo（可选）": "Team logo (optional)",
+  "上传队伍 Logo": "Upload team logo",
+  "更换队伍 Logo": "Replace team logo",
+  "移除队标": "Remove team logo",
+  "PNG、JPG 或静态 WebP，最大 2 MB。保留透明背景，完整显示队标。": "PNG, JPG or static WebP, up to 2 MB. Transparency is preserved and the full logo is shown.",
+  "队标将用于赛管审核和公开赛事展示。": "The logo is used for organizer review and public event pages.",
+  "报名只读，队标可更新": "Registration read-only; logo editable"
 }
