@@ -52680,5 +52680,35 @@
     "zh-TW": "報名唯讀，隊標可更新",
     "en-US": "Registration read-only; logo editable",
     "ko-KR": "등록 읽기 전용, 로고 변경 가능"
+  },
+  "结束本次测试并重新开始？旧演练记录保留，不影响正式比赛。": {
+    "zh-TW": "結束本次測試並重新開始？舊演練紀錄保留，不影響正式比賽。",
+    "en-US": "End this exercise and start again? Previous records are kept. Official matches are unaffected.",
+    "ko-KR": "이번 테스트를 종료하고 다시 시작할까요? 기존 연습 기록은 보존되며 공식 경기에는 영향이 없습니다."
+  },
+  "管理员测试房间": {
+    "zh-TW": "管理員測試房間",
+    "en-US": "Administrator practice room",
+    "ko-KR": "관리자 연습방"
+  },
+  "测试演练 · 仅自己可操作": {
+    "zh-TW": "測試演練 · 僅自己可操作",
+    "en-US": "Practice · Only you can operate this room",
+    "ko-KR": "테스트 연습 · 본인만 조작 가능"
+  },
+  "虚拟队伍，不发布、不计正式积分。可代双方操作；先手权默认使用“赛管指定”。换人从本周 7 人名单选择 5 名首发。": {
+    "zh-TW": "虛擬隊伍，不發布、不計正式積分。可代雙方操作；先手權預設使用「賽管指定」。換人從本週 7 人名單選擇 5 名先發。",
+    "en-US": "Virtual teams. Unpublished, with no official points. You can operate both sides; first pick defaults to a staff decision. Select five starters from the seven-player roster to practice substitutions.",
+    "ko-KR": "가상 팀이며 공개되지 않고 공식 점수에 반영되지 않습니다. 양 팀을 대신 조작할 수 있으며 선픽은 기본적으로 운영진이 지정합니다. 7인 명단에서 선발 5명을 선택해 교체를 연습하세요."
+  },
+  "正在重开…": {
+    "zh-TW": "正在重開…",
+    "en-US": "Restarting…",
+    "ko-KR": "다시 시작하는 중…"
+  },
+  "重置我的演练": {
+    "zh-TW": "重設我的演練",
+    "en-US": "Restart my practice",
+    "ko-KR": "내 연습 초기화"
   }
 }

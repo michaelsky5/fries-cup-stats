@@ -1,4 +1,5 @@
 import AccountAvatar from '../account-ui/AccountAvatar.jsx'
+import RoomTrainingNotice from './RoomTrainingNotice.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import RoomCasterAssignments from './RoomCasterAssignments.jsx'
@@ -179,6 +180,7 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
   const task = lineupStage ? '确认本图首发名单' : stage === 'PREPARING' ? data.opening && !data.opening.complete ? data.opening.phase === 'CHOOSING' ? '选择本图地图与 Ban 顺序' : data.opening.phase === 'BANNING' ? '完成本图英雄禁用' : '完成本图地图选择' : !lineupsReady ? '确认本图首发名单' : data.access.staff ? data.access.canStart ? '双方已准备，请确认游戏开赛' : '核对赛前准备条件' : own.length ? own.every(side => side.ready) ? data.preparation.sides.every(side => side.ready) ? '双方已准备，等待最终确认' : '本队已准备，等待对方核对' : '核对签到、房间与名单，确认本队准备' : '查看本场安排，等待队伍代表准备' : stage === 'PAUSED' ? data.access.staff ? '核对双方恢复条件' : '比赛已暂停，等待恢复通知' : stage === 'LIVE' ? data.access.staff ? '比赛进行中，核对当前图信息' : '本图正在进行，请专注比赛' : stage === 'REVIEW' ? data.opening?.access.canNext ? '核对本图结果并开放下一图' : '整理本场赛果并提交战报' : stage === 'ARCHIVED' ? '本场已归档，记录只读' : '比赛记录进入赛果处理'
   return <main className={`${styles.room} ${frame.frame} ${workspace.viewport}`} data-page-mode="control" data-room-layout="workspace" data-phase={stage} data-opening={!!openingActive}>
     <RoomMatchHeader data={data} phaseLabel={roomPhaseName(data)} returnPath={returnPath} busy={busy} error={error} refresh={refresh} accountControl={accountControl} />
+    <RoomTrainingNotice data={data} disabled={disabled} />
     <RoomSeriesRail data={data} phaseLabel={roomPhaseName(data)} />
     {(error || notice) && <div className={error ? styles.error : styles.notice} role={error ? 'alert' : 'status'}>{error ? uiText("{0} 重新同步前暂停操作。", uiLocale, [error]) : notice}</div>}
     <div className={workspace.columns}><Team team={data.match.teamA} data={data} disabled={disabled} mutate={mutate} /><div className={workspace.center} data-stage-view={lineupStage ? 'lineup' : openingActive ? 'selection' : stage.toLowerCase()} data-inspecting={inspectingStage}>

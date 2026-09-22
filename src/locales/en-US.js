@@ -8929,5 +8929,11 @@ export default {
   "移除队标": "Remove team logo",
   "PNG、JPG 或静态 WebP，最大 2 MB。保留透明背景，完整显示队标。": "PNG, JPG or static WebP, up to 2 MB. Transparency is preserved and the full logo is shown.",
   "队标将用于赛管审核和公开赛事展示。": "The logo is used for organizer review and public event pages.",
-  "报名只读，队标可更新": "Registration read-only; logo editable"
+  "报名只读，队标可更新": "Registration read-only; logo editable",
+  "结束本次测试并重新开始？旧演练记录保留，不影响正式比赛。": "End this exercise and start again? Previous records are kept. Official matches are unaffected.",
+  "管理员测试房间": "Administrator practice room",
+  "测试演练 · 仅自己可操作": "Practice · Only you can operate this room",
+  "虚拟队伍，不发布、不计正式积分。可代双方操作；先手权默认使用“赛管指定”。换人从本周 7 人名单选择 5 名首发。": "Virtual teams. Unpublished, with no official points. You can operate both sides; first pick defaults to a staff decision. Select five starters from the seven-player roster to practice substitutions.",
+  "正在重开…": "Restarting…",
+  "重置我的演练": "Restart my practice"
 }
