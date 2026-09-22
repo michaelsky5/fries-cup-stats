@@ -388,3 +388,7 @@
     font-size:11px;
   }
 }
+.training { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; border: 2px solid #c18b16; background: #fff3c4; color: #352800; }
+.training > div { flex: 1 1 300px; min-width: 0; }
+.training p { margin: 4px 0 0; font-size: 13px; }
+.training button { padding: 8px 12px; border: 1px solid currentColor; color: inherit; background: transparent; }
