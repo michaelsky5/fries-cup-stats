@@ -1,4 +1,5 @@
 import SeasonRegistrationEntry from '../../features/event-registration/SeasonRegistrationEntry.jsx'
+import { isWeeklyOverview } from '../../features/weekly-overview/weeklyOverviewModel.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
@@ -56,7 +57,7 @@ const SPACE_SECTION_DEFINITIONS = {
   tasks: { id: 'tasks', label: '任务中心', en: 'TASKS', group: 'home' },
   events: { id: 'events', label: '我的赛事', en: 'EVENTS', group: 'event' },
   matches: { id: 'matches', label: '我的比赛', en: 'MATCHES', group: 'event' },
-  team: { id: 'team', label: '队伍与阵容', en: 'TEAM', group: 'event' },
+  team: { id: 'team', label: '队伍与报名', en: 'TEAM', group: 'team' },
   referee: { id: 'referee', label: '赛管工作台', en: 'REFEREE', group: 'work' },
   caster: { id: 'caster', label: '解说工作台', en: 'CASTER', group: 'work' },
   stats: { id: 'stats', label: '我的数据', en: 'STATS', group: 'personal' },
@@ -65,13 +66,14 @@ const SPACE_SECTION_DEFINITIONS = {
   security: { id: 'security', label: '账号设置', en: 'ACCOUNT', group: 'service' }
 }
 
-const SPACE_NAV_LABELS_EN = { overview: 'Overview', matches: 'My participation', tasks: 'To do', messages: 'Inbox', following: 'Following', workspace: 'Workspace' }
-const SPACE_SECTION_LABELS_EN = { overview: 'Space overview', tasks: 'Task center', events: 'My events', matches: 'My matches', team: 'Team & roster', referee: 'Referee workspace', caster: 'Caster workspace', stats: 'My stats', following: 'Following', communications: 'Event messages', security: 'Account settings' }
+const SPACE_NAV_LABELS_EN = { overview: 'Overview', team: 'Team & registration', matches: 'My participation', tasks: 'To do', messages: 'Inbox', following: 'Following', workspace: 'Workspace' }
+const SPACE_SECTION_LABELS_EN = { overview: 'Space overview', tasks: 'Task center', events: 'My events', matches: 'My matches', team: 'Team & registration', referee: 'Referee workspace', caster: 'Caster workspace', stats: 'My stats', following: 'Following', communications: 'Event messages', security: 'Account settings' }
 
 const SPACE_NAV_GROUPS = [
   { id: 'overview', label: '概览', en: 'HOME', sectionIds: ['overview'] },
   { id: 'tasks', label: '待办', en: 'TO DO', sectionIds: ['tasks'] },
-  { id: 'matches', label: '我的参赛', en: 'PARTICIPATION', sectionIds: ['events', 'team', 'matches', 'stats'] },
+  { id: 'team', label: '队伍与报名', en: 'TEAM', sectionIds: ['team'] },
+  { id: 'matches', label: '我的参赛', en: 'PARTICIPATION', sectionIds: ['events', 'matches', 'stats'] },
   { id: 'messages', label: '消息', en: 'INBOX', sectionIds: ['communications'] },
   { id: 'following', label: '我的关注', en: 'FOLLOWING', sectionIds: ['following'] },
   { id: 'workspace', label: '工作台', en: 'WORKSPACE', sectionIds: ['referee', 'caster'] }
@@ -771,6 +773,19 @@ function MySpaceContent() {
     )
   }
 
+  if (!isAuthenticated && requestedSection === 'team' && isWeeklyOverview(db, season)) return <main className={styles.page} data-design="signal">
+    <section className={styles.releaseGate}>
+      <div className={styles.releaseGateCopy}>
+        <span>WEEKLY / PARTICIPATION</span>
+        <h1>{uiText('本周参赛确认', locale)}</h1>
+        <p>{uiText('请先登录参赛账号，登录后继续确认本周参赛并提交出赛名单。', locale)}</p>
+        <nav aria-label={uiText('报名与参赛', locale)}>
+          <button type="button" onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText('登录参赛账号 →', locale)}</button>
+          <Link to={pageLink(`/participate/${encodeURIComponent(seasonId)}`)}>{uiText('首次报名 / 继续报名', locale)}</Link>
+        </nav>
+      </div>
+    </section>
+  </main>
   if (!isAuthenticated) return <FollowingPage />
   return (
     <main className={styles.page} data-design="signal" data-page-mode={activeSection === 'following' ? 'index' : 'control'}>
@@ -780,6 +795,7 @@ function MySpaceContent() {
         {showIdentityContext && needsParticipationAccess ? <IdentityContextStrip context={effectiveSpaceContext} loading={spaceContextLoading} error={spaceContextError} /> : null}
         <SpaceTabs key={activeSection} activeSection={activeSection} withSeason={pageLink} sections={spaceSections} overview={navigationSummary} locale={locale} />
       </SpaceHeader>
+      {activeSection === 'overview' ? registrationEntry : null}
       {['overview', 'tasks'].includes(activeSection) ? <AccountActivityWorkspace key={`${seasonId}:${authUser?.id || ''}`} view={activeSection} activity={activity} locale={locale} context={effectiveSpaceContext} withSeason={pageLink} sections={spaceSections} followingSummary={followingSummary} managerStatus={isPrimaryManager ? managerWorkspaceStatus : null} playerStatus={isPrimaryPlayer ? playerWorkspaceStatus : null} genericTasks={hasAccountFeatureAccess(accountLaunch, 'communications')} weeklyPreparation={isWeekly && canViewWeeklyCompetition && spaceSections.some(section => section.id === 'team')} weeklyRooms={isWeekly && canViewWeeklyMatchRooms && spaceSections.some(section => section.id === 'matches')} roomsReadOnly={!canWriteMatchRooms} /> : null}
       {activeSection === 'events' ? <MyEventsPanel context={effectiveSpaceContext} withSeason={pageLink} /> : null}
       {activeSection === 'communications' ? <AccountCommunicationsCenter seasonId={seasonId} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} withSeason={pageLink} onSummaryChange={handleTaskSummaryChange} /> : null}

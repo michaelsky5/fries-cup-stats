@@ -2,6 +2,7 @@ import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useMemo, useRef } from 'react'
 import { Link, useLocation, useOutletContext, useSearchParams } from 'react-router-dom'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
+import WeeklyConfirmationCard from './WeeklyConfirmationCard.jsx'
 import { formatOwMapName } from '../../lib/heroes.js'
 import { getMatchFormatLabel } from '../../lib/matchFormat.js'
 import { formatMatchSchedule } from '../../lib/scheduleFormat.js'
@@ -16,7 +17,7 @@ const fullName = team => team?.name || team?.team_name || shortName(team)
 const idOf = team => team?.id || team?.team_id
 
 export default function SignalWeeklyOverview() {
-  const { db, seasonId, locale, withSeason, isFavoriteTeam, toggleTeamFavorite } = useOutletContext()
+  const { db, season, seasonId, locale, withSeason, isFavoriteTeam, toggleTeamFavorite } = useOutletContext()
   const [params, setParams] = useSearchParams()
   const location = useLocation()
   const focusRef = useRef(null)
@@ -57,8 +58,8 @@ export default function SignalWeeklyOverview() {
       <div><p className={styles.eyebrow}>FRIES CUP / WEEKLY</p><h1>{t(uiText("五局，都算数。", locale), 'Every map counts.')}</h1><p>{t(uiText("从这一周的对阵，走向整个周期。", locale), 'This week’s matchups. A whole cycle to play for.')}</p></div>
       <div className={styles.headingActions}><WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, match: null })} /><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a></div>
     </header>
+    <WeeklyConfirmationCard preparation={db?.weekly_competition?.registration} seasonId={season?.id || db?.season?.id || seasonId} locale={locale} withSeason={withSeason} />
     <WeeklyWeekRail weeks={weeks} selectedId={week?.id} locale={locale} onChange={id => change({ cycle: cycle.id, week: id, match: null })} />
-
     <div className={styles.mainGrid}>
       <section className={styles.matchSection} aria-labelledby="weekly-focus-title">
         <div className={styles.sectionBar}><h2 id="weekly-focus-title">{week ? weekTitle : t(uiText("本周对阵", locale), 'This week')}</h2><span>{matches.length ? t(uiText("{0} 场对阵 · {1} 场已结束", locale, [matches.length, model.complete]), `${matches.length} matches · ${model.complete} final`) : t(uiText("等待赛程公布", locale), 'Awaiting publication')}</span></div>

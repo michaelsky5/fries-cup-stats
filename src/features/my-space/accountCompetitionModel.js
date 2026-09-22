@@ -15,7 +15,8 @@ export function normalizeAccountCompetitions(value) {
     return true
   }).map(item => ({
     id: item.id, name: String(item.name || item.id), status: item.status,
-    competitionKind: item.competitionKind, teams: Array.isArray(item.teams) ? item.teams : []
+    competitionKind: item.competitionKind, teams: Array.isArray(item.teams) ? item.teams : [],
+    registrations: Array.isArray(item.registrations) ? item.registrations : []
   }))
 }
 
