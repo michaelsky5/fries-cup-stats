@@ -25,7 +25,7 @@ function resolveRoute(url, { platformOrigin, publicOrigin, rehearsal }) {
   let pathname
   try { pathname = decodeURIComponent(url.pathname) } catch { return null }
   if (pathname.split('/').some(part => part === '.' || part === '..') || pathname.includes('\\')) return null
-  if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/(rulebook|rulebooks\/[a-f0-9]{32}\.(docx|pdf))$/.test(pathname)) {
+  if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/(team-logos|rulebook|rulebooks\/[a-f0-9]{32}\.(docx|pdf))$/.test(pathname)) {
     return { public: true, url: `${publicOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}` }
   }
   if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/publish\/latest\/(data|report)$/.test(pathname)) {
@@ -95,6 +95,7 @@ export async function proxyRequest(request, {
 
   const registrationImage = (request.method === 'POST' && /^\/api\/platform\/seasons\/[^/]+\/registration\/drafts$/.test(url.pathname))
     || (request.method === 'PATCH' && /^\/api\/platform\/seasons\/[^/]+\/registration\/drafts\/[^/]+$/.test(url.pathname))
+    || (request.method === 'PUT' && /^\/api\/platform\/seasons\/[^/]+\/registration\/drafts\/[^/]+\/logo$/.test(url.pathname))
   const bodyLimit = registrationImage || (request.method === 'PATCH' && url.pathname === '/api/platform/me/profile') ? 3 * MAX_BODY_BYTES : MAX_BODY_BYTES
   let body
   if (!READ_METHODS.has(request.method)) {

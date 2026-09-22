@@ -1,15 +1,16 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import styles from './SeasonParticipationPage.module.css'
 import { detectRegistrationLogoType, REGISTRATION_LOGO_LIMIT } from './registrationLogoInput.js'
+import { getPublicLogoSources } from '../../lib/teamLogoResolver.js'
 
-export default function RegistrationLogoField({ image, url, disabled, onChange, onReading }) {
+export default function RegistrationLogoField({ image, url, disabled, onChange, onReading, allowUrl = true, selectedMessage = '已选择新图片，保存报名资料后生效。' }) {
   const id = useId()
   const reader = useRef(null)
   const [error, setError] = useState('')
   const [reading, setReading] = useState(false)
   const [imageType, setImageType] = useState('image/png')
   useEffect(() => () => reader.current?.abort(), [])
-  const preview = image ? `data:${imageType};base64,${image}` : url
+  const preview = image ? `data:${imageType};base64,${image}` : url ? getPublicLogoSources(url)[0] : ''
   function select(event) {
     const file = event.target.files?.[0]
     event.target.value = ''
@@ -42,11 +43,11 @@ export default function RegistrationLogoField({ image, url, disabled, onChange, 
       <div className={styles.logoControls}>
         <label htmlFor={id}>{preview ? '更换队伍 Logo' : '上传队伍 Logo'}<input id={id} type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" onChange={select} aria-describedby={`${id}-help`} /></label>
         <p id={`${id}-help`}>PNG、JPG 或静态 WebP，最大 2 MB。保留透明背景，完整显示队标。</p>
-        <p role="status">{reading ? '正在读取图片…' : image ? '已选择新图片，保存报名资料后生效。' : '队标将用于赛管审核和公开赛事展示。'}</p>
+        <p role="status">{reading ? '正在读取图片…' : image ? selectedMessage : '队标将用于赛管审核和公开赛事展示。'}</p>
         {preview && <button type="button" onClick={() => { onChange({ image: undefined, url: '' }); setError('') }}>移除队标</button>}
       </div>
     </div>
     {error && <p className={styles.error} role="alert">{error}</p>}
-    <details><summary>使用已有图片链接</summary><label>HTTPS 图片链接<input type="url" value={url || ''} maxLength={1000} placeholder="https://…" onChange={event => { onChange({ image: undefined, url: event.target.value }); setError('') }} /></label></details>
+    {allowUrl && <details><summary>使用已有图片链接</summary><label>HTTPS 图片链接<input type="url" value={url || ''} maxLength={1000} placeholder="https://…" onChange={event => { onChange({ image: undefined, url: event.target.value }); setError('') }} /></label></details>}
   </fieldset>
 }

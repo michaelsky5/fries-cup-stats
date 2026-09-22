@@ -115,7 +115,7 @@ export function getPublishedTeamLogo(team) {
   return getDirectLogoValues(team)[0] || ''
 }
 
-function getPublicLogoSources(source) {
+export function getPublicLogoSources(source) {
   // These immutable uploads are already public. Serve them through the same
   // origin/cache as avatars, with the original URL retained as a fallback.
   const match = source.match(/^https:\/\/admin\.fries-cup\.com(\/api\/media\/team-logos\/[a-f0-9]{24}\/[a-f0-9]{32}\.webp)$/)

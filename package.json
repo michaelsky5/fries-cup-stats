@@ -32,7 +32,7 @@
     "build:qgcs4-preseason": "node scripts/buildQgcs4PreseasonFixture.mjs",
     "test:qgcs4-season": "node scripts/assertQGCS4Season.mjs",
     "test:team-logos": "npm run build:team-logo-catalog && node scripts/assertTeamLogoResolution.mjs",
-    "test:weekly-public-ui": "node --test scripts/assertWeeklyPublicIdentity.mjs scripts/assertWeeklyOverview.mjs scripts/assertWeeklySchedule.mjs scripts/assertWeeklyAdvance.mjs scripts/assertMatchPhases.mjs scripts/accountAvatarProxy.test.mjs",
+    "test:weekly-public-ui": "node --test scripts/assertWeeklyPublicIdentity.mjs scripts/assertWeeklyOverview.mjs scripts/assertWeeklySchedule.mjs scripts/assertWeeklyAdvance.mjs scripts/assertMatchPhases.mjs scripts/accountAvatarProxy.test.mjs scripts/currentTeamLogos.test.mjs",
     "test:scouting-report": "node scripts/assertScoutingReport.mjs",
     "scouting:create-share-link": "node scripts/createScoutingShareLink.mjs",
     "test:account-identity": "node scripts/assertAccountIdentity.mjs",

@@ -3,6 +3,7 @@ import { resolvePublishedAdvanceTeams } from './advanceSelectors.js'
 import { readPublicSnapshot, savePublicSnapshot } from './publicSnapshotCache.js'
 import { requestPublicJson } from './publicJsonRequest.js'
 import { resolvePublicMatchIdentities } from './publicMatchIdentity.js'
+import { hydrateCurrentTeamLogos } from './currentTeamLogos.js'
 
 const dbCache = new Map()
 const reportCache = new Map()
@@ -274,7 +275,7 @@ async function fetchDb(season, { allowFallback = true, cached } = {}) {
     cached && { data: cached, ...getDbSource(cached) }
   )
 
-  const snapshot = markDbSource(await hydrateReviewStaffPayload(data, season), sourceUrl, season, false, etag)
+  const snapshot = markDbSource(await hydrateCurrentTeamLogos(await hydrateReviewStaffPayload(data, season), season, sourceUrl), sourceUrl, season, false, etag)
   return snapshot
 }
 
