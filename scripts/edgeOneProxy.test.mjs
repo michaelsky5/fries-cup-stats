@@ -53,6 +53,40 @@ test('account writes use staging, preserving method, bytes, Origin and Cookie', 
   assert.equal(result.headers.get('cache-control'), 'private, no-store')
 })
 
+test('rulebooks expose only public metadata and immutable files without credentials', async () => {
+  const file = 'a'.repeat(32) + '.docx'
+  for (const suffix of ['rulebook', `rulebooks/${file}`]) {
+    let call
+    const path = `/api/admin-public/seasons/FCW26/${suffix}`
+    const bytes = new Uint8Array([80, 75, 3, 4, 255, 0])
+    const isFile = suffix.startsWith('rulebooks/')
+    const result = await proxyRequest(request(path, { headers: { cookie: 'session=secret', authorization: 'Bearer secret', origin } }), {
+      platformOrigin: 'https://test-admin.fries-cup.com',
+      cache: { match: async () => undefined, put: mustNotFetch },
+      fetchImpl: async (url, options) => {
+        call = { url, options }
+        return isFile
+          ? new Response(bytes, { headers: { 'content-type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'content-disposition': 'attachment; filename="rules.docx"', 'cache-control': 'public, max-age=31536000, immutable' } })
+          : json({ version: 'WEEKLY_V2_1' }, { headers: { 'cache-control': 'no-store' } })
+      }
+    })
+    assert.equal(call.url, `https://admin.fries-cup.com/api/public/seasons/FCW26/${suffix}`)
+    for (const header of ['cookie', 'authorization', 'origin']) assert.equal(call.options.headers.get(header), null)
+    assert.equal(result.status, 200)
+    if (isFile) {
+      assert.deepEqual(new Uint8Array(await result.arrayBuffer()), bytes)
+      assert.equal(result.headers.get('content-disposition'), 'attachment; filename="rules.docx"')
+    } else {
+      assert.equal(result.headers.get('cache-control'), 'no-store')
+      assert.equal((await result.json()).version, 'WEEKLY_V2_1')
+    }
+    assert.equal((await proxyRequest(request(path, { method: 'POST', headers: { origin } }), { fetchImpl: mustNotFetch })).status, 405)
+  }
+  for (const suffix of ['rulebook/draft/download', 'rulebook/publish', 'rulebook/download', 'rulebooks/not-a-file.docx', `rulebooks/${'a'.repeat(32)}.html`]) {
+    assert.equal((await proxyRequest(request(`/api/admin-public/seasons/FCW26/${suffix}`), { fetchImpl: mustNotFetch })).status, 404)
+  }
+})
+
 test('preserves separate secure session cookies and upstream failure status', async () => {
   const headers = new Headers({ 'content-type': 'application/json' })
   const cookies = ['__Host-fries_session=one; Path=/; HttpOnly; Secure; SameSite=Strict', 'preference=two; Expires=Wed, 09 Jun 2027 10:18:14 GMT; Path=/; Secure']

@@ -25,6 +25,9 @@ function resolveRoute(url, { platformOrigin, publicOrigin, rehearsal }) {
   let pathname
   try { pathname = decodeURIComponent(url.pathname) } catch { return null }
   if (pathname.split('/').some(part => part === '.' || part === '..') || pathname.includes('\\')) return null
+  if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/(rulebook|rulebooks\/[a-f0-9]{32}\.(docx|pdf))$/.test(pathname)) {
+    return { public: true, url: `${publicOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}` }
+  }
   if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/publish\/latest\/(data|report)$/.test(pathname)) {
     const snapshotOrigin = rehearsal && pathname.startsWith('/api/admin-public/seasons/WEBWEEK20260914/') ? platformOrigin : publicOrigin
     return { public: true, url: `${snapshotOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}${url.search}` }

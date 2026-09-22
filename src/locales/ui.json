@@ -28732,8 +28732,8 @@
   },
   "本周参赛确认": {
     "zh-TW": "本週參賽確認",
-    "en-US": "This week’s entry confirmation",
-    "ko-KR": "이번주 참가확인"
+    "en-US": "Confirm this week’s participation",
+    "ko-KR": "이번 주 참가 확인"
   },
   "本周参赛确认已保存。": {
     "zh-TW": "本週參賽確認已儲存。",
@@ -40195,8 +40195,8 @@
   },
   "继续填写报名": {
     "zh-TW": "繼續填寫報名",
-    "en-US": "Continue to fill in the registration form",
-    "ko-KR": "계속해서 등록 양식을 작성하세요."
+    "en-US": "Continue registration",
+    "ko-KR": "참가 신청 이어서 작성"
   },
   "继续处理 {0} 项待办": {
     "zh-TW": "繼續處理 {0} 項待辦",
@@ -52450,5 +52450,170 @@
     "zh-TW": "D.Va",
     "ko-KR": "D.Va",
     "en-US": "D.Va"
+  },
+  "队伍与报名": {
+    "zh-TW": "隊伍與報名",
+    "en-US": "Team & registration",
+    "ko-KR": "팀 및 참가 신청"
+  },
+  "修改并重新提交": {
+    "zh-TW": "修改並重新提交",
+    "en-US": "Revise and resubmit",
+    "ko-KR": "수정 후 다시 제출"
+  },
+  "查看审核 / 修改资料": {
+    "zh-TW": "查看審核 / 修改資料",
+    "en-US": "Review status / edit submission",
+    "ko-KR": "심사 확인 / 정보 수정"
+  },
+  "查看已通过的报名": {
+    "zh-TW": "查看已通過的報名",
+    "en-US": "View approved registration",
+    "ko-KR": "승인된 신청 확인"
+  },
+  "查看报名": {
+    "zh-TW": "查看報名",
+    "en-US": "View registration",
+    "ko-KR": "참가 신청 확인"
+  },
+  "正在读取报名状态…": {
+    "zh-TW": "正在讀取報名狀態…",
+    "en-US": "Checking your registration…",
+    "ko-KR": "신청 상태 확인 중…"
+  },
+  "暂时未能读取报名状态，可进入报名页核对已保存资料。": {
+    "zh-TW": "暫時未能讀取報名狀態，可進入報名頁核對已儲存資料。",
+    "en-US": "Open registration to check your saved details.",
+    "ko-KR": "신청 페이지에서 저장된 정보를 확인해 주세요."
+  },
+  "创建队伍，或回到已保存的报名继续填写。": {
+    "zh-TW": "建立隊伍，或回到已儲存的報名繼續填寫。",
+    "en-US": "Create your team or return to your saved registration.",
+    "ko-KR": "팀을 만들거나 저장된 신청서를 이어서 작성하세요."
+  },
+  "进入本赛季报名": {
+    "zh-TW": "進入本賽季報名",
+    "en-US": "Open season registration",
+    "ko-KR": "이번 시즌 참가 신청"
+  },
+  "已通过本赛季报名的队伍，请在“队伍与报名”中完成每周参赛确认和出赛名单。": {
+    "zh-TW": "已通過本賽季報名的隊伍，請在「隊伍與報名」中完成每週參賽確認和出賽名單。",
+    "en-US": "Already approved? Use Team & registration to confirm each week and submit the weekly roster.",
+    "ko-KR": "승인된 팀은 팀 및 참가 신청에서 주간 참가 여부와 출전 명단을 제출하세요."
+  },
+  "每周参赛确认": {
+    "zh-TW": "每週參賽確認",
+    "en-US": "Weekly participation",
+    "ko-KR": "주간 참가 확인"
+  },
+  "确认已截止": {
+    "zh-TW": "確認已截止",
+    "en-US": "Confirmation closed",
+    "ko-KR": "참가 확인 마감"
+  },
+  "参赛确认中": {
+    "zh-TW": "參賽確認中",
+    "en-US": "Participation confirmation",
+    "ko-KR": "참가 확인 진행 중"
+  },
+  "参赛确认截止": {
+    "zh-TW": "參賽確認截止",
+    "en-US": "Confirmation deadline",
+    "ko-KR": "참가 확인 마감"
+  },
+  "确认截止时间待公布。": {
+    "zh-TW": "確認截止時間待公布。",
+    "en-US": "The organizer has not set a deadline.",
+    "ko-KR": "확인 마감 시간은 추후 공지됩니다."
+  },
+  "对阵将在赛程发布后展示。": {
+    "zh-TW": "對陣將在賽程發布後展示。",
+    "en-US": "Matchups will appear after schedule publication.",
+    "ko-KR": "대진은 일정 발표 후 표시됩니다."
+  },
+  "当周确认与阵容": {
+    "zh-TW": "當週確認與陣容",
+    "en-US": "Weekly confirmation & roster",
+    "ko-KR": "주간 참가 확인 및 명단"
+  },
+  "本赛季报名 / 继续草稿": {
+    "zh-TW": "本賽季報名 / 繼續草稿",
+    "en-US": "Season registration / saved draft",
+    "ko-KR": "시즌 신청 / 임시 저장 이어서 작성"
+  },
+  "撤回并修改": {
+    "zh-TW": "撤回並修改",
+    "en-US": "Withdraw to edit",
+    "ko-KR": "제출 취소 및 수정"
+  },
+  "当前规则书 {0} · 下载阅读": {
+    "zh-TW": "目前規則書 {0} · 下載閱讀",
+    "en-US": "Current rulebook {0} · Download",
+    "ko-KR": "현재 규정집 {0} · 다운로드"
+  },
+  "阅读周赛 {0} 规则书": {
+    "zh-TW": "閱讀週賽 {0} 規則書",
+    "en-US": "Read the weekly {0} rulebook",
+    "ko-KR": "주간 대회 {0} 규정집 읽기"
+  },
+  "需要修改队伍资料？点击“撤回并修改”，修改后重新提交审核。": {
+    "zh-TW": "需要修改隊伍資料？點擊「撤回並修改」，修改後重新提交審核。",
+    "en-US": "To edit team details, withdraw your submission, make changes, and submit for review again.",
+    "ko-KR": "팀 정보를 수정하려면 제출을 취소하고 수정한 뒤 다시 심사를 요청하세요."
+  },
+  "队伍资料已审核。联系方式、队标或经历有变更时，请联系赛事管理员更新队伍资料；每周出赛阵容在“队伍与报名”中管理。": {
+    "zh-TW": "隊伍資料已審核。聯絡方式、隊標或經歷有變更時，請聯絡賽事管理員更新隊伍資料；每週出賽陣容在「隊伍與報名」中管理。",
+    "en-US": "Team details are approved. Contact the organizer to update contact details, the logo, or team history. Manage weekly rosters in Team & registration.",
+    "ko-KR": "승인된 팀 정보의 연락처, 로고, 경력 변경은 운영진에게 문의하세요. 주간 명단은 팀 및 참가 신청에서 관리하세요."
+  },
+  "当前报名不可编辑，请核对报名开放时间或联系赛事管理员。": {
+    "zh-TW": "目前報名不可編輯，請核對報名開放時間或聯絡賽事管理員。",
+    "en-US": "This registration cannot be edited. Check the registration window or contact the organizer.",
+    "ko-KR": "현재 신청서를 수정할 수 없습니다. 신청 기간을 확인하거나 운영진에게 문의하세요."
+  },
+  "报名与参赛": {
+    "zh-TW": "報名與參賽",
+    "en-US": "Registration & participation",
+    "ko-KR": "등록 및 참가"
+  },
+  "首次报名 / 继续报名": {
+    "zh-TW": "首次報名 / 繼續報名",
+    "en-US": "Start / continue registration",
+    "ko-KR": "신규 등록 / 이어서 작성"
+  },
+  "创建队伍或继续已保存的报名。首次创建需要负责人邀请，请联系赛事负责人获取链接。": {
+    "zh-TW": "建立隊伍或繼續已儲存的報名。首次建立需要負責人邀請，請聯絡賽事負責人取得連結。",
+    "en-US": "Create a team or continue your saved registration. First-time team owners need an invitation link from the organizer.",
+    "ko-KR": "팀을 만들거나 저장한 등록을 이어서 작성하세요. 처음 팀을 만드는 대표자는 대회 운영진에게 초대 링크를 받아야 합니다."
+  },
+  "已通过报名的队伍，由队长或经理确认当周参赛并提交出赛名单。": {
+    "zh-TW": "已通過報名的隊伍，由隊長或經理確認當週參賽並提交出賽名單。",
+    "en-US": "For approved teams, the captain or manager confirms participation and submits the weekly roster.",
+    "ko-KR": "등록이 승인된 팀은 주장 또는 매니저가 해당 주 참가를 확인하고 출전 명단을 제출합니다."
+  },
+  "确认尚未开始": {
+    "zh-TW": "確認尚未開始",
+    "en-US": "Confirmation not yet open",
+    "ko-KR": "참가 확인 시작 전"
+  },
+  "确认窗口与截止时间以参赛页面为准。": {
+    "zh-TW": "確認期間與截止時間以參賽頁面為準。",
+    "en-US": "Check the participation page for the confirmation window and deadline.",
+    "ko-KR": "참가 확인 기간과 마감 시간은 참가 페이지에서 확인하세요."
+  },
+  "需要队伍负责人邀请": {
+    "zh-TW": "需要隊伍負責人邀請",
+    "en-US": "Team owner invitation required",
+    "ko-KR": "팀 대표자 초대 필요"
+  },
+  "请联系赛事负责人获取本赛季队伍负责人邀请链接，接受后即可创建报名。队员请使用队长发送的入队邀请链接。": {
+    "zh-TW": "請聯絡賽事負責人取得本賽季隊伍負責人邀請連結，接受後即可建立報名。隊員請使用隊長傳送的入隊邀請連結。",
+    "en-US": "Ask the organizer for a team owner invitation for this season. Accept it to create a registration. Players should use the team invitation sent by their captain.",
+    "ko-KR": "대회 운영진에게 이번 시즌 팀 대표자 초대 링크를 요청하세요. 초대를 수락하면 등록을 시작할 수 있습니다. 선수는 주장이 보낸 팀 합류 초대 링크를 사용하세요."
+  },
+  "请先登录参赛账号，登录后继续确认本周参赛并提交出赛名单。": {
+    "zh-TW": "請先登入參賽帳號，登入後繼續確認本週參賽並提交出賽名單。",
+    "en-US": "Sign in with your participant account to continue confirming this week’s participation and submitting your roster.",
+    "ko-KR": "참가 계정으로 로그인한 후 이번 주 참가 확인과 출전 명단 제출을 계속하세요."
   }
 }
