@@ -392,3 +392,11 @@
 .training > div { flex: 1 1 300px; min-width: 0; }
 .training p { margin: 4px 0 0; font-size: 13px; }
 .training button { padding: 8px 12px; border: 1px solid currentColor; color: inherit; background: transparent; }
+@media(min-width:1500px) and (min-height:850px) {
+  .room .training { font-size:calc(14 * var(--room-unit));padding:calc(12 * var(--room-unit)) calc(20 * var(--room-unit));gap:calc(12 * var(--room-unit)); }
+  .room .training p { font-size:calc(12 * var(--room-unit)); }
+  .room .resultProgress { gap:calc(12 * var(--room-unit)); }.room .resultProgress>.resultTitle { font-size:calc(26 * var(--room-unit)); }
+  .room .resultSteps li { font-size:calc(12 * var(--room-unit));padding-bottom:calc(8 * var(--room-unit)); }
+  .room .task h2 { font-size:calc(28 * var(--room-unit)); }.room .task p { font-size:calc(14 * var(--room-unit)); }
+  .room .task button,.room .resultLink { font-size:calc(14 * var(--room-unit));min-height:calc(40 * var(--room-unit));padding:calc(8 * var(--room-unit)) calc(14 * var(--room-unit)); }
+}

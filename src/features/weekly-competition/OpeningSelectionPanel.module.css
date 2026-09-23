@@ -1,4 +1,7 @@
 .opening{border:1px solid var(--fc-data-room-control);background:var(--fc-data-room-surface);min-width:0;overflow:hidden}
+.banOrderChoice{flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px;padding:20px 14px;text-align:center;min-height:0}
+.banOrderChoice>strong{font-size:24px}
+.banOrderChoice .order{width:100%;padding:0}
 .opening>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px 10px;background:linear-gradient(110deg,var(--fc-data-room-raised),var(--fc-data-room-surface))}
 .opening h1{font-size:20px;line-height:1.4;margin:2px 0 0}.opening header small{letter-spacing:.12em;color:var(--fc-data-room-muted);font-size:10px}.opening header>span{font-size:11px;white-space:nowrap;color:var(--fc-data-room-text)}
 .steps{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);margin:0;padding:0 16px;border-bottom:1px solid var(--fc-data-room-line);gap:10px}
@@ -255,6 +258,9 @@
   :global([data-room-layout=workspace]) .opening .choices { padding:8px 14px; }
 }
 @media(min-width:1180px) and (max-height:800px) {
+  :global([data-room-layout=workspace]) .opening .mapPool { grid-auto-rows:minmax(46px,1fr); }
+  :global([data-room-layout=workspace]) .opening .mapPool button { min-height:46px;padding:5px 8px; }
+  :global([data-room-layout=workspace]) .opening .mapPool strong { font-size:12px; }
   :global([data-room-layout=workspace]) .opening .heroes { grid-auto-rows:minmax(46px,1fr);gap:4px; }
   :global([data-room-layout=workspace]) .opening .heroes button { min-height:46px;padding:3px;gap:1px; }
   :global([data-room-layout=workspace]) .opening .heroes img { width:26px;height:26px; }
@@ -263,4 +269,64 @@
 }
 @media(min-width:1180px) and (max-height:760px) {
   :global([data-room-layout=workspace]) .opening .heroes { grid-template-columns:repeat(8,minmax(0,1fr)); }
+}
+.firstPickConfirmation { flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:16px;width:min(100%,850px);margin:auto;padding:24px; }
+.firstPickConfirmation>p { font-size:14px;line-height:1.7;color:var(--fc-data-room-muted); }
+.confirmationTeams { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+.confirmationTeams>div { display:grid;gap:8px;align-content:start;padding:20px;border:1px solid var(--fc-data-room-line);background:var(--fc-data-room-raised);border-top:3px solid var(--fc-data-room-control); }
+.confirmationTeams>div[data-confirmed=true] { border-top-color:var(--fc-data-room-success); }
+.confirmationTeams strong { font-size:24px;overflow-wrap:anywhere; }.confirmationTeams span { font-size:13px; }.confirmationTeams small { font-size:11px; }
+.firstPickConfirmation>form { display:flex;align-items:end;gap:14px;padding-top:12px;border-top:1px solid var(--fc-data-room-line); }
+.firstPickConfirmation>form label { display:grid;gap:8px;flex:1;font-size:12px;min-width:0; }.firstPickConfirmation select { width:100%;min-height:42px; }
+.firstPickEvidence { border-top:1px solid var(--fc-data-room-line);padding-top:14px; }
+.firstPickEvidence summary { cursor:pointer;font-size:12px; }.firstPickEvidence p { font-size:12px;margin-top:10px;line-height:1.6; }
+.evidenceUpload { display:grid;gap:8px;margin-top:12px; }.evidenceUpload label { display:grid;gap:6px; }.evidenceUpload input { width:100%;min-width:0;font-size:12px; }.evidenceUpload>button { justify-self:start; }
+.evidenceList { display:flex;flex-wrap:wrap;gap:10px;margin-top:12px; }.evidenceList a { display:grid;gap:4px;font-size:11px; }.evidenceList img { width:110px;height:70px;object-fit:contain;background:var(--fc-data-room-inset);border:1px solid var(--fc-data-room-line); }
+.firstPickConfirmation:has(details[open]) { justify-content:flex-start;overflow:auto; }
+.banOrderChoice { max-width:900px;width:100%;margin:auto; }.banOrderChoice .order button { min-height:90px;display:flex;flex-direction:column;justify-content:center;gap:8px;font-size:19px; }
+@media(max-width:600px) { .firstPickConfirmation { padding:18px 12px; }.confirmationTeams { gap:8px; }.confirmationTeams>div { padding:14px 10px; }.confirmationTeams strong { font-size:20px; }.firstPickConfirmation>form { flex-direction:column;align-items:stretch; }.banOrderChoice .order button { font-size:16px; }.firstPickConfirmation:has(details[open]) { overflow:visible; } }
+@media(min-width:1180px) and (max-height:800px) { .firstPickConfirmation { gap:10px;padding:12px 24px; }.confirmationTeams>div { padding:12px;gap:4px; }.confirmationTeams strong { font-size:20px; }.firstPickConfirmation>form { padding-top:8px; }.firstPickEvidence { padding-top:8px; } }
+@media(min-width:1500px) and (min-height:850px) {
+  :global([data-room-layout=workspace]) .opening>header { padding:calc(20 * var(--room-unit)) calc(24 * var(--room-unit)) calc(14 * var(--room-unit));border-bottom:1px solid var(--fc-data-room-line); }
+  :global([data-room-layout=workspace]) .opening h1 { font-size:calc(28 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening header small { font-size:calc(11 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .responsibility strong { font-size:calc(13 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .responsibility span { font-size:calc(11 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .rule { padding:calc(14 * var(--room-unit)) calc(24 * var(--room-unit)) calc(6 * var(--room-unit));font-size:calc(14 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .method { font-size:calc(12 * var(--room-unit));padding:calc(10 * var(--room-unit)) calc(24 * var(--room-unit)); }.opening .method strong { font-size:inherit; }
+  :global([data-room-layout=workspace]) .opening .typeHeading { padding:calc(10 * var(--room-unit)) calc(24 * var(--room-unit));font-size:calc(14 * var(--room-unit)); }.opening .typeHeading small { font-size:inherit; }
+  :global([data-room-layout=workspace]) .opening .types { padding:0 calc(24 * var(--room-unit));gap:calc(8 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .types button { min-height:calc(46 * var(--room-unit)); }.opening .types strong { font-size:calc(13 * var(--room-unit)); }.opening .types small { font-size:calc(11 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .mapPool { margin:calc(12 * var(--room-unit)) calc(24 * var(--room-unit)) 0;gap:calc(12 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .mapPool button { padding:calc(16 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .mapPool strong { font-size:calc(22 * var(--room-unit)); }.opening .mapPool small { font-size:calc(12 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .order { padding:calc(12 * var(--room-unit)) calc(24 * var(--room-unit)) 0;gap:calc(12 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .order button { min-height:calc(44 * var(--room-unit));font-size:calc(14 * var(--room-unit)); }.opening .order small { font-size:calc(12 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .confirm { margin:calc(12 * var(--room-unit)) calc(24 * var(--room-unit)) calc(18 * var(--room-unit));padding-top:calc(14 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .confirm .primary,.opening .firstPickConfirmation .primary { min-height:calc(44 * var(--room-unit));font-size:calc(14 * var(--room-unit));padding:calc(10 * var(--room-unit)) calc(18 * var(--room-unit)); }
+  .opening .confirm :is(small,p) { font-size:calc(13 * var(--room-unit)); }
+  .opening .banOrderChoice { max-width:calc(850 * var(--room-unit));gap:calc(28 * var(--room-unit)); }
+  .opening .banOrderChoice>strong { font-size:calc(36 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .banOrderChoice .order button { min-height:calc(120 * var(--room-unit));flex-direction:column;font-size:calc(22 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .banSummary { padding:calc(16 * var(--room-unit)) calc(24 * var(--room-unit));gap:calc(10 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .banSummary>strong { font-size:calc(22 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .banSummary>span { font-size:calc(13 * var(--room-unit));padding:calc(10 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .filters { padding:calc(12 * var(--room-unit)) calc(24 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .filters button { font-size:calc(13 * var(--room-unit));min-height:calc(36 * var(--room-unit)); }.opening .filters small { font-size:calc(12 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .heroes { margin:0 calc(24 * var(--room-unit));gap:calc(8 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .heroes img { width:calc(45 * var(--room-unit));height:calc(45 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .heroes span { font-size:calc(13 * var(--room-unit)); }
+  :global([data-room-layout=workspace]) .opening .heroes small { font-size:calc(10 * var(--room-unit)); }
+  .opening .firstPickConfirmation { width:min(100%,calc(850 * var(--room-unit)));padding:calc(24 * var(--room-unit));gap:calc(20 * var(--room-unit)); }
+  .opening .firstPickConfirmation>p { font-size:calc(15 * var(--room-unit)); }
+  .opening .confirmationTeams { gap:calc(18 * var(--room-unit)); }.opening .confirmationTeams>div { padding:calc(24 * var(--room-unit));gap:calc(12 * var(--room-unit)); }
+  .opening .confirmationTeams strong { font-size:calc(30 * var(--room-unit)); }.opening .confirmationTeams span { font-size:calc(14 * var(--room-unit)); }.opening .confirmationTeams small { font-size:calc(11 * var(--room-unit)); }
+  .opening .firstPickConfirmation>form { gap:calc(16 * var(--room-unit));padding-top:calc(18 * var(--room-unit)); }
+  .opening .firstPickConfirmation label,.opening .firstPickEvidence summary,.opening .firstPickEvidence p { font-size:calc(13 * var(--room-unit)); }
+  .opening .firstPickConfirmation select { font-size:calc(15 * var(--room-unit));min-height:calc(46 * var(--room-unit)); }
+  .opening .firstPick { flex:1;align-content:center;width:min(100%,calc(850 * var(--room-unit)));margin:auto;padding:calc(24 * var(--room-unit));gap:calc(20 * var(--room-unit));font-size:calc(15 * var(--room-unit)); }
+  .opening .firstPick label { font-size:calc(13 * var(--room-unit));gap:calc(8 * var(--room-unit)); }
+  .opening .firstPick :is(select,input,button) { font-size:calc(14 * var(--room-unit));min-height:calc(42 * var(--room-unit));padding:calc(8 * var(--room-unit)); }
+  .opening .duel strong { font-size:calc(24 * var(--room-unit)); }.opening .duel span:not(.hand) { font-size:calc(14 * var(--room-unit)); }
+  .opening .choices button { min-height:calc(80 * var(--room-unit)); }.opening .choices button>span { font-size:calc(18 * var(--room-unit)); }.opening .choices svg { width:calc(36 * var(--room-unit));height:calc(36 * var(--room-unit)); }
 }
