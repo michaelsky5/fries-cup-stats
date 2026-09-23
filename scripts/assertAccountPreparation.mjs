@@ -38,19 +38,19 @@ assert.equal(weeklyConfirmationWindow({ ...fixture().week, status: 'CANCELLED' }
 
 let data = fixture()
 let prepared = buildWeeklyPreparation(data.workspace, options)
-assert.equal(prepared.plans[0].next.key, 'roster')
+assert.equal(prepared.plans[0].next.key, 'lineup', 'incomplete saved roster returns to adjustment before confirmation')
 assert.equal(prepared.tasks.length, 1, 'a saved draft still requires submission')
 assert.equal(prepared.tasks[0].requiresSourceResolution, true, 'derived progress cannot be manually checked off')
 assert.equal(prepared.tasks[0].status, 'OPEN')
-assert.equal(prepared.plans[0].stages[2].label, '草稿待提交')
+assert.equal(prepared.plans[0].stages.find(stage => stage.key === 'roster').label, '草稿待提交')
 assert.equal(buildWeeklyPreparation(data.workspace, { ...options, userId: 'user-b' }).plans.length, 0, 'no previous-user progress')
 assert.equal(buildWeeklyPreparation(data.workspace, { ...options, seasonId: 'season-b' }).tasks.length, 0, 'no cross-season tasks')
 data.participation.rosters[0].status = 'SUBMITTED'
 prepared = buildWeeklyPreparation(data.workspace, options)
 assert.equal(prepared.tasks.length, 0, 'successful submission resolves the preparation task')
-assert.equal(prepared.plans[0].stages[2].state, 'waiting', 'submitted is not locked or approved')
+assert.equal(prepared.plans[0].stages.find(stage => stage.key === 'roster').state, 'waiting', 'submitted is not locked or approved')
 data.participation.rosters[0].status = 'LOCKED'
-assert.equal(buildWeeklyPreparation(data.workspace, options).plans[0].stages[2].state, 'done')
+assert.equal(buildWeeklyPreparation(data.workspace, options).plans[0].stages.find(stage => stage.key === 'roster').state, 'done')
 assert.equal(buildWeeklyPreparation(data.workspace, options).plans[0].readyForSchedule, true)
 assert.match(buildWeeklyPreparation(data.workspace, options).plans[0].guidance.detail, /赛程/)
 
@@ -74,7 +74,7 @@ assert.equal(buildWeeklyPreparation(data.workspace, options).tasks.length, 1, 'r
 for (const status of ['DECLINED', 'WITHDRAWN']) {
   data.participation.status = status
   assert.equal(buildWeeklyPreparation(data.workspace, options).tasks.length, 0, 'an explicit opt-out is not an unanswered invitation')
-  assert.equal(buildWeeklyPreparation(data.workspace, options).plans[0].stages[2].state, 'quiet')
+  assert.equal(buildWeeklyPreparation(data.workspace, options).plans[0].stages.find(stage => stage.key === 'roster').state, 'quiet')
   assert.equal(buildWeeklyPreparation(data.workspace, options).plans[0].readyForSchedule, false)
   assert.match(buildWeeklyPreparation(data.workspace, options).plans[0].guidance.detail, /无需提交名单/)
 }
@@ -86,8 +86,8 @@ prepared = buildWeeklyPreparation(data.workspace, options)
 assert.equal(prepared.tasks.length, 0)
 assert.equal(prepared.plans[0].readyForSchedule, false)
 assert.match(prepared.plans[0].guidance.detail, /已取消/)
-assert.doesNotMatch(prepared.plans[0].stages[2].label, /等待/)
-assert.doesNotMatch(prepared.plans[0].stages[2].detail, /等待/)
+assert.doesNotMatch(prepared.plans[0].stages.find(stage => stage.key === 'roster').label, /等待/)
+assert.doesNotMatch(prepared.plans[0].stages.find(stage => stage.key === 'roster').detail, /等待/)
 
 data = fixture()
 data.entry.weeks = []
@@ -108,8 +108,8 @@ data = fixture()
 data.participation.status = 'PENDING'
 prepared = buildWeeklyPreparation(data.workspace, { ...options, now: Date.parse('2026-09-07T12:00:00Z') })
 assert.match(prepared.plans[0].guidance.detail, /确认期已结束/)
-assert.equal(prepared.plans[0].stages[2].label, '本周未提交')
-assert.doesNotMatch(prepared.plans[0].stages[2].detail, /继续准备/)
+assert.equal(prepared.plans[0].stages.find(stage => stage.key === 'roster').label, '本周未提交')
+assert.doesNotMatch(prepared.plans[0].stages.find(stage => stage.key === 'roster').detail, /继续准备/)
 data.participation.status = 'DECLINED'
 prepared = buildWeeklyPreparation(data.workspace, { ...options, now: Date.parse('2026-09-06T09:00:00Z') })
 assert.match(prepared.plans[0].guidance.detail, /尚未开放/)
@@ -122,7 +122,7 @@ data.entry.weeks.push({ ...structuredClone(data.entry.weeks[0]), week: { ...data
 prepared = buildWeeklyPreparation(data.workspace, options)
 assert.equal(prepared.tasks.length, 1, 'core is a single cycle task, even with multiple open weeks')
 assert.match(prepared.tasks[0].id, /weekly-core/)
-assert.equal(prepared.plans.every(plan => plan.stages[2].state === 'waiting'), true, 'submission waits for the locked core')
+assert.equal(prepared.plans.every(plan => plan.stages.find(stage => stage.key === 'roster').state === 'waiting'), true, 'submission waits for the locked core')
 
 data = fixture()
 const second = structuredClone(data.entry)
@@ -255,7 +255,12 @@ assert.equal(getWeeklyRosterCheck(['0', '1', '2', '5', '6'], new Set(), continui
 assert.equal(getWeeklyRosterCheck(['0', '1', '5', '6', '7'], coreIds, continuityRules, rosterPlayers).canSubmit, false)
 const currentRules = fixture()
 currentRules.cycle.rules.rosterContinuityMode = 'PREVIOUS_APPEARANCE'
-assert.deepEqual(buildWeeklyPreparation(currentRules.workspace, options).plans[0].stages.map(stage => stage.key), ['participation', 'roster'])
+assert.deepEqual(buildWeeklyPreparation(currentRules.workspace, options).plans[0].stages.map(stage => stage.key), ['participation', 'lineup', 'roster'])
+currentRules.entry.players = ['a', 'b', 'c', 'd', 'e'].map(id => ({ id }))
+currentRules.participation.rosters[0].members = currentRules.entry.players.map(player => ({ playerId: player.id }))
+assert.equal(buildWeeklyPreparation(currentRules.workspace, options).plans[0].next.key, 'roster', 'a valid saved draft moves to confirmation instead of being submitted automatically')
+currentRules.entry.weeks[0].rules = { rosterMin: 6 }
+assert.equal(buildWeeklyPreparation(currentRules.workspace, options).plans[0].next.key, 'lineup', 'week-specific roster requirements also govern the adjustment step')
 
 // Match the actual System /me/weekly-competition response: rules and continuity
 // belong to the week wrapper, alongside participation (not inside it).

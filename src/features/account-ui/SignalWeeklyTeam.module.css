@@ -168,3 +168,11 @@
   .playerColumns, .playerRow { gap: 8px; grid-template-columns: 20px minmax(0, 1fr) 32px 48px; padding-inline: 6px; }
   .playerColumns { font-size: 11px; }
 }
+.reviewRoster { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 20px 0; }
+.reviewRoster section { min-width: 0; padding: 16px; border: 1px solid currentColor; overflow-wrap: anywhere; }
+.reviewRoster li { padding: 8px 0; }
+.reviewActions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 20px; }
+.reviewCheck { padding-block: 16px; color: var(--fc-data-ink); }
+.card .reviewCheck p { color: var(--fc-data-ink); }
+.workspace .reviewActions .primaryButton:not(:disabled) { background: var(--fc-data-signal); border-color: var(--fc-data-signal); }
+@media (max-width: 680px) { .reviewRoster { grid-template-columns: minmax(0, 1fr); } }
