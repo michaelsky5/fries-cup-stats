@@ -1,3 +1,5 @@
+import { getWeeklyRosterCheck, getWeeklyRosterContext } from '../account-ui/participationJourneyModel.js'
+
 const TERMINAL = new Set(['CLOSED', 'CANCELLED'])
 const time = value => value ? Date.parse(value) : NaN
 const members = record => record?.members || []
@@ -23,7 +25,7 @@ export function weeklyTeamDestination(cycleId, entryId, weekId, step) {
 }
 
 export function getWeeklyFocusStep(plan, requestedStep) {
-  const steps = plan?.stages?.map(stage => stage.key) || ['participation', 'roster']
+  const steps = plan?.stages?.map(stage => stage.key) || ['participation', 'lineup', 'roster']
   if (requestedStep && !steps.includes(requestedStep)) return null
   return requestedStep || plan?.next?.key || plan?.stages?.find(stage => ['blocked', 'waiting'].includes(stage.state))?.key || 'roster'
 }
@@ -60,7 +62,7 @@ export function isWeeklyPreparationWorkspace(workspace, seasonId, userId) {
 function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
   const week = record?.week
   const participation = record?.participation
-  const rules = cycle.rules || {}
+  const { rules, checkRules } = getWeeklyRosterContext(cycle, record)
   const fixedCore = rules.rosterContinuityMode === 'FIXED_CORE'
   const team = entry.team || {}
   const teamAccess = workspace.teams.find(item => item.team?.id === (entry.seasonTeamId || team.id))
@@ -73,6 +75,7 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
   const roster = participation?.rosters?.find(item => item.status === 'LOCKED')
     || participation?.rosters?.find(item => ['DRAFT', 'SUBMITTED'].includes(item.status))
   const confirmed = participation?.status === 'CONFIRMED'
+  const draftReady = Boolean(roster && getWeeklyRosterCheck(members(roster).map(member => member.playerId), new Set(members(core).map(member => member.playerId)), checkRules, entry.players || []).canSubmit)
   const declined = ['DECLINED', 'WITHDRAWN'].includes(participation?.status)
   const terminalDetail = week?.status === 'CANCELLED' || cycle.status === 'CANCELLED' ? '赛事安排已取消，已有记录仅供查看。'
     : entry.status && entry.status !== 'ACTIVE' ? '本队的参赛关系已结束，已有记录仅供查看。'
@@ -91,7 +94,7 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
         : terminal ? terminalDetail : cycle.status === 'REGISTRATION' ? `${owner}，选定核心后确认锁定。` : '需要周赛管理员核对核心名单。'
     }] : []),
     {
-      key: 'participation', title: '当周参赛',
+      key: 'participation', title: '确认当周参赛',
       state: confirmed ? 'done' : declined || terminal ? 'quiet' : window === 'open' ? writable ? 'action' : 'waiting' : window === 'closed' ? 'blocked' : 'waiting',
       label: confirmed ? '已确认参赛' : declined ? participation.status === 'DECLINED' ? '本周不参赛' : '已撤回确认'
         : terminal ? '未确认参赛' : window === 'missing' ? '周次尚未公布' : window === 'unknown' ? '确认状态待同步'
@@ -101,10 +104,17 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
           : window === 'open' && !terminal ? `${owner}，确认是否参加本周比赛。` : windowDetail
     },
     {
-      key: 'roster', title: '出赛名单',
+      key: 'lineup', title: '调整人员',
+      state: declined || terminal ? 'quiet' : ['SUBMITTED', 'LOCKED'].includes(roster?.status) || draftReady ? 'done'
+        : !confirmed ? 'waiting' : window === 'closed' ? 'blocked' : window === 'open' && (!fixedCore || core) && writable ? 'action' : 'waiting',
+      label: declined ? '本周无需调整' : terminal ? '历史名单' : ['SUBMITTED', 'LOCKED'].includes(roster?.status) || draftReady ? '调整已保存' : !confirmed ? '确认参赛后开放' : roster ? '草稿还需补齐' : '待选择人员',
+      detail: terminal ? terminalDetail : declined ? '本周无需提交名单。' : window !== 'open' ? windowDetail : `${owner}，添加或移除本周出赛人选，保存草稿后进入确认名单；选手档案与历史战绩保留。`
+    },
+    {
+      key: 'roster', title: '确认并提交名单',
       state: declined ? 'quiet' : roster?.status === 'LOCKED' ? 'done' : terminal ? 'quiet'
         : !confirmed ? 'waiting' : roster?.status === 'SUBMITTED' ? 'waiting'
-          : window === 'closed' ? 'blocked' : window === 'open' && (!fixedCore || core) && writable ? 'action' : 'waiting',
+          : window === 'closed' ? 'blocked' : !draftReady ? 'waiting' : window === 'open' && (!fixedCore || core) && writable ? 'action' : 'waiting',
       label: declined ? '本周无需提交' : roster?.status === 'LOCKED' ? '管理员已锁定'
         : terminal ? roster?.status === 'SUBMITTED' ? '已提交 · 未锁定' : '未提交正式名单'
           : !confirmed ? window === 'closed' ? '本周未提交' : '确认参赛后开放' : roster?.status === 'SUBMITTED' ? '已提交 · 等待锁定'
@@ -155,7 +165,7 @@ export function buildWeeklyPreparation(workspace, { seasonId, userId, readOnly =
     seen.add(id)
     return [{ id, status: 'OPEN', identityType: 'MANAGER', priority: 'HIGH', requiresSourceResolution: true,
       taskType: `WEEKLY_PREPARATION_${stage.key.toUpperCase()}`, sourceType: 'WEEKLY_PREPARATION', sourceId,
-      title: `${plan.team.shortName || plan.team.name || '本队'} · ${stage.key === 'core' ? '锁定周期核心' : stage.key === 'participation' ? '确认当周参赛' : '提交出赛名单'}`,
+      title: `${plan.team.shortName || plan.team.name || '本队'} · ${stage.key === 'core' ? '锁定周期核心' : stage.key === 'participation' ? '确认当周参赛' : stage.key === 'lineup' ? '调整本周人员' : '提交出赛名单'}`,
       body: `${plan.cycle.name}${stage.key !== 'core' && plan.week ? ` · ${plan.week.label || `第 ${plan.week.weekNumber} 周`}` : ''}。${stage.detail}`,
       teamOrganization: plan.team, dueAt: stage.key === 'core' ? null : plan.dueAt, actionUrl: stage.actionUrl }]
   }))

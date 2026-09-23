@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import WeeklyParticipationChangeDialog from './WeeklyParticipationChangeDialog.jsx'
+import WeeklyRosterReview from './WeeklyRosterReview.jsx'
 import {
   fetchMyWeeklyCompetition,
   saveMyWeeklyCore,
@@ -84,7 +85,7 @@ function PlayerPicker({ players, selectedIds, coreIds, disabled, readOnly = fals
   )
 }
 
-function SaveFeedback({ notice, kind, plan, nextHref, progressHref, overviewHref }) {
+function SaveFeedback({ notice, kind, step = kind, plan, nextHref, progressHref, overviewHref }) {
   const uiLocale = useUiLocale()
   const feedbackRef = useRef(null)
   const visible = notice?.kind === kind && notice.planId === plan?.id
@@ -97,7 +98,7 @@ function SaveFeedback({ notice, kind, plan, nextHref, progressHref, overviewHref
   return <div ref={feedbackRef} className={styles.saveFeedback} tabIndex={-1} role="status">
     <strong><span aria-hidden="true">✓</span> {notice.message}</strong>
     <p>{plan.guidance.detail}</p>
-    <nav aria-label={uiText("保存后的下一步", uiLocale)}>{plan.next && plan.next.key !== kind ? <Link className={styles.nextStep} to={nextHref}>{uiText("继续", uiLocale)}{plan.next.title} →</Link> : null}<Link to={progressHref}>{uiText("查看本次参赛进度 ↗", uiLocale)}</Link><Link to={overviewHref}>{uiText("返回我的空间", uiLocale)}</Link></nav>
+    <nav aria-label={uiText("保存后的下一步", uiLocale)}>{plan.next && plan.next.key !== step ? <Link className={styles.nextStep} to={nextHref}>{uiText("继续", uiLocale)}{plan.next.title} →</Link> : null}<Link to={progressHref}>{uiText("查看本次参赛进度 ↗", uiLocale)}</Link><Link to={overviewHref}>{uiText("返回我的空间", uiLocale)}</Link></nav>
   </div>
 }
 
@@ -217,7 +218,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
 
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 30_000); return () => clearInterval(timer) }, [])
   useEffect(() => {
-    if (loading || invalidSelection || !['core', 'participation', 'roster'].includes(requestedStep)) return
+    if (loading || invalidSelection || !['core', 'participation', 'lineup', 'roster'].includes(requestedStep)) return
     const element = document.getElementById(`weekly-${requestedStep}`)
     element?.scrollIntoView({ block: 'start' })
     element?.focus({ preventScroll: true })
@@ -358,20 +359,27 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
           <SaveFeedback {...feedbackProps} kind="participation" />
         </section>
 
-        <section id="weekly-roster" tabIndex={-1} hidden={activeStep !== 'roster'} className={styles.card} aria-label={uiText("本周出赛名单", uiLocale)}>
-          <header><h3>{uiText("本周出赛名单", uiLocale)}</h3><em>{currentRoster ? 'V' + currentRoster.version + ' · ' + STATUS_LABELS[currentRoster.status] : uiText("尚未提交", uiLocale)}</em></header>
+        <section id="weekly-lineup" tabIndex={-1} hidden={activeStep !== 'lineup'} className={styles.card} aria-label={uiText("调整人员", uiLocale)}>
+          <header><h3>{uiText("调整人员", uiLocale)}</h3><em>{currentRoster ? 'V' + currentRoster.version + ' · ' + STATUS_LABELS[currentRoster.status] : uiText("尚未提交", uiLocale)}</em></header>
+          <p>{uiText('勾选或取消勾选本周出赛人选。新加入队伍的选手请先由管理员核对入队资料，再选择进入本周名单。', uiLocale)}</p>
           <p>{entry.team?.shortName || entry.team?.name} · {weekRecord?.week?.label}：{rules.rosterMin}–{rules.rosterMax}{uiText(" 人，", uiLocale)}{fixedCore ? uiText("至少 {0} 名已锁定核心。", uiLocale, [rules.minimumCoreInWeeklyRoster]) : firstAppearance ? uiText("首次参赛，无需保留历史出赛名单。", uiLocale) : uiText("至少保留最近一次实际参赛名单中的 {0} 人。", uiLocale, [continuity?.required || 0])}</p>
           {!participation?.id || participation.status !== 'CONFIRMED' ? <div className={styles.empty}><strong>{PARTICIPATION_LABELS[participation?.status] || uiText("等待确认参赛", uiLocale)}</strong><p>{uiText("确认参加本周比赛后，再准备出赛名单。", uiLocale)}</p><Link to={stepHref('participation')}>{uiText("查看本周参赛确认 →", uiLocale)}</Link></div> : <>
             <div className={styles.selectionLayout}>
               <PlayerPicker players={entry.players || []} selectedIds={rosterIds} coreIds={fixedCore ? lockedCoreIds : continuityPlayerIds} markerLabel={fixedCore ? "周期核心" : "上次参赛"} markerText={fixedCore ? "核心" : "已参赛"} disabled={!rosterWritable || Boolean(busy)} readOnly={!rosterWritable} onChange={setRosterIds} />
               <aside className={styles.selectionSummary} aria-label={uiText("出赛名单核对与提交", uiLocale)}>
                 <div className={styles.selectionCheck} role="status"><h4>{rosterLocked ? uiText("正式名单", uiLocale) : uiText("提交前核对", uiLocale)}</h4><dl><div><dt>{uiText("出赛人数", uiLocale)}</dt><dd>{rosterCheck.count}<small> / {rules.rosterMin}–{rules.rosterMax}{uiText(" 人", uiLocale)}</small></dd></div><div><dt>{fixedCore ? uiText("已含核心", uiLocale) : uiText("与最近参赛重合", uiLocale)}</dt><dd>{firstAppearance ? uiText("首次参赛", uiLocale) : <>{fixedCore ? rosterCheck.coreCount : rosterCheck.retainedCount}<small>{uiText(" / 至少 ", uiLocale)}{fixedCore ? rules.minimumCoreInWeeklyRoster : (continuity?.required || 0)}{uiText(" 人", uiLocale)}</small></>}</dd></div></dl><strong className={styles.checkState} data-valid={rosterCheck.canSubmit}>{rosterCheck.errors.length ? uiText("名单还需补齐", uiLocale) : uiText("✓ 人数与继承规则符合要求", uiLocale)}</strong>{rosterCheck.errors.length ? rosterCheck.errors.map(message => <p key={message}>{message}</p>) : <p>{rosterLocked ? uiText("管理员已锁定，正式出赛名单已确认。", uiLocale) : rosterDraft?.status === 'SUBMITTED' && !rosterDirty ? uiText("已提交给周赛管理员，等待锁定，无需重复提交。", uiLocale) : rosterDirty ? uiText("有未保存的改动。提交后交由周赛管理员锁定。", uiLocale) : uiText("当前为已保存草稿，正式提交后交由周赛管理员锁定。", uiLocale)}</p>}</div>
-                {rosterWritable && <div className={styles.selectionActions}><span className={styles.mobileSelectionCount} aria-hidden="true">{rosterCheck.errors[0] || (firstAppearance ? uiText("已选 {0} 人 · 首次参赛{1}", uiLocale, [rosterCheck.count, rosterDirty ? " · 未保存" : ""]) : uiText("已选 {0} 人 · 保留 {1} 人{2}", uiLocale, [rosterCheck.count, fixedCore ? rosterCheck.coreCount : rosterCheck.retainedCount, rosterDirty ? " · 未保存" : ""]))}</span><button type="button" className={styles.primaryButton} disabled={Boolean(busy) || !rosterCheck.canSubmit || (rosterDraft?.status === 'SUBMITTED' && !rosterDirty)} onClick={() => runAction('roster', () => saveMyWeeklyRoster(participation.id, { members: rosterIds.map(playerId => ({ playerId, plannedStarter: false })), status: 'SUBMITTED', revision: rosterDraft?.revision || 0 }), '本周名单已提交。')}>{busy === 'roster' ? uiText("保存中…", uiLocale) : rosterDraft?.status === 'SUBMITTED' && !rosterDirty ? uiText("已提交 · 等待管理员", uiLocale) : uiText("提交名单", uiLocale)}</button><button type="button" className={styles.secondaryButton} disabled={Boolean(busy) || !rosterDirty} onClick={() => runAction('roster', () => saveMyWeeklyRoster(participation.id, { members: rosterIds.map(playerId => ({ playerId, plannedStarter: false })), status: 'DRAFT', revision: rosterDraft?.revision || 0 }), '本周名单草稿已保存，尚未正式提交。')}>{uiText("保存草稿", uiLocale)}</button></div>}
+                {rosterWritable && <div className={styles.selectionActions}><span className={styles.mobileSelectionCount} aria-hidden="true">{rosterCheck.errors[0] || (firstAppearance ? uiText("已选 {0} 人 · 首次参赛{1}", uiLocale, [rosterCheck.count, rosterDirty ? " · 未保存" : ""]) : uiText("已选 {0} 人 · 保留 {1} 人{2}", uiLocale, [rosterCheck.count, fixedCore ? rosterCheck.coreCount : rosterCheck.retainedCount, rosterDirty ? " · 未保存" : ""]))}</span>{!rosterDirty && rosterCheck.canSubmit && <Link className={styles.primaryButton} to={stepHref('roster')}>{uiText('前往确认名单', uiLocale)}</Link>}<button type="button" className={styles.secondaryButton} disabled={Boolean(busy) || !rosterDirty} onClick={() => runAction('roster', () => saveMyWeeklyRoster(participation.id, { members: rosterIds.map(playerId => ({ playerId, plannedStarter: false })), status: 'DRAFT', revision: rosterDraft?.revision || 0 }), '本周名单草稿已保存，尚未正式提交。')}>{uiText("保存调整", uiLocale)}</button></div>}
               </aside>
             </div>
-            <SaveFeedback {...feedbackProps} kind="roster" />
+            {activeStep === 'lineup' && <SaveFeedback {...feedbackProps} kind="roster" step="lineup" />}
             {!rosterWritable && <p className={styles.lockNote}>{rosterLocked ? uiText("正式名单已锁定。", uiLocale) : !entryWritable ? uiText("当前账号或赛季策略只允许查看，本周名单由队长或经理提交。", uiLocale) : uiText("当前确认窗口未开放或已截止，名单保持只读。", uiLocale)}</p>}
           </>}
+        </section>
+        <section id="weekly-roster" tabIndex={-1} hidden={activeStep !== 'roster'} className={styles.card} aria-label={uiText('确认并提交名单', uiLocale)}>
+          <header><h3>{uiText('确认并提交名单', uiLocale)}</h3><em>{currentRoster ? 'V' + currentRoster.version + ' · ' + STATUS_LABELS[currentRoster.status] : uiText('尚未提交', uiLocale)}</em></header>
+          <WeeklyRosterReview players={entry.players || []} ids={rosterIds} previousIds={continuity?.playerIds || []} firstAppearance={firstAppearance} check={rosterCheck} status={currentRoster?.status} writable={rosterWritable} dirty={rosterDirty} busy={Boolean(busy)} editHref={stepHref('lineup')} onSubmit={() => runAction('roster', () => saveMyWeeklyRoster(participation.id, { members: rosterIds.map(playerId => ({ playerId, plannedStarter: false })), status: 'SUBMITTED', revision: rosterDraft?.revision || 0 }), '本周名单已提交。')} />
+          {!rosterWritable && <p className={styles.lockNote}>{rosterLocked ? uiText('正式名单已锁定。', uiLocale) : !entryWritable ? uiText('当前账号或赛季策略只允许查看，本周名单由队长或经理提交。', uiLocale) : uiText('当前确认窗口未开放或已截止，名单保持只读。', uiLocale)}</p>}
+          {activeStep === 'roster' && <SaveFeedback {...feedbackProps} kind="roster" />}
         </section>
         <footer className={styles.taskFooter}><span>{currentPlan?.guidance.detail}</span><Link to={progressHref}>{uiText("查看完整参赛进度 ↗", uiLocale)}</Link></footer>
         {weekId && entry?.team?.id && <WeeklyCoordinationPanel key={`${weekId}:${entry.team.id}`} weekId={weekId} teamId={entry.team.id} readOnly={readOnly || stale || Boolean(busy)} onActivityChange={onActivityChange} />}

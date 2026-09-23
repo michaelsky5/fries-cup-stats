@@ -11134,8 +11134,8 @@
   },
   "历史名单": {
     "zh-TW": "歷史名單",
-    "en-US": "Historical list",
-    "ko-KR": "기록 목록"
+    "en-US": "Past roster",
+    "ko-KR": "과거 명단"
   },
   "历史届次": {
     "zh-TW": "歷史屆次",
@@ -52710,5 +52710,110 @@
     "zh-TW": "重設我的演練",
     "en-US": "Restart my practice",
     "ko-KR": "내 연습 초기화"
+  },
+  "调整人员": {
+    "zh-TW": "調整人員",
+    "en-US": "Adjust players",
+    "ko-KR": "선수 조정"
+  },
+  "确认并提交名单": {
+    "zh-TW": "確認並提交名單",
+    "en-US": "Confirm and submit roster",
+    "ko-KR": "명단 확인 및 제출"
+  },
+  "历史名单选手（已不在当前阵容）": {
+    "zh-TW": "歷史名單選手（已不在目前陣容）",
+    "en-US": "Previous roster player (no longer on the team)",
+    "ko-KR": "이전 명단 선수 (현재 팀 소속 아님)"
+  },
+  "核对下面的完整名单后正式提交。保存调整只会保存草稿，不代表已提交。": {
+    "zh-TW": "核對下方完整名單後正式提交。儲存調整只會儲存草稿，不代表已提交。",
+    "en-US": "Review the full roster below before submitting. Saving changes only saves a draft.",
+    "ko-KR": "아래 전체 명단을 확인한 후 제출하세요. 변경 사항 저장은 초안만 저장합니다."
+  },
+  "本周完整名单": {
+    "zh-TW": "本週完整名單",
+    "en-US": "Full weekly roster",
+    "ko-KR": "이번 주 전체 명단"
+  },
+  "请先调整并保存本周出赛人选。": {
+    "zh-TW": "請先調整並儲存本週出賽人選。",
+    "en-US": "Select and save this week’s players first.",
+    "ko-KR": "먼저 이번 주 출전 선수를 선택하고 저장하세요."
+  },
+  "首次参赛名单": {
+    "zh-TW": "首次參賽名單",
+    "en-US": "First appearance roster",
+    "ko-KR": "첫 출전 명단"
+  },
+  "与最近一次参赛比较": {
+    "zh-TW": "與最近一次參賽比較",
+    "en-US": "Compared with the last appearance",
+    "ko-KR": "최근 출전 명단과 비교"
+  },
+  "新增出赛": {
+    "zh-TW": "新增出賽",
+    "en-US": "Added players",
+    "ko-KR": "추가 출전 선수"
+  },
+  "本周不出赛": {
+    "zh-TW": "本週不出賽",
+    "en-US": "Not playing this week",
+    "ko-KR": "이번 주 미출전"
+  },
+  "移出本周名单不会删除选手档案或历史战绩。": {
+    "zh-TW": "移出本週名單不會刪除選手檔案或歷史戰績。",
+    "en-US": "Removing players from this week’s roster keeps their profiles and match history.",
+    "ko-KR": "이번 주 명단에서 제외해도 선수 프로필과 과거 기록은 유지됩니다."
+  },
+  "查看人员名单": {
+    "zh-TW": "查看人員名單",
+    "en-US": "View players",
+    "ko-KR": "선수 명단 보기"
+  },
+  "返回调整人员": {
+    "zh-TW": "返回調整人員",
+    "en-US": "Back to player selection",
+    "ko-KR": "선수 조정으로 돌아가기"
+  },
+  "前往确认名单": {
+    "zh-TW": "前往確認名單",
+    "en-US": "Review roster",
+    "ko-KR": "명단 확인하기"
+  },
+  "保存调整": {
+    "zh-TW": "儲存調整",
+    "en-US": "Save changes",
+    "ko-KR": "변경 사항 저장"
+  },
+  "勾选或取消勾选本周出赛人选。新加入队伍的选手请先由管理员核对入队资料，再选择进入本周名单。": {
+    "zh-TW": "勾選或取消勾選本週出賽人選。新加入隊伍的選手請先由管理員核對入隊資料，再選入本週名單。",
+    "en-US": "Select or deselect this week’s players. An administrator must verify new team members before they can be selected.",
+    "ko-KR": "이번 주 출전 선수를 선택하거나 해제하세요. 신규 팀원은 관리자의 가입 정보 확인 후 명단에 추가할 수 있습니다."
+  },
+  "调整已保存": {
+    "zh-TW": "調整已儲存",
+    "en-US": "Changes saved",
+    "ko-KR": "변경 사항 저장됨"
+  },
+  "本周无需调整": {
+    "zh-TW": "本週無需調整",
+    "en-US": "No changes needed this week",
+    "ko-KR": "이번 주 조정 불필요"
+  },
+  "草稿还需补齐": {
+    "zh-TW": "草稿還需補齊",
+    "en-US": "Draft incomplete",
+    "ko-KR": "초안 보완 필요"
+  },
+  "待选择人员": {
+    "zh-TW": "待選擇人員",
+    "en-US": "Select players",
+    "ko-KR": "선수 선택 필요"
+  },
+  "调整本周人员": {
+    "zh-TW": "調整本週人員",
+    "en-US": "Adjust this week’s players",
+    "ko-KR": "이번 주 선수 조정"
   }
 }
