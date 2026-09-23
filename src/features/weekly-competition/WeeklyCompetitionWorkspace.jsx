@@ -1,4 +1,5 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
+import WeeklyTeamAdditions from './WeeklyTeamAdditions.jsx'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -326,6 +327,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
       <header className={styles.workHeader}><div><span>WEEKLY PARTICIPATION</span><h2>{uiText("本周参赛准备", uiLocale)}</h2></div><button type="button" disabled={Boolean(busy)} onClick={async () => { if (await confirmDiscard()) { refresh().catch(() => {}); onActivityChange?.() } }}>{uiText("刷新资料", uiLocale)}</button></header>
       {error ? <div ref={errorRef} tabIndex={-1} className={styles.message} role="alert" data-error="true"><span>{error}</span></div> : null}
       {stale && <p className={styles.lockNote}>{uiText("当前显示上次同步记录，重新同步前仅可查看。", uiLocale)}</p>}
+      <WeeklyTeamAdditions key={seasonId} seasonId={seasonId} readOnly={readOnly || stale || Boolean(busy)} />
       <div className={styles.preparationReturn}><Link to={progressHref}>{uiText("← 本次参赛进度", uiLocale)}</Link><strong>{entry?.team?.shortName || entry?.team?.name} · {weekRecord?.week?.label || uiText("周期登记", uiLocale)}</strong><span>{cycle?.name}</span>{confirmationOpen && weekRecord.week.confirmationDeadlineAt && <time dateTime={weekRecord.week.confirmationDeadlineAt}>{uiText("截止 ", uiLocale)}{new Date(weekRecord.week.confirmationDeadlineAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}{uiText(" · 北京时间", uiLocale)}</time>}</div>
       {(workspace.cycles.length > 1 || cycle?.entries?.length > 1 || entry?.weeks?.length > 1) && <details className={styles.contextSwitcher}><summary>{uiText("切换队伍或周次", uiLocale)}</summary><div className={styles.selectors}>
         <label><span>{uiText("周期", uiLocale)}</span><select value={cycleId} disabled={Boolean(busy)} onChange={event => changeSelection('cycle', event.target.value)}>{workspace.cycles.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
@@ -361,7 +363,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
 
         <section id="weekly-lineup" tabIndex={-1} hidden={activeStep !== 'lineup'} className={styles.card} aria-label={uiText("调整人员", uiLocale)}>
           <header><h3>{uiText("调整人员", uiLocale)}</h3><em>{currentRoster ? 'V' + currentRoster.version + ' · ' + STATUS_LABELS[currentRoster.status] : uiText("尚未提交", uiLocale)}</em></header>
-          <p>{uiText('勾选或取消勾选本周出赛人选。新加入队伍的选手请先由管理员核对入队资料，再选择进入本周名单。', uiLocale)}</p>
+          <p>{uiText('勾选或取消勾选本周出赛人选。全新队员可在上方“队伍自主增员”中邀请，审核通过后刷新资料即可选择。', uiLocale)}</p>
           <p>{entry.team?.shortName || entry.team?.name} · {weekRecord?.week?.label}：{rules.rosterMin}–{rules.rosterMax}{uiText(" 人，", uiLocale)}{fixedCore ? uiText("至少 {0} 名已锁定核心。", uiLocale, [rules.minimumCoreInWeeklyRoster]) : firstAppearance ? uiText("首次参赛，无需保留历史出赛名单。", uiLocale) : uiText("至少保留最近一次实际参赛名单中的 {0} 人。", uiLocale, [continuity?.required || 0])}</p>
           {!participation?.id || participation.status !== 'CONFIRMED' ? <div className={styles.empty}><strong>{PARTICIPATION_LABELS[participation?.status] || uiText("等待确认参赛", uiLocale)}</strong><p>{uiText("确认参加本周比赛后，再准备出赛名单。", uiLocale)}</p><Link to={stepHref('participation')}>{uiText("查看本周参赛确认 →", uiLocale)}</Link></div> : <>
             <div className={styles.selectionLayout}>
