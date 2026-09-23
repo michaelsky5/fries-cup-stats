@@ -52815,5 +52815,125 @@
     "zh-TW": "調整本週人員",
     "en-US": "Adjust this week’s players",
     "ko-KR": "이번 주 선수 조정"
+  },
+  "选择本图地图": {
+    "zh-TW": "選擇本圖地圖",
+    "en-US": "Choose this map",
+    "ko-KR": "이번 전장 선택"
+  },
+  "选择本图 Ban 顺序": {
+    "zh-TW": "選擇本圖 Ban 順序",
+    "en-US": "Choose the ban order",
+    "ko-KR": "이번 전장 금지 순서 선택"
+  },
+  " 图；有攻防的模式同时确认本队先攻或先防。": {
+    "zh-TW": " 圖；有攻防的模式同時確認本隊先攻或先防。",
+    "en-US": "; for attack/defense modes, also choose your starting side.",
+    "ko-KR": "번째 전장을 선택합니다. 공격/수비 모드는 시작 진영도 선택하세요."
+  },
+  "选择本队攻防顺序": {
+    "zh-TW": "選擇本隊攻防順序",
+    "en-US": "Choose your starting side",
+    "ko-KR": "우리 팀 시작 진영 선택"
+  },
+  "本队先攻": {
+    "zh-TW": "本隊先攻",
+    "en-US": "Attack first",
+    "ko-KR": "우리 팀 선공"
+  },
+  "本队先防": {
+    "zh-TW": "本隊先防",
+    "en-US": "Defend first",
+    "ko-KR": "우리 팀 선 수비"
+  },
+  "对方先攻": {
+    "zh-TW": "對方先攻",
+    "en-US": "Opponent attacks first",
+    "ko-KR": "상대 팀 선공"
+  },
+  "对方先防": {
+    "zh-TW": "對方先防",
+    "en-US": "Opponent defends first",
+    "ko-KR": "상대 팀 선 수비"
+  },
+  "请选择攻防顺序": {
+    "zh-TW": "請選擇攻防順序",
+    "en-US": "Choose attack or defense",
+    "ko-KR": "공격 또는 수비 선택"
+  },
+  "确认地图，进入首发确认": {
+    "zh-TW": "確認地圖，進入先發確認",
+    "en-US": "Confirm map and continue to lineup",
+    "ko-KR": "전장 확정 후 선발 확인"
+  },
+  " 确认地图及适用的攻防顺序，随后双方提交首发。": {
+    "zh-TW": " 確認地圖及適用的攻防順序，隨後雙方提交先發。",
+    "en-US": " to confirm the map and starting side where applicable, then both teams submit their lineups.",
+    "ko-KR": "의 전장 및 해당되는 시작 진영 확정을 기다립니다. 이후 양 팀이 선발을 제출합니다."
+  },
+  "双方首发与职责已确认，由 {0} 决定本队先 Ban 或后 Ban。": {
+    "zh-TW": "雙方先發與職責已確認，由 {0} 決定本隊先 Ban 或後 Ban。",
+    "en-US": "Both lineups and roles are confirmed. {0} chooses whether to ban first or second.",
+    "ko-KR": "양 팀 선발과 역할이 확정되었습니다. {0} 팀이 먼저 금지할지 나중에 금지할지 선택합니다."
+  },
+  "确认顺序后，先手方开始禁用英雄。": {
+    "zh-TW": "確認順序後，先手方開始禁用英雄。",
+    "en-US": "Once the order is confirmed, the first team bans a hero.",
+    "ko-KR": "순서가 확정되면 선행 팀이 영웅을 금지합니다."
+  },
+  "确认 Ban 顺序": {
+    "zh-TW": "確認 Ban 順序",
+    "en-US": "Confirm ban order",
+    "ko-KR": "금지 순서 확정"
+  },
+  "等待 {0} 确认 Ban 顺序。": {
+    "zh-TW": "等待 {0} 確認 Ban 順序。",
+    "en-US": "Waiting for {0} to confirm the ban order.",
+    "ko-KR": "{0}의 금지 순서 확정을 기다립니다."
+  },
+  "首攻方": {
+    "zh-TW": "首攻方",
+    "en-US": "Attacks first",
+    "ko-KR": "선공 팀"
+  },
+  "无需选择攻防": {
+    "zh-TW": "無需選擇攻防",
+    "en-US": "No attack/defense choice",
+    "ko-KR": "공격/수비 선택 없음"
+  },
+  "选择本图地图与攻防": {
+    "zh-TW": "選擇本圖地圖與攻防",
+    "en-US": "Choose the map and starting side",
+    "ko-KR": "이번 전장과 시작 진영 선택"
+  },
+  "先确定地图及适用的攻防顺序，再确认双方首发，随后选择 Ban 顺序并禁用英雄。": {
+    "zh-TW": "先確定地圖及適用的攻防順序，再確認雙方先發，隨後選擇 Ban 順序並禁用英雄。",
+    "en-US": "Choose the map and starting side where applicable, confirm both lineups, then choose the ban order and ban heroes.",
+    "ko-KR": "전장과 해당되는 시작 진영을 선택하고 양 팀 선발을 확정한 후, 금지 순서와 영웅을 선택합니다."
+  },
+  "沿用本图选择方，下一图先选地图与适用的攻防；首发确认后再决定 Ban 顺序。": {
+    "zh-TW": "沿用本圖選擇方，下一圖先選地圖與適用的攻防；先發確認後再決定 Ban 順序。",
+    "en-US": "The same team chooses the next map and starting side where applicable, then the ban order after lineups are confirmed.",
+    "ko-KR": "선택권을 유지한 팀이 다음 전장과 해당되는 시작 진영을 선택하고, 선발 확정 후 금지 순서를 정합니다."
+  },
+  "{0} 将选择下一图地图与适用的攻防，首发确认后再决定 Ban 顺序。{1}": {
+    "zh-TW": "{0} 將選擇下一圖地圖與適用的攻防，先發確認後再決定 Ban 順序。{1}",
+    "en-US": "{0} chooses the next map and starting side where applicable, then the ban order after lineups are confirmed. {1}",
+    "ko-KR": "{0} 팀이 다음 전장과 해당되는 시작 진영을 선택하고, 선발 확정 후 금지 순서를 정합니다. {1}"
+  },
+  "败方选择地图与攻防": {
+    "zh-TW": "敗方選擇地圖與攻防",
+    "en-US": "Losing team chooses map and side",
+    "ko-KR": "패배 팀이 전장과 진영 선택"
+  },
+  "等待赛管开放第 {0} 图，随后由 {1} 选择地图与适用的攻防。": {
+    "zh-TW": "等待賽管開放第 {0} 圖，隨後由 {1} 選擇地圖與適用的攻防。",
+    "en-US": "Waiting for the referee to open map {0}, then {1} chooses the map and starting side where applicable.",
+    "ko-KR": "심판이 {0}번째 전장을 열면 {1} 팀이 전장과 해당되는 시작 진영을 선택합니다."
+  },
+  "图一固定为占领要点；实际游戏 1V1 胜者获得图一选择权。图二及后续由上一图败方选择地图类型、具体地图与适用的攻防；平局保留选择方。双方确认首发后，由选择方在英雄禁用环节决定本队先 Ban 或后 Ban。": {
+    "zh-TW": "圖一固定為控制；實際遊戲 1V1 勝者獲得圖一選擇權。圖二及後續由上一圖敗方選擇地圖類型、具體地圖與適用的攻防；平手保留選擇方。雙方確認先發後，由選擇方在英雄禁用環節決定本隊先 Ban 或後 Ban。",
+    "en-US": "Map 1 is Control, chosen by the in-game 1v1 winner. On later maps, the previous loser chooses the mode, map and starting side where applicable; a draw retains the chooser. After both lineups are confirmed, that team chooses whether to ban first or second in the hero-ban stage.",
+    "ko-KR": "첫 전장은 쟁탈이며 실제 게임 1대1 승자가 선택합니다. 이후에는 직전 전장 패배 팀이 모드, 전장 및 해당되는 시작 진영을 선택하며 무승부는 선택권을 유지합니다. 양 팀 선발 확정 후 선택권을 가진 팀이 영웅 금지 단계에서 금지 순서를 정합니다."
   }
 }

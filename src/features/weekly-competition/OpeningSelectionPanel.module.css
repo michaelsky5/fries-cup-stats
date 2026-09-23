@@ -1,4 +1,7 @@
 .opening{border:1px solid var(--fc-data-room-control);background:var(--fc-data-room-surface);min-width:0;overflow:hidden}
+.banOrderChoice{flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px;padding:20px 14px;text-align:center;min-height:0}
+.banOrderChoice>strong{font-size:24px}
+.banOrderChoice .order{width:100%;padding:0}
 .opening>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px 10px;background:linear-gradient(110deg,var(--fc-data-room-raised),var(--fc-data-room-surface))}
 .opening h1{font-size:20px;line-height:1.4;margin:2px 0 0}.opening header small{letter-spacing:.12em;color:var(--fc-data-room-muted);font-size:10px}.opening header>span{font-size:11px;white-space:nowrap;color:var(--fc-data-room-text)}
 .steps{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);margin:0;padding:0 16px;border-bottom:1px solid var(--fc-data-room-line);gap:10px}
@@ -255,6 +258,9 @@
   :global([data-room-layout=workspace]) .opening .choices { padding:8px 14px; }
 }
 @media(min-width:1180px) and (max-height:800px) {
+  :global([data-room-layout=workspace]) .opening .mapPool { grid-auto-rows:minmax(46px,1fr); }
+  :global([data-room-layout=workspace]) .opening .mapPool button { min-height:46px;padding:5px 8px; }
+  :global([data-room-layout=workspace]) .opening .mapPool strong { font-size:12px; }
   :global([data-room-layout=workspace]) .opening .heroes { grid-auto-rows:minmax(46px,1fr);gap:4px; }
   :global([data-room-layout=workspace]) .opening .heroes button { min-height:46px;padding:3px;gap:1px; }
   :global([data-room-layout=workspace]) .opening .heroes img { width:26px;height:26px; }

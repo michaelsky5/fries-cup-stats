@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { getRoomStageIndex, getRoomOperatingSides } from '../src/features/weekly-competition/weeklyRoomFlow.js'
 import { buildWeeklyRoomPreview, PREVIEW_STAGES, PREVIEW_ROLES } from '../src/pages/dev/weeklyRoomPreviewModel.js'
 
-for (const [stage, expected] of Object.entries({ opening: 0, choosing: 1, lineup: 2, banning: 3, ready: 4, live: 5, paused: 5, review: 6, result: 7 })) {
+for (const [stage, expected] of Object.entries({ opening: 0, choosing: 1, lineup: 2, banorder: 3, banning: 3, ready: 4, live: 5, paused: 5, review: 6, result: 7 })) {
   const data = buildWeeklyRoomPreview(stage)
   assert.equal(getRoomStageIndex(data), expected, stage)
 }
