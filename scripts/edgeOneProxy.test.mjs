@@ -119,6 +119,26 @@ test('rejects oversized bodies even without a Content-Length header', async () =
   }
 })
 
+test('first-pick screenshots have a scoped upload limit and private image responses', async () => {
+  const path = '/api/platform/weekly-live-rooms/test-match/opening/evidence'
+  const body = JSON.stringify({ image: 'a'.repeat(5 * 1024 * 1024) })
+  let forwarded
+  const result = await proxyRequest(request(path, { method: 'POST', body, headers: { origin, 'content-type': 'application/json' } }), {
+    fetchImpl: async (_url, options) => { forwarded = options.body.byteLength; return json({ saved: true }) }
+  })
+  assert.equal(result.status, 200)
+  assert.equal(forwarded, new TextEncoder().encode(body).length)
+  assert.equal((await proxyRequest(request(path, { method: 'POST', body: new Uint8Array(8 * 1024 * 1024 + 1), headers: { origin } }), { fetchImpl: mustNotFetch })).status, 413)
+  const bytes = new Uint8Array([82, 73, 70, 70])
+  const image = await proxyRequest(request(path + '/abc', { headers: { cookie: 'session=test' } }), { fetchImpl: async (_url, options) => {
+    assert.equal(options.headers.get('cookie'), 'session=test')
+    return new Response(bytes, { headers: { 'content-type': 'image/webp', 'cache-control': 'private, no-store' } })
+  } })
+  assert.equal(image.status, 200)
+  assert.equal(image.headers.get('cache-control'), 'private, no-store')
+  assert.deepEqual(new Uint8Array(await image.arrayBuffer()), bytes)
+})
+
 test('never follows upstream redirects and translates HTML and connectivity failures into JSON', async () => {
   for (const upstream of [new Response(null, { status: 307, headers: { location: 'https://evil.example' } }), new Response('<html>Oops</html>', { headers: { 'content-type': 'text/html' } })]) {
     const result = await proxyRequest(request('/api/platform/auth/me'), { fetchImpl: async () => upstream })

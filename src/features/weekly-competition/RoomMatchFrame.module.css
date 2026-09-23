@@ -297,3 +297,21 @@
   .headerMeta { justify-content:flex-start;overflow-x:auto;scrollbar-width:none; }
   .headerMeta::-webkit-scrollbar { display:none; }
 }
+@media(min-width:1500px) and (min-height:850px) {
+  .frame .brand { gap:calc(12 * var(--room-unit)); }.frame .brand img { width:calc(28 * var(--room-unit));height:calc(36 * var(--room-unit)); }
+  .frame .brand b { font-size:calc(24 * var(--room-unit)); }.frame .brand small { font-size:calc(11 * var(--room-unit)); }
+  .frame .headerTeams { gap:calc(18 * var(--room-unit)); }.frame .headerTeams strong { font-size:calc(26 * var(--room-unit));max-width:calc(280 * var(--room-unit)); }.frame .headerTeams b { font-size:calc(19 * var(--room-unit)); }
+  .frame .headerMeta { font-size:calc(11 * var(--room-unit));gap:calc(12 * var(--room-unit));margin-top:calc(6 * var(--room-unit)); }
+  .frame .tools { width:calc(290 * var(--room-unit));gap:calc(10 * var(--room-unit)); }
+  .frame .tools>button,.frame .tools>div>button { font-size:calc(12 * var(--room-unit));height:calc(42 * var(--room-unit));max-height:none; }
+  .frame .tools>div>button>span:first-child { width:calc(28 * var(--room-unit));height:calc(28 * var(--room-unit));font-size:calc(12 * var(--room-unit)); }
+  .frame .matchFacts b { font-size:calc(13 * var(--room-unit)); }.frame .sync { font-size:calc(11 * var(--room-unit)); }
+  .frame .seriesLabel { min-width:calc(94 * var(--room-unit)); }.frame .seriesLabel strong { font-size:calc(13 * var(--room-unit)); }.frame .seriesLabel small { font-size:calc(11 * var(--room-unit)); }
+  .frame .mapRail button,.frame .mapRail li>div { grid-template-columns:calc(30 * var(--room-unit)) minmax(0,1fr);gap:calc(4 * var(--room-unit)) calc(12 * var(--room-unit)); }
+  .frame .mapRail button>span,.frame .mapRail li>div>span { font-size:calc(29 * var(--room-unit)); }.frame .mapRail b { font-size:calc(14 * var(--room-unit)); }
+  .frame .phaseViewHeader h2,.frame .decisionTitle h2 { font-size:calc(28 * var(--room-unit)); }
+  .frame .phaseViewHeader :is(small,span) { font-size:calc(12 * var(--room-unit)); }
+  .frame .phaseView { padding:calc(24 * var(--room-unit));font-size:calc(14 * var(--room-unit)); }
+  .frame .phaseView p { font-size:calc(14 * var(--room-unit)); }
+  .frame .resultMapTable { font-size:calc(14 * var(--room-unit)); }.frame .resultMapTable :is(th,td) { padding:calc(12 * var(--room-unit)) 0;font-size:inherit; }
+}

@@ -1,4 +1,4 @@
-.viewport.viewport { max-width:none;min-height:100dvh;padding:12px 18px;gap:8px; }
+.viewport.viewport { --room-unit:1px;max-width:none;min-height:100dvh;padding:12px 18px;gap:8px; }
 .columns { display:grid;grid-template-columns:minmax(190px,230px) minmax(0,1fr) minmax(190px,230px);gap:12px;flex:1;min-height:0; }
 .center { min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px; }
 .team { min-width:0;display:flex;flex-direction:column;border:1px solid var(--line);background:var(--fc-data-room-surface); }
@@ -94,4 +94,49 @@
   .viewport [data-room-slot=representative] { padding:5px 8px; }
   .team>footer { padding:5px 8px; }.team>footer strong { line-height:1.3; }.team>footer small { line-height:1.3; }
   .lineupChoices>div { padding:3px 7px; }.lineupEditor>footer { padding-top:2px; }.lineupEditor { gap:5px; }
+}
+/* Scale the workspace by both width and height; short desktop windows keep compact controls. */
+@media(min-width:1500px) and (min-height:850px) {
+  .viewport.viewport { --room-unit:clamp(1px,min(.0625vw,.1dvh),2.25px);padding:calc(14 * var(--room-unit)) calc(20 * var(--room-unit));gap:calc(10 * var(--room-unit));font-size:calc(14 * var(--room-unit)); }
+  .viewport .columns { grid-template-columns:calc(245 * var(--room-unit)) minmax(0,1fr) calc(245 * var(--room-unit));gap:calc(16 * var(--room-unit)); }
+  .viewport .center { gap:calc(10 * var(--room-unit)); }
+  .viewport .team>header { padding:calc(12 * var(--room-unit));gap:calc(4 * var(--room-unit)); }
+  .viewport .team>header h2 { font-size:calc(28 * var(--room-unit)); }
+  .viewport .team>header>small,.viewport .team>header>span { font-size:calc(11 * var(--room-unit)); }
+  .viewport .roster { padding:0 calc(14 * var(--room-unit));display:flex;flex-direction:column;flex:1;min-height:0; }
+  .viewport .rosterLabel { padding:calc(10 * var(--room-unit)) calc(14 * var(--room-unit)) calc(6 * var(--room-unit));font-size:calc(11 * var(--room-unit)); }
+  .viewport .rosterLabel strong { font-size:calc(12 * var(--room-unit)); }.viewport .rosterLabel small { font-size:calc(10 * var(--room-unit)); }
+  .viewport .person { grid-template-columns:calc(30 * var(--room-unit)) minmax(0,1fr) auto;flex:1;min-height:0;gap:calc(7 * var(--room-unit));padding:calc(3 * var(--room-unit)) 0; }
+  .viewport .role { min-height:calc(24 * var(--room-unit));font-size:calc(12 * var(--room-unit)); }
+  .viewport .identity b { font-size:calc(14 * var(--room-unit)); }.viewport .identity small { font-size:calc(10 * var(--room-unit));margin-top:calc(3 * var(--room-unit)); }
+  .viewport .person button { font-size:calc(11 * var(--room-unit));padding:calc(4 * var(--room-unit)) calc(6 * var(--room-unit));min-height:calc(30 * var(--room-unit)); }
+  .viewport .team>footer { padding:calc(10 * var(--room-unit)) calc(14 * var(--room-unit));gap:calc(4 * var(--room-unit)); }
+  .viewport .team>footer strong { font-size:calc(12 * var(--room-unit)); }.viewport .team>footer small { font-size:calc(10 * var(--room-unit)); }
+  .viewport [data-room-slot=representative] { padding:calc(12 * var(--room-unit)) calc(14 * var(--room-unit)); }
+  .viewport [data-room-slot=representative]>div:first-child small,.viewport [data-room-slot=representative] em { font-size:calc(10 * var(--room-unit)); }
+  .viewport [data-room-slot=representative]>div:first-child button { font-size:calc(11 * var(--room-unit));min-height:calc(28 * var(--room-unit));padding:calc(3 * var(--room-unit)) calc(6 * var(--room-unit)); }
+  .viewport [data-room-slot=representative]>div:nth-child(2) strong { font-size:calc(13 * var(--room-unit)); }.viewport [data-room-slot=representative]>div:nth-child(2) small { font-size:calc(10 * var(--room-unit)); }
+  .viewport [data-room-slot=header] { grid-template-columns:calc(210 * var(--room-unit)) minmax(0,1fr) calc(290 * var(--room-unit));min-height:calc(60 * var(--room-unit));padding-bottom:calc(10 * var(--room-unit)); }
+  .viewport [data-room-slot=facts] { min-height:calc(32 * var(--room-unit));font-size:calc(12 * var(--room-unit));padding-bottom:calc(8 * var(--room-unit)); }
+  .viewport [data-room-slot=series] { min-height:calc(60 * var(--room-unit));gap:calc(16 * var(--room-unit)); }
+  .viewport [data-room-slot=series] ol { gap:calc(8 * var(--room-unit)); }
+  .viewport [data-room-slot=series] li>button,.viewport [data-room-slot=series] li>div { min-height:calc(60 * var(--room-unit));padding:calc(8 * var(--room-unit)) calc(12 * var(--room-unit)); }
+  .viewport [data-room-slot=series] li small { font-size:calc(11 * var(--room-unit)); }
+  .viewport [data-room-slot=stages] { min-height:calc(44 * var(--room-unit));height:calc(44 * var(--room-unit));grid-template-rows:calc(44 * var(--room-unit)); }
+  .viewport [data-room-slot=stages] li button { font-size:calc(12 * var(--room-unit));height:calc(44 * var(--room-unit));gap:calc(5 * var(--room-unit)); }
+  .viewport [data-room-slot=stages] button>span:first-child { font-size:calc(10 * var(--room-unit)); }
+  .viewport .center>section[aria-label="首发确认"] { padding:calc(24 * var(--room-unit));gap:calc(14 * var(--room-unit)); }
+  .viewport .lineupEditor { gap:calc(14 * var(--room-unit));flex:1;justify-content:center; }
+  .viewport .lineupEditor>header { font-size:calc(16 * var(--room-unit));padding:calc(10 * var(--room-unit)) 0; }
+  .viewport .lineupEditor>header span,.viewport .lineupEditor>footer small { font-size:calc(12 * var(--room-unit)); }
+  .viewport .lineupChoices { gap:calc(10 * var(--room-unit)); }.viewport .lineupChoices>div { padding:calc(13 * var(--room-unit)); }
+  .viewport .lineupChoices b { font-size:calc(15 * var(--room-unit)); }.viewport .lineupChoices small { font-size:calc(11 * var(--room-unit)); }
+  .viewport .lineupChoices select { font-size:calc(13 * var(--room-unit));padding:calc(7 * var(--room-unit));max-width:calc(125 * var(--room-unit)); }
+  .viewport .lineupChoices input { width:calc(18 * var(--room-unit));height:calc(18 * var(--room-unit)); }
+  .viewport .lobbyOrder { gap:calc(8 * var(--room-unit)); }.viewport .lobbyOrder>div { padding:calc(12 * var(--room-unit));gap:calc(7 * var(--room-unit)); }.viewport .lobbyOrder :is(b,span) { font-size:calc(13 * var(--room-unit)); }
+  .viewport .lineupEditor>footer button { font-size:calc(14 * var(--room-unit));padding:calc(10 * var(--room-unit)) calc(16 * var(--room-unit)); }
+  .viewport .toolbar { min-height:calc(36 * var(--room-unit));font-size:calc(12 * var(--room-unit)); }
+  .viewport .toolbar button,.viewport .toolbar a { font-size:calc(12 * var(--room-unit));padding:calc(6 * var(--room-unit)) calc(10 * var(--room-unit));min-height:calc(34 * var(--room-unit)); }
+  .viewport .preflight { padding:calc(16 * var(--room-unit));gap:calc(10 * var(--room-unit)); }
+  .viewport .preflight strong { font-size:calc(15 * var(--room-unit)); }.viewport .preflight label,.viewport .preflight button { font-size:calc(13 * var(--room-unit)); }
 }

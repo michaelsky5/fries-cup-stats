@@ -26,8 +26,8 @@ export default function RoomResultActions({ data, disabled, mutate }) {
       <button className={report ? undefined : styles.primary} disabled={disabled || !result.handoff.canHandoff || !systemPageUrl('/submit/check')} onClick={async () => {
         setError(''); handoffPending.current ||= { matchRevision: data.match.revision, draftRevision: result.handoff.draftRevision, clientKey: crypto.randomUUID() }
         const saved = await mutate(async () => { try { return await liveRoomWrite(data.match.id, '/result-handoff', handoffPending.current) } catch (failure) { if (failure.status && failure.status < 500) handoffPending.current = null; setError(failure.message); throw failure } }, '战报入口已准备好，提交后可返回比赛房。')
-        if (saved) { handoffPending.current = null; setReport(saved) }
-      }}>{report ? uiText("刷新战报入口", uiLocale) : result.handoff.createdAt ? uiText("继续整理战报", uiLocale) : uiText("整理战报并交接", uiLocale)}</button>
+        if (saved) { handoffPending.current = null; setReport(saved); window.location.assign(systemPageUrl(saved.path + '?returnToRoom=1')) }
+      }}>{uiText(result.handoff.createdAt ? '继续上传截图与核对战报' : '上传截图并核对战报', uiLocale)} ↗</button>
       {report && <a className={`${styles.resultLink} ${styles.primary}`} href={systemPageUrl(report.path + '?returnToRoom=1')} target="_blank" rel="noopener noreferrer">{uiText("打开战报并提交审核 ↗", uiLocale)}</a>}
       {result.handoff.reason && <small>{result.handoff.reason}</small>}
       {!systemPageUrl('/submit/check') && <small>{uiText("战报服务尚未接通，请赛事管理员检查入口配置。", uiLocale)}</small>}
