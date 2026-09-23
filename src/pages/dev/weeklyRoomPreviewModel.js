@@ -11,6 +11,7 @@ export function buildWeeklyRoomPreview(stage = 'lineup', role = 'representative'
   const beforeLineup = ['opening', 'confirming', 'choosing', 'lineup'].includes(stage)
   const complete = !['opening', 'confirming', 'choosing', 'lineup', 'banorder', 'banning'].includes(stage)
   const map = { order: 1, name: 'Lijiang Tower', type: 'Control', status: ['review', 'result'].includes(stage) ? 'COMPLETE' : ['live', 'paused'].includes(stage) ? 'LIVE' : 'PENDING', lineupA: beforeLineup ? [] : lineup(0), lineupB: beforeLineup ? [] : lineup(1), banA: complete ? 'Ana' : null, banB: complete ? 'Ashe' : null, chooserSide: 'A', firstBanSide: ['opening', 'choosing', 'lineup', 'banorder'].includes(stage) ? '' : 'A', scoreA: ['review', 'result'].includes(stage) ? 2 : null, scoreB: ['review', 'result'].includes(stage) ? 1 : null }
+  if (['opening', 'confirming', 'choosing'].includes(stage)) Object.assign(map, { name: '', type: '', chooserSide: stage === 'choosing' ? 'A' : '' })
   const maps = stage === 'result' ? [map, ...['Rialto', "King's Row", 'New Queen Street', 'Suravasa'].map((name, i) => ({ ...map, order: i + 2, name, type: ['Escort', 'Hybrid', 'Push', 'Flashpoint'][i], scoreA: 1, scoreB: 1 }))] : [map]
   const opening = {
     revision: 1, mapOrder: map.order, phase: stage === 'confirming' ? 'CONFIRMING_FIRST_PICK' : stage === 'opening' ? 'ONE_V_ONE_SETUP' : stage === 'choosing' ? 'CHOOSING' : complete ? 'COMPLETE' : 'BANNING', complete,
