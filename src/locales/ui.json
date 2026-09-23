@@ -18280,8 +18280,8 @@
   },
   "已加入队伍": {
     "zh-TW": "已加入隊伍",
-    "en-US": "Joined the team",
-    "ko-KR": "이미 팀에 합류했습니다."
+    "en-US": "Added to the team",
+    "ko-KR": "팀에 추가됨"
   },
   "已匹配本职责 {0} / {1} 分钟；没有历史战绩的对手按中性处理。": {
     "zh-TW": "已匹配本職責 {0} / {1} 分鐘；沒有歷史戰績的對手按中性處理。",
@@ -48154,8 +48154,8 @@
   },
   "选手称呼": {
     "zh-TW": "選手稱呼",
-    "en-US": "Player title",
-    "ko-KR": "선수 타이틀"
+    "en-US": "Player display name",
+    "ko-KR": "선수 표시 이름"
   },
   "选手索引": {
     "zh-TW": "選手索引",
@@ -52815,6 +52815,141 @@
     "zh-TW": "調整本週人員",
     "en-US": "Adjust this week’s players",
     "ko-KR": "이번 주 선수 조정"
+  },
+  "队伍自主增员": {
+    "zh-TW": "隊伍自主增員",
+    "en-US": "Add team members",
+    "ko-KR": "팀 선수 추가"
+  },
+  "负责人邀请 → 选手本人确认 → System 管理员审核 → 加入队内名单。": {
+    "zh-TW": "負責人邀請 → 選手本人確認 → System 管理員審核 → 加入隊內名單。",
+    "en-US": "Manager invites → player confirms → System administrator reviews → added to the team.",
+    "ko-KR": "담당자 초대 → 선수 본인 확인 → System 관리자 심사 → 팀 명단 추가."
+  },
+  "刷新增员记录": {
+    "zh-TW": "重新整理增員紀錄",
+    "en-US": "Refresh member requests",
+    "ko-KR": "선수 추가 요청 새로고침"
+  },
+  "正在读取增员记录；读取失败时可点击刷新。": {
+    "zh-TW": "正在讀取增員紀錄；讀取失敗時可點擊重新整理。",
+    "en-US": "Loading member requests. Refresh if loading fails.",
+    "ko-KR": "선수 추가 요청을 불러오는 중입니다. 실패하면 새로고침하세요."
+  },
+  "邀请新队员": {
+    "zh-TW": "邀請新隊員",
+    "en-US": "Invite a new player",
+    "ko-KR": "새 선수 초대"
+  },
+  "选手本人邮箱": {
+    "zh-TW": "選手本人信箱",
+    "en-US": "Player’s own email",
+    "ko-KR": "선수 본인 이메일"
+  },
+  "生成增员邀请": {
+    "zh-TW": "產生增員邀請",
+    "en-US": "Create player invitation",
+    "ko-KR": "선수 초대 생성"
+  },
+  "增员通过后，请刷新周赛资料并选择当周出赛名单。已锁定的名单和历史赛绩不会自动改变。": {
+    "zh-TW": "增員通過後，請重新整理週賽資料並選擇當週出賽名單。已鎖定的名單和歷史賽績不會自動改變。",
+    "en-US": "After approval, refresh weekly data and select the player for an open weekly roster. Locked rosters and past results stay unchanged.",
+    "ko-KR": "승인 후 주간 대회 정보를 새로고침하고 출전 명단을 선택하세요. 잠긴 명단과 과거 경기 결과는 변경되지 않습니다."
+  },
+  "当前入口仅可查看增员记录。": {
+    "zh-TW": "目前入口僅可檢視增員紀錄。",
+    "en-US": "Member requests are currently read-only.",
+    "ko-KR": "현재 선수 추가 요청은 조회만 가능합니다."
+  },
+  "将邀请链接交给该选手本人；重新生成后旧链接失效。": {
+    "zh-TW": "將邀請連結交給該選手本人；重新產生後舊連結失效。",
+    "en-US": "Share the link with the invited player. Generating a new link invalidates the previous one.",
+    "ko-KR": "초대받은 선수 본인에게 링크를 전달하세요. 링크를 다시 생성하면 이전 링크는 무효가 됩니다."
+  },
+  "增员邀请链接": {
+    "zh-TW": "增員邀請連結",
+    "en-US": "Player invitation link",
+    "ko-KR": "선수 초대 링크"
+  },
+  "邀请链接已复制。": {
+    "zh-TW": "邀請連結已複製。",
+    "en-US": "Invitation link copied.",
+    "ko-KR": "초대 링크를 복사했습니다."
+  },
+  "复制失败，请选中链接手动复制。": {
+    "zh-TW": "複製失敗，請選取連結手動複製。",
+    "en-US": "Copy failed. Select the link and copy it manually.",
+    "ko-KR": "복사하지 못했습니다. 링크를 선택하여 직접 복사하세요."
+  },
+  "暂无增员申请。": {
+    "zh-TW": "暫無增員申請。",
+    "en-US": "No member requests yet.",
+    "ko-KR": "선수 추가 요청이 없습니다."
+  },
+  "待选手本人确认": {
+    "zh-TW": "待選手本人確認",
+    "en-US": "Awaiting player confirmation",
+    "ko-KR": "선수 본인 확인 대기"
+  },
+  "待管理员审核": {
+    "zh-TW": "待管理員審核",
+    "en-US": "Awaiting administrator review",
+    "ko-KR": "관리자 심사 대기"
+  },
+  "邀请有效至：": {
+    "zh-TW": "邀請有效至：",
+    "en-US": "Invitation expires: ",
+    "ko-KR": "초대 만료: "
+  },
+  "已进入队内名单。队长可刷新周赛资料，选择开放周次的出赛名单。": {
+    "zh-TW": "已進入隊內名單。隊長可重新整理週賽資料，選擇開放週次的出賽名單。",
+    "en-US": "Added to the team. The captain can refresh weekly data and select the player for an open week.",
+    "ko-KR": "팀에 추가되었습니다. 주장은 정보를 새로고침한 뒤 접수 중인 주차의 출전 명단을 선택할 수 있습니다."
+  },
+  "重新生成邀请": {
+    "zh-TW": "重新產生邀請",
+    "en-US": "Generate a new invitation",
+    "ko-KR": "초대 다시 생성"
+  },
+  "邀请已生成，选手确认后将进入 System 审核。": {
+    "zh-TW": "邀請已產生，選手確認後將進入 System 審核。",
+    "en-US": "Invitation created. After the player confirms, the request goes to System for review.",
+    "ko-KR": "초대를 생성했습니다. 선수가 확인하면 System에서 심사할 수 있습니다."
+  },
+  "邀请已重新生成，旧链接失效。": {
+    "zh-TW": "邀請已重新產生，舊連結失效。",
+    "en-US": "New invitation created. The previous link is no longer valid.",
+    "ko-KR": "초대를 다시 생성했습니다. 이전 링크는 무효입니다."
+  },
+  "增员申请已取消。": {
+    "zh-TW": "增員申請已取消。",
+    "en-US": "Member request cancelled.",
+    "ko-KR": "선수 추가 요청을 취소했습니다."
+  },
+  "勾选或取消勾选本周出赛人选。全新队员可在上方“队伍自主增员”中邀请，审核通过后刷新资料即可选择。": {
+    "zh-TW": "勾選或取消勾選本週出賽人選。全新隊員可在上方「隊伍自主增員」中邀請，審核通過後重新整理資料即可選擇。",
+    "en-US": "Select or deselect this week’s players. Invite new players under Add team members above; refresh after approval to select them.",
+    "ko-KR": "이번 주 출전 선수를 선택하거나 해제하세요. 위의 팀 선수 추가에서 신규 선수를 초대하고 승인 후 새로고침하면 선택할 수 있습니다."
+  },
+  "队伍资料已审核。可在上方“队伍自主增员”邀请新队员，队标可在下方更新；每周出赛阵容在“队伍与报名”中管理。": {
+    "zh-TW": "隊伍資料已審核。可在上方「隊伍自主增員」邀請新隊員，隊標可在下方更新；每週出賽陣容在「隊伍與報名」中管理。",
+    "en-US": "Team registration approved. Invite players under Add team members above and update the logo below. Manage weekly rosters in Team & registration.",
+    "ko-KR": "팀 등록이 승인되었습니다. 위에서 새 선수를 초대하고 아래에서 로고를 변경할 수 있습니다. 주간 출전 명단은 팀 및 등록에서 관리하세요."
+  },
+  "取消申请": {
+    "zh-TW": "取消申請",
+    "en-US": "Cancel request",
+    "ko-KR": "요청 취소"
+  },
+  "审核说明：": {
+    "zh-TW": "審核說明：",
+    "en-US": "Review note: ",
+    "ko-KR": "심사 의견: "
+  },
+  "复制邀请链接": {
+    "zh-TW": "複製邀請連結",
+    "en-US": "Copy invitation link",
+    "ko-KR": "초대 링크 복사"
   },
   "选择本图地图": {
     "zh-TW": "選擇本圖地圖",
