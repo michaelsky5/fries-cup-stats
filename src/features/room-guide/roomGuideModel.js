@@ -45,7 +45,7 @@ export function roomGuideUrl(context = {}, locale = 'zh-CN', { share = false } =
 
 export function guideReturnPath(context, locale) {
   const match = id(context.match), season = id(context.season)
-  return withLocale(match ? `/me/matches/${encodeURIComponent(match)}/room` : `/me?section=matches${season ? `&season=${encodeURIComponent(season)}` : ''}`, locale)
+  return withLocale(match ? `/me/matches/${encodeURIComponent(match)}/room` : `/me?section=matches${season ? `&competition=${encodeURIComponent(season)}` : ''}`, locale)
 }
 
 export function guideLessons(role, step) {

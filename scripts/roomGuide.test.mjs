@@ -31,6 +31,9 @@ test('shared reading links drop match, season and arbitrary sensitive query valu
   assert.equal(url.pathname, '/guides/weekly-room')
   assert.equal(new URL(guideReturnPath({ match: '//attacker.test' }, 'en-US'), 'https://stats.example').pathname, '/me')
   assert.equal(new URL(guideReturnPath({ match: 'MATCH-1' }, 'zh-TW'), 'https://stats.example').pathname, '/me/matches/MATCH-1/room')
+  const accountReturn = new URL(guideReturnPath({ season: 'TRAIN-123' }, 'en-US'), 'https://stats.example')
+  assert.equal(accountReturn.searchParams.get('competition'), 'TRAIN-123')
+  assert.equal(accountReturn.searchParams.has('season'), false)
 })
 
 test('malformed reading preferences fall back, and practice can only link to the fixed System route', () => {
