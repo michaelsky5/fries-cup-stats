@@ -11,6 +11,7 @@ import AccountFrame from '../account-ui/AccountFrame.jsx'
 import RegistrationLogoField from './RegistrationLogoField.jsx'
 import ApprovedTeamLogoEditor from './ApprovedTeamLogoEditor.jsx'
 import WeeklyTeamAdditions from '../weekly-competition/WeeklyTeamAdditions.jsx'
+import WeeklyOwnershipTransfers from '../weekly-competition/WeeklyOwnershipTransfers.jsx'
 import WeeklyEligibilityFields, { MemberEligibilityEditor, readWeeklyEligibility } from './WeeklyEligibilityFields.jsx'
 import { describeRegistrationError as describeError } from './registrationErrors.js'
 const emptyDetails = { region: '', history: '', logoUrl: '', coachName: '', coachContact: '' }
@@ -31,6 +32,7 @@ function ParticipationPage({ seasonId }) {
   const { user, isBootstrapping, logout } = useAuth()
   const [invitationToken] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get('invitation') || '')
   const [hasAdditions, setHasAdditions] = useState(false)
+  const [hasTransfers, setHasTransfers] = useState(false)
   return <AccountFrame title={uiText("赛事报名", uiLocale)} eyebrow="EVENT REGISTRATION" description={uiText("组建本队名单，确认后提交赛事负责人审核。", uiLocale)}><div className={styles.page}>
     <header className={styles.header}>
       <div><span>{uiText("参赛账号", uiLocale)}</span><strong>{user?.displayName || uiText("等待登录", uiLocale)}</strong></div>
@@ -38,7 +40,7 @@ function ParticipationPage({ seasonId }) {
     </header>
     {invitationToken ? <Invitation key={invitationToken} token={invitationToken} seasonId={seasonId} />
       : isBootstrapping ? <p role="status">{uiText("正在确认登录状态…", uiLocale)}</p>
-        : user ? <><WeeklyTeamAdditions key={`additions:${user.id}:${seasonId}`} seasonId={seasonId} onHasAdditions={setHasAdditions} /><Workspace key={`${user.id}:${seasonId}`} user={user} seasonId={seasonId} hasAdditions={hasAdditions} /></> : <Login />}
+        : user ? <><WeeklyTeamAdditions key={`additions:${user.id}:${seasonId}`} seasonId={seasonId} onHasAdditions={setHasAdditions} /><WeeklyOwnershipTransfers key={`transfers:${user.id}:${seasonId}`} seasonId={seasonId} onHasTransfers={setHasTransfers} /><Workspace key={`${user.id}:${seasonId}`} user={user} seasonId={seasonId} hasAdditions={hasAdditions || hasTransfers} /></> : <Login />}
   </div></AccountFrame>
 }
 

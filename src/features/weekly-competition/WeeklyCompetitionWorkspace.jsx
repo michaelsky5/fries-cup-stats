@@ -1,5 +1,6 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import WeeklyTeamAdditions from './WeeklyTeamAdditions.jsx'
+import WeeklyOwnershipTransfers from './WeeklyOwnershipTransfers.jsx'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -328,6 +329,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
       {error ? <div ref={errorRef} tabIndex={-1} className={styles.message} role="alert" data-error="true"><span>{error}</span></div> : null}
       {stale && <p className={styles.lockNote}>{uiText("当前显示上次同步记录，重新同步前仅可查看。", uiLocale)}</p>}
       <WeeklyTeamAdditions key={seasonId} seasonId={seasonId} readOnly={readOnly || stale || Boolean(busy)} />
+      <WeeklyOwnershipTransfers key={`ownership:${seasonId}`} seasonId={seasonId} readOnly={readOnly || stale || Boolean(busy)} />
       <div className={styles.preparationReturn}><Link to={progressHref}>{uiText("← 本次参赛进度", uiLocale)}</Link><strong>{entry?.team?.shortName || entry?.team?.name} · {weekRecord?.week?.label || uiText("周期登记", uiLocale)}</strong><span>{cycle?.name}</span>{confirmationOpen && weekRecord.week.confirmationDeadlineAt && <time dateTime={weekRecord.week.confirmationDeadlineAt}>{uiText("截止 ", uiLocale)}{new Date(weekRecord.week.confirmationDeadlineAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}{uiText(" · 北京时间", uiLocale)}</time>}</div>
       {(workspace.cycles.length > 1 || cycle?.entries?.length > 1 || entry?.weeks?.length > 1) && <details className={styles.contextSwitcher}><summary>{uiText("切换队伍或周次", uiLocale)}</summary><div className={styles.selectors}>
         <label><span>{uiText("周期", uiLocale)}</span><select value={cycleId} disabled={Boolean(busy)} onChange={event => changeSelection('cycle', event.target.value)}>{workspace.cycles.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
