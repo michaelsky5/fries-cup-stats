@@ -119,6 +119,7 @@ const router = createBrowserRouter([
   { path: '/guides/weekly-room', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/room-guide/WeeklyRoomGuidePage.jsx')) },
   { path: '/guides/weekly-room/simulate', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/room-guide/RoomPracticePage.jsx')) },
   { path: '/account', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/account/AccountSettingsPage.jsx')) },
+  { path: '/auth/staff', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/auth/StaffInvitationPage.jsx')) },
   // Retired room bookmarks resolve to public details; no legacy room component or API.
   { path: '/matches/:matchId/room', loader: ({ params, request }) => redirect(`/matches/${encodeURIComponent(params.matchId)}${new URL(request.url).search}`) },
   { path: '/me/matches/:matchId/room', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/weekly-competition/WeeklyLiveRoomPage.jsx')) },

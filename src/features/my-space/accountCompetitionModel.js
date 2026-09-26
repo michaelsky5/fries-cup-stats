@@ -16,7 +16,8 @@ export function normalizeAccountCompetitions(value) {
   }).map(item => ({
     id: item.id, name: String(item.name || item.id), status: item.status,
     competitionKind: item.competitionKind, teams: Array.isArray(item.teams) ? item.teams : [],
-    registrations: Array.isArray(item.registrations) ? item.registrations : []
+    registrations: Array.isArray(item.registrations) ? item.registrations : [],
+    staffRoles: [...new Set((Array.isArray(item.staffRoles) ? item.staffRoles : []).filter(role => ['REFEREE', 'CASTER'].includes(role)))]
   }))
 }
 
