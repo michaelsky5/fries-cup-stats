@@ -37,7 +37,7 @@ export function weeklyRoomStatus(room, { readOnly = false } = {}) {
     return { label: '已取消', tone: 'quiet', detail: '比赛或所属周赛已取消，记录仅供查看。' }
   }
   if (phase === 'closed') return { label: '已结束 · 记录只读', tone: 'quiet', detail: '本周或所属周期已结束。已有赛果与响应保留供核对，如需更正请联系管理员。' }
-  if (phase === 'scheduled') return { label: room.scheduledAt ? '等待开赛' : '比赛时间待定', tone: 'yellow', detail: room.scheduledAt ? '赛程已发布。请在下方查看房间安排，核对队伍准备状态；遇到问题可在本页提交给赛管。' : '本队配对已发布，等待管理员确认比赛时间。' }
+  if (phase === 'scheduled') return { label: room.scheduledAt ? '等待开赛' : '比赛时间待定', tone: 'yellow', detail: room.scheduledAt ? '赛程已发布。点击“进入比赛房”，按当前阶段操作；房间内可随时联系赛管。' : '本队配对已发布，等待管理员确认比赛时间。' }
   if (phase === 'live') return { label: '比赛进行中', tone: 'yellow', detail: '比赛正在进行，当前无需确认赛果。正式结果通过审核后，队长或经理再代表本队响应。' }
   if (room?.ready === false && phase === 'review' && room.confirmationState !== 'STALE') return { label: '赛果待审核', tone: 'quiet', detail: '比赛结果尚未完成正式审核，请等待裁判与管理员处理。' }
   if (room?.confirmationState === 'PENDING' && room.myTeams?.length) {
@@ -74,7 +74,7 @@ export function buildWeeklyRoomJourney(room, options) {
   const teamConfirmed = ['CONFIRMED', 'FINALIZED', 'OVERRIDDEN'].includes(room?.confirmationState)
   const stages = preMatch ? [
     { key: 'schedule', en: 'SCHEDULE', label: room.scheduledAt ? '赛程已发布' : '等待比赛时间', state: room.scheduledAt ? 'done' : 'current' },
-    { key: 'match', en: 'MATCH', label: phase === 'live' ? '比赛进行中' : '核对安排与准备', state: phase === 'live' || room.scheduledAt ? 'current' : 'waiting' },
+    { key: 'match', en: 'MATCH', label: phase === 'live' ? '比赛进行中' : '进入比赛房', state: phase === 'live' || room.scheduledAt ? 'current' : 'waiting' },
     { key: 'result', en: 'RESULT', label: '赛后核对赛果', state: 'waiting' }
   ] : [
     { key: 'official', en: 'OFFICIAL', label: room?.ready ? '赛果已审核' : terminal ? '赛果未完成审核' : '等待赛果审核', state: room?.ready ? 'done' : terminal ? 'quiet' : 'current' },

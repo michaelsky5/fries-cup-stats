@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { getRoomStageIndex, getRoomOperatingSides } from '../src/features/weekly-competition/weeklyRoomFlow.js'
 import { buildWeeklyRoomPreview, PREVIEW_STAGES, PREVIEW_ROLES } from '../src/pages/dev/weeklyRoomPreviewModel.js'
 
-for (const [stage, expected] of Object.entries({ opening: 0, confirming: 0, choosing: 1, lineup: 2, banorder: 3, banning: 3, ready: 4, live: 5, paused: 5, review: 6, result: 7 })) {
+for (const [stage, expected] of Object.entries({ opening: 0, confirming: 0, choosing: 1, lineup: 2, banorder: 3, banning: 3, ready: 3, live: 4, paused: 4, review: 5, result: 6 })) {
   const data = buildWeeklyRoomPreview(stage)
   assert.equal(getRoomStageIndex(data), expected, stage)
 }
@@ -13,7 +13,7 @@ assert.equal(getRoomStageIndex(data), 2, 'one saved lineup still waits for the o
 data.map.lineupB = Array.from({ length: 5 }, (_, i) => ({ playerId: `b${i}` }))
 assert.equal(getRoomStageIndex(data), 3, 'both lineups unlock the ban UI within the API BANNING phase')
 data.opening.complete = true; data.opening.phase = 'COMPLETE'
-assert.equal(getRoomStageIndex(data), 4, 'completed bans lead to readiness')
+assert.equal(getRoomStageIndex(data), 3, 'completed bans remain in the ban panel until actual start')
 for (const mode of ['REFEREE', 'TEAM_CAPTAINS']) {
   for (const role of Object.keys(PREVIEW_ROLES)) {
     const room = buildWeeklyRoomPreview('ready', role)
@@ -23,7 +23,7 @@ for (const mode of ['REFEREE', 'TEAM_CAPTAINS']) {
 }
 const mapFive = buildWeeklyRoomPreview('review')
 mapFive.map.order = 5; mapFive.match.format = 'FT3'
-assert.equal(getRoomStageIndex(mapFive), 6, 'map number alone must not invent series completion')
+assert.equal(getRoomStageIndex(mapFive), 5, 'map number alone must not invent series completion')
 mapFive.map.order = 2; mapFive.map.lineupA = []; mapFive.map.lineupB = []
 mapFive.phase = 'PREPARING'; mapFive.opening.complete = false; mapFive.opening.phase = 'CHOOSING'
 assert.equal(getRoomStageIndex(mapFive), 1, 'next map returns to selection instead of retaining the previous result stage')

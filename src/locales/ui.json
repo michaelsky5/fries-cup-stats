@@ -15525,8 +15525,8 @@
   },
   "复制失败，请手动复制": {
     "zh-TW": "複製失敗，請手動複製",
-    "en-US": "Copy failed. Please copy it manually.",
-    "ko-KR": "복사에 실패했습니다. 수동으로 복사하십시오."
+    "en-US": "Copy failed. Please copy manually.",
+    "ko-KR": "복사에 실패했습니다. 직접 복사하세요."
   },
   "复制文本": {
     "zh-TW": "複製文本"
@@ -34259,7 +34259,7 @@
   },
   "比赛房": {
     "zh-TW": "比賽房",
-    "en-US": "Competition Room",
+    "en-US": "Match room",
     "ko-KR": "대회장"
   },
   "比赛房 ·": {
@@ -47487,7 +47487,7 @@
   },
   "进入比赛房": {
     "zh-TW": "進入比賽房",
-    "en-US": "Entering the competition room",
+    "en-US": "Enter match room",
     "ko-KR": "대회장 입장"
   },
   "进入比赛房 · 准备与沟通 ↗": {
@@ -54060,5 +54060,160 @@
     "en-US": "Apply through an administrator invitation or the shared application page. Existing players use their current account.",
     "ko-KR": "관리자 초대 또는 공용 신청 페이지로 운영진 역할을 신청할 수 있습니다. 기존 선수는 원래 계정을 사용하세요.",
     "zh-TW": "可透過管理員邀請或共用入口申請工作人員身分。已有選手使用原帳號。"
+  },
+  "核对房间与名单后，由本场授权操作人记录游戏开赛。": {
+    "zh-TW": "核對房間與名單後，由本場授權操作人記錄遊戲開賽。",
+    "en-US": "After checking the lobby and lineups, the authorized operator records the actual start.",
+    "ko-KR": "방과 명단을 확인한 뒤 담당자가 실제 경기 시작을 기록합니다."
+  },
+  "首发与禁用已完成。游戏实际开始后，记录本图开赛即可。": {
+    "zh-TW": "首發與禁用已完成。遊戲實際開始後，記錄本圖開賽即可。",
+    "en-US": "Lineups and bans are complete. Record the map start when the game actually begins.",
+    "ko-KR": "선발과 금지가 완료되었습니다. 게임이 실제로 시작되면 맵 시작을 기록하세요."
+  },
+  "首发已确认 · C C T N N": {
+    "zh-TW": "首發已確認 · C C T N N",
+    "en-US": "Lineup confirmed · D D T S S",
+    "ko-KR": "선발 확인 완료 · 딜 딜 탱 힐 힐"
+  },
+  "开赛待处理事项": {
+    "zh-TW": "開賽待處理事項",
+    "en-US": "Before starting",
+    "ko-KR": "시작 전 확인 사항"
+  },
+  "记录本图开赛": {
+    "zh-TW": "記錄本圖開賽",
+    "en-US": "Record map start",
+    "ko-KR": "맵 시작 기록"
+  },
+  "等待本场授权操作人记录开赛": {
+    "zh-TW": "等待本場授權操作人記錄開賽",
+    "en-US": "Waiting for the authorized operator to record the start",
+    "ko-KR": "담당자의 시작 기록을 기다리는 중"
+  },
+  "由本场赛管记录实际开赛。": {
+    "zh-TW": "由本場賽管記錄實際開賽。",
+    "en-US": "The assigned referee records the actual start.",
+    "ko-KR": "배정된 운영진이 실제 시작을 기록합니다."
+  },
+  "由任一方操作代表记录实际开赛。": {
+    "zh-TW": "由任一方操作代表記錄實際開賽。",
+    "en-US": "Either team representative records the actual start.",
+    "ko-KR": "양 팀 중 한 팀 대표자가 실제 시작을 기록합니다."
+  },
+  "设置码": {
+    "zh-TW": "設置碼",
+    "en-US": "Settings code",
+    "ko-KR": "설정 코드"
+  },
+  "比赛房链接": {
+    "zh-TW": "比賽房鏈接",
+    "en-US": "Match room link",
+    "ko-KR": "경기방 링크"
+  },
+  "复制设置码": {
+    "zh-TW": "複製設置碼",
+    "en-US": "Copy settings code",
+    "ko-KR": "설정 코드 복사"
+  },
+  "复制房间链接": {
+    "zh-TW": "複製房間鏈接",
+    "en-US": "Copy room link",
+    "ko-KR": "경기방 링크 복사"
+  },
+  "编辑房间": {
+    "zh-TW": "編輯房間",
+    "en-US": "Edit lobby",
+    "ko-KR": "방 편집"
+  },
+  "填写游戏房间": {
+    "zh-TW": "填寫遊戲房間",
+    "en-US": "Set game lobby",
+    "ko-KR": "게임 방 입력"
+  },
+  "游戏房间名称": {
+    "zh-TW": "遊戲房間名稱",
+    "en-US": "Game lobby name",
+    "ko-KR": "게임 방 이름"
+  },
+  "游戏房间已保存。": {
+    "zh-TW": "遊戲房間已保存。",
+    "en-US": "Game lobby saved.",
+    "ko-KR": "게임 방이 저장되었습니다."
+  },
+  "进入比赛房后，按本场身份完成赛前准备、选图、首发和禁用。": {
+    "zh-TW": "進入比賽房後，按本場身份完成賽前準備、選圖、首發和禁用。",
+    "en-US": "Enter the match room to prepare, pick maps, confirm lineups and ban heroes according to your role.",
+    "ko-KR": "경기방에서 본인의 역할에 따라 사전 준비, 맵 선택, 선발 확인, 영웅 금지를 진행하세요."
+  },
+  "房间安排与赛管协助": {
+    "zh-TW": "房間安排與賽管協助",
+    "en-US": "Lobby details and referee support",
+    "ko-KR": "방 안내 및 운영진 지원"
+  },
+  "从下方按钮直接进入": {
+    "zh-TW": "從下方按鈕直接進入",
+    "en-US": "Enter using the button below",
+    "ko-KR": "아래 버튼으로 입장"
+  },
+  "查看本场执裁安排，点击“进入比赛房”直接开始操作。": {
+    "zh-TW": "查看本場執裁安排，點擊“進入比賽房”直接開始操作。",
+    "en-US": "Check your assignments and select Enter match room to begin.",
+    "ko-KR": "배정 내역을 확인하고 경기방 입장을 눌러 시작하세요."
+  },
+  "选禁完成，等待实际开赛": {
+    "zh-TW": "選禁完成，等待實際開賽",
+    "en-US": "Picks and bans complete · Waiting for game start",
+    "ko-KR": "선택·금지 완료 · 실제 시작 대기"
+  },
+  "✓ 本图首发已确认": {
+    "zh-TW": "✓ 本圖首發已確認",
+    "en-US": "✓ Map lineup confirmed",
+    "ko-KR": "✓ 이번 맵 선발 확인 완료"
+  },
+  "首发环节统一确认到场": {
+    "zh-TW": "首發環節統一確認到場",
+    "en-US": "Attendance is confirmed with the lineup",
+    "ko-KR": "선발 확인 시 참석도 함께 확인"
+  },
+  "已带入上一图人员与职责，可直接确认或调整。": {
+    "zh-TW": "已帶入上一圖人員與職責，可直接確認或調整。",
+    "en-US": "Previous map lineup and roles restored. Confirm or adjust as needed.",
+    "ko-KR": "이전 맵 명단과 역할을 불러왔습니다. 확인하거나 수정하세요."
+  },
+  "恢复计划首发": {
+    "zh-TW": "恢復計劃首發",
+    "en-US": "Restore planned starters",
+    "ko-KR": "계획된 선발로 복원"
+  },
+  "确认即代表这五人已到场；游戏内也按此顺序排列，无需逐人签到。": {
+    "zh-TW": "確認即代表這五人已到場；遊戲內也按此順序排列，無需逐人簽到。",
+    "en-US": "Confirming verifies all five are present. Use this order in game; individual check-ins are unnecessary.",
+    "ko-KR": "확인은 다섯 명의 참석도 확인합니다. 게임 내에서도 이 순서로 배치하세요. 개별 체크인은 필요 없습니다."
+  },
+  "确认五人到场、职责与顺序": {
+    "zh-TW": "確認五人到場、職責與順序",
+    "en-US": "Confirm attendance, roles and order",
+    "ko-KR": "다섯 명 참석·역할·순서 확인"
+  },
+  "已确认的人员和职责会显示在两侧名单。轮到本队时确认五人到场与职责即可，无需逐人签到。": {
+    "zh-TW": "已確認的人員和職責會顯示在兩側名單。輪到本隊時確認五人到場與職責即可，無需逐人簽到。",
+    "en-US": "Confirmed players and roles appear in the side panels. On your turn, confirm all five are present and their roles together.",
+    "ko-KR": "확인된 선수와 역할은 양쪽 명단에 표시됩니다. 본 팀 차례에 다섯 명 참석과 역할을 함께 확인하세요."
+  },
+  "选择一名英雄，确认后等待实际开赛": {
+    "zh-TW": "選擇一名英雄，確認後等待實際開賽",
+    "en-US": "Choose a hero; then wait for the actual game start.",
+    "ko-KR": "영웅을 선택하고 확인 후 실제 시작을 기다리세요."
+  },
+  "赛程已发布。点击“进入比赛房”，按当前阶段操作；房间内可随时联系赛管。": {
+    "zh-TW": "賽程已發佈。點擊“進入比賽房”，按當前階段操作；房間內可隨時聯繫賽管。",
+    "en-US": "Schedule published. Select Enter match room to continue the current stage and contact the referee.",
+    "ko-KR": "일정이 공개되었습니다. 경기방 입장을 눌러 현재 단계를 진행하고 운영진에게 문의할 수 있습니다."
+  },
+  "首发待确认": {
+    "zh-TW": "首發待確認",
+    "en-US": "Lineup pending",
+    "ko-KR": "선발 확인 대기"
   }
 }

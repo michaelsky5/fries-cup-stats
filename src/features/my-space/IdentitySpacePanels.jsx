@@ -366,7 +366,7 @@ function MatchCollection({ title, eyebrow, description, matches, withSeason, neg
   )
 }
 
-function StaffAssignmentList({ assignments, kind, withSeason }) {
+function StaffAssignmentList({ assignments, kind, withSeason, weekly }) {
   const uiLocale = useUiLocale()
   if (!assignments?.length) return <div className={styles.miniEmpty}><strong>{uiText("本届暂无", uiLocale)}{kind === 'CASTER' ? uiText("解说", uiLocale) : uiText("赛管", uiLocale)}{uiText("任务", uiLocale)}</strong><p>{uiText("长期身份已保留，只有被正式分配后才会获得单场操作权限。", uiLocale)}</p></div>
   return <div className={styles.staffList} data-kind={kind}>{assignments.map(assignment => {
@@ -380,9 +380,10 @@ function StaffAssignmentList({ assignments, kind, withSeason }) {
       <h3>{matchTeams(match)}</h3>
       <p>{match?.displayName} · {formatTime(match?.scheduledAt)}</p>
       <dl className={styles.staffAssignmentFacts}>
-        {isCaster ? <><div><dt>{uiText("播出方案", uiLocale)}</dt><dd>{assignment.plan?.name || uiText("待配置", uiLocale)}</dd></div><div><dt>{uiText("直播入口", uiLocale)}</dt><dd>{assignment.streamUrl ? uiText("已配置", uiLocale) : uiText("待配置", uiLocale)}</dd></div></> : <><div><dt>{uiText("排班状态", uiLocale)}</dt><dd>{isHistorical ? uiText("只读归档", uiLocale) : assignmentLabel}</dd></div><div><dt>{uiText("比赛房间", uiLocale)}</dt><dd>{isHistorical ? uiText("保留赛后记录", uiLocale) : uiText("开放后从比赛页进入", uiLocale)}</dd></div></>}
+        {isCaster ? <><div><dt>{uiText("播出方案", uiLocale)}</dt><dd>{assignment.plan?.name || uiText("待配置", uiLocale)}</dd></div><div><dt>{uiText("直播入口", uiLocale)}</dt><dd>{assignment.streamUrl ? uiText("已配置", uiLocale) : uiText("待配置", uiLocale)}</dd></div></> : <><div><dt>{uiText("排班状态", uiLocale)}</dt><dd>{isHistorical ? uiText("只读归档", uiLocale) : assignmentLabel}</dd></div><div><dt>{uiText("比赛房间", uiLocale)}</dt><dd>{isHistorical ? uiText("保留赛后记录", uiLocale) : uiText("从下方按钮直接进入", uiLocale)}</dd></div></>}
       </dl>
       <div className={styles.actions}>
+        {weekly && match?.id && assignment.status !== 'CANCELLED' && <Link to={withSeason(`/me/matches/${encodeURIComponent(match.id)}/room`)}>{uiText("进入比赛房", uiLocale)} →</Link>}
         <Link to={withSeason(`/matches/${encodeURIComponent(match?.id || '')}`)}>{isCaster ? uiText("查看比赛与播出资料", uiLocale) : uiText("查看比赛与执裁资料", uiLocale)}</Link>
         {isCaster && assignment.streamUrl ? <a href={assignment.streamUrl} target="_blank" rel="noreferrer">{uiText("打开直播地址", uiLocale)}</a> : null}
       </div>
@@ -394,12 +395,12 @@ export function RefereeWorkspace({ context, withSeason, onContextChange, preview
   const uiLocale = useUiLocale()
   const direct = context?.staffContext?.refereeAssignments || []
   const broadcast = context?.staffContext?.broadcastRefereeAssignments || []
-  return <section className={styles.workspace}><WorkspaceSectionHeader eyebrow="REFEREE DESK" title={uiText("赛管任务", uiLocale)} description={uiText("优先查看需要执裁的场次、时间与状态；比赛房间开放后再从比赛资料页进入。", uiLocale)} badge={`${direct.length + broadcast.length} ASSIGNMENTS`} />{preview ? null : <EventStaffControl seasonId={context?.seasonId} role="REFEREE" capabilitySnapshot={context?.capabilitySnapshot} onContextChange={onContextChange} />}<StaffAssignmentList assignments={[...direct, ...broadcast]} kind="REFEREE" withSeason={withSeason} /></section>
+  return <section className={styles.workspace}><WorkspaceSectionHeader eyebrow="REFEREE DESK" title={uiText("赛管任务", uiLocale)} description={uiText("查看本场执裁安排，点击“进入比赛房”直接开始操作。", uiLocale)} badge={`${direct.length + broadcast.length} ASSIGNMENTS`} />{preview ? null : <EventStaffControl seasonId={context?.seasonId} role="REFEREE" capabilitySnapshot={context?.capabilitySnapshot} onContextChange={onContextChange} />}<StaffAssignmentList assignments={[...direct, ...broadcast]} kind="REFEREE" withSeason={withSeason} weekly={context?.competitionKind === 'WEEKLY'} /></section>
 }
 
 export function CasterWorkspace({ context, withSeason, onContextChange, preview = false }) {
   const uiLocale = useUiLocale()
   const assignments = context?.staffContext?.casterAssignments || []
   const availability = context?.staffContext?.availability || []
-  return <section className={styles.workspace}><WorkspaceSectionHeader eyebrow="CASTER DESK" title={uiText("解说安排", uiLocale)} description={uiText("集中查看档期、正式排班、播出方案和直播入口，不显示与解说无关的比赛操作。", uiLocale)} badge={`${assignments.length} MATCHES`} />{preview ? null : <EventStaffControl seasonId={context?.seasonId} role="CASTER" capabilitySnapshot={context?.capabilitySnapshot} onContextChange={onContextChange} />}{availability.length ? <div className={styles.availability}>{availability.map(item => <div key={item.id}><span>{item.formTitle}</span><strong>{item.formStatus || uiText("已提交", uiLocale)}</strong><em>{formatTime(item.submittedAt)}</em></div>)}</div> : null}<StaffAssignmentList assignments={assignments} kind="CASTER" withSeason={withSeason} /></section>
+  return <section className={styles.workspace}><WorkspaceSectionHeader eyebrow="CASTER DESK" title={uiText("解说安排", uiLocale)} description={uiText("集中查看档期、正式排班、播出方案和直播入口，不显示与解说无关的比赛操作。", uiLocale)} badge={`${assignments.length} MATCHES`} />{preview ? null : <EventStaffControl seasonId={context?.seasonId} role="CASTER" capabilitySnapshot={context?.capabilitySnapshot} onContextChange={onContextChange} />}{availability.length ? <div className={styles.availability}>{availability.map(item => <div key={item.id}><span>{item.formTitle}</span><strong>{item.formStatus || uiText("已提交", uiLocale)}</strong><em>{formatTime(item.submittedAt)}</em></div>)}</div> : null}<StaffAssignmentList assignments={assignments} kind="CASTER" withSeason={withSeason} weekly={context?.competitionKind === 'WEEKLY'} /></section>
 }

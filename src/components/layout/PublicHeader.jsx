@@ -6,9 +6,11 @@ import { LOCALES } from '../../lib/locales.js'
 import { pickUiLocale } from '../../lib/uiText.js'
 import AuthButton from '../../features/auth/AuthDialog.jsx'
 import { useAuth } from '../../features/auth/AuthProvider.jsx'
+import useAccountCompetition from '../../features/my-space/useAccountCompetition.js'
 import EventContextBar from './EventContextBar.jsx'
 import PublicMobileNav from './PublicMobileNav.jsx'
 import { getPrimaryNavigation, getPersonalNavItem, getNavLabel, getWeeklyNavigationPath } from './publicNavigation.js'
+import roomEntry from './RoomEntry.module.css'
 import styles from '../../features/fd-design/layoutStyles.js'
 
 function AccountAttentionBadge({ attention }) {
@@ -146,6 +148,7 @@ function LanguageMenu({ locale, mobile = false, onLocaleChange }) {
 
 export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, activeGroup = "space", layoutLocale = "zh-CN", compatibleLayoutLocale = layoutLocale, withSeason = path => path, accountAttention, activeNavLabel = "我的空间", season, seasonId, updatedAtText = "", seasonStatus, summary, isSyncing = false, dataStatus, handleSeasonChange, headerContextMode = "data", isReviewEntryRoute = false, handleLocaleChange, activeSection, showSeason = true, showLanguage = true }) {
   const { isAuthenticated } = useAuth()
+  const roomCompetition = useAccountCompetition(seasonId)
   const location = useLocation()
   const fallbackMenuRef = useRef(null)
   const menuRef = mobileMenuRef || fallbackMenuRef
@@ -235,6 +238,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
           </details>
 
           <div className={styles.headerRight}>
+            {isAuthenticated && <Link className={roomEntry.shortcut} to={roomCompetition.link(navPath("/me?section=matches"))}>{uiText("比赛房", layoutLocale)} ↗</Link>}
             {isKprHybridDesign && showSeason ? (
               <EventContextBar
                 season={season}

@@ -37,10 +37,10 @@ export const SIM_CHALLENGES = {
   'caster-result': { type: 'decision', options: ['working-result','official-result'], correct: 'working-result', stage: 'result' },
 }
 export const SIM_COURSES = {
-  representative: ['checkin','pick','lineup','ban-order','ban','ready','pause','resume','rr5','confirm'],
+  representative: ['checkin','pick','lineup','ban-order','ban','pause','resume','rr5','confirm'],
   manager: ['nominate','substitution','rr5','sync'],
   member: ['identity','substitution','sync','rr5'],
-  referee: ['preflight','start','pause','resume','map-score','score-correct','report','forfeit'],
+  referee: ['start','pause','resume','map-score','score-correct','report','forfeit'],
   caster: ['caster-access','caster-lineup','caster-pause','caster-result','rr5'],
   admin: ['access-fix','assign','substitution','forfeit','review','settle','publish'],
 }
@@ -56,7 +56,7 @@ export const SIM_SCENARIOS = {
 export function createSimulation(role = 'representative', scenario = '', mode = 'referee') {
   const course = SIM_SCENARIOS[scenario]
   const ids = !course && role === 'representative' && mode === 'captains'
-    ? ['checkin','pick','lineup','ban-order','ban','ready','start','pause','resume','map-score','rr5','confirm']
+    ? ['checkin','pick','lineup','ban-order','ban','start','pause','resume','map-score','rr5','confirm']
     : course?.ids || SIM_COURSES[role] || SIM_COURSES.representative
   return { role: course?.role || (SIM_COURSES[role] ? role : 'representative'), scenario: course ? scenario : '', mode: mode === 'captains' ? mode : 'referee',
     ids: [...ids], round: 0, index: 0, complete: false, error: '', attempts: 0, history: [], setup: {} }
