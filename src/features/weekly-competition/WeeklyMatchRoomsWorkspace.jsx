@@ -258,7 +258,7 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
             <span>{operatorView ? uiText("本场工作人员 · 在比赛房按职责操作", uiLocale) : effectiveReadOnly ? uiText("只读 · 由队长或经理响应", uiLocale) : uiText("队长 / 经理 · 可代表本队响应", uiLocale)}</span>
             <span>{timezone === 'Asia/Shanghai' ? uiText("时间均为北京时间", uiLocale) : timezone}</span>
           </div>
-          {rooms.length === 0 ? <div className={styles.state}><span>{currentWorkspace.teams.length ? 'WAITING FOR PUBLISHED MATCHES' : 'NO TEAM LINK'}</span><strong>{currentWorkspace.teams.length ? uiText("暂时没有已发布的本队周赛", uiLocale) : uiText("当前账号尚未绑定本赛季队伍", uiLocale)}</strong><p>{currentWorkspace.teams.length ? uiText("管理员发布配对后，比赛会出现在这里；草稿和其他队伍的比赛不会显示。", uiLocale) : uiText("请联系周赛管理员完成邀请认领，不需要重新创建队伍。", uiLocale)}</p></div> : (
+          {rooms.length === 0 ? <div className={styles.state}><span>{currentWorkspace.operatorView ? 'WAITING FOR STAFF ASSIGNMENT' : currentWorkspace.teams.length ? 'WAITING FOR PUBLISHED MATCHES' : 'NO TEAM LINK'}</span><strong>{currentWorkspace.operatorView ? uiText("工作人员身份已就绪，等待本场安排", uiLocale) : currentWorkspace.teams.length ? uiText("暂时没有已发布的本队周赛", uiLocale) : uiText("当前账号尚未绑定本赛季队伍", uiLocale)}</strong><p>{currentWorkspace.operatorView ? uiText("正式排班发布或管理员完成单场指派后，比赛会出现在这里。无需重复注册或加入队伍。", uiLocale) : currentWorkspace.teams.length ? uiText("管理员发布配对后，比赛会出现在这里；草稿和其他队伍的比赛不会显示。", uiLocale) : uiText("请联系周赛管理员完成邀请认领，不需要重新创建队伍。", uiLocale)}</p></div> : (
             <>
               <div className={styles.layout}>
                 <aside className={styles.roomIndex}>

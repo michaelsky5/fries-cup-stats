@@ -53330,5 +53330,260 @@
     "zh-TW": "交接範圍（隊伍歸屬及以下未歸檔賽季）",
     "en-US": "Transfer scope: team organization and these unarchived seasons",
     "ko-KR": "이전 범위: 팀 조직 및 아래 미보관 시즌"
+  },
+  "接受工作人员邀请": {
+    "zh-TW": "接受工作人員邀請",
+    "en-US": "Accept staff invitation",
+    "ko-KR": "운영진 초대 수락"
+  },
+  "一个账号，按赛事与场次承担不同职责。": {
+    "zh-TW": "一個帳號，依賽事與場次擔任不同職責。",
+    "en-US": "Use one account for different roles across events and matches.",
+    "ko-KR": "하나의 계정으로 대회와 경기별 역할을 맡습니다."
+  },
+  "工作人员认领流程": {
+    "zh-TW": "工作人員認領流程",
+    "en-US": "Staff invitation steps",
+    "ko-KR": "운영진 초대 절차"
+  },
+  "核对账号": {
+    "zh-TW": "核對帳號",
+    "en-US": "Check account",
+    "ko-KR": "계정 확인"
+  },
+  "查看比赛安排": {
+    "zh-TW": "查看比賽安排",
+    "en-US": "View assignments",
+    "ko-KR": "경기 배정 확인"
+  },
+  "工作人员邀请": {
+    "zh-TW": "工作人員邀請",
+    "en-US": "Staff invitation",
+    "ko-KR": "운영진 초대"
+  },
+  "本届工作人员身份已生效": {
+    "zh-TW": "本屆工作人員身分已生效",
+    "en-US": "Your event staff roles are active",
+    "ko-KR": "이번 대회 운영진 자격이 활성화되었습니다"
+  },
+  "请到邮箱确认邀请": {
+    "zh-TW": "請到信箱確認邀請",
+    "en-US": "Confirm the invitation in your email",
+    "ko-KR": "이메일에서 초대를 확인하세요"
+  },
+  "确认本人邮箱并接受职责": {
+    "zh-TW": "確認本人信箱並接受職責",
+    "en-US": "Verify your email and accept the roles",
+    "ko-KR": "이메일 확인 및 역할 수락"
+  },
+  "核对你的邀请": {
+    "zh-TW": "核對你的邀請",
+    "en-US": "Review your invitation",
+    "ko-KR": "초대 확인"
+  },
+  "邀请链接缺少凭证，请重新打开管理员发来的完整链接。": {
+    "zh-TW": "邀請連結缺少憑證，請重新開啟管理員傳來的完整連結。",
+    "en-US": "The invitation token is missing. Reopen the complete link from your administrator.",
+    "ko-KR": "초대 인증 정보가 없습니다. 관리자가 보낸 전체 링크를 다시 여세요."
+  },
+  "你已接受“{0}”的{1}职责。已有选手身份和队伍关系已保留。": {
+    "zh-TW": "你已接受「{0}」的{1}職責。原有選手身分和隊伍關係已保留。",
+    "en-US": "You accepted the {1} roles for {0}. Your player identity and team membership are preserved.",
+    "ko-KR": "{0}의 {1} 역할을 수락했습니다. 기존 선수 자격과 팀 소속은 유지됩니다."
+  },
+  "请使用受邀邮箱 {0} 对应的账号登录；如已登录其他账号，请先退出再切换。": {
+    "zh-TW": "請使用受邀信箱 {0} 對應的帳號登入；若已登入其他帳號，請先登出再切換。",
+    "en-US": "Sign in with the account for {0}. If another account is signed in, sign out first.",
+    "ko-KR": "초대받은 이메일 {0}의 계정으로 로그인하세요. 다른 계정으로 로그인되어 있다면 먼저 로그아웃하세요."
+  },
+  "前往我的比赛 →": {
+    "zh-TW": "前往我的比賽 →",
+    "en-US": "Go to my matches →",
+    "ko-KR": "내 경기로 →"
+  },
+  "正式排班发布后，相应场次会出现在“我的空间 → 我的比赛”。尚未排班时无需再次注册。本队比赛仍按参赛身份进入。": {
+    "zh-TW": "正式排班發布後，相關場次會顯示於「我的空間 → 我的比賽」。尚未排班時無須再次註冊。本隊比賽仍以參賽身分進入。",
+    "en-US": "Published assignments appear in My Space → My Matches. You do not need to register again while waiting. Enter your own team's matches as a participant.",
+    "ko-KR": "공식 배정이 게시되면 내 공간 → 내 경기에 표시됩니다. 배정 전에도 다시 가입할 필요는 없습니다. 소속 팀 경기는 참가자 자격으로 입장합니다."
+  },
+  "请验证邮箱 {0}。打开验证邮件中的链接，确认接受本届职责。": {
+    "zh-TW": "請驗證信箱 {0}。開啟驗證郵件中的連結，確認接受本屆職責。",
+    "en-US": "Check {0} and open the verification link to accept your event roles.",
+    "ko-KR": "{0}에서 인증 링크를 열어 이번 대회 역할을 수락하세요."
+  },
+  "邮件服务已受理发送，请检查收件箱和垃圾邮件。": {
+    "zh-TW": "郵件服務已受理寄送，請檢查收件匣與垃圾郵件。",
+    "en-US": "The email service accepted the message. Check your inbox and spam folder.",
+    "ko-KR": "메일 서비스에서 발송 요청을 접수했습니다. 받은편지함과 스팸함을 확인하세요."
+  },
+  "邮件投递未确认，身份尚未生效。请稍后返回重试或联系管理员检查邮件服务。": {
+    "zh-TW": "郵件投遞尚未確認，身分尚未生效。請稍後返回重試或請管理員檢查郵件服務。",
+    "en-US": "Email delivery is unconfirmed and the roles are not active. Retry later or ask your administrator to check email delivery.",
+    "ko-KR": "메일 전달이 확인되지 않아 자격이 아직 활성화되지 않았습니다. 나중에 다시 시도하거나 관리자에게 문의하세요."
+  },
+  "邮箱确认链接 30 分钟内有效；重新发送后旧验证链接失效。": {
+    "zh-TW": "信箱確認連結 30 分鐘內有效；重新寄送後舊連結即失效。",
+    "en-US": "The verification link expires in 30 minutes. Resending invalidates the previous link.",
+    "ko-KR": "인증 링크는 30분 동안 유효합니다. 재발송하면 이전 링크는 만료됩니다."
+  },
+  "返回 / 重新发送验证邮件": {
+    "zh-TW": "返回 / 重新寄送驗證郵件",
+    "en-US": "Back / Resend verification email",
+    "ko-KR": "뒤로 / 인증 메일 재발송"
+  },
+  "本届：{0}。具体比赛按已发布排班或管理员单场指派开放；不会获得其他赛事管理权。": {
+    "zh-TW": "本屆：{0}。具體比賽依已發布排班或管理員單場指派開放；不會取得其他賽事管理權。",
+    "en-US": "Event: {0}. Match access comes from published schedules or individual assignments. Other events are outside this invitation.",
+    "ko-KR": "대회: {0}. 게시된 배정이나 관리자의 개별 지정에 따라 경기 접근 권한이 부여됩니다. 다른 대회 관리 권한은 부여되지 않습니다."
+  },
+  "确认邮箱 {0} 后，此邀请绑定到刚核对的本人账号。": {
+    "zh-TW": "確認信箱 {0} 後，此邀請將綁定剛核對的本人帳號。",
+    "en-US": "Verifying {0} links this invitation to the account you just checked.",
+    "ko-KR": "이메일 {0}을 확인하면 방금 확인한 본인 계정에 초대가 연결됩니다."
+  },
+  "邀请指定的本人邮箱": {
+    "zh-TW": "邀請指定的本人信箱",
+    "en-US": "Invited email address",
+    "ko-KR": "초대받은 본인 이메일"
+  },
+  "原账号密码": {
+    "zh-TW": "原帳號密碼",
+    "en-US": "Existing account password",
+    "ko-KR": "기존 계정 비밀번호"
+  },
+  "设置账号密码": {
+    "zh-TW": "設定帳號密碼",
+    "en-US": "Set account password",
+    "ko-KR": "계정 비밀번호 설정"
+  },
+  "复用原账号，原密码、选手档案和队伍关系保留。忘记密码可先在登录窗口找回。": {
+    "zh-TW": "沿用原帳號、密碼、選手檔案與隊伍關係。忘記密碼可先在登入視窗找回。",
+    "en-US": "Your account, password, player profile and team membership stay the same. Use password recovery in the sign-in dialog if needed.",
+    "ko-KR": "기존 계정, 비밀번호, 선수 프로필 및 팀 소속이 유지됩니다. 비밀번호를 잊었다면 로그인 창에서 복구하세요."
+  },
+  "新账号请设置至少 12 位密码。邮箱验证完成后，才能获得工作人员身份。": {
+    "zh-TW": "新帳號請設定至少 12 位密碼。完成信箱驗證後才會取得工作人員身分。",
+    "en-US": "New accounts need a password of at least 12 characters. Staff roles activate after email verification.",
+    "ko-KR": "새 계정의 비밀번호는 12자 이상이어야 합니다. 이메일 인증을 완료하면 운영진 자격이 활성화됩니다."
+  },
+  "确认邮箱并接受本届职责": {
+    "zh-TW": "確認信箱並接受本屆職責",
+    "en-US": "Verify email and accept event roles",
+    "ko-KR": "이메일 확인 및 대회 역할 수락"
+  },
+  "发送本人邮箱验证 →": {
+    "zh-TW": "寄送本人信箱驗證 →",
+    "en-US": "Send verification email →",
+    "ko-KR": "인증 메일 발송 →"
+  },
+  "邀请有效至 {0}（北京时间）。": {
+    "zh-TW": "邀請有效至 {0}（北京時間）。",
+    "en-US": "Invitation expires at {0} (Beijing time).",
+    "ko-KR": "초대 만료: {0} (베이징 시간)."
+  },
+  "重新读取身份": {
+    "zh-TW": "重新讀取身分",
+    "en-US": "Reload roles",
+    "ko-KR": "자격 다시 불러오기"
+  },
+  "正在读取本届工作人员关系…": {
+    "zh-TW": "正在讀取本屆工作人員關係…",
+    "en-US": "Loading event staff roles…",
+    "ko-KR": "대회 운영진 자격을 불러오는 중…"
+  },
+  "赛管与解说由赛事管理员邀请。已有选手账号直接认领邀请，无需另建账号。": {
+    "zh-TW": "賽管與解說由賽事管理員邀請。已有選手帳號可直接認領，無須另建帳號。",
+    "en-US": "Event administrators invite referees and casters. Existing players can accept with their current account.",
+    "ko-KR": "대회 관리자가 심판과 해설자를 초대합니다. 기존 선수는 현재 계정으로 초대를 수락할 수 있습니다."
+  },
+  "查看本届比赛安排 →": {
+    "zh-TW": "查看本屆比賽安排 →",
+    "en-US": "View event assignments →",
+    "ko-KR": "대회 경기 배정 보기 →"
+  },
+  "房间准入未开放，或工作人员身份已停用，请联系本届管理员核对。": {
+    "zh-TW": "房間准入尚未開放，或工作人員身分已停用，請聯絡本屆管理員核對。",
+    "en-US": "Room access is not open or your staff role is disabled. Contact the event administrator.",
+    "ko-KR": "경기방 접근이 열리지 않았거나 운영진 자격이 비활성화되었습니다. 대회 관리자에게 문의하세요."
+  },
+  "身份可以兼有。进房按本场职责授权；本队比赛保留队伍权限，未排班时等待管理员安排。": {
+    "zh-TW": "身分可以兼有。進房依本場職責授權；本隊比賽保留隊伍權限，尚未排班時等待管理員安排。",
+    "en-US": "You can hold multiple roles. Room permissions follow each match assignment. Your team's matches retain participant access; otherwise, wait for an assignment.",
+    "ko-KR": "여러 자격을 함께 가질 수 있습니다. 경기방 권한은 해당 경기 배정에 따릅니다. 소속 팀 경기는 참가자 권한을 유지하며, 미배정 경기는 관리자 배정을 기다립니다."
+  },
+  "本场工作人员 · 赛管": {
+    "zh-TW": "本場工作人員 · 賽管",
+    "en-US": "Match staff · Referees",
+    "ko-KR": "경기 운영진 · 심판"
+  },
+  "赛管从已发布排班带入。临时指派与撤回仅影响本场，优先于排班；本队成员不可兼任。": {
+    "zh-TW": "賽管由已發布排班帶入。臨時指派與撤回僅影響本場，優先於排班；本隊成員不可兼任。",
+    "en-US": "Referees come from the published schedule. Match overrides take priority and affect only this match. Team members cannot referee their own match.",
+    "ko-KR": "심판은 게시된 배정에서 연결됩니다. 임시 지정과 철회는 해당 경기에만 적용되며 배정보다 우선합니다. 팀원은 자기 팀 경기의 심판을 맡을 수 없습니다."
+  },
+  "的本场赛管权限": {
+    "zh-TW": "的本場賽管權限",
+    "en-US": " as match referee",
+    "ko-KR": "의 경기 심판 권한"
+  },
+  "当前没有已授权赛管，双方操作代表按自助流程推进。": {
+    "zh-TW": "目前沒有已授權賽管，雙方操作代表依自助流程推進。",
+    "en-US": "No referee is assigned. Both team representatives can follow the self-service workflow.",
+    "ko-KR": "배정된 심판이 없습니다. 양 팀 대표가 셀프 진행 절차를 따릅니다."
+  },
+  "已撤回 · 覆盖排班": {
+    "zh-TW": "已撤回 · 覆蓋排班",
+    "en-US": "Revoked · Overrides schedule",
+    "ko-KR": "철회됨 · 배정보다 우선"
+  },
+  "临时指派本场赛管": {
+    "zh-TW": "臨時指派本場賽管",
+    "en-US": "Assign a referee for this match",
+    "ko-KR": "이 경기의 심판 임시 지정"
+  },
+  "选择已获准入且无本队冲突的赛管": {
+    "zh-TW": "選擇已獲准入且無本隊衝突的賽管",
+    "en-US": "Choose an eligible referee without a team conflict",
+    "ko-KR": "팀 이해충돌이 없는 승인된 심판 선택"
+  },
+  "保存赛管指派": {
+    "zh-TW": "儲存賽管指派",
+    "en-US": "Save referee assignment",
+    "ko-KR": "심판 지정 저장"
+  },
+  "本届已认证": {
+    "zh-TW": "本屆已認證",
+    "en-US": "Active for this event",
+    "ko-KR": "이번 대회에서 승인됨"
+  },
+  "本届已撤销": {
+    "zh-TW": "本屆已撤銷",
+    "en-US": "Revoked for this event",
+    "ko-KR": "이번 대회에서 철회됨"
+  },
+  "本届已暂停": {
+    "zh-TW": "本屆已暫停",
+    "en-US": "Suspended for this event",
+    "ko-KR": "이번 대회에서 중지됨"
+  },
+  "工作人员身份已就绪，等待本场安排": {
+    "zh-TW": "工作人員身分已就緒，等待本場安排",
+    "en-US": "Your staff role is ready; awaiting an assignment",
+    "ko-KR": "운영진 자격이 준비되었습니다. 경기 배정을 기다리세요"
+  },
+  "已恢复跟随正式排班。": {
+    "zh-TW": "已恢復跟隨正式排班。",
+    "en-US": "Restored access from the published schedule.",
+    "ko-KR": "공식 배정에 따른 접근을 복원했습니다."
+  },
+  "已指派本场赛管。": {
+    "zh-TW": "已指派本場賽管。",
+    "en-US": "Match referee assigned.",
+    "ko-KR": "경기 심판을 지정했습니다."
+  },
+  "已撤回本场赛管权限，重新发布排班不会自动恢复。": {
+    "zh-TW": "已撤回本場賽管權限，重新發布排班不會自動恢復。",
+    "en-US": "Match referee access revoked. Republishing will not restore it automatically.",
+    "ko-KR": "경기 심판 권한을 철회했습니다. 배정을 다시 게시해도 자동 복원되지 않습니다."
   }
 }

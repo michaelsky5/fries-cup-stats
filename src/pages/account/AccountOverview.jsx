@@ -7,6 +7,7 @@ import { useAuth } from '../../features/auth/AuthProvider.jsx'
 import { fetchAccountSessions } from '../../features/account-security/accountSecurityApi.js'
 import { accountSettingsError } from '../../features/account-security/accountFoundationSettings.js'
 import styles from './AccountSettingsPage.module.css'
+import StaffMemberships from './StaffMemberships.jsx'
 
 export default function AccountOverview({ user, spaceHref }) {
   const uiLocale = useUiLocale()
@@ -61,5 +62,6 @@ export default function AccountOverview({ user, spaceHref }) {
       </div>
     </div>
     <Link className={styles.spaceReturn} to={spaceHref}><span><strong>{uiText("继续参赛事务", uiLocale)}</strong><small>{uiText("查看本周准备、比赛与队伍安排", uiLocale)}</small></span><span>{uiText("我的空间 ", uiLocale)}<i aria-hidden="true">→</i></span></Link>
+    <StaffMemberships />
   </section>
 }
