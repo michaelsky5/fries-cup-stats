@@ -50,7 +50,7 @@ export default function RoomResultPanel({ data, disabled, mutate, correction }) 
   const index = ['AWAITING_SUBMISSION', 'REPORT_IN_PROGRESS', 'RETURNED'].includes(data.result.phase) ? 0 : ['REVIEWING', 'RECHECK', 'FORFEIT_REVIEW'].includes(data.result.phase) ? 1 : ['SETTLED', 'AWAITING_SETTLEMENT'].includes(data.result.phase) ? 3 : 2
   const maps = data.result.official ? data.result.maps || [] : data.forfeit?.record?.maps || data.maps
   const byRuling = data.result.phase === 'SETTLED' && data.result.sides.some(side => side.status === 'OVERRIDDEN')
-  return <div className={styles.resultProgress} aria-label={uiText("整场赛果进度", uiLocale)}>
+  return <div className={`${styles.resultProgress} ${frame.resultPanel}`} aria-label={uiText("整场赛果进度", uiLocale)}>
     <ol className={styles.resultSteps}>{[data.result.forfeit ? '弃权记录' : '战报提交', '管理员审核', byRuling ? '响应已裁定' : '双方确认', '积分结算'].map((label, step) => <li key={label} aria-current={data.result.phase !== 'SETTLED' && step === index ? 'step' : undefined} data-done={data.result.phase === 'SETTLED' || step < index}><span>{data.result.phase === 'SETTLED' || step < index ? '✓' : `0${step + 1}`}</span>{label}</li>)}</ol>
     <strong className={styles.resultTitle}>{byRuling ? uiText("本场已按裁定结算", uiLocale) : uiText(title, uiLocale)}</strong><p>{data.result.forfeit && ['AWAITING_CONFIRMATIONS', 'CONFIRMING'].includes(data.result.phase) ? data.result.phase === 'CONFIRMING' ? uiText("请核对弃权队伍、已打地图与积分依据。有异议可提交说明，由管理员复核。", uiLocale) : uiText("裁定已通过管理员复核，开放后双方可核对弃权队伍、实际记录及积分依据。", uiLocale) : uiText(description, uiLocale)}</p>
     <ForfeitSummary data={data} />
