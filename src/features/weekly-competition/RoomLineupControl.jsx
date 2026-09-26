@@ -5,7 +5,10 @@ import styles from './WeeklyRoomWorkspace.module.css'
 export default function RoomLineupControl({ data, side, disabled, command }) {
   const roster = data.rosters.find(item => item.teamId === side.team.id)
   const saved = data.map?.[`lineup${side.key}`] || []
-  const initial = saved.length ? saved : (roster?.members || []).filter(member => member.plannedStarter).slice(0, 5).map(member => ({ playerId: member.id, role: member.role }))
+  const previous = [...(data.maps || [])].reverse().find(map => map.order < data.map.order)?.[`lineup${side.key}`] || []
+  const reusable = validRoomLineup(previous) && previous.every(player => roster?.members.some(member => member.id === player.playerId))
+  const planned = (roster?.members || []).filter(member => member.plannedStarter).slice(0, 5).map(member => ({ playerId: member.id, role: member.role }))
+  const initial = saved.length ? saved : reusable ? previous : planned
   const [selected, setSelected] = useState(initial)
   const pending = useRef(null)
   useEffect(() => { pending.current = null }, [data.revision, data.match.revision, data.draftRevision])
@@ -16,8 +19,6 @@ export default function RoomLineupControl({ data, side, disabled, command }) {
   const toggle = member => edit(selected.some(item => item.playerId === member.id) ? selected.filter(item => item.playerId !== member.id) : selected.length < 5 ? [...selected, { playerId: member.id, role: member.role }] : selected)
   const valid = validRoomLineup(selected)
   const ordered = sortRoomLineup(selected)
-  const previous = [...(data.maps || [])].reverse().find(map => map.order < data.map.order)?.[`lineup${side.key}`] || []
-  const reusable = validRoomLineup(previous) && previous.every(player => roster?.members.some(member => member.id === player.playerId))
   async function confirm() {
     if (!canEdit || !valid) return
     pending.current ||= { teamId: side.team.id, lineup: ordered.map(({ playerId, role }) => ({ playerId, role })), clientKey: crypto.randomUUID(), expectedRevision: data.revision, matchRevision: data.match.revision, draftRevision: data.draftRevision }
@@ -25,7 +26,7 @@ export default function RoomLineupControl({ data, side, disabled, command }) {
   }
   return <section className={styles.lineupEditor} aria-label={`${side.team.shortName || side.team.name} 本图首发与职责`}>
     <header><strong>{side.team.shortName || side.team.name}</strong><span>{locked ? '已确认并锁定' : ownTurn ? '轮到本队确认' : '等待选图方先确认'}</span></header>
-    {canEdit && reusable && <button type="button" onClick={() => edit(previous.map(({ playerId, role }) => ({ playerId, role })))}>沿用上一图人员与职责</button>}
+    {canEdit && reusable && <div><small>已带入上一图人员与职责，可直接确认或调整。</small><button type="button" onClick={() => edit(planned)}>恢复计划首发</button></div>}
     <div className={styles.lineupChoices}>{(roster?.members || []).map(member => {
       const entry = selected.find(item => item.playerId === member.id)
       return <div key={member.id} data-selected={!!entry}>
@@ -37,6 +38,6 @@ export default function RoomLineupControl({ data, side, disabled, command }) {
       </div>
     })}</div>
     <div className={styles.lobbyOrder} aria-label="游戏内 CCTNN 顺序">{ROOM_ROLE_ORDER.map((role, index) => <div key={index} data-valid={ordered[index]?.role === role}><b>{index + 1} · {roomRoleCode(role)}</b><span>{roster?.members.find(member => member.id === ordered[index]?.playerId)?.name || '待选择'}</span></div>)}</div>
-    <footer><small>{valid ? '游戏房间从上到下也必须按此顺序排列。' : `已选 ${selected.length}/5；需要 2 输出、1 重装、2 支援。`}</small><button type="button" disabled={!canEdit || !valid} onClick={confirm}>{locked ? '本队首发已锁定' : ownTurn ? '确认五人、职责与顺序' : '等待对方确认'}</button></footer>
+    <footer><small>{valid ? '确认即代表这五人已到场；游戏内也按此顺序排列，无需逐人签到。' : `已选 ${selected.length}/5；需要 2 输出、1 重装、2 支援。`}</small><button type="button" disabled={!canEdit || !valid} onClick={confirm}>{locked ? '本队首发已锁定' : ownTurn ? '确认五人到场、职责与顺序' : '等待对方确认'}</button></footer>
   </section>
 }

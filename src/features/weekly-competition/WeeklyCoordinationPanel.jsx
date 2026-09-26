@@ -97,14 +97,14 @@ export default function WeeklyCoordinationPanel({ weekId, teamId, matchId, readO
         {match.brief?.roomCode && <div className={styles.roomCode}><span>{uiText("比赛房间设置码", uiLocale)}</span><code>{match.brief.roomCode}</code></div>}
         <div className={styles.instructions}><div className={styles.instructionsHeader}><span>{uiText("赛管安排", uiLocale)}</span>{match.brief?.updatedAt && <small>{uiText("更新于 ", uiLocale)}{time(match.brief.updatedAt)}</small>}</div><p>{match.brief?.instructions || uiText("赛管尚未补充本场说明。安排发布后会在这里更新。", uiLocale)}</p></div>
       </div>
-      <div className={styles.readinessPanel}>
+      {match.requiresReadyConfirmation !== false && <div className={styles.readinessPanel}>
         <h4>{uiText("双方准备状态", uiLocale)}</h4>
         <div className={styles.readiness} aria-label={uiText("双方准备状态", uiLocale)}>{match.sides.map(side => <div key={side.team.id} data-ready={side.ready}><div><strong>{side.team.shortName || side.team.name}</strong>{side.team.id === teamId && <em>{uiText("本队", uiLocale)}</em>}</div><span>{side.ready ? uiText("已准备好", uiLocale) : side.stale ? uiText("安排有变化 · 需重新确认", uiLocale) : uiText("尚未确认准备好", uiLocale)}</span>{side.ready && <small>{uiText("确认于 ", uiLocale)}{time(side.updatedAt)}</small>}</div>)}</div>
         <div className={styles.readyAction}>
           {ownSide?.canConfirm && !readOnly && <p>{match.bothReady ? uiText("双方均已准备好，等待赛管更新比赛状态。", uiLocale) : ownSide?.ready ? uiText("本队准备状态已保存，等待对方和赛管更新。", uiLocale) : uiText("核对房间与出赛队员后，代表本队确认。", uiLocale)}</p>}
           {ownSide?.canConfirm && !readOnly ? <button className={ownSide.ready ? '' : styles.primary} disabled={disabled} onClick={() => mutate('/readiness', { weekId, matchId, teamId, ready: !ownSide.ready, fingerprint: ownSide.fingerprint, expectedRevision: ownSide.revision }, 'PUT', value => value?.id === matchId && value.sides?.some(side => side.team.id === teamId && side.ready === !ownSide.ready), ownSide.ready ? '已撤回本队准备确认，双方和赛管会看到最新状态。' : '本队准备状态已保存，对方和赛管均可查看。')}>{busy ? uiText("正在保存…", uiLocale) : ownSide.ready ? uiText("撤回本队准备确认", uiLocale) : uiText("确认本队已准备好", uiLocale)}</button> : <p className={styles.muted}>{ownSide?.reason || uiText("本队准备状态由队长或经理确认。", uiLocale)}</p>}
         </div>
-      </div>
+      </div>}
     </div>}
     <div className={styles.support}>
     <details className={styles.help}>

@@ -81,7 +81,7 @@
 .decisionTitle>div { display:grid;gap:5px; }
 .decisionTitle>span { flex:none;font-size:11px;border-left:2px solid var(--fc-data-room-action-bg);padding:4px 0 4px 10px;max-width:140px; }
 .decisionTitle h2 { font-size:24px;line-height:1.35; }
-.stageRail { list-style:none;margin:0;padding:0 2px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px; }
+.stageRail { list-style:none;margin:0;padding:0 2px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px; }
 .stageRail li { display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:2px solid var(--line);font-size:11px;color:var(--muted); }
 .stageRail button { display:flex;align-items:center;gap:8px;width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left;font-size:inherit;cursor:pointer; }
 .stageRail button:hover { color:var(--yellow); }
@@ -329,3 +329,11 @@
   .frame .phaseView p { font-size:calc(14 * var(--room-unit)); }
   .frame .resultMapTable { font-size:calc(14 * var(--room-unit)); }.frame .resultMapTable :is(th,td) { padding:calc(12 * var(--room-unit)) 0;font-size:inherit; }
 }
+
+.stageRail button:disabled { cursor:default;opacity:.5;color:inherit; }
+.currentPhase { justify-self:start;background:transparent;border:0;color:var(--yellow);font:inherit;font-size:12px;cursor:pointer;padding:0; }
+.lobbyTools { display:flex;gap:6px;align-items:center;flex-wrap:wrap; }
+.lobbyTools button { padding:4px 8px;background:transparent;color:var(--text);border:1px solid var(--line);font:inherit;font-size:11px;cursor:pointer; }
+.lobbyTools small { color:var(--yellow); }
+.matchFacts>div { flex-wrap:wrap;gap:8px 20px;min-width:0; }
+@media (max-width:760px) { .lobbyTools { grid-column:1/-1; }.lobbyTools button { min-height:32px; } }

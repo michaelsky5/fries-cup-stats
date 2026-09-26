@@ -1,0 +1,3 @@
+.shortcut { display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;min-height:40px;padding:8px 12px;background:var(--fc-data-signal,#efc642);color:var(--fc-data-ink,#181a17);font-size:12px;font-weight:750;text-decoration:none; }
+.shortcut:focus-visible { outline:2px solid currentColor;outline-offset:3px; }
+@media (max-width:600px) { .shortcut { min-height:36px;padding:6px 8px;font-size:11px; } }

@@ -20,7 +20,7 @@ export const ROLE_LESSONS = {
   member: ['entry', 'lineup', 'live', 'result'], referee: GUIDE_STEPS,
   caster: ['entry', 'map', 'lineup', 'ban', 'live', 'result'], admin: GUIDE_STEPS,
 }
-const STAGE_STEPS = ['opening', 'map', 'lineup', 'ban', 'ready', 'live', 'map-result', 'result']
+const STAGE_STEPS = ['opening', 'map', 'lineup', 'ban', 'live', 'map-result', 'result']
 const id = value => typeof value === 'string' && /^[A-Za-z0-9_-]{1,120}$/.test(value) ? value : ''
 
 // These are reading preferences only. Never use guide query parameters for access.

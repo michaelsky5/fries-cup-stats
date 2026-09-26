@@ -7,10 +7,9 @@ const copy = JSON.parse(readFileSync(new URL('../src/features/room-guide/roomGui
 const teamId = 'preview-team-A'
 const lineup = ['TANK', 'DPS', 'DPS', 'SUP', 'SUP'].map((role, i) => ({ playerId: `${teamId}-p${i}`, role }))
 
-test('real-room practice walks check-in, map, lineups, ban order, bans, pause and result response', () => {
+test('real-room practice walks map, lineups, ban order, bans, pause and result response', () => {
   let state = createRoomPractice()
   const act = (path, body, kind) => { state = applyRoomPractice(state, path, body, kind).state }
-  for (let i = 0; i < 5; i++) act('/check-ins', { teamId, playerId: `${teamId}-p${i}`, status: 'PRESENT' })
   assert.equal(state.scene, 'choosing')
   act('/opening', { action: 'SELECT_SETUP', mapName: 'Busan', teamId })
   assert.equal(getRoomStageIndex(buildRoomPractice(state, copy)), 2)
@@ -20,7 +19,7 @@ test('real-room practice walks check-in, map, lineups, ban order, bans, pause an
   act('/opening', { action: 'SELECT_BAN_ORDER', teamId, banOrder: 'SECOND' })
   assert.throws(() => act('/opening', { action: 'BAN', teamId, hero: 'Ashe' }), /phase/)
   act('/opening', { action: 'BAN', teamId, hero: 'Ana' })
-  act('/readiness', { teamId, ready: true }, 'coordination')
+  act('start', {}, 'scene')
   assert.equal(state.scene, 'live')
   act('/requests', { teamId, title: 'A2 disconnected', body: 'Please pause for reconnection.' }, 'coordination')
   assert.equal(state.scene, 'paused')
@@ -35,11 +34,10 @@ test('real-room practice walks check-in, map, lineups, ban order, bans, pause an
   assert.equal(state.response, 'CONFIRMED')
 })
 
-test('staff controls require preflight, both recovery states, score evidence and reviewed points', () => {
+test('staff controls record actual start, require both recovery states, score evidence and reviewed points', () => {
   let state = createRoomPractice('referee')
   const act = (path, body, kind) => { state = applyRoomPractice(state, path, body, kind).state }
-  assert.throws(() => act('/commands', { action: 'START' }), /phase/)
-  act('/commands', { action: 'VERIFY_PREFLIGHT', roomConfirmed: true, rosterVerified: true, networkTestCompleted: true })
+  assert.equal(buildRoomPractice(state, copy).access.canStart, true)
   act('/commands', { action: 'START' })
   act('/commands', { action: 'PAUSE', note: 'Network problem' })
   assert.throws(() => act('/commands', { action: 'RESUME' }), /phase/)
@@ -54,13 +52,15 @@ test('staff controls require preflight, both recovery states, score evidence and
   assert.equal(buildRoomPractice(state, copy).result.phase, 'SETTLED')
 })
 
-test('a substitute must check in before the representative can confirm readiness', () => {
-  let state = createRoomPractice('representative', 'ready')
-  state.lineup = lineup.map((player, i) => i === 1 ? { ...player, playerId: `${teamId}-p5` } : player)
-  assert.equal(buildRoomPractice(state, copy).preparation.sides[0].canConfirm, false)
-  assert.throws(() => applyRoomPractice(state, '/readiness', { teamId, ready: true }, 'coordination'), /checkin/)
-  state = applyRoomPractice(state, '/check-ins', { teamId, playerId: `${teamId}-p5`, status: 'PRESENT' }).state
-  assert.equal(buildRoomPractice(state, copy).preparation.sides[0].canConfirm, true)
+test('lineup confirmation includes substitutes but a later absence blocks actual start', () => {
+  let state = createRoomPractice('referee', 'lineup')
+  const selected = lineup.map((player, i) => i === 1 ? { ...player, playerId: teamId + '-p5' } : player)
+  state = applyRoomPractice(state, '/commands', { action: 'SET_LINEUP', teamId, lineup: selected }).state
+  assert.equal(state.checkIns[teamId + '-p5'], true)
+  state.scene = 'ready'
+  state = applyRoomPractice(state, '/check-ins', { teamId, playerId: teamId + '-p5', status: 'ABSENT' }).state
+  assert.equal(buildRoomPractice(state, copy).access.canStart, false)
+  assert.throws(() => applyRoomPractice(state, '/commands', { action: 'START' }), /phase/)
 })
 
 test('practice is local, isolated by session, and rejects real match IDs and unsupported writes', async () => {

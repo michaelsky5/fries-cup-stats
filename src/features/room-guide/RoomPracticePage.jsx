@@ -46,7 +46,7 @@ function Practice({ role, initialScene, text, locale, onRole }) {
     <p className={styles.boundary} data-i18n-ignore>{text['room.boundary']}</p>
     <section ref={coach} className={styles.coach} data-i18n-ignore aria-labelledby="practice-task-title">
       <div className={styles.coachTitle}><span>SIMULATION / {text['room.coach']}</span><h1 id="practice-task-title">{text[`room.task.${teachingKey}`]}</h1><p>{text[`room.help.${teachingKey}`]}</p></div>
-      <div className={styles.coachActions}><button type="button" onClick={locate}>{text['room.locate']} ↓</button>{['live', 'review'].includes(state.scene) && <button type="button" onClick={jumpResult}>{text['room.jump']} →</button>}<details><summary>{text['room.terms']}</summary><p>{text['room.glossary']}</p></details></div>
+      <div className={styles.coachActions}><button type="button" onClick={locate}>{text['room.locate']} ↓</button>{state.scene === 'ready' && role === 'representative' && <button type="button" onClick={() => session.apply('start', {}, 'scene')}>{text['room.simulate-start']}</button>}{['live', 'review'].includes(state.scene) && <button type="button" onClick={jumpResult}>{text['room.jump']} →</button>}<details><summary>{text['room.terms']}</summary><p>{text['room.glossary']}</p></details></div>
       {state.event !== 'welcome' && <p className={styles.response} role="status">✓ {text[`room.event.${state.event}`] || text['room.saved']}</p>}
     </section>
     <div ref={room} className={styles.room} data-hint={hint ? target === '[data-side="A"]' ? 'team' : target === 'footer' ? 'footer' : 'center' : ''}>

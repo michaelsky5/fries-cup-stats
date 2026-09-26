@@ -130,3 +130,7 @@
   .actions > button { flex: 1 1 150px; }
 }
 @media (max-width: 540px) { .dialog { padding: 22px 18px; } .dialog .actions > button { flex: 1 1 100%; } }
+
+.roomEntry { display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:16px; }
+.roomEntry .primaryButton { display:inline-flex;align-items:center;gap:24px;text-decoration:none;color:var(--fc-data-ink);font-size:15px; }
+.coordinationDetails { margin:16px 24px; }.coordinationDetails>summary { cursor:pointer;font-weight:600; }

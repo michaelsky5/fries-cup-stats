@@ -1,5 +1,5 @@
 import { OW_HEROES, OW_MAPS } from '../../lib/heroes.js'
-export const PREVIEW_STAGES = { opening: '1V1 先手权', confirming: '双方确认先手权', choosing: '选图', lineup: '首发', banorder: 'Ban 顺序', banning: 'Ban', ready: '准备', live: '比赛中', paused: '暂停', review: '图结果', result: '整场赛果' }
+export const PREVIEW_STAGES = { opening: '1V1 先手权', confirming: '双方确认先手权', choosing: '选图', lineup: '首发', banorder: 'Ban 顺序', banning: 'Ban', ready: '禁用完成 · 待开赛', live: '比赛中', paused: '暂停', review: '图结果', result: '整场赛果' }
 export const PREVIEW_ROLES = { representative: '操作代表', staff: '赛管', player: '队员', caster: '解说' }
 
 // Synthetic, read-only data. Never use a real match ID or an account API here.
@@ -33,10 +33,10 @@ export function buildWeeklyRoomPreview(stage = 'lineup', role = 'representative'
     phase: stage === 'paused' ? 'PAUSED' : stage === 'live' ? 'LIVE' : ['review', 'result'].includes(stage) ? 'REVIEW' : 'PREPARING', revision: 1, draftRevision: 1,
     access: { canWrite: false, staff, production, teamIds: ['representative', 'player'].includes(role) ? [teams[0].id] : [], representativeTeams: role === 'representative' ? [teams[0].id] : [], operatorMode: 'REFEREE', canStart: staff && stage === 'ready', canPause: staff, canResume: staff },
     rosters, map: maps.at(-1), maps, opening, series: { complete: stage === 'result', completedMaps: stage === 'result' ? 5 : stage === 'review' ? 1 : 0, scoreA: 1, scoreB: 0, drawCount: stage === 'result' ? 4 : 0 },
-    preparation: { brief: { roomName: '示例自定义房间', roomCode: 'KYWVV' }, sides: teams.map(team => ({ key: team === teams[0] ? 'A' : 'B', team, ready: false, canConfirm: true, revision: 1, fingerprint: 'preview' })) },
+    preparation: { requiresReadyConfirmation: false, brief: { roomName: '示例自定义房间', roomCode: 'KYWVV' }, sides: teams.map(team => ({ key: team === teams[0] ? 'A' : 'B', team, ready: false, canConfirm: true, revision: 1, fingerprint: 'preview' })) },
     representatives: { ready: true, sides: teams.map((team, i) => ({ teamId: team.id, active: true, name: rosters[i].members[0].name, role: 'PLAYER', battleTag: rosters[i].members[0].battleTag, candidates: [], canAssign: false, isYou: role === 'representative' && i === 0 })) },
-    preflight: { roomConfirmed: false, rosterVerified: false, networkTestCompleted: false, canConfirm: staff },
-    checkIns: {}, staff: [{ name: '示例赛管' }], casters: [], casterOverrides: [], casterCandidates: [], messages: [], requests: [], hasEarlierMessages: false, blockers: ['等待双方核对准备'], publicNote: '本地只读示例：切换阶段和身份查看布局，不会保存比赛操作。', pause: { recovered: {} }, canRecordMapResult: staff, canCorrectMapResult: staff,
+    preflight: { required: false, roomConfirmed: false, rosterVerified: false, networkTestCompleted: false, canConfirm: staff },
+    checkIns: {}, staff: [{ name: '示例赛管' }], casters: [], casterOverrides: [], casterCandidates: [], messages: [], requests: [], hasEarlierMessages: false, blockers: [], publicNote: '本地只读示例：切换阶段和身份查看布局，不会保存比赛操作。', pause: { recovered: {} }, canRecordMapResult: staff, canCorrectMapResult: staff,
     result: stage === 'result' ? { phase: 'AWAITING_SUBMISSION', official: false, sides: [], points: [], handoff: {}, administration: {} } : null
   }
 }

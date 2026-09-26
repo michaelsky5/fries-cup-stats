@@ -16,7 +16,7 @@ const startersPresent = state => starterIds(state).every(id => present(state, id
 
 export function createRoomPractice(role = 'representative', scene) {
   role = PRACTICE_ROLES.includes(role) ? role : 'representative'
-  scene = PRACTICE_SCENES.includes(scene) ? scene : staffRole(role) ? 'ready' : ['member', 'caster'].includes(role) ? 'live' : 'checkin'
+  scene = PRACTICE_SCENES.includes(scene) ? scene : staffRole(role) ? 'ready' : ['member', 'caster'].includes(role) ? 'live' : 'choosing'
   return { role, scene, revision: 1, mapName: 'Busan', banOrder: 'FIRST', hero: 'Ana', lineup: null, checkIns: {},
     ready: false, preflight: false, recovered: false, recoveredB: true, pausedOnce: false, representative: false,
     scoreA: scene === 'review' ? 1 : 2, scoreB: scene === 'review' ? 2 : 1, response: '', settled: false, messages: [], requests: [], history: [], event: 'welcome' }
@@ -28,7 +28,7 @@ export function practiceLesson(state) {
   if (role === 'manager') return state.representative ? 'manager-done' : 'manager'
   if (['member', 'caster'].includes(role) && scene !== 'result') return role
   if (scene === 'review' && state.scoreA === 1 && staffRole(role)) return 'correction'
-  if (scene === 'ready' && staffRole(role)) return 'preflight'
+  if (scene === 'ready' && staffRole(role)) return 'ready'
   if (scene === 'live') return staffRole(role) ? 'staff-live' : state.pausedOnce ? 'after-pause' : 'live'
   if (scene === 'paused' && staffRole(role)) return 'staff-paused'
   if (scene === 'result' && role === 'admin') return 'settle'
@@ -80,7 +80,7 @@ export function buildRoomPractice(state, text) {
   }
   data.opening.revision = state.revision
   data.opening.rules.maps = data.opening.rules.maps.filter(map => ['Busan', 'Samoa', 'Lijiang Tower'].includes(map.name))
-  Object.assign(data.access, { administrator: state.role === 'admin', canWrite: true, canStart: staff && state.scene === 'ready' && state.preflight,
+  Object.assign(data.access, { administrator: state.role === 'admin', canWrite: true, canStart: staff && state.scene === 'ready' && startersPresent(state),
     canPause: staff && state.scene === 'live', canResume: staff && state.scene === 'paused' && state.recovered && state.recoveredB })
   Object.assign(data.opening.access, { canChoose: (staff || representative) && state.scene === 'choosing',
     canChooseBanOrder: (staff || representative) && state.scene === 'banorder', canBan: (staff || representative) && state.scene === 'banning', canNext: false })
@@ -90,13 +90,13 @@ export function buildRoomPractice(state, text) {
     Object.assign(data.opening.setup, { banA: data.map.banA, banB: data.map.banB, firstBanSide: data.map.firstBanSide })
   }
   data.preparation.sides.forEach((side, i) => { side.ready = !['checkin', 'choosing', 'lineup', 'banorder', 'banning'].includes(state.scene) && Boolean(i || state.ready || staff); side.canConfirm = state.scene === 'ready' && (!staff || !i) && (i || startersPresent(state)); side.reason = !i && !startersPresent(state) ? text['room.error.checkin'] : ''; side.confirmedBy = side.ready ? i ? text['room.bot-opponent'] : text['room.you'] : '' })
-  data.preflight = { canConfirm: staff && state.scene === 'ready', roomConfirmed: state.preflight, rosterVerified: state.preflight, networkTestCompleted: state.preflight }
+  data.preflight = { required: false, canConfirm: staff && state.scene === 'ready', roomConfirmed: state.preflight, rosterVerified: state.preflight, networkTestCompleted: state.preflight }
   data.pause = { at: date, recovered: { A: { ready: state.recovered, by: text['room.you'] }, B: { ready: state.recoveredB, by: text['room.bot-opponent'] } } }
   data.messages = state.messages
   data.requests = state.requests
   data.canRecordMapResult = staff && state.scene === 'live'
   data.canCorrectMapResult = staff && state.scene === 'review'
-  data.blockers = state.preflight ? [] : data.blockers
+  data.blockers = startersPresent(state) ? [] : [text['room.error.checkin']]
   if (state.scene === 'result') {
     // A scripted 4:1 series; unlike a live match, intermediate maps are supplied
     // by the exercise. The coach labels this jump before it happens.
@@ -124,7 +124,8 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
   const scene = state.scene, ownTeam = 'preview-team-A'
   const actor = staff || representative
   let event = '', result = { ok: true }
-  if (kind === 'scene' && path === 'result' && ['live', 'review'].includes(scene)) { next.scene = 'result'; event = 'jump-result' }
+  if (kind === 'scene' && path === 'start' && representative && scene === 'ready' && startersPresent(state)) { next.scene = 'live'; event = 'bot-start' }
+  else if (kind === 'scene' && path === 'result' && ['live', 'review'].includes(scene)) { next.scene = 'result'; event = 'jump-result' }
   else if (kind === 'room' && path === '/check-ins') {
     if (!actor || ![ownTeam, ...(staff ? ['preview-team-B'] : [])].includes(body.teamId) || !new RegExp(`^${body.teamId}-p[0-6]$`).test(body.playerId)) fail('permission')
     next.checkIns[body.playerId] = body.status === 'PRESENT'
@@ -140,9 +141,9 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
     else if (body.action === 'BAN' && scene === 'banning' && body.teamId === ownTeam && heroRole(body.hero) && !(state.banOrder === 'SECOND' && heroRole(body.hero) === 'damage')) { next.hero = body.hero; next.scene = 'ready'; event = 'ban' }
     else fail('phase')
   } else if (kind === 'room' && path === '/commands') {
-    if (body.action === 'SET_LINEUP' && scene === 'lineup' && actor && body.teamId === ownTeam && validRoomLineup(body.lineup) && body.lineup.every(player => /^preview-team-A-p[0-6]$/.test(player.playerId))) { next.lineup = body.lineup; next.scene = 'banorder'; event = 'lineup' }
+    if (body.action === 'SET_LINEUP' && scene === 'lineup' && actor && body.teamId === ownTeam && validRoomLineup(body.lineup) && body.lineup.every(player => /^preview-team-A-p[0-6]$/.test(player.playerId))) { next.lineup = body.lineup; for (const player of body.lineup) next.checkIns[player.playerId] = true; next.scene = 'banorder'; event = 'lineup' }
     else if (body.action === 'VERIFY_PREFLIGHT' && staff && scene === 'ready' && body.roomConfirmed && body.rosterVerified && body.networkTestCompleted) { next.preflight = true; event = 'preflight' }
-    else if (body.action === 'START' && staff && scene === 'ready' && state.preflight) { next.scene = 'live'; event = 'start' }
+    else if (body.action === 'START' && staff && scene === 'ready' && startersPresent(state)) { next.scene = 'live'; event = 'start' }
     else if (body.action === 'PAUSE' && staff && scene === 'live' && String(body.note || '').trim().length >= 2) { next.scene = 'paused'; event = 'pause' }
     else if (body.action === 'RECOVER' && actor && scene === 'paused' && [ownTeam, ...(staff ? ['preview-team-B'] : [])].includes(body.teamId)) { next[body.teamId === ownTeam ? 'recovered' : 'recoveredB'] = Boolean(body.ready); if (representative && next.recovered && next.recoveredB) { next.scene = 'live'; next.pausedOnce = true } event = 'recover' }
     else if (body.action === 'RESUME' && staff && scene === 'paused' && state.recovered && state.recoveredB) { next.scene = 'live'; next.pausedOnce = true; event = 'resume' }
@@ -150,11 +151,6 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
       if (body.scoreA !== 2 || body.scoreB !== 1 || (body.action === 'CORRECT_MAP_RESULT' && String(body.note || '').trim().length < 2)) fail('score')
       next.scoreA = body.scoreA; next.scoreB = body.scoreB; next.scene = 'review'; event = 'score'
     } else fail('phase')
-  } else if (kind === 'coordination' && path === '/readiness') {
-    if (!actor || scene !== 'ready' || body.teamId !== ownTeam) fail('phase')
-    if (body.ready && !startersPresent(state)) fail('checkin')
-    next.ready = Boolean(body.ready)
-    if (representative && next.ready) { next.scene = 'live'; event = 'bot-start' } else event = 'ready'
   } else if ((kind === 'coordination' && path === '/requests') || (kind === 'room' && path === '/messages')) {
     if (String(body.body || '').trim().length < 2) fail('note')
     if (path === '/requests') {
