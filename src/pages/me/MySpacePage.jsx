@@ -1,3 +1,4 @@
+import RoomGuideLink from '../../features/room-guide/RoomGuideLink.jsx'
 import SeasonRegistrationEntry from '../../features/event-registration/SeasonRegistrationEntry.jsx'
 import { isWeeklyOverview } from '../../features/weekly-overview/weeklyOverviewModel.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
@@ -748,11 +749,11 @@ function MySpaceContent() {
   }
 
   if (isAuthenticated && needsParticipationAccess && (accountLaunchLoading || ((accountLaunch?.seasonId !== seasonId || accountLaunch?.accountUserId !== authUser?.id) && !accountLaunchError))) {
-    return <>{competitionBar}<AccountReleaseGate launch={accountLaunch} loading withSeason={pageLink} /></>
+    return <>{competitionBar}<RoomGuideLink season={seasonId} scenario="access" label="无法操作？查看指南" /><AccountReleaseGate launch={accountLaunch} loading withSeason={pageLink} /></>
   }
 
   if (isAuthenticated && needsParticipationAccess && (accountLaunchError || !accountPortalAllowed)) {
-    return <>{competitionBar}<AccountReleaseGate launch={accountLaunch} error={accountLaunchError} withSeason={pageLink} onRetry={() => setAccountLaunchAttempt(value => value + 1)} /></>
+    return <>{competitionBar}<RoomGuideLink season={seasonId} scenario="access" label="无法操作？查看指南" /><AccountReleaseGate launch={accountLaunch} error={accountLaunchError} withSeason={pageLink} onRetry={() => setAccountLaunchAttempt(value => value + 1)} /></>
   }
 
   if (isAuthenticated && needsParticipationAccess && !currentSpaceContext) {
@@ -779,20 +780,21 @@ function MySpaceContent() {
         <span>WEEKLY / PARTICIPATION</span>
         <h1>{uiText('本周参赛确认', locale)}</h1>
         <p>{uiText('请先登录参赛账号，登录后继续确认本周参赛并提交出赛名单。', locale)}</p>
-        <nav aria-label={uiText('报名与参赛', locale)}>
+        <RoomGuideLink season={seasonId} role="manager" label="参赛与比赛指南" /><nav aria-label={uiText('报名与参赛', locale)}>
           <button type="button" onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText('登录参赛账号 →', locale)}</button>
           <Link to={pageLink(`/participate/${encodeURIComponent(seasonId)}`)}>{uiText('首次报名 / 继续报名', locale)}</Link>
         </nav>
       </div>
     </section>
   </main>
-  if (!isAuthenticated) return <FollowingPage />
+  if (!isAuthenticated) return <><div className={styles.guideEntry}><RoomGuideLink label="参赛与比赛指南" /></div><FollowingPage /></>
   return (
     <main className={styles.page} data-design="signal" data-page-mode={activeSection === 'following' ? 'index' : 'control'}>
       <SpaceHeader>
         <SpaceIdentity context={effectiveSpaceContext} locale={locale} withSeason={pageLink} following={activeSection === 'following'} />
         {needsParticipationAccess ? competitionBar : null}
         {showIdentityContext && needsParticipationAccess ? <IdentityContextStrip context={effectiveSpaceContext} loading={spaceContextLoading} error={spaceContextError} /> : null}
+        <RoomGuideLink season={seasonId} label="参赛与比赛指南" />
         <SpaceTabs key={activeSection} activeSection={activeSection} withSeason={pageLink} sections={spaceSections} overview={navigationSummary} locale={locale} />
       </SpaceHeader>
       {activeSection === 'overview' ? registrationEntry : null}

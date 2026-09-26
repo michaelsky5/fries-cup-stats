@@ -1,3 +1,5 @@
+import RoomGuideLink from '../room-guide/RoomGuideLink.jsx'
+import { guideRoleForMatch } from '../room-guide/roomGuideModel.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
@@ -241,13 +243,13 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
     <section id="weekly-match-rooms" className={styles.workspace} aria-label={uiText("周赛比赛房间", uiLocale)} aria-busy={loading}>
       <header className={styles.workHeader}>
         <div><span>WEEKLY MATCHES</span><h2>{uiText("我的周赛比赛", uiLocale)}</h2></div>
-        <div className={styles.headerActions}>
+        <div className={styles.headerActions}><RoomGuideLink season={seasonId} />
           {(tasksVisible || preparationVisible) && <nav className={styles.returnLinks} aria-label={uiText("参赛流程导航", uiLocale)}>{tasksVisible && <Link to={taskUrl}>{uiText("← 任务中心", uiLocale)}</Link>}{preparationVisible && <Link to={preparationUrl}>{uiText("参赛准备 ↗", uiLocale)}</Link>}</nav>}
         <button type="button" className={styles.secondaryButton} disabled={loading || submitting} onClick={async () => { if (await confirmDiscard() && mounted.current && !submitLock.current) { setFeedback(null); refresh() } }}>{loading ? uiText("同步中…", uiLocale) : uiText("刷新比赛资料", uiLocale)}</button>
         </div>
       </header>
 
-      {loadError ? <p className={styles.message} data-error="true" role="alert">{weeklyRoomError(loadError)}{currentWorkspace ? uiText(" 当前显示上次同步记录，重新同步前不可提交。", uiLocale) : ''}</p> : null}
+      {loadError ? <p className={styles.message} data-error="true" role="alert">{weeklyRoomError(loadError)} <RoomGuideLink season={seasonId} scenario="access" label="无法操作？查看指南" />{currentWorkspace ? uiText(" 当前显示上次同步记录，重新同步前不可提交。", uiLocale) : ''}</p> : null}
       {feedback ? <div className={styles.message} data-error={feedback.error ? 'true' : 'false'} role={feedback.error ? 'alert' : 'status'}><p>{feedback.message}</p>{!feedback.error && tasksVisible && <Link to={taskUrl}>{uiText("返回任务中心，查看下一步 →", uiLocale)}</Link>}</div> : null}
       {!currentWorkspace && loading ? <div className={styles.state} role="status"><span>SYNCING TEAM CHANNEL</span><strong>{uiText("正在同步获授权比赛与赛果状态", uiLocale)}</strong><p>{uiText("同步完成前，不会把未知状态显示成“没有比赛”或“已确认”。", uiLocale)}</p></div> : null}
 
@@ -282,7 +284,7 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
                       <div className={styles.matchMeta}><span>{room.cycle?.name} · {room.week?.label || uiText("第 {0} 周", uiLocale, [room.week?.weekNumber])}</span><strong data-tone={roomState.tone}>{roomState.label}</strong></div>
                       <h3><span>{weeklyTeamName(room.teamA)}</span><b>{journey.preMatch ? 'VS' : weeklyRoomScore(room)}</b><span>{weeklyTeamName(room.teamB)}</span></h3>
                       <p>{room.displayName} · {formatTime(room.scheduledAt, timezone)}{room.roleLabel ? ` · ${room.roleLabel}` : ''}{!journey.preMatch ? uiText(" · 赛果修订 {0}", uiLocale, [room.revision]) : ''}</p>
-                      <Link to={`/me/matches/${encodeURIComponent(room.id)}/room`}>{uiText("进入比赛房 · 准备与沟通 ↗", uiLocale)}</Link>
+                      <Link to={`/me/matches/${encodeURIComponent(room.id)}/room`}>{uiText("进入比赛房 · 准备与沟通 ↗", uiLocale)}</Link> <RoomGuideLink season={seasonId} match={room.id} role={guideRoleForMatch(room)} step={journey.preMatch ? "entry" : "result"} />
                     </header>
                     <ol className={styles.resultRoute} aria-label={journey.preMatch ? uiText("比赛日进度", uiLocale) : uiText("赛果处理进度", uiLocale)}>
                       {journey.stages.map((stage, index) => <li key={stage.key} data-state={stage.state}><span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><strong>{stage.label}</strong></li>)}

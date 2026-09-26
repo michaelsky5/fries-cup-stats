@@ -1,3 +1,4 @@
+import RoomGuideLink from '../room-guide/RoomGuideLink.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
@@ -36,7 +37,7 @@ function ParticipationPage({ seasonId }) {
   return <AccountFrame title={uiText("赛事报名", uiLocale)} eyebrow="EVENT REGISTRATION" description={uiText("组建本队名单，确认后提交赛事负责人审核。", uiLocale)}><div className={styles.page}>
     <header className={styles.header}>
       <div><span>{uiText("参赛账号", uiLocale)}</span><strong>{user?.displayName || uiText("等待登录", uiLocale)}</strong></div>
-      <div className={styles.actions}>{user ? <><button type="button" onClick={async () => { if (await confirmDiscard()) await logout() }}>{uiText("退出账号", uiLocale)}</button></> : null}<Link to="/me">{uiText("我的空间", uiLocale)}</Link></div>
+      <div className={styles.actions}><RoomGuideLink season={seasonId} role="manager" label="参赛与比赛指南" />{user ? <><button type="button" onClick={async () => { if (await confirmDiscard()) await logout() }}>{uiText("退出账号", uiLocale)}</button></> : null}<Link to="/me">{uiText("我的空间", uiLocale)}</Link></div>
     </header>
     {invitationToken ? <Invitation key={invitationToken} token={invitationToken} seasonId={seasonId} />
       : isBootstrapping ? <p role="status">{uiText("正在确认登录状态…", uiLocale)}</p>
