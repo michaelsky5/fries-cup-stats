@@ -53855,5 +53855,210 @@
     "zh-TW": "已撤回本場賽管權限，重新發布排班不會自動恢復。",
     "en-US": "Match referee access revoked. Republishing will not restore it automatically.",
     "ko-KR": "경기 심판 권한을 철회했습니다. 배정을 다시 게시해도 자동 복원되지 않습니다."
+  },
+  "申请赛管与解说": {
+    "en-US": "Apply as referee or caster",
+    "ko-KR": "심판 및 해설 신청",
+    "zh-TW": "申請賽管與解說"
+  },
+  "复用一个本人账号，参与赛事工作。": {
+    "en-US": "Use your existing personal account to join the event crew.",
+    "ko-KR": "본인 계정 하나로 대회 운영에 참여하세요.",
+    "zh-TW": "複用一個本人賬號，參與賽事工作。"
+  },
+  "工作人员申请流程": {
+    "en-US": "Staff application steps",
+    "ko-KR": "운영진 신청 절차",
+    "zh-TW": "工作人員申請流程"
+  },
+  "填写申请": {
+    "en-US": "Apply",
+    "ko-KR": "신청 작성",
+    "zh-TW": "填寫申請"
+  },
+  "申请已审核通过": {
+    "en-US": "Application approved",
+    "ko-KR": "신청 승인 완료",
+    "zh-TW": "申請已審核通過"
+  },
+  "申请已提交，等待管理员审核": {
+    "en-US": "Application submitted for administrator review",
+    "ko-KR": "신청 완료, 관리자 심사 대기 중",
+    "zh-TW": "申請已提交，等待管理員審核"
+  },
+  "请到邮箱确认申请": {
+    "en-US": "Check your email to confirm the application",
+    "ko-KR": "이메일에서 신청을 확인하세요",
+    "zh-TW": "請到郵箱確認申請"
+  },
+  "验证本人邮箱并提交申请": {
+    "en-US": "Verify your email and submit your application",
+    "ko-KR": "본인 이메일 인증 후 신청 제출",
+    "zh-TW": "驗證本人郵箱並提交申請"
+  },
+  "选择你希望参与的职责": {
+    "en-US": "Choose the roles you wish to apply for",
+    "ko-KR": "신청할 역할을 선택하세요",
+    "zh-TW": "選擇你希望參與的職責"
+  },
+  "链接缺少赛事信息，请使用管理员分享的完整共用链接。": {
+    "en-US": "Event details are missing. Open the complete shared link from your administrator.",
+    "ko-KR": "대회 정보가 없습니다. 관리자가 공유한 전체 링크를 여세요.",
+    "zh-TW": "鏈接缺少賽事信息，請使用管理員分享的完整共用鏈接。"
+  },
+  "正在读取申请入口…": {
+    "en-US": "Loading application…",
+    "ko-KR": "신청 페이지를 불러오는 중…",
+    "zh-TW": "正在讀取申請入口…"
+  },
+  "重新读取入口": {
+    "en-US": "Reload application",
+    "ko-KR": "신청 페이지 새로고침",
+    "zh-TW": "重新讀取入口"
+  },
+  "本届工作人员申请暂未开放，请联系赛事管理员。": {
+    "en-US": "Staff applications are currently closed for this event. Contact the event administrator.",
+    "ko-KR": "현재 이 대회의 운영진 신청이 닫혀 있습니다. 관리자에게 문의하세요.",
+    "zh-TW": "本屆工作人員申請暫未開放，請聯繫賽事管理員。"
+  },
+  "本届职责已批准，具体场次按正式排班开放。": {
+    "en-US": "Your event roles are approved. Match access follows the published schedule.",
+    "ko-KR": "대회 역할이 승인되었습니다. 경기 접근은 공식 배정에 따라 열립니다.",
+    "zh-TW": "本屆職責已批准，具體場次按正式排班開放。"
+  },
+  "邮箱已验证，申请已进入审核列表。审核通过前不会获得赛管或解说权限。": {
+    "en-US": "Your email is verified and your application is awaiting review. Referee and caster permissions require approval.",
+    "ko-KR": "이메일 인증이 완료되어 심사 대기 중입니다. 승인 전에는 심판이나 해설 권한이 부여되지 않습니다.",
+    "zh-TW": "郵箱已驗證，申請已進入審核列表。審核通過前不會獲得賽管或解說權限。"
+  },
+  "已有选手身份、原密码和队伍关系均保留。请使用刚才的本人邮箱登录，在账号概览查看审核结果。": {
+    "en-US": "Your player identity, password and team links are preserved. Sign in with this email to check the result in your account overview.",
+    "ko-KR": "기존 선수 신분, 비밀번호, 팀 관계가 유지됩니다. 해당 이메일로 로그인하여 계정 개요에서 심사 결과를 확인하세요.",
+    "zh-TW": "已有選手身份、原密碼和隊伍關係均保留。請使用剛才的本人郵箱登錄，在賬號概覽查看審核結果。"
+  },
+  "登录并查看申请状态 →": {
+    "en-US": "Sign in and view application status →",
+    "ko-KR": "로그인하여 신청 상태 확인 →",
+    "zh-TW": "登錄並查看申請狀態 →"
+  },
+  "验证邮件已发送至 {0}。打开邮件链接后确认提交申请。": {
+    "en-US": "A verification email was sent to {0}. Open its link to confirm your application.",
+    "ko-KR": "{0}(으)로 인증 메일을 보냈습니다. 메일 링크를 열어 신청을 확인하세요.",
+    "zh-TW": "驗證郵件已發送至 {0}。打開郵件鏈接後確認提交申請。"
+  },
+  "邮件投递未确认，申请尚未提交。请稍后重试或联系管理员。": {
+    "en-US": "Email delivery is unconfirmed and the application is not submitted. Try again later or contact the administrator.",
+    "ko-KR": "메일 발송이 확인되지 않아 신청이 제출되지 않았습니다. 나중에 재시도하거나 관리자에게 문의하세요.",
+    "zh-TW": "郵件投遞未確認，申請尚未提交。請稍後重試或聯繫管理員。"
+  },
+  "确认邮箱 {0} 后，申请会交给本届管理员审核。": {
+    "en-US": "After verifying {0}, your application will go to this event’s administrator for review.",
+    "ko-KR": "{0} 이메일 인증 후 이번 대회 관리자가 신청을 심사합니다.",
+    "zh-TW": "確認郵箱 {0} 後，申請會交給本屆管理員審核。"
+  },
+  "账号使用方式": {
+    "en-US": "Account option",
+    "ko-KR": "계정 사용 방식",
+    "zh-TW": "賬號使用方式"
+  },
+  "使用已有账号": {
+    "en-US": "Use existing account",
+    "ko-KR": "기존 계정 사용",
+    "zh-TW": "使用已有賬號"
+  },
+  "创建新账号": {
+    "en-US": "Create new account",
+    "ko-KR": "새 계정 생성",
+    "zh-TW": "創建新賬號"
+  },
+  "已经是选手或工作人员，请使用原账号，无需重复注册。": {
+    "en-US": "If you are already a player or staff member, use your existing account.",
+    "ko-KR": "이미 선수 또는 운영진이라면 새로 가입하지 말고 기존 계정을 사용하세요.",
+    "zh-TW": "已經是選手或工作人員，請使用原賬號，無需重複註冊。"
+  },
+  "本人邮箱": {
+    "en-US": "Your email",
+    "ko-KR": "본인 이메일",
+    "zh-TW": "本人郵箱"
+  },
+  "新账号密码至少需要 12 个字符。": {
+    "en-US": "New account passwords need at least 12 characters.",
+    "ko-KR": "새 계정 비밀번호는 12자 이상이어야 합니다.",
+    "zh-TW": "新賬號密碼至少需要 12 個字符。"
+  },
+  "工作人员称呼": {
+    "en-US": "Staff display name",
+    "ko-KR": "운영진 표시 이름",
+    "zh-TW": "工作人員稱呼"
+  },
+  "申请职责（可多选）": {
+    "en-US": "Requested roles (select one or both)",
+    "ko-KR": "신청 역할 (복수 선택 가능)",
+    "zh-TW": "申請職責（可多選）"
+  },
+  "本届管理员会查看你的邮箱、称呼、BattleTag 和申请职责。身份审核通过后仍须安排具体场次；本队比赛保留参赛身份。": {
+    "en-US": "This event’s administrator will see your email, name, BattleTag and requested roles. Approval still requires match assignments; you remain a participant in your own team’s matches.",
+    "ko-KR": "이번 대회 관리자가 이메일, 이름, BattleTag, 신청 역할을 확인합니다. 승인 후에도 경기별 배정이 필요하며 소속 팀 경기에서는 참가자 신분이 유지됩니다.",
+    "zh-TW": "本屆管理員會查看你的郵箱、稱呼、BattleTag 和申請職責。身份審核通過後仍須安排具體場次；本隊比賽保留參賽身份。"
+  },
+  "验证邮箱并提交申请": {
+    "en-US": "Verify email and submit application",
+    "ko-KR": "이메일 인증 및 신청 제출",
+    "zh-TW": "驗證郵箱並提交申請"
+  },
+  "工作人员申请记录": {
+    "en-US": "Staff applications",
+    "ko-KR": "운영진 신청 내역",
+    "zh-TW": "工作人員申請記錄"
+  },
+  "等待管理员审核": {
+    "en-US": "Awaiting administrator review",
+    "ko-KR": "관리자 심사 대기",
+    "zh-TW": "等待管理員審核"
+  },
+  "申请未通过": {
+    "en-US": "Application declined",
+    "ko-KR": "신청 미승인",
+    "zh-TW": "申請未通過"
+  },
+  "批准职责：": {
+    "en-US": "Approved roles: ",
+    "ko-KR": "승인 역할: ",
+    "zh-TW": "批准職責："
+  },
+  "重新申请 →": {
+    "en-US": "Apply again →",
+    "ko-KR": "다시 신청 →",
+    "zh-TW": "重新申請 →"
+  },
+  "邮箱或原密码不正确，或账号暂不可用。请核对或使用登录窗口找回密码。": {
+    "en-US": "The email or password is incorrect, or this account is unavailable. Check your details or reset your password from the sign-in window.",
+    "ko-KR": "이메일 또는 비밀번호가 잘못되었거나 계정을 사용할 수 없습니다. 확인하거나 로그인 창에서 비밀번호를 재설정하세요.",
+    "zh-TW": "郵箱或原密碼不正確，或賬號暫不可用。請核對或使用登錄窗口找回密碼。"
+  },
+  "该邮箱已有账号，请选择“使用已有账号”并填写原密码。": {
+    "en-US": "This email already has an account. Select “Use existing account” and enter its password.",
+    "ko-KR": "이미 등록된 이메일입니다. 기존 계정 사용을 선택하고 원래 비밀번호를 입력하세요.",
+    "zh-TW": "該郵箱已有賬號，請選擇“使用已有賬號”並填寫原密碼。"
+  },
+  "验证链接无效或已经使用，请重新打开共用申请入口。": {
+    "en-US": "The verification link is invalid or already used. Reopen the shared application page.",
+    "ko-KR": "인증 링크가 유효하지 않거나 이미 사용되었습니다. 공용 신청 페이지를 다시 여세요.",
+    "zh-TW": "驗證鏈接無效或已經使用，請重新打開共用申請入口。"
+  },
+  "邮箱确认链接已过期，请重新提交申请以获取新邮件。": {
+    "en-US": "The verification link expired. Submit the application again to receive a new email.",
+    "ko-KR": "인증 링크가 만료되었습니다. 신청을 다시 제출하여 새 메일을 받으세요.",
+    "zh-TW": "郵箱確認鏈接已過期，請重新提交申請以獲取新郵件。"
+  },
+  "刷新申请状态": {
+    "en-US": "Refresh application status",
+    "ko-KR": "신청 상태 새로고침",
+    "zh-TW": "重新整理申請狀態"
+  },
+  "可通过管理员邀请或共用入口申请工作人员身份。已有选手使用原账号。": {
+    "en-US": "Apply through an administrator invitation or the shared application page. Existing players use their current account.",
+    "ko-KR": "관리자 초대 또는 공용 신청 페이지로 운영진 역할을 신청할 수 있습니다. 기존 선수는 원래 계정을 사용하세요.",
+    "zh-TW": "可透過管理員邀請或共用入口申請工作人員身分。已有選手使用原帳號。"
   }
 }

@@ -1,0 +1,8 @@
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.modes button { border: 1px solid #a5a89f; padding: 13px 10px; font: inherit; font-size: 14px; background: transparent; color: #181a18; cursor: pointer; }
+.modes button[aria-pressed='true'] { background: #1b1d1b; border-color: #1b1d1b; color: #f0ca43; }
+.modes button:focus-visible { outline: 2px solid #1b1d1b; outline-offset: 3px; }
+.roles { border: 1px solid #cecec7; display: flex; gap: 28px; padding: 16px; margin: 0 0 20px; }
+.roles legend { font-size: 14px; font-weight: 600; padding: 0 6px; }
+.roles label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.roles input { width: 18px; height: 18px; accent-color: #1b1d1b; }
