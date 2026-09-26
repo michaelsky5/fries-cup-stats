@@ -1,10 +1,11 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
-import { liveRoomWrite } from './liveRoomApi.js'
+import { useRoomTransport } from './RoomTransport.jsx'
 import styles from './WeeklyLiveRoomPage.module.css'
 
 export default function RoomRepresentative({ team, data, disabled, mutate }) {
+  const { liveRoomWrite } = useRoomTransport()
   const uiLocale = useUiLocale()
   const side = data.representatives?.sides.find(item => item.teamId === team?.id)
   const [open, setOpen] = useState(false), [selected, setSelected] = useState(''), [reason, setReason] = useState('')

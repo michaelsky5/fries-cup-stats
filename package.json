@@ -54,7 +54,7 @@
     "compare:scoring": "node scripts/compareScoringEngines.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test:room-guide": "node --test scripts/roomGuide.test.mjs scripts/roomSimulation.test.mjs"
+    "test:room-guide": "node --test scripts/roomGuide.test.mjs scripts/roomSimulation.test.mjs scripts/roomPractice.test.mjs"
   },
   "dependencies": {
     "html-to-image": "^1.11.13",
