@@ -313,7 +313,7 @@ export function RelationshipMatchesPanel({ context, withSeason }) {
       <WorkspaceSectionHeader
         eyebrow="RELATIONSHIP MATCHES"
         title={uiText("我的比赛", uiLocale)}
-        description={uiText("仅汇总你在本届赛事关系下关联的比赛；比赛房默认赛前 15 分钟开放，赛后保留只读记录。", uiLocale)}
+        description={uiText("仅汇总你在本届赛事关系下关联的比赛；比赛房默认赛前 30 分钟开放，赛后保留只读记录。", uiLocale)}
         badge={`${view.facts[0].value} MATCHES`}
       />
 

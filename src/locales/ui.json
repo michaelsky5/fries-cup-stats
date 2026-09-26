@@ -3574,10 +3574,10 @@
     "en-US": ". End unused sign-ins in the device list.",
     "ko-KR": ". 더 이상 사용하지 않는 로그인은 장치 목록에서 로그아웃될 수 있습니다."
   },
-  "。每场比赛可单独配置，当前默认赛前 15 分钟开放。": {
-    "zh-TW": "。每場比賽可單獨配置，當前預設賽前 15 分鐘開放。",
-    "en-US": ". Each game can be configured individually, and currently opens 15 minutes before the game by default.",
-    "ko-KR": ". 각 경기은 개별적으로 구성할 수 있으며 현재 기본적으로 경기 시작 15분 전에 시작됩니다."
+  "。每场比赛可单独配置，当前默认赛前 30 分钟开放。": {
+    "zh-TW": "。每場比賽可單獨配置，當前預設賽前 30 分鐘開放。",
+    "en-US": ". Each match can be configured individually. Rooms open 30 minutes before the match by default.",
+    "ko-KR": ". 경기별로 설정할 수 있으며, 기본적으로 경기 시작 30분 전에 경기방이 열립니다."
   },
   "。每条记录对应一名选手的一项职责；暂定与未评级条目不参与正式排名。筛选保留原榜名次，不重新编号。": {
     "zh-TW": "。每條記錄對應一名選手的一項職責；暫定與未評級條目不參與正式排名。篩選保留原榜名次，不重新編號。",
@@ -5312,10 +5312,10 @@
     "en-US": "Comparisons are within this event and position—not estimates of professional readiness or signing success.",
     "ko-KR": "이번 대회 같은 포지션 내 비교입니다. 프로 수준이나 영입 성공률을 뜻하지 않습니다."
   },
-  "仅汇总你在本届赛事关系下关联的比赛；比赛房默认赛前 15 分钟开放，赛后保留只读记录。": {
-    "zh-TW": "僅彙總你在本屆賽事關係下關聯的比賽；比賽房預設賽前 15 分鐘開放，賽後保留只讀記錄。",
-    "en-US": "Only the matches you are associated with in this tournament are summarized; the match room will be open 15 minutes before the match by default, and read-only records will be kept after the match.",
-    "ko-KR": "이 토너먼트에서 귀하와 관련된 경기만 요약됩니다. 매치룸은 기본적으로 경기 시작 15분 전부터 오픈되며, 경기 종료 후 읽기 전용 기록이 유지됩니다."
+  "仅汇总你在本届赛事关系下关联的比赛；比赛房默认赛前 30 分钟开放，赛后保留只读记录。": {
+    "zh-TW": "僅彙總你在本屆賽事關係下關聯的比賽；比賽房預設賽前 30 分鐘開放，賽後保留只讀記錄。",
+    "en-US": "Shows matches linked to you in this event. Match rooms open 30 minutes before the match by default; records remain read-only afterward.",
+    "ko-KR": "이번 대회에서 나와 연결된 경기만 표시됩니다. 경기방은 기본적으로 경기 시작 30분 전에 열리며, 경기 후에는 기록을 읽기 전용으로 볼 수 있습니다."
   },
   "仅相关队伍与赛管": {
     "zh-TW": "僅相關隊伍與賽管",
@@ -34308,10 +34308,10 @@
     "en-US": "Competition room synchronization or submission failed, please refresh and try again.",
     "ko-KR": "경기실 동기화 또는 제출에 실패했습니다. 새로 고친 후 다시 시도하십시오."
   },
-  "比赛房间将在开赛前 15 分钟开放": {
-    "zh-TW": "比賽房間將在開賽前 15 分鐘開放",
-    "en-US": "Game rooms will open 15 minutes before kickoff",
-    "ko-KR": "경기룸은 킥오프 15분 전에 열립니다."
+  "比赛房间将在开赛前 30 分钟开放": {
+    "zh-TW": "比賽房間將在開賽前 30 分鐘開放",
+    "en-US": "Match rooms open 30 minutes before the match",
+    "ko-KR": "경기방은 경기 시작 30분 전에 열립니다."
   },
   "比赛房间流程": {
     "zh-TW": "比賽房間流程",
