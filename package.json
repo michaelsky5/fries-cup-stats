@@ -47,13 +47,14 @@
     "test:account-settings-ui": "node scripts/assertAccountSettingsUi.mjs",
     "test:account-foundation-settings": "node scripts/assertAccountFoundationSettings.mjs",
     "test:weekly-competition-ui": "node scripts/assertAccountCompetition.mjs && node scripts/assertWeeklyCompetitionWorkspace.mjs && npm run test:weekly-match-room-ui && npm run test:weekly-account-invitation-ui",
-    "test:weekly-match-room-ui": "node scripts/assertWeeklyMatchRooms.mjs && node scripts/assertWeeklyRoomFlow.mjs && node --test scripts/roomBroadcastLinks.test.mjs scripts/roomSettlement.test.mjs && node scripts/assertCookieAuth.mjs && node scripts/assertPlatformRequest.mjs",
+    "test:weekly-match-room-ui": "node scripts/assertWeeklyMatchRooms.mjs && node scripts/assertWeeklyRoomFlow.mjs && node --test scripts/roomBroadcastLinks.test.mjs scripts/roomSettlement.test.mjs && node scripts/assertCookieAuth.mjs && node scripts/assertPlatformRequest.mjs && npm run test:room-guide",
     "test:weekly-account-invitation-ui": "node scripts/assertWeeklyAccountInvitation.mjs",
     "test:account-entry": "node scripts/assertAccountEntry.mjs",
     "test:account-ui": "npm run test:account-identity && npm run test:my-space && npm run test:capability-ui && npm run test:event-registration-ui && npm run test:task-notification-ui && npm run test:communication-center-ui && npm run test:prediction-center-ui && npm run test:account-settings-ui && npm run test:account-foundation-settings && npm run test:weekly-competition-ui && npm run test:account-entry",
     "compare:scoring": "node scripts/compareScoringEngines.mjs",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:room-guide": "node --test scripts/roomGuide.test.mjs scripts/roomSimulation.test.mjs"
   },
   "dependencies": {
     "html-to-image": "^1.11.13",

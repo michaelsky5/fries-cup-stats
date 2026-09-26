@@ -1,3 +1,4 @@
+import RoomGuideLink from '../room-guide/RoomGuideLink.jsx'
 import AccountAvatar from '../account-ui/AccountAvatar.jsx'
 import RoomBroadcastLink from './RoomBroadcastLink.jsx'
 import RoomTrainingNotice from './RoomTrainingNotice.jsx'
@@ -162,7 +163,7 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
   useEffect(() => { setSelectedStage(null) }, [data?.map?.order, data?.phase, data?.opening?.phase])
   const dialog = useRef(null)
   useEffect(() => { if (pauseOpen) dialog.current?.showModal(); else dialog.current?.close() }, [pauseOpen])
-  if (!data) return <main className={styles.emptyPage}><Link to="/me?section=matches">{uiText("← 我的比赛", uiLocale)}</Link><h1>{uiText("比赛房", uiLocale)}</h1><p role={error ? 'alert' : 'status'}>{error || uiText("正在同步本场比赛…", uiLocale)}</p>{error && <button onClick={refresh}>{uiText("重新同步", uiLocale)}</button>}<AuthButton /></main>
+  if (!data) return <main className={styles.emptyPage}><Link to="/me?section=matches">{uiText("← 我的比赛", uiLocale)}</Link><h1>{uiText("比赛房", uiLocale)}</h1><RoomGuideLink match={matchId} scenario="access" label="无法操作？查看指南" /><p role={error ? 'alert' : 'status'}>{error || uiText("正在同步本场比赛…", uiLocale)}</p>{error && <button onClick={refresh}>{uiText("重新同步", uiLocale)}</button>}<AuthButton /></main>
   const disabled = busy || !!error || !data.access.canWrite
   const stage = data.phase, own = getRoomOperatingSides(data)
   const currentStage = getRoomStageIndex(data)
@@ -184,7 +185,7 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
     <RoomMatchHeader data={data} phaseLabel={roomPhaseName(data)} returnPath={returnPath} busy={busy} error={error} refresh={refresh} accountControl={accountControl} />
     <RoomTrainingNotice data={data} disabled={disabled} />
     <RoomSeriesRail data={data} phaseLabel={roomPhaseName(data)} />
-    {(error || notice) && <div className={error ? styles.error : styles.notice} role={error ? 'alert' : 'status'}>{error ? uiText("{0} 重新同步前暂停操作。", uiLocale, [error]) : notice}</div>}
+    {(error || notice) && <div className={error ? styles.error : styles.notice} role={error ? 'alert' : 'status'}>{error ? uiText("{0} 重新同步前暂停操作。", uiLocale, [error]) : notice}{error && <RoomGuideLink data={data} scenario="sync" label="无法操作？查看指南" />}</div>}
     <div className={workspace.columns}><Team team={data.match.teamA} data={data} disabled={disabled} mutate={mutate} /><div className={workspace.center} data-stage-view={lineupStage ? 'lineup' : openingActive ? 'selection' : stage.toLowerCase()} data-inspecting={inspectingStage}>
       {!data.result && <RoomStageRail data={data} selectedStage={selectedStage} onStageSelect={setSelectedStage} />}
       {openingActive && !lineupStage && !inspectingStage && <OpeningSelectionPanel data={data} disabled={disabled} mutate={mutate} />}
@@ -218,6 +219,6 @@ function LiveRoom({ matchId }) {
 export default function WeeklyLiveRoomPage() {
   const uiLocale = useUiLocale()
   const { matchId } = useParams(), { user, isBootstrapping } = useAuth()
-  if (!user) return <main className={styles.emptyPage}><Link to="/me">{uiText("← 我的空间", uiLocale)}</Link><small>MATCH ROOM</small><h1>{uiText("进入本场比赛", uiLocale)}</h1><p>{isBootstrapping ? uiText("正在检查登录状态…", uiLocale) : uiText("登录后按本场身份查看准备、沟通与比赛进度。", uiLocale)}</p><AuthButton /></main>
+  if (!user) return <main className={styles.emptyPage}><Link to="/me">{uiText("← 我的空间", uiLocale)}</Link><small>MATCH ROOM</small><h1>{uiText("进入本场比赛", uiLocale)}</h1><RoomGuideLink match={matchId} scenario="access" label="参赛与比赛指南" /><p>{isBootstrapping ? uiText("正在检查登录状态…", uiLocale) : uiText("登录后按本场身份查看准备、沟通与比赛进度。", uiLocale)}</p><AuthButton /></main>
   return <LiveRoom key={user.id + matchId} matchId={matchId} />
 }

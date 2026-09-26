@@ -53331,6 +53331,21 @@
     "en-US": "Transfer scope: team organization and these unarchived seasons",
     "ko-KR": "이전 범위: 팀 조직 및 아래 미보관 시즌"
   },
+  "比赛房操作指南": {
+    "zh-TW": "比賽房操作指南",
+    "en-US": "Match room guide",
+    "ko-KR": "경기방 조작 안내"
+  },
+  "参赛与比赛指南": {
+    "zh-TW": "參賽與比賽指南",
+    "en-US": "Participation and match guide",
+    "ko-KR": "참가 및 경기 안내"
+  },
+  "无法操作？查看指南": {
+    "zh-TW": "無法操作？查看指南",
+    "en-US": "Cannot act? Read the guide",
+    "ko-KR": "조작할 수 없나요? 안내 확인"
+  },
   "接受工作人员邀请": {
     "zh-TW": "接受工作人員邀請",
     "en-US": "Accept staff invitation",
