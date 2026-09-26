@@ -6927,8 +6927,8 @@
   },
   "你负责操作": {
     "zh-TW": "你負責操作",
-    "en-US": "You are responsible for the operation",
-    "ko-KR": "귀하는 작업에 대한 책임이 있습니다."
+    "en-US": "You are the operator",
+    "ko-KR": "내가 조작 담당"
   },
   "你负责的本图 HERO BAN 已经锁定": {
     "zh-TW": "你負責的本圖 HERO BAN 已經鎖定",
@@ -9709,8 +9709,8 @@
   },
   "准备确认": {
     "zh-TW": "準備確認",
-    "en-US": "Ready to confirm",
-    "ko-KR": "확인 준비 완료"
+    "en-US": "Readiness",
+    "ko-KR": "준비 확인"
   },
   "准备记录待核对": {
     "zh-TW": "準備記錄待核對",
@@ -11731,8 +11731,8 @@
   },
   "双方确认": {
     "zh-TW": "雙方確認",
-    "en-US": "Confirmed by both parties",
-    "ko-KR": "양측 모두 확인함"
+    "en-US": "Team confirmations",
+    "ko-KR": "양 팀 확인"
   },
   "双方确认后，由赛管记录游戏实际开赛；网页不会自动开始游戏。": {
     "zh-TW": "雙方確認後，由賽管記錄遊戲實際開賽；網頁不會自動開始遊戲。",
@@ -18122,8 +18122,8 @@
   },
   "已保存不等于对方已阅": {
     "zh-TW": "已儲存不等於對方已閱",
-    "en-US": "Saved does not mean that the other party has read it.",
-    "ko-KR": "저장되었다고 해서 상대방이 읽었다는 의미는 아닙니다."
+    "en-US": "Saved does not mean read by the recipient",
+    "ko-KR": "저장되었다고 상대가 읽은 것은 아닙니다"
   },
   "已保存本场手动指派。": {
     "zh-TW": "已儲存本場手動指派。",
@@ -21706,8 +21706,8 @@
   },
   "待本队核对": {
     "zh-TW": "待本隊核對",
-    "en-US": "To be verified by our team",
-    "ko-KR": "우리 팀에서 확인 예정"
+    "en-US": "Awaiting your team’s review",
+    "ko-KR": "우리 팀 확인 대기"
   },
   "待本队确认": {
     "zh-TW": "待本隊確認",
@@ -22332,8 +22332,8 @@
   },
   "战报提交": {
     "zh-TW": "戰報提交",
-    "en-US": "Battle report submission",
-    "ko-KR": "전투 보고서 제출"
+    "en-US": "Report submission",
+    "ko-KR": "경기 보고서 제출"
   },
   "战报服务尚未接通，请赛事管理员检查入口配置。": {
     "zh-TW": "戰報服務尚未接通，請賽事管理員檢查入口配置。",
@@ -28972,8 +28972,8 @@
   },
   "本图比赛进度": {
     "zh-TW": "本圖比賽進度",
-    "en-US": "Competition progress of this picture",
-    "ko-KR": "이 사진의 공모 진행 상황"
+    "en-US": "Current map progress",
+    "ko-KR": "현재 맵 진행 상황"
   },
   "本图由赛管锁定": {
     "zh-TW": "本圖由賽管鎖定",
@@ -29087,8 +29087,8 @@
   },
   "本场五局": {
     "zh-TW": "本場五局",
-    "en-US": "Five games in this game",
-    "ko-KR": "이 게임에는 5개의 게임이 포함되어 있습니다."
+    "en-US": "Five-map series",
+    "ko-KR": "5맵 시리즈"
   },
   "本场人员可见": {
     "zh-TW": "本場人員可見",
@@ -29198,8 +29198,8 @@
   },
   "本场操作代表": {
     "zh-TW": "本場操作代表",
-    "en-US": "Local operation representative",
-    "ko-KR": "현지 운영 담당자"
+    "en-US": "Match representative",
+    "ko-KR": "경기 조작 대표"
   },
   "本场操作代表已更新，双方可在比赛沟通中查看交接记录。": {
     "zh-TW": "本場操作代表已更新，雙方可在比賽溝通中檢視交接記錄。",
@@ -29251,8 +29251,8 @@
   },
   "本场赛管": {
     "zh-TW": "本場賽管",
-    "en-US": "This match management",
-    "ko-KR": "이 게임의 관리"
+    "en-US": "Assigned referee",
+    "ko-KR": "배정 운영진"
   },
   "本场采用": {
     "zh-TW": "本場採用",
@@ -34038,8 +34038,8 @@
   },
   "比赛交流": {
     "zh-TW": "比賽交流",
-    "en-US": "Competition Communication",
-    "ko-KR": "경기 통신"
+    "en-US": "Match chat",
+    "ko-KR": "경기 채팅"
   },
   "比赛人员": {
     "zh-TW": "比賽人員",
@@ -34429,8 +34429,8 @@
   },
   "比赛沟通": {
     "zh-TW": "比賽溝通",
-    "en-US": "Competition Communication",
-    "ko-KR": "경기 통신"
+    "en-US": "Match communication",
+    "ko-KR": "경기 대화"
   },
   "比赛流程": {
     "zh-TW": "比賽流程",
@@ -34654,8 +34654,8 @@
   },
   "比赛进行": {
     "zh-TW": "比賽進行",
-    "en-US": "Game in progress",
-    "ko-KR": "경기 진행 중"
+    "en-US": "In game",
+    "ko-KR": "경기 진행"
   },
   "比赛进行中": {
     "zh-TW": "比賽進行中",
@@ -37860,8 +37860,8 @@
   },
   "积分结算": {
     "zh-TW": "積分結算",
-    "en-US": "Points Settlement",
-    "ko-KR": "포인트 정산"
+    "en-US": "Points settlement",
+    "ko-KR": "점수 정산"
   },
   "积分计入本届排行": {
     "zh-TW": "積分計入本屆排行",
@@ -38328,13 +38328,13 @@
   },
   "第 {0} 图 · Ban": {
     "zh-TW": "第 {0} 圖 · Ban",
-    "en-US": "Picture {0} · Ban",
-    "ko-KR": "사진 {0} · 금지"
+    "en-US": "Map {0} · Hero bans",
+    "ko-KR": "{0}맵 · 영웅 금지"
   },
   "第 {0} 图 · 选图": {
     "zh-TW": "第 {0} 圖 · 選圖",
-    "en-US": "Image {0} · Select image",
-    "ko-KR": "이미지 {0} · 이미지 선택"
+    "en-US": "Map {0} · Selection",
+    "ko-KR": "{0}맵 · 선택"
   },
   "第 {0} 图阅读导航": {
     "zh-TW": "第 {0} 圖閱讀導覽",
@@ -39029,8 +39029,8 @@
   },
   "等待选图": {
     "zh-TW": "等待選圖",
-    "en-US": "Waiting for picture selection",
-    "ko-KR": "사진 선택을 기다리는 중"
+    "en-US": "Waiting for map selection",
+    "ko-KR": "맵 선택 대기"
   },
   "等待选择": {
     "zh-TW": "等待選擇",
@@ -39182,8 +39182,8 @@
   },
   "签到": {
     "zh-TW": "簽到",
-    "en-US": "Sign in",
-    "ko-KR": "로그인"
+    "en-US": "Check in",
+    "ko-KR": "출석 확인"
   },
   "签到中": {
     "zh-TW": "簽到中",
@@ -39265,9 +39265,9 @@
     "ko-KR": "관리자가 페어링을 해제한 후 여기에 일치 항목이 표시됩니다. 드래프트 및 기타 팀 경기는 표시되지 않습니다."
   },
   "管理员审核": {
-    "zh-TW": "管理員稽核",
+    "zh-TW": "管理員審核",
     "en-US": "Administrator review",
-    "ko-KR": "관리자 검토"
+    "ko-KR": "관리자 심사"
   },
   "管理员审核中": {
     "zh-TW": "管理員稽核中",
@@ -41362,9 +41362,9 @@
     "ko-KR": "히어로 화면이 조정되었으며, 이번에는 공유 이미지에만 영향을 미칩니다."
   },
   "英雄禁用": {
-    "zh-TW": "英雄停用",
-    "en-US": "Hero disabled",
-    "ko-KR": "영웅 비활성화됨"
+    "zh-TW": "英雄禁用",
+    "en-US": "Hero bans",
+    "ko-KR": "영웅 금지"
   },
   "英雄禁用限时": {
     "zh-TW": "英雄停用限時",
@@ -43364,8 +43364,8 @@
   },
   "请选择职责": {
     "zh-TW": "請選擇職責",
-    "en-US": "Please select a responsibility",
-    "ko-KR": "역할을 선택하세요."
+    "en-US": "Select a role",
+    "ko-KR": "역할 선택"
   },
   "请选择身份": {
     "zh-TW": "請選擇身份",
@@ -45845,8 +45845,8 @@
   },
   "转播协同": {
     "zh-TW": "轉播協同",
-    "en-US": "Broadcast collaboration",
-    "ko-KR": "방송 협업"
+    "en-US": "Production chat",
+    "ko-KR": "중계 협업"
   },
   "轮": {
     "zh-TW": "輪",
@@ -51694,8 +51694,8 @@
   },
   "首图": {
     "zh-TW": "首圖",
-    "en-US": "First image",
-    "ko-KR": "첫 번째 이미지"
+    "en-US": "First map",
+    "ko-KR": "첫 맵"
   },
   "首图先手权": {
     "zh-TW": "首圖先手權",
@@ -52953,8 +52953,8 @@
   },
   "选择本图地图": {
     "zh-TW": "選擇本圖地圖",
-    "en-US": "Choose this map",
-    "ko-KR": "이번 전장 선택"
+    "en-US": "Select this map",
+    "ko-KR": "현재 맵 선택"
   },
   "选择本图 Ban 顺序": {
     "zh-TW": "選擇本圖 Ban 順序",
@@ -53345,5 +53345,260 @@
     "zh-TW": "無法操作？查看指南",
     "en-US": "Cannot act? Read the guide",
     "ko-KR": "조작할 수 없나요? 안내 확인"
+  },
+  "比赛房间设置码": {
+    "zh-TW": "比賽房間設定碼",
+    "en-US": "Lobby settings code",
+    "ko-KR": "경기방 설정 코드"
+  },
+  "计划首发 · 待本图确认": {
+    "zh-TW": "計畫先發 · 待本圖確認",
+    "en-US": "Planned starters · awaiting map confirmation",
+    "ko-KR": "예정 선발 · 현재 맵 확정 대기"
+  },
+  "参考名单": {
+    "zh-TW": "參考名單",
+    "en-US": "Reference roster",
+    "ko-KR": "참고 명단"
+  },
+  "替补 ·": {
+    "zh-TW": "替補 ·",
+    "en-US": "Substitutes ·",
+    "ko-KR": "교체 선수 ·"
+  },
+  "替": {
+    "zh-TW": "替",
+    "en-US": "SUB",
+    "ko-KR": "교체"
+  },
+  "已到": {
+    "zh-TW": "已到",
+    "en-US": "Present",
+    "ko-KR": "출석"
+  },
+  "待到": {
+    "zh-TW": "待到",
+    "en-US": "Expected",
+    "ko-KR": "출석 대기"
+  },
+  "缺席": {
+    "zh-TW": "缺席",
+    "en-US": "Absent",
+    "ko-KR": "결석"
+  },
+  "{0} · 签到": {
+    "zh-TW": "{0} · 簽到",
+    "en-US": "{0} · Check in",
+    "ko-KR": "{0} · 출석 확인"
+  },
+  "{0} · 已到": {
+    "zh-TW": "{0} · 已到",
+    "en-US": "{0} · Present",
+    "ko-KR": "{0} · 출석"
+  },
+  "{0} · 缺席": {
+    "zh-TW": "{0} · 缺席",
+    "en-US": "{0} · Absent",
+    "ko-KR": "{0} · 결석"
+  },
+  "游戏内必须按 C C T N N 排列": {
+    "zh-TW": "遊戲內必須按 C C T N N 排列",
+    "en-US": "Use C C T N N order in the game lobby",
+    "ko-KR": "게임 내 C C T N N 순서로 배치"
+  },
+  "先手权确认": {
+    "zh-TW": "先手權確認",
+    "en-US": "First-pick rights",
+    "ko-KR": "선택권 확인"
+  },
+  "首发确认": {
+    "zh-TW": "先發確認",
+    "en-US": "Lineup confirmation",
+    "ko-KR": "선발 확정"
+  },
+  "地图结果": {
+    "zh-TW": "地圖結果",
+    "en-US": "Map result",
+    "ko-KR": "맵 결과"
+  },
+  "赛果提交": {
+    "zh-TW": "賽果提交",
+    "en-US": "Report submission",
+    "ko-KR": "결과 제출"
+  },
+  "查看第 {0} 步 {1}": {
+    "zh-TW": "查看第 {0} 步 {1}",
+    "en-US": "View step {0}: {1}",
+    "ko-KR": "{0}단계 보기: {1}"
+  },
+  "规则与记录": {
+    "zh-TW": "規則與紀錄",
+    "en-US": "Rules and records",
+    "ko-KR": "규칙 및 기록"
+  },
+  "返回我的比赛 ↗": {
+    "zh-TW": "返回我的比賽 ↗",
+    "en-US": "Back to My matches ↗",
+    "ko-KR": "내 경기로 돌아가기 ↗"
+  },
+  "本图首发 · CCTNN": {
+    "zh-TW": "本圖先發 · CCTNN",
+    "en-US": "Map starters · CCTNN",
+    "ko-KR": "현재 맵 선발 · CCTNN"
+  },
+  "首发已提交 · 待双方公开": {
+    "zh-TW": "先發已提交 · 待雙方公開",
+    "en-US": "Lineup submitted · waiting for both teams",
+    "ko-KR": "선발 제출됨 · 양 팀 공개 대기"
+  },
+  "确认本图首发": {
+    "zh-TW": "確認本圖先發",
+    "en-US": "Confirm this map’s lineup",
+    "ko-KR": "현재 맵 선발 확정"
+  },
+  "2 输出 · 1 重装 · 2 支援": {
+    "zh-TW": "2 輸出 · 1 坦克 · 2 輔助",
+    "en-US": "2 damage · 1 tank · 2 supports",
+    "ko-KR": "공격 2 · 돌격 1 · 지원 2"
+  },
+  "选图方先确认五人和本图职责，另一方随后确认；允许换位，游戏内也必须按 CCTNN 排列。": {
+    "zh-TW": "選圖方先確認五人和本圖職責，另一方隨後確認；允許換位，遊戲內也必須按 CCTNN 排列。",
+    "en-US": "The map chooser confirms five players and roles first, followed by the other team. Role swaps are allowed; use CCTNN order in the game lobby too.",
+    "ko-KR": "맵 선택 팀이 먼저 선발 5명과 역할을 확정한 뒤 상대가 확인합니다. 역할 변경이 가능하며 게임에서도 CCTNN 순서를 지켜야 합니다."
+  },
+  "轮到本队确认": {
+    "zh-TW": "輪到本隊確認",
+    "en-US": "Your team’s turn",
+    "ko-KR": "우리 팀 확인 차례"
+  },
+  "已确认并锁定": {
+    "zh-TW": "已確認並鎖定",
+    "en-US": "Confirmed and locked",
+    "ko-KR": "확정 및 잠금 완료"
+  },
+  "等待选图方先确认": {
+    "zh-TW": "等待選圖方先確認",
+    "en-US": "Waiting for the map chooser",
+    "ko-KR": "맵 선택 팀 확정 대기"
+  },
+  "沿用上一图人员与职责": {
+    "zh-TW": "沿用上一圖人員與職責",
+    "en-US": "Reuse the previous lineup and roles",
+    "ko-KR": "이전 맵 선수와 역할 사용"
+  },
+  "{0} 本图首发与职责": {
+    "zh-TW": "{0} 本圖先發與職責",
+    "en-US": "{0} starters and roles",
+    "ko-KR": "{0} 현재 맵 선발 및 역할"
+  },
+  "{0} 本图职责": {
+    "zh-TW": "{0} 本圖職責",
+    "en-US": "{0} role for this map",
+    "ko-KR": "{0} 현재 맵 역할"
+  },
+  "C · 输出": {
+    "zh-TW": "C · 輸出",
+    "en-US": "C · Damage",
+    "ko-KR": "C · 공격"
+  },
+  "T · 重装": {
+    "zh-TW": "T · 坦克",
+    "en-US": "T · Tank",
+    "ko-KR": "T · 돌격"
+  },
+  "N · 支援": {
+    "zh-TW": "N · 輔助",
+    "en-US": "N · Support",
+    "ko-KR": "N · 지원"
+  },
+  "游戏内 CCTNN 顺序": {
+    "zh-TW": "遊戲內 CCTNN 順序",
+    "en-US": "In-game CCTNN order",
+    "ko-KR": "게임 내 CCTNN 순서"
+  },
+  "游戏房间从上到下也必须按此顺序排列。": {
+    "zh-TW": "遊戲房間從上到下也必須按此順序排列。",
+    "en-US": "Use this same top-to-bottom order in the game lobby.",
+    "ko-KR": "게임방에서도 위에서 아래로 같은 순서로 배치하세요."
+  },
+  "已选 {0}/5；需要 2 输出、1 重装、2 支援。": {
+    "zh-TW": "已選 {0}/5；需要 2 輸出、1 坦克、2 輔助。",
+    "en-US": "Selected {0}/5; need 2 damage, 1 tank and 2 supports.",
+    "ko-KR": "{0}/5 선택됨. 공격 2명, 돌격 1명, 지원 2명이 필요합니다."
+  },
+  "确认五人、职责与顺序": {
+    "zh-TW": "確認五人、職責與順序",
+    "en-US": "Confirm five players, roles and order",
+    "ko-KR": "5명, 역할 및 순서 확정"
+  },
+  "本队首发已锁定": {
+    "zh-TW": "本隊先發已鎖定",
+    "en-US": "Your lineup is locked",
+    "ko-KR": "우리 팀 선발 확정됨"
+  },
+  "游戏开赛前核对": {
+    "zh-TW": "遊戲開賽前核對",
+    "en-US": "Pre-game checks",
+    "ko-KR": "경기 시작 전 점검"
+  },
+  "最终操作人员核对": {
+    "zh-TW": "最終操作人員核對",
+    "en-US": "Final operator checks",
+    "ko-KR": "최종 조작 담당자 점검"
+  },
+  "游戏房间、地图与设置码已核对": {
+    "zh-TW": "遊戲房間、地圖與設定碼已核對",
+    "en-US": "Lobby, map and settings code checked",
+    "ko-KR": "게임방, 맵, 설정 코드 확인"
+  },
+  "双方游戏内按 C C T N N 排列": {
+    "zh-TW": "雙方遊戲內按 C C T N N 排列",
+    "en-US": "Both teams use C C T N N order",
+    "ko-KR": "양 팀 게임 내 C C T N N 배치"
+  },
+  "双方网络与进房情况已核对": {
+    "zh-TW": "雙方網路與進房情況已核對",
+    "en-US": "Both teams’ connections and lobby access checked",
+    "ko-KR": "양 팀 연결과 게임방 입장 확인"
+  },
+  "保存游戏设置核对": {
+    "zh-TW": "儲存遊戲設定核對",
+    "en-US": "Save pre-game checks",
+    "ko-KR": "게임 설정 점검 저장"
+  },
+  "第 {0} 图 · 首发确认": {
+    "zh-TW": "第 {0} 圖 · 先發確認",
+    "en-US": "Map {0} · Lineup confirmation",
+    "ko-KR": "{0}맵 · 선발 확정"
+  },
+  "比赛沟通与协助": {
+    "zh-TW": "比賽溝通與協助",
+    "en-US": "Match communication and support",
+    "ko-KR": "경기 대화 및 지원"
+  },
+  "关闭比赛沟通与协助": {
+    "zh-TW": "關閉比賽溝通與協助",
+    "en-US": "Close match communication and support",
+    "ko-KR": "경기 대화 및 지원 닫기"
+  },
+  "关闭 ×": {
+    "zh-TW": "關閉 ×",
+    "en-US": "Close ×",
+    "ko-KR": "닫기 ×"
+  },
+  "赛管协助": {
+    "zh-TW": "賽管協助",
+    "en-US": "Referee support",
+    "ko-KR": "운영진 지원"
+  },
+  "联系赛管 / 查看协助": {
+    "zh-TW": "聯絡賽管 / 查看協助",
+    "en-US": "Contact referee / View support",
+    "ko-KR": "운영진 연락 / 지원 보기"
+  },
+  "✓ 本队已准备": {
+    "zh-TW": "✓ 本隊已準備",
+    "en-US": "✓ Your team is ready",
+    "ko-KR": "✓ 우리 팀 준비 완료"
   }
 }

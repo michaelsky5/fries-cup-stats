@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { getPlatformApiUrl } from '../auth/platformApi.js'
-import { liveRoomWrite } from './liveRoomApi.js'
+import { useRoomTransport } from './RoomTransport.jsx'
 import styles from './OpeningSelectionPanel.module.css'
 
 export default function FirstPickConfirmation({ data, disabled, send, mutate }) {
+  const { liveRoomWrite } = useRoomTransport()
   const locale = useUiLocale(), opening = data.opening, access = opening.access
   const confirmations = opening.firstPick?.confirmations || []
   const teams = [data.match.teamA, data.match.teamB]

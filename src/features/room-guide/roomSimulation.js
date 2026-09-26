@@ -9,6 +9,7 @@ export const SIM_CHALLENGES = {
   nominate: { type: 'handover', stage: 'entry' },
   pick: { type: 'pick', stage: 'map' },
   lineup: { type: 'lineup', stage: 'lineup' },
+  'ban-order': { type: 'order', stage: 'ban' },
   ban: { type: 'ban', stage: 'ban' },
   ready: { type: 'checks', checks: ['lineup','lobby'], stage: 'ready' },
   preflight: { type: 'checks', checks: ['lobby','lineup','network'], stage: 'ready' },
@@ -36,7 +37,7 @@ export const SIM_CHALLENGES = {
   'caster-result': { type: 'decision', options: ['working-result','official-result'], correct: 'working-result', stage: 'result' },
 }
 export const SIM_COURSES = {
-  representative: ['checkin','pick','lineup','ban','ready','pause','resume','rr5','confirm'],
+  representative: ['checkin','pick','lineup','ban-order','ban','ready','pause','resume','rr5','confirm'],
   manager: ['nominate','substitution','rr5','sync'],
   member: ['identity','substitution','sync','rr5'],
   referee: ['preflight','start','pause','resume','map-score','score-correct','report','forfeit'],
@@ -55,7 +56,7 @@ export const SIM_SCENARIOS = {
 export function createSimulation(role = 'representative', scenario = '', mode = 'referee') {
   const course = SIM_SCENARIOS[scenario]
   const ids = !course && role === 'representative' && mode === 'captains'
-    ? ['checkin','pick','lineup','ban','ready','start','pause','resume','map-score','rr5','confirm']
+    ? ['checkin','pick','lineup','ban-order','ban','ready','start','pause','resume','map-score','rr5','confirm']
     : course?.ids || SIM_COURSES[role] || SIM_COURSES.representative
   return { role: course?.role || (SIM_COURSES[role] ? role : 'representative'), scenario: course ? scenario : '', mode: mode === 'captains' ? mode : 'referee',
     ids: [...ids], round: 0, index: 0, complete: false, error: '', attempts: 0, history: [], setup: {} }
@@ -68,7 +69,8 @@ export function validateSimulationInput(challengeId, input = {}, setup = {}) {
   if (challenge.type === 'decision') return input.choice === challenge.correct ? '' : `decision.${challengeId}`
   if (challenge.type === 'checks') return challenge.checks.every(key => input.checks?.includes(key)) ? '' : 'checks'
   if (challenge.type === 'handover') return input.player === 'a6' && note.length >= 2 ? '' : 'handover'
-  if (challenge.type === 'pick') return ['Samoa','Busan','Lijiang Tower'].includes(input.map) && ['FIRST','SECOND'].includes(input.order) ? '' : 'pick'
+  if (challenge.type === 'pick') return ['Samoa','Busan','Lijiang Tower'].includes(input.map) ? '' : 'pick'
+  if (challenge.type === 'order') return ['FIRST','SECOND'].includes(input.order) ? '' : 'order'
   if (challenge.type === 'lineup') {
     const ids = [...new Set(input.players || [])], selected = ids.map(id => SIM_PLAYERS.find(player => player.id === id))
     return ids.length === 5 && selected.every(Boolean) && ['DPS','TANK','SUP'].every(role => selected.filter(player => player.role === role).length === (role === 'TANK' ? 1 : 2)) ? '' : 'lineup'
@@ -91,5 +93,5 @@ export function simulationReducer(state, action) {
   const challengeId = state.ids[state.index], input = action.input || {}
   const error = validateSimulationInput(challengeId, input, state.setup)
   if (error) return { ...state, error, attempts: state.attempts + 1 }
-  return { ...state, complete: true, error: '', history: [...state.history, challengeId], setup: challengeId === 'pick' ? { ...state.setup, map: input.map, order: input.order } : challengeId === 'lineup' ? { ...state.setup, players: [...input.players] } : challengeId === 'ban' ? { ...state.setup, hero: input.hero } : state.setup }
+  return { ...state, complete: true, error: '', history: [...state.history, challengeId], setup: challengeId === 'pick' ? { ...state.setup, map: input.map } : challengeId === 'ban-order' ? { ...state.setup, order: input.order } : challengeId === 'lineup' ? { ...state.setup, players: [...input.players] } : challengeId === 'ban' ? { ...state.setup, hero: input.hero } : state.setup }
 }

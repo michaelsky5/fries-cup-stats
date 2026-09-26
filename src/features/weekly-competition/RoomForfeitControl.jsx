@@ -1,7 +1,7 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
-import { liveRoomWrite } from './liveRoomApi.js'
+import { useRoomTransport } from './RoomTransport.jsx'
 import styles from './WeeklyLiveRoomPage.module.css'
 import frame from './RoomMatchFrame.module.css'
 import surfaces from './RoomSurfaces.module.css'
@@ -27,6 +27,7 @@ export function ForfeitSummary({ data, expanded = false }) {
 }
 
 export default function RoomForfeitControl({ data, disabled, mutate }) {
+  const { liveRoomWrite } = useRoomTransport()
   const uiLocale = useUiLocale()
   const [action, setAction] = useState(''), [side, setSide] = useState(''), [reason, setReason] = useState(''), [error, setError] = useState('')
   const dialog = useRef(null), pending = useRef(null), viewed = useRef(null)

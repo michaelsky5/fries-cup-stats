@@ -3,6 +3,15 @@ import { withLocale } from '../../lib/locales.js'
 
 export const GUIDE_PATH = '/guides/weekly-room'
 export const GUIDE_VERSION = '2026-09-26'
+export const ROOM_PRACTICE_CASES = {
+  disabled: { role: 'member', scene: 'live' },
+  handover: { role: 'manager', scene: 'checkin' },
+  substitution: { role: 'representative', scene: 'lineup' },
+  disconnect: { role: 'representative', scene: 'live' },
+  'result-error': { role: 'referee', scene: 'review' },
+  dispute: { role: 'representative', scene: 'result' },
+  broadcast: { role: 'caster', scene: 'live' },
+}
 export const GUIDE_ROLES = ['manager', 'representative', 'member', 'referee', 'caster', 'admin']
 export const GUIDE_STEPS = ['entry', 'opening', 'map', 'lineup', 'ban', 'ready', 'live', 'map-result', 'result']
 export const GUIDE_SCENARIOS = ['access', 'disabled', 'handover', 'substitution', 'opening-error', 'disconnect', 'result-error', 'rr5', 'forfeit', 'dispute', 'sync', 'broadcast']

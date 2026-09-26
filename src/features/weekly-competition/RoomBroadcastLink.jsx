@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { liveRoomWrite } from './liveRoomApi.js'
+import { useRoomTransport } from './RoomTransport.jsx'
 import { roomBroadcastUrl } from './roomBroadcastLinks.js'
 import styles from './WeeklyLiveRoomPage.module.css'
 
 export default function RoomBroadcastLink({ data, disabled }) {
+  const { liveRoomWrite } = useRoomTransport()
   const [connection, setConnection] = useState(null)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')

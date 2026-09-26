@@ -1,12 +1,13 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
-import { liveRoomWrite } from './liveRoomApi.js'
+import { useRoomTransport } from './RoomTransport.jsx'
 import { formatOwMapName } from '../../lib/heroes.js'
 import styles from './WeeklyLiveRoomPage.module.css'
 import frame from './RoomMatchFrame.module.css'
 
 export default function MapResultControl({ data, disabled, mutate, correcting = false }) {
+  const { liveRoomWrite } = useRoomTransport()
   const uiLocale = useUiLocale()
   const [open, setOpen] = useState(false), [scoreA, setScoreA] = useState(''), [scoreB, setScoreB] = useState(''), [error, setError] = useState(''), [note, setNote] = useState('')
   const dialog = useRef(null), pending = useRef(null), viewed = useRef(null)
@@ -20,7 +21,7 @@ export default function MapResultControl({ data, disabled, mutate, correcting = 
       pending.current ||= { action: correcting ? 'CORRECT_MAP_RESULT' : 'RECORD_MAP_RESULT', ...(correcting ? { note: note.trim() } : {}), scoreA: Number(scoreA), scoreB: Number(scoreB), ...viewed.current, clientKey: crypto.randomUUID() }
       const result = await mutate(async () => { try { return await liveRoomWrite(data.match.id, '/commands', pending.current) } catch (error) { if (error.status && error.status < 500) pending.current = null; setError(error.message || '提交结果未确认，请同步核对后重试。'); throw error } }, lastMap ? '第五图结果已保存。五图完成，请核对并整理战报。' : correcting ? '比分更正已保存，选择权已按最新结果重新计算。' : '本图赛中结果已保存，下一步按结果安排选禁。')
       if (result) { pending.current = null; setOpen(false) }
-    }}><h2 id="weekly-map-result-title">{correcting ? uiText("更正", uiLocale) : uiText("记录", uiLocale)}{uiText("第 ", uiLocale)}{data.map.order}{uiText(" 图结果", uiLocale)}</h2><p>{formatOwMapName(data.map.name)}{uiText(" · 请核对游戏实际结束后的双方小分。", uiLocale)}{lastMap ? uiText("这是本场最后一图；保存后可整理整场战报，正式赛果仍需审核。", uiLocale) : uiText("此记录用于下一图选禁；整场正式赛果仍需审核。", uiLocale)}</p>
+    }}><h2 id="weekly-map-result-title">{correcting ? uiText("更正", uiLocale) : uiText("记录", uiLocale)}{uiText("第 ", uiLocale)}{data.map.order}{uiText(" 图结果", uiLocale)}</h2><p>{formatOwMapName(data.map.name, uiLocale)}{uiText(" · 请核对游戏实际结束后的双方小分。", uiLocale)}{lastMap ? uiText("这是本场最后一图；保存后可整理整场战报，正式赛果仍需审核。", uiLocale) : uiText("此记录用于下一图选禁；整场正式赛果仍需审核。", uiLocale)}</p>
       <div className={styles.actions}><label>{a.name}{uiText(" 本图小分", uiLocale)}<input type="number" min="0" max="100" step="1" value={scoreA} required disabled={disabled} onChange={e => { setScoreA(e.target.value); pending.current = null }} /></label><label>{b.name}{uiText(" 本图小分", uiLocale)}<input type="number" min="0" max="100" step="1" value={scoreB} required disabled={disabled} onChange={e => { setScoreB(e.target.value); pending.current = null }} /></label></div>
       {correcting && <label>{uiText("公开更正原因", uiLocale)}<textarea value={note} onChange={e => { setNote(e.target.value); pending.current = null }} required minLength={2} maxLength={500} disabled={disabled} placeholder={uiText("例如：核对录像后发现双方小分录反", uiLocale)} /></label>}
       {hasScores && <div className={frame.resultConsequence} role="status"><strong>{Number(scoreA) === Number(scoreB) ? uiText("本图平局{0}", uiLocale, [fixedFive ? ' · 计入五图，胜场不增加' : '']) : uiText("{0} 赢下本图", uiLocale, [Number(scoreA) > Number(scoreB) ? a.name : b.name])}</strong><p>{lastMap ? uiText("确认后五图全部完成，进入整场战报与审核。总比分平局也正常结束，不增加第六图。", uiLocale) : Number(scoreA) === Number(scoreB) ? uiText("沿用本图选择方，下一图先选地图与适用的攻防；首发确认后再决定 Ban 顺序。", uiLocale) : uiText("{0} 将选择下一图地图与适用的攻防，首发确认后再决定 Ban 顺序。{1}", uiLocale, [Number(scoreA) > Number(scoreB) ? b.name : a.name, fixedFive ? `本图计入完成进度，之后还需完成 ${5 - data.map.order} 图。` : '整场达到获胜条件时进入赛果核对。'])}</p></div>}
@@ -30,6 +31,7 @@ export default function MapResultControl({ data, disabled, mutate, correcting = 
 }
 
 export function NextMapControl({ data, disabled, mutate }) {
+  const { liveRoomWrite } = useRoomTransport()
   const uiLocale = useUiLocale()
   const pending = useRef(null), next = data.opening?.next
   if (!next) return null

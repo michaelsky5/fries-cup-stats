@@ -40,3 +40,5 @@
 .reference > summary:focus-visible { outline: 3px solid #eacb4b; outline-offset: 3px; }
 .reference .course { margin-top: 0; }
 .caseAnswer button { cursor: pointer; padding: 12px 18px; background: #eacb4b; border: 1px solid #eacb4b; color: #1c2117; font: inherit; font-weight: 700; }
+
+.start { display:flex;align-items:center;gap:24px;padding:24px;background:#e8eddf;color:#17221a;border:1px solid #89967a; }.start h2 { margin:0 0 10px;font-size:23px; }.start p { margin:0;line-height:1.7;font-size:14px; }.start a { flex-shrink:0;background:#f4cc39;color:#17221a;padding:16px 20px;font-weight:700;border:1px solid #7b681e; }.start a:focus-visible { outline:3px solid #243b25;outline-offset:3px; }@media(max-width:700px) { .start { flex-direction:column;align-items:stretch;padding:20px;gap:16px; }.start a { text-align:center; } }
