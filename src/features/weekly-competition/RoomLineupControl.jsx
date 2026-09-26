@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ROOM_ROLE_ORDER, roomRoleCode, roomLineupTurn, sortRoomLineup, validRoomLineup } from './roomLineups.js'
 import styles from './WeeklyRoomWorkspace.module.css'
 
@@ -8,6 +8,7 @@ export default function RoomLineupControl({ data, side, disabled, command }) {
   const initial = saved.length ? saved : (roster?.members || []).filter(member => member.plannedStarter).slice(0, 5).map(member => ({ playerId: member.id, role: member.role }))
   const [selected, setSelected] = useState(initial)
   const pending = useRef(null)
+  useEffect(() => { pending.current = null }, [data.revision, data.match.revision, data.draftRevision])
   const locked = Boolean(data.map?.lineupLocks?.[side.key] || saved.length === 5)
   const ownTurn = roomLineupTurn(data.map) === side.key
   const canEdit = !disabled && !locked && ownTurn
@@ -15,6 +16,8 @@ export default function RoomLineupControl({ data, side, disabled, command }) {
   const toggle = member => edit(selected.some(item => item.playerId === member.id) ? selected.filter(item => item.playerId !== member.id) : selected.length < 5 ? [...selected, { playerId: member.id, role: member.role }] : selected)
   const valid = validRoomLineup(selected)
   const ordered = sortRoomLineup(selected)
+  const previous = [...(data.maps || [])].reverse().find(map => map.order < data.map.order)?.[`lineup${side.key}`] || []
+  const reusable = validRoomLineup(previous) && previous.every(player => roster?.members.some(member => member.id === player.playerId))
   async function confirm() {
     if (!canEdit || !valid) return
     pending.current ||= { teamId: side.team.id, lineup: ordered.map(({ playerId, role }) => ({ playerId, role })), clientKey: crypto.randomUUID(), expectedRevision: data.revision, matchRevision: data.match.revision, draftRevision: data.draftRevision }
@@ -22,6 +25,7 @@ export default function RoomLineupControl({ data, side, disabled, command }) {
   }
   return <section className={styles.lineupEditor} aria-label={`${side.team.shortName || side.team.name} 本图首发与职责`}>
     <header><strong>{side.team.shortName || side.team.name}</strong><span>{locked ? '已确认并锁定' : ownTurn ? '轮到本队确认' : '等待选图方先确认'}</span></header>
+    {canEdit && reusable && <button type="button" onClick={() => edit(previous.map(({ playerId, role }) => ({ playerId, role })))}>沿用上一图人员与职责</button>}
     <div className={styles.lineupChoices}>{(roster?.members || []).map(member => {
       const entry = selected.find(item => item.playerId === member.id)
       return <div key={member.id} data-selected={!!entry}>

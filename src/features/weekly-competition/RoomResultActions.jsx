@@ -3,6 +3,7 @@ import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
 import { liveRoomWrite } from './liveRoomApi.js'
 import { systemPageUrl } from './roomResultLinks.js'
+import { roomSettlementProposal } from './roomSettlement.js'
 import styles from './WeeklyLiveRoomPage.module.css'
 
 export default function RoomResultActions({ data, disabled, mutate }) {
@@ -12,9 +13,10 @@ export default function RoomResultActions({ data, disabled, mutate }) {
   const [override, setOverride] = useState(false)
   useEffect(() => { if (open) dialog.current?.showModal(); else dialog.current?.close() }, [open])
   const result = data.result, admin = result.administration || {}, reviewUrl = systemPageUrl(admin.reviewPath)
+  const proposal = roomSettlementProposal(data)
   const versions = () => ({ expectedRevision: result.revision, fingerprint: result.fingerprint, confirmationVersion: result.confirmationVersion })
   const openSettlement = (byRuling = false) => {
-    if (!pending.current) { viewed.current = versions(); setPointsA(result.forfeit ? String(result.forfeit.pointsA) : result.countsTowardStandings ? '' : '0'); setPointsB(result.forfeit ? String(result.forfeit.pointsB) : result.countsTowardStandings ? '' : '0'); setReason(''); setOverride(byRuling) }
+    if (!pending.current) { viewed.current = versions(); setPointsA(proposal ? String(proposal.pointsA) : ''); setPointsB(proposal ? String(proposal.pointsB) : ''); setReason(byRuling ? '' : proposal?.reason || ''); setOverride(byRuling) }
     setError(''); setOpen(true)
   }
   async function act(action, extra, version = versions()) {
@@ -42,7 +44,7 @@ export default function RoomResultActions({ data, disabled, mutate }) {
       event.preventDefault(); setError('')
       if (await act('SETTLE', { pointsA: Number(pointsA), pointsB: Number(pointsB), reason: reason.trim(), ...(override ? { overrideConfirmations: true } : {}) }, viewed.current)) setOpen(false)
     }}><h2>{override ? uiText("按管理员裁定结算", uiLocale) : uiText("核对本场积分并结算", uiLocale)}</h2><p>{data.match.teamA.name} / {data.match.teamB.name} · {override ? uiText("未齐双方确认或存在异议，将保留原响应并记录管理员裁定。", uiLocale) : uiText("双方已确认", uiLocale)}</p>
-      <p>{!result.countsTowardStandings ? uiText("本周期不计入正式积分，双方均记 0 分。", uiLocale) : result.forfeit ? uiText("弃权方 0 分；对手保留已得积分，未完成地图每张补 1 分。以下积分由已审核记录计算。", uiLocale) : uiText("按本届规则填写双方应得积分。比分不等于积分。", uiLocale)}</p>
+      <p>{!result.countsTowardStandings ? uiText("本周期不计入正式积分，双方均记 0 分。", uiLocale) : result.forfeit ? uiText("弃权方 0 分；对手保留已得积分，未完成地图每张补 1 分。以下积分由已审核记录计算。", uiLocale) : proposal ? uiText('已按审核赛果预填：五图参赛分 5 + 小局胜场分。请核对双方积分与结算依据。', uiLocale) : uiText("按本届规则填写双方应得积分。比分不等于积分。", uiLocale)}</p>
       <div className={styles.resultPoints}><label>{data.match.teamA.name}{uiText(" 积分", uiLocale)}<input type="number" min="0" max="1000" step="1" required value={pointsA} readOnly={!result.countsTowardStandings || !!result.forfeit} disabled={disabled} onChange={event => { setPointsA(event.target.value); pending.current = null }} /></label><label>{data.match.teamB.name}{uiText(" 积分", uiLocale)}<input type="number" min="0" max="1000" step="1" required value={pointsB} readOnly={!result.countsTowardStandings || !!result.forfeit} disabled={disabled} onChange={event => { setPointsB(event.target.value); pending.current = null }} /></label></div>
       <label>{uiText("结算依据", uiLocale)}<textarea required minLength={2} maxLength={2000} value={reason} disabled={disabled} onChange={event => { setReason(event.target.value); pending.current = null }} placeholder={uiText("填写适用积分规则及本场结算依据", uiLocale)} /></label>
       {error && <p role="alert">{error}</p>}<div className={styles.actions}><button type="button" disabled={disabled} onClick={() => setOpen(false)}>{uiText("返回核对", uiLocale)}</button><button className={styles.primary} disabled={disabled || pointsA === '' || pointsB === '' || reason.trim().length < 2}>{uiText("确认结算本场积分", uiLocale)}</button></div>
