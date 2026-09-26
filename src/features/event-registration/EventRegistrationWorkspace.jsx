@@ -732,7 +732,7 @@ export default function EventRegistrationWorkspace({
                           <span>{uiText("已排定", uiLocale)}</span>
                           <strong>{formatManagerMatchTime(nextMatch.scheduledAt)}</strong>
                           <p>{[nextMatch.stage, nextMatch.roundLabel].filter(Boolean).join(' · ') || uiText("阶段待定", uiLocale)}</p>
-                          <small>{uiText("比赛房间将在开赛前 15 分钟开放", uiLocale)}</small>
+                          <small>{uiText("比赛房间将在开赛前 30 分钟开放", uiLocale)}</small>
                         </aside>
                       </>
                     ) : managerPrimaryMode === 'task' ? (
