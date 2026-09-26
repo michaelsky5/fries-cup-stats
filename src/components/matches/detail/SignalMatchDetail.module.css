@@ -163,7 +163,8 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
 .rosters > div { padding: 16px; background: var(--fc-data-paper-raised); border: 1px solid var(--fc-data-line); }
 .rosters > div > strong { display: block; font-size: 22px; margin-bottom: 10px; }
 .rosters > div > div { display: flex; justify-content: space-between; gap: 15px; padding: 10px 0; border-top: 1px solid var(--fc-data-line); }
-.rosters small { color: var(--fc-data-text-muted); font-size: 12px; }
+.rosters > div > div > a, .rosters > div > div > span { min-width: 0; overflow-wrap: anywhere; }
+.rosters small { flex-shrink: 0; color: var(--fc-data-text-muted); font-size: 12px; }
 .rosters a:hover { text-decoration: underline; }
 .footerNav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--fc-data-line-strong); margin-top: 10px; }
 .footerNav > a { display: grid; gap: 12px; padding: 24px 0; }

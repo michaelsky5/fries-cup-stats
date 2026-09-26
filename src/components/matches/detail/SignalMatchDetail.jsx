@@ -91,7 +91,10 @@ function TeamComparison({ dossier, selectedMap, seasonId, en }) {
 
 function RegisteredRosters({ dossier, withSeason, returnState, onNavigate, en }) {
   const uiLocale = useUiLocale()
-  return <div className={styles.rosters}>{['A', 'B'].map(side => <div key={side}><strong>{dossier[`team${side}`].short}</strong>{dossier.rosters[`team${side}`].length ? dossier.rosters[`team${side}`].map(player => <div key={player.id || player.name}>{player.id ? <Link to={withSeason(`/players/${encodeURIComponent(player.id)}`)} state={returnState} onClick={onNavigate}>{player.name}</Link> : <span>{player.name}</span>}<small>{en ? getRoleEnLabel(player.role) : uiText(getRoleLabel(player.role), uiLocale)}</small></div>) : <p>{en ? 'Roster not published' : uiText("名单尚未发布", uiLocale)}</p>}</div>)}</div>
+  return <div className={styles.rosters}>{['A', 'B'].map(side => <div key={side}><strong>{dossier[`team${side}`].short}</strong>{dossier.rosters[`team${side}`].length ? dossier.rosters[`team${side}`].map(player => {
+    const battleTag = player.battleTag || player.name
+    return <div key={player.id || player.name}>{player.id ? <Link data-i18n-ignore to={withSeason(`/players/${encodeURIComponent(player.id)}`)} state={returnState} onClick={onNavigate}>{battleTag}</Link> : <span data-i18n-ignore>{battleTag}</span>}<small>{en ? getRoleEnLabel(player.role) : uiText(getRoleLabel(player.role), uiLocale)}</small></div>
+  }) : <p>{en ? 'Roster not published' : uiText("名单尚未发布", uiLocale)}</p>}</div>)}</div>
 }
 
 function PendingRoster({ dossier, withSeason, returnState, onNavigate, en }) {
