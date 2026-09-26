@@ -41,7 +41,14 @@ test('simulated first-map choices carry into bans, and invalid lineups cannot lo
   state = simulationReducer(state, { type: 'SUBMIT', input: validInput('checkin') })
   state = simulationReducer(state, { type: 'NEXT' })
   state = simulationReducer(state, { type: 'SUBMIT', input: validInput('pick') })
-  assert.deepEqual(state.setup, { map: 'Busan', order: 'SECOND' })
+  assert.deepEqual(state.setup, { map: 'Busan' })
+  assert.deepEqual(state.ids.slice(1, 5), ['pick','lineup','ban-order','ban'])
+  for (const id of ['lineup', 'ban-order']) {
+    state = simulationReducer(state, { type: 'NEXT' })
+    state = simulationReducer(state, { type: 'SUBMIT', input: validInput(id) })
+    assert.equal(state.complete, true)
+  }
+  assert.equal(state.setup.order, 'SECOND')
   assert.equal(validateSimulationInput('ban', { hero: 'Ashe' }, state.setup), 'ban')
   assert.equal(validateSimulationInput('ban', { hero: 'Kiriko' }, state.setup), '')
   assert.equal(validateSimulationInput('ban', { hero: 'Ashe' }, { order: 'FIRST' }), '')

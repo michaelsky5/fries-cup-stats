@@ -1,12 +1,13 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
-import { liveRoomWrite } from './liveRoomApi.js'
+import { useRoomTransport } from './RoomTransport.jsx'
 import { systemPageUrl } from './roomResultLinks.js'
 import { roomSettlementProposal } from './roomSettlement.js'
 import styles from './WeeklyLiveRoomPage.module.css'
 
 export default function RoomResultActions({ data, disabled, mutate }) {
+  const { liveRoomWrite } = useRoomTransport()
   const uiLocale = useUiLocale()
   const [report, setReport] = useState(null), [open, setOpen] = useState(false), [pointsA, setPointsA] = useState(''), [pointsB, setPointsB] = useState(''), [reason, setReason] = useState(''), [error, setError] = useState('')
   const dialog = useRef(null), pending = useRef(null), viewed = useRef(null), handoffPending = useRef(null)

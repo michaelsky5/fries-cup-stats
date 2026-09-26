@@ -7,6 +7,7 @@ import styles from './WeeklyRoomGuidePage.module.css'
 export default function RoomGuideLink({ data, role, step, scenario, season, match, mode, label = '比赛房操作指南', className = '' }) {
   const locale = useUiLocale()
   const context = data ? guideContextForRoom(data) : {}
+  if (data?.simulation) { delete context.match; delete context.season }
   for (const [key, value] of Object.entries({ role, step, scenario, season, match, mode })) if (value) context[key] = value
   return <a className={`${styles.guideLink} ${className}`} href={roomGuideUrl(context, locale)} target="_blank" rel="noopener noreferrer">{translateUiText(label, locale)} <span aria-hidden="true">↗</span></a>
 }

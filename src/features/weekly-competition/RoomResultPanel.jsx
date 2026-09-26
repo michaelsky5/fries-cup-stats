@@ -1,7 +1,7 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
-import { liveRoomWrite } from './liveRoomApi.js'
+import { useRoomTransport } from './RoomTransport.jsx'
 import RoomResultActions from './RoomResultActions.jsx'
 import RoomForfeitControl, { ForfeitSummary } from './RoomForfeitControl.jsx'
 import { formatOwMapName } from '../../lib/heroes.js'
@@ -25,6 +25,7 @@ const stages = {
 const responseNames = { NOT_OPEN: '尚未开放', PENDING: '待本队核对', CONFIRMED: '已确认', DISPUTED: '争议处理中', FINALIZED: '已结算', OVERRIDDEN: '按管理员裁定结算', EXPIRED: '等待重新确认' }
 
 function ResponseControl({ side, data, disabled, mutate }) {
+  const { liveRoomWrite } = useRoomTransport()
   const uiLocale = useUiLocale()
   const [open, setOpen] = useState(false), [status, setStatus] = useState('CONFIRMED'), [note, setNote] = useState(side.note || ''), [error, setError] = useState('')
   const dialog = useRef(null), pending = useRef(null), viewed = useRef(null)
@@ -37,7 +38,7 @@ function ResponseControl({ side, data, disabled, mutate }) {
       if (saved) { pending.current = null; setOpen(false) }
     }}><h2>{side.team.name}{uiText(" · 核对正式赛果", uiLocale)}</h2>{data.result.forfeit ? <ForfeitSummary data={data} /> : <p>{data.match.teamA.name} {data.result.scoreA} : {data.result.scoreB} {data.match.teamB.name}</p>}
       <label>{uiText("本队响应", uiLocale)}<select value={status} onChange={event => { setStatus(event.target.value); pending.current = null }} disabled={disabled}><option value="CONFIRMED">{data.result.forfeit ? uiText("记录无误，确认本队赛果", uiLocale) : uiText("比分无误，确认本队赛果", uiLocale)}</option><option value="DISPUTED">{uiText("赛果有异议，请管理员复核", uiLocale)}</option></select></label>
-      {!!data.result.maps?.length && <ol className={styles.approvedMaps}>{data.result.maps.map(map => <li key={map.order}><span>{uiText("图 ", uiLocale)}{map.order} · {formatOwMapName(map.name)}</span><strong>{map.scoreA} : {map.scoreB}</strong></li>)}</ol>}
+      {!!data.result.maps?.length && <ol className={styles.approvedMaps}>{data.result.maps.map(map => <li key={map.order}><span>{uiText("图 ", uiLocale)}{map.order} · {formatOwMapName(map.name, uiLocale)}</span><strong>{map.scoreA} : {map.scoreB}</strong></li>)}</ol>}
       <label>{uiText("核对说明", uiLocale)}{status === 'DISPUTED' ? uiText("（必填）", uiLocale) : uiText("（选填）", uiLocale)}<textarea value={note} onChange={event => { setNote(event.target.value); pending.current = null }} required={status === 'DISPUTED'} maxLength={2000} disabled={disabled} placeholder={uiText("涉及哪一图、存在什么问题、核对依据是什么", uiLocale)} /></label><p>{uiText("说明仅本队与赛管可见，对方和解说只看到响应状态。", uiLocale)}</p>
       {error && <p role="alert">{error}</p>}<div className={styles.actions}><button type="button" onClick={() => setOpen(false)}>{uiText("返回核对", uiLocale)}</button><button className={styles.primary} disabled={disabled || (status === 'DISPUTED' && note.trim().length < 2)}>{uiText("提交本队响应", uiLocale)}</button></div>
     </form></dialog></>
@@ -59,7 +60,7 @@ export default function RoomResultPanel({ data, disabled, mutate, correction }) 
     <div className={frame.resultMapTable}><table><caption>{data.result.official ? uiText("审核版本 · 逐图比分", uiLocale) : uiText("赛中工作记录 · 等待审核", uiLocale)}</caption><thead><tr><th scope="col">{uiText("局", uiLocale)}</th><th scope="col">{uiText("地图", uiLocale)}</th><th scope="col">{uiText("双方小分", uiLocale)}</th><th scope="col">{uiText("记录", uiLocale)}</th></tr></thead><tbody>{maps.map(map => {
       const hasScore = typeof map.scoreA === 'number' && Number.isFinite(map.scoreA) && typeof map.scoreB === 'number' && Number.isFinite(map.scoreB)
       const complete = data.result.official || !!data.forfeit?.record || map.status === 'COMPLETE'
-      return <tr key={map.order}><td>{String(map.order).padStart(2, '0')}</td><th scope="row">{formatOwMapName(map.name) || uiText("地图待定", uiLocale)}</th><td>{complete && hasScore ? `${map.scoreA} : ${map.scoreB}` : '—'}</td><td>{complete && hasScore ? map.scoreA === map.scoreB ? uiText("平局", uiLocale) : uiText("已完成", uiLocale) : uiText("待确认", uiLocale)}</td></tr>
+      return <tr key={map.order}><td>{String(map.order).padStart(2, '0')}</td><th scope="row">{formatOwMapName(map.name, uiLocale) || uiText("地图待定", uiLocale)}</th><td>{complete && hasScore ? `${map.scoreA} : ${map.scoreB}` : '—'}</td><td>{complete && hasScore ? map.scoreA === map.scoreB ? uiText("平局", uiLocale) : uiText("已完成", uiLocale) : uiText("待确认", uiLocale)}</td></tr>
     })}</tbody></table>{!maps.length && <p>{data.result.forfeit ? uiText("本场未完成任何地图。", uiLocale) : uiText("地图记录尚未提供。", uiLocale)}</p>}</div>
     {data.result.official && <div className={styles.resultResponses}>{data.result.sides.map(side => <div key={side.team.id}><span><strong>{side.team.shortName || side.team.name}</strong><small>{data.result.phase === 'SETTLED' ? uiText("{0} 分 · 已结算", uiLocale, [data.result.points.find(item => item.teamId === side.team.id)?.points ?? '—']) : responseNames[side.status] || uiText("待核对", uiLocale)}</small></span>{side.canRespond && <ResponseControl key={data.result.fingerprint + side.team.id} side={side} data={data} disabled={disabled} mutate={mutate} />}</div>)}</div>}
     <div className={styles.resultControls}><RoomResultActions key={data.match.id + data.actor.id} data={data} disabled={disabled} mutate={mutate} />{correction}</div>
