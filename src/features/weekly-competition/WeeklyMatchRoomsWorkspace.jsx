@@ -136,10 +136,10 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
   }, [refresh])
 
   const currentWorkspace = workspace?.season?.id === seasonId ? workspace : null
-  const operatorView = Boolean(currentWorkspace?.operatorView)
   const rooms = useMemo(() => sortWeeklyRooms(currentWorkspace?.rooms), [currentWorkspace])
   const selectedRoomId = searchParams.get('weeklyMatch') || ''
   const room = selectWeeklyRoom(rooms, selectedRoomId)
+  const operatorView = Boolean(currentWorkspace?.operatorView || (room?.roleLabel && !room.myTeams?.length))
   const roomCardRef = useRef(null)
   const visibleRoomId = room?.id
   useEffect(() => {
@@ -257,7 +257,7 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
         <>
           <div className={styles.channelRail}>
             <strong>{currentWorkspace.season.name}</strong>
-            <span>{operatorView ? uiText("本场工作人员 · 在比赛房按职责操作", uiLocale) : effectiveReadOnly ? uiText("只读 · 由队长或经理响应", uiLocale) : uiText("队长 / 经理 · 可代表本队响应", uiLocale)}</span>
+            <span>{room?.roleLabel ? uiText(room.roleLabel, uiLocale) : operatorView ? uiText("本场工作人员 · 在比赛房按职责操作", uiLocale) : effectiveReadOnly ? uiText("只读 · 由队长或经理响应", uiLocale) : uiText("队长 / 经理 · 可代表本队响应", uiLocale)}</span>
             <span>{timezone === 'Asia/Shanghai' ? uiText("时间均为北京时间", uiLocale) : timezone}</span>
           </div>
           {rooms.length === 0 ? <div className={styles.state}><span>{currentWorkspace.operatorView ? 'WAITING FOR STAFF ASSIGNMENT' : currentWorkspace.teams.length ? 'WAITING FOR PUBLISHED MATCHES' : 'NO TEAM LINK'}</span><strong>{currentWorkspace.operatorView ? uiText("工作人员身份已就绪，等待本场安排", uiLocale) : currentWorkspace.teams.length ? uiText("暂时没有已发布的本队周赛", uiLocale) : uiText("当前账号尚未绑定本赛季队伍", uiLocale)}</strong><p>{currentWorkspace.operatorView ? uiText("正式排班发布或管理员完成单场指派后，比赛会出现在这里。无需重复注册或加入队伍。", uiLocale) : currentWorkspace.teams.length ? uiText("管理员发布配对后，比赛会出现在这里；草稿和其他队伍的比赛不会显示。", uiLocale) : uiText("请联系周赛管理员完成邀请认领，不需要重新创建队伍。", uiLocale)}</p></div> : (
@@ -266,7 +266,7 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
                 <aside className={styles.roomIndex}>
                   <button type="button" className={styles.roomSwitcher} aria-expanded={roomIndexOpen} aria-controls={roomIndexId} onClick={() => setRoomIndexOpen(value => !value)}>{uiText("切换比赛 ", uiLocale)}<span>{uiText("共 ", uiLocale)}{rooms.length}{uiText(" 场 ", uiLocale)}{roomIndexOpen ? '−' : '+'}</span></button>
                   <div id={roomIndexId} className={styles.roomIndexContent} data-expanded={roomIndexOpen}>
-                    <div className={styles.roomSummary}><strong>{operatorView ? uiText("获授权比赛", uiLocale) : uiText("本队比赛", uiLocale)} <b>{rooms.length}</b></strong><span>{effectiveReadOnly ? uiText("赛果响应仅可查看", uiLocale) : uiText("{0} 场待确认赛果", uiLocale, [pendingCount])}</span>{disputedCount > 0 && <span data-alert="true">{disputedCount}{uiText(" 场争议处理中", uiLocale)}</span>}</div>
+                    <div className={styles.roomSummary}><strong>{uiText("我的比赛", uiLocale)} <b>{rooms.length}</b></strong><span>{effectiveReadOnly ? uiText("赛果响应仅可查看", uiLocale) : uiText("{0} 场待确认赛果", uiLocale, [pendingCount])}</span>{disputedCount > 0 && <span data-alert="true">{disputedCount}{uiText(" 场争议处理中", uiLocale)}</span>}</div>
                 <nav className={styles.roomList} aria-label={uiText("获授权周赛比赛", uiLocale)}>
                   {rooms.map((item, index) => (
                     <button type="button" key={item.id} aria-pressed={room?.id === item.id} disabled={submitting} onClick={() => { selectRoom(item.id); setRoomIndexOpen(false) }}>
