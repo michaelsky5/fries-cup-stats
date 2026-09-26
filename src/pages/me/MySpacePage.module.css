@@ -1,3 +1,4 @@
+.guideEntry { padding: 16px 24px; }
 .page { display: grid; gap: 16px; color: var(--fc-data-ink); }
 .spaceHeader { display: grid; gap: 14px; min-width: 0; }
 .mobileTaskSummary { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px 12px; }

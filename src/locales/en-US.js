@@ -9059,5 +9059,8 @@ export default {
   "接任已确认，等待 System 管理员审核。": "Ownership accepted. Awaiting System administrator approval.",
   "转让已撤回，队伍归属未改变。": "Transfer withdrawn. Team ownership is unchanged.",
   "已拒绝接任，队伍归属未改变。": "Ownership declined. Team ownership is unchanged.",
-  "交接范围（队伍归属及以下未归档赛季）": "Transfer scope: team organization and these unarchived seasons"
+  "交接范围（队伍归属及以下未归档赛季）": "Transfer scope: team organization and these unarchived seasons",
+  "比赛房操作指南": "Match room guide",
+  "参赛与比赛指南": "Participation and match guide",
+  "无法操作？查看指南": "Cannot act? Read the guide"
 }

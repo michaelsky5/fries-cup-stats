@@ -1,3 +1,4 @@
+import RoomGuideLink from '../room-guide/RoomGuideLink.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
@@ -24,7 +25,7 @@ export function RoomMatchHeader({ data, phaseLabel, returnPath, busy, error, ref
     <header className={styles.masthead} data-room-slot="header" data-opening={Boolean(data.opening && !data.opening.complete)}>
       <Link to={returnPath} className={styles.brand}><img src="/logos/fries-cup-symbol.png" alt="" /><span><b>FRIES CUP</b><small>{uiText("赛事中心 / 比赛房", uiLocale)}</small></span></Link>
       <div className={styles.headerMatch}><div className={styles.headerTeams}><strong>{teamName(data.match.teamA)}</strong><b>{hasScore ? `${score.scoreA} : ${score.scoreB}` : 'VS'}</b><strong>{teamName(data.match.teamB)}</strong></div><div className={styles.headerMeta}><span>{data.match.seasonName}</span><span>{data.match.weekLabel}</span><span>{data.match.format === 'RR5' ? uiText("RR5 · 固定五局", uiLocale) : data.match.format || uiText("赛制待确认", uiLocale)}</span><span>{data.match.scheduledAt ? new Date(data.match.scheduledAt).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }) : uiText("比赛时间待定", uiLocale)}</span><em data-phase={data.phase}>{phaseLabel}</em></div></div>
-      <div className={styles.tools}><button type="button" disabled={busy} onClick={() => refresh({ force: true })}><span aria-hidden="true">↻</span>{uiText(" 重新同步", uiLocale)}</button>{accountControl}</div>
+      <div className={styles.tools}><RoomGuideLink data={data} /><button type="button" disabled={busy} onClick={() => refresh({ force: true })}><span aria-hidden="true">↻</span>{uiText(" 重新同步", uiLocale)}</button>{accountControl}</div>
     </header>
     <div className={styles.matchFacts} data-room-slot="facts"><div><span>{uiText("游戏房间", uiLocale)}<b>{data.preparation.brief?.roomName || uiText("等待赛管发布", uiLocale)}</b></span><span>{uiText("比赛房间设置码", uiLocale)}<b className={styles.mono}>{data.preparation.brief?.roomCode || uiText("未设置", uiLocale)}</b></span><span>{uiText("本场赛管", uiLocale)}<b>{data.staff.map(item => item.name).join(' / ') || uiText("等待指派", uiLocale)}</b></span></div><span className={styles.sync} data-error={!!error}>{error ? uiText("同步中断 · 上次记录", uiLocale) : data.syncedAt ? uiText("最近同步 {0}", uiLocale, [new Date(data.syncedAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })]) : uiText("同步时间待确认", uiLocale)}</span></div>
   </>

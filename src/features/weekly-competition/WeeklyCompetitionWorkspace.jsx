@@ -1,3 +1,4 @@
+import RoomGuideLink from '../room-guide/RoomGuideLink.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import WeeklyTeamAdditions from './WeeklyTeamAdditions.jsx'
 import WeeklyOwnershipTransfers from './WeeklyOwnershipTransfers.jsx'
@@ -325,7 +326,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
 
   return (
     <section className={styles.workspace} aria-label={uiText("周赛队伍工作台", uiLocale)}>
-      <header className={styles.workHeader}><div><span>WEEKLY PARTICIPATION</span><h2>{uiText("本周参赛准备", uiLocale)}</h2></div><button type="button" disabled={Boolean(busy)} onClick={async () => { if (await confirmDiscard()) { refresh().catch(() => {}); onActivityChange?.() } }}>{uiText("刷新资料", uiLocale)}</button></header>
+      <header className={styles.workHeader}><div><RoomGuideLink season={seasonId} role="manager" label="参赛与比赛指南" /><span>WEEKLY PARTICIPATION</span><h2>{uiText("本周参赛准备", uiLocale)}</h2></div><button type="button" disabled={Boolean(busy)} onClick={async () => { if (await confirmDiscard()) { refresh().catch(() => {}); onActivityChange?.() } }}>{uiText("刷新资料", uiLocale)}</button></header>
       {error ? <div ref={errorRef} tabIndex={-1} className={styles.message} role="alert" data-error="true"><span>{error}</span></div> : null}
       {stale && <p className={styles.lockNote}>{uiText("当前显示上次同步记录，重新同步前仅可查看。", uiLocale)}</p>}
       <WeeklyTeamAdditions key={seasonId} seasonId={seasonId} readOnly={readOnly || stale || Boolean(busy)} />

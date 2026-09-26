@@ -116,6 +116,7 @@ const router = createBrowserRouter([
       return null
     }, children: [
   ...developmentRoutes,
+  { path: '/guides/weekly-room', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/room-guide/WeeklyRoomGuidePage.jsx')) },
   { path: '/account', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/account/AccountSettingsPage.jsx')) },
   // Retired room bookmarks resolve to public details; no legacy room component or API.
   { path: '/matches/:matchId/room', loader: ({ params, request }) => redirect(`/matches/${encodeURIComponent(params.matchId)}${new URL(request.url).search}`) },
