@@ -38831,8 +38831,8 @@
   },
   "等待确认": {
     "zh-TW": "等待確認",
-    "en-US": "Waiting for confirmation",
-    "ko-KR": "확인 대기 중"
+    "en-US": "Awaiting confirmation",
+    "ko-KR": "확정 대기"
   },
   "等待确认参赛": {
     "zh-TW": "等待確認參賽",
@@ -54215,5 +54215,145 @@
     "zh-TW": "首發待確認",
     "en-US": "Lineup pending",
     "ko-KR": "선발 확인 대기"
+  },
+  "双方独立确认五人和本图职责；提交后锁定，双方均确认才同时公开。允许换位，游戏内按 CCTNN 排列。": {
+    "zh-TW": "雙方獨立確認五人和本圖職責；提交後鎖定，雙方均確認才同時公開。允許換位，遊戲內按 CCTNN 排列。",
+    "en-US": "Each side confirms five players and their roles independently. Submissions lock and reveal together once both sides confirm. Role swaps are allowed; use CCTNN order in game.",
+    "ko-KR": "양 팀이 선발 5명과 역할을 각각 확정합니다. 제출 후 잠기며 양측이 확정해야 동시에 공개됩니다. 역할 변경은 가능하며 게임 내 CCTNN 순서를 지켜 주세요."
+  },
+  "选图方先确认五人和本图职责，另一方随后确认；游戏内按 CCTNN 排列。": {
+    "zh-TW": "選圖方先確認五人和本圖職責，另一方隨後確認；遊戲內按 CCTNN 排列。",
+    "en-US": "The map chooser confirms five players and roles first, then the opponent. Use CCTNN order in game.",
+    "ko-KR": "맵 선택 팀이 먼저 선발과 역할을 확정한 뒤 상대가 확정합니다. 게임 내 CCTNN 순서를 지켜 주세요."
+  },
+  "双方首发提交状态": {
+    "zh-TW": "雙方首發提交狀態",
+    "en-US": "Lineup submissions",
+    "ko-KR": "양 팀 선발 제출 상태"
+  },
+  "✓ 已密封提交": {
+    "zh-TW": "✓ 已密封提交",
+    "en-US": "✓ Submitted privately",
+    "ko-KR": "✓ 비공개 제출 완료"
+  },
+  "已密封提交": {
+    "zh-TW": "已密封提交",
+    "en-US": "Submitted privately",
+    "ko-KR": "비공개 제출 완료"
+  },
+  "赛管代为确认队伍": {
+    "zh-TW": "賽管代為確認隊伍",
+    "en-US": "Referee lineup assistance",
+    "ko-KR": "심판의 선발 확정 지원"
+  },
+  "代 {0} 确认": {
+    "zh-TW": "代 {0} 確認",
+    "en-US": "Confirm for {0}",
+    "ko-KR": "{0} 대신 확정"
+  },
+  "等待双方首发确认完成": {
+    "zh-TW": "等待雙方首發確認完成",
+    "en-US": "Waiting for both lineup submissions",
+    "ko-KR": "양측 선발 확정 대기"
+  },
+  "已提交的首发保持隐藏，双方完成后会自动公开并进入英雄禁用，无需重复提交。": {
+    "zh-TW": "已提交的首發保持隱藏，雙方完成後會自動公開並進入英雄禁用，無需重複提交。",
+    "en-US": "Submitted lineups stay hidden until both sides confirm, then reveal automatically before hero bans. No second submission is needed.",
+    "ko-KR": "양측 확정 전까지 제출한 선발은 비공개입니다. 양측 확정 후 자동 공개되며 영웅 밴으로 진행합니다. 다시 제출할 필요가 없습니다."
+  },
+  "可独立确认 · 提交前对方不可见": {
+    "zh-TW": "可獨立確認 · 提交前對方不可見",
+    "en-US": "Confirm independently · hidden from opponents",
+    "ko-KR": "개별 확정 가능 · 상대에게 비공개"
+  },
+  "确认即代表五人到场；提交后锁定，双方都确认才公开。游戏内按 CCTNN 排列。": {
+    "zh-TW": "確認即代表五人到場；提交後鎖定，雙方都確認才公開。遊戲內按 CCTNN 排列。",
+    "en-US": "Confirm all five are present. The lineup locks on submission and reveals after both sides confirm. Use CCTNN order in game.",
+    "ko-KR": "확정 시 5명 모두 참석한 것으로 기록합니다. 제출 후 잠기며 양측 확정 후 공개됩니다. 게임 내 CCTNN 순서를 지켜 주세요."
+  },
+  "本周名单 · 首发未公开": {
+    "zh-TW": "本週名單 · 首發未公開",
+    "en-US": "Weekly roster · lineup hidden",
+    "ko-KR": "주간 명단 · 선발 비공개"
+  },
+  "对方不可见": {
+    "zh-TW": "對方不可見",
+    "en-US": "Hidden from opponents",
+    "ko-KR": "상대에게 비공개"
+  },
+  "候": {
+    "zh-TW": "候",
+    "en-US": "R",
+    "ko-KR": "후보"
+  },
+  "赛管接管 / 强制开始": {
+    "zh-TW": "賽管接管 / 強制開始",
+    "en-US": "Referee override / force start",
+    "ko-KR": "심판 개입 / 강제 시작"
+  },
+  "赛管接管开赛": {
+    "zh-TW": "賽管接管開賽",
+    "en-US": "Referee start override",
+    "ko-KR": "심판 강제 시작"
+  },
+  "用于游戏已开赛、网页确认卡住的情况。地图、双方首发及职责、Ban 先后与禁用记录仍须完整；不会替你在游戏内点击开始。": {
+    "zh-TW": "用於遊戲已開賽、網頁確認卡住的情況。地圖、雙方首發及職責、Ban 先後與禁用記錄仍須完整；不會替你在遊戲內點擊開始。",
+    "en-US": "Use when the game has started but website confirmations are stuck. Map, both lineups, roles, ban order and bans must be complete. This does not start the game client.",
+    "ko-KR": "게임은 시작됐지만 웹 확인이 멈췄을 때 사용합니다. 맵, 양 팀 선발과 역할, 밴 순서와 기록이 모두 있어야 합니다. 게임 클라이언트를 시작하는 기능은 아닙니다."
+  },
+  "仍需先处理": {
+    "zh-TW": "仍需先處理",
+    "en-US": "Resolve these first",
+    "ko-KR": "먼저 처리할 항목"
+  },
+  "返回当前步骤可由赛管代为操作。正在被其他赛管编辑时，需要先交接。": {
+    "zh-TW": "返回目前步驟可由賽管代為操作。正在被其他賽管編輯時，需要先交接。",
+    "en-US": "Return to the current step for referee assistance. If another referee is editing, complete the handover first.",
+    "ko-KR": "현재 단계로 돌아가 심판이 대신 진행할 수 있습니다. 다른 심판이 편집 중이면 먼저 인계해야 합니다."
+  },
+  "本次接管的确认项": {
+    "zh-TW": "本次接管的確認項",
+    "en-US": "Confirmations being overridden",
+    "ko-KR": "이번에 대체할 확인 항목"
+  },
+  "当前已满足正常开赛条件，关闭此窗口后点击“记录本图开赛”即可。": {
+    "zh-TW": "目前已滿足正常開賽條件，關閉此視窗後點擊「記錄本圖開賽」即可。",
+    "en-US": "Normal start conditions are met. Close this window and select Record map start.",
+    "ko-KR": "일반 시작 조건을 충족했습니다. 창을 닫고 맵 시작 기록을 선택해 주세요."
+  },
+  "公开接管原因": {
+    "zh-TW": "公開接管原因",
+    "en-US": "Public override reason",
+    "ko-KR": "공개 개입 사유"
+  },
+  "例如：已在游戏内核对十人到场，网页签到未更新": {
+    "zh-TW": "例如：已在遊戲內核對十人到場，網頁簽到未更新",
+    "en-US": "Example: All ten players verified in game; website attendance is outdated",
+    "ko-KR": "예: 게임에서 10명 참석을 확인했으나 웹 출석이 갱신되지 않음"
+  },
+  "我已核对实际房间和双方人员，确认本图游戏已开赛": {
+    "zh-TW": "我已核對實際房間和雙方人員，確認本圖遊戲已開賽",
+    "en-US": "I verified the game lobby and both teams, and confirm this map has started",
+    "ko-KR": "실제 로비와 양 팀 인원을 확인했으며 본 맵 게임이 시작됨을 확인합니다"
+  },
+  "操作人、原因、时间和跳过的确认项会向本场人员公开，并保留审计记录。": {
+    "zh-TW": "操作人、原因、時間和跳過的確認項會向本場人員公開，並保留稽核記錄。",
+    "en-US": "The operator, reason, time and overridden confirmations are shared with match participants and retained in the audit log.",
+    "ko-KR": "진행자, 사유, 시각과 대체한 확인 항목은 경기 참가자에게 공개되며 감사 기록에 저장됩니다."
+  },
+  "返回比赛房": {
+    "zh-TW": "返回比賽房",
+    "en-US": "Back to match room",
+    "ko-KR": "경기방으로 돌아가기"
+  },
+  "确认强制开始本图": {
+    "zh-TW": "確認強制開始本圖",
+    "en-US": "Confirm forced map start",
+    "ko-KR": "본 맵 강제 시작 확정"
+  },
+  "请先完成地图、首发与英雄禁用": {
+    "zh-TW": "請先完成地圖、首發與英雄禁用",
+    "en-US": "Complete map selection, lineups and hero bans first",
+    "ko-KR": "먼저 맵 선택, 선발과 영웅 밴을 완료해 주세요"
   }
 }
