@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ROOM_ROLE_ORDER, roomRoleCode, roomLineupTurn, sortRoomLineup, validRoomLineup } from './roomLineups.js'
+import { ROOM_ROLE_ORDER, roomRoleCode, canSubmitRoomLineup, sortRoomLineup, validRoomLineup } from './roomLineups.js'
 import styles from './WeeklyRoomWorkspace.module.css'
 
 export default function RoomLineupControl({ data, side, disabled, command }) {
@@ -13,7 +13,7 @@ export default function RoomLineupControl({ data, side, disabled, command }) {
   const pending = useRef(null)
   useEffect(() => { pending.current = null }, [data.revision, data.match.revision, data.draftRevision])
   const locked = Boolean(data.map?.lineupLocks?.[side.key] || saved.length === 5)
-  const ownTurn = roomLineupTurn(data.map) === side.key
+  const ownTurn = canSubmitRoomLineup(data.map, side.key)
   const canEdit = !disabled && !locked && ownTurn
   const edit = next => { pending.current = null; setSelected(next) }
   const toggle = member => edit(selected.some(item => item.playerId === member.id) ? selected.filter(item => item.playerId !== member.id) : selected.length < 5 ? [...selected, { playerId: member.id, role: member.role }] : selected)
@@ -21,11 +21,11 @@ export default function RoomLineupControl({ data, side, disabled, command }) {
   const ordered = sortRoomLineup(selected)
   async function confirm() {
     if (!canEdit || !valid) return
-    pending.current ||= { teamId: side.team.id, lineup: ordered.map(({ playerId, role }) => ({ playerId, role })), clientKey: crypto.randomUUID(), expectedRevision: data.revision, matchRevision: data.match.revision, draftRevision: data.draftRevision }
+    pending.current ||= { teamId: side.team.id, lineup: ordered.map(({ playerId, role }) => ({ playerId, role })), ...(data.map.lineupContext ? { lineupContext: data.map.lineupContext } : {}), clientKey: crypto.randomUUID(), expectedRevision: data.revision, matchRevision: data.match.revision, draftRevision: data.draftRevision }
     if (await command('SET_LINEUP', pending.current)) pending.current = null
   }
   return <section className={styles.lineupEditor} aria-label={`${side.team.shortName || side.team.name} 本图首发与职责`}>
-    <header><strong>{side.team.shortName || side.team.name}</strong><span>{locked ? '已确认并锁定' : ownTurn ? '轮到本队确认' : '等待选图方先确认'}</span></header>
+    <header><strong>{side.team.shortName || side.team.name}</strong><span>{locked ? '已密封提交' : ownTurn ? data.map?.lineupMode === 'SIMULTANEOUS' ? '可独立确认 · 提交前对方不可见' : '轮到本队确认' : '等待选图方先确认'}</span></header>
     {canEdit && reusable && <div><small>已带入上一图人员与职责，可直接确认或调整。</small><button type="button" onClick={() => edit(planned)}>恢复计划首发</button></div>}
     <div className={styles.lineupChoices}>{(roster?.members || []).map(member => {
       const entry = selected.find(item => item.playerId === member.id)
@@ -38,6 +38,6 @@ export default function RoomLineupControl({ data, side, disabled, command }) {
       </div>
     })}</div>
     <div className={styles.lobbyOrder} aria-label="游戏内 CCTNN 顺序">{ROOM_ROLE_ORDER.map((role, index) => <div key={index} data-valid={ordered[index]?.role === role}><b>{index + 1} · {roomRoleCode(role)}</b><span>{roster?.members.find(member => member.id === ordered[index]?.playerId)?.name || '待选择'}</span></div>)}</div>
-    <footer><small>{valid ? '确认即代表这五人已到场；游戏内也按此顺序排列，无需逐人签到。' : `已选 ${selected.length}/5；需要 2 输出、1 重装、2 支援。`}</small><button type="button" disabled={!canEdit || !valid} onClick={confirm}>{locked ? '本队首发已锁定' : ownTurn ? '确认五人到场、职责与顺序' : '等待对方确认'}</button></footer>
+    <footer><small>{valid ? '确认即代表五人到场；提交后锁定，双方都确认才公开。游戏内按 CCTNN 排列。' : `已选 ${selected.length}/5；需要 2 输出、1 重装、2 支援。`}</small><button type="button" disabled={!canEdit || !valid} onClick={confirm}>{locked ? '本队首发已锁定' : ownTurn ? '确认五人到场、职责与顺序' : '等待对方确认'}</button></footer>
   </section>
 }

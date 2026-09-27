@@ -97,6 +97,7 @@ export function buildRoomPractice(state, text) {
   data.canRecordMapResult = staff && state.scene === 'live'
   data.canCorrectMapResult = staff && state.scene === 'review'
   data.blockers = startersPresent(state) ? [] : [text['room.error.checkin']]
+  data.startControl = { canForceStart: staff && state.scene === 'ready' && data.blockers.length > 0, overridable: data.blockers, required: state.scene === 'ready' ? [] : ['请先完成地图、首发与英雄禁用'] }
   if (state.scene === 'result') {
     // A scripted 4:1 series; unlike a live match, intermediate maps are supplied
     // by the exercise. The coach labels this jump before it happens.
@@ -144,6 +145,7 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
     if (body.action === 'SET_LINEUP' && scene === 'lineup' && actor && body.teamId === ownTeam && validRoomLineup(body.lineup) && body.lineup.every(player => /^preview-team-A-p[0-6]$/.test(player.playerId))) { next.lineup = body.lineup; for (const player of body.lineup) next.checkIns[player.playerId] = true; next.scene = 'banorder'; event = 'lineup' }
     else if (body.action === 'VERIFY_PREFLIGHT' && staff && scene === 'ready' && body.roomConfirmed && body.rosterVerified && body.networkTestCompleted) { next.preflight = true; event = 'preflight' }
     else if (body.action === 'START' && staff && scene === 'ready' && startersPresent(state)) { next.scene = 'live'; event = 'start' }
+    else if (body.action === 'FORCE_START' && staff && scene === 'ready' && !startersPresent(state) && body.actualStartConfirmed === true && String(body.note || '').trim().length >= 2) { next.scene = 'live'; event = 'start' }
     else if (body.action === 'PAUSE' && staff && scene === 'live' && String(body.note || '').trim().length >= 2) { next.scene = 'paused'; event = 'pause' }
     else if (body.action === 'RECOVER' && actor && scene === 'paused' && [ownTeam, ...(staff ? ['preview-team-B'] : [])].includes(body.teamId)) { next[body.teamId === ownTeam ? 'recovered' : 'recoveredB'] = Boolean(body.ready); if (representative && next.recovered && next.recoveredB) { next.scene = 'live'; next.pausedOnce = true } event = 'recover' }
     else if (body.action === 'RESUME' && staff && scene === 'paused' && state.recovered && state.recoveredB) { next.scene = 'live'; next.pausedOnce = true; event = 'resume' }

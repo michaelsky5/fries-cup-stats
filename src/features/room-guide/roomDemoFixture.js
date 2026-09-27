@@ -13,6 +13,7 @@ export function buildWeeklyRoomPreview(stage = 'lineup', role = 'representative'
   const map = { order: 1, name: 'Lijiang Tower', type: 'Control', status: ['review', 'result'].includes(stage) ? 'COMPLETE' : ['live', 'paused'].includes(stage) ? 'LIVE' : 'PENDING', lineupA: beforeLineup ? [] : lineup(0), lineupB: beforeLineup ? [] : lineup(1), banA: complete ? 'Ana' : null, banB: complete ? 'Ashe' : null, chooserSide: 'A', firstBanSide: ['opening', 'choosing', 'lineup', 'banorder'].includes(stage) ? '' : 'A', scoreA: ['review', 'result'].includes(stage) ? 2 : null, scoreB: ['review', 'result'].includes(stage) ? 1 : null }
   if (['opening', 'confirming', 'choosing'].includes(stage)) Object.assign(map, { name: '', type: '', chooserSide: stage === 'choosing' ? 'A' : '' })
   const maps = stage === 'result' ? [map, ...['Rialto', "King's Row", 'New Queen Street', 'Suravasa'].map((name, i) => ({ ...map, order: i + 2, name, type: ['Escort', 'Hybrid', 'Push', 'Flashpoint'][i], scoreA: 1, scoreB: 1 }))] : [map]
+  for (const item of maps) Object.assign(item, { lineupMode: 'SIMULTANEOUS', lineupContext: `preview-${item.order}`, lineupsRevealed: !beforeLineup, lineupLocks: { A: !beforeLineup, B: !beforeLineup } })
   const opening = {
     revision: 1, mapOrder: map.order, phase: stage === 'confirming' ? 'CONFIRMING_FIRST_PICK' : stage === 'opening' ? 'ONE_V_ONE_SETUP' : stage === 'choosing' ? 'CHOOSING' : complete ? 'COMPLETE' : 'BANNING', complete,
     winner: 'A', nextSide: stage === 'banning' ? 'A' : null, rounds: [], corrections: [], selections: [], firstPick: { mode: 'REAL_1V1', modeLabel: '实际游戏 1V1', sourceLabel: '示例规则' },
@@ -36,6 +37,7 @@ export function buildWeeklyRoomPreview(stage = 'lineup', role = 'representative'
     preparation: { requiresReadyConfirmation: false, brief: { roomName: '示例自定义房间', roomCode: 'KYWVV' }, sides: teams.map(team => ({ key: team === teams[0] ? 'A' : 'B', team, ready: false, canConfirm: true, revision: 1, fingerprint: 'preview' })) },
     representatives: { ready: true, sides: teams.map((team, i) => ({ teamId: team.id, active: true, name: rosters[i].members[0].name, role: 'PLAYER', battleTag: rosters[i].members[0].battleTag, candidates: [], canAssign: false, isYou: role === 'representative' && i === 0 })) },
     preflight: { required: false, roomConfirmed: false, rosterVerified: false, networkTestCompleted: false, canConfirm: staff },
+    startControl: { canForceStart: false, overridable: [], required: complete ? [] : ['请先完成地图、首发与英雄禁用'] },
     checkIns: {}, staff: [{ name: '示例赛管' }], casters: [], casterOverrides: [], casterCandidates: [], messages: [], requests: [], hasEarlierMessages: false, blockers: [], publicNote: '本地只读示例：切换阶段和身份查看布局，不会保存比赛操作。', pause: { recovered: {} }, canRecordMapResult: staff, canCorrectMapResult: staff,
     result: stage === 'result' ? { phase: 'AWAITING_SUBMISSION', official: false, sides: [], points: [], handoff: {}, administration: {} } : null
   }

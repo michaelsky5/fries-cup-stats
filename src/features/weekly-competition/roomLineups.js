@@ -7,3 +7,7 @@ export function roomLineupTurn(map) {
   const first = map?.chooserSide || 'A', second = first === 'A' ? 'B' : 'A'
   return !validRoomLineup(map?.[`lineup${first}`] || []) ? first : !validRoomLineup(map?.[`lineup${second}`] || []) ? second : null
 }
+
+export const roomLineupSubmitted = (map, side) => Boolean(map?.lineupLocks?.[side] || validRoomLineup(map?.[`lineup${side}`] || []))
+export const canSubmitRoomLineup = (map, side) => !roomLineupSubmitted(map, side)
+  && (map?.lineupMode === 'SIMULTANEOUS' || roomLineupTurn(map) === side)
