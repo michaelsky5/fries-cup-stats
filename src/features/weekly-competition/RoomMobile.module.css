@@ -1,0 +1,108 @@
+/* A separate touch layout; all competition state and commands remain shared. */
+@media (max-width:900px) {
+  .mobileFrame.mobileFrame[data-room-layout=workspace] {
+    --mobile-nav-height:calc(68px + env(safe-area-inset-bottom,0px));
+    --mobile-header-height:calc(96px + env(safe-area-inset-top,0px));
+    padding:0 0 calc(var(--mobile-nav-height) + 16px);gap:0;min-height:100dvh;height:auto;max-height:none;width:100%;overflow:visible;
+  }
+  .mobileFrame.mobileFrame :is(button,select) { min-height:44px;touch-action:manipulation; }
+  .mobileFrame.mobileFrame :is(input:not([type=checkbox]),textarea,select) { font-size:16px; }
+  .mobileFrame.mobileFrame input[type=checkbox] { width:20px;height:20px;min-height:20px;flex:none; }
+  .mobileFrame.mobileFrame :global([data-room-slot=columns]) { display:block;padding:0 12px;min-width:0; }
+  .mobileFrame.mobileFrame :global([data-room-slot=center]) { display:flex;gap:10px;scroll-margin-top:var(--mobile-header-height); }
+  .mobileFrame.mobileFrame :global([data-room-slot=center]):focus { outline:none; }
+  .mobileFrame.mobileFrame:has(:global([data-room-commit])) :global([data-room-slot=center]) { padding-bottom:210px; }
+  .mobileFrame.mobileFrame :global([data-room-slot=center])>section { min-height:0; }
+  .mobileFrame.mobileFrame :global([data-room-slot=center])>section>p { font-size:14px;line-height:1.65; }
+  .mobileFrame.mobileFrame :global([data-room-slot=opening]) { border-top-width:2px; }
+  .mobileFrame.mobileFrame :global([data-room-slot=opening])>header { padding:14px 14px 6px;gap:6px;display:block; }
+  .mobileFrame.mobileFrame :global([data-room-slot=opening])>header>div:first-child>small { display:none; }
+  .mobileFrame.mobileFrame :global([data-room-slot=opening])>header h1 { font-size:23px;line-height:1.3;margin:0; }
+  .mobileFrame.mobileFrame :global([data-room-slot=opening])>header>div:last-child { margin-top:5px;display:flex;gap:8px;align-items:center;font-size:12px;max-width:none; }
+  .mobileFrame.mobileFrame :global([data-room-slot=stage-header]) { position:sticky;top:var(--mobile-header-height);z-index:22;background:var(--fc-data-room-canvas);padding:5px 0;margin:0;min-height:58px;gap:8px; }
+  .mobileFrame.mobileFrame :global([data-room-slot=stage-header])>button { display:flex;align-items:center;gap:8px;text-align:left;padding:6px 10px;min-width:0;background:var(--fc-data-room-surface);border:1px solid var(--line);border-radius:6px; }
+  .mobileFrame.mobileFrame :global([data-room-slot=stage-header])>button>span:first-child { font:700 18px var(--font-data,monospace);color:var(--fc-data-signal,#f4c320); }
+  .mobileFrame.mobileFrame :global([data-room-slot=stage-header])>button>strong { font-size:13px;min-width:0;flex:1;overflow-wrap:anywhere; }
+  .mobileFrame.mobileFrame :global([data-room-slot=stages]) { display:none;position:absolute;top:100%;left:0;right:0;height:auto;margin:0;padding:8px;grid-template-columns:1fr 1fr;gap:6px;background:var(--fc-data-room-surface);border:1px solid var(--line);box-shadow:0 10px 30px #0006; }
+  .mobileFrame.mobileFrame :global([data-menu-open=true])>ol { display:grid; }
+  .mobileFrame.mobileFrame :global([data-room-slot=stages]) li { padding:0;min-height:44px; }
+  .mobileFrame.mobileFrame :global([data-room-slot=stages]) button { padding:8px;font-size:13px;min-height:44px; }
+  .mobileFrame.mobileFrame :global([data-room-slot=phase-clock]) { min-width:94px;max-width:150px;gap:6px;padding-left:10px;justify-content:flex-end; }
+  .mobileFrame.mobileFrame :global([data-room-slot=phase-clock]) strong[role=timer] { font-size:25px; }
+  .mobileFrame.mobileFrame :global([data-room-slot=phase-clock]) details>summary { min-width:40px;min-height:44px; }
+  .mobileFrame.mobileFrame :global([data-room-slot=phase-clock]) details>div { width:300px;max-width:calc(100vw - 24px); }
+  .mobileFrame.mobileFrame :global([data-room-slot=phase-clock]) details>div p { font-size:13px; }
+  .mobileFrame.mobileFrame :global([data-room-slot=phase-clock]) details>div button { font-size:14px; }
+  .mobileFrame.mobileFrame :global([data-room-commit]) { position:fixed;z-index:23;left:12px;right:12px;bottom:calc(var(--mobile-nav-height) + 8px);width:auto;margin:0;border:1px solid var(--fc-data-room-line);border-top:2px solid var(--fc-data-room-control);border-radius:10px;box-shadow:0 -8px 30px #0002;background:var(--fc-data-room-surface);color:var(--fc-data-room-text); }
+  .mobileFrame.mobileFrame :global([data-room-commit=lineup]) { display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px; }
+  .mobileFrame.mobileFrame :global([data-room-commit=lineup]) small { font-size:12px;line-height:1.5; }
+  .mobileFrame.mobileFrame :global([data-room-commit=lineup]) button { min-height:48px;font-size:14px;white-space:normal;background:var(--fc-data-room-action-bg);color:var(--fc-data-room-action-text);border-radius:6px; }
+  .mobileFrame.mobileFrame dialog { max-width:calc(100vw - 16px);max-height:calc(100dvh - 20px);overflow:auto;border-radius:12px;overscroll-behavior:contain; }
+  .mobileFrame.mobileFrame :global(dialog[data-room-panel]) { width:100%;max-width:min(100vw,600px);max-height:calc(100dvh - 20px);margin:auto auto 0;padding:0;border-radius:16px 16px 0 0; }
+  .mobileFrame.mobileFrame :global(dialog[data-room-panel])>header { padding:12px 16px;gap:8px; }
+  .mobileFrame.mobileFrame :global(dialog[data-room-panel])>header h2 { font-size:18px; }
+  .mobileFrame.mobileFrame :global(dialog[data-room-panel])>header button { font-size:13px; }
+  .mobileFrame.mobileFrame :global(dialog[data-room-panel])>div { padding:12px 16px calc(16px + env(safe-area-inset-bottom,0px));max-height:calc(100dvh - 94px);overflow:auto;overscroll-behavior:contain; }
+  .mobileFrame.mobileFrame :global(dialog[data-room-panel]) :global([data-roster-row]) { min-height:62px;gap:10px; }
+  .mobileFrame.mobileFrame :global(dialog[data-room-panel]) :global([data-roster-row]) b { font-size:15px; }
+  .mobileFrame.mobileFrame :global(dialog[data-room-panel]) :global([data-roster-row]) small { font-size:12px; }
+  .mobileFrame.mobileFrame :global(dialog[data-room-panel]) :global([data-roster-row]) button { font-size:13px;min-width:48px; }
+  .mobileFrame.mobileFrame :global(dialog[data-room-panel]) :global([data-room-slot=representative]) { padding:12px; }
+  .mobileFrame.mobileFrame :global([id=room-communication]) { min-height:360px;height:calc(100dvh - 118px);max-height:660px; }
+  .mobileFrame.mobileFrame :global([id=room-communication])>header { display:none; }
+  .mobileFrame.mobileFrame :global([id=room-communication])>nav { gap:12px;flex-wrap:wrap; }
+  .mobileFrame.mobileFrame :global([id=room-communication]) textarea { min-height:48px;font-size:16px; }
+  .mobileFrame.mobileFrame :global([id=room-communication]) :global([data-pinned]) p { font-size:13px; }
+
+  .header { position:sticky;top:0;z-index:24;height:var(--mobile-header-height);padding:calc(6px + env(safe-area-inset-top,0px)) 12px 8px;background:var(--fc-data-room-canvas);border-bottom:1px solid var(--line);flex:none; }
+  .topline { display:flex;align-items:center;gap:8px;min-height:44px; }
+  .topline>a { display:grid;place-items:center;width:40px;min-height:44px;flex:none; }
+  .topline>div { display:grid;flex:1;min-width:0;gap:0; }
+  .topline strong { font-family:'FC Data Display',sans-serif;font-size:15px;line-height:1.2; }
+  .topline small { font-size:11px; }
+  .mobileFrame .topline button { font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:none;white-space:nowrap; }
+  .mobileFrame .topline .sync { border:0;padding:6px;width:40px;display:grid;place-items:center; }
+  .sync[data-error=true] { color:#edb45b; }
+  .score { display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:14px;padding:4px 10px 0; }
+  .score strong { min-width:0;font-size:20px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .score strong:last-child { text-align:right; }
+  .score b { font:800 18px var(--font-data,monospace);color:var(--fc-data-signal,#f4c320); }
+  .nav { position:fixed;bottom:0;left:0;right:0;z-index:25;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));height:var(--mobile-nav-height);padding:4px 8px calc(4px + env(safe-area-inset-bottom,0px));background:var(--fc-data-room-canvas);border-top:1px solid var(--line); }
+  .mobileFrame .nav button { display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;background:none;border:0;border-radius:6px;padding:6px 2px;font-size:11px;color:var(--muted);line-height:1.3;min-width:0; }
+  .mobileFrame .nav button[aria-current=page] { color:var(--fc-data-signal,#f4c320);background:color-mix(in srgb,var(--fc-data-signal,#f4c320) 7%,transparent); }
+  .nav button>span:first-child { position:relative;display:flex; }
+  .nav i { position:absolute;top:-2px;right:-5px;width:7px;height:7px;border-radius:50%;background:#eeae52; }
+  .teamTabs { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px; }
+  .teamTabs button { display:grid;gap:3px;text-align:left;padding:10px 12px;min-width:0; }
+  .teamTabs b { font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .teamTabs small { font-size:11px; }
+  .teamTabs button[aria-pressed=true] { border-color:var(--fc-data-signal,#f4c320);box-shadow:inset 0 2px var(--fc-data-signal,#f4c320); }
+  .info { display:grid;gap:16px; }
+  .info>p { font-size:12px;color:var(--muted); }
+  .info h3 { font-size:20px;overflow-wrap:anywhere; }
+  .info dl { display:grid;gap:0;margin:0; }
+  .info dl>div { display:grid;gap:4px;padding:12px 0;border-bottom:1px solid var(--line); }
+  .info dt { font-size:12px;color:var(--muted); }
+  .info dd { margin:0;font-size:16px;font-weight:600;overflow-wrap:anywhere; }
+  .account { display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding-top:12px;border-top:1px solid var(--line);font-size:13px; }
+  .more { display:grid;gap:8px; }
+  .more>p { color:var(--muted);font-size:13px;padding-bottom:10px; }
+  .mobileFrame .more>button,.more>a { display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:52px;padding:12px 14px;border:1px solid var(--line);font-size:14px; }
+}
+@media (max-width:360px) {
+  .mobileFrame.mobileFrame :global([data-room-slot=columns]) { padding-inline:8px; }
+  .mobileFrame.mobileFrame :global([data-room-commit]) { left:8px;right:8px; }
+  .topline { gap:4px; }.header { padding-inline:8px; }.score strong { font-size:18px; }
+}
+@media (max-width:900px) and (max-height:540px) {
+  .mobileFrame.mobileFrame[data-room-layout=workspace] { --mobile-header-height:52px; }
+  .header { display:flex;gap:14px;padding-block:4px;align-items:center; }.topline { flex:1; }.topline>div { display:none; }.score { flex:1;padding:0; }.score strong { font-size:16px; }
+  .mobileFrame.mobileFrame :global([data-room-commit]) { position:static;box-shadow:none;margin-top:12px; }
+  .mobileFrame.mobileFrame:has(:global([data-room-commit])) :global([data-room-slot=center]) { padding-bottom:12px; }
+}
+
+@media(max-width:900px){.mobileFrame.mobileFrame :global([id=room-communication]) form button{font-size:14px}}
+
+@media(max-width:900px){
+  .mobileFrame.mobileFrame :global([data-room-slot=opening]):has(:global([data-selection-workbench=ban]))>header>div:last-child{display:none}
+}

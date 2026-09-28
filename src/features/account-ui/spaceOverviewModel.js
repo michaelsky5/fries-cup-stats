@@ -27,8 +27,8 @@ export function buildSpaceOverview(context, { now = new Date(), sections, weekly
   const workspace = weekly?.status === 'ready' && weekly.workspace?.season?.id === context?.seasonId ? weekly.workspace : null
   const weeklyRooms = allowed('matches') ? workspace?.rooms || [] : []
   const weeklyTasks = allowed('matches') ? buildWeeklyResultTasks(workspace, { seasonId: context?.seasonId, readOnly: weekly?.readOnly !== false }) : []
-  const weeklyCandidates = weeklyRooms.filter(room => (room.myTeams?.length || room.roleLabel) && ['PENDING', 'SCHEDULED', 'IN_PROGRESS', 'READY'].includes(room.status))
-    .map(match => ({ match, isStaff: !match.myTeams?.length && Boolean(match.roleLabel), role: '', roleLabel: match.roleLabel, canEnterRoom: false, actionLabel: '查看周赛比赛', actionUrl: `/me?section=matches&weeklyMatch=${encodeURIComponent(match.id)}` }))
+  const weeklyCandidates = weeklyRooms.filter(room => (room.myTeams?.length || room.roleLabel || workspace?.operatorView) && ['PENDING', 'SCHEDULED', 'IN_PROGRESS', 'READY'].includes(room.status) && !['CANCELLED', 'CLOSED'].includes(room.week?.status) && !['CANCELLED', 'CLOSED'].includes(room.cycle?.status))
+    .map(match => ({ match, isStaff: !match.myTeams?.length, role: '', roleLabel: match.roleLabel, canEnterRoom: true, actionLabel: '进入比赛房', actionUrl: `/me/matches/${encodeURIComponent(match.id)}/room` }))
   const candidates = [
     ...weeklyCandidates,
     teamMatch && !weeklyCandidates.some(item => item.match.id === teamMatch.id) && { match: teamMatch, isStaff: false, role: '', canEnterRoom: false },

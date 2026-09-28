@@ -9,7 +9,7 @@ import styles from './WeeklyLiveRoomPage.module.css'
 import frame from './RoomMatchFrame.module.css'
 
 const stages = {
-  FORFEIT_REVIEW: ['弃权记录待复核', '后续选禁与比赛控制已暂停。请管理员核对队伍、已打记录及公开原因，确认后再进入赛果与积分处理。'],
+  FORFEIT_REVIEW: ['弃权记录待复核', '后续选禁与比赛控制已暂停。请本场有权限的赛管或管理员核对队伍、已打记录及公开原因，确认后再进入赛果与积分处理。'],
   AWAITING_SUBMISSION: ['比赛结束，上传截图并核对战报', '地图、Ban 和逐图比分会自动带入提交页，无需重复填表。赛管上传数据截图，核对识别出的选手数据、补充回放后提交审核。'],
   REPORT_IN_PROGRESS: ['赛管正在核对战报', '地图、Ban 和逐图比分已带入；继续补齐截图并核对识别结果，提交审核后双方再确认赛果。'],
   RETURNED: ['战报已退回，等待更正', '管理员退回了当前战报。赛管需查看审核意见、补充资料并重新提交。'],
@@ -52,8 +52,8 @@ export default function RoomResultPanel({ data, disabled, mutate, correction }) 
   const maps = data.result.official ? data.result.maps || [] : data.forfeit?.record?.maps || data.maps
   const byRuling = data.result.phase === 'SETTLED' && data.result.sides.some(side => side.status === 'OVERRIDDEN')
   return <div className={`${styles.resultProgress} ${frame.resultPanel}`} aria-label={uiText("整场赛果进度", uiLocale)}>
-    <ol className={styles.resultSteps}>{[data.result.forfeit ? '弃权记录' : '战报提交', '管理员审核', byRuling ? '响应已裁定' : '双方确认', '积分结算'].map((label, step) => <li key={label} aria-current={data.result.phase !== 'SETTLED' && step === index ? 'step' : undefined} data-done={data.result.phase === 'SETTLED' || step < index}><span>{data.result.phase === 'SETTLED' || step < index ? '✓' : `0${step + 1}`}</span>{label}</li>)}</ol>
-    <strong className={styles.resultTitle}>{byRuling ? uiText("本场已按裁定结算", uiLocale) : uiText(title, uiLocale)}</strong><p>{data.result.forfeit && ['AWAITING_CONFIRMATIONS', 'CONFIRMING'].includes(data.result.phase) ? data.result.phase === 'CONFIRMING' ? uiText("请核对弃权队伍、已打地图与积分依据。有异议可提交说明，由管理员复核。", uiLocale) : uiText("裁定已通过管理员复核，开放后双方可核对弃权队伍、实际记录及积分依据。", uiLocale) : uiText(description, uiLocale)}</p>
+    <ol className={styles.resultSteps}>{[data.result.forfeit ? '弃权记录' : '战报提交', data.forfeit?.record?.source === 'TEAM_CONCESSION' ? uiText('赛管确认', uiLocale) : '管理员审核', byRuling ? '响应已裁定' : '双方确认', '积分结算'].map((label, step) => <li key={label} aria-current={data.result.phase !== 'SETTLED' && step === index ? 'step' : undefined} data-done={data.result.phase === 'SETTLED' || step < index}><span>{data.result.phase === 'SETTLED' || step < index ? '✓' : `0${step + 1}`}</span>{label}</li>)}</ol>
+    <strong className={styles.resultTitle}>{byRuling ? uiText("本场已按裁定结算", uiLocale) : uiText(title, uiLocale)}</strong><p>{data.result.forfeit && ['AWAITING_CONFIRMATIONS', 'CONFIRMING'].includes(data.result.phase) ? data.result.phase === 'CONFIRMING' ? uiText("请核对弃权队伍、已打地图与积分依据。有异议可提交说明，由管理员复核。", uiLocale) : uiText("裁定已复核，开放后双方可核对弃权队伍、实际记录及积分依据。", uiLocale) : uiText(description, uiLocale)}</p>
     <ForfeitSummary data={data} />
     <RoomForfeitControl data={data} disabled={disabled} mutate={mutate} />
     {data.match.format === 'RR5' && data.series.complete && <div className={frame.seriesComplete}><strong>{uiText("5 / 5 图已完成", uiLocale)}</strong><span>{data.series.drawCount ? uiText("{0} 图平局 · ", uiLocale, [data.series.drawCount]) : ''}{data.series.scoreA === data.series.scoreB ? uiText("整场平局，正常进入赛果流程", uiLocale) : uiText("本场不再增加地图", uiLocale)}</span></div>}

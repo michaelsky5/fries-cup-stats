@@ -183,3 +183,43 @@
   .viewport .lineupChoices>div { min-height:32px;padding:1px 6px; }
   .viewport .lineupChoices select { min-height:26px;padding:3px 5px; }
 }
+
+/* Reserve room for timer notices without hiding lineup confirmation on large screens. */
+@media(min-width:1500px) and (min-height:850px) {
+  .viewport .lineupChoices { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+
+@media(min-width:1180px) and (max-height:850px) { .viewport .lineupEditor { gap:3px; } }
+
+@media(min-width:1180px) and (max-height:850px) { .viewport .lineupChoices { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+
+/* Keep submitted-map feedback and the lineup action visible together on short desktops. */
+@media(min-width:1180px) and (max-height:850px){
+  .viewport.viewport .center[data-stage-view=lineup]>section{padding:8px 12px;gap:5px}
+  .viewport .center[data-stage-view=lineup]>section>header{padding-bottom:5px;gap:8px}
+  .viewport .center[data-stage-view=lineup]>section>header>div{display:flex;align-items:baseline;gap:8px}
+  .viewport .center[data-stage-view=lineup]>section>header h2{font-size:20px;margin:0}
+  .viewport .lineupEditor>header{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%)}
+  .viewport .lobbyOrder>div{padding:3px 5px;gap:0}
+  .viewport .lineupEditor{gap:4px}
+  .viewport .lineupStatus>div{padding:3px 8px}
+}
+
+@media(max-width:900px){
+  .viewport[data-room-layout=workspace] {
+    .lineupChoices{grid-template-columns:1fr;gap:8px}.lineupChoices>div{padding:8px 10px;min-height:64px;border-radius:6px;gap:10px}.lineupChoices label{min-height:44px;flex:1;gap:10px}.lineupChoices b{font-size:15px}.lineupChoices small{font-size:11px}.lineupChoices select{font-size:16px;min-height:44px;max-width:130px;width:130px;padding:6px}
+    .lineupEditor{padding:0;border:0;gap:12px;background:none}.lineupEditor>header{gap:8px;flex-wrap:wrap}.lineupEditor>header strong{font-size:16px}.lineupEditor>header span{font-size:12px}
+    .lobbyOrder{gap:4px}.lobbyOrder>div{padding:8px 5px}.lobbyOrder b{font-size:12px}.lobbyOrder span{font-size:12px}
+    .lineupStatus{gap:8px}.lineupStatus>div{padding:10px}.lineupStatus b{font-size:14px}.lineupStatus span{font-size:12px}
+    .center[data-stage-view=lineup]>section{padding:12px;gap:8px}
+    .center[data-stage-view=lineup]>section>header{padding-bottom:8px;gap:4px;display:block}
+    .center[data-stage-view=lineup]>section>header h2{font-size:22px;margin:0 0 4px}
+    .center[data-stage-view=lineup]>section>header small,.lineupInstruction{display:none}
+    .center[data-stage-view=lineup]>section>header>span{font-size:12px}
+    .lineupStatus>div{display:grid;gap:4px;padding:8px 10px}
+    .lineupChoices>div[data-selected=true]{background:color-mix(in srgb,var(--fc-data-room-action-bg) 12%,var(--fc-data-room-inset))}
+  }
+}
+
+.lineupEditor>footer:has(:global([data-countdown-hint])){flex-wrap:wrap}
+.lineupEditor>footer>:global([data-countdown-hint]){flex-basis:100%;font-size:11px;line-height:1.4}

@@ -1,3 +1,4 @@
+import { demoRoomClock } from './roomDemoClock.js'
 import { OW_HEROES, OW_MAPS } from '../../lib/heroes.js'
 export const PREVIEW_STAGES = { opening: '1V1 先手权', confirming: '双方确认先手权', choosing: '选图', lineup: '首发', banorder: 'Ban 顺序', banning: 'Ban', ready: '禁用完成 · 待开赛', live: '比赛中', paused: '暂停', review: '图结果', result: '整场赛果' }
 export const PREVIEW_ROLES = { representative: '操作代表', staff: '赛管', player: '队员', caster: '解说' }
@@ -30,6 +31,7 @@ export function buildWeeklyRoomPreview(stage = 'lineup', role = 'representative'
     Object.assign(opening.access, { canConfirmFirstPick: staff || role === 'representative', staffFirstPick: staff, firstPickConfirmationTeams: role === 'representative' ? [teams[0].id] : [], canUploadFirstPickEvidence: false })
   }
   return {
+    phaseClock: demoRoomClock(stage),
     actor: { id: `preview-${role}`, name: '示例账号', label: PREVIEW_ROLES[role] }, match: { id: 'LOCAL-WEEKLY-PREVIEW', seasonId: 'LOCAL-PREVIEW', weekId: 'preview-week', revision: 1, seasonName: '本地示例 · 非真实赛事', weekLabel: '第 1 周', format: 'RR5', teamA: teams[0], teamB: teams[1] },
     phase: stage === 'paused' ? 'PAUSED' : stage === 'live' ? 'LIVE' : ['review', 'result'].includes(stage) ? 'REVIEW' : 'PREPARING', revision: 1, draftRevision: 1,
     access: { canWrite: false, staff, production, teamIds: ['representative', 'player'].includes(role) ? [teams[0].id] : [], representativeTeams: role === 'representative' ? [teams[0].id] : [], operatorMode: 'REFEREE', canStart: staff && stage === 'ready', canPause: staff, canResume: staff },

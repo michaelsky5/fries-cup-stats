@@ -10,8 +10,9 @@ import { buildRoomPractice, createPracticeSession, createPracticeTransport, prac
 import copy from './roomGuideCopy.json'
 import styles from './RoomPracticePage.module.css'
 
-function Practice({ role, initialScene, text, locale, onRole }) {
+function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
   const [session] = useState(() => createPracticeSession(role, initialScene))
+  useEffect(() => { const timer = setInterval(() => session.tick(), 500); return () => clearInterval(timer) }, [session])
   const state = useSyncExternalStore(session.subscribe, session.getSnapshot)
   const [notice, setNotice] = useState(''), [run, setRun] = useState(0), [hint, setHint] = useState(false)
   const textRef = useRef(text), room = useRef(null), coach = useRef(null)
@@ -24,7 +25,7 @@ function Practice({ role, initialScene, text, locale, onRole }) {
     data, error: '', busy: false, notice,
     refresh: async () => setNotice(text['room.synced']), clearNotice: () => setNotice(''),
     mutate: async operation => {
-      try { const result = await operation(); setHint(false); setNotice(textRef.current['room.saved']); return result }
+      try { const result = await operation(); setHint(false); setNotice(frameOnly ? '' : textRef.current['room.saved']); return result }
       catch (error) { setNotice(error.practice ? error.message : textRef.current['room.error.unsupported']); return false }
     },
   }
@@ -41,7 +42,7 @@ function Practice({ role, initialScene, text, locale, onRole }) {
     control?.focus({ preventScroll: true })
   }
   const jumpResult = () => { session.apply('result', {}, 'scene'); setRun(value => value + 1); setNotice(''); setHint(false); coach.current?.scrollIntoView({ block: 'start' }) }
-  return <div className={styles.page} lang={locale}>
+  return <div className={styles.page} lang={locale} data-frame-only={frameOnly}>
     <header className={styles.topbar} data-i18n-ignore><Link to={withLocale(`/guides/weekly-room?role=${role}`, locale)}>← {text['room.exit']}</Link><strong>{text['room.title']}</strong><div><label>{text['sim.role']} <select value={role} onChange={event => onRole(event.target.value)}>{PRACTICE_ROLES.map(value => <option key={value} value={value}>{text[`role.${value}`]}</option>)}</select></label><button type="button" onClick={reset}>{text['sim.reset']}</button></div></header>
     <p className={styles.boundary} data-i18n-ignore>{text['room.boundary']}</p>
     <section ref={coach} className={styles.coach} data-i18n-ignore aria-labelledby="practice-task-title">
@@ -61,5 +62,5 @@ export default function RoomPracticePage() {
   const text = copy[locale] || copy['zh-CN'], role = PRACTICE_ROLES.includes(params.get('role')) ? params.get('role') : 'representative'
   const scene = params.get('scene') || ''
   useEffect(() => { document.title = `${text['room.title']} · Fries Cup` }, [text])
-  return <Practice key={role + scene} role={role} initialScene={scene} locale={locale} text={text} onRole={value => setParams({ role: value, ...(params.get('lang') ? { lang: params.get('lang') } : {}) })} />
+  return <Practice frameOnly={import.meta.env.DEV && params.get('frame') === 'room'} key={role + scene} role={role} initialScene={scene} locale={locale} text={text} onRole={value => setParams({ role: value, ...(params.get('lang') ? { lang: params.get('lang') } : {}) })} />
 }

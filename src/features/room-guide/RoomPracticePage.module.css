@@ -16,3 +16,7 @@
 .page :is(button,a,summary,select):focus-visible { outline:3px solid #aa7000;outline-offset:3px; }
 @media(max-width:760px) { .topbar { padding:12px;gap:10px; }.topbar>strong { order:-1;flex-basis:100%; }.topbar>div { width:100%;justify-content:space-between; }.coach { grid-template-columns:1fr;padding:16px 14px;gap:8px; }.coachActions { justify-content:flex-start;max-width:none; }.coach p { font-size:13px; }.room [data-room-layout=workspace] { min-height:0; }.after { flex-direction:column;align-items:flex-start;padding:16px;gap:8px; } }
 @media(max-width:760px) { .room [data-roster-row] button { min-height:44px;min-width:48px; } }
+
+/* Development-only frame: exercise the same controls at the real room viewport height. */
+.page[data-frame-only=true]>:is(.topbar,.boundary,.coach,.after){display:none}
+@media(min-width:1180px) and (min-height:640px){.page[data-frame-only=true] .room [data-room-layout=workspace]{height:100dvh;max-height:100dvh;min-height:0}}
