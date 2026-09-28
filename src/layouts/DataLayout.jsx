@@ -29,6 +29,7 @@ import { FavoritesProvider, normalizeSeasonId, useFavorites } from '../features/
 import { useAuth } from '../features/auth/AuthProvider.jsx'
 import { buildAccountIdentity, findVerifiedAccountIdentity, getAccountCapabilities, resolveAccountIdentityTarget } from '../features/auth/accountIdentity.js'
 import PublicHeader from '../components/layout/PublicHeader.jsx'
+import PartnerTrialNotice from '../components/layout/PartnerTrialNotice.jsx'
 import { getDossierView } from '../features/team-dossier/teamDossierScenes.js'
 import { PRIMARY_NAV, getNavLabel, getPersonalNavItem, getNavigationSearch } from '../components/layout/publicNavigation.js'
 import EventContextBar from '../components/layout/EventContextBar.jsx'
@@ -456,6 +457,7 @@ export default function DataLayout() {
 
       <div className={styles.pageFrame} data-roster-index={isRosterIndexRoute || undefined} data-roster-directory={isRosterDirectoryRoute || undefined} data-schedule-directory={isScheduleDirectoryRoute || undefined} data-match-detail={isPublicMatchDetailRoute || undefined} data-player-rankings={isPlayerRankingsRoute || undefined} data-hero-data={isHeroDataRoute || undefined} data-map-data={isMapDataRoute || undefined} data-data-section={isEditorialDataRoute || undefined} data-team-archive={isTeamArchiveRoute || undefined}>
         <main className={styles.main} aria-busy={isLoading && needsPublicSnapshot ? 'true' : 'false'}>
+          <PartnerTrialNotice season={season} locale={layoutLocale} />
           {isLoading && needsPublicSnapshot ? (
             <div className={`${styles.systemBox} ${styles.syncBox}`} role="status" aria-live="polite">
               <span className={styles.syncKicker}>LIVE DATA SYNC</span>

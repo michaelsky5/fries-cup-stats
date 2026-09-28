@@ -1,3 +1,4 @@
+import { PARTNER_TRIAL } from '../../config/partnerTrial.js'
 const DEFAULT_PLATFORM_API_BASE_URL = '/api/platform'
 export const PLATFORM_REQUEST_TIMEOUT_MS = 15000
 
@@ -10,6 +11,7 @@ function normalizePath(path) {
 }
 
 function getPlatformApiBaseUrl() {
+  if (PARTNER_TRIAL) return DEFAULT_PLATFORM_API_BASE_URL
   return normalizeBaseUrl(import.meta.env?.VITE_PLATFORM_API_BASE_URL)
 }
 

@@ -3,6 +3,7 @@ import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
+import PartnerTrialOverview from '../../components/layout/PartnerTrialOverview.jsx'
 import {
   formatMatchScore,
   formatTeamFullName,
@@ -1408,6 +1409,7 @@ function ArchiveOverview({ overview, archive, archiveMatches, summary, dataPulse
 
 export default function HomePage() {
   const { db, season, isKprHybridDesign } = useOutletContext()
+  if (season?.partnerTrial) return <PartnerTrialOverview />
   if (isKprHybridDesign && isWeeklyOverview(db, season)) {
     return <Suspense fallback={<div role="status" style={{ padding: 32 }}>FRIES CUP / WEEKLY…</div>}><SignalWeeklyOverview key={season.id} /></Suspense>
   }

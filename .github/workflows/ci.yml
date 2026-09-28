@@ -29,8 +29,19 @@ jobs:
       - name: Check weekly public pages and media
         run: npm run test:weekly-public-ui
 
+      - name: Check partner trial boundaries
+        run: node scripts/assertPartnerTrial.mjs
+
       - name: Lint source files
         run: npm run lint
 
       - name: Build production frontend
         run: npm run build
+
+      - name: Build isolated partner trial frontend
+        run: npm run build -- --outDir dist-trial
+        env:
+          VITE_PARTNER_TRIAL: "1"
+          VITE_PARTNER_TRIAL_SEASONS: TRIALPARTNER26
+          VITE_ADMIN_PUBLIC_PROXY_TARGET: https://test-admin.fries-cup.com
+          VITE_PLATFORM_API_PROXY_TARGET: https://test-admin.fries-cup.com

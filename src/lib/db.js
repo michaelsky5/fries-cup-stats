@@ -1,4 +1,5 @@
 import { getSeasonById, getStoredSeasonId } from '../config/seasons.js'
+import { assertTrialSnapshot } from '../config/partnerTrial.js'
 import { resolvePublishedAdvanceTeams } from './advanceSelectors.js'
 import { readPublicSnapshot, savePublicSnapshot } from './publicSnapshotCache.js'
 import { requestPublicJson } from './publicJsonRequest.js'
@@ -54,6 +55,7 @@ function getEnvUrl(seasonId, kind) {
 }
 
 function getDbUrls(season) {
+  if (season.partnerTrial) return [season.proxyDataUrl]
   const remoteUrls = [
     getEnvUrl(season.id, 'data'),
     season.proxyDataUrl,
@@ -67,6 +69,7 @@ function getDbUrls(season) {
 }
 
 function getReportUrls(season) {
+  if (season.partnerTrial) return [season.proxyReportUrl]
   return uniqueUrls([
     getEnvUrl(season.id, 'report'),
     season.proxyReportUrl,
@@ -207,6 +210,7 @@ async function hydrateReviewStaffPayload(data, season) {
 }
 
 function validatePublicDb(data, season) {
+  assertTrialSnapshot(data, season)
   if (!Array.isArray(data?.teams) || !Array.isArray(data?.players) || !Array.isArray(data?.matches)) {
     throw new Error('DB_PAYLOAD_INVALID')
   }
@@ -329,7 +333,7 @@ export async function getDb(seasonId, options = {}) {
 
   if (!preferLocalData) {
     const stored = await readPublicSnapshot(season.id)
-    if (stored?.data && stored.sourceUrl && stored.sourceUrl !== season.localDataUrl) {
+    if (stored?.data && stored.sourceUrl && stored.sourceUrl !== season.localDataUrl && (!season.partnerTrial || getDbUrls(season).includes(stored.sourceUrl))) {
       try {
         const cached = markDbSource(validatePublicDb(stored.data, season), stored.sourceUrl, season, true, stored.etag)
         dbCache.set(cacheKey, cached)

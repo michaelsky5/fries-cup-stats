@@ -116,7 +116,7 @@ function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary,
           onSeasonChange?.(item.id)
         }}
       >
-        <strong>{item.publicCode}</strong>
+        <strong>{item.displayCode || item.publicCode}</strong>
         <span>{name}</span>
         <em>{getSwitcherMeta(item, seasonId, seasonStatus, locale, activeSummary)}</em>
       </button>
@@ -128,13 +128,13 @@ function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary,
       <summary>
         {compact ? (
           <>
-            <strong>{currentSeason?.publicCode || seasonId}</strong>
+            <strong>{currentSeason?.displayCode || currentSeason?.publicCode || seasonId}</strong>
             <span>{getSeasonEventKind(currentSeason)}</span>
           </>
         ) : (
           <>
             <span>{contextText(locale, uiText("切换赛事", locale), 'Switch Event', '대회 전환')}</span>
-            <strong>{currentSeason?.publicCode || seasonId}</strong>
+            <strong>{currentSeason?.displayCode || currentSeason?.publicCode || seasonId}</strong>
           </>
         )}
       </summary>
@@ -182,7 +182,7 @@ export default function EventContextBar({
   if (presentation === 'directory') return (
     <section className={styles.directoryContext} data-directory-context data-source={dataStatus?.key} data-i18n-ignore aria-label={contextText(locale, uiText("赛事与数据状态", locale), 'Event and data status', '대회 및 데이터 상태')}>
       <div className={styles.directoryIdentity}>
-        <strong>{season?.publicCode || seasonId}</strong>
+        <strong>{season?.displayCode || season?.publicCode || seasonId}</strong>
         <small className={styles.eventKindLabel}>{getEventKindLabel(season, locale)}</small>
         <span>{statusLabel}</span>
       </div>
@@ -212,7 +212,7 @@ export default function EventContextBar({
           />
         ) : null}
         <div className={styles.eventIdentity}>
-          <span className={styles.eventCode}>{season?.publicCode || seasonId}</span>
+          <span className={styles.eventCode}>{season?.displayCode || season?.publicCode || seasonId}</span>
           <span className={styles.partnerLabel}>{getEventKindLabel(season, locale)}</span>
         </div>
       </div> : null}
