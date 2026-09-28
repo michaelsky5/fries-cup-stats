@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useNavigationType, useOutletContext, useSearchParams } from 'react-router-dom'
 import { getLocationPath, getRestoreScrollY, getSavedReturnScroll, restoreWindowScroll } from '../../lib/navigationState.js'
 import AdvanceHeader from '../../components/advance/AdvanceHeader.jsx'
+import PartnerTrialOverview from '../../components/layout/PartnerTrialOverview.jsx'
 import AdvanceSignalFinal from '../../components/advance/AdvanceSignalFinal.jsx'
 import AdvanceSignalBreakthrough from '../../components/advance/AdvanceSignalBreakthrough.jsx'
 import AdvanceSignalGroup from '../../components/advance/AdvanceSignalGroup.jsx'
@@ -58,6 +59,7 @@ function useAdvancePhase(db, season) {
 
 export default function AdvancePage() {
   const { db, season, isKprHybridDesign } = useOutletContext()
+  if (season?.partnerTrial) return <PartnerTrialOverview />
   if (isKprHybridDesign && isWeeklyOverview(db, season)) return <Suspense fallback={null}><SignalWeeklyAdvance /></Suspense>
   return <StandardAdvancePage />
 }

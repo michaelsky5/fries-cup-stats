@@ -149,7 +149,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
   const location = useLocation()
   const fallbackMenuRef = useRef(null)
   const menuRef = mobileMenuRef || fallbackMenuRef
-  const headerNavItems = getPrimaryNavigation(isAuthenticated)
+  const headerNavItems = getPrimaryNavigation(isAuthenticated).filter(item => !season?.partnerTrial || !['advance', 'space'].includes(item.group))
   const navPath = path => withSeason(getWeeklyNavigationPath(path, location.search, season?.rules?.weeklyCompetition?.enabled || season?.competitionFormat === 'WEEKLY'))
   const currentLabel = activeGroup === 'space' ? getNavLabel(getPersonalNavItem(isAuthenticated), layoutLocale) : activeNavLabel
   const phoneNavigation = isKprHybridDesign && !/^\/(?:account|participate|activate-weekly|dev)(?:\/|$)/.test(location.pathname) && !/\/room\/?$/.test(location.pathname) && !(isAuthenticated && location.pathname === '/me')

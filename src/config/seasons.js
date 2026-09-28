@@ -1,7 +1,8 @@
 import { translateUiText as formatUiText } from '../lib/uiText.js'
 import { isReviewReady } from '../lib/reviewReadiness.js'
+import { PARTNER_TRIAL, buildTrialCatalog, trialSeasonFromManifest } from './partnerTrial.js'
 
-export const DEFAULT_SEASON_ID = 'FCR26'
+export let DEFAULT_SEASON_ID = PARTNER_TRIAL?.ids[0] || 'FCR26'
 export const SEASON_STORAGE_KEY = 'fries_cup_stats_active_season'
 export const SEASON_URL_PARAM = 'season'
 
@@ -375,6 +376,8 @@ if (import.meta.env?.DEV && import.meta.env?.VITE_WEEKLY_PREVIEW === '1') {
   })
 }
 
+if (PARTNER_TRIAL) SEASONS.splice(0, SEASONS.length, ...buildTrialCatalog(PARTNER_TRIAL))
+
 export function getSeasonById(seasonId) {
   const id = String(seasonId || '').trim().toUpperCase()
   return SEASONS.find(season => season.id === id || String(season.publicCode).toUpperCase() === id) ||
@@ -401,6 +404,22 @@ const SEASON_URL_ALIASES = SEASONS.reduce((aliases, season) => {
 
   return aliases
 }, {})
+
+// Finish verification before the router reads its initial season. Never fall
+// back to another person's sample if a personal trial URL cannot be resolved.
+export async function initializeTrialSeason() {
+  if (!PARTNER_TRIAL || typeof window === 'undefined') return
+  const requested = new URLSearchParams(window.location.search).get(SEASON_URL_PARAM)?.trim().toUpperCase()
+  if (!requested) throw new Error('请从自己的试用总览点击“查看公开结果”。')
+  if (!/^TRIAL[A-Z0-9_-]{1,20}$/.test(requested)) throw new Error('试用赛事链接无效，请返回自己的试用总览。')
+  const response = await fetch(`/api/platform/partner-trial/catalog/${encodeURIComponent(requested)}`, { credentials: 'omit', cache: 'no-store', signal: AbortSignal.timeout(15000) })
+  if (!response.ok) throw new Error('本轮试用已结束或链接无效，请从试用总览打开当前轮次的结果。')
+  const season = trialSeasonFromManifest(PARTNER_TRIAL, requested, await response.json())
+  SEASONS.splice(0, SEASONS.length, season)
+  Object.keys(SEASON_URL_ALIASES).forEach(key => delete SEASON_URL_ALIASES[key])
+  SEASON_URL_ALIASES[season.id] = season.id
+  DEFAULT_SEASON_ID = season.id
+}
 
 export function resolveSeasonFromUrl(value) {
   const alias = normalizeSeasonAlias(value)
