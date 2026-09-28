@@ -27,7 +27,7 @@ export default function MatchReminderSummary({ userId, locale, withSeason }) {
 export function MatchCountdown({ match, now, locale }) {
   const copy = reminderCopy(locale)
   const start = Date.parse(match?.scheduledAt)
-  if (!Number.isFinite(start) || ['COMPLETE', 'LOCKED', 'CANCELLED'].includes(match.status)) return null
+  if (!Number.isFinite(start) || ['IN_PROGRESS', 'COMPLETE', 'LOCKED', 'CANCELLED'].includes(match.status)) return null
   const minutes = Math.max(0, Math.ceil((start - Number(now)) / 60000))
   const label = minutes >= 60 ? Math.floor(minutes / 60) + ' ' + copy.hours + ' ' + minutes % 60 + ' ' + copy.minutes : minutes + ' ' + copy.minutes
   return <div className={styles.countdown} data-soon={minutes <= 60} data-i18n-ignore>
