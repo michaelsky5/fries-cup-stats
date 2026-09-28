@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useBlocker, useLocation } from 'react-router-dom'
 import AccountFrame from '../../features/account-ui/AccountFrame.jsx'
 import AccountOverview from './AccountOverview.jsx'
+import { reminderCopy } from '../../features/match-reminders/reminderCopy.js'
+import MatchReminderSettings from '../../features/match-reminders/MatchReminderSettings.jsx'
 import AccountAvatar from '../../features/account-ui/AccountAvatar.jsx'
 import AvatarEditor from '../../features/account-ui/AvatarEditor.jsx'
 import { translateAccountSettingsText } from '../../features/account-ui/accountSettingsCopy.js'
@@ -27,7 +29,7 @@ import styles from './AccountSettingsPage.module.css'
 const SECTIONS = [
   ['overview', '00', '账号概览', 'OVERVIEW'],
   ['profile', '01', '个人资料', 'PROFILE'], ['password', '02', '修改密码', 'PASSWORD'],
-  ['email', '03', '邮箱验证', 'EMAIL'], ['sessions', '04', '登录设备', 'DEVICES']
+  ['email', '03', '邮箱验证', 'EMAIL'], ['sessions', '04', '登录设备', 'DEVICES'], ['reminders', '05', '比赛提醒', 'REMINDERS']
 ]
 
 function Notice({ notice }) {
@@ -384,13 +386,14 @@ function SettingsWorkspace({ user, onRevoked }) {
   }, [dirty])
   return <div className={styles.workspace}>
     {blocker.state === 'blocked' && <ConfirmationDialog title={uiText("修改尚未保存", uiLocale)} description={uiText("离开后，本页尚未提交的内容会丢失。", uiLocale)} cancelLabel="继续编辑" confirmLabel="放弃修改并离开" onCancel={blocker.reset} onConfirm={blocker.proceed} />}
-    <aside className={styles.sidebar}><span className={styles.kicker}>{uiText("账号设置", uiLocale)}</span><nav aria-label={uiText("账号设置分区", uiLocale)}>{SECTIONS.map(([id, , title, english]) => <Link key={id} to={{ pathname: location.pathname, search: location.search, hash: `#${id}` }} aria-current={section === id ? 'page' : undefined}><strong>{title}<small>{english}</small></strong><i aria-hidden="true">→</i></Link>)}</nav><p>{uiText("报名、队伍和比赛事务", uiLocale)}<br />{uiText("可以在我的空间处理。", uiLocale)}</p><Link to={spaceHref}>{uiText("返回我的空间 ↗", uiLocale)}</Link></aside>
+    <aside className={styles.sidebar}><span className={styles.kicker}>{uiText("账号设置", uiLocale)}</span><nav aria-label={uiText("账号设置分区", uiLocale)}>{SECTIONS.map(([id, , title, english]) => <Link key={id} to={{ pathname: location.pathname, search: location.search, hash: `#${id}` }} aria-current={section === id ? 'page' : undefined}><strong data-i18n-ignore={id === 'reminders' || undefined}>{id === 'reminders' ? reminderCopy(uiLocale).title : title}<small>{english}</small></strong><i aria-hidden="true">→</i></Link>)}</nav><p>{uiText("报名、队伍和比赛事务", uiLocale)}<br />{uiText("可以在我的空间处理。", uiLocale)}</p><Link to={spaceHref}>{uiText("返回我的空间 ↗", uiLocale)}</Link></aside>
     <div className={styles.cards} ref={cards}>
       {section === 'overview' && <AccountOverview user={user} spaceHref={spaceHref} />}
       {section === 'profile' && <ProfileSettings user={user} onDirtyChange={onDirtyChange} />}
       {section === 'password' && <PasswordSettings user={user} onRevoked={onRevoked} onDirtyChange={onDirtyChange} />}
       {section === 'email' && <EmailSettings user={user} />}
       {section === 'sessions' && <SessionSettings onRevoked={onRevoked} />}
+      {section === 'reminders' && <MatchReminderSettings user={user} onDirtyChange={onDirtyChange} />}
     </div>
   </div>
 }

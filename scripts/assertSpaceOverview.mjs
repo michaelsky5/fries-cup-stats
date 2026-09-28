@@ -48,6 +48,15 @@ for (const field of ['readOnly', 'player', 'stale', 'archived', 'hidden']) {
 }
 weekly.workspace.rooms.push({ ...match, id: 'weekly-next', myTeams: weeklyRoom.myTeams })
 assert.equal(buildSpaceOverview(weeklyContext, weeklyOptions).next.actionUrl, '/me?section=matches&weeklyMatch=weekly-next')
+
+const staffWeekly = structuredClone(weekly)
+staffWeekly.workspace.rooms = [{ ...staffMatch, id: 'staff-weekly', myTeams: [], roleLabel: '解说' }]
+const staffWeeklyView = buildSpaceOverview(weeklyContext, { ...weeklyOptions, weekly: staffWeekly })
+assert.equal(staffWeeklyView.next.match.id, 'staff-weekly', 'weekly staff-only assignments appear in next match')
+assert.equal(staffWeeklyView.next.isStaff, true)
+assert.equal(staffWeeklyView.next.roleLabel, '解说')
+assert.equal(staffWeeklyView.next.canEnterRoom, false, 'a reminder does not grant room access')
+assert.equal(buildSpaceOverview(weeklyContext, { ...weeklyOptions, weekly: staffWeekly, sections: [{ id: 'overview' }] }).next, null, 'hidden matches never leak staff schedules')
 const viewerContext = { primaryIdentityType: 'VIEWER', identities: [], teamContexts: [] }
 assert.equal(getSpaceOverviewPresentation(viewerContext).followingFirst, true, 'a viewer without tasks or assignments sees following first')
 assert.equal(getSpaceOverviewPresentation(viewerContext, { tasksPending: true }).collapseTasks, false, 'unknown task counts cannot be presented as all clear')
