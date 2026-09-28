@@ -56,6 +56,16 @@ const assignedWeekly = { ...weekly, workspace: { ...weekly.workspace, operatorVi
 assert.equal(buildSpaceOverview(weeklyContext, { ...weeklyOptions, weekly: assignedWeekly }).next.actionUrl, '/me/matches/assigned-room/room', 'server-assigned staff rooms use the same direct entry')
 assignedWeekly.workspace.rooms[0].week = { status: 'CANCELLED' }
 assert.equal(buildSpaceOverview(weeklyContext, { ...weeklyOptions, weekly: assignedWeekly }).next, null, 'cancelled weeks never become upcoming rooms')
+
+const staffWeekly = structuredClone(weekly)
+staffWeekly.workspace.rooms = [{ ...staffMatch, id: 'staff-weekly', myTeams: [], roleLabel: '解说' }]
+const staffWeeklyView = buildSpaceOverview(weeklyContext, { ...weeklyOptions, weekly: staffWeekly })
+assert.equal(staffWeeklyView.next.match.id, 'staff-weekly', 'weekly staff-only assignments appear in next match')
+assert.equal(staffWeeklyView.next.isStaff, true)
+assert.equal(staffWeeklyView.next.roleLabel, '解说')
+assert.equal(staffWeeklyView.next.canEnterRoom, true, 'server-assigned staff rooms expose a direct route; the server retains access and opening checks')
+assert.equal(staffWeeklyView.next.actionUrl, '/me/matches/staff-weekly/room')
+assert.equal(buildSpaceOverview(weeklyContext, { ...weeklyOptions, weekly: staffWeekly, sections: [{ id: 'overview' }] }).next, null, 'hidden matches never leak staff schedules')
 const viewerContext = { primaryIdentityType: 'VIEWER', identities: [], teamContexts: [] }
 assert.equal(getSpaceOverviewPresentation(viewerContext).followingFirst, true, 'a viewer without tasks or assignments sees following first')
 assert.equal(getSpaceOverviewPresentation(viewerContext, { tasksPending: true }).collapseTasks, false, 'unknown task counts cannot be presented as all clear')

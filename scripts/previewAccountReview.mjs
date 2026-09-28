@@ -56,7 +56,7 @@ const vite = await createServer({
           const target = new URL(page.href, url.origin)
           target.searchParams.set('reviewSession', session)
           target.searchParams.set('reviewPage', page.id)
-          if (url.searchParams.get('lang') === 'en') target.searchParams.set('lang', 'en')
+          if (['zh', 'en', 'zh-TW', 'ko'].includes(url.searchParams.get('lang'))) target.searchParams.set('lang', url.searchParams.get('lang'))
           res.writeHead(303, { Location: target.pathname + target.search + target.hash, 'Cache-Control': 'no-store' }); res.end(); return
         }
         // All account reads and writes stay in the fixture handler, never in a proxy.

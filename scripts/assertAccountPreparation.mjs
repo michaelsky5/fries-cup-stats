@@ -13,7 +13,7 @@ delete readyTaskWorkspace.rooms[0].myTeams[0].preparation
 assert.equal(buildWeeklyResultTasks(readyTaskWorkspace, { seasonId: 'LOCAL', readOnly: false }).length, 0, 'unknown coordination must not invent a task')
 import { buildSpaceOverview } from '../src/features/account-ui/spaceOverviewModel.js'
 import { buildParticipationJourneys, getParticipationView, getWeeklyRosterCheck, getWeeklyRosterContext } from '../src/features/account-ui/participationJourneyModel.js'
-import { requiresParticipationAccess, requiresPublicSnapshot } from '../src/features/my-space/personalSpacePolicy.js'
+import { isCompetitionMatchesEntry, requiresParticipationAccess, requiresPublicSnapshot } from '../src/features/my-space/personalSpacePolicy.js'
 
 const now = Date.parse('2026-09-06T12:00:00Z')
 const options = { seasonId: 'season-a', userId: 'user-a', readOnly: false, now }
@@ -247,6 +247,16 @@ for (const section of ['following', 'stats']) {
 }
 assert.equal(requiresPublicSnapshot({ pathname: '/me', section: 'overview', isAuthenticated: false }), true, 'guest following needs public data')
 assert.equal(requiresPublicSnapshot({ pathname: '/matches', isAuthenticated: true }), true, 'public match pages retain their own data boundary')
+const matchEmailEntry = { pathname: '/me', search: '?competition=REMINDERTEST&section=matches', section: 'matches', isAuthenticated: false }
+assert.equal(isCompetitionMatchesEntry(matchEmailEntry), true)
+assert.equal(requiresPublicSnapshot(matchEmailEntry), false, 'email sign-in must remain reachable when public archive data is unavailable')
+assert.equal(isCompetitionMatchesEntry({ ...matchEmailEntry, pathname: '/me/' }), true)
+for (const search of ['?section=matches', '?competition=&section=matches', '?competition=bad%2Fid&section=matches', '?competition=REMINDERTEST&section=following']) {
+  assert.equal(isCompetitionMatchesEntry({ ...matchEmailEntry, search }), false)
+  assert.equal(requiresPublicSnapshot({ ...matchEmailEntry, search }), true)
+}
+assert.equal(isCompetitionMatchesEntry({ ...matchEmailEntry, pathname: '/following' }), false)
+assert.equal(requiresPublicSnapshot({ ...matchEmailEntry, pathname: '/matches' }), true, 'matching query parameters must not bypass public page loading')
 for (const section of ['overview', 'tasks', 'team', 'matches', 'referee', 'caster', 'unknown']) assert.equal(requiresParticipationAccess(section), true)
 console.log('Participation continuity checks passed: stable records, handoff, read-only access, scoped response history, selection recovery and roster preflight.')
 
