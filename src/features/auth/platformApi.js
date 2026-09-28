@@ -44,12 +44,20 @@ async function readResponse(response) {
   return response.text()
 }
 
+export function retryAfterMillis(value, now = Date.now()) {
+  if (typeof value !== 'string' || !value.trim()) return undefined
+  const text = value.trim()
+  const delay = /^\d+$/.test(text) ? Number(text) * 1000 : Date.parse(text) - now
+  return Number.isFinite(delay) ? Math.min(2147483647, Math.max(0, delay)) : undefined
+}
+
 export class PlatformApiError extends Error {
-  constructor(message, { status, data } = {}) {
+  constructor(message, { status, data, retryAfterMs } = {}) {
     super(message)
     this.name = 'PlatformApiError'
     this.status = status
     this.data = data
+    this.retryAfterMs = retryAfterMs
   }
 }
 
@@ -98,7 +106,7 @@ export async function platformRequest(path, {
           ? data.message || data.error || `Request failed with status ${response.status}`
           : data || `Request failed with status ${response.status}`
 
-        throw new PlatformApiError(message, { status: response.status, data })
+        throw new PlatformApiError(message, { status: response.status, data, retryAfterMs: retryAfterMillis(response.headers.get('retry-after')) })
       }
       return data
     })()

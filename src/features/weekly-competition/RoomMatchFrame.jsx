@@ -1,9 +1,11 @@
+import { roomBanLabel } from './roomBans.js'
+import { RoomMapSides } from './RoomPhaseClock.jsx'
 import RoomLobbyTools from './RoomLobbyTools.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { formatOwHeroName, formatOwMapMode, formatOwMapName, getOwMap } from '../../lib/heroes.js'
+import { formatOwMapMode, formatOwMapName, getOwMap } from '../../lib/heroes.js'
 import { getMapImage } from '../../lib/reviewAssets.js'
 import { systemPageUrl } from './roomResultLinks.js'
 import styles from './RoomMatchFrame.module.css'
@@ -51,7 +53,7 @@ export function RoomSeriesRail({ data, phaseLabel }) {
           const map = data.maps.find(item => item.order === index + 1)
           const current = map?.order === data.map?.order
           const label = map?.status === 'COMPLETE' ? `${map.scoreA ?? '—'} : ${map.scoreB ?? '—'}${isDraw(map) ? ' · 平局' : ''}` : data.forfeit?.record ? data.forfeit.record.status === 'APPROVED' ? map?.status === 'LIVE' ? '因弃权未完成' : '因弃权未进行' : '弃权记录待复核' : current ? phaseLabel : '尚未开始'
-          const banSummary = `${teamName(data.match.teamA)}：${formatOwHeroName(map?.banA, uiLocale) || uiText("待定", uiLocale)} / ${teamName(data.match.teamB)}：${formatOwHeroName(map?.banB, uiLocale) || uiText("待定", uiLocale)}`
+          const banSummary = `${teamName(data.match.teamA)}：${roomBanLabel(map, 'A', uiLocale) || uiText("待定", uiLocale)} / ${teamName(data.match.teamB)}：${roomBanLabel(map, 'B', uiLocale) || uiText("待定", uiLocale)}`
           const content = <><span>{String(index + 1).padStart(2, '0')}</span><b>{formatOwMapName(map?.name, uiLocale) || (current ? uiText("等待选图", uiLocale) : uiText("地图待定", uiLocale))}</b><small>{map?.name ? `${map?.status === 'COMPLETE' ? `${label} · ` : ''}${banSummary}` : label}</small></>
           return <li key={index} data-current={!!current} data-complete={map?.status === 'COMPLETE'}>{map?.name ? <button type="button" aria-label={uiText("查看第 {0} 图 {1} · {2}", uiLocale, [index + 1, formatOwMapName(map.name, uiLocale), label])} onClick={() => setSelected(map.order)}>{content}</button> : <div>{content}</div>}</li>
         })}
@@ -61,23 +63,24 @@ export function RoomSeriesRail({ data, phaseLabel }) {
       {selectedMap && <><header><div><small>MAP {String(selectedMap.order).padStart(2, '0')}{uiText(" / 地图记录", uiLocale)}</small><h2 id="room-map-record-title">{formatOwMapName(selectedMap.name, uiLocale)}</h2></div><button type="button" aria-label={uiText("关闭地图记录", uiLocale)} onClick={() => setSelected(null)}>×</button></header>
         <div className={styles.recordMap} style={selectedImage ? { backgroundImage: `linear-gradient(90deg,#181a17cf,#181a1780),url("${selectedImage}")` } : undefined}><span>{teamName(data.match.teamA)}</span><strong>{selectedMap.status === 'COMPLETE' ? `${selectedMap.scoreA ?? '—'} : ${selectedMap.scoreB ?? '—'}` : 'VS'}</strong><span>{teamName(data.match.teamB)}</span></div>
         <p>{formatOwMapMode(selectedMap.type, uiLocale)} · {selectedMap.status === 'COMPLETE' ? isDraw(selectedMap) ? uiText("平局{0}", uiLocale, [data.match.format === 'RR5' ? ' · 计入固定五局' : '']) : uiText("本图已完成", uiLocale) : uiText("本图尚未完成", uiLocale)}{uiText(" · 赛管工作记录", uiLocale)}</p>
-        <dl className={styles.recordBans}><div><dt>{teamName(data.match.teamA)}{uiText(" 禁用", uiLocale)}</dt><dd>{formatOwHeroName(selectedMap.banA, uiLocale) || uiText("尚未记录", uiLocale)}</dd></div><div><dt>{teamName(data.match.teamB)}{uiText(" 禁用", uiLocale)}</dt><dd>{formatOwHeroName(selectedMap.banB, uiLocale) || uiText("尚未记录", uiLocale)}</dd></div></dl>
+        <RoomMapSides map={selectedMap} match={data.match} /><dl className={styles.recordBans}><div><dt>{teamName(data.match.teamA)}{uiText(" 禁用", uiLocale)}</dt><dd>{roomBanLabel(selectedMap, 'A', uiLocale) || uiText("尚未记录", uiLocale)}</dd></div><div><dt>{teamName(data.match.teamB)}{uiText(" 禁用", uiLocale)}</dt><dd>{roomBanLabel(selectedMap, 'B', uiLocale) || uiText("尚未记录", uiLocale)}</dd></div></dl>
         <p>{uiText("此处显示赛中地图记录。正式审核与积分结算以整场赛果为准。", uiLocale)}</p></>}
     </dialog>
   </>
 }
 
-export function RoomStageRail({ data, selectedStage, onStageSelect }) {
+export function RoomStageRail({ data, selectedStage, onStageSelect, clock }) {
   const uiLocale = useUiLocale()
+  const [menuOpen, setMenuOpen] = useState(false)
   const map = data.map
   const current = getRoomStageIndex(data)
   const labels = ROOM_STAGES
   const submissionUrl = systemPageUrl(data.result?.handoff?.path)
   const lineupSummary = side => (map?.[`lineup${side}`] || []).map(player => player.battleTag || player.name).join('、') || uiText("待确认", uiLocale)
   const view = selectedStage === null ? current : selectedStage
-  const liveSummary = map && view >= 4 ? `${formatOwMapName(map.name, uiLocale) || uiText("地图待定", uiLocale)} · ${data.match.teamA.shortName || data.match.teamA.name} Ban ${formatOwHeroName(map.banA, uiLocale) || uiText("待定", uiLocale)} · ${data.match.teamB.shortName || data.match.teamB.name} Ban ${formatOwHeroName(map.banB, uiLocale) || uiText("待定", uiLocale)} · ${uiText("首发", uiLocale)} ${lineupSummary('A')} / ${lineupSummary('B')}` : ''
+  const liveSummary = map && view >= 4 ? `${formatOwMapName(map.name, uiLocale) || uiText("地图待定", uiLocale)} · ${data.match.teamA.shortName || data.match.teamA.name} Ban ${roomBanLabel(map, 'A', uiLocale) || uiText("待定", uiLocale)} · ${data.match.teamB.shortName || data.match.teamB.name} Ban ${roomBanLabel(map, 'B', uiLocale) || uiText("待定", uiLocale)} · ${uiText("首发", uiLocale)} ${lineupSummary('A')} / ${lineupSummary('B')}` : ''
   const completedMaps = data.maps.filter(item => item.status === 'COMPLETE').map(item => `${item.order}. ${formatOwMapName(item.name, uiLocale) || uiText("地图待定", uiLocale)} ${item.scoreA ?? '—'}:${item.scoreB ?? '—'}`).join(' · ')
-  const selectedSetup = data.opening?.setup || (map?.name ? { name: map.name, type: map.type, chooserSide: map.chooserSide, attackFirstSide: map.attackFirstSide, firstBanSide: map.firstBanSide, banA: map.banA, banB: map.banB } : null)
+  const selectedSetup = data.opening?.setup || (map?.name ? { name: map.name, type: map.type, chooserSide: map.chooserSide, attackFirstSide: map.attackFirstSide, firstBanSide: map.firstBanSide, banA: map.banA, banB: map.banB, banAStatus: map.banAStatus, banBStatus: map.banBStatus } : null)
   const chooser = selectedSetup?.chooserSide === 'A' ? data.match.teamA : selectedSetup?.chooserSide === 'B' ? data.match.teamB : null
   const attackFirst = selectedSetup?.attackFirstSide === 'A' ? data.match.teamA : selectedSetup?.attackFirstSide === 'B' ? data.match.teamB : null
   const playedNames = new Set(data.maps.filter(item => item.status === 'COMPLETE').map(item => item.name))
@@ -92,7 +95,7 @@ export function RoomStageRail({ data, selectedStage, onStageSelect }) {
   </section> : null
   const readOnlySummary = view !== current ? view === 1 ? formatOwMapName(selectedSetup?.name, uiLocale) || uiText("地图尚未确定", uiLocale) : view === 5 ? completedMaps || uiText("本图结果尚未记录", uiLocale) : view === 6 ? submissionUrl ? uiText("战报提交入口已生成，请点击赛果入口打开。", uiLocale) : uiText("整场地图完成后，由赛管生成 System 战报提交入口。", uiLocale) : `${labels[view]} · ${formatOwMapName(map?.name, uiLocale) || uiText("当前地图", uiLocale)} · ${uiText("只读查看，当前操作仍在第 {0} 步", uiLocale, [String(current + 1).padStart(2, '0')])}` : null
   return <>
-    <ol className={styles.stageRail} data-room-slot="stages" aria-label={uiText("本图比赛进度", uiLocale)}>{ROOM_PREMATCH_STAGES.map((label, index) => <li key={label} aria-current={index === current ? 'step' : undefined} data-done={index < current} data-selected={index === selectedStage}><button type="button" disabled={index > current} onClick={() => onStageSelect(index === current ? null : index)} aria-label={uiText("查看第 {0} 步 {1}", uiLocale, [index + 1, label])}><span>{index < current ? '✓' : `0${index + 1}`}</span>{uiText(label, uiLocale)}</button></li>)}</ol>
+    <div className={styles.stageHeader} data-room-slot="stage-header" data-menu-open={menuOpen} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setMenuOpen(false) }} onKeyDown={event => { if (event.key === 'Escape') setMenuOpen(false) }}><button type="button" className={styles.stageToggle} aria-expanded={menuOpen} aria-label={uiText("查看比赛阶段", uiLocale)} onClick={() => setMenuOpen(!menuOpen)}><span>{String(view + 1).padStart(2, '0')}</span><strong>{uiText(labels[view], uiLocale)}{view !== current ? ' · ' + uiText("只读查看", uiLocale) : ''}</strong><span aria-hidden="true">⌄</span></button><ol className={styles.stageRail} data-room-slot="stages" aria-label={uiText("本图比赛进度", uiLocale)}>{ROOM_PREMATCH_STAGES.map((label, index) => <li key={label} aria-current={index === current ? 'step' : undefined} data-done={index < current} data-selected={index === selectedStage}><button type="button" disabled={index > current} onClick={() => { onStageSelect(index === current ? null : index); setMenuOpen(false) }} aria-label={uiText("查看第 {0} 步 {1}", uiLocale, [index + 1, uiText(label, uiLocale)])}><span>{index < current ? '✓' : `0${index + 1}`}</span>{uiText(label, uiLocale)}</button></li>)}</ol>{clock}</div>
     {current >= 4 && <button type="button" className={styles.currentPhase} onClick={() => onStageSelect(null)}>{uiText(ROOM_STAGES[current], uiLocale)} · {uiText("返回当前操作", uiLocale)} →</button>}
     {view !== current && liveSummary && <p className={styles.stageSummary} data-room-slot="stage-summary">{liveSummary}</p>}
     {mapSelectionPage}

@@ -7,5 +7,6 @@ export const coordinationWrite = (path, body, staff = false, method = 'POST') =>
 
 export function roomReadFailure(error, previous) {
   const denied = [401, 403, 404].includes(error?.status)
-  return { data: denied ? null : previous, error: error?.message || '同步中断，请重新同步后继续操作。' }
+  const message = error?.status === 429 ? '服务器请求较多，正在等待重试。' : error?.status >= 500 ? '服务暂时不可用，正在自动重连。' : error?.data?.error === 'REQUEST_TIMEOUT' ? '同步超时，正在自动重连。' : error instanceof TypeError ? '连接中断，正在自动重连。' : error?.message || '连接中断，正在自动重连。'
+  return { data: denied ? null : previous, error: message }
 }

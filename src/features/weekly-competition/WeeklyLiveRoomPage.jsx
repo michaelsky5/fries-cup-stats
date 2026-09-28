@@ -1,3 +1,7 @@
+import { RoomMobileHeader, RoomMobileNav, RoomMobileInfo, useMobileRoom } from './RoomMobile.jsx'
+import mobile from './RoomMobile.module.css'
+import RoomDecisionSummary from './RoomDecisionSummary.jsx'
+import RoomPhaseClock, { RoomSideBadge } from './RoomPhaseClock.jsx'
 import RoomGuideLink from '../room-guide/RoomGuideLink.jsx'
 import AccountAvatar from '../account-ui/AccountAvatar.jsx'
 import RoomBroadcastLink from './RoomBroadcastLink.jsx'
@@ -15,8 +19,6 @@ import { useAuth } from '../auth/AuthProvider.jsx'
 import AuthButton from '../auth/AuthDialog.jsx'
 import useWeeklyLiveRoom from './useWeeklyLiveRoom.js'
 import { useRoomTransport } from './RoomTransport.jsx'
-import { formatOwMapMode, formatOwMapName, getOwMap } from '../../lib/heroes.js'
-import { getMapImage } from '../../lib/reviewAssets.js'
 import styles from './WeeklyLiveRoomPage.module.css'
 import surfaces from './RoomSurfaces.module.css'
 import OpeningSelectionPanel, { OpeningHistory } from './OpeningSelectionPanel.jsx'
@@ -27,12 +29,20 @@ import { RoomMatchHeader, RoomSeriesRail, RoomStageRail } from './RoomMatchFrame
 import frame from './RoomMatchFrame.module.css'
 import workspace from './WeeklyRoomWorkspace.module.css'
 import RoomLineupStage from './RoomLineupStage.jsx'
+import RoomConnectionNotice from './RoomConnectionNotice.jsx'
 import RoomForceStartControl from './RoomForceStartControl.jsx'
 import RoomStartControl from './RoomStartControl.jsx'
 import { roomRoleCode, sortRoomLineup } from './roomLineups.js'
 
 const phaseNames = { PREPARING: '赛前准备', LIVE: '比赛进行中', PAUSED: '技术暂停', REVIEW: '赛果处理', ARCHIVED: '已归档' }
-const roomPhaseName = data => data.phase === 'PREPARING' && data.opening && !data.opening.complete ? ({ NOT_STARTED: '赛前安排', ONE_V_ONE_SETUP: '实际 1V1 · 指定选手', ONE_V_ONE_LIVE: '实际 1V1 进行中', PLAYING: '首图先手权', DRAW: '出手平局 · 再次决定', CHOOSING: `第 ${data.opening.mapOrder} 图 · 选图`, BANNING: `第 ${data.opening.mapOrder} 图 · ${getRoomStageIndex(data) === 2 ? '首发确认' : 'Ban'}` }[data.opening.phase] || '选禁准备') : data.phase === 'PREPARING' && data.map?.order > 1 ? '局间准备' : data.phase === 'REVIEW' && !data.result && data.opening ? '本图已结束' : phaseNames[data.phase]
+function roomPhaseName(data, locale) {
+  if (data.phase === 'PREPARING' && data.opening && !data.opening.complete) {
+    if (data.opening.phase === 'CHOOSING') return uiText('第 {0} 图 · 选图', locale, [data.opening.mapOrder])
+    if (data.opening.phase === 'BANNING') return uiText(getRoomStageIndex(data) === 2 ? '第 {0} 图 · 首发确认' : '第 {0} 图 · Ban', locale, [data.opening.mapOrder])
+    return uiText(({ NOT_STARTED: '赛前安排', ONE_V_ONE_SETUP: '实际 1V1 · 指定选手', ONE_V_ONE_LIVE: '实际 1V1 进行中', PLAYING: '首图先手权', DRAW: '出手平局 · 再次决定' })[data.opening.phase] || '选禁准备', locale)
+  }
+  return uiText(data.phase === 'PREPARING' && data.map?.order > 1 ? '局间准备' : data.phase === 'REVIEW' && !data.result && data.opening ? '本图已结束' : phaseNames[data.phase], locale)
+}
 const requestNames = { OPEN: '待赛管受理', IN_PROGRESS: '赛管处理中', RESOLVED: '已解决' }
 const name = team => team?.shortName || team?.name || '队伍待定'
 const time = value => value ? new Date(value).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false }) : '—'
@@ -62,7 +72,7 @@ function Team({ team, data, disabled, mutate }) {
     </div>
   }
   return <aside id={`room-team-${team?.id}`} tabIndex={-1} className={workspace.team} aria-label={name(team)} data-side={side}>
-    <header><small>TEAM {side}</small><h2>{name(team)}</h2><span title={team?.name}>{team?.name}</span></header>
+    <header><small>TEAM {side}</small><h2>{name(team)}</h2><RoomSideBadge map={data.map} side={team.id === data.match.teamA.id ? 'A' : 'B'} /><span title={team?.name}>{team?.name}</span></header>
     <RoomRepresentative team={team} data={data} disabled={disabled} mutate={mutate} />
     <div className={workspace.rosterLabel}><strong>{saved.length ? '本图首发 · CCTNN' : sealed ? '本周名单 · 首发未公开' : '计划首发 · 待本图确认'}</strong><small>{saved.length ? data.map.lineupsRevealed ? '已锁定' : '对方不可见' : lineupConfirmed ? '已密封提交' : '参考名单'}</small></div>
     <div className={workspace.roster}>{starters.map((member, index) => row(member, index, true))}{rest.length > 0 && !sealed && <div className={workspace.rosterLabel}>替补 · {rest.length} 人</div>}{rest.map((member, index) => row(member, index))}{(roster?.staff || []).length > 0 && <div className={workspace.rosterLabel}>队伍工作人员</div>}{(roster?.staff || []).map((member, index) => row(member, index, false, true))}{!roster?.members?.length && <p>本周名单尚未提交。</p>}</div>
@@ -73,7 +83,7 @@ function Team({ team, data, disabled, mutate }) {
 function RoomPanelDialog({ open, close, title, children }) {
   const ref = useRef(null)
   useEffect(() => { if (open) ref.current?.showModal(); else ref.current?.close() }, [open])
-  return <dialog ref={ref} className={workspace.panelDialog} onCancel={close} aria-label={title}>
+  return <dialog ref={ref} className={workspace.panelDialog} data-room-panel onCancel={close} aria-label={title}>
     <header><h2>{title}</h2><button type="button" onClick={close} aria-label={`关闭${title}`}>关闭 ×</button></header>
     {open && <div className={workspace.panelBody}>{children}</div>}
   </dialog>
@@ -163,7 +173,10 @@ function RoomCommunication({ data, disabled, mutate, expanded, setExpanded, chan
 export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButton />, messageLoader, preview = false, returnPathOverride, returnLabelOverride }) {
   const { liveRoomWrite } = useRoomTransport()
   const uiLocale = useUiLocale()
-  const { data, error, busy, notice, refresh, mutate, clearNotice } = controller
+  const { data, error, busy, notice, refresh, mutate, clearNotice, connection } = controller
+  const compact = useMobileRoom()
+  const [rosterSide, setRosterSide] = useState(null)
+  const operation = useRef(null)
   const [auxiliary, setAuxiliary] = useState(''), [pauseOpen, setPauseOpen] = useState(false), [pauseNote, setPauseNote] = useState('')
   const [channel, setChannel] = useState('PUBLIC')
   const [selectedStage, setSelectedStage] = useState(null)
@@ -171,28 +184,34 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
   useEffect(() => { setSelectedStage(null) }, [data?.map?.order, stageIndex])
   const dialog = useRef(null)
   useEffect(() => { if (pauseOpen) dialog.current?.showModal(); else dialog.current?.close() }, [pauseOpen])
-  if (!data) return <main className={styles.emptyPage}><Link to="/me?section=matches">{uiText("← 我的比赛", uiLocale)}</Link><h1>{uiText("比赛房", uiLocale)}</h1><RoomGuideLink match={matchId} scenario="access" label="无法操作？查看指南" /><p role={error ? 'alert' : 'status'}>{error || uiText("正在同步本场比赛…", uiLocale)}</p>{error && <button onClick={refresh}>{uiText("重新同步", uiLocale)}</button>}<AuthButton /></main>
+  if (!data) return <main className={styles.emptyPage}><Link to="/me?section=matches">{uiText("← 我的比赛", uiLocale)}</Link><h1>{uiText("比赛房", uiLocale)}</h1><RoomGuideLink match={matchId} scenario="access" label="无法操作？查看指南" /><RoomConnectionNotice connection={connection} error={error} refresh={refresh} />{(!connection || !error) && <p role={error ? 'alert' : 'status'}>{error || uiText("正在同步本场比赛…", uiLocale)}</p>}{error && !connection && <button onClick={() => refresh({ force: true })}>{uiText("重新同步", uiLocale)}</button>}<AuthButton /></main>
   const disabled = busy || !!error || !data.access.canWrite
   const stage = data.phase, own = getRoomOperatingSides(data)
   const currentStage = getRoomStageIndex(data)
   const inspectingStage = selectedStage !== null && selectedStage !== currentStage
   const casterOnly = data.access.production && !data.access.staff && !data.access.teamIds.length
   const openingActive = data.opening && stage === 'PREPARING' && !data.opening.complete
-  const mapImage = data.map && getOwMap(data.map.name) ? getMapImage(data.map.type, data.map.name) : null
   const returnPath = returnPathOverride || `/me?section=matches&competition=${encodeURIComponent(data.match.seasonId)}&weeklyMatch=${encodeURIComponent(matchId)}`
   const command = (action, extra = {}) => mutate(() => liveRoomWrite(matchId, '/commands', { action, clientKey: crypto.randomUUID(), expectedRevision: data.revision, matchRevision: data.match.revision, draftRevision: data.draftRevision, ...extra }), '操作已保存，本场人员会同步看到最新状态。')
   const lineupStage = stage === 'PREPARING' && currentStage === 2
   const task = stage === 'PREPARING' ? data.opening?.complete ? '选禁完成，等待实际开赛' : '核对赛前准备条件' : stage === 'PAUSED' ? data.access.staff ? '核对双方恢复条件' : '比赛已暂停，等待恢复通知' : stage === 'LIVE' ? data.access.staff ? '比赛进行中，核对当前图信息' : '本图正在进行，请专注比赛' : stage === 'REVIEW' ? data.series && !data.series.complete ? data.opening?.access.canNext ? '核对本图结果并开放下一图' : '等待赛管开放下一图' : data.access.staff ? '整理本场赛果并提交战报' : '等待赛管提交本场战报' : stage === 'ARCHIVED' ? '本场已归档，记录只读' : '比赛记录进入赛果处理'
-  return <main className={`${styles.room} ${frame.frame} ${workspace.viewport}`} data-page-mode="control" data-room-layout="workspace" data-phase={stage} data-opening={!!openingActive}>
-    <RoomMatchHeader data={data} phaseLabel={roomPhaseName(data)} returnPath={returnPath} busy={busy} error={error} refresh={refresh} mutate={preview ? undefined : mutate} disabled={disabled} accountControl={accountControl} />
+  return <main className={`${styles.room} ${frame.frame} ${workspace.viewport} ${mobile.mobileFrame}`} data-page-mode="control" data-room-layout="workspace" data-phase={stage} data-opening={!!openingActive} onClick={event => {
+    if (!compact) return
+    const href = event.target.closest('a')?.getAttribute('href')
+    const side = ['A', 'B'].find(side => href === '#room-team-' + data.match['team' + side].id)
+    if (side) { event.preventDefault(); setRosterSide(side); setAuxiliary('teams') }
+  }}>
+    {compact ? <RoomMobileHeader data={data} returnPath={returnPath} busy={busy} error={error} refresh={refresh} onInfo={() => setAuxiliary('info')} /> : <RoomMatchHeader data={data} phaseLabel={roomPhaseName(data, uiLocale)} returnPath={returnPath} busy={busy} error={error} refresh={refresh} mutate={preview ? undefined : mutate} disabled={disabled} accountControl={accountControl} />}
     <RoomTrainingNotice data={data} disabled={disabled} />
-    <RoomSeriesRail data={data} phaseLabel={roomPhaseName(data)} />
-    {(error || notice) && <div className={error ? styles.error : styles.notice} role={error ? 'alert' : 'status'}>{error ? uiText("{0} 重新同步前暂停操作。", uiLocale, [error]) : notice}{error && <RoomGuideLink data={data} scenario="sync" label="无法操作？查看指南" />}</div>}
-    <div className={workspace.columns}><Team team={data.match.teamA} data={data} disabled={disabled} mutate={mutate} /><div className={workspace.center} data-stage-view={lineupStage ? 'lineup' : openingActive ? 'selection' : stage.toLowerCase()} data-inspecting={inspectingStage}>
-      {!data.result && <RoomStageRail data={data} selectedStage={selectedStage} onStageSelect={setSelectedStage} />}
+    {!compact && <RoomSeriesRail data={data} phaseLabel={roomPhaseName(data, uiLocale)} />}
+    <RoomConnectionNotice connection={connection} error={error} refresh={refresh} />
+    {((error && !connection) || notice) && <div className={error && !connection ? styles.error : styles.notice} role={error && !connection ? 'alert' : 'status'}>{error && !connection ? uiText("{0} 重新同步前暂停操作。", uiLocale, [error]) : notice}{error && <RoomGuideLink data={data} scenario="sync" label="无法操作？查看指南" />}</div>}
+    <div className={workspace.columns} data-room-slot="columns">{!compact && <Team team={data.match.teamA} data={data} disabled={disabled} mutate={mutate} />}<div className={workspace.center} ref={operation} tabIndex={-1} data-room-slot="center" data-stage-view={lineupStage ? 'lineup' : openingActive ? 'selection' : stage.toLowerCase()} data-inspecting={inspectingStage}>
+      {!data.result && <RoomStageRail data={data} selectedStage={selectedStage} onStageSelect={setSelectedStage} clock={<RoomPhaseClock data={data} disabled={disabled} mutate={mutate} stale={!!error} />} />}
+      <RoomDecisionSummary data={data} stale={!!error} />
       {openingActive && !lineupStage && !inspectingStage && <OpeningSelectionPanel data={data} disabled={disabled} mutate={mutate} />}
       {lineupStage && !inspectingStage && <section className={`${styles.task} ${surfaces.paper} ${frame.phaseView}`} aria-label={uiText("首发确认", uiLocale)}><header className={frame.phaseViewHeader}><div><small>03 / LINEUP</small><h2>{uiText("确认本图首发", uiLocale)}</h2></div><span>{uiText("2 输出 · 1 重装 · 2 支援", uiLocale)}</span></header><RoomLineupStage key={data.map?.lineupContext || data.map?.order} data={data} disabled={disabled} command={command} /></section>}
-      {!openingActive && !lineupStage && !inspectingStage && <>{!data.result && <div className={styles.map} style={mapImage ? { backgroundImage: `linear-gradient(90deg, color-mix(in srgb, var(--fc-data-ink, #181a17) 93%, transparent), color-mix(in srgb, var(--fc-data-ink, #181a17) 50%, transparent)), url("${mapImage}")` } : undefined}><small>{data.map ? `MAP ${String(data.map.order).padStart(2, '0')} · ${formatOwMapMode(data.map.type, uiLocale)}` : 'CURRENT MAP'}</small><h1>{formatOwMapName(data.map?.name, uiLocale) || uiText("等待赛管确定当前图", uiLocale)}</h1><span>{data.opening?.complete ? uiText("双方选禁已锁定", uiLocale) : uiText("地图与禁用按赛管工作台更新", uiLocale)}</span></div>}
+      {!openingActive && !lineupStage && !inspectingStage && <>
       <section className={`${styles.task} ${surfaces.paper} ${frame.decisionTask} ${frame.phaseView}`} data-stage={stage.toLowerCase()} aria-label={uiText("当前任务", uiLocale)}>{!data.result && <div className={frame.decisionTitle}><div><small>MAP {String(data.map?.order || 1).padStart(2, '0')} / {stage === 'LIVE' ? uiText("比赛进行", uiLocale) : stage === 'REVIEW' ? uiText("地图结果", uiLocale) : stage === 'PAUSED' ? uiText("技术暂停", uiLocale) : uiText("赛前准备", uiLocale)}</small><h2>{casterOnly && stage === 'LIVE' ? uiText("本图正在进行，跟进公开赛况", uiLocale) : uiText(task, uiLocale)}</h2></div><span>{data.access.staff ? uiText("本场赛管", uiLocale) : own.length ? uiText("本队操作代表", uiLocale) : casterOnly ? uiText("解说视角", uiLocale) : uiText("队伍成员 · 查看进度", uiLocale)}</span></div>}
         {stage === 'PREPARING' && <RoomStartControl data={data} disabled={disabled} command={command} mutate={mutate} />}
         {stage === 'LIVE' && <><p>{casterOnly ? uiText("按公开状态同步解说；制作沟通请使用转播协同。", uiLocale) : data.access.staff ? uiText("关注双方协助。游戏实际暂停或结束后，再记录状态与本图结果。", uiLocale) : uiText("选禁已锁定。需要暂停或遇到进房问题时，通过本页联系赛管。", uiLocale)}</p><div className={frame.taskActions}>{data.access.canPause && <button disabled={disabled || !data.access.canPause} onClick={() => { clearNotice(); setPauseOpen(true) }}>{uiText("记录游戏已暂停", uiLocale)}</button>}{data.canRecordMapResult && <MapResultControl key={data.map.order} data={data} disabled={disabled} mutate={mutate} />}{(data.access.staff || data.access.teamIds.length > 0 || casterOnly) && <button type="button" onClick={() => { setChannel(casterOnly ? 'PRODUCTION' : 'SUPPORT'); setAuxiliary('communication') }}>{casterOnly ? uiText("打开转播协同", uiLocale) : uiText("联系赛管 / 查看协助", uiLocale)}</button>}</div></>}
@@ -201,11 +220,27 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
         {['REVIEW', 'ARCHIVED'].includes(stage) && <RoomResultPanel data={data} disabled={disabled} mutate={mutate} correction={stage === 'REVIEW' && data.canCorrectMapResult ? <span className={styles.resultCorrection}><MapResultControl key={'correct-' + data.map.order} data={data} disabled={disabled} mutate={mutate} correcting /></span> : null} />}
         {stage === 'REVIEW' && !data.result && data.canCorrectMapResult && <div className={styles.resultCorrection}><MapResultControl key={'correct-' + data.map.order} data={data} disabled={disabled} mutate={mutate} correcting /></div>}
       </section></>}
-    </div><Team team={data.match.teamB} data={data} disabled={disabled} mutate={mutate} /></div>
-    <footer className={workspace.toolbar}>
+    </div>{!compact && <Team team={data.match.teamB} data={data} disabled={disabled} mutate={mutate} />}</div>
+    {!compact && <footer className={workspace.toolbar}>
       <span><b>{data.actor.name}</b> · {data.actor.label}</span>
       <div><RoomForceStartControl key={`${data.map?.order}:${data.map?.lineupContext}`} data={data} disabled={disabled} command={command} notice={notice} /><button type="button" onClick={() => setAuxiliary('communication')}>比赛沟通{data.requests?.some(request => request.status !== 'RESOLVED') ? ' · 有待处理协助' : ''}</button><button type="button" onClick={() => setAuxiliary('records')}>规则与记录</button>{(!data.result && (data.forfeit?.canPropose || data.forfeit?.history?.length > 0)) && <button type="button" onClick={() => setAuxiliary('forfeit')}>弃权处理</button>}<RoomGuideLink data={data} /><Link to={returnPath}>{returnLabelOverride || '返回我的比赛 ↗'}</Link></div>
-    </footer>
+    </footer>}
+    {compact && <RoomMobileNav auxiliary={auxiliary} assistance={data.requests?.some(request => request.status !== 'RESOLVED')} navigate={key => { if (key === 'operation') { setAuxiliary(''); setSelectedStage(null); operation.current?.scrollIntoView({ block: 'start' }); operation.current?.focus({ preventScroll: true }) } else setAuxiliary(key) }} />}
+    {compact && <>
+      <RoomPanelDialog open={auxiliary === 'teams'} close={() => setAuxiliary('')} title={uiText('双方名单', uiLocale)}>
+        <div className={mobile.teamTabs} role="group" aria-label={uiText('切换队伍名单', uiLocale)}>{['A', 'B'].map(side => { const activeSide = rosterSide || (data.access.teamIds.includes(data.match.teamB.id) ? 'B' : 'A'); return <button type="button" key={side} aria-pressed={activeSide === side} onClick={() => setRosterSide(side)}><b>{name(data.match['team' + side])}</b><small>{uiText(data.map?.lineupLocks?.[side] ? '首发已提交' : '首发待确认', uiLocale)}</small></button> })}</div>
+        <Team key={rosterSide || 'default'} team={data.match['team' + (rosterSide || (data.access.teamIds.includes(data.match.teamB.id) ? 'B' : 'A'))]} data={data} disabled={disabled} mutate={mutate} />
+      </RoomPanelDialog>
+      <RoomPanelDialog open={auxiliary === 'info'} close={() => setAuxiliary('')} title={uiText('房间信息', uiLocale)}><RoomMobileInfo data={data} accountControl={accountControl} disabled={disabled} mutate={preview ? undefined : mutate}><RoomSeriesRail data={data} phaseLabel={roomPhaseName(data, uiLocale)} /></RoomMobileInfo></RoomPanelDialog>
+      <RoomPanelDialog open={auxiliary === 'more'} close={() => setAuxiliary('')} title={uiText('更多操作', uiLocale)}><div className={mobile.more}>
+        <p><b>{data.actor.name}</b> · {data.actor.label}</p>
+        <button type="button" onClick={() => setAuxiliary('info')}>{uiText('房间信息', uiLocale)} <span>↗</span></button>
+        <button type="button" onClick={() => setAuxiliary('records')}>{uiText('规则与记录', uiLocale)} <span>↗</span></button>
+        <RoomForceStartControl key={data.map?.order + ':' + data.map?.lineupContext} data={data} disabled={disabled} command={command} notice={notice} />
+        {(!data.result && (data.forfeit?.canPropose || data.forfeit?.history?.length > 0)) && <button type="button" onClick={() => setAuxiliary('forfeit')}>{uiText('弃权处理', uiLocale)} <span>↗</span></button>}
+        <RoomGuideLink data={data} /><Link to={returnPath}>{returnLabelOverride || uiText('返回我的比赛 ↗', uiLocale)}</Link>
+      </div></RoomPanelDialog>
+    </>}
     <RoomPanelDialog open={auxiliary === 'communication'} close={() => setAuxiliary('')} title="比赛沟通与协助"><RoomCommunication key={data.actor.id + matchId} data={data} disabled={disabled} mutate={mutate} expanded setExpanded={() => setAuxiliary('')} channel={channel} setChannel={setChannel} messageLoader={messageLoader} /></RoomPanelDialog>
     <RoomPanelDialog open={auxiliary === 'records'} close={() => setAuxiliary('')} title="规则、选禁记录与转播安排">{data.access.production && <RoomBroadcastLink key={`broadcast:${data.actor.id}:${matchId}`} data={data} disabled={busy || !!error || preview} />}<RoomRulesPanel data={data} /><OpeningHistory key={data.actor.id + matchId} data={data} disabled={disabled} mutate={mutate} /><RoomRefereeAssignments data={data} disabled={disabled} mutate={mutate} /><RoomCasterAssignments data={data} disabled={disabled} mutate={mutate} /></RoomPanelDialog>
     <RoomPanelDialog open={auxiliary === 'forfeit'} close={() => setAuxiliary('')} title="本场弃权处理"><RoomForfeitControl data={data} disabled={disabled} mutate={mutate} /></RoomPanelDialog>

@@ -337,3 +337,13 @@
 .lobbyTools small { color:var(--yellow); }
 .matchFacts>div { flex-wrap:wrap;gap:8px 20px;min-width:0; }
 @media (max-width:760px) { .lobbyTools { grid-column:1/-1; }.lobbyTools button { min-height:32px; } }
+
+/* Navigation and its live clock share one row; stage records stay outside it. */
+.stageHeader { display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;min-width:0;flex:none; }
+.stageHeader .stageRail { min-width:0; }
+@media(min-width:1500px) and (min-height:850px) { .stageHeader { gap:calc(18 * var(--room-unit,1px)); } }
+@media(max-width:650px) { .stageHeader { gap:6px; }.stageHeader .stageRail button { flex-wrap:wrap; } }
+
+.stageToggle { display:none; }
+
+@media(max-width:900px){:global([data-inspecting=false])>.currentPhase{display:none}}

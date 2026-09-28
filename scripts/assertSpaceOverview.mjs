@@ -47,7 +47,15 @@ for (const field of ['readOnly', 'player', 'stale', 'archived', 'hidden']) {
   assert.equal(buildSpaceOverview(weeklyContext, options).taskCount, 0, `${field} cannot expose a result submission task`)
 }
 weekly.workspace.rooms.push({ ...match, id: 'weekly-next', myTeams: weeklyRoom.myTeams })
-assert.equal(buildSpaceOverview(weeklyContext, weeklyOptions).next.actionUrl, '/me?section=matches&weeklyMatch=weekly-next')
+assert.equal(buildSpaceOverview(weeklyContext, weeklyOptions).next.actionUrl, '/me/matches/weekly-next/room')
+assert.equal(buildSpaceOverview(weeklyContext, weeklyOptions).next.canEnterRoom, true, 'fresh authorized weekly rooms open directly, with server opening gates retained')
+assert.equal(buildSpaceOverview(weeklyContext, { ...weeklyOptions, weekly: { ...weekly, status: 'error' } }).next, null, 'failed synchronization never reuses a weekly room link')
+assert.equal(buildSpaceOverview({ ...weeklyContext, seasonId: 'other' }, weeklyOptions).next, null, 'another competition never contributes a weekly room link')
+assert.equal(buildSpaceOverview(weeklyContext, { ...weeklyOptions, sections: [{ id: 'overview' }] }).next, null, 'hidden match feature never exposes a weekly room link')
+const assignedWeekly = { ...weekly, workspace: { ...weekly.workspace, operatorView: true, rooms: [{ ...match, id: 'assigned-room', roleLabel: '赛管', myTeams: [] }] } }
+assert.equal(buildSpaceOverview(weeklyContext, { ...weeklyOptions, weekly: assignedWeekly }).next.actionUrl, '/me/matches/assigned-room/room', 'server-assigned staff rooms use the same direct entry')
+assignedWeekly.workspace.rooms[0].week = { status: 'CANCELLED' }
+assert.equal(buildSpaceOverview(weeklyContext, { ...weeklyOptions, weekly: assignedWeekly }).next, null, 'cancelled weeks never become upcoming rooms')
 const viewerContext = { primaryIdentityType: 'VIEWER', identities: [], teamContexts: [] }
 assert.equal(getSpaceOverviewPresentation(viewerContext).followingFirst, true, 'a viewer without tasks or assignments sees following first')
 assert.equal(getSpaceOverviewPresentation(viewerContext, { tasksPending: true }).collapseTasks, false, 'unknown task counts cannot be presented as all clear')

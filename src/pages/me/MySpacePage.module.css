@@ -120,3 +120,12 @@
   .spaceSubnav { gap: 0 20px; padding-inline: 0; }
   .spaceSubnav a { font-size: 12px; }
  .statsStatusHero, .sectionHeading, .selectedRoleHeading { align-items: start; flex-direction: column; } .statsFactRail > div, .statsMethodRail > article { padding: 18px; } .statsMethodRail { grid-template-columns: minmax(0, 1fr); } .statsMethodRail > article { border-right: 0; border-bottom: 1px solid var(--fc-data-line); } .performanceGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .recentPerformance, .analysisPanel { padding: 20px; } }
+
+/* Match rooms belong to the personal workspace; keep them reachable on phones. */
+.spaceNavBar { display: none; }
+@media (max-width: 600px) {
+  .spaceNavBar { display: flex; align-items: center; gap: 16px; }
+  .spaceNavBar .spaceNavToggle { flex: 1; min-width: 0; width: auto; }
+  .spaceRoomShortcut { flex: 0 0 auto; display: inline-flex; gap: 8px; align-items: center; min-height: 44px; padding-inline: 12px; border-left: 1px solid var(--fc-data-line); color: var(--fc-data-ink); font-size: 13px; font-weight: 750; white-space: nowrap; }
+  .spaceRoomShortcut[aria-current='page'] { box-shadow: inset 0 -3px var(--fc-data-signal); }
+}

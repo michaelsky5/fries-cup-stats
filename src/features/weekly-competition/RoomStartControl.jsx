@@ -1,4 +1,4 @@
-import { formatOwHeroName } from '../../lib/heroes.js'
+import { roomBanLabel } from './roomBans.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useRoomTransport } from './RoomTransport.jsx'
@@ -17,7 +17,7 @@ export default function RoomStartControl({ data, disabled, command, mutate }) {
       {data.preparation.sides.map(side => { const key = side.team.id === data.match.teamA.id ? 'A' : 'B'; const confirmed = data.map?.[`lineup${key}`]?.length === 5; return <span key={side.team.id} data-ready={confirmed}>
         <b>{side.team.shortName || side.team.name}</b>
         <span>{uiText(confirmed ? '首发已确认 · C C T N N' : '首发待确认', locale)}</span>
-        <small>{uiText('禁用', locale)} · {formatOwHeroName(data.map?.[`ban${key}`], locale) || '—'}</small>
+        <small>{uiText('禁用', locale)} · {roomBanLabel(data.map, key, locale)}</small>
       </span> })}
     </div>
     {legacy && <><RoomPreflightControl data={data} disabled={disabled} command={command} />

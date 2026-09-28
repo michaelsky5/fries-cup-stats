@@ -7796,8 +7796,8 @@
   },
   "先攻": {
     "zh-TW": "先攻",
-    "en-US": "First strike",
-    "ko-KR": "첫 번째 공격"
+    "en-US": "Attack first",
+    "ko-KR": "선공"
   },
   "先攻方": {
     "zh-TW": "先攻方",
@@ -10615,7 +10615,7 @@
   "剩余": {
     "zh-TW": "剩餘",
     "en-US": "Remaining",
-    "ko-KR": "남음"
+    "ko-KR": "남은 시간"
   },
   "剪刀": {
     "zh-TW": "剪刀",
@@ -31566,7 +31566,7 @@
   },
   "查看第 {0} 图 {1} · {2}": {
     "zh-TW": "檢視第 {0} 圖 {1} · {2}",
-    "en-US": "View image {0} {1} · {2}",
+    "en-US": "View map {0}: {1} · {2}",
     "ko-KR": "이미지 보기 {0} {1} · {2}"
   },
   "查看第 {0} 图{1}战报": {
@@ -34274,9 +34274,9 @@
     "zh-TW": "比賽房分階段介面"
   },
   "比赛房响应不完整，请重新同步。": {
-    "zh-TW": "比賽房響應不完整，請重新同步。",
-    "en-US": "The competition room response is incomplete, please resynchronize.",
-    "ko-KR": "대회실 응답이 불완전합니다. 다시 동기화하십시오."
+    "zh-TW": "比賽房回應不完整，請重新同步。",
+    "en-US": "The room response is incomplete. Please synchronize again.",
+    "ko-KR": "경기방 응답이 불완전합니다. 다시 동기화해 주세요."
   },
   "比赛房已开放": {
     "zh-TW": "比賽房已開放",
@@ -37736,8 +37736,8 @@
   },
   "离开比赛房": {
     "zh-TW": "離開比賽房",
-    "en-US": "Leaving the competition room",
-    "ko-KR": "대회장 나가기"
+    "en-US": "Leave match room",
+    "ko-KR": "경기방 나가기"
   },
   "离开飞天猫后，哪些记录仍支持其职责适配？助攻量不等于指挥能力。": {
     "zh-TW": "離開飛天貓後，哪些記錄仍支援其職責適配？助攻量不等於指揮能力。",
@@ -39147,7 +39147,7 @@
   },
   "筛选英雄职责": {
     "zh-TW": "篩選英雄職責",
-    "en-US": "Screening Hero Duties",
+    "en-US": "Filter heroes by role",
     "ko-KR": "영웅 임무 심사"
   },
   "筛选赛果": {
@@ -45371,8 +45371,8 @@
   },
   "赛管确认": {
     "zh-TW": "賽管確認",
-    "en-US": "Competition management confirmation",
-    "ko-KR": "대회 관리 확인"
+    "en-US": "Referee confirmation",
+    "ko-KR": "심판 확인"
   },
   "赛管纪念卡": {
     "zh-TW": "賽管紀念卡"
@@ -48566,7 +48566,7 @@
   },
   "选择本图禁用英雄": {
     "zh-TW": "選擇本圖停用英雄",
-    "en-US": "Select this image to disable the hero",
+    "en-US": "Choose a hero to ban for this map",
     "ko-KR": "영웅을 비활성화하려면 이 이미지를 선택하세요."
   },
   "选择本届招募方式和人员需求；长期队伍不会自动进入新的赛事届次。": {
@@ -48601,7 +48601,7 @@
   },
   "选择禁用英雄": {
     "zh-TW": "選擇停用英雄",
-    "en-US": "Select disabled hero",
+    "en-US": "Choose a hero to ban",
     "ko-KR": "비활성화된 영웅 선택"
   },
   "选择第": {
@@ -48611,7 +48611,7 @@
   },
   "选择第 {0} 图": {
     "zh-TW": "選擇第 {0} 圖",
-    "en-US": "Select image {0}",
+    "en-US": "Choose map {0}",
     "ko-KR": "이미지 {0} 선택"
   },
   "选择职责": {
@@ -54355,5 +54355,675 @@
     "zh-TW": "請先完成地圖、首發與英雄禁用",
     "en-US": "Complete map selection, lineups and hero bans first",
     "ko-KR": "먼저 맵 선택, 선발과 영웅 밴을 완료해 주세요"
+  },
+  "先防": {
+    "zh-TW": "先防",
+    "en-US": "Defend first",
+    "ko-KR": "선수비"
+  },
+  "Ban 顺序": {
+    "zh-TW": "Ban 順序",
+    "en-US": "Ban order",
+    "ko-KR": "금지 순서"
+  },
+  "阶段倒计时": {
+    "zh-TW": "階段倒數計時",
+    "en-US": "Stage countdown",
+    "ko-KR": "단계 제한 시간"
+  },
+  "第 {0} 图 · {1}": {
+    "zh-TW": "第 {0} 圖 · {1}",
+    "en-US": "Map {0} · {1}",
+    "ko-KR": "{0}번 맵 · {1}"
+  },
+  "倒计时设置已保存，双方将同步看到。": {
+    "zh-TW": "倒數計時設定已儲存，雙方將同步看到。",
+    "en-US": "Countdown settings saved for both teams.",
+    "ko-KR": "양 팀에 적용되는 제한 시간 설정을 저장했습니다."
+  },
+  "同步中断 · 计时待核对": {
+    "zh-TW": "同步中斷 · 計時待核對",
+    "en-US": "Sync interrupted · Check timer",
+    "ko-KR": "동기화 중단 · 시간 확인 필요"
+  },
+  "已超时": {
+    "zh-TW": "已逾時",
+    "en-US": "Time expired",
+    "ko-KR": "시간 초과"
+  },
+  "等待开始": {
+    "zh-TW": "等待開始",
+    "en-US": "Waiting to start",
+    "ko-KR": "시작 대기"
+  },
+  "等待下一阶段": {
+    "zh-TW": "等待下一階段",
+    "en-US": "Waiting for next stage",
+    "ko-KR": "다음 단계 대기"
+  },
+  "由赛管控制": {
+    "zh-TW": "由賽管控制",
+    "en-US": "Referee controlled",
+    "ko-KR": "심판 관리"
+  },
+  "计时设置": {
+    "zh-TW": "計時設定",
+    "en-US": "Timer settings",
+    "ko-KR": "시간 설정"
+  },
+  "超时提醒赛管，不自动选择或判罚。": {
+    "zh-TW": "逾時提醒賽管，不自動選擇或判罰。",
+    "en-US": "Expiry alerts the referee. No automatic choices or penalties.",
+    "ko-KR": "시간 초과 시 심판에게 알립니다. 자동 선택이나 처벌은 없습니다."
+  },
+  "关闭本场倒计时": {
+    "zh-TW": "關閉本場倒數計時",
+    "en-US": "Disable match timers",
+    "ko-KR": "이 경기 제한 시간 끄기"
+  },
+  "开启本场倒计时": {
+    "zh-TW": "開啟本場倒數計時",
+    "en-US": "Enable match timers",
+    "ko-KR": "이 경기 제한 시간 켜기"
+  },
+  "开始本阶段计时": {
+    "zh-TW": "開始本階段計時",
+    "en-US": "Start this stage timer",
+    "ko-KR": "현재 단계 시간 시작"
+  },
+  "本阶段加时 60 秒": {
+    "zh-TW": "本階段加時 60 秒",
+    "en-US": "Add 60 seconds",
+    "ko-KR": "현재 단계 60초 연장"
+  },
+  "本阶段已超时，请赛管核对后处理或加时。": {
+    "zh-TW": "本階段已逾時，請賽管核對後處理或加時。",
+    "en-US": "Time expired. Referee: review the situation or extend the timer.",
+    "ko-KR": "시간이 초과되었습니다. 심판은 상황을 확인하거나 시간을 연장하세요."
+  },
+  "本阶段已超时，请联系赛管；流程不会自动跳过。": {
+    "zh-TW": "本階段已逾時，請聯絡賽管；流程不會自動跳過。",
+    "en-US": "Time expired. Contact the referee; this step will not be skipped automatically.",
+    "ko-KR": "시간이 초과되었습니다. 심판에게 문의하세요. 단계가 자동으로 건너뛰어지지 않습니다."
+  },
+  "确认地图后，双方首发倒计时同时开始（{0} 秒）。": {
+    "zh-TW": "確認地圖後，雙方先發倒數同時開始（{0} 秒）。",
+    "en-US": "Confirming the map starts both lineup timers together ({0} seconds).",
+    "ko-KR": "맵을 확정하면 양 팀 선발 확정 시간이 동시에 시작됩니다({0}초)."
+  },
+  "双方首发都确认后，开始 Ban 顺序倒计时（{0} 秒）。": {
+    "zh-TW": "雙方先發都確認後，開始 Ban 順序倒數（{0} 秒）。",
+    "en-US": "Once both lineups are confirmed, the ban-order timer starts ({0} seconds).",
+    "ko-KR": "양 팀 선발이 확정되면 금지 순서 선택 시간이 시작됩니다({0}초)."
+  },
+  "确认后，先手方 Ban 倒计时开始（{0} 秒）。": {
+    "zh-TW": "確認後，先手方 Ban 倒數開始（{0} 秒）。",
+    "en-US": "Confirming starts the first team’s ban timer ({0} seconds).",
+    "ko-KR": "확정하면 선금지 팀의 제한 시간이 시작됩니다({0}초)."
+  },
+  "确认后，本图选禁倒计时结束。": {
+    "zh-TW": "確認後，本圖選禁倒數結束。",
+    "en-US": "Confirming ends this map’s pick and ban timers.",
+    "ko-KR": "확정하면 이 맵의 선택 및 금지 시간이 종료됩니다."
+  },
+  "确认后，对方 Ban 倒计时开始（{0} 秒）。": {
+    "zh-TW": "確認後，對方 Ban 倒數開始（{0} 秒）。",
+    "en-US": "Confirming starts the opponent’s ban timer ({0} seconds).",
+    "ko-KR": "확정하면 상대 팀의 금지 시간이 시작됩니다({0}초)."
+  },
+  "首图选择权确认后，选图倒计时开始（{0} 秒）。": {
+    "zh-TW": "首圖選擇權確認後，選圖倒數開始（{0} 秒）。",
+    "en-US": "Confirming first-map priority starts the map timer ({0} seconds).",
+    "ko-KR": "첫 맵 선택권이 확정되면 맵 선택 시간이 시작됩니다({0}초)."
+  },
+  "确认获胜方后，选图倒计时开始（{0} 秒）。": {
+    "zh-TW": "確認獲勝方後，選圖倒數開始（{0} 秒）。",
+    "en-US": "Confirming the winner starts the map timer ({0} seconds).",
+    "ko-KR": "승자를 확정하면 맵 선택 시간이 시작됩니다({0}초)."
+  },
+  "双方出手揭晓胜者后，选图倒计时开始（{0} 秒）。": {
+    "zh-TW": "雙方出手揭曉勝者後，選圖倒數開始（{0} 秒）。",
+    "en-US": "The map timer starts when both moves reveal a winner ({0} seconds).",
+    "ko-KR": "양 팀의 선택으로 승자가 결정되면 맵 선택 시간이 시작됩니다({0}초)."
+  },
+  "选图倒计时从上一图结果确认时开始，开放下一图不会重置。": {
+    "zh-TW": "選圖倒數從上一圖結果確認時開始，開放下一圖不會重置。",
+    "en-US": "The map timer starts when the previous result is confirmed. Opening the next map does not reset it.",
+    "ko-KR": "이전 맵 결과 확정 시 다음 맵 선택 시간이 시작됩니다. 다음 맵을 열어도 초기화되지 않습니다."
+  },
+  "确认结果且整场尚未结束时，下一图选图倒计时开始（{0} 秒）。": {
+    "zh-TW": "確認結果且整場尚未結束時，下一圖選圖倒數開始（{0} 秒）。",
+    "en-US": "If the series continues, confirming starts the next map timer ({0} seconds).",
+    "ko-KR": "시리즈가 계속된다면 결과 확정 시 다음 맵 선택 시간이 시작됩니다({0}초)."
+  },
+  "已通知赛管，本队继续比赛。": {
+    "zh-TW": "已通知賽管，本隊繼續比賽。",
+    "en-US": "Referee notified: your team will continue.",
+    "ko-KR": "경기 속행 의사를 심판에게 전달했습니다."
+  },
+  "已提交放弃剩余地图申请，等待赛管确认。": {
+    "zh-TW": "已提交放棄剩餘地圖申請，等待賽管確認。",
+    "en-US": "Concession requested. Waiting for the referee.",
+    "ko-KR": "남은 맵 포기를 요청했습니다. 심판 확인을 기다리세요."
+  },
+  "{0} 可选择继续或放弃剩余 {1} 图": {
+    "zh-TW": "{0} 可選擇繼續或放棄剩餘 {1} 圖",
+    "en-US": "{0} may continue or concede the remaining {1} maps",
+    "ko-KR": "{0}: 속행 또는 남은 {1}개 맵 포기 가능"
+  },
+  "本队已选择继续；0:4 时仍可再次选择。": {
+    "zh-TW": "本隊已選擇繼續；0:4 時仍可再次選擇。",
+    "en-US": "Your team chose to continue. The choice returns at 0:4.",
+    "ko-KR": "속행을 선택했습니다. 0:4가 되면 다시 선택할 수 있습니다."
+  },
+  "由落后方本场操作代表决定。放弃需赛管确认，已打地图与积分保留。": {
+    "zh-TW": "由落後方本場操作代表決定。放棄需賽管確認，已打地圖與積分保留。",
+    "en-US": "The trailing team’s representative decides. Concession requires referee confirmation; played maps and earned points are kept.",
+    "ko-KR": "뒤지고 있는 팀의 대표가 결정합니다. 포기는 심판 확인이 필요하며 진행한 맵과 획득 점수는 유지됩니다."
+  },
+  "继续比赛，通知赛管": {
+    "zh-TW": "繼續比賽，通知賽管",
+    "en-US": "Continue and notify referee",
+    "ko-KR": "경기 속행 및 심판 알림"
+  },
+  "申请放弃剩余地图": {
+    "zh-TW": "申請放棄剩餘地圖",
+    "en-US": "Request concession of remaining maps",
+    "ko-KR": "남은 맵 포기 요청"
+  },
+  "确认申请放弃剩余地图": {
+    "zh-TW": "確認申請放棄剩餘地圖",
+    "en-US": "Confirm concession request",
+    "ko-KR": "남은 맵 포기 요청 확인"
+  },
+  "赛管确认后，最终比分为 {0}:{1}。未打的 {2} 图记为判负，不生成小分、回放或选手数据。": {
+    "zh-TW": "賽管確認後，最終比分為 {0}:{1}。未打的 {2} 圖記為判負，不產生小分、回放或選手資料。",
+    "en-US": "After referee confirmation, the final score is {0}:{1}. The {2} unplayed maps are awarded losses without map scores, replays or player data.",
+    "ko-KR": "심판 확인 후 최종 스코어는 {0}:{1}입니다. 미진행 {2}개 맵은 패배로 처리하며 맵 점수, 리플레이, 선수 데이터를 생성하지 않습니다."
+  },
+  "提交后暂停后续比赛操作，等待赛管确认。纪律处罚另行处理。": {
+    "zh-TW": "提交後暫停後續比賽操作，等待賽管確認。紀律處罰另行處理。",
+    "en-US": "Submission pauses further match actions pending referee confirmation. Disciplinary decisions are handled separately.",
+    "ko-KR": "제출 후 심판 확인까지 경기 진행이 중지됩니다. 징계 여부는 별도로 처리합니다."
+  },
+  "确认申请，交由赛管处理": {
+    "zh-TW": "確認申請，交由賽管處理",
+    "en-US": "Confirm request for referee review",
+    "ko-KR": "요청 확정 및 심판 검토"
+  },
+  " · 等待赛管确认": {
+    "zh-TW": " · 等待賽管確認",
+    "en-US": " · Awaiting referee confirmation",
+    "ko-KR": " · 심판 확인 대기"
+  },
+  "裁定后比分 {0}:{1}；已打积分保留，剩余地图弃权方每图 0 分，对手每图 2 分。": {
+    "zh-TW": "裁定後比分 {0}:{1}；已打積分保留，剩餘地圖棄權方每圖 0 分，對手每圖 2 分。",
+    "en-US": "Awarded score {0}:{1}. Earned points remain; remaining maps give 0 points to the conceding team and 2 to the opponent.",
+    "ko-KR": "판정 스코어 {0}:{1}. 기존 점수는 유지하며 남은 맵은 포기 팀 0점, 상대 팀 2점씩 부여됩니다."
+  },
+  " 图记为判负，仅计算系列赛比分与积分，不生成小分或选手数据。": {
+    "zh-TW": " 圖記為判負，僅計算系列賽比分與積分，不產生小分或選手資料。",
+    "en-US": " maps are awarded losses for series score and points only; no map scores or player data are created.",
+    "ko-KR": "개 맵을 시리즈 스코어와 점수에만 반영합니다. 맵 점수나 선수 데이터는 생성하지 않습니다."
+  },
+  "已打地图积分保留；剩余地图弃权方每图 0 分，对手每图 2 分。以下积分由已审核记录计算。": {
+    "zh-TW": "已打地圖積分保留；剩餘地圖棄權方每圖 0 分，對手每圖 2 分。以下積分由已審核紀錄計算。",
+    "en-US": "Points earned on played maps remain. Remaining maps give 0 points to the conceding team and 2 to the opponent. Totals follow the reviewed record.",
+    "ko-KR": "진행한 맵의 점수는 유지됩니다. 남은 맵은 포기 팀 0점, 상대 팀 2점씩이며 검토된 기록으로 계산됩니다."
+  },
+  "裁定已复核，开放后双方可核对弃权队伍、实际记录及积分依据。": {
+    "zh-TW": "裁定已複核，開放後雙方可核對棄權隊伍、實際紀錄及積分依據。",
+    "en-US": "The ruling has been reviewed. Once confirmation opens, both teams can check the concession, played records and points.",
+    "ko-KR": "판정 검토가 완료되었습니다. 확인이 열리면 양 팀이 포기 팀, 실제 기록 및 점수 근거를 확인할 수 있습니다."
+  },
+  "上一图：{0}": {
+    "zh-TW": "上一圖：{0}",
+    "en-US": "Previous map: {0}",
+    "ko-KR": "이전 맵: {0}"
+  },
+  "后续选禁与比赛控制已暂停。请本场有权限的赛管或管理员核对队伍、已打记录及公开原因，确认后再进入赛果与积分处理。": {
+    "zh-TW": "後續選禁與比賽控制已暫停。請本場有權限的賽管或管理員核對隊伍、已打紀錄及公開原因，確認後再進入賽果與積分處理。",
+    "en-US": "Picks and match controls are paused. The authorized referee or administrator must review the team, played maps and public reason before result processing.",
+    "ko-KR": "선택 및 경기 진행이 중지되었습니다. 권한이 있는 심판이나 관리자가 팀, 진행한 맵 및 사유를 확인한 후 결과와 점수를 처리합니다."
+  },
+  "本图已确认信息": {
+    "zh-TW": "本圖已確認資訊",
+    "en-US": "Confirmed for this map",
+    "ko-KR": "이번 전장 확정 정보"
+  },
+  "地图已确定：{0}": {
+    "zh-TW": "地圖已確定：{0}",
+    "en-US": "Map selected: {0}",
+    "ko-KR": "전장 확정: {0}"
+  },
+  "双方首发已公开": {
+    "zh-TW": "雙方先發已公開",
+    "en-US": "Both lineups revealed",
+    "ko-KR": "양 팀 선발 공개"
+  },
+  "{0} 先 Ban": {
+    "zh-TW": "{0} 先 Ban",
+    "en-US": "{0} bans first",
+    "ko-KR": "{0} 선금지"
+  },
+  "{0} 已禁用 {1}": {
+    "zh-TW": "{0} 已禁用 {1}",
+    "en-US": "{0} banned {1}",
+    "ko-KR": "{0}: {1} 금지"
+  },
+  "{0} 禁用": {
+    "zh-TW": "{0} 禁用",
+    "en-US": "{0} ban",
+    "ko-KR": "{0} 금지"
+  },
+  "换上": {
+    "zh-TW": "換上",
+    "en-US": "In",
+    "ko-KR": "투입"
+  },
+  "换下": {
+    "zh-TW": "換下",
+    "en-US": "Out",
+    "ko-KR": "교체 아웃"
+  },
+  "收起更新提示": {
+    "zh-TW": "收起更新提示",
+    "en-US": "Dismiss update",
+    "ko-KR": "알림 닫기"
+  },
+  "首发已公开": {
+    "zh-TW": "先發已公開",
+    "en-US": "Lineups revealed",
+    "ko-KR": "선발 공개됨"
+  },
+  "首发暂未公开": {
+    "zh-TW": "先發暫未公開",
+    "en-US": "Lineups sealed",
+    "ko-KR": "선발 비공개"
+  },
+  "本图有人选或职责变动": {
+    "zh-TW": "本圖有人選或職責變動",
+    "en-US": "Players or roles changed",
+    "ko-KR": "선수 또는 역할 변경"
+  },
+  "查看双方 CCTNN": {
+    "zh-TW": "檢視雙方 CCTNN",
+    "en-US": "View both CCTNN lineups",
+    "ko-KR": "양 팀 CCTNN 보기"
+  },
+  "双方确认后一起公开": {
+    "zh-TW": "雙方確認後一起公開",
+    "en-US": "Revealed after both submit",
+    "ko-KR": "양 팀 제출 후 동시 공개"
+  },
+  "双方首发与本图变动": {
+    "zh-TW": "雙方先發與本圖變動",
+    "en-US": "Lineups and changes",
+    "ko-KR": "양 팀 선발 및 변경 사항"
+  },
+  "沿用上一图人员": {
+    "zh-TW": "沿用上一圖人員",
+    "en-US": "Same players as last map",
+    "ko-KR": "이전 전장과 같은 선수"
+  },
+  "本图首次公布首发": {
+    "zh-TW": "本圖首次公布先發",
+    "en-US": "First lineup announcement",
+    "ko-KR": "첫 선발 공개"
+  },
+  "以上信息在双方提交后同时公开；查看信息不影响当前操作和倒计时。": {
+    "zh-TW": "以上資訊在雙方提交後同時公開；檢視資訊不影響目前操作和倒數計時。",
+    "en-US": "Lineups are revealed together after both teams submit. Viewing does not pause actions or the timer.",
+    "ko-KR": "양 팀 제출 후 선발을 동시에 공개합니다. 확인 중에도 진행과 타이머는 유지됩니다."
+  },
+  "{0} 选择本图": {
+    "zh-TW": "{0} 選擇本圖",
+    "en-US": "{0} chooses this map",
+    "ko-KR": "{0} 전장 선택"
+  },
+  "选定地图后，双方同时确认首发。": {
+    "zh-TW": "選定地圖後，雙方同時確認先發。",
+    "en-US": "Both teams submit lineups after map selection.",
+    "ko-KR": "전장 선택 후 양 팀이 선발을 제출합니다."
+  },
+  "首图固定占领要点，选定后双方同时确认首发。": {
+    "zh-TW": "首圖固定控制，選定後雙方同時確認先發。",
+    "en-US": "Map 1 is Control. Both teams submit lineups next.",
+    "ko-KR": "1세트는 쟁탈입니다. 이후 양 팀이 선발을 제출합니다."
+  },
+  "本次选择": {
+    "zh-TW": "本次選擇",
+    "en-US": "YOUR SELECTION",
+    "ko-KR": "현재 선택"
+  },
+  "本队开局攻防": {
+    "zh-TW": "本隊開局攻防",
+    "en-US": "Your starting side",
+    "ko-KR": "우리 팀 시작 진영"
+  },
+  "此模式无需选择攻防。": {
+    "zh-TW": "此模式無需選擇攻防。",
+    "en-US": "No starting-side choice for this mode.",
+    "ko-KR": "이 모드는 시작 진영 선택이 없습니다."
+  },
+  "选择左侧地图，在此核对后提交。": {
+    "zh-TW": "選擇左側地圖，在此核對後提交。",
+    "en-US": "Pick a map, then review and confirm here.",
+    "ko-KR": "전장을 고른 뒤 여기서 확인하고 제출하세요."
+  },
+  "确认后锁定地图，进入首发确认。": {
+    "zh-TW": "確認後鎖定地圖，進入先發確認。",
+    "en-US": "Confirm to lock the map and open lineups.",
+    "ko-KR": "확정하면 전장이 잠기고 선발 제출이 시작됩니다."
+  },
+  "确认地图，进入首发": {
+    "zh-TW": "確認地圖，進入先發",
+    "en-US": "Confirm map & open lineups",
+    "ko-KR": "전장 확정 · 선발 제출"
+  },
+  "等待 {0} 选择地图": {
+    "zh-TW": "等待 {0} 選擇地圖",
+    "en-US": "Waiting for {0} to pick",
+    "ko-KR": "{0} 전장 선택 대기 중"
+  },
+  "对方确认后，地图和攻防会直接显示在这里。": {
+    "zh-TW": "對方確認後，地圖和攻防會直接顯示在這裡。",
+    "en-US": "The map and starting sides will appear here once confirmed.",
+    "ko-KR": "확정되면 전장과 시작 진영이 여기에 표시됩니다."
+  },
+  "后 Ban": {
+    "zh-TW": "後 Ban",
+    "en-US": "Bans second",
+    "ko-KR": "후금지"
+  },
+  "正在选择": {
+    "zh-TW": "正在選擇",
+    "en-US": "Choosing now",
+    "ko-KR": "선택 중"
+  },
+  "等待对方禁用": {
+    "zh-TW": "等待對方禁用",
+    "en-US": "Waiting for first ban",
+    "ko-KR": "상대 금지 대기 중"
+  },
+  "当前操作": {
+    "zh-TW": "目前操作",
+    "en-US": "Action",
+    "ko-KR": "현재 작업"
+  },
+  "不可选": {
+    "zh-TW": "不可選",
+    "en-US": "Unavailable",
+    "ko-KR": "선택 불가"
+  },
+  "没有匹配的英雄，请切换职责或清空搜索。": {
+    "zh-TW": "沒有符合的英雄，請切換職責或清空搜尋。",
+    "en-US": "No heroes found. Change role or clear the search.",
+    "ko-KR": "일치하는 영웅이 없습니다. 역할을 바꾸거나 검색어를 지우세요."
+  },
+  "灰色英雄不可禁用，悬停可查看规则原因。": {
+    "zh-TW": "灰色英雄不可禁用，游標停留可檢視規則原因。",
+    "en-US": "Grey heroes are unavailable. Hover to see why.",
+    "ko-KR": "회색 영웅은 선택할 수 없습니다. 마우스를 올려 이유를 확인하세요."
+  },
+  "本次禁用": {
+    "zh-TW": "本次禁用",
+    "en-US": "YOUR BAN",
+    "ko-KR": "현재 금지 선택"
+  },
+  "请选择英雄": {
+    "zh-TW": "請選擇英雄",
+    "en-US": "Choose a hero",
+    "ko-KR": "영웅을 선택하세요"
+  },
+  "确认后，本图双方均不可使用此英雄。": {
+    "zh-TW": "確認後，本圖雙方均不可使用此英雄。",
+    "en-US": "Once confirmed, neither team may use this hero on this map.",
+    "ko-KR": "확정하면 이번 전장에서 양 팀 모두 이 영웅을 사용할 수 없습니다."
+  },
+  "选择英雄后，在此核对并锁定禁用。": {
+    "zh-TW": "選擇英雄後，在此核對並鎖定禁用。",
+    "en-US": "Choose a hero, then review and lock the ban here.",
+    "ko-KR": "영웅을 고른 뒤 여기서 확인하고 금지를 확정하세요."
+  },
+  "确认后完成本图选禁，等待实际开赛。": {
+    "zh-TW": "確認後完成本圖選禁，等待實際開賽。",
+    "en-US": "Confirm to finish selection and await game start.",
+    "ko-KR": "확정하면 선택을 마치고 실제 경기 시작을 기다립니다."
+  },
+  "确认后轮到对方禁用英雄。": {
+    "zh-TW": "確認後輪到對方禁用英雄。",
+    "en-US": "Confirm to give the other team their ban turn.",
+    "ko-KR": "확정하면 상대 팀의 금지 차례로 넘어갑니다."
+  },
+  "确认禁用 {0}": {
+    "zh-TW": "確認禁用 {0}",
+    "en-US": "Ban {0}",
+    "ko-KR": "{0} 금지 확정"
+  },
+  "确认禁用": {
+    "zh-TW": "確認禁用",
+    "en-US": "Confirm ban",
+    "ko-KR": "금지 확정"
+  },
+  "等待 {0} 禁用英雄": {
+    "zh-TW": "等待 {0} 禁用英雄",
+    "en-US": "Waiting for {0} to ban",
+    "ko-KR": "{0} 영웅 금지 대기 중"
+  },
+  "禁用结果会自动显示，无需返回地图栏查找。": {
+    "zh-TW": "禁用結果會自動顯示，無需返回地圖欄尋找。",
+    "en-US": "Ban results appear here automatically.",
+    "ko-KR": "금지 결과가 여기에 자동으로 표시됩니다."
+  },
+  "未禁用（超时）": {
+    "zh-TW": "未禁用（逾時）",
+    "en-US": "No ban (timed out)",
+    "ko-KR": "시간 초과로 밴 없음"
+  },
+  "已放弃": {
+    "zh-TW": "已放棄",
+    "en-US": "Waived",
+    "ko-KR": "포기됨"
+  },
+  "{0} 超时，已放弃本轮禁用": {
+    "zh-TW": "{0} 逾時，已放棄本輪禁用",
+    "en-US": "{0} timed out and waived this ban",
+    "ko-KR": "{0} 시간 초과로 이번 밴 포기"
+  },
+  "英雄禁用超时自动放弃本轮禁用权；其他阶段超时提醒赛管。": {
+    "zh-TW": "英雄禁用逾時自動放棄本輪禁用權；其他階段逾時提醒賽管。",
+    "en-US": "A ban timeout waives that turn; other phase timeouts alert the referee.",
+    "ko-KR": "밴 시간 초과 시 해당 밴을 포기합니다. 다른 단계는 심판에게 알립니다."
+  },
+  "禁用时间已到，正在同步超时放弃结果。": {
+    "zh-TW": "禁用時間已到，正在同步逾時放棄結果。",
+    "en-US": "Ban time is up. Syncing the waived turn.",
+    "ko-KR": "밴 시간이 끝났습니다. 포기 결과를 동기화 중입니다."
+  },
+  "请在倒计时结束前确认；超时自动放弃本轮禁用权，不得补 Ban。": {
+    "zh-TW": "請在倒計時結束前確認；逾時自動放棄本輪禁用權，不得補 Ban。",
+    "en-US": "Confirm before time runs out. A timeout waives this ban; late bans are not allowed.",
+    "ko-KR": "시간 내에 확정하세요. 시간 초과 시 이번 밴이 포기되며 나중에 추가할 수 없습니다."
+  },
+  "确认后，先手方 Ban 倒计时开始（{0} 秒）。 超时将自动放弃本轮禁用权，不得补 Ban。": {
+    "zh-TW": "確認後，先手方 Ban 倒數開始（{0} 秒）。 逾時將自動放棄本輪禁用權，不得補 Ban。",
+    "en-US": "Confirming starts the first team’s ban timer ({0} seconds). A timeout waives the turn; late bans are not allowed.",
+    "ko-KR": "확정하면 선금지 팀의 제한 시간이 시작됩니다({0}초). 시간 초과 시 해당 밴을 포기하며 나중에 추가할 수 없습니다."
+  },
+  "确认后，对方 Ban 倒计时开始（{0} 秒）。 超时将自动放弃本轮禁用权，不得补 Ban。": {
+    "zh-TW": "確認後，對方 Ban 倒數開始（{0} 秒）。 逾時將自動放棄本輪禁用權，不得補 Ban。",
+    "en-US": "Confirming starts the opponent’s ban timer ({0} seconds). A timeout waives the turn; late bans are not allowed.",
+    "ko-KR": "확정하면 상대 팀의 금지 시간이 시작됩니다({0}초). 시간 초과 시 해당 밴을 포기하며 나중에 추가할 수 없습니다."
+  },
+  "确认后，本图选禁倒计时结束。 超时将自动放弃本轮禁用权，不得补 Ban。": {
+    "zh-TW": "確認後，本圖選禁倒數結束。 逾時將自動放棄本輪禁用權，不得補 Ban。",
+    "en-US": "Confirming ends this map’s pick and ban timers. A timeout waives the turn; late bans are not allowed.",
+    "ko-KR": "확정하면 이 맵의 선택 및 금지 시간이 종료됩니다. 시간 초과 시 해당 밴을 포기하며 나중에 추가할 수 없습니다."
+  },
+  "查看房间信息": {
+    "zh-TW": "查看房間資訊",
+    "en-US": "View room details",
+    "ko-KR": "방 정보 보기"
+  },
+  "房间信息": {
+    "zh-TW": "房間資訊",
+    "en-US": "Room info",
+    "ko-KR": "방 정보"
+  },
+  "本场对阵": {
+    "zh-TW": "本場對陣",
+    "en-US": "Match teams and score",
+    "ko-KR": "대진 및 점수"
+  },
+  "比赛房导航": {
+    "zh-TW": "比賽房導覽",
+    "en-US": "Match room navigation",
+    "ko-KR": "경기방 탐색"
+  },
+  "双方名单": {
+    "zh-TW": "雙方名單",
+    "en-US": "Rosters",
+    "ko-KR": "양 팀 명단"
+  },
+  "更多操作": {
+    "zh-TW": "更多操作",
+    "en-US": "More",
+    "ko-KR": "더 보기"
+  },
+  "有待处理协助": {
+    "zh-TW": "有待處理協助",
+    "en-US": "Assistance pending",
+    "ko-KR": "처리 대기 요청"
+  },
+  "切换队伍名单": {
+    "zh-TW": "切換隊伍名單",
+    "en-US": "Switch team roster",
+    "ko-KR": "팀 명단 전환"
+  },
+  "首发已提交": {
+    "zh-TW": "先發已提交",
+    "en-US": "Lineup submitted",
+    "ko-KR": "선발 제출 완료"
+  },
+  "查看比赛阶段": {
+    "zh-TW": "查看比賽階段",
+    "en-US": "View match stages",
+    "ko-KR": "경기 단계 보기"
+  },
+  "选择地图，在此核对后提交。": {
+    "zh-TW": "選擇地圖，在此核對後提交。",
+    "en-US": "Select a map, then review and confirm here.",
+    "ko-KR": "맵을 선택한 후 여기에서 확인하고 제출하세요."
+  },
+  "灰色英雄不可禁用，规则限制显示在下方。": {
+    "zh-TW": "灰色英雄不可禁用，規則限制顯示在下方。",
+    "en-US": "Grey heroes are unavailable. Restrictions are listed below.",
+    "ko-KR": "회색 영웅은 금지할 수 없습니다. 제한 사유는 아래에 표시됩니다."
+  },
+  "连接已恢复，已同步最新进度": {
+    "zh-TW": "連線已恢復，已同步最新進度",
+    "en-US": "Reconnected · progress is up to date",
+    "ko-KR": "연결 복구 · 최신 진행 상태 동기화 완료"
+  },
+  "需要重新核对访问权限": {
+    "zh-TW": "需要重新核對存取權限",
+    "en-US": "Check your room access",
+    "ko-KR": "경기방 접근 권한을 확인해 주세요"
+  },
+  "网络已断开，页面内容已保留": {
+    "zh-TW": "網路已中斷，頁面內容已保留",
+    "en-US": "Offline · your view is preserved",
+    "ko-KR": "오프라인 · 현재 화면이 유지됩니다"
+  },
+  "连接暂时中断，正在自动重连": {
+    "zh-TW": "連線暫時中斷，正在自動重新連線",
+    "en-US": "Connection interrupted · reconnecting",
+    "ko-KR": "연결 중단 · 자동 재연결 중"
+  },
+  "比赛房连接状态": {
+    "zh-TW": "比賽房連線狀態",
+    "en-US": "Match room connection",
+    "ko-KR": "경기방 연결 상태"
+  },
+  "当前显示上次同步的内容，提交已暂停。断线不会暂停服务器倒计时。": {
+    "zh-TW": "目前顯示上次同步的內容，提交已暫停。斷線不會暫停伺服器倒數計時。",
+    "en-US": "Showing the last synced state. Submissions are paused. The server countdown continues while disconnected.",
+    "ko-KR": "마지막으로 동기화된 상태입니다. 제출이 일시 중지됩니다. 연결이 끊겨도 서버 제한 시간은 계속 흐릅니다."
+  },
+  "正在重新同步…": {
+    "zh-TW": "正在重新同步…",
+    "en-US": "Synchronizing…",
+    "ko-KR": "다시 동기화 중…"
+  },
+  "{0} 秒后自动重试": {
+    "zh-TW": "{0} 秒後自動重試",
+    "en-US": "Retrying in {0}s",
+    "ko-KR": "{0}초 후 자동 재시도"
+  },
+  "联网后自动恢复，也可手动尝试": {
+    "zh-TW": "連網後自動恢復，也可手動嘗試",
+    "en-US": "Reconnecting when online; you can also retry",
+    "ko-KR": "온라인 복귀 시 자동 재연결됩니다. 직접 재시도할 수도 있습니다"
+  },
+  "立即重连": {
+    "zh-TW": "立即重新連線",
+    "en-US": "Reconnect now",
+    "ko-KR": "지금 재연결"
+  },
+  "网络连接已中断，正在等待恢复。": {
+    "zh-TW": "網路連線已中斷，正在等待恢復。",
+    "en-US": "Offline. Waiting for the connection to return.",
+    "ko-KR": "네트워크 연결이 끊겼습니다. 복구를 기다리는 중입니다."
+  },
+  "服务器请求较多，正在等待重试。": {
+    "zh-TW": "伺服器請求較多，正在等待重試。",
+    "en-US": "The server is busy. Waiting before retrying.",
+    "ko-KR": "서버 요청이 많습니다. 잠시 후 재시도합니다."
+  },
+  "服务暂时不可用，正在自动重连。": {
+    "zh-TW": "服務暫時無法使用，正在自動重新連線。",
+    "en-US": "Service temporarily unavailable. Reconnecting automatically.",
+    "ko-KR": "서비스를 일시적으로 사용할 수 없습니다. 자동 재연결 중입니다."
+  },
+  "同步超时，正在自动重连。": {
+    "zh-TW": "同步逾時，正在自動重新連線。",
+    "en-US": "Synchronization timed out. Reconnecting automatically.",
+    "ko-KR": "동기화 시간이 초과되었습니다. 자동 재연결 중입니다."
+  },
+  "连接中断，正在自动重连。": {
+    "zh-TW": "連線中斷，正在自動重新連線。",
+    "en-US": "Connection interrupted. Reconnecting automatically.",
+    "ko-KR": "연결이 끊겼습니다. 자동 재연결 중입니다."
+  },
+  "账号已变化，请重新进入比赛房。": {
+    "zh-TW": "帳號已變更，請重新進入比賽房。",
+    "en-US": "Your account changed. Please re-enter the room.",
+    "ko-KR": "계정이 변경되었습니다. 경기방에 다시 입장해 주세요."
+  },
+  "已保存并同步最新状态。": {
+    "zh-TW": "已儲存並同步最新狀態。",
+    "en-US": "Saved and synchronized.",
+    "ko-KR": "저장 및 최신 상태 동기화 완료."
+  },
+  "连接已恢复，已同步服务器进度。请核对刚才的提交，再决定是否重试。": {
+    "zh-TW": "連線已恢復，已同步伺服器進度。請核對剛才的提交，再決定是否重試。",
+    "en-US": "Reconnected and synchronized. Check your last submission before retrying.",
+    "ko-KR": "연결이 복구되고 동기화되었습니다. 재시도 전에 방금 제출한 내용을 확인해 주세요."
+  },
+  "已保存；正在恢复同步，核对最新状态后可继续操作。": {
+    "zh-TW": "已儲存；正在恢復同步，核對最新狀態後可繼續操作。",
+    "en-US": "Saved. Reconnecting to verify the latest state before continuing.",
+    "ko-KR": "저장되었습니다. 계속 진행하기 전에 최신 상태를 확인하기 위해 재연결 중입니다."
+  },
+  "提交结果尚未确认，已同步服务器进度。请核对后再重试，操作不会自动重发。": {
+    "zh-TW": "提交結果尚未確認，已同步伺服器進度。請核對後再重試，操作不會自動重送。",
+    "en-US": "The submission response was lost. Server progress is synchronized. Check before retrying; commands are never resent automatically.",
+    "ko-KR": "제출 응답을 받지 못했습니다. 서버 진행 상태가 동기화되었습니다. 확인 후 재시도해 주세요. 작업은 자동으로 재전송되지 않습니다."
+  },
+  "提交结果尚未确认，正在自动重连。请保留当前页面，恢复后核对；操作不会自动重发。": {
+    "zh-TW": "提交結果尚未確認，正在自動重新連線。請保留目前頁面，恢復後核對；操作不會自動重送。",
+    "en-US": "Submission outcome unknown. Reconnecting. Keep this page open and check after recovery; commands are never resent automatically.",
+    "ko-KR": "제출 결과를 확인할 수 없습니다. 자동 재연결 중입니다. 이 페이지를 유지하고 복구 후 확인해 주세요. 작업은 자동으로 재전송되지 않습니다."
   }
 }

@@ -89,6 +89,11 @@ const developmentRoutes = import.meta.env.DEV ? [
     lazy: async () => ({ Component: (await import('../pages/dev/AccountDesignPreviewPage.jsx')).default })
   },
   {
+    path: '/dev/weekly-room-network',
+    HydrateFallback: RouteFallback,
+    lazy: lazyDefault(() => import('../pages/dev/WeeklyRoomNetworkPreview.jsx'))
+  },
+  {
     path: '/dev/weekly-room-preview',
     HydrateFallback: RouteFallback,
     lazy: async () => ({ Component: (await import('../pages/dev/WeeklyRoomDesignPreview.jsx')).default })

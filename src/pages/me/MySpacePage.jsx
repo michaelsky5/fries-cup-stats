@@ -67,14 +67,15 @@ const SPACE_SECTION_DEFINITIONS = {
   security: { id: 'security', label: '账号设置', en: 'ACCOUNT', group: 'service' }
 }
 
-const SPACE_NAV_LABELS_EN = { overview: 'Overview', team: 'Team & registration', matches: 'My participation', tasks: 'To do', messages: 'Inbox', following: 'Following', workspace: 'Workspace' }
+const SPACE_NAV_LABELS_EN = { overview: 'Overview', team: 'Team & registration', matches: 'Match rooms', participation: 'My participation', tasks: 'To do', messages: 'Inbox', following: 'Following', workspace: 'Workspace' }
 const SPACE_SECTION_LABELS_EN = { overview: 'Space overview', tasks: 'Task center', events: 'My events', matches: 'My matches', team: 'Team & registration', referee: 'Referee workspace', caster: 'Caster workspace', stats: 'My stats', following: 'Following', communications: 'Event messages', security: 'Account settings' }
 
 const SPACE_NAV_GROUPS = [
   { id: 'overview', label: '概览', en: 'HOME', sectionIds: ['overview'] },
+  { id: 'matches', label: '比赛房', en: 'MATCH ROOMS', sectionIds: ['matches'] },
   { id: 'tasks', label: '待办', en: 'TO DO', sectionIds: ['tasks'] },
   { id: 'team', label: '队伍与报名', en: 'TEAM', sectionIds: ['team'] },
-  { id: 'matches', label: '我的参赛', en: 'PARTICIPATION', sectionIds: ['events', 'matches', 'stats'] },
+  { id: 'participation', label: '我的参赛', en: 'PARTICIPATION', sectionIds: ['events', 'stats'] },
   { id: 'messages', label: '消息', en: 'INBOX', sectionIds: ['communications'] },
   { id: 'following', label: '我的关注', en: 'FOLLOWING', sectionIds: ['following'] },
   { id: 'workspace', label: '工作台', en: 'WORKSPACE', sectionIds: ['referee', 'caster'] }
@@ -258,7 +259,7 @@ function NavChevron() {
   return <svg className={styles.navChevron} viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
 }
 
-export function SpaceTabs({ activeSection, withSeason, sections, overview = null, locale = 'zh-CN' }) {
+export function SpaceTabs({ activeSection, withSeason, sections, overview = null, locale = 'zh-CN', roomEntry = false }) {
   const [expanded, setExpanded] = useState(false)
   const menuId = useId()
   const sectionLabel = section => locale === 'en-US' ? SPACE_SECTION_LABELS_EN[section?.id] || 'Space overview' : section?.label || uiText("空间首页", locale)
@@ -281,13 +282,16 @@ export function SpaceTabs({ activeSection, withSeason, sections, overview = null
         setExpanded(false)
       }
     }}>
+      <div className={styles.spaceNavBar}>
       <button type="button" className={styles.spaceNavToggle} aria-expanded={expanded} aria-controls={menuId} onClick={() => setExpanded(value => !value)}>
         <strong>{sectionLabel(activeDefinition)}</strong><span className={styles.mobileTaskSummary}>{sections.some(section => section.id === 'tasks') && taskBadge ? <span aria-label={taskBadgeLabel}>{locale === 'en-US' ? 'To do' : uiText("待办", locale)} {taskBadge}</span> : null}<span data-i18n-ignore>{locale === 'en-US' ? 'Sections' : uiText("切换栏目", locale)} <NavChevron /></span></span>
       </button>
+      {sections.some(section => section.id === 'matches') ? <Link className={styles.spaceRoomShortcut} aria-current={activeSection === 'matches' ? 'page' : undefined} to={withSeason('/me?section=matches')}>{roomEntry ? uiText('比赛房', locale) : sectionLabel(SPACE_SECTION_DEFINITIONS.matches)} <span aria-hidden="true">→</span></Link> : null}
+      </div>
       <div id={menuId} className={styles.spaceNavGroups} onClick={event => { if (event.target.closest('a')) setExpanded(false) }}>
         {groups.map(group => {
           const active = group.items.some(section => section.id === activeSection)
-          const groupLabel = group.id === 'workspace' && group.items.length === 1 ? sectionLabel(group.items[0]) : locale === 'en-US' ? SPACE_NAV_LABELS_EN[group.id] : uiText(group.label, locale)
+          const groupLabel = (group.id === 'matches' && !roomEntry) || (group.id === 'workspace' && group.items.length === 1) ? sectionLabel(group.items[0]) : locale === 'en-US' ? SPACE_NAV_LABELS_EN[group.id] : uiText(group.label, locale)
           const count = group.id === 'tasks' ? taskBadge : group.id === 'messages' ? unreadMessageCount : 0
           if (group.items.length === 1) {
             const section = group.items[0]
@@ -795,7 +799,7 @@ function MySpaceContent() {
         {needsParticipationAccess ? competitionBar : null}
         {showIdentityContext && needsParticipationAccess ? <IdentityContextStrip context={effectiveSpaceContext} loading={spaceContextLoading} error={spaceContextError} /> : null}
         <RoomGuideLink season={seasonId} label="参赛与比赛指南" />
-        <SpaceTabs key={activeSection} activeSection={activeSection} withSeason={pageLink} sections={spaceSections} overview={navigationSummary} locale={locale} />
+        <SpaceTabs key={activeSection} activeSection={activeSection} withSeason={pageLink} sections={spaceSections} overview={navigationSummary} locale={locale} roomEntry={isWeekly && canViewWeeklyMatchRooms} />
       </SpaceHeader>
       {activeSection === 'overview' ? registrationEntry : null}
       {['overview', 'tasks'].includes(activeSection) ? <AccountActivityWorkspace key={`${seasonId}:${authUser?.id || ''}`} view={activeSection} activity={activity} locale={locale} context={effectiveSpaceContext} withSeason={pageLink} sections={spaceSections} followingSummary={followingSummary} managerStatus={isPrimaryManager ? managerWorkspaceStatus : null} playerStatus={isPrimaryPlayer ? playerWorkspaceStatus : null} genericTasks={hasAccountFeatureAccess(accountLaunch, 'communications')} weeklyPreparation={isWeekly && canViewWeeklyCompetition && spaceSections.some(section => section.id === 'team')} weeklyRooms={isWeekly && canViewWeeklyMatchRooms && spaceSections.some(section => section.id === 'matches')} roomsReadOnly={!canWriteMatchRooms} /> : null}

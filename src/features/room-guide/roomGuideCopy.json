@@ -76,7 +76,7 @@
     "step.map.title": "选择地图与顺序",
     "step.map.who": "页面显示的选图方操作代表；赛管按权限协助。",
     "step.map.where": "比赛房 → 地图选择。",
-    "step.map.action": "选择当前可用的地图及页面要求的攻防顺序，核对后点“确认地图，进入首发确认”。图一固定占领要点；双方首发确认后才决定 Ban 顺序。",
+    "step.map.action": "选择当前可用的地图及页面要求的攻防顺序，核对后点“确认地图，进入首发”。图一固定占领要点；双方首发确认后才决定 Ban 顺序。",
     "step.map.success": "双方看到同一地图及攻防安排，进入首发确认。Ban 顺序仍待双方首发完成后选择。",
     "step.map.trouble": "选错或地图池有问题时联系赛管；有权限者填写更正原因并重新开放选禁。保留已有先手记录，不自行重开正式比赛。",
     "step.lineup.title": "确认五人首发与职责",
@@ -379,13 +379,13 @@
     "room.task.checkin": "先给 A1–A5 签到",
     "room.help.checkin": "你是 DEMO A 的操作代表。本次假设 A1–A5 已到场：在 A 队名单中逐个点“签到”，看到“已到”就成功。五人到齐后，模拟赛管会开放选图。",
     "room.task.choosing": "在地图卡片中选择第一张地图",
-    "room.help.choosing": "本次假设 A 队已赢得游戏内 1V1，获得首图选择权。点击一张地图，再点“确认地图，进入首发确认”。现在还不用选 Ban 顺序。",
+    "room.help.choosing": "本次假设 A 队已赢得游戏内 1V1，获得首图选择权。点击一张地图，再点“确认地图，进入首发”。现在还不用选 Ban 顺序。",
     "room.task.lineup": "确认五位首发和他们的职责",
     "room.help.lineup": "双方可独立提交五名已到场的选手与本图职责。提交后锁定，双方均确认才同时公开。演练会自动模拟对方提交；游戏内按 CCTNN 排列。",
     "room.task.banorder": "双方首发齐了，再决定谁先 Ban",
     "room.help.banorder": "Ban 就是禁用英雄。点击“本队先 Ban”或“本队后 Ban”，再点“确认 Ban 顺序”。选后手时，模拟对手会先禁用艾什。",
     "room.task.banning": "点击一个英雄，再确认禁用",
-    "room.help.banning": "可以用“重装 / 输出 / 支援”切换英雄列表。灰色英雄旁会写明不能选择的原因。选择后点“确认 Ban”；模拟对手也会完成自己的禁用。",
+    "room.help.banning": "可以按职责筛选或搜索英雄。英雄列表下方会说明当前禁用限制。选择后在右侧核对，点击“确认禁用”；模拟对手也会完成自己的禁用。",
     "room.task.ready": "选禁已完成，记录实际开赛",
     "room.help.ready": "无需再次确认准备。赛管点击“记录本图开赛”；代表视角可点击教学栏的“模拟赛管记录开赛”继续练习。真实比赛要等游戏实际开始。",
     "room.task.preflight": "记录实际开赛",
@@ -441,7 +441,8 @@
     "room.error.checkin": "首发里还有未签到的选手。请回到 A 队名单，为实际到场的首发点“签到”。",
     "room.task.correction": "这张图的小分录反了，练习更正",
     "room.help.correction": "本题实际计分板是 A 2:1 B，当前却录成 1:2。点击“更正本图比分”，改成 2 和 1，填写“双方小分录反”等原因再提交。",
-    "room.simulate-start": "模拟赛管记录开赛"
+    "room.simulate-start": "模拟赛管记录开赛",
+    "room.event.ban-timeout": "本队超时放弃禁用，模拟对手已完成禁用。"
   },
   "zh-TW": {
     "title": "周賽比賽房指南",
@@ -520,7 +521,7 @@
     "step.map.title": "選擇地圖與順序",
     "step.map.who": "頁面顯示的選圖方操作代表；賽管按權限協助。",
     "step.map.where": "比賽房 → 地圖選擇。",
-    "step.map.action": "選擇目前可用的地圖及頁面要求的攻防順序，核對後點「確認地圖，進入先發確認」。圖一固定控制；雙方先發確認後才決定 Ban 順序。",
+    "step.map.action": "選擇目前可用的地圖及頁面要求的攻防順序，核對後點「確認地圖，進入先發」。圖一固定控制；雙方先發確認後才決定 Ban 順序。",
     "step.map.success": "雙方看到相同地圖及攻防安排，進入先發確認。Ban 順序仍待雙方先發完成後選擇。",
     "step.map.trouble": "選錯或地圖池有問題時聯繫賽管；有權限者填寫更正原因並重新開放選禁。保留已有先手記錄，不自行重開正式比賽。",
     "step.lineup.title": "確認五人首發與職責",
@@ -823,13 +824,13 @@
     "room.task.checkin": "先給 A1–A5 簽到",
     "room.help.checkin": "你是 DEMO A 的操作代表。本次假設 A1–A5 已到場：在 A 隊名單中逐個點「簽到」，看到「已到」就成功。五人到齊後，模擬賽管會開放選圖。",
     "room.task.choosing": "在地圖卡片中選擇第一張地圖",
-    "room.help.choosing": "本次假設 A 隊已贏得遊戲內 1V1，獲得首圖選擇權。點擊一張地圖，再點「確認地圖，進入首發確認」。現在還不用選 Ban 順序。",
+    "room.help.choosing": "本次假設 A 隊已贏得遊戲內 1V1，獲得首圖選擇權。點擊一張地圖，再點「確認地圖，進入先發」。現在還不用選 Ban 順序。",
     "room.task.lineup": "確認五位先發和他們的職責",
     "room.help.lineup": "雙方可獨立提交五名已到場的選手與本圖職責。提交後鎖定，雙方均確認才同時公開。演練會自動模擬對方提交；遊戲內按 CCTNN 排列。",
     "room.task.banorder": "雙方先發齊了，再決定誰先 Ban",
     "room.help.banorder": "Ban 就是禁用英雄。點擊「本隊先 Ban」或「本隊後 Ban」，再點「確認 Ban 順序」。選後手時，模擬對手會先禁用艾希。",
     "room.task.banning": "點擊一個英雄，再確認禁用",
-    "room.help.banning": "可以用「坦克 / 輸出 / 輔助」切換英雄清單。灰色英雄旁會寫明不能選擇的原因。選擇後點「確認 Ban」；模擬對手也會完成自己的禁用。",
+    "room.help.banning": "可以按職責篩選或搜尋英雄。英雄清單下方會說明目前禁用限制。選擇後在右側核對，點擊「確認禁用」；模擬對手也會完成自己的禁用。",
     "room.task.ready": "選禁已完成，記錄實際開賽",
     "room.help.ready": "無需再次確認準備。賽管點擊“記錄本圖開賽”；代表視角可點擊教學欄的“模擬賽管記錄開賽”繼續練習。真實比賽要等遊戲實際開始。",
     "room.task.preflight": "記錄實際開賽",
@@ -885,7 +886,8 @@
     "room.error.checkin": "先發裡還有未簽到的選手。請回到 A 隊名單，為實際到場的先發點「簽到」。",
     "room.task.correction": "這張圖的小分錄反了，練習更正",
     "room.help.correction": "本題實際計分板是 A 2:1 B，目前卻錄成 1:2。點擊「更正本圖比分」，改成 2 和 1，填寫「雙方小分錄反」等原因再提交。",
-    "room.simulate-start": "模擬賽管記錄開賽"
+    "room.simulate-start": "模擬賽管記錄開賽",
+    "room.event.ban-timeout": "本隊逾時放棄禁用，模擬對手已完成禁用。"
   },
   "en-US": {
     "title": "Weekly match room guide",
@@ -1273,7 +1275,7 @@
     "room.task.banorder": "With both lineups locked, choose ban order",
     "room.help.banorder": "Ban means excluding a hero. Choose whether your team bans first or second, then confirm. If you go second, the simulated opponent bans Ashe first.",
     "room.task.banning": "Choose a hero and confirm the ban",
-    "room.help.banning": "Filter by tank, damage or support. Disabled heroes explain why they cannot be selected. Pick one and confirm the ban; the simulated opponent completes its ban too.",
+    "room.help.banning": "Filter by role or search for a hero. Restrictions appear below the list. Review your choice on the right and confirm the ban; the simulated opponent also completes its ban.",
     "room.task.ready": "Picks and bans complete · Record actual start",
     "room.help.ready": "No extra ready confirmation. Referees select Record map start; representatives use Simulate referee start in the coach bar. In a real match, wait for the actual game start.",
     "room.task.preflight": "Record actual start",
@@ -1329,7 +1331,8 @@
     "room.error.checkin": "A starter has not checked in. Return to team A’s roster and mark the present starters as checked in.",
     "room.task.correction": "The map score was reversed: practise a correction",
     "room.help.correction": "The exercise scoreboard is A 2:1 B, but the record shows 1:2. Open Correct map score, enter 2 and 1, add a reason such as reversed teams, and submit.",
-    "room.simulate-start": "Simulate referee start"
+    "room.simulate-start": "Simulate referee start",
+    "room.event.ban-timeout": "Your ban timed out. The simulated opponent has completed its ban."
   },
   "ko-KR": {
     "title": "주간 대회 경기방 안내",
@@ -1717,7 +1720,7 @@
     "room.task.banorder": "양 팀 선발 확정 후 밴 순서 선택",
     "room.help.banorder": "Ban은 영웅 금지입니다. 선밴 또는 후밴을 선택하고 확정하세요. 후밴을 선택하면 가상 상대가 먼저 애쉬를 금지합니다.",
     "room.task.banning": "영웅을 선택하고 금지 확정",
-    "room.help.banning": "역할 필터로 영웅 목록을 바꿀 수 있습니다. 비활성 영웅에는 선택할 수 없는 이유가 표시됩니다. 영웅을 고르고 밴을 확정하면 상대도 완료합니다.",
+    "room.help.banning": "역할로 필터링하거나 영웅을 검색하세요. 목록 아래에 금지 제한이 표시됩니다. 오른쪽에서 선택을 확인하고 금지를 확정하면 모의 상대도 금지를 완료합니다.",
     "room.task.ready": "선택·금지 완료 · 실제 시작 기록",
     "room.help.ready": "추가 준비 확인은 없습니다. 운영진은 맵 시작 기록을, 대표자는 안내 영역의 가상 운영진 시작 기록을 누르세요. 실제 경기에서는 게임이 시작될 때까지 기다리세요.",
     "room.task.preflight": "실제 시작 기록",
@@ -1773,6 +1776,7 @@
     "room.error.checkin": "출석 확인이 안 된 선발이 있습니다. A팀 명단에서 도착한 선발의 출석을 확인하세요.",
     "room.task.correction": "맵 점수가 반대로 입력됨: 수정 연습",
     "room.help.correction": "실제 연습 점수는 A 2:1 B인데 기록은 1:2입니다. 맵 점수 수정을 열고 2와 1로 바꾼 뒤 팀 점수 반대로 입력 등의 사유를 작성하여 제출하세요.",
-    "room.simulate-start": "가상 운영진 시작 기록"
+    "room.simulate-start": "가상 운영진 시작 기록",
+    "room.event.ban-timeout": "시간 초과로 밴을 포기했습니다. 가상 상대는 밴을 완료했습니다."
   }
 }
