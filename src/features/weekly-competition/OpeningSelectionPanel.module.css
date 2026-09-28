@@ -330,3 +330,10 @@
   .opening .duel strong { font-size:calc(24 * var(--room-unit)); }.opening .duel span:not(.hand) { font-size:calc(14 * var(--room-unit)); }
   .opening .choices button { min-height:calc(80 * var(--room-unit)); }.opening .choices button>span { font-size:calc(18 * var(--room-unit)); }.opening .choices svg { width:calc(36 * var(--room-unit));height:calc(36 * var(--room-unit)); }
 }
+
+@media (max-width: 600px) {
+  :global([data-room-layout=workspace]) .opening .heroes { height: auto; max-height: min(280px, 38dvh); grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  :global([data-room-layout=workspace]) .opening .confirm { position: sticky; bottom: var(--room-mobile-toolbar-height, 100px); z-index: 2; margin: 0; padding: 12px; background: var(--fc-data-room-surface); border-top: 1px solid var(--fc-data-room-line); box-shadow: 0 -4px 12px #0000000a; }
+  :global([data-room-layout=workspace]) .opening .confirm .primary { min-height: 44px; }
+  :global([data-room-layout=workspace]) .opening .confirm small { font-size: 12px; line-height: 1.5; }
+}

@@ -8,14 +8,14 @@ const roles = { MANAGER: ['队伍负责人', 'Team manager'], PLAYER: ['选手',
 const statusLabel = (status, en) => status === 'ARCHIVED' ? en ? 'Archived · Read only' : '已归档 · 只读'
   : status === 'DRAFT' ? en ? 'In preparation' : '筹备中' : en ? 'Active' : '进行中'
 
-export default function AccountCompetitionBar({ competition, locale = 'zh-CN', withSeason, entry = false }) {
+export default function AccountCompetitionBar({ competition, locale = 'zh-CN', withSeason, entry = false, compact = false }) {
   const { search } = useLocation()
   const en = locale === 'en-US'
   const { selected, competitions } = competition
   const href = id => `/me?${competitionSwitchSearch(search, id)}`
   if (entry) return <AccountCompetitionEntry competition={competition} locale={locale} withSeason={withSeason} />
   if (!selected) return null
-  return <section className={styles.bar} aria-label={en ? 'Participation event' : uiText("参赛赛事", locale)} data-i18n-ignore>
+  return <section className={styles.bar} data-compact={compact || undefined} aria-label={en ? 'Participation event' : uiText("参赛赛事", locale)} data-i18n-ignore>
     <div className={styles.context}>
       <div className={styles.current}><strong>{selected.name}</strong><span className={styles.status}>{uiText(statusLabel(selected.status, en), locale)}</span></div>
       {selected.teams.length ? <div className={styles.memberships}>{selected.teams.map((team, index) => <div className={styles.membership} key={team.id || index}><strong>{team.shortName || team.name}</strong><small>{[...new Set(team.roles || [])].map(role => uiText(roles[role]?.[en ? 1 : 0], locale) || role).join(' · ')}</small></div>)}</div> : null}

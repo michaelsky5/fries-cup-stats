@@ -9398,5 +9398,7 @@ export default {
   "连接已恢复，已同步服务器进度。请核对刚才的提交，再决定是否重试。": "Reconnected and synchronized. Check your last submission before retrying.",
   "已保存；正在恢复同步，核对最新状态后可继续操作。": "Saved. Reconnecting to verify the latest state before continuing.",
   "提交结果尚未确认，已同步服务器进度。请核对后再重试，操作不会自动重发。": "The submission response was lost. Server progress is synchronized. Check before retrying; commands are never resent automatically.",
-  "提交结果尚未确认，正在自动重连。请保留当前页面，恢复后核对；操作不会自动重发。": "Submission outcome unknown. Reconnecting. Keep this page open and check after recovery; commands are never resent automatically."
+  "提交结果尚未确认，正在自动重连。请保留当前页面，恢复后核对；操作不会自动重发。": "Submission outcome unknown. Reconnecting. Keep this page open and check after recovery; commands are never resent automatically.",
+  "参赛指南": "Participation guide",
+  "待办与消息": "Tasks and messages"
 }

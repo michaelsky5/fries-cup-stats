@@ -68,18 +68,20 @@ const SPACE_SECTION_DEFINITIONS = {
   security: { id: 'security', label: '账号设置', en: 'ACCOUNT', group: 'service' }
 }
 
-const SPACE_NAV_LABELS_EN = { overview: 'Overview', team: 'Team & registration', matches: 'Match rooms', participation: 'My participation', tasks: 'To do', messages: 'Inbox', following: 'Following', workspace: 'Workspace' }
+const SPACE_NAV_LABELS_EN = { overview: 'Overview', team: 'Team & registration', matches: 'Match rooms', participation: 'Records', tasks: 'To do', messages: 'Inbox', following: 'Following', workspace: 'Workspace' }
 const SPACE_SECTION_LABELS_EN = { overview: 'Space overview', tasks: 'Task center', events: 'My events', matches: 'My matches', team: 'Team & registration', referee: 'Referee workspace', caster: 'Caster workspace', stats: 'My stats', following: 'Following', communications: 'Event messages', security: 'Account settings' }
 
 const SPACE_NAV_GROUPS = [
   { id: 'overview', label: '概览', en: 'HOME', sectionIds: ['overview'] },
   { id: 'matches', label: '比赛房', en: 'MATCH ROOMS', sectionIds: ['matches'] },
-  { id: 'tasks', label: '待办', en: 'TO DO', sectionIds: ['tasks'] },
   { id: 'team', label: '队伍与报名', en: 'TEAM', sectionIds: ['team'] },
-  { id: 'participation', label: '我的参赛', en: 'PARTICIPATION', sectionIds: ['events', 'stats'] },
-  { id: 'messages', label: '消息', en: 'INBOX', sectionIds: ['communications'] },
-  { id: 'following', label: '我的关注', en: 'FOLLOWING', sectionIds: ['following'] },
+  { id: 'participation', label: '参赛记录', en: 'RECORDS', sectionIds: ['events', 'stats'] },
   { id: 'workspace', label: '工作台', en: 'WORKSPACE', sectionIds: ['referee', 'caster'] }
+]
+
+const SPACE_UTILITY_NAV = [
+  { id: 'tasks', label: '待办', en: 'TO DO', sectionIds: ['tasks'] },
+  { id: 'messages', label: '消息', en: 'INBOX', sectionIds: ['communications'] }
 ]
 
 export function buildSpaceSections({ player = false, team = false, manager = false, referee = false, caster = false, weekly = false, weeklyRooms = false, registration = false, publicStats = true, launch = null } = {}) {
@@ -263,66 +265,93 @@ function NavChevron() {
 export function SpaceTabs({ activeSection, withSeason, sections, overview = null, locale = 'zh-CN', roomEntry = false }) {
   const [expanded, setExpanded] = useState(false)
   const menuId = useId()
-  const sectionLabel = section => locale === 'en-US' ? SPACE_SECTION_LABELS_EN[section?.id] || 'Space overview' : section?.label || uiText("空间首页", locale)
-  const countLabel = (count, group) => locale === 'en-US' ? count + (group === 'tasks' ? ' tasks to do' : ' unread messages') : count + (group === 'tasks' ? uiText(" 项待办", locale) : uiText(" 条未读消息", locale))
+  const sectionLabel = section => locale === 'en-US' ? SPACE_SECTION_LABELS_EN[section?.id] || 'Space overview' : uiText(section?.label || '空间首页', locale)
+  const countLabel = (count, group) => locale === 'en-US' ? count + (group === 'tasks' ? ' tasks to do' : ' unread messages') : count + (group === 'tasks' ? uiText(' 项待办', locale) : uiText(' 条未读消息', locale))
   const operationalCount = Number(overview?.openTaskCount || 0)
   const taskPending = ['loading', 'error'].includes(overview?.taskSyncStatus)
   const taskBadge = taskPending ? (overview.taskSyncStatus === 'error' ? '!' : '…') : operationalCount || null
-  const taskBadgeLabel = taskPending ? (locale === 'en-US' ? 'Task count not yet synced' : uiText("待办数量尚未同步", locale)) : countLabel(operationalCount, 'tasks')
+  const taskBadgeLabel = taskPending ? (locale === 'en-US' ? 'Task count not yet synced' : uiText('待办数量尚未同步', locale)) : countLabel(operationalCount, 'tasks')
   const unreadMessageCount = Number(overview?.unreadNotificationCount || 0)
+  const quickNav = useRef(null)
+  useEffect(() => {
+    const nav = quickNav.current
+    const revealCurrent = () => {
+      const current = nav?.querySelector('[aria-current="page"]')
+      if (!current || !nav.clientWidth) return
+      const bounds = nav.getBoundingClientRect()
+      const item = current.getBoundingClientRect()
+      if (item.left < bounds.left) nav.scrollLeft += item.left - bounds.left
+      else if (item.right > bounds.right) nav.scrollLeft += item.right - bounds.right
+    }
+    revealCurrent()
+    const observer = new ResizeObserver(revealCurrent)
+    if (nav) observer.observe(nav)
+    return () => observer.disconnect()
+  }, [activeSection, locale, taskBadge, unreadMessageCount])
   const activeDefinition = sections.find(section => section.id === activeSection) || sections[0]
-  const groups = SPACE_NAV_GROUPS.map(group => ({
+  const availableGroups = definitions => definitions.map(group => ({
     ...group,
     items: group.sectionIds.map(id => sections.find(section => section.id === id)).filter(Boolean)
   })).filter(group => group.items.length)
+  const groups = availableGroups(SPACE_NAV_GROUPS)
+  const utilities = availableGroups(SPACE_UTILITY_NAV)
   const activeGroup = groups.find(group => group.items.length > 1 && group.items.some(section => section.id === activeSection))
-  return (
-    <nav className={styles.spaceTabs} aria-label={locale === 'en-US' ? 'My Space sections' : uiText("我的空间功能", locale)} data-i18n-ignore data-expanded={expanded} onKeyDown={event => {
-      if (event.key === 'Escape' && expanded && !event.target.closest('details[open]')) {
-        event.currentTarget.querySelector('button')?.focus()
-        setExpanded(false)
-      }
-    }}>
-      <div className={styles.spaceNavBar}>
+  const quickSections = [
+    ['overview', '概览', 'Overview'], ['tasks', '待办', 'To do'], ['team', '队伍', 'Team'],
+    ['matches', '比赛', 'Matches'], ['communications', '消息', 'Inbox']
+  ].filter(([id]) => sections.some(section => section.id === id))
+  const renderGroup = (group, utility = false) => {
+    const active = group.items.some(section => section.id === activeSection)
+    const groupLabel = group.id === 'matches' && !roomEntry ? sectionLabel(group.items[0]) : locale === 'en-US' ? SPACE_NAV_LABELS_EN[group.id] : uiText(group.label, locale)
+    const count = group.id === 'tasks' ? taskBadge : group.id === 'messages' ? unreadMessageCount : 0
+    if (group.items.length === 1) {
+      const section = group.items[0]
+      return <Link key={group.id} className={active ? styles.spaceTabActive : ''} aria-current={active ? 'page' : undefined} to={withSeason('/me?section=' + section.id)}>
+        {utility ? <svg className={styles.utilityIcon} viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">{group.id === 'tasks' ? <><path d="m3 5 1.5 1.5L7 4M9 5h8M3 11h3M9 11h8M3 16h3M9 16h8" /></> : <path d="M3 4h14v10H9l-4 3v-3H3V4Z" />}</svg> : null}
+        <span>{groupLabel}</span>{count ? <b aria-label={group.id === 'tasks' ? taskBadgeLabel : countLabel(count, group.id)}>{count}</b> : null}
+      </Link>
+    }
+    return <details key={group.id + ':' + activeSection} className={styles.spaceNavGroup} data-active={active ? 'true' : 'false'}>
+      <summary aria-current={active ? 'true' : undefined}><span>{groupLabel}</span><NavChevron /></summary>
+      <div className={styles.spaceNavMenu}>
+        {group.items.map(section => <Link key={section.id} aria-current={activeSection === section.id ? 'page' : undefined} to={withSeason('/me?section=' + section.id)} onClick={event => event.currentTarget.closest('details')?.removeAttribute('open')}>
+          <span>{sectionLabel(section)}</span><em>{section.en}</em>
+        </Link>)}
+      </div>
+    </details>
+  }
+  return <nav className={styles.spaceTabs} aria-label={locale === 'en-US' ? 'My Space sections' : uiText('我的空间功能', locale)} data-i18n-ignore data-expanded={expanded} onKeyDown={event => {
+    if (event.key !== 'Escape') return
+    const openGroup = event.target.closest('details[open]')
+    if (openGroup) {
+      openGroup.removeAttribute('open')
+      openGroup.querySelector('summary')?.focus()
+    } else if (expanded) {
+      event.currentTarget.querySelector('button')?.focus()
+      setExpanded(false)
+    }
+  }}>
+      <div ref={quickNav} className={styles.spaceQuickNav}>
+        {quickSections.map(([id, label, en]) => <Link key={id} to={withSeason(`/me?section=${id}`)} onClick={() => setExpanded(false)} aria-current={activeSection === id ? 'page' : undefined}>
+          {locale === 'en-US' ? en : uiText(label, locale)}
+          {id === 'tasks' && taskBadge ? <b aria-label={taskBadgeLabel}>{taskBadge}</b> : null}
+          {id === 'communications' && unreadMessageCount ? <b aria-label={countLabel(unreadMessageCount, 'messages')}>{unreadMessageCount}</b> : null}
+        </Link>)}
+      </div>
+    <div className={styles.spaceNavBar}>
       <button type="button" className={styles.spaceNavToggle} aria-expanded={expanded} aria-controls={menuId} onClick={() => setExpanded(value => !value)}>
-        <strong>{sectionLabel(activeDefinition)}</strong><span className={styles.mobileTaskSummary}>{sections.some(section => section.id === 'tasks') && taskBadge ? <span aria-label={taskBadgeLabel}>{locale === 'en-US' ? 'To do' : uiText("待办", locale)} {taskBadge}</span> : null}<span data-i18n-ignore>{locale === 'en-US' ? 'Sections' : uiText("切换栏目", locale)} <NavChevron /></span></span>
+        <strong>{sectionLabel(activeDefinition)}</strong><span>{locale === 'en-US' ? 'Sections' : uiText('切换栏目', locale)} <NavChevron /></span>
       </button>
       {sections.some(section => section.id === 'matches') ? <Link className={styles.spaceRoomShortcut} aria-current={activeSection === 'matches' ? 'page' : undefined} to={withSeason('/me?section=matches')}>{roomEntry ? uiText('比赛房', locale) : sectionLabel(SPACE_SECTION_DEFINITIONS.matches)} <span aria-hidden="true">→</span></Link> : null}
-      </div>
-      <div id={menuId} className={styles.spaceNavGroups} onClick={event => { if (event.target.closest('a')) setExpanded(false) }}>
-        {groups.map(group => {
-          const active = group.items.some(section => section.id === activeSection)
-          const groupLabel = (group.id === 'matches' && !roomEntry) || (group.id === 'workspace' && group.items.length === 1) ? sectionLabel(group.items[0]) : locale === 'en-US' ? SPACE_NAV_LABELS_EN[group.id] : uiText(group.label, locale)
-          const count = group.id === 'tasks' ? taskBadge : group.id === 'messages' ? unreadMessageCount : 0
-          if (group.items.length === 1) {
-            const section = group.items[0]
-            return (
-              <Link key={group.id} className={active ? styles.spaceTabActive : ''} aria-current={active ? 'page' : undefined} to={withSeason(section.id === 'security' ? '/account' : `/me?section=${section.id}`)}>
-                <span>{groupLabel}</span><em>{group.en}</em>{count ? <b aria-label={group.id === 'tasks' ? taskBadgeLabel : countLabel(count, group.id)}>{count}</b> : null}
-              </Link>
-            )
-          }
-          return (
-            <details key={`${group.id}:${activeSection}`} className={styles.spaceNavGroup} data-active={active ? 'true' : 'false'}>
-              <summary aria-current={active ? 'true' : undefined}><span>{groupLabel}</span>{count ? <b aria-label={countLabel(count, group.id)}>{count}</b> : null}<NavChevron /></summary>
-              <div className={styles.spaceNavMenu}>
-                {group.items.map(section => (
-                  <Link key={section.id} aria-current={activeSection === section.id ? 'page' : undefined} to={withSeason(section.id === 'security' ? '/account' : `/me?section=${section.id}`)} onClick={event => event.currentTarget.closest('details')?.removeAttribute('open')}>
-                    <span>{sectionLabel(section)}</span><em>{section.en}</em>
-                    {section.id === 'tasks' && operationalCount ? <b>{operationalCount}</b> : null}
-                    {section.id === 'communications' && unreadMessageCount ? <b>{unreadMessageCount}</b> : null}
-                  </Link>
-                ))}
-              </div>
-            </details>
-          )
-        })}
-      </div>
-      {activeGroup ? <div className={styles.spaceSubnav} aria-label={locale === 'en-US' ? `${SPACE_NAV_LABELS_EN[activeGroup.id]} pages` : uiText("{0}分区", locale, [activeGroup.label])}>
-        {activeGroup.items.map(section => <Link key={section.id} to={withSeason(`/me?section=${section.id}`)} aria-current={section.id === activeSection ? 'page' : undefined}>{sectionLabel(section)}</Link>)}
-      </div> : null}
-    </nav>
-  )
+    </div>
+    <div className={styles.spaceNavRow} onClick={event => { if (event.target.closest('a')) setExpanded(false) }}>
+      <div id={menuId} className={styles.spaceNavGroups}>{groups.map(group => renderGroup(group))}</div>
+      {utilities.length ? <div className={styles.spaceNavUtilities} role="group" aria-label={uiText('待办与消息', locale)}>{utilities.map(group => renderGroup(group, true))}</div> : null}
+    </div>
+    {activeGroup ? <div className={styles.spaceSubnav} aria-label={locale === 'en-US' ? SPACE_NAV_LABELS_EN[activeGroup.id] + ' pages' : uiText('{0}分区', locale, [activeGroup.label])}>
+      {activeGroup.items.map(section => <Link key={section.id} to={withSeason('/me?section=' + section.id)} aria-current={section.id === activeSection ? 'page' : undefined}>{sectionLabel(section)}</Link>)}
+    </div> : null}
+  </nav>
 }
 
 function getRoleMetrics(roleData) {
@@ -811,10 +840,10 @@ function MySpaceContent() {
   return (
     <main className={styles.page} data-design="signal" data-page-mode={activeSection === 'following' ? 'index' : 'control'}>
       <SpaceHeader>
-        <SpaceIdentity context={effectiveSpaceContext} locale={locale} withSeason={pageLink} following={activeSection === 'following'} />
-        {needsParticipationAccess ? competitionBar : null}
+        <SpaceIdentity context={effectiveSpaceContext} locale={locale} withSeason={pageLink} following={activeSection === 'following'}
+          contextContent={needsParticipationAccess ? <AccountCompetitionBar competition={competition} locale={locale} withSeason={pageLink} compact /> : null}
+          actions={<RoomGuideLink season={seasonId} label="参赛指南" className={styles.spaceGuide} />} />
         {showIdentityContext && needsParticipationAccess ? <IdentityContextStrip context={effectiveSpaceContext} loading={spaceContextLoading} error={spaceContextError} /> : null}
-        <RoomGuideLink season={seasonId} label="参赛与比赛指南" />
         <SpaceTabs key={activeSection} activeSection={activeSection} withSeason={pageLink} sections={spaceSections} overview={navigationSummary} locale={locale} roomEntry={isWeekly && canViewWeeklyMatchRooms} />
       </SpaceHeader>
       {activeSection === 'overview' ? registrationEntry : null}
@@ -823,7 +852,7 @@ function MySpaceContent() {
       {activeSection === 'communications' ? <AccountCommunicationsCenter seasonId={seasonId} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} withSeason={pageLink} onSummaryChange={handleTaskSummaryChange} /> : null}
       {activeSection === 'matches' ? <>{matchesWorkspace}{canUseScheduleNegotiation ? <ScheduleNegotiationWorkspace seasonId={seasonId} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} /> : null}</> : null}
       {activeSection === 'stats' ? <><WorkspaceSectionHeader eyebrow="MY STATS" title={uiText("我的数据", locale)} description={uiText("正式出场、职责样本、排名和英雄池都从本届公开比赛数据自动生成。", locale)} badge={playerStatsWorkspace.status.key === 'RANKED' ? `${playerStatsWorkspace.totals.rankedRoles} RANKED ROLES` : playerStatsWorkspace.status.key.replaceAll('_', ' ')} /><PerformancePanel dossier={dossier} statsWorkspace={playerStatsWorkspace} withSeason={pageLink} expanded /></> : null}
-      {activeSection === 'team' ? <>{canShowRegistrationEntry ? registrationEntry : null}{canViewWeeklyCompetition ? <WeeklyCompetitionWorkspace seasonId={seasonId} readOnly={!canWriteWeeklyCompetition} onActivityChange={activity.refresh} /> : null}{!canViewWeeklyCompetition && !canShowRegistrationEntry ? <ReadOnlyWorkspaceNotice title={uiText("队伍与名单暂为只读", locale)} description={uiText("当前队伍资料仅供查看。如需更新参赛名单，请联系周赛管理员核对本届权限。", locale)} /> : null}{teamOverview?.team ? <TeamPanel db={db} teamOverview={teamOverview} seasonId={seasonId} withSeason={pageLink} /> : null}</> : null}
+      {activeSection === 'team' ? <>{canViewWeeklyCompetition ? <WeeklyCompetitionWorkspace seasonId={seasonId} readOnly={!canWriteWeeklyCompetition} onActivityChange={activity.refresh} /> : null}{canShowRegistrationEntry ? registrationEntry : null}{!canViewWeeklyCompetition && !canShowRegistrationEntry ? <ReadOnlyWorkspaceNotice title={uiText("队伍与名单暂为只读", locale)} description={uiText("当前队伍资料仅供查看。如需更新参赛名单，请联系周赛管理员核对本届权限。", locale)} /> : null}{teamOverview?.team ? <TeamPanel db={db} teamOverview={teamOverview} seasonId={seasonId} withSeason={pageLink} /> : null}</> : null}
       {activeSection === 'referee' ? <RefereeWorkspace context={effectiveSpaceContext} withSeason={pageLink} onContextChange={refreshSpaceContext} /> : null}
       {activeSection === 'caster' ? <CasterWorkspace context={effectiveSpaceContext} withSeason={pageLink} onContextChange={refreshSpaceContext} /> : null}
       {activeSection === 'following' ? <FollowingWorkspace key={`${seasonId}:${authUser?.id || ''}`} db={db} favorites={manualFavorites} favoriteLimits={favoriteLimits} locale={locale} season={season} withSeason={pageLink} isAuthenticated accountId={authUser?.id} onSave={handleSave} excludedFavorites={identityFavorites} syncStatus={context.favoritesSyncStatus} syncError={context.favoritesSyncError} onManageTeams={() => openManager('teams')} onManagePlayers={() => openManager('players')} /> : null}

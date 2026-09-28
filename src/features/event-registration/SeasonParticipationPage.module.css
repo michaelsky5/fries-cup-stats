@@ -66,3 +66,36 @@
 .page .rulebookLink { display:block;width:fit-content;margin:16px 0;padding:12px 18px;background:var(--fc-data-signal);color:var(--fc-data-ink);border:1px solid currentColor;font-weight:700; }
 .logoEditor { display:grid;grid-template-columns:112px minmax(0,1fr);gap:18px; }.logoPreview { display:grid;place-items:center;align-self:start;min-height:112px;border:1px solid var(--fc-data-line-strong);background:#e3e2d9; }.logoPreview img { width:104px;height:104px;object-fit:contain; }.logoPreview span { font-size:12px; }.logoControls { min-width:0; }.logoControls input { max-width:100%; }.logoControls p { font-size:12px;margin:6px 0; }.logoField>details { margin-top:12px; }.logoField>details label { padding-top:10px; }
 @media(max-width:560px) { .logoEditor { grid-template-columns:1fr; }.logoPreview { width:112px; }.eligibilityFields,.logoField { padding:12px; } }
+
+@media (max-width: 600px) {
+  .page { gap: 12px; }
+  .header { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding-bottom: 10px; }
+  .header > div:first-child { gap: 8px; }
+  .header .actions { gap: 10px; }
+  .header button { border: 0; padding-inline: 4px; font-size: 12px; }
+  .context { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; padding: 10px 12px; }
+  .context div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+  .context div:first-child, .context div:nth-child(3) { grid-column: 1 / -1; }
+  .context div:nth-child(3) { grid-row: 3; }
+  .context strong { font-size: 13px; overflow-wrap: anywhere; }
+  .context > span { grid-column: 2; grid-row: 2; }
+  .panel, .login { padding: 16px 12px; }
+  .row { gap: 8px; }
+  .row > button { min-height: 44px; padding: 6px 8px; align-self: end; font-size: 12px; }
+  .journey { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-block: 12px 16px; }
+  .journey li { padding: 10px 6px; gap: 6px; border-bottom: 0; font-size: 12px; }
+  .journey li:nth-child(2) { border-right: 1px solid var(--fc-data-line); }
+  .journey span { font-size: 18px; }
+  .tableScroll { overflow: visible; }
+  .tableScroll thead { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .tableScroll :is(table, tbody, tr) { display: block; width: 100%; }
+  .tableScroll tr { border: 1px solid var(--fc-data-line); padding: 10px 12px; margin-bottom: 10px; }
+  .tableScroll td { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 8px; padding: 5px 0; border: 0; white-space: normal; overflow-wrap: anywhere; font-size: 13px; }
+  .tableScroll td::before { content: attr(data-label); color: var(--fc-data-text-muted); font-size: 12px; }
+  .tableScroll td:first-child { font-weight: 700; }
+  .memberActions { gap: 6px; }
+  .memberActions button { min-height: 44px; }
+  .submission { position: sticky; bottom: var(--fc-mobile-navigation-height, 0px); z-index: 2; margin: 12px -12px -16px; padding: 12px; border-top: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised); }
+  .submission button { width: 100%; min-height: 44px; }
+  .submission > span { font-size: 12px; line-height: 1.6; }
+}

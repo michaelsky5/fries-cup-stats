@@ -138,3 +138,39 @@
 .center p { font-size: 14px; line-height: 1.8; font-weight: 400; }
 .center small { font-size: 12px; line-height: 1.7; font-weight: 400; }
 .center button { font-weight: 600; }
+
+@media (max-width: 600px) {
+  .center > .header { flex-direction: row; align-items: center; gap: 10px; padding-bottom: 10px; margin-bottom: 12px; }
+  .center > .header h2 { margin: 0; font-size: 22px; }
+  .center > .header > div > span, .center > .header p { display: none; }
+  .center > .header button { padding: 8px; white-space: nowrap; }
+  .tabs { display: flex; min-width: 0; overflow-x: auto; margin-bottom: 12px; }
+  .tabs button { flex: 1 0 auto; min-height: 44px; gap: 8px; padding: 8px 10px; white-space: nowrap; }
+  .tabs em { flex: none; }
+  .messagePanel { gap: 12px; }
+  .messageHeroMain { padding: 16px; gap: 8px; }
+  .messageHeroMain > strong { font-size: 21px; line-height: 1.4; }
+  .messageHeroMain > p { font-size: 14px; line-height: 1.65; margin: 4px 0; }
+  .messageHeroActions { gap: 8px; }
+  .messageHeroActions a, .messageHeroActions button { width: auto; flex: 1 1 110px; min-height: 44px; }
+  .messageHeroSide { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 16px; }
+  .messageHeroSide > span, .messageHeroSide > p, .messageFacts { display: none; }
+  .messageHeroSide > strong { font-size: 12px; }
+  .messageHeroSide > em { padding: 3px 6px; font-size: 11px; }
+  .communicationBoundary { display: flex; order: 1; padding: 0; border: 0; background: transparent; }
+  .communicationBoundary > div:first-child, .communicationBoundary :is(span, strong, p) { display: none; }
+  .communicationBoundary > div:last-child { min-height: 0; padding: 0; border: 0; background: transparent; }
+  .communicationBoundary a { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; }
+  .messageToolbar { flex-direction: row; align-items: center; min-height: 44px; padding: 8px 0; gap: 8px; }
+  .messageToolbar p, .messageGroup > header p, .messageGroup > header span { display: none; }
+  .messageGroup > header { min-height: 44px; padding: 8px 14px; }
+  .messageGroup > header strong { font-size: 14px; }
+  .messageMain { padding: 14px 16px; }
+  .messageMain h3 { font-size: 18px; line-height: 1.4; }
+  .messageActions { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 16px; }
+  .messageActions :is(a, button) { flex: 1 1 110px; min-height: 44px; }
+  .messageComplete { min-height: 0; padding: 12px 16px; }
+  .messageComplete span { display: none; }
+  .messageComplete strong { font-size: 14px; }
+  .messageComplete p { font-size: 12px; margin: 0; }
+}

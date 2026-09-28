@@ -134,3 +134,16 @@
 .roomEntry { display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:16px; }
 .roomEntry .primaryButton { display:inline-flex;align-items:center;gap:24px;text-decoration:none;color:var(--fc-data-ink);font-size:15px; }
 .coordinationDetails { margin:16px 24px; }.coordinationDetails>summary { cursor:pointer;font-weight:600; }
+
+@media (max-width: 600px) {
+  .workspace { gap: 12px; }
+  .workspace > header { gap: 8px; }
+  .workspace > header h2 { margin: 0; font-size: 22px; }
+  .workspace > header .eyebrow { display: none; }
+  .headerActions { gap: 4px; }
+  .returnLinks { gap: 4px 12px; }
+  .channelRail { padding-block: 8px; gap: 4px 10px; }
+  .channelRail strong { flex-basis: auto; font-size: 13px; }
+  .roomSwitcher { padding-block: 8px; }
+  .resultRoute li { padding: 8px; gap: 4px; }
+}

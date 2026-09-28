@@ -176,3 +176,22 @@
 .card .reviewCheck p { color: var(--fc-data-ink); }
 .workspace .reviewActions .primaryButton:not(:disabled) { background: var(--fc-data-signal); border-color: var(--fc-data-signal); }
 @media (max-width: 680px) { .reviewRoster { grid-template-columns: minmax(0, 1fr); } }
+
+@media (max-width: 600px) {
+  .workspace { gap: 12px; }
+  .workHeader > div > span { display: none; }
+  .workHeader h2 { margin: 0; font-size: 22px; }
+  .workHeader button { min-height: 44px; padding-inline: 8px; white-space: nowrap; }
+  .preparationReturn { padding-block: 8px; gap: 4px 10px; }
+  .stepRail { grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); }
+  .stepRail a { display: flex; gap: 8px; padding: 10px; min-height: 60px; }
+  .stepRail a > span { font-size: 18px; }
+  .stepRail strong { font-size: 13px; }
+  .stepRail small { font-size: 11px; }
+  .card { padding: 16px 12px; }
+  .card > header { gap: 8px; padding-bottom: 10px; }
+  .card p { margin-block: 12px; font-size: 13px; line-height: 1.6; }
+  .selectionActions { bottom: var(--fc-mobile-navigation-height, 0px); padding: 10px 12px; }
+  .taskFooter { gap: 6px; font-size: 12px; }
+  .workspace [id^='weekly-'] { scroll-margin-top: 76px; scroll-margin-bottom: calc(150px + env(safe-area-inset-bottom)); }
+}

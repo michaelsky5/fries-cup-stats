@@ -1081,3 +1081,42 @@
 .completion { scroll-margin-block: 110px 48px; }
 .completion:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 3px; }
 .itemAction:empty { display: none; }
+
+/* Keep the queue ahead of explanatory summaries on a phone. */
+@media (max-width: 600px) {
+  .center > .header { padding-bottom: 10px; margin-bottom: 12px; }
+  .center > .header h2 { margin: 0; font-size: 22px; }
+  .center > .header > div > span, .center > .header p { display: none; }
+  .viewSwitch { margin-bottom: 12px; }
+  .viewSwitch a { min-height: 44px; padding-inline: 12px; gap: 6px; }
+  .priorityMain { padding: 16px; gap: 8px; }
+  .priorityMain > strong { font-size: 22px; line-height: 1.4; }
+  .priorityMain > p { margin: 0; font-size: 13px; line-height: 1.6; }
+  .priorityMeta { gap: 6px; }
+  .priorityMeta span, .priorityMeta em { font-size: 11px; letter-spacing: 0; }
+  .priorityActions { gap: 8px; margin-top: 4px; }
+  .priorityActions a, .priorityActions button { width: auto; flex: 1 1 110px; min-height: 44px; }
+  .prioritySide { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 16px; }
+  .prioritySide > span, .prioritySide > p, .taskFactRail { display: none; }
+  .prioritySide > strong { font-size: 12px; }
+  .prioritySide > em { font-size: 11px; padding: 3px 6px; }
+  .panelToolbar { min-height: 44px; flex-direction: row; align-items: center; padding: 10px 14px; gap: 8px; }
+  .panelToolbar p, .queueGroup > header p, .queueGroup > header span { display: none; }
+  .queueGroup > header { min-height: 44px; padding: 8px 14px; }
+  .queueGroup > header strong { font-size: 14px; }
+  .queueGroup > header em { min-width: 26px; min-height: 26px; }
+  .item { grid-template-columns: minmax(0, 1fr); }
+  .itemOrder { display: none; }
+  .itemMain { gap: 8px; padding: 14px 16px 10px; }
+  .itemMain h3 { font-size: 17px; line-height: 1.45; }
+  .itemMain p { margin: 0; font-size: 13px; line-height: 1.6; }
+  .itemMeta { gap: 4px 6px; }
+  .itemMeta b { border: 0; padding: 0; font-weight: 500; color: var(--fc-data-text-muted); }
+  .itemResolution { padding: 0 0 0 8px; background: transparent; }
+  .itemResolution span { display: none; }
+  .itemAction { grid-column: 1; display: flex; flex-wrap: wrap; padding: 8px 16px 14px; border-top: 0; }
+  .itemAction :is(a, button) { min-height: 44px; flex: 1 1 110px; }
+  .taskGuide { margin: 12px 0; }
+  .taskGuide p { display: none; }
+  .emptyState, .loading, .error { padding: 18px 16px; }
+}
