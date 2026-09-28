@@ -14,7 +14,7 @@ const priorities = { URGENT: '紧急', HIGH: '待处理', NORMAL: '待处理', L
 const formatTime = (value, fallback = '时间待定') => value && Number.isFinite(Date.parse(value)) ? new Date(value).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', month: 'long', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false }) : fallback
 const teamName = team => team?.shortName || team?.short || team?.name || team?.full || '对手待定'
 
-export function SpaceIdentity({ context, locale = 'zh-CN', following = false, withSeason = path => path }) {
+export function SpaceIdentity({ context, locale = 'zh-CN', following = false, withSeason = path => path, contextContent = null, actions = null }) {
   const { user: sessionUser } = useAuth()
   const user = { ...context?.user, ...(sessionUser?.id === context?.user?.id ? sessionUser : {}) }
   const identities = context?.identities || []
@@ -25,8 +25,13 @@ export function SpaceIdentity({ context, locale = 'zh-CN', following = false, wi
   const emailPending = user.emailVerified === false
   const identityLabel = identities.length ? [...new Set(identities.map(item => labels[item.type] || item.label || (en ? 'Event member' : uiText("赛事成员", locale))))].join(' · ') : (en ? 'Account' : uiText("账号", locale))
   return <header className={styles.identity}>
-    <div data-i18n-ignore><span className={styles.eyebrow}>{following ? 'MY FOLLOWING' : 'MY SPACE'}</span><h1>{title}</h1></div>
-    <details className={styles.person} data-i18n-ignore>
+    <div className={styles.identityMain}>
+      <div className={styles.identityTitle} data-i18n-ignore><span className={styles.eyebrow}>{following ? 'MY FOLLOWING' : 'MY SPACE'}</span><h1>{title}</h1></div>
+      {contextContent ? <div className={styles.identityContext}>{contextContent}</div> : null}
+    </div>
+    <div className={styles.identityActions}>
+    {actions}
+    <details className={styles.person} data-i18n-ignore onKeyDown={event => { if (event.key === 'Escape') { event.currentTarget.removeAttribute('open'); event.currentTarget.querySelector('summary')?.focus() } }}>
       <summary aria-label={`${name} · ${en ? 'Account menu' : uiText("账号菜单", locale)}${emailPending ? en ? ' · Email unverified' : uiText(" · 邮箱待验证", locale) : ''}`}>
         <AccountAvatar className={styles.avatar} user={user}>{emailPending ? <i /> : null}</AccountAvatar>
         <span className={styles.accountName}><strong>{name}</strong><small>{en ? 'Account' : uiText("账号", locale)}</small></span>
@@ -34,10 +39,12 @@ export function SpaceIdentity({ context, locale = 'zh-CN', following = false, wi
       </summary>
       <div className={styles.accountMenu}>
         <div className={styles.accountRoles}><span>{en ? 'Your roles' : uiText("账号身份", locale)}</span><p>{identityLabel}</p></div>
+        <Link to={withSeason('/me?section=following')} aria-current={following ? 'page' : undefined} onClick={event => event.currentTarget.closest('details')?.removeAttribute('open')}><span>{en ? 'My Following' : uiText('我的关注', locale)}</span><span aria-hidden="true">→</span></Link>
         <Link to={withSeason('/account')} onClick={event => event.currentTarget.closest('details')?.removeAttribute('open')}><span>{en ? 'Account settings' : uiText("账号设置", locale)}</span><span aria-hidden="true">→</span></Link>
         {emailPending ? <Link className={styles.emailAction} to={withSeason('/account#email')} onClick={event => event.currentTarget.closest('details')?.removeAttribute('open')}><span>{en ? 'Verify email' : uiText("验证邮箱", locale)}</span><small>{en ? 'Unverified' : uiText("待验证", locale)}</small></Link> : <div className={styles.emailStatus}>{user.emailVerified === true ? en ? 'Email verified' : uiText("邮箱已验证", locale) : en ? 'Email status not yet synced' : uiText("邮箱状态待同步", locale)}</div>}
       </div>
     </details>
+    </div>
   </header>
 }
 

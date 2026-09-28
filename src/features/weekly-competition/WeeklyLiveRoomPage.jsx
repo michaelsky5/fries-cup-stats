@@ -6,7 +6,7 @@ import RoomGuideLink from '../room-guide/RoomGuideLink.jsx'
 import AccountAvatar from '../account-ui/AccountAvatar.jsx'
 import RoomBroadcastLink from './RoomBroadcastLink.jsx'
 import RoomTrainingNotice from './RoomTrainingNotice.jsx'
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { translateUiText as uiText, pickUiLocale } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import RoomCasterAssignments from './RoomCasterAssignments.jsx'
 import RoomRefereeAssignments from './RoomRefereeAssignments.jsx'
@@ -51,6 +51,9 @@ const readDraft = key => { try { return JSON.parse(sessionStorage.getItem(key)) 
 
 function Team({ team, data, disabled, mutate }) {
   const { liveRoomWrite } = useRoomTransport()
+  const uiLocale = useUiLocale()
+  const [expanded, setExpanded] = useState(false)
+  const contentId = `room-team-content-${team?.id}`
   const roster = data.rosters.find(item => item.teamId === team?.id)
   const side = team?.id === data.match.teamA.id ? 'A' : 'B'
   const saved = data.map?.[`lineup${side}`] || []
@@ -71,12 +74,14 @@ function Team({ team, data, disabled, mutate }) {
       {canCheckIn ? <button type="button" aria-label={`${member.name || member.battleTag} · ${label}`} aria-pressed={status === 'PRESENT'} disabled={disabled} onClick={() => setCheckIn(member.id, status === 'PRESENT' ? 'ABSENT' : 'PRESENT')}>{label}</button> : <small>{status === 'PRESENT' ? '已到' : status === 'ABSENT' ? '缺席' : '待到'}</small>}
     </div>
   }
-  return <aside id={`room-team-${team?.id}`} tabIndex={-1} className={workspace.team} aria-label={name(team)} data-side={side}>
-    <header><small>TEAM {side}</small><h2>{name(team)}</h2><RoomSideBadge map={data.map} side={team.id === data.match.teamA.id ? 'A' : 'B'} /><span title={team?.name}>{team?.name}</span></header>
+  return <aside id={`room-team-${team?.id}`} tabIndex={-1} className={workspace.team} aria-label={name(team)} data-side={side} data-expanded={expanded} onFocus={event => { if (event.target === event.currentTarget) setExpanded(true) }}>
+    <header><small>TEAM {side}</small><h2>{name(team)}</h2><RoomSideBadge map={data.map} side={team.id === data.match.teamA.id ? 'A' : 'B'} /><span title={team?.name}>{team?.name}</span><button type="button" className={workspace.teamToggle} aria-expanded={expanded} aria-controls={contentId} onClick={() => setExpanded(value => !value)}>{pickUiLocale(uiLocale, '名单与签到', 'Roster & check-in', '명단 · 체크인', '名單與簽到')}<span aria-hidden="true">{expanded ? '−' : '+'}</span></button></header>
+    <div id={contentId} className={workspace.teamContent}>
     <RoomRepresentative team={team} data={data} disabled={disabled} mutate={mutate} />
     <div className={workspace.rosterLabel}><strong>{saved.length ? '本图首发 · CCTNN' : sealed ? '本周名单 · 首发未公开' : '计划首发 · 待本图确认'}</strong><small>{saved.length ? data.map.lineupsRevealed ? '已锁定' : '对方不可见' : lineupConfirmed ? '已密封提交' : '参考名单'}</small></div>
     <div className={workspace.roster}>{starters.map((member, index) => row(member, index, true))}{rest.length > 0 && !sealed && <div className={workspace.rosterLabel}>替补 · {rest.length} 人</div>}{rest.map((member, index) => row(member, index))}{(roster?.staff || []).length > 0 && <div className={workspace.rosterLabel}>队伍工作人员</div>}{(roster?.staff || []).map((member, index) => row(member, index, false, true))}{!roster?.members?.length && <p>本周名单尚未提交。</p>}</div>
     <footer data-ready={lineupConfirmed}><strong>{lineupConfirmed ? '✓ 本图首发已确认' : '首发环节统一确认到场'}</strong><small>{confirmedBy ? `${confirmedBy.name} · ${time(confirmedBy.at)}` : '游戏内必须按 C C T N N 排列'}</small></footer>
+    </div>
   </aside>
 }
 

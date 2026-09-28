@@ -21,3 +21,14 @@
 .frame :is(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid var(--fc-data-focus); outline-offset: 4px; }
 @media (max-width: 680px) { .intro { display: grid; gap: 24px; padding-bottom: 24px; margin-bottom: 24px; } .main { padding-block: 24px 48px; } .context { padding-block: 18px; } .scope { display: none; } }
 @media (max-width: 680px) { .main[data-compact='true'] .intro { gap: 16px; padding-bottom: 16px; margin-bottom: 20px; } .main[data-compact='true'] .intro > div:first-child > p { display: none; } }
+
+@media (max-width: 600px) {
+  .context { min-height: 44px; padding-block: 8px; gap: 10px; }
+  .context a { display: inline-flex; align-items: center; min-height: 32px; }
+  .main, .main[data-compact='true'] { padding-top: 16px; }
+  .intro, .main[data-compact='true'] .intro { margin-bottom: 16px; padding-bottom: 16px; gap: 12px; }
+  .intro .eyebrow { display: none; }
+  .intro h1, .main[data-compact='true'] .intro h1 { margin: 0 0 8px; font-size: 26px; }
+  .intro p { font-size: 13px; line-height: 1.6; }
+  .frame :is(input, select, textarea) { scroll-margin-bottom: calc(90px + env(safe-area-inset-bottom)); }
+}

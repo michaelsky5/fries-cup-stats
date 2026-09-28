@@ -55025,5 +55025,15 @@
     "zh-TW": "提交結果尚未確認，正在自動重新連線。請保留目前頁面，恢復後核對；操作不會自動重送。",
     "en-US": "Submission outcome unknown. Reconnecting. Keep this page open and check after recovery; commands are never resent automatically.",
     "ko-KR": "제출 결과를 확인할 수 없습니다. 자동 재연결 중입니다. 이 페이지를 유지하고 복구 후 확인해 주세요. 작업은 자동으로 재전송되지 않습니다."
+  },
+  "参赛指南": {
+    "zh-TW": "參賽指南",
+    "en-US": "Participation guide",
+    "ko-KR": "참가 안내"
+  },
+  "待办与消息": {
+    "zh-TW": "待辦與訊息",
+    "en-US": "Tasks and messages",
+    "ko-KR": "할 일 및 메시지"
   }
 }

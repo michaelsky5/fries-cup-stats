@@ -30,3 +30,29 @@
   .switcher summary { padding-inline: 0; }
   .switcher nav { left: 0; right: auto; }
 }
+
+/* Compact event context within the personal workspace header. */
+.bar[data-compact] { padding: 0; border: 0; background: transparent; flex-wrap: wrap; gap: 4px 20px; }
+.bar[data-compact] .context { gap: 6px 16px; }
+.bar[data-compact] .current strong { font-size: 14px; }
+.bar[data-compact] .memberships { padding-left: 16px; }
+.bar[data-compact] .switcher { margin-left: 0; }
+.bar[data-compact] .switcher summary { min-height: 36px; padding: 4px 0; font-size: 12px; }
+.bar[data-compact] .switcher nav { left: 0; right: auto; }
+@media (max-width: 700px) {
+  .bar[data-compact] .context { flex-basis: auto; }
+  .bar[data-compact] .current, .bar[data-compact] .memberships { flex-basis: auto; }
+  .bar[data-compact] .memberships { padding-left: 0; }
+}
+
+@media (max-width: 600px) {
+  .bar { align-items: start; flex-wrap: nowrap; padding: 8px 10px; gap: 8px; }
+  .context { flex: 1 1 auto; gap: 2px; }
+  .current { gap: 2px 8px; }
+  .current strong { font-size: 13px; }
+  .membership { gap: 2px 8px; }
+  .status, .membership small { font-size: 11px; }
+  .switcher { margin-left: auto; }
+  .switcher summary { padding: 0; font-size: 12px; }
+  .switcher nav { left: auto; right: 0; }
+}

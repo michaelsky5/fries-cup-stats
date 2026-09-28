@@ -152,7 +152,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
   const headerNavItems = getPrimaryNavigation(isAuthenticated).filter(item => !season?.partnerTrial || !['advance', 'space'].includes(item.group))
   const navPath = path => withSeason(getWeeklyNavigationPath(path, location.search, season?.rules?.weeklyCompetition?.enabled || season?.competitionFormat === 'WEEKLY'))
   const currentLabel = activeGroup === 'space' ? getNavLabel(getPersonalNavItem(isAuthenticated), layoutLocale) : activeNavLabel
-  const phoneNavigation = isKprHybridDesign && !/^\/(?:account|participate|activate-weekly|dev)(?:\/|$)/.test(location.pathname) && !/\/room\/?$/.test(location.pathname) && !(isAuthenticated && location.pathname === '/me')
+  const phoneNavigation = isKprHybridDesign && !/^\/dev(?:\/|$)/.test(location.pathname) && !/\/room\/?$/.test(location.pathname)
 
   useEffect(() => { menuRef.current?.removeAttribute('open') }, [location.key, isAuthenticated, menuRef])
   useEffect(() => {
