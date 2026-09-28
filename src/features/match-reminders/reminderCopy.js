@@ -1,5 +1,8 @@
 import { normalizeLocale } from '../../lib/locales.js'
 const entries = {
+  signInTitle: ['登录后查看比赛安排', 'Sign in to view your match', '登入後查看比賽安排', '로그인하여 경기 일정 확인'],
+  signInDescription: ['请使用接收提醒的参赛账号登录，继续查看这项赛事的比赛与执勤安排。', 'Use the account that received this reminder to continue to your matches and assigned duties in this competition.', '請使用接收提醒的參賽帳號登入，繼續查看這項賽事的比賽與執勤安排。', '알림을 받은 계정으로 로그인하여 이 대회의 경기 및 배정된 업무를 확인하세요.'],
+  signInAction: ['登录并查看比赛', 'Sign in and view match', '登入並查看比賽', '로그인하고 경기 보기'],
   title: ['比赛提醒', 'Match reminders', '比賽提醒', '경기 알림'],
   description: ['选择与你有关的周赛、参赛和执勤邮件。', 'Choose emails for your weekly matches and assigned duties.', '選擇與你有關的週賽、參賽和執勤郵件。', '참가하는 주간 경기와 배정된 업무의 이메일을 설정하세요.'],
   master: ['开启比赛邮件提醒', 'Enable match emails', '開啟比賽郵件提醒', '경기 이메일 알림 켜기'],

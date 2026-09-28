@@ -34,7 +34,7 @@ import { PRIMARY_NAV, getNavLabel, getPersonalNavItem, getNavigationSearch } fro
 import EventContextBar from '../components/layout/EventContextBar.jsx'
 import UrgentAnnouncementGate from '../features/communications/UrgentAnnouncementGate.jsx'
 import { fetchMySpaceContext } from '../features/my-space/mySpaceApi.js'
-import { requiresPublicSnapshot } from '../features/my-space/personalSpacePolicy.js'
+import { isCompetitionMatchesEntry, requiresPublicSnapshot } from '../features/my-space/personalSpacePolicy.js'
 import useAccountCompetition from '../features/my-space/useAccountCompetition.js'
 import { withAccountCompetition } from '../features/my-space/accountCompetitionModel.js'
 import { buildAccountAttention } from '../features/my-space/accountAttentionModel.js'
@@ -157,15 +157,17 @@ export default function DataLayout() {
   } = useAuth()
 
   const t = useMemo(() => createLayoutTranslator(layoutLocale), [layoutLocale])
+  const isMatchEntry = isCompetitionMatchesEntry(location)
   const needsPublicSnapshot = requiresPublicSnapshot({
     pathname: location.pathname,
+    search: location.search,
     section: new URLSearchParams(location.search).get('section'),
     isAuthenticated
   })
   const isWeeklyAdvanceRoute = isKprHybridDesign && /^\/advance\/?$/.test(location.pathname) && isWeeklyOverview(db, season)
   const isWeeklyHomeRoute = isKprHybridDesign && location.pathname === '/' && isWeeklyOverview(db, season)
   const isAdvanceIndexRoute = isKprHybridDesign && /^\/advance\/?$/.test(location.pathname)
-  const isPublicFollowingRoute = isAccountSpaceRoute && (!isAuthenticated || location.pathname.startsWith('/following') || new URLSearchParams(location.search).get('section') === 'following')
+  const isPublicFollowingRoute = isAccountSpaceRoute && ((!isAuthenticated && !isMatchEntry) || location.pathname.startsWith('/following') || new URLSearchParams(location.search).get('section') === 'following')
   const isCompactContextRoute = isRosterDirectoryRoute || isScheduleDirectoryRoute || isPublicMatchDetailRoute || isPlayerRankingsRoute || isHeroDataRoute || isMapDataRoute || isAdvanceIndexRoute || isWeeklyHomeRoute || isPublicFollowingRoute || isPlayerArchiveRoute || (isTeamArchiveRoute && !isTeamExhibitionRoute)
   const competition = useAccountCompetition(season.id)
   const attentionSeasonId = competition.navigationId || seasonId
@@ -233,7 +235,7 @@ export default function DataLayout() {
   const updatedAtText = formatUpdatedAt(summary.updatedAt, t('layout.meta.empty'))
   const reviewAvailable = seasonHasReview(season, db)
   const activeGroup = getNavActiveGroup(location.pathname, location.search)
-  const activeNavItem = activeGroup === 'space' ? getPersonalNavItem(isAuthenticated) : PRIMARY_NAV.find(item => item.group === activeGroup) || PRIMARY_NAV[0]
+  const activeNavItem = activeGroup === 'space' ? getPersonalNavItem(isAuthenticated || isMatchEntry) : PRIMARY_NAV.find(item => item.group === activeGroup) || PRIMARY_NAV[0]
   const activeNavLabel = getNavLabel(activeNavItem, layoutLocale)
   const activeNavIndex = Math.max(0, PRIMARY_NAV.findIndex(item => item.group === activeNavItem.group))
   const headerContextMode = isKprHybridDesign
@@ -298,10 +300,10 @@ export default function DataLayout() {
   }, [layoutLocale])
 
   useEffect(() => {
-    document.title = isAccountSpaceRoute && !isAuthenticated
+    document.title = isAccountSpaceRoute && !isAuthenticated && !isMatchEntry
       ? buildFriesCupTitle(getNavLabel(getPersonalNavItem(false), layoutLocale), layoutLocale)
       : getLayoutDocumentTitle(location.pathname, location.search, layoutLocale)
-  }, [layoutLocale, location.pathname, location.search, isAccountSpaceRoute, isAuthenticated])
+  }, [layoutLocale, location.pathname, location.search, isAccountSpaceRoute, isAuthenticated, isMatchEntry])
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
@@ -444,7 +446,7 @@ export default function DataLayout() {
         isReviewEntryRoute={isReviewEntryRoute} handleLocaleChange={handleLocaleChange} activeSection={activeSection}
       />
 
-      {!isTeamExhibitionRoute && !(isAuthenticated && /^\/me\/?$/.test(location.pathname) && new URLSearchParams(location.search).get('section') !== 'following') ? eventContextDock : null}
+      {!isTeamExhibitionRoute && !isMatchEntry && !(isAuthenticated && /^\/me\/?$/.test(location.pathname) && new URLSearchParams(location.search).get('section') !== 'following') ? eventContextDock : null}
 
       <UrgentAnnouncementGate
         seasonId={seasonId}
