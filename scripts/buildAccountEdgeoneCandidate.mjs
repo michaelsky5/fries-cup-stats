@@ -8,7 +8,8 @@ import { build } from 'vite'
 import react from '@vitejs/plugin-react'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const out = path.join(root, 'dist')
+const out = path.resolve(root, process.argv[2] || 'dist')
+if (!out.startsWith(root + path.sep)) throw new Error('Keep staging output inside this checkout.')
 if (fs.existsSync(out)) throw new Error('Keep the previous package intact; dist must not exist.')
 if (execFileSync('git', ['status', '--porcelain'], { cwd: root, encoding: 'utf8' }).trim()) {
   throw new Error('Commit the isolated candidate before building.')
@@ -19,6 +20,13 @@ process.env.VITE_ACCOUNT_WEEKLY_REHEARSAL = '1'
 await build({ root, configFile: false, envDir: false, plugins: [react()], build: { outDir: out } })
 fs.copyFileSync(path.join(root, 'edgeone.json'), path.join(out, 'edgeone.json'))
 fs.cpSync(path.join(root, 'edge-functions'), path.join(out, 'edge-functions'), { recursive: true })
+// Freeze the preview account origin in the artifact; runtime defaults point to production.
+const proxyPath = path.join(out, 'edge-functions/api/[[path]].js')
+const proxy = fs.readFileSync(proxyPath, 'utf8')
+const entry = 'return proxyRequest(context.request, {'
+if (!proxy.includes(entry)) throw new Error('Preview proxy entry changed; review the staging origin.')
+fs.writeFileSync(proxyPath, proxy.replace(entry, entry + "\n    platformOrigin: 'https://test-admin.fries-cup.com', environment: 'account-staging', rehearsal: true,"))
+
 fs.writeFileSync(path.join(out, 'robots.txt'), 'User-agent: *\nDisallow: /\n')
 const indexPath = path.join(out, 'index.html')
 const notice = '<aside aria-label="账号测试环境" style="padding:7px 16px;background:#f0ca43;color:#171915;text-align:center;font:600 12px/1.5 sans-serif">账号测试环境 · 非正式赛事数据</aside>'
