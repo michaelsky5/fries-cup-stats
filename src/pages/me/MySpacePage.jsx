@@ -45,10 +45,11 @@ import {
 } from '../../features/my-space/IdentitySpacePanels.jsx'
 import FollowingPage from '../following/FollowingPage.jsx'
 import styles from './MySpacePage.module.css'
+import { reminderCopy } from '../../features/match-reminders/reminderCopy.js'
 import { SpaceIdentity } from '../../features/account-ui/SpaceOverview.jsx'
 import AccountActivityWorkspace from '../../features/account-ui/AccountActivityWorkspace.jsx'
 import useAccountActivity from '../../features/account-ui/useAccountActivity.js'
-import { requiresParticipationAccess } from '../../features/my-space/personalSpacePolicy.js'
+import { isCompetitionMatchesEntry, requiresParticipationAccess } from '../../features/my-space/personalSpacePolicy.js'
 import useAccountCompetition from '../../features/my-space/useAccountCompetition.js'
 import AccountCompetitionBar from '../../features/my-space/AccountCompetitionBar.jsx'
 import { rememberCompetition, withAccountCompetition } from '../../features/my-space/accountCompetitionModel.js'
@@ -774,6 +775,21 @@ function MySpaceContent() {
     )
   }
 
+  if (!isAuthenticated && isCompetitionMatchesEntry({ pathname: '/me', search: searchParams.toString() })) {
+    const copy = reminderCopy(locale)
+    return <main className={styles.page} data-design="signal" data-i18n-ignore>
+      <section className={styles.releaseGate}>
+        <div className={styles.releaseGateCopy}>
+          <span>MATCH REMINDERS</span>
+          <h1>{copy.signInTitle}</h1>
+          <p>{copy.signInDescription}</p>
+          <nav aria-label={copy.title}>
+            <button type="button" onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{copy.signInAction}</button>
+          </nav>
+        </div>
+      </section>
+    </main>
+  }
   if (!isAuthenticated && requestedSection === 'team' && isWeeklyOverview(db, season)) return <main className={styles.page} data-design="signal">
     <section className={styles.releaseGate}>
       <div className={styles.releaseGateCopy}>

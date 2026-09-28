@@ -3,6 +3,8 @@ import { buildAccountDesignPreviewFixture } from '../../src/pages/dev/accountDes
 export function createAccountReviewFixture(initialScenario = 'preparing') {
 const user = { id: 'design-preview-user', displayName: '柚子', username: 'Yuzu', email: 'you@example.com', emailVerified: false, role: 'USER' }
 let profile = { nickname: 'Yuzu', bio: '和队友一起，认真打好下一场。', regionCode: 'CN' }
+let reminderPreference = { emailEnabled: false, scheduleEmail: true, hourEmail: true, roomEmail: false, revision: 0 }
+let reminderDeliveries = []
 let loggedIn = true
 let favorites = { primaryTeamId: 'BANANA', favoriteTeamIds: ['BANANA'], favoritePlayerIds: ['FCR26-P0111'] }
 let supportRequests = []
@@ -34,6 +36,7 @@ Object.assign(scenarioLabels, { 'staff-none': '未关联本届职员', 'staff-in
 Object.assign(scenarioLabels, { 'activation-existing':'已有账号邀请', 'activation-used':'邀请已认领', 'activation-revoked':'邀请已撤销', 'activation-unavailable':'邀请读取失败', 'recovery-unavailable':'邮件找回未开放' })
 let invitationClaimed = false
 let passwordResetUsed = false
+Object.assign(scenarioLabels, { 'reminders-unavailable': '提醒未启用', 'reminders-error': '提醒读取失败', 'reminders-staff': '解说比赛提醒' })
 let scenario = 'preparing'
 Object.assign(scenarioLabels, { 'launch-timeout':'参赛权限读取超时', guest:'游客本地关注', account:'已登录我的空间', viewer:'观众空间' })
 let matchTimeoutUntil = 0
@@ -46,7 +49,7 @@ function setScenario(value) {
   scenario = Object.hasOwn(scenarioLabels, value) ? value : 'preparing'
   staffReads.clear()
   staffRelations.clear()
-  user.emailVerified = scenario === 'email-verified'
+  user.emailVerified = scenario === 'email-verified' || scenario.startsWith('reminders-')
   user.role = scenario === 'profile-readonly' ? 'OPERATOR' : 'USER'
   launchHoldUntil = Date.now() + 14000
   loggedIn = scenario !== 'guest' && !scenario.startsWith('activation') && !scenario.startsWith('recovery')
@@ -80,6 +83,7 @@ function setScenario(value) {
       ]
     }))
   }
+  if (scenario === 'reminders-staff') weeklyRooms.forEach(room => { room.myTeams = []; room.roleLabel = '解说' })
   if (scenario === 'match-live') weeklyRooms[1].status = 'IN_PROGRESS'
   if (scenario === 'match-confirmed') Object.assign(resultRoom.myTeams[0].confirmation, { status:'CONFIRMED', actedAt:new Date().toISOString() })
   if (scenario === 'match-disputed') { resultRoom.confirmationState = 'DISPUTED'; Object.assign(resultRoom.myTeams[0].confirmation, { status:'DISPUTED', note:'第 2 局加时比分需核对（示例）', actedAt:new Date().toISOString() }) }
@@ -139,6 +143,22 @@ const handle = async (req,res) => {
   }
   if(path === '/preview/reset') {loggedIn=true;return send({reset:true})}
   if(!loggedIn) return send({error:'UNAUTHORIZED'},401)
+  if(path === '/me/match-reminders') {
+    if(scenario === 'reminders-error') return send({error:'PREVIEW_REMINDER_UNAVAILABLE'},503)
+    const available = scenario !== 'reminders-unavailable'
+    if(req.method === 'PATCH') {
+      if(!available) return send({error:'MATCH_REMINDERS_UNAVAILABLE'},503)
+      if(body.emailEnabled && !user.emailVerified) return send({error:'EMAIL_VERIFICATION_REQUIRED'},403)
+      if(body.revision !== reminderPreference.revision) return send({error:'REMINDER_PREFERENCES_CHANGED'},409)
+      reminderPreference = {...body,revision:reminderPreference.revision+1}
+    }
+    return send({userId:user.id,available,emailVerified:user.emailVerified,preference:reminderPreference,upcoming:[],deliveries:reminderDeliveries})
+  }
+  if(path === '/me/match-reminders/test' && req.method === 'POST') {
+    if(!user.emailVerified) return send({error:'EMAIL_VERIFICATION_REQUIRED'},403)
+    if(!reminderDeliveries.length) reminderDeliveries.push({id:'preview-test-email',kind:'TEST',status:'PENDING',dueAt:new Date().toISOString()})
+    return send({delivery:reminderDeliveries[0]},202)
+  }
   if(path === '/me/event-staff-context') {
     const seasonId = new URL(req.url, 'http://local').searchParams.get('seasonId')
     const count = (staffReads.get(seasonId) || 0) + 1
@@ -184,6 +204,7 @@ const handle = async (req,res) => {
   }
   if(path.startsWith('/me/weekly-cycle-entries/') && req.method==='PUT') { Object.assign(weeklyEntry.coreSelections[0],body,{members:(body.playerIds || []).map(playerId=>({playerId})),version:weeklyEntry.coreSelections[0].version+1}); return send({selection:weeklyEntry.coreSelections[0]}) }
   if(path === '/me/profile') { if(req.method==='PATCH'){ if(body.displayName) user.displayName=body.displayName; profile={...profile,...body} } return send({user,profile}) }
+  if(path === '/me/identities' && scenario === 'reminders-staff') return send({userId:user.id,competitionSeasons:[{id:'FCR26',name:'九月周赛 · 界面样例',status:'ACTIVE',competitionKind:'WEEKLY',teams:[]}],identities:identities.filter(identity=>identity.type==='CASTER'),primaryIdentity:identities.find(identity=>identity.type==='CASTER'),capabilities:{canUseCloudFavorites:true}})
   if(path === '/me/identities') return send({userId:user.id,competitionSeasons: scenario === 'viewer' ? [] : [{id:'FCR26',name:'九月周赛 · 界面样例',status:'ACTIVE',competitionKind:'WEEKLY',teams:[{...weeklyEntry.team,roles:scenario === 'player' ? ['PLAYER'] : ['MANAGER','PLAYER']}]}],identities:scenario === 'viewer' ? [] : identities,primaryIdentity:scenario === 'viewer' ? null : identities[0],capabilities:{canUseCloudFavorites:true}})
   if(path.startsWith('/account-launch/seasons/')) {
     if (scenario === 'launch-timeout' && Date.now() < launchHoldUntil) { pendingPreviewReads.add(res); res.once('close', () => pendingPreviewReads.delete(res)); return }
@@ -207,8 +228,8 @@ const handle = async (req,res) => {
   if(path === '/me/predictions') return send({predictions:[]})
   if(path.endsWith('/prediction-board')) return send({matches:[],policy:{winnerPoints:3,exactScoreBonus:2},eligibility:{eligible:false}})
   if(path.endsWith('/prediction-leaderboard')) return send({leaderboard:[],viewer:null,participants:0})
-  if(path === '/me/space-context') {const seasonId=new URL(req.url,'http://local').searchParams.get('seasonId');const context=buildAccountDesignPreviewFixture('locked',scenario === 'viewer' ? 'VIEWER' : scenario === 'caster' || ['staff-none','staff-error','staff-invited'].includes(scenario) ? 'CASTER' : scenario === 'referee' || ['staff-active','staff-refresh-error'].includes(scenario) ? 'REFEREE' : scenario === 'player' ? 'PLAYER' : 'MULTI').spaceContext;Object.assign(context,{seasonId,user:{...user,emailVerified:false},contract:'ACCOUNT_FOUNDATION_V1',competitionKind:'WEEKLY'});context.overview={...context.overview,tasks:[],openTaskCount:0,nextTeamMatch:null,nextStaffAssignment:null};if(scenario.startsWith('staff-'))context.staffContext={refereeAssignments:[],broadcastRefereeAssignments:[],casterAssignments:[],availability:[]};context.teamContexts=context.teamContexts.map(team=>({...team,matches:[]}));return send({context})}
-  if(path === '/me/weekly-match-rooms') {const seasonId=new URL(req.url,'http://local').searchParams.get('seasonId');return send({season:{id:seasonId,name:'周赛设计示例',status:'ACTIVE',timezone:'Asia/Shanghai'},accessMode:'WRITE',featureAccess:'WRITE',teams:[weeklyRooms[0].myTeams[0]],rooms:weeklyRooms.map(room => ({...room,myTeams:room.myTeams.map(side=>({...side,preparation:{ready:preparationReady,canConfirm:room.status==='PENDING' && ['locked','support'].includes(scenario),reason:''}}))}))})}
+  if(path === '/me/space-context') {const seasonId=new URL(req.url,'http://local').searchParams.get('seasonId');const context=buildAccountDesignPreviewFixture('locked',scenario === 'viewer' ? 'VIEWER' : ['caster','reminders-staff'].includes(scenario) || ['staff-none','staff-error','staff-invited'].includes(scenario) ? 'CASTER' : scenario === 'referee' || ['staff-active','staff-refresh-error'].includes(scenario) ? 'REFEREE' : scenario === 'player' ? 'PLAYER' : 'MULTI').spaceContext;Object.assign(context,{seasonId,user:{...user,emailVerified:false},contract:'ACCOUNT_FOUNDATION_V1',competitionKind:'WEEKLY'});context.overview={...context.overview,tasks:[],openTaskCount:0,nextTeamMatch:null,nextStaffAssignment:null};if(scenario.startsWith('staff-'))context.staffContext={refereeAssignments:[],broadcastRefereeAssignments:[],casterAssignments:[],availability:[]};context.teamContexts=context.teamContexts.map(team=>({...team,matches:[]}));if(scenario==='reminders-staff'){context.sections.weeklyRooms=true;context.teamContexts=[]}return send({context})}
+  if(path === '/me/weekly-match-rooms') {const seasonId=new URL(req.url,'http://local').searchParams.get('seasonId');return send({season:{id:seasonId,name:'周赛设计示例',status:'ACTIVE',timezone:'Asia/Shanghai'},accessMode:'WRITE',featureAccess:'WRITE',teams:weeklyRooms[0].myTeams,rooms:weeklyRooms.map(room => ({...room,myTeams:room.myTeams.map(side=>({...side,preparation:{ready:preparationReady,canConfirm:room.status==='PENDING' && ['locked','support'].includes(scenario),reason:''}}))}))})}
   if(path.startsWith('/me/weekly-match-rooms/') && req.method==='PUT'){
     const room=weeklyRooms.find(item=>item.id===path.split('/')[3])
     const ownTeam=room?.myTeams.find(item=>item.team.id===body.confirmingTeamId)
