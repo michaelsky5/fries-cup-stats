@@ -79,6 +79,13 @@ export const TEAM_LOGO_CATALOG = Object.freeze({
     "aliases": {},
     "fallback": "/logos/FCR/OW.png"
   },
+  "FCW26": {
+    "assets": {
+      "ow": "/logos/FCW26/OW.png"
+    },
+    "aliases": {},
+    "fallback": "/logos/FCW26/OW.png"
+  },
   "QGCS4": {
     "assets": {
       "5fw": "/logos/QGCS4/5FW.png",

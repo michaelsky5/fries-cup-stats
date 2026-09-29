@@ -1,3 +1,5 @@
+import WeeklyRosterScopePicker from '../../components/WeeklyRosterScopePicker.jsx'
+import { weeklyRosterScopes, filterWeeklyRoster } from '../../lib/weeklyRosterScope.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -1787,6 +1789,10 @@ export default function TeamDetailPage() {
     ].some(value => normalizeKey(value) === target))
   }, [teamId, teams])
 
+  const [weeklyRosterScope, setWeeklyRosterScope] = useState('current')
+  const weekRosterScopes = weeklyRosterScopes(db, team?.team_id || team?.id)
+  const visibleRosterScope = db?.weekly_competition ? weeklyRosterScope : 'history'
+  const rosterControls = db?.weekly_competition ? <WeeklyRosterScopePicker value={weeklyRosterScope} onChange={setWeeklyRosterScope} scopes={weekRosterScopes} en={isEn} /> : null
   const playerDirectory = useMemo(() => getPlayerDirectory(db, favorites), [db, favorites])
   const roster = useMemo(() => {
     if (!team) return []
@@ -1939,6 +1945,7 @@ export default function TeamDetailPage() {
     return <>
       <SignalTeamDossier
         team={team} seasonId={seasonId} locale={locale} withSeason={withSeason}
+        rosterControls={rosterControls} rosterScope={visibleRosterScope} weekRosterScopes={weekRosterScopes}
         rosterGroups={rosterDisplayGroups} matchRows={matchRows} advanceState={advanceState}
         allMatches={db?.matches}
         onBack={sourceReturnState.returnTo ? handleBack : () => navigate(withSeason('/teams'))}
@@ -2221,6 +2228,7 @@ export default function TeamDetailPage() {
           </section>
 
           <section className={`${styles.panel} ${styles.rosterPanel}`}>
+            {rosterControls}
             <div className={styles.panelHead}>
               <h2>{uiText("完整名单", locale)}</h2>
               <span>
@@ -2233,7 +2241,7 @@ export default function TeamDetailPage() {
               data-roster-size={Math.min(Math.max(rosterDisplay.length, 5), 7)}
               style={{ '--roster-count': Math.max(rosterDisplay.length, 1) }}
             >
-              {rosterDisplayGroups.map(group => (
+              {rosterDisplayGroups.map(group => ({ ...group, rows: filterWeeklyRoster(group.rows, visibleRosterScope, weekRosterScopes) })).filter(group => group.rows.length).map(group => (
                 <div
                   key={group.role}
                   className={styles.rosterRoleGroup}

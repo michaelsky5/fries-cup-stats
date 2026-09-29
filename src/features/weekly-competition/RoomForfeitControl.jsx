@@ -5,6 +5,7 @@ import { useRoomTransport } from './RoomTransport.jsx'
 import styles from './WeeklyLiveRoomPage.module.css'
 import frame from './RoomMatchFrame.module.css'
 import surfaces from './RoomSurfaces.module.css'
+import RoomConcessionResponse from './RoomConcessionResponse.jsx'
 import RoomForfeitRecovery, { ForfeitHistory } from './RoomForfeitRecovery.jsx'
 
 export function ForfeitSummary({ data, expanded = false }) {
@@ -20,7 +21,7 @@ export function ForfeitSummary({ data, expanded = false }) {
     <p>{uiText("已完成 ", uiLocale)}{record.completedMaps}{uiText(" / 5 图", uiLocale)}{record.completedMaps ? uiText("，实际比分 {0} : {1}", uiLocale, [record.playedScoreA ?? record.scoreA, record.playedScoreB ?? record.scoreB]) : uiText("，尚未产生实际比分", uiLocale)}{uiText("。剩余 ", uiLocale)}{record.remainingMaps}{uiText(" 图因弃权未完成，不生成小分或选手数据。", uiLocale)}</p>
     {!record.legacyPolicy && <p>{uiText('裁定后比分 {0}:{1}；已打积分保留，剩余地图弃权方每图 0 分，对手每图 2 分。', uiLocale, [record.scoreA, record.scoreB])}</p>}
     <dl>{['A', 'B'].map(side => <div key={side}><dt>{team(side)}</dt><dd>{pendingReview ? uiText('拟计：', uiLocale) : ''}{uiText('{0} 分', uiLocale, [points(side)])}</dd></div>)}</dl>
-    <details open={expanded}><summary>{uiText("查看弃权原因与复核记录", uiLocale)}</summary><p>{uiText("公开原因：", uiLocale)}{record.reason}</p><small>{record.proposedBy} · {new Date(record.proposedAt).toLocaleString('zh-CN')}{record.reviewedBy ? uiText(" · {0} 已复核", uiLocale, [record.reviewedBy]) : ''}</small>
+    <details open={expanded}><summary>{uiText("查看弃权原因与复核记录", uiLocale)}</summary><p>{uiText("公开原因：", uiLocale)}{record.reason}</p><small>{record.proposedBy} · {new Date(record.proposedAt).toLocaleString('zh-CN')}{record.reviewedBy ? uiText(record.confirmationMode === 'TEAM_SELF_CONFIRMED' ? " · {0} 二次确认生效" : " · {0} 已复核", uiLocale, [record.reviewedBy]) : ''}</small>
       {record.reviewReason && <p>{uiText("复核说明：", uiLocale)}{record.reviewReason}</p>}
     </details>
     <small>{data.result?.phase === 'SETTLED' ? uiText("积分已结算；已打地图的结果继续保留。", uiLocale) : uiText("积分在结算后生效；已打地图的结果继续保留。", uiLocale)}</small>
@@ -34,13 +35,14 @@ export default function RoomForfeitControl({ data, disabled, mutate }) {
   const dialog = useRef(null), pending = useRef(null), viewed = useRef(null)
   useEffect(() => { if (action) dialog.current?.showModal(); else dialog.current?.close() }, [action])
   const access = data.forfeit
-  if (!access?.canPropose && !access?.canReview && !access?.canCorrect && !access?.history?.length) return null
+  if (!access?.canPropose && !access?.canReview && !access?.canCorrect && !access?.history?.length && !access?.canAcknowledge && !access?.canDispute && !access?.canResolveDispute && !access?.response) return null
   const open = selected => {
     if (!pending.current) { viewed.current = { matchRevision: data.match.revision, draftRevision: data.draftRevision }; setSide(''); setReason(data.forfeit?.record?.source === 'TEAM_CONCESSION' ? '确认落后方自愿放弃剩余地图，按规则书第 3.2 条处理。' : '') }
     setError(''); setAction(pending.current?.action || selected)
   }
   const projection = access.projections?.[side]
   return <div className={frame.forfeitActions}>
+    <RoomConcessionResponse data={data} disabled={disabled} mutate={mutate} />
     <ForfeitHistory data={data} />
     <RoomForfeitRecovery data={data} disabled={disabled} mutate={mutate} />
     {access.canPropose && <><button disabled={disabled} onClick={() => open('PROPOSE')}>{uiText("记录全场弃权", uiLocale)}</button><small>{uiText("需填写公开原因，由管理员复核。", uiLocale)}</small></>}

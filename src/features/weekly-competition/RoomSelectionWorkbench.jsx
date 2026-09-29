@@ -16,9 +16,13 @@ export function MapSelectionWorkbench({ data, draft, edit, send, disabled, mapTy
   const chooser = data.match[`team${opening.winner}`], canChoose = opening.access.canChoose
   const pool = opening.rules.maps.filter(map => map.type === mapType)
   const needsSide = ['Hybrid', 'Escort'].includes(chosenMap?.type)
-  const locked = disabled
+  const mapSeconds = useRoomClockSeconds(data.phaseClock)
+  const locked = disabled || data.phaseClock?.enabled && data.phaseClock.stage?.kind === 'MAP' && data.phaseClock.status !== 'WAITING' && mapSeconds === 0
+  const timeout = data.phaseClock?.mapTimeouts?.latest
+  const timedHere = timeout?.mapOrder === opening.mapOrder
+  const timeoutHint = timedHere ? timeout.count === 1 ? '首次选图超时警告 · 补时 60 秒' : '本图 Ban 权已取消 · 补时 60 秒' : '超时：警告 → 取消 Ban → 随机地图'
   return <div className={styles.mapStage} data-selection-workbench="map">
-    <div className={styles.intro}><strong>{t('{0} 选择本图', [teamName(chooser)])}</strong><span>{t(later ? '选定地图后，双方同时确认首发。' : '首图固定占领要点，选定后双方同时确认首发。')}</span></div>
+    <div className={styles.intro}><strong>{t('{0} 选择本图', [teamName(chooser)])}</strong><span>{t(data.phaseClock?.enabled ? timeoutHint : later ? '选定地图后，双方同时确认首发。' : '首图固定占领要点，选定后双方同时确认首发。')}</span></div>
     {canChoose ? <>
       {later && <div className={styles.modeTabs} role="group" aria-label={t('选择地图类型')}>{opening.typeCycle?.types.map(item => <button type="button" key={item.type} aria-pressed={mapType === item.type} disabled={locked || item.used || !item.remaining} onClick={() => edit({ mapType: item.type, mapName: '', startSide: '' })}><strong>{formatOwMapMode(item.type, locale)}</strong><small>{t(item.used ? '本轮已用' : '{0} 张可选', [item.remaining || 0])}</small></button>)}</div>}
       <div className={styles.mapWorkspace}>

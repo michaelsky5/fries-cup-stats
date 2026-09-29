@@ -674,3 +674,19 @@
 
 .refreshRow button:disabled { opacity: .55; cursor: wait; }
 .refreshRow button:focus-visible { outline: 2px solid #147658; outline-offset: 3px; }
+
+.availabilityPicker { border: 1px solid var(--line, #c9c7bd); padding: 1rem; min-width: 0; grid-column: 1 / -1; }
+.availabilityPicker legend { font-weight: 700; }
+.availabilityPicker small { font-weight: 400; margin-left: .6rem; }
+.availabilityPicker p { font-size: .85rem; color: var(--muted, #686d65); }
+.availabilityActions, .availabilitySlots { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .7rem; }
+.availabilityActions button[aria-pressed=true] { background: #edc842; color: #181b17; }
+.availabilitySlots label { display: flex; align-items: center; gap: .5rem; padding: .65rem; background: #f6f5ee; border: 1px solid #d5d4ca; }
+.availabilitySlots input { width: auto; accent-color: #807016; }
+
+.availabilitySlots input[type=checkbox], .streamDeclaration input[type=checkbox] { width:18px; height:18px; min-height:18px; padding:0; margin:0; flex-shrink:0; }
+.streamCard { --weekly-ink:#191c17; --weekly-white:#faf9f3; --weekly-yellow:#edc842; max-width:960px; margin-inline:auto; }
+.streamForm { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; gap:18px; }
+.streamWide, .streamDeclaration { grid-column:1 / -1; }
+.streamForm .streamDeclaration { display:flex; align-items:center; gap:10px; }
+@media(max-width:620px){.streamForm{grid-template-columns:minmax(0,1fr);}.streamCard{padding:16px;}}

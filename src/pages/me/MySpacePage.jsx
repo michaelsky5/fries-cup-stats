@@ -1,3 +1,4 @@
+import PlayerStreamWorkspace from '../../features/weekly-competition/PlayerStreamWorkspace.jsx'
 import RoomGuideLink from '../../features/room-guide/RoomGuideLink.jsx'
 import SeasonRegistrationEntry from '../../features/event-registration/SeasonRegistrationEntry.jsx'
 import { isWeeklyOverview } from '../../features/weekly-overview/weeklyOverviewModel.js'
@@ -65,17 +66,18 @@ const SPACE_SECTION_DEFINITIONS = {
   stats: { id: 'stats', label: '我的数据', en: 'STATS', group: 'personal' },
   following: { id: 'following', label: '我的关注', en: 'FOLLOWING', group: 'personal' },
   communications: { id: 'communications', label: '赛事消息', en: 'COMMS', group: 'service' },
+  stream: { id: 'stream', label: '直播展示', en: 'MY STREAM', group: 'personal' },
   security: { id: 'security', label: '账号设置', en: 'ACCOUNT', group: 'service' }
 }
 
 const SPACE_NAV_LABELS_EN = { overview: 'Overview', team: 'Team & registration', matches: 'Match rooms', participation: 'Records', tasks: 'To do', messages: 'Inbox', following: 'Following', workspace: 'Workspace' }
-const SPACE_SECTION_LABELS_EN = { overview: 'Space overview', tasks: 'Task center', events: 'My events', matches: 'My matches', team: 'Team & registration', referee: 'Referee workspace', caster: 'Caster workspace', stats: 'My stats', following: 'Following', communications: 'Event messages', security: 'Account settings' }
+const SPACE_SECTION_LABELS_EN = { overview: 'Space overview', tasks: 'Task center', events: 'My events', matches: 'My matches', team: 'Team & registration', referee: 'Referee workspace', caster: 'Caster workspace', stats: 'My stats', following: 'Following', communications: 'Event messages', stream: 'My stream', security: 'Account settings' }
 
 const SPACE_NAV_GROUPS = [
   { id: 'overview', label: '概览', en: 'HOME', sectionIds: ['overview'] },
   { id: 'matches', label: '比赛房', en: 'MATCH ROOMS', sectionIds: ['matches'] },
   { id: 'team', label: '队伍与报名', en: 'TEAM', sectionIds: ['team'] },
-  { id: 'participation', label: '参赛记录', en: 'RECORDS', sectionIds: ['events', 'stats'] },
+  { id: 'participation', label: '参赛记录', en: 'RECORDS', sectionIds: ['events', 'stats', 'stream'] },
   { id: 'workspace', label: '工作台', en: 'WORKSPACE', sectionIds: ['referee', 'caster'] }
 ]
 
@@ -99,6 +101,7 @@ export function buildSpaceSections({ player = false, team = false, manager = fal
       : []),
     ...(referee ? [SPACE_SECTION_DEFINITIONS.referee] : []),
     ...(caster ? [SPACE_SECTION_DEFINITIONS.caster] : []),
+    ...(player && weekly ? [SPACE_SECTION_DEFINITIONS.stream] : []),
     ...(player && publicStats ? [SPACE_SECTION_DEFINITIONS.stats] : []),
     SPACE_SECTION_DEFINITIONS.following,
     ...(communicationsVisible ? [SPACE_SECTION_DEFINITIONS.communications] : []),
@@ -302,7 +305,7 @@ export function SpaceTabs({ activeSection, withSeason, sections, overview = null
   ].filter(([id]) => sections.some(section => section.id === id))
   const renderGroup = (group, utility = false) => {
     const active = group.items.some(section => section.id === activeSection)
-    const groupLabel = group.id === 'matches' && !roomEntry ? sectionLabel(group.items[0]) : locale === 'en-US' ? SPACE_NAV_LABELS_EN[group.id] : uiText(group.label, locale)
+    const groupLabel = group.items.length === 1 && group.items[0].id === 'stream' ? sectionLabel(group.items[0]) : group.id === 'matches' && !roomEntry ? sectionLabel(group.items[0]) : locale === 'en-US' ? SPACE_NAV_LABELS_EN[group.id] : uiText(group.label, locale)
     const count = group.id === 'tasks' ? taskBadge : group.id === 'messages' ? unreadMessageCount : 0
     if (group.items.length === 1) {
       const section = group.items[0]
@@ -732,7 +735,6 @@ function MySpaceContent() {
   const canViewWeeklyCompetition = hasAccountFeatureAccess(accountLaunch, 'weeklyCompetition') &&
     (effectiveSpaceContext.identities || []).some(identity => ['MANAGER', 'PLAYER'].includes(String(identity.type || identity.identityType || '').toUpperCase()))
   const canWriteWeeklyCompetition = hasAccountFeatureAccess(accountLaunch, 'weeklyCompetition', 'WRITE')
-  const canUseScheduleNegotiation = hasAccountFeatureAccess(accountLaunch, 'scheduleNegotiation', 'WRITE')
   const canViewWeeklyMatchRooms = hasAccountFeatureAccess(accountLaunch, 'matchRoom') &&
     (effectiveSpaceContext.sections?.weeklyRooms || (effectiveSpaceContext.identities || []).some(identity => ['MANAGER', 'PLAYER'].includes(String(identity.type || identity.identityType || '').toUpperCase())))
   const canWriteMatchRooms = hasAccountFeatureAccess(accountLaunch, 'matchRoom', 'WRITE')
@@ -750,6 +752,7 @@ function MySpaceContent() {
     ? <WeeklyMatchRoomsWorkspace key={`${seasonId}:${authUser?.id || ''}`} seasonId={seasonId} readOnly={!canWriteMatchRooms} withSeason={pageLink} onActivityChange={activity.refresh} tasksVisible={spaceSections.some(section => section.id === 'tasks')} preparationVisible={canViewWeeklyCompetition && spaceSections.some(section => section.id === 'team')}>{relationshipMatches}</WeeklyMatchRoomsWorkspace>
     : relationshipMatches
   const isWeekly = effectiveSpaceContext.competitionKind === 'WEEKLY'
+  const canUseScheduleNegotiation = (isWeekly && canViewWeeklyMatchRooms) || hasAccountFeatureAccess(accountLaunch, 'scheduleNegotiation', 'WRITE')
 
   const openManager = tab => {
     openManagerPage(tab, 'following')
@@ -848,8 +851,9 @@ function MySpaceContent() {
       </SpaceHeader>
       {activeSection === 'overview' ? registrationEntry : null}
       {['overview', 'tasks'].includes(activeSection) ? <AccountActivityWorkspace key={`${seasonId}:${authUser?.id || ''}`} view={activeSection} activity={activity} locale={locale} context={effectiveSpaceContext} withSeason={pageLink} sections={spaceSections} followingSummary={followingSummary} managerStatus={isPrimaryManager ? managerWorkspaceStatus : null} playerStatus={isPrimaryPlayer ? playerWorkspaceStatus : null} genericTasks={hasAccountFeatureAccess(accountLaunch, 'communications')} weeklyPreparation={isWeekly && canViewWeeklyCompetition && spaceSections.some(section => section.id === 'team')} weeklyRooms={isWeekly && canViewWeeklyMatchRooms && spaceSections.some(section => section.id === 'matches')} roomsReadOnly={!canWriteMatchRooms} /> : null}
+      {activeSection === 'stream' ? <PlayerStreamWorkspace key={seasonId} seasonId={seasonId} /> : null}
       {activeSection === 'events' ? <MyEventsPanel context={effectiveSpaceContext} withSeason={pageLink} /> : null}
-      {activeSection === 'communications' ? <AccountCommunicationsCenter seasonId={seasonId} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} withSeason={pageLink} onSummaryChange={handleTaskSummaryChange} /> : null}
+      {activeSection === 'communications' ? <AccountCommunicationsCenter seasonId={seasonId} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} withSeason={pageLink} onSummaryChange={handleTaskSummaryChange} onActivityChange={activity.refresh} /> : null}
       {activeSection === 'matches' ? <>{matchesWorkspace}{canUseScheduleNegotiation ? <ScheduleNegotiationWorkspace seasonId={seasonId} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} /> : null}</> : null}
       {activeSection === 'stats' ? <><WorkspaceSectionHeader eyebrow="MY STATS" title={uiText("我的数据", locale)} description={uiText("正式出场、职责样本、排名和英雄池都从本届公开比赛数据自动生成。", locale)} badge={playerStatsWorkspace.status.key === 'RANKED' ? `${playerStatsWorkspace.totals.rankedRoles} RANKED ROLES` : playerStatsWorkspace.status.key.replaceAll('_', ' ')} /><PerformancePanel dossier={dossier} statsWorkspace={playerStatsWorkspace} withSeason={pageLink} expanded /></> : null}
       {activeSection === 'team' ? <>{canViewWeeklyCompetition ? <WeeklyCompetitionWorkspace seasonId={seasonId} readOnly={!canWriteWeeklyCompetition} onActivityChange={activity.refresh} /> : null}{canShowRegistrationEntry ? registrationEntry : null}{!canViewWeeklyCompetition && !canShowRegistrationEntry ? <ReadOnlyWorkspaceNotice title={uiText("队伍与名单暂为只读", locale)} description={uiText("当前队伍资料仅供查看。如需更新参赛名单，请联系周赛管理员核对本届权限。", locale)} /> : null}{teamOverview?.team ? <TeamPanel db={db} teamOverview={teamOverview} seasonId={seasonId} withSeason={pageLink} /> : null}</> : null}

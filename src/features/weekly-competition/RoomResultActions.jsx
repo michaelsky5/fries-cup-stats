@@ -25,7 +25,7 @@ export default function RoomResultActions({ data, disabled, mutate }) {
     return mutate(async () => { try { const saved = await liveRoomWrite(data.match.id, '/result-actions', pending.current); pending.current = null; return saved } catch (failure) { if (failure.status && failure.status < 500) pending.current = null; setError(failure.message); throw failure } }, action === 'SETTLE' ? '本场积分已结算。' : '双方确认已开放。')
   }
   return <>
-    {data.access.staff && result.handoff && ['AWAITING_SUBMISSION', 'REPORT_IN_PROGRESS', 'RETURNED'].includes(result.phase) && <div className={styles.resultAction}>
+    {(result.handoff?.canPrepare ?? data.access.staff) && ['AWAITING_SUBMISSION', 'REPORT_IN_PROGRESS', 'RETURNED'].includes(result.phase) && <div className={styles.resultAction}>
       <button className={report ? undefined : styles.primary} disabled={disabled || !result.handoff.canHandoff || !systemPageUrl('/submit/check')} onClick={async () => {
         setError(''); handoffPending.current ||= { matchRevision: data.match.revision, draftRevision: result.handoff.draftRevision, clientKey: crypto.randomUUID() }
         const saved = await mutate(async () => { try { return await liveRoomWrite(data.match.id, '/result-handoff', handoffPending.current) } catch (failure) { if (failure.status && failure.status < 500) handoffPending.current = null; setError(failure.message); throw failure } }, '战报入口已准备好，提交后可返回比赛房。')

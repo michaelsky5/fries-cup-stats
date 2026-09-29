@@ -1,10 +1,10 @@
-const limits = { PREPARATION: 180, FIRST_MAP: 90, MAP: 120, LINEUP: 60, BAN_ORDER: 60, BAN: 60 }
+const limits = { PREPARATION: 600, FIRST_MAP: 120, MAP: 120, LINEUP: 60, BAN_ORDER: 60, BAN: 60 }
 const stages = { checkin: 'PREPARATION', opening: 'PREPARATION', confirming: 'PREPARATION', choosing: 'MAP', lineup: 'LINEUP', banorder: 'BAN_ORDER', banning: 'BAN', review: 'MAP' }
 
 // Synthetic guide/preview only; the real room receives persisted deadlines from System.
 export function demoRoomClock(scene, previous, now = Date.now()) {
   const kind = stages[scene], mapOrder = scene === 'review' ? 2 : 1
-  const stage = kind ? { key: `${scene}:${mapOrder}`, kind, mapOrder, side: ['MAP', 'BAN_ORDER', 'BAN'].includes(kind) ? scene === 'review' ? 'B' : 'A' : null, ...(kind === 'LINEUP' ? { pendingSides: ['A', 'B'] } : {}), durationSeconds: kind === 'MAP' && mapOrder === 1 ? 90 : limits[kind] } : null
+  const stage = kind ? { key: `${scene}:${mapOrder}`, kind, mapOrder, side: ['MAP', 'BAN_ORDER', 'BAN'].includes(kind) ? scene === 'review' ? 'B' : 'A' : null, ...(kind === 'LINEUP' ? { pendingSides: ['A', 'B'] } : {}), durationSeconds: kind === 'MAP' && mapOrder === 1 ? 120 : limits[kind] } : null
   const enabled = previous?.enabled ?? true, changed = previous?.stage?.key !== stage?.key
   const remainingMs = changed || !previous ? (stage?.durationSeconds || 0) * 1000 : previous.deadlineAt ? Math.max(0, Date.parse(previous.deadlineAt) - now) : previous.remainingMs
   const deadlineAt = enabled && stage ? changed || !previous ? new Date(now + remainingMs).toISOString() : previous.deadlineAt : null

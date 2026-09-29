@@ -7,7 +7,7 @@ export const PREVIEW_ROLES = { representative: '操作代表', staff: '赛管', 
 export function buildWeeklyRoomPreview(stage = 'lineup', role = 'representative') {
   const staff = role === 'staff', production = staff || role === 'caster'
   const teams = ['A', 'B'].map(side => ({ id: `preview-team-${side}`, name: `示例队伍 ${side}`, shortName: `DEMO ${side}` }))
-  const rosters = teams.map((team, index) => ({ teamId: team.id, status: 'LOCKED', staff: [{ id: `staff-${index}`, name: '示例经理', role: 'MANAGER' }, { id: `coach-${index}`, name: '示例教练', role: 'COACH' }], members: Array.from({ length: 7 }, (_, i) => ({ id: `${team.id}-p${i}`, name: `示例选手 ${index + 1}-${i + 1}`, battleTag: `示例选手${index + 1}${i + 1}#0000`, role: ['TANK', 'DPS', 'DPS', 'SUP', 'SUP', 'FLEX', 'DPS'][i], plannedStarter: i < 5 })) }))
+  const rosters = teams.map((team, index) => ({ teamId: team.id, status: 'LOCKED', staff: [{ id: `staff-${index}`, name: '示例经理', battleTag: 'DemoManager' + (index + 1) + '#1000', role: 'MANAGER' }, { id: `coach-${index}`, name: '示例教练', battleTag: 'DemoCoach' + (index + 1) + '#1000', role: 'COACH' }], members: Array.from({ length: 7 }, (_, i) => ({ id: `${team.id}-p${i}`, name: `示例选手 ${index + 1}-${i + 1}`, battleTag: `示例选手${index + 1}${i + 1}#0000`, role: ['TANK', 'DPS', 'DPS', 'SUP', 'SUP', 'FLEX', 'DPS'][i], plannedStarter: i < 5 })) }))
   const lineup = index => rosters[index].members.slice(0, 5).map(player => ({ ...player, playerId: player.id }))
   const beforeLineup = ['opening', 'confirming', 'choosing', 'lineup'].includes(stage)
   const complete = !['opening', 'confirming', 'choosing', 'lineup', 'banorder', 'banning'].includes(stage)

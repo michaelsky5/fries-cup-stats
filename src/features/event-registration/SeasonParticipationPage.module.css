@@ -99,3 +99,7 @@
   .submission button { width: 100%; min-height: 44px; }
   .submission > span { font-size: 12px; line-height: 1.6; }
 }
+
+/* Transparency check stays in the upload preview, never flattened into the image. */
+.logoPreview { background-color: #efefe9; background-image: conic-gradient(#bcbeb8 25%, transparent 0 50%, #bcbeb8 0 75%, transparent 0); background-size: 16px 16px; }
+.logoPreview img { background: transparent; }

@@ -1,3 +1,4 @@
+import WeeklyMapPool from '../weekly-competition/WeeklyMapPool.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useMemo, useRef } from 'react'
 import { Link, useLocation, useOutletContext, useSearchParams } from 'react-router-dom'
@@ -61,6 +62,7 @@ export default function SignalWeeklyOverview() {
     </header>
     <WeeklyConfirmationCard preparation={db?.weekly_competition?.registration} seasonId={season?.id || db?.season?.id || seasonId} locale={locale} withSeason={withSeason} />
     <WeeklyWeekRail weeks={weeks} selectedId={week?.id} locale={locale} onChange={id => change({ cycle: cycle.id, week: id, match: null })} />
+    <WeeklyMapPool cycle={cycle} week={week} locale={locale} />
     <div className={styles.mainGrid}>
       <div className={styles.matchColumn}>
         <section className={styles.matchSection} aria-labelledby="weekly-focus-title">

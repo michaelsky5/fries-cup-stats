@@ -1,3 +1,4 @@
+import WeeklyAvailabilityPicker, { EMPTY_AVAILABILITY } from './WeeklyAvailabilityPicker.jsx'
 import RoomGuideLink from '../room-guide/RoomGuideLink.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import WeeklyTeamAdditions from './WeeklyTeamAdditions.jsx'
@@ -131,6 +132,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
   const [coreIds, setCoreIds] = useState([])
   const [coreStatus, setCoreStatus] = useState('DRAFT')
   const [participationStatus, setParticipationStatus] = useState('PENDING')
+  const [availability, setAvailability] = useState(EMPTY_AVAILABILITY)
   const [availabilityNote, setAvailabilityNote] = useState('')
   const [rosterIds, setRosterIds] = useState([])
   const [participationChange, setParticipationChange] = useState(null)
@@ -215,7 +217,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
 
   useEffect(() => {
     setParticipationStatus(participation?.status || 'PENDING')
-    setAvailabilityNote(participation?.availabilityNote || '')
+    setAvailability(participation?.availability || EMPTY_AVAILABILITY); setAvailabilityNote(participation?.availabilityNote || '')
     setRosterIds(selectedPlayerIds(currentRoster))
   }, [currentRoster, participation])
 
@@ -241,11 +243,11 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
     setSearchParams(next)
   }
   const resetCore = () => { setCoreIds(selectedPlayerIds(currentCore)); setCoreStatus(currentCore?.status === 'LOCKED' ? 'LOCKED' : 'DRAFT') }
-  const resetParticipation = () => { setParticipationStatus(participation?.status || 'PENDING'); setAvailabilityNote(participation?.availabilityNote || '') }
+  const resetParticipation = () => { setParticipationStatus(participation?.status || 'PENDING'); setAvailability(participation?.availability || EMPTY_AVAILABILITY); setAvailabilityNote(participation?.availabilityNote || '') }
   const resetRoster = () => setRosterIds(selectedPlayerIds(currentRoster))
   const sameIds = (left, right) => JSON.stringify([...left].sort()) === JSON.stringify([...right].sort())
   const coreDirty = !sameIds(coreIds, selectedPlayerIds(currentCore)) || coreStatus !== (currentCore?.status === 'LOCKED' ? 'LOCKED' : 'DRAFT')
-  const participationDirty = participationStatus !== (participation?.status || 'PENDING') || availabilityNote !== (participation?.availabilityNote || '')
+  const participationDirty = JSON.stringify(availability) !== JSON.stringify(participation?.availability || EMPTY_AVAILABILITY) || participationStatus !== (participation?.status || 'PENDING') || availabilityNote !== (participation?.availabilityNote || '')
   const rosterDirty = !sameIds(rosterIds, selectedPlayerIds(currentRoster))
   const rosterCheck = getWeeklyRosterCheck(rosterIds, lockedCoreIds, rosterRules, entry?.players || [])
   const progressParams = new URLSearchParams(searchParams)
@@ -276,9 +278,9 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
   useRegistrationDraft(synchronized && !loading && participationDirty, { label: uiText("本周参赛确认", uiLocale), busy: busy === 'participation', discard: resetParticipation })
   useRegistrationDraft(synchronized && !loading && rosterDirty, { label: uiText("本周名单", uiLocale), busy: busy === 'roster', discard: resetRoster })
 
-  async function runAction(kind, action, successMessage) {
+  async function runAction(kind, action, successMessage, saveAvailability = false) {
     if (writeLock.current || !entryWritable) return
-    if (!(await confirmDiscard({ exceptLabels: [{ core: '周期核心', participation: '本周参赛确认', roster: '本周名单' }[kind]] }))) return
+    if (!(await confirmDiscard({ exceptLabels: [{ core: '周期核心', participation: '本周参赛确认', roster: '本周名单' }[kind], ...(saveAvailability ? ['本周参赛确认'] : [])] }))) return
     if (writeLock.current || !mounted.current) return
     writeLock.current = true
     let saved = false
@@ -357,10 +359,12 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
           <header><h3>{uiText("确认本周参赛", uiLocale)}</h3><em>{PARTICIPATION_LABELS[participation?.status || 'PENDING']}</em></header>
           <p>{currentPlan?.stages.find(stage => stage.key === 'participation')?.detail}</p>
           {participationWritable ? <div className={styles.responseForm}>
+            <WeeklyAvailabilityPicker week={weekRecord?.week} value={availability} onChange={setAvailability} disabled={Boolean(busy)} />
             <label><span>{uiText("本周可赛说明", uiLocale)}</span><input value={availabilityNote} onChange={event => setAvailabilityNote(event.target.value)} maxLength={1000} placeholder={uiText("例如：周六晚可赛", uiLocale)} disabled={Boolean(busy)} /></label>
-            <button type="button" disabled={Boolean(busy) || (participation?.status === 'CONFIRMED' && !participationDirty)} onClick={() => runAction('participation', () => saveMyWeeklyParticipation(weekId, { entryId: entry.id, status: 'CONFIRMED', revision: participation?.revision || 0, availabilityNote: availabilityNote.trim() || null }), '本周参赛确认已保存。')}>{busy === 'participation' ? uiText("保存中…", uiLocale) : participation?.status === 'CONFIRMED' ? uiText("保存可赛说明", uiLocale) : uiText("确认本周参赛", uiLocale)}</button>
+            <button type="button" disabled={Boolean(busy) || (participation?.status === 'CONFIRMED' && !participationDirty)} onClick={() => runAction('participation', () => saveMyWeeklyParticipation(weekId, { entryId: entry.id, status: 'CONFIRMED', revision: participation?.revision || 0, availability, availabilityNote: availabilityNote.trim() || null }), '本周参赛确认已保存。')}>{busy === 'participation' ? uiText("保存中…", uiLocale) : participation?.status === 'CONFIRMED' ? uiText("保存可赛时间", uiLocale) : uiText("确认本周参赛", uiLocale)}</button>
             <details className={styles.changeParticipation}><summary>{uiText("本周无法参赛", uiLocale)}</summary><p>{uiText("更改参赛意向会影响本周名单提交，请先与本队确认。", uiLocale)}</p><button type="button" className={styles.dangerButton} disabled={Boolean(busy)} onClick={() => setParticipationChange(participation?.status === 'CONFIRMED' ? 'WITHDRAWN' : 'DECLINED')}>{participation?.status === 'CONFIRMED' ? uiText("撤回参赛确认", uiLocale) : uiText("本周不参赛", uiLocale)}</button></details>
           </div> : <p className={styles.lockNote}>{!confirmationOpen ? uiText("当前确认窗口未开放或已经截止，已有确认记录仅供查看。", uiLocale) : uiText("当前账号或赛季策略只允许查看，本周参赛由队长或经理确认。", uiLocale)}</p>}
+          {!participationWritable && <WeeklyAvailabilityPicker week={weekRecord?.week} value={participation?.availability || EMPTY_AVAILABILITY} disabled />}
           <SaveFeedback {...feedbackProps} kind="participation" />
         </section>
 
@@ -382,14 +386,21 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
         </section>
         <section id="weekly-roster" tabIndex={-1} hidden={activeStep !== 'roster'} className={styles.card} aria-label={uiText('确认并提交名单', uiLocale)}>
           <header><h3>{uiText('确认并提交名单', uiLocale)}</h3><em>{currentRoster ? 'V' + currentRoster.version + ' · ' + STATUS_LABELS[currentRoster.status] : uiText('尚未提交', uiLocale)}</em></header>
-          <WeeklyRosterReview players={entry.players || []} ids={rosterIds} previousIds={continuity?.playerIds || []} firstAppearance={firstAppearance} check={rosterCheck} status={currentRoster?.status} writable={rosterWritable} dirty={rosterDirty} busy={Boolean(busy)} editHref={stepHref('lineup')} onSubmit={() => runAction('roster', () => saveMyWeeklyRoster(participation.id, { members: rosterIds.map(playerId => ({ playerId, plannedStarter: false })), status: 'SUBMITTED', revision: rosterDraft?.revision || 0 }), '本周名单已提交。')} />
+          {participation?.status === 'CONFIRMED' && <div className={styles.responseForm}>
+            <WeeklyAvailabilityPicker week={weekRecord?.week} value={availability} onChange={setAvailability} disabled={!participationWritable || Boolean(busy)} />
+            <label><span>{uiText("本周可赛说明", uiLocale)}</span><input value={availabilityNote} onChange={event => setAvailabilityNote(event.target.value)} maxLength={1000} disabled={!participationWritable || Boolean(busy)} /></label>
+            <p>{uiText("可赛时间与本周名单一起保存。未确定的时间不会视为全部可赛。", uiLocale)}</p>
+            {participationWritable && ['SUBMITTED', 'LOCKED'].includes(currentRoster?.status) && <button type="button" disabled={Boolean(busy) || !participationDirty} onClick={() => runAction('participation', () => saveMyWeeklyParticipation(weekId, { entryId: entry.id, status: 'CONFIRMED', revision: participation.revision, availability, availabilityNote: availabilityNote.trim() || null }), '本周可赛时间已保存。')}>{uiText("保存可赛时间", uiLocale)}</button>}
+          </div>}
+          <WeeklyRosterReview players={entry.players || []} ids={rosterIds} previousIds={continuity?.playerIds || []} firstAppearance={firstAppearance} check={rosterCheck} status={currentRoster?.status} writable={rosterWritable} dirty={rosterDirty} busy={Boolean(busy)} editHref={stepHref('lineup')} onSubmit={() => runAction('roster', () => saveMyWeeklyRoster(participation.id, { members: rosterIds.map(playerId => ({ playerId, plannedStarter: false })), status: 'SUBMITTED', revision: rosterDraft?.revision || 0, availabilityUpdate: { revision: participation.revision, availability, availabilityNote: availabilityNote.trim() || null } }), '本周名单与可赛时间已提交。', true)} />
           {!rosterWritable && <p className={styles.lockNote}>{rosterLocked ? uiText('正式名单已锁定。', uiLocale) : !entryWritable ? uiText('当前账号或赛季策略只允许查看，本周名单由队长或经理提交。', uiLocale) : uiText('当前确认窗口未开放或已截止，名单保持只读。', uiLocale)}</p>}
           {activeStep === 'roster' && <SaveFeedback {...feedbackProps} kind="roster" />}
+          {activeStep === 'roster' && <SaveFeedback {...feedbackProps} kind="participation" />}
         </section>
         <footer className={styles.taskFooter}><span>{currentPlan?.guidance.detail}</span><Link to={progressHref}>{uiText("查看完整参赛进度 ↗", uiLocale)}</Link></footer>
         {weekId && entry?.team?.id && <WeeklyCoordinationPanel key={`${weekId}:${entry.team.id}`} weekId={weekId} teamId={entry.team.id} readOnly={readOnly || stale || Boolean(busy)} onActivityChange={onActivityChange} />}
       </>}
-      {participationChange && <WeeklyParticipationChangeDialog team={entry?.team?.shortName || entry?.team?.name} week={weekRecord?.week?.label} status={participationChange} busy={Boolean(busy)} onCancel={() => setParticipationChange(null)} onConfirm={() => runAction('participation', () => saveMyWeeklyParticipation(weekId, { entryId: entry.id, status: participationChange, revision: participation?.revision || 0, availabilityNote: availabilityNote.trim() || null }), '本周参赛状态已更新。')} />}
+      {participationChange && <WeeklyParticipationChangeDialog team={entry?.team?.shortName || entry?.team?.name} week={weekRecord?.week?.label} status={participationChange} busy={Boolean(busy)} onCancel={() => setParticipationChange(null)} onConfirm={() => runAction('participation', () => saveMyWeeklyParticipation(weekId, { entryId: entry.id, status: participationChange, revision: participation?.revision || 0, availability, availabilityNote: availabilityNote.trim() || null }), '本周参赛状态已更新。')} />}
     </section>
   )
 }

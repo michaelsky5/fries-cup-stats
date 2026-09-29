@@ -227,7 +227,7 @@
   .opening .banSummary { gap:8px; }.opening .banSummary>span:nth-of-type(n+2) { padding:8px;font-size:12px; }
 }
 /* Full-height match workspace: the active stage owns the center column. */
-@media(min-width:1180px) and (min-height:640px) {
+@media(min-width:1180px) and (min-height:600px) {
   :global([data-room-layout=workspace]) .opening { flex:1;min-height:0; }
   :global([data-room-layout=workspace]) .opening>header { padding:10px 14px 8px;flex:none; }
   :global([data-room-layout=workspace]) .opening h1 { font-size:22px; }

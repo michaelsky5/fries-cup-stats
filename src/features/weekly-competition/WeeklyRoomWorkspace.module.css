@@ -11,7 +11,7 @@
 .rosterLabel small { font-size:9px; }
 .roster { padding:0 10px; }
 .person { display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:6px;align-items:center;min-height:40px;padding:5px 0;border-bottom:1px solid var(--line); }
-.role { display:grid;place-items:center;font-size:11px;font-weight:800;min-height:27px;background:var(--fc-data-room-inset); }
+.role { display:grid;place-items:center;font-size:11px;font-weight:800;min-height:27px;white-space:nowrap;letter-spacing:0;background:var(--fc-data-room-inset); }
 .person[data-role=DPS] .role { border-left:2px solid #b66235; }.person[data-role=TANK] .role { border-left:2px solid #397f93; }.person[data-role=SUP] .role { border-left:2px solid #648654; }
 .identity { display:grid;min-width:0;gap:1px; }.identity b { font-size:12px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }.identity small { font-size:9px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
 .viewport .person button { font-size:10px;padding:3px 5px;min-height:28px; }.person[data-check-in=PRESENT] button,.person[data-check-in=PRESENT]>small { color:var(--fc-data-room-success); }
@@ -65,7 +65,7 @@
 .toolbar { display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;min-height:32px;flex:none; }.toolbar>div { display:flex;align-items:center;gap:8px; }.viewport .toolbar button { min-height:30px;padding:4px 9px;font-size:11px; }.toolbar>a,.toolbar>div>a { padding:4px 0 4px 8px;font-size:11px; }
 .panelDialog { width:min(960px,calc(100vw - 40px));max-height:calc(100dvh - 40px);padding:0;background:var(--fc-data-room-surface);color:var(--text);border:1px solid var(--line); }
 .panelDialog::backdrop { background:var(--fc-data-room-scrim); }.panelDialog>header { display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 18px;border-bottom:1px solid var(--line); }.panelDialog>header h2 { font-size:18px; }.panelBody { padding:16px;max-height:calc(100dvh - 120px);overflow:auto; }.panelBody>section { min-height:0; }.panelBody>details { padding:10px 0; }.panelBody :is(input,textarea,select) { max-width:100%; }.panelBody [id=room-communication] { height: min(620px,calc(100dvh - 170px));min-height:300px; }
-@media(min-width:1180px) and (min-height:640px) {
+@media(min-width:1180px) and (min-height:600px) {
   .viewport.viewport { height:calc(100dvh - var(--room-preview-toolbar,0px));min-height:0;max-height:calc(100dvh - var(--room-preview-toolbar,0px));padding:10px 16px;gap:7px; }
   .columns { grid-template-columns:clamp(190px,17.2vw,260px) minmax(0,1fr) clamp(190px,17.2vw,260px); }
   .center>section { flex:1;min-height:0; }.center>div:not([role=status]) { flex:none; }
@@ -102,7 +102,7 @@
   .viewport .preflight button { grid-column:2;grid-row:1;min-height:26px; }
   .viewport .preflight input { padding:0;min-height:15px; }
 }
-@media(min-width:1180px) and (min-height:640px) {
+@media(min-width:1180px) and (min-height:600px) {
   .columns { grid-template-rows:minmax(0,1fr); }
   .viewport [data-room-slot=stages] { height:42px;grid-template-rows:42px; }
   .viewport [data-room-slot=stages] li { min-height:0; }
@@ -166,7 +166,7 @@
 }
 .viewport .center[data-stage-view=lineup]>section { display:flex;flex-direction:column; }
 .viewport .center[data-stage-view=lineup]>section>header,.viewport .center[data-stage-view=lineup]>section>p { flex-shrink:0; }
-@media(min-width:1180px) and (min-height:640px) {
+@media(min-width:1180px) and (min-height:600px) {
   .viewport .lineupEditor { overflow:auto; }
 }
 @media(min-width:1500px) and (min-height:850px) and (max-height:1150px) {
@@ -251,4 +251,54 @@
   .panelDialog > header h2 { font-size: 18px; }
   .panelDialog > header button { min-height: 44px; white-space: nowrap; }
   .panelBody { max-height: calc(100dvh - 90px); }
+}
+
+/* Fit the usable area of a 768px laptop after browser chrome, without scaling the page. */
+@media (min-width:1180px) and (min-height:600px) and (max-height:700px) {
+  .viewport.viewport { gap:4px; }
+  .viewport [data-room-slot=header] { grid-template-columns:210px minmax(0,1fr) 230px; }
+  .viewport [data-room-slot=header]>a small { letter-spacing:0;white-space:nowrap; }
+  .viewport .center { gap:5px; }
+  .viewport [data-room-slot=stages] { min-height:32px;height:32px;grid-template-rows:32px; }
+  .viewport [data-room-slot=stages] li button { height:32px;min-height:32px; }
+  .viewport [data-room-slot=series] ol { min-height:40px; }
+  .viewport [data-room-slot=series] li>button,.viewport [data-room-slot=series] li>div { min-height:40px; }
+}
+
+@media (min-width:1180px) and (min-height:600px) and (max-height:700px) {
+  .viewport.viewport .center[data-stage-view=lineup]>section {
+    display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto minmax(0,1fr);
+  }
+  .viewport .center[data-stage-view=lineup]>section>header,.viewport .lineupInstruction { grid-column:1/-1; }
+  .viewport .lineupStatus { grid-column:1/-1;grid-row:3; }
+  .viewport .center[data-stage-view=lineup]>section:has(.lineupTabs) .lineupStatus { grid-column:1; }
+  .viewport .lineupTabs { grid-column:2;grid-row:3;align-items:stretch; }
+  .viewport .lineupEditor,.viewport .waiting { grid-column:1/-1;grid-row:4; }
+  .viewport .lineupEditor>footer { display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 12px;align-items:center; }
+  .viewport .lineupEditor>footer>small,.viewport .lineupEditor>footer>:global([data-countdown-hint]) { grid-column:1; }
+  .viewport .lineupEditor>footer>button { grid-column:2;grid-row:1/span 3; }
+}
+
+@media (min-width:1180px) and (min-height:600px) and (max-height:700px) {
+  .viewport .lineupInstruction { font-size:12px;line-height:1.4; }
+  .viewport .lobbyOrder>div { display:flex;align-items:center;gap:6px;min-width:0; }
+  .viewport .lobbyOrder b { flex:none; }
+  .viewport .lobbyOrder span { flex:1;min-width:0; }
+}
+
+/* Keep team identity on one line, leaving vertical space for the roster. */
+.viewport .team>header { display:flex;align-items:center;gap:8px; }
+.viewport .team>header .teamTitle { display:flex;align-items:baseline;gap:6px;flex:1;min-width:0;margin:0;font-size:17px;line-height:1.3;white-space:nowrap; }
+.teamTitle>strong { flex:0 1 auto;min-width:0;max-width:65%;overflow:hidden;text-overflow:ellipsis; }
+.teamTitle>strong:only-child { max-width:100%; }
+.teamTitle>span { flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:11px;font-weight:400;color:var(--muted); }
+.team>header>[data-map-side] { flex:none; }
+@media(min-width:1500px) and (min-height:850px) {
+  .viewport .team>header .teamTitle { gap:calc(6 * var(--room-unit));font-size:calc(20 * var(--room-unit)); }
+  .teamTitle>span { font-size:calc(11 * var(--room-unit)); }
+}
+@media(max-width:600px) {
+  .viewport .team>header { flex-wrap:wrap; }
+  .viewport .team>header .teamTitle { flex-basis:calc(100% - 65px); }
+  .viewport .teamToggle { width:100%;justify-content:space-between; }
 }

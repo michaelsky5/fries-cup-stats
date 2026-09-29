@@ -6,6 +6,7 @@ import { OW_HEROES } from '../../lib/heroes.js'
 export const PRACTICE_ID = 'LOCAL-ROOM-PRACTICE'
 export const PRACTICE_ROLES = ['representative', 'manager', 'member', 'referee', 'caster', 'admin']
 export const PRACTICE_SCENES = ['checkin', 'choosing', 'lineup', 'banorder', 'banning', 'ready', 'live', 'paused', 'review', 'result']
+const practiceMaps = ['Busan', 'Samoa', 'Lijiang Tower']
 const staffRole = role => ['referee', 'admin'].includes(role)
 const repRole = role => role === 'representative'
 const date = '2026-09-26T12:00:00.000Z'
@@ -18,7 +19,7 @@ const startersPresent = state => starterIds(state).every(id => present(state, id
 export function createRoomPractice(role = 'representative', scene) {
   role = PRACTICE_ROLES.includes(role) ? role : 'representative'
   scene = PRACTICE_SCENES.includes(scene) ? scene : staffRole(role) ? 'ready' : ['member', 'caster'].includes(role) ? 'live' : 'choosing'
-  return { role, scene, phaseClock: demoRoomClock(scene), revision: 1, mapName: 'Busan', banOrder: 'FIRST', hero: 'Ana', lineup: null, checkIns: {},
+  return { role, scene, phaseClock: demoRoomClock(scene), mapTimeouts: [], revision: 1, mapName: 'Busan', banOrder: 'FIRST', hero: 'Ana', lineup: null, checkIns: {},
     ready: false, preflight: false, recovered: false, recoveredB: true, pausedOnce: false, representative: false,
     scoreA: scene === 'review' ? 1 : 2, scoreB: scene === 'review' ? 2 : 1, response: '', settled: false, messages: [], requests: [], history: [], event: 'welcome' }
 }
@@ -69,8 +70,9 @@ export function buildRoomPractice(state, text) {
   if (afterPick) data.maps[0].name = state.mapName
   if (state.scene === 'review') {
     Object.assign(data.map, { scoreA: state.scoreA, scoreB: state.scoreB })
-    data.series.scoreA = state.scoreA > state.scoreB ? 1 : 0; data.series.scoreB = 1 - data.series.scoreA
+    data.series.scoreA = state.scoreA > state.scoreB ? 1 : 0; data.series.scoreB = state.scoreB > state.scoreA ? 1 : 0; data.series.drawCount = state.scoreA === state.scoreB ? 1 : 0
     data.opening.next.chooserSide = state.scoreA > state.scoreB ? 'B' : 'A'
+    data.opening.next.rightsSource = state.scoreA === state.scoreB ? 'DRAW_RETAINED_CHOOSER' : 'PREVIOUS_MAP_LOSER'
   }
   if (data.opening.setup) Object.assign(data.opening.setup, { name: state.mapName, firstBanSide: state.scene === 'banorder' || state.scene === 'lineup' ? '' : state.banOrder === 'FIRST' ? 'A' : 'B',
     banA: ['banning', 'banorder', 'lineup'].includes(state.scene) ? null : state.hero,
@@ -81,7 +83,7 @@ export function buildRoomPractice(state, text) {
     data.opening.heroes = data.opening.heroes.map(hero => ({ ...hero, reason: state.banOrder === 'SECOND' && hero.role === 'DPS' ? text['room.ban-blocked'] : '' }))
   }
   data.opening.revision = state.revision
-  data.opening.rules.maps = data.opening.rules.maps.filter(map => ['Busan', 'Samoa', 'Lijiang Tower'].includes(map.name))
+  data.opening.rules.maps = data.opening.rules.maps.filter(map => practiceMaps.includes(map.name))
   Object.assign(data.access, { administrator: state.role === 'admin', canWrite: true, canStart: staff && state.scene === 'ready' && startersPresent(state),
     canPause: staff && state.scene === 'live', canResume: staff && state.scene === 'paused' && state.recovered && state.recoveredB })
   Object.assign(data.opening.access, { canChoose: (staff || representative) && state.scene === 'choosing',
@@ -121,7 +123,10 @@ export function buildRoomPractice(state, text) {
     Object.assign(data.maps[0], { banA: '', banAStatus: 'TIMED_OUT' })
     if (data.opening.setup && data.map.order === 1) Object.assign(data.opening.setup, { banA: '', banAStatus: 'TIMED_OUT' })
   }
-  data.phaseClock = { ...demoRoomClock(state.scene, state.phaseClock), canManage: staff }
+  if (state.mapTimeouts?.length >= 2 && afterPick) {
+    for (const target of [data.maps[0], data.opening.setup].filter(Boolean)) Object.assign(target, { banA: '', banAStatus: 'TIMED_OUT', banATimeoutReason: 'MAP_SELECTION', firstBanSide: 'B', selectionMethod: state.randomMap ? 'TIMEOUT_RANDOM' : 'TEAM' })
+  }
+  data.phaseClock = { ...demoRoomClock(state.scene, state.phaseClock), canManage: staff, mapTimeouts: { counts: { A: state.mapTimeouts?.length || 0, B: 0 }, latest: state.mapTimeouts?.at(-1) || null } }
   return data
 }
 
@@ -133,10 +138,21 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
   const actor = staff || representative
   let event = '', result = { ok: true }
   if (kind === 'scene' && path === 'timeout' && scene === 'banning' && demoRoomClock(scene, state.phaseClock).status === 'EXPIRED') { next.banTimedOut = true; next.hero = ''; next.scene = 'ready'; event = 'ban-timeout' }
+  else if (kind === 'scene' && path === 'timeout' && scene === 'choosing' && demoRoomClock(scene, state.phaseClock).status === 'EXPIRED') {
+    next.mapTimeouts ||= []
+    const count = next.mapTimeouts.length + 1, at = new Date().toISOString()
+    next.mapTimeouts.push({ side: 'A', mapOrder: 1, count, at, deadlineAt: state.phaseClock.deadlineAt, outcome: count === 1 ? 'WARNING' : count === 2 ? 'BAN_FORFEIT' : 'RANDOM_MAP' })
+    if (count >= 2) { next.banTimedOut = true; next.hero = ''; next.banOrder = 'SECOND' }
+    if (count >= 3) { next.mapName = practiceMaps[Math.floor(Math.random() * practiceMaps.length)]; next.randomMap = true; next.scene = 'lineup' }
+    else next.phaseClock = { ...state.phaseClock, revision: state.phaseClock.revision + 1, remainingMs: 60000, deadlineAt: new Date(Date.now() + 60000).toISOString() }
+    next.messages.push({ id: `map-timeout-${count}`, channel: 'PUBLIC', kind: 'OPENING_MAP_TIMEOUT', authorName: 'DEMO', roleLabel: 'system', body: count === 1 ? '选图超时：警告，补时 60 秒。' : count === 2 ? '选图再次超时：取消本图 Ban，补时 60 秒。' : `选图第三次超时：随机选择 ${next.mapName}，本图 Ban 权已取消。`, createdAt: at })
+    event = 'map-timeout'
+  }
   else if (kind === 'scene' && path === 'start' && representative && scene === 'ready' && startersPresent(state)) { next.scene = 'live'; event = 'bot-start' }
   else if (kind === 'scene' && path === 'result' && ['live', 'review'].includes(scene)) { next.scene = 'result'; event = 'jump-result' }
   else if (kind === 'room' && path === '/clock') {
     if (!staff) fail('permission')
+    if (['choosing', 'banning'].includes(scene) && demoRoomClock(scene, state.phaseClock).status === 'EXPIRED') fail('phase')
     try { next.phaseClock = changeDemoClock(demoRoomClock(scene, state.phaseClock), body) } catch { fail('phase') }
     event = 'message'
   } else if (kind === 'room' && path === '/check-ins') {
@@ -149,13 +165,13 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
     next.representative = true; event = 'handover'
   } else if (kind === 'room' && path === '/opening') {
     if (!actor) fail('permission')
-    if (scene === 'banning' && demoRoomClock(scene, state.phaseClock).status === 'EXPIRED') fail('phase')
-    if (body.action === 'SELECT_SETUP' && scene === 'choosing' && ['Busan', 'Samoa', 'Lijiang Tower'].includes(body.mapName) && body.teamId === ownTeam) { next.mapName = body.mapName; next.scene = 'lineup'; event = 'map' }
+    if (['choosing', 'banning'].includes(scene) && demoRoomClock(scene, state.phaseClock).status === 'EXPIRED') fail('phase')
+    if (body.action === 'SELECT_SETUP' && scene === 'choosing' && practiceMaps.includes(body.mapName) && body.teamId === ownTeam) { next.mapName = body.mapName; next.scene = 'lineup'; event = 'map' }
     else if (body.action === 'SELECT_BAN_ORDER' && scene === 'banorder' && ['FIRST', 'SECOND'].includes(body.banOrder) && body.teamId === ownTeam) { next.banOrder = body.banOrder; next.scene = 'banning'; event = 'order' }
     else if (body.action === 'BAN' && scene === 'banning' && body.teamId === ownTeam && heroRole(body.hero) && !(state.banOrder === 'SECOND' && heroRole(body.hero) === 'damage')) { next.hero = body.hero; next.scene = 'ready'; event = 'ban' }
     else fail('phase')
   } else if (kind === 'room' && path === '/commands') {
-    if (body.action === 'SET_LINEUP' && scene === 'lineup' && actor && body.teamId === ownTeam && validRoomLineup(body.lineup) && body.lineup.every(player => /^preview-team-A-p[0-6]$/.test(player.playerId))) { next.lineup = body.lineup; for (const player of body.lineup) next.checkIns[player.playerId] = true; next.scene = 'banorder'; event = 'lineup' }
+    if (body.action === 'SET_LINEUP' && scene === 'lineup' && actor && body.teamId === ownTeam && validRoomLineup(body.lineup) && body.lineup.every(player => /^preview-team-A-p[0-6]$/.test(player.playerId))) { next.lineup = body.lineup; for (const player of body.lineup) next.checkIns[player.playerId] = true; next.scene = next.banTimedOut ? 'ready' : 'banorder'; event = 'lineup' }
     else if (body.action === 'VERIFY_PREFLIGHT' && staff && scene === 'ready' && body.roomConfirmed && body.rosterVerified && body.networkTestCompleted) { next.preflight = true; event = 'preflight' }
     else if (body.action === 'START' && staff && scene === 'ready' && startersPresent(state)) { next.scene = 'live'; event = 'start' }
     else if (body.action === 'FORCE_START' && staff && scene === 'ready' && !startersPresent(state) && body.actualStartConfirmed === true && String(body.note || '').trim().length >= 2) { next.scene = 'live'; event = 'start' }
@@ -210,7 +226,7 @@ export function createPracticeSession(role, scene) {
   return {
     getSnapshot: () => state,
     subscribe: listener => { listeners.add(listener); return () => listeners.delete(listener) },
-    tick: () => { if (state.scene === 'banning' && demoRoomClock(state.scene, state.phaseClock).status === 'EXPIRED') { state = applyRoomPractice(state, 'timeout', {}, 'scene').state; emit() } },
+    tick: () => { if (['choosing', 'banning'].includes(state.scene) && demoRoomClock(state.scene, state.phaseClock).status === 'EXPIRED') { state = applyRoomPractice(state, 'timeout', {}, 'scene').state; emit() } },
     reset: () => { state = createRoomPractice(role, scene); emit() },
     apply: (path, body, kind) => { const next = applyRoomPractice(state, path, body, kind); state = next.state; emit(); return next.result },
   }

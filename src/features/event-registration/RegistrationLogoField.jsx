@@ -42,7 +42,7 @@ export default function RegistrationLogoField({ image, url, disabled, onChange, 
       <div className={styles.logoPreview}>{preview ? <img src={preview} alt="队伍 Logo 预览" /> : <span>队标预览</span>}</div>
       <div className={styles.logoControls}>
         <label htmlFor={id}>{preview ? '更换队伍 Logo' : '上传队伍 Logo'}<input id={id} type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" onChange={select} aria-describedby={`${id}-help`} /></label>
-        <p id={`${id}-help`}>PNG、JPG 或静态 WebP，最大 2 MB。保留透明背景，完整显示队标。</p>
+        <p id={`${id}-help`}>PNG、JPG 或静态 WebP，最大 2 MB。PNG / WebP 的透明背景会保留；JPG 不支持透明。棋盘格用于检查透明区域。</p>
         <p role="status">{reading ? '正在读取图片…' : image ? selectedMessage : '队标将用于赛管审核和公开赛事展示。'}</p>
         {preview && <button type="button" onClick={() => { onChange({ image: undefined, url: '' }); setError('') }}>移除队标</button>}
       </div>

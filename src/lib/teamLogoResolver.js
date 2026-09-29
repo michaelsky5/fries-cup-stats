@@ -1,7 +1,7 @@
 import { TEAM_LOGO_CATALOG } from '../generated/teamLogoCatalog.js'
 
 const LOGO_EXTENSIONS = Object.freeze(['png', 'webp', 'jpg', 'jpeg', 'svg'])
-const GLOBAL_TEAM_LOGO_FALLBACK = '/logos/fc_logo.png'
+const GLOBAL_TEAM_LOGO_FALLBACK = '/logos/OW.png'
 
 function unique(values) {
   return Array.from(new Set(values.filter(Boolean)))

@@ -1,3 +1,4 @@
+import { accountRequestError } from '../auth/accountRequestError.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { fetchTaskCenter, completeManualTask } from '../tasks/taskNotificationApi.js'
 import { fetchMyWeeklyMatchRooms } from '../weekly-competition/weeklyMatchRoomsApi.js'
@@ -19,7 +20,8 @@ export default function useAccountActivity({ seasonId, userId, identityType, ena
   const [actionError, setActionError] = useState('')
   const writeLock = useRef(false)
   const mounted = useRef(false)
-  const scope = `${seasonId}:${userId}:${genericTasks}:${weeklyPreparation}:${weeklyRooms}:${view}:${attempt}`
+  const identityScope = `${seasonId}:${userId}:${genericTasks}:${weeklyPreparation}:${weeklyRooms}:${view}`
+  const scope = `${identityScope}:${attempt}`
   const refresh = useCallback(() => { setActionError(''); setAttempt(value => value + 1) }, [])
   useEffect(() => {
     mounted.current = true
@@ -40,7 +42,7 @@ export default function useAccountActivity({ seasonId, userId, identityType, ena
     if (weeklyPreparation) requests.push(['preparation', options => fetchMyWeeklyCompetition(seasonId, options), data => isWeeklyPreparationWorkspace(data, seasonId, userId)])
     if (weeklyRooms) requests.push(['rooms', options => fetchMyWeeklyMatchRooms(seasonId, options), data => data?.season?.id === seasonId && Array.isArray(data.rooms) && Array.isArray(data.teams)])
     for (const [key] of requests) sources[key] = { status: 'loading' }
-    setSnapshot({ scope, sources })
+    setSnapshot(current => ({ scope, identityScope, sources: Object.fromEntries(Object.entries(sources).map(([key, source]) => [key, { ...source, ...(current?.identityScope === identityScope ? { data: current.sources[key]?.data, updatedAt: current.sources[key]?.updatedAt } : {}) }])) }))
     for (const [key, fetcher, validate] of requests) {
       const requestController = new AbortController()
       const cancel = () => requestController.abort()
@@ -52,22 +54,22 @@ export default function useAccountActivity({ seasonId, userId, identityType, ena
           ? { ...current, sources: { ...current.sources, [key]: { status: 'ready', data, updatedAt: Date.now() } } } : current)
       }).catch(error => {
         if (!controller.signal.aborted) setSnapshot(current => current?.scope === scope
-          ? { ...current, sources: { ...current.sources, [key]: { status: 'error', message: error?.status === 401 ? '登录已失效，请重新登录。' : `${SOURCE_LABELS[key]}${requestController.signal.reason?.name === 'TimeoutError' ? '同步超时' : '暂时无法同步'}，请重试。` } } } : current)
+          ? { ...current, sources: { ...current.sources, [key]: { ...current.sources[key], status: 'error', message: accountRequestError(requestController.signal.reason?.name === 'TimeoutError' ? requestController.signal.reason : error, SOURCE_LABELS[key]) } } } : current)
       }).finally(() => {
         clearTimeout(timeout)
         controller.signal.removeEventListener('abort', cancel)
       })
     }
     return () => controller.abort()
-  }, [genericTasks, scope, seasonId, userId, weeklyPreparation, weeklyRooms])
+  }, [genericTasks, identityScope, scope, seasonId, userId, weeklyPreparation, weeklyRooms])
   const sources = useMemo(() => snapshot?.scope === scope ? snapshot.sources : Object.fromEntries([
     genericTasks && ['tasks', { status: 'loading' }], weeklyPreparation && ['preparation', { status: 'loading' }], weeklyRooms && ['rooms', { status: 'loading' }]
   ].filter(Boolean)), [genericTasks, scope, snapshot, weeklyPreparation, weeklyRooms])
-  const preparation = useMemo(() => buildWeeklyPreparation(sources.preparation?.status === 'ready' ? sources.preparation.data : null,
-    { seasonId, userId, readOnly: preparationReadOnly, now }), [now, preparationReadOnly, seasonId, sources.preparation, userId])
-  const taskView = useMemo(() => mergeAccountTasks(sources.tasks?.status === 'ready' ? sources.tasks.data.tasks : [], [
+  const preparation = useMemo(() => buildWeeklyPreparation(sources.preparation?.data || null,
+    { seasonId, userId, readOnly: preparationReadOnly || sources.preparation?.status !== 'ready', now }), [now, preparationReadOnly, seasonId, sources.preparation, userId])
+  const taskView = useMemo(() => mergeAccountTasks(sources.tasks?.data?.tasks || [], [
     ...preparation.tasks,
-    ...buildWeeklyResultTasks(sources.rooms?.status === 'ready' ? sources.rooms.data : null, { seasonId, readOnly: roomsReadOnly })
+    ...buildWeeklyResultTasks(sources.rooms?.data || null, { seasonId, readOnly: roomsReadOnly || sources.rooms?.status !== 'ready' })
   ], { now, identityType }), [identityType, now, preparation.tasks, roomsReadOnly, seasonId, sources.rooms, sources.tasks])
   const records = Object.values(sources)
   const status = records.some(source => source.status === 'loading') ? 'loading' : records.some(source => source.status === 'error') ? 'error' : 'ready'

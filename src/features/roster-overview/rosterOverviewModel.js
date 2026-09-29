@@ -1,6 +1,6 @@
 import { getPlayerDirectory, getPlayerDisplayIdentity, getRoleCounts, getStaffCounts, getStaffDirectory, getTeamDirectory, normalizeRosterRole, sortTeams } from '../../lib/rosterSelectors.js'
 import { buildStaffIndex } from '../../lib/reviewSearch.js'
-import { getPlayerRosterChange } from '../../lib/rosterStage.js'
+import { getPlayerRosterChange, isPlayerCurrentlyOnTeam } from '../../lib/rosterStage.js'
 import { getStaffProfilePath } from '../../lib/staffProfiles.js'
 
 const key = value => String(value ?? '').normalize('NFKC').trim().toLowerCase()
@@ -40,6 +40,7 @@ export function buildRosterOverview(db, season) {
       const recorded = identity.playerId ? byPlayerId.get(key(identity.playerId)) : null
       return {
         identity,
+        active: isPlayerCurrentlyOnTeam(player),
         role: normalizeRosterRole(player.role),
         rosterChange: getPlayerRosterChange(player),
         href: identity.playerId ? `/players/${encodeURIComponent(identity.playerId)}` : '',

@@ -5,18 +5,22 @@ function seasonQuery(seasonId, extra = '') {
 }
 
 export async function fetchCommunicationCenter(seasonId) {
-  const [notificationData, announcementData, appealData, optionData] = await Promise.all([
+  const keys = ['notifications', 'announcements', 'appeals', 'appealOptions']
+  const results = await Promise.allSettled([
     platformRequest(`/me/notifications?${seasonQuery(seasonId)}`),
     fetchMyAnnouncements(seasonId),
     platformRequest(`/me/appeals?${seasonQuery(seasonId)}`),
     platformRequest(`/me/appeal-options?${seasonQuery(seasonId)}`)
   ])
-  return {
-    notifications: notificationData?.notifications || [],
-    announcements: announcementData,
-    appeals: appealData?.appeals || [],
-    appealOptions: optionData?.matches || []
-  }
+  const selectors = [data => data?.notifications, data => data, data => data?.appeals, data => data?.matches]
+  const data = { errors: {} }
+  results.forEach((result, index) => {
+    const key = keys[index]
+    const value = result.status === 'fulfilled' ? selectors[index](result.value) : undefined
+    if (Array.isArray(value)) data[key] = value
+    else data.errors[key] = result.status === 'rejected' ? result.reason : new Error('Invalid response')
+  })
+  return data
 }
 
 export async function markNotificationRead(notificationId) {
@@ -34,7 +38,8 @@ export async function markAllNotificationsRead(seasonId) {
 
 export async function fetchMyAnnouncements(seasonId) {
   const data = await platformRequest(`/announcements?${seasonQuery(seasonId)}`)
-  return data?.announcements || []
+  if (!Array.isArray(data?.announcements)) throw new Error('Invalid announcements response')
+  return data.announcements
 }
 
 export async function markAnnouncementRead(id) {
@@ -64,4 +69,8 @@ export async function withdrawAppeal(id, note = '') {
     method: 'POST', body: { note: note || null }
   })
   return data?.appeal || null
+}
+
+export async function requestAppealReview(id, payload) {
+  return platformRequest(`/appeals/${encodeURIComponent(id)}/review`, { method: "POST", body: payload })
 }
