@@ -55035,5 +55035,45 @@
     "zh-TW": "待辦與訊息",
     "en-US": "Tasks and messages",
     "ko-KR": "할 일 및 메시지"
+  },
+  "本场地图池与规则": {
+    "zh-TW": "本場地圖池與規則",
+    "en-US": "Map pool and rules",
+    "ko-KR": "맵 풀 및 규정"
+  },
+  "本场适用规则": {
+    "zh-TW": "本場適用規則",
+    "en-US": "Rules for this match",
+    "ko-KR": "이 경기의 적용 규정"
+  },
+  "打开规则中心": {
+    "zh-TW": "開啟規則中心",
+    "en-US": "Open the rulebook",
+    "ko-KR": "규정집 열기"
+  },
+  "本场尚未关联线上规则版本，请以本周期已公布的规则及赛事组公告为准。": {
+    "zh-TW": "本場尚未關聯線上規則版本，請以本週期已公布的規則及賽事組公告為準。",
+    "en-US": "No online rule version is linked to this match. Follow the published rules and organizer notices for this cycle.",
+    "ko-KR": "이 경기에 연결된 온라인 규정 버전이 없습니다. 해당 주기에 공지된 규정과 주최 측 안내를 따르세요."
+  },
+  "以下为比赛房当前配置，具体选禁步骤请按操作区完成。": {
+    "zh-TW": "以下為比賽房目前配置，具體選禁步驟請按操作區完成。",
+    "en-US": "These are the current room settings. Follow the room controls to complete picks and bans.",
+    "ko-KR": "현재 경기 방 설정입니다. 방의 안내에 따라 맵 선택과 영웅 금지를 진행하세요."
+  },
+  "规则中心": {
+    "zh-TW": "規則中心",
+    "en-US": "Rulebook",
+    "ko-KR": "규정 센터"
+  },
+  "完整条款与历史版本": {
+    "zh-TW": "完整條款與歷史版本",
+    "en-US": "Rules and version history",
+    "ko-KR": "전체 규정 및 버전 이력"
+  },
+  "职业经历、名单及其他参赛资格要求，请查阅适用的周赛规则。": {
+    "zh-TW": "職業經歷、名單及其他參賽資格要求，請查閱適用的週賽規則。",
+    "en-US": "See the applicable weekly rules for professional experience, roster, and other eligibility requirements.",
+    "ko-KR": "프로 경력, 로스터 및 기타 참가 자격 요건은 해당 주간 대회 규정을 확인하세요."
   }
 }
