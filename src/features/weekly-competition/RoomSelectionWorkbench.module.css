@@ -94,3 +94,14 @@
     .banStage .selection:has(.touchHint :global([data-countdown-hint])) .explanation{display:none}
   }
 }
+
+/* More columns keep the largest hero role readable on short desktop windows. */
+@media (min-width:1180px) and (min-height:600px) and (max-height:700px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) {
+    .heroGrid { grid-template-columns:repeat(8,minmax(0,1fr)); }
+    .search { min-height:28px;height:28px; }
+    .heroGrid img { width:28px; }
+    .heroGrid button>span { font-size:11px; }
+    .banSlots>div { padding-block:4px; }
+  }
+}

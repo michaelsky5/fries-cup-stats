@@ -1,6 +1,7 @@
+import { accountRequestError } from '../auth/accountRequestError.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
   acknowledgeAnnouncement,
@@ -10,7 +11,7 @@ import {
   markAllNotificationsRead,
   markAnnouncementRead,
   markNotificationRead,
-  withdrawAppeal
+  withdrawAppeal, requestAppealReview
 } from './communicationApi.js'
 import styles from './AccountCommunicationsCenter.module.css'
 import {
@@ -28,6 +29,7 @@ import { buildCommunicationCenterView } from './communicationCenterModel.js'
 const SEVERITY = { NORMAL: '普通公告', IMPORTANT: '重要公告', URGENT: '紧急公告', ACTION: '行动公告' }
 const MESSAGE_PRIORITY = { LOW: '一般', NORMAL: '普通', HIGH: '重要', IMPORTANT: '重要', URGENT: '紧急' }
 const APPEAL_STATUS = {
+  FIRST_DECIDED:'首次裁定已送达', REVIEW_REQUESTED:'待独立复核', REVIEWING:'独立复核中',
   OPEN: '待受理', TRIAGED: '已受理', UNDER_REVIEW: '审核中', AWAITING_EVIDENCE: '待补证',
   RESOLVED: '已裁定', REJECTED: '已驳回', WITHDRAWN: '已撤回'
 }
@@ -104,33 +106,56 @@ function MessageHero({ notification, busy, onRead, withSeason }) {
   )
 }
 
-export default function AccountCommunicationsCenter({ seasonId, capabilitySnapshot = null, standalone = false, withSeason = null, onSummaryChange = null }) {
+export default function AccountCommunicationsCenter({ seasonId, capabilitySnapshot = null, standalone = false, withSeason = null, onSummaryChange = null, onActivityChange = null }) {
   const uiLocale = useUiLocale()
   const [searchParams] = useSearchParams()
   const requestedView = searchParams.get('view')
   const [tab, setTab] = useState(['messages', 'announcements', 'appeals'].includes(requestedView) ? requestedView : searchParams.get('appeal') ? 'appeals' : 'messages')
+  useEffect(() => { if (['messages', 'announcements', 'appeals'].includes(requestedView)) setTab(requestedView) }, [requestedView])
   const [notifications, setNotifications] = useState([])
   const [announcements, setAnnouncements] = useState([])
   const [appeals, setAppeals] = useState([])
   const [appealOptions, setAppealOptions] = useState([])
   const [appealForm, setAppealForm] = useState(EMPTY_APPEAL)
   const [evidenceAppealId, setEvidenceAppealId] = useState('')
+  const [reviewReasons, setReviewReasons] = useState({})
   const [evidenceForm, setEvidenceForm] = useState(EMPTY_EVIDENCE)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
+  const [sourceErrors, setSourceErrors] = useState({})
+  const [loaded, setLoaded] = useState({})
+  const sequence = useRef(0)
+  const loadedSeason = useRef(seasonId)
 
   const load = useCallback(async () => {
+    const attempt = ++sequence.current
+    if (loadedSeason.current !== seasonId) {
+      loadedSeason.current = seasonId
+      setNotifications([]); setAnnouncements([]); setAppeals([]); setAppealOptions([])
+      setLoaded({}); setSourceErrors({}); setAppealForm(EMPTY_APPEAL)
+    }
     setLoading(true); setError('')
     try {
       const data = await fetchCommunicationCenter(seasonId)
-      setNotifications(data.notifications); setAnnouncements(data.announcements); setAppeals(data.appeals); setAppealOptions(data.appealOptions)
-      setAppealForm(current => ({ ...current, matchId: data.appealOptions.some(item => item.id === current.matchId) ? current.matchId : data.appealOptions[0]?.id || '' }))
-    } catch (loadError) { setError(loadError?.message || '公告与申诉状态暂时无法同步。') }
-    finally { setLoading(false) }
+      if (attempt !== sequence.current) return
+      setSourceErrors(data.errors)
+      const setters = { notifications: setNotifications, announcements: setAnnouncements, appeals: setAppeals, appealOptions: setAppealOptions }
+      for (const [key, setter] of Object.entries(setters)) {
+        if (Array.isArray(data[key])) {
+          setter(data[key])
+          setLoaded(current => ({ ...current, [key]: true }))
+        }
+      }
+      if (data.appealOptions) setAppealForm(current => ({ ...current, matchId: data.appealOptions.some(item => item.id === current.matchId) ? current.matchId : data.appealOptions[0]?.id || '' }))
+    } catch (loadError) {
+      if (attempt === sequence.current) setError(accountRequestError(loadError, '赛事消息'))
+    } finally {
+      if (attempt === sequence.current) setLoading(false)
+    }
   }, [seasonId])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => { const requestSequence = sequence; load(); return () => { requestSequence.current++ } }, [load])
 
   const messageView = useMemo(() => buildCommunicationCenterView(notifications), [notifications])
   const unreadMessageCount = messageView.summary.unread
@@ -140,26 +165,30 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
     () => appealOptions.find(item => item.id === appealForm.matchId) || appealOptions[0] || null,
     [appealForm.matchId, appealOptions]
   )
-  const appealCreateAccess = resolveCapabilityAccess(capabilitySnapshot, 'appeal.create', {
+  const appealCreateAccess = selectedAppealOption?.canCreate === true ? { allowed: true } : resolveCapabilityAccess(capabilitySnapshot, 'appeal.create', {
     registrationId: selectedAppealOption?.representation?.registrationId,
     matchId: selectedAppealOption?.id
   })
 
   useEffect(() => {
-    if (loading) return
+    if (loading || !loaded.notifications || sourceErrors.notifications) return
     onSummaryChange?.({ unreadNotificationCount: unreadMessageCount })
-  }, [loading, onSummaryChange, unreadMessageCount])
+  }, [loading, loaded.notifications, sourceErrors.notifications, onSummaryChange, unreadMessageCount])
 
-  const updateReceipt = (id, receipt) => setAnnouncements(current => current.map(item => item.id === id ? { ...item, receipt } : item))
+  const updateReceipt = (id, receipt) => {
+    setAnnouncements(current => current.map(item => item.id === id ? { ...item, receipt } : item))
+    if (receipt?.readAt) setNotifications(current => current.map(item => item.id === receipt.id ? { ...item, readAt: receipt.readAt } : item))
+  }
 
   const readNotification = async notification => {
-    if (notification.readAt) return
+    if (notification.readAt || sourceErrors.notifications || loading) return
     setNotifications(current => current.map(item => item.id === notification.id ? { ...item, readAt: new Date().toISOString() } : item))
     try { await markNotificationRead(notification.id) }
     catch (actionError) { setError(actionError?.message || '消息阅读状态同步失败。'); await load() }
   }
 
   const readAllNotifications = async () => {
+    if (sourceErrors.notifications || loading || busy) return
     setBusy('read-all-messages')
     try {
       await markAllNotificationsRead(seasonId)
@@ -169,7 +198,7 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
   }
 
   const readAnnouncement = async announcement => {
-    if (announcement.receipt?.readAt) return
+    if (announcement.receipt?.readAt || sourceErrors.announcements || loading) return
     setBusy(`read:${announcement.id}`)
     try { updateReceipt(announcement.id, await markAnnouncementRead(announcement.id)) }
     catch (actionError) { setError(actionError?.message || '阅读状态同步失败。') }
@@ -177,14 +206,15 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
   }
 
   const acknowledge = async announcement => {
+    if (sourceErrors.announcements || loading || busy) return
     setBusy(`ack:${announcement.id}`)
-    try { updateReceipt(announcement.id, await acknowledgeAnnouncement(announcement.id)) }
+    try { updateReceipt(announcement.id, await acknowledgeAnnouncement(announcement.id)); onActivityChange?.() }
     catch (actionError) { setError(actionError?.message || '公告确认失败。') }
     finally { setBusy('') }
   }
 
   const submitAppeal = async event => {
-    event.preventDefault(); setBusy('create-appeal'); setError('')
+    event.preventDefault(); if (sourceErrors.appealOptions || sourceErrors.appeals || loading || busy) return; setBusy('create-appeal'); setError('')
     try {
       await createAppeal(appealForm.matchId, {
         type: appealForm.type,
@@ -201,7 +231,7 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
   }
 
   const supplementEvidence = async (event, appeal) => {
-    event.preventDefault(); setBusy(`evidence:${appeal.id}`); setError('')
+    event.preventDefault(); if (sourceErrors.appeals || loading || busy) return; setBusy(`evidence:${appeal.id}`); setError('')
     try {
       await addAppealEvidence(appeal.id, [{ ...evidenceForm, url: evidenceForm.evidenceType === 'LINK' ? evidenceForm.url : null }])
       setEvidenceAppealId(''); setEvidenceForm(EMPTY_EVIDENCE); await load()
@@ -210,6 +240,7 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
   }
 
   const withdraw = async appeal => {
+    if (sourceErrors.appeals || loading || busy) return
     setBusy(`withdraw:${appeal.id}`); setError('')
     try { await withdrawAppeal(appeal.id); await load() }
     catch (actionError) { setError(actionError?.message || '申诉撤回失败。') }
@@ -220,16 +251,21 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
     <section className={`${styles.center} ${standalone ? styles.standalone : ''}`}>
       <header className={styles.header}><div><span>EVENT COMMUNICATIONS</span><h2>{uiText("赛事消息", uiLocale)}</h2><p>{uiText("流程结果、定向公告和正式比赛申诉集中留档，但不会混入需要操作的任务队列。", uiLocale)}</p></div><button type="button" onClick={load} disabled={loading}>{loading ? uiText("同步中", uiLocale) : uiText("刷新消息", uiLocale)}</button></header>
       <div className={styles.tabs} role="tablist" aria-label={uiText("赛事消息分类", uiLocale)}>
-        <button type="button" role="tab" aria-selected={tab === 'messages'} data-active={tab === 'messages'} onClick={() => setTab('messages')}><span>{uiText("流程消息", uiLocale)}</span><em>{unreadMessageCount}</em></button>
-        <button type="button" role="tab" aria-selected={tab === 'announcements'} data-active={tab === 'announcements'} onClick={() => setTab('announcements')}><span>{uiText("赛事公告", uiLocale)}</span><em>{unreadAnnouncementCount}</em></button>
-        <button type="button" role="tab" aria-selected={tab === 'appeals'} data-active={tab === 'appeals'} onClick={() => setTab('appeals')}><span>{uiText("比赛申诉", uiLocale)}</span><em>{activeAppeals}</em></button>
+        <button type="button" role="tab" aria-selected={tab === 'messages'} data-active={tab === 'messages'} onClick={() => setTab('messages')}><span>{uiText("流程消息", uiLocale)}</span><em>{loaded.notifications && !sourceErrors.notifications ? unreadMessageCount : '—'}</em></button>
+        <button type="button" role="tab" aria-selected={tab === 'announcements'} data-active={tab === 'announcements'} onClick={() => setTab('announcements')}><span>{uiText("赛事公告", uiLocale)}</span><em>{loaded.announcements && !sourceErrors.announcements ? unreadAnnouncementCount : '—'}</em></button>
+        <button type="button" role="tab" aria-selected={tab === 'appeals'} data-active={tab === 'appeals'} onClick={() => setTab('appeals')}><span>{uiText("比赛申诉", uiLocale)}</span><em>{loaded.appeals && !sourceErrors.appeals ? activeAppeals : '—'}</em></button>
       </div>
+      {Object.keys(sourceErrors).length ? <div className={styles.error} role="status">
+        <strong>{uiText("部分内容尚未同步", uiLocale)}</strong>
+        {Object.entries(sourceErrors).map(([key, issue]) => <span key={key}>{uiText(accountRequestError(issue, { notifications: '流程消息', announcements: '赛事公告', appeals: '比赛申诉', appealOptions: '可申诉比赛' }[key]), uiLocale)}</span>)}
+        <button type="button" onClick={load} disabled={loading}>{uiText("重新同步", uiLocale)}</button>
+      </div> : null}
       {error ? <div className={styles.error}><strong>{uiText("操作没有完成", uiLocale)}</strong><span>{error}</span></div> : null}
       {loading && !notifications.length && !announcements.length && !appeals.length ? <div className={styles.empty}>{uiText("正在同步账号消息、赛事公告与申诉状态…", uiLocale)}</div> : null}
 
-      {tab === 'messages' && (!loading || notifications.length) ? (
+      {tab === 'messages' && loaded.notifications ? (
         <div className={styles.messagePanel}>
-          {messageView.primaryNotification ? <MessageHero notification={messageView.primaryNotification} busy={busy} onRead={readNotification} withSeason={withSeason} /> : null}
+          {messageView.primaryNotification ? <MessageHero notification={messageView.primaryNotification} busy={busy || loading || sourceErrors.notifications} onRead={readNotification} withSeason={withSeason} /> : null}
 
           {messageView.notifications.length ? <section className={styles.messageFacts} aria-label={uiText("流程消息摘要", uiLocale)}>
             {messageView.facts.map(fact => <div key={fact.label}><span>{fact.label}</span><strong>{fact.value}</strong><small>{fact.detail}</small></div>)}
@@ -242,22 +278,22 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
 
           <div className={styles.messageToolbar}>
             <div><strong>{uiText("其余流程消息", uiLocale)}</strong><p>{uiText("未读优先、重要程度其次，再按发生时间排列；首要消息已经固定在上方。", uiLocale)}</p></div>
-            {unreadMessageCount ? <button type="button" disabled={busy === 'read-all-messages'} onClick={readAllNotifications}>{uiText("全部已读", uiLocale)}</button> : null}
+            {unreadMessageCount ? <button type="button" disabled={Boolean(busy || loading || sourceErrors.notifications)} onClick={readAllNotifications}>{uiText("全部已读", uiLocale)}</button> : null}
           </div>
           {messageView.groups.length ? <div className={styles.messageGroups}>{messageView.groups.map(group => (
             <section className={styles.messageGroup} key={group.key} data-category={group.key}>
               <header><div><span>{group.eyebrow}</span><strong>{group.label}</strong><p>{group.description}</p></div><em>{group.notifications.length}</em></header>
-              <div className={styles.list}>{group.notifications.map(notification => <MessageCard key={notification.id} notification={notification} busy={busy} onRead={readNotification} withSeason={withSeason} />)}</div>
+              <div className={styles.list}>{group.notifications.map(notification => <MessageCard key={notification.id} notification={notification} busy={busy || loading || sourceErrors.notifications} onRead={readNotification} withSeason={withSeason} />)}</div>
             </section>
-          ))}</div> : messageView.primaryNotification ? <div className={styles.messageComplete}><span>ONE UPDATE</span><strong>{uiText("当前只有上方这一条消息", uiLocale)}</strong><p>{uiText("阅读后仍会保留在这里，不会因为已读而消失。", uiLocale)}</p></div> : <div className={styles.empty}><strong>{uiText("目前没有流程消息", uiLocale)}</strong><p>{uiText("报名、阵容、身份、赛程和竞猜状态变化后会显示在这里。", uiLocale)}</p></div>}
+          ))}</div> : messageView.primaryNotification ? <div className={styles.messageComplete}><span>ONE UPDATE</span><strong>{uiText("当前只有上方这一条消息", uiLocale)}</strong><p>{uiText("阅读后仍会保留在这里，不会因为已读而消失。", uiLocale)}</p></div> : sourceErrors.notifications ? null : <div className={styles.empty}><strong>{uiText("目前没有流程消息", uiLocale)}</strong><p>{uiText("报名、阵容、身份、赛程和竞猜状态变化后会显示在这里。", uiLocale)}</p></div>}
         </div>
       ) : null}
 
-      {tab === 'announcements' && (!loading || announcements.length) ? <div className={styles.list}>{announcements.length ? announcements.map(announcement => <article className={styles.announcement} data-severity={announcement.severity} data-unread={!announcement.receipt?.readAt} key={announcement.id}><div className={styles.rail} /><header><div><span>{SEVERITY[announcement.severity]} · V{announcement.currentVersion.version}</span><h3>{announcement.currentVersion.title}</h3></div><b>{announcement.receipt?.acknowledgedAt ? uiText("已确认", uiLocale) : announcement.receipt?.readAt ? uiText("已读", uiLocale) : uiText("未读", uiLocale)}</b></header><p>{announcement.currentVersion.body}</p><footer><div><span>{uiText("发布 ", uiLocale)}{formatTime(announcement.publishedAt)}</span>{announcement.dueAt ? <span>{uiText("截止 ", uiLocale)}{formatTime(announcement.dueAt)}</span> : null}</div><div>{!announcement.receipt?.readAt ? <button type="button" disabled={Boolean(busy)} onClick={() => readAnnouncement(announcement)}>{uiText("标为已读", uiLocale)}</button> : null}{announcement.requiresAcknowledgement && !announcement.receipt?.acknowledgedAt ? <button className={styles.primary} type="button" disabled={Boolean(busy)} onClick={() => acknowledge(announcement)}>{uiText("确认已阅读", uiLocale)}</button> : null}{announcement.actionUrl ? <Link to={resolveNotificationActionUrl(announcement.actionUrl, withSeason)} onClick={() => readAnnouncement(announcement)}>{uiText("前往处理", uiLocale)}</Link> : null}</div></footer></article>) : <div className={styles.empty}><strong>{uiText("目前没有发给你的赛事公告", uiLocale)}</strong><p>{uiText("队伍、身份或全赛事公告发布后会显示在这里。", uiLocale)}</p></div>}</div> : null}
+      {tab === 'announcements' && loaded.announcements ? <div className={styles.list}>{announcements.length ? announcements.map(announcement => <article className={styles.announcement} data-severity={announcement.severity} data-unread={!announcement.receipt?.readAt} key={announcement.id}><div className={styles.rail} /><header><div><span>{SEVERITY[announcement.severity]} · V{announcement.currentVersion.version}</span><h3>{announcement.currentVersion.title}</h3></div><b>{announcement.receipt?.acknowledgedAt ? uiText("已确认", uiLocale) : announcement.receipt?.readAt ? uiText("已读", uiLocale) : uiText("未读", uiLocale)}</b></header><p>{announcement.currentVersion.body}</p><footer><div><span>{uiText("发布 ", uiLocale)}{formatTime(announcement.publishedAt)}</span>{announcement.dueAt ? <span>{uiText("截止 ", uiLocale)}{formatTime(announcement.dueAt)}</span> : null}</div><div>{!announcement.receipt?.readAt ? <button type="button" disabled={Boolean(busy || loading || sourceErrors.announcements)} onClick={() => readAnnouncement(announcement)}>{uiText("标为已读", uiLocale)}</button> : null}{announcement.requiresAcknowledgement && !announcement.receipt?.acknowledgedAt ? <button className={styles.primary} type="button" disabled={Boolean(busy || loading || sourceErrors.announcements)} onClick={() => acknowledge(announcement)}>{uiText("确认已阅读", uiLocale)}</button> : null}{announcement.actionUrl ? <Link to={resolveNotificationActionUrl(announcement.actionUrl, withSeason)} onClick={() => readAnnouncement(announcement)}>{uiText("前往处理", uiLocale)}</Link> : null}</div></footer></article>) : sourceErrors.announcements ? null : <div className={styles.empty}><strong>{uiText("目前没有发给你的赛事公告", uiLocale)}</strong><p>{uiText("队伍、身份或全赛事公告发布后会显示在这里。", uiLocale)}</p></div>}</div> : null}
 
-      {tab === 'appeals' && (!loading || appeals.length || appealOptions.length) ? <div className={styles.appealPanel}>
-        {appealOptions.length && appealCreateAccess.allowed ? <form className={styles.appealForm} onSubmit={submitAppeal}><header><span>NEW MATCH APPEAL</span><h3>{uiText("提交正式比赛申诉", uiLocale)}</h3><p>{uiText("账号资格与本场代表关系已确认；普通争议仍须在赛果发布后 2 小时内完成。", uiLocale)}</p></header><label className={styles.wide}><span>{uiText("比赛", uiLocale)}</span><select required value={appealForm.matchId} onChange={event => setAppealForm(current => ({ ...current, matchId: event.target.value }))}>{appealOptions.map(match => <option key={match.id} value={match.id}>{teamName(match.teamA)} VS {teamName(match.teamB)} · {match.displayName}{uiText(" · 代表身份 ", uiLocale)}{match.representation.role}</option>)}</select></label><label><span>{uiText("申诉类型", uiLocale)}</span><select value={appealForm.type} onChange={event => setAppealForm(current => ({ ...current, type: event.target.value }))}>{APPEAL_TYPES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label><span>{uiText("首项证据类型", uiLocale)}</span><select value={appealForm.evidenceType} onChange={event => setAppealForm(current => ({ ...current, evidenceType: event.target.value }))}><option value="LINK">{uiText("链接", uiLocale)}</option><option value="TEXT">{uiText("文字说明", uiLocale)}</option></select></label><label className={styles.wide}><span>{uiText("事实与申诉请求（至少 20 字）", uiLocale)}</span><textarea required minLength="20" rows="5" value={appealForm.description} onChange={event => setAppealForm(current => ({ ...current, description: event.target.value }))} /></label><label className={styles.wide}><span>{uiText("证据说明", uiLocale)}</span><textarea required minLength="3" rows="3" value={appealForm.evidenceDescription} onChange={event => setAppealForm(current => ({ ...current, evidenceDescription: event.target.value }))} /></label>{appealForm.evidenceType === 'LINK' ? <label className={styles.wide}><span>{uiText("证据链接", uiLocale)}</span><input required type="url" value={appealForm.evidenceUrl} onChange={event => setAppealForm(current => ({ ...current, evidenceUrl: event.target.value }))} /></label> : null}<button className={styles.primary} type="submit" disabled={busy === 'create-appeal' || !appealCreateAccess.allowed}>{busy === 'create-appeal' ? uiText("提交中…", uiLocale) : uiText("提交正式申诉", uiLocale)}</button></form> : <div className={styles.permissionNote}><strong>{appealOptions.length ? uiText("当前账号不能发起正式申诉", uiLocale) : uiText("当前没有可发起申诉的比赛", uiLocale)}</strong><p>{appealOptions.length ? capabilityBlockText(appealCreateAccess) : uiText("只有本场队伍经理、队长或副队长能在赛果发布后发起；已提交过的比赛不会重复出现。", uiLocale)}</p></div>}
-        <div className={styles.list}>{appeals.length ? appeals.map(appeal => <article className={styles.appeal} data-blocked={appeal.blocksProgression} key={appeal.id}><header><div><span>{appeal.match.stage} / {appeal.representativeRole}</span><h3>{teamName(appeal.match.teamA)} VS {teamName(appeal.match.teamB)}</h3><p>{appeal.match.displayName}</p></div><b data-status={appeal.status}>{APPEAL_STATUS[appeal.status]}</b></header><div className={styles.flags}><span>{APPEAL_TYPES.find(item => item[0] === appeal.type)?.[1] || appeal.type}</span><span>{appeal.severity === 'SERIOUS' ? uiText("严重违规例外", uiLocale) : uiText("普通时限", uiLocale)}</span>{appeal.blocksProgression ? <strong>{uiText("后续编排已阻塞", uiLocale)}</strong> : null}</div><p className={styles.description}>{appeal.description}</p><div className={styles.evidenceList}><strong>{uiText("已提交证据 ", uiLocale)}{appeal.evidence.length}</strong>{appeal.evidence.map(item => <div key={item.id}><span>{item.evidenceType}</span><p>{item.description}</p>{item.url ? <a href={item.url} target="_blank" rel="noreferrer">{uiText("查看证据", uiLocale)}</a> : null}</div>)}</div>{appeal.resolution ? <div className={styles.resolution}><strong>{uiText("最终裁定", uiLocale)}</strong><p>{appeal.resolution}</p></div> : null}{evidenceAppealId === appeal.id ? <form className={styles.evidenceForm} onSubmit={event => supplementEvidence(event, appeal)}><select value={evidenceForm.evidenceType} onChange={event => setEvidenceForm(current => ({ ...current, evidenceType: event.target.value }))}><option value="LINK">{uiText("链接", uiLocale)}</option><option value="TEXT">{uiText("文字说明", uiLocale)}</option></select><textarea required minLength="3" placeholder={uiText("补充证据说明", uiLocale)} value={evidenceForm.description} onChange={event => setEvidenceForm(current => ({ ...current, description: event.target.value }))} />{evidenceForm.evidenceType === 'LINK' ? <input required type="url" placeholder="https://" value={evidenceForm.url} onChange={event => setEvidenceForm(current => ({ ...current, url: event.target.value }))} /> : null}<div><button className={styles.primary} type="submit">{uiText("提交证据", uiLocale)}</button><button type="button" onClick={() => setEvidenceAppealId('')}>{uiText("取消", uiLocale)}</button></div></form> : null}<footer>{appeal.canAddEvidence ? <button type="button" onClick={() => setEvidenceAppealId(appeal.id)}>{uiText("补充证据", uiLocale)}</button> : null}{appeal.canWithdraw ? <button type="button" disabled={Boolean(busy)} onClick={() => withdraw(appeal)}>{uiText("撤回申诉", uiLocale)}</button> : null}</footer></article>) : <div className={styles.empty}><strong>{uiText("尚无正式比赛申诉", uiLocale)}</strong><p>{uiText("提交后可在这里查看受理、补证和最终裁定记录。", uiLocale)}</p></div>}</div>
+      {tab === 'appeals' && (loaded.appeals || loaded.appealOptions) ? <div className={styles.appealPanel}>
+        {loaded.appealOptions && !sourceErrors.appealOptions && !sourceErrors.appeals && appealOptions.length && appealCreateAccess.allowed ? <form className={styles.appealForm} onSubmit={submitAppeal}><header><span>NEW MATCH APPEAL</span><h3>{uiText("提交正式比赛申诉", uiLocale)}</h3><p>{uiText("由经理或备案临时负责人提交，原则上完赛后 24 小时内；延迟送达的战报保留 12 小时响应窗口。", uiLocale)}</p></header><label className={styles.wide}><span>{uiText("比赛", uiLocale)}</span><select required value={appealForm.matchId} onChange={event => setAppealForm(current => ({ ...current, matchId: event.target.value }))}>{appealOptions.map(match => <option key={match.id} value={match.id}>{teamName(match.teamA)} VS {teamName(match.teamB)} · {match.displayName}{uiText(" · 代表身份 ", uiLocale)}{match.representation.role}</option>)}</select></label><label><span>{uiText("申诉类型", uiLocale)}</span><select value={appealForm.type} onChange={event => setAppealForm(current => ({ ...current, type: event.target.value }))}>{APPEAL_TYPES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label><span>{uiText("首项证据类型", uiLocale)}</span><select value={appealForm.evidenceType} onChange={event => setAppealForm(current => ({ ...current, evidenceType: event.target.value }))}><option value="LINK">{uiText("链接", uiLocale)}</option><option value="TEXT">{uiText("文字说明", uiLocale)}</option></select></label><label className={styles.wide}><span>{uiText("事实与申诉请求（至少 20 字）", uiLocale)}</span><textarea required minLength="20" rows="5" value={appealForm.description} onChange={event => setAppealForm(current => ({ ...current, description: event.target.value }))} /></label><label className={styles.wide}><span>{uiText("证据说明", uiLocale)}</span><textarea required minLength="3" rows="3" value={appealForm.evidenceDescription} onChange={event => setAppealForm(current => ({ ...current, evidenceDescription: event.target.value }))} /></label>{appealForm.evidenceType === 'LINK' ? <label className={styles.wide}><span>{uiText("证据链接", uiLocale)}</span><input required type="url" value={appealForm.evidenceUrl} onChange={event => setAppealForm(current => ({ ...current, evidenceUrl: event.target.value }))} /></label> : null}<button className={styles.primary} type="submit" disabled={busy === 'create-appeal' || !appealCreateAccess.allowed}>{busy === 'create-appeal' ? uiText("提交中…", uiLocale) : uiText("提交正式申诉", uiLocale)}</button></form> : <div className={styles.permissionNote}><strong>{appealOptions.length ? uiText("当前账号不能发起正式申诉", uiLocale) : uiText(!loaded.appealOptions || sourceErrors.appealOptions ? '可申诉比赛尚未同步' : '当前没有可发起申诉的比赛', uiLocale)}</strong><p>{appealOptions.length ? capabilityBlockText(appealCreateAccess) : uiText("由经理或赛事组已备案的临时负责人提交；普通操作代表可在比赛房提出赛果异议。", uiLocale)}</p></div>}
+        <div className={styles.list}>{appeals.length ? appeals.map(appeal => <article className={styles.appeal} data-blocked={appeal.blocksProgression} key={appeal.id}><header><div><span>{appeal.match.stage} / {appeal.representativeRole}</span><h3>{teamName(appeal.match.teamA)} VS {teamName(appeal.match.teamB)}</h3><p>{appeal.match.displayName}</p></div><b data-status={appeal.status}>{APPEAL_STATUS[appeal.status]}</b></header><div className={styles.flags}><span>{APPEAL_TYPES.find(item => item[0] === appeal.type)?.[1] || appeal.type}</span><span>{appeal.severity === 'SERIOUS' ? uiText("需核查资格或行为", uiLocale) : uiText("普通时限", uiLocale)}</span>{appeal.blocksProgression ? <strong>{uiText("赛果结算暂缓", uiLocale)}</strong> : null}</div><p className={styles.description}>{appeal.description}</p><div className={styles.evidenceList}><strong>{uiText("已提交证据 ", uiLocale)}{appeal.evidence.length}</strong>{appeal.evidence.map(item => <div key={item.id}><span>{item.evidenceType}</span><p>{item.description}</p>{item.url ? <a href={item.url} target="_blank" rel="noreferrer">{uiText("查看证据", uiLocale)}</a> : null}</div>)}</div>{appeal.resolution ? <div className={styles.resolution}><strong>{uiText(appeal.review?.finalAt ? "最终裁定" : "首次裁定", uiLocale)}</strong><p>{appeal.resolution}</p></div> : null}{evidenceAppealId === appeal.id ? <form className={styles.evidenceForm} onSubmit={event => supplementEvidence(event, appeal)}><select value={evidenceForm.evidenceType} onChange={event => setEvidenceForm(current => ({ ...current, evidenceType: event.target.value }))}><option value="LINK">{uiText("链接", uiLocale)}</option><option value="TEXT">{uiText("文字说明", uiLocale)}</option></select><textarea required minLength="3" placeholder={uiText("补充证据说明", uiLocale)} value={evidenceForm.description} onChange={event => setEvidenceForm(current => ({ ...current, description: event.target.value }))} />{evidenceForm.evidenceType === 'LINK' ? <input required type="url" placeholder="https://" value={evidenceForm.url} onChange={event => setEvidenceForm(current => ({ ...current, url: event.target.value }))} /> : null}<div><button className={styles.primary} type="submit">{uiText("提交证据", uiLocale)}</button><button type="button" onClick={() => setEvidenceAppealId('')}>{uiText("取消", uiLocale)}</button></div></form> : null}{appeal.review?.reviewDueAt && <p>{uiText("首次裁定复核截止",uiLocale)} · {formatTime(appeal.review.reviewDueAt)} UTC+8</p>}{appeal.canReview && !sourceErrors.appeals && <form className={styles.evidenceForm} onSubmit={async event=>{event.preventDefault();if(busy)return;setBusy('review:'+appeal.id);setError('');try{await requestAppealReview(appeal.id,{reason:reviewReasons[appeal.id]||'',expectedRevision:appeal.revision});await load()}catch(failure){setError(failure.message)}finally{setBusy('')}}}><label>{uiText("申请一次独立复核（至少 10 字）",uiLocale)}<textarea required minLength={10} maxLength={5000} value={reviewReasons[appeal.id]||''} onChange={event=>setReviewReasons(current=>({...current,[appeal.id]:event.target.value}))}/></label><button disabled={Boolean(busy)}>{uiText("提交复核申请",uiLocale)}</button></form>}<footer>{appeal.canAddEvidence && !sourceErrors.appeals ? <button type="button" onClick={() => setEvidenceAppealId(appeal.id)}>{uiText("补充证据", uiLocale)}</button> : null}{appeal.canWithdraw && !sourceErrors.appeals ? <button type="button" disabled={Boolean(busy)} onClick={() => withdraw(appeal)}>{uiText("撤回申诉", uiLocale)}</button> : null}</footer></article>) : <div className={styles.empty}><strong>{uiText(loaded.appeals && !sourceErrors.appeals ? '尚无正式比赛申诉' : '申诉记录尚未完整同步', uiLocale)}</strong><p>{uiText("提交后可在这里查看受理、补证和最终裁定记录。", uiLocale)}</p></div>}</div>
       </div> : null}
     </section>
   )

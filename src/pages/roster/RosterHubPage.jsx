@@ -1,3 +1,5 @@
+import WeeklyRosterScopePicker from '../../components/WeeklyRosterScopePicker.jsx'
+import { weeklyRosterScopes } from '../../lib/weeklyRosterScope.js'
 import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
@@ -7,7 +9,7 @@ import ImeSafeInput from '../../components/common/ImeSafeInput.jsx'
 import HeroArtwork from '../../components/media/HeroArtwork.jsx'
 import { DirectoryLink } from '../../features/roster-directory/RosterDirectory.jsx'
 import { buildRosterOverview, searchRosterOverview, staffOverviewHref } from '../../features/roster-overview/rosterOverviewModel.js'
-import { getTeamLogoCandidates, getDefaultTeamLogoCandidates } from '../../lib/teamLogoResolver.js'
+import { getTeamLogoCandidates } from '../../lib/teamLogoResolver.js'
 import { getStaffAvatar } from '../../lib/reviewAssets.js'
 import { formatOwHeroName } from '../../lib/heroes.js'
 import { getRosterChangeLabel } from '../../lib/rosterStage.js'
@@ -26,8 +28,7 @@ function scrollCompactPreview(ref) {
 }
 
 function TeamMark({ team, seasonId }) {
-  const defaults = getDefaultTeamLogoCandidates(seasonId, team)
-  const sources = getTeamLogoCandidates(team, seasonId).filter(src => !defaults.includes(src))
+  const sources = getTeamLogoCandidates(team, seasonId)
   const [index, setIndex] = useState(0)
   return <span className={styles.teamMark} aria-hidden="true">{sources[index] ? <img src={sources[index]} alt="" loading="lazy" onError={() => setIndex(value => value + 1)} /> : <b>{team.shortName.slice(0, 3)}</b>}</span>
 }
@@ -74,19 +75,23 @@ function OverviewSearch({ model, value, onChange, withSeason, en }) {
   </div>
 }
 
-function SelectedTeam({ team, seasonId, withSeason, locale, panelRef }) {
+function SelectedTeam({ db, team, seasonId, withSeason, locale, panelRef }) {
   const en = locale === 'en-US'
   const [previewKey, setPreviewKey] = useState('')
+  const [rosterScope, setRosterScope] = useState(db?.weekly_competition ? 'current' : 'history')
   if (!team) return <div className={styles.teamEmpty}>{en ? 'Team rosters have not been published yet.' : uiText("本届队伍名单尚未发布。", locale)}</div>
-  const hero = team.members.find(member => memberKey(member) === previewKey) || team.heroMember || team.members[0] || null
+  const scopes = weeklyRosterScopes(db, team.team_id || team.id || team.routeId)
+  const visibleMembers = rosterScope === 'history' ? team.members : rosterScope === 'current' ? team.members.filter(member => member.active) : team.members.filter(member => scopes.find(scope => scope.id === rosterScope)?.playerIds.includes(member.identity.playerId))
+  const hero = visibleMembers.find(member => memberKey(member) === previewKey) || visibleMembers.find(member => member.hero) || visibleMembers[0] || null
   return <article ref={panelRef} className={styles.selectedTeam} data-overview-team={team.routeId} aria-label={(en ? 'Selected team ' : uiText("当前队伍 ", locale)) + team.shortName}>
     <div className={styles.teamCopy}>
-      <header className={styles.teamIdentity}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><div><span>{en ? 'SEASON PLAYER ARCHIVE' : uiText("全季选手名录", locale)}</span><h2>{team.shortName}</h2><p>{team.fullName}</p></div><DirectoryLink to={withSeason('/teams/' + encodeURIComponent(team.routeId))} label={(en ? 'Open team archive ' : uiText("查看队伍档案 ", locale)) + team.shortName}>↗</DirectoryLink></header>
+      <header className={styles.teamIdentity}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><div><span>{rosterScope === 'current' ? en ? 'CURRENT ROSTER' : '当前在队名单' : rosterScope === 'history' ? en ? 'SEASON PLAYER ARCHIVE' : uiText("全季选手名录", locale) : en ? 'WEEKLY ROSTER' : '本周参赛名单'}</span><h2>{team.shortName}</h2><p>{team.fullName}</p></div><DirectoryLink to={withSeason('/teams/' + encodeURIComponent(team.routeId))} label={(en ? 'Open team archive ' : uiText("查看队伍档案 ", locale)) + team.shortName}>↗</DirectoryLink></header>
       {team.playoffJoins || team.playoffExits ? <p className={styles.rosterHistory}>
         {team.openingRosterSize !== null ? (en ? 'Opening roster: ' + team.openingRosterSize : uiText('初始报名 {0} 人', locale, [team.openingRosterSize])) + ' · ' : ''}
         {en ? team.rosterSize + ' players across the season' : uiText('全季收录 {0} 人', locale, [team.rosterSize])}
       </p> : null}
-      <ul className={styles.members}>{team.members.map((member, index) => {
+      {db?.weekly_competition && <WeeklyRosterScopePicker value={rosterScope} onChange={setRosterScope} scopes={scopes} en={en} />}
+      <ul className={styles.members}>{visibleMembers.map((member, index) => {
         const changeLabel = getRosterChangeLabel(member.rosterChange, locale)
         const memberContent = <><strong>{member.identity.primary}</strong><span className={styles.memberMeta}>
           <span className={styles.memberRole}>{roleLabel(member.role, locale)}</span>
@@ -98,7 +103,7 @@ function SelectedTeam({ team, seasonId, withSeason, locale, panelRef }) {
           {member.href ? <DirectoryLink className={styles.memberEntry} to={withSeason(member.href)} label={(en ? 'Open player archive ' : uiText("查看选手档案 ", locale)) + member.identity.primary + (changeLabel ? ' · ' + changeLabel : '')}>{memberContent}</DirectoryLink> : <span className={styles.memberEntry}>{memberContent}</span>}
         </li>
       })}</ul>
-      {team.members.length < team.rosterSize ? <p className={styles.rosterNotice}>{en ? team.members.length + ' of ' + team.rosterSize + ' archived player records available.' : uiText('已提供 {0} / {1} 位赛季收录选手的资料。', locale, [team.members.length, team.rosterSize])}</p> : !team.members.length ? <p className={styles.rosterNotice}>{en ? 'Player names not published yet.' : uiText("选手名单尚未发布。", locale)}</p> : null}
+      {rosterScope === 'history' && team.members.length < team.rosterSize ? <p className={styles.rosterNotice}>{en ? team.members.length + ' of ' + team.rosterSize + ' archived player records available.' : uiText('已提供 {0} / {1} 位赛季收录选手的资料。', locale, [team.members.length, team.rosterSize])}</p> : !visibleMembers.length ? <p className={styles.rosterNotice}>{en ? 'Player names not published yet.' : uiText("选手名单尚未发布。", locale)}</p> : null}
       <div className={styles.teamStaff}>{['manager', 'coach'].map(role => { const records = team.staffRecords.filter(staff => staff.roles.includes(role)); return <div key={role}><span>{role === 'manager' ? en ? 'Manager' : uiText("经理", locale) : en ? 'Coach' : uiText("教练", locale)}</span><p>{records.length ? records.map(staff => <DirectoryLink key={staff.id} to={withSeason(staffOverviewHref(staff))}>{staff.name}</DirectoryLink>) : en ? 'Not registered' : uiText("未登记", locale)}</p></div> })}</div>
     </div>
     {hero ? <figure className={styles.heroFigure} data-overview-hero={memberKey(hero)} data-hero-missing={!hero.hero || undefined}>
@@ -233,7 +238,7 @@ export default function RosterHubPage() {
         <div ref={teamGridRef} className={styles.teamGrid} data-expanded={expandedTeams} role="group" aria-label={en ? 'Select a team' : uiText("选择队伍", locale)}>{model.teams.map((team, index) => <button key={team.routeId} type="button" aria-pressed={selectedTeam?.routeId === team.routeId} aria-label={(en ? 'Show roster for ' : uiText("查看阵容 ", locale)) + team.shortName} title={team.fullName} style={{ '--arrival-order': Math.min(index, 14) }} onClick={() => { const compact = window.matchMedia('(max-width: 760px)').matches; pendingTeamScroll.current = compact && expandedTeams; update({ rosterTeam: team.routeId, ...(compact ? { teamsExpanded: '' } : {}) }) }}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><strong>{team.shortName}</strong></button>)}</div>
         {model.teams.length > 5 ? <button type="button" className={styles.expandTeams} aria-expanded={expandedTeams} onClick={() => update({ teamsExpanded: expandedTeams ? '' : '1' })}>{expandedTeams ? en ? 'Show fewer teams' : uiText("收起队徽", locale) : en ? 'Show all ' + model.teams.length + ' teams' : uiText('展开全部 {0} 支队伍', locale, [model.teams.length])} <span aria-hidden="true">{expandedTeams ? '−' : '+'}</span></button> : null}
         <div className={styles.teamSelectionStatus} role="status">{selectedTeam ? (en ? 'Showing ' : uiText("当前查看：", locale)) + selectedTeam.shortName : ''}</div>
-        <SelectedTeam key={seasonId + ':' + (selectedTeam?.routeId || '')} team={selectedTeam} seasonId={seasonId} withSeason={withSeason} locale={locale} panelRef={panelRef} />
+        <SelectedTeam db={db} key={seasonId + ':' + (selectedTeam?.routeId || '')} team={selectedTeam} seasonId={seasonId} withSeason={withSeason} locale={locale} panelRef={panelRef} />
       </div>
       <dl className={styles.metrics}>{metrics.map(metric => <div key={metric.href}><dt>{metric.label}</dt><dd><DirectoryLink to={withSeason(metric.href)} label={(en ? 'Browse ' : uiText("查看", locale)) + metric.label.replace(/^[支位份]/, '')}><b>{metric.count}</b><span aria-hidden="true">↗</span></DirectoryLink></dd></div>)}</dl>
     </section>

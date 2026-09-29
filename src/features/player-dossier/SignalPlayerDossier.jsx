@@ -1,3 +1,4 @@
+import PublicPlayerStream from '../weekly-competition/PublicPlayerStream.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useCallback, useMemo, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
@@ -41,6 +42,7 @@ export default function SignalPlayerDossier({ db, dossier, season, seasonId, loc
       <div>{[['profile', '选手档案', 'Profile'], ['journey', '赛季征程', 'Journey'], ['analysis', '竞技分析', 'Performance']].map(([key, label, english], index) => <Link key={key} {...pageLink(key)} className={navStyles.item} aria-current={page === key ? 'page' : undefined}><small className={navStyles.code}>0{index + 1}</small>{en ? english : uiText(label, locale)}</Link>)}</div>
     </nav></div>
 
+    {db?.weekly_competition && <PublicPlayerStream seasonId={season?.id || db?.season?.id || seasonId} playerId={identity.playerId} />}
     {analysisPage ? <SignalPlayerAnalysis db={db} dossier={dossier} active={active} appearances={appearances} season={season} seasonId={seasonId} locale={locale} linkProps={linkProps} onShare={openShare} /> :
       page === 'journey' ? <SignalPlayerJourney dossier={dossier} archive={archive} season={season} seasonId={seasonId} locale={locale} linkProps={linkProps} analysisLink={changes => pageLink('analysis', changes)} profileLink={pageLink('profile')} /> :
       <SignalPlayerArchive key={identity.playerId} db={db} dossier={dossier} appearances={appearances} archive={archive} season={season} seasonId={seasonId} locale={locale} linkProps={linkProps} analysisLink={changes => pageLink('analysis', changes)} journeyLink={changes => pageLink('journey', changes)} onFavorite={onFavorite} favorited={favorited} favoriteDisabled={favoriteDisabled} onShare={openShare} />}

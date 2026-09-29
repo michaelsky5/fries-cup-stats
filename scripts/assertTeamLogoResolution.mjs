@@ -38,7 +38,7 @@ const futureSeason = getTeamLogoCandidates({
 }, 'FCX27')
 assert.equal(futureSeason[0], '/logos/FCX27/NOVA.png')
 assert.ok(futureSeason.includes('/logos/FCX27/OW.png'))
-assert.equal(futureSeason.at(-1), '/logos/fc_logo.png')
+assert.equal(futureSeason.at(-1), '/logos/OW.png')
 
 assert.equal(getReviewTeamLogoCandidates(skTeam, 'QGCS4')[0], '/logos/QGCS4/SK.png')
 assertAssetExists(getTeamLogoCandidates(skTeam, 'QGCS4')[0], 'QGCS4 SK')

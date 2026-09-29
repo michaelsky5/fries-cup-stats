@@ -272,7 +272,7 @@ export function getTaskClosure(task) {
 
 export function getTaskActionUrl(task) {
   const actionUrl = String(task?.actionUrl || '')
-  if (getTaskWorkflow(task).key !== 'schedule') return actionUrl
+  if (/^https?:\/\//i.test(actionUrl) || getTaskWorkflow(task).key !== 'schedule') return actionUrl
 
   const query = actionUrl.includes('?') ? actionUrl.split('?')[1].split('#')[0] : ''
   const actionSeasonId = new URLSearchParams(query).get('season')

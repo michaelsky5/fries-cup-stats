@@ -1,3 +1,4 @@
+import { filterWeeklyRoster } from '../../lib/weeklyRosterScope.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useMemo } from 'react'
@@ -69,7 +70,7 @@ function WinRateTrace({ rows, en }) {
   </div>
 }
 
-export default function SignalTeamDossier({ team, seasonId, locale, withSeason, rosterGroups, matchRows, allMatches, advanceState, onBack, onShare, onToggleFavorite, favorited, favoriteDisabled, sourceReturnState }) {
+export default function SignalTeamDossier({ team, seasonId, locale, withSeason, rosterControls = null, rosterScope = 'history', weekRosterScopes = [], rosterGroups, matchRows, allMatches, advanceState, onBack, onShare, onToggleFavorite, favorited, favoriteDisabled, sourceReturnState }) {
   const en = locale === 'en-US'
   const location = useLocation()
   const [params, setParams] = useSearchParams()
@@ -131,7 +132,7 @@ export default function SignalTeamDossier({ team, seasonId, locale, withSeason, 
   return <article className={styles.dossier} data-team-dossier="signal" data-archive-view={view} data-page-mode={view === 'analysis' ? 'index' : 'archive'} style={getArchiveIdentity()} data-i18n-ignore>
     <TeamArchiveNavigation team={team} seasonId={seasonId} locale={locale} view={view} galleryHref={galleryHref} journeyHref={journeyHref} analysisHref={analysisHref} viewState={viewState} onBack={onBack} onShare={shareDossier} />
     {view === 'gallery' ? <>
-      <TeamGalleryScenes team={team} seasonId={seasonId} locale={locale} roster={roster} rows={rows} advanceState={advanceState} research={research} memberId={params.get('member')} onMemberChange={member => updateQuery({ member })} journeyHref={journeyHref} analysisHref={analysisHref} withSeason={withSeason} returnState={returnState} viewState={viewState} onLeave={onLeave} favorited={favorited} favoriteDisabled={favoriteDisabled} onToggleFavorite={onToggleFavorite} />
+      <>{rosterControls}<TeamGalleryScenes team={team} seasonId={seasonId} locale={locale} roster={filterWeeklyRoster(roster, rosterScope, weekRosterScopes)} rows={rows} advanceState={advanceState} research={research} memberId={params.get('member')} onMemberChange={member => updateQuery({ member })} journeyHref={journeyHref} analysisHref={analysisHref} withSeason={withSeason} returnState={returnState} viewState={viewState} onLeave={onLeave} favorited={favorited} favoriteDisabled={favoriteDisabled} onToggleFavorite={onToggleFavorite} /></>
     </> : view === 'analysis' ? <>
       <TeamPerformanceReport team={team} seasonId={seasonId} rows={rows} roster={roster} allMatches={allMatches} locale={locale} params={params} updateQuery={updateQuery} opened={openedEvidence} onToggle={toggleEvidence} withSeason={withSeason} returnState={returnState} onLeave={onLeave} journeyHref={journeyHref} />
     </> : <>

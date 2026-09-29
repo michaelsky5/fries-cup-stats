@@ -42,7 +42,7 @@ test('explicit match artwork wins; missing identities and logos keep their exist
   delete db.matches[0].team_a.logoUrl
   delete db.matches[0].team_a.id
   assert.equal(resolvePublicMatchIdentities(db).matches[0].team_a.team_logo, undefined)
-  assert.equal(getTeamLogoCandidates(db.matches[0].team_b, 'FCW26').at(-1), '/logos/fc_logo.png')
+  assert.equal(getTeamLogoCandidates(db.matches[0].team_b, 'FCW26').at(-1), '/logos/OW.png')
 })
 
 test('only known immutable public uploads gain a same-origin image route, with origin fallback', () => {

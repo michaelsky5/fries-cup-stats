@@ -112,3 +112,6 @@ for (const updated of [null, { ...manualTask, status: 'OPEN' }, { ...manualTask,
 assert.equal(isManualTaskCompletion(manualTask, { ...manualTask, status: 'COMPLETED' }), true)
 const closedTaskView = buildTaskCenterView([{ ...manualTask, status: 'COMPLETED' }])
 assert.equal(findTaskDetail(closedTaskView, 'manual').closure.key, 'completed', 'the same detail URL shows the completed receipt after reloading')
+
+const systemScheduleUrl = 'https://system.example.test/tournaments?view=community&seasonId=FCW26&communityTab=schedule'
+assert.equal(getTaskActionUrl({ taskType: 'SCHEDULE', seasonId: 'FCW26', actionUrl: systemScheduleUrl }), systemScheduleUrl, 'administrator review must retain its System destination')

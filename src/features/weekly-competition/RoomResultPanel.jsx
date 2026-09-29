@@ -10,9 +10,9 @@ import frame from './RoomMatchFrame.module.css'
 
 const stages = {
   FORFEIT_REVIEW: ['弃权记录待复核', '后续选禁与比赛控制已暂停。请本场有权限的赛管或管理员核对队伍、已打记录及公开原因，确认后再进入赛果与积分处理。'],
-  AWAITING_SUBMISSION: ['比赛结束，上传截图并核对战报', '地图、Ban 和逐图比分会自动带入提交页，无需重复填表。赛管上传数据截图，核对识别出的选手数据、补充回放后提交审核。'],
-  REPORT_IN_PROGRESS: ['赛管正在核对战报', '地图、Ban 和逐图比分已带入；继续补齐截图并核对识别结果，提交审核后双方再确认赛果。'],
-  RETURNED: ['战报已退回，等待更正', '管理员退回了当前战报。赛管需查看审核意见、补充资料并重新提交。'],
+  AWAITING_SUBMISSION: ['比赛结束，上传截图并核对战报', '地图、Ban 和逐图比分会自动带入提交页，无需重复填表。有赛管时由赛管、无赛管时由胜方（平局主队 A）上传数据截图，核对识别出的选手数据、补充回放后提交审核。'],
+  REPORT_IN_PROGRESS: ['提交方正在核对战报', '地图、Ban 和逐图比分已带入；继续补齐截图并核对识别结果，提交审核后双方再确认赛果。'],
+  RETURNED: ['战报已退回，等待更正', '管理员退回了当前战报。提交方需查看审核意见、补充资料并重新提交。'],
   REVIEWING: ['管理员审核中', '请等待赛果审核。当前地图记录可供核对，需要更正时请使用赛管协助。'],
   RECHECK: ['赛果需要重新复核', '赛果在审核或结算后发生变化，原响应不能直接用于新赛果。请等待管理员复核。'],
   AWAITING_CONFIRMATIONS: ['等待管理员开放确认', '正式赛果已通过审核，管理员开放后，双方本场操作代表可直接在本页响应。'],
@@ -51,16 +51,19 @@ export default function RoomResultPanel({ data, disabled, mutate, correction }) 
   const index = ['AWAITING_SUBMISSION', 'REPORT_IN_PROGRESS', 'RETURNED'].includes(data.result.phase) ? 0 : ['REVIEWING', 'RECHECK', 'FORFEIT_REVIEW'].includes(data.result.phase) ? 1 : ['SETTLED', 'AWAITING_SETTLEMENT'].includes(data.result.phase) ? 3 : 2
   const maps = data.result.official ? data.result.maps || [] : data.forfeit?.record?.maps || data.maps
   const byRuling = data.result.phase === 'SETTLED' && data.result.sides.some(side => side.status === 'OVERRIDDEN')
+  const selfConfirmed = data.forfeit?.record?.confirmationMode === 'TEAM_SELF_CONFIRMED'
   return <div className={`${styles.resultProgress} ${frame.resultPanel}`} aria-label={uiText("整场赛果进度", uiLocale)}>
-    <ol className={styles.resultSteps}>{[data.result.forfeit ? '弃权记录' : '战报提交', data.forfeit?.record?.source === 'TEAM_CONCESSION' ? uiText('赛管确认', uiLocale) : '管理员审核', byRuling ? '响应已裁定' : '双方确认', '积分结算'].map((label, step) => <li key={label} aria-current={data.result.phase !== 'SETTLED' && step === index ? 'step' : undefined} data-done={data.result.phase === 'SETTLED' || step < index}><span>{data.result.phase === 'SETTLED' || step < index ? '✓' : `0${step + 1}`}</span>{label}</li>)}</ol>
-    <strong className={styles.resultTitle}>{byRuling ? uiText("本场已按裁定结算", uiLocale) : uiText(title, uiLocale)}</strong><p>{data.result.forfeit && ['AWAITING_CONFIRMATIONS', 'CONFIRMING'].includes(data.result.phase) ? data.result.phase === 'CONFIRMING' ? uiText("请核对弃权队伍、已打地图与积分依据。有异议可提交说明，由管理员复核。", uiLocale) : uiText("裁定已复核，开放后双方可核对弃权队伍、实际记录及积分依据。", uiLocale) : uiText(description, uiLocale)}</p>
+    <ol className={styles.resultSteps}>{[data.result.forfeit ? '弃权记录' : '战报提交', selfConfirmed ? uiText('落后方确认', uiLocale) : data.forfeit?.record?.source === 'TEAM_CONCESSION' ? uiText('赛管确认', uiLocale) : '管理员审核', byRuling ? '响应已裁定' : '双方确认', '积分结算'].map((label, step) => <li key={label} aria-current={data.result.phase !== 'SETTLED' && step === index ? 'step' : undefined} data-done={data.result.phase === 'SETTLED' || step < index}><span>{data.result.phase === 'SETTLED' || step < index ? '✓' : `0${step + 1}`}</span>{label}</li>)}</ol>
+    <strong className={styles.resultTitle}>{byRuling ? uiText("本场已按裁定结算", uiLocale) : uiText(title, uiLocale)}</strong><p>{data.result.forfeit && ['AWAITING_CONFIRMATIONS', 'CONFIRMING'].includes(data.result.phase) ? data.result.phase === 'CONFIRMING' ? uiText("请核对弃权队伍、已打地图与积分依据。有异议可提交说明，由管理员复核。", uiLocale) : uiText(selfConfirmed ? '放弃剩余地图已按规则生效。对方可立即知悉或提出异议；正式赛果确认由管理员开放。' : '裁定已复核，开放后双方可核对弃权队伍、实际记录及积分依据。', uiLocale) : uiText(description, uiLocale)}</p>
+    {data.result.handoff?.submissionDueAt && index===0 && <small>{uiText('战报应在完赛后 30 分钟内提交，逾期仍可补录。',uiLocale)} · {new Date(data.result.handoff.submissionDueAt).toLocaleString(uiLocale,{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit'})} UTC+8</small>}
+    {data.result.responseDueAt && index===2 && <small>{uiText(data.result.responseOverdue?'响应已超时，请管理员复核；未确认不视为同意。':'完整赛果已送达，请在 12 小时内确认或提出异议。',uiLocale)} · {new Date(data.result.responseDueAt).toLocaleString(uiLocale,{timeZone:'Asia/Shanghai',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})} UTC+8</small>}
     <ForfeitSummary data={data} />
     <RoomForfeitControl data={data} disabled={disabled} mutate={mutate} />
     {data.match.format === 'RR5' && data.series.complete && <div className={frame.seriesComplete}><strong>{uiText("5 / 5 图已完成", uiLocale)}</strong><span>{data.series.drawCount ? uiText("{0} 图平局 · ", uiLocale, [data.series.drawCount]) : ''}{data.series.scoreA === data.series.scoreB ? uiText("整场平局，正常进入赛果流程", uiLocale) : uiText("本场不再增加地图", uiLocale)}</span></div>}
     <div className={frame.resultMapTable}><table><caption>{data.result.official ? uiText("审核版本 · 逐图比分", uiLocale) : uiText("赛中工作记录 · 等待审核", uiLocale)}</caption><thead><tr><th scope="col">{uiText("局", uiLocale)}</th><th scope="col">{uiText("地图", uiLocale)}</th><th scope="col">{uiText("双方小分", uiLocale)}</th><th scope="col">{uiText("记录", uiLocale)}</th></tr></thead><tbody>{maps.map(map => {
       const hasScore = typeof map.scoreA === 'number' && Number.isFinite(map.scoreA) && typeof map.scoreB === 'number' && Number.isFinite(map.scoreB)
       const complete = data.result.official || !!data.forfeit?.record || map.status === 'COMPLETE'
-      return <tr key={map.order}><td>{String(map.order).padStart(2, '0')}</td><th scope="row">{formatOwMapName(map.name, uiLocale) || uiText("地图待定", uiLocale)}</th><td>{complete && hasScore ? `${map.scoreA} : ${map.scoreB}` : '—'}</td><td>{complete && hasScore ? map.scoreA === map.scoreB ? uiText("平局", uiLocale) : uiText("已完成", uiLocale) : uiText("待确认", uiLocale)}</td></tr>
+      return <tr key={map.order}><td>{String(map.order).padStart(2, '0')}</td><th scope="row">{formatOwMapName(map.name, uiLocale) || uiText("地图待定", uiLocale)}</th><td>{complete && hasScore ? `${map.scoreA} : ${map.scoreB}` : '—'}</td><td>{complete && hasScore ? uiText("已完成", uiLocale) : uiText("待确认", uiLocale)}</td></tr>
     })}</tbody></table>{!maps.length && <p>{data.result.forfeit ? uiText("本场未完成任何地图。", uiLocale) : uiText("地图记录尚未提供。", uiLocale)}</p>}</div>
     {data.result.official && <div className={styles.resultResponses}>{data.result.sides.map(side => <div key={side.team.id}><span><strong>{side.team.shortName || side.team.name}</strong><small>{data.result.phase === 'SETTLED' ? uiText("{0} 分 · 已结算", uiLocale, [data.result.points.find(item => item.teamId === side.team.id)?.points ?? '—']) : responseNames[side.status] || uiText("待核对", uiLocale)}</small></span>{side.canRespond && <ResponseControl key={data.result.fingerprint + side.team.id} side={side} data={data} disabled={disabled} mutate={mutate} />}</div>)}</div>}
     <div className={styles.resultControls}><RoomResultActions key={data.match.id + data.actor.id} data={data} disabled={disabled} mutate={mutate} />{correction}</div>

@@ -19,4 +19,4 @@
 
 /* Development-only frame: exercise the same controls at the real room viewport height. */
 .page[data-frame-only=true]>:is(.topbar,.boundary,.coach,.after){display:none}
-@media(min-width:1180px) and (min-height:640px){.page[data-frame-only=true] .room [data-room-layout=workspace]{height:100dvh;max-height:100dvh;min-height:0}}
+@media(min-width:1180px) and (min-height:600px){.page[data-frame-only=true] .room [data-room-layout=workspace]{height:100dvh;max-height:100dvh;min-height:0}}

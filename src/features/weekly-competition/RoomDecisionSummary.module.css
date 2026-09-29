@@ -34,3 +34,12 @@
 @media(max-width:900px){
   :global([data-room-layout=workspace][data-page-mode=control]):has(:global([data-selection-workbench=ban])) .ban{display:none}
 }
+
+/* The active ban workbench already shows both bans; retain map, sides and lineup access. */
+@media (min-width:1180px) and (min-height:600px) and (max-height:700px) {
+  :global([data-room-layout=workspace][data-page-mode=control]):has(:global([data-selection-workbench=ban])) .recap {
+    .facts { grid-template-columns:minmax(0,1fr) auto; }
+    .ban { display:none; }
+    .lineups { display:flex;align-items:center;gap:8px;min-height:28px; }
+  }
+}

@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { roomSettlementProposal } from '../src/features/weekly-competition/roomSettlement.js'
+import { roomSeriesMaps } from '../src/features/weekly-competition/roomSeriesMaps.js'
 const room = (patch = {}) => ({ match: { format: 'RR5' }, result: { official: true, countsTowardStandings: true, maps: Array(5).fill({}), scoreA: 3, scoreB: 2, ...patch } })
 test('reviewed RR5 includes five participation points for both teams', () => {
   assert.deepEqual(roomSettlementProposal(room()), { pointsA: 8, pointsB: 7, reason: 'RR5 五图参赛分 5 + 小局胜场分：8 / 7。' })
@@ -15,4 +16,18 @@ test('working scores, incomplete or unsupported series are not prefilled', () =>
   assert.equal(roomSettlementProposal(room({ maps: [{}] })), null)
   assert.equal(roomSettlementProposal(room({ scoreA: 4, scoreB: 2 })), null)
   assert.equal(roomSettlementProposal({ ...room(), match: { format: 'FT3' } }), null)
+})
+
+test('reviewed reports replace incomplete live history in the series rail without changing either record', () => {
+  const live = [{ order: 1, name: 'Old map', status: 'LIVE', banA: 'old-ban' }]
+  const reviewed = Array.from({ length: 5 }, (_, index) => ({ order: index + 1, name: `Map ${index + 1}`, scoreA: 1, scoreB: 1 }))
+  const data = { maps: live, result: { official: true, maps: reviewed } }
+  const before = structuredClone(data)
+  const display = roomSeriesMaps(data)
+  assert.equal(display.length, 5)
+  assert.ok(display.every(map => map.status === 'COMPLETE' && map.scoreA === 1 && map.scoreB === 1))
+  assert.equal(display[0].banA, undefined)
+  assert.deepEqual(data, before)
+  assert.deepEqual(roomSeriesMaps({ maps: live, result: { official: true, maps: [] } }), [])
+  assert.equal(roomSeriesMaps({ maps: live, result: { official: false, maps: reviewed } }), live)
 })

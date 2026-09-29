@@ -92,3 +92,32 @@ test('all role and scene payloads keep synthetic identity and the production roo
     assert.ok(Number.isInteger(getRoomStageIndex(data)))
   }
 })
+
+
+test('practice selection timeouts warn, forfeit Ban and randomize once before allowing lineups', () => {
+  let state = createRoomPractice('representative', 'choosing')
+  for (let count = 1; count <= 3; count++) {
+    state.phaseClock.deadlineAt = new Date(Date.now() - 1).toISOString()
+    assert.throws(() => applyRoomPractice(state, '/opening', { action: 'SELECT_SETUP', teamId, mapName: 'Busan' }), /phase/)
+    state = applyRoomPractice(state, 'timeout', {}, 'scene').state
+    const data = buildRoomPractice(state, copy)
+    assert.equal(data.phaseClock.mapTimeouts.counts.A, count)
+    if (count < 3) { assert.equal(state.scene, 'choosing'); assert.ok(data.phaseClock.remainingMs > 59000) }
+    else { assert.equal(state.scene, 'lineup'); assert.ok(['Busan', 'Samoa', 'Lijiang Tower'].includes(state.mapName)); assert.equal(data.map.selectionMethod, 'TIMEOUT_RANDOM') }
+    if (count >= 2) assert.equal(data.map.banAStatus, 'TIMED_OUT')
+  }
+  const selected = state.mapName
+  assert.throws(() => applyRoomPractice(state, 'timeout', {}, 'scene'))
+  state = applyRoomPractice(state, '/commands', { action: 'SET_LINEUP', teamId, lineup }).state
+  const data = buildRoomPractice(state, copy)
+  assert.equal(state.scene, 'ready'); assert.equal(data.map.name, selected)
+  assert.equal(data.map.banA, ''); assert.equal(data.map.banATimeoutReason, 'MAP_SELECTION'); assert.equal(data.map.firstBanSide, 'B')
+  assert.equal(data.opening.complete, true)
+})
+
+test('practice selection timeout is inactive while the referee disables the clock', () => {
+  const state = createRoomPractice('referee', 'choosing')
+  state.phaseClock.enabled = false; state.phaseClock.deadlineAt = null; state.phaseClock.remainingMs = 0
+  assert.throws(() => applyRoomPractice(state, 'timeout', {}, 'scene'))
+  assert.equal(applyRoomPractice(state, '/opening', { action: 'SELECT_SETUP', teamId, mapName: 'Busan' }).state.scene, 'lineup')
+})
