@@ -9400,5 +9400,13 @@ export default {
   "提交结果尚未确认，已同步服务器进度。请核对后再重试，操作不会自动重发。": "The submission response was lost. Server progress is synchronized. Check before retrying; commands are never resent automatically.",
   "提交结果尚未确认，正在自动重连。请保留当前页面，恢复后核对；操作不会自动重发。": "Submission outcome unknown. Reconnecting. Keep this page open and check after recovery; commands are never resent automatically.",
   "参赛指南": "Participation guide",
-  "待办与消息": "Tasks and messages"
+  "待办与消息": "Tasks and messages",
+  "本场地图池与规则": "Map pool and rules",
+  "本场适用规则": "Rules for this match",
+  "打开规则中心": "Open the rulebook",
+  "本场尚未关联线上规则版本，请以本周期已公布的规则及赛事组公告为准。": "No online rule version is linked to this match. Follow the published rules and organizer notices for this cycle.",
+  "以下为比赛房当前配置，具体选禁步骤请按操作区完成。": "These are the current room settings. Follow the room controls to complete picks and bans.",
+  "规则中心": "Rulebook",
+  "完整条款与历史版本": "Rules and version history",
+  "职业经历、名单及其他参赛资格要求，请查阅适用的周赛规则。": "See the applicable weekly rules for professional experience, roster, and other eligibility requirements."
 }

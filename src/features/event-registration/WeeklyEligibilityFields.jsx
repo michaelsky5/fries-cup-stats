@@ -41,11 +41,12 @@ export default function WeeklyEligibilityFields({ value, disabled = false, ruleb
         <option value="" disabled>{uiText("请选择", uiLocale)}</option><option value="NONE">{uiText("没有参加", uiLocale)}</option><option value="QUALIFIERS">{uiText("仅海选／公开预选，未进入正赛名单", uiLocale)}</option><option value="MAIN_EVENT">{uiText("进入过任一赛区正赛大名单", uiLocale)}</option>
       </select></label>
     </div>
-    <p>{uiText("进入过 OWCS 2026 正赛大名单的选手不符合本届周赛资格。KR、JP 队伍每张地图的首发须包含至少两名中国（含港澳台）选手。", uiLocale)}</p>
+    <p>{uiText("职业经历、名单及其他参赛资格要求，请查阅适用的周赛规则。", uiLocale)}</p>
     <div className={styles.fields}>
       { [['tank', '重装'], ['damage', '输出'], ['support', '支援']].map(([key, label]) => <label key={key}>{uiText('{0}当前段位', uiLocale, [uiText(label, uiLocale)])}<input name={`${key}Rank`} defaultValue={value?.ranks?.[key] || ''} required maxLength={40} placeholder={uiText("例如：大师 3；未定级请填未定级", uiLocale)} /></label>) }
     </div>
-    <a className={styles.rulebookLink} href={rulebook?.url || '/rules/weekly-rules-v2.0.docx'} target="_blank" rel="noreferrer">{uiText("阅读周赛 {0} 规则书", uiLocale, [rulebook?.label || 'V2.0'])} ↗</a>
+    <a className={styles.rulebookLink} href="https://fries-cup.com/rules/" target="_blank" rel="noreferrer">{uiText('打开规则中心', uiLocale)} ↗</a>
+    <p><a href={rulebook?.url || '/rules/weekly-rules-v2.0.docx'} target="_blank" rel="noreferrer">{uiText("阅读周赛 {0} 规则书", uiLocale, [rulebook?.label || 'V2.0'])} ↗</a></p>
     <label className={styles.check}><input key={`${rulesVersion}:${value?.rulesVersion || ''}:${value?.declaredAt || ''}`} name="rulesAccepted" type="checkbox" defaultChecked={value?.rulesAccepted === true && value?.rulesVersion === rulesVersion} required />{uiText("我已阅读规则，以上资料真实，且使用本人战网账号参赛。", uiLocale)}</label>
   </fieldset>
 }
