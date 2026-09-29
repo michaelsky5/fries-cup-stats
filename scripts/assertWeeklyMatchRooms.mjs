@@ -159,8 +159,8 @@ assert.match(liveRoomSource, /签到/)
 assert.match(liveRoomSource, /缺席/)
 assert.match(liveRoomSource, /RoomStartControl/)
 assert.match(read('../src/features/weekly-competition/RoomStartControl.jsx'), /由本场赛管记录实际开赛/)
-assert.match(roomRulesSource, /选择权按本场先手方式确定/)
-assert.match(roomRulesSource, /图一固定为占领要点/)
+assert.match(roomRulesSource, /encodeURIComponent\(reference\.version\)/)
+assert.match(roomRulesSource, /本场尚未关联线上规则版本/)
 assert.match(read('../src/features/weekly-competition/WeeklyLiveRoomPage.module.css'), /checkInRow/)
 const sectionKeys = ['overview', 'tasks', 'events', 'matches', 'team', 'referee', 'caster', 'stats', 'following', 'communications', 'security']
 const sectionSource = mySpaceSource.match(/export function buildSpaceSections\([\s\S]*?\n\}/)?.[0]

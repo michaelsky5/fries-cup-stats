@@ -54,11 +54,14 @@ export default function SignalWeeklyOverview() {
   }
   const renderScore = match => ['upcoming', 'cancelled', 'postponed', 'unknown'].includes(match?.state) ? 'VS' : `${weeklyScore(match?.team_a?.score)} : ${weeklyScore(match?.team_b?.score)}`
   const focusedIds = focus ? [idOf(focus.team_a), idOf(focus.team_b)] : []
+  const rulebookUrl = cycle?.rulebook?.slug && cycle?.rulebook?.version
+    ? `https://fries-cup.com/rules/?book=${encodeURIComponent(cycle.rulebook.slug)}&version=${encodeURIComponent(cycle.rulebook.version)}`
+    : 'https://fries-cup.com/rules/'
 
   return <div className={styles.page} data-weekly-overview="true">
     <header className={styles.heading}>
       <div><p className={styles.eyebrow}>FRIES CUP / WEEKLY</p><h1>{t(uiText("五局，都算数。", locale), 'Every map counts.')}</h1><p>{t(uiText("从这一周的对阵，走向整个周期。", locale), 'This week’s matchups. A whole cycle to play for.')}</p></div>
-      <div className={styles.headingActions}><WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, match: null })} /><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a></div>
+      <div className={styles.headingActions}><WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, match: null })} /><a className={styles.rulesLink} href={rulebookUrl} target="_blank" rel="noreferrer">{t(uiText("规则中心", locale), 'Rulebook')} <span aria-hidden="true">↗</span><small>{cycle?.rulebook?.version ? `V${cycle.rulebook.version}` : t(uiText("完整条款与历史版本", locale), 'Rules & version history')}</small></a><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a></div>
     </header>
     <WeeklyConfirmationCard preparation={db?.weekly_competition?.registration} seasonId={season?.id || db?.season?.id || seasonId} locale={locale} withSeason={withSeason} />
     <WeeklyWeekRail weeks={weeks} selectedId={week?.id} locale={locale} onChange={id => change({ cycle: cycle.id, week: id, match: null })} />
