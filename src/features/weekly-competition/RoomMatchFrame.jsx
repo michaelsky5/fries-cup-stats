@@ -1,4 +1,5 @@
 import { roomBanLabel } from './roomBans.js'
+import { roomSeriesMaps } from './roomSeriesMaps.js'
 import { RoomMapSides } from './RoomPhaseClock.jsx'
 import RoomLobbyTools from './RoomLobbyTools.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
@@ -37,24 +38,26 @@ export function RoomSeriesRail({ data, phaseLabel }) {
   const uiLocale = useUiLocale()
   const [selected, setSelected] = useState(null)
   const dialog = useRef(null)
-  const selectedMap = data.maps.find(map => map.order === selected)
+  const official = Boolean(data.result?.official)
+  const maps = roomSeriesMaps(data)
+  const selectedMap = maps.find(map => map.order === selected)
   useEffect(() => { if (selectedMap) dialog.current?.showModal(); else dialog.current?.close() }, [selectedMap])
-  const completed = data.maps.filter(map => map.status === 'COMPLETE')
+  const completed = maps.filter(map => map.status === 'COMPLETE')
   const drawCount = completed.filter(isDraw).length
-  const total = data.match.format === 'RR5' ? 5 : Math.max(1, ...data.maps.map(map => map.order))
+  const total = data.match.format === 'RR5' ? 5 : Math.max(1, ...maps.map(map => map.order))
   // Do not discard an unexpected server record beyond RR5's configured five maps.
-  const count = Math.max(total, ...data.maps.map(map => map.order))
+  const count = Math.max(total, ...maps.map(map => map.order))
   const selectedImage = selectedMap && getOwMap(selectedMap.name) ? getMapImage(selectedMap.type, selectedMap.name) : null
   return <>
     <section className={styles.series} data-room-slot="series" aria-label={uiText("整场地图进程", uiLocale)}>
       <div className={styles.seriesLabel}><strong>{data.match.format === 'RR5' ? uiText("本场五局", uiLocale) : uiText("整场地图", uiLocale)}</strong><small>{completed.length}{data.match.format === 'RR5' ? ' / 5' : ''}{uiText(" 已完成", uiLocale)}{drawCount ? uiText(" · {0} 平", uiLocale, [drawCount]) : ''}</small></div>
       <ol className={styles.mapRail} style={{ '--map-count': count }}>
         {Array.from({ length: count }, (_, index) => {
-          const map = data.maps.find(item => item.order === index + 1)
-          const current = map?.order === data.map?.order
+          const map = maps.find(item => item.order === index + 1)
+          const current = !official && map?.order === data.map?.order
           const label = map?.status === 'COMPLETE' ? `${map.scoreA ?? '—'} : ${map.scoreB ?? '—'}` : data.forfeit?.record ? data.forfeit.record.status === 'APPROVED' ? map?.status === 'LIVE' ? '因弃权未完成' : '因弃权未进行' : '弃权记录待复核' : current ? phaseLabel : '尚未开始'
           const banSummary = `${teamName(data.match.teamA)}：${roomBanLabel(map, 'A', uiLocale) || uiText("待定", uiLocale)} / ${teamName(data.match.teamB)}：${roomBanLabel(map, 'B', uiLocale) || uiText("待定", uiLocale)}`
-          const content = <><span>{String(index + 1).padStart(2, '0')}</span><b>{formatOwMapName(map?.name, uiLocale) || (current ? uiText("等待选图", uiLocale) : uiText("地图待定", uiLocale))}</b><small>{map?.name ? `${map?.status === 'COMPLETE' ? `${label} · ` : ''}${banSummary}` : label}</small></>
+          const content = <><span>{String(index + 1).padStart(2, '0')}</span><b>{formatOwMapName(map?.name, uiLocale) || (current ? uiText("等待选图", uiLocale) : uiText("地图待定", uiLocale))}</b><small>{map?.name ? official ? label : `${map?.status === 'COMPLETE' ? `${label} · ` : ''}${banSummary}` : label}</small></>
           return <li key={index} data-current={!!current} data-complete={map?.status === 'COMPLETE'}>{map?.name ? <button type="button" aria-label={uiText("查看第 {0} 图 {1} · {2}", uiLocale, [index + 1, formatOwMapName(map.name, uiLocale), label])} onClick={() => setSelected(map.order)}>{content}</button> : <div>{content}</div>}</li>
         })}
       </ol>
@@ -62,9 +65,9 @@ export function RoomSeriesRail({ data, phaseLabel }) {
     <dialog ref={dialog} className={styles.recordDialog} onCancel={() => setSelected(null)} aria-labelledby="room-map-record-title">
       {selectedMap && <><header><div><small>MAP {String(selectedMap.order).padStart(2, '0')}{uiText(" / 地图记录", uiLocale)}</small><h2 id="room-map-record-title">{formatOwMapName(selectedMap.name, uiLocale)}</h2></div><button type="button" aria-label={uiText("关闭地图记录", uiLocale)} onClick={() => setSelected(null)}>×</button></header>
         <div className={styles.recordMap} style={selectedImage ? { backgroundImage: `linear-gradient(90deg,#181a17cf,#181a1780),url("${selectedImage}")` } : undefined}><span>{teamName(data.match.teamA)}</span><strong>{selectedMap.status === 'COMPLETE' ? `${selectedMap.scoreA ?? '—'} : ${selectedMap.scoreB ?? '—'}` : 'VS'}</strong><span>{teamName(data.match.teamB)}</span></div>
-        <p>{formatOwMapMode(selectedMap.type, uiLocale)} · {selectedMap.status === 'COMPLETE' ? isDraw(selectedMap) ? uiText("平局{0}", uiLocale, [data.match.format === 'RR5' ? ' · 计入固定五局' : '']) : uiText("本图已完成", uiLocale) : uiText("本图尚未完成", uiLocale)}{uiText(" · 赛管工作记录", uiLocale)}</p>
-        <RoomMapSides map={selectedMap} match={data.match} /><dl className={styles.recordBans}><div><dt>{teamName(data.match.teamA)}{uiText(" 禁用", uiLocale)}</dt><dd>{roomBanLabel(selectedMap, 'A', uiLocale) || uiText("尚未记录", uiLocale)}</dd></div><div><dt>{teamName(data.match.teamB)}{uiText(" 禁用", uiLocale)}</dt><dd>{roomBanLabel(selectedMap, 'B', uiLocale) || uiText("尚未记录", uiLocale)}</dd></div></dl>
-        <p>{uiText("此处显示赛中地图记录。正式审核与积分结算以整场赛果为准。", uiLocale)}</p></>}
+        <p>{formatOwMapMode(selectedMap.type, uiLocale)} · {selectedMap.status === 'COMPLETE' ? isDraw(selectedMap) ? uiText("平局{0}", uiLocale, [data.match.format === 'RR5' ? ' · 计入固定五局' : '']) : uiText("本图已完成", uiLocale) : uiText("本图尚未完成", uiLocale)}{official ? '' : uiText(" · 赛管工作记录", uiLocale)}</p>
+        {!official && <><RoomMapSides map={selectedMap} match={data.match} /><dl className={styles.recordBans}><div><dt>{teamName(data.match.teamA)}{uiText(" 禁用", uiLocale)}</dt><dd>{roomBanLabel(selectedMap, 'A', uiLocale) || uiText("尚未记录", uiLocale)}</dd></div><div><dt>{teamName(data.match.teamB)}{uiText(" 禁用", uiLocale)}</dt><dd>{roomBanLabel(selectedMap, 'B', uiLocale) || uiText("尚未记录", uiLocale)}</dd></div></dl></>}
+        <p>{uiText(official ? "审核版本 · 逐图比分" : "此处显示赛中地图记录。正式审核与积分结算以整场赛果为准。", uiLocale)}</p></>}
     </dialog>
   </>
 }
