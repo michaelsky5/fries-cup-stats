@@ -7,7 +7,8 @@ import { pickUiLocale } from '../../lib/uiText.js'
 import AuthButton from '../../features/auth/AuthDialog.jsx'
 import { useAuth } from '../../features/auth/AuthProvider.jsx'
 import EventContextBar from './EventContextBar.jsx'
-import PublicMobileNav from './PublicMobileNav.jsx'
+import PublicMobileNav, { PublicMobileMenu } from './PublicMobileNav.jsx'
+import mobileStyles from './PublicMobileNav.module.css'
 import { getPrimaryNavigation, getPersonalNavItem, getNavLabel, getWeeklyNavigationPath } from './publicNavigation.js'
 import styles from '../../features/fd-design/layoutStyles.js'
 
@@ -16,7 +17,7 @@ function AccountAttentionBadge({ attention }) {
 
   return (
     <span className={styles.navAttention} aria-label={attention.ariaLabel} title={attention.ariaLabel}>
-      {attention.openTaskCount ? <span>{attention.taskBadge}</span> : null}
+      {attention.showTaskBadge ? <span>{attention.taskBadge}</span> : null}
       {attention.unreadNotificationCount ? <span>{attention.unreadBadge}</span> : null}
     </span>
   )
@@ -175,7 +176,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
   return (<>
       <header className={styles.topShell} data-phone-navigation={phoneNavigation || undefined}>
         <div className={styles.topBar}>
-          <a href="https://fries-cup.com/" className={styles.brandLink} aria-label={pickUiLocale(layoutLocale, '薯条杯赛事中心 · 返回薯条杯官网', 'FriesCup official site', '프라이즈 컵 공식 사이트로 이동', '薯條杯賽事中心 · 返回薯條杯官網')}>
+          <a href="https://fries-cup.com/" className={`${styles.brandLink} ${phoneNavigation ? mobileStyles.desktopBrand : ''}`} aria-label={pickUiLocale(layoutLocale, '薯条杯赛事中心 · 返回薯条杯官网', 'FriesCup official site', '프라이즈 컵 공식 사이트로 이동', '薯條杯賽事中心 · 返回薯條杯官網')}>
             <span className={styles.brandEventMark} aria-hidden="true">
               <img src={isKprHybridDesign ? '/logos/fries-cup-symbol.png' : '/logos/fc_logo.svg'} alt="" />
             </span>
@@ -190,6 +191,10 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
               </span>
             )}
           </a>
+          {phoneNavigation ? <Link to={navPath('/')} className={`${styles.brandLink} ${mobileStyles.mobileBrand}`} aria-label={pickUiLocale(layoutLocale, '薯条杯赛事首页', 'Fries Cup events', '프라이즈 컵 대회', '薯條杯賽事首頁')}>
+            <span className={styles.brandEventMark} aria-hidden="true"><img src="/logos/fries-cup-symbol.png" alt="" /></span>
+            <span className={styles.brandTypeLockup} aria-hidden="true" data-i18n-ignore><strong>FRIES CUP</strong><small>{pickUiLocale(layoutLocale, '赛事中心', 'EVENT CENTER', '대회 센터', '賽事中心')}</small></span>
+          </Link> : null}
 
           <nav className={styles.nav} aria-label={pickUiLocale(layoutLocale, '赛事中心导航', 'Event navigation', '대회 센터 탐색', '賽事中心導覽')} data-i18n-ignore>
             {headerNavItems.map(item => (
@@ -251,6 +256,9 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
                 placement="header"
               />
             ) : null}
+            {phoneNavigation ? <PublicMobileMenu items={headerNavItems} locale={layoutLocale} navPath={navPath} reviewAvailable={Boolean(season?.reviewEnabled)} personalAvailable={!season?.partnerTrial}>
+              {showLanguage ? <LanguageMenu locale={layoutLocale} mobile onLocaleChange={handleLocaleChange} /> : null}
+            </PublicMobileMenu> : null}
             {isKprHybridDesign ? showLanguage ? (
               <LanguageMenu
                 locale={layoutLocale}
@@ -294,8 +302,6 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
           contextMode={headerContextMode}
         /> : null}
       </header>
-      {phoneNavigation ? <PublicMobileNav items={headerNavItems} activeGroup={activeGroup} locale={layoutLocale} navPath={navPath} accountAttention={accountAttention}>
-        {showLanguage ? <LanguageMenu locale={layoutLocale} includeKorean={isReviewEntryRoute || layoutLocale === 'ko-KR'} mobile onLocaleChange={handleLocaleChange} /> : null}
-      </PublicMobileNav> : null}
+      {phoneNavigation ? <PublicMobileNav items={headerNavItems} locale={layoutLocale} navPath={navPath} accountAttention={accountAttention} /> : null}
   </>)
 }

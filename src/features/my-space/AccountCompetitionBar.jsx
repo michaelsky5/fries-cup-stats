@@ -8,12 +8,12 @@ const roles = { MANAGER: ['队伍负责人', 'Team manager'], PLAYER: ['选手',
 const statusLabel = (status, en) => status === 'ARCHIVED' ? en ? 'Archived · Read only' : '已归档 · 只读'
   : status === 'DRAFT' ? en ? 'In preparation' : '筹备中' : en ? 'Active' : '进行中'
 
-export default function AccountCompetitionBar({ competition, locale = 'zh-CN', withSeason, entry = false, compact = false }) {
+export default function AccountCompetitionBar({ competition, locale = 'zh-CN', withSeason, entry = false, compact = false, mobileHome = false }) {
   const { search } = useLocation()
   const en = locale === 'en-US'
   const { selected, competitions } = competition
   const href = id => `/me?${competitionSwitchSearch(search, id)}`
-  if (entry) return <AccountCompetitionEntry competition={competition} locale={locale} withSeason={withSeason} />
+  if (entry) return <AccountCompetitionEntry competition={competition} locale={locale} withSeason={withSeason} mobileHome={mobileHome} />
   if (!selected) return null
   return <section className={styles.bar} data-compact={compact || undefined} aria-label={en ? 'Participation event' : uiText("参赛赛事", locale)} data-i18n-ignore>
     <div className={styles.context}>

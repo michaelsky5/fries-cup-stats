@@ -367,15 +367,20 @@ function SettingsWorkspace({ user, onRevoked }) {
   const competition = useAccountCompetition(getInitialSeasonId())
   const spaceHref = competition.link(withSeason('/me', getInitialSeasonId(), location.search))
   const section = SECTIONS.some(([id]) => `#${id}` === location.hash) ? location.hash.slice(1) : 'overview'
+  const mobilePanel = SECTIONS.some(([id]) => `#${id}` === location.hash)
   const [dirty, setDirty] = useState(false)
   const onDirtyChange = useCallback(value => setDirty(value), [])
   const blocker = useBlocker(({ currentLocation, nextLocation }) => dirty && (currentLocation.pathname !== nextLocation.pathname || currentLocation.search !== nextLocation.search || currentLocation.hash !== nextLocation.hash))
   const cards = useRef(null)
-  const previousSection = useRef(section)
+  const panelKey = `${mobilePanel}:${section}`
+  const previousSection = useRef(panelKey)
   useEffect(() => {
-    if (previousSection.current !== section) cards.current?.querySelector('h2')?.focus({ preventScroll: true })
-    previousSection.current = section
-  }, [section])
+    if (previousSection.current !== panelKey) {
+      cards.current?.querySelector('h2')?.focus({ preventScroll: true })
+      if (window.matchMedia('(max-width: 600px)').matches) window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    }
+    previousSection.current = panelKey
+  }, [panelKey])
   useEffect(() => {
     if (!dirty) return undefined
     const warn = event => { event.preventDefault(); event.returnValue = '' }
@@ -384,7 +389,8 @@ function SettingsWorkspace({ user, onRevoked }) {
     window.addEventListener(ACCOUNT_SIGN_OUT_EVENT, protectDraft)
     return () => { window.removeEventListener('beforeunload', warn); window.removeEventListener(ACCOUNT_SIGN_OUT_EVENT, protectDraft) }
   }, [dirty])
-  return <div className={styles.workspace}>
+  return <div className={styles.workspace} data-mobile-panel={mobilePanel}>
+    {mobilePanel ? <nav className={styles.mobileBack} aria-label={uiText('账号设置', uiLocale)}><Link to={{ pathname: location.pathname, search: location.search, hash: '' }}>← {uiText('账号设置', uiLocale)}</Link></nav> : null}
     {blocker.state === 'blocked' && <ConfirmationDialog title={uiText("修改尚未保存", uiLocale)} description={uiText("离开后，本页尚未提交的内容会丢失。", uiLocale)} cancelLabel="继续编辑" confirmLabel="放弃修改并离开" onCancel={blocker.reset} onConfirm={blocker.proceed} />}
     <aside className={styles.sidebar}><span className={styles.kicker}>{uiText("账号设置", uiLocale)}</span><nav aria-label={uiText("账号设置分区", uiLocale)}>{SECTIONS.map(([id, , title, english]) => <Link key={id} to={{ pathname: location.pathname, search: location.search, hash: `#${id}` }} aria-current={section === id ? 'page' : undefined}><strong data-i18n-ignore={id === 'reminders' || undefined}>{id === 'reminders' ? reminderCopy(uiLocale).title : title}<small>{english}</small></strong><i aria-hidden="true">→</i></Link>)}</nav><p>{uiText("报名、队伍和比赛事务", uiLocale)}<br />{uiText("可以在我的空间处理。", uiLocale)}</p><Link to={spaceHref}>{uiText("返回我的空间 ↗", uiLocale)}</Link></aside>
     <div className={styles.cards} ref={cards}>

@@ -14,7 +14,8 @@ import ApprovedTeamLogoEditor from './ApprovedTeamLogoEditor.jsx'
 import WeeklyTeamAdditions from '../weekly-competition/WeeklyTeamAdditions.jsx'
 import WeeklyOwnershipTransfers from '../weekly-competition/WeeklyOwnershipTransfers.jsx'
 import WeeklyEligibilityFields, { MemberEligibilityEditor, readWeeklyEligibility } from './WeeklyEligibilityFields.jsx'
-import { describeRegistrationError as describeError } from './registrationErrors.js'
+import { describeRegistrationError as describeError, translateRegistrationError } from './registrationErrors.js'
+import { SharedRegistrationJoin, RegistrationJoinManager, MyRegistrationJoinApplications } from './SharedRegistrationJoin.jsx'
 const emptyDetails = { region: '', history: '', logoUrl: '', coachName: '', coachContact: '' }
 const emptyTeam = { name: '', shortName: '', contact: '', note: '', kind: 'LONG_TERM', organizationId: '' }
 const emptyPlayer = { displayName: '', email: '', battleTag: '', role: 'UNKNOWN' }
@@ -34,14 +35,15 @@ function ParticipationPage({ seasonId }) {
   const [invitationToken] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get('invitation') || '')
   const [hasAdditions, setHasAdditions] = useState(false)
   const [hasTransfers, setHasTransfers] = useState(false)
+  const [joinToken] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get('join') || '')
   return <AccountFrame title={uiText("赛事报名", uiLocale)} eyebrow="EVENT REGISTRATION" description={uiText("组建本队名单，确认后提交赛事负责人审核。", uiLocale)}><div className={styles.page}>
     <header className={styles.header}>
       <div><span>{uiText("参赛账号", uiLocale)}</span><strong>{user?.displayName || uiText("等待登录", uiLocale)}</strong></div>
       <div className={styles.actions}><RoomGuideLink season={seasonId} role="manager" label="参赛与比赛指南" />{user ? <><button type="button" onClick={async () => { if (await confirmDiscard()) await logout() }}>{uiText("退出账号", uiLocale)}</button></> : null}<Link to="/me">{uiText("我的空间", uiLocale)}</Link></div>
     </header>
-    {invitationToken ? <Invitation key={invitationToken} token={invitationToken} seasonId={seasonId} />
+    {joinToken ? <SharedRegistrationJoin key={joinToken} token={joinToken} seasonId={seasonId} /> : invitationToken ? <Invitation key={invitationToken} token={invitationToken} seasonId={seasonId} />
       : isBootstrapping ? <p role="status">{uiText("正在确认登录状态…", uiLocale)}</p>
-        : user ? <><WeeklyTeamAdditions key={`additions:${user.id}:${seasonId}`} seasonId={seasonId} onHasAdditions={setHasAdditions} /><WeeklyOwnershipTransfers key={`transfers:${user.id}:${seasonId}`} seasonId={seasonId} onHasTransfers={setHasTransfers} /><Workspace key={`${user.id}:${seasonId}`} user={user} seasonId={seasonId} hasAdditions={hasAdditions || hasTransfers} /></> : <Login />}
+        : user ? <><Workspace key={`${user.id}:${seasonId}`} user={user} seasonId={seasonId} hasAdditions={hasAdditions || hasTransfers} /><details className={styles.teamManagement}><summary>{uiText("队伍管理", uiLocale)}</summary><WeeklyTeamAdditions key={`additions:${user.id}:${seasonId}`} seasonId={seasonId} onHasAdditions={setHasAdditions} /><WeeklyOwnershipTransfers key={`transfers:${user.id}:${seasonId}`} seasonId={seasonId} onHasTransfers={setHasTransfers} /></details></> : <Login />}
   </div></AccountFrame>
 }
 
@@ -133,7 +135,7 @@ function Workspace({ user, seasonId, hasAdditions }) {
   async function perform(suffix, body, method = 'POST', savingDraftLabel) {
     if (mutation.current) return false
     mutation.current = true
-    if (suffix.startsWith('/drafts') && !suffix.endsWith('/remove-member') && !suffix.endsWith('/invitations') && !await confirmDiscard({ exceptLabels: savingDraftLabel ? [savingDraftLabel] : [] })) { mutation.current = false; return false }
+    if (suffix.startsWith('/drafts') && !suffix.endsWith('/remove-member') && !suffix.endsWith('/invitations') && !suffix.endsWith('/join-link') && !suffix.includes('/join-applications/') && !await confirmDiscard({ exceptLabels: savingDraftLabel ? [savingDraftLabel] : [] })) { mutation.current = false; return false }
     setBusy(true); setError(''); setNotice(''); setLink(null)
     try {
       const result = await platformRequest(path(seasonId) + suffix, { method, body })
@@ -146,17 +148,18 @@ function Workspace({ user, seasonId, hasAdditions }) {
       return result
     } catch (failure) { setError(describeError(failure)); return false } finally { mutation.current = false; setBusy(false) }
   }
-  if (!workspace) return <section className={styles.panel}>{error ? <p role="alert" className={styles.error}>{error}</p> : <p role="status">{uiText("正在读取本赛季报名…", uiLocale)}</p>}<button type="button" onClick={() => setVersion(value => value + 1)}>{uiText("重新读取", uiLocale)}</button></section>
+  if (!workspace) return <section className={styles.panel}>{error ? <p role="alert" className={styles.error}>{translateRegistrationError(error, uiLocale)}</p> : <p role="status">{uiText("正在读取本赛季报名…", uiLocale)}</p>}<button type="button" onClick={() => setVersion(value => value + 1)}>{uiText("重新读取", uiLocale)}</button></section>
   const ownerRegistration = workspace.registrations.find(item => item.ownerUserId === user.id && item.status !== 'WITHDRAWN')
   return <>
     <div className={styles.context}><div><span>{uiText("当前赛季", uiLocale)}</span><strong>{workspace.season.name}</strong></div><div><span>{uiText("报名人数", uiLocale)}</span><strong>{workspace.policy.rosterMin}–{workspace.policy.rosterMax}{uiText(" 人", uiLocale)}</strong></div><div><span>{uiText("报名截止", uiLocale)}</span><strong>{workspace.policy.closesAt ? new Date(workspace.policy.closesAt).toLocaleString() : uiText("以赛事通知为准", uiLocale)}</strong></div><span>{workspace.canWrite ? uiText("报名开放", uiLocale) : uiText(workspace.canManageLogo && workspace.registrations.some(record => record.status === "APPROVED" && record.ownerUserId === user.id) ? "报名只读，队标可更新" : "当前只读", uiLocale)}</span></div>
     {workspace.policy.rulebook && <p><a className={styles.rulebookLink} href={workspace.policy.rulebook.url} target="_blank" rel="noreferrer">{uiText("当前规则书 {0} · 下载阅读", uiLocale, [workspace.policy.rulebook.label])} ↗</a></p>}
-    {(error || notice) && <p ref={feedback} tabIndex={-1} role={error ? "alert" : "status"} className={error ? styles.error : styles.success}>{error || notice}</p>}
+    {(error || notice) && <p ref={feedback} tabIndex={-1} role={error ? "alert" : "status"} className={error ? styles.error : styles.success}>{error ? translateRegistrationError(error, uiLocale) : uiText(notice, uiLocale)}</p>}
     {link && <InvitationLink invitation={link} />}
+    <MyRegistrationJoinApplications seasonId={seasonId} />
     {workspace.notices.some(item => item.requiresAck && !item.acknowledgedAt) && <section className={styles.panel}><h2>{uiText("需要确认", uiLocale)}</h2>{workspace.notices.filter(item => item.requiresAck && !item.acknowledgedAt).map(item => <div className={styles.notice} key={item.id}><div><strong>{item.title}</strong><p>{item.message}</p></div><button disabled={busy} onClick={() => perform(`/notices/${item.id}/acknowledge`, {})}>{uiText("我已知悉", uiLocale)}</button></div>)}</section>}
     {!ownerRegistration && workspace.canCreate && <TeamForm eligibilityRequired={workspace.policy.eligibilityRequired} organizations={workspace.organizations} busy={busy} onSave={input => perform('/drafts', input, 'POST', '队伍报名资料')} />}
     {!hasAdditions && !workspace.registrations.length && workspace.canWrite && !workspace.canCreate && <section className={styles.panel}><h2>{uiText('需要队伍负责人邀请', uiLocale)}</h2><p>{uiText('请联系赛事负责人获取本赛季队伍负责人邀请链接，接受后即可创建报名。队员请使用队长发送的入队邀请链接。', uiLocale)}</p></section>}
-    {workspace.registrations.map(record => <Registration rulebook={workspace.policy.rulebook} key={record.id} eligibilityRequired={workspace.policy.eligibilityRequired} record={record} userId={user.id} owner={record.ownerUserId === user.id} canWrite={workspace.canWrite} canManageLogo={workspace.canManageLogo} busy={busy} perform={perform} invitationLinks={invitationLinks} rosterMin={workspace.policy.rosterMin} rosterMax={workspace.policy.rosterMax} onRefresh={async () => { if (await confirmDiscard()) setVersion(value => value + 1) }} />)}
+    {workspace.registrations.map(record => <Registration seasonId={seasonId} rulebook={workspace.policy.rulebook} key={record.id} eligibilityRequired={workspace.policy.eligibilityRequired} record={record} userId={user.id} owner={record.ownerUserId === user.id} canWrite={workspace.canWrite} canManageLogo={workspace.canManageLogo} busy={busy} perform={perform} invitationLinks={invitationLinks} rosterMin={workspace.policy.rosterMin} rosterMax={workspace.policy.rosterMax} onRefresh={async () => { if (await confirmDiscard()) setVersion(value => value + 1) }} />)}
     {!hasAdditions && !workspace.registrations.length && !workspace.canWrite && <section className={styles.panel}><h2>{uiText("尚无报名", uiLocale)}</h2><p>{uiText("本赛季报名当前没有开放，请等待赛事负责人通知。", uiLocale)}</p></section>}
     {workspace.notices.length > 0 && <details className={styles.panel}><summary>{uiText("报名通知 · ", uiLocale)}{workspace.notices.length}</summary>{workspace.notices.map(item => <div className={styles.notice} key={item.id}><div><strong>{item.title}</strong><p>{item.message}</p></div><time>{new Date(item.createdAt).toLocaleString()}</time></div>)}</details>}
   </>
@@ -192,7 +195,6 @@ function TeamForm({ organizations = [], record, busy, onSave, eligibilityRequire
       <label>队伍简称<input name="shortName" value={form.shortName} required maxLength={24} onChange={event => set('shortName', event.target.value)} /></label>
       {!record && <label>队伍类型<select value={form.kind} onChange={event => set('kind', event.target.value)} disabled={Boolean(form.organizationId)}><option value="LONG_TERM">长期队伍</option><option value="TEMPORARY">本赛季临时队伍</option></select></label>}
       <label>{eligibilityRequired ? '负责人 QQ' : '负责人联系方式'}<input name="contact" value={form.contact} required minLength={eligibilityRequired ? 5 : 3} maxLength={eligibilityRequired ? 12 : 240} inputMode={eligibilityRequired ? 'numeric' : 'text'} pattern={eligibilityRequired ? '[0-9]{5,12}' : undefined} title={eligibilityRequired ? '请填写 5 至 12 位 QQ 号码，只填数字' : undefined} placeholder={eligibilityRequired ? '只填写 QQ 号码，用于赛事联系' : '赛事联系账号'} onChange={event => set('contact', event.target.value.trim())} /></label>
-      {eligibilityRequired && <label>队伍所属赛区<select name="region" required value={form.details.region} onChange={event => detail('region', event.target.value)}><option value="">请选择赛区</option><option value="CN">CN · 中国</option><option value="SEA">SEA · 东南亚</option><option value="OCE">OCE · 大洋洲</option><option value="KR">KR · 韩国</option><option value="JP">JP · 日本</option></select></label>}
     </div>
     {eligibilityRequired && <label>队伍历史赛事表现<textarea name="history" required rows={2} maxLength={1000} value={form.details.history} placeholder="赛事名称、成绩；没有参赛经历请填写“无”" onChange={event => detail('history', event.target.value)} /></label>}
     <RegistrationLogoField image={form.logoImage} url={form.details.logoUrl} disabled={busy} onReading={setReading} onChange={({ image, url }) => { setForm(current => ({ ...current, logoImage: image, details: { ...current.details, logoUrl: url } })); setDirty(true) }} />
@@ -201,17 +203,18 @@ function TeamForm({ organizations = [], record, busy, onSave, eligibilityRequire
   </form></section>
 }
 
-function Registration({ rulebook, eligibilityRequired, record, userId, owner, canWrite, canManageLogo, busy, perform, invitationLinks, rosterMin = 1, rosterMax = 7, onRefresh }) {
+function Registration({ seasonId, rulebook, eligibilityRequired, record, userId, owner, canWrite, canManageLogo, busy, perform, invitationLinks, rosterMin = 1, rosterMax = 7, onRefresh }) {
   const uiLocale = useUiLocale()
   const [player, setPlayer] = useState(emptyPlayer)
   const [copyNotice, setCopyNotice] = useState('')
+  const [joinPending, setJoinPending] = useState(null)
   const [editingTeam, setEditingTeam] = useState(false)
   useRegistrationDraft(JSON.stringify(player) !== JSON.stringify(emptyPlayer), { label: uiText("选手邀请", uiLocale), busy, discard: () => setPlayer(emptyPlayer) })
   const editable = owner && canWrite && ['DRAFT', 'RETURNED'].includes(record.status)
   const prefix = `/drafts/${record.id}`
   const confirmed = record.members.length > 0 && record.members.every(member => member.status === 'CONFIRMED')
   const rosterFull = record.members.length >= rosterMax
-  const rosterReady = record.members.length >= rosterMin && confirmed
+  const rosterReady = record.members.length >= rosterMin && confirmed && (!owner || joinPending === 0)
   const stage = record.status === 'APPROVED' ? 3 : record.status === 'SUBMITTED' || confirmed ? 2 : 1
   const stageLabels = ['队伍资料', '队员确认', record.status === 'SUBMITTED' ? '等待审核' : '提交审核', '参赛资格']
   const statusLabel = value => getRegistrationStatusLabel(value, value)
@@ -244,6 +247,7 @@ function Registration({ rulebook, eligibilityRequired, record, userId, owner, ca
     {owner && editable && record.members.some(member => member.status === 'CONFIRMED') ? <p className={styles.feedback} role="status">{uiText("已确认资料由选手本人修改。队伍提交审核后会冻结资料，需要负责人撤回报名后才能修改。", uiLocale)}</p> : null}
     {copyNotice && <p role="status" className={styles.feedback}>{copyNotice}</p>}
     {canWrite && ['DRAFT', 'RETURNED'].includes(record.status) && record.members.filter(member => member.userId === userId && member.status === 'CONFIRMED').map(member => <MemberEligibilityEditor rulebook={rulebook} key={`${member.id}:${member.confirmedAt}`} member={member} eligibilityRequired={eligibilityRequired} busy={busy} onSave={input => perform(`${prefix}/eligibility`, { revision: record.revision, ...input }, 'PUT', '本人参赛资料')} />)}
+    {owner && <RegistrationJoinManager record={record} seasonId={seasonId} editable={editable} busy={busy} perform={perform} onPendingChange={setJoinPending} />}
     {!record.members.length && <p>{uiText("还没有选手。负责人兼任选手时，也需要将本人加入名单并确认。", uiLocale)}</p>}
     {editable && <>
       <form className={styles.playerForm} onSubmit={async event => { event.preventDefault(); const payload = { ...player, displayName: player.displayName.trim(), email: player.email.trim(), battleTag: player.battleTag.trim(), revision: record.revision }; if (await perform(`${prefix}/invitations`, payload, 'POST', '选手邀请')) setPlayer(emptyPlayer) }}>

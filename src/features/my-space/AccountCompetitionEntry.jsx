@@ -5,7 +5,7 @@ import { competitionSwitchSearch } from './accountCompetitionModel.js'
 import { resolvePastedInvitation } from './accountInvitationEntry.js'
 import styles from './AccountCompetitionEntry.module.css'
 
-export default function AccountCompetitionEntry({ competition, locale, withSeason }) {
+export default function AccountCompetitionEntry({ competition, locale, withSeason, mobileHome = false }) {
   const en = locale === 'en-US'
   const navigate = useNavigate()
   const { search } = useLocation()
@@ -31,7 +31,7 @@ export default function AccountCompetitionEntry({ competition, locale, withSeaso
     setInvitation('')
     navigate(target)
   }
-  return <section className={styles.entry} aria-busy={loading} data-i18n-ignore>
+  return <section className={styles.entry} aria-busy={loading} data-i18n-ignore data-mobile-home={mobileHome}>
     <header className={styles.status}>
       <div><span>{en ? 'PARTICIPATION' : uiText("我的参赛", locale)}</span><h2>{title}</h2><p role={error || unavailable ? 'alert' : 'status'}>{description}</p></div>
       {!loading && <button type="button" onClick={() => competition.refresh().catch(() => {})}>{en ? 'Refresh events' : uiText("重新读取赛事", locale)} <span aria-hidden="true">↻</span></button>}

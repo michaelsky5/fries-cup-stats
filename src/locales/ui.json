@@ -55530,5 +55530,1325 @@
     "zh-TW": "職業經歷、名單及其他參賽資格要求，請查閱適用的週賽規則。",
     "en-US": "See the applicable weekly rules for professional experience, roster, and other eligibility requirements.",
     "ko-KR": "프로 경력, 로스터 및 기타 참가 자격 요건은 해당 주간 대회 규정을 확인하세요."
+  },
+  "· 名单尚未公布或积分变更后待复核": {
+    "en-US": "· Roster not yet published, or awaiting review after a points change",
+    "ko-KR": "· 명단 미공개 또는 점수 변경 후 재검토 대기",
+    "zh-TW": "· 名單尚未公布或積分變更後待複核"
+  },
+  "{0} 已撤回本人申请。": {
+    "en-US": "{0} has withdrawn their application.",
+    "ko-KR": "{0} 님이 본인의 신청을 철회했습니다.",
+    "zh-TW": "{0} 已撤回本人申請。"
+  },
+  "{0} 已提交 {1} 的本人参赛资料，请审核。": {
+    "en-US": "{0} has submitted their player details for {1}. Please review them.",
+    "ko-KR": "{0} 님이 {1} 참가 정보를 제출했습니다. 검토해 주세요.",
+    "zh-TW": "{0} 已提交 {1} 的本人參賽資料，請審核。"
+  },
+  "{0}当前段位": {
+    "en-US": "Current {0} rank",
+    "ko-KR": "{0} 현재 등급",
+    "zh-TW": "{0}目前牌位"
+  },
+  "报名链接所属赛事不一致，请重新打开完整链接。": {
+    "zh-TW": "報名連結所屬賽事不一致，請重新開啟完整連結。",
+    "en-US": "This link belongs to a different event. Reopen the complete link.",
+    "ko-KR": "다른 대회의 링크입니다. 전체 링크를 다시 열어 주세요."
+  },
+  "报名链接无效或已重新生成，请向队伍负责人获取新链接。": {
+    "en-US": "This registration link is invalid or has been replaced. Ask the team manager for a new link.",
+    "ko-KR": "등록 링크가 유효하지 않거나 새로 생성되었습니다. 팀 관리자에게 새 링크를 요청해 주세요.",
+    "zh-TW": "報名連結無效或已重新產生，請向隊伍負責人取得新連結。"
+  },
+  "报名链接已到期，请联系队伍负责人。": {
+    "en-US": "This registration link has expired. Contact the team manager.",
+    "ko-KR": "등록 링크가 만료되었습니다. 팀 관리자에게 문의해 주세요.",
+    "zh-TW": "報名連結已到期，請聯絡隊伍負責人。"
+  },
+  "报名链接已关闭，已有申请仍可审核。": {
+    "zh-TW": "報名連結已關閉，已有申請仍可審核。",
+    "en-US": "The link is closed. Existing applications can still be reviewed.",
+    "ko-KR": "링크를 닫았습니다. 기존 신청은 계속 검토할 수 있습니다."
+  },
+  "报名链接已重新生成，请获取新链接。": {
+    "en-US": "This registration link has been replaced. Please obtain the new link.",
+    "ko-KR": "등록 링크가 새로 생성되었습니다. 새 링크를 받아 주세요.",
+    "zh-TW": "報名連結已重新產生，請取得新連結。"
+  },
+  "报名名单当前已冻结，共用链接不接受新申请。": {
+    "zh-TW": "報名名單目前已凍結，共用連結不接受新申請。",
+    "en-US": "The roster is frozen. The shared link cannot accept new applications.",
+    "ko-KR": "등록 명단이 잠겨 있습니다. 공용 링크로 새 신청을 받을 수 없습니다."
+  },
+  "报名已提交或结束，请联系负责人；当前不能加入或审核队员。": {
+    "en-US": "Registration has been submitted or has ended. Contact the manager; players cannot currently join or be reviewed.",
+    "ko-KR": "등록이 제출되었거나 종료되었습니다. 관리자에게 문의해 주세요. 현재 선수 가입 및 심사가 불가능합니다.",
+    "zh-TW": "報名已提交或結束，請聯絡負責人；目前無法加入或審核隊員。"
+  },
+  "报名职责": {
+    "zh-TW": "報名職責",
+    "en-US": "Registration role",
+    "ko-KR": "등록 역할"
+  },
+  "本队报名名单已满，请联系负责人调整后再申请或审核。": {
+    "en-US": "This team’s registration roster is full. Ask the manager to adjust it before applying or reviewing players.",
+    "ko-KR": "팀 등록 명단이 가득 찼습니다. 관리자가 명단을 조정한 후 신청하거나 심사해 주세요.",
+    "zh-TW": "本隊報名名單已滿，請聯絡負責人調整後再申請或審核。"
+  },
+  "本队没有这条申请。": {
+    "en-US": "This application does not belong to this team.",
+    "ko-KR": "이 신청은 해당 팀의 신청이 아닙니다.",
+    "zh-TW": "本隊沒有這筆申請。"
+  },
+  "本队已有此 BattleTag，请核对本人战网 ID。": {
+    "en-US": "This BattleTag is already on the team. Check your own Battle.net ID.",
+    "ko-KR": "팀에 이미 등록된 BattleTag입니다. 본인의 Battle.net ID를 확인해 주세요.",
+    "zh-TW": "本隊已有此 BattleTag，請核對本人 Battle.net ID。"
+  },
+  "本队已有使用此 BattleTag 的待审核申请。": {
+    "en-US": "The team already has a pending application with this BattleTag.",
+    "ko-KR": "팀에 이 BattleTag를 사용한 심사 대기 신청이 이미 있습니다.",
+    "zh-TW": "本隊已有使用此 BattleTag 的待審核申請。"
+  },
+  "本人参赛资格": {
+    "en-US": "My eligibility",
+    "ko-KR": "본인 참가 자격",
+    "zh-TW": "本人參賽資格"
+  },
+  "本人参赛资料": {
+    "zh-TW": "本人參賽資料",
+    "en-US": "Your player details",
+    "ko-KR": "본인 참가 정보"
+  },
+  "本人称呼": {
+    "zh-TW": "本人稱呼",
+    "en-US": "Your display name",
+    "ko-KR": "본인 표시 이름"
+  },
+  "本人的入队申请": {
+    "zh-TW": "本人的入隊申請",
+    "en-US": "My team applications",
+    "ko-KR": "본인의 팀 합류 신청"
+  },
+  "本人确认并保存资料": {
+    "en-US": "Confirm and save my details",
+    "ko-KR": "본인 확인 및 정보 저장",
+    "zh-TW": "本人確認並儲存資料"
+  },
+  "本人入队申请": {
+    "zh-TW": "本人入隊申請",
+    "en-US": "My team application",
+    "ko-KR": "본인의 팀 합류 신청"
+  },
+  "本人申请已撤回。": {
+    "zh-TW": "本人申請已撤回。",
+    "en-US": "Your application has been withdrawn.",
+    "ko-KR": "본인의 신청을 철회했습니다."
+  },
+  "本人填写 · 经理审核": {
+    "zh-TW": "本人填寫 · 經理審核",
+    "en-US": "You complete it · Manager reviews it",
+    "ko-KR": "본인 작성 · 매니저 검토"
+  },
+  "本赛事报名入口当前未开放填写，请稍后重试。": {
+    "en-US": "Registration for this event is not currently open. Please try again later.",
+    "ko-KR": "현재 이 대회의 등록이 열려 있지 않습니다. 나중에 다시 시도해 주세요.",
+    "zh-TW": "本賽事報名入口目前未開放填寫，請稍後重試。"
+  },
+  "参赛记录待复核": {
+    "en-US": "Participation record awaiting review",
+    "ko-KR": "참가 기록 재검토 대기",
+    "zh-TW": "參賽紀錄待複核"
+  },
+  "查看本人报名进度 →": {
+    "zh-TW": "查看本人報名進度 →",
+    "en-US": "View my registration progress →",
+    "ko-KR": "본인의 등록 진행 상황 보기 →"
+  },
+  "撤回本人申请": {
+    "zh-TW": "撤回本人申請",
+    "en-US": "Withdraw my application",
+    "ko-KR": "본인의 신청 철회"
+  },
+  "创建队伍、分享共用链接，队员各自填写，经理审核后统一提交报名。": {
+    "zh-TW": "建立隊伍、分享共用連結，隊員各自填寫，經理審核後統一提交報名。",
+    "en-US": "Create your team and share the link. Players complete their own details; the manager reviews them and submits the team registration.",
+    "ko-KR": "팀을 만들고 공용 링크를 공유하세요. 선수들이 각자 작성하면 매니저가 검토 후 팀 등록을 일괄 제출합니다."
+  },
+  "创建账号并验证邮箱": {
+    "zh-TW": "建立帳號並驗證信箱",
+    "en-US": "Create account and verify email",
+    "ko-KR": "계정 생성 및 이메일 인증"
+  },
+  "此账号不能申请参赛。": {
+    "en-US": "This account cannot apply to compete.",
+    "ko-KR": "이 계정으로 참가 신청을 할 수 없습니다.",
+    "zh-TW": "此帳號無法申請參賽。"
+  },
+  "从积分榜，走进四强赛场。": {
+    "en-US": "From the standings to the final four.",
+    "ko-KR": "순위표에서 최종 4강 무대로.",
+    "zh-TW": "從積分榜，走進四強賽場。"
+  },
+  "待补充具体国家、地区": {
+    "en-US": "Country or region details required",
+    "ko-KR": "구체적인 국가 또는 지역 입력 필요",
+    "zh-TW": "待補充具體國家、地區"
+  },
+  "当前段位": {
+    "zh-TW": "目前段位",
+    "en-US": "Current ranks",
+    "ko-KR": "현재 등급"
+  },
+  "当前没有待审核的入队申请。": {
+    "zh-TW": "目前沒有待審核的入隊申請。",
+    "en-US": "No team applications are awaiting review.",
+    "ko-KR": "검토 대기 중인 팀 합류 신청이 없습니다."
+  },
+  "当前赛事没有这份报名。": {
+    "en-US": "This registration does not belong to the current event.",
+    "ko-KR": "이 등록은 현재 대회의 등록이 아닙니다.",
+    "zh-TW": "目前賽事沒有這份報名。"
+  },
+  "地图净胜数": {
+    "en-US": "Map differential",
+    "ko-KR": "맵 득실차",
+    "zh-TW": "地圖淨勝數"
+  },
+  "登录本人账号": {
+    "zh-TW": "登入本人帳號",
+    "en-US": "Sign in to your account",
+    "ko-KR": "본인 계정 로그인"
+  },
+  "等待队员本人补充并重新提交。": {
+    "zh-TW": "等待隊員本人補充並重新提交。",
+    "en-US": "Waiting for the player to correct and resubmit.",
+    "ko-KR": "선수 본인의 정보 보완 및 재제출 대기 중입니다."
+  },
+  "递补顺位": {
+    "en-US": "Replacement order",
+    "ko-KR": "대체 진출 순서",
+    "zh-TW": "遞補順位"
+  },
+  "队内报名": {
+    "zh-TW": "隊內報名",
+    "en-US": "Join the team registration",
+    "ko-KR": "팀 참가 신청"
+  },
+  "队内共用报名链接": {
+    "zh-TW": "隊內共用報名連結",
+    "en-US": "Team registration link",
+    "ko-KR": "팀 공용 등록 링크"
+  },
+  "队伍报名不存在。": {
+    "en-US": "Team registration not found.",
+    "ko-KR": "팀 등록을 찾을 수 없습니다.",
+    "zh-TW": "隊伍報名不存在。"
+  },
+  "队伍管理": {
+    "en-US": "Team management",
+    "ko-KR": "팀 관리",
+    "zh-TW": "隊伍管理"
+  },
+  "队伍仍需统一提交赛事资格审核。你可以在报名工作区查看进度或修改本人资料。": {
+    "zh-TW": "隊伍仍需統一提交賽事資格審核。你可以在報名工作區查看進度或修改本人資料。",
+    "en-US": "The team must still submit its registration for eligibility review. Track progress or edit your details in the registration workspace.",
+    "ko-KR": "팀은 등록을 일괄 제출하여 참가 자격 심사를 받아야 합니다. 등록 페이지에서 진행 상황을 확인하거나 본인 정보를 수정할 수 있습니다."
+  },
+  "发到队伍群，让队员各自填写；审核通过后进入报名名单。": {
+    "zh-TW": "傳到隊伍群組，讓隊員各自填寫；審核通過後加入報名名單。",
+    "en-US": "Share it with your team. Each player completes their own details and joins the roster after your approval.",
+    "ko-KR": "팀에 공유하면 선수들이 각자 작성할 수 있습니다. 승인 후 등록 명단에 추가됩니다."
+  },
+  "非活跃，重新审核后恢复": {
+    "en-US": "Inactive; restored after a new review",
+    "ko-KR": "비활성, 재심사 후 복구",
+    "zh-TW": "非活躍，重新審核後恢復"
+  },
+  "符合晋级门槛": {
+    "en-US": "Meets qualification requirements",
+    "ko-KR": "진출 조건 충족",
+    "zh-TW": "符合晉級門檻"
+  },
+  "负责人已关闭这个报名链接。": {
+    "en-US": "The manager has closed this registration link.",
+    "ko-KR": "관리자가 이 등록 링크를 닫았습니다.",
+    "zh-TW": "負責人已關閉這個報名連結。"
+  },
+  "复制共用链接": {
+    "zh-TW": "複製共用連結",
+    "en-US": "Copy shared link",
+    "ko-KR": "공용 링크 복사"
+  },
+  "复制失败，请手动复制下方链接。": {
+    "zh-TW": "複製失敗，請手動複製下方連結。",
+    "en-US": "Copy failed. Copy the link below manually.",
+    "ko-KR": "복사하지 못했습니다. 아래 링크를 직접 복사해 주세요."
+  },
+  "该邮箱已有账号，请使用原账号登录；忘记密码可先找回。": {
+    "en-US": "An account already uses this email. Sign in to that account, or reset your password if needed.",
+    "ko-KR": "이 이메일로 가입된 계정이 있습니다. 기존 계정으로 로그인하거나 비밀번호를 재설정해 주세요.",
+    "zh-TW": "此電子郵件已有帳號，請使用原帳號登入；忘記密碼可先找回。"
+  },
+  "更新资料并提交经理审核": {
+    "zh-TW": "更新資料並提交經理審核",
+    "en-US": "Update and submit for manager review",
+    "ko-KR": "정보 수정 및 매니저 검토 요청"
+  },
+  "共用报名链接": {
+    "zh-TW": "共用報名連結",
+    "en-US": "Shared registration link",
+    "ko-KR": "공용 등록 링크"
+  },
+  "共用报名链接已复制，可以发到队伍群。": {
+    "zh-TW": "共用報名連結已複製，可以傳到隊伍群組。",
+    "en-US": "Shared registration link copied. Send it to your team.",
+    "ko-KR": "공용 등록 링크를 복사했습니다. 팀에 공유해 주세요."
+  },
+  "共用报名链接已准备好，可以发到队伍群。": {
+    "zh-TW": "共用報名連結已準備好，可以傳到隊伍群組。",
+    "en-US": "The shared registration link is ready to send to your team.",
+    "ko-KR": "팀에 공유할 공용 등록 링크가 준비되었습니다."
+  },
+  "关闭链接": {
+    "zh-TW": "關閉連結",
+    "en-US": "Close link",
+    "ko-KR": "링크 닫기"
+  },
+  "国籍／地区": {
+    "zh-TW": "國籍／地區",
+    "en-US": "Nationality / region",
+    "ko-KR": "국적 / 지역"
+  },
+  "国籍或国家、地区": {
+    "en-US": "Nationality or country/region",
+    "ko-KR": "국적 또는 국가·지역",
+    "zh-TW": "國籍或國家、地區"
+  },
+  "仅海选／公开预选": {
+    "zh-TW": "僅海選／公開預選",
+    "en-US": "Open qualifiers only",
+    "ko-KR": "공개 예선만 참가"
+  },
+  "仅海选／公开预选，未进入正赛名单": {
+    "en-US": "Open qualifiers only; not on a main-event roster",
+    "ko-KR": "공개 예선만 참가, 본선 명단에 포함되지 않음",
+    "zh-TW": "僅海選／公開預選，未進入正賽名單"
+  },
+  "进入报名工作区 →": {
+    "zh-TW": "進入報名工作區 →",
+    "en-US": "Open registration workspace →",
+    "ko-KR": "등록 페이지 열기 →"
+  },
+  "进入过任一赛区正赛大名单": {
+    "en-US": "Listed on a main-event roster in any region",
+    "ko-KR": "어느 지역이든 본선 명단에 포함된 적 있음",
+    "zh-TW": "曾進入任一賽區正賽大名單"
+  },
+  "进入正赛名单": {
+    "zh-TW": "進入正賽名單",
+    "en-US": "Named on a main-event roster",
+    "ko-KR": "본선 명단에 포함됨"
+  },
+  "经理审核入队": {
+    "zh-TW": "經理審核入隊",
+    "en-US": "Manager approves your entry",
+    "ko-KR": "매니저의 팀 합류 승인"
+  },
+  "经理审核意见：": {
+    "zh-TW": "經理審核意見：",
+    "en-US": "Manager feedback: ",
+    "ko-KR": "매니저 검토 의견: "
+  },
+  "经理通过后进入名单，整队仍需赛事资格审核。": {
+    "zh-TW": "經理通過後加入名單，整隊仍需賽事資格審核。",
+    "en-US": "Manager approval adds you to the roster. The team still needs event eligibility review.",
+    "ko-KR": "매니저 승인 후 명단에 추가됩니다. 팀의 대회 참가 자격 심사는 별도로 필요합니다."
+  },
+  "净胜图": {
+    "en-US": "Map differential",
+    "ko-KR": "맵 득실차",
+    "zh-TW": "淨勝圖"
+  },
+  "拒绝申请": {
+    "zh-TW": "拒絕申請",
+    "en-US": "Decline application",
+    "ko-KR": "신청 거절"
+  },
+  "例如：大师 3；未定级请填未定级": {
+    "en-US": "Example: Master 3; enter Unranked if not placed",
+    "ko-KR": "예: 마스터 3. 배치 전이면 미배치로 입력",
+    "zh-TW": "例如：大師 3；未定級請填未定級"
+  },
+  "例如：请核对战网 ID，或补充段位信息": {
+    "zh-TW": "例如：請核對戰網 ID，或補充段位資訊",
+    "en-US": "For example: check your BattleTag or provide current ranks",
+    "ko-KR": "예: 배틀태그를 확인하거나 등급 정보를 추가해 주세요"
+  },
+  "例如：中国、新加坡、日本": {
+    "en-US": "Example: China, Singapore, Japan",
+    "ko-KR": "예: 중국, 싱가포르, 일본",
+    "zh-TW": "例如：中國、新加坡、日本"
+  },
+  "没有参加": {
+    "zh-TW": "沒有參加",
+    "en-US": "Did not participate",
+    "ko-KR": "참가하지 않음"
+  },
+  "名次与积分沿用公布榜单，按积分、系列赛胜场、地图净胜数排序；完全同分保留并列。": {
+    "en-US": "Ranks and points follow the published standings, ordered by points, series wins, then map differential. Exact ties remain tied.",
+    "ko-KR": "순위와 점수는 공개 순위표를 따르며 점수, 시리즈 승수, 맵 득실차 순으로 정렬합니다. 완전 동률은 공동 순위로 유지합니다.",
+    "zh-TW": "名次與積分沿用公布榜單，依積分、系列賽勝場、地圖淨勝數排序；完全同分保留並列。"
+  },
+  "名单或申请被同时处理，请刷新后核对结果再操作。": {
+    "en-US": "The roster or application was processed at the same time. Refresh and check the result before continuing.",
+    "ko-KR": "명단 또는 신청이 동시에 처리되었습니다. 새로고침 후 결과를 확인하고 계속해 주세요.",
+    "zh-TW": "名單或申請被同時處理，請重新整理後核對結果再操作。"
+  },
+  "名单已变化，请刷新后再操作。": {
+    "en-US": "The roster has changed. Refresh before continuing.",
+    "ko-KR": "명단이 변경되었습니다. 새로고침 후 계속해 주세요.",
+    "zh-TW": "名單已變更，請重新整理後再操作。"
+  },
+  "你已有本赛事其他队伍的待处理申请，请先撤回再申请本队。": {
+    "en-US": "You have a pending application for another team in this event. Withdraw it before applying to this team.",
+    "ko-KR": "이 대회의 다른 팀에 처리 대기 중인 신청이 있습니다. 먼저 철회한 후 이 팀에 신청해 주세요.",
+    "zh-TW": "你已有本賽事其他隊伍的待處理申請，請先撤回再申請本隊。"
+  },
+  "你已在本赛事其他队伍的有效名单中，请先处理原队关系。": {
+    "en-US": "You are on another team’s active roster in this event. Resolve that membership first.",
+    "ko-KR": "이 대회의 다른 팀 유효 명단에 이미 포함되어 있습니다. 기존 팀 소속을 먼저 정리해 주세요.",
+    "zh-TW": "你已在本賽事其他隊伍的有效名單中，請先處理原隊關係。"
+  },
+  "你已在这份报名名单中，请从报名工作区查看或修改本人资料。": {
+    "en-US": "You are already on this registration roster. View or update your details in the registration workspace.",
+    "ko-KR": "이미 이 등록 명단에 포함되어 있습니다. 등록 작업 공간에서 본인 정보를 확인하거나 수정해 주세요.",
+    "zh-TW": "你已在這份報名名單中，請從報名工作區查看或修改本人資料。"
+  },
+  "请检查必填信息、本人确认和格式。": {
+    "en-US": "Check the required fields, personal confirmation, and formatting.",
+    "ko-KR": "필수 정보, 본인 확인 및 입력 형식을 확인해 주세요.",
+    "zh-TW": "請檢查必填資訊、本人確認和格式。"
+  },
+  "请联系队伍负责人。": {
+    "en-US": "Contact the team manager.",
+    "ko-KR": "팀 관리자에게 문의해 주세요.",
+    "zh-TW": "請聯絡隊伍負責人。"
+  },
+  "请输入完整 BattleTag，包括 # 后的数字。": {
+    "en-US": "Enter your full BattleTag, including the numbers after #.",
+    "ko-KR": "# 뒤의 숫자를 포함한 전체 BattleTag를 입력해 주세요.",
+    "zh-TW": "請輸入完整 BattleTag，包括 # 後的數字。"
+  },
+  "请说明需要队员补充或修改的内容。": {
+    "en-US": "Explain what the player needs to add or change.",
+    "ko-KR": "선수가 보완하거나 수정할 내용을 설명해 주세요.",
+    "zh-TW": "請說明需要隊員補充或修改的內容。"
+  },
+  "请先处理所有待审核或待补充的申请，再统一提交队伍报名。": {
+    "zh-TW": "請先處理所有待審核或待補充的申請，再統一提交隊伍報名。",
+    "en-US": "Resolve all pending or returned applications before submitting the team registration.",
+    "ko-KR": "팀 등록을 제출하기 전에 검토 대기 또는 보완 요청 중인 모든 신청을 처리해 주세요."
+  },
+  "请先登录本人账号。": {
+    "en-US": "Sign in to your own account first.",
+    "ko-KR": "먼저 본인의 계정으로 로그인해 주세요.",
+    "zh-TW": "請先登入本人帳號。"
+  },
+  "请先验证本人邮箱，再提交入队申请。": {
+    "en-US": "Verify your email before submitting a join request.",
+    "ko-KR": "이메일을 인증한 후 팀 가입 신청을 제출해 주세요.",
+    "zh-TW": "請先驗證本人電子郵件，再提交入隊申請。"
+  },
+  "请由本人确认参赛资料并同意加入本队。": {
+    "en-US": "Confirm your own player details and agree to join this team.",
+    "ko-KR": "본인이 직접 참가 정보를 확인하고 팀 가입에 동의해 주세요.",
+    "zh-TW": "請由本人確認參賽資料並同意加入本隊。"
+  },
+  "入队申请{0}": {
+    "en-US": "Join request {0}",
+    "ko-KR": "팀 가입 신청 {0}",
+    "zh-TW": "入隊申請{0}"
+  },
+  "入队申请审核": {
+    "zh-TW": "入隊申請審核",
+    "en-US": "Team application review",
+    "ko-KR": "팀 합류 신청 검토"
+  },
+  "入队申请已撤回": {
+    "en-US": "Join request withdrawn",
+    "ko-KR": "팀 가입 신청 철회됨",
+    "zh-TW": "入隊申請已撤回"
+  },
+  "上次审核意见：": {
+    "zh-TW": "上次審核意見：",
+    "en-US": "Previous feedback: ",
+    "ko-KR": "이전 검토 의견: "
+  },
+  "设置密码（至少 12 位）": {
+    "zh-TW": "設定密碼（至少 12 碼）",
+    "en-US": "Set a password (at least 12 characters)",
+    "ko-KR": "비밀번호 설정 (12자 이상)"
+  },
+  "申请不存在，请刷新后重试。": {
+    "en-US": "Application not found. Refresh and try again.",
+    "ko-KR": "신청을 찾을 수 없습니다. 새로고침 후 다시 시도해 주세요.",
+    "zh-TW": "申請不存在，請重新整理後重試。"
+  },
+  "申请人账号当前不能参加报名。": {
+    "en-US": "The applicant’s account cannot currently register.",
+    "ko-KR": "현재 신청자의 계정으로 등록할 수 없습니다.",
+    "zh-TW": "申請人帳號目前無法參加報名。"
+  },
+  "申请已被处理或更新，请刷新后核对。": {
+    "en-US": "The application has been processed or updated. Refresh to check it.",
+    "ko-KR": "신청이 처리되었거나 수정되었습니다. 새로고침 후 확인해 주세요.",
+    "zh-TW": "申請已被處理或更新，請重新整理後核對。"
+  },
+  "申请已变化，请刷新后核对。": {
+    "en-US": "The application has changed. Refresh to check it.",
+    "ko-KR": "신청이 변경되었습니다. 새로고침 후 확인해 주세요.",
+    "zh-TW": "申請已變更，請重新整理後核對。"
+  },
+  "申请已变化；已入队时请使用撤回本人确认。": {
+    "en-US": "The application has changed. If you have joined the team, use Withdraw my confirmation.",
+    "ko-KR": "신청이 변경되었습니다. 이미 팀에 가입했다면 본인 확인 철회를 사용해 주세요.",
+    "zh-TW": "申請已變更；已入隊時請使用撤回本人確認。"
+  },
+  "申请已撤回": {
+    "zh-TW": "申請已撤回",
+    "en-US": "Application withdrawn",
+    "ko-KR": "신청 철회됨"
+  },
+  "申请已提交，等待经理审核。通过后进入报名名单，整队仍需赛事资格审核。": {
+    "zh-TW": "申請已提交，等待經理審核。通過後加入報名名單，整隊仍需賽事資格審核。",
+    "en-US": "Application submitted for manager review. Approval adds you to the roster; the team still needs event eligibility review.",
+    "ko-KR": "매니저 검토를 위해 신청을 제출했습니다. 승인 후 명단에 추가되며, 팀의 대회 참가 자격 심사는 별도로 필요합니다."
+  },
+  "申请只会发送给这支队伍的负责人。": {
+    "zh-TW": "申請只會傳送給這支隊伍的負責人。",
+    "en-US": "Your application is shared only with this team’s leader.",
+    "ko-KR": "신청서는 이 팀의 담당자에게만 전달됩니다."
+  },
+  "审核结果已发送给本人。": {
+    "zh-TW": "審核結果已傳送給本人。",
+    "en-US": "Review feedback sent to the applicant.",
+    "ko-KR": "검토 결과를 신청자에게 전달했습니다."
+  },
+  "审核通过并加入名单": {
+    "zh-TW": "審核通過並加入名單",
+    "en-US": "Approve and add to roster",
+    "ko-KR": "승인 및 명단에 추가"
+  },
+  "审核意见（退回补充时必填）": {
+    "zh-TW": "審核意見（退回補充時必填）",
+    "en-US": "Feedback (required when returning)",
+    "ko-KR": "검토 의견 (보완 요청 시 필수)"
+  },
+  "生成队内共用链接": {
+    "zh-TW": "產生隊內共用連結",
+    "en-US": "Generate team link",
+    "ko-KR": "팀 공용 링크 생성"
+  },
+  "使用本人账号填写": {
+    "zh-TW": "使用本人帳號填寫",
+    "en-US": "Use your own account",
+    "ko-KR": "본인 계정으로 작성"
+  },
+  "收起注册": {
+    "zh-TW": "收起註冊",
+    "en-US": "Hide account creation",
+    "ko-KR": "계정 생성 접기"
+  },
+  "首次参加，创建账号": {
+    "zh-TW": "首次參加，建立帳號",
+    "en-US": "First time? Create an account",
+    "ko-KR": "첫 참가, 계정 만들기"
+  },
+  "首图异常平局须交赛事组裁定；无效图／重赛请使用裁定面板。": {
+    "en-US": "An unexpected draw on the first map requires an event ruling. Use the ruling panel for invalid maps or replays.",
+    "ko-KR": "첫 맵의 비정상 무승부는 대회 운영진의 판정이 필요합니다. 무효 맵 또는 재경기는 판정 패널을 사용해 주세요.",
+    "zh-TW": "首圖異常平局須交賽事組裁定；無效圖／重賽請使用裁定面板。"
+  },
+  "刷新审核状态": {
+    "zh-TW": "重新整理審核狀態",
+    "en-US": "Refresh review status",
+    "ko-KR": "검토 상태 새로고침"
+  },
+  "刷新页面后仍可复制同一个链接。": {
+    "zh-TW": "重新整理頁面後仍可複製同一個連結。",
+    "en-US": "The same link remains available after refreshing.",
+    "ko-KR": "페이지를 새로고침해도 같은 링크를 복사할 수 있습니다."
+  },
+  "四强单败": {
+    "en-US": "Four-team single elimination",
+    "ko-KR": "4강 싱글 엘리미네이션",
+    "zh-TW": "四強單敗"
+  },
+  "提交经理审核": {
+    "zh-TW": "提交經理審核",
+    "en-US": "Submit for manager review",
+    "ko-KR": "매니저 검토 요청"
+  },
+  "填写参赛资料": {
+    "zh-TW": "填寫參賽資料",
+    "en-US": "Complete your player details",
+    "ko-KR": "참가 정보 작성"
+  },
+  "退回补充": {
+    "zh-TW": "退回補充",
+    "en-US": "Return for corrections",
+    "ko-KR": "보완 요청"
+  },
+  "未满足参赛门槛": {
+    "en-US": "Participation requirements not met",
+    "ko-KR": "참가 조건 미충족",
+    "zh-TW": "未滿足參賽門檻"
+  },
+  "我使用本人邮箱注册，并由本人填写参赛资料。": {
+    "zh-TW": "我使用本人信箱註冊，並由本人填寫參賽資料。",
+    "en-US": "I am registering with my own email and completing my own player details.",
+    "ko-KR": "본인의 이메일로 가입하고 본인의 참가 정보를 직접 작성합니다."
+  },
+  "我已阅读规则，以上资料真实，且使用本人战网账号参赛。": {
+    "en-US": "I have read the rules, my details are accurate, and I will compete using my own Battle.net account.",
+    "ko-KR": "규정을 읽었으며 위 정보는 사실이고, 본인의 Battle.net 계정으로 참가합니다.",
+    "zh-TW": "我已閱讀規則，以上資料真實，且使用本人 Battle.net 帳號參賽。"
+  },
+  "先验证本人邮箱": {
+    "zh-TW": "先驗證本人信箱",
+    "en-US": "Verify your email first",
+    "ko-KR": "본인 이메일을 먼저 인증해 주세요"
+  },
+  "新的入队申请": {
+    "en-US": "New join request",
+    "ko-KR": "새 팀 가입 신청",
+    "zh-TW": "新的入隊申請"
+  },
+  "修改本人的报名与资格资料": {
+    "en-US": "Edit my registration and eligibility details",
+    "ko-KR": "본인 등록 및 참가 자격 정보 수정",
+    "zh-TW": "修改本人的報名與資格資料"
+  },
+  "修改已提交的本人资料": {
+    "zh-TW": "修改已提交的本人資料",
+    "en-US": "Edit my submitted details",
+    "ko-KR": "제출한 본인 정보 수정"
+  },
+  "须公开抽签定种子": {
+    "en-US": "Public draw required for seeding",
+    "ko-KR": "시드 결정을 위한 공개 추첨 필요",
+    "zh-TW": "須公開抽籤決定種子"
+  },
+  "须进行 FT2 资格赛": {
+    "en-US": "FT2 qualification match required",
+    "ko-KR": "FT2 진출 결정전 필요",
+    "zh-TW": "須進行 FT2 資格賽"
+  },
+  "需补充": {
+    "en-US": "Needs additional information",
+    "ko-KR": "정보 보완 필요",
+    "zh-TW": "需補充"
+  },
+  "需要补充资料": {
+    "zh-TW": "需要補充資料",
+    "en-US": "More information needed",
+    "ko-KR": "추가 정보 필요"
+  },
+  "需要修改时，请重新打开队伍群内的共用链接。": {
+    "zh-TW": "需要修改時，請重新開啟隊伍群組內的共用連結。",
+    "en-US": "To make changes, reopen the shared link from your team.",
+    "ko-KR": "수정하려면 팀에 공유된 공용 링크를 다시 열어 주세요."
+  },
+  "验证后才能提交入队申请；你的普通账号不会因此获得队伍管理权限。": {
+    "zh-TW": "驗證後才能提交入隊申請；你的普通帳號不會因此取得隊伍管理權限。",
+    "en-US": "Verify your email before applying. Your ordinary account does not receive team management permissions.",
+    "ko-KR": "이메일 인증 후 신청할 수 있습니다. 일반 계정에 팀 관리 권한이 부여되지는 않습니다."
+  },
+  "验证邮件未发送成功，请稍后重试。": {
+    "zh-TW": "驗證郵件未成功寄出，請稍後重試。",
+    "en-US": "The verification email could not be sent. Try again later.",
+    "ko-KR": "인증 메일을 보내지 못했습니다. 나중에 다시 시도해 주세요."
+  },
+  "验证邮件已发送；完成验证后回到这里继续填写。": {
+    "zh-TW": "驗證郵件已寄出；完成驗證後回到這裡繼續填寫。",
+    "en-US": "Verification email sent. Return here after verifying your email.",
+    "ko-KR": "인증 메일을 보냈습니다. 이메일 인증 후 돌아와서 작성해 주세요."
+  },
+  "已处理申请": {
+    "zh-TW": "已處理申請",
+    "en-US": "Reviewed applications",
+    "ko-KR": "처리된 신청"
+  },
+  "已公布季后赛种子 {0}": {
+    "en-US": "Published playoff seed {0}",
+    "ko-KR": "공개된 플레이오프 시드 {0}",
+    "zh-TW": "已公布季後賽種子 {0}"
+  },
+  "已进入报名名单": {
+    "zh-TW": "已加入報名名單",
+    "en-US": "Added to the registration roster",
+    "ko-KR": "등록 명단에 추가됨"
+  },
+  "已进入报名名单，整队仍需赛事负责人审核。": {
+    "en-US": "You are on the registration roster. The full team still requires review by the event manager.",
+    "ko-KR": "등록 명단에 포함되었습니다. 팀 전체는 대회 관리자의 심사를 받아야 합니다.",
+    "zh-TW": "已進入報名名單，整隊仍需賽事負責人審核。"
+  },
+  "已视为离队，重新审核后恢复": {
+    "en-US": "Treated as having left the team; restored after a new review",
+    "ko-KR": "팀 이탈로 처리됨, 재심사 후 복구",
+    "zh-TW": "已視為離隊，重新審核後恢復"
+  },
+  "已通过申请，队员进入报名名单。": {
+    "zh-TW": "已通過申請，隊員加入報名名單。",
+    "en-US": "Application approved. The player has joined the registration roster.",
+    "ko-KR": "신청을 승인했습니다. 선수가 등록 명단에 추가되었습니다."
+  },
+  "已验证，刷新状态": {
+    "zh-TW": "已驗證，重新整理狀態",
+    "en-US": "Verified — refresh status",
+    "ko-KR": "인증 완료, 상태 새로고침"
+  },
+  "已有账号，登录": {
+    "zh-TW": "已有帳號，登入",
+    "en-US": "Sign in to an existing account",
+    "ko-KR": "기존 계정 로그인"
+  },
+  "已有账号直接登录，参赛资料会自动带入。首次参加可在这里创建账号。": {
+    "zh-TW": "已有帳號直接登入，參賽資料會自動帶入。首次參加可在這裡建立帳號。",
+    "en-US": "Sign in to reuse your existing player details. First-time participants can create an account here.",
+    "ko-KR": "기존 계정으로 로그인하면 참가 정보를 불러옵니다. 처음 참가하는 경우 여기서 계정을 만들 수 있습니다."
+  },
+  "以上资料属于本人，我同意加入该队伍的本赛季报名，并提交经理审核。": {
+    "zh-TW": "以上資料屬於本人，我同意加入該隊伍的本賽季報名，並提交經理審核。",
+    "en-US": "These are my own details. I agree to join this team’s season registration and submit my application for manager review.",
+    "ko-KR": "위 정보는 본인의 정보입니다. 이 팀의 시즌 등록에 합류하고 매니저 검토를 위해 신청서를 제출하는 데 동의합니다."
+  },
+  "用于赛事资格核验与对阵分档，仅本人、队伍负责人和有权限的赛管可查看。周赛不设段位门槛。": {
+    "en-US": "Used to verify eligibility and group opponents. Visible only to you, your team manager, and authorized event staff. Weekly events have no rank requirement.",
+    "ko-KR": "참가 자격 확인과 대진 분류에 사용됩니다. 본인, 팀 관리자, 권한이 있는 대회 운영진만 볼 수 있습니다. 주간 대회에는 등급 제한이 없습니다.",
+    "zh-TW": "用於賽事資格核驗與對陣分檔，僅本人、隊伍負責人和有權限的賽管可查看。週賽不設牌位門檻。"
+  },
+  "有效参赛 / 实际比赛": {
+    "en-US": "Valid participations / matches played",
+    "ko-KR": "유효 참가 / 실제 경기",
+    "zh-TW": "有效參賽 / 實際比賽"
+  },
+  "有效平局裁定依据": {
+    "en-US": "Basis for the valid-draw ruling",
+    "ko-KR": "유효 무승부 판정 근거",
+    "zh-TW": "有效平局裁定依據"
+  },
+  "有效期至": {
+    "zh-TW": "有效期限至",
+    "en-US": "Valid until",
+    "ko-KR": "유효 기간"
+  },
+  "账号、申请或战网 ID 重复，请刷新后核对。": {
+    "en-US": "Duplicate account, application, or Battle.net ID. Refresh and check the details.",
+    "ko-KR": "계정, 신청 또는 Battle.net ID가 중복됩니다. 새로고침 후 확인해 주세요.",
+    "zh-TW": "帳號、申請或 Battle.net ID 重複，請重新整理後核對。"
+  },
+  "账号安全状态已变化，请重新登录。": {
+    "en-US": "Your account security status has changed. Sign in again.",
+    "ko-KR": "계정 보안 상태가 변경되었습니다. 다시 로그인해 주세요.",
+    "zh-TW": "帳號安全狀態已變更，請重新登入。"
+  },
+  "账号创建响应异常，请尝试登录刚刚注册的账号。": {
+    "zh-TW": "帳號建立回應異常，請嘗試登入剛剛註冊的帳號。",
+    "en-US": "The account creation response was incomplete. Try signing in to the account you just created.",
+    "ko-KR": "계정 생성 응답이 불완전합니다. 방금 만든 계정으로 로그인해 주세요."
+  },
+  "这个战网 ID 已绑定其他账号，请使用本人原账号或联系赛事负责人核对。": {
+    "en-US": "This Battle.net ID is linked to another account. Use your original account or contact the event manager.",
+    "ko-KR": "이 Battle.net ID는 다른 계정에 연결되어 있습니다. 본인의 기존 계정을 사용하거나 대회 관리자에게 문의해 주세요.",
+    "zh-TW": "這個 Battle.net ID 已綁定其他帳號，請使用本人原帳號或聯絡賽事負責人核對。"
+  },
+  "整队资格审核": {
+    "zh-TW": "整隊資格審核",
+    "en-US": "Event reviews team eligibility",
+    "ko-KR": "팀 참가 자격 심사"
+  },
+  "正在创建…": {
+    "zh-TW": "正在建立…",
+    "en-US": "Creating…",
+    "ko-KR": "생성 중…"
+  },
+  "正在读取本人申请资料…": {
+    "zh-TW": "正在讀取本人申請資料…",
+    "en-US": "Loading your application…",
+    "ko-KR": "본인의 신청 정보 불러오는 중…"
+  },
+  "正在读取申请…": {
+    "zh-TW": "正在讀取申請…",
+    "en-US": "Loading applications…",
+    "ko-KR": "신청 불러오는 중…"
+  },
+  "正在核对报名链接…": {
+    "zh-TW": "正在核對報名連結…",
+    "en-US": "Checking the registration link…",
+    "ko-KR": "등록 링크 확인 중…"
+  },
+  "只能撤回本人在当前赛事的申请。": {
+    "en-US": "You can only withdraw your own application for the current event.",
+    "ko-KR": "현재 대회에 제출한 본인의 신청만 철회할 수 있습니다.",
+    "zh-TW": "只能撤回本人在目前賽事的申請。"
+  },
+  "只有本队负责人可以管理共用链接和入队申请。": {
+    "en-US": "Only this team’s manager can manage the shared link and join requests.",
+    "ko-KR": "해당 팀 관리자만 공유 링크와 팀 가입 신청을 관리할 수 있습니다.",
+    "zh-TW": "只有本隊負責人可以管理共用連結和入隊申請。"
+  },
+  "至少保留最近一次审核通过报名名单中的 {0} 人。": {
+    "en-US": "Retain at least {0} players from the most recently approved registration roster.",
+    "ko-KR": "최근 승인된 등록 명단에서 최소 {0}명을 유지해야 합니다.",
+    "zh-TW": "至少保留最近一次審核通過報名名單中的 {0} 人。"
+  },
+  "至少需要保留最近一次审核通过报名名单中的 {0} 人，当前保留 {1} 人。": {
+    "en-US": "At least {0} players from the most recently approved registration roster must remain; {1} currently remain.",
+    "ko-KR": "최근 승인된 등록 명단에서 최소 {0}명을 유지해야 하며, 현재 {1}명이 남아 있습니다.",
+    "zh-TW": "至少需要保留最近一次審核通過報名名單中的 {0} 人，目前保留 {1} 人。"
+  },
+  "中国（含港澳台）": {
+    "zh-TW": "中國（含港澳台）",
+    "en-US": "China (including Hong Kong, Macau and Taiwan)",
+    "ko-KR": "중국 (홍콩, 마카오, 대만 포함)"
+  },
+  "重新核对链接": {
+    "zh-TW": "重新核對連結",
+    "en-US": "Check the link again",
+    "ko-KR": "링크 다시 확인"
+  },
+  "重新开放共用链接": {
+    "zh-TW": "重新開放共用連結",
+    "en-US": "Reopen shared link",
+    "ko-KR": "공용 링크 다시 열기"
+  },
+  "重新生成报名链接": {
+    "zh-TW": "重新產生報名連結",
+    "en-US": "Generate a new registration link",
+    "ko-KR": "등록 링크 새로 생성"
+  },
+  "重新生成后，群内的旧链接将失效。已有申请会保留，是否继续？": {
+    "zh-TW": "重新產生後，群組內的舊連結將失效。已有申請會保留，是否繼續？",
+    "en-US": "Generating a new link invalidates the old link. Existing applications are kept. Continue?",
+    "ko-KR": "새 링크를 만들면 이전 링크는 사용할 수 없지만 기존 신청은 유지됩니다. 계속하시겠습니까?"
+  },
+  "周期季后赛采用四强单败，半决赛 1 对 4、2 对 3。须有效参赛至少两次、实赛至少一次；完全同分涉及入围时进行 FT2 资格赛。": {
+    "en-US": "Cycle playoffs use four-team single elimination, with semifinals of 1 vs 4 and 2 vs 3. At least two valid participations and one match played are required. Exact ties affecting qualification require an FT2 qualification match.",
+    "ko-KR": "주기별 플레이오프는 4강 싱글 엘리미네이션으로, 준결승은 1위 대 4위, 2위 대 3위입니다. 유효 참가 2회 이상과 실제 경기 1회 이상이 필요합니다. 진출 여부에 영향을 주는 완전 동률은 FT2 진출 결정전을 치릅니다.",
+    "zh-TW": "週期季後賽採用四強單敗，準決賽 1 對 4、2 對 3。須有效參賽至少兩次、實賽至少一次；完全同分涉及入圍時進行 FT2 資格賽。"
+  },
+  "注册本人账号": {
+    "zh-TW": "註冊本人帳號",
+    "en-US": "Create my account",
+    "ko-KR": "본인 계정 만들기"
+  },
+  "OWCS 2026 参赛经历": {
+    "en-US": "OWCS 2026 participation",
+    "ko-KR": "OWCS 2026 참가 이력",
+    "zh-TW": "OWCS 2026 參賽經歷"
+  },
+  "{0} · 第 {1} 轮": {
+    "en-US": "{0} · Round {1}",
+    "ko-KR": "{0} · {1}라운드",
+    "zh-TW": "{0} · 第 {1} 輪"
+  },
+  "{0} · 决赛": {
+    "en-US": "{0} · Final",
+    "ko-KR": "{0} · 결승",
+    "zh-TW": "{0} · 決賽"
+  },
+  "{0} · 决赛 · {1}": {
+    "en-US": "{0} · Final · {1}",
+    "ko-KR": "{0} · 결승 · {1}",
+    "zh-TW": "{0} · 決賽 · {1}"
+  },
+  "{0} · 资格赛第 {1} 轮 · {2}": {
+    "en-US": "{0} · Qualification round {1} · {2}",
+    "ko-KR": "{0} · 진출 결정전 {1}라운드 · {2}",
+    "zh-TW": "{0} · 資格賽第 {1} 輪 · {2}"
+  },
+  "{0} 月度周期": {
+    "en-US": "{0} monthly cycle",
+    "ko-KR": "{0} 월간 주기",
+    "zh-TW": "{0} 月度週期"
+  },
+  "{0}：请本人阅读并重新确认当前 V3.0 规则；旧声明保留为历史记录。": {
+    "en-US": "{0}: Please read and personally confirm the current V3.0 rules again. Your earlier declaration is retained as a historical record.",
+    "ko-KR": "{0}: 현재 V3.0 규정을 읽고 본인이 다시 확인해 주세요. 이전 확인은 이력으로 보존됩니다.",
+    "zh-TW": "{0}：請本人閱讀並重新確認目前 V3.0 規則；舊聲明保留為歷史紀錄。"
+  },
+  "2026 薯条杯周赛规则书 v3.0（正式版）": {
+    "en-US": "2026 Fries Cup Weekly Rulebook v3.0 (official)",
+    "ko-KR": "2026 Fries Cup 주간 대회 규정집 v3.0 (공식)",
+    "zh-TW": "2026 薯條盃週賽規則書 v3.0（正式版）"
+  },
+  "半决赛（PLAYOFFS）": {
+    "en-US": "Semifinals (PLAYOFFS)",
+    "ko-KR": "준결승 (PLAYOFFS)",
+    "zh-TW": "準決賽（PLAYOFFS）"
+  },
+  "半决赛须决出胜者、完成赛果审核，且没有阻止晋级的待决申诉。": {
+    "en-US": "Semifinals must have winners and reviewed results, with no unresolved appeals blocking advancement.",
+    "ko-KR": "준결승 승자가 결정되고 결과 심사가 완료되어야 하며, 진출을 막는 미해결 이의 신청이 없어야 합니다.",
+    "zh-TW": "準決賽須決出勝者、完成賽果審核，且沒有阻止晉級的待決申訴。"
+  },
+  "半决赛须为种子 1 对 4、2 对 3；不足四队按已公布种子生成必要轮空，决赛由半决赛胜方进入。": {
+    "en-US": "Semifinals must pair seeds 1 vs 4 and 2 vs 3. With fewer than four teams, necessary byes follow the published seeds. Semifinal winners advance to the final.",
+    "ko-KR": "준결승은 시드 1 대 4, 2 대 3으로 진행합니다. 4팀 미만이면 공개된 시드에 따라 필요한 부전승을 배정합니다. 준결승 승자가 결승에 진출합니다.",
+    "zh-TW": "準決賽須為種子 1 對 4、2 對 3；不足四隊依已公布種子產生必要輪空，決賽由準決賽勝方進入。"
+  },
+  "本比赛周周日属于 {0}，须归入该自然月独立周期。": {
+    "en-US": "This match week’s Sunday falls in {0}; the week must belong to that calendar month’s separate cycle.",
+    "ko-KR": "이 경기 주의 일요일은 {0}에 속하므로 해당 달의 독립된 주기에 포함되어야 합니다.",
+    "zh-TW": "本比賽週週日屬於 {0}，須歸入該自然月獨立週期。"
+  },
+  "本队本周已有生效的违约记录。": {
+    "en-US": "This team already has an active violation record for this week.",
+    "ko-KR": "이 팀에는 이번 주에 유효한 규정 위반 기록이 이미 있습니다.",
+    "zh-TW": "本隊本週已有生效的違約紀錄。"
+  },
+  "本队因正式违约弃权裁定暂停后续 {0} 个实际举办的常规比赛周。": {
+    "en-US": "Following a formal ruling of a forfeit in breach of the rules, this team is suspended for the next {0} regular match weeks actually held.",
+    "ko-KR": "규정 위반 몰수패에 대한 공식 판정으로 이 팀은 이후 실제 개최되는 정규 경기 주 {0}회 동안 출전이 정지됩니다.",
+    "zh-TW": "本隊因正式違約棄權裁定暫停後續 {0} 個實際舉辦的常規比賽週。"
+  },
+  "本阶段按 V3.0 使用 {0}。": {
+    "en-US": "This phase uses {0} under V3.0.",
+    "ko-KR": "이 단계는 V3.0에 따라 {0}을 사용합니다.",
+    "zh-TW": "本階段依 V3.0 使用 {0}。"
+  },
+  "本轮 FT2 须达到二胜、完成审核，且没有影响晋级的待决申诉。": {
+    "en-US": "This FT2 round requires two wins, completed review, and no unresolved appeals affecting advancement.",
+    "ko-KR": "이번 FT2 라운드는 2승과 심사 완료가 필요하며, 진출에 영향을 주는 미해결 이의 신청이 없어야 합니다.",
+    "zh-TW": "本輪 FT2 須達到二勝、完成審核，且沒有影響晉級的待決申訴。"
+  },
+  "本轮签表与公布路径不一致，请复核。": {
+    "en-US": "This round’s bracket differs from the published path. Please review it.",
+    "ko-KR": "이번 라운드 대진표가 공개된 진출 경로와 다릅니다. 재검토해 주세요.",
+    "zh-TW": "本輪籤表與公布路徑不一致，請複核。"
+  },
+  "本轮须使用 {0} 阶段。": {
+    "en-US": "This round must use the {0} phase.",
+    "ko-KR": "이번 라운드는 {0} 단계를 사용해야 합니다.",
+    "zh-TW": "本輪須使用 {0} 階段。"
+  },
+  "本周官方轮空按规则为 {0} 分。": {
+    "en-US": "The official bye is worth {0} points this week under the rules.",
+    "ko-KR": "규정에 따라 이번 주 공식 부전승은 {0}점입니다.",
+    "zh-TW": "本週官方輪空依規則為 {0} 分。"
+  },
+  "本周名单与最近一次审核通过报名名单仅重合 {0} 人，至少需要 3 人。若按新队伍参赛，请先申请资格审核；本次未修改积分。": {
+    "en-US": "This week’s roster shares only {0} players with the most recently approved registration roster; at least 3 are required. To compete as a new team, request an eligibility review first. Points have not been changed.",
+    "ko-KR": "이번 주 명단과 최근 승인된 등록 명단의 공통 선수는 {0}명이며, 최소 3명이 필요합니다. 새 팀으로 참가하려면 먼저 자격 심사를 신청해 주세요. 점수는 변경되지 않았습니다.",
+    "zh-TW": "本週名單與最近一次審核通過報名名單僅重合 {0} 人，至少需要 3 人。若以新隊伍參賽，請先申請資格審核；本次未修改積分。"
+  },
+  "比赛周不存在。": {
+    "en-US": "Match week not found.",
+    "ko-KR": "경기 주를 찾을 수 없습니다.",
+    "zh-TW": "比賽週不存在。"
+  },
+  "不能跳过指标排名更高的合格队伍，种子顺序须沿用积分排名。": {
+    "en-US": "Eligible teams with higher standings cannot be skipped. Seeding must follow the points ranking.",
+    "ko-KR": "성적 순위가 더 높은 자격 충족 팀을 건너뛸 수 없습니다. 시드 순서는 점수 순위를 따라야 합니다.",
+    "zh-TW": "不能跳過指標排名更高的合格隊伍，種子順序須沿用積分排名。"
+  },
+  "不足四队，按已公布实际签表轮空": {
+    "en-US": "Fewer than four teams; byes follow the published bracket",
+    "ko-KR": "4팀 미만, 공개된 실제 대진표에 따라 부전승 배정",
+    "zh-TW": "不足四隊，依已公布實際籤表輪空"
+  },
+  "参赛确认或名单刚刚变化，请重新预览迁移。": {
+    "en-US": "Participation confirmations or rosters have changed. Preview the move again.",
+    "ko-KR": "참가 확인 또는 명단이 변경되었습니다. 이동을 다시 미리 확인해 주세요.",
+    "zh-TW": "參賽確認或名單剛剛變更，請重新預覽遷移。"
+  },
+  "常规积分或参赛门槛已变化，请先复核资格赛签表。": {
+    "en-US": "Regular-season points or participation requirements have changed. Review the qualification bracket first.",
+    "ko-KR": "정규 점수 또는 참가 조건이 변경되었습니다. 진출 결정전 대진표를 먼저 재검토해 주세요.",
+    "zh-TW": "常規積分或參賽門檻已變更，請先複核資格賽籤表。"
+  },
+  "撤销对象与当前队伍、比赛周不匹配。": {
+    "en-US": "The record to revoke does not match the current team and match week.",
+    "ko-KR": "취소할 기록이 현재 팀 및 경기 주와 일치하지 않습니다.",
+    "zh-TW": "撤銷對象與目前隊伍、比賽週不符。"
+  },
+  "此修正只适用于 V3.0 自然月比赛周。": {
+    "en-US": "This correction applies only to V3.0 match weeks organized by calendar month.",
+    "ko-KR": "이 수정은 달력 기준 월별로 운영되는 V3.0 경기 주에만 적용됩니다.",
+    "zh-TW": "此修正只適用於 V3.0 自然月比賽週。"
+  },
+  "当前周期不能更新季后赛种子。": {
+    "en-US": "Playoff seeds cannot be updated in the current cycle.",
+    "ko-KR": "현재 주기에서는 플레이오프 시드를 수정할 수 없습니다.",
+    "zh-TW": "目前週期無法更新季後賽種子。"
+  },
+  "还有入队申请待审核或待补充，请先处理后再提交整队报名。": {
+    "en-US": "Some join requests are awaiting review or additional information. Resolve them before submitting the team registration.",
+    "ko-KR": "심사 또는 정보 보완을 기다리는 팀 가입 신청이 있습니다. 먼저 처리한 후 팀 등록을 제출해 주세요.",
+    "zh-TW": "還有入隊申請待審核或待補充，請先處理後再提交整隊報名。"
+  },
+  "后续资格赛队伍的参赛确认已变化，请先复核。": {
+    "en-US": "Participation confirmations for the next qualification round have changed. Please review them first.",
+    "ko-KR": "다음 진출 결정전 라운드 팀의 참가 확인이 변경되었습니다. 먼저 재검토해 주세요.",
+    "zh-TW": "後續資格賽隊伍的參賽確認已變更，請先複核。"
+  },
+  "季后赛名单须为满足有效参赛门槛的前四名；不足四队须记录实际签表依据。": {
+    "en-US": "The playoff roster must include the top four teams meeting the valid-participation requirements. With fewer than four teams, record the basis for the actual bracket.",
+    "ko-KR": "플레이오프 명단에는 유효 참가 조건을 충족한 상위 4팀이 포함되어야 합니다. 4팀 미만이면 실제 대진표의 근거를 기록해야 합니다.",
+    "zh-TW": "季後賽名單須為滿足有效參賽門檻的前四名；不足四隊須記錄實際籤表依據。"
+  },
+  "季后赛使用已公布种子签表；资格赛使用已公布抽签路径，不能按段位配对。": {
+    "en-US": "Playoffs use the published seeded bracket; qualification matches use the published draw path. Pairing by rank is not allowed.",
+    "ko-KR": "플레이오프는 공개된 시드 대진표를, 진출 결정전은 공개된 추첨 경로를 사용합니다. 등급 기준 대진은 허용되지 않습니다.",
+    "zh-TW": "季後賽使用已公布種子籤表；資格賽使用已公布抽籤路徑，不能依牌位配對。"
+  },
+  "季后赛须在本周期有效参赛至少 2 次，且至少实际比赛 1 次。": {
+    "en-US": "Playoff eligibility requires at least 2 valid participations and at least 1 match played in this cycle.",
+    "ko-KR": "플레이오프 진출에는 이번 주기에서 유효 참가 2회 이상과 실제 경기 1회 이상이 필요합니다.",
+    "zh-TW": "季後賽須在本週期有效參賽至少 2 次，且至少實際比賽 1 次。"
+  },
+  "季后赛选手须至少一次列入本周期本队审核通过的常规名单；替补也计入，不要求实际登场。": {
+    "en-US": "Playoff players must have appeared on this team’s approved regular-season roster at least once in this cycle. Substitutes count; playing in a match is not required.",
+    "ko-KR": "플레이오프 선수는 이번 주기에 해당 팀의 승인된 정규 명단에 한 번 이상 포함되어야 합니다. 후보 선수도 포함되며 실제 출전은 필수가 아닙니다.",
+    "zh-TW": "季後賽選手須至少一次列入本週期本隊審核通過的常規名單；替補也計入，不要求實際登場。"
+  },
+  "仅可推进尚未关闭、已公布签表的同分资格赛。": {
+    "en-US": "Only open tiebreaker qualification events with a published bracket can advance.",
+    "ko-KR": "종료되지 않았으며 대진표가 공개된 동률 진출 결정전만 다음 단계로 진행할 수 있습니다.",
+    "zh-TW": "僅可推進尚未關閉、已公布籤表的同分資格賽。"
+  },
+  "决赛（GRAND_FINAL）": {
+    "en-US": "Final (GRAND_FINAL)",
+    "ko-KR": "결승 (GRAND_FINAL)",
+    "zh-TW": "決賽（GRAND_FINAL）"
+  },
+  "决赛队伍的参赛确认已变化，请复核。": {
+    "en-US": "The finalists’ participation confirmations have changed. Please review them.",
+    "ko-KR": "결승 팀의 참가 확인이 변경되었습니다. 재검토해 주세요.",
+    "zh-TW": "決賽隊伍的參賽確認已變更，請複核。"
+  },
+  "开放 V3.0 比赛周前须填写周末比赛窗口。": {
+    "en-US": "Set the weekend match window before opening a V3.0 match week.",
+    "ko-KR": "V3.0 경기 주를 열기 전에 주말 경기 시간대를 입력해 주세요.",
+    "zh-TW": "開放 V3.0 比賽週前須填寫週末比賽時段。"
+  },
+  "历史赛季不能更改晋级资格。": {
+    "en-US": "Qualification cannot be changed for a historical season.",
+    "ko-KR": "과거 시즌의 진출 자격은 변경할 수 없습니다.",
+    "zh-TW": "歷史賽季無法更改晉級資格。"
+  },
+  "轮空方参赛确认已变化，请复核实际签表。": {
+    "en-US": "The bye recipient’s participation confirmation has changed. Review the actual bracket.",
+    "ko-KR": "부전승 팀의 참가 확인이 변경되었습니다. 실제 대진표를 재검토해 주세요.",
+    "zh-TW": "輪空方參賽確認已變更，請複核實際籤表。"
+  },
+  "每个自然月最后一个比赛周为季后赛周，其他比赛周为常规赛。": {
+    "en-US": "The last match week of each calendar month is the playoff week. Other match weeks are regular-season weeks.",
+    "ko-KR": "매달 마지막 경기 주는 플레이오프 주이며, 나머지 경기 주는 정규 경기 주입니다.",
+    "zh-TW": "每個自然月最後一個比賽週為季後賽週，其他比賽週為常規賽。"
+  },
+  "目标月份周期已结束，不能迁入。": {
+    "en-US": "The target month’s cycle has ended; the week cannot be moved into it.",
+    "ko-KR": "대상 월의 주기가 종료되어 해당 주를 이동할 수 없습니다.",
+    "zh-TW": "目標月份週期已結束，無法遷入。"
+  },
+  "目标周期的月份或规则绑定不匹配，请先核对，未更改记录。": {
+    "en-US": "The target cycle’s month or rule binding does not match. Check it first; no records were changed.",
+    "ko-KR": "대상 주기의 월 또는 규정 연결이 일치하지 않습니다. 먼저 확인해 주세요. 기록은 변경되지 않았습니다.",
+    "zh-TW": "目標週期的月份或規則綁定不符，請先核對，未更改紀錄。"
+  },
+  "目标周期队伍登记状态冲突，请先核对。": {
+    "en-US": "The team’s registration status conflicts in the target cycle. Check it first.",
+    "ko-KR": "대상 주기에서 팀 등록 상태가 충돌합니다. 먼저 확인해 주세요.",
+    "zh-TW": "目標週期隊伍登記狀態衝突，請先核對。"
+  },
+  "目标周期已有相同周次，请由管理员核对，未覆盖任何记录。": {
+    "en-US": "The target cycle already has this week number. Ask an administrator to check it; no records were overwritten.",
+    "ko-KR": "대상 주기에 같은 주차가 이미 있습니다. 관리자에게 확인을 요청해 주세요. 기록은 덮어쓰지 않았습니다.",
+    "zh-TW": "目標週期已有相同週次，請由管理員核對，未覆寫任何紀錄。"
+  },
+  "排名或种子已变化，请按新公示重新生成配对。": {
+    "en-US": "Standings or seeds have changed. Generate pairings again using the new published information.",
+    "ko-KR": "순위 또는 시드가 변경되었습니다. 새 공지에 따라 대진을 다시 생성해 주세요.",
+    "zh-TW": "排名或種子已變更，請依新公示重新產生配對。"
+  },
+  "普通结算必须沿用规则逐图计算值；季后赛、资格赛不增加周期积分。特殊处分请单独记录审计流水。": {
+    "en-US": "Standard settlement must use the per-map values calculated under the rules. Playoffs and qualification matches add no cycle points. Record special penalties separately in the audit ledger.",
+    "ko-KR": "일반 정산은 규정에 따라 계산된 맵별 값을 사용해야 합니다. 플레이오프와 진출 결정전은 주기 점수를 추가하지 않습니다. 특별 징계는 별도 감사 원장에 기록해 주세요.",
+    "zh-TW": "一般結算必須沿用規則逐圖計算值；季後賽、資格賽不增加週期積分。特殊處分請另外記錄稽核流水。"
+  },
+  "签表尚未产生两支不同的决赛队伍。": {
+    "en-US": "The bracket has not yet produced two distinct finalists.",
+    "ko-KR": "대진표에서 서로 다른 두 결승 팀이 아직 결정되지 않았습니다.",
+    "zh-TW": "籤表尚未產生兩支不同的決賽隊伍。"
+  },
+  "请核对当前已公布的附录 C 首轮签表，不能跳过比赛轮次。": {
+    "en-US": "Check the currently published Appendix C first-round bracket. Match rounds cannot be skipped.",
+    "ko-KR": "현재 공개된 부록 C 1라운드 대진표를 확인해 주세요. 경기 라운드를 건너뛸 수 없습니다.",
+    "zh-TW": "請核對目前已公布的附錄 C 首輪籤表，不能跳過比賽輪次。"
+  },
+  "请记录赛事组认定官方轮空的原因（数量、时间或实力匹配等）。": {
+    "en-US": "Record why event staff approved the official bye, such as team count, timing, or strength matching.",
+    "ko-KR": "팀 수, 시간 또는 실력 매칭 등 운영진이 공식 부전승을 인정한 사유를 기록해 주세요.",
+    "zh-TW": "請記錄賽事組認定官方輪空的原因（數量、時間或實力匹配等）。"
+  },
+  "请记录首图异常平局的裁定依据。": {
+    "en-US": "Record the basis for the ruling on the unexpected first-map draw.",
+    "ko-KR": "첫 맵 비정상 무승부 판정의 근거를 기록해 주세요.",
+    "zh-TW": "請記錄首圖異常平局的裁定依據。"
+  },
+  "请记录资格赛开始前公布的抽签、对阵、轮空和晋级路径公示。": {
+    "en-US": "Record the draw, pairings, byes, and advancement path published before qualification matches begin.",
+    "ko-KR": "진출 결정전 시작 전에 공개한 추첨, 대진, 부전승 및 진출 경로 공지를 기록해 주세요.",
+    "zh-TW": "請記錄資格賽開始前公布的抽籤、對陣、輪空和晉級路徑公示。"
+  },
+  "请使用常规赛、季后赛或同分资格赛阶段。": {
+    "en-US": "Use the regular-season, playoff, or tiebreaker qualification phase.",
+    "ko-KR": "정규 경기, 플레이오프 또는 동률 진출 결정전 단계를 사용해 주세요.",
+    "zh-TW": "請使用常規賽、季後賽或同分資格賽階段。"
+  },
+  "请填写国籍或国家、地区。": {
+    "en-US": "Enter your nationality or country/region.",
+    "ko-KR": "국적 또는 국가·지역을 입력해 주세요.",
+    "zh-TW": "請填寫國籍或國家、地區。"
+  },
+  "请填写下一轮开赛时间后公布。": {
+    "en-US": "Enter the next round’s start time before publishing.",
+    "ko-KR": "다음 라운드 시작 시간을 입력한 후 공개해 주세요.",
+    "zh-TW": "請填寫下一輪開賽時間後公布。"
+  },
+  "请填写真实国籍或国家、地区，不能只填“其他”。": {
+    "en-US": "Enter your actual nationality or country/region; “Other” alone is not enough.",
+    "ko-KR": "실제 국적 또는 국가·지역을 입력해 주세요. “기타”만 입력할 수 없습니다.",
+    "zh-TW": "請填寫真實國籍或國家、地區，不能只填「其他」。"
+  },
+  "请先公布半决赛签表；决赛由半决赛胜方产生。": {
+    "en-US": "Publish the semifinal bracket first. Semifinal winners advance to the final.",
+    "ko-KR": "준결승 대진표를 먼저 공개해 주세요. 준결승 승자가 결승에 진출합니다.",
+    "zh-TW": "請先公布準決賽籤表；決賽由準決賽勝方產生。"
+  },
+  "请先公布本周期季后赛种子。": {
+    "en-US": "Publish this cycle’s playoff seeds first.",
+    "ko-KR": "이번 주기의 플레이오프 시드를 먼저 공개해 주세요.",
+    "zh-TW": "請先公布本週期季後賽種子。"
+  },
+  "请先完成同分资格赛／公开种子抽签并公布本周期季后赛名单；积分变更后需重新核对。": {
+    "en-US": "Complete the tiebreaker qualification matches or public seeding draw and publish this cycle’s playoff roster first. Review it again after any points change.",
+    "ko-KR": "동률 진출 결정전 또는 공개 시드 추첨을 완료하고 이번 주기의 플레이오프 명단을 먼저 공개해 주세요. 점수 변경 후 다시 확인해야 합니다.",
+    "zh-TW": "請先完成同分資格賽／公開種子抽籤並公布本週期季後賽名單；積分變更後需重新核對。"
+  },
+  "请由选手本人补齐真实国籍或国家、地区、OWCS 2026 经历和当前段位，并确认参赛规则。": {
+    "en-US": "The player must personally provide their actual nationality or country/region, OWCS 2026 history, and current ranks, and confirm the competition rules.",
+    "ko-KR": "선수 본인이 실제 국적 또는 국가·지역, OWCS 2026 참가 이력, 현재 등급을 입력하고 대회 규정을 확인해야 합니다.",
+    "zh-TW": "請由選手本人補齊真實國籍或國家、地區、OWCS 2026 經歷和目前牌位，並確認參賽規則。"
+  },
+  "请在版本说明中记录赛前公布的抽签、签表与晋级路径。": {
+    "en-US": "Record the pre-event published draw, bracket, and advancement path in the version notes.",
+    "ko-KR": "버전 설명에 대회 전에 공개한 추첨, 대진표 및 진출 경로를 기록해 주세요.",
+    "zh-TW": "請在版本說明中記錄賽前公布的抽籤、籤表與晉級路徑。"
+  },
+  "赛季或周期已锁定，须先按恢复流程重新开放。": {
+    "en-US": "The season or cycle is locked. Reopen it through the recovery process first.",
+    "ko-KR": "시즌 또는 주기가 잠겨 있습니다. 복구 절차에 따라 먼저 다시 열어 주세요.",
+    "zh-TW": "賽季或週期已鎖定，須先依恢復流程重新開放。"
+  },
+  "赛事组已裁定首图为有效平局，依据：{0}": {
+    "en-US": "Event staff ruled the first map a valid draw. Basis: {0}",
+    "ko-KR": "운영진이 첫 맵을 유효 무승부로 판정했습니다. 근거: {0}",
+    "zh-TW": "賽事組已裁定首圖為有效平局，依據：{0}"
+  },
+  "涉及晋级名额的完全同分必须通过已审核、达到二胜的 FT2 资格赛产生；抽签不能代替比赛。": {
+    "en-US": "Exact ties affecting qualification places must be resolved by reviewed FT2 qualification matches reaching two wins. A draw cannot replace a match.",
+    "ko-KR": "진출 자리에 영향을 주는 완전 동률은 심사가 완료되고 2승에 도달한 FT2 진출 결정전으로 해결해야 합니다. 추첨으로 경기를 대체할 수 없습니다.",
+    "zh-TW": "涉及晉級名額的完全同分必須透過已審核、達到二勝的 FT2 資格賽產生；抽籤不能代替比賽。"
+  },
+  "首图异常平局须由赛事组裁定为有效平局，或在裁定面板安排无效图／重赛。": {
+    "en-US": "An unexpected first-map draw must be ruled valid by event staff, or handled as an invalid map or replay in the ruling panel.",
+    "ko-KR": "첫 맵의 비정상 무승부는 운영진이 유효 무승부로 판정하거나 판정 패널에서 무효 맵 또는 재경기로 처리해야 합니다.",
+    "zh-TW": "首圖異常平局須由賽事組裁定為有效平局，或在裁定面板安排無效圖／重賽。"
+  },
+  "数据刚刚变化，请刷新核对后重试。": {
+    "en-US": "The data has just changed. Refresh, check it, and try again.",
+    "ko-KR": "데이터가 방금 변경되었습니다. 새로고침 후 확인하고 다시 시도해 주세요.",
+    "zh-TW": "資料剛剛變更，請重新整理並核對後重試。"
+  },
+  "完全同分的种子顺序须记录公开抽签证据。": {
+    "en-US": "Record evidence of the public draw used to seed exactly tied teams.",
+    "ko-KR": "완전 동률 팀의 시드 순서를 정한 공개 추첨 증거를 기록해야 합니다.",
+    "zh-TW": "完全同分的種子順序須記錄公開抽籤證據。"
+  },
+  "违约弃权裁定仅适用于常规比赛周。": {
+    "en-US": "Rulings for forfeits in breach of the rules apply only to regular match weeks.",
+    "ko-KR": "규정 위반 몰수패 판정은 정규 경기 주에만 적용됩니다.",
+    "zh-TW": "違約棄權裁定僅適用於常規比賽週。"
+  },
+  "须先结算并关闭所有实际举办的常规比赛周，再公布季后赛种子。": {
+    "en-US": "Settle and close all regular match weeks actually held before publishing playoff seeds.",
+    "ko-KR": "실제 개최된 모든 정규 경기 주를 정산하고 종료한 후 플레이오프 시드를 공개해야 합니다.",
+    "zh-TW": "須先結算並關閉所有實際舉辦的常規比賽週，再公布季後賽種子。"
+  },
+  "须先审核该队的违约弃权赛果；合规提前结束不能记为违约。": {
+    "en-US": "Review this team’s forfeit result first. An early finish allowed by the rules cannot be recorded as a violation.",
+    "ko-KR": "해당 팀의 규정 위반 몰수패 결과를 먼저 심사해야 합니다. 규정에 맞는 조기 종료는 위반으로 기록할 수 없습니다.",
+    "zh-TW": "須先審核該隊的違約棄權賽果；合規提前結束不能記為違約。"
+  },
+  "依赛前公布附录 C 晋级路径推进": {
+    "en-US": "Advance along the Appendix C path published before the event",
+    "ko-KR": "대회 전에 공개된 부록 C 진출 경로에 따라 진행",
+    "zh-TW": "依賽前公布附錄 C 晉級路徑推進"
+  },
+  "依已公布季后赛种子安排": {
+    "en-US": "Arrange by the published playoff seeds",
+    "ko-KR": "공개된 플레이오프 시드에 따라 배정",
+    "zh-TW": "依已公布季後賽種子安排"
+  },
+  "已发布比赛周不能更换阶段。": {
+    "en-US": "A published match week’s phase cannot be changed.",
+    "ko-KR": "공개된 경기 주의 단계는 변경할 수 없습니다.",
+    "zh-TW": "已發布比賽週無法更換階段。"
+  },
+  "异常地图裁定只能由赛事组在比赛房间记录；请同步现有裁定后继续。": {
+    "en-US": "Only event staff can record exceptional map rulings in the match room. Sync the existing ruling before continuing.",
+    "ko-KR": "특수 맵 판정은 운영진만 경기 방에 기록할 수 있습니다. 기존 판정을 동기화한 후 계속해 주세요.",
+    "zh-TW": "異常地圖裁定只能由賽事組在比賽房間記錄；請同步現有裁定後繼續。"
+  },
+  "有队伍的参赛指标尚未核实，请先补齐历史记录，不能把未知指标当作不合格。": {
+    "en-US": "Some teams’ participation metrics are unverified. Complete their history first; unknown metrics cannot be treated as ineligibility.",
+    "ko-KR": "일부 팀의 참가 지표가 아직 확인되지 않았습니다. 먼저 과거 기록을 보완해 주세요. 알 수 없는 지표를 자격 미달로 취급할 수 없습니다.",
+    "zh-TW": "有隊伍的參賽指標尚未核實，請先補齊歷史紀錄，不能把未知指標當作不合格。"
+  },
+  "原周期或赛季已锁定，不能迁出比赛周。": {
+    "en-US": "The source cycle or season is locked; the match week cannot be moved out.",
+    "ko-KR": "원래 주기 또는 시즌이 잠겨 있어 경기 주를 이동할 수 없습니다.",
+    "zh-TW": "原週期或賽季已鎖定，無法遷出比賽週。"
+  },
+  "只可迁移未发布、无比赛、无配对计划、无积分流水的比赛周；已完成历史不能迁移。": {
+    "en-US": "Only unpublished match weeks with no matches, pairing plans, or point ledger entries can be moved. Completed history cannot be moved.",
+    "ko-KR": "미공개 상태이며 경기, 대진 계획, 점수 원장 기록이 없는 경기 주만 이동할 수 있습니다. 완료된 과거 기록은 이동할 수 없습니다.",
+    "zh-TW": "只可遷移未發布、無比賽、無配對計畫、無積分流水的比賽週；已完成歷史無法遷移。"
+  },
+  "只能在尚未关闭的已发布季后赛周创建决赛。": {
+    "en-US": "A final can only be created in an open, published playoff week.",
+    "ko-KR": "종료되지 않은 공개 플레이오프 주에서만 결승을 생성할 수 있습니다.",
+    "zh-TW": "只能在尚未關閉的已發布季後賽週建立決賽。"
+  },
+  "种子已变更，请先复核已发布签表。": {
+    "en-US": "Seeds have changed. Review the published bracket first.",
+    "ko-KR": "시드가 변경되었습니다. 공개된 대진표를 먼저 재검토해 주세요.",
+    "zh-TW": "種子已變更，請先複核已發布籤表。"
+  },
+  "资格赛参赛队伍、积分或签表刚刚变化，请重新核对首轮。": {
+    "en-US": "Qualification teams, points, or the bracket have just changed. Check the first round again.",
+    "ko-KR": "진출 결정전 참가 팀, 점수 또는 대진표가 변경되었습니다. 1라운드를 다시 확인해 주세요.",
+    "zh-TW": "資格賽參賽隊伍、積分或籤表剛剛變更，請重新核對首輪。"
+  },
+  "资格赛仅用于解决影响入围名额的完全同分。": {
+    "en-US": "Qualification matches are only for resolving exact ties that affect qualification places.",
+    "ko-KR": "진출 결정전은 진출 자리에 영향을 주는 완전 동률을 해결하는 데만 사용됩니다.",
+    "zh-TW": "資格賽僅用於解決影響入圍名額的完全同分。"
+  },
+  "资格赛仍有影响晋级的待决申诉，请先处理。": {
+    "en-US": "Unresolved appeals still affect qualification advancement. Resolve them first.",
+    "ko-KR": "진출 결정전에 진출에 영향을 주는 미해결 이의 신청이 있습니다. 먼저 처리해 주세요.",
+    "zh-TW": "資格賽仍有影響晉級的待決申訴，請先處理。"
+  },
+  "资格赛首轮须包括争夺同一入围名额的全部完全同分队伍。": {
+    "en-US": "The first qualification round must include all exactly tied teams competing for the same qualification place.",
+    "ko-KR": "진출 결정전 1라운드에는 같은 진출 자리를 놓고 경쟁하는 모든 완전 동률 팀이 포함되어야 합니다.",
+    "zh-TW": "資格賽首輪須包括爭奪同一入圍名額的全部完全同分隊伍。"
+  },
+  "资格赛须按附录 C 完成淘汰轮／晋级轮，不能跳过必要对局或改变已产生的晋级结果。": {
+    "en-US": "Qualification must complete the elimination and advancement rounds under Appendix C. Required matches cannot be skipped, and decided advancement results cannot be changed.",
+    "ko-KR": "진출 결정전은 부록 C에 따라 탈락 및 진출 라운드를 완료해야 합니다. 필요한 경기를 건너뛰거나 이미 결정된 진출 결과를 바꿀 수 없습니다.",
+    "zh-TW": "資格賽須依附錄 C 完成淘汰輪／晉級輪，不能跳過必要對局或改變已產生的晉級結果。"
+  },
+  "V3.0 官方轮空为 3 分；季后赛、资格赛及不计分周期为 0 分。": {
+    "en-US": "V3.0 official byes award 3 points. Playoffs, qualification matches, and cycles without scoring award 0 points.",
+    "ko-KR": "V3.0 공식 부전승은 3점입니다. 플레이오프, 진출 결정전 및 점수를 부여하지 않는 주기는 0점입니다.",
+    "zh-TW": "V3.0 官方輪空為 3 分；季後賽、資格賽及不計分週期為 0 分。"
+  },
+  "V3.0 周期起止须保持北京时间自然月边界。": {
+    "en-US": "V3.0 cycles must start and end at calendar-month boundaries in Beijing time.",
+    "ko-KR": "V3.0 주기의 시작과 종료는 베이징 시간 기준 달의 경계를 따라야 합니다.",
+    "zh-TW": "V3.0 週期起訖須維持北京時間自然月邊界。"
+  },
+  "入队申请已通过": {
+    "en-US": "Join request accepted",
+    "ko-KR": "팀 가입 신청 승인됨",
+    "zh-TW": "入隊申請已通過"
+  },
+  "入队申请需补充": {
+    "en-US": "Join request needs additional information",
+    "ko-KR": "팀 가입 신청 정보 보완 필요",
+    "zh-TW": "入隊申請需補充"
+  },
+  "入队申请未通过": {
+    "en-US": "Join request rejected",
+    "ko-KR": "팀 가입 신청 거절됨",
+    "zh-TW": "入隊申請未通過"
+  },
+  "至少需要 {0} 个字符。": {
+    "en-US": "At least {0} characters are required.",
+    "ko-KR": "최소 {0}자가 필요합니다.",
+    "zh-TW": "至少需要 {0} 個字元。"
+  },
+  "不能超过 {0} 个字符。": {
+    "en-US": "No more than {0} characters are allowed.",
+    "ko-KR": "{0}자를 초과할 수 없습니다.",
+    "zh-TW": "不能超過 {0} 個字元。"
+  },
+  "请填写完整、有效的邮箱地址。": {
+    "en-US": "Enter a complete, valid email address.",
+    "ko-KR": "올바른 전체 이메일 주소를 입력해 주세요.",
+    "zh-TW": "請填寫完整、有效的電子郵件地址。"
+  },
+  "格式不正确，请核对后重试。": {
+    "en-US": "The format is incorrect. Check it and try again.",
+    "ko-KR": "입력 형식이 올바르지 않습니다. 확인 후 다시 시도해 주세요.",
+    "zh-TW": "格式不正確，請核對後重試。"
+  },
+  "请填写或选择有效内容，并完成必选确认。": {
+    "en-US": "Enter or select a valid value and complete the required confirmations.",
+    "ko-KR": "유효한 값을 입력하거나 선택하고 필수 확인을 완료해 주세요.",
+    "zh-TW": "請填寫或選擇有效內容，並完成必選確認。"
+  },
+  "本轮须使用 半决赛（PLAYOFFS） 阶段。": {
+    "en-US": "This round must use the semifinal (PLAYOFFS) phase.",
+    "ko-KR": "이번 라운드는 준결승 (PLAYOFFS) 단계를 사용해야 합니다.",
+    "zh-TW": "本輪須使用 準決賽（PLAYOFFS） 階段。"
+  },
+  "本轮须使用 决赛（GRAND_FINAL） 阶段。": {
+    "en-US": "This round must use the final (GRAND_FINAL) phase.",
+    "ko-KR": "이번 라운드는 결승 (GRAND_FINAL) 단계를 사용해야 합니다.",
+    "zh-TW": "本輪須使用 決賽（GRAND_FINAL） 階段。"
+  },
+  "上次审核名单": {
+    "en-US": "Last approved roster",
+    "ko-KR": "최근 승인 명단",
+    "zh-TW": "上次審核名單"
+  },
+  "曾列入审核名单": {
+    "en-US": "Previously on the approved roster",
+    "ko-KR": "승인 명단에 포함됨",
+    "zh-TW": "曾列入審核名單"
+  },
+  "与最近审核名单重合": {
+    "en-US": "Overlap with the last approved roster",
+    "ko-KR": "최근 승인 명단과 겹치는 인원",
+    "zh-TW": "與最近審核名單重合"
+  },
+  "与最近一次审核通过名单比较": {
+    "en-US": "Compare with the most recently approved roster",
+    "ko-KR": "최근 승인 명단과 비교",
+    "zh-TW": "與最近一次審核通過名單比較"
+  },
+  "本周名单与最近一次实际参赛名单仅重合 {0} 人，至少需要 3 人。若按新队伍参赛，请先申请资格审核；本次未修改积分。": {
+    "en-US": "This week’s roster shares only {0} players with the most recent roster that actually played; at least 3 are required. To compete as a new team, request an eligibility review first. Points have not been changed.",
+    "ko-KR": "이번 주 명단과 최근 실제 경기 참가 명단의 공통 선수는 {0}명이며 최소 3명이 필요합니다. 새 팀으로 참가하려면 먼저 자격 심사를 신청해 주세요. 점수는 변경되지 않았습니다.",
+    "zh-TW": "本週名單與最近一次實際參賽名單僅重合 {0} 人，至少需要 3 人。若以新隊伍參賽，請先申請資格審核；本次未修改積分。"
   }
 }

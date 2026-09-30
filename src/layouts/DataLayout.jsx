@@ -24,7 +24,7 @@ import { getGlobalSummary } from '../lib/selectors.js'
 import { getSeasonStatus } from '../lib/homeSelectors.js'
 import { isWeeklyOverview } from '../features/weekly-overview/weeklyOverviewModel.js'
 import { buildFriesCupTitle, getDataCenterPageLabel } from '../lib/pageTitle.js'
-import { getRestoreScrollY } from '../lib/navigationState.js'
+import { getRestoreScrollY, restoreWindowScroll } from '../lib/navigationState.js'
 import { FavoritesProvider, normalizeSeasonId, useFavorites } from '../features/favorites/index.js'
 import { useAuth } from '../features/auth/AuthProvider.jsx'
 import { buildAccountIdentity, findVerifiedAccountIdentity, getAccountCapabilities, resolveAccountIdentityTarget } from '../features/auth/accountIdentity.js'
@@ -34,13 +34,11 @@ import { getDossierView } from '../features/team-dossier/teamDossierScenes.js'
 import { PRIMARY_NAV, getNavLabel, getPersonalNavItem, getNavigationSearch } from '../components/layout/publicNavigation.js'
 import EventContextBar from '../components/layout/EventContextBar.jsx'
 import UrgentAnnouncementGate from '../features/communications/UrgentAnnouncementGate.jsx'
-import { fetchMySpaceContext } from '../features/my-space/mySpaceApi.js'
+import { fetchAccountAttentionContext } from '../features/my-space/accountAttentionApi.js'
 import { isCompetitionMatchesEntry, requiresPublicSnapshot } from '../features/my-space/personalSpacePolicy.js'
 import useAccountCompetition from '../features/my-space/useAccountCompetition.js'
 import { withAccountCompetition } from '../features/my-space/accountCompetitionModel.js'
 import { buildAccountAttention } from '../features/my-space/accountAttentionModel.js'
-import { fetchMyWeeklyCompetition } from '../features/weekly-competition/weeklyCompetitionApi.js'
-import { buildWeeklyPreparation } from '../features/weekly-competition/weeklyPreparationModel.js'
 import { useLocaleDomTranslation } from '../hooks/useLocaleDomTranslation.js'
 import { createPublicTextTranslator } from '../lib/publicText.js'
 import DesignPreviewBar from '../features/fd-design/DesignPreviewBar.jsx'
@@ -146,7 +144,6 @@ export default function DataLayout() {
   const isFdSamplePage = /^(?:\/leaderboard|\/teams\/[^/]+)\/?$/.test(location.pathname)
   const {
     accountDataError,
-    accountCapabilities: accountApiCapabilities,
     accountIdentities,
     accountPrimaryIdentity,
     accountProfile,
@@ -171,40 +168,39 @@ export default function DataLayout() {
   const isPublicFollowingRoute = isAccountSpaceRoute && ((!isAuthenticated && !isMatchEntry) || location.pathname.startsWith('/following') || new URLSearchParams(location.search).get('section') === 'following')
   const isCompactContextRoute = isRosterDirectoryRoute || isScheduleDirectoryRoute || isPublicMatchDetailRoute || isPlayerRankingsRoute || isHeroDataRoute || isMapDataRoute || isAdvanceIndexRoute || isWeeklyHomeRoute || isPublicFollowingRoute || isPlayerArchiveRoute || (isTeamArchiveRoute && !isTeamExhibitionRoute)
   const competition = useAccountCompetition(season.id)
-  const attentionSeasonId = competition.navigationId || seasonId
-  const weeklyAttention = competition.selected?.competitionKind === 'WEEKLY'
+  const attentionSeasonId = competition.id
+  const attentionEnabled = isAuthenticated && !competition.loading && !competition.error && !competition.issue
+  const attentionScope = `${authUser?.id || ''}:${attentionSeasonId}`
   const canonicalSeasonId = normalizeSeasonId(season?.publicCode || seasonId)
   const favoritesApi = useFavorites(canonicalSeasonId, db)
 
   useEffect(() => {
     let alive = true
     let requestInFlight = false
+    let refreshQueued = false
+    const controller = new AbortController()
 
-    if (!isAuthenticated || !attentionSeasonId || (!weeklyAttention && accountApiCapabilities?.canReadOperationalSummary !== true)) {
+    if (!attentionEnabled || !attentionSeasonId) {
       setAccountAttentionContext(null)
       return () => { alive = false }
     }
 
-    setAccountAttentionContext(null)
+    setAccountAttentionContext({ scope: attentionScope, overview: { taskSyncStatus: 'loading' } })
 
     const refreshAccountAttention = () => {
-      if (document.visibilityState === 'hidden' || requestInFlight) return
+      if (document.visibilityState === 'hidden') return
+      if (requestInFlight) { refreshQueued = true; return }
       requestInFlight = true
-      Promise.allSettled([
-        accountApiCapabilities?.canReadOperationalSummary === true ? fetchMySpaceContext(attentionSeasonId) : Promise.resolve(null),
-        weeklyAttention ? fetchMyWeeklyCompetition(attentionSeasonId) : Promise.resolve(null)
-      ])
-        .then(([contextResult, weeklyResult]) => {
-          const context = contextResult.status === 'fulfilled' ? contextResult.value : null
-          const workspace = weeklyResult.status === 'fulfilled' ? weeklyResult.value : null
-          const preparation = buildWeeklyPreparation(workspace, { seasonId: attentionSeasonId, userId: authUser?.id, readOnly: false })
-          if (alive) setAccountAttentionContext({ overview: { ...context?.overview, openTaskCount: Number(context?.overview?.openTaskCount || 0) + preparation.tasks.length } })
+      fetchAccountAttentionContext(attentionSeasonId, authUser?.id, { signal: controller.signal })
+        .then(context => {
+          if (alive) setAccountAttentionContext(context ? { ...context, scope: attentionScope } : null)
         })
         .catch(() => {
-          // The navigation remains usable and simply omits its optional counters.
+          if (alive) setAccountAttentionContext({ scope: attentionScope, overview: { taskSyncStatus: 'error' } })
         })
         .finally(() => {
           requestInFlight = false
+          if (alive && refreshQueued) { refreshQueued = false; refreshAccountAttention() }
         })
     }
 
@@ -220,12 +216,13 @@ export default function DataLayout() {
 
     return () => {
       alive = false
+      controller.abort()
       globalThis.clearInterval(interval)
       globalThis.removeEventListener('focus', refreshAccountAttention)
       globalThis.removeEventListener('fc:account-activity-changed', refreshAccountAttention)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [accountApiCapabilities?.canReadOperationalSummary, authUser?.id, isAuthenticated, attentionSeasonId, weeklyAttention])
+  }, [authUser?.id, attentionEnabled, attentionSeasonId, attentionScope])
 
   const visibleDb = isLoading ? null : db
   const summary = getGlobalSummary(visibleDb)
@@ -250,8 +247,8 @@ export default function DataLayout() {
       }
     : null
   const accountAttention = useMemo(
-    () => buildAccountAttention(accountAttentionContext, compatibleLayoutLocale),
-    [accountAttentionContext, compatibleLayoutLocale]
+    () => buildAccountAttention(attentionEnabled && accountAttentionContext?.scope === attentionScope ? accountAttentionContext : null, compatibleLayoutLocale),
+    [accountAttentionContext, compatibleLayoutLocale, attentionEnabled, attentionScope]
   )
   const navigationSearch = getNavigationSearch(location.search, designPreview, layoutLocale)
   const withSeason = useMemo(
@@ -294,6 +291,10 @@ export default function DataLayout() {
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
     }
   }, [location.pathname, location.hash, location.state, navigationType])
+
+  useEffect(() => {
+    if (location.state?.mobileTabRestore && !isLoading) restoreWindowScroll(getRestoreScrollY(location.state))
+  }, [location.key, location.state, isLoading])
 
   useEffect(() => {
     document.documentElement.lang = layoutLocale

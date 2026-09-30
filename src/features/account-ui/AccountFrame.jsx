@@ -12,6 +12,7 @@ import useAccountCompetition from '../my-space/useAccountCompetition.js'
 import layout from '../fd-design/layoutStyles.js'
 import styles from './AccountFrame.module.css'
 import { translateAccountSettingsText } from './accountSettingsCopy.js'
+import { getRestoreScrollY, restoreWindowScroll } from '../../lib/navigationState.js'
 
 // Global account pages share the public frame without fetching a season snapshot.
 export default function AccountFrame({ children, title, eyebrow = 'ACCOUNT', description, aside, compact = false }) {
@@ -33,12 +34,15 @@ export default function AccountFrame({ children, title, eyebrow = 'ACCOUNT', des
   useLocaleDomTranslation(locale, shell, location.pathname === '/account' ? translateAccountSettingsText : undefined)
   useEffect(() => { setStoredSeasonId(season.id) }, [season.id])
   useEffect(() => { document.documentElement.lang = locale; setStoredLocale(locale) }, [locale])
+  useEffect(() => {
+    if (location.state?.mobileTabRestore) restoreWindowScroll(getRestoreScrollY(location.state))
+  }, [location.key, location.state])
   const changeContext = (key, value) => {
     const next = new URLSearchParams(location.search)
     next.set(key, value)
     navigate({ pathname: location.pathname, search: `?${next}`, hash: location.hash }, { replace: true })
   }
-  return <div ref={shell} className={`${layout.shell} ${styles.frame}`} style={{ '--kpr-preview-height': '0px' }} data-design="kpr" data-design-edition="hybrid" data-header-mode="account" data-locale={locale}>
+  return <div ref={shell} className={`${layout.shell} ${styles.frame}`} style={{ '--kpr-preview-height': '0px' }} data-design="kpr" data-design-edition="hybrid" data-header-mode="account" data-locale={locale} data-account-subpage={location.pathname === '/account' && /^#(?:overview|profile|password|email|sessions|reminders)$/.test(location.hash) || undefined}>
     <PublicHeader mobileMenuRef={menu} activeNavLabel={personalLabel} withSeason={publicLink} layoutLocale={locale} compatibleLayoutLocale={locale} season={season} seasonId={season.id} seasonStatus={season.lifecycle === 'ARCHIVED' ? { isFinished: true } : undefined} handleSeasonChange={id => changeContext('season', getSeasonById(id).publicCode)} handleLocaleChange={value => changeContext('lang', getReviewLocaleParam(value))} />
     <div className={styles.context}><Link to={publicLink('/me')} data-i18n-ignore>{personalLabel}</Link><span aria-hidden="true">/</span><strong>{title}</strong><span className={styles.scope}>{location.pathname === '/account' ? uiText("通用账号设置", locale) : uiText("参赛服务", locale)}</span></div>
     <main className={styles.main} data-compact={compact}>

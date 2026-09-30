@@ -173,7 +173,7 @@ assert.equal(matchSection({ manager: true }), true)
 assert.equal(matchSection({ weeklyRooms: true, launch: { features: { matchRoom: 'READ_ONLY' } } }), true, 'Assigned staff can discover their matches')
 assert.equal(matchSection({ weeklyRooms: true, launch: { features: { matchRoom: 'HIDDEN' } } }), false, 'Discovery respects launch feature visibility')
 assert.equal(matchSection({ caster: true, weeklyRooms: false }), false, 'A caster identity alone does not grant match discovery')
-assert.match(mySpaceSource, /hasAccountFeatureAccess\(accountLaunch, 'matchRoom', 'WRITE'\)/)
+assert.match(mySpaceSource, /canWriteMatchRooms = !activityAccess\.roomsReadOnly/)
 assert.match(mySpaceSource, /<WeeklyMatchRoomsWorkspace key=\{`\$\{seasonId\}:\$\{authUser\?\.id \|\| ''\}`\}/)
 assert.match(mySpaceSource, /readOnly=\{!canWriteMatchRooms\}/)
 

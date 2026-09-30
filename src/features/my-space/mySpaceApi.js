@@ -23,7 +23,7 @@ export async function fetchAccountLaunchStatus(seasonId, options = {}) {
   }
 }
 
-export async function fetchMySpaceContext(seasonId) {
-  const data = await platformRequest(`/me/space-context?seasonId=${encodeURIComponent(seasonId)}`)
+export async function fetchMySpaceContext(seasonId, options = {}) {
+  const data = await platformRequest(`/me/space-context?seasonId=${encodeURIComponent(seasonId)}`, options)
   return data?.context || null
 }
