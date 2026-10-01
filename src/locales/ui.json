@@ -1214,15 +1214,15 @@
     "en-US": "RR5 · Fixed five rounds",
     "ko-KR": "RR5 · 5개 라운드 수정"
   },
-  "RR5 · 无论比分，都打满五局": {
-    "zh-TW": "RR5 · 無論比分，都打滿五局",
-    "en-US": "RR5 · All five maps are played",
-    "ko-KR": "RR5 · 점수에 관계없이 5라운드 플레이"
+  "RR5 · 固定五图，可按规则提前结束": {
+    "zh-TW": "RR5 · 固定五圖，可按規則提前結束",
+    "en-US": "RR5 · Five maps; early finish allowed under the rules",
+    "ko-KR": "RR5 · 5개 맵, 규칙에 따른 조기 종료 가능"
   },
-  "RR5 打满五局，当前比分不是最终赛果。": {
-    "zh-TW": "RR5 打滿五局，當前比分不是最終賽果。",
-    "en-US": "RR5 plays all five maps. This score is not final.",
-    "ko-KR": "RR5는 5라운드를 플레이했으며 현재 점수는 최종 결과가 아닙니다."
+  "RR5 当前比分尚未确认，最终赛果以公布为准。": {
+    "zh-TW": "RR5 目前比分尚未確認，最終賽果以公布為準。",
+    "en-US": "The RR5 score is provisional. The final result follows publication.",
+    "ko-KR": "RR5 현재 점수는 잠정 결과입니다. 최종 결과는 공식 발표를 따릅니다."
   },
   "Roguelike 电竞经理模拟": {
     "zh-TW": "Roguelike 電競經理模擬"
@@ -11838,10 +11838,10 @@
   "双败淘汰给了队伍一次重新站起来的机会，也让每一次跌落都更接近真正的告别。进入前八的队伍，把自己的故事延伸到了更残酷、更接近结尾的阶段。": {
     "zh-TW": "雙敗淘汰給了隊伍一次重新站起來的機會，也讓每一次跌落都更接近真正的告別。進入前八的隊伍，把自己的故事延伸到了更殘酷、更接近結尾的階段。"
   },
-  "双败淘汰，继续向前": {
-    "zh-TW": "雙敗淘汰，繼續向前",
-    "en-US": "Double elimination",
-    "ko-KR": "이중 제거, 계속 전진"
+  "四强单败，继续向前": {
+    "zh-TW": "四強單敗，繼續向前",
+    "en-US": "Four-team single elimination",
+    "ko-KR": "4강 싱글 엘리미네이션"
   },
   "双轨脉冲包住人物，两条主线不在文字区交叉": {
     "zh-TW": "雙軌脈衝包住人物，兩條主線不在文字區交叉"

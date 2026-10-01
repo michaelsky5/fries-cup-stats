@@ -82,7 +82,7 @@ export default function SignalWeeklyOverview() {
               <div className={styles.score}><strong>{renderScore(focus)}</strong><span>{focus.state === 'live' ? t(uiText("比赛仍在继续", locale), 'Still in play') : status(focus.state)}</span></div>
             </div>
             {maps.length > 0 && <div className={styles.mapsSection}>
-              <div className={styles.mapHeading}><b>{rr5 ? t(uiText("五局进程", locale), 'Five-map series') : t(uiText("地图记录", locale), 'Map records')}</b><span>{rr5 ? t(uiText("RR5 · 无论比分，都打满五局", locale), 'RR5 · All five maps are played') : getMatchFormatLabel(focus)}</span></div>
+              <div className={styles.mapHeading}><b>{rr5 ? t(uiText("五局进程", locale), 'Five-map series') : t(uiText("地图记录", locale), 'Map records')}</b><span>{rr5 ? t(uiText("RR5 · 固定五图，可按规则提前结束", locale), 'RR5 · Five maps; early finish allowed under the rules') : getMatchFormatLabel(focus)}</span></div>
               <ol className={styles.mapRail} style={{ '--map-count': maps.length }} tabIndex={0} aria-label={rr5 ? t(uiText('五局进程', locale), 'Five-map series') : t(uiText('地图记录', locale), 'Map records')}>
                 {maps.map(({ order, map, state }) => <li key={order} data-map-state={state}>
                   {map?.map_name && map?.map_type && <img key={`${map.map_type}/${map.map_name}`} className={styles.mapArt} src={getMapImage(map.map_type, map.map_name)} alt="" loading="lazy" onError={event => { event.currentTarget.hidden = true }} />}
@@ -124,6 +124,6 @@ export default function SignalWeeklyOverview() {
       </section>
     </div>
 
-    <footer className={styles.pathway}><div><span>01</span><b>{t(uiText("每周上场", locale), 'Weekly play')}</b><small>{t(uiText("五局累计周期积分", locale), 'Five maps, cycle points')}</small></div><i aria-hidden="true">→</i><div><span>02</span><b>{t(uiText("周期季后赛", locale), 'Cycle playoffs')}</b><small>{t(uiText("双败淘汰，继续向前", locale), 'Double elimination')}</small></div><i aria-hidden="true">→</i><div><span>03</span><b>Weekly Major</b><small>{t(uiText("走向更大的赛场", locale), 'The next stage')}</small></div><p>{t(uiText("晋级名额与日期，以当期公示为准。", locale), 'Qualification places and dates follow the current announcement.')}</p></footer>
+    <footer className={styles.pathway}><div><span>01</span><b>{t(uiText("每周上场", locale), 'Weekly play')}</b><small>{t(uiText("五局累计周期积分", locale), 'Five maps, cycle points')}</small></div><i aria-hidden="true">→</i><div><span>02</span><b>{t(uiText("周期季后赛", locale), 'Cycle playoffs')}</b><small>{t(uiText("四强单败，继续向前", locale), 'Four-team single elimination')}</small></div><i aria-hidden="true">→</i><div><span>03</span><b>Weekly Major</b><small>{t(uiText("走向更大的赛场", locale), 'The next stage')}</small></div><p>{t(uiText("晋级名额与日期，以当期公示为准。", locale), 'Qualification places and dates follow the current announcement.')}</p></footer>
   </div>
 }
