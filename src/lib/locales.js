@@ -2,6 +2,7 @@ export const LOCALE_STORAGE_KEY = 'fries_cup_stats_locale'
 export const LEGACY_REVIEW_LOCALE_STORAGE_KEY = 'fries_cup_review_locale'
 export const DEFAULT_LOCALE = 'zh-CN'
 export const LOCALE_CHANGE_EVENT = 'friescup:locale-change'
+let sessionLocale = null
 
 // One language contract for public pages, accounts, review stories and share URLs.
 export const LOCALES = [
@@ -11,7 +12,7 @@ export const LOCALES = [
   { id: 'en-US', param: 'en', code: 'EN-US', label: 'English', shortLabel: 'EN' }
 ]
 
-function resolveLocale(value) {
+export function resolveLocale(value) {
   const raw = String(value || '').trim().replaceAll('_', '-').toLowerCase()
   if (/^zh-(?:tw|hk|mo|hant)(?:-|$)/.test(raw)) return 'zh-TW'
   if (/^zh(?:-|$)/.test(raw)) return 'zh-CN'
@@ -28,20 +29,26 @@ export function getLocaleParam(locale) {
   return LOCALES.find(item => item.id === normalizeLocale(locale)).param
 }
 
+export function getSavedLocale() {
+  if (typeof window === 'undefined') return null
+  try {
+    return resolveLocale(window.localStorage.getItem(LOCALE_STORAGE_KEY)) ||
+      resolveLocale(window.localStorage.getItem(LEGACY_REVIEW_LOCALE_STORAGE_KEY))
+  } catch {
+    return null
+  }
+}
+
 export function getStoredLocale(fallback = DEFAULT_LOCALE) {
   if (typeof window === 'undefined') return normalizeLocale(fallback)
-  try {
-    return normalizeLocale(window.localStorage.getItem(LOCALE_STORAGE_KEY) ||
-      window.localStorage.getItem(LEGACY_REVIEW_LOCALE_STORAGE_KEY), fallback)
-  } catch {
-    return normalizeLocale(fallback)
-  }
+  return getSavedLocale() || sessionLocale || normalizeLocale(fallback)
 }
 
 export function setStoredLocale(locale) {
   if (typeof window === 'undefined') return
+  const normalized = normalizeLocale(locale)
+  sessionLocale = normalized
   try {
-    const normalized = normalizeLocale(locale)
     window.localStorage.setItem(LOCALE_STORAGE_KEY, normalized)
     window.localStorage.setItem(LEGACY_REVIEW_LOCALE_STORAGE_KEY, normalized)
   } catch { /* Language switching still works in the URL when storage is blocked. */ }
