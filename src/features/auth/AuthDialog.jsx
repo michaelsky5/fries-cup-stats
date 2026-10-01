@@ -6,14 +6,7 @@ import { getInitialSeasonId, withSeason } from '../../config/seasons.js'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthProvider.jsx'
 import useAccountCompetition from '../my-space/useAccountCompetition.js'
-import {
-  DEFAULT_REGION_GROUP,
-  REGION_GROUPS,
-  getLocalizedOption,
-  getRegionGroup,
-  getRegionGroupValueForCode,
-  getRegionOption
-} from './regionOptions.js'
+import RegionSelector from './RegionSelector.jsx'
 import PasswordRecoveryPanel from './PasswordRecoveryPanel.jsx'
 import usePasswordRecovery from './usePasswordRecovery.js'
 import { passwordRecoveryTitle, readPasswordResetLocation } from './passwordRecoveryModel.js'
@@ -111,10 +104,7 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
   const [displayName, setDisplayName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [regionGroup, setRegionGroup] = useState(DEFAULT_REGION_GROUP)
-  const [regionCode, setRegionCode] = useState('CN')
-  const [regionSearch, setRegionSearch] = useState('')
-  const [isRegionPickerOpen, setIsRegionPickerOpen] = useState(false)
+  const [regionCode, setRegionCode] = useState('')
   const [qqContact, setQqContact] = useState('')
   const [discordContact, setDiscordContact] = useState('')
   const [error, setError] = useState(null)
@@ -140,10 +130,7 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
       displayName: isEn ? 'Username' : uiText("用户名", locale),
       password: isEn ? 'Password' : uiText("密码", locale),
       confirmPassword: isEn ? 'Confirm Password' : uiText("确认密码", locale),
-      regionGroup: isEn ? 'Area' : uiText("区域", locale),
       region: isEn ? 'Country / Region' : uiText("国家 / 地区", locale),
-      regionSearch: isEn ? 'Search country / region' : uiText("搜索国家 / 地区", locale),
-      noRegionResults: isEn ? 'No matching country or region.' : uiText("没有匹配的国家或地区。", locale),
       qqContact: isEn ? 'QQ' : 'QQ',
       discordContact: isEn ? 'Discord' : 'Discord',
       contactGroup: isEn ? 'Contact' : uiText("联系方式", locale),
@@ -190,53 +177,15 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
     if (!open) return
     setError(null)
     setIsSubmitting(false)
-    setIsRegionPickerOpen(false)
   }, [open, mode])
 
   useEffect(() => {
     if (!registrationAllowed && mode === 'register') setMode('login')
   }, [registrationAllowed, mode])
 
-  const selectedRegionGroup = getRegionGroup(regionGroup)
-  const selectedRegionOption = getRegionOption(regionCode)
-  const searchableRegionOptions = useMemo(() => (
-    REGION_GROUPS.flatMap(group => (
-      group.options.map(option => ({
-        ...option,
-        groupValue: group.value,
-        groupLabel: getLocalizedOption(group, locale)
-      }))
-    ))
-  ), [locale])
-  const regionOptions = useMemo(() => {
-    const query = regionSearch.trim().toLocaleLowerCase()
-    const baseOptions = query
-      ? searchableRegionOptions
-      : selectedRegionGroup.options.map(option => ({
-          ...option,
-          groupValue: selectedRegionGroup.value,
-          groupLabel: getLocalizedOption(selectedRegionGroup, locale)
-        }))
-
-    if (!query) return baseOptions
-
-    return baseOptions.filter(option => [
-      option.value,
-      option.zh,
-      option.en,
-      option.groupLabel
-    ].some(value => String(value || '').toLocaleLowerCase().includes(query)))
-  }, [locale, regionSearch, searchableRegionOptions, selectedRegionGroup])
   const contactFields = QQ_FIRST_REGION_CODES.has(regionCode)
     ? ['QQ', 'DISCORD']
     : ['DISCORD', 'QQ']
-
-  const handleRegionSelect = option => {
-    setRegionCode(option.value)
-    setRegionGroup(option.groupValue || getRegionGroupValueForCode(option.value))
-    setRegionSearch('')
-    setIsRegionPickerOpen(false)
-  }
 
   if (!open) return null
 
@@ -363,88 +312,7 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
                       />
                     </div>
 
-                    <div className={styles.regionControl}>
-                      <div className={styles.fieldPair}>
-                        <div className={styles.field}>
-                          <label htmlFor="fries-cup-auth-region-group">{copy.regionGroup}</label>
-                          <select
-                            id="fries-cup-auth-region-group"
-                            value={regionGroup}
-                            onChange={event => {
-                              const nextGroup = getRegionGroup(event.target.value)
-                              const nextRegionCode = nextGroup.options[0].value
-                              setRegionGroup(nextGroup.value)
-                              setRegionCode(nextRegionCode)
-                              setRegionSearch('')
-                              setIsRegionPickerOpen(true)
-                            }}
-                            required
-                          >
-                            {REGION_GROUPS.map(option => (
-                              <option key={option.value} value={option.value}>
-                                {getLocalizedOption(option, locale)}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div className={styles.field}>
-                          <label htmlFor="fries-cup-auth-region-toggle">{copy.region}</label>
-                          <button
-                            id="fries-cup-auth-region-toggle"
-                            type="button"
-                            className={styles.regionToggle}
-                            aria-expanded={isRegionPickerOpen}
-                            aria-controls="fries-cup-auth-region-list"
-                            onClick={() => {
-                              setRegionSearch('')
-                              setIsRegionPickerOpen(value => !value)
-                            }}
-                          >
-                            <span>{getLocalizedOption(selectedRegionOption, locale)}</span>
-                            <em>{regionCode}</em>
-                          </button>
-                        </div>
-                      </div>
-
-                      {isRegionPickerOpen ? (
-                        <div className={styles.regionPicker}>
-                          <div className={styles.regionSearchField}>
-                            <input
-                              id="fries-cup-auth-region-search"
-                              type="search"
-                              autoComplete="off"
-                              value={regionSearch}
-                              placeholder={copy.regionSearch}
-                              onChange={event => setRegionSearch(event.target.value)}
-                            />
-                          </div>
-
-                          <div
-                            id="fries-cup-auth-region-list"
-                            className={styles.regionOptionList}
-                            role="listbox"
-                            aria-label={copy.region}
-                          >
-                            {regionOptions.length === 0 ? (
-                              <div className={styles.regionEmpty}>{copy.noRegionResults}</div>
-                            ) : regionOptions.map(option => (
-                              <button
-                                key={`${option.groupValue}-${option.value}`}
-                                type="button"
-                                className={`${styles.regionOption} ${option.value === regionCode ? styles.regionOptionActive : ''}`}
-                                onClick={() => handleRegionSelect(option)}
-                                role="option"
-                                aria-selected={option.value === regionCode}
-                              >
-                                <span>{getLocalizedOption(option, locale)}</span>
-                                <em>{option.groupLabel} / {option.value}</em>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      ) : null}
-                    </div>
+                    <RegionSelector value={regionCode} onChange={setRegionCode} label={copy.region} required disabled={isSubmitting} locale={locale} />
 
                     <div className={styles.contactGroup} aria-describedby="fries-cup-auth-contact-hint">
                       <div className={styles.contactHeader}>

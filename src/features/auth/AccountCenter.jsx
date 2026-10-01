@@ -13,7 +13,8 @@ import {
   updateUserProfile
 } from './userDataApi.js'
 import { fetchMySpaceContext } from '../my-space/mySpaceApi.js'
-import { getLocalizedOption, getRegionOption, REGION_GROUPS } from './regionOptions.js'
+import { getLocalizedOption, getRegionOption } from './regionOptions.js'
+import RegionSelector from './RegionSelector.jsx'
 import styles from './AccountCenter.module.css'
 
 const IDENTITY_OPTIONS = [
@@ -153,7 +154,7 @@ function createProfileForm(user, profile) {
   return {
     displayName: user?.displayName || profile?.nickname || '',
     avatarUrl: profile?.avatarUrl || '',
-    regionCode: profile?.regionCode || 'CN',
+    regionCode: profile?.regionCode || '',
     qqContact: getProfileContact(profile, 'QQ'),
     discordContact: getProfileContact(profile, 'DISCORD'),
     bio: profile?.bio || ''
@@ -950,16 +951,7 @@ export default function AccountCenter({
                     <span>{ui(locale, '显示名称', 'Display name')}</span>
                     <input type="text" minLength={1} maxLength={40} value={profileForm.displayName} onChange={event => handleProfileFieldChange('displayName', event.target.value)} required />
                   </label>
-                  <label>
-                    <span>{ui(locale, '国家 / 地区', 'Country / Region')}</span>
-                    <select value={profileForm.regionCode} onChange={event => handleProfileFieldChange('regionCode', event.target.value)} required>
-                      {REGION_GROUPS.map(group => (
-                        <optgroup key={group.value} label={getLocalizedOption(group, locale)}>
-                          {group.options.map(option => <option key={option.value} value={option.value}>{getLocalizedOption(option, locale)}</option>)}
-                        </optgroup>
-                      ))}
-                    </select>
-                  </label>
+                  <RegionSelector value={profileForm.regionCode} onChange={code => handleProfileFieldChange('regionCode', code)} label={ui(locale, '国家 / 地区', 'Country / Region')} required disabled={isSavingProfile} locale={locale} />
                 </div>
                 <label className={styles.fullField}>
                   <span>{ui(locale, '头像地址', 'Avatar URL')}</span>

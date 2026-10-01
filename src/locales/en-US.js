@@ -9558,7 +9558,7 @@ export default {
   "共用报名链接已准备好，可以发到队伍群。": "The shared registration link is ready to send to your team.",
   "关闭链接": "Close link",
   "国籍／地区": "Nationality / region",
-  "国籍或国家、地区": "Nationality or country/region",
+  "国籍或国家、地区": "Nationality / country or region",
   "仅海选／公开预选": "Open qualifiers only",
   "仅海选／公开预选，未进入正赛名单": "Open qualifiers only; not on a main-event roster",
   "进入报名工作区 →": "Open registration workspace →",
@@ -9764,6 +9764,9 @@ export default {
   "与最近审核名单重合": "Overlap with the last approved roster",
   "与最近一次审核通过名单比较": "Compare with the most recently approved roster",
   "本周名单与最近一次实际参赛名单仅重合 {0} 人，至少需要 3 人。若按新队伍参赛，请先申请资格审核；本次未修改积分。": "This week’s roster shares only {0} players with the most recent roster that actually played; at least 3 are required. To compete as a new team, request an eligibility review first. Points have not been changed.",
+  "请选择国家或地区": "Select a country or region",
+  "其他国家或地区": "Other country or region",
+  "请填写未列出的国家或地区": "Enter the country or region not listed",
   "教练信息（选填）": "Coach information (optional)",
   "教练联系方式": "Coach contact",
   "没有教练可留空；联系方式用于赛事联系。教练兼任选手时，仍需单独加入选手名单并确认。": "Leave blank if there is no coach. Contact details are used for event communication. A coach who also plays must join the player roster and confirm separately."

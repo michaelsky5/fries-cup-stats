@@ -55822,9 +55822,9 @@
     "ko-KR": "국적 / 지역"
   },
   "国籍或国家、地区": {
-    "en-US": "Nationality or country/region",
-    "ko-KR": "국적 또는 국가·지역",
-    "zh-TW": "國籍或國家、地區"
+    "zh-TW": "國籍或國家、地區",
+    "en-US": "Nationality / country or region",
+    "ko-KR": "국적 또는 국가 / 지역"
   },
   "仅海选／公开预选": {
     "zh-TW": "僅海選／公開預選",
@@ -56850,6 +56850,21 @@
     "en-US": "This week’s roster shares only {0} players with the most recent roster that actually played; at least 3 are required. To compete as a new team, request an eligibility review first. Points have not been changed.",
     "ko-KR": "이번 주 명단과 최근 실제 경기 참가 명단의 공통 선수는 {0}명이며 최소 3명이 필요합니다. 새 팀으로 참가하려면 먼저 자격 심사를 신청해 주세요. 점수는 변경되지 않았습니다.",
     "zh-TW": "本週名單與最近一次實際參賽名單僅重合 {0} 人，至少需要 3 人。若以新隊伍參賽，請先申請資格審核；本次未修改積分。"
+  },
+  "请选择国家或地区": {
+    "zh-TW": "請選擇國家或地區",
+    "en-US": "Select a country or region",
+    "ko-KR": "국가 또는 지역을 선택하세요"
+  },
+  "其他国家或地区": {
+    "zh-TW": "其他國家或地區",
+    "en-US": "Other country or region",
+    "ko-KR": "기타 국가 또는 지역"
+  },
+  "请填写未列出的国家或地区": {
+    "zh-TW": "請填寫未列出的國家或地區",
+    "en-US": "Enter the country or region not listed",
+    "ko-KR": "목록에 없는 국가 또는 지역을 입력하세요"
   },
   "教练信息（选填）": {
     "zh-TW": "教練資訊（選填）",

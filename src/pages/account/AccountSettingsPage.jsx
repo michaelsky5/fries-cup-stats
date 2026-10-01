@@ -15,7 +15,7 @@ import { getInitialSeasonId, withSeason } from '../../config/seasons.js'
 import { ACCOUNT_SIGN_OUT_EVENT, canSignOutOfAccount, UNSAVED_ACCOUNT_MESSAGE } from '../../features/account-ui/accountNavigationGuard.js'
 import { useAuth } from '../../features/auth/AuthProvider.jsx'
 import { updateUserProfile } from '../../features/auth/userDataApi.js'
-import { REGION_GROUPS } from '../../features/auth/regionOptions.js'
+import RegionSelector from '../../features/auth/RegionSelector.jsx'
 import {
   changeAccountPassword, fetchAccountProfile, fetchAccountSessions,
   revokeAccountSession, revokeOtherAccountSessions
@@ -142,7 +142,7 @@ function ProfileSettings({ user, onDirtyChange }) {
       <fieldset disabled={busy || readOnly} className={styles.fields}>
         <label>{uiText("显示名称", uiLocale)}<input name="displayName" autoComplete="nickname" required maxLength={40} aria-describedby="display-name-hint" {...field('displayName')} /><small id="display-name-hint" className={styles.fieldHint}>{uiText("账号入口与站内交流时显示的名字", uiLocale)}</small></label>
         <label><span>{uiText("个人昵称 ", uiLocale)}<small className={styles.optional}>{uiText("选填", uiLocale)}</small></span><input name="nickname" maxLength={40} aria-describedby="nickname-hint" {...field('nickname')} /><small id="nickname-hint" className={styles.fieldHint}>{uiText("补充个人称呼，不会修改游戏 ID", uiLocale)}</small></label>
-        <label>{uiText("国家／地区", uiLocale)}<select name="regionCode" {...field('regionCode')}><option value="">{uiText("未设置", uiLocale)}</option>{form.regionCode && !REGION_GROUPS.some(group => group.options.some(option => option.value === form.regionCode)) && <option value={form.regionCode}>{form.regionCode}</option>}{REGION_GROUPS.map(group => <optgroup key={group.value} label={group.zh}>{group.options.map(option => <option key={option.value} value={option.value}>{option.zh}</option>)}</optgroup>)}</select></label>
+        <RegionSelector name="regionCode" value={form.regionCode} onChange={code => { setNotice(null); setForm(current => ({ ...current, regionCode: code })) }} label={uiText("国家／地区", uiLocale)} disabled={busy || readOnly} locale={uiLocale} />
         <label className={styles.wide}>{uiText("个人介绍", uiLocale)}<textarea name="bio" rows={3} maxLength={280} {...field('bio')} /><small>{form.bio.length} / 280</small></label>
       </fieldset>
       <aside className={styles.profilePreview} aria-label={uiText("个人资料预览", uiLocale)}><div className={styles.previewHeading}><span>{uiText("展示预览", uiLocale)}</span><small>{dirty ? uiText("尚未保存", uiLocale) : uiText("已保存的资料", uiLocale)}</small></div><AccountAvatar className={styles.previewAvatar} url={avatarDraft ? avatarDraft.url : savedAvatar} name={form.displayName} thumbnail={false} /><strong data-i18n-ignore>{form.displayName.trim() || '—'}</strong>{form.nickname.trim() && <span data-i18n-ignore>{form.nickname}</span>}<p data-i18n-ignore>{form.bio.trim() || '—'}</p><small>{uiText("这里只预览账号资料；赛事档案与出赛名单不会随之修改。", uiLocale)}</small></aside>
