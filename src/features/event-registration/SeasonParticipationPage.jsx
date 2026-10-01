@@ -172,6 +172,7 @@ function InvitationLink({ invitation }) {
 }
 
 function TeamForm({ organizations = [], record, busy, onSave, eligibilityRequired }) {
+  const uiLocale = useUiLocale()
   const initial = () => record ? { name: record.name, shortName: record.shortName, contact: record.contact, note: record.note, details: { ...emptyDetails, ...record.details } } : { ...emptyTeam, details: { ...emptyDetails } }
   const [form, setForm] = useState(initial)
   const [dirty, setDirty] = useState(false), [reading, setReading] = useState(false)
@@ -196,6 +197,14 @@ function TeamForm({ organizations = [], record, busy, onSave, eligibilityRequire
       {!record && <label>队伍类型<select value={form.kind} onChange={event => set('kind', event.target.value)} disabled={Boolean(form.organizationId)}><option value="LONG_TERM">长期队伍</option><option value="TEMPORARY">本赛季临时队伍</option></select></label>}
       <label>{eligibilityRequired ? '负责人 QQ' : '负责人联系方式'}<input name="contact" value={form.contact} required minLength={eligibilityRequired ? 5 : 3} maxLength={eligibilityRequired ? 12 : 240} inputMode={eligibilityRequired ? 'numeric' : 'text'} pattern={eligibilityRequired ? '[0-9]{5,12}' : undefined} title={eligibilityRequired ? '请填写 5 至 12 位 QQ 号码，只填数字' : undefined} placeholder={eligibilityRequired ? '只填写 QQ 号码，用于赛事联系' : '赛事联系账号'} onChange={event => set('contact', event.target.value.trim())} /></label>
     </div>
+    <fieldset className={styles.eligibilityFields} disabled={busy}>
+      <legend>{uiText('教练信息（选填）', uiLocale)}</legend>
+      <div className={`${styles.fields} ${styles.coachFields}`}>
+        <label>{uiText('教练昵称 / 参赛名', uiLocale)}<input name="coachName" maxLength={80} autoComplete="off" value={form.details.coachName} onChange={event => detail('coachName', event.target.value)} /></label>
+        <label>{uiText('教练联系方式', uiLocale)}<input name="coachContact" maxLength={240} autoComplete="off" value={form.details.coachContact} onChange={event => detail('coachContact', event.target.value)} /></label>
+      </div>
+      <p>{uiText('没有教练可留空；联系方式用于赛事联系。教练兼任选手时，仍需单独加入选手名单并确认。', uiLocale)}</p>
+    </fieldset>
     {eligibilityRequired && <label>队伍历史赛事表现<textarea name="history" required rows={2} maxLength={1000} value={form.details.history} placeholder="赛事名称、成绩；没有参赛经历请填写“无”" onChange={event => detail('history', event.target.value)} /></label>}
     <RegistrationLogoField image={form.logoImage} url={form.details.logoUrl} disabled={busy} onReading={setReading} onChange={({ image, url }) => { setForm(current => ({ ...current, logoImage: image, details: { ...current.details, logoUrl: url } })); setDirty(true) }} />
     <label>报名备注<textarea value={form.note} maxLength={1000} rows={2} onChange={event => set('note', event.target.value)} /></label>

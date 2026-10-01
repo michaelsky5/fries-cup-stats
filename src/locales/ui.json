@@ -56850,5 +56850,20 @@
     "en-US": "This week’s roster shares only {0} players with the most recent roster that actually played; at least 3 are required. To compete as a new team, request an eligibility review first. Points have not been changed.",
     "ko-KR": "이번 주 명단과 최근 실제 경기 참가 명단의 공통 선수는 {0}명이며 최소 3명이 필요합니다. 새 팀으로 참가하려면 먼저 자격 심사를 신청해 주세요. 점수는 변경되지 않았습니다.",
     "zh-TW": "本週名單與最近一次實際參賽名單僅重合 {0} 人，至少需要 3 人。若以新隊伍參賽，請先申請資格審核；本次未修改積分。"
+  },
+  "教练信息（选填）": {
+    "zh-TW": "教練資訊（選填）",
+    "en-US": "Coach information (optional)",
+    "ko-KR": "코치 정보 (선택 사항)"
+  },
+  "教练联系方式": {
+    "zh-TW": "教練聯絡方式",
+    "en-US": "Coach contact",
+    "ko-KR": "코치 연락처"
+  },
+  "没有教练可留空；联系方式用于赛事联系。教练兼任选手时，仍需单独加入选手名单并确认。": {
+    "zh-TW": "沒有教練可留空；聯絡方式用於賽事聯絡。教練兼任選手時，仍需另外加入選手名單並確認。",
+    "en-US": "Leave blank if there is no coach. Contact details are used for event communication. A coach who also plays must join the player roster and confirm separately.",
+    "ko-KR": "코치가 없으면 비워 두세요. 연락처는 대회 연락에 사용됩니다. 선수를 겸하는 코치는 선수 명단에 별도로 등록하고 확인해야 합니다."
   }
 }
