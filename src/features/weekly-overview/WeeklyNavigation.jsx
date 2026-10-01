@@ -1,17 +1,19 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useRef } from 'react'
-import { weeklyCycleTitle, weeklyStatusLabel, weeklyWeekTitle } from './weeklyPresentation.js'
+import { weeklyCycleDates, weeklyCycleTitle, weeklyStatusLabel, weeklyWeekTitle } from './weeklyPresentation.js'
 import styles from './WeeklyNavigation.module.css'
 import sectionStyles from '../../components/navigation/SignalSectionNav.module.css'
 
 export function WeeklyCyclePicker({ cycles, cycle, locale, onChange }) {
   const en = String(locale).startsWith('en')
+  const dates = weeklyCycleDates(cycle, locale)
   return <div className={styles.cycleBar}>
     <label>{en ? 'Cycle' : uiText("当前周期", locale)}<select aria-label={en ? 'Select cycle' : uiText("选择周期", locale)} value={cycle?.id || ''} onChange={event => onChange(event.target.value)} disabled={!cycles.length}>
       {!cycles.length && <option value="">{en ? 'To be announced' : uiText("待公布", locale)}</option>}
       {cycles.map(item => <option key={item.id} value={item.id}>{weeklyCycleTitle(item, locale)}</option>)}
     </select></label>
     <span>{cycle ? weeklyStatusLabel(cycle.status, locale) : en ? 'Schedule pending' : uiText("赛程待公布", locale)}{cycle?.counts_toward_standings === false && (en ? ' · No cycle points' : uiText(" · 不计周期积分", locale))}</span>
+    {dates && <small>{dates}</small>}
   </div>
 }
 
