@@ -13,6 +13,14 @@ export const weeklyCycleTitle = (cycle, locale) => isEnglish(locale) ? cycle?.co
 export const weeklyWeekTitle = (week, locale) => isEnglish(locale) ? `Week ${week?.week_number}` : translateUiText(week?.label || `第 ${week?.week_number} 周`, locale)
 export const weeklyTeamShort = team => team?.short || team?.team_short_name || team?.name || team?.team_name || 'TBD'
 
+export function weeklyCycleDates(cycle, locale) {
+  if (!cycle?.starts_at || !cycle?.ends_at) return ''
+  const start = new Date(cycle.starts_at), end = new Date(cycle.ends_at)
+  if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime())) return ''
+  const formatter = new Intl.DateTimeFormat(locale || 'zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' })
+  return `${formatter.format(start)} – ${formatter.format(end)}`
+}
+
 export function weeklyPeriodPath(path, cycle, week) {
   const params = new URLSearchParams()
   if (cycle?.id) params.set('cycle', cycle.id)
