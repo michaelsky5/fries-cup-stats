@@ -1,5 +1,3 @@
-import localeResponse from './locale.js'
-
 // Production defaults to the live account API. Preview deployments can set
 // FRIES_PLATFORM_ORIGIN to the isolated staging backend.
 const PLATFORM_ORIGIN = globalThis.process?.env?.FRIES_PLATFORM_ORIGIN || 'https://admin.fries-cup.com'
@@ -171,6 +169,23 @@ export async function proxyRequest(request, {
     else await task
   }
   return response
+}
+
+// Keep the geo response inside the existing catch-all entry. Importing another
+// EdgeOne handler here caused the deployed proxy to use that handler instead.
+export function localeResponse({ request }) {
+  const method = request.method.toUpperCase()
+  const headers = {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': 'private, no-store, max-age=0',
+    'CDN-Cache-Control': 'no-store',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Robots-Tag': 'noindex, nofollow, noarchive, nosnippet'
+  }
+  if (!['GET', 'HEAD'].includes(method)) return new Response(null, { status: 405, headers: { ...headers, Allow: 'GET, HEAD' } })
+  const raw = String(request.eo?.geo?.countryCodeAlpha2 || '').trim().toUpperCase()
+  const countryCode = /^[A-Z]{2}$/.test(raw) ? raw : null
+  return new Response(method === 'HEAD' ? null : JSON.stringify({ countryCode }), { headers })
 }
 
 export default function onRequest(context) {

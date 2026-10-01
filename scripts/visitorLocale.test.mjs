@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { browserLocale, regionLocale, initialLocale, initializeVisitorLocale } from '../src/lib/visitorLocale.js'
 import { LOCALE_STORAGE_KEY, LEGACY_REVIEW_LOCALE_STORAGE_KEY, getStoredLocale } from '../src/lib/locales.js'
-import localeResponse from '../edge-functions/api/locale.js'
+import { localeResponse } from '../edge-functions/api/[[path]].js'
 import edgeRequest from '../edge-functions/api/[[path]].js'
 
 test('explicit link and existing preference override browser and region hints', () => {
