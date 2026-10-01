@@ -44,7 +44,7 @@ export function getMatchPhasePresentation(dossier, progress = [], locale = 'zh-C
   }
   const captions = {
     upcoming: t('从第一局开始，等双方上场。', 'Ready for the first map. Waiting for the teams.'),
-    live: rr5 ? records.length < 5 ? t('RR5 打满五局，当前比分不是最终赛果。', 'RR5 plays all five maps. This score is not final.')
+    live: rr5 ? records.length < 5 ? t('RR5 当前比分尚未确认，最终赛果以公布为准。', 'The RR5 score is provisional. The final result follows publication.')
       : t('五局记录已公布，比赛状态仍为进行中。', 'Five map records are available. The match is still marked in progress.')
       : t('比赛仍在继续，以下展示已公布的地图记录。', 'The match continues. Published map records are shown below.'),
     review: t('比分与地图结果待审核，正式赛果以公布为准。', 'Scores and map results are under review. The final result follows publication.'),

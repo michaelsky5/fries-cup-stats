@@ -130,7 +130,7 @@ export default function SignalWeeklySchedule() {
     </div>
     <div className={styles.listHeading}>
       <h2>{selectedWeekId === 'all' ? weeklyCycleTitle(cycle, locale) : week ? weeklyWeekTitle(week, locale) : t(uiText("周赛赛程", locale), 'Weekly schedule')}<span aria-live="polite">{t(uiText("{0} 场对阵", locale, [model.resultCount]), `${model.resultCount} matches`)}</span></h2>
-      <p>{t(uiText("RR5 · 无论比分，都打满五局", locale), 'RR5 · All five maps are played')}</p>
+      <p>{t(uiText("RR5 · 固定五图，可按规则提前结束", locale), 'RR5 · Five maps; early finish allowed under the rules')}</p>
     </div>
     {entries.length ? <div className={styles.groups}>{entries.map(entry => <section key={entry.week.id} aria-label={weeklyWeekTitle(entry.week, locale)}>
       {selectedWeekId === 'all' && <h3 className={styles.weekHeading}><span>{weeklyWeekTitle(entry.week, locale)}</span><small>{weeklyStatusLabel(entry.week.status, locale)}</small></h3>}
