@@ -3,7 +3,7 @@ import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import styles from '../account-ui/SignalWeeklyTeam.module.css'
 
-export default function WeeklyRosterReview({ players, ids, previousIds, firstAppearance, check, status, writable, dirty, busy, editHref, onSubmit }) {
+export default function WeeklyRosterReview({ players, ids, previousIds, firstAppearance, approvedContinuity = false, check, status, writable, dirty, busy, editHref, onSubmit }) {
   const locale = useUiLocale()
   const previous = new Set(previousIds)
   const selected = new Set(ids)
@@ -17,7 +17,7 @@ export default function WeeklyRosterReview({ players, ids, previousIds, firstApp
     <p>{uiText('核对下面的完整名单后正式提交。保存调整只会保存草稿，不代表已提交。', locale)}</p>
     <div className={styles.reviewRoster}>
       <section><h4>{uiText('本周完整名单', locale)} · {ids.length}</h4>{ids.length ? <ol>{ids.map(id => <li key={id}>{label(id)}</li>)}</ol> : <p>{uiText('请先调整并保存本周出赛人选。', locale)}</p>}</section>
-      <section><h4>{firstAppearance ? uiText('首次参赛名单', locale) : uiText('与最近一次参赛比较', locale)}</h4>
+      <section><h4>{firstAppearance ? uiText('首次参赛名单', locale) : uiText(approvedContinuity ? '与最近一次审核通过名单比较' : '与最近一次参赛比较', locale)}</h4>
         <p>{uiText('新增出赛', locale)}：{added.length ? added.map(label).join('、') : uiText('无', locale)}</p>
         {!firstAppearance && <p>{uiText('本周不出赛', locale)}：{removed.length ? removed.map(label).join('、') : uiText('无', locale)}</p>}
         <p>{uiText('移出本周名单不会删除选手档案或历史战绩。', locale)}</p>

@@ -181,3 +181,20 @@
   .matchActions { padding: 12px 16px; gap: 8px; }
   .empty { min-height: 180px; padding: 20px 16px; }
 }
+
+.homeDetails, .homeSummary, .homeFollowing { display: contents; }
+@media (max-width: 600px) {
+  .identity { gap: 12px; align-items: flex-start; }
+  .identityMain { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .identity .eyebrow { display: none; }
+  .identity h1 { margin: 0; font-size: 24px; }
+  .identityContext { width: 100%; padding: 0; border: 0; }
+  .overview[data-mobile-home='true'] { gap: 14px; }
+  .overview[data-mobile-home='true'] .focusGrid { display: flex; flex-direction: column; gap: 14px; }
+  .overview[data-mobile-home='true'] .focusGrid .match { order: -1; }
+  .overview[data-mobile-home='true'] .taskList > .task:nth-child(n+2) { display: none; }
+  .overview[data-mobile-home='true'][data-mobile-progress='false'] .homeDetails { display: none; }
+  .overview[data-mobile-home='true'][data-mobile-progress='true'] .homeSummary { display: none; }
+  .overview[data-mobile-home='true'][data-mobile-progress='true'] .homeFollowing { display: none; }
+  .overview[data-mobile-home='true'] .support { display: none; }
+}

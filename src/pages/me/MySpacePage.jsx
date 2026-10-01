@@ -5,7 +5,7 @@ import { isWeeklyOverview } from '../../features/weekly-overview/weeklyOverviewM
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
-import { Link, Navigate, useOutletContext, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigationType, useOutletContext, useSearchParams } from 'react-router-dom'
 import { withSeason as withPublicSeason } from '../../config/seasons.js'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import FollowingWorkspace, { FollowingDigest } from '../../features/following/FollowingWorkspace.jsx'
@@ -48,8 +48,11 @@ import FollowingPage from '../following/FollowingPage.jsx'
 import styles from './MySpacePage.module.css'
 import { reminderCopy } from '../../features/match-reminders/reminderCopy.js'
 import { SpaceIdentity } from '../../features/account-ui/SpaceOverview.jsx'
+import MobileSpaceMenu, { MobileSpaceBack } from '../../features/account-ui/MobileSpaceNavigation.jsx'
+import { getRestoreScrollY } from '../../lib/navigationState.js'
 import AccountActivityWorkspace from '../../features/account-ui/AccountActivityWorkspace.jsx'
 import useAccountActivity from '../../features/account-ui/useAccountActivity.js'
+import { getAccountActivityAccess } from '../../features/account-ui/accountActivityModel.js'
 import { isCompetitionMatchesEntry, requiresParticipationAccess } from '../../features/my-space/personalSpacePolicy.js'
 import useAccountCompetition from '../../features/my-space/useAccountCompetition.js'
 import AccountCompetitionBar from '../../features/my-space/AccountCompetitionBar.jsx'
@@ -522,6 +525,8 @@ export default function MySpacePage() {
 }
 
 function MySpaceContent() {
+  const location = useLocation()
+  const navigationType = useNavigationType()
   const context = useOutletContext() || {}
   const {
     db,
@@ -730,20 +735,24 @@ function MySpaceContent() {
   const isPrimaryPlayer = primarySpaceIdentityType === 'PLAYER' && isVerifiedPlayer
   const isPrimaryManager = primarySpaceIdentityType === 'MANAGER'
   const activeSection = spaceSections.some(section => section.id === requestedSection) ? requestedSection : 'overview'
+  const participationView = activeSection === 'overview' && (searchParams.has('journey') || searchParams.has('progress'))
+  const pageView = `${activeSection}:${participationView}:${searchParams.get('manage') || ''}`
+  const previousSection = useRef(pageView)
+  useEffect(() => {
+    if (previousSection.current !== pageView && navigationType !== 'POP' && getRestoreScrollY(location.state) === null) {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    }
+    previousSection.current = pageView
+  }, [pageView, location.state, navigationType])
   const showIdentityContext = spaceContextLoading || Boolean(spaceContextError)
   const registrationEntry = canShowRegistrationEntry ? <SeasonRegistrationEntry seasonId={seasonId} withSeason={pageLink} className={styles.spaceContextState} /> : null
-  const canViewWeeklyCompetition = hasAccountFeatureAccess(accountLaunch, 'weeklyCompetition') &&
-    (effectiveSpaceContext.identities || []).some(identity => ['MANAGER', 'PLAYER'].includes(String(identity.type || identity.identityType || '').toUpperCase()))
-  const canWriteWeeklyCompetition = hasAccountFeatureAccess(accountLaunch, 'weeklyCompetition', 'WRITE')
-  const canViewWeeklyMatchRooms = hasAccountFeatureAccess(accountLaunch, 'matchRoom') &&
-    (effectiveSpaceContext.sections?.weeklyRooms || (effectiveSpaceContext.identities || []).some(identity => ['MANAGER', 'PLAYER'].includes(String(identity.type || identity.identityType || '').toUpperCase())))
-  const canWriteMatchRooms = hasAccountFeatureAccess(accountLaunch, 'matchRoom', 'WRITE')
+  const activityAccess = getAccountActivityAccess(effectiveSpaceContext, accountLaunch)
+  const { canViewWeeklyCompetition, canViewWeeklyMatchRooms } = activityAccess
+  const canWriteWeeklyCompetition = !activityAccess.preparationReadOnly
+  const canWriteMatchRooms = !activityAccess.roomsReadOnly
   const activityEnabled = isAuthenticated && accountPortalAllowed && Boolean(currentSpaceContext)
   const activity = useAccountActivity({ seasonId, userId: authUser?.id, identityType: effectiveSpaceContext.primaryIdentityType,
-    enabled: activityEnabled, view: activeSection, genericTasks: hasAccountFeatureAccess(accountLaunch, 'communications'),
-    weeklyPreparation: effectiveSpaceContext.competitionKind === 'WEEKLY' && canViewWeeklyCompetition && spaceSections.some(section => section.id === 'team'),
-    weeklyRooms: effectiveSpaceContext.competitionKind === 'WEEKLY' && canViewWeeklyMatchRooms && spaceSections.some(section => section.id === 'matches'),
-    preparationReadOnly: !canWriteWeeklyCompetition, roomsReadOnly: !canWriteMatchRooms })
+    enabled: activityEnabled, view: activeSection, ...activityAccess })
   const navigationSummary = { ...effectiveSpaceContext.overview,
     openTaskCount: activityEnabled && activity.status === 'ready' ? activity.taskView.openTasks.length : null,
     taskSyncStatus: activityEnabled ? activity.status : 'loading' }
@@ -776,12 +785,17 @@ function MySpaceContent() {
   const competitionBar = <AccountCompetitionBar competition={competition} locale={locale} withSeason={pageLink} />
   if (isAuthenticated && needsParticipationAccess && (competition.loading || competition.error || competition.issue)) {
     const entrySections = ['overview', 'events', 'following', 'security'].map(id => SPACE_SECTION_DEFINITIONS[id])
-    return <main className={styles.page} data-design="signal" data-page-mode="control">
+    const entrySection = requestedSection === 'overview' ? 'overview' : 'events'
+    return <main className={styles.page} data-design="signal" data-page-mode="control" data-native-mobile>
       <SpaceHeader>
+        <MobileSpaceBack section={entrySection} withSeason={pageLink} locale={locale} />
+        <div className={entrySection === 'overview' ? styles.homeIdentity : styles.desktopIdentity}>
         <SpaceIdentity context={effectiveSpaceContext} locale={locale} withSeason={pageLink} />
-        <SpaceTabs activeSection={requestedSection === 'overview' ? 'overview' : 'events'} withSeason={pageLink} sections={entrySections} locale={locale} />
+        </div>
+        <div className={styles.desktopSpaceNavigation}><SpaceTabs activeSection={entrySection} withSeason={pageLink} sections={entrySections} locale={locale} /></div>
       </SpaceHeader>
-      <AccountCompetitionBar competition={competition} locale={locale} withSeason={pageLink} entry />
+      {entrySection === 'overview' ? <MobileSpaceMenu sections={entrySections.filter(section => section.id !== 'overview')} withSeason={pageLink} locale={locale} /> : null}
+      <AccountCompetitionBar competition={competition} locale={locale} withSeason={pageLink} entry mobileHome={entrySection === 'overview'} />
     </main>
   }
 
@@ -841,16 +855,18 @@ function MySpaceContent() {
   </main>
   if (!isAuthenticated) return <><div className={styles.guideEntry}><RoomGuideLink label="参赛与比赛指南" /></div><FollowingPage /></>
   return (
-    <main className={styles.page} data-design="signal" data-page-mode={activeSection === 'following' ? 'index' : 'control'}>
+    <main className={styles.page} data-design="signal" data-native-mobile data-page-mode={activeSection === 'following' ? 'index' : 'control'}>
       <SpaceHeader>
+        <MobileSpaceBack section={participationView ? 'progress' : activeSection} withSeason={pageLink} locale={locale} />
+        <div className={activeSection === 'overview' && !participationView ? styles.homeIdentity : styles.desktopIdentity}>
         <SpaceIdentity context={effectiveSpaceContext} locale={locale} withSeason={pageLink} following={activeSection === 'following'}
           contextContent={needsParticipationAccess ? <AccountCompetitionBar competition={competition} locale={locale} withSeason={pageLink} compact /> : null}
           actions={<RoomGuideLink season={seasonId} label="参赛指南" className={styles.spaceGuide} />} />
+        </div>
         {showIdentityContext && needsParticipationAccess ? <IdentityContextStrip context={effectiveSpaceContext} loading={spaceContextLoading} error={spaceContextError} /> : null}
-        <SpaceTabs key={activeSection} activeSection={activeSection} withSeason={pageLink} sections={spaceSections} overview={navigationSummary} locale={locale} roomEntry={isWeekly && canViewWeeklyMatchRooms} />
+        <div className={styles.desktopSpaceNavigation}><SpaceTabs key={activeSection} activeSection={activeSection} withSeason={pageLink} sections={spaceSections} overview={navigationSummary} locale={locale} roomEntry={isWeekly && canViewWeeklyMatchRooms} /></div>
       </SpaceHeader>
-      {activeSection === 'overview' ? registrationEntry : null}
-      {['overview', 'tasks'].includes(activeSection) ? <AccountActivityWorkspace key={`${seasonId}:${authUser?.id || ''}`} view={activeSection} activity={activity} locale={locale} context={effectiveSpaceContext} withSeason={pageLink} sections={spaceSections} followingSummary={followingSummary} managerStatus={isPrimaryManager ? managerWorkspaceStatus : null} playerStatus={isPrimaryPlayer ? playerWorkspaceStatus : null} genericTasks={hasAccountFeatureAccess(accountLaunch, 'communications')} weeklyPreparation={isWeekly && canViewWeeklyCompetition && spaceSections.some(section => section.id === 'team')} weeklyRooms={isWeekly && canViewWeeklyMatchRooms && spaceSections.some(section => section.id === 'matches')} roomsReadOnly={!canWriteMatchRooms} /> : null}
+      {['overview', 'tasks'].includes(activeSection) ? <AccountActivityWorkspace key={`${seasonId}:${authUser?.id || ''}`} view={activeSection} activity={activity} locale={locale} participationView={participationView} quickEntries={activeSection === 'overview' ? <MobileSpaceMenu sections={spaceSections} overview={navigationSummary} withSeason={pageLink} locale={locale} /> : null} registrationEntry={activeSection === 'overview' ? registrationEntry : null} context={effectiveSpaceContext} withSeason={pageLink} sections={spaceSections} followingSummary={followingSummary} managerStatus={isPrimaryManager ? managerWorkspaceStatus : null} playerStatus={isPrimaryPlayer ? playerWorkspaceStatus : null} genericTasks={hasAccountFeatureAccess(accountLaunch, 'communications')} weeklyPreparation={isWeekly && canViewWeeklyCompetition && spaceSections.some(section => section.id === 'team')} weeklyRooms={isWeekly && canViewWeeklyMatchRooms && spaceSections.some(section => section.id === 'matches')} roomsReadOnly={!canWriteMatchRooms} /> : null}
       {activeSection === 'stream' ? <PlayerStreamWorkspace key={seasonId} seasonId={seasonId} /> : null}
       {activeSection === 'events' ? <MyEventsPanel context={effectiveSpaceContext} withSeason={pageLink} /> : null}
       {activeSection === 'communications' ? <AccountCommunicationsCenter seasonId={seasonId} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} withSeason={pageLink} onSummaryChange={handleTaskSummaryChange} onActivityChange={activity.refresh} /> : null}

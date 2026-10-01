@@ -32,3 +32,7 @@
   .intro p { font-size: 13px; line-height: 1.6; }
   .frame :is(input, select, textarea) { scroll-margin-bottom: calc(90px + env(safe-area-inset-bottom)); }
 }
+
+@media (max-width: 600px) {
+  .frame[data-account-subpage='true'] .context, .frame[data-account-subpage='true'] .intro { display: none; }
+}

@@ -31,7 +31,7 @@ assert.match(workspaceSource, /revision: rosterDraft\?\.revision \|\| 0/)
 assert.equal(workspaceSource.includes('<option value="LOCKED">锁定名单</option>'), false, 'team accounts must not be offered the administrator-only roster lock action')
 
 assert.match(mySpaceSource, /import WeeklyCompetitionWorkspace/)
-assert.match(mySpaceSource, /hasAccountFeatureAccess\(accountLaunch, 'weeklyCompetition', 'WRITE'\)/)
+assert.match(mySpaceSource, /canWriteWeeklyCompetition = !activityAccess\.preparationReadOnly/)
 assert.doesNotMatch(mySpaceSource, /canWriteTeamOperations \? <WeeklyCompetitionWorkspace/)
 
 console.log('Weekly competition account workspace boundary checks passed.')

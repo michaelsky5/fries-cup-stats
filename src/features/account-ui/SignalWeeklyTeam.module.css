@@ -195,3 +195,7 @@
   .taskFooter { gap: 6px; font-size: 12px; }
   .workspace [id^='weekly-'] { scroll-margin-top: 76px; scroll-margin-bottom: calc(150px + env(safe-area-inset-bottom)); }
 }
+
+.teamOperations { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; padding-block: 12px; border-top: 1px solid var(--fc-data-line); }
+.teamOperations a { display: inline-flex; align-items: center; min-height: 44px; color: var(--fc-data-text-muted); font-size: 13px; text-decoration: none; }
+.teamOperations a:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 2px; }

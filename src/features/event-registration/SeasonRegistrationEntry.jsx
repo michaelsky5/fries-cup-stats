@@ -24,7 +24,7 @@ export default function SeasonRegistrationEntry({ seasonId, withSeason = value =
   return <section className={className} aria-busy={state.loading} data-i18n-ignore>
     <strong>{en ? 'Season registration' : t('本赛季报名')}</strong>
     {records.length ? records.map(record => <p key={record.id}><b>{record.name}</b> · <Link to={withSeason(`/participate/${encodeURIComponent(seasonId)}`)}>{labels[record.status] || (en ? 'View registration' : t('查看报名'))}</Link></p>) : <>
-      <p>{state.loading ? en ? 'Checking your registration…' : t('正在读取报名状态…') : state.error ? en ? 'Open registration to check your saved details.' : t('暂时未能读取报名状态，可进入报名页核对已保存资料。') : en ? 'Create your team or return to your saved registration.' : t('创建队伍，或回到已保存的报名继续填写。')}</p>
+      <p>{state.loading ? en ? 'Checking your registration…' : t('正在读取报名状态…') : state.error ? en ? 'Open registration to check your saved details.' : t('暂时未能读取报名状态，可进入报名页核对已保存资料。') : en ? 'Create your team or return to your saved registration.' : t('创建队伍、分享共用链接，队员各自填写，经理审核后统一提交报名。')}</p>
       <Link to={withSeason(`/participate/${encodeURIComponent(seasonId)}`)}>{en ? 'Open season registration' : t('进入本赛季报名')}</Link>
     </>}
     <p>{en ? 'Already approved? Use Team & registration to confirm each week and submit the weekly roster.' : t('已通过本赛季报名的队伍，请在“队伍与报名”中完成每周参赛确认和出赛名单。')}</p>

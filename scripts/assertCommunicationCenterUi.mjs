@@ -67,6 +67,8 @@ assert.deepEqual(buildAccountAttention({
 }), {
   openTaskCount: 3,
   unreadNotificationCount: 120,
+  taskSyncStatus: 'ready',
+  showTaskBadge: true,
   visible: true,
   taskBadge: '待 3',
   unreadBadge: '未 99+',
@@ -89,8 +91,7 @@ assert.equal(gateSource.includes('暂时无法核验赛事公告'), true)
 const headerSource = readFileSync(new URL('../src/components/layout/PublicHeader.jsx', import.meta.url), 'utf8')
 assert.equal(headerSource.includes('<AccountAttentionBadge attention={accountAttention} />'), true)
 assert.equal(layoutSource.includes('accountAttention={accountAttention}'), true)
-assert.equal(layoutSource.includes('fetchMySpaceContext(attentionSeasonId)'), true)
-assert.equal(layoutSource.includes('buildWeeklyPreparation(workspace'), true)
+assert.equal(layoutSource.includes('fetchAccountAttentionContext(attentionSeasonId, authUser?.id'), true)
 assert.match(layoutSource, /<UrgentAnnouncementGate\s+seasonId=\{seasonId\}/)
 
 console.log('Communication center UI assertions passed.')

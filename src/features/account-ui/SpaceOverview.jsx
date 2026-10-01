@@ -48,7 +48,7 @@ export function SpaceIdentity({ context, locale = 'zh-CN', following = false, wi
   </header>
 }
 
-export default function SpaceOverview({ context, withSeason, sections, managerStatus, playerStatus, followingSummary, children, weekly, activity, preparation, locale = 'zh-CN' }) {
+export default function SpaceOverview({ context, withSeason, sections, managerStatus, playerStatus, followingSummary, children, weekly, activity, preparation, quickEntries, registrationEntry, participationView = false, locale = 'zh-CN' }) {
   const overview = context?.overview || {}
   const [now, setNow] = useState(() => new Date())
   useEffect(() => { const timer = setInterval(() => setNow(new Date()), 30_000); return () => clearInterval(timer) }, [])
@@ -69,8 +69,8 @@ export default function SpaceOverview({ context, withSeason, sections, managerSt
   const matchCard = (<section className={styles.match} aria-labelledby="space-match-title"><header className={styles.sectionHead}><div><span className={styles.eyebrow}>{canEnter ? 'MATCH ROOM' : archived ? 'MATCH ARCHIVE' : 'NEXT MATCH'}</span><h2 id="space-match-title">{canEnter ? uiText('比赛房', locale) : archived ? en ? 'Competition records' : uiText("本届比赛记录", locale) : nextIsStaff ? uiText("下一场执赛安排", locale) : uiText("下一场比赛", locale)}</h2></div><span className={styles.status}>{match ? MATCH_STATUS_LABELS[match.status] || match.statusLabel || uiText("赛程已安排", locale) : archived ? en ? 'Archived' : uiText("已归档", locale) : weeklyPending ? uiText("待同步", locale) : uiText("等待安排", locale)}</span></header>
         {match ? <><MatchCountdown match={match} now={now} locale={locale} /><div className={styles.matchFacts}><time dateTime={match.scheduledAt || undefined}>{formatTime(match.scheduledAt)}</time><span>{match.displayName || [match.stage, match.roundLabel].filter(Boolean).join(' · ') || uiText("轮次待定", locale)}{nextIsStaff ? ` · ${next.roleLabel || roleLabels[next.role] || '工作人员'}` : ''}</span></div><div className={styles.matchTeams}><div><TeamLogo team={{ ...match.teamA, short: teamName(match.teamA) }} seasonId={context.seasonId} className={styles.logo} /><strong>{teamName(match.teamA)}</strong></div><b>VS</b><div><TeamLogo team={{ ...match.teamB, short: teamName(match.teamB) }} seasonId={context.seasonId} className={styles.logo} /><strong>{teamName(match.teamB)}</strong></div></div><div className={styles.matchActions}><Link className={canEnter ? styles.primary : ''} to={withSeason(next.actionUrl || `/matches/${encodeURIComponent(match.id)}`)}>{uiText(next.actionLabel || '查看比赛详情', locale)} →</Link>{allowed('matches') && <Link to={withSeason('/me?section=matches')}>{uiText("全部比赛", locale)}</Link>}</div>{match?.roomAccess?.isAuthorized && !canEnter && <p className={styles.roomHint}>{match.roomAccess.label} · {match.roomAccess.detail}</p>}</> : <div className={styles.empty}><h3>{archived ? en ? 'This event has been archived' : uiText("本届赛事已归档", locale) : weeklyPending ? uiText("周赛赛程尚未同步", locale) : uiText("下一场，等待赛程确认", locale)}</h3><p>{archived ? en ? 'Review your matches and participation records. This event is read only.' : uiText("你可以回看本届比赛与参赛记录。归档赛事仅供查看。", locale) : weeklyPending ? weeklyMessage : uiText("赛程发布后，会自动展示对手、时间和比赛入口。", locale)}</p><Link to={withSeason(allowed('matches') ? '/me?section=matches' : allowed('events') ? '/me?section=events' : allowed('team') ? '/me?section=team' : '/account')}>{allowed('matches') ? uiText("查看我的比赛", locale) : allowed('events') ? uiText("查看我的赛事", locale) : allowed('team') ? uiText("查看队伍进度", locale) : uiText("查看账号设置", locale)} →</Link></div>}
       </section>)
-  return <div className={styles.overview}>
-    {!archived && !followingFirst && context?.user?.id && <MatchReminderSummary userId={context.user.id} locale={locale} withSeason={withSeason} />}
+  return <div className={styles.overview} data-mobile-home={Boolean(quickEntries)} data-mobile-progress={participationView}>
+    <div className={styles.homeSummary}>
     {followingFirst ? followingSummary : null}
     {presentation.collapseTasks ? <div className={styles.clearTasks}><span><i aria-hidden="true">✓</i>{uiText("目前没有需要处理的待办", locale)}</span>{allowed('tasks') ? <Link to={withSeason('/me?section=tasks&view=history')}>{uiText("查看处理记录 ↗", locale)}</Link> : null}</div> : null}
     {!followingFirst ? <div className={styles.focusGrid} data-single={presentation.collapseTasks}>
@@ -89,8 +89,11 @@ export default function SpaceOverview({ context, withSeason, sections, managerSt
       {!canEnter ? matchCard : null}
     </div> : null}
     {(tasksPending || weeklyPending) && <div className={styles.syncNotice} role={activity?.status === 'error' || weekly?.status === 'error' ? 'alert' : 'status'}><span>{tasksPending ? tasksMessage : weeklyMessage}</span>{(activity?.status === 'error' || weekly?.status === 'error') && <button type="button" onClick={activity?.refresh || weekly?.retry}>{uiText("重新同步", locale)}</button>}</div>}
-    {preparation}
-    {!followingFirst ? followingSummary : null}
+    {quickEntries}
+    {registrationEntry}
+    {!archived && !followingFirst && context?.user?.id && <MatchReminderSummary userId={context.user.id} locale={locale} withSeason={withSeason} />}
+    </div>
+    <div className={styles.homeDetails}>{preparation}{!followingFirst ? <div className={styles.homeFollowing}>{followingSummary}</div> : null}</div>
     <section className={styles.support} aria-label={uiText("赛事概况", locale)}><Link to={withSeason(allowed('events') ? '/me?section=events' : allowed('team') ? '/me?section=team' : '/account')}><span>{uiText("本届参赛关系", locale)}</span><strong>{status?.teamLabel || (teams.length ? teams.map(item => teamName(item.seasonTeam || item.teamOrganization)).join(' / ') : uiText("查看参与状态", locale))}</strong><small>{status?.registrationLabel || uiText("报名与身份关系", locale)} ↗</small></Link>{allowed('communications') && <Link to={withSeason('/me?section=communications')}><span>{uiText("赛事消息", locale)}</span><strong>{overview.unreadNotificationCount || 0}<em>{uiText("条未读", locale)}</em></strong><small>{uiText("通知与沟通 ↗", locale)}</small></Link>}{!followingSummary ? <Link to={withSeason('/me?section=following')}><span>{uiText("关注动态", locale)}</span><strong>{uiText("我的关注", locale)}</strong><small>{uiText("队伍与选手 ↗", locale)}</small></Link> : null}</section>
     {children}
   </div>

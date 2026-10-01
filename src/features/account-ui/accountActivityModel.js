@@ -1,5 +1,43 @@
 import { weeklyResponseAccess, weeklyTeamName } from '../weekly-competition/weeklyMatchRoomModel.js'
 import { buildTaskCenterView } from '../tasks/taskNotificationModel.js'
+import { buildWeeklyPreparation, isWeeklyPreparationWorkspace } from '../weekly-competition/weeklyPreparationModel.js'
+import { hasAccountFeatureAccess } from '../my-space/mySpaceApi.js'
+
+export function getAccountActivityAccess(context, launch) {
+  const participant = (context?.identities || []).some(identity => ['MANAGER', 'PLAYER'].includes(String(identity.type || identity.identityType || '').toUpperCase()))
+  const canViewWeeklyCompetition = hasAccountFeatureAccess(launch, 'weeklyCompetition') && participant
+  const canViewWeeklyMatchRooms = hasAccountFeatureAccess(launch, 'matchRoom') && Boolean(context?.sections?.weeklyRooms || participant)
+  const weekly = context?.competitionKind === 'WEEKLY'
+  return {
+    canViewWeeklyCompetition,
+    canViewWeeklyMatchRooms,
+    genericTasks: hasAccountFeatureAccess(launch, 'communications'),
+    weeklyPreparation: weekly && canViewWeeklyCompetition,
+    weeklyRooms: weekly && canViewWeeklyMatchRooms,
+    preparationReadOnly: !hasAccountFeatureAccess(launch, 'weeklyCompetition', 'WRITE'),
+    roomsReadOnly: !hasAccountFeatureAccess(launch, 'matchRoom', 'WRITE')
+  }
+}
+
+export function isAccountActivitySource(key, data, { seasonId, userId }) {
+  if (key === 'tasks') return Array.isArray(data?.tasks) && data.tasks.every(task => (!task.userId || task.userId === userId) && (!task.seasonId || task.seasonId === seasonId))
+  if (key === 'preparation') return isWeeklyPreparationWorkspace(data, seasonId, userId)
+  if (key === 'rooms') return data?.season?.id === seasonId && (!data.userId || data.userId === userId) && Array.isArray(data.rooms) && Array.isArray(data.teams)
+  return false
+}
+
+// Navigation and My Space derive their count from this same permission-aware queue.
+export function buildAccountActivity(sources, { seasonId, userId, identityType, preparationReadOnly = true, roomsReadOnly = true, now = Date.now() }) {
+  const preparation = buildWeeklyPreparation(sources.preparation?.data || null,
+    { seasonId, userId, readOnly: preparationReadOnly || sources.preparation?.status !== 'ready', now })
+  const taskView = mergeAccountTasks(sources.tasks?.data?.tasks || [], [
+    ...preparation.tasks,
+    ...buildWeeklyResultTasks(sources.rooms?.data || null, { seasonId, readOnly: roomsReadOnly || sources.rooms?.status !== 'ready' })
+  ], { now, identityType })
+  const records = Object.values(sources)
+  const status = records.some(source => source.status === 'loading') ? 'loading' : records.some(source => source.status === 'error') ? 'error' : 'ready'
+  return { preparation, taskView, status }
+}
 
 export function buildWeeklyResultTasks(workspace, { seasonId, readOnly = true } = {}) {
   if (!workspace || !seasonId || workspace.season?.id !== seasonId) return []

@@ -19,6 +19,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import AuthButton from '../auth/AuthDialog.jsx'
 import useWeeklyLiveRoom from './useWeeklyLiveRoom.js'
+import useRoomPanelNavigation from './useRoomPanelNavigation.js'
 import { useRoomTransport } from './RoomTransport.jsx'
 import styles from './WeeklyLiveRoomPage.module.css'
 import surfaces from './RoomSurfaces.module.css'
@@ -50,7 +51,7 @@ const time = value => value ? new Date(value).toLocaleTimeString('zh-CN', { hour
 const roleName = role => ({ TANK: '重装', DPS: '输出', SUP: '支援', FLEX: '自由位' }[role] || '队员')
 const readDraft = key => { try { return JSON.parse(sessionStorage.getItem(key)) || { body: '', title: '', key: crypto.randomUUID() } } catch { return { body: '', title: '', key: crypto.randomUUID() } } }
 
-function Team({ team, data, disabled, mutate }) {
+function Team({ team, data, disabled, mutate, fullRoster = false }) {
   const { liveRoomWrite } = useRoomTransport()
   const uiLocale = useUiLocale()
   const [expanded, setExpanded] = useState(false)
@@ -78,8 +79,8 @@ function Team({ team, data, disabled, mutate }) {
       {canCheckIn ? <button type="button" aria-label={`${member.name || member.battleTag} · ${label}`} aria-pressed={status === 'PRESENT'} disabled={disabled} onClick={() => setCheckIn(member.id, status === 'PRESENT' ? 'ABSENT' : 'PRESENT')}>{label}</button> : <small>{status === 'PRESENT' ? '已到' : status === 'ABSENT' ? '缺席' : '待到'}</small>}
     </div>
   }
-  return <aside id={`room-team-${team?.id}`} tabIndex={-1} className={workspace.team} aria-label={name(team)} data-side={side} data-expanded={expanded} onFocus={event => { if (event.target === event.currentTarget) setExpanded(true) }}>
-    <header><h2 className={workspace.teamTitle} title={team?.name && team.name !== name(team) ? `${name(team)} · ${team.name}` : name(team)}><strong>{name(team)}</strong>{team?.name && team.name !== name(team) && <span>· {team.name}</span>}</h2><RoomSideBadge map={data.map} side={side} /><button type="button" className={workspace.teamToggle} aria-expanded={expanded} aria-controls={contentId} onClick={() => setExpanded(value => !value)}>{pickUiLocale(uiLocale, '名单与签到', 'Roster & check-in', '명단 · 체크인', '名單與簽到')}<span aria-hidden="true">{expanded ? '−' : '+'}</span></button></header>
+  return <aside id={`room-team-${team?.id}`} tabIndex={-1} className={workspace.team} aria-label={name(team)} data-side={side} data-expanded={fullRoster || expanded} onFocus={event => { if (event.target === event.currentTarget) setExpanded(true) }}>
+    <header><h2 className={workspace.teamTitle} title={team?.name && team.name !== name(team) ? `${name(team)} · ${team.name}` : name(team)}><strong>{name(team)}</strong>{team?.name && team.name !== name(team) && <span>· {team.name}</span>}</h2><RoomSideBadge map={data.map} side={side} />{!fullRoster && <button type="button" className={workspace.teamToggle} aria-expanded={expanded} aria-controls={contentId} onClick={() => setExpanded(value => !value)}>{pickUiLocale(uiLocale, '名单与签到', 'Roster & check-in', '명단 · 체크인', '名單與簽到')}<span aria-hidden="true">{expanded ? '−' : '+'}</span></button>}</header>
     <div id={contentId} className={workspace.teamContent}>
     <RoomRepresentative team={team} data={data} disabled={disabled} mutate={mutate} />
     <div className={workspace.rosterLabel}><strong>{uiText(saved.length ? '本图首发 · D D T S S' : sealed ? '本周名单 · 首发未公开' : '计划首发 · 待本图确认', uiLocale)}</strong><small>{saved.length ? data.map.lineupsRevealed ? '已锁定' : '对方不可见' : lineupConfirmed ? '已密封提交' : '参考名单'}</small></div>
@@ -92,7 +93,7 @@ function Team({ team, data, disabled, mutate }) {
 function RoomPanelDialog({ open, close, title, children }) {
   const ref = useRef(null)
   useEffect(() => { if (open) ref.current?.showModal(); else ref.current?.close() }, [open])
-  return <dialog ref={ref} className={workspace.panelDialog} data-room-panel onCancel={close} aria-label={title}>
+  return <dialog ref={ref} className={workspace.panelDialog} data-room-panel onCancel={event => { event.preventDefault(); close() }} aria-label={title}>
     <header><h2>{title}</h2><button type="button" onClick={close} aria-label={`关闭${title}`}>关闭 ×</button></header>
     {open && <div className={workspace.panelBody}>{children}</div>}
   </dialog>
@@ -186,7 +187,8 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
   const compact = useMobileRoom()
   const [rosterSide, setRosterSide] = useState(null)
   const operation = useRef(null)
-  const [auxiliary, setAuxiliary] = useState(''), [pauseOpen, setPauseOpen] = useState(false), [pauseNote, setPauseNote] = useState(''), [pauseSide, setPauseSide] = useState('A')
+  const [auxiliary, setAuxiliary] = useRoomPanelNavigation(matchId)
+  const [pauseOpen, setPauseOpen] = useState(false), [pauseNote, setPauseNote] = useState(''), [pauseSide, setPauseSide] = useState('A')
   const [channel, setChannel] = useState('PUBLIC')
   const [selectedStage, setSelectedStage] = useState(null)
   const stageIndex = data ? getRoomStageIndex(data) : null
@@ -238,7 +240,7 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
     {compact && <>
       <RoomPanelDialog open={auxiliary === 'teams'} close={() => setAuxiliary('')} title={uiText('双方名单', uiLocale)}>
         <div className={mobile.teamTabs} role="group" aria-label={uiText('切换队伍名单', uiLocale)}>{['A', 'B'].map(side => { const activeSide = rosterSide || (data.access.teamIds.includes(data.match.teamB.id) ? 'B' : 'A'); return <button type="button" key={side} aria-pressed={activeSide === side} onClick={() => setRosterSide(side)}><b>{name(data.match['team' + side])}</b><small>{uiText(data.map?.lineupLocks?.[side] ? '首发已提交' : '首发待确认', uiLocale)}</small></button> })}</div>
-        <Team key={rosterSide || 'default'} team={data.match['team' + (rosterSide || (data.access.teamIds.includes(data.match.teamB.id) ? 'B' : 'A'))]} data={data} disabled={disabled} mutate={mutate} />
+        <Team key={rosterSide || 'default'} team={data.match['team' + (rosterSide || (data.access.teamIds.includes(data.match.teamB.id) ? 'B' : 'A'))]} data={data} disabled={disabled} mutate={mutate} fullRoster />
       </RoomPanelDialog>
       <RoomPanelDialog open={auxiliary === 'info'} close={() => setAuxiliary('')} title={uiText('房间信息', uiLocale)}><RoomMobileInfo data={data} accountControl={accountControl} disabled={disabled} mutate={preview ? undefined : mutate}><RoomSeriesRail data={data} phaseLabel={roomPhaseName(data, uiLocale)} /></RoomMobileInfo></RoomPanelDialog>
       <RoomPanelDialog open={auxiliary === 'more'} close={() => setAuxiliary('')} title={uiText('更多操作', uiLocale)}><div className={mobile.more}>

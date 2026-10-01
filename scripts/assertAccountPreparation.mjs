@@ -283,6 +283,10 @@ assert.equal(weeklyContext.rules.rosterMin, 5, 'weekly override takes precedence
 assert.equal(weeklyContext.rules.rosterContinuityMode, 'PREVIOUS_APPEARANCE')
 assert.equal(getWeeklyRosterCheck(['0', '1', '5', '6', '7'], coreIds, weeklyContext.checkRules, rosterPlayers).canSubmit, false, 'two retained players must fail before posting to System')
 assert.equal(getWeeklyRosterCheck(['0', '1', '2', '5', '6'], coreIds, weeklyContext.checkRules, rosterPlayers).canSubmit, true)
+assert.match(getWeeklyRosterCheck(['0', '1', '5', '6', '7'], coreIds, weeklyContext.checkRules, rosterPlayers).errors[0], /实际参赛名单/)
+const approvedContext = getWeeklyRosterContext(null, { ...weeklyContext, rules: weeklyContext.rules,
+  continuity: { ...weeklyContext.continuity, basis: 'APPROVED_ROSTER' } })
+assert.match(getWeeklyRosterCheck(['0', '1', '5', '6', '7'], coreIds, approvedContext.checkRules, rosterPlayers).errors[0], /审核通过报名名单/)
 const firstContext = getWeeklyRosterContext(null, { continuity: { status: 'FIRST_APPEARANCE', required: 0, playerIds: [] } })
 assert.equal(firstContext.continuity.status, 'FIRST_APPEARANCE')
 assert.equal(getWeeklyRosterCheck(['0', '1', '2', '3', '4'], new Set(), firstContext.checkRules, rosterPlayers).canSubmit, true)

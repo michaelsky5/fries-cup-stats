@@ -1,5 +1,15 @@
 .entry { display: grid; gap: 24px; min-width: 0; }
 .entry button, .entry input { font: inherit; }
+@media (max-width: 600px) {
+  .entry[data-mobile-home='true'] { gap: 14px; }
+  .entry[data-mobile-home='true'] .status { padding-top: 0; }
+  .entry[data-mobile-home='true'] .status h2 { font-size: 20px; }
+  .entry[data-mobile-home='true'] .personal { display: none; }
+  .entry[data-mobile-home='true'] .join { padding: 18px 16px; }
+  .entry[data-mobile-home='true'] .join h3 { font-size: 21px; }
+  .entry[data-mobile-home='true'] .join input { font-size: 16px; }
+  .entry[data-mobile-home='true'] .join summary { min-height: 44px; }
+}
 .status { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px 0 4px; }
 .status > div { min-width: 0; }
 .status > div > span, .personal header > span, .journey header > span { font: 700 12px/1.5 var(--fc-data-font-mono); color: var(--fc-data-text-muted); }

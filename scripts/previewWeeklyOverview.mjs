@@ -1,7 +1,9 @@
 import { createServer } from 'vite'
 import { buildWeeklyOverviewFixture } from './lib/weeklyOverviewFixture.mjs'
+import { readFileSync } from 'node:fs'
 
 const port = Number(process.env.WEEKLY_PREVIEW_PORT || 3049)
+const localFixture = process.env.WEEKLY_PREVIEW_DATA_FILE ? JSON.parse(readFileSync(process.env.WEEKLY_PREVIEW_DATA_FILE, 'utf8')) : null
 const server = await createServer({
   cacheDir: 'node_modules/.vite-weekly-overview',
   define: {
@@ -20,7 +22,7 @@ const server = await createServer({
         res.statusCode = 403
         return res.end(JSON.stringify({ error: 'WEEKLY_DESIGN_PREVIEW_READ_ONLY' }))
       }
-      if (path === '/__weekly-overview/data.json') return res.end(JSON.stringify(buildWeeklyOverviewFixture()))
+      if (path === '/__weekly-overview/data.json') return res.end(JSON.stringify(localFixture || buildWeeklyOverviewFixture()))
       if (path.endsWith('/auth/me')) return res.end(JSON.stringify({ user: null }))
       if (path.endsWith('/auth/config')) return res.end(JSON.stringify({ selfRegistrationEnabled: false, emailVerificationEnabled: false }))
       res.statusCode = 404
