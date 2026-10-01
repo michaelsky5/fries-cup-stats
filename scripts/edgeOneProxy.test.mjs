@@ -1,12 +1,41 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { proxyRequest } from '../edge-functions/api/[[path]].js'
+import edgeRequest, { proxyRequest } from '../edge-functions/api/[[path]].js'
 
 const origin = 'https://hub-preview.fries-cup.com'
 const snapshot = '/api/admin-public/seasons/QGCS4/publish/latest/data'
 const request = (path, options) => new Request(origin + path, options)
 const json = (data, init = {}) => new Response(JSON.stringify(data), { ...init, headers: { 'Content-Type': 'application/json', ...init.headers } })
 const mustNotFetch = () => { throw new Error('Unexpected upstream request') }
+
+test('deployed entry keeps geo hints separate from platform and published APIs', async () => {
+  const originalFetch = globalThis.fetch
+  const calls = []
+  globalThis.fetch = async (url, options) => {
+    calls.push({ url, options })
+    return json({ ok: true, upstream: url })
+  }
+  try {
+    const geoRequest = request('/api/locale')
+    Object.defineProperty(geoRequest, 'eo', { value: { geo: { countryCodeAlpha2: 'SG' } } })
+    assert.deepEqual(await (await edgeRequest({ request: geoRequest })).json(), { countryCode: 'SG' })
+    assert.equal(calls.length, 0)
+    for (const [path, upstream] of [
+      ['/api/platform/health', 'https://admin.fries-cup.com/api/health'],
+      ['/api/platform/auth/config', 'https://admin.fries-cup.com/api/auth/config'],
+      [snapshot, 'https://admin.fries-cup.com/api/public/seasons/QGCS4/publish/latest/data']
+    ]) {
+      const apiRequest = request(path)
+      Object.defineProperty(apiRequest, 'eo', { value: { geo: { countryCodeAlpha2: 'SG' } } })
+      const response = await edgeRequest({ request: apiRequest })
+      assert.deepEqual(await response.json(), { ok: true, upstream })
+      assert.equal(calls.at(-1).url, upstream)
+    }
+    assert.equal(calls.length, 3)
+  } finally {
+    globalThis.fetch = originalFetch
+  }
+})
 
 test('public snapshots use production with query intact, without credentials or spoofed forwarding headers', async () => {
   let call
