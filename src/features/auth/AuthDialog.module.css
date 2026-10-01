@@ -301,7 +301,7 @@
 .form { display: grid; gap: 20px; }
 .field { display: grid; gap: 9px; min-width: 0; }
 .field label { font-size: 14px; font-weight: 600; }
-.field input, .field select, .regionSearchField input { min-width: 0; width: 100%; min-height: 48px; border: 1px solid var(--fc-data-line-strong); border-radius: 0; background: var(--fc-data-paper); color: var(--fc-data-ink); font: 16px/1.5 var(--font-sans); padding: 11px 12px; }
+.field input, .field select { min-width: 0; width: 100%; min-height: 48px; border: 1px solid var(--fc-data-line-strong); border-radius: 0; background: var(--fc-data-paper); color: var(--fc-data-ink); font: 16px/1.5 var(--font-sans); padding: 11px 12px; }
 .submitButton { min-height: 48px; background: var(--fc-data-signal); color: var(--fc-data-ink); border: 1px solid var(--fc-data-signal); font: 700 14px/1.5 var(--font-sans); cursor: pointer; }
 .submitButton:hover { background: var(--fc-data-signal-bright); }
 .submitButton:disabled { opacity: .5; cursor: not-allowed; }
@@ -318,15 +318,8 @@
 .tabs { display: flex; gap: 16px; border-bottom: 1px solid var(--fc-data-line); margin-bottom: 24px; }
 .tabButton { padding: 10px 0; border: 0; background: transparent; color: var(--fc-data-text-muted); cursor: pointer; }
 .tabButtonActive { color: var(--fc-data-ink); box-shadow: 0 2px var(--fc-data-ink); }
-.fieldPair, .contactPair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.regionControl, .contactGroup { display: grid; gap: 14px; }
-.regionToggle { display: flex; justify-content: space-between; align-items: center; padding: 12px; min-height: 46px; background: var(--fc-data-paper); border: 1px solid var(--fc-data-line-strong); font-size: 13px; cursor: pointer; }
-.regionToggle em { font-style: normal; color: var(--fc-data-text-muted); }
-.regionPicker { border: 1px solid var(--fc-data-line-strong); padding: 14px; }
-.regionOptionList { max-height: 200px; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 12px; }
-.regionOption { display: flex; justify-content: space-between; padding: 10px; border: 1px solid var(--fc-data-line); background: var(--fc-data-paper); font-size: 12px; cursor: pointer; }
-.regionOptionActive { background: var(--fc-data-signal); }
-.regionEmpty { font-size: 13px; color: var(--fc-data-text-muted); }
+.contactPair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.contactGroup { display: grid; gap: 14px; }
 .contactHeader { display: flex; justify-content: space-between; gap: 16px; font-size: 13px; }
 .contactHeader span { color: var(--fc-data-text-muted); }
 .dialog :is(input, select, button, a):focus-visible { outline: 2px solid var(--fc-data-focus); outline-offset: 3px; }
@@ -339,4 +332,4 @@
 .accountMenu a:hover, .accountMenu button:hover { background: #30322d; }
 .accountMenu button { border-top: 1px solid #eeede629; }
 .accountMenu p { color: #ff776d; font-size: 12px; padding: 0 20px; }
-@media (max-width: 600px) { .backdrop { padding: 16px; } .dialog { max-height: calc(100dvh - 32px); } .dialogHeader { padding: 24px 22px; } .dialogBody { padding: 22px; } .dialogRail { padding: 16px 22px; } .dialogTitle { font-size: 25px; } .fieldPair, .contactPair { grid-template-columns: 1fr; } .accountMenu { max-width: calc(100vw - 40px); } }
+@media (max-width: 600px) { .backdrop { padding: 16px; } .dialog { max-height: calc(100dvh - 32px); } .dialogHeader { padding: 24px 22px; } .dialogBody { padding: 22px; } .dialogRail { padding: 16px 22px; } .dialogTitle { font-size: 25px; } .contactPair { grid-template-columns: 1fr; } .accountMenu { max-width: calc(100vw - 40px); } }

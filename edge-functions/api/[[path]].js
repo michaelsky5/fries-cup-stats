@@ -1,3 +1,5 @@
+import localeResponse from './locale.js'
+
 // Production defaults to the live account API. Preview deployments can set
 // FRIES_PLATFORM_ORIGIN to the isolated staging backend.
 const PLATFORM_ORIGIN = globalThis.process?.env?.FRIES_PLATFORM_ORIGIN || 'https://admin.fries-cup.com'
@@ -172,6 +174,7 @@ export async function proxyRequest(request, {
 }
 
 export default function onRequest(context) {
+  if (new URL(context.request.url).pathname === '/api/locale') return localeResponse(context)
   return proxyRequest(context.request, {
     cache: globalThis.caches?.default,
     waitUntil: context.waitUntil ? task => context.waitUntil(task) : undefined

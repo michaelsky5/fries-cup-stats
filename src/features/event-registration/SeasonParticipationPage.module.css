@@ -17,6 +17,7 @@
 .page button:disabled { opacity: .5; cursor: default; }
 .page button.primary { background: var(--accent); color: #191919; border-color: var(--accent); font-weight: 750; }
 .fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.coachFields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 13px; }
 .actions input { flex: 1; min-width: 180px; }
 .memberActions { display: flex; flex-wrap: wrap; gap: 6px; }

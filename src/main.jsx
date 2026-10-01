@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import './trial-start.css'
 import { initializeTrialSeason } from './config/seasons.js'
+import { initializeVisitorLocale } from './lib/visitorLocale.js'
 
 const root = createRoot(document.getElementById('root'))
 function TrialStartError({ message }) {
@@ -16,6 +17,7 @@ function TrialStartError({ message }) {
 }
 async function start() {
   try {
+    await initializeVisitorLocale()
     await initializeTrialSeason()
     const { default: App } = await import('./app/App.jsx')
     root.render(<StrictMode><App /></StrictMode>)
