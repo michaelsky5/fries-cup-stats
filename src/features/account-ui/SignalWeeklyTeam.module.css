@@ -5,7 +5,7 @@
 .state p { margin: 0; max-width: 640px; }
 .message { padding: 16px 20px; border: 1px solid var(--fc-data-line); border-left: 3px solid var(--fc-data-status-success); background: var(--fc-data-paper-raised); font-size: 14px; line-height: 1.8; }
 .message[data-error='true'] { border-left-color: var(--fc-data-status-danger); color: var(--fc-data-status-danger); }
-.selectors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--fc-data-line); background: var(--fc-data-paper-raised); }
+.selectors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--fc-data-line); background: var(--fc-data-paper-raised); }
 .selectors label { padding: 20px; border-right: 1px solid var(--fc-data-line); }
 .selectors label:last-child { border-right: 0; }
 .selectors label, .actionRow label, .responseForm label { display: grid; gap: 10px; min-width: 0; }
@@ -199,6 +199,25 @@
 .teamOperations { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; padding-block: 12px; border-top: 1px solid var(--fc-data-line); }
 .teamOperations a { display: inline-flex; align-items: center; min-height: 44px; color: var(--fc-data-text-muted); font-size: 13px; text-decoration: none; }
 .teamOperations a:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 2px; }
+.teamContext { min-width: 0; padding: 16px 20px 0; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised); }
+.teamContextRow { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; margin-bottom: 12px; }
+.teamChoice { display: grid; gap: 6px; flex: 1 1 280px; min-width: 0; max-width: 620px; }
+.teamChoice > span { color: var(--fc-data-text-muted); font-size: 12px; }
+.teamChoice > strong { min-height: 44px; display: flex; align-items: center; overflow-wrap: anywhere; }
+.teamPermission { display: grid; gap: 4px; font-size: 13px; }
+.teamPermission > span { color: var(--fc-data-text-muted); font-size: 12px; }
+.teamContext .teamOperations { gap: 8px; padding-block: 8px; }
+.teamContext .teamOperations a { padding: 8px 12px; color: var(--fc-data-ink); border: 1px solid transparent; }
+.teamContext .teamOperations a[aria-current] { background: var(--fc-data-signal); font-weight: 700; }
+.teamContext .teamOperations a:hover { border-color: var(--fc-data-line-strong); }
+.teamContext > p { margin: 0 0 14px; color: var(--fc-data-text-muted); font-size: 13px; line-height: 1.6; }
+@media (max-width: 600px) {
+  .teamContext { padding: 12px 12px 0; }
+  .teamChoice { flex-basis: 100%; }
+  .teamPermission { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+  .teamContext .teamOperations { gap: 4px; }
+  .teamContext .teamOperations a { padding-inline: 8px; }
+}
 .rosterReviewStatus {
   margin-top: 12px;
   padding: 14px 16px;

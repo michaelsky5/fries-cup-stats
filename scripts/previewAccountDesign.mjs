@@ -22,13 +22,14 @@ const initialEntry = structuredClone(weeklyEntry)
 Object.assign(weeklyRooms[0].myTeams[0].confirmation, { id:'preview-result-confirmation', matchId:weeklyRooms[0].id, confirmingTeamId:weeklyRooms[0].teamAId, resultFingerprint:weeklyRooms[0].resultFingerprint, note:'' })
 weeklyRooms[0].otherTeamResponses = [{ confirmingTeam:weeklyRooms[0].teamB, status:'PENDING' }]
 const initialRooms = structuredClone(weeklyRooms)
-const scenarioLabels = { preparing:'名单草稿', confirmation:'待确认参赛', submitted:'等待锁定', locked:'名单已锁定', declined:'本周不参赛', cancelled:'当周已取消', pendingweek:'周次未公布', player:'选手只读', deadline:'确认已截止', multiple:'多个队伍与周次', partial:'准备同步失败', slow:'准备同步超时', saving:'名单保存中', unavailable:'待办同步失败' }
+const scenarioLabels = { preparing:'名单草稿', confirmation:'待确认参赛', submitted:'等待锁定', locked:'名单已锁定', declined:'本周不参赛', cancelled:'当周已取消', pendingweek:'周次未公布', player:'选手只读', deadline:'确认已截止', multiple:'多个队伍与周次', mixedteams:'A 队负责人 · B 队选手', partial:'准备同步失败', slow:'准备同步超时', saving:'名单保存中', unavailable:'待办同步失败' }
 const pendingPreviewReads = new Set()
 Object.assign(scenarioLabels, { 'match-live':'比赛进行中', 'match-confirmed':'本队已确认', 'match-disputed':'争议处理中', 'match-finalized':'赛果已结算', 'match-conflict':'提交时赛果更新', 'match-unknown':'提交结果未确认', 'match-timeout':'比赛同步超时' })
 let scenario = 'preparing'
 Object.assign(scenarioLabels, { guest:'游客本地关注', account:'已登录我的空间', viewer:'观众空间' })
 let matchTimeoutUntil = 0
 let extraEntry = null
+let previewCoaches = [{ id: 'preview-coach', displayName: '示例教练', battleTag: 'PreviewCoach#1234', contact: '', accountLinked: false }]
 let previewTasks = []
 const previewCycles = () => [{id:'preview-cycle',name:'九月周期',status:'ACTIVE',rules:{corePlayerCount:3,rosterMin:5,rosterMax:7,minimumCoreInWeeklyRoster:3},entries:[weeklyEntry, ...(extraEntry ? [extraEntry] : [])]}]
 function setScenario(value) {
@@ -39,6 +40,7 @@ function setScenario(value) {
   Object.assign(weeklyEntry, structuredClone(initialEntry))
   weeklyRooms.splice(0, weeklyRooms.length, ...structuredClone(initialRooms))
   extraEntry = null
+  previewCoaches = [{ id: 'preview-coach', displayName: '示例教练', battleTag: 'PreviewCoach#1234', contact: '', accountLinked: false }]
   previewTasks = []
   matchTimeoutUntil = scenario === 'match-timeout' ? Date.now() + 15000 : 0
   const record = weeklyEntry.weeks[0]
@@ -65,8 +67,13 @@ function setScenario(value) {
     Object.assign(later.participation, { id:null, status:'PENDING', rosters:[] })
     weeklyEntry.weeks.push(later)
   }
+  if (scenario === 'mixedteams') {
+    extraEntry = structuredClone(initialEntry)
+    Object.assign(extraEntry, { id: 'preview-entry-ihan', seasonTeamId: weeklyRooms[0].teamB.id, team: weeklyRooms[0].teamB, accessMode: 'READ_ONLY' })
+    extraEntry.weeks[0].participation.id = 'preview-participation-ihan'
+  }
 }
-const previewTeamAccess = () => [weeklyEntry, ...(extraEntry ? [extraEntry] : [])].map(entry => ({ team:entry.team, role:scenario === 'player' ? 'PLAYER' : 'MANAGER', accessMode:entry.accessMode }))
+const previewTeamAccess = () => [weeklyEntry, ...(extraEntry ? [extraEntry] : [])].map(entry => ({ team:entry.team, role:entry.accessMode === 'READ_ONLY' ? 'PLAYER' : 'MANAGER', accessMode:entry.accessMode }))
 const notifications = [{id:'preview-notification',notificationType:'MATCH_SCHEDULE',priority:'NORMAL',title:'第 3 周赛程已发布',body:'请查看本队的下一场比赛时间，提前安排集合。',visibleAt:new Date().toISOString(),readAt:null,actionUrl:'/me?section=matches'}]
 const api = http.createServer(async (req,res) => {
   const path = new URL(req.url,'http://127.0.0.1').pathname.replace(/^\/api/,'')
@@ -83,13 +90,25 @@ const api = http.createServer(async (req,res) => {
   if(!loggedIn) return send({error:'UNAUTHORIZED'},401)
   if(path === '/auth/me') return send({user})
   if(path === '/me/profile') { if(req.method==='PATCH'){ if(body.displayName) user.displayName=body.displayName; profile={...profile,...body} } return send({user,profile}) }
-  if(path === '/me/identities') return send({userId:user.id,identities:scenario === 'viewer' ? [] : identities,primaryIdentity:scenario === 'viewer' ? null : identities[0],capabilities:{}})
+  if(path === '/me/identities') return send({userId:user.id,identities:scenario === 'viewer' ? [] : identities,primaryIdentity:scenario === 'viewer' ? null : identities[0],competitionSeasons:scenario === 'mixedteams' ? [{id:'FCR2026',name:'周赛设计示例',status:'ACTIVE',competitionKind:'WEEKLY',teams:previewTeamAccess().map(item=>({...item.team,roles:[item.role]})),staffRoles:[]}] : undefined,capabilities:{}})
   if(path.startsWith('/account-launch/seasons/'))return send({launch:{seasonId:path.split('/').at(-1),portalMode:'SHADOW_BETA',allowed:true,emailVerified:true,features:{teamOperations:'WRITE',weeklyCompetition:'WRITE',matchRoom:'WRITE',communications:'READ_ONLY',predictions:'READ_ONLY',scheduleNegotiation:'READ_ONLY'}}})
   if ((scenario === 'unavailable' && ['/me/tasks','/me/weekly-competition','/me/weekly-match-rooms'].includes(path)) || (scenario === 'partial' && path === '/me/weekly-competition')) return send({error:'PREVIEW_SYNC_FAILURE'},503)
   if (scenario === 'slow' && path === '/me/weekly-competition') { pendingPreviewReads.add(res); res.once('close', () => pendingPreviewReads.delete(res)); return }
   if (Date.now() < matchTimeoutUntil && path === '/me/weekly-match-rooms') { pendingPreviewReads.add(res); res.once('close', () => pendingPreviewReads.delete(res)); return }
   if (scenario === 'saving' && path.startsWith('/me/weekly-participations/') && req.method === 'PUT') await new Promise(resolve => setTimeout(resolve, 5000))
   if(path === '/me/weekly-competition') return send({userId:user.id,season:{id:new URL(req.url,'http://local').searchParams.get('seasonId'),name:'周赛设计示例',status:'ACTIVE'},accessMode:scenario === 'player' ? 'READ_ONLY' : 'WRITE',teams:previewTeamAccess(),cycles:previewCycles()})
+  if (/^\/me\/weekly-teams\/[^/]+\/coaches$/.test(path)) {
+    const teamId = path.split('/')[3]
+    const access = previewTeamAccess().find(item => item.team.id === teamId)
+    if (!access || access.accessMode !== 'WRITE') return send({ error: 'WEEKLY_TEAM_ACCESS_FORBIDDEN' }, 403)
+    if (req.method === 'POST') {
+      if (!body.displayName?.trim() || !/^[^#\s]+#[0-9]+$/.test(body.battleTag || '')) return send({ error: 'PREVIEW_INVALID_COACH' }, 400)
+      const coach = previewCoaches.find(item => item.id === body.id)
+      if (coach) Object.assign(coach, { displayName: body.displayName, battleTag: body.battleTag, contact: body.contact || '' })
+      else previewCoaches.push({ id: `preview-coach-${previewCoaches.length + 1}`, displayName: body.displayName, battleTag: body.battleTag, contact: body.contact || '', accountLinked: false })
+    }
+    return send({ team: access.team, canWrite: true, fingerprint: 'preview-coaches', coaches: previewCoaches })
+  }
   if(path.startsWith('/me/weekly-weeks/') && req.method==='PUT') { const entry=[weeklyEntry,extraEntry].filter(Boolean).find(item=>item.id===body.entryId); const record=entry?.weeks.find(item=>item.week.id===path.split('/')[3]); if (!record || entry.accessMode !== 'WRITE') return send({error:'PREVIEW_INVALID_TEAM'},403); const participation=record.participation; Object.assign(participation,body,{id:participation.id || `preview-participation-${entry.id}`,revision:participation.revision+1}); return send({participation}) }
   if(path.startsWith('/me/weekly-participations/') && req.method==='PUT') { const participation=[weeklyEntry,extraEntry].filter(Boolean).flatMap(entry=>entry.weeks).map(record=>record.participation).find(item=>item.id===path.split('/')[3]); if(!participation || scenario==='player') return send({error:'PREVIEW_INVALID_TEAM'},403); const roster=participation.rosters[0] || {id:'preview-new-roster',version:1,revision:0,members:[]}; Object.assign(roster,body,{revision:roster.revision+1}); participation.rosters=[roster]; return send({roster}) }
   if(path === '/me/tasks') return send({tasks:previewTasks})

@@ -7,7 +7,7 @@ import styles from './WeeklyTeamAdditions.module.css'
 
 const labels = { PENDING: '待接任者确认', SUBMITTED: '待管理员审核', APPROVED: '交接已生效', REJECTED: '未通过', CANCELLED: '已取消', DECLINED: '接任者已拒绝', EXPIRED: '已过期' }
 const empty = { email: '', password: '', reason: '', consent: false }
-export default function WeeklyOwnershipTransfers({ seasonId, readOnly = false, onHasTransfers, onChanged }) {
+export default function WeeklyOwnershipTransfers({ seasonId, selectedTeamId, readOnly = false, onHasTransfers, onChanged }) {
   const locale = useUiLocale(), t = text => uiText(text, locale)
   const [data, setData] = useState(null), [teamId, setTeamId] = useState(''), [form, setForm] = useState(empty)
   const [responses, setResponses] = useState({}), [busy, setBusy] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('')
@@ -17,9 +17,10 @@ export default function WeeklyOwnershipTransfers({ seasonId, readOnly = false, o
   const refresh = useCallback(async signal => {
     try {
       const next = await platformRequest(`${base}/ownership-transfers`, { signal })
+      if (selectedTeamId) next.teams = next.teams.filter(team => team.id === selectedTeamId)
       if (!signal?.aborted && mounted.current) { setData(next); setError(''); onHasTransfers?.(next.transfers.length > 0); setTeamId(current => next.teams.some(team => team.id === current) ? current : next.teams[0]?.id || '') }
     } catch (failure) { if (!signal?.aborted && mounted.current) { setData(null); setError(failure.message) } }
-  }, [base, onHasTransfers])
+  }, [base, selectedTeamId, onHasTransfers])
   useEffect(() => { mounted.current = true; const controller = new AbortController(); refresh(controller.signal); return () => { mounted.current = false; controller.abort() } }, [refresh])
   const writable = data?.canWrite && !readOnly && !busy
   const team = data?.teams.find(item => item.id === teamId)
