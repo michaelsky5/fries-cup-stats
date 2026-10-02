@@ -1,4 +1,189 @@
 {
+  "名单有未提交的修改": {
+    "zh-TW": "名單有未提交的修改",
+    "en-US": "Roster has unsubmitted changes",
+    "ko-KR": "명단에 제출하지 않은 변경 사항이 있습니다"
+  },
+  "修改后需重新提交并检查，旧的审阅结果不适用于新名单。": {
+    "zh-TW": "修改後須重新提交並檢查，舊的審閱結果不適用於新名單。",
+    "en-US": "Submit changes for a new check. The previous review does not apply to the updated roster.",
+    "ko-KR": "변경한 명단은 다시 제출하여 검사해야 합니다. 이전 검토 결과는 새 명단에 적용되지 않습니다."
+  },
+  "正式名单已经确认，截止后的变更须经管理员审批。": {
+    "zh-TW": "正式名單已確認，截止後的變更須經管理員審批。",
+    "en-US": "The official roster is confirmed. Changes after the deadline require administrator approval.",
+    "ko-KR": "공식 명단이 확정되었습니다. 마감 이후 변경은 관리자 승인이 필요합니다."
+  },
+  "提交后自动检查": {
+    "zh-TW": "提交後自動檢查",
+    "en-US": "Automatic check after submission",
+    "ko-KR": "제출 후 자동 검사"
+  },
+  "系统检查人数、重复报名、名单继承和参赛资格；无法确定的问题交管理员复核。": {
+    "zh-TW": "系統檢查人數、重複報名、名單繼承和參賽資格；無法確定的問題交管理員複核。",
+    "en-US": "The system checks roster size, duplicate entries, roster continuity and eligibility. Unresolved issues go to an administrator.",
+    "ko-KR": "시스템이 인원 수, 중복 등록, 명단 승계 및 참가 자격을 검사합니다. 확인이 필요한 문제는 관리자가 검토합니다."
+  },
+  "等待自动检查": {
+    "zh-TW": "等待自動檢查",
+    "en-US": "Awaiting automatic check",
+    "ko-KR": "자동 검사 대기 중"
+  },
+  "检查结果尚未同步，请刷新后核对。": {
+    "zh-TW": "檢查結果尚未同步，請重新整理後核對。",
+    "en-US": "Check results have not synced yet. Refresh to verify.",
+    "ko-KR": "검사 결과가 아직 동기화되지 않았습니다. 새로고침하여 확인하세요."
+  },
+  "人工复核通过": {
+    "zh-TW": "人工複核通過",
+    "en-US": "Administrator review passed",
+    "ko-KR": "관리자 검토 통과"
+  },
+  "自动检查通过": {
+    "zh-TW": "自動檢查通過",
+    "en-US": "Automatic check passed",
+    "ko-KR": "자동 검사 통과"
+  },
+  "待人工复核": {
+    "zh-TW": "待人工複核",
+    "en-US": "Administrator review needed",
+    "ko-KR": "관리자 검토 필요"
+  },
+  "需调整名单": {
+    "zh-TW": "須調整名單",
+    "en-US": "Roster changes needed",
+    "ko-KR": "명단 수정 필요"
+  },
+  "截止前可以修改，每次重新检查；截止时锁定通过的名单。": {
+    "zh-TW": "截止前可以修改，每次重新檢查；截止時鎖定通過的名單。",
+    "en-US": "You can make changes before the deadline. Each change is checked again; passing rosters lock at the deadline.",
+    "ko-KR": "마감 전에는 수정할 수 있습니다. 변경할 때마다 다시 검사하며, 통과한 명단은 마감 시 잠깁니다."
+  },
+  "名单已提交，管理员只需核对以下问题，无需重复提交。": {
+    "zh-TW": "名單已提交，管理員只需核對以下問題，無須重複提交。",
+    "en-US": "Your roster is submitted. An administrator will review the issues below; no need to submit again.",
+    "ko-KR": "명단이 제출되었습니다. 관리자가 아래 문제만 확인하면 됩니다. 다시 제출할 필요가 없습니다."
+  },
+  "请返回调整人员，修正问题后保存并重新提交。": {
+    "zh-TW": "請返回調整人員，修正問題後儲存並重新提交。",
+    "en-US": "Return to player selection, fix the issues, save and submit again.",
+    "ko-KR": "선수 선택으로 돌아가 문제를 수정한 뒤 저장하고 다시 제출하세요."
+  },
+  "名单截止": {
+    "zh-TW": "名單截止",
+    "en-US": "Roster deadline",
+    "ko-KR": "명단 마감"
+  },
+  "已自动锁定": {
+    "zh-TW": "已自動鎖定",
+    "en-US": "Automatically locked",
+    "ko-KR": "자동 잠금 완료"
+  },
+  "该选手在本队或同周另一队伍名单中重复，请核对。": {
+    "zh-TW": "該選手在本隊或同週另一隊伍名單中重複，請核對。",
+    "en-US": "This player is duplicated on this roster or another team's roster for the same week.",
+    "ko-KR": "이 선수가 본 팀 또는 같은 주 다른 팀의 명단에 중복 등록되어 있습니다."
+  },
+  "可能存在同一选手的多份档案，需管理员核对。": {
+    "zh-TW": "可能存在同一選手的多份檔案，須管理員核對。",
+    "en-US": "Multiple records may refer to the same player. An administrator needs to check.",
+    "ko-KR": "한 선수에게 여러 기록이 있을 수 있습니다. 관리자의 확인이 필요합니다."
+  },
+  "该选手身份已停用，不能通过检查。": {
+    "zh-TW": "該選手身分已停用，無法通過檢查。",
+    "en-US": "This player's identity is inactive and cannot pass the check.",
+    "ko-KR": "이 선수의 신원 상태가 비활성화되어 검사를 통과할 수 없습니다."
+  },
+  "请核对该选手的完整 BattleTag。": {
+    "zh-TW": "請核對該選手的完整 BattleTag。",
+    "en-US": "Check this player's full BattleTag.",
+    "ko-KR": "이 선수의 전체 BattleTag를 확인하세요."
+  },
+  "该选手身份尚无绑定或历史审核记录。": {
+    "zh-TW": "該選手身分尚無綁定或歷史審核紀錄。",
+    "en-US": "This player has no linked identity or prior approved roster record.",
+    "ko-KR": "이 선수에게 연결된 신원 또는 이전 승인 명단 기록이 없습니다."
+  },
+  "首次参赛资格尚无审核通过记录。": {
+    "zh-TW": "首次參賽資格尚無審核通過紀錄。",
+    "en-US": "First-time eligibility has not yet been approved.",
+    "ko-KR": "첫 참가 자격의 승인 기록이 없습니다."
+  },
+  "本周名单截止时间尚未配置，需管理员设置。": {
+    "zh-TW": "本週名單截止時間尚未設定，須管理員設定。",
+    "en-US": "This week's roster deadline needs to be set by an administrator.",
+    "ko-KR": "이번 주 명단 마감 시간을 관리자가 설정해야 합니다."
+  },
+  "名单人数不符合本周要求。": {
+    "zh-TW": "名單人數不符合本週要求。",
+    "en-US": "Roster size does not meet this week's requirements.",
+    "ko-KR": "명단 인원 수가 이번 주 요건을 충족하지 않습니다."
+  },
+  "名单包含本队不可用的选手。": {
+    "zh-TW": "名單包含本隊不可用的選手。",
+    "en-US": "The roster includes players unavailable for this team.",
+    "ko-KR": "본 팀에서 출전할 수 없는 선수가 명단에 포함되어 있습니다."
+  },
+  "名单未满足至少保留三名选手的继承要求。": {
+    "zh-TW": "名單未符合至少保留三名選手的繼承要求。",
+    "en-US": "The roster must retain at least three players from the previous approved roster.",
+    "ko-KR": "이전 승인 명단에서 최소 3명을 유지해야 합니다."
+  },
+  "历史正式名单缺失，需要管理员核对。": {
+    "zh-TW": "歷史正式名單缺失，需要管理員核對。",
+    "en-US": "An earlier official roster is missing. An administrator needs to verify it.",
+    "ko-KR": "이전 공식 명단이 없습니다. 관리자가 확인해야 합니다."
+  },
+  "本队当前处于停赛期。": {
+    "zh-TW": "本隊目前處於停賽期。",
+    "en-US": "This team is currently suspended.",
+    "ko-KR": "현재 이 팀은 출전 정지 상태입니다."
+  },
+  "名单包含不符合季后赛资格的选手。": {
+    "zh-TW": "名單包含不符合季後賽資格的選手。",
+    "en-US": "The roster includes players who are ineligible for playoffs.",
+    "ko-KR": "플레이오프 자격이 없는 선수가 명단에 포함되어 있습니다."
+  },
+  "该选手已在同周另一队伍名单中提交。": {
+    "zh-TW": "該選手已在同週另一隊伍名單中提交。",
+    "en-US": "This player is already submitted on another team's roster for the same week.",
+    "ko-KR": "이 선수는 이미 같은 주 다른 팀의 명단에 제출되어 있습니다."
+  },
+  "名单需要管理员进一步核对。": {
+    "zh-TW": "名單需要管理員進一步核對。",
+    "en-US": "The roster needs further administrator review.",
+    "ko-KR": "관리자의 추가 명단 검토가 필요합니다."
+  },
+  "名单已提交": {
+    "zh-TW": "名單已提交",
+    "en-US": "Roster submitted",
+    "ko-KR": "명단 제출 완료"
+  },
+  "确认并提交检查": {
+    "zh-TW": "確認並提交檢查",
+    "en-US": "Confirm and submit for check",
+    "ko-KR": "확인 후 검사 제출"
+  },
+  "已自动锁定，正式出赛名单已确认。": {
+    "zh-TW": "已自動鎖定，正式出賽名單已確認。",
+    "en-US": "Automatically locked. The official roster is confirmed.",
+    "ko-KR": "자동으로 잠겼으며 공식 출전 명단이 확정되었습니다."
+  },
+  "名单已提交，检查结果可在确认名单中查看。": {
+    "zh-TW": "名單已提交，檢查結果可在確認名單中查看。",
+    "en-US": "Roster submitted. View the check results in roster confirmation.",
+    "ko-KR": "명단이 제출되었습니다. 명단 확인에서 검사 결과를 볼 수 있습니다."
+  },
+  "有未保存的改动。提交后系统会重新检查。": {
+    "zh-TW": "有未儲存的改動。提交後系統會重新檢查。",
+    "en-US": "There are unsaved changes. The system will check again after submission.",
+    "ko-KR": "저장하지 않은 변경 사항이 있습니다. 제출하면 시스템이 다시 검사합니다."
+  },
+  "当前为已保存草稿，正式提交后系统会自动检查。": {
+    "zh-TW": "目前為已儲存草稿，正式提交後系統會自動檢查。",
+    "en-US": "This is a saved draft. The system checks it after formal submission.",
+    "ko-KR": "현재 저장된 초안입니다. 정식 제출 후 시스템이 자동 검사합니다."
+  },
   "生成并复制链接": {
     "zh-TW": "產生並複製連結",
     "en-US": "Generate and copy link",
@@ -56880,5 +57065,115 @@
     "zh-TW": "沒有教練可留空；聯絡方式用於賽事聯絡。教練兼任選手時，仍需另外加入選手名單並確認。",
     "en-US": "Leave blank if there is no coach. Contact details are used for event communication. A coach who also plays must join the player roster and confirm separately.",
     "ko-KR": "코치가 없으면 비워 두세요. 연락처는 대회 연락에 사용됩니다. 선수를 겸하는 코치는 선수 명단에 별도로 등록하고 확인해야 합니다."
+  },
+  "队伍教练资料": {
+    "en-US": "Team coaches",
+    "zh-TW": "隊伍教練資料",
+    "ko-KR": "팀 코치 정보"
+  },
+  "教练补录与资料维护": {
+    "en-US": "Add and update coaches",
+    "zh-TW": "教練補錄與資料維護",
+    "ko-KR": "코치 추가 및 정보 관리"
+  },
+  "补录教练称呼、完整 BattleTag 和联系方式；保存后会显示在队伍职员资料中。": {
+    "en-US": "Add a coach name, full BattleTag and contact details. Saved coaches appear in the team staff directory.",
+    "zh-TW": "補錄教練稱呼、完整 BattleTag 和聯絡方式；儲存後會顯示在隊伍職員資料中。",
+    "ko-KR": "코치 이름, 전체 BattleTag와 연락처를 입력하세요. 저장하면 팀 스태프 정보에 표시됩니다."
+  },
+  "正在读取教练资料；读取失败时可点击刷新。": {
+    "en-US": "Loading coaches. If loading fails, select Refresh.",
+    "zh-TW": "正在讀取教練資料；讀取失敗時可點擊重新整理。",
+    "ko-KR": "코치 정보를 불러오는 중입니다. 실패하면 새로고침하세요."
+  },
+  "暂未录入教练。": {
+    "en-US": "No coaches have been added.",
+    "zh-TW": "暫未錄入教練。",
+    "ko-KR": "등록된 코치가 없습니다."
+  },
+  "补录教练": {
+    "en-US": "Add a coach",
+    "zh-TW": "補錄教練",
+    "ko-KR": "코치 추가"
+  },
+  "修改教练资料": {
+    "en-US": "Edit coach details",
+    "zh-TW": "修改教練資料",
+    "ko-KR": "코치 정보 수정"
+  },
+  "教练称呼": {
+    "en-US": "Coach name",
+    "zh-TW": "教練稱呼",
+    "ko-KR": "코치 이름"
+  },
+  "联系方式（用于队内联络）": {
+    "en-US": "Contact details (for team communication)",
+    "zh-TW": "聯絡方式（用於隊內聯絡）",
+    "ko-KR": "연락처 (팀 내 연락용)"
+  },
+  "保存教练资料": {
+    "en-US": "Save coach details",
+    "zh-TW": "儲存教練資料",
+    "ko-KR": "코치 정보 저장"
+  },
+  "教练资料已保存。": {
+    "en-US": "Coach details saved.",
+    "zh-TW": "教練資料已儲存。",
+    "ko-KR": "코치 정보가 저장되었습니다."
+  },
+  "BattleTag 待补全": {
+    "en-US": "BattleTag required",
+    "zh-TW": "BattleTag 待補全",
+    "ko-KR": "BattleTag 입력 필요"
+  },
+  "未填写联系方式": {
+    "en-US": "No contact details",
+    "zh-TW": "未填寫聯絡方式",
+    "ko-KR": "연락처 미입력"
+  },
+  "教练或队伍资料已更新，请刷新后重试。": {
+    "en-US": "Coach or team details changed. Refresh and try again.",
+    "zh-TW": "教練或隊伍資料已更新，請重新整理後重試。",
+    "ko-KR": "코치 또는 팀 정보가 변경되었습니다. 새로고침 후 다시 시도하세요."
+  },
+  "当前队伍已有相同 BattleTag 的教练。": {
+    "en-US": "This team already has a coach with that BattleTag.",
+    "zh-TW": "目前隊伍已有相同 BattleTag 的教練。",
+    "ko-KR": "이 팀에 같은 BattleTag의 코치가 이미 있습니다."
+  },
+  "已绑定账号的教练不能在这里更换 BattleTag，请先通过账号管理核对身份。": {
+    "en-US": "A linked coach cannot change their BattleTag here. Verify their identity in Account Management first.",
+    "zh-TW": "已綁定帳號的教練不能在這裡更換 BattleTag，請先透過帳號管理核對身分。",
+    "ko-KR": "계정에 연결된 코치의 BattleTag는 여기서 변경할 수 없습니다. 먼저 계정 관리에서 신원을 확인하세요."
+  },
+  "这位教练不属于当前队伍，请刷新后核对。": {
+    "en-US": "This coach is not on the selected team. Refresh and check again.",
+    "zh-TW": "這位教練不屬於目前隊伍，請重新整理後核對。",
+    "ko-KR": "이 코치는 선택한 팀 소속이 아닙니다. 새로고침 후 확인하세요."
+  },
+  "队伍已停用，不能补录教练。": {
+    "en-US": "The team is inactive. Coaches cannot be added.",
+    "zh-TW": "隊伍已停用，不能補錄教練。",
+    "ko-KR": "비활성 팀에는 코치를 추가할 수 없습니다."
+  },
+  "当前赛季已经归档，只能查看教练资料。": {
+    "en-US": "This season is archived. Coach details are read-only.",
+    "zh-TW": "目前賽季已封存，只能查看教練資料。",
+    "ko-KR": "보관된 시즌의 코치 정보는 조회만 가능합니다."
+  },
+  "编辑教练": {
+    "en-US": "Edit coach",
+    "zh-TW": "編輯教練",
+    "ko-KR": "코치 수정"
+  },
+  "取消编辑": {
+    "en-US": "Cancel editing",
+    "zh-TW": "取消編輯",
+    "ko-KR": "수정 취소"
+  },
+  "已绑定账号": {
+    "en-US": "Account linked",
+    "zh-TW": "已綁定帳號",
+    "ko-KR": "계정 연결됨"
   }
 }

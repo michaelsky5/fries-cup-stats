@@ -1,4 +1,5 @@
 import { getWeeklyRosterCheck, getWeeklyRosterContext } from '../account-ui/participationJourneyModel.js'
+import { currentRosterReview, rosterReviewPresentation } from './rosterReviewPresentation.js'
 
 const TERMINAL = new Set(['CLOSED', 'CANCELLED'])
 const time = value => value ? Date.parse(value) : NaN
@@ -75,6 +76,10 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
   const roster = participation?.rosters?.find(item => item.status === 'LOCKED')
     || participation?.rosters?.find(item => ['DRAFT', 'SUBMITTED'].includes(item.status))
   const confirmed = participation?.status === 'CONFIRMED'
+  const review = currentRosterReview(roster)
+  const needsRosterChanges = roster?.status === 'SUBMITTED' && review?.status === 'NEEDS_CHANGES'
+  const automaticReview = Boolean(rules.automaticRosterReview || review)
+  const reviewPresentation = rosterReviewPresentation(roster, { automatic: automaticReview })
   const draftReady = Boolean(roster && getWeeklyRosterCheck(members(roster).map(member => member.playerId), new Set(members(core).map(member => member.playerId)), checkRules, entry.players || []).canSubmit)
   const declined = ['DECLINED', 'WITHDRAWN'].includes(participation?.status)
   const terminalDetail = week?.status === 'CANCELLED' || cycle.status === 'CANCELLED' ? '赛事安排已取消，已有记录仅供查看。'
@@ -105,23 +110,23 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
     },
     {
       key: 'lineup', title: '调整人员',
-      state: declined || terminal ? 'quiet' : ['SUBMITTED', 'LOCKED'].includes(roster?.status) || draftReady ? 'done'
+      state: declined || terminal ? 'quiet' : needsRosterChanges ? window === 'open' && writable ? 'action' : 'blocked' : ['SUBMITTED', 'LOCKED'].includes(roster?.status) || draftReady ? 'done'
         : !confirmed ? 'waiting' : window === 'closed' ? 'blocked' : window === 'open' && (!fixedCore || core) && writable ? 'action' : 'waiting',
-      label: declined ? '本周无需调整' : terminal ? '历史名单' : ['SUBMITTED', 'LOCKED'].includes(roster?.status) || draftReady ? '调整已保存' : !confirmed ? '确认参赛后开放' : roster ? '草稿还需补齐' : '待选择人员',
-      detail: terminal ? terminalDetail : declined ? '本周无需提交名单。' : window !== 'open' ? windowDetail : `${owner}，添加或移除本周出赛人选，保存草稿后进入确认名单；选手档案与历史战绩保留。`
+      label: declined ? '本周无需调整' : terminal ? '历史名单' : needsRosterChanges ? '需调整名单' : ['SUBMITTED', 'LOCKED'].includes(roster?.status) || draftReady ? '调整已保存' : !confirmed ? '确认参赛后开放' : roster ? '草稿还需补齐' : '待选择人员',
+      detail: terminal ? terminalDetail : declined ? '本周无需提交名单。' : needsRosterChanges ? reviewPresentation.detail : window !== 'open' ? windowDetail : `${owner}，添加或移除本周出赛人选，保存草稿后进入确认名单；选手档案与历史战绩保留。`
     },
     {
       key: 'roster', title: '确认并提交名单',
       state: declined ? 'quiet' : roster?.status === 'LOCKED' ? 'done' : terminal ? 'quiet'
         : !confirmed ? 'waiting' : roster?.status === 'SUBMITTED' ? 'waiting'
           : window === 'closed' ? 'blocked' : !draftReady ? 'waiting' : window === 'open' && (!fixedCore || core) && writable ? 'action' : 'waiting',
-      label: declined ? '本周无需提交' : roster?.status === 'LOCKED' ? '管理员已锁定'
+      label: declined ? '本周无需提交' : roster?.status === 'LOCKED' ? review?.lockMethod === 'AUTOMATIC' ? '已自动锁定' : '管理员已锁定'
         : terminal ? roster?.status === 'SUBMITTED' ? '已提交 · 未锁定' : '未提交正式名单'
-          : !confirmed ? window === 'closed' ? '本周未提交' : '确认参赛后开放' : roster?.status === 'SUBMITTED' ? '已提交 · 等待锁定'
+          : !confirmed ? window === 'closed' ? '本周未提交' : '确认参赛后开放' : roster?.status === 'SUBMITTED' ? automaticReview ? reviewPresentation.title : '已提交 · 等待锁定'
           : window === 'closed' && !terminal ? '未提交 · 已截止' : roster ? '草稿待提交' : '尚未提交',
       detail: declined ? '不计入本周参赛准备。' : roster?.status === 'LOCKED' ? `${members(roster).length} 人 · 正式名单已锁定`
         : terminal ? terminalDetail : !confirmed ? window === 'closed' ? '未完成当周参赛确认，名单未提交。' : '由队长或经理确认参赛后，继续准备名单。'
-          : roster?.status === 'SUBMITTED' ? `${members(roster).length} 人 · 等待周赛管理员锁定。`
+          : roster?.status === 'SUBMITTED' ? automaticReview ? reviewPresentation.detail : `${members(roster).length} 人 · 等待周赛管理员锁定。`
               : terminal || window !== 'open' ? windowDetail
                 : fixedCore && !core ? '先完成周期核心锁定，再提交本周名单。'
                 : `${roster ? `已保存 ${members(roster).length} 人，` : ''}${writable ? '核对后正式提交；保存草稿不会完成此步骤。' : '等待队长或经理提交名单。'}`
@@ -133,14 +138,14 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
   const summary = terminal ? week?.status === 'CANCELLED' || cycle.status === 'CANCELLED' ? '赛事安排已取消' : '历史参赛记录'
     : declined ? participation.status === 'WITHDRAWN' ? '已撤回当周参赛' : '本周不参赛' : next ? `下一步：${next.title}`
       : issue ? '需要管理员协助' : readyForSchedule ? '本周名单准备已完成'
-        : roster?.status === 'SUBMITTED' ? '等待管理员锁定名单' : !week ? '等待周次公布'
+        : roster?.status === 'SUBMITTED' ? automaticReview ? reviewPresentation.title : '等待管理员锁定名单' : !week ? '等待周次公布'
             : window === 'unknown' ? '确认状态待同步' : window === 'upcoming' ? '等待确认窗口开放'
             : fixedCore && !core ? '等待队长或经理锁定核心' : !confirmed ? '等待队长或经理确认参赛' : '等待队长或经理提交名单'
   const guidance = terminal ? { label: '记录状态', detail: terminalDetail }
     : declined ? { label: '当前安排', detail: window === 'open' ? `本周无需提交名单。${writable ? '如计划有变，可在截止前调整参赛意向。' : '如计划有变，请联系队长或经理。'}` : `本周无需提交名单。${windowDetail}` }
       : issue ? { label: '需要协助', detail: issue.key === 'core' ? '可在下方队伍准备页提交问题，由赛管核对周期核心名单。' : '确认期已结束，可在队伍准备页提交问题并跟踪处理。' }
         : readyForSchedule ? { label: '接下来', detail: '名单已锁定，请留意赛程发布与比赛安排。' }
-          : roster?.status === 'SUBMITTED' ? { label: '接下来由管理员处理', detail: '名单已提交，等待周赛管理员锁定；无需重复提交。' }
+          : roster?.status === 'SUBMITTED' ? automaticReview ? { label: reviewPresentation.title, detail: reviewPresentation.detail } : { label: '接下来由管理员处理', detail: '名单已提交，等待周赛管理员锁定；无需重复提交。' }
             : !week ? { label: '接下来', detail: '周次公布后，这里会显示当周确认时间与名单要求。' }
               : window === 'upcoming' ? { label: '开放后继续', detail: '确认窗口开放后，由队长或经理确认参赛并提交名单。' }
                 : window === 'unknown' ? { label: '状态待确认', detail: '请刷新进度，核对确认窗口后再继续。' }
