@@ -1,4 +1,13 @@
 {
+  "切换队伍": { "zh-TW": "切換隊伍", "en-US": "Switch team", "ko-KR": "팀 전환" },
+  "队伍切换与管理": { "zh-TW": "隊伍切換與管理", "en-US": "Team selection and management", "ko-KR": "팀 전환 및 관리" },
+  "当前队伍 · 切换队伍": { "zh-TW": "目前隊伍 · 切換隊伍", "en-US": "Current team · Switch team", "ko-KR": "현재 팀 · 팀 전환" },
+  "可维护本队资料": { "zh-TW": "可維護本隊資料", "en-US": "You can manage this team", "ko-KR": "이 팀의 정보를 관리할 수 있습니다" },
+  "本队资料仅可查看": { "zh-TW": "本隊資料僅可查看", "en-US": "View-only access to this team", "ko-KR": "이 팀의 정보는 조회만 가능합니다" },
+  "教练管理": { "zh-TW": "教練管理", "en-US": "Manage coaches", "ko-KR": "코치 관리" },
+  "本队名单与教练资料由队长或经理维护。": { "zh-TW": "本隊名單與教練資料由隊長或經理維護。", "en-US": "The team captain or manager maintains this team's roster and coach details.", "ko-KR": "이 팀의 명단과 코치 정보는 주장 또는 매니저가 관리합니다." },
+  "查看本队参赛准备 →": { "zh-TW": "查看本隊參賽準備 →", "en-US": "View this team's preparation →", "ko-KR": "이 팀의 참가 준비 보기 →" },
+  "切换周期或周次": { "zh-TW": "切換週期或週次", "en-US": "Switch cycle or week", "ko-KR": "주기 또는 주차 전환" },
   "名单有未提交的修改": {
     "zh-TW": "名單有未提交的修改",
     "en-US": "Roster has unsubmitted changes",

@@ -19,6 +19,9 @@
 .switcher nav a:hover { background: var(--fc-data-paper-deep); }
 .switcher nav strong { font-size: 14px; }
 .switcher nav small { font-size: 12px; color: var(--fc-data-text-muted); }
+.context [data-team-switcher] { margin-left: 0; }
+.context [data-team-switcher] nav { left: 0; right: auto; width: min(300px, calc(100vw - 48px)); }
+.context [data-team-switcher] summary > span { color: var(--fc-data-text-muted); font-size: 11px; }
 .bar :is(summary, a):focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 3px; }
 @media (max-width: 700px) {
   .bar { flex-wrap: wrap; gap: 4px 12px; padding: 10px 12px; }
@@ -55,4 +58,5 @@
   .switcher { margin-left: auto; }
   .switcher summary { padding: 0; font-size: 12px; }
   .switcher nav { left: auto; right: 0; }
+  .bar[data-compact] .context .current { flex-basis: 100%; }
 }

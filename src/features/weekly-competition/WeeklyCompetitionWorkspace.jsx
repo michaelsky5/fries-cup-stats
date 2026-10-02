@@ -3,6 +3,7 @@ import RoomGuideLink from '../room-guide/RoomGuideLink.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import WeeklyTeamAdditions from './WeeklyTeamAdditions.jsx'
 import WeeklyTeamCoaches from './WeeklyTeamCoaches.jsx'
+import WeeklyTeamContext from './WeeklyTeamContext.jsx'
 import WeeklyOwnershipTransfers from './WeeklyOwnershipTransfers.jsx'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -184,10 +185,13 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
     }
   }, [refresh])
 
-  const explicitSelection = searchParams.has('cycle') || searchParams.has('entry') || searchParams.has('week')
-  const { cycle, entry, weekRecord, invalid: invalidSelection } = resolveWeeklySelection(workspace, explicitSelection ? {
-    cycleId: searchParams.get('cycle'), entryId: searchParams.get('entry'), weekId: searchParams.get('week')
+  const explicitSelection = searchParams.has('team') || searchParams.has('cycle') || searchParams.has('entry') || searchParams.has('week')
+  const { cycle, entry, weekRecord, teamAccess, invalid: invalidSelection } = resolveWeeklySelection(workspace, explicitSelection ? {
+    teamId: searchParams.get('team'), cycleId: searchParams.get('cycle'), entryId: searchParams.get('entry'), weekId: searchParams.get('week')
   } : defaultSelection, now)
+  const teamId = teamAccess?.team?.id || ''
+  const canManageTeam = teamAccess?.accessMode === 'WRITE' && ['LEADER', 'MANAGER'].includes(teamAccess?.role)
+  const teamCycles = workspace?.cycles?.filter(item => item.entries?.some(candidate => (candidate.seasonTeamId || candidate.team?.id) === teamId)) || []
   const cycleId = cycle?.id || ''
   const entryId = entry?.id || ''
   const weekId = weekRecord?.week?.id || ''
@@ -201,7 +205,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
   const currentRoster = rosterDraft || rosterLocked
   const lockedCoreIds = useMemo(() => new Set(selectedPlayerIds(coreLocked)), [coreLocked])
   const synchronized = workspace?.userId === user?.id && workspace?.season?.id === seasonId
-  const entryWritable = synchronized && !stale && !readOnly && !invalidSelection && workspace.season.status !== 'ARCHIVED' && !['CLOSED', 'CANCELLED'].includes(cycle?.status) && entry?.accessMode === 'WRITE'
+  const entryWritable = synchronized && !stale && !readOnly && !invalidSelection && canManageTeam && workspace.accessMode === 'WRITE' && workspace.season.status !== 'ARCHIVED' && !['CLOSED', 'CANCELLED'].includes(cycle?.status) && entry?.accessMode === 'WRITE'
   const confirmationOpen = weekRecord?.week?.status === 'CONFIRMATION_OPEN' && weeklyConfirmationWindow(weekRecord.week, now) === 'open'
   const coreWritable = entryWritable && cycle?.status === 'REGISTRATION' && !coreLocked
   const participationWritable = entryWritable && confirmationOpen
@@ -233,15 +237,18 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
   const changeSelection = (field, value) => {
     setNotice(null)
     const next = new URLSearchParams(searchParams)
-    const requested = { cycleId, entryId, weekId, [`${field}Id`]: value }
+    const requested = { teamId, cycleId, entryId, weekId, [`${field}Id`]: value }
+    if (field === 'team') { delete requested.cycleId; delete requested.entryId }
     if (field === 'cycle') delete requested.entryId
     if (field !== 'week') delete requested.weekId
     const selected = resolveWeeklySelection(workspace, requested, now)
-    for (const [key, id] of [['cycle', selected.cycle?.id], ['entry', selected.entry?.id], ['week', selected.weekRecord?.week?.id]]) {
+    for (const [key, id] of [['team', selected.teamAccess?.team?.id], ['cycle', selected.cycle?.id], ['entry', selected.entry?.id], ['week', selected.weekRecord?.week?.id]]) {
       if (id) next.set(key, id)
       else next.delete(key)
     }
     next.delete('step')
+    next.delete('journey')
+    if (field === 'team' && !(selected.teamAccess?.accessMode === 'WRITE' && ['LEADER', 'MANAGER'].includes(selected.teamAccess?.role))) next.delete('manage')
     setSearchParams(next)
   }
   const resetCore = () => { setCoreIds(selectedPlayerIds(currentCore)); setCoreStatus(currentCore?.status === 'LOCKED' ? 'LOCKED' : 'DRAFT') }
@@ -268,7 +275,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
   useEffect(() => {
     if (hasPlan) setDefaultFocus(current => current?.scope === focusScope ? current : { scope: focusScope, step: initialStep })
   }, [hasPlan, focusScope, initialStep])
-  const stepHref = key => withParticipationActionContext(weeklyTeamDestination(cycleId, entryId, weekId, key), searchParams)
+  const stepHref = key => withParticipationActionContext(weeklyTeamDestination(cycleId, entryId, weekId, key, teamId), searchParams)
   const feedbackNotice = { core: coreDirty, participation: participationDirty, roster: rosterDirty }[notice?.kind] ? null : notice
   const feedbackProps = { notice: feedbackNotice, plan: currentPlan, nextHref, progressHref, overviewHref: '/me?' + overviewParams }
   useEffect(() => {
@@ -329,28 +336,31 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
   const management = searchParams.get('manage')
   const managementPath = mode => {
     const next = new URLSearchParams(searchParams)
+    next.set('team', teamId)
+    next.delete('step')
     if (mode) next.set('manage', mode)
     else next.delete('manage')
     return '?' + next
   }
+  const teamContext = <WeeklyTeamContext teams={workspace.teams} selected={teamAccess} canManage={canManageTeam} readOnly={readOnly || stale || workspace.season.status === 'ARCHIVED'} busy={Boolean(busy)} locale={uiLocale} onChange={value => changeSelection('team', value)} management={management} managementPath={managementPath} />
   if (['members', 'ownership', 'coaches'].includes(management)) return <section className={styles.workspace}>
-    <nav className={styles.teamOperations}><Link to={managementPath(null)}>← {uiText('本周参赛准备', uiLocale)}</Link></nav>
-    {management === 'coaches' ? <WeeklyTeamCoaches key={`coaches:${entry?.team?.id}`} teamId={entry?.team?.id} readOnly={readOnly || stale || Boolean(busy)} onActivityChange={onActivityChange} /> : management === 'members'
-      ? <WeeklyTeamAdditions key={seasonId} seasonId={seasonId} readOnly={readOnly || stale || Boolean(busy)} />
-      : <WeeklyOwnershipTransfers key={`ownership:${seasonId}`} seasonId={seasonId} readOnly={readOnly || stale || Boolean(busy)} />}
+    {teamContext}
+    {!canManageTeam ? <div className={styles.empty}><strong>{uiText('本队资料仅可查看', uiLocale)}</strong><p>{uiText('本队名单与教练资料由队长或经理维护。', uiLocale)}</p><Link to={managementPath(null)}>{uiText('查看本队参赛准备 →', uiLocale)}</Link></div> : management === 'coaches' ? <WeeklyTeamCoaches key={`coaches:${teamId}`} teamId={teamId} readOnly={readOnly || stale || Boolean(busy)} onActivityChange={onActivityChange} /> : management === 'members'
+      ? <WeeklyTeamAdditions key={`${seasonId}:${teamId}`} seasonId={seasonId} selectedTeamId={teamId} readOnly={readOnly || stale || Boolean(busy)} />
+      : <WeeklyOwnershipTransfers key={`ownership:${seasonId}:${teamId}`} seasonId={seasonId} selectedTeamId={teamId} readOnly={readOnly || stale || Boolean(busy)} />}
   </section>
 
   if (!activeStep) return <section className={styles.state} role="alert"><strong>{uiText("这个参赛步骤不存在", uiLocale)}</strong><Link to={progressHref}>{uiText("返回本次参赛进度 →", uiLocale)}</Link></section>
 
   return (
     <section className={styles.workspace} aria-label={uiText("周赛队伍工作台", uiLocale)}>
+      {teamContext}
       <header className={styles.workHeader}><div><RoomGuideLink season={seasonId} role="manager" label="参赛与比赛指南" /><span>WEEKLY PARTICIPATION</span><h2>{uiText("本周参赛准备", uiLocale)}</h2></div><button type="button" disabled={Boolean(busy)} onClick={async () => { if (await confirmDiscard()) { refresh().catch(() => {}); onActivityChange?.() } }}>{uiText("刷新资料", uiLocale)}</button></header>
       {error ? <div ref={errorRef} tabIndex={-1} className={styles.message} role="alert" data-error="true"><span>{error}</span></div> : null}
       {stale && <p className={styles.lockNote}>{uiText("当前显示上次同步记录，重新同步前仅可查看。", uiLocale)}</p>}
-      <div className={styles.preparationReturn}><Link to={progressHref}>{uiText("← 本次参赛进度", uiLocale)}</Link><strong>{entry?.team?.shortName || entry?.team?.name} · {weekRecord?.week?.label || uiText("周期登记", uiLocale)}</strong><span>{cycle?.name}</span>{confirmationOpen && weekRecord.week.confirmationDeadlineAt && <time dateTime={weekRecord.week.confirmationDeadlineAt}>{uiText("截止 ", uiLocale)}{new Date(weekRecord.week.confirmationDeadlineAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}{uiText(" · 北京时间", uiLocale)}</time>}</div>
-      {(workspace.cycles.length > 1 || cycle?.entries?.length > 1 || entry?.weeks?.length > 1) && <details className={styles.contextSwitcher}><summary>{uiText("切换队伍或周次", uiLocale)}</summary><div className={styles.selectors}>
-        <label><span>{uiText("周期", uiLocale)}</span><select value={cycleId} disabled={Boolean(busy)} onChange={event => changeSelection('cycle', event.target.value)}>{workspace.cycles.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
-        <label><span>{uiText("队伍", uiLocale)}</span><select value={entryId} disabled={Boolean(busy)} onChange={event => changeSelection('entry', event.target.value)}>{(cycle?.entries || []).map(item => <option key={item.id} value={item.id}>{item.team?.name || item.seasonTeamId}</option>)}</select></label>
+      {entry && <div className={styles.preparationReturn}><Link to={progressHref}>{uiText("← 本次参赛进度", uiLocale)}</Link><strong>{entry.team?.shortName || entry.team?.name} · {weekRecord?.week?.label || uiText("周期登记", uiLocale)}</strong><span>{cycle?.name}</span>{confirmationOpen && weekRecord.week.confirmationDeadlineAt && <time dateTime={weekRecord.week.confirmationDeadlineAt}>{uiText("截止 ", uiLocale)}{new Date(weekRecord.week.confirmationDeadlineAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}{uiText(" · 北京时间", uiLocale)}</time>}</div>}
+      {(teamCycles.length > 1 || entry?.weeks?.length > 1) && <details className={styles.contextSwitcher}><summary>{uiText("切换周期或周次", uiLocale)}</summary><div className={styles.selectors}>
+        <label><span>{uiText("周期", uiLocale)}</span><select value={cycleId} disabled={Boolean(busy)} onChange={event => changeSelection('cycle', event.target.value)}>{teamCycles.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
         <label><span>{uiText("周次", uiLocale)}</span><select value={weekId} disabled={Boolean(busy)} onChange={event => changeSelection('week', event.target.value)}>{(entry?.weeks || []).map(item => <option key={item.week.id} value={item.week.id}>{item.week.label || uiText("第 {0} 周", uiLocale, [item.week.weekNumber])}</option>)}</select></label>
       </div></details>}
 
@@ -412,14 +422,9 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
           {activeStep === 'roster' && <SaveFeedback {...feedbackProps} kind="participation" />}
         </section>
         <footer className={styles.taskFooter}><span>{currentPlan?.guidance.detail}</span><Link to={progressHref}>{uiText("查看完整参赛进度 ↗", uiLocale)}</Link></footer>
-        {weekId && entry?.team?.id && <WeeklyCoordinationPanel key={`${weekId}:${entry.team.id}`} weekId={weekId} teamId={entry.team.id} readOnly={readOnly || stale || Boolean(busy)} onActivityChange={onActivityChange} />}
+        {weekId && entry?.team?.id && <WeeklyCoordinationPanel key={`${weekId}:${entry.team.id}`} weekId={weekId} teamId={entry.team.id} readOnly={readOnly || !canManageTeam || stale || Boolean(busy)} onActivityChange={onActivityChange} />}
       </>}
       {participationChange && <WeeklyParticipationChangeDialog team={entry?.team?.shortName || entry?.team?.name} week={weekRecord?.week?.label} status={participationChange} busy={Boolean(busy)} onCancel={() => setParticipationChange(null)} onConfirm={() => runAction('participation', () => saveMyWeeklyParticipation(weekId, { entryId: entry.id, status: participationChange, revision: participation?.revision || 0, availability, availabilityNote: availabilityNote.trim() || null }), '本周参赛状态已更新。')} />}
-      <nav className={styles.teamOperations} aria-label={uiText('队伍管理', uiLocale)}>
-        <Link to={managementPath('members')}>{uiText('队伍自主增员', uiLocale)} →</Link>
-        <Link to={managementPath('coaches')}>{uiText('教练补录与资料维护', uiLocale)} →</Link>
-        <Link to={managementPath('ownership')}>{uiText('队伍所有权转让', uiLocale)} →</Link>
-      </nav>
     </section>
   )
 }

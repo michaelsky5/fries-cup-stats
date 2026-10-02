@@ -7,7 +7,7 @@ import styles from './WeeklyTeamAdditions.module.css'
 
 const empty = { displayName: '', email: '', battleTag: '', role: 'UNKNOWN' }
 const labels = { INVITED: '待选手本人确认', SUBMITTED: '待管理员审核', APPROVED: '已加入队伍', REJECTED: '未通过', CANCELLED: '已取消' }
-export default function WeeklyTeamAdditions({ seasonId, readOnly = false, onHasAdditions }) {
+export default function WeeklyTeamAdditions({ seasonId, selectedTeamId, readOnly = false, onHasAdditions }) {
   const locale = useUiLocale(), t = text => uiText(text, locale)
   const [data, setData] = useState(null), [teamId, setTeamId] = useState(''), [form, setForm] = useState(empty)
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [link, setLink] = useState(null), [notice, setNotice] = useState('')
@@ -18,9 +18,10 @@ export default function WeeklyTeamAdditions({ seasonId, readOnly = false, onHasA
   const refresh = useCallback(async signal => {
     try {
       const next = await platformRequest(`${base}/team-additions`, { signal })
+      if (selectedTeamId) next.teams = next.teams.filter(team => team.id === selectedTeamId)
       if (!signal?.aborted && mounted.current) { setData(next); onHasAdditions?.(next.additions.length > 0); setTeamId(current => next.teams.some(team => team.id === current) ? current : next.teams[0]?.id || '') }
     } catch (failure) { if (!signal?.aborted && mounted.current) { setData(null); setError(failure.message) } }
-  }, [base, onHasAdditions])
+  }, [base, selectedTeamId, onHasAdditions])
   useEffect(() => { mounted.current = true; const controller = new AbortController(); refresh(controller.signal); return () => { mounted.current = false; controller.abort() } }, [refresh])
   const writable = data?.canWrite && !readOnly && !busy
   async function action(suffix, body, message, creating = false) {

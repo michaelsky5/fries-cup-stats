@@ -18,8 +18,9 @@ export function weeklyConfirmationWindow(week, now = Date.now()) {
   return week.status === 'DRAFT' ? 'upcoming' : 'closed'
 }
 
-export function weeklyTeamDestination(cycleId, entryId, weekId, step) {
+export function weeklyTeamDestination(cycleId, entryId, weekId, step, teamId) {
   const params = new URLSearchParams({ section: 'team', cycle: cycleId, entry: entryId })
+  if (teamId) params.set('team', teamId)
   if (weekId) params.set('week', weekId)
   if (step) params.set('step', step)
   return `/me?${params}${step ? `#weekly-${step}` : ''}`
@@ -46,13 +47,16 @@ export function orderWeeklyRecords(records = [], now = Date.now()) {
 // Explicit links must never silently open a different team or week.
 export function resolveWeeklySelection(workspace, requested = {}, now = Date.now()) {
   const cycles = workspace?.cycles || []
+  const entries = cycle => (cycle?.entries || []).filter(entry => !requested.teamId || (entry.seasonTeamId || entry.team?.id) === requested.teamId)
   const cycle = requested.cycleId ? cycles.find(item => item.id === requested.cycleId)
-    : requested.entryId ? cycles.find(item => item.entries?.some(entry => entry.id === requested.entryId))
-      : cycles.find(item => !TERMINAL.has(item.status) && item.entries?.length) || cycles.find(item => item.entries?.length) || cycles[0]
-  const entry = requested.entryId ? cycle?.entries?.find(item => item.id === requested.entryId) : cycle?.entries?.[0]
+    : requested.entryId ? cycles.find(item => entries(item).some(entry => entry.id === requested.entryId))
+      : cycles.find(item => !TERMINAL.has(item.status) && entries(item).length) || cycles.find(item => entries(item).length) || (!requested.teamId ? cycles[0] : null)
+  const entry = requested.entryId ? entries(cycle).find(item => item.id === requested.entryId) : entries(cycle)[0]
+  const teamId = requested.teamId || entry?.seasonTeamId || entry?.team?.id
+  const teamAccess = teamId ? workspace?.teams?.find(item => item.team?.id === teamId) : workspace?.teams?.[0]
   const weekRecord = requested.weekId ? entry?.weeks?.find(item => item.week?.id === requested.weekId) : orderWeeklyRecords(entry?.weeks, now)[0]
-  const invalid = Boolean((requested.cycleId && !cycle) || (requested.entryId && !entry) || (requested.weekId && !weekRecord))
-  return { cycle: cycle || null, entry: entry || null, weekRecord: weekRecord || null, invalid }
+  const invalid = Boolean((requested.teamId && !teamAccess) || (requested.cycleId && !cycle) || (requested.entryId && !entry) || (requested.weekId && !weekRecord))
+  return { cycle: cycle || null, entry: entry || null, weekRecord: weekRecord || null, teamAccess: teamAccess || null, invalid }
 }
 
 export function isWeeklyPreparationWorkspace(workspace, seasonId, userId) {
@@ -131,7 +135,7 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
                 : fixedCore && !core ? '先完成周期核心锁定，再提交本周名单。'
                 : `${roster ? `已保存 ${members(roster).length} 人，` : ''}${writable ? '核对后正式提交；保存草稿不会完成此步骤。' : '等待队长或经理提交名单。'}`
     }
-  ].map(stage => ({ ...stage, actionUrl: weeklyTeamDestination(cycle.id, entry.id, week?.id, stage.key) }))
+  ].map(stage => ({ ...stage, actionUrl: weeklyTeamDestination(cycle.id, entry.id, week?.id, stage.key, team.id) }))
   const next = stages.find(stage => stage.state === 'action')
   const issue = stages.find(stage => stage.state === 'blocked')
   const readyForSchedule = !terminal && !declined && stages.every(stage => stage.state === 'done')
@@ -152,7 +156,7 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
                   : { label: writable ? '接下来由你处理' : '接下来由队伍处理', detail: stages.find(stage => ['action', 'waiting'].includes(stage.state))?.detail || '请在队伍页核对当前参赛状态。' }
   return { id: `${entry.id}:${week?.id || 'cycle'}`, cycle, entry, week, team, stages, next, summary,
     dueAt: !terminal && window === 'open' ? week.confirmationDeadlineAt : null,
-    guidance, readyForSchedule, window, writable, actionUrl: weeklyTeamDestination(cycle.id, entry.id, week?.id), terminal }
+    guidance, readyForSchedule, window, writable, actionUrl: weeklyTeamDestination(cycle.id, entry.id, week?.id, undefined, team.id), terminal }
 }
 
 export function buildWeeklyPreparation(workspace, { seasonId, userId, readOnly = true, now = Date.now() } = {}) {

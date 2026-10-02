@@ -51,6 +51,9 @@ export function withAccountCompetition(path, competitionId, currentSearch = '') 
   params.delete('platformSeason')
   if (personal && id) params.set(ACCOUNT_COMPETITION_PARAM, id)
   else params.delete(ACCOUNT_COMPETITION_PARAM)
+  const current = new URLSearchParams(currentSearch)
+  if (/^\/me\/?$/.test(pathname) && !params.has('team') && !params.has('entry')
+    && current.get(ACCOUNT_COMPETITION_PARAM) === id && current.get('team')) params.set('team', current.get('team'))
   return `${pathname}${params.size ? `?${params}` : ''}${hash ? `#${hash}` : ''}`
 }
 
@@ -60,6 +63,17 @@ export function competitionSwitchSearch(search, id) {
   for (const key of ['season', 'lang', 'design']) if (current.has(key)) next.set(key, current.get(key))
   if (normalizeCompetitionId(id)) next.set(ACCOUNT_COMPETITION_PARAM, id)
   next.set('section', 'overview')
+  return next.toString()
+}
+
+// Changing teams opens that team's workspace without reusing another team's
+// cycle, week, form, or notification link. Event and language stay selected.
+export function teamWorkspaceSearch(search, teamId) {
+  const current = new URLSearchParams(search)
+  const next = new URLSearchParams()
+  for (const key of ['season', 'lang', 'design', 'competition']) if (current.has(key)) next.set(key, current.get(key))
+  next.set('section', 'team')
+  next.set('team', teamId)
   return next.toString()
 }
 
