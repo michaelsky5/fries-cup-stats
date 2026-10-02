@@ -35,6 +35,9 @@ jobs:
       - name: Check weekly roster scope and partial account sync
         run: node --test scripts/week2Community.test.mjs
 
+      - name: Check weekly roster review presentation
+        run: npm run test:weekly-roster-review
+
       - name: Check partner trial boundaries
         run: node scripts/assertPartnerTrial.mjs
 

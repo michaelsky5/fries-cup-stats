@@ -199,3 +199,17 @@
 .teamOperations { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; padding-block: 12px; border-top: 1px solid var(--fc-data-line); }
 .teamOperations a { display: inline-flex; align-items: center; min-height: 44px; color: var(--fc-data-text-muted); font-size: 13px; text-decoration: none; }
 .teamOperations a:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 2px; }
+.rosterReviewStatus {
+  margin-top: 12px;
+  padding: 14px 16px;
+  background: rgba(237, 196, 50, 0.07);
+  border: 1px solid rgba(35, 33, 34, 0.28);
+  border-left: 3px solid #c2a128;
+  overflow-wrap: anywhere;
+}
+.rosterReviewStatus[data-status='PASSED'],
+.rosterReviewStatus[data-status='LOCKED'] { border-left-color: #38785c; }
+.rosterReviewStatus[data-status='NEEDS_CHANGES'] { border-left-color: #a74b39; }
+.rosterReviewStatus strong { font-size: 14px; }
+.rosterReviewStatus p { margin: 8px 0 0; font-size: 12px; line-height: 1.6; }
+.rosterReviewStatus ul { margin: 10px 0 0; padding-left: 20px; font-size: 12px; line-height: 1.6; }

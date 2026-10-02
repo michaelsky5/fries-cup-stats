@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import styles from '../account-ui/SignalWeeklyTeam.module.css'
+import WeeklyRosterReviewStatus from './WeeklyRosterReviewStatus.jsx'
 
-export default function WeeklyRosterReview({ players, ids, previousIds, firstAppearance, approvedContinuity = false, check, status, writable, dirty, busy, editHref, onSubmit }) {
+export default function WeeklyRosterReview({ players, ids, previousIds, firstAppearance, approvedContinuity = false, check, status, roster, automatic = false, deadline, writable, dirty, busy, editHref, onSubmit }) {
   const locale = useUiLocale()
   const previous = new Set(previousIds)
   const selected = new Set(ids)
@@ -26,11 +27,12 @@ export default function WeeklyRosterReview({ players, ids, previousIds, firstApp
     <div role="status" className={styles.reviewCheck}>
       {check.errors.map(message => <p key={message}>{uiText(message, locale)}</p>)}
       {check.canSubmit && <p>{uiText('✓ 人数与继承规则符合要求', locale)}</p>}
-      {status === 'LOCKED' ? <p>{uiText('管理员已锁定，正式出赛名单已确认。', locale)}</p> : status === 'SUBMITTED' && !dirty ? <p>{uiText('已提交给周赛管理员，等待锁定，无需重复提交。', locale)}</p> : null}
+      {!automatic && (status === 'LOCKED' ? <p>{uiText('管理员已锁定，正式出赛名单已确认。', locale)}</p> : status === 'SUBMITTED' && !dirty ? <p>{uiText('已提交给周赛管理员，等待锁定，无需重复提交。', locale)}</p> : null)}
     </div>
+    {(automatic || roster?.review) && <WeeklyRosterReviewStatus roster={roster} automatic={automatic} dirty={dirty} players={players} deadline={deadline} />}
     <div className={styles.reviewActions}>
       <Link to={editHref}>{uiText(status === 'LOCKED' ? '查看人员名单' : '返回调整人员', locale)}</Link>
-      {writable && <button type="button" className={styles.primaryButton} disabled={busy || dirty || !check.canSubmit || status === 'SUBMITTED'} onClick={onSubmit}>{uiText(busy ? '保存中…' : status === 'SUBMITTED' ? '已提交 · 等待管理员' : '确认并提交名单', locale)}</button>}
+      {writable && <button type="button" className={styles.primaryButton} disabled={busy || dirty || !check.canSubmit || status === 'SUBMITTED'} onClick={onSubmit}>{uiText(busy ? '保存中…' : status === 'SUBMITTED' ? automatic ? '名单已提交' : '已提交 · 等待管理员' : automatic ? '确认并提交检查' : '确认并提交名单', locale)}</button>}
     </div>
   </>
 }
