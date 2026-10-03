@@ -1,4 +1,9 @@
 {
+  "关闭计时": { "zh-TW": "關閉計時", "en-US": "Timer off", "ko-KR": "타이머 끄기" },
+  "恢复计时": { "zh-TW": "恢復計時", "en-US": "Resume", "ko-KR": "타이머 재개" },
+  "关闭后暂停阶段计时和自动超时处理；准备总时限、到场宽限及计划开赛时间仍然有效。": { "zh-TW": "關閉後暫停階段計時和自動超時處理；準備總時限、到場寬限及計劃開賽時間仍然有效。", "en-US": "Turning this off pauses stage timers and automatic timeout handling. Preparation and arrival deadlines and the scheduled start time still apply.", "ko-KR": "단계 타이머와 자동 시간 초과 처리가 일시 중지됩니다. 총 준비 제한 시간, 도착 유예 시간 및 예정된 경기 시작 시간은 그대로 적용됩니다." },
+  "尚未到计划开赛时间，不能记录开赛或强制开赛": { "zh-TW": "尚未到計劃開賽時間，不能記錄開賽或強制開賽", "en-US": "The scheduled start time has not arrived. Neither normal nor forced start is available.", "ko-KR": "예정된 경기 시작 시간 전에는 일반 시작과 강제 시작 모두 사용할 수 없습니다." },
+  "比赛时间待定，请先确认计划开赛时间": { "zh-TW": "比賽時間待定，請先確認計劃開賽時間", "en-US": "The match time is pending. Confirm the scheduled start time first.", "ko-KR": "경기 시간이 정해지지 않았습니다. 예정된 시작 시간을 먼저 확인해 주세요." },
   "切换队伍": { "zh-TW": "切換隊伍", "en-US": "Switch team", "ko-KR": "팀 전환" },
   "队伍切换与管理": { "zh-TW": "隊伍切換與管理", "en-US": "Team selection and management", "ko-KR": "팀 전환 및 관리" },
   "当前队伍 · 切换队伍": { "zh-TW": "目前隊伍 · 切換隊伍", "en-US": "Current team · Switch team", "ko-KR": "현재 팀 · 팀 전환" },

@@ -11,11 +11,11 @@ export default function RoomForceStartControl({ data, disabled, command, notice 
   const { required = [], overridable = [], canForceStart } = data.startControl
   const close = () => { if (!disabled) { setOpen(false); pending.current = null } }
   return <>
-    <button type="button" disabled={disabled} onClick={() => setOpen(true)}>赛管接管 / 强制开始</button>
+    <button type="button" disabled={disabled || data.timing?.startTimeBlocked} title={data.timing?.startBlockReason || undefined} onClick={() => setOpen(true)}>赛管接管 / 强制开始</button>
     <dialog ref={dialog} className={`${styles.dialog} ${workspace.forceDialog}`} onCancel={event => { if (disabled) event.preventDefault(); else close() }} aria-labelledby="force-start-title">
       <form onSubmit={async event => {
         event.preventDefault()
-        if (disabled || !canForceStart || !confirmed || note.trim().length < 2) return
+        if (disabled || data.timing?.startTimeBlocked || !canForceStart || !confirmed || note.trim().length < 2) return
         pending.current ||= { clientKey: crypto.randomUUID(), expectedRevision: data.revision, matchRevision: data.match.revision, draftRevision: data.draftRevision, note: note.trim(), actualStartConfirmed: true }
         if (await command('FORCE_START', pending.current)) { setOpen(false); setNote(''); setConfirmed(false); pending.current = null }
       }}>
@@ -30,7 +30,7 @@ export default function RoomForceStartControl({ data, disabled, command, notice 
           <small>操作人、原因、时间和跳过的确认项会向本场人员公开，并保留审计记录。</small>
         </>}
         {notice && <p role="status">{notice}</p>}
-        <div className={styles.actions}><button type="button" disabled={disabled} onClick={close}>返回比赛房</button>{canForceStart && <button className={styles.primary} disabled={disabled || !confirmed || note.trim().length < 2}>确认强制开始本图</button>}</div>
+        <div className={styles.actions}><button type="button" disabled={disabled} onClick={close}>返回比赛房</button>{canForceStart && <button className={styles.primary} disabled={disabled || data.timing?.startTimeBlocked || !confirmed || note.trim().length < 2}>确认强制开始本图</button>}</div>
       </form>
     </dialog>
   </>
