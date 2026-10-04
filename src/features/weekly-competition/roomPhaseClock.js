@@ -25,7 +25,7 @@ export function roomClockHint(data, action) {
     REPORT_1V1_RESULT: ['确认获胜方后，选图倒计时开始（{0} 秒）。', limits.FIRST_MAP],
     PLAY: ['双方出手揭晓胜者后，选图倒计时开始（{0} 秒）。', limits.FIRST_MAP],
     NEXT_MAP: ['局间休息结束后选图计时开始，开放下一图不会重置倒计时。'],
-    RECORD_MAP_RESULT: data.match.format === 'RR5' && data.map.order === 5 ? null : ['确认后开始局间休息（最多 {0} 秒），休息结束后开始选图计时。', limits.REST || 120]
+    RECORD_MAP_RESULT: !data.map || (data.match.format === 'RR5' && data.map.order === 5) ? null : ['确认后开始局间休息（最多 {0} 秒），休息结束后开始选图计时。', limits.REST || 120]
   }
   if (['BAN', 'SELECT_BAN_ORDER'].includes(action) && hints[action]) {
     const hint = hints[action]
