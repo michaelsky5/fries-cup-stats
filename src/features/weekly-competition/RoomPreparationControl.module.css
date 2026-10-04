@@ -1,0 +1,8 @@
+.form { display:grid;gap:14px;min-width:0; }
+.form p { margin:0;line-height:1.65; }
+.form label { display:grid;gap:7px;min-width:0; }
+.form select,.form textarea { width:100%;min-width:0; }
+.form textarea { min-height:100px; }
+.form button { min-height:44px; }
+.form .checkbox { display:flex;align-items:center;gap:8px; }
+.form .checkbox input[type=checkbox] { width:18px;height:18px;min-height:0;flex:none;margin:0; }

@@ -4,10 +4,11 @@ import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useRoomTransport } from './RoomTransport.jsx'
 import { getRoomOperatingSides } from './weeklyRoomFlow.js'
 import RoomPreflightControl from './RoomPreflightControl.jsx'
+import RoomForceStartControl from './RoomForceStartControl.jsx'
 import styles from './WeeklyLiveRoomPage.module.css'
 import frame from './RoomMatchFrame.module.css'
 
-export default function RoomStartControl({ data, disabled, command, mutate }) {
+export default function RoomStartControl({ data, disabled, command, mutate, notice, onPreparationExtension }) {
   const locale = useUiLocale()
   const { coordinationWrite } = useRoomTransport()
   const legacy = data.preflight?.required ?? !data.opening
@@ -28,6 +29,7 @@ export default function RoomStartControl({ data, disabled, command, mutate }) {
     {otherBlockers.length > 0 && <ul aria-label={uiText('开赛待处理事项', locale)}>{otherBlockers.map(item => <li key={item}>{item}</li>)}</ul>}
     <div className={frame.taskActions}>
       {(data.access.staff || (data.access.operatorMode === 'TEAM_CAPTAINS' && data.access.representativeTeams.length > 0)) ? <button type="button" className={styles.primary} disabled={disabled || data.timing?.startTimeBlocked || !data.access.canStart} onClick={() => command('START')}>{uiText('记录本图开赛', locale)}</button> : <strong>{uiText('等待本场授权操作人记录开赛', locale)}</strong>}
+      {!data.access.canStart && data.startControl?.canForceStart && <RoomForceStartControl data={data} disabled={disabled} command={command} notice={notice} onPreparationExtension={onPreparationExtension} />}
     </div>
     <small>{uiText(data.access.operatorMode === 'REFEREE' ? '由本场赛管记录实际开赛。' : '由任一方操作代表记录实际开赛。', locale)}</small>
   </>
