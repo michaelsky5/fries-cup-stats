@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { roomClockRemaining, roomMapSide } from '../src/features/weekly-competition/roomPhaseClock.js'
+import { roomClockRemaining, roomClockHint, roomMapSide } from '../src/features/weekly-competition/roomPhaseClock.js'
 import { demoRoomClock, changeDemoClock } from '../src/features/room-guide/roomDemoClock.js'
 
 test('room remaining time uses server interval, not the viewer clock or time zone', () => {
@@ -8,6 +8,20 @@ test('room remaining time uses server interval, not the viewer clock or time zon
   assert.equal(roomClockRemaining(clock, 15000), 45)
   assert.equal(roomClockRemaining(clock, 75000), 0)
   assert.equal(roomClockRemaining({ remainingMs: 45300 }, 90000), 46)
+})
+
+test('opening countdown hints render before the current map is created', () => {
+  const data = {
+    match: { format: 'RR5' },
+    map: null,
+    phaseClock: { enabled: true, limits: { FIRST_MAP: 60, REST: 120 } }
+  }
+  for (const action of ['BEGIN', 'CONFIRM_FIRST_PICK', 'REPORT_1V1_RESULT', 'PLAY']) {
+    assert.equal(roomClockHint(data, action)[1], 60)
+  }
+  assert.equal(roomClockHint(data, 'RECORD_MAP_RESULT'), null)
+  assert.equal(roomClockHint({ ...data, map: { order: 1 } }, 'RECORD_MAP_RESULT')[1], 120)
+  assert.equal(roomClockHint({ ...data, map: { order: 5 } }, 'RECORD_MAP_RESULT'), null)
 })
 test('attack/defense labels always describe opening side and exclude symmetric modes', () => {
   for (const type of ['Hybrid', 'Escort']) {
