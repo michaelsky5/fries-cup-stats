@@ -91,7 +91,7 @@ function OpeningForm({ data, disabled, mutate }) {
       <div className={styles.confirm}><small>{uiText("确认顺序后，先手方开始禁用英雄。", uiLocale)}</small><button className={styles.primary} disabled={disabled || !draft.banOrder} onClick={() => send('SELECT_BAN_ORDER', { teamId: winnerTeam.id, banOrder: draft.banOrder })}>{uiText("确认 Ban 顺序", uiLocale)}</button></div></> : <p className={styles.waiting} role="status">{uiText("等待 {0} 确认 Ban 顺序。", uiLocale, [representativeName(winnerTeam)])}</p>}
     </>}
     {opening.phase === 'BANNING' && !choosingBanOrder && <HeroBanWorkbench data={data} draft={draft} edit={edit} send={send} disabled={disabled} role={role} setRole={setRole} chosenHero={chosenHero} />}
-    <RoomCountdownHint data={data} action={opening.phase === 'CHOOSING' ? 'SELECT_SETUP' : opening.phase === 'BANNING' ? choosingBanOrder ? 'SELECT_BAN_ORDER' : 'BAN' : opening.phase === 'ONE_V_ONE_LIVE' ? 'REPORT_1V1_RESULT' : opening.phase === 'PLAYING' ? 'PLAY' : 'CONFIRM_FIRST_PICK'} />
+    {opening.phase !== 'CHOOSING' && (opening.phase !== 'BANNING' || choosingBanOrder || !access.canBan) && <RoomCountdownHint data={data} action={opening.phase === 'BANNING' ? choosingBanOrder ? 'SELECT_BAN_ORDER' : 'BAN' : opening.phase === 'ONE_V_ONE_LIVE' ? 'REPORT_1V1_RESULT' : opening.phase === 'PLAYING' ? 'PLAY' : 'CONFIRM_FIRST_PICK'} />}
   </section>
 }
 

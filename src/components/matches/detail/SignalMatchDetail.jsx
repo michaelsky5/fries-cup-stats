@@ -21,6 +21,8 @@ import styles from './SignalMatchDetail.module.css'
 import { getCompactMapSelection, getMatchAnalysisSearch, getMatchMapDataSearch } from './matchReadingState.js'
 import { getMatchPhasePresentation } from './matchPhasePresentation.js'
 import { SignalMatchPhaseProgress, SignalMatchPreparation } from './SignalMatchPhase.jsx'
+import { presentPublicRoomProgress } from './publicRoomProgress.js'
+import usePublicRoomProgress from './usePublicRoomProgress.js'
 
 function getMapOutcome(map, locale) {
   const en = locale === 'en-US'
@@ -122,7 +124,7 @@ function RoleStandouts({ dossier, selectedMap, withSeason, returnState, onNaviga
   })}</div></details>
 }
 
-export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSeason, returnState, onNavigate, backLabel, onBack, roomPath, onCopyLink, copyMessage, activeAnchor, onSelectMap, analysisRef, setMapRef, returnTo, returnScrollY, weeklyPeriod, isPreview }) {
+export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSeason, returnState, onNavigate, backLabel, onBack, roomPath, onCopyLink, copyMessage, activeAnchor, onSelectMap, analysisRef, setMapRef, returnTo, returnScrollY, weeklyPeriod, isPreview, progressReader }) {
   const en = locale === 'en-US'
   const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -182,9 +184,11 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
     event.preventDefault()
     shellRef.current?.querySelector(`[data-match-section="${section}"]`)?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' })
   }
-  const scoreParts = dossier.scoreLabel.split(':').map(part => part.trim())
   const allProgress = useMemo(() => getMatchReviewProgress(dossier), [dossier])
-  const phase = useMemo(() => getMatchPhasePresentation(dossier, allProgress, locale), [dossier, allProgress, locale])
+  const roomSnapshot = usePublicRoomProgress(dossier, seasonId, isPreview, progressReader)
+  const phase = useMemo(() => presentPublicRoomProgress(getMatchPhasePresentation(dossier, allProgress, locale), dossier, roomSnapshot.progress, locale), [dossier, allProgress, locale, roomSnapshot.progress])
+  const scoreLabel = phase.scoreLabel || dossier.scoreLabel
+  const scoreParts = scoreLabel.split(':').map(part => part.trim())
   const progress = phase.active ? phase.records : allProgress
   const compact = useCompactMatchLayout()
   const compactSelection = getCompactMapSelection(progress, searchParams.get('map'))
@@ -262,18 +266,18 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
         ...(canAnalyze ? [['analysis', 'series-analysis', en ? 'Players' : uiText("选手数据", locale)]] : []),
         ...(!phase.active ? [['resources', 'match-resources', en ? 'Replays' : uiText("录像资料", locale)]] : [])
       ].map(([section, id, label]) => <a key={section} href={`#${id}`} aria-current={visibleSection === section ? 'location' : undefined} onClick={event => selectSection(event, section)}>{label}</a>)}</div>
-      <div className={styles.navTools}><span className={styles.navMatch} data-visible={visibleSection !== 'overview'} aria-hidden={visibleSection === 'overview'}>{dossier.teamA.short}<b>{dossier.scoreLabel}</b>{dossier.teamB.short}</span>{canAnalyze ? <button type="button" className={styles.findPlayer} onClick={event => openAnalysis(event, true)} aria-label={en ? 'Find a player in this match' : uiText("查找本场选手", locale)} title={en ? 'Find a player in this match' : uiText("查找本场选手", locale)}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4.5 4.5" /></svg><span>{en ? 'Find player' : uiText("查找选手", locale)}</span></button> : null}</div>
+      <div className={styles.navTools}><span className={styles.navMatch} data-visible={visibleSection !== 'overview'} aria-hidden={visibleSection === 'overview'}>{dossier.teamA.short}<b>{scoreLabel}</b>{dossier.teamB.short}</span>{canAnalyze ? <button type="button" className={styles.findPlayer} onClick={event => openAnalysis(event, true)} aria-label={en ? 'Find a player in this match' : uiText("查找本场选手", locale)} title={en ? 'Find a player in this match' : uiText("查找本场选手", locale)}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4.5 4.5" /></svg><span>{en ? 'Find player' : uiText("查找选手", locale)}</span></button> : null}</div>
     </nav>
     <section className={styles.hero} id="match-overview" data-match-section="overview" aria-labelledby="match-dossier-title">
       <div className={styles.cover}>
-        <header className={styles.heroMeta}><span>{getScheduleStageLabel(dossier.match.stage, locale)} <b>/</b> {getRoundLabel(dossier, locale)}</span><strong data-live={dossier.state.isLive}>{status}</strong></header>
+        <header className={styles.heroMeta}><span>{getScheduleStageLabel(dossier.match.stage, locale)} <b>/</b> {getRoundLabel(dossier, locale)}</span><strong data-live={phase.key === 'live'}>{status}</strong></header>
         <div className={styles.versus}>
           <TeamIdentity team={dossier.teamA} logoTeam={dossier.match.team_a} side="A" seasonId={seasonId} winner={dossier.hasSeriesScore && dossier.winnerSide === 'A'} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} />
-          <div className={styles.scoreAxis}><span>{phase.scoreTitle}</span><h1 id="match-dossier-title" aria-label={dossier.title + ' · ' + dossier.scoreLabel}>{scoreParts.length === 2 ? <><span data-winner={dossier.winnerSide === 'A'}>{scoreParts[0]}</span><i>:</i><span data-winner={dossier.winnerSide === 'B'}>{scoreParts[1]}</span></> : 'VS'}</h1><span>{getReviewFormat(dossier.formatLabel, en)}</span></div>
+          <div className={styles.scoreAxis}><span>{phase.scoreTitle}</span><h1 id="match-dossier-title" aria-label={dossier.title + ' · ' + scoreLabel}>{scoreParts.length === 2 ? <><span data-winner={dossier.winnerSide === 'A'}>{scoreParts[0]}</span><i>:</i><span data-winner={dossier.winnerSide === 'B'}>{scoreParts[1]}</span></> : 'VS'}</h1><span>{getReviewFormat(dossier.formatLabel, en)}</span></div>
           <TeamIdentity team={dossier.teamB} logoTeam={dossier.match.team_b} side="B" seasonId={seasonId} winner={dossier.hasSeriesScore && dossier.winnerSide === 'B'} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} />
         </div>
         {summary ? <p className={styles.matchSummary} data-match-summary={matchFact.kind}>{summary}</p> : null}
-        {phase.active ? <><p className={styles.phaseCaption}>{phase.caption}</p><SignalMatchPhaseProgress key={dossier.internalId} phase={phase} onSelectMap={onSelectMap} en={en} /></> : <SeriesProgress key={dossier.internalId} maps={progress} currentOrder={currentOrder} onSelectMap={onSelectMap} en={en} />}
+        {phase.active ? <><p className={styles.phaseCaption}>{phase.caption}</p><SignalMatchPhaseProgress key={dossier.internalId} phase={phase} syncStatus={roomSnapshot.status} onSelectMap={onSelectMap} en={en} /></> : <SeriesProgress key={dossier.internalId} maps={progress} currentOrder={currentOrder} onSelectMap={onSelectMap} en={en} />}
         <footer className={styles.heroFooter}><span>{en ? 'SCHEDULE' : uiText("比赛时间", locale)}<strong>{phase.active ? phase.scheduleLabel : dossier.scheduleLabel}</strong>{phase.active ? <small>UTC+8</small> : null}</span>{dossier.totalDurationLabel ? <span>{phase.active ? (en ? 'RECORDED TIME' : uiText("已记录时长", locale)) : (en ? 'IN-GAME TIME' : uiText("局内总时长", locale))}<strong>{dossier.totalDurationLabel}</strong></span> : null}{!phase.active || phase.recordedCount ? <span>{en ? 'MAPS RECORDED' : uiText("地图记录", locale)}<strong>{phase.active ? phase.recordedCount : dossier.mapRecords.length}</strong></span> : null}</footer>
         {!phase.active ? <SignalMatchSpotlight dossier={dossier} locale={locale} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} /> : null}
       </div>

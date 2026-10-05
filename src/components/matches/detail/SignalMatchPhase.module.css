@@ -1,4 +1,8 @@
 .progress { padding: 18px 0 20px; border-top: 1px solid var(--fc-data-line-on-dark); }
+.sync { display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px 20px;margin-bottom:16px;font-size:11px;color:var(--fc-data-text-dark-muted); }
+.sync strong { color:var(--fc-data-status-live-bright);font-weight:600; }
+.sync[data-sync-status="reconnecting"] strong { color:var(--fc-data-signal); }
+.slots li[data-map-state="preparing"],.slots li[data-map-state="paused"] { box-shadow:inset 0 -3px var(--fc-data-signal); }
 .progressHeading { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
 .progressHeading > strong { font-size: 14px; }
 .progressHeading > span { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 11px; color: var(--fc-data-text-dark-muted); }

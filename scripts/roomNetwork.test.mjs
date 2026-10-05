@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createRoomSync, roomRetryDelay } from '../src/features/weekly-competition/roomSync.js'
+import { roomClockState } from '../src/features/weekly-competition/roomPhaseClock.js'
 import { PlatformApiError, platformRequest, retryAfterMillis } from '../src/features/auth/platformApi.js'
 import { roomLineupDraftKey, readRoomLineupDraft, saveRoomLineupDraft, clearRoomLineupDraft } from '../src/features/weekly-competition/roomLineupDraft.js'
 
@@ -50,6 +51,24 @@ test('Retry-After is respected even by manual refresh and focus/online events', 
   await h.advance(1); assert.equal(h.calls.length, 2)
   assert.equal(h.store.getSnapshot().connection.status, 'connected')
   h.store.stop()
+})
+
+test('a delayed snapshot anchors the clock at receipt without mutating the server response', async () => {
+  let mono = 1000
+  const original = { ...room(), syncedAt: '2026-10-04T12:00:00Z', phaseClock: {
+    serverNow: '2026-10-04T12:00:00Z', deadlineAt: '2026-10-04T12:01:15Z',
+    submissionGrace: { normalDeadlineAt: '2026-10-04T12:01:00Z' }
+  } }
+  const store = createRoomSync({ matchId: room().match.id, monotonicNow: () => mono,
+    read: async () => { mono += 4000; return original }, setTimer: () => 1, clearTimer: () => {} })
+  store.start(); await flush()
+  const clock = store.getSnapshot().data.phaseClock
+  assert.equal(clock.receivedAtMonoMs, 5000)
+  assert.equal(clock.transitEstimateMs, 2000)
+  assert.equal(original.phaseClock.receivedAtMonoMs, undefined)
+  assert.deepEqual(roomClockState(clock), { seconds: 58, inSubmissionGrace: false })
+  assert.deepEqual(roomClockState(clock, 58000), { seconds: 15, inSubmissionGrace: true })
+  store.stop()
 })
 
 test('hidden rooms stop scheduled polling, and returning to the foreground synchronizes once', async () => {
@@ -115,6 +134,7 @@ test('an old read cannot overwrite a write reconciliation, even if transport ign
   old.resolve(room(0)); assert.equal(await reading, false)
   assert.equal(h.store.getSnapshot().data.revision, 1)
   assert.equal(h.store.getSnapshot().notice, 'Saved')
+  assert.equal(h.store.getSnapshot().noticeKind, 'success')
   h.store.stop()
 })
 
@@ -126,6 +146,7 @@ test('a lost write response reconciles with the server and never replays the ope
   assert.equal(result, null); assert.equal(writes, 1)
   assert.equal(h.store.getSnapshot().data.revision, 1)
   assert.match(h.store.getSnapshot().notice, /不会自动重发/)
+  assert.equal(h.store.getSnapshot().noticeKind, 'warning')
   await h.advance(15000); assert.equal(writes, 1)
   h.store.stop()
 })
