@@ -104,6 +104,8 @@
 }
 @media(min-width:1180px) and (min-height:600px) {
   .columns { grid-template-rows:minmax(0,1fr); }
+  .columns>.team { min-height:0;overflow:hidden; }
+  .columns>.team>.teamContent { display:flex;flex-direction:column;flex:1;min-height:0;overflow:auto;overscroll-behavior:contain; }
   .viewport [data-room-slot=stages] { height:42px;grid-template-rows:42px; }
   .viewport [data-room-slot=stages] li { min-height:0; }
   .viewport [data-room-slot=stages] li button { height:42px;min-height:0; }
@@ -297,6 +299,15 @@
   .viewport .team>header .teamTitle { gap:calc(6 * var(--room-unit));font-size:calc(20 * var(--room-unit)); }
   .teamTitle>span { font-size:calc(11 * var(--room-unit)); }
 }
+
+/* Routine receipts do not consume workspace height; failures stay in the flow. */
+.viewport :global([data-room-feedback]) { display:flex;align-items:center;gap:12px;flex:none; }
+.viewport :global([data-room-feedback])>span { flex:1;min-width:0;overflow-wrap:anywhere; }
+.viewport :global([data-room-feedback])>button { flex:none;min-height:32px;min-width:32px;padding:4px;font-size:20px;background:transparent;color:inherit; }
+.viewport :global([data-room-feedback=success]) { position:fixed;z-index:28;top:12px;left:50%;transform:translateX(-50%);max-width:min(620px,calc(100vw - 32px));width:max-content;box-shadow:0 6px 24px #0003; }
+.viewport .person small { font-size:11px;line-height:1.3; }
+.viewport .person[data-check-in=PRESENT] button[aria-pressed=true] { background:transparent;border-color:transparent; }
+.viewport .person[data-check-in=PRESENT] button[aria-pressed=true]:hover { border-color:var(--line); }
 @media(max-width:600px) {
   .viewport .team>header { flex-wrap:wrap; }
   .viewport .team>header .teamTitle { flex-basis:calc(100% - 65px); }

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { roomClockRemaining, roomClockHint, roomMapSide } from '../src/features/weekly-competition/roomPhaseClock.js'
+import { roomClockRemaining, roomClockState, calibrateRoomClock, roomClockHint, roomMapSide } from '../src/features/weekly-competition/roomPhaseClock.js'
 import { demoRoomClock, changeDemoClock } from '../src/features/room-guide/roomDemoClock.js'
 
 test('room remaining time uses server interval, not the viewer clock or time zone', () => {
@@ -8,6 +8,25 @@ test('room remaining time uses server interval, not the viewer clock or time zon
   assert.equal(roomClockRemaining(clock, 15000), 45)
   assert.equal(roomClockRemaining(clock, 75000), 0)
   assert.equal(roomClockRemaining({ remainingMs: 45300 }, 90000), 46)
+})
+
+test('a delayed response consumes transit time and render delay without using the device wall clock', () => {
+  const clock = { serverNow: '2026-10-04T12:00:00Z', deadlineAt: '2026-10-04T21:00:06+09:00' }
+  const calibrated = calibrateRoomClock(clock, 100, 4100, clock.serverNow)
+  assert.equal(calibrated.transitEstimateMs, 2000)
+  assert.equal(calibrated.receivedAtMonoMs, 4100)
+  assert.equal(roomClockRemaining(calibrated), 4)
+  assert.equal(roomClockRemaining(calibrated, 1500), 3)
+  assert.equal(roomClockRemaining(calibrated, 4500), 0)
+})
+
+test('a room clock enters one public fifteen-second submission window before expiration', () => {
+  const clock = { serverNow: '2026-10-04T12:00:00Z', deadlineAt: '2026-10-04T12:01:15Z', submissionGrace: { normalDeadlineAt: '2026-10-04T12:01:00Z', seconds: 15 } }
+  assert.deepEqual(roomClockState(clock, 55000), { seconds: 5, inSubmissionGrace: false })
+  assert.deepEqual(roomClockState(clock, 60000), { seconds: 15, inSubmissionGrace: true })
+  assert.deepEqual(roomClockState(clock, 74999), { seconds: 1, inSubmissionGrace: true })
+  assert.deepEqual(roomClockState(clock, 75000), { seconds: 0, inSubmissionGrace: false })
+  assert.deepEqual(roomClockState({ ...clock, submissionGrace: null }, 60000), { seconds: 15, inSubmissionGrace: false })
 })
 
 test('opening countdown hints render before the current map is created', () => {
@@ -39,8 +58,9 @@ test('guide timer survives rerenders, pause and stage transitions without modify
   const resumed = changeDemoClock(paused, { expectedRevision: paused.revision, stageKey: paused.stage.key, action: 'SET_ENABLED', enabled: true }, now + 90000)
   assert.equal(Date.parse(resumed.deadlineAt) - now, 130000)
   const ban = demoRoomClock('banning', resumed, now + 95000)
-  assert.equal(ban.remainingMs, 60000)
-  assert.equal(demoRoomClock('banning', ban, now + 160000).status, 'EXPIRED')
+  assert.equal(ban.remainingMs, 75000)
+  assert.equal(demoRoomClock('banning', ban, now + 160000).status, 'RUNNING')
+  assert.equal(demoRoomClock('banning', ban, now + 170000).status, 'EXPIRED')
 })
 
 test('practice timeout waives the hero without inventing one, while a disabled clock does not', async () => {

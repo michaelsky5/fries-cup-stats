@@ -1,11 +1,24 @@
 import { roomBanResolved } from './roomBans.js'
 export const ROOM_CLOCK_LABELS = { REST: '局间休息', PREPARATION: '赛前准备', MAP: '地图选择', LINEUP: '首发确认', BAN_ORDER: 'Ban 顺序', BAN: '英雄禁用' }
 
-export function roomClockRemaining(clock, elapsedMs = 0) {
-  if (!clock) return null
-  if (!clock.deadlineAt) return Math.max(0, Math.ceil((clock.remainingMs || 0) / 1000))
-  const duration = Date.parse(clock.deadlineAt) - Date.parse(clock.serverNow) - Math.max(0, elapsedMs)
-  return Number.isFinite(duration) ? Math.max(0, Math.ceil(duration / 1000)) : null
+export function roomClockState(clock, elapsedMs = 0) {
+  if (!clock) return { seconds: null, inSubmissionGrace: false }
+  if (!clock.deadlineAt) return { seconds: Math.max(0, Math.ceil((clock.submissionGrace?.normalRemainingMs || clock.remainingMs || 0) / 1000)), inSubmissionGrace: false }
+  const estimatedNow = Date.parse(clock.serverNow) + Math.max(0, elapsedMs) + Math.max(0, clock.transitEstimateMs || 0)
+  const finalDuration = Date.parse(clock.deadlineAt) - estimatedNow
+  const normalDuration = clock.submissionGrace?.normalDeadlineAt ? Date.parse(clock.submissionGrace.normalDeadlineAt) - estimatedNow : finalDuration
+  const inSubmissionGrace = Number.isFinite(normalDuration) && normalDuration <= 0 && finalDuration > 0
+  const duration = finalDuration <= 0 ? finalDuration : normalDuration > 0 ? Math.min(normalDuration, finalDuration) : finalDuration
+  return { seconds: Number.isFinite(duration) ? Math.max(0, Math.ceil(duration / 1000)) : null, inSubmissionGrace }
+}
+export const roomClockRemaining = (clock, elapsedMs = 0) => roomClockState(clock, elapsedMs).seconds
+
+// Timestamp at receipt, not at the next React effect. RTT/2 is a latency estimate,
+// not a new deadline; System remains authoritative for accepting submissions.
+export function calibrateRoomClock(clock, startedAt, receivedAt, serverSentAt) {
+  if (!clock) return clock
+  const serverWorkAfterClock = Date.parse(serverSentAt) - Date.parse(clock.serverNow)
+  return { ...clock, receivedAtMonoMs: receivedAt, transitEstimateMs: Math.max(0, receivedAt - startedAt) / 2 + (Number.isFinite(serverWorkAfterClock) ? Math.max(0, serverWorkAfterClock) : 0) }
 }
 
 export const formatRoomClock = seconds => seconds === null ? '—' : `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`

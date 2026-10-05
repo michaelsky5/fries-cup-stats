@@ -8,6 +8,22 @@ const request = (path, options) => new Request(origin + path, options)
 const json = (data, init = {}) => new Response(JSON.stringify(data), { ...init, headers: { 'Content-Type': 'application/json', ...init.headers } })
 const mustNotFetch = () => { throw new Error('Unexpected upstream request') }
 
+test('public room progress is anonymous, read-only and bypasses all snapshot caches', async () => {
+  let call
+  const path = '/api/admin-public/seasons/FCW26/matches/FCW26-OTHER-LOCAL/progress'
+  const result = await proxyRequest(request(path, { headers: { cookie: 'session=secret', authorization: 'Bearer secret', origin } }), {
+    cache: { match: mustNotFetch, put: mustNotFetch },
+    fetchImpl: async (url, options) => { call = { url, options }; return json({ phase: 'LIVE' }, { headers: { 'cache-control': 'public, max-age=120', 'set-cookie': 'PRIVATE=1' } }) }
+  })
+  assert.equal(call.url, 'https://admin.fries-cup.com/api/public/seasons/FCW26/matches/FCW26-OTHER-LOCAL/progress')
+  for (const header of ['cookie', 'authorization', 'origin']) assert.equal(call.options.headers.get(header), null)
+  assert.equal(result.headers.get('cache-control'), 'private, no-store')
+  assert.equal(result.headers.get('set-cookie'), null)
+  assert.equal(result.headers.get('x-fries-public-cache'), 'BYPASS')
+  assert.equal((await proxyRequest(request(path, { method: 'POST' }), { fetchImpl: mustNotFetch })).status, 405)
+  assert.equal((await proxyRequest(request(path.replace('/progress', '/messages')), { fetchImpl: mustNotFetch })).status, 404)
+})
+
 test('deployed entry keeps geo hints separate from platform and published APIs', async () => {
   const originalFetch = globalThis.fetch
   const calls = []

@@ -144,7 +144,7 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
     next.mapTimeouts.push({ side: 'A', mapOrder: 1, count, at, deadlineAt: state.phaseClock.deadlineAt, outcome: count === 1 ? 'WARNING' : count === 2 ? 'BAN_FORFEIT' : 'RANDOM_MAP' })
     if (count >= 2) { next.banTimedOut = true; next.hero = ''; next.banOrder = 'SECOND' }
     if (count >= 3) { next.mapName = practiceMaps[Math.floor(Math.random() * practiceMaps.length)]; next.randomMap = true; next.scene = 'lineup' }
-    else next.phaseClock = { ...state.phaseClock, revision: state.phaseClock.revision + 1, remainingMs: 60000, deadlineAt: new Date(Date.now() + 60000).toISOString() }
+    else next.phaseClock = { ...state.phaseClock, revision: state.phaseClock.revision + 1, submissionGrace: null, remainingMs: 60000, deadlineAt: new Date(Date.now() + 60000).toISOString() }
     next.messages.push({ id: `map-timeout-${count}`, channel: 'PUBLIC', kind: 'OPENING_MAP_TIMEOUT', authorName: 'DEMO', roleLabel: 'system', body: count === 1 ? '选图超时：警告，补时 60 秒。' : count === 2 ? '选图再次超时：取消本图 Ban，补时 60 秒。' : `选图第三次超时：随机选择 ${next.mapName}，本图 Ban 权已取消。`, createdAt: at })
     event = 'map-timeout'
   }

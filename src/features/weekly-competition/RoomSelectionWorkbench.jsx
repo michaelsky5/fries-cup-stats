@@ -32,12 +32,16 @@ export function MapSelectionWorkbench({ data, draft, edit, send, disabled, mapTy
           </button>)}
           {!pool.length && <p>{t('本轮剩余类型没有可用地图，请赛管联系管理员补充地图池。')}</p>}
         </div>
-        <aside className={styles.selection} data-room-commit="selection" data-selected={!!chosenMap}>
+        <aside className={styles.selection} data-room-map-preview data-selected={!!chosenMap}>
           <div className={styles.selectionTitle}><small>{t('本次选择')}</small><strong>{chosenMap ? formatOwMapName(chosenMap.name, locale) : t('请选择地图')}</strong></div>
           <div className={styles.mapPreview} style={chosenMap ? { backgroundImage: `url("${getMapImage(chosenMap.type, chosenMap.name)}")` } : undefined}>{!chosenMap && <span>MAP {String(opening.mapOrder).padStart(2, '0')}</span>}</div>
-          {needsSide ? <div className={styles.sideChoice} role="group" aria-label={t('选择本队攻防顺序')}><small>{t('本队开局攻防')}</small>{[['ATTACK', '先攻', '对方先防'], ['DEFEND', '先防', '对方先攻']].map(([side, label, other]) => <button type="button" key={side} aria-pressed={draft.startSide === side} disabled={locked} onClick={() => edit({ startSide: side })}><b>{t(label)}</b><small>{t(other)}</small></button>)}</div> : <p className={styles.explanation}>{t(chosenMap ? '此模式无需选择攻防。' : '选择地图，在此核对后提交。')}</p>}
-          <div className={styles.commit}><small>{t(needsSide && !draft.startSide ? '请选择攻防顺序' : '确认后锁定地图，进入首发确认。')}</small><div className={styles.touchHint}><RoomCountdownHint data={data} action="SELECT_SETUP" /></div><button type="button" disabled={locked || !chosenMap || needsSide && !draft.startSide} onClick={() => send('SELECT_SETUP', { teamId: chooser.id, mapName: chosenMap.name, mapType: chosenMap.type, ...(needsSide ? { startSide: draft.startSide } : {}) })}>{t('确认地图，进入首发')} <span aria-hidden="true">→</span></button></div>
+          <p className={styles.explanation}>{t(chosenMap ? needsSide ? draft.startSide ? draft.startSide === 'ATTACK' ? '先攻' : '先防' : '请选择攻防顺序' : '此模式无需选择攻防。' : '选择地图，在此核对后提交。')}</p>
         </aside>
+      </div>
+      <div className={`${styles.commit} ${styles.mapCommit}`} data-room-commit="map" data-selected={!!chosenMap} data-room-map-confirm>
+        <div className={styles.commitSummary}>{chosenMap && <strong>{formatOwMapName(chosenMap.name, locale)}</strong>}<small>{t(!chosenMap ? '选择地图，在此核对后提交。' : needsSide && !draft.startSide ? '请选择攻防顺序' : '确认后锁定地图，进入首发确认。')}</small>{chosenMap && <RoomCountdownHint data={data} action="SELECT_SETUP" />}</div>
+        {needsSide && <div className={styles.footerSideChoice} role="group" aria-label={t('选择本队攻防顺序')}><small>{t('本队开局攻防')}</small>{[['ATTACK', '先攻'], ['DEFEND', '先防']].map(([side, label]) => <button type="button" key={side} aria-pressed={draft.startSide === side} disabled={locked} onClick={() => edit({ startSide: side })}>{t(label)}</button>)}</div>}
+        <button type="button" disabled={locked || !chosenMap || needsSide && !draft.startSide} onClick={() => send('SELECT_SETUP', { teamId: chooser.id, mapName: chosenMap.name, mapType: chosenMap.type, ...(needsSide ? { startSide: draft.startSide } : {}) })}>{t('确认地图，进入首发')} <span aria-hidden="true">→</span></button>
       </div>
     </> : <div className={styles.waiting}><span>02 / MAP</span><h2>{t('等待 {0} 选择地图', [teamName(chooser)])}</h2><p>{t('对方确认后，地图和攻防会直接显示在这里。')}</p></div>}
   </div>
@@ -71,7 +75,7 @@ export function HeroBanWorkbench({ data, draft, edit, send, disabled, role, setR
         <div className={styles.selectionTitle}><small>{t('本次禁用')}</small><strong>{chosenHero ? formatOwHeroName(chosenHero.name, locale) : t('请选择英雄')}</strong></div>
         <div className={styles.heroPreview}>{chosenHero ? <img src={getHeroImage(chosenHero.name, chosenHero.role)} alt={formatOwHeroName(chosenHero.name, locale)} /> : <span>BAN</span>}</div>
         <p className={styles.explanation}>{t(expired ? '禁用时间已到，正在同步超时放弃结果。' : data.phaseClock?.enabled ? '请在倒计时结束前确认；超时自动放弃本轮禁用权，不得补 Ban。' : chosenHero ? '确认后，本图双方均不可使用此英雄。' : '选择英雄后，在此核对并锁定禁用。')}</p>
-        <div className={styles.commit}><small>{t(roomBanResolved(setup, 'A') || roomBanResolved(setup, 'B') ? '确认后完成本图选禁，等待实际开赛。' : '确认后轮到对方禁用英雄。')}</small><div className={styles.touchHint}><RoomCountdownHint data={data} action="BAN" /></div><button type="button" disabled={locked || !chosenHero} onClick={() => send('BAN', { teamId: activeTeam.id, hero: chosenHero.name, heroRole: chosenHero.role })}>{chosenHero ? t('确认禁用 {0}', [formatOwHeroName(chosenHero.name, locale)]) : t('确认禁用')} <span aria-hidden="true">→</span></button></div>
+        <div className={styles.commit}><small>{t(!chosenHero ? '选择英雄后，在此核对并锁定禁用。' : roomBanResolved(setup, 'A') || roomBanResolved(setup, 'B') ? '确认后完成本图选禁，等待实际开赛。' : '确认后轮到对方禁用英雄。')}</small>{chosenHero && <div className={styles.touchHint}><RoomCountdownHint data={data} action="BAN" /></div>}<button type="button" disabled={locked || !chosenHero} onClick={() => send('BAN', { teamId: activeTeam.id, hero: chosenHero.name, heroRole: chosenHero.role })}>{chosenHero ? t('确认禁用 {0}', [formatOwHeroName(chosenHero.name, locale)]) : t('确认禁用')} <span aria-hidden="true">→</span></button></div>
       </aside>
     </div> : <div className={styles.waiting}><span>04 / HERO BAN</span><h2>{t('等待 {0} 禁用英雄', [teamName(activeTeam)])}</h2><p>{t('禁用结果会自动显示，无需返回地图栏查找。')}</p></div>}
   </div>

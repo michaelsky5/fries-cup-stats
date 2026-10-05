@@ -25,6 +25,9 @@ function resolveRoute(url, { platformOrigin, publicOrigin, rehearsal }) {
   let pathname
   try { pathname = decodeURIComponent(url.pathname) } catch { return null }
   if (pathname.split('/').some(part => part === '.' || part === '..') || pathname.includes('\\')) return null
+  if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/matches\/[A-Za-z0-9_-]+\/progress$/.test(pathname)) {
+    return { public: true, volatile: true, url: `${publicOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}` }
+  }
   if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/(team-logos|rulebook|rulebooks\/[a-f0-9]{32}\.(docx|pdf))$/.test(pathname)) {
     return { public: true, url: `${publicOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}` }
   }
@@ -65,7 +68,7 @@ export async function proxyRequest(request, {
   // Key the published representation by its upstream URL, independently of the
   // preview hostname and the Pages route that executed this function.
   const cacheKey = new Request(route.url)
-  const canReadCache = route.public && request.method === 'GET' && cache
+  const canReadCache = route.public && !route.volatile && request.method === 'GET' && cache
   if (canReadCache) {
     try {
       const hit = await cache.match(cacheKey)
@@ -135,7 +138,7 @@ export async function proxyRequest(request, {
   responseHeaders.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet')
   responseHeaders.set('X-Content-Type-Options', 'nosniff')
   responseHeaders.set('X-Fries-Backend', route.media ? `${environment}-media` : route.public ? 'published-snapshots' : environment)
-  if (!route.public || !upstream.ok) responseHeaders.set('Cache-Control', 'private, no-store')
+  if (!route.public || route.volatile || !upstream.ok) responseHeaders.set('Cache-Control', 'private, no-store')
   if (route.public) {
     responseHeaders.delete('set-cookie')
     // Both variants were normalized upstream: no Origin, identity encoding.
@@ -144,7 +147,7 @@ export async function proxyRequest(request, {
     if (vary.length) responseHeaders.set('vary', vary.join(', '))
     else responseHeaders.delete('vary')
   }
-  responseHeaders.set('X-Fries-Public-Cache', route.public ? (cache ? 'MISS' : 'UNAVAILABLE') : 'BYPASS')
+  responseHeaders.set('X-Fries-Public-Cache', route.public && !route.volatile ? (cache ? 'MISS' : 'UNAVAILABLE') : 'BYPASS')
   const response = new Response(request.method === 'HEAD' || upstream.status === 204 ? null : upstream.body, {
     status: upstream.status, statusText: upstream.statusText, headers: responseHeaders
   })
