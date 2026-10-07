@@ -64,6 +64,17 @@ export function isWeeklyPreparationWorkspace(workspace, seasonId, userId) {
     && Array.isArray(workspace.cycles) && Array.isArray(workspace.teams))
 }
 
+export function getWeeklyEnrollmentCycles(workspace, { seasonId, userId, readOnly = true } = {}) {
+  if (!isWeeklyPreparationWorkspace(workspace, seasonId, userId) || readOnly || workspace.accessMode !== 'WRITE' || workspace.season.status === 'ARCHIVED') return []
+  return workspace.cycles.filter(cycle => cycle.enrollmentOpen && ['REGISTRATION', 'ACTIVE'].includes(cycle.status)).map(cycle => ({
+    ...cycle, eligibleTeams: (cycle.eligibleTeams || []).filter(team => {
+      const access = workspace.teams.find(item => item.team?.id === team.id)
+      return access?.accessMode === 'WRITE' && ['LEADER', 'MANAGER'].includes(access.role)
+        && !(cycle.entries || []).some(entry => (entry.seasonTeamId || entry.team?.id) === team.id)
+    })
+  })).filter(cycle => cycle.eligibleTeams.length)
+}
+
 function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
   const week = record?.week
   const participation = record?.participation
@@ -178,13 +189,7 @@ export function buildWeeklyPreparation(workspace, { seasonId, userId, readOnly =
       body: `${plan.cycle.name}${stage.key !== 'core' && plan.week ? ` · ${plan.week.label || `第 ${plan.week.weekNumber} 周`}` : ''}。${stage.detail}`,
       teamOrganization: plan.team, dueAt: stage.key === 'core' ? null : plan.dueAt, actionUrl: stage.actionUrl }]
   }))
-  const enrollmentTasks = readOnly || workspace.accessMode !== 'WRITE' || workspace.season.status === 'ARCHIVED' ? []
-    : workspace.cycles.filter(cycle => cycle.enrollmentOpen && ['REGISTRATION', 'ACTIVE'].includes(cycle.status)).flatMap(cycle => (cycle.eligibleTeams || [])
-      .filter(team => {
-        const access = workspace.teams.find(item => item.team?.id === team.id)
-        return access?.accessMode === 'WRITE' && ['LEADER', 'MANAGER'].includes(access.role)
-          && !(cycle.entries || []).some(entry => (entry.seasonTeamId || entry.team?.id) === team.id)
-      }).map(team => ({
+  const enrollmentTasks = getWeeklyEnrollmentCycles(workspace, { seasonId, userId, readOnly }).flatMap(cycle => cycle.eligibleTeams.map(team => ({
         id: `weekly-enrollment:${cycle.id}:${team.id}`, status: 'OPEN', identityType: 'MANAGER', priority: 'HIGH', requiresSourceResolution: true,
         taskType: 'WEEKLY_CYCLE_ENROLLMENT', sourceType: 'WEEKLY_CYCLE_ENROLLMENT', sourceId: `${cycle.id}:${team.id}`,
         title: `${team.shortName || team.name} · 登记参赛周期`, body: `${cycle.name} 已开放登记。登记后再按周选择是否参赛。`,

@@ -8,6 +8,11 @@ export async function fetchMyOwnershipTransfers(seasonId, options = {}) {
   return platformRequest(`/seasons/${encodeURIComponent(seasonId)}/registration/ownership-transfers`, options)
 }
 
+export async function enrollMyWeeklyCycle(cycleId, teamId) {
+  const data = await platformRequest(`/me/weekly-cycles/${encodeURIComponent(cycleId)}/enrollment`, { method: 'PUT', body: { teamId } })
+  return data?.entry || null
+}
+
 export async function saveMyWeeklyCore(entryId, input) {
   const data = await platformRequest(
     `/me/weekly-cycle-entries/${encodeURIComponent(entryId)}/core-selection`,

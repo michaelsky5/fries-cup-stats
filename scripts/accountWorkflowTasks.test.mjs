@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { buildWeeklyPreparation } from '../src/features/weekly-competition/weeklyPreparationModel.js'
+import { readFileSync } from 'node:fs'
+import { buildWeeklyPreparation, getWeeklyEnrollmentCycles } from '../src/features/weekly-competition/weeklyPreparationModel.js'
 import { buildAccountActivity, getAccountActivityAccess } from '../src/features/account-ui/accountActivityModel.js'
 import { fetchAccountAttentionContext } from '../src/features/my-space/accountAttentionApi.js'
 import { getTaskWorkflow, identityTypeLabel } from '../src/features/tasks/taskNotificationModel.js'
@@ -66,4 +67,22 @@ test('projected tasks and enrollment share the same pending queue and deduplicat
     preparation: { status: 'ready', data: workspace() } }, { seasonId, userId, preparationReadOnly: false })
   assert.equal(activity.taskView.openTasks.length, 2)
   assert.equal(activity.taskView.historyTasks.length, 1)
+})
+
+test('enrollment display and pending tasks share eligibility and entry exclusions', () => {
+  const data = workspace()
+  data.cycles[0].eligibleTeams.push({ id: 'unauthorized', name: 'Other' })
+  const cycles = getWeeklyEnrollmentCycles(data, { seasonId, userId, readOnly: false })
+  assert.deepEqual(cycles[0].eligibleTeams.map(team => team.id), ['team-a'])
+  assert.equal(buildWeeklyPreparation(data, { seasonId, userId, readOnly: false }).tasks.length, 1)
+  data.cycles[0].entries = [{ seasonTeamId: 'team-a' }]
+  assert.deepEqual(getWeeklyEnrollmentCycles(data, { seasonId, userId, readOnly: false }), [])
+})
+test('the live team workspace mounts the enrollment action and exports its existing endpoint adapter', () => {
+  const page = readFileSync(new URL('../src/features/weekly-competition/WeeklyCompetitionWorkspace.jsx', import.meta.url), 'utf8')
+  const api = readFileSync(new URL('../src/features/weekly-competition/weeklyCompetitionApi.js', import.meta.url), 'utf8')
+  assert.match(page, /import WeeklyCycleEnrollment/)
+  assert.match(page, /<WeeklyCycleEnrollment[^>]+onEnrolled=\{handleEnrolled\}/)
+  assert.match(api, /export async function enrollMyWeeklyCycle/)
+  assert.match(api, /weekly-cycles\/\$\{encodeURIComponent\(cycleId\)\}\/enrollment/)
 })
