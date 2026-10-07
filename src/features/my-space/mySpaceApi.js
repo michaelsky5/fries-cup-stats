@@ -17,6 +17,7 @@ export async function fetchAccountLaunchStatus(seasonId, options = {}) {
     seasonId: data?.launch?.seasonId || seasonId,
     portalMode: data?.launch?.portalMode || 'OFF',
     allowed: Boolean(data?.launch?.allowed),
+    taskCenterAllowed: Boolean(data?.launch?.taskCenterAllowed),
     reason: data?.launch?.reason || 'PORTAL_OFF',
     emailVerified: Boolean(data?.launch?.emailVerified),
     features: normalizeLaunchFeatures(data?.launch?.features)

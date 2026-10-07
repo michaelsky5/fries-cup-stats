@@ -24,7 +24,7 @@ export default function WeeklyCycleEnrollment({ cycles, disabled, onEnrolled, on
   }
   const available = cycles.filter(cycle => cycle.enrollmentOpen && cycle.eligibleTeams?.length)
   if (!available.length) return null
-  return <section className={styles.enrollment} aria-labelledby="weekly-enrollment-title"><header><span>JOIN A CYCLE</span><h3 id="weekly-enrollment-title">{uiText("登记参赛周期", uiLocale)}</h3><p>{uiText("队伍资格已通过。登记周期后，每周可自行选择是否参赛；登记本身不会确认出场。", uiLocale)}</p></header>
+  return <section id="weekly-enrollment" className={styles.enrollment} aria-labelledby="weekly-enrollment-title"><header><span>JOIN A CYCLE</span><h3 id="weekly-enrollment-title">{uiText("登记参赛周期", uiLocale)}</h3><p>{uiText("队伍资格已通过。登记周期后，每周可自行选择是否参赛；登记本身不会确认出场。", uiLocale)}</p></header>
     {error && <p role="alert">{uiText(error, uiLocale)}</p>}
     <div className={styles.enrollmentOptions}>{available.flatMap(cycle => cycle.eligibleTeams.map(team => <article key={cycle.id + team.id}><div><strong>{cycle.name}</strong><span>{team.name}</span><small>{uiText(cycle.status === 'REGISTRATION' ? '周期报名开放' : '本周接受新队伍登记', uiLocale)}</small></div><button className={styles.primaryButton} disabled={disabled || Boolean(busy)} onClick={() => enroll(cycle, team)}>{uiText(busy === cycle.id + team.id ? '正在登记…' : '登记并继续 →', uiLocale)}</button></article>))}</div>
   </section>

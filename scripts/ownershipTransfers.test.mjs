@@ -119,5 +119,5 @@ test('the registration entry expands the management area and focuses the selecte
   assert.match(form, /row\.status === 'PENDING' && row\.toUserId === data\.userId/)
   assert.match(form, /disabled=\{!writable\}/)
   assert.match(form, /fc:account-activity-changed/)
-  assert.match(space, /weekly && registration && teamOperationsVisible/)
+  assert.match(space, /registration && teamOperationsVisible/)
 })

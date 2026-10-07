@@ -118,6 +118,8 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
   const [appealOptions, setAppealOptions] = useState([])
   const [appealForm, setAppealForm] = useState(EMPTY_APPEAL)
   const [evidenceAppealId, setEvidenceAppealId] = useState('')
+  const requestedAppeal = searchParams.get('appeal')
+  const focusedAppeal = useRef('')
   const [reviewReasons, setReviewReasons] = useState({})
   const [evidenceForm, setEvidenceForm] = useState(EMPTY_EVIDENCE)
   const [loading, setLoading] = useState(true)
@@ -156,6 +158,16 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
   }, [seasonId])
 
   useEffect(() => { const requestSequence = sequence; load(); return () => { requestSequence.current++ } }, [load])
+  useEffect(() => {
+    if (!requestedAppeal || focusedAppeal.current === requestedAppeal || !appeals.some(item => item.id === requestedAppeal && item.canAddEvidence)) return
+    focusedAppeal.current = requestedAppeal
+    setTab('appeals'); setEvidenceAppealId(requestedAppeal)
+  }, [appeals, requestedAppeal])
+  useEffect(() => {
+    if (tab !== 'appeals' || !evidenceAppealId) return
+    const form = document.querySelector(`.${styles.evidenceForm}`)
+    form?.scrollIntoView({ block: 'center' }); form?.querySelector('textarea')?.focus()
+  }, [tab, evidenceAppealId])
 
   const messageView = useMemo(() => buildCommunicationCenterView(notifications), [notifications])
   const unreadMessageCount = messageView.summary.unread
@@ -234,7 +246,7 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
     event.preventDefault(); if (sourceErrors.appeals || loading || busy) return; setBusy(`evidence:${appeal.id}`); setError('')
     try {
       await addAppealEvidence(appeal.id, [{ ...evidenceForm, url: evidenceForm.evidenceType === 'LINK' ? evidenceForm.url : null }])
-      setEvidenceAppealId(''); setEvidenceForm(EMPTY_EVIDENCE); await load()
+      setEvidenceAppealId(''); setEvidenceForm(EMPTY_EVIDENCE); await load(); onActivityChange?.()
     } catch (actionError) { setError(actionError?.message || '证据补充失败。') }
     finally { setBusy('') }
   }

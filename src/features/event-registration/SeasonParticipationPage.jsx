@@ -32,6 +32,9 @@ function ParticipationPage({ seasonId }) {
   const uiLocale = useUiLocale()
   const location = useLocation()
   const focusTransferId = new URLSearchParams(location.search).get('ownershipTransfer') || ''
+  const invitationId = new URLSearchParams(location.search).get('participationInvitation') || ''
+  const applicationId = new URLSearchParams(location.search).get('joinApplication') || ''
+  const noticeId = new URLSearchParams(location.search).get('participationNotice') || ''
   const { confirmDiscard } = useRegistrationDraftActions()
   const { user, isBootstrapping, logout } = useAuth()
   const [invitationToken] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get('invitation') || '')
@@ -43,7 +46,8 @@ function ParticipationPage({ seasonId }) {
       <div><span>{uiText("参赛账号", uiLocale)}</span><strong>{user?.displayName || uiText("等待登录", uiLocale)}</strong></div>
       <div className={styles.actions}><RoomGuideLink season={seasonId} role="manager" label="参赛与比赛指南" />{user ? <><button type="button" onClick={async () => { if (await confirmDiscard()) await logout() }}>{uiText("退出账号", uiLocale)}</button></> : null}<Link to="/me">{uiText("我的空间", uiLocale)}</Link></div>
     </header>
-    {joinToken ? <SharedRegistrationJoin key={joinToken} token={joinToken} seasonId={seasonId} /> : invitationToken ? <Invitation key={invitationToken} token={invitationToken} seasonId={seasonId} />
+    {joinToken || (applicationId && user) ? <SharedRegistrationJoin key={`${joinToken || applicationId}:${user?.id || ''}`} token={joinToken} applicationId={applicationId} seasonId={seasonId} /> : invitationToken || (invitationId && user) ? <Invitation key={`${invitationToken || invitationId}:${user?.id || ''}`} token={invitationToken} invitationId={invitationId} seasonId={seasonId} />
+      : noticeId && user ? <ParticipationNotice key={`${noticeId}:${user.id}`} seasonId={seasonId} noticeId={noticeId} />
       : isBootstrapping ? <p role="status">{uiText("正在确认登录状态…", uiLocale)}</p>
         : user ? <><Workspace key={`${user.id}:${seasonId}`} user={user} seasonId={seasonId} hasAdditions={hasAdditions || hasTransfers} /><details className={styles.teamManagement} open={Boolean(focusTransferId) || undefined}><summary>{uiText("队伍管理", uiLocale)}</summary><WeeklyTeamAdditions key={`additions:${user.id}:${seasonId}`} seasonId={seasonId} onHasAdditions={setHasAdditions} /><WeeklyOwnershipTransfers key={`transfers:${user.id}:${seasonId}`} seasonId={seasonId} focusTransferId={focusTransferId} onHasTransfers={setHasTransfers} /></details></> : <Login />}
   </div></AccountFrame>
@@ -54,7 +58,35 @@ function Login() {
   return <section className={styles.login}><span className={styles.kicker}>JOIN THE COMPETITION</span><h2>{uiText("从你的参赛账号开始", uiLocale)}</h2><p>{uiText("已有账号可使用受邀邮箱登录。首次参加，请打开赛事负责人或队长提供的邀请链接。", uiLocale)}</p><button type="button" className={styles.primary} onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText("登录参赛账号 →", uiLocale)}</button></section>
 }
 
-function Invitation({ token, seasonId }) {
+function ParticipationNotice({ seasonId, noticeId }) {
+  const locale = useUiLocale()
+  const [notice, setNotice] = useState(null), [error, setError] = useState(''), [busy, setBusy] = useState(false)
+  const [attempt, setAttempt] = useState(0)
+  useEffect(() => {
+    const controller = new AbortController()
+    platformRequest(`${path(seasonId)}/notices/${encodeURIComponent(noticeId)}`, { signal: controller.signal })
+      .then(result => { if (!controller.signal.aborted) { setNotice(result.notice); setError('') } })
+      .catch(failure => { if (!controller.signal.aborted) setError(describeError(failure)) })
+    return () => controller.abort()
+  }, [seasonId, noticeId, attempt])
+  async function acknowledge() {
+    if (busy) return
+    setBusy(true)
+    try {
+      await platformRequest(`${path(seasonId)}/notices/${encodeURIComponent(noticeId)}/acknowledge`, { method: 'POST', body: {} })
+      setNotice(current => ({ ...current, acknowledgedAt: new Date().toISOString() }))
+      globalThis.dispatchEvent(new Event('fc:account-activity-changed'))
+    } catch (failure) { setError(describeError(failure)) } finally { setBusy(false) }
+  }
+  return <section className={styles.panel}>
+    {error && <p role="alert" className={styles.error}>{translateRegistrationError(error, locale)}</p>}
+    {notice ? <><h2>{notice.title}</h2><p>{notice.message}</p>{notice.requiresAck && !notice.acknowledgedAt ? <button type="button" disabled={busy} onClick={acknowledge}>{uiText('我已知悉', locale)}</button> : <p role="status">{uiText('已确认', locale)}</p>}</> : <p role="status">{uiText('正在读取本赛季报名…', locale)}</p>}
+    {error && <button type="button" onClick={() => setAttempt(value => value + 1)}>{uiText('重新读取', locale)}</button>}
+    <Link to={`/me?competition=${encodeURIComponent(seasonId)}&section=tasks`}>{uiText('我的待办', locale)}</Link>
+  </section>
+}
+
+function Invitation({ token, invitationId, seasonId }) {
   const uiLocale = useUiLocale()
   const navigate = useNavigate()
   const { refreshSession } = useAuth()
@@ -66,17 +98,17 @@ function Invitation({ token, seasonId }) {
   const lock = useRef(false)
   useEffect(() => {
     // The token is used only in request bodies and this page's memory.
-    window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search)
+    if (token) window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search)
     const controller = new AbortController()
     setError('')
-    platformRequest('/auth/participation-invitations/preview', { method: 'POST', body: { token }, signal: controller.signal })
+    platformRequest(token ? '/auth/participation-invitations/preview' : `${path(seasonId)}/invitations/${encodeURIComponent(invitationId)}`, { ...(token ? { method: 'POST', body: { token } } : {}), signal: controller.signal })
       .then(result => {
         if (controller.signal.aborted) return
         if (result.invitation.seasonId !== seasonId) throw new Error('邀请所属赛季与当前页面不一致，请重新打开完整链接。')
         setInvitation(result.invitation)
       }).catch(failure => { if (!controller.signal.aborted) setError(describeError(failure)) })
     return () => controller.abort()
-  }, [token, seasonId, attempt])
+  }, [token, invitationId, seasonId, attempt])
   async function accept(event) {
     event.preventDefault()
     if (lock.current) return
@@ -84,7 +116,7 @@ function Invitation({ token, seasonId }) {
     if (invitation.passwordMode === 'SET' && form.get('password') !== form.get('confirmation')) { setError('两次输入的密码不一致。'); return }
     lock.current = true; setBusy(true); setError('')
     try {
-      const result = await platformRequest('/auth/participation-invitations/accept', { method: 'POST', body: { token, password: form.get('password'), consent: form.get('consent') === 'on', ...(invitation.eligibilityRequired ? { eligibility: readWeeklyEligibility(form) } : {}) } })
+      const result = await platformRequest(token ? '/auth/participation-invitations/accept' : `${path(seasonId)}/invitations/${encodeURIComponent(invitationId)}/accept`, { method: 'POST', body: { ...(token ? { token } : {}), password: form.get('password'), consent: form.get('consent') === 'on', ...(invitation.eligibilityRequired ? { eligibility: readWeeklyEligibility(form) } : {}) } })
       if (!result.accepted || result.seasonId !== seasonId) throw new Error('邀请确认响应异常，请重新登录查看状态。')
       setAccepted(true)
       await enterWorkspace()
@@ -116,6 +148,10 @@ function Invitation({ token, seasonId }) {
 
 function Workspace({ user, seasonId, hasAdditions }) {
   const uiLocale = useUiLocale()
+  const location = useLocation()
+  const focusParams = new URLSearchParams(location.search)
+  const focusId = focusParams.get('participationNotice') ? `participation-notice-${focusParams.get('participationNotice')}` : focusParams.get('registration') ? `registration-${focusParams.get('registration')}` : ''
+  const focused = useRef('')
   const { confirmDiscard } = useRegistrationDraftActions()
   const [workspace, setWorkspace] = useState(null)
   const [error, setError] = useState('')
@@ -127,6 +163,11 @@ function Workspace({ user, seasonId, hasAdditions }) {
   const feedback = useRef(null)
   useEffect(() => { if (error || notice) feedback.current?.focus() }, [error, notice])
   const mutation = useRef(false)
+  useEffect(() => {
+    if (!workspace || !focusId || focused.current === focusId) return
+    const target = document.getElementById(focusId)
+    if (target) { target.focus(); target.scrollIntoView({ block: 'center' }); focused.current = focusId }
+  }, [workspace, focusId])
   useEffect(() => {
     const controller = new AbortController()
     platformRequest(`${path(seasonId)}/me`, { signal: controller.signal })
@@ -147,6 +188,7 @@ function Workspace({ user, seasonId, hasAdditions }) {
       }
       setNotice(suffix.endsWith('/logo') ? '队标已保存，报名与队员确认状态保持不变。' : suffix.endsWith('/submit') ? '报名已成功提交！现在等待赛事负责人审核，无需重复提交。' : suffix.endsWith('/eligibility') ? '本人的报名资料已保存。队伍仍需由负责人提交审核。' : method === 'PATCH' ? '队伍报名资料已保存。全部队员确认后，请继续提交赛事负责人审核。' : '')
       setVersion(current => current + 1)
+      globalThis.dispatchEvent(new Event('fc:account-activity-changed'))
       return result
     } catch (failure) { setError(describeError(failure)); return false } finally { mutation.current = false; setBusy(false) }
   }
@@ -158,7 +200,7 @@ function Workspace({ user, seasonId, hasAdditions }) {
     {(error || notice) && <p ref={feedback} tabIndex={-1} role={error ? "alert" : "status"} className={error ? styles.error : styles.success}>{error ? translateRegistrationError(error, uiLocale) : uiText(notice, uiLocale)}</p>}
     {link && <InvitationLink invitation={link} />}
     <MyRegistrationJoinApplications seasonId={seasonId} />
-    {workspace.notices.some(item => item.requiresAck && !item.acknowledgedAt) && <section className={styles.panel}><h2>{uiText("需要确认", uiLocale)}</h2>{workspace.notices.filter(item => item.requiresAck && !item.acknowledgedAt).map(item => <div className={styles.notice} key={item.id}><div><strong>{item.title}</strong><p>{item.message}</p></div><button disabled={busy} onClick={() => perform(`/notices/${item.id}/acknowledge`, {})}>{uiText("我已知悉", uiLocale)}</button></div>)}</section>}
+    {workspace.notices.some(item => item.requiresAck && !item.acknowledgedAt) && <section className={styles.panel}><h2>{uiText("需要确认", uiLocale)}</h2>{workspace.notices.filter(item => item.requiresAck && !item.acknowledgedAt).map(item => <div id={`participation-notice-${item.id}`} tabIndex={-1} className={styles.notice} key={item.id}><div><strong>{item.title}</strong><p>{item.message}</p></div><button disabled={busy} onClick={() => perform(`/notices/${item.id}/acknowledge`, {})}>{uiText("我已知悉", uiLocale)}</button></div>)}</section>}
     {!ownerRegistration && workspace.canCreate && <TeamForm eligibilityRequired={workspace.policy.eligibilityRequired} organizations={workspace.organizations} busy={busy} onSave={input => perform('/drafts', input, 'POST', '队伍报名资料')} />}
     {!hasAdditions && !workspace.registrations.length && workspace.canWrite && !workspace.canCreate && <section className={styles.panel}><h2>{uiText('需要队伍负责人邀请', uiLocale)}</h2><p>{uiText('请联系赛事负责人获取本赛季队伍负责人邀请链接，接受后即可创建报名。队员请使用队长发送的入队邀请链接。', uiLocale)}</p></section>}
     {workspace.registrations.map(record => <Registration seasonId={seasonId} rulebook={workspace.policy.rulebook} key={record.id} eligibilityRequired={workspace.policy.eligibilityRequired} record={record} userId={user.id} owner={record.ownerUserId === user.id} canWrite={workspace.canWrite} canManageLogo={workspace.canManageLogo} busy={busy} perform={perform} invitationLinks={invitationLinks} rosterMin={workspace.policy.rosterMin} rosterMax={workspace.policy.rosterMax} onRefresh={async () => { if (await confirmDiscard()) setVersion(value => value + 1) }} />)}
@@ -243,7 +285,7 @@ function Registration({ seasonId, rulebook, eligibilityRequired, record, userId,
       setCopyNotice('复制失败，请从上方邀请框手动复制。')
     }
   }
-  return <section className={styles.panel}>
+  return <section id={`registration-${record.id}`} tabIndex={-1} className={styles.panel}>
     <div className={styles.row}><div><h2>{record.name} <span className={styles.tag}>{statusLabel(record.status)}</span></h2><p>{owner ? uiText("你负责这份队伍报名", uiLocale) : uiText("队伍负责人：{0}", uiLocale, [record.ownerName])} · {record.members.filter(member => member.status === 'CONFIRMED').length}/{record.members.length}{uiText(" 人已确认", uiLocale)}</p></div><button disabled={busy} onClick={onRefresh}>{uiText("刷新确认状态", uiLocale)}</button></div>
     {editable && <button type="button" disabled={busy} aria-expanded={editingTeam} onClick={() => setEditingTeam(value => !value)}>{uiText("修改队伍资料", uiLocale)}</button>}
     {editable && <div hidden={!editingTeam}><TeamForm eligibilityRequired={eligibilityRequired} record={record} busy={busy} onSave={input => perform(prefix, input, 'PATCH', '队伍报名资料')} /></div>}
