@@ -1,10 +1,10 @@
 import { fetchAccountLaunchStatus, fetchMySpaceContext } from './mySpaceApi.js'
 import { fetchTaskCenter } from '../tasks/taskNotificationApi.js'
-import { fetchMyWeeklyCompetition } from '../weekly-competition/weeklyCompetitionApi.js'
+import { fetchMyWeeklyCompetition, fetchMyOwnershipTransfers } from '../weekly-competition/weeklyCompetitionApi.js'
 import { fetchMyWeeklyMatchRooms } from '../weekly-competition/weeklyMatchRoomsApi.js'
 import { buildAccountActivity, getAccountActivityAccess, isAccountActivitySource } from '../account-ui/accountActivityModel.js'
 
-const LOADERS = { launch: fetchAccountLaunchStatus, context: fetchMySpaceContext, tasks: fetchTaskCenter, preparation: fetchMyWeeklyCompetition, rooms: fetchMyWeeklyMatchRooms }
+const LOADERS = { launch: fetchAccountLaunchStatus, context: fetchMySpaceContext, tasks: fetchTaskCenter, preparation: fetchMyWeeklyCompetition, rooms: fetchMyWeeklyMatchRooms, ownership: fetchMyOwnershipTransfers }
 
 export async function fetchAccountAttentionContext(seasonId, userId, { signal, now = Date.now(), loaders = LOADERS } = {}) {
   if (!seasonId || !userId) return null
@@ -14,7 +14,7 @@ export async function fetchAccountAttentionContext(seasonId, userId, { signal, n
   const context = await loaders.context(seasonId, { signal })
   if (context?.seasonId !== seasonId || context?.user?.id !== userId) throw new Error('返回的账号资料与当前账号或赛事不一致。')
   const access = getAccountActivityAccess(context, launch)
-  const keys = [access.genericTasks && 'tasks', access.weeklyPreparation && 'preparation', access.weeklyRooms && 'rooms'].filter(Boolean)
+  const keys = [access.genericTasks && 'tasks', access.weeklyPreparation && 'preparation', access.weeklyRooms && 'rooms', access.ownershipTransfers && 'ownership'].filter(Boolean)
   const results = await Promise.allSettled(keys.map(async key => {
     const data = await loaders[key](seasonId, { signal })
     if (!isAccountActivitySource(key, data, { seasonId, userId })) throw new Error('待办资料不完整或与当前账号、赛事不一致。')
