@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { platformRequest } from '../auth/platformApi.js'
 import { useRegistrationDraft } from './registrationDraftGuard.jsx'
@@ -14,7 +14,7 @@ const roles = { DPS: 'DPS', TANK: 'TANK', SUP: 'SUP', FLEX: 'FLEX', UNKNOWN: '�
 const registrationPath = seasonId => `/seasons/${encodeURIComponent(seasonId)}/registration`
 const openLogin = () => window.dispatchEvent(new Event('fries-cup:open-account'))
 
-export function SharedRegistrationJoin({ token, seasonId }) {
+export function SharedRegistrationJoin({ token, applicationId, seasonId }) {
   const locale = useUiLocale()
   const { user, isBootstrapping, refreshSession, requestEmailVerification, emailVerificationState } = useAuth()
   const [invitation, setInvitation] = useState(null)
@@ -30,15 +30,18 @@ export function SharedRegistrationJoin({ token, seasonId }) {
   useEffect(() => {
     const controller = new AbortController()
     setError('')
-    platformRequest('/registration/join-links/preview', { method: 'POST', body: { token }, signal: controller.signal })
+    if (!token) { setInvitation(null); setState(null) }
+    platformRequest(token ? '/registration/join-links/preview' : `${registrationPath(seasonId)}/join-applications/${encodeURIComponent(applicationId)}/context`, { ...(token ? { method: 'POST', body: { token } } : {}), signal: controller.signal })
       .then(result => {
         if (controller.signal.aborted) return
         if (result.invitation.seasonId !== seasonId) throw new Error('报名链接所属赛事不一致，请重新打开完整链接。')
         setInvitation(result.invitation)
+        if (!token) setState(result.state)
       }).catch(failure => { if (!controller.signal.aborted) { setInvitation(null); setError(describeRegistrationError(failure)) } })
     return () => controller.abort()
-  }, [token, seasonId, attempt])
+  }, [token, applicationId, seasonId, attempt, refresh, userId])
   useEffect(() => {
+    if (!token) return
     const controller = new AbortController()
     setState(null)
     if (userId && invitation) platformRequest('/registration/join-links/state', { method: 'POST', body: { token }, signal: controller.signal })
@@ -62,8 +65,9 @@ export function SharedRegistrationJoin({ token, seasonId }) {
     if (lock.current) return false
     lock.current = true; setBusy(true); setError(''); setNotice('')
     try {
-      const result = await platformRequest('/registration/join-links/apply', { method: 'POST', body: { token, ...body } })
+      const result = await platformRequest(token ? '/registration/join-links/apply' : `${registrationPath(seasonId)}/join-applications/${encodeURIComponent(applicationId)}/resubmit`, { method: 'POST', body: { ...(token ? { token } : {}), ...body } })
       setState(current => ({ ...current, application: result.application, prefill: result.application }))
+      globalThis.dispatchEvent(new Event('fc:account-activity-changed'))
       setNotice(invitation.joinMode === 'TEAM_ADDITION' ? '申请已提交，等待经理审核；之后仍需赛事管理员审核增员。' : invitation.joinMode === 'WAITING_REVIEW' ? '资料已提交。队伍报名正在审核，通过后经理可继续审核增员申请。' : '申请已提交，等待经理审核。通过后进入报名名单，整队仍需赛事资格审核。')
       return true
     } catch (failure) { setError(describeRegistrationError(failure)); return false }
@@ -160,11 +164,19 @@ function JoinApplicationForm({ prefill, applicationRevision, eligibilityRequired
 
 export function RegistrationJoinManager({ record, seasonId, editable, busy, perform, onPendingChange }) {
   const locale = useUiLocale()
+  const [searchParams] = useSearchParams()
+  const focusId = searchParams.get('reviewJoinApplication')
+  const focused = useRef('')
   const [data, setData] = useState(null)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [version, setVersion] = useState(0)
   const prefix = `/drafts/${record.id}`
+  useEffect(() => {
+    if (!data || !focusId || focused.current === focusId) return
+    const target = document.getElementById(`join-review-${focusId}`)
+    if (target) { target.focus(); target.scrollIntoView({ block: 'center' }); focused.current = focusId }
+  }, [data, focusId])
   useEffect(() => {
     const controller = new AbortController()
     platformRequest(`${registrationPath(seasonId)}${prefix}/join-link`, { signal: controller.signal })
@@ -219,7 +231,7 @@ function JoinReview({ application, editable, canAccept, additionMode, busy, onRe
   const [reason, setReason] = useState('')
   useRegistrationDraft(Boolean(reason), { label: '入队申请审核', busy, discard: () => setReason('') })
   const eligibility = application.eligibility
-  return <article className={styles.review}><div className={styles.row}><div><strong>{application.displayName}</strong><p>{application.battleTag} · {uiText(roles[application.role], locale)} · {application.email}</p></div><span className={styles.badge}>{uiText(joinApplicationStatusLabel(application), locale)}</span></div>
+  return <article id={`join-review-${application.id}`} tabIndex={-1} className={styles.review}><div className={styles.row}><div><strong>{application.displayName}</strong><p>{application.battleTag} · {uiText(roles[application.role], locale)} · {application.email}</p></div><span className={styles.badge}>{uiText(joinApplicationStatusLabel(application), locale)}</span></div>
     {eligibility && <dl className={styles.eligibility}><div><dt>{uiText('国籍／地区', locale)}</dt><dd>{eligibility.countryOrRegion || uiText(eligibility.countryGroup === 'CN_HMT' ? '中国（含港澳台）' : '待补充具体国家、地区', locale)}</dd></div><div><dt>OWCS 2026</dt><dd>{uiText(eligibility.owcs2026 === 'NONE' ? '没有参加' : eligibility.owcs2026 === 'QUALIFIERS' ? '仅海选／公开预选' : '进入正赛名单', locale)}</dd></div><div><dt>{uiText('当前段位', locale)}</dt><dd>T {eligibility.ranks?.tank} · D {eligibility.ranks?.damage} · S {eligibility.ranks?.support}</dd></div></dl>}
     {application.reviewNote && <p>{uiText('上次审核意见：', locale)}{application.reviewNote}</p>}
     {editable && <><label>{uiText('审核意见（退回补充时必填）', locale)}<input value={reason} maxLength={1000} disabled={busy} placeholder={uiText('例如：请核对战网 ID，或补充段位信息', locale)} onChange={event => setReason(event.target.value)} /></label><div className={styles.actions}>{application.status === 'PENDING' ? <><button className={styles.primary} type="button" disabled={busy || !canAccept} onClick={async () => { if (await onReview(application, 'ACCEPT', reason.trim())) setReason('') }}>{uiText(additionMode ? '经理通过并提交增员审核' : '审核通过并加入名单', locale)}</button><button type="button" disabled={busy || !reason.trim()} onClick={async () => { if (await onReview(application, 'RETURN', reason.trim())) setReason('') }}>{uiText('退回补充', locale)}</button></> : <span>{uiText('等待队员本人补充并重新提交。', locale)}</span>}<button type="button" disabled={busy} onClick={async () => { if (await onReview(application, 'REJECT', reason.trim())) setReason('') }}>{uiText('拒绝申请', locale)}</button></div></>}
@@ -245,5 +257,5 @@ export function MyRegistrationJoinApplications({ seasonId }) {
     finally { setBusy(false) }
   }
   if (applications?.length === 0 && !error) return null
-  return <section className={styles.manager} data-i18n-ignore><div className={styles.row}><h3>{uiText('本人的入队申请', locale)}</h3><button type="button" disabled={busy} onClick={() => load()}>{uiText('刷新审核状态', locale)}</button></div>{error && <p role="alert" className={styles.error}>{uiText(error, locale)}</p>}{applications?.map(item => <article className={styles.review} key={item.id}><div className={styles.row}><strong>{item.shortName} · {item.teamName}</strong><span>{uiText(joinApplicationStatusLabel(item), locale)}</span></div><p>{item.displayName} · {item.battleTag}</p>{item.reviewNote && <p>{item.reviewNote}</p>}{item.addition?.reviewNote && <p>{item.addition.reviewNote}</p>}{canWithdrawJoinApplication(item) && <button type="button" disabled={busy} onClick={() => withdraw(item)}>{uiText('撤回本人申请', locale)}</button>}{canEditJoinApplication(item) && <p>{uiText('需要修改时，请重新打开队伍群内的共用链接。', locale)}</p>}</article>)}</section>
+  return <section className={styles.manager} data-i18n-ignore><div className={styles.row}><h3>{uiText('本人的入队申请', locale)}</h3><button type="button" disabled={busy} onClick={() => load()}>{uiText('刷新审核状态', locale)}</button></div>{error && <p role="alert" className={styles.error}>{uiText(error, locale)}</p>}{applications?.map(item => <article className={styles.review} key={item.id}><div className={styles.row}><strong>{item.shortName} · {item.teamName}</strong><span>{uiText(joinApplicationStatusLabel(item), locale)}</span></div><p>{item.displayName} · {item.battleTag}</p>{item.reviewNote && <p>{item.reviewNote}</p>}{item.addition?.reviewNote && <p>{item.addition.reviewNote}</p>}{canWithdrawJoinApplication(item) && <button type="button" disabled={busy} onClick={() => withdraw(item)}>{uiText('撤回本人申请', locale)}</button>}{canEditJoinApplication(item) && <Link to={`/participate/${encodeURIComponent(seasonId)}?joinApplication=${encodeURIComponent(item.id)}`}>{uiText('修改本人资料 →', locale)}</Link>}</article>)}</section>
 }

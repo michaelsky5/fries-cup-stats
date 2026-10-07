@@ -89,14 +89,14 @@ const SPACE_UTILITY_NAV = [
   { id: 'messages', label: '消息', en: 'INBOX', sectionIds: ['communications'] }
 ]
 
-export function buildSpaceSections({ player = false, team = false, manager = false, referee = false, caster = false, weekly = false, weeklyRooms = false, registration = false, publicStats = true, launch = null } = {}) {
+export function buildSpaceSections({ player = false, team = false, manager = false, referee = false, caster = false, weekly = false, weeklyRooms = false, registration = false, administrativeTasks = false, publicStats = true, launch = null } = {}) {
   const communicationsVisible = !launch || hasAccountFeatureAccess(launch, 'communications')
   const teamOperationsVisible = !launch || hasAccountFeatureAccess(launch, 'teamOperations')
   const weeklyCompetitionVisible = !launch || hasAccountFeatureAccess(launch, 'weeklyCompetition')
   const matchRoomVisible = !launch || hasAccountFeatureAccess(launch, 'matchRoom')
   return [
     SPACE_SECTION_DEFINITIONS.overview,
-    ...(communicationsVisible || (weekly && registration && teamOperationsVisible) || (weekly && (team || player || manager) && (weeklyCompetitionVisible || matchRoomVisible)) ? [SPACE_SECTION_DEFINITIONS.tasks] : []),
+    ...(administrativeTasks || communicationsVisible || (registration && teamOperationsVisible) || (weekly && (team || player || manager) && (weeklyCompetitionVisible || matchRoomVisible)) ? [SPACE_SECTION_DEFINITIONS.tasks] : []),
     ...(!weekly ? [SPACE_SECTION_DEFINITIONS.events] : []),
     ...(team || player || ((manager || weeklyRooms) && matchRoomVisible) ? [SPACE_SECTION_DEFINITIONS.matches] : []),
     ...(((team || registration) && teamOperationsVisible) || (manager && weeklyCompetitionVisible) || (player && weeklyCompetitionVisible)
@@ -617,10 +617,12 @@ function MySpaceContent() {
   }, [accountLaunchAttempt, authUser?.id, isAuthenticated, seasonId, competition.loading, competition.error, competition.issue])
 
   const accountPortalAllowed = accountLaunch?.seasonId === seasonId && accountLaunch?.accountUserId === authUser?.id && Boolean(accountLaunch?.allowed)
+  const taskCenterAllowed = accountLaunch?.seasonId === seasonId && accountLaunch?.accountUserId === authUser?.id && Boolean(accountLaunch?.taskCenterAllowed)
+  const accountSpaceAllowed = accountPortalAllowed || taskCenterAllowed
 
   useEffect(() => {
     const requestId = ++spaceRequest.current
-    if (!isAuthenticated || !seasonId || !accountPortalAllowed) {
+    if (!isAuthenticated || !seasonId || !accountSpaceAllowed) {
       setSpaceContext(null)
       return undefined
     }
@@ -632,10 +634,10 @@ function MySpaceContent() {
       .catch(error => { if (!cancelled && requestId === spaceRequest.current) setSpaceContextError(error?.message || '身份与赛事关系同步失败。') })
       .finally(() => { if (!cancelled && requestId === spaceRequest.current) setSpaceContextLoading(false) })
     return () => { cancelled = true; spaceRequest.current += 1 }
-  }, [accountPortalAllowed, authUser?.id, isAuthenticated, seasonId])
+  }, [accountSpaceAllowed, authUser?.id, isAuthenticated, seasonId])
 
   const refreshSpaceContext = useCallback(async () => {
-    if (!isAuthenticated || !seasonId || !accountPortalAllowed) return
+    if (!isAuthenticated || !seasonId || !accountSpaceAllowed) return
     const requestId = ++spaceRequest.current
     setSpaceContextLoading(true)
     setSpaceContextError('')
@@ -647,7 +649,7 @@ function MySpaceContent() {
     } finally {
       if (requestId === spaceRequest.current) setSpaceContextLoading(false)
     }
-  }, [accountPortalAllowed, isAuthenticated, seasonId])
+  }, [accountSpaceAllowed, isAuthenticated, seasonId])
 
   const handleTaskSummaryChange = useCallback(summary => {
     setSpaceContext(current => current ? {
@@ -689,6 +691,7 @@ function MySpaceContent() {
   }, [accountCapabilities.canAccessTeamSpace, authUser, currentSpaceContext, fallbackPrimaryIdentityType, isVerifiedPlayer, seasonId, verifiedIdentityTypes])
   const canShowRegistrationEntry = effectiveSpaceContext.contract === 'ACCOUNT_FOUNDATION_V1' && hasAccountFeatureAccess(accountLaunch, 'teamOperations')
   const spaceSections = useMemo(() => buildSpaceSections({
+    administrativeTasks: Boolean(effectiveSpaceContext.sections?.tasks),
     registration: canShowRegistrationEntry,
     publicStats: hasMatchingPublicSeason,
     player: isVerifiedPlayer && (
@@ -750,7 +753,7 @@ function MySpaceContent() {
   const { canViewWeeklyCompetition, canViewWeeklyMatchRooms } = activityAccess
   const canWriteWeeklyCompetition = !activityAccess.preparationReadOnly
   const canWriteMatchRooms = !activityAccess.roomsReadOnly
-  const activityEnabled = isAuthenticated && accountPortalAllowed && Boolean(currentSpaceContext)
+  const activityEnabled = isAuthenticated && accountSpaceAllowed && Boolean(currentSpaceContext)
   const activity = useAccountActivity({ seasonId, userId: authUser?.id, identityType: effectiveSpaceContext.primaryIdentityType,
     enabled: activityEnabled, view: activeSection, ...activityAccess })
   const navigationSummary = { ...effectiveSpaceContext.overview,
@@ -803,7 +806,7 @@ function MySpaceContent() {
     return <>{competitionBar}<RoomGuideLink season={seasonId} scenario="access" label="无法操作？查看指南" /><AccountReleaseGate launch={accountLaunch} loading withSeason={pageLink} /></>
   }
 
-  if (isAuthenticated && needsParticipationAccess && (accountLaunchError || !accountPortalAllowed)) {
+  if (isAuthenticated && needsParticipationAccess && (accountLaunchError || !(accountPortalAllowed || taskCenterAllowed && ['overview', 'tasks'].includes(requestedSection)))) {
     return <>{competitionBar}<RoomGuideLink season={seasonId} scenario="access" label="无法操作？查看指南" /><AccountReleaseGate launch={accountLaunch} error={accountLaunchError} withSeason={pageLink} onRetry={() => setAccountLaunchAttempt(value => value + 1)} /></>
   }
 

@@ -10,7 +10,7 @@ export async function fetchAccountAttentionContext(seasonId, userId, { signal, n
   if (!seasonId || !userId) return null
   const launch = await loaders.launch(seasonId, { signal })
   if (launch?.seasonId !== seasonId) throw new Error('参赛权限与当前赛事不一致。')
-  if (!launch.allowed) return null
+  if (!launch.allowed && !launch.taskCenterAllowed) return null
   const context = await loaders.context(seasonId, { signal })
   if (context?.seasonId !== seasonId || context?.user?.id !== userId) throw new Error('返回的账号资料与当前账号或赛事不一致。')
   const access = getAccountActivityAccess(context, launch)

@@ -5,19 +5,20 @@ import { hasAccountFeatureAccess } from '../my-space/mySpaceApi.js'
 import { buildOwnershipTransferTasks, isOwnershipTransferWorkspace } from '../weekly-competition/ownershipTransferTasks.js'
 
 export function getAccountActivityAccess(context, launch) {
+  const featureAccess = (feature, level) => launch?.allowed !== false && hasAccountFeatureAccess(launch, feature, level)
   const participant = (context?.identities || []).some(identity => ['MANAGER', 'PLAYER'].includes(String(identity.type || identity.identityType || '').toUpperCase()))
-  const canViewWeeklyCompetition = hasAccountFeatureAccess(launch, 'weeklyCompetition') && participant
-  const canViewWeeklyMatchRooms = hasAccountFeatureAccess(launch, 'matchRoom') && Boolean(context?.sections?.weeklyRooms || participant)
+  const canViewWeeklyCompetition = featureAccess('weeklyCompetition') && participant
+  const canViewWeeklyMatchRooms = featureAccess('matchRoom') && Boolean(context?.sections?.weeklyRooms || participant)
   const weekly = context?.competitionKind === 'WEEKLY'
   return {
     canViewWeeklyCompetition,
     canViewWeeklyMatchRooms,
-    genericTasks: hasAccountFeatureAccess(launch, 'communications'),
+    genericTasks: Boolean(context?.sections?.tasks) || ['communications', 'teamOperations', 'weeklyCompetition', 'scheduleNegotiation', 'matchRoom'].some(feature => featureAccess(feature)),
     weeklyPreparation: weekly && canViewWeeklyCompetition,
     weeklyRooms: weekly && canViewWeeklyMatchRooms,
-    ownershipTransfers: weekly && hasAccountFeatureAccess(launch, 'teamOperations'),
-    preparationReadOnly: !hasAccountFeatureAccess(launch, 'weeklyCompetition', 'WRITE'),
-    roomsReadOnly: !hasAccountFeatureAccess(launch, 'matchRoom', 'WRITE')
+    ownershipTransfers: weekly && featureAccess('teamOperations'),
+    preparationReadOnly: !featureAccess('weeklyCompetition', 'WRITE'),
+    roomsReadOnly: !featureAccess('matchRoom', 'WRITE')
   }
 }
 

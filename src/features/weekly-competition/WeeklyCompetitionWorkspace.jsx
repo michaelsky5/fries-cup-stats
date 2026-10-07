@@ -5,9 +5,10 @@ import WeeklyTeamAdditions from './WeeklyTeamAdditions.jsx'
 import WeeklyTeamCoaches from './WeeklyTeamCoaches.jsx'
 import WeeklyTeamContext from './WeeklyTeamContext.jsx'
 import WeeklyOwnershipTransfers from './WeeklyOwnershipTransfers.jsx'
+import WeeklyCycleEnrollment from './WeeklyCycleEnrollment.jsx'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import WeeklyParticipationChangeDialog from './WeeklyParticipationChangeDialog.jsx'
 import WeeklyRosterReview from './WeeklyRosterReview.jsx'
@@ -19,7 +20,7 @@ import {
 } from './weeklyCompetitionApi.js'
 import styles from '../account-ui/SignalWeeklyTeam.module.css'
 import { getWeeklyRosterCheck, getWeeklyRosterContext, withParticipationActionContext } from '../account-ui/participationJourneyModel.js'
-import { buildWeeklyPreparation, getWeeklyFocusStep, resolveWeeklySelection, weeklyConfirmationWindow, weeklyTeamDestination } from './weeklyPreparationModel.js'
+import { buildWeeklyPreparation, getWeeklyEnrollmentCycles, getWeeklyFocusStep, resolveWeeklySelection, weeklyConfirmationWindow, weeklyTeamDestination } from './weeklyPreparationModel.js'
 import WeeklyCoordinationPanel from './WeeklyCoordinationPanel.jsx'
 import { RegistrationDraftGuard, useRegistrationDraft, useRegistrationDraftActions } from '../event-registration/registrationDraftGuard.jsx'
 
@@ -117,6 +118,7 @@ export default function WeeklyCompetitionWorkspace({ seasonId, readOnly = false,
 function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
   const uiLocale = useUiLocale()
   const [searchParams, setSearchParams] = useSearchParams()
+  const { hash } = useLocation()
   const { confirmDiscard } = useRegistrationDraftActions()
   const mounted = useRef(false)
   const loadController = useRef(null)
@@ -192,6 +194,9 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
   const teamId = teamAccess?.team?.id || ''
   const canManageTeam = teamAccess?.accessMode === 'WRITE' && ['LEADER', 'MANAGER'].includes(teamAccess?.role)
   const teamCycles = workspace?.cycles?.filter(item => item.entries?.some(candidate => (candidate.seasonTeamId || candidate.team?.id) === teamId)) || []
+  const enrollmentCycles = getWeeklyEnrollmentCycles(workspace, { seasonId, userId: user?.id, readOnly })
+    .filter(item => !searchParams.has('cycle') || item.id === searchParams.get('cycle'))
+    .map(item => ({ ...item, eligibleTeams: item.eligibleTeams.filter(team => team.id === teamId) })).filter(item => item.eligibleTeams.length)
   const cycleId = cycle?.id || ''
   const entryId = entry?.id || ''
   const weekId = weekRecord?.week?.id || ''
@@ -229,11 +234,12 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
 
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 30_000); return () => clearInterval(timer) }, [])
   useEffect(() => {
-    if (loading || invalidSelection || !['core', 'participation', 'lineup', 'roster'].includes(requestedStep)) return
-    const element = document.getElementById(`weekly-${requestedStep}`)
+    const step = hash === '#weekly-enrollment' && !entryId ? 'enrollment' : requestedStep
+    if (loading || invalidSelection || !['enrollment', 'core', 'participation', 'lineup', 'roster'].includes(step)) return
+    const element = document.getElementById(`weekly-${step}`)
     element?.scrollIntoView({ block: 'start' })
     element?.focus({ preventScroll: true })
-  }, [loading, invalidSelection, requestedStep, cycleId, entryId, weekId])
+  }, [loading, invalidSelection, requestedStep, cycleId, entryId, weekId, teamId, hash])
   const changeSelection = (field, value) => {
     setNotice(null)
     const next = new URLSearchParams(searchParams)
@@ -319,6 +325,24 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
     }
   }
 
+  async function beforeEnrollment() {
+    if (writeLock.current || readOnly || stale || !synchronized || !enrollmentCycles.length) return false
+    return await confirmDiscard() && mounted.current && !writeLock.current
+  }
+  async function handleEnrolled(nextCycleId, nextEntryId, nextTeamId) {
+    globalThis.dispatchEvent(new Event('fc:account-activity-changed'))
+    if (!mounted.current) return
+    try {
+      await refresh({ quiet: true })
+      if (!mounted.current) return
+      const next = new URLSearchParams(searchParams)
+      for (const key of ['week', 'step', 'journey', 'progress', 'manage']) next.delete(key)
+      next.set('cycle', nextCycleId); next.set('entry', nextEntryId); next.set('team', nextTeamId)
+      setSearchParams(next)
+    } finally { if (mounted.current) onActivityChange?.() }
+  }
+  const enrollmentBusy = value => { writeLock.current = value; if (mounted.current) setBusy(value ? 'enrollment' : '') }
+
   if (loading || (workspace && !synchronized)) {
     return <section className={styles.state}><span>SYNCING WEEKLY COMPETITION</span><strong>{uiText("正在读取本队周赛资料", uiLocale)}</strong><p>{uiText("同步完成前不会显示空名单或错误的待确认状态。", uiLocale)}</p></section>
   }
@@ -364,7 +388,8 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
         <label><span>{uiText("周次", uiLocale)}</span><select value={weekId} disabled={Boolean(busy)} onChange={event => changeSelection('week', event.target.value)}>{(entry?.weeks || []).map(item => <option key={item.week.id} value={item.week.id}>{item.week.label || uiText("第 {0} 周", uiLocale, [item.week.weekNumber])}</option>)}</select></label>
       </div></details>}
 
-      {!cycle || !entry ? <div className={styles.empty}>{uiText("当前赛季还没有可操作的周赛周期或参赛关系。", uiLocale)}</div> : <>
+      {!entry && enrollmentCycles.length > 0 && <WeeklyCycleEnrollment cycles={enrollmentCycles} disabled={readOnly || stale || Boolean(busy)} onBeforeEnroll={beforeEnrollment} onEnrolled={handleEnrolled} onBusyChange={enrollmentBusy} />}
+      {!cycle || !entry ? !enrollmentCycles.length && <div className={styles.empty}>{uiText("当前赛季还没有可操作的周赛周期或参赛关系。", uiLocale)}</div> : <>
         <nav className={styles.stepRail} aria-label={uiText("本队周赛步骤", uiLocale)}>{currentPlan?.stages.map((step, index) => <Link key={step.key} to={stepHref(step.key)} aria-current={activeStep === step.key ? 'step' : undefined} data-state={step.state}><span>{String(index + 1).padStart(2, '0')}</span><div><strong>{step.title}</strong><small>{step.label}</small></div></Link>)}</nav>
         {fixedCore && <section id="weekly-core" tabIndex={-1} hidden={activeStep !== 'core'} className={styles.card} aria-label={uiText("周期核心", uiLocale)}>
           <header><h3>{uiText("登记周期核心", uiLocale)}</h3><em>{currentCore ? 'V' + currentCore.version + ' · ' + STATUS_LABELS[currentCore.status] : uiText("尚未登记", uiLocale)}</em></header>

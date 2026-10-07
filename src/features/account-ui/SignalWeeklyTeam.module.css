@@ -120,6 +120,21 @@
 .workHeader > div > span { font: 800 13px/1.4 var(--fc-data-font-display); color: var(--fc-data-text-muted); }
 .workHeader h2 { margin: 4px 0 0; font-size: 24px; }
 .workHeader button { background: transparent; border-color: transparent; font-weight: 500; }
+.enrollment { display: grid; gap: 16px; padding-block: 16px; border-top: 1px solid var(--fc-data-line); }
+.enrollment > header { display: grid; gap: 8px; }
+.enrollment > header > span { color: var(--fc-data-text-muted); font: 800 12px/1.4 var(--fc-data-font-display); }
+.enrollment h3 { margin: 0; font-size: 20px; line-height: 1.4; }
+.enrollment p { margin: 0; color: var(--fc-data-text-muted); font-size: 14px; line-height: 1.8; }
+.enrollmentOptions > article { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; padding-block: 16px; border-top: 1px solid var(--fc-data-line); }
+.enrollmentOptions > article > div { display: grid; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
+.enrollmentOptions strong { font-size: 16px; line-height: 1.5; }
+.enrollmentOptions span { font-size: 14px; line-height: 1.6; }
+.enrollmentOptions small { color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.6; }
+.workspace .enrollmentOptions .primaryButton { background: var(--fc-data-signal); border-color: var(--fc-data-signal); }
+@container weekly-team (max-width: 600px) {
+  .enrollmentOptions > article { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .enrollmentOptions button { width: 100%; }
+}
 .stepRail { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--fc-data-line); }
 .stepRail a { display: flex; align-items: center; gap: 14px; padding: 14px 20px; min-width: 0; color: var(--fc-data-ink); background: var(--fc-data-paper-raised); border-right: 1px solid var(--fc-data-line); }
 .stepRail a:last-child { border-right: 0; }
