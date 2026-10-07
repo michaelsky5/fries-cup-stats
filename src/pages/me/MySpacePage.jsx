@@ -96,7 +96,7 @@ export function buildSpaceSections({ player = false, team = false, manager = fal
   const matchRoomVisible = !launch || hasAccountFeatureAccess(launch, 'matchRoom')
   return [
     SPACE_SECTION_DEFINITIONS.overview,
-    ...(communicationsVisible || (weekly && (team || player || manager) && (weeklyCompetitionVisible || matchRoomVisible)) ? [SPACE_SECTION_DEFINITIONS.tasks] : []),
+    ...(communicationsVisible || (weekly && registration && teamOperationsVisible) || (weekly && (team || player || manager) && (weeklyCompetitionVisible || matchRoomVisible)) ? [SPACE_SECTION_DEFINITIONS.tasks] : []),
     ...(!weekly ? [SPACE_SECTION_DEFINITIONS.events] : []),
     ...(team || player || ((manager || weeklyRooms) && matchRoomVisible) ? [SPACE_SECTION_DEFINITIONS.matches] : []),
     ...(((team || registration) && teamOperationsVisible) || (manager && weeklyCompetitionVisible) || (player && weeklyCompetitionVisible)

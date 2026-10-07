@@ -4,6 +4,10 @@ export async function fetchMyWeeklyCompetition(seasonId, options = {}) {
   return platformRequest(`/me/weekly-competition?seasonId=${encodeURIComponent(seasonId)}`, options)
 }
 
+export async function fetchMyOwnershipTransfers(seasonId, options = {}) {
+  return platformRequest(`/seasons/${encodeURIComponent(seasonId)}/registration/ownership-transfers`, options)
+}
+
 export async function saveMyWeeklyCore(entryId, input) {
   const data = await platformRequest(
     `/me/weekly-cycle-entries/${encodeURIComponent(entryId)}/core-selection`,

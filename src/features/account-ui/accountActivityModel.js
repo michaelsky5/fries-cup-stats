@@ -2,6 +2,7 @@ import { weeklyResponseAccess, weeklyTeamName } from '../weekly-competition/week
 import { buildTaskCenterView } from '../tasks/taskNotificationModel.js'
 import { buildWeeklyPreparation, isWeeklyPreparationWorkspace } from '../weekly-competition/weeklyPreparationModel.js'
 import { hasAccountFeatureAccess } from '../my-space/mySpaceApi.js'
+import { buildOwnershipTransferTasks, isOwnershipTransferWorkspace } from '../weekly-competition/ownershipTransferTasks.js'
 
 export function getAccountActivityAccess(context, launch) {
   const participant = (context?.identities || []).some(identity => ['MANAGER', 'PLAYER'].includes(String(identity.type || identity.identityType || '').toUpperCase()))
@@ -14,6 +15,7 @@ export function getAccountActivityAccess(context, launch) {
     genericTasks: hasAccountFeatureAccess(launch, 'communications'),
     weeklyPreparation: weekly && canViewWeeklyCompetition,
     weeklyRooms: weekly && canViewWeeklyMatchRooms,
+    ownershipTransfers: weekly && hasAccountFeatureAccess(launch, 'teamOperations'),
     preparationReadOnly: !hasAccountFeatureAccess(launch, 'weeklyCompetition', 'WRITE'),
     roomsReadOnly: !hasAccountFeatureAccess(launch, 'matchRoom', 'WRITE')
   }
@@ -23,6 +25,7 @@ export function isAccountActivitySource(key, data, { seasonId, userId }) {
   if (key === 'tasks') return Array.isArray(data?.tasks) && data.tasks.every(task => (!task.userId || task.userId === userId) && (!task.seasonId || task.seasonId === seasonId))
   if (key === 'preparation') return isWeeklyPreparationWorkspace(data, seasonId, userId)
   if (key === 'rooms') return data?.season?.id === seasonId && (!data.userId || data.userId === userId) && Array.isArray(data.rooms) && Array.isArray(data.teams)
+  if (key === 'ownership') return isOwnershipTransferWorkspace(data, seasonId, userId)
   return false
 }
 
@@ -32,6 +35,7 @@ export function buildAccountActivity(sources, { seasonId, userId, identityType, 
     { seasonId, userId, readOnly: preparationReadOnly || sources.preparation?.status !== 'ready', now })
   const taskView = mergeAccountTasks(sources.tasks?.data?.tasks || [], [
     ...preparation.tasks,
+    ...buildOwnershipTransferTasks(sources.ownership?.data, { seasonId, userId, identityType, now }),
     ...buildWeeklyResultTasks(sources.rooms?.data || null, { seasonId, readOnly: roomsReadOnly || sources.rooms?.status !== 'ready' })
   ], { now, identityType })
   const records = Object.values(sources)

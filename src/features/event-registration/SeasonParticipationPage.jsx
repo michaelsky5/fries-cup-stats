@@ -30,6 +30,8 @@ export default function SeasonParticipationPage() {
 
 function ParticipationPage({ seasonId }) {
   const uiLocale = useUiLocale()
+  const location = useLocation()
+  const focusTransferId = new URLSearchParams(location.search).get('ownershipTransfer') || ''
   const { confirmDiscard } = useRegistrationDraftActions()
   const { user, isBootstrapping, logout } = useAuth()
   const [invitationToken] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get('invitation') || '')
@@ -43,7 +45,7 @@ function ParticipationPage({ seasonId }) {
     </header>
     {joinToken ? <SharedRegistrationJoin key={joinToken} token={joinToken} seasonId={seasonId} /> : invitationToken ? <Invitation key={invitationToken} token={invitationToken} seasonId={seasonId} />
       : isBootstrapping ? <p role="status">{uiText("正在确认登录状态…", uiLocale)}</p>
-        : user ? <><Workspace key={`${user.id}:${seasonId}`} user={user} seasonId={seasonId} hasAdditions={hasAdditions || hasTransfers} /><details className={styles.teamManagement}><summary>{uiText("队伍管理", uiLocale)}</summary><WeeklyTeamAdditions key={`additions:${user.id}:${seasonId}`} seasonId={seasonId} onHasAdditions={setHasAdditions} /><WeeklyOwnershipTransfers key={`transfers:${user.id}:${seasonId}`} seasonId={seasonId} onHasTransfers={setHasTransfers} /></details></> : <Login />}
+        : user ? <><Workspace key={`${user.id}:${seasonId}`} user={user} seasonId={seasonId} hasAdditions={hasAdditions || hasTransfers} /><details className={styles.teamManagement} open={Boolean(focusTransferId) || undefined}><summary>{uiText("队伍管理", uiLocale)}</summary><WeeklyTeamAdditions key={`additions:${user.id}:${seasonId}`} seasonId={seasonId} onHasAdditions={setHasAdditions} /><WeeklyOwnershipTransfers key={`transfers:${user.id}:${seasonId}`} seasonId={seasonId} focusTransferId={focusTransferId} onHasTransfers={setHasTransfers} /></details></> : <Login />}
   </div></AccountFrame>
 }
 

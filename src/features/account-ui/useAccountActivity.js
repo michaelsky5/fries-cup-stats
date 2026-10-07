@@ -2,16 +2,17 @@ import { accountRequestError } from '../auth/accountRequestError.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { fetchTaskCenter, completeManualTask } from '../tasks/taskNotificationApi.js'
 import { fetchMyWeeklyMatchRooms } from '../weekly-competition/weeklyMatchRoomsApi.js'
-import { fetchMyWeeklyCompetition } from '../weekly-competition/weeklyCompetitionApi.js'
+import { fetchMyWeeklyCompetition, fetchMyOwnershipTransfers } from '../weekly-competition/weeklyCompetitionApi.js'
 import { buildAccountActivity, isAccountActivitySource } from './accountActivityModel.js'
 import { isManualTaskCompletion } from '../tasks/taskNotificationModel.js'
 
-const SOURCE_LABELS = { tasks: '赛事待办', preparation: '参赛准备', rooms: '比赛与赛果' }
+const SOURCE_LABELS = { tasks: '赛事待办', preparation: '参赛准备', rooms: '比赛与赛果', ownership: '队伍所有权转让' }
 
-export default function useAccountActivity({ seasonId, userId, identityType, enabled = true, genericTasks = false, weeklyPreparation = false, weeklyRooms = false, preparationReadOnly = true, roomsReadOnly = true, view }) {
+export default function useAccountActivity({ seasonId, userId, identityType, enabled = true, genericTasks = false, weeklyPreparation = false, weeklyRooms = false, ownershipTransfers = false, preparationReadOnly = true, roomsReadOnly = true, view }) {
   genericTasks = enabled && genericTasks
   weeklyPreparation = enabled && weeklyPreparation
   weeklyRooms = enabled && weeklyRooms
+  ownershipTransfers = enabled && ownershipTransfers
   const [snapshot, setSnapshot] = useState(null)
   const [attempt, setAttempt] = useState(0)
   const [now, setNow] = useState(Date.now)
@@ -19,7 +20,7 @@ export default function useAccountActivity({ seasonId, userId, identityType, ena
   const [actionError, setActionError] = useState('')
   const writeLock = useRef(false)
   const mounted = useRef(false)
-  const identityScope = `${seasonId}:${userId}:${genericTasks}:${weeklyPreparation}:${weeklyRooms}:${view}`
+  const identityScope = `${seasonId}:${userId}:${genericTasks}:${weeklyPreparation}:${weeklyRooms}:${ownershipTransfers}:${view}`
   const scope = `${identityScope}:${attempt}`
   const refresh = useCallback(() => {
     setActionError(''); setAttempt(value => value + 1)
@@ -42,6 +43,7 @@ export default function useAccountActivity({ seasonId, userId, identityType, ena
     if (genericTasks) requests.push(['tasks', options => fetchTaskCenter(seasonId, options)])
     if (weeklyPreparation) requests.push(['preparation', options => fetchMyWeeklyCompetition(seasonId, options)])
     if (weeklyRooms) requests.push(['rooms', options => fetchMyWeeklyMatchRooms(seasonId, options)])
+    if (ownershipTransfers) requests.push(['ownership', options => fetchMyOwnershipTransfers(seasonId, options)])
     for (const [key] of requests) sources[key] = { status: 'loading' }
     setSnapshot(current => ({ scope, identityScope, sources: Object.fromEntries(Object.entries(sources).map(([key, source]) => [key, { ...source, ...(current?.identityScope === identityScope ? { data: current.sources[key]?.data, updatedAt: current.sources[key]?.updatedAt } : {}) }])) }))
     for (const [key, fetcher] of requests) {
@@ -62,10 +64,10 @@ export default function useAccountActivity({ seasonId, userId, identityType, ena
       })
     }
     return () => controller.abort()
-  }, [genericTasks, identityScope, scope, seasonId, userId, weeklyPreparation, weeklyRooms])
+  }, [genericTasks, identityScope, scope, seasonId, userId, weeklyPreparation, weeklyRooms, ownershipTransfers])
   const sources = useMemo(() => snapshot?.scope === scope ? snapshot.sources : Object.fromEntries([
-    genericTasks && ['tasks', { status: 'loading' }], weeklyPreparation && ['preparation', { status: 'loading' }], weeklyRooms && ['rooms', { status: 'loading' }]
-  ].filter(Boolean)), [genericTasks, scope, snapshot, weeklyPreparation, weeklyRooms])
+    genericTasks && ['tasks', { status: 'loading' }], weeklyPreparation && ['preparation', { status: 'loading' }], weeklyRooms && ['rooms', { status: 'loading' }], ownershipTransfers && ['ownership', { status: 'loading' }]
+  ].filter(Boolean)), [genericTasks, scope, snapshot, weeklyPreparation, weeklyRooms, ownershipTransfers])
   const { preparation, taskView, status } = useMemo(() => buildAccountActivity(sources,
     { seasonId, userId, identityType, preparationReadOnly, roomsReadOnly, now }), [sources, seasonId, userId, identityType, preparationReadOnly, roomsReadOnly, now])
   const records = Object.values(sources)
