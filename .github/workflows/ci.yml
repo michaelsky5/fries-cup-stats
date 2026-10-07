@@ -44,6 +44,9 @@ jobs:
       - name: Lint source files
         run: npm run lint
 
+      - name: Check Overwatch Season 5 and historical roles
+        run: node scripts/assertOverwatchSeason5.mjs
+
       - name: Build production frontend
         run: npm run build
 

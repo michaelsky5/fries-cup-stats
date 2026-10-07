@@ -1,6 +1,6 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
-import { formatOwHeroName, getOwHeroRole } from '../../lib/heroes.js'
+import { formatOwHeroName, getOwHeroRole, getOwHeroCanonicalKey } from '../../lib/heroes.js'
 import { lineupContexts } from './teamPerformanceReadings.js'
 import { HeroPortrait, PerformanceEvidence, roleLabel } from './TeamPerformancePrimitives.jsx'
 import TeamReviewRecords from './TeamReviewRecords.jsx'
@@ -8,7 +8,7 @@ import styles from './TeamLineupReadings.module.css'
 
 function Lineup({ lineup, index, total, context }) {
   const { en, locale } = context
-  const heroRole = hero => ({ TANK: 'TANK', DPS: 'DPS', DAMAGE: 'DPS', SUP: 'SUP', SUPPORT: 'SUP' })[getOwHeroRole(hero).toUpperCase()] || 'UNKNOWN'
+  const heroRole = hero => lineup.heroRoles?.[getOwHeroCanonicalKey(hero)] || ({ TANK: 'TANK', DPS: 'DPS', DAMAGE: 'DPS', SUP: 'SUP', SUPPORT: 'SUP' })[getOwHeroRole(hero).toUpperCase()] || 'UNKNOWN'
   const roles = ['TANK', 'DPS', 'SUP', 'UNKNOWN'].map(role => ({ role, heroes: lineup.heroes.filter(hero => heroRole(hero) === role) })).filter(group => group.heroes.length)
   return <article className={styles.lineup} aria-label={en ? `Recorded lineup ${index + 1}` : uiText("记录阵容 {0}", locale, [index + 1])}>
     <header><span>{en ? 'LINEUP' : uiText("组合", locale)} {String(index + 1).padStart(2, '0')}</span><b>{lineup.records.length}<small>{en ? (lineup.records.length === 1 ? 'recorded map' : 'recorded maps') : uiText("张地图有记录", locale)}</small></b><span className={styles.lineupSample}>{lineup.records.length} / {total} {en ? 'records' : uiText("完整记录", locale)}<br />{(lineup.share * 100).toFixed(1)}%</span></header>

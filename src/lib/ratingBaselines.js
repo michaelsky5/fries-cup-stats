@@ -1,7 +1,7 @@
 import { normalizeSeasonId } from '../features/favorites/normalizeSeasonId.js'
 import { getFrozenRatingBaselineSnapshot } from '../config/frozenRatingBaselines.js'
 import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
-import { resolveHeroSubrole } from './heroSubroleSelectors.js'
+import { resolveHeroSubrole, getHeroRatingBaselineKey } from './heroSubroleSelectors.js'
 import { getMatchLogDedupKey, selectPlayerMatchLogs } from './playerMatchLogs.js'
 
 const METRICS = [
@@ -307,7 +307,7 @@ function byKey(items) {
 
 function buildFromRows(rows, cleaning, options = {}) {
   const heroes = aggregate(rows, row => ({
-    key: row.resolution.canonicalHeroName,
+    key: getHeroRatingBaselineKey(row.resolution),
     label: row.resolution.canonicalHeroName,
     type: 'hero'
   }))
@@ -403,9 +403,9 @@ export function buildRatingBaselinesFromDb(db, options = {}) {
   return baselines
 }
 
-export function getRuntimeHeroBaseline({ baselines, canonicalHeroName, heroName }) {
-  const resolved = canonicalHeroName ? { canonicalHeroName } : resolveHeroSubrole(heroName || '')
-  return baselines?.byHero?.[resolved.canonicalHeroName] || null
+export function getRuntimeHeroBaseline({ baselines, canonicalHeroName, heroName, role, officialRole }) {
+  const resolved = resolveHeroSubrole(canonicalHeroName || heroName || '', { role, officialRole })
+  return baselines?.byHero?.[getHeroRatingBaselineKey(resolved)] || null
 }
 
 export function getRuntimeProfileBaseline({ baselines, scoringProfile }) {

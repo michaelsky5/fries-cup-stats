@@ -3,7 +3,7 @@ import { MAP_RATING_CONFIG, RATING_METRICS, SEASON_SCORE_CONFIG } from '../confi
 import { SEASON_SAMPLE_POLICY } from './seasonRatingPolicy.js'
 import { buildSeasonOpponentEvidence } from './seasonOpponentStrength.js'
 import { buildRatingBaselinesFromDb, buildRatingBaselinesFromPlayerLogs } from './ratingBaselines.js'
-import { resolveHeroSubrole } from './heroSubroleSelectors.js'
+import { resolveHeroSubrole, getHeroRatingBaselineKey } from './heroSubroleSelectors.js'
 import {
   calculateRawProfileScore,
   getRatingModelVersion,
@@ -96,7 +96,7 @@ function getLogPer10Stats(logRow) {
 
 function getRatingBaselinesForResolution(baselines, resolution) {
   return {
-    heroBaseline: baselines?.byHero?.[resolution?.canonicalHeroName] || null,
+    heroBaseline: baselines?.byHero?.[getHeroRatingBaselineKey(resolution)] || null,
     profileBaseline: baselines?.byScoringProfile?.[resolution?.scoringProfile] || null,
     subroleBaseline: baselines?.bySubrole?.[resolution?.resolvedSubrole] || null
   }

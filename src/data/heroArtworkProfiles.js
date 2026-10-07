@@ -1,6 +1,7 @@
 // Source: FryDeck heroPortraitProfiles.js. These values describe the shared
 // transparent source artwork, independent of the broadcast canvas or web layout.
 export const HERO_ARTWORK_PROFILES = Object.freeze({
+  "doctrine": { "contentHeight": 0.9639, "focusX": 0.5167, "top": 0.0361 },
   "domina": {
     "contentHeight": 0.833,
     "focusX": 0.494,
