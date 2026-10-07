@@ -96,7 +96,13 @@ export function resolveHeroSubrole(heroName, context = {}) {
   if (match) {
     const canonicalKey = normalizeHeroSubroleLookupKey(match.canonicalHeroName)
     const aliasMatched = key !== canonicalKey || inputHeroName !== match.canonicalHeroName
-    return createResolvedHero(match.canonicalHeroName, match.config, {
+    // Keep the established DPS profile for archived or unlabelled Sombra data.
+    // New support records explicitly select the generic support baseline.
+    const recordedRole = normalizeOfficialRole(context.officialRole || context.role || context.primarySubrole)
+    const config = match.canonicalHeroName === 'Sombra' && recordedRole === 'SUPPORT'
+      ? HERO_SUBROLE_FALLBACKS.SUPPORT
+      : match.config
+    return createResolvedHero(match.canonicalHeroName, config, {
       inputHeroName,
       known: true,
       aliasMatched,
@@ -120,4 +126,10 @@ export function listHeroSubroleEntries() {
     ...config,
     secondarySubroles: Array.isArray(config.secondarySubroles) ? [...config.secondarySubroles] : []
   }))
+}
+
+// Keep the original key for legacy/frozen DPS baselines.
+export function getHeroRatingBaselineKey(resolution) {
+  return resolution?.canonicalHeroName === 'Sombra' && resolution?.officialRole === 'SUPPORT'
+    ? 'Sombra:SUPPORT' : resolution?.canonicalHeroName || ''
 }

@@ -302,6 +302,15 @@ export const HERO_SUBROLE_CONFIG = {
     scoringProfile: 'utility_main_support'
   },
 
+  // Provisional support baseline until Season 5 match samples are available.
+  Doctrine: {
+    officialRole: 'SUPPORT',
+    primarySubrole: 'FLEX_SUPPORT',
+    secondarySubroles: [],
+    scoringProfile: 'utility_flex_support',
+    aliases: ['血律'],
+    provisional: true
+  },
   Ana: {
     officialRole: 'SUPPORT',
     primarySubrole: 'FLEX_SUPPORT',

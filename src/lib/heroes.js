@@ -35,7 +35,6 @@ export const OW_HEROES = [
   { id: 'soldier-76', zh: '士兵：76', en: 'Soldier: 76', role: 'damage', assetKey: 'soldier-76', aliases: ['Soldier 76', 'Soldier76'] },
   { id: 'sierra', zh: '西拉', en: 'Sierra', role: 'damage', assetKey: 'sierra' },
   { id: 'shion', zh: '死怨', en: 'Shion', role: 'damage', assetKey: 'shion', aliases: ['Shino', 'shino'] },
-  { id: 'sombra', zh: '黑影', en: 'Sombra', role: 'damage', assetKey: 'sombra' },
   { id: 'symmetra', zh: '秩序之光', en: 'Symmetra', role: 'damage', assetKey: 'symmetra' },
   { id: 'torbjorn', zh: '托比昂', en: 'Torbjörn', role: 'damage', assetKey: 'torbjorn', aliases: ['Torbjorn'] },
   { id: 'tracer', zh: '猎空', en: 'Tracer', role: 'damage', assetKey: 'tracer' },
@@ -43,6 +42,8 @@ export const OW_HEROES = [
   { id: 'venture', zh: '探奇', en: 'Venture', role: 'damage', assetKey: 'venture' },
   { id: 'widowmaker', zh: '黑百合', en: 'Widowmaker', role: 'damage', assetKey: 'widowmaker' },
 
+  { id: 'doctrine', zh: '血律', en: 'Doctrine', role: 'support', assetKey: 'doctrine' },
+  { id: 'sombra', zh: '黑影', en: 'Sombra', role: 'support', assetKey: 'sombra' },
   { id: 'ana', zh: '安娜', en: 'Ana', role: 'support', assetKey: 'ana' },
   { id: 'baptiste', zh: '巴蒂斯特', en: 'Baptiste', role: 'support', assetKey: 'baptiste' },
   { id: 'brigitte', zh: '布丽吉塔', en: 'Brigitte', role: 'support', assetKey: 'brigitte' },
@@ -76,6 +77,7 @@ export const OW_MAPS = [
   { id: 'rialto', zh: '里阿尔托', en: 'Rialto', mode: 'escort', assetKey: 'rialto', imageName: 'Rialto' },
   { id: 'shambali-monastery', zh: '香巴里寺院', en: 'Shambali Monastery', mode: 'escort', assetKey: 'shambali', imageName: 'Shambali', aliases: ['Shambali'] },
   { id: 'circuit-royal', zh: '皇家赛道', en: 'Circuit Royal', mode: 'escort', assetKey: 'circuit-royal', imageName: 'Circuit_Royal' },
+  { id: 'watchpoint-grimsvotn', zh: '监测站：格里姆火山', en: 'Watchpoint: Grímsvötn', mode: 'escort', assetKey: 'watchpoint-grimsvotn', imageName: 'Watchpoint_Grimsvotn', aliases: ['Watchpoint: Grimsvotn', 'Grímsvötn', 'Grimsvotn', '格里姆火山'] },
 
   { id: 'blizzard-world', zh: '暴雪世界', en: 'Blizzard World', mode: 'hybrid', assetKey: 'blizzard-world', imageName: 'Blizzard_World', aliases: ['BlizzardWorld'] },
   { id: 'eichenwalde', zh: '艾兴瓦尔德', en: 'Eichenwalde', mode: 'hybrid', assetKey: 'eichenwalde', imageName: 'Eichenwalde' },
@@ -282,8 +284,19 @@ export function getOwHeroAssetKey(value) {
   return ''
 }
 
-export function getOwHeroRole(value) {
-  return getOwHero(value)?.role || ''
+export function getOwHeroRole(value, context = {}) {
+  const hero = getOwHero(value)
+  // Saved roles preserve historical Sombra records after the Season 5 migration.
+  const recordedRole = String(context?.role || context?.officialRole || '').toUpperCase()
+  if (hero?.id === 'sombra') {
+    if (['DPS', 'DMG', 'DAMAGE', 'FLEX_DPS', 'HITSCAN'].includes(recordedRole)) return 'damage'
+    if (['SUP', 'SUPPORT', 'MAIN_SUPPORT', 'FLEX_SUPPORT'].includes(recordedRole)) return 'support'
+    if (context?.gameVersion === 'overwatch-pre-season5') return 'damage'
+    if (context?.gameVersion === 'overwatch-2026-season5') return 'support'
+    const timestamp = Date.parse(context?.scheduledAt || context?.scheduled_at || '')
+    if (Number.isFinite(timestamp) && timestamp < Date.parse('2026-10-07T00:00:00+08:00')) return 'damage'
+  }
+  return hero?.role || ''
 }
 
 export function formatOwMapName(value, locale = 'zh-CN') {

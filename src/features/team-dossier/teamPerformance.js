@@ -83,7 +83,7 @@ function sidePlayers(record, side) {
       {
         id,
         name: text(player.player_name).split('#')[0] || id,
-        role: role(player.role || getOwHeroRole(player.heroes_played)),
+        role: role(player.role || getOwHeroRole(player.heroes_played, { scheduledAt: record.match.scheduled_at })),
         hero: text(player.heroes_played),
         minutes,
         values: Object.fromEntries(
@@ -257,15 +257,17 @@ export function getPerformanceField(matches, stage = 'all', locale = 'zh-CN') {
 
 function countHeroes(entries, locale) {
   const groups = new Map()
-  for (const { hero, record } of entries) {
-    const key = getOwHeroCanonicalKey(hero)
-    if (!key) continue
+  for (const { hero, record, role: recordedRole } of entries) {
+    const canonicalKey = getOwHeroCanonicalKey(hero)
+    if (!canonicalKey) continue
+    const heroRole = role(recordedRole || getOwHeroRole(hero, { scheduledAt: record.match.scheduled_at }))
+    const key = canonicalKey === 'sombra' ? `${canonicalKey}:${heroRole}` : canonicalKey
     if (!groups.has(key))
       groups.set(key, {
         key,
         hero,
         label: formatOwHeroName(hero, locale),
-        role: role(getOwHeroRole(hero)),
+        role: heroRole,
         records: []
       })
     const group = groups.get(key)
@@ -341,7 +343,7 @@ export function buildTeamPerformance(rows, roster = [], locale = 'zh-CN') {
   const metrics = aggregatePerformance(records)
   const members = memberProfiles(records, roster, locale)
   const heroEntries = records.flatMap((record) =>
-    record.own.players.map((player) => ({ hero: player.hero, record }))
+    record.own.players.map((player) => ({ hero: player.hero, role: player.role, record }))
   )
   const lineups = new Map()
   const cohorts = new Map()
@@ -354,8 +356,12 @@ export function buildTeamPerformance(rows, roster = [], locale = 'zh-CN') {
     const heroes = record.own.players
       .map((player) => player.hero)
       .sort((a, b) => getOwHeroCanonicalKey(a).localeCompare(getOwHeroCanonicalKey(b)))
-    const key = heroes.map(getOwHeroCanonicalKey).join('|')
-    if (!lineups.has(key)) lineups.set(key, { key, heroes, records: [] })
+    const heroRoles = Object.fromEntries(record.own.players.map(player => [getOwHeroCanonicalKey(player.hero), player.role]))
+    const key = heroes.map(hero => {
+      const canonical = getOwHeroCanonicalKey(hero)
+      return canonical === 'sombra' ? `${canonical}:${heroRoles[canonical]}` : canonical
+    }).join('|')
+    if (!lineups.has(key)) lineups.set(key, { key, heroes, heroRoles, records: [] })
     lineups.get(key).records.push(record)
   }
   const bans = { own: [], opponent: [], ownCoverage: 0, opponentCoverage: 0 }
@@ -367,7 +373,7 @@ export function buildTeamPerformance(rows, roster = [], locale = 'zh-CN') {
     ]) {
       const hero = text(map[`${side}_ban`])
       if (!hero || /^(none|null|unknown|无|未禁用|—|-)$/i.test(hero)) continue
-      bans[key].push({ hero, record })
+      bans[key].push({ hero, record, role: map[`${side}_ban_role`] })
       bans[`${key}Coverage`] += 1
     }
   }

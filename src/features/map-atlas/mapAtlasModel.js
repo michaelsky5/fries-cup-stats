@@ -129,10 +129,13 @@ function buildReport(name, records) {
       }
       const uniqueHeroes = new Map()
       stats.forEach(stat => {
-        const key = getOwHeroCanonicalKey(stat.heroes_played)
-        if (!key) return
+        const canonicalKey = getOwHeroCanonicalKey(stat.heroes_played)
+        if (!canonicalKey) return
         const hero = getOwHeroCanonicalName(stat.heroes_played)
-        uniqueHeroes.set(key, { key, name: hero, role: getOwHeroRole(hero) || 'other' })
+        const role = getOwHeroRole(hero, { ...stat, scheduledAt: record.date }) || 'other'
+        const key = canonicalKey === 'sombra' ? `${canonicalKey}:${role}` : canonicalKey
+        uniqueHeroes.set(key, { key, name: hero, role })
+        record.heroKeys.add(canonicalKey)
         record.heroKeys.add(key)
         metrics.forEach(metric => {
           const value = number(stat[metric])

@@ -356,7 +356,7 @@ function RankedBarItem({ rank, title, titleTo = '', sub, badge = '', rateText, w
 function LineupHeroToken({ hero, locale, compact = false }) {
   const heroName = formatOwHeroName(hero.name, locale)
   const imageUrl = getHeroImageUrl(hero.name)
-  const role = String(getOwHeroRole(hero.name) || '').toUpperCase()
+  const role = String(hero.role || getOwHeroRole(hero.name) || '').toUpperCase()
 
   return (
     <div className={[styles.lineupHeroToken, compact ? styles.lineupHeroTokenCompact : ''].filter(Boolean).join(' ')}>
