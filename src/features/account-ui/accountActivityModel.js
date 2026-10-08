@@ -6,7 +6,9 @@ import { buildOwnershipTransferTasks, isOwnershipTransferWorkspace } from '../we
 
 export function getAccountActivityAccess(context, launch) {
   const featureAccess = (feature, level) => launch?.allowed !== false && hasAccountFeatureAccess(launch, feature, level)
-  const participant = (context?.identities || []).some(identity => ['MANAGER', 'PLAYER'].includes(String(identity.type || identity.identityType || '').toUpperCase()))
+  const identities = (context?.identities || []).map(identity => String(identity.type || identity.identityType || '').toUpperCase())
+  const participant = identities.some(type => ['MANAGER', 'PLAYER', 'COACH'].includes(type))
+  const coachOnly = identities.includes('COACH') && !identities.some(type => ['MANAGER', 'PLAYER'].includes(type))
   const canViewWeeklyCompetition = featureAccess('weeklyCompetition') && participant
   const canViewWeeklyMatchRooms = featureAccess('matchRoom') && Boolean(context?.sections?.weeklyRooms || participant)
   const weekly = context?.competitionKind === 'WEEKLY'
@@ -17,7 +19,7 @@ export function getAccountActivityAccess(context, launch) {
     weeklyPreparation: weekly && canViewWeeklyCompetition,
     weeklyRooms: weekly && canViewWeeklyMatchRooms,
     ownershipTransfers: weekly && featureAccess('teamOperations'),
-    preparationReadOnly: !featureAccess('weeklyCompetition', 'WRITE'),
+    preparationReadOnly: coachOnly || !featureAccess('weeklyCompetition', 'WRITE'),
     roomsReadOnly: !featureAccess('matchRoom', 'WRITE')
   }
 }

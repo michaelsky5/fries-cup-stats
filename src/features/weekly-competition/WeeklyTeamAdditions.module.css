@@ -5,6 +5,15 @@
 .panel summary { cursor: pointer; font-weight: 700; padding: 12px 0; }
 .panel form { display: grid; gap: 16px; }
 .panel input:not([type=checkbox]), .panel select { box-sizing: border-box; display: block; width: 100%; min-width: 0; padding: 12px; background: #fafaf7; color: #171b18; border: 1px solid #8b8e85; margin-top: 6px; }
+.panel .consentField { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; padding: 8px 0; box-sizing: border-box; line-height: 1.6; cursor: pointer; }
+.panel .consentField input { flex: 0 0 18px; width: 18px; height: 18px; min-height: 0; margin: 2px 0 0; padding: 0; color-scheme: light; accent-color: var(--fc-data-signal, #f2ca25); }
+.panel .consentField input:focus-visible { outline: 2px solid var(--fc-data-focus-on-light, #806000); outline-offset: 3px; }
+.consentField span { min-width: 0; overflow-wrap: anywhere; }
+.invitationPanel { border-top: 1px solid var(--fc-data-line, #c5c3ba); margin-top: 24px; padding-top: 20px; min-width: 0; }
+.invitationPanel header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 12px; }
+.invitationPanel header > div { flex: 1 1 280px; }
+.invitationLink { display: grid; gap: 10px; padding: 16px; margin: 16px 0; background: var(--fc-data-paper, #f4f2e9); border-left: 3px solid var(--fc-data-signal, #f2ca25); }
+.invitationLink input { width: 100%; min-width: 0; }
 .fields { display: grid; grid-template-columns: repeat(auto-fit,minmax(210px,1fr)); gap: 14px; }
 .panel button { padding: 11px 16px; background: #f2ca25; border: 1px solid #9a7e0a; color: #171b18; cursor: pointer; }
 .panel button:disabled { opacity: .5; cursor: default; }

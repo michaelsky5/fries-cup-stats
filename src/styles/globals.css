@@ -112,7 +112,8 @@ h6 {
   color: var(--text-on-accent);
 }
 
-input,
+/* Native selection controls keep their own size, appearance and focus ring. */
+input:where(:not([type='checkbox']):not([type='radio'])),
 select,
 textarea {
   width: 100%;
@@ -128,13 +129,13 @@ textarea {
     color var(--transition-fast);
 }
 
-input:hover,
+input:where(:not([type='checkbox']):not([type='radio'])):hover,
 select:hover,
 textarea:hover {
   border-color: var(--border-strong);
 }
 
-input:focus,
+input:where(:not([type='checkbox']):not([type='radio'])):focus,
 select:focus,
 textarea:focus {
   border-color: var(--accent);

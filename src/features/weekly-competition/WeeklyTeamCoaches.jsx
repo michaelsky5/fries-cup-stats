@@ -4,6 +4,7 @@ import { useRegistrationDraft } from '../event-registration/registrationDraftGua
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import styles from './WeeklyTeamAdditions.module.css'
+import WeeklyCoachInvitations from './WeeklyCoachInvitations.jsx'
 
 const empty = { displayName: '', battleTag: '', contact: '' }
 const messages = {
@@ -56,6 +57,7 @@ export default function WeeklyTeamCoaches({ teamId, readOnly = false, onActivity
         <div className={styles.fields}>{[['displayName', '教练称呼'], ['battleTag', '完整 BattleTag'], ['contact', '联系方式（用于队内联络）']].map(([key, label]) => <label key={key}>{t(label)}<input value={form[key]} maxLength={key === 'contact' ? 240 : 80} required={key !== 'contact'} pattern={key === 'battleTag' ? '[^#\\s]+#[0-9]+' : undefined} disabled={!writable || (key === 'battleTag' && data.coaches.find(coach => coach.id === editingId)?.accountLinked)} onChange={event => setForm(current => ({ ...current, [key]: event.target.value }))} /></label>)}</div>
         <div className={styles.actions}><button type="submit" disabled={!writable || !dirty}>{t(busy ? '保存中…' : '保存教练资料')}</button>{(editingId || dirty) && <button type="button" disabled={busy} onClick={reset}>{t('取消编辑')}</button>}</div>
       </form>
+      {data.canWrite && !readOnly && <WeeklyCoachInvitations key={teamId} teamId={teamId} coaches={data.coaches} disabled={!writable || dirty} onChanged={() => { refresh(); onActivityChange?.() }} />}
     </>}
   </section>
 }

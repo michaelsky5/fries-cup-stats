@@ -58,7 +58,7 @@ export default function WeeklyOwnershipTransfers({ seasonId, selectedTeamId, foc
           <div className={styles.fields}><label>{t('接任者账号邮箱')}<input type="email" required maxLength={254} value={form.email} autoComplete="off" disabled={!writable} onChange={event => setForm(current => ({ ...current, email: event.target.value }))} /></label><label>{t('当前账号密码')}<input type="password" required autoComplete="current-password" value={form.password} disabled={!writable} onChange={event => setForm(current => ({ ...current, password: event.target.value }))} /></label></div>
           <p>{t('接任者须已有已验证账号，且能够进入这些赛季的报名页。')}</p>
           <label>{t('转让原因')}<input required minLength={2} maxLength={1000} value={form.reason} disabled={!writable} onChange={event => setForm(current => ({ ...current, reason: event.target.value }))} /></label>
-          <label><input type="checkbox" required checked={form.consent} disabled={!writable} onChange={event => setForm(current => ({ ...current, consent: event.target.checked }))} /> {t('我已核对接任邮箱及交接范围，同意审核通过后移交管理权限。')}</label>
+          <label className={styles.consentField}><input type="checkbox" required checked={form.consent} disabled={!writable} onChange={event => setForm(current => ({ ...current, consent: event.target.checked }))} /><span>{t('我已核对接任邮箱及交接范围，同意审核通过后移交管理权限。')}</span></label>
           <button type="submit" disabled={!writable || !team?.fingerprint || data.transfers.some(row => row.organizationId === team.organizationId && ['PENDING', 'SUBMITTED'].includes(row.status))}>{t('确认发起转让')}</button>
         </>}
       </form></details>}
@@ -71,7 +71,7 @@ export default function WeeklyOwnershipTransfers({ seasonId, selectedTeamId, foc
         {row.status === 'PENDING' && row.toUserId === data.userId && <form onSubmit={event => { event.preventDefault(); action(`/ownership-transfers/${row.id}/respond`, { action: 'ACCEPT', revision: row.revision, ...responses[row.id] }, '接任已确认，等待 System 管理员审核。') }}>
           <p>{t('审核通过后，你将接管上述队伍及赛季报名。')}</p>
           <div className={styles.fields}><label>{t('当前账号密码')}<input ref={row.id === focusTransferId ? confirmationInput : undefined} type="password" required autoComplete="current-password" disabled={!writable} value={responses[row.id]?.password || ''} onChange={event => responseField(row.id, 'password', event.target.value)} /></label><label>{t('接任后的联系方式')}<input required minLength={3} maxLength={240} disabled={!writable} value={responses[row.id]?.contact || ''} onChange={event => responseField(row.id, 'contact', event.target.value)} /></label></div>
-          <label><input type="checkbox" required checked={responses[row.id]?.consent || false} disabled={!writable} onChange={event => responseField(row.id, 'consent', event.target.checked)} /> {t('我已核对交接范围，同意接任队伍负责人并提交管理员审核。')}</label><button type="submit" disabled={!writable}>{t('本人确认接任')}</button>
+          <label className={styles.consentField}><input type="checkbox" required checked={responses[row.id]?.consent || false} disabled={!writable} onChange={event => responseField(row.id, 'consent', event.target.checked)} /><span>{t('我已核对交接范围，同意接任队伍负责人并提交管理员审核。')}</span></label><button type="submit" disabled={!writable}>{t('本人确认接任')}</button>
         </form>}
         {['PENDING', 'SUBMITTED'].includes(row.status) && <div className={styles.actions}>
           {row.fromUserId === data.userId && <button type="button" disabled={!writable} onClick={() => action(`/ownership-transfers/${row.id}/respond`, { action: 'CANCEL', revision: row.revision }, '转让已撤回，队伍归属未改变。')}>{t('撤回转让')}</button>}

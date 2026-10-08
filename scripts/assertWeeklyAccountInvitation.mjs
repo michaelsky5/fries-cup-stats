@@ -21,6 +21,7 @@ assert.equal(readWeeklyInvitationLocation().token, '')
 
 const pending = { id: 'invitation', status: 'PENDING', passwordMode: 'SET', identityType: 'MANAGER', user: { id: 'account' }, team: { id: 'team', seasonId: 'FCW26' } }
 assert.equal(isPendingWeeklyInvitation(pending), true)
+assert.equal(isPendingWeeklyInvitation({ ...pending, identityType: 'COACH', passwordMode: 'CONFIRM' }), true)
 for (const change of [{ status: 'ACCEPTED' }, { user: null }, { team: {} }, { passwordMode: 'UNKNOWN' }, { identityType: 'ADMIN' }]) {
   assert.equal(isPendingWeeklyInvitation({ ...pending, ...change }), false)
 }

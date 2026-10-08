@@ -686,7 +686,11 @@
 }
 
 .submitRow input {
-  width: auto;
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
   flex: 0 0 auto;
   accent-color: var(--fc-data-signal);
 }
@@ -1273,7 +1277,7 @@
 .center > .hero h2, .center > .hero h1 { font-size: 26px; line-height: 1.4; margin: 8px 0 10px; font-weight: 750; }
 .center > .hero p { font-size: 13px; line-height: 1.8; font-weight: 400; color: var(--fc-data-text-muted); }
 .center > .hero > div > span { color: var(--fc-data-text-muted); font: 900 17px/1.2 var(--fc-data-font-display); }
-.center :is(input,select,textarea) { min-height: 44px; font-size: 14px; border-radius: 0; }
+.center :is(input:where(:not([type='checkbox']):not([type='radio'])),select,textarea) { min-height: 44px; font-size: 14px; border-radius: 0; }
 .center button { font-size: 13px; min-height: 42px; border-radius: 0; }
 .center p { font-size: 14px; line-height: 1.8; font-weight: 400; }
 .center small { font-size: 12px; line-height: 1.7; font-weight: 400; }

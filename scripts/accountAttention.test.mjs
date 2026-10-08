@@ -110,6 +110,27 @@ test('read-only participants and archived seasons have no writable derived tasks
   assert.equal((await count(f)).overview.openTaskCount, 0)
 })
 
+test('a coach-only account reads the team workspace without receiving team-management tasks or permissions', async () => {
+  const f = fixture()
+  f.data.context.primaryIdentityType = 'COACH'
+  f.data.context.identities = [{ identityType: 'COACH', status: 'ACTIVE' }]
+  f.data.context.sections = { weeklyRooms: true }
+  f.data.context.teamContexts = [{ roles: ['COACH'], capabilities: { canManageTeam: false, canEnterMatchRoom: true } }]
+  f.data.preparation.teams[0].role = 'COACH'; f.data.preparation.teams[0].accessMode = 'READ_ONLY'
+  f.data.rooms.rooms[0].myTeams[0].role = 'COACH'; f.data.rooms.rooms[0].myTeams[0].accessMode = 'READ_ONLY'
+  const access = getAccountActivityAccess(f.data.context, f.data.launch)
+  assert.equal(access.canViewWeeklyCompetition, true)
+  assert.equal(access.weeklyPreparation, true)
+  assert.equal(access.preparationReadOnly, true)
+  assert.equal(access.canViewWeeklyMatchRooms, true)
+  assert.equal((await count(f)).overview.openTaskCount, 0)
+  assert(f.calls.some(call => call.key === 'preparation'), 'the real account loading path fetches the coach workspace')
+  assert.equal(getAccountActivityAccess(f.data.context, { ...f.data.launch, allowed: false }).canViewWeeklyCompetition, false)
+  assert.equal(getAccountActivityAccess(f.data.context, { ...f.data.launch, features: {} }).canViewWeeklyCompetition, false)
+  f.data.context.identities.push({ type: 'MANAGER' })
+  assert.equal(getAccountActivityAccess(f.data.context, f.data.launch).preparationReadOnly, false, 'a separate manager identity retains its existing per-team access checks')
+})
+
 test('context from another account or competition is rejected before reading tasks', async () => {
   for (const kind of ['account', 'competition', 'launch']) {
     const f = fixture()

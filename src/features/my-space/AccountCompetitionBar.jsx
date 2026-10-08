@@ -4,7 +4,7 @@ import { competitionSwitchSearch, teamWorkspaceSearch } from './accountCompetiti
 import styles from './AccountCompetitionBar.module.css'
 import AccountCompetitionEntry from './AccountCompetitionEntry.jsx'
 
-const roles = { LEADER: ['队长', 'Team captain'], MANAGER: ['队伍负责人', 'Team manager'], PLAYER: ['选手', 'Player'] }
+const roles = { LEADER: ['队长', 'Team captain'], MANAGER: ['队伍负责人', 'Team manager'], PLAYER: ['选手', 'Player'], COACH: ['教练', 'Coach'] }
 const statusLabel = (status, en) => status === 'ARCHIVED' ? en ? 'Archived · Read only' : '已归档 · 只读'
   : status === 'DRAFT' ? en ? 'In preparation' : '筹备中' : en ? 'Active' : '进行中'
 

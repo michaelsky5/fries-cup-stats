@@ -99,7 +99,7 @@ export function buildSpaceSections({ player = false, team = false, manager = fal
     ...(administrativeTasks || communicationsVisible || (registration && teamOperationsVisible) || (weekly && (team || player || manager) && (weeklyCompetitionVisible || matchRoomVisible)) ? [SPACE_SECTION_DEFINITIONS.tasks] : []),
     ...(!weekly ? [SPACE_SECTION_DEFINITIONS.events] : []),
     ...(team || player || ((manager || weeklyRooms) && matchRoomVisible) ? [SPACE_SECTION_DEFINITIONS.matches] : []),
-    ...(((team || registration) && teamOperationsVisible) || (manager && weeklyCompetitionVisible) || (player && weeklyCompetitionVisible)
+    ...(((team || registration) && teamOperationsVisible) || ((manager || player || (weekly && team)) && weeklyCompetitionVisible)
       ? [SPACE_SECTION_DEFINITIONS.team]
       : []),
     ...(referee ? [SPACE_SECTION_DEFINITIONS.referee] : []),
