@@ -150,7 +150,7 @@ function WeeklyInvitationFlow({ invitationLocation }) {
           {invitation ? <dl>
             <div><dt>{t(uiText("受邀邮箱", locale), 'Invited email')}</dt><dd>{invitation.maskedEmail}</dd></div>
             <div><dt>{t(uiText("认领对象", locale), 'Identity')}</dt><dd>{invitation.target?.label || t(uiText("周赛身份", locale), 'Weekly identity')}</dd></div>
-            <div><dt>{t(uiText("职责", locale), 'Role')}</dt><dd>{invitation.identityType === 'MANAGER' ? t(uiText("队长 / 队伍负责人", locale), 'Captain / team manager') : t(uiText("选手 · 本队只读", locale), 'Player · team read access')}</dd></div>
+            <div><dt>{t(uiText("职责", locale), 'Role')}</dt><dd>{invitation.identityType === 'MANAGER' ? t(uiText("队长 / 队伍负责人", locale), 'Captain / team manager') : invitation.identityType === 'COACH' ? t(uiText('教练 · 查看本队比赛房，操作按本场代表权限', locale), 'Coach · own team room access; actions follow the match representative assignment') : t(uiText("选手 · 本队只读", locale), 'Player · team read access')}</dd></div>
             {expiresAt && !accepted ? <div><dt>{t(uiText("有效至（本地时间）", locale), 'Expires (local time)')}</dt><dd>{expiresAt}</dd></div> : null}
           </dl> : <dl><div><dt>{t(uiText("邀请由谁提供", locale), 'Who provides the link')}</dt><dd>{t(uiText("周赛管理员或队伍负责人", locale), 'Weekly organizer or team captain')}</dd></div><div><dt>{t(uiText("已有账号", locale), 'Already have an account')}</dt><dd>{t(uiText("使用原账号，无需重新注册", locale), 'Use your existing account')}</dd></div></dl>}
           <p className={styles.permission}>{t(uiText("本次认领只连接邀请指定的身份。队伍负责人和选手的可用操作，以赛季实际权限为准。", locale), 'This link only claims the specified identity. Available team actions follow the season permissions.')}</p>

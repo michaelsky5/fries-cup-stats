@@ -55,14 +55,14 @@ export function createRoomSync({ matchId, read, now = Date.now, monotonicNow = (
         if (writeIssue) noticeKind = writeIssue.kind === 'saved' ? 'success' : 'warning'
         writeIssue = null; online = true
         const calibrated = next.phaseClock ? { ...next, phaseClock: calibrateRoomClock(next.phaseClock, startedAt, receivedAt, next.syncedAt) } : next
-        publish({ data: calibrated, error: '', notice, noticeKind }, { status: 'connected', attempts: 0, lastSuccessAt: now(), nextRetryAt: null, retryAfterUntil: 0, recoveredAt: recovered ? now() : state.connection.recoveredAt })
+        publish({ data: calibrated, error: '', notice, noticeKind }, { status: 'connected', errorCode: null, attempts: 0, lastSuccessAt: now(), nextRetryAt: null, retryAfterUntil: 0, recoveredAt: recovered ? now() : state.connection.recoveredAt })
         return true
       } catch (failure) {
         if (!running || current.token !== sequence) return false
         const result = roomReadFailure(failure, state.data)
         const hold = Number.isFinite(failure.retryAfterMs) ? Math.max(0, failure.retryAfterMs) : 0
         publish({ data: result.data, error: result.error, ...(denied(failure.status) ? { notice: '' } : {}) }, {
-          status: terminal(failure.status) ? 'blocked' : online ? 'retrying' : 'offline', attempts: state.connection.attempts + 1,
+          status: terminal(failure.status) ? 'blocked' : online ? 'retrying' : 'offline', errorCode: failure.data?.error || (failure.status ? `HTTP_${failure.status}` : 'ROOM_NETWORK_ERROR'), attempts: state.connection.attempts + 1,
           retryAfterUntil: hold ? now() + hold : 0, recoveredAt: null,
         })
         return false

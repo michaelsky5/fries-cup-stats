@@ -12,7 +12,7 @@ export function readWeeklyInvitationLocation(location = {}) {
 export function isPendingWeeklyInvitation(invitation) {
   return Boolean(invitation?.id && invitation?.user?.id && invitation?.team?.id && invitation?.team?.seasonId &&
     invitation.status === 'PENDING' && ['SET', 'CONFIRM'].includes(invitation.passwordMode) &&
-    ['MANAGER', 'PLAYER'].includes(invitation.identityType))
+    ['MANAGER', 'PLAYER', 'COACH'].includes(invitation.identityType))
 }
 
 export function validateWeeklyInvitationPassword({ password = '', confirmation = '', passwordMode }, locale = 'zh-CN') {
@@ -37,7 +37,8 @@ export function weeklyInvitationErrorMessage(error, locale = 'zh-CN') {
       VIEWER_ACCOUNT_REQUIRED: 'This account is no longer eligible to claim the invitation. Contact the organizer.',
       PLAYER_IDENTITY_ALREADY_BOUND: 'This account is already linked to another player. The existing identity cannot be replaced.',
       BATTLETAG_ALREADY_BOUND: 'This player has already been claimed by another account. Contact the organizer.',
-      TEAM_CAPTAIN_ALREADY_BOUND: 'This team representative has already been claimed. Contact the organizer.'
+      TEAM_CAPTAIN_ALREADY_BOUND: 'This team representative has already been claimed. Contact the organizer.',
+      TEAM_COACH_ALREADY_BOUND: 'This coach is already linked to another account. Ask your team leader to check the invitation.'
     }
     if (messages[error?.data?.error]) return messages[error.data.error]
     if (error?.status === 429) return 'Too many requests. Please wait before trying again.'
@@ -56,7 +57,8 @@ export function weeklyInvitationErrorMessage(error, locale = 'zh-CN') {
     VIEWER_ACCOUNT_REQUIRED: '受邀账号已停用或不再符合认领条件，请联系管理员。',
     PLAYER_IDENTITY_ALREADY_BOUND: '该账号已绑定其他选手，不能覆盖原身份。',
     BATTLETAG_ALREADY_BOUND: '该选手已被其他账号认领，请联系管理员核对。',
-    TEAM_CAPTAIN_ALREADY_BOUND: '该负责人已被其他账号认领，请联系管理员核对。'
+    TEAM_CAPTAIN_ALREADY_BOUND: '该负责人已被其他账号认领，请联系管理员核对。',
+    TEAM_COACH_ALREADY_BOUND: '这位教练已绑定其他账号，请联系负责人核对邀请。'
   }
   if (messages[error?.data?.error]) return messages[error.data.error]
   if (error?.status === 429) return '操作过于频繁，请稍后重试。'
@@ -71,7 +73,7 @@ export function weeklyInvitationFailureKind(error, hasToken = true) {
   if (code === 'ACCOUNT_LINK_INVITATION_ACCEPTED') return 'used'
   if (code === 'ACCOUNT_LINK_INVITATION_EXPIRED') return 'expired'
   if (code === 'ACCOUNT_LINK_INVITATION_REVOKED') return 'revoked'
-  if (['ACCOUNT_LINK_INVITATION_INVALID', 'ACCOUNT_LINK_INVITATION_CHANGED', 'IDENTITY_STATUS_RESTRICTED', 'VIEWER_ACCOUNT_REQUIRED', 'PLAYER_IDENTITY_ALREADY_BOUND', 'BATTLETAG_ALREADY_BOUND', 'TEAM_CAPTAIN_ALREADY_BOUND'].includes(code)) return 'unavailable'
+  if (['ACCOUNT_LINK_INVITATION_INVALID', 'ACCOUNT_LINK_INVITATION_CHANGED', 'IDENTITY_STATUS_RESTRICTED', 'VIEWER_ACCOUNT_REQUIRED', 'PLAYER_IDENTITY_ALREADY_BOUND', 'BATTLETAG_ALREADY_BOUND', 'TEAM_CAPTAIN_ALREADY_BOUND', 'TEAM_COACH_ALREADY_BOUND', 'TEAM_INACTIVE'].includes(code)) return 'unavailable'
   return 'retry'
 }
 

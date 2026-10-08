@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import styles from '../account-ui/SignalWeeklyTeam.module.css'
 
-const roleLabels = { LEADER: '队长', MANAGER: '队伍负责人', PLAYER: '选手' }
+const roleLabels = { LEADER: '队长', MANAGER: '队伍负责人', PLAYER: '选手', COACH: '教练' }
 const teamName = team => [team?.shortName, team?.name !== team?.shortName ? team?.name : ''].filter(Boolean).join(' · ')
 
 export default function WeeklyTeamContext({ teams, selected, canManage, readOnly, busy, locale, onChange, management, managementPath }) {

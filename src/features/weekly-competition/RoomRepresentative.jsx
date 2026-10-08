@@ -32,7 +32,7 @@ export default function RoomRepresentative({ team, data, disabled, mutate }) {
   }
   return <div className={styles.representative} data-active={side.active} data-room-slot="representative">
     <div className={styles.representativeHeading}><small>{uiText("本场操作代表", uiLocale)}</small><div className={styles.representativeHeadingActions}>{side.isYou && <em>{uiText("你负责操作", uiLocale)}</em>}{side.canAssign ? <button type="button" disabled={disabled} onClick={() => { openedRevision.current = side.revision; setSelected(''); setReason(''); edit(); setOpen(true) }}>{side.userId ? uiText("更换", uiLocale) : uiText("指定", uiLocale)} <span aria-hidden="true">↗</span></button> : null}</div></div>
-    <div className={styles.representativePerson}><strong>{side.name || uiText("尚未指定", uiLocale)}</strong>{side.name && <small>{[side.battleTag, side.role && roleLabel].filter(Boolean).join(' · ')}</small>}</div>
+    <div className={styles.representativePerson}><strong>{side.name || uiText("尚未指定", uiLocale)}</strong>{side.name && <small>{[side.battleTag, side.role && roleLabel].filter(Boolean).join(' · ')}</small>}{side.revision > 0 && side.updatedAt && <small data-representative-changed>{uiText('代表已更换', uiLocale)} · {new Date(side.updatedAt).toLocaleTimeString(uiLocale, { hour: '2-digit', minute: '2-digit' })}{side.assignedBy && ` · ${side.assignedBy}`}</small>}</div>
     <dialog ref={dialog} className={styles.dialog} aria-labelledby={titleId} onCancel={event => { if (saving) event.preventDefault(); else setOpen(false) }}>
       <form onSubmit={submit}>
         <div><small>{team.shortName || team.name}{uiText(" · 本场权限", uiLocale)}</small><h2 id={titleId}>{side.userId ? uiText("转交本场操作代表", uiLocale) : uiText("指定本场操作代表", uiLocale)}</h2></div>
