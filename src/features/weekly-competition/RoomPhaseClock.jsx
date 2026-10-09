@@ -58,7 +58,7 @@ export default function RoomPhaseClock({ data, disabled, mutate, stale = false, 
   if (!clock) return null
   const stageLabel = clock.stage ? uiText(ROOM_CLOCK_LABELS[clock.stage.kind], locale) : uiText('阶段倒计时', locale)
   const grace = clock.stage?.kind === 'MAP' && clock.mapTimeouts?.latest?.mapOrder === clock.stage.mapOrder ? clock.mapTimeouts.latest : null
-  const status = data.timing?.publicFault?.active ? uiText('公共故障 · 计时已暂停',locale) : data.timing?.preparationOverdue ? uiText('准备总时限已到 · 请赛管处理',locale) : stale ? uiText('同步中断 · 计时待核对', locale) : expired ? uiText('已超时', locale) : inSubmissionGrace ? uiText('补交宽限 · 请立即确认', locale) : clock.status === 'WAITING' ? uiText('等待开始', locale) : clock.status === 'IDLE' ? uiText('等待下一阶段', locale) : grace && clock.enabled ? uiText('第 {0} 次超时 · 补时', locale, [grace.count]) : ''
+  const status = stale ? uiText('同步中断 · 计时待核对', locale) : data.timing?.publicFault?.active ? uiText('公共故障 · 计时已暂停',locale) : data.timing?.preparationOverdue ? uiText(data.timing.noRefereePolicy ? '准备截止已到 · 留证待核验' : '准备总时限已到 · 请赛管处理',locale) : data.timing?.noRefereeGrace?.active ? uiText('单次准备补时 · 3 分钟', locale) : expired ? uiText('已超时', locale) : inSubmissionGrace ? uiText('补交宽限 · 请立即确认', locale) : clock.status === 'WAITING' ? uiText('等待开始', locale) : clock.status === 'IDLE' ? uiText('等待下一阶段', locale) : grace && clock.enabled ? uiText('第 {0} 次超时 · 补时', locale, [grace.count]) : ''
   const canExtendPreparation = Boolean(onPreparationExtension && canExtendRoomPreparation(data))
   const description = [stageLabel, owner, status, grace?.count >= 2 ? uiText('本图 Ban 权已取消', locale) : ''].filter(Boolean).join(' · ')
   const cannotAdjust = disabled || stale || expired && ['MAP', 'BAN'].includes(clock.stage?.kind)
