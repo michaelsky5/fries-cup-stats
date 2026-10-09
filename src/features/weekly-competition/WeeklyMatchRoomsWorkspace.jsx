@@ -1,6 +1,7 @@
 import RoomGuideLink from '../room-guide/RoomGuideLink.jsx'
 import { guideRoleForMatch } from '../room-guide/roomGuideModel.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
+import { matchRoomDestination } from '../my-space/spaceDestinations.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -157,8 +158,12 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
   const pendingCount = rooms.filter(item => item.myTeams?.some(team => (
     team.confirmation?.status === 'PENDING' && weeklyResponseAccess(item, team, { readOnly: effectiveReadOnly }).allowed
   ))).length
-  const taskUrl = withSeason ? withSeason('/me?section=tasks') : `/me?section=tasks&season=${encodeURIComponent(seasonId)}`
-  const preparationUrl = withSeason ? withSeason('/me?section=overview') : `/me?section=overview&season=${encodeURIComponent(seasonId)}`
+  const taskUrl = withSeason ? withSeason('/me?section=tasks') : `/me?section=tasks&competition=${encodeURIComponent(seasonId)}`
+  const preparationUrl = withSeason ? withSeason('/me?section=overview&progress=current') : `/me?section=overview&progress=current&competition=${encodeURIComponent(seasonId)}`
+  const roomLink = matchId => {
+    const path = matchRoomDestination(matchId, { search: searchParams.toString(), competitionId: seasonId })
+    return withSeason ? withSeason(path) : path
+  }
 
   function selectRoom(matchId) {
     setFeedback(null)
@@ -242,9 +247,9 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
   return (
     <section id="weekly-match-rooms" className={styles.workspace} aria-label={uiText("周赛比赛房间", uiLocale)} aria-busy={loading}>
       <header className={styles.workHeader}>
-        <div><span>WEEKLY MATCHES</span><h2>{uiText("我的周赛比赛", uiLocale)}</h2></div>
+        <div><span>WEEKLY MATCHES</span><h2>{uiText(currentWorkspace?.operatorView ? '我的执勤比赛' : '我的比赛', uiLocale)}</h2><p>{uiText('显示本届赛事中与你的队伍或执勤有关的全部场次。切换队伍不会隐藏其他关联比赛。', uiLocale)}</p></div>
         <div className={styles.headerActions}><RoomGuideLink season={seasonId} />
-          {(tasksVisible || preparationVisible) && <nav className={styles.returnLinks} aria-label={uiText("参赛流程导航", uiLocale)}>{tasksVisible && <Link to={taskUrl}>{uiText("← 任务中心", uiLocale)}</Link>}{preparationVisible && <Link to={preparationUrl}>{uiText("参赛准备 ↗", uiLocale)}</Link>}</nav>}
+          {(tasksVisible || preparationVisible) && <nav className={styles.returnLinks} aria-label={uiText("参赛流程导航", uiLocale)}>{tasksVisible && <Link to={taskUrl}>{uiText("← 待办", uiLocale)}</Link>}{preparationVisible && <Link to={preparationUrl}>{uiText("参赛进度 ↗", uiLocale)}</Link>}</nav>}
         <button type="button" className={styles.secondaryButton} disabled={loading || submitting} onClick={async () => { if (await confirmDiscard() && mounted.current && !submitLock.current) { setFeedback(null); refresh() } }}>{loading ? uiText("同步中…", uiLocale) : uiText("刷新比赛资料", uiLocale)}</button>
         </div>
       </header>
@@ -284,7 +289,7 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
                       <div className={styles.matchMeta}><span>{room.cycle?.name} · {room.week?.label || uiText("第 {0} 周", uiLocale, [room.week?.weekNumber])}</span><strong data-tone={roomState.tone}>{roomState.label}</strong></div>
                       <h3><span>{weeklyTeamName(room.teamA)}</span><b>{journey.preMatch ? 'VS' : weeklyRoomScore(room)}</b><span>{weeklyTeamName(room.teamB)}</span></h3>
                       <p>{room.displayName} · {formatTime(room.scheduledAt, timezone)}{room.roleLabel ? ` · ${room.roleLabel}` : ''}{!journey.preMatch ? uiText(" · 赛果修订 {0}", uiLocale, [room.revision]) : ''}</p>
-                      <div className={styles.roomEntry}><Link className={styles.primaryButton} to={`/me/matches/${encodeURIComponent(room.id)}/room`}>{uiText("进入比赛房", uiLocale)} →</Link> <RoomGuideLink season={seasonId} match={room.id} role={guideRoleForMatch(room)} step={journey.preMatch ? "entry" : "result"} /></div>
+                      <div className={styles.roomEntry}><Link className={styles.primaryButton} to={roomLink(room.id)}>{uiText("进入比赛房", uiLocale)} →</Link> <RoomGuideLink season={seasonId} match={room.id} role={guideRoleForMatch(room)} step={journey.preMatch ? "entry" : "result"} /></div>
                     </header>
                     <ol className={styles.resultRoute} aria-label={journey.preMatch ? uiText("比赛日进度", uiLocale) : uiText("赛果处理进度", uiLocale)}>
                       {journey.stages.map((stage, index) => <li key={stage.key} data-state={stage.state}><span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><strong>{stage.label}</strong></li>)}

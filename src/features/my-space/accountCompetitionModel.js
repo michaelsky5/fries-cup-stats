@@ -52,7 +52,7 @@ export function withAccountCompetition(path, competitionId, currentSearch = '') 
   if (personal && id) params.set(ACCOUNT_COMPETITION_PARAM, id)
   else params.delete(ACCOUNT_COMPETITION_PARAM)
   const current = new URLSearchParams(currentSearch)
-  if (/^\/me\/?$/.test(pathname) && !params.has('team') && !params.has('entry')
+  if ((/^\/me\/?$/.test(pathname) || /^\/me\/matches\/[^/]+\/room\/?$/.test(pathname)) && !params.has('team') && !params.has('entry')
     && current.get(ACCOUNT_COMPETITION_PARAM) === id && current.get('team')) params.set('team', current.get('team'))
   return `${pathname}${params.size ? `?${params}` : ''}${hash ? `#${hash}` : ''}`
 }

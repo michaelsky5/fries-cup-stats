@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { teamManagementDestination } from '../my-space/spaceDestinations.js'
 import { platformRequest } from '../auth/platformApi.js'
 import { useRegistrationDraft } from '../event-registration/registrationDraftGuard.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
@@ -7,7 +9,8 @@ import styles from './WeeklyTeamAdditions.module.css'
 
 const empty = { displayName: '', email: '', battleTag: '', role: 'UNKNOWN' }
 const labels = { INVITED: '待选手本人确认', SUBMITTED: '待管理员审核', APPROVED: '已加入队伍', REJECTED: '未通过', CANCELLED: '已取消' }
-export default function WeeklyTeamAdditions({ seasonId, selectedTeamId, readOnly = false, onHasAdditions }) {
+export default function WeeklyTeamAdditions({ seasonId, selectedTeamId, readOnly = false, onHasAdditions, navigationOnly = false }) {
+  const location = useLocation()
   const locale = useUiLocale(), t = text => uiText(text, locale)
   const [data, setData] = useState(null), [teamId, setTeamId] = useState(''), [form, setForm] = useState(empty)
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [link, setLink] = useState(null), [notice, setNotice] = useState('')
@@ -19,11 +22,18 @@ export default function WeeklyTeamAdditions({ seasonId, selectedTeamId, readOnly
     try {
       const next = await platformRequest(`${base}/team-additions`, { signal })
       if (selectedTeamId) next.teams = next.teams.filter(team => team.id === selectedTeamId)
-      if (!signal?.aborted && mounted.current) { setData(next); onHasAdditions?.(next.additions.length > 0); setTeamId(current => next.teams.some(team => team.id === current) ? current : next.teams[0]?.id || '') }
+      if (!signal?.aborted && mounted.current) { setData(next); setError(''); onHasAdditions?.(next.additions.length > 0 || next.teams.length > 0); setTeamId(current => next.teams.some(team => team.id === current) ? current : next.teams[0]?.id || '') }
     } catch (failure) { if (!signal?.aborted && mounted.current) { setData(null); setError(failure.message) } }
   }, [base, selectedTeamId, onHasAdditions])
   useEffect(() => { mounted.current = true; const controller = new AbortController(); refresh(controller.signal); return () => { mounted.current = false; controller.abort() } }, [refresh])
   const writable = data?.canWrite && !readOnly && !busy
+  if (navigationOnly) {
+    if (data && !data.teams.length && !data.additions.length) return null
+    return <section className={styles.panel} aria-label={t('已报名队伍管理')}>
+      <header><div><h3>{t('已报名队伍管理')}</h3><p>{t('教练、队员与所有权转让统一在“我的队伍”维护。报名草稿与本人邀请确认仍在本页处理。')}</p></div></header>
+      {error ? <p role="alert" className={styles.error}>{t(error)} <button type="button" onClick={() => refresh()}>{t('重新读取')}</button></p> : !data ? <p role="status">{t('正在读取队伍管理入口…')}</p> : data.teams.length ? <ul className={styles.records}>{data.teams.map(team => <li key={team.id}><strong>{team.name}</strong><div className={styles.actions}>{[['', '本周参赛准备'], ['coaches', '教练管理'], ['members', '队员管理'], ['ownership', '队伍所有权转让']].map(([manage, label]) => <Link key={manage} to={teamManagementDestination({ search: location.search, competitionId: seasonId, teamId: team.id, manage })}>{t(label)} →</Link>)}</div></li>)}</ul> : <p>{t('增员申请仍在处理，可从待办查看本人确认与审核状态。')}</p>}
+    </section>
+  }
   async function action(suffix, body, message, creating = false) {
     if (lock.current || !writable) return
     lock.current = true; setBusy(true); setError(''); setNotice(''); setLink(null)

@@ -57,37 +57,7 @@ import { isCompetitionMatchesEntry, requiresParticipationAccess } from '../../fe
 import useAccountCompetition from '../../features/my-space/useAccountCompetition.js'
 import AccountCompetitionBar from '../../features/my-space/AccountCompetitionBar.jsx'
 import { rememberCompetition, withAccountCompetition } from '../../features/my-space/accountCompetitionModel.js'
-
-const SPACE_SECTION_DEFINITIONS = {
-  overview: { id: 'overview', label: '空间首页', en: 'HOME', group: 'home' },
-  tasks: { id: 'tasks', label: '任务中心', en: 'TASKS', group: 'home' },
-  events: { id: 'events', label: '我的赛事', en: 'EVENTS', group: 'event' },
-  matches: { id: 'matches', label: '我的比赛', en: 'MATCHES', group: 'event' },
-  team: { id: 'team', label: '队伍与报名', en: 'TEAM', group: 'team' },
-  referee: { id: 'referee', label: '赛管工作台', en: 'REFEREE', group: 'work' },
-  caster: { id: 'caster', label: '解说工作台', en: 'CASTER', group: 'work' },
-  stats: { id: 'stats', label: '我的数据', en: 'STATS', group: 'personal' },
-  following: { id: 'following', label: '我的关注', en: 'FOLLOWING', group: 'personal' },
-  communications: { id: 'communications', label: '赛事消息', en: 'COMMS', group: 'service' },
-  stream: { id: 'stream', label: '直播展示', en: 'MY STREAM', group: 'personal' },
-  security: { id: 'security', label: '账号设置', en: 'ACCOUNT', group: 'service' }
-}
-
-const SPACE_NAV_LABELS_EN = { overview: 'Overview', team: 'Team & registration', matches: 'Match rooms', participation: 'Records', tasks: 'To do', messages: 'Inbox', following: 'Following', workspace: 'Workspace' }
-const SPACE_SECTION_LABELS_EN = { overview: 'Space overview', tasks: 'Task center', events: 'My events', matches: 'My matches', team: 'Team & registration', referee: 'Referee workspace', caster: 'Caster workspace', stats: 'My stats', following: 'Following', communications: 'Event messages', stream: 'My stream', security: 'Account settings' }
-
-const SPACE_NAV_GROUPS = [
-  { id: 'overview', label: '概览', en: 'HOME', sectionIds: ['overview'] },
-  { id: 'matches', label: '比赛房', en: 'MATCH ROOMS', sectionIds: ['matches'] },
-  { id: 'team', label: '队伍与报名', en: 'TEAM', sectionIds: ['team'] },
-  { id: 'participation', label: '参赛记录', en: 'RECORDS', sectionIds: ['events', 'stats', 'stream'] },
-  { id: 'workspace', label: '工作台', en: 'WORKSPACE', sectionIds: ['referee', 'caster'] }
-]
-
-const SPACE_UTILITY_NAV = [
-  { id: 'tasks', label: '待办', en: 'TO DO', sectionIds: ['tasks'] },
-  { id: 'messages', label: '消息', en: 'INBOX', sectionIds: ['communications'] }
-]
+import { SPACE_SECTION_DEFINITIONS, SPACE_PRIMARY_IDS, SPACE_NAV_GROUPS, SPACE_UTILITY_NAV, spaceSectionLabel, resolveSpaceEntry, registrationEntryPolicy } from '../../features/my-space/spaceNavigation.js'
 
 export function buildSpaceSections({ player = false, team = false, manager = false, referee = false, caster = false, weekly = false, weeklyRooms = false, registration = false, administrativeTasks = false, publicStats = true, launch = null } = {}) {
   const communicationsVisible = !launch || hasAccountFeatureAccess(launch, 'communications')
@@ -213,6 +183,17 @@ function ReadOnlyWorkspaceNotice({ title, description }) {
   )
 }
 
+function SpaceEntryNotice({ reason, locale, withSeason }) {
+  const messages = {
+    PARTICIPATION_RECORDS: '周赛参赛记录已归入“参赛进度”，已打开历史记录。',
+    STAFF_MATCHES: '本届赛管与解说从“我的比赛”进入获指派场次。档期与工作人员身份可在账号设置中查看。',
+    UNAVAILABLE_SECTION: '当前赛事或账号身份未开放这个栏目，已返回概览。可从上方入口选择可用功能。',
+    UNKNOWN_SECTION: '这个栏目链接已失效，已返回概览。请从上方入口继续。'
+  }
+  if (!messages[reason]) return null
+  return <aside className={styles.entryNotice} role="status"><p>{uiText(messages[reason], locale)}</p>{reason === 'STAFF_MATCHES' && <Link to={withSeason('/account')}>{uiText('账号设置', locale)} →</Link>}</aside>
+}
+
 function matchResultLabel(result) {
   const key = String(result || '').trim().toLowerCase()
   if (key === 'win' || key === '胜') return '胜'
@@ -268,10 +249,10 @@ function NavChevron() {
   return <svg className={styles.navChevron} viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
 }
 
-export function SpaceTabs({ activeSection, withSeason, sections, overview = null, locale = 'zh-CN', roomEntry = false }) {
+export function SpaceTabs({ activeSection, withSeason, sections, overview = null, locale = 'zh-CN' }) {
   const [expanded, setExpanded] = useState(false)
   const menuId = useId()
-  const sectionLabel = section => locale === 'en-US' ? SPACE_SECTION_LABELS_EN[section?.id] || 'Space overview' : uiText(section?.label || '空间首页', locale)
+  const sectionLabel = section => spaceSectionLabel(section?.id, locale)
   const countLabel = (count, group) => locale === 'en-US' ? count + (group === 'tasks' ? ' tasks to do' : ' unread messages') : count + (group === 'tasks' ? uiText(' 项待办', locale) : uiText(' 条未读消息', locale))
   const operationalCount = Number(overview?.openTaskCount || 0)
   const taskPending = ['loading', 'error'].includes(overview?.taskSyncStatus)
@@ -302,14 +283,11 @@ export function SpaceTabs({ activeSection, withSeason, sections, overview = null
   const groups = availableGroups(SPACE_NAV_GROUPS)
   const utilities = availableGroups(SPACE_UTILITY_NAV)
   const activeGroup = groups.find(group => group.items.length > 1 && group.items.some(section => section.id === activeSection))
-  const quickSections = [
-    ['overview', '概览', 'Overview'], ['tasks', '待办', 'To do'], ['team', '队伍', 'Team'],
-    ['matches', '比赛', 'Matches'], ['communications', '消息', 'Inbox']
-  ].filter(([id]) => sections.some(section => section.id === id))
+  const quickSections = SPACE_PRIMARY_IDS.filter(id => sections.some(section => section.id === id))
   const renderGroup = (group, utility = false) => {
     const active = group.items.some(section => section.id === activeSection)
-    const groupLabel = group.items.length === 1 && group.items[0].id === 'stream' ? sectionLabel(group.items[0]) : group.id === 'matches' && !roomEntry ? sectionLabel(group.items[0]) : locale === 'en-US' ? SPACE_NAV_LABELS_EN[group.id] : uiText(group.label, locale)
-    const count = group.id === 'tasks' ? taskBadge : group.id === 'messages' ? unreadMessageCount : 0
+    const groupLabel = group.items.length === 1 ? sectionLabel(group.items[0]) : locale === 'en-US' ? group.english : uiText(group.label, locale)
+    const count = group.id === 'tasks' ? taskBadge : group.id === 'communications' ? unreadMessageCount : 0
     if (group.items.length === 1) {
       const section = group.items[0]
       return <Link key={group.id} className={active ? styles.spaceTabActive : ''} aria-current={active ? 'page' : undefined} to={withSeason('/me?section=' + section.id)}>
@@ -338,8 +316,8 @@ export function SpaceTabs({ activeSection, withSeason, sections, overview = null
     }
   }}>
       <div ref={quickNav} className={styles.spaceQuickNav}>
-        {quickSections.map(([id, label, en]) => <Link key={id} to={withSeason(`/me?section=${id}`)} onClick={() => setExpanded(false)} aria-current={activeSection === id ? 'page' : undefined}>
-          {locale === 'en-US' ? en : uiText(label, locale)}
+        {quickSections.map(id => <Link key={id} to={withSeason(`/me?section=${id}`)} onClick={() => setExpanded(false)} aria-current={activeSection === id ? 'page' : undefined}>
+          {spaceSectionLabel(id, locale)}
           {id === 'tasks' && taskBadge ? <b aria-label={taskBadgeLabel}>{taskBadge}</b> : null}
           {id === 'communications' && unreadMessageCount ? <b aria-label={countLabel(unreadMessageCount, 'messages')}>{unreadMessageCount}</b> : null}
         </Link>)}
@@ -348,13 +326,13 @@ export function SpaceTabs({ activeSection, withSeason, sections, overview = null
       <button type="button" className={styles.spaceNavToggle} aria-expanded={expanded} aria-controls={menuId} onClick={() => setExpanded(value => !value)}>
         <strong>{sectionLabel(activeDefinition)}</strong><span>{locale === 'en-US' ? 'Sections' : uiText('切换栏目', locale)} <NavChevron /></span>
       </button>
-      {sections.some(section => section.id === 'matches') ? <Link className={styles.spaceRoomShortcut} aria-current={activeSection === 'matches' ? 'page' : undefined} to={withSeason('/me?section=matches')}>{roomEntry ? uiText('比赛房', locale) : sectionLabel(SPACE_SECTION_DEFINITIONS.matches)} <span aria-hidden="true">→</span></Link> : null}
+      {sections.some(section => section.id === 'matches') ? <Link className={styles.spaceRoomShortcut} aria-current={activeSection === 'matches' ? 'page' : undefined} to={withSeason('/me?section=matches')}>{sectionLabel(SPACE_SECTION_DEFINITIONS.matches)} <span aria-hidden="true">→</span></Link> : null}
     </div>
     <div className={styles.spaceNavRow} onClick={event => { if (event.target.closest('a')) setExpanded(false) }}>
       <div id={menuId} className={styles.spaceNavGroups}>{groups.map(group => renderGroup(group))}</div>
       {utilities.length ? <div className={styles.spaceNavUtilities} role="group" aria-label={uiText('待办与消息', locale)}>{utilities.map(group => renderGroup(group, true))}</div> : null}
     </div>
-    {activeGroup ? <div className={styles.spaceSubnav} aria-label={locale === 'en-US' ? SPACE_NAV_LABELS_EN[activeGroup.id] + ' pages' : uiText('{0}分区', locale, [activeGroup.label])}>
+    {activeGroup ? <div className={styles.spaceSubnav} aria-label={locale === 'en-US' ? activeGroup.english + ' pages' : uiText('{0}分区', locale, [activeGroup.label])}>
       {activeGroup.items.map(section => <Link key={section.id} to={withSeason('/me?section=' + section.id)} aria-current={section.id === activeSection ? 'page' : undefined}>{sectionLabel(section)}</Link>)}
     </div> : null}
   </nav>
@@ -514,7 +492,7 @@ export default function MySpacePage() {
   if (params.get('section') === 'predictions') {
     const next = new URLSearchParams(params)
     next.set('section', 'overview')
-    return <Navigate replace to={`/me?${next}`} />
+    return <Navigate replace to={`/me?${next}`} state={{ spaceEntryNotice: 'UNKNOWN_SECTION' }} />
   }
   if (params.get('section') === 'security') {
     const next = new URLSearchParams(params)
@@ -689,7 +667,8 @@ function MySpaceContent() {
       viewer: verifiedIdentityTypes.size === 0
     }
   }, [accountCapabilities.canAccessTeamSpace, authUser, currentSpaceContext, fallbackPrimaryIdentityType, isVerifiedPlayer, seasonId, verifiedIdentityTypes])
-  const canShowRegistrationEntry = effectiveSpaceContext.contract === 'ACCOUNT_FOUNDATION_V1' && hasAccountFeatureAccess(accountLaunch, 'teamOperations')
+  const registrationPolicy = registrationEntryPolicy(effectiveSpaceContext, competition.selected, searchParams.get('team'))
+  const canShowRegistrationEntry = effectiveSpaceContext.contract === 'ACCOUNT_FOUNDATION_V1' && hasAccountFeatureAccess(accountLaunch, 'teamOperations') && registrationPolicy.visible
   const spaceSections = useMemo(() => buildSpaceSections({
     administrativeTasks: Boolean(effectiveSpaceContext.sections?.tasks),
     registration: canShowRegistrationEntry,
@@ -737,7 +716,8 @@ function MySpaceContent() {
   const primarySpaceIdentityType = getPrimarySpaceIdentityType(effectiveSpaceContext, fallbackPrimaryIdentityType)
   const isPrimaryPlayer = primarySpaceIdentityType === 'PLAYER' && isVerifiedPlayer
   const isPrimaryManager = primarySpaceIdentityType === 'MANAGER'
-  const activeSection = spaceSections.some(section => section.id === requestedSection) ? requestedSection : 'overview'
+  const spaceEntry = resolveSpaceEntry({ search: location.search, sections: spaceSections, weekly: effectiveSpaceContext.competitionKind === 'WEEKLY', staffRoles: competition.selected?.staffRoles || [] })
+  const activeSection = spaceEntry.section
   const participationView = activeSection === 'overview' && (searchParams.has('journey') || searchParams.has('progress'))
   const pageView = `${activeSection}:${participationView}:${searchParams.get('manage') || ''}`
   const previousSection = useRef(pageView)
@@ -748,7 +728,7 @@ function MySpaceContent() {
     previousSection.current = pageView
   }, [pageView, location.state, navigationType])
   const showIdentityContext = spaceContextLoading || Boolean(spaceContextError)
-  const registrationEntry = canShowRegistrationEntry ? <SeasonRegistrationEntry seasonId={seasonId} withSeason={pageLink} className={styles.spaceContextState} /> : null
+  const registrationEntry = canShowRegistrationEntry ? <SeasonRegistrationEntry seasonId={seasonId} withSeason={pageLink} className={styles.spaceContextState} allowCreate={registrationPolicy.allowCreate} /> : null
   const activityAccess = getAccountActivityAccess(effectiveSpaceContext, accountLaunch)
   const { canViewWeeklyCompetition, canViewWeeklyMatchRooms } = activityAccess
   const canWriteWeeklyCompetition = !activityAccess.preparationReadOnly
@@ -857,6 +837,7 @@ function MySpaceContent() {
     </section>
   </main>
   if (!isAuthenticated) return <><div className={styles.guideEntry}><RoomGuideLink label="参赛与比赛指南" /></div><FollowingPage /></>
+  if (currentSpaceContext && spaceEntry.replacement) return <Navigate replace to={spaceEntry.replacement} state={{ ...location.state, spaceEntryNotice: spaceEntry.notice }} />
   return (
     <main className={styles.page} data-design="signal" data-native-mobile data-page-mode={activeSection === 'following' ? 'index' : 'control'}>
       <SpaceHeader>
@@ -867,9 +848,10 @@ function MySpaceContent() {
           actions={<RoomGuideLink season={seasonId} label="参赛指南" className={styles.spaceGuide} />} />
         </div>
         {showIdentityContext && needsParticipationAccess ? <IdentityContextStrip context={effectiveSpaceContext} loading={spaceContextLoading} error={spaceContextError} /> : null}
-        <div className={styles.desktopSpaceNavigation}><SpaceTabs key={activeSection} activeSection={activeSection} withSeason={pageLink} sections={spaceSections} overview={navigationSummary} locale={locale} roomEntry={isWeekly && canViewWeeklyMatchRooms} /></div>
+        <div className={styles.desktopSpaceNavigation}><SpaceTabs key={activeSection} activeSection={activeSection} withSeason={pageLink} sections={spaceSections} overview={navigationSummary} locale={locale} /></div>
       </SpaceHeader>
-      {['overview', 'tasks'].includes(activeSection) ? <AccountActivityWorkspace key={`${seasonId}:${authUser?.id || ''}`} view={activeSection} activity={activity} locale={locale} participationView={participationView} quickEntries={activeSection === 'overview' ? <MobileSpaceMenu sections={spaceSections} overview={navigationSummary} withSeason={pageLink} locale={locale} /> : null} registrationEntry={activeSection === 'overview' ? registrationEntry : null} context={effectiveSpaceContext} withSeason={pageLink} sections={spaceSections} followingSummary={followingSummary} managerStatus={isPrimaryManager ? managerWorkspaceStatus : null} playerStatus={isPrimaryPlayer ? playerWorkspaceStatus : null} genericTasks={hasAccountFeatureAccess(accountLaunch, 'communications')} weeklyPreparation={isWeekly && canViewWeeklyCompetition && spaceSections.some(section => section.id === 'team')} weeklyRooms={isWeekly && canViewWeeklyMatchRooms && spaceSections.some(section => section.id === 'matches')} roomsReadOnly={!canWriteMatchRooms} /> : null}
+      {location.state?.spaceEntryNotice ? <SpaceEntryNotice reason={location.state.spaceEntryNotice} locale={locale} withSeason={pageLink} /> : null}
+      {['overview', 'tasks'].includes(activeSection) ? <AccountActivityWorkspace key={`${seasonId}:${authUser?.id || ''}`} view={activeSection} activity={activity} locale={locale} participationView={participationView} quickEntries={activeSection === 'overview' ? <MobileSpaceMenu sections={spaceSections} overview={navigationSummary} withSeason={pageLink} locale={locale} /> : null} registrationEntry={activeSection === 'overview' && registrationPolicy.onHome ? registrationEntry : null} context={effectiveSpaceContext} withSeason={pageLink} sections={spaceSections} followingSummary={followingSummary} managerStatus={isPrimaryManager ? managerWorkspaceStatus : null} playerStatus={isPrimaryPlayer ? playerWorkspaceStatus : null} genericTasks={hasAccountFeatureAccess(accountLaunch, 'communications')} weeklyPreparation={isWeekly && canViewWeeklyCompetition && spaceSections.some(section => section.id === 'team')} weeklyRooms={isWeekly && canViewWeeklyMatchRooms && spaceSections.some(section => section.id === 'matches')} roomsReadOnly={!canWriteMatchRooms} /> : null}
       {activeSection === 'stream' ? <PlayerStreamWorkspace key={seasonId} seasonId={seasonId} /> : null}
       {activeSection === 'events' ? <MyEventsPanel context={effectiveSpaceContext} withSeason={pageLink} /> : null}
       {activeSection === 'communications' ? <AccountCommunicationsCenter seasonId={seasonId} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} withSeason={pageLink} onSummaryChange={handleTaskSummaryChange} onActivityChange={activity.refresh} /> : null}

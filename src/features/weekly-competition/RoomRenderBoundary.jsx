@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { roomDiagnostic } from './roomResponse.js'
 import styles from './WeeklyLiveRoomPage.module.css'
+import { matchListDestination } from '../my-space/spaceDestinations.js'
 
 export default class RoomRenderBoundary extends Component {
   state = { failed: false, busy: false, receipt: '' }
@@ -31,7 +32,7 @@ export default class RoomRenderBoundary extends Component {
       <p>{t('比赛编号')}：{this.props.matchId}</p>
       <div className={styles.actions}><button type="button" disabled={this.state.busy} onClick={this.retry}>{t(this.state.busy ? '正在重新同步…' : '重新同步比赛房')}</button><button type="button" onClick={this.copy}>{t('复制诊断信息')}</button><button type="button" onClick={() => window.location.reload()}>{t('重新载入页面')}</button></div>
       {this.state.receipt && <p role="status">{t(this.state.receipt)}</p>}
-      <Link to="/me?section=matches">{t('返回我的比赛 ↗')}</Link>
+      <Link to={this.props.returnPath || matchListDestination(this.props.matchId, { search: globalThis.location?.search || '' })}>{t('返回我的比赛 ↗')}</Link>
     </main>
   }
 }

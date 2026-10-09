@@ -42,7 +42,7 @@
     "test:account-identity": "node scripts/assertAccountIdentity.mjs",
     "test:match-room-lifecycle": "node scripts/assertMatchRoomLifecycle.mjs",
     "test:match-room-readiness": "node scripts/assertMatchRoomReadiness.mjs",
-    "test:my-space": "node scripts/assertMySpaceSelectors.mjs && node scripts/assertSpaceOverview.mjs && node scripts/assertAccountPreparation.mjs && node scripts/assertFollowingFeed.mjs && node scripts/assertFavoriteManager.mjs",
+    "test:my-space": "node scripts/assertMySpaceSelectors.mjs && node scripts/assertSpaceOverview.mjs && node scripts/assertAccountPreparation.mjs && node scripts/assertFollowingFeed.mjs && node scripts/assertFavoriteManager.mjs && node --test scripts/spaceNavigation.test.mjs",
     "test:capability-ui": "node scripts/assertCapabilityUi.mjs",
     "test:event-registration-ui": "node scripts/assertEventRegistrationUi.mjs && node --test scripts/assertRegistrationInputs.mjs scripts/registrationJoin.test.mjs && npm run test:region-picker && npm run test:visitor-locale",
     "test:task-notification-ui": "node scripts/assertTaskNotificationUi.mjs && node --test scripts/ownershipTransfers.test.mjs scripts/accountWorkflowTasks.test.mjs",

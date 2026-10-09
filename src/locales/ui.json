@@ -28960,9 +28960,9 @@
     "ko-KR": "이번주 라인업"
   },
   "本周参赛准备": {
+    "en-US": "This week’s preparation",
     "zh-TW": "本週參賽準備",
-    "en-US": "Preparation for this week’s competition",
-    "ko-KR": "이번주 대회 준비"
+    "ko-KR": "이번 주 참가 준비"
   },
   "本周参赛意向已保存。": {
     "zh-TW": "本週參賽意向已儲存。",
@@ -31212,9 +31212,9 @@
     "ko-KR": "참여 상태 보기"
   },
   "查看参赛记录": {
-    "zh-TW": "檢視參賽記錄",
-    "en-US": "View entry records",
-    "ko-KR": "입력 기록 보기"
+    "en-US": "View participation records",
+    "zh-TW": "查看參賽紀錄",
+    "ko-KR": "참가 기록 보기"
   },
   "查看参赛阵容": {
     "zh-TW": "檢視參賽陣容",
@@ -57305,5 +57305,115 @@
   "{0} 的本场队长指定为 {1}。赛管处理，原因：{2}。已提交的比赛操作保留，后续操作由新队长负责。": {"zh-TW":"{0} 的本場隊長指定為 {1}。賽管處理，原因：{2}。已提交的比賽操作保留，後續操作由新代表負責。","en-US":"The referee appointed {1} as {0}’s match representative. Reason: {2}. Submitted decisions are retained. The new representative handles further actions.","ko-KR":"심판이 {1}님을 {0}의 경기 대표로 지정했습니다. 사유: {2}. 제출된 조작은 유지되며 이후 조작은 새 대표가 담당합니다."},
   "登录已失效，请重新登录后进入比赛房。": {"zh-TW":"登入已失效，請重新登入後進入比賽房。","en-US":"Your sign-in has expired. Sign in again to enter the match room.","ko-KR":"로그인이 만료되었습니다. 다시 로그인한 후 경기방에 입장하세요."},
   "没有找到这场比赛，请核对比赛链接。": {"zh-TW":"找不到這場比賽，請核對比賽連結。","en-US":"This match could not be found. Check the match link.","ko-KR":"이 경기를 찾을 수 없습니다. 경기 링크를 확인하세요."},
-  "当前账号没有本场权限，请核对本场指派。": {"zh-TW":"目前帳號沒有本場權限，請核對本場指派。","en-US":"This account does not have access to this match. Check your assignment.","ko-KR":"현재 계정에는 이 경기의 접근 권한이 없습니다. 경기 배정을 확인하세요."}
+  "当前账号没有本场权限，请核对本场指派。": {"zh-TW":"目前帳號沒有本場權限，請核對本場指派。","en-US":"This account does not have access to this match. Check your assignment.","ko-KR":"현재 계정에는 이 경기의 접근 권한이 없습니다. 경기 배정을 확인하세요."},
+  "个人资料与记录": {
+    "en-US": "Profile & records",
+    "zh-TW": "個人資料與紀錄",
+    "ko-KR": "개인 정보 및 참가 기록"
+  },
+  "周赛参赛记录已归入“参赛进度”，已打开历史记录。": {
+    "en-US": "Weekly participation records are now under Participation progress. Your history is open.",
+    "zh-TW": "週賽參賽紀錄已歸入「參賽進度」，已開啟歷史紀錄。",
+    "ko-KR": "주간 대회 참가 기록이 참가 진행 상황으로 이동했습니다. 지난 기록을 열었습니다."
+  },
+  "本届赛管与解说从“我的比赛”进入获指派场次。档期与工作人员身份可在账号设置中查看。": {
+    "en-US": "Referees and casters enter assigned matches from My matches. Availability and staff roles are in Account settings.",
+    "zh-TW": "本屆賽管與解說從「我的比賽」進入獲指派場次。檔期與工作人員身分可在帳號設定中查看。",
+    "ko-KR": "이번 대회의 심판과 해설자는 내 경기에서 배정된 경기에 입장합니다. 일정과 스태프 역할은 계정 설정에서 확인할 수 있습니다."
+  },
+  "当前赛事或账号身份未开放这个栏目，已返回概览。可从上方入口选择可用功能。": {
+    "en-US": "This section is unavailable for your event or role. You are back at Overview; choose an available section above.",
+    "zh-TW": "目前賽事或帳號身分未開放這個欄目，已返回概覽。可從上方入口選擇可用功能。",
+    "ko-KR": "현재 대회 또는 계정 역할에서 사용할 수 없는 항목입니다. 개요로 돌아왔으니 위에서 이용 가능한 기능을 선택하세요."
+  },
+  "这个栏目链接已失效，已返回概览。请从上方入口继续。": {
+    "en-US": "This section link is no longer valid. You are back at Overview; continue from the navigation above.",
+    "zh-TW": "這個欄目連結已失效，已返回概覽。請從上方入口繼續。",
+    "ko-KR": "이 항목의 링크가 유효하지 않아 개요로 돌아왔습니다. 위 메뉴에서 계속하세요."
+  },
+  "我的执勤比赛": {
+    "en-US": "My assigned matches",
+    "zh-TW": "我的執勤比賽",
+    "ko-KR": "내 담당 경기"
+  },
+  "显示本届赛事中与你的队伍或执勤有关的全部场次。切换队伍不会隐藏其他关联比赛。": {
+    "en-US": "All matches in this event related to your teams or staff duties. Switching teams keeps other related matches visible.",
+    "zh-TW": "顯示本屆賽事中與你的隊伍或執勤有關的全部場次。切換隊伍不會隱藏其他關聯比賽。",
+    "ko-KR": "이번 대회에서 내 팀 또는 담당 업무와 관련된 모든 경기를 표시합니다. 팀을 전환해도 다른 관련 경기는 계속 표시됩니다."
+  },
+  "← 待办": {
+    "en-US": "← To do",
+    "zh-TW": "← 待辦",
+    "ko-KR": "← 할 일"
+  },
+  "参赛进度 ↗": {
+    "en-US": "Participation progress ↗",
+    "zh-TW": "參賽進度 ↗",
+    "ko-KR": "참가 진행 상황 ↗"
+  },
+  "← 参赛进度": {
+    "en-US": "← Participation progress",
+    "zh-TW": "← 參賽進度",
+    "ko-KR": "← 참가 진행 상황"
+  },
+  "返回参赛进度 →": {
+    "en-US": "Back to participation progress →",
+    "zh-TW": "返回參賽進度 →",
+    "ko-KR": "참가 진행 상황으로 →"
+  },
+  "查看本周参赛准备": {
+    "en-US": "View this week’s preparation",
+    "zh-TW": "查看本週參賽準備",
+    "ko-KR": "이번 주 참가 준비 보기"
+  },
+  "重新选择我的队伍 →": {
+    "en-US": "Choose my team again →",
+    "zh-TW": "重新選擇我的隊伍 →",
+    "ko-KR": "내 팀 다시 선택 →"
+  },
+  "每周参赛准备与队伍维护统一在“我的队伍”办理。": {
+    "en-US": "Weekly preparation and team maintenance are in My team.",
+    "zh-TW": "每週參賽準備與隊伍維護統一在「我的隊伍」辦理。",
+    "ko-KR": "주간 참가 준비와 팀 관리는 내 팀에서 진행합니다."
+  },
+  "已报名队伍管理": {
+    "en-US": "Manage registered teams",
+    "zh-TW": "已報名隊伍管理",
+    "ko-KR": "등록한 팀 관리"
+  },
+  "教练、队员与所有权转让统一在“我的队伍”维护。报名草稿与本人邀请确认仍在本页处理。": {
+    "en-US": "Manage coaches, members and ownership transfers in My team. Registration drafts and personal invitation confirmations stay here.",
+    "zh-TW": "教練、隊員與所有權轉讓統一在「我的隊伍」維護。報名草稿與本人邀請確認仍在本頁處理。",
+    "ko-KR": "코치, 선수와 팀 소유권 이전은 내 팀에서 관리합니다. 참가 신청 초안과 본인 초대 확인은 이 페이지에서 처리합니다."
+  },
+  "正在读取队伍管理入口…": {
+    "en-US": "Loading team management links…",
+    "zh-TW": "正在讀取隊伍管理入口…",
+    "ko-KR": "팀 관리 링크를 불러오는 중…"
+  },
+  "增员申请仍在处理，可从待办查看本人确认与审核状态。": {
+    "en-US": "The member application is still being processed. Check personal confirmation and review status in To do.",
+    "zh-TW": "增員申請仍在處理，可從待辦查看本人確認與審核狀態。",
+    "ko-KR": "선수 추가 신청이 처리 중입니다. 할 일에서 본인 확인과 심사 상태를 확인하세요."
+  },
+  "队伍资料已审核。教练、队员与每周参赛准备请进入“我的队伍”维护；报名记录仍可在本页查看。": {
+    "en-US": "Team registration is approved. Manage coaches, members and weekly preparation in My team; registration records remain here.",
+    "zh-TW": "隊伍資料已審核。教練、隊員與每週參賽準備請進入「我的隊伍」維護；報名紀錄仍可在本頁查看。",
+    "ko-KR": "팀 등록이 승인되었습니다. 코치, 선수와 주간 참가 준비는 내 팀에서 관리하며 신청 기록은 이 페이지에서 확인할 수 있습니다."
+  },
+  "查看本届执勤比赛 →": {
+    "en-US": "View assigned matches for this event →",
+    "zh-TW": "查看本屆執勤比賽 →",
+    "ko-KR": "이번 대회 담당 경기 보기 →"
+  },
+  "队长、经理、选手或教练完成邀请认领后，这里会自动出现对应队伍的周期与每周资料。": {
+    "en-US": "Once a captain, manager, player or coach accepts an invitation, the team’s cycle and weekly information will appear here.",
+    "zh-TW": "隊長、經理、選手或教練完成邀請認領後，這裡會自動出現對應隊伍的週期與每週資料。",
+    "ko-KR": "팀장, 매니저, 선수 또는 코치가 초대를 수락하면 팀의 사이클과 주간 정보가 여기에 표시됩니다."
+  },
+  "队员管理": {
+    "zh-TW": "隊員管理",
+    "en-US": "Team members",
+    "ko-KR": "팀원 관리"
+  }
 }

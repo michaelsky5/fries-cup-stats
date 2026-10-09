@@ -13,6 +13,7 @@ import RegistrationLogoField from './RegistrationLogoField.jsx'
 import ApprovedTeamLogoEditor from './ApprovedTeamLogoEditor.jsx'
 import WeeklyTeamAdditions from '../weekly-competition/WeeklyTeamAdditions.jsx'
 import WeeklyOwnershipTransfers from '../weekly-competition/WeeklyOwnershipTransfers.jsx'
+import { spaceSectionDestination, teamManagementDestination } from '../my-space/spaceDestinations.js'
 import WeeklyEligibilityFields, { MemberEligibilityEditor, readWeeklyEligibility } from './WeeklyEligibilityFields.jsx'
 import { describeRegistrationError as describeError, translateRegistrationError } from './registrationErrors.js'
 import { SharedRegistrationJoin, RegistrationJoinManager, MyRegistrationJoinApplications } from './SharedRegistrationJoin.jsx'
@@ -44,12 +45,12 @@ function ParticipationPage({ seasonId }) {
   return <AccountFrame title={uiText("赛事报名", uiLocale)} eyebrow="EVENT REGISTRATION" description={uiText("组建本队名单，确认后提交赛事负责人审核。", uiLocale)}><div className={styles.page}>
     <header className={styles.header}>
       <div><span>{uiText("参赛账号", uiLocale)}</span><strong>{user?.displayName || uiText("等待登录", uiLocale)}</strong></div>
-      <div className={styles.actions}><RoomGuideLink season={seasonId} role="manager" label="参赛与比赛指南" />{user ? <><button type="button" onClick={async () => { if (await confirmDiscard()) await logout() }}>{uiText("退出账号", uiLocale)}</button></> : null}<Link to="/me">{uiText("我的空间", uiLocale)}</Link></div>
+      <div className={styles.actions}><RoomGuideLink season={seasonId} role="manager" label="参赛与比赛指南" />{user ? <><button type="button" onClick={async () => { if (await confirmDiscard()) await logout() }}>{uiText("退出账号", uiLocale)}</button></> : null}<Link to={teamManagementDestination({ search: location.search, competitionId: seasonId })}>{uiText("我的队伍", uiLocale)}</Link></div>
     </header>
     {joinToken || (applicationId && user) ? <SharedRegistrationJoin key={`${joinToken || applicationId}:${user?.id || ''}`} token={joinToken} applicationId={applicationId} seasonId={seasonId} /> : invitationToken || (invitationId && user) ? <Invitation key={`${invitationToken || invitationId}:${user?.id || ''}`} token={invitationToken} invitationId={invitationId} seasonId={seasonId} />
       : noticeId && user ? <ParticipationNotice key={`${noticeId}:${user.id}`} seasonId={seasonId} noticeId={noticeId} />
       : isBootstrapping ? <p role="status">{uiText("正在确认登录状态…", uiLocale)}</p>
-        : user ? <><Workspace key={`${user.id}:${seasonId}`} user={user} seasonId={seasonId} hasAdditions={hasAdditions || hasTransfers} /><details className={styles.teamManagement} open={Boolean(focusTransferId) || undefined}><summary>{uiText("队伍管理", uiLocale)}</summary><WeeklyTeamAdditions key={`additions:${user.id}:${seasonId}`} seasonId={seasonId} onHasAdditions={setHasAdditions} /><WeeklyOwnershipTransfers key={`transfers:${user.id}:${seasonId}`} seasonId={seasonId} focusTransferId={focusTransferId} onHasTransfers={setHasTransfers} /></details></> : <Login />}
+        : user ? <><Workspace key={`${user.id}:${seasonId}`} user={user} seasonId={seasonId} hasAdditions={hasAdditions || hasTransfers} /><WeeklyTeamAdditions key={`additions:${user.id}:${seasonId}`} seasonId={seasonId} onHasAdditions={setHasAdditions} navigationOnly /><WeeklyOwnershipTransfers key={`transfers:${user.id}:${seasonId}`} seasonId={seasonId} focusTransferId={focusTransferId} onHasTransfers={setHasTransfers} responseOnly /></> : <Login />}
   </div></AccountFrame>
 }
 
@@ -59,6 +60,7 @@ function Login() {
 }
 
 function ParticipationNotice({ seasonId, noticeId }) {
+  const location = useLocation()
   const locale = useUiLocale()
   const [notice, setNotice] = useState(null), [error, setError] = useState(''), [busy, setBusy] = useState(false)
   const [attempt, setAttempt] = useState(0)
@@ -82,7 +84,7 @@ function ParticipationNotice({ seasonId, noticeId }) {
     {error && <p role="alert" className={styles.error}>{translateRegistrationError(error, locale)}</p>}
     {notice ? <><h2>{notice.title}</h2><p>{notice.message}</p>{notice.requiresAck && !notice.acknowledgedAt ? <button type="button" disabled={busy} onClick={acknowledge}>{uiText('我已知悉', locale)}</button> : <p role="status">{uiText('已确认', locale)}</p>}</> : <p role="status">{uiText('正在读取本赛季报名…', locale)}</p>}
     {error && <button type="button" onClick={() => setAttempt(value => value + 1)}>{uiText('重新读取', locale)}</button>}
-    <Link to={`/me?competition=${encodeURIComponent(seasonId)}&section=tasks`}>{uiText('我的待办', locale)}</Link>
+    <Link to={spaceSectionDestination('tasks', { search: location.search, competitionId: seasonId })}>{uiText('我的待办', locale)}</Link>
   </section>
 }
 
@@ -289,7 +291,7 @@ function Registration({ seasonId, rulebook, eligibilityRequired, record, userId,
     <div className={styles.row}><div><h2>{record.name} <span className={styles.tag}>{statusLabel(record.status)}</span></h2><p>{owner ? uiText("你负责这份队伍报名", uiLocale) : uiText("队伍负责人：{0}", uiLocale, [record.ownerName])} · {record.members.filter(member => member.status === 'CONFIRMED').length}/{record.members.length}{uiText(" 人已确认", uiLocale)}</p></div><button disabled={busy} onClick={onRefresh}>{uiText("刷新确认状态", uiLocale)}</button></div>
     {editable && <button type="button" disabled={busy} aria-expanded={editingTeam} onClick={() => setEditingTeam(value => !value)}>{uiText("修改队伍资料", uiLocale)}</button>}
     {editable && <div hidden={!editingTeam}><TeamForm eligibilityRequired={eligibilityRequired} record={record} busy={busy} onSave={input => perform(prefix, input, 'PATCH', '队伍报名资料')} /></div>}
-    {owner && !editable && <p className={styles.feedback}>{uiText(record.status === 'SUBMITTED' ? '需要修改队伍资料？点击“撤回并修改”，修改后重新提交审核。' : record.status === 'APPROVED' ? (canManageLogo ? '队伍资料已审核。可在上方“队伍自主增员”邀请新队员，队标可在下方更新；每周出赛阵容在“队伍与报名”中管理。' : '队伍资料已审核。联系方式、队标或经历有变更时，请联系赛事管理员更新队伍资料；每周出赛阵容在“队伍与报名”中管理。') : '当前报名不可编辑，请核对报名开放时间或联系赛事管理员。', uiLocale)}</p>}
+    {owner && !editable && <p className={styles.feedback}>{uiText(record.status === 'SUBMITTED' ? '需要修改队伍资料？点击“撤回并修改”，修改后重新提交审核。' : record.status === 'APPROVED' ? '队伍资料已审核。教练、队员与每周参赛准备请进入“我的队伍”维护；报名记录仍可在本页查看。' : '当前报名不可编辑，请核对报名开放时间或联系赛事管理员。', uiLocale)}</p>}
     {owner && canManageLogo && record.status === 'APPROVED' && <ApprovedTeamLogoEditor key={record.logoUrl || 'no-logo'} logoUrl={record.logoUrl || ''} busy={busy} onSave={input => perform(`${prefix}/logo`, input, 'PUT', '队伍队标')} />}
     <ol className={styles.journey} aria-label={uiText("报名进度", uiLocale)}>{stageLabels.map((label, index) => <li key={index} data-state={record.status === 'WITHDRAWN' ? 'inactive' : index < stage || record.status === 'APPROVED' ? 'done' : index === stage ? 'current' : 'upcoming'} aria-current={record.status !== 'WITHDRAWN' && index === stage ? 'step' : undefined}><span>{String(index + 1).padStart(2, '0')}</span><strong>{label}</strong></li>)}</ol>
     {record.reviewNote && <p className={styles.feedback}>{uiText("审核意见：", uiLocale)}{record.reviewNote}</p>}
