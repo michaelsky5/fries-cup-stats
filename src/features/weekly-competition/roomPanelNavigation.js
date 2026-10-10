@@ -1,4 +1,4 @@
-const PANELS = new Set(['teams', 'info', 'more', 'communication', 'records', 'forfeit', 'preparation', 'preparation-incident'])
+const PANELS = new Set(['teams', 'info', 'more', 'communication', 'records', 'forfeit', 'preparation', 'preparation-incident', 'lineup-correction'])
 
 export function getRoomPanel(state, matchId) {
   const panel = state?.roomPanel
