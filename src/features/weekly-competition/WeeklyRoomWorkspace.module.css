@@ -113,6 +113,8 @@
   .columns { grid-template-rows:minmax(0,1fr); }
   .columns>.team { min-height:0;overflow:hidden; }
   .columns>.team>.teamContent { display:flex;flex-direction:column;flex:1;min-height:0;overflow:auto;overscroll-behavior:contain; }
+  .columns>.team>.teamContent>.roster { flex-shrink:0; }
+  .columns>.team>.teamContent>footer { position:sticky;bottom:0;flex-shrink:0;z-index:1; }
   .viewport [data-room-slot=stages] { height:42px;grid-template-rows:42px; }
   .viewport [data-room-slot=stages] li { min-height:0; }
   .viewport [data-room-slot=stages] li button { height:42px;min-height:0; }
