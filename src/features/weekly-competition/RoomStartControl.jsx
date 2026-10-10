@@ -5,6 +5,7 @@ import { useRoomTransport } from './RoomTransport.jsx'
 import { getRoomOperatingSides } from './weeklyRoomFlow.js'
 import RoomPreflightControl from './RoomPreflightControl.jsx'
 import RoomForceStartControl from './RoomForceStartControl.jsx'
+import { RoomPreparationContinuation } from './RoomCaptainAgreements.jsx'
 import styles from './WeeklyLiveRoomPage.module.css'
 import frame from './RoomMatchFrame.module.css'
 
@@ -12,7 +13,8 @@ export default function RoomStartControl({ data, disabled, command, mutate, noti
   const locale = useUiLocale()
   const { coordinationWrite } = useRoomTransport()
   const legacy = data.preflight?.required ?? !data.opening
-  const otherBlockers = data.blockers.filter(item => !data.timing?.startTimeBlocked || item !== data.timing.startBlockReason)
+  const continuationVisible = data.timing?.noRefereePolicy && data.timing.preparationOverdue && data.captainAgreements?.preparation
+  const otherBlockers = data.blockers.filter(item => (!data.timing?.startTimeBlocked || item !== data.timing.startBlockReason) && !(continuationVisible && item.startsWith('准备总时限已到')))
   return <>
     <p>{uiText(legacy ? '核对房间与名单后，由本场授权操作人记录游戏开赛。' : '首发与禁用已完成。游戏实际开始后，记录本图开赛即可。', locale)}</p>
     {data.timing?.startTimeBlocked && <p role="status"><strong>{uiText(data.timing.startBlockReason, locale)}</strong>{data.timing.scheduledStartAt && <> · {new Date(data.timing.scheduledStartAt).toLocaleString(locale, { timeZone: 'Asia/Shanghai', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })} UTC+8</>}</p>}
@@ -27,6 +29,7 @@ export default function RoomStartControl({ data, disabled, command, mutate, noti
       <div className={frame.taskActions}>{getRoomOperatingSides(data).map(side => <button key={side.team.id} disabled={disabled || !side.canConfirm} onClick={() => mutate(() => coordinationWrite('/readiness', { weekId: data.match.weekId, matchId: data.match.id, teamId: side.team.id, ready: !side.ready, fingerprint: side.fingerprint, expectedRevision: side.revision }, data.access.staff, 'PUT'), '准备状态已保存。')}>{side.ready ? uiText('撤回本队准备确认', locale) : uiText('确认本队已准备好', locale)}</button>)}</div>
     </>}
     {otherBlockers.length > 0 && <ul aria-label={uiText('开赛待处理事项', locale)}>{otherBlockers.map(item => <li key={item}>{item}</li>)}</ul>}
+    <RoomPreparationContinuation data={data} disabled={disabled} command={command} />
     <div className={frame.taskActions}>
       {(data.access.staff || (data.access.operatorMode === 'TEAM_CAPTAINS' && data.access.representativeTeams.length > 0)) ? <button type="button" className={styles.primary} disabled={disabled || data.timing?.startTimeBlocked || !data.access.canStart} onClick={() => command('START')}>{uiText('记录本图开赛', locale)}</button> : <strong>{uiText('等待本场授权操作人记录开赛', locale)}</strong>}
       {!data.access.canStart && data.startControl?.canForceStart && <RoomForceStartControl data={data} disabled={disabled} command={command} notice={notice} onPreparationExtension={onPreparationExtension} />}
