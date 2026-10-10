@@ -1,63 +1,299 @@
 {
-  "队伍邀请链接": {"zh-TW":"隊伍邀請連結","en-US":"Team invitation link","ko-KR":"팀 초대 링크"},
-  "赛事增员审核": {"zh-TW":"賽事增員審核","en-US":"Event addition review","ko-KR":"대회 선수 추가 심사"},
-  "等待管理员审核增员": {"zh-TW":"等待管理員審核增員","en-US":"Awaiting administrator addition review","ko-KR":"관리자 선수 추가 심사 대기"},
-  "已加入队内名单": {"zh-TW":"已加入隊內名單","en-US":"Added to the team roster","ko-KR":"팀 명단에 추가됨"},
-  "增员申请未通过": {"zh-TW":"增員申請未通過","en-US":"Addition application declined","ko-KR":"선수 추가 신청 반려"},
-  "增员申请已取消": {"zh-TW":"增員申請已取消","en-US":"Addition application cancelled","ko-KR":"선수 추가 신청 취소됨"},
-  "延长链接有效期": {"zh-TW":"延長連結有效期","en-US":"Extend link expiry","ko-KR":"링크 유효기간 연장"},
-  "续期并保留原链接": {"zh-TW":"續期並保留原連結","en-US":"Renew the same link","ko-KR":"기존 링크 유효기간 갱신"},
-  "经理通过并提交增员审核": {"zh-TW":"經理通過並提交增員審核","en-US":"Accept and submit for addition review","ko-KR":"승인 후 선수 추가 심사 제출"},
-  "经理审核已通过，等待赛事管理员审核增员。": {"zh-TW":"經理審核已通過，等待賽事管理員審核增員。","en-US":"The manager has accepted the application. Administrator addition review is pending.","ko-KR":"매니저가 승인했습니다. 대회 관리자 선수 추가 심사를 기다립니다."},
-  "申请已提交，等待经理审核；之后仍需赛事管理员审核增员。": {"zh-TW":"申請已提交，等待經理審核；之後仍需賽事管理員審核增員。","en-US":"Application submitted for manager review. Administrator addition review is still required afterward.","ko-KR":"매니저 심사에 신청을 제출했습니다. 이후 대회 관리자의 선수 추가 심사가 필요합니다."},
-  "资料已提交。队伍报名正在审核，通过后经理可继续审核增员申请。": {"zh-TW":"資料已提交。隊伍報名正在審核，通過後經理可繼續審核增員申請。","en-US":"Details submitted. The team registration is under review; after approval, the manager can review addition applications.","ko-KR":"정보를 제출했습니다. 팀 등록이 심사 중이며 승인 후 매니저가 선수 추가 신청을 심사할 수 있습니다."},
-  "队伍报名正在审核，可以先提交本人资料；已送审名单不会改变。": {"zh-TW":"隊伍報名正在審核，可以先提交本人資料；已送審名單不會改變。","en-US":"Team registration is under review. You may submit your own details now; the submitted roster will not change.","ko-KR":"팀 등록 심사 중입니다. 본인 정보를 미리 제출할 수 있으며 심사에 제출된 명단은 변경되지 않습니다."},
-  "你已在本队有效名单中，无需重复申请。出赛名单由负责人按周次安排。": {"zh-TW":"你已在本隊有效名單中，無需重複申請。出賽名單由負責人按週次安排。","en-US":"You are already on this team's active roster. No new application is needed; the team lead selects each week's lineup.","ko-KR":"이미 팀의 유효 명단에 포함되어 있습니다. 재신청은 필요 없으며 책임자가 주차별 출전 명단을 정합니다."},
-  "发到队伍群，让新队员本人填写；经理通过后提交赛事增员审核。": {"zh-TW":"發到隊伍群，讓新隊員本人填寫；經理通過後提交賽事增員審核。","en-US":"Share with the team so new players can apply themselves. Manager acceptance submits the application for event addition review.","ko-KR":"팀에 공유하여 신규 선수가 직접 작성하게 하세요. 매니저 승인 후 대회 선수 추가 심사에 제출됩니다."},
-  "取得正式参赛资格前，仍需赛事管理员审核报名或增员申请。": {"zh-TW":"取得正式參賽資格前，仍需賽事管理員審核報名或增員申請。","en-US":"Administrator registration or addition review is required before formal participation eligibility is granted.","ko-KR":"정식 참가 자격을 얻으려면 대회 관리자의 등록 또는 선수 추가 심사가 필요합니다."},
-  "赛管工具": {"zh-TW":"賽管工具","en-US":"Referee tools","ko-KR":"심판 도구"},
-  "关闭提示": {"zh-TW":"關閉提示","en-US":"Dismiss notice","ko-KR":"알림 닫기"},
-  "补交宽限 · 请立即确认": {"zh-TW":"補交寬限 · 請立即確認","en-US":"Grace period · confirm now","ko-KR":"제출 유예 · 지금 확인하세요"},
-  "选图和每轮 Ban 各有一次 15 秒补交宽限；选图处罚后的 60 秒补时与无效 Ban 的纠正窗口不再追加宽限。": {"zh-TW":"選圖和每輪 Ban 各有一次 15 秒補交寬限；選圖處罰後的 60 秒補時與無效 Ban 的糾正窗口不再追加寬限。","en-US":"Map selection and each Ban turn get one 15-second submission grace period. The 60-second map penalty extensions and invalid-Ban correction windows receive no further grace.","ko-KR":"지도 선택과 각 영웅 금지 차례에 15초 제출 유예가 한 번 주어집니다. 지도 선택 제재 후 60초 연장과 잘못된 영웅 금지 수정 시간에는 유예가 추가되지 않습니다."},
-  "比赛房实时进程": {"zh-TW":"比賽房即時進程","en-US":"Live match-room progress","ko-KR":"경기방 실시간 진행"},
-  "每 5 秒自动同步": {"zh-TW":"每 5 秒自動同步","en-US":"Updates every 5 seconds","ko-KR":"5초마다 자동 동기화"},
-  "最近更新 {0}（UTC+8）": {"zh-TW":"最近更新 {0}（UTC+8）","en-US":"Last updated {0} (UTC+8)","ko-KR":"최근 업데이트 {0} (UTC+8)"},
-  "同步中断，正在重试": {"zh-TW":"同步中斷，正在重試","en-US":"Connection interrupted; retrying","ko-KR":"연결 중단, 다시 시도 중"},
-  "同步已暂停": {"zh-TW":"同步已暫停","en-US":"Updates paused","ko-KR":"동기화 일시 중지"},
-  "实时进程暂时无法同步，显示已公布信息。": {"zh-TW":"即時進程暫時無法同步，顯示已公布資訊。","en-US":"Live progress is temporarily unavailable. Published information is shown.","ko-KR":"실시간 진행을 일시적으로 동기화할 수 없습니다. 공개된 정보를 표시합니다."},
-  "已记录 · 待审核": {"zh-TW":"已記錄 · 待審核","en-US":"Recorded · pending review","ko-KR":"기록됨 · 검토 대기"},
-  "本图比分 · 待审核": {"zh-TW":"本圖比分 · 待審核","en-US":"Map score · pending review","ko-KR":"맵 점수 · 검토 대기"},
-  "等待实际开赛": {"zh-TW":"等待實際開賽","en-US":"Waiting for the actual start","ko-KR":"실제 경기 시작 대기"},
-  "本图准备加时": {"zh-TW":"本圖準備加時","en-US":"Extend preparation for this map","ko-KR":"현재 맵 준비 시간 연장"},
-  "处理超时": {"zh-TW":"處理超時","en-US":"Handle timeout","ko-KR":"시간 초과 처리"},
-  "处理准备超时": {"zh-TW":"處理準備超時","en-US":"Handle preparation timeout","ko-KR":"준비 시간 초과 처리"},
-  "准备总时限已到 · 请赛管处理": {"zh-TW":"準備總時限已到 · 請賽管處理","en-US":"Preparation deadline reached · referee action needed","ko-KR":"총 준비 시간 초과 · 심판 처리 필요"},
-  "准备加时已记录并向双方公布。": {"zh-TW":"準備加時已記錄並向雙方公布。","en-US":"The preparation extension has been recorded and shared with both teams.","ko-KR":"준비 시간 연장이 기록되어 양 팀에 공개되었습니다."},
-  "本场赛管可处理技术延误，无需等待管理员在线。填写原因后，加时记录会向双方公开。": {"zh-TW":"本場賽管可處理技術延誤，無需等待管理員上線。填寫原因後，加時記錄會向雙方公開。","en-US":"The assigned referee can handle technical delays without waiting for an administrator. The reason and extension are visible to both teams.","ko-KR":"배정된 심판이 관리자 접속을 기다리지 않고 기술적 지연을 처리할 수 있습니다. 사유와 연장 기록은 양 팀에 공개됩니다."},
-  "当前准备截止": {"zh-TW":"目前準備截止","en-US":"Current preparation deadline","ko-KR":"현재 준비 마감"},
-  "追加准备时间": {"zh-TW":"追加準備時間","en-US":"Additional preparation time","ko-KR":"추가 준비 시간"},
-  "已超时，将从当前时间重新给予所选准备时间。": {"zh-TW":"已超時，將從目前時間重新給予所選準備時間。","en-US":"The deadline has passed. The selected time will run from now.","ko-KR":"마감이 지났습니다. 선택한 시간은 현재 시점부터 적용됩니다."},
-  "尚未超时，将在原截止时间后追加所选准备时间。": {"zh-TW":"尚未超時，將在原截止時間後追加所選準備時間。","en-US":"The selected time will be added to the existing deadline.","ko-KR":"선택한 시간이 기존 마감 시간에 추가됩니다."},
-  "预计新截止": {"zh-TW":"預計新截止","en-US":"Estimated new deadline","ko-KR":"예상 새 마감"},
-  "公开加时原因": {"zh-TW":"公開加時原因","en-US":"Public reason for extension","ko-KR":"공개 연장 사유"},
-  "例如：比赛房页面故障导致准备延误，已核对双方情况。": {"zh-TW":"例如：比賽房頁面故障導致準備延誤，已核對雙方情況。","en-US":"For example: a room-page fault delayed preparation; both teams have been checked.","ko-KR":"예: 경기방 페이지 오류로 준비가 지연되어 양 팀의 상황을 확인했습니다."},
-  "加时只调整本图准备总时限；开赛时间限制、首发与 Ban 校验继续执行。": {"zh-TW":"加時只調整本圖準備總時限；開賽時間限制、首發與 Ban 校驗繼續執行。","en-US":"This extends only total preparation time for this map. Scheduled-start, lineup and Ban checks still apply.","ko-KR":"현재 맵의 총 준비 시간만 연장됩니다. 예정 시작 시간, 선발 명단 및 Ban 검증은 유지됩니다."},
-  "确认加时并向双方公布": {"zh-TW":"確認加時並向雙方公布","en-US":"Confirm and announce extension","ko-KR":"연장 확인 및 양 팀 공개"},
-  "准备总时限已到，本场赛管可记录加时，或填写公开原因并强制记录实际开赛": {"zh-TW":"準備總時限已到，本場賽管可記錄加時，或填寫公開原因並強制記錄實際開賽","en-US":"Preparation time has expired. The assigned referee can extend it or record the actual start with a public takeover reason.","ko-KR":"준비 시간이 초과되었습니다. 배정 심판이 시간을 연장하거나 공개 인계 사유를 입력하여 실제 경기 시작을 기록할 수 있습니다."},
-  "关闭计时": { "zh-TW": "關閉計時", "en-US": "Timer off", "ko-KR": "타이머 끄기" },
-  "恢复计时": { "zh-TW": "恢復計時", "en-US": "Resume", "ko-KR": "타이머 재개" },
-  "关闭后暂停阶段计时和自动超时处理；准备总时限、到场宽限及计划开赛时间仍然有效。": { "zh-TW": "關閉後暫停階段計時和自動超時處理；準備總時限、到場寬限及計劃開賽時間仍然有效。", "en-US": "Turning this off pauses stage timers and automatic timeout handling. Preparation and arrival deadlines and the scheduled start time still apply.", "ko-KR": "단계 타이머와 자동 시간 초과 처리가 일시 중지됩니다. 총 준비 제한 시간, 도착 유예 시간 및 예정된 경기 시작 시간은 그대로 적용됩니다." },
-  "尚未到计划开赛时间，不能记录开赛或强制开赛": { "zh-TW": "尚未到計劃開賽時間，不能記錄開賽或強制開賽", "en-US": "The scheduled start time has not arrived. Neither normal nor forced start is available.", "ko-KR": "예정된 경기 시작 시간 전에는 일반 시작과 강제 시작 모두 사용할 수 없습니다." },
-  "比赛时间待定，请先确认计划开赛时间": { "zh-TW": "比賽時間待定，請先確認計劃開賽時間", "en-US": "The match time is pending. Confirm the scheduled start time first.", "ko-KR": "경기 시간이 정해지지 않았습니다. 예정된 시작 시간을 먼저 확인해 주세요." },
-  "切换队伍": { "zh-TW": "切換隊伍", "en-US": "Switch team", "ko-KR": "팀 전환" },
-  "队伍切换与管理": { "zh-TW": "隊伍切換與管理", "en-US": "Team selection and management", "ko-KR": "팀 전환 및 관리" },
-  "当前队伍 · 切换队伍": { "zh-TW": "目前隊伍 · 切換隊伍", "en-US": "Current team · Switch team", "ko-KR": "현재 팀 · 팀 전환" },
-  "可维护本队资料": { "zh-TW": "可維護本隊資料", "en-US": "You can manage this team", "ko-KR": "이 팀의 정보를 관리할 수 있습니다" },
-  "本队资料仅可查看": { "zh-TW": "本隊資料僅可查看", "en-US": "View-only access to this team", "ko-KR": "이 팀의 정보는 조회만 가능합니다" },
-  "教练管理": { "zh-TW": "教練管理", "en-US": "Manage coaches", "ko-KR": "코치 관리" },
-  "本队名单与教练资料由队长或经理维护。": { "zh-TW": "本隊名單與教練資料由隊長或經理維護。", "en-US": "The team captain or manager maintains this team's roster and coach details.", "ko-KR": "이 팀의 명단과 코치 정보는 주장 또는 매니저가 관리합니다." },
-  "查看本队参赛准备 →": { "zh-TW": "查看本隊參賽準備 →", "en-US": "View this team's preparation →", "ko-KR": "이 팀의 참가 준비 보기 →" },
-  "切换周期或周次": { "zh-TW": "切換週期或週次", "en-US": "Switch cycle or week", "ko-KR": "주기 또는 주차 전환" },
+  "队伍邀请链接": {
+    "zh-TW": "隊伍邀請連結",
+    "en-US": "Team invitation link",
+    "ko-KR": "팀 초대 링크"
+  },
+  "赛事增员审核": {
+    "zh-TW": "賽事增員審核",
+    "en-US": "Event addition review",
+    "ko-KR": "대회 선수 추가 심사"
+  },
+  "等待管理员审核增员": {
+    "zh-TW": "等待管理員審核增員",
+    "en-US": "Awaiting administrator addition review",
+    "ko-KR": "관리자 선수 추가 심사 대기"
+  },
+  "已加入队内名单": {
+    "zh-TW": "已加入隊內名單",
+    "en-US": "Added to the team roster",
+    "ko-KR": "팀 명단에 추가됨"
+  },
+  "增员申请未通过": {
+    "zh-TW": "增員申請未通過",
+    "en-US": "Addition application declined",
+    "ko-KR": "선수 추가 신청 반려"
+  },
+  "增员申请已取消": {
+    "zh-TW": "增員申請已取消",
+    "en-US": "Addition application cancelled",
+    "ko-KR": "선수 추가 신청 취소됨"
+  },
+  "延长链接有效期": {
+    "zh-TW": "延長連結有效期",
+    "en-US": "Extend link expiry",
+    "ko-KR": "링크 유효기간 연장"
+  },
+  "续期并保留原链接": {
+    "zh-TW": "續期並保留原連結",
+    "en-US": "Renew the same link",
+    "ko-KR": "기존 링크 유효기간 갱신"
+  },
+  "经理通过并提交增员审核": {
+    "zh-TW": "經理通過並提交增員審核",
+    "en-US": "Accept and submit for addition review",
+    "ko-KR": "승인 후 선수 추가 심사 제출"
+  },
+  "经理审核已通过，等待赛事管理员审核增员。": {
+    "zh-TW": "經理審核已通過，等待賽事管理員審核增員。",
+    "en-US": "The manager has accepted the application. Administrator addition review is pending.",
+    "ko-KR": "매니저가 승인했습니다. 대회 관리자 선수 추가 심사를 기다립니다."
+  },
+  "申请已提交，等待经理审核；之后仍需赛事管理员审核增员。": {
+    "zh-TW": "申請已提交，等待經理審核；之後仍需賽事管理員審核增員。",
+    "en-US": "Application submitted for manager review. Administrator addition review is still required afterward.",
+    "ko-KR": "매니저 심사에 신청을 제출했습니다. 이후 대회 관리자의 선수 추가 심사가 필요합니다."
+  },
+  "资料已提交。队伍报名正在审核，通过后经理可继续审核增员申请。": {
+    "zh-TW": "資料已提交。隊伍報名正在審核，通過後經理可繼續審核增員申請。",
+    "en-US": "Details submitted. The team registration is under review; after approval, the manager can review addition applications.",
+    "ko-KR": "정보를 제출했습니다. 팀 등록이 심사 중이며 승인 후 매니저가 선수 추가 신청을 심사할 수 있습니다."
+  },
+  "队伍报名正在审核，可以先提交本人资料；已送审名单不会改变。": {
+    "zh-TW": "隊伍報名正在審核，可以先提交本人資料；已送審名單不會改變。",
+    "en-US": "Team registration is under review. You may submit your own details now; the submitted roster will not change.",
+    "ko-KR": "팀 등록 심사 중입니다. 본인 정보를 미리 제출할 수 있으며 심사에 제출된 명단은 변경되지 않습니다."
+  },
+  "你已在本队有效名单中，无需重复申请。出赛名单由负责人按周次安排。": {
+    "zh-TW": "你已在本隊有效名單中，無需重複申請。出賽名單由負責人按週次安排。",
+    "en-US": "You are already on this team's active roster. No new application is needed; the team lead selects each week's lineup.",
+    "ko-KR": "이미 팀의 유효 명단에 포함되어 있습니다. 재신청은 필요 없으며 책임자가 주차별 출전 명단을 정합니다."
+  },
+  "发到队伍群，让新队员本人填写；经理通过后提交赛事增员审核。": {
+    "zh-TW": "發到隊伍群，讓新隊員本人填寫；經理通過後提交賽事增員審核。",
+    "en-US": "Share with the team so new players can apply themselves. Manager acceptance submits the application for event addition review.",
+    "ko-KR": "팀에 공유하여 신규 선수가 직접 작성하게 하세요. 매니저 승인 후 대회 선수 추가 심사에 제출됩니다."
+  },
+  "取得正式参赛资格前，仍需赛事管理员审核报名或增员申请。": {
+    "zh-TW": "取得正式參賽資格前，仍需賽事管理員審核報名或增員申請。",
+    "en-US": "Administrator registration or addition review is required before formal participation eligibility is granted.",
+    "ko-KR": "정식 참가 자격을 얻으려면 대회 관리자의 등록 또는 선수 추가 심사가 필요합니다."
+  },
+  "赛管工具": {
+    "zh-TW": "賽管工具",
+    "en-US": "Referee tools",
+    "ko-KR": "심판 도구"
+  },
+  "关闭提示": {
+    "zh-TW": "關閉提示",
+    "en-US": "Dismiss notice",
+    "ko-KR": "알림 닫기"
+  },
+  "补交宽限 · 请立即确认": {
+    "zh-TW": "補交寬限 · 請立即確認",
+    "en-US": "Grace period · confirm now",
+    "ko-KR": "제출 유예 · 지금 확인하세요"
+  },
+  "选图和每轮 Ban 各有一次 15 秒补交宽限；选图处罚后的 60 秒补时与无效 Ban 的纠正窗口不再追加宽限。": {
+    "zh-TW": "選圖和每輪 Ban 各有一次 15 秒補交寬限；選圖處罰後的 60 秒補時與無效 Ban 的糾正窗口不再追加寬限。",
+    "en-US": "Map selection and each Ban turn get one 15-second submission grace period. The 60-second map penalty extensions and invalid-Ban correction windows receive no further grace.",
+    "ko-KR": "지도 선택과 각 영웅 금지 차례에 15초 제출 유예가 한 번 주어집니다. 지도 선택 제재 후 60초 연장과 잘못된 영웅 금지 수정 시간에는 유예가 추가되지 않습니다."
+  },
+  "比赛房实时进程": {
+    "zh-TW": "比賽房即時進程",
+    "en-US": "Live match-room progress",
+    "ko-KR": "경기방 실시간 진행"
+  },
+  "每 5 秒自动同步": {
+    "zh-TW": "每 5 秒自動同步",
+    "en-US": "Updates every 5 seconds",
+    "ko-KR": "5초마다 자동 동기화"
+  },
+  "最近更新 {0}（UTC+8）": {
+    "zh-TW": "最近更新 {0}（UTC+8）",
+    "en-US": "Last updated {0} (UTC+8)",
+    "ko-KR": "최근 업데이트 {0} (UTC+8)"
+  },
+  "同步中断，正在重试": {
+    "zh-TW": "同步中斷，正在重試",
+    "en-US": "Connection interrupted; retrying",
+    "ko-KR": "연결 중단, 다시 시도 중"
+  },
+  "同步已暂停": {
+    "zh-TW": "同步已暫停",
+    "en-US": "Updates paused",
+    "ko-KR": "동기화 일시 중지"
+  },
+  "实时进程暂时无法同步，显示已公布信息。": {
+    "zh-TW": "即時進程暫時無法同步，顯示已公布資訊。",
+    "en-US": "Live progress is temporarily unavailable. Published information is shown.",
+    "ko-KR": "실시간 진행을 일시적으로 동기화할 수 없습니다. 공개된 정보를 표시합니다."
+  },
+  "已记录 · 待审核": {
+    "zh-TW": "已記錄 · 待審核",
+    "en-US": "Recorded · pending review",
+    "ko-KR": "기록됨 · 검토 대기"
+  },
+  "本图比分 · 待审核": {
+    "zh-TW": "本圖比分 · 待審核",
+    "en-US": "Map score · pending review",
+    "ko-KR": "맵 점수 · 검토 대기"
+  },
+  "等待实际开赛": {
+    "zh-TW": "等待實際開賽",
+    "en-US": "Waiting for the actual start",
+    "ko-KR": "실제 경기 시작 대기"
+  },
+  "本图准备加时": {
+    "zh-TW": "本圖準備加時",
+    "en-US": "Extend preparation for this map",
+    "ko-KR": "현재 맵 준비 시간 연장"
+  },
+  "处理超时": {
+    "zh-TW": "處理超時",
+    "en-US": "Handle timeout",
+    "ko-KR": "시간 초과 처리"
+  },
+  "处理准备超时": {
+    "zh-TW": "處理準備超時",
+    "en-US": "Handle preparation timeout",
+    "ko-KR": "준비 시간 초과 처리"
+  },
+  "准备总时限已到 · 请赛管处理": {
+    "zh-TW": "準備總時限已到 · 請賽管處理",
+    "en-US": "Preparation deadline reached · referee action needed",
+    "ko-KR": "총 준비 시간 초과 · 심판 처리 필요"
+  },
+  "准备加时已记录并向双方公布。": {
+    "zh-TW": "準備加時已記錄並向雙方公布。",
+    "en-US": "The preparation extension has been recorded and shared with both teams.",
+    "ko-KR": "준비 시간 연장이 기록되어 양 팀에 공개되었습니다."
+  },
+  "本场赛管可处理技术延误，无需等待管理员在线。填写原因后，加时记录会向双方公开。": {
+    "zh-TW": "本場賽管可處理技術延誤，無需等待管理員上線。填寫原因後，加時記錄會向雙方公開。",
+    "en-US": "The assigned referee can handle technical delays without waiting for an administrator. The reason and extension are visible to both teams.",
+    "ko-KR": "배정된 심판이 관리자 접속을 기다리지 않고 기술적 지연을 처리할 수 있습니다. 사유와 연장 기록은 양 팀에 공개됩니다."
+  },
+  "当前准备截止": {
+    "zh-TW": "目前準備截止",
+    "en-US": "Current preparation deadline",
+    "ko-KR": "현재 준비 마감"
+  },
+  "追加准备时间": {
+    "zh-TW": "追加準備時間",
+    "en-US": "Additional preparation time",
+    "ko-KR": "추가 준비 시간"
+  },
+  "已超时，将从当前时间重新给予所选准备时间。": {
+    "zh-TW": "已超時，將從目前時間重新給予所選準備時間。",
+    "en-US": "The deadline has passed. The selected time will run from now.",
+    "ko-KR": "마감이 지났습니다. 선택한 시간은 현재 시점부터 적용됩니다."
+  },
+  "尚未超时，将在原截止时间后追加所选准备时间。": {
+    "zh-TW": "尚未超時，將在原截止時間後追加所選準備時間。",
+    "en-US": "The selected time will be added to the existing deadline.",
+    "ko-KR": "선택한 시간이 기존 마감 시간에 추가됩니다."
+  },
+  "预计新截止": {
+    "zh-TW": "預計新截止",
+    "en-US": "Estimated new deadline",
+    "ko-KR": "예상 새 마감"
+  },
+  "公开加时原因": {
+    "zh-TW": "公開加時原因",
+    "en-US": "Public reason for extension",
+    "ko-KR": "공개 연장 사유"
+  },
+  "例如：比赛房页面故障导致准备延误，已核对双方情况。": {
+    "zh-TW": "例如：比賽房頁面故障導致準備延誤，已核對雙方情況。",
+    "en-US": "For example: a room-page fault delayed preparation; both teams have been checked.",
+    "ko-KR": "예: 경기방 페이지 오류로 준비가 지연되어 양 팀의 상황을 확인했습니다."
+  },
+  "加时只调整本图准备总时限；开赛时间限制、首发与 Ban 校验继续执行。": {
+    "zh-TW": "加時只調整本圖準備總時限；開賽時間限制、首發與 Ban 校驗繼續執行。",
+    "en-US": "This extends only total preparation time for this map. Scheduled-start, lineup and Ban checks still apply.",
+    "ko-KR": "현재 맵의 총 준비 시간만 연장됩니다. 예정 시작 시간, 선발 명단 및 Ban 검증은 유지됩니다."
+  },
+  "确认加时并向双方公布": {
+    "zh-TW": "確認加時並向雙方公布",
+    "en-US": "Confirm and announce extension",
+    "ko-KR": "연장 확인 및 양 팀 공개"
+  },
+  "准备总时限已到，本场赛管可记录加时，或填写公开原因并强制记录实际开赛": {
+    "zh-TW": "準備總時限已到，本場賽管可記錄加時，或填寫公開原因並強制記錄實際開賽",
+    "en-US": "Preparation time has expired. The assigned referee can extend it or record the actual start with a public takeover reason.",
+    "ko-KR": "준비 시간이 초과되었습니다. 배정 심판이 시간을 연장하거나 공개 인계 사유를 입력하여 실제 경기 시작을 기록할 수 있습니다."
+  },
+  "关闭计时": {
+    "zh-TW": "關閉計時",
+    "en-US": "Timer off",
+    "ko-KR": "타이머 끄기"
+  },
+  "恢复计时": {
+    "zh-TW": "恢復計時",
+    "en-US": "Resume",
+    "ko-KR": "타이머 재개"
+  },
+  "关闭后暂停阶段计时和自动超时处理；准备总时限、到场宽限及计划开赛时间仍然有效。": {
+    "zh-TW": "關閉後暫停階段計時和自動超時處理；準備總時限、到場寬限及計劃開賽時間仍然有效。",
+    "en-US": "Turning this off pauses stage timers and automatic timeout handling. Preparation and arrival deadlines and the scheduled start time still apply.",
+    "ko-KR": "단계 타이머와 자동 시간 초과 처리가 일시 중지됩니다. 총 준비 제한 시간, 도착 유예 시간 및 예정된 경기 시작 시간은 그대로 적용됩니다."
+  },
+  "尚未到计划开赛时间，不能记录开赛或强制开赛": {
+    "zh-TW": "尚未到計劃開賽時間，不能記錄開賽或強制開賽",
+    "en-US": "The scheduled start time has not arrived. Neither normal nor forced start is available.",
+    "ko-KR": "예정된 경기 시작 시간 전에는 일반 시작과 강제 시작 모두 사용할 수 없습니다."
+  },
+  "比赛时间待定，请先确认计划开赛时间": {
+    "zh-TW": "比賽時間待定，請先確認計劃開賽時間",
+    "en-US": "The match time is pending. Confirm the scheduled start time first.",
+    "ko-KR": "경기 시간이 정해지지 않았습니다. 예정된 시작 시간을 먼저 확인해 주세요."
+  },
+  "切换队伍": {
+    "zh-TW": "切換隊伍",
+    "en-US": "Switch team",
+    "ko-KR": "팀 전환"
+  },
+  "队伍切换与管理": {
+    "zh-TW": "隊伍切換與管理",
+    "en-US": "Team selection and management",
+    "ko-KR": "팀 전환 및 관리"
+  },
+  "当前队伍 · 切换队伍": {
+    "zh-TW": "目前隊伍 · 切換隊伍",
+    "en-US": "Current team · Switch team",
+    "ko-KR": "현재 팀 · 팀 전환"
+  },
+  "可维护本队资料": {
+    "zh-TW": "可維護本隊資料",
+    "en-US": "You can manage this team",
+    "ko-KR": "이 팀의 정보를 관리할 수 있습니다"
+  },
+  "本队资料仅可查看": {
+    "zh-TW": "本隊資料僅可查看",
+    "en-US": "View-only access to this team",
+    "ko-KR": "이 팀의 정보는 조회만 가능합니다"
+  },
+  "教练管理": {
+    "zh-TW": "教練管理",
+    "en-US": "Manage coaches",
+    "ko-KR": "코치 관리"
+  },
+  "本队名单与教练资料由队长或经理维护。": {
+    "zh-TW": "本隊名單與教練資料由隊長或經理維護。",
+    "en-US": "The team captain or manager maintains this team's roster and coach details.",
+    "ko-KR": "이 팀의 명단과 코치 정보는 주장 또는 매니저가 관리합니다."
+  },
+  "查看本队参赛准备 →": {
+    "zh-TW": "查看本隊參賽準備 →",
+    "en-US": "View this team's preparation →",
+    "ko-KR": "이 팀의 참가 준비 보기 →"
+  },
+  "切换周期或周次": {
+    "zh-TW": "切換週期或週次",
+    "en-US": "Switch cycle or week",
+    "ko-KR": "주기 또는 주차 전환"
+  },
   "名单有未提交的修改": {
     "zh-TW": "名單有未提交的修改",
     "en-US": "Roster has unsubmitted changes",
@@ -53832,8 +54068,8 @@
   },
   "赛管协助": {
     "zh-TW": "賽管協助",
-    "en-US": "Referee support",
-    "ko-KR": "운영진 지원"
+    "ko-KR": "심판 지원",
+    "en-US": "Referee assistance"
   },
   "联系赛管 / 查看协助": {
     "zh-TW": "聯絡賽管 / 查看協助",
@@ -57234,78 +57470,362 @@
     "en-US": "Account linked",
     "zh-TW": "已綁定帳號",
     "ko-KR": "계정 연결됨"
-  },
-  "待教练本人确认": {"zh-TW":"待教練本人確認","en-US":"Awaiting coach confirmation","ko-KR":"코치 본인 확인 대기"},
-  "已确认绑定": {"zh-TW":"已確認綁定","en-US":"Link confirmed","ko-KR":"연결 확인됨"},
-  "教练账号邀请": {"zh-TW":"教練帳號邀請","en-US":"Coach account invitation","ko-KR":"코치 계정 초대"},
-  "教练账号绑定": {"zh-TW":"教練帳號綁定","en-US":"Link a coach account","ko-KR":"코치 계정 연결"},
-  "负责人邀请 → 教练本人确认 → 关联本队。教练可查看本队比赛房，操作仍以本场代表权限为准。": {"zh-TW":"負責人邀請 → 教練本人確認 → 關聯本隊。教練可查看本隊比賽房，操作仍以本場代表權限為準。","en-US":"Team lead invites → coach confirms → account joins this team. Coaches can view team match rooms; actions still require the assigned representative permission.","ko-KR":"책임자 초대 → 코치 본인 확인 → 팀 연결. 코치는 팀 경기방을 볼 수 있으며, 조작은 해당 경기 대표 권한을 따릅니다."},
-  "刷新绑定状态": {"zh-TW":"重新整理綁定狀態","en-US":"Refresh link status","ko-KR":"연결 상태 새로고침"},
-  "正在读取教练邀请；读取失败时请刷新。": {"zh-TW":"正在讀取教練邀請；讀取失敗時請重新整理。","en-US":"Loading coach invitations. Refresh if loading fails.","ko-KR":"코치 초대를 불러오는 중입니다. 실패하면 새로고침해 주세요."},
-  "选择教练": {"zh-TW":"選擇教練","en-US":"Choose coach","ko-KR":"코치 선택"},
-  "教练账号邮箱": {"zh-TW":"教練帳號電子信箱","en-US":"Coach account email","ko-KR":"코치 계정 이메일"},
-  "请教练先注册并验证邮箱。新邀请会撤销这位教练尚未确认的旧邀请；修改教练 BattleTag 后也需要重新邀请。": {"zh-TW":"請教練先註冊並驗證電子信箱。新邀請會撤銷這位教練尚未確認的舊邀請；修改教練 BattleTag 後也需要重新邀請。","en-US":"Ask the coach to register and verify their email first. A new invitation revokes their pending invitations. Changing their BattleTag also requires a new invitation.","ko-KR":"코치가 먼저 가입하고 이메일을 인증해야 합니다. 새 초대를 만들면 해당 코치의 미확인 초대는 취소됩니다. BattleTag를 변경한 경우에도 다시 초대해야 합니다."},
-  "正在生成…": {"zh-TW":"正在產生…","en-US":"Generating…","ko-KR":"생성 중…"},
-  "生成教练绑定邀请": {"zh-TW":"產生教練綁定邀請","en-US":"Create coach invitation","ko-KR":"코치 연결 초대 생성"},
-  "请先保存待绑定的教练资料；已绑定的教练无需再次邀请。": {"zh-TW":"請先儲存待綁定的教練資料；已綁定的教練無需再次邀請。","en-US":"Save the coach details first. Linked coaches do not need another invitation.","ko-KR":"먼저 연결할 코치 정보를 저장하세요. 이미 연결된 코치는 다시 초대할 필요가 없습니다."},
-  "邀请已生成，等待教练本人确认": {"zh-TW":"邀請已產生，等待教練本人確認","en-US":"Invitation created; awaiting coach confirmation","ko-KR":"초대가 생성되었습니다. 코치 본인 확인을 기다립니다."},
-  "有效至：": {"zh-TW":"有效至：","en-US":"Expires: ","ko-KR":"유효기간: "},
-  "将此链接私发给这位教练，请勿公开。教练确认前不会获得本队权限。": {"zh-TW":"將此連結私下傳給這位教練，請勿公開。教練確認前不會取得本隊權限。","en-US":"Send this link privately to the coach. Do not share it publicly. Team access is granted only after the coach confirms.","ko-KR":"이 링크는 코치에게 개인적으로 전달하고 공개하지 마세요. 코치가 확인한 후에만 팀 접근 권한이 부여됩니다."},
-  "绑定邀请链接已复制。": {"zh-TW":"綁定邀請連結已複製。","en-US":"Invitation link copied.","ko-KR":"연결 초대 링크를 복사했습니다."},
-  "复制失败，请手动复制。": {"zh-TW":"複製失敗，請手動複製。","en-US":"Copy failed. Please copy the link manually.","ko-KR":"복사에 실패했습니다. 링크를 직접 복사해 주세요."},
-  "复制教练邀请链接": {"zh-TW":"複製教練邀請連結","en-US":"Copy coach invitation link","ko-KR":"코치 초대 링크 복사"},
-  "教练邀请链接": {"zh-TW":"教練邀請連結","en-US":"Coach invitation link","ko-KR":"코치 초대 링크"},
-  "撤销邀请": {"zh-TW":"撤銷邀請","en-US":"Revoke invitation","ko-KR":"초대 취소"},
-  "重新同步未完成，请核对连接和登录状态。": {"zh-TW":"重新同步未完成，請核對連線與登入狀態。","en-US":"Sync could not finish. Check your connection and sign-in status.","ko-KR":"동기화를 완료하지 못했습니다. 연결 및 로그인 상태를 확인하세요."},
-  "诊断信息已复制。": {"zh-TW":"診斷資訊已複製。","en-US":"Diagnostics copied.","ko-KR":"진단 정보를 복사했습니다."},
-  "复制失败，请记录诊断编号和比赛链接。": {"zh-TW":"複製失敗，請記錄診斷編號與比賽連結。","en-US":"Copy failed. Save the diagnostic code and match link.","ko-KR":"복사에 실패했습니다. 진단 코드와 경기 링크를 기록해 주세요."},
-  "比赛房显示异常": {"zh-TW":"比賽房顯示異常","en-US":"Match room display error","ko-KR":"경기방 표시 오류"},
-  "比赛记录仍保存在服务器。重新同步后可继续；页面不会自动重发刚才的操作。": {"zh-TW":"比賽紀錄仍儲存在伺服器。重新同步後可繼續；頁面不會自動重新提交剛才的操作。","en-US":"Saved match records remain on the server. Sync again to continue. Your last action will not be resubmitted automatically.","ko-KR":"저장된 경기 기록은 서버에 유지됩니다. 다시 동기화하면 계속할 수 있습니다. 마지막 조작은 자동으로 재전송되지 않습니다."},
-  "比赛编号": {"zh-TW":"比賽編號","en-US":"Match ID","ko-KR":"경기 ID"},
-  "重新同步比赛房": {"zh-TW":"重新同步比賽房","en-US":"Sync match room again","ko-KR":"경기방 다시 동기화"},
-  "复制诊断信息": {"zh-TW":"複製診斷資訊","en-US":"Copy diagnostics","ko-KR":"진단 정보 복사"},
-  "重新载入页面": {"zh-TW":"重新載入頁面","en-US":"Reload page","ko-KR":"페이지 새로고침"},
-  "操作代表更换": {"zh-TW":"操作代表更換","en-US":"Representative changed","ko-KR":"조작 대표 변경"},
-  "赛管安排变更": {"zh-TW":"賽管安排變更","en-US":"Referee assignment changed","ko-KR":"심판 배정 변경"},
-  "赛管交接": {"zh-TW":"賽管交接","en-US":"Referee handoff","ko-KR":"심판 인계"},
-  "本场人员变更": {"zh-TW":"本場人員變更","en-US":"Personnel changes","ko-KR":"경기 담당자 변경"},
-  "上次同步记录": {"zh-TW":"上次同步紀錄","en-US":"Last synced records","ko-KR":"마지막 동기화 기록"},
-  "当前编辑赛管": {"zh-TW":"目前編輯賽管","en-US":"Referee currently editing","ko-KR":"현재 편집 중인 심판"},
-  "查看人员变更记录": {"zh-TW":"查看人員變更紀錄","en-US":"View personnel change history","ko-KR":"담당자 변경 기록 보기"},
-  "首发人员变更": {"zh-TW":"先發人員變更","en-US":"Starting lineup changes","ko-KR":"선발 선수 변경"},
-  "首发人员变更仅在双方名单公开后显示。": {"zh-TW":"先發人員變更僅在雙方名單公開後顯示。","en-US":"Lineup changes appear only after both teams’ lineups are revealed.","ko-KR":"선발 선수 변경은 양 팀 명단이 공개된 후에만 표시됩니다."},
-  "本图首发有变更": {"zh-TW":"本圖先發有變更","en-US":"Starting lineup changed for this map","ko-KR":"현재 맵 선발 변경"},
-  "比赛房数据暂未完整，正在重新同步": {"zh-TW":"比賽房資料暫未完整，正在重新同步","en-US":"Room data is incomplete; syncing again","ko-KR":"경기방 데이터가 불완전합니다. 다시 동기화 중입니다."},
-  "网络已断开，正在等待恢复": {"zh-TW":"網路已中斷，正在等待恢復","en-US":"Offline; waiting for connection","ko-KR":"네트워크 연결이 끊겼습니다. 복구를 기다립니다."},
-  "正在读取本场比赛。重新同步后可继续；已保存的比赛操作不会自动重发。": {"zh-TW":"正在讀取本場比賽。重新同步後可繼續；已儲存的比賽操作不會自動重新提交。","en-US":"Loading this match. Sync again to continue. Saved actions will not be resubmitted automatically.","ko-KR":"경기를 불러오는 중입니다. 다시 동기화하면 계속할 수 있습니다. 저장된 조작은 자동으로 재전송되지 않습니다."},
-  "比赛房数据不完整，正在重新同步；已保存的比赛记录不会被清除。": {"zh-TW":"比賽房資料不完整，正在重新同步；已儲存的比賽紀錄不會被清除。","en-US":"Room data is incomplete; syncing again. Saved match records will not be cleared.","ko-KR":"경기방 데이터가 불완전하여 다시 동기화합니다. 저장된 경기 기록은 삭제되지 않습니다."},
-  "代表已更换": {"zh-TW":"代表已更換","en-US":"Representative updated","ko-KR":"대표 변경됨"},
-  "教练 · 查看本队比赛房，操作按本场代表权限": {"zh-TW":"教練 · 查看本隊比賽房，操作依本場代表權限","en-US":"Coach · view team match rooms; actions require match representative permission","ko-KR":"코치 · 팀 경기방 조회, 조작은 경기 대표 권한 필요"},
-  "这位教练已绑定其他账号，请联系负责人核对邀请。": {"zh-TW":"這位教練已綁定其他帳號，請聯絡負責人核對邀請。","en-US":"This coach is linked to another account. Ask the team lead to check the invitation.","ko-KR":"이 코치는 다른 계정에 연결되어 있습니다. 책임자에게 초대 확인을 요청하세요."},
-  "请教练先注册并验证账号邮箱，再发送绑定邀请。": {"zh-TW":"請教練先註冊並驗證帳號電子信箱，再傳送綁定邀請。","en-US":"Ask the coach to register and verify their email before sending an invitation.","ko-KR":"코치가 가입하고 계정 이메일을 인증한 후 초대를 보내세요."},
-  "请先保存本队教练资料，再邀请绑定账号。": {"zh-TW":"請先儲存本隊教練資料，再邀請綁定帳號。","en-US":"Save this team’s coach details before inviting their account.","ko-KR":"팀 코치 정보를 저장한 후 계정 연결을 초대하세요."},
-  "这位教练已经绑定账号。": {"zh-TW":"這位教練已經綁定帳號。","en-US":"This coach account is already linked.","ko-KR":"이미 연결된 코치 계정입니다."},
-  "请先补全教练 BattleTag。": {"zh-TW":"請先補全教練 BattleTag。","en-US":"Enter the coach’s complete BattleTag first.","ko-KR":"먼저 코치의 전체 BattleTag를 입력하세요."},
-  "没有找到本队教练邀请。": {"zh-TW":"沒有找到本隊教練邀請。","en-US":"This team’s coach invitation was not found.","ko-KR":"팀 코치 초대를 찾을 수 없습니다."},
-  "邀请或账号刚刚发生变化，请刷新后重试。": {"zh-TW":"邀請或帳號剛剛發生變化，請重新整理後重試。","en-US":"The invitation or account has changed. Refresh and try again.","ko-KR":"초대 또는 계정이 변경되었습니다. 새로고침 후 다시 시도하세요."},
-  "本场编辑赛管由 {0} 转交给 {1}。": {"zh-TW":"本場編輯賽管由 {0} 轉交給 {1}。","en-US":"Match editing handed over from {0} to {1}.","ko-KR":"경기 편집 담당이 {0}에서 {1}(으)로 인계되었습니다."},
-  "{0} 已加入本场赛管 {1}。请按最新赛管安排沟通；比赛记录保留。": {"zh-TW":"{0} 已加入本場賽管 {1}。請依最新賽管安排溝通；比賽紀錄保留。","en-US":"{0} added referee {1}. Use the updated referee assignment; match records are retained.","ko-KR":"{0}님이 심판 {1}님을 추가했습니다. 최신 심판 배정에 따라 소통하세요. 경기 기록은 유지됩니다."},
-  "{0} 已移除本场赛管 {1}。请按最新赛管安排沟通；比赛记录保留。": {"zh-TW":"{0} 已移除本場賽管 {1}。請依最新賽管安排溝通；比賽紀錄保留。","en-US":"{0} removed referee {1}. Use the updated referee assignment; match records are retained.","ko-KR":"{0}님이 심판 {1}님을 제외했습니다. 최신 심판 배정에 따라 소통하세요. 경기 기록은 유지됩니다."},
-  "{0} 已恢复按排班表安排 {1}。请按最新赛管安排沟通；比赛记录保留。": {"zh-TW":"{0} 已恢復依排班表安排 {1}。請依最新賽管安排溝通；比賽紀錄保留。","en-US":"{0} restored the scheduled assignment for {1}. Use the updated referee assignment; match records are retained.","ko-KR":"{0}님이 {1}님의 배정표를 복원했습니다. 최신 심판 배정에 따라 소통하세요. 경기 기록은 유지됩니다."},
-  "重要操作动态": {"zh-TW":"重要操作動態","en-US":"Important match actions","ko-KR":"중요 경기 조작 알림"},
-  "重要动态": {"zh-TW":"重要動態","en-US":"Activity","ko-KR":"주요 알림"},
-  "重要操作记录": {"zh-TW":"重要操作紀錄","en-US":"Important action history","ko-KR":"중요 조작 기록"},
-  "暂停动态播放": {"zh-TW":"暫停動態播放","en-US":"Pause activity feed","ko-KR":"알림 재생 일시 중지"},
-  "继续动态播放": {"zh-TW":"繼續動態播放","en-US":"Resume activity feed","ko-KR":"알림 재생 계속"},
-  "下一条动态": {"zh-TW":"下一則動態","en-US":"Next activity","ko-KR":"다음 알림"},
-  "已记录本图开赛": {"zh-TW":"已記錄本圖開賽","en-US":"Map start recorded","ko-KR":"현재 맵 시작 기록됨"},
-  "{0} 的本场队长由 {1} 转交给 {2}。负责本场选图、首发到场与职责确认、英雄禁用和比赛沟通。已提交的比赛操作保留，后续操作由新队长负责。": {"zh-TW":"{0} 的本場隊長由 {1} 轉交給 {2}。負責本場選圖、先發到場與職責確認、英雄禁用與比賽溝通。已提交的比賽操作保留，後續操作由新代表負責。","en-US":"{0} handed over match representative duties from {1} to {2}, including map selection, lineups, check-in, hero bans and match communication. Submitted decisions are retained. The new representative handles further actions.","ko-KR":"{0}의 경기 대표가 {1}에서 {2}(으)로 변경되었습니다. 지도 선택, 선발과 출석 및 역할 확인, 영웅 금지, 경기 소통을 담당합니다. 제출된 조작은 유지되며 이후 조작은 새 대표가 담당합니다."},
-  "{0} 的本场队长指定为 {1}。负责本场选图、首发到场与职责确认、英雄禁用和比赛沟通。已提交的比赛操作保留，后续操作由新队长负责。": {"zh-TW":"{0} 的本場隊長指定為 {1}。負責本場選圖、先發到場與職責確認、英雄禁用與比賽溝通。已提交的比賽操作保留，後續操作由新代表負責。","en-US":"{1} is the match representative for {0}, handling map selection, lineups, check-in, hero bans and match communication. Submitted decisions are retained. The new representative handles further actions.","ko-KR":"{0}의 경기 대표로 {1}님이 지정되었습니다. 지도 선택, 선발과 출석 및 역할 확인, 영웅 금지, 경기 소통을 담당합니다. 제출된 조작은 유지되며 이후 조작은 새 대표가 담당합니다."},
-  "{0} 的本场队长由 {1} 转交给 {2}。赛管处理，原因：{3}。已提交的比赛操作保留，后续操作由新队长负责。": {"zh-TW":"{0} 的本場隊長由 {1} 轉交給 {2}。賽管處理，原因：{3}。已提交的比賽操作保留，後續操作由新代表負責。","en-US":"The referee handed over {0}’s match representative duties from {1} to {2}. Reason: {3}. Submitted decisions are retained. The new representative handles further actions.","ko-KR":"심판이 {0}의 경기 대표를 {1}에서 {2}(으)로 변경했습니다. 사유: {3}. 제출된 조작은 유지되며 이후 조작은 새 대표가 담당합니다."},
-  "{0} 的本场队长指定为 {1}。赛管处理，原因：{2}。已提交的比赛操作保留，后续操作由新队长负责。": {"zh-TW":"{0} 的本場隊長指定為 {1}。賽管處理，原因：{2}。已提交的比賽操作保留，後續操作由新代表負責。","en-US":"The referee appointed {1} as {0}’s match representative. Reason: {2}. Submitted decisions are retained. The new representative handles further actions.","ko-KR":"심판이 {1}님을 {0}의 경기 대표로 지정했습니다. 사유: {2}. 제출된 조작은 유지되며 이후 조작은 새 대표가 담당합니다."},
-  "登录已失效，请重新登录后进入比赛房。": {"zh-TW":"登入已失效，請重新登入後進入比賽房。","en-US":"Your sign-in has expired. Sign in again to enter the match room.","ko-KR":"로그인이 만료되었습니다. 다시 로그인한 후 경기방에 입장하세요."},
-  "没有找到这场比赛，请核对比赛链接。": {"zh-TW":"找不到這場比賽，請核對比賽連結。","en-US":"This match could not be found. Check the match link.","ko-KR":"이 경기를 찾을 수 없습니다. 경기 링크를 확인하세요."},
-  "当前账号没有本场权限，请核对本场指派。": {"zh-TW":"目前帳號沒有本場權限，請核對本場指派。","en-US":"This account does not have access to this match. Check your assignment.","ko-KR":"현재 계정에는 이 경기의 접근 권한이 없습니다. 경기 배정을 확인하세요."},
+  },
+  "待教练本人确认": {
+    "zh-TW": "待教練本人確認",
+    "en-US": "Awaiting coach confirmation",
+    "ko-KR": "코치 본인 확인 대기"
+  },
+  "已确认绑定": {
+    "zh-TW": "已確認綁定",
+    "en-US": "Link confirmed",
+    "ko-KR": "연결 확인됨"
+  },
+  "教练账号邀请": {
+    "zh-TW": "教練帳號邀請",
+    "en-US": "Coach account invitation",
+    "ko-KR": "코치 계정 초대"
+  },
+  "教练账号绑定": {
+    "zh-TW": "教練帳號綁定",
+    "en-US": "Link a coach account",
+    "ko-KR": "코치 계정 연결"
+  },
+  "负责人邀请 → 教练本人确认 → 关联本队。教练可查看本队比赛房，操作仍以本场代表权限为准。": {
+    "zh-TW": "負責人邀請 → 教練本人確認 → 關聯本隊。教練可查看本隊比賽房，操作仍以本場代表權限為準。",
+    "en-US": "Team lead invites → coach confirms → account joins this team. Coaches can view team match rooms; actions still require the assigned representative permission.",
+    "ko-KR": "책임자 초대 → 코치 본인 확인 → 팀 연결. 코치는 팀 경기방을 볼 수 있으며, 조작은 해당 경기 대표 권한을 따릅니다."
+  },
+  "刷新绑定状态": {
+    "zh-TW": "重新整理綁定狀態",
+    "en-US": "Refresh link status",
+    "ko-KR": "연결 상태 새로고침"
+  },
+  "正在读取教练邀请；读取失败时请刷新。": {
+    "zh-TW": "正在讀取教練邀請；讀取失敗時請重新整理。",
+    "en-US": "Loading coach invitations. Refresh if loading fails.",
+    "ko-KR": "코치 초대를 불러오는 중입니다. 실패하면 새로고침해 주세요."
+  },
+  "选择教练": {
+    "zh-TW": "選擇教練",
+    "en-US": "Choose coach",
+    "ko-KR": "코치 선택"
+  },
+  "教练账号邮箱": {
+    "zh-TW": "教練帳號電子信箱",
+    "en-US": "Coach account email",
+    "ko-KR": "코치 계정 이메일"
+  },
+  "请教练先注册并验证邮箱。新邀请会撤销这位教练尚未确认的旧邀请；修改教练 BattleTag 后也需要重新邀请。": {
+    "zh-TW": "請教練先註冊並驗證電子信箱。新邀請會撤銷這位教練尚未確認的舊邀請；修改教練 BattleTag 後也需要重新邀請。",
+    "en-US": "Ask the coach to register and verify their email first. A new invitation revokes their pending invitations. Changing their BattleTag also requires a new invitation.",
+    "ko-KR": "코치가 먼저 가입하고 이메일을 인증해야 합니다. 새 초대를 만들면 해당 코치의 미확인 초대는 취소됩니다. BattleTag를 변경한 경우에도 다시 초대해야 합니다."
+  },
+  "正在生成…": {
+    "zh-TW": "正在產生…",
+    "en-US": "Generating…",
+    "ko-KR": "생성 중…"
+  },
+  "生成教练绑定邀请": {
+    "zh-TW": "產生教練綁定邀請",
+    "en-US": "Create coach invitation",
+    "ko-KR": "코치 연결 초대 생성"
+  },
+  "请先保存待绑定的教练资料；已绑定的教练无需再次邀请。": {
+    "zh-TW": "請先儲存待綁定的教練資料；已綁定的教練無需再次邀請。",
+    "en-US": "Save the coach details first. Linked coaches do not need another invitation.",
+    "ko-KR": "먼저 연결할 코치 정보를 저장하세요. 이미 연결된 코치는 다시 초대할 필요가 없습니다."
+  },
+  "邀请已生成，等待教练本人确认": {
+    "zh-TW": "邀請已產生，等待教練本人確認",
+    "en-US": "Invitation created; awaiting coach confirmation",
+    "ko-KR": "초대가 생성되었습니다. 코치 본인 확인을 기다립니다."
+  },
+  "有效至：": {
+    "zh-TW": "有效至：",
+    "en-US": "Expires: ",
+    "ko-KR": "유효기간: "
+  },
+  "将此链接私发给这位教练，请勿公开。教练确认前不会获得本队权限。": {
+    "zh-TW": "將此連結私下傳給這位教練，請勿公開。教練確認前不會取得本隊權限。",
+    "en-US": "Send this link privately to the coach. Do not share it publicly. Team access is granted only after the coach confirms.",
+    "ko-KR": "이 링크는 코치에게 개인적으로 전달하고 공개하지 마세요. 코치가 확인한 후에만 팀 접근 권한이 부여됩니다."
+  },
+  "绑定邀请链接已复制。": {
+    "zh-TW": "綁定邀請連結已複製。",
+    "en-US": "Invitation link copied.",
+    "ko-KR": "연결 초대 링크를 복사했습니다."
+  },
+  "复制失败，请手动复制。": {
+    "zh-TW": "複製失敗，請手動複製。",
+    "en-US": "Copy failed. Please copy the link manually.",
+    "ko-KR": "복사에 실패했습니다. 링크를 직접 복사해 주세요."
+  },
+  "复制教练邀请链接": {
+    "zh-TW": "複製教練邀請連結",
+    "en-US": "Copy coach invitation link",
+    "ko-KR": "코치 초대 링크 복사"
+  },
+  "教练邀请链接": {
+    "zh-TW": "教練邀請連結",
+    "en-US": "Coach invitation link",
+    "ko-KR": "코치 초대 링크"
+  },
+  "撤销邀请": {
+    "zh-TW": "撤銷邀請",
+    "en-US": "Revoke invitation",
+    "ko-KR": "초대 취소"
+  },
+  "重新同步未完成，请核对连接和登录状态。": {
+    "zh-TW": "重新同步未完成，請核對連線與登入狀態。",
+    "en-US": "Sync could not finish. Check your connection and sign-in status.",
+    "ko-KR": "동기화를 완료하지 못했습니다. 연결 및 로그인 상태를 확인하세요."
+  },
+  "诊断信息已复制。": {
+    "zh-TW": "診斷資訊已複製。",
+    "en-US": "Diagnostics copied.",
+    "ko-KR": "진단 정보를 복사했습니다."
+  },
+  "复制失败，请记录诊断编号和比赛链接。": {
+    "zh-TW": "複製失敗，請記錄診斷編號與比賽連結。",
+    "en-US": "Copy failed. Save the diagnostic code and match link.",
+    "ko-KR": "복사에 실패했습니다. 진단 코드와 경기 링크를 기록해 주세요."
+  },
+  "比赛房显示异常": {
+    "zh-TW": "比賽房顯示異常",
+    "en-US": "Match room display error",
+    "ko-KR": "경기방 표시 오류"
+  },
+  "比赛记录仍保存在服务器。重新同步后可继续；页面不会自动重发刚才的操作。": {
+    "zh-TW": "比賽紀錄仍儲存在伺服器。重新同步後可繼續；頁面不會自動重新提交剛才的操作。",
+    "en-US": "Saved match records remain on the server. Sync again to continue. Your last action will not be resubmitted automatically.",
+    "ko-KR": "저장된 경기 기록은 서버에 유지됩니다. 다시 동기화하면 계속할 수 있습니다. 마지막 조작은 자동으로 재전송되지 않습니다."
+  },
+  "比赛编号": {
+    "zh-TW": "比賽編號",
+    "en-US": "Match ID",
+    "ko-KR": "경기 ID"
+  },
+  "重新同步比赛房": {
+    "zh-TW": "重新同步比賽房",
+    "en-US": "Sync match room again",
+    "ko-KR": "경기방 다시 동기화"
+  },
+  "复制诊断信息": {
+    "zh-TW": "複製診斷資訊",
+    "en-US": "Copy diagnostics",
+    "ko-KR": "진단 정보 복사"
+  },
+  "重新载入页面": {
+    "zh-TW": "重新載入頁面",
+    "en-US": "Reload page",
+    "ko-KR": "페이지 새로고침"
+  },
+  "操作代表更换": {
+    "zh-TW": "操作代表更換",
+    "en-US": "Representative changed",
+    "ko-KR": "조작 대표 변경"
+  },
+  "赛管安排变更": {
+    "zh-TW": "賽管安排變更",
+    "en-US": "Referee assignment changed",
+    "ko-KR": "심판 배정 변경"
+  },
+  "赛管交接": {
+    "zh-TW": "賽管交接",
+    "en-US": "Referee handoff",
+    "ko-KR": "심판 인계"
+  },
+  "本场人员变更": {
+    "zh-TW": "本場人員變更",
+    "en-US": "Personnel changes",
+    "ko-KR": "경기 담당자 변경"
+  },
+  "上次同步记录": {
+    "zh-TW": "上次同步紀錄",
+    "en-US": "Last synced records",
+    "ko-KR": "마지막 동기화 기록"
+  },
+  "当前编辑赛管": {
+    "zh-TW": "目前編輯賽管",
+    "en-US": "Referee currently editing",
+    "ko-KR": "현재 편집 중인 심판"
+  },
+  "查看人员变更记录": {
+    "zh-TW": "查看人員變更紀錄",
+    "en-US": "View personnel change history",
+    "ko-KR": "담당자 변경 기록 보기"
+  },
+  "首发人员变更": {
+    "zh-TW": "先發人員變更",
+    "en-US": "Starting lineup changes",
+    "ko-KR": "선발 선수 변경"
+  },
+  "首发人员变更仅在双方名单公开后显示。": {
+    "zh-TW": "先發人員變更僅在雙方名單公開後顯示。",
+    "en-US": "Lineup changes appear only after both teams’ lineups are revealed.",
+    "ko-KR": "선발 선수 변경은 양 팀 명단이 공개된 후에만 표시됩니다."
+  },
+  "本图首发有变更": {
+    "zh-TW": "本圖先發有變更",
+    "en-US": "Starting lineup changed for this map",
+    "ko-KR": "현재 맵 선발 변경"
+  },
+  "比赛房数据暂未完整，正在重新同步": {
+    "zh-TW": "比賽房資料暫未完整，正在重新同步",
+    "en-US": "Room data is incomplete; syncing again",
+    "ko-KR": "경기방 데이터가 불완전합니다. 다시 동기화 중입니다."
+  },
+  "网络已断开，正在等待恢复": {
+    "zh-TW": "網路已中斷，正在等待恢復",
+    "en-US": "Offline; waiting for connection",
+    "ko-KR": "네트워크 연결이 끊겼습니다. 복구를 기다립니다."
+  },
+  "正在读取本场比赛。重新同步后可继续；已保存的比赛操作不会自动重发。": {
+    "zh-TW": "正在讀取本場比賽。重新同步後可繼續；已儲存的比賽操作不會自動重新提交。",
+    "en-US": "Loading this match. Sync again to continue. Saved actions will not be resubmitted automatically.",
+    "ko-KR": "경기를 불러오는 중입니다. 다시 동기화하면 계속할 수 있습니다. 저장된 조작은 자동으로 재전송되지 않습니다."
+  },
+  "比赛房数据不完整，正在重新同步；已保存的比赛记录不会被清除。": {
+    "zh-TW": "比賽房資料不完整，正在重新同步；已儲存的比賽紀錄不會被清除。",
+    "en-US": "Room data is incomplete; syncing again. Saved match records will not be cleared.",
+    "ko-KR": "경기방 데이터가 불완전하여 다시 동기화합니다. 저장된 경기 기록은 삭제되지 않습니다."
+  },
+  "代表已更换": {
+    "zh-TW": "代表已更換",
+    "en-US": "Representative updated",
+    "ko-KR": "대표 변경됨"
+  },
+  "教练 · 查看本队比赛房，操作按本场代表权限": {
+    "zh-TW": "教練 · 查看本隊比賽房，操作依本場代表權限",
+    "en-US": "Coach · view team match rooms; actions require match representative permission",
+    "ko-KR": "코치 · 팀 경기방 조회, 조작은 경기 대표 권한 필요"
+  },
+  "这位教练已绑定其他账号，请联系负责人核对邀请。": {
+    "zh-TW": "這位教練已綁定其他帳號，請聯絡負責人核對邀請。",
+    "en-US": "This coach is linked to another account. Ask the team lead to check the invitation.",
+    "ko-KR": "이 코치는 다른 계정에 연결되어 있습니다. 책임자에게 초대 확인을 요청하세요."
+  },
+  "请教练先注册并验证账号邮箱，再发送绑定邀请。": {
+    "zh-TW": "請教練先註冊並驗證帳號電子信箱，再傳送綁定邀請。",
+    "en-US": "Ask the coach to register and verify their email before sending an invitation.",
+    "ko-KR": "코치가 가입하고 계정 이메일을 인증한 후 초대를 보내세요."
+  },
+  "请先保存本队教练资料，再邀请绑定账号。": {
+    "zh-TW": "請先儲存本隊教練資料，再邀請綁定帳號。",
+    "en-US": "Save this team’s coach details before inviting their account.",
+    "ko-KR": "팀 코치 정보를 저장한 후 계정 연결을 초대하세요."
+  },
+  "这位教练已经绑定账号。": {
+    "zh-TW": "這位教練已經綁定帳號。",
+    "en-US": "This coach account is already linked.",
+    "ko-KR": "이미 연결된 코치 계정입니다."
+  },
+  "请先补全教练 BattleTag。": {
+    "zh-TW": "請先補全教練 BattleTag。",
+    "en-US": "Enter the coach’s complete BattleTag first.",
+    "ko-KR": "먼저 코치의 전체 BattleTag를 입력하세요."
+  },
+  "没有找到本队教练邀请。": {
+    "zh-TW": "沒有找到本隊教練邀請。",
+    "en-US": "This team’s coach invitation was not found.",
+    "ko-KR": "팀 코치 초대를 찾을 수 없습니다."
+  },
+  "邀请或账号刚刚发生变化，请刷新后重试。": {
+    "zh-TW": "邀請或帳號剛剛發生變化，請重新整理後重試。",
+    "en-US": "The invitation or account has changed. Refresh and try again.",
+    "ko-KR": "초대 또는 계정이 변경되었습니다. 새로고침 후 다시 시도하세요."
+  },
+  "本场编辑赛管由 {0} 转交给 {1}。": {
+    "zh-TW": "本場編輯賽管由 {0} 轉交給 {1}。",
+    "en-US": "Match editing handed over from {0} to {1}.",
+    "ko-KR": "경기 편집 담당이 {0}에서 {1}(으)로 인계되었습니다."
+  },
+  "{0} 已加入本场赛管 {1}。请按最新赛管安排沟通；比赛记录保留。": {
+    "zh-TW": "{0} 已加入本場賽管 {1}。請依最新賽管安排溝通；比賽紀錄保留。",
+    "en-US": "{0} added referee {1}. Use the updated referee assignment; match records are retained.",
+    "ko-KR": "{0}님이 심판 {1}님을 추가했습니다. 최신 심판 배정에 따라 소통하세요. 경기 기록은 유지됩니다."
+  },
+  "{0} 已移除本场赛管 {1}。请按最新赛管安排沟通；比赛记录保留。": {
+    "zh-TW": "{0} 已移除本場賽管 {1}。請依最新賽管安排溝通；比賽紀錄保留。",
+    "en-US": "{0} removed referee {1}. Use the updated referee assignment; match records are retained.",
+    "ko-KR": "{0}님이 심판 {1}님을 제외했습니다. 최신 심판 배정에 따라 소통하세요. 경기 기록은 유지됩니다."
+  },
+  "{0} 已恢复按排班表安排 {1}。请按最新赛管安排沟通；比赛记录保留。": {
+    "zh-TW": "{0} 已恢復依排班表安排 {1}。請依最新賽管安排溝通；比賽紀錄保留。",
+    "en-US": "{0} restored the scheduled assignment for {1}. Use the updated referee assignment; match records are retained.",
+    "ko-KR": "{0}님이 {1}님의 배정표를 복원했습니다. 최신 심판 배정에 따라 소통하세요. 경기 기록은 유지됩니다."
+  },
+  "重要操作动态": {
+    "zh-TW": "重要操作動態",
+    "en-US": "Important match actions",
+    "ko-KR": "중요 경기 조작 알림"
+  },
+  "重要动态": {
+    "zh-TW": "重要動態",
+    "en-US": "Activity",
+    "ko-KR": "주요 알림"
+  },
+  "重要操作记录": {
+    "zh-TW": "重要操作紀錄",
+    "en-US": "Important action history",
+    "ko-KR": "중요 조작 기록"
+  },
+  "暂停动态播放": {
+    "zh-TW": "暫停動態播放",
+    "en-US": "Pause activity feed",
+    "ko-KR": "알림 재생 일시 중지"
+  },
+  "继续动态播放": {
+    "zh-TW": "繼續動態播放",
+    "en-US": "Resume activity feed",
+    "ko-KR": "알림 재생 계속"
+  },
+  "下一条动态": {
+    "zh-TW": "下一則動態",
+    "en-US": "Next activity",
+    "ko-KR": "다음 알림"
+  },
+  "已记录本图开赛": {
+    "zh-TW": "已記錄本圖開賽",
+    "en-US": "Map start recorded",
+    "ko-KR": "현재 맵 시작 기록됨"
+  },
+  "{0} 的本场队长由 {1} 转交给 {2}。负责本场选图、首发到场与职责确认、英雄禁用和比赛沟通。已提交的比赛操作保留，后续操作由新队长负责。": {
+    "zh-TW": "{0} 的本場隊長由 {1} 轉交給 {2}。負責本場選圖、先發到場與職責確認、英雄禁用與比賽溝通。已提交的比賽操作保留，後續操作由新代表負責。",
+    "en-US": "{0} handed over match representative duties from {1} to {2}, including map selection, lineups, check-in, hero bans and match communication. Submitted decisions are retained. The new representative handles further actions.",
+    "ko-KR": "{0}의 경기 대표가 {1}에서 {2}(으)로 변경되었습니다. 지도 선택, 선발과 출석 및 역할 확인, 영웅 금지, 경기 소통을 담당합니다. 제출된 조작은 유지되며 이후 조작은 새 대표가 담당합니다."
+  },
+  "{0} 的本场队长指定为 {1}。负责本场选图、首发到场与职责确认、英雄禁用和比赛沟通。已提交的比赛操作保留，后续操作由新队长负责。": {
+    "zh-TW": "{0} 的本場隊長指定為 {1}。負責本場選圖、先發到場與職責確認、英雄禁用與比賽溝通。已提交的比賽操作保留，後續操作由新代表負責。",
+    "en-US": "{1} is the match representative for {0}, handling map selection, lineups, check-in, hero bans and match communication. Submitted decisions are retained. The new representative handles further actions.",
+    "ko-KR": "{0}의 경기 대표로 {1}님이 지정되었습니다. 지도 선택, 선발과 출석 및 역할 확인, 영웅 금지, 경기 소통을 담당합니다. 제출된 조작은 유지되며 이후 조작은 새 대표가 담당합니다."
+  },
+  "{0} 的本场队长由 {1} 转交给 {2}。赛管处理，原因：{3}。已提交的比赛操作保留，后续操作由新队长负责。": {
+    "zh-TW": "{0} 的本場隊長由 {1} 轉交給 {2}。賽管處理，原因：{3}。已提交的比賽操作保留，後續操作由新代表負責。",
+    "en-US": "The referee handed over {0}’s match representative duties from {1} to {2}. Reason: {3}. Submitted decisions are retained. The new representative handles further actions.",
+    "ko-KR": "심판이 {0}의 경기 대표를 {1}에서 {2}(으)로 변경했습니다. 사유: {3}. 제출된 조작은 유지되며 이후 조작은 새 대표가 담당합니다."
+  },
+  "{0} 的本场队长指定为 {1}。赛管处理，原因：{2}。已提交的比赛操作保留，后续操作由新队长负责。": {
+    "zh-TW": "{0} 的本場隊長指定為 {1}。賽管處理，原因：{2}。已提交的比賽操作保留，後續操作由新代表負責。",
+    "en-US": "The referee appointed {1} as {0}’s match representative. Reason: {2}. Submitted decisions are retained. The new representative handles further actions.",
+    "ko-KR": "심판이 {1}님을 {0}의 경기 대표로 지정했습니다. 사유: {2}. 제출된 조작은 유지되며 이후 조작은 새 대표가 담당합니다."
+  },
+  "登录已失效，请重新登录后进入比赛房。": {
+    "zh-TW": "登入已失效，請重新登入後進入比賽房。",
+    "en-US": "Your sign-in has expired. Sign in again to enter the match room.",
+    "ko-KR": "로그인이 만료되었습니다. 다시 로그인한 후 경기방에 입장하세요."
+  },
+  "没有找到这场比赛，请核对比赛链接。": {
+    "zh-TW": "找不到這場比賽，請核對比賽連結。",
+    "en-US": "This match could not be found. Check the match link.",
+    "ko-KR": "이 경기를 찾을 수 없습니다. 경기 링크를 확인하세요."
+  },
+  "当前账号没有本场权限，请核对本场指派。": {
+    "zh-TW": "目前帳號沒有本場權限，請核對本場指派。",
+    "en-US": "This account does not have access to this match. Check your assignment.",
+    "ko-KR": "현재 계정에는 이 경기의 접근 권한이 없습니다. 경기 배정을 확인하세요."
+  },
   "个人资料与记录": {
     "en-US": "Profile & records",
     "zh-TW": "個人資料與紀錄",
@@ -57415,5 +57935,345 @@
     "zh-TW": "隊員管理",
     "en-US": "Team members",
     "ko-KR": "팀원 관리"
+  },
+  "双方确认状态": {
+    "zh-TW": "雙方確認狀態",
+    "ko-KR": "양 팀 확인 상태",
+    "en-US": "Both teams’ confirmations"
+  },
+  "首发更正": {
+    "zh-TW": "首發更正",
+    "ko-KR": "선발 명단 수정",
+    "en-US": "Lineup correction"
+  },
+  "本队首发尚未公开，可撤回后修改；原阶段计时继续。": {
+    "zh-TW": "本隊首發尚未公開，可撤回後修改；原階段計時繼續。",
+    "ko-KR": "아직 공개되지 않은 우리 팀 선발은 제출을 철회한 후 수정할 수 있습니다. 기존 단계 타이머는 계속됩니다.",
+    "en-US": "Your sealed lineup has not been revealed. Withdraw it to make changes; the current stage timer continues."
+  },
+  "撤回本队密封首发": {
+    "zh-TW": "撤回本隊密封首發",
+    "ko-KR": "우리 팀 비공개 선발 제출 철회",
+    "en-US": "Withdraw our sealed lineup"
+  },
+  "双方同意后重新确认首发。等待期间原首发和计时仍有效；Ban 开始后申请失效。": {
+    "zh-TW": "雙方同意後重新確認首發。等待期間原首發和計時仍有效；Ban 開始後申請失效。",
+    "ko-KR": "양 팀 대표가 동의해야 선발을 다시 확정할 수 있습니다. 대기 중에는 기존 선발과 타이머가 유지되며, 밴이 시작되면 요청이 만료됩니다.",
+    "en-US": "Both representatives must agree to reopen lineups. Existing lineups and timers remain valid while waiting. The request expires once bans begin."
+  },
+  "同意重新确认首发": {
+    "zh-TW": "同意重新確認首發",
+    "ko-KR": "선발 재확정에 동의",
+    "en-US": "Agree to reopen lineups"
+  },
+  "保留原首发": {
+    "zh-TW": "保留原首發",
+    "ko-KR": "기존 선발 유지",
+    "en-US": "Keep the existing lineups"
+  },
+  "撤回重开申请": {
+    "zh-TW": "撤回重開申請",
+    "ko-KR": "재확정 요청 철회",
+    "en-US": "Withdraw the reopen request"
+  },
+  "申请双方重新确认首发": {
+    "zh-TW": "申請雙方重新確認首發",
+    "ko-KR": "양 팀 선발 재확정 요청",
+    "en-US": "Request both teams to reopen lineups"
+  },
+  "首发已公开，需要另一方同意；地图、Ban 权和准备总截止保留。": {
+    "zh-TW": "首發已公開，需要另一方同意；地圖、Ban 權和準備總截止保留。",
+    "ko-KR": "선발이 이미 공개되어 상대 대표의 동의가 필요합니다. 맵, 밴 권한 및 전체 준비 마감 시각은 유지됩니다.",
+    "en-US": "The lineups have been revealed, so the other representative must agree. The map, ban rights and overall preparation deadline remain unchanged."
+  },
+  "请另一方确认": {
+    "zh-TW": "請另一方確認",
+    "ko-KR": "상대 팀에 확인 요청",
+    "en-US": "Request the other team’s confirmation"
+  },
+  "核对本图比分": {
+    "zh-TW": "核對本圖比分",
+    "ko-KR": "이번 맵 점수 확인",
+    "en-US": "Review this map’s score"
+  },
+  "比分确认已失效，请重新核对": {
+    "zh-TW": "比分確認已失效，請重新核對",
+    "ko-KR": "점수 확인이 만료되었습니다. 다시 확인해 주세요",
+    "en-US": "Score confirmation expired; review it again"
+  },
+  "本图比分存在异议": {
+    "zh-TW": "本圖比分存在異議",
+    "ko-KR": "이번 맵 점수에 이의가 있습니다",
+    "en-US": "This map’s score is disputed"
+  },
+  "等待双方核对本图比分": {
+    "zh-TW": "等待雙方核對本圖比分",
+    "ko-KR": "양 팀의 이번 맵 점수 확인 대기",
+    "en-US": "Waiting for both teams to confirm this map’s score"
+  },
+  "待确认比分尚未计入大比分，确认后才会开放下一图。": {
+    "zh-TW": "待確認比分尚未計入大比分，確認後才會開放下一圖。",
+    "ko-KR": "확인 대기 중인 점수는 아직 전체 스코어에 반영되지 않습니다. 양 팀 확인 후 다음 맵이 열립니다.",
+    "en-US": "The proposed score does not count toward the series yet. The next map opens after both teams confirm."
+  },
+  "确认对方录入的本图比分": {
+    "zh-TW": "確認對方錄入的本圖比分",
+    "ko-KR": "상대 팀이 입력한 맵 점수 확인",
+    "en-US": "Confirm the other team’s map score"
+  },
+  "撤回待确认比分": {
+    "zh-TW": "撤回待確認比分",
+    "ko-KR": "확인 대기 점수 철회",
+    "en-US": "Withdraw the proposed score"
+  },
+  "联系赛事组": {
+    "zh-TW": "聯繫賽事組",
+    "ko-KR": "대회 운영진에게 문의",
+    "en-US": "Contact the organizers"
+  },
+  "比分不对，提出异议": {
+    "zh-TW": "比分不對，提出異議",
+    "ko-KR": "잘못된 점수에 이의 제기",
+    "en-US": "Dispute an incorrect score"
+  },
+  "公开核对说明": {
+    "zh-TW": "公開核對說明",
+    "ko-KR": "공개 확인 설명",
+    "en-US": "Public review note"
+  },
+  "提交本图比分异议": {
+    "zh-TW": "提交本圖比分異議",
+    "ko-KR": "맵 점수 이의 제출",
+    "en-US": "Submit a map score dispute"
+  },
+  "准备超时后继续开赛": {
+    "zh-TW": "準備超時後繼續開賽",
+    "ko-KR": "준비 시간 초과 후 경기 계속",
+    "en-US": "Continue after preparation timeout"
+  },
+  "双方已同意超时继续开赛": {
+    "zh-TW": "雙方已同意超時繼續開賽",
+    "ko-KR": "양 팀이 시간 초과 후 경기 시작에 동의했습니다",
+    "en-US": "Both teams agreed to start after the timeout"
+  },
+  "准备超时后，由双方确认继续": {
+    "zh-TW": "準備超時後，由雙方確認繼續",
+    "ko-KR": "준비 시간 초과 후에는 양 팀이 계속 진행에 동의해야 합니다",
+    "en-US": "After a preparation timeout, both teams must agree to continue"
+  },
+  "仅在双方五人到齐、地图/首发/Ban 完整且已到计划时间时允许。原截止和违例记录保留，不重新补时；人员或选禁变化后须重新确认。": {
+    "zh-TW": "僅在雙方五人到齊、地圖/首發/Ban 完整且已到計劃時間時允許。原截止和違例記錄保留，不重新補時；人員或選禁變化後須重新確認。",
+    "ko-KR": "양 팀 선발 5명 모두 도착하고 맵·선발·밴이 완료되었으며 예정 시작 시각이 지난 경우에만 가능합니다. 기존 마감과 위반 기록은 유지되고 추가 시간은 주어지지 않습니다. 인원 또는 선택·밴이 바뀌면 다시 동의해야 합니다.",
+    "en-US": "Available only when both teams have five starters present, map/lineups/bans are complete and the scheduled start time has arrived. Original deadlines and violation records remain; no extra time is added. Changes to personnel or picks/bans require fresh consent."
+  },
+  "本队同意按当前记录继续开赛": {
+    "zh-TW": "本隊同意按當前記錄繼續開賽",
+    "ko-KR": "우리 팀은 현재 기록으로 경기 시작에 동의합니다",
+    "en-US": "Our team agrees to start with the current records"
+  },
+  "本队已确认，等待另一方；仍有异议时联系赛事组。": {
+    "zh-TW": "本隊已確認，等待另一方；仍有異議時聯繫賽事組。",
+    "ko-KR": "우리 팀은 확인했습니다. 상대 팀 확인을 기다립니다. 이의가 있으면 운영진에게 문의하세요.",
+    "en-US": "Our team has confirmed. Waiting for the other team; contact the organizers if there is a dispute."
+  },
+  "请先处理其他准备事项，再由双方确认；仍缺人或有异议时留证联系赛事组。": {
+    "zh-TW": "請先處理其他準備事項，再由雙方確認；仍缺人或有異議時留證聯繫賽事組。",
+    "ko-KR": "남은 준비 사항을 먼저 처리한 뒤 양 팀 대표가 확인해 주세요. 인원이 부족하거나 이의가 있으면 증거를 남기고 운영진에게 문의하세요.",
+    "en-US": "Complete the remaining preparation first, then have both representatives confirm. If players are missing or there is a dispute, preserve evidence and contact the organizers."
+  },
+  "按本场规则进行石头剪刀布，队伍不能更改方式。": {
+    "zh-TW": "按本場規則進行石頭剪刀布，隊伍不能更改方式。",
+    "ko-KR": "이번 경기 규칙에 따라 가위바위보를 진행합니다. 팀은 방식을 변경할 수 없습니다.",
+    "en-US": "Use rock–paper–scissors under this match’s rules. Teams cannot change the method."
+  },
+  "双方先指定本场操作代表；到操作开放时间后，任一代表可开启流程。": {
+    "zh-TW": "雙方先指定本場操作代表；到操作開放時間後，任一代表可開啟流程。",
+    "ko-KR": "먼저 양 팀이 이번 경기 조작 대표를 지정해야 합니다. 조작 가능 시간이 되면 어느 대표든 절차를 시작할 수 있습니다.",
+    "en-US": "Both teams must appoint an operating representative first. Either representative can begin once match operations open."
+  },
+  "双方核对本场队伍与规则后，由任一当前操作代表开启对决。": {
+    "zh-TW": "雙方核對本場隊伍與規則後，由任一當前操作代表開啟對決。",
+    "ko-KR": "양 팀이 팀 정보와 규칙을 확인한 뒤 현재 조작 대표 중 누구든 대결을 시작할 수 있습니다.",
+    "en-US": "After both teams review the teams and rules, either current representative can begin the contest."
+  },
+  "等待双方指定操作代表": {
+    "zh-TW": "等待雙方指定操作代表",
+    "ko-KR": "양 팀 조작 대표 지정 대기",
+    "en-US": "Waiting for both teams to appoint representatives"
+  },
+  "等待操作开放或当前代表开启": {
+    "zh-TW": "等待操作開放或當前代表開啟",
+    "ko-KR": "조작 가능 시간 또는 현재 대표의 시작 대기",
+    "en-US": "Waiting for operations to open or a representative to begin"
+  },
+  "核对本图比分，双方确认后继续": {
+    "zh-TW": "核對本圖比分，雙方確認後繼續",
+    "ko-KR": "맵 점수를 확인하고 양 팀 확인 후 계속 진행",
+    "en-US": "Review the map score; continue after both teams confirm"
+  },
+  "选禁已锁定。需要暂停时与主队 A 沟通，由 A 代表记录游戏暂停；比赛结束后由一方录入比分、另一方确认。": {
+    "zh-TW": "選禁已鎖定。需要暫停時與主隊 A 溝通，由 A 代表記錄遊戲暫停；比賽結束後由一方錄入比分、另一方確認。",
+    "ko-KR": "선택과 밴이 확정되었습니다. 일시 정지가 필요하면 홈팀 A와 소통하여 A 대표가 실제 게임 정지를 기록합니다. 맵 종료 후 한 팀이 점수를 입력하고 상대 팀이 확인합니다.",
+    "en-US": "Picks and bans are locked. For a pause, contact home team A; their representative records the actual game pause. After the map, one representative enters the score and the other confirms."
+  },
+  "本场控制": {
+    "zh-TW": "本場控制",
+    "ko-KR": "경기 조작",
+    "en-US": "Match controls"
+  },
+  "双方代表操作": {
+    "zh-TW": "雙方代表操作",
+    "ko-KR": "양 팀 대표가 조작",
+    "en-US": "Controlled by both representatives"
+  },
+  "本图比分提议已保存，等待另一方确认后生效。": {
+    "zh-TW": "本圖比分提議已保存，等待另一方確認後生效。",
+    "ko-KR": "맵 점수 제안이 저장되었습니다. 상대 대표가 확인하면 반영됩니다.",
+    "en-US": "The score proposal is saved. It takes effect after the other representative confirms."
+  },
+  "先提交本图小分，请另一方代表核对确认；确认前不计入大比分，也不开下一图。": {
+    "zh-TW": "先提交本圖小分，請另一方代表核對確認；確認前不計入大比分，也不開下一圖。",
+    "ko-KR": "맵 점수를 제출하여 상대 대표의 확인을 받아 주세요. 확인 전에는 전체 스코어에 반영되거나 다음 맵이 열리지 않습니다.",
+    "en-US": "Submit the map score for the other representative to review. It does not affect the series score or open the next map until confirmed."
+  },
+  "提交本图比分，等待对方确认": {
+    "zh-TW": "提交本圖比分，等待對方確認",
+    "ko-KR": "맵 점수 제출 후 상대 확인 대기",
+    "en-US": "Submit the map score for confirmation"
+  },
+  "准备超时 · 双方已同意继续": {
+    "zh-TW": "準備超時 · 雙方已同意繼續",
+    "ko-KR": "준비 시간 초과 · 양 팀 계속 진행 동의",
+    "en-US": "Preparation timed out · Both teams agreed to continue"
+  },
+  "准备超时 · 完整准备后双方确认": {
+    "zh-TW": "準備超時 · 完整準備後雙方確認",
+    "ko-KR": "준비 시간 초과 · 준비 완료 후 양 팀 확인",
+    "en-US": "Preparation timed out · Complete preparation, then both teams confirm"
+  },
+  "准备超时，双方已同意继续": {
+    "zh-TW": "準備超時，雙方已同意繼續",
+    "ko-KR": "준비 시간이 초과되었으며 양 팀이 계속 진행에 동의했습니다",
+    "en-US": "Preparation timed out; both teams agreed to continue"
+  },
+  "准备超时，完整准备后双方确认继续": {
+    "zh-TW": "準備超時，完整準備後雙方確認繼續",
+    "ko-KR": "준비 시간이 초과되었습니다. 준비 완료 후 양 팀이 계속 진행에 동의해 주세요",
+    "en-US": "Preparation timed out; finish preparation, then both teams agree to continue"
+  },
+  "五人到齐且选禁完整后，双方代表可同意超时继续开赛，原截止和处罚保留；仍无法开赛或有异议时，可留证结束现场等待，赛事组稍后核验，不自动判负或弃权。": {
+    "zh-TW": "五人到齊且選禁完整後，雙方代表可同意超時繼續開賽，原截止和處罰保留；仍無法開賽或有異議時，可留證結束現場等待，賽事組稍後核驗，不自動判負或棄權。",
+    "ko-KR": "양 팀 선발 5명 모두 도착하고 선택·밴이 완료되면 양 팀 대표가 시간 초과 후 경기 시작에 동의할 수 있습니다. 기존 마감과 처벌은 유지됩니다. 여전히 경기가 불가능하거나 이의가 있으면 증거를 남기고 현장 대기를 끝낼 수 있으며 운영진이 추후 확인합니다. 자동 패배나 기권 처리는 하지 않습니다.",
+    "en-US": "Once five starters per team are present and picks/bans are complete, both representatives may agree to start after the timeout. Original deadlines and penalties remain. If play is still impossible or disputed, preserve evidence and end the on-site wait for later organizer review. No automatic loss or forfeit is imposed."
+  },
+  "继续开赛条件与记录": {
+    "zh-TW": "繼續開賽條件與記錄",
+    "ko-KR": "계속 진행 조건 및 기록",
+    "en-US": "Conditions and records for continuing"
+  },
+  "协助已提交，等待赛事组处理；比赛状态没有改变。": {
+    "zh-TW": "協助已提交，等待賽事組處理；比賽狀態沒有改變。",
+    "ko-KR": "지원 요청이 운영진에게 제출되었습니다. 경기 상태는 변경되지 않았습니다.",
+    "en-US": "Assistance request saved for organizer review; the match state has not changed."
+  },
+  "仅相关队伍与赛事工作人员": {
+    "zh-TW": "僅相關隊伍與賽事工作人員",
+    "ko-KR": "관련 팀과 대회 담당자에게만 공개",
+    "en-US": "Only the relevant team and event staff"
+  },
+  "赛事组协助": {
+    "zh-TW": "賽事組協助",
+    "ko-KR": "대회 운영진 지원",
+    "en-US": "Organizer assistance"
+  },
+  "相关队伍与赛事工作人员可见": {
+    "zh-TW": "相關隊伍與賽事工作人員可見",
+    "ko-KR": "관련 팀과 대회 담당자에게 공개",
+    "en-US": "Visible to the relevant team and event staff"
+  },
+  "联系主队 / 比赛沟通": {
+    "zh-TW": "聯繫主隊 / 比賽溝通",
+    "ko-KR": "홈팀 연락 / 경기 대화",
+    "en-US": "Contact home team / Match chat"
+  },
+  "等待双方设置": {
+    "zh-TW": "等待雙方設置",
+    "ko-KR": "양 팀 설정 대기",
+    "en-US": "Waiting for both teams to set up"
+  },
+  "本阶段已超时，请尽快操作；需要协助时联系主队 A 或赛事组。": {
+    "zh-TW": "本階段已超時，請儘快操作；需要協助時聯繫主隊 A 或賽事組。",
+    "ko-KR": "이 단계의 시간이 초과되었습니다. 신속히 진행하고 도움이 필요하면 홈팀 A 또는 운영진에게 문의하세요.",
+    "en-US": "This stage timed out. Act promptly; contact home team A or the organizers for assistance."
+  },
+  "待赛事组处理": {
+    "zh-TW": "待賽事組處理",
+    "ko-KR": "운영진 처리 대기",
+    "en-US": "Awaiting organizer review"
+  },
+  "赛事组处理中": {
+    "zh-TW": "賽事組處理中",
+    "ko-KR": "운영진 처리 중",
+    "en-US": "Organizers are handling this"
+  },
+  "先在游戏内完成暂停，再发布双方与解说可见的说明。私密详情留在赛事组协助中。": {
+    "zh-TW": "先在遊戲內完成暫停，再發布雙方與解說可見的說明。私密詳情留在賽事組協助中。",
+    "ko-KR": "먼저 게임에서 일시 정지한 뒤 양 팀과 해설진에게 공개되는 설명을 게시하세요. 비공개 내용은 운영진 지원 채널에 남기세요.",
+    "en-US": "Pause in the game first, then publish a note visible to both teams and casters. Keep private details in organizer assistance."
+  },
+  "邀请已接受": {
+    "zh-TW": "邀請已接受",
+    "en-US": "Invitation accepted",
+    "ko-KR": "초대 수락됨"
+  },
+  "历史邀请记录": {
+    "zh-TW": "歷史邀請記錄",
+    "en-US": "Invitation history",
+    "ko-KR": "초대 이력"
+  },
+  "邀请确认截止时间：": {
+    "zh-TW": "邀請確認截止時間：",
+    "en-US": "Invitation confirmation deadline: ",
+    "ko-KR": "초대 확인 마감: "
+  },
+  "绑定确认时间：": {
+    "zh-TW": "綁定確認時間：",
+    "en-US": "Link confirmed: ",
+    "ko-KR": "연결 확인 시간: "
+  },
+  "邀请确认时间：": {
+    "zh-TW": "邀請確認時間：",
+    "en-US": "Invitation confirmed: ",
+    "ko-KR": "초대 확인 시간: "
+  },
+  "邀请撤销时间：": {
+    "zh-TW": "邀請撤銷時間：",
+    "en-US": "Invitation revoked: ",
+    "ko-KR": "초대 철회 시간: "
+  },
+  "邀请过期时间：": {
+    "zh-TW": "邀請過期時間：",
+    "en-US": "Invitation expired: ",
+    "ko-KR": "초대 만료 시간: "
+  },
+  "原邀请截止时间：": {
+    "zh-TW": "原邀請截止時間：",
+    "en-US": "Original invitation deadline: ",
+    "ko-KR": "기존 초대 마감: "
+  },
+  "协商确认截止时间：": {
+    "zh-TW": "協商確認截止時間：",
+    "en-US": "Negotiation confirmation deadline: ",
+    "ko-KR": "협의 확인 마감: "
+  },
+  "赛程确认时间：": {
+    "zh-TW": "賽程確認時間：",
+    "en-US": "Schedule confirmed: ",
+    "ko-KR": "일정 확정 시간: "
+  },
+  "提案发起时间：": {
+    "zh-TW": "提案發起時間：",
+    "en-US": "Proposal created: ",
+    "ko-KR": "제안 생성 시간: "
   }
 }

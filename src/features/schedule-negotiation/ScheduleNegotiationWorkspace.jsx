@@ -9,6 +9,7 @@ import {
   fetchScheduleContext
 } from './scheduleNegotiationApi.js'
 import styles from './ScheduleNegotiationWorkspace.module.css'
+import { scheduleProposalTiming } from './scheduleProposalTiming.js'
 import {
   capabilityBlockText,
   capabilityDeniedMessage,
@@ -112,6 +113,7 @@ export default function ScheduleNegotiationWorkspace({ seasonId, capabilitySnaps
         const form = getForm(match.id)
         const actingAccess = match.access?.find(access => access.canAct)
         const proposal = match.proposal
+        const proposalTiming = proposal ? scheduleProposalTiming(proposal) : null
         const proposeAccess = context?.permissionSource === 'WEEKLY_MEMBERSHIP' ? { allowed: !!actingAccess } : resolveCapabilityAccess(capabilitySnapshot, 'schedule.propose', {
           registrationId: actingAccess?.registrationId,
           matchId: match.id
@@ -137,7 +139,7 @@ export default function ScheduleNegotiationWorkspace({ seasonId, capabilitySnaps
           }}><div><span>{uiText("提出 1–3 个候选时间 · 北京时间", uiLocale)}</span><p>{uiText("你填写的每个时间都视为本队已同意。", uiLocale)}</p></div>{form.times.map((value, index) => <input key={index} aria-label={uiText("候选时间 {0}（北京时间）", uiLocale, [index + 1])} type="datetime-local" value={value} onChange={event => setTime(match.id, index, event.target.value)} />)}<input className={styles.note} placeholder={uiText("给对方的说明（可选）", uiLocale)} value={form.note} onChange={event => setForm(match.id, { note: event.target.value })} /><button type="submit" disabled={busy === `create:${match.id}` || !form.times.some(Boolean)}>{uiText("发送提案", uiLocale)}</button></form> : null}
 
           {proposal ? <div className={styles.proposal}>
-            <div className={styles.proposalHeading}><div><span>PROPOSAL V{proposal.version}</span><strong>{proposal.proposedByTeam?.shortName}{uiText(" 发起", uiLocale)}</strong><p>{proposal.note || uiText("无附加说明", uiLocale)} · {formatTime(proposal.expiresAt)}{uiText(" 前有效", uiLocale)}</p></div><em data-status={proposal.status}>{STATUS_LABELS[proposal.status] || proposal.status}</em></div>
+            <div className={styles.proposalHeading}><div><span>PROPOSAL V{proposal.version}</span><strong>{proposal.proposedByTeam?.shortName}{uiText(" 发起", uiLocale)}</strong><p>{proposal.note || uiText("无附加说明", uiLocale)} · {uiText(proposalTiming.label, uiLocale)}{proposalTiming.timestamp ? formatTime(proposalTiming.timestamp) : uiText('未记录', uiLocale)}</p></div><em data-status={proposal.status}>{STATUS_LABELS[proposal.status] || proposal.status}</em></div>
             <div className={styles.candidateList}>{proposal.candidates.map(candidate => {
               const myConfirmation = candidate.confirmations.find(item => item.teamId === actingAccess?.teamId)
               const opponentConfirmed = candidate.confirmations.filter(item => item.status === 'APPROVED').length >= 2

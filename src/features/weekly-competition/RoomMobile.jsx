@@ -54,9 +54,9 @@ export function RoomMobileNav({ auxiliary, navigate, assistance, staff = false }
 export function RoomMobileInfo({ data, accountControl, disabled, mutate, children }) {
   const locale = useUiLocale(), t = text => uiText(text, locale)
   const facts = [
-    ['游戏房间', data.preparation.brief?.roomName || t('等待赛管发布')],
+    ['游戏房间', data.preparation.brief?.roomName || t(data.access.operatorMode === 'TEAM_CAPTAINS' ? '等待双方设置' : '等待赛管发布')],
     ['比赛房间设置码', data.preparation.brief?.roomCode || t('未设置')],
-    ['本场赛管', data.staff.map(item => item.name).join(' / ') || t('等待指派')],
+    [data.access.operatorMode === 'TEAM_CAPTAINS' ? '本场控制' : '本场赛管', data.access.operatorMode === 'TEAM_CAPTAINS' ? t('双方代表操作') : data.staff.map(item => item.name).join(' / ') || t('等待指派')],
   ]
   return <div className={styles.info}>
     <p>{data.match.seasonName} · {data.match.weekLabel}</p>

@@ -3,9 +3,9 @@ import { platformRequest } from '../auth/platformApi.js'
 import { useRegistrationDraft } from '../event-registration/registrationDraftGuard.jsx'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
+import { coachInvitationPresentation, partitionCoachInvitations } from './coachInvitationPresentation.js'
 import styles from './WeeklyTeamAdditions.module.css'
 
-const statusLabels = { PENDING: '待教练本人确认', ACCEPTED: '已确认绑定', REVOKED: '已撤销', EXPIRED: '已过期' }
 export default function WeeklyCoachInvitations({ teamId, coaches, disabled, onChanged }) {
   const locale = useUiLocale(), t = key => uiText(key, locale)
   const base = `/me/weekly-teams/${encodeURIComponent(teamId)}/coaches/account-links`
@@ -45,6 +45,13 @@ export default function WeeklyCoachInvitations({ teamId, coaches, disabled, onCh
     finally { lock.current = false; if (mounted.current) setBusy(false) }
   }
   const unlinked = coaches.filter(coach => !coach.accountLinked && !coach.id.startsWith('legacy-'))
+  const { current, history } = partitionCoachInvitations(invitations || [])
+  const issuedStatus = issued ? coachInvitationPresentation(invitations?.find(invitation => invitation.id === issued.id) || issued).status : null
+  const renderRecord = ({ invitation, presentation }) => <li key={invitation.id}>
+    <strong>{invitation.target.label} · {t(presentation.label)}</strong>
+    <p>{invitation.maskedEmail} · {t(presentation.timingLabel)}{presentation.timestamp ? new Date(presentation.timestamp).toLocaleString(locale) : t('未记录')}</p>
+    {presentation.status === 'PENDING' && <button type="button" disabled={!writable} onClick={() => revoke(invitation.id)}>{t('撤销邀请')}</button>}
+  </li>
   return <section className={styles.invitationPanel} aria-label={t('教练账号绑定')}>
     <header><div><h4>{t('教练账号绑定')}</h4><p>{t('负责人邀请 → 教练本人确认 → 关联本队。教练可查看本队比赛房，操作仍以本场代表权限为准。')}</p></div><button type="button" disabled={busy || disabled} onClick={refreshStatus}>{t('刷新绑定状态')}</button></header>
     {error && <p role="alert" className={styles.error}>{t(error)}</p>}
@@ -54,8 +61,9 @@ export default function WeeklyCoachInvitations({ teamId, coaches, disabled, onCh
         <p>{t('请教练先注册并验证邮箱。新邀请会撤销这位教练尚未确认的旧邀请；修改教练 BattleTag 后也需要重新邀请。')}</p>
         <button type="submit" disabled={!writable || !targetId}>{t(busy ? '正在生成…' : '生成教练绑定邀请')}</button>
       </form> : <p>{t('请先保存待绑定的教练资料；已绑定的教练无需再次邀请。')}</p>}
-      {issued?.activationUrl && <div className={styles.invitationLink} role="status"><strong>{t('邀请已生成，等待教练本人确认')}</strong><p>{issued.maskedEmail} · {t('有效至：')}{new Date(issued.expiresAt).toLocaleString(locale)}</p><p>{t('将此链接私发给这位教练，请勿公开。教练确认前不会获得本队权限。')}</p><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(issued.activationUrl); setReceipt('绑定邀请链接已复制。') } catch { setReceipt('复制失败，请手动复制。') } }}>{t('复制教练邀请链接')}</button><input aria-label={t('教练邀请链接')} readOnly value={issued.activationUrl} onFocus={event => event.target.select()} />{receipt && <p>{t(receipt)}</p>}</div>}
-      {invitations.length > 0 && <ul className={styles.records}>{invitations.map(invitation => <li key={invitation.id}><strong>{invitation.target.label} · {t(statusLabels[invitation.status] || invitation.status)}</strong><p>{invitation.maskedEmail} · {t('有效至：')}{new Date(invitation.expiresAt).toLocaleString(locale)}</p>{invitation.status === 'PENDING' && <button type="button" disabled={!writable} onClick={() => revoke(invitation.id)}>{t('撤销邀请')}</button>}</li>)}</ul>}
+      {issued?.activationUrl && issuedStatus === 'PENDING' && <div className={styles.invitationLink} role="status"><strong>{t('邀请已生成，等待教练本人确认')}</strong><p>{issued.maskedEmail} · {t('邀请确认截止时间：')}{new Date(issued.expiresAt).toLocaleString(locale)}</p><p>{t('将此链接私发给这位教练，请勿公开。教练确认前不会获得本队权限。')}</p><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(issued.activationUrl); setReceipt('绑定邀请链接已复制。') } catch { setReceipt('复制失败，请手动复制。') } }}>{t('复制教练邀请链接')}</button><input aria-label={t('教练邀请链接')} readOnly value={issued.activationUrl} onFocus={event => event.target.select()} />{receipt && <p>{t(receipt)}</p>}</div>}
+      {current.length > 0 && <ul className={styles.records}>{current.map(renderRecord)}</ul>}
+      {history.length > 0 && <details><summary>{t('历史邀请记录')} ({history.length})</summary><ul className={styles.records}>{history.map(renderRecord)}</ul></details>}
     </>}
   </section>
 }
