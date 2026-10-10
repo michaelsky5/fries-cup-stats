@@ -1,6 +1,8 @@
 .viewport.viewport { --room-unit:1px;max-width:none;min-height:100dvh;padding:12px 18px;gap:8px; }
 .columns { display:grid;grid-template-columns:minmax(190px,230px) minmax(0,1fr) minmax(190px,230px);gap:12px;flex:1;min-height:0; }
 .center { min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px; }
+.auxiliary { display:flex; flex-direction:column; gap:8px; flex:none; min-height:0; max-height:min(160px,24dvh); overflow:auto; overscroll-behavior:contain; scrollbar-width:thin; }
+.auxiliary:empty { display:none; }
 .team { min-width:0;display:flex;flex-direction:column;border:1px solid var(--line);background:var(--fc-data-room-surface); }
 .team>header { padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:3px 8px;border-top:3px solid var(--fc-data-room-action-bg);border-bottom:1px solid var(--line); }
 .team>header>small { grid-column:1/-1;font-size:9px;letter-spacing:.16em; }

@@ -12,7 +12,7 @@
 .status [data-confirmed=true] { color:var(--fc-data-room-success,#237a4b); }
 .score { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
 .score b { font-size:24px; font-variant-numeric:tabular-nums; }
-.lineupReopen { flex:none; min-height:0; margin:0; padding:6px 12px; display:flex; flex-wrap:wrap; align-items:center; gap:4px 16px; max-height:30dvh; overflow:auto; }
+.lineupReopen { flex:none; min-height:0; margin:0; padding:6px 12px; display:flex; flex-wrap:wrap; align-items:center; gap:4px 16px; }
 .lineupReopen>strong { flex:none; font-size:12px; }
 .lineupReopen>details { flex:1; min-width:0; }
 .lineupReopen summary { padding-block:4px; min-height:28px; font-size:12px; }

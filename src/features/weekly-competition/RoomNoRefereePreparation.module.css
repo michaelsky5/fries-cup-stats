@@ -1,4 +1,4 @@
-.notice { margin:0; padding:6px 12px; border-bottom:1px solid var(--line); border-left:3px solid var(--fc-data-room-accent); background:var(--fc-data-room-surface); font-size:12px; line-height:1.55; flex:none; display:flex; flex-wrap:wrap; align-items:center; gap:4px 16px; max-height:30dvh; overflow:auto; }
+.notice { margin:0; padding:6px 12px; border-bottom:1px solid var(--line); border-left:3px solid var(--fc-data-room-accent); background:var(--fc-data-room-surface); font-size:12px; line-height:1.55; flex:none; display:flex; flex-wrap:wrap; align-items:center; gap:4px 16px; }
 .notice[data-overdue=true] { border-left-color:var(--fc-data-status-danger); }
 .notice>strong { font-size:12px; }
 .notice p { margin:6px 0; overflow-wrap:anywhere; }
