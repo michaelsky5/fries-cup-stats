@@ -19,6 +19,11 @@
 .viewport .person button { font-size:10px;padding:3px 5px;min-height:28px; }.person[data-check-in=PRESENT] button,.person[data-check-in=PRESENT]>small { color:var(--fc-data-room-success); }
 .teamContent>footer { display:grid;gap:2px;margin-top:auto;padding:9px 10px;background:var(--fc-data-room-inset);border-top:1px solid var(--line); }
 .teamContent>footer strong { font-size:11px; }.teamContent>footer small { font-size:9px; }.teamContent>footer[data-ready=true] strong { color:var(--fc-data-room-success); }
+.lineupConfirmation { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+.lineupConfirmation>strong { min-width:0; }
+.viewport .lineupCorrection { flex:none; min-height:28px; padding:3px 6px; font-size:10px; background:transparent; }
+.lineupCorrection[data-pending=true] { color:var(--fc-data-room-warning); border-color:var(--fc-data-room-warning); }
+@media(max-width:1179px) { .viewport .lineupCorrection { min-height:44px; padding:6px 10px; font-size:12px; } }
 .viewport [data-room-slot=representative] { margin:0;padding:8px 10px;border-inline:0;border-bottom:1px solid var(--line);background:transparent; }
 .viewport [data-room-slot=representative]>div:first-child { gap:5px; }.viewport [data-room-slot=representative]>div:first-child small { font-size:9px; }
 .viewport [data-room-slot=representative]>div:first-child button { min-height:24px;padding:2px 5px;font-size:10px; }.viewport [data-room-slot=representative] em { font-size:9px; }
@@ -108,6 +113,8 @@
   .columns { grid-template-rows:minmax(0,1fr); }
   .columns>.team { min-height:0;overflow:hidden; }
   .columns>.team>.teamContent { display:flex;flex-direction:column;flex:1;min-height:0;overflow:auto;overscroll-behavior:contain; }
+  .columns>.team>.teamContent>.roster { flex-shrink:0; }
+  .columns>.team>.teamContent>footer { position:sticky;bottom:0;flex-shrink:0;z-index:1; }
   .viewport [data-room-slot=stages] { height:42px;grid-template-rows:42px; }
   .viewport [data-room-slot=stages] li { min-height:0; }
   .viewport [data-room-slot=stages] li button { height:42px;min-height:0; }
@@ -138,6 +145,7 @@
   .viewport .person button { font-size:calc(11 * var(--room-unit));padding:calc(4 * var(--room-unit)) calc(6 * var(--room-unit));min-height:calc(30 * var(--room-unit)); }
   .viewport .teamContent>footer { padding:calc(10 * var(--room-unit)) calc(14 * var(--room-unit));gap:calc(4 * var(--room-unit)); }
   .viewport .teamContent>footer strong { font-size:calc(12 * var(--room-unit)); }.viewport .teamContent>footer small { font-size:calc(10 * var(--room-unit)); }
+  .viewport .lineupCorrection { min-height:calc(30 * var(--room-unit)); padding:calc(4 * var(--room-unit)) calc(6 * var(--room-unit)); font-size:calc(11 * var(--room-unit)); }
   .viewport [data-room-slot=representative] { padding:calc(12 * var(--room-unit)) calc(14 * var(--room-unit)); }
   .viewport [data-room-slot=representative]>div:first-child small,.viewport [data-room-slot=representative] em { font-size:calc(10 * var(--room-unit)); }
   .viewport [data-room-slot=representative]>div:first-child button { font-size:calc(11 * var(--room-unit));min-height:calc(28 * var(--room-unit));padding:calc(3 * var(--room-unit)) calc(6 * var(--room-unit)); }

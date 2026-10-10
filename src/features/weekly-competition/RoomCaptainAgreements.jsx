@@ -22,14 +22,15 @@ function ConfirmationStatus({ data, view }) {
   return <div className={styles.status} aria-label={uiText('双方确认状态', locale)}>{['A', 'B'].map(side => <span key={side} data-confirmed={view.confirmations?.some(item => item.side === side && item.confirmed)}>{teamName(data, side)} · {uiText(view.confirmations?.some(item => item.side === side && item.confirmed) ? '已确认' : '待确认', locale)}</span>)}</div>
 }
 
-export function RoomLineupReopen({ data, disabled, command }) {
+export function RoomLineupReopen({ data, disabled, command, teamId }) {
   const locale = useUiLocale(), send = useAgreementCommand(data, command)
   const [note, setNote] = useState(''), view = data.captainAgreements?.lineup
-  if (!view || !(view.withdrawTeams.length || view.canRequest || view.canRespond || view.canCancel || view.valid && view.status === 'PENDING')) return null
-  return <section className={`${styles.panel} ${styles.lineupReopen}`} data-room-slot="lineup-reopen" aria-label={uiText('首发更正', locale)}><strong>{uiText('首发更正', locale)}</strong>
-    {view.withdrawTeams.length > 0 ? <><p>{uiText('本队首发尚未公开，可撤回后修改；原阶段计时继续。', locale)}</p><button type="button" disabled={disabled} onClick={() => send('WITHDRAW_LINEUP', null, { teamId: view.withdrawTeams[0] })}>{uiText('撤回本队密封首发', locale)}</button></>
+  if (!view || !(view.withdrawTeams?.length || view.canRequest || view.canRespond || view.canCancel || view.valid && view.status === 'PENDING')) return null
+  const withdrawTeam = view.withdrawTeams?.includes(teamId) ? teamId : view.withdrawTeams?.[0]
+  return <section className={`${styles.panel} ${styles.lineupReopen}`} data-room-slot="lineup-reopen" aria-label={uiText('首发更正', locale)}>
+    {withdrawTeam ? <><p>{uiText('本队首发尚未公开，可撤回后修改；原阶段计时继续。', locale)}</p><button type="button" disabled={disabled} onClick={() => send('WITHDRAW_LINEUP', null, { teamId: withdrawTeam })}>{uiText('撤回本队密封首发', locale)}</button></>
       : view.valid && view.status === 'PENDING' ? <><p>{teamName(data, view.proposerSide)} · {view.reason}</p><ConfirmationStatus data={data} view={view} /><p>{uiText('双方同意后重新确认首发。等待期间原首发和计时仍有效；Ban 开始后申请失效。', locale)}</p><div className={styles.actions}>{view.canRespond && <><button type="button" disabled={disabled} onClick={() => send('RESPOND_LINEUP_REOPEN', view, { ready: true })}>{uiText('同意重新确认首发', locale)}</button><button type="button" disabled={disabled} onClick={() => send('RESPOND_LINEUP_REOPEN', view, { ready: false })}>{uiText('保留原首发', locale)}</button></>}{view.canCancel && <button type="button" disabled={disabled} onClick={() => send('RESPOND_LINEUP_REOPEN', view, { ready: false })}>{uiText('撤回重开申请', locale)}</button>}</div></>
-        : view.canRequest && <details><summary>{uiText('申请双方重新确认首发', locale)}</summary><form onSubmit={event => { event.preventDefault(); return send('REQUEST_LINEUP_REOPEN', null, { note: note.trim() }) }}><label>{uiText('公开更正原因', locale)}<input value={note} onChange={event => setNote(event.target.value)} required minLength={2} maxLength={500} disabled={disabled} /></label><p>{uiText('首发已公开，需要另一方同意；地图、Ban 权和准备总截止保留。', locale)}</p><button disabled={disabled || note.trim().length < 2}>{uiText('请另一方确认', locale)}</button></form></details>}
+        : view.canRequest && <><strong>{uiText('申请双方重新确认首发', locale)}</strong><form onSubmit={event => { event.preventDefault(); return send('REQUEST_LINEUP_REOPEN', null, { note: note.trim() }) }}><label>{uiText('公开更正原因', locale)}<input value={note} onChange={event => setNote(event.target.value)} required minLength={2} maxLength={500} disabled={disabled} /></label><p>{uiText('首发已公开，需要另一方同意；地图、Ban 权和准备总截止保留。', locale)}</p><button disabled={disabled || note.trim().length < 2}>{uiText('请另一方确认', locale)}</button></form></>}
   </section>
 }
 
