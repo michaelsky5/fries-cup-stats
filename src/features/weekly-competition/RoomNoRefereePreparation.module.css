@@ -1,16 +1,17 @@
-.notice { margin:0; padding:12px 18px; border-bottom:1px solid var(--line); border-left:3px solid var(--fc-data-room-accent); background:var(--fc-data-room-surface); font-size:12px; line-height:1.55; flex:none; max-height:40dvh; overflow:auto; }
+.notice { margin:0; padding:6px 12px; border-bottom:1px solid var(--line); border-left:3px solid var(--fc-data-room-accent); background:var(--fc-data-room-surface); font-size:12px; line-height:1.55; flex:none; display:flex; flex-wrap:wrap; align-items:center; gap:4px 16px; max-height:30dvh; overflow:auto; }
 .notice[data-overdue=true] { border-left-color:var(--fc-data-status-danger); }
-.notice>strong { font-size:13px; }
+.notice>strong { font-size:12px; }
 .notice p { margin:6px 0; overflow-wrap:anywhere; }
 .notice small { display:block; color:var(--muted); }
-.notice dl { display:flex; flex-wrap:wrap; gap:6px 20px; margin:8px 0; }
-.notice dl>div { min-width:0; }
+.notice dl { display:flex; flex-wrap:wrap; gap:4px 14px; margin:0; }
+.notice dl>div { min-width:0; display:flex; flex-wrap:wrap; align-items:baseline; gap:0 6px; }
 .notice dt { color:var(--muted); font-size:11px; }
 .notice dd { margin:0; font-variant-numeric:tabular-nums; font-weight:650; }
-.details { margin:6px 0; }
+.details { margin:0 0 0 auto; }
 .details summary { cursor:pointer; min-height:28px; display:list-item; }
-.details[open] { padding-bottom:8px; }
-.actions { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+.details[open] { flex-basis:100%; margin-left:0; padding-bottom:4px; }
+.actions { display:flex; align-items:center; flex-wrap:wrap; gap:10px; flex-basis:100%; }
+.actions:empty { display:none; }
 .actions button { min-height:36px; font-size:12px; white-space:normal; }
 .records { display:grid; gap:10px; margin-top:10px; }
 .records>div { border-top:1px solid var(--line); padding-top:8px; min-width:0; }
@@ -23,4 +24,4 @@
 .form textarea { min-height:110px; width:100%; resize:vertical; }
 .form .confirm { display:flex; align-items:flex-start; }
 .confirm input { flex-shrink:0; margin-top:5px; }
-@media(max-width:650px) { .notice { padding:10px 12px; font-size:12px; }.actions button,.details summary { min-height:44px; }.notice dl { gap:6px 12px; } }
+@media(max-width:650px) { .notice { padding:6px 10px; font-size:12px; gap:4px 10px; max-height:none; }.notice>strong { flex:1; }.actions button,.details summary { min-height:44px; }.notice dl { flex-basis:100%; order:1; gap:4px 12px; }.details[open] { order:2; }.actions { order:3; } }

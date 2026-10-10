@@ -68,7 +68,7 @@
 @media(min-width:1180px) and (min-height:600px) {
   .viewport.viewport { height:calc(100dvh - var(--room-preview-toolbar,0px));min-height:0;max-height:calc(100dvh - var(--room-preview-toolbar,0px));padding:10px 16px;gap:7px; }
   .columns { grid-template-columns:clamp(190px,17.2vw,260px) minmax(0,1fr) clamp(190px,17.2vw,260px); }
-  .center>section { flex:1;min-height:0; }.center>div:not([role=status]) { flex:none; }
+  .center>section:is([data-room-slot=current-task],[data-room-slot=opening]),.center[data-inspecting=true]>section { flex:1;min-height:0; }.center>div:not([role=status]) { flex:none; }
   .center>section[data-room-slot=current-task] { align-content:start;overflow:auto; }
   .viewport [data-room-slot=opening] { min-height:0;display:flex;flex-direction:column; }
 }
