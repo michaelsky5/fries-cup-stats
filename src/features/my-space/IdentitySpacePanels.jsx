@@ -101,7 +101,7 @@ function TeamContextCard({ teamContext, withSeason }) {
         <div><dt>{uiText("队长", uiLocale)}</dt><dd>{teamContext.leadership?.managerIsDefaultCaptain ? uiText("经理默认兼任", uiLocale) : teamContext.leadership?.captain?.displayName || uiText("待指定", uiLocale)}</dd></div>
         <div><dt>{uiText("下一场", uiLocale)}</dt><dd>{teamContext.nextMatch ? formatTime(teamContext.nextMatch.scheduledAt) : uiText("暂无", uiLocale)}</dd></div>
       </dl>
-      <div className={styles.actions}>{permissions.canManageTeam ? <Link to={withSeason('/me?section=team')}>{uiText("管理报名与阵容", uiLocale)}</Link> : <Link to={withSeason('/me?section=team')}>{uiText("查看队伍关系", uiLocale)}</Link>}{permissions.canNegotiateSchedule ? <Link to={withSeason('/me?section=matches')}>{uiText("赛程协商", uiLocale)}</Link> : null}{permissions.canSubmitAppeal ? <Link to={withSeason('/me?section=communications')}>{uiText("赛事申诉", uiLocale)}</Link> : null}</div>
+      <div className={styles.actions}>{permissions.canManageTeam ? <Link to={withSeason('/me?section=team' + (teamContext.seasonTeam?.id ? '&team=' + encodeURIComponent(teamContext.seasonTeam.id) : ''))}>{uiText("管理报名与阵容", uiLocale)}</Link> : <Link to={withSeason('/me?section=team' + (teamContext.seasonTeam?.id ? '&team=' + encodeURIComponent(teamContext.seasonTeam.id) : ''))}>{uiText("查看队伍关系", uiLocale)}</Link>}{permissions.canNegotiateSchedule ? <Link to={withSeason('/me?section=matches')}>{uiText("赛程协商", uiLocale)}</Link> : null}{permissions.canSubmitAppeal ? <Link to={withSeason('/me?section=communications')}>{uiText("赛事申诉", uiLocale)}</Link> : null}</div>
       {permissions.readOnly ? <p className={styles.readOnly}>{uiText("当前关系为只读；教练可查看队伍赛事信息，但不能代替经理提交报名、阵容或申诉。", uiLocale)}</p> : null}
     </article>
   )

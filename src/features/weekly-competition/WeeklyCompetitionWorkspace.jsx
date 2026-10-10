@@ -5,6 +5,7 @@ import WeeklyTeamAdditions from './WeeklyTeamAdditions.jsx'
 import WeeklyTeamCoaches from './WeeklyTeamCoaches.jsx'
 import WeeklyTeamContext from './WeeklyTeamContext.jsx'
 import WeeklyOwnershipTransfers from './WeeklyOwnershipTransfers.jsx'
+import { teamManagementDestination } from '../my-space/spaceDestinations.js'
 import WeeklyCycleEnrollment from './WeeklyCycleEnrollment.jsx'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -105,7 +106,7 @@ function SaveFeedback({ notice, kind, step = kind, plan, nextHref, progressHref,
   return <div ref={feedbackRef} className={styles.saveFeedback} tabIndex={-1} role="status">
     <strong><span aria-hidden="true">✓</span> {notice.message}</strong>
     <p>{plan.guidance.detail}</p>
-    <nav aria-label={uiText("保存后的下一步", uiLocale)}>{plan.next && plan.next.key !== step ? <Link className={styles.nextStep} to={nextHref}>{uiText("继续", uiLocale)}{plan.next.title} →</Link> : null}<Link to={progressHref}>{uiText("查看本次参赛进度 ↗", uiLocale)}</Link><Link to={overviewHref}>{uiText("返回我的空间", uiLocale)}</Link></nav>
+    <nav aria-label={uiText("保存后的下一步", uiLocale)}>{plan.next && plan.next.key !== step ? <Link className={styles.nextStep} to={nextHref}>{uiText("继续", uiLocale)}{plan.next.title} →</Link> : null}<Link to={progressHref}>{uiText("参赛进度 ↗", uiLocale)}</Link><Link to={overviewHref}>{uiText("返回我的空间", uiLocale)}</Link></nav>
   </div>
 }
 
@@ -352,10 +353,10 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
   }
 
   if (!workspace?.teams?.length) {
-    return <section className={styles.state} data-tone="quiet"><span>NO WEEKLY TEAM LINK</span><strong>{uiText("当前账号还没有已连接的周赛队伍", uiLocale)}</strong><p>{error || uiText("队长、经理或选手完成邀请认领后，这里会自动出现对应队伍的周期与每周资料。", uiLocale)}</p></section>
+    return <section className={styles.state} data-tone="quiet"><span>NO WEEKLY TEAM LINK</span><strong>{uiText("当前账号还没有已连接的周赛队伍", uiLocale)}</strong><p>{error || uiText("队长、经理、选手或教练完成邀请认领后，这里会自动出现对应队伍的周期与每周资料。", uiLocale)}</p></section>
   }
 
-  if (invalidSelection) return <section className={styles.state} role="alert"><span>PARTICIPATION LINK</span><strong>{uiText("此队伍或周次已不可用", uiLocale)}</strong><p>{uiText("链接对应的参赛关系不存在，或当前账号无权查看。请从参赛准备重新选择。", uiLocale)}</p><Link to={`?${new URLSearchParams({ ...Object.fromEntries(searchParams), section: 'overview' })}`}>{uiText("返回参赛准备 →", uiLocale)}</Link></section>
+  if (invalidSelection) return <section className={styles.state} role="alert"><span>PARTICIPATION LINK</span><strong>{uiText("此队伍或周次已不可用", uiLocale)}</strong><p>{uiText("链接对应的参赛关系不存在，或当前账号无权查看。请从参赛准备重新选择。", uiLocale)}</p><Link to={teamManagementDestination({ search: searchParams.toString(), competitionId: seasonId })}>{uiText("重新选择我的队伍 →", uiLocale)}</Link></section>
 
   const management = searchParams.get('manage')
   const managementPath = mode => {
@@ -374,7 +375,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
       : <WeeklyOwnershipTransfers key={`ownership:${seasonId}:${teamId}`} seasonId={seasonId} selectedTeamId={teamId} readOnly={readOnly || stale || Boolean(busy)} />}
   </section>
 
-  if (!activeStep) return <section className={styles.state} role="alert"><strong>{uiText("这个参赛步骤不存在", uiLocale)}</strong><Link to={progressHref}>{uiText("返回本次参赛进度 →", uiLocale)}</Link></section>
+  if (!activeStep) return <section className={styles.state} role="alert"><strong>{uiText("这个参赛步骤不存在", uiLocale)}</strong><Link to={progressHref}>{uiText("返回参赛进度 →", uiLocale)}</Link></section>
 
   return (
     <section className={styles.workspace} aria-label={uiText("周赛队伍工作台", uiLocale)}>
@@ -382,7 +383,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
       <header className={styles.workHeader}><div><RoomGuideLink season={seasonId} role={canManageTeam ? 'manager' : 'member'} label="参赛与比赛指南" /><span>WEEKLY PARTICIPATION</span><h2>{uiText("本周参赛准备", uiLocale)}</h2></div><button type="button" disabled={Boolean(busy)} onClick={async () => { if (await confirmDiscard()) { refresh().catch(() => {}); onActivityChange?.() } }}>{uiText("刷新资料", uiLocale)}</button></header>
       {error ? <div ref={errorRef} tabIndex={-1} className={styles.message} role="alert" data-error="true"><span>{error}</span></div> : null}
       {stale && <p className={styles.lockNote}>{uiText("当前显示上次同步记录，重新同步前仅可查看。", uiLocale)}</p>}
-      {entry && <div className={styles.preparationReturn}><Link to={progressHref}>{uiText("← 本次参赛进度", uiLocale)}</Link><strong>{entry.team?.shortName || entry.team?.name} · {weekRecord?.week?.label || uiText("周期登记", uiLocale)}</strong><span>{cycle?.name}</span>{confirmationOpen && weekRecord.week.confirmationDeadlineAt && <time dateTime={weekRecord.week.confirmationDeadlineAt}>{uiText("截止 ", uiLocale)}{new Date(weekRecord.week.confirmationDeadlineAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}{uiText(" · 北京时间", uiLocale)}</time>}</div>}
+      {entry && <div className={styles.preparationReturn}><Link to={progressHref}>{uiText("← 参赛进度", uiLocale)}</Link><strong>{entry.team?.shortName || entry.team?.name} · {weekRecord?.week?.label || uiText("周期登记", uiLocale)}</strong><span>{cycle?.name}</span>{confirmationOpen && weekRecord.week.confirmationDeadlineAt && <time dateTime={weekRecord.week.confirmationDeadlineAt}>{uiText("截止 ", uiLocale)}{new Date(weekRecord.week.confirmationDeadlineAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}{uiText(" · 北京时间", uiLocale)}</time>}</div>}
       {(teamCycles.length > 1 || entry?.weeks?.length > 1) && <details className={styles.contextSwitcher}><summary>{uiText("切换周期或周次", uiLocale)}</summary><div className={styles.selectors}>
         <label><span>{uiText("周期", uiLocale)}</span><select value={cycleId} disabled={Boolean(busy)} onChange={event => changeSelection('cycle', event.target.value)}>{teamCycles.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
         <label><span>{uiText("周次", uiLocale)}</span><select value={weekId} disabled={Boolean(busy)} onChange={event => changeSelection('week', event.target.value)}>{(entry?.weeks || []).map(item => <option key={item.week.id} value={item.week.id}>{item.week.label || uiText("第 {0} 周", uiLocale, [item.week.weekNumber])}</option>)}</select></label>

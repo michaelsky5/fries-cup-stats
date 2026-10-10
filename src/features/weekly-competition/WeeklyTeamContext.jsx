@@ -17,10 +17,10 @@ export default function WeeklyTeamContext({ teams, selected, canManage, readOnly
       <div className={styles.teamPermission}><strong>{t(roleLabels[selected?.role] || selected?.role)}</strong><span>{t(canManage && !readOnly ? '可维护本队资料' : '本队资料仅可查看')}</span></div>
     </div>
     <nav className={styles.teamOperations} aria-label={t('队伍管理')}>
-      <Link to={managementPath(null)} aria-current={!management ? 'page' : undefined}>{t('参赛准备')}</Link>
+      <Link to={managementPath(null)} aria-current={!management ? 'page' : undefined}>{t('本周参赛准备')}</Link>
       {canManage && <>
         <Link to={managementPath('coaches')} aria-current={management === 'coaches' ? 'page' : undefined}>{t('教练管理')} →</Link>
-        <Link to={managementPath('members')} aria-current={management === 'members' ? 'page' : undefined}>{t('队伍自主增员')} →</Link>
+        <Link to={managementPath('members')} aria-current={management === 'members' ? 'page' : undefined}>{t('队员管理')} →</Link>
         <Link to={managementPath('ownership')} aria-current={management === 'ownership' ? 'page' : undefined}>{t('队伍所有权转让')} →</Link>
       </>}
     </nav>

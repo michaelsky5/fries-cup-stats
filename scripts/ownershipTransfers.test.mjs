@@ -108,13 +108,14 @@ test('navigation and the task center count the same pending receipt, even with c
   assert.equal(buildAccountAttention(await read()).taskBadge, '待 !', 'failed ownership sync must not claim the queue is clear')
 })
 
-test('the registration entry expands the management area and focuses the selected receipt', () => {
+test('the registration entry exposes the selected incoming receipt without team-management ownership', () => {
   const page = readFileSync(new URL('../src/features/event-registration/SeasonParticipationPage.jsx', import.meta.url), 'utf8')
   const form = readFileSync(new URL('../src/features/weekly-competition/WeeklyOwnershipTransfers.jsx', import.meta.url), 'utf8')
   const space = readFileSync(new URL('../src/pages/me/MySpacePage.jsx', import.meta.url), 'utf8')
   assert.match(page, /get\('ownershipTransfer'\)/)
-  assert.match(page, /open=\{Boolean\(focusTransferId\)/)
   assert.match(page, /focusTransferId=\{focusTransferId\}/)
+  assert.match(page, /<WeeklyOwnershipTransfers[^>]*responseOnly/)
+  assert.match(form, /if \(responseOnly\) \{ next\.teams = \[\]; next\.transfers = next\.transfers\.filter\(row => row\.toUserId === next\.userId\)/)
   assert.match(form, /focusedRecord\.current\?\.scrollIntoView/)
   assert.match(form, /row\.status === 'PENDING' && row\.toUserId === data\.userId/)
   assert.match(form, /disabled=\{!writable\}/)

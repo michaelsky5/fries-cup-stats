@@ -18,7 +18,7 @@ import RoomResultPanel from './RoomResultPanel.jsx'
 import RoomForfeitControl from './RoomForfeitControl.jsx'
 import RoomRulesPanel from './RoomRulesPanel.jsx'
 import { useEffect, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import AuthButton from '../auth/AuthDialog.jsx'
 import useWeeklyLiveRoom from './useWeeklyLiveRoom.js'
@@ -40,6 +40,7 @@ import RoomImportantOperations from './RoomImportantOperations.jsx'
 import RoomForceStartControl from './RoomForceStartControl.jsx'
 import RoomStartControl from './RoomStartControl.jsx'
 import { roomRoleCode, sortRoomLineup } from './roomLineups.js'
+import { matchListDestination } from '../my-space/spaceDestinations.js'
 
 const phaseNames = { PREPARING: '赛前准备', LIVE: '比赛进行中', PAUSED: '技术暂停', REVIEW: '赛果处理', ARCHIVED: '已归档' }
 function roomPhaseName(data, locale) {
@@ -186,9 +187,11 @@ function RoomCommunication({ data, disabled, mutate, expanded, setExpanded, chan
 }
 
 export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButton />, messageLoader, preview = false, returnPathOverride, returnLabelOverride }) {
+  const location = useLocation()
   const { liveRoomWrite } = useRoomTransport()
   const uiLocale = useUiLocale()
   const { data, error, busy, notice, noticeKind, refresh, mutate, clearNotice, connection } = controller
+  const returnPath = returnPathOverride || matchListDestination(matchId, { search: location.search, competitionId: data?.match?.seasonId })
   const compact = useMobileRoom()
   const roomRoot = useRef(null)
   const [rosterSide, setRosterSide] = useState(null)
@@ -214,14 +217,13 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
   }, [compact, data?.map?.order, data?.opening?.phase, stageIndex, selectedStage])
   const dialog = useRef(null)
   useEffect(() => { if (pauseOpen) dialog.current?.showModal(); else dialog.current?.close() }, [pauseOpen])
-  if (!data) return <main className={styles.emptyPage}><Link to="/me?section=matches">{uiText("← 我的比赛", uiLocale)}</Link><h1>{uiText("比赛房", uiLocale)}</h1><RoomGuideLink match={matchId} scenario="access" label="无法操作？查看指南" /><RoomConnectionNotice connection={connection} error={error} refresh={refresh} matchId={matchId} hasData={Boolean(data)} />{(!connection || !error) && <p role={error ? 'alert' : 'status'}>{error || uiText("正在同步本场比赛…", uiLocale)}</p>}{error && !connection && <button onClick={() => refresh({ force: true })}>{uiText("重新同步", uiLocale)}</button>}{accountControl}</main>
+  if (!data) return <main className={styles.emptyPage}><Link to={returnPath}>{uiText("← 我的比赛", uiLocale)}</Link><h1>{uiText("比赛房", uiLocale)}</h1><RoomGuideLink match={matchId} scenario="access" label="无法操作？查看指南" /><RoomConnectionNotice connection={connection} error={error} refresh={refresh} matchId={matchId} hasData={Boolean(data)} />{(!connection || !error) && <p role={error ? 'alert' : 'status'}>{error || uiText("正在同步本场比赛…", uiLocale)}</p>}{error && !connection && <button onClick={() => refresh({ force: true })}>{uiText("重新同步", uiLocale)}</button>}{accountControl}</main>
   const disabled = busy || !!error || !data.access.canWrite
   const stage = data.phase, own = getRoomOperatingSides(data)
   const currentStage = getRoomStageIndex(data)
   const inspectingStage = selectedStage !== null && selectedStage !== currentStage
   const casterOnly = data.access.production && !data.access.staff && !data.access.teamIds.length
   const openingActive = data.opening && stage === 'PREPARING' && !data.opening.complete
-  const returnPath = returnPathOverride || `/me?section=matches&competition=${encodeURIComponent(data.match.seasonId)}&weeklyMatch=${encodeURIComponent(matchId)}`
   const command = (action, extra = {}) => mutate(() => liveRoomWrite(matchId, '/commands', { action, clientKey: crypto.randomUUID(), expectedRevision: data.revision, matchRevision: data.match.revision, draftRevision: data.draftRevision, ...extra }), '操作已保存，本场人员会同步看到最新状态。')
   const lineupStage = stage === 'PREPARING' && currentStage === 2
   const task = stage === 'PREPARING' ? data.opening?.complete ? '选禁完成，等待实际开赛' : '核对赛前准备条件' : stage === 'PAUSED' ? data.access.staff ? '核对双方恢复条件' : '比赛已暂停，等待恢复通知' : stage === 'LIVE' ? data.access.staff ? '比赛进行中，核对当前图信息' : '本图正在进行，请专注比赛' : stage === 'REVIEW' ? data.series && !data.series.complete ? data.opening?.access.canNext ? '核对本图结果并开放下一图' : data.phaseClock?.stage?.kind === 'REST' ? '局间休息 · 可提前结束后选图' : '等待本场操作人员开放下一图' : data.access.staff ? '整理本场赛果并提交战报' : '按本场分工提交战报，胜方负责；平局由主队 A 负责' : stage === 'ARCHIVED' ? '本场已归档，记录只读' : '比赛记录进入赛果处理'
@@ -287,14 +289,17 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
 }
 
 function LiveRoom({ matchId }) {
+  const location = useLocation()
   const controller = useWeeklyLiveRoom(matchId)
   const locale = useUiLocale()
-  return <RoomRenderBoundary matchId={matchId} locale={locale} refresh={controller.refresh}><WeeklyRoomView matchId={matchId} controller={controller} /></RoomRenderBoundary>
+  const returnPath = matchListDestination(matchId, { search: location.search, competitionId: controller.data?.match?.seasonId })
+  return <RoomRenderBoundary matchId={matchId} locale={locale} refresh={controller.refresh} returnPath={returnPath}><WeeklyRoomView matchId={matchId} controller={controller} /></RoomRenderBoundary>
 }
 
 export default function WeeklyLiveRoomPage() {
+  const location = useLocation()
   const uiLocale = useUiLocale()
   const { matchId } = useParams(), { user, isBootstrapping } = useAuth()
-  if (!user) return <main className={styles.emptyPage}><Link to="/me">{uiText("← 我的空间", uiLocale)}</Link><small>MATCH ROOM</small><h1>{uiText("进入本场比赛", uiLocale)}</h1><RoomGuideLink match={matchId} scenario="access" label="参赛与比赛指南" /><p>{isBootstrapping ? uiText("正在检查登录状态…", uiLocale) : uiText("登录后按本场身份查看准备、沟通与比赛进度。", uiLocale)}</p><AuthButton /></main>
+  if (!user) return <main className={styles.emptyPage}><Link to={matchListDestination(matchId, { search: location.search })}>{uiText("← 我的比赛", uiLocale)}</Link><small>MATCH ROOM</small><h1>{uiText("进入本场比赛", uiLocale)}</h1><RoomGuideLink match={matchId} scenario="access" label="参赛与比赛指南" /><p>{isBootstrapping ? uiText("正在检查登录状态…", uiLocale) : uiText("登录后按本场身份查看准备、沟通与比赛进度。", uiLocale)}</p><AuthButton /></main>
   return <LiveRoom key={user.id + matchId} matchId={matchId} />
 }

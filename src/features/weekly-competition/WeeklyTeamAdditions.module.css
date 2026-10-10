@@ -20,6 +20,9 @@
 .records { padding: 0; list-style: none; }
 .records li { padding: 16px 0; border-top: 1px solid #cfcdc4; }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.actions a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 12px; border: 1px solid var(--fc-data-line-strong); color: var(--fc-data-ink); font-size: 13px; text-decoration: none; }
+.actions a:hover { background: var(--fc-data-paper-deep); }
+.actions a:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 2px; }
 .link { padding: 16px; border: 1px solid #7a826f; margin: 16px 0; }
 .link input { margin-bottom: 10px; }
 .error { color: #9f2718; }
