@@ -16,7 +16,7 @@
   .mobileFrame.mobileFrame :global([data-room-slot=center]) { display:flex;flex:1;min-height:0;gap:10px;overflow:hidden;scroll-margin-top:var(--mobile-header-height); }
   .mobileFrame.mobileFrame :global([data-room-slot=center]):focus { outline:none; }
   .mobileFrame.mobileFrame:has(:global([data-room-commit])) :global([data-room-slot=center]) { padding-bottom:calc(var(--room-action-height,150px) + 8px); }
-  .mobileFrame.mobileFrame :global([data-room-slot=center])>section { min-height:0;flex:1;overflow:auto;overscroll-behavior:contain; }
+  .mobileFrame.mobileFrame :global([data-room-slot=center])>section:not(:global([data-room-slot=lineup-reopen])) { min-height:0;flex:1;overflow:auto;overscroll-behavior:contain; }
   .mobileFrame.mobileFrame :global([data-room-slot=center])>section>p { font-size:14px;line-height:1.65; }
   .mobileFrame.mobileFrame :global([data-room-slot=opening]) { border-top-width:2px; }
   .mobileFrame.mobileFrame :global([data-room-slot=opening])>header { padding:14px 14px 6px;gap:6px;display:block; }

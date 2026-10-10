@@ -244,8 +244,10 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
     <div className={workspace.columns} data-room-slot="columns">{!compact && <Team team={data.match.teamA} data={data} disabled={disabled} mutate={mutate} />}<div className={workspace.center} ref={operation} tabIndex={-1} data-room-slot="center" data-stage-view={lineupStage ? 'lineup' : openingActive ? 'selection' : stage.toLowerCase()} data-inspecting={inspectingStage}>
       {!data.result && <RoomStageRail data={data} selectedStage={selectedStage} onStageSelect={setSelectedStage} clock={<RoomPhaseClock data={data} disabled={disabled} mutate={mutate} stale={!!error} onPreparationExtension={() => setAuxiliary('preparation')} />} />}
       <RoomDecisionSummary data={data} stale={!!error} />
-      <RoomNoRefereePreparation data={data} disabled={disabled} onReport={() => setAuxiliary('preparation-incident')} onSupport={() => { setChannel('SUPPORT'); setAuxiliary('communication') }} />
-      {openingActive && !lineupStage && !inspectingStage && <RoomLineupReopen data={data} disabled={disabled} command={command} />}
+      <div className={workspace.auxiliary} data-room-slot="auxiliary" role="region" aria-label={uiText('规则与记录', uiLocale)} tabIndex={0}>
+        {!compact && <RoomNoRefereePreparation data={data} disabled={disabled} onReport={() => setAuxiliary('preparation-incident')} onSupport={() => { setChannel('SUPPORT'); setAuxiliary('communication') }} />}
+        {openingActive && !lineupStage && !inspectingStage && <RoomLineupReopen data={data} disabled={disabled} command={command} />}
+      </div>
       {openingActive && !lineupStage && !inspectingStage && <OpeningSelectionPanel data={data} disabled={disabled} mutate={mutate} />}
       {lineupStage && !inspectingStage && <section className={`${styles.task} ${surfaces.paper} ${frame.phaseView}`} aria-label={uiText("首发确认", uiLocale)}><header className={frame.phaseViewHeader}><div><small>03 / LINEUP</small><h2>{uiText("确认本图首发", uiLocale)}</h2></div><span>{uiText("2 输出 · 1 重装 · 2 支援", uiLocale)}</span></header><RoomLineupStage key={data.map?.lineupContext || data.map?.order} data={data} disabled={disabled} command={command} /></section>}
       {!openingActive && !lineupStage && !inspectingStage && <>
@@ -268,7 +270,7 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
         <div className={mobile.teamTabs} role="group" aria-label={uiText('切换队伍名单', uiLocale)}>{['A', 'B'].map(side => { const activeSide = rosterSide || (data.access.teamIds.includes(data.match.teamB.id) ? 'B' : 'A'); return <button type="button" key={side} aria-pressed={activeSide === side} onClick={() => setRosterSide(side)}><b>{name(data.match['team' + side])}</b><small>{uiText(data.map?.lineupLocks?.[side] ? '首发已提交' : '首发待确认', uiLocale)}</small></button> })}</div>
         <Team key={rosterSide || 'default'} team={data.match['team' + (rosterSide || (data.access.teamIds.includes(data.match.teamB.id) ? 'B' : 'A'))]} data={data} disabled={disabled} mutate={mutate} fullRoster />
       </RoomPanelDialog>
-      <RoomPanelDialog open={auxiliary === 'info'} close={() => setAuxiliary('')} title={uiText('房间信息', uiLocale)}><RoomMobileInfo data={data} accountControl={accountControl} disabled={disabled} mutate={preview ? undefined : mutate}><RoomSeriesRail data={data} phaseLabel={roomPhaseName(data, uiLocale)} /></RoomMobileInfo></RoomPanelDialog>
+      <RoomPanelDialog open={auxiliary === 'info'} close={() => setAuxiliary('')} title={uiText('房间信息', uiLocale)}><RoomMobileInfo data={data} accountControl={accountControl} disabled={disabled} mutate={preview ? undefined : mutate}><RoomSeriesRail data={data} phaseLabel={roomPhaseName(data, uiLocale)} /><RoomNoRefereePreparation data={data} disabled={disabled} onReport={() => setAuxiliary('preparation-incident')} onSupport={() => { setChannel('SUPPORT'); setAuxiliary('communication') }} /></RoomMobileInfo></RoomPanelDialog>
     </>}
       <RoomPanelDialog open={auxiliary === 'more'} close={() => setAuxiliary('')} title={uiText(data.access.staff ? '赛管工具' : '更多操作', uiLocale)}><div className={mobile.more}>
         <p><b>{data.actor.name}</b> · {data.actor.label}</p>

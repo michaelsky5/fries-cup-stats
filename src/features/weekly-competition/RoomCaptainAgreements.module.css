@@ -12,4 +12,15 @@
 .status [data-confirmed=true] { color:var(--fc-data-room-success,#237a4b); }
 .score { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
 .score b { font-size:24px; font-variant-numeric:tabular-nums; }
+.lineupReopen { flex:none; min-height:0; margin:0; padding:6px 12px; display:flex; flex-wrap:wrap; align-items:center; gap:4px 16px; }
+.lineupReopen>strong { flex:none; font-size:12px; }
+.lineupReopen>details { flex:1; min-width:0; }
+.lineupReopen summary { padding-block:4px; min-height:28px; font-size:12px; }
+.lineupReopen>p,.lineupReopen>.status,.lineupReopen>.actions { flex-basis:100%; margin:0; }
+.lineupReopen label { margin-block:8px; }
+.lineupReopen form { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:6px 12px; }
+.lineupReopen form label { margin:0; }
+.lineupReopen form p { grid-column:1/-1; grid-row:2; margin:0; font-size:11px; }
+.lineupReopen form button { min-height:36px; padding:6px 12px; }
 @media(max-width:600px) { .panel { padding:12px; } .actions button { flex:1 1 140px; } }
+@media(max-width:650px) { .lineupReopen { padding:6px 10px; gap:4px 10px; max-height:none; }.lineupReopen summary { min-height:44px; padding-block:12px; }.lineupReopen form { grid-template-columns:minmax(0,1fr); }.lineupReopen form button { min-height:44px; } }
