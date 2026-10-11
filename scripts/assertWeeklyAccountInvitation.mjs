@@ -21,6 +21,7 @@ assert.equal(readWeeklyInvitationLocation().token, '')
 
 const pending = { id: 'invitation', status: 'PENDING', passwordMode: 'SET', identityType: 'MANAGER', user: { id: 'account' }, team: { id: 'team', seasonId: 'FCW26' } }
 assert.equal(isPendingWeeklyInvitation(pending), true)
+assert.equal(isPendingWeeklyInvitation({ ...pending, identityType: 'COACH' }), true)
 assert.equal(isPendingWeeklyInvitation({ ...pending, identityType: 'COACH', passwordMode: 'CONFIRM' }), true)
 for (const change of [{ status: 'ACCEPTED' }, { user: null }, { team: {} }, { passwordMode: 'UNKNOWN' }, { identityType: 'ADMIN' }]) {
   assert.equal(isPendingWeeklyInvitation({ ...pending, ...change }), false)
@@ -63,6 +64,12 @@ try {
 }
 
 const page = await readFile(new URL('../src/pages/auth/WeeklyAccountActivationPage.jsx', import.meta.url), 'utf8')
+const coachPanel = await readFile(new URL('../src/features/weekly-competition/WeeklyCoachInvitations.jsx', import.meta.url), 'utf8')
+assert.match(coachPanel, /无需提前注册。新教练通过邀请设置密码并确认账号；已有账号使用原密码/)
+assert.doesNotMatch(coachPanel, /请教练先注册/)
+assert.match(coachPanel, /issuedStatus === 'PENDING'/)
+assert.match(coachPanel, /emailDelivery\?\.status === 'ACCEPTED'/)
+assert.match(coachPanel, /邮件投递未确认，邀请仍有效。请复制链接私发给教练。/)
 const router = await readFile(new URL('../src/app/router.jsx', import.meta.url), 'utf8')
 assert.match(router, /path: '\/activate-weekly'/)
 assert.ok(router.indexOf("path: '/activate-weekly'") < router.indexOf("path: '/'"))
