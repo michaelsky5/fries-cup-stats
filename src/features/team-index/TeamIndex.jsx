@@ -22,7 +22,7 @@ function TeamEmblem({ team, seasonId, className = '' }) {
 
 export function TeamIndexHeading({ seasonCode, count, total, locale, favoriteCount, withSeason }) {
   const en = locale === 'en-US'
-  return <DirectoryHeading seasonCode={seasonCode} count={count} total={total} kicker={en ? 'THE TEAMS' : uiText("本届参赛队伍", locale)} title={en ? <>One team.<br className={directoryStyles.englishBreak} /> A shared season.</> : <>{uiText("一支队伍，", locale)}<span>{uiText("一起上场。", locale)}</span></>} description={en ? 'Explore full rosters, managers, coaches, schedules and results.' : uiText("查看完整阵容、经理与教练，以及本届赛程赛果。", locale)} unit={en ? 'teams' : uiText("支参赛队伍", locale)} action={<ArchiveLink to={withSeason('/me?section=following&manage=1')} label={en ? 'Manage followed teams' : uiText("管理关注的队伍", locale)}><span>{en ? favoriteCount + ' followed' : uiText("已关注 {0} 支", locale, [favoriteCount])}</span><span>{en ? 'Manage' : uiText("管理关注", locale)} ↗</span></ArchiveLink>} />
+  return <DirectoryHeading seasonCode={seasonCode} count={count} total={total} kicker="FRIES CUP / TEAMS" title={en ? 'Participating teams' : uiText("参赛战队", locale)} description={en ? 'Explore full rosters, managers, coaches, schedules and results.' : uiText("查看完整阵容、经理与教练，以及本届赛程赛果。", locale)} unit={en ? 'teams' : uiText("支参赛队伍", locale)} action={<ArchiveLink to={withSeason('/me?section=following&manage=1')} label={en ? 'Manage followed teams' : uiText("管理关注的队伍", locale)}><span>{en ? favoriteCount + ' followed' : uiText("已关注 {0} 支", locale, [favoriteCount])}</span><span>{en ? 'Manage' : uiText("管理关注", locale)} ↗</span></ArchiveLink>} />
 }
 
 export function TeamIndexControls({ fields, ...props }) {
@@ -42,7 +42,7 @@ function TeamShowcase({ team, preview, seasonId, seasonCode, locale, withSeason,
     <header className={styles.showcaseTop}><span>{seasonCode} <i /> {en ? 'TEAM ARCHIVE' : uiText("队伍档案", locale)}</span><b>{en ? 'On the roster' : uiText("本届参赛", locale)}</b></header>
     <div className={styles.scene}>
       <span className={styles.backprint} aria-hidden="true">{team.shortName}</span>
-      <div className={styles.identity}><span>{en ? 'THE NAME WE PLAY UNDER' : uiText("以这个名字，并肩上场", locale)}</span><h2 data-name-length={weightedLength > 7 ? 'long' : weightedLength > 4 ? 'medium' : 'short'}>{team.shortName}</h2><p>{team.fullName}</p><div className={styles.standing}><span>{preview.standing.heading}</span><strong>{preview.standing.label}</strong><small>{preview.standing.zone}</small></div></div>
+      <div className={styles.identity}><span>{en ? 'TEAM PROFILE' : uiText("队伍资料", locale)}</span><h2 data-name-length={weightedLength > 7 ? 'long' : weightedLength > 4 ? 'medium' : 'short'}>{team.shortName}</h2><p>{team.fullName}</p><div className={styles.standing}><span>{preview.standing.heading}</span><strong>{preview.standing.label}</strong><small>{preview.standing.zone}</small></div></div>
       <TeamEmblem key={seasonId + ':' + team.routeId} team={team} seasonId={seasonId} className={styles.portraitEmblem} />
     </div>
     <div className={styles.facts}><div><span>{en ? 'Manager' : uiText("经理", locale)}</span><b>{staffNames(team.staff?.managers)}</b></div><div><span>{en ? 'Coach' : uiText("教练", locale)}</span><b>{staffNames(team.staff?.coaches)}</b></div></div>
@@ -58,11 +58,11 @@ function TeamShowcase({ team, preview, seasonId, seasonCode, locale, withSeason,
           {player.player_id ? <ArchiveLink className={styles.rosterEntry} to={withSeason('/players/' + player.player_id)} label={(en ? 'Open player archive ' : uiText("打开选手档案 ", locale)) + player.identity.primary + (changeLabel ? ' · ' + changeLabel : '')}>{content}<i aria-hidden="true">↗</i></ArchiveLink> : <span className={styles.rosterEntry}>{content}</span>}
         </li>
       })}</ul> : <p className={styles.noRoster}>{en ? 'Player names have not been published.' : uiText("选手姓名尚未发布。", locale)}</p>}
-      <div className={styles.recordHeading}><span>{en ? 'SEASON SCHEDULE' : uiText("这一季的赛程", locale)}</span><ArchiveLink to={journeyHref}>{preview.scheduleCount} {en ? 'entries · Journey' : uiText("条记录 · 赛季征程", locale)} ↗</ArchiveLink></div>
+      <div className={styles.recordHeading}><span>{en ? 'SEASON SCHEDULE' : uiText("赛程记录", locale)}</span><ArchiveLink to={journeyHref}>{preview.scheduleCount} {en ? 'entries · Journey' : uiText("条记录 · 赛季征程", locale)} ↗</ArchiveLink></div>
       {preview.stages.length ? <div className={styles.stages}>{preview.stages.map(stage => <ArchiveLink key={stage.value} to={getArchiveStageHref(journeyHref, stage.value)}><span>{teamIndexText(stage.title, locale)}</span><b>{stage.count}<small>{en ? stage.count === 1 ? ' entry' : ' entries' : uiText(" 条", locale)}</small></b></ArchiveLink>)}</div> : <p className={styles.noRoster}>{en ? 'No published schedule entries.' : uiText("暂无已发布赛程。", locale)}</p>}
       <p className={styles.recordNote}>{en ? 'Published schedule entries include byes and administrative results.' : uiText("赛程记录包含已发布的轮空及判罚结果。", locale)}</p>
     </div>
-    <footer className={styles.teamActions}><button type="button" aria-pressed={Boolean(team.isFavorite)} disabled={favoriteDisabled} onClick={() => onToggleFavorite(team)} aria-label={team.isFavorite ? (en ? 'Unfollow team ' : uiText("取消关注队伍 ", locale)) + team.shortName : favoriteDisabled ? en ? 'Follow limit reached' : uiText("关注已满", locale) : (en ? 'Follow team ' : uiText("关注队伍 ", locale)) + team.shortName}>{team.isFavorite ? en ? '★ Following' : uiText("★ 已关注", locale) : favoriteDisabled ? en ? 'Limit reached' : uiText("关注已满", locale) : en ? '☆ Follow team' : uiText("☆ 关注队伍", locale)}</button><ArchiveLink to={withSeason('/teams/' + team.routeId)}>{en ? 'Enter team exhibition' : uiText("走进战队展馆", locale)} <span aria-hidden="true">↗</span></ArchiveLink></footer>
+    <footer className={styles.teamActions}><button type="button" aria-pressed={Boolean(team.isFavorite)} disabled={favoriteDisabled} onClick={() => onToggleFavorite(team)} aria-label={team.isFavorite ? (en ? 'Unfollow team ' : uiText("取消关注队伍 ", locale)) + team.shortName : favoriteDisabled ? en ? 'Follow limit reached' : uiText("关注已满", locale) : (en ? 'Follow team ' : uiText("关注队伍 ", locale)) + team.shortName}>{team.isFavorite ? en ? '★ Following' : uiText("★ 已关注", locale) : favoriteDisabled ? en ? 'Limit reached' : uiText("关注已满", locale) : en ? '☆ Follow team' : uiText("☆ 关注队伍", locale)}</button><ArchiveLink to={withSeason('/teams/' + team.routeId)}>{en ? 'View team profile' : uiText("查看队伍资料", locale)} <span aria-hidden="true">↗</span></ArchiveLink></footer>
   </article>
 }
 
@@ -72,9 +72,9 @@ export default function TeamIndex({ teams, focusedTeam, preview, onFocusTeam, di
   return <RosterDirectory kind="teams" label={en ? 'Team directory' : uiText("参赛队伍目录", uiLocale)} listTitle={en ? 'THE TEAM LIST' : uiText("队伍索引", uiLocale)}
     directoryRef={directoryRef} items={teams} focusedKey={focusedTeam?.routeId} getKey={team => team.routeId} getName={team => team.shortName}
     renderIdentity={team => <><TeamEmblem key={showcaseProps.seasonId + ':' + team.routeId} team={team} seasonId={showcaseProps.seasonId} className={styles.rowEmblem} /><span className={directoryStyles.rowIdentity}><strong>{team.shortName}{team.isFavorite ? ' ★' : ''}</strong><small>{team.fullName}</small></span></>}
-    getHref={team => showcaseProps.withSeason('/teams/' + team.routeId)} previewLabel={en ? 'Preview team' : uiText("预览队伍", uiLocale)} archiveLabel={en ? 'Open team exhibition' : uiText("打开战队展馆", uiLocale)}
+    getHref={team => showcaseProps.withSeason('/teams/' + team.routeId)} previewLabel={en ? 'Preview team' : uiText("预览队伍", uiLocale)} archiveLabel={en ? 'View team profile' : uiText("查看队伍资料", uiLocale)}
     onFocus={onFocusTeam} mobileExpanded={mobileExpanded} startIndex={startIndex} resultCount={resultCount} controls={controls} pagination={pagination} emptyState={emptyState} locale={showcaseProps.locale}
     preview={focusedTeam && preview ? <TeamShowcase key={focusedTeam.routeId} team={focusedTeam} preview={preview} {...showcaseProps} /> : null}
-    emptyPreview={{ kicker: en ? 'TEAM ARCHIVE' : uiText("队伍档案", uiLocale), title: en ? 'Find your team.' : uiText("下一支队伍，等你认识。", uiLocale), description: en ? 'Adjust the filters to explore this season’s teams.' : uiText("调整筛选，继续浏览本届参赛队伍。", uiLocale) }}
+    emptyPreview={{ kicker: en ? 'TEAM ARCHIVE' : uiText("队伍档案", uiLocale), title: en ? 'No team to preview' : uiText("暂无可预览队伍", uiLocale), description: en ? 'Adjust the filters to explore this season’s teams.' : uiText("调整筛选，继续浏览本届参赛队伍。", uiLocale) }}
   />
 }

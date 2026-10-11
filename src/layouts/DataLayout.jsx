@@ -76,6 +76,7 @@ function createLayoutTranslator(locale) {
 }
 
 function getLayoutDocumentTitle(pathname, search, locale) {
+  if (/^\/reports(?:\/|$)/.test(pathname)) return buildFriesCupTitle(locale === 'en-US' ? 'Fries Cup Weekly' : '薯条周报', locale)
   if (/^\/review\/?$/.test(pathname)) {
     if (locale === 'ko-KR') return '시즌 리뷰 | Fries Cup'
     if (locale === 'en-US') return 'Season Review | Fries Cup'
@@ -88,7 +89,7 @@ function getNavActiveGroup(pathname, search = '') {
   const matchTab = String(params.get('tab') || '').toLowerCase()
   const isFollowingView = params.get('following') === '1' || matchTab === 'following'
 
-  if (pathname === '/') return 'overview'
+  if (pathname === '/' || pathname.startsWith('/reports')) return 'overview'
   if (pathname.startsWith('/me') || pathname.startsWith('/following')) return 'space'
   if (pathname.startsWith('/matches') || pathname.startsWith('/schedule')) return isFollowingView ? 'space' : 'matches'
   if (pathname.startsWith('/advance') || pathname.startsWith('/standings')) return 'advance'
@@ -166,7 +167,7 @@ export default function DataLayout() {
   const isWeeklyHomeRoute = isKprHybridDesign && location.pathname === '/' && isWeeklyOverview(db, season)
   const isAdvanceIndexRoute = isKprHybridDesign && /^\/advance\/?$/.test(location.pathname)
   const isPublicFollowingRoute = isAccountSpaceRoute && ((!isAuthenticated && !isMatchEntry) || location.pathname.startsWith('/following') || new URLSearchParams(location.search).get('section') === 'following')
-  const isCompactContextRoute = isRosterDirectoryRoute || isScheduleDirectoryRoute || isPublicMatchDetailRoute || isPlayerRankingsRoute || isHeroDataRoute || isMapDataRoute || isAdvanceIndexRoute || isWeeklyHomeRoute || isPublicFollowingRoute || isPlayerArchiveRoute || (isTeamArchiveRoute && !isTeamExhibitionRoute)
+  const isCompactContextRoute = /^\/reports(?:\/|$)/.test(location.pathname) || /^\/staff\/[^/]+\/?$/.test(location.pathname) || isRosterDirectoryRoute || isScheduleDirectoryRoute || isPublicMatchDetailRoute || isPlayerRankingsRoute || isHeroDataRoute || isMapDataRoute || isAdvanceIndexRoute || isWeeklyHomeRoute || isPublicFollowingRoute || isPlayerArchiveRoute || (isTeamArchiveRoute && !isTeamExhibitionRoute)
   const competition = useAccountCompetition(season.id)
   const attentionSeasonId = competition.id
   const attentionEnabled = isAuthenticated && !competition.loading && !competition.error && !competition.issue

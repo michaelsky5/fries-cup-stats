@@ -203,7 +203,7 @@ export function playerComparisonPath(entry, search, mode = 'per10') {
 
 export function formatPlayerMatchStage(value, en = false) {
   if (en) return value
-  const labels = { SWISS: '瑞士轮', QUALIFIERS: '瑞士轮', LCQ: '突围赛', PLAYOFFS: '季后赛', GROUP: '小组赛', SEMIFINALS: '半决赛', QUARTERFINALS: '四分之一决赛', 'UB QF': '胜者组四分之一决赛', 'UB SF': '胜者组半决赛', 'UB FINAL': '胜者组决赛', 'LB FINAL': '败者组决赛', 'GRAND FINALS': '总决赛', 'ROUND OF 16': '十六强赛', QUALIFICATION: '晋级赛', 'PLAY-IN': '入围赛' }
+  const labels = { WEEKLY: '周赛', SWISS: '瑞士轮', QUALIFIERS: '瑞士轮', LCQ: '突围赛', PLAYOFFS: '季后赛', GROUP: '小组赛', SEMIFINALS: '半决赛', QUARTERFINALS: '四分之一决赛', 'UB QF': '胜者组四分之一决赛', 'UB SF': '胜者组半决赛', 'UB FINAL': '胜者组决赛', 'LB FINAL': '败者组决赛', 'GRAND FINALS': '总决赛', 'ROUND OF 16': '十六强赛', QUALIFICATION: '晋级赛', 'PLAY-IN': '入围赛' }
   return String(value || '').split(' · ').map(part => {
     const normalized = part.trim().toUpperCase()
     if (labels[normalized]) return labels[normalized]

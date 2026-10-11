@@ -7,6 +7,34 @@ const test = (name, fn) => { fn(); checks += 1; console.log(`PASS ${name}`) }
 const db = buildWeeklyOverviewFixture()
 const active = buildWeeklyOverview(db)
 test('current week wins over a later published week', () => assert.equal(active.week.week_number, 3))
+
+test('default and stale week URLs select the latest published week without reordering the payload', () => {
+  const fixture = structuredClone(db)
+  const cycle = fixture.weekly_competition.cycles[1]
+  cycle.weeks.forEach(week => { week.status = 'PUBLISHED' })
+  cycle.weeks.reverse()
+  const inputOrder = cycle.weeks.map(week => week.id)
+  const output = buildWeeklyOverview(fixture)
+  assert.equal(output.week.week_number, 4)
+  assert.equal(buildWeeklyOverview(fixture, { weekId: 'missing' }).week.week_number, 4)
+  assert.deepEqual(output.weeks.map(week => week.week_number), [1, 2, 3, 4])
+  assert.deepEqual(cycle.weeks.map(week => week.id), inputOrder)
+})
+
+test('explicit history remains selected when newer weeks have been published', () => {
+  const fixture = structuredClone(db)
+  fixture.weekly_competition.cycles[1].weeks.forEach(week => { week.status = 'PUBLISHED' })
+  const history = buildWeeklyOverview(fixture, { weekId: 'sample-cycle-1-w1' })
+  assert.equal(history.week.week_number, 1)
+  assert.equal(history.focus.state, 'complete')
+  assert.deepEqual(history.standings, buildWeeklyOverview(fixture).standings)
+})
+
+test('a week awaiting result review takes priority over a later published week', () => {
+  const fixture = structuredClone(db)
+  fixture.weekly_competition.cycles[1].weeks[2].status = 'RESULT_REVIEW'
+  assert.equal(buildWeeklyOverview(fixture).week.week_number, 3)
+})
 test('raw System IDs resolve to public match routes', () => assert.equal(active.focus.id, 'FCW26-W3-M1'))
 test('RR5 at 3:0 remains live with two unrecorded maps', () => {
   assert.equal(active.focus.state, 'live')

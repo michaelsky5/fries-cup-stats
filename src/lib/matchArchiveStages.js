@@ -1,4 +1,5 @@
 const STAGES = {
+  WEEKLY: { title: '周赛', label: 'WEEKLY MATCHES' },
   GROUP: { title: '小组赛', label: 'GROUP STAGE' },
   SWISS: { title: '瑞士轮', label: 'SWISS STAGE' },
   LCQ: { title: '突围赛', label: 'BREAKTHROUGH' },

@@ -31,13 +31,13 @@ export default function TeamGalleryScenes({ team, seasonId, locale, roster, rows
     <TeamExhibitionPoster key={team.routeId + seasonId} team={team} seasonId={seasonId} locale={locale} roster={roster} cohort={cohort} appeared={members.filter(member => member.maps > 0).length} dates={dates} advanceState={advanceState} members={members} selectedId={selectedId} onSelect={onMemberChange} onOpenMember={openRecord} onCredits={() => { const target = document.getElementById('team-credits'); target?.focus({ preventScroll: true }); target?.scrollIntoView({ block: 'start', behavior: 'instant' }) }} />
     {recordPlayer ? <TeamMemberRecordDrawer player={recordPlayer} member={members.find(member => member.playerId === recordMemberId)} team={team} locale={locale} journeyHref={journeyHref} withSeason={withSeason} returnState={returnState} viewState={viewState} onLeave={onLeave} onClose={() => setRecordMemberId(null)} /> : null}
     <section className={styles.credits} id="team-credits" tabIndex={-1} aria-label={en ? 'Behind the team' : uiText("幕后署名", locale)}>
-      <div><span>BEHIND THE TEAM</span><h2>{en ? <>A team takes<br />more than five.</> : <>{uiText("场上五人。", locale)}<br />{uiText("身后，还有他们。", locale)}</>}</h2></div>
+      <div><span>BEHIND THE TEAM</span><h2>{en ? 'Managers and coaches' : uiText("经理与教练", locale)}</h2></div>
       <dl><div><dt>{en ? 'COACH' : uiText("教练", locale)}</dt><StaffCredit people={team.staff?.coaches} en={en} /></div><div><dt>{en ? 'MANAGER' : uiText("经理", locale)}</dt><StaffCredit people={team.staff?.managers} en={en} /></div></dl>
       <button type="button" aria-pressed={favorited} disabled={favoriteDisabled} onClick={onToggleFavorite}>{favorited ? (en ? 'Following' : uiText("已关注队伍", locale)) : (en ? 'Follow team' : uiText("关注这支队伍", locale))}<span aria-hidden="true">{favorited ? '✓' : '+'}</span></button>
     </section>
     <nav className={styles.next} aria-label={en ? 'Continue exploring the team' : uiText("继续了解这支队伍", locale)}>
-      <Link to={journeyHref} state={viewState}><span>02 / {en ? 'SEASON JOURNEY' : uiText("赛季征程", locale)}</span><b>{en ? 'Follow the turning points.' : uiText("沿着转折，回到这一季。", locale)}</b><i aria-hidden="true">↗</i></Link>
-      <Link to={analysisHref} state={viewState}><span>03 / {en ? 'COMPETITIVE ANALYSIS' : uiText("竞技分析", locale)}</span><b>{en ? 'Understand their performance.' : uiText("看表现，也看长板与短板。", locale)}</b><i aria-hidden="true">↗</i></Link>
+      <Link to={journeyHref} state={viewState}><span>02 / {en ? 'SEASON JOURNEY' : uiText("赛季征程", locale)}</span><b>{en ? 'View match records' : uiText("查看比赛记录", locale)}</b><i aria-hidden="true">↗</i></Link>
+      <Link to={analysisHref} state={viewState}><span>03 / {en ? 'COMPETITIVE ANALYSIS' : uiText("竞技分析", locale)}</span><b>{en ? 'View performance analysis' : uiText("查看数据分析", locale)}</b><i aria-hidden="true">↗</i></Link>
     </nav>
   </>
 }

@@ -1,6 +1,6 @@
 import { getGroupStandings, getSwissStandingsRows, isGroupCompetition } from '../../lib/advanceSelectors.js'
 import { getMatchArchiveStages } from '../../lib/matchArchiveStages.js'
-import { getTeamRosterPlayers, getPlayerDisplayIdentity, normalizeRosterRole } from '../../lib/rosterSelectors.js'
+import { getTeamRosterPlayers, getPlayerDisplayIdentity, getRosterRegistrationRole } from '../../lib/rosterSelectors.js'
 import { getTeamSeasonPresentation } from '../../lib/teamSeasonPresentation.js'
 import { getPlayerRosterChange } from '../../lib/rosterStage.js'
 
@@ -25,7 +25,7 @@ export function buildTeamIndexPreview(db, season, team, locale = 'zh-CN') {
   const standings = groupCompetition ? getGroupStandings(db, season).flatMap(group => group.rows) : getSwissStandingsRows(db, season)
   const standing = standings.find(row => matchesIndexTeam(team, row))
   return {
-    roster: getTeamRosterPlayers(db, team).map(player => ({ ...player, identity: getPlayerDisplayIdentity(player), role: normalizeRosterRole(player.role), rosterChange: getPlayerRosterChange(player) })),
+    roster: getTeamRosterPlayers(db, team).map(player => ({ ...player, identity: getPlayerDisplayIdentity(player), role: getRosterRegistrationRole(player.role), rosterChange: getPlayerRosterChange(player) })),
     stages: getMatchArchiveStages(matches),
     scheduleCount: matches.length,
     standing: getTeamSeasonPresentation({ db, season, team, standing, groupCompetition, locale })

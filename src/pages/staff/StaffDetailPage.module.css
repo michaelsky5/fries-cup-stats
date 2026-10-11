@@ -101,3 +101,10 @@
   .player { min-height: 64px; }
   .teamLink { padding: 18px; }
 }
+
+.source summary { cursor: pointer; font-size: 12px; line-height: 1.7; color: var(--fc-data-text-muted); }
+.source summary:focus-visible { outline: 2px solid var(--fc-data-signal-deep); outline-offset: 4px; }
+@media (min-width: 761px) {
+  .identity > div { container-type: inline-size; }
+  .identity h1 { font-size: clamp(26px, calc(96cqi / var(--credit-name-units, 8)), 52px); text-wrap: balance; }
+}

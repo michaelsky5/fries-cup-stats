@@ -1,4 +1,5 @@
 import { getPublishedTeamLogo } from './teamLogoResolver.js'
+import { getPublicMatchCode } from './publicMatchCode.js'
 
 const teamId = team => String(team?.id || team?.team_id || team?.teamId || '').trim().toLowerCase()
 const teamDirectory = teams => new Map((Array.isArray(teams) ? teams : []).map(team => [teamId(team), team]))
@@ -18,8 +19,11 @@ export function resolvePublicMatchIdentity(match, teams) {
   const teamA = resolveTeam(match.team_a, directory)
   const teamB = resolveTeam(match.team_b, directory)
   const weekly = match.cycle_week_id && (!match.stage || String(match.stage).toUpperCase() === 'OTHER')
-  if (!weekly && teamA === match.team_a && teamB === match.team_b) return match
+  const code = getPublicMatchCode(match)
+  const needsCode = Boolean(match.cycle_week_id && code && match.match_code !== code)
+  if (!weekly && !needsCode && teamA === match.team_a && teamB === match.team_b) return match
   return { ...match, team_a: teamA, team_b: teamB,
+    ...(needsCode ? { match_code: code } : {}),
     ...(weekly ? { stage: 'WEEKLY', raw_stage: match.raw_stage ?? match.stage } : {}) }
 }
 

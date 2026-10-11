@@ -129,7 +129,7 @@ function LanguageMenu({ locale, mobile = false, onLocaleChange }) {
   }
 
   return (
-    <details ref={detailsRef} className={styles.languageMenu} data-i18n-ignore>
+    <details ref={detailsRef} className={styles.languageMenu} data-upgrade-language data-i18n-ignore>
       <summary aria-label={`${uiText('语言', locale)}: ${current.nativeName}`}>
         <strong>{current.code}</strong>
         <span>LANGUAGE</span>
@@ -174,14 +174,14 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
     }
   }, [menuRef])
   return (<>
-      <header className={styles.topShell} data-phone-navigation={phoneNavigation || undefined}>
-        <div className={styles.topBar}>
-          <a href="https://fries-cup.com/" className={`${styles.brandLink} ${phoneNavigation ? mobileStyles.desktopBrand : ''}`} aria-label={pickUiLocale(layoutLocale, '薯条杯赛事中心 · 返回薯条杯官网', 'FriesCup official site', '프라이즈 컵 공식 사이트로 이동', '薯條杯賽事中心 · 返回薯條杯官網')}>
-            <span className={styles.brandEventMark} aria-hidden="true">
-              <img src={isKprHybridDesign ? '/logos/fries-cup-symbol.png' : '/logos/fc_logo.svg'} alt="" />
+      <header className={styles.topShell} data-upgrade-header="event-center" data-phone-navigation={phoneNavigation || undefined}>
+        <div className={styles.topBar} data-upgrade-bar>
+          <a href="https://fries-cup.com/" className={`${styles.brandLink} ${phoneNavigation ? mobileStyles.desktopBrand : ''}`} data-upgrade-brand aria-label={pickUiLocale(layoutLocale, '薯条杯赛事中心 · 返回薯条杯官网', 'FriesCup official site', '프라이즈 컵 공식 사이트로 이동', '薯條杯賽事中心 · 返回薯條杯官網')}>
+            <span className={styles.brandEventMark} data-upgrade-mark aria-hidden="true">
+              <img src={isKprHybridDesign ? '/logos/fries-cup-mark-ink.svg' : '/logos/fc_logo.svg'} alt="" />
             </span>
             {isKprHybridDesign ? (
-              <span className={styles.brandTypeLockup} aria-hidden="true" data-i18n-ignore>
+              <span className={styles.brandTypeLockup} data-upgrade-lockup aria-hidden="true" data-i18n-ignore>
                 <strong>FRIES CUP</strong>
                 <small lang={layoutLocale}>{pickUiLocale(layoutLocale, '赛事中心', 'EVENT CENTER', '대회 센터', '賽事中心')}</small>
               </span>
@@ -192,11 +192,11 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
             )}
           </a>
           {phoneNavigation ? <Link to={navPath('/')} className={`${styles.brandLink} ${mobileStyles.mobileBrand}`} aria-label={pickUiLocale(layoutLocale, '薯条杯赛事首页', 'Fries Cup events', '프라이즈 컵 대회', '薯條杯賽事首頁')}>
-            <span className={styles.brandEventMark} aria-hidden="true"><img src="/logos/fries-cup-symbol.png" alt="" /></span>
-            <span className={styles.brandTypeLockup} aria-hidden="true" data-i18n-ignore><strong>FRIES CUP</strong><small>{pickUiLocale(layoutLocale, '赛事中心', 'EVENT CENTER', '대회 센터', '賽事中心')}</small></span>
+            <span className={styles.brandEventMark} data-upgrade-mark aria-hidden="true"><img src="/logos/fries-cup-symbol.png" alt="" /></span>
+            <span className={styles.brandTypeLockup} data-upgrade-lockup aria-hidden="true" data-i18n-ignore><strong>FRIES CUP</strong><small>{pickUiLocale(layoutLocale, '赛事中心', 'EVENT CENTER', '대회 센터', '賽事中心')}</small></span>
           </Link> : null}
 
-          <nav className={styles.nav} aria-label={pickUiLocale(layoutLocale, '赛事中心导航', 'Event navigation', '대회 센터 탐색', '賽事中心導覽')} data-i18n-ignore>
+          <nav className={styles.nav} data-upgrade-nav aria-label={pickUiLocale(layoutLocale, '赛事中心导航', 'Event navigation', '대회 센터 탐색', '賽事中心導覽')} data-i18n-ignore>
             {headerNavItems.map(item => (
               <PortalNavItem
                 key={item.group}
@@ -209,7 +209,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
             ))}
           </nav>
 
-          <details ref={menuRef} className={styles.mobileNavMenu} data-i18n-ignore>
+          <details ref={menuRef} className={styles.mobileNavMenu} data-upgrade-menu data-i18n-ignore>
             <summary>
               <span className={styles.mobileNavCurrent}>{currentLabel}</span>
               <span className={styles.mobileNavSummaryMeta}>
@@ -239,7 +239,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
             </nav>
           </details>
 
-          <div className={styles.headerRight}>
+          <div className={styles.headerRight} data-upgrade-controls>
             {isKprHybridDesign && showSeason ? (
               <EventContextBar
                 season={season}
@@ -281,7 +281,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
                 >{option.shortLabel}</button>)}
               </div>
             )}
-            <div className={styles.accountCluster}>
+            <div className={styles.accountCluster} data-upgrade-account>
               <AuthButton locale={compatibleLayoutLocale} seasonId={seasonId} />
             </div>
           </div>

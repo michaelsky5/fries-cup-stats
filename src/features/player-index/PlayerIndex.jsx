@@ -1,4 +1,5 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
+import { eventCenterText } from '../../lib/eventCenterCopy.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import HeroArtwork from '../../components/media/HeroArtwork.jsx'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
@@ -14,7 +15,7 @@ const teamFor = player => ({ team_id: player.teamRouteId, team_short_name: playe
 
 export function PlayerIndexHeading({ seasonCode, count, total, locale }) {
   const en = locale === 'en-US'
-  return <DirectoryHeading seasonCode={seasonCode} count={count} total={total} kicker={en ? 'THE PLAYERS' : uiText("本届参赛选手", locale)} title={en ? <>Every player.<br className={directoryStyles.englishBreak} /> Part of the season.</> : <>{uiText("每一个名字，", locale)}<span>{uiText("都在赛场。", locale)}</span></>} description={en ? 'Find players, their teams, and their records from this season.' : uiText("查找选手，查看所属队伍与本届比赛记录。", locale)} unit={en ? 'players' : uiText("位选手", locale)} />
+  return <DirectoryHeading seasonCode={seasonCode} count={count} total={total} kicker={en ? 'THE PLAYERS' : uiText("本届参赛选手", locale)} title={eventCenterText('playersTitle', locale)} description={en ? 'Find players, their teams, and their records from this season.' : uiText("查找选手，查看所属队伍与本届比赛记录。", locale)} unit={en ? 'players' : uiText("位选手", locale)} />
 }
 
 export function PlayerIndexControls({ roleTabs, ...props }) {
@@ -37,7 +38,7 @@ function PlayerPortrait({ player, seasonId, seasonCode, withSeason, onToggleFavo
   return <article className={styles.portrait} data-role={role} data-player-portrait={playerKey(player)} data-has-art={Boolean(heroes.length)} data-name-length={nameLength} aria-label={en ? `Selected player ${name}` : uiText("当前选手 {0}", locale, [name])}>
     <header className={styles.portraitTop}>
       <span>{seasonCode} <i /> {en ? 'PLAYER ARCHIVE' : uiText("选手档案", locale)}</span>
-      <b>{playerIndexText(getRosterRoleLabel(player.role), locale)}</b>
+      <b>{en ? player.hasStats ? 'Played role · ' : 'Registered role · ' : uiText(player.hasStats ? '出场职责 · ' : '报名职责 · ', locale)}{getRosterRoleLabel(player.hasStats ? player.performanceRole : player.registrationRole, locale)}</b>
     </header>
     <div className={styles.scene}>
       <span className={styles.teamEcho} aria-hidden="true">{player.teamShortName}</span>
@@ -60,7 +61,7 @@ function PlayerPortrait({ player, seasonId, seasonCode, withSeason, onToggleFavo
     </div> : <div className={styles.recordEmpty}><strong>{en ? 'On this season’s roster' : uiText("已收录于本届参赛名单", locale)}</strong><p>{en ? 'No published appearance data yet.' : uiText("暂无已发布的出场数据。", locale)}</p><small>{scopeLabel}</small></div>}
     <footer className={styles.portraitActions}>
       <button type="button" onClick={() => onToggleFavorite(player)} disabled={favoriteDisabled} aria-pressed={Boolean(player.isFavorite)} aria-label={player.isFavorite ? (en ? 'Unfollow player ' : uiText("取消关注选手 ", locale)) + name : favoriteDisabled ? (en ? 'Follow limit reached' : uiText("关注已满", locale)) : (en ? 'Follow player ' : uiText("关注选手 ", locale)) + name}>{player.isFavorite ? (en ? '★ Following' : uiText("★ 已关注", locale)) : favoriteDisabled ? (en ? 'Limit reached' : uiText("关注已满", locale)) : (en ? '☆ Follow' : uiText("☆ 关注选手", locale))}</button>
-      <RecordLink to={withSeason(`/players/${playerKey(player)}`)}>{en ? 'Explore player archive' : uiText("走进选手档案", locale)} <span aria-hidden="true">↗</span></RecordLink>
+      <RecordLink to={withSeason(`/players/${playerKey(player)}`)}>{en ? 'View player profile' : uiText("查看选手档案", locale)} <span aria-hidden="true">↗</span></RecordLink>
     </footer>
   </article>
 }
@@ -71,10 +72,10 @@ export default function PlayerIndex({ directoryRef, players, focusedPlayer, onFo
   const selectedKey = playerKey(focusedPlayer)
   return <RosterDirectory kind="players" label={en ? 'Player directory' : uiText("选手目录", uiLocale)} listTitle={en ? 'THE ROSTER' : uiText("选手索引", uiLocale)}
     directoryRef={directoryRef} items={players} focusedKey={selectedKey} getKey={playerKey} getName={player => player.identity.primary}
-    renderIdentity={player => <span className={directoryStyles.rowIdentity}><strong>{player.identity.primary}{player.isFavorite ? ' ★' : ''}</strong><small>{player.teamShortName} <i /> {playerIndexText(getRosterRoleLabel(player.role), portraitProps.locale)}</small></span>}
+    renderIdentity={player => <span className={directoryStyles.rowIdentity}><strong>{player.identity.primary}{player.isFavorite ? ' ★' : ''}</strong><small>{player.teamShortName} <i /> {en ? 'Registered: ' : uiText('报名：', portraitProps.locale)}{getRosterRoleLabel(player.registrationRole, portraitProps.locale)}</small></span>}
     getHref={player => portraitProps.withSeason('/players/' + playerKey(player))} previewLabel={en ? 'Preview player' : uiText("预览选手", uiLocale)} archiveLabel={en ? 'Open player archive' : uiText("打开选手档案", uiLocale)}
     onFocus={onFocusPlayer} mobileExpanded={mobileExpanded} startIndex={startIndex} resultCount={resultCount} controls={controls} pagination={pagination} emptyState={emptyState} locale={portraitProps.locale}
     preview={focusedPlayer ? <PlayerPortrait key={selectedKey} player={focusedPlayer} {...portraitProps} /> : null}
-    emptyPreview={{ kicker: en ? 'PLAYER ARCHIVE' : uiText("选手档案", uiLocale), title: en ? 'Find your next name.' : uiText("下一个名字，等你发现。", uiLocale), description: en ? 'Change the filters to explore this season’s roster.' : uiText("调整筛选，继续浏览本届参赛名单。", uiLocale) }}
+    emptyPreview={{ kicker: en ? 'PLAYER ARCHIVE' : uiText("选手档案", uiLocale), title: eventCenterText('playersEmpty', uiLocale), description: eventCenterText('playersEmptyIntro', uiLocale) }}
   />
 }
