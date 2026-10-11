@@ -3,6 +3,7 @@ import { useUiLocale } from '../../../hooks/useUiLocale.js'
 import { useState } from 'react'
 import { getHeroAvatarSrc } from '../../../lib/leaderboardSelectors.js'
 import styles from './SignalPlayerData.module.css'
+import { getStatisticalRatingLabel, getStatisticalRatingNotes } from '../../../lib/statisticalRatingPresentation.js'
 
 export function SignalBattleTag({ value, en }) {
   const uiLocale = useUiLocale()
@@ -11,11 +12,14 @@ export function SignalBattleTag({ value, en }) {
   return divider > 0 ? <>{value.slice(0, divider)}<wbr /><span className={styles.tagSuffix}>{value.slice(divider)}</span></> : value
 }
 
-export function SignalRating({ value, mvp = false, en = false }) {
+export function SignalRating({ value, entry, mvp = false, en = false }) {
   const uiLocale = useUiLocale()
   const display = value != null && value !== '' && Number.isFinite(Number(value)) ? Number(value).toFixed(1) : '—'
-  return <span className={styles.rating} data-rating-value={display} data-team-mvp={mvp || undefined} data-empty={display === '—'} title={mvp ? (en ? 'Team best on this map' : uiText("本队本图最佳", uiLocale)) : undefined} aria-label={mvp ? `${display} · ${en ? 'Team best on this map' : uiText("本队本图最佳", uiLocale)}` : undefined}>
+  const label = uiText(getStatisticalRatingLabel(entry, uiLocale), uiLocale)
+  const notes = getStatisticalRatingNotes(entry, uiLocale).map(note => uiText(note, uiLocale)).join('\n')
+  return <span className={styles.rating} data-statistical-rating={entry?.statisticalRating?.version} data-rating-value={display} data-team-mvp={mvp || undefined} data-empty={display === '—'} title={notes || (mvp ? (en ? 'Team best on this map' : uiText("本队本图最佳", uiLocale)) : undefined)} aria-label={label ? `${display} · ${label}. ${notes}` : mvp ? `${display} · ${en ? 'Team best on this map' : uiText("本队本图最佳", uiLocale)}` : undefined}>
     <strong>{display}</strong>
+    {label ? <small>{label}</small> : null}
   </span>
 }
 

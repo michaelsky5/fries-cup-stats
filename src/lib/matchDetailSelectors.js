@@ -575,7 +575,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     }
     return {
       ...normalizedMap,
-      rating: getMatchRatingSummary(match, [normalizedMap.raw], players)
+      rating: getMatchRatingSummary(match, [normalizedMap.raw], players, { db })
     }
   })
   const completedMaps = maps.filter(map => map.hasResult)
@@ -591,7 +591,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
   const mapTypeResults = buildMapTypeResults(completedMaps, teamA, teamB)
   const seriesPeakPlayers = getSeriesPeakPlayers(completedMaps, teamA, teamB)
   const rating = state.isComplete && !state.isForfeit
-    ? getMatchRatingSummary(match, completedMaps.map(map => map.raw), players)
+    ? getMatchRatingSummary(match, completedMaps.map(map => map.raw), players, { db })
     : {
         supported: false,
         level: 'match',

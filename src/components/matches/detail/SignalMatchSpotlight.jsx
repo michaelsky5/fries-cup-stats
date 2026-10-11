@@ -7,6 +7,7 @@ import { getRoleEnLabel, getRoleLabel } from '../../../lib/leaderboardSelectors.
 import { formatInt } from '../../../lib/format.js'
 import { SignalBattleTag, SignalHeroList } from './SignalPlayerData.jsx'
 import styles from './SignalMatchSpotlight.module.css'
+import { getStatisticalRatingLabel, getStatisticalRatingNotes } from '../../../lib/statisticalRatingPresentation.js'
 
 const METRIC_LABELS = { elim: 'Eliminations', ast: 'Assists', dth: 'Deaths', dmg: 'Damage', heal: 'Healing', block: 'Mitigation' }
 
@@ -41,12 +42,13 @@ export default function SignalMatchSpotlight({ dossier, locale, withSeason, retu
       <div className={styles.rating}>
         <span>{en ? 'Overall match rating' : uiText("全场综合评分", locale)}</span>
         <strong aria-label={`${en ? 'Match rating' : uiText("全场评分", locale)} ${player.rating.toFixed(1)} / 10`}>{player.rating.toFixed(1)}<small>/ 10</small></strong>
+        {entry.statisticalRating ? <span title={getStatisticalRatingNotes(entry, locale).join('\n')}>{uiText(getStatisticalRatingLabel(entry, locale), locale)}</span> : null}
       </div>
       <dl className={styles.facts}>
         {coreStats.map(stat => <div key={stat.metricId}><dt>{en ? METRIC_LABELS[stat.metricId] || stat.label : uiText(stat.label, locale)}</dt><dd>{formatInt(stat.value, '—')}</dd></div>)}
         <div><dt>{en ? 'Maps played' : uiText("出场地图", locale)}</dt><dd>{player.maps.length}<small> / {dossier.mapRecords.length}</small></dd></div>
       </dl>
-      <details className={styles.ratingInfo}><summary>{en ? 'How ratings work' : uiText("评分口径", locale)}<span aria-hidden="true">＋</span></summary><div><p>{en ? 'Match and map ratings use the same scale. Full-match performance is weighted by playtime within each role, then converted to a rating.' : uiText("全场与单图评分使用同一刻度。全场先按职责和出场时间汇总表现，再换算评分。", locale)}</p><p>{en ? 'Map win bonuses do not carry into multi-map match ratings.' : uiText("单图胜方加分不计入多图全场评分。", locale)}{entry.matchAwardMinimumMaps > 0 ? (en ? ` MVP eligibility requires at least ${entry.matchAwardMinimumMaps} map appearances.` : uiText(" 本场 MVP 至少需出场 {0} 图。", locale, [entry.matchAwardMinimumMaps])) : ''}</p></div></details>
+      <details className={styles.ratingInfo}><summary>{en ? 'How ratings work' : uiText("评分口径", locale)}<span aria-hidden="true">＋</span></summary><div><p>{en ? 'Match and map ratings use the same scale. Full-match performance is weighted by playtime within each role, then converted to a rating.' : uiText("全场与单图评分使用同一刻度。全场先按职责和出场时间汇总表现，再换算评分。", locale)}</p><p>{entry.statisticalRating ? (en ? 'Statistical ratings have no map-win bonus.' : uiText('统计表现分不增加单图胜方加分。', locale)) : en ? 'Map win bonuses do not carry into multi-map match ratings.' : uiText("单图胜方加分不计入多图全场评分。", locale)}{entry.matchAwardMinimumMaps > 0 ? (en ? ` MVP eligibility requires at least ${entry.matchAwardMinimumMaps} map appearances.` : uiText(" 本场 MVP 至少需出场 {0} 图。", locale, [entry.matchAwardMinimumMaps])) : ''}</p>{getStatisticalRatingNotes(entry, locale).map(note => <p key={note}>{uiText(note, locale)}</p>)}</div></details>
     </div>
   </section>
 }

@@ -532,6 +532,7 @@ export function getLeaderboardSummary(entries, minTimeMins, db) {
 
   return {
     totalEntries: entries.length,
+    statisticalRatingVersion: entries.find(entry => entry.statisticalRating)?.statisticalRating.version || null,
     qualifiedEntries: qualified.length,
     totalPlayers: Math.max(playerIds.size, directoryPlayerCount),
     qualifiedPlayers: qualifiedPlayerIds.size,

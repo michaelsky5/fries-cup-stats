@@ -4,6 +4,8 @@ import { SEASON_SAMPLE_POLICY } from './seasonRatingPolicy.js'
 import { buildSeasonOpponentEvidence } from './seasonOpponentStrength.js'
 import { buildRatingBaselinesFromDb, buildRatingBaselinesFromPlayerLogs } from './ratingBaselines.js'
 import { resolveHeroSubrole, getHeroRatingBaselineKey } from './heroSubroleSelectors.js'
+import { usesStatisticalRating, buildStatisticalRatingSummary } from './statisticalRatingAdapter.js'
+import { STATISTICAL_RATING_VERSION } from '../config/statisticalRatingConfig.js'
 import {
   calculateRawProfileScore,
   getRatingModelVersion,
@@ -66,6 +68,7 @@ function devWarn(message, detail) {
 }
 
 function getBaselines(args = {}) {
+  if (usesStatisticalRating(args)) return { baselineMode: 'strict_prior_day', baselineFrozen: false }
   if (args.baselines) return args.baselines
   if (args.db) return buildRatingBaselinesFromDb(args.db, args)
   return buildRatingBaselinesFromPlayerLogs(args.players || [], args)
@@ -338,6 +341,7 @@ function buildRatingEvidence(items) {
 }
 
 function buildRatingSummaryForEntry(entry, baselines, scoreContext = 'season', args = {}) {
+  if (usesStatisticalRating(args)) return buildStatisticalRatingSummary(entry, args, scoreContext)
   const usesCurrentPerformance = scoreContext === 'map' || scoreContext === 'match'
   const hasCurrentLogScope = Array.isArray(args.currentMatchIds) && args.currentMatchIds.length > 0
   const logRatings = usesCurrentPerformance
@@ -405,6 +409,7 @@ function isWinningEntry(entry, winnerTeamKeys = []) {
 }
 
 function applyMapResultAdjustment(summary, entry, args = {}) {
+  if (summary?.statisticalRating) return { ...summary, mapResultAdjustment: 0 }
   if (args.scoreContext !== 'map' || !summary || !isFiniteScore(summary.mapRating)) return summary
 
   const winnerTeamKeys = Array.isArray(args.winnerTeamKeys) ? args.winnerTeamKeys : []
@@ -478,13 +483,24 @@ function attachRatingModelScore(entry, args = {}) {
   const roleScore = scoreContext === 'season' ? seasonScore : outputScore
 
   if (!summary || !isFiniteScore(roleScore)) {
+    if (usesStatisticalRating(args)) return {
+      ...entry, ratingModelVersion: STATISTICAL_RATING_VERSION, scoringEngine: 'rating_v1_5',
+      scoringError: 'statistical_rating_unavailable', legacyScore, legacyImpactScore: legacyScore,
+      roleScore: null, rawRoleScore: null, rawScore: null, seasonScore: null, score: null, rating: null,
+      mapRating: null, impactScore: null, seasonScoreConfidence: 0, seasonScoreStatus: 'UNAVAILABLE',
+      scoringProfile: summary?.scoringProfile || '', subrole: summary?.subrole || '', sampleStatus: 'VERY_LOW_SAMPLE',
+      roleMatchesPlayed: 0, ratingModelSourceLogs: 0, ratingModelSourceMinutes: 0,
+      ratingModelSourceScope: summary?.sourceScope, ratingEvidence: null,
+      statisticalRating: summary?.statisticalRating, mapResultAdjustment: 0
+    }
     return withFallback(entry, legacyScore, scoreContext, 'rating_v1_unavailable')
   }
 
   return {
     ...entry,
-    ratingModelVersion: getRatingModelVersion(),
-    scoringEngine: 'rating_v1',
+    ratingModelVersion: summary.ratingModelVersion || getRatingModelVersion(),
+    scoringEngine: summary.statisticalRating ? 'rating_v1_5' : 'rating_v1',
+    ...(summary.statisticalRating ? { statisticalRating: summary.statisticalRating } : {}),
     legacyScore,
     legacyImpactScore: legacyScore,
     roleScore,

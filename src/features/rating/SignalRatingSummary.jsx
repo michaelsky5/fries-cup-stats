@@ -115,7 +115,7 @@ export default function SignalRatingSummary({ entry, locale, sample }) {
           })}</div>
         </> : <p className={styles.notice}>{en ? 'Metric contributions are not available in the published data.' : uiText("当前公开数据不足以拆解这项评分的指标贡献。", locale)}</p>}
         {hasNumber(evidence?.ruleAdjustment) && Math.abs(evidence.ruleAdjustment) >= 0.05 ? <p>{en ? 'Hero-profile rule adjustment' : uiText("英雄定位规则修正", locale)}：{Number(evidence.ruleAdjustment) > 0 ? '+' : ''}{fmt(evidence.ruleAdjustment)}</p> : null}
-        <p className={styles.metricFootnote}>{en ? 'Hero segments are compared per 10 minutes and combined by playtime. Survival rewards fewer deaths.' : uiText("按每段英雄记录的每 10 分钟数据比较，再按出场时间合并；生存项以死亡更少为优。", locale)}</p>
+        <p className={styles.metricFootnote}>{en ? 'Published statistical records are compared per 10 minutes and combined by playtime. Survival rewards fewer deaths.' : uiText("按每条公开统计记录的每 10 分钟数据比较，再按出场时间合并；生存项以死亡更少为优。", locale)}</p>
       </section>
     </> : null}
   </>
