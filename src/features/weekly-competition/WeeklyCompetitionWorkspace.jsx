@@ -21,7 +21,7 @@ import {
 } from './weeklyCompetitionApi.js'
 import styles from '../account-ui/SignalWeeklyTeam.module.css'
 import { getWeeklyRosterCheck, getWeeklyRosterContext, withParticipationActionContext } from '../account-ui/participationJourneyModel.js'
-import { buildWeeklyPreparation, getWeeklyEnrollmentCycles, getWeeklyFocusStep, resolveWeeklySelection, weeklyConfirmationWindow, weeklyTeamDestination } from './weeklyPreparationModel.js'
+import { buildWeeklyPreparation, getWeeklyEnrollmentCycles, getWeeklyFocusStep, isWeeklyRecordBeforeEnrollment, resolveWeeklySelection, weeklyConfirmationWindow, weeklyTeamDestination } from './weeklyPreparationModel.js'
 import WeeklyCoordinationPanel from './WeeklyCoordinationPanel.jsx'
 import { RegistrationDraftGuard, useRegistrationDraft, useRegistrationDraftActions } from '../event-registration/registrationDraftGuard.jsx'
 
@@ -203,6 +203,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
   const weekId = weekRecord?.week?.id || ''
   const requestedStep = searchParams.get('step')
   const participation = weekRecord?.participation || null
+  const weekBeforeEnrollment = isWeeklyRecordBeforeEnrollment(entry, weekRecord)
   const coreDraft = entry?.coreSelections?.find(item => item.status === 'DRAFT') || null
   const coreLocked = entry?.coreSelections?.find(item => item.status === 'LOCKED') || null
   const currentCore = coreDraft || coreLocked
@@ -211,7 +212,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
   const currentRoster = rosterDraft || rosterLocked
   const lockedCoreIds = useMemo(() => new Set(selectedPlayerIds(coreLocked)), [coreLocked])
   const synchronized = workspace?.userId === user?.id && workspace?.season?.id === seasonId
-  const entryWritable = synchronized && !stale && !readOnly && !invalidSelection && canManageTeam && workspace.accessMode === 'WRITE' && workspace.season.status !== 'ARCHIVED' && !['CLOSED', 'CANCELLED'].includes(cycle?.status) && entry?.accessMode === 'WRITE'
+  const entryWritable = synchronized && !stale && !readOnly && !invalidSelection && !weekBeforeEnrollment && canManageTeam && workspace.accessMode === 'WRITE' && workspace.season.status !== 'ARCHIVED' && !['CLOSED', 'CANCELLED'].includes(cycle?.status) && entry?.accessMode === 'WRITE'
   const confirmationOpen = weekRecord?.week?.status === 'CONFIRMATION_OPEN' && weeklyConfirmationWindow(weekRecord.week, now) === 'open'
   const coreWritable = entryWritable && cycle?.status === 'REGISTRATION' && !coreLocked
   const participationWritable = entryWritable && confirmationOpen
@@ -406,14 +407,14 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
         </section>}
 
         <section id="weekly-participation" tabIndex={-1} hidden={activeStep !== 'participation'} className={styles.card} aria-label={uiText("本周参赛确认", uiLocale)}>
-          <header><h3>{uiText("确认本周参赛", uiLocale)}</h3><em>{PARTICIPATION_LABELS[participation?.status || 'PENDING']}</em></header>
+          <header><h3>{uiText("确认本周参赛", uiLocale)}</h3><em>{weekBeforeEnrollment ? uiText("本队登记前的周次", uiLocale) : PARTICIPATION_LABELS[participation?.status || 'PENDING']}</em></header>
           <p>{currentPlan?.stages.find(stage => stage.key === 'participation')?.detail}</p>
           {participationWritable ? <div className={styles.responseForm}>
             <WeeklyAvailabilityPicker week={weekRecord?.week} value={availability} onChange={setAvailability} disabled={Boolean(busy)} />
             <label><span>{uiText("本周可赛说明", uiLocale)}</span><input value={availabilityNote} onChange={event => setAvailabilityNote(event.target.value)} maxLength={1000} placeholder={uiText("例如：周六晚可赛", uiLocale)} disabled={Boolean(busy)} /></label>
             <button type="button" disabled={Boolean(busy) || (participation?.status === 'CONFIRMED' && !participationDirty)} onClick={() => runAction('participation', () => saveMyWeeklyParticipation(weekId, { entryId: entry.id, status: 'CONFIRMED', revision: participation?.revision || 0, availability, availabilityNote: availabilityNote.trim() || null }), '本周参赛确认已保存。')}>{busy === 'participation' ? uiText("保存中…", uiLocale) : participation?.status === 'CONFIRMED' ? uiText("保存可赛时间", uiLocale) : uiText("确认本周参赛", uiLocale)}</button>
             <details className={styles.changeParticipation}><summary>{uiText("本周无法参赛", uiLocale)}</summary><p>{uiText("更改参赛意向会影响本周名单提交，请先与本队确认。", uiLocale)}</p><button type="button" className={styles.dangerButton} disabled={Boolean(busy)} onClick={() => setParticipationChange(participation?.status === 'CONFIRMED' ? 'WITHDRAWN' : 'DECLINED')}>{participation?.status === 'CONFIRMED' ? uiText("撤回参赛确认", uiLocale) : uiText("本周不参赛", uiLocale)}</button></details>
-          </div> : <p className={styles.lockNote}>{!confirmationOpen ? uiText("当前确认窗口未开放或已经截止，已有确认记录仅供查看。", uiLocale) : uiText("当前账号或赛季策略只允许查看，本周参赛由队长或经理确认。", uiLocale)}</p>}
+          </div> : <p className={styles.lockNote}>{weekBeforeEnrollment ? uiText("本队登记时此周比赛已结束，无需补确认，也不计入待办。", uiLocale) : !confirmationOpen ? uiText("当前确认窗口未开放或已经截止，已有确认记录仅供查看。", uiLocale) : uiText("当前账号或赛季策略只允许查看，本周参赛由队长或经理确认。", uiLocale)}</p>}
           {!participationWritable && <WeeklyAvailabilityPicker week={weekRecord?.week} value={participation?.availability || EMPTY_AVAILABILITY} disabled />}
           <SaveFeedback {...feedbackProps} kind="participation" />
         </section>

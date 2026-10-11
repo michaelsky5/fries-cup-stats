@@ -109,6 +109,10 @@ export function findTaskDetail(taskView, taskId) {
   return [...taskView.openTasks, ...taskView.historyTasks].find(task => task.id === taskId) || null
 }
 
+export function taskHistoryDestination(task) {
+  return task?.id && task.status !== 'OPEN' ? `/me?${new URLSearchParams({ section: 'tasks', view: 'history', task: task.id })}` : ''
+}
+
 export function isManualTaskCompletion(task, updated) {
   return Boolean(updated && updated.id === task.id && updated.status === 'COMPLETED'
     && (!task.userId || !updated.userId || updated.userId === task.userId)

@@ -10104,5 +10104,13 @@ export default {
   "锁定本队出手": "Lock in your move",
   "开启第 {0} 轮": "Start round {0}",
   "开放第 {0} 图 · {1} 选图": "Open map {0} · {1} chooses",
-  "核对本图结果并开放下一图": "Review the result and open the next map"
+  "核对本图结果并开放下一图": "Review the result and open the next map",
+  "本队登记前的周次": "Week before this team's enrollment",
+  "本队登记时此周比赛已结束，无需补确认，也不计入待办。": "This week ended before the team enrolled. No confirmation or task is required.",
+  "本场指定代表 · 可代表本队响应": "Appointed representative · may respond for this team",
+  "当前仅可查看 · 由本场指定代表响应": "View only · the appointed representative responds",
+  "赛果版本 {0}": "Result revision {0}",
+  "赛果版本未记录": "Result revision not recorded",
+  "本次送达赛果：{0}": "Delivered result: {0}",
+  "查看当前比赛进度": "View current match progress"
 }

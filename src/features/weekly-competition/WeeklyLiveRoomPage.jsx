@@ -20,6 +20,7 @@ import RoomRulesPanel from './RoomRulesPanel.jsx'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
+import AccountModeSwitch from '../auth/AccountModeSwitch.jsx'
 import AuthButton from '../auth/AuthDialog.jsx'
 import useWeeklyLiveRoom from './useWeeklyLiveRoom.js'
 import useRoomPanelNavigation from './useRoomPanelNavigation.js'
@@ -331,5 +332,5 @@ export default function WeeklyLiveRoomPage() {
   const uiLocale = useUiLocale()
   const { matchId } = useParams(), { user, isBootstrapping } = useAuth()
   if (!user) return <main className={styles.emptyPage}><Link to={matchListDestination(matchId, { search: location.search })}>{uiText("← 我的比赛", uiLocale)}</Link><small>MATCH ROOM</small><h1>{uiText("进入本场比赛", uiLocale)}</h1><RoomGuideLink match={matchId} scenario="access" label="参赛与比赛指南" /><p>{isBootstrapping ? uiText("正在检查登录状态…", uiLocale) : uiText("登录后按本场身份查看准备、沟通与比赛进度。", uiLocale)}</p><AuthButton /></main>
-  return <LiveRoom key={user.id + matchId} matchId={matchId} />
+  return <><AccountModeSwitch locale={uiLocale} /><LiveRoom key={`${user.id}:${user.accountMode || ''}:${matchId}`} matchId={matchId} /></>
 }

@@ -5,6 +5,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import {
   identityTypeLabel,
   findTaskDetail,
+  taskHistoryDestination,
   resolveWorkflowActionUrl
 } from './taskNotificationModel.js'
 import styles from './TaskNotificationCenter.module.css'
@@ -59,6 +60,8 @@ function TaskCard({ task, index, workingId, onComplete, withSeason, history = fa
   const actionUrl = resolveWorkflowActionUrl(task.resolvedActionUrl, withSeason)
   const deadline = task.deadline
   const resolution = history ? task.closure : task.actionMode
+  const result = task.resultContext
+  const historyUrl = resolveWorkflowActionUrl(taskHistoryDestination(task), withSeason)
   return (
     <article className={styles.item} data-status={task.status} data-deadline={deadline.key} key={task.id}>
       <div className={styles.itemOrder} aria-hidden="true">{String(index + 1).padStart(2, '0')}</div>
@@ -69,9 +72,12 @@ function TaskCard({ task, index, workingId, onComplete, withSeason, history = fa
           <b>{task.workflow.label}</b>
           <b>{identityTypeLabel(task.identityType)}</b>
           {task.teamOrganization?.shortName || task.teamOrganization?.name ? <b>{task.teamOrganization.shortName || task.teamOrganization.name}</b> : null}
+          {result?.matchCode ? <b>{result.matchCode}</b> : null}
+          {result ? <b>{Number.isInteger(result.revision) ? uiText("赛果版本 {0}", uiLocale, [result.revision]) : uiText("赛果版本未记录", uiLocale)}</b> : null}
         </div>
         <h3>{task.title}</h3>
         {task.body ? <p>{task.body}</p> : null}
+        {result && Number.isInteger(result.scoreA) && Number.isInteger(result.scoreB) ? <p>{uiText("本次送达赛果：{0}", uiLocale, [`${result.scoreA} : ${result.scoreB}`])}</p> : null}
         {resolution && !(history && focused) ? <div className={styles.itemResolution} data-kind={resolution.key}><strong>{resolution.label}</strong><span>{resolution.detail}</span></div> : null}
         <small>{task.status === 'OPEN' ? task.dueAt ? uiText("截止 {0}", uiLocale, [formatTime(task.dueAt)]) : uiText("无固定截止时间", uiLocale) : `${TASK_STATUS[task.status] || '创建'} · ${formatRecordedTime(task.completedAt || task.updatedAt || task.createdAt)}`}</small>
       </div>
@@ -81,6 +87,8 @@ function TaskCard({ task, index, workingId, onComplete, withSeason, history = fa
           <button type="button" disabled={workingId === task.id} onClick={() => onComplete(task)}>{workingId === task.id ? uiText("提交中", uiLocale) : uiText("确认完成", uiLocale)}</button>
         ) : null}
         {history && !focused ? <span>{task.closure.label}{uiText(" · 只读", uiLocale)}</span> : null}
+        {history && !focused && historyUrl ? <Link to={historyUrl}>{uiText("查看详情", uiLocale)}</Link> : null}
+        {history && focused && result && actionUrl ? <Link to={actionUrl}>{uiText("查看当前比赛进度", uiLocale)}</Link> : null}
       </div>
     </article>
   )

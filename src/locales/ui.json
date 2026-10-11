@@ -58655,5 +58655,45 @@
     "zh-TW": "核對本圖結果並開放下一圖",
     "en-US": "Review the result and open the next map",
     "ko-KR": "이번 맵 결과 확인 후 다음 맵 열기"
+  },
+  "本队登记前的周次": {
+    "zh-TW": "本隊登記前的週次",
+    "en-US": "Week before this team's enrollment",
+    "ko-KR": "팀 등록 전 주차"
+  },
+  "本队登记时此周比赛已结束，无需补确认，也不计入待办。": {
+    "zh-TW": "本隊登記時此週比賽已結束，無需補確認，也不計入待辦。",
+    "en-US": "This week ended before the team enrolled. No confirmation or task is required.",
+    "ko-KR": "팀 등록 전에 해당 주 경기가 종료되어 확인이나 할 일이 필요하지 않습니다."
+  },
+  "本场指定代表 · 可代表本队响应": {
+    "zh-TW": "本場指定代表 · 可代表本隊回應",
+    "en-US": "Appointed representative · may respond for this team",
+    "ko-KR": "지정 대표 · 팀을 대신해 응답 가능"
+  },
+  "当前仅可查看 · 由本场指定代表响应": {
+    "zh-TW": "目前僅可查看 · 由本場指定代表回應",
+    "en-US": "View only · the appointed representative responds",
+    "ko-KR": "현재 조회 전용 · 지정 대표가 응답"
+  },
+  "赛果版本 {0}": {
+    "zh-TW": "賽果版本 {0}",
+    "en-US": "Result revision {0}",
+    "ko-KR": "경기 결과 버전 {0}"
+  },
+  "赛果版本未记录": {
+    "zh-TW": "賽果版本未記錄",
+    "en-US": "Result revision not recorded",
+    "ko-KR": "경기 결과 버전 미기록"
+  },
+  "本次送达赛果：{0}": {
+    "zh-TW": "本次送達賽果：{0}",
+    "en-US": "Delivered result: {0}",
+    "ko-KR": "전달된 경기 결과: {0}"
+  },
+  "查看当前比赛进度": {
+    "zh-TW": "查看目前比賽進度",
+    "en-US": "View current match progress",
+    "ko-KR": "현재 경기 진행 상황 보기"
   }
 }
