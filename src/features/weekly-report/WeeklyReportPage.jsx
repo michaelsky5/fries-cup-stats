@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Link, useOutletContext, useParams, useSearchParams } from 'react-router-dom'
-import { translateUiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText } from '../../lib/uiText.js'
 import { weeklyCycleTitle, weeklyPeriodPath } from '../weekly-overview/weeklyPresentation.js'
 import { buildWeeklyOverview } from '../weekly-overview/weeklyOverviewModel.js'
 import { formatReportTime, weeklyReportPath } from './weeklyReportPreview.js'
@@ -10,13 +10,14 @@ import WeeklyNewspaper from './WeeklyNewspaper.jsx'
 import styles from './WeeklyReport.module.css'
 
 export default function WeeklyReportPage() {
-  const { db, seasonId, locale, withSeason } = useOutletContext()
+  const { db, season, seasonId, locale, withSeason } = useOutletContext()
+  const weekly = season?.rules?.weeklyCompetition?.enabled === true || season?.competitionFormat === 'WEEKLY'
   const { weekId } = useParams()
   const [params] = useSearchParams()
   const requestedCycle = params.get('cycle')
   const overview = useMemo(() => buildWeeklyOverview(db, { cycleId: requestedCycle }), [db, requestedCycle])
   const cycleId = requestedCycle || overview.cycle?.id
-  const { issue, issues, loading, error } = usePublishedNewspaper({ seasonId, cycleId, weekId, locale }, !weekId)
+  const { issue, issues, loading, error } = usePublishedNewspaper({ seasonId, cycleId: weekly ? cycleId : null, weekId, locale }, !weekId)
   const report = issue?.report
   const t = (zh, en) => String(locale).startsWith('en') ? en : translateUiText(zh, locale)
   const home = report ? withSeason(weeklyPeriodPath('/', report.cycle, report.week)) : withSeason('/')
@@ -29,8 +30,8 @@ export default function WeeklyReportPage() {
       <nav className={styles.cycleLinks} aria-label={t('周报比赛周期', 'Report cycles')}>{overview.cycles.map(cycle => <Link key={cycle.id} to={withSeason('/reports?cycle=' + encodeURIComponent(cycle.id))} aria-current={cycle.id === cycleId ? 'page' : undefined}>{weeklyCycleTitle(cycle, locale)}</Link>)}</nav>
     </>}
     {(loading || error || (weekId ? !issue : !issues.length)) && <section className={styles.unavailable} role={error ? 'alert' : 'status'}>
-      <h2>{loading ? t('正在读取周报…', 'Loading the issue…') : error ? t('周报暂时无法读取', 'The issue could not be loaded') : t('本期周报尚未出刊', 'This issue has not been published')}</h2>
-      <p>{error ? t('请稍后刷新重试。', 'Please refresh and retry.') : !loading ? t('每周二 12:00（UTC+8）出刊。', 'Published Tuesdays at 12:00 (UTC+8).') : ''}</p>
+      <h2>{!weekly ? pickUiLocale(locale, '当前赛事暂无周报', 'No weekly reports for this event', '이 대회에는 주간 신문이 없습니다', '目前賽事暫無週報') : loading ? t('正在读取周报…', 'Loading the issue…') : error ? t('周报暂时无法读取', 'The issue could not be loaded') : t('本期周报尚未出刊', 'This issue has not been published')}</h2>
+      <p>{weekly && (error ? t('请稍后刷新重试。', 'Please refresh and retry.') : !loading ? t('每周二 12:00（UTC+8）出刊。', 'Published Tuesdays at 12:00 (UTC+8).') : '')}</p>
       <Link className={styles.textLink} to={home}>{t('返回赛事总览', 'Return to the overview')} →</Link>
     </section>}
     <div className={styles.archiveList}>{issues.map(item => {

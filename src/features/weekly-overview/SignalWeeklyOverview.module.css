@@ -447,8 +447,12 @@
   .mapRail li {
     min-height: 168px;
     gap: 5px;
-    background-image: linear-gradient(0deg, #2a2a2af7 0%, #2a2a2ab3 55%, #2a2a2a33 100%), var(--weekly-map-photo);
+    border-inline: 0;
+    border-bottom: 0;
+    border-top-width: 2px;
+    background-image: linear-gradient(0deg, var(--ink) 0%, #181a17ef 18%, #2a2a2ab3 55%, #2a2a2a33 100%), var(--weekly-map-photo);
   }
+  .mapRail li + li { border-left: 1px solid #eeede61c; }
   .mapRail b { font-size: 13px; }
   .mapRail li > span:not(.mapNumber) { font-size: 11px; line-height: 1.5; color: var(--fc-data-text-on-dark); }
   .mapRail li > small { font-size: 12px; }
