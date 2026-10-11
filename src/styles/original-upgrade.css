@@ -18,7 +18,7 @@ html [data-design='kpr'][data-design-edition='hybrid'] [data-upgrade-header='eve
 
   [data-upgrade-bar] {
     display: grid;
-    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
     align-items: center;
     gap: 20px;
     min-height: var(--fc-masthead-height);
@@ -286,6 +286,14 @@ html [data-design='kpr'][data-design-edition='hybrid'] [data-upgrade-header='eve
     [data-upgrade-bar] { gap: 12px; }
     [data-upgrade-nav] { gap: 6px; }
     [data-upgrade-nav] > a { padding-inline: 8px; }
+    [data-upgrade-nav]:is(:lang(en), :lang(ko)) > a { font-size: 12px; }
+  }
+}
+
+@media (1180px <= width) and (width < 1280px) {
+  html [data-design='kpr'][data-design-edition='hybrid'] [data-upgrade-header='event-center'] {
+    [data-upgrade-nav] { gap: 4px; }
+    [data-upgrade-nav] > a { padding-inline: 4px; }
   }
 }
 
