@@ -5,6 +5,7 @@ import { SEASONS } from '../../config/seasons.js'
 import { LOCALES } from '../../lib/locales.js'
 import { pickUiLocale } from '../../lib/uiText.js'
 import AuthButton from '../../features/auth/AuthDialog.jsx'
+import AccountModeSwitch from '../../features/auth/AccountModeSwitch.jsx'
 import { useAuth } from '../../features/auth/AuthProvider.jsx'
 import EventContextBar from './EventContextBar.jsx'
 import PublicMobileNav, { PublicMobileMenu } from './PublicMobileNav.jsx'
@@ -302,6 +303,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
           contextMode={headerContextMode}
         /> : null}
       </header>
+      <AccountModeSwitch locale={compatibleLayoutLocale} />
       {phoneNavigation ? <PublicMobileNav items={headerNavItems} locale={layoutLocale} navPath={navPath} accountAttention={accountAttention} /> : null}
   </>)
 }

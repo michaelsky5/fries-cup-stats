@@ -48,6 +48,12 @@ export async function fetchCurrentUser(options = {}) {
   return data.user
 }
 
+export async function setAccountMode(mode) {
+  const data = await platformRequest('/auth/account-mode', { method: 'POST', body: { mode } })
+  if (!data?.user?.id || data.user.accountMode !== mode) throw new Error('模式切换结果尚未确认，请同步账号后核对。')
+  return data.user
+}
+
 export async function requestEmailVerification() {
   const data = await platformRequest('/auth/email-verifications', {
     method: 'POST'
