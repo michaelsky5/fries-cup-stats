@@ -13,15 +13,17 @@ export default function AccountCompetitionEntry({ competition, locale, withSeaso
   const [invitation, setInvitation] = useState('')
   const [invitationError, setInvitationError] = useState('')
   const empty = !loading && !error && issue === 'EMPTY'
+  const unlinked = !loading && !error && issue === 'UNLINKED'
   const unavailable = ['INVALID', 'UNAVAILABLE'].includes(issue)
   const title = error ? en ? 'Your events could not be loaded' : uiText("参赛赛事暂时未能载入", locale)
     : loading ? en ? 'Finding your events…' : uiText("正在读取参赛赛事…", locale)
       : empty ? en ? 'You have no linked events yet' : uiText("你还没有关联参赛赛事", locale)
+        : unlinked ? en ? 'No participation identity for this event yet' : uiText('尚未关联赛事身份', locale)
         : unavailable ? en ? 'This event is unavailable to this account' : uiText("当前账号无法进入这项赛事", locale)
           : en ? 'Choose your event' : uiText("选择要进入的赛事", locale)
   const description = error ? en ? 'Your team links could not be checked. Retry below; your account and following are still available.' : uiText("暂时无法核对队伍关系。可以重新读取，账号设置和我的关注仍可使用。", locale)
     : loading ? en ? 'Checking the teams linked to this account.' : uiText("正在核对这个账号的队伍关系，请稍候。", locale)
-      : empty ? en ? 'Accept your invitation to bring your team, weekly preparation and matches into this space.' : uiText("认领邀请后，你的队伍、每周参赛准备和比赛会汇集在这里。", locale)
+      : empty || unlinked ? en ? 'Accept your invitation to bring your team, weekly preparation and matches into this space.' : uiText("认领邀请后，你的队伍、每周参赛准备和比赛会汇集在这里。", locale)
         : unavailable ? en ? 'This link may belong to another account. Select a linked event below or check your invitation.' : uiText("这个链接可能属于其他账号。可选择下方已关联赛事，或核对收到的邀请。", locale)
           : en ? 'Each event keeps its own tasks, team rosters and match records.' : uiText("每项赛事分别保存待办、名单和比赛记录。", locale)
   function openInvitation(event) {

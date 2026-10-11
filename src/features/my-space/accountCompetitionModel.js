@@ -1,3 +1,5 @@
+import { SEASONS } from '../../config/seasons.js'
+
 export const ACCOUNT_COMPETITION_PARAM = 'competition'
 
 export function normalizeCompetitionId(value) {
@@ -31,6 +33,10 @@ export function resolveAccountCompetition({ search = '', competitions = null, re
     return { id, issue: '' }
   }
   if (competitions === null) return { id: publicSeasonId, issue: '' }
+  // The event already selected in the site header is the default workspace.
+  // Membership still comes from the account API, never from a public ID alone.
+  if (publicSeasonId) return competitions.some(item => item.id === publicSeasonId)
+    ? { id: publicSeasonId, issue: '' } : { id: '', issue: 'UNLINKED' }
   if (competitions.some(item => item.id === rememberedId)) return { id: rememberedId, issue: '' }
   if (competitions.length === 1) return { id: competitions[0].id, issue: '' }
   return { id: '', issue: competitions.length ? 'CHOOSE' : 'EMPTY' }
@@ -61,6 +67,8 @@ export function competitionSwitchSearch(search, id) {
   const current = new URLSearchParams(search)
   const next = new URLSearchParams()
   for (const key of ['season', 'lang', 'design']) if (current.has(key)) next.set(key, current.get(key))
+  const publicSeason = SEASONS.find(item => item.id === id)
+  if (publicSeason) next.set('season', publicSeason.publicCode)
   if (normalizeCompetitionId(id)) next.set(ACCOUNT_COMPETITION_PARAM, id)
   next.set('section', 'overview')
   return next.toString()
