@@ -22,6 +22,25 @@ export function roomOperationEvents(data) {
     (['LIVE', 'LINEUPS'].includes(event.kind) || event.kind === 'LINEUP_CHANGE' && ['A', 'B'].includes(event.side) && ['added', 'removed', 'roles'].every(key => players(event[key]))))
 }
 
+// Shared operations stay shared; never guess ownership from a translated message body.
+export function roomActivitySide(event, match) {
+  if (event.teamId != null) {
+    const side = ['A', 'B'].find(side => event.teamId === match[`team${side}`].id)
+    if (!side || event.side && event.side !== side) return 'unrelated'
+    return side
+  }
+  if (['A', 'B'].includes(event.side)) return event.side
+  if (event.kind === 'MAP' && ['A', 'B'].includes(event.map?.chooserSide)) return event.map.chooserSide
+  return null
+}
+
+export function roomTeamActivityEvents(events, match, side) {
+  return events.filter(event => {
+    const owner = roomActivitySide(event, match)
+    return owner !== 'unrelated' && (!side || owner === null || owner === side)
+  })
+}
+
 // Saved public starts and lineup changes survive later map states and refreshes.
 // Map/Ban/score summaries still follow the current confirmed state after corrections.
 export function roomImportantEvents(data) {
@@ -30,7 +49,7 @@ export function roomImportantEvents(data) {
   const maps = (data.maps || []).filter(map => map?.name).sort((a, b) => b.order - a.order)
   const decisions = maps.flatMap(map => {
     const snapshot = roomDecisionSnapshot({ ...data, map, result: null, opening: data.opening?.mapOrder === map.order ? data.opening : null })
-    const events = snapshot.events.filter(event => event.kind !== 'BAN_ORDER' && (event.kind !== 'LINEUPS' || !recorded('LINEUPS', map.order))).map(event => ({ ...event, id: event.key, mapOrder: map.order, map: { name: snapshot.map.name, type: snapshot.map.type } }))
+    const events = snapshot.events.filter(event => event.kind !== 'BAN_ORDER' && (event.kind !== 'LINEUPS' || !recorded('LINEUPS', map.order))).map(event => ({ ...event, id: event.key, mapOrder: map.order, map: { name: snapshot.map.name, type: snapshot.map.type, chooserSide: snapshot.map.chooserSide } }))
     if ((map.startedAt || map.status === 'LIVE') && !recorded('LIVE', map.order)) events.push({ id: `${map.order}:LIVE`, kind: 'LIVE', mapOrder: map.order, createdAt: map.startedAt || undefined })
     if (map.status === 'COMPLETE' && Number.isFinite(map.scoreA) && Number.isFinite(map.scoreB)) events.push({ id: `${map.order}:RESULT:${map.scoreA}:${map.scoreB}`, kind: 'RESULT', mapOrder: map.order, scoreA: map.scoreA, scoreB: map.scoreB })
     return events.reverse()

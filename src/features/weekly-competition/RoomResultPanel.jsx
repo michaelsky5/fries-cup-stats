@@ -1,4 +1,5 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
+import RoomTaskLayout, { RoomTaskActions } from './RoomTaskLayout.jsx'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
 import { useRoomTransport } from './RoomTransport.jsx'
@@ -31,17 +32,17 @@ function ResponseControl({ side, data, disabled, mutate }) {
   const dialog = useRef(null), pending = useRef(null), viewed = useRef(null)
   useEffect(() => { if (open) dialog.current?.showModal(); else dialog.current?.close() }, [open])
   return <><button disabled={disabled} onClick={() => { if (!pending.current) { viewed.current = { expectedRevision: data.result.revision, fingerprint: data.result.fingerprint, confirmationUpdatedAt: side.updatedAt }; setStatus(side.status === 'DISPUTED' ? 'DISPUTED' : 'CONFIRMED') } setOpen(true) }}>{side.status === 'PENDING' ? uiText("核对并响应", uiLocale) : uiText("修改本队响应", uiLocale)}</button>
-    <dialog ref={dialog} className={styles.dialog} aria-label={uiText("{0} 核对正式赛果", uiLocale, [side.team.name])} onCancel={() => setOpen(false)}><form onSubmit={async event => {
+    <dialog ref={dialog} className={styles.dialog} data-room-task-dialog aria-label={uiText("{0} 核对正式赛果", uiLocale, [side.team.name])} onCancel={() => setOpen(false)}><RoomTaskLayout as="form" header={<h2>{side.team.name}{uiText(" · 核对正式赛果", uiLocale)}</h2>} onSubmit={async event => {
       event.preventDefault(); setError('')
       pending.current ||= { teamId: side.team.id, status, note: note.trim(), ...viewed.current, clientKey: crypto.randomUUID() }
       const saved = await mutate(async () => { try { return await liveRoomWrite(data.match.id, '/result-response', pending.current) } catch (failure) { if (failure.status && failure.status < 500) pending.current = null; setError(failure.message || '提交尚未确认，请核对后重试。'); throw failure } }, '本队赛果响应已保存。')
       if (saved) { pending.current = null; setOpen(false) }
-    }}><h2>{side.team.name}{uiText(" · 核对正式赛果", uiLocale)}</h2>{data.result.forfeit ? <ForfeitSummary data={data} /> : <p>{data.match.teamA.name} {data.result.scoreA} : {data.result.scoreB} {data.match.teamB.name}</p>}
+    }}>{data.result.forfeit ? <ForfeitSummary data={data} /> : <p>{data.match.teamA.name} {data.result.scoreA} : {data.result.scoreB} {data.match.teamB.name}</p>}
       <label>{uiText("本队响应", uiLocale)}<select value={status} onChange={event => { setStatus(event.target.value); pending.current = null }} disabled={disabled}><option value="CONFIRMED">{data.result.forfeit ? uiText("记录无误，确认本队赛果", uiLocale) : uiText("比分无误，确认本队赛果", uiLocale)}</option><option value="DISPUTED">{uiText("赛果有异议，请管理员复核", uiLocale)}</option></select></label>
       {!!data.result.maps?.length && <ol className={styles.approvedMaps}>{data.result.maps.map(map => <li key={map.order}><span>{uiText("图 ", uiLocale)}{map.order} · {formatOwMapName(map.name, uiLocale)}</span><strong>{map.scoreA} : {map.scoreB}</strong></li>)}</ol>}
       <label>{uiText("核对说明", uiLocale)}{status === 'DISPUTED' ? uiText("（必填）", uiLocale) : uiText("（选填）", uiLocale)}<textarea value={note} onChange={event => { setNote(event.target.value); pending.current = null }} required={status === 'DISPUTED'} maxLength={2000} disabled={disabled} placeholder={uiText("涉及哪一图、存在什么问题、核对依据是什么", uiLocale)} /></label><p>{uiText("说明仅本队与赛管可见，对方和解说只看到响应状态。", uiLocale)}</p>
-      {error && <p role="alert">{error}</p>}<div className={styles.actions}><button type="button" onClick={() => setOpen(false)}>{uiText("返回核对", uiLocale)}</button><button className={styles.primary} disabled={disabled || (status === 'DISPUTED' && note.trim().length < 2)}>{uiText("提交本队响应", uiLocale)}</button></div>
-    </form></dialog></>
+      {error && <p role="alert">{error}</p>}<RoomTaskActions><div className={styles.actions}><button type="button" onClick={() => setOpen(false)}>{uiText("返回核对", uiLocale)}</button><button className={styles.primary} disabled={disabled || (status === 'DISPUTED' && note.trim().length < 2)}>{uiText("提交本队响应", uiLocale)}</button></div></RoomTaskActions>
+    </RoomTaskLayout></dialog></>
 }
 
 export default function RoomResultPanel({ data, disabled, mutate, correction }) {
@@ -65,7 +66,7 @@ export default function RoomResultPanel({ data, disabled, mutate, correction }) 
       const complete = data.result.official || !!data.forfeit?.record || map.status === 'COMPLETE'
       return <tr key={map.order}><td>{String(map.order).padStart(2, '0')}</td><th scope="row">{formatOwMapName(map.name, uiLocale) || uiText("地图待定", uiLocale)}</th><td>{complete && hasScore ? `${map.scoreA} : ${map.scoreB}` : '—'}</td><td>{complete && hasScore ? uiText("已完成", uiLocale) : uiText("待确认", uiLocale)}</td></tr>
     })}</tbody></table>{!maps.length && <p>{data.result.forfeit ? uiText("本场未完成任何地图。", uiLocale) : uiText("地图记录尚未提供。", uiLocale)}</p>}</div>
-    {data.result.official && <div className={styles.resultResponses}>{data.result.sides.map(side => <div key={side.team.id}><span><strong>{side.team.shortName || side.team.name}</strong><small>{data.result.phase === 'SETTLED' ? uiText("{0} 分 · 已结算", uiLocale, [data.result.points.find(item => item.teamId === side.team.id)?.points ?? '—']) : responseNames[side.status] || uiText("待核对", uiLocale)}</small></span>{side.canRespond && <ResponseControl key={data.result.fingerprint + side.team.id} side={side} data={data} disabled={disabled} mutate={mutate} />}</div>)}</div>}
-    <div className={styles.resultControls}><RoomResultActions key={data.match.id + data.actor.id} data={data} disabled={disabled} mutate={mutate} />{correction}</div>
+    {data.result.official && <RoomTaskActions><div className={styles.resultResponses} data-room-result-responses>{data.result.sides.map(side => <div key={side.team.id}><span><strong>{side.team.shortName || side.team.name}</strong><small>{data.result.phase === 'SETTLED' ? uiText("{0} 分 · 已结算", uiLocale, [data.result.points.find(item => item.teamId === side.team.id)?.points ?? '—']) : responseNames[side.status] || uiText("待核对", uiLocale)}</small></span>{side.canRespond && <ResponseControl key={data.result.fingerprint + side.team.id} side={side} data={data} disabled={disabled} mutate={mutate} />}</div>)}</div></RoomTaskActions>}
+    <RoomTaskActions><div className={styles.resultControls}><RoomResultActions key={data.match.id + data.actor.id} data={data} disabled={disabled} mutate={mutate} />{correction}</div></RoomTaskActions>
   </div>
 }

@@ -5,7 +5,7 @@
 .panel button:disabled { opacity:.55; cursor:not-allowed; }
 .panel label { display:grid; gap:6px; margin-block:12px; }
 .panel input,.panel textarea { box-sizing:border-box; width:100%; min-width:0; padding:10px; }
-.panel summary { padding-block:10px; cursor:pointer; }
+.panel summary { padding-block:10px; min-height:44px; box-sizing:border-box; cursor:pointer; }
 .actions,.status { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
 .status { margin-top:8px; }
 .status span { font-size:12px; padding:4px 8px; border:1px solid var(--fc-data-room-line,var(--line)); }

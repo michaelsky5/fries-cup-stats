@@ -10,7 +10,7 @@ import { formatOwMapMode, formatOwMapName, getOwMap } from '../../lib/heroes.js'
 import { getMapImage } from '../../lib/reviewAssets.js'
 import { systemPageUrl } from './roomResultLinks.js'
 import styles from './RoomMatchFrame.module.css'
-import { getRoomStageIndex, ROOM_STAGES, ROOM_PREMATCH_STAGES } from './weeklyRoomFlow.js'
+import { getRoomStageIndex, getRoomStageLabel, ROOM_STAGES, ROOM_PREMATCH_STAGES } from './weeklyRoomFlow.js'
 
 const teamName = team => team?.shortName || team?.name || '队伍待定'
 const numericScore = value => typeof value === 'number' && Number.isFinite(value)
@@ -77,10 +77,15 @@ export function RoomStageRail({ data, selectedStage, onStageSelect, clock }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const map = data.map
   const current = getRoomStageIndex(data)
-  const labels = ROOM_STAGES
+  const labels = ROOM_STAGES.map((_, index) => getRoomStageLabel(data, index))
   const submissionUrl = systemPageUrl(data.result?.handoff?.path)
   const lineupSummary = side => (map?.[`lineup${side}`] || []).map(player => player.battleTag || player.name).join('、') || uiText("待确认", uiLocale)
   const view = selectedStage === null ? current : selectedStage
+  const opening = data.opening
+  const actingSide = !opening?.complete && view === current && [1, 3].includes(current)
+    ? opening?.phase === 'CHOOSING' || opening?.phase === 'BANNING' && !opening.setup?.firstBanSide ? opening?.winner : opening?.phase === 'BANNING' ? opening.nextSide : null
+    : null
+  const actingTeam = ['A', 'B'].includes(actingSide) ? data.match[`team${actingSide}`] : null
   const liveSummary = map && view >= 4 ? `${formatOwMapName(map.name, uiLocale) || uiText("地图待定", uiLocale)} · ${data.match.teamA.shortName || data.match.teamA.name} Ban ${roomBanLabel(map, 'A', uiLocale) || uiText("待定", uiLocale)} · ${data.match.teamB.shortName || data.match.teamB.name} Ban ${roomBanLabel(map, 'B', uiLocale) || uiText("待定", uiLocale)} · ${uiText("首发", uiLocale)} ${lineupSummary('A')} / ${lineupSummary('B')}` : ''
   const completedMaps = data.maps.filter(item => item.status === 'COMPLETE').map(item => `${item.order}. ${formatOwMapName(item.name, uiLocale) || uiText("地图待定", uiLocale)} ${item.scoreA ?? '—'}:${item.scoreB ?? '—'}`).join(' · ')
   const selectedSetup = data.opening?.setup || (map?.name ? { name: map.name, type: map.type, chooserSide: map.chooserSide, attackFirstSide: map.attackFirstSide, firstBanSide: map.firstBanSide, banA: map.banA, banB: map.banB, banAStatus: map.banAStatus, banBStatus: map.banBStatus } : null)
@@ -98,7 +103,7 @@ export function RoomStageRail({ data, selectedStage, onStageSelect, clock }) {
   </section> : null
   const readOnlySummary = view !== current ? view === 1 ? formatOwMapName(selectedSetup?.name, uiLocale) || uiText("地图尚未确定", uiLocale) : view === 5 ? completedMaps || uiText("本图结果尚未记录", uiLocale) : view === 6 ? submissionUrl ? uiText("战报提交入口已生成，请点击赛果入口打开。", uiLocale) : uiText("整场地图完成后，由本场负责提交的一方打开战报入口。", uiLocale) : `${labels[view]} · ${formatOwMapName(map?.name, uiLocale) || uiText("当前地图", uiLocale)} · ${uiText("只读查看，当前操作仍在第 {0} 步", uiLocale, [String(current + 1).padStart(2, '0')])}` : null
   return <>
-    <div className={styles.stageHeader} data-room-slot="stage-header" data-menu-open={menuOpen} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setMenuOpen(false) }} onKeyDown={event => { if (event.key === 'Escape') setMenuOpen(false) }}><button type="button" className={styles.stageToggle} aria-expanded={menuOpen} aria-label={uiText("查看比赛阶段", uiLocale)} onClick={() => setMenuOpen(!menuOpen)}><span>{String(view + 1).padStart(2, '0')}</span><strong>{uiText(labels[view], uiLocale)}{view !== current ? ' · ' + uiText("只读查看", uiLocale) : ''}</strong><span aria-hidden="true">⌄</span></button><ol className={styles.stageRail} data-room-slot="stages" aria-label={uiText("本图比赛进度", uiLocale)}>{ROOM_PREMATCH_STAGES.map((label, index) => <li key={label} aria-current={index === current ? 'step' : undefined} data-done={index < current} data-selected={index === selectedStage}><button type="button" disabled={index > current} onClick={() => { onStageSelect(index === current ? null : index); setMenuOpen(false) }} aria-label={uiText("查看第 {0} 步 {1}", uiLocale, [index + 1, uiText(label, uiLocale)])}><span>{index < current ? '✓' : `0${index + 1}`}</span>{uiText(label, uiLocale)}</button></li>)}</ol>{clock}</div>
+    <div className={styles.stageHeader} data-room-slot="stage-header" data-menu-open={menuOpen} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setMenuOpen(false) }} onKeyDown={event => { if (event.key === 'Escape') setMenuOpen(false) }}><button type="button" className={styles.stageToggle} aria-expanded={menuOpen} aria-label={uiText("查看比赛阶段", uiLocale)} onClick={() => setMenuOpen(!menuOpen)}><span>{String(view + 1).padStart(2, '0')}</span><strong><span>{uiText(labels[view], uiLocale)}{view !== current ? ' · ' + uiText("只读查看", uiLocale) : ''}</span>{actingTeam && <small data-room-stage-owner>{uiText("轮到 {0}", uiLocale, [teamName(actingTeam)])}</small>}</strong><span aria-hidden="true">⌄</span></button><ol className={styles.stageRail} data-room-slot="stages" aria-label={uiText("本图比赛进度", uiLocale)}>{ROOM_PREMATCH_STAGES.map((label, index) => <li key={label} aria-current={index === current ? 'step' : undefined} data-done={index < current} data-selected={index === selectedStage}><button type="button" disabled={index > current} onClick={() => { onStageSelect(index === current ? null : index); setMenuOpen(false) }} aria-label={uiText("查看第 {0} 步 {1}", uiLocale, [index + 1, uiText(getRoomStageLabel(data, index), uiLocale)])}><span>{index < current ? '✓' : `0${index + 1}`}</span>{uiText(getRoomStageLabel(data, index), uiLocale)}</button></li>)}</ol>{clock}</div>
     {current >= 4 && <button type="button" className={styles.currentPhase} onClick={() => onStageSelect(null)}>{uiText(ROOM_STAGES[current], uiLocale)} · {uiText("返回当前操作", uiLocale)} →</button>}
     {view !== current && liveSummary && <p className={styles.stageSummary} data-room-slot="stage-summary">{liveSummary}</p>}
     {mapSelectionPage}

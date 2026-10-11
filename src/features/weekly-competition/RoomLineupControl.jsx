@@ -1,10 +1,13 @@
 import { roomLineupDraftKey, readRoomLineupDraft, saveRoomLineupDraft, clearRoomLineupDraft } from './roomLineupDraft.js'
 import { RoomCountdownHint } from './RoomPhaseClock.jsx'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
+import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useRef, useState } from 'react'
 import { ROOM_ROLE_ORDER, roomRoleCode, canSubmitRoomLineup, sortRoomLineup, validRoomLineup } from './roomLineups.js'
 import styles from './WeeklyRoomWorkspace.module.css'
 
 export default function RoomLineupControl({ data, side, disabled, command }) {
+  const locale = useUiLocale()
   const roster = data.rosters.find(item => item.teamId === side.team.id)
   const saved = data.map?.[`lineup${side.key}`] || []
   const previous = [...(data.maps || [])].reverse().find(map => map.order < data.map.order)?.[`lineup${side.key}`] || []
@@ -24,6 +27,7 @@ export default function RoomLineupControl({ data, side, disabled, command }) {
   const toggle = member => edit(selected.some(item => item.playerId === member.id) ? selected.filter(item => item.playerId !== member.id) : selected.length < 5 ? [...selected, { playerId: member.id, role: member.role }] : selected)
   const valid = validRoomLineup(selected)
   const ordered = sortRoomLineup(selected)
+  const roleCounts = ['DPS', 'TANK', 'SUP'].map(role => selected.filter(player => player.role === role).length)
   async function confirm() {
     if (!canEdit || !valid) return
     pending.current ||= { teamId: side.team.id, lineup: ordered.map(({ playerId, role }) => ({ playerId, role })), ...(data.map.lineupContext ? { lineupContext: data.map.lineupContext } : {}), clientKey: crypto.randomUUID(), expectedRevision: data.revision, matchRevision: data.match.revision, draftRevision: data.draftRevision }
@@ -42,7 +46,7 @@ export default function RoomLineupControl({ data, side, disabled, command }) {
         </select>
       </div>
     })}</div>
-    <div className={styles.lobbyOrder} aria-label="游戏内 D D T S S 顺序">{ROOM_ROLE_ORDER.map((role, index) => <div key={index} data-valid={ordered[index]?.role === role}><b>{index + 1} · {roomRoleCode(role)}</b><span>{roster?.members.find(member => member.id === ordered[index]?.playerId)?.name || '待选择'}</span></div>)}</div>
-    <footer data-room-commit="lineup">{storageError && <small role="status">浏览器未能保留选择，请保持此页面打开。</small>}{!locked && <RoomCountdownHint data={data} action="SET_LINEUP" />}<small>{valid ? '确认即代表五人到场；提交后锁定，双方都确认才公开。游戏内按 D D T S S 排列。' : `已选 ${selected.length}/5；需要 2 输出、1 重装、2 支援。`}</small><button type="button" disabled={!canEdit || !valid} onClick={confirm}>{locked ? '本队首发已锁定' : ownTurn ? '确认五人到场、职责与顺序' : '等待对方确认'}</button></footer>
+    <div className={styles.lobbyOrder} aria-label="游戏内 D D T S S 顺序">{ROOM_ROLE_ORDER.map((role, index) => <div key={index} data-valid={ordered[index]?.role === role}><b>{index + 1} · {roomRoleCode(role)}</b><span title={roster?.members.find(member => member.id === ordered[index]?.playerId)?.name}>{roster?.members.find(member => member.id === ordered[index]?.playerId)?.name || '待选择'}</span></div>)}</div>
+    <footer data-room-commit="lineup">{storageError && <small role="status">浏览器未能保留选择，请保持此页面打开。</small>}{!locked && <RoomCountdownHint data={data} action="SET_LINEUP" />}<div className={styles.lineupCount} data-lineup-selection-count role="status"><b>{uiText('已选 {0}/5', locale, [selected.length])}</b><span>{uiText('{0} 输出 · {1} 重装 · {2} 支援', locale, roleCounts)}</span></div><small>{!valid ? uiText('需要 2 输出、1 重装、2 支援。', locale) : uiText('确认即代表五人到场；双方都确认才公开。', locale)}{canEdit && selected.length === 5 && <span className={styles.lineupSwapHint}>{uiText('换人请先取消一名。', locale)}</span>}</small><button type="button" disabled={!canEdit || !valid} onClick={confirm}>{locked ? '本队首发已锁定' : ownTurn ? '确认五人到场、职责与顺序' : '等待对方确认'}</button></footer>
   </section>
 }

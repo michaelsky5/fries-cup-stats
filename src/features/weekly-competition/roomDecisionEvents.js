@@ -24,7 +24,7 @@ export function roomDecisionSnapshot(data) {
   const map = data.map
   if (!map?.name || data.result || data.opening?.mapOrder > map.order) return { scope, map: null, events: [], lineups: null }
   const setup = data.opening?.mapOrder === map.order ? data.opening?.setup : null
-  const publicMap = { ...map, ...(setup ? { banA: setup.banA, banB: setup.banB, banAStatus: setup.banAStatus, banBStatus: setup.banBStatus, firstBanSide: setup.firstBanSide } : {}) }
+  const publicMap = { ...map, ...(setup ? { banA: setup.banA, banB: setup.banB, banAStatus: setup.banAStatus, banBStatus: setup.banBStatus, banATimeoutReason: setup.banATimeoutReason, banBTimeoutReason: setup.banBTimeoutReason, firstBanSide: setup.firstBanSide } : {}) }
   const context = `${map.order}:${map.lineupContext || ''}`
   const events = [{ kind: 'MAP', key: `${context}:MAP:${signature([map.name, map.chooserSide, map.attackFirstSide])}` }]
   let lineups = null
@@ -40,7 +40,10 @@ export function roomDecisionSnapshot(data) {
   }
   if (publicMap.firstBanSide) events.push({ kind: 'BAN_ORDER', key: `${context}:ORDER:${publicMap.firstBanSide}` })
   for (const side of ['A', 'B']) if (publicMap[`ban${side}`]) events.push({ kind: `BAN_${side}`, side, hero: publicMap[`ban${side}`], key: `${context}:BAN_${side}:${publicMap[`ban${side}`]}` })
-  for (const side of ['A', 'B']) if (publicMap[`ban${side}Status`] === 'TIMED_OUT') events.push({ kind: 'BAN_TIMEOUT', side, key: `${context}:BAN_${side}:TIMED_OUT` })
+  for (const side of ['A', 'B']) if (publicMap[`ban${side}Status`] === 'TIMED_OUT') {
+    const reason = publicMap[`ban${side}TimeoutReason`] || 'DEADLINE'
+    events.push({ kind: 'BAN_TIMEOUT', side, reason, key: `${context}:BAN_${side}:TIMED_OUT:${reason}` })
+  }
   return { scope, map: publicMap, events, lineups }
 }
 

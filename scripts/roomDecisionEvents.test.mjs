@@ -75,3 +75,32 @@ test('next-map selection and final results cannot display the old map as new dec
   assert.equal(roomDecisionSnapshot(data).map, null)
   assert.deepEqual(roomDecisionSnapshot(buildWeeklyRoomPreview('result')).events, [])
 })
+
+test('current setup carries timeout reasons and replaces a stale map penalty after correction', () => {
+  const data = buildWeeklyRoomPreview('banning')
+  data.map.banAStatus = 'TIMED_OUT'; data.map.banATimeoutReason = 'MAP_SELECTION'
+  data.opening.setup.banAStatus = 'TIMED_OUT'; data.opening.setup.banATimeoutReason = 'DEADLINE'
+  const first = roomDecisionSnapshot(data)
+  assert.equal(first.map.banATimeoutReason, 'DEADLINE')
+  assert.equal(first.events.find(event => event.kind === 'BAN_TIMEOUT').reason, 'DEADLINE')
+  data.opening.setup.banATimeoutReason = 'MAP_SELECTION'
+  const corrected = roomDecisionSnapshot(data)
+  const changes = changedRoomDecisions(first, corrected)
+  assert.equal(changes.length, 1)
+  assert.equal(changes[0].reason, 'MAP_SELECTION')
+  assert.deepEqual(changedRoomDecisions(corrected, roomDecisionSnapshot(data)), [])
+  delete data.opening.setup.banAStatus; delete data.opening.setup.banATimeoutReason
+  const cleared = roomDecisionSnapshot(data)
+  assert.equal(cleared.map.banATimeoutReason, undefined)
+  assert(!cleared.events.some(event => event.kind === 'BAN_TIMEOUT'), 'corrected setup must not revive the stale map penalty')
+})
+
+test('historical and legacy timeout snapshots retain the authoritative reason', () => {
+  const data = buildWeeklyRoomPreview('banning')
+  data.opening = null; data.map.banAStatus = 'TIMED_OUT'; data.map.banATimeoutReason = 'MAP_SELECTION'
+  let event = roomDecisionSnapshot(data).events.find(event => event.kind === 'BAN_TIMEOUT')
+  assert.equal(event.reason, 'MAP_SELECTION')
+  delete data.map.banATimeoutReason
+  event = roomDecisionSnapshot(data).events.find(event => event.kind === 'BAN_TIMEOUT')
+  assert.equal(event.reason, 'DEADLINE')
+})

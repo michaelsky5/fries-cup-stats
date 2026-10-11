@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { translateUiText as uiText, pickUiLocale } from '../../lib/uiText.js'
 import { getPlatformApiUrl } from '../auth/platformApi.js'
 import { useRoomTransport } from './RoomTransport.jsx'
 import { canRecordPreparationIncident } from './roomNoRefereePreparation.js'
@@ -21,7 +21,16 @@ export function RoomPreparationIncidents({ data }) {
   </div>)}</div>
 }
 
-export default function RoomNoRefereePreparation({ data, disabled, onReport, onSupport }) {
+export function RoomPreparationDeadlines({ data }) {
+  const locale = useUiLocale(), timing = data.timing
+  if (!timing?.arrivalDueAt && !timing?.preparationDueAt) return null
+  return <section className={styles.notice} data-room-slot="preparation-deadlines">
+    <strong>{pickUiLocale(locale, '准备时限', 'Preparation time limits', '준비 시간 제한', '準備時限')}</strong>
+    <dl>{timing.arrivalDueAt && <div><dt>{uiText('到场截止', locale)}</dt><dd>{time(timing.arrivalDueAt, locale)} UTC+8</dd></div>}{timing.preparationDueAt && <div><dt>{uiText('准备截止', locale)}</dt><dd>{time(timing.preparationDueAt, locale)} UTC+8</dd></div>}</dl>
+  </section>
+}
+
+export default function RoomNoRefereePreparation({ data, disabled, onReport, onSupport, expanded = false }) {
   const locale = useUiLocale(), timing = data.timing
   if (!timing?.noRefereePolicy || data.phase !== 'PREPARING') return null
   const grace = timing.noRefereeGrace, currentGrace = grace?.mapOrder === (data.map?.order || 1)
@@ -30,7 +39,7 @@ export default function RoomNoRefereePreparation({ data, disabled, onReport, onS
     <strong>{uiText(recorded ? '本队已留证结束等待，待赛事组核验' : timing.preparationOverdue ? data.captainAgreements?.preparation.agreed ? '准备超时，双方已同意继续' : '准备超时，完整准备后双方确认继续' : currentGrace ? '本场已使用单次 3 分钟准备补时' : '无赛管 · 单次准备补时规则', locale)}</strong>
     <dl><div><dt>{uiText('到场截止', locale)}</dt><dd>{time(timing.arrivalDueAt, locale)} UTC+8</dd></div>{currentGrace && <div><dt>{uiText('补时前截止', locale)}</dt><dd>{time(grace.originalDueAt, locale)} UTC+8</dd></div>}<div><dt>{uiText(currentGrace ? '补时后准备截止' : '准备截止', locale)}</dt><dd>{time(timing.preparationDueAt, locale)} UTC+8</dd></div></dl>
     {grace && !currentGrace && <p>{uiText('本场补时已在第 {0} 图使用，本图不再自动补时。', locale, [grace.mapOrder])}</p>}
-    <details className={styles.details}>
+    <details className={styles.details} open={expanded || undefined}>
       <summary>{uiText('补时规则与留证记录', locale)}</summary>
       <p>{uiText('双方在到场截止前声明五名锁定名单选手到齐，准备超时后整场自动补时一次 3 分钟，无需临时表决。到场截止、选图和 Ban 超时处罚不变。', locale)}</p>
       <p>{uiText('五人到齐且选禁完整后，双方代表可同意超时继续开赛，原截止和处罚保留；仍无法开赛或有异议时，可留证结束现场等待，赛事组稍后核验，不自动判负或弃权。', locale)}</p>
