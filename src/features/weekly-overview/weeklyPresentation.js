@@ -5,7 +5,7 @@ const labels = {
   postponed: ['已延期', 'Postponed'], unknown: ['状态待更新', 'Status pending'],
   IN_PROGRESS: ['进行中', 'In progress'], RESULT_REVIEW: ['结果审核中', 'Under review'],
   PUBLISHED: ['对阵已公布', 'Published'], CLOSED: ['已结束', 'Closed'],
-  ACTIVE: ['周期进行中', 'Active cycle'], PLAYOFFS: ['周期季后赛', 'Cycle playoffs']
+  ACTIVE: ['周期进行中', 'Active cycle'], PLAYOFFS: ['季后赛', 'Playoffs']
 }
 const isEnglish = locale => String(locale).startsWith('en')
 export const weeklyStatusLabel = (key, locale) => translateUiText(labels[key]?.[isEnglish(locale) ? 1 : 0] || (isEnglish(locale) ? 'To be announced' : '待公布'), locale)

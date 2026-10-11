@@ -10,6 +10,7 @@ import { WeeklyCyclePicker } from '../weekly-overview/WeeklyNavigation.jsx'
 import { weeklyScore } from '../weekly-overview/weeklyOverviewModel.js'
 import { weeklyCycleTitle, weeklyPeriodPath, weeklyStatusLabel, weeklyTeamShort, weeklyWeekTitle } from '../weekly-overview/weeklyPresentation.js'
 import { buildWeeklyAdvance, resetWeeklyAdvanceSearch, weeklyPublishedRank } from './weeklyAdvanceModel.js'
+import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
 import styles from './SignalWeeklyAdvance.module.css'
 
 const idOf = team => String(team?.id || team?.team_id || '')
@@ -80,9 +81,9 @@ export default function SignalWeeklyAdvance() {
   const rank = weeklyPublishedRank(standing?.display_rank)
   const isFollowing = selected && !!isFavoriteTeam?.(selected.id)
   const stages = [
-    { id: 'points', title: isPilot ? t(uiText("比赛记录", locale), 'Match records') : t(uiText("周期积分", locale), 'Cycle points'), note: isPilot ? t('本周期不计积分', 'No standings points') : t('按周累计', 'Week by week') },
-    { id: 'playoffs', title: t(uiText("周期季后赛", locale), 'Cycle playoffs'), note: pickUiLocale(locale, '四强单败', 'Four-team single elimination', '4팀 싱글 엘리미네이션', '四強單敗') },
-    { id: 'major', title: 'Weekly Major', note: eventCenterText('majorStageNote', locale) }
+    { id: 'points', title: isPilot ? t(uiText("比赛记录", locale), 'Match records') : getWeeklyPhaseLabel('REGULAR', locale), note: isPilot ? t('本周期不计积分', 'No standings points') : t('按周累计', 'Week by week') },
+    { id: 'playoffs', title: getWeeklyPhaseLabel('PLAYOFFS', locale), note: pickUiLocale(locale, '四强单败', 'Four-team single elimination', '4팀 싱글 엘리미네이션', '四強單敗') },
+    { id: 'major', title: getWeeklyPhaseLabel('MAJOR', locale), note: eventCenterText('majorStageNote', locale) }
   ]
 
   return <div className={styles.page} data-weekly-advance="true">
@@ -146,8 +147,8 @@ export default function SignalWeeklyAdvance() {
     </section>
 
     <section className={styles.nextStages} aria-label={t(uiText("后续阶段", locale), 'Later stages')}>
-      <article id="weekly-playoffs"><span className={styles.nextNumber}>02</span><div><p className={styles.eyebrow}>CYCLE PLAYOFFS</p><h2>{eventCenterText('playoffsTitle', locale)}</h2><p>{eventCenterText('playoffsIntro', locale)}</p><a href={officialWeekly} target="_blank" rel="noreferrer">{eventCenterText('eventGuideLink', locale)} ↗</a></div></article>
-      <article id="weekly-major"><span className={styles.nextNumber}>03</span><div><p className={styles.eyebrow}>WEEKLY MAJOR</p><h2>{'Weekly Major'}</h2><p>{eventCenterText('majorIntro', locale)}</p><a href={officialWeekly} target="_blank" rel="noreferrer">{t(uiText("了解 Weekly Major", locale), 'About Weekly Major')} ↗</a></div></article>
+      <article id="weekly-playoffs"><span className={styles.nextNumber}>02</span><div><p className={styles.eyebrow}>CYCLE PLAYOFFS</p><h2>{getWeeklyPhaseLabel('PLAYOFFS', locale)}</h2><p>{eventCenterText('playoffsIntro', locale)}</p><a href={officialWeekly} target="_blank" rel="noreferrer">{eventCenterText('eventGuideLink', locale)} ↗</a></div></article>
+      <article id="weekly-major"><span className={styles.nextNumber}>03</span><div><p className={styles.eyebrow}>WEEKLY MAJOR</p><h2>{getWeeklyPhaseLabel('MAJOR', locale)}</h2><p>{eventCenterText('majorIntro', locale)}</p><a href={officialWeekly} target="_blank" rel="noreferrer">{t(uiText("了解大师赛", locale), 'About the Major')} ↗</a></div></article>
     </section>
   </div>
 }

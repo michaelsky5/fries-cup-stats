@@ -4,6 +4,7 @@ import { useEffect, useId, useMemo } from 'react'
 import { Link, useLocation, useNavigationType, useOutletContext, useSearchParams } from 'react-router-dom'
 import ImeSafeInput from '../../components/common/ImeSafeInput.jsx'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
+import WeeklyMatchIdentity from '../../components/matches/WeeklyMatchIdentity.jsx'
 import { formatOwMapName } from '../../lib/heroes.js'
 import { getMapImage } from '../../lib/reviewAssets.js'
 import { getMatchFormatLabel } from '../../lib/matchFormat.js'
@@ -40,6 +41,7 @@ function WeeklyMatchRow({ match, locale, seasonId, withSeason, returnProps, maps
         : match.state === 'ruling' ? t('按赛事判定', 'Event ruling applies')
           : match.state === 'live' ? t('比赛仍在继续', 'Still in play') : ''
   return <article className={styles.matchRow} data-state={match.state} data-weekly-match={match.id} data-expanded={mapsExpanded || undefined}>
+    <WeeklyMatchIdentity match={match} locale={locale} />
     <Link className={styles.matchMain} to={withSeason(path)} {...returnProps} aria-label={`${weeklyTeamShort(match.team_a)} ${score} ${weeklyTeamShort(match.team_b)} · ${weeklyStatusLabel(match.state, locale)} · ${t('比赛详情', 'Match details')}`}>
       <span className={styles.time}>
         <span className={styles.state} data-state={match.state}><i aria-hidden="true" />{weeklyStatusLabel(match.state, locale)}</span>
@@ -124,7 +126,7 @@ export default function SignalWeeklySchedule() {
     </header>
     <WeeklyWeekRail weeks={weeks} selectedId={selectedWeekId} locale={locale} includeAll onChange={id => change({ week: id, expanded: null })} />
     <div className={styles.filters}>
-      <label className={styles.search}><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg><ImeSafeInput type="search" value={query} onValueChange={value => change({ query: value })} placeholder={t(uiText("搜索队伍名称或简称…", locale), 'Search team names or abbreviations…')} aria-label={t(uiText("搜索周赛队伍", locale), 'Search weekly teams')} /></label>
+      <label className={styles.search}><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg><ImeSafeInput type="search" value={query} onValueChange={value => change({ query: value })} placeholder={t(uiText("搜索队伍或比赛编号…", locale), 'Search teams or match numbers…')} aria-label={t(uiText("搜索周赛队伍或比赛编号", locale), 'Search weekly teams or match numbers')} /></label>
       <label className={styles.teamFilter}><span>{t(uiText("队伍", locale), 'Team')}</span><select value={teamId} onChange={event => change({ teamId: event.target.value })} aria-label={t(uiText("筛选队伍", locale), 'Filter team')}>
         <option value="">{t(uiText("全部队伍", locale), 'All teams')}</option>
         {teamId && !teamOptions.some(team => idOf(team) === teamId) && <option value={teamId}>{t(uiText("本周无对阵的队伍", locale), 'Team without fixtures')}</option>}
@@ -139,7 +141,9 @@ export default function SignalWeeklySchedule() {
     </div>
     <div className={styles.listHeading}>
       <h2>{selectedWeekId === 'all' ? weeklyCycleTitle(cycle, locale) : week ? weeklyWeekTitle(week, locale) : t(uiText("周赛赛程", locale), 'Weekly schedule')}<span aria-live="polite">{t(uiText("{0} 场对阵", locale, [model.resultCount]), `${model.resultCount} matches`)}</span></h2>
-      <p>{t(uiText("RR5 · 固定五图，可按规则提前结束", locale), 'RR5 · Five maps, subject to event rules')}</p>
+      <p>{entries.length && entries.every(entry => entry.matches.every(match => String(match.format).toUpperCase() === 'RR5'))
+        ? t(uiText("RR5 · 固定五图，可按规则提前结束", locale), 'RR5 · Five maps, subject to event rules')
+        : t(uiText("各场赛制以对阵公示为准", locale), 'Each match follows its published format')}</p>
     </div>
     {entries.length ? <div className={styles.groups}>{entries.map(entry => <section key={entry.week.id} aria-label={weeklyWeekTitle(entry.week, locale)}>
       {selectedWeekId === 'all' && <h3 className={styles.weekHeading}><span>{weeklyWeekTitle(entry.week, locale)}</span><small>{weeklyStatusLabel(entry.week.status, locale)}</small></h3>}

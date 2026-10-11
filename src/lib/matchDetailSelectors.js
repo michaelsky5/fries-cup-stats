@@ -59,6 +59,7 @@ function matchIdValues(match) {
   return [
     match?.match_id,
     match?.raw_match_id,
+    match?.match_code,
     match?.id
   ].map(cleanText).filter(Boolean)
 }
@@ -553,7 +554,7 @@ function getAdjacentMatches(matches, match) {
 }
 
 export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
-  const match = resolvePublicMatchIdentity(getMatchById(db, matchId), db?.teams)
+  const match = resolvePublicMatchIdentity(getMatchById(db, matchId), db?.teams, db?.weekly_competition)
   if (!match) return null
 
   const state = getMatchState(match)
