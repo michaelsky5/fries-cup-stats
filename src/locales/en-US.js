@@ -10078,5 +10078,8 @@ export default {
   "按周次查看对阵、比分与比赛记录。": "Browse fixtures, scores and match records by week.",
   "暂无可预览队伍": "No team to preview",
   "薯条周报": "Fries Cup Weekly",
-  "本周赛果待确认": "Confirmed results pending"
+  "本周赛果待确认": "Confirmed results pending",
+  "无需提前注册。新教练通过邀请设置密码并确认账号；已有账号使用原密码。新邀请会撤销尚未确认的旧邀请，修改教练 BattleTag 后也需要重新邀请。": "No advance registration is needed. New coaches set a password and confirm their account through the invitation; existing accounts use their current password. A new invitation revokes pending links. Changing the coach's BattleTag also requires a new invitation.",
+  "邮件服务已受理邀请发送，请教练检查收件箱和垃圾邮件。": "The email service accepted the invitation. Ask the coach to check their inbox and spam folder.",
+  "邮件投递未确认，邀请仍有效。请复制链接私发给教练。": "Email delivery is unconfirmed, but the invitation remains valid. Copy the link and send it privately to the coach."
 }
