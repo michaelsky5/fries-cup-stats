@@ -1,4 +1,4 @@
-import { getRoomStageIndex } from '../weekly-competition/weeklyRoomFlow.js'
+import { getRoomStageIndex, isRoomAwaitingStart } from '../weekly-competition/weeklyRoomFlow.js'
 import { withLocale } from '../../lib/locales.js'
 
 export const GUIDE_PATH = '/guides/weekly-room'
@@ -40,7 +40,7 @@ export function guideContextForRoom(data) {
     : access.representativeTeams?.length ? 'representative'
       : data?.representatives?.sides?.some(side => side.canAssign) || /队长|经理/.test(data?.actor?.label || '') ? 'manager'
         : access.production ? 'caster' : 'member'
-  return { role, step: data?.preparation && data?.maps ? STAGE_STEPS[getRoomStageIndex(data)] : 'entry',
+  return { role, step: data?.preparation && data?.maps ? isRoomAwaitingStart(data) ? 'ready' : STAGE_STEPS[getRoomStageIndex(data)] : 'entry',
     mode: access.operatorMode === 'TEAM_CAPTAINS' ? 'captains' : 'referee', match: data?.match?.id, season: data?.match?.seasonId }
 }
 

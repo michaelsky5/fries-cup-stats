@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { getRoomStageIndex, getRoomOperatingSides } from '../src/features/weekly-competition/weeklyRoomFlow.js'
+import { getRoomStageIndex, getRoomOperatingSides, getRoomStageLabel } from '../src/features/weekly-competition/weeklyRoomFlow.js'
 import { buildWeeklyRoomPreview, PREVIEW_STAGES, PREVIEW_ROLES } from '../src/pages/dev/weeklyRoomPreviewModel.js'
 
 for (const [stage, expected] of Object.entries({ opening: 0, confirming: 0, choosing: 1, lineup: 2, banorder: 3, banning: 3, ready: 3, live: 4, paused: 4, review: 5, result: 6 })) {
@@ -13,7 +13,10 @@ assert.equal(getRoomStageIndex(data), 2, 'one saved lineup still waits for the o
 data.map.lineupB = Array.from({ length: 5 }, (_, i) => ({ playerId: `b${i}` }))
 assert.equal(getRoomStageIndex(data), 3, 'both lineups unlock the ban UI within the API BANNING phase')
 data.opening.complete = true; data.opening.phase = 'COMPLETE'
-assert.equal(getRoomStageIndex(data), 3, 'completed bans remain in the ban panel until actual start')
+assert.equal(getRoomStageIndex(data), 3, 'completed bans retain their stage number until actual start')
+assert.equal(getRoomStageLabel(data), '等待实际开赛', 'completed bans identify the actual next task')
+assert.equal(getRoomStageLabel(buildWeeklyRoomPreview('banning')), '英雄禁用', 'unfinished bans retain their stage label')
+assert.equal(getRoomStageLabel(buildWeeklyRoomPreview('live')), '比赛进行', 'recording start advances the label')
 for (const mode of ['REFEREE', 'TEAM_CAPTAINS']) {
   for (const role of Object.keys(PREVIEW_ROLES)) {
     const room = buildWeeklyRoomPreview('ready', role)

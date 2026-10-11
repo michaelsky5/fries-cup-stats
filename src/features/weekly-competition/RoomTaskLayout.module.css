@@ -1,0 +1,34 @@
+.layout.layout { display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden;gap:8px; }
+.body { flex:1;min-height:0;min-width:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin; }
+.body>p { margin:6px 0;font-size:14px;line-height:1.6; }
+.actions { flex:none;min-width:0;display:flex;flex-wrap:wrap;gap:6px 8px;border-top:1px solid var(--fc-data-room-line);padding-top:8px;background:var(--fc-data-room-surface); }
+.actions:empty { display:none; }
+.group { min-width:0;max-width:100%;flex:1 1 auto;display:flex;flex-direction:column;gap:6px; }
+.actions button { min-height:44px;max-width:100%;white-space:normal; }
+.actions :global([data-room-primary-group])>button { width:100%; }
+.actions :global([data-room-rps-controls]) { width:100%; }
+.actions :global([data-room-rps-controls])>div { margin:0; }
+.actions :global([data-room-rps-controls])>div:first-child { padding:0 10px; }
+.actions :global([data-room-rps-controls]) svg { width:28px;height:28px; }
+.actions :global([data-room-rps-controls]) :global([role=group]) button { min-height:48px;font-size:14px;padding:6px; }
+.actions :global([data-room-result-responses]) { margin:0; }
+@media(width < 1180px) {
+  .layout.layout { gap:6px; }
+  .actions { padding:6px 10px;gap:6px;border-top:2px solid var(--fc-data-room-action-bg); }
+  .actions :global([data-room-result-responses]) { grid-template-columns:1fr 1fr;gap:6px; }
+  .actions :global([data-room-result-responses])>div { flex-wrap:wrap;align-content:start;padding-top:0;border-top:0; }
+  .body>p { font-size:13px; }
+}
+@media(width < 1180px) and (height < 540px) {
+  .layout.layout { gap:4px; }
+  .actions { padding-block:4px; }
+  .group { gap:4px; }
+  .actions :global([data-room-rps-controls]) { display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center; }
+  .actions :global([data-room-rps-controls]) :global([role=group]) { padding:0; }
+  .actions :global([data-room-rps-controls]) :global([role=group]) button { min-height:44px; }
+}
+
+:global(dialog[data-room-task-dialog][data-room-task-dialog][open]) { height:min(740px,calc(100dvh - 20px));overflow:hidden; }
+:global(dialog[data-room-task-dialog])>.layout { height:100%; }
+:global(dialog[data-room-task-dialog])>.layout>.body { display:grid;grid-auto-rows:max-content;align-content:start;gap:12px;padding:2px; }
+:global(dialog[data-room-task-dialog])>.layout>.actions { padding-inline:0; }

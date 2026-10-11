@@ -2,6 +2,7 @@ import {
   getTeamLogo as resolveTeamLogo,
   getTeamLogoCandidates as resolveTeamLogoCandidates
 } from './teamLogoResolver.js'
+import { getOwHeroAssetKey, getOwHeroRole } from './heroes.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
@@ -574,6 +575,9 @@ export function heroNameToSlug(heroName) {
   const raw = String(heroName ?? '').trim()
   if (!raw) return 'unknown'
 
+  const canonical = getOwHeroAssetKey(raw)
+  if (canonical) return canonical
+
   if (HERO_SLUGS[raw]) return HERO_SLUGS[raw]
 
   const looseKey = normalizeLooseKey(raw)
@@ -595,6 +599,8 @@ export function heroNameToSlug(heroName) {
 }
 
 export function inferHeroFolder(heroName) {
+  const canonical = getOwHeroRole(heroName)
+  if (canonical) return canonical
   const slug = heroNameToSlug(heroName)
   return HERO_ROLE_BY_SLUG[slug] || ''
 }

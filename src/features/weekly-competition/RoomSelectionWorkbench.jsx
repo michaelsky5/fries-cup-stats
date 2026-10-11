@@ -1,6 +1,5 @@
-import { roomBanTimedOut, roomBanResolved } from './roomBans.js'
+import { roomBanTimedOut, roomBanResolved, roomBanLabel } from './roomBans.js'
 import { RoomCountdownHint, useRoomClockSeconds } from './RoomPhaseClock.jsx'
-import { useState } from 'react'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { formatOwHeroName, formatOwMapName, formatOwMapMode, getOwHero } from '../../lib/heroes.js'
@@ -26,7 +25,7 @@ export function MapSelectionWorkbench({ data, draft, edit, send, disabled, mapTy
     {canChoose ? <>
       {later && <div className={styles.modeTabs} role="group" aria-label={t('选择地图类型')}>{opening.typeCycle?.types.map(item => <button type="button" key={item.type} aria-pressed={mapType === item.type} disabled={locked || item.used || !item.remaining} onClick={() => edit({ mapType: item.type, mapName: '', startSide: '' })}><strong>{formatOwMapMode(item.type, locale)}</strong><small>{t(item.used ? '本轮已用' : '{0} 张可选', [item.remaining || 0])}</small></button>)}</div>}
       <div className={styles.mapWorkspace}>
-        <div className={styles.mapCards} data-compact={pool.length > 3} role="group" aria-label={t('选择第 {0} 图', [opening.mapOrder])}>
+        <div className={styles.mapCards} data-compact={pool.length > 3} data-map-count={pool.length} role="group" aria-label={t('选择第 {0} 图', [opening.mapOrder])}>
           {pool.map((map, index) => <button type="button" key={map.name} aria-pressed={draft.mapName === map.name} disabled={locked || !!map.reason} title={map.reason || formatOwMapName(map.name, locale)} onClick={() => edit({ mapName: map.name, startSide: '' })} style={{ backgroundImage: `linear-gradient(90deg,#141712dc,#14171220),url("${getMapImage(map.type, map.name)}")` }}>
             <span className={styles.mapIndex}>{String(index + 1).padStart(2, '0')}</span><div><small>{formatOwMapMode(map.type, locale)}</small><strong>{formatOwMapName(map.name, locale)}</strong>{map.reason && <span>{map.reason}</span>}</div><b className={styles.mapMark}>{draft.mapName === map.name ? '✓' : '↗'}</b>
           </button>)}
@@ -47,9 +46,8 @@ export function MapSelectionWorkbench({ data, draft, edit, send, disabled, mapTy
   </div>
 }
 
-export function HeroBanWorkbench({ data, draft, edit, send, disabled, role, setRole, chosenHero }) {
+export function HeroBanWorkbench({ data, draft, edit, send, disabled, role, setRole, query, setQuery, chosenHero }) {
   const locale = useUiLocale(), t = (key, values) => uiText(key, locale, values)
-  const [query, setQuery] = useState('')
   const { opening } = data, setup = opening.setup, canBan = opening.access.canBan
   const seconds = useRoomClockSeconds(data.phaseClock)
   const expired = data.phaseClock?.enabled && data.phaseClock?.stage?.kind === 'BAN' && data.phaseClock?.status !== 'WAITING' && seconds === 0
@@ -58,18 +56,18 @@ export function HeroBanWorkbench({ data, draft, edit, send, disabled, role, setR
   const matchQuery = hero => `${formatOwHeroName(hero.name, locale)} ${hero.name} ${getOwHero(hero.name)?.zh || ''} ${(getOwHero(hero.name)?.aliases || []).join(' ')}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase())
   const pool = opening.heroes.filter(hero => hero.role === role && matchQuery(hero))
   return <div className={styles.banStage} data-selection-workbench="ban">
-    <div className={styles.banSlots}>{['A', 'B'].map(side => {
+    <div className={styles.banSlots}>{(setup?.firstBanSide === 'B' ? ['B', 'A'] : ['A', 'B']).map((side, index) => {
       const hero = setup?.[`ban${side}`], active = opening.nextSide === side
-      return <div key={side} data-active={active} data-locked={!!hero || roomBanTimedOut(setup, side)}>{hero ? <img src={getHeroImage(hero)} alt="" /> : <span className={styles.slotNumber}>{setup?.firstBanSide === side ? '01' : '02'}</span>}<div><small>{teamName(data.match[`team${side}`])} · {t(setup?.firstBanSide === side ? '先 Ban' : '后 Ban')}</small><strong>{hero ? formatOwHeroName(hero, locale) : t(roomBanTimedOut(setup, side) ? '未禁用（超时）' : active ? '正在选择' : '等待对方禁用')}</strong></div><span className={styles.slotState}>{t(roomBanTimedOut(setup, side) ? '已放弃' : hero ? '已锁定' : active ? '当前操作' : '待选择')}</span></div>
+      return <div key={side} data-active={active} data-locked={!!hero || roomBanTimedOut(setup, side)}><span className={styles.slotNumber} data-locked={!!hero}>{hero && <img src={getHeroImage(hero)} alt="" />}<span>{String(index + 1).padStart(2, '0')}</span></span><div><small>{teamName(data.match[`team${side}`])}</small><strong>{roomBanResolved(setup, side) ? roomBanLabel(setup, side, locale) : t(active ? '正在选择' : '等待对方确认')}</strong></div><span className={styles.slotState}>{t(roomBanTimedOut(setup, side) ? '已放弃' : hero ? '已锁定' : active ? '当前操作' : '待选择')}</span></div>
     })}</div>
     {canBan ? <div className={styles.heroWorkspace}>
       <div className={styles.heroLibrary}>
-        <div className={styles.heroToolbar}><div className={styles.roleTabs} role="group" aria-label={t('筛选英雄职责')}>{roles.map(([value, label]) => <button type="button" key={value} aria-pressed={role === value} onClick={() => setRole(value)}><strong>{t(label)}</strong><small>{opening.heroes.filter(hero => hero.role === value && !hero.reason).length}</small></button>)}</div><input className={styles.search} type="search" value={query} onChange={event => setQuery(event.target.value)} aria-label={t('搜索英雄')} placeholder={t('搜索英雄')} /></div>
+        <div className={styles.heroToolbar}><div className={styles.roleTabs} role="group" aria-label={t('筛选英雄职责')}>{roles.map(([value, label]) => <button type="button" key={value} aria-pressed={role === value} onClick={() => setRole(value)}><strong>{t(label)}</strong><small>{opening.heroes.filter(hero => hero.role === value && !hero.reason).length}</small></button>)}</div><input className={styles.search} type="search" value={query} onChange={event => setQuery(event.target.value)} aria-label={t('搜索英雄')} placeholder={t('搜索')} /></div>
         <div className={styles.heroGrid} role="group" aria-label={t('选择禁用英雄')}>{pool.map(hero => <button type="button" key={hero.name} aria-pressed={draft.hero === hero.name} disabled={locked || !!hero.reason} title={hero.reason ? `${formatOwHeroName(hero.name, locale)} · ${hero.reason}` : formatOwHeroName(hero.name, locale)} onClick={() => edit({ hero: hero.name })}>
           <img src={getHeroImage(hero.name, hero.role)} alt="" /><span>{formatOwHeroName(hero.name, locale)}</span>{hero.reason ? <small className={styles.restricted}>{t('不可选')}</small> : draft.hero === hero.name ? <b className={styles.heroMark}>✓</b> : null}
         </button>)}</div>
         {!pool.length && <p className={styles.noHeroes}>{t('没有匹配的英雄，请切换职责或清空搜索。')}</p>}
-        <small className={styles.poolNote}>{[...new Set(pool.map(hero => hero.reason).filter(Boolean))].join('；') || t('灰色英雄不可禁用，规则限制显示在下方。')}</small>
+        <small className={styles.poolNote} data-restricted={pool.some(hero => hero.reason)}>{[...new Set(pool.map(hero => hero.reason).filter(Boolean))].join('；') || t('灰色英雄不可禁用，规则限制显示在下方。')}</small>
       </div>
       <aside className={styles.selection} data-room-commit="selection" data-selected={!!chosenHero}>
         <div className={styles.selectionTitle}><small>{t('本次禁用')}</small><strong>{chosenHero ? formatOwHeroName(chosenHero.name, locale) : t('请选择英雄')}</strong></div>

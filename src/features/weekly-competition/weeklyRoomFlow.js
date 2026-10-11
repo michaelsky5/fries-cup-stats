@@ -17,6 +17,14 @@ export function getRoomStageIndex(data) {
   return 3
 }
 
+export function isRoomAwaitingStart(data) {
+  return data?.phase === 'PREPARING' && data.opening?.complete === true && !data.result && !data.series?.complete
+}
+
+export function getRoomStageLabel(data, index = getRoomStageIndex(data)) {
+  return index === 3 && isRoomAwaitingStart(data) ? '等待实际开赛' : ROOM_STAGES[index]
+}
+
 export function getRoomOperatingSides(data) {
   return data.preparation.sides.filter(side => data.access.staff || data.access.representativeTeams.includes(side.team.id))
 }

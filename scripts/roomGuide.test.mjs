@@ -17,7 +17,7 @@ test('room guidance uses current representative and referee authority, not capta
 
 test('deep links retain correct stages including paused, map review and series results', () => {
   const base = { maps: [], preparation: {}, access: {} }
-  for (const [data, step] of [[{ phase: 'PAUSED' }, 'live'], [{ phase: 'REVIEW' }, 'map-result'], [{ result: { phase: 'DISPUTED' } }, 'result'], [{ opening: { complete: false, phase: 'CHOOSING' } }, 'map'], [{ opening: { complete: false, phase: 'BANNING' }, map: { lineupA: [1,2,3,4,5], lineupB: [1,2,3,4,5] } }, 'ban']]) {
+  for (const [data, step] of [[{ phase: 'PREPARING', opening: { complete: true, phase: 'COMPLETE' } }, 'ready'], [{ phase: 'PAUSED' }, 'live'], [{ phase: 'REVIEW' }, 'map-result'], [{ result: { phase: 'DISPUTED' } }, 'result'], [{ opening: { complete: false, phase: 'CHOOSING' } }, 'map'], [{ opening: { complete: false, phase: 'BANNING' }, map: { lineupA: [1,2,3,4,5], lineupB: [1,2,3,4,5] } }, 'ban']]) {
     assert.equal(guideContextForRoom({ ...base, ...data }).step, step)
   }
   assert.equal(guideContextForRoom(null).step, 'entry')

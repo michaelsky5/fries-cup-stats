@@ -639,8 +639,8 @@
   },
   " · 获胜": {
     "zh-TW": " · 獲勝",
-    "en-US": "· Win",
-    "ko-KR": "· 승리"
+    "en-US": " · Winner",
+    "ko-KR": " · 승리"
   },
   " · 计入五图，胜场不增加": {
     "zh-TW": " · 計入五圖，勝場不增加",
@@ -19722,8 +19722,8 @@
   },
   "布": {
     "zh-TW": "布",
-    "en-US": "Cloth",
-    "ko-KR": "천"
+    "en-US": "Paper",
+    "ko-KR": "보"
   },
   "布丽吉塔": {
     "zh-TW": "碧姬",
@@ -37743,8 +37743,8 @@
   },
   "石头": {
     "zh-TW": "石頭",
-    "en-US": "Stone",
-    "ko-KR": "스톤"
+    "en-US": "Rock",
+    "ko-KR": "바위"
   },
   "石头剪刀布": {
     "zh-TW": "石頭剪刀布",
@@ -50300,8 +50300,8 @@
   },
   "锁定{0}": {
     "zh-TW": "鎖定{0}",
-    "en-US": "Locked {0}",
-    "ko-KR": "잠김 {0}"
+    "en-US": "Lock in {0}",
+    "ko-KR": "{0} 확정"
   },
   "锁定发布": {
     "zh-TW": "鎖定公佈",
@@ -58540,5 +58540,120 @@
     "zh-TW": "郵件投遞未確認，邀請仍有效。請複製連結私下傳給教練。",
     "ko-KR": "메일 전달은 확인되지 않았지만 초대는 여전히 유효합니다. 링크를 복사해 코치에게 비공개로 보내세요.",
     "en-US": "Email delivery is unconfirmed, but the invitation remains valid. Copy the link and send it privately to the coach."
+  },
+  "等待对方确认": {
+    "zh-TW": "等待對方確認",
+    "en-US": "Waiting for opponent to confirm",
+    "ko-KR": "상대 확인 대기 중"
+  },
+  "本图信息": {
+    "zh-TW": "本圖資訊",
+    "en-US": "Map info",
+    "ko-KR": "현재 맵 정보"
+  },
+  "暂无本队操作记录": {
+    "zh-TW": "暫無本隊操作紀錄",
+    "en-US": "No team actions yet",
+    "ko-KR": "아직 팀 조작 기록이 없습니다"
+  },
+  "双方": {
+    "zh-TW": "雙方",
+    "en-US": "Both teams",
+    "ko-KR": "양 팀"
+  },
+  "本场": {
+    "zh-TW": "本場",
+    "en-US": "Match",
+    "ko-KR": "이 경기"
+  },
+  "结束休息": {
+    "zh-TW": "結束休息",
+    "en-US": "End rest",
+    "ko-KR": "휴식 종료"
+  },
+  "选图超时处罚": {
+    "zh-TW": "選圖逾時處罰",
+    "en-US": "Map selection timeout penalty",
+    "ko-KR": "맵 선택 시간 초과 페널티"
+  },
+  "{0} 选图超时，本图 Ban 已取消": {
+    "zh-TW": "{0} 選圖逾時，本圖 Ban 已取消",
+    "en-US": "{0} timed out during map selection; its Ban for this map was cancelled",
+    "ko-KR": "{0}의 맵 선택 시간이 초과되어 이번 맵의 영웅 금지가 취소되었습니다"
+  },
+  "局间休息": {
+    "zh-TW": "局間休息",
+    "en-US": "Between-map break",
+    "ko-KR": "맵 간 휴식"
+  },
+  "局间休息 · 可提前结束后选图": {
+    "zh-TW": "局間休息 · 可提前結束後選圖",
+    "en-US": "Break · end early to select the next map",
+    "ko-KR": "휴식 · 일찍 종료하고 다음 맵 선택 가능"
+  },
+  "局间休息结束后选图计时开始，开放下一图不会重置倒计时。": {
+    "zh-TW": "局間休息結束後選圖計時開始，開放下一圖不會重設倒數計時。",
+    "en-US": "Map selection timing starts when the break ends. Opening the next map does not reset the timer.",
+    "ko-KR": "휴식이 끝나면 맵 선택 타이머가 시작됩니다. 다음 맵을 열어도 타이머는 초기화되지 않습니다."
+  },
+  "局间休息最多 120 秒；可提前结束休息，再由选择方选图。": {
+    "zh-TW": "局間休息最多 120 秒；可提前結束休息，再由選擇方選圖。",
+    "en-US": "The break lasts up to 120 seconds. End it early to let the choosing team select a map.",
+    "ko-KR": "휴식은 최대 120초입니다. 휴식을 일찍 종료하면 선택권을 가진 팀이 맵을 선택할 수 있습니다."
+  },
+  "轮到 {0}": {
+    "en-US": "{0} to act",
+    "ko-KR": "{0} 차례",
+    "zh-TW": "輪到 {0}"
+  },
+  "已选 {0}/5": {
+    "en-US": "Selected {0}/5",
+    "ko-KR": "{0}/5 선택됨",
+    "zh-TW": "已選 {0}/5"
+  },
+  "{0} 输出 · {1} 重装 · {2} 支援": {
+    "en-US": "{0} damage · {1} tank · {2} support",
+    "ko-KR": "공격 {0} · 돌격 {1} · 지원 {2}",
+    "zh-TW": "{0} 輸出 · {1} 重裝 · {2} 支援"
+  },
+  "换人请先取消一名。": {
+    "en-US": "To swap, deselect one player first.",
+    "ko-KR": "교체하려면 먼저 한 명을 선택 해제하세요.",
+    "zh-TW": "換人請先取消一名。"
+  },
+  "需要 2 输出、1 重装、2 支援。": {
+    "en-US": "Requires 2 damage, 1 tank and 2 support.",
+    "ko-KR": "공격 2명, 돌격 1명, 지원 2명이 필요합니다.",
+    "zh-TW": "需要 2 輸出、1 重裝、2 支援。"
+  },
+  "确认即代表五人到场；双方都确认才公开。": {
+    "en-US": "Confirm all five are present. Both lineups are revealed together.",
+    "ko-KR": "5명 모두의 출석을 확인합니다. 양 팀 확인 후 함께 공개됩니다.",
+    "zh-TW": "確認即代表五人到場；雙方都確認才公開。"
+  },
+  "已选 {0}，确认后开始禁用。": {
+    "en-US": "Selected: {0}. Confirm to begin bans.",
+    "ko-KR": "{0} 선택됨. 확인 후 금지가 시작됩니다.",
+    "zh-TW": "已選 {0}，確認後開始禁用。"
+  },
+  "锁定本队出手": {
+    "zh-TW": "鎖定本隊出手",
+    "en-US": "Lock in your move",
+    "ko-KR": "우리 팀 선택 확정"
+  },
+  "开启第 {0} 轮": {
+    "zh-TW": "開啟第 {0} 輪",
+    "en-US": "Start round {0}",
+    "ko-KR": "{0}라운드 시작"
+  },
+  "开放第 {0} 图 · {1} 选图": {
+    "zh-TW": "開放第 {0} 圖 · {1} 選圖",
+    "en-US": "Open map {0} · {1} chooses",
+    "ko-KR": "{0}번째 맵 열기 · {1} 선택"
+  },
+  "核对本图结果并开放下一图": {
+    "zh-TW": "核對本圖結果並開放下一圖",
+    "en-US": "Review the result and open the next map",
+    "ko-KR": "이번 맵 결과 확인 후 다음 맵 열기"
   }
 }

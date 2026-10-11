@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { RoomTaskActions } from './RoomTaskLayout.jsx'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import styles from './RoomCaptainAgreements.module.css'
@@ -38,11 +39,13 @@ export function RoomMapResultAgreement({ data, disabled, command, onSupport }) {
   const locale = useUiLocale(), send = useAgreementCommand(data, command)
   const [note, setNote] = useState(''), view = data.captainAgreements?.result
   if (!view || !['PENDING', 'DISPUTED', 'EXPIRED'].includes(view.status)) return null
-  return <section className={styles.panel} aria-label={uiText('核对本图比分', locale)}><strong>{uiText(view.status === 'EXPIRED' ? '比分确认已失效，请重新核对' : view.status === 'DISPUTED' ? '本图比分存在异议' : '等待双方核对本图比分', locale)}</strong>
-    <p className={styles.score}>{teamName(data, 'A')} <b>{view.payload?.scoreA} : {view.payload?.scoreB}</b> {teamName(data, 'B')}</p><p>{uiText('待确认比分尚未计入大比分，确认后才会开放下一图。', locale)}</p><ConfirmationStatus data={data} view={view} />
+  return <section className={styles.panel} data-room-slot="map-result-agreement" data-agreement-status={view.status} aria-label={uiText('核对本图比分', locale)}><strong>{uiText(view.status === 'EXPIRED' ? '比分确认已失效，请重新核对' : view.status === 'DISPUTED' ? '本图比分存在异议' : '等待双方核对本图比分', locale)}</strong>
+    <p className={styles.score}>{teamName(data, 'A')} <b>{view.payload?.scoreA} : {view.payload?.scoreB}</b> {teamName(data, 'B')}</p><ConfirmationStatus data={data} view={view} />
     {view.dispute && <p>{view.dispute.by} · {view.dispute.reason}</p>}
-    <div className={styles.actions}>{view.canConfirm && <button type="button" disabled={disabled} onClick={() => send('CONFIRM_MAP_RESULT', view)}>{uiText('确认对方录入的本图比分', locale)}</button>}{view.canWithdraw && <button type="button" disabled={disabled} onClick={() => send('WITHDRAW_MAP_RESULT', view)}>{uiText('撤回待确认比分', locale)}</button>}{onSupport && <button type="button" onClick={onSupport}>{uiText('联系赛事组', locale)}</button>}</div>
+    <div className={styles.actions}>{view.canConfirm && <button type="button" disabled={disabled} onClick={() => send('CONFIRM_MAP_RESULT', view)}>{uiText('确认对方录入的本图比分', locale)}</button>}{view.canWithdraw && <button type="button" disabled={disabled} onClick={() => send('WITHDRAW_MAP_RESULT', view)}>{uiText('撤回待确认比分', locale)}</button>}</div>
     {view.canDispute && <details><summary>{uiText('比分不对，提出异议', locale)}</summary><form onSubmit={event => { event.preventDefault(); return send('DISPUTE_MAP_RESULT', view, { note: note.trim() }) }}><label>{uiText('公开核对说明', locale)}<textarea required minLength={2} maxLength={500} disabled={disabled} value={note} onChange={event => setNote(event.target.value)} /></label><button disabled={disabled || note.trim().length < 2}>{uiText('提交本图比分异议', locale)}</button></form></details>}
+    <p>{uiText('待确认比分尚未计入大比分，确认后才会开放下一图。', locale)}</p>
+    {onSupport && <button type="button" onClick={onSupport}>{uiText('联系赛事组', locale)}</button>}
   </section>
 }
 
@@ -53,6 +56,6 @@ export function RoomPreparationContinuation({ data, disabled, command }) {
   const confirmedByThisTeam = view.valid && view.confirmations?.some(item => item.confirmed && data.match[`team${item.side}`]?.id === ownTeam(data))
   return <section className={styles.panel} aria-label={uiText('准备超时后继续开赛', locale)}><strong>{uiText(view.agreed ? '双方已同意超时继续开赛' : '准备超时后，由双方确认继续', locale)}</strong><ConfirmationStatus data={data} view={view} />
     <details><summary>{uiText('继续开赛条件与记录', locale)}</summary><p>{uiText('仅在双方五人到齐、地图/首发/Ban 完整且已到计划时间时允许。原截止和违例记录保留，不重新补时；人员或选禁变化后须重新确认。', locale)}</p></details>
-    {view.canConfirm ? <button type="button" disabled={disabled} onClick={() => send('CONFIRM_PREPARATION_CONTINUE', view)}>{uiText('本队同意按当前记录继续开赛', locale)}</button> : !view.agreed && <p>{uiText(confirmedByThisTeam ? '本队已确认，等待另一方；仍有异议时联系赛事组。' : '请先处理其他准备事项，再由双方确认；仍缺人或有异议时留证联系赛事组。', locale)}</p>}
+    {view.canConfirm ? <RoomTaskActions><button type="button" disabled={disabled} onClick={() => send('CONFIRM_PREPARATION_CONTINUE', view)}>{uiText('本队同意按当前记录继续开赛', locale)}</button></RoomTaskActions> : !view.agreed && <p>{uiText(confirmedByThisTeam ? '本队已确认，等待另一方；仍有异议时联系赛事组。' : '请先处理其他准备事项，再由双方确认；仍缺人或有异议时留证联系赛事组。', locale)}</p>}
   </section>
 }

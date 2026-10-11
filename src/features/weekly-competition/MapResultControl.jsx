@@ -1,4 +1,5 @@
 import RoomConcession from './RoomConcession.jsx'
+import { RoomTaskActions } from './RoomTaskLayout.jsx'
 import { RoomCountdownHint } from './RoomPhaseClock.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
@@ -47,8 +48,8 @@ export function NextMapControl({ data, disabled, mutate }) {
   const chooser = next.chooserSide === 'A' ? data.match.teamA : next.chooserSide === 'B' ? data.match.teamB : null
   const representative = data.representatives?.sides.find(side => side.teamId === chooser?.id)
   return <><RoomConcession data={data} disabled={disabled} mutate={mutate} /><RoomCountdownHint data={data} action="NEXT_MAP" /><div className={frame.nextMapSummary}><div><small>{data.match.format === 'RR5' ? uiText("RR5 · {0} / 5 图已完成", uiLocale, [data.series.completedMaps ?? data.maps.filter(map => map.status === 'COMPLETE').length]) : uiText("本图已记录", uiLocale)}</small><strong>{next.reason ? uiText("等待核对本场记录", uiLocale) : uiText("下一图 · {0}", uiLocale, [chooser?.shortName || chooser?.name || '选择方待确认'])}</strong></div><span>{next.reason ? uiText("请赛管核对", uiLocale) : next.rightsSource === 'DRAW_RETAINED_CHOOSER' ? uiText("首图平局 · 沿用首图选择方", uiLocale) : next.rightsSource === 'DRAW_TWO_MAPS_BACK' ? uiText("平局 · 回溯前两图选择方", uiLocale) : uiText("败方选择地图与攻防", uiLocale)}</span></div><p>{next.reason || (data.phaseClock?.stage?.kind === 'REST' ? uiText("局间休息最多 120 秒；可提前结束休息，再由选择方选图。", uiLocale) : uiText("请本场操作人员开放第 {0} 图，随后由 {1} 选择地图与适用的攻防。", uiLocale, [next.order, representative?.active ? representative.name : `${chooser?.name || '本队'} 操作代表`]))}</p>
-    {data.opening.access.canNext && <button className={styles.primary} disabled={disabled} onClick={async () => {
+    {data.opening.access.canNext && <RoomTaskActions><button className={styles.primary} disabled={disabled} onClick={async () => {
       pending.current ||= { action: 'NEXT_MAP', expectedRevision: data.opening.revision, clientKey: crypto.randomUUID() }
       await mutate(async () => { try { return await liveRoomWrite(data.match.id, '/opening', pending.current) } catch (error) { if (error.status && error.status < 500) pending.current = null; throw error } }, '')
-    }}>{uiText("开放第 ", uiLocale)}{next.order}{uiText(" 图 · ", uiLocale)}{chooser?.name || uiText("选择方待确认", uiLocale)}{uiText(" 选择", uiLocale)}</button>}</>
+    }}>{uiText("开放第 {0} 图 · {1} 选图", uiLocale, [next.order, chooser?.shortName || chooser?.name || uiText("选择方待确认", uiLocale)])}</button></RoomTaskActions>}</>
 }

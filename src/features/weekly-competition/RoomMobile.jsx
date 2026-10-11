@@ -6,7 +6,7 @@ import RoomLobbyTools from './RoomLobbyTools.jsx'
 import styles from './RoomMobile.module.css'
 
 // Narrow desktops share the compact layout so the operation area stays usable.
-const query = '(max-width: 1179px)'
+const query = '(width < 1180px)'
 const subscribe = callback => {
   const media = window.matchMedia(query)
   media.addEventListener('change', callback)
