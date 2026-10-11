@@ -373,15 +373,17 @@ test('sharing copy and filenames preserve issue identity and sample status',()=>
   assert.match(paper.sharingText,/2026\/10\/05 21:01 UTC\+8/)
   assert.match(paper.sharingText,/尚未正式发布/)
   assert.equal(editionFilename(report,'.pdf'),'FriesCup-Weekly-C01-3-sample.pdf')
+  assert.equal(editionFilename({...report,publication:{publishedAt:'2026-10-11T06:00:00Z'}},'.pdf'),'FriesCup-Weekly-C01-3.pdf')
   assert.equal(editionFilename({...report,cycle:{code:'../../invalid'}},'.png').includes('../'),false)
   assert.deepEqual(PAPER_SIZE,{width:900,height:1273})
 })
 test('PDF assembly places exactly the supplied image on each A4 page',async()=>{
   const calls=[]
-  const fakePdf={setTitle:t=>calls.push(['title',t]),setAuthor:()=>{},setSubject:()=>{},embedJpg:async image=>image,addPage:size=>({drawImage:(image,options)=>calls.push({size,image,options})}),save:async()=>new Uint8Array([37,80,68,70])}
+  const fakePdf={setTitle:t=>calls.push(['title',t]),setAuthor:()=>{},setSubject:t=>calls.push(['subject',t]),embedJpg:async image=>image,addPage:size=>({drawImage:(image,options)=>calls.push({size,image,options})}),save:async()=>new Uint8Array([37,80,68,70])}
   await assert.rejects(makeNewspaperPdf({create:async()=>fakePdf},[],'Issue'),/No newspaper pages/)
   const bytes=await makeNewspaperPdf({create:async()=>fakePdf},[new Uint8Array([1,2])],'Issue')
   assert.deepEqual([...bytes],[37,80,68,70])
+  assert.equal(calls.find(call=>call[0]==='subject')[1],'Weekly results, lineups and statistics')
   const draw=calls.find(call=>call.size)
   assert.deepEqual(draw.size,A4_POINTS)
   assert.deepEqual(draw.options,{x:0,y:0,width:A4_POINTS[0],height:A4_POINTS[1]})

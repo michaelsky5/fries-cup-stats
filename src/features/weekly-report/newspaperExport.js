@@ -3,13 +3,13 @@ export const A4_POINTS = [595.28,841.89]
 
 export function editionFilename(report, suffix) {
   const scope = `${report.cycle.code || report.cycle.id}-${report.week.week_number}`.replace(/[^a-zA-Z0-9_-]/g,'-')
-  return `FriesCup-Weekly-${scope}-sample${suffix}`
+  return `FriesCup-Weekly-${scope}${report.publication ? '' : '-sample'}${suffix}`
 }
 
 export async function makeNewspaperPdf(PDFDocument, images, title) {
   if (!images.length) throw new Error('No newspaper pages')
   const pdf = await PDFDocument.create()
-  pdf.setTitle(title); pdf.setAuthor('Fries Cup'); pdf.setSubject('Unpublished newspaper sample from public match records')
+  pdf.setTitle(title); pdf.setAuthor('Fries Cup'); pdf.setSubject('Weekly results, lineups and statistics')
   for (const bytes of images) {
     const image = await pdf.embedJpg(bytes), page = pdf.addPage(A4_POINTS)
     page.drawImage(image,{x:0,y:0,width:A4_POINTS[0],height:A4_POINTS[1]})
@@ -55,7 +55,7 @@ export async function exportNewspaperPdf(sheets, newspaper, progress) {
     images.push(new Uint8Array(await blob.arrayBuffer()))
   }
   const {PDFDocument}=await import('./vendor/pdf-lib.esm.min.js')
-  const bytes=await makeNewspaperPdf(PDFDocument,images,`Fries Cup Weekly — ${newspaper.edition} — SAMPLE`)
+  const bytes=await makeNewspaperPdf(PDFDocument,images,`Fries Cup Weekly — ${newspaper.edition}`)
   return new Blob([bytes],{type:'application/pdf'})
 }
 
