@@ -29,6 +29,9 @@ jobs:
       - name: Check weekly public pages and media
         run: npm run test:weekly-public-ui
 
+      - name: Check readable weekly match identities and legacy links
+        run: node --test scripts/assertWeeklyMatchIdentity.mjs
+
       - name: Check weekly newspaper and roster presentation
         run: npm run test:weekly-newspaper
 

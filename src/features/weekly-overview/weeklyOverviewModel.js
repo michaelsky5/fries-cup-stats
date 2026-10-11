@@ -1,5 +1,6 @@
 // Public weekly data is projected by System's weeklyPublishSnapshot.js.
 // Scores never determine lifecycle or replace the published cycle standings.
+import { buildWeeklyContextIndex, getPublishedWeeklyContext } from '../../lib/weeklyMatchIdentity.js'
 const list = value => Array.isArray(value) ? value : []
 const text = value => String(value ?? '').trim()
 const upper = value => text(value).toUpperCase()
@@ -61,6 +62,7 @@ export function buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch
     || newestWeeks.find(item => upper(item.status) === 'RESULT_REVIEW')
     || newestWeeks.find(item => upper(item.status) === 'PUBLISHED') || newestWeeks[0] || null
   const teams = new Map(list(db?.teams).map(team => [teamId(team), team]))
+  const weeklyContexts = buildWeeklyContextIndex(snapshot)
   const publicMatches = new Map()
   list(db?.matches).forEach(match => {
     for (const key of [match.match_id, match.raw_match_id, match.id]) {
@@ -77,7 +79,7 @@ export function buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch
       if (match.cycle_id && text(match.cycle_id) !== text(cycle?.id)) return []
       if (match.is_bye || [match.team_a, match.team_b].some(team => /^(bye|轮空)$/i.test(teamId(team)) || /^(bye|轮空)$/i.test(text(team?.name)))) return []
       seen.add(matchId(match))
-      return [{ ...match, id: matchId(match), state: weeklyMatchState(match),
+      return [{ ...match, id: matchId(match), state: weeklyMatchState(match), weekly_context: getPublishedWeeklyContext(match, weeklyContexts),
         team_a: { ...teams.get(teamId(match.team_a)), ...match.team_a },
         team_b: { ...teams.get(teamId(match.team_b)), ...match.team_b } }]
     }).sort((a, b) => timeOf(a) - timeOf(b) || a.id.localeCompare(b.id))

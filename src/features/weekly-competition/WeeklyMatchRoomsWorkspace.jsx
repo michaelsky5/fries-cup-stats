@@ -1,4 +1,6 @@
 import RoomGuideLink from '../room-guide/RoomGuideLink.jsx'
+import WeeklyMatchIdentity from '../../components/matches/WeeklyMatchIdentity.jsx'
+import { getMatchDisplayCode } from '../../lib/weeklyMatchIdentity.js'
 import { guideRoleForMatch } from '../room-guide/roomGuideModel.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { matchRoomDestination } from '../my-space/spaceDestinations.js'
@@ -273,9 +275,9 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
                   <div id={roomIndexId} className={styles.roomIndexContent} data-expanded={roomIndexOpen}>
                     <div className={styles.roomSummary}><strong>{uiText("我的比赛", uiLocale)} <b>{rooms.length}</b></strong><span>{effectiveReadOnly ? uiText("赛果响应仅可查看", uiLocale) : uiText("{0} 场待确认赛果", uiLocale, [pendingCount])}</span>{disputedCount > 0 && <span data-alert="true">{disputedCount}{uiText(" 场争议处理中", uiLocale)}</span>}</div>
                 <nav className={styles.roomList} aria-label={uiText("获授权周赛比赛", uiLocale)}>
-                  {rooms.map((item, index) => (
+                  {rooms.map(item => (
                     <button type="button" key={item.id} aria-pressed={room?.id === item.id} disabled={submitting} onClick={() => { selectRoom(item.id); setRoomIndexOpen(false) }}>
-                      <span>{String(index + 1).padStart(2, '0')} / {item.cycle?.code} · W{item.week?.weekNumber}</span>
+                      <span>{getMatchDisplayCode(item)} / {item.cycle?.code} · W{item.week?.weekNumber}</span>
                       <strong>{weeklyTeamName(item.teamA)} vs {weeklyTeamName(item.teamB)}</strong>
                       <small>{formatTime(item.scheduledAt, timezone)}</small><em>{weeklyRoomStatus(item, { readOnly: effectiveReadOnly }).label}</em>
                     </button>
@@ -288,6 +290,7 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
                     <header className={styles.matchHeader}>
                       <div className={styles.matchMeta}><span>{room.cycle?.name} · {room.week?.label || uiText("第 {0} 周", uiLocale, [room.week?.weekNumber])}</span><strong data-tone={roomState.tone}>{roomState.label}</strong></div>
                       <h3><span>{weeklyTeamName(room.teamA)}</span><b>{journey.preMatch ? 'VS' : weeklyRoomScore(room)}</b><span>{weeklyTeamName(room.teamB)}</span></h3>
+                      <WeeklyMatchIdentity match={room} locale={uiLocale} copyable />
                       <p>{room.displayName} · {formatTime(room.scheduledAt, timezone)}{room.roleLabel ? ` · ${room.roleLabel}` : ''}{!journey.preMatch ? uiText(" · 赛果修订 {0}", uiLocale, [room.revision]) : ''}</p>
                       <div className={styles.roomEntry}><Link className={styles.primaryButton} to={roomLink(room.id)}>{uiText("进入比赛房", uiLocale)} →</Link> <RoomGuideLink season={seasonId} match={room.id} role={guideRoleForMatch(room)} step={journey.preMatch ? "entry" : "result"} /></div>
                     </header>

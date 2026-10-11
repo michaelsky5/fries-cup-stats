@@ -1,4 +1,6 @@
 import { translateUiText as uiText } from '../../../lib/uiText.js'
+import WeeklyMatchIdentity from '../WeeklyMatchIdentity.jsx'
+import { getWeeklyMatchIdentityLabel } from '../../../lib/weeklyMatchIdentity.js'
 import { useUiLocale } from '../../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
@@ -263,7 +265,8 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
     </nav>
     <section className={styles.hero} id="match-overview" data-match-section="overview" aria-labelledby="match-dossier-title">
       <div className={styles.cover}>
-        <header className={styles.heroMeta}><span>{getScheduleStageLabel(dossier.match.stage, locale)} <b>/</b> {getRoundLabel(dossier, locale)}</span><strong data-live={dossier.state.isLive}>{status}</strong></header>
+        <header className={styles.heroMeta}><span>{getWeeklyMatchIdentityLabel(dossier.match, locale) || <>{getScheduleStageLabel(dossier.match.stage, locale)} <b>/</b> {getRoundLabel(dossier, locale)}</>}</span><strong data-live={dossier.state.isLive}>{status}</strong></header>
+        <WeeklyMatchIdentity match={dossier.match} locale={locale} copyable showContext={false} />
         <div className={styles.versus}>
           <TeamIdentity team={dossier.teamA} logoTeam={dossier.match.team_a} side="A" seasonId={seasonId} winner={dossier.hasSeriesScore && dossier.winnerSide === 'A'} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} />
           <div className={styles.scoreAxis}><span>{phase.scoreTitle}</span><h1 id="match-dossier-title" aria-label={dossier.title + ' · ' + dossier.scoreLabel}>{scoreParts.length === 2 ? <><span data-winner={dossier.winnerSide === 'A'}>{scoreParts[0]}</span><i>:</i><span data-winner={dossier.winnerSide === 'B'}>{scoreParts[1]}</span></> : 'VS'}</h1><span>{getReviewFormat(dossier.formatLabel, en)}</span></div>
