@@ -18,6 +18,8 @@ export default function WeeklyReportPage() {
   const overview = useMemo(() => buildWeeklyOverview(db, { cycleId: requestedCycle }), [db, requestedCycle])
   const cycleId = requestedCycle || overview.cycle?.id
   const { issue, issues, loading, error } = usePublishedNewspaper({ seasonId, cycleId: weekly ? cycleId : null, weekId, locale }, !weekId)
+  // Delayed backfills keep their publication time without moving an earlier week above later weeks.
+  const archiveIssues = useMemo(() => [...issues].sort((a, b) => b.report.week.week_number - a.report.week.week_number), [issues])
   const report = issue?.report
   const t = (zh, en) => String(locale).startsWith('en') ? en : translateUiText(zh, locale)
   const home = report ? withSeason(weeklyPeriodPath('/', report.cycle, report.week)) : withSeason('/')
@@ -34,7 +36,7 @@ export default function WeeklyReportPage() {
       <p>{weekly && (error ? t('请稍后刷新重试。', 'Please refresh and retry.') : !loading ? t('每周二 12:00（UTC+8）出刊。', 'Published Tuesdays at 12:00 (UTC+8).') : '')}</p>
       <Link className={styles.textLink} to={home}>{t('返回赛事总览', 'Return to the overview')} →</Link>
     </section>}
-    <div className={styles.archiveList}>{issues.map(item => {
+    <div className={styles.archiveList}>{archiveIssues.map(item => {
       const published = item.report
       return <article key={published.week.id} className={styles.archiveRow}>
         <Link className={styles.coverLink} to={withSeason(weeklyReportPath(published))}><ReportCover report={published} newspaper={item.newspaper} locale={locale} /></Link>
