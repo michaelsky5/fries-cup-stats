@@ -72,10 +72,23 @@ function getReadableStatus(seasonStatus, locale = 'zh-CN', season = null) {
   return contextText(locale, uiText('赛程待发布', locale), 'Schedule Pending', '일정 공개 대기')
 }
 
+function getHeaderEventLabel(season, locale, fullName) {
+  const match = String(season?.name?.zh || '').match(/^(20\d{2})\s*薯条杯(周赛|常规赛|学院赛)$/)
+  if (!match) return fullName || season?.displayCode || season?.publicCode || season?.id
+
+  const labels = {
+    周赛: ['周赛', 'Weekly', '주간 대회', '週賽'],
+    常规赛: ['常规赛', 'Regular', '정규 대회', '常規賽'],
+    学院赛: ['学院赛', 'Academy', '아카데미 대회', '學院賽']
+  }
+  return `${pickUiLocale(locale, ...labels[match[2]])} · ${match[1]}`
+}
+
 function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary, onSeasonChange, compact = false }) {
   const detailsRef = useRef(null)
   const currentSeason = seasons.find(item => item.id === seasonId) || seasons[0]
   const eventGroups = getSeasonEventGroups(seasons)
+  const currentName = contextText(locale, uiText(currentSeason?.name?.zh, locale), currentSeason?.name?.en, uiText(currentSeason?.name?.zh, locale))
 
   useEffect(() => {
     const closeMenu = event => {
@@ -125,10 +138,13 @@ function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary,
 
   return (
     <details ref={detailsRef} className={styles.eventSwitcher}>
-      <summary>
+      <summary
+        title={compact ? currentName : undefined}
+        aria-label={compact ? `${pickUiLocale(locale, '切换赛事', 'Switch event', '대회 전환', '切換賽事')}: ${currentName}` : undefined}
+      >
         {compact ? (
           <>
-            <strong>{currentSeason?.displayCode || currentSeason?.publicCode || seasonId}</strong>
+            <strong>{getHeaderEventLabel(currentSeason, locale, currentName)}</strong>
             <span>{getSeasonEventKind(currentSeason)}</span>
           </>
         ) : (

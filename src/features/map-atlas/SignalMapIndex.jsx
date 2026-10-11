@@ -1,4 +1,5 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
+import { eventCenterText } from '../../lib/eventCenterCopy.js'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigationType, useOutletContext, useSearchParams } from 'react-router-dom'
 import ImeSafeInput from '../../components/common/ImeSafeInput.jsx'
@@ -47,8 +48,8 @@ export default function SignalMapIndex() {
 
   return <div className={styles.shell} data-map-atlas="index" data-map-sort={sort} data-i18n-ignore>
     <AtlasNav withSeason={withSeason} locale={locale} />
-    <SignalDataHeading compact title={isEn ? 'Where the season unfolded.' : uiText("赛季，发生在这些地图。", locale)} description={isEn ? 'From each map, explore its heroes, team results and matches.' : uiText("从一张地图开始，查看英雄出场、队伍战绩与比赛记录。", locale)}>
-      <span><b>{atlas.maps.length}</b> {isEn ? 'recorded maps' : uiText("张地图留下记录", locale)}</span>
+    <SignalDataHeading compact title={eventCenterText('mapsTitle', locale)} description={eventCenterText('mapsIntro', locale)}>
+      <span><b>{atlas.maps.length}</b> {eventCenterText('recordedMapsUnit', locale)}</span>
       <span>{atlas.totalRecords} {isEn ? 'map records' : uiText("条地图记录", locale)}</span>
     </SignalDataHeading>
 

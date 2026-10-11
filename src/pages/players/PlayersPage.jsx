@@ -13,6 +13,7 @@ import {
   buildRosterQueryState,
   filterPlayers,
   getPlayerDirectory,
+  getPlayerRoleFilterCounts,
   getRosterSummary,
   getRosterRoleLabel,
   normalizeRosterRole,
@@ -96,6 +97,9 @@ export default function PlayersPage() {
   const queryState = useMemo(() => buildRosterQueryState(searchParams, 'players'), [searchParams])
 
   const summary = useMemo(() => getRosterSummary(db), [db])
+  const roleFilterCounts = useMemo(() => isKprHybridDesign
+    ? getPlayerRoleFilterCounts(db, favorites, { season, filters: queryState })
+    : {}, [db, favorites, isKprHybridDesign, queryState, season])
   const players = useMemo(() => {
     return getPlayerDirectory(db, favorites, { role: queryState.role, season })
   }, [db, favorites, queryState.role, season])
@@ -223,6 +227,7 @@ export default function PlayersPage() {
           }}
         >
           {isKprHybridDesign ? playerIndexText(tab.label, locale) : rosterText(tab.label, locale)}
+          {isKprHybridDesign ? <span>{roleFilterCounts[tab.id]}</span> : null}
         </button>
       ))}
     </div>

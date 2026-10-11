@@ -74,7 +74,7 @@
 .empty h3 { font-size: 20px; }
 .empty p { color: var(--muted); font-size: 13px; line-height: 1.8; margin-top: 12px; }
 .empty button { background: transparent; border: 0; border-bottom: 1px solid var(--ink); padding: 8px 0; margin-top: 16px; font-size: 12px; }
-.journey { min-width: 0; background: var(--ink); color: var(--paper); padding: 24px 28px; scroll-margin-top: 130px; border-top: 3px solid var(--yellow); }
+.journey { position: sticky; top: calc(var(--kpr-header-height, 124px) + 16px); max-height: calc(100dvh - var(--kpr-header-height, 124px) - 32px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--dark-muted) var(--ink); min-width: 0; background: var(--ink); color: var(--paper); padding: 24px 28px; scroll-margin-top: 130px; border-top: 3px solid var(--yellow); }
 .journey :is(button, a):focus-visible, .pathway a[data-current]:focus-visible { outline-color: var(--yellow); }
 .journeyTop { display: flex; align-items: center; justify-content: space-between; gap: 15px; border-bottom: 1px solid var(--dark-line); padding-bottom: 16px; }
 .journeyTop > span { color: var(--dark-muted); font-size: 10px; letter-spacing: .04em; }
@@ -159,7 +159,7 @@
   .rowArrow { display: inline; }
   .selectionHint { display: block; }
   .teamIdentity h2 { font-size: 48px; }
-  .journey { padding: 24px; }
+  .journey { position: static; max-height: none; overflow: visible; padding: 24px; }
   .heroLogo { width: 66px; height: 66px; flex-basis: 66px; }
   .nextStages { grid-template-columns: minmax(0, 1fr); }
   .nextStages article + article { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }

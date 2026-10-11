@@ -2,6 +2,7 @@ import { translateUiText as formatUiText } from '../../lib/uiText.js'
 import { rosterText } from '../roster-index/rosterCopy.js'
 
 const labels = {
+  '周赛': 'Weekly matches',
   '5 人名单': '5-player roster', '6 人名单': '6-player roster', '7 人名单': '7-player roster',
   '有教练': 'With a coach', '无教练': 'No registered coach', '关注优先': 'Following first',
   '名单人数': 'Roster size', '有教练优先': 'Coached teams first',
@@ -12,6 +13,7 @@ export function teamIndexText(value, locale) {
 }
 
 export function teamIndexRole(role, locale) {
-  const labels = { TANK: ['重装', 'Tank'], DPS: ['输出', 'Damage'], SUP: ['支援', 'Support'], SUPPORT: ['支援', 'Support'], FLEX: ['灵活', 'Flex'] }
+  const labels = {
+  '周赛': 'Weekly matches', TANK: ['重装', 'Tank'], DPS: ['输出', 'Damage'], SUP: ['支援', 'Support'], SUPPORT: ['支援', 'Support'], FLEX: ['灵活', 'Flex'], UNKNOWN: ['未注明', 'Unspecified'] }
   return rosterText(labels[role]?.[locale === 'en-US' ? 1 : 0] || role, locale)
 }

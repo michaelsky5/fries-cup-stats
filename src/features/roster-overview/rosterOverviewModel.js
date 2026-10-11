@@ -1,11 +1,11 @@
-import { getPlayerDirectory, getPlayerDisplayIdentity, getRoleCounts, getStaffCounts, getStaffDirectory, getTeamDirectory, normalizeRosterRole, sortTeams } from '../../lib/rosterSelectors.js'
+import { getPlayerDirectory, getPlayerDisplayIdentity, getStaffCounts, getStaffDirectory, getTeamDirectory, getRosterRegistrationRole, sortTeams } from '../../lib/rosterSelectors.js'
 import { buildStaffIndex } from '../../lib/reviewSearch.js'
-import { getPlayerRosterChange, isPlayerCurrentlyOnTeam } from '../../lib/rosterStage.js'
+import { getPlayerRosterChange } from '../../lib/rosterStage.js'
 import { getStaffProfilePath } from '../../lib/staffProfiles.js'
 
 const key = value => String(value ?? '').normalize('NFKC').trim().toLowerCase()
 const array = value => Array.isArray(value) ? value : []
-const roleOrder = ['TANK', 'DPS', 'SUP', 'FLEX']
+const roleOrder = ['TANK', 'DPS', 'SUP', 'FLEX', 'UNKNOWN']
 const compareNames = (a, b) => a.localeCompare(b, 'zh-Hans-CN', { numeric: true })
 const recordedNumber = value => value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value)) && Number(value) >= 0 ? Number(value) : null
 
@@ -32,7 +32,11 @@ export function buildRosterOverview(db, season) {
   const byPlayerId = new Map(players.map(player => [key(player.identity.playerId), player]).filter(([id]) => id))
   const teamStaff = getStaffDirectory(db)
   const staffCounts = getStaffCounts(teamStaff)
-  const roleCounts = getRoleCounts(db)
+  const roleCounts = { TANK: 0, DPS: 0, SUP: 0, FLEX: 0, UNKNOWN: 0 }
+  array(db?.players).forEach(player => {
+    const role = getRosterRegistrationRole(player.role)
+    roleCounts[role]++
+  })
   const teams = sortTeams(getTeamDirectory(db), 'short').map(team => {
     const rosterRecords = getOverviewTeamRoster(db, team)
     const members = rosterRecords.map(player => {
@@ -40,8 +44,7 @@ export function buildRosterOverview(db, season) {
       const recorded = identity.playerId ? byPlayerId.get(key(identity.playerId)) : null
       return {
         identity,
-        active: isPlayerCurrentlyOnTeam(player),
-        role: normalizeRosterRole(player.role),
+        role: getRosterRegistrationRole(player.role),
         rosterChange: getPlayerRosterChange(player),
         href: identity.playerId ? `/players/${encodeURIComponent(identity.playerId)}` : '',
         hero: recorded?.hasStats ? recorded.avatar?.heroName || '' : '',
@@ -99,7 +102,7 @@ export function buildRosterOverview(db, season) {
     teamStaffCount: teamStaff.length,
     eventStaffCount: credits.admin.length + credits.caster.length,
     staffCounts,
-    roles: roleOrder.map(role => ({ role, count: roleCounts[role] || 0 })),
+    roles: roleOrder.map(role => ({ role, count: roleCounts[role] })),
     rosterSizes: [...sizes].sort(([a], [b]) => a - b).map(([size, count]) => ({ size, count }))
   }
 }

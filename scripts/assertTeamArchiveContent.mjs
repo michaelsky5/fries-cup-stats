@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { getDossierMatch } from '../src/features/team-dossier/teamDossierPresentation.js'
+import { getDossierMatch, getDossierRoundLabel } from '../src/features/team-dossier/teamDossierPresentation.js'
 import { getArchiveMapRecords, getArchiveMembers, getArchiveJourneyHref, getArchiveStageHref, getArchiveMatchReading, getArchiveStageAnalysis, getArchiveDistribution, getArchiveMetricAvailability } from '../src/features/team-dossier/teamArchiveContent.js'
 
 const map = (overrides = {}) => ({ map_name: 'Ilios', map_type: 'Control', score_a: 2, score_b: 0, ...overrides })
@@ -108,4 +108,12 @@ test('missing metrics on any active member are distinct from an explicitly publi
   assert.equal(getArchiveMetricAvailability([], metrics).damage, false)
   const profiles = [{ id: 'zero', values: { damage: 0 }, available: { damage: true } }, { id: 'incomplete', values: { damage: 100 }, available: { damage: false } }]
   assert.deepEqual(getArchiveDistribution(profiles, 'damage').samples.map(sample => sample.id), ['zero'])
+})
+
+test('weekly archive rounds use the public week label without changing internal stage codes', () => {
+  const match = { stage: 'WEEKLY', round: '第 1 周 · 首周试运行' }
+  assert.equal(getDossierRoundLabel(match), '第 1 周')
+  assert.equal(getDossierRoundLabel(match, 'en-US'), 'Week 1')
+  assert.equal(match.stage, 'WEEKLY')
+  assert.equal(getDossierRoundLabel({ stage: 'SWISS', round: 'Round 2' }), '第 2 轮')
 })

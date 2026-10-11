@@ -107,3 +107,20 @@
 }
 @media (max-width: 380px) { .roster { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .showcase { animation: none; } }
+
+/* Desktop previews keep the same frame while the roster adapts inside it. */
+@media (min-width: 761px) {
+  .showcase { height: var(--portrait-height); min-height: 0; overflow: hidden; }
+  .showcaseTop, .facts, .teamActions { flex-shrink: 0; }
+  .scene { flex: 0 0 32%; min-height: 0; padding-block: 18px; }
+  .identity h2 { font-size: clamp(48px, 6vw, 82px); }
+  .identity h2[data-name-length="medium"] { font-size: clamp(38px, 4.7vw, 64px); }
+  .identity h2[data-name-length="long"] { font-size: clamp(30px, 3.5vw, 48px); }
+  .portraitEmblem { width: min(100%, 172px); padding: 12px; }
+  .teamRecords { display: flex; flex-direction: column; flex: 1; min-height: 0; padding-top: 14px; }
+  .recordHeading, .stages, .recordNote { flex-shrink: 0; }
+  .roster { flex: 1; min-height: 0; grid-auto-rows: minmax(40px, 1fr); overflow: auto; scrollbar-width: thin; scrollbar-color: var(--fc-data-signal-deep) transparent; overscroll-behavior: contain; }
+  .roster li { display: flex; align-items: center; }
+  .rosterEntry { width: 100%; padding-block: 8px; }
+  .recordNote { margin-bottom: 8px; }
+}

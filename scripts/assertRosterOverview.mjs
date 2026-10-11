@@ -3,7 +3,7 @@ import test from 'node:test'
 import { readFileSync } from 'node:fs'
 import { buildRosterOverview, getOverviewTeamRoster, searchRosterOverview } from '../src/features/roster-overview/rosterOverviewModel.js'
 import { getSeasonById, withSeason } from '../src/config/seasons.js'
-import { filterPlayers, getPlayerDirectory } from '../src/lib/rosterSelectors.js'
+import { filterPlayers, getPlayerDirectory, getPlayerRoleFilterCounts } from '../src/lib/rosterSelectors.js'
 
 const season = getSeasonById('FCR2026')
 const fixture = () => ({
@@ -21,6 +21,38 @@ const fixture = () => ({
     { match_id: 'M1', team_a: { id: 'A', short: 'ALPHA' }, team_b: { id: 'B', short: 'BETA' }, broadcast: { admin: 'Shared', referee: 'Shared', caster: 'Voice', host: 'Voice' } },
     { match_id: 'M2', team_a: { id: 'B', short: 'BETA' }, team_b: { id: 'A', short: 'ALPHA' }, broadcast: { admin: 'Shared', caster: 'Shared' } }
   ]
+})
+
+test('player filter counts include published players only, merge support aliases and keep favorites separate', () => {
+  assert.deepEqual(getPlayerRoleFilterCounts(fixture(), { favoritePlayerIds: ['P3'] }, { season }), {
+    ALL: 4, TANK: 1, DPS: 1, SUPPORT: 2, following: 1
+  })
+  assert.deepEqual(getPlayerRoleFilterCounts({}, {}, { season }), {
+    ALL: 0, TANK: 0, DPS: 0, SUPPORT: 0, following: 0
+  })
+})
+
+test('player filter counts retain search and team scope and use the hero records of the destination role', () => {
+  const db = fixture()
+  db.player_totals = [{
+    ...db.players[1],
+    most_played_hero: 'Tracer', maps_played: 2, raw_time_mins: 20,
+    role_breakdown: {
+      DPS: { most_played_hero: 'Tracer', maps_played: 1, raw_time_mins: 10 },
+      TANK: { most_played_hero: 'Reinhardt', maps_played: 1, raw_time_mins: 10 }
+    }
+  }]
+  const favorites = { favoritePlayerIds: ['P2'] }
+  assert.deepEqual(getPlayerRoleFilterCounts(db, favorites, { season }), {
+    ALL: 4, TANK: 2, DPS: 1, SUPPORT: 2, following: 1
+  })
+  const filters = { q: 'Two', team: 'A', hero: 'Reinhardt', role: 'SUPPORT', following: 'following' }
+  assert.deepEqual(getPlayerRoleFilterCounts(db, favorites, { season, filters }), {
+    ALL: 0, TANK: 1, DPS: 0, SUPPORT: 0, following: 0
+  })
+  assert.deepEqual(getPlayerRoleFilterCounts(db, favorites, { season, filters: { ...filters, team: 'B' } }), {
+    ALL: 0, TANK: 0, DPS: 0, SUPPORT: 0, following: 0
+  })
 })
 
 test('explicit player IDs are authoritative despite renamed teams and reused names', () => {
@@ -44,12 +76,30 @@ test('legacy names resolve only when at least one side lacks a published team ID
 test('support aliases count once and a combined staff role is one team record', () => {
   const model = buildRosterOverview(fixture(), season)
   assert.equal(model.totalPlayers, 4)
-  assert.deepEqual(model.roles.map(item => [item.role, item.count]), [['TANK', 1], ['DPS', 1], ['SUP', 2], ['FLEX', 0]])
+  assert.deepEqual(model.roles.map(item => [item.role, item.count]), [['TANK', 1], ['DPS', 1], ['SUP', 2], ['FLEX', 0], ['UNKNOWN', 0]])
   assert.equal(model.teamStaffCount, 2)
   assert.equal(model.staffCounts.managers, 1)
   assert.equal(model.staffCounts.coaches, 2)
   assert.equal(model.teams[0].staffRecords.length, 1)
   assert.deepEqual(model.teams[0].staffRecords[0].roles, ['manager', 'coach'])
+})
+
+test('registered flex roles stay separate from unspecified roles and staff are excluded from player counts', () => {
+  const db = fixture()
+  db.teams[0].player_ids.push('P5', 'P6', 'P7')
+  db.players.push(
+    { player_id: 'P5', team_id: 'A', role: ' flex ', join_stage: 'SEASON' },
+    { player_id: 'P6', team_id: 'A', role: 'UNKNOWN', join_stage: 'SEASON' },
+    { player_id: 'P7', team_id: 'A', join_stage: 'SEASON' }
+  )
+  db.players.forEach(player => { player.join_stage = 'SEASON' })
+  const model = buildRosterOverview(db, season)
+  assert.deepEqual(model.roles.map(item => [item.role, item.count]), [['TANK', 1], ['DPS', 1], ['SUP', 2], ['FLEX', 1], ['UNKNOWN', 2]])
+  assert.equal(model.totalPlayers, 7)
+  assert.equal(model.roles.reduce((sum, item) => sum + item.count, 0), 7)
+  assert.equal(model.teams.find(team => team.routeId === 'A').openingRosterSize, 7)
+  assert.equal(model.teams.find(team => team.routeId === 'A').staffRecords.length, 1)
+  assert.deepEqual(model.rosterSizes, [{ size: 0, count: 1 }, { size: 7, count: 1 }])
 })
 
 test('match credits deduplicate source aliases within a role but keep different roles separate', () => {
@@ -192,4 +242,21 @@ test('an empty season has zero totals and no synthetic roster or credits', () =>
   assert.deepEqual(model.rosterSizes, [])
   assert.equal(model.roles.reduce((sum, item) => sum + item.count, 0), 0)
   assert.deepEqual(searchRosterOverview(model, 'AIP'), [])
+})
+
+test('registration labels do not borrow a played role, and preview records retain actual performance', () => {
+  const db = fixture()
+  delete db.players[0].role
+  db.players[1].role = 'FLEX'
+  db.player_totals = [{ ...db.players[0], role: 'TANK', most_played_hero: 'Winston', maps_played: 2, raw_time_mins: 20,
+    role_breakdown: { TANK: { most_played_hero: 'Winston', maps_played: 2, raw_time_mins: 20 } } }]
+  const directory = getPlayerDirectory(db, {}, { season })
+  const player = directory.find(row => row.player_id === 'P1')
+  assert.equal(player.registrationRole, 'UNKNOWN')
+  assert.equal(player.performanceRole, 'TANK')
+  assert.ok(player.hasStats)
+  assert.equal(directory.find(row => row.player_id === 'P2').registrationRole, 'FLEX')
+  const members = buildRosterOverview(db, season).teams.find(row => row.routeId === 'A').members
+  assert.equal(members.find(row => row.identity.playerId === 'P1').role, 'UNKNOWN')
+  assert.equal(members.find(row => row.identity.playerId === 'P2').role, 'FLEX')
 })

@@ -8,6 +8,7 @@ import {
 } from '../../lib/matchesSelectors.js'
 import { getReturnState, saveReturnScroll } from '../../lib/navigationState.js'
 import TeamLogo from './TeamLogo.jsx'
+import { getPublicMatchCode } from '../../lib/publicMatchCode.js'
 import styles from './MatchHub.module.css'
 
 function handleRowKeyDown(event) {
@@ -63,7 +64,7 @@ function ScheduleRow({ match, to, returnTo, seasonId, teams }) {
 
 function ResultRow({ match, to, returnTo, teams, seasonId }) {
   const score = getMatchScore(match)
-  const matchCode = match?.match_id || match?.match_display_name || match?.raw_match_id || ''
+  const matchCode = getPublicMatchCode(match)
 
   return (
     <Link

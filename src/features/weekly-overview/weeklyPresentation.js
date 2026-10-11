@@ -10,16 +10,13 @@ const labels = {
 const isEnglish = locale => String(locale).startsWith('en')
 export const weeklyStatusLabel = (key, locale) => translateUiText(labels[key]?.[isEnglish(locale) ? 1 : 0] || (isEnglish(locale) ? 'To be announced' : '待公布'), locale)
 export const weeklyCycleTitle = (cycle, locale) => isEnglish(locale) ? cycle?.code || 'Cycle' : cycle?.name || cycle?.code || '周期'
-export const weeklyWeekTitle = (week, locale) => isEnglish(locale) ? `Week ${week?.week_number}` : translateUiText(week?.label || `第 ${week?.week_number} 周`, locale)
-export const weeklyTeamShort = team => team?.short || team?.team_short_name || team?.name || team?.team_name || 'TBD'
-
-export function weeklyCycleDates(cycle, locale) {
-  if (!cycle?.starts_at || !cycle?.ends_at) return ''
-  const start = new Date(cycle.starts_at), end = new Date(cycle.ends_at)
-  if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime())) return ''
-  const formatter = new Intl.DateTimeFormat(locale || 'zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' })
-  return `${formatter.format(start)} – ${formatter.format(end)}`
+export const weeklyWeekTitle = (week, locale) => {
+  if (isEnglish(locale)) return `Week ${week?.week_number}`
+  const fallback = `第 ${week?.week_number} 周`
+  const label = String(week?.label || fallback).replace(/\s*[·•—–-]?\s*首[周週][试試][运運]行\s*$/, '').trim()
+  return translateUiText(label || fallback, locale)
 }
+export const weeklyTeamShort = team => team?.short || team?.team_short_name || team?.name || team?.team_name || 'TBD'
 
 export function weeklyPeriodPath(path, cycle, week) {
   const params = new URLSearchParams()

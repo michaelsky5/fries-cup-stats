@@ -73,7 +73,7 @@ export function getTeamSeasonChapters(matchRows, advanceState, locale = 'zh-CN')
         : `${opening.length} 场实际交手，${openingRecord.wins} 胜 ${openingRecord.losses} 负${openingRecord.draws ? ` ${openingRecord.draws} 平` : ''}。此后的比赛，进入${getDossierStageLabel(nextStage.match.stage, locale)}。`,
       note: en ? 'Byes and administrative results remain in the complete ledger.' : '轮空与判罚记录另见完整赛程。'
     })
-  } else add(played[0], { kind: 'opening', title: en ? 'The first match on record.' : '这一季，从这场开始。', reading: getArchiveMatchReading(played[0], rows, locale) })
+  } else add(played[0], { kind: 'opening', title: en ? 'First match' : '首场比赛', reading: getArchiveMatchReading(played[0], rows, locale) })
 
   if (story.comeback) {
     const setback = story.milestones[0]
@@ -90,10 +90,10 @@ export function getTeamSeasonChapters(matchRows, advanceState, locale = 'zh-CN')
     const stageEntry = afterOpening.find(row => row.match.stage !== played[0].match.stage)
     if (stageEntry) add(stageEntry, { kind: 'stage', title: en ? `Into the ${getDossierStageLabel(stageEntry.match.stage, locale).toLowerCase()}.` : `来到${getDossierStageLabel(stageEntry.match.stage, locale)}。`, reading: getArchiveMatchReading(stageEntry, rows, locale) })
     const loss = afterOpening.find(row => row.tone === 'loss' && row !== stageEntry)
-    if (loss) add(loss, { kind: 'setback', title: en ? 'A loss along the way.' : '途中，也有失利。', reading: getArchiveMatchReading(loss, rows, locale) })
+    if (loss) add(loss, { kind: 'setback', title: en ? 'Recorded loss' : '失利记录', reading: getArchiveMatchReading(loss, rows, locale) })
   }
   const latest = played.at(-1)
   const champion = advanceState.isArchived && advanceState.rank === 1 && latest.tone === 'win' && /^(grand finals?|总决赛)$/i.test(String(latest.match.round || '').trim())
-  add(latest, { kind: champion ? 'champion' : 'latest', title: champion ? (en ? 'The season ends with a title.' : '这一季，定格在冠军。') : advanceState.isArchived ? (en ? 'The final entry of this season.' : '这一季的最后一页。') : (en ? 'The latest chapter, so far.' : '最近一章，故事待续。'), reading: champion ? (en ? `${latest.scoreLabel} against ${latest.opponentLabel} in the grand final. ${getArchiveMatchReading(latest, rows, locale)}` : `总决赛 ${latest.scoreLabel} 战胜 ${latest.opponentLabel}。${getArchiveMatchReading(latest, rows, locale)}`) : getArchiveMatchReading(latest, rows, locale) })
+  add(latest, { kind: champion ? 'champion' : 'latest', title: champion ? (en ? 'Title-winning match' : '夺冠比赛') : advanceState.isArchived ? (en ? 'Final match of the event' : '本届最后一场') : (en ? 'Latest match' : '最近比赛'), reading: champion ? (en ? `${latest.scoreLabel} against ${latest.opponentLabel} in the grand final. ${getArchiveMatchReading(latest, rows, locale)}` : `总决赛 ${latest.scoreLabel} 战胜 ${latest.opponentLabel}。${getArchiveMatchReading(latest, rows, locale)}`) : getArchiveMatchReading(latest, rows, locale) })
   return chapters.sort((a, b) => rows.indexOf(a.row) - rows.indexOf(b.row))
 }

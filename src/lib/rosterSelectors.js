@@ -65,7 +65,15 @@ export function normalizeRosterRole(role) {
   return 'FLEX'
 }
 
+// Registration labels preserve missing data instead of inferring a flex role
+// or borrowing a role from performance totals. Filtering remains unchanged.
+export function getRosterRegistrationRole(role) {
+  const normalized = normalizeRosterRole(role)
+  return normalized === 'FLEX' && normalizeKey(role) !== 'flex' ? 'UNKNOWN' : normalized
+}
+
 export function getRosterRoleLabel(role, locale = 'zh-CN') {
+  if (role === 'UNKNOWN') return formatUiText(locale === 'en-US' ? 'Unspecified' : '未注明', locale)
   const normalized = normalizeRosterRole(role)
   if (locale === 'en-US') {
     return formatUiText(normalized === 'SUP' ? 'SUPPORT' : normalized || 'ROLE', locale)
@@ -492,6 +500,7 @@ export function getPlayerDirectory(db, favorites = {}, options = {}) {
       heroNames,
       role,
       registeredRole,
+      registrationRole: getRosterRegistrationRole(player?.role),
       performanceRole,
       playedRoles,
       flexRoles,
@@ -544,6 +553,15 @@ export function filterPlayers(players, filters = {}) {
       ])
     ])
   })
+}
+
+export function getPlayerRoleFilterCounts(db, favorites = {}, { season, filters = {} } = {}) {
+  return Object.fromEntries(['ALL', 'TANK', 'DPS', 'SUPPORT', 'following'].map(tab => {
+    const role = tab === 'following' ? 'ALL' : tab
+    // Counts describe each tab's destination, including its role-specific hero records.
+    const players = getPlayerDirectory(db, favorites, { role, season })
+    return [tab, filterPlayers(players, { ...filters, role, following: tab === 'following' ? 'following' : 'all' }).length]
+  }))
 }
 
 export function sortPlayers(players, sort = 'default') {

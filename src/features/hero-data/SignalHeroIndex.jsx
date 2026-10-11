@@ -1,4 +1,5 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
+import { eventCenterText } from '../../lib/eventCenterCopy.js'
 import { useEffect, useMemo } from 'react'
 import { Link, useLocation, useNavigationType, useOutletContext, useSearchParams } from 'react-router-dom'
 import HeroArtwork from '../../components/media/HeroArtwork.jsx'
@@ -51,7 +52,7 @@ function HeroDirectory({ guide, params, setParams, locale, isEn }) {
       <div className={styles.searchControls}><label className={styles.search}><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m15 15 5 5" stroke="currentColor" strokeWidth="1.5" /></svg><ImeSafeInput value={search} onValueChange={value => update({ heroSearch: value })} placeholder={isEn ? 'Find a hero…' : uiText("搜索英雄", locale) + "…"} aria-label={isEn ? 'Find a hero' : uiText("搜索英雄", locale)} aria-controls="hero-results" />{search ? <button type="button" onClick={() => update({ heroSearch: '' })} aria-label={isEn ? 'Clear search' : uiText("清除搜索", locale)}>×</button> : null}</label><select aria-label={isEn ? 'Sort heroes' : uiText("英雄排序", locale)} value={sort} onChange={event => update({ heroSort: event.target.value })}><option value="records">{isEn ? 'Most appearances' : uiText("出场记录最多", locale)}</option><option value="players">{isEn ? 'Most players' : uiText("使用选手最多", locale)}</option><option value="name">{isEn ? 'Name A–Z' : uiText("名称 A–Z", locale)}</option></select></div>
     </div>
     {showOverview ? <section className={styles.overview} aria-labelledby="role-leaders-heading">
-      <header className={styles.overviewHeading}><h2 id="role-leaders-heading">{isEn ? 'Most recorded, by role.' : uiText("各职责的高频出场。", locale)}</h2><a href="#hero-results">{isEn ? 'Full directory' : uiText("查看完整列表", locale)}<Arrow down /></a></header>
+      <header className={styles.overviewHeading}><h2 id="role-leaders-heading">{eventCenterText('heroesLeaders', locale)}</h2><a href="#hero-results">{isEn ? 'Full directory' : uiText("查看完整列表", locale)}<Arrow down /></a></header>
       <div className={styles.spotlights}>{HERO_DATA_ROLES.map((value, index) => <RoleSpotlight key={value} role={value} heroes={guide.heroes.filter(hero => hero.role === value)} samples={guide.samples} locale={locale} isEn={isEn} index={index} toHero={key => heroGuideHref(params, key)} />)}</div>
     </section> : null}
     <section className={styles.results} id="hero-results" aria-labelledby="directory-heading">
@@ -91,11 +92,11 @@ export default function SignalHeroIndex() {
   if (selected) return hero ? <SignalHeroDossier key={`${db?.season?.id || ''}:${hero.key}`} guide={guide} hero={hero} params={params} setParams={setParams} locale={locale} withSeason={withSeason} /> : <div className={styles.shell} data-hero-guide="missing"><HeroDataNav withSeason={withSeason} isEn={isEn} backTo={backTo} /><GuideEmpty title={isEn ? 'No records for this hero' : uiText("本赛季暂无该英雄记录", locale)} action={<Link className={styles.textButton} to={backTo}>{isEn ? 'Browse all heroes' : uiText("浏览全部英雄", locale)}<Arrow /></Link>}>{isEn ? 'Explore heroes with published match records below.' : uiText("可返回索引，查看本赛季已有记录的英雄。", locale)}</GuideEmpty></div>
   return <div className={styles.shell} data-hero-guide="index" data-i18n-ignore>
     <HeroDataNav withSeason={withSeason} isEn={isEn} />
-    <SignalDataHeading compact title={isEn ? 'The faces of this season.' : uiText("这一季，谁在场。", locale)} description={isEn ? 'Follow each hero’s recorded appearances to the players, maps and matches behind them.' : uiText("从英雄的出场记录，找到使用它的选手、地图与比赛。", locale)}>
-      <span><b>{guide.heroes.length}</b> {isEn ? 'recorded heroes' : uiText("位英雄留下记录", locale)}</span>
+    <SignalDataHeading compact title={eventCenterText('heroesTitle', locale)} description={eventCenterText('heroesIntro', locale)}>
+      <span><b>{guide.heroes.length}</b> {eventCenterText('recordedHeroesUnit', locale)}</span>
       <span>{guide.mapRecords} {isEn ? 'map records' : uiText("条地图记录", locale)} · {guide.samples} {isEn ? 'team-sides' : uiText("份队伍单图样本", locale)}</span>
     </SignalDataHeading>
-    {guide.heroes.length ? <HeroDirectory guide={guide} params={params} setParams={setParams} locale={locale} isEn={isEn} /> : <GuideEmpty title={isEn ? 'The field guide is waiting.' : uiText("英雄档案，等待开场。", locale)}>{isEn ? 'Heroes will appear once post-map statistics are published.' : uiText("发布包含英雄信息的单图统计后，这里会呈现本赛季的英雄选择。", locale)}</GuideEmpty>}
+    {guide.heroes.length ? <HeroDirectory guide={guide} params={params} setParams={setParams} locale={locale} isEn={isEn} /> : <GuideEmpty title={eventCenterText('heroesEmptyTitle', locale)}>{eventCenterText('heroesEmptyIntro', locale)}</GuideEmpty>}
     <GuideMethod isEn={isEn} guide={guide} />
   </div>
 }

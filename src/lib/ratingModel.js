@@ -147,6 +147,7 @@ function percentileFromStats(value, stats) {
 }
 
 function getBaselineMaturity(baseline, fallbackStatus = '') {
+  if (Number.isFinite(baseline?.independentSampleMaturity)) return clamp(baseline.independentSampleMaturity, 0, 1)
   if (!baseline) return 0
 
   const sampleLogs = toFiniteNumber(baseline.sampleLogs, NaN)
