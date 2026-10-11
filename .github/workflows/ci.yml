@@ -53,6 +53,9 @@ jobs:
       - name: Check Overwatch Season 5 and historical roles
         run: node scripts/assertOverwatchSeason5.mjs
 
+      - name: Check statistical rating and archived scoring rules
+        run: npm run test:statistical-rating && npm run test:rating-release
+
       - name: Build production frontend
         run: npm run build
 

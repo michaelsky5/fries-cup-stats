@@ -1,4 +1,5 @@
 import { translateUiText as uiText } from '../../../lib/uiText.js'
+import { getStatisticalRatingModelNotice } from '../../../lib/statisticalRatingPresentation.js'
 import { useUiLocale } from '../../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
@@ -72,7 +73,7 @@ function PlayerRow({ entry, slot, height, mvp, awardIndex, columns, metricStart,
   return <tr className={`${styles.playerRow} ${dataStyles.roleRow}`} data-player-row data-role={row.role} data-row-slot={slot} style={height ? { height } : undefined} data-team-best={mvp || undefined}>
     <th scope="row" className={styles.identityCell}>{playerPath ? <Link className={styles.identity} to={playerPath} state={returnState} onClick={onPlayerNavigate} title={[row.battleTag || description, role, award ? t(award.labelKey, award.fallback) : ''].filter(Boolean).join(' · ')} aria-label={description}>{identity}</Link> : <span className={styles.identity} title={description}>{identity}</span>}</th>
     {columns.map(column => <StatCell key={column.key} row={row} column={column} maxima={maxima} t={t} focusedMetric={focusedMetric} groupStart={column.key === metricStart} />)}
-    <td className={styles.rating} title={en ? 'Map rating' : uiText("本图评分", uiLocale)}><SignalRating value={rating} /></td>
+    <td className={styles.rating} title={en ? 'Map rating' : uiText("本图评分", uiLocale)}><SignalRating value={rating} entry={impact?.entry} /></td>
   </tr>
 }
 
@@ -89,7 +90,7 @@ function CompactPlayers({ rows, participantScores, mvpKeys, columns, locale, t, 
       const identity = <><Avatar row={row} /><span><strong>{row.displayName}</strong><small>{[role, row.hero].filter(Boolean).join(' · ')}</small></span></>
       return <li key={row.key} className={`${styles.compactPlayer} ${dataStyles.roleRow}`} data-role={row.role} data-team-best={mvpKeys.has(row.key) || undefined}>
         {row.playerId ? <Link className={styles.compactIdentity} to={withSeason(`/players/${encodeURIComponent(row.playerId)}?role=${encodeURIComponent(row.role)}`)} state={returnState} onClick={onPlayerNavigate} aria-label={description}>{identity}</Link> : <span className={styles.compactIdentity}>{identity}</span>}
-        <div className={styles.compactRating}><span>{en ? 'Rating' : uiText('本图评分', locale)}</span><SignalRating value={getReviewMapRating(impact?.entry, participantScores)} /></div>
+        <div className={styles.compactRating}><span>{en ? 'Rating' : uiText('本图评分', locale)}</span><SignalRating value={getReviewMapRating(impact?.entry, participantScores)} entry={impact?.entry} /></div>
         <dl className={styles.compactMetrics}>
           <div><dt>{en ? 'E / A / D' : uiText('消灭 / 助攻 / 阵亡', locale)}</dt><dd>{ACTIVITY_KEYS.map(key => valueLabel(row[key])).join(' / ')}</dd></div>
           {metric ? <div><dt>{t(metric.labelKey, metric.fallback)}</dt><dd>{valueLabel(row[metric.key])}</dd></div> : null}
@@ -187,5 +188,6 @@ export default function SignalMapStats({ map, dossier, teamADisplayRows, teamBDi
     </div>
     {showFullStats && focusedTotals && teamADisplayRows.length > 0 && teamBDisplayRows.length > 0 ? <div className={styles.metricComparison} data-map-metric-comparison role="status"><strong>{t(focusedColumn.labelKey, focusedColumn.fallback)}</strong><span>{dossier.teamA.short}<b>{formatInt(focusedTotals[0])}</b></span><span>{dossier.teamB.short}<b>{formatInt(focusedTotals[1])}</b></span><span className={styles.difference}>{dossier.teamA.short} − {dossier.teamB.short}<b>{focusedTotals[0] > focusedTotals[1] ? '+' : ''}{formatInt(focusedTotals[0] - focusedTotals[1])}</b></span></div> : null}
     <span className={styles.announcement} role="status">{showFullStats && focusedColumn ? `${en ? 'Comparing: ' : uiText("对照：", locale)}${t(focusedColumn.labelKey, focusedColumn.fallback)}` : ''}</span>
+    {map.rating?.ratingModelVersion ? <p data-statistical-rating={map.rating.ratingModelVersion}>{uiText(getStatisticalRatingModelNotice(locale), locale)}</p> : null}
   </div>
 }

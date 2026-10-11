@@ -14,6 +14,8 @@ import {
 import TeamLogo from '../TeamLogo.jsx'
 import SignalMapStats from './SignalMapStats.jsx'
 import styles from './matchDetailStyles.js'
+import { getStatisticalRatingLabel, getStatisticalRatingNotes } from '../../../lib/statisticalRatingPresentation.js'
+import { useUiLocale } from '../../../hooks/useUiLocale.js'
 
 const ROLE_SORT_ORDER = {
   TANK: 0,
@@ -99,7 +101,7 @@ function createImpactIndex(rating) {
 
   entries.forEach((entry, entryIndex) => {
     const rank = entryIndex + 1
-    const rawPts = Number(entry.roleScore)
+    const rawPts = Number(entry.statisticalRating ? entry.rawScore : entry.roleScore)
     const matchRating = getDisplayedMatchRating(entry, rawPts, participantScores)
     const keys = [
       makeImpactKey(entry.player_id, entry.role),
@@ -222,6 +224,7 @@ function AwardBadge({ award, t }) {
 }
 
 function RatingCluster({ impact, t }) {
+  const locale = useUiLocale()
   if (!impact) {
     return (
       <span
@@ -239,7 +242,8 @@ function RatingCluster({ impact, t }) {
   const note = t('matchDetail.ratingMappedFromImpact', 'Rating is generated from player performance metrics on this map.')
   const displayRating = formatMapPlayerMatchRating(impact.matchRating)
   const rawPts = formatRating(impact.rawPts)
-  const title = `${ratingLabel}: ${displayRating}\n${rawLabel}: ${rawPts} PTS\n${note}`
+  const statisticalLabel = getStatisticalRatingLabel(impact.entry, locale)
+  const title = `${ratingLabel}: ${displayRating}\n${rawLabel}: ${rawPts} PTS\n${note}\n${getStatisticalRatingNotes(impact.entry, locale).join('\n')}`
   const ariaLabel = `${ratingLabel}: ${displayRating}. ${rawLabel}: ${rawPts} PTS.`
   const featured = Number(impact.matchRating) >= 8.5
 
@@ -252,6 +256,7 @@ function RatingCluster({ impact, t }) {
       aria-label={ariaLabel}
     >
       <strong className={styles.ratingValue}>{displayRating}</strong>
+      {statisticalLabel ? <small>{statisticalLabel}</small> : null}
     </span>
   )
 }
