@@ -1,6 +1,6 @@
 // Public weekly data is projected by System's weeklyPublishSnapshot.js.
 // Scores never determine lifecycle or replace the published cycle standings.
-import { buildWeeklyContextIndex, getPublishedWeeklyContext } from '../../lib/weeklyMatchIdentity.js'
+import { buildWeeklyContextIndex, getPublishedWeeklyContext, getMatchLookupIds } from '../../lib/weeklyMatchIdentity.js'
 const list = value => Array.isArray(value) ? value : []
 const text = value => String(value ?? '').trim()
 const upper = value => text(value).toUpperCase()
@@ -87,7 +87,7 @@ export function buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch
   const weekEntries = weeks.map(item => ({ week: item, matches: getMatches(item) }))
   const matches = weekEntries.find(entry => entry.week.id === week?.id)?.matches || []
   const isFollowed = match => [match.team_a, match.team_b].some(team => followedTeamIds.includes(teamId(team)))
-  const focus = matches.find(match => match.id === requestedMatch)
+  const focus = matches.find(match => getMatchLookupIds(match).some(id => id.toLowerCase() === text(requestedMatch).toLowerCase()))
     || matches.find(match => match.state === 'live' && isFollowed(match))
     || matches.find(match => match.state === 'live')
     || matches.find(match => match.state === 'review')

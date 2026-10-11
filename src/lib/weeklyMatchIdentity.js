@@ -14,6 +14,14 @@ const list = value => Array.isArray(value) ? value : []
 
 export const getMatchDisplayCode = match => text(match?.match_code || match?.matchCode || match?.weeklyIdentity?.code || getPublicMatchCode(match))
 
+export function getMatchLookupIds(match) {
+  const rawId = text(match?.raw_match_id || match?.id || match?.match_id)
+  const legacyCode = (match?.cycle_week_id || match?.cycleWeekId) && rawId
+    ? getPublicMatchCode({ raw_match_id: rawId, cycle_week_id: true }) : ''
+  return [...new Set([match?.match_id, match?.raw_match_id, match?.id, match?.match_code,
+    match?.matchCode, match?.weeklyIdentity?.code, legacyCode].map(text).filter(Boolean))]
+}
+
 function parseCode(code) {
   const found = text(code).match(/^(.+)-C(\d+)-W(\d+)-(REG|QUAL|PO)-M(\d+)$/)
   if (!found || ![found[2], found[3], found[5]].every(value => Number.isSafeInteger(Number(value)))
