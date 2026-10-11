@@ -7,6 +7,7 @@ import {
   fetchAuthConfig,
   fetchCurrentUser,
   loginWithPassword,
+  setAccountMode,
   registerWithPassword,
   revokeCurrentSession,
   requestEmailVerification as requestEmailVerificationApi
@@ -61,6 +62,8 @@ export function AuthProvider({ children }) {
   const sessionEpoch = useRef(0)
   const accountRequest = useRef(0)
   const currentUserId = useRef('')
+  const currentSessionUser = useRef(null)
+  currentSessionUser.current = authState.user
   const sessionChannel = useRef(null)
   const profileRequest = useRef(0)
 
@@ -88,6 +91,7 @@ export function AuthProvider({ children }) {
     accountRequest.current += 1
     profileRequest.current += 1
     currentUserId.current = user?.id || ''
+    currentSessionUser.current = user || null
     clearStoredAuth()
     setAuthState({ user: user || null, isBootstrapping: false })
     setProfileSnapshot(null)
@@ -241,11 +245,45 @@ export function AuthProvider({ children }) {
     return refreshAccountData()
   }, [accountState.capabilities?.canSetPrimaryIdentity, refreshAccountData])
 
+  const switchAccountMode = useCallback(async mode => {
+    const epoch = sessionEpoch.current
+    const user = await setAccountMode(mode)
+    if (epoch !== sessionEpoch.current) throw new Error('账号已变化，请同步后重新切换。')
+    installSession(user)
+    sessionChannel.current?.postMessage('SESSION_CHANGED')
+    return user
+  }, [installSession])
+
+  useEffect(() => {
+    if (!authState.user?.canSwitchAccountMode) return undefined
+    let inFlight = false
+    let cancelled = false
+    const refresh = async () => {
+      if (inFlight) return
+      inFlight = true
+      const epoch = sessionEpoch.current
+      try {
+        const user = await fetchCurrentUser()
+        if (cancelled || epoch !== sessionEpoch.current) return
+        const current = currentSessionUser.current
+        if (user?.id !== current?.id || user?.role !== current?.role
+          || user?.accountMode !== current?.accountMode || user?.canSwitchAccountMode !== current?.canSwitchAccountMode) {
+          installSession(user)
+        }
+      } catch (error) {
+        if (!cancelled && epoch === sessionEpoch.current && error?.status === 401) clearRevokedSession()
+      } finally { inFlight = false }
+    }
+    const timer = window.setInterval(refresh, 15000)
+    window.addEventListener('focus', refresh)
+    return () => { cancelled = true; window.clearInterval(timer); window.removeEventListener('focus', refresh) }
+  }, [authState.user?.canSwitchAccountMode, clearRevokedSession, installSession])
+
   useEffect(() => {
     if (!authState.user?.id) return undefined
     refreshAccountData().catch(() => {})
     return () => { accountRequest.current += 1 }
-  }, [authState.user?.id, refreshAccountData])
+  }, [authState.user?.id, authState.user?.role, authState.user?.accountMode, refreshAccountData])
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined
@@ -436,9 +474,10 @@ export function AuthProvider({ children }) {
     logout,
     refreshAccountData,
     setPrimaryIdentity,
+    switchAccountMode,
     register,
     requestEmailVerification
-  }), [accountState, profileSnapshot, authState, authConfig, authConfigError, retryAuthConfig, refreshSession, clearRevokedSession, emailAppealState, emailChangeState, emailVerificationState, login, logout, refreshAccountData, register, requestEmailVerification, setPrimaryIdentity])
+  }), [accountState, profileSnapshot, authState, authConfig, authConfigError, retryAuthConfig, refreshSession, clearRevokedSession, emailAppealState, emailChangeState, emailVerificationState, login, logout, refreshAccountData, register, requestEmailVerification, setPrimaryIdentity, switchAccountMode])
 
   return (
     <AuthContext.Provider value={value}>
