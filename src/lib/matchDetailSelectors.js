@@ -19,6 +19,7 @@ import { getPlayerDirectory, getPlayerDisplayIdentity, normalizeRosterRole } fro
 import { formatOwHeroName, formatOwMapMode, formatOwMapName } from './heroes.js'
 import { resolvePublicMatchIdentity } from './publicMatchIdentity.js'
 import { getPublicMatchCode } from './publicMatchCode.js'
+import { getMatchLookupIds } from './weeklyMatchIdentity.js'
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED'])
 const LIVE_STATUSES = new Set(['IN_PROGRESS', 'LIVE'])
@@ -56,12 +57,7 @@ function isKnownValue(value) {
 }
 
 function matchIdValues(match) {
-  return [
-    match?.match_id,
-    match?.raw_match_id,
-    match?.match_code,
-    match?.id
-  ].map(cleanText).filter(Boolean)
+  return getMatchLookupIds(match)
 }
 
 function getMatchById(db, matchId) {

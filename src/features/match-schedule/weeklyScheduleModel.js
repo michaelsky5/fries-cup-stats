@@ -1,6 +1,6 @@
 import { formatMatchSchedule, getMatchScheduleValue } from '../../lib/scheduleFormat.js'
 import { buildWeeklyOverview } from '../weekly-overview/weeklyOverviewModel.js'
-import { getMatchDisplayCode, getWeeklyMatchIdentityLabel } from '../../lib/weeklyMatchIdentity.js'
+import { getMatchLookupIds, getWeeklyMatchIdentityLabel } from '../../lib/weeklyMatchIdentity.js'
 
 export const WEEKLY_SCHEDULE_STATUSES = ['all', 'live', 'upcoming', 'final', 'review', 'changed', 'unknown']
 const text = value => String(value ?? '').normalize('NFKC').trim().toLowerCase()
@@ -25,7 +25,7 @@ export function buildWeeklySchedule(db, { cycleId, weekId, query = '', teamId = 
   const matchesSearch = match => {
     const teams = [match.team_a, match.team_b]
     const haystack = text([...teams.flatMap(team => [team?.name, team?.short, team?.team_name, team?.team_short_name]),
-      getMatchDisplayCode(match), match.match_id, match.raw_match_id, getWeeklyMatchIdentityLabel(match)].join(' '))
+      ...getMatchLookupIds(match), getWeeklyMatchIdentityLabel(match)].join(' '))
     return terms.every(term => haystack.includes(term)) && (!teamId || teams.some(team => idOf(team) === teamId)) && (!followedOnly || isFollowed(match))
   }
   const candidates = scope.flatMap(entry => entry.matches).filter(matchesSearch)

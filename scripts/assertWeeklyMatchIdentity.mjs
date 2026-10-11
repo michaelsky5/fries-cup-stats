@@ -3,6 +3,7 @@ import test from 'node:test'
 import { getMatchDisplayCode, getWeeklyMatchIdentity, getWeeklyMatchIdentityLabel, getWeeklyPhaseLabel, getPublishedWeeklyContext } from '../src/lib/weeklyMatchIdentity.js'
 import { resolvePublicMatchIdentities } from '../src/lib/publicMatchIdentity.js'
 import { getMatchDossier } from '../src/lib/matchDetailSelectors.js'
+import { buildWeeklyOverview } from '../src/features/weekly-overview/weeklyOverviewModel.js'
 import { buildWeeklySchedule } from '../src/features/match-schedule/weeklyScheduleModel.js'
 import { buildWeeklyOverviewFixture } from './lib/weeklyOverviewFixture.mjs'
 
@@ -69,4 +70,20 @@ test('readable code lookup and legacy lookup reach the same match and stored roo
   assert.deepEqual(select(match.match_code).map(item => item.id), [match.match_id])
   assert.deepEqual(select(match.raw_match_id).map(item => item.id), [match.match_id])
   assert.equal(select('积分赛').length, 12)
+})
+
+test('a copied legacy WEEKLY code remains searchable and opens the same match after numbering', () => {
+  const db = fixture()
+  const match = db.matches[0]
+  const originalRawId = match.raw_match_id
+  match.raw_match_id = 'FCW26-OTHER-6EFFE40D'
+  for (const cycle of db.weekly_competition.cycles) for (const week of cycle.weeks) {
+    week.match_ids = week.match_ids.map(id => id === originalRawId ? match.raw_match_id : id)
+  }
+  const legacyCode = 'FCW26-WEEKLY-6EFFE40D'
+  assert.equal(getMatchDossier(db, legacyCode).match.match_id, match.match_id)
+  const results = buildWeeklySchedule(db, { weekId: 'all', query: legacyCode.toLowerCase() }).entries.flatMap(entry => entry.matches)
+  assert.deepEqual(results.map(item => item.id), [match.match_id])
+  assert.equal(buildWeeklyOverview(db, { weekId: match.cycle_week_id, match: legacyCode }).focus.match_id, match.match_id)
+  assert.equal(buildWeeklyOverview(db, { weekId: match.cycle_week_id, match: match.match_code }).focus.match_id, match.match_id)
 })
