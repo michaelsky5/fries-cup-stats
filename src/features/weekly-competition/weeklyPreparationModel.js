@@ -35,8 +35,22 @@ export function getWeeklyFocusStep(plan, requestedStep) {
 function weekRank(week, now) {
   const window = weeklyConfirmationWindow(week, now)
   if (window === 'open') return 0
+  const starts = time(week?.matchWindowStartsAt)
+  const ends = time(week?.matchWindowEndsAt)
+  if (Number.isFinite(ends) && Number(now) > ends) return 3
+  if (Number.isFinite(starts) && Number(now) < starts) return 2
   if (['PUBLISHED', 'IN_PROGRESS', 'RESULT_REVIEW', 'CONFIRMATION_CLOSED', 'ROSTER_LOCKED', 'PAIRING'].includes(week?.status)) return 1
   return window === 'upcoming' ? 2 : 3
+}
+
+// A missing record is not a missed obligation when the team joined after play ended.
+// Retain actual participation records, including administrator-entered history.
+export function isWeeklyRecordBeforeEnrollment(entry, record) {
+  const participation = record?.participation
+  if (participation?.id || participation?.persisted === true || (participation?.status && participation.status !== 'PENDING')) return false
+  const joined = time(entry?.joinedAt)
+  const ends = time(record?.week?.matchWindowEndsAt)
+  return Number.isFinite(joined) && Number.isFinite(ends) && ends < joined
 }
 
 export function orderWeeklyRecords(records = [], now = Date.now()) {
@@ -54,7 +68,8 @@ export function resolveWeeklySelection(workspace, requested = {}, now = Date.now
   const entry = requested.entryId ? entries(cycle).find(item => item.id === requested.entryId) : entries(cycle)[0]
   const teamId = requested.teamId || entry?.seasonTeamId || entry?.team?.id
   const teamAccess = teamId ? workspace?.teams?.find(item => item.team?.id === teamId) : workspace?.teams?.[0]
-  const weekRecord = requested.weekId ? entry?.weeks?.find(item => item.week?.id === requested.weekId) : orderWeeklyRecords(entry?.weeks, now)[0]
+  const weekRecord = requested.weekId ? entry?.weeks?.find(item => item.week?.id === requested.weekId)
+    : orderWeeklyRecords((entry?.weeks || []).filter(record => !isWeeklyRecordBeforeEnrollment(entry, record)), now)[0]
   const invalid = Boolean((requested.teamId && !teamAccess) || (requested.cycleId && !cycle) || (requested.entryId && !entry) || (requested.weekId && !weekRecord))
   return { cycle: cycle || null, entry: entry || null, weekRecord: weekRecord || null, teamAccess: teamAccess || null, invalid }
 }
@@ -173,8 +188,8 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
 export function buildWeeklyPreparation(workspace, { seasonId, userId, readOnly = true, now = Date.now() } = {}) {
   if (!isWeeklyPreparationWorkspace(workspace, seasonId, userId)) return { plans: [], tasks: [] }
   const plans = workspace.cycles.flatMap(cycle => (cycle.entries || []).flatMap(entry => {
-    const records = orderWeeklyRecords(entry.weeks, now)
-    return (records.length ? records : [null]).map(record => prepareEntry(workspace, cycle, entry, record, { readOnly, now }))
+    const records = orderWeeklyRecords((entry.weeks || []).filter(record => !isWeeklyRecordBeforeEnrollment(entry, record)), now)
+    return (records.length ? records : entry.weeks?.length ? [] : [null]).map(record => prepareEntry(workspace, cycle, entry, record, { readOnly, now }))
   })).sort((a, b) => Number(a.terminal) - Number(b.terminal) || Number(!a.next) - Number(!b.next)
     || weekRank(a.week, now) - weekRank(b.week, now))
   const seen = new Set()

@@ -21,7 +21,7 @@ export function withParticipationActionContext(actionUrl, currentSearch) {
   return `${target.pathname}${target.search}${target.hash}`
 }
 
-export function buildParticipationJourneys(plans = [], workspace, { seasonId, readOnly = true } = {}) {
+export function buildParticipationJourneys(plans = [], workspace, { seasonId, readOnly = true, now = Date.now() } = {}) {
   const preparation = plans.map(plan => {
     const optedOut = plan.stages.some(stage => stage.key === 'participation' && stage.state === 'quiet')
     const category = plan.terminal || optedOut ? 'history' : plan.next ? 'action' : plan.stages.some(stage => stage.state === 'blocked') ? 'blocked' : plan.readyForSchedule ? 'active' : 'waiting'
@@ -38,14 +38,14 @@ export function buildParticipationJourneys(plans = [], workspace, { seasonId, re
   const roomReadOnly = readOnly || workspace?.accessMode !== 'WRITE' || workspace?.featureAccess !== 'WRITE' || workspace?.season?.status === 'ARCHIVED'
   const rooms = workspace?.season?.id === seasonId ? (workspace.rooms || []).flatMap(room => (room.myTeams || []).map(team => {
     const ownRoom = { ...room, myTeams: [team] }
-    const journey = buildWeeklyRoomJourney(ownRoom, { readOnly: roomReadOnly })
+    const journey = buildWeeklyRoomJourney(ownRoom, { readOnly: roomReadOnly, now })
     const actionable = team.confirmation?.status === 'PENDING' && weeklyResponseAccess(ownRoom, team, { readOnly: roomReadOnly }).allowed
-    const category = journey.terminal ? 'history' : actionable ? 'action' : ['DISPUTED', 'STALE'].includes(room.confirmationState) ? 'blocked' : journey.phase === 'live' || journey.preMatch && room.scheduledAt ? 'active' : 'waiting'
+    const category = journey.terminal ? 'history' : actionable ? 'action' : journey.responseOverdue || ['DISPUTED', 'STALE'].includes(room.confirmationState) ? 'blocked' : journey.phase === 'live' || journey.preMatch && room.scheduledAt ? 'active' : 'waiting'
     return {
       id: `match:${room.id}:${team.team.id}`, category, title: `${weeklyTeamName(room.teamA)} vs ${weeklyTeamName(room.teamB)}`,
       scope: [weeklyTeamName(team.team), room.cycle?.name, room.displayName || room.week?.label].filter(Boolean).join(' · '),
-      summary: actionable && room.confirmationState === 'DISPUTED' ? '本队待响应 · 已有争议' : journey.state.label,
-      detail: actionable && room.confirmationState === 'DISPUTED' ? '本场已有争议，本队仍需核对当前赛果并提交响应。争议由周赛管理员处理，队伍响应不会直接结算。' : journey.state.detail,
+      summary: actionable && room.confirmationState === 'DISPUTED' && !journey.responseOverdue ? '本队待响应 · 已有争议' : journey.state.label,
+      detail: actionable && room.confirmationState === 'DISPUTED' && !journey.responseOverdue ? '本场已有争议，本队仍需核对当前赛果并提交响应。争议由周赛管理员处理，队伍响应不会直接结算。' : journey.state.detail,
       owner: category === 'history' ? '结果与响应可回看' : actionable ? '由你代表本队处理' : category === 'blocked' ? '等待周赛管理员处理' : journey.preMatch ? '按赛程安排参赛' : '等待赛果流程继续',
       actionUrl: `/me?section=matches&weeklyMatch=${encodeURIComponent(room.id)}`,
       actionLabel: actionable ? '核对本场赛果' : category === 'history' ? '查看赛果记录' : '查看比赛进度',
