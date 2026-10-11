@@ -2,7 +2,7 @@ import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useMemo, useRef } from 'react'
 import HeroArtwork from '../../components/media/HeroArtwork.jsx'
 import MissingHeroPortrait from '../../components/media/MissingHeroPortrait.jsx'
-import { getRosterRoleLabel } from '../../lib/rosterSelectors.js'
+import { getRosterRoleLabel, getRosterRegistrationRole } from '../../lib/rosterSelectors.js'
 import { getDossierPlayerHero, getDossierPlayerKey, getDossierPlayerName } from './teamDossierScenes.js'
 import { getMemberConnections } from './teamDossierResearch.js'
 import { ArchiveCrest } from './TeamArchiveNavigation.jsx'
@@ -79,13 +79,13 @@ export default function TeamExhibitionPoster({
             </div>
             <div className={styles.resultSlip}><span>{advanceState.heading}</span><strong>{advanceState.label}</strong><i aria-hidden="true">↗</i></div>
           </div>
-          <div className={styles.objectAnnotation}><span aria-hidden="true">└</span><p>{en ? 'Their badge. Their season.' : uiText("队徽之下，是一起走过的赛季。", locale)}<small>{dates.length ? dates.join(' — ') : en ? 'Registered roster' : uiText("注册名单已留档", locale)}</small></p></div>
+          <div className={styles.objectAnnotation}><span aria-hidden="true">└</span><p>{en ? 'Roster and match records.' : uiText("本届参赛名单与比赛记录。", locale)}<small>{dates.length ? dates.join(' — ') : en ? 'Registered roster' : uiText("注册名单已留档", locale)}</small></p></div>
         </div>
         <div className={styles.arrivalFoot}>
-          <span><b>{String(roster.length).padStart(2, '0')}</b>{en ? 'names on the roster' : uiText("个名字，共同署名", locale)}</span>
+          <span><b>{String(roster.length).padStart(2, '0')}</b>{en ? 'names on the roster' : uiText("位参赛选手", locale)}</span>
           <div className={styles.mobileResult}><span>{advanceState.heading}</span><strong>{advanceState.label}</strong></div>
-          <p>{en ? 'Players, coaches and the people behind the team.' : uiText("队员、教练与经理，共同留下这一季。", locale)}</p>
-          <button type="button" onClick={() => moveTo(1)}>{en ? 'UNFOLD THE ROSTER' : uiText("向下，展开人物", locale)} <span aria-hidden="true">↓</span></button>
+          <p>{en ? 'Explore the players, managers and coaches.' : uiText("查看选手、经理与教练资料。", locale)}</p>
+          <button type="button" onClick={() => moveTo(1)}>{en ? 'VIEW PLAYERS' : uiText("查看选手", locale)} <span aria-hidden="true">↓</span></button>
         </div>
       </div>
 
@@ -93,29 +93,29 @@ export default function TeamExhibitionPoster({
         <div className={styles.peopleIntro}>
           <p className={styles.eyebrow}>THE PEOPLE / {String(roster.length).padStart(2, '0')}</p>
           <h2 ref={peopleRef} tabIndex={-1}>{en ? <>Together.<br />{' '}On the map.</> : <>{uiText("一起。", locale)}<br />{uiText("上场。", locale)}</>}</h2>
-          <p className={styles.chooseHint}>{en ? 'Choose a name to change the scene.' : uiText("选择一个名字，展开他的这一季。", locale)}</p>
+          <p className={styles.chooseHint}>{en ? 'Select a player to view their hero and appearance records.' : uiText("选择选手，查看英雄形象与出场记录。", locale)}</p>
           <div ref={memberIndexRef} className={styles.memberIndex} role="group" aria-label={en ? 'Exhibition members' : uiText("展厅人物选择", locale)}>
             {roster.map((player, index) => {
               const key = getDossierPlayerKey(player)
-              return <button type="button" key={key} onClick={() => onSelect(key)} aria-pressed={id === key} aria-controls="exhibition-member"><small>{String(index + 1).padStart(2, '0')}</small><b>{getDossierPlayerName(player)}</b><span>{getRosterRoleLabel(player.role, locale)}</span><i aria-hidden="true">{id === key ? '●' : '+'}</i></button>
+              return <button type="button" key={key} onClick={() => onSelect(key)} aria-pressed={id === key} aria-controls="exhibition-member"><small>{String(index + 1).padStart(2, '0')}</small><b>{getDossierPlayerName(player)}</b><span>{getRosterRoleLabel(player.registrationRole || getRosterRegistrationRole(player.role), locale)}</span><i aria-hidden="true">{id === key ? '●' : '+'}</i></button>
             })}
           </div>
         </div>
         <div className={styles.posterArrangement}>
           <span className={styles.peopleBackprint} aria-hidden="true">{team.shortName}</span>
-          {supporting.map((player, index) => <div key={getDossierPlayerKey(player)} className={styles.companionPoster} data-side={index} aria-hidden="true"><span>{getDossierPlayerName(player)}</span><Portrait player={player} member={memberById.get(getDossierPlayerKey(player))} locale={locale} /><small>{getRosterRoleLabel(player.role, locale)}</small></div>)}
+          {supporting.map((player, index) => <div key={getDossierPlayerKey(player)} className={styles.companionPoster} data-side={index} aria-hidden="true"><span>{getDossierPlayerName(player)}</span><Portrait player={player} member={memberById.get(getDossierPlayerKey(player))} locale={locale} /><small>{getRosterRoleLabel(player.registrationRole || getRosterRegistrationRole(player.role), locale)}</small></div>)}
           <div className={styles.memberPoster} id="exhibition-member" data-empty={!member?.maps || undefined}>
-            <div className={styles.memberPosterTop}><span>{getRosterRoleLabel(selected?.role, locale) || (en ? 'ROSTER' : uiText("注册名单", locale))}</span><b>{seasonId} / {ordinal}</b></div>
+            <div className={styles.memberPosterTop}><span>{getRosterRoleLabel(selected?.registrationRole || getRosterRegistrationRole(selected?.role), locale) || (en ? 'ROSTER' : uiText("注册名单", locale))}</span><b>{seasonId} / {ordinal}</b></div>
             <div className={styles.memberPortrait} key={id}><Portrait player={selected} member={member} locale={locale} priority /><span className={styles.posterPrint} aria-hidden="true">{team.shortName}</span></div>
             <div className={styles.memberPosterName}><h3>{selected ? getDossierPlayerName(selected) : en ? 'To be announced' : uiText("等待名单", locale)}</h3><span>{member?.maps ? (en ? member.maps + ' maps · ' + member.series + ' series' : uiText("{0} 图出场 · {1} 场比赛", locale, [member.maps, member.series])) : en ? 'No published appearances' : uiText("尚无已发布的出场记录", locale)}</span></div>
             <button type="button" className={styles.openMember} onClick={() => onOpenMember(id)} disabled={!selected} aria-haspopup="dialog">{en ? 'Explore player records' : uiText("查看这位成员的记录", locale)}<span aria-hidden="true">↗</span></button>
           </div>
           <aside className={styles.connections}>
             <span className={styles.connectionTitle}>{en ? 'ON THE SAME MAP' : uiText("并肩出场", locale)}</span>
-            {connections.length ? <><p>{en ? 'Shared map records' : uiText("与这些队友同场", locale)}<span aria-hidden="true">↙</span></p><ul>{connections.map(connection => <li key={connection.playerId}><b>{getDossierPlayerName(roster.find(player => getDossierPlayerKey(player) === connection.playerId))}</b><span>{connection.maps}<small>{en ? 'maps' : uiText("图", locale)}</small></span></li>)}</ul></> : <p>{en ? 'Shared appearances will be shown when records are published.' : uiText("共同出场关系，将随比赛记录一同留下。", locale)}</p>}
+            {connections.length ? <><p>{en ? 'Shared map records' : uiText("与这些队友同场", locale)}<span aria-hidden="true">↙</span></p><ul>{connections.map(connection => <li key={connection.playerId}><b>{getDossierPlayerName(roster.find(player => getDossierPlayerKey(player) === connection.playerId))}</b><span>{connection.maps}<small>{en ? 'maps' : uiText("图", locale)}</small></span></li>)}</ul></> : <p>{en ? 'No shared appearances recorded yet.' : uiText("暂无共同出场记录。", locale)}</p>}
           </aside>
         </div>
-        <div className={styles.peopleFoot}><p>{cohort ? (en ? 'Team record — most recorded five-player group: ' + cohort.records.length + ' maps together.' : uiText("全队记录：共同出场最多的五人组合，留下 {0} 图记录。", locale, [cohort.records.length])) : (en ? appeared + ' members have recorded appearances.' : uiText("{0} 位成员留下了出场记录。", locale, [appeared]))}<small>{en ? 'Hero art represents the player; it is not a player photograph or an official starting lineup.' : uiText("英雄为成员代表形象；出场记录不代表官方首发。", locale)}</small></p><button type="button" onClick={onCredits}>{en ? 'Behind the team' : uiText("看看幕后署名", locale)} <span aria-hidden="true">↓</span></button></div>
+        <div className={styles.peopleFoot}><p>{cohort ? (en ? 'Team record — most recorded five-player group: ' + cohort.records.length + ' maps together.' : uiText("全队记录：共同出场最多的五人组合，留下 {0} 图记录。", locale, [cohort.records.length])) : (en ? appeared + ' members have recorded appearances.' : uiText("{0} 位成员留下了出场记录。", locale, [appeared]))}<small>{en ? 'Hero art represents the player; it is not a player photograph or an official starting lineup.' : uiText("英雄为成员代表形象；出场记录不代表官方首发。", locale)}</small></p><button type="button" onClick={onCredits}>{en ? 'Managers and coaches' : uiText("经理与教练", locale)} <span aria-hidden="true">↓</span></button></div>
       </div>
       <nav className={styles.sceneSteps} aria-label={en ? 'Exhibition scenes' : uiText("展厅场景", locale)}><button type="button" onClick={() => moveTo(0)} aria-current={chapter === 0 ? 'step' : undefined}><i />01 {en ? 'Identity' : uiText("队伍身份", locale)}</button><button type="button" onClick={() => moveTo(1)} aria-current={chapter === 1 ? 'step' : undefined}><i />02 {en ? 'People' : uiText("人物群像", locale)}</button></nav>
     </div>

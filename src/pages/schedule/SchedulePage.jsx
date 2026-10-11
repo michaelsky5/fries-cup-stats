@@ -4,6 +4,7 @@ import { getSeasonRules } from '../../config/seasons.js'
 import { formatMatchSchedule, getPublicStatusLabel } from '../../lib/scheduleFormat.js'
 import { calculateSwissStandings } from '../../lib/swissEngine.js'
 import { safeArr } from '../../lib/selectors.js'
+import { getPublicMatchCode } from '../../lib/publicMatchCode.js'
 import styles from './SchedulePage.module.css'
 
 const SHANGHAI_TZ = 'Asia/Shanghai'
@@ -271,7 +272,7 @@ function OverviewScheduleRow({ match, locale, t, withSeason }) {
       </div>
 
       <div className={styles.scheduleRowFoot}>
-        <span>{match?.match_id || match?.raw_match_id || '--'}</span>
+        <span>{getPublicMatchCode(match) || '--'}</span>
         <Link to={getDetailLink(match, withSeason)} className={styles.detailLink}>
           {t('schedule.viewDetails', 'Details')}
         </Link>

@@ -81,5 +81,5 @@ test('weekly team standing comes from the published cycle, never Swiss calculati
   db.weekly_competition.cycles[1].counts_toward_standings = true
   db.weekly_competition.cycles[1].standings = []
   assert.equal(present().rank, null)
-  assert.equal(present().label, '积分待公布')
+  assert.equal(present().label, '排名待公布')
 })

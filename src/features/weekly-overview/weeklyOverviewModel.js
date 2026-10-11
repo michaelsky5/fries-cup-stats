@@ -55,10 +55,11 @@ export function buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch
   const cycle = cycles.find(item => text(item.id) === text(cycleId))
     || newest.find(item => ['ACTIVE', 'PLAYOFFS'].includes(upper(item.status))) || newest[0] || null
   const weeks = list(cycle?.weeks).filter(week => PUBLIC_WEEKS.has(upper(week.status))).sort((a, b) => weekNumber(a) - weekNumber(b))
+  const newestWeeks = [...weeks].reverse()
   const week = weeks.find(item => text(item.id) === text(weekId))
-    || weeks.find(item => upper(item.status) === 'IN_PROGRESS')
-    || weeks.find(item => upper(item.status) === 'RESULT_REVIEW')
-    || weeks.find(item => upper(item.status) === 'PUBLISHED') || weeks.at(-1) || null
+    || newestWeeks.find(item => upper(item.status) === 'IN_PROGRESS')
+    || newestWeeks.find(item => upper(item.status) === 'RESULT_REVIEW')
+    || newestWeeks.find(item => upper(item.status) === 'PUBLISHED') || newestWeeks[0] || null
   const teams = new Map(list(db?.teams).map(team => [teamId(team), team]))
   const publicMatches = new Map()
   list(db?.matches).forEach(match => {

@@ -20,14 +20,14 @@ export function getTeamSeasonPresentation({ db, season, team, standing, groupCom
     const rank = !isPilot && Number.isInteger(value) && value > 0 ? value : null
     return {
       isArchived: false,
-      heading: pickUiLocale(locale, '周期积分', 'Cycle standings', '주기 순위', '週期積分'),
+      heading: pickUiLocale(locale, '周期排名', 'Cycle ranking', '주기 순위', '週期排名'),
       code: 'CYCLE STANDINGS',
       rank,
       label: isPilot ? pickUiLocale(locale, '不计积分', 'Unranked', '순위 미반영', '不計積分')
         : rank ? (published.tied
           ? pickUiLocale(locale, `并列第 ${rank} 名`, `Tied #${rank}`, `공동 ${rank}위`, `並列第 ${rank} 名`)
           : pickUiLocale(locale, `第 ${rank} 名`, `#${rank}`, `${rank}위`, `第 ${rank} 名`))
-          : pickUiLocale(locale, '积分待公布', 'Standings pending', '순위 발표 대기', '積分待公布'),
+          : pickUiLocale(locale, '排名待公布', 'Ranking pending', '순위 발표 대기', '排名待公布'),
       zone: cycle?.name || cycle?.code || pickUiLocale(locale, '周期待公布', 'Cycle pending', '주기 발표 대기', '週期待公布'),
       tone: 'pending'
     }

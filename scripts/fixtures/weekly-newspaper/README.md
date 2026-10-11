@@ -1,0 +1,3 @@
+# Weekly newspaper regression data
+
+This fixture comes from the already-published FCW26 public snapshot used during the newspaper preview (data timestamp: 2026-10-05 21:01 UTC+8). Account identifiers, emails, BattleTags and staff account applications were removed. It is test data, not a runtime publication or a historical newspaper archive. The first three weeks exercise independent generation, five-role awards, map scores, hero appearances and the fixed top-three Ban list. Backfill tests record an actual test publication time instead of assigning this October snapshot to an earlier September cutoff.

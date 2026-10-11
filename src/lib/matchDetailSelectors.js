@@ -18,6 +18,7 @@ import { getRoleEnLabel, getRoleLabel, normalizeLeaderboardRole } from './leader
 import { getPlayerDirectory, getPlayerDisplayIdentity, normalizeRosterRole } from './rosterSelectors.js'
 import { formatOwHeroName, formatOwMapMode, formatOwMapName } from './heroes.js'
 import { resolvePublicMatchIdentity } from './publicMatchIdentity.js'
+import { getPublicMatchCode } from './publicMatchCode.js'
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED'])
 const LIVE_STATUSES = new Set(['IN_PROGRESS', 'LIVE'])
@@ -644,6 +645,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     mapCountLabel,
     totalDurationLabel,
     internalId: cleanText(match?.match_id || match?.raw_match_id),
+    displayCode: getPublicMatchCode(match),
     roomPath: state.isWeekly
       ? match?.raw_match_id ? `/me/matches/${encodeURIComponent(match.raw_match_id)}/room` : '/me?section=matches'
       : null,

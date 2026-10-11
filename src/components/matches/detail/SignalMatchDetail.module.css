@@ -59,6 +59,8 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
 .heroFooter { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 28px; padding: 10px 0; border-top: 1px solid var(--fc-data-line-on-dark); }
 .heroFooter > span { display: flex; gap: 12px; align-items: baseline; font-size: 12px; color: var(--fc-data-text-on-dark); }
 .heroFooter strong { color: var(--fc-data-paper); font-weight: 600; }
+.matchIdentifier { display:flex; justify-content:center; flex-wrap:wrap; gap:6px 12px; margin:0; padding:2px 0 10px; color:var(--fc-data-text-on-dark); font-size:11px; line-height:1.5; }
+.matchIdentifier > span { color:var(--fc-data-paper); overflow-wrap:anywhere; }
 .progress { display: grid; grid-template-columns: 88px minmax(0, 1fr); align-items: center; gap: 16px; padding: 10px 0; border-top: 1px solid var(--fc-data-line-on-dark); }
 .progressHeading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 9px; font-size: 12px; }
 .progressHeading > strong { font-weight: 600; }
@@ -163,8 +165,7 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
 .rosters > div { padding: 16px; background: var(--fc-data-paper-raised); border: 1px solid var(--fc-data-line); }
 .rosters > div > strong { display: block; font-size: 22px; margin-bottom: 10px; }
 .rosters > div > div { display: flex; justify-content: space-between; gap: 15px; padding: 10px 0; border-top: 1px solid var(--fc-data-line); }
-.rosters > div > div > a, .rosters > div > div > span { min-width: 0; overflow-wrap: anywhere; }
-.rosters small { flex-shrink: 0; color: var(--fc-data-text-muted); font-size: 12px; }
+.rosters small { color: var(--fc-data-text-muted); font-size: 12px; }
 .rosters a:hover { text-decoration: underline; }
 .footerNav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--fc-data-line-strong); margin-top: 10px; }
 .footerNav > a { display: grid; gap: 12px; padding: 24px 0; }

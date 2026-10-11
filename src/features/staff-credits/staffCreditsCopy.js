@@ -2,6 +2,7 @@ import { pickUiLocale, translateUiText as formatUiText } from '../../lib/uiText.
 import { rosterText } from '../roster-index/rosterCopy.js'
 
 const labels = {
+  '周赛': 'Weekly matches',
   '经理': 'Manager',
   '教练': 'Coach',
   '队伍': 'Team',
@@ -20,6 +21,7 @@ export function staffRoleLabel(staff, locale) {
   if (staff.team) return formatUiText(staff.roles.map(role => staffCreditsText(role === 'coach' ? '教练' : '经理', locale)).join(' / '), locale)
   if (staff.role === 'admin' && staff.duties?.length) {
     const labels = {
+  '周赛': 'Weekly matches',
       REFEREE: pickUiLocale(locale, '裁判', 'Referee', '심판', '裁判'),
       VOICE_REFEREE: pickUiLocale(locale, '语音裁判', 'Voice referee', '음성 심판', '語音裁判'),
       DIRECTOR: pickUiLocale(locale, '导播', 'Director', '방송 연출', '導播'),

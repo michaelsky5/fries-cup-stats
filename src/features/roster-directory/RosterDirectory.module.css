@@ -25,7 +25,7 @@
 .roleTabs { display: flex; flex-wrap: wrap; gap: 2px; padding: 8px 0; }
 .roleTabs button { min-height: 32px; padding: 6px 11px; border: 0; background: transparent; color: var(--fc-data-text-muted); font: 12px var(--fc-data-font-interface); cursor: pointer; }
 .roleTabs button[aria-pressed="true"] { color: var(--fc-data-ink); background: var(--fc-data-signal); font-weight: 800; }
-.roleTabs button > span { margin-left: 5px; font-size: 10px; opacity: .75; }
+.roleTabs button > span { margin-left: 6px; font-size: 12px; font-variant-numeric: tabular-nums; opacity: .75; }
 .search { position: relative; display: block; }
 .search > span:first-child { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .search input { display: block; width: 100%; min-width: 0; height: 42px; padding: 8px 34px 8px 10px; border: 1px solid var(--fc-data-line-strong); border-radius: 0; background: transparent; color: var(--fc-data-ink); font: 13px var(--fc-data-font-interface); }

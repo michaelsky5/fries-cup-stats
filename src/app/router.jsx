@@ -137,6 +137,9 @@ const router = createBrowserRouter([
     lazy: lazyDefault(() => import('../layouts/DataLayout.jsx')),
     children: [
       { index: true, lazy: lazyDefault(() => import('../pages/home/HomePage.jsx')) },
+      { path: 'reports', lazy: lazyDefault(() => import('../features/weekly-report/WeeklyReportPage.jsx')) },
+      { path: 'reports/workbench', lazy: lazyDefault(() => import('../features/weekly-report/WeeklyReportWorkbench.jsx')) },
+      { path: 'reports/:weekId', lazy: lazyDefault(() => import('../features/weekly-report/WeeklyReportPage.jsx')) },
 
       { path: 'schedule', element: <ScheduleRedirect /> },
       { path: 'matches', lazy: lazyDefault(() => import('../pages/matches/MatchesPage.jsx')) },

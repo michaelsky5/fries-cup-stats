@@ -1,6 +1,7 @@
 @import './styles/tokens.css';
 @import './styles/globals.css';
 @import './styles/fries-cup-data-system.css';
+@import './styles/original-upgrade.css';
 
 :root:lang(zh-TW) {
   --font-sans: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', 'FCAHarmonySC', sans-serif;

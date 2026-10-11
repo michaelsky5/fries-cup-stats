@@ -1,9 +1,11 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
-import { useEffect, useMemo } from 'react'
+import { eventCenterText } from '../../lib/eventCenterCopy.js'
+import { useEffect, useId, useMemo } from 'react'
 import { Link, useLocation, useNavigationType, useOutletContext, useSearchParams } from 'react-router-dom'
 import ImeSafeInput from '../../components/common/ImeSafeInput.jsx'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import { formatOwMapName } from '../../lib/heroes.js'
+import { getMapImage } from '../../lib/reviewAssets.js'
 import { getMatchFormatLabel } from '../../lib/matchFormat.js'
 import { formatMatchSchedule, getMatchScheduleValue } from '../../lib/scheduleFormat.js'
 import { getLocationPath, getRestoreScrollY, getReturnState, getSavedReturnScroll, restoreWindowScroll, saveReturnScroll } from '../../lib/navigationState.js'
@@ -19,7 +21,8 @@ const statusNames = {
 }
 const idOf = team => String(team?.id || team?.team_id || '')
 
-function WeeklyMatchRow({ match, locale, seasonId, withSeason, returnProps }) {
+function WeeklyMatchRow({ match, locale, seasonId, withSeason, returnProps, mapsExpanded, onToggleMaps }) {
+  const mapPanelId = useId()
   const en = String(locale).startsWith('en')
   const t = (zh, english) => en ? english : zh
   const schedule = formatMatchSchedule(match, { locale })
@@ -36,7 +39,7 @@ function WeeklyMatchRow({ match, locale, seasonId, withSeason, returnProps }) {
       : match.state === 'cancelled' ? t('本场已取消', 'This match is cancelled')
         : match.state === 'ruling' ? t('按赛事判定', 'Event ruling applies')
           : match.state === 'live' ? t('比赛仍在继续', 'Still in play') : ''
-  return <article className={styles.matchRow} data-state={match.state} data-weekly-match={match.id}>
+  return <article className={styles.matchRow} data-state={match.state} data-weekly-match={match.id} data-expanded={mapsExpanded || undefined}>
     <Link className={styles.matchMain} to={withSeason(path)} {...returnProps} aria-label={`${weeklyTeamShort(match.team_a)} ${score} ${weeklyTeamShort(match.team_b)} · ${weeklyStatusLabel(match.state, locale)} · ${t('比赛详情', 'Match details')}`}>
       <span className={styles.time}>
         <span className={styles.state} data-state={match.state}><i aria-hidden="true" />{weeklyStatusLabel(match.state, locale)}</span>
@@ -48,16 +51,21 @@ function WeeklyMatchRow({ match, locale, seasonId, withSeason, returnProps }) {
         <span className={styles.score}><strong>{score}</strong><small>{note || (match.state === 'complete' ? t(uiText("最终比分", locale), 'Final score') : getMatchFormatLabel(match))}</small></span>
         <span className={`${styles.team} ${styles.teamB}`}><TeamLogo team={match.team_b} seasonId={seasonId} className={styles.logo} /><span><b>{weeklyTeamShort(match.team_b)}</b><small>{match.team_b?.name || match.team_b?.team_name}</small></span></span>
       </span>
-      <span className={styles.arrow} aria-hidden="true">↗</span>
+      <span className={styles.arrow} aria-hidden="true">{eventCenterText('matchDetails', locale)} <i>↗</i></span>
     </Link>
-    <div className={styles.mapProgress}>
-      <div className={styles.mapHeading}><span>{t(uiText("地图记录", locale), 'Map records')}</span><b>{recorded}<i> / {maps.length || '—'}</i></b></div>
-      <ol className={styles.mapCells} aria-label={t(uiText("各局结果", locale), 'Map results')}>
+    <button type="button" className={styles.mapToggle} aria-expanded={mapsExpanded} aria-controls={mapPanelId} onClick={onToggleMaps} aria-label={`${eventCenterText(mapsExpanded ? 'collapseMatchMaps' : 'expandMatchMaps', locale)} · ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`}>
+      <span>{eventCenterText(mapsExpanded ? 'collapseMatchMaps' : 'expandMatchMaps', locale)}</span><i aria-hidden="true">{mapsExpanded ? '−' : '+'}</i>
+    </button>
+    <div id={mapPanelId} className={styles.mapProgress} hidden={!mapsExpanded}>
+      <div className={styles.mapHeading}><span>{eventCenterText('mapResults', locale)}</span><b>{recorded}<i> / {maps.length || '—'}</i></b></div>
+      <ol className={styles.mapCells} aria-label={eventCenterText('mapResults', locale)}>
         {maps.map(({ order, map, state }) => {
-          const result = state === 'ruling' ? t('判定', 'Ruling') : state === 'live' ? t('进行中', 'In play')
-            : state === 'recorded' ? map.winner === idOf(match.team_a) ? weeklyTeamShort(match.team_a) : map.winner === idOf(match.team_b) ? weeklyTeamShort(match.team_b) : t('已记录', 'Recorded') : '—'
-          const label = `${t(`第 ${order} 局`, `Map ${order}`)} · ${formatOwMapName(map?.map_name, locale) || t('地图待公布', 'Map TBA')} · ${result}`
-          const content = <><span>{String(order).padStart(2, '0')}</span><b>{result}</b></>
+          const winner = map?.winner === idOf(match.team_a) ? weeklyTeamShort(match.team_a) : map?.winner === idOf(match.team_b) ? weeklyTeamShort(match.team_b) : ''
+          const result = state === 'ruling' ? t(uiText('判定', locale), 'Ruling') : state === 'live' ? t(uiText('进行中', locale), 'In play')
+            : state === 'recorded' ? winner ? `${winner} · ${t(uiText('胜', locale), 'wins')}` : t(uiText('已记录', locale), 'Recorded') : eventCenterText('mapPending', locale)
+          const mapName = formatOwMapName(map?.map_name, locale) || eventCenterText('mapTba', locale)
+          const label = `${String(order).padStart(2, '0')} · ${mapName} · ${result}`
+          const content = <><span className={styles.mapArt}>{map && <img src={getMapImage(map.map_type, map.map_name)} alt="" loading="lazy" />}<span>{String(order).padStart(2, '0')}</span></span><span className={styles.mapCopy}><b>{mapName}</b><small>{result}</small></span></>
           return <li key={order} data-map-state={state}>{map ? <Link to={withSeason(`${path}?map=${order}`)} {...returnProps} aria-label={label} title={label}>{content}</Link> : <span aria-label={label} title={label}>{content}</span>}</li>
         })}
       </ol>
@@ -75,6 +83,7 @@ export default function SignalWeeklySchedule() {
   const t = (zh, english) => en ? english : zh
   const query = params.get('query') || ''
   const teamId = params.get('teamId') || ''
+  const expandedMatchId = params.get('expanded') || ''
   const followedOnly = params.get('followed') === '1'
   const followedKey = (db?.teams || []).filter(team => isFavoriteTeam?.(idOf(team))).map(idOf).join('|')
   const model = useMemo(() => buildWeeklySchedule(db, {
@@ -107,13 +116,13 @@ export default function SignalWeeklySchedule() {
 
   return <div className={styles.page} data-weekly-schedule="true">
     <header className={styles.heading}>
-      <div><p className={styles.eyebrow}>FRIES CUP / WEEKLY MATCHES</p><h1>{t(uiText("每一周，都有下一场。", locale), 'A new matchup. Every week.')}</h1><p>{t(uiText("找到想看的对阵，接着看完五局。", locale), 'Find your matchup. Follow all five maps.')}</p></div>
+      <div><p className={styles.eyebrow}>FRIES CUP / WEEKLY MATCHES</p><h1>{t(uiText("赛程赛果", locale), 'Schedule & results')}</h1><p>{eventCenterText('matchesIntro', locale)}</p></div>
       <div className={styles.headingActions}>
-        <WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, match: null, teamId: null })} />
-        <Link to={overviewPath} className={styles.overviewLink}>{t(uiText("周赛总览", locale), 'Weekly overview')} <span aria-hidden="true">↗</span><small>{t(uiText("赛况与周期积分", locale), 'Matches & cycle points')}</small></Link>
+        <WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, match: null, teamId: null, expanded: null })} />
+        <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">↗</span><small>{t(uiText("赛况与周期积分", locale), 'Matches & cycle points')}</small></Link>
       </div>
     </header>
-    <WeeklyWeekRail weeks={weeks} selectedId={selectedWeekId} locale={locale} includeAll onChange={id => change({ week: id })} />
+    <WeeklyWeekRail weeks={weeks} selectedId={selectedWeekId} locale={locale} includeAll onChange={id => change({ week: id, expanded: null })} />
     <div className={styles.filters}>
       <label className={styles.search}><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg><ImeSafeInput type="search" value={query} onValueChange={value => change({ query: value })} placeholder={t(uiText("搜索队伍名称或简称…", locale), 'Search team names or abbreviations…')} aria-label={t(uiText("搜索周赛队伍", locale), 'Search weekly teams')} /></label>
       <label className={styles.teamFilter}><span>{t(uiText("队伍", locale), 'Team')}</span><select value={teamId} onChange={event => change({ teamId: event.target.value })} aria-label={t(uiText("筛选队伍", locale), 'Filter team')}>
@@ -130,18 +139,18 @@ export default function SignalWeeklySchedule() {
     </div>
     <div className={styles.listHeading}>
       <h2>{selectedWeekId === 'all' ? weeklyCycleTitle(cycle, locale) : week ? weeklyWeekTitle(week, locale) : t(uiText("周赛赛程", locale), 'Weekly schedule')}<span aria-live="polite">{t(uiText("{0} 场对阵", locale, [model.resultCount]), `${model.resultCount} matches`)}</span></h2>
-      <p>{t(uiText("RR5 · 固定五图，可按规则提前结束", locale), 'RR5 · Five maps; early finish allowed under the rules')}</p>
+      <p>{t(uiText("RR5 · 固定五图，可按规则提前结束", locale), 'RR5 · Five maps, subject to event rules')}</p>
     </div>
     {entries.length ? <div className={styles.groups}>{entries.map(entry => <section key={entry.week.id} aria-label={weeklyWeekTitle(entry.week, locale)}>
       {selectedWeekId === 'all' && <h3 className={styles.weekHeading}><span>{weeklyWeekTitle(entry.week, locale)}</span><small>{weeklyStatusLabel(entry.week.status, locale)}</small></h3>}
       {entry.days.map(group => <section className={styles.dayGroup} key={group.day} aria-label={dayLabel(group.day)}>
         <div className={styles.dayHeading}><h3>{dayLabel(group.day)}</h3><span>{t(uiText("{0} 场", locale, [group.matches.length]), `${group.matches.length} matches`)}</span></div>
-        <div>{group.matches.map(match => <WeeklyMatchRow key={match.id} match={match} locale={locale} seasonId={seasonId} withSeason={withSeason} returnProps={returnProps} />)}</div>
+        <div>{group.matches.map(match => <WeeklyMatchRow key={match.id} match={match} locale={locale} seasonId={seasonId} withSeason={withSeason} returnProps={returnProps} mapsExpanded={expandedMatchId === match.id} onToggleMaps={() => change({ expanded: expandedMatchId === match.id ? null : match.id })} />)}</div>
       </section>)}
     </section>)}</div> : <section className={styles.empty}>
       <span>WEEKLY / MATCHES</span>
-      <h3>{!model.total ? t(uiText("对阵公布后，在这里见。", locale), 'Fixtures will appear here.') : followedOnly && !followedKey ? t(uiText("先选一支想看的队伍。", locale), 'Start with a team to follow.') : t(uiText("没有符合条件的对阵。", locale), 'No matching fixtures.')}</h3>
-      <p>{!model.total ? t(uiText("当前周次尚无公开对阵，可切换其他已发布周次。", locale), 'There are no public fixtures in this selection. Try another published week.') : followedOnly && !followedKey ? t(uiText("在周赛总览关注队伍，再回来查看他们的赛程。", locale), 'Follow teams in the weekly overview to see their fixtures here.') : t(uiText("试试其他队伍或比赛状态，也可以重置筛选。", locale), 'Try another team or match status, or reset your filters.')}</p>
+      <h3>{!model.total ? t(uiText("赛程尚未公布", locale), 'Schedule not yet published') : followedOnly && !followedKey ? t(uiText("尚未关注队伍", locale), 'No followed teams') : eventCenterText('fixturesEmpty', locale)}</h3>
+      <p>{!model.total ? t(uiText("当前周次尚无公开对阵，可切换其他已发布周次。", locale), 'There are no public fixtures in this selection. Try another published week.') : followedOnly && !followedKey ? t(uiText("在周赛总览关注队伍，再回来查看他们的赛程。", locale), 'Follow teams in the weekly overview to see their fixtures here.') : eventCenterText('fixturesEmptyIntro', locale)}</p>
       {followedOnly && !followedKey ? <Link to={`${overviewPath}#weekly-following`}>{t(uiText("去关注队伍", locale), 'Choose teams')} ↗</Link> : model.hasFilters && <button type="button" onClick={reset}>{t(uiText("重置筛选", locale), 'Reset filters')} ↺</button>}
     </section>}
     <footer className={styles.footer}><p>{t(uiText("比分与地图记录以公布内容为准；周期积分见总览。", locale), 'Scores and map records follow the published data. Cycle points are in the overview.')}</p><Link to={overviewPath}>{t(uiText("查看周期积分", locale), 'View cycle points')} ↗</Link></footer>

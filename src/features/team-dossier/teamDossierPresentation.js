@@ -1,4 +1,5 @@
 import { translateUiText as formatUiText } from '../../lib/uiText.js'
+import { weeklyWeekTitle } from '../weekly-overview/weeklyPresentation.js'
 import { isByeMatch, isFinishedMatch, isLiveMatch, getMatchTimeLabel } from '../../lib/matchesSelectors.js'
 import { formatOwMapName, formatOwMapMode, getOwMap, getOwMapImageName, getOwMapModeFolder } from '../../lib/heroes.js'
 
@@ -22,6 +23,10 @@ export function getDossierStageLabel(stage, locale = 'zh-CN') {
 
 export function getDossierRoundLabel(match, locale = 'zh-CN') {
   const raw = String(match?.round || '').trim()
+  if (String(match?.stage || '').toUpperCase() === 'WEEKLY') {
+    const week = /(?:第\s*(\d+)\s*[周週]|week\s+(\d+))/i.exec(raw)
+    if (week) return weeklyWeekTitle({ week_number: Number(week[1] || week[2]), label: raw }, locale)
+  }
   if (locale === 'en-US') return formatUiText(raw || getDossierStageLabel(match?.stage, locale), locale)
   const normalized = raw.toLowerCase()
   const bracket = raw.match(/^(UB|WB|LB)\s+(R\s*(\d+)|SF|QF|F)$/i)
