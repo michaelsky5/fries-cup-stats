@@ -19,9 +19,6 @@ export async function makeNewspaperPdf(PDFDocument, images, title) {
 
 export async function captureNewspaperSheet(sheet) {
   if (!sheet) throw new Error('版面尚未加载，请稍后重试。')
-  const footer = sheet.querySelector('[data-paper-folio]')
-  const body = sheet.querySelector('[data-paper-body]')
-  if (!footer || !body || body.scrollHeight > body.clientHeight+1 || sheet.scrollHeight > PAPER_SIZE.height+1 || footer.offsetTop+footer.offsetHeight > PAPER_SIZE.height) throw new Error('报纸版面超出页边界，请重试或反馈这一期。')
   await document.fonts.ready
   sheet.querySelectorAll('img').forEach(img=>{img.loading='eager'})
   await Promise.all([...sheet.querySelectorAll('img')].map(async img=>{
@@ -34,8 +31,25 @@ export async function captureNewspaperSheet(sheet) {
     if (!img.naturalWidth) throw new Error('版面图片加载失败，请重试。')
     if (img.decode) await img.decode()
   }))
+  // Validate the same printable layout as the publication inspector. Reading
+  // links occupy space on screen but are excluded from the exported edition.
+  const captureRoot=document.createElement('div')
+  captureRoot.setAttribute('aria-hidden','true');captureRoot.inert=true
+  Object.assign(captureRoot.style,{position:'fixed',left:'-10000px',top:'0',width:PAPER_SIZE.width+'px',pointerEvents:'none'})
+  const printable=sheet.cloneNode(true),computed=getComputedStyle(sheet)
+  printable.style.transform='none'
+  printable.style.setProperty('--paper-font',computed.fontFamily)
+  printable.style.fontVariantNumeric=computed.fontVariantNumeric
+  printable.removeAttribute('id')
+  printable.querySelectorAll('[id]').forEach(node=>node.removeAttribute('id'))
+  printable.querySelectorAll('[data-paper-web-only]').forEach(node=>node.remove())
+  captureRoot.append(printable);document.body.append(captureRoot)
+  try {
+  const footer = printable.querySelector('[data-paper-folio]')
+  const body = printable.querySelector('[data-paper-body]')
+  if (!footer || !body || body.scrollHeight > body.clientHeight+1 || printable.scrollHeight > PAPER_SIZE.height+1 || footer.offsetTop+footer.offsetHeight > PAPER_SIZE.height) throw new Error('报纸版面超出页边界，请重试或反馈这一期。')
   const {toCanvas} = await import('html-to-image')
-  const canvas=await toCanvas(sheet,{width:PAPER_SIZE.width,height:PAPER_SIZE.height,pixelRatio:2,backgroundColor:'#f5f1e8',preferredFontFormat:'woff2',filter:node=>!node.hasAttribute?.('data-paper-web-only'),style:{transform:'none',position:'relative',inset:'auto',left:'0',top:'0'}})
+  const canvas=await toCanvas(printable,{width:PAPER_SIZE.width,height:PAPER_SIZE.height,pixelRatio:2,backgroundColor:'#f5f1e8',preferredFontFormat:'woff2',style:{transform:'none',position:'relative',inset:'auto',left:'0',top:'0'}})
   const probe=document.createElement('canvas');probe.width=20;probe.height=28
   const context=probe.getContext('2d');context.drawImage(canvas,0,0,20,28)
   const pixels=context.getImageData(0,0,20,28).data
@@ -43,6 +57,7 @@ export async function captureNewspaperSheet(sheet) {
   for(let i=0;i<pixels.length;i+=4) if(Math.abs(pixels[i]-245)+Math.abs(pixels[i+1]-241)+Math.abs(pixels[i+2]-232)>60) ink++
   if(ink<20) throw new Error('未能完整渲染报纸，请重试。')
   return canvas
+  } finally {captureRoot.remove()}
 }
 
 export async function exportNewspaperPdf(sheets, newspaper, progress) {
