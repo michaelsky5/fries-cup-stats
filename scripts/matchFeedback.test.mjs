@@ -46,6 +46,8 @@ test('reconciliation requires the saved report to match every submitted field', 
   assert.equal(isMatchingFeedback({ ...saved, description: 'other' }, payload), false)
   assert.equal(isMatchingFeedback({ ...saved, id: '' }, payload), false)
   assert.equal(isMatchingFeedback(null, payload), false)
+  assert.equal(isMatchingFeedback({ ...saved, clientKey: 'other' }, { ...payload, clientKey: 'current' }), false)
+  assert.equal(isMatchingFeedback({ ...saved, clientKey: 'current' }, { ...payload, clientKey: 'current' }), true)
 })
 
 test('unknown write outcomes require a read check; rejected submissions remain retryable', () => {

@@ -16,11 +16,14 @@ function FeedbackDialog({ dossier, seasonId, initialMap, locale, onClose, return
   const [state, setState] = useState('editing')
   const [error, setError] = useState('')
   const [record, setRecord] = useState(null)
+  const [history, setHistory] = useState(null)
+  const [historyLoading, setHistoryLoading] = useState(false)
+  const [historyError, setHistoryError] = useState('')
   const dialog = useRef(null)
   const requestLock = useRef(false)
   const lastPayload = useRef(null)
   const currentUser = useRef(user?.id)
-  useEffect(() => { currentUser.current = user?.id }, [user?.id])
+  useEffect(() => { currentUser.current = user?.id; setHistory(null) }, [user?.id])
   useEffect(() => {
     const node = dialog.current
     if (!node) return undefined
@@ -42,6 +45,8 @@ function FeedbackDialog({ dossier, seasonId, initialMap, locale, onClose, return
       setError(label('请填写至少 5 个字，并控制在字数上限内。', 'Enter at least 5 characters within the limit.'))
       return
     }
+    payload.clientKey = isMatchingFeedback({ ...lastPayload.current, id: 'draft' }, payload)
+      ? lastPayload.current.clientKey : crypto.randomUUID()
     requestLock.current = true
     lastPayload.current = payload
     const submittedBy = user.id
@@ -74,7 +79,7 @@ function FeedbackDialog({ dossier, seasonId, initialMap, locale, onClose, return
     requestLock.current = true
     setState('checking')
     try {
-      const reports = await fetchUserFeedback()
+      const reports = await fetchUserFeedback(lastPayload.current.targetId)
       if (currentUser.current !== checkedBy) { setState('unconfirmed'); return }
       const saved = reports.find(item => isMatchingFeedback(item, lastPayload.current))
       if (saved) { setRecord(saved); setState('submitted'); setError('') }
@@ -82,6 +87,18 @@ function FeedbackDialog({ dossier, seasonId, initialMap, locale, onClose, return
     } catch { setState('unconfirmed'); setError(label('核对失败，请稍后再核对。草稿已保留。', 'Could not check your reports. Try checking again later; your draft is retained.')) }
     finally { requestLock.current = false }
   }
+  const readHistory = async () => {
+    if (historyLoading) return
+    if (!isAuthenticated) { setAuthOpen(true); return }
+    const checkedBy = user.id
+    setHistoryLoading(true); setHistoryError('')
+    try {
+      const reports = await fetchUserFeedback(context.targetId)
+      if (currentUser.current === checkedBy) setHistory(reports)
+    } catch { setHistoryError(label('反馈记录读取失败，请稍后重试。', 'Could not load your reports. Please retry later.')) }
+    finally { setHistoryLoading(false) }
+  }
+  const historyStatuses = { OPEN: label('待核对', 'Open'), TRIAGED: label('已受理', 'Triaged'), FIXING: label('修正中', 'Fixing'), RESOLVED: label('已解决', 'Resolved'), REJECTED: label('未采纳', 'Rejected'), DUPLICATE: label('重复反馈', 'Duplicate') }
 
   return createPortal(<>
     <dialog ref={dialog} data-design="signal" data-match-feedback className={styles.dialog} aria-labelledby="match-feedback-title" onCancel={event => { event.preventDefault(); if (!busy) onClose() }}>
@@ -98,6 +115,7 @@ function FeedbackDialog({ dossier, seasonId, initialMap, locale, onClose, return
         {error ? <p className={styles.error} role="alert">{error}</p> : null}
         <footer className={styles.actions}><button type="button" onClick={onClose} disabled={busy}>{label('取消', 'Cancel')}</button>{state === 'unconfirmed' || state === 'checking' ? <button className={styles.primary} type="button" onClick={check} disabled={busy}>{state === 'checking' ? label('正在核对…', 'Checking…') : label('核对提交结果', 'Check submission')}</button> : <button className={styles.primary} type="submit" disabled={busy || isBootstrapping}>{state === 'submitting' ? label('正在提交…', 'Submitting…') : isAuthenticated ? label('提交反馈', 'Submit report') : label('登录并继续', 'Sign in to continue')}</button>}</footer>
       </form>}
+      <div className={styles.history}><button type="button" disabled={busy || historyLoading} onClick={readHistory}>{historyLoading ? label('正在读取…', 'Loading…') : label('查看我的本场反馈', 'My reports for this match')}</button>{historyError ? <p role="alert">{historyError}</p> : null}{history ? <div role="status">{history.length ? history.map(item => <details key={item.id}><summary>{historyStatuses[item.status] || item.status} · {new Date(item.createdAt).toLocaleDateString(en ? 'en-US' : 'zh-CN')}</summary><p>{item.description}</p>{item.adminReply ? <p><strong>{label('处理说明', 'Staff reply')}：</strong>{item.adminReply}</p> : null}</details>) : <p>{label('你还没有提交本场反馈。', 'You have no reports for this match yet.')}</p>}</div> : null}</div>
     </dialog>
     <AuthDialog open={authOpen} onClose={() => setAuthOpen(false)} locale={locale} />
   </>, document.body)

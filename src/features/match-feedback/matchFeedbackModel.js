@@ -38,7 +38,8 @@ export function buildMatchFeedbackPayload(dossier, seasonId, form) {
 }
 
 export function isMatchingFeedback(record, payload) {
-  return Boolean(record?.id && payload && ['seasonId', 'targetType', 'targetId', 'issueType', 'description'].every(key => record[key] === payload[key]))
+  return Boolean(record?.id && payload && (!payload.clientKey || record.clientKey === payload.clientKey)
+    && ['seasonId', 'targetType', 'targetId', 'issueType', 'description'].every(key => record[key] === payload[key]))
 }
 
 // A failed write response can still mean the server saved the report.
