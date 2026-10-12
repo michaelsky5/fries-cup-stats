@@ -2,7 +2,7 @@ import { translateUiText as uiText } from '../../../lib/uiText.js'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import HeroArtwork from '../../media/HeroArtwork.jsx'
-import { getMatchReviewMvp } from '../../../lib/matchReviewSelectors.js'
+import { getMatchReviewMvp, getMatchReviewMvpUnavailableReason } from '../../../lib/matchReviewSelectors.js'
 import { getRoleEnLabel, getRoleLabel } from '../../../lib/leaderboardSelectors.js'
 import { formatInt } from '../../../lib/format.js'
 import { SignalBattleTag, SignalHeroList } from './SignalPlayerData.jsx'
@@ -14,7 +14,11 @@ const METRIC_LABELS = { elim: 'Eliminations', ast: 'Assists', dth: 'Deaths', dmg
 export default function SignalMatchSpotlight({ dossier, locale, withSeason, returnState, onNavigate }) {
   const en = locale === 'en-US'
   const player = useMemo(() => getMatchReviewMvp(dossier), [dossier])
-  if (!player) return null
+  if (!player) {
+    const reason = getMatchReviewMvpUnavailableReason(dossier)
+    if (!reason) return null
+    return <div className={styles.unavailable} data-match-mvp-unavailable={reason}><strong>{en ? 'MATCH MVP' : uiText('全场 MVP', locale)}</strong><details><summary>{reason === 'REFERENCE_UNAVAILABLE' ? (en ? 'Insufficient references' : uiText('暂无足够参照，暂不评选统计 MVP', locale)) : reason === 'NO_ELIGIBLE_PLAYER' ? (en ? 'No eligible player' : uiText('暂无满足出场门槛的选手', locale)) : (en ? 'Player statistics unavailable' : uiText('选手统计尚未齐备', locale))}<span aria-hidden="true">＋</span></summary><p>{reason === 'REFERENCE_UNAVAILABLE' ? (en ? 'The current model compares against earlier competition days within the same version group. No usable scores are available for this match. Version groups are inferred from dates, and later matches do not backfill this award.' : uiText('当前模型使用同版本分组的此前比赛日参照，本场暂缺可用评分。版本分组按日期推定，后续比赛不会反过来补算本场 MVP。', locale)) : reason === 'NO_ELIGIBLE_PLAYER' ? (en ? `This match requires at least ${dossier.rating.awardEligibility.minimumMaps} map appearances for MVP eligibility.` : uiText('本场 MVP 至少需出场 {0} 图。', locale, [dossier.rating.awardEligibility.minimumMaps])) : (en ? 'An MVP can be selected once the published player records support a match rating.' : uiText('待已发布的选手记录能够支持全场评分后，再评选 MVP。', locale))}</p></details></div>
+  }
 
   const team = dossier[`team${player.side}`]
   const entry = player.ratingEntry

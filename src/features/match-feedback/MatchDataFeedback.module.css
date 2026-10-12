@@ -1,0 +1,28 @@
+.dialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 24px; border: 1px solid var(--fc-data-line-strong); border-top: 3px solid var(--fc-data-signal); background: var(--fc-data-paper); color: var(--fc-data-ink); font: 14px/1.65 var(--fc-data-font-interface); overflow: auto; box-sizing: border-box; }
+.dialog::backdrop { background: rgb(0 0 0 / .58); }
+.dialog :is(h2, p) { margin: 0; }
+.dialog :is(select, textarea, button) { font: inherit; color: inherit; }
+.dialog :is(button, select, textarea):focus-visible { outline: 3px solid var(--fc-data-focus); outline-offset: 2px; }
+.dialog button { cursor: pointer; border: 1px solid var(--fc-data-line-strong); padding: 8px 14px; min-height: 44px; background: transparent; font-weight: 600; }
+.dialog :disabled { cursor: default; opacity: .65; }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.header span { font-size: 10px; letter-spacing: .1em; color: var(--fc-data-text-muted); }
+.header h2 { font: 700 23px/1.4 var(--fc-data-font-interface); }
+.header .close { font-size: 25px; padding: 0; min-width: 44px; border: 0; }
+.context { display: flex; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; margin: 18px 0; padding: 12px 0; border-block: 1px solid var(--fc-data-line-strong); overflow-wrap: anywhere; }
+.context span { font-size: 12px; color: var(--fc-data-text-muted); }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.dialog label { display: grid; gap: 7px; font-weight: 600; min-width: 0; }
+.dialog :is(select, textarea) { width: 100%; padding: 10px; min-height: 44px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised); border-radius: 0; box-sizing: border-box; font-weight: 400; }
+.description { margin-top: 16px; }
+.description textarea { resize: vertical; }
+.description small { text-align: right; font-size: 11px; color: var(--fc-data-text-muted); font-weight: 400; }
+.dialog .hint { margin-top: 8px; color: var(--fc-data-text-muted); font-size: 12px; }
+.dialog .error { margin-top: 12px; color: var(--fc-data-status-error, #a03122); }
+.actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--fc-data-line-strong); }
+.dialog .primary, .success button { background: var(--fc-data-signal); border-color: var(--fc-data-signal); color: var(--fc-data-on-signal); }
+.success { display: grid; gap: 12px; padding: 12px 0; }
+.success strong { font-size: 20px; }
+.success small { overflow-wrap: anywhere; color: var(--fc-data-text-muted); }
+.success button { justify-self: end; }
+@media (max-width: 480px) { .dialog { padding: 18px; } .fields { grid-template-columns: 1fr; gap: 12px; } .header h2 { font-size: 21px; } }

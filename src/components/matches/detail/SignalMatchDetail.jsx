@@ -9,6 +9,7 @@ import SignalMatchPlayers from './SignalMatchPlayers.jsx'
 import SignalMapChapter from './SignalMapChapter.jsx'
 import SignalMatchSpotlight from './SignalMatchSpotlight.jsx'
 import SignalMatchResources from './SignalMatchResources.jsx'
+import MatchDataFeedback from '../../../features/match-feedback/MatchDataFeedback.jsx'
 import useCompactMatchLayout from './useCompactMatchLayout.js'
 import { SignalRating } from './SignalPlayerData.jsx'
 import { getRoleEnLabel, getRoleLabel } from '../../../lib/leaderboardSelectors.js'
@@ -250,7 +251,7 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
   const adjacentState = { returnTo, ...(Number.isFinite(Number(returnScrollY)) ? { returnScrollY } : {}) }
 
   return <div ref={shellRef} className={styles.shell} data-page-mode="index" data-match-design="signal-coach" data-match-phase={phase.key}>
-    <div className={styles.toolbar}><button type="button" onClick={onBack}>← {backLabel}</button><div><button type="button" onClick={onCopyLink}>{en ? 'Copy link' : uiText("复制链接", locale)}</button>{!phase.active && video ? <a className={video.kind === 'replay' ? styles.primaryAction : undefined} href={video.url} target="_blank" rel="noreferrer">{video.kind === 'replay' ? (en ? 'Watch replay' : uiText("观看录像", locale)) : (en ? 'Video archive' : uiText("赛事录像库", locale))} ↗</a> : null}</div></div>
+    <div className={styles.toolbar}><button type="button" onClick={onBack}>← {backLabel}</button><div><MatchDataFeedback key={dossier.internalId} dossier={dossier} seasonId={seasonId} locale={locale} mapOrder={searchParams.has('map') ? compactSelection.map?.order ?? '' : ''} isPreview={isPreview} /><button type="button" onClick={onCopyLink}>{en ? 'Copy link' : uiText("复制链接", locale)}</button>{!phase.active && video ? <a className={video.kind === 'replay' ? styles.primaryAction : undefined} href={video.url} target="_blank" rel="noreferrer">{video.kind === 'replay' ? (en ? 'Watch replay' : uiText("观看录像", locale)) : (en ? 'Video archive' : uiText("赛事录像库", locale))} ↗</a> : null}</div></div>
     {copyMessage ? <p className={styles.copyFeedback} role="status">{copyMessage}</p> : null}
     {isPreview ? <p className={styles.phasePreview}>{en ? 'Design preview · fictional fixtures, scores, staff and broadcast links' : uiText("设计样例 · 对阵、比分、工作人员与直播入口均为演示", locale)}</p> : null}
     <nav ref={navigationRef} className={styles.sectionNav} data-match-navigation aria-label={en ? 'Match sections' : uiText("比赛详情章节", locale)}>
