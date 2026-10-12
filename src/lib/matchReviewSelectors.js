@@ -115,12 +115,20 @@ export function getMatchReviewTimeline(dossier) {
   })
 }
 
-// Keep the original series award and its eligibility decision. A rounded
-// table rating or an unfinished series must not create a different winner.
+// Keep available rating-based awards. The independent cold-start award only
+// supplies an identity; it must not manufacture a missing displayed rating.
 export function getMatchReviewMvp(dossier, players) {
+  if (!dossier?.state.isComplete || dossier.state.isForfeit) return null
+  const rows = players || getMatchReviewPlayers(dossier)
+  if (!dossier.rating?.supported && dossier.matchAwardFallback?.method === 'MATCH_RELATIVE') {
+    const awardEntry = dossier.matchAwardFallback.entries[0]
+    if (!awardEntry || awardEntry.matchAwardEligible === false) return null
+    const row = rows.find(player => findRating(player, [awardEntry], dossier[`team${player.side}`]))
+    return row ? { ...row, awardEntry, awardMethod: 'MATCH_RELATIVE' } : null
+  }
   const entry = dossier?.topRatedPlayer
-  if (!dossier?.state.isComplete || dossier.state.isForfeit || !dossier.rating?.supported || !entry || entry.matchAwardEligible === false) return null
-  const row = (players || getMatchReviewPlayers(dossier)).find(player => player.ratingEntry === entry)
+  if (!dossier.rating?.supported || !entry || entry.matchAwardEligible === false) return null
+  const row = rows.find(player => player.ratingEntry === entry)
   return row?.rating != null && Number.isFinite(row.rating) && row.rating > 0 ? row : null
 }
 
