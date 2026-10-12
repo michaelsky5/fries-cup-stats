@@ -1,0 +1,12 @@
+.disclosure { margin: 6px 0 0; color: var(--fc-data-text-muted); font: 400 12px/1.8 var(--fc-data-font-interface); }
+.disclosure > summary { display: flex; align-items: center; justify-content: flex-end; gap: 10px; min-height: 30px; padding-inline: 12px; cursor: pointer; list-style: none; text-decoration: underline; text-decoration-color: var(--fc-data-line-strong); text-underline-offset: 4px; }
+.disclosure > summary::-webkit-details-marker { display: none; }
+.disclosure > summary:hover, .disclosure[open] > summary { color: var(--fc-data-ink); }
+.disclosure[open] > summary > span { transform: rotate(45deg); }
+.disclosure > summary:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: -2px; }
+.notes { display: grid; gap: 8px; color: var(--fc-data-text-muted); font: 400 12px/1.8 var(--fc-data-font-interface); }
+.disclosure > .notes { padding: 12px; border-top: 1px solid var(--fc-data-line); background: var(--fc-data-paper-raised); }
+.notes p { margin: 0; }
+.notes ul { display: grid; gap: 10px; padding-left: 18px; margin: 0; }
+.notes strong { color: var(--fc-data-ink); font-weight: 600; }
+@media (pointer: coarse) { .disclosure > summary { min-height: 44px; } }

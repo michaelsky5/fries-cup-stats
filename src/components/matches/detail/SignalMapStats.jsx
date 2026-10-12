@@ -1,5 +1,5 @@
 import { translateUiText as uiText } from '../../../lib/uiText.js'
-import { getStatisticalRatingModelNotice } from '../../../lib/statisticalRatingPresentation.js'
+import MatchRatingDisclosure from '../../../features/rating/MatchRatingDisclosure.jsx'
 import { useUiLocale } from '../../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
@@ -188,6 +188,6 @@ export default function SignalMapStats({ map, dossier, teamADisplayRows, teamBDi
     </div>
     {showFullStats && focusedTotals && teamADisplayRows.length > 0 && teamBDisplayRows.length > 0 ? <div className={styles.metricComparison} data-map-metric-comparison role="status"><strong>{t(focusedColumn.labelKey, focusedColumn.fallback)}</strong><span>{dossier.teamA.short}<b>{formatInt(focusedTotals[0])}</b></span><span>{dossier.teamB.short}<b>{formatInt(focusedTotals[1])}</b></span><span className={styles.difference}>{dossier.teamA.short} − {dossier.teamB.short}<b>{focusedTotals[0] > focusedTotals[1] ? '+' : ''}{formatInt(focusedTotals[0] - focusedTotals[1])}</b></span></div> : null}
     <span className={styles.announcement} role="status">{showFullStats && focusedColumn ? `${en ? 'Comparing: ' : uiText("对照：", locale)}${t(focusedColumn.labelKey, focusedColumn.fallback)}` : ''}</span>
-    {map.rating?.ratingModelVersion ? <p data-statistical-rating={map.rating.ratingModelVersion}>{uiText(getStatisticalRatingModelNotice(locale), locale)}</p> : null}
+    <MatchRatingDisclosure rating={map.rating} locale={locale} />
   </div>
 }

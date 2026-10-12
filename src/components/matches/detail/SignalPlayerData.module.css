@@ -1,8 +1,6 @@
 .tagSuffix { white-space: nowrap; }
 .rating { position: relative; display: inline-flex; align-items: center; justify-content: center; color: var(--fc-data-ink); font-family: var(--fc-data-font-interface); font-variant-numeric: tabular-nums lining-nums; }
 .rating > strong { font-size: 16px; font-weight: 700; line-height: 1.2; }
-.rating[data-statistical-rating] { flex-direction: column; gap: 3px; }
-.rating > small { font-size: 9px; line-height: 1.2; white-space: nowrap; color: var(--fc-data-text-muted); }
 .rating[data-empty="true"] > strong { color: var(--fc-data-text-muted); font-weight: 400; }
 .rating[data-team-mvp="true"]::after { content: ''; position: absolute; top: calc(100% + 4px); left: 50%; width: 16px; height: 2px; transform: translateX(-50%); background: var(--fc-data-focus-on-light); }
 .hero { display: inline-grid; place-items: center; width: 25px; height: 28px; flex: 0 0 25px; overflow: hidden; color: var(--fc-data-text-muted); background: var(--fc-data-paper-deep); }

@@ -19,7 +19,6 @@ export function SignalRating({ value, entry, mvp = false, en = false }) {
   const notes = getStatisticalRatingNotes(entry, uiLocale).map(note => uiText(note, uiLocale)).join('\n')
   return <span className={styles.rating} data-statistical-rating={entry?.statisticalRating?.version} data-rating-value={display} data-team-mvp={mvp || undefined} data-empty={display === '—'} title={notes || (mvp ? (en ? 'Team best on this map' : uiText("本队本图最佳", uiLocale)) : undefined)} aria-label={label ? `${display} · ${label}. ${notes}` : mvp ? `${display} · ${en ? 'Team best on this map' : uiText("本队本图最佳", uiLocale)}` : undefined}>
     <strong>{display}</strong>
-    {label ? <small>{label}</small> : null}
   </span>
 }
 

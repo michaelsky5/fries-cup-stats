@@ -1,5 +1,5 @@
 import { translateUiText as uiText } from '../../../lib/uiText.js'
-import { getStatisticalRatingModelNotice } from '../../../lib/statisticalRatingPresentation.js'
+import { MatchRatingNotes } from '../../../features/rating/MatchRatingDisclosure.jsx'
 import { useUiLocale } from '../../../hooks/useUiLocale.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
@@ -161,7 +161,6 @@ export default function SignalMatchPlayers({ dossier, seasonId, locale, withSeas
       </section>
     })}</div>}
     </>}
-    {dossier.rating.ratingModelVersion ? <p className={styles.explanation} data-statistical-rating={dossier.rating.ratingModelVersion}>{uiText(getStatisticalRatingModelNotice(locale), locale)}</p> : null}
-    <details className={styles.explanation}><summary>{en ? 'About ratings' : uiText("评分说明", locale)}</summary><p>{en ? 'Match and map ratings use the same scale. Full-match performance is weighted by playtime within each role, then converted to a rating. Match MVP uses unrounded performance scores and requires sufficient map appearances. Players who change roles have separate rows.' : uiText('全场与单图评分使用同一刻度。全场先按职责和出场时间汇总表现，再换算评分。全场 MVP 按未取整的表现分评选，并设有出场图数门槛；更换职责的选手分别列出。', locale)}</p><p>{en ? 'An underline in the map view marks the highest rating on that team and map, including ties. A dash means a rating is unavailable.' : uiText("逐图表现中，评分下的短线标记本队本图最佳，同分并列。“—”表示暂无评分。", locale)}</p></details>
+    <details className={styles.explanation}><summary>{en ? 'About ratings' : uiText("评分说明", locale)}</summary><p>{en ? 'Match and map ratings use the same scale. Full-match performance is weighted by playtime within each role, then converted to a rating. Match MVP uses unrounded performance scores and requires sufficient map appearances. Players who change roles have separate rows.' : uiText('全场与单图评分使用同一刻度。全场先按职责和出场时间汇总表现，再换算评分。全场 MVP 按未取整的表现分评选，并设有出场图数门槛；更换职责的选手分别列出。', locale)}</p><p>{en ? 'An underline in the map view marks the highest rating on that team and map, including ties. A dash means a rating is unavailable.' : uiText("逐图表现中，评分下的短线标记本队本图最佳，同分并列。“—”表示暂无评分。", locale)}</p><MatchRatingNotes rating={dossier.rating} locale={locale} /></details>
   </div>
 }

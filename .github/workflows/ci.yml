@@ -54,7 +54,7 @@ jobs:
         run: node scripts/assertOverwatchSeason5.mjs
 
       - name: Check statistical rating and archived scoring rules
-        run: npm run test:statistical-rating && npm run test:rating-release
+        run: npm run test:statistical-rating && npm run test:rating-release && node --test scripts/assertMatchReview.mjs
 
       - name: Build production frontend
         run: npm run build

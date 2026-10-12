@@ -244,7 +244,7 @@ function RatingCluster({ impact, t }) {
   const rawPts = formatRating(impact.rawPts)
   const statisticalLabel = getStatisticalRatingLabel(impact.entry, locale)
   const title = `${ratingLabel}: ${displayRating}\n${rawLabel}: ${rawPts} PTS\n${note}\n${getStatisticalRatingNotes(impact.entry, locale).join('\n')}`
-  const ariaLabel = `${ratingLabel}: ${displayRating}. ${rawLabel}: ${rawPts} PTS.`
+  const ariaLabel = `${ratingLabel}: ${displayRating}. ${rawLabel}: ${rawPts} PTS.${statisticalLabel ? ` ${statisticalLabel}. ${getStatisticalRatingNotes(impact.entry, locale).join(' ')}` : ''}`
   const featured = Number(impact.matchRating) >= 8.5
 
   return (
@@ -256,7 +256,6 @@ function RatingCluster({ impact, t }) {
       aria-label={ariaLabel}
     >
       <strong className={styles.ratingValue}>{displayRating}</strong>
-      {statisticalLabel ? <small>{statisticalLabel}</small> : null}
     </span>
   )
 }

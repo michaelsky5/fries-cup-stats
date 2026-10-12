@@ -7,7 +7,7 @@ import { getRoleEnLabel, getRoleLabel } from '../../../lib/leaderboardSelectors.
 import { formatInt } from '../../../lib/format.js'
 import { SignalBattleTag, SignalHeroList } from './SignalPlayerData.jsx'
 import styles from './SignalMatchSpotlight.module.css'
-import { getStatisticalRatingLabel, getStatisticalRatingNotes } from '../../../lib/statisticalRatingPresentation.js'
+import { getStatisticalRatingNotes } from '../../../lib/statisticalRatingPresentation.js'
 
 const METRIC_LABELS = { elim: 'Eliminations', ast: 'Assists', dth: 'Deaths', dmg: 'Damage', heal: 'Healing', block: 'Mitigation' }
 
@@ -42,7 +42,6 @@ export default function SignalMatchSpotlight({ dossier, locale, withSeason, retu
       <div className={styles.rating}>
         <span>{en ? 'Overall match rating' : uiText("全场综合评分", locale)}</span>
         <strong aria-label={`${en ? 'Match rating' : uiText("全场评分", locale)} ${player.rating.toFixed(1)} / 10`}>{player.rating.toFixed(1)}<small>/ 10</small></strong>
-        {entry.statisticalRating ? <span title={getStatisticalRatingNotes(entry, locale).join('\n')}>{uiText(getStatisticalRatingLabel(entry, locale), locale)}</span> : null}
       </div>
       <dl className={styles.facts}>
         {coreStats.map(stat => <div key={stat.metricId}><dt>{en ? METRIC_LABELS[stat.metricId] || stat.label : uiText(stat.label, locale)}</dt><dd>{formatInt(stat.value, '—')}</dd></div>)}
