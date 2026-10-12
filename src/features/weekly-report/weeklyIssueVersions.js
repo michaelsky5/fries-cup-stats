@@ -14,7 +14,7 @@ const matchFacts = match => pick(match,['id','state','team_a','team_b','start_ti
 
 export function issueScope(report, seasonId, locale) {
   const scope = {seasonId:text(seasonId || report?.seasonId),cycleId:text(report?.cycle?.id),weekId:text(report?.week?.id),locale:text(locale || 'zh-CN')}
-  if (Object.values(scope).some(value => !value)) throw new Error('周报赛事、周期或周次不完整。 / Missing issue scope.')
+  if (Object.values(scope).some(value => !value)) throw new Error('周报赛事、赛段或周次不完整。 / Missing issue scope.')
   return scope
 }
 

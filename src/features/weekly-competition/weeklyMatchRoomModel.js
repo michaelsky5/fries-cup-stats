@@ -42,7 +42,7 @@ export function weeklyRoomStatus(room, { readOnly = false, now = Date.now() } = 
   if (phase === 'cancelled') {
     return { label: '已取消', tone: 'quiet', detail: '比赛或所属周赛已取消，记录仅供查看。' }
   }
-  if (phase === 'closed') return { label: '已结束 · 记录只读', tone: 'quiet', detail: '本周或所属周期已结束。已有赛果与响应保留供核对，如需更正请联系管理员。' }
+  if (phase === 'closed') return { label: '已结束 · 记录只读', tone: 'quiet', detail: '本周或所属赛段已结束。已有赛果与响应保留供核对，如需更正请联系管理员。' }
   if (phase === 'scheduled') return { label: room.scheduledAt ? '等待开赛' : '比赛时间待定', tone: 'yellow', detail: room.scheduledAt ? '赛程已发布。点击“进入比赛房”，按当前阶段操作；房间内可随时联系赛管。' : '本队配对已发布，等待管理员确认比赛时间。' }
   if (phase === 'live') return { label: '比赛进行中', tone: 'yellow', detail: '比赛正在进行，当前无需确认赛果。正式结果通过审核后，由本队本场指定代表响应。' }
   if (room?.ready === false && phase === 'review' && room.confirmationState !== 'STALE') return { label: '赛果待审核', tone: 'quiet', detail: '比赛结果尚未完成正式审核，请等待裁判与管理员处理。' }
@@ -111,7 +111,7 @@ export function weeklyResponseAccess(room, ownTeam, { readOnly = true } = {}) {
     return { allowed: false, reason: '本场已结算，确认记录只读；更正请联系周赛管理员。' }
   }
   if (TERMINAL_STATES.has(room.week?.status) || TERMINAL_STATES.has(room.cycle?.status) || room.status === 'CANCELLED') {
-    return { allowed: false, reason: '本周或所属周期已结束、取消，不能再提交响应。' }
+    return { allowed: false, reason: '本周或所属赛段已结束、取消，不能再提交响应。' }
   }
   const representative = ownTeam.isRepresentative === true && ownTeam.responseAccessMode === 'WRITE' && ['PLAYER', 'COACH', 'LEADER', 'MANAGER'].includes(ownTeam.role)
   if (ownTeam.role === 'PLAYER' && !representative) {
@@ -172,7 +172,7 @@ export function weeklyRoomError(error) {
     WEEKLY_RESULT_REVISION_CONFLICT: '正式赛果已更新，本次操作未保存。请重新核对最新比分后再提交。',
     WEEKLY_RESULT_CONFIRMATION_NOT_OPEN: '当前修订尚未开启确认，或旧确认已失效，请刷新后核对。',
     WEEKLY_RESULT_ALREADY_FINALIZED: '本场已结算，不能再修改确认；如需更正请联系周赛管理员。',
-    WEEKLY_RESULT_IMMUTABLE: '本周或周期已结束，赛果确认只读。',
+    WEEKLY_RESULT_IMMUTABLE: '本周或赛段已结束，赛果确认只读。',
     MATCH_REVIEW_NOT_APPROVED: '正式赛果尚未通过审核，不能确认。',
     MATCH_RESULT_NOT_READY: '正式赛果还未准备好，不能确认。',
     UNAUTHORIZED: '登录已失效，请重新登录。'

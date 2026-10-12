@@ -121,7 +121,7 @@ export default function SignalWeeklySchedule() {
       <div><p className={styles.eyebrow}>FRIES CUP / WEEKLY MATCHES</p><h1>{t(uiText("赛程赛果", locale), 'Schedule & results')}</h1><p>{eventCenterText('matchesIntro', locale)}</p></div>
       <div className={styles.headingActions}>
         <WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, match: null, teamId: null, expanded: null })} />
-        <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">↗</span><small>{t(uiText("赛况与周期积分", locale), 'Matches & cycle points')}</small></Link>
+        <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">↗</span><small>{t(uiText("赛况与赛段积分", locale), 'Matches & cycle points')}</small></Link>
       </div>
     </header>
     <WeeklyWeekRail weeks={weeks} selectedId={selectedWeekId} locale={locale} includeAll onChange={id => change({ week: id, expanded: null })} />
@@ -157,6 +157,6 @@ export default function SignalWeeklySchedule() {
       <p>{!model.total ? t(uiText("当前周次尚无公开对阵，可切换其他已发布周次。", locale), 'There are no public fixtures in this selection. Try another published week.') : followedOnly && !followedKey ? t(uiText("在周赛总览关注队伍，再回来查看他们的赛程。", locale), 'Follow teams in the weekly overview to see their fixtures here.') : eventCenterText('fixturesEmptyIntro', locale)}</p>
       {followedOnly && !followedKey ? <Link to={`${overviewPath}#weekly-following`}>{t(uiText("去关注队伍", locale), 'Choose teams')} ↗</Link> : model.hasFilters && <button type="button" onClick={reset}>{t(uiText("重置筛选", locale), 'Reset filters')} ↺</button>}
     </section>}
-    <footer className={styles.footer}><p>{t(uiText("比分与地图记录以公布内容为准；周期积分见总览。", locale), 'Scores and map records follow the published data. Cycle points are in the overview.')}</p><Link to={overviewPath}>{t(uiText("查看周期积分", locale), 'View cycle points')} ↗</Link></footer>
+    <footer className={styles.footer}><p>{t(uiText("比分与地图记录以公布内容为准；赛段积分见总览。", locale), 'Scores and map records follow the published data. Cycle points are in the overview.')}</p><Link to={overviewPath}>{t(uiText("查看赛段积分", locale), 'View cycle points')} ↗</Link></footer>
   </div>
 }
