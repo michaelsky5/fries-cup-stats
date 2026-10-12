@@ -97,7 +97,7 @@ export function WeeklyReportTeaser({ cycle, week, report: providedReport, compac
 export function WeeklyEventPathway({ cycle, week, locale, withSeason }) {
   const t = (zh, en) => copy(locale, zh, en)
   const stages = [
-    ['01', getWeeklyPhaseLabel('REGULAR', locale), t('五局累计周期积分', 'Five maps, cycle points')],
+    ['01', getWeeklyPhaseLabel('REGULAR', locale), t('五局累计赛段积分', 'Five maps, cycle points')],
     ['02', getWeeklyPhaseLabel('PLAYOFFS', locale), t('四强单败', 'Four-team single elimination')],
     ['03', getWeeklyPhaseLabel('MAJOR', locale), t('赛制与名额见赛事说明', 'See the event guide for format and places')]
   ]

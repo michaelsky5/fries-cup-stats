@@ -1,15 +1,16 @@
 import { translateUiText } from '../../lib/uiText.js'
+import { getWeeklyCycleIdentityLabel } from '../../lib/weeklyMatchIdentity.js'
 const labels = {
   live: ['进行中', 'In progress'], complete: ['已结束', 'Final'], upcoming: ['待赛', 'Upcoming'],
   review: ['待审核', 'Under review'], ruling: ['判定结束', 'By ruling'], cancelled: ['已取消', 'Cancelled'],
   postponed: ['已延期', 'Postponed'], unknown: ['状态待更新', 'Status pending'],
   IN_PROGRESS: ['进行中', 'In progress'], RESULT_REVIEW: ['结果审核中', 'Under review'],
   PUBLISHED: ['对阵已公布', 'Published'], CLOSED: ['已结束', 'Closed'],
-  ACTIVE: ['周期进行中', 'Active cycle'], PLAYOFFS: ['季后赛', 'Playoffs']
+  ACTIVE: ['赛段进行中', 'Active cycle'], PLAYOFFS: ['季后赛', 'Playoffs']
 }
 const isEnglish = locale => String(locale).startsWith('en')
 export const weeklyStatusLabel = (key, locale) => translateUiText(labels[key]?.[isEnglish(locale) ? 1 : 0] || (isEnglish(locale) ? 'To be announced' : '待公布'), locale)
-export const weeklyCycleTitle = (cycle, locale) => isEnglish(locale) ? cycle?.code || 'Cycle' : cycle?.name || cycle?.code || '周期'
+export const weeklyCycleTitle = (cycle, locale) => getWeeklyCycleIdentityLabel(cycle, locale) || (isEnglish(locale) ? cycle?.code || 'Cycle' : cycle?.name?.replaceAll('周期', '赛段') || cycle?.code || '赛段')
 export const weeklyWeekTitle = (week, locale) => {
   if (isEnglish(locale)) return `Week ${week?.week_number}`
   const fallback = `第 ${week?.week_number} 周`

@@ -3,10 +3,10 @@ import { getPublicMatchCode } from './publicMatchCode.js'
 
 // These are display labels. Rules and immutable codes keep their existing keys.
 export const WEEKLY_PHASE_LABELS = Object.freeze({
-  REGULAR: ['积分赛', 'Points stage'],
+  REGULAR: ['积分赛', 'Prelims'],
   QUALIFIER: ['晋级加赛', 'Tiebreak qualifier'],
   PLAYOFFS: ['季后赛', 'Playoffs'],
-  MAJOR: ['大师赛', 'Major']
+  MAJOR: ['巅峰赛', 'Finals']
 })
 const PHASE_CODES = { REG: 'REGULAR', QUAL: 'QUALIFIER', PO: 'PLAYOFFS' }
 const text = value => String(value ?? '').trim()
@@ -26,7 +26,7 @@ function parseCode(code) {
   const found = text(code).match(/^(.+)-C(\d+)-W(\d+)-(REG|QUAL|PO)-M(\d+)$/)
   if (!found || ![found[2], found[3], found[5]].every(value => Number.isSafeInteger(Number(value)))
     || Number(found[3]) < 1 || Number(found[5]) < 1) return null
-  return { cycle_sequence: Number(found[2]), week_number: Number(found[3]), phase: PHASE_CODES[found[4]], match_number: Number(found[5]) }
+  return { seasonId: found[1], cycle_sequence: Number(found[2]), week_number: Number(found[3]), phase: PHASE_CODES[found[4]], match_number: Number(found[5]) }
 }
 
 export function buildWeeklyContextIndex(snapshot) {
@@ -75,14 +75,24 @@ export function getWeeklyPhaseLabel(phase, locale = 'zh-CN') {
   return label ? uiText(label, locale) : ''
 }
 
+export function getWeeklyCycleIdentityLabel(identity, locale = 'zh-CN') {
+  const en = String(locale).startsWith('en');
+  const sequence = identity?.cycle_sequence ?? identity?.sequence;
+  if (sequence === 0) return en ? 'Pilot' : uiText(identity.cycle_name || identity.name || '试运行', locale);
+  const seasonId = identity?.seasonId || identity?.season_id || parseCode(identity?.code)?.seasonId;
+  if (seasonId === 'FCW26' && [1, 2].includes(sequence)) return `FCW S1 C${sequence}`;
+  return Number.isInteger(sequence) ? en ? `Cycle ${sequence}` : uiText('第 {0} 赛段', locale, [sequence])
+    : uiText(String(identity?.cycle_name || identity?.name || '').replaceAll('周期', '赛段'), locale);
+}
+
 export function getWeeklyMatchIdentityLabel(match, locale = 'zh-CN') {
   const identity = getWeeklyMatchIdentity(match)
   if (!identity) return ''
   const en = String(locale).startsWith('en')
-  const round = identity.round_label === '决赛' ? en ? 'Final' : uiText('决赛', locale)
+  const round = identity.round_label === '总决赛' ? en ? 'Grand Final' : uiText('总决赛', locale)
+    : identity.round_label === '决赛' ? en ? 'Final' : uiText('决赛', locale)
     : identity.round_label === '半决赛' ? en ? 'Semifinal' : uiText('半决赛', locale) : uiText(identity.round_label || '', locale)
-  return [identity.cycle_sequence === 0 ? en ? 'Pilot' : uiText(identity.cycle_name || '试运行', locale)
-    : Number.isInteger(identity.cycle_sequence) ? en ? `Cycle ${identity.cycle_sequence}` : uiText('第 {0} 周期', locale, [identity.cycle_sequence]) : identity.cycle_name,
+  return [getWeeklyCycleIdentityLabel({ ...identity, seasonId: identity.seasonId || match.season_id || (/^FCW26-/.test(getMatchDisplayCode(match)) ? 'FCW26' : '') }, locale),
     identity.week_number ? en ? `Week ${identity.week_number}` : uiText('第 {0} 周', locale, [identity.week_number]) : identity.week_label,
     getWeeklyPhaseLabel(identity.phase, locale), round,
     identity.match_number ? en ? `Match ${String(identity.match_number).padStart(2, '0')}` : uiText('第 {0} 场', locale, [String(identity.match_number).padStart(2, '0')]) : ''

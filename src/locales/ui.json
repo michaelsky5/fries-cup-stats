@@ -45514,9 +45514,9 @@
     "ko-KR": "결과를 다시 검토해야 합니다."
   },
   "赛段": {
+    "en-US": "Cycle",
     "zh-TW": "賽段",
-    "en-US": "stage",
-    "ko-KR": "스테이지"
+    "ko-KR": "사이클"
   },
   "赛段 / 轮次": {
     "zh-TW": "賽段 / 輪次",
@@ -58695,5 +58695,243 @@
     "zh-TW": "查看目前比賽進度",
     "en-US": "View current match progress",
     "ko-KR": "현재 경기 진행 상황 보기"
+  },
+  "本周或赛段已结束，赛果确认只读。": {
+    "zh-TW": "本週或賽段已結束，賽果確認只讀。",
+    "en-US": "This week or cycle has ended, and the result confirmation is read-only.",
+    "ko-KR": "이번 주 또는 주기가 종료되었으며 결과 확인은 읽기 전용입니다."
+  },
+  "本周或所属赛段已结束、取消，不能再提交响应。": {
+    "zh-TW": "本週或所屬賽段已結束、取消，不能再提交響應。",
+    "en-US": "This week or the period it belongs to has ended or been cancelled, and no more responses can be submitted.",
+    "ko-KR": "이번 주 또는 해당 기간이 종료 또는 취소되어 더 이상 응답을 제출할 수 없습니다."
+  },
+  "本周或所属赛段已结束。已有赛果与响应保留供核对，如需更正请联系管理员。": {
+    "zh-TW": "本週或所屬賽段已結束。已有賽果與響應保留供核對，如需更正請聯絡管理員。",
+    "en-US": "This week or period has ended. The results and responses have been reserved for verification. If corrections are needed, please contact the administrator.",
+    "ko-KR": "이번 주 또는 기간이 종료되었습니다. 결과와 응답은 검증을 위해 예약되었습니다. 수정이 필요한 경우 관리자에게 문의하시기 바랍니다."
+  },
+  "先完成赛段核心锁定，再提交本周名单。": {
+    "zh-TW": "先完成赛段核心鎖定，再提交本週名單。",
+    "en-US": "Complete the cycle core lock first, and then submit this week's list.",
+    "ko-KR": "먼저 사이클 코어 잠금을 완료한 후 이번 주 목록을 제출하세요."
+  },
+  "可在下方队伍准备页提交问题，由赛管核对赛段核心名单。": {
+    "zh-TW": "可在下方隊伍準備頁提交問題，由賽管核對賽段核心名單。",
+    "en-US": "You can submit questions on the team preparation page below, and the competition management will check the core list of the cycle.",
+    "ko-KR": "아래 팀 준비 페이지에서 질문을 제출하시면 대회 운영진이 해당 사이클의 핵심 목록을 확인하게 됩니다."
+  },
+  "赛段核心": {
+    "zh-TW": "賽段核心",
+    "en-US": "Cycle Core",
+    "ko-KR": "사이클 코어"
+  },
+  "赛段核心名单": {
+    "zh-TW": "賽段核心名單"
+  },
+  "本赛段或周次已结束，已有记录仅供查看。": {
+    "zh-TW": "本賽段或周次已結束，已有記錄僅供檢視。",
+    "en-US": "This cycle or week has ended, and there are existing records for viewing only.",
+    "ko-KR": "이 주기 또는 주가 종료되었으며 보기 전용 기존 기록이 있습니다."
+  },
+  "核对赛段核心": {
+    "zh-TW": "核對賽段核心",
+    "en-US": "Check cycle core",
+    "ko-KR": "사이클 코어 확인"
+  },
+  "锁定赛段核心": {
+    "zh-TW": "鎖定賽段核心",
+    "en-US": "Lock cycle core",
+    "ko-KR": "잠금 사이클 코어"
+  },
+  "赛段积分": {
+    "zh-TW": "賽段積分",
+    "en-US": "Cycle standings",
+    "ko-KR": "기간 통합"
+  },
+  "本赛段不计积分": {
+    "zh-TW": "本賽段不計積分",
+    "en-US": "No standings points in this cycle",
+    "ko-KR": "이 주기에는 포인트가 부여되지 않습니다."
+  },
+  "本赛段不计积分，比赛记录照常保留。": {
+    "zh-TW": "本賽段不計積分，比賽記錄照常保留。",
+    "en-US": "This cycle keeps match records without awarding standings points.",
+    "ko-KR": "이 사이클에서는 점수가 계산되지 않으며 경기 기록은 평소와 같이 유지됩니다."
+  },
+  "本赛段比赛": {
+    "zh-TW": "本賽段比賽",
+    "en-US": "Matches in this cycle",
+    "ko-KR": "이번 주기 경기"
+  },
+  "等待赛段记录公布。": {
+    "zh-TW": "等待賽段記錄公佈。",
+    "en-US": "Awaiting cycle records.",
+    "ko-KR": "기간 레코드가 게시되기를 기다리는 중입니다."
+  },
+  "本赛段不计入正式积分，双方均记 0 分。": {
+    "zh-TW": "本賽段不計入正式積分，雙方均記 0 分。",
+    "en-US": "No formal points will be counted in this cycle, and both sides will score 0 points.",
+    "ko-KR": "이 주기에서는 공식적인 점수가 계산되지 않으며 양측 모두 0점을 얻습니다."
+  },
+  "本场尚未关联线上规则版本，请以本赛段已公布的规则及赛事组公告为准。": {
+    "zh-TW": "本場尚未關聯線上規則版本，請以本賽段已公布的規則及賽事組公告為準。",
+    "en-US": "No online rule version is linked to this match. Follow the published rules and organizer notices for this cycle.",
+    "ko-KR": "이 경기에 연결된 온라인 규정 버전이 없습니다. 해당 주기에 공지된 규정과 주최 측 안내를 따르세요."
+  },
+  "切换赛段或周次": {
+    "zh-TW": "切換賽段或週次",
+    "en-US": "Switch cycle or week",
+    "ko-KR": "주기 또는 주차 전환"
+  },
+  "周名单需要包含规定数量的赛段核心选手。": {
+    "zh-TW": "周名單需要包含規定數量的賽段核心選手。",
+    "en-US": "The weekly roster needs to contain a specified number of core players for the cycle.",
+    "ko-KR": "주간 명단에는 해당 주기에 대해 지정된 수의 핵심 선수가 포함되어야 합니다."
+  },
+  "赛段核心已经锁定，如需更改请联系周赛管理员并说明原因。": {
+    "zh-TW": "賽段核心已經鎖定，如需更改請聯絡周賽管理員並說明原因。",
+    "en-US": "The cycle core has been locked. If you need to change it, please contact the weekly competition administrator and explain the reason.",
+    "ko-KR": "사이클 코어가 잠겨 있습니다. 변경이 필요한 경우 주간대회 관리자에게 연락하여 사유를 설명해 주시기 바랍니다."
+  },
+  "赛段核心已锁定": {
+    "zh-TW": "賽段核心已鎖定",
+    "en-US": "Cycle core locked",
+    "ko-KR": "사이클 코어 잠김"
+  },
+  "赛段核心已锁定。": {
+    "zh-TW": "賽段核心已鎖定。",
+    "en-US": "Cycle core locked.",
+    "ko-KR": "사이클 코어가 잠겼습니다."
+  },
+  "赛段核心核对": {
+    "zh-TW": "賽段核心核對",
+    "en-US": "Cycle core check",
+    "ko-KR": "사이클 코어 검사"
+  },
+  "赛段核心草稿已保存。": {
+    "zh-TW": "賽段核心草稿已儲存。",
+    "en-US": "Cycle core draft saved.",
+    "ko-KR": "사이클 코어 초안이 저장되었습니다."
+  },
+  "赛段登记": {
+    "zh-TW": "賽段登記",
+    "en-US": "Periodic registration",
+    "ko-KR": "정기 등록"
+  },
+  "当前不在赛段核心登记阶段。": {
+    "zh-TW": "當前不在賽段核心登記階段。",
+    "en-US": "Currently not in the cycle core registration phase.",
+    "ko-KR": "현재 사이클 코어 등록 단계가 아닙니다."
+  },
+  "当前赛季还没有可操作的周赛赛段或参赛关系。": {
+    "zh-TW": "當前賽季還沒有可操作的周賽賽段或參賽關係。",
+    "en-US": "There is no operable weekly game cycle or participation relationship in the current season.",
+    "ko-KR": "현재 시즌에는 작동 가능한 주간 게임 주기 또는 참여 관계가 없습니다."
+  },
+  "登记赛段核心": {
+    "zh-TW": "登記賽段核心",
+    "en-US": "Registration cycle core",
+    "ko-KR": "등록 주기 코어"
+  },
+  "确认后将锁定本赛段核心，每周名单按此核对。": {
+    "zh-TW": "確認後將鎖定本賽段核心，每週名單按此核對。",
+    "en-US": "After confirmation, the core of this cycle will be locked, and the weekly list will be checked according to this.",
+    "ko-KR": "확인 후 이 주기의 핵심이 잠기고 이에 따라 주간 목록이 확인됩니다."
+  },
+  "锁定赛段核心时，人数必须符合本赛段规则。": {
+    "zh-TW": "鎖定賽段核心時，人數必須符合本賽段規則。",
+    "en-US": "When locking the cycle core, the number of people must comply with the rules of this cycle.",
+    "ko-KR": "사이클 코어를 잠글 때 인원 수는 이 사이클의 규칙을 준수해야 합니다."
+  },
+  "队长、经理、选手或教练完成邀请认领后，这里会自动出现对应队伍的赛段与每周资料。": {
+    "en-US": "Once a captain, manager, player or coach accepts an invitation, the team’s cycle and weekly information will appear here.",
+    "zh-TW": "隊長、經理、選手或教練完成邀請認領後，這裡會自動出現對應隊伍的賽段與每週資料。",
+    "ko-KR": "팀장, 매니저, 선수 또는 코치가 초대를 수락하면 팀의 사이클과 주간 정보가 여기에 표시됩니다."
+  },
+  "当前赛段": {
+    "zh-TW": "當前賽段",
+    "en-US": "Cycle",
+    "ko-KR": "현재 기간"
+  },
+  "本赛段不计入正式积分。": {
+    "zh-TW": "本賽段不計入正式積分。",
+    "en-US": "This cycle does not award standings points.",
+    "ko-KR": "이 주기에서는 공식 포인트가 계산되지 않습니다."
+  },
+  "进行中的比分尚未计入赛段积分。": {
+    "zh-TW": "進行中的比分尚未計入賽段積分。",
+    "en-US": "Live scores are not added to the published cycle points.",
+    "ko-KR": "진행 중인 점수가 아직 기간 점수에 포함되지 않았습니다."
+  },
+  " · 不计赛段积分": {
+    "zh-TW": " · 不計賽段積分",
+    "en-US": " · No cycle points",
+    "ko-KR": "· 기간 포인트는 포함되지 않습니다."
+  },
+  "整个赛段": {
+    "zh-TW": "整個賽段",
+    "en-US": "Whole cycle",
+    "ko-KR": "전체 주기"
+  },
+  "选择赛段": {
+    "zh-TW": "選擇賽段",
+    "en-US": "Select cycle",
+    "ko-KR": "주기 선택"
+  },
+  "五局累计赛段积分": {
+    "zh-TW": "五局累計賽段積分",
+    "en-US": "Five maps, cycle points",
+    "ko-KR": "5경기 누적 피리어드 포인트"
+  },
+  "查看赛段积分": {
+    "zh-TW": "檢視賽段積分",
+    "en-US": "View cycle points",
+    "ko-KR": "기간 포인트 보기"
+  },
+  "比分与地图记录以公布内容为准；赛段积分见总览。": {
+    "zh-TW": "比分與地圖記錄以公佈內容為準；賽段積分見總覽。",
+    "en-US": "Scores and map records follow the published data. Cycle points are in the overview.",
+    "ko-KR": "점수 및 맵 기록은 게시된 콘텐츠에 따라 달라집니다. 기간 포인트에 대한 개요를 참조하세요."
+  },
+  "赛况与赛段积分": {
+    "zh-TW": "賽況與賽段積分",
+    "en-US": "Matches & cycle points",
+    "ko-KR": "경기 상태 및 기간 포인트"
+  },
+  "赛段季后赛": {
+    "zh-TW": "賽段季後賽",
+    "en-US": "Cycle playoffs",
+    "ko-KR": "사이클 플레이오프"
+  },
+  "第 {0} 赛段": {
+    "en-US": "Cycle {0}",
+    "zh-TW": "第 {0} 賽段",
+    "ko-KR": "사이클 {0}"
+  },
+  "赛段进行中": {
+    "en-US": "Active cycle",
+    "zh-TW": "賽段進行中",
+    "ko-KR": "사이클 진행 중"
+  },
+  "巅峰赛": {
+    "en-US": "Finals",
+    "zh-TW": "巔峰賽",
+    "ko-KR": "파이널"
+  },
+  "了解巅峰赛": {
+    "en-US": "About the Finals",
+    "zh-TW": "了解巔峰賽",
+    "ko-KR": "파이널 안내"
+  },
+  "Prelims": {
+    "en-US": "Prelims",
+    "zh-TW": "Prelims",
+    "ko-KR": "예선"
+  },
+  "Finals": {
+    "en-US": "Finals",
+    "zh-TW": "Finals",
+    "ko-KR": "파이널"
   }
 }

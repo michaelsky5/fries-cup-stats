@@ -16,17 +16,17 @@ function fixture() {
 }
 
 test('main stage labels follow the approved names; qualifier remains an auxiliary stage', () => {
-  assert.deepEqual(['REGULAR', 'PLAYOFFS', 'MAJOR'].map(phase => getWeeklyPhaseLabel(phase)), ['积分赛', '季后赛', '大师赛'])
+  assert.deepEqual(['REGULAR', 'PLAYOFFS', 'MAJOR'].map(phase => getWeeklyPhaseLabel(phase)), ['积分赛', '季后赛', '巅峰赛'])
   assert.equal(getWeeklyPhaseLabel('QUALIFIER'), '晋级加赛')
   assert.equal(getWeeklyPhaseLabel('OTHER'), '')
-  assert.equal(getWeeklyPhaseLabel('REGULAR', 'en-US'), 'Points stage')
+  assert.equal(getWeeklyPhaseLabel('REGULAR', 'en-US'), 'Prelims')
 })
 
 test('Chinese and English identity labels use persisted numbers and phase instead of format or live state', () => {
   const match = { match_code: 'FCW26-C02-W05-PO-M03', format: 'RR5', status: 'LIVE',
     weekly_context: { cycle_sequence: 9, week_number: 9, phase: 'REGULAR', round_label: '决赛' } }
-  assert.equal(getWeeklyMatchIdentityLabel(match), '第 2 周期 · 第 5 周 · 季后赛 · 决赛 · 第 03 场')
-  assert.equal(getWeeklyMatchIdentityLabel(match, 'en-US'), 'Cycle 2 · Week 5 · Playoffs · Final · Match 03')
+  assert.equal(getWeeklyMatchIdentityLabel(match), 'FCW S1 C2 · 第 5 周 · 季后赛 · 决赛 · 第 03 场')
+  assert.equal(getWeeklyMatchIdentityLabel(match, 'en-US'), 'FCW S1 C2 · Week 5 · Playoffs · Final · Match 03')
   assert.equal(getWeeklyMatchIdentity({ weeklyIdentity: { code: 'FCW26-C01-W04-QUAL-M02', phase: 'QUALIFIER', roundLabel: '第 2 轮' } }).match_number, 2)
   assert.equal(getWeeklyMatchIdentityLabel({ match_code: 'FCW26-C00-W01-REG-M01', weekly_context: { cycle_name: '试运行' } }), '试运行 · 第 1 周 · 积分赛 · 第 01 场')
 })
@@ -39,7 +39,7 @@ test('legacy matches gain only published cycle/week context; ordinal numbers are
   assert.equal(context.week_number, 1)
   assert.equal(context.phase, 'REGULAR')
   assert.equal(context.match_number, undefined)
-  assert.equal(getWeeklyMatchIdentityLabel({ ...match, weekly_context: context }), '第 1 周期 · 第 1 周 · 积分赛')
+  assert.equal(getWeeklyMatchIdentityLabel({ ...match, weekly_context: context }), 'FCW S1 C1 · 第 1 周 · 积分赛')
   assert.equal(getPublishedWeeklyContext({ ...match, cycle_week_id: 'wrong-week' }, db.weekly_competition), null)
   assert.equal(getPublishedWeeklyContext({ ...match, cycle_id: 'wrong-cycle' }, db.weekly_competition), null)
   assert.equal(getWeeklyMatchIdentity({ match_id: 'FCW26-WEEKLY-6EFFE40D' }), null)

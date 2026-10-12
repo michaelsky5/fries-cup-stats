@@ -29,7 +29,7 @@ export default function WeeklyReportPage() {
     <nav className={styles.breadcrumbs} aria-label={t('周报导航', 'Report navigation')}><Link to={home}>← {t('赛事总览', 'Event overview')}</Link><Link to={archive}>{t('周报归档', 'Report archive')} →</Link></nav>
     {!weekId && <>
       <header className={styles.archiveHeading}><div><span className={styles.eyebrow}>FRIES CUP / WEEKLY NEWSPAPER</span><h1>{t('薯条周报', 'Fries Cup Weekly')}</h1></div><p>{t('每周赛果、最佳阵容与数据看点。', 'Weekly results, best lineups and data stories.')}</p></header>
-      <nav className={styles.cycleLinks} aria-label={t('周报比赛周期', 'Report cycles')}>{overview.cycles.map(cycle => <Link key={cycle.id} to={withSeason('/reports?cycle=' + encodeURIComponent(cycle.id))} aria-current={cycle.id === cycleId ? 'page' : undefined}>{weeklyCycleTitle(cycle, locale)}</Link>)}</nav>
+      <nav className={styles.cycleLinks} aria-label={t('周报比赛赛段', 'Report cycles')}>{overview.cycles.map(cycle => <Link key={cycle.id} to={withSeason('/reports?cycle=' + encodeURIComponent(cycle.id))} aria-current={cycle.id === cycleId ? 'page' : undefined}>{weeklyCycleTitle(cycle, locale)}</Link>)}</nav>
     </>}
     {(loading || error || (weekId ? !issue : !issues.length)) && <section className={styles.unavailable} role={error ? 'alert' : 'status'}>
       <h2>{!weekly ? pickUiLocale(locale, '当前赛事暂无周报', 'No weekly reports for this event', '이 대회에는 주간 신문이 없습니다', '目前賽事暫無週報') : loading ? t('正在读取周报…', 'Loading the issue…') : error ? t('周报暂时无法读取', 'The issue could not be loaded') : t('本期周报尚未出刊', 'This issue has not been published')}</h2>

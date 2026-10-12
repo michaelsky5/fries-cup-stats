@@ -50,8 +50,10 @@ const weekNumber = week => Number(week?.week_number) || 0
 
 export function buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch, followedTeamIds = [] } = {}) {
   const snapshot = db?.weekly_competition
+  const seasonId = db?.season?.id || db?.meta?.season_id || snapshot?.season_id
   const cycles = snapshot?.schema_version === 'friescup-weekly-public-v1'
-    ? list(snapshot.cycles).filter(cycle => PUBLIC_CYCLES.has(upper(cycle.status))) : []
+    ? list(snapshot.cycles).filter(cycle => PUBLIC_CYCLES.has(upper(cycle.status)))
+      .map(cycle => seasonId ? { ...cycle, season_id: cycle.season_id || seasonId } : cycle) : []
   const newest = [...cycles].sort((a, b) => Number(b.sequence || 0) - Number(a.sequence || 0))
   const cycle = cycles.find(item => text(item.id) === text(cycleId))
     || newest.find(item => ['ACTIVE', 'PLAYOFFS'].includes(upper(item.status))) || newest[0] || null

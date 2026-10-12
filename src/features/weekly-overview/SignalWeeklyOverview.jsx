@@ -131,7 +131,7 @@ export default function SignalWeeklyOverview() {
       <div className={styles.headingActions}><Link className={styles.rulesLink} data-weekly-report-archive-link to={withSeason(`/reports?cycle=${encodeURIComponent(selectedCycleId || '')}`)}>{pickUiLocale(locale, '周报归档', 'Weekly reports', '주간 신문', '週報歸檔')} <span aria-hidden="true">→</span><small>{pickUiLocale(locale, '赛果与选手数据', 'Results & player statistics', '경기 결과와 선수 기록', '賽果與選手數據')}</small></Link><a className={styles.rulesLink} href={rulebookUrl} target="_blank" rel="noreferrer">{t(uiText("规则中心", locale), 'Rulebook')} <span aria-hidden="true">↗</span><small>{cycle?.rulebook?.version ? `V${cycle.rulebook.version}` : t(uiText("完整条款与历史版本", locale), 'Rules & version history')}</small></a><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a></div>
     </header>
     <WeeklyRegistrationBand registration={db?.weekly_competition?.registration} locale={locale} withSeason={withSeason} />
-    <section className={styles.periodNavigation} data-weekly-period-nav="true" aria-label={pickUiLocale(locale, '比赛周期与周次', 'Cycle and weeks', '주기 및 주차', '比賽週期與週次')}>
+    <section className={styles.periodNavigation} data-weekly-period-nav="true" aria-label={pickUiLocale(locale, '比赛赛段与周次', 'Cycle and weeks', '주기 및 주차', '比賽賽段與週次')}>
       <div className={styles.cycleBlock}><WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} dateRange={weeklyCycleDateRange(cycle, locale)} onChange={id => change({ cycle: id, week: null, match: null })} /></div>
       <WeeklyWeekRail weeks={weeks} selectedId={week?.id} locale={locale} onChange={id => change({ cycle: cycle.id, week: id, match: null })} />
     </section>
@@ -165,7 +165,7 @@ export default function SignalWeeklyOverview() {
               </li>)}
             </ol>
           </div>}
-          <div className={styles.matchFooter}><span>{focus.state === 'live' ? t(uiText("进行中的比分尚未计入周期积分。", locale), 'Live scores are not added to the published cycle points.') : focus.state === 'ruling' ? t(uiText("按赛事判定记录，积分以公布榜单为准。", locale), 'A ruling applies. Points follow the published standings.') : t(uiText("地图记录与结果以公布内容为准。", locale), 'Map records and results follow the published data.')}</span><Link to={withSeason(`/matches/${encodeURIComponent(focus.id)}`)} {...returnProps(focus)}>{t(uiText("比赛详情", locale), 'Match details')} <span aria-hidden="true">→</span></Link></div>
+          <div className={styles.matchFooter}><span>{focus.state === 'live' ? t(uiText("进行中的比分尚未计入赛段积分。", locale), 'Live scores are not added to the published cycle points.') : focus.state === 'ruling' ? t(uiText("按赛事判定记录，积分以公布榜单为准。", locale), 'A ruling applies. Points follow the published standings.') : t(uiText("地图记录与结果以公布内容为准。", locale), 'Map records and results follow the published data.')}</span><Link to={withSeason(`/matches/${encodeURIComponent(focus.id)}`)} {...returnProps(focus)}>{t(uiText("比赛详情", locale), 'Match details')} <span aria-hidden="true">→</span></Link></div>
         </div> : <div className={styles.empty}><span>WEEKLY / MATCHES</span><h3>{t(uiText("赛程尚未公布", locale), 'Schedule not yet published')}</h3><p>{t(uiText("可切换其他已发布周次，查看对阵与赛果。", locale), 'Choose another published week to view fixtures and results.')}</p></div>}
       </section>
       {matches.length > 0 && <section className={styles.matchList} aria-labelledby="weekly-matches-title">
@@ -182,9 +182,9 @@ export default function SignalWeeklyOverview() {
       {!isDesktop && following}
       </div>
       <aside className={styles.standings} aria-labelledby="weekly-standings-title">
-        <div className={styles.sectionBar}><h2 id="weekly-standings-title">{t(uiText("周期积分", locale), 'Cycle points')}</h2><span>{cycleTitle(cycle)}</span></div>
+        <div className={styles.sectionBar}><h2 id="weekly-standings-title">{t(uiText("赛段积分", locale), 'Cycle points')}</h2><span>{cycleTitle(cycle)}</span></div>
         <div className={styles.standingsPanel}>
-        <div className={styles.standingsIntro}><span>{isPilot ? t(uiText("本周期不计入正式积分。", locale), 'This cycle does not award standings points.') : eventCenterText('latestCyclePoints', locale)}</span>{hasFocusedStandings && <div className={styles.standingsFocusLegend} id="weekly-standings-focus-legend"><i aria-hidden="true" />{pickUiLocale(locale, '高亮为当前对阵队伍', 'Shaded rows mark the current matchup', '강조된 행은 현재 대진의 팀입니다', '高亮為目前對陣隊伍')}</div>}</div>
+        <div className={styles.standingsIntro}><span>{isPilot ? t(uiText("本赛段不计入正式积分。", locale), 'This cycle does not award standings points.') : eventCenterText('latestCyclePoints', locale)}</span>{hasFocusedStandings && <div className={styles.standingsFocusLegend} id="weekly-standings-focus-legend"><i aria-hidden="true" />{pickUiLocale(locale, '高亮为当前对阵队伍', 'Shaded rows mark the current matchup', '강조된 행은 현재 대진의 팀입니다', '高亮為目前對陣隊伍')}</div>}</div>
         {!isPilot && standings.length > 0 ? <>
           <table aria-describedby={hasFocusedStandings ? 'weekly-standings-focus-legend' : undefined}>
             {hasStandingsExcerpt && <caption className={styles.standingsCaption}>{pickUiLocale(locale, `前 ${standingsLimit} 支 · 共 ${standings.length} 支`, `First ${standingsLimit} of ${standings.length} teams`, `전체 ${standings.length}팀 중 상위 ${standingsLimit}팀`, `前 ${standingsLimit} 支 · 共 ${standings.length} 支`)}</caption>}
