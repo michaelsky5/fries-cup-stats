@@ -124,6 +124,14 @@ export function getMatchReviewMvp(dossier, players) {
   return row?.rating != null && Number.isFinite(row.rating) && row.rating > 0 ? row : null
 }
 
+export function getMatchReviewMvpUnavailableReason(dossier) {
+  if (!dossier?.state.isComplete || dossier.state.isForfeit || getMatchReviewMvp(dossier)) return null
+  if (dossier.rating?.supported) return 'NO_ELIGIBLE_PLAYER'
+  // Missing published statistics and missing comparison scores need different explanations.
+  if (dossier.rating?.ratingModelVersion && dossier.hasCompletePlayerStats) return 'REFERENCE_UNAVAILABLE'
+  return 'STATS_UNAVAILABLE'
+}
+
 export function canCompareReviewPlayers(a, b) {
   return Boolean(a && b && a.side !== b.side && a.role === b.role && ['TANK', 'DPS', 'SUPPORT'].includes(a.role))
 }

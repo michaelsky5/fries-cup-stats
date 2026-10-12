@@ -56,6 +56,9 @@ jobs:
       - name: Check statistical rating and archived scoring rules
         run: npm run test:statistical-rating && npm run test:rating-release && node --test scripts/assertMatchReview.mjs
 
+      - name: Check match data feedback and missing MVP explanations
+        run: node --test scripts/matchFeedback.test.mjs
+
       - name: Build production frontend
         run: npm run build
 
