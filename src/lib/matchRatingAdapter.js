@@ -10,6 +10,7 @@ import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 import { normalizeSeasonId } from '../features/favorites/normalizeSeasonId.js'
 import { usesStatisticalRating } from './statisticalRatingAdapter.js'
 import { STATISTICAL_RATING_VERSION } from '../config/statisticalRatingConfig.js'
+import { buildMatchAwardFallback } from './matchAwardFallback.js'
 
 const METRIC_IDS = PUBLIC_METRICS.map(metric => metric.id)
 
@@ -374,6 +375,13 @@ function decorateScoreEntry(entry, minimumMaps) {
     matchAwardMapsPlayed: mapsPlayed,
     matchAwardMinimumMaps: minimumMaps
   }
+}
+
+export function getMatchAwardFallback(match, maps = [], players = []) {
+  if (!usesStatisticalRating({ seasonId: getMatchSeasonId(match) }) || match?.is_forfeit) return null
+  const minimumMaps = getMatchAwardMinimumMaps(maps.length)
+  const award = buildMatchAwardFallback(buildMatchRatingEntries(match, maps, players), maps, minimumMaps)
+  return award ? { ...award, minimumMaps, entries: award.entries.map(entry => decorateScoreEntry(entry, minimumMaps)) } : null
 }
 
 export function getMatchRatingSummary(match, maps = [], players = [], options = {}) {
