@@ -16,7 +16,7 @@ export function weeklyMatchState(match) {
   if (['CANCELLED', 'CANCELED', 'VOID'].includes(status)) return 'cancelled'
   if (status === 'POSTPONED') return 'postponed'
   if (match?.is_forfeit || ['FORFEIT', 'ADMIN_COMPLETED'].includes(status)) return 'ruling'
-  if (['COMPLETE', 'COMPLETED', 'FINISHED'].includes(status)) return 'complete'
+  if (['COMPLETE', 'COMPLETED', 'FINISHED', 'LOCKED'].includes(status)) return 'complete'
   if (['LIVE', 'IN_PROGRESS'].includes(status)) return 'live'
   if (['RESULT_REVIEW', 'PENDING_REVIEW'].includes(status)) return 'review'
   if (['PENDING', 'SCHEDULED', 'PUBLISHED', 'READY', 'UPCOMING'].includes(status)) return 'upcoming'

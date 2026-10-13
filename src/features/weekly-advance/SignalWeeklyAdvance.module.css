@@ -123,6 +123,7 @@
 .journeyEmpty h2 { font-size: 28px; margin: 18px 0; }
 .journeyEmpty p { font-size: 13px; line-height: 1.8; color: var(--dark-muted); }
 .nextStages { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-block: 1px solid var(--line); margin-top: 36px; }
+.nextStages.majorStage { grid-template-columns: minmax(0, 1fr); }
 .nextStages article { display: flex; gap: 28px; padding: 32px 30px 32px 0; scroll-margin-top: 130px; min-width: 0; }
 .nextStages article + article { border-left: 1px solid var(--line); padding-left: 30px; }
 .nextNumber { font: 800 42px/1 var(--fc-data-font-display); color: var(--muted); }
