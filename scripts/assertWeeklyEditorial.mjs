@@ -9,7 +9,7 @@ import { applyIssueEdits, createIssueDraft, validateIssueDraft } from '../src/fe
 const team = id => ({ id, name: id, short: id })
 function fixture(weekNumber, aWins = 3, { a = 'A', b = 'B', state = 'complete', cycleId = 'cycle' } = {}) {
   const id = `match-${weekNumber}-${a}-${b}`
-  const match = { id, state, team_a: { ...team(a), score: aWins }, team_b: { ...team(b), score: 5 - aWins } }
+  const match = { id, state, scheduled_at: new Date(Date.parse('2026-09-01T12:00:00Z') + weekNumber * 7 * 86400_000).toISOString(), team_a: { ...team(a), score: aWins }, team_b: { ...team(b), score: 5 - aWins } }
   const winners = aWins === 3 ? [a, b, b, a, a] : aWins === 2 ? [b, a, a, b, b] : Array.from({ length: 5 }, (_, index) => index < aWins ? a : b)
   const maps = winners.map((winner, index) => ({ matchId: id, order: index + 1, map_name: 'Nepal', map_type: 'Control',
     winner, score_a: winner === a ? 2 : 0, score_b: winner === a ? 0 : 2 }))
@@ -89,11 +89,24 @@ test('multiple same-week appearances do not infer chronological streaks from ide
   assert.equal(context.kind, 'previous-meeting')
 })
 
+test('missing dates and rescheduled matches out of week order cannot establish a winning run', () => {
+  for (const date of [null,'2026-09-25T12:00:00Z']) {
+    const first=fixture(1,4),second=fixture(2,5)
+    first.overview.matches[0].scheduled_at=date
+    const context=background(fixture(3,3,{a:'C',b:'A'}),[first,second])
+    assert.ok(!context || context.kind==='previous-meeting')
+  }
+})
+
 test('lead introduction distinguishes a unique close match within fully recorded results', () => {
   const current = fixture(3), close = buildMatchNews(current, current.completed[0])
   const ordinaryReport = fixture(3, 4, { a: 'C', b: 'D' }), ordinary = buildMatchNews(ordinaryReport, ordinaryReport.completed[0])
   assert.match(buildLeadIntro(close, [close, ordinary]), /2 场完整五图赛果中唯一的 3:2/)
-  assert.doesNotMatch(buildLeadIntro(close, [close, { ...ordinary, decisive: ordinary.maps[4] }]), /唯一/)
+  const closingLoss=fixture(3,3,{a:'E',b:'F'})
+  closingLoss.maps.forEach((map,index)=>{map.winner=index<3?'E':'F';map.score_a=index<3?2:0;map.score_b=index<3?0:2})
+  const anotherClose=buildMatchNews(closingLoss,closingLoss.completed[0])
+  assert.equal(anotherClose.decisive,null)
+  assert.doesNotMatch(buildLeadIntro(close, [close, anotherClose]), /唯一/)
   assert.doesNotMatch(buildLeadIntro({ ...close, sequence: [], decisive: null, brief: '赛果已确认。' }, [close]), /逆转|决胜|唯一/)
 })
 
