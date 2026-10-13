@@ -4,6 +4,7 @@ import { weeklyTeamShort, weeklyCycleTitle } from '../weekly-overview/weeklyPres
 import { formatReportTime } from './weeklyReportPreview.js'
 import { buildWeeklyDataStories, formatWeeklyDataStory } from './weeklyDataStories.js'
 import { buildWeeklyPeopleNews } from './weeklyPeopleNews.js'
+import { buildLeadIntro, buildMatchBackground, selectWeeklyLead } from './weeklyEditorial.js'
 
 const identity = team => String(team?.id || team?.team_id || '')
 const score = value => value != null && String(value).trim() !== '' && Number.isFinite(Number(value)) ? Number(value) : null
@@ -191,8 +192,12 @@ export function buildWeeklyFunFacts(report, articles) {
 export function buildWeeklyNewspaper(report, locale = 'zh-CN') {
   if (!report) return null
   const t = tFor(locale)
-  const articles = report.completed.map(match => buildMatchNews(report, match, locale))
-  const lead = articles.find(article => article.id === report.closeMatch?.id) || articles[0] || null
+  const articles = report.completed.map(match => {
+    const article = buildMatchNews(report, match, locale)
+    return { ...article, state: match.state, background: buildMatchBackground(article, report, locale) }
+  })
+  const lead = selectWeeklyLead(articles, report.closeMatch?.id)
+  if (lead) lead.intro = buildLeadIntro(lead, articles, locale)
   const briefs=selectMatchBriefs(articles,lead)
   const otherResults=articles.filter(article=>article!==lead&&!briefs.some(brief=>brief.id===article.id)).sort((a,b)=>String(a.id).localeCompare(String(b.id)))
   const topMap = report.mapFrequency[0]
@@ -232,5 +237,5 @@ export function buildWeeklyNewspaper(report, locale = 'zh-CN') {
   }
   const edition = t(`${weeklyCycleTitle(report.cycle,locale)} · 第 ${report.week.week_number} 周`, `${weeklyCycleTitle(report.cycle,locale)} · Week ${report.week.week_number}`)
   const sharingText = [t(`薯条周报｜${edition}（样报）`,`Fries Cup Weekly | ${edition} (sample)`),lead?.title, t(`${report.completed.length} 场已确认对阵 · ${report.maps.length} 张实际地图 · ${report.playerCount} 名出场选手`,`${report.completed.length} confirmed matches · ${report.maps.length} played maps · ${report.playerCount} recorded players`),t('最佳阵容与 MVP 依当周有效数据自动试评，尚未正式发布。','Team of the week and MVP are calculated from valid weekly data, not formally published.'),t(`数据截至 ${formatReportTime(report.sourceAt,locale)}，本期为可保存的报纸样稿。`,`Data version: ${formatReportTime(report.sourceAt,locale)}. This is a downloadable newspaper sample.`)].filter(Boolean).join('\n')
-  return { report,locale,edition,articles,lead,briefs,otherResults:otherResults.slice(0,3),otherResultCount:otherResults.length,layout:report.completed.length<=2?'compact':'standard',mapNews,heroNews,banNews,peopleNews,funFacts,dataStories,updates,pageCount:1,sharingText,generation:{mode:'verified-facts-template',version:'frypress-v9',sourceAt:report.sourceAt,cycleId:report.cycle.id,weekId:report.week.id},publication:null,awards:report.awards,issueStandings:null }
+  return { report,locale,edition,articles,lead,briefs,otherResults:otherResults.slice(0,3),otherResultCount:otherResults.length,layout:report.completed.length<=2?'compact':'standard',mapNews,heroNews,banNews,peopleNews,funFacts,dataStories,updates,nextWeek:report.newsContext?.nextWeek || null,pageCount:1,sharingText,generation:{mode:'verified-facts-template',version:'frypress-v10',sourceAt:report.sourceAt,cycleId:report.cycle.id,weekId:report.week.id},publication:null,awards:report.awards,issueStandings:null }
 }

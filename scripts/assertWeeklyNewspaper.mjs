@@ -134,7 +134,7 @@ test('visual score paths and first-map comebacks require all five verified winne
   const partial=structuredClone(report)
   partial.maps.find(map=>map.matchId===paper.lead.id&&map.order===1).winner=''
   const issue=buildWeeklyNewspaper(partial)
-  assert.deepEqual(issue.lead.sequence,[])
+  assert.deepEqual(issue.articles.find(article=>article.id===paper.lead.id).sequence,[])
   assert.equal(issue.funFacts.comeback.count,0)
   assert.equal(issue.funFacts.comeback.total,2)
 })
@@ -392,7 +392,7 @@ test('PDF assembly places exactly the supplied image on each A4 page',async()=>{
 test('winner-first display reverses the entire score path while retaining immutable source data',()=>{
   const issue=listWeeklyReportPreviews(db).find(sample=>sample.week.week_number===2)
   const before=structuredClone(issue)
-  const story=buildWeeklyNewspaper(issue).lead
+  const story=buildWeeklyNewspaper(issue).articles.find(article=>article.id===issue.closeMatch.id)
   assert.equal(story.result,'MMGT 3:2 Ateam')
   assert.equal(story.sourceResult,'Ateam 2:3 MMGT')
   assert.deepEqual(story.scoreOrder,['MMGT','Ateam'])

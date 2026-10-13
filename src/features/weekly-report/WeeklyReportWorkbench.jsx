@@ -65,6 +65,7 @@ export default function WeeklyReportWorkbench() {
       <button type="button" disabled={busy || dirty} onClick={() => run('generate')}>{t('生成本期', 'Generate issue')}</button>
       {draft && <>
         <label className={styles.field}>{t('主标题', 'Headline')}<textarea rows={2} value={draft.edits.headline} maxLength={checks.headlineLimit} disabled={busy} onChange={event => setEdits({ ...draft.edits, headline: event.target.value })} /></label>
+         {draft.paper.lead?.intro !== undefined&&<label className={styles.field}>{t('头条导语', 'Lead introduction')}<textarea rows={4} value={draft.edits.intro ?? draft.paper.lead.intro} maxLength={checks.introLimit} disabled={busy} onChange={event => setEdits({ ...draft.edits, intro: event.target.value })} /></label>}
         {draft.paper.briefs.map(article => <label className={styles.field} key={article.id}>{article.title}<textarea value={draft.edits.briefs[article.id]} maxLength={checks.briefLimit} disabled={busy} onChange={event => setEdits({ ...draft.edits, briefs: { ...draft.edits.briefs, [article.id]: event.target.value } })} /></label>)}
         {checks.errors.map(message => <p key={message} role="alert">{message}</p>)}
         <button type="button" disabled={busy || !dirty || checks.errors.length > 0} onClick={() => run('revisions')}>{t('保存新版本', 'Save revision')}</button>

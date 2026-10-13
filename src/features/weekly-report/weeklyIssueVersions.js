@@ -24,20 +24,22 @@ const sameScope = (a,b) => ['seasonId','cycleId','weekId','locale'].every(key =>
 export function createIssueDraft(report, seasonId, locale) {
   const scope=issueScope(report,seasonId,locale)
   // Freeze the public fact pack, not the whole application database or its latest-data pointer.
-  const frozenReport=copy({...pick(report,['cycle','week','number','seasonId','sourceAt','maps','playerCount','teamCount','namedBans']),completed:report.completed.map(matchFacts),pending:report.pending.map(matchFacts),awards:freezeAwards(report.awards)})
+  const frozenReport=copy({...pick(report,['cycle','week','number','seasonId','sourceAt','maps','playerCount','teamCount','namedBans','newsContext']),completed:report.completed.map(matchFacts),pending:report.pending.map(matchFacts),awards:freezeAwards(report.awards)})
   const newspaper=buildWeeklyNewspaper(report,locale)
   const {report: ignoredReport, ...paper}=newspaper
   void ignoredReport
   // Raw map facts are retained once. Rendered articles do not need duplicate player rows
   // or the award engine's full candidate and baseline calculation graph.
   const frozenPaper=JSON.parse(JSON.stringify({...paper,awards:frozenReport.awards},(key,value)=>key==='player_stats'?undefined:value))
-  return {scope,report:frozenReport,paper:frozenPaper,edits:{headline:paper.lead?.title || '',briefs:Object.fromEntries(paper.briefs.map(article=>[article.id,article.brief]))},reviewed:false}
+  return {scope,report:frozenReport,paper:frozenPaper,edits:{headline:paper.lead?.title || '',intro:paper.lead?.intro || '',briefs:Object.fromEntries(paper.briefs.map(article=>[article.id,article.brief]))},reviewed:false}
 }
 
 export function applyIssueEdits(draft) {
   const paper=copy(draft.paper)
   if (paper.lead) paper.lead.title=text(draft.edits?.headline)
+  if (paper.lead && draft.edits?.intro !== undefined) paper.lead.intro=text(draft.edits.intro)
   paper.briefs=paper.briefs.map(article=>({...article,brief:text(draft.edits?.briefs?.[article.id] ?? article.brief)}))
+  paper.articles=paper.articles.map(article=>article.id===paper.lead?.id ? {...article,...paper.lead} : paper.briefs.find(brief=>brief.id===article.id) || article)
   return paper
 }
 
@@ -51,15 +53,26 @@ export function validateIssueDraft(draft) {
   if (!report?.sourceAt || !Number.isFinite(Date.parse(report.sourceAt))) errors.push('缺少有效的数据时间。 / Missing source timestamp.')
   if (paper?.generation?.cycleId!==scope?.cycleId || paper?.generation?.weekId!==scope?.weekId || paper?.locale!==scope?.locale) errors.push('生成内容不属于当前周次或语言。 / Generated content scope mismatch.')
   const en=String(scope?.locale).startsWith('en'),headlineLimit=en?100:44,briefLimit=en?190:88
+  const introLimit=en?420:String(scope?.locale).startsWith('ko')?260:160
   const headline=text(draft?.edits?.headline)
   if (!headline || [...headline].length>headlineLimit || /[\r\n]/.test(headline)) errors.push(`主标题需为单行，最多 ${headlineLimit} 字。 / Invalid headline length.`)
+  if (paper?.lead?.intro !== undefined || draft?.edits?.intro !== undefined) {
+    const intro=text(draft?.edits?.intro ?? paper?.lead?.intro)
+    if (!intro || [...intro].length>introLimit || /[\r\n]/.test(intro)) errors.push(`头条导语需为单段，最多 ${introLimit} 字。 / Invalid lead introduction length.`)
+  }
   for (const article of paper?.briefs || []) {
     const brief=text(draft?.edits?.briefs?.[article.id])
     if (!brief || [...brief].length>briefLimit || /[\r\n]/.test(brief)) errors.push(`短讯需为单段，最多 ${briefLimit} 字。 / Invalid brief length.`)
   }
   const matchIds=new Set((report?.completed || []).map(match=>String(match.id)))
   const maps=new Set((report?.maps || []).map(map=>JSON.stringify([String(map.matchId),Number(map.order)])))
-  for (const article of paper?.articles || []) if (!matchIds.has(String(article.id))) errors.push('新闻引用了其他周次的比赛。 / Out-of-week match reference.')
+  const renderedArticles=[...(paper?.articles || []),paper?.lead,...(paper?.briefs || []),...(paper?.otherResults || [])].filter(Boolean)
+  for (const article of renderedArticles) if (!matchIds.has(String(article.id))) errors.push('新闻引用了其他周次的比赛。 / Out-of-week match reference.')
+  const historicalMatches=new Set((report?.newsContext?.history || []).flatMap(week=>week.matches.filter(match=>match.verified).map(match=>JSON.stringify([week.weekId,week.weekNumber,match.id]))))
+  for (const article of renderedArticles) for (const source of article.background?.sources || []) {
+    if (!historicalMatches.has(JSON.stringify([source.weekId,source.weekNumber,source.matchId]))) errors.push('新闻背景缺少本期已冻结的历史赛果。 / Unverified historical match reference.')
+  }
+  if (paper?.nextWeek && JSON.stringify(paper.nextWeek)!==JSON.stringify(report?.newsContext?.nextWeek)) errors.push('下周赛程与本期已公布记录不一致。 / Next-week fixture mismatch.')
   for (const story of paper?.dataStories?.cards || []) for (const stat of story.stats || []) {
     if (!maps.has(JSON.stringify([String(stat.matchId),Number(stat.order)]))) errors.push('数据趣闻引用了其他周次的地图。 / Out-of-week story reference.')
   }
@@ -67,7 +80,7 @@ export function validateIssueDraft(draft) {
   if (sequenceIssues.length) warnings.push('有逐图比分待补齐或存在冲突。 / Some map scores require review.')
   if (report?.pending?.length) warnings.push('本周仍有未确认对阵。 / Some weekly results are pending.')
   if ((report?.awards?.bestFive || []).filter(slot=>slot.player).length!==5 || !(report?.awards?.mvp || []).length) warnings.push('本周荣誉名单尚未完整。 / Weekly honours are incomplete.')
-  return {errors:[...new Set(errors)],warnings:[...new Set(warnings)],headlineLimit,briefLimit}
+  return {errors:[...new Set(errors)],warnings:[...new Set(warnings)],headlineLimit,briefLimit,introLimit}
 }
 
 function canonical(value) {
