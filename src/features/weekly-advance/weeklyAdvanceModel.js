@@ -1,4 +1,5 @@
 import { buildWeeklyOverview, weeklyScore } from '../weekly-overview/weeklyOverviewModel.js'
+import { buildWeeklyElimination } from './weeklyEliminationModel.js'
 
 const idOf = team => String(team?.id || team?.team_id || '')
 const normalize = value => String(value ?? '').normalize('NFKC').trim().toLowerCase()
@@ -45,10 +46,13 @@ export function buildWeeklyAdvance(db, { cycleId, weekId, teamId, query = '', fo
   const journey = selected ? weekEntries.map(({ week, matches }) => ({
     week, fixtures: matches.map(match => weeklyTeamMatch(match, selected.id)).filter(Boolean)
   })) : []
+  const elimination = buildWeeklyElimination(db, overview)
   return { ...overview, rows: visibleRows, selected, journey, totalTeams: rows.length,
+    elimination,
     publishedCount: published.length, hasStandings: published.length > 0,
     hasFilters: !!search || followedOnly,
-    activeStage: !isPilot && cycle?.status === 'ACTIVE' ? 'points' : !isPilot && cycle?.status === 'PLAYOFFS' ? 'playoffs' : null }
+    activeStage: !isPilot && cycle?.status === 'PLAYOFFS' ? 'playoffs'
+      : !isPilot && cycle?.status === 'ACTIVE' ? elimination?.hasBracket ? 'playoffs' : 'points' : null }
 }
 
 export function resetWeeklyAdvanceSearch(search) {
