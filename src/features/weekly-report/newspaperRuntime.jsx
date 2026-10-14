@@ -10,7 +10,7 @@ await Promise.all(['zh-TW', 'en-US', 'ko-KR'].map(ensureUiLocale))
 export { buildWeeklyReportPreview } from './weeklyReportPreview.js'
 export { createIssueDraft, validateIssueDraft, applyIssueEdits } from './weeklyIssueVersions.js'
 
-export const NEWSPAPER_RUNTIME_VERSION = 'frypress-release-6'
+export const NEWSPAPER_RUNTIME_VERSION = 'frypress-release-7'
 export function renderNewspaper(draft) {
   const { report, paper, scope } = draft
   const withSeason = path => path + (path.includes('?') ? '&' : '?') + 'season=' + encodeURIComponent(scope.seasonId)

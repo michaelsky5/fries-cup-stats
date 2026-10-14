@@ -6,7 +6,7 @@ import { getMapImage, getHeroImage } from '../../lib/reviewAssets.js'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import { weeklyPeriodPath } from '../weekly-overview/weeklyPresentation.js'
 import { formatReportTime } from './weeklyReportPreview.js'
-import { buildWeeklyNewspaper, newspaperTeamName } from './weeklyNewsroom.js'
+import { buildWeeklyNewspaper, newspaperTeamName, resolveWeeklyHeroRole } from './weeklyNewsroom.js'
 import { formatUpcomingMatch, formatWeeklyMatchScope, buildMatchBrief, buildLeadPrintNote } from './weeklyEditorial.js'
 import { WEEKLY_POSITIONS, WEEKLY_POSITION_ROLES } from './weeklyPositions.js'
 import { buildWeeklyNewspaperResultsUrl, buildWeeklyNewspaperQr } from './weeklyNewspaperShare.js'
@@ -63,9 +63,9 @@ function NewspaperTeamLogo({team,className,...props}) {
   return <TeamLogo team={team} className={className} {...props}/>
 }
 
-function RoleSymbol({role}) {
+function RoleSymbol({role,label}) {
   const icon={TANK:'tank',DPS:'damage',SUP:'support'}[role]
-  return <span aria-hidden="true" className={styles.roleSymbol} data-role-icon={role} style={{'--role-icon':`url("/role/${icon}.png")`}}/>
+  return <span aria-hidden={label?undefined:true} aria-label={label} role={label?'img':undefined} title={label} className={styles.roleSymbol} data-role-icon={role} style={{'--role-icon':`url("/role/${icon}.png")`}}/>
 }
 
 function MapTimeline({article,locale,t,compact=false}) {
@@ -108,14 +108,14 @@ function DataCuriosities({facts,stories,locale,t,withSeason}) {
   </section>
 }
 
-function HeroTrendList({heroes,kind,locale,t}) {
+function HeroTrendList({heroes,kind,locale,t,report}) {
   return <ol className={styles.heroTrendList} data-hero-trend={kind} data-count={heroes.length} aria-label={kind==='usage'?t('本周英雄出场排行','Weekly hero appearance leaders'):t('本周英雄 Ban 前三','Weekly top three hero bans')}>
-    {heroes.map(hero=><li key={hero.name} data-hero={hero.name} data-count={hero.count} data-rank={hero.rank}>
+    {heroes.map(hero=>{const role=resolveWeeklyHeroRole(hero,report);return <li key={hero.name} data-hero={hero.name} data-count={hero.count} data-rank={hero.rank} data-hero-role={role||undefined}>
       <span className={styles.trendRank} data-hero-rank={hero.rank} aria-label={t(`第 ${hero.rank} 名`,`No. ${hero.rank}`)}>{String(hero.rank).padStart(2,'0')}</span>
       <img src={getHeroImage(hero.name)} alt=""/>
-      <b className={styles.heroTrendName}>{formatOwHeroName(hero.name,locale)}</b>
+      <b className={styles.heroTrendName}>{role&&<RoleSymbol role={role} label={positionLabel(role,t)}/>}<span>{formatOwHeroName(hero.name,locale)}</span></b>
       <strong>{hero.count}<small>{t('次',kind==='usage'?'plays':'bans')}</small></strong>
-    </li>)}
+    </li>})}
     {!heroes.length&&<li className={styles.trendPending}>{t('记录待补齐','Records pending')}</li>}
   </ol>
 }
@@ -124,8 +124,8 @@ function WeeklyTrends({newspaper,report,locale,t}) {
   const {mapNews,heroNews,banNews}=newspaper
   return <section className={styles.weeklyTrends} data-weekly-trends aria-label={t('本周地图与英雄排行','This week’s map and hero rankings')}>
     <article><div className={styles.trendHeading}><h3>{t('本周常见地图','MOST PLAYED MAP')}</h3>{mapNews.tieCount>1&&<span>{t(`${mapNews.tieCount} 张并列`,`${mapNews.tieCount} tied`)}</span>}</div><div className={styles.mapHighlights} data-count={mapNews.highlights.length}>{mapNews.highlights.map(map=><figure key={map.name}><img src={getMapImage(map.type,map.name)} alt=""/><figcaption><b>{formatOwMapName(map.name,locale)}</b><strong>{map.count}<small>{t('次','plays')}</small></strong></figcaption></figure>)}{!mapNews.highlights.length&&<span className={styles.trendPending}>{t('记录待补齐','Records pending')}</span>}</div><small className={styles.trendNote}>{t(`本周 ${report.maps.length} 图赛果${mapNews.tieCount>3?` · 另 ${mapNews.tieCount-3} 张并列`:''}`,`${report.maps.length} map results this week${mapNews.tieCount>3?` · ${mapNews.tieCount-3} more tied`:''}`)}</small></article>
-    <article><div className={styles.trendHeading}><h3>{t('本周英雄出场','MOST PLAYED HEROES')}</h3>{heroNews.tieCount>1&&<span>{t(`${heroNews.tieCount} 名并列榜首`,`${heroNews.tieCount} tied`)}</span>}</div><HeroTrendList heroes={heroNews.highlights} kind="usage" locale={locale} t={t}/><small className={styles.trendNote}>{t('同一英雄，每位选手每图计 1 次','Each hero counts once per player per map.')}{heroNews.omittedTies>0&&t(` · 另 ${heroNews.omittedTies} 名并列`,` · ${heroNews.omittedTies} more tied`)}</small></article>
-    <article><div className={styles.trendHeading}><h3>{t('Ban 榜观察','MOST BANNED HEROES')}</h3><span>{banNews.tieCount>1?t(`${banNews.tieCount} 名并列榜首`,`${banNews.tieCount} tied`):'TOP 3'}</span></div><HeroTrendList heroes={banNews.highlights} kind="ban" locale={locale} t={t}/><small className={styles.trendNote}>{t(`本周记录 ${report.namedBans} 次英雄 Ban${banNews.omittedTies>0?` · 另 ${banNews.omittedTies} 名并列`:''}`,`${report.namedBans} hero bans recorded this week${banNews.omittedTies>0?` · ${banNews.omittedTies} more tied`:''}`)}</small></article>
+    <article><div className={styles.trendHeading}><h3>{t('本周英雄出场','MOST PLAYED HEROES')}</h3>{heroNews.tieCount>1&&<span>{t(`${heroNews.tieCount} 名并列榜首`,`${heroNews.tieCount} tied`)}</span>}</div><HeroTrendList heroes={heroNews.highlights} kind="usage" locale={locale} t={t} report={report}/><small className={styles.trendNote}>{t('同一英雄，每位选手每图计 1 次','Each hero counts once per player per map.')}{heroNews.omittedTies>0&&t(` · 另 ${heroNews.omittedTies} 名并列`,` · ${heroNews.omittedTies} more tied`)}</small></article>
+    <article><div className={styles.trendHeading}><h3>{t('Ban 榜观察','MOST BANNED HEROES')}</h3><span>{banNews.tieCount>1?t(`${banNews.tieCount} 名并列榜首`,`${banNews.tieCount} tied`):'TOP 3'}</span></div><HeroTrendList heroes={banNews.highlights} kind="ban" locale={locale} t={t} report={report}/><small className={styles.trendNote}>{t(`本周记录 ${report.namedBans} 次英雄 Ban${banNews.omittedTies>0?` · 另 ${banNews.omittedTies} 名并列`:''}`,`${report.namedBans} hero bans recorded this week${banNews.omittedTies>0?` · ${banNews.omittedTies} more tied`:''}`)}</small></article>
   </section>
 }
 
@@ -158,7 +158,7 @@ function AwardTeam({player,seasonId}) {
   return <span className={styles.awardTeam}>{player.teams.map(team=><span key={team.id}><NewspaperTeamLogo team={team} seasonId={seasonId} className={styles.awardEmblem}/>{newspaperTeamName(team)}</span>)}</span>
 }
 
-const positionLabel=(position,t)=>({TANK:t('坦克','Tank'),DPS:t('输出','Damage'),SUP:t('辅助','Support')})[WEEKLY_POSITION_ROLES[position]]||t('待归类','Unassigned')
+const positionLabel=(position,t)=>({TANK:t('坦克','Tank'),DPS:t('输出','Damage'),SUP:t('辅助','Support')})[WEEKLY_POSITION_ROLES[position]||position]||t('待归类','Unassigned')
 
 function KeyPerformance({player,t,mvp=false}) {
   const metrics=player.position==='TANK'?[['blocked',t('阻挡伤害','Mitigated')],['elims',t('消灭','Elims')]]:player.role==='SUP'?[['healing',t('治疗','Healing')],['assists',t('助攻','Assists')]]:[['damage',t('伤害','Damage')],['elims',t('消灭','Elims')]]
