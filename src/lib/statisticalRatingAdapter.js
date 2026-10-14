@@ -1,7 +1,7 @@
-import { STATISTICAL_RATING_SEASONS, STATISTICAL_RATING_VERSION } from '../config/statisticalRatingConfig.js'
+import { STATISTICAL_RATING_BACKFILL as BACKFILL, STATISTICAL_RATING_SEASONS, STATISTICAL_RATING_VERSION } from '../config/statisticalRatingConfig.js'
 import { RATING_METRICS } from '../config/ratingModelConfig.js'
 import { prepareStatisticalRatingData, round, text } from './statisticalRatingEvidence.js'
-import { buildStatisticalRatingBaselines, scoreStatisticalRatingRow } from './statisticalRatingModel.js'
+import { buildRetrospectiveStatisticalRatingBaselines, buildStatisticalRatingBaselines, scoreStatisticalRatingRow } from './statisticalRatingModel.js'
 import { mapRawScoreToMapRating } from './ratingModel.js'
 import { buildSeasonOpponentEvidence } from './seasonOpponentStrength.js'
 
@@ -20,7 +20,7 @@ export function usesStatisticalRating(args = {}) {
 }
 
 export function getStatisticalRatingDataset(db, seasonId = statisticalRatingSeasonId({ db })) {
-  if (!db || typeof db !== 'object') return { rows: [], byId: new Map(), scores: new Map() }
+  if (!db || typeof db !== 'object') return { rows: [], byId: new Map(), scores: new Map(), backfillScores: new Map() }
   const cached = cache.get(db)
   if (cached?.seasonId === seasonId) return cached
   const prepared = prepareStatisticalRatingData(db, seasonId)
@@ -30,7 +30,21 @@ export function getStatisticalRatingDataset(db, seasonId = statisticalRatingSeas
     if (!baselines.has(row.day)) baselines.set(row.day, buildStatisticalRatingBaselines(prepared.rows, { beforeDay: row.day }))
     scores.set(row.rowId, scoreStatisticalRatingRow(row, baselines.get(row.day)))
   }
-  const dataset = { ...prepared, byId: new Map(prepared.rows.map(row => [row.rowId, row])), scores }
+  const backfillScores = new Map()
+  if (seasonId === BACKFILL.seasonId) for (const matchId of BACKFILL.targetMatchIds) {
+    const targets = prepared.rows.filter(row => row.matchId === matchId)
+    // Never replace an existing score or repair missing observations by changing references.
+    if (!targets.length || targets.some(row => finite(scores.get(row.rowId)?.rawScore))
+      || targets.some(row => row.day > BACKFILL.throughDay || row.era.key === 'unknown-transition')) continue
+    const referencesByEra = new Map()
+    for (const row of targets) {
+      const key = row.day + '|' + row.era.key
+      if (!referencesByEra.has(key)) referencesByEra.set(key,
+        buildRetrospectiveStatisticalRatingBaselines(prepared.rows, row, BACKFILL))
+      backfillScores.set(row.rowId, scoreStatisticalRatingRow(row, referencesByEra.get(key)))
+    }
+  }
+  const dataset = { ...prepared, byId: new Map(prepared.rows.map(row => [row.rowId, row])), scores, backfillScores }
   cache.set(db, dataset)
   return dataset
 }
@@ -69,7 +83,8 @@ export function buildStatisticalRatingSummary(entry, args = {}, scoreContext = '
   const items = selected.map(row => ({ canonicalHeroName: row.hero, subrole: row.resolution.resolvedSubrole,
     scoringProfile: row.resolution.scoringProfile, effectiveScoringProfile: row.resolution.scoringProfile,
     minutes: row.playtimeMinutes, matchId: row.matchId, rawMatchId: row.rawMatchId, mapOrder: row.mapOrder,
-    teamId: text(row.rawLog?.teamId || row.rawLog?.team_id), rating: dataset.scores.get(row.rowId), row }))
+    teamId: text(row.rawLog?.teamId || row.rawLog?.team_id),
+    rating: (current ? dataset.backfillScores.get(row.rowId) : null) || dataset.scores.get(row.rowId), row }))
   const available = items.filter(item => finite(item.rating.rawScore))
   const sourceMinutes = available.reduce((sum, item) => sum + item.minutes, 0)
   const observedMinutes = selected.reduce((sum, row) => sum + row.playtimeMinutes, 0)
@@ -81,7 +96,8 @@ export function buildStatisticalRatingSummary(entry, args = {}, scoreContext = '
   if (!available.length) flags.push('STATISTICAL_SCORE_UNAVAILABLE')
   const activeCounts = available.map(item => item.rating.referenceUse.minimumObservedActiveSourceMatches).filter(finite)
   const early = available.some(item => item.rating.referenceUse.stage === 'EARLY_REFERENCE')
-  const provisional = available.some(item => item.rating.referenceUse.provisional) || coverage < 0.999999
+  const retrospective = available.find(item => item.rating.retrospective)?.rating.retrospective
+  const provisional = Boolean(retrospective) || available.some(item => item.rating.referenceUse.provisional) || coverage < 0.999999
   const rawScore = sourceMinutes ? round(available.reduce((sum, item) => sum + item.rating.rawScore * item.minutes, 0) / sourceMinutes, 3) : null
   const sampleStatus = available.length && available.every(item => item.rating.baselineMature) ? 'OK' : 'LOW_SAMPLE'
   const identityItems = available.length ? available : items
@@ -90,15 +106,16 @@ export function buildStatisticalRatingSummary(entry, args = {}, scoreContext = '
     canonicalHeroName: primary(identityItems, 'canonicalHeroName'), subrole: primary(identityItems, 'subrole'),
     scoringProfile: primary(identityItems, 'scoringProfile'), effectiveScoringProfile: primary(identityItems, 'effectiveScoringProfile'),
     sampleStatus, sourceLogCount: available.length, sourceMatchCount: new Set(available.map(item => item.matchId)).size,
-    sourceMinutes: round(sourceMinutes, 3), sourceScope: `strict_prior_day_${scoreContext}_published_logs`,
+    sourceMinutes: round(sourceMinutes, 3), sourceScope: `${retrospective ? 'retrospective' : 'strict_prior_day'}_${scoreContext}_published_logs`,
     aggregation: 'published_log_time_weighted', profileFallbackUsed: false,
     evidence: evidenceFor(available, sourceMinutes),
     opponentEvidence: scoreContext === 'season' ? buildSeasonOpponentEvidence({ db: args.db, logs: available, totalMinutes: sourceMinutes }) : null,
     statisticalRating: { version: STATISTICAL_RATING_VERSION, flags, provisional, reviewOnly: items.some(item => item.rating.reviewOnly),
       sourceMinutes: round(sourceMinutes, 3), totalMinutes: round(totalMinutes, 3), coverage,
       availableLogs: available.length, totalLogs: items.length, missingLogs: items.length - available.length,
-      referenceStage: !available.length ? 'REFERENCE_UNAVAILABLE' : early ? 'EARLY_REFERENCE' : provisional ? 'REFERENCE_MATURITY_PENDING' : 'REFERENCE_MATURITY_GATE_PASSED',
+      referenceStage: !available.length ? 'REFERENCE_UNAVAILABLE' : retrospective ? 'RETROSPECTIVE_REFERENCE' : early ? 'EARLY_REFERENCE' : provisional ? 'REFERENCE_MATURITY_PENDING' : 'REFERENCE_MATURITY_GATE_PASSED',
       minimumSourceMatches: activeCounts.length ? Math.min(...activeCounts) : null,
       heroAttributionVerified: available.length > 0 && available.every(item => item.row.verified),
-      accuracyValidated: false, referenceCutoff: 'STRICTLY_EARLIER_DAYS_ENTIRE_MATCH_HELD_OUT' } }
+      accuracyValidated: false, referenceCutoff: retrospective?.cutoff || 'STRICTLY_EARLIER_DAYS_ENTIRE_MATCH_HELD_OUT',
+      ...(retrospective ? { retrospective: { ...retrospective, policyVersion: BACKFILL.version } } : {}) } }
 }

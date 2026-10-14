@@ -24,8 +24,9 @@ export function MatchRatingNotes({ rating, locale }) {
 
 export default function MatchRatingDisclosure({ rating, locale = 'zh-CN' }) {
   if (!rating?.ratingModelVersion) return null
+  const retrospective = rating.entries?.some(entry => entry.statisticalRating?.retrospective)
   return <details className={styles.disclosure} data-match-rating-disclosure>
-    <summary>{locale === 'en-US' ? 'About ratings' : uiText('评分说明', locale)}<span aria-hidden="true">＋</span></summary>
+    <summary>{retrospective ? <small data-retrospective-rating>{locale === 'en-US' ? 'v1.5 · Retrospective' : uiText('v1.5 · 回溯评分', locale)}</small> : null}{locale === 'en-US' ? 'About ratings' : uiText('评分说明', locale)}<span aria-hidden="true">＋</span></summary>
     <MatchRatingNotes rating={rating} locale={locale} />
   </details>
 }

@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { resolveHeroSubrole } from '../src/lib/heroSubroleSelectors.js'
-import { buildStatisticalRatingBaselines, scoreStatisticalRatingRow, makeStatisticalDistribution,
+import { buildRetrospectiveStatisticalRatingBaselines, buildStatisticalRatingBaselines, scoreStatisticalRatingRow, makeStatisticalDistribution,
   continuousStatisticalMidrank } from '../src/lib/statisticalRatingModel.js'
 import { prepareStatisticalRatingData, getEra, heroVersion } from '../src/lib/statisticalRatingEvidence.js'
-import { usesStatisticalRating, buildStatisticalRatingSummary } from '../src/lib/statisticalRatingAdapter.js'
+import { usesStatisticalRating, buildStatisticalRatingSummary, getStatisticalRatingDataset } from '../src/lib/statisticalRatingAdapter.js'
 import { calculateMapPlayerScoreV1, attachRatingModelScoreToLeaderboardRows } from '../src/lib/scoringEngineAdapter.js'
 import { scoreLeaderboardEntries } from '../src/lib/leaderboardScoring.js'
-import { getStatisticalRatingNotes } from '../src/lib/statisticalRatingPresentation.js'
-import { STAT_KEYS } from '../src/config/statisticalRatingConfig.js'
+import { getStatisticalRatingLabel, getStatisticalRatingNotes } from '../src/lib/statisticalRatingPresentation.js'
+import { STAT_KEYS, STATISTICAL_RATING_BACKFILL as BACKFILL } from '../src/config/statisticalRatingConfig.js'
 
 function row(id, day = '2026-10-12', changes = {}) {
   const value = { rowId: id, seasonId: 'FCW26', matchId: id, mapOrder: '1', playerId: id, teamId: 'A',
@@ -162,4 +162,103 @@ test('unavailable season records produce neither an OVR nor a rank and partial a
   assert.equal(partial.statisticalRating.coverage, 0.5)
   assert.ok(partial.statisticalRating.flags.includes('PARTIAL_SCORING_COVERAGE_REVIEW'))
   assert.ok(getStatisticalRatingNotes({ statisticalRating: partial.statisticalRating }).some(note => note.includes('50%')))
+})
+
+test('retrospective references preserve the v1.5 formula and hold out the whole match and other versions', () => {
+  const target = row('TARGET', '2026-10-10')
+  const records = references().map((reference, index) => ({ ...reference, day: '2026-10-11', matchId: 'R' + index }))
+  const policy = { throughDay: '2026-10-11', referenceMatchIds: records.map(record => record.matchId) }
+  const baseline = buildRetrospectiveStatisticalRatingBaselines(records, target, policy)
+  const result = scoreStatisticalRatingRow(target, baseline)
+  const priorTarget = { ...target, day: '2026-10-12' }
+  const sameFormula = scoreStatisticalRatingRow(priorTarget, buildStatisticalRatingBaselines(records, { beforeDay: priorTarget.day }))
+  assert.equal(result.rawScore, sameFormula.rawScore)
+  assert.equal(result.mapRating, sameFormula.mapRating)
+  assert.deepEqual(result.metricContributions, sameFormula.metricContributions)
+  const additions = [row('SELF', '2026-10-10', { matchId: target.matchId }), row('OLD', '2026-10-04'),
+    row('FUTURE', '2026-10-12'), row('OTHER_SEASON', '2026-10-11', { seasonId: 'OTHER' })]
+  const expanded = { ...policy, referenceMatchIds: [...policy.referenceMatchIds, 'OLD', 'FUTURE', 'OTHER_SEASON'] }
+  const guarded = buildRetrospectiveStatisticalRatingBaselines([...records, ...additions], target, expanded)
+  assert.equal(scoreStatisticalRatingRow(target, guarded).rawScore, result.rawScore)
+  assert.equal(guarded.training.records, records.length)
+  assert.throws(() => buildRetrospectiveStatisticalRatingBaselines(records, target,
+    { ...policy, referenceMatchIds: [...policy.referenceMatchIds, target.matchId] }), /holdout/)
+  assert.throws(() => scoreStatisticalRatingRow({ ...target, matchId: 'OTHER_TARGET' }, baseline), /leakage/)
+})
+
+function backfillFixture() {
+  const db = fixture()
+  const aliases = new Map(db.matches.map((match, index) => [match.match_id,
+    index === 5 ? BACKFILL.targetMatchIds[2] : index < 3 ? BACKFILL.referenceMatchIds[index + 8] : 'IGNORED_' + index]))
+  for (const match of db.matches) {
+    match.match_id = aliases.get(match.match_id)
+    match.scheduled_at = match.match_id === BACKFILL.targetMatchIds[2] ? '2026-10-10T12:00:00Z' : '2026-10-11T12:00:00Z'
+  }
+  for (const player of db.players) for (const log of player.match_logs) log.matchId = aliases.get(log.matchId)
+  return db
+}
+const backfillSummary = (db, context = 'map') => buildStatisticalRatingSummary(entry(),
+  { db, seasonId: 'FCW26', currentMatchIds: [BACKFILL.targetMatchIds[2]], currentMapOrders: [1] }, context)
+
+test('published cold-start map and match scores use v1.5 while season scores and OVR remain unavailable', () => {
+  const db = backfillFixture()
+  const dataset = getStatisticalRatingDataset(db, 'FCW26')
+  const target = dataset.rows.find(record => record.playerId === entry().player_id)
+  assert.equal(dataset.scores.get(target.rowId).rawScore, null)
+  assert.ok(Number.isFinite(dataset.backfillScores.get(target.rowId).rawScore))
+  for (const context of ['map', 'match']) {
+    const summary = backfillSummary(db, context)
+    assert.ok(Number.isFinite(summary.rawScore))
+    assert.equal(summary.statisticalRating.retrospective.policyVersion, BACKFILL.version)
+    assert.equal(summary.statisticalRating.referenceCutoff, 'RETROSPECTIVE_SAME_VERSION_ENTIRE_MATCH_HELD_OUT')
+    assert.equal(getStatisticalRatingLabel(summary), '回溯统计分')
+    assert.ok(getStatisticalRatingNotes(summary).some(note => note.includes('整场排除本场数据')))
+    assert.ok(!getStatisticalRatingNotes(summary).some(note => note.includes('只使用此前比赛日')))
+  }
+  assert.equal(backfillSummary(db, 'season').rawScore, null)
+  const season = scoreLeaderboardEntries([entry()], 30, { db, seasonId: 'FCW26' })[0]
+  assert.equal(season.seasonOvr, null)
+  assert.equal(season.provisionalSeasonOvr, null)
+  const args = { entry: entry(), db, seasonId: 'FCW26', currentMatchIds: [BACKFILL.targetMatchIds[2]], currentMapOrders: [1] }
+  assert.equal(calculateMapPlayerScoreV1({ ...args, winnerTeamKeys: ['A'] }).rawScore,
+    calculateMapPlayerScoreV1({ ...args, winnerTeamKeys: ['B'] }).rawScore)
+})
+
+test('new matches outside the fixed backfill membership cannot change restored scores', () => {
+  const db = backfillFixture()
+  const before = backfillSummary(db)
+  const future = structuredClone(db.matches[0])
+  future.match_id = 'FCW26-FUTURE'
+  future.scheduled_at = '2026-10-20T12:00:00Z'
+  db.matches.push(future)
+  for (const player of db.players) for (const log of player.match_logs.filter(log => log.matchId === db.matches[0].match_id)) {
+    player.match_logs.push({ ...log, matchId: future.match_id })
+  }
+  assert.deepEqual(backfillSummary(structuredClone(db)), before)
+})
+
+test('an already available score on a backfill target keeps its prior-day reference policy', () => {
+  const db = backfillFixture()
+  for (const match of db.matches.slice(0, 3)) match.scheduled_at = '2026-10-09T12:00:00Z'
+  const dataset = getStatisticalRatingDataset(db, 'FCW26')
+  const target = dataset.rows.find(record => record.playerId === entry().player_id)
+  assert.ok(Number.isFinite(dataset.scores.get(target.rowId).rawScore))
+  assert.equal(dataset.backfillScores.has(target.rowId), false)
+  const summary = backfillSummary(db)
+  assert.equal(summary.rawScore, dataset.scores.get(target.rowId).rawScore)
+  assert.equal(summary.statisticalRating.referenceCutoff, 'STRICTLY_EARLIER_DAYS_ENTIRE_MATCH_HELD_OUT')
+  assert.equal(summary.statisticalRating.retrospective, undefined)
+})
+
+test('missing target metrics, forfeits and administrative maps cannot manufacture backfill scores', () => {
+  for (const mutate of [
+    db => { delete db.matches.at(-1).maps[0].team_a_stats[0].healing; delete db.players.at(-1).match_logs[0].totals.healing },
+    db => { db.matches.at(-1).is_forfeit = true },
+    db => { db.matches.at(-1).maps[0].is_administrative = true },
+    db => { db.matches.at(-1).status = 'PENDING' }
+  ]) {
+    const db = backfillFixture()
+    mutate(db)
+    assert.equal(backfillSummary(db).rawScore, null)
+  }
 })
