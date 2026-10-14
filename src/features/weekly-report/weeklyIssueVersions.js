@@ -5,10 +5,10 @@ const STORE_SCHEMA = 'friescup-weekly-issue-store-v1'
 const text = value => String(value ?? '').trim()
 const copy = value => JSON.parse(JSON.stringify(value, (_key, item) => item instanceof Map ? [...item] : item instanceof Set ? [...item] : item))
 const pick = (value, keys) => Object.fromEntries(keys.filter(key => value?.[key] !== undefined).map(key => [key,value[key]]))
-const awardPlayer = player => player ? pick(player,['id','name','role','position','hero','teams','per10','score','rating']) : null
+const awardPlayer = player => player ? pick(player,['id','name','role','position','hero','teams','per10','maps','score','rating']) : null
 function freezeAwards(awards) {
   if (!awards) return null
-  return {...pick(awards,['status','complete','policy','modelVersion','inputVersion']),mvp:(awards.mvp||[]).map(awardPlayer),bestFive:(awards.bestFive||[]).map(slot=>({...pick(slot,['position','role','status']),player:awardPlayer(slot.player)}))}
+  return {...pick(awards,['status','complete','policy','modelVersion','inputVersion']),minimumMaps:awards.policy?.minimumMaps,mvp:(awards.mvp||[]).map(awardPlayer),bestFive:(awards.bestFive||[]).map(slot=>({...pick(slot,['position','role','status']),player:awardPlayer(slot.player)}))}
 }
 const matchFacts = match => pick(match,['id','state','team_a','team_b','start_time','format','label'])
 

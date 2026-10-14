@@ -1,10 +1,10 @@
-import { translateUiText } from '../../lib/uiText.js'
+import { translateUiText, pickUiLocale } from '../../lib/uiText.js'
 import { formatOwMapName, formatOwHeroName, getOwHero } from '../../lib/heroes.js'
 import { weeklyTeamShort, weeklyCycleTitle } from '../weekly-overview/weeklyPresentation.js'
 import { formatReportTime } from './weeklyReportPreview.js'
 import { buildWeeklyDataStories, formatWeeklyDataStory } from './weeklyDataStories.js'
 import { buildWeeklyPeopleNews } from './weeklyPeopleNews.js'
-import { buildLeadIntro, buildMatchBackground, selectWeeklyLead } from './weeklyEditorial.js'
+import { buildLeadIntro, buildMatchBackground, buildMatchBrief, selectWeeklyLead } from './weeklyEditorial.js'
 
 const identity = team => String(team?.id || team?.team_id || '')
 const score = value => value != null && String(value).trim() !== '' && Number.isFinite(Number(value)) ? Number(value) : null
@@ -70,7 +70,7 @@ export function buildMatchNews(report, match, locale = 'zh-CN') {
   const result = `${newspaperTeamName(displayTeams[0])} ${displayScores[0] ?? '—'}:${displayScores[1] ?? '—'} ${newspaperTeamName(displayTeams[1])}`
   let title = t(`${nameA} 与 ${nameB} 的赛果已确认`, `${nameA}–${nameB}: result confirmed`)
   if (match.state === 'ruling') title = t(`${nameA} 与 ${nameB}：判定结果已公布`, `${nameA}–${nameB}: ruling recorded`)
-  else if (winning && lastTwo && wins===3 && losses===2) title = t(`${newspaperTeamName(winning)} 连取末两图，${wins}:${losses} 战胜 ${newspaperTeamName(losing)}`, `${newspaperTeamName(winning)} takes the final two maps to beat ${newspaperTeamName(losing)} ${wins}:${losses}`)
+  else if (winning && lastTwo && wins===3 && losses===2) title = pickUiLocale(locale, '{0} 连取末两图，{1}:{2} 逆转 {3}', '{0} wins the final two maps to come back against {3}, {1}:{2}', '{0}, 마지막 두 맵을 따내며 {3}에 {1}:{2} 역전승', '{0} 連取末兩圖，{1}:{2} 逆轉 {3}').replace(/\{(\d+)\}/g, (_token, index) => [newspaperTeamName(winning), wins, losses, newspaperTeamName(losing)][index])
   else if (winning && tiedAtFour) title = t(`${newspaperTeamName(winning)} 赢下决胜图，${wins}:${losses} 战胜 ${newspaperTeamName(losing)}`, `${newspaperTeamName(winning)} wins the decider to beat ${newspaperTeamName(losing)} ${wins}:${losses}`)
   else if (winning && completeWinners && losses===1 && String(maps[0].winner)!==winnerId) title = t(`${newspaperTeamName(winning)} 连赢四图，${wins}:${losses} 战胜 ${newspaperTeamName(losing)}`, `${newspaperTeamName(winning)} wins four straight to beat ${newspaperTeamName(losing)} ${wins}:${losses}`)
   else if (winning) title = t(`${newspaperTeamName(winning)} 以 ${wins}:${losses} 战胜 ${newspaperTeamName(losing)}`, `${newspaperTeamName(winning)} beats ${newspaperTeamName(losing)} ${wins}:${losses}`)
@@ -127,13 +127,13 @@ export function buildMatchNews(report, match, locale = 'zh-CN') {
   return { id:match.id, title, shortTitle, brief, visualNote, editorialMark, newsKind, displayTeams, displayScores, sourceScoreOrder:[nameA,nameB], scoreOrder:displayTeams.map(newspaperTeamName), result, sourceResult, paragraphs, maps, sequence, decisive, firstMapComeback:Boolean(completeWinners && winning && String(maps[0].winner) !== winnerId), image:decisive || maps.at(-1) || null, sources:[match.id], path:`/matches/${encodeURIComponent(match.id)}` }
 }
 
-export function selectMatchBriefs(articles,lead,limit=2) {
+export function selectMatchBriefs(articles,lead,limit=3) {
   const selected=[],kinds=new Set(lead?[lead.newsKind]:[]),teams=new Set((lead?.displayTeams||[]).map(identity))
   const priority={'late-comeback':100,'deciding-map':90,'four-straight':80,sweep:70}
   while(selected.length<limit) {
     const remaining=articles.filter(article=>article!==lead&&!selected.some(item=>item.id===article.id))
     if(!remaining.length)break
-    const rank=article=>[Number(article.sequence.length===5),Number(!kinds.has(article.newsKind)),article.displayTeams.filter(team=>!teams.has(identity(team))).length,priority[article.newsKind]||20]
+    const rank=article=>[Number(article.sequence.length===5),article.background?.priority||0,Number(!kinds.has(article.newsKind)),article.displayTeams.filter(team=>!teams.has(identity(team))).length,priority[article.newsKind]||20]
     remaining.sort((a,b)=>{const x=rank(a),y=rank(b);for(let i=0;i<x.length;i++){if(x[i]!==y[i])return y[i]-x[i]}return String(a.id).localeCompare(String(b.id))})
     const article=remaining[0]
     selected.push(article);kinds.add(article.newsKind);article.displayTeams.forEach(team=>teams.add(identity(team)))
@@ -194,7 +194,8 @@ export function buildWeeklyNewspaper(report, locale = 'zh-CN') {
   const t = tFor(locale)
   const articles = report.completed.map(match => {
     const article = buildMatchNews(report, match, locale)
-    return { ...article, state: match.state, background: buildMatchBackground(article, report, locale) }
+    const background = buildMatchBackground(article, report, locale)
+    return { ...article, state: match.state, background, recap: article.brief, brief: buildMatchBrief({ ...article, background }, locale) }
   })
   const lead = selectWeeklyLead(articles, report.closeMatch?.id)
   if (lead) lead.intro = buildLeadIntro(lead, articles, locale)
@@ -237,5 +238,5 @@ export function buildWeeklyNewspaper(report, locale = 'zh-CN') {
   }
   const edition = t(`${weeklyCycleTitle(report.cycle,locale)} · 第 ${report.week.week_number} 周`, `${weeklyCycleTitle(report.cycle,locale)} · Week ${report.week.week_number}`)
   const sharingText = [t(`薯条周报｜${edition}（样报）`,`Fries Cup Weekly | ${edition} (sample)`),lead?.title, t(`${report.completed.length} 场已确认对阵 · ${report.maps.length} 张实际地图 · ${report.playerCount} 名出场选手`,`${report.completed.length} confirmed matches · ${report.maps.length} played maps · ${report.playerCount} recorded players`),t('最佳阵容与 MVP 依当周有效数据自动试评，尚未正式发布。','Team of the week and MVP are calculated from valid weekly data, not formally published.'),t(`数据截至 ${formatReportTime(report.sourceAt,locale)}，本期为可保存的报纸样稿。`,`Data version: ${formatReportTime(report.sourceAt,locale)}. This is a downloadable newspaper sample.`)].filter(Boolean).join('\n')
-  return { report,locale,edition,articles,lead,briefs,otherResults:otherResults.slice(0,3),otherResultCount:otherResults.length,layout:report.completed.length<=2?'compact':'standard',mapNews,heroNews,banNews,peopleNews,funFacts,dataStories,updates,nextWeek:report.newsContext?.nextWeek || null,pageCount:1,sharingText,generation:{mode:'verified-facts-template',version:'frypress-v10',sourceAt:report.sourceAt,cycleId:report.cycle.id,weekId:report.week.id},publication:null,awards:report.awards,issueStandings:null }
+  return { report,locale,edition,articles,lead,briefs,otherResults:otherResults.slice(0,3),otherResultCount:otherResults.length,layout:report.completed.length<=2?'compact':'standard',mapNews,heroNews,banNews,peopleNews,funFacts,dataStories,updates,nextWeek:report.newsContext?.nextWeek || null,pageCount:1,sharingText,generation:{mode:'verified-facts-template',version:'frypress-v11',sourceAt:report.sourceAt,cycleId:report.cycle.id,weekId:report.week.id},publication:null,awards:report.awards,issueStandings:null }
 }

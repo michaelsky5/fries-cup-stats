@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { translateUiText } from '../../lib/uiText.js'
+import { translateUiText, pickUiLocale } from '../../lib/uiText.js'
 import { formatOwMapName, formatOwHeroName } from '../../lib/heroes.js'
 import { getMapImage, getHeroImage } from '../../lib/reviewAssets.js'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import { weeklyPeriodPath } from '../weekly-overview/weeklyPresentation.js'
 import { formatReportTime } from './weeklyReportPreview.js'
 import { buildWeeklyNewspaper, newspaperTeamName } from './weeklyNewsroom.js'
-import { formatUpcomingMatch } from './weeklyEditorial.js'
+import { formatUpcomingMatch, formatWeeklyMatchScope, buildMatchBrief } from './weeklyEditorial.js'
 import { WEEKLY_POSITIONS, WEEKLY_POSITION_ROLES } from './weeklyPositions.js'
 import { buildWeeklyNewspaperResultsUrl, buildWeeklyNewspaperQr } from './weeklyNewspaperShare.js'
 import styles from './WeeklyNewspaper.module.css'
@@ -40,7 +40,7 @@ function NewspaperSheet({ children, busy, savePdf, savePng, status, error, scale
     <div className={styles.feedback} role="status" aria-live="polite" aria-atomic="true">{status}</div>
     {error&&<strong className={styles.exportError} role="alert">{error}</strong>}
     <div className={styles.sheetFrame} style={{ height:PAPER_SIZE.height*scale }}>
-      <section className={styles.sheet} id="newspaper-page-1" lang={locale} data-newspaper-sheet data-paper-page="1" data-paper-layout={newspaper.layout} data-has-intro={Boolean(newspaper.lead?.intro)} data-has-roundup={newspaper.otherResults.length>0} data-has-updates={newspaper.updates.length>0} aria-label={t('本期报纸','This issue')} ref={node=>{if(node)sheetsRef.current.set(0,node);else sheetsRef.current.delete(0)}} style={{ transform:`scale(${scale})` }}>
+      <section className={styles.sheet} id="newspaper-page-1" lang={locale} data-newspaper-sheet data-paper-page="1" data-paper-layout={newspaper.layout} data-has-intro={Boolean(newspaper.lead?.intro)} data-brief-count={newspaper.briefs.length} data-has-roundup={newspaper.otherResults.length>0} data-has-updates={newspaper.updates.length>0} aria-label={t('本期报纸','This issue')} ref={node=>{if(node)sheetsRef.current.set(0,node);else sheetsRef.current.delete(0)}} style={{ transform:`scale(${scale})` }}>
         <header className={styles.masthead}>
           <div className={styles.mastheadTop}><span>FRIES CUP / WEEKLY NEWSPAPER</span><span>{t('赛果 · 阵容 · 数据','RESULTS · LINEUPS · DATA')}</span></div>
           <div className={styles.nameplate}><div className={styles.brandSignature}><img src="/logos/fries-cup-mark-ink.svg" alt=""/><span>FRIES CUP<small>THE WEEK, IN PRINT.</small></span></div><h1>{t('薯条周报','THE WEEKLY')}</h1><span className={styles.issueStamp}>{report.number}<small>{t('周','WEEK')}</small></span></div>
@@ -55,6 +55,12 @@ function NewspaperSheet({ children, busy, savePdf, savePng, status, error, scale
 
 function SourceLink({ article, t, withSeason }) {
   return <Link className={styles.sourceLink} data-paper-web-only to={withSeason(article.path)}>{t('比赛记录','Match records')} →</Link>
+}
+
+function NewspaperTeamLogo({team,className,...props}) {
+  const logoIdentity=team?.team_short_name||team?.short||team?.team_name||team?.name
+  if(!logoIdentity||logoIdentity==='?'||logoIdentity==='TBD')return <span className={className} data-team-logo-placeholder aria-hidden="true">—</span>
+  return <TeamLogo team={team} className={className} {...props}/>
 }
 
 function RoleSymbol({role}) {
@@ -76,7 +82,7 @@ function MapTimeline({article,locale,t,compact=false}) {
 function MatchBrief({article,seasonId,locale,t,withSeason}) {
   const [left,right]=article.displayTeams
   return <article className={styles.brief} aria-label={article.shortTitle}>
-    <Link className={styles.briefMatchup} to={withSeason(article.path)}><div><TeamLogo team={left} seasonId={seasonId} className={styles.briefEmblem}/><b>{newspaperTeamName(left)}</b></div><strong>{article.displayScores[0]??'—'}<i>:</i>{article.displayScores[1]??'—'}</strong><div><TeamLogo team={right} seasonId={seasonId} className={styles.briefEmblem}/><b>{newspaperTeamName(right)}</b></div></Link>
+    <Link className={styles.briefMatchup} to={withSeason(article.path)}><div><NewspaperTeamLogo team={left} seasonId={seasonId} className={styles.briefEmblem}/><b>{newspaperTeamName(left)}</b></div><strong>{article.displayScores[0]??'—'}<i>:</i>{article.displayScores[1]??'—'}</strong><div><NewspaperTeamLogo team={right} seasonId={seasonId} className={styles.briefEmblem}/><b>{newspaperTeamName(right)}</b></div></Link>
     <MapTimeline article={article} locale={locale} t={t} compact/>
     <p data-match-brief={article.id}>{article.brief}</p><SourceLink article={article} t={t} withSeason={withSeason}/>
   </article>
@@ -132,7 +138,8 @@ function WeeklyNewsDesk({newspaper,locale,t,withSeason}) {
     <div className={styles.newsGrid}>{ordered.map(article=><article key={article.id} data-news-match={article.id}>
       <h3><Link to={withSeason(article.path)}>{article.title}</Link></h3>
       <p>{article.intro || article.brief}</p>
-      {article.background&&!article.intro?.includes(article.background.text)&&<p className={styles.matchBackground} data-match-background={article.background.kind}>{article.background.text}</p>}
+      {article.recap&&article.recap!==article.brief&&!article.intro?.includes(article.recap)&&<p>{article.recap}</p>}
+      {article.background&&!(article.intro||article.brief).includes(article.background.text)&&(article.intro||article.brief!==buildMatchBrief(article,locale))&&<p className={styles.matchBackground} data-match-background={article.background.kind}>{article.background.text}</p>}
       {article.background&&<div className={styles.backgroundSources}>{article.background.sources.map(source=><Link key={source.matchId} to={withSeason(`/matches/${encodeURIComponent(source.matchId)}`)}>{t(`第 ${source.weekNumber} 周比赛记录`,`Week ${source.weekNumber} match records`)} →</Link>)}</div>}
       <SourceLink article={article} t={t} withSeason={withSeason}/>
     </article>)}</div>
@@ -147,7 +154,7 @@ function UpdatesDesk({updates,t}) {
 }
 
 function AwardTeam({player,seasonId}) {
-  return <span className={styles.awardTeam}>{player.teams.map(team=><span key={team.id}><TeamLogo team={team} seasonId={seasonId} className={styles.awardEmblem}/>{newspaperTeamName(team)}</span>)}</span>
+  return <span className={styles.awardTeam}>{player.teams.map(team=><span key={team.id}><NewspaperTeamLogo team={team} seasonId={seasonId} className={styles.awardEmblem}/>{newspaperTeamName(team)}</span>)}</span>
 }
 
 const positionLabel=(position,t)=>({TANK:t('坦克','Tank'),DPS:t('输出','Damage'),SUP:t('辅助','Support')})[WEEKLY_POSITION_ROLES[position]]||t('待归类','Unassigned')
@@ -158,7 +165,7 @@ function KeyPerformance({player,t,mvp=false}) {
   return <dl className={`${styles.keyStats} ${mvp?styles.mvpMetrics:''}`} data-key-metrics aria-label={t('主要职责每 10 分钟数据','Primary-role statistics per 10 minutes')}>{metrics.map(([metric,label])=><div key={metric} title={t(`${label} / 每 10 分钟：${player.per10[metric].toFixed(1)}`,`${label} per 10 minutes: ${player.per10[metric].toFixed(1)}`)}><dt>{label}</dt><dd data-key-metric={metric}>{compact(player.per10[metric])}</dd></div>)}</dl>
 }
 
-function WeeklyHonours({awards,t,locale,seasonId,withSeason}) {
+function WeeklyHonours({awards,t,locale,seasonId,withSeason,editorial=false}) {
   const slots=awards?.bestFive||WEEKLY_POSITIONS.map(position=>({position,role:WEEKLY_POSITION_ROLES[position],status:'insufficient-data'}))
   const mvps=awards?.mvp||[]
   const mvp=mvps.length===1?mvps[0]:null
@@ -169,14 +176,29 @@ function WeeklyHonours({awards,t,locale,seasonId,withSeason}) {
         <div className={styles.mvpPortrait}>{mvp?<img src={getHeroImage(mvp.hero,mvp.role)} alt={formatOwHeroName(mvp.hero,locale)}/>:<img src="/logos/fries-cup-mark-ink.svg" alt=""/>}</div>
         <div className={styles.mvpCopy}>{mvp?<><Link className={styles.mvpName} to={withSeason(`/players/${encodeURIComponent(mvp.id)}`)}>{mvp.name}</Link><div className={styles.mvpMeta} data-mvp-identity><AwardTeam player={mvp} seasonId={seasonId}/><span className={styles.mvpRole}><RoleSymbol role={mvp.role}/>{positionLabel(mvp.position,t)}</span></div></>:mvps.length?<><strong className={styles.sharedMvp}>{t('并列 MVP','JOINT MVP')}</strong>{mvps.map(player=><Link key={`${player.id}-${player.position}`} to={withSeason(`/players/${encodeURIComponent(player.id)}`)}>{player.name} · {positionLabel(player.position,t)}</Link>)}</>:<><strong>{t('暂缺结果','No result yet')}</strong><small>{t('数据不足','Insufficient data')}</small></>}</div>
       </div>
-      {mvp&&<div className={styles.mvpPerformance} data-mvp-performance><KeyPerformance player={mvp} t={t} mvp/></div>}
+      {mvp&&<div className={styles.mvpPerformance} data-mvp-performance><AwardMapCount player={mvp} locale={locale} editorial={editorial}/><KeyPerformance player={mvp} t={t} mvp/></div>}
     </div>
     <div className={styles.bestFive}><div className={styles.fiveSlots}>{slots.map((slot,i)=><div key={i} data-award-role={slot.role} data-award-position={slot.position} data-award-player={slot.player?.id||''} data-award-status={slot.status}>
-      <div className={styles.fiveRole}><RoleSymbol role={slot.role}/><span>{positionLabel(slot.position,t)}</span></div>{slot.player?<><Link className={styles.fivePlayer} to={withSeason(`/players/${encodeURIComponent(slot.player.id)}`)}><img src={getHeroImage(slot.player.hero,slot.role)} alt={formatOwHeroName(slot.player.hero,locale)}/><b>{slot.player.name}</b></Link><AwardTeam player={slot.player} seasonId={seasonId}/><KeyPerformance player={slot.player} t={t}/></>:<div className={styles.pendingSlot}><b>{slot.status==='tie'?t('并列待确认','Tie pending'):slot.status==='lineup-limit'?t('席位待定','Slot pending'):t('暂缺结果','No result yet')}</b>{slot.status==='insufficient-data'&&<small>{t('数据不足','Insufficient data')}</small>}</div>}
+      <div className={styles.fiveRole}><RoleSymbol role={slot.role}/><span>{positionLabel(slot.position,t)}</span></div>{slot.player?<><Link className={styles.fivePlayer} to={withSeason(`/players/${encodeURIComponent(slot.player.id)}`)}><img src={getHeroImage(slot.player.hero,slot.role)} alt={formatOwHeroName(slot.player.hero,locale)}/><b>{slot.player.name}</b></Link><AwardTeam player={slot.player} seasonId={seasonId}/><AwardMapCount player={slot.player} locale={locale} editorial={editorial}/><KeyPerformance player={slot.player} t={t}/></>:<div className={styles.pendingSlot}><b>{slot.status==='tie'?t('并列待确认','Tie pending'):slot.status==='lineup-limit'?t('席位待定','Slot pending'):t('暂缺结果','No result yet')}</b>{slot.status==='insufficient-data'&&<small>{t('数据不足','Insufficient data')}</small>}</div>}
     </div>)}</div></div>
+    {editorial&&Number.isInteger(awards?.minimumMaps)&&<a className={styles.awardBasis} data-award-basis href="#weekly-award-notes">{awardEligibilityText(awards.minimumMaps,locale)}</a>}
   </section>
 }
 
+
+function awardEligibilityText(maps,locale) {
+  return pickUiLocale(locale,'至少 {0} 图有效数据 · 按岗位综合评分评选','Minimum {0} valid maps · selected by role-adjusted overall scores','유효 맵 최소 {0}개 · 역할별 종합 점수로 선정','至少 {0} 圖有效數據 · 按崗位綜合評分評選').replace('{0}',maps)
+}
+
+function AwardMapCount({player,locale,editorial}) {
+  if(!editorial||!Number.isInteger(player.maps)||player.maps<=0)return null
+  return <small className={styles.awardMaps} data-award-sample={player.maps}>{pickUiLocale(locale,'{0} 图有效数据','{0} valid maps','유효 맵 {0}개','{0} 圖有效數據').replace('{0}',player.maps)}</small>
+}
+
+function WeeklyAwardNotes({awards,locale}) {
+  if(!Number.isInteger(awards?.minimumMaps))return null
+  return <section className={styles.awardNotes} id="weekly-award-notes" data-weekly-award-notes><h3>{pickUiLocale(locale,'荣誉评选说明','How honours are selected','주간 수상 선정 기준','榮譽評選說明')}</h3><p>{awardEligibilityText(awards.minimumMaps,locale)}</p><p>{pickUiLocale(locale,'MVP 从达到有效地图门槛的选手中按岗位综合评分评选。最佳阵容设一名坦克、两名输出和两名辅助。展示的每 10 分钟数据按有效比赛时间折算；两项展示数据仅为阅读摘要。','MVP is selected by role-adjusted overall scores among eligible players. The team of the week has one tank, two damage players and two supports. Displayed rates use valid playing time and show a two-stat summary.','MVP는 유효 맵 기준을 충족한 선수의 역할별 종합 점수로 선정합니다. 주간 베스트는 탱커 1명, 공격 2명, 지원 2명입니다. 10분당 수치는 유효 플레이 시간을 기준으로 하며 두 지표는 요약입니다.','MVP 從達到有效地圖門檻的選手中按崗位綜合評分評選。最佳陣容設一名坦克、兩名輸出和兩名輔助。展示的每 10 分鐘數據按有效比賽時間折算；兩項展示數據僅為閱讀摘要。')}</p></section>
+}
 
 export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, home, archive, newspaperOverride, embedded=false }) {
   const newspaper=useMemo(()=>newspaperOverride||buildWeeklyNewspaper(report,locale),[report,locale,newspaperOverride])
@@ -217,11 +239,11 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
     {!embedded&&<nav className={styles.breadcrumbs} aria-label={t('周报导航','Report navigation')}><Link to={home}>← {t(`第 ${report.week.week_number} 周赛事总览`,`Week ${report.week.week_number} overview`)}</Link><Link to={archive}>{t('周报归档','Report archive')} →</Link></nav>}
     <div className={styles.pages} ref={pagesRef}>
       <NewspaperSheet busy={busy} savePdf={savePdf} savePng={savePng} status={status} error={error} scale={scale} t={t} report={report} seasonId={seasonId} newspaper={newspaper} date={date} sheetsRef={sheetsRef} locale={locale}>
-        <div className={styles.frontKicker}><span>{t('本周主新闻','THIS WEEK’S LEAD')}</span><span>{report.completed.length} {t('场对阵','matches')} / {report.maps.length} {t('图赛果','map results')} / {report.playerCount} {t('名出场选手','players')}</span></div>
+        <div className={styles.frontKicker}><span>{t('本周主新闻','THIS WEEK’S LEAD')}</span><span data-weekly-match-scope>{lead?.intro?formatWeeklyMatchScope(report,locale):<>{report.completed.length} {t('场对阵','matches')}</>} / {report.maps.length} {t('图赛果','map results')} / {report.playerCount} {t('名出场选手','players')}</span></div>
         <h2 className={styles.leadHeadline}>{lead?.intro?<Link to={withSeason(lead.path)}>{lead.title}</Link>:lead?.title||t('这一周，等待赛果确认。','This week awaits confirmed results.')}</h2>
         <div className={styles.frontColumns} data-front-layout={newspaper.layout}>
           <article className={styles.leadColumn}>
-            {lead?.image&&<figure className={styles.leadPhoto}><div className={styles.photoWindow}><img className={styles.mapArt} src={getMapImage(lead.image.map_type,lead.image.map_name)} alt={formatOwMapName(lead.image.map_name,locale)} />{leadTeams&&<div className={styles.photoScore} data-photo-score-order={lead.scoreOrder.join(' / ')}><div><TeamLogo team={leadTeams[0]} seasonId={seasonId} className={styles.teamEmblem}/><b>{newspaperTeamName(leadTeams[0])}</b></div><strong>{lead.displayScores[0]??'—'}<i>:</i>{lead.displayScores[1]??'—'}</strong><div><b>{newspaperTeamName(leadTeams[1])}</b><TeamLogo team={leadTeams[1]} seasonId={seasonId} className={styles.teamEmblem}/></div></div>}{lead.editorialMark?<span className={styles.photoStamp} data-match-mark={lead.editorialMark.kind}>{lead.editorialMark.label}</span>:<span className={styles.photoTag}>{lead.decisive?t('决胜图','DECIDING MAP'):t('赛场记录','MATCH RECORD')}</span>}</div><figcaption>{formatOwMapName(lead.image.map_name,locale)} · {t(`第 ${lead.image.order} 图 / 场景插图`,`Map ${lead.image.order} / scene artwork`)}</figcaption></figure>}
+            {lead?.image&&<figure className={styles.leadPhoto}><div className={styles.photoWindow}><img className={styles.mapArt} src={getMapImage(lead.image.map_type,lead.image.map_name)} alt={formatOwMapName(lead.image.map_name,locale)} />{leadTeams&&<div className={styles.photoScore} data-photo-score-order={lead.scoreOrder.join(' / ')}><div><NewspaperTeamLogo team={leadTeams[0]} seasonId={seasonId} className={styles.teamEmblem}/><b>{newspaperTeamName(leadTeams[0])}</b></div><strong>{lead.displayScores[0]??'—'}<i>:</i>{lead.displayScores[1]??'—'}</strong><div><b>{newspaperTeamName(leadTeams[1])}</b><NewspaperTeamLogo team={leadTeams[1]} seasonId={seasonId} className={styles.teamEmblem}/></div></div>}{lead.editorialMark?<span className={styles.photoStamp} data-match-mark={lead.editorialMark.kind}>{lead.editorialMark.label}</span>:<span className={styles.photoTag}>{lead.decisive?t('决胜图','DECIDING MAP'):t('赛场记录','MATCH RECORD')}</span>}</div><figcaption>{formatOwMapName(lead.image.map_name,locale)} · {t(`第 ${lead.image.order} 图 / 场景插图`,`Map ${lead.image.order} / scene artwork`)}</figcaption></figure>}
             {lead?.intro&&<p className={styles.leadIntro} data-lead-intro>{lead.intro}</p>}
             {!lead&&<p>{t('本期尚无已确认赛果。新闻将在比赛记录确认后生成。','News will appear when this week’s results are confirmed.')}</p>}
           </article>
@@ -231,7 +253,7 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
             {!newspaper.briefs.length&&<p className={styles.emptyBrief}>{t('本期暂无其他赛果。','No other results this week.')}</p>}
             {newspaper.peopleNews.people.length>0&&<article className={styles.peopleNote}>
               <span className={styles.columnLabel}>{newspaper.peopleNews.title}</span>
-              <div className={styles.rolePairs} data-person-note-count={newspaper.peopleNews.people.length}>{newspaper.peopleNews.people.map(person=><Link to={withSeason(`/players/${encodeURIComponent(person.id)}`)} key={person.id} title={person.context} data-person-note={person.kind}><b>{person.name}</b><span>{person.summary}</span></Link>)}</div>
+              <div className={styles.rolePairs} data-person-note-count={newspaper.peopleNews.people.length}>{newspaper.peopleNews.people.map(person=><Link to={withSeason(`/players/${encodeURIComponent(person.id)}`)} key={person.id} title={person.context} data-person-note={person.kind}><b>{person.name}{lead?.intro&&person.team&&<small>{newspaperTeamName(person.team)}</small>}</b><span>{lead?.intro?(person.detail||person.summary):person.summary}</span></Link>)}</div>
             </article>}
           </aside>
           {lead&&<div className={styles.leadResults}><div className={styles.timelineHeading}><b>{t('逐图赛果','MAP RESULTS')}</b><span>{lead.visualNote}</span><SourceLink t={t} withSeason={withSeason} article={lead}/></div><MapTimeline article={lead} locale={locale} t={t}/></div>}
@@ -239,13 +261,14 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
         <div className={styles.recordsLine}><span>{t('黄色 / 左队胜 · 黑色 / 右队胜','Yellow / left-team win · black / right-team win')}</span><Link data-paper-web-only to={withSeason(weeklyPeriodPath('/matches',report.cycle,report.week))}>{t('本周全部比赛记录','All weekly match records')} →</Link></div>
         <ResultRoundup newspaper={newspaper} t={t} withSeason={withSeason}/>
         <DataCuriosities facts={newspaper.funFacts} stories={newspaper.dataStories} locale={locale} t={t} withSeason={withSeason}/>
-        <WeeklyHonours awards={report.awards} t={t} locale={locale} seasonId={seasonId} withSeason={withSeason}/>
+        <WeeklyHonours awards={report.awards} editorial={Boolean(lead?.intro)} t={t} locale={locale} seasonId={seasonId} withSeason={withSeason}/>
         <WeeklyTrends newspaper={newspaper} report={report} locale={locale} t={t}/>
         <UpdatesDesk updates={newspaper.updates} t={t}/>
         <p className={styles.editionNote}>{report.publication ? t('英雄与地图为游戏插图','Hero and map images are game artwork') : t('样报 · 英雄与地图为游戏插图','SAMPLE · Hero and map images are game artwork')}</p>
       </NewspaperSheet>
     </div>
     {!embedded&&<WeeklyNewsDesk newspaper={newspaper} locale={locale} t={t} withSeason={withSeason}/>}
+    {!embedded&&lead?.intro&&<WeeklyAwardNotes awards={report.awards} locale={locale}/>}
     {!embedded&&<footer className={styles.readerFooter}>
       <div className={styles.readerLinks}><Link to={home}>← {t(`回到第 ${report.week.week_number} 周`,`Back to week ${report.week.week_number}`)}</Link><Link to={archive}>{t('周报归档','Report archive')} →</Link></div>
       <SaveActions busy={busy} savePdf={savePdf} savePng={savePng} t={t} placement="bottom"/>

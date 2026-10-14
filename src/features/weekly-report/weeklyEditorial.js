@@ -109,7 +109,36 @@ export function buildLeadIntro(article, articles, locale = 'zh-CN') {
     '이번 호에 다섯 맵 결과가 모두 수록된 {0}경기 중 유일한 3:2입니다.',
     '這是本期 {0} 場完整五圖賽果中唯一的 3:2 對陣。'
   ], [complete.length]) : ''
-  return [article.brief, context].filter(Boolean).join(String(locale).startsWith('en') || String(locale).startsWith('ko') ? ' ' : '')
+  return [article.recap || article.brief, context].filter(Boolean).join(String(locale).startsWith('en') || String(locale).startsWith('ko') ? ' ' : '')
+}
+
+export function buildMatchBrief(article, locale = 'zh-CN') {
+  const background = article.background, count = background?.sources?.length || 0
+  const [winner, loser] = article.displayTeams || []
+  if (background?.kind === 'streak-ended' && count >= 2) return copy(locale, [
+    '{0}此前的 {1} 场连胜就此终结。', "{0}'s {1}-match winning run ends.",
+    '{0}의 {1}연승이 이번 주 끝났습니다.', '{0}此前的 {1} 場連勝就此終結。'
+  ], [teamName(loser), count])
+  if (background?.kind === 'first-played-win' && count) return copy(locale, [
+    '此前 {1} 场实赛均负，{0}取得本周期已公布实赛中的首胜。',
+    '{0} records its first published played win in this cycle after {1} losses.',
+    '{0}, 앞선 {1}경기 패배 후 이 주기의 공개된 실제 경기에서 첫 승리.',
+    '此前 {1} 場實賽均負，{0}取得本週期已公布實賽中的首勝。'
+  ], [teamName(winner), count])
+  if (background?.kind === 'winning-run' && count) return copy(locale, [
+    '{0}已连续赢下 {1} 场实赛。', '{0} has won {1} consecutive played matches.',
+    '{0}, 실제 경기 {1}연승.', '{0}已連續贏下 {1} 場實賽。'
+  ], [teamName(winner), count + 1])
+  return background?.text || article.recap || article.brief
+}
+
+export function formatWeeklyMatchScope(report, locale = 'zh-CN') {
+  const played = list(report?.completed).filter(match => match.state === 'complete').length
+  const rulings = list(report?.completed).filter(match => match.state === 'ruling').length
+  return copy(locale, rulings ? [
+    '{0} 场实赛 + {1} 场赛事判定', `{0} played ${played===1?'match':'matches'} + {1} ${rulings===1?'ruling':'rulings'}`,
+    '실제 경기 {0}건 + 운영진 판정 {1}건', '{0} 場實賽 + {1} 場賽事判定'
+  ] : ['{0} 场实赛', `{0} played ${played===1?'match':'matches'}`, '실제 경기 {0}건', '{0} 場實賽'], [played, rulings])
 }
 
 export function formatUpcomingMatch(match, locale = 'zh-CN') {

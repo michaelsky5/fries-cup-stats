@@ -43,7 +43,7 @@ test('share URL treats identifier text as data instead of accepting extra URL pa
 
 test('the lead tells a verified fifth-map result, not an imagined tactical story',()=>{
   assert.equal(paper.lead.id,'FCW26-SWISS-R1-M09')
-  assert.match(paper.lead.title,/MH 连取末两图，3:2 战胜 404/)
+  assert.match(paper.lead.title,/MH 连取末两图，3:2 逆转 404/)
   assert.equal(paper.lead.decisive.map_name,'Route 66')
   assert.match(paper.lead.paragraphs[1],/前四图双方战成 2:2/)
   assert.deepEqual(paper.lead.sources,['FCW26-SWISS-R1-M09'])
@@ -72,7 +72,7 @@ test('partial or contradictory winners never support a sequence or deciding-map 
   for(const alter of [r=>r.maps.find(m=>m.matchId===match.id).winner='',r=>r.maps=r.maps.filter(m=>!(m.matchId===match.id&&m.order===5)),r=>r.maps.find(m=>m.matchId===match.id&&m.order===4).winner=match.team_b.id,r=>r.maps.find(m=>m.matchId===match.id&&m.order===4).order=3,r=>r.maps.find(m=>m.matchId===match.id&&m.order===5).is_administrative=true]) {
     const r=structuredClone(report);alter(r)
     const story=buildMatchNews(r,match)
-    assert.doesNotMatch(story.title,/连取/)
+    assert.doesNotMatch(story.title,/连取|逆转/)
     assert.equal(story.decisive,null)
     assert.doesNotMatch(story.paragraphs.join(''),/前四图|这一图确定|赢下/)
     assert.doesNotMatch(story.brief,/连下|连赢|追回|扳回|决胜|翻盘|首两图|前四图|末两图/)
@@ -88,19 +88,19 @@ test('administrative rulings and missing scores are reported as such',()=>{
   assert.doesNotMatch(incomplete.title,/战胜|连取/)
   assert.match(incomplete.result,/—/)
 })
-test('a one-page edition has two briefs and at most two observed people even for large fields',()=>{
+test('a one-page edition has three briefs and at most two observed people even for large fields',()=>{
   const large=structuredClone(report)
   large.roster=Array.from({length:1000},(_,i)=>({...report.roster[i%report.roster.length],id:`extra-${i}`}))
   large.completed=Array.from({length:120},(_,i)=>({...report.completed[i%3],id:`extra-match-${i}`}))
   const largePaper=buildWeeklyNewspaper(large)
   assert.equal(largePaper.pageCount,1)
-  assert.equal(largePaper.briefs.length,2)
+  assert.equal(largePaper.briefs.length,3)
   assert.ok(largePaper.peopleNews.people.length<=2)
   assert.equal(largePaper.rosterPages,undefined)
   for(const sample of listWeeklyReportPreviews(db)) {
     const issue=buildWeeklyNewspaper(sample)
     assert.equal(issue.pageCount,1)
-    assert.ok(issue.briefs.length<=2)
+    assert.ok(issue.briefs.length<=3)
     assert.ok(issue.articles.every(a=>sample.completed.some(m=>m.id===a.id)))
     assert.equal(issue.generation.weekId,sample.week.id)
   }
@@ -312,15 +312,15 @@ test('match briefs use natural copy without calling an opening map win a recover
   }
 })
 
-test('current briefs distinguish the verified opening, reply and closing sequences in two sentences',()=>{
+test('map recaps preserve the opening, reply and closing when a brief leads with historical news',()=>{
   const [first,second]=paper.briefs
-  assert.match(first.brief,/Ateam 连下首两图，取得 2:0 领先/)
-  assert.match(first.brief,/CSM 在香巴里寺院扳回一图，Ateam 随后拿下末两图/)
-  assert.match(second.brief,/SPS.V 以三图连胜开局/)
-  assert.match(second.brief,/MMGT 在香巴里寺院追回一图，SPS.V 再取霓虹枢纽收尾/)
+  assert.match(first.recap,/Ateam 连下首两图，取得 2:0 领先/)
+  assert.match(first.recap,/CSM 在香巴里寺院扳回一图，Ateam 随后拿下末两图/)
+  assert.match(second.recap,/SPS.V 以三图连胜开局/)
+  assert.match(second.recap,/MMGT 在香巴里寺院追回一图，SPS.V 再取霓虹枢纽收尾/)
   const english=buildWeeklyNewspaper(report,'en-US').briefs
-  assert.match(english[0].brief,/Ateam opened 2:0.*CSM won Shambali Monastery.*Ateam took the last two/)
-  assert.match(english[1].brief,/SPS.V opened 3:0.*MMGT won Shambali Monastery.*SPS.V took Neon Junction/)
+  assert.match(english[0].recap,/Ateam opened 2:0.*CSM won Shambali Monastery.*Ateam took the last two/)
+  assert.match(english[1].recap,/SPS.V opened 3:0.*MMGT won Shambali Monastery.*SPS.V took Neon Junction/)
   for(const issue of listWeeklyReportPreviews(db)) for(const article of buildWeeklyNewspaper(issue).articles) {
     assert.ok((article.brief.match(/。/g)||[]).length<=2)
     assert.doesNotMatch(article.brief,/战术|压制|操作|关键团战|观众|唯一一胜/)
@@ -417,14 +417,16 @@ test('reversing the display never manufactures a missing or inconsistent map sco
   }
 })
 
-test('multiweek briefs prefer different verified match patterns and keep the remaining results visible',()=>{
+test('multiweek briefs prioritize verified backgrounds and keep every remaining result visible',()=>{
   const issues=listWeeklyReportPreviews(db)
   const first=buildWeeklyNewspaper(issues.find(sample=>sample.week.week_number===1))
   const second=buildWeeklyNewspaper(issues.find(sample=>sample.week.week_number===2))
   assert.equal(first.layout,'compact')
   assert.equal(second.layout,'standard')
-  assert.equal(new Set(second.briefs.map(article=>article.newsKind)).size,2)
-  assert.equal(second.otherResults.length,2)
+  assert.equal(second.briefs.length,3)
+  assert.ok(second.briefs[0].background)
+  assert.match(second.briefs[0].brief,/此前 1 场实赛均负，SPS取得本周期已公布实赛中的首胜/)
+  assert.equal(second.otherResults.length,1)
   assert.deepEqual(new Set([second.lead,...second.briefs,...second.otherResults].map(article=>article.id)),new Set(second.articles.map(article=>article.id)))
   const reordered={...second.report,completed:[...second.report.completed].reverse(),maps:[...second.report.maps].reverse()}
   const other=buildWeeklyNewspaper(reordered)

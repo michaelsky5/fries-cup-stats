@@ -1,9 +1,10 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { buildMatchNews, buildWeeklyNewspaper } from '../src/features/weekly-report/weeklyNewsroom.js'
+import { buildMatchNews, buildWeeklyNewspaper, selectMatchBriefs } from '../src/features/weekly-report/weeklyNewsroom.js'
 import { buildWeeklyReportPreview } from '../src/features/weekly-report/weeklyReportPreview.js'
-import { buildLeadIntro, buildMatchBackground, collectWeeklyNewsContext, selectWeeklyLead } from '../src/features/weekly-report/weeklyEditorial.js'
+import { buildLeadIntro, buildMatchBackground, collectWeeklyNewsContext, selectWeeklyLead, formatWeeklyMatchScope, buildMatchBrief } from '../src/features/weekly-report/weeklyEditorial.js'
+import { buildWeeklyPeopleNews } from '../src/features/weekly-report/weeklyPeopleNews.js'
 import { applyIssueEdits, createIssueDraft, validateIssueDraft } from '../src/features/weekly-report/weeklyIssueVersions.js'
 
 const team = id => ({ id, name: id, short: id })
@@ -167,4 +168,51 @@ test('unfrozen historical references and changed next-week fixtures are rejected
   assert.ok(validateIssueDraft(draft).errors.some(error => /历史赛果/.test(error)))
   draft.paper.nextWeek = { id: 'other-week', matches: [] }
   assert.ok(validateIssueDraft(draft).errors.some(error => /下周赛程/.test(error)))
+})
+
+test('paper briefs prioritize verified history, retain all played results and exclude ruling stories when space is available', () => {
+  const article = (id, priority, state = 'complete') => ({ id, state, sequence: state === 'complete' ? Array(5).fill({}) : [], displayTeams: [team(id), team(id + '-opponent')], newsKind: 'ordinary', ...(priority ? { background: { priority } } : {}) })
+  const lead = article('lead', 0), normal = article('normal', 0), firstWin = article('first-win', 80), ended = article('ended', 90), ruling = article('ruling', 999, 'ruling')
+  assert.deepEqual(selectMatchBriefs([ruling,normal,firstWin,ended,lead],lead).map(a => a.id), ['ended','first-win','normal'])
+})
+
+test('played and ruling counts use only confirmed results in each frozen issue', () => {
+  const scope = { completed: [{ state: 'complete' }, { state: 'complete' }, { state: 'ruling' }], pending: [{ state: 'pending' }] }
+  assert.equal(formatWeeklyMatchScope(scope), '2 场实赛 + 1 场赛事判定')
+  assert.equal(formatWeeklyMatchScope({ completed: [{ state: 'complete' }] }), '1 场实赛')
+  for (const locale of ['zh-CN','zh-TW','en-US','ko-KR']) assert.ok(formatWeeklyMatchScope(scope,locale).includes('2'))
+})
+
+test('player prose counts unique map appearances and claims a map win only from a confirmed winner', () => {
+  const report = buildWeeklyReportPreview(db), paper = buildWeeklyNewspaper(report)
+  const cross = paper.peopleNews.people.find(person => person.kind === 'cross-role')
+  assert.ok(cross.detail.includes(String(new Set(cross.sources.map(source => JSON.stringify([source.matchId,source.order]))).size)))
+  const note = paper.peopleNews.people.find(person => person.kind === 'map-note')
+  const copy = structuredClone(report), target = copy.maps.find(map => map.matchId === note.source.matchId && map.order === note.source.order)
+  const notes = () => buildWeeklyPeopleNews(copy,{featuredIds:paper.dataStories.cards.map(story=>story.id)}).people.find(person=>person.id===note.id)
+  target.winner = note.teamId
+  assert.match(notes().detail,/队伍赢下/)
+  target.winner = ''
+  assert.doesNotMatch(notes().detail,/队伍赢下/)
+  assert.match(notes().detail,new RegExp(note.value.toLocaleString('en-US')))
+})
+
+test('new award sample counts and eligibility are frozen without the candidate calculation graph', () => {
+  const report = buildWeeklyReportPreview(db), draft = createIssueDraft(report,'FCW26','zh-CN')
+  assert.equal(draft.report.awards.minimumMaps,report.awards.policy.minimumMaps)
+  assert.equal(draft.report.awards.mvp[0].maps,report.awards.mvp[0].maps)
+  for (const slot of draft.report.awards.bestFive) if (slot.player) assert.equal(slot.player.maps,report.awards.bestFive.find(item=>item.position===slot.position).player.maps)
+  assert.equal(draft.report.awards.snapshot,undefined)
+})
+
+test('concise streak news retains the verified run count and language while the full context remains frozen', () => {
+  const current = fixture(3,4,{a:'C',b:'A'}), full = background(current,[fixture(1,4),fixture(2,5)])
+  const article = {...buildMatchNews(current,current.completed[0]),background:full}
+  assert.equal(buildMatchBrief(article),'A此前的 2 场连胜就此终结。')
+  for(const locale of ['zh-CN','zh-TW','en-US','ko-KR']) {
+    assert.ok(buildMatchBrief(article,locale).includes('2'))
+    assert.ok(buildMatchBrief(article,locale).includes('A'))
+  }
+  assert.equal(article.background.text,full.text)
+  assert.equal(article.background.sources.length,2)
 })
