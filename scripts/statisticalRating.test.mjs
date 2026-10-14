@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { resolveHeroSubrole } from '../src/lib/heroSubroleSelectors.js'
-import { buildRetrospectiveStatisticalRatingBaselines, buildStatisticalRatingBaselines, scoreStatisticalRatingRow, makeStatisticalDistribution,
+import { buildRetrospectiveStatisticalRatingBaselines, buildSeasonStatisticalRatingBaselines, buildStatisticalRatingBaselines, scoreStatisticalRatingRow, makeStatisticalDistribution,
   continuousStatisticalMidrank } from '../src/lib/statisticalRatingModel.js'
 import { prepareStatisticalRatingData, getEra, heroVersion } from '../src/lib/statisticalRatingEvidence.js'
 import { usesStatisticalRating, buildStatisticalRatingSummary, getStatisticalRatingDataset } from '../src/lib/statisticalRatingAdapter.js'
@@ -200,7 +200,7 @@ function backfillFixture() {
 const backfillSummary = (db, context = 'map') => buildStatisticalRatingSummary(entry(),
   { db, seasonId: 'FCW26', currentMatchIds: [BACKFILL.targetMatchIds[2]], currentMapOrders: [1] }, context)
 
-test('published cold-start map and match scores use v1.5 while season scores and OVR remain unavailable', () => {
+test('cold-start map awards keep v1.5 while season references use the full season and retain sample gates', () => {
   const db = backfillFixture()
   const dataset = getStatisticalRatingDataset(db, 'FCW26')
   const target = dataset.rows.find(record => record.playerId === entry().player_id)
@@ -215,13 +215,72 @@ test('published cold-start map and match scores use v1.5 while season scores and
     assert.ok(getStatisticalRatingNotes(summary).some(note => note.includes('整场排除本场数据')))
     assert.ok(!getStatisticalRatingNotes(summary).some(note => note.includes('只使用此前比赛日')))
   }
-  assert.equal(backfillSummary(db, 'season').rawScore, null)
+  assert.ok(Number.isFinite(backfillSummary(db, 'season').rawScore))
+  assert.equal(backfillSummary(db, 'season').statisticalRating.seasonReference.throughDay, '2026-10-11')
   const season = scoreLeaderboardEntries([entry()], 30, { db, seasonId: 'FCW26' })[0]
   assert.equal(season.seasonOvr, null)
   assert.equal(season.provisionalSeasonOvr, null)
   const args = { entry: entry(), db, seasonId: 'FCW26', currentMatchIds: [BACKFILL.targetMatchIds[2]], currentMapOrders: [1] }
   assert.equal(calculateMapPlayerScoreV1({ ...args, winnerTeamKeys: ['A'] }).rawScore,
     calculateMapPlayerScoreV1({ ...args, winnerTeamKeys: ['B'] }).rawScore)
+})
+
+test('season references include same-day and later eligible matches while excluding the complete target and other versions', () => {
+  const target = row('TARGET', '2026-10-10')
+  const peer = row('PEER', '2026-10-10')
+  const later = row('LATER', '2026-10-11')
+  const self = row('SELF', '2026-10-10', { matchId: target.matchId, mapOrder: '2' })
+  const otherSeason = row('OTHER_SEASON', '2026-10-11', { seasonId: 'OTHER' })
+  const old = row('OLD', '2026-10-03')
+  const baseline = buildSeasonStatisticalRatingBaselines([target, peer, later, self, otherSeason, old], target)
+  assert.deepEqual(baseline.trainingMatchIds.sort(), ['LATER', 'PEER'])
+  assert.equal(baseline.retrospective.throughDay, '2026-10-11')
+  assert.ok(Number.isFinite(scoreStatisticalRatingRow(target, baseline).rawScore))
+  self.per10.healing = 100000
+  const changed = buildSeasonStatisticalRatingBaselines([target, peer, later, self, otherSeason, old], target)
+  assert.deepEqual(changed.byHero, baseline.byHero)
+})
+
+test('DPS and support Sombra have separate profiles, weights, hero versions and season reference pools', () => {
+  const sombra = (id, role, day) => {
+    const resolution = resolveHeroSubrole('Sombra', { role, seasonId: 'FCW26' })
+    return row(id, day, { hero: 'Sombra', resolution })
+  }
+  const damage = sombra('DPS_TARGET', 'DPS', '2026-10-03')
+  const support = sombra('SUP_TARGET', 'SUPPORT', '2026-10-10')
+  const damagePeer = sombra('DPS_PEER', 'DPS', '2026-10-03')
+  const supportPeer = sombra('SUP_PEER', 'SUPPORT', '2026-10-11')
+  const rows = [damage, support, damagePeer, supportPeer]
+  const dpsBaseline = buildSeasonStatisticalRatingBaselines(rows, damage)
+  const supBaseline = buildSeasonStatisticalRatingBaselines(rows, support)
+  assert.notEqual(damage.heroVersion, support.heroVersion)
+  assert.notEqual(damage.resolution.scoringProfile, support.resolution.scoringProfile)
+  assert.deepEqual(dpsBaseline.trainingMatchIds, ['DPS_PEER'])
+  assert.deepEqual(supBaseline.trainingMatchIds, ['SUP_PEER'])
+  const dpsScore = scoreStatisticalRatingRow(damage, dpsBaseline)
+  const supScore = scoreStatisticalRatingRow(support, supBaseline)
+  assert.notDeepEqual(dpsScore.weights, supScore.weights)
+  supportPeer.per10.damage = 100000
+  assert.deepEqual(buildSeasonStatisticalRatingBaselines(rows, damage).byHero, dpsBaseline.byHero)
+})
+
+test('new season publications update season references while preserving previous map raw scores', () => {
+  const original = fixture()
+  const before = getStatisticalRatingDataset(original, 'FCW26')
+  const db = structuredClone(original)
+  const added = structuredClone(db.matches[0])
+  added.match_id = 'LATER_MATCH'
+  added.scheduled_at = '2026-10-13T10:00:00Z'
+  for (const stat of added.maps[0].team_a_stats) stat.healing += 10000
+  db.matches.push(added)
+  for (const player of db.players) for (const log of player.match_logs.filter(log => log.matchId === original.matches[0].match_id)) {
+    player.match_logs.push({ ...log, matchId: added.match_id, totals: { ...log.totals, healing: log.totals.healing + 10000 } })
+  }
+  const after = getStatisticalRatingDataset(db, 'FCW26')
+  const target = before.rows.find(record => record.playerId === entry().player_id)
+  assert.equal(after.scores.get(target.rowId).rawScore, before.scores.get(target.rowId).rawScore)
+  assert.notEqual(after.seasonScores.get(target.rowId).rawScore, before.seasonScores.get(target.rowId).rawScore)
+  assert.ok(after.seasonScores.get(target.rowId).seasonReference.trainingMatchIds.includes(added.match_id))
 })
 
 test('new matches outside the fixed backfill membership cannot change restored scores', () => {

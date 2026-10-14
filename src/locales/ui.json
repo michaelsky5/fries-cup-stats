@@ -59014,6 +59014,26 @@
     "zh-TW": "評分採用統一的十分制刻度；全場評分按已評分上場時間彙總各圖表現。",
     "ko-KR": "모든 평가는 동일한 10점 척도로 표시됩니다. 경기 전체 평가는 점수가 있는 맵별 기록을 플레이 시간으로 가중 평균합니다."
   },
+  "赛季总评计入截至 {0} 已发布的有效比赛，按版本与职责比较；每条记录的参照均排除其所在整场比赛。": {
+    "en-US": "Season OVR uses eligible published matches through {0}, compared within each version and role. Each scored match is fully excluded from its own references.",
+    "zh-TW": "賽季總評計入截至 {0} 已發布的有效比賽，按版本與職責比較；每條記錄的參照均排除其所在整場比賽。",
+    "ko-KR": "시즌 종합 평가는 {0}까지 공개된 유효한 경기를 포함하고 버전 및 역할별로 비교합니다. 각 기록의 참조에서 해당 경기 전체를 제외합니다."
+  },
+  "新增比赛会更新赛季总评与赛季排名；历史单场评分和 MVP 保持原规则。": {
+    "en-US": "Newly published matches can update Season OVR and season ranks. Published match ratings and MVP selections retain their original rules.",
+    "zh-TW": "新增比賽會更新賽季總評與賽季排名；歷史單場評分和 MVP 保持原規則。",
+    "ko-KR": "새로 공개된 경기는 시즌 종합 평가와 순위를 갱신합니다. 과거 경기의 평가와 MVP 선정은 기존 규칙을 유지합니다."
+  },
+  "赛季总评使用本赛季全部已发布的有效记录，按版本与职责比较，参照排除被评分的整场比赛。": {
+    "en-US": "Season OVR uses all eligible published season records, compared within each version and role, with the entire scored match held out.",
+    "zh-TW": "賽季總評使用本賽季全部已發布的有效記錄，按版本與職責比較，參照排除被評分的整場比賽。",
+    "ko-KR": "시즌 종합 평가는 공개된 모든 유효한 시즌 기록을 사용하고 버전과 역할별로 비교합니다. 참조에서는 평가 대상 경기 전체를 제외합니다."
+  },
+  "整季数据按版本与职责参照，整场排除自身；参照成熟度与英雄统计归属在评分依据中说明。": {
+    "en-US": "Whole-season references by version and role; each match is held out. Reference maturity and hero attribution are explained with each rating.",
+    "zh-TW": "整季資料按版本與職責參照，整場排除自身；參照成熟度與英雄統計歸屬在評分依據中說明。",
+    "ko-KR": "시즌 전체 기록을 버전과 역할별로 참조하고 해당 경기 전체를 제외합니다. 참조의 충분성 및 영웅별 통계 귀속은 평가 근거에서 설명합니다."
+  },
   "部分参照来源仅有同版本其他 {0} 场比赛，小分差需谨慎解读。": {
     "en-US": "Some active references have only {0} other same-version matches. Small score differences need caution.",
     "zh-TW": "部分參照來源僅有同版本其他 {0} 場比賽，小分差需謹慎解讀。",

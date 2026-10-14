@@ -3,8 +3,15 @@ export const STATISTICAL_RATING_SEASONS = Object.freeze(['FCW26'])
 export const STAT_KEYS = Object.freeze(['elims', 'assists', 'deaths', 'damage', 'healing', 'blocked'])
 export const EVIDENCE_SCHEMA_VERSION = 'hero-rating-evidence-v1'
 
+// Season totals are retrospective. Published map/match scoring keeps its cutoff.
+export const STATISTICAL_RATING_SEASON_REFERENCE = Object.freeze({
+  version: 'v1.5-season-2026.10.14',
+  cutoff: 'CURRENT_PUBLISHED_SEASON_SAME_VERSION_ENTIRE_MATCH_HELD_OUT',
+  scope: 'SEASON_OVR_AND_PLAYER_DOSSIER'
+})
+
 // A fixed reference membership for the three published cold-start matches.
-// Only map/match presentation may use it; season ratings retain prior-day scores.
+// Only map/match presentation uses this fixed set; season references are separate.
 export const STATISTICAL_RATING_BACKFILL = Object.freeze({
   version: 'v1.5-backfill-2026.10.14',
   seasonId: 'FCW26',
