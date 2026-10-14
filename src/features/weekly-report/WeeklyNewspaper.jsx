@@ -108,12 +108,18 @@ function DataCuriosities({facts,stories,locale,t,withSeason}) {
   </section>
 }
 
+const heroRoleLabel=(role,locale)=>({
+  TANK:pickUiLocale(locale,'坦克','Tank','돌격','肉盾'),
+  DPS:pickUiLocale(locale,'输出','Damage','공격','攻擊'),
+  SUP:pickUiLocale(locale,'辅助','Support','지원','輔助'),
+})[role]
+
 function HeroTrendList({heroes,kind,locale,t,report}) {
   return <ol className={styles.heroTrendList} data-hero-trend={kind} data-count={heroes.length} aria-label={kind==='usage'?t('本周英雄出场排行','Weekly hero appearance leaders'):t('本周英雄 Ban 前三','Weekly top three hero bans')}>
     {heroes.map(hero=>{const role=resolveWeeklyHeroRole(hero,report);return <li key={hero.name} data-hero={hero.name} data-count={hero.count} data-rank={hero.rank} data-hero-role={role||undefined}>
       <span className={styles.trendRank} data-hero-rank={hero.rank} aria-label={t(`第 ${hero.rank} 名`,`No. ${hero.rank}`)}>{String(hero.rank).padStart(2,'0')}</span>
       <img src={getHeroImage(hero.name)} alt=""/>
-      <b className={styles.heroTrendName}>{role&&<RoleSymbol role={role} label={positionLabel(role,t)}/>}<span>{formatOwHeroName(hero.name,locale)}</span></b>
+      <b className={styles.heroTrendName}>{role&&<RoleSymbol role={role} label={heroRoleLabel(role,locale)}/>}<span>{formatOwHeroName(hero.name,locale)}</span></b>
       <strong>{hero.count}<small>{t('次',kind==='usage'?'plays':'bans')}</small></strong>
     </li>})}
     {!heroes.length&&<li className={styles.trendPending}>{t('记录待补齐','Records pending')}</li>}
@@ -158,7 +164,7 @@ function AwardTeam({player,seasonId}) {
   return <span className={styles.awardTeam}>{player.teams.map(team=><span key={team.id}><NewspaperTeamLogo team={team} seasonId={seasonId} className={styles.awardEmblem}/>{newspaperTeamName(team)}</span>)}</span>
 }
 
-const positionLabel=(position,t)=>({TANK:t('坦克','Tank'),DPS:t('输出','Damage'),SUP:t('辅助','Support')})[WEEKLY_POSITION_ROLES[position]||position]||t('待归类','Unassigned')
+const positionLabel=(position,t)=>({TANK:t('坦克','Tank'),DPS:t('输出','Damage'),SUP:t('辅助','Support')})[WEEKLY_POSITION_ROLES[position]]||t('待归类','Unassigned')
 
 function KeyPerformance({player,t,mvp=false}) {
   const metrics=player.position==='TANK'?[['blocked',t('阻挡伤害','Mitigated')],['elims',t('消灭','Elims')]]:player.role==='SUP'?[['healing',t('治疗','Healing')],['assists',t('助攻','Assists')]]:[['damage',t('伤害','Damage')],['elims',t('消灭','Elims')]]
