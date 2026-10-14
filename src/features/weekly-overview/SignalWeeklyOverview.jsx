@@ -12,14 +12,13 @@ import { getLocationPath, getRestoreScrollY, getReturnState, getSavedReturnScrol
 import { buildWeeklyOverview, weeklyMapSlots, weeklyScore } from './weeklyOverviewModel.js'
 import { WeeklyCyclePicker, WeeklyWeekRail } from './WeeklyNavigation.jsx'
 import { WeeklyRegistrationBand, WeeklyPublishedMapPool, weeklyCycleDateRange } from './WeeklyExistingSections.jsx'
-import { weeklyCycleTitle, weeklyPeriodPath, weeklyStatusLabel, weeklyWeekTitle } from './weeklyPresentation.js'
+import { weeklyCycleTitle, weeklyPeriodPath, weeklyStatusLabel, weeklyWeekTitle, weeklyTeamShort as shortName } from './weeklyPresentation.js'
 import { weeklyOverviewReturnLocation } from './weeklyInteractionNavigation.js'
 import { weeklyStandingsPreviewLimit, selectWeeklyFollowingPreview, selectWeeklyStandingsPreview } from './weeklyOverviewPreview.js'
 import { WeeklyReportTeaser, WeeklyEventPathway } from '../weekly-report/WeeklyReportTeaser.jsx'
 import usePublishedNewspaper from '../weekly-report/usePublishedNewspaper.js'
 import styles from './SignalWeeklyOverview.module.css'
 
-const shortName = team => team?.short || team?.team_short_name || team?.name || team?.team_name || 'TBD'
 const fullName = team => team?.name || team?.team_name || shortName(team)
 const idOf = team => team?.id || team?.team_id
 
@@ -119,7 +118,7 @@ export default function SignalWeeklyOverview() {
   const standingsPreview = selectWeeklyStandingsPreview(standings, focusedIds, { limit: standingsLimit })
   const visibleStandings = isDesktop ? standingsPreview.leading : standings
   const hasStandingsExcerpt = isDesktop && standings.length > standingsLimit
-  const renderStandingRow = row => <tr key={row.team_id} data-focused={focusedIds.includes(row.team_id) || undefined}><td>{row.display_rank ?? '—'}{row.tied && <small>{t(uiText("并列", locale), 'Tied')}</small>}</td><th scope="row"><Link to={withSeason(`/teams/${encodeURIComponent(row.team_id)}`)}><TeamLogo team={row.team} seasonId={seasonId} className={styles.rowLogo} />{row.team_short_name || row.team_name}</Link></th><td>{row.played ?? '—'}</td><td><strong>{row.points ?? '—'}</strong></td></tr>
+  const renderStandingRow = row => <tr key={row.team_id} data-focused={focusedIds.includes(row.team_id) || undefined}><td>{row.display_rank ?? '—'}{row.tied && <small>{t(uiText("并列", locale), 'Tied')}</small>}</td><th scope="row"><Link to={withSeason(`/teams/${encodeURIComponent(row.team_id)}`)}><TeamLogo team={row.team} seasonId={seasonId} className={styles.rowLogo} />{shortName(row)}</Link></th><td>{row.played ?? '—'}</td><td><strong>{row.points ?? '—'}</strong></td></tr>
   const hasFocusedStandings = !isPilot && standings.some(row => focusedIds.includes(row.team_id))
   const rulebookUrl = cycle?.rulebook?.slug && cycle?.rulebook?.version
     ? `https://fries-cup.com/rules/?book=${encodeURIComponent(cycle.rulebook.slug)}&version=${encodeURIComponent(cycle.rulebook.version)}`
