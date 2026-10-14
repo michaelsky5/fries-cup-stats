@@ -228,6 +228,18 @@ export function getStaffAvatar(staffName, { knownOnly = false } = {}) {
   return !knownOnly && clean ? `/casters/${encodePathSegment(clean)}.jpg` : ''
 }
 
+export function getStaffAvatarCandidates(staff = {}) {
+  const identities = [
+    staff.name, staff.staff_name, staff.battleTag, staff.battle_tag,
+    ...(Array.isArray(staff.aliases) ? staff.aliases : [])
+  ].filter(value => typeof value === 'string' && value.trim())
+  const published = [staff.avatar, staff.avatar_url]
+    .filter(value => typeof value === 'string' && value.trim())
+    .map(value => value.trim())
+  const local = identities.map(name => getStaffAvatar(name, { knownOnly: true })).filter(Boolean)
+  return [...new Set([...published, ...local])]
+}
+
 /* -------------------------------------------------------------------------- */
 /* maps                                                                        */
 /* -------------------------------------------------------------------------- */

@@ -143,7 +143,7 @@ test('map and ban frequency captions retain exact counts and ties',()=>{
   assert.match(paper.mapNews.paragraphs[0],/霓虹枢纽/)
   assert.match(paper.banNews.summary,/堡垒、D.Mon、飞天猫各被 Ban 3 次/)
   assert.match(paper.banNews.summary,/27 条/)
-  assert.equal(newspaperTeamName({short:'?',name:'Ateam'}),'Ateam')
+  assert.equal(newspaperTeamName({short:'?',name:'Ateam'}),'ATEAM')
 })
 
 test('visual score paths and first-map comebacks require all five verified winners',()=>{
@@ -335,12 +335,12 @@ test('match briefs use natural copy without calling an opening map win a recover
 
 test('map recaps preserve the opening, reply and closing when a brief leads with historical news',()=>{
   const [first,second]=paper.briefs
-  assert.match(first.recap,/Ateam 连下首两图，取得 2:0 领先/)
-  assert.match(first.recap,/CSM 在香巴里寺院扳回一图，Ateam 随后拿下末两图/)
+  assert.match(first.recap,/ATEAM 连下首两图，取得 2:0 领先/)
+  assert.match(first.recap,/CSM 在香巴里寺院扳回一图，ATEAM 随后拿下末两图/)
   assert.match(second.recap,/SPS.V 以三图连胜开局/)
   assert.match(second.recap,/MMGT 在香巴里寺院追回一图，SPS.V 再取霓虹枢纽收尾/)
   const english=buildWeeklyNewspaper(report,'en-US').briefs
-  assert.match(english[0].recap,/Ateam opened 2:0.*CSM won Shambali Monastery.*Ateam took the last two/)
+  assert.match(english[0].recap,/ATEAM opened 2:0.*CSM won Shambali Monastery.*ATEAM took the last two/)
   assert.match(english[1].recap,/SPS.V opened 3:0.*MMGT won Shambali Monastery.*SPS.V took Neon Junction/)
   for(const issue of listWeeklyReportPreviews(db)) for(const article of buildWeeklyNewspaper(issue).articles) {
     assert.ok((article.brief.match(/。/g)||[]).length<=2)
@@ -414,15 +414,15 @@ test('winner-first display reverses the entire score path while retaining immuta
   const issue=listWeeklyReportPreviews(db).find(sample=>sample.week.week_number===2)
   const before=structuredClone(issue)
   const story=buildWeeklyNewspaper(issue).articles.find(article=>article.id===issue.closeMatch.id)
-  assert.equal(story.result,'MMGT 3:2 Ateam')
-  assert.equal(story.sourceResult,'Ateam 2:3 MMGT')
-  assert.deepEqual(story.scoreOrder,['MMGT','Ateam'])
-  assert.deepEqual(story.sourceScoreOrder,['Ateam','MMGT'])
+  assert.equal(story.result,'MMGT 3:2 ATEAM')
+  assert.equal(story.sourceResult,'ATEAM 2:3 MMGT')
+  assert.deepEqual(story.scoreOrder,['MMGT','ATEAM'])
+  assert.deepEqual(story.sourceScoreOrder,['ATEAM','MMGT'])
   assert.deepEqual(story.displayScores,[3,2])
   assert.deepEqual(story.sequence.map(map=>map.mapScore),[[2,1],[0,3],[1,0],[0,3],[1,0]])
   assert.deepEqual(story.sequence.map(map=>map.runningScore),[[1,0],[1,1],[2,1],[2,2],[3,2]])
   assert.deepEqual(story.sequence.map(map=>map.winnerSide),['a','b','a','b','a'])
-  assert.match(story.title,/赢下决胜图，3:2 战胜 Ateam/)
+  assert.match(story.title,/赢下决胜图，3:2 战胜 ATEAM/)
   assert.match(story.brief,/交替获胜.*2:2.*拿下香巴里寺院/)
   assert.deepEqual(issue,before)
 })

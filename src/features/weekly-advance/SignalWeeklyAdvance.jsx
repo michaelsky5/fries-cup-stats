@@ -28,6 +28,7 @@ export default function SignalWeeklyAdvance() {
   const location = useLocation()
   const navigationType = useNavigationType()
   const journeyRef = useRef(null)
+  const journeyMatchesRef = useRef(null)
   const pendingJourneyReveal = useRef(false)
   const en = String(locale).startsWith('en')
   const t = (zh, english) => en ? english : zh
@@ -54,11 +55,15 @@ export default function SignalWeeklyAdvance() {
     navigate({ search: `?${next}`, hash: location.hash }, { replace: true, preventScrollReset: true })
   }, [cycle, params, navigate, location.hash])
   useEffect(() => {
-    if (!window.matchMedia('(max-width: 800px)').matches && journeyRef.current) journeyRef.current.scrollTop = 0
+    if (!window.matchMedia('(max-width: 800px)').matches) {
+      if (journeyRef.current) journeyRef.current.scrollTop = 0
+      if (journeyMatchesRef.current) journeyMatchesRef.current.scrollTop = 0
+    }
   }, [selected?.id])
   useEffect(() => {
     if (!pendingJourneyReveal.current) return
     pendingJourneyReveal.current = false
+    if (window.matchMedia('(min-width: 901px)').matches) return
     const frame = requestAnimationFrame(() => {
       const panel = journeyRef.current
       if (!panel) return
@@ -135,7 +140,7 @@ export default function SignalWeeklyAdvance() {
           <div className={styles.teamIdentity}><TeamLogo team={selected.team} seasonId={seasonId} className={styles.heroLogo} /><div><h2 id="weekly-team-title">{weeklyTeamShort(selected.team)}</h2><p>{selected.team?.name || selected.team?.team_name}</p></div>{standing && <div className={styles.heroPoints}><strong>{weeklyScore(standing.points)}</strong><small>{t(uiText("赛段积分", locale), 'Cycle points')}</small></div>}</div>
           {standing ? <div className={styles.teamStats}><div><span>{standing.tied ? t(uiText("并列名次", locale), 'Tied rank') : t(uiText("公布名次", locale), 'Published rank')}</span><b>{rank === '—' ? rank : rank.padStart(2, '0')}</b></div><div><span>{t(uiText("已赛", locale), 'Played')}</span><b>{weeklyScore(standing.played)}</b></div><div><span>{t(uiText("胜 / 平 / 负", locale), 'W / D / L')}</span><b className={styles.results}>{[standing.wins, standing.draws, standing.losses].map(weeklyScore).join(' / ')}</b></div></div> : <p className={styles.noPoints}>{isPilot ? t(uiText("本赛段不计积分", locale), 'No standings points in this cycle') : t(uiText("暂无公布积分", locale), 'No published points yet')}</p>}
           <div className={styles.journeyHeading}><div><h3>{t(uiText("本赛段比赛", locale), 'Matches in this cycle')}</h3><p>{t(uiText("比分以 {0} 在前", locale, [weeklyTeamShort(selected.team)]), `${weeklyTeamShort(selected.team)}’s score is shown first`)}</p></div><span>UTC+8</span></div>
-          <ol className={styles.weeks}>{journey.map(({ week: item, fixtures }) => <li key={item.id}>
+          <ol className={styles.weeks} ref={journeyMatchesRef}>{journey.map(({ week: item, fixtures }) => <li key={item.id}>
             <div className={styles.weekLabel}><b>{weeklyWeekTitle(item, locale)}</b><span>{weeklyStatusLabel(item.status, locale)}</span></div>
             {fixtures.length ? fixtures.map(({ match, opponent, score }) => {
               const schedule = formatMatchSchedule(match, { locale })

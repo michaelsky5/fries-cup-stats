@@ -8,6 +8,7 @@ import { getArchiveStageHref } from '../team-dossier/teamArchiveContent.js'
 import RosterDirectory, { DirectoryHeading, DirectoryControls, DirectoryLink as ArchiveLink } from '../roster-directory/RosterDirectory.jsx'
 import directoryStyles from '../roster-directory/RosterDirectory.module.css'
 import { teamIndexText, teamIndexRole } from './teamIndexCopy.js'
+import { getTeamDisplayIdentity, getTeamDisplayName as displayTeamName } from '../../lib/teamDisplayIdentity.js'
 import styles from './TeamIndex.module.css'
 
 function TeamEmblem({ team, seasonId, className = '' }) {
@@ -15,8 +16,9 @@ function TeamEmblem({ team, seasonId, className = '' }) {
   const sources = getTeamLogoCandidates(team, seasonId).filter(src => !fallback.includes(src))
   const [index, setIndex] = useState(0)
   const src = sources[index]
+  const name = displayTeamName(team)
   return <span className={styles.emblem + ' ' + className} data-has-logo={Boolean(src)}>
-    {src ? <img src={src} alt={team.shortName + ' logo'} loading="lazy" onError={() => setIndex(value => value + 1)} /> : <b aria-hidden="true">{team.shortName}</b>}
+    {src ? <img src={src} alt={name + ' logo'} loading="lazy" onError={() => setIndex(value => value + 1)} /> : <b aria-hidden="true">{name}</b>}
   </span>
 }
 
@@ -35,14 +37,16 @@ export function TeamIndexControls({ fields, ...props }) {
 
 function TeamShowcase({ team, preview, seasonId, seasonCode, locale, withSeason, onToggleFavorite, favoriteDisabled }) {
   const en = locale === 'en-US'
+  const identity = getTeamDisplayIdentity(team.shortName, team.fullName)
+  const name = identity.primary
   const journeyHref = withSeason('/teams/' + team.routeId + '/journey')
   const staffNames = people => people?.map(formatStaffPerson).filter(Boolean).join(' / ') || (en ? 'Not registered' : uiText("未登记", locale))
-  const weightedLength = Array.from(team.shortName).reduce((length, char) => length + (/\p{Script=Han}/u.test(char) ? 1 : .56), 0)
-  return <article className={styles.showcase} data-team-showcase={team.routeId} aria-label={(en ? 'Selected team ' : uiText("当前队伍 ", locale)) + team.shortName}>
+  const weightedLength = Array.from(name).reduce((length, char) => length + (/\p{Script=Han}/u.test(char) ? 1 : .56), 0)
+  return <article className={styles.showcase} data-team-showcase={team.routeId} aria-label={(en ? 'Selected team ' : uiText("当前队伍 ", locale)) + name}>
     <header className={styles.showcaseTop}><span>{seasonCode} <i /> {en ? 'TEAM ARCHIVE' : uiText("队伍档案", locale)}</span><b>{en ? 'On the roster' : uiText("本届参赛", locale)}</b></header>
     <div className={styles.scene}>
-      <span className={styles.backprint} aria-hidden="true">{team.shortName}</span>
-      <div className={styles.identity}><span>{en ? 'TEAM PROFILE' : uiText("队伍资料", locale)}</span><h2 data-name-length={weightedLength > 7 ? 'long' : weightedLength > 4 ? 'medium' : 'short'}>{team.shortName}</h2><p>{team.fullName}</p><div className={styles.standing}><span>{preview.standing.heading}</span><strong>{preview.standing.label}</strong><small>{preview.standing.zone}</small></div></div>
+      <span className={styles.backprint} aria-hidden="true">{name}</span>
+      <div className={styles.identity}><span>{en ? 'TEAM PROFILE' : uiText("队伍资料", locale)}</span><h2 data-name-length={weightedLength > 7 ? 'long' : weightedLength > 4 ? 'medium' : 'short'}>{name}</h2>{identity.secondary ? <p>{identity.secondary}</p> : null}<div className={styles.standing}><span>{preview.standing.heading}</span><strong>{preview.standing.label}</strong><small>{preview.standing.zone}</small></div></div>
       <TeamEmblem key={seasonId + ':' + team.routeId} team={team} seasonId={seasonId} className={styles.portraitEmblem} />
     </div>
     <div className={styles.facts}><div><span>{en ? 'Manager' : uiText("经理", locale)}</span><b>{staffNames(team.staff?.managers)}</b></div><div><span>{en ? 'Coach' : uiText("教练", locale)}</span><b>{staffNames(team.staff?.coaches)}</b></div></div>
@@ -62,7 +66,7 @@ function TeamShowcase({ team, preview, seasonId, seasonCode, locale, withSeason,
       {preview.stages.length ? <div className={styles.stages}>{preview.stages.map(stage => <ArchiveLink key={stage.value} to={getArchiveStageHref(journeyHref, stage.value)}><span>{teamIndexText(stage.title, locale)}</span><b>{stage.count}<small>{en ? stage.count === 1 ? ' entry' : ' entries' : uiText(" 条", locale)}</small></b></ArchiveLink>)}</div> : <p className={styles.noRoster}>{en ? 'No published schedule entries.' : uiText("暂无已发布赛程。", locale)}</p>}
       <p className={styles.recordNote}>{en ? 'Published schedule entries include byes and administrative results.' : uiText("赛程记录包含已发布的轮空及判罚结果。", locale)}</p>
     </div>
-    <footer className={styles.teamActions}><button type="button" aria-pressed={Boolean(team.isFavorite)} disabled={favoriteDisabled} onClick={() => onToggleFavorite(team)} aria-label={team.isFavorite ? (en ? 'Unfollow team ' : uiText("取消关注队伍 ", locale)) + team.shortName : favoriteDisabled ? en ? 'Follow limit reached' : uiText("关注已满", locale) : (en ? 'Follow team ' : uiText("关注队伍 ", locale)) + team.shortName}>{team.isFavorite ? en ? '★ Following' : uiText("★ 已关注", locale) : favoriteDisabled ? en ? 'Limit reached' : uiText("关注已满", locale) : en ? '☆ Follow team' : uiText("☆ 关注队伍", locale)}</button><ArchiveLink to={withSeason('/teams/' + team.routeId)}>{en ? 'View team profile' : uiText("查看队伍资料", locale)} <span aria-hidden="true">↗</span></ArchiveLink></footer>
+    <footer className={styles.teamActions}><button type="button" aria-pressed={Boolean(team.isFavorite)} disabled={favoriteDisabled} onClick={() => onToggleFavorite(team)} aria-label={team.isFavorite ? (en ? 'Unfollow team ' : uiText("取消关注队伍 ", locale)) + name : favoriteDisabled ? en ? 'Follow limit reached' : uiText("关注已满", locale) : (en ? 'Follow team ' : uiText("关注队伍 ", locale)) + name}>{team.isFavorite ? en ? '★ Following' : uiText("★ 已关注", locale) : favoriteDisabled ? en ? 'Limit reached' : uiText("关注已满", locale) : en ? '☆ Follow team' : uiText("☆ 关注队伍", locale)}</button><ArchiveLink to={withSeason('/teams/' + team.routeId)}>{en ? 'View team profile' : uiText("查看队伍资料", locale)} <span aria-hidden="true">↗</span></ArchiveLink></footer>
   </article>
 }
 
@@ -70,8 +74,11 @@ export default function TeamIndex({ teams, focusedTeam, preview, onFocusTeam, di
   const uiLocale = useUiLocale()
   const en = showcaseProps.locale === 'en-US'
   return <RosterDirectory kind="teams" label={en ? 'Team directory' : uiText("参赛队伍目录", uiLocale)} listTitle={en ? 'THE TEAM LIST' : uiText("队伍索引", uiLocale)}
-    directoryRef={directoryRef} items={teams} focusedKey={focusedTeam?.routeId} getKey={team => team.routeId} getName={team => team.shortName}
-    renderIdentity={team => <><TeamEmblem key={showcaseProps.seasonId + ':' + team.routeId} team={team} seasonId={showcaseProps.seasonId} className={styles.rowEmblem} /><span className={directoryStyles.rowIdentity}><strong>{team.shortName}{team.isFavorite ? ' ★' : ''}</strong><small>{team.fullName}</small></span></>}
+    directoryRef={directoryRef} items={teams} focusedKey={focusedTeam?.routeId} getKey={team => team.routeId} getName={displayTeamName}
+    renderIdentity={team => {
+      const identity = getTeamDisplayIdentity(team.shortName, team.fullName)
+      return <><TeamEmblem key={showcaseProps.seasonId + ':' + team.routeId} team={team} seasonId={showcaseProps.seasonId} className={styles.rowEmblem} /><span className={directoryStyles.rowIdentity}><strong>{identity.primary}{team.isFavorite ? ' ★' : ''}</strong>{identity.secondary ? <small>{identity.secondary}</small> : null}</span></>
+    }}
     getHref={team => showcaseProps.withSeason('/teams/' + team.routeId)} previewLabel={en ? 'Preview team' : uiText("预览队伍", uiLocale)} archiveLabel={en ? 'View team profile' : uiText("查看队伍资料", uiLocale)}
     onFocus={onFocusTeam} mobileExpanded={mobileExpanded} startIndex={startIndex} resultCount={resultCount} controls={controls} pagination={pagination} emptyState={emptyState} locale={showcaseProps.locale}
     preview={focusedTeam && preview ? <TeamShowcase key={focusedTeam.routeId} team={focusedTeam} preview={preview} {...showcaseProps} /> : null}

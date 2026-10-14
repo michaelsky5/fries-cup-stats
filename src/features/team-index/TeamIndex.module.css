@@ -112,11 +112,14 @@
 @media (min-width: 761px) {
   .showcase { height: var(--portrait-height); min-height: 0; overflow: hidden; }
   .showcaseTop, .facts, .teamActions { flex-shrink: 0; }
-  .scene { flex: 0 0 32%; min-height: 0; padding-block: 18px; }
-  .identity h2 { font-size: clamp(48px, 6vw, 82px); }
-  .identity h2[data-name-length="medium"] { font-size: clamp(38px, 4.7vw, 64px); }
-  .identity h2[data-name-length="long"] { font-size: clamp(30px, 3.5vw, 48px); }
-  .portraitEmblem { width: min(100%, 172px); padding: 12px; }
+  .scene { flex: 0 0 32%; min-height: 0; grid-template-rows: minmax(0, 1fr); padding-block: 16px 64px; }
+  .identity h2 { margin-block: 8px 4px; font-size: clamp(42px, 4.5vw, 64px); }
+  .identity h2[data-name-length="medium"] { font-size: clamp(34px, 3.7vw, 52px); }
+  .identity h2[data-name-length="long"] { font-size: clamp(28px, 3vw, 42px); }
+  .standing { position: absolute; left: 26px; right: 26px; bottom: 14px; margin-top: 0; padding-top: 8px; }
+  .standing strong { font-size: 20px; line-height: 1.2; }
+  .portraitEmblem { height: 100%; width: auto; max-width: min(100%, 172px); padding: 12px; }
+  .portraitEmblem[data-has-logo="false"] b { font-size: clamp(18px, 2vw, 26px); line-height: 1.15; }
   .teamRecords { display: flex; flex-direction: column; flex: 1; min-height: 0; padding-top: 14px; }
   .recordHeading, .stages, .recordNote { flex-shrink: 0; }
   .roster { flex: 1; min-height: 0; grid-auto-rows: minmax(40px, 1fr); overflow: auto; scrollbar-width: thin; scrollbar-color: var(--fc-data-signal-deep) transparent; overscroll-behavior: contain; }

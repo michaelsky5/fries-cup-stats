@@ -1,5 +1,6 @@
 import { translateUiText } from '../../lib/uiText.js'
 import { getWeeklyCycleIdentityLabel } from '../../lib/weeklyMatchIdentity.js'
+import { getPreferredTeamShortName } from '../../lib/teamDisplayIdentity.js'
 const labels = {
   live: ['进行中', 'In progress'], complete: ['已结束', 'Final'], upcoming: ['待赛', 'Upcoming'],
   review: ['待审核', 'Under review'], ruling: ['判定结束', 'By ruling'], cancelled: ['已取消', 'Cancelled'],
@@ -17,7 +18,10 @@ export const weeklyWeekTitle = (week, locale) => {
   const label = String(week?.label || fallback).replace(/\s*[·•—–-]?\s*首[周週][试試][运運]行\s*$/, '').trim()
   return translateUiText(label || fallback, locale)
 }
-export const weeklyTeamShort = team => team?.short || team?.team_short_name || team?.name || team?.team_name || 'TBD'
+export const weeklyTeamShort = team => getPreferredTeamShortName(
+  team?.short || team?.team_short_name || team?.name || team?.team_name || 'TBD',
+  team?.name || team?.team_name
+)
 
 export function weeklyPeriodPath(path, cycle, week) {
   const params = new URLSearchParams()

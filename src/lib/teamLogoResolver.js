@@ -1,4 +1,6 @@
 import { TEAM_LOGO_CATALOG } from '../generated/teamLogoCatalog.js'
+import { createDefaultTeamLogo } from './defaultTeamLogo.js'
+import { getTeamDisplayIdentity } from './teamDisplayIdentity.js'
 
 const LOGO_EXTENSIONS = Object.freeze(['png', 'webp', 'jpg', 'jpeg', 'svg'])
 const GLOBAL_TEAM_LOGO_FALLBACK = '/logos/OW.png'
@@ -133,11 +135,14 @@ function getTeamIdentityValues(team) {
     team.teamLogoKey,
     team.team_short_name,
     team.teamShortName,
+    team.shortName,
     team.short,
     team.abbreviation,
     team.acronym,
     team.team_name,
     team.teamName,
+    team.fullName,
+    team.full,
     team.name,
     team.team_id,
     team.teamId,
@@ -213,14 +218,22 @@ export function getTeamLogoCandidates(team, seasonLike) {
     : { team_short_name: text(team) }
   const directories = getTeamLogoDirectoryCandidates(logoTeam, seasonLike)
   const identityValues = getTeamIdentityValues(logoTeam)
-
-  return unique([
+  const defaults = getDefaultTeamLogoCandidates(seasonLike, logoTeam)
+  const specificLogos = unique([
     ...getDirectLogoValues(logoTeam).flatMap(getPublicLogoSources),
     ...directories.flatMap(directory => getCatalogMatches(directory, identityValues)),
     ...directories.flatMap(directory => getConventionCandidates(directory, identityValues)),
-    ...(directories.length ? [] : getRootLegacyCandidates(identityValues)),
-    ...getDefaultTeamLogoCandidates(seasonLike, logoTeam)
-  ])
+    ...(directories.length ? [] : getRootLegacyCandidates(identityValues))
+  ]).filter(source => !defaults.includes(source))
+  const identity = getTeamDisplayIdentity(
+    logoTeam.shortName || logoTeam.team_short_name || logoTeam.teamShortName || logoTeam.short || logoTeam.abbreviation || logoTeam.acronym,
+    logoTeam.fullName || logoTeam.full || logoTeam.team_name || logoTeam.teamName || logoTeam.name
+  )
+  const label = identity.primary === '—' || /^TBD$/i.test(identity.primary) ? '' : identity.primary
+
+  // A local lettermark fills absent/broken artwork; source data stays untouched.
+  // Keep legacy generic images last, outside the team-specific artwork list.
+  return unique([...specificLogos, createDefaultTeamLogo(label), ...defaults])
 }
 
 export function getTeamLogo(team, seasonLike) {

@@ -125,3 +125,53 @@
   .pagination nav > label { margin-inline: auto; }
 }
 @media (prefers-reduced-motion: reduce) { .nameRow { transition: none; } }
+
+.shell[data-roster-directory="players"] .heading { padding: 12px 0 16px; }
+.shell[data-roster-directory="players"] .eyebrow { display: none; }
+.shell[data-roster-directory="players"] .heading h1 { margin-top: 0; font-size: clamp(32px, 3vw, 44px); }
+.shell[data-roster-directory="players"] .headingAside p { font-size: 13px; }
+.shell[data-roster-directory="players"] .serial { width: 26px; font: 12px/1 var(--font-mono); }
+.shell[data-roster-directory="players"] .rowIdentity small { font-size: 12px; }
+.shell[data-roster-directory="players"] :is(.selectionMark, .rowLink) { font-size: 11px; }
+.shell[data-roster-directory="players"] .selectField > span { font-size: 12px; }
+.shell[data-roster-directory="players"] .directoryTop small { font-size: 12px; }
+@media (min-width: 761px) {
+  .shell[data-roster-directory="players"] .workbench { --portrait-height: clamp(560px, calc(100dvh - 290px), 720px); }
+}
+@media (max-width: 760px) {
+  .shell[data-roster-directory="players"] .heading h1 { font-size: clamp(29px, 8vw, 42px); }
+}
+
+@media (min-width: 901px) {
+  .shell[data-staff-group="event"] .workbench { grid-template-columns: minmax(0, 1fr) clamp(320px, 26vw, 420px); gap: 28px; border: 0; }
+  .shell[data-staff-group="event"] .directory { height: auto; background: transparent; }
+  .shell[data-staff-group="event"] .directoryTop { display: none; }
+  .shell[data-staff-group="event"] .controls { display: grid; grid-template-columns: minmax(0, 1fr) 180px; align-items: end; gap: 8px 24px; padding: 8px 0 16px; }
+  .shell[data-staff-group="event"] .roleTabs { grid-column: 1 / -1; padding: 0; }
+  .shell[data-staff-group="event"] .search input { height: 44px; padding-left: 0; border: 0; border-bottom: 1px solid var(--fc-data-line-strong); }
+  .shell[data-staff-group="event"] .filterLine { margin: 0; }
+  .shell[data-staff-group="event"] .selectField select { height: 44px; border-bottom-color: var(--fc-data-line-strong); }
+  .shell[data-staff-group="event"] :is(.advanced, .activeFilters) { grid-column: 1 / -1; }
+  .shell[data-staff-group="event"] .names { flex: none; min-height: 0; overflow: visible; }
+  .shell[data-staff-group="event"] .nameRow { min-height: 70px; }
+  .shell[data-staff-group="event"] .nameRow > button { gap: 20px; padding: 18px 20px 18px 14px; }
+  .shell[data-staff-group="event"] .serial { width: 32px; font: 12px/1 var(--font-mono); }
+  .shell[data-staff-group="event"] .selectionMark { display: none; }
+  .shell[data-staff-group="event"] .rowLink { min-width: 44px; border-left: 0; }
+  .shell[data-staff-group="event"] .rowLink > span:first-child { display: none; }
+  .shell[data-staff-group="event"] .rowLink > span:last-child { font-size: 18px; }
+  .shell[data-staff-group="event"] .names [data-selected="true"] > .nameRow { background: var(--fc-data-paper-raised); color: var(--fc-data-ink); box-shadow: inset 3px 0 var(--fc-data-signal); }
+  .shell[data-staff-group="event"] .names [data-selected="true"] :is(.serial, .rowLink) { color: var(--fc-data-focus-on-light); }
+  .shell[data-staff-group="event"] .pagination { border-top: 0; padding: 16px 0; }
+  .shell[data-staff-group="event"] .pagination nav > div:nth-child(2) { order: 0; width: auto; }
+  .shell[data-staff-group="event"] .noSelection { min-height: clamp(540px, calc(100dvh - 180px), 620px); padding: 28px; }
+  .shell[data-staff-group="event"] .noSelection h2 { font-size: 28px; }
+  .shell[data-staff-group="event"] .noSelection p { font-size: 12px; }
+}
+
+@media (min-width: 901px) and (max-width: 1100px) {
+  .shell[data-staff-group="event"] .workbench { gap: 24px; }
+  .shell[data-staff-group="event"] .controls { grid-template-columns: minmax(0, 1fr) 150px; gap: 8px 16px; }
+  .shell[data-staff-group="event"] .nameRow > button { gap: 12px; padding-inline: 12px; }
+  .shell[data-staff-group="event"] .serial { width: 26px; }
+}

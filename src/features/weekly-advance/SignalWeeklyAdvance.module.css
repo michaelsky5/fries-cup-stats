@@ -130,6 +130,41 @@
 .nextStages h2 { font-size: 23px; font-weight: 800; line-height: 1.4; margin: 12px 0; }
 .nextStages p:not(.eyebrow) { font-size: 12px; line-height: 1.9; color: var(--muted); max-width: 470px; }
 .nextStages a { display: inline-block; font-size: 12px; border-bottom: 1px solid var(--ink); margin-top: 20px; padding-bottom: 4px; }
+@media (min-width: 901px) {
+  .page .workspace { grid-template-columns: minmax(0, 1fr) clamp(320px, 28vw, 420px); gap: 28px; }
+  .teamButton { padding-block: 14px; }
+  .teamButton small { margin-top: 4px; }
+  .table .points { font-size: 30px; }
+  .page .journey { display: flex; flex-direction: column; height: clamp(520px, calc(100dvh - 160px), 680px); overflow: hidden; padding: 20px 22px; }
+  .journey > :is(.journeyTop, .teamIdentity, .teamStats, .noPoints, .journeyHeading, .scheduleLink) { flex-shrink: 0; }
+  .journeyTop { padding-bottom: 12px; }
+  .page .teamIdentity { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; gap: 12px; padding: 20px 0; }
+  .page .heroLogo { width: 42px; height: 42px; }
+  .page .teamIdentity h2 { font-size: 34px; line-height: 1.15; }
+  .teamIdentity p { margin-top: 6px; }
+  .page .heroPoints strong { font-size: 46px; }
+  .heroPoints small { margin-top: 4px; }
+  .teamStats { grid-template-columns: .8fr .65fr 1.1fr; padding: 14px 0; }
+  .teamStats > div + div { padding-left: 12px; }
+  .teamStats span { margin-bottom: 7px; }
+  .teamStats b { font-size: 25px; }
+  .teamStats .results { font-size: 20px; }
+  .journeyHeading { padding-top: 20px; }
+  .weeks { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+  .weeks > li { padding-block: 10px; }
+  .weeks > li:last-child { border-bottom: 0; }
+  .weekLabel { margin-bottom: 8px; }
+  .fixture { gap: 6px 12px; }
+  .opponent > b { font-size: 20px; }
+  .fixtureScore { font-size: 25px; }
+  .page .scheduleLink { background: transparent; color: var(--paper) !important; margin-top: 16px; padding: 16px 0 0; border-top: 1px solid var(--dark-line); }
+  .scheduleLink span { color: var(--yellow); }
+  .page .scheduleLink:hover { color: var(--yellow) !important; }
+}
+@media (min-width: 1001px) {
+  .page .recordColumn { display: table-cell; }
+  .page .teamButton small { display: block; }
+}
 @media (max-width: 1250px) {
   .heading { align-items: flex-start; }
   .headingActions { gap: 18px; }

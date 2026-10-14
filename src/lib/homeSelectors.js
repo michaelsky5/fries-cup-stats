@@ -5,6 +5,7 @@ import { getMatchRoundScopeKey } from './matchRoundScope.js'
 import { getGroupStandings } from './advanceSelectors.js'
 import { isByeMatch } from './matchesSelectors.js'
 import { getExplicitWeeklyCompletion } from './weeklySeasonLifecycle.js'
+import { getPreferredTeamShortName } from './teamDisplayIdentity.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
@@ -524,7 +525,7 @@ export function getArchiveHighlights(db, season) {
 }
 
 export function formatTeamName(team) {
-  return teamName(team)
+  return getPreferredTeamShortName(teamName(team), team?.team_name || team?.name)
 }
 
 export function formatTeamFullName(team) {
@@ -532,7 +533,7 @@ export function formatTeamFullName(team) {
 }
 
 export function formatMatchTitle(match) {
-  return match?.match_display_name || `${teamName(match?.team_a)} VS ${teamName(match?.team_b)}`
+  return match?.match_display_name || `${formatTeamName(match?.team_a)} VS ${formatTeamName(match?.team_b)}`
 }
 
 export function formatMatchScore(match) {

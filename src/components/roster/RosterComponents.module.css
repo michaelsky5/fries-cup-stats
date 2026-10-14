@@ -1952,6 +1952,8 @@
   object-position: center top;
 }
 
+.staffSignalPortrait img[data-loading] { position: absolute; inset: 0; opacity: 0; }
+
 .staffSignalPortrait b {
   padding-bottom: 32px;
   font: 900 54px/0.76 var(--fc-data-font-display, var(--font-display));

@@ -125,6 +125,8 @@
 .creditNames button:focus-visible, .creditMatchArea a:focus-visible { outline-offset: -3px; }
 .staffMark { display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0; border: 1px solid var(--fc-data-line); background: var(--fc-data-paper-deep); color: var(--fc-data-ink); overflow: hidden; }
 .staffMark img { width: 100%; height: 100%; object-fit: cover; }
+.staffMark:has(img[data-loading]) { position: relative; }
+.staffMark img[data-loading] { position: absolute; inset: 0; opacity: 0; }
 .staffMark b { font-size: 12px; }
 .staffMark[data-large] { width: 58px; height: 58px; }
 .staffMark[data-large] b { font-size: 20px; }

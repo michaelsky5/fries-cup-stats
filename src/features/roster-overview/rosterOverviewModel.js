@@ -2,6 +2,7 @@ import { getPlayerDirectory, getPlayerDisplayIdentity, getStaffCounts, getStaffD
 import { buildStaffIndex } from '../../lib/reviewSearch.js'
 import { getPlayerRosterChange } from '../../lib/rosterStage.js'
 import { getStaffProfilePath } from '../../lib/staffProfiles.js'
+import { getTeamDisplayIdentity, getTeamDisplayName } from '../../lib/teamDisplayIdentity.js'
 
 const key = value => String(value ?? '').normalize('NFKC').trim().toLowerCase()
 const array = value => Array.isArray(value) ? value : []
@@ -80,8 +81,8 @@ export function buildRosterOverview(db, season) {
     href: staffOverviewHref(entry, role),
     matchLinks: entry.matches.map(match => ({
       id: String(match.match_id || match.id || ''),
-      teamA: match.team_a?.short || match.team_a?.team_short_name || match.team_a?.name || '',
-      teamB: match.team_b?.short || match.team_b?.team_short_name || match.team_b?.name || ''
+      teamA: getTeamDisplayName(match.team_a),
+      teamB: getTeamDisplayName(match.team_b)
     })).filter(match => match.id)
   })).sort((a, b) => b.match_count - a.match_count || compareNames(a.staff_name, b.staff_name))]))
   const sizes = new Map()
@@ -91,9 +92,12 @@ export function buildRosterOverview(db, season) {
     sizes.set(size, (sizes.get(size) || 0) + 1)
   })
   const groups = [
-    { id: 'teams', href: '/teams', entries: teams.map(team => ({ id: team.routeId, name: team.shortName, detail: team.fullName, fields: [team.shortName, team.fullName], href: `/teams/${encodeURIComponent(team.routeId)}` })) },
-    { id: 'players', href: '/players', entries: players.filter(player => player.identity.playerId).map(player => ({ id: player.identity.playerId, name: player.identity.primary, detail: player.teamShortName, fields: [player.identity.primary, player.identity.secondary, player.teamShortName, player.teamFullName], href: `/players/${encodeURIComponent(player.identity.playerId)}` })) },
-    { id: 'teamStaff', href: '/staff?group=team', entries: teamStaff.map(staff => ({ id: staff.id, name: staff.name, detail: staff.team.shortName, fields: [staff.name, staff.battleTag, staff.team.shortName, staff.team.fullName], href: staffOverviewHref(staff) })) },
+    { id: 'teams', href: '/teams', entries: teams.map(team => {
+      const identity = getTeamDisplayIdentity(team.shortName, team.fullName)
+      return { id: team.routeId, name: identity.primary, detail: identity.secondary, fields: [team.shortName, team.fullName], href: `/teams/${encodeURIComponent(team.routeId)}` }
+    }) },
+    { id: 'players', href: '/players', entries: players.filter(player => player.identity.playerId).map(player => ({ id: player.identity.playerId, name: player.identity.primary, detail: getTeamDisplayIdentity(player.teamShortName, player.teamFullName).primary, fields: [player.identity.primary, player.identity.secondary, player.teamShortName, player.teamFullName], href: `/players/${encodeURIComponent(player.identity.playerId)}` })) },
+    { id: 'teamStaff', href: '/staff?group=team', entries: teamStaff.map(staff => ({ id: staff.id, name: staff.name, detail: getTeamDisplayName(staff.team), fields: [staff.name, staff.battleTag, staff.team.shortName, staff.team.fullName], href: staffOverviewHref(staff) })) },
     { id: 'eventStaff', href: '/staff?group=event', entries: [...credits.admin, ...credits.caster].map(staff => ({ id: staff.key, name: staff.staff_name, detail: staff.role, fields: [staff.staff_name, ...staff.aliases], href: staff.href })) }
   ]
   return {

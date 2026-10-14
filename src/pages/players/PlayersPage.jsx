@@ -27,6 +27,7 @@ import { rosterText } from '../../features/roster-index/rosterCopy.js'
 import PlayerIndex, { PlayerIndexControls, PlayerIndexHeading } from '../../features/player-index/PlayerIndex.jsx'
 import directoryStyles from '../../features/roster-directory/RosterDirectory.module.css'
 import { playerIndexText } from '../../features/player-index/playerIndexCopy.js'
+import { buildPlayerPreviewLookup, getPlayerPreview, getPlayerTeamDisplayIdentity } from '../../features/player-index/playerPreviewModel.js'
 
 const ROLE_TABS = [
   { id: 'ALL', label: '全部' },
@@ -100,17 +101,19 @@ export default function PlayersPage() {
   const roleFilterCounts = useMemo(() => isKprHybridDesign
     ? getPlayerRoleFilterCounts(db, favorites, { season, filters: queryState })
     : {}, [db, favorites, isKprHybridDesign, queryState, season])
-  const players = useMemo(() => {
-    return getPlayerDirectory(db, favorites, { role: queryState.role, season })
-  }, [db, favorites, queryState.role, season])
+  const rosterPlayers = useMemo(() => getPlayerDirectory(db, favorites, { season }), [db, favorites, season])
+  const players = useMemo(() => queryState.role === 'ALL'
+    ? rosterPlayers
+    : getPlayerDirectory(db, favorites, { role: queryState.role, season }), [db, favorites, queryState.role, season, rosterPlayers])
   const teamOptions = useMemo(() => {
     const map = new Map()
     players.forEach(player => {
       const key = player.teamRouteId || player.teamShortName
       if (!key || map.has(key)) return
+      const identity = getPlayerTeamDisplayIdentity(player)
       map.set(key, {
         value: key,
-        label: `${player.teamShortName} · ${player.teamFullName}`
+        label: [identity.primary, identity.secondary].filter(Boolean).join(' · ')
       })
     })
     return [
@@ -152,6 +155,9 @@ export default function PlayersPage() {
       pagination.items[0] ||
       null
   }, [focusedPlayerId, pagination.items])
+
+  const previewLookup = useMemo(() => isKprHybridDesign ? buildPlayerPreviewLookup(db, season) : null, [db, season, isKprHybridDesign])
+  const focusedPreview = useMemo(() => getPlayerPreview(focusedPlayer, previewLookup, queryState.role), [focusedPlayer, previewLookup, queryState.role])
 
   useEffect(() => {
     if (pagination.page !== queryState.page) {
@@ -274,16 +280,15 @@ export default function PlayersPage() {
 
   if (isKprHybridDesign) {
     const seasonCode = season?.publicCode || season?.id || ''
-    const scopeLabel = queryState.role === 'ALL'
-      ? (en ? 'This season’s published records' : uiText("本届已发布记录", locale))
-      : (en ? 'Within the selected role' : uiText("当前职责筛选内的记录", locale))
     return <div className={directoryStyles.shell} data-roster-directory="players" data-i18n-ignore>
       <RosterSubnav presentation="index" />
-      <PlayerIndexHeading seasonCode={seasonCode} count={filteredPlayers.length} total={summary.totalPlayers} locale={locale} />
+      <PlayerIndexHeading seasonCode={seasonCode} locale={locale} />
       <PlayerIndex
         directoryRef={directoryRef}
         players={pagination.items}
+        rosterPlayers={rosterPlayers}
         focusedPlayer={focusedPlayer}
+        previewData={focusedPreview}
         mobileExpanded={Boolean(focusedPlayerId)}
         onFocusPlayer={setFocusedPlayerId}
         startIndex={pagination.startIndex}
@@ -291,7 +296,6 @@ export default function PlayersPage() {
         withSeason={withSeason}
         seasonId={season?.id}
         seasonCode={seasonCode}
-        scopeLabel={scopeLabel}
         onToggleFavorite={togglePlayerFavorite}
         favoriteDisabled={!focusedPlayer?.isFavorite && favoriteCount >= favoriteLimit}
         locale={locale}
