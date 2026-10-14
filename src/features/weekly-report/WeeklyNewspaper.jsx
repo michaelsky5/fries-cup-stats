@@ -7,7 +7,7 @@ import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import { weeklyPeriodPath } from '../weekly-overview/weeklyPresentation.js'
 import { formatReportTime } from './weeklyReportPreview.js'
 import { buildWeeklyNewspaper, newspaperTeamName } from './weeklyNewsroom.js'
-import { formatUpcomingMatch, formatWeeklyMatchScope, buildMatchBrief } from './weeklyEditorial.js'
+import { formatUpcomingMatch, formatWeeklyMatchScope, buildMatchBrief, buildLeadPrintNote } from './weeklyEditorial.js'
 import { WEEKLY_POSITIONS, WEEKLY_POSITION_ROLES } from './weeklyPositions.js'
 import { buildWeeklyNewspaperResultsUrl, buildWeeklyNewspaperQr } from './weeklyNewspaperShare.js'
 import styles from './WeeklyNewspaper.module.css'
@@ -235,6 +235,7 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
   }
   const lead=newspaper.lead
   const leadTeams=lead?.displayTeams
+  const leadPrintNote=lead?.intro ? buildLeadPrintNote(lead,newspaper.articles,locale) : lead?.visualNote
   return <div className={styles.root} data-weekly-report-page data-weekly-newspaper data-report-week={report.week.id} data-i18n-ignore>
     {!embedded&&<nav className={styles.breadcrumbs} aria-label={t('周报导航','Report navigation')}><Link to={home}>← {t(`第 ${report.week.week_number} 周赛事总览`,`Week ${report.week.week_number} overview`)}</Link><Link to={archive}>{t('周报归档','Report archive')} →</Link></nav>}
     <div className={styles.pages} ref={pagesRef}>
@@ -244,7 +245,6 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
         <div className={styles.frontColumns} data-front-layout={newspaper.layout}>
           <article className={styles.leadColumn}>
             {lead?.image&&<figure className={styles.leadPhoto}><div className={styles.photoWindow}><img className={styles.mapArt} src={getMapImage(lead.image.map_type,lead.image.map_name)} alt={formatOwMapName(lead.image.map_name,locale)} />{leadTeams&&<div className={styles.photoScore} data-photo-score-order={lead.scoreOrder.join(' / ')}><div><NewspaperTeamLogo team={leadTeams[0]} seasonId={seasonId} className={styles.teamEmblem}/><b>{newspaperTeamName(leadTeams[0])}</b></div><strong>{lead.displayScores[0]??'—'}<i>:</i>{lead.displayScores[1]??'—'}</strong><div><b>{newspaperTeamName(leadTeams[1])}</b><NewspaperTeamLogo team={leadTeams[1]} seasonId={seasonId} className={styles.teamEmblem}/></div></div>}{lead.editorialMark?<span className={styles.photoStamp} data-match-mark={lead.editorialMark.kind}>{lead.editorialMark.label}</span>:<span className={styles.photoTag}>{lead.decisive?t('决胜图','DECIDING MAP'):t('赛场记录','MATCH RECORD')}</span>}</div><figcaption>{formatOwMapName(lead.image.map_name,locale)} · {t(`第 ${lead.image.order} 图 / 场景插图`,`Map ${lead.image.order} / scene artwork`)}</figcaption></figure>}
-            {lead?.intro&&<p className={styles.leadIntro} data-lead-intro>{lead.intro}</p>}
             {!lead&&<p>{t('本期尚无已确认赛果。新闻将在比赛记录确认后生成。','News will appear when this week’s results are confirmed.')}</p>}
           </article>
           <aside className={styles.frontSidebar}>
@@ -256,7 +256,7 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
               <div className={styles.rolePairs} data-person-note-count={newspaper.peopleNews.people.length}>{newspaper.peopleNews.people.map(person=><Link to={withSeason(`/players/${encodeURIComponent(person.id)}`)} key={person.id} title={person.context} data-person-note={person.kind}><b>{person.name}{lead?.intro&&person.team&&<small>{newspaperTeamName(person.team)}</small>}</b><span>{lead?.intro?(person.detail||person.summary):person.summary}</span></Link>)}</div>
             </article>}
           </aside>
-          {lead&&<div className={styles.leadResults}><div className={styles.timelineHeading}><b>{t('逐图赛果','MAP RESULTS')}</b><span>{lead.visualNote}</span><SourceLink t={t} withSeason={withSeason} article={lead}/></div><MapTimeline article={lead} locale={locale} t={t}/></div>}
+          {lead&&<div className={styles.leadResults}><div className={styles.timelineHeading}><b>{t('逐图赛果','MAP RESULTS')}</b><span data-lead-print-note>{leadPrintNote}</span><SourceLink t={t} withSeason={withSeason} article={lead}/></div><MapTimeline article={lead} locale={locale} t={t}/></div>}
         </div>
         <div className={styles.recordsLine}><span>{t('黄色 / 左队胜 · 黑色 / 右队胜','Yellow / left-team win · black / right-team win')}</span><Link data-paper-web-only to={withSeason(weeklyPeriodPath('/matches',report.cycle,report.week))}>{t('本周全部比赛记录','All weekly match records')} →</Link></div>
         <ResultRoundup newspaper={newspaper} t={t} withSeason={withSeason}/>

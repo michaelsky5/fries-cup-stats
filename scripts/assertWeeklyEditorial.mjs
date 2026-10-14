@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { buildMatchNews, buildWeeklyNewspaper, selectMatchBriefs } from '../src/features/weekly-report/weeklyNewsroom.js'
 import { buildWeeklyReportPreview } from '../src/features/weekly-report/weeklyReportPreview.js'
-import { buildLeadIntro, buildMatchBackground, collectWeeklyNewsContext, selectWeeklyLead, formatWeeklyMatchScope, buildMatchBrief } from '../src/features/weekly-report/weeklyEditorial.js'
+import { buildLeadIntro, buildLeadPrintNote, buildMatchBackground, collectWeeklyNewsContext, selectWeeklyLead, formatWeeklyMatchScope, buildMatchBrief } from '../src/features/weekly-report/weeklyEditorial.js'
 import { buildWeeklyPeopleNews } from '../src/features/weekly-report/weeklyPeopleNews.js'
 import { applyIssueEdits, createIssueDraft, validateIssueDraft } from '../src/features/weekly-report/weeklyIssueVersions.js'
 
@@ -109,6 +109,23 @@ test('lead introduction distinguishes a unique close match within fully recorded
   assert.equal(anotherClose.decisive,null)
   assert.doesNotMatch(buildLeadIntro(close, [close, anotherClose]), /唯一/)
   assert.doesNotMatch(buildLeadIntro({ ...close, sequence: [], decisive: null, brief: '赛果已确认。' }, [close]), /逆转|决胜|唯一/)
+})
+
+test('compact lead note uses the frozen match identity and excludes incomplete results and rulings', () => {
+  const current = fixture(3), close = { ...buildMatchNews(current, current.completed[0]), state: 'complete' }
+  const other = fixture(3, 4, { a: 'C', b: 'D' }), ordinary = { ...buildMatchNews(other, other.completed[0]), state: 'complete' }
+  const frozen = JSON.stringify([close, ordinary])
+  for (const locale of ['zh-CN','zh-TW','en-US','ko-KR']) {
+    assert.match(buildLeadPrintNote(structuredClone(close), [close, ordinary], locale), /3:2/)
+  }
+  assert.equal(JSON.stringify([close, ordinary]), frozen)
+  assert.equal(buildLeadPrintNote(close, [close]), '')
+  assert.equal(buildLeadPrintNote(close, [close, { ...ordinary, sequence: [] }]), '')
+  assert.equal(buildLeadPrintNote(close, [close, { ...ordinary, state: 'ruling' }]), '')
+  assert.equal(buildLeadPrintNote(ordinary, [close, ordinary]), '')
+  const another = fixture(3, 3, { a: 'E', b: 'F' }), secondClose = { ...buildMatchNews(another, another.completed[0]), state: 'complete' }
+  assert.equal(buildLeadPrintNote(close, [close, secondClose]), '')
+  assert.equal(buildLeadPrintNote({ ...close, state: 'ruling' }, [close, ordinary]), '')
 })
 
 test('only published, scheduled next-week opponents enter the frozen preview', () => {
