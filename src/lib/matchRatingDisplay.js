@@ -1,4 +1,5 @@
 import { mapRawScoreToMapRating } from './ratingModel.js'
+import { STATISTICAL_RATING_DISPLAY_CONFIG } from '../config/statisticalRatingDisplayConfig.js'
 
 function safeArr(value) {
   return Array.isArray(value) ? value : []
@@ -55,7 +56,16 @@ export function getMapPlayerMatchRating(rawScore, mapParticipants = []) {
   return Number(clamp(rating, 5.6, 9.8).toFixed(1))
 }
 
+export function usesStatisticalRatingDisplay(entry) {
+  return entry?.ratingModelVersion === STATISTICAL_RATING_DISPLAY_CONFIG.modelVersion
+}
+
 export function getMatchPlayerRating(entry) {
+  if (usesStatisticalRatingDisplay(entry)) {
+    const rawScore = toFiniteNumber(entry.rawScore)
+    return Number.isFinite(rawScore)
+      ? mapRawScoreToMapRating(rawScore, { curve: STATISTICAL_RATING_DISPLAY_CONFIG.curve }) : null
+  }
   const modelRating = toFiniteNumber(entry?.mapRating)
   if (Number.isFinite(modelRating)) return modelRating
 

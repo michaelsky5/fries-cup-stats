@@ -23,6 +23,9 @@ export function getStatisticalRatingNotes(entry, locale = 'zh-CN') {
     : '统计表现 v1.5：沿用同一公式与刻度，使用同版本分组的其他比赛回溯评分，整场排除本场数据。')
     : en ? 'Statistical performance v1.5: references use earlier competition days. Tactical contribution is not fully measured.'
       : '统计表现 v1.5：只使用此前比赛日的参照，尚不能完整衡量战术贡献。']
+  notes.push(en
+    ? 'Ratings use one shared ten-point scale. Match ratings combine scored map performances by playtime.'
+    : '评分采用统一的十分制刻度；全场评分按已评分上场时间汇总各图表现。')
   if (retrospective) notes.push(en
     ? `Reference membership is fixed through ${retrospective.throughDay}. These provisional match/map ratings do not enter season OVR or forward validation; tactical contribution is not fully measured.`
     : `参照场次固定在 ${retrospective.throughDay} 及之前。回溯分用于比赛与单图展示，不计入赛季 OVR 或前向验证；尚不能完整衡量战术贡献。`)
