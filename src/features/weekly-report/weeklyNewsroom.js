@@ -1,5 +1,5 @@
 import { translateUiText, pickUiLocale } from '../../lib/uiText.js'
-import { formatOwMapName, formatOwHeroName, getOwHero } from '../../lib/heroes.js'
+import { formatOwMapName, formatOwHeroName, getOwHero, getOwHeroRole } from '../../lib/heroes.js'
 import { weeklyTeamShort, weeklyCycleTitle } from '../weekly-overview/weeklyPresentation.js'
 import { formatReportTime } from './weeklyReportPreview.js'
 import { buildWeeklyDataStories, formatWeeklyDataStory } from './weeklyDataStories.js'
@@ -11,6 +11,22 @@ const score = value => value != null && String(value).trim() !== '' && Number.is
 const tFor = locale => (zh, en) => String(locale).startsWith('en') ? en : translateUiText(zh, locale)
 const countText = (items, locale) => items.map(item => formatOwHeroName(item.name, locale)).join(String(locale).startsWith('en') ? ', ' : '、')
 export const newspaperTeamName = team => weeklyTeamShort(team) === '?' ? team?.name || team?.team_name || '?' : weeklyTeamShort(team)
+
+// Historical Sombra honours retain the recorded role across its migration.
+// A frozen edition without a role or game-version context is not relabelled.
+export function resolveWeeklyHeroRole(hero, report) {
+  const definition = getOwHero(hero?.name)
+  if (!definition) return ''
+  let recordedRole = hero.role
+  if (definition.id === 'sombra' && !recordedRole) {
+    const players = [...(report?.awards?.mvp || []), ...(report?.awards?.bestFive || []).map(slot => slot.player)].filter(Boolean)
+    const saved = new Set(players.filter(player => ['DPS', 'SUP'].includes(player.role) && getOwHero(player.hero)?.id === definition.id)
+      .map(player => getOwHeroRole(hero.name, { role: player.role })).filter(Boolean))
+    if (saved.size > 1 || (!saved.size && !report?.gameVersion)) return ''
+    recordedRole = [...saved][0]
+  }
+  return { tank: 'TANK', damage: 'DPS', support: 'SUP' }[getOwHeroRole(hero.name, { role: recordedRole, gameVersion: report?.gameVersion })] || ''
+}
 
 // Count recorded hero use, including switches, once per player/map/hero.
 // These inputs retain every validated appearance, not only award candidates.
