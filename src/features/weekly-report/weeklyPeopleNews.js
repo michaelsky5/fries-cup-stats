@@ -1,5 +1,5 @@
 import {formatOwMapName} from '../../lib/heroes.js'
-import {translateUiText} from '../../lib/uiText.js'
+import {translateUiText,pickUiLocale} from '../../lib/uiText.js'
 import {collectWeeklyMapSamples} from './weeklyDataStories.js'
 
 const roleOrder={TANK:0,DPS:1,SUP:2}
@@ -44,9 +44,20 @@ export function buildWeeklyPeopleNews(report,{featuredIds=[],locale='zh-CN'}={})
   const labels={TANK:t('坦克','tank'),DPS:t('输出','damage'),SUP:t('辅助','support')}
   const metricLabels={blocked:t('阻挡','blocked'),elims:t('消灭','elims'),assists:t('助攻','assists')}
   const notes=selected.map(person=>{
-    if(person.kind==='cross-role')return {...person,summary:person.roles.map(r=>labels[r.role]).join(' / '),context:t('本周兼任多个岗位','Played multiple roles this week')}
+    const describe=(zh,en,ko,tw,values)=>pickUiLocale(locale,zh,en,ko,tw).replace(/\{(\d+)\}/g,(token,index)=>values[index]??token)
+    if(person.kind==='cross-role') {
+      const appearances=person.roles.map(role=>describe('{0} {1} 图','{1} as {0}','{0} {1}맵','{0} {1} 圖',[labels[role.role],role.maps])).join(t('、',', '))
+      const maps = new Set(person.sources.map(source => JSON.stringify([source.matchId, source.order]))).size
+      const detail = describe('本周出场 {0} 图，{1}。', 'Played {0} maps: {1}.', '이번 주 {0}맵 출전: {1}.', '本週出場 {0} 圖，{1}。', [maps, appearances])
+      return {...person,summary:person.roles.map(r=>labels[r.role]).join(' / '),context:t('本周兼任多个岗位','Played multiple roles this week'),detail,description:describe('{0}：{1}', '{0}: {1}', '{0}: {1}', '{0}：{1}', [person.name, detail])}
+    }
     const value=person.value.toLocaleString('en-US'),label=metricLabels[person.metric]
-    return {...person,summary:t(`单图${label} ${value}`,`Map: ${value} ${label}`),context:`${formatOwMapName(person.source.map,locale)} · ${t(`第 ${person.source.order} 图`,`map ${person.source.order}`)}`}
+    const map=formatOwMapName(person.source.map,locale)
+    const match = report.completed.find(match => match.id === person.source.matchId && match.state === 'complete')
+    const played = report.maps.find(source => source.matchId === person.source.matchId && Number(source.order) === Number(person.source.order) && !source.is_administrative)
+    const won = Boolean(match && played && String(played.winner) === person.teamId)
+    const detail = won ? describe('在队伍赢下的第 {0} 图{1}记录{2} {3}。', 'Recorded {3} {2} in the {1} win (map {0}).', '팀이 승리한 {0}번째 맵 {1}에서 {3} {2} 기록.', '在隊伍贏下的第 {0} 圖{1}記錄{2} {3}。', [person.source.order, map, label, value]) : describe('在第 {0} 图{1}记录{2} {3}。', 'Recorded {3} {2} on {1} (map {0}).', '{0}번째 맵 {1}에서 {3} {2} 기록.', '在第 {0} 圖{1}記錄{2} {3}。', [person.source.order, map, label, value])
+    return {...person,summary:t(`单图${label} ${value}`,`Map: ${value} ${label}`),context:`${map} · ${t(`第 ${person.source.order} 图`,`map ${person.source.order}`)}`,detail,description:describe('{0}：{1}', '{0}: {1}', '{0}: {1}', '{0}：{1}', [person.name, detail])}
   })
   return {title:t('赛场侧写','PLAYER NOTES'),people:notes,paragraphs:notes.map(p=>`${p.name} · ${p.summary}`),note:t('来自已确认地图的记录，不代表荣誉评选。','Confirmed map records, not award selections.')}
 }
