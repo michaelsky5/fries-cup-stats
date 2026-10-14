@@ -10176,5 +10176,9 @@ export default {
   "统计表现 v1.5：沿用同一公式与刻度，使用同版本分组的其他比赛回溯评分，整场排除本场数据。": "Statistical performance v1.5: the same formula and scale, with retrospective references from other matches in the same version group. This entire match is excluded.",
   "参照场次固定在 {0} 及之前。回溯分用于比赛与单图展示，不计入赛季 OVR 或前向验证；尚不能完整衡量战术贡献。": "Reference membership is fixed through {0}. These provisional match/map ratings do not enter season OVR or forward validation; tactical contribution is not fully measured.",
   "评分采用统一的十分制刻度；全场评分按已评分上场时间汇总各图表现。": "Ratings use one shared ten-point scale. Match ratings combine scored map performances by playtime.",
+  "赛季总评计入截至 {0} 已发布的有效比赛，按版本与职责比较；每条记录的参照均排除其所在整场比赛。": "Season OVR uses eligible published matches through {0}, compared within each version and role. Each scored match is fully excluded from its own references.",
+  "新增比赛会更新赛季总评与赛季排名；历史单场评分和 MVP 保持原规则。": "Newly published matches can update Season OVR and season ranks. Published match ratings and MVP selections retain their original rules.",
+  "赛季总评使用本赛季全部已发布的有效记录，按版本与职责比较，参照排除被评分的整场比赛。": "Season OVR uses all eligible published season records, compared within each version and role, with the entire scored match held out.",
+  "整季数据按版本与职责参照，整场排除自身；参照成熟度与英雄统计归属在评分依据中说明。": "Whole-season references by version and role; each match is held out. Reference maturity and hero attribution are explained with each rating.",
   "部分参照来源仅有同版本其他 {0} 场比赛，小分差需谨慎解读。": "Some active references have only {0} other same-version matches. Small score differences need caution."
 }

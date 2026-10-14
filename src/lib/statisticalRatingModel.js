@@ -134,6 +134,13 @@ export function buildRetrospectiveStatisticalRatingBaselines(rows, target, { thr
   } }
 }
 
+export function buildSeasonStatisticalRatingBaselines(rows, target) {
+  const eligible = rows.filter(row => row.seasonId === target.seasonId && row.day && row.era.key !== 'unknown-transition')
+  const throughDay = eligible.map(row => row.day).sort().at(-1)
+  const referenceMatchIds = [...new Set(eligible.map(row => row.matchId))].filter(id => id !== target.matchId)
+  return buildRetrospectiveStatisticalRatingBaselines(rows, target, { throughDay, referenceMatchIds })
+}
+
 function metricPercentile(row, baselines, metric) {
   const stat = metric === 'survival' ? 'deaths' : metric
   const keys = referenceKeys(row)
