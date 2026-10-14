@@ -82,7 +82,6 @@
 .photoTag { position:absolute; top:12px; left:12px; background:var(--paper-yellow); color:var(--paper-ink); padding:4px 8px; font:700 10px/1.5 var(--paper-font); }
 .photoStamp { position:absolute; top:25px; right:17px; transform:rotate(-8deg); padding:6px 11px; border:3px double var(--paper-ink); box-shadow:3px 3px 0 var(--paper-ink); background:var(--paper-yellow); color:var(--paper-ink); font:900 17px/1.3 var(--paper-font); letter-spacing:.04em; white-space:nowrap; }
 :lang(en) .photoStamp { font-size:14px; }
-.leadPhoto figcaption { margin-top:4px; color:var(--paper-muted); font:10px/1.4 var(--paper-font); }
 .timelineHeading { display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin:0 0 6px; font:10px/1.5 var(--paper-font); }
 .timelineHeading span { color:var(--paper-muted); font-size:10px; }
 .timelineHeading .sourceLink { margin:0; font-size:10px; flex-shrink:0; }
@@ -240,24 +239,24 @@
 .mapHighlights:not([data-count="1"]) strong { position:absolute; top:5px; right:5px; gap:2px; padding:3px 5px; background:#2a2a2ae8; font-size:24px; }
 .mapHighlights[data-count="1"] b { font-size:17px; }
 .mapHighlights[data-count="1"] strong { font-size:38px; }
-.heroTrendList { list-style:none; padding:0; margin:0; height:var(--paper-trend-height,86px); display:grid; grid-template-rows:repeat(3,minmax(0,1fr)); gap:4px; }
-.heroTrendList li { display:flex; align-items:center; gap:8px; min-width:0; background:#e8e2d5; padding-right:7px; }
-.heroTrendList img { width:calc((var(--paper-trend-height,86px) - 8px)/3); height:calc((var(--paper-trend-height,86px) - 8px)/3); flex:0 0 calc((var(--paper-trend-height,86px) - 8px)/3); display:block; object-fit:cover; }
-.heroTrendList li > span { flex:1; min-width:0; }
-.heroTrendList b { display:block; font:800 11px/1.2 var(--paper-font); overflow-wrap:anywhere; }
-.heroTrendList span > small { display:block; color:var(--paper-muted); font:10px/1.1 var(--paper-font); margin-top:1px; }
+.heroTrendList { --trend-portrait:calc((var(--paper-trend-height,86px) - 8px)/3); list-style:none; padding:0; margin:0; height:var(--paper-trend-height,86px); display:grid; grid-template-rows:repeat(3,minmax(0,1fr)); gap:4px; }
+.heroTrendList li { display:grid; grid-template-columns:20px var(--trend-portrait) minmax(0,1fr) auto; align-items:center; gap:6px; min-width:0; background:#e8e2d5; padding-inline:5px 7px; }
+.heroTrendList img { width:var(--trend-portrait); height:var(--trend-portrait); display:block; object-fit:cover; }
+.heroTrendList .trendRank { display:grid; place-items:center; width:20px; height:20px; background:#d7d0c0; color:var(--paper-ink); font:900 12px/1 var(--paper-font); font-variant-numeric:tabular-nums; }
+.heroTrendList li[data-rank="1"] .trendRank { background:var(--paper-ink); color:var(--paper-yellow); }
+.heroTrendList .heroTrendName { min-width:0; font:800 11px/1.3 var(--paper-font); overflow-wrap:anywhere; }
 .heroTrendList strong { display:flex; align-items:baseline; gap:3px; flex-shrink:0; color:var(--paper-ink); font:900 24px/1 var(--paper-font); }
 .heroTrendList strong > small { font:10px/1.3 var(--paper-font); color:var(--paper-muted); }
 .heroTrendList[data-hero-trend="usage"] li[data-rank="1"] { background:var(--paper-yellow); }
 .heroTrendList[data-hero-trend="ban"] li { background:transparent; border-bottom:1px solid var(--paper-rule); }
 .heroTrendList[data-hero-trend="ban"] strong { font-size:23px; }
 .heroTrendList[data-count="0"],.heroTrendList[data-count="1"] { grid-template-rows:1fr; }
-.heroTrendList[data-count="1"] li { gap:10px; padding-right:10px; background:#e8e2d5; border:0; }
-.heroTrendList[data-count="1"] img { width:var(--paper-trend-height,86px); height:var(--paper-trend-height,86px); flex-basis:var(--paper-trend-height,86px); }
+.heroTrendList[data-count="1"] { --trend-portrait:var(--paper-trend-height,86px); }
+.heroTrendList[data-count="1"] li { padding-right:10px; background:#e8e2d5; border:0; }
 .heroTrendList[data-count="1"] b { font-size:12px; line-height:1.4; }
 .heroTrendList[data-count="1"] strong { font-size:40px; }
 .heroTrendList[data-count="2"] { grid-template-rows:repeat(2,minmax(0,1fr)); }
-.heroTrendList[data-count="2"] img { width:calc((var(--paper-trend-height,86px) - 4px)/2); height:calc((var(--paper-trend-height,86px) - 4px)/2); flex-basis:calc((var(--paper-trend-height,86px) - 4px)/2); }
+.heroTrendList[data-count="2"] { --trend-portrait:calc((var(--paper-trend-height,86px) - 4px)/2); }
 .heroTrendList .trendPending,.trendPending { display:flex; justify-content:center; align-items:center; flex:1; font:10px/1.5 var(--paper-font); color:var(--paper-muted); background:#e8e2d5; }
 .updatesDesk { display:flex; align-items:center; gap:18px; min-height:65px; padding:8px 13px; border-top:2px solid var(--paper-ink); border-bottom:1px solid var(--paper-ink); margin-top:7px; background:#ebe6da; font-family:var(--paper-font); }
 .updatesDesk > div { width:148px; padding-right:17px; border-right:1px solid var(--paper-rule); flex-shrink:0; }
@@ -302,7 +301,7 @@
 .readerLinks { display:flex; align-items:center; gap:24px; }
 .footerFeedback { grid-column:1/-1; color:var(--fc-data-muted); font:11px/1.8 var(--paper-font); }
 .footerFeedback:empty { display:none; }
-.sheet[data-has-intro="true"] { --paper-trend-height:78px; }
+.sheet[data-has-intro="true"] { --paper-trend-height:86px; }
 .sheet[data-has-intro="true"] .nameplate { padding-block:6px; margin-block:7px; }
 .sheet[data-has-intro="true"] .nameplate h1 { font-size:44px; }
 .sheet[data-has-intro="true"] .issueStamp { width:66px; font-size:44px; }
@@ -320,7 +319,6 @@
 .sheet[data-has-intro="true"] .rolePairs span { font-size:11px; line-height:1.45; }
 .sheet[data-has-intro="true"] .mvp { gap:6px; }
 .sheet[data-has-intro="true"] .mvpPortrait { width:72px; height:72px; flex-basis:72px; }
-.awardMaps { display:block; color:#c9c6bd; font:9px/1.4 var(--paper-font); }
 .awardBasis { grid-column:1/-1; padding-top:5px; border-top:1px solid #5d5b54; font:9px/1.4 var(--paper-font); color:#d0cdc4!important; }
 .awardNotes { width:min(100%,900px); margin:24px auto; border-top:1px solid var(--fc-data-line); padding-top:16px; }
 .awardNotes h3 { margin:0 0 8px; font-size:16px; }
