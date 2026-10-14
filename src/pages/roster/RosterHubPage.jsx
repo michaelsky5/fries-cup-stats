@@ -9,7 +9,8 @@ import HeroArtwork from '../../components/media/HeroArtwork.jsx'
 import { DirectoryLink } from '../../features/roster-directory/RosterDirectory.jsx'
 import { buildRosterOverview, searchRosterOverview, staffOverviewHref } from '../../features/roster-overview/rosterOverviewModel.js'
 import { getTeamLogoCandidates, getDefaultTeamLogoCandidates } from '../../lib/teamLogoResolver.js'
-import { getStaffAvatar } from '../../lib/reviewAssets.js'
+import { getTeamDisplayIdentity, getTeamDisplayName } from '../../lib/teamDisplayIdentity.js'
+import { getStaffAvatarCandidates } from '../../lib/reviewAssets.js'
 import { formatOwHeroName } from '../../lib/heroes.js'
 import { getRosterChangeLabel } from '../../lib/rosterStage.js'
 import { getLocationPath, getRestoreScrollY, getSavedReturnScroll, restoreWindowScroll } from '../../lib/navigationState.js'
@@ -30,13 +31,15 @@ function TeamMark({ team, seasonId }) {
   const defaults = getDefaultTeamLogoCandidates(seasonId, team)
   const sources = getTeamLogoCandidates(team, seasonId).filter(src => !defaults.includes(src))
   const [index, setIndex] = useState(0)
-  return <span className={styles.teamMark} aria-hidden="true">{sources[index] ? <img src={sources[index]} alt="" loading="lazy" onError={() => setIndex(value => value + 1)} /> : <b>{team.shortName.slice(0, 3)}</b>}</span>
+  return <span className={styles.teamMark} aria-hidden="true">{sources[index] ? <img src={sources[index]} alt="" loading="lazy" onError={() => setIndex(value => value + 1)} /> : <b>{getTeamDisplayName(team).slice(0, 3)}</b>}</span>
 }
 
-function StaffMark({ name, large = false }) {
-  const src = getStaffAvatar(name, { knownOnly: true })
-  const [failed, setFailed] = useState(false)
-  return <span className={styles.staffMark} data-large={large || undefined} aria-hidden="true">{src && !failed ? <img src={src} alt="" loading="lazy" onError={() => setFailed(true)} /> : <b>{Array.from(name).slice(0, 2).join('')}</b>}</span>
+function StaffMark({ staff, large = false }) {
+  const [failedSources, setFailedSources] = useState([])
+  const [loadedSource, setLoadedSource] = useState('')
+  const src = getStaffAvatarCandidates(staff).find(source => !failedSources.includes(source))
+  const loading = Boolean(src && loadedSource !== src)
+  return <span className={styles.staffMark} data-large={large || undefined} aria-hidden="true">{!src || loading ? <b>{Array.from(staff.staff_name).slice(0, 2).join('')}</b> : null}{src ? <img src={src} alt="" loading="lazy" data-loading={loading || undefined} onLoad={() => setLoadedSource(src)} onError={() => setFailedSources(sources => [...sources, src])} /> : null}</span>
 }
 
 function OverviewSearch({ model, value, onChange, withSeason, en }) {
@@ -79,13 +82,14 @@ function SelectedTeam({ team, seasonId, withSeason, locale, panelRef }) {
   const en = locale === 'en-US'
   const [previewKey, setPreviewKey] = useState('')
   if (!team) return <div className={styles.teamEmpty}>{en ? 'Team rosters have not been published yet.' : uiText("本届队伍名单尚未发布。", locale)}</div>
+  const identity = getTeamDisplayIdentity(team.shortName, team.fullName)
   const hero = team.members.find(member => memberKey(member) === previewKey) || team.heroMember || team.members[0] || null
   const playerCount = team.rosterSize > 0
     ? en && team.rosterSize === 1 ? '1 player' : eventCenterText('rosterPlayerCount', locale).replace('{0}', String(team.rosterSize))
     : eventCenterText('rosterPlayerCountUnavailable', locale)
-  return <article ref={panelRef} className={styles.selectedTeam} data-overview-team={team.routeId} style={{ '--roster-rows': Math.max(1, Math.ceil(team.members.length / 2)) }} aria-label={(en ? 'Selected team ' : uiText("当前队伍 ", locale)) + team.shortName}>
+  return <article ref={panelRef} className={styles.selectedTeam} data-overview-team={team.routeId} style={{ '--roster-rows': Math.max(1, Math.ceil(team.members.length / 2)) }} aria-label={(en ? 'Selected team ' : uiText("当前队伍 ", locale)) + identity.primary}>
     <div className={styles.teamCopy}>
-      <header className={styles.teamIdentity}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><div><span>{en ? 'SEASON PLAYER ARCHIVE' : uiText("全季选手名录", locale)}</span><div className={styles.teamNameLine}><h2>{team.shortName}</h2><small className={styles.teamPlayerCount}>{playerCount}</small></div><p>{team.fullName}</p></div><DirectoryLink to={withSeason('/teams/' + encodeURIComponent(team.routeId))} label={(en ? 'Open team archive ' : uiText("查看队伍档案 ", locale)) + team.shortName}>↗</DirectoryLink></header>
+      <header className={styles.teamIdentity}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><div><span>{en ? 'SEASON PLAYER ARCHIVE' : uiText("全季选手名录", locale)}</span><div className={styles.teamNameLine}><h2>{identity.primary}</h2><small className={styles.teamPlayerCount}>{playerCount}</small></div>{identity.secondary ? <p>{identity.secondary}</p> : null}</div><DirectoryLink to={withSeason('/teams/' + encodeURIComponent(team.routeId))} label={(en ? 'Open team archive ' : uiText("查看队伍档案 ", locale)) + identity.primary}>↗</DirectoryLink></header>
       {(team.playoffJoins || team.playoffExits) && team.openingRosterSize !== null ? <p className={styles.rosterHistory}>{en ? 'Opening roster: ' + team.openingRosterSize : uiText('初始报名 {0} 人', locale, [team.openingRosterSize])}</p> : null}
       <ul className={styles.members}>{team.members.map((member, index) => {
         const changeLabel = getRosterChangeLabel(member.rosterChange, locale)
@@ -158,7 +162,7 @@ function CreditSection({ model, role, selectedKey, onChangeRole, onSelect, seaso
         {entries.length ? <ul ref={namesRef} className={styles.creditNames} style={{ '--credit-rows': Math.max(3, Math.ceil(entries.length / 2)) }}>
           {entries.map(entry => <li key={entry.key}>
             <button type="button" aria-pressed={selected?.key === entry.key} aria-controls="roster-credit-preview" aria-label={(en ? 'Preview ' : uiText("预览", uiLocale)) + (role === 'admin' ? en ? 'official ' : uiText("赛管 ", uiLocale) : en ? 'caster ' : uiText("解说 ", uiLocale)) + entry.staff_name} onClick={() => pickCredit(entry.key)}>
-              <StaffMark key={seasonId + entry.key} name={entry.staff_name} />
+              <StaffMark key={seasonId + entry.key} staff={entry} />
               <span><strong>{entry.staff_name}</strong><small>{matchCount(entry.match_count)}</small></span>
             </button>
           </li>)}
@@ -166,7 +170,7 @@ function CreditSection({ model, role, selectedKey, onChangeRole, onSelect, seaso
       </div>
       {selected ? <article id="roster-credit-preview" key={selected.key} ref={previewRef} className={styles.creditDetail} data-overview-credit={selected.key} aria-label={(en ? 'Selected credit ' : uiText("当前署名 ", uiLocale)) + selected.staff_name}>
         <header>
-          <StaffMark key={seasonId + selected.key} name={selected.staff_name} large />
+          <StaffMark key={seasonId + selected.key} staff={selected} large />
           <div>
             <h3>{selected.staff_name}</h3>
             <p className={styles.creditMeta}><span>{role === 'admin' ? en ? 'Official' : uiText("赛管", uiLocale) : en ? 'Caster' : uiText("解说", uiLocale)}</span><span>{matchCount(selected.match_count)}</span></p>
@@ -256,9 +260,9 @@ export default function RosterHubPage() {
       <OverviewSearch model={model} value={query} onChange={q => update({ q })} withSeason={withSeason} en={en} />
       <div className={styles.ensemble}>
         <header className={styles.fieldHeading}><span>{eventCenterText('rosterTeamsHeading', locale)}</span><DirectoryLink className={styles.allTeamsLink} to={withSeason('/teams')}>{eventCenterText('rosterTeamDirectory', locale)} <i aria-hidden="true">↗</i></DirectoryLink></header>
-        <div ref={teamGridRef} className={styles.teamGrid} data-expanded={expandedTeams} role="group" aria-label={en ? 'Select a team' : uiText("选择队伍", locale)}>{model.teams.map((team, index) => <button key={team.routeId} type="button" aria-pressed={selectedTeam?.routeId === team.routeId} aria-label={(en ? 'Show roster for ' : uiText("查看阵容 ", locale)) + team.shortName} title={team.fullName} style={{ '--arrival-order': Math.min(index, 14) }} onClick={() => { const compact = window.matchMedia('(max-width: 760px)').matches; pendingTeamScroll.current = compact && expandedTeams; update({ rosterTeam: team.routeId, ...(compact ? { teamsExpanded: '' } : {}) }) }}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><strong>{team.shortName}</strong></button>)}</div>
+        <div ref={teamGridRef} className={styles.teamGrid} data-expanded={expandedTeams} role="group" aria-label={en ? 'Select a team' : uiText("选择队伍", locale)}>{model.teams.map((team, index) => <button key={team.routeId} type="button" aria-pressed={selectedTeam?.routeId === team.routeId} aria-label={(en ? 'Show roster for ' : uiText("查看阵容 ", locale)) + getTeamDisplayName(team)} title={team.fullName} style={{ '--arrival-order': Math.min(index, 14) }} onClick={() => { const compact = window.matchMedia('(max-width: 760px)').matches; pendingTeamScroll.current = compact && expandedTeams; update({ rosterTeam: team.routeId, ...(compact ? { teamsExpanded: '' } : {}) }) }}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><strong>{getTeamDisplayName(team)}</strong></button>)}</div>
         {model.teams.length > 5 ? <button type="button" className={styles.expandTeams} aria-expanded={expandedTeams} onClick={() => update({ teamsExpanded: expandedTeams ? '' : '1' })}>{expandedTeams ? en ? 'Show fewer teams' : uiText("收起队徽", locale) : en ? 'Show all ' + model.teams.length + ' teams' : uiText('展开全部 {0} 支队伍', locale, [model.teams.length])} <span aria-hidden="true">{expandedTeams ? '−' : '+'}</span></button> : null}
-        <div className={styles.teamSelectionStatus} role="status">{selectedTeam ? (en ? 'Showing ' : uiText("当前查看：", locale)) + selectedTeam.shortName : ''}</div>
+        <div className={styles.teamSelectionStatus} role="status">{selectedTeam ? (en ? 'Showing ' : uiText("当前查看：", locale)) + getTeamDisplayName(selectedTeam) : ''}</div>
         <SelectedTeam key={seasonId + ':' + (selectedTeam?.routeId || '')} team={selectedTeam} seasonId={seasonId} withSeason={withSeason} locale={locale} panelRef={panelRef} />
       </div>
     </section>

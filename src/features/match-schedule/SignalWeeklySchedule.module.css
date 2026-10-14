@@ -174,3 +174,107 @@
   .empty p { font-size: 12px; }
 }
 @media (prefers-reduced-motion: no-preference) { .arrow { transition: transform 150ms ease; } }
+
+.listColumn { min-width: 0; }
+.preview, .rowDetails { display: none; }
+@media (min-width: 901px) {
+  .heading { padding-block: 24px 20px; }
+  .heading h1 { margin-block: 6px 8px; }
+  .workspace { display: grid; grid-template-columns: minmax(0, 1fr) clamp(300px, 28vw, 420px); gap: 28px; align-items: start; margin-top: 16px; }
+  .filters { grid-template-columns: minmax(0, 1fr) 160px auto 50px; gap: 20px; padding-top: 0; }
+  .search input, .teamFilter select { min-height: 44px; font-size: 13px; }
+  .statusTabs button { padding: 12px 16px; font-size: 12px; }
+  .statusTabs b { margin-left: 9px; font-size: 17px; }
+  .listHeading { padding-block: 16px 10px; }
+  .listHeading p { font-size: 11px; text-align: right; }
+  .listHeading h2 { font-size: 20px; }
+  .dayHeading { padding-block: 10px; border-top: 1px solid var(--fc-data-line-strong); }
+  .dayGroup + .dayGroup { margin-top: 22px; }
+  .weekHeading { border-top-width: 1px; }
+  .matchRow { grid-template-columns: minmax(0, 1fr) 92px; background: transparent; }
+  .matchMain { grid-template-columns: 74px minmax(0, 1fr); min-height: 82px; padding: 16px; gap: 18px; border: 0; background: transparent; text-align: left; }
+  .matchMain > .arrow, .matchRow > .mapToggle, .matchRow > .mapProgress { display: none; }
+  .time { gap: 7px; }
+  .time > strong { font-size: 15px; }
+  .time > small { display: none; }
+  .duel { width: 100%; max-width: 580px; justify-self: center; grid-template-columns: minmax(0, 1fr) 84px minmax(0, 1fr); gap: 22px; }
+  .team { gap: 10px; justify-content: flex-end; text-align: right; }
+  .teamB { flex-direction: row; justify-content: flex-start; text-align: left; }
+  .team b { font-size: 24px; }
+  .team small { display: none; }
+  .logo { width: 30px; height: 30px; flex-basis: 30px; }
+  .score > strong { font-size: 30px; }
+  .score > small { display: none; }
+  .rowDetails { display: flex; align-items: center; justify-content: center; gap: 8px; border-left: 1px solid var(--line); font-size: 11px; color: var(--muted) !important; }
+  .rowDetails i { font-style: normal; font-size: 19px; color: var(--fc-data-focus-on-light); }
+  .matchRow:has(.matchMain:hover), .rowDetails:hover { background: var(--fc-data-paper-raised); }
+  .matchRow[data-selected] { background: var(--fc-data-paper-raised); box-shadow: inset 3px 0 var(--yellow); }
+  .matchRow > :is(button, a):focus-visible { outline-offset: -4px; }
+  .preview { position: sticky; top: calc(var(--fc-data-section-nav-height) + 36px); display: flex; flex-direction: column; height: clamp(540px, calc(100dvh - 180px), 620px); min-width: 0; overflow: hidden; color: var(--paper); background: var(--ink); border-top: 3px solid var(--yellow); }
+  .preview :is(a, button):focus-visible { outline-color: var(--yellow); outline-offset: -3px; }
+  .previewHeader { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 46px; padding: 12px 22px; border-bottom: 1px solid var(--fc-data-line-on-dark); color: var(--fc-data-text-dark-muted); font-size: 11px; flex-shrink: 0; }
+  .preview .state { font-size: 11px; }
+  .preview .state[data-state="live"] { color: var(--fc-data-status-live-bright); }
+  .preview .state:is([data-state="review"], [data-state="ruling"], [data-state="postponed"]) { color: var(--fc-data-status-warning-bright); }
+  .previewSummary { padding: 20px 22px; min-height: 166px; flex-shrink: 0; }
+  .previewSummary time { display: flex; justify-content: space-between; gap: 10px; color: var(--fc-data-text-dark-muted); font-size: 11px; }
+  .previewSummary time > span { font-size: 10px; white-space: nowrap; }
+  .previewDuel { display: grid; grid-template-columns: minmax(0, 1fr) 88px minmax(0, 1fr); align-items: center; gap: 12px; margin-top: 20px; }
+  .previewTeam { display: grid; justify-items: center; gap: 8px; min-width: 0; text-align: center; }
+  .previewTeam b { font: 900 24px/1.15 var(--fc-data-font-display); overflow-wrap: anywhere; }
+  .previewLogo { width: 32px; height: 32px; display: grid; place-items: center; }
+  .previewLogo img { width: 100%; height: 100%; object-fit: contain; }
+  .previewScore { text-align: center; font: 900 48px/1 var(--fc-data-font-display); color: var(--yellow); white-space: nowrap; }
+  .previewHint { color: var(--fc-data-text-dark-muted); text-align: center; margin-top: 14px !important; font-size: 11px; }
+  .previewMaps { display: flex; flex-direction: column; flex: 1; min-height: 0; padding: 20px 22px; border-top: 1px solid var(--fc-data-line-on-dark); }
+  .previewMaps .mapHeading { flex-shrink: 0; margin-bottom: 14px; }
+  .previewMaps .mapHeading i { color: var(--fc-data-text-dark-muted); }
+  .previewMaps .mapCells { display: block; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; flex: 0 1 auto; }
+  .previewMaps .mapCells li { background: transparent; box-shadow: none; }
+  .previewMaps .mapCells li + li { border-top: 1px solid var(--fc-data-line-on-dark); }
+  .previewMaps .mapCells li > :is(a, span) { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 52px; padding: 6px 0; border: 0; }
+  .previewMaps .mapArt { height: 38px; background: var(--fc-data-ink-raised); }
+  .previewMaps .mapArt > span { font-size: 11px; padding: 3px 4px; }
+  .previewMaps .mapCopy { padding: 0; gap: 4px; }
+  .previewMaps .mapCopy b { font-size: 13px; line-height: 1.4; }
+  .previewMaps .mapCopy small, .previewMaps .noMaps { color: var(--fc-data-text-dark-muted); font-size: 11px; }
+  .previewMaps .noMaps { display: grid; place-items: center; flex: 1; text-align: center; font-size: 13px; }
+  .previewMaps .mapCells li[data-map-state="live"] .mapCopy small { color: var(--fc-data-status-live-bright); }
+  .mapScore { font: 900 21px/1 var(--fc-data-font-display); white-space: nowrap; }
+  .previewMaps .mapCells a:hover { background: var(--fc-data-ink-raised); }
+  .previewDetails { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 54px; padding: 16px 22px; border-top: 1px solid var(--fc-data-line-on-dark); font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .previewDetails > span { color: var(--yellow); font-size: 20px; line-height: 1; }
+  .previewDetails:hover { background: var(--fc-data-ink-raised); }
+  .previewEmpty { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: 28px; }
+  .previewEmpty h3 { font-size: 24px; }
+  .previewEmpty p { color: var(--fc-data-text-dark-muted); font-size: 13px; line-height: 1.8; }
+}
+@media (min-width: 901px) and (max-width: 1100px) {
+  .workspace { gap: 24px; }
+  .filters { grid-template-columns: minmax(0, 1fr) 130px auto 45px; gap: 12px; }
+  .statusTabs button { padding-inline: 12px; font-size: 11px; }
+  .statusTabs b { margin-left: 6px; }
+  .statusBar { gap: 12px; }
+  .matchMain { padding-inline: 12px; grid-template-columns: 62px minmax(0, 1fr); gap: 12px; }
+  .team { gap: 7px; }
+  .team b { font-size: 21px; }
+  .duel { gap: 10px; grid-template-columns: minmax(0, 1fr) 68px minmax(0, 1fr); }
+  .matchRow { grid-template-columns: minmax(0, 1fr) 40px; }
+  .rowDetails > span { display: none; }
+  .listHeading { flex-wrap: wrap; gap: 8px; }
+  .previewHeader, .previewSummary, .previewMaps, .previewDetails { padding-inline: 18px; }
+  .previewDuel { grid-template-columns: minmax(0, 1fr) 78px minmax(0, 1fr); gap: 10px; }
+  .previewScore { font-size: 43px; }
+  .previewTeam b { font-size: 22px; }
+  .previewMaps .mapCells li > :is(a, span) { grid-template-columns: 50px minmax(0, 1fr) auto; gap: 8px; }
+  .mapScore { font-size: 19px; }
+}
+@media (min-width: 901px) and (max-height: 800px) {
+  .previewSummary { min-height: 140px; padding-block: 16px; }
+  .previewDuel { margin-top: 14px; }
+  .previewHint { margin-top: 10px !important; }
+  .previewMaps { padding-block: 16px; }
+  .previewMaps .mapHeading { margin-bottom: 10px; }
+  .previewMaps .mapCells li > :is(a, span) { min-height: 46px; padding-block: 4px; }
+  .previewMaps .mapArt { height: 34px; }
+}

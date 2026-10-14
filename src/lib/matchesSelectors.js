@@ -3,6 +3,7 @@ import { getCompetitionDayMatches, getCompetitionDayNumber } from './competition
 import { formatOwMapName } from './heroes.js'
 import { getRoundKey, isMatchInRoundScope } from './matchRoundScope.js'
 import { getExplicitWeeklyCompletion } from './weeklySeasonLifecycle.js'
+import { getPreferredTeamShortName } from './teamDisplayIdentity.js'
 
 export { getTeamLogoCandidates } from './teamLogoResolver.js'
 
@@ -288,7 +289,8 @@ export function getMatchStatusText(match) {
 }
 
 export function getTeamLabel(team) {
-  return team?.team_short_name || team?.short || team?.team_name || team?.name || 'TBD'
+  const short = team?.team_short_name || team?.short || team?.team_name || team?.name || 'TBD'
+  return getPreferredTeamShortName(short, team?.team_name || team?.name)
 }
 
 export function getTeamFullName(team) {

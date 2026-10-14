@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { getTeamLogoCandidates } from '../../lib/matchesSelectors.js'
+import { getPreferredTeamShortName } from '../../lib/teamDisplayIdentity.js'
 
 function getTeamShort(team, teamShortName, teamName) {
-  return teamShortName || team?.team_short_name || team?.short || teamName || team?.team_name || team?.name || 'TBD'
+  const short = teamShortName || team?.team_short_name || team?.short || teamName || team?.team_name || team?.name || 'TBD'
+  return getPreferredTeamShortName(short, teamName || team?.team_name || team?.fullName || team?.full || team?.name)
 }
 
 export default function TeamLogo({ team, seasonId, teamShortName, teamName, className = '', large = false }) {

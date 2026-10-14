@@ -35,6 +35,9 @@ jobs:
       - name: Check weekly newspaper and roster presentation
         run: npm run test:weekly-newspaper
 
+      - name: Check roster previews and team identity
+        run: npm run test:roster-display
+
       - name: Check mobile navigation state and account isolation
         run: npm run test:mobile-navigation
 

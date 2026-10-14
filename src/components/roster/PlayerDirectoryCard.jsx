@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { formatOwHeroNames } from '../../lib/heroes.js'
 import { getRosterRoleLabel } from '../../lib/rosterSelectors.js'
+import { getPreferredTeamShortName } from '../../lib/teamDisplayIdentity.js'
 import styles from './RosterComponents.module.css'
 
 const ROLE_COLORS = {
@@ -24,7 +25,7 @@ function getTeamTagLabel(player) {
   const shortName = cleanLabel(player.teamShortName || player.team_short_name)
   const fullName = cleanLabel(player.teamFullName || player.team_name)
 
-  if (shortName && shortName !== '-') return shortName
+  if (shortName && shortName !== '-') return getPreferredTeamShortName(shortName, fullName)
   if (fullName && fullName !== '-') return fullName
   return cleanLabel(player.teamRouteId || player.team_id) || 'TEAM'
 }

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { buildWeeklyOverviewFixture } from './lib/weeklyOverviewFixture.mjs'
-import { buildWeeklySchedule, resetWeeklyScheduleSearch, weeklyMatchDay } from '../src/features/match-schedule/weeklyScheduleModel.js'
+import { buildWeeklySchedule, getWeeklyScheduleMapSlots, getWeeklyScheduleScore, resetWeeklyScheduleSearch, selectWeeklyScheduleMatch, weeklyMatchDay } from '../src/features/match-schedule/weeklyScheduleModel.js'
 import { getWeeklyNavigationPath } from '../src/components/layout/publicNavigation.js'
 import { getScheduleReturnLabel } from '../src/features/match-schedule/schedulePresentation.js'
 import { weeklyMapSlots } from '../src/features/weekly-overview/weeklyOverviewModel.js'
@@ -62,6 +62,38 @@ test('no followed teams yields a real empty result', () => {
   assert.equal(model.total, 3)
   assert.equal(model.resultCount, 0)
   assert.equal(model.hasFilters, true)
+})
+
+test('desktop previews select only visible matches and recover after filters or a week change', () => {
+  const db = buildWeeklyOverviewFixture()
+  const model = buildWeeklySchedule(db, { weekId: 'all' })
+  const first = model.entries[0].days[0].matches[0]
+  assert.equal(selectWeeklyScheduleMatch(model)?.id, first.id)
+  const selected = rows(model).at(-1)
+  assert.equal(selectWeeklyScheduleMatch(model, selected.id)?.id, selected.id)
+  const filtered = buildWeeklySchedule(db, { status: 'live' })
+  assert.equal(selectWeeklyScheduleMatch(filtered, selected.id)?.state, 'live')
+  const empty = buildWeeklySchedule(db, { query: 'no-such-team' })
+  assert.equal(selectWeeklyScheduleMatch(empty, selected.id), null)
+})
+
+test('desktop scores keep zeros and hide stale values in unplayed or cancelled matches', () => {
+  const match = { team_a: { score: 0 }, team_b: { score: 3 } }
+  for (const state of ['complete', 'live', 'review', 'ruling']) assert.equal(getWeeklyScheduleScore({ ...match, state }), '0 : 3')
+  for (const state of ['upcoming', 'postponed', 'cancelled', 'unknown']) assert.equal(getWeeklyScheduleScore({ ...match, state }), 'VS')
+})
+
+test('ended matches do not present missing map records as future games', () => {
+  assert.deepEqual(getWeeklyScheduleMapSlots({ format: 'RR5', state: 'ruling', maps: [] }), [])
+  const maps = [{ map_order: 1, status: 'COMPLETED', score_a: 0, score_b: 2 }]
+  const ended = getWeeklyScheduleMapSlots({ format: 'RR5', state: 'complete', maps })
+  assert.equal(ended.length, 5)
+  assert.equal(ended[0].state, 'recorded')
+  assert.ok(ended.slice(1).every(slot => slot.state === 'unrecorded'))
+  assert.equal(getWeeklyScheduleMapSlots({ format: 'RR5', state: 'live', maps })[1].state, 'pending')
+  for (const state of ['upcoming', 'postponed', 'cancelled']) {
+    assert.ok(getWeeklyScheduleMapSlots({ format: 'RR5', state, maps }).every(slot => !['recorded', 'ruling', 'live'].includes(slot.state)))
+  }
 })
 test('stored normalized favorite IDs match the public team IDs', () => {
   const model = buildWeeklySchedule(buildWeeklyOverviewFixture(), { followedOnly: true, followedTeamIds: ['fcw26-t001'] })

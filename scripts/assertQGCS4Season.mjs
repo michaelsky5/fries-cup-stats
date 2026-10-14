@@ -55,7 +55,7 @@ for (const [teamId, fileName] of Object.entries(expectedTeamLogos)) {
   const candidates = getTeamLogoCandidates(team, season.id)
   assert.equal(candidates[0], expectedUrl, `${teamId} logo mapping`)
   assert.equal(candidates.includes('/logos/QGCS4/OW.png'), true, `${teamId} logo fallback`)
-  assert.equal(candidates.at(-1), '/logos/fc_logo.png', `${teamId} global logo fallback`)
+  assert.equal(candidates.at(-1), '/logos/OW.png', `${teamId} global logo fallback`)
   assert.equal(fs.existsSync(path.resolve('public/logos/QGCS4', fileName)), true, `${fileName} exists`)
 }
 

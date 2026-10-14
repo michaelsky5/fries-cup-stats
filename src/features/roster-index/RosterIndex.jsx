@@ -9,6 +9,7 @@ import { formatOwHeroName } from '../../lib/heroes.js'
 import { getLocationPath, getRestoreScrollY, getSavedReturnScroll, getReturnState, restoreWindowScroll, saveReturnScroll } from '../../lib/navigationState.js'
 import { rosterText } from './rosterCopy.js'
 import { getStaffProfilePath } from '../../lib/staffProfiles.js'
+import { getTeamDisplayIdentity } from '../../lib/teamDisplayIdentity.js'
 import styles from './RosterIndex.module.css'
 
 const teamKey = team => team?.routeId || team?.team_id || team?.shortName || ''
@@ -89,7 +90,7 @@ function PlayerPreview({ player, withSeason, onToggleFavorite, favoriteDisabled,
     <div className={styles.previewKicker}>{en ? 'SELECTED PLAYER' : uiText("当前选手", locale)}<span>{rosterText(getRosterRoleLabel(player.role), locale)}</span></div>
     <div className={styles.playerCover}>
       {heroes.length ? <HeroArtwork hero={heroes[0]} variant="spotlight" decorative className={styles.playerArt} locale={locale} /> : <div className={styles.noArtwork}><b>FC</b><span>{en ? 'No recorded hero data' : uiText("暂无英雄出场记录", locale)}</span></div>}
-      <div className={styles.previewIdentity}><span>{player.teamShortName}</span><h2>{player.identity.primary}</h2><p>{player.identity.secondary}</p></div>
+      <div className={styles.previewIdentity}><span>{getTeamDisplayIdentity(player.teamShortName, player.teamFullName).primary}</span><h2>{player.identity.primary}</h2><p>{player.identity.secondary}</p></div>
     </div>
     <dl className={styles.facts}>
       <div><dt>{en ? 'Recorded heroes' : uiText("已记录英雄", locale)}</dt><dd>{heroes.length ? heroes.slice(0, 3).map(hero => formatOwHeroName(hero, locale)).join(' / ') : '—'}</dd></div>
@@ -115,7 +116,7 @@ export function PlayerArchiveExplorer({ directoryRef, players, focusedPlayer, on
             <button type="button" className={styles.personSelect} onClick={() => onFocusPlayer(key)} aria-pressed={selected} aria-label={`${en ? 'Preview player' : uiText("预览选手", locale)} ${player.identity.primary}`}>
               <span className={styles.serial}>{String(startIndex + index).padStart(2, '0')}</span>
               <span className={styles.personName}><strong>{player.identity.primary}{player.isFavorite ? ' ★' : ''}</strong><small>{player.identity.secondary || '—'}</small></span>
-              <span className={styles.personMeta}><b>{player.teamShortName}</b><small>{rosterText(getRosterRoleLabel(player.role), locale)}</small></span>
+              <span className={styles.personMeta}><b>{getTeamDisplayIdentity(player.teamShortName, player.teamFullName).primary}</b><small>{rosterText(getRosterRoleLabel(player.role), locale)}</small></span>
             </button>
             <ArchiveLink to={withSeason(`/players/${key}`)} className={styles.entryLink} label={`${en ? 'Open player archive' : uiText("打开选手档案", locale)} ${player.identity.primary}`} />
           </div>
