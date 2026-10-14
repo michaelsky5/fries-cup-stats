@@ -112,6 +112,20 @@ export function buildLeadIntro(article, articles, locale = 'zh-CN') {
   return [article.recap || article.brief, context].filter(Boolean).join(String(locale).startsWith('en') || String(locale).startsWith('ko') ? ' ' : '')
 }
 
+// Derive this compact note from the issue's frozen results, never live data.
+export function buildLeadPrintNote(article, articles, locale = 'zh-CN') {
+  if (!article?.id || article.state !== 'complete' || list(article.sequence).length !== 5 || article.displayScores?.[0] !== 3 || article.displayScores?.[1] !== 2) return ''
+  const complete = list(articles).filter(item => item.state === 'complete' && list(item.sequence).length === 5)
+  const close = complete.filter(item => item.displayScores?.[0] === 3 && item.displayScores?.[1] === 2)
+  if (complete.length < 2 || close.length !== 1 || close[0].id !== article.id) return ''
+  return copy(locale, [
+    '本期完整赛果中唯一的 3:2',
+    'Only 3:2 among fully recorded matches',
+    '완전 기록 경기 중 유일한 3:2',
+    '本期完整賽果中唯一的 3:2'
+  ])
+}
+
 export function buildMatchBrief(article, locale = 'zh-CN') {
   const background = article.background, count = background?.sources?.length || 0
   const [winner, loser] = article.displayTeams || []
