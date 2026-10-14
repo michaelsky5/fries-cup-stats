@@ -94,14 +94,14 @@ function makeReference(rows) {
   return result
 }
 
-export function buildStatisticalRatingBaselines(rows, { beforeDay } = {}) {
-  requireValid(Boolean(beforeDay), 'A strict reference date is required')
+function validateRatingRows(rows) {
   requireValid(new Set(rows.map(row => row.rowId)).size === rows.length, 'Duplicate rating row')
   const unconfirmed = rows.filter(row => !row.verified)
   requireValid(new Set(unconfirmed.map(evidenceKey)).size === unconfirmed.length, 'Ambiguous player-map identity')
   requireValid(rows.every(row => finite(row.playtimeMinutes) && row.playtimeMinutes > 0), 'Invalid source duration')
-  const training = rows.filter(row => row.day && row.day < beforeDay && row.era.key !== 'unknown-transition'
-    && row.playtimeMinutes * 60 >= POLICY.targetReliability.minimumSeconds)
+}
+
+function makeBaselines(training, beforeDay) {
   const result = { beforeDay, training: support(training), byHero: {}, byProfile: {}, bySubrole: {},
     maxTrainingDay: training.length ? training.map(row => row.day).sort().at(-1) : null,
     trainingMatchIds: [...new Set(training.map(row => row.matchId))] }
@@ -109,6 +109,29 @@ export function buildStatisticalRatingBaselines(rows, { beforeDay } = {}) {
     for (const [key, cohort] of groupBy(training, row => referenceKeys(row)[type])) result[field][key] = makeReference(cohort)
   }
   return result
+}
+
+export function buildStatisticalRatingBaselines(rows, { beforeDay } = {}) {
+  requireValid(Boolean(beforeDay), 'A strict reference date is required')
+  validateRatingRows(rows)
+  const training = rows.filter(row => row.day && row.day < beforeDay && row.era.key !== 'unknown-transition'
+    && row.playtimeMinutes * 60 >= POLICY.targetReliability.minimumSeconds)
+  return makeBaselines(training, beforeDay)
+}
+
+export function buildRetrospectiveStatisticalRatingBaselines(rows, target, { throughDay, referenceMatchIds } = {}) {
+  requireValid(Boolean(target?.day && throughDay && target.day <= throughDay && target.era?.key !== 'unknown-transition'),
+    'A valid retrospective target and cutoff are required')
+  requireValid(Array.isArray(referenceMatchIds) && !referenceMatchIds.includes(target.matchId), 'Whole-match holdout is required')
+  validateRatingRows(rows)
+  const references = new Set(referenceMatchIds)
+  const training = rows.filter(row => row.seasonId === target.seasonId && row.era.key === target.era.key
+    && row.day && row.day <= throughDay && references.has(row.matchId) && row.matchId !== target.matchId
+    && row.playtimeMinutes * 60 >= POLICY.targetReliability.minimumSeconds)
+  return { ...makeBaselines(training, target.day), retrospective: {
+    matchId: target.matchId, seasonId: target.seasonId, era: target.era.key, throughDay,
+    referenceMatchIds: [...referenceMatchIds], cutoff: 'RETROSPECTIVE_SAME_VERSION_ENTIRE_MATCH_HELD_OUT'
+  } }
 }
 
 function metricPercentile(row, baselines, metric) {
@@ -175,10 +198,17 @@ export function describeStatisticalReferenceUse(scored) {
 }
 
 export function scoreStatisticalRatingRow(row, baselines) {
-  requireValid(row.day && row.day === baselines.beforeDay && (baselines.maxTrainingDay === null || baselines.maxTrainingDay < row.day)
+  const retrospective = baselines.retrospective
+  const validReferenceScope = retrospective
+    ? retrospective.matchId === row.matchId && retrospective.seasonId === row.seasonId && retrospective.era === row.era.key
+      && row.day <= retrospective.throughDay && (baselines.maxTrainingDay === null || baselines.maxTrainingDay <= retrospective.throughDay)
+      && baselines.trainingMatchIds.every(id => retrospective.referenceMatchIds.includes(id))
+    : baselines.maxTrainingDay === null || baselines.maxTrainingDay < row.day
+  requireValid(row.day && row.day === baselines.beforeDay && validReferenceScope
     && !baselines.trainingMatchIds.includes(row.matchId), 'Temporal or whole-match leakage')
   const profile = profileFor(row)
   const flags = []
+  if (retrospective) flags.push('RETROSPECTIVE_REFERENCE_REVIEW')
   const seconds = finite(row.playtimeMinutes) && row.playtimeMinutes > 0 ? row.playtimeMinutes * 60 : null
   const targetReliability = { seconds, minimumSeconds: POLICY.targetReliability.minimumSeconds,
     durationEligible: seconds !== null && seconds >= POLICY.targetReliability.minimumSeconds }
@@ -225,6 +255,7 @@ export function scoreStatisticalRatingRow(row, baselines) {
     referenceAudit: rawScore === null ? null : { method: POLICY.formula, hasIdenticalPools: identical.length > 0,
       maximumIdenticalPoolShare: identical.length ? Math.max(...identical.map(group => group.weight)) : 0,
       heroOnlyPoolShare: round(RATING_METRICS.reduce((sum, metric) => sum + weights[metric] * (metricPercentiles[metric].heroOnlyPoolShare || 0) / 100, 0), 8) } }
+  if (retrospective) scored.retrospective = { ...retrospective, trainingMatchIds: [...baselines.trainingMatchIds] }
   scored.referenceUse = describeStatisticalReferenceUse(scored)
   if (scored.referenceUse.stage === 'EARLY_REFERENCE') flags.push('EARLY_REFERENCE_REVIEW')
   if (scored.referenceUse.stage === 'REFERENCE_SUPPORT_NOT_CHECKED') flags.push('REFERENCE_SUPPORT_REVIEW')

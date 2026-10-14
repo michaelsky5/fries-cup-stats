@@ -3,6 +3,20 @@ export const STATISTICAL_RATING_SEASONS = Object.freeze(['FCW26'])
 export const STAT_KEYS = Object.freeze(['elims', 'assists', 'deaths', 'damage', 'healing', 'blocked'])
 export const EVIDENCE_SCHEMA_VERSION = 'hero-rating-evidence-v1'
 
+// A fixed reference membership for the three published cold-start matches.
+// Only map/match presentation may use it; season ratings retain prior-day scores.
+export const STATISTICAL_RATING_BACKFILL = Object.freeze({
+  version: 'v1.5-backfill-2026.10.14',
+  seasonId: 'FCW26',
+  throughDay: '2026-10-11',
+  targetMatchIds: Object.freeze(['FCW26-SWISS-R1-M01', 'FCW26-SWISS-R1-M02', 'FCW26-SWISS-R1-M12']),
+  referenceMatchIds: Object.freeze([
+    'FCW26-SWISS-R1-M03', 'FCW26-SWISS-R1-M04', 'FCW26-SWISS-R1-M05', 'FCW26-SWISS-R1-M06',
+    'FCW26-SWISS-R1-M07', 'FCW26-SWISS-R1-M08', 'FCW26-SWISS-R1-M09', 'FCW26-SWISS-R1-M10',
+    'FCW26-SWISS-R1-M13', 'FCW26-SWISS-R1-M14', 'FCW26-SWISS-R1-M15'
+  ])
+})
+
 // These are engineering gates and interpretation rules, not measured accuracy.
 export const STATISTICAL_RATING_POLICY = Object.freeze({
   formula: 'CONTINUOUS_WEIGHTED_MID_DISTRIBUTION',
