@@ -2,13 +2,34 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 import {buildWeeklyReportPreview,listWeeklyReportPreviews} from '../src/features/weekly-report/weeklyReportPreview.js'
-import {buildWeeklyNewspaper,buildMatchNews,newspaperTeamName,buildWeeklyHeroUsage,buildWeeklyFunFacts} from '../src/features/weekly-report/weeklyNewsroom.js'
+import {buildWeeklyNewspaper,buildMatchNews,newspaperTeamName,buildWeeklyHeroUsage,buildWeeklyFunFacts,resolveWeeklyHeroRole} from '../src/features/weekly-report/weeklyNewsroom.js'
 import {makeNewspaperPdf,PAPER_SIZE,A4_POINTS,editionFilename} from '../src/features/weekly-report/newspaperExport.js'
 import {buildWeeklyNewspaperResultsUrl,buildWeeklyNewspaperQr} from '../src/features/weekly-report/weeklyNewspaperShare.js'
 
 const db=JSON.parse(readFileSync(new URL('./fixtures/weekly-newspaper/published-FCW26.json',import.meta.url),'utf8'))
 const report=buildWeeklyReportPreview(db)
 const paper=buildWeeklyNewspaper(report)
+
+test('hero role icons preserve saved historical Sombra roles and the frozen model',()=>{
+  for (const role of ['DPS','SUP']) {
+    const frozen={awards:{mvp:[{hero:'Sombra',role}],bestFive:[]}}
+    const before=JSON.stringify(frozen)
+    assert.equal(resolveWeeklyHeroRole({name:'黑影'},frozen),role)
+    assert.equal(resolveWeeklyHeroRole({name:'黑影'},{...frozen,gameVersion:'overwatch-2026-season5'}),role)
+    assert.equal(JSON.stringify(frozen),before)
+  }
+  assert.equal(resolveWeeklyHeroRole({name:'Sombra'},{gameVersion:'overwatch-pre-season5'}),'DPS')
+  assert.equal(resolveWeeklyHeroRole({name:'Sombra'},{gameVersion:'overwatch-2026-season5'}),'SUP')
+  assert.equal(resolveWeeklyHeroRole({name:'Sombra',role:'DPS'},{gameVersion:'overwatch-2026-season5'}),'DPS')
+})
+
+test('unknown and conflicting historical role contexts never default to a damage icon',()=>{
+  assert.equal(resolveWeeklyHeroRole({name:'Sombra'},{}),'')
+  assert.equal(resolveWeeklyHeroRole({name:'Sombra'},{awards:{mvp:[{hero:'Sombra',role:'DPS'},{hero:'Sombra',role:'SUP'}]}}),'')
+  assert.equal(resolveWeeklyHeroRole({name:'unregistered hero'},{}),'')
+  assert.equal(resolveWeeklyHeroRole({name:'Doctrine'},{}),'SUP')
+  assert.equal(resolveWeeklyHeroRole({name:'D.Mon'},{}),'TANK')
+})
 
 test('printed results links keep the exact issue on the public site in every supported language',()=>{
   for (const [locale,param] of [['zh-CN','zh'],['zh-TW','zh-TW'],['ko-KR','ko'],['en-US','en']]) {
