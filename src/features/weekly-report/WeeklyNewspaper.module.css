@@ -301,7 +301,7 @@
 .readerLinks { display:flex; align-items:center; gap:24px; }
 .footerFeedback { grid-column:1/-1; color:var(--fc-data-muted); font:11px/1.8 var(--paper-font); }
 .footerFeedback:empty { display:none; }
-.sheet[data-has-intro="true"] { --paper-trend-height:78px; }
+.sheet[data-has-intro="true"] { --paper-trend-height:86px; }
 .sheet[data-has-intro="true"] .nameplate { padding-block:6px; margin-block:7px; }
 .sheet[data-has-intro="true"] .nameplate h1 { font-size:44px; }
 .sheet[data-has-intro="true"] .issueStamp { width:66px; font-size:44px; }
