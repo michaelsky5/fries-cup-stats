@@ -1,4 +1,4 @@
-import { getMapPlayerMatchRating, getMatchPlayerRating } from './matchRatingDisplay.js'
+import { getMapPlayerMatchRating, getMatchPlayerRating, usesStatisticalRatingDisplay } from './matchRatingDisplay.js'
 
 export const REVIEW_METRICS = [
   { key: 'eliminations', zh: '消灭', en: 'ELIM' },
@@ -19,6 +19,7 @@ export function getReviewBanOrder(map, side) {
 }
 
 export function getReviewMapRating(entry, participants = []) {
+  if (usesStatisticalRatingDisplay(entry)) return getMatchPlayerRating(entry)
   if (entry?.mapRating != null && entry.mapRating !== '' && Number.isFinite(Number(entry.mapRating))) return Number(entry.mapRating)
   return entry?.roleScore != null && entry.roleScore !== '' ? getMapPlayerMatchRating(entry.roleScore, participants) : null
 }

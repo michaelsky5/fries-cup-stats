@@ -10175,5 +10175,6 @@ export default {
   "回溯统计分": "Retrospective statistics",
   "统计表现 v1.5：沿用同一公式与刻度，使用同版本分组的其他比赛回溯评分，整场排除本场数据。": "Statistical performance v1.5: the same formula and scale, with retrospective references from other matches in the same version group. This entire match is excluded.",
   "参照场次固定在 {0} 及之前。回溯分用于比赛与单图展示，不计入赛季 OVR 或前向验证；尚不能完整衡量战术贡献。": "Reference membership is fixed through {0}. These provisional match/map ratings do not enter season OVR or forward validation; tactical contribution is not fully measured.",
+  "评分采用统一的十分制刻度；全场评分按已评分上场时间汇总各图表现。": "Ratings use one shared ten-point scale. Match ratings combine scored map performances by playtime.",
   "部分参照来源仅有同版本其他 {0} 场比赛，小分差需谨慎解读。": "Some active references have only {0} other same-version matches. Small score differences need caution."
 }

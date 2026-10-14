@@ -9,7 +9,9 @@ import {
 } from '../../../lib/leaderboardSelectors.js'
 import {
   formatMapPlayerMatchRating,
-  getMapPlayerMatchRating
+  getMapPlayerMatchRating,
+  getMatchPlayerRating,
+  usesStatisticalRatingDisplay
 } from '../../../lib/matchRatingDisplay.js'
 import TeamLogo from '../TeamLogo.jsx'
 import SignalMapStats from './SignalMapStats.jsx'
@@ -89,6 +91,7 @@ function getSummaryTail(totals) {
 }
 
 function getDisplayedMatchRating(entry, rawPts, participantScores) {
+  if (usesStatisticalRatingDisplay(entry)) return getMatchPlayerRating(entry)
   const modelMapRating = Number(entry?.mapRating)
   if (Number.isFinite(modelMapRating)) return modelMapRating
   return getMapPlayerMatchRating(rawPts, participantScores)

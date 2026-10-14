@@ -1,5 +1,9 @@
 # Match rating presentation and candidate display review
 
+This document records the October 12 candidate decision and frozen replay. On
+October 14 the user selected the gentle curve; its implementation and scope are
+documented in [the display release](rating-v15-display-release-20261014.md).
+
 FCW26 match tables repeated a provisional label below every rating and displayed
 a long model notice below every map. Ratings now occupy one line. Each map has a
 collapsed, keyboard-accessible rating explanation; the existing series and MVP
