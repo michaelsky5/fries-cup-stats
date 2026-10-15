@@ -16,6 +16,8 @@
 .round h3, .finalRound h3, .qualifier h3 { margin: 0 0 14px; font-size: 13px; }
 .round::after { content: ''; position: absolute; top: 100px; bottom: 78px; right: -33px; width: 32px; border: 1px solid var(--fc-data-line, #c6c7b6); border-left: 0; }
 .finalRound { display: flex; flex-direction: column; justify-content: center; }
+.thirdPlace { width: calc((100% - 64px) / 2); margin: 28px 0 0 auto; }
+.thirdPlace h3 { margin: 0 0 14px; font-size: 13px; }
 .finalRound::before { content: ''; position: absolute; top: 50%; left: -32px; width: 32px; border-top: 1px solid var(--fc-data-line, #c6c7b6); }
 .bracket[data-direct-final="true"] { grid-template-columns: minmax(0, 1fr); }
 .bracket[data-direct-final="true"] .finalRound::before { display: none; }
@@ -54,7 +56,7 @@ a.match:hover { border-color: var(--fc-data-ink, #181a17); }
 .champion strong { min-width: 0; font: 800 34px/1.2 var(--fc-data-font-display); overflow-wrap: anywhere; }
 .championLogo { display: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 44px; }
 .section :is(a, button):focus-visible { outline: 2px solid var(--fc-data-ink, #181a17); outline-offset: 4px; }
-@media (max-width: 1000px) { .seeds { grid-template-columns: repeat(2, minmax(0, 1fr)); } .bracket { gap: 36px; } .round::after { right: -19px; width: 18px; } .finalRound::before { left: -18px; width: 18px; } }
+@media (max-width: 1000px) { .seeds { grid-template-columns: repeat(2, minmax(0, 1fr)); } .bracket { gap: 36px; } .thirdPlace { width: calc((100% - 36px) / 2); } .round::after { right: -19px; width: 18px; } .finalRound::before { left: -18px; width: 18px; } }
 @media (max-width: 650px) {
   .heading { align-items: start; flex-direction: column; gap: 12px; }
   .heading h2 { font-size: 24px; }
@@ -62,6 +64,7 @@ a.match:hover { border-color: var(--fc-data-ink, #181a17); }
   .seeds button { padding: 12px 10px; gap: 8px; }
   .seeds strong { font-size: 18px; }
   .bracket, .qualifierMatches { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .thirdPlace { width: 100%; margin-top: 24px; }
   .round::after, .finalRound::before { display: none; }
   .match { padding: 14px; }
   .side { gap: 10px; }
