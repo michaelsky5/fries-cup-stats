@@ -3,8 +3,47 @@ import { test } from 'node:test'
 import { buildWeeklyPlayoffFixture } from './lib/weeklyPlayoffFixture.mjs'
 import { buildWeeklyAdvance } from '../src/features/weekly-advance/weeklyAdvanceModel.js'
 import { confirmedWeeklyWinner } from '../src/features/weekly-advance/weeklyEliminationModel.js'
+import { buildWeeklyBracketPresentation } from '../src/features/weekly-advance/weeklyBracketPresentation.js'
 
 const model = state => buildWeeklyAdvance(buildWeeklyPlayoffFixture(state)).elimination
+
+test('unpublished bracket explains seed positions without claiming entrants or matches', () => {
+  const source = model('pending-seeds'), before = structuredClone(source)
+  const result = buildWeeklyBracketPresentation(source)
+  assert.equal(result.semifinals.length, 2)
+  assert.deepEqual(result.semifinals.map(item => item.sources.map(slot => slot.number)), [[1, 4], [2, 3]])
+  assert(result.semifinals.every(item => item.type === 'PLACEHOLDER' && !item.match && !item.a && !item.b))
+  assert.equal(result.hasPublishedMatches, false)
+  assert.deepEqual(result.thirdPlaces, [], 'No third-place event is invented before its announcement.')
+  assert.deepEqual(source, before)
+});
+
+test('published match links and reviewed winners survive presentation adaptation', () => {
+  const source = model('final-pending'), result = buildWeeklyBracketPresentation(source)
+  assert.equal(result.semifinals[0], source.semifinals[0].items[0])
+  assert.equal(result.finals[0].type, 'PLACEHOLDER')
+  assert.equal(result.finals[0].a.id, source.finalists[0].id)
+  assert.equal(result.finals[0].b.id, source.finalists[1].id)
+  assert.equal(result.finals[0].match, null)
+  const reviewed = buildWeeklyBracketPresentation(model('pending-results'))
+  assert.equal(reviewed.finals[0].a, null)
+  assert.equal(reviewed.finals[0].b, null)
+});
+
+test('direct finals omit fictional semifinals, and stale seeds cannot fill placeholders', () => {
+  const source = model('pending-seeds')
+  source.seeds = [{ seed: 1, team: { id: 'a' } }, { seed: 2, team: { id: 'b' } }]
+  let result = buildWeeklyBracketPresentation(source)
+  assert.equal(result.semifinals.length, 2)
+  assert.equal(result.semifinals[0].a, null)
+  source.seedsCurrent = true
+  result = buildWeeklyBracketPresentation(source)
+  assert.equal(result.directFinal, true)
+  assert.deepEqual(result.semifinals, [])
+  assert.equal(result.finals[0].a.id, 'a')
+  assert.equal(result.finals[0].a.seed, 1)
+  assert.equal(result.finals[0].b.id, 'b')
+});
 
 test('standings alone never create entrants, a pairing or a champion', () => {
   const result = model('pending-seeds')
