@@ -212,7 +212,7 @@ export function getDefaultTeamLogoCandidates(seasonLike, team = null) {
   ])
 }
 
-export function getTeamLogoCandidates(team, seasonLike) {
+export function getTeamLogoCandidates(team, seasonLike, { fallbackSrc = '' } = {}) {
   const logoTeam = typeof team === 'object' && team !== null
     ? team
     : { team_short_name: text(team) }
@@ -233,7 +233,7 @@ export function getTeamLogoCandidates(team, seasonLike) {
 
   // A local lettermark fills absent/broken artwork; source data stays untouched.
   // Keep legacy generic images last, outside the team-specific artwork list.
-  return unique([...specificLogos, createDefaultTeamLogo(label), ...defaults])
+  return unique([...specificLogos, ...(fallbackSrc ? [fallbackSrc] : [createDefaultTeamLogo(label), ...defaults])])
 }
 
 export function getTeamLogo(team, seasonLike) {

@@ -59,3 +59,14 @@ test('generated SVG retains complete names, fits its text area, and keeps untrus
   assert.doesNotThrow(() => createDefaultTeamLogo('A\uD800B\u0000\u202EC'))
   assert.match(svgOf(createDefaultTeamLogo('A\uD800B\u0000\u202EC')), /<title>ABC<\/title>/u)
 })
+
+test('newspaper OW fallback is opt-in, follows published artwork, and preserves shared lettermarks and source data', () => {
+  const team = { team_short_name: '?', team_name: 'Ateam' }
+  const frozen = structuredClone(team)
+  assert.deepEqual(getTeamLogoCandidates(team, 'FCW26', { fallbackSrc: '/logos/OW.svg' }), ['/logos/OW.svg'])
+  assert.equal(getTeamLogoCandidates(team, 'FCW26')[0], createDefaultTeamLogo('ATEAM'))
+  const published = { team_id: 'QGCS4-T06', team_short_name: 'SK', team_logo: 'https://assets.example/sk.svg' }
+  const logos = getTeamLogoCandidates(published, 'QGCS4', { fallbackSrc: '/logos/OW.svg' })
+  assert.deepEqual(logos, ['https://assets.example/sk.svg', '/logos/QGCS4/SK.png', '/logos/OW.svg'])
+  assert.deepEqual(team, frozen)
+})
