@@ -259,7 +259,7 @@
 .heroTrendList .trendRank { display:grid; place-items:center; width:20px; height:20px; background:#d7d0c0; color:var(--paper-ink); font:900 12px/1 var(--paper-font); font-variant-numeric:tabular-nums; }
 .heroTrendList li[data-rank="1"] .trendRank { background:var(--paper-ink); color:var(--paper-yellow); }
 .heroTrendList .heroTrendName { display:flex; align-items:center; gap:4px; min-width:0; font:800 11px/1.3 var(--paper-font); }
-.heroTrendName > span:last-child { min-width:0; overflow-wrap:anywhere; }
+.heroTrendName > span:last-child { min-width:0; white-space:nowrap; }
 .heroTrendName .roleSymbol { width:11px; height:11px; flex-basis:11px; background:var(--paper-muted); }
 .heroTrendList strong { display:flex; align-items:baseline; gap:3px; flex-shrink:0; color:var(--paper-ink); font:900 24px/1 var(--paper-font); }
 .heroTrendList strong > small { font:10px/1.3 var(--paper-font); color:var(--paper-muted); }
