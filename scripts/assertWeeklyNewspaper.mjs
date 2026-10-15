@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 import {buildWeeklyReportPreview,listWeeklyReportPreviews} from '../src/features/weekly-report/weeklyReportPreview.js'
 import {buildWeeklyNewspaper,buildMatchNews,newspaperTeamName,buildWeeklyHeroUsage,buildWeeklyFunFacts,resolveWeeklyHeroRole} from '../src/features/weekly-report/weeklyNewsroom.js'
-import {makeNewspaperPdf,PAPER_SIZE,A4_POINTS,editionFilename} from '../src/features/weekly-report/newspaperExport.js'
+import {captureNewspaperSheet,makeNewspaperPdf,PAPER_SIZE,A4_POINTS,editionFilename} from '../src/features/weekly-report/newspaperExport.js'
 import {buildWeeklyNewspaperResultsUrl,buildWeeklyNewspaperQr} from '../src/features/weekly-report/weeklyNewspaperShare.js'
 
 const db=JSON.parse(readFileSync(new URL('./fixtures/weekly-newspaper/published-FCW26.json',import.meta.url),'utf8'))
@@ -455,4 +455,27 @@ test('multiweek briefs prioritize verified backgrounds and keep every remaining 
   assert.deepEqual(other.otherResults.map(article=>article.id),second.otherResults.map(article=>article.id))
   const ordinary=first.lead
   assert.doesNotMatch(ordinary.title,/末两图|逆转|决胜/)
+})
+
+test('capture waits for copied images before layout and removes the copy on decoding failure',async t=>{
+  const globals=['document','getComputedStyle'].map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)])
+  t.after(()=>{for(const [key,descriptor] of globals) descriptor?Object.defineProperty(globalThis,key,descriptor):delete globalThis[key]})
+  let rejectDecode,decodingStarted=false,layoutRead=false,removed=false
+  const decoding=new Promise((resolve,reject)=>{rejectDecode=reject})
+  const image={complete:true,naturalWidth:512,loading:'lazy',decode:()=>{decodingStarted=true;return decoding}}
+  const printable={style:{setProperty(){}},removeAttribute(){},querySelectorAll:selector=>selector==='img'?[image]:[],
+    querySelector:()=>{layoutRead=true;throw new Error('Layout must wait for the copied image')}}
+  const captureRoot={style:{},setAttribute(){},append(){},remove:()=>{removed=true}}
+  const sheet={querySelectorAll:()=>[],cloneNode:()=>printable}
+  globalThis.document={fonts:{ready:Promise.resolve()},createElement:()=>captureRoot,body:{append(){}}}
+  globalThis.getComputedStyle=()=>({fontFamily:'FCA Harmony',fontVariantNumeric:'tabular-nums'})
+  const outcome=captureNewspaperSheet(sheet).then(()=>null,error=>error)
+  try {
+    await new Promise(resolve=>setImmediate(resolve))
+    assert.equal(decodingStarted,true,'Every capture must decode its own copy, even with cached source images')
+    assert.equal(image.loading,'eager')
+    assert.equal(layoutRead,false,'Intrinsic image sizes must be ready before layout is copied')
+  } finally {rejectDecode(new Error('Copied team logo failed to decode'))}
+  assert.match((await outcome)?.message,/Copied team logo failed to decode/)
+  assert.equal(removed,true)
 })
