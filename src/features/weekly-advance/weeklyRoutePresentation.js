@@ -54,7 +54,7 @@ const labels = {
   selectHint: ['切换队伍，读取它的晋级条件与时间', 'Change teams to follow conditions and times', '팀을 바꿔 진출 조건과 시간 확인', '切換隊伍，讀取它的晉級條件與時間'],
   noTeam: ['参赛队伍待公布', 'Entrants to be announced', '참가 팀 발표 예정', '參賽隊伍待公布'],
   points: ['加赛与季后赛不增加赛段积分。', 'Qualifiers and playoffs do not add cycle points.', '결정전과 플레이오프는 대회 포인트에 합산되지 않습니다.', '加賽與季後賽不增加賽段積分。'],
-  champion: ['赛段冠军', 'Cycle champion', '대회 우승 팀', '賽段冠軍'],
+  champion: ['赛段优胜者', 'Cycle winner', '사이클 우승 팀', '賽段優勝者'],
   bye: ['本轮轮空', 'Round bye', '이번 라운드 부전승', '本輪輪空'],
   byeNote: ['直接晋级，无需比赛', 'Advances without a match', '경기 없이 다음 라운드 진출', '直接晉級，無需比賽']
 }
