@@ -58,9 +58,49 @@ function SourceLink({ article, t, withSeason }) {
 }
 
 function NewspaperTeamLogo({team,className,...props}) {
-  const logoIdentity=team?.team_short_name||team?.short||team?.team_name||team?.name
-  if(!logoIdentity||logoIdentity==='?'||logoIdentity==='TBD')return <span className={className} data-team-logo-placeholder aria-hidden="true">—</span>
-  return <TeamLogo team={team} className={className} {...props}/>
+  return <TeamLogo team={team} teamShortName={newspaperTeamName(team)} fallbackSrc="/logos/OW.svg" className={className} {...props}/>
+}
+
+function formatPersonMapContext(context,locale) {
+  const parts=String(context||'').split(' · ')
+  const order=parts.length===2?parts[1].match(/(\d+)\D*$/u)?.[1]:null
+  if(!order)return context
+  const map=formatOwMapName(parts[0],locale)
+  const label=pickUiLocale(locale,'第 {0} 图','Map {0}','{0}번째 맵','第 {0} 圖').replace('{0}',order)
+  return `${map} · ${label}`
+}
+
+function keepPersonMapTogether(summary,context,locale) {
+  const text=String(summary||'')
+  const parts=String(context||'').split(' · ')
+  if(parts.length!==2)return text
+  const map=[formatOwMapName(parts[0],locale),parts[0]].find(name=>name&&text.includes(name))
+  if(!map)return text
+  const index=text.indexOf(map)
+  return <>{text.slice(0,index)}<span className={styles.personMap} data-person-map>{map}</span>{text.slice(index+map.length)}</>
+}
+
+function PeopleNotes({people,editorial,compact,locale,seasonId,withSeason}) {
+  return <div className={styles.rolePairs} data-person-note-count={people.length}>
+    {people.map(person=>{
+      const roleLabels={
+        '坦克':pickUiLocale(locale,'坦克','tank','돌격','肉盾'),
+        '输出':pickUiLocale(locale,'输出','damage','공격','攻擊'),
+        '辅助':pickUiLocale(locale,'辅助','support','지원','輔助'),
+      }
+      const roles=String(person.summary||'').split(' / ').map(role=>roleLabels[role]||translateUiText(role,locale)).join(' / ')
+      const summary=person.kind==='cross-role'&&!editorial
+        ? pickUiLocale(locale,'本周跨 {0} 出场','Played {0} this week','이번 주 {0} 출전','本週跨 {0} 出場').replace('{0}',roles)
+        : editorial?(person.detail||person.summary):person.summary
+      return <Link to={withSeason(`/players/${encodeURIComponent(person.id)}`)} key={person.id} title={person.context} data-person-note={person.kind}>
+        <NewspaperTeamLogo team={person.team} seasonId={seasonId} className={styles.personEmblem}/>
+        <span className={styles.personCopy}>
+          <b className={styles.personIdentity}>{person.name}{person.team&&<small>{newspaperTeamName(person.team)}</small>}{!editorial&&!compact&&person.kind==='map-note'&&person.context&&<small className={styles.personContext}>{formatPersonMapContext(person.context,locale)}</small>}</b>
+          <span className={styles.personSummary}>{editorial?keepPersonMapTogether(summary,person.context,locale):String(summary||'').split(/(\d[\d,]*(?:\.\d+)?)/u).map((part,index)=>index%2?<strong key={index}>{part}</strong>:part)}</span>
+        </span>
+      </Link>
+    })}
+  </div>
 }
 
 function RoleSymbol({role,label}) {
@@ -94,8 +134,15 @@ function ResultRoundup({newspaper,t,withSeason}) {
 }
 
 function DataStoryCard({story,locale,withSeason}) {
+  const primary=story.stats[0]
+  const conciseRecord=story.editorialHook==='number-echo'&&story.kind==='record'&&story.stats.length===1&&primary.metric==='assists'&&primary.unit==='single-map-total'
+  const headline=conciseRecord
+    ? primary.tiedCount>1
+      ? pickUiLocale(locale,'单图助攻并列最高','JOINT MAP ASSISTS HIGH','단일 맵 도움 공동 최다','單圖助攻並列最高')
+      : pickUiLocale(locale,'单图助攻最高','MAP ASSISTS HIGH','단일 맵 도움 최다','單圖助攻最高')
+    : story.headline
   return <article className={styles.storyCard} data-player-story={story.id} data-story-kind={story.kind} data-story-hook={story.editorialHook||undefined}>
-    <div className={styles.storyIdentity}><div><span>{story.headline}</span><div><Link to={withSeason(`/players/${encodeURIComponent(story.id)}`)}>{story.name}</Link>{story.team&&<small>{newspaperTeamName(story.team)}</small>}</div></div>{story.hero&&<img src={getHeroImage(story.hero,story.role)} alt={formatOwHeroName(story.hero,locale)}/>}</div>
+    <div className={styles.storyIdentity}><div><span>{headline}</span><div><Link to={withSeason(`/players/${encodeURIComponent(story.id)}`)}>{story.name}</Link>{story.team&&<small>{newspaperTeamName(story.team)}</small>}</div></div>{story.hero&&<img src={getHeroImage(story.hero,story.role)} alt={formatOwHeroName(story.hero,locale)}/>}</div>
     <dl className={styles.storyValues} data-count={story.stats.length}>{story.stats.map(item=><div key={item.metric}><dt>{item.label}</dt><dd><Link data-story-metric={item.metric} data-story-unit={item.unit} to={withSeason(`/matches/${encodeURIComponent(item.matchId)}`)} title={`${formatOwMapName(item.map,locale)} · ${item.order}`}>{item.value.toLocaleString('en-US')}</Link></dd></div>)}</dl>
     <p className={styles.storyCaption}>{story.caption}</p>
   </article>
@@ -172,12 +219,13 @@ function KeyPerformance({player,t,mvp=false}) {
   return <dl className={`${styles.keyStats} ${mvp?styles.mvpMetrics:''}`} data-key-metrics aria-label={t('主要职责每 10 分钟数据','Primary-role statistics per 10 minutes')}>{metrics.map(([metric,label])=><div key={metric} title={t(`${label} / 每 10 分钟：${player.per10[metric].toFixed(1)}`,`${label} per 10 minutes: ${player.per10[metric].toFixed(1)}`)}><dt>{label}</dt><dd data-key-metric={metric}>{compact(player.per10[metric])}</dd></div>)}</dl>
 }
 
-function WeeklyHonours({awards,t,locale,seasonId,withSeason,editorial=false}) {
+function WeeklyHonours({awards,t,locale,seasonId,withSeason}) {
   const slots=awards?.bestFive||WEEKLY_POSITIONS.map(position=>({position,role:WEEKLY_POSITION_ROLES[position],status:'insufficient-data'}))
   const mvps=awards?.mvp||[]
   const mvp=mvps.length===1?mvps[0]:null
+  const rateLabel=pickUiLocale(locale,'每 10 分钟','PER 10 MIN','10분당','每 10 分鐘')
   return <section className={styles.honours} aria-label={t('本周荣誉','Weekly honours')}>
-    <div className={styles.honoursHeading}><h3 className={styles.mvpLabel}>{t('本周 MVP','WEEKLY MVP')}</h3><div><h3>{t('本周最佳阵容','TEAM OF THE WEEK')}</h3><span data-stat-scope="per-10">{t('每 10 分钟数据','STATS PER 10 MIN')}</span></div></div>
+    <div className={styles.honoursHeading}><div data-honour-heading="mvp"><h3 className={styles.mvpLabel}>{t('本周 MVP','WEEKLY MVP')}</h3><span data-stat-scope="per-10">{rateLabel}</span></div><div data-honour-heading="best-five"><h3>{t('本周最佳阵容','TEAM OF THE WEEK')}</h3><span data-stat-scope="per-10">{rateLabel}</span></div></div>
     <div className={styles.mvp} data-weekly-mvp={mvps.map(player=>player.id).join(',')}>
       <div className={styles.mvpIdentity}>
         <div className={styles.mvpPortrait}>{mvp?<img src={getHeroImage(mvp.hero,mvp.role)} alt={formatOwHeroName(mvp.hero,locale)}/>:<img src="/logos/fries-cup-mark-ink.svg" alt=""/>}</div>
@@ -188,7 +236,6 @@ function WeeklyHonours({awards,t,locale,seasonId,withSeason,editorial=false}) {
     <div className={styles.bestFive}><div className={styles.fiveSlots}>{slots.map((slot,i)=><div key={i} data-award-role={slot.role} data-award-position={slot.position} data-award-player={slot.player?.id||''} data-award-status={slot.status}>
       <div className={styles.fiveRole}><RoleSymbol role={slot.role}/><span>{positionLabel(slot.position,t)}</span></div>{slot.player?<><Link className={styles.fivePlayer} to={withSeason(`/players/${encodeURIComponent(slot.player.id)}`)}><img src={getHeroImage(slot.player.hero,slot.role)} alt={formatOwHeroName(slot.player.hero,locale)}/><b>{slot.player.name}</b></Link><AwardTeam player={slot.player} seasonId={seasonId}/><KeyPerformance player={slot.player} t={t}/></>:<div className={styles.pendingSlot}><b>{slot.status==='tie'?t('并列待确认','Tie pending'):slot.status==='lineup-limit'?t('席位待定','Slot pending'):t('暂缺结果','No result yet')}</b>{slot.status==='insufficient-data'&&<small>{t('数据不足','Insufficient data')}</small>}</div>}
     </div>)}</div></div>
-    {editorial&&Number.isInteger(awards?.minimumMaps)&&<a className={styles.awardBasis} data-award-basis href="#weekly-award-notes">{awardEligibilityText(awards.minimumMaps,locale)}</a>}
   </section>
 }
 
@@ -199,7 +246,7 @@ function awardEligibilityText(maps,locale) {
 
 function WeeklyAwardNotes({awards,locale}) {
   if(!Number.isInteger(awards?.minimumMaps))return null
-  return <section className={styles.awardNotes} id="weekly-award-notes" data-weekly-award-notes><h3>{pickUiLocale(locale,'荣誉评选说明','How honours are selected','주간 수상 선정 기준','榮譽評選說明')}</h3><p>{awardEligibilityText(awards.minimumMaps,locale)}</p><p>{pickUiLocale(locale,'MVP 从达到有效地图门槛的选手中按岗位综合评分评选。最佳阵容设一名坦克、两名输出和两名辅助。展示的每 10 分钟数据按有效比赛时间折算；两项展示数据仅为阅读摘要。','MVP is selected by role-adjusted overall scores among eligible players. The team of the week has one tank, two damage players and two supports. Displayed rates use valid playing time and show a two-stat summary.','MVP는 유효 맵 기준을 충족한 선수의 역할별 종합 점수로 선정합니다. 주간 베스트는 탱커 1명, 공격 2명, 지원 2명입니다. 10분당 수치는 유효 플레이 시간을 기준으로 하며 두 지표는 요약입니다.','MVP 從達到有效地圖門檻的選手中按崗位綜合評分評選。最佳陣容設一名坦克、兩名輸出和兩名輔助。展示的每 10 分鐘數據按有效比賽時間折算；兩項展示數據僅為閱讀摘要。')}</p></section>
+  return <section className={styles.awardNotes} id="weekly-award-notes" data-weekly-award-notes data-paper-web-only><h3>{pickUiLocale(locale,'荣誉评选说明','How honours are selected','주간 수상 선정 기준','榮譽評選說明')}</h3><p>{awardEligibilityText(awards.minimumMaps,locale)}</p><p>{pickUiLocale(locale,'MVP 从达到有效地图门槛的选手中按岗位综合评分评选。最佳阵容设一名坦克、两名输出和两名辅助。展示的每 10 分钟数据按有效比赛时间折算；两项展示数据仅为阅读摘要。','MVP is selected by role-adjusted overall scores among eligible players. The team of the week has one tank, two damage players and two supports. Displayed rates use valid playing time and show a two-stat summary.','MVP는 유효 맵 기준을 충족한 선수의 역할별 종합 점수로 선정합니다. 주간 베스트는 탱커 1명, 공격 2명, 지원 2명입니다. 10분당 수치는 유효 플레이 시간을 기준으로 하며 두 지표는 요약입니다.','MVP 從達到有效地圖門檻的選手中按崗位綜合評分評選。最佳陣容設一名坦克、兩名輸出和兩名輔助。展示的每 10 分鐘數據按有效比賽時間折算；兩項展示數據僅為閱讀摘要。')}</p></section>
 }
 
 export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, home, archive, newspaperOverride, embedded=false }) {
@@ -255,7 +302,7 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
             {!newspaper.briefs.length&&<p className={styles.emptyBrief}>{t('本期暂无其他赛果。','No other results this week.')}</p>}
             {newspaper.peopleNews.people.length>0&&<article className={styles.peopleNote}>
               <span className={styles.columnLabel}>{newspaper.peopleNews.title}</span>
-              <div className={styles.rolePairs} data-person-note-count={newspaper.peopleNews.people.length}>{newspaper.peopleNews.people.map(person=><Link to={withSeason(`/players/${encodeURIComponent(person.id)}`)} key={person.id} title={person.context} data-person-note={person.kind}><b>{person.name}{lead?.intro&&person.team&&<small>{newspaperTeamName(person.team)}</small>}</b><span>{lead?.intro?(person.detail||person.summary):person.summary}</span></Link>)}</div>
+              <PeopleNotes people={newspaper.peopleNews.people} editorial={Boolean(lead?.intro)} compact={newspaper.layout==='compact'} locale={locale} seasonId={seasonId} withSeason={withSeason}/>
             </article>}
           </aside>
           {lead&&<div className={styles.leadResults}><div className={styles.timelineHeading}><b>{t('逐图赛果','MAP RESULTS')}</b><span data-lead-print-note>{leadPrintNote}</span><SourceLink t={t} withSeason={withSeason} article={lead}/></div><MapTimeline article={lead} locale={locale} t={t}/></div>}
@@ -263,14 +310,14 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
         <div className={styles.recordsLine}><span>{t('黄色 / 左队胜 · 黑色 / 右队胜','Yellow / left-team win · black / right-team win')}</span><Link data-paper-web-only to={withSeason(weeklyPeriodPath('/matches',report.cycle,report.week))}>{t('本周全部比赛记录','All weekly match records')} →</Link></div>
         <ResultRoundup newspaper={newspaper} t={t} withSeason={withSeason}/>
         <DataCuriosities facts={newspaper.funFacts} stories={newspaper.dataStories} locale={locale} t={t} withSeason={withSeason}/>
-        <WeeklyHonours awards={report.awards} editorial={Boolean(lead?.intro)} t={t} locale={locale} seasonId={seasonId} withSeason={withSeason}/>
+        <WeeklyHonours awards={report.awards} t={t} locale={locale} seasonId={seasonId} withSeason={withSeason}/>
         <WeeklyTrends newspaper={newspaper} report={report} locale={locale} t={t}/>
         <UpdatesDesk updates={newspaper.updates} t={t}/>
         {!report.publication&&<p className={styles.editionNote}>{t('样报','SAMPLE')}</p>}
       </NewspaperSheet>
     </div>
     {!embedded&&<WeeklyNewsDesk newspaper={newspaper} locale={locale} t={t} withSeason={withSeason}/>}
-    {!embedded&&lead?.intro&&<WeeklyAwardNotes awards={report.awards} locale={locale}/>}
+    {!embedded&&<WeeklyAwardNotes awards={report.awards} locale={locale}/>}
     {!embedded&&<footer className={styles.readerFooter}>
       <div className={styles.readerLinks}><Link to={home}>← {t(`回到第 ${report.week.week_number} 周`,`Back to week ${report.week.week_number}`)}</Link><Link to={archive}>{t('周报归档','Report archive')} →</Link></div>
       <SaveActions busy={busy} savePdf={savePdf} savePng={savePng} t={t} placement="bottom"/>
