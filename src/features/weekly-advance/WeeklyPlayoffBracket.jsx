@@ -21,6 +21,7 @@ const labels = {
   round: ['第 {0} 轮', 'Round {0}', '{0}라운드', '第 {0} 輪'],
   qualified: ['已公布入围队伍', 'Published qualifiers', '발표된 진출 팀', '已公布入圍隊伍'],
   semifinal: ['半决赛', 'Semifinal', '준결승', '準決賽'],
+  thirdPlace: ['季军赛', 'Third-place match', '3위 결정전', '季軍賽'],
   final: ['决赛', 'Final', '결승', '決賽'],
   finalPending: ['等待决赛对阵公布', 'Awaiting the final matchup', '결승 대진 발표 대기', '等待決賽對陣公布'],
   winner: ['半决赛 {0} 胜者', 'Semifinal {0} winner', '준결승 {0} 승자', '準決賽 {0} 勝者'],
@@ -60,7 +61,7 @@ export default function WeeklyPlayoffBracket({ model, cycle, locale, seasonId, w
     <header className={styles.heading}><div><p className={styles.eyebrow}>PLAYOFFS / {cycle.code || cycle.name}</p><h2 id="weekly-playoffs-title">{copy('title', locale)}</h2><p>{copy('intro', locale)}</p></div><Link to={withSeason(`/matches?cycle=${encodeURIComponent(cycle.id)}&week=all`)}>{copy('schedule', locale)} ↗</Link></header>
     {model.champion && <div className={styles.champion} data-weekly-champion={idOf(model.champion)}><span>{copy('champion', locale)}</span><TeamLogo team={model.champion} seasonId={seasonId} className={styles.championLogo} /><strong>{weeklyTeamShort(model.champion)}</strong></div>}
     {model.seeds.length > 0 && <ol className={styles.seeds} aria-label={copy('seed', locale)}>{model.seeds.map(seed => <li key={seed.id}><button type="button" aria-pressed={seed.id === selectedTeamId} onClick={() => onSelectTeam(seed.id)}><span>{copy('seed', locale)} <b>{String(seed.seed).padStart(2, '0')}</b></span><TeamLogo team={seed.team} seasonId={seasonId} className={styles.logo} /><strong>{weeklyTeamShort(seed.team)}</strong></button></li>)}</ol>}
-    {!model.seedsCurrent && (model.semifinals.length > 0 || model.finals.length > 0) && <p className={styles.notice}>{copy('stale', locale)}</p>}
+    {!model.seedsCurrent && (model.semifinals.length > 0 || model.finals.length > 0 || model.thirdPlaces.length > 0) && <p className={styles.notice}>{copy('stale', locale)}</p>}
     {model.qualifiers.map(round => <div className={styles.qualifier} key={round.id}>
       <h3>{copy('qualifier', locale)}{round.round_number ? ` · ${copy('round', locale).replace('{0}', round.round_number)}` : ''}</h3>
       <div className={styles.qualifierMatches}>{round.items.map((item, index) => <MatchCard key={item.id} {...{ item, locale, seasonId, withSeason, returnProps, selectedTeamId }} title={`${copy('qualifier', locale)} ${index + 1}`} />)}</div>
@@ -73,7 +74,8 @@ export default function WeeklyPlayoffBracket({ model, cycle, locale, seasonId, w
         {model.finals.length > 0 ? model.finals.flatMap(round => round.items).map(item => <MatchCard key={item.id} {...{ item, locale, seasonId, withSeason, returnProps, selectedTeamId }} title={copy('final', locale)} />)
           : <article className={`${styles.match} ${styles.pendingFinal}`} data-final-pending="true"><header><span>{copy('finalPending', locale)}</span></header>{[0, 1].map(index => <div className={styles.side} key={index}>{model.finalists[index] ? <><TeamLogo team={model.finalists[index]} seasonId={seasonId} className={styles.logo} /><strong>{weeklyTeamShort(model.finalists[index])}</strong></> : <strong className={styles.placeholder}>{copy('winner', locale).replace('{0}', index + 1)}</strong>}</div>)}</article>}
       </div>
-    </div> : <div className={styles.empty}><h3>{copy(model.seeds.length ? 'awaitingMatchups' : model.qualificationResolved ? 'seedsPending' : 'waiting', locale)}</h3><p>{copy(model.qualificationResolved ? 'seedsPendingNote' : 'waitingNote', locale)}</p>{model.qualificationRequired && <strong>{copy('qualification', locale)}</strong>}{model.seedDrawRequired && <strong>{copy('draw', locale)}</strong>}</div>}
+    </div> : !model.thirdPlaces.length && <div className={styles.empty}><h3>{copy(model.seeds.length ? 'awaitingMatchups' : model.qualificationResolved ? 'seedsPending' : 'waiting', locale)}</h3><p>{copy(model.qualificationResolved ? 'seedsPendingNote' : 'waitingNote', locale)}</p>{model.qualificationRequired && <strong>{copy('qualification', locale)}</strong>}{model.seedDrawRequired && <strong>{copy('draw', locale)}</strong>}</div>}
+    {model.thirdPlaces.length > 0 && <div className={styles.thirdPlace} data-weekly-third-place="true"><h3>{copy('thirdPlace', locale)} · FT3</h3>{model.thirdPlaces.flatMap(round => round.items).map(item => <MatchCard key={item.id} {...{ item, locale, seasonId, withSeason, returnProps, selectedTeamId }} title={copy('thirdPlace', locale)} />)}</div>}
     <p className={styles.pointsNote}>{copy('points', locale)}</p>
   </section>
 }

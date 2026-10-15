@@ -35,6 +35,22 @@ test('live or result-review victories never advance a team or declare a champion
   assert.deepEqual(model('pending-results').finalists, [null, null])
 });
 
+test('third-place participants and results stay separate from the final and champion', () => {
+  const third = model('third-place')
+  assert.equal(third.thirdPlaces.length, 1)
+  assert.equal(third.semifinals[0].items.length, 2)
+  assert.deepEqual(third.thirdPlaces[0].items.map(item => [item.a.seed, item.b.seed]), [[3, 4]])
+  assert.equal(third.thirdPlaces[0].items[0].match.format, 'FT3')
+  assert.equal(third.champion, null, 'A completed third-place match cannot declare the cycle champion.')
+  const complete = model('medal-complete')
+  assert.equal(complete.finals.length, 1)
+  assert.notEqual(complete.champion.id, complete.thirdPlaces[0].items[0].winner.id)
+  const legacy = model('third-place-legacy')
+  assert.equal(legacy.thirdPlaces.length, 1)
+  assert.equal(legacy.semifinals[0].items.length, 2, 'A legacy third-place match is never another semifinal.')
+  assert.equal(legacy.champion, null)
+});
+
 test('a champion requires one completed published final, an explicit winner and a valid FT score', () => {
   const db = buildWeeklyPlayoffFixture()
   const final = db.matches.at(-1)

@@ -55,7 +55,7 @@ export function buildWeeklyElimination(db, overview) {
   for (const round of list(metadata?.rounds)) {
     const entry = weeks.get(round.week_id)
     if (!entry || entry.week.phase !== round.phase
-      || !(round.phase === 'QUALIFIER' && round.kind === 'QUALIFIER' || round.phase === 'PLAYOFFS' && ['SEMIFINAL', 'FINAL'].includes(round.kind))) continue
+      || !(round.phase === 'QUALIFIER' && round.kind === 'QUALIFIER' || round.phase === 'PLAYOFFS' && ['SEMIFINAL', 'THIRD_PLACE', 'FINAL'].includes(round.kind))) continue
     const items = list(round.items).map(item => fixture(item, round)).filter(Boolean).sort((a, b) => a.order - b.order)
     if (items.length) rounds.push({ ...round, week: entry.week, items })
   }
@@ -64,8 +64,10 @@ export function buildWeeklyElimination(db, overview) {
   if (!metadata) for (const { week, matches: publicMatches } of weekEntries) {
     if (!['PLAYOFFS', 'QUALIFIER'].includes(week.phase)) continue
     for (const match of publicMatches) {
+      const roundLabel = text(match.weekly_context?.round_label || match.round)
       const kind = week.phase === 'QUALIFIER' ? 'QUALIFIER'
-        : ['GRAND_FINAL', 'GRAND FINALS'].includes(text(match.stage).toUpperCase()) || /^(决赛|总决赛|final|grand final)$/i.test(text(match.weekly_context?.round_label)) ? 'FINAL' : 'SEMIFINAL'
+        : /季军|季軍|THIRD[_ -]?PLACE|3RD/i.test(roundLabel) ? 'THIRD_PLACE'
+          : ['GRAND_FINAL', 'GRAND FINALS'].includes(text(match.stage).toUpperCase()) || /^(决赛|总决赛|final|grand final)$/i.test(roundLabel) ? 'FINAL' : 'SEMIFINAL'
       let round = rounds.find(item => item.week_id === week.id && item.kind === kind)
       if (!round) { round = { id: `${week.id}-${kind}`, week_id: week.id, phase: week.phase, kind, round_number: null, week, items: [] }; rounds.push(round) }
       const item = fixture({ type: 'MATCH', order: round.items.length + 1, match_id: match.id, team_a_id: idOf(match.team_a), team_b_id: idOf(match.team_b) }, round)
@@ -76,10 +78,11 @@ export function buildWeeklyElimination(db, overview) {
   const qualifiers = rounds.filter(round => round.kind === 'QUALIFIER')
   const semifinals = rounds.filter(round => round.kind === 'SEMIFINAL')
   const finals = rounds.filter(round => round.kind === 'FINAL')
+  const thirdPlaces = rounds.filter(round => round.kind === 'THIRD_PLACE')
   const finalItems = finals.flatMap(round => round.items)
   const champion = finalItems.length === 1 && finalItems[0].type === 'MATCH' ? finalItems[0].winner : null
   const qualificationResolved = qualifiers.some(round => round.qualification_current !== false && list(round.outcome_team_ids).length > 0)
-  return { seeds, seedsCurrent: cycle.playoff_seeds_current === true, qualifiers, semifinals, finals, champion, teamById,
+  return { seeds, seedsCurrent: cycle.playoff_seeds_current === true, qualifiers, semifinals, finals, thirdPlaces, champion, teamById,
     finalFormat: ['FT3', 'FT4'].includes(metadata?.final_format) ? metadata.final_format : null,
     hasBracket: rounds.length > 0,
     finalists: semifinals.flatMap(round => round.items).map(item => item.winner ? team(idOf(item.winner)) : null),

@@ -37,7 +37,15 @@ export function buildWeeklyPlayoffFixture(state = 'complete') {
   else { db.matches.push(sf1, sf2); cycle.weeks.at(-1).match_ids.push(sf1.raw_match_id, sf2.raw_match_id) }
   if (state === 'semifinals') for (const fixture of [sf1, sf2]) { fixture.status = 'PENDING'; fixture.winner = null }
   if (state === 'pending-results') for (const fixture of [sf1, sf2]) fixture.status = 'RESULT_REVIEW'
-  if (['final-live', 'complete', 'stale-seeds', 'legacy'].includes(state)) {
+  if (['third-place', 'medal-complete', 'third-place-legacy'].includes(state)) {
+    const third = match('PLAYOFF-FIXTURE-THIRD', 4, entrants[2], entrants[3], 'THIRD_PLACE', [3, 1])
+    third.scheduled_at = '2026-10-18T11:30:00Z'
+    db.matches.push(third)
+    cycle.weeks.at(-1).match_ids.push(third.raw_match_id)
+    cycle.elimination.rounds.push({ id: 'published-third-place', week_id: weekId, phase: 'PLAYOFFS', kind: 'THIRD_PLACE', round_number: 2,
+      source_match_ids: [sf1.raw_match_id, sf2.raw_match_id], items: [item(1, entrants[2], entrants[3], third.match_id)] })
+  }
+  if (['final-live', 'complete', 'stale-seeds', 'legacy', 'medal-complete'].includes(state)) {
     if (state === 'final-live') final.status = 'LIVE'
     db.matches.push(final)
     cycle.weeks.at(-1).match_ids.push(final.raw_match_id)
@@ -59,6 +67,6 @@ export function buildWeeklyPlayoffFixture(state = 'complete') {
         qualified_team_ids: [tied[0]], outcome_team_ids: [tied[0], tied[2]], items: [item(1, tied[2], tied[1], q2.match_id)] }
     ]
   }
-  if (state === 'legacy') delete cycle.elimination
+  if (['legacy', 'third-place-legacy'].includes(state)) delete cycle.elimination
   return db
 }
