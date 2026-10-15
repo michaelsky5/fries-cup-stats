@@ -12,10 +12,10 @@ import { weeklyCycleTitle, weeklyPeriodPath, weeklyStatusLabel, weeklyTeamShort,
 import { buildWeeklyAdvance, resetWeeklyAdvanceSearch, weeklyPublishedRank } from './weeklyAdvanceModel.js'
 import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
 import WeeklyPlayoffBracket from './WeeklyPlayoffBracket.jsx'
+import WeeklyFinalsPath from './WeeklyFinalsPath.jsx'
 import styles from './SignalWeeklyAdvance.module.css'
 
 const idOf = team => String(team?.id || team?.team_id || '')
-const officialWeekly = 'https://fries-cup.com/events/weekly/'
 const rankLabel = value => {
   const rank = weeklyPublishedRank(value)
   return rank === '—' ? rank : rank.padStart(2, '0')
@@ -159,8 +159,6 @@ export default function SignalWeeklyAdvance() {
     </section>
 
     <WeeklyPlayoffBracket model={model.elimination} {...{ cycle, locale, seasonId, withSeason, returnProps }} selectedTeamId={selected?.id} onSelectTeam={id => change({ teamId: id, query: null, followed: null })} />
-    <section className={`${styles.nextStages} ${styles.majorStage}`} aria-label={t(uiText("后续阶段", locale), 'Later stages')}>
-      <article id="weekly-major"><span className={styles.nextNumber}>03</span><div><p className={styles.eyebrow}>FCW FINALS</p><h2>{getWeeklyPhaseLabel('MAJOR', locale)}</h2><p>{eventCenterText('majorIntro', locale)}</p><a href={officialWeekly} target="_blank" rel="noreferrer">{t(uiText("了解巅峰赛", locale), 'About the Finals')} ↗</a></div></article>
-    </section>
+    <WeeklyFinalsPath locale={locale} />
   </div>
 }
