@@ -4,6 +4,23 @@ import { buildWeeklyElimination } from './weeklyEliminationModel.js'
 const idOf = team => String(team?.id || team?.team_id || '')
 const normalize = value => String(value ?? '').normalize('NFKC').trim().toLowerCase()
 
+const phases = ['points', 'playoffs', 'major']
+
+export function getWeeklyAdvancePhase(search, { activeStage, hash = '' } = {}) {
+  const requested = String(new URLSearchParams(search).get('phase') || '').toLowerCase()
+  if (phases.includes(requested)) return requested
+  const legacy = { '#weekly-points': 'points', '#weekly-playoffs': 'playoffs', '#weekly-full-bracket': 'playoffs', '#weekly-team-route': 'playoffs', '#weekly-major': 'major' }[hash]
+  return legacy || (phases.includes(activeStage) ? activeStage : 'points')
+}
+
+export function getWeeklyAdvancePhasePath(search, phase) {
+  const next = new URLSearchParams(search)
+  next.set('phase', phases.includes(phase) ? phase : 'points')
+  next.delete('bracket')
+  next.delete('view')
+  return `/advance?${next}`
+}
+
 export function weeklyPublishedRank(value) {
   const rank = weeklyScore(value)
   return Number(rank) > 0 ? rank : '—'

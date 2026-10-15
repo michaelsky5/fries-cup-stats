@@ -3,6 +3,15 @@ import { weeklyTeamShort } from '../weekly-overview/weeklyPresentation.js'
 import { formatMatchSchedule } from '../../lib/scheduleFormat.js'
 
 const labels = {
+  bracket: ['季后赛', 'Playoffs', '플레이오프', '季後賽'],
+  bracketFocus: ['对阵与赛程。', 'Bracket and schedule.', '대진과 일정', '對陣與賽程。'],
+  bracketIntro: ['从加赛到半决赛，再到决赛与季军赛。对阵、晋级去向和开赛时间放在一张图里。', 'Follow every matchup, advancement branch and start time from the qualifier to the medal matches.', '결정전부터 준결승과 순위 결정전까지 대진, 진출 경로, 시작 시간을 한눈에 확인하세요.', '從加賽到準決賽，再到決賽與季軍賽。對陣、晉級去向和開賽時間放在一張圖裡。'],
+  all: ['全部对阵', 'All matchups', '전체 대진', '全部對陣'],
+  teamDetail: ['按队伍查看晋级路线', 'Follow a team’s route', '팀별 진출 경로 보기', '按隊伍查看晉級路線'],
+  medal: ['决赛 / 季军赛', 'Medal matches', '결승 / 3위 결정전', '決賽 / 季軍賽'],
+  winnerLine: ['胜方晋级', 'Winners advance', '승자 진출', '勝方晉級'],
+  loserLine: ['负方进入季军赛', 'Losers enter third place', '패자는 3위 결정전으로', '負方進入季軍賽'],
+  swipe: ['左右滑动查看完整对阵图', 'Swipe to see the complete bracket', '좌우로 밀어 전체 대진표 보기', '左右滑動查看完整對陣圖'],
   choose: ['选一支队，', 'Choose a team.', '팀을 선택하고,', '選一支隊，'],
   follow: ['看它如何晋级。', 'Follow its route.', '진출 경로를 확인하세요.', '看它如何晉級。'],
   intro: ['沿加赛、半决赛和名次赛查看去向；选择队伍，读取每一步的对手、条件与比赛时间。', 'Choose a team to follow its opponents, conditions and start times through qualification and the medal matches.', '팀을 선택해 결정전부터 순위 결정전까지 상대, 진출 조건, 시작 시간을 확인하세요.', '沿加賽、準決賽和名次賽查看去向；選擇隊伍，讀取每一步的對手、條件與比賽時間。'],
