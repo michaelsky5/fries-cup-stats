@@ -13,6 +13,9 @@
   overflow-wrap: anywhere;
 }
 
+/* Fixed newspaper typography matches the standalone renderer in every UI locale. */
+[data-newspaper-sheet] { --paper-font:"FCA Harmony",sans-serif; word-break:normal; overflow-wrap:normal; }
+
 .sys-booting {
   min-height: 100vh;
   display: flex;
