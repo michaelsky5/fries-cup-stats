@@ -121,7 +121,7 @@
 .briefEmblem { width:21px; height:21px; flex:0 0 21px; display:flex; align-items:center; justify-content:center; }
 .briefEmblem img { width:100%; height:100%; object-fit:contain; }
 .brief p { font:12px/1.45 var(--paper-font); margin-bottom:0; }
-.brief .sourceLink { font-size:10px; margin-top:2px; }
+.brief .sourceLink { display:none; }
 .emptyBrief { font-size:14px; }
 .peopleNote { display:flex; flex:1; flex-direction:column; min-height:0; margin-top:9px; padding-top:5px; }
 .peopleNote > .columnLabel { margin-bottom:5px; }
