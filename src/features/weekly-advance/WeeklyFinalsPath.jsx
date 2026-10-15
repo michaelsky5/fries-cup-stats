@@ -1,5 +1,6 @@
 import { pickUiLocale } from '../../lib/uiText.js'
 import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
+import signal from '../../components/advance/AdvanceSignal.module.css'
 import styles from './WeeklyPlayoffBracket.module.css'
 
 const text = (locale, ...values) => pickUiLocale(locale, ...values)
@@ -19,14 +20,14 @@ const steps = [
 ]
 
 export default function WeeklyFinalsPath({ locale }) {
-  return <section id="weekly-major" className={styles.section} aria-labelledby="weekly-finals-title" data-weekly-finals="pending">
-    <header className={styles.heading}>
-      <div><p className={styles.eyebrow}>03 / FCW FINALS</p><h2 id="weekly-finals-title">{getWeeklyPhaseLabel('MAJOR', locale)}</h2><p>{text(locale, '沿资格、公示对阵到冠军，后续安排在这里展开。', 'Follow eligibility, announced matchups and the route to the title.', '참가 자격, 공식 대진, 우승까지의 경로를 이곳에서 확인하세요.', '沿資格、公示對陣到冠軍，後續安排在這裡展開。')}</p></div>
-      <span className={styles.finalsHeadingBadge}>{text(locale, '等待正式公布', 'Awaiting announcement', '공식 발표 대기', '等待正式公布')}</span>
+  return <section id="weekly-major" className={`${signal.playoffWorkspace} ${styles.section} ${styles.finalsSection}`} data-chapter="03" aria-labelledby="weekly-finals-title" data-weekly-finals="pending">
+    <header className={signal.routeChapterHeading}>
+      <span>03 / FCW FINALS</span><h2 id="weekly-finals-title">{getWeeklyPhaseLabel('MAJOR', locale)}{' '}<em>{text(locale, '等待正式公布。', 'Awaiting announcement.', '공식 발표 대기', '等待正式公布。')}</em></h2><p>{text(locale, '沿资格、公示对阵到冠军，后续安排在这里展开。', 'Follow eligibility, announced matchups and the route to the title.', '참가 자격, 공식 대진, 우승까지의 경로를 이곳에서 확인하세요.', '沿資格、公示對陣到冠軍，後續安排在這裡展開。')}</p>
     </header>
+    <div className={signal.routeStory}><div className={styles.finalsStatus}><strong>FCW FINALS / ROUTE</strong><span>{text(locale, '等待正式公布', 'Awaiting announcement', '공식 발표 대기', '等待正式公布')}</span></div>
     <div className={styles.finalsPath} aria-label={text(locale, '巅峰赛晋级路径', 'Finals advancement path', '파이널 진출 경로', '巔峰賽晉級路徑')}>
       {steps.map((step, index) => <article key={index} className={styles.finalsStep}><span>{String(index + 1).padStart(2, '0')}</span><h3>{text(locale, ...step.title)}</h3><p>{text(locale, ...step.detail)}</p></article>)}
     </div>
-    <p className={styles.pointsNote}>{text(locale, '赛段成绩不自动产生巅峰赛资格，具体资格与赛制另行公布。', 'Cycle results do not automatically grant Finals entry. Eligibility and format will be announced separately.', '대회 성적만으로 파이널 참가 자격이 자동 부여되지 않습니다. 자격 및 경기 방식은 별도 발표됩니다.', '賽段成績不自動產生巔峰賽資格，具體資格與賽制另行公布。')} <a href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{text(locale, '查看赛事公示', 'Event announcements', '대회 공지', '查看賽事公示')} ↗</a></p>
+    <p className={styles.finalsNote}>{text(locale, '赛段成绩不自动产生巅峰赛资格，具体资格与赛制另行公布。', 'Cycle results do not automatically grant Finals entry. Eligibility and format will be announced separately.', '대회 성적만으로 파이널 참가 자격이 자동 부여되지 않습니다. 자격 및 경기 방식은 별도 발표됩니다.', '賽段成績不自動產生巔峰賽資格，具體資格與賽制另行公布。')} <a href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{text(locale, '查看赛事公示', 'Event announcements', '대회 공지', '查看賽事公示')} ↗</a></p></div>
   </section>
 }

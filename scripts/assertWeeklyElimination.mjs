@@ -4,8 +4,90 @@ import { buildWeeklyPlayoffFixture } from './lib/weeklyPlayoffFixture.mjs'
 import { buildWeeklyAdvance } from '../src/features/weekly-advance/weeklyAdvanceModel.js'
 import { confirmedWeeklyWinner } from '../src/features/weekly-advance/weeklyEliminationModel.js'
 import { buildWeeklyBracketPresentation } from '../src/features/weekly-advance/weeklyBracketPresentation.js'
+import { buildWeeklyRouteModel } from '../src/features/weekly-advance/weeklyRouteModel.js'
+import { C1_PLAYOFF_SCHEDULE } from '../src/features/weekly-advance/weeklyApprovedSchedules.js'
+import { routeTime } from '../src/features/weekly-advance/weeklyRoutePresentation.js'
 
 const model = state => buildWeeklyAdvance(buildWeeklyPlayoffFixture(state)).elimination
+
+function c1RouteFixture() {
+  const ids = [...C1_PLAYOFF_SCHEDULE.seedTeamIds, ...C1_PLAYOFF_SCHEDULE.qualifierTeamIds]
+  const teams = ids.map((id, index) => ({ id, short: ['404', 'BBB', 'MH', 'SPS', 'TS'][index] }))
+  const match = { id: C1_PLAYOFF_SCHEDULE.qualifierMatchId, scheduled_at: '2026-10-16T13:00:00.000Z', format: 'FT2', status: 'PENDING' }
+  const qualifier = { id: match.id, type: 'MATCH', match, state: 'pending', a: teams[3], b: teams[4], scoreA: null, scoreB: null, winner: null }
+  return { teams, model: { seeds: [], seedsCurrent: false, qualifiers: [{ id: 'q1', qualification_current: true, outcome_team_ids: [], items: [qualifier] }], semifinals: [], finals: [], thirdPlaces: [], champion: null, teamById: new Map(teams.map(team => [team.id, team])), finalists: [], qualificationRequired: true, finalFormat: 'FT3' }, options: { cycle: { id: C1_PLAYOFF_SCHEDULE.cycleId }, seasonId: 'FCW2026' } }
+}
+
+test('C1 approved schedule explains four conditional matches without manufacturing official seeds or results', () => {
+  const fixture = c1RouteFixture(), before = structuredClone(fixture.model)
+  const route = buildWeeklyRouteModel(fixture.model, { ...fixture.options, selectedTeamId: fixture.teams[0].id })
+  assert.equal(route.approvedPlan, true)
+  assert.deepEqual(route.route.map(node => node.kind), ['SEMIFINAL', 'FINAL', 'THIRD_PLACE'])
+  assert.deepEqual(route.route.map(node => node.scheduledAt), ['2026-10-17T12:00:00.000Z', '2026-10-18T13:00:00.000Z', '2026-10-18T11:30:00.000Z'])
+  assert.equal(route.hasFork, true)
+  assert.equal(route.entrants.length, 5)
+  assert.equal(route.nodes.filter(node => node.match).length, 1)
+  assert.equal(route.nodes.filter(node => node.planned).length, 4)
+  assert.equal(route.champion, null)
+  assert.equal(route.officialSeed, null)
+  assert.deepEqual(fixture.model, before)
+})
+
+test('qualifier participants see qualification before their semifinal, and only reviewed qualification removes the loser route', () => {
+  const fixture = c1RouteFixture()
+  const selected = fixture.teams[4].id
+  const read = () => buildWeeklyRouteModel(fixture.model, { ...fixture.options, selectedTeamId: selected })
+  assert.deepEqual(read().route.map(node => node.kind), ['QUALIFIER', 'SEMIFINAL', 'FINAL', 'THIRD_PLACE'])
+  const round = fixture.model.qualifiers[0]
+  round.items[0].winner = fixture.teams[3]
+  round.qualification_current = false
+  round.outcome_team_ids = [fixture.teams[3].id]
+  assert.equal(read().route.length, 4, 'An outcome pending review cannot eliminate a candidate.')
+  round.qualification_current = true
+  round.outcome_team_ids = [fixture.teams[0].id]
+  assert.equal(read().route.length, 4, 'An outcome naming a different entrant is not a qualifier result.')
+  round.outcome_team_ids = [fixture.teams[3].id]
+  assert.deepEqual(read().route.map(node => node.kind), ['QUALIFIER'])
+  assert.equal(read().hasFork, false)
+})
+
+test('published semifinal times and winners override C1 arrangements and split final from third-place participants', () => {
+  const fixture = c1RouteFixture()
+  fixture.model.qualifiers[0].outcome_team_ids = [fixture.teams[3].id]
+  const semifinal = (id, a, b, winner, time) => ({ id, type: 'MATCH', a, b, winner, state: 'complete', scoreA: 3, scoreB: 1, match: { id, format: 'FT3', scheduled_at: time } })
+  fixture.model.semifinals = [{ items: [semifinal('sf1', fixture.teams[0], fixture.teams[3], fixture.teams[0], '2026-10-17T12:30:00.000Z'), semifinal('sf2', fixture.teams[1], fixture.teams[2], fixture.teams[1], '2026-10-17T14:00:00.000Z')] }]
+  const winner = buildWeeklyRouteModel(fixture.model, { ...fixture.options, selectedTeamId: fixture.teams[0].id })
+  assert.deepEqual(winner.route.map(node => node.kind), ['SEMIFINAL', 'FINAL'])
+  assert.equal(winner.route[0].scheduledAt, '2026-10-17T12:30:00.000Z')
+  const loser = buildWeeklyRouteModel(fixture.model, { ...fixture.options, selectedTeamId: fixture.teams[2].id })
+  assert.deepEqual(loser.route.map(node => node.kind), ['SEMIFINAL', 'THIRD_PLACE'])
+  assert.equal(loser.route[0].estimated, false, 'A published time supersedes an estimated time.')
+  assert.equal(loser.hasFork, false)
+  assert.equal(loser.champion, null)
+})
+
+test('C1 arrangements require the exact cycle, event, participant identities and published qualifier', () => {
+  const fixture = c1RouteFixture()
+  for (const patch of [{ cycle: { id: 'other-cycle' } }, { seasonId: 'FCR2026' }]) {
+    const route = buildWeeklyRouteModel(fixture.model, { ...fixture.options, ...patch })
+    assert.equal(route.approvedPlan, false)
+    assert.equal(route.nodes.some(node => node.kind === 'THIRD_PLACE'), false)
+    assert.equal(route.nodes.some(node => node.planned), false)
+  }
+  fixture.model.teamById.delete(fixture.teams[2].id)
+  assert.equal(buildWeeklyRouteModel(fixture.model, fixture.options).approvedPlan, false)
+})
+
+test('generic two-team published seeds retain a direct final without invented semifinal or third-place', () => {
+  const fixture = c1RouteFixture()
+  fixture.model.qualifiers = []
+  fixture.model.seedsCurrent = true
+  fixture.model.seeds = fixture.teams.slice(0, 2).map((team, index) => ({ id: team.id, team, seed: index + 1 }))
+  const route = buildWeeklyRouteModel(fixture.model, fixture.options)
+  assert.deepEqual(route.nodes.map(node => node.kind), ['FINAL'])
+  assert.equal(route.officialSeed, 1)
+  assert.equal(route.hasPlannedFixtures, false)
+})
 
 test('unpublished bracket explains seed positions without claiming entrants or matches', () => {
   const source = model('pending-seeds'), before = structuredClone(source)
@@ -121,7 +203,25 @@ test('three entrants retain a real published bye without a fictional match', () 
   assert.equal(bye.type, 'BYE'); assert.equal(bye.match, null)
   assert.equal(result.finalists[0].id, bye.a.id)
   assert.equal(result.champion, null)
+  const route = buildWeeklyRouteModel(result, { cycle: { id: 'sample-cycle-1' }, seasonId: 'FCW2026', selectedTeamId: bye.a.id })
+  const byeNode = route.nodes.find(node => node.type === 'BYE')
+  assert.equal(byeNode.b, null)
+  assert.equal(byeNode.format, 'BYE')
+  assert.equal(byeNode.scheduledAt, null)
+  assert.deepEqual(byeNode.candidateIds, [bye.a.id])
+  assert.equal(routeTime(byeNode, 'zh-CN'), '直接晋级，无需比赛')
 });
+
+test('route dates preserve date-only official schedules and current final formats', () => {
+  const fixture = c1RouteFixture()
+  fixture.model.finalFormat = 'FT4'
+  const route = buildWeeklyRouteModel(fixture.model, fixture.options)
+  assert.equal(route.nodes.find(node => node.kind === 'FINAL').format, 'FT4')
+  const dateOnly = { match: { scheduled_at: '2026-10-16' }, scheduledAt: '2026-10-16', plannedTime: false }
+  assert.equal(routeTime(dateOnly, 'zh-CN').includes('08:00'), false)
+  assert.equal(routeTime({ scheduledAt: '2026-10-17T12:00:00.000Z' }, 'zh-CN').includes('20:00'), true)
+  assert.equal(routeTime({ scheduledAt: null }, 'en-US'), 'Time to be announced')
+})
 
 test('qualifier rounds and published outcomes remain separate from playoff seeds and points', () => {
   const db = buildWeeklyPlayoffFixture('qualifiers'), points = structuredClone(db.weekly_competition.cycles[1].standings)
