@@ -9,7 +9,7 @@ import { getLocationPath, getRestoreScrollY, getReturnState, getSavedReturnScrol
 import { WeeklyCyclePicker } from '../weekly-overview/WeeklyNavigation.jsx'
 import { weeklyScore } from '../weekly-overview/weeklyOverviewModel.js'
 import { weeklyCycleTitle, weeklyPeriodPath, weeklyStatusLabel, weeklyTeamShort, weeklyWeekTitle } from '../weekly-overview/weeklyPresentation.js'
-import { buildWeeklyAdvance, resetWeeklyAdvanceSearch, weeklyPublishedRank } from './weeklyAdvanceModel.js'
+import { buildWeeklyAdvance, getWeeklyAdvancePhase, getWeeklyAdvancePhasePath, resetWeeklyAdvanceSearch, weeklyPublishedRank } from './weeklyAdvanceModel.js'
 import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
 import WeeklyPlayoffBracket from './WeeklyPlayoffBracket.jsx'
 import WeeklyFinalsPath from './WeeklyFinalsPath.jsx'
@@ -43,19 +43,16 @@ export default function SignalWeeklyAdvance() {
   }), [db, params, followedKey])
   const { cycles, cycle, week, rows, selected, journey, isPilot, hasStandings } = model
   const cycleId = cycle?.id
+  const phase = getWeeklyAdvancePhase(params, { activeStage: model.activeStage, hash: location.hash })
   const restoreY = getRestoreScrollY(location.state) ?? (navigationType === 'POP' ? getSavedReturnScroll(getLocationPath(location)) : null)
   useEffect(() => { if (restoreY !== null) restoreWindowScroll(restoreY) }, [location.key, restoreY])
   useEffect(() => {
-    if (cycleId && location.hash === '#weekly-playoffs' && restoreY === null) {
-      document.getElementById('weekly-playoffs')?.scrollIntoView({ block: 'start', behavior: 'instant' })
-    }
-  }, [cycleId, location.hash, restoreY])
-  useEffect(() => {
-    if (!cycle || params.get('cycle') === cycle.id) return
+    if (!cycleId || params.get('cycle') === cycleId && params.get('phase') === phase) return
     const next = new URLSearchParams(params)
-    next.set('cycle', cycle.id)
+    next.set('cycle', cycleId)
+    next.set('phase', phase)
     navigate({ search: `?${next}`, hash: location.hash }, { replace: true, preventScrollReset: true })
-  }, [cycle, params, navigate, location.hash])
+  }, [cycleId, phase, params, navigate, location.hash])
   useEffect(() => {
     if (!window.matchMedia('(max-width: 800px)').matches) {
       if (journeyRef.current) journeyRef.current.scrollTop = 0
@@ -100,21 +97,21 @@ export default function SignalWeeklyAdvance() {
     { id: 'major', title: getWeeklyPhaseLabel('MAJOR', locale), note: eventCenterText('majorStageNote', locale) }
   ]
 
-  return <div className={styles.page} data-weekly-advance="true">
+  return <div className={styles.page} data-weekly-advance="true" data-weekly-phase={phase}>
     <header className={styles.heading}>
       <div><p className={styles.eyebrow}>FRIES CUP / WEEKLY ADVANCE</p><h1>{eventCenterText('advanceTitle', locale)}</h1><p>{eventCenterText('advanceIntro', locale)}</p></div>
       <div className={styles.headingActions}>
-        <WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, teamId: null })} />
+        <WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, teamId: null, query: null, followed: null, view: null, bracket: null })} />
         <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">↗</span><small>{t(uiText("回到本周对阵", locale), 'This week’s matchups')}</small></Link>
       </div>
     </header>
     <nav className={advanceStyles.phaseIndex} style={{ '--advance-phase-count': stages.length }} aria-label={t(uiText("周赛晋级路径", locale), 'Weekly advancement path')}>
       <span className={advanceStyles.phaseIndexLabel}><img src="/logos/fries-cup-symbol.png" alt="" /><b>FC / ROUTE</b></span>
-      <div className={advanceStyles.phaseLinks}>{stages.map((stage, index) => <a key={stage.id} href={`#weekly-${stage.id}`} data-status={model.activeStage === stage.id ? 'current' : 'pending'} aria-current={model.activeStage === stage.id ? 'step' : undefined}><span>{String(index + 1).padStart(2, '0')} / {stage.title}</span><small>{stage.note}</small></a>)}</div>
-      <span className={advanceStyles.phaseStamp}><b>{String(Math.max(1, stages.findIndex(stage => stage.id === model.activeStage) + 1)).padStart(2, '0')}</b> / 03</span>
+      <div className={advanceStyles.phaseLinks}>{stages.map((stage, index) => <Link key={stage.id} to={getWeeklyAdvancePhasePath(params, stage.id)} data-status={model.activeStage === stage.id ? 'current' : 'pending'} aria-current={phase === stage.id ? 'page' : undefined}><span>{String(index + 1).padStart(2, '0')} / {stage.title}</span><small>{stage.note}</small></Link>)}</div>
+      <span className={advanceStyles.phaseStamp}><b>{String(stages.findIndex(stage => stage.id === phase) + 1).padStart(2, '0')}</b> / 03</span>
     </nav>
 
-    <section className={styles.workspace} id="weekly-points" aria-labelledby="weekly-points-title">
+    {phase === 'points' && <section className={styles.workspace} id="weekly-points" aria-labelledby="weekly-points-title">
       <div className={styles.ranking}>
         <header className={styles.sectionHeading}><div><p className={styles.eyebrow}>{weeklyCycleTitle(cycle, locale)}</p><h2 id="weekly-points-title">{isPilot ? t(uiText("队伍比赛记录", locale), 'Team match records') : t(uiText("赛段积分", locale), 'Cycle points')}<span aria-live="polite">{t(uiText("{0} 支队伍", locale, [rows.length]), `${rows.length} teams`)}</span></h2></div><span className={styles.selectionHint}>{eventCenterText('advanceSelectHint', locale)} ↗</span></header>
         <p className={styles.pointsIntro}>{isPilot ? t(uiText("本赛段不计积分，比赛记录照常保留。", locale), 'This cycle keeps match records without awarding standings points.') : eventCenterText('latestCyclePoints', locale)}</p>
@@ -157,9 +154,9 @@ export default function SignalWeeklyAdvance() {
           <Link className={styles.scheduleLink} to={withSeason(`/matches?cycle=${encodeURIComponent(cycle.id)}&week=all&teamId=${encodeURIComponent(selected.id)}`)}>{t(uiText("查看该队完整赛程", locale), 'View this team’s full schedule')} <span aria-hidden="true">↗</span></Link>
         </> : <div className={styles.journeyEmpty}><span>TEAM / RESULTS</span><h2 id="weekly-team-title">{eventCenterText('advanceEmptyTitle', locale)}</h2><p>{eventCenterText('advanceEmptyIntro', locale)}</p></div>}
       </aside>
-    </section>
+    </section>}
 
-    <WeeklyPlayoffBracket model={model.elimination} {...{ cycle, locale, seasonId, withSeason, returnProps }} selectedTeamId={selected?.id} onSelectTeam={id => change({ teamId: id, query: null, followed: null })} />
-    <WeeklyFinalsPath locale={locale} />
+    {phase === 'playoffs' && <WeeklyPlayoffBracket model={model.elimination} {...{ cycle, locale, seasonId, withSeason, returnProps }} selectedTeamId={params.get('teamId')} onSelectTeam={id => change({ teamId: id, query: null, followed: null })} />}
+    {phase === 'major' && <WeeklyFinalsPath locale={locale} />}
   </div>
 }

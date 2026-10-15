@@ -1,10 +1,40 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { buildWeeklyOverviewFixture } from './lib/weeklyOverviewFixture.mjs'
-import { buildWeeklyAdvance, resetWeeklyAdvanceSearch, weeklyPublishedRank, weeklyTeamMatch } from '../src/features/weekly-advance/weeklyAdvanceModel.js'
+import { buildWeeklyAdvance, getWeeklyAdvancePhase, getWeeklyAdvancePhasePath, resetWeeklyAdvanceSearch, weeklyPublishedRank, weeklyTeamMatch } from '../src/features/weekly-advance/weeklyAdvanceModel.js'
 import { weeklyScore } from '../src/features/weekly-overview/weeklyOverviewModel.js'
 import { getWeeklyNavigationPath } from '../src/components/layout/publicNavigation.js'
 import { readReturnState } from '../src/lib/navigationState.js'
+
+test('explicit weekly phases override cycle progress and old section anchors', () => {
+  for (const phase of ['points', 'playoffs', 'major']) {
+    assert.equal(getWeeklyAdvancePhase(`phase=${phase}`, { activeStage: 'playoffs', hash: '#weekly-points' }), phase)
+  }
+})
+
+test('existing shared weekly anchors open their matching phase', () => {
+  for (const [hash, phase] of [['#weekly-points', 'points'], ['#weekly-playoffs', 'playoffs'], ['#weekly-full-bracket', 'playoffs'], ['#weekly-major', 'major']]) {
+    assert.equal(getWeeklyAdvancePhase('', { activeStage: 'points', hash }), phase)
+  }
+})
+
+test('unknown or absent phase uses known cycle progress without inventing Finals', () => {
+  assert.equal(getWeeklyAdvancePhase('phase=unknown', { activeStage: 'playoffs' }), 'playoffs')
+  assert.equal(getWeeklyAdvancePhase('', { activeStage: null }), 'points')
+  assert.equal(getWeeklyAdvancePhase('phase=swiss'), 'points')
+})
+
+test('phase page links preserve context, selection and filters without mutating the current URL', () => {
+  const params = new URLSearchParams('season=FCW2026&cycle=c1&teamId=a&lang=en&query=test&followed=1&view=team&bracket=full')
+  const target = new URL(getWeeklyAdvancePhasePath(params, 'major'), 'https://example.test')
+  assert.equal(target.pathname, '/advance')
+  assert.equal(target.hash, '')
+  for (const key of ['season', 'cycle', 'teamId', 'lang', 'query', 'followed']) assert.equal(target.searchParams.get(key), params.get(key))
+  assert.equal(target.searchParams.get('phase'), 'major')
+  assert.equal(target.searchParams.has('view'), false)
+  assert.equal(target.searchParams.has('bracket'), false)
+  assert.equal(params.get('view'), 'team')
+})
 
 test('published order, ranks and ties are preserved without a new tiebreaker', () => {
   const db = buildWeeklyOverviewFixture()
