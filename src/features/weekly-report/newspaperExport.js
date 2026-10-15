@@ -56,7 +56,7 @@ export async function captureNewspaperSheet(sheet) {
   const body = printable.querySelector('[data-paper-body]')
   if (!footer || !body || body.scrollHeight > body.clientHeight+1 || printable.scrollHeight > PAPER_SIZE.height+1 || footer.offsetTop+footer.offsetHeight > PAPER_SIZE.height) throw new Error('报纸版面超出页边界，请重试或反馈这一期。')
   const {toCanvas} = await import('html-to-image')
-  const canvas=await toCanvas(printable,{width:PAPER_SIZE.width,height:PAPER_SIZE.height,pixelRatio:2,backgroundColor:'#f5f1e8',preferredFontFormat:'woff2',style:{transform:'none',position:'relative',inset:'auto',left:'0',top:'0'}})
+  const canvas=await toCanvas(printable,{width:PAPER_SIZE.width,height:PAPER_SIZE.height,pixelRatio:2,backgroundColor:'#f5f1e8',style:{transform:'none',position:'relative',inset:'auto',left:'0',top:'0'}})
   const probe=document.createElement('canvas');probe.width=20;probe.height=28
   const context=probe.getContext('2d');context.drawImage(canvas,0,0,20,28)
   const pixels=context.getImageData(0,0,20,28).data
