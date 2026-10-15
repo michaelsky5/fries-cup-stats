@@ -1,98 +1,116 @@
-import { Link } from 'react-router-dom'
+import { useId } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
-import { pickUiLocale } from '../../lib/uiText.js'
-import { formatMatchSchedule } from '../../lib/scheduleFormat.js'
-import { getMatchDisplayCode } from '../../lib/weeklyMatchIdentity.js'
+import AdvanceTeamPicker from '../../components/advance/AdvanceTeamPicker.jsx'
 import { weeklyStatusLabel, weeklyTeamShort } from '../weekly-overview/weeklyPresentation.js'
-import { buildWeeklyBracketPresentation } from './weeklyBracketPresentation.js'
+import { buildWeeklyRouteModel } from './weeklyRouteModel.js'
+import { routeSourceLabel, routeText as text, routeTime, routeTitle } from './weeklyRoutePresentation.js'
+import signal from '../../components/advance/AdvanceSignal.module.css'
 import styles from './WeeklyPlayoffBracket.module.css'
 
-const labels = {
-  title: ['季后赛签表', 'Playoff bracket', '플레이오프 대진표', '季後賽籤表'],
-  intro: ['四强单败 · 对阵与晋级沿用正式公示', 'Four-team single elimination · Published matchups and results', '4팀 싱글 엘리미네이션 · 공식 대진 및 결과', '四強單敗 · 對陣與晉級沿用正式公示'],
-  schedule: ['查看赛段赛程', 'Cycle schedule', '대회 일정', '查看賽段賽程'],
-  seed: ['种子', 'Seed', '시드', '種子'],
-  waiting: ['等待入围名单公布', 'Awaiting published entrants', '진출 팀 발표 대기', '等待入圍名單公布'],
-  seedsPending: ['加赛已完成，等待种子公布', 'Qualifiers complete. Awaiting published seeds', '결정전 완료. 공식 시드 발표 대기', '加賽已完成，等待種子公布'],
-  seedsPendingNote: ['正式种子和季后赛对阵尚待公布。', 'Official seeds and playoff matchups are still pending.', '공식 시드와 플레이오프 대진 발표를 기다리고 있습니다.', '正式種子和季後賽對陣尚待公布。'],
-  waitingNote: ['积分排名与入围名单分别公布。正式种子和对阵公布后，在这里查看晋级路径。', 'Standings and entrants are published separately. Seeds and matchups appear here once announced.', '순위와 진출 팀은 별도로 발표됩니다. 공식 시드와 대진 발표 후 이곳에서 확인할 수 있습니다.', '積分排名與入圍名單分別公布。正式種子和對陣公布後，在這裡查看晉級路徑。'],
-  qualification: ['晋级名额需加赛确定', 'Qualification requires a tiebreak', '진출권 결정전 필요', '晉級名額需加賽確定'],
-  draw: ['种子顺序待公开抽签', 'Seed order awaits a public draw', '공개 추첨으로 시드 순서 결정', '種子順序待公開抽籤'],
-  qualifier: ['晋级加赛', 'Tiebreak qualifier', '진출권 결정전', '晉級加賽'],
-  round: ['第 {0} 轮', 'Round {0}', '{0}라운드', '第 {0} 輪'],
-  qualified: ['已公布入围队伍', 'Published qualifiers', '발표된 진출 팀', '已公布入圍隊伍'],
-  semifinal: ['半决赛', 'Semifinal', '준결승', '準決賽'],
-  thirdPlace: ['季军赛', 'Third-place match', '3위 결정전', '季軍賽'],
-  final: ['决赛', 'Final', '결승', '決賽'],
-  finalPending: ['等待决赛对阵公布', 'Awaiting the final matchup', '결승 대진 발표 대기', '等待決賽對陣公布'],
-  winner: ['半决赛 {0} 胜者', 'Semifinal {0} winner', '준결승 {0} 승자', '準決賽 {0} 勝者'],
-  bye: ['本轮轮空', 'Round bye', '이번 라운드 부전승', '本輪輪空'],
-  qualifierReview: ['晋级依据待复核，暂不展示入围结论。', 'Qualification awaits review. Entrants are not confirmed.', '진출 근거 재검토 대기 중입니다. 진출 팀은 아직 확정되지 않았습니다.', '晉級依據待複核，暫不展示入圍結論。'],
-  tbd: ['待定', 'TBD', '미정', '待定'],
-  awaitingMatchups: ['种子已公布，等待对阵发布。', 'Seeds are published. Matchups are pending.', '시드가 발표되었습니다. 대진 발표를 기다리고 있습니다.', '種子已公布，等待對陣發布。'],
-  stale: ['种子待复核，保留已公布比赛记录。', 'Seeds await review. Published match records remain available.', '시드 재검토 대기 중입니다. 발표된 경기 기록은 유지됩니다.', '種子待複核，保留已公布比賽紀錄。'],
-  champion: ['赛段冠军', 'Cycle champion', '대회 우승 팀', '賽段冠軍'],
-  points: ['加赛与季后赛不增加赛段积分。', 'Qualifiers and playoffs do not add cycle points.', '결정전과 플레이오프는 대회 포인트에 합산되지 않습니다.', '加賽與季後賽不增加賽段積分。']
-}
-Object.assign(labels, {
-  seedSlot: ['{0} 号种子 · 待公布', 'Seed {0} · To be announced', '{0}번 시드 · 발표 예정', '{0} 號種子 · 待公布'],
-  fixturePending: ['对阵待发布', 'Matchup pending', '대진 발표 대기', '對陣待發布'],
-  structure: ['签表结构 · 正式对阵待公布', 'Bracket structure · Matchups pending', '대진 구조 · 공식 대진 발표 대기', '籤表結構 · 正式對陣待公布'],
-  structureNote: ['占位只说明晋级路径；队伍和开赛时间沿用正式发布。', 'Placeholders explain the route. Teams and start times follow the official publication.', '자리 표시는 진출 경로만 설명합니다. 팀과 시작 시간은 공식 발표를 따릅니다.', '佔位只說明晉級路徑；隊伍和開賽時間沿用正式發布。'],
-  wins: ['获胜晋级', 'Win to advance', '승리 시 진출', '獲勝晉級'],
-  losses: ['半决赛负方', 'Semifinal losers', '준결승 패자', '準決賽負方'],
-  championPending: ['冠军待产生', 'Champion to be decided', '우승 팀 미정', '冠軍待產生'],
-  qualifierPath: ['通过加赛确定入围名额', 'Qualifiers decide the remaining places', '결정전으로 남은 진출권 결정', '透過加賽確定入圍名額']
-})
-const copy = (key, locale) => pickUiLocale(locale, ...labels[key])
-const idOf = team => team?.id || team?.team_id
+const idOf = team => String(team?.id || team?.team_id || '')
+const fullName = team => team?.name || team?.team_name || weeklyTeamShort(team)
+const resultFor = (node, id) => node.winner ? idOf(node.winner) === id ? 'win' : 'loss' : 'pending'
 
-function MatchCard({ item, title, locale, seasonId, withSeason, returnProps, selectedTeamId }) {
-  const selected = Boolean(selectedTeamId) && [item.a, item.b].some(team => idOf(team) === selectedTeamId)
-  const winnerId = idOf(item.winner)
-  const schedule = item.match ? formatMatchSchedule(item.match, { locale }) : null
-  const pending = item.type === 'PLACEHOLDER'
-  const sourceLabel = index => {
-    const source = item.sources?.[index]
-    return source ? copy(source.kind === 'SEED' ? 'seedSlot' : 'winner', locale).replace('{0}', source.number) : copy('tbd', locale)
-  }
-  const label = [title, item.match?.format, weeklyTeamShort(item.a), item.scoreA == null ? 'VS' : `${item.scoreA} : ${item.scoreB}`,
-    item.b ? weeklyTeamShort(item.b) : copy('bye', locale), item.match ? weeklyStatusLabel(item.state, locale) : ''].filter(Boolean).join(' · ')
+function RouteCard({ node, route, locale, seasonId, withSeason, returnProps }) {
+  const activeId = idOf(route.activeTeam)
+  const opponent = route.opponent(node)
+  const condition = node.kind === 'FINAL' ? 'afterWin' : node.kind === 'THIRD_PLACE' ? 'afterLoss'
+    : node.kind === 'SEMIFINAL' && route.route[0]?.kind === 'QUALIFIER' ? 'afterQualifier' : null
+  const scoreVisible = node.match && node.scoreA != null && node.scoreB != null
+  const score = idOf(node.a) === activeId ? [node.scoreA, node.scoreB] : [node.scoreB, node.scoreA]
   const content = <>
-    <header><span>{title}</span><b>{item.match?.format || item.format || (item.type === 'BYE' ? 'BYE' : '')}</b></header>
-    <div className={styles.sides}>{[item.a, item.b].map((team, index) => <div className={styles.side} key={index} data-winner={team && idOf(team) === winnerId || undefined}>
-      {team ? <><span className={styles.seed}>{team.seed ? `#${team.seed}` : '—'}</span><TeamLogo team={team} seasonId={seasonId} className={styles.logo} /><strong>{weeklyTeamShort(team)}</strong></> : <><span className={styles.pendingMark} aria-hidden="true">{pending && item.sources?.[index]?.kind === 'SEED' ? `#${item.sources[index].number}` : '↗'}</span><strong className={styles.placeholder}>{item.type === 'BYE' ? copy('bye', locale) : sourceLabel(index)}</strong></>}
-      {item.type !== 'BYE' && <b className={styles.score}>{index === 0 ? item.scoreA ?? '—' : item.scoreB ?? '—'}</b>}
-    </div>)}</div>
-    <footer><span>{pending ? copy('fixturePending', locale) : item.type === 'BYE' ? copy('bye', locale) : weeklyStatusLabel(item.state, locale)}</span><span>{schedule?.hasSchedule ? schedule.label : item.type === 'MATCH' ? copy('tbd', locale) : ''}</span></footer>
-    {item.match && <small className={styles.matchCode}>{getMatchDisplayCode(item.match)} <span aria-hidden="true">↗</span></small>}
+    <span className={signal.journeyNodeIndex}>{node.format || 'PLAYOFFS'} / {node.match ? text('published', locale) : text(node.planned ? 'planned' : 'pending', locale)}</span>
+    <strong className={signal.journeyNodeRound}>{routeTitle(node, locale)}</strong>
+    <span className={signal.journeyOpponent}>{opponent.team ? <TeamLogo team={opponent.team} seasonId={seasonId} className={signal.journeyOpponentLogo} /> : <span className={styles.sourceIcon} aria-hidden="true">↗</span>}<b>{node.type === 'BYE' ? text('bye', locale) : opponent.team ? weeklyTeamShort(opponent.team) : routeSourceLabel(opponent.source, route, locale)}</b></span>
+    <time className={styles.routeTime} dateTime={node.scheduledAt || undefined}>{routeTime(node, locale)}</time>
+    {scoreVisible && <span className={styles.routeScore}>{score[0]} : {score[1]}</span>}
+    <em className={signal.journeyResult}>{node.type === 'BYE' ? text('bye', locale) : node.match ? weeklyStatusLabel(node.state, locale) : condition ? text(condition, locale) : text(node.planned ? 'conditional' : 'pending', locale)}</em>
+    {node.match && <span className={styles.detailsArrow} aria-hidden="true">↗</span>}
   </>
-  return item.match ? <Link className={styles.match} aria-label={label} data-state={item.state} data-selected={selected || undefined} to={withSeason(`/matches/${encodeURIComponent(item.match.id)}`)} {...returnProps}>{content}</Link>
-    : <article className={styles.match} data-state={pending ? 'unpublished' : 'bye'} data-selected={selected || undefined} data-bracket-placeholder={pending || undefined}>{content}</article>
+  return node.match ? <Link className={styles.routeCard} to={withSeason(`/matches/${encodeURIComponent(node.match.id)}`)} {...returnProps}>{content}</Link>
+    : <div className={styles.routeCard} data-planned-route={node.planned || undefined}>{content}</div>
+}
+
+function TeamRoute({ route, locale, seasonId, withSeason, returnProps }) {
+  const marker = useId().replaceAll(':', '')
+  const activeId = idOf(route.activeTeam)
+  const hasQualifier = route.route.some(node => node.kind === 'QUALIFIER')
+  const positions = new Map(route.route.map(node => [node.key, {
+    x: node.kind === 'QUALIFIER' ? 28 : node.kind === 'SEMIFINAL' ? hasQualifier ? 340 : 80 : 720,
+    y: node.kind === 'THIRD_PLACE' ? 322 : 82
+  }]))
+  return <div className={`${signal.journeyMapViewport} ${styles.routeViewport}`} tabIndex={0} role="region" aria-label={`${weeklyTeamShort(route.activeTeam)} · ${text('route', locale)}`} data-weekly-team-route={activeId}>
+    {route.hasFork && <p className={styles.mobileForkNote}>{text('forkNote', locale)}</p>}
+    <div className={`${signal.journeyMapCanvas} ${styles.routeCanvas}`}>
+      <div className={signal.journeyLaneLabel} data-lane="upper"><span>ENTRY / ADVANCE</span><small>{text('entry', locale)}</small></div>
+      <div className={`${signal.journeyLaneLabel} ${styles.finalLane}`} data-lane="final"><span>FINAL</span><small>{text('titleMatch', locale)}</small></div>
+      {route.route.some(node => node.kind === 'THIRD_PLACE') && <div className={`${signal.journeyLaneLabel} ${styles.thirdLane}`} data-lane="lower"><span>THIRD PLACE</span><small>{text('placement', locale)}</small></div>}
+      <span className={signal.journeyTeamGhost} aria-hidden="true">{weeklyTeamShort(route.activeTeam)}</span>
+      <svg className={signal.journeyConnectors} viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true"><defs><marker id={marker} markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" /></marker></defs>{route.edges.filter(edge => edge.active && positions.has(edge.from) && positions.has(edge.to)).map(edge => {
+        const from = positions.get(edge.from), to = positions.get(edge.to)
+        return <path key={`${edge.from}-${edge.to}`} d={`M ${from.x + 220} ${from.y + 81} H ${to.x - 30} V ${to.y + 81} H ${to.x}`} markerEnd={`url(#${marker})`} data-drop={edge.result === 'loss' || undefined} />
+      })}</svg>
+      <ol className={`${signal.journeyNodes} ${styles.routeNodes}`}>{route.route.map(node => {
+        const pos = positions.get(node.key)
+        return <li key={node.key} style={{ '--journey-x': `${pos.x / 10}%`, '--journey-y': `${pos.y}px`, '--journey-card-width': '22%' }} data-lane={node.kind === 'FINAL' ? 'final' : node.kind === 'THIRD_PLACE' ? 'lower' : 'upper'} data-result={resultFor(node, activeId)} data-branch={route.hasFork && ['FINAL', 'THIRD_PLACE'].includes(node.kind) || undefined}>
+          <RouteCard {...{ node, route, locale, seasonId, withSeason, returnProps }} />
+        </li>
+      })}</ol>
+    </div>
+  </div>
+}
+
+function FullMatchCard({ node, route, locale, seasonId, withSeason, returnProps }) {
+  const content = <><header><strong>{routeTitle(node, locale)}</strong><span>{node.format}</span></header><div className={styles.fullSides}>{[node.a, node.b].map((team, index) => <div key={index} data-winner={team && idOf(team) === idOf(node.winner) || undefined}>
+    {team ? <><TeamLogo team={team} seasonId={seasonId} className={styles.fullLogo} /><strong>{weeklyTeamShort(team)}</strong></> : <strong className={styles.sourceLabel}>{node.type === 'BYE' ? text('bye', locale) : routeSourceLabel(node.sources[index], route, locale)}</strong>}
+    {node.type !== 'BYE' && <b>{index === 0 ? node.scoreA ?? '—' : node.scoreB ?? '—'}</b>}
+  </div>)}</div><time dateTime={node.scheduledAt || undefined}>{routeTime(node, locale)}</time><footer>{node.match ? weeklyStatusLabel(node.state, locale) : text(node.planned ? 'approved' : 'pending', locale)}{node.match && <span aria-hidden="true">↗</span>}</footer></>
+  const props = { className: `${signal.matchIndexCard} ${styles.fullCard}`, 'data-active': node.candidateIds.includes(idOf(route.activeTeam)) || undefined, 'data-planned-fixture': node.planned || undefined }
+  return node.match ? <Link {...props} to={withSeason(`/matches/${encodeURIComponent(node.match.id)}`)} {...returnProps}>{content}</Link> : <article {...props}>{content}</article>
+}
+
+function FullBracket({ route, locale, seasonId, withSeason, returnProps }) {
+  const marker = useId().replaceAll(':', '')
+  const hasQualifier = route.nodes.some(node => node.kind === 'QUALIFIER')
+  const hasSemifinal = route.nodes.some(node => node.kind === 'SEMIFINAL')
+  const semiX = hasQualifier ? 335 : 24
+  const medalX = hasSemifinal ? hasQualifier ? 690 : 380 : 24
+  const canvasWidth = hasQualifier ? 980 : hasSemifinal ? 700 : 300
+  const positions = new Map(route.nodes.map(node => [node.key, { x: node.kind === 'QUALIFIER' ? 24 : node.kind === 'SEMIFINAL' ? semiX : medalX,
+    y: node.kind === 'QUALIFIER' ? 245 + (node.index - 1) * 205 : node.kind === 'SEMIFINAL' ? 80 + (node.index - 1) * 320 : node.kind === 'THIRD_PLACE' ? 400 : 80 }]))
+  const height = Math.max(630, ...[...positions.values()].map(pos => pos.y + 205))
+  return <div className={styles.fullViewport} tabIndex={0} role="region" aria-label={text('full', locale)}><div className={styles.fullCanvas} style={{ height, width: canvasWidth, minWidth: canvasWidth }}>
+    {hasQualifier && <div className={styles.fullCaption} style={{ left: 24 }}>01 / QUALIFIER</div>}{hasSemifinal && <div className={styles.fullCaption} style={{ left: semiX }}>{hasQualifier ? '02' : '01'} / SEMIFINALS</div>}<div className={styles.fullCaption} style={{ left: medalX }}>{hasQualifier ? '03' : hasSemifinal ? '02' : '01'} / MEDAL MATCHES</div>
+    <svg viewBox={`0 0 ${canvasWidth} ${height}`} className={styles.fullConnectors} aria-hidden="true"><defs><marker id={marker} markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" /></marker></defs>{route.edges.map(edge => {
+      const from = positions.get(edge.from), to = positions.get(edge.to)
+      if (!from || !to) return null
+      const targetY = to.y + (edge.from === 'semifinal-2' ? 115 : 75)
+      return <path key={`${edge.from}-${edge.to}`} d={`M ${from.x + 250} ${from.y + 95} H ${to.x - (edge.from === 'semifinal-2' ? 26 : 48)} V ${targetY} H ${to.x}`} data-drop={edge.result === 'loss' || undefined} data-active={edge.active || undefined} markerEnd={`url(#${marker})`} />
+    })}</svg>
+    {route.nodes.map(node => { const pos = positions.get(node.key); return <div key={node.key} className={styles.fullNode} style={{ left: pos.x, top: pos.y }} data-weekly-third-place={node.kind === 'THIRD_PLACE' || undefined}><FullMatchCard {...{ node, route, locale, seasonId, withSeason, returnProps }} /></div> })}
+  </div></div>
 }
 
 export default function WeeklyPlayoffBracket({ model, cycle, locale, seasonId, withSeason, returnProps, selectedTeamId, onSelectTeam }) {
-  if (!model) return null
-  const diagram = buildWeeklyBracketPresentation(model)
-  const cardProps = { locale, seasonId, withSeason, returnProps, selectedTeamId }
-  return <section id="weekly-playoffs" className={styles.section} aria-labelledby="weekly-playoffs-title" data-weekly-playoffs="true">
-    <header className={styles.heading}><div><p className={styles.eyebrow}>PLAYOFFS / {cycle.code || cycle.name}</p><h2 id="weekly-playoffs-title">{copy('title', locale)}</h2><p>{copy('intro', locale)}</p></div><Link to={withSeason(`/matches?cycle=${encodeURIComponent(cycle.id)}&week=all`)}>{copy('schedule', locale)} ↗</Link></header>
-    {model.seeds.length > 0 && <ol className={styles.seeds} aria-label={copy('seed', locale)}>{model.seeds.map(seed => <li key={seed.id}><button type="button" aria-pressed={seed.id === selectedTeamId} onClick={() => onSelectTeam(seed.id)}><span>{copy('seed', locale)} <b>{String(seed.seed).padStart(2, '0')}</b></span><TeamLogo team={seed.team} seasonId={seasonId} className={styles.logo} /><strong>{weeklyTeamShort(seed.team)}</strong></button></li>)}</ol>}
-    {!model.seedsCurrent && (model.semifinals.length > 0 || model.finals.length > 0 || model.thirdPlaces.length > 0) && <p className={styles.notice}>{copy('stale', locale)}</p>}
-    {model.qualifiers.length > 0 && <div className={styles.qualifierSection}><div className={styles.routeLabel}><span>01 / QUALIFIER</span><strong>{copy('qualifierPath', locale)}</strong></div><div className={styles.qualifierRounds}>{model.qualifiers.map(round => <div className={styles.qualifier} key={round.id}>
-      <h3>{copy('qualifier', locale)}{round.round_number ? ` · ${copy('round', locale).replace('{0}', round.round_number)}` : ''}</h3>
-      <div className={styles.qualifierMatches}>{round.items.map((item, index) => <MatchCard key={item.id} {...{ item, locale, seasonId, withSeason, returnProps, selectedTeamId }} title={`${copy('qualifier', locale)} ${index + 1}`} />)}</div>
-      {round.qualification_current === false && <p className={styles.notice}>{copy('qualifierReview', locale)}</p>}
-      {round.qualification_current !== false && round.outcome_team_ids?.length > 0 && <p className={styles.notice}>{copy('qualified', locale)}：{round.outcome_team_ids.map(id => weeklyTeamShort(model.teamById.get(id))).join(' · ')}</p>}
-    </div>)}</div></div>}
-    {!diagram.hasPublishedMatches && <div className={styles.pendingNotice}><div><strong>{copy(model.seeds.length ? 'awaitingMatchups' : model.qualificationResolved ? 'seedsPending' : 'structure', locale)}</strong><p>{copy('structureNote', locale)}</p></div>{model.qualificationRequired && <span>{copy('qualification', locale)}</span>}{model.seedDrawRequired && <span>{copy('draw', locale)}</span>}</div>}
-    <div className={styles.diagramHeading}><span>02 / PLAYOFFS</span><span className={styles.legend}>{copy('wins', locale)} <i aria-hidden="true" /> {copy('champion', locale)}</span></div>
-    <div className={styles.bracket} data-direct-final={diagram.directFinal || undefined}>
-      {diagram.semifinals.length > 0 && <div className={styles.roundColumn}><h3>{copy('semifinal', locale)} <small>FT3</small></h3><div className={styles.round} data-single={diagram.semifinals.length === 1 || undefined}>{diagram.semifinals.map((item, index) => <MatchCard key={item.id} item={item} {...cardProps} title={`${copy('semifinal', locale)} ${index + 1}`} />)}</div></div>}
-      <div className={styles.roundColumn}><h3>{copy('final', locale)} {model.finalFormat && <small>{model.finalFormat}</small>}</h3><div className={styles.finalRound}>{diagram.finals.map(item => <MatchCard key={item.id} item={item} {...cardProps} title={copy('final', locale)} />)}</div></div>
-      <div className={styles.roundColumn}><h3>{copy('champion', locale)}</h3><div className={styles.championColumn}><div className={styles.champion} data-weekly-champion={model.champion ? idOf(model.champion) : undefined} data-pending={!model.champion || undefined}><span>WINNER</span>{model.champion ? <><TeamLogo team={model.champion} seasonId={seasonId} className={styles.championLogo} /><strong>{weeklyTeamShort(model.champion)}</strong></> : <><span className={styles.trophy} aria-hidden="true">★</span><strong>{copy('championPending', locale)}</strong></>}<small>{copy('champion', locale)}</small></div></div></div>
-    </div>
-    {diagram.thirdPlaces.length > 0 && <div className={styles.thirdPlace} data-weekly-third-place="true"><div><span className={styles.lossLine} aria-hidden="true" /><span>{copy('losses', locale)}</span></div><h3>{copy('thirdPlace', locale)} · FT3</h3>{diagram.thirdPlaces.map(item => <MatchCard key={item.id} item={item} {...cardProps} title={copy('thirdPlace', locale)} />)}</div>}
-    <p className={styles.pointsNote}>{copy('points', locale)}</p>
+  const [params, setParams] = useSearchParams()
+  const route = buildWeeklyRouteModel(model, { cycle, seasonId, selectedTeamId })
+  if (!route) return null
+  const fullOpen = params.get('bracket') === 'full'
+  const setFull = open => { const next = new URLSearchParams(params); if (open) next.set('bracket', 'full'); else next.delete('bracket'); setParams(next, { replace: true, preventScrollReset: true }) }
+  const activeId = idOf(route.activeTeam)
+  return <section id="weekly-playoffs" className={`${signal.playoffWorkspace} ${styles.section}`} data-chapter="03" aria-labelledby="weekly-playoffs-title" data-weekly-playoffs="true">
+    <header className={`${signal.routeChapterHeading} ${styles.chapterHeading}`}><span>02 / PLAYOFFS / {cycle.code || cycle.name}</span><h2 id="weekly-playoffs-title">{text('choose', locale)}{' '}<em>{text('follow', locale)}</em></h2><p>{text('intro', locale)}</p></header>
+    <div className={styles.scheduleNotice}><strong>{text(route.hasPlannedFixtures ? 'approved' : route.nodes.some(node => node.match) ? 'official' : 'pending', locale)}</strong><span>{text('timeZone', locale)}</span>{route.hasPlannedFixtures && <p>{text('planNote', locale)}</p>}</div>
+    <section className={signal.routeStory} aria-label={text('title', locale)}>
+      <div className={styles.teamPicker}><AdvanceTeamPicker teams={route.entrants.map(team => ({ id: idOf(team), label: `${weeklyTeamShort(team)} · ${fullName(team)}` }))} value={activeId} onChange={onSelectTeam} locale={locale} /></div>
+      <header className={`${signal.routeStoryHeader} ${styles.storyHeader}`}><div><span>PLAYOFF TRANSMISSION / {cycle.code || 'FCW'}</span><strong>{text('title', locale)}</strong></div><dl><div><dt>{text('steps', locale)}</dt><dd>{String(route.route.length).padStart(2, '0')}</dd></div><div><dt>{text('finalFormat', locale)}</dt><dd>{model.finalFormat || (route.approvedPlan ? 'FT3' : '—')}</dd></div><div><dt>{text('zone', locale)}</dt><dd>UTC+8</dd></div></dl><a href="#weekly-full-bracket" onClick={() => setFull(true)}><span>{text('full', locale)}</span><b aria-hidden="true">↗</b></a></header>
+      {route.activeTeam ? <div className={signal.routeStoryBody}><aside className={signal.routeIdentity}>
+        <span className={signal.routeIdentitySeed}>{route.officialSeed ? `${text('seedPublished', locale)} / ${route.officialSeed}` : text(route.plannedSeed ? 'planSlot' : 'contender', locale)}</span><span className={signal.routeIdentityGhost} aria-hidden="true">{weeklyTeamShort(route.activeTeam)}</span><TeamLogo team={route.activeTeam} seasonId={seasonId} className={signal.routeIdentityLogo} /><div><small>{text(idOf(route.champion) === activeId ? 'champion' : route.officialSeed ? 'seedPublished' : route.plannedSeed ? 'planSlot' : 'contender', locale)}</small><strong>{weeklyTeamShort(route.activeTeam)}</strong><p>{fullName(route.activeTeam)}</p></div><span className={signal.routeIdentityHint}>{text('route', locale)}<b>→</b></span>
+      </aside><TeamRoute {...{ route, locale, seasonId, withSeason, returnProps }} /></div> : <p className={styles.emptyRoute}>{text('noTeam', locale)}</p>}
+      <div className={`${signal.routeTeamDock} ${styles.teamDock}`}><header><span>CHOOSE A RUNNER</span><small>{text('selectHint', locale)}</small></header><div role="group" aria-label={text('selectHint', locale)}>{route.entrants.map((team, index) => <button type="button" key={idOf(team)} aria-pressed={idOf(team) === activeId} data-active={idOf(team) === activeId || undefined} onClick={() => onSelectTeam(idOf(team))}><span>{String(index + 1).padStart(2, '0')}</span><TeamLogo team={team} seasonId={seasonId} className={signal.routeDockLogo} /><strong>{weeklyTeamShort(team)}</strong><i aria-hidden="true">↗</i></button>)}</div></div>
+      <footer className={signal.routeStoryFooter}><span>{text('points', locale)}</span><strong>{text('selectHint', locale)}</strong></footer>
+    </section>
+    <details id="weekly-full-bracket" className={signal.fullBracketDisclosure} open={fullOpen} onToggle={event => { if (event.currentTarget.open !== fullOpen) setFull(event.currentTarget.open) }}><summary><span><b>FULL SYSTEM</b>{text('full', locale)}</span><span>{text('timeZone', locale)}</span><i aria-hidden="true">＋</i></summary><div className={signal.fullBracketBody}><header><span>{text(route.approvedPlan ? 'approved' : 'official', locale)}</span><p><Link to={withSeason(`/matches?cycle=${encodeURIComponent(cycle.id)}&week=all`)}>{text('schedule', locale)} ↗</Link></p></header><FullBracket {...{ route, locale, seasonId, withSeason, returnProps }} />{route.champion && <p className={styles.champion} data-weekly-champion={idOf(route.champion)}>{text('champion', locale)} · <strong>{weeklyTeamShort(route.champion)}</strong></p>}</div></details>
   </section>
 }

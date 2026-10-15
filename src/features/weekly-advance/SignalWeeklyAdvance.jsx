@@ -13,6 +13,7 @@ import { buildWeeklyAdvance, resetWeeklyAdvanceSearch, weeklyPublishedRank } fro
 import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
 import WeeklyPlayoffBracket from './WeeklyPlayoffBracket.jsx'
 import WeeklyFinalsPath from './WeeklyFinalsPath.jsx'
+import advanceStyles from '../../components/advance/AdvanceSignal.module.css'
 import styles from './SignalWeeklyAdvance.module.css'
 
 const idOf = team => String(team?.id || team?.team_id || '')
@@ -41,13 +42,14 @@ export default function SignalWeeklyAdvance() {
     followedTeamIds: followedKey ? followedKey.split('|') : []
   }), [db, params, followedKey])
   const { cycles, cycle, week, rows, selected, journey, isPilot, hasStandings } = model
+  const cycleId = cycle?.id
   const restoreY = getRestoreScrollY(location.state) ?? (navigationType === 'POP' ? getSavedReturnScroll(getLocationPath(location)) : null)
   useEffect(() => { if (restoreY !== null) restoreWindowScroll(restoreY) }, [location.key, restoreY])
   useEffect(() => {
-    if (cycle && location.hash === '#weekly-playoffs' && restoreY === null) {
+    if (cycleId && location.hash === '#weekly-playoffs' && restoreY === null) {
       document.getElementById('weekly-playoffs')?.scrollIntoView({ block: 'start', behavior: 'instant' })
     }
-  }, [cycle, location.hash, restoreY])
+  }, [cycleId, location.hash, restoreY])
   useEffect(() => {
     if (!cycle || params.get('cycle') === cycle.id) return
     const next = new URLSearchParams(params)
@@ -106,11 +108,10 @@ export default function SignalWeeklyAdvance() {
         <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">↗</span><small>{t(uiText("回到本周对阵", locale), 'This week’s matchups')}</small></Link>
       </div>
     </header>
-    <nav className={styles.pathway} aria-label={t(uiText("周赛晋级路径", locale), 'Weekly advancement path')}>
-      {stages.map((stage, index) => <a key={stage.id} href={`#weekly-${stage.id}`} data-current={model.activeStage === stage.id || undefined} aria-current={model.activeStage === stage.id ? 'step' : undefined}>
-        <span className={styles.stageNumber}>{String(index + 1).padStart(2, '0')}</span><span><b>{stage.title}</b><small>{stage.note}</small></span>
-        <span className={styles.stageArrow} aria-hidden="true">{index === 2 ? '↗' : '→'}</span>
-      </a>)}
+    <nav className={advanceStyles.phaseIndex} style={{ '--advance-phase-count': stages.length }} aria-label={t(uiText("周赛晋级路径", locale), 'Weekly advancement path')}>
+      <span className={advanceStyles.phaseIndexLabel}><img src="/logos/fries-cup-symbol.png" alt="" /><b>FC / ROUTE</b></span>
+      <div className={advanceStyles.phaseLinks}>{stages.map((stage, index) => <a key={stage.id} href={`#weekly-${stage.id}`} data-status={model.activeStage === stage.id ? 'current' : 'pending'} aria-current={model.activeStage === stage.id ? 'step' : undefined}><span>{String(index + 1).padStart(2, '0')} / {stage.title}</span><small>{stage.note}</small></a>)}</div>
+      <span className={advanceStyles.phaseStamp}><b>{String(Math.max(1, stages.findIndex(stage => stage.id === model.activeStage) + 1)).padStart(2, '0')}</b> / 03</span>
     </nav>
 
     <section className={styles.workspace} id="weekly-points" aria-labelledby="weekly-points-title">
