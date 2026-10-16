@@ -13,7 +13,8 @@ export function SignalMatchPhaseProgress({ phase, onSelectMap, en }) {
     <div className={styles.progressHeading}><strong>{phase.rr5 ? (en ? 'Five-map series' : uiText("五局进程", uiLocale)) : (en ? 'Map schedule' : uiText("地图安排", uiLocale))}</strong><span>{['live', 'review'].includes(phase.key) ? (en ? 'Series score after each map' : uiText("各局结束后的大比分", uiLocale)) : phase.rr5 ? (en ? 'RR5 · All five maps are played' : uiText("RR5 · 无论比分，都打满五局", uiLocale)) : (en ? 'Published map order' : uiText("按已公布顺序", uiLocale))}{['live', 'review'].includes(phase.key) ? <b>{en ? 'Recorded' : uiText("已记录", uiLocale)} {phase.recordedCount} / {phase.slots.length}</b> : null}</span></div>
     <ol className={styles.slots} style={{ '--phase-map-count': phase.slots.length }}>
       {phase.slots.map(slot => {
-        const content = <><span className={styles.slotTop}><small>{String(slot.order).padStart(2, '0')}</small><strong>{slot.name}</strong></span><span className={styles.slotResult}>{slot.record ? <b>{slot.record.cumulative.replace(':', ' : ')}</b> : <i aria-hidden="true">{slot.state === 'live' ? '●' : '—'}</i>}<span>{slot.label}</span></span></>
+        const seriesScore = slot.roomSeriesScore || slot.record?.cumulative.replace(':', ' : ')
+        const content = <><span className={styles.slotTop}><small>{String(slot.order).padStart(2, '0')}</small><strong>{slot.name}</strong></span><span className={styles.slotResult}>{seriesScore ? <b>{seriesScore}</b> : <i aria-hidden="true">{slot.state === 'live' ? '●' : '—'}</i>}<span>{slot.label}</span></span></>
         return <li key={slot.order} data-map-state={slot.state}>{slot.record ? <button type="button" onClick={() => onSelectMap(slot.order)} aria-label={`${en ? 'Review map' : uiText("查看第", uiLocale)} ${slot.order}${en ? '' : uiText(" 图", uiLocale)} · ${slot.name} · ${slot.label}`}>{content}<span className={styles.slotArrow} aria-hidden="true">↘</span></button> : <div>{content}</div>}</li>
       })}
     </ol>
