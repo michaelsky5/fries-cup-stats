@@ -277,7 +277,7 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
         <WeeklyMatchIdentity match={dossier.match} locale={locale} copyable showContext={false} />
         <div className={styles.versus}>
           <TeamIdentity team={dossier.teamA} logoTeam={dossier.match.team_a} side="A" seasonId={seasonId} winner={dossier.hasSeriesScore && winnerSide === 'A'} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} />
-          <div className={styles.scoreAxis}><span>{phase.scoreTitle}</span><h1 id="match-dossier-title" aria-label={dossier.title + ' · ' + scoreLabel}>{scoreParts.length === 2 ? <><span data-winner={winnerSide === 'A'}>{scoreParts[0]}</span><i>:</i><span data-winner={winnerSide === 'B'}>{scoreParts[1]}</span></> : 'VS'}</h1><span>{getReviewFormat(dossier.formatLabel, en)}</span></div>
+          <div className={styles.scoreAxis}><span>{phase.scoreTitle}</span><h1 id="match-dossier-title" aria-label={dossier.title + ' · ' + scoreLabel}>{scoreParts.length === 2 ? <><span data-winner={winnerSide === 'A'}>{scoreParts[0]}</span><i>:</i><span data-winner={winnerSide === 'B'}>{scoreParts[1]}</span></> : 'VS'}</h1><span>{uiText(getReviewFormat(dossier.formatLabel, en), locale)}</span></div>
           <TeamIdentity team={dossier.teamB} logoTeam={dossier.match.team_b} side="B" seasonId={seasonId} winner={dossier.hasSeriesScore && winnerSide === 'B'} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} />
         </div>
         {summary ? <p className={styles.matchSummary} data-match-summary={matchFact.kind}>{summary}</p> : null}
