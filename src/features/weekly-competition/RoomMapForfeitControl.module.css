@@ -12,3 +12,4 @@
 }
 .dialog .form textarea { min-height: 100px; }
 .dialog .form option { color: #181a17; background: #fff; }
+.dialog .form [role='alert'] { color: #a13629; }
