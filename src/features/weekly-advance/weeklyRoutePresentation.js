@@ -24,6 +24,7 @@ const labels = {
   approved: ['排期已确认 · 条件对阵', 'Confirmed schedule · Conditional matchups', '일정 확정 · 조건부 대진', '排期已確認 · 條件對陣'],
   planNote: ['按已确认排期展示。正式种子及完整对阵待加赛复核后公布；第二场半决赛为预计时间，后续场次随前场进度调整。', 'The confirmed schedule is shown. Official seeds and fixtures follow qualifier review. Semifinal 2 is estimated; later matches follow the preceding match.', '확정 일정을 표시합니다. 공식 시드와 대진은 결정전 검토 후 발표됩니다. 준결승 2경기는 예상 시간이며 이후 경기는 앞 경기 진행에 따라 조정됩니다.', '按已確認排期展示。正式種子及完整對陣待加賽複核後公布；第二場準決賽為預計時間，後續場次隨前場進度調整。'],
   official: ['沿用已发布对阵与赛果', 'Published fixtures and results', '공식 대진 및 결과', '沿用已發布對陣與賽果'],
+  officialPlanNote: ['正式种子已公布。后续场次沿用已确认排期，对阵由前轮正式赛果确定；第二场半决赛为预计时间，后续场次随前场进度调整。', 'Official seeds are published. Later matches keep the confirmed schedule, with opponents determined by reviewed results. Semifinal 2 is estimated; later matches follow the preceding match.', '공식 시드가 발표되었습니다. 후속 경기는 확정 일정에 따라 진행되며 대진은 앞 경기의 공식 결과로 결정됩니다. 준결승 2경기는 예상 시간이며 이후 경기는 앞 경기 진행에 따라 조정됩니다.', '正式種子已公布。後續場次沿用已確認排期，對陣由前輪正式賽果確定；第二場準決賽為預計時間，後續場次隨前場進度調整。'],
   published: ['已发布对阵', 'Published fixture', '공식 대진', '已發布對陣'],
   pending: ['对阵待公布', 'Matchups pending', '대진 발표 대기', '對陣待公布'],
   full: ['完整季后赛签表', 'Complete playoff bracket', '전체 플레이오프 대진표', '完整季後賽籤表'],
@@ -59,6 +60,13 @@ const labels = {
   byeNote: ['直接晋级，无需比赛', 'Advances without a match', '경기 없이 다음 라운드 진출', '直接晉級，無需比賽']
 }
 export const routeText = (key, locale, value) => pickUiLocale(locale, ...labels[key]).replace('{0}', value ?? '')
+export function routeScheduleNotice(route, locale) {
+  const waitingForSeeds = route.hasPlannedFixtures && !route.officialSeeds
+  return {
+    title: routeText(waitingForSeeds ? 'approved' : route.nodes.some(node => node.match) ? 'official' : 'pending', locale),
+    note: route.hasPlannedFixtures ? routeText(waitingForSeeds ? 'planNote' : 'officialPlanNote', locale) : null
+  }
+}
 export const routeTitle = (node, locale) => `${routeText(({ QUALIFIER: 'qualifier', SEMIFINAL: 'semifinal', FINAL: 'final', THIRD_PLACE: 'third' })[node.kind], locale)}${node.kind === 'SEMIFINAL' ? ` ${node.index}` : ''}`
 export function routeSourceLabel(source, route, locale) {
   if (!source) return routeText('pending', locale)

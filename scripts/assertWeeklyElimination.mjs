@@ -6,7 +6,7 @@ import { confirmedWeeklyWinner } from '../src/features/weekly-advance/weeklyElim
 import { buildWeeklyBracketPresentation } from '../src/features/weekly-advance/weeklyBracketPresentation.js'
 import { buildWeeklyRouteModel } from '../src/features/weekly-advance/weeklyRouteModel.js'
 import { C1_PLAYOFF_SCHEDULE } from '../src/features/weekly-advance/weeklyApprovedSchedules.js'
-import { routeTime } from '../src/features/weekly-advance/weeklyRoutePresentation.js'
+import { routeScheduleNotice, routeText, routeTime } from '../src/features/weekly-advance/weeklyRoutePresentation.js'
 
 const model = state => buildWeeklyAdvance(buildWeeklyPlayoffFixture(state)).elimination
 
@@ -49,6 +49,31 @@ test('qualifier participants see qualification before their semifinal, and only 
   round.outcome_team_ids = [fixture.teams[3].id]
   assert.deepEqual(read().route.map(node => node.kind), ['QUALIFIER'])
   assert.equal(read().hasFork, false)
+})
+
+test('publishing C1 seeds removes the qualifier-review notice while medal matches remain conditional', () => {
+  const fixture = c1RouteFixture()
+  const read = () => buildWeeklyRouteModel(fixture.model, fixture.options)
+  assert.equal(routeScheduleNotice(read(), 'zh').note, routeText('planNote', 'zh'))
+  fixture.model.seedsCurrent = true
+  fixture.model.seeds = fixture.teams.slice(0, 4).map((team, index) => ({ id: team.id, team, seed: index + 1 }))
+  fixture.model.qualifiers[0].outcome_team_ids = [fixture.teams[3].id]
+  fixture.model.semifinals = [{ items: [[0, 3], [1, 2]].map(([a, b], index) => ({
+    id: `sf${index + 1}`, type: 'MATCH', a: fixture.teams[a], b: fixture.teams[b], winner: null,
+    state: 'pending', scoreA: null, scoreB: null,
+    match: { id: `sf${index + 1}`, format: 'FT3', scheduled_at: C1_PLAYOFF_SCHEDULE.semifinals[index].scheduledAt }
+  })) }]
+  const route = read()
+  assert.equal(route.hasPlannedFixtures, true, 'Medal match schedules still need their semifinal results.')
+  assert.equal(route.nodes.filter(node => node.kind === 'SEMIFINAL').every(node => node.match), true)
+  for (const locale of ['zh', 'zh-TW', 'en', 'ko']) {
+    const notice = routeScheduleNotice(route, locale)
+    assert.equal(notice.title, routeText('official', locale))
+    assert.equal(notice.note, routeText('officialPlanNote', locale))
+    assert.notEqual(notice.note, routeText('planNote', locale))
+  }
+  fixture.model.seedsCurrent = false
+  assert.equal(routeScheduleNotice(read(), 'zh').note, routeText('planNote', 'zh'), 'Stale seeds must not retain the published-seed notice.')
 })
 
 test('published semifinal times and winners override C1 arrangements and split final from third-place participants', () => {
