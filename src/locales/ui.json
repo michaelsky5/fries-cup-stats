@@ -59133,5 +59133,10 @@
     "zh-TW": "本場不增加賽段積分，雙方零分結算並保留賽果。",
     "en-US": "This match adds no cycle points. Both teams settle at zero and the result is retained.",
     "ko-KR": "이번 경기는 구간 포인트를 추가하지 않습니다. 양 팀은 0점으로 정산되며 경기 결과는 유지됩니다."
+  },
+  "请选择队伍": {
+    "zh-TW": "請選擇隊伍",
+    "en-US": "Select a team",
+    "ko-KR": "팀을 선택하세요"
   }
 }

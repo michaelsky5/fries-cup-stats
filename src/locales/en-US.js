@@ -10199,5 +10199,6 @@ export default {
   "本场不增加赛段积分，双方均记 0 分。": "This match adds no cycle points. Both teams receive 0 points.",
   "确认结算本场赛果": "Confirm result settlement",
   "。到期且无争议后自动结算。": ". Settlement is automatic after that time if no disputes remain.",
-  "本场不增加赛段积分，双方零分结算并保留赛果。": "This match adds no cycle points. Both teams settle at zero and the result is retained."
+  "本场不增加赛段积分，双方零分结算并保留赛果。": "This match adds no cycle points. Both teams settle at zero and the result is retained.",
+  "请选择队伍": "Select a team"
 }

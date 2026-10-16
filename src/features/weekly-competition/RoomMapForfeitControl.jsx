@@ -4,6 +4,7 @@ import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { formatOwMapName } from '../../lib/heroes.js'
 import styles from './WeeklyLiveRoomPage.module.css'
+import forfeitStyles from './RoomMapForfeitControl.module.css'
 
 export default function RoomMapForfeitControl({ data, disabled, mutate }) {
   const locale = useUiLocale(), { liveRoomWrite } = useRoomTransport()
@@ -18,8 +19,8 @@ export default function RoomMapForfeitControl({ data, disabled, mutate }) {
       viewed.current = { matchRevision: data.match.revision, draftRevision: data.draftRevision, openingRevision: data.opening?.revision || 0 }
       pending.current = null; setSide(''); setReason(''); setOpen(true)
     }}>{uiText('本图弃权', locale)}</button>
-    <dialog ref={dialog} className={styles.dialog} aria-label={uiText('记录本图弃权', locale)} onCancel={() => setOpen(false)}>
-      <form onChange={() => { pending.current = null }} onSubmit={async event => {
+    <dialog ref={dialog} className={`${styles.dialog} ${forfeitStyles.dialog}`} aria-label={uiText('记录本图弃权', locale)} onCancel={() => setOpen(false)}>
+      <form className={forfeitStyles.form} onChange={() => { pending.current = null }} onSubmit={async event => {
         event.preventDefault()
         pending.current ||= { action: 'MAP_FORFEIT', forfeitedSide: side, reason: reason.trim(), ...viewed.current, clientKey: crypto.randomUUID() }
         const saved = await mutate(async () => {
