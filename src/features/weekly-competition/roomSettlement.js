@@ -1,7 +1,7 @@
-// Only prefill an audited RR5 result. The server validates the calculation again on settlement.
+// Non-counting matches settle at zero. RR5 points still follow the audited maps.
 export function roomSettlementProposal({ match, result }) {
   if (!result?.official) return null
-  if (result.countsTowardStandings === false) return { pointsA: 0, pointsB: 0, reason: '本赛段不计正式积分，双方零分结算并保留战绩。' }
+  if (result.countsTowardStandings === false) return { pointsA: 0, pointsB: 0, reason: '本场不增加赛段积分，双方零分结算并保留赛果。' }
   if (result.forfeit && [result.forfeit.pointsA, result.forfeit.pointsB].every(Number.isInteger)) {
     return { pointsA: result.forfeit.pointsA, pointsB: result.forfeit.pointsB, reason: '按已审核 RR5 弃权裁定逐图计算积分。' }
   }

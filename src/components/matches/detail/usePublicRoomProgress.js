@@ -6,7 +6,8 @@ export default function usePublicRoomProgress(dossier, seasonId, isPreview, read
   const rawSeasonId = getSeasonById(seasonId)?.id || seasonId
   const matchId = dossier.match.raw_match_id || dossier.internalId
   const identity = `${rawSeasonId}:${matchId}`
-  const enabled = dossier.state.isWeekly && !isPreview && !dossier.state.isComplete && !dossier.state.isForfeit && !dossier.state.isRuling && !dossier.state.isCancelled
+  const enabled = dossier.state.isWeekly && !isPreview && (dossier.state.isUpcoming || dossier.state.isLive || dossier.state.isReview)
+    && !dossier.state.isComplete && !dossier.state.isForfeit && !dossier.state.isRuling && !dossier.state.isCancelled && !dossier.state.isPostponed
   const [snapshot, setSnapshot] = useState(null)
   useEffect(() => {
     if (!enabled) return

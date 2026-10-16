@@ -14,12 +14,17 @@ export function validatePublicRoomProgress(value, seasonId, matchId) {
     || value.scoreA + value.scoreB > value.completedMaps || !Array.isArray(value.maps) || value.maps.length > value.mapLimit) throw new Error('Invalid public room progress')
   const orders = new Set()
   const maps = value.maps.map(map => {
+    const administrative = map.isAdministrative === true
+    const validRuling = administrative && map.administrativeReason === 'MAP_FORFEIT' && ['A', 'B'].includes(map.forfeitedBySide)
+      && map.winnerSide === (map.forfeitedBySide === 'A' ? 'B' : 'A') && map.status === 'COMPLETE'
+      && map.scoreA === null && map.scoreB === null
     if (!integer(map.order) || map.order < 1 || map.order > value.mapLimit || orders.has(map.order) || !mapStates.includes(map.status)
       || typeof map.name !== 'string' || map.name.length > 160 || typeof map.type !== 'string' || map.type.length > 40
       || (map.scoreA !== null && !integer(map.scoreA)) || (map.scoreB !== null && !integer(map.scoreB))
-      || (map.status === 'COMPLETE' ? map.scoreA === null || map.scoreB === null : map.scoreA !== null || map.scoreB !== null)) throw new Error('Invalid public room map')
+      || (administrative ? !validRuling : map.status === 'COMPLETE' ? map.scoreA === null || map.scoreB === null : map.scoreA !== null || map.scoreB !== null)) throw new Error('Invalid public room map')
     orders.add(map.order)
-    return { order: map.order, name: map.name, type: map.type, status: map.status, scoreA: map.scoreA, scoreB: map.scoreB }
+    return { order: map.order, name: map.name, type: map.type, status: map.status, scoreA: map.scoreA, scoreB: map.scoreB,
+      ...(administrative ? { isAdministrative: true, administrativeReason: 'MAP_FORFEIT', forfeitedBySide: map.forfeitedBySide, winnerSide: map.winnerSide } : {}) }
   })
   // Discard any extra response fields. Public progress is separate from statistics.
   return { schemaVersion: value.schemaVersion, seasonId, matchId, updatedAt: value.updatedAt, phase: value.phase, stage: value.stage,
@@ -34,20 +39,30 @@ export async function readPublicRoomProgress(seasonId, matchId, { signal, fetchI
 }
 
 export function presentPublicRoomProgress(base, dossier, room, locale) {
-  if (!room || !base.active || !dossier.state.isWeekly || ['forfeit', 'ruling', 'complete', 'cancelled'].includes(base.key)) return base
+  if (!room || !base.active || !dossier.state.isWeekly || !['upcoming', 'live', 'review'].includes(base.key)) return base
   const t = (key, values) => uiText(key, locale, values)
   const key = room.phase === 'CANCELLED' ? 'cancelled' : room.phase === 'REVIEW' ? 'review' : room.phase === 'PREPARING' && !room.completedMaps ? 'upcoming' : 'live'
-  const stageLabels = { CHOOSING: '选图', LINEUPS: '首发确认', BAN_ORDER: 'Ban 顺序', BANNING: '英雄禁用', COMPLETE: '等待实际开赛', LIVE: '本局进行中', PAUSED: '比赛暂停', REVIEW: '结果待审核', CANCELLED: '已取消' }
+  const stageLabels = { CHOOSING: '选择地图', LINEUPS: '首发确认', BAN_ORDER: 'Ban 顺序', BANNING: '英雄禁用', COMPLETE: '等待实际开赛', LIVE: '本局进行中', PAUSED: '比赛暂停', REVIEW: '结果待审核', CANCELLED: '已取消' }
   const currentLabel = t(stageLabels[room.stage] || '赛前准备')
+  const cumulative = new Map()
+  let scoreA = 0, scoreB = 0
+  for (const map of [...room.maps].sort((a, b) => a.order - b.order)) {
+    if (map.status !== 'COMPLETE') continue
+    const winner = map.isAdministrative ? map.winnerSide : map.scoreA > map.scoreB ? 'A' : map.scoreB > map.scoreA ? 'B' : ''
+    if (winner === 'A') scoreA++
+    if (winner === 'B') scoreB++
+    cumulative.set(map.order, `${scoreA} : ${scoreB}`)
+  }
   const slots = Array.from({ length: room.mapLimit }, (_, i) => {
     const order = i + 1, map = room.maps.find(item => item.order === order), published = base.slots.find(slot => slot.order === order)
     const recorded = map?.status === 'COMPLETE'
     const current = order === room.activeMapOrder && !recorded && room.phase !== 'CANCELLED'
-    const state = recorded ? 'recorded' : current ? room.phase === 'LIVE' ? 'live' : room.phase === 'PAUSED' ? 'paused' : 'preparing' : 'pending'
+    const state = recorded ? map.isAdministrative ? 'ruling' : 'recorded' : current ? room.phase === 'LIVE' ? 'live' : room.phase === 'PAUSED' ? 'paused' : 'preparing' : 'pending'
     return { order, record: published?.record, map: published?.map, state,
       name: map?.name ? formatOwMapName(map.name, locale) : published?.name || t('地图待公布'),
-      roomScore: recorded ? `${map.scoreA} : ${map.scoreB}` : '',
-      label: recorded ? t('已记录 · 待审核') : current ? currentLabel : t('待开赛') }
+      roomScore: recorded && !map.isAdministrative ? `${map.scoreA} : ${map.scoreB}` : '',
+      roomSeriesScore: cumulative.get(order) || '',
+      label: recorded ? map.isAdministrative ? `${t('{0} · 单图弃权', [dossier[`team${map.forfeitedBySide}`]?.short || map.forfeitedBySide])} · ${t('已记录 · 待审核')}` : t('已记录 · 待审核') : current ? currentLabel : t('待开赛') }
   })
   return { ...base, key, slots, recordedCount: room.completedMaps, roomProgress: true, updatedAt: room.updatedAt,
     scoreLabel: room.completedMaps || ['LIVE', 'PAUSED', 'REVIEW'].includes(room.phase) ? `${room.scoreA} : ${room.scoreB}` : 'VS',

@@ -22,7 +22,7 @@ export default function RoomResultActions({ data, disabled, mutate }) {
   }
   async function act(action, extra, version = versions()) {
     pending.current ||= { action, ...extra, ...version, clientKey: crypto.randomUUID() }
-    return mutate(async () => { try { const saved = await liveRoomWrite(data.match.id, '/result-actions', pending.current); pending.current = null; return saved } catch (failure) { if (failure.status && failure.status < 500) pending.current = null; setError(failure.message); throw failure } }, action === 'SETTLE' ? '本场积分已结算。' : '双方确认已开放。')
+    return mutate(async () => { try { const saved = await liveRoomWrite(data.match.id, '/result-actions', pending.current); pending.current = null; return saved } catch (failure) { if (failure.status && failure.status < 500) pending.current = null; setError(failure.message); throw failure } }, action === 'SETTLE' ? '本场赛果已结算。' : '双方确认已开放。')
   }
   return <>
     {(result.handoff?.canPrepare ?? data.access.staff) && ['AWAITING_SUBMISSION', 'REPORT_IN_PROGRESS', 'RETURNED'].includes(result.phase) && <div className={styles.resultAction}>
@@ -36,19 +36,19 @@ export default function RoomResultActions({ data, disabled, mutate }) {
       {!systemPageUrl('/submit/check') && <small>{uiText("战报服务尚未接通，请赛事管理员检查入口配置。", uiLocale)}</small>}
     </div>}
     {admin.canOpen && <button className={styles.primary} disabled={disabled} onClick={() => { setError(''); act('OPEN_CONFIRMATIONS') }}>{uiText("开放双方赛果确认", uiLocale)}</button>}
-    {admin.canSettle && <button className={styles.primary} disabled={disabled} onClick={() => openSettlement()}>{uiText("核对积分并结算", uiLocale)}</button>}
+    {admin.canSettle && <button className={styles.primary} disabled={disabled} onClick={() => openSettlement()}>{uiText("核对赛果并结算", uiLocale)}</button>}
     {admin.canSettleByRuling && !admin.canSettle && <button disabled={disabled} onClick={() => openSettlement(true)}>{uiText("按裁定结算（需说明）", uiLocale)}</button>}
     {reviewUrl && ['REVIEWING', 'RECHECK', 'DISPUTED', 'RETURNED'].includes(result.phase) && <a className={styles.resultLink} href={reviewUrl} target="_blank" rel="noopener noreferrer">{result.phase === 'DISPUTED' ? uiText("打开战报，复核争议", uiLocale) : uiText("打开本场审核工作台", uiLocale)} ↗</a>}
-    {result.eligibleAt && result.phase === 'AWAITING_SETTLEMENT' && !admin.canSettle && <small>{uiText("申诉等待期至 ", uiLocale)}{new Date(result.eligibleAt).toLocaleString('zh-CN')}{uiText("。到期后由管理员结算。", uiLocale)}</small>}
+    {result.eligibleAt && result.phase === 'AWAITING_SETTLEMENT' && !admin.canSettle && <small>{uiText("申诉等待期至 ", uiLocale)}{new Date(result.eligibleAt).toLocaleString('zh-CN')}{uiText("。到期且无争议后自动结算。", uiLocale)}</small>}
     {error && !open && <p role="alert">{error}</p>}
-    <dialog ref={dialog} className={styles.dialog} aria-label={uiText("核对本场积分并结算", uiLocale)} onCancel={() => setOpen(false)}><form onSubmit={async event => {
+    <dialog ref={dialog} className={styles.dialog} aria-label={uiText("核对本场赛果并结算", uiLocale)} onCancel={() => setOpen(false)}><form onSubmit={async event => {
       event.preventDefault(); setError('')
       if (await act('SETTLE', { pointsA: Number(pointsA), pointsB: Number(pointsB), reason: reason.trim(), ...(override ? { overrideConfirmations: true } : {}) }, viewed.current)) setOpen(false)
-    }}><h2>{override ? uiText("按管理员裁定结算", uiLocale) : uiText("核对本场积分并结算", uiLocale)}</h2><p>{data.match.teamA.name} / {data.match.teamB.name} · {override ? uiText("未齐双方确认或存在异议，将保留原响应并记录管理员裁定。", uiLocale) : uiText("双方已确认", uiLocale)}</p>
-      <p>{!result.countsTowardStandings ? uiText("本赛段不计入正式积分，双方均记 0 分。", uiLocale) : result.forfeit ? uiText(result.forfeit.legacyPolicy ? "弃权方 0 分；对手保留已得积分，未完成地图每张补 1 分。以下积分由已审核记录计算。" : "已打地图积分保留；剩余地图弃权方每图 0 分，对手每图 2 分。以下积分由已审核记录计算。", uiLocale) : proposal ? uiText('已按审核赛果预填：五图参赛分 5 + 小局胜场分。请核对双方积分与结算依据。', uiLocale) : uiText("按本届规则填写双方应得积分。比分不等于积分。", uiLocale)}</p>
+    }}><h2>{override ? uiText("按管理员裁定结算", uiLocale) : uiText("核对本场赛果并结算", uiLocale)}</h2><p>{data.match.teamA.name} / {data.match.teamB.name} · {override ? uiText("未齐双方确认或存在异议，将保留原响应并记录管理员裁定。", uiLocale) : uiText("双方已确认", uiLocale)}</p>
+      <p>{!result.countsTowardStandings ? uiText("本场不增加赛段积分，双方均记 0 分。", uiLocale) : result.forfeit ? uiText(result.forfeit.legacyPolicy ? "弃权方 0 分；对手保留已得积分，未完成地图每张补 1 分。以下积分由已审核记录计算。" : "已打地图积分保留；剩余地图弃权方每图 0 分，对手每图 2 分。以下积分由已审核记录计算。", uiLocale) : proposal ? uiText('已按审核赛果预填：五图参赛分 5 + 小局胜场分。请核对双方积分与结算依据。', uiLocale) : uiText("按本届规则填写双方应得积分。比分不等于积分。", uiLocale)}</p>
       <div className={styles.resultPoints}><label>{data.match.teamA.name}{uiText(" 积分", uiLocale)}<input type="number" min="0" max="1000" step="1" required value={pointsA} readOnly={!result.countsTowardStandings || !!result.forfeit} disabled={disabled} onChange={event => { setPointsA(event.target.value); pending.current = null }} /></label><label>{data.match.teamB.name}{uiText(" 积分", uiLocale)}<input type="number" min="0" max="1000" step="1" required value={pointsB} readOnly={!result.countsTowardStandings || !!result.forfeit} disabled={disabled} onChange={event => { setPointsB(event.target.value); pending.current = null }} /></label></div>
       <label>{uiText("结算依据", uiLocale)}<textarea required minLength={2} maxLength={2000} value={reason} disabled={disabled} onChange={event => { setReason(event.target.value); pending.current = null }} placeholder={uiText("填写适用积分规则及本场结算依据", uiLocale)} /></label>
-      {error && <p role="alert">{error}</p>}<div className={styles.actions}><button type="button" disabled={disabled} onClick={() => setOpen(false)}>{uiText("返回核对", uiLocale)}</button><button className={styles.primary} disabled={disabled || pointsA === '' || pointsB === '' || reason.trim().length < 2}>{uiText("确认结算本场积分", uiLocale)}</button></div>
+      {error && <p role="alert">{error}</p>}<div className={styles.actions}><button type="button" disabled={disabled} onClick={() => setOpen(false)}>{uiText("返回核对", uiLocale)}</button><button className={styles.primary} disabled={disabled || pointsA === '' || pointsB === '' || reason.trim().length < 2}>{uiText("确认结算本场赛果", uiLocale)}</button></div>
     </form></dialog>
   </>
 }
