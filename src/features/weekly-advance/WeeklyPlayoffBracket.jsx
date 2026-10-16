@@ -4,7 +4,7 @@ import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import AdvanceTeamPicker from '../../components/advance/AdvanceTeamPicker.jsx'
 import { weeklyStatusLabel, weeklyTeamShort } from '../weekly-overview/weeklyPresentation.js'
 import { buildWeeklyRouteModel } from './weeklyRouteModel.js'
-import { routeSourceLabel, routeText as text, routeTime, routeTitle } from './weeklyRoutePresentation.js'
+import { routeScheduleNotice, routeSourceLabel, routeText as text, routeTime, routeTitle } from './weeklyRoutePresentation.js'
 import signal from '../../components/advance/AdvanceSignal.module.css'
 import styles from './WeeklyPlayoffBracket.module.css'
 
@@ -98,11 +98,12 @@ export default function WeeklyPlayoffBracket({ model, cycle, locale, seasonId, w
   const teamOpen = params.get('view') === 'team'
   const setTeamView = open => { const next = new URLSearchParams(params); if (open) next.set('view', 'team'); else next.delete('view'); setParams(next, { replace: true, preventScrollReset: true }) }
   if (!route) return <section id="weekly-playoffs" className={styles.section} data-weekly-playoffs="pending"><h2>{text('bracket', locale)}</h2><p className={styles.emptyRoute}>{text('pending', locale)}</p></section>
+  const notice = routeScheduleNotice(route, locale)
   const activeId = idOf(route.activeTeam)
   const highlightId = route.entrants.some(team => idOf(team) === selectedTeamId) ? selectedTeamId : null
   return <section id="weekly-playoffs" className={`${signal.playoffWorkspace} ${styles.section}`} data-chapter="02" aria-labelledby="weekly-playoffs-title" data-weekly-playoffs="true">
     <header className={`${signal.routeChapterHeading} ${styles.bracketHeading}`}><span>02 / PLAYOFFS / {cycle.code || cycle.name}</span><h2 id="weekly-playoffs-title">{text('bracket', locale)}{' '}<em>{text('bracketFocus', locale)}</em></h2><p>{text('bracketIntro', locale)}</p></header>
-    <div className={styles.scheduleNotice}><strong>{text(route.hasPlannedFixtures ? 'approved' : route.nodes.some(node => node.match) ? 'official' : 'pending', locale)}</strong><span>{text('timeZone', locale)}</span>{route.hasPlannedFixtures && <p>{text('planNote', locale)}</p>}</div>
+    <div className={styles.scheduleNotice}><strong>{notice.title}</strong><span>{text('timeZone', locale)}</span>{notice.note && <p>{notice.note}</p>}</div>
     <div id="weekly-full-bracket" className={styles.bracketOverview}>
       <div className={styles.overviewPicker}><AdvanceTeamPicker teams={[{ id: '', label: text('all', locale) }, ...route.entrants.map(team => ({ id: idOf(team), label: `${weeklyTeamShort(team)} · ${fullName(team)}` }))]} value={highlightId || ''} onChange={onSelectTeam} locale={locale} /></div>
       <div className={`${signal.routeTeamDock} ${styles.teamDock} ${styles.bracketTeamDock}`}><header><span>PLAYOFF BRACKET</span><small>{text('timeZone', locale)}</small></header><div role="group" aria-label={text('selectHint', locale)}><button type="button" aria-pressed={!highlightId} data-active={!highlightId || undefined} onClick={() => onSelectTeam(null)}><strong>{text('all', locale)}</strong><i aria-hidden="true">↗</i></button>{route.entrants.map((team, index) => <button type="button" key={idOf(team)} aria-pressed={idOf(team) === highlightId} data-active={idOf(team) === highlightId || undefined} onClick={() => onSelectTeam(idOf(team))}><span>{String(index + 1).padStart(2, '0')}</span><TeamLogo team={team} seasonId={seasonId} className={signal.routeDockLogo} /><strong>{weeklyTeamShort(team)}</strong><i aria-hidden="true">↗</i></button>)}</div></div>
