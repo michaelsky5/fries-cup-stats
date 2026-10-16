@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { roomSettlementProposal } from '../src/features/weekly-competition/roomSettlement.js'
 import { roomSeriesMaps } from '../src/features/weekly-competition/roomSeriesMaps.js'
+import { roomMapResultLabel } from '../src/features/weekly-competition/roomMapResults.js'
 const room = (patch = {}) => ({ match: { format: 'RR5' }, result: { official: true, countsTowardStandings: true, maps: Array(5).fill({}), scoreA: 3, scoreB: 2, ...patch } })
 test('reviewed RR5 includes five participation points for both teams', () => {
   assert.deepEqual(roomSettlementProposal(room()), { pointsA: 8, pointsB: 7, reason: 'RR5 五图参赛分 5 + 小局胜场分：8 / 7。' })
@@ -10,6 +11,14 @@ test('reviewed RR5 includes five participation points for both teams', () => {
 test('non-counting cycles and approved forfeits retain their own points', () => {
   assert.equal(roomSettlementProposal(room({ countsTowardStandings: false })).pointsA, 0)
   assert.equal(roomSettlementProposal(room({ forfeit: { pointsA: 0, pointsB: 6 }, maps: [] })).pointsB, 6)
+})
+test('reviewed weekly FT rooms use the match zero-point flag and preserve map-forfeit labels without fabricated scores', () => {
+  const map = { order: 3, name: 'Dorado', scoreA: null, scoreB: null, isAdministrative: true, administrativeReason: 'MAP_FORFEIT', forfeitedBySide: 'A' }
+  const data = { match: { format: 'FT3', teamA: { shortName: 'A Team' } }, maps: [], result: { official: true, countsTowardStandings: false, maps: [map], scoreA: 1, scoreB: 3 } }
+  assert.deepEqual([roomSettlementProposal(data).pointsA, roomSettlementProposal(data).pointsB], [0, 0])
+  assert.equal(roomMapResultLabel(roomSeriesMaps(data)[0], data.match, 'zh-CN'), 'A Team · 单图弃权')
+  assert.equal(roomSeriesMaps(data)[0].scoreA, null)
+  assert.equal(roomSettlementProposal({ ...data, result: { ...data.result, official: false } }), null)
 })
 test('working scores, incomplete or unsupported series are not prefilled', () => {
   assert.equal(roomSettlementProposal(room({ official: false })), null)

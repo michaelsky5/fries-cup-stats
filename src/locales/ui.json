@@ -59038,5 +59038,100 @@
     "en-US": "Some active references have only {0} other same-version matches. Small score differences need caution.",
     "zh-TW": "部分參照來源僅有同版本其他 {0} 場比賽，小分差需謹慎解讀。",
     "ko-KR": "일부 참조 자료는 같은 버전의 다른 경기 {0}개만 포함합니다. 작은 점수 차이는 신중하게 해석해야 합니다."
+  },
+  "本图弃权": {
+    "zh-TW": "本圖棄權",
+    "en-US": "Forfeit this map",
+    "ko-KR": "현재 전장 기권"
+  },
+  "记录本图弃权": {
+    "zh-TW": "記錄本圖棄權",
+    "en-US": "Record a map forfeit",
+    "ko-KR": "전장 기권 기록"
+  },
+  "本图弃权已记录并向双方公布。": {
+    "zh-TW": "本圖棄權已記錄並向雙方公布。",
+    "en-US": "The map forfeit has been recorded and shared with both teams.",
+    "ko-KR": "전장 기권이 기록되어 양 팀에 공개되었습니다."
+  },
+  "只给对手增加一图胜场。达到本场获胜条件则结束，否则继续下一图。本图不生成游戏小分或选手统计。": {
+    "zh-TW": "只給對手增加一圖勝場。達到本場獲勝條件則結束，否則繼續下一圖。本圖不產生遊戲小分或選手統計。",
+    "en-US": "The opponent receives one map win. The series ends if the win target is reached; otherwise, play continues. No in-game score or player stats are created for this map.",
+    "ko-KR": "상대 팀에 전장 1승만 추가합니다. 승리 조건에 도달하면 경기가 종료되고, 아니면 다음 전장을 진행합니다. 이 전장의 게임 점수나 선수 통계는 생성하지 않습니다."
+  },
+  "本图弃权方": {
+    "zh-TW": "本圖棄權方",
+    "en-US": "Team forfeiting this map",
+    "ko-KR": "현재 전장 기권 팀"
+  },
+  "记录后大比分：{0} : {1}": {
+    "zh-TW": "記錄後大比分：{0} : {1}",
+    "en-US": "Series score after recording: {0} : {1}",
+    "ko-KR": "기록 후 경기 점수: {0} : {1}"
+  },
+  "达到获胜条件，进入整场赛果核对": {
+    "zh-TW": "達到獲勝條件，進入整場賽果核對",
+    "en-US": "Win target reached; proceed to series result review",
+    "ko-KR": "승리 조건 도달, 경기 결과 확인 진행"
+  },
+  "尚未达到获胜条件，继续下一图": {
+    "zh-TW": "尚未達到獲勝條件，繼續下一圖",
+    "en-US": "Win target not reached; continue to the next map",
+    "ko-KR": "승리 조건 미달, 다음 전장 진행"
+  },
+  "记录本图弃权并公布": {
+    "zh-TW": "記錄本圖棄權並公布",
+    "en-US": "Record and publish this map forfeit",
+    "ko-KR": "전장 기권 기록 및 공개"
+  },
+  "{0} · 单图弃权": {
+    "zh-TW": "{0} · 單圖棄權",
+    "en-US": "{0} · map forfeited",
+    "ko-KR": "{0} · 전장 기권"
+  },
+  "双方响应已记录，申诉期结束且无争议后自动结算。加赛、季后赛不增加赛段积分。": {
+    "zh-TW": "雙方回應已記錄，申訴期結束且無爭議後自動結算。加賽、季後賽不增加賽段積分。",
+    "en-US": "Both responses are recorded. Settlement is automatic after the appeal window closes with no disputes. Tiebreakers and playoffs add no cycle points.",
+    "ko-KR": "양 팀 응답이 기록되었습니다. 이의 제기 기간이 끝나고 분쟁이 없으면 자동 정산됩니다. 타이브레이커와 플레이오프는 구간 포인트를 추가하지 않습니다."
+  },
+  "赛果结算": {
+    "zh-TW": "賽果結算",
+    "en-US": "Result settlement",
+    "ko-KR": "경기 결과 정산"
+  },
+  "本场赛果已结算。": {
+    "zh-TW": "本場賽果已結算。",
+    "en-US": "This match result has been settled.",
+    "ko-KR": "경기 결과가 정산되었습니다."
+  },
+  "核对赛果并结算": {
+    "zh-TW": "核對賽果並結算",
+    "en-US": "Review and settle the result",
+    "ko-KR": "결과 확인 및 정산"
+  },
+  "核对本场赛果并结算": {
+    "zh-TW": "核對本場賽果並結算",
+    "en-US": "Review and settle this match result",
+    "ko-KR": "이번 경기 결과 확인 및 정산"
+  },
+  "本场不增加赛段积分，双方均记 0 分。": {
+    "zh-TW": "本場不增加賽段積分，雙方均記 0 分。",
+    "en-US": "This match adds no cycle points. Both teams receive 0 points.",
+    "ko-KR": "이번 경기는 구간 포인트를 추가하지 않습니다. 양 팀 모두 0점입니다."
+  },
+  "确认结算本场赛果": {
+    "zh-TW": "確認結算本場賽果",
+    "en-US": "Confirm result settlement",
+    "ko-KR": "경기 결과 정산 확인"
+  },
+  "。到期且无争议后自动结算。": {
+    "zh-TW": "。到期且無爭議後自動結算。",
+    "en-US": ". Settlement is automatic after that time if no disputes remain.",
+    "ko-KR": " 이후 분쟁이 없으면 자동 정산됩니다."
+  },
+  "本场不增加赛段积分，双方零分结算并保留赛果。": {
+    "zh-TW": "本場不增加賽段積分，雙方零分結算並保留賽果。",
+    "en-US": "This match adds no cycle points. Both teams settle at zero and the result is retained.",
+    "ko-KR": "이번 경기는 구간 포인트를 추가하지 않습니다. 양 팀은 0점으로 정산되며 경기 결과는 유지됩니다."
   }
 }
