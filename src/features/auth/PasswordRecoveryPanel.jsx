@@ -30,7 +30,7 @@ export default function PasswordRecoveryPanel({ recovery, locale = 'zh-CN', deli
           <label><span>{t(uiText("再次输入新密码", locale), 'Confirm new password')}</span><input type={recovery.showPassword ? 'text' : 'password'} autoComplete="new-password" minLength={8} value={recovery.confirmation} onChange={event => recovery.setConfirmation(event.target.value)} disabled={busy} required /></label>
         </>}
         {issue}<button className={styles.primary} type="submit" disabled={busy || (stage === 'request' && !deliveryEnabled)}>{busy ? t(uiText("正在处理…", locale), 'Working…') : stage === 'reset' ? t(uiText("确认更新密码", locale), 'Update password') : t(uiText("发送重置链接", locale), 'Send reset link')} <span aria-hidden="true">→</span></button>
-      </form>{loginButton}
+      </form>{stage === 'request' && <a className={styles.secondary} href="/account/recovery">{t('旧邮箱无法收信？申请账号恢复 →', 'Old email unavailable? Request account recovery →')}</a>}{loginButton}
     </>}
   </div>
 }

@@ -1,67 +1,33 @@
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import { buildAccountSettingsView, DEFAULT_NOTIFICATION_PREFERENCES } from '../src/features/account-security/accountSettingsModel.js'
+import { readRecoveryProgress, synchronizeAfterCredentialChange, validateRecoveryApplication, validateRecoveryPassword } from '../src/features/account-security/accountRecoveryModel.js'
+import { accountSettingsError } from '../src/features/account-security/accountFoundationSettings.js'
 
-const currentSession = { id: 'current', current: true }
-const otherSession = { id: 'other', current: false }
-const verifiedIdentity = { id: 'player', identityType: 'PLAYER', isVerified: true }
+// Retire assertions for the unused security panel, keep meaningful live input
+// boundaries. Browser/API acceptance covers the actual new routes and forms.
+assert.equal(validateRecoveryPassword('1234567', '1234567'), '新密码至少需要 8 位。')
+assert.equal(validateRecoveryPassword('password1', 'password2'), '两次输入的新密码不一致。')
+assert.equal(validateRecoveryPassword('密'.repeat(25), '密'.repeat(25)), '新密码不能超过 72 个 UTF-8 字节。')
+assert.equal(validateRecoveryPassword('密'.repeat(24), '密'.repeat(24)), '')
+assert.equal(validateRecoveryPassword('x'.repeat(72), 'x'.repeat(72)), '')
+assert.equal(validateRecoveryPassword('x'.repeat(73), 'x'.repeat(73)), '新密码不能超过 72 个 UTF-8 字节。')
+for (const code of ['EMAIL_ALREADY_IN_USE', 'EMAIL_UNCHANGED', 'EMAIL_VERIFICATION_REQUIRED', 'RECOVERY_TOKEN_INVALID', 'RECOVERY_TOKEN_EXPIRED', 'RECOVERY_ACCOUNT_CHANGED']) assert.notEqual(accountSettingsError({ data: { error: code } }), '操作未完成，请稍后重试。')
+console.log('Account email and recovery input/error boundaries passed.')
 
-const reviewView = buildAccountSettingsView({
-  security: {
-    user: { emailVerified: true },
-    sessions: [currentSession, otherSession],
-    identityRequests: []
-  },
-  notificationSettings: { preference: { emailEnabled: false } },
-  contactPrivacy: { grants: [{ id: 'grant' }], recentAccesses: [{ id: 'access' }] },
-  identities: [verifiedIdentity]
-})
-
-assert.equal(reviewView.action.key, 'sessions')
-assert.equal(reviewView.action.target, 'sessions')
-assert.equal(reviewView.counts.sessions, 2)
-assert.equal(reviewView.counts.otherSessions, 1)
-assert.equal(reviewView.counts.activeIdentities, 1)
-assert.equal(reviewView.counts.privacyGrants, 1)
-assert.equal(reviewView.counts.recentAccesses, 1)
-assert.equal(reviewView.notificationPreference.emailEnabled, false)
-assert.equal(reviewView.notificationPreference.predictionInApp, DEFAULT_NOTIFICATION_PREFERENCES.predictionInApp)
-assert.deepEqual(reviewView.readiness.map(item => item.value), ['已验证', '2 个', '已关闭', '1 项', '1 个'])
-
-const verifyView = buildAccountSettingsView({ security: { user: { emailVerified: false }, sessions: [currentSession] } })
-assert.equal(verifyView.action.key, 'verify-email')
-
-const emailChangeView = buildAccountSettingsView({
-  security: { user: { emailVerified: true }, sessions: [currentSession, otherSession], emailChangeRequest: { id: 'change' } }
-})
-assert.equal(emailChangeView.action.key, 'email-change')
-assert.equal(emailChangeView.action.target, 'credentials')
-
-const pendingIdentityView = buildAccountSettingsView({
-  security: { user: { emailVerified: true }, sessions: [currentSession], identityRequests: [{ status: 'PENDING' }] }
-})
-assert.equal(pendingIdentityView.action.key, 'identity-pending')
-assert.equal(pendingIdentityView.counts.pendingIdentityRequests, 1)
-
-const readyView = buildAccountSettingsView({ security: { user: { emailVerified: true }, sessions: [currentSession] } })
-assert.equal(readyView.action.key, 'ready')
-
-const source = readFileSync(new URL('../src/features/account-security/AccountSecurityPanel.jsx', import.meta.url), 'utf8')
-assert.equal(source.includes('NOTIFICATION DELIVERY'), true)
-assert.equal(source.includes('核心赛事待办始终保留站内记录'), true)
-assert.equal(source.includes('隐私授权与查看记录'), true)
-assert.equal(source.includes('长期身份与申请记录'), true)
-assert.equal(source.includes('deactivationForm.confirmation !== \'注销账号\''), true)
-
-const css = readFileSync(new URL('../src/features/account-security/AccountSecurityPanel.module.css', import.meta.url), 'utf8')
-assert.equal(css.includes('.primaryAction'), true)
-assert.equal(css.includes('.settingsRail'), true)
-assert.equal(css.includes('.preferenceRows'), true)
-assert.equal(css.includes('scroll-margin-top: 225px'), true)
-
-const mySpace = readFileSync(new URL('../src/pages/me/MySpacePage.jsx', import.meta.url), 'utf8')
-assert.equal(mySpace.includes("params.get('section') === 'security'"), true)
-assert.equal(mySpace.includes('return <Navigate replace to={`/account'), true)
-assert.equal(mySpace.includes('<AccountSecurityPanel seasonId={seasonId} />'), false)
-
-console.log('Account settings UI assertions passed.')
+assert.equal(await synchronizeAfterCredentialChange(async () => { throw { status: 401 } }), '')
+assert.match(await synchronizeAfterCredentialChange(async () => { throw new TypeError('offline') }), /变更已完成/)
+assert.match(validateRecoveryApplication({ currentEmail: 'Same@local.example.test', newEmail: 'same@local.example.test', reason: '足够详细的登录原因描述', evidence: '足够详细且可以通过原有渠道独立核验的账号线索说明' }), /不同/)
+const tokens = new URLSearchParams({ verify: 'synthetic-verification', request: 'synthetic-status' }), verified = { current: false }
+let attempts = 0, reads = 0
+const transport = async path => {
+  if (path.endsWith('/verify')) { attempts++; if (attempts === 1) throw new TypeError('offline'); return {} }
+  reads++; return { request: { status: 'PENDING_REVIEW' } }
+}
+await assert.rejects(readRecoveryProgress(tokens, transport, verified), TypeError)
+assert.equal((await readRecoveryProgress(tokens, transport, verified)).request.status, 'PENDING_REVIEW')
+await readRecoveryProgress(tokens, transport, verified)
+assert.equal(attempts, 2); assert.equal(reads, 2)
+for (const code of ['RECOVERY_TOKEN_INVALID', 'RECOVERY_TOKEN_EXPIRED']) {
+  const data = await readRecoveryProgress(tokens, async path => { if (path.endsWith('/verify')) throw { data: { error: code } }; return { request: { status: 'EXPIRED' } } }, { current: false })
+  assert.equal(data.request.status, 'EXPIRED')
+}
+console.log('Recovery retry, consumed links and successful-write session synchronization passed.')

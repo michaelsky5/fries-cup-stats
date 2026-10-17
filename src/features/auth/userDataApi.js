@@ -101,19 +101,7 @@ export async function updatePrimaryIdentityPreference(identityType) {
   })
 }
 
-export async function fetchVerificationRequests() {
-  const data = await platformRequest('/me/verification-requests')
-  return Array.isArray(data?.requests) ? data.requests : []
-}
 
-export async function createVerificationRequest(payload) {
-  const data = await platformRequest('/me/verification-requests', {
-    method: 'POST',
-    body: payload
-  })
-
-  return data?.request || null
-}
 
 export async function fetchUserFeedback(targetId = '') {
   const data = await platformRequest(`/me/feedback${targetId ? `?targetId=${encodeURIComponent(targetId)}` : ''}`)

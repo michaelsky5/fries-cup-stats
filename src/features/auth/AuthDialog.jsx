@@ -89,7 +89,6 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
     authConfig,
     authConfigError,
     retryAuthConfig,
-    emailAppealState,
     emailChangeState,
     emailVerificationState,
     isAuthenticated,
@@ -261,11 +260,7 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
           ) : emailChangeState?.status === 'ERROR' ? (
             <p className={styles.emailChangeNotice} data-tone="error">{uiText("邮箱确认链接无效、已过期或已被取消。", locale)}</p>
           ) : null}
-          {emailAppealState?.status === 'PENDING_REVIEW' ? (
-            <p className={styles.emailChangeNotice} data-tone="success">{uiText("新邮箱已验证，换绑申请已经进入 System 人工审核。", locale)}</p>
-          ) : emailAppealState?.status === 'ERROR' ? (
-            <p className={styles.emailChangeNotice} data-tone="error">{uiText("新邮箱验证链接无效、已过期或申请已取消。", locale)}</p>
-          ) : null}
+
           {isRecovery ? <PasswordRecoveryPanel recovery={recovery} locale={locale} deliveryEnabled={authConfig?.emailVerificationEnabled === true} configLoading={!authConfig && !authConfigError} configError={authConfigError} retryConfig={retryAuthConfig} onLogin={() => { setForceSignIn(true); setMode('login'); setPassword(''); setConfirmPassword(''); if (recovery.email) setEmail(recovery.email) }} /> : isAuthenticated && !onSignedIn && !forceSignIn ? (
             <div className={styles.formIntro}><strong>{user?.displayName || user?.email}</strong><p>{locale === 'en-US' ? 'Manage your profile, password, email and devices in account settings.' : uiText("前往账号设置，管理资料、密码、邮箱和登录设备。", locale)}</p><Link to="/account" onClick={onClose}>{locale === 'en-US' ? 'Open account settings →' : uiText("打开账号设置 →", locale)}</Link></div>
           ) : (
@@ -410,7 +405,6 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
 
 export default function AuthButton({ locale = 'zh-CN', dialogOnly = false }) {
   const {
-    emailAppealState,
     emailChangeState,
     emailVerificationState,
     isAuthenticated,
@@ -436,7 +430,7 @@ export default function AuthButton({ locale = 'zh-CN', dialogOnly = false }) {
     document.addEventListener('keydown', dismiss)
     return () => { document.removeEventListener('pointerdown', dismiss); document.removeEventListener('keydown', dismiss) }
   }, [menuOpen])
-  const [emailLinkVisit] = useState(() => ['verifyEmail', 'emailChangeToken', 'emailAppealToken'].some(key => new URLSearchParams(window.location.search).has(key)))
+  const [emailLinkVisit] = useState(() => new URLSearchParams(window.location.search).has('verifyEmail'))
   const emailLinkHandled = useRef(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -471,7 +465,6 @@ export default function AuthButton({ locale = 'zh-CN', dialogOnly = false }) {
 
   useEffect(() => {
     const resultStatuses = [
-      emailAppealState?.status,
       emailChangeState?.status,
       emailVerificationState?.status
     ]
@@ -479,7 +472,7 @@ export default function AuthButton({ locale = 'zh-CN', dialogOnly = false }) {
       emailLinkHandled.current = true
       openAccount()
     }
-  }, [emailLinkVisit, emailAppealState?.status, emailChangeState?.status, emailVerificationState?.status, openAccount])
+  }, [emailLinkVisit, emailChangeState?.status, emailVerificationState?.status, openAccount])
 
   return (
     <>

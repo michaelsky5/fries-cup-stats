@@ -124,6 +124,7 @@ const router = createBrowserRouter([
   { path: '/guides/weekly-room', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/room-guide/WeeklyRoomGuidePage.jsx')) },
   { path: '/guides/weekly-room/simulate', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/room-guide/RoomPracticePage.jsx')) },
   { path: '/account', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/account/AccountSettingsPage.jsx')) },
+  { path: '/account/recovery', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/account/AccountRecoveryPage.jsx')) },
   { path: '/auth/staff', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/auth/StaffInvitationPage.jsx')) },
   { path: '/auth/staff/apply', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/auth/StaffApplicationPage.jsx')) },
   // Retired room bookmarks resolve to public details; no legacy room component or API.
