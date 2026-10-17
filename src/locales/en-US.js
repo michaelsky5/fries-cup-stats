@@ -9776,6 +9776,7 @@ export default {
   "{0} · 决赛 · {1}": "{0} · Final · {1}",
   "{0} · 资格赛第 {1} 轮 · {2}": "{0} · Qualification round {1} · {2}",
   "{0} 月度周期": "{0} monthly cycle",
+  "{0}：请本人阅读并重新确认当前 {1} 规则；旧声明保留为历史记录。": "{0}: Please read and personally confirm the current {1} rules again. Your earlier declaration is retained as a historical record.",
   "{0}：请本人阅读并重新确认当前 V3.0 规则；旧声明保留为历史记录。": "{0}: Please read and personally confirm the current V3.0 rules again. Your earlier declaration is retained as a historical record.",
   "2026 薯条杯周赛规则书 v3.0（正式版）": "2026 Fries Cup Weekly Rulebook v3.0 (official)",
   "半决赛（PLAYOFFS）": "Semifinals (PLAYOFFS)",

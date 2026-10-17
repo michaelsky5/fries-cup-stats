@@ -54,7 +54,7 @@ export default function WeeklyEligibilityFields({ value, disabled = false, ruleb
     <div className={styles.fields}>
       { [['tank', '重装'], ['damage', '输出'], ['support', '支援']].map(([key, label]) => <label key={key}>{uiText('{0}当前段位', uiLocale, [uiText(label, uiLocale)])}<input name={`${key}Rank`} defaultValue={value?.ranks?.[key] || ''} required maxLength={40} placeholder={uiText("例如：大师 3；未定级请填未定级", uiLocale)} /></label>) }
     </div>
-    <a className={styles.rulebookLink} href="https://fries-cup.com/rules/" target="_blank" rel="noreferrer">{uiText('打开规则中心', uiLocale)} ↗</a>
+    <a className={styles.rulebookLink} href={rulebook?.url || 'https://fries-cup.com/rules/'} target="_blank" rel="noreferrer">{uiText('打开规则中心', uiLocale)} ↗</a>
     <p><a href={rulebook?.url || 'https://fries-cup.com/rules/'} target="_blank" rel="noreferrer">{uiText("阅读周赛 {0} 规则书", uiLocale, [rulebook?.label || 'V3.0'])} ↗</a></p>
     <label className={styles.check}><input key={`${rulesVersion}:${value?.rulesVersion || ''}:${value?.declaredAt || ''}`} name="rulesAccepted" type="checkbox" defaultChecked={value?.rulesAccepted === true && value?.rulesVersion === rulesVersion} required />{uiText("我已阅读规则，以上资料真实，且使用本人战网账号参赛。", uiLocale)}</label>
   </fieldset>
