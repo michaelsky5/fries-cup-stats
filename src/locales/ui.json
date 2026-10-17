@@ -56912,6 +56912,11 @@
     "ko-KR": "{0} 월간 주기",
     "zh-TW": "{0} 月度週期"
   },
+  "{0}：请本人阅读并重新确认当前 {1} 规则；旧声明保留为历史记录。": {
+    "en-US": "{0}: Please read and personally confirm the current {1} rules again. Your earlier declaration is retained as a historical record.",
+    "ko-KR": "{0}: 현재 {1} 규정을 읽고 본인이 다시 확인해 주세요. 이전 확인은 이력으로 보존됩니다.",
+    "zh-TW": "{0}：請本人閱讀並重新確認目前 {1} 規則；舊聲明保留為歷史紀錄。"
+  },
   "{0}：请本人阅读并重新确认当前 V3.0 规则；旧声明保留为历史记录。": {
     "en-US": "{0}: Please read and personally confirm the current V3.0 rules again. Your earlier declaration is retained as a historical record.",
     "ko-KR": "{0}: 현재 V3.0 규정을 읽고 본인이 다시 확인해 주세요. 이전 확인은 이력으로 보존됩니다.",

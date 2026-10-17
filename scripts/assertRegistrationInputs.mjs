@@ -79,3 +79,16 @@ test('multiline registration errors translate each field and issue while retaini
   }
   assert.equal(translateRegistrationError(message, 'zh-CN'), message)
 })
+
+test('outdated rulebook feedback preserves the player and required version in every locale', () => {
+  for (const version of ['V3.0.1', 'V3.1', 'V4.0']) {
+    const message = `Player#12345：请本人阅读并重新确认当前 ${version} 规则；旧声明保留为历史记录。`
+    for (const locale of ['en-US', 'ko-KR', 'zh-TW']) {
+      const translated = translateRegistrationError(message, locale)
+      assert.ok(translated.includes('Player#12345'))
+      assert.ok(translated.includes(version))
+      assert.notEqual(translated, message)
+      if (locale !== 'zh-TW') assert.doesNotMatch(translated, /[\u4e00-\u9fff]/u)
+    }
+  }
+})
