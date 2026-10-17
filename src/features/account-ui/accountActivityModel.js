@@ -1,4 +1,4 @@
-import { weeklyResponseAccess, weeklyTeamName } from '../weekly-competition/weeklyMatchRoomModel.js'
+import { weeklyResponseAccess, weeklyRoomResponseOverdue, weeklyTeamName } from '../weekly-competition/weeklyMatchRoomModel.js'
 import { buildTaskCenterView } from '../tasks/taskNotificationModel.js'
 import { buildWeeklyPreparation, isWeeklyPreparationWorkspace } from '../weekly-competition/weeklyPreparationModel.js'
 import { hasAccountFeatureAccess } from '../my-space/mySpaceApi.js'
@@ -36,17 +36,20 @@ export function isAccountActivitySource(key, data, { seasonId, userId }) {
 export function buildAccountActivity(sources, { seasonId, userId, identityType, preparationReadOnly = true, roomsReadOnly = true, now = Date.now() }) {
   const preparation = buildWeeklyPreparation(sources.preparation?.data || null,
     { seasonId, userId, readOnly: preparationReadOnly || sources.preparation?.status !== 'ready', now })
-  const taskView = mergeAccountTasks(sources.tasks?.data?.tasks || [], [
+  const resultTasks = buildWeeklyResultTasks(sources.rooms?.data || null, { seasonId, readOnly: roomsReadOnly || sources.rooms?.status !== 'ready', now })
+  const respondingMatches = new Set(resultTasks.filter(task => task.sourceType === 'WEEKLY_RESULT').map(task => task.resultContext.matchId))
+  const inboxTasks = (sources.tasks?.data?.tasks || []).filter(task => !(task.status === 'OPEN' && task.sourceType === 'WEEKLY_RESULT' && respondingMatches.has(task.resultContext?.matchId || task.sourceId)))
+  const taskView = mergeAccountTasks(inboxTasks, [
     ...preparation.tasks,
     ...buildOwnershipTransferTasks(sources.ownership?.data, { seasonId, userId, identityType, now }),
-    ...buildWeeklyResultTasks(sources.rooms?.data || null, { seasonId, readOnly: roomsReadOnly || sources.rooms?.status !== 'ready' })
+    ...resultTasks
   ], { now, identityType })
   const records = Object.values(sources)
   const status = records.some(source => source.status === 'loading') ? 'loading' : records.some(source => source.status === 'error') ? 'error' : 'ready'
   return { preparation, taskView, status }
 }
 
-export function buildWeeklyResultTasks(workspace, { seasonId, readOnly = true } = {}) {
+export function buildWeeklyResultTasks(workspace, { seasonId, readOnly = true, now = Date.now() } = {}) {
   if (!workspace || !seasonId || workspace.season?.id !== seasonId) return []
   const viewOnly = readOnly || workspace.accessMode !== 'WRITE' || workspace.featureAccess !== 'WRITE' || workspace.season.status === 'ARCHIVED'
   const preparation = viewOnly ? [] : (workspace.rooms || []).filter(room => room.status === 'PENDING').flatMap(room => (room.myTeams || [])
@@ -63,8 +66,10 @@ export function buildWeeklyResultTasks(workspace, { seasonId, readOnly = true } 
     .map(team => ({
       id: `weekly-result:${room.id}:${team.team.id}`, status: 'OPEN', requiresSourceResolution: true,
       taskType: 'WEEKLY_RESULT_CONFIRMATION', sourceType: 'WEEKLY_RESULT', sourceId: `${room.id}:${team.team.id}`,
-      title: `核对 ${weeklyTeamName(team.team)} 的本场赛果`, priority: 'HIGH', identityType: 'MANAGER', teamOrganization: team.team,
-      body: `${room.cycle?.name || '周赛'} · ${room.displayName || room.week?.label || '赛果确认'}。核对比分后代表本队确认，或提交争议说明。`,
+      title: `${weeklyTeamName(room.teamA)} vs ${weeklyTeamName(room.teamB)} · 核对 ${weeklyTeamName(team.team)} 的本场赛果`, priority: 'HIGH', identityType: team.role === 'PLAYER' ? 'PLAYER' : team.role === 'COACH' ? 'COACH' : 'MANAGER', teamOrganization: team.team,
+      body: `${room.cycle?.name || '周赛'} · ${room.displayName || room.week?.label || '赛果确认'}。${weeklyRoomResponseOverdue(room, now) ? '响应已超时，指定代表仍可记录本队响应；须由管理员复核，沉默不视为同意。' : '核对比分后代表本队确认，或提交争议说明。'}`,
+      dueAt: room.responseDueAt || null,
+      resultContext: { matchId: room.id, matchCode: room.matchCode, revision: room.revision, scoreA: room.scoreA, scoreB: room.scoreB },
       actionUrl: `/me?section=matches&weeklyMatch=${encodeURIComponent(room.id)}`
     })))
   return [...preparation, ...results]

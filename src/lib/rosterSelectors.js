@@ -1,6 +1,7 @@
 import { translateUiText as formatUiText } from './uiText.js'
 import { getHeroAvatarSrc, getLeaderboardRows, getPlayerInitials, normalizeLeaderboardRole } from './leaderboardSelectors.js'
 import { formatOwHeroName, getOwHeroCanonicalKey, getOwHeroCanonicalName, getOwNameSearchText } from './heroes.js'
+import { getPreferredTeamShortName } from './teamDisplayIdentity.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
@@ -97,7 +98,8 @@ export function getTeamRouteId(team) {
 }
 
 export function getTeamShortName(team) {
-  return normalize(team?.team_short_name || team?.shortName || team?.short || team?.team_id || team?.id || team?.name || '-')
+  const short = normalize(team?.team_short_name || team?.shortName || team?.short || team?.team_id || team?.id || team?.name || '-')
+  return getPreferredTeamShortName(short, team?.team_name || team?.fullName || team?.name)
 }
 
 export function getTeamFullName(team) {

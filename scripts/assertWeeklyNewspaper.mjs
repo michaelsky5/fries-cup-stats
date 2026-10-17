@@ -2,13 +2,34 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 import {buildWeeklyReportPreview,listWeeklyReportPreviews} from '../src/features/weekly-report/weeklyReportPreview.js'
-import {buildWeeklyNewspaper,buildMatchNews,newspaperTeamName,buildWeeklyHeroUsage,buildWeeklyFunFacts} from '../src/features/weekly-report/weeklyNewsroom.js'
-import {makeNewspaperPdf,PAPER_SIZE,A4_POINTS,editionFilename} from '../src/features/weekly-report/newspaperExport.js'
+import {buildWeeklyNewspaper,buildMatchNews,newspaperTeamName,buildWeeklyHeroUsage,buildWeeklyFunFacts,resolveWeeklyHeroRole} from '../src/features/weekly-report/weeklyNewsroom.js'
+import {captureNewspaperSheet,makeNewspaperPdf,PAPER_SIZE,A4_POINTS,editionFilename} from '../src/features/weekly-report/newspaperExport.js'
 import {buildWeeklyNewspaperResultsUrl,buildWeeklyNewspaperQr} from '../src/features/weekly-report/weeklyNewspaperShare.js'
 
 const db=JSON.parse(readFileSync(new URL('./fixtures/weekly-newspaper/published-FCW26.json',import.meta.url),'utf8'))
 const report=buildWeeklyReportPreview(db)
 const paper=buildWeeklyNewspaper(report)
+
+test('hero role icons preserve saved historical Sombra roles and the frozen model',()=>{
+  for (const role of ['DPS','SUP']) {
+    const frozen={awards:{mvp:[{hero:'Sombra',role}],bestFive:[]}}
+    const before=JSON.stringify(frozen)
+    assert.equal(resolveWeeklyHeroRole({name:'黑影'},frozen),role)
+    assert.equal(resolveWeeklyHeroRole({name:'黑影'},{...frozen,gameVersion:'overwatch-2026-season5'}),role)
+    assert.equal(JSON.stringify(frozen),before)
+  }
+  assert.equal(resolveWeeklyHeroRole({name:'Sombra'},{gameVersion:'overwatch-pre-season5'}),'DPS')
+  assert.equal(resolveWeeklyHeroRole({name:'Sombra'},{gameVersion:'overwatch-2026-season5'}),'SUP')
+  assert.equal(resolveWeeklyHeroRole({name:'Sombra',role:'DPS'},{gameVersion:'overwatch-2026-season5'}),'DPS')
+})
+
+test('unknown and conflicting historical role contexts never default to a damage icon',()=>{
+  assert.equal(resolveWeeklyHeroRole({name:'Sombra'},{}),'')
+  assert.equal(resolveWeeklyHeroRole({name:'Sombra'},{awards:{mvp:[{hero:'Sombra',role:'DPS'},{hero:'Sombra',role:'SUP'}]}}),'')
+  assert.equal(resolveWeeklyHeroRole({name:'unregistered hero'},{}),'')
+  assert.equal(resolveWeeklyHeroRole({name:'Doctrine'},{}),'SUP')
+  assert.equal(resolveWeeklyHeroRole({name:'D.Mon'},{}),'TANK')
+})
 
 test('printed results links keep the exact issue on the public site in every supported language',()=>{
   for (const [locale,param] of [['zh-CN','zh'],['zh-TW','zh-TW'],['ko-KR','ko'],['en-US','en']]) {
@@ -43,7 +64,7 @@ test('share URL treats identifier text as data instead of accepting extra URL pa
 
 test('the lead tells a verified fifth-map result, not an imagined tactical story',()=>{
   assert.equal(paper.lead.id,'FCW26-SWISS-R1-M09')
-  assert.match(paper.lead.title,/MH 连取末两图，3:2 战胜 404/)
+  assert.match(paper.lead.title,/MH 连取末两图，3:2 逆转 404/)
   assert.equal(paper.lead.decisive.map_name,'Route 66')
   assert.match(paper.lead.paragraphs[1],/前四图双方战成 2:2/)
   assert.deepEqual(paper.lead.sources,['FCW26-SWISS-R1-M09'])
@@ -72,7 +93,7 @@ test('partial or contradictory winners never support a sequence or deciding-map 
   for(const alter of [r=>r.maps.find(m=>m.matchId===match.id).winner='',r=>r.maps=r.maps.filter(m=>!(m.matchId===match.id&&m.order===5)),r=>r.maps.find(m=>m.matchId===match.id&&m.order===4).winner=match.team_b.id,r=>r.maps.find(m=>m.matchId===match.id&&m.order===4).order=3,r=>r.maps.find(m=>m.matchId===match.id&&m.order===5).is_administrative=true]) {
     const r=structuredClone(report);alter(r)
     const story=buildMatchNews(r,match)
-    assert.doesNotMatch(story.title,/连取/)
+    assert.doesNotMatch(story.title,/连取|逆转/)
     assert.equal(story.decisive,null)
     assert.doesNotMatch(story.paragraphs.join(''),/前四图|这一图确定|赢下/)
     assert.doesNotMatch(story.brief,/连下|连赢|追回|扳回|决胜|翻盘|首两图|前四图|末两图/)
@@ -88,19 +109,19 @@ test('administrative rulings and missing scores are reported as such',()=>{
   assert.doesNotMatch(incomplete.title,/战胜|连取/)
   assert.match(incomplete.result,/—/)
 })
-test('a one-page edition has two briefs and at most two observed people even for large fields',()=>{
+test('a one-page edition has three briefs and at most two observed people even for large fields',()=>{
   const large=structuredClone(report)
   large.roster=Array.from({length:1000},(_,i)=>({...report.roster[i%report.roster.length],id:`extra-${i}`}))
   large.completed=Array.from({length:120},(_,i)=>({...report.completed[i%3],id:`extra-match-${i}`}))
   const largePaper=buildWeeklyNewspaper(large)
   assert.equal(largePaper.pageCount,1)
-  assert.equal(largePaper.briefs.length,2)
+  assert.equal(largePaper.briefs.length,3)
   assert.ok(largePaper.peopleNews.people.length<=2)
   assert.equal(largePaper.rosterPages,undefined)
   for(const sample of listWeeklyReportPreviews(db)) {
     const issue=buildWeeklyNewspaper(sample)
     assert.equal(issue.pageCount,1)
-    assert.ok(issue.briefs.length<=2)
+    assert.ok(issue.briefs.length<=3)
     assert.ok(issue.articles.every(a=>sample.completed.some(m=>m.id===a.id)))
     assert.equal(issue.generation.weekId,sample.week.id)
   }
@@ -122,7 +143,7 @@ test('map and ban frequency captions retain exact counts and ties',()=>{
   assert.match(paper.mapNews.paragraphs[0],/霓虹枢纽/)
   assert.match(paper.banNews.summary,/堡垒、D.Mon、飞天猫各被 Ban 3 次/)
   assert.match(paper.banNews.summary,/27 条/)
-  assert.equal(newspaperTeamName({short:'?',name:'Ateam'}),'Ateam')
+  assert.equal(newspaperTeamName({short:'?',name:'Ateam'}),'ATEAM')
 })
 
 test('visual score paths and first-map comebacks require all five verified winners',()=>{
@@ -134,7 +155,7 @@ test('visual score paths and first-map comebacks require all five verified winne
   const partial=structuredClone(report)
   partial.maps.find(map=>map.matchId===paper.lead.id&&map.order===1).winner=''
   const issue=buildWeeklyNewspaper(partial)
-  assert.deepEqual(issue.lead.sequence,[])
+  assert.deepEqual(issue.articles.find(article=>article.id===paper.lead.id).sequence,[])
   assert.equal(issue.funFacts.comeback.count,0)
   assert.equal(issue.funFacts.comeback.total,2)
 })
@@ -312,15 +333,15 @@ test('match briefs use natural copy without calling an opening map win a recover
   }
 })
 
-test('current briefs distinguish the verified opening, reply and closing sequences in two sentences',()=>{
+test('map recaps preserve the opening, reply and closing when a brief leads with historical news',()=>{
   const [first,second]=paper.briefs
-  assert.match(first.brief,/Ateam 连下首两图，取得 2:0 领先/)
-  assert.match(first.brief,/CSM 在香巴里寺院扳回一图，Ateam 随后拿下末两图/)
-  assert.match(second.brief,/SPS.V 以三图连胜开局/)
-  assert.match(second.brief,/MMGT 在香巴里寺院追回一图，SPS.V 再取霓虹枢纽收尾/)
+  assert.match(first.recap,/ATEAM 连下首两图，取得 2:0 领先/)
+  assert.match(first.recap,/CSM 在香巴里寺院扳回一图，ATEAM 随后拿下末两图/)
+  assert.match(second.recap,/SPS.V 以三图连胜开局/)
+  assert.match(second.recap,/MMGT 在香巴里寺院追回一图，SPS.V 再取霓虹枢纽收尾/)
   const english=buildWeeklyNewspaper(report,'en-US').briefs
-  assert.match(english[0].brief,/Ateam opened 2:0.*CSM won Shambali Monastery.*Ateam took the last two/)
-  assert.match(english[1].brief,/SPS.V opened 3:0.*MMGT won Shambali Monastery.*SPS.V took Neon Junction/)
+  assert.match(english[0].recap,/ATEAM opened 2:0.*CSM won Shambali Monastery.*ATEAM took the last two/)
+  assert.match(english[1].recap,/SPS.V opened 3:0.*MMGT won Shambali Monastery.*SPS.V took Neon Junction/)
   for(const issue of listWeeklyReportPreviews(db)) for(const article of buildWeeklyNewspaper(issue).articles) {
     assert.ok((article.brief.match(/。/g)||[]).length<=2)
     assert.doesNotMatch(article.brief,/战术|压制|操作|关键团战|观众|唯一一胜/)
@@ -392,16 +413,16 @@ test('PDF assembly places exactly the supplied image on each A4 page',async()=>{
 test('winner-first display reverses the entire score path while retaining immutable source data',()=>{
   const issue=listWeeklyReportPreviews(db).find(sample=>sample.week.week_number===2)
   const before=structuredClone(issue)
-  const story=buildWeeklyNewspaper(issue).lead
-  assert.equal(story.result,'MMGT 3:2 Ateam')
-  assert.equal(story.sourceResult,'Ateam 2:3 MMGT')
-  assert.deepEqual(story.scoreOrder,['MMGT','Ateam'])
-  assert.deepEqual(story.sourceScoreOrder,['Ateam','MMGT'])
+  const story=buildWeeklyNewspaper(issue).articles.find(article=>article.id===issue.closeMatch.id)
+  assert.equal(story.result,'MMGT 3:2 ATEAM')
+  assert.equal(story.sourceResult,'ATEAM 2:3 MMGT')
+  assert.deepEqual(story.scoreOrder,['MMGT','ATEAM'])
+  assert.deepEqual(story.sourceScoreOrder,['ATEAM','MMGT'])
   assert.deepEqual(story.displayScores,[3,2])
   assert.deepEqual(story.sequence.map(map=>map.mapScore),[[2,1],[0,3],[1,0],[0,3],[1,0]])
   assert.deepEqual(story.sequence.map(map=>map.runningScore),[[1,0],[1,1],[2,1],[2,2],[3,2]])
   assert.deepEqual(story.sequence.map(map=>map.winnerSide),['a','b','a','b','a'])
-  assert.match(story.title,/赢下决胜图，3:2 战胜 Ateam/)
+  assert.match(story.title,/赢下决胜图，3:2 战胜 ATEAM/)
   assert.match(story.brief,/交替获胜.*2:2.*拿下香巴里寺院/)
   assert.deepEqual(issue,before)
 })
@@ -417,14 +438,16 @@ test('reversing the display never manufactures a missing or inconsistent map sco
   }
 })
 
-test('multiweek briefs prefer different verified match patterns and keep the remaining results visible',()=>{
+test('multiweek briefs prioritize verified backgrounds and keep every remaining result visible',()=>{
   const issues=listWeeklyReportPreviews(db)
   const first=buildWeeklyNewspaper(issues.find(sample=>sample.week.week_number===1))
   const second=buildWeeklyNewspaper(issues.find(sample=>sample.week.week_number===2))
   assert.equal(first.layout,'compact')
   assert.equal(second.layout,'standard')
-  assert.equal(new Set(second.briefs.map(article=>article.newsKind)).size,2)
-  assert.equal(second.otherResults.length,2)
+  assert.equal(second.briefs.length,3)
+  assert.ok(second.briefs[0].background)
+  assert.match(second.briefs[0].brief,/此前 1 场实赛均负，SPS取得本周期已公布实赛中的首胜/)
+  assert.equal(second.otherResults.length,1)
   assert.deepEqual(new Set([second.lead,...second.briefs,...second.otherResults].map(article=>article.id)),new Set(second.articles.map(article=>article.id)))
   const reordered={...second.report,completed:[...second.report.completed].reverse(),maps:[...second.report.maps].reverse()}
   const other=buildWeeklyNewspaper(reordered)
@@ -432,4 +455,27 @@ test('multiweek briefs prefer different verified match patterns and keep the rem
   assert.deepEqual(other.otherResults.map(article=>article.id),second.otherResults.map(article=>article.id))
   const ordinary=first.lead
   assert.doesNotMatch(ordinary.title,/末两图|逆转|决胜/)
+})
+
+test('capture waits for copied images before layout and removes the copy on decoding failure',async t=>{
+  const globals=['document','getComputedStyle'].map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)])
+  t.after(()=>{for(const [key,descriptor] of globals) descriptor?Object.defineProperty(globalThis,key,descriptor):delete globalThis[key]})
+  let rejectDecode,decodingStarted=false,layoutRead=false,removed=false
+  const decoding=new Promise((resolve,reject)=>{rejectDecode=reject})
+  const image={complete:true,naturalWidth:512,loading:'lazy',decode:()=>{decodingStarted=true;return decoding}}
+  const printable={style:{setProperty(){}},removeAttribute(){},querySelectorAll:selector=>selector==='img'?[image]:[],
+    querySelector:()=>{layoutRead=true;throw new Error('Layout must wait for the copied image')}}
+  const captureRoot={style:{},setAttribute(){},append(){},remove:()=>{removed=true}}
+  const sheet={querySelectorAll:()=>[],cloneNode:()=>printable}
+  globalThis.document={fonts:{ready:Promise.resolve()},createElement:()=>captureRoot,body:{append(){}}}
+  globalThis.getComputedStyle=()=>({fontFamily:'FCA Harmony',fontVariantNumeric:'tabular-nums'})
+  const outcome=captureNewspaperSheet(sheet).then(()=>null,error=>error)
+  try {
+    await new Promise(resolve=>setImmediate(resolve))
+    assert.equal(decodingStarted,true,'Every capture must decode its own copy, even with cached source images')
+    assert.equal(image.loading,'eager')
+    assert.equal(layoutRead,false,'Intrinsic image sizes must be ready before layout is copied')
+  } finally {rejectDecode(new Error('Copied team logo failed to decode'))}
+  assert.match((await outcome)?.message,/Copied team logo failed to decode/)
+  assert.equal(removed,true)
 })

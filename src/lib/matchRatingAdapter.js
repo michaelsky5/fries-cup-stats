@@ -8,6 +8,9 @@ import {
 import { normalizeLeaderboardRole } from './leaderboardSelectors.js'
 import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
 import { normalizeSeasonId } from '../features/favorites/normalizeSeasonId.js'
+import { usesStatisticalRating } from './statisticalRatingAdapter.js'
+import { STATISTICAL_RATING_VERSION } from '../config/statisticalRatingConfig.js'
+import { buildMatchAwardFallback } from './matchAwardFallback.js'
 
 const METRIC_IDS = PUBLIC_METRICS.map(metric => metric.id)
 
@@ -374,7 +377,16 @@ function decorateScoreEntry(entry, minimumMaps) {
   }
 }
 
-export function getMatchRatingSummary(match, maps = [], players = []) {
+export function getMatchAwardFallback(match, maps = [], players = []) {
+  if (!usesStatisticalRating({ seasonId: getMatchSeasonId(match) }) || match?.is_forfeit) return null
+  const minimumMaps = getMatchAwardMinimumMaps(maps.length)
+  const award = buildMatchAwardFallback(buildMatchRatingEntries(match, maps, players), maps, minimumMaps)
+  return award ? { ...award, minimumMaps, entries: award.entries.map(entry => decorateScoreEntry(entry, minimumMaps)) } : null
+}
+
+export function getMatchRatingSummary(match, maps = [], players = [], options = {}) {
+  const statistical = usesStatisticalRating({ seasonId: getMatchSeasonId(match) })
+  const modelMetadata = statistical ? { ratingModelVersion: STATISTICAL_RATING_VERSION, formulaSource: 'ratingModel.v1.5' } : { formulaSource: 'ratingModel.v1' }
   const completedMapCount = safeArr(maps).length
   const minimumAwardMaps = getMatchAwardMinimumMaps(completedMapCount)
   const rawEntries = buildMatchRatingEntries(match, maps, players)
@@ -383,6 +395,7 @@ export function getMatchRatingSummary(match, maps = [], players = []) {
       supported: false,
       level: 'match',
       formulaSource: 'ratingModel.v1',
+      ...modelMetadata,
       topEntries: [],
       roleLeaders: {},
       entries: [],
@@ -397,13 +410,14 @@ export function getMatchRatingSummary(match, maps = [], players = []) {
   const resultContext = scoreContext === 'map' ? getMapResultContext(match, maps[0]) : {}
   const currentRatingScope = getCurrentRatingScope(match, maps)
   const scoredEntries = scoreLeaderboardEntries(rawEntries, 0, {
+    db: options.db,
     players,
     seasonId: getMatchSeasonId(match),
     scoreContext,
     ...currentRatingScope,
     ...resultContext
   })
-    .filter(entry => entry.roleScore > 0)
+    .filter(entry => entry.roleScore != null && Number.isFinite(entry.roleScore))
     .sort(compareLeaderboardEntries)
     .map(entry => decorateScoreEntry(entry, minimumAwardMaps))
 
@@ -418,6 +432,7 @@ export function getMatchRatingSummary(match, maps = [], players = []) {
     supported: scoredEntries.length > 0,
     level: 'match',
     formulaSource: 'ratingModel.v1',
+    ...modelMetadata,
     topEntries: awardEligibleEntries.slice(0, 3),
     roleLeaders,
     entries: scoredEntries,

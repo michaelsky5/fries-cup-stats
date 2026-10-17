@@ -38,6 +38,7 @@
 .duel strong { overflow-wrap: anywhere; }
 .duel img { width: 30px; height: 30px; object-fit: contain; flex-shrink: 0; }
 .duel > b { text-align: center; white-space: nowrap; font: 800 26px var(--fc-data-font-display, sans-serif); }
+.duel > b.matchState { white-space: normal; overflow-wrap: anywhere; text-wrap: balance; font: 700 12px/1.5 var(--fc-data-font-interface); color: var(--fc-data-text-muted); }
 .arrow { color: #8a6f19; }
 .more { display: flex; width: 100%; justify-content: space-between; min-height: 48px; margin-top: 16px; padding: 14px; border: 1px solid var(--staff-line); border-radius: 0; background: transparent; font: inherit; font-size: 13px; color: inherit; cursor: pointer; }
 .aside { min-width: 0; border-left: 1px solid var(--staff-line); padding-left: 28px; }

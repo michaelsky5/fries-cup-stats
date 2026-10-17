@@ -17,9 +17,7 @@ export async function makeNewspaperPdf(PDFDocument, images, title) {
   return pdf.save()
 }
 
-export async function captureNewspaperSheet(sheet) {
-  if (!sheet) throw new Error('版面尚未加载，请稍后重试。')
-  await document.fonts.ready
+async function waitForNewspaperImages(sheet) {
   sheet.querySelectorAll('img').forEach(img=>{img.loading='eager'})
   await Promise.all([...sheet.querySelectorAll('img')].map(async img=>{
     if (!img.complete) await new Promise((resolve,reject)=>{
@@ -31,6 +29,12 @@ export async function captureNewspaperSheet(sheet) {
     if (!img.naturalWidth) throw new Error('版面图片加载失败，请重试。')
     if (img.decode) await img.decode()
   }))
+}
+
+export async function captureNewspaperSheet(sheet) {
+  if (!sheet) throw new Error('版面尚未加载，请稍后重试。')
+  await document.fonts.ready
+  await waitForNewspaperImages(sheet)
   // Validate the same printable layout as the publication inspector. Reading
   // links occupy space on screen but are excluded from the exported edition.
   const captureRoot=document.createElement('div')
@@ -45,11 +49,14 @@ export async function captureNewspaperSheet(sheet) {
   printable.querySelectorAll('[data-paper-web-only]').forEach(node=>node.remove())
   captureRoot.append(printable);document.body.append(captureRoot)
   try {
+  // A copied image has its own loading state. Wait before html-to-image reads
+  // intrinsic sizes, including when its module and resource caches are warm.
+  await waitForNewspaperImages(printable)
   const footer = printable.querySelector('[data-paper-folio]')
   const body = printable.querySelector('[data-paper-body]')
   if (!footer || !body || body.scrollHeight > body.clientHeight+1 || printable.scrollHeight > PAPER_SIZE.height+1 || footer.offsetTop+footer.offsetHeight > PAPER_SIZE.height) throw new Error('报纸版面超出页边界，请重试或反馈这一期。')
   const {toCanvas} = await import('html-to-image')
-  const canvas=await toCanvas(printable,{width:PAPER_SIZE.width,height:PAPER_SIZE.height,pixelRatio:2,backgroundColor:'#f5f1e8',preferredFontFormat:'woff2',style:{transform:'none',position:'relative',inset:'auto',left:'0',top:'0'}})
+  const canvas=await toCanvas(printable,{width:PAPER_SIZE.width,height:PAPER_SIZE.height,pixelRatio:2,backgroundColor:'#f5f1e8',style:{transform:'none',position:'relative',inset:'auto',left:'0',top:'0'}})
   const probe=document.createElement('canvas');probe.width=20;probe.height=28
   const context=probe.getContext('2d');context.drawImage(canvas,0,0,20,28)
   const pixels=context.getImageData(0,0,20,28).data

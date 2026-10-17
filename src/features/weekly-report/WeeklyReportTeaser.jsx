@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { translateUiText } from '../../lib/uiText.js'
+import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
 import { getHeroImage, getMapImage } from '../../lib/reviewAssets.js'
 import { weeklyCycleTitle, weeklyPeriodPath } from '../weekly-overview/weeklyPresentation.js'
 import { weeklyReportPath } from './weeklyReportPreview.js'
@@ -96,9 +97,9 @@ export function WeeklyReportTeaser({ cycle, week, report: providedReport, compac
 export function WeeklyEventPathway({ cycle, week, locale, withSeason }) {
   const t = (zh, en) => copy(locale, zh, en)
   const stages = [
-    ['01', t('每周比赛', 'Weekly matches'), t('五局累计周期积分', 'Five maps, cycle points')],
-    ['02', t('周期季后赛', 'Cycle playoffs'), t('四强单败', 'Four-team single elimination')],
-    ['03', 'Weekly Major', t('赛制与名额见赛事说明', 'See the event guide for format and places')]
+    ['01', getWeeklyPhaseLabel('REGULAR', locale), t('五局累计赛段积分', 'Five maps, cycle points')],
+    ['02', getWeeklyPhaseLabel('PLAYOFFS', locale), t('四强单败', 'Four-team single elimination')],
+    ['03', getWeeklyPhaseLabel('MAJOR', locale), t('赛制与名额见赛事说明', 'See the event guide for format and places')]
   ]
   return <footer className={styles.pathway} aria-labelledby="weekly-pathway-title" data-weekly-pathway data-i18n-ignore>
     <div className={styles.pathwayHeading}><h2 id="weekly-pathway-title">{t('赛事路径', 'The competition path')}</h2><Link to={withSeason(weeklyPeriodPath('/advance', cycle, week))}>{t('查看晋级形势', 'Explore advancement')}<span aria-hidden="true">→</span></Link></div>

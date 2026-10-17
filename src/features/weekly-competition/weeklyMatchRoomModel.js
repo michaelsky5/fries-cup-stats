@@ -31,15 +31,26 @@ export function weeklyMatchPhase(room) {
   return room?.ready === true ? 'response' : 'review'
 }
 
-export function weeklyRoomStatus(room, { readOnly = false } = {}) {
+export function weeklyRoomResponseOverdue(room, now = Date.now()) {
+  if (weeklyMatchPhase(room) !== 'response' || !['PENDING', 'DISPUTED'].includes(room?.confirmationState)) return false
+  const due = Date.parse(room.responseDueAt)
+  return Number.isFinite(due) ? Number(now) >= due : room.responseOverdue === true
+}
+
+export function weeklyRoomStatus(room, { readOnly = false, now = Date.now() } = {}) {
   const phase = weeklyMatchPhase(room)
   if (phase === 'cancelled') {
     return { label: '已取消', tone: 'quiet', detail: '比赛或所属周赛已取消，记录仅供查看。' }
   }
-  if (phase === 'closed') return { label: '已结束 · 记录只读', tone: 'quiet', detail: '本周或所属周期已结束。已有赛果与响应保留供核对，如需更正请联系管理员。' }
+  if (phase === 'closed') return { label: '已结束 · 记录只读', tone: 'quiet', detail: '本周或所属赛段已结束。已有赛果与响应保留供核对，如需更正请联系管理员。' }
   if (phase === 'scheduled') return { label: room.scheduledAt ? '等待开赛' : '比赛时间待定', tone: 'yellow', detail: room.scheduledAt ? '赛程已发布。点击“进入比赛房”，按当前阶段操作；房间内可随时联系赛管。' : '本队配对已发布，等待管理员确认比赛时间。' }
-  if (phase === 'live') return { label: '比赛进行中', tone: 'yellow', detail: '比赛正在进行，当前无需确认赛果。正式结果通过审核后，队长或经理再代表本队响应。' }
+  if (phase === 'live') return { label: '比赛进行中', tone: 'yellow', detail: '比赛正在进行，当前无需确认赛果。正式结果通过审核后，由本队本场指定代表响应。' }
   if (room?.ready === false && phase === 'review' && room.confirmationState !== 'STALE') return { label: '赛果待审核', tone: 'quiet', detail: '比赛结果尚未完成正式审核，请等待裁判与管理员处理。' }
+  if (weeklyRoomResponseOverdue(room, now)) {
+    const ownConfirmed = room.myTeams?.length && room.myTeams.every(team => team.confirmation?.isCurrent === true && team.confirmation.revision === room.revision && team.confirmation.status === 'CONFIRMED')
+    return { label: ownConfirmed ? '本队已确认 · 等待管理员复核' : '响应已超时 · 等待管理员复核', tone: 'red',
+      detail: `${ownConfirmed ? '本队已确认当前赛果，仍有队伍未确认。' : '尚有队伍未确认，指定代表仍可记录本队响应。'}响应窗口已结束，须由周赛管理员复核截图与记录；沉默不视为同意。` }
+  }
   if (room?.confirmationState === 'PENDING' && room.myTeams?.length) {
     const current = room.myTeams.filter(team => team.confirmation?.isCurrent === true && team.confirmation.revision === room.revision)
     if (current.length !== room.myTeams.length) return { label: '确认状态待同步', tone: 'yellow', detail: '本队响应与当前赛果修订尚未对齐，请刷新核对，等待管理员重新开启确认。' }
@@ -48,7 +59,7 @@ export function weeklyRoomStatus(room, { readOnly = false } = {}) {
     }
     if (current.some(team => team.confirmation.status === 'PENDING')) {
       const canAct = current.some(team => team.confirmation.status === 'PENDING' && weeklyResponseAccess(room, team, { readOnly }).allowed)
-      return { label: canAct ? '待本队确认' : '等待队伍确认', tone: 'yellow', detail: canAct ? '请核对已审核比分，再代表下方待响应的队伍确认或提出争议。' : '等待本队队长或经理核对比分并响应；当前账号仅可查看。' }
+      return { label: canAct ? '待本队确认' : '等待队伍确认', tone: 'yellow', detail: canAct ? '请核对已审核比分，再代表下方待响应的队伍确认或提出争议。' : '等待本队本场指定代表核对比分并响应；当前账号仅可查看。' }
     }
   }
   const states = {
@@ -58,7 +69,7 @@ export function weeklyRoomStatus(room, { readOnly = false } = {}) {
     STALE: { label: '赛果已更新', tone: 'yellow', detail: '旧修订的确认已失效。请核对当前比分，等待管理员重新开启确认。' },
     CONFIRMED: { label: '双方已确认', tone: 'mint', detail: '双方已接受当前赛果，等待管理员按规则结算；确认不会自动增加积分。' },
     PENDING: { label: '等待双方确认', tone: 'yellow', detail: readOnly
-      ? '等待本队队长或经理核对比分并响应；当前账号仅可查看。'
+      ? '等待本队本场指定代表核对比分并响应；当前账号仅可查看。'
       : '请核对已审核比分，再代表本队确认或提出争议。' }
   }
   return states[room?.confirmationState] || (room?.ready
@@ -71,6 +82,7 @@ export function buildWeeklyRoomJourney(room, options) {
   const state = weeklyRoomStatus(room, options)
   const preMatch = ['scheduled', 'live'].includes(phase)
   const terminal = ['cancelled', 'closed', 'settled'].includes(phase)
+  const responseOverdue = weeklyRoomResponseOverdue(room, options?.now)
   const teamConfirmed = ['CONFIRMED', 'FINALIZED', 'OVERRIDDEN'].includes(room?.confirmationState)
   const stages = preMatch ? [
     { key: 'schedule', en: 'SCHEDULE', label: room.scheduledAt ? '赛程已发布' : '等待比赛时间', state: room.scheduledAt ? 'done' : 'current' },
@@ -79,9 +91,9 @@ export function buildWeeklyRoomJourney(room, options) {
   ] : [
     { key: 'official', en: 'OFFICIAL', label: room?.ready ? '赛果已审核' : terminal ? '赛果未完成审核' : '等待赛果审核', state: room?.ready ? 'done' : terminal ? 'quiet' : 'current' },
     { key: 'response', en: 'TEAM RESPONSE', label: terminal && phase !== 'settled' ? '响应记录只读' : room?.ready ? state.label : '审核后开启确认', state: teamConfirmed ? 'done' : terminal ? 'quiet' : room?.ready ? 'current' : 'waiting' },
-    { key: 'settlement', en: 'SETTLEMENT', label: phase === 'settled' ? '结算已完成' : terminal ? '结算记录由管理员核对' : room?.confirmationState === 'DISPUTED' ? '等待管理员处理争议' : teamConfirmed ? '等待管理员结算' : '确认后进入结算', state: phase === 'settled' ? 'done' : terminal ? 'quiet' : room?.confirmationState === 'DISPUTED' ? 'blocked' : teamConfirmed ? 'current' : 'waiting' }
+    { key: 'settlement', en: 'SETTLEMENT', label: phase === 'settled' ? '结算已完成' : terminal ? '结算记录由管理员核对' : responseOverdue ? '等待管理员复核逾期响应' : room?.confirmationState === 'DISPUTED' ? '等待管理员处理争议' : teamConfirmed ? '等待管理员结算' : '确认后进入结算', state: phase === 'settled' ? 'done' : terminal ? 'quiet' : responseOverdue || room?.confirmationState === 'DISPUTED' ? 'blocked' : teamConfirmed ? 'current' : 'waiting' }
   ]
-  return { phase, state, preMatch, terminal, stages }
+  return { phase, state, preMatch, terminal, stages, responseOverdue }
 }
 
 export function isWeeklyResponseReceipt(receipt, pending) {
@@ -99,12 +111,13 @@ export function weeklyResponseAccess(room, ownTeam, { readOnly = true } = {}) {
     return { allowed: false, reason: '本场已结算，确认记录只读；更正请联系周赛管理员。' }
   }
   if (TERMINAL_STATES.has(room.week?.status) || TERMINAL_STATES.has(room.cycle?.status) || room.status === 'CANCELLED') {
-    return { allowed: false, reason: '本周或所属周期已结束、取消，不能再提交响应。' }
+    return { allowed: false, reason: '本周或所属赛段已结束、取消，不能再提交响应。' }
   }
-  if (ownTeam.role === 'PLAYER') {
-    return { allowed: false, reason: '普通选手账号仅可查看，由本队队长或经理确认赛果、提交争议。' }
+  const representative = ownTeam.isRepresentative === true && ownTeam.responseAccessMode === 'WRITE' && ['PLAYER', 'COACH', 'LEADER', 'MANAGER'].includes(ownTeam.role)
+  if (ownTeam.role === 'PLAYER' && !representative) {
+    return { allowed: false, reason: '普通选手账号仅可查看，由本队本场指定代表确认赛果、提交争议。' }
   }
-  if (readOnly || ownTeam.accessMode !== 'WRITE' || !['LEADER', 'MANAGER'].includes(ownTeam.role)) {
+  if (readOnly || (!representative && (ownTeam.accessMode !== 'WRITE' || !['LEADER', 'MANAGER'].includes(ownTeam.role)))) {
     return { allowed: false, reason: '当前比赛房间为只读，不能代表队伍提交响应。' }
   }
   if (!room.ready) return { allowed: false, reason: '等待正式比赛赛果完成审核。' }
@@ -155,10 +168,11 @@ export function weeklyRoomError(error) {
     WEEKLY_TEAM_MANAGER_REQUIRED: '只有本队有效的队长或经理可以提交响应。',
     WEEKLY_TEAM_ACCESS_FORBIDDEN: '当前账号没有代表这支队伍提交响应的权限。',
     WEEKLY_MATCH_ROOM_FORBIDDEN: '当前账号不能代表这支队伍响应。',
+    WEEKLY_ROOM_ACTION_FORBIDDEN: '本场指定代表已变化，当前账号不能代表本队响应。请刷新后核对。',
     WEEKLY_RESULT_REVISION_CONFLICT: '正式赛果已更新，本次操作未保存。请重新核对最新比分后再提交。',
     WEEKLY_RESULT_CONFIRMATION_NOT_OPEN: '当前修订尚未开启确认，或旧确认已失效，请刷新后核对。',
     WEEKLY_RESULT_ALREADY_FINALIZED: '本场已结算，不能再修改确认；如需更正请联系周赛管理员。',
-    WEEKLY_RESULT_IMMUTABLE: '本周或周期已结束，赛果确认只读。',
+    WEEKLY_RESULT_IMMUTABLE: '本周或赛段已结束，赛果确认只读。',
     MATCH_REVIEW_NOT_APPROVED: '正式赛果尚未通过审核，不能确认。',
     MATCH_RESULT_NOT_READY: '正式赛果还未准备好，不能确认。',
     UNAUTHORIZED: '登录已失效，请重新登录。'

@@ -18,6 +18,7 @@ import {
   sortStaff
 } from '../../lib/rosterSelectors.js'
 import { getEventStaffDirectory } from '../../lib/staffProfiles.js'
+import { getTeamDisplayIdentity } from '../../lib/teamDisplayIdentity.js'
 import { normalizeStaffDirectorySearch } from '../../lib/staffDirectoryGroups.js'
 import styles from './StaffPage.module.css'
 import { StaffSignalDirectory } from '../../features/roster-index/RosterIndex.jsx'
@@ -97,9 +98,10 @@ export default function StaffPage() {
     staff.forEach(row => {
       const key = row.team?.routeId || row.team?.shortName
       if (!key || map.has(key)) return
+      const identity = getTeamDisplayIdentity(row.team.shortName, row.team.fullName)
       map.set(key, {
         value: key,
-        label: `${row.team.shortName} · ${row.team.fullName}`
+        label: [identity.primary, identity.secondary].filter(Boolean).join(' · ')
       })
     })
     return [
@@ -158,7 +160,7 @@ export default function StaffPage() {
   ].filter(Boolean)
 
   const directoryTabs = isTeamStaff ? TYPE_TABS.slice(0, 3) : [TYPE_TABS[0], ...TYPE_TABS.slice(3)]
-  const directorySortOptions = isTeamStaff ? SORT_OPTIONS.map(option => option.value === 'team' ? { ...option, label: uiText("队伍", locale) } : option) : [{ value: 'matches', label: uiText("署名场数", locale) }, ...SORT_OPTIONS.filter(option => option.value !== 'team')]
+  const directorySortOptions = isTeamStaff ? SORT_OPTIONS.map(option => option.value === 'team' ? { ...option, label: uiText("队伍", locale) } : option) : [{ value: 'matches', label: '参与场数' }, ...SORT_OPTIONS.filter(option => option.value !== 'team')]
   const roleTabs = <div className={directoryStyles.roleTabs} role="group" aria-label={en ? 'Filter staff by role' : uiText("按职务筛选", locale)}>{directoryTabs.map(tab => <button key={tab.id} type="button" aria-pressed={queryState.type === tab.id} onClick={() => setQuery({ type: { value: tab.id, fallback: 'ALL' } })}>{staffCreditsText(tab.label, locale)}<span>{{ ALL: directoryStaff.length, manager: counts.managers, coach: counts.coaches, admin: counts.admins, caster: counts.casters }[tab.id]}</span></button>)}</div>
 
   if (isKprHybridDesign) return <div className={directoryStyles.shell} data-roster-directory="staff" data-staff-group={staffGroup} data-i18n-ignore>

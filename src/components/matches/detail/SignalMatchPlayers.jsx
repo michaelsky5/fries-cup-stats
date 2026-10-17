@@ -1,4 +1,5 @@
 import { translateUiText as uiText } from '../../../lib/uiText.js'
+import { MatchRatingNotes } from '../../../features/rating/MatchRatingDisclosure.jsx'
 import { useUiLocale } from '../../../hooks/useUiLocale.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
@@ -41,7 +42,7 @@ function TimelineCell({ row, map, onSelectMap, en }) {
   return <td className={styles.mapCell} data-map-column={map.order}>
     {entry ? <button type="button" className={styles.mapAppearance} onClick={() => onSelectMap(map.order)} aria-label={`${row.displayName} · ${map.name} · ${entry.heroes.join(' / ')} · ${en ? 'Map rating ' : uiText('本图评分 ', uiLocale)}${entry.rating == null ? '—' : entry.rating.toFixed(1)}${mvp ? (en ? ' · Team MVP' : uiText(' · 队内 MVP', uiLocale)) : ''}`}>
       <SignalHeroList row={entry} en={en} showMaps={false} />
-      <SignalRating value={entry.rating} mvp={mvp} en={en} />
+      <SignalRating value={entry.rating} entry={entry.ratingEntry} mvp={mvp} en={en} />
     </button> : <span className={styles.noAppearance} title={missing} aria-label={missing}>—</span>}
   </td>
 }
@@ -150,7 +151,7 @@ export default function SignalMatchPlayers({ dossier, seasonId, locale, withSeas
               if (!row) return <tr key={`${slot.role}-${slot.index}`} className={styles.placeholder} aria-hidden="true"><td colSpan={columnCount}>—</td></tr>
               return <tr key={row.key} className={`${styles.playerRow} ${dataStyles.roleRow}`} data-role={row.role} data-match-best={row.key === matchMvp?.key || undefined} data-selected={row.key === a?.key || row.key === b?.key} data-player-record data-player-key={row.key}>
                 <th scope="row" className={styles.identityCell}><PlayerIdentity row={row} {...identityProps} showHeroes={view === 'summary'} /></th>
-                {view === 'maps' ? timeline.map(map => <TimelineCell key={map.key} row={row} map={map} en={en} onSelectMap={onSelectMap} />) : <>{REVIEW_METRICS.map(metric => <td key={metric.key} data-metric={metric.key} className={ACTIVITY.includes(metric.key) ? styles.activity : undefined}><span className={styles.mobileLabel} aria-hidden="true">{en ? metric.en : uiText(metric.zh, locale)}</span><span data-stat={metric.key}>{formatInt(row[metric.key], '—')}</span></td>)}<td className={styles.ratingCell}><span className={styles.mobileLabel} aria-hidden="true">{en ? 'Rating' : uiText("评分", locale)}</span><SignalRating value={row.rating} /></td></>}
+                {view === 'maps' ? timeline.map(map => <TimelineCell key={map.key} row={row} map={map} en={en} onSelectMap={onSelectMap} />) : <>{REVIEW_METRICS.map(metric => <td key={metric.key} data-metric={metric.key} className={ACTIVITY.includes(metric.key) ? styles.activity : undefined}><span className={styles.mobileLabel} aria-hidden="true">{en ? metric.en : uiText(metric.zh, locale)}</span><span data-stat={metric.key}>{formatInt(row[metric.key], '—')}</span></td>)}<td className={styles.ratingCell}><span className={styles.mobileLabel} aria-hidden="true">{en ? 'Rating' : uiText("评分", locale)}</span><SignalRating value={row.rating} entry={row.ratingEntry} /></td></>}
                 <td className={styles.compareCell}>{compareControl(row)}</td>
               </tr>
             })}</tbody>
@@ -160,6 +161,6 @@ export default function SignalMatchPlayers({ dossier, seasonId, locale, withSeas
       </section>
     })}</div>}
     </>}
-    <details className={styles.explanation}><summary>{en ? 'About ratings' : uiText("评分说明", locale)}</summary><p>{en ? 'Match and map ratings use the same scale. Full-match performance is weighted by playtime within each role, then converted to a rating. Map win bonuses do not carry into multi-map match ratings. Match MVP uses unrounded performance scores and requires sufficient map appearances. Players who change roles have separate rows.' : uiText("全场与单图评分使用同一刻度。全场先按职责和出场时间汇总表现，再换算评分；单图胜方加分不计入多图全场评分。全场 MVP 按未取整的表现分评选，并设有出场图数门槛；更换职责的选手分别列出。", locale)}</p><p>{en ? 'An underline in the map view marks the highest rating on that team and map, including ties. A dash means a rating is unavailable.' : uiText("逐图表现中，评分下的短线标记本队本图最佳，同分并列。“—”表示暂无评分。", locale)}</p></details>
+    <details className={styles.explanation}><summary>{en ? 'About ratings' : uiText("评分说明", locale)}</summary><p>{en ? 'Match and map ratings use the same scale. Full-match performance is weighted by playtime within each role, then converted to a rating. Match MVP uses unrounded performance scores and requires sufficient map appearances. Players who change roles have separate rows.' : uiText('全场与单图评分使用同一刻度。全场先按职责和出场时间汇总表现，再换算评分。全场 MVP 按未取整的表现分评选，并设有出场图数门槛；更换职责的选手分别列出。', locale)}</p><p>{en ? 'An underline in the map view marks the highest rating on that team and map, including ties. A dash means a rating is unavailable.' : uiText("逐图表现中，评分下的短线标记本队本图最佳，同分并列。“—”表示暂无评分。", locale)}</p><MatchRatingNotes rating={dossier.rating} locale={locale} /></details>
   </div>
 }

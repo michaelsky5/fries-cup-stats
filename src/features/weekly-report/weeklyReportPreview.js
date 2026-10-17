@@ -1,5 +1,6 @@
 import { buildWeeklyOverview, weeklyMapSlots } from '../weekly-overview/weeklyOverviewModel.js'
 import { buildWeeklyAwards } from './weeklyAwards.js'
+import { collectWeeklyNewsContext } from './weeklyEditorial.js'
 
 const list = value => Array.isArray(value) ? value : []
 const text = value => String(value ?? '').trim()
@@ -76,6 +77,7 @@ export function buildWeeklyReportPreview(db, options = {}) {
   const referenceReports = report.overview.weeks.filter(week => Number(week.week_number) < Number(report.week.week_number))
     .map(week => buildWeeklyReportData(db, { cycleId: report.cycle.id, weekId: week.id })).filter(Boolean)
   report.awards = buildWeeklyAwards(report, list(db?.players), { referenceReports })
+  report.newsContext = collectWeeklyNewsContext(report, referenceReports)
   return report
 }
 

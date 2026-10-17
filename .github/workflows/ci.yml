@@ -29,8 +29,14 @@ jobs:
       - name: Check weekly public pages and media
         run: npm run test:weekly-public-ui
 
+      - name: Check readable weekly match identities and legacy links
+        run: node --test scripts/assertWeeklyMatchIdentity.mjs
+
       - name: Check weekly newspaper and roster presentation
         run: npm run test:weekly-newspaper
+
+      - name: Check roster previews and team identity
+        run: npm run test:roster-display
 
       - name: Check mobile navigation state and account isolation
         run: npm run test:mobile-navigation
@@ -49,6 +55,12 @@ jobs:
 
       - name: Check Overwatch Season 5 and historical roles
         run: node scripts/assertOverwatchSeason5.mjs
+
+      - name: Check statistical rating and archived scoring rules
+        run: npm run test:statistical-rating && npm run test:rating-release && node --test scripts/assertMatchReview.mjs
+
+      - name: Check match data feedback and missing MVP explanations
+        run: node --test scripts/matchFeedback.test.mjs scripts/historicalMatchMvp.test.mjs
 
       - name: Build production frontend
         run: npm run build

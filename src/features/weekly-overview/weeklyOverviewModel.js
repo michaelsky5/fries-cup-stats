@@ -1,5 +1,6 @@
 // Public weekly data is projected by System's weeklyPublishSnapshot.js.
 // Scores never determine lifecycle or replace the published cycle standings.
+import { buildWeeklyContextIndex, getPublishedWeeklyContext, getMatchLookupIds } from '../../lib/weeklyMatchIdentity.js'
 const list = value => Array.isArray(value) ? value : []
 const text = value => String(value ?? '').trim()
 const upper = value => text(value).toUpperCase()
@@ -15,7 +16,7 @@ export function weeklyMatchState(match) {
   if (['CANCELLED', 'CANCELED', 'VOID'].includes(status)) return 'cancelled'
   if (status === 'POSTPONED') return 'postponed'
   if (match?.is_forfeit || ['FORFEIT', 'ADMIN_COMPLETED'].includes(status)) return 'ruling'
-  if (['COMPLETE', 'COMPLETED', 'FINISHED'].includes(status)) return 'complete'
+  if (['COMPLETE', 'COMPLETED', 'FINISHED', 'LOCKED'].includes(status)) return 'complete'
   if (['LIVE', 'IN_PROGRESS'].includes(status)) return 'live'
   if (['RESULT_REVIEW', 'PENDING_REVIEW'].includes(status)) return 'review'
   if (['PENDING', 'SCHEDULED', 'PUBLISHED', 'READY', 'UPCOMING'].includes(status)) return 'upcoming'
@@ -49,8 +50,10 @@ const weekNumber = week => Number(week?.week_number) || 0
 
 export function buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch, followedTeamIds = [] } = {}) {
   const snapshot = db?.weekly_competition
+  const seasonId = db?.season?.id || db?.meta?.season_id || snapshot?.season_id
   const cycles = snapshot?.schema_version === 'friescup-weekly-public-v1'
-    ? list(snapshot.cycles).filter(cycle => PUBLIC_CYCLES.has(upper(cycle.status))) : []
+    ? list(snapshot.cycles).filter(cycle => PUBLIC_CYCLES.has(upper(cycle.status)))
+      .map(cycle => seasonId ? { ...cycle, season_id: cycle.season_id || seasonId } : cycle) : []
   const newest = [...cycles].sort((a, b) => Number(b.sequence || 0) - Number(a.sequence || 0))
   const cycle = cycles.find(item => text(item.id) === text(cycleId))
     || newest.find(item => ['ACTIVE', 'PLAYOFFS'].includes(upper(item.status))) || newest[0] || null
@@ -61,6 +64,7 @@ export function buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch
     || newestWeeks.find(item => upper(item.status) === 'RESULT_REVIEW')
     || newestWeeks.find(item => upper(item.status) === 'PUBLISHED') || newestWeeks[0] || null
   const teams = new Map(list(db?.teams).map(team => [teamId(team), team]))
+  const weeklyContexts = buildWeeklyContextIndex(snapshot)
   const publicMatches = new Map()
   list(db?.matches).forEach(match => {
     for (const key of [match.match_id, match.raw_match_id, match.id]) {
@@ -77,7 +81,7 @@ export function buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch
       if (match.cycle_id && text(match.cycle_id) !== text(cycle?.id)) return []
       if (match.is_bye || [match.team_a, match.team_b].some(team => /^(bye|轮空)$/i.test(teamId(team)) || /^(bye|轮空)$/i.test(text(team?.name)))) return []
       seen.add(matchId(match))
-      return [{ ...match, id: matchId(match), state: weeklyMatchState(match),
+      return [{ ...match, id: matchId(match), state: weeklyMatchState(match), weekly_context: getPublishedWeeklyContext(match, weeklyContexts),
         team_a: { ...teams.get(teamId(match.team_a)), ...match.team_a },
         team_b: { ...teams.get(teamId(match.team_b)), ...match.team_b } }]
     }).sort((a, b) => timeOf(a) - timeOf(b) || a.id.localeCompare(b.id))
@@ -85,7 +89,7 @@ export function buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch
   const weekEntries = weeks.map(item => ({ week: item, matches: getMatches(item) }))
   const matches = weekEntries.find(entry => entry.week.id === week?.id)?.matches || []
   const isFollowed = match => [match.team_a, match.team_b].some(team => followedTeamIds.includes(teamId(team)))
-  const focus = matches.find(match => match.id === requestedMatch)
+  const focus = matches.find(match => getMatchLookupIds(match).some(id => id.toLowerCase() === text(requestedMatch).toLowerCase()))
     || matches.find(match => match.state === 'live' && isFollowed(match))
     || matches.find(match => match.state === 'live')
     || matches.find(match => match.state === 'review')

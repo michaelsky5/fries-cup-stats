@@ -20,7 +20,7 @@ export function DirectoryHeading({ seasonCode, kicker, title, description, count
   }, [location, navigationType])
   return <header className={styles.heading} data-directory-heading>
     <div><span className={styles.eyebrow} aria-label={seasonCode + ' · ' + kicker}>{kicker}</span><h1>{title}</h1></div>
-    <div className={styles.headingAside}><p>{description}</p><span><b>{count}</b>{count !== total ? ' / ' + total : ''} <em>{unit}</em></span>{action}</div>
+    <div className={styles.headingAside}><p>{description}</p>{count != null ? <span><b>{count}</b>{count !== total ? ' / ' + total : ''} <em>{unit}</em></span> : null}{action}</div>
   </header>
 }
 
@@ -44,7 +44,7 @@ export function DirectoryControls({ tabs, searchLabel, searchPlaceholder, search
   </div>
 }
 
-export default function RosterDirectory({ kind, label, listTitle, items, focusedKey, getKey, getName, renderIdentity, getHref, previewLabel, archiveLabel, getArchiveText, onFocus, mobileExpanded, startIndex, resultCount, controls, pagination, emptyState, preview, emptyPreview, directoryRef, locale }) {
+export default function RosterDirectory({ kind, label, listTitle, listHeader, items, focusedKey, getKey, getName, renderIdentity, getHref, previewLabel, archiveLabel, getArchiveText, onFocus, mobileExpanded, startIndex, resultCount, controls, pagination, emptyState, preview, emptyPreview, directoryRef, locale }) {
   const en = locale === 'en-US'
   const previewId = useId()
   const [isCompact, setIsCompact] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 760px)').matches)
@@ -81,6 +81,7 @@ export default function RosterDirectory({ kind, label, listTitle, items, focused
     <div className={styles.directory} data-directory-list>
       <div className={styles.directoryTop}><span>{listTitle}</span><b>{resultCount} <small>{en ? 'results' : uiText("条结果", locale)}</small></b></div>
       {controls}
+      {listHeader}
       {items.length ? <ul className={styles.names} ref={listRef}>{items.map((item, index) => {
         const key = getKey(item)
         const selected = key === focusedKey

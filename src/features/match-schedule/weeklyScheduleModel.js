@@ -1,5 +1,6 @@
 import { formatMatchSchedule, getMatchScheduleValue } from '../../lib/scheduleFormat.js'
-import { buildWeeklyOverview } from '../weekly-overview/weeklyOverviewModel.js'
+import { buildWeeklyOverview, weeklyMapSlots, weeklyScore } from '../weekly-overview/weeklyOverviewModel.js'
+import { getMatchLookupIds, getWeeklyMatchIdentityLabel } from '../../lib/weeklyMatchIdentity.js'
 
 export const WEEKLY_SCHEDULE_STATUSES = ['all', 'live', 'upcoming', 'final', 'review', 'changed', 'unknown']
 const text = value => String(value ?? '').normalize('NFKC').trim().toLowerCase()
@@ -23,7 +24,8 @@ export function buildWeeklySchedule(db, { cycleId, weekId, query = '', teamId = 
     .filter(team => idOf(team)).sort((a, b) => String(a.short || a.name).localeCompare(String(b.short || b.name)))
   const matchesSearch = match => {
     const teams = [match.team_a, match.team_b]
-    const haystack = text(teams.flatMap(team => [team?.name, team?.short, team?.team_name, team?.team_short_name]).join(' '))
+    const haystack = text([...teams.flatMap(team => [team?.name, team?.short, team?.team_name, team?.team_short_name]),
+      ...getMatchLookupIds(match), getWeeklyMatchIdentityLabel(match)].join(' '))
     return terms.every(term => haystack.includes(term)) && (!teamId || teams.some(team => idOf(team) === teamId)) && (!followedOnly || isFollowed(match))
   }
   const candidates = scope.flatMap(entry => entry.matches).filter(matchesSearch)
@@ -49,4 +51,25 @@ export function resetWeeklyScheduleSearch(search) {
   const params = new URLSearchParams(search)
   for (const key of ['query', 'team', 'teamId', 'status', 'followed', 'following', 'tab', 'view', 'focus']) params.delete(key)
   return params
+}
+
+export function selectWeeklyScheduleMatch(model, matchId) {
+  const matches = model.entries.flatMap(entry => entry.days.flatMap(day => day.matches))
+  return matches.find(match => match.id === matchId) || matches[0] || null
+}
+
+export function getWeeklyScheduleScore(match) {
+  return ['live', 'complete', 'review', 'ruling'].includes(match.state)
+    ? `${weeklyScore(match.team_a?.score)} : ${weeklyScore(match.team_b?.score)}` : 'VS'
+}
+
+export function getWeeklyScheduleMapSlots(match) {
+  const slots = weeklyMapSlots(match)
+  const ended = ['complete', 'ruling'].includes(match.state)
+  if (ended && !slots.some(slot => slot.map)) return []
+  return slots.map(slot => {
+    if (match.state === 'cancelled' || ended && slot.state === 'pending') return { ...slot, state: 'unrecorded' }
+    if (['upcoming', 'postponed'].includes(match.state)) return { ...slot, state: 'pending' }
+    return slot
+  })
 }

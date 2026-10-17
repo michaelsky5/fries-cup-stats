@@ -15,7 +15,7 @@ function ComparisonIdentity({ sample, team, en }) {
       <small data-battle-tag={sample.battleTag || undefined}><SignalBattleTag value={sample.battleTag} en={en} /></small>
       <SignalHeroList row={sample} en={en} />
     </div>
-    <div className={styles.rating} title={en ? 'Full-match rating, unchanged by the comparison sample' : uiText("整场评分，不随对比范围重新计算", uiLocale)}><span>{en ? 'Match rating' : uiText("全场评分", uiLocale)}</span><SignalRating value={sample.rating} /></div>
+    <div className={styles.rating} title={en ? 'Full-match rating, unchanged by the comparison sample' : uiText("整场评分，不随对比范围重新计算", uiLocale)}><span>{en ? 'Match rating' : uiText("全场评分", uiLocale)}</span><SignalRating value={sample.rating} entry={sample.ratingEntry} /></div>
   </div>
 }
 

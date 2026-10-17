@@ -1,7 +1,25 @@
 import { buildWeeklyOverview, weeklyScore } from '../weekly-overview/weeklyOverviewModel.js'
+import { buildWeeklyElimination } from './weeklyEliminationModel.js'
 
 const idOf = team => String(team?.id || team?.team_id || '')
 const normalize = value => String(value ?? '').normalize('NFKC').trim().toLowerCase()
+
+const phases = ['points', 'playoffs', 'major']
+
+export function getWeeklyAdvancePhase(search, { activeStage, hash = '' } = {}) {
+  const requested = String(new URLSearchParams(search).get('phase') || '').toLowerCase()
+  if (phases.includes(requested)) return requested
+  const legacy = { '#weekly-points': 'points', '#weekly-playoffs': 'playoffs', '#weekly-full-bracket': 'playoffs', '#weekly-team-route': 'playoffs', '#weekly-major': 'major' }[hash]
+  return legacy || (phases.includes(activeStage) ? activeStage : 'points')
+}
+
+export function getWeeklyAdvancePhasePath(search, phase) {
+  const next = new URLSearchParams(search)
+  next.set('phase', phases.includes(phase) ? phase : 'points')
+  next.delete('bracket')
+  next.delete('view')
+  return `/advance?${next}`
+}
 
 export function weeklyPublishedRank(value) {
   const rank = weeklyScore(value)
@@ -45,10 +63,13 @@ export function buildWeeklyAdvance(db, { cycleId, weekId, teamId, query = '', fo
   const journey = selected ? weekEntries.map(({ week, matches }) => ({
     week, fixtures: matches.map(match => weeklyTeamMatch(match, selected.id)).filter(Boolean)
   })) : []
+  const elimination = buildWeeklyElimination(db, overview)
   return { ...overview, rows: visibleRows, selected, journey, totalTeams: rows.length,
+    elimination,
     publishedCount: published.length, hasStandings: published.length > 0,
     hasFilters: !!search || followedOnly,
-    activeStage: !isPilot && cycle?.status === 'ACTIVE' ? 'points' : !isPilot && cycle?.status === 'PLAYOFFS' ? 'playoffs' : null }
+    activeStage: !isPilot && cycle?.status === 'PLAYOFFS' ? 'playoffs'
+      : !isPilot && cycle?.status === 'ACTIVE' ? elimination?.hasBracket ? 'playoffs' : 'points' : null }
 }
 
 export function resetWeeklyAdvanceSearch(search) {

@@ -15,7 +15,7 @@ export function WeeklyCyclePicker({ cycles, cycle, locale, onChange, dateRange =
   const current = cycles.find(item => item.id === cycle?.id) || cycles[0]
   const selectedIndex = Math.max(0, cycles.findIndex(item => item.id === current?.id))
   const title = current ? weeklyCycleTitle(current, locale) : en ? 'To be announced' : uiText('待公布', locale)
-  const selectLabel = en ? 'Select cycle' : uiText('选择周期', locale)
+  const selectLabel = en ? 'Select cycle' : uiText('选择赛段', locale)
   useLayoutEffect(() => {
     if (open) optionRefs.current[openingIndex.current]?.focus()
   }, [open, cycles.length])
@@ -49,7 +49,7 @@ export function WeeklyCyclePicker({ cycles, cycle, locale, onChange, dateRange =
     optionRefs.current[next]?.focus()
   }
   return <div className={styles.cycleBar} ref={rootRef} data-weekly-cycle-picker="true" onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false) }}>
-    <div className={styles.cycleField} data-weekly-cycle-field="true"><span>{en ? 'Cycle' : uiText('当前周期', locale)}</span>
+    <div className={styles.cycleField} data-weekly-cycle-field="true"><span>{en ? 'Cycle' : uiText('当前赛段', locale)}</span>
       <div className={styles.cycleControl}>
         {cycles.length > 1 ? <>
           <button ref={triggerRef} type="button" className={`${styles.cycleValue} ${styles.cycleTrigger}`} data-weekly-cycle-value="true" aria-label={`${selectLabel}：${title}`} aria-haspopup="menu" aria-expanded={open} aria-controls={menuId} onClick={() => { if (open) closeMenu(); else openMenu(selectedIndex) }} onKeyDown={event => {
@@ -63,7 +63,7 @@ export function WeeklyCyclePicker({ cycles, cycle, locale, onChange, dateRange =
       </div>
     </div>
     {dateRange && <small>{dateRange}</small>}
-    <span>{current ? weeklyStatusLabel(current.status, locale) : en ? 'Schedule pending' : uiText("赛程待公布", locale)}{current?.counts_toward_standings === false && (en ? ' · No cycle points' : uiText(" · 不计周期积分", locale))}</span>
+    <span>{current ? weeklyStatusLabel(current.status, locale) : en ? 'Schedule pending' : uiText("赛程待公布", locale)}{current?.counts_toward_standings === false && (en ? ' · No cycle points' : uiText(" · 不计赛段积分", locale))}</span>
   </div>
 }
 
@@ -91,7 +91,7 @@ export function WeeklyWeekRail({ weeks, selectedId, locale, onChange, includeAll
   const items = includeAll ? [{ id: 'all' }, ...weeks] : weeks
   return <nav ref={ref} className={`${styles.weekRail} ${sectionStyles.root}`} aria-label={en ? 'Published weeks' : uiText("已发布周次", locale)}>
     {items.map(item => <button type="button" key={item.id} className={`${styles.weekItem} ${sectionStyles.item}`} aria-current={selectedId === item.id ? 'true' : undefined} onClick={() => onChange(item.id)}>
-      <span><b>{item.id === 'all' ? '↔' : String(item.week_number).padStart(2, '0')}</b>{item.id === 'all' ? en ? 'Whole cycle' : uiText("整个周期", locale) : weeklyWeekTitle(item, locale)}</span>
+      <span><b>{item.id === 'all' ? '↔' : String(item.week_number).padStart(2, '0')}</b>{item.id === 'all' ? en ? 'Whole cycle' : uiText("整个赛段", locale) : weeklyWeekTitle(item, locale)}</span>
       <small>{item.id === 'all' ? en ? 'Published only' : uiText("已公布赛程", locale) : weeklyStatusLabel(item.status, locale)}</small>
     </button>)}
   </nav>

@@ -12,6 +12,7 @@ import {
 } from './leaderboardSelectors.js'
 import { PUBLIC_METRICS, ROLE_ORDER } from './leaderboardScoring.js'
 import { getOwHeroCanonicalKey, getOwHeroCanonicalName } from './heroes.js'
+import { getPreferredTeamShortName } from './teamDisplayIdentity.js'
 
 const ROLE_RADAR_DIMENSIONS = {
   TANK: [
@@ -164,7 +165,8 @@ function teamRouteId(team, fallback = '') {
 }
 
 function teamShort(team, fallback = '') {
-  return normalize(team?.team_short_name || team?.short || team?.team_id || team?.id || fallback) || '—'
+  const short = normalize(team?.team_short_name || team?.short || team?.team_id || team?.id || fallback) || '—'
+  return getPreferredTeamShortName(short, team?.team_name || team?.name)
 }
 
 function teamFull(team, fallback = '') {

@@ -14,6 +14,7 @@ import {
 import styles from './SeasonRating.module.css'
 import { SEASON_OPPONENT_POLICY } from '../../lib/seasonOpponentStrength.js'
 import SignalRatingSummary from './SignalRatingSummary.jsx'
+import { getStatisticalRatingLabel, getStatisticalRatingNotes } from '../../lib/statisticalRatingPresentation.js'
 
 const METRIC_NAMES = {
   elims: ['消灭', 'Eliminations'], assists: ['助攻', 'Assists'], survival: ['生存', 'Survival'],
@@ -93,6 +94,10 @@ function RatingExplanation({ entry, locale, onClose, signal }) {
       <button type="button" onClick={onClose} aria-label={en ? 'Close rating explanation' : uiText("关闭评分说明", locale)}>×</button>
     </header>
     <div className={styles.body}>
+      {entry.statisticalRating ? <section className={styles.section} data-statistical-rating={entry.ratingModelVersion}>
+        <h3>{uiText(getStatisticalRatingLabel(entry, locale), locale)}</h3>
+        {getStatisticalRatingNotes(entry, locale).map(note => <p key={note}>{uiText(note, locale)}</p>)}
+      </section> : null}
       {signal ? <SignalRatingSummary entry={entry} locale={locale} sample={sample} /> : <>
       <div className={styles.identity}>
         <div><h3>{playerName}</h3><p>{entry.team_short_name || entry.team_name || '—'} · {entry.role}</p></div>
@@ -114,7 +119,7 @@ function RatingExplanation({ entry, locale, onClose, signal }) {
       </section>
       {rated ? <section className={styles.section}>
         <h3>{en ? '02 / Where the performance comes from' : uiText("02 / 表现来自哪些指标", locale)}</h3>
-        <p>{en ? 'Each hero segment is evaluated per 10 minutes and weighted by playtime. These contributions are relative to a neutral raw score of 50, before the Season OVR conversion.' : uiText("先比较每段英雄记录的每 10 分钟数据，再按出场时间合并。下方为相对中性原始分 50 的贡献，不是 OVR 的直接加减分。", locale)}</p>
+        <p>{en ? 'Each published statistical record is evaluated per 10 minutes and weighted by playtime. These contributions are relative to a neutral raw score of 50, before the Season OVR conversion.' : uiText("先比较每条公开统计记录的每 10 分钟数据，再按出场时间合并。下方为相对中性原始分 50 的贡献，不是 OVR 的直接加减分。", locale)}</p>
         {evidence ? <div className={styles.metrics}>{evidence.metrics.map(metric => <div className={styles.metric} key={metric.metric}>
           <span>{uiText(METRIC_NAMES[metric.metric]?.[en ? 1 : 0], locale) || metric.metric}<small>{en ? 'Weight' : uiText("权重", locale)} {fmt(metric.weight)}%</small></span>
           <div className={styles.track} aria-hidden="true"><i style={{ width: `${Math.min(50, Math.abs(metric.delta) / 20 * 50)}%`, left: metric.delta >= 0 ? '50%' : undefined, right: metric.delta < 0 ? '50%' : undefined }} data-positive={metric.delta >= 0} /></div>
@@ -144,12 +149,12 @@ function RatingExplanation({ entry, locale, onClose, signal }) {
       {rated ? <OpponentExplanation entry={entry} en={en} signal={signal} /> : null}
       <section className={styles.section}>
         <h3>{en ? 'Comparison basis' : uiText("对比依据", locale)}</h3>
-        <p>{entry.ratingBaselineMode === 'frozen'
+        <p>{entry.statisticalRating?.seasonReference ? (en ? 'Season OVR uses all eligible published season records, compared within each version and role, with the entire scored match held out.' : uiText('赛季总评使用本赛季全部已发布的有效记录，按版本与职责比较，参照排除被评分的整场比赛。', locale)) : entry.statisticalRating ? (en ? 'Each record uses earlier competition days in its own season and version group. Later results do not enter past references.' : uiText('每条记录只使用本赛季、对应版本分组中此前比赛日的数据；后续比赛不会进入过去记录的参照。', locale)) : entry.ratingBaselineMode === 'frozen'
           ? en ? `Frozen Swiss-stage baseline · published snapshot ${entry.ratingBaselineSourceVersion ?? '—'}` : uiText("瑞士轮结束时冻结的基线 · 发布快照 {0}", locale, [entry.ratingBaselineSourceVersion ?? '—'])
           : en ? 'Baseline calculated from the currently published season records; new records may change it.' : uiText("使用本赛季当前公开记录计算基线；新增记录可能改变对比基准。", locale)}</p>
         {evidence?.baselineMix ? <p>{en ? 'Baseline mix' : uiText("基线混合占比", locale)}：{en ? 'same hero' : uiText("同英雄", locale)} {fmt(evidence.baselineMix.hero * 100, 0)}% · {en ? 'same playstyle' : uiText("同打法定位", locale)} {fmt(evidence.baselineMix.profile * 100, 0)}% · {en ? 'same subrole' : uiText("同细分职责", locale)} {fmt(evidence.baselineMix.subrole * 100, 0)}%</p> : null}
         <p>{en ? `Season policy ${entry.seasonRatingVersion || SEASON_RATING_VERSION} · Hero calibration ${entry.ratingModelVersion || '—'}` : uiText("赛季规则 {0} · 英雄评分模型 {1}", locale, [entry.seasonRatingVersion || SEASON_RATING_VERSION, entry.ratingModelVersion || '—'])}</p>
-        <p className={styles.scope}>{en ? 'This describes performance within this season, with a limited schedule-strength adjustment. It is not an absolute cross-event skill rating; patch and roster changes are not modelled separately.' : uiText("评分描述本赛季内的相对表现，并有限校正赛程强度。它不是跨赛事通用的实力值；游戏版本和队伍阵容变化尚未单独建模。", locale)}</p>
+        <p className={styles.scope}>{entry.statisticalRating ? (en ? 'This describes recorded statistical performance within this season, with a limited opponent adjustment. Date-inferred patch groups do not prove per-hero or tactical accuracy.' : uiText('评分描述本赛季已记录的统计表现，并有限校正对手强度。按日期推定版本分组，尚不能证明逐英雄及战术表现的准确性。', locale)) : en ? 'This describes performance within this season, with a limited schedule-strength adjustment. It is not an absolute cross-event skill rating; patch and roster changes are not modelled separately.' : uiText("评分描述本赛季内的相对表现，并有限校正赛程强度。它不是跨赛事通用的实力值；游戏版本和队伍阵容变化尚未单独建模。", locale)}</p>
       </section>
       </EvidencePanel>
     </div>
@@ -164,12 +169,13 @@ export default function SeasonRating({ entry, locale = 'zh-CN', variant = 'compa
   return <>
     <button type="button" className={`${styles.trigger} ${variant === 'large' ? styles.large : ''} ${explanationOnly ? styles.explanationOnly : ''}`}
       data-status={entry.seasonRatingStatus} aria-haspopup="dialog" aria-expanded={Boolean(openDesign)}
+      title={en ? 'Rating explanation' : uiText('评分依据', locale)}
       aria-label={`${en ? 'Rating explanation' : uiText("评分依据", locale)}：${name} · ${entry.role} · ${getSeasonRatingLabel(entry, locale)} ${formatSeasonRatingValue(entry)}`}
       onClick={event => {
         event.stopPropagation()
         setOpenDesign(event.currentTarget.closest('[data-design="kpr"], [data-design="signal"]') ? 'signal' : 'original')
       }} onKeyDown={event => event.stopPropagation()}>
-      {explanationOnly ? (en ? 'Rating details' : uiText("评分依据", locale)) : <><b>{formatSeasonRatingValue(entry)}</b><small>{entry.eligible ? (en ? 'Details ↗' : uiText("依据 ↗", locale)) : `${getSeasonRatingStatusLabel(entry, locale)} ↗`}</small></>}
+      {explanationOnly ? (en ? 'Rating details' : uiText("评分依据", locale)) : <><b>{formatSeasonRatingValue(entry)}</b>{entry.statisticalRating && entry.eligible ? null : <small>{entry.eligible ? (en ? 'Details ↗' : uiText("依据 ↗", locale)) : `${getSeasonRatingStatusLabel(entry, locale)} ↗`}</small>}</>}
     </button>
     {openDesign ? <RatingExplanation entry={entry} locale={locale} signal={openDesign === 'signal'} onClose={() => setOpenDesign(null)} /> : null}
   </>
@@ -178,6 +184,7 @@ export default function SeasonRating({ entry, locale = 'zh-CN', variant = 'compa
 export function SeasonRatingRules({ summary, locale = 'zh-CN' }) {
   const en = locale === 'en-US'
   return <div className={styles.rules}>
+    {summary.statisticalRatingVersion ? <span data-statistical-rating={summary.statisticalRatingVersion}><b>{en ? 'STATISTICAL PERFORMANCE' : uiText('统计表现评分', locale)} {summary.statisticalRatingVersion}</b><small>{en ? 'Whole-season references by version and role; each match is held out. Reference maturity and hero attribution are explained with each rating.' : uiText('整季数据按版本与职责参照，整场排除自身；参照成熟度与英雄统计归属在评分依据中说明。', locale)}</small></span> : null}
     <span><b>{en ? 'SEASON RATING' : uiText("赛季评分", locale)} {SEASON_RATING_VERSION}</b>{formatSeasonSampleRequirements(summary.minTimeMins, locale)}<small>{en ? `Includes opponent strength · capped at ±${SEASON_OPPONENT_POLICY.maxOvrAdjustment} OVR` : uiText("已加入对手强度校正 · 最多 ±{0} OVR", locale, [SEASON_OPPONENT_POLICY.maxOvrAdjustment])}</small></span>
     <span>{summary.qualifiedEntries} {en ? 'ranked' : uiText("正式", locale)} · {summary.provisionalEntries} {en ? 'provisional' : uiText("暂定", locale)} · {summary.unratedEntries} {en ? 'unrated' : uiText("未评级", locale)}<small>{en ? 'Season-wide player × role entries · click a rating for details' : uiText("全赛季选手 × 职责条目 · 点开评分查看依据", locale)}</small></span>
   </div>

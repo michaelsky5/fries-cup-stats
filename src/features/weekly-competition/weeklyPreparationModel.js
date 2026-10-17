@@ -35,8 +35,22 @@ export function getWeeklyFocusStep(plan, requestedStep) {
 function weekRank(week, now) {
   const window = weeklyConfirmationWindow(week, now)
   if (window === 'open') return 0
+  const starts = time(week?.matchWindowStartsAt)
+  const ends = time(week?.matchWindowEndsAt)
+  if (Number.isFinite(ends) && Number(now) > ends) return 3
+  if (Number.isFinite(starts) && Number(now) < starts) return 2
   if (['PUBLISHED', 'IN_PROGRESS', 'RESULT_REVIEW', 'CONFIRMATION_CLOSED', 'ROSTER_LOCKED', 'PAIRING'].includes(week?.status)) return 1
   return window === 'upcoming' ? 2 : 3
+}
+
+// A missing record is not a missed obligation when the team joined after play ended.
+// Retain actual participation records, including administrator-entered history.
+export function isWeeklyRecordBeforeEnrollment(entry, record) {
+  const participation = record?.participation
+  if (participation?.id || participation?.persisted === true || (participation?.status && participation.status !== 'PENDING')) return false
+  const joined = time(entry?.joinedAt)
+  const ends = time(record?.week?.matchWindowEndsAt)
+  return Number.isFinite(joined) && Number.isFinite(ends) && ends < joined
 }
 
 export function orderWeeklyRecords(records = [], now = Date.now()) {
@@ -54,7 +68,8 @@ export function resolveWeeklySelection(workspace, requested = {}, now = Date.now
   const entry = requested.entryId ? entries(cycle).find(item => item.id === requested.entryId) : entries(cycle)[0]
   const teamId = requested.teamId || entry?.seasonTeamId || entry?.team?.id
   const teamAccess = teamId ? workspace?.teams?.find(item => item.team?.id === teamId) : workspace?.teams?.[0]
-  const weekRecord = requested.weekId ? entry?.weeks?.find(item => item.week?.id === requested.weekId) : orderWeeklyRecords(entry?.weeks, now)[0]
+  const weekRecord = requested.weekId ? entry?.weeks?.find(item => item.week?.id === requested.weekId)
+    : orderWeeklyRecords((entry?.weeks || []).filter(record => !isWeeklyRecordBeforeEnrollment(entry, record)), now)[0]
   const invalid = Boolean((requested.teamId && !teamAccess) || (requested.cycleId && !cycle) || (requested.entryId && !entry) || (requested.weekId && !weekRecord))
   return { cycle: cycle || null, entry: entry || null, weekRecord: weekRecord || null, teamAccess: teamAccess || null, invalid }
 }
@@ -99,7 +114,7 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
   const declined = ['DECLINED', 'WITHDRAWN'].includes(participation?.status)
   const terminalDetail = week?.status === 'CANCELLED' || cycle.status === 'CANCELLED' ? '赛事安排已取消，已有记录仅供查看。'
     : entry.status && entry.status !== 'ACTIVE' ? '本队的参赛关系已结束，已有记录仅供查看。'
-      : '本周期或周次已结束，已有记录仅供查看。'
+      : '本赛段或周次已结束，已有记录仅供查看。'
   const owner = writable ? '由你代表队伍处理' : '由队长或经理处理'
   const windowDetail = terminal ? terminalDetail
     : window === 'closed' ? '确认期已结束，如需补录请联系周赛管理员。'
@@ -107,7 +122,7 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
         : window === 'missing' ? '周次公布后显示当周确认与名单。' : '确认窗口尚未开放。'
   const stages = [
     ...(fixedCore ? [{
-      key: 'core', title: '周期核心',
+      key: 'core', title: '赛段核心',
       state: core ? 'done' : terminal ? 'quiet' : cycle.status === 'REGISTRATION' ? writable ? 'action' : 'waiting' : 'blocked',
       label: core ? '已锁定' : coreDraft ? '草稿待锁定' : '尚未登记',
       detail: core ? `${members(core).length} 人 · 核心名单已锁定`
@@ -143,7 +158,7 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
         : terminal ? terminalDetail : !confirmed ? window === 'closed' ? '未完成当周参赛确认，名单未提交。' : '由队长或经理确认参赛后，继续准备名单。'
           : roster?.status === 'SUBMITTED' ? automaticReview ? reviewPresentation.detail : `${members(roster).length} 人 · 等待周赛管理员锁定。`
               : terminal || window !== 'open' ? windowDetail
-                : fixedCore && !core ? '先完成周期核心锁定，再提交本周名单。'
+                : fixedCore && !core ? '先完成赛段核心锁定，再提交本周名单。'
                 : `${roster ? `已保存 ${members(roster).length} 人，` : ''}${writable ? '核对后正式提交；保存草稿不会完成此步骤。' : '等待队长或经理提交名单。'}`
     }
   ].map(stage => ({ ...stage, actionUrl: weeklyTeamDestination(cycle.id, entry.id, week?.id, stage.key, team.id) }))
@@ -158,7 +173,7 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
             : fixedCore && !core ? '等待队长或经理锁定核心' : !confirmed ? '等待队长或经理确认参赛' : '等待队长或经理提交名单'
   const guidance = terminal ? { label: '记录状态', detail: terminalDetail }
     : declined ? { label: '当前安排', detail: window === 'open' ? `本周无需提交名单。${writable ? '如计划有变，可在截止前调整参赛意向。' : '如计划有变，请联系队长或经理。'}` : `本周无需提交名单。${windowDetail}` }
-      : issue ? { label: '需要协助', detail: issue.key === 'core' ? '可在下方队伍准备页提交问题，由赛管核对周期核心名单。' : '确认期已结束，可在队伍准备页提交问题并跟踪处理。' }
+      : issue ? { label: '需要协助', detail: issue.key === 'core' ? '可在下方队伍准备页提交问题，由赛管核对赛段核心名单。' : '确认期已结束，可在队伍准备页提交问题并跟踪处理。' }
         : readyForSchedule ? { label: '接下来', detail: '名单已锁定，请留意赛程发布与比赛安排。' }
           : roster?.status === 'SUBMITTED' ? automaticReview ? { label: reviewPresentation.title, detail: reviewPresentation.detail } : { label: '接下来由管理员处理', detail: '名单已提交，等待周赛管理员锁定；无需重复提交。' }
             : !week ? { label: '接下来', detail: '周次公布后，这里会显示当周确认时间与名单要求。' }
@@ -173,8 +188,8 @@ function prepareEntry(workspace, cycle, entry, record, { readOnly, now }) {
 export function buildWeeklyPreparation(workspace, { seasonId, userId, readOnly = true, now = Date.now() } = {}) {
   if (!isWeeklyPreparationWorkspace(workspace, seasonId, userId)) return { plans: [], tasks: [] }
   const plans = workspace.cycles.flatMap(cycle => (cycle.entries || []).flatMap(entry => {
-    const records = orderWeeklyRecords(entry.weeks, now)
-    return (records.length ? records : [null]).map(record => prepareEntry(workspace, cycle, entry, record, { readOnly, now }))
+    const records = orderWeeklyRecords((entry.weeks || []).filter(record => !isWeeklyRecordBeforeEnrollment(entry, record)), now)
+    return (records.length ? records : entry.weeks?.length ? [] : [null]).map(record => prepareEntry(workspace, cycle, entry, record, { readOnly, now }))
   })).sort((a, b) => Number(a.terminal) - Number(b.terminal) || Number(!a.next) - Number(!b.next)
     || weekRank(a.week, now) - weekRank(b.week, now))
   const seen = new Set()
@@ -185,14 +200,14 @@ export function buildWeeklyPreparation(workspace, { seasonId, userId, readOnly =
     seen.add(id)
     return [{ id, status: 'OPEN', identityType: 'MANAGER', priority: 'HIGH', requiresSourceResolution: true,
       taskType: `WEEKLY_PREPARATION_${stage.key.toUpperCase()}`, sourceType: 'WEEKLY_PREPARATION', sourceId,
-      title: `${plan.team.shortName || plan.team.name || '本队'} · ${stage.key === 'core' ? '锁定周期核心' : stage.key === 'participation' ? '确认当周参赛' : stage.key === 'lineup' ? '调整本周人员' : '提交出赛名单'}`,
+      title: `${plan.team.shortName || plan.team.name || '本队'} · ${stage.key === 'core' ? '锁定赛段核心' : stage.key === 'participation' ? '确认当周参赛' : stage.key === 'lineup' ? '调整本周人员' : '提交出赛名单'}`,
       body: `${plan.cycle.name}${stage.key !== 'core' && plan.week ? ` · ${plan.week.label || `第 ${plan.week.weekNumber} 周`}` : ''}。${stage.detail}`,
       teamOrganization: plan.team, dueAt: stage.key === 'core' ? null : plan.dueAt, actionUrl: stage.actionUrl }]
   }))
   const enrollmentTasks = getWeeklyEnrollmentCycles(workspace, { seasonId, userId, readOnly }).flatMap(cycle => cycle.eligibleTeams.map(team => ({
         id: `weekly-enrollment:${cycle.id}:${team.id}`, status: 'OPEN', identityType: 'MANAGER', priority: 'HIGH', requiresSourceResolution: true,
         taskType: 'WEEKLY_CYCLE_ENROLLMENT', sourceType: 'WEEKLY_CYCLE_ENROLLMENT', sourceId: `${cycle.id}:${team.id}`,
-        title: `${team.shortName || team.name} · 登记参赛周期`, body: `${cycle.name} 已开放登记。登记后再按周选择是否参赛。`,
+        title: `${team.shortName || team.name} · 登记参赛赛段`, body: `${cycle.name} 已开放登记。登记后再按周选择是否参赛。`,
         teamOrganization: team, actionUrl: `/me?${new URLSearchParams({ section: 'team', cycle: cycle.id, team: team.id })}#weekly-enrollment`
       })))
   return { plans, tasks: [...enrollmentTasks, ...tasks] }

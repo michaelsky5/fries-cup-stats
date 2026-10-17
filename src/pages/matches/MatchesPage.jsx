@@ -291,7 +291,7 @@ function FeaturedMatchCard({ match, primary = false, compact = false }) {
   const teams = getMatchDisplayTeams(match)
   const mapSummary = getMapSummary(match, locale)
   const status = getMatchStatus(match)
-  const matchCode = match?.match_id || match?.match_display_name || match?.raw_match_id || 'MATCH RECORD'
+  const matchCode = match?.match_code || match?.match_id || match?.match_display_name || match?.raw_match_id || 'MATCH RECORD'
 
   return (
     <Link

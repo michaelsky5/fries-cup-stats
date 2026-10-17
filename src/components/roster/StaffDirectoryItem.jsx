@@ -1,24 +1,24 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getStaffAvatar } from '../../lib/reviewAssets.js'
+import { getStaffAvatarCandidates } from '../../lib/reviewAssets.js'
 import { getStaffProfilePath } from '../../lib/staffProfiles.js'
+import { getTeamDisplayIdentity } from '../../lib/teamDisplayIdentity.js'
 import styles from './RosterComponents.module.css'
 
-function StaffPortrait({ name }) {
-  const src = getStaffAvatar(name)
-  const [failed, setFailed] = useState(false)
-
-  useEffect(() => setFailed(false), [src])
+function StaffPortrait({ staff }) {
+  const [failedSources, setFailedSources] = useState([])
+  const [loadedSource, setLoadedSource] = useState('')
+  const src = getStaffAvatarCandidates(staff).find(source => !failedSources.includes(source))
+  const loading = Boolean(src && loadedSource !== src)
 
   return (
     <div className={styles.staffSignalPortrait}>
-      {src && !failed ? (
-        <img src={src} alt={name} loading="lazy" onError={() => setFailed(true)} />
-      ) : (
-        <b>{String(name || 'FC').trim().slice(0, 2).toUpperCase()}</b>
-      )}
+      {!src || loading ? (
+        <b>{String(staff.name || 'FC').trim().slice(0, 2).toUpperCase()}</b>
+      ) : null}
+      {src ? <img src={src} alt={staff.name} loading="lazy" data-loading={loading || undefined} onLoad={() => setLoadedSource(src)} onError={() => setFailedSources(sources => [...sources, src])} /> : null}
     </div>
   )
 }
@@ -32,6 +32,7 @@ export default function StaffDirectoryItem({
   const uiLocale = useUiLocale()
   const navigate = useNavigate()
   const isEventStaff = Boolean(staff.storyPath)
+  const affiliation = getTeamDisplayIdentity(staff.team?.shortName, staff.team?.fullName)
   const targetPath = withSeason(getStaffProfilePath(staff))
   const actionLabel = uiLocale === 'en-US' ? 'Open staff profile' : uiText('查看职员档案', uiLocale)
   const roleCode = staff.role === 'caster'
@@ -54,13 +55,13 @@ export default function StaffDirectoryItem({
         <div className={styles.staffSignalVisual} data-staff-name={staff.name}>
           <span className={styles.staffFileIndex}>{String(index).padStart(2, '0')}<i>/ CREDIT FILE</i></span>
           <span className={styles.staffSignalRole}>{staff.roleLabel}<i>{roleCode}</i></span>
-          <StaffPortrait name={staff.name} />
+          <StaffPortrait staff={staff} />
         </div>
 
         <div className={styles.staffSignalBody}>
           <div className={styles.staffSignalScope}>
             <b>{isEventStaff ? 'MATCH CREDIT' : 'TEAM STAFF'}</b>
-            <span>{isEventStaff ? uiText("赛事公开记录", uiLocale) : staff.team?.shortName}</span>
+            <span>{isEventStaff ? uiText("赛事公开记录", uiLocale) : affiliation.primary}</span>
           </div>
           <div className={styles.staffSignalIdentity}>
             <strong>{staff.name}</strong>
@@ -75,7 +76,7 @@ export default function StaffDirectoryItem({
               </>
             ) : (
               <>
-                <div className={styles.staffSignalWideStat}><strong>{staff.team?.shortName}</strong><span>{uiText("所属战队", uiLocale)}<em>{staff.team?.fullName}</em></span></div>
+                <div className={styles.staffSignalWideStat}><strong>{affiliation.primary}</strong><span>{uiText("所属战队", uiLocale)}{affiliation.secondary ? <em>{affiliation.secondary}</em> : null}</span></div>
                 <div><strong>{staff.roles?.length || 1}</strong><span>{uiText("职务", uiLocale)}<em>DUTIES</em></span></div>
               </>
             )}
@@ -111,8 +112,8 @@ export default function StaffDirectoryItem({
       <div className={styles.staffMetaGrid}>
         <div className={styles.staffMetaBlock}>
           <span className={styles.staffMetaLabel}>{isEventStaff ? uiText("公开记录", uiLocale) : uiText("所属战队", uiLocale)}</span>
-          <strong>{isEventStaff ? uiText("{0} 场比赛", uiLocale, [staff.matchCount]) : staff.team.shortName}</strong>
-          <em>{isEventStaff ? uiText("{0} 个阶段 · {1} 支队伍", uiLocale, [staff.stageCount, staff.teamCount]) : staff.team.fullName}</em>
+          <strong>{isEventStaff ? uiText("{0} 场比赛", uiLocale, [staff.matchCount]) : affiliation.primary}</strong>
+          {isEventStaff || affiliation.secondary ? <em>{isEventStaff ? uiText("{0} 个阶段 · {1} 支队伍", uiLocale, [staff.stageCount, staff.teamCount]) : affiliation.secondary}</em> : null}
         </div>
         <div className={styles.staffMetaBlock}>
           <span className={styles.staffMetaLabel}>{uiText("身份", uiLocale)}</span>

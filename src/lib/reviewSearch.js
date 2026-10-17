@@ -6,6 +6,7 @@ import {
   splitStaffNames
 } from './reviewAssets.js'
 import { getReviewIdentityLabel, getReviewIdentityPortfolio } from './reviewIdentity.js'
+import { getPreferredTeamShortName } from './teamDisplayIdentity.js'
 
 const STAFF_INDEX_CACHE = new WeakMap()
 const TEAM_INDEX_CACHE = new WeakMap()
@@ -269,7 +270,8 @@ export function getCasterNamesFromMatch(match) {
 }
 
 function getTeamLabel(team) {
-  return team?.short || team?.team_short_name || team?.name || team?.team_name || ''
+  const short = team?.short || team?.team_short_name || team?.name || team?.team_name || ''
+  return getPreferredTeamShortName(short, team?.name || team?.team_name)
 }
 
 function getMatchTeams(match) {

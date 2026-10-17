@@ -3,6 +3,7 @@ import test from 'node:test'
 import { buildWeeklyOverviewFixture } from './lib/weeklyOverviewFixture.mjs'
 import { getMatchDossier } from '../src/lib/matchDetailSelectors.js'
 import { getMatchPhasePresentation } from '../src/components/matches/detail/matchPhasePresentation.js'
+import { ensureUiLocale } from '../src/lib/localeCatalog.js'
 import { validatePublicRoomProgress, presentPublicRoomProgress, readPublicRoomProgress, startRoomProgressPolling } from '../src/components/matches/detail/publicRoomProgress.js'
 
 const matchId = 'raw-FCW26-W3-M3'
@@ -29,7 +30,7 @@ test('room state overlays a stale published snapshot without inventing statistic
   const dossier = getMatchDossier(buildWeeklyOverviewFixture(), 'FCW26-W3-M3', { locale: 'zh-CN' }), before = JSON.stringify(dossier)
   const base = getMatchPhasePresentation(dossier), room = frame(), phase = presentPublicRoomProgress(base, dossier, room, 'zh-CN')
   assert.equal(base.key, 'upcoming'); assert.equal(phase.key, 'live')
-  assert.equal(phase.scoreLabel, '1 : 1'); assert.equal(phase.statusLabel, '第 3 图 · 选图')
+  assert.equal(phase.scoreLabel, '1 : 1'); assert.equal(phase.statusLabel, '第 3 图 · 选择地图')
   assert.equal(phase.slots[0].roomScore, '0 : 2'); assert.equal(phase.slots[2].state, 'preparing')
   assert.equal(phase.slots[2].name, '地图待公布'); assert.equal(phase.slots[3].state, 'pending')
   assert.ok(phase.slots.every(slot => !slot.record)); assert.equal(phase.records.length, 0); assert.equal(phase.canAnalyze, false)
@@ -46,7 +47,39 @@ test('room state overlays a stale published snapshot without inventing statistic
 test('published final results and administrative outcomes remain authoritative', () => {
   const db = buildWeeklyOverviewFixture(), dossier = getMatchDossier(db, 'FCW26-W3-M2', { locale: 'zh-CN' }), base = getMatchPhasePresentation(dossier)
   assert.equal(presentPublicRoomProgress(base, dossier, frame(), 'zh-CN'), base)
-  for (const key of ['forfeit', 'ruling', 'cancelled']) assert.equal(presentPublicRoomProgress({ ...base, active: true, key }, dossier, frame(), 'zh-CN').roomProgress, undefined)
+  for (const key of ['forfeit', 'ruling', 'cancelled', 'postponed', 'unknown']) assert.equal(presentPublicRoomProgress({ ...base, active: true, key }, dossier, frame(), 'zh-CN').roomProgress, undefined)
+})
+
+test('attributed map forfeits accept empty small scores and show the awarded series win before publication', async () => {
+  const value = frame()
+  value.phase = 'REVIEW'; value.stage = 'REVIEW'; value.mapLimit = 3; value.completedMaps = 3; value.scoreB = 2
+  Object.assign(value.maps[2], { name: 'Dorado', type: 'Escort', status: 'COMPLETE', isAdministrative: true,
+    administrativeReason: 'MAP_FORFEIT', forfeitedBySide: 'A', winnerSide: 'B', reason: 'PRIVATE_REASON', actor: 'PRIVATE_ACTOR' })
+  const room = validatePublicRoomProgress(value, 'FCW26', matchId)
+  assert.equal(room.maps[2].scoreA, null); assert.equal(room.maps[2].scoreB, null)
+  assert.equal(room.maps[2].winnerSide, 'B'); assert.doesNotMatch(JSON.stringify(room), /PRIVATE_/)
+  const dossier = getMatchDossier(buildWeeklyOverviewFixture(), 'FCW26-W3-M3', { locale: 'zh-CN' })
+  const phase = presentPublicRoomProgress(getMatchPhasePresentation(dossier), dossier, room, 'zh-CN')
+  assert.equal(phase.scoreLabel, '1 : 2'); assert.equal(phase.key, 'review'); assert.equal(phase.canAnalyze, false)
+  assert.deepEqual(phase.slots.map(slot => slot.roomSeriesScore), ['0 : 1', '1 : 1', '1 : 2'])
+  assert.equal(phase.slots[2].state, 'ruling'); assert.equal(phase.slots[2].roomScore, '')
+  assert.match(phase.slots[2].label, /单图弃权/); assert.match(phase.slots[2].label, /待审核/)
+  assert.ok(phase.slots.every(slot => !slot.record)); assert.equal(phase.records.length, 0)
+  for (const edit of [map => { map.isAdministrative = false }, map => { map.winnerSide = 'A' },
+    map => { map.forfeitedBySide = 'UNKNOWN' }, map => { map.scoreA = 0 },
+    map => { map.administrativeReason = 'OTHER' }, map => { map.status = 'LIVE' }]) {
+    const invalid = structuredClone(value); edit(invalid.maps[2])
+    assert.throws(() => validatePublicRoomProgress(invalid, 'FCW26', matchId))
+  }
+  for (const locale of ['zh-TW', 'en-US', 'ko-KR']) {
+    await ensureUiLocale(locale)
+    const translated = presentPublicRoomProgress(getMatchPhasePresentation(dossier), dossier, room, locale)
+    assert.equal(translated.slots[2].roomScore, ''); assert.equal(translated.slots[2].roomSeriesScore, '1 : 2')
+    assert.doesNotMatch(translated.slots[2].label, /null|undefined/)
+    const choosing = presentPublicRoomProgress(getMatchPhasePresentation(dossier), dossier,
+      { ...room, phase: 'PREPARING', stage: 'CHOOSING', activeMapOrder: 4, mapLimit: 5 }, locale)
+    assert.doesNotMatch(choosing.statusLabel, /选择地图|选图/)
+  }
 })
 
 function clock() {

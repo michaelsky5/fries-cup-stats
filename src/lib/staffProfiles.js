@@ -19,6 +19,7 @@ export function getEventStaffDirectory(db) {
     roles: [role], role,
     duties: entry.duties || [],
     avatar: entry.avatar || '',
+    aliases: entry.aliases || [],
     roleLabel: role === 'caster' ? '解说' : '赛管',
     identityKey: `${role}:${entry.staff_key}`,
     team: null,

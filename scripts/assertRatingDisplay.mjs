@@ -11,7 +11,8 @@ import {
 } from '../src/lib/leaderboardSelectors.js'
 import { getPlayerDossier } from '../src/lib/playerDetailSelectors.js'
 import { getMatchDossier } from '../src/lib/matchDetailSelectors.js'
-import { getMatchReviewMvp, getMatchReviewPlayers } from '../src/lib/matchReviewSelectors.js'
+import { getMatchReviewMvp, getMatchReviewPlayers, getReviewMapRating } from '../src/lib/matchReviewSelectors.js'
+import { mapRawScoreToMapRating } from '../src/lib/ratingModel.js'
 import {
   formatMapPlayerMatchRating,
   getMapPlayerMatchRating,
@@ -45,6 +46,38 @@ test('match display uses the model curve, including legacy fallback and one-map 
   assert.equal(getMatchPlayerRating({ rawScore: 0 }), 5.5)
   assert.equal(getMatchPlayerRating({ rawScore: 100 }), 9.8)
   assert.equal(getMatchPlayerRating({ rawScore: 50, roleScore: 72, mapRating: 7.2 }), 7.2)
+})
+
+test('the v1.5 display scale applies equally to map and match views while preserving archived scales', () => {
+  for (const [rawScore, expected] of [[0, 5.5], [25, 6.4], [50, 7], [70, 7.9], [85, 8.6], [95, 9.2], [99, 9.6], [100, 9.8]]) {
+    for (const role of ['TANK', 'DPS', 'SUPPORT']) for (const result of ['WIN', 'LOSS']) {
+      const entry = { ratingModelVersion: 'v1.5.0', rawScore, role,
+        mapResult: result, mapRating: mapRawScoreToMapRating(rawScore) }
+      assert.equal(getMatchPlayerRating(entry), expected)
+      assert.equal(getReviewMapRating(entry, [20, 50, 80]), expected)
+    }
+  }
+  for (const ratingModelVersion of ['v1.2', 'v1.4', 'v1.5.1', undefined]) {
+    const entry = { ratingModelVersion, rawScore: 70, mapRating: 7.6 }
+    assert.equal(getMatchPlayerRating(entry), 7.6)
+    assert.equal(getReviewMapRating(entry), 7.6)
+  }
+})
+
+test('the v1.5 display preserves missingness, bounds, monotonicity and the entire lower half', () => {
+  for (const rawScore of [null, undefined, '', '  ', NaN, Infinity, 'invalid']) {
+    const entry = { ratingModelVersion: 'v1.5.0', rawScore, roleScore: 99, mapRating: 9.5 }
+    assert.equal(getMatchPlayerRating(entry), null)
+    assert.equal(getReviewMapRating(entry, [20, 50, 80]), null)
+  }
+  let previous = -Infinity
+  for (let step = 0; step <= 100000; step++) {
+    const rawScore = step / 1000
+    const rating = getMatchPlayerRating({ ratingModelVersion: 'v1.5.0', rawScore })
+    assert.ok(rating >= previous && rating >= 5.5 && rating <= 9.8)
+    if (rawScore <= 50) assert.equal(rating, mapRawScoreToMapRating(rawScore))
+    previous = rating
+  }
 })
 
 test('missing match ratings do not produce a minimum or zero rating', () => {

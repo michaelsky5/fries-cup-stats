@@ -42,7 +42,7 @@ export function WeeklyPublishedMapPool({ cycle, locale }) {
   const count = groups.reduce((total, group) => total + (group.maps || []).length, 0)
   return <details className={styles.publishedMapPool} data-weekly-map-pool="true">
     <summary>
-      <span className={styles.poolSummaryTitle}><strong>{pickUiLocale(locale, '当前周期地图池', 'Current cycle map pool', '현재 주기 전장 목록', '當前週期地圖池')}</strong><small>{pickUiLocale(locale, `${count} 张地图 · ${groups.length} 类`, `${count} maps · ${groups.length} modes`, `전장 ${count}개 · 유형 ${groups.length}개`, `${count} 張地圖 · ${groups.length} 類`)}</small></span>
+      <span className={styles.poolSummaryTitle}><strong>{pickUiLocale(locale, '当前赛段地图池', 'Current cycle map pool', '현재 주기 전장 목록', '當前賽段地圖池')}</strong><small>{pickUiLocale(locale, `${count} 张地图 · ${groups.length} 类`, `${count} maps · ${groups.length} modes`, `전장 ${count}개 · 유형 ${groups.length}개`, `${count} 張地圖 · ${groups.length} 類`)}</small></span>
       <span className={styles.poolToggle}><span className={styles.poolExpand}>{pickUiLocale(locale, '查看地图', 'View maps', '전장 보기', '查看地圖')}</span><span className={styles.poolCollapse}>{pickUiLocale(locale, '收起地图', 'Hide maps', '접기', '收起地圖')}</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></span>
     </summary>
     <nav className={styles.poolModePicker} aria-label={pickUiLocale(locale, '地图类型', 'Map modes', '전장 유형', '地圖類型')}>

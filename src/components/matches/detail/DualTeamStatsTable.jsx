@@ -9,11 +9,15 @@ import {
 } from '../../../lib/leaderboardSelectors.js'
 import {
   formatMapPlayerMatchRating,
-  getMapPlayerMatchRating
+  getMapPlayerMatchRating,
+  getMatchPlayerRating,
+  usesStatisticalRatingDisplay
 } from '../../../lib/matchRatingDisplay.js'
 import TeamLogo from '../TeamLogo.jsx'
 import SignalMapStats from './SignalMapStats.jsx'
 import styles from './matchDetailStyles.js'
+import { getStatisticalRatingLabel, getStatisticalRatingNotes } from '../../../lib/statisticalRatingPresentation.js'
+import { useUiLocale } from '../../../hooks/useUiLocale.js'
 
 const ROLE_SORT_ORDER = {
   TANK: 0,
@@ -87,6 +91,7 @@ function getSummaryTail(totals) {
 }
 
 function getDisplayedMatchRating(entry, rawPts, participantScores) {
+  if (usesStatisticalRatingDisplay(entry)) return getMatchPlayerRating(entry)
   const modelMapRating = Number(entry?.mapRating)
   if (Number.isFinite(modelMapRating)) return modelMapRating
   return getMapPlayerMatchRating(rawPts, participantScores)
@@ -99,7 +104,7 @@ function createImpactIndex(rating) {
 
   entries.forEach((entry, entryIndex) => {
     const rank = entryIndex + 1
-    const rawPts = Number(entry.roleScore)
+    const rawPts = Number(entry.statisticalRating ? entry.rawScore : entry.roleScore)
     const matchRating = getDisplayedMatchRating(entry, rawPts, participantScores)
     const keys = [
       makeImpactKey(entry.player_id, entry.role),
@@ -222,6 +227,7 @@ function AwardBadge({ award, t }) {
 }
 
 function RatingCluster({ impact, t }) {
+  const locale = useUiLocale()
   if (!impact) {
     return (
       <span
@@ -239,8 +245,9 @@ function RatingCluster({ impact, t }) {
   const note = t('matchDetail.ratingMappedFromImpact', 'Rating is generated from player performance metrics on this map.')
   const displayRating = formatMapPlayerMatchRating(impact.matchRating)
   const rawPts = formatRating(impact.rawPts)
-  const title = `${ratingLabel}: ${displayRating}\n${rawLabel}: ${rawPts} PTS\n${note}`
-  const ariaLabel = `${ratingLabel}: ${displayRating}. ${rawLabel}: ${rawPts} PTS.`
+  const statisticalLabel = getStatisticalRatingLabel(impact.entry, locale)
+  const title = `${ratingLabel}: ${displayRating}\n${rawLabel}: ${rawPts} PTS\n${note}\n${getStatisticalRatingNotes(impact.entry, locale).join('\n')}`
+  const ariaLabel = `${ratingLabel}: ${displayRating}. ${rawLabel}: ${rawPts} PTS.${statisticalLabel ? ` ${statisticalLabel}. ${getStatisticalRatingNotes(impact.entry, locale).join(' ')}` : ''}`
   const featured = Number(impact.matchRating) >= 8.5
 
   return (

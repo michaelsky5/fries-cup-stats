@@ -2,7 +2,7 @@ import { translateUiText as formatUiText } from './uiText.js'
 import { formatInt, formatScore, formatUpdatedAt } from './format.js'
 import { getMatchFormatLabel } from './matchFormat.js'
 import { getBroadcastInfo } from './broadcastSelectors.js'
-import { getMatchRatingSummary } from './matchRatingAdapter.js'
+import { getMatchAwardFallback, getMatchRatingSummary } from './matchRatingAdapter.js'
 import {
   getMatchStatusText,
   getMatchCompetitionDay,
@@ -19,6 +19,7 @@ import { getPlayerDirectory, getPlayerDisplayIdentity, normalizeRosterRole } fro
 import { formatOwHeroName, formatOwMapMode, formatOwMapName } from './heroes.js'
 import { resolvePublicMatchIdentity } from './publicMatchIdentity.js'
 import { getPublicMatchCode } from './publicMatchCode.js'
+import { getMatchLookupIds } from './weeklyMatchIdentity.js'
 
 const COMPLETE_STATUSES = new Set(['COMPLETE', 'COMPLETED'])
 const LIVE_STATUSES = new Set(['IN_PROGRESS', 'LIVE'])
@@ -56,11 +57,7 @@ function isKnownValue(value) {
 }
 
 function matchIdValues(match) {
-  return [
-    match?.match_id,
-    match?.raw_match_id,
-    match?.id
-  ].map(cleanText).filter(Boolean)
+  return getMatchLookupIds(match)
 }
 
 function getMatchById(db, matchId) {
@@ -553,7 +550,7 @@ function getAdjacentMatches(matches, match) {
 }
 
 export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
-  const match = resolvePublicMatchIdentity(getMatchById(db, matchId), db?.teams)
+  const match = resolvePublicMatchIdentity(getMatchById(db, matchId), db?.teams, db?.weekly_competition)
   if (!match) return null
 
   const state = getMatchState(match)
@@ -578,7 +575,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     }
     return {
       ...normalizedMap,
-      rating: getMatchRatingSummary(match, [normalizedMap.raw], players)
+      rating: getMatchRatingSummary(match, [normalizedMap.raw], players, { db })
     }
   })
   const completedMaps = maps.filter(map => map.hasResult)
@@ -594,7 +591,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
   const mapTypeResults = buildMapTypeResults(completedMaps, teamA, teamB)
   const seriesPeakPlayers = getSeriesPeakPlayers(completedMaps, teamA, teamB)
   const rating = state.isComplete && !state.isForfeit
-    ? getMatchRatingSummary(match, completedMaps.map(map => map.raw), players)
+    ? getMatchRatingSummary(match, completedMaps.map(map => map.raw), players, { db })
     : {
         supported: false,
         level: 'match',
@@ -604,6 +601,9 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
         entries: []
       }
   const longestMap = getLongestMap(completedMaps)
+  const matchAwardFallback = state.isComplete && !state.isForfeit && rating.ratingModelVersion && !rating.supported
+    ? getMatchAwardFallback(match, completedMaps.map(map => map.raw), players)
+    : null
   const closestMap = getClosestMap(completedMaps)
   const analysisFacts = buildAnalysisFacts({
     completedMaps,
@@ -669,6 +669,7 @@ export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
     seriesPath,
     comparison,
     rating,
+    matchAwardFallback,
     topRatedPlayer: rating.topEntries?.[0] || null,
     roleLeaders: rating.roleLeaders || {},
     mapTypeResults,

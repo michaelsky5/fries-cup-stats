@@ -103,8 +103,8 @@ export async function updatePrimaryIdentityPreference(identityType) {
 
 
 
-export async function fetchUserFeedback() {
-  const data = await platformRequest('/me/feedback')
+export async function fetchUserFeedback(targetId = '') {
+  const data = await platformRequest(`/me/feedback${targetId ? `?targetId=${encodeURIComponent(targetId)}` : ''}`)
   return Array.isArray(data?.feedback) ? data.feedback : []
 }
 

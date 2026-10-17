@@ -135,9 +135,9 @@ export function formatWeeklyDataStory(story,locale='zh-CN') {
   const labels={damage:t('伤害','Damage'),healing:t('治疗','Healing'),blocked:t('阻挡伤害','Mitigated'),assists:t('助攻','Assists'),elims:t('消灭','Elims')}
   const primary=story.stats[0],maps=[...new Set(story.stats.map(item=>formatOwMapName(item.map,locale)))]
   let headline
-  if(story.kind==='cross-role-records')headline=t('跨岗双纪录','CROSS-ROLE RECORDS')
-  else if(story.kind==='multiple-records')headline=t('本周双纪录','DUAL MAP RECORDS')
-  else if(story.kind==='record')headline=t(`单图${labels[primary.metric]}${primary.tiedCount>1?'并列':''}最高`,`${labels[primary.metric].toUpperCase()} ${primary.tiedCount>1?'JOINT ':''}RECORD`)
+  if(story.kind==='cross-role-records')headline=t('本周单图跨岗双最高','WEEKLY CROSS-ROLE MAP HIGHS')
+  else if(story.kind==='multiple-records')headline=t('本周单图双最高','TWO WEEKLY MAP HIGHS')
+  else if(story.kind==='record')headline=t(`本周单图${labels[primary.metric]}${primary.tiedCount>1?'并列':''}最高`,`${labels[primary.metric].toUpperCase()} ${primary.tiedCount>1?'JOINT ':''}WEEKLY MAP HIGH`)
   else if(story.kind==='deciding-map')headline=t('决胜图亮点','DECIDING MAP')
   else headline=t('单图数据亮点','MAP SPOTLIGHT')
   const name=String(story.name||'').trim()

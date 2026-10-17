@@ -1,3 +1,5 @@
+import { SEASONS } from '../../config/seasons.js'
+
 export const ACCOUNT_COMPETITION_PARAM = 'competition'
 
 export function normalizeCompetitionId(value) {
@@ -62,6 +64,8 @@ export function competitionSwitchSearch(search, id) {
   const current = new URLSearchParams(search)
   const next = new URLSearchParams()
   for (const key of ['season', 'lang', 'design']) if (current.has(key)) next.set(key, current.get(key))
+  const publicSeason = SEASONS.find(item => item.id === id)
+  if (publicSeason) next.set('season', publicSeason.publicCode)
   if (normalizeCompetitionId(id)) next.set(ACCOUNT_COMPETITION_PARAM, id)
   next.set('section', 'overview')
   return next.toString()
