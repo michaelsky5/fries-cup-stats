@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useBlocker, useLocation } from 'react-router-dom'
 import AccountFrame from '../../features/account-ui/AccountFrame.jsx'
 import AccountOverview from './AccountOverview.jsx'
+import EmailChangePanel from '../../features/account-security/EmailChangePanel.jsx'
 import { reminderCopy } from '../../features/match-reminders/reminderCopy.js'
 import MatchReminderSettings from '../../features/match-reminders/MatchReminderSettings.jsx'
 import AccountAvatar from '../../features/account-ui/AccountAvatar.jsx'
@@ -29,7 +30,7 @@ import styles from './AccountSettingsPage.module.css'
 const SECTIONS = [
   ['overview', '00', '账号概览', 'OVERVIEW'],
   ['profile', '01', '个人资料', 'PROFILE'], ['password', '02', '修改密码', 'PASSWORD'],
-  ['email', '03', '邮箱验证', 'EMAIL'], ['sessions', '04', '登录设备', 'DEVICES'], ['reminders', '05', '比赛提醒', 'REMINDERS']
+  ['email', '03', '邮箱管理', 'EMAIL'], ['sessions', '04', '登录设备', 'DEVICES'], ['reminders', '05', '比赛提醒', 'REMINDERS']
 ]
 
 function Notice({ notice }) {
@@ -201,7 +202,7 @@ function PasswordSettings({ user, onRevoked, onDirtyChange }) {
   </Section>
 }
 
-function EmailSettings({ user }) {
+function EmailSettings({ user, onDirtyChange }) {
   const uiLocale = useUiLocale()
   const { authConfig, authConfigError, retryAuthConfig, emailVerificationState, requestEmailVerification, refreshSession, clearRevokedSession } = useAuth()
   const [refreshing, setRefreshing] = useState(false)
@@ -227,7 +228,7 @@ function EmailSettings({ user }) {
     try { await requestEmailVerification() } catch (error) { if (error?.status === 401) clearRevokedSession() }
     finally { lock.current = false }
   }
-  return <Section id="email" number="03" title={uiText("邮箱验证", uiLocale)} description={uiText("受邀邮箱用于登录和接收账号验证邮件。", uiLocale)}>
+  return <Section id="email" number="03" title={uiText("邮箱管理", uiLocale)} description={uiText("管理邮箱验证和登录邮箱变更。", uiLocale)}>
     <div className={styles.emailAddress}><span className={styles.hint}>{uiText("当前登录邮箱", uiLocale)}</span><div className={styles.emailLine}><strong data-i18n-ignore>{user.email}</strong><span className={styles.badge} data-ready={user.emailVerified === true}>{user.emailVerified === true ? uiText("已验证", uiLocale) : user.emailVerified === false ? uiText("待验证", uiLocale) : uiText("状态待确认", uiLocale)}</span></div></div>
     <Notice notice={refreshNotice || emailVerificationNotice(emailVerificationState)} />
     {user.emailVerified ? <div className={styles.securityImpact}><strong>{uiText("邮箱验证已完成", uiLocale)}</strong><p>{uiText("这表示登录邮箱已验证；队伍与参赛身份仍按邀请认领流程关联。", uiLocale)}</p></div> : <ol className={styles.verificationSteps}><li><span aria-hidden="true">01</span><div><strong>{uiText("发送验证邮件", uiLocale)}</strong><p>{uiText("邮件会发送到上方的登录邮箱。", uiLocale)}</p></div></li><li><span aria-hidden="true">02</span><div><strong>{uiText("打开邮件中的链接", uiLocale)}</strong><p>{uiText("未收到时，请检查垃圾邮件或稍后重试。", uiLocale)}</p></div></li><li><span aria-hidden="true">03</span><div><strong>{uiText("回到这里核对状态", uiLocale)}</strong><p>{uiText("完成后点击“刷新验证状态”。", uiLocale)}</p></div></li></ol>}
@@ -235,6 +236,7 @@ function EmailSettings({ user }) {
       {authConfigError ? <Notice notice={{ tone: 'error', text: uiText("暂时无法读取邮件服务状态。", uiLocale) }} /> : authConfig?.emailVerificationEnabled === false ? <Notice notice={{ tone: 'info', text: uiText("邮件服务暂未开放，目前无法发送验证邮件。请联系赛事负责人核对账号邮箱。", uiLocale) }} /> : !authConfig ? <p role="status">{uiText("正在读取邮件服务状态…", uiLocale)}</p> : null}
       <div className={styles.actions}><button type="button" className={styles.primary} onClick={send} disabled={pending || refreshing || authConfig?.emailVerificationEnabled !== true}>{pending ? uiText("正在处理…", uiLocale) : uiText("发送验证邮件", uiLocale)}</button><button type="button" className={styles.secondary} onClick={refresh} disabled={pending || refreshing}>{refreshing ? uiText("正在刷新…", uiLocale) : uiText("刷新验证状态", uiLocale)}</button>{authConfigError && <button type="button" className={styles.secondary} onClick={retryAuthConfig}>{uiText("重试服务状态", uiLocale)}</button>}</div>
     </>}
+    <EmailChangePanel user={user} onDirtyChange={onDirtyChange} />
   </Section>
 }
 
@@ -363,7 +365,10 @@ function ConfirmationDialog({ title, description, cancelLabel, confirmLabel, onC
 
 function SettingsWorkspace({ user, onRevoked }) {
   const uiLocale = useUiLocale()
-  const location = useLocation()
+  const routeLocation = useLocation()
+  const params = new URLSearchParams(routeLocation.search)
+  params.delete('emailChangeToken')
+  const location = { ...routeLocation, search: params.size ? '?' + params : '' }
   const competition = useAccountCompetition(getInitialSeasonId())
   const spaceHref = competition.link(withSeason('/me', getInitialSeasonId(), location.search))
   const section = SECTIONS.some(([id]) => `#${id}` === location.hash) ? location.hash.slice(1) : 'overview'
@@ -397,15 +402,39 @@ function SettingsWorkspace({ user, onRevoked }) {
       {section === 'overview' && <AccountOverview user={user} spaceHref={spaceHref} />}
       {section === 'profile' && <ProfileSettings user={user} onDirtyChange={onDirtyChange} />}
       {section === 'password' && <PasswordSettings user={user} onRevoked={onRevoked} onDirtyChange={onDirtyChange} />}
-      {section === 'email' && <EmailSettings user={user} />}
+      {section === 'email' && <EmailSettings user={user} onDirtyChange={onDirtyChange} />}
       {section === 'sessions' && <SessionSettings onRevoked={onRevoked} />}
       {section === 'reminders' && <MatchReminderSettings user={user} onDirtyChange={onDirtyChange} />}
     </div>
   </div>
 }
 
+function EmailChangeConfirmation() {
+  const { emailChangeState: state, user } = useAuth()
+  const locale = useUiLocale()
+  if (!state || state.status === 'IDLE') return null
+  const completed = state.status === 'COMPLETED', failed = state.status === 'ERROR'
+  const permanentFailure = failed && [400, 409, 410].includes(state.error?.status)
+  const confirmed = state.status === 'CONFIRMED', request = state.result?.request
+  const message = completed ? '登录邮箱已更换，此账号的全部旧登录设备已退出。请使用新邮箱和原密码重新登录。'
+    : confirmed ? '这一侧邮箱已确认。请打开另一邮箱中的确认邮件，两边确认后换绑才会生效。'
+      : failed ? accountSettingsError(state.error, locale) : '正在确认邮箱变更，请稍候…'
+  return <section className={`${styles.securityImpact} ${styles.emailConfirmation}`} aria-label={uiText('邮箱确认结果', locale)}>
+    <h2>{uiText(completed ? '邮箱换绑已完成' : confirmed ? '邮箱确认已记录' : failed ? '邮箱确认未完成' : '正在确认邮箱', locale)}</h2>
+    <p role={failed ? 'alert' : 'status'}>{uiText(message, locale)}</p>
+    {request && <p data-i18n-ignore>{request.currentEmail} → {request.newEmail}</p>}
+    {confirmed && <p>{uiText(state.result.side === 'CURRENT' ? '原邮箱已确认，等待新邮箱确认。' : '新邮箱已确认，等待原邮箱确认。', locale)}</p>}
+    {completed && user && user.email !== request?.newEmail && <p>{uiText('当前登录的是另一个账号，本次换绑不会退出该账号。若要登录新邮箱，请先退出当前账号。', locale)}</p>}
+    {state.sessionWarning && <p role="alert">{uiText(state.sessionWarning, locale)}</p>}
+    <div className={styles.actions}>
+      {completed && !user && <button className={styles.primary} type="button" onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText('使用新邮箱登录', locale)}</button>}
+      {failed && (permanentFailure ? <Link className={styles.secondary} to="/account#email">{uiText('返回邮箱管理', locale)}</Link> : <button className={styles.secondary} type="button" onClick={() => window.location.reload()}>{uiText('重新核对链接', locale)}</button>)}
+    </div>
+  </section>
+}
+
 export default function AccountSettingsPage() {
-  const { user, isBootstrapping, accountDataError } = useAuth()
+  const { user, isBootstrapping, accountDataError, emailChangeState } = useAuth()
   const location = useLocation()
   const [signedOutNotice, setSignedOutNotice] = useState('')
   const locale = new URLSearchParams(location.search).get('lang') || getStoredLocale()
@@ -416,7 +445,8 @@ export default function AccountSettingsPage() {
   }, [locale])
   return <AccountFrame compact title={uiText("账号设置", locale)} eyebrow="ACCOUNT SETTINGS" description={uiText("管理你的个人资料与账号安全。", locale)} aside={<div className={styles.identity}><AccountAvatar className={styles.avatar} user={user} /><div><strong data-i18n-ignore={user ? '' : undefined}>{user?.displayName || (isBootstrapping ? uiText("正在核对账号…", locale) : uiText("受邀账号", locale))}</strong><span data-i18n-ignore={user ? '' : undefined}>{user?.email || uiText("登录后管理账号", locale)}</span></div></div>}>
     <div className={styles.page}>
-      {isBootstrapping ? <section className={styles.guest} role="status"><h2>{uiText("正在核对登录状态…", locale)}</h2></section> : user ? <SettingsWorkspace key={user.id} user={user} onRevoked={setSignedOutNotice} /> : <section className={styles.guest}>
+      <EmailChangeConfirmation />
+      {isBootstrapping ? <section className={styles.guest} role="status"><h2>{uiText("正在核对登录状态…", locale)}</h2></section> : user ? <SettingsWorkspace key={user.id} user={user} onRevoked={setSignedOutNotice} /> : emailChangeState.status === 'COMPLETED' ? null : <section className={styles.guest}>
         <span className={styles.kicker}>ACCOUNT ACCESS</span><h2>{uiText("欢迎回到薯条杯", locale)}</h2><Notice notice={signedOutNotice ? { tone: 'success', text: signedOutNotice } : accountDataError ? { tone: 'error', text: accountSettingsError(accountDataError, locale) } : null} /><p>{uiText("使用受邀邮箱登录，即可管理资料和安全设置。首次参加，请打开赛事负责人或队长提供的邀请链接。", locale)}</p><button type="button" className={styles.primary} onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText("登录账号 →", locale)}</button><Link className={styles.guestLink} to={withSeason('/me', getInitialSeasonId(), location.search)}>{uiText("前往我的空间 ↗", locale)}</Link>
       </section>}
     </div>

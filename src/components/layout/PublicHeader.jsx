@@ -303,7 +303,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
           contextMode={headerContextMode}
         /> : null}
       </header>
-      <AccountModeSwitch locale={compatibleLayoutLocale} />
+      <AccountModeSwitch locale={compatibleLayoutLocale} seasonId={seasonId} />
       {phoneNavigation ? <PublicMobileNav items={headerNavItems} locale={layoutLocale} navPath={navPath} accountAttention={accountAttention} /> : null}
   </>)
 }

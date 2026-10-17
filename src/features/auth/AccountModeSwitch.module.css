@@ -2,8 +2,8 @@
 .bar[data-account-mode="ADMIN"] { background: #edf2ce; }
 .status { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 .status span { opacity: .7; }
-.bar button { min-height: 36px; padding: 6px 12px; color: inherit; background: transparent; border: 1px solid currentColor; font: inherit; cursor: pointer; }
+.bar button { min-height: 40px; padding: 6px 12px; color: inherit; background: transparent; border: 1px solid currentColor; font: inherit; cursor: pointer; }
 .bar button:disabled { opacity: .55; cursor: wait; }
-.bar a { color: inherit; text-decoration: underline; }
+.bar a { display: inline-flex; align-items: center; min-height: 40px; padding: 6px 10px; color: inherit; text-decoration: underline; }
 .error { flex-basis: 100%; color: #a63030; }
-@media (max-width: 600px) { .bar { gap: 8px; padding: 8px 12px; } .status { flex: 1 1 160px; gap: 4px; flex-direction: column; align-items: flex-start; } }
+@media (max-width: 600px) { .bar { gap: 8px; padding: 8px 12px; } .status { flex: 1 1 160px; gap: 4px; flex-direction: column; align-items: flex-start; } .bar button, .bar a { min-height: 44px; } }

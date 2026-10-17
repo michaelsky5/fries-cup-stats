@@ -8,7 +8,7 @@ const copy = new Map([
   ['账号设置', 'Account settings'], ['通用账号设置', 'Across all events'],
   ['管理你的个人资料与账号安全。', 'Manage your profile and account access.'],
   ['账号概览', 'Overview'], ['个人资料', 'Profile'], ['修改密码', 'Change password'],
-  ['邮箱验证', 'Email verification'], ['登录设备', 'Devices'], ['当前账号', 'Current account'],
+  ['邮箱验证', 'Email verification'], ['邮箱管理', 'Email management'], ['登录设备', 'Devices'], ['当前账号', 'Current account'],
   ['账号设置分区', 'Account settings sections'], ['个人资料、登录与验证状态，都在这里。', 'Your profile, sign-ins and verification in one place.'],
   ['登录邮箱', 'Sign-in email'], ['用户名', 'Username'], ['编辑个人资料', 'Edit profile'], ['查看个人资料', 'View profile'],
   ['账号资料用于个人展示。参赛身份、队伍与出赛名单在我的空间管理。', 'Your profile represents your account. Manage event roles, teams and lineups in My Space.'],

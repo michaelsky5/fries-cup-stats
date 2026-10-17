@@ -37,7 +37,7 @@ assert.match(emailVerificationNotice({ status: 'SENT', result: { delivered: true
 assert.equal(emailVerificationNotice({ status: 'VERIFIED' }).tone, 'success')
 assert.match(accountSettingsError({ data: { error: 'PASSWORD_INVALID' }, status: 403 }), /当前密码/)
 assert.match(accountSettingsError({ status: 401 }), /登录已失效/)
-assert.match(accountSettingsError({ data: { error: 'EMAIL_DELIVERY_UNAVAILABLE' }, status: 503 }), /邮件服务暂未开放/)
+assert.match(accountSettingsError({ data: { error: 'EMAIL_DELIVERY_UNAVAILABLE' }, status: 503 }), /邮件暂未投递.*稍后重试/)
 
 const previousFetch = globalThis.fetch
 let responseBody = {}

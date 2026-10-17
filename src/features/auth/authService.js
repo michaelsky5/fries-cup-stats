@@ -75,12 +75,6 @@ export async function confirmEmailChange(token) {
   })
 }
 
-export async function confirmEmailAppeal(token) {
-  return platformRequest('/auth/email-appeals/confirm', {
-    method: 'POST',
-    body: { token }
-  })
-}
 
 export async function requestPasswordReset(email) {
   return platformRequest('/auth/password-resets', {

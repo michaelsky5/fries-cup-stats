@@ -1,7 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   clearStoredAuth,
-  confirmEmailAppeal,
   confirmEmailChange,
   confirmEmailVerification,
   fetchAuthConfig,
@@ -16,10 +15,10 @@ import {
   ACCOUNT_PROFILE_SAVED,
   fetchUserIdentityBundle,
   fetchUserProfile,
-  fetchVerificationRequests,
   updatePrimaryIdentityPreference
 } from './userDataApi.js'
 import { fetchAccountProfile } from '../account-security/accountSecurityApi.js'
+import { synchronizeAfterCredentialChange } from '../account-security/accountRecoveryModel.js'
 
 const AuthContext = createContext(null)
 
@@ -51,14 +50,8 @@ export function AuthProvider({ children }) {
     result: null,
     error: null
   })
-  const [emailAppealState, setEmailAppealState] = useState({
-    status: 'IDLE',
-    result: null,
-    error: null
-  })
   const processedEmailToken = useRef(null)
   const processedEmailChangeToken = useRef(null)
-  const processedEmailAppealToken = useRef(null)
   const sessionEpoch = useRef(0)
   const accountRequest = useRef(0)
   const currentUserId = useRef('')
@@ -70,7 +63,6 @@ export function AuthProvider({ children }) {
   const resetEmailStates = useCallback(() => {
     setEmailVerificationState({ status: 'IDLE', result: null, error: null })
     setEmailChangeState({ status: 'IDLE', result: null, error: null })
-    setEmailAppealState({ status: 'IDLE', result: null, error: null })
   }, [])
 
   const retryAuthConfig = useCallback(() => setAuthConfigAttempt(value => value + 1), [])
@@ -209,9 +201,7 @@ export function AuthProvider({ children }) {
         installSession(currentUser)
         return null
       }
-      const requests = identityBundle.capabilities?.canReadVerificationRequests === true
-        ? await fetchVerificationRequests()
-        : []
+      const requests = []
       if (!isCurrent()) return null
       // An older identity read must not restore a replaced avatar or profile.
       const profileIsCurrent = profileVersion === profileRequest.current
@@ -285,36 +275,7 @@ export function AuthProvider({ children }) {
     return () => { accountRequest.current += 1 }
   }, [authState.user?.id, authState.user?.role, authState.user?.accountMode, refreshAccountData])
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return undefined
-    const params = new URLSearchParams(window.location.search)
-    const token = params.get('emailAppealToken') || ''
-    if (!token) return undefined
-    if (processedEmailAppealToken.current?.token !== token) {
-      processedEmailAppealToken.current = { token, promise: confirmEmailAppeal(token) }
-    }
-    let cancelled = false
-    setEmailAppealState({ status: 'VERIFYING', result: null, error: null })
-    processedEmailAppealToken.current.promise
-      .then(async result => {
-        if (cancelled) return
-        if (currentUserId.current) await refreshAccountData().catch(() => {})
-        if (cancelled) return
-        setEmailAppealState({ status: 'PENDING_REVIEW', result, error: null })
-        params.delete('emailAppealToken')
-        const nextSearch = params.toString()
-        window.history.replaceState({}, '', `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}${window.location.hash}`)
-        window.dispatchEvent(new Event('fries-cup:open-account'))
-      })
-      .catch(error => {
-        if (cancelled) return
-        setEmailAppealState({ status: 'ERROR', result: null, error })
-      })
 
-    return () => {
-      cancelled = true
-    }
-  }, [refreshAccountData])
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined
@@ -329,18 +290,18 @@ export function AuthProvider({ children }) {
     processedEmailChangeToken.current.promise
       .then(async result => {
         if (cancelled) return
+        let sessionWarning = ''
         if (result?.completed) {
-          installSession(null)
+          sessionWarning = await synchronizeAfterCredentialChange(refreshSession)
           sessionChannel.current?.postMessage('SESSION_CHANGED')
         } else if (currentUserId.current) {
           await refreshAccountData().catch(() => {})
         }
         if (cancelled) return
-        setEmailChangeState({ status: result?.completed ? 'COMPLETED' : 'CONFIRMED', result, error: null })
+        setEmailChangeState({ status: result?.completed ? 'COMPLETED' : 'CONFIRMED', result, error: null, sessionWarning })
         params.delete('emailChangeToken')
         const nextSearch = params.toString()
         window.history.replaceState({}, '', `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}${window.location.hash}`)
-        window.dispatchEvent(new Event('fries-cup:open-account'))
       })
       .catch(error => {
         if (cancelled) return
@@ -350,7 +311,7 @@ export function AuthProvider({ children }) {
     return () => {
       cancelled = true
     }
-  }, [installSession, refreshAccountData])
+  }, [refreshSession, refreshAccountData])
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined
@@ -469,7 +430,6 @@ export function AuthProvider({ children }) {
     isAccountDataLoading: accountState.isLoading,
     emailVerificationState,
     emailChangeState,
-    emailAppealState,
     login,
     logout,
     refreshAccountData,
@@ -477,7 +437,7 @@ export function AuthProvider({ children }) {
     switchAccountMode,
     register,
     requestEmailVerification
-  }), [accountState, profileSnapshot, authState, authConfig, authConfigError, retryAuthConfig, refreshSession, clearRevokedSession, emailAppealState, emailChangeState, emailVerificationState, login, logout, refreshAccountData, register, requestEmailVerification, setPrimaryIdentity, switchAccountMode])
+  }), [accountState, profileSnapshot, authState, authConfig, authConfigError, retryAuthConfig, refreshSession, clearRevokedSession, emailChangeState, emailVerificationState, login, logout, refreshAccountData, register, requestEmailVerification, setPrimaryIdentity, switchAccountMode])
 
   return (
     <AuthContext.Provider value={value}>

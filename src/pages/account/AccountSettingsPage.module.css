@@ -22,6 +22,12 @@
 .sidebar > a { display: inline-block; margin-top: 12px; font-size: 13px; color: inherit; border-bottom: 1px solid var(--fc-data-line-strong); padding-bottom: 5px; }
 .cards { min-width: 0; max-width: 1180px; }
 .card { border: 1px solid var(--fc-data-line); background: var(--fc-data-paper-raised); min-width: 0; scroll-margin-top: 112px; }
+.emailChange { border-top: 1px solid var(--fc-data-line); margin-top: 28px; padding-top: 24px; }
+.emailChange h3 { font-size: 18px; margin: 0 0 12px; }
+.emailChange .hint { line-height: 1.8; }
+.emailChange form { margin-top: 20px; }
+.emailChange .actions { align-items: end; }
+.emailChange input { box-sizing: border-box; }
 .cardHeader { padding: 24px 32px; border-bottom: 1px solid var(--fc-data-line); }
 .cardHeader h2 { margin: 0; font-size: 22px; font-weight: 750; }
 .cardHeader p { margin: 10px 0 0; font-size: 13px; line-height: 1.8; color: var(--fc-data-text-muted); }
@@ -177,3 +183,5 @@
   .sidebar nav small { display: none; }
   .saveBar { position: sticky; z-index: 10; bottom: calc(63px + env(safe-area-inset-bottom)); padding: 12px; margin-inline: -12px; background: var(--fc-data-paper-raised); border: 1px solid var(--fc-data-line); }
 }
+.emailConfirmation { color: var(--fc-data-ink); font-size: 14px; }
+.emailConfirmation h2 { margin: 0 0 12px; font-size: 24px; line-height: 1.4; color: var(--fc-data-ink); }

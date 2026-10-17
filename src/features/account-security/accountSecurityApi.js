@@ -12,9 +12,6 @@ export async function fetchAccountSessions(options = {}) {
   return data.sessions
 }
 
-export async function fetchAccountSecurity() {
-  return platformRequest('/me/security')
-}
 
 export async function revokeAccountSession(sessionId) {
   return platformRequest(`/me/sessions/${encodeURIComponent(sessionId)}`, { method: 'DELETE' })
@@ -31,26 +28,5 @@ export async function changeAccountPassword(currentPassword, newPassword) {
   return platformRequest('/me/password', {
     method: 'PATCH',
     body: { currentPassword, newPassword }
-  })
-}
-
-export async function requestAccountEmailChange(newEmail, password) {
-  return platformRequest('/me/email-change-requests', {
-    method: 'POST',
-    body: { newEmail, password }
-  })
-}
-
-export async function requestAccountEmailAppeal(newEmail, password, reason) {
-  return platformRequest('/me/email-appeals', {
-    method: 'POST',
-    body: { newEmail, password, reason }
-  })
-}
-
-export async function deactivateAccount(password, confirmation, reason) {
-  return platformRequest('/me/deactivate', {
-    method: 'POST',
-    body: { password, confirmation, reason: reason || null }
   })
 }
