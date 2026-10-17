@@ -237,6 +237,7 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
   }, [pauseOpen])
   if (!data) return <main className={styles.emptyPage}><Link to={returnPath}>{uiText("← 我的比赛", uiLocale)}</Link><h1>{uiText("比赛房", uiLocale)}</h1><RoomGuideLink match={matchId} scenario="access" label="无法操作？查看指南" /><RoomConnectionNotice connection={connection} error={error} refresh={refresh} matchId={matchId} hasData={Boolean(data)} />{(!connection || !error) && <p role={error ? 'alert' : 'status'}>{error || uiText("正在同步本场比赛…", uiLocale)}</p>}{error && !connection && <button onClick={() => refresh({ force: true })}>{uiText("重新同步", uiLocale)}</button>}{accountControl}</main>
   const disabled = busy || !!error || !data.access.canWrite
+  const missingOwnRepresentative = data.representatives?.sides.find(side => !side.active && (side.canClaim || side.canAssign) && data.access.teamIds.includes(side.teamId))
   const stage = data.phase, own = getRoomOperatingSides(data)
   const currentStage = getRoomStageIndex(data)
   const inspectingStage = selectedStage !== null && selectedStage !== currentStage
@@ -255,8 +256,15 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
   }}>
     {compact ? <RoomMobileHeader data={data} returnPath={returnPath} busy={busy} error={error} refresh={refresh} onInfo={() => setAuxiliary('info')} /> : <RoomMatchHeader data={data} phaseLabel={roomPhaseName(data, uiLocale)} returnPath={returnPath} busy={busy} error={error} refresh={refresh} mutate={preview ? undefined : mutate} disabled={disabled} accountControl={accountControl} />}
     <RoomTrainingNotice data={data} disabled={disabled} />
+    {data.access.managementConflict && <div className={styles.notice} role="status" data-room-management-conflict>
+      <span>{data.access.forceMode
+        ? pickUiLocale(uiLocale, '强制模式已开启：本场管理操作会记录介入原因。', 'Force mode is active. Management actions in this match record the intervention reason.', '강제 모드가 활성화되어 있습니다. 이 경기의 관리 작업에 개입 사유가 기록됩니다.', '強制模式已開啟：本場管理操作會記錄介入原因。')
+        : pickUiLocale(uiLocale, '本场管理权限已回避：你与参赛队伍有关联，仅保留本队身份对应的操作。请由独立赛管处理比赛管理。', 'Management access is restricted because you are linked to a competing team. Your team role still applies. An independent referee must manage this match.', '참가 팀과 연관되어 이 경기의 관리 권한이 제한됩니다. 소속 팀 역할에 따른 작업은 유지됩니다. 독립 심판에게 경기 관리를 맡겨 주세요.', '本場管理權限已迴避：你與參賽隊伍有關聯，僅保留本隊身分對應的操作。請由獨立賽管處理比賽管理。')}
+        {data.access.forceMode && <small> {data.access.forceMode.reason}</small>}</span>
+    </div>}
     {!compact && <RoomSeriesRail data={data} phaseLabel={roomPhaseName(data, uiLocale)} />}
     <RoomConnectionNotice connection={connection} error={error} refresh={refresh} matchId={matchId} hasData={Boolean(data)} />
+    {compact && missingOwnRepresentative && <div className={styles.notice} data-room-slot="representative-entry"><span>{pickUiLocale(uiLocale, '本队尚无操作代表。可提前设置，无需等待比赛开放。', 'Your team needs a representative. Set one before match operations open.', '팀 조작 대표가 필요합니다. 경기 조작이 열리기 전에 설정할 수 있습니다.', '本隊尚無操作代表。可提前設定，無需等待比賽開放。')}</span><button type="button" onClick={() => { setRosterSide(missingOwnRepresentative.teamId === data.match.teamA.id ? 'A' : 'B'); setAuxiliary('teams') }}>{pickUiLocale(uiLocale, '设置本队代表', 'Set team representative', '팀 대표 설정', '設定本隊代表')} ↗</button></div>}
     {((error && !connection) || notice) && <div className={error && !connection || noticeKind === 'error' ? styles.error : styles.notice} data-room-feedback={noticeKind || 'warning'} role={error && !connection || noticeKind === 'error' ? 'alert' : 'status'}><span>{error && !connection ? uiText("{0} 重新同步前暂停操作。", uiLocale, [error]) : notice}{error && <RoomGuideLink data={data} scenario="sync" label="无法操作？查看指南" />}</span>{!error && <button type="button" aria-label={uiText('关闭提示', uiLocale)} onClick={clearNotice}>×</button>}</div>}
     <div className={workspace.statusStrip} data-room-slot="status-strip"><RoomImportantOperations data={data} stale={!!error} side="A" /><RoomDecisionSummary data={data} inline /><RoomImportantOperations data={data} stale={!!error} side="B" /></div>
     <div className={workspace.columns} data-room-slot="columns">{!compact && <Team team={data.match.teamA} data={data} disabled={disabled} mutate={mutate} onLineupCorrection={openLineupCorrection} />}<div className={workspace.center} ref={operation} tabIndex={-1} data-room-slot="center" data-stage-view={lineupStage ? 'lineup' : openingActive ? 'selection' : stage.toLowerCase()} data-inspecting={inspectingStage}>
