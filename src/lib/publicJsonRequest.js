@@ -1,5 +1,7 @@
 const inFlight = new Map()
-const REQUEST_TIMEOUT_MS = 20_000
+// Uncompressed snapshots (FCR26 ~4.9 MB) took 21.5 s from Singapore; revisit
+// once data responses are compressed.
+const REQUEST_TIMEOUT_MS = 45_000
 
 function conditionalEtag(url, cached, origin) {
   if (!cached?.data || cached.sourceUrl !== url) return ''

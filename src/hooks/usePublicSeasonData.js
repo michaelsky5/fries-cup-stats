@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { getSeasonById } from '../config/seasons.js'
 import { getDb, getDbSource, isLocalDbFallback, refreshDb } from '../lib/db.js'
 
 const initialState = (seasonId, reviewArchive = false) => ({ seasonId, reviewArchive, db: null, error: '', isLoading: true, isRefreshing: false, refreshError: false })
@@ -14,6 +15,10 @@ export function usePublicSeasonData(seasonId, { reviewArchive = false } = {}) {
     let lastAttempt = 0
     let fallback = false
     let localPreview = false
+    // Archived seasons no longer change: load their snapshot once, with no
+    // polling, focus refresh or cache revalidation. A bundled fallback still
+    // retries the published snapshot so retry() keeps working.
+    const archived = getSeasonById(seasonId).lifecycle === 'ARCHIVED'
     setState(current => current.seasonId === seasonId && current.reviewArchive === reviewArchive && current.db
       ? { ...current, isRefreshing: !reviewArchive }
       : initialState(seasonId, reviewArchive))
@@ -44,13 +49,13 @@ export function usePublicSeasonData(seasonId, { reviewArchive = false } = {}) {
         localPreview = getDbSource(data).kind === 'local-preview'
         setState(current => ({ seasonId, reviewArchive, db: data, error: '', isLoading: false, isRefreshing: false,
           refreshError: !reviewArchive && getDbSource(data).fromCache && current.seasonId === seasonId && current.reviewArchive === reviewArchive ? current.refreshError : false }))
-        if (!reviewArchive && (fallback || getDbSource(data).fromCache)) void refresh()
+        if (!reviewArchive && (fallback || (!archived && getDbSource(data).fromCache))) void refresh()
       })
       .catch(() => {
         if (alive) setState({ ...initialState(seasonId, reviewArchive), isLoading: false, error: 'DATA_LOAD_FAILED' })
       })
 
-    if (reviewArchive) return () => { alive = false }
+    if (reviewArchive || archived) return () => { alive = false }
 
     const refreshVisible = () => {
       if (document.visibilityState !== 'hidden' && Date.now() - lastAttempt >= 15_000) void refresh()
