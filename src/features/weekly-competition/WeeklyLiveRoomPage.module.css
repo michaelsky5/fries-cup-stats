@@ -152,6 +152,8 @@
 .representativeHeading em { color:var(--yellow);font-size:10px;font-style:normal; }
 .representativeHeadingActions { display:flex;align-items:center;gap:7px;min-width:0; }
 .room .representativeHeadingActions > button { min-height:28px;padding:3px 8px;background:transparent;border-color:var(--line);font-size:10px; }
+.room .representativeHeadingActions > button[data-self-claim] { min-height:36px;padding:6px 10px;color:var(--yellow);border-color:var(--fc-data-room-accent-line);font-size:12px; }
+.room [data-room-slot="representative-entry"] { color:var(--text);background:var(--fc-data-room-surface);border-color:var(--fc-data-room-accent-line); }
 .room .representativeHeadingActions > button:hover:not(:disabled) { border-color:var(--yellow);color:var(--yellow); }
 .representativePerson { display:flex;align-items:baseline;gap:7px;flex-wrap:wrap; }
 .representativePerson>strong { font-size:14px;overflow-wrap:anywhere; }

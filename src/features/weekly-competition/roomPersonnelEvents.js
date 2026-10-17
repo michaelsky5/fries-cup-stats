@@ -37,6 +37,7 @@ export function roomActivitySide(event, match) {
 export function roomTeamActivityEvents(events, match, side) {
   return events.filter(event => {
     const owner = roomActivitySide(event, match)
+    if (side && event.kind === 'REPRESENTATIVE_ASSIGNED' && owner === null) return false
     return owner !== 'unrelated' && (!side || owner === null || owner === side)
   })
 }

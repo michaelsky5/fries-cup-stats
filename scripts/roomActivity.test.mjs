@@ -113,6 +113,14 @@ test('confirmed map selection retains its public chooser while unrelated ownersh
   assert.deepEqual(roomTeamActivityEvents(unrelated, data.match), [])
 })
 
+test('legacy representative notices without confirmed ownership stay in history without being attributed to both teams', () => {
+  const data = buildWeeklyRoomPreview('ready')
+  const notice = { id: 'legacy-representative', kind: 'REPRESENTATIVE_ASSIGNED', body: 'MH 的代表指定为本地测试选手。' }
+  assert.deepEqual(roomTeamActivityEvents([notice], data.match), [notice])
+  assert.deepEqual(roomTeamActivityEvents([notice], data.match, 'A'), [])
+  assert.deepEqual(roomTeamActivityEvents([notice], data.match, 'B'), [])
+})
+
 test('side activity and shared history preserve sealed-lineup privacy', () => {
   const data = buildWeeklyRoomPreview('lineup')
   data.map.lineupsRevealed = false
