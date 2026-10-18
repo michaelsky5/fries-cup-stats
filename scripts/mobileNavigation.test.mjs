@@ -119,3 +119,17 @@ test('public detail analysis and match comparison resume the chosen view', () =>
   const match = buildMobileTabTarget({ path: '/matches/m1?map=2&pview=compare&compareA=p1&compareB=p2' }, '/matches?season=FCR2026', 'matches')
   assert.equal(new URL(match.to, 'https://test.invalid').searchParams.get('compareB'), 'p2')
 })
+
+test('direct representative selection closes with Back without leaving the room or changing its team history', () => {
+  const room = { pathname: '/me/matches/m1/room', search: '?lang=zh&season=FCW2026', hash: '', key: 'room-base', state: { returnTo: '/me?section=matches' } }
+  const open = getRoomPanelNavigation(room, 'm1', 'representative')
+  assert.deepEqual(open.to, { pathname: room.pathname, search: room.search, hash: '' })
+  assert.equal(open.options.replace, false)
+  assert.equal(getRoomPanel(open.options.state, 'm1').key, 'representative')
+  assert.equal(getRoomPanel(open.options.state, 'm2'), null)
+  assert.deepEqual(getRoomPanelNavigation({ ...room, state: open.options.state }, 'm1', ''), { to: -1 })
+  const fromRoster = getRoomPanelNavigation({ ...room, state: getRoomPanelNavigation(room, 'm1', 'teams').options.state }, 'm1', 'representative')
+  assert.equal(fromRoster.options.replace, true)
+  assert.equal(fromRoster.options.state.roomPanel.originKey, 'room-base')
+  assert.equal(fromRoster.options.state.returnTo, room.state.returnTo)
+})

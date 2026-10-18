@@ -18,22 +18,47 @@ function representativeHint(side, data, teamId, locale) {
 }
 
 export default function RoomRepresentative({ team, data, disabled, mutate }) {
-  const { liveRoomWrite } = useRoomTransport()
   const uiLocale = useUiLocale()
   const side = data.representatives?.sides.find(item => item.teamId === team?.id)
-  const [open, setOpen] = useState(false), [selected, setSelected] = useState(''), [reason, setReason] = useState('')
-  const [formError, setFormError] = useState(''), [saving, setSaving] = useState(false)
-  const dialog = useRef(null), pending = useRef(null), openedRevision = useRef(0)
-  useEffect(() => { if (open) dialog.current?.showModal(); else dialog.current?.close() }, [open])
+  const [open, setOpen] = useState(false)
   if (!side) return null
   const roleLabels = { MANAGER: uiText("经理", uiLocale), LEADER: uiText("队长", uiLocale), COACH: uiText("教练", uiLocale), PLAYER: uiText("选手", uiLocale) }
   const roleLabel = roleLabels[side.role] || uiText("队员", uiLocale)
-  const claiming = !side.canAssign && side.canClaim
   const canEdit = side.canAssign || side.canClaim
-  const claimCandidate = side.candidates.find(item => item.userId === data.actor.id)
+  const claiming = !side.canAssign && side.canClaim
   const claimLabel = pickUiLocale(uiLocale, '我来担任', 'Take this role', '제가 맡겠습니다', '我來擔任')
   const actionLabel = claiming ? claimLabel : side.userId ? uiText('更换', uiLocale) : uiText('指定', uiLocale)
   const hint = representativeHint(side, data, team.id, uiLocale)
+  const changed = side.revision > 1 && Boolean(side.updatedAt)
+  return <div className={styles.representative} data-active={side.active} data-room-slot="representative" data-personnel-changed={changed}>
+    <div className={styles.representativeHeading}><small>{uiText("本场操作代表", uiLocale)}</small><div className={styles.representativeHeadingActions}>{side.isYou && <em>{uiText("你负责操作", uiLocale)}</em>}{canEdit ? <button type="button" disabled={disabled} data-self-claim={claiming || undefined} aria-label={`${team.shortName || team.name} · ${actionLabel}`} onClick={() => setOpen(true)}>{actionLabel} <span aria-hidden="true">↗</span></button> : null}</div></div>
+    <div className={styles.representativePerson}><strong>{side.name || uiText("尚未指定", uiLocale)}</strong>{side.name && <small>{[side.battleTag, side.role && roleLabel].filter(Boolean).join(' · ')}</small>}{changed && <small data-representative-changed>{uiText('代表已更换', uiLocale)} · {new Date(side.updatedAt).toLocaleTimeString(uiLocale, { hour: '2-digit', minute: '2-digit' })}{side.assignedBy && ` · ${side.assignedBy}`}</small>}</div>
+    {side.name && !side.active && <p>{pickUiLocale(uiLocale, '原代表资格已失效，需要重新指定。', 'The previous representative is no longer eligible. Appoint a new one.', '기존 대표의 자격이 만료되었습니다. 다시 지정해 주세요.', '原代表資格已失效，需要重新指定。')}</p>}
+    {hint && <p>{hint}</p>}
+    {open && <RoomRepresentativeDialog team={team} data={data} disabled={disabled} mutate={mutate} onClose={() => setOpen(false)} />}
+  </div>
+}
+
+export function RoomRepresentativeDialog({ team, data, disabled, mutate, onClose }) {
+  const { liveRoomWrite } = useRoomTransport()
+  const uiLocale = useUiLocale()
+  const side = data.representatives?.sides.find(item => item.teamId === team?.id)
+  const [selected, setSelected] = useState(() => !side?.canAssign && side?.canClaim ? data.actor.id : ''), [reason, setReason] = useState('')
+  const [formError, setFormError] = useState(''), [saving, setSaving] = useState(false)
+  const dialog = useRef(null), pending = useRef(null), openedRevision = useRef(side?.revision)
+  useEffect(() => {
+    const previous = document.activeElement, element = dialog.current
+    element?.showModal()
+    return () => {
+      element?.close()
+      if (previous instanceof HTMLElement && previous.isConnected) previous.focus({ preventScroll: true })
+    }
+  }, [])
+  if (!side) return null
+  const roleLabels = { MANAGER: uiText("经理", uiLocale), LEADER: uiText("队长", uiLocale), COACH: uiText("教练", uiLocale), PLAYER: uiText("选手", uiLocale) }
+  const claiming = !side.canAssign && side.canClaim
+  const canEdit = side.canAssign || side.canClaim
+  const claimCandidate = side.candidates.find(item => item.userId === data.actor.id)
   const canSave = canEdit && !disabled && !saving && side.candidates.some(item => item.userId === selected) && selected !== side.userId && (!side.requiresReason || reason.trim().length >= 2)
   const titleId = `representative-${team.id}`
   function edit() { pending.current = null; setFormError('') }
@@ -48,15 +73,9 @@ export default function RoomRepresentative({ team, data, disabled, mutate }) {
       catch (error) { setFormError(error.message || '提交结果尚未确认，请同步核对后重试。'); if (error.status && error.status < 500) pending.current = null; throw error }
     }, '本场操作代表已更新，双方可在比赛沟通中查看交接记录。')
     setSaving(false)
-    if (result) { setOpen(false); pending.current = null }
+    if (result) { pending.current = null; onClose() }
   }
-  const changed = side.revision > 1 && Boolean(side.updatedAt)
-  return <div className={styles.representative} data-active={side.active} data-room-slot="representative" data-personnel-changed={changed}>
-    <div className={styles.representativeHeading}><small>{uiText("本场操作代表", uiLocale)}</small><div className={styles.representativeHeadingActions}>{side.isYou && <em>{uiText("你负责操作", uiLocale)}</em>}{canEdit ? <button type="button" disabled={disabled} data-self-claim={claiming || undefined} aria-label={`${team.shortName || team.name} · ${actionLabel}`} onClick={() => { openedRevision.current = side.revision; setSelected(claiming ? data.actor.id : ''); setReason(''); edit(); setOpen(true) }}>{actionLabel} <span aria-hidden="true">↗</span></button> : null}</div></div>
-    <div className={styles.representativePerson}><strong>{side.name || uiText("尚未指定", uiLocale)}</strong>{side.name && <small>{[side.battleTag, side.role && roleLabel].filter(Boolean).join(' · ')}</small>}{changed && <small data-representative-changed>{uiText('代表已更换', uiLocale)} · {new Date(side.updatedAt).toLocaleTimeString(uiLocale, { hour: '2-digit', minute: '2-digit' })}{side.assignedBy && ` · ${side.assignedBy}`}</small>}</div>
-    {side.name && !side.active && <p>{pickUiLocale(uiLocale, '原代表资格已失效，需要重新指定。', 'The previous representative is no longer eligible. Appoint a new one.', '기존 대표의 자격이 만료되었습니다. 다시 지정해 주세요.', '原代表資格已失效，需要重新指定。')}</p>}
-    {hint && <p>{hint}</p>}
-    <dialog ref={dialog} className={styles.dialog} aria-labelledby={titleId} onCancel={event => { if (saving) event.preventDefault(); else setOpen(false) }}>
+  return <dialog ref={dialog} id={`room-representative-${team.id}`} className={styles.dialog} aria-labelledby={titleId} onCancel={event => { if (saving) event.preventDefault(); else onClose() }}>
       <form onSubmit={submit}>
         <div><small>{team.shortName || team.name}{uiText(" · 本场权限", uiLocale)}</small><h2 id={titleId}>{claiming ? pickUiLocale(uiLocale, '担任本场操作代表', 'Become this match’s representative', '이 경기의 조작 대표 맡기', '擔任本場操作代表') : side.userId ? uiText("转交本场操作代表", uiLocale) : uiText("指定本场操作代表", uiLocale)}</h2></div>
         <p>{claiming ? pickUiLocale(uiLocale, '确认后，你将代表本队选图、提交首发与到场情况、禁用英雄和确认赛果。请先与队友沟通；本队队长、经理或本场赛管可以按流程交接。', 'You will select maps, submit lineups and attendance, ban heroes and confirm results for your team. Coordinate with teammates first. Your captain, manager or referee can arrange a handover.', '팀을 대신해 맵 선택, 선발 및 출석 제출, 영웅 금지와 결과 확인을 담당합니다. 먼저 팀원과 상의하세요. 팀장, 매니저 또는 심판이 인계를 처리할 수 있습니다.', '確認後，你將代表本隊選圖、提交首發與到場情況、禁用英雄和確認賽果。請先與隊友溝通；本隊隊長、經理或本場賽管可以按流程交接。') : side.requiresReason ? uiText(data.access.operatorMode === 'TEAM_CAPTAINS' ? "无赛管时，本队队长或经理可记录交接原因。旧代表立即失去本场操作权限；已提交的选禁和计时保留，不重新补时。" : "流程已开始，由赛管记录本次交接。已提交的选禁结果和计时保留；尚未开赛时，新操作代表需要重新确认本队准备。", uiLocale) : uiText("从本队当前有权限的经理、教练或选手中选择一人。转交后，对方可以代表本队签到、选图、Ban、调整首发与确认准备。", uiLocale)}</p>
@@ -66,8 +85,7 @@ export default function RoomRepresentative({ team, data, disabled, mutate }) {
         {canEdit && !side.candidates.some(item => item.userId !== side.userId) && <p role="status">{pickUiLocale(uiLocale, '暂无其他符合条件的成员。请核对该成员已绑定账号、验证邮箱，并具有有效的本队身份。', 'No other eligible members. Check that the member has a linked account, verified email and an active team identity.', '다른 적격 구성원이 없습니다. 계정 연동, 이메일 인증 및 유효한 팀 자격을 확인하세요.', '暫無其他符合條件的成員。請核對該成員已綁定帳號、驗證信箱，並具有有效的本隊身分。')}</p>}
         {!canEdit && <p role="alert">{uiText("比赛阶段或你的权限已变化，请关闭并核对最新状态。", uiLocale)}</p>}
         {formError && <p role="alert">{formError}</p>}
-        <div className={styles.actions}><button type="button" disabled={saving} onClick={() => setOpen(false)}>{uiText("取消", uiLocale)}</button><button className={styles.primary} disabled={!canSave}>{saving ? uiText("正在保存…", uiLocale) : pending.current ? uiText("重试确认代表", uiLocale) : claiming ? pickUiLocale(uiLocale, '确认由我担任', 'Confirm and take this role', '확인하고 맡기', '確認由我擔任') : uiText("确认操作代表", uiLocale)}</button></div>
+        <div className={styles.actions}><button type="button" disabled={saving} onClick={() => onClose()}>{uiText("取消", uiLocale)}</button><button className={styles.primary} disabled={!canSave}>{saving ? uiText("正在保存…", uiLocale) : pending.current ? uiText("重试确认代表", uiLocale) : claiming ? pickUiLocale(uiLocale, '确认由我担任', 'Confirm and take this role', '확인하고 맡기', '確認由我擔任') : uiText("确认操作代表", uiLocale)}</button></div>
       </form>
     </dialog>
-  </div>
 }
