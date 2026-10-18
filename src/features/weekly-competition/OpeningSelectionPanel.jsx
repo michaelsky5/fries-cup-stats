@@ -19,7 +19,7 @@ const teamName = team => team?.shortName || team?.name || '队伍待定'
 const phases = { NOT_STARTED: '开局对决', ONE_V_ONE_SETUP: '实际 1V1 · 指定选手', ONE_V_ONE_LIVE: '实际 1V1 进行中', PLAYING: '双方出手', DRAW: '平局重赛', CONFIRMING_FIRST_PICK: '确认首图选择权', CHOOSING: '胜方选图', BANNING: '依次 Ban', COMPLETE: '选禁已锁定' }
 const loadDraft = key => { try { return JSON.parse(sessionStorage.getItem(key)) || {} } catch { return {} } }
 
-function OpeningForm({ data, disabled, mutate }) {
+function OpeningForm({ data, disabled, mutate, onRepresentativeOpen }) {
   const { liveRoomWrite } = useRoomTransport()
   const uiLocale = useUiLocale()
   const opening = data.opening, access = opening.access, round = opening.rounds.at(-1)
@@ -63,7 +63,7 @@ function OpeningForm({ data, disabled, mutate }) {
   const rpsActive = !later && firstPickMode === 'RPS' && ['NOT_STARTED', 'PLAYING', 'DRAW'].includes(opening.phase)
   return <RoomTaskLayout as="section" enabled={rpsActive} className={`${styles.opening} ${surfaces.paper}`} aria-label={uiText("开局与选禁", uiLocale)} data-room-slot="opening" data-phase={opening.phase} header={
     <header><div><small>MAP {String(opening.mapOrder).padStart(2, '0')} / {later ? 'SELECTION' : 'OPENING'}</small><h1>{opening.phase === 'CHOOSING' ? uiText("选择本图地图", uiLocale) : opening.phase === 'BANNING' ? choosingBanOrder ? uiText("选择本图 Ban 顺序", uiLocale) : uiText("选择本图禁用英雄", uiLocale) : opening.phase === 'PLAYING' && access.playTeams.length ? uiText("提交本队出手", uiLocale) : opening.phase === 'NOT_STARTED' && firstPickMode !== 'RPS' ? uiText("确认首图选择权", uiLocale) : uiText(phases[opening.phase], uiLocale)}</h1></div><div className={styles.responsibility} data-own={Boolean(access.playTeams.length || access.canChoose || access.canChooseBanOrder || access.canBan)}><strong>{responsibility}</strong><span>{later ? uiText(rightsLabel, uiLocale) : round ? uiText("第 {0} 轮", uiLocale, [round.number]) : uiText("首图", uiLocale)}{opening.phase === 'PLAYING' ? uiText(" · {0}/2 已提交", uiLocale, [round.sides.filter(s => s.submitted).length]) : ''}</span></div></header>}>
-    {!data.representatives?.ready && <div className={styles.representativeLinks}>{uiText(data.access.operatorMode === 'TEAM_CAPTAINS' ? '双方先指定本场操作代表；到操作开放时间后，任一代表可开启流程。' : '双方代表就绪后，赛管可开启流程。', uiLocale)}{data.representatives?.sides.filter(side => !side.active).map(side => <a key={side.teamId} href={`#room-team-${side.teamId}`}>{teamName([data.match.teamA, data.match.teamB].find(item => item.id === side.teamId))}{uiText(" · 指定代表 ↗", uiLocale)}</a>)}</div>}
+    {!data.representatives?.ready && <div className={styles.representativeLinks}>{uiText(data.access.operatorMode === 'TEAM_CAPTAINS' ? '双方先指定本场操作代表；到操作开放时间后，任一代表可开启流程。' : '双方代表就绪后，赛管可开启流程。', uiLocale)}{data.representatives?.sides.filter(side => !side.active).map(side => <button type="button" key={side.teamId} disabled={disabled || !(side.canAssign || side.canClaim)} aria-haspopup="dialog" aria-controls={`room-representative-${side.teamId}`} onClick={() => onRepresentativeOpen(side.teamId)}>{teamName([data.match.teamA, data.match.teamB].find(item => item.id === side.teamId))}{uiText(" · 指定代表 ↗", uiLocale)}</button>)}</div>}
     {!later && !['CHOOSING', 'BANNING', 'CONFIRMING_FIRST_PICK'].includes(opening.phase) && <OpeningMethodControl key={opening.revision} opening={opening} disabled={disabled} send={send} />}
     {opening.blocked && <p className={styles.warning} role="status">{opening.blocked}</p>}
     {storageError && <p role="alert">{storageError}</p>}
