@@ -242,3 +242,81 @@ test('lost write responses remain uncertain and are never replayed', async () =>
   }), { fetchImpl: mustNotFetch })
   assert.equal((await rejected.json()).outcomeUnknown, undefined)
 })
+
+test('public cache HIT uses weak validators without fetching or returning the snapshot again', async () => {
+  const saved = new Map()
+  let fetchCount = 0
+  const cache = { match: async key => saved.get(key.url)?.clone(), put: async (key, value) => { saved.set(key.url, value) } }
+  const options = { cache, fetchImpl: async () => {
+    fetchCount++
+    return json({ version: 30 }, { headers: { etag: '"data,30"', 'last-modified': 'Sun, 18 Oct 2026 00:00:00 GMT', 'cache-control': 'public, max-age=5, stale-while-revalidate=15' } })
+  } }
+  await (await proxyRequest(request(snapshot), options)).text()
+  for (const validator of ['"data,30"', 'W/"data,30"', '"old", W/"data,30"', '*']) {
+    const hit = await proxyRequest(request(snapshot, { headers: { 'if-none-match': validator } }), options)
+    assert.equal(hit.status, 304, validator)
+    assert.equal(await hit.text(), '')
+    assert.equal(hit.headers.get('etag'), '"data,30"')
+    assert.equal(hit.headers.get('last-modified'), 'Sun, 18 Oct 2026 00:00:00 GMT')
+    assert.equal(hit.headers.get('cache-control'), 'public, max-age=5, stale-while-revalidate=15')
+    assert.equal(hit.headers.get('x-fries-public-cache'), 'HIT')
+    assert.equal(hit.headers.has('content-length'), false)
+  }
+  for (const validator of ['"old"', 'data,30', '"data,30" trailing']) {
+    const changed = await proxyRequest(request(snapshot, { headers: { 'if-none-match': validator } }), options)
+    assert.equal(changed.status, 200)
+    assert.deepEqual(await changed.json(), { version: 30 })
+  }
+  assert.equal(fetchCount, 1)
+})
+
+test('public MISS forwards validators, accepts bodyless 304, and never stores it as a snapshot', async () => {
+  for (const method of ['GET', 'HEAD']) {
+    const result = await proxyRequest(request(snapshot, { method, headers: { 'if-none-match': 'W/"data-30"', cookie: 'secret', authorization: 'Bearer secret' } }), {
+      cache: { match: async () => undefined, put: mustNotFetch },
+      fetchImpl: async (_url, options) => {
+        assert.equal(options.headers.get('if-none-match'), 'W/"data-30"')
+        assert.equal(options.headers.get('cookie'), null)
+        assert.equal(options.headers.get('authorization'), null)
+        return new Response(null, { status: 304, headers: { etag: '"data-30"', 'cache-control': 'public, max-age=5', 'set-cookie': 'unexpected=secret' } })
+      }
+    })
+    assert.equal(result.status, 304)
+    assert.equal(await result.text(), '')
+    assert.equal(result.headers.get('cache-control'), 'public, max-age=5')
+    assert.equal(result.headers.get('set-cookie'), null)
+  }
+})
+
+test('conditional misses expose a newer publication and retain errors without caching them', async () => {
+  const saved = new Map()
+  let version = 31
+  const options = {
+    cache: { match: async key => saved.get(key.url)?.clone(), put: async (key, value) => { saved.set(key.url, value) } },
+    fetchImpl: async () => version ? json({ version }, { headers: { etag: `"data-${version}"`, 'cache-control': 'public, max-age=5' } }) : json({ error: 'unavailable' }, { status: 503 })
+  }
+  const first = await proxyRequest(request(snapshot, { headers: { 'if-none-match': '"data-30"' } }), options)
+  assert.equal(first.status, 200)
+  assert.deepEqual(await first.json(), { version: 31 })
+  saved.clear() // node TTL expiry
+  version = 32
+  const next = await proxyRequest(request(snapshot, { headers: { 'if-none-match': '"data-31"' } }), options)
+  assert.deepEqual(await next.json(), { version: 32 })
+  saved.clear()
+  version = 0
+  const failed = await proxyRequest(request(snapshot, { headers: { 'if-none-match': '"data-32"' } }), options)
+  assert.equal(failed.status, 503)
+  assert.match(failed.headers.get('cache-control'), /no-store/)
+  assert.equal(saved.size, 0)
+})
+
+test('private validators are not forwarded or used to turn credentialed errors into 304', async () => {
+  const result = await proxyRequest(request('/api/platform/auth/me', { headers: { 'if-none-match': '*', cookie: 'private=1' } }), {
+    fetchImpl: async (_url, options) => {
+      assert.equal(options.headers.get('if-none-match'), null)
+      return new Response(null, { status: 304 })
+    }
+  })
+  assert.equal(result.status, 502)
+  assert.match(result.headers.get('cache-control'), /no-store/)
+})

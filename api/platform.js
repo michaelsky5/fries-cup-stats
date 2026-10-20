@@ -16,7 +16,7 @@ export function createProductionFetch({ transport = createHttpsTransport(), log 
         ...options, body: options.body ? Buffer.from(options.body) : undefined
       }, phases)
       const bytes = await upstream.arrayBuffer()
-      return new Response(options.method === 'HEAD' || upstream.status === 204 ? null : bytes,
+      return new Response(options.method === 'HEAD' || upstream.status === 204 || upstream.status === 304 ? null : bytes,
         { status: upstream.status, headers: upstream.headers })
     } catch (error) {
       if (process.env.VERCEL_ENV === 'preview' && error.message === 'ACCOUNT_PROXY_CONNECT_TIMEOUT') {

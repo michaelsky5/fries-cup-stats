@@ -29,6 +29,9 @@ jobs:
       - name: Check weekly public pages and media
         run: npm run test:weekly-public-ui
 
+      - name: Check public proxy revalidation and private cache boundaries
+        run: npm run test:public-http-cache
+
       - name: Check readable weekly match identities and legacy links
         run: node --test scripts/assertWeeklyMatchIdentity.mjs
 

@@ -7,6 +7,38 @@ const READ_METHODS = new Set(['GET', 'HEAD', 'OPTIONS'])
 const METHODS = new Set([...READ_METHODS, 'POST', 'PUT', 'PATCH', 'DELETE'])
 const FORWARD_HEADERS = ['accept', 'accept-language', 'content-type', 'origin', 'referer', 'sec-fetch-site']
 
+function matchesIfNoneMatch(value, currentEtag) {
+  if (typeof value !== 'string' || typeof currentEtag !== 'string') return false
+  const field = value.trim()
+  if (field === '*') return true
+  const current = currentEtag.trim().replace(/^W\//, '')
+  const tags = []
+  let remaining = field
+  while (remaining) {
+    const match = remaining.match(/^[\t ,]*(?:W\/)?("[\x21\x23-\x7e\x80-\xff]*")[\t ]*(?:,|$)/)
+    if (!match) return false
+    tags.push(match[1])
+    remaining = remaining.slice(match[0].length)
+    if (/^[\t ,]*$/.test(remaining)) break
+  }
+  return tags.includes(current)
+}
+
+function cachedResponse(request, hit) {
+  const headers = new Headers(hit.headers)
+  headers.set('X-Fries-Public-Cache', 'HIT')
+  const unchanged = request.headers.get('if-none-match')?.trim() === '*'
+    || matchesIfNoneMatch(request.headers.get('if-none-match'), headers.get('etag'))
+  if (unchanged) {
+    headers.delete('content-length')
+    headers.delete('content-encoding')
+    // Releasing a cache body must not delay a header-only response.
+    hit.body?.cancel().catch(() => {})
+    return new Response(null, { status: 304, headers })
+  }
+  return new Response(hit.body, { status: hit.status, headers })
+}
+
 function problem(status, error, message, outcomeUnknown = false) {
   return new Response(JSON.stringify({ error, message, ...(outcomeUnknown ? { outcomeUnknown: true } : {}) }), {
     status,
@@ -73,9 +105,7 @@ export async function proxyRequest(request, {
     try {
       const hit = await cache.match(cacheKey)
       if (hit?.ok) {
-        const headers = new Headers(hit.headers)
-        headers.set('X-Fries-Public-Cache', 'HIT')
-        return new Response(hit.body, { status: hit.status, headers })
+        return cachedResponse(request, hit)
       }
     } catch { /* Expired or unavailable node cache: use the published origin. */ }
   }
@@ -88,6 +118,7 @@ export async function proxyRequest(request, {
     // Published snapshots are identical for everyone; never send user credentials.
     headers.delete('origin')
     headers.delete('referer')
+    if (request.headers.has('if-none-match')) headers.set('if-none-match', request.headers.get('if-none-match'))
   } else {
     for (const name of ['cookie', 'authorization']) {
       if (request.headers.has(name)) headers.set(name, request.headers.get(name))
@@ -124,7 +155,8 @@ export async function proxyRequest(request, {
   }
 
   // API redirects are unexpected. Never follow them with session credentials.
-  if (upstream.status >= 300 && upstream.status < 400) {
+  const notModified = route.public && ['GET', 'HEAD'].includes(request.method) && upstream.status === 304
+  if (upstream.status >= 300 && upstream.status < 400 && !notModified) {
     return problem(502, 'UPSTREAM_REDIRECT', '账号服务返回异常，请先刷新相关状态后核对。', !READ_METHODS.has(request.method))
   }
   if (request.method !== 'HEAD' && upstream.status !== 204 && /text\/html/i.test(upstream.headers.get('content-type') || '')) {
@@ -138,7 +170,7 @@ export async function proxyRequest(request, {
   responseHeaders.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet')
   responseHeaders.set('X-Content-Type-Options', 'nosniff')
   responseHeaders.set('X-Fries-Backend', route.media ? `${environment}-media` : route.public ? 'published-snapshots' : environment)
-  if (!route.public || route.volatile || !upstream.ok) responseHeaders.set('Cache-Control', 'private, no-store')
+  if (!route.public || route.volatile || (!upstream.ok && !notModified)) responseHeaders.set('Cache-Control', 'private, no-store')
   if (route.public) {
     responseHeaders.delete('set-cookie')
     // Both variants were normalized upstream: no Origin, identity encoding.
@@ -148,7 +180,7 @@ export async function proxyRequest(request, {
     else responseHeaders.delete('vary')
   }
   responseHeaders.set('X-Fries-Public-Cache', route.public && !route.volatile ? (cache ? 'MISS' : 'UNAVAILABLE') : 'BYPASS')
-  const response = new Response(request.method === 'HEAD' || upstream.status === 204 ? null : upstream.body, {
+  const response = new Response(request.method === 'HEAD' || upstream.status === 204 || notModified ? null : upstream.body, {
     status: upstream.status, statusText: upstream.statusText, headers: responseHeaders
   })
   const cacheControl = responseHeaders.get('cache-control') || ''
