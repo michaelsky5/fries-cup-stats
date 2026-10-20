@@ -6,7 +6,6 @@ import { getInitialSeasonId, withSeason } from '../../config/seasons.js'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthProvider.jsx'
 import useAccountCompetition from '../my-space/useAccountCompetition.js'
-import RegionSelector from './RegionSelector.jsx'
 import PasswordRecoveryPanel from './PasswordRecoveryPanel.jsx'
 import usePasswordRecovery from './usePasswordRecovery.js'
 import { passwordRecoveryTitle, readPasswordResetLocation } from './passwordRecoveryModel.js'
@@ -20,7 +19,6 @@ function createLocalAuthError(code) {
 }
 
 
-const QQ_FIRST_REGION_CODES = new Set(['CN', 'HK', 'MO', 'TW'])
 
 function getAuthErrorText(error, locale) {
   const fallback = locale === 'en-US'
@@ -103,9 +101,6 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
   const [displayName, setDisplayName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [regionCode, setRegionCode] = useState('')
-  const [qqContact, setQqContact] = useState('')
-  const [discordContact, setDiscordContact] = useState('')
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -182,9 +177,6 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
     if (!registrationAllowed && mode === 'register') setMode('login')
   }, [registrationAllowed, mode])
 
-  const contactFields = QQ_FIRST_REGION_CODES.has(regionCode)
-    ? ['QQ', 'DISCORD']
-    : ['DISCORD', 'QQ']
 
   if (!open) return null
 
@@ -209,19 +201,12 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
           setError(createLocalAuthError('PASSWORD_MISMATCH'))
           return
         }
-        if (!qqContact.trim() && !discordContact.trim()) {
-          setError(createLocalAuthError('CONTACT_REQUIRED'))
-          return
-        }
 
         await register({
           email,
           password,
           username: displayName,
-          displayName,
-          regionCode,
-          qqContact,
-          discordContact
+          displayName
         })
       } else {
         const signedIn = await login({ email, password })
@@ -307,38 +292,7 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
                       />
                     </div>
 
-                    <RegionSelector value={regionCode} onChange={setRegionCode} label={copy.region} required disabled={isSubmitting} locale={locale} />
-
-                    <div className={styles.contactGroup} aria-describedby="fries-cup-auth-contact-hint">
-                      <div className={styles.contactHeader}>
-                        <span>{copy.contactGroup}</span>
-                        <em id="fries-cup-auth-contact-hint">{copy.contactHint}</em>
-                      </div>
-                      <div className={styles.contactPair}>
-                        {contactFields.map(contactField => (
-                          <div className={styles.field} key={contactField}>
-                            <label htmlFor={`fries-cup-auth-contact-${contactField.toLowerCase()}`}>
-                              {contactField === 'QQ' ? copy.qqContact : copy.discordContact}
-                            </label>
-                            <input
-                              id={`fries-cup-auth-contact-${contactField.toLowerCase()}`}
-                              type={contactField === 'QQ' ? 'tel' : 'text'}
-                              inputMode={contactField === 'QQ' ? 'numeric' : 'text'}
-                              pattern={contactField === 'QQ' ? '[1-9][0-9]{4,11}' : undefined}
-                              autoComplete="off"
-                              value={contactField === 'QQ' ? qqContact : discordContact}
-                              onChange={event => {
-                                if (contactField === 'QQ') {
-                                  setQqContact(event.target.value)
-                                } else {
-                                  setDiscordContact(event.target.value)
-                                }
-                              }}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    <p className={styles.invitationNotice}>{locale === 'en-US' ? 'Verify your email to use the team lobby. Contact details are requested only when you apply to connect.' : uiText('验证邮箱后可使用组队大厅；联系方式在实际联系时单独填写与授权。', locale)}</p>
                   </>
                 ) : null}
 

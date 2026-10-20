@@ -33,10 +33,10 @@ export async function loginWithPassword({ email, password }) {
   return auth
 }
 
-export async function registerWithPassword({ email, password, username, displayName, regionCode, qqContact, discordContact }) {
+export async function registerWithPassword({ email, password, username, displayName }) {
   const auth = await platformRequest('/auth/register', {
     method: 'POST',
-    body: { email, password, username, displayName, regionCode, qqContact, discordContact }
+    body: { email, password, username, displayName }
   })
 
   clearStoredAuth()

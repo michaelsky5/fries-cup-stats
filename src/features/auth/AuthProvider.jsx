@@ -314,10 +314,13 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (typeof window === 'undefined') return undefined
     const params = new URLSearchParams(window.location.search)
-    const token = params.get('verifyEmail') || ''
+    const token = params.get('verifyEmail') || (processedEmailToken.current?.pending ? processedEmailToken.current.token : '')
     if (!token) return undefined
+    params.delete('verifyEmail')
+    const cleanSearch = params.toString()
+    window.history.replaceState({}, '', `${window.location.pathname}${cleanSearch ? `?${cleanSearch}` : ''}${window.location.hash}`)
     if (processedEmailToken.current?.token !== token) {
-      processedEmailToken.current = { token, promise: confirmEmailVerification(token) }
+      processedEmailToken.current = { token, pending: true, promise: confirmEmailVerification(token) }
     }
     let cancelled = false
     setEmailVerificationState({ status: 'VERIFYING', result: null, error: null })
@@ -325,9 +328,18 @@ export function AuthProvider({ children }) {
     processedEmailToken.current.promise
       .then(async result => {
         if (cancelled) return
-        if (currentUserId.current) await refreshSession()
+        let sessionWarning = ''
+        try {
+          // Verification may finish before the cookie bootstrap. Refresh even
+          // without an installed user; retry if bootstrap superseded this read.
+          const refreshed = await refreshSession()
+          if (!refreshed && !cancelled && currentUserId.current) await refreshSession()
+        } catch (error) {
+          if (error?.status !== 401) sessionWarning = '邮箱已验证，账号状态暂未同步。请重新读取状态或登录本人账号。'
+        }
         if (cancelled) return
-        setEmailVerificationState({ status: 'VERIFIED', result, error: null })
+        processedEmailToken.current.pending = false
+        setEmailVerificationState({ status: 'VERIFIED', result, error: null, sessionWarning })
         params.delete('verifyEmail')
         const nextSearch = params.toString()
         window.history.replaceState({}, '', `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}${window.location.hash}`)
@@ -335,6 +347,7 @@ export function AuthProvider({ children }) {
       })
       .catch(error => {
         if (cancelled) return
+        processedEmailToken.current.pending = false
         setEmailVerificationState({ status: 'ERROR', result: null, error })
       })
 
@@ -353,17 +366,14 @@ export function AuthProvider({ children }) {
     return auth.user
   }, [installSession])
 
-  const register = useCallback(async ({ email, password, username, displayName, regionCode, qqContact, discordContact }) => {
+  const register = useCallback(async ({ email, password, username, displayName }) => {
     const epoch = ++sessionEpoch.current
     const normalizedUsername = String(username || displayName || '').trim()
     const auth = await registerWithPassword({
       email: email.trim(),
       password,
       username: normalizedUsername,
-      displayName: String(displayName || normalizedUsername).trim(),
-      regionCode,
-      qqContact: String(qqContact || '').trim(),
-      discordContact: String(discordContact || '').trim()
+      displayName: String(displayName || normalizedUsername).trim()
     })
     if (!auth?.user?.id) throw new Error('注册响应缺少有效账号，请重新登录。')
     if (epoch !== sessionEpoch.current) return null

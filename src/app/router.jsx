@@ -121,6 +121,15 @@ const router = createBrowserRouter([
       return null
     }, children: [
   ...developmentRoutes,
+  { lazy: lazyDefault(() => import('../features/team-lobby/LobbyFrame.jsx')), children: [
+    { path: '/lobby', lazy: async () => ({ Component: (await import('../features/team-lobby/LobbyPages.jsx')).LobbyIndex }) },
+    { path: '/lobby/cards/:publicId', lazy: async () => ({ Component: (await import('../features/team-lobby/LobbyPages.jsx')).LobbyDetail }) },
+    { path: '/lobby/me', lazy: async () => ({ Component: (await import('../features/team-lobby/LobbyPages.jsx')).MyLobby }) },
+    { path: '/lobby/me/publish', lazy: async () => ({ Component: (await import('../features/team-lobby/LobbyPages.jsx')).LobbyEditor }) },
+    { path: '/lobby/me/cards/:cardId/edit', lazy: async () => ({ Component: (await import('../features/team-lobby/LobbyPages.jsx')).LobbyEditor }) },
+    { path: '/lobby/me/formation', lazy: async () => ({ Component: (await import('../features/team-lobby/LobbyPages.jsx')).LobbyEditor }) },
+    ...['register', 'login', 'verify-email', 'recover', 'reset-password'].map(path => ({ path: `/account/${path}`, lazy: lazyDefault(() => import('../features/team-lobby/AccountEntryPage.jsx')) }))
+  ] },
   { path: '/guides/weekly-room', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/room-guide/WeeklyRoomGuidePage.jsx')) },
   { path: '/guides/weekly-room/simulate', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/room-guide/RoomPracticePage.jsx')) },
   { path: '/account', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/account/AccountSettingsPage.jsx')) },

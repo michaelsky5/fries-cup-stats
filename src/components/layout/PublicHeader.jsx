@@ -198,6 +198,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
           </Link> : null}
 
           <nav className={styles.nav} data-upgrade-nav aria-label={pickUiLocale(layoutLocale, '赛事中心导航', 'Event navigation', '대회 센터 탐색', '賽事中心導覽')} data-i18n-ignore>
+            <Link className={styles.navLink} to="/lobby">{pickUiLocale(layoutLocale, '组队大厅', 'Team lobby', '팀 찾기', '組隊大廳')}</Link>
             {headerNavItems.map(item => (
               <PortalNavItem
                 key={item.group}
