@@ -141,6 +141,7 @@ const router = createBrowserRouter([
   { path: '/me/matches/:matchId/room', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/weekly-competition/WeeklyLiveRoomPage.jsx')) },
   { path: '/participate/:seasonId', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/event-registration/SeasonParticipationPage.jsx')) },
   { path: '/activate-weekly', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/auth/WeeklyAccountActivationPage.jsx')) },
+  { path: '/activate-partner', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/auth/PartnerActivationRedirect.jsx')) },
   {
     path: '/',
     HydrateFallback: RouteFallback,

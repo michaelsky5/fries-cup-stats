@@ -57,6 +57,7 @@ export function AuthProvider({ children }) {
   const accountRequest = useRef(0)
   const currentUserId = useRef('')
   const currentSessionUser = useRef(null)
+  const sessionBootstrap = useRef(Promise.resolve())
   useLayoutEffect(() => { currentSessionUser.current = authState.user }, [authState.user])
   const sessionChannel = useRef(null)
   const profileRequest = useRef(0)
@@ -145,7 +146,7 @@ export function AuthProvider({ children }) {
       resetEmailStates()
       setAuthState({ user: null, isBootstrapping: true })
       setAccountState(emptyAccountState())
-      fetchCurrentUser({ signal })
+      sessionBootstrap.current = fetchCurrentUser({ signal })
         .then(user => {
           if (signal.aborted || epoch !== sessionEpoch.current) return
           installSession(user)
@@ -287,6 +288,10 @@ export function AuthProvider({ children }) {
     setEmailChangeState({ status: 'VERIFYING', result: null, error: null })
     processedEmailChangeToken.current.promise
       .then(async result => {
+        // The initial cookie read can finish after the link confirmation.
+        // Install that session before publishing a result it would otherwise
+        // clear, then refresh again when the credential was changed.
+        await sessionBootstrap.current
         if (cancelled) return
         let sessionWarning = ''
         if (result?.completed) {
@@ -327,6 +332,7 @@ export function AuthProvider({ children }) {
 
     processedEmailToken.current.promise
       .then(async result => {
+        await sessionBootstrap.current
         if (cancelled) return
         let sessionWarning = ''
         try {
