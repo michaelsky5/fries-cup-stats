@@ -104,6 +104,14 @@ export default function WeeklyPlayoffBracket({ model, cycle, locale, seasonId, w
   return <section id="weekly-playoffs" className={`${signal.playoffWorkspace} ${styles.section}`} data-chapter="02" aria-labelledby="weekly-playoffs-title" data-weekly-playoffs="true">
     <header className={`${signal.routeChapterHeading} ${styles.bracketHeading}`}><span>02 / PLAYOFFS / {cycle.code || cycle.name}</span><h2 id="weekly-playoffs-title">{text('bracket', locale)}{' '}<em>{text('bracketFocus', locale)}</em></h2><p>{text('bracketIntro', locale)}</p></header>
     <div className={styles.scheduleNotice}><strong>{notice.title}</strong><span>{text('timeZone', locale)}</span>{notice.note && <p>{notice.note}</p>}</div>
+    {model.placements?.length === 4 && <section className={styles.placements} aria-label={text('finalPlacements', locale)}>
+      <header><h3>{cycle.code} · {text('finalPlacements', locale)}</h3><span>{text(cycle.status === 'CLOSED' ? 'cycleClosed' : 'closeoutPending', locale)}</span></header>
+      <ol>{model.placements.map(({ rank, team, match }) => <li key={idOf(team)} data-place={rank}>
+        <span>{String(rank).padStart(2, '0')} / {text(['champion', 'runnerUp', 'thirdPlace', 'fourthPlace'][rank - 1], locale)}</span>
+        <Link to={withSeason(`/matches/${encodeURIComponent(match.id)}`)} {...returnProps}><TeamLogo team={team} seasonId={seasonId} className={styles.placementLogo} /><strong>{weeklyTeamShort(team)}</strong><span aria-hidden="true">↗</span></Link>
+      </li>)}</ol>
+      <p>{text('placementsNote', locale)}</p>
+    </section>}
     <div id="weekly-full-bracket" className={styles.bracketOverview}>
       <div className={styles.overviewPicker}><AdvanceTeamPicker teams={[{ id: '', label: text('all', locale) }, ...route.entrants.map(team => ({ id: idOf(team), label: `${weeklyTeamShort(team)} · ${fullName(team)}` }))]} value={highlightId || ''} onChange={onSelectTeam} locale={locale} /></div>
       <div className={`${signal.routeTeamDock} ${styles.teamDock} ${styles.bracketTeamDock}`}><header><span>PLAYOFF BRACKET</span><small>{text('timeZone', locale)}</small></header><div role="group" aria-label={text('selectHint', locale)}><button type="button" aria-pressed={!highlightId} data-active={!highlightId || undefined} onClick={() => onSelectTeam(null)}><strong>{text('all', locale)}</strong><i aria-hidden="true">↗</i></button>{route.entrants.map((team, index) => <button type="button" key={idOf(team)} aria-pressed={idOf(team) === highlightId} data-active={idOf(team) === highlightId || undefined} onClick={() => onSelectTeam(idOf(team))}><span>{String(index + 1).padStart(2, '0')}</span><TeamLogo team={team} seasonId={seasonId} className={signal.routeDockLogo} /><strong>{weeklyTeamShort(team)}</strong><i aria-hidden="true">↗</i></button>)}</div></div>

@@ -13,6 +13,7 @@ import { buildWeeklyAdvance, getWeeklyAdvancePhase, getWeeklyAdvancePhasePath, r
 import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
 import WeeklyPlayoffBracket from './WeeklyPlayoffBracket.jsx'
 import WeeklyFinalsPath from './WeeklyFinalsPath.jsx'
+import WeeklySeasonPoints from './WeeklySeasonPoints.jsx'
 import advanceStyles from '../../components/advance/AdvanceSignal.module.css'
 import styles from './SignalWeeklyAdvance.module.css'
 
@@ -111,6 +112,7 @@ export default function SignalWeeklyAdvance() {
       <span className={advanceStyles.phaseStamp}><b>{String(stages.findIndex(stage => stage.id === phase) + 1).padStart(2, '0')}</b> / 03</span>
     </nav>
 
+    {phase === 'points' && <WeeklySeasonPoints snapshot={db?.weekly_competition} locale={locale} />}
     {phase === 'points' && <section className={styles.workspace} id="weekly-points" aria-labelledby="weekly-points-title">
       <div className={styles.ranking}>
         <header className={styles.sectionHeading}><div><p className={styles.eyebrow}>{weeklyCycleTitle(cycle, locale)}</p><h2 id="weekly-points-title">{isPilot ? t(uiText("队伍比赛记录", locale), 'Team match records') : t(uiText("赛段积分", locale), 'Cycle points')}<span aria-live="polite">{t(uiText("{0} 支队伍", locale, [rows.length]), `${rows.length} teams`)}</span></h2></div><span className={styles.selectionHint}>{eventCenterText('advanceSelectHint', locale)} ↗</span></header>

@@ -10,6 +10,35 @@ import { routeScheduleNotice, routeText, routeTime } from '../src/features/weekl
 
 const model = state => buildWeeklyAdvance(buildWeeklyPlayoffFixture(state)).elimination
 
+test('final placements follow published medal results, not points or seeds, and keep points unchanged', () => {
+  const db = buildWeeklyPlayoffFixture('medal-complete')
+  const cycle = db.weekly_competition.cycles.find(c => c.id === 'sample-cycle-1')
+  cycle.status = 'CLOSED'
+  const before = structuredClone(cycle.standings)
+  const result = buildWeeklyAdvance(db)
+  const ids = cycle.elimination.seed_team_ids
+  assert.deepEqual(result.elimination.placements.map(p => [p.rank, p.team.id]), [[1, ids[0]], [2, ids[1]], [3, ids[2]], [4, ids[3]]])
+  assert.deepEqual(cycle.standings, before)
+  assert.equal(result.activeStage, 'playoffs')
+  const third = db.matches.find(m => m.round === 'THIRD_PLACE')
+  third.is_forfeit = true
+  third.team_b.score = 0
+  assert.equal(buildWeeklyAdvance(db).elimination.placements.length, 4, 'An official 3:0 forfeit determines third place.')
+  third.status = 'RESULT_REVIEW'
+  assert.deepEqual(buildWeeklyAdvance(db).elimination.placements, [], 'A provisional forfeit cannot determine final placements.')
+})
+
+test('missing or inconsistent medal matches do not manufacture final placements', () => {
+  assert.deepEqual(model('complete').placements, [], 'No third-place result means no four-place ranking.')
+  assert.deepEqual(model('final-live').placements, [])
+  const db = buildWeeklyPlayoffFixture('medal-complete')
+  const semi = db.matches.find(m => m.round === 'SEMIFINAL')
+  semi.winner = semi.team_b.id
+  semi.team_a.score = 1
+  semi.team_b.score = 3
+  assert.deepEqual(buildWeeklyAdvance(db).elimination.placements, [], 'Old medal participants cannot survive a semifinal correction.')
+})
+
 function c1RouteFixture() {
   const ids = [...C1_PLAYOFF_SCHEDULE.seedTeamIds, ...C1_PLAYOFF_SCHEDULE.qualifierTeamIds]
   const teams = ids.map((id, index) => ({ id, short: ['404', 'BBB', 'MH', 'SPS', 'TS'][index] }))
