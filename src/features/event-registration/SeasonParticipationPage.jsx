@@ -4,6 +4,7 @@ import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
+import { AuthDialog } from '../auth/AuthDialog.jsx'
 import { platformRequest } from '../auth/platformApi.js'
 import { getRegistrationStatusLabel } from '../my-space/myEventsModel.js'
 import { RegistrationDraftGuard, useRegistrationDraft, useRegistrationDraftActions } from './registrationDraftGuard.jsx'
@@ -97,6 +98,7 @@ function Invitation({ token, invitationId, seasonId }) {
   const [error, setError] = useState('')
   const [attempt, setAttempt] = useState(0)
   const [busy, setBusy] = useState(false)
+  const [recovering, setRecovering] = useState(false)
   const lock = useRef(false)
   useEffect(() => {
     // The token is used only in request bodies and this page's memory.
@@ -140,11 +142,13 @@ function Invitation({ token, invitationId, seasonId }) {
       {accepted ? <><p>{uiText("邀请已接受，正在同步登录状态。", uiLocale)}</p><button disabled={busy} onClick={enterWorkspace}>{uiText("重新同步并进入报名", uiLocale)}</button></> : <form onSubmit={accept}>
         <label>{invitation.passwordMode === 'SET' ? uiText("设置账号密码（至少 12 位）", uiLocale) : uiText("受邀账号的现有密码", uiLocale)}<input name="password" type="password" autoComplete={invitation.passwordMode === 'SET' ? 'new-password' : 'current-password'} minLength={invitation.passwordMode === 'SET' ? 12 : 1} required /></label>
         {invitation.passwordMode === 'SET' && <label>{uiText("再次输入密码", uiLocale)}<input name="confirmation" type="password" autoComplete="new-password" required /></label>}
+        {invitation.passwordMode === 'CONFIRM' && <button type="button" disabled={busy} onClick={() => setRecovering(true)}>{uiText('忘记现有密码？', uiLocale)}</button>}
         {invitation.eligibilityRequired && <WeeklyEligibilityFields rulebook={invitation.rulebook} disabled={busy} />}
         <label className={styles.check}><input name="consent" type="checkbox" required />{['PLAYER', 'TEAM_ADDITION'].includes(invitation.kind) ? uiText("以上选手资料属于本人，我同意加入该队伍的本赛季报名。", uiLocale) : uiText("我将使用本人账号负责队伍报名。", uiLocale)}</label>
         <button className={styles.primary} disabled={busy}>{busy ? uiText("正在确认…", uiLocale) : uiText("本人确认并进入报名", uiLocale)}</button>
       </form>}
     </>}
+    <AuthDialog key={recovering ? 'recovery' : 'closed'} open={recovering} initialMode="forgot" onClose={() => setRecovering(false)} locale={uiLocale} />
   </section>
 }
 
