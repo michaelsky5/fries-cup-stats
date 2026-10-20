@@ -372,7 +372,7 @@ export function AuthProvider({ children }) {
     installSession(auth.user)
     sessionChannel.current?.postMessage('SESSION_CHANGED')
     setEmailVerificationState({
-      status: auth.emailVerification?.delivered ? 'SENT' : 'IDLE',
+      status: auth.emailVerification?.queued ? 'QUEUED' : auth.emailVerification?.delivered ? 'SENT' : 'IDLE',
       result: auth.emailVerification || null,
       error: null
     })
@@ -387,7 +387,7 @@ export function AuthProvider({ children }) {
       if (epoch !== sessionEpoch.current) return null
       if (result?.verified) await refreshSession()
       if (epoch !== sessionEpoch.current) return null
-      setEmailVerificationState({ status: result?.verified ? 'VERIFIED' : result?.delivered ? 'SENT' : 'UNDELIVERED', result, error: null })
+      setEmailVerificationState({ status: result?.verified ? 'VERIFIED' : result?.queued ? 'QUEUED' : result?.delivered ? 'SENT' : 'UNDELIVERED', result, error: null })
       return result
     } catch (error) {
       if (epoch === sessionEpoch.current) setEmailVerificationState({ status: 'ERROR', result: null, error })

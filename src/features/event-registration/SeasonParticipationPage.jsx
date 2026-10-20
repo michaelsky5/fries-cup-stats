@@ -214,7 +214,7 @@ function Workspace({ user, seasonId, hasAdditions }) {
 function InvitationLink({ invitation }) {
   const uiLocale = useUiLocale()
   const [copied, setCopied] = useState(false)
-  return <section className={styles.panel} aria-live="polite"><strong>{uiText("已为 ", uiLocale)}{invitation.email}{uiText(" 生成邀请", uiLocale)}</strong><p>{invitation.emailDelivery?.delivered ? uiText("邀请邮件已交给投递服务。", uiLocale) : uiText("邮件未送达，请将下方链接私下交给这名受邀者。", uiLocale)}{uiText("链接有效期至 ", uiLocale)}{new Date(invitation.expiresAt).toLocaleString()}。</p><div className={styles.actions}><input aria-label={uiText("本次邀请链接", uiLocale)} value={invitation.activationUrl} readOnly /><button onClick={async () => { try { await navigator.clipboard.writeText(invitation.activationUrl); setCopied(true) } catch { setCopied(false) } }}>{copied ? uiText("已复制", uiLocale) : uiText("复制邀请", uiLocale)}</button></div></section>
+  return <section className={styles.panel} aria-live="polite"><strong>{uiText("已为 ", uiLocale)}{invitation.email}{uiText(" 生成邀请", uiLocale)}</strong><p>{invitation.emailDelivery?.queued ? uiText('邀请邮件已排队，系统会自动重试发送。', uiLocale) : invitation.emailDelivery?.delivered ? uiText("邀请邮件已交给投递服务。", uiLocale) : uiText("邮件未送达，请将下方链接私下交给这名受邀者。", uiLocale)}{uiText("链接有效期至 ", uiLocale)}{new Date(invitation.expiresAt).toLocaleString()}。</p><div className={styles.actions}><input aria-label={uiText("本次邀请链接", uiLocale)} value={invitation.activationUrl} readOnly /><button onClick={async () => { try { await navigator.clipboard.writeText(invitation.activationUrl); setCopied(true) } catch { setCopied(false) } }}>{copied ? uiText("已复制", uiLocale) : uiText("复制邀请", uiLocale)}</button></div></section>
 }
 
 function TeamForm({ organizations = [], record, busy, onSave, eligibilityRequired }) {

@@ -1,4 +1,29 @@
 {
+  "请检查 {0} 的验证邮件，打开链接后确认提交申请。": {
+    "en-US": "Check the verification email for {0}. Open the link to confirm your application.",
+    "ko-KR": "{0}의 인증 메일을 확인해 주세요. 링크를 열어 신청을 확인하세요.",
+    "zh-TW": "請檢查 {0} 的驗證郵件，開啟連結後確認提交申請。"
+  },
+  "验证请求已受理，请稍后检查": {
+    "en-US": "Your verification request was accepted. Please check shortly:",
+    "ko-KR": "인증 요청이 접수되었습니다. 잠시 후 다음 메일함을 확인해 주세요:",
+    "zh-TW": "驗證請求已受理，請稍後檢查"
+  },
+  "邀请邮件已排队，系统会自动重试发送。": {
+    "en-US": "The invitation email is queued and will retry automatically if needed.",
+    "ko-KR": "초대 메일이 대기열에 추가되었습니다. 필요한 경우 자동으로 재시도합니다.",
+    "zh-TW": "邀請郵件已排入佇列，系統會自動重試傳送。"
+  },
+  "验证邮件已排队，系统会自动重试发送。请稍后检查收件箱和垃圾邮件。": {
+    "en-US": "Your verification email is queued and will retry automatically if needed. Check your inbox and spam folder shortly.",
+    "ko-KR": "인증 메일이 대기열에 추가되었습니다. 필요한 경우 자동으로 재시도합니다. 잠시 후 받은편지함과 스팸함을 확인해 주세요.",
+    "zh-TW": "驗證郵件已排入佇列，系統會自動重試傳送。請稍後檢查收件匣和垃圾郵件。"
+  },
+  "确认邮件已排队，系统会自动重试发送。请分别检查原邮箱和新邮箱；两边确认后才会更换。": {
+    "en-US": "Confirmation emails are queued and will retry automatically if needed. Check both your old and new mailboxes; the address changes only after both are confirmed.",
+    "ko-KR": "확인 메일이 대기열에 추가되었습니다. 필요한 경우 자동으로 재시도합니다. 기존 메일함과 새 메일함을 모두 확인해 주세요. 양쪽에서 확인해야 주소가 변경됩니다.",
+    "zh-TW": "確認郵件已排入佇列，系統會自動重試傳送。請分別檢查原信箱和新信箱；兩邊確認後才會更換。"
+  },
   "头条导语": {
     "zh-TW": "頭條導語",
     "en-US": "Lead introduction",

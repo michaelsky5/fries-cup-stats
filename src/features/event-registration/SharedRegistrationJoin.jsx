@@ -53,7 +53,7 @@ export function SharedRegistrationJoin({ token, applicationId, seasonId }) {
     setError('')
     try {
       const result = await requestEmailVerification()
-      setNotice(result?.delivered ? '验证邮件已发送；完成验证后回到这里继续填写。' : '验证邮件未发送成功，请稍后重试。')
+      setNotice(result?.queued ? '验证邮件已排队，系统会自动重试发送。请稍后检查收件箱和垃圾邮件。' : result?.delivered ? '验证邮件已发送；完成验证后回到这里继续填写。' : '验证邮件未发送成功，请稍后重试。')
     } catch (failure) { setError(describeRegistrationError(failure)) }
   }
   const reload = async () => {

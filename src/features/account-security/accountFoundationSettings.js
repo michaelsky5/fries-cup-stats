@@ -58,6 +58,7 @@ export function validateAccountPassword({ currentPassword = '', newPassword = ''
 
 export function emailVerificationNotice(state) {
   if (state?.status === 'VERIFIED') return { tone: 'success', text: '邮箱已验证。' }
+  if (state?.status === 'QUEUED' && state.result?.queued) return { tone: 'info', text: '验证邮件已排队，系统会自动重试发送。请稍后检查收件箱和垃圾邮件。' }
   if (state?.status === 'SENT' && state.result?.delivered) return { tone: 'success', text: '验证邮件已交给投递服务，请检查收件箱和垃圾邮件，并打开验证链接。' }
   if (state?.status === 'SENT' || state?.status === 'UNDELIVERED') return { tone: 'error', text: '验证邮件未投递，请稍后重试或联系赛事负责人。' }
   if (state?.status === 'ERROR') return { tone: 'error', text: accountSettingsError(state.error) }
