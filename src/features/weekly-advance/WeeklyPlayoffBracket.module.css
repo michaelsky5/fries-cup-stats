@@ -105,3 +105,16 @@
   .finalsStep { min-height: 180px; }
   .finalsStep + .finalsStep::before { content: '↓'; left: calc(50% - 12px); top: -32px; }
 }
+.placements { padding: 28px 36px; border-bottom: 1px solid #191b1826; background: #eeece2; }
+.placements header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px; }
+.placements h3 { margin: 0; font-size: 22px; }
+.placements header > span, .placements p { color: #64665d; font-size: 12px; line-height: 1.7; }
+.placements ol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; padding: 0; margin: 24px 0 16px; list-style: none; }
+.placements li { min-width: 0; border-top: 2px solid #191b1833; padding-top: 12px; }
+.placements li[data-place="1"] { border-color: #b78a13; }
+.placements li > span { font-size: 12px; color: #64665d; }
+.placements li a { display: flex; align-items: center; gap: 12px; padding: 16px 0; color: #191b18; text-decoration: none; }
+.placements li strong { font-size: 26px; overflow-wrap: anywhere; }
+.placements li a > span { margin-left: auto; }
+.placementLogo { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; }
+@media (max-width: 800px) { .placements { padding: 24px 16px; } .placements ol { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; } .placements li strong { font-size: 22px; } }

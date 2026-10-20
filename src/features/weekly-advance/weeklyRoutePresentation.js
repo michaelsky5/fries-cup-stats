@@ -56,6 +56,13 @@ const labels = {
   noTeam: ['参赛队伍待公布', 'Entrants to be announced', '참가 팀 발표 예정', '參賽隊伍待公布'],
   points: ['加赛与季后赛不增加赛段积分。', 'Qualifiers and playoffs do not add cycle points.', '결정전과 플레이오프는 대회 포인트에 합산되지 않습니다.', '加賽與季後賽不增加賽段積分。'],
   champion: ['赛段优胜者', 'Cycle winner', '사이클 우승 팀', '賽段優勝者'],
+  finalPlacements: ['最终名次', 'Final placements', '최종 순위', '最終名次'],
+  runnerUp: ['亚军', 'Runner-up', '준우승', '亞軍'],
+  thirdPlace: ['季军', 'Third place', '3위', '季軍'],
+  fourthPlace: ['第四名', 'Fourth place', '4위', '第四名'],
+  cycleClosed: ['赛段已结束', 'Cycle closed', '사이클 종료', '賽段已結束'],
+  closeoutPending: ['赛果已公布 · 赛段收尾中', 'Results published · Cycle closing', '결과 발표 · 마감 처리 중', '賽果已公布 · 賽段收尾中'],
+  placementsNote: ['名次依据已发布的决赛与季军赛赛果；积分赛排名保持独立。', 'Placements follow the published final and third-place results. Points standings remain separate.', '결승과 3위 결정전의 공식 결과 기준이며 포인트 순위와 별개입니다.', '名次依據已發布的決賽與季軍賽賽果；積分賽排名保持獨立。'],
   bye: ['本轮轮空', 'Round bye', '이번 라운드 부전승', '本輪輪空'],
   byeNote: ['直接晋级，无需比赛', 'Advances without a match', '경기 없이 다음 라운드 진출', '直接晉級，無需比賽']
 }

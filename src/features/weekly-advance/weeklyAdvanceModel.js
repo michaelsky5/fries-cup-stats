@@ -68,7 +68,7 @@ export function buildWeeklyAdvance(db, { cycleId, weekId, teamId, query = '', fo
     elimination,
     publishedCount: published.length, hasStandings: published.length > 0,
     hasFilters: !!search || followedOnly,
-    activeStage: !isPilot && cycle?.status === 'PLAYOFFS' ? 'playoffs'
+    activeStage: !isPilot && (cycle?.status === 'PLAYOFFS' || cycle?.status === 'CLOSED' && elimination?.hasBracket) ? 'playoffs'
       : !isPilot && cycle?.status === 'ACTIVE' ? elimination?.hasBracket ? 'playoffs' : 'points' : null }
 }
 

@@ -1,5 +1,6 @@
 import { getMatchLookupIds } from '../../lib/weeklyMatchIdentity.js'
 import { weeklyMatchState, weeklyScore } from '../weekly-overview/weeklyOverviewModel.js'
+import { buildWeeklyFinalPlacements } from './weeklyFinalPlacements.js'
 
 const list = value => Array.isArray(value) ? value : []
 const text = value => String(value ?? '').trim()
@@ -83,6 +84,7 @@ export function buildWeeklyElimination(db, overview) {
   const champion = finalItems.length === 1 && finalItems[0].type === 'MATCH' ? finalItems[0].winner : null
   const qualificationResolved = qualifiers.some(round => round.qualification_current !== false && list(round.outcome_team_ids).length > 0)
   return { seeds, seedsCurrent: cycle.playoff_seeds_current === true, qualifiers, semifinals, finals, thirdPlaces, champion, teamById,
+    placements: buildWeeklyFinalPlacements({ semifinals, finals, thirdPlaces }),
     finalFormat: ['FT3', 'FT4'].includes(metadata?.final_format) ? metadata.final_format : null,
     hasBracket: rounds.length > 0,
     finalists: semifinals.flatMap(round => round.items).map(item => item.winner ? team(idOf(item.winner)) : null),
