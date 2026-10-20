@@ -323,3 +323,7 @@
     .heroGrid button>span { font-size:12px; }
   }
 }
+.timeoutNotice { flex:none;padding:10px 12px;border:1px solid #d1b261;border-left:4px solid #c99a19;background:#fff1c8;color:#49350d;font-size:12px;line-height:1.55; }
+.timeoutNotice strong { display:block;font-size:13px; }
+.timeoutNotice p { margin:4px 0 0; }
+.timeoutNotice[data-penalty=true] { border-color:#bd5140;background:#ffe5dc;color:#6d241b; }

@@ -8786,7 +8786,8 @@
     "ko-KR": "모두 읽음"
   },
   "全部待办": {
-    "zh-TW": "全部待辦"
+    "zh-TW": "全部待辦",
+    "en-US": "All tasks"
   },
   "全部待办 ↗": {
     "zh-TW": "全部待辦 ↗",
@@ -22814,7 +22815,7 @@
   },
   "我的比赛": {
     "zh-TW": "我的比賽",
-    "en-US": "My game",
+    "en-US": "My matches",
     "ko-KR": "내 경기"
   },
   "我的比赛 ↗": {
@@ -59659,5 +59660,120 @@
     "zh-TW": "登記參賽賽段",
     "en-US": "Enroll in the cycle",
     "ko-KR": "사이클 참가 등록"
+  },
+  "请输入负责人完整 BattleTag，包括 # 后的数字。": {
+    "zh-TW": "請輸入負責人完整 BattleTag，包括 # 後的數字。",
+    "en-US": "Enter the manager's full BattleTag, including the digits after #.",
+    "ko-KR": "# 뒤의 숫자를 포함한 팀 책임자의 전체 배틀태그를 입력하세요."
+  },
+  "请填写负责人完整 BattleTag，包括 # 后的数字。": {
+    "zh-TW": "請填寫負責人完整 BattleTag，包括 # 後的數字。",
+    "en-US": "Provide the manager's full BattleTag, including the digits after #.",
+    "ko-KR": "# 뒤의 숫자를 포함한 팀 책임자의 전체 배틀태그를 작성하세요."
+  },
+  "只有尚未确认或规则更新后待重新确认的申请可以重新邀请。": {
+    "zh-TW": "只有尚未確認或規則更新後待重新確認的申請可以重新邀請。",
+    "en-US": "Only unconfirmed applications or those needing renewed consent after a rule change can be re-invited.",
+    "ko-KR": "미확인 신청 또는 규정 변경 후 재확인이 필요한 신청만 다시 초대할 수 있습니다."
+  },
+  "负责人完整 BattleTag": {
+    "zh-TW": "負責人完整 BattleTag",
+    "en-US": "Manager's full BattleTag",
+    "ko-KR": "팀 책임자의 전체 배틀태그"
+  },
+  "规则书已更新，请选手本人阅读并重新确认当前规则。": {
+    "zh-TW": "規則書已更新，請選手本人閱讀並重新確認目前規則。",
+    "en-US": "The rulebook has changed. The player must read and confirm the current rules again.",
+    "ko-KR": "규정집이 변경되었습니다. 선수 본인이 현재 규정을 읽고 다시 확인해야 합니다."
+  },
+  "{0} 已开放登记。登记后再按周选择是否参赛。": {
+    "zh-TW": "{0} 已開放登記。登記後再按週選擇是否參賽。",
+    "en-US": "Registration for {0} is open. After registering, choose whether to play each week.",
+    "ko-KR": "{0} 참가 등록이 열렸습니다. 등록 후 매주 참가 여부를 선택하세요."
+  },
+  "各环节时长": {
+    "en-US": "Stage time limits",
+    "ko-KR": "각 단계 제한 시간",
+    "zh-TW": "各環節時長"
+  },
+  "每轮 {0} 秒": {
+    "en-US": "{0} s per turn",
+    "ko-KR": "매 차례 {0}초",
+    "zh-TW": "每輪 {0} 秒"
+  },
+  "标准 {0} 秒": {
+    "en-US": "Standard: {0} s",
+    "ko-KR": "기본 {0}초",
+    "zh-TW": "標準 {0} 秒"
+  },
+  "以上为标准时长；当前剩余时间以倒计时为准，加时与暂停会单独显示。": {
+    "en-US": "These are standard limits. The countdown shows remaining time; extensions and pauses are indicated separately.",
+    "ko-KR": "기본 제한 시간입니다. 남은 시간은 카운트다운을 확인하세요. 연장과 일시 정지는 별도로 표시됩니다.",
+    "zh-TW": "以上為標準時長；當前剩餘時間以倒計時為準，加時與暫停會單獨顯示。"
+  },
+  "{0} 仅剩 5 秒，请立即确认。": {
+    "en-US": "{0}: 5 seconds left. Confirm now.",
+    "ko-KR": "{0}: 5초 남았습니다. 지금 확정하세요.",
+    "zh-TW": "{0} 僅剩 5 秒，請立即確認。"
+  },
+  "{0} 仅剩 10 秒，请及时确认。": {
+    "en-US": "{0}: 10 seconds left. Please confirm soon.",
+    "ko-KR": "{0}: 10초 남았습니다. 곧 확정해 주세요.",
+    "zh-TW": "{0} 僅剩 10 秒，請及時確認。"
+  },
+  "已进入补交宽限，请立即确认。": {
+    "en-US": "Submission grace has started. Confirm now.",
+    "ko-KR": "제출 유예 시간이 시작되었습니다. 지금 확정하세요.",
+    "zh-TW": "已進入補交寬限，請立即確認。"
+  },
+  "立即确认": {
+    "en-US": "Confirm now",
+    "ko-KR": "지금 확정",
+    "zh-TW": "立即確認"
+  },
+  "即将到时": {
+    "en-US": "Time running out",
+    "ko-KR": "마감 임박",
+    "zh-TW": "即將到時"
+  },
+  "选图时限与超时处罚": {
+    "en-US": "Map selection: limits & penalties",
+    "ko-KR": "맵 선택 제한 시간 및 페널티",
+    "zh-TW": "選圖時限與超時處罰"
+  },
+  "标准选图时间结束后，有一次 {0} 秒补交宽限，请及时确认。": {
+    "en-US": "After the standard map timer, there is one {0}-second submission grace. Confirm your choice promptly.",
+    "ko-KR": "기본 맵 선택 시간이 끝나면 한 번의 {0}초 제출 유예가 주어집니다. 선택을 신속히 확정하세요.",
+    "zh-TW": "標準選圖時間結束後，有一次 {0} 秒補交寬限，請及時確認。"
+  },
+  "选图处罚按本队整场流程超时次数累计：第 1 次警告并补时 60 秒；第 2 次取消本图英雄禁用权并补时 60 秒；第 3 次起随机选择合法地图及攻防。处罚补时不再追加 15 秒宽限。": {
+    "en-US": "Map penalties count your team’s procedure timeouts across the match: first, a warning and 60 extra seconds; second, loss of hero ban for this map and 60 extra seconds; third and later, a random legal map and starting side. Penalty extensions receive no further 15-second grace.",
+    "ko-KR": "맵 선택 페널티는 경기 전체의 팀 절차 시간 초과 횟수로 누적됩니다. 첫 번째는 경고와 60초 연장, 두 번째는 이번 맵 영웅 금지권 박탈과 60초 연장, 세 번째부터는 사용 가능한 맵과 시작 진영을 무작위로 정합니다. 페널티 연장에는 추가 15초 유예가 없습니다.",
+    "zh-TW": "選圖處罰按本隊整場流程超時次數累計：第 1 次警告並補時 60 秒；第 2 次取消本圖英雄禁用權並補時 60 秒；第 3 次起隨機選擇合法地圖及攻防。處罰補時不再追加 15 秒寬限。"
+  },
+  "英雄禁用时限": {
+    "en-US": "Hero ban time limit",
+    "ko-KR": "영웅 금지 제한 시간",
+    "zh-TW": "英雄禁用時限"
+  },
+  "当前为无效 Ban 的纠正窗口，不再追加补交宽限；到时未确认将放弃本轮禁用权。": {
+    "en-US": "This is the correction window for an invalid ban. No further grace applies; failing to confirm in time forfeits this turn.",
+    "ko-KR": "현재는 유효하지 않은 영웅 금지를 수정하는 시간입니다. 추가 제출 유예는 없으며, 시간 내 확정하지 않으면 이번 금지권을 포기하게 됩니다.",
+    "zh-TW": "當前為無效 Ban 的糾正窗口，不再追加補交寬限；到時未確認將放棄本輪禁用權。"
+  },
+  "每轮禁用标准时间结束后，有一次 {0} 秒补交宽限。宽限结束仍未确认，将自动放弃本轮禁用权，不得补 Ban。": {
+    "en-US": "Each ban turn has one {0}-second grace after the standard timer. If you have not confirmed by then, you forfeit this turn and cannot submit a late ban.",
+    "ko-KR": "매 영웅 금지 차례에는 기본 시간이 끝난 뒤 한 번의 {0}초 제출 유예가 있습니다. 유예가 끝날 때까지 확정하지 않으면 이번 금지권이 사라지며 추가 제출은 불가능합니다.",
+    "zh-TW": "每輪禁用標準時間結束後，有一次 {0} 秒補交寬限。寬限結束仍未確認，將自動放棄本輪禁用權，不得補 Ban。"
+  },
+  "休息即将结束，请准备选图。": {
+    "en-US": "The break is ending. Get ready to select a map.",
+    "ko-KR": "휴식이 곧 끝납니다. 맵 선택을 준비하세요.",
+    "zh-TW": "休息即將結束，請準備選圖。"
+  },
+  "准备选图": {
+    "en-US": "Prepare to pick",
+    "ko-KR": "맵 선택 준비",
+    "zh-TW": "準備選圖"
   }
 }

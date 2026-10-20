@@ -63,8 +63,9 @@ export default function WeeklyTeamAdditions({ seasonId, selectedTeamId, readOnly
         <strong>{row.team.name} · {row.displayName}</strong><p>{row.battleTag} · {t(labels[row.status])}</p>
         {row.status === 'INVITED' && row.invitation && <p>{t('邀请有效至：')}{new Date(row.invitation.expiresAt).toLocaleString()}</p>}
         {row.reviewNote && <p>{t('审核说明：')}{row.reviewNote}</p>}
+        {row.needsRulesConfirmation && <p role="status">{t('规则书已更新，请选手本人阅读并重新确认当前规则。')}</p>}
         {row.status === 'APPROVED' && <p>{t('已进入队内名单。队长可刷新周赛资料，选择开放周次的出赛名单。')}</p>}
-        {['INVITED', 'SUBMITTED'].includes(row.status) && <div className={styles.actions}>{row.status === 'INVITED' && data.teams.some(team => team.id === row.teamId) && <button type="button" disabled={!writable} onClick={() => action(`/team-additions/${row.id}/resend`, { revision: row.revision }, '邀请已重新生成，旧链接失效。')}>{t('重新生成邀请')}</button>}<button type="button" disabled={!writable} onClick={() => action(`/team-additions/${row.id}/cancel`, { revision: row.revision }, '增员申请已取消。')}>{t('取消申请')}</button></div>}
+        {['INVITED', 'SUBMITTED'].includes(row.status) && <div className={styles.actions}>{(row.status === 'INVITED' || row.needsRulesConfirmation) && data.teams.some(team => team.id === row.teamId) && <button type="button" disabled={!writable} onClick={() => action(`/team-additions/${row.id}/resend`, { revision: row.revision }, '邀请已重新生成，旧链接失效。')}>{t('重新生成邀请')}</button>}<button type="button" disabled={!writable} onClick={() => action(`/team-additions/${row.id}/cancel`, { revision: row.revision }, '增员申请已取消。')}>{t('取消申请')}</button></div>}
       </li>)}</ul>}
     </>}
   </section>

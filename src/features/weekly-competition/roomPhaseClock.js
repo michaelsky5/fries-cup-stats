@@ -13,12 +13,15 @@ export function roomClockState(clock, elapsedMs = 0) {
 }
 export const roomClockRemaining = (clock, elapsedMs = 0) => roomClockState(clock, elapsedMs).seconds
 
-// Timestamp at receipt, not at the next React effect. RTT/2 is a latency estimate,
-// not a new deadline; System remains authoritative for accepting submissions.
+// Exclude server processing from RTT before estimating one-way network transit.
+// System remains authoritative for accepting submissions.
 export function calibrateRoomClock(clock, startedAt, receivedAt, serverSentAt) {
   if (!clock) return clock
   const serverWorkAfterClock = Date.parse(serverSentAt) - Date.parse(clock.serverNow)
-  return { ...clock, receivedAtMonoMs: receivedAt, transitEstimateMs: Math.max(0, receivedAt - startedAt) / 2 + (Number.isFinite(serverWorkAfterClock) ? Math.max(0, serverWorkAfterClock) : 0) }
+  const roundTrip = Math.max(0, receivedAt - startedAt)
+  const serverProcessing = Number.isFinite(clock.serverProcessingMs) && clock.serverProcessingMs >= 0 ? clock.serverProcessingMs : 0
+  const networkTransit = Math.max(0, roundTrip - serverProcessing) / 2
+  return { ...clock, receivedAtMonoMs: receivedAt, transitEstimateMs: networkTransit + (Number.isFinite(serverWorkAfterClock) ? Math.max(0, serverWorkAfterClock) : 0) }
 }
 
 export const formatRoomClock = seconds => seconds === null ? '—' : `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`

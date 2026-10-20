@@ -1,7 +1,7 @@
 import { roomBanLabel } from './roomBans.js'
 import { roomSeriesMaps } from './roomSeriesMaps.js'
 import { roomMapResultLabel } from './roomMapResults.js'
-import { RoomMapSides } from './RoomPhaseClock.jsx'
+import { RoomMapSides, RoomStageTimes } from './RoomPhaseClock.jsx'
 import RoomLobbyTools from './RoomLobbyTools.jsx'
 import WeeklyMatchIdentity from '../../components/matches/WeeklyMatchIdentity.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
@@ -107,6 +107,7 @@ export function RoomStageRail({ data, selectedStage, onStageSelect, clock }) {
   const readOnlySummary = view !== current ? view === 1 ? formatOwMapName(selectedSetup?.name, uiLocale) || uiText("地图尚未确定", uiLocale) : view === 5 ? completedMaps || uiText("本图结果尚未记录", uiLocale) : view === 6 ? submissionUrl ? uiText("战报提交入口已生成，请点击赛果入口打开。", uiLocale) : uiText("整场地图完成后，由本场负责提交的一方打开战报入口。", uiLocale) : `${labels[view]} · ${formatOwMapName(map?.name, uiLocale) || uiText("当前地图", uiLocale)} · ${uiText("只读查看，当前操作仍在第 {0} 步", uiLocale, [String(current + 1).padStart(2, '0')])}` : null
   return <>
     <div className={styles.stageHeader} data-room-slot="stage-header" data-menu-open={menuOpen} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setMenuOpen(false) }} onKeyDown={event => { if (event.key === 'Escape') setMenuOpen(false) }}><button type="button" className={styles.stageToggle} aria-expanded={menuOpen} aria-label={uiText("查看比赛阶段", uiLocale)} onClick={() => setMenuOpen(!menuOpen)}><span>{String(view + 1).padStart(2, '0')}</span><strong><span>{uiText(labels[view], uiLocale)}{view !== current ? ' · ' + uiText("只读查看", uiLocale) : ''}</span>{actingTeam && <small data-room-stage-owner>{uiText("轮到 {0}", uiLocale, [teamName(actingTeam)])}</small>}</strong><span aria-hidden="true">⌄</span></button><ol className={styles.stageRail} data-room-slot="stages" aria-label={uiText("本图比赛进度", uiLocale)}>{ROOM_PREMATCH_STAGES.map((label, index) => <li key={label} aria-current={index === current ? 'step' : undefined} data-done={index < current} data-selected={index === selectedStage}><button type="button" disabled={index > current} onClick={() => { onStageSelect(index === current ? null : index); setMenuOpen(false) }} aria-label={uiText("查看第 {0} 步 {1}", uiLocale, [index + 1, uiText(getRoomStageLabel(data, index), uiLocale)])}><span>{index < current ? '✓' : `0${index + 1}`}</span>{uiText(getRoomStageLabel(data, index), uiLocale)}</button></li>)}</ol>{clock}</div>
+    {current < 4 && <RoomStageTimes data={data} />}
     {current >= 4 && <button type="button" className={styles.currentPhase} onClick={() => onStageSelect(null)}>{uiText(ROOM_STAGES[current], uiLocale)} · {uiText("返回当前操作", uiLocale)} →</button>}
     {view !== current && liveSummary && <p className={styles.stageSummary} data-room-slot="stage-summary">{liveSummary}</p>}
     {mapSelectionPage}

@@ -1,5 +1,6 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
-import { taskTitle } from './taskPresentation.js'
+import { taskBody, taskTitle } from './taskPresentation.js'
+import { accountDateTime } from '../account-ui/accountDateTime.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -26,23 +27,12 @@ const PRIORITY_LABEL = {
   IMPORTANT: '重要'
 }
 
-function formatTime(value) {
-  if (!value) return '无截止时间'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '时间待确认'
-  return new Intl.DateTimeFormat('zh-CN', {
-    timeZone: 'Asia/Shanghai',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  }).format(date)
+function formatTime(value, locale) {
+  return accountDateTime(value, locale, value ? '时间待确认' : '无截止时间')
 }
 
-function formatRecordedTime(value) {
-  if (!value) return '时间未记录'
-  return formatTime(value)
+function formatRecordedTime(value, locale) {
+  return accountDateTime(value, locale, '时间未记录')
 }
 
 function HistoryEmptyState({ weekly }) {
@@ -77,10 +67,10 @@ function TaskCard({ task, index, workingId, onComplete, withSeason, history = fa
           {result ? <b>{Number.isInteger(result.revision) ? uiText("赛果版本 {0}", uiLocale, [result.revision]) : uiText("赛果版本未记录", uiLocale)}</b> : null}
         </div>
         <h3 data-i18n-ignore>{taskTitle(task, uiLocale)}</h3>
-        {task.body ? <p>{task.body}</p> : null}
+        {task.body ? <p data-i18n-ignore>{taskBody(task, uiLocale)}</p> : null}
         {result && Number.isInteger(result.scoreA) && Number.isInteger(result.scoreB) ? <p>{uiText("本次送达赛果：{0}", uiLocale, [`${result.scoreA} : ${result.scoreB}`])}</p> : null}
         {resolution && !(history && focused) ? <div className={styles.itemResolution} data-kind={resolution.key}><strong>{resolution.label}</strong><span>{resolution.detail}</span></div> : null}
-        <small>{task.status === 'OPEN' ? task.dueAt ? uiText("截止 {0}", uiLocale, [formatTime(task.dueAt)]) : uiText("无固定截止时间", uiLocale) : `${TASK_STATUS[task.status] || '创建'} · ${formatRecordedTime(task.completedAt || task.updatedAt || task.createdAt)}`}</small>
+        <small>{task.status === 'OPEN' ? task.dueAt ? uiText("截止 {0}", uiLocale, [formatTime(task.dueAt, uiLocale)]) : uiText("无固定截止时间", uiLocale) : `${uiText(TASK_STATUS[task.status] || '创建', uiLocale)} · ${formatRecordedTime(task.completedAt || task.updatedAt || task.createdAt, uiLocale)}`}</small>
       </div>
       <div className={styles.itemAction}>
         {task.status === 'OPEN' && actionUrl ? <Link to={actionUrl}>{task.requiresSourceResolution === false ? uiText("查看详情", uiLocale) : uiText("进入流程", uiLocale)}</Link> : null}
@@ -200,8 +190,8 @@ export default function TaskNotificationCenter({ activity, identityType = 'VIEWE
               <div className={styles.priorityMain}>
                 <div className={styles.priorityMeta}><span>{primaryTask.workflow.en} · {identityTypeLabel(primaryTask.identityType)}</span><em>{primaryTask.deadline.label}</em></div>
                 <strong data-i18n-ignore>{taskTitle(primaryTask, uiLocale)}</strong>
-                <p>{primaryTask.body || uiText("进入对应流程完成操作后，任务状态会自动同步。", uiLocale)}</p>
-                <small>{primaryTask.dueAt ? uiText("截止 {0}", uiLocale, [formatTime(primaryTask.dueAt)]) : uiText("没有固定截止时间，但仍需要主动处理", uiLocale)}</small>
+                <p data-i18n-ignore>{taskBody(primaryTask, uiLocale) || uiText("进入对应流程完成操作后，任务状态会自动同步。", uiLocale)}</p>
+                <small>{primaryTask.dueAt ? uiText("截止 {0}", uiLocale, [formatTime(primaryTask.dueAt, uiLocale)]) : uiText("没有固定截止时间，但仍需要主动处理", uiLocale)}</small>
                 <div className={styles.priorityActions}>
                   {primaryActionUrl ? <Link to={primaryActionUrl}>{uiText("现在处理 →", uiLocale)}</Link> : null}
                   {primaryTask.requiresSourceResolution === false ? <button type="button" disabled={workingId === primaryTask.id} onClick={() => finishTask(primaryTask)}>{workingId === primaryTask.id ? uiText("提交中", uiLocale) : uiText("确认完成", uiLocale)}</button> : null}

@@ -8,3 +8,13 @@ export function taskTitle(task, locale) {
   const label = translateUiText(key, locale, values)
   return prefix ? `${prefix} · ${label}` : label
 }
+
+export function taskBody(task, locale) {
+  if (!task?.bodyCopy) return task?.body || ''
+  const { prefix, key, values = [] } = task.bodyCopy
+  const label = translateUiText(key, locale, values)
+  const context = Array.isArray(prefix)
+    ? prefix.map(part => typeof part === 'string' ? part : translateUiText(part.key, locale, part.values || [])).filter(Boolean).join(' · ')
+    : prefix
+  return context ? `${context} · ${label}` : label
+}

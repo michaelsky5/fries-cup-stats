@@ -170,6 +170,7 @@ const router = createBrowserRouter([
       { path: 'roster', lazy: lazyDefault(() => import('../pages/roster/RosterHubPage.jsx')) },
       { path: 'heroes', lazy: lazyDefault(() => import('../pages/heroes/HeroesPage.jsx')) },
       { path: 'advance', lazy: lazyDefault(() => import('../pages/advance/AdvancePage.jsx')) },
+      { path: 'support', lazy: lazyDefault(() => import('../features/weekly-support/WeeklySupportPage.jsx')) },
       { path: 'standings', lazy: lazyDefault(() => import('../pages/standings/StandingsPage.jsx')) },
       { path: 'maps', lazy: lazyDefault(() => import('../pages/stats/MapStatsPage.jsx')) },
       { path: 'maps/:mapName', lazy: lazyDefault(() => import('../pages/stats/MapDetailPage.jsx')) },

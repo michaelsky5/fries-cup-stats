@@ -48,7 +48,7 @@ export function createSeasonReportPrimitives(adapter) {
     const titleLead = textFor(lang, 'event')
     const titleReport = textFor(lang, 'report')
     return <ScoutingReportHero
-      eyebrow="CONFIDENTIAL · TECHNICAL ANALYSIS"
+      eyebrow="PUBLIC MATCH DATA · TECHNICAL ANALYSIS"
       title={`${titleLead} ${titleReport}`}
       titleLead={titleLead}
       titleReport={titleReport}

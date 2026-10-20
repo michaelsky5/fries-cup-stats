@@ -11,7 +11,7 @@
     "build": "vite build",
     "build:locales": "node scripts/buildLocaleCatalogs.mjs",
     "test:locales": "node scripts/assertPublicLocales.mjs",
-    "test:public-http-cache": "node --test scripts/edgeOneProxy.test.mjs scripts/productionPlatformProxy.test.mjs scripts/assertPublicJsonRefresh.mjs scripts/dbLoadCoalescing.test.mjs scripts/visiblePolling.test.mjs",
+    "test:public-http-cache": "node --test scripts/edgeOneProxy.test.mjs scripts/productionPlatformProxy.test.mjs scripts/assertPublicJsonRefresh.mjs scripts/dbLoadCoalescing.test.mjs scripts/visiblePolling.test.mjs scripts/weeklySupport.test.mjs",
     "build:team-logo-catalog": "node scripts/buildTeamLogoCatalog.mjs",
     "build:scouting-artifacts": "node scripts/buildScoutingArtifacts.mjs",
     "scouting:season-report": "node scripts/buildSeasonScoutingReport.mjs",

@@ -5,6 +5,17 @@ import { useRoomTransport } from './RoomTransport.jsx'
 import { formatRoomClock, roomClockState, roomClockHint, roomMapSide, ROOM_CLOCK_LABELS } from './roomPhaseClock.js'
 import styles from './RoomPhaseClock.module.css'
 import { canExtendRoomPreparation } from './roomPreparationExtension.js'
+import { roomClockUrgency, roomStageDurations } from './roomClockPresentation.js'
+
+export function RoomStageTimes({ data }) {
+  const locale = useUiLocale(), durations = roomStageDurations(data.phaseClock)
+  if (!durations.length) return null
+  return <details className={styles.stageTimes} data-room-slot="stage-times">
+    <summary>{uiText('各环节时长', locale)}</summary>
+    <dl>{durations.map(item => <div key={item.kind}><dt>{uiText(item.label, locale)}</dt><dd>{uiText(item.kind === 'BAN' ? '每轮 {0} 秒' : '{0} 秒', locale, [item.seconds])}</dd></div>)}</dl>
+    <p>{uiText('以上为标准时长；当前剩余时间以倒计时为准，加时与暂停会单独显示。', locale)}</p>
+  </details>
+}
 
 export function useRoomClockState(clock) {
   const [sample, setSample] = useState({ key: '', elapsed: 0 })
@@ -67,7 +78,8 @@ export default function RoomPhaseClock({ data, disabled, mutate, stale = false, 
   useEffect(() => { pending.current = null }, [clock?.revision, clock?.stage?.key])
   const { seconds, inSubmissionGrace } = useRoomClockState(clock), active = clock?.stage && !['IDLE', 'DISABLED'].includes(clock.status)
   const expired = active && clock.status !== 'WAITING' && seconds === 0
-  const urgent = active && clock.status !== 'WAITING' && seconds > 0 && seconds <= 15
+  const urgency = roomClockUrgency(clock, seconds, { stale, inSubmissionGrace })
+  const urgent = ['warning', 'critical', 'grace'].includes(urgency)
   const teamName = side => data.match[`team${side}`]?.shortName || data.match[`team${side}`]?.name
   const owner = clock?.stage?.side ? teamName(clock.stage.side) : clock?.stage?.pendingSides?.map(teamName).join(' / ')
   async function setClock(action, enabled) {
@@ -91,15 +103,18 @@ export default function RoomPhaseClock({ data, disabled, mutate, stale = false, 
   const description = [stageLabel, owner, status, grace?.count >= 2 ? uiText('本图 Ban 权已取消', locale) : ''].filter(Boolean).join(' · ')
   const cannotAdjust = disabled || stale || expired && ['MAP', 'BAN'].includes(clock.stage?.kind)
   const toggleLabel = uiText(clock.enabled ? '关闭本场倒计时' : '开启本场倒计时', locale)
-  return <div className={styles.bar} data-room-slot="phase-clock" data-expired={Boolean(expired)} data-urgent={Boolean(urgent)} data-submission-grace={inSubmissionGrace} data-stale={stale} title={description} aria-label={description}>
+  const restEnding = clock.stage?.kind === 'REST' && ['warning', 'critical'].includes(urgency)
+  const announcement = restEnding ? uiText('休息即将结束，请准备选图。', locale) : urgency === 'critical' ? uiText('{0} 仅剩 5 秒，请立即确认。', locale, [stageLabel]) : urgency === 'warning' ? uiText('{0} 仅剩 10 秒，请及时确认。', locale, [stageLabel]) : urgency === 'grace' ? uiText('已进入补交宽限，请立即确认。', locale) : ''
+  return <div className={styles.bar} data-room-slot="phase-clock" data-expired={Boolean(expired)} data-urgent={Boolean(urgent)} data-urgency={urgency} data-submission-grace={inSubmissionGrace} data-stale={stale} title={description} aria-label={description}>
     <div className={styles.caption}><span>{stageLabel}</span>{owner && <small>{owner}</small>}</div>
-    <div className={styles.time}><strong className={styles.digits} data-clock-display={clock.status !== 'IDLE' && !clock.enabled ? 'status' : 'digits'} role="timer" aria-live="off">{clock.status === 'IDLE' ? '—' : !clock.enabled ? uiText('已关闭', locale) : formatRoomClock(seconds)}</strong>{status && <small className={styles.status}>{status}</small>}</div>
+    <div className={styles.time}><strong className={styles.digits} data-clock-display={clock.status !== 'IDLE' && !clock.enabled ? 'status' : 'digits'} role="timer" aria-live="off">{clock.status === 'IDLE' ? '—' : !clock.enabled ? uiText('已关闭', locale) : formatRoomClock(seconds)}</strong>{clock.stage?.durationSeconds > 0 && <small className={styles.duration}>{uiText('标准 {0} 秒', locale, [clock.stage.durationSeconds])}</small>}{status && <small className={styles.status}>{status}</small>}{['warning', 'critical'].includes(urgency) && <small className={styles.urgencyLabel}>{uiText(restEnding ? '准备选图' : urgency === 'critical' ? '立即确认' : '即将到时', locale)}</small>}</div>
+    <span className={styles.announcement} role="alert" aria-atomic="true">{announcement}</span>
     {preparationLink}
     {clock.canSkipRest && <button type="button" className={styles.skipRest} data-room-slot="skip-rest" aria-label={uiText('结束休息，开始选图', locale)} title={uiText('结束休息，开始选图', locale)} disabled={disabled || stale} onClick={() => setClock('SKIP_REST')}>{uiText('结束休息', locale)}</button>}
     {canExtendPreparation && data.timing.preparationOverdue ? <button type="button" className={styles.toggle} data-room-slot="phase-clock-toggle" disabled={disabled || stale} onClick={onPreparationExtension}>{uiText('处理超时', locale)}</button> : clock.canManage && <button type="button" className={styles.toggle} data-room-slot="phase-clock-toggle" disabled={cannotAdjust} aria-label={toggleLabel} title={toggleLabel} onClick={() => setClock('SET_ENABLED', !clock.enabled)}>{uiText(clock.enabled ? '关闭计时' : '恢复计时', locale)}</button>}
     {clock.canManage && <RoomClockMenu label={uiText('计时设置', locale)}>
       <strong>{uiText('计时设置', locale)}</strong>{data.timing?.preparationDueAt && <p>{uiText('准备总截止',locale)} · {new Date(data.timing.preparationDueAt).toLocaleTimeString(locale,{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit'})} UTC+8</p>}{data.timing?.arrivalDueAt && <p>{uiText('到场宽限截止',locale)} · {new Date(data.timing.arrivalDueAt).toLocaleTimeString(locale,{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit'})} UTC+8</p>}
-      <p>{uiText('选图超时按本队整场累计：首次警告、第二次取消本图 Ban、第三次随机合法地图及攻防；前两次各补时 60 秒。英雄禁用超时直接放弃本轮禁用权。', locale)}</p>
+      <p>{uiText('选图处罚按本队整场流程超时次数累计：第 1 次警告并补时 60 秒；第 2 次取消本图英雄禁用权并补时 60 秒；第 3 次起随机选择合法地图及攻防。处罚补时不再追加 15 秒宽限。', locale)}</p>
       {clock.submissionGrace && <p>{uiText('选图和每轮 Ban 各有一次 15 秒补交宽限；选图处罚后的 60 秒补时与无效 Ban 的纠正窗口不再追加宽限。', locale)}</p>}
       <p>{uiText('关闭后暂停阶段计时和自动超时处理；准备总时限、到场宽限及计划开赛时间仍然有效。', locale)}</p>
       <button type="button" disabled={cannotAdjust} onClick={() => setClock('SET_ENABLED', !clock.enabled)}>{toggleLabel}</button>
