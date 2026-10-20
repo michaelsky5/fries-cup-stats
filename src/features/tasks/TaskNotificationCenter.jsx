@@ -1,4 +1,5 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
+import { taskTitle } from './taskPresentation.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -75,7 +76,7 @@ function TaskCard({ task, index, workingId, onComplete, withSeason, history = fa
           {result?.matchCode ? <b>{result.matchCode}</b> : null}
           {result ? <b>{Number.isInteger(result.revision) ? uiText("赛果版本 {0}", uiLocale, [result.revision]) : uiText("赛果版本未记录", uiLocale)}</b> : null}
         </div>
-        <h3>{task.title}</h3>
+        <h3 data-i18n-ignore>{taskTitle(task, uiLocale)}</h3>
         {task.body ? <p>{task.body}</p> : null}
         {result && Number.isInteger(result.scoreA) && Number.isInteger(result.scoreB) ? <p>{uiText("本次送达赛果：{0}", uiLocale, [`${result.scoreA} : ${result.scoreB}`])}</p> : null}
         {resolution && !(history && focused) ? <div className={styles.itemResolution} data-kind={resolution.key}><strong>{resolution.label}</strong><span>{resolution.detail}</span></div> : null}
@@ -113,7 +114,7 @@ function PlayerTaskFlow({ stages, withSeason }) {
             <div className={styles.flowMain}>
               <span>{stage.eyebrow}</span>
               <strong>{stage.title}</strong>
-              <p>{stage.nextTask?.title || stage.description}</p>
+              <p data-i18n-ignore>{stage.nextTask ? taskTitle(stage.nextTask, uiLocale) : uiText(stage.description, uiLocale)}</p>
             </div>
             <div className={styles.flowState}>
               <b>{stage.stateLabel}</b>
@@ -198,7 +199,7 @@ export default function TaskNotificationCenter({ activity, identityType = 'VIEWE
             <section key={primaryTask.id} className={styles.priorityHero} data-deadline={primaryTask.deadline.key}>
               <div className={styles.priorityMain}>
                 <div className={styles.priorityMeta}><span>{primaryTask.workflow.en} · {identityTypeLabel(primaryTask.identityType)}</span><em>{primaryTask.deadline.label}</em></div>
-                <strong>{primaryTask.title}</strong>
+                <strong data-i18n-ignore>{taskTitle(primaryTask, uiLocale)}</strong>
                 <p>{primaryTask.body || uiText("进入对应流程完成操作后，任务状态会自动同步。", uiLocale)}</p>
                 <small>{primaryTask.dueAt ? uiText("截止 {0}", uiLocale, [formatTime(primaryTask.dueAt)]) : uiText("没有固定截止时间，但仍需要主动处理", uiLocale)}</small>
                 <div className={styles.priorityActions}>

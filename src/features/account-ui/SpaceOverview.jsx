@@ -1,4 +1,5 @@
 import AccountAvatar from './AccountAvatar.jsx'
+import { taskTitle } from '../tasks/taskPresentation.js'
 import MatchReminderSummary, { MatchCountdown } from '../match-reminders/MatchReminderSummary.jsx'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { translateUiText as uiText } from '../../lib/uiText.js'
@@ -86,8 +87,8 @@ export default function SpaceOverview({ context, withSeason, sections, managerSt
           const action = getOverviewTaskAction(task)
           return <Link key={task.id} to={withSeason(action.url)} className={styles.task} data-primary={index === 0} data-deadline={task.deadline?.key}>
             <div className={styles.taskMeta}><span data-priority={task.priority}>{index === 0 ? uiText("优先处理", locale) : uiText("接着处理", locale)} · {task.dueAt ? task.deadline?.label || uiText("待处理", locale) : task.priority === 'URGENT' ? uiText("紧急", locale) : task.workflow?.label || priorities[task.priority] || uiText("待处理", locale)}</span><span>{roleLabels[task.identityType] || uiText("账号", locale)}</span></div>
-            <h3>{task.title}</h3>{index === 0 && task.body ? <p className={styles.taskDescription}>{task.body}</p> : null}
-            <div className={styles.taskFoot}><time dateTime={task.dueAt || undefined}>{formatTime(task.dueAt, '无固定截止时间')}{task.dueAt ? uiText(" 截止 · 北京时间", locale) : ''}</time><strong>{action.label} →</strong></div>
+            <h3 data-i18n-ignore>{taskTitle(task, locale)}</h3>{index === 0 && task.body ? <p className={styles.taskDescription}>{task.body}</p> : null}
+            <div className={styles.taskFoot}><time dateTime={task.dueAt || undefined}>{formatTime(task.dueAt, '无固定截止时间')}{task.dueAt ? uiText(" 截止 · 北京时间", locale) : ''}</time><strong>{uiText(action.label, locale)} →</strong></div>
           </Link>
         })}{count > 3 && allowed('tasks') ? <Link className={styles.moreTasks} to={withSeason('/me?section=tasks')}>{uiText("还有 ", locale)}{count - 3}{tasksPending ? '+' : ''}{uiText(" 项待办 · 查看完整队列 ↗", locale)}</Link> : null}</div> : <div className={styles.empty}>{!tasksPending && !count && <span className={styles.emptyMark} aria-hidden="true">✓</span>}<h3>{tasksPending ? uiText("待办状态尚未同步", locale) : count ? uiText("查看待办详情", locale) : uiText("目前没有需要处理的待办", locale)}</h3><p>{tasksPending ? tasksMessage : count ? uiText("待办内容可在任务中心查看。", locale) : uiText("新的名单确认、赛程安排与赛事通知会出现在这里。", locale)}</p>{allowed('tasks') && <Link to={withSeason(count || tasksPending ? '/me?section=tasks' : '/me?section=tasks&view=history')}>{count || tasksPending ? uiText("打开任务中心", locale) : uiText("查看处理记录", locale)} →</Link>}</div>}
       </section> : null}

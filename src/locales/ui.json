@@ -24860,8 +24860,8 @@
   },
   "提交出赛名单": {
     "zh-TW": "提交出賽名單",
-    "en-US": "Submit competition list",
-    "ko-KR": "경쟁 목록 제출"
+    "en-US": "Submit the lineup",
+    "ko-KR": "출전 명단 제출"
   },
   "提交前核对": {
     "zh-TW": "提交前核對",
@@ -32636,8 +32636,8 @@
   },
   "核对 {0} 的本场赛果": {
     "zh-TW": "核對 {0} 的本場賽果",
-    "en-US": "Check the results of {0}",
-    "ko-KR": "{0}의 결과를 확인하세요."
+    "en-US": "Review the match result for {0}",
+    "ko-KR": "{0}의 이번 경기 결과 확인"
   },
   "核对事项与处理身份，完成后继续查看当前队列。": {
     "zh-TW": "核對事項與處理身份，完成後繼續檢視當前佇列。",
@@ -38008,8 +38008,8 @@
   },
   "确认当周参赛": {
     "zh-TW": "確認當週參賽",
-    "en-US": "Confirmed to participate in this week",
-    "ko-KR": "이번주 참가 확정"
+    "en-US": "Confirm participation this week",
+    "ko-KR": "이번 주 참가 확인"
   },
   "确认截止：": {
     "zh-TW": "確認截止：",
@@ -59620,9 +59620,39 @@
     "en-US": "Manage email verification and changes to your sign-in email.",
     "ko-KR": "이메일 인증과 로그인 이메일 변경을 관리합니다."
   },
+  "赛事路径": {
+    "zh-TW": "賽事路徑",
+    "en-US": "The competition path",
+    "ko-KR": "대회 진행 과정"
+  },
+  "邮箱管理": {
+    "zh-TW": "郵箱管理",
+    "en-US": "Email management",
+    "ko-KR": "이메일 관리"
+  },
   "已重新读取当前换绑状态，请核对后再操作。": {
     "zh-TW": "已重新讀取當前換綁狀態，請核對後再操作。",
     "en-US": "The current email change status has been reloaded. Check it before taking another action.",
     "ko-KR": "현재 이메일 변경 상태를 다시 불러왔습니다. 확인 후 다음 작업을 진행하세요."
+  },
+  "登录后管理个人资料与账号安全。": {
+    "zh-TW": "登入後管理個人資料與帳號安全。",
+    "en-US": "Sign in to manage your profile and account security.",
+    "ko-KR": "로그인하여 프로필과 계정 보안을 관리하세요."
+  },
+  "登录或注册账号，管理个人资料与安全设置。参赛身份通过邀请或报名关联。": {
+    "zh-TW": "登入或註冊帳號，管理個人資料與安全設定。參賽身分透過邀請或報名關聯。",
+    "en-US": "Sign in or create an account to manage your profile and security. Link event roles through an invitation or event registration.",
+    "ko-KR": "로그인하거나 계정을 만들어 프로필과 보안을 관리하세요. 대회 역할은 초대 또는 대회 등록으로 연결하세요."
+  },
+  "登录 / 注册 →": {
+    "zh-TW": "登入 / 註冊 →",
+    "en-US": "Sign in / Register →",
+    "ko-KR": "로그인 / 가입 →"
+  },
+  "登记参赛赛段": {
+    "zh-TW": "登記參賽賽段",
+    "en-US": "Enroll in the cycle",
+    "ko-KR": "사이클 참가 등록"
   }
 }

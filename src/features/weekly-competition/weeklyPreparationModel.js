@@ -201,6 +201,7 @@ export function buildWeeklyPreparation(workspace, { seasonId, userId, readOnly =
     return [{ id, status: 'OPEN', identityType: 'MANAGER', priority: 'HIGH', requiresSourceResolution: true,
       taskType: `WEEKLY_PREPARATION_${stage.key.toUpperCase()}`, sourceType: 'WEEKLY_PREPARATION', sourceId,
       title: `${plan.team.shortName || plan.team.name || '本队'} · ${stage.key === 'core' ? '锁定赛段核心' : stage.key === 'participation' ? '确认当周参赛' : stage.key === 'lineup' ? '调整本周人员' : '提交出赛名单'}`,
+      titleCopy: { prefix: plan.team.shortName || plan.team.name, key: stage.key === 'core' ? '锁定赛段核心' : stage.key === 'participation' ? '确认当周参赛' : stage.key === 'lineup' ? '调整本周人员' : '提交出赛名单' },
       body: `${plan.cycle.name}${stage.key !== 'core' && plan.week ? ` · ${plan.week.label || `第 ${plan.week.weekNumber} 周`}` : ''}。${stage.detail}`,
       teamOrganization: plan.team, dueAt: stage.key === 'core' ? null : plan.dueAt, actionUrl: stage.actionUrl }]
   }))
@@ -208,6 +209,7 @@ export function buildWeeklyPreparation(workspace, { seasonId, userId, readOnly =
         id: `weekly-enrollment:${cycle.id}:${team.id}`, status: 'OPEN', identityType: 'MANAGER', priority: 'HIGH', requiresSourceResolution: true,
         taskType: 'WEEKLY_CYCLE_ENROLLMENT', sourceType: 'WEEKLY_CYCLE_ENROLLMENT', sourceId: `${cycle.id}:${team.id}`,
         title: `${team.shortName || team.name} · 登记参赛赛段`, body: `${cycle.name} 已开放登记。登记后再按周选择是否参赛。`,
+        titleCopy: { prefix: team.shortName || team.name, key: '登记参赛赛段' },
         teamOrganization: team, actionUrl: `/me?${new URLSearchParams({ section: 'team', cycle: cycle.id, team: team.id })}#weekly-enrollment`
       })))
   return { plans, tasks: [...enrollmentTasks, ...tasks] }

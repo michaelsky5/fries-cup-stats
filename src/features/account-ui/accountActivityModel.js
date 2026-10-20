@@ -58,6 +58,7 @@ export function buildWeeklyResultTasks(workspace, { seasonId, readOnly = true, n
       id: `weekly-ready:${room.id}:${team.team.id}`, status: 'OPEN', requiresSourceResolution: true,
       taskType: 'WEEKLY_TEAM_READINESS', sourceType: 'WEEKLY_READINESS', sourceId: `${room.id}:${team.team.id}`,
       title: `${weeklyTeamName(team.team)} · 确认赛前准备`, priority: 'HIGH', identityType: 'MANAGER', teamOrganization: team.team,
+      titleCopy: { prefix: weeklyTeamName(team.team), key: '确认赛前准备' },
       body: `${room.cycle?.name || '周赛'} · ${room.displayName || '本场比赛'}。${team.preparation.stale ? '安排或名单有变化，请重新核对并确认。' : '房间安排已发布，请核对房间与出赛队员，再代表本队确认准备状态。'}`,
       actionUrl: `/me?section=matches&weeklyMatch=${encodeURIComponent(room.id)}`
     })))
@@ -67,6 +68,7 @@ export function buildWeeklyResultTasks(workspace, { seasonId, readOnly = true, n
       id: `weekly-result:${room.id}:${team.team.id}`, status: 'OPEN', requiresSourceResolution: true,
       taskType: 'WEEKLY_RESULT_CONFIRMATION', sourceType: 'WEEKLY_RESULT', sourceId: `${room.id}:${team.team.id}`,
       title: `${weeklyTeamName(room.teamA)} vs ${weeklyTeamName(room.teamB)} · 核对 ${weeklyTeamName(team.team)} 的本场赛果`, priority: 'HIGH', identityType: team.role === 'PLAYER' ? 'PLAYER' : team.role === 'COACH' ? 'COACH' : 'MANAGER', teamOrganization: team.team,
+      titleCopy: { prefix: `${weeklyTeamName(room.teamA)} vs ${weeklyTeamName(room.teamB)}`, key: '核对 {0} 的本场赛果', values: [weeklyTeamName(team.team)] },
       body: `${room.cycle?.name || '周赛'} · ${room.displayName || room.week?.label || '赛果确认'}。${weeklyRoomResponseOverdue(room, now) ? '响应已超时，指定代表仍可记录本队响应；须由管理员复核，沉默不视为同意。' : '核对比分后代表本队确认，或提交争议说明。'}`,
       dueAt: room.responseDueAt || null,
       resultContext: { matchId: room.id, matchCode: room.matchCode, revision: room.revision, scoreA: room.scoreA, scoreB: room.scoreB },
