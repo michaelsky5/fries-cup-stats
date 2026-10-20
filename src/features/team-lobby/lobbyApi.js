@@ -13,3 +13,8 @@ export const saveCard = body => platformRequest('/lobby/me/card', { method: 'PUT
 export const changeCard = (id, body) => platformRequest(`/lobby/me/cards/${encodeURIComponent(id)}/action`, { method: 'POST', body })
 export const saveFormation = (body, id) => platformRequest(`/lobby/me/formations${id ? `/${encodeURIComponent(id)}` : ''}`, { method: id ? 'PUT' : 'POST', body })
 export const withdrawFormation = item => platformRequest(`/lobby/me/formations/${encodeURIComponent(item.id)}/withdraw`, { method: 'POST', body: { revision: item.revision } })
+export const createContact = body => platformRequest('/lobby/contacts', { method: 'POST', body })
+export const listContacts = ({ direction = 'all', page = 1 } = {}, options) => platformRequest(`/lobby/contacts?direction=${direction}&page=${page}&pageSize=20`, options)
+export const getContact = (id, options) => platformRequest(`/lobby/contacts/${encodeURIComponent(id)}`, options)
+export const changeContact = (id, body) => platformRequest(`/lobby/contacts/${encodeURIComponent(id)}/action`, { method: 'POST', body })
+export const readContactQq = id => platformRequest(`/lobby/contacts/${encodeURIComponent(id)}/qq`, { method: 'POST', body: {} })
