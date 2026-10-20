@@ -1,4 +1,6 @@
 .card {
+  --font-sans: var(--font-export-sans);
+  --font-mono: var(--font-brand-sans);
   --share-black: #11110f;
   --share-ink: #242421;
   --share-panel: #2d2d29;

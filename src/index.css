@@ -5,10 +5,12 @@
 
 :root:lang(zh-TW) {
   --font-sans: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', 'FCAHarmonySC', sans-serif;
+  --font-export-sans: var(--font-sans);
 }
 
 :root:lang(ko) {
   --font-sans: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', 'FCAHarmonySC', sans-serif;
+  --font-export-sans: var(--font-sans);
   word-break: keep-all;
   overflow-wrap: anywhere;
 }

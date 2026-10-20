@@ -315,6 +315,10 @@
 }
 
 .posterCanvas {
+  --font-sans: var(--font-export-sans);
+  --font-primary: var(--font-export-sans);
+  --font-mono: var(--font-brand-sans);
+  font-family: var(--font-export-sans);
   width: min(100%, 1100px);
   margin: 0 auto;
   background: linear-gradient(135deg, #0f0f13 0%, #000000 100%);

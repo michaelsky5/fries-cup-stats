@@ -125,8 +125,21 @@
   --radius-base: 8px;
 
   /* Type */
+  /* Keep the original downloadable face for fixed-size artwork and exports. */
+  --font-brand-sans:
+    "FCA Harmony",
+    "HarmonyOS Sans SC",
+    "HarmonyOS Sans",
+    "PingFang SC",
+    "Microsoft YaHei",
+    "Noto Sans SC",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  --font-export-sans: var(--font-brand-sans);
+  /* Normal browsing should not download full CJK fonts before showing text. */
   --font-sans:
-    "FCA Harmony",
     "HarmonyOS Sans SC",
     "HarmonyOS Sans",
     "PingFang SC",
@@ -136,17 +149,7 @@
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-  --font-mono:
-    "FCA Harmony",
-    "HarmonyOS Sans SC",
-    "HarmonyOS Sans",
-    "PingFang SC",
-    "Microsoft YaHei",
-    "Noto Sans SC",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  --font-mono: var(--font-sans);
   --font-primary: var(--font-sans);
 
   /* Geometry */
