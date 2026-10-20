@@ -1,9 +1,9 @@
-import { toBlob } from 'html-to-image'
 import { waitForShareAssets } from '../player-share/playerShareRenderer.js'
 
 export async function exportTeamSharePng(node, fileName) {
   if (!node) throw new Error('Missing team share card node')
   await waitForShareAssets(node)
+  const { toBlob } = await import('html-to-image')
   const blob = await toBlob(node, {
     cacheBust: true,
     pixelRatio: 1,

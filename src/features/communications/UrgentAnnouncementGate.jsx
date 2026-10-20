@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { acknowledgeAnnouncement, fetchMyAnnouncements } from './communicationApi.js'
 import { getPendingAcknowledgementAnnouncements } from './mandatoryAnnouncementModel.js'
+import { startVisiblePolling } from '../../lib/visiblePolling.js'
 import styles from './UrgentAnnouncementGate.module.css'
 
 const ANNOUNCEMENT_REFRESH_INTERVAL_MS = 60_000
@@ -29,10 +30,8 @@ export default function UrgentAnnouncementGate({ seasonId, isAuthenticated, deta
     setGateState({ key: gateKey, status: 'loading', announcements: [], error: '' })
     setActionError('')
 
-    const refreshAnnouncements = () => {
-      if (document.visibilityState === 'hidden') return
-
-      fetchMyAnnouncements(seasonId)
+    const refreshAnnouncements = ({ signal }) => {
+      return fetchMyAnnouncements(seasonId, { signal })
         .then(items => {
           if (!active) return
           const announcements = getPendingAcknowledgementAnnouncements(items)
@@ -56,23 +55,15 @@ export default function UrgentAnnouncementGate({ seasonId, isAuthenticated, deta
             announcements: current.key === gateKey ? current.announcements : [],
             error: error?.message || '必须确认的赛事公告暂时无法载入，请重试。'
           }))
+          throw error
         })
     }
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') refreshAnnouncements()
-    }
-
-    refreshAnnouncements()
-    const interval = globalThis.setInterval(refreshAnnouncements, ANNOUNCEMENT_REFRESH_INTERVAL_MS)
-    globalThis.addEventListener('focus', refreshAnnouncements)
-    document.addEventListener('visibilitychange', handleVisibilityChange)
+    const polling = startVisiblePolling(refreshAnnouncements, { intervalMs: ANNOUNCEMENT_REFRESH_INTERVAL_MS })
 
     return () => {
       active = false
-      globalThis.clearInterval(interval)
-      globalThis.removeEventListener('focus', refreshAnnouncements)
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      polling.stop()
     }
   }, [gateKey, retryNonce, seasonId])
 

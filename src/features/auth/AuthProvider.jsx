@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   clearStoredAuth,
   confirmEmailChange,
@@ -19,6 +19,7 @@ import {
 } from './userDataApi.js'
 import { fetchAccountProfile } from '../account-security/accountSecurityApi.js'
 import { synchronizeAfterCredentialChange } from '../account-security/accountRecoveryModel.js'
+import { startVisiblePolling } from '../../lib/visiblePolling.js'
 
 const AuthContext = createContext(null)
 
@@ -56,7 +57,7 @@ export function AuthProvider({ children }) {
   const accountRequest = useRef(0)
   const currentUserId = useRef('')
   const currentSessionUser = useRef(null)
-  currentSessionUser.current = authState.user
+  useLayoutEffect(() => { currentSessionUser.current = authState.user }, [authState.user])
   const sessionChannel = useRef(null)
   const profileRequest = useRef(0)
 
@@ -246,14 +247,11 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (!authState.user?.canSwitchAccountMode) return undefined
-    let inFlight = false
     let cancelled = false
-    const refresh = async () => {
-      if (inFlight) return
-      inFlight = true
+    const refresh = async ({ signal }) => {
       const epoch = sessionEpoch.current
       try {
-        const user = await fetchCurrentUser()
+        const user = await fetchCurrentUser({ signal })
         if (cancelled || epoch !== sessionEpoch.current) return
         const current = currentSessionUser.current
         if (user?.id !== current?.id || user?.role !== current?.role
@@ -262,11 +260,11 @@ export function AuthProvider({ children }) {
         }
       } catch (error) {
         if (!cancelled && epoch === sessionEpoch.current && error?.status === 401) clearRevokedSession()
-      } finally { inFlight = false }
+        throw error
+      }
     }
-    const timer = window.setInterval(refresh, 15000)
-    window.addEventListener('focus', refresh)
-    return () => { cancelled = true; window.clearInterval(timer); window.removeEventListener('focus', refresh) }
+    const polling = startVisiblePolling(refresh, { intervalMs: 15_000, initialDelayMs: 15_000 })
+    return () => { cancelled = true; polling.stop() }
   }, [authState.user?.canSwitchAccountMode, clearRevokedSession, installSession])
 
   useEffect(() => {

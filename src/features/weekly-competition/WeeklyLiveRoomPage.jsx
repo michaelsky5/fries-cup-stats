@@ -47,6 +47,7 @@ import { getRoomLineupCorrection } from './roomLineupCorrection.js'
 import { getRoomLineupHighlights } from './roomLineupHighlights.js'
 import { roomRoleCode, sortRoomLineup } from './roomLineups.js'
 import { matchListDestination } from '../my-space/spaceDestinations.js'
+import { startVisiblePolling } from '../../lib/visiblePolling.js'
 
 const phaseNames = { PREPARING: '赛前准备', LIVE: '比赛进行中', PAUSED: '技术暂停', REVIEW: '赛果处理', ARCHIVED: '已归档' }
 function roomPhaseName(data, locale) {
@@ -136,21 +137,22 @@ function RoomCommunication({ data, disabled, mutate, expanded, setExpanded, chan
     let alive = true, pending = false, firstLoad = true
     currentScope.current = scope; atBottom.current = true; setUnread(false); setFeedError(''); setItems([])
     if (channel === 'SUPPORT') return
-    const load = async () => {
+    const load = async ({ signal } = {}) => {
       if (pending) return
       pending = true; setLoading(true)
       try {
-        const value = await messageLoader(data.match.id, channel)
+        const value = await messageLoader(data.match.id, channel, undefined, { signal })
         if (!alive || token !== generation.current) return
         setItems(previous => [...new Map([...previous, ...value.items].map(item => [item.id, item])).values()].sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id)))
         if (firstLoad) { setHasMore(value.hasMore); firstLoad = false }
         setFeedError('')
-      } catch (error) { if (alive && token === generation.current) { setFeedError(error.message); if ([401, 403].includes(error.status)) setItems([]) } }
+      } catch (error) { if (alive && token === generation.current) { setFeedError(error.message); if ([401, 403].includes(error.status)) setItems([]) }; throw error }
       finally { pending = false; if (alive && token === generation.current) setLoading(false) }
     }
-    load()
-    const timer = channel === 'PRODUCTION' ? setInterval(load, 3000) : null
-    return () => { alive = false; clearInterval(timer) }
+    const polling = channel === 'PRODUCTION' ? startVisiblePolling(load, { intervalMs: 3000 }) : null
+    const controller = new AbortController()
+    if (!polling) void load({ signal: controller.signal }).catch(() => {})
+    return () => { alive = false; polling?.stop(); controller.abort() }
   }, [scope, channel, data.match.id, messageLoader])
   useEffect(() => {
     if (channel !== 'PUBLIC' || currentScope.current !== scope) return

@@ -2,6 +2,7 @@ import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { platformRequest } from '../auth/platformApi.js'
+import { startVisiblePolling } from '../../lib/visiblePolling.js'
 import { useRegistrationDraft } from '../event-registration/registrationDraftGuard.jsx'
 import AccountAvatar from '../account-ui/AccountAvatar.jsx'
 import styles from './WeeklyCoordinationPanel.module.css'
@@ -40,10 +41,10 @@ export default function WeeklyCoordinationPanel({ weekId, teamId, matchId, readO
   const sequence = useRef(0)
   const query = new URLSearchParams({ weekId, teamId, ...(matchId ? { matchId } : {}) }).toString()
   useRegistrationDraft(Boolean(title || body), { label: uiText("尚未提交的赛管协助请求", uiLocale), busy, discard: () => { setTitle(''); setBody('') } })
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async ({ signal, background = false } = {}) => {
     const seq = ++sequence.current
     try {
-      const value = await platformRequest(`${endpoint}?${query}`)
+      const value = await platformRequest(`${endpoint}?${query}`, { signal })
       if (!mounted.current || seq !== sequence.current) return false
       if (value?.weekId !== weekId || value?.teamId !== teamId || value?.matchId !== (matchId || null) || !Array.isArray(value.requests) || !Array.isArray(value.matches)) throw new Error('站内协作记录返回不完整，请重新同步。')
       setData(value); setError(''); return true
@@ -52,16 +53,16 @@ export default function WeeklyCoordinationPanel({ weekId, teamId, matchId, readO
         setError(failure?.status === 404 ? '当前服务尚未开放站内赛前协作，暂时无法提交。' : failure.message || '协作记录未同步，请重试。')
         if ([401, 403].includes(failure.status)) setData(null)
       }
+      if (background) throw failure
       return false
     } finally { if (mounted.current && seq === sequence.current) setLoading(false) }
   }, [query, weekId, teamId, matchId])
   useEffect(() => {
     mounted.current = true
-    refresh()
-    const interval = setInterval(() => { if (!locked.current && document.visibilityState === 'visible') refresh() }, 20000)
-    const focus = () => { if (!locked.current) refresh() }
-    window.addEventListener('focus', focus)
-    return () => { mounted.current = false; clearInterval(interval); window.removeEventListener('focus', focus) }
+    const polling = startVisiblePolling(({ signal }) => {
+      if (!locked.current) return refresh({ signal, background: true })
+    }, { intervalMs: 20_000 })
+    return () => { mounted.current = false; sequence.current += 1; polling.stop() }
   }, [refresh])
   async function mutate(path, input, method, valid, success) {
     if (locked.current || readOnly || !data?.canWrite || error) return false

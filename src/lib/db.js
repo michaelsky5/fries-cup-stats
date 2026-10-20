@@ -2,13 +2,39 @@ import { getSeasonById, getStoredSeasonId } from '../config/seasons.js'
 import { assertTrialSnapshot } from '../config/partnerTrial.js'
 import { resolvePublishedAdvanceTeams } from './advanceSelectors.js'
 import { readPublicSnapshot, savePublicSnapshot } from './publicSnapshotCache.js'
-import { requestPublicJson } from './publicJsonRequest.js'
+import { invalidatePublicJsonRequests, requestPublicJson } from './publicJsonRequest.js'
 import { resolvePublicMatchIdentities } from './publicMatchIdentity.js'
 import { hydrateCurrentTeamLogos } from './currentTeamLogos.js'
 
 const dbCache = new Map()
 const reportCache = new Map()
 const dbSourceBySnapshot = new WeakMap()
+const dbLoads = new Map()
+const dbRefreshes = new Map()
+const reportLoads = new Map()
+const snapshotWrites = new Map()
+
+// Share validation, hydration and storage as well as the underlying download.
+// Invalidating a task never lets its completion remove or overwrite a newer one.
+function shareLoad(tasks, key, load) {
+  if (tasks.has(key)) return tasks.get(key)
+  const task = Promise.resolve().then(() => load(() => tasks.get(key) === task))
+    .finally(() => { if (tasks.get(key) === task) tasks.delete(key) })
+  tasks.set(key, task)
+  return task
+}
+
+function persistSnapshot(seasonId, cacheKey, data) {
+  if (getDbSource(data).kind !== 'published') return
+  const previous = snapshotWrites.get(seasonId) || Promise.resolve()
+  const write = previous.then(() => {
+    if (dbCache.get(cacheKey) !== data) return
+    const { sourceUrl, etag } = getDbSource(data)
+    return savePublicSnapshot(seasonId, data, sourceUrl, etag)
+  }).catch(() => { /* Disk storage is optional; the validated memory cache remains usable. */ })
+    .finally(() => { if (snapshotWrites.get(seasonId) === write) snapshotWrites.delete(seasonId) })
+  snapshotWrites.set(seasonId, write)
+}
 
 const REVIEW_STAFF_FIELD_KEYS = [
   'crew',
@@ -234,8 +260,12 @@ function validatePublicDb(data, season) {
 
 async function fetchFirstAvailableWithSource(urls, errorCode, validate = data => data, cached) {
   const errors = []
+  let retryFailure
 
   for (const url of urls) {
+    // A second public hostname can lead to the same API. Respect admission
+    // control instead of immediately retrying that host through an alias.
+    if (retryFailure && !String(url).startsWith('/data/')) continue
     try {
       const response = await requestPublicJson(url, errorCode, { cached })
       return {
@@ -245,10 +275,13 @@ async function fetchFirstAvailableWithSource(urls, errorCode, validate = data =>
       }
     } catch (error) {
       errors.push(`${url} (${error?.message || 'failed'})`)
+      if (error?.status === 429 || error?.retryAfterMs !== undefined) retryFailure = error
     }
   }
 
-  throw new Error(`${errorCode}: ${errors.join(' | ')}`)
+  throw Object.assign(new Error(`${errorCode}: ${errors.join(' | ')}`), {
+    status: retryFailure?.status, retryAfterMs: retryFailure?.retryAfterMs
+  })
 }
 
 async function fetchFirstAvailable(urls, errorCode, validate = data => data) {
@@ -331,21 +364,28 @@ export async function getDb(seasonId, options = {}) {
     return cached
   }
 
-  if (!preferLocalData) {
-    const stored = await readPublicSnapshot(season.id)
-    if (stored?.data && stored.sourceUrl && stored.sourceUrl !== season.localDataUrl && (!season.partnerTrial || getDbUrls(season).includes(stored.sourceUrl))) {
-      try {
-        const cached = markDbSource(validatePublicDb(stored.data, season), stored.sourceUrl, season, true, stored.etag)
-        dbCache.set(cacheKey, cached)
-        return cached
-      } catch { /* Old or incomplete cache entries fall through to the API. */ }
+  return shareLoad(dbLoads, cacheKey, async isCurrent => {
+    if (!preferLocalData) {
+      const stored = await readPublicSnapshot(season.id)
+      // A network refresh can finish while IndexedDB is still opening.
+      if (dbCache.has(cacheKey)) return dbCache.get(cacheKey)
+      if (stored?.data && stored.sourceUrl && stored.sourceUrl !== season.localDataUrl && (!season.partnerTrial || getDbUrls(season).includes(stored.sourceUrl))) {
+        try {
+          const cached = markDbSource(validatePublicDb(stored.data, season), stored.sourceUrl, season, true, stored.etag)
+          if (isCurrent()) dbCache.set(cacheKey, cached)
+          return cached
+        } catch { /* Old or incomplete cache entries fall through to the API. */ }
+      }
     }
-  }
 
-  const data = await fetchDb(sourceSeason)
-  dbCache.set(cacheKey, data)
-  if (getDbSource(data).kind === 'published') void savePublicSnapshot(season.id, data, getDbSource(data).sourceUrl, getDbSource(data).etag)
-  return data
+    const fetchedData = await fetchDb(sourceSeason)
+    const data = dbCache.get(cacheKey) || fetchedData
+    if (isCurrent()) {
+      dbCache.set(cacheKey, data)
+      if (data === fetchedData) persistSnapshot(season.id, cacheKey, data)
+    }
+    return data
+  })
 }
 
 export async function refreshDb(seasonId, options = {}) {
@@ -357,26 +397,39 @@ export async function refreshDb(seasonId, options = {}) {
     : season
   // A failed refresh must remain a failure, even if a bundled file is readable.
   // The caller keeps its existing snapshot and offers retry.
-  const fetchedData = await fetchDb(sourceSeason, { allowFallback: false, cached: dbCache.get(cacheKey) })
-  const data = selectNewestDbSnapshot(dbCache.get(cacheKey), fetchedData)
-  dbCache.set(cacheKey, data)
-  if (getDbSource(data).kind === 'published') void savePublicSnapshot(season.id, data, getDbSource(data).sourceUrl, getDbSource(data).etag)
-  return data
+  return shareLoad(dbRefreshes, cacheKey, async isCurrent => {
+    const previousSource = getDbSource(dbCache.get(cacheKey))
+    const fetchedData = await fetchDb(sourceSeason, { allowFallback: false, cached: dbCache.get(cacheKey) })
+    if (!isCurrent()) return dbCache.get(cacheKey) || fetchedData
+    const data = selectNewestDbSnapshot(dbCache.get(cacheKey), fetchedData)
+    dbCache.set(cacheKey, data)
+    const nextSource = getDbSource(data)
+    if (data === fetchedData || nextSource.etag !== previousSource.etag || nextSource.sourceUrl !== previousSource.sourceUrl) {
+      persistSnapshot(season.id, cacheKey, data)
+    }
+    return data
+  })
 }
 
 export async function getReviewReport(seasonId) {
   const season = getSeasonById(seasonId || getStoredSeasonId())
   if (reportCache.has(season.id)) return reportCache.get(season.id)
 
-  const report = await fetchFirstAvailable(getReportUrls(season), 'REPORT_LOAD_FAILED')
-  reportCache.set(season.id, report)
-  return report
+  return shareLoad(reportLoads, season.id, async isCurrent => {
+    const report = await fetchFirstAvailable(getReportUrls(season), 'REPORT_LOAD_FAILED')
+    if (isCurrent()) reportCache.set(season.id, report)
+    return reportCache.get(season.id) || report
+  })
 }
 
 export function clearDbCache(seasonId) {
   if (!seasonId) {
     dbCache.clear()
     reportCache.clear()
+    dbLoads.clear()
+    dbRefreshes.clear()
+    reportLoads.clear()
+    invalidatePublicJsonRequests()
     return
   }
 
@@ -384,4 +437,10 @@ export function clearDbCache(seasonId) {
   dbCache.delete(season.id)
   dbCache.delete(`${season.id}:local-first`)
   reportCache.delete(season.id)
+  for (const key of [season.id, `${season.id}:local-first`]) {
+    dbLoads.delete(key)
+    dbRefreshes.delete(key)
+  }
+  reportLoads.delete(season.id)
+  invalidatePublicJsonRequests([...getDbUrls(season), ...getReportUrls(season)])
 }

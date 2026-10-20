@@ -36,8 +36,8 @@ export async function markAllNotificationsRead(seasonId) {
   })
 }
 
-export async function fetchMyAnnouncements(seasonId) {
-  const data = await platformRequest(`/announcements?${seasonQuery(seasonId)}`)
+export async function fetchMyAnnouncements(seasonId, options) {
+  const data = await platformRequest(`/announcements?${seasonQuery(seasonId)}`, options)
   if (!Array.isArray(data?.announcements)) throw new Error('Invalid announcements response')
   return data.announcements
 }

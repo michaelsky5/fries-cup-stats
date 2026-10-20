@@ -1,5 +1,14 @@
+import { retryAfterMillis } from './httpRetry.js'
+
 const inFlight = new Map()
 const REQUEST_TIMEOUT_MS = 20_000
+
+export function invalidatePublicJsonRequests(urls) {
+  const selected = urls && new Set(urls)
+  for (const key of inFlight.keys()) {
+    if (!selected || selected.has(JSON.parse(key)[0])) inFlight.delete(key)
+  }
+}
 
 function conditionalEtag(url, cached, origin) {
   if (!cached?.data || cached.sourceUrl !== url) return ''
@@ -36,7 +45,9 @@ export function requestPublicJson(url, errorCode, {
         if (!etag) throw new Error(`${errorCode}: 304_WITHOUT_SNAPSHOT`)
         return { data: cached.data, etag: res.headers?.get?.('etag') || cached.etag }
       }
-      if (!res.ok) throw new Error(`${errorCode}: ${res.status}`)
+      if (!res.ok) throw Object.assign(new Error(`${errorCode}: ${res.status}`), {
+        status: res.status, retryAfterMs: retryAfterMillis(res.headers?.get?.('retry-after'))
+      })
       return { data: await res.json(), etag: res.headers?.get?.('etag') || '' }
     } catch (error) {
       if (controller.signal.aborted) throw new Error(`${errorCode}: REQUEST_TIMEOUT`)
@@ -44,7 +55,7 @@ export function requestPublicJson(url, errorCode, {
     } finally {
       globalThis.clearTimeout(timeout)
     }
-  })().finally(() => { inFlight.delete(key) })
+  })().finally(() => { if (inFlight.get(key) === request) inFlight.delete(key) })
   inFlight.set(key, request)
   return request
 }
