@@ -126,12 +126,18 @@ export default function FantasyBattle() {
 
   useEffect(() => {
     const state = getRunState()
-    if (!state) return navigate(buildSeasonLink('/shop', getInitialSeasonId(), window.location.search))
+    if (!state) {
+      navigate(buildSeasonLink('/shop', getInitialSeasonId(), window.location.search), { replace: true })
+      return
+    }
     setRunState(state)
 
     const savedRoster = localStorage.getItem('fca_my_roster')
     const savedPower = localStorage.getItem('fca_my_power')
-    if (!savedRoster || !savedPower) return navigate(buildSeasonLink('/shop', getInitialSeasonId(), window.location.search))
+    if (!savedRoster || !savedPower) {
+      navigate(buildSeasonLink('/shop', getInitialSeasonId(), window.location.search), { replace: true })
+      return
+    }
 
     const roster = JSON.parse(savedRoster)
     setMyRoster(roster)
