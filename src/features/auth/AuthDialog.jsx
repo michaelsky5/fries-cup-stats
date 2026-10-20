@@ -250,10 +250,11 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
             <div className={styles.formIntro}><strong>{user?.displayName || user?.email}</strong><p>{locale === 'en-US' ? 'Manage your profile, password, email and devices in account settings.' : uiText("前往账号设置，管理资料、密码、邮箱和登录设备。", locale)}</p><Link to="/account" onClick={onClose}>{locale === 'en-US' ? 'Open account settings →' : uiText("打开账号设置 →", locale)}</Link></div>
           ) : (
             <>
-              {['login', 'register'].includes(mode) ? registrationAllowed ? <div className={styles.tabs} role="tablist" aria-label={copy.account}>
+              {['login', 'register'].includes(mode) ? registrationAllowed ? <div className={styles.tabs} role="group" aria-label={copy.account}>
                 <button
                   type="button"
                   className={`${styles.tabButton} ${mode === 'login' ? styles.tabButtonActive : ''}`}
+                  aria-pressed={mode === 'login'}
                   disabled={isSubmitting}
                   onClick={() => { setMode('login'); setSuccess('') }}
                 >
@@ -262,6 +263,7 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
                 {registrationAllowed ? <button
                   type="button"
                   className={`${styles.tabButton} ${mode === 'register' ? styles.tabButtonActive : ''}`}
+                  aria-pressed={mode === 'register'}
                   disabled={isSubmitting}
                   onClick={() => { setMode('register'); setSuccess('') }}
                 >

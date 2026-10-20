@@ -10297,6 +10297,7 @@ export default {
   "账号凭据已变化，本次恢复不能继续，请重新申请。": "The account credentials have changed. This recovery cannot continue; apply again.",
   "邮件暂未投递，请稍后重试；持续失败时请联系平台工作人员。": "The email has not been sent. Try again later; contact platform staff if it keeps failing.",
   "管理邮箱验证和登录邮箱变更。": "Manage email verification and changes to your sign-in email.",
+  "验证邮箱后可使用组队大厅；联系方式在实际联系时单独填写与授权。": "Verify your email to use the team lobby. Contact details are requested only when you apply to connect.",
   "赛事路径": "The competition path",
   "邮箱管理": "Email management",
   "已重新读取当前换绑状态，请核对后再操作。": "The current email change status has been reloaded. Check it before taking another action.",

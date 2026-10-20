@@ -59620,6 +59620,11 @@
     "en-US": "Manage email verification and changes to your sign-in email.",
     "ko-KR": "이메일 인증과 로그인 이메일 변경을 관리합니다."
   },
+  "验证邮箱后可使用组队大厅；联系方式在实际联系时单独填写与授权。": {
+    "zh-TW": "驗證郵箱後可使用組隊大廳；聯絡方式在實際聯絡時另行填寫與授權。",
+    "en-US": "Verify your email to use the team lobby. Contact details are requested only when you apply to connect.",
+    "ko-KR": "이메일 인증 후 팀 찾기 로비를 이용할 수 있습니다. 연락처는 실제 연락을 신청할 때 별도로 입력하고 공유에 동의합니다."
+  },
   "赛事路径": {
     "zh-TW": "賽事路徑",
     "en-US": "The competition path",
