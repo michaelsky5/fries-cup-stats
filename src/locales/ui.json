@@ -40,7 +40,7 @@
     "ko-KR": "이번 호의 경기 결과, 이전 맞대결과 선수 이야기."
   },
   "第 {0} 周比赛记录": {
-    "zh-TW": "第 {0} 週比賽記錄",
+    "zh-TW": "第 {0} 週比賽紀錄",
     "en-US": "Week {0} match records",
     "ko-KR": "{0}주차 경기 기록"
   },
@@ -38875,8 +38875,8 @@
   },
   "第 {0} 名": {
     "zh-TW": "第 {0} 名",
-    "en-US": "#{0}",
-    "ko-KR": "아니요. {0}"
+    "en-US": "Rank {0}",
+    "ko-KR": "{0}위"
   },
   "第 {0} 周": {
     "zh-TW": "第 {0} 週",
@@ -46534,7 +46534,9 @@
     "ko-KR": "많은 죽음이 어떤 영웅·경기에 집중됐나요? 기록만으로 무모한 스타일이라고 단정할 수 없습니다."
   },
   "辅助": {
-    "zh-TW": "輔助"
+    "zh-TW": "輔助",
+    "en-US": "Support",
+    "ko-KR": "지원"
   },
   "辅助选手": {
     "zh-TW": "輔助選手"
@@ -58599,7 +58601,8 @@
   },
   "单图{0} {1}": {
     "zh-TW": "單圖{0} {1}",
-    "ko-KR": "단일 맵 {0} {1}"
+    "ko-KR": "단일 맵 {0} {1}",
+    "en-US": "Map: {1} {0}"
   },
   "{0}，打出 {1} 次{2}": {
     "zh-TW": "{0}，打出 {1} 次{2}",
@@ -60045,5 +60048,415 @@
     "en-US": "The referee may override a preparation timeout or stuck web confirmation. Maps, both lineups, roles and bans must be complete, and the scheduled start time reached. Start in game first, then record the reason and actual start.",
     "ko-KR": "심판은 준비 시간 초과나 웹 확인 지연 시 개입할 수 있습니다. 맵, 양 팀 선발·역할·금지 기록이 완성되고 예정 시작 시각에 도달해야 합니다. 먼저 게임을 시작한 뒤 사유와 실제 시작을 기록하세요.",
     "zh-TW": "當場賽管可接管準備超時或網頁確認卡住的情況。地圖、雙方首發及職責、Ban 記錄須完整，且已到計劃開賽時間；先在遊戲內開始，再填寫原因並記錄實際開賽。"
+  },
+  "保存报纸 PDF": {
+    "en-US": "Save newspaper PDF",
+    "ko-KR": "신문 PDF 저장",
+    "zh-TW": "儲存報紙 PDF"
+  },
+  "保存报纸 PNG": {
+    "en-US": "Save newspaper PNG",
+    "ko-KR": "신문 PNG 저장",
+    "zh-TW": "儲存報紙 PNG"
+  },
+  "扫码看本周赛果": {
+    "en-US": "Scan for this week’s results",
+    "ko-KR": "QR 코드로 이번 주 결과 보기",
+    "zh-TW": "掃碼看本週賽果"
+  },
+  "本期报纸": {
+    "en-US": "This issue",
+    "ko-KR": "이번 호 신문",
+    "zh-TW": "本期報紙"
+  },
+  "周": {
+    "en-US": "Week",
+    "ko-KR": "주",
+    "zh-TW": "週"
+  },
+  "逐图胜方记录待补齐": {
+    "en-US": "Map winners pending",
+    "ko-KR": "맵별 승리 팀 기록 대기 중",
+    "zh-TW": "逐圖勝方紀錄待補齊"
+  },
+  "逐图赛果；比分顺序 {0}": {
+    "en-US": "Map results; score order {0}",
+    "ko-KR": "맵별 결과; 점수 순서 {0}",
+    "zh-TW": "逐圖賽果；比分順序 {0}"
+  },
+  "其他赛果": {
+    "en-US": "Other results",
+    "ko-KR": "다른 경기 결과",
+    "zh-TW": "其他賽果"
+  },
+  "另 {0} 场": {
+    "en-US": "{0} more matches",
+    "ko-KR": "추가 {0}경기",
+    "zh-TW": "另 {0} 場"
+  },
+  "数据趣闻": {
+    "en-US": "Data curiosities",
+    "ko-KR": "데이터 이야기",
+    "zh-TW": "數據趣聞"
+  },
+  "单图数据": {
+    "en-US": "Single-map totals",
+    "ko-KR": "단일 맵 합계",
+    "zh-TW": "單圖數據"
+  },
+  "首图失利后获胜": {
+    "en-US": "Wins after losing map one",
+    "ko-KR": "첫 맵 패배 후 승리",
+    "zh-TW": "首圖失利後獲勝"
+  },
+  "本周 {0} 场完整五图赛果中": {
+    "en-US": "Of {0} complete five-map results this week",
+    "ko-KR": "이번 주 5맵 기록이 완전한 {0}경기 중",
+    "zh-TW": "本週 {0} 場完整五圖賽果中"
+  },
+  "本期个人数据待补齐": {
+    "en-US": "Player records pending",
+    "ko-KR": "이번 호 선수 데이터 대기 중",
+    "zh-TW": "本期個人數據待補齊"
+  },
+  "本周英雄出场排行": {
+    "en-US": "Hero picks this week",
+    "ko-KR": "이번 주 영웅 출전 순위",
+    "zh-TW": "本週英雄出場排行"
+  },
+  "本周英雄 Ban 前三": {
+    "en-US": "Top three hero bans this week",
+    "ko-KR": "이번 주 영웅 금지 상위 3위",
+    "zh-TW": "本週英雄 Ban 前三"
+  },
+  "记录待补齐": {
+    "en-US": "Records pending",
+    "ko-KR": "기록 대기 중",
+    "zh-TW": "紀錄待補齊"
+  },
+  "本周常见地图": {
+    "en-US": "Most played map",
+    "ko-KR": "이번 주 최다 플레이 맵",
+    "zh-TW": "本週常見地圖"
+  },
+  "{0} 张并列": {
+    "en-US": "{0} maps tied",
+    "ko-KR": "맵 {0}개 공동",
+    "zh-TW": "{0} 張並列"
+  },
+  "本周 {0} 图赛果": {
+    "en-US": "{0} map results this week",
+    "ko-KR": "이번 주 {0}맵 결과",
+    "zh-TW": "本週 {0} 圖賽果"
+  },
+  "本周 {0} 图赛果 · 另 {1} 张并列": {
+    "en-US": "{0} map results this week · {1} more tied",
+    "ko-KR": "이번 주 {0}맵 결과 · 추가 맵 {1}개 공동",
+    "zh-TW": "本週 {0} 圖賽果 · 另 {1} 張並列"
+  },
+  "本周英雄出场": {
+    "en-US": "Most played heroes",
+    "ko-KR": "이번 주 최다 출전 영웅",
+    "zh-TW": "本週英雄出場"
+  },
+  "{0} 名并列榜首": {
+    "en-US": "{0} tied for first",
+    "ko-KR": "{0}명 공동 1위",
+    "zh-TW": "{0} 名並列榜首"
+  },
+  "同一英雄，每位选手每图计 1 次": {
+    "en-US": "Each hero counts once per player per map",
+    "ko-KR": "같은 영웅은 선수별 맵당 1회로 집계",
+    "zh-TW": "同一英雄，每位選手每圖計 1 次"
+  },
+  " · 另 {0} 名并列": {
+    "en-US": " · {0} more tied",
+    "ko-KR": " · 추가 {0}명 공동",
+    "zh-TW": " · 另 {0} 名並列"
+  },
+  "Ban 榜观察": {
+    "en-US": "Most banned heroes",
+    "ko-KR": "최다 금지 영웅",
+    "zh-TW": "Ban 榜觀察"
+  },
+  "本周记录 {0} 次英雄 Ban": {
+    "en-US": "{0} hero bans recorded this week",
+    "ko-KR": "이번 주 영웅 금지 {0}회 기록",
+    "zh-TW": "本週紀錄 {0} 次英雄 Ban"
+  },
+  "本周记录 {0} 次英雄 Ban · 另 {1} 名并列": {
+    "en-US": "{0} hero bans recorded this week · {1} more tied",
+    "ko-KR": "이번 주 영웅 금지 {0}회 기록 · 추가 {1}명 공동",
+    "zh-TW": "本週紀錄 {0} 次英雄 Ban · 另 {1} 名並列"
+  },
+  "赛场侧写": {
+    "en-US": "Player notes",
+    "ko-KR": "선수 이야기",
+    "zh-TW": "賽場側寫"
+  },
+  "更新速递": {
+    "en-US": "Updates",
+    "ko-KR": "업데이트 소식",
+    "zh-TW": "更新速遞"
+  },
+  "赛事中心 × 游戏版本": {
+    "en-US": "Event center × game patch",
+    "ko-KR": "대회 센터 × 게임 패치",
+    "zh-TW": "賽事中心 × 遊戲版本"
+  },
+  "游戏版本": {
+    "en-US": "Game patch",
+    "ko-KR": "게임 패치",
+    "zh-TW": "遊戲版本"
+  },
+  "待归类": {
+    "en-US": "Unassigned",
+    "ko-KR": "분류 대기",
+    "zh-TW": "待歸類"
+  },
+  "阻挡伤害": {
+    "en-US": "Mitigated damage",
+    "ko-KR": "막은 피해",
+    "zh-TW": "阻擋傷害"
+  },
+  "主要职责每 10 分钟数据": {
+    "en-US": "Primary-role statistics per 10 minutes",
+    "ko-KR": "주 역할의 10분당 기록",
+    "zh-TW": "主要職責每 10 分鐘數據"
+  },
+  "{0} / 每 10 分钟：{1}": {
+    "en-US": "{0} per 10 minutes: {1}",
+    "ko-KR": "10분당 {0}: {1}",
+    "zh-TW": "{0} / 每 10 分鐘：{1}"
+  },
+  "本周荣誉": {
+    "en-US": "Weekly honours",
+    "ko-KR": "주간 수상",
+    "zh-TW": "本週榮譽"
+  },
+  "本周 MVP": {
+    "en-US": "Weekly MVP",
+    "ko-KR": "주간 MVP",
+    "zh-TW": "本週 MVP"
+  },
+  "本周最佳阵容": {
+    "en-US": "Team of the week",
+    "ko-KR": "주간 베스트",
+    "zh-TW": "本週最佳陣容"
+  },
+  "并列 MVP": {
+    "en-US": "Joint MVP",
+    "ko-KR": "공동 MVP",
+    "zh-TW": "並列 MVP"
+  },
+  "暂缺结果": {
+    "en-US": "No result yet",
+    "ko-KR": "결과 대기 중",
+    "zh-TW": "暫缺結果"
+  },
+  "数据不足": {
+    "en-US": "Insufficient data",
+    "ko-KR": "데이터 부족",
+    "zh-TW": "數據不足"
+  },
+  "并列待确认": {
+    "en-US": "Tie pending",
+    "ko-KR": "동률 확인 대기",
+    "zh-TW": "並列待確認"
+  },
+  "席位待定": {
+    "en-US": "Slot pending",
+    "ko-KR": "자리 미정",
+    "zh-TW": "席位待定"
+  },
+  "正在生成报纸 PDF…": {
+    "en-US": "Preparing newspaper PDF…",
+    "ko-KR": "신문 PDF 생성 중…",
+    "zh-TW": "正在產生報紙 PDF…"
+  },
+  "版面尚未加载完整，请稍后重试。": {
+    "en-US": "The issue is still loading. Please retry.",
+    "ko-KR": "지면을 불러오는 중입니다. 잠시 후 다시 시도해 주세요.",
+    "zh-TW": "版面尚未載入完整，請稍後重試。"
+  },
+  "一页 PDF 已生成。": {
+    "en-US": "Your one-page PDF is ready.",
+    "ko-KR": "한 페이지 PDF가 생성되었습니다.",
+    "zh-TW": "一頁 PDF 已產生。"
+  },
+  "导出失败，请重试。": {
+    "en-US": "Export failed. Please retry.",
+    "ko-KR": "내보내기에 실패했습니다. 다시 시도해 주세요.",
+    "zh-TW": "匯出失敗，請重試。"
+  },
+  "正在生成报纸图片…": {
+    "en-US": "Preparing newspaper image…",
+    "ko-KR": "신문 이미지 생성 중…",
+    "zh-TW": "正在產生報紙圖片…"
+  },
+  "图片生成失败，请重试。": {
+    "en-US": "Image export failed. Please retry.",
+    "ko-KR": "이미지 생성에 실패했습니다. 다시 시도해 주세요.",
+    "zh-TW": "圖片產生失敗，請重試。"
+  },
+  "报纸图片已生成，可以保存分享。": {
+    "en-US": "The newspaper image is ready to save and share.",
+    "ko-KR": "신문 이미지가 생성되었습니다. 저장하고 공유할 수 있습니다.",
+    "zh-TW": "報紙圖片已產生，可以儲存分享。"
+  },
+  "周报导航": {
+    "en-US": "Report navigation",
+    "ko-KR": "주간 신문 탐색",
+    "zh-TW": "週報導覽"
+  },
+  "第 {0} 周赛事总览": {
+    "en-US": "Week {0} overview",
+    "ko-KR": "{0}주차 대회 개요",
+    "zh-TW": "第 {0} 週賽事總覽"
+  },
+  "周报归档": {
+    "en-US": "Report archive",
+    "ko-KR": "주간 신문 보관함",
+    "zh-TW": "週報封存"
+  },
+  "本周主新闻": {
+    "en-US": "This week’s lead",
+    "ko-KR": "이번 주 주요 소식",
+    "zh-TW": "本週主新聞"
+  },
+  "场对阵": {
+    "en-US": "matches",
+    "ko-KR": "경기",
+    "zh-TW": "場對陣"
+  },
+  "名出场选手": {
+    "en-US": "players",
+    "ko-KR": "명 출전 선수",
+    "zh-TW": "名出場選手"
+  },
+  "这一周，等待赛果确认。": {
+    "en-US": "This week awaits confirmed results.",
+    "ko-KR": "이번 주 경기 결과 확인을 기다리고 있습니다.",
+    "zh-TW": "這一週，等待賽果確認。"
+  },
+  "赛场记录": {
+    "en-US": "Match record",
+    "ko-KR": "경기 기록",
+    "zh-TW": "賽場紀錄"
+  },
+  "本期尚无已确认赛果。新闻将在比赛记录确认后生成。": {
+    "en-US": "News will appear when this week’s results are confirmed.",
+    "ko-KR": "확인된 경기 결과가 없습니다. 경기 기록이 확인되면 소식이 생성됩니다.",
+    "zh-TW": "本期尚無已確認賽果。新聞將在比賽紀錄確認後產生。"
+  },
+  "赛场短讯": {
+    "en-US": "Match briefs",
+    "ko-KR": "경기 단신",
+    "zh-TW": "賽場短訊"
+  },
+  "本期暂无其他赛果。": {
+    "en-US": "No other results this week.",
+    "ko-KR": "이번 호에 다른 경기 결과가 없습니다.",
+    "zh-TW": "本期暫無其他賽果。"
+  },
+  "逐图赛果": {
+    "en-US": "Map results",
+    "ko-KR": "맵별 결과",
+    "zh-TW": "逐圖賽果"
+  },
+  "黄色 / 左队胜 · 黑色 / 右队胜": {
+    "en-US": "Yellow / left-team win · black / right-team win",
+    "ko-KR": "노란색 / 왼쪽 팀 승리 · 검은색 / 오른쪽 팀 승리",
+    "zh-TW": "黃色 / 左隊勝 · 黑色 / 右隊勝"
+  },
+  "本周全部比赛记录": {
+    "en-US": "All weekly match records",
+    "ko-KR": "이번 주 전체 경기 기록",
+    "zh-TW": "本週全部比賽紀錄"
+  },
+  "样报": {
+    "en-US": "Sample",
+    "ko-KR": "견본",
+    "zh-TW": "樣報"
+  },
+  "回到第 {0} 周": {
+    "en-US": "Back to week {0}",
+    "ko-KR": "{0}주차로 돌아가기",
+    "zh-TW": "回到第 {0} 週"
+  },
+  "周报比赛赛段": {
+    "en-US": "Report cycles",
+    "ko-KR": "주간 신문 대회 사이클",
+    "zh-TW": "週報比賽賽段"
+  },
+  "正在读取周报…": {
+    "en-US": "Loading the issue…",
+    "ko-KR": "주간 신문을 불러오는 중…",
+    "zh-TW": "正在讀取週報…"
+  },
+  "周报暂时无法读取": {
+    "en-US": "The issue could not be loaded",
+    "ko-KR": "주간 신문을 불러올 수 없습니다",
+    "zh-TW": "週報暫時無法讀取"
+  },
+  "本期周报尚未出刊": {
+    "en-US": "This issue has not been published",
+    "ko-KR": "이번 호는 아직 발행되지 않았습니다",
+    "zh-TW": "本期週報尚未出刊"
+  },
+  "请稍后刷新重试。": {
+    "en-US": "Please refresh and retry.",
+    "ko-KR": "잠시 후 새로고침하여 다시 시도해 주세요.",
+    "zh-TW": "請稍後重新整理再試。"
+  },
+  "每周二 12:00（UTC+8）出刊。": {
+    "en-US": "Published Tuesdays at 12:00 (UTC+8).",
+    "ko-KR": "매주 화요일 12:00(UTC+8)에 발행됩니다.",
+    "zh-TW": "每週二 12:00（UTC+8）出刊。"
+  },
+  "补刊": {
+    "en-US": "Backfilled",
+    "ko-KR": "추가 발행",
+    "zh-TW": "補刊"
+  },
+  "本周兼任多个岗位": {
+    "en-US": "Played multiple roles this week",
+    "ko-KR": "이번 주 여러 역할로 출전",
+    "zh-TW": "本週兼任多個崗位"
+  },
+  "来自已确认地图的记录，不代表荣誉评选。": {
+    "en-US": "Confirmed map records, not award selections.",
+    "ko-KR": "확인된 맵 기록이며 수상 선정 결과가 아닙니다.",
+    "zh-TW": "來自已確認地圖的紀錄，不代表榮譽評選。"
+  },
+  "决胜图亮点": {
+    "en-US": "Deciding-map highlight",
+    "ko-KR": "최종 맵 하이라이트",
+    "zh-TW": "決勝圖亮點"
+  },
+  "单图数据亮点": {
+    "en-US": "Map stat highlight",
+    "ko-KR": "단일 맵 기록 하이라이트",
+    "zh-TW": "單圖數據亮點"
+  },
+  "{0}：{1} · 第 {2} 图": {
+    "en-US": "{0}: {1} · Map {2}",
+    "ko-KR": "{0}: {1} · {2}번째 맵",
+    "zh-TW": "{0}：{1} · 第 {2} 圖"
+  },
+  "末两图逆转": {
+    "en-US": "Final-two-map comeback",
+    "ko-KR": "마지막 두 맵 역전승",
+    "zh-TW": "末兩圖逆轉"
+  },
+  "五图全胜": {
+    "en-US": "Five-map sweep",
+    "ko-KR": "5맵 전승",
+    "zh-TW": "五圖全勝"
+  },
+  "四图连胜": {
+    "en-US": "Four-map streak",
+    "ko-KR": "4맵 연승",
+    "zh-TW": "四圖連勝"
   }
 }
