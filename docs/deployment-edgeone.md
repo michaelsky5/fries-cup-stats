@@ -3,9 +3,37 @@
 ## Registration maintenance release candidate (2026-10-21)
 
 Production is `https://stats.fries-cup.com`, with the account/public API on
-`https://admin.fries-cup.com`. The previously recorded EdgeOne project is
-`makers-qbtsugmahw7a`; refresh its domain and deployment record in the console
-before publishing. A matching homepage does not establish the function version.
+`https://admin.fries-cup.com`. Read-only console verification on 2026-10-21
+confirmed project `makers-qbtsugmahw7a`, production deployment `dp9z9pmjlri0`,
+source `63eae80cacf442e57774c1ccfed758967166a636`, and one Edge Functions route
+`/api/*`. That associates the function route with the deployment; the old
+function has no embedded digest to prove its bytes independently.
+
+Production automatically deploys `main`; preview branch deployment is disabled.
+The current Git build uses `npm ci`, `npm run build`, output `dist`, and Node
+22.11.0. These console settings have not been changed. A read-only check of the
+version selector also confirmed that 24.18.0 is available. **Do not merge this
+candidate before coordinated acceptance**: `main` currently deploys automatically.
+
+The [CLI documentation](https://pages.edgeone.ai/document/edgeone-cli) explicitly
+limits local artifact deployment into an existing project to direct-upload
+projects. The existing Git project cannot be assumed to accept the retained CI
+package. Keep the current project/domain and use its Git build for this candidate:
+`edgeone.json` selects Node 24.18.0 and `npm run build:edgeone`. This builds a clean
+release and then copies its stamped catch-all function to the repository-root
+function path used by EdgeOne. The command deliberately modifies that generated
+function in the disposable build checkout; do not run it in a normal development
+checkout. Ordinary `build:release` leaves source files unchanged.
+
+At the approved cutover, suspend automatic production deployment before merging,
+validate the Git build/function discovery in a provider preview, and then deploy
+the approved commit with the coordinated System release. Re-enable automatic
+deployment only after that release path has been accepted. Provider preview and
+production have not yet been exercised for this candidate. Local staging alone
+does not prove the provider's function discovery/build order.
+
+Refresh the domain and deployment record again immediately before publishing.
+A matching homepage does not establish the function version.
 
 Build the complete production package from a clean, committed isolated checkout:
 
@@ -30,14 +58,20 @@ variables. An unstamped source build reports 503 instead of claiming an identity
 The packaging verifier rejects an altered static file, proxy or configuration.
 
 After the approved deployment, compare **JSON bodies** from both
-`/release-version.json` and `/api/release` with the retained CI package; a 200
-SPA HTML fallback is a failure. Also compare the deployed `index.html` bytes,
-check its referenced hashed assets, and record the control-plane deployment ID.
+`/release-version.json` and `/api/release`; they must match each other. A 200
+SPA HTML fallback is a failure. Their commit must match the approved CI commit,
+and proxy/config digests must match its source. The provider performs a separate
+build, so its `builtAt` is expected to differ from CI; do not claim that it is a
+promotion of the exact CI artifact. Compare static-tree/index/asset digests to
+the CI package where deterministic, retain the provider deployment/build identity,
+and investigate discrepancies before acceptance. If exact CI-artifact promotion
+becomes mandatory, use a separately approved direct-upload project and domain
+cutover; do not silently create one or change the current domain.
 Exercise public conditional reads, login/cookies, write Origin checks and the
 room UI against the deployed hostname. These checks establish different parts
 of the release; a local package is not production acceptance.
 
-Publish the package root, with `index.html`, `edge-functions/` and `edgeone.json`
+For an approved direct-upload project, publish the package root, with `index.html`, `edge-functions/` and `edgeone.json`
 at the top level. EdgeOne's [direct upload documentation](https://pages.edgeone.ai/document/direct-upload)
 supports this layout; its [configuration guide](https://pages.edgeone.ai/document/edgeone-json)
 describes static/function matching before the SPA fallback. Keep the prior

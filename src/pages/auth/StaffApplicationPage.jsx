@@ -22,12 +22,16 @@ export default function StaffApplicationPage() {
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [attempt, setAttempt] = useState(0)
   const pending = useRef(false), heading = useRef(null)
   useEffect(() => {
+    const previousTitle = document.title
+    document.title = `${translateUiText('工作人员申请', locale)} | ${translateUiText('薯条杯', locale)}`
+    return () => { document.title = previousTitle }
+  }, [locale])
+  useEffect(() => {
     const changed = () => { const next = credential(); if (next) { setToken(next); setStep('form') } }
     window.addEventListener('hashchange', changed)
     return () => window.removeEventListener('hashchange', changed)
   }, [])
   useEffect(() => {
-    document.title = '工作人员申请 | 薯条杯'
     window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search)
     const controller = new AbortController()
     setContext(null); setError('')

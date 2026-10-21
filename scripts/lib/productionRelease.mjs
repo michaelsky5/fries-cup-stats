@@ -57,3 +57,18 @@ export function verifyProductionRelease(out) {
   assert.deepEqual(readdirSync(path.join(out, 'edge-functions/api')), ['[[path]].js'])
   return identity
 }
+
+// EdgeOne Git builds discover functions at the repository root, whereas direct
+// uploads discover them in the uploaded package. Only its explicit Git build
+// entry point stages this generated stamp in the disposable provider checkout.
+export function stageGitDeploymentFunction(root, out, expectedCommit) {
+  const identity = verifyProductionRelease(out)
+  assert.equal(identity.sourceCommit, expectedCommit, 'Release does not match the Git checkout')
+  const target = path.join(root, names.proxy)
+  assert.ok(lstatSync(target).isFile() && !lstatSync(target).isSymbolicLink(), 'Expected the original root function file')
+  assert.equal(hash(readFileSync(target)), identity.proxySourceSha256, 'Root function differs from the packaged source')
+  assert.equal(hash(readFileSync(path.join(root, names.config))), identity.edgeConfigSha256, 'Root Edge configuration differs from the package')
+  cpSync(path.join(out, names.proxy), target)
+  assert.equal(hash(readFileSync(target)), hash(readFileSync(path.join(out, names.proxy))))
+  return identity
+}

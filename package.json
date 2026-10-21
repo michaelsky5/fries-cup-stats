@@ -11,6 +11,7 @@
     "build": "vite build",
     "prebuild:release": "npm run prebuild",
     "build:release": "node scripts/buildProductionRelease.mjs",
+    "build:edgeone": "npm run build:release && node scripts/stageEdgeOneGitFunction.mjs",
     "test:release-package": "node --test scripts/productionRelease.test.mjs",
     "build:locales": "node scripts/buildLocaleCatalogs.mjs",
     "test:locales": "node scripts/assertPublicLocales.mjs",

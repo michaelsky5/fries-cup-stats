@@ -30,6 +30,11 @@ export default function StaffInvitationPage() {
   const pending = useRef(false)
   const heading = useRef(null)
   useEffect(() => {
+    const previousTitle = document.title
+    document.title = `${translateUiText('工作人员邀请', locale)} | ${translateUiText('薯条杯', locale)}`
+    return () => { document.title = previousTitle }
+  }, [locale])
+  useEffect(() => {
     const changed = () => {
       const next = readCredential()
       if (!next.token) return
@@ -40,7 +45,6 @@ export default function StaffInvitationPage() {
     return () => window.removeEventListener('hashchange', changed)
   }, [])
   useEffect(() => {
-    document.title = '工作人员邀请 | 薯条杯'
     window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search)
     if (!credential.token) return
     const controller = new AbortController()

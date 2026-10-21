@@ -1056,6 +1056,12 @@
   .shell:global([data-design='kpr'][data-design-edition='hybrid']):has([data-mobile-season-archive]) .dataNotice { margin: 8px 16px 0; }
 }
 
+/* Keep the event switch and 44px controls clear at narrow phone widths. */
+@media (max-width: 360px) {
+  :global([data-design='kpr'][data-design-edition='hybrid']) [data-phone-navigation='true'] .brandLink { grid-template-columns: 24px; min-width: 44px; min-height: 44px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) [data-phone-navigation='true'] .brandTypeLockup { display: none; }
+}
+
 /* The archive owns its footer; its final surface also carries the phone dock clearance. */
 .shell:global([data-design='kpr'][data-design-edition='hybrid'][data-archive-home='true']) { padding-bottom: 0; }
 :global([data-design='kpr'][data-design-edition='hybrid'][data-archive-home='true']) .pageFrame { padding-bottom: 0; }
