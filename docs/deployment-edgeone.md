@@ -1,5 +1,51 @@
 # Stats EdgeOne Deployment
 
+## Registration maintenance release candidate (2026-10-21)
+
+Production is `https://stats.fries-cup.com`, with the account/public API on
+`https://admin.fries-cup.com`. The previously recorded EdgeOne project is
+`makers-qbtsugmahw7a`; refresh its domain and deployment record in the console
+before publishing. A matching homepage does not establish the function version.
+
+Build the complete production package from a clean, committed isolated checkout:
+
+```powershell
+npm ci
+npm run test:release-package
+npm run build:release -- .codex-tmp/production-release
+node scripts/assertPublicBundle.mjs .codex-tmp/production-release
+```
+
+Use a fresh output path. This command removes inherited `VITE_*` preview flags,
+ignores local env files, uses the same-origin `/api/platform` path, and packages
+the static frontend, `edgeone.json` and the existing catch-all edge function
+together. It does not upload or deploy. The final combined CI builds the same
+package at `dist/`; it must run after this maintenance candidate is complete.
+
+`release-version.json` records the actual Git commit, build time, static file
+count/content digest, original proxy source digest and EdgeOne configuration
+digest. The packaged `/api/release` function returns that same identity with
+no-store headers, without touching the account API or exposing environment
+variables. An unstamped source build reports 503 instead of claiming an identity.
+The packaging verifier rejects an altered static file, proxy or configuration.
+
+After the approved deployment, compare **JSON bodies** from both
+`/release-version.json` and `/api/release` with the retained CI package; a 200
+SPA HTML fallback is a failure. Also compare the deployed `index.html` bytes,
+check its referenced hashed assets, and record the control-plane deployment ID.
+Exercise public conditional reads, login/cookies, write Origin checks and the
+room UI against the deployed hostname. These checks establish different parts
+of the release; a local package is not production acceptance.
+
+Publish the package root, with `index.html`, `edge-functions/` and `edgeone.json`
+at the top level. EdgeOne's [direct upload documentation](https://pages.edgeone.ai/document/direct-upload)
+supports this layout; its [configuration guide](https://pages.edgeone.ai/document/edgeone-json)
+describes static/function matching before the SPA fallback. Keep the prior
+deployment available and roll static assets and functions back together.
+
+The older migration notes below are background instructions. Replace their
+example domains with the verified current domains above.
+
 This runbook moves only `fries-cup-stats` from Vercel to Tencent Cloud EdgeOne. The System admin site, API, PostgreSQL, and persistent uploads remain on the existing Tencent server.
 
 ## Target routing

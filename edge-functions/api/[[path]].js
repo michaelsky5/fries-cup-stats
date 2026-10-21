@@ -2,6 +2,7 @@
 // FRIES_PLATFORM_ORIGIN to the isolated staging backend.
 const PLATFORM_ORIGIN = globalThis.process?.env?.FRIES_PLATFORM_ORIGIN || 'https://admin.fries-cup.com'
 const PUBLIC_ORIGIN = 'https://admin.fries-cup.com'
+const RELEASE_IDENTITY = null // stamped by the production release builder
 const MAX_BODY_BYTES = 1024 * 1024
 const READ_METHODS = new Set(['GET', 'HEAD', 'OPTIONS'])
 const METHODS = new Set([...READ_METHODS, 'POST', 'PUT', 'PATCH', 'DELETE'])
@@ -227,6 +228,11 @@ export function localeResponse({ request }) {
 }
 
 export default function onRequest(context) {
+  if (new URL(context.request.url).pathname === '/api/release') {
+    const headers = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'private, no-store, max-age=0', 'CDN-Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }
+    if (!['GET', 'HEAD'].includes(context.request.method)) return new Response(null, { status: 405, headers: { ...headers, Allow: 'GET, HEAD' } })
+    return new Response(context.request.method === 'HEAD' ? null : JSON.stringify(RELEASE_IDENTITY || { error: 'RELEASE_IDENTITY_UNAVAILABLE' }), { status: RELEASE_IDENTITY ? 200 : 503, headers })
+  }
   if (new URL(context.request.url).pathname === '/api/locale') return localeResponse(context)
   return proxyRequest(context.request, {
     cache: globalThis.caches?.default,
