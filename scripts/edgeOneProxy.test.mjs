@@ -65,6 +65,36 @@ test('public snapshots use production with query intact, without credentials or 
   assert.deepEqual(await result.json(), { version: 30 })
 })
 
+test('the deployed EdgeOne entry reads context.env for isolated accounts and keeps public snapshots on production', async () => {
+  const originalFetch = globalThis.fetch
+  const calls = []
+  globalThis.fetch = async (url, options) => {
+    calls.push({ url, options })
+    return json({ ok: true })
+  }
+  try {
+    const env = { FRIES_PLATFORM_ORIGIN: 'https://test-admin.fries-cup.com' }
+    const response = await edgeRequest({ env, request: request('/api/platform/me/profile', {
+      method: 'PATCH', headers: { origin, cookie: 'session=synthetic', 'content-type': 'application/json' },
+      body: JSON.stringify({ displayName: 'Synthetic preview' })
+    }) })
+    assert.equal(response.status, 200)
+    assert.equal(response.headers.get('x-fries-backend'), 'preview')
+    assert.equal(calls[0].url, 'https://test-admin.fries-cup.com/api/me/profile')
+    assert.equal(calls[0].options.headers.get('cookie'), 'session=synthetic')
+    assert.equal(calls[0].options.headers.get('origin'), origin)
+    await edgeRequest({ env, request: request(snapshot, { headers: { cookie: 'session=synthetic' } }) })
+    assert.equal(calls[1].url, 'https://admin.fries-cup.com/api/public/seasons/QGCS4/publish/latest/data')
+    assert.equal(calls[1].options.headers.get('cookie'), null)
+    const rejected = await edgeRequest({ env: { FRIES_PLATFORM_ORIGIN: 'https://unreviewed.example.test' }, request: request('/api/platform/me/profile') })
+    assert.equal(rejected.status, 503)
+    assert.equal((await rejected.json()).error, 'PLATFORM_ORIGIN_INVALID')
+    assert.equal(calls.length, 2, 'Invalid configuration must not forward credentials or fall back to production')
+  } finally {
+    globalThis.fetch = originalFetch
+  }
+})
+
 test('only the named synthetic weekly publication uses staging and remains public read-only', async () => {
   for (const [seasonId, upstream] of [['WEBWEEK20260914', 'test-admin'], ['WEBWEEK20260914-OTHER', 'admin']]) {
     const path = `/api/admin-public/seasons/${seasonId}/publish/latest/data`

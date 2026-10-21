@@ -1,5 +1,6 @@
 // Production defaults to the live account API. Preview deployments can set
-// FRIES_PLATFORM_ORIGIN to the isolated staging backend.
+// FRIES_PLATFORM_ORIGIN to the isolated staging backend. EdgeOne supplies this
+// through context.env; process.env is only the local Node fallback.
 const PLATFORM_ORIGIN = globalThis.process?.env?.FRIES_PLATFORM_ORIGIN || 'https://admin.fries-cup.com'
 const PUBLIC_ORIGIN = 'https://admin.fries-cup.com'
 const RELEASE_IDENTITY = null // stamped by the production release builder
@@ -234,7 +235,13 @@ export default function onRequest(context) {
     return new Response(context.request.method === 'HEAD' ? null : JSON.stringify(RELEASE_IDENTITY || { error: 'RELEASE_IDENTITY_UNAVAILABLE' }), { status: RELEASE_IDENTITY ? 200 : 503, headers })
   }
   if (new URL(context.request.url).pathname === '/api/locale') return localeResponse(context)
+  const platformOrigin = context.env?.FRIES_PLATFORM_ORIGIN ?? PLATFORM_ORIGIN
+  if (!['https://admin.fries-cup.com', 'https://test-admin.fries-cup.com'].includes(platformOrigin)) {
+    return problem(503, 'PLATFORM_ORIGIN_INVALID', '账号服务配置暂时不可用。')
+  }
   return proxyRequest(context.request, {
+    platformOrigin,
+    environment: platformOrigin === PUBLIC_ORIGIN ? 'production' : 'preview',
     cache: globalThis.caches?.default,
     waitUntil: context.waitUntil ? task => context.waitUntil(task) : undefined
   })

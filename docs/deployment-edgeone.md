@@ -35,6 +35,19 @@ does not prove the provider's function discovery/build order.
 Refresh the domain and deployment record again immediately before publishing.
 A matching homepage does not establish the function version.
 
+The provider generates an untracked `.edgeone/` work directory before invoking
+the build. Ignore only that generated directory; retain the release builder's
+clean tracked/untracked source check. A real preview caught this difference from
+the local Git build on 2026-10-21 (`dpirztx6qrm3`); no production deployment ran.
+
+For isolated account acceptance, set `FRIES_PLATFORM_ORIGIN` in the **preview
+environment only** after reviewing the staging backend and allowed Origin.
+The entry reads EdgeOne's documented `context.env`; Node's `process.env` is only
+a local fallback. The reviewed account origins are `https://admin.fries-cup.com`
+and `https://test-admin.fries-cup.com`; an unknown value fails closed without
+forwarding credentials or falling back to production. Published snapshots still
+use production anonymously. See the [Edge Functions context contract](https://pages.edgeone.ai/document/edge-functions).
+
 Build the complete production package from a clean, committed isolated checkout:
 
 ```powershell
