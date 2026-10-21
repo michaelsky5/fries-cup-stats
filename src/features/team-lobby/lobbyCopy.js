@@ -301,6 +301,12 @@ const rows = [
   ['请到我的组队核对公开预览并发布招募。正式参赛另行报名。', 'Review the public preview and publish recruitment in My lobby. Register for events separately.', '내 팀 찾기에서 공개 미리보기를 확인하고 모집을 게시하세요. 대회 신청은 별도입니다.', '請到我的組隊核對公開預覽並發布招募。正式參賽另行報名。'],
 ]
 
+rows.push(
+  ['目前分批开放，每天最多新增 {0} 个账号；邮件额度不足时会提前暂停。已有账号仍可登录。', 'Registration is opening in batches, with up to {0} new accounts per day. It may pause earlier when email capacity is low. Existing accounts can still sign in.', '현재 하루 최대 {0}개의 새 계정을 순차적으로 받고 있습니다. 이메일 발송 한도가 부족하면 조기 중단될 수 있습니다. 기존 계정은 계속 로그인할 수 있습니다.', '目前分批開放，每天最多新增 {0} 個帳號；郵件額度不足時會提前暫停。已有帳號仍可登入。'],
+  ['本批注册名额已用完，已有账号仍可登录。', 'This registration batch is full. Existing accounts can still sign in.', '이번 가입 정원이 마감되었습니다. 기존 계정은 계속 로그인할 수 있습니다.', '本批註冊名額已用完，已有帳號仍可登入。'],
+  ['邮件额度暂时不足，请稍后重试。', 'Email capacity is temporarily limited. Please try again later.', '이메일 발송 한도가 일시적으로 부족합니다. 나중에 다시 시도해 주세요.', '郵件額度暫時不足，請稍後重試。'],
+  ['可于 {0} 后重试。', 'Try again after {0}.', '{0} 이후 다시 시도해 주세요.', '可於 {0} 後重試。']
+)
 export const lobbyCopyRows = rows
 const copy = new Map(rows.map(([source, en, ko, tw]) => [source, { 'en-US': en, 'ko-KR': ko, 'zh-TW': tw }]))
 export function lobbyText(source, values = [], locale = getActiveLocale()) {

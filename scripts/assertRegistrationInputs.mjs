@@ -7,6 +7,14 @@ import { translateUiText } from '../src/lib/uiText.js'
 
 await Promise.all(['en-US', 'ko-KR', 'zh-TW'].map(ensureUiLocale))
 
+test('join registration quota feedback is translated in every supported locale', () => {
+  for (const locale of ['en-US', 'ko-KR', 'zh-TW']) {
+    for (const source of ['本批注册名额已用完，请按提示时间重试。已有账号仍可登录。', '当前邮件额度需优先保留给账号安全服务，请按提示时间重试。']) {
+      assert.notEqual(translateRegistrationError(source, locale), source)
+    }
+  }
+})
+
 test('image detection uses file content, including files without MIME metadata', () => {
   const png = Buffer.from('89504e470d0a1a0a0000000d49484452', 'hex')
   const jpeg = Buffer.from('ffd8ffe000104a464946000101', 'hex')

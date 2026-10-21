@@ -54,6 +54,10 @@ try {
   responseBody = { selfRegistrationEnabled: false, emailVerificationEnabled: false }
   assert.deepEqual(await fetchAuthConfig(), responseBody)
   assert.equal(requests.at(-1).url, '/api/platform/auth/config')
+  responseBody = { selfRegistrationEnabled: true, emailVerificationEnabled: true, registrationDailyLimit: 20 }
+  assert.deepEqual(await fetchAuthConfig(), responseBody)
+  responseBody.registrationDailyLimit = 'invalid'
+  assert.equal(Object.hasOwn(await fetchAuthConfig(), 'registrationDailyLimit'), false)
   responseBody = { selfRegistrationEnabled: 'false', emailVerificationEnabled: true }
   await assert.rejects(fetchAuthConfig(), /配置/)
 

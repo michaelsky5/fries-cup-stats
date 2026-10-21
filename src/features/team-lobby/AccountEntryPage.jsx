@@ -89,6 +89,7 @@ function AccountForm({ mode }) {
             <label>{t("密码")}<input type="password" autoComplete={mode === 'register' ? 'new-password' : 'current-password'} required minLength={mode === 'register' ? 8 : 1} {...field('password')} /></label>
             {mode === 'register' && <label>{t("再次输入密码")}<input type="password" autoComplete="new-password" required minLength={8} {...field('confirmation')} /></label>}
             {mode === 'register' && <p>{t("验证邮箱后可使用已开放的大厅功能；正式参赛另行报名。QQ 在每次联系时填写并单独授权。")}</p>}
+            {mode === 'register' && auth.authConfig?.selfRegistrationEnabled && auth.authConfig?.registrationDailyLimit > 0 && <p role="status">{t("目前分批开放，每天最多新增 {0} 个账号；邮件额度不足时会提前暂停。已有账号仍可登录。", [auth.authConfig.registrationDailyLimit])}</p>}
             {mode === 'register' && auth.authConfig?.selfRegistrationEnabled === false && <p role="status">{t("普通注册暂未开放，已有账号仍可登录。")}</p>}
             <button className={styles.primary} disabled={busy || !auth.authConfig || (mode === 'register' && !auth.authConfig.selfRegistrationEnabled)}>{busy ? t("正在处理…") : mode === 'register' ? t("创建账号") : t("登录")}</button>
             <div className={styles.actions}><Link to={accountPath(mode === 'register' ? 'login' : 'register')}>{mode === 'register' ? t("已有账号，去登录") : t("没有账号，创建账号")}</Link><Link to={accountPath('recover')}>{t("忘记密码")}</Link></div>

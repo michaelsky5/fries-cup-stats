@@ -13,6 +13,8 @@ test('registration conflicts and uncertain submissions have actionable distinct 
   assert.match(accountFailure({ data: { error: 'USERNAME_EXISTS' } }), /换一个/)
   assert.match(accountFailure({ data: { outcomeUnknown: true } }), /先查看账号或本人记录/)
   assert.match(accountFailure({ name: 'TypeError' }), /暂时无法确认/)
+  assert.match(accountFailure({ data: { error: 'REGISTRATION_CAPACITY_REACHED', retryAfter: 60 } }), /已有账号仍可登录.*UTC\+8/)
+  assert.match(accountFailure({ data: { code: 'EMAIL_QUOTA_RESERVED', retryAfter: 'invalid' } }), /邮件额度暂时不足/)
 })
 test('lobby labels retain non-official forming and lifecycle meaning', () => {
   assert.equal(roleLabel('SUP'), '支援')

@@ -23,6 +23,15 @@ export function leavesLobbyPage(current, next) {
   return withoutLanguage(current) !== withoutLanguage(next)
 }
 export function accountFailure(error) {
+  const quotaCode = error.data?.error || error.data?.code
+  if (['REGISTRATION_CAPACITY_REACHED', 'EMAIL_QUOTA_RESERVED'].includes(quotaCode)) {
+    const message = quotaCode === 'REGISTRATION_CAPACITY_REACHED'
+      ? t("本批注册名额已用完，已有账号仍可登录。")
+      : t("邮件额度暂时不足，请稍后重试。")
+    const seconds = Number(error.data?.retryAfter)
+    return Number.isFinite(seconds) && seconds > 0 && seconds <= 32 * 86400
+      ? message + ' ' + t("可于 {0} 后重试。", [lobbyDate(Date.now() + seconds * 1000)]) : message
+  }
   const messages = { USER_EXISTS: t("这个邮箱已注册，请登录或找回原账号。"), USERNAME_EXISTS: t("用户名已被使用，请换一个。"), INVALID_USERNAME: t("用户名需为 2—24 位字母、数字、下划线、短横线或点。"), INVALID_CREDENTIALS: t("邮箱或密码不正确。"), REGISTRATION_DISABLED: t("普通注册暂未开放，已有账号仍可登录。"), RATE_LIMITED: t("操作较频繁，请按提示稍后重试。") }
   if (error.data?.outcomeUnknown || error.name === 'TypeError') return t("暂时无法确认处理结果。请先查看账号或本人记录，再决定是否重试。")
   return messages[error.data?.error] || error.message || t("请求未完成，请稍后重试。")

@@ -8,7 +8,9 @@ export async function fetchAuthConfig(options = {}) {
   if (typeof data?.selfRegistrationEnabled !== 'boolean' || typeof data?.emailVerificationEnabled !== 'boolean') {
     throw new Error('账号服务配置暂时不可用，请稍后重试。')
   }
-  return { selfRegistrationEnabled: data.selfRegistrationEnabled, emailVerificationEnabled: data.emailVerificationEnabled }
+  return { selfRegistrationEnabled: data.selfRegistrationEnabled, emailVerificationEnabled: data.emailVerificationEnabled,
+    ...(Number.isInteger(data.registrationDailyLimit) && data.registrationDailyLimit > 0 && data.registrationDailyLimit <= 10000
+      ? { registrationDailyLimit: data.registrationDailyLimit } : {}) }
 }
 
 export function clearStoredAuth() {
