@@ -121,7 +121,7 @@ const rows = [
   ['重试', 'Retry', '다시 시도', '重試'],
   ['正在核对验证链接…', 'Checking verification link…', '인증 링크 확인 중…', '正在核對驗證連結…'],
   ['邮箱已验证', 'Email verified', '이메일 인증 완료', '電子郵件已驗證'],
-  ['现在可以发布求队卡或申请筹建招募。', 'You can now publish a player card or apply to form a team.', '이제 팀 찾기 카드를 게시하거나 팀 구성을 신청할 수 있습니다.', '現在可以發布求隊卡或申請籌建招募。'],
+  ['现在可以继续使用已开放的账号功能。', 'You can now continue using the available account features.', '이제 현재 제공되는 계정 기능을 계속 사용할 수 있습니다.', '現在可以繼續使用已開放的帳號功能。'],
   ['继续原来的操作', 'Continue where you left off', '이전 작업 계속하기', '繼續原來的操作'],
   ['登录后继续', 'Sign in to continue', '로그인 후 계속', '登入後繼續'],
   ['账号已创建，请验证邮箱', 'Account created. Please verify your email.', '계정이 생성되었습니다. 이메일을 인증하세요.', '帳號已建立，請驗證電子郵件'],

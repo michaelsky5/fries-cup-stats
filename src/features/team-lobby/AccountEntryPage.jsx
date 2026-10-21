@@ -74,7 +74,7 @@ function AccountForm({ mode }) {
       {auth.authConfigError && <p role="alert" className={styles.error}>{t("账号配置暂时无法读取。")}<button onClick={auth.retryAuthConfig}>{t("重试")}</button></p>}
       {['recover', 'reset-password'].includes(mode) ? <PasswordRecoveryPanel recovery={recovery} locale={uiLocale} deliveryEnabled={auth.authConfig?.emailVerificationEnabled === true} configLoading={!auth.authConfig && !auth.authConfigError} configError={auth.authConfigError} retryConfig={auth.retryAuthConfig} onLogin={() => navigate(accountPath('login'))} />
         : mode === 'verify-email' ? <div className={styles.stack}>
-          {auth.emailVerificationState.status === 'VERIFYING' ? <p role="status">{t("正在核对验证链接…")}</p> : verified ? <><h2>{t("邮箱已验证")}</h2><p>{t("现在可以发布求队卡或申请筹建招募。")}</p><Link className={styles.primary} to={auth.user ? destination : accountPath('login')}>{auth.user ? t("继续原来的操作") : t("登录后继续")}</Link></>
+          {auth.emailVerificationState.status === 'VERIFYING' ? <p role="status">{t("正在核对验证链接…")}</p> : verified ? <><h2>{t("邮箱已验证")}</h2><p>{t("现在可以继续使用已开放的账号功能。")}</p><Link className={styles.primary} to={auth.user ? destination : accountPath('login')}>{auth.user ? t("继续原来的操作") : t("登录后继续")}</Link></>
             : <><h2>{auth.user ? t("账号已创建，请验证邮箱") : t("登录后查看验证状态")}</h2>{auth.user && <p>{auth.user.email}</p>}
               <p>{auth.emailVerificationState.result?.queued ? t("账号已保留，验证邮件正在排队发送。请稍后检查收件箱与垃圾邮件。") : auth.emailVerificationState.result?.delivered ? t("验证邮件已提交发送，请检查收件箱与垃圾邮件。") : t("验证邮件的发送与账号创建分别记录。尚未收到时，可登录本人账号重新发送。")}</p>
               {auth.emailVerificationState.status === 'ERROR' && <p role="alert" className={styles.error}>{t("验证链接无效或已过期，请登录本人账号后重新发送。")}</p>}
@@ -90,9 +90,9 @@ function AccountForm({ mode }) {
             {mode === 'register' && <label>{t("再次输入密码")}<input type="password" autoComplete="new-password" required minLength={8} {...field('confirmation')} /></label>}
             {mode === 'register' && <p>{t("验证邮箱后可使用已开放的大厅功能；正式参赛另行报名。QQ 在每次联系时填写并单独授权。")}</p>}
             {mode === 'register' && auth.authConfig?.selfRegistrationEnabled && auth.authConfig?.registrationDailyLimit > 0 && <p role="status">{t("目前分批开放，每天最多新增 {0} 个账号；邮件额度不足时会提前暂停。已有账号仍可登录。", [auth.authConfig.registrationDailyLimit])}</p>}
-            {mode === 'register' && auth.authConfig?.selfRegistrationEnabled === false && <p role="status">{t("普通注册暂未开放，已有账号仍可登录。")}</p>}
+            {auth.authConfig?.selfRegistrationEnabled === false && <p role="status">{t("普通注册暂未开放，已有账号仍可登录。")}</p>}
             <button className={styles.primary} disabled={busy || !auth.authConfig || (mode === 'register' && !auth.authConfig.selfRegistrationEnabled)}>{busy ? t("正在处理…") : mode === 'register' ? t("创建账号") : t("登录")}</button>
-            <div className={styles.actions}><Link to={accountPath(mode === 'register' ? 'login' : 'register')}>{mode === 'register' ? t("已有账号，去登录") : t("没有账号，创建账号")}</Link><Link to={accountPath('recover')}>{t("忘记密码")}</Link></div>
+            <div className={styles.actions}>{(mode === 'register' || auth.authConfig?.selfRegistrationEnabled === true) && <Link to={accountPath(mode === 'register' ? 'login' : 'register')}>{mode === 'register' ? t("已有账号，去登录") : t("没有账号，创建账号")}</Link>}<Link to={accountPath('recover')}>{t("忘记密码")}</Link></div>
           </form>}
     </div>
   </section>
