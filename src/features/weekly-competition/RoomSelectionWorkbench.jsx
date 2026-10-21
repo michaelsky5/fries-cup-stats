@@ -19,14 +19,10 @@ export function MapSelectionWorkbench({ data, draft, edit, send, disabled, mapTy
   const locked = disabled || data.phaseClock?.enabled && data.phaseClock.stage?.kind === 'MAP' && data.phaseClock.status !== 'WAITING' && mapSeconds === 0
   const timeout = data.phaseClock?.mapTimeouts?.latest
   const timedHere = timeout?.mapOrder === opening.mapOrder
-  const timeoutHint = timedHere ? timeout.count === 1 ? '首次选图超时警告 · 补时 60 秒' : '本图 Ban 权已取消 · 补时 60 秒' : '超时：警告 → 取消 Ban → 随机地图'
+  const timeoutHint = timeout?.count === 1 ? '首次选图超时警告 · 补时 60 秒' : '本图 Ban 权已取消 · 补时 60 秒'
   return <div className={styles.mapStage} data-selection-workbench="map">
     <div className={styles.intro}><strong>{t('{0} 选择本图', [teamName(chooser)])}</strong>{!data.phaseClock?.enabled && <span>{t(later ? '选定地图后，双方同时确认首发。' : '首图固定占领要点，选定后双方同时确认首发。')}</span>}</div>
-    {data.phaseClock?.enabled && <div className={styles.timeoutNotice} data-map-timeout-notice data-penalty={Boolean(timedHere)} role="note" aria-label={t('选图时限与超时处罚')}>
-      <strong>{t(timedHere ? timeoutHint : '选图时限与超时处罚')}</strong>
-      {data.phaseClock.submissionGrace && <p>{t('标准选图时间结束后，有一次 {0} 秒补交宽限，请及时确认。', [data.phaseClock.submissionGrace.seconds])}</p>}
-      <p>{t('选图处罚按本队整场流程超时次数累计：第 1 次警告并补时 60 秒；第 2 次取消本图英雄禁用权并补时 60 秒；第 3 次起随机选择合法地图及攻防。处罚补时不再追加 15 秒宽限。')}</p>
-    </div>}
+    {timedHere && <p className={styles.timeoutNotice} data-map-timeout-notice data-penalty="true" role="status">{t(timeoutHint)}</p>}
     {canChoose ? <>
       {later && <div className={styles.modeTabs} role="group" aria-label={t('选择地图类型')}>{opening.typeCycle?.types.map(item => <button type="button" key={item.type} aria-pressed={mapType === item.type} disabled={locked || item.used || !item.remaining} onClick={() => edit({ mapType: item.type, mapName: '', startSide: '' })}><strong>{formatOwMapMode(item.type, locale)}</strong><small>{t(item.used ? '本轮已用' : '{0} 张可选', [item.remaining || 0])}</small></button>)}</div>}
       <div className={styles.mapWorkspace}>
@@ -58,14 +54,10 @@ export function HeroBanWorkbench({ data, draft, edit, send, disabled, role, setR
   const expired = data.phaseClock?.enabled && data.phaseClock?.stage?.kind === 'BAN' && data.phaseClock?.status !== 'WAITING' && seconds === 0
   const activeTeam = data.match[`team${opening.nextSide}`]
   const locked = disabled || expired
-  const graceSeconds = data.phaseClock?.submissionGrace?.seconds ?? data.phaseClock?.stage?.submissionGraceSeconds
   const matchQuery = hero => `${formatOwHeroName(hero.name, locale)} ${hero.name} ${getOwHero(hero.name)?.zh || ''} ${(getOwHero(hero.name)?.aliases || []).join(' ')}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase())
   const pool = opening.heroes.filter(hero => hero.role === role && matchQuery(hero))
   return <div className={styles.banStage} data-selection-workbench="ban">
-    {data.phaseClock?.enabled && <div className={styles.timeoutNotice} data-ban-timeout-notice role="note" aria-label={t('英雄禁用时限')}>
-      <strong>{t('英雄禁用时限')}</strong>
-      <p>{t(data.phaseClock.stage?.correction ? '当前为无效 Ban 的纠正窗口，不再追加补交宽限；到时未确认将放弃本轮禁用权。' : graceSeconds > 0 ? '每轮禁用标准时间结束后，有一次 {0} 秒补交宽限。宽限结束仍未确认，将自动放弃本轮禁用权，不得补 Ban。' : '请在倒计时结束前确认；超时自动放弃本轮禁用权，不得补 Ban。', [graceSeconds])}</p>
-    </div>}
+    {data.phaseClock?.enabled && data.phaseClock.stage?.correction && <p className={styles.timeoutNotice} data-ban-timeout-notice role="status">{t('当前为无效 Ban 的纠正窗口，不再追加补交宽限；到时未确认将放弃本轮禁用权。')}</p>}
     <div className={styles.banSlots}>{(setup?.firstBanSide === 'B' ? ['B', 'A'] : ['A', 'B']).map((side, index) => {
       const hero = setup?.[`ban${side}`], active = opening.nextSide === side
       return <div key={side} data-active={active} data-locked={!!hero || roomBanTimedOut(setup, side)}><span className={styles.slotNumber} data-locked={!!hero}>{hero && <img src={getHeroImage(hero)} alt="" />}<span>{String(index + 1).padStart(2, '0')}</span></span><div><small>{teamName(data.match[`team${side}`])}</small><strong>{roomBanResolved(setup, side) ? roomBanLabel(setup, side, locale) : t(active ? '正在选择' : '等待对方确认')}</strong></div><span className={styles.slotState}>{t(roomBanTimedOut(setup, side) ? '已放弃' : hero ? '已锁定' : active ? '当前操作' : '待选择')}</span></div>

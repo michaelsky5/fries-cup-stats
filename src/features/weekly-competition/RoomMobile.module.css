@@ -173,6 +173,3 @@
 @media(width < 1180px) {
   .mobileFrame.mobileFrame :global([data-room-slot=center])>section:global([data-room-task-layout]) { flex:1;min-height:0;overflow:hidden; }
 }
-@media(max-width:1179px) {
-  .mobileFrame.mobileFrame :global([data-room-slot=phase-clock][data-urgent=true]) strong[role=timer] { font-size:28px; }
-}

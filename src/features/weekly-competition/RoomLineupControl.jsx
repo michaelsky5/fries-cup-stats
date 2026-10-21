@@ -33,20 +33,20 @@ export default function RoomLineupControl({ data, side, disabled, command }) {
     pending.current ||= { teamId: side.team.id, lineup: ordered.map(({ playerId, role }) => ({ playerId, role })), ...(data.map.lineupContext ? { lineupContext: data.map.lineupContext } : {}), clientKey: crypto.randomUUID(), expectedRevision: data.revision, matchRevision: data.match.revision, draftRevision: data.draftRevision }
     if (await command('SET_LINEUP', pending.current)) { pending.current = null; if (!data.simulation) clearRoomLineupDraft(draftKey) }
   }
-  return <section className={styles.lineupEditor} aria-label={`${side.team.shortName || side.team.name} 本图首发与职责`}>
-    <header><strong>{side.team.shortName || side.team.name}</strong><span>{locked ? '已密封提交' : ownTurn ? data.map?.lineupMode === 'SIMULTANEOUS' ? '可独立确认 · 提交前对方不可见' : '轮到本队确认' : '等待选图方先确认'}</span></header>
-    {canEdit && reusable && <div><small>已带入上一图人员与职责，可直接确认或调整。</small><button type="button" onClick={() => edit(planned)}>恢复计划首发</button></div>}
+  return <section className={styles.lineupEditor} aria-label={uiText('{0} 本图首发与职责', locale, [side.team.shortName || side.team.name])}>
+    <header><strong>{side.team.shortName || side.team.name}</strong><span>{uiText(locked ? '已密封提交' : ownTurn ? data.map?.lineupMode === 'SIMULTANEOUS' ? '可独立确认 · 提交前对方不可见' : '轮到本队确认' : '等待选图方先确认', locale)}</span></header>
+    {canEdit && reusable && <div><small>{uiText('已带入上一图人员与职责，可直接确认或调整。', locale)}</small><button type="button" onClick={() => edit(planned)}>{uiText('恢复计划首发', locale)}</button></div>}
     <div className={styles.lineupChoices}>{(roster?.members || []).map(member => {
       const entry = selected.find(item => item.playerId === member.id)
       return <div key={member.id} data-selected={!!entry}>
         <label><input type="checkbox" checked={!!entry} onChange={() => toggle(member)} disabled={!canEdit || (!entry && selected.length >= 5)} /><span><b>{member.name}</b><small>{member.battleTag}</small></span></label>
-        <select aria-label={`${member.name} 本图职责`} value={entry?.role || member.role} disabled={!canEdit || !entry} onChange={event => edit(selected.map(item => item.playerId === member.id ? { ...item, role: event.target.value } : item))}>
-          {!['DPS', 'TANK', 'SUP'].includes(entry?.role || member.role) && <option value={entry?.role || member.role}>请选择职责</option>}
-          <option value="DPS">D · 输出</option><option value="TANK">T · 重装</option><option value="SUP">S · 支援</option>
+        <select aria-label={uiText('{0} 本图职责', locale, [member.name])} value={entry?.role || member.role} disabled={!canEdit || !entry} onChange={event => edit(selected.map(item => item.playerId === member.id ? { ...item, role: event.target.value } : item))}>
+          {!['DPS', 'TANK', 'SUP'].includes(entry?.role || member.role) && <option value={entry?.role || member.role}>{uiText('请选择职责', locale)}</option>}
+          <option value="DPS">{uiText('D · 输出', locale)}</option><option value="TANK">{uiText('T · 重装', locale)}</option><option value="SUP">{uiText('S · 支援', locale)}</option>
         </select>
       </div>
     })}</div>
-    <div className={styles.lobbyOrder} aria-label="游戏内 D D T S S 顺序">{ROOM_ROLE_ORDER.map((role, index) => <div key={index} data-valid={ordered[index]?.role === role}><b>{index + 1} · {roomRoleCode(role)}</b><span title={roster?.members.find(member => member.id === ordered[index]?.playerId)?.name}>{roster?.members.find(member => member.id === ordered[index]?.playerId)?.name || '待选择'}</span></div>)}</div>
-    <footer data-room-commit="lineup">{storageError && <small role="status">浏览器未能保留选择，请保持此页面打开。</small>}{!locked && <RoomCountdownHint data={data} action="SET_LINEUP" />}<div className={styles.lineupCount} data-lineup-selection-count role="status"><b>{uiText('已选 {0}/5', locale, [selected.length])}</b><span>{uiText('{0} 输出 · {1} 重装 · {2} 支援', locale, roleCounts)}</span></div><small>{!valid ? uiText('需要 2 输出、1 重装、2 支援。', locale) : uiText('确认即代表五人到场；双方都确认才公开。', locale)}{canEdit && selected.length === 5 && <span className={styles.lineupSwapHint}>{uiText('换人请先取消一名。', locale)}</span>}</small><button type="button" disabled={!canEdit || !valid} onClick={confirm}>{locked ? '本队首发已锁定' : ownTurn ? '确认五人到场、职责与顺序' : '等待对方确认'}</button></footer>
+    <div className={styles.lobbyOrder} aria-label={uiText('游戏内 D D T S S 顺序', locale)}>{ROOM_ROLE_ORDER.map((role, index) => <div key={index} data-valid={ordered[index]?.role === role}><b>{index + 1} · {roomRoleCode(role)}</b><span title={roster?.members.find(member => member.id === ordered[index]?.playerId)?.name}>{roster?.members.find(member => member.id === ordered[index]?.playerId)?.name || uiText('待选择', locale)}</span></div>)}</div>
+    <footer data-room-commit="lineup">{storageError && <small role="status">{uiText('浏览器未能保留选择，请保持此页面打开。', locale)}</small>}{!locked && <RoomCountdownHint data={data} action="SET_LINEUP" />}<div className={styles.lineupCount} data-lineup-selection-count role="status"><b>{uiText('已选 {0}/5', locale, [selected.length])}</b><span>{uiText('{0} 输出 · {1} 重装 · {2} 支援', locale, roleCounts)}</span></div><small>{!valid ? uiText('需要 2 输出、1 重装、2 支援。', locale) : uiText('确认即代表五人到场；双方都确认才公开。', locale)}{canEdit && selected.length === 5 && <span className={styles.lineupSwapHint}>{uiText('换人请先取消一名。', locale)}</span>}</small><button type="button" disabled={!canEdit || !valid} onClick={confirm}>{uiText(locked ? '本队首发已锁定' : ownTurn ? '确认五人到场、职责与顺序' : '等待对方确认', locale)}</button></footer>
   </section>
 }
