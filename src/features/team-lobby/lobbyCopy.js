@@ -302,6 +302,7 @@ const rows = [
 ]
 
 rows.push(
+  ['组队大厅暂时无法读取，请稍后重试。已有记录会保留。', 'The team lobby could not be loaded. Try again later. Your existing records are preserved.', '팀 찾기를 불러올 수 없습니다. 나중에 다시 시도해 주세요. 기존 기록은 보존됩니다.', '組隊大廳暫時無法讀取，請稍後重試。已有紀錄會保留。'],
   ['目前分批开放，每天最多新增 {0} 个账号；邮件额度不足时会提前暂停。已有账号仍可登录。', 'Registration is opening in batches, with up to {0} new accounts per day. It may pause earlier when email capacity is low. Existing accounts can still sign in.', '현재 하루 최대 {0}개의 새 계정을 순차적으로 받고 있습니다. 이메일 발송 한도가 부족하면 조기 중단될 수 있습니다. 기존 계정은 계속 로그인할 수 있습니다.', '目前分批開放，每天最多新增 {0} 個帳號；郵件額度不足時會提前暫停。已有帳號仍可登入。'],
   ['本批注册名额已用完，已有账号仍可登录。', 'This registration batch is full. Existing accounts can still sign in.', '이번 가입 정원이 마감되었습니다. 기존 계정은 계속 로그인할 수 있습니다.', '本批註冊名額已用完，已有帳號仍可登入。'],
   ['邮件额度暂时不足，请稍后重试。', 'Email capacity is temporarily limited. Please try again later.', '이메일 발송 한도가 일시적으로 부족합니다. 나중에 다시 시도해 주세요.', '郵件額度暫時不足，請稍後重試。'],

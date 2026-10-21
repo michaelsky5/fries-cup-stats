@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams, useSearchParams, useBlocker } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import * as api from './lobbyApi.js'
-import { LOBBY_ROLES, roleLabel, lobbyDate, accountFailure, leavesLobbyPage } from './lobbyModel.js'
+import { LOBBY_ROLES, roleLabel, lobbyDate, accountFailure, leavesLobbyPage, lobbyReadFailure, canPublishLobby, lobbyRegistrationMessage } from './lobbyModel.js'
 import styles from './Lobby.module.css'
 import { useLobbyMine as useMine } from './useLobbyState.js'
 import { ContactEntry } from './LobbyContacts.jsx'
@@ -16,10 +16,11 @@ function ErrorNotice({ error }) {
 function Access({ children, write = false, data }) {
   useUiLocale()
 
-  const { user, isBootstrapping } = useAuth()
+  const { user, isBootstrapping, authConfig } = useAuth()
+  const registrationMessage = lobbyRegistrationMessage(authConfig)
   const location = useLocation()
   if (isBootstrapping) return <p role="status">{t("正在读取账号…")}</p>
-  if (!user) return <section className={styles.empty}><h1>{t("登录后管理我的组队")}</h1><p>{t("新人可以自行注册，无需先入队或报名。")}</p><Link className={styles.primary} to={`/account/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`}>{t("登录／注册")}</Link></section>
+  if (!user) return <section className={styles.empty}><h1>{t("登录后管理我的组队")}</h1>{registrationMessage && <p>{registrationMessage}</p>}<Link className={styles.primary} to={`/account/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`}>{t("登录／注册")}</Link></section>
   if (write && !user.emailVerifiedAt) return <section className={styles.empty}><h1>{t("先验证邮箱")}</h1><Link className={styles.primary} to={`/account/verify-email?returnTo=${encodeURIComponent(location.pathname + location.search)}`}>{t("前往验证邮箱")}</Link></section>
   if (write && data && !data.canWrite) return <section className={styles.empty}><h1>{t("暂时不能发布或修改")}</h1><p>{data.restriction || t("大厅当前为只读或尚未开放。")}</p><Link to="/lobby/me">{t("返回本人记录")}</Link></section>
   return children
@@ -55,9 +56,9 @@ export function LobbyIndex() {
   }, [type, role, page, attempt])
   function filter(key, value) { const next = new URLSearchParams(query); next.set(key, value); next.set('page', '1'); setQuery(next) }
   return <>
-    <div className={styles.pageHeading}><div><span className={styles.eyebrow}>TEAM LOBBY</span><h1>{t("找到下一位队友")}</h1><p>{t("发布求队名片，或为队伍找到合适的人。")}</p></div><div className={styles.actions}><Link className={styles.primary} to="/lobby/me/publish?type=person">{t("发布我的求队")}</Link><Link to="/lobby/me/publish?type=team">{t("队伍招募")}</Link></div></div>
-    <div className={styles.filters}><div className={styles.tabs}><button aria-pressed={type === 'teams'} onClick={() => filter('type', 'teams')}>{t("队伍招人")}</button><button aria-pressed={type === 'people'} onClick={() => filter('type', 'people')}>{t("个人找队")}</button></div><label>{t("岗位")} <select value={role} onChange={event => filter('role', event.target.value)}><option value="all">{t("全部岗位")}</option>{LOBBY_ROLES.map(item => <option key={item.value} value={item.value}>{t(item.label)}</option>)}</select></label></div>
-    <ErrorNotice error={error} />{error && <button onClick={() => setAttempt(value => value + 1)}>{t("重新读取")}</button>}
+    <div className={styles.pageHeading}><div><span className={styles.eyebrow}>TEAM LOBBY</span><h1>{t("找到下一位队友")}</h1><p>{t("发布求队名片，或为队伍找到合适的人。")}</p></div>{canPublishLobby(config, error) && <div className={styles.actions}><Link className={styles.primary} to="/lobby/me/publish?type=person">{t("发布我的求队")}</Link><Link to="/lobby/me/publish?type=team">{t("队伍招募")}</Link></div>}</div>
+    {config && config.mode !== 'OFF' && !error && <div className={styles.filters}><div className={styles.tabs}><button aria-pressed={type === 'teams'} onClick={() => filter('type', 'teams')}>{t("队伍招人")}</button><button aria-pressed={type === 'people'} onClick={() => filter('type', 'people')}>{t("个人找队")}</button></div><label>{t("岗位")} <select value={role} onChange={event => filter('role', event.target.value)}><option value="all">{t("全部岗位")}</option>{LOBBY_ROLES.map(item => <option key={item.value} value={item.value}>{t(item.label)}</option>)}</select></label></div>}
+    {error && <><p role="alert" className={styles.error}>{lobbyReadFailure(error)}</p><button onClick={() => setAttempt(value => value + 1)}>{t("重新读取")}</button></>}
     {config?.mode === 'OFF' ? <div className={styles.empty}><h2>{t("组队大厅暂未开放")}</h2><p>{t("需求记录会保留，已有账号仍可按各自开放范围登录。")}</p></div> : !data && !error ? <p role="status">{t("正在读取需求…")}</p> : data && <>
       {config?.mode === 'READ_ONLY' && <p className={styles.notice}>{t("大厅当前只读，可以浏览需求和管理已有联系。")}</p>}
       {data.cards.length ? <div className={styles.cards}>{data.cards.map(card => <CardSummary key={card.publicId} card={card} returnTo={`/lobby?${query}`} />)}</div> : <div className={styles.empty}><h2>{role === 'all' ? t("暂时没有展示中的需求") : t("没有符合这个岗位的需求")}</h2><p>{t("这里仅展示仍有效的真实需求。")}</p>{role !== 'all' && <button onClick={() => filter('role', 'all')}>{t("清除岗位筛选")}</button>}</div>}

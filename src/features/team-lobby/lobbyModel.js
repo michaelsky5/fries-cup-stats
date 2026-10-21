@@ -36,3 +36,20 @@ export function accountFailure(error) {
   if (error.data?.outcomeUnknown || error.name === 'TypeError') return t("暂时无法确认处理结果。请先查看账号或本人记录，再决定是否重试。")
   return messages[error.data?.error] || error.message || t("请求未完成，请稍后重试。")
 }
+
+export function lobbyReadFailure(error) {
+  if (error?.data?.error === 'LOBBY_OFF') return t("组队大厅暂未开放")
+  // Initial discovery must not expose upstream routing or infrastructure errors.
+  // A failed read also must not imply that an account write may have occurred.
+  return t("组队大厅暂时无法读取，请稍后重试。已有记录会保留。")
+}
+
+export function canPublishLobby(config, error) {
+  return config?.mode === 'WRITE' && !error
+}
+
+export function lobbyRegistrationMessage(config) {
+  if (config?.selfRegistrationEnabled === true) return t("新人可以自行注册，无需先入队或报名。")
+  if (config?.selfRegistrationEnabled === false) return t("普通注册暂未开放，已有账号仍可登录。")
+  return null
+}
