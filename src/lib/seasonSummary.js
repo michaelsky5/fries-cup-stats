@@ -98,4 +98,3 @@ export function getSeasonStatus(db, season = null) {
     progress
   }
 }
-
