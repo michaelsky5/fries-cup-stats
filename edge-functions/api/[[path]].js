@@ -228,7 +228,95 @@ export function localeResponse({ request }) {
   return new Response(method === 'HEAD' ? null : JSON.stringify({ countryCode }), { headers })
 }
 
+// Transport only. The Worker still verifies the original HMAC and timestamp;
+// this endpoint has no signing, mail, database, or R2 credential.
+export async function monitorRelay(request, { fetchImpl = fetch, timeoutMs = 8000 } = {}) {
+  const url = new URL(request.url)
+  const receipt = url.pathname === '/api/ops-monitor/receipt'
+  const health = url.pathname === '/api/ops-monitor/health'
+  if ((!receipt && !health) || url.search) return problem(404, 'MONITOR_ROUTE_NOT_FOUND', 'Unknown monitor route.')
+  if ((receipt && request.method !== 'POST') || (health && request.method !== 'GET')) {
+    return problem(405, 'METHOD_NOT_ALLOWED', 'Unsupported monitor method.')
+  }
+  if (receipt && (request.headers.has('origin') || request.headers.get('sec-fetch-site') === 'cross-site')) {
+    return problem(403, 'ORIGIN_NOT_ALLOWED', 'Monitor receipts are sent by the production host.')
+  }
+  if (receipt && (!/^application\/json(?:\s*;.*)?$/i.test(request.headers.get('content-type') || '')
+    || !/^[a-f0-9]{64}$/.test(request.headers.get('x-friescup-signature') || ''))) {
+    return problem(400, 'INVALID_MONITOR_RECEIPT', 'A signed JSON receipt is required.')
+  }
+  const limit = 2048
+  if (receipt && Number(request.headers.get('content-length')) > limit) {
+    return problem(413, 'REQUEST_TOO_LARGE', 'Monitor receipt exceeds the size limit.')
+  }
+  const controller = new AbortController()
+  let timer
+  const deadline = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      controller.abort()
+      reject(new DOMException('Monitor request timed out', 'TimeoutError'))
+    }, timeoutMs)
+  })
+  const bounded = promise => Promise.race([promise, deadline])
+  async function readLimited(stream) {
+    if (!stream) return new Uint8Array()
+    const reader = stream.getReader(), chunks = []
+    let length = 0
+    try {
+      while (true) {
+        const { done, value } = await bounded(reader.read())
+        if (done) break
+        length += value.byteLength
+        if (length > limit) throw new RangeError('Monitor body limit')
+        chunks.push(value)
+      }
+    } catch (error) {
+      reader.cancel().catch(() => {})
+      throw error
+    } finally { reader.releaseLock() }
+    const bytes = new Uint8Array(length)
+    let offset = 0
+    for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength }
+    return bytes
+  }
+  let requestRead = false
+  try {
+    const body = receipt ? await readLimited(request.body) : undefined
+    if (receipt && !body.byteLength) return problem(400, 'INVALID_MONITOR_RECEIPT', 'An empty receipt is not accepted.')
+    requestRead = true
+    const headers = new Headers({ Accept: 'application/json', 'Cache-Control': 'no-store' })
+    if (receipt) {
+      headers.set('Content-Type', 'application/json')
+      headers.set('X-FriesCup-Signature', request.headers.get('x-friescup-signature'))
+    }
+    const upstream = await bounded(fetchImpl(`https://friescup-external-monitor.shenkeyu5.workers.dev/${receipt ? 'receipt' : 'health'}`, {
+      method: request.method, headers, body, redirect: 'manual', signal: controller.signal,
+      eo: { timeoutSetting: { connectTimeout: 5000, readTimeout: 5000, writeTimeout: 5000 } }
+    }))
+    if ((upstream.status >= 300 && upstream.status < 400)
+      || !/^application\/json(?:\s*;.*)?$/i.test(upstream.headers.get('content-type') || '')) {
+      upstream.body?.cancel().catch(() => {})
+      return problem(502, 'MONITOR_INVALID_RESPONSE', 'Monitor response could not be verified.')
+    }
+    const bytes = await readLimited(upstream.body)
+    const value = JSON.parse(new TextDecoder().decode(bytes))
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      return problem(502, 'MONITOR_INVALID_RESPONSE', 'Monitor response could not be verified.')
+    }
+    return new Response(bytes, { status: upstream.status, headers: {
+      'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'private, no-store, max-age=0',
+      'CDN-Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
+      'X-Robots-Tag': 'noindex, nofollow, noarchive, nosnippet'
+    } })
+  } catch (error) {
+    if (!requestRead && error instanceof RangeError) return problem(413, 'REQUEST_TOO_LARGE', 'Monitor receipt exceeds the size limit.')
+    const timedOut = controller.signal.aborted || error?.name === 'TimeoutError' || error?.name === 'AbortError'
+    return problem(timedOut ? 504 : 502, timedOut ? 'MONITOR_TIMEOUT' : 'MONITOR_UNAVAILABLE', 'Monitor response could not be verified.')
+  } finally { clearTimeout(timer) }
+}
+
 export default function onRequest(context) {
+  if (new URL(context.request.url).pathname.startsWith('/api/ops-monitor/')) return monitorRelay(context.request)
   if (new URL(context.request.url).pathname === '/api/release') {
     const headers = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'private, no-store, max-age=0', 'CDN-Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }
     if (!['GET', 'HEAD'].includes(context.request.method)) return new Response(null, { status: 405, headers: { ...headers, Allow: 'GET, HEAD' } })
