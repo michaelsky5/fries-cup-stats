@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { getInitialSeasonId, withSeason as buildSeasonLink } from '../../config/seasons.js'
-import html2canvas from 'html2canvas'
 import styles from './ChampionPage.module.css'
 import { getRunState } from '../engine/runEngine'
 import { calculateTeamPower } from '../engine/managerEngine'
@@ -94,6 +93,7 @@ export default function ChampionPage() {
     if (!posterRef.current) return
     setIsExporting(true)
     try {
+      const { default: html2canvas } = await import('html2canvas')
       const canvas = await html2canvas(posterRef.current, {
         scale: 2,
         useCORS: true,

@@ -15,26 +15,7 @@ export function normalizeRole(role) {
 }
 
 // 获取全局赛事概览数据
-export function getGlobalSummary(db) {
-  const matches = safeArr(db?.matches)
-  const players = safeArr(db?.players)
-  const teams = safeArr(db?.teams)
-  const totalMaps = matches.reduce((sum, m) => sum + safeArr(m.maps).length, 0)
-  const completed = matches.filter(m => m.status === 'COMPLETE' || m.status === 'COMPLETED').length
-  const inProgress = matches.filter(m => m.status === 'IN_PROGRESS').length
-  const pending = matches.filter(m => !['COMPLETE', 'COMPLETED', 'IN_PROGRESS'].includes(m.status)).length
-
-  return {
-    updatedAt: db?.updated_at || db?.updatedAt || db?.meta?.updated_at || db?.meta?.ranking_as_of || '',
-    teamCount: teams.length,
-    playerCount: players.length,
-    matchCount: matches.length,
-    mapCount: totalMaps,
-    completed,
-    inProgress,
-    pending
-  }
-}
+export { getGlobalSummary } from './seasonSummary.js'
 
 // 赛段筛选选项
 export function getStageOptions(db) {

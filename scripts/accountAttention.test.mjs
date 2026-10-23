@@ -82,6 +82,15 @@ test('all failed sources show an unknown count instead of no tasks', async () =>
   assert.match(attention.ariaLabel, /数量暂时未知/)
 })
 
+test('partial account failures preserve their retry deadline for the background scheduler', async () => {
+  const f = fixture()
+  f.loaders.preparation = async () => { throw Object.assign(new Error('limited'), { retryAfterMs: 90_000 }) }
+  const context = await count(f)
+  assert.equal(context.overview.taskSyncStatus, 'error')
+  assert.equal(context.overview.openTaskCount, 1)
+  assert.equal(context.refreshError.retryAfterMs, 90_000)
+})
+
 test('closed and hidden features do not fetch task sources', async () => {
   const f = fixture()
   f.data.launch.allowed = false

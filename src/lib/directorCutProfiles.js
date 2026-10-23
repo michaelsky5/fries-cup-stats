@@ -9,6 +9,10 @@ const ARCHIVE_HEROES = [
   { id: 'dmon', zh: 'D.Mon', en: 'D.Mon', role: 'tank', assetKey: 'dmon', aliases: ['DMon'] }
 ]
 
+// A game-catalog entry does not imply a finished export design. Doctrine's
+// dedicated artwork, framing and story layers are still awaiting design review.
+export const DIRECTOR_CUT_PENDING_HERO_IDS = Object.freeze(['doctrine'])
+
 const HERO_RECIPES = {
   domina: ['fortress', 'SOVEREIGN / ORDER', '#d9c997', 'monument'],
   doomfist: ['impact', 'GAUNTLET / IMPACT', '#cf5947', 'kinetic'],
@@ -1200,6 +1204,7 @@ const HERO_CATALOG = (() => {
         })
       })
     })
+    .filter(hero => !DIRECTOR_CUT_PENDING_HERO_IDS.includes(hero.id))
 })()
 
 const HERO_BY_ID = new Map(HERO_CATALOG.map(hero => [hero.id, hero]))

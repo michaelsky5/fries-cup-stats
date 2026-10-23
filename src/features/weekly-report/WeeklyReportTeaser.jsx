@@ -3,8 +3,7 @@ import { translateUiText } from '../../lib/uiText.js'
 import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
 import { getHeroImage, getMapImage } from '../../lib/reviewAssets.js'
 import { weeklyCycleTitle, weeklyPeriodPath } from '../weekly-overview/weeklyPresentation.js'
-import { weeklyReportPath } from './weeklyReportPreview.js'
-import { newspaperTeamName } from './weeklyNewsroom.js'
+import { weeklyReportPath, newspaperTeamName } from './weeklyReportPresentation.js'
 import styles from './WeeklyReport.module.css'
 
 const copy = (locale, zh, en) => String(locale).startsWith('en') ? en : translateUiText(zh, locale)

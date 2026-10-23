@@ -1,4 +1,5 @@
 .shareCard {
+  --font-mono: var(--font-brand-sans);
   --accent: #f4c320;
   --accent-rgb: 244, 195, 32;
   --font-cn: "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;

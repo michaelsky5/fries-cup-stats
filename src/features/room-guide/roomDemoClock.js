@@ -1,4 +1,4 @@
-const limits = { PREPARATION: 600, FIRST_MAP: 120, MAP: 120, LINEUP: 60, BAN_ORDER: 60, BAN: 60 }
+const limits = { PREPARATION: 600, FIRST_MAP: 120, MAP: 120, LINEUP: 60, BAN_ORDER: 60, BAN: 60, REST: 120 }
 const stages = { checkin: 'PREPARATION', opening: 'PREPARATION', confirming: 'PREPARATION', choosing: 'MAP', lineup: 'LINEUP', banorder: 'BAN_ORDER', banning: 'BAN', review: 'MAP' }
 
 // Synthetic guide/preview only; the real room receives persisted deadlines from System.

@@ -1,0 +1,2 @@
+# Published PDFs must retain exact bytes, including cross-reference offsets.
+public/documents/*.pdf binary

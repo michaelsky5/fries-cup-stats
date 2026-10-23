@@ -1,16 +1,16 @@
-const PANELS = new Set(['teams', 'representative', 'info', 'more', 'communication', 'records', 'forfeit', 'preparation', 'preparation-incident', 'lineup-correction'])
+const PANELS = new Set(['teams', 'representative', 'info', 'more', 'communication', 'records', 'forfeit', 'preparation', 'preparation-incident', 'lineup-correction', 'timeout'])
 
 export function getRoomPanel(state, matchId) {
   const panel = state?.roomPanel
   return panel?.matchId === matchId && PANELS.has(panel.key) ? panel : null
 }
 
-export function getRoomPanelNavigation(location, matchId, key) {
+export function getRoomPanelNavigation(location, matchId, key, { replace = false } = {}) {
   const current = getRoomPanel(location.state, matchId)
   if (!key) {
     // Opening a panel adds one history entry, so Back dismisses it before leaving the room.
     if (!current) return null
-    if (current.originKey) return { to: -1 }
+    if (current.originKey && !replace) return { to: -1 }
     const { roomPanel: _panel, ...state } = location.state || {}
     return { to: { pathname: location.pathname, search: location.search, hash: location.hash }, options: { replace: true, state } }
   }

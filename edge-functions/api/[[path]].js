@@ -1,11 +1,45 @@
 // Production defaults to the live account API. Preview deployments can set
-// FRIES_PLATFORM_ORIGIN to the isolated staging backend.
+// FRIES_PLATFORM_ORIGIN to the isolated staging backend. EdgeOne supplies this
+// through context.env; process.env is only the local Node fallback.
 const PLATFORM_ORIGIN = globalThis.process?.env?.FRIES_PLATFORM_ORIGIN || 'https://admin.fries-cup.com'
 const PUBLIC_ORIGIN = 'https://admin.fries-cup.com'
+const RELEASE_IDENTITY = null // stamped by the production release builder
 const MAX_BODY_BYTES = 1024 * 1024
 const READ_METHODS = new Set(['GET', 'HEAD', 'OPTIONS'])
 const METHODS = new Set([...READ_METHODS, 'POST', 'PUT', 'PATCH', 'DELETE'])
 const FORWARD_HEADERS = ['accept', 'accept-language', 'content-type', 'origin', 'referer', 'sec-fetch-site']
+
+function matchesIfNoneMatch(value, currentEtag) {
+  if (typeof value !== 'string' || typeof currentEtag !== 'string') return false
+  const field = value.trim()
+  if (field === '*') return true
+  const current = currentEtag.trim().replace(/^W\//, '')
+  const tags = []
+  let remaining = field
+  while (remaining) {
+    const match = remaining.match(/^[\t ,]*(?:W\/)?("[\x21\x23-\x7e\x80-\xff]*")[\t ]*(?:,|$)/)
+    if (!match) return false
+    tags.push(match[1])
+    remaining = remaining.slice(match[0].length)
+    if (/^[\t ,]*$/.test(remaining)) break
+  }
+  return tags.includes(current)
+}
+
+function cachedResponse(request, hit) {
+  const headers = new Headers(hit.headers)
+  headers.set('X-Fries-Public-Cache', 'HIT')
+  const unchanged = request.headers.get('if-none-match')?.trim() === '*'
+    || matchesIfNoneMatch(request.headers.get('if-none-match'), headers.get('etag'))
+  if (unchanged) {
+    headers.delete('content-length')
+    headers.delete('content-encoding')
+    // Releasing a cache body must not delay a header-only response.
+    hit.body?.cancel().catch(() => {})
+    return new Response(null, { status: 304, headers })
+  }
+  return new Response(hit.body, { status: hit.status, headers })
+}
 
 function problem(status, error, message, outcomeUnknown = false) {
   return new Response(JSON.stringify({ error, message, ...(outcomeUnknown ? { outcomeUnknown: true } : {}) }), {
@@ -27,6 +61,9 @@ function resolveRoute(url, { platformOrigin, publicOrigin, rehearsal }) {
   if (pathname.split('/').some(part => part === '.' || part === '..') || pathname.includes('\\')) return null
   if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/matches\/[A-Za-z0-9_-]+\/progress$/.test(pathname)) {
     return { public: true, volatile: true, url: `${publicOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}` }
+  }
+  if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/support$/.test(pathname)) {
+    return { public: true, noCache: true, url: `${publicOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}${url.search}` }
   }
   if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/(team-logos|rulebook|rulebooks\/[a-f0-9]{32}\.(docx|pdf))$/.test(pathname)) {
     return { public: true, url: `${publicOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}` }
@@ -68,14 +105,12 @@ export async function proxyRequest(request, {
   // Key the published representation by its upstream URL, independently of the
   // preview hostname and the Pages route that executed this function.
   const cacheKey = new Request(route.url)
-  const canReadCache = route.public && !route.volatile && request.method === 'GET' && cache
+  const canReadCache = route.public && !route.volatile && !route.noCache && request.method === 'GET' && cache
   if (canReadCache) {
     try {
       const hit = await cache.match(cacheKey)
       if (hit?.ok) {
-        const headers = new Headers(hit.headers)
-        headers.set('X-Fries-Public-Cache', 'HIT')
-        return new Response(hit.body, { status: hit.status, headers })
+        return cachedResponse(request, hit)
       }
     } catch { /* Expired or unavailable node cache: use the published origin. */ }
   }
@@ -88,6 +123,7 @@ export async function proxyRequest(request, {
     // Published snapshots are identical for everyone; never send user credentials.
     headers.delete('origin')
     headers.delete('referer')
+    if (request.headers.has('if-none-match')) headers.set('if-none-match', request.headers.get('if-none-match'))
   } else {
     for (const name of ['cookie', 'authorization']) {
       if (request.headers.has(name)) headers.set(name, request.headers.get(name))
@@ -124,7 +160,8 @@ export async function proxyRequest(request, {
   }
 
   // API redirects are unexpected. Never follow them with session credentials.
-  if (upstream.status >= 300 && upstream.status < 400) {
+  const notModified = route.public && ['GET', 'HEAD'].includes(request.method) && upstream.status === 304
+  if (upstream.status >= 300 && upstream.status < 400 && !notModified) {
     return problem(502, 'UPSTREAM_REDIRECT', '账号服务返回异常，请先刷新相关状态后核对。', !READ_METHODS.has(request.method))
   }
   if (request.method !== 'HEAD' && upstream.status !== 204 && /text\/html/i.test(upstream.headers.get('content-type') || '')) {
@@ -138,7 +175,7 @@ export async function proxyRequest(request, {
   responseHeaders.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet')
   responseHeaders.set('X-Content-Type-Options', 'nosniff')
   responseHeaders.set('X-Fries-Backend', route.media ? `${environment}-media` : route.public ? 'published-snapshots' : environment)
-  if (!route.public || route.volatile || !upstream.ok) responseHeaders.set('Cache-Control', 'private, no-store')
+  if (!route.public || route.volatile || route.noCache || (!upstream.ok && !notModified)) responseHeaders.set('Cache-Control', 'private, no-store')
   if (route.public) {
     responseHeaders.delete('set-cookie')
     // Both variants were normalized upstream: no Origin, identity encoding.
@@ -147,8 +184,8 @@ export async function proxyRequest(request, {
     if (vary.length) responseHeaders.set('vary', vary.join(', '))
     else responseHeaders.delete('vary')
   }
-  responseHeaders.set('X-Fries-Public-Cache', route.public && !route.volatile ? (cache ? 'MISS' : 'UNAVAILABLE') : 'BYPASS')
-  const response = new Response(request.method === 'HEAD' || upstream.status === 204 ? null : upstream.body, {
+  responseHeaders.set('X-Fries-Public-Cache', route.public && !route.volatile && !route.noCache ? (cache ? 'MISS' : 'UNAVAILABLE') : 'BYPASS')
+  const response = new Response(request.method === 'HEAD' || upstream.status === 204 || notModified ? null : upstream.body, {
     status: upstream.status, statusText: upstream.statusText, headers: responseHeaders
   })
   const cacheControl = responseHeaders.get('cache-control') || ''
@@ -192,8 +229,19 @@ export function localeResponse({ request }) {
 }
 
 export default function onRequest(context) {
+  if (new URL(context.request.url).pathname === '/api/release') {
+    const headers = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'private, no-store, max-age=0', 'CDN-Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }
+    if (!['GET', 'HEAD'].includes(context.request.method)) return new Response(null, { status: 405, headers: { ...headers, Allow: 'GET, HEAD' } })
+    return new Response(context.request.method === 'HEAD' ? null : JSON.stringify(RELEASE_IDENTITY || { error: 'RELEASE_IDENTITY_UNAVAILABLE' }), { status: RELEASE_IDENTITY ? 200 : 503, headers })
+  }
   if (new URL(context.request.url).pathname === '/api/locale') return localeResponse(context)
+  const platformOrigin = context.env?.FRIES_PLATFORM_ORIGIN ?? PLATFORM_ORIGIN
+  if (!['https://admin.fries-cup.com', 'https://test-admin.fries-cup.com'].includes(platformOrigin)) {
+    return problem(503, 'PLATFORM_ORIGIN_INVALID', '账号服务配置暂时不可用。')
+  }
   return proxyRequest(context.request, {
+    platformOrigin,
+    environment: platformOrigin === PUBLIC_ORIGIN ? 'production' : 'preview',
     cache: globalThis.caches?.default,
     waitUntil: context.waitUntil ? task => context.waitUntil(task) : undefined
   })

@@ -53,7 +53,10 @@ export default function EmailChangePanel({ user, onDirtyChange }) {
       const data = await platformRequest('/me/email-change-requests', { method: 'POST', body: { newEmail: request?.newEmail || newEmail.trim(), password } })
       setRequest(data.request); setPassword(''); setNewEmail('')
       const delivered = data.delivery.current.delivered && data.delivery.new.delivered
-      setNotice({ tone: delivered ? 'success' : 'error', text: delivered
+      const queued = [data.delivery.current, data.delivery.new].every(item => item.queued || item.delivered) && !delivered
+      setNotice({ tone: queued ? 'info' : delivered ? 'success' : 'error', text: queued
+        ? uiText('确认邮件已排队，系统会自动重试发送。请分别检查原邮箱和新邮箱；两边确认后才会更换。', locale)
+        : delivered
         ? uiText('确认邮件已交给投递服务。请分别打开原邮箱和新邮箱的邮件；两边确认后才会更换。', locale)
         : uiText('换绑申请已保存，但至少一封确认邮件未投递。请稍后重发；重发会使旧确认链接失效。', locale) })
     } catch (error) { setPassword(''); setNotice({ tone: 'error', text: accountSettingsError(error) }); await reconcileRequest(error) }

@@ -238,6 +238,10 @@
   color: var(--portal-ink);
 }
 
+.eventSwitcher:not([open]) > .switcherPanel {
+  display: none;
+}
+
 .switcherPanel section {
   display: grid;
   gap: 8px;

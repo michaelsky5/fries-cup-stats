@@ -130,6 +130,7 @@ export default function SignalWeeklyOverview() {
       <div className={styles.headingActions}><Link className={styles.rulesLink} data-weekly-report-archive-link to={withSeason(`/reports?cycle=${encodeURIComponent(selectedCycleId || '')}`)}>{pickUiLocale(locale, '周报归档', 'Weekly reports', '주간 신문', '週報歸檔')} <span aria-hidden="true">→</span><small>{pickUiLocale(locale, '赛果与选手数据', 'Results & player statistics', '경기 결과와 선수 기록', '賽果與選手數據')}</small></Link><a className={styles.rulesLink} href={rulebookUrl} target="_blank" rel="noreferrer">{t(uiText("规则中心", locale), 'Rulebook')} <span aria-hidden="true">↗</span><small>{cycle?.rulebook?.version ? `V${cycle.rulebook.version}` : t(uiText("完整条款与历史版本", locale), 'Rules & version history')}</small></a><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a></div>
     </header>
     <WeeklyRegistrationBand registration={db?.weekly_competition?.registration} locale={locale} withSeason={withSeason} />
+    {seasonId === 'FCW26' && <div className={styles.supportEntry}><Link to={withSeason('/support')}>{pickUiLocale(locale,'周赛支持与资金进度','Weekly support & funding','주간 대회 후원 및 자금 현황','週賽支持與資金進度')} →</Link><SupporterThanks seasonId="FCW26" withSeason={withSeason} locale={locale} /></div>}
     <section className={styles.periodNavigation} data-weekly-period-nav="true" aria-label={pickUiLocale(locale, '比赛赛段与周次', 'Cycle and weeks', '주기 및 주차', '比賽賽段與週次')}>
       <div className={styles.cycleBlock}><WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} dateRange={weeklyCycleDateRange(cycle, locale)} onChange={id => change({ cycle: id, week: null, match: null })} /></div>
       <WeeklyWeekRail weeks={weeks} selectedId={week?.id} locale={locale} onChange={id => change({ cycle: cycle.id, week: id, match: null })} />
@@ -204,3 +205,4 @@ export default function SignalWeeklyOverview() {
     <WeeklyEventPathway cycle={cycle} week={week} locale={locale} withSeason={withSeason} />
   </div>
 }
+import SupporterThanks from '../weekly-support/SupporterThanks.jsx'

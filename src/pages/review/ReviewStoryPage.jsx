@@ -2375,9 +2375,9 @@ export default function ReviewStoryPage({ storyType }) {
 
   useEffect(() => {
     document.title = locale === 'ko-KR'
-      ? `${localizedProfile.eventTitle} 시즌 리뷰`
+      ? `${localizedProfile.eventTitle} 리뷰`
       : locale === 'en-US'
-        ? `${localizedProfile.eventTitle} Season Review`
+        ? `${localizedProfile.eventTitle} Review`
         : buildFriesCupTitle(getReviewStoryPageLabel(storyType), locale)
   }, [locale, storyType, localizedProfile.eventTitle])
 

@@ -8,21 +8,18 @@ import {
   loadScoutingPlayer
 } from '../../features/scouting/scoutingArtifactClient.js'
 import { getScoutingAccessRecord } from '../../features/scouting/scoutingAccess.js'
+import { LOCALES as UI_LOCALES, normalizeLocale } from '../../lib/locales.js'
 import styles from './ScoutingReportRoute.module.css'
 
-const LOCALES = [
-  { id: 'zh', locale: 'zh-CN' },
-  { id: 'en', locale: 'en-US' },
-  { id: 'ko', locale: 'ko-KR' }
-]
+const LOCALES = UI_LOCALES.map(item => ({ id: item.param, locale: item.id }))
 
 const SUBROLE_ORDER = ['TANK', 'HITSCAN', 'FLEX_DPS', 'MAIN_SUPPORT', 'FLEX_SUPPORT']
 
 const COPY = {
   'zh-CN': {
     title: '薯条杯 2026 选手技术分析报告',
-    access: '俱乐部专属访问',
-    eyebrow: 'CONFIDENTIAL · PERFORMANCE INTELLIGENCE',
+    access: '公开赛事分析',
+    eyebrow: 'PUBLIC MATCH DATA · PERFORMANCE INTELLIGENCE',
     overviewLead: '薯条杯 2026',
     overviewTitle: '选手技术分析报告',
     overviewMeta: '先载入 25 人技术摘要，再接入完整经理与教练分析模块。',
@@ -45,13 +42,42 @@ const COPY = {
     nationality: '国籍',
     rank: '分路顺位',
     fit: '模型基础分',
-    invalid: '该专属链接不可用，请向报告提供方获取新的访问地址。',
+    invalid: '此报告链接不可用，请核对地址或返回赛事页面。',
     error: '技术分析数据暂时无法载入，请稍后重试。'
+  },
+  'zh-TW': {
+    title: '薯條杯 2026 選手技術分析報告',
+    access: '公開賽事分析',
+    eyebrow: 'PUBLIC MATCH DATA · PERFORMANCE INTELLIGENCE',
+    overviewLead: '薯條杯 2026',
+    overviewTitle: '選手技術分析報告',
+    overviewMeta: '先載入 25 人技術摘要，再接入完整經理與教練分析模組。',
+    playerMeta: '選手身分與技術摘要已獨立載入，深度證據正在背景接入。',
+    shellPhase: '報告框架',
+    summaryPhase: '技術摘要',
+    analysisPhase: '完整分析',
+    phaseLabel: '實際載入階段',
+    indexLoading: '正在讀取 25 人技術摘要',
+    playerLoading: '正在讀取選手技術摘要',
+    analysisLoading: '摘要已就緒，正在接入深度分析',
+    ready: '已完成',
+    dossierCount: '分析檔案',
+    priorityCount: '優先候選',
+    extendedCount: '延伸考察',
+    watchCount: '觀察名單',
+    positionPreview: '五位置摘要',
+    positionLeader: '目前技術首選',
+    battleTag: '戰網 ID',
+    nationality: '國籍',
+    rank: '分路順位',
+    fit: '模型基礎分',
+    invalid: '此報告連結無法使用，請核對地址或返回賽事頁面。',
+    error: '技術分析資料暫時無法載入，請稍後重試。'
   },
   'en-US': {
     title: 'Fries Cup 2026 Player Performance Report',
-    access: 'Club-only access',
-    eyebrow: 'CONFIDENTIAL · PERFORMANCE INTELLIGENCE',
+    access: 'Public match analysis',
+    eyebrow: 'PUBLIC MATCH DATA · PERFORMANCE INTELLIGENCE',
     overviewLead: 'FRIES CUP 2026',
     overviewTitle: 'PLAYER PERFORMANCE REPORT',
     overviewMeta: 'Loading the 25-player technical summary before the complete manager and coach modules.',
@@ -74,13 +100,13 @@ const COPY = {
     nationality: 'Nationality',
     rank: 'Position rank',
     fit: 'Base model score',
-    invalid: 'This dedicated link is unavailable. Request a new access URL from the report provider.',
+    invalid: 'This report link is unavailable. Check the address or return to the event page.',
     error: 'Technical analysis data is temporarily unavailable. Please try again later.'
   },
   'ko-KR': {
     title: 'Fries Cup 2026 선수 경기력 분석 보고서',
-    access: '구단 전용 접근',
-    eyebrow: 'CONFIDENTIAL · PERFORMANCE INTELLIGENCE',
+    access: '공개 경기 분석',
+    eyebrow: 'PUBLIC MATCH DATA · PERFORMANCE INTELLIGENCE',
     overviewLead: 'FRIES CUP 2026',
     overviewTitle: '선수 경기력 분석 보고서',
     overviewMeta: '25인 기술 요약을 먼저 불러온 뒤 매니저·코치 전체 분석 모듈을 연결합니다.',
@@ -103,22 +129,22 @@ const COPY = {
     nationality: '국적',
     rank: '포지션 순위',
     fit: '기본 모델 점수',
-    invalid: '이 전용 링크를 사용할 수 없습니다. 보고서 제공자에게 새 링크를 요청하세요.',
+    invalid: '이 보고서 링크를 사용할 수 없습니다. 주소를 확인하거나 대회 페이지로 돌아가세요.',
     error: '기술 분석 데이터를 불러올 수 없습니다. 잠시 후 다시 시도하세요.'
   }
 }
 
 const SUBROLE_LABELS = {
-  TANK: { 'zh-CN': '坦克', 'en-US': 'TANK', 'ko-KR': '탱커' },
-  HITSCAN: { 'zh-CN': '长枪', 'en-US': 'HITSCAN', 'ko-KR': '히트스캔' },
-  FLEX_DPS: { 'zh-CN': '自由人', 'en-US': 'FLEX DPS', 'ko-KR': '플렉스 DPS' },
-  MAIN_SUPPORT: { 'zh-CN': '群辅', 'en-US': 'MAIN SUPPORT', 'ko-KR': '메인 서포트' },
-  FLEX_SUPPORT: { 'zh-CN': '枪辅', 'en-US': 'FLEX SUPPORT', 'ko-KR': '플렉스 서포트' }
+  TANK: { 'zh-CN': '坦克', 'zh-TW': '坦克', 'en-US': 'TANK', 'ko-KR': '탱커' },
+  HITSCAN: { 'zh-CN': '长枪', 'zh-TW': '長槍', 'en-US': 'HITSCAN', 'ko-KR': '히트스캔' },
+  FLEX_DPS: { 'zh-CN': '自由人', 'zh-TW': '自由人', 'en-US': 'FLEX DPS', 'ko-KR': '플렉스 DPS' },
+  MAIN_SUPPORT: { 'zh-CN': '群辅', 'zh-TW': '群輔', 'en-US': 'MAIN SUPPORT', 'ko-KR': '메인 서포트' },
+  FLEX_SUPPORT: { 'zh-CN': '枪辅', 'zh-TW': '槍輔', 'en-US': 'FLEX SUPPORT', 'ko-KR': '플렉스 서포트' }
 }
 
 const NATIONALITY_LABELS = {
-  'CN-MAINLAND': { 'zh-CN': '中国大陆', 'en-US': 'Mainland China', 'ko-KR': '중국 본토' },
-  KR: { 'zh-CN': '韩国', 'en-US': 'South Korea', 'ko-KR': '대한민국' }
+  'CN-MAINLAND': { 'zh-CN': '中国大陆', 'zh-TW': '中國大陸', 'en-US': 'Mainland China', 'ko-KR': '중국 본토' },
+  KR: { 'zh-CN': '韩国', 'zh-TW': '韓國', 'en-US': 'South Korea', 'ko-KR': '대한민국' }
 }
 
 let reportModulePromise = null
@@ -138,10 +164,7 @@ const FullOverviewReport = lazy(() => loadFullReportModule().then(module => ({ d
 const FullPlayerReport = lazy(() => loadFullReportModule().then(module => ({ default: module.ScoutingPlayerPage })))
 
 function getLocale(searchParams) {
-  const language = searchParams.get('lang')
-  if (language === 'en') return 'en-US'
-  if (language === 'ko') return 'ko-KR'
-  return 'zh-CN'
+  return normalizeLocale(searchParams.get('lang'))
 }
 
 function getSubroleLabel(subrole, locale) {

@@ -13,6 +13,7 @@ import { DIRECTOR_CUT_HERO_MARKS, getCinemaTicketData, getDirectorCutEmblemLayou
 import { getStaffAvatar, getTeamLogoCandidates, heroNameToSlug } from '../src/lib/reviewAssets.js'
 import {
   DIRECTOR_CUT_HERO_CATALOG,
+  DIRECTOR_CUT_PENDING_HERO_IDS,
   DIRECTOR_CUT_STAGE_AUDIT_VERSION,
   applyDirectorCutSelection,
   getDirectorCutEdition,
@@ -640,7 +641,14 @@ function auditGenericCoverage(db, teamIds, staffIndex, identityEntries) {
   const teamsWithRealLogo = teamCoverage.filter(team => team.realLogo)
   const teamsUsingOwFallback = teamCoverage.filter(team => !team.realLogo)
   if (!teamsWithRealLogo.length) errors.push('coverage: no team with a real logo was found')
-  if (!teamsUsingOwFallback.length) errors.push('coverage: no team using the OW fallback was found')
+  // A fully illustrated public archive must still exercise missing-logo behavior.
+  const missingLogoCandidates = getTeamLogoCandidates({
+    team_id: 'review-missing-logo-fixture', team_short_name: 'UNKNOWN_REVIEW_FIXTURE'
+  }, 'FCR2026')
+  if (!missingLogoCandidates[0]?.startsWith('data:image/svg+xml')
+    || !missingLogoCandidates.includes('/logos/FCR/OW.png')) {
+    errors.push('coverage: a team without a logo must have a generated lettermark and a legacy image fallback')
+  }
   if (!publicAssetExists('/logos/FCR/OW.png')) errors.push('coverage: OW default team mark is missing')
 
   const staffRows = [...safeArr(staffIndex?.admins), ...safeArr(staffIndex?.casters)]
@@ -1573,10 +1581,17 @@ if (automaticDirectorStaff.ready || automaticDirectorStaff.choiceLabel !== 'SELE
 if (
   manualDirectorStaff.subjectMode !== 'hero'
   || !manualDirectorStaff.ready
-  || appliedDirectorStaff.heroRender !== '/review/hero-renders/damage/sombra.png'
+  || appliedDirectorStaff.heroRender !== '/review/hero-renders/support/sombra.png'
   || appliedDirectorStaff.directorCut?.heroName !== '黑影'
 ) {
   errors.push('director-cut: staff manual selection did not resolve the selected hero design')
+}
+for (const pending of DIRECTOR_CUT_PENDING_HERO_IDS) {
+  if (getDirectorCutHeroOptions().some(hero => hero.id === pending)
+    || getDirectorCutSelection(directorStaffPayload, pending).ready
+    || getDirectorCutSelection({cardKind: 'player', playerTicket: {topHero: pending}}).ready) {
+    errors.push(`director-cut: unfinished ${pending} design must not be offered or auto-selected for export`)
+  }
 }
 const koreanSemanticMovieTicket = getCinemaTicketData({
   cardKind: 'player',

@@ -434,7 +434,7 @@ function EmailChangeConfirmation() {
 }
 
 export default function AccountSettingsPage() {
-  const { user, isBootstrapping, accountDataError, emailChangeState } = useAuth()
+  const { user, isBootstrapping, accountDataError, emailChangeState, authConfig } = useAuth()
   const location = useLocation()
   const [signedOutNotice, setSignedOutNotice] = useState('')
   const locale = new URLSearchParams(location.search).get('lang') || getStoredLocale()
@@ -443,11 +443,11 @@ export default function AccountSettingsPage() {
     document.title = `${translateAccountSettingsText('账号设置', locale)} | 薯条杯`
     return () => { document.title = previousTitle }
   }, [locale])
-  return <AccountFrame compact title={uiText("账号设置", locale)} eyebrow="ACCOUNT SETTINGS" description={uiText("管理你的个人资料与账号安全。", locale)} aside={<div className={styles.identity}><AccountAvatar className={styles.avatar} user={user} /><div><strong data-i18n-ignore={user ? '' : undefined}>{user?.displayName || (isBootstrapping ? uiText("正在核对账号…", locale) : uiText("受邀账号", locale))}</strong><span data-i18n-ignore={user ? '' : undefined}>{user?.email || uiText("登录后管理账号", locale)}</span></div></div>}>
+  return <AccountFrame compact title={uiText("账号设置", locale)} eyebrow="ACCOUNT SETTINGS" description={uiText("管理你的个人资料与账号安全。", locale)} aside={<div className={styles.identity}><AccountAvatar className={styles.avatar} user={user} /><div><strong data-i18n-ignore={user ? '' : undefined}>{user?.displayName || (isBootstrapping ? uiText("正在核对账号…", locale) : uiText("账号设置", locale))}</strong><span data-i18n-ignore={user ? '' : undefined}>{user?.email || uiText("登录后管理账号", locale)}</span></div></div>}>
     <div className={styles.page}>
       <EmailChangeConfirmation />
       {isBootstrapping ? <section className={styles.guest} role="status"><h2>{uiText("正在核对登录状态…", locale)}</h2></section> : user ? <SettingsWorkspace key={user.id} user={user} onRevoked={setSignedOutNotice} /> : emailChangeState.status === 'COMPLETED' ? null : <section className={styles.guest}>
-        <span className={styles.kicker}>ACCOUNT ACCESS</span><h2>{uiText("欢迎回到薯条杯", locale)}</h2><Notice notice={signedOutNotice ? { tone: 'success', text: signedOutNotice } : accountDataError ? { tone: 'error', text: accountSettingsError(accountDataError, locale) } : null} /><p>{uiText("使用受邀邮箱登录，即可管理资料和安全设置。首次参加，请打开赛事负责人或队长提供的邀请链接。", locale)}</p><button type="button" className={styles.primary} onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText("登录账号 →", locale)}</button><Link className={styles.guestLink} to={withSeason('/me', getInitialSeasonId(), location.search)}>{uiText("前往我的空间 ↗", locale)}</Link>
+        <span className={styles.kicker}>ACCOUNT ACCESS</span><h2>{uiText("欢迎回到薯条杯", locale)}</h2><Notice notice={signedOutNotice ? { tone: 'success', text: signedOutNotice } : accountDataError ? { tone: 'error', text: accountSettingsError(accountDataError, locale) } : null} /><p>{uiText(authConfig?.selfRegistrationEnabled === true ? "登录或注册账号，管理个人资料与安全设置。参赛身份通过邀请或报名关联。" : authConfig?.selfRegistrationEnabled === false ? "使用受邀邮箱登录，即可管理资料和安全设置。首次参加，请打开赛事负责人或队长提供的邀请链接。" : "登录后管理个人资料与账号安全。", locale)}</p><button type="button" className={styles.primary} onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText(authConfig?.selfRegistrationEnabled === true ? "登录 / 注册 →" : "登录账号 →", locale)}</button><Link className={styles.guestLink} to={withSeason('/me', getInitialSeasonId(), location.search)}>{uiText("前往我的空间 ↗", locale)}</Link>
       </section>}
     </div>
   </AccountFrame>

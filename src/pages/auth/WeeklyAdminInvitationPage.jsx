@@ -64,7 +64,7 @@ export default function WeeklyAdminInvitationPage() {
           <p className={styles.hint}>使用刚才登记的邮箱和密码登录。这个邀请名额已经认领，原链接不能再次注册。</p>
         </> : step === 'email' ? <>
           <p>验证邮件发往 <strong>{sent?.invitation.maskedEmail}</strong>。打开邮件中的链接，确认后即可获得管理权限。</p>
-          {!sent?.emailDelivery?.delivered && <p className={styles.error} role="alert">邮件投递尚未确认。请稍后返回注册信息重试；名额尚未完成认领。</p>}
+          {sent?.emailDelivery?.queued ? <p role="status">验证邮件已排队，系统会自动重试发送。请稍后检查收件箱和垃圾邮件。</p> : !sent?.emailDelivery?.delivered && <p className={styles.error} role="alert">邮件投递尚未确认。请稍后返回注册信息重试；名额尚未完成认领。</p>}
           <p className={styles.hint}>邮箱确认链接 30 分钟内有效。找不到邮件时，请检查垃圾邮件；重新发送后，旧验证邮件失效。</p>
           <button className={styles.secondary} onClick={() => { setStep('form'); setError('') }}>返回注册信息 / 重新发送</button>
         </> : <form onSubmit={submit}>

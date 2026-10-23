@@ -24,5 +24,9 @@ export async function fetchAccountAttentionContext(seasonId, userId, { signal, n
   const sources = Object.fromEntries(keys.map((key, index) => [key, results[index].status === 'fulfilled'
     ? { status: 'ready', data: results[index].value } : { status: 'error' }]))
   const activity = buildAccountActivity(sources, { ...access, seasonId, userId, identityType: context.primaryIdentityType, now })
-  return { overview: { ...context.overview, openTaskCount: activity.taskView.openTasks.length, taskSyncStatus: activity.status } }
+  const failures = results.filter(result => result.status === 'rejected').map(result => result.reason)
+  const refreshError = failures.length ? Object.assign(new Error('Some account activity sources failed'), {
+    retryAfterMs: Math.max(0, ...failures.map(error => error?.retryAfterMs || 0))
+  }) : null
+  return { overview: { ...context.overview, openTaskCount: activity.taskView.openTasks.length, taskSyncStatus: activity.status }, refreshError }
 }

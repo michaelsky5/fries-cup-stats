@@ -1,5 +1,3 @@
-import { toPng } from 'html-to-image'
-
 async function waitForImage(image) {
   if (!image) return
   if (!image.complete) {
@@ -28,6 +26,7 @@ export async function waitForShareAssets(node) {
 export async function exportPlayerSharePng(node, fileName) {
   if (!node) throw new Error('Missing share card node')
   await waitForShareAssets(node)
+  const { toPng } = await import('html-to-image')
   const dataUrl = await toPng(node, {
     cacheBust: true,
     pixelRatio: 1,

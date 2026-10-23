@@ -26,8 +26,14 @@ jobs:
       - name: Check account UI contracts
         run: npm run test:account-ui
 
+      - name: Check lobby continuation, consent copy and language boundaries
+        run: node --test scripts/teamLobby.test.mjs
+
       - name: Check weekly public pages and media
         run: npm run test:weekly-public-ui
+
+      - name: Check public proxy revalidation and private cache boundaries
+        run: npm run test:public-http-cache
 
       - name: Check readable weekly match identities and legacy links
         run: node --test scripts/assertWeeklyMatchIdentity.mjs
@@ -63,7 +69,19 @@ jobs:
         run: node --test scripts/matchFeedback.test.mjs scripts/historicalMatchMvp.test.mjs
 
       - name: Build production frontend
-        run: npm run build
+        run: npm run test:release-package && npm run build:release
+
+      - name: Check public route loading budget
+        run: node scripts/assertPublicBundle.mjs
+
+      - name: Retain the matched frontend and EdgeOne function package
+        uses: actions/upload-artifact@v4
+        with:
+          name: stats-production-release-${{ github.sha }}
+          path: dist/
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
 
       - name: Build isolated partner trial frontend
         run: npm run build -- --outDir dist-trial

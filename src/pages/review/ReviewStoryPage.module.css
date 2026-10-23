@@ -10921,6 +10921,7 @@
   }
 
   .mobileStoryControls .storyControlButtons button {
+    min-width: 44px;
     font-size: 13px;
     min-height: 48px;
     padding-inline: 8px;

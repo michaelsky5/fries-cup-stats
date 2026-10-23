@@ -1,0 +1,4 @@
+.strip { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 24px; padding: 16px 0; margin: 12px 0; border-block: 1px solid var(--fc-data-line); font: 13px/1.6 var(--fc-data-font-interface); color: var(--fc-data-ink); }
+.strip > strong { padding-left: 12px; border-left: 3px solid var(--fc-data-signal); font-size: 12px; }
+.strip > span { font-weight: 700; }
+.strip > a { margin-left: auto; color: var(--fc-data-text-muted); font-size: 12px; }

@@ -3,7 +3,7 @@ import { Link, useOutletContext, useParams, useSearchParams } from 'react-router
 import { pickUiLocale, translateUiText } from '../../lib/uiText.js'
 import { weeklyCycleTitle, weeklyPeriodPath } from '../weekly-overview/weeklyPresentation.js'
 import { buildWeeklyOverview } from '../weekly-overview/weeklyOverviewModel.js'
-import { formatReportTime, weeklyReportPath } from './weeklyReportPreview.js'
+import { formatReportTime, weeklyReportPath } from './weeklyReportPresentation.js'
 import usePublishedNewspaper from './usePublishedNewspaper.js'
 import { ReportCover } from './WeeklyReportTeaser.jsx'
 import WeeklyNewspaper from './WeeklyNewspaper.jsx'

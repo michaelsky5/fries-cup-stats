@@ -1,7 +1,8 @@
 import { translateUiText, pickUiLocale } from '../../lib/uiText.js'
 import { formatOwMapName, formatOwHeroName, getOwHero, getOwHeroRole } from '../../lib/heroes.js'
-import { weeklyTeamShort, weeklyCycleTitle } from '../weekly-overview/weeklyPresentation.js'
-import { formatReportTime } from './weeklyReportPreview.js'
+import { weeklyCycleTitle } from '../weekly-overview/weeklyPresentation.js'
+import { formatReportTime, newspaperTeamName } from './weeklyReportPresentation.js'
+export { newspaperTeamName } from './weeklyReportPresentation.js'
 import { buildWeeklyDataStories, formatWeeklyDataStory } from './weeklyDataStories.js'
 import { buildWeeklyPeopleNews } from './weeklyPeopleNews.js'
 import { buildLeadIntro, buildMatchBackground, buildMatchBrief, selectWeeklyLead } from './weeklyEditorial.js'
@@ -10,7 +11,6 @@ const identity = team => String(team?.id || team?.team_id || '')
 const score = value => value != null && String(value).trim() !== '' && Number.isFinite(Number(value)) ? Number(value) : null
 const tFor = locale => (zh, en) => String(locale).startsWith('en') ? en : translateUiText(zh, locale)
 const countText = (items, locale) => items.map(item => formatOwHeroName(item.name, locale)).join(String(locale).startsWith('en') ? ', ' : '、')
-export const newspaperTeamName = team => weeklyTeamShort(team) === '?' ? team?.name || team?.team_name || '?' : weeklyTeamShort(team)
 
 // Historical Sombra honours retain the recorded role across its migration.
 // A frozen edition without a role or game-version context is not relabelled.

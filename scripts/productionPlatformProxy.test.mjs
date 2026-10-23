@@ -19,6 +19,17 @@ test('production transport adapts binary bodies and independent cookies without 
   assert.deepEqual([...new Uint8Array(await response.arrayBuffer())], [4, 5, 6])
 })
 
+test('production transport accepts an empty conditional media response', async () => {
+  const fetchImpl = createProductionFetch({ log: () => {}, transport: async () => ({
+    status: 304, headers: new Headers({ etag: '"avatar-v1"', 'cache-control': 'public, max-age=31536000, immutable' }),
+    arrayBuffer: async () => new ArrayBuffer(0)
+  }) })
+  const response = await fetchImpl('https://admin.fries-cup.com/api/media/avatars/test', { method: 'GET' })
+  assert.equal(response.status, 304)
+  assert.equal(await response.text(), '')
+  assert.equal(response.headers.get('etag'), '"avatar-v1"')
+})
+
 test('production HTTP adapter preserves session, upload, cache and failure boundaries', async t => {
   const calls = []
   let reply = () => new Response('{}', { headers: { 'Content-Type': 'application/json' } })

@@ -1,4 +1,6 @@
 import { PARTNER_TRIAL } from '../../config/partnerTrial.js'
+import { retryAfterMillis } from '../../lib/httpRetry.js'
+export { retryAfterMillis } from '../../lib/httpRetry.js'
 const DEFAULT_PLATFORM_API_BASE_URL = '/api/platform'
 export const PLATFORM_REQUEST_TIMEOUT_MS = 15000
 
@@ -44,13 +46,6 @@ async function readResponse(response) {
   if (response.ok) throw new PlatformApiError('账号接口返回了无效响应，请稍后重试。', { status: 502, data: { error: 'INVALID_API_RESPONSE' } })
 
   return response.text()
-}
-
-export function retryAfterMillis(value, now = Date.now()) {
-  if (typeof value !== 'string' || !value.trim()) return undefined
-  const text = value.trim()
-  const delay = /^\d+$/.test(text) ? Number(text) * 1000 : Date.parse(text) - now
-  return Number.isFinite(delay) ? Math.min(2147483647, Math.max(0, delay)) : undefined
 }
 
 export class PlatformApiError extends Error {

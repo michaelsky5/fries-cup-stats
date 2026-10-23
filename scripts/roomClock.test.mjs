@@ -2,6 +2,28 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { roomClockRemaining, roomClockState, calibrateRoomClock, roomClockHint, roomMapSide } from '../src/features/weekly-competition/roomPhaseClock.js'
 import { demoRoomClock, changeDemoClock } from '../src/features/room-guide/roomDemoClock.js'
+import { roomClockUrgency, roomStageDurations } from '../src/features/weekly-competition/roomClockPresentation.js'
+
+test('clock alerts distinguish ten/five seconds, grace, stale and paused snapshots', () => {
+  const clock = { enabled: true, status: 'RUNNING', stage: { kind: 'MAP' } }
+  assert.equal(roomClockUrgency(clock, 11), 'normal')
+  assert.equal(roomClockUrgency(clock, 10), 'warning')
+  assert.equal(roomClockUrgency(clock, 5), 'critical')
+  assert.equal(roomClockUrgency(clock, 0), 'expired')
+  assert.equal(roomClockUrgency(clock, 15, { inSubmissionGrace: true }), 'grace')
+  assert.equal(roomClockUrgency(clock, 5, { stale: true }), 'stale')
+  for (const changed of [{ enabled: false }, { status: 'WAITING' }, { stage: null }]) {
+    assert.equal(roomClockUrgency({ ...clock, ...changed }, 5), 'inactive')
+  }
+  assert.equal(roomClockUrgency(clock, null), 'inactive')
+})
+
+test('stage durations reflect server limits without inventing missing values', () => {
+  const clock = { stage: { mapOrder: 1 }, limits: { FIRST_MAP: 95, MAP: 120, LINEUP: 45, BAN: 30 } }
+  assert.deepEqual(roomStageDurations(clock).map(v => [v.kind, v.seconds]), [['MAP', 95], ['LINEUP', 45], ['BAN', 30]])
+  assert.equal(roomStageDurations({ ...clock, stage: { mapOrder: 2 } })[0].seconds, 120)
+  assert.deepEqual(roomStageDurations(null), [])
+})
 
 test('room remaining time uses server interval, not the viewer clock or time zone', () => {
   const clock = { serverNow: '2026-09-27T12:00:00Z', deadlineAt: '2026-09-27T12:01:00Z' }
@@ -18,6 +40,18 @@ test('a delayed response consumes transit time and render delay without using th
   assert.equal(roomClockRemaining(calibrated), 4)
   assert.equal(roomClockRemaining(calibrated, 1500), 3)
   assert.equal(roomClockRemaining(calibrated, 4500), 0)
+})
+
+test('slow server work is not counted twice as network delay', () => {
+  const clock = { serverNow: '2026-10-20T12:00:00Z', deadlineAt: '2026-10-20T12:01:00Z', serverProcessingMs: 6000 }
+  const calibrated = calibrateRoomClock(clock, 100, 6300, '2026-10-20T12:00:01Z')
+  assert.equal(calibrated.transitEstimateMs, 1100)
+  assert.equal(roomClockRemaining(calibrated), 59)
+  assert.equal(roomClockRemaining(calibrated, 1000), 58)
+  assert.equal(calibrateRoomClock({ ...clock, serverProcessingMs: 10000 }, 0, 200, clock.serverNow).transitEstimateMs, 0)
+  for (const invalid of [undefined, null, -1, '6000', NaN, Infinity]) {
+    assert.equal(calibrateRoomClock({ ...clock, serverProcessingMs: invalid }, 0, 200, clock.serverNow).transitEstimateMs, 100)
+  }
 })
 
 test('a room clock enters one public fifteen-second submission window before expiration', () => {

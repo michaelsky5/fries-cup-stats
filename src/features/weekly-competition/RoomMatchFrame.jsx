@@ -28,7 +28,7 @@ export function RoomMatchHeader({ data, phaseLabel, returnPath, busy, error, ref
   if (forfeit) phaseLabel = forfeit.status === 'PENDING_REVIEW' ? '弃权待复核' : `${teamName(forfeit.forfeitedSide === 'A' ? data.match.teamA : data.match.teamB)} 弃权 · ${teamName(forfeit.winnerSide === 'A' ? data.match.teamA : data.match.teamB)} 获判胜`
   return <>
     <header className={styles.masthead} data-room-slot="header" data-opening={Boolean(data.opening && !data.opening.complete)}>
-      <Link to={returnPath} className={styles.brand}><img src="/logos/fries-cup-symbol.png" alt="" /><span><b>FRIES CUP</b><small>{uiText("赛事中心 / 比赛房", uiLocale)}</small></span></Link>
+      <Link to={returnPath} className={styles.brand}><img src="/logos/fries-cup-symbol.png" alt="" /><span><b>FRIES CUP</b><small>{uiText("比赛房", uiLocale)}</small></span></Link>
       <div className={styles.headerMatch}><div className={styles.headerTeams}><strong>{teamName(data.match.teamA)}</strong><b>{hasScore ? `${score.scoreA} : ${score.scoreB}` : 'VS'}</b><strong>{teamName(data.match.teamB)}</strong></div><div className={styles.headerMeta}><span>{data.match.seasonName}</span><span>{data.match.weekLabel}</span><span>{data.match.format === 'RR5' ? uiText("RR5 · 固定五局", uiLocale) : data.match.format || uiText("赛制待确认", uiLocale)}</span><span>{data.match.scheduledAt ? new Date(data.match.scheduledAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }) + ' UTC+8' : uiText("比赛时间待定", uiLocale)}</span><em data-phase={data.phase}>{phaseLabel}</em></div></div>
       <div className={styles.tools}><button type="button" disabled={busy} onClick={() => refresh({ force: true })}><span aria-hidden="true">↻</span>{uiText(" 重新同步", uiLocale)}</button>{accountControl}</div>
     </header>
@@ -58,7 +58,7 @@ export function RoomSeriesRail({ data, phaseLabel }) {
         {Array.from({ length: count }, (_, index) => {
           const map = maps.find(item => item.order === index + 1)
           const current = !official && map?.order === data.map?.order
-          const label = map?.status === 'COMPLETE' ? roomMapResultLabel(map, data.match, uiLocale) : data.forfeit?.record ? data.forfeit.record.status === 'APPROVED' ? map?.status === 'LIVE' ? '因弃权未完成' : '因弃权未进行' : '弃权记录待复核' : current ? phaseLabel : '尚未开始'
+          const label = map?.status === 'COMPLETE' ? roomMapResultLabel(map, data.match, uiLocale) : data.forfeit?.record ? data.forfeit.record.status === 'APPROVED' ? map?.status === 'LIVE' ? '因弃权未完成' : '因弃权未进行' : '弃权记录待复核' : current ? phaseLabel : uiText('尚未开始', uiLocale)
           const banSummary = `${teamName(data.match.teamA)}：${roomBanLabel(map, 'A', uiLocale) || uiText("待定", uiLocale)} / ${teamName(data.match.teamB)}：${roomBanLabel(map, 'B', uiLocale) || uiText("待定", uiLocale)}`
           const content = <><span>{String(index + 1).padStart(2, '0')}</span><b>{formatOwMapName(map?.name, uiLocale) || (current ? uiText("等待选图", uiLocale) : uiText("地图待定", uiLocale))}</b><small>{map?.name ? official ? label : `${map?.status === 'COMPLETE' ? `${label} · ` : ''}${banSummary}` : label}</small></>
           return <li key={index} data-current={!!current} data-complete={map?.status === 'COMPLETE'}>{map?.name ? <button type="button" aria-label={uiText("查看第 {0} 图 {1} · {2}", uiLocale, [index + 1, formatOwMapName(map.name, uiLocale), label])} onClick={() => setSelected(map.order)}>{content}</button> : <div>{content}</div>}</li>

@@ -5,11 +5,12 @@ import { formatOwMapName, formatOwHeroName } from '../../lib/heroes.js'
 import { getMapImage, getHeroImage } from '../../lib/reviewAssets.js'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import { weeklyPeriodPath } from '../weekly-overview/weeklyPresentation.js'
-import { formatReportTime } from './weeklyReportPreview.js'
+import { formatReportTime } from './weeklyReportPresentation.js'
 import { buildWeeklyNewspaper, newspaperTeamName, resolveWeeklyHeroRole } from './weeklyNewsroom.js'
 import { formatUpcomingMatch, formatWeeklyMatchScope, buildMatchBrief, buildLeadPrintNote } from './weeklyEditorial.js'
 import { WEEKLY_POSITIONS, WEEKLY_POSITION_ROLES } from './weeklyPositions.js'
 import { buildWeeklyNewspaperResultsUrl, buildWeeklyNewspaperQr } from './weeklyNewspaperShare.js'
+import { localizePublishedPersonNote } from './weeklyNewspaperPresentation.js'
 import styles from './WeeklyNewspaper.module.css'
 
 const PAPER_SIZE = { width: 900, height: 1273 }
@@ -92,7 +93,7 @@ function PeopleNotes({people,editorial,compact,locale,seasonId,withSeason}) {
       const summary=person.kind==='cross-role'&&!editorial
         ? pickUiLocale(locale,'本周跨 {0} 出场','Played {0} this week','이번 주 {0} 출전','本週跨 {0} 出場').replace('{0}',roles)
         : editorial?(person.detail||person.summary):person.summary
-      return <Link to={withSeason(`/players/${encodeURIComponent(person.id)}`)} key={person.id} title={person.context} data-person-note={person.kind}>
+      return <Link to={withSeason(`/players/${encodeURIComponent(person.id)}`)} key={person.id} title={translateUiText(person.context,locale)} data-person-note={person.kind}>
         <NewspaperTeamLogo team={person.team} seasonId={seasonId} className={styles.personEmblem}/>
         <span className={styles.personCopy}>
           <b className={styles.personIdentity}>{person.name}{person.team&&<small>{newspaperTeamName(person.team)}</small>}{!editorial&&!compact&&person.kind==='map-note'&&person.context&&<small className={styles.personContext}>{formatPersonMapContext(person.context,locale)}</small>}</b>
@@ -140,11 +141,11 @@ function DataStoryCard({story,locale,withSeason}) {
     ? primary.tiedCount>1
       ? pickUiLocale(locale,'单图助攻并列最高','JOINT MAP ASSISTS HIGH','단일 맵 도움 공동 최다','單圖助攻並列最高')
       : pickUiLocale(locale,'单图助攻最高','MAP ASSISTS HIGH','단일 맵 도움 최다','單圖助攻最高')
-    : story.headline
+    : translateUiText(story.headline,locale)
   return <article className={styles.storyCard} data-player-story={story.id} data-story-kind={story.kind} data-story-hook={story.editorialHook||undefined}>
     <div className={styles.storyIdentity}><div><span>{headline}</span><div><Link to={withSeason(`/players/${encodeURIComponent(story.id)}`)}>{story.name}</Link>{story.team&&<small>{newspaperTeamName(story.team)}</small>}</div></div>{story.hero&&<img src={getHeroImage(story.hero,story.role)} alt={formatOwHeroName(story.hero,locale)}/>}</div>
     <dl className={styles.storyValues} data-count={story.stats.length}>{story.stats.map(item=><div key={item.metric}><dt>{item.label}</dt><dd><Link data-story-metric={item.metric} data-story-unit={item.unit} to={withSeason(`/matches/${encodeURIComponent(item.matchId)}`)} title={`${formatOwMapName(item.map,locale)} · ${item.order}`}>{item.value.toLocaleString('en-US')}</Link></dd></div>)}</dl>
-    <p className={styles.storyCaption}>{story.caption}</p>
+    <p className={styles.storyCaption}>{String(story.caption||'').split('；').map(part=>translateUiText(part,locale)).join(pickUiLocale(locale,'；','; ','; ','；'))}</p>
   </article>
 }
 
@@ -250,7 +251,10 @@ function WeeklyAwardNotes({awards,locale}) {
 }
 
 export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, home, archive, newspaperOverride, embedded=false }) {
-  const newspaper=useMemo(()=>newspaperOverride||buildWeeklyNewspaper(report,locale),[report,locale,newspaperOverride])
+  const newspaper=useMemo(()=>{
+    const paper=newspaperOverride||buildWeeklyNewspaper(report,locale)
+    return {...paper,peopleNews:{...paper.peopleNews,people:paper.peopleNews.people.map(person=>localizePublishedPersonNote(person,locale))}}
+  },[report,locale,newspaperOverride])
   const t=(zh,en)=>String(locale).startsWith('en') ? en : translateUiText(zh,locale)
   const pagesRef=useRef(null), sheetsRef=useRef(new Map())
   const [scale,setScale]=useState(1), [busy,setBusy]=useState(false), [status,setStatus]=useState(''), [error,setError]=useState('')
@@ -293,7 +297,7 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
         <h2 className={styles.leadHeadline}>{lead?<Link to={withSeason(lead.path)}>{lead.title}</Link>:t('这一周，等待赛果确认。','This week awaits confirmed results.')}</h2>
         <div className={styles.frontColumns} data-front-layout={newspaper.layout}>
           <article className={styles.leadColumn}>
-            {lead?.image&&<figure className={styles.leadPhoto}><div className={styles.photoWindow}><img className={styles.mapArt} src={getMapImage(lead.image.map_type,lead.image.map_name)} alt={formatOwMapName(lead.image.map_name,locale)} />{leadTeams&&<div className={styles.photoScore} data-photo-score-order={lead.scoreOrder.join(' / ')}><div><NewspaperTeamLogo team={leadTeams[0]} seasonId={seasonId} className={styles.teamEmblem}/><b>{newspaperTeamName(leadTeams[0])}</b></div><strong>{lead.displayScores[0]??'—'}<i>:</i>{lead.displayScores[1]??'—'}</strong><div><b>{newspaperTeamName(leadTeams[1])}</b><NewspaperTeamLogo team={leadTeams[1]} seasonId={seasonId} className={styles.teamEmblem}/></div></div>}{lead.editorialMark?<span className={styles.photoStamp} data-match-mark={lead.editorialMark.kind}>{lead.editorialMark.label}</span>:<span className={styles.photoTag}>{lead.decisive?t('决胜图','DECIDING MAP'):t('赛场记录','MATCH RECORD')}</span>}</div></figure>}
+            {lead?.image&&<figure className={styles.leadPhoto}><div className={styles.photoWindow}><img className={styles.mapArt} src={getMapImage(lead.image.map_type,lead.image.map_name)} alt={formatOwMapName(lead.image.map_name,locale)} />{leadTeams&&<div className={styles.photoScore} data-photo-score-order={lead.scoreOrder.join(' / ')}><div><NewspaperTeamLogo team={leadTeams[0]} seasonId={seasonId} className={styles.teamEmblem}/><b>{newspaperTeamName(leadTeams[0])}</b></div><strong>{lead.displayScores[0]??'—'}<i>:</i>{lead.displayScores[1]??'—'}</strong><div><b>{newspaperTeamName(leadTeams[1])}</b><NewspaperTeamLogo team={leadTeams[1]} seasonId={seasonId} className={styles.teamEmblem}/></div></div>}{lead.editorialMark?<span className={styles.photoStamp} data-match-mark={lead.editorialMark.kind}>{translateUiText(lead.editorialMark.label,locale)}</span>:<span className={styles.photoTag}>{lead.decisive?t('决胜图','DECIDING MAP'):t('赛场记录','MATCH RECORD')}</span>}</div></figure>}
             {!lead&&<p>{t('本期尚无已确认赛果。新闻将在比赛记录确认后生成。','News will appear when this week’s results are confirmed.')}</p>}
           </article>
           <aside className={styles.frontSidebar}>
@@ -301,7 +305,7 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
             {newspaper.briefs.map(article=><MatchBrief key={article.id} article={article} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason}/>)}
             {!newspaper.briefs.length&&<p className={styles.emptyBrief}>{t('本期暂无其他赛果。','No other results this week.')}</p>}
             {newspaper.peopleNews.people.length>0&&<article className={styles.peopleNote}>
-              <span className={styles.columnLabel}>{newspaper.peopleNews.title}</span>
+              <span className={styles.columnLabel}>{translateUiText(newspaper.peopleNews.title,locale)}</span>
               <PeopleNotes people={newspaper.peopleNews.people} editorial={Boolean(lead?.intro)} compact={newspaper.layout==='compact'} locale={locale} seasonId={seasonId} withSeason={withSeason}/>
             </article>}
           </aside>

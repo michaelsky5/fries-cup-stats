@@ -18,10 +18,10 @@ import {
   normalizeReviewLocale
 } from '../lib/reviewLocale.js'
 import { usePublicSeasonData } from '../hooks/usePublicSeasonData.js'
+import { startVisiblePolling } from '../lib/visiblePolling.js'
 import { getPublicDataStatus } from '../lib/publicDataStatus.js'
 import { formatUpdatedAt } from '../lib/format.js'
-import { getGlobalSummary } from '../lib/selectors.js'
-import { getSeasonStatus } from '../lib/homeSelectors.js'
+import { getGlobalSummary, getSeasonStatus } from '../lib/seasonSummary.js'
 import { isWeeklyOverview } from '../features/weekly-overview/weeklyOverviewModel.js'
 import { buildFriesCupTitle, getDataCenterPageLabel } from '../lib/pageTitle.js'
 import { getRestoreScrollY, restoreWindowScroll } from '../lib/navigationState.js'
@@ -177,9 +177,6 @@ export default function DataLayout() {
 
   useEffect(() => {
     let alive = true
-    let requestInFlight = false
-    let refreshQueued = false
-    const controller = new AbortController()
 
     if (!attentionEnabled || !attentionSeasonId) {
       setAccountAttentionContext(null)
@@ -188,40 +185,26 @@ export default function DataLayout() {
 
     setAccountAttentionContext({ scope: attentionScope, overview: { taskSyncStatus: 'loading' } })
 
-    const refreshAccountAttention = () => {
-      if (document.visibilityState === 'hidden') return
-      if (requestInFlight) { refreshQueued = true; return }
-      requestInFlight = true
-      fetchAccountAttentionContext(attentionSeasonId, authUser?.id, { signal: controller.signal })
-        .then(context => {
-          if (alive) setAccountAttentionContext(context ? { ...context, scope: attentionScope } : null)
-        })
-        .catch(() => {
-          if (alive) setAccountAttentionContext({ scope: attentionScope, overview: { taskSyncStatus: 'error' } })
-        })
-        .finally(() => {
-          requestInFlight = false
-          if (alive && refreshQueued) { refreshQueued = false; refreshAccountAttention() }
-        })
+    const refreshAccountAttention = async ({ signal }) => {
+      let context
+      try { context = await fetchAccountAttentionContext(attentionSeasonId, authUser?.id, { signal }) }
+      catch (error) {
+        if (alive) setAccountAttentionContext({ scope: attentionScope, overview: { taskSyncStatus: 'error' } })
+        throw error
+      }
+      if (alive) setAccountAttentionContext(context ? { ...context, scope: attentionScope } : null)
+      // Keep partial counts visible while respecting failed sources' backoff.
+      if (context?.refreshError) throw context.refreshError
     }
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') refreshAccountAttention()
-    }
-
-    refreshAccountAttention()
-    const interval = globalThis.setInterval(refreshAccountAttention, ACCOUNT_ATTENTION_REFRESH_INTERVAL_MS)
-    globalThis.addEventListener('focus', refreshAccountAttention)
-    globalThis.addEventListener('fc:account-activity-changed', refreshAccountAttention)
-    document.addEventListener('visibilitychange', handleVisibilityChange)
+    const polling = startVisiblePolling(refreshAccountAttention, { intervalMs: ACCOUNT_ATTENTION_REFRESH_INTERVAL_MS })
+    const activityChanged = () => polling.refresh({ changed: true })
+    globalThis.addEventListener('fc:account-activity-changed', activityChanged)
 
     return () => {
       alive = false
-      controller.abort()
-      globalThis.clearInterval(interval)
-      globalThis.removeEventListener('focus', refreshAccountAttention)
-      globalThis.removeEventListener('fc:account-activity-changed', refreshAccountAttention)
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      polling.stop()
+      globalThis.removeEventListener('fc:account-activity-changed', activityChanged)
     }
   }, [authUser?.id, attentionEnabled, attentionSeasonId, attentionScope])
 
@@ -453,6 +436,7 @@ export default function DataLayout() {
 
       <UrgentAnnouncementGate
         seasonId={seasonId}
+        key={`${authUser?.id || ''}:${seasonId}`}
         isAuthenticated={isAuthenticated}
         detailsUrl={withSeason('/me?section=communications')}
       />

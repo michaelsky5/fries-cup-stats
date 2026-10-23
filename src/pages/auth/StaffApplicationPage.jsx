@@ -22,12 +22,16 @@ export default function StaffApplicationPage() {
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [attempt, setAttempt] = useState(0)
   const pending = useRef(false), heading = useRef(null)
   useEffect(() => {
+    const previousTitle = document.title
+    document.title = `${translateUiText('工作人员申请', locale)} | ${translateUiText('薯条杯', locale)}`
+    return () => { document.title = previousTitle }
+  }, [locale])
+  useEffect(() => {
     const changed = () => { const next = credential(); if (next) { setToken(next); setStep('form') } }
     window.addEventListener('hashchange', changed)
     return () => window.removeEventListener('hashchange', changed)
   }, [])
   useEffect(() => {
-    document.title = '工作人员申请 | 薯条杯'
     window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search)
     const controller = new AbortController()
     setContext(null); setError('')
@@ -73,8 +77,8 @@ export default function StaffApplicationPage() {
           <p>{t('已有选手身份、原密码和队伍关系均保留。请使用刚才的本人邮箱登录，在账号概览查看审核结果。')}</p>
           <Link className={styles.primary} to={withAccountCompetition('/account', context.season.id)}>{t('登录并查看申请状态 →')}</Link>
         </> : step === 'email' ? <>
-          <p>{t('验证邮件已发送至 {0}。打开邮件链接后确认提交申请。', [application.maskedEmail])}</p>
-          <p role={delivery?.delivered ? 'status' : 'alert'} className={!delivery?.delivered ? styles.error : undefined}>{t(delivery?.delivered ? '邮件服务已受理发送，请检查收件箱和垃圾邮件。' : '邮件投递未确认，申请尚未提交。请稍后重试或联系管理员。')}</p>
+          <p>{t('请检查 {0} 的验证邮件，打开链接后确认提交申请。', [application.maskedEmail])}</p>
+          <p role={delivery?.queued || delivery?.delivered ? 'status' : 'alert'} className={!delivery?.queued && !delivery?.delivered ? styles.error : undefined}>{t(delivery?.queued ? '验证邮件已排队，系统会自动重试发送。请稍后检查收件箱和垃圾邮件。' : delivery?.delivered ? '邮件服务已受理发送，请检查收件箱和垃圾邮件。' : '邮件投递未确认，申请尚未提交。请稍后重试或联系管理员。')}</p>
           <p className={styles.hint}>{t('邮箱确认链接 30 分钟内有效；重新发送后旧验证链接失效。')}</p>
           <button className={styles.secondary} onClick={() => { setStep('form'); setError('') }}>{t('返回 / 重新发送验证邮件')}</button>
         </> : <form onSubmit={submit}>

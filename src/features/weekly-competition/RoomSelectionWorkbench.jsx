@@ -19,9 +19,10 @@ export function MapSelectionWorkbench({ data, draft, edit, send, disabled, mapTy
   const locked = disabled || data.phaseClock?.enabled && data.phaseClock.stage?.kind === 'MAP' && data.phaseClock.status !== 'WAITING' && mapSeconds === 0
   const timeout = data.phaseClock?.mapTimeouts?.latest
   const timedHere = timeout?.mapOrder === opening.mapOrder
-  const timeoutHint = timedHere ? timeout.count === 1 ? '首次选图超时警告 · 补时 60 秒' : '本图 Ban 权已取消 · 补时 60 秒' : '超时：警告 → 取消 Ban → 随机地图'
+  const timeoutHint = timeout?.count === 1 ? '首次选图超时警告 · 补时 60 秒' : '本图 Ban 权已取消 · 补时 60 秒'
   return <div className={styles.mapStage} data-selection-workbench="map">
-    <div className={styles.intro}><strong>{t('{0} 选择本图', [teamName(chooser)])}</strong><span>{t(data.phaseClock?.enabled ? timeoutHint : later ? '选定地图后，双方同时确认首发。' : '首图固定占领要点，选定后双方同时确认首发。')}</span></div>
+    <div className={styles.intro}><strong>{t('{0} 选择本图', [teamName(chooser)])}</strong>{!data.phaseClock?.enabled && <span>{t(later ? '选定地图后，双方同时确认首发。' : '首图固定占领要点，选定后双方同时确认首发。')}</span>}</div>
+    {timedHere && <p className={styles.timeoutNotice} data-map-timeout-notice data-penalty="true" role="status">{t(timeoutHint)}</p>}
     {canChoose ? <>
       {later && <div className={styles.modeTabs} role="group" aria-label={t('选择地图类型')}>{opening.typeCycle?.types.map(item => <button type="button" key={item.type} aria-pressed={mapType === item.type} disabled={locked || item.used || !item.remaining} onClick={() => edit({ mapType: item.type, mapName: '', startSide: '' })}><strong>{formatOwMapMode(item.type, locale)}</strong><small>{t(item.used ? '本轮已用' : '{0} 张可选', [item.remaining || 0])}</small></button>)}</div>}
       <div className={styles.mapWorkspace}>
@@ -56,6 +57,7 @@ export function HeroBanWorkbench({ data, draft, edit, send, disabled, role, setR
   const matchQuery = hero => `${formatOwHeroName(hero.name, locale)} ${hero.name} ${getOwHero(hero.name)?.zh || ''} ${(getOwHero(hero.name)?.aliases || []).join(' ')}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase())
   const pool = opening.heroes.filter(hero => hero.role === role && matchQuery(hero))
   return <div className={styles.banStage} data-selection-workbench="ban">
+    {data.phaseClock?.enabled && data.phaseClock.stage?.correction && <p className={styles.timeoutNotice} data-ban-timeout-notice role="status">{t('当前为无效 Ban 的纠正窗口，不再追加补交宽限；到时未确认将放弃本轮禁用权。')}</p>}
     <div className={styles.banSlots}>{(setup?.firstBanSide === 'B' ? ['B', 'A'] : ['A', 'B']).map((side, index) => {
       const hero = setup?.[`ban${side}`], active = opening.nextSide === side
       return <div key={side} data-active={active} data-locked={!!hero || roomBanTimedOut(setup, side)}><span className={styles.slotNumber} data-locked={!!hero}>{hero && <img src={getHeroImage(hero)} alt="" />}<span>{String(index + 1).padStart(2, '0')}</span></span><div><small>{teamName(data.match[`team${side}`])}</small><strong>{roomBanResolved(setup, side) ? roomBanLabel(setup, side, locale) : t(active ? '正在选择' : '等待对方确认')}</strong></div><span className={styles.slotState}>{t(roomBanTimedOut(setup, side) ? '已放弃' : hero ? '已锁定' : active ? '当前操作' : '待选择')}</span></div>
@@ -72,7 +74,7 @@ export function HeroBanWorkbench({ data, draft, edit, send, disabled, role, setR
       <aside className={styles.selection} data-room-commit="selection" data-selected={!!chosenHero}>
         <div className={styles.selectionTitle}><small>{t('本次禁用')}</small><strong>{chosenHero ? formatOwHeroName(chosenHero.name, locale) : t('请选择英雄')}</strong></div>
         <div className={styles.heroPreview}>{chosenHero ? <img src={getHeroImage(chosenHero.name, chosenHero.role)} alt={formatOwHeroName(chosenHero.name, locale)} /> : <span>BAN</span>}</div>
-        <p className={styles.explanation}>{t(expired ? '禁用时间已到，正在同步超时放弃结果。' : data.phaseClock?.enabled ? '请在倒计时结束前确认；超时自动放弃本轮禁用权，不得补 Ban。' : chosenHero ? '确认后，本图双方均不可使用此英雄。' : '选择英雄后，在此核对并锁定禁用。')}</p>
+        <p className={styles.explanation}>{t(expired ? '禁用时间已到，正在同步超时放弃结果。' : chosenHero ? '确认后，本图双方均不可使用此英雄。' : '选择英雄后，在此核对并锁定禁用。')}</p>
         <div className={styles.commit}><small>{t(!chosenHero ? '选择英雄后，在此核对并锁定禁用。' : roomBanResolved(setup, 'A') || roomBanResolved(setup, 'B') ? '确认后完成本图选禁，等待实际开赛。' : '确认后轮到对方禁用英雄。')}</small>{chosenHero && <div className={styles.touchHint}><RoomCountdownHint data={data} action="BAN" /></div>}<button type="button" disabled={locked || !chosenHero} onClick={() => send('BAN', { teamId: activeTeam.id, hero: chosenHero.name, heroRole: chosenHero.role })}>{chosenHero ? t('确认禁用 {0}', [formatOwHeroName(chosenHero.name, locale)]) : t('确认禁用')} <span aria-hidden="true">→</span></button></div>
       </aside>
     </div> : <div className={styles.waiting}><span>04 / HERO BAN</span><h2>{t('等待 {0} 禁用英雄', [teamName(activeTeam)])}</h2><p>{t('禁用结果会自动显示，无需返回地图栏查找。')}</p></div>}

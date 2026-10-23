@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   clearStoredAuth,
   confirmEmailChange,
@@ -19,6 +19,7 @@ import {
 } from './userDataApi.js'
 import { fetchAccountProfile } from '../account-security/accountSecurityApi.js'
 import { synchronizeAfterCredentialChange } from '../account-security/accountRecoveryModel.js'
+import { startVisiblePolling } from '../../lib/visiblePolling.js'
 
 const AuthContext = createContext(null)
 
@@ -56,7 +57,8 @@ export function AuthProvider({ children }) {
   const accountRequest = useRef(0)
   const currentUserId = useRef('')
   const currentSessionUser = useRef(null)
-  currentSessionUser.current = authState.user
+  const sessionBootstrap = useRef(Promise.resolve())
+  useLayoutEffect(() => { currentSessionUser.current = authState.user }, [authState.user])
   const sessionChannel = useRef(null)
   const profileRequest = useRef(0)
 
@@ -144,7 +146,7 @@ export function AuthProvider({ children }) {
       resetEmailStates()
       setAuthState({ user: null, isBootstrapping: true })
       setAccountState(emptyAccountState())
-      fetchCurrentUser({ signal })
+      sessionBootstrap.current = fetchCurrentUser({ signal })
         .then(user => {
           if (signal.aborted || epoch !== sessionEpoch.current) return
           installSession(user)
@@ -246,14 +248,11 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (!authState.user?.canSwitchAccountMode) return undefined
-    let inFlight = false
     let cancelled = false
-    const refresh = async () => {
-      if (inFlight) return
-      inFlight = true
+    const refresh = async ({ signal }) => {
       const epoch = sessionEpoch.current
       try {
-        const user = await fetchCurrentUser()
+        const user = await fetchCurrentUser({ signal })
         if (cancelled || epoch !== sessionEpoch.current) return
         const current = currentSessionUser.current
         if (user?.id !== current?.id || user?.role !== current?.role
@@ -262,11 +261,11 @@ export function AuthProvider({ children }) {
         }
       } catch (error) {
         if (!cancelled && epoch === sessionEpoch.current && error?.status === 401) clearRevokedSession()
-      } finally { inFlight = false }
+        throw error
+      }
     }
-    const timer = window.setInterval(refresh, 15000)
-    window.addEventListener('focus', refresh)
-    return () => { cancelled = true; window.clearInterval(timer); window.removeEventListener('focus', refresh) }
+    const polling = startVisiblePolling(refresh, { intervalMs: 15_000, initialDelayMs: 15_000 })
+    return () => { cancelled = true; polling.stop() }
   }, [authState.user?.canSwitchAccountMode, clearRevokedSession, installSession])
 
   useEffect(() => {
@@ -289,6 +288,10 @@ export function AuthProvider({ children }) {
     setEmailChangeState({ status: 'VERIFYING', result: null, error: null })
     processedEmailChangeToken.current.promise
       .then(async result => {
+        // The initial cookie read can finish after the link confirmation.
+        // Install that session before publishing a result it would otherwise
+        // clear, then refresh again when the credential was changed.
+        await sessionBootstrap.current
         if (cancelled) return
         let sessionWarning = ''
         if (result?.completed) {
@@ -316,20 +319,33 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (typeof window === 'undefined') return undefined
     const params = new URLSearchParams(window.location.search)
-    const token = params.get('verifyEmail') || ''
+    const token = params.get('verifyEmail') || (processedEmailToken.current?.pending ? processedEmailToken.current.token : '')
     if (!token) return undefined
+    params.delete('verifyEmail')
+    const cleanSearch = params.toString()
+    window.history.replaceState({}, '', `${window.location.pathname}${cleanSearch ? `?${cleanSearch}` : ''}${window.location.hash}`)
     if (processedEmailToken.current?.token !== token) {
-      processedEmailToken.current = { token, promise: confirmEmailVerification(token) }
+      processedEmailToken.current = { token, pending: true, promise: confirmEmailVerification(token) }
     }
     let cancelled = false
     setEmailVerificationState({ status: 'VERIFYING', result: null, error: null })
 
     processedEmailToken.current.promise
       .then(async result => {
+        await sessionBootstrap.current
         if (cancelled) return
-        if (currentUserId.current) await refreshSession()
+        let sessionWarning = ''
+        try {
+          // Verification may finish before the cookie bootstrap. Refresh even
+          // without an installed user; retry if bootstrap superseded this read.
+          const refreshed = await refreshSession()
+          if (!refreshed && !cancelled && currentUserId.current) await refreshSession()
+        } catch (error) {
+          if (error?.status !== 401) sessionWarning = '邮箱已验证，账号状态暂未同步。请重新读取状态或登录本人账号。'
+        }
         if (cancelled) return
-        setEmailVerificationState({ status: 'VERIFIED', result, error: null })
+        processedEmailToken.current.pending = false
+        setEmailVerificationState({ status: 'VERIFIED', result, error: null, sessionWarning })
         params.delete('verifyEmail')
         const nextSearch = params.toString()
         window.history.replaceState({}, '', `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}${window.location.hash}`)
@@ -337,6 +353,7 @@ export function AuthProvider({ children }) {
       })
       .catch(error => {
         if (cancelled) return
+        processedEmailToken.current.pending = false
         setEmailVerificationState({ status: 'ERROR', result: null, error })
       })
 
@@ -355,24 +372,21 @@ export function AuthProvider({ children }) {
     return auth.user
   }, [installSession])
 
-  const register = useCallback(async ({ email, password, username, displayName, regionCode, qqContact, discordContact }) => {
+  const register = useCallback(async ({ email, password, username, displayName }) => {
     const epoch = ++sessionEpoch.current
     const normalizedUsername = String(username || displayName || '').trim()
     const auth = await registerWithPassword({
       email: email.trim(),
       password,
       username: normalizedUsername,
-      displayName: String(displayName || normalizedUsername).trim(),
-      regionCode,
-      qqContact: String(qqContact || '').trim(),
-      discordContact: String(discordContact || '').trim()
+      displayName: String(displayName || normalizedUsername).trim()
     })
     if (!auth?.user?.id) throw new Error('注册响应缺少有效账号，请重新登录。')
     if (epoch !== sessionEpoch.current) return null
     installSession(auth.user)
     sessionChannel.current?.postMessage('SESSION_CHANGED')
     setEmailVerificationState({
-      status: auth.emailVerification?.delivered ? 'SENT' : 'IDLE',
+      status: auth.emailVerification?.queued ? 'QUEUED' : auth.emailVerification?.delivered ? 'SENT' : 'IDLE',
       result: auth.emailVerification || null,
       error: null
     })
@@ -387,7 +401,7 @@ export function AuthProvider({ children }) {
       if (epoch !== sessionEpoch.current) return null
       if (result?.verified) await refreshSession()
       if (epoch !== sessionEpoch.current) return null
-      setEmailVerificationState({ status: result?.verified ? 'VERIFIED' : result?.delivered ? 'SENT' : 'UNDELIVERED', result, error: null })
+      setEmailVerificationState({ status: result?.verified ? 'VERIFIED' : result?.queued ? 'QUEUED' : result?.delivered ? 'SENT' : 'UNDELIVERED', result, error: null })
       return result
     } catch (error) {
       if (epoch === sessionEpoch.current) setEmailVerificationState({ status: 'ERROR', result: null, error })

@@ -1,4 +1,6 @@
 {
+  "buildCommand": "npm run build:edgeone",
+  "nodeVersion": "24.18.0",
   "rewrites": [{ "source": "/*", "destination": "/index.html" }],
   "headers": [
     {
@@ -24,6 +26,10 @@
     {
       "source": "/index.html",
       "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+    },
+    {
+      "source": "/release-version.json",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
     },
     {
       "source": "/migration-version.json",

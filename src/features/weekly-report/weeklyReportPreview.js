@@ -1,6 +1,7 @@
 import { buildWeeklyOverview, weeklyMapSlots } from '../weekly-overview/weeklyOverviewModel.js'
 import { buildWeeklyAwards } from './weeklyAwards.js'
 import { collectWeeklyNewsContext } from './weeklyEditorial.js'
+export { formatReportTime, weeklyReportPath } from './weeklyReportPresentation.js'
 
 const list = value => Array.isArray(value) ? value : []
 const text = value => String(value ?? '').trim()
@@ -81,20 +82,8 @@ export function buildWeeklyReportPreview(db, options = {}) {
   return report
 }
 
-export function weeklyReportPath(report) {
-  return `/reports/${encodeURIComponent(report.week.id)}?cycle=${encodeURIComponent(report.cycle.id)}`
-}
-
 export function listWeeklyReportPreviews(db, cycleId) {
   const overview = buildWeeklyOverview(db, { cycleId })
   if (cycleId && overview.cycle?.id !== cycleId) return []
   return [...overview.weeks].reverse().map(week => buildWeeklyReportPreview(db, { cycleId: overview.cycle.id, weekId: week.id })).filter(Boolean)
-}
-
-export function formatReportTime(value, locale = 'zh-CN') {
-  const date = new Date(value)
-  if (!value || !Number.isFinite(date.getTime())) return '—'
-  return new Intl.DateTimeFormat(String(locale).startsWith('en') ? 'en-GB' : 'zh-CN', {
-    timeZone: 'Asia/Singapore', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
-  }).format(date) + ' UTC+8'
 }

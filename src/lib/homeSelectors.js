@@ -4,7 +4,8 @@ import { getRankingMinTimeMins } from './leaderboardSelectors.js'
 import { getMatchRoundScopeKey } from './matchRoundScope.js'
 import { getGroupStandings } from './advanceSelectors.js'
 import { isByeMatch } from './matchesSelectors.js'
-import { getExplicitWeeklyCompletion } from './weeklySeasonLifecycle.js'
+import { getSeasonStatus, getPublicationRules as getRules } from './seasonSummary.js'
+export { getSeasonStatus } from './seasonSummary.js'
 import { getPreferredTeamShortName } from './teamDisplayIdentity.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
@@ -154,70 +155,6 @@ function compareAscByTime(a, b) {
   const timeDelta = getMatchTime(a) - getMatchTime(b)
   if (timeDelta !== 0) return timeDelta
   return String(a?.match_id || '').localeCompare(String(b?.match_id || ''))
-}
-
-function getExpectedSwissMatchCount(db, season) {
-  const rules = getRules(season, db)
-  if (normalizeText(rules?.competitionFormat || db?.season?.competition_format).toUpperCase() === 'GROUP') {
-    return toNumber(rules?.groupStage?.expectedMatches ?? rules?.advance?.groups?.matchCount, 0) +
-      toNumber(rules?.advance?.playoffs?.matchCount, 0)
-  }
-  const swiss = rules?.advance?.swiss || {}
-  const swissStage = rules?.swissStage || {}
-  const expectedRounds = toNumber(swiss.rounds ?? swissStage.maxRounds ?? rules?.swiss?.round_count, 0)
-  const teamCount = safeArr(db?.teams).length
-  const matchesPerRound = toNumber(
-    swiss.matchesPerRound ?? swissStage.matchesPerRound,
-    teamCount > 1 ? Math.ceil(teamCount / 2) : 0
-  )
-
-  return expectedRounds > 0 && matchesPerRound > 0 ? expectedRounds * matchesPerRound : 0
-}
-
-function isSeasonCompleteByPublishedMatches(db, season, completedCount, matchCount) {
-  const weeklyFinished = getExplicitWeeklyCompletion(db, season)
-  if (weeklyFinished !== null) return weeklyFinished
-  if (!matchCount || completedCount !== matchCount) return false
-
-  const expectedSwissMatches = getExpectedSwissMatchCount(db, season)
-  return !expectedSwissMatches || matchCount >= expectedSwissMatches
-}
-
-export function getSeasonStatus(db, season = null) {
-  const matches = safeArr(db?.matches)
-  const completed = matches.filter(isComplete)
-  const live = matches.filter(isLive)
-  const upcoming = matches.filter(match => !isComplete(match) && !isLive(match))
-  const progress = matches.length ? Math.round((completed.length / matches.length) * 100) : 0
-  const isFinished = isSeasonCompleteByPublishedMatches(db, season, completed.length, matches.length)
-
-  let phase = 'pending'
-  let label = '等待赛程'
-  if (isFinished) {
-    phase = 'complete'
-    label = '赛季已完结'
-  } else if (live.length) {
-    phase = 'live'
-    label = '比赛进行中'
-  } else if (completed.length) {
-    phase = 'active'
-    label = '赛季进行中'
-  } else if (upcoming.length) {
-    phase = 'scheduled'
-    label = '赛程已发布'
-  }
-
-  return {
-    phase,
-    label,
-    isFinished: phase === 'complete',
-    isActive: ['live', 'active', 'scheduled'].includes(phase),
-    totalMatches: matches.length,
-    completedMatches: completed.length,
-    liveMatches: live.length,
-    upcomingMatches: upcoming.length,
-    progress
-  }
 }
 
 export function getHomeSummary(db) {
@@ -601,14 +538,6 @@ function getSeasonDisplayName(season, db) {
 
 function getSeasonDisplayCode(season, db) {
   return normalizeText(season?.publicCode || db?.season?.publicCode || db?.meta?.publicCode || season?.id || 'FCR2026')
-}
-
-function getRules(season, db) {
-  return {
-    ...(season?.rules || {}),
-    ...(db?.meta?.rules && typeof db.meta.rules === 'object' ? db.meta.rules : {}),
-    ...(db?.season?.rules && typeof db.season.rules === 'object' ? db.season.rules : {})
-  }
 }
 
 function getAdvancementSlots(season, db) {

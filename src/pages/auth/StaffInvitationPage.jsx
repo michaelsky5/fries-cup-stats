@@ -30,6 +30,11 @@ export default function StaffInvitationPage() {
   const pending = useRef(false)
   const heading = useRef(null)
   useEffect(() => {
+    const previousTitle = document.title
+    document.title = `${translateUiText('工作人员邀请', locale)} | ${translateUiText('薯条杯', locale)}`
+    return () => { document.title = previousTitle }
+  }, [locale])
+  useEffect(() => {
     const changed = () => {
       const next = readCredential()
       if (!next.token) return
@@ -40,7 +45,6 @@ export default function StaffInvitationPage() {
     return () => window.removeEventListener('hashchange', changed)
   }, [])
   useEffect(() => {
-    document.title = '工作人员邀请 | 薯条杯'
     window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search)
     if (!credential.token) return
     const controller = new AbortController()
@@ -84,7 +88,7 @@ export default function StaffInvitationPage() {
           <p className={styles.hint}>{t("正式排班发布后，相应场次会出现在“我的空间 → 我的比赛”。尚未排班时无需再次注册。本队比赛仍按参赛身份进入。")}</p>
         </> : step === 'email' ? <>
           <p>{t('请验证邮箱 {0}。打开验证邮件中的链接，确认接受本届职责。', [sent?.invitation.maskedEmail])}</p>
-          <p role={sent?.emailDelivery?.delivered ? 'status' : 'alert'} className={!sent?.emailDelivery?.delivered ? styles.error : undefined}>{sent?.emailDelivery?.delivered ? t("邮件服务已受理发送，请检查收件箱和垃圾邮件。") : t("邮件投递未确认，身份尚未生效。请稍后返回重试或联系管理员检查邮件服务。")}</p>
+          <p role={sent?.emailDelivery?.queued || sent?.emailDelivery?.delivered ? 'status' : 'alert'} className={!sent?.emailDelivery?.queued && !sent?.emailDelivery?.delivered ? styles.error : undefined}>{sent?.emailDelivery?.queued ? t('验证邮件已排队，系统会自动重试发送。请稍后检查收件箱和垃圾邮件。') : sent?.emailDelivery?.delivered ? t("邮件服务已受理发送，请检查收件箱和垃圾邮件。") : t("邮件投递未确认，身份尚未生效。请稍后返回重试或联系管理员检查邮件服务。")}</p>
           <p className={styles.hint}>{t("邮箱确认链接 30 分钟内有效；重新发送后旧验证链接失效。")}</p>
           <button className={styles.secondary} onClick={() => { setStep('form'); setError('') }}>{t("返回 / 重新发送验证邮件")}</button>
         </> : <form onSubmit={submit}>

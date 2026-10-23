@@ -1,3 +1,5 @@
+import { accountDateTime } from '../account-ui/accountDateTime.js'
+import { taskTitle } from '../tasks/taskPresentation.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { Link } from 'react-router-dom'
@@ -33,15 +35,13 @@ const STAFF_MATCH_STATUS = {
 }
 const HISTORICAL_MATCH_STATUSES = new Set(Object.keys(STAFF_MATCH_STATUS))
 
-function formatTime(value, fallback = '时间待定') {
-  return value ? new Date(value).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false }) : fallback
-}
+const formatTime = accountDateTime
 
-function formatSeasonRange(start, end) {
-  const format = value => value ? new Date(value).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit' }) : ''
+function formatSeasonRange(start, end, locale) {
+  const format = value => accountDateTime(value, locale, '', { year: 'numeric', month: 'short', day: undefined, hour: undefined, minute: undefined })
   const startLabel = format(start)
   const endLabel = format(end)
-  return startLabel && endLabel ? `${startLabel} — ${endLabel}` : startLabel || endLabel || '时间未记录'
+  return startLabel && endLabel ? `${startLabel} — ${endLabel}` : startLabel || endLabel || uiText('时间未记录', locale)
 }
 
 function teamName(team) {
@@ -73,7 +73,7 @@ export function IdentityContextStrip({ context, loading = false, error = '' }) {
 function NextMatchCard({ match, label, withSeason }) {
   const uiLocale = useUiLocale()
   if (!match) return <div className={styles.miniEmpty}><strong>{uiText("暂无下一场安排", uiLocale)}</strong><p>{uiText("赛程或排班确认后会自动出现在这里。", uiLocale)}</p></div>
-  return <article className={styles.nextCard}><header><span>{label}</span><em>{match.status}</em></header><h3>{matchTeams(match)}</h3><p>{match.displayName}</p><dl><div><dt>{uiText("时间", uiLocale)}</dt><dd>{formatTime(match.scheduledAt)}</dd></div><div><dt>{uiText("阶段", uiLocale)}</dt><dd>{match.stage} · {match.roundLabel || uiText("待定", uiLocale)}</dd></div></dl><Link to={withSeason(`/matches/${encodeURIComponent(match.id)}`)}>{uiText("查看比赛 →", uiLocale)}</Link></article>
+  return <article className={styles.nextCard}><header><span>{label}</span><em>{match.status}</em></header><h3>{matchTeams(match)}</h3><p>{match.displayName}</p><dl><div><dt>{uiText("时间", uiLocale)}</dt><dd>{formatTime(match.scheduledAt, uiLocale)}</dd></div><div><dt>{uiText("阶段", uiLocale)}</dt><dd>{match.stage} · {match.roundLabel || uiText("待定", uiLocale)}</dd></div></dl><Link to={withSeason(`/matches/${encodeURIComponent(match.id)}`)}>{uiText("查看比赛 →", uiLocale)}</Link></article>
 }
 
 function TeamContextCard({ teamContext, withSeason }) {
@@ -99,7 +99,7 @@ function TeamContextCard({ teamContext, withSeason }) {
         <div><dt>{uiText("本届报名", uiLocale)}</dt><dd>{EVENT_REGISTRATION_STATUS[teamContext.registrationStatus] || teamContext.registrationStatus}</dd></div>
         <div><dt>{ownMember ? uiText("我的名单状态", uiLocale) : uiText("注册名单", uiLocale)}</dt><dd>{rosterSummary}</dd></div>
         <div><dt>{uiText("队长", uiLocale)}</dt><dd>{teamContext.leadership?.managerIsDefaultCaptain ? uiText("经理默认兼任", uiLocale) : teamContext.leadership?.captain?.displayName || uiText("待指定", uiLocale)}</dd></div>
-        <div><dt>{uiText("下一场", uiLocale)}</dt><dd>{teamContext.nextMatch ? formatTime(teamContext.nextMatch.scheduledAt) : uiText("暂无", uiLocale)}</dd></div>
+        <div><dt>{uiText("下一场", uiLocale)}</dt><dd>{teamContext.nextMatch ? formatTime(teamContext.nextMatch.scheduledAt, uiLocale) : uiText("暂无", uiLocale)}</dd></div>
       </dl>
       <div className={styles.actions}>{permissions.canManageTeam ? <Link to={withSeason('/me?section=team' + (teamContext.seasonTeam?.id ? '&team=' + encodeURIComponent(teamContext.seasonTeam.id) : ''))}>{uiText("管理报名与阵容", uiLocale)}</Link> : <Link to={withSeason('/me?section=team' + (teamContext.seasonTeam?.id ? '&team=' + encodeURIComponent(teamContext.seasonTeam.id) : ''))}>{uiText("查看队伍关系", uiLocale)}</Link>}{permissions.canNegotiateSchedule ? <Link to={withSeason('/me?section=matches')}>{uiText("赛程协商", uiLocale)}</Link> : null}{permissions.canSubmitAppeal ? <Link to={withSeason('/me?section=communications')}>{uiText("赛事申诉", uiLocale)}</Link> : null}</div>
       {permissions.readOnly ? <p className={styles.readOnly}>{uiText("当前关系为只读；教练可查看队伍赛事信息，但不能代替经理提交报名、阵容或申诉。", uiLocale)}</p> : null}
@@ -113,7 +113,7 @@ function StaffEventCard({ staffView, withSeason }) {
   return (
     <article className={styles.staffEventCard} data-role={staffView.role}>
       <header><div><span>{staffView.en} RELATION</span><strong>{staffView.label}{uiText("赛事关系", uiLocale)}</strong></div><em>{staffView.statusLabel}</em></header>
-      <div className={styles.staffEventFacts}><div><span>{uiText("本届状态", uiLocale)}</span><strong>{staffView.statusLabel}</strong></div><div><span>{uiText("正式排班", uiLocale)}</span><strong>{staffView.assignmentCount}{uiText(" 场", uiLocale)}</strong></div><div><span>{uiText("下一项安排", uiLocale)}</span><strong>{nextAssignment?.match ? formatTime(nextAssignment.match.scheduledAt) : uiText("暂无", uiLocale)}</strong></div></div>
+      <div className={styles.staffEventFacts}><div><span>{uiText("本届状态", uiLocale)}</span><strong>{staffView.statusLabel}</strong></div><div><span>{uiText("正式排班", uiLocale)}</span><strong>{staffView.assignmentCount}{uiText(" 场", uiLocale)}</strong></div><div><span>{uiText("下一项安排", uiLocale)}</span><strong>{nextAssignment?.match ? formatTime(nextAssignment.match.scheduledAt, uiLocale) : uiText("暂无", uiLocale)}</strong></div></div>
       <Link to={withSeason(staffView.actionUrl)}>{uiText("打开", uiLocale)}{staffView.label}{uiText("工作台 →", uiLocale)}</Link>
     </article>
   )
@@ -154,7 +154,7 @@ function PlayerEventHistory({ records }) {
       </header>
       {records.length ? <div className={styles.playerEventHistoryGrid}>{records.map(record => (
         <article key={`${record.seasonId}-${record.registrationId}`} data-appearance={record.hasAppearance ? 'true' : 'false'}>
-          <div className={styles.historySeason}><span>{record.seasonStatusLabel}</span><strong>{record.seasonName}</strong><small>{formatSeasonRange(record.startsAt, record.endsAt)}</small></div>
+          <div className={styles.historySeason}><span>{record.seasonStatusLabel}</span><strong>{record.seasonName}</strong><small>{formatSeasonRange(record.startsAt, record.endsAt, uiLocale)}</small></div>
           <div className={styles.historyTeam}><span>OFFICIAL TEAM</span><strong>{record.teamLabel}</strong><p>{record.rosterPosition} · {record.roleLabel}</p></div>
           <dl>
             <div><dt>{uiText("正式出场", uiLocale)}</dt><dd>{record.appearanceLabel}</dd></div>
@@ -177,7 +177,7 @@ export function GeneralSpaceOverview({ context, withSeason, showNextEvent = true
     <div className={styles.overviewGrid} data-layout={showNextEvent ? 'split' : 'action-only'} data-has-tasks={tasks.length ? 'true' : 'false'}>
       {tasks.length ? <section className={styles.priorityPanel} data-has-tasks="true">
         <header><div><span>ACTION FIRST</span><h2>{tasks.length ? uiText("优先处理", uiLocale) : uiText("当前状态正常", uiLocale)}</h2><p>{tasks.length ? uiText("只展示最需要你回应的事项，完整记录保留在任务中心。", uiLocale) : uiText("暂时没有必须回应的邀请、阵容、赛程或排班事项。", uiLocale)}</p></div><div className={styles.priorityActions}><Link to={withSeason('/me?section=tasks')}>{context?.overview?.openTaskCount || 0}{uiText(" 项待办 →", uiLocale)}</Link>{unreadNotifications ? <Link to={withSeason('/me?section=communications&view=messages')}>{unreadNotifications}{uiText(" 条未读 →", uiLocale)}</Link> : null}</div></header>
-        <div className={styles.taskList}>{tasks.slice(0, 3).map(task => <Link key={task.id} to={withSeason(task.actionUrl || '/me?section=tasks')}><em data-priority={task.priority}>{TASK_PRIORITY[task.priority] || task.priority}</em><div><strong>{task.title}</strong><span>{task.identityType || uiText("账号", uiLocale)} · {formatTime(task.dueAt, '无固定截止')}</span></div><b>→</b></Link>)}</div>
+        <div className={styles.taskList}>{tasks.slice(0, 3).map(task => <Link key={task.id} to={withSeason(task.actionUrl || '/me?section=tasks')}><em data-priority={task.priority}>{TASK_PRIORITY[task.priority] || task.priority}</em><div><strong data-i18n-ignore>{taskTitle(task, uiLocale)}</strong><span>{task.identityType || uiText("账号", uiLocale)} · {formatTime(task.dueAt, uiLocale, '无固定截止')}</span></div><b>→</b></Link>)}</div>
       </section> : null}
       {showNextEvent ? <section className={styles.nextPanel}><header><span>NEXT EVENT</span><h2>{uiText("下一项赛事安排", uiLocale)}</h2></header>{context?.overview?.nextTeamMatch ? <NextMatchCard match={context.overview.nextTeamMatch} label="TEAM MATCH" withSeason={withSeason} /> : nextStaff?.match ? <NextMatchCard match={nextStaff.match} label={nextStaff.assignmentType === 'CASTER' ? 'CASTING' : 'REFEREE'} withSeason={withSeason} /> : <div className={styles.miniEmpty}><strong>{uiText("暂无比赛或工作人员排班", uiLocale)}</strong><p>{uiText("你仍可查看关注队伍的比赛与最新赛果。", uiLocale)}</p><Link to={withSeason('/me?section=following')}>{uiText("查看我的关注 →", uiLocale)}</Link></div>}</section> : null}
       {playerStatus ? <section className={styles.statRail} data-variant="player"><Link to={withSeason('/me?section=events')}><span>{uiText("本届队伍关系", uiLocale)}</span><strong>{playerStatus.key === 'WAITING_TEAM' ? playerStatus.teamLabel : uiText("已建立", uiLocale)}</strong><small>{uiText("查看详情 →", uiLocale)}</small></Link><Link to={withSeason('/me?section=team')}><span>{uiText("名单状态", uiLocale)}</span><strong>{playerStatus.rosterLabel}</strong><small>{uiText("查看名单 →", uiLocale)}</small></Link><Link to={withSeason('/me?section=matches')}><span>{uiText("关联比赛", uiLocale)}</span><strong>{playerStatus.matchCount}</strong><small>{uiText("场 · 查看 →", uiLocale)}</small></Link><Link to={withSeason('/me?section=communications&view=messages')}><span>{uiText("未读消息", uiLocale)}</span><strong>{context?.overview?.unreadNotificationCount || 0}</strong><small>{uiText("查看 →", uiLocale)}</small></Link></section> : managerStatus ? <section className={styles.statRail} data-variant="manager"><Link to={withSeason('/me?section=team')}><span>{uiText("本届队伍关系", uiLocale)}</span><strong>{managerStatus.teamCount ? uiText("已建立", uiLocale) : managerStatus.teamLabel}</strong><small>{managerStatus.registrationLabel} →</small></Link><Link to={withSeason('/me?section=team')}><span>{uiText("候选阵容", uiLocale)}</span><strong>{managerStatus.candidateCount}</strong><small>{uiText("人 · 管理 →", uiLocale)}</small></Link><Link to={withSeason('/me?section=team')}><span>{uiText("待审核申请", uiLocale)}</span><strong>{managerStatus.pendingApplicationCount}</strong><small>{uiText("条 · 处理 →", uiLocale)}</small></Link><Link to={withSeason('/me?section=matches')}><span>{uiText("关联比赛", uiLocale)}</span><strong>{managerStatus.matchCount}</strong><small>{uiText("场 · 查看 →", uiLocale)}</small></Link></section> : <section className={styles.statRail}><div><span>{uiText("当前身份", uiLocale)}</span><strong>{context?.identities?.length || 1}</strong><small>{uiText("个", uiLocale)}</small></div><Link to={withSeason('/me?section=events')}><span>{uiText("赛事队伍关系", uiLocale)}</span><strong>{context?.teamContexts?.length || 0}</strong><small>{uiText("查看 →", uiLocale)}</small></Link><Link to={withSeason('/me?section=communications&view=messages')}><span>{uiText("未读消息", uiLocale)}</span><strong>{context?.overview?.unreadNotificationCount || 0}</strong><small>{uiText("查看 →", uiLocale)}</small></Link><Link to={withSeason('/me?section=events')}><span>{uiText("工作人员任务", uiLocale)}</span><strong>{(context?.staffContext?.refereeAssignments?.length || 0) + (context?.staffContext?.casterAssignments?.length || 0)}</strong><small>{uiText("查看 →", uiLocale)}</small></Link></section>}
@@ -196,7 +196,7 @@ export function ManagerSpaceOverview({ context, managerStatus, withSeason }) {
     <section className={styles.managerWorkspace} data-theme="operations">
       {firstTask ? (
         <section className={styles.managerAlertBar} data-priority={firstTask.priority}>
-          <div><span>{TASK_PRIORITY[firstTask.priority] || firstTask.priority}{uiText("待办", uiLocale)}</span><strong>{firstTask.title}</strong><small>{formatTime(firstTask.dueAt, '无固定截止')}</small></div>
+          <div><span>{TASK_PRIORITY[firstTask.priority] || firstTask.priority}{uiText("待办", uiLocale)}</span><strong data-i18n-ignore>{taskTitle(firstTask, uiLocale)}</strong><small>{formatTime(firstTask.dueAt, uiLocale, '无固定截止')}</small></div>
           <Link to={withSeason(firstTask.actionUrl || '/me?section=tasks')}>{uiText("现在处理 →", uiLocale)}</Link>
           {managerStatus.openTaskCount > 1 ? <Link to={withSeason('/me?section=tasks')}>{uiText("其余 ", uiLocale)}{managerStatus.openTaskCount - 1}{uiText(" 项", uiLocale)}</Link> : null}
         </section>
@@ -209,7 +209,7 @@ export function ManagerSpaceOverview({ context, managerStatus, withSeason }) {
             <>
               <div className={styles.managerMatchDayTeams}><strong>{teamName(nextMatch.teamA)}</strong><b>VS</b><strong>{teamName(nextMatch.teamB)}</strong></div>
               <p>{nextMatch.displayName || `${nextMatch.stage || '赛事'} · ${nextMatch.roundLabel || '轮次待定'}`}</p>
-              <time dateTime={nextMatch.scheduledAt || undefined}>{formatTime(nextMatch.scheduledAt)}</time>
+              <time dateTime={nextMatch.scheduledAt || undefined}>{formatTime(nextMatch.scheduledAt, uiLocale)}</time>
               <Link className={styles.managerPrimaryAction} to={withSeason(`/matches/${encodeURIComponent(nextMatch.id)}`)}>{uiText("查看下一场比赛 →", uiLocale)}</Link>
             </>
           ) : (
@@ -334,7 +334,7 @@ export function RelationshipMatchesPanel({ context, withSeason }) {
               {nextMatch.canNegotiateSchedule ? <Link to={withSeason('/me?section=matches#schedule-negotiation')}>{uiText("赛程协商 →", uiLocale)}</Link> : null}
             </div>
           </div>
-          <div className={styles.nextMatchTime}><span>{nextMatch.timeState.label}</span><strong>{formatTime(nextMatch.scheduledAt)}</strong><em>{nextMatch.statusLabel}</em><p>{nextMatch.stage || uiText("阶段待定", uiLocale)} · {nextMatch.roundLabel || uiText("轮次待定", uiLocale)}</p></div>
+          <div className={styles.nextMatchTime}><span>{nextMatch.timeState.label}</span><strong>{formatTime(nextMatch.scheduledAt, uiLocale)}</strong><em>{nextMatch.statusLabel}</em><p>{nextMatch.stage || uiText("阶段待定", uiLocale)} · {nextMatch.roundLabel || uiText("轮次待定", uiLocale)}</p></div>
         </section>
       ) : (
         <section key="empty" className={styles.matchEmptyHero}><div><span>NO RELATED MATCH</span><strong>{view.currentAction.headline}</strong><p>{view.currentAction.description}</p></div><Link to={withSeason(view.currentAction.url)}>{view.currentAction.label} →</Link></section>
@@ -356,7 +356,7 @@ function MatchCollection({ title, eyebrow, description, matches, withSeason, neg
       <header><div><span>{eyebrow}</span><h2>{title}</h2><p>{description}</p></div><em>{matches.length} MATCHES</em></header>
       <div className={styles.matchCollectionList}>{matches.map(match => (
         <article key={match.id} data-state={match.timeState.key}>
-          <div className={styles.matchCollectionTime}><span>{match.timeState.label}</span><strong>{formatTime(match.scheduledAt)}</strong></div>
+          <div className={styles.matchCollectionTime}><span>{match.timeState.label}</span><strong>{formatTime(match.scheduledAt, uiLocale)}</strong></div>
           <div className={styles.matchCollectionTeams}><strong>{match.matchup}</strong><span>{match.displayName || `${match.stage || '赛事阶段'} · ${match.roundLabel || '轮次待定'}`}</span></div>
           <div className={styles.matchCollectionState}><em>{match.statusLabel}</em>{history && match.score ? <strong>{match.score}</strong> : <span>{match.roomAccess.label}</span>}</div>
           <div className={styles.matchCollectionActions}><Link to={withSeason(`/matches/${encodeURIComponent(match.id)}`)}>{uiText("比赛资料 →", uiLocale)}</Link>{negotiation ? <Link to={withSeason('/me?section=matches#schedule-negotiation')}>{uiText("协商工作台 →", uiLocale)}</Link> : null}</div>
@@ -378,7 +378,7 @@ function StaffAssignmentList({ assignments, kind, withSeason, weekly }) {
     return <article key={assignment.id} data-history={isHistorical ? 'true' : 'false'}>
       <header><span>{kind}</span><em>{statusLabel}</em></header>
       <h3>{matchTeams(match)}</h3>
-      <p>{match?.displayName} · {formatTime(match?.scheduledAt)}</p>
+      <p>{match?.displayName} · {formatTime(match?.scheduledAt, uiLocale)}</p>
       <dl className={styles.staffAssignmentFacts}>
         {isCaster ? <><div><dt>{uiText("播出方案", uiLocale)}</dt><dd>{assignment.plan?.name || uiText("待配置", uiLocale)}</dd></div><div><dt>{uiText("直播入口", uiLocale)}</dt><dd>{assignment.streamUrl ? uiText("已配置", uiLocale) : uiText("待配置", uiLocale)}</dd></div></> : <><div><dt>{uiText("排班状态", uiLocale)}</dt><dd>{isHistorical ? uiText("只读归档", uiLocale) : assignmentLabel}</dd></div><div><dt>{uiText("比赛房间", uiLocale)}</dt><dd>{isHistorical ? uiText("保留赛后记录", uiLocale) : uiText("从下方按钮直接进入", uiLocale)}</dd></div></>}
       </dl>
@@ -402,5 +402,5 @@ export function CasterWorkspace({ context, withSeason, onContextChange, preview 
   const uiLocale = useUiLocale()
   const assignments = context?.staffContext?.casterAssignments || []
   const availability = context?.staffContext?.availability || []
-  return <section className={styles.workspace}><WorkspaceSectionHeader eyebrow="CASTER DESK" title={uiText("解说安排", uiLocale)} description={uiText("集中查看档期、正式排班、播出方案和直播入口，不显示与解说无关的比赛操作。", uiLocale)} badge={`${assignments.length} MATCHES`} />{preview ? null : <EventStaffControl seasonId={context?.seasonId} role="CASTER" capabilitySnapshot={context?.capabilitySnapshot} onContextChange={onContextChange} />}{availability.length ? <div className={styles.availability}>{availability.map(item => <div key={item.id}><span>{item.formTitle}</span><strong>{item.formStatus || uiText("已提交", uiLocale)}</strong><em>{formatTime(item.submittedAt)}</em></div>)}</div> : null}<StaffAssignmentList assignments={assignments} kind="CASTER" withSeason={withSeason} weekly={context?.competitionKind === 'WEEKLY'} /></section>
+  return <section className={styles.workspace}><WorkspaceSectionHeader eyebrow="CASTER DESK" title={uiText("解说安排", uiLocale)} description={uiText("集中查看档期、正式排班、播出方案和直播入口，不显示与解说无关的比赛操作。", uiLocale)} badge={`${assignments.length} MATCHES`} />{preview ? null : <EventStaffControl seasonId={context?.seasonId} role="CASTER" capabilitySnapshot={context?.capabilitySnapshot} onContextChange={onContextChange} />}{availability.length ? <div className={styles.availability}>{availability.map(item => <div key={item.id}><span>{item.formTitle}</span><strong>{item.formStatus || uiText("已提交", uiLocale)}</strong><em>{formatTime(item.submittedAt, uiLocale)}</em></div>)}</div> : null}<StaffAssignmentList assignments={assignments} kind="CASTER" withSeason={withSeason} weekly={context?.competitionKind === 'WEEKLY'} /></section>
 }

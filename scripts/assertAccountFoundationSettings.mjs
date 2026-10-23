@@ -35,6 +35,8 @@ assert.equal(emailVerificationNotice({ status: 'SENT', result: { delivered: fals
 assert.equal(emailVerificationNotice({ status: 'UNDELIVERED' }).tone, 'error')
 assert.match(emailVerificationNotice({ status: 'SENT', result: { delivered: true } }).text, /交给投递服务/)
 assert.equal(emailVerificationNotice({ status: 'VERIFIED' }).tone, 'success')
+assert.equal(emailVerificationNotice({ status: 'QUEUED', result: { queued: true, delivered: false } }).tone, 'info')
+assert.match(emailVerificationNotice({ status: 'QUEUED', result: { queued: true } }).text, /已排队/)
 assert.match(accountSettingsError({ data: { error: 'PASSWORD_INVALID' }, status: 403 }), /当前密码/)
 assert.match(accountSettingsError({ status: 401 }), /登录已失效/)
 assert.match(accountSettingsError({ data: { error: 'EMAIL_DELIVERY_UNAVAILABLE' }, status: 503 }), /邮件暂未投递.*稍后重试/)
@@ -52,6 +54,10 @@ try {
   responseBody = { selfRegistrationEnabled: false, emailVerificationEnabled: false }
   assert.deepEqual(await fetchAuthConfig(), responseBody)
   assert.equal(requests.at(-1).url, '/api/platform/auth/config')
+  responseBody = { selfRegistrationEnabled: true, emailVerificationEnabled: true, registrationDailyLimit: 20 }
+  assert.deepEqual(await fetchAuthConfig(), responseBody)
+  responseBody.registrationDailyLimit = 'invalid'
+  assert.equal(Object.hasOwn(await fetchAuthConfig(), 'registrationDailyLimit'), false)
   responseBody = { selfRegistrationEnabled: 'false', emailVerificationEnabled: true }
   await assert.rejects(fetchAuthConfig(), /配置/)
 
