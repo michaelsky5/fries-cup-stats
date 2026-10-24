@@ -1,6 +1,8 @@
-export function validateRecoveryPassword(password, confirmation) {
-  if (password.length < 8) return '新密码至少需要 8 位。'
-  if (new TextEncoder().encode(password).length > 72) return '新密码不能超过 72 个 UTF-8 字节。'
+import { validateNewPassword } from '../auth/passwordPolicy.js'
+
+export function validateRecoveryPassword(password, confirmation, locale) {
+  const issue = validateNewPassword(password, locale)
+  if (issue) return issue
   if (password !== confirmation) return '两次输入的新密码不一致。'
   return ''
 }

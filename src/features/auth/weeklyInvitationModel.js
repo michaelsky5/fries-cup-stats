@@ -1,3 +1,5 @@
+import { passwordPolicyHint, validateNewPassword } from './passwordPolicy.js'
+
 export function readWeeklyInvitationLocation(location = {}) {
   const query = new URLSearchParams(location.search || '')
   const fragment = new URLSearchParams(String(location.hash || '').replace(/^#/, ''))
@@ -17,13 +19,19 @@ export function isPendingWeeklyInvitation(invitation) {
 
 export function validateWeeklyInvitationPassword({ password = '', confirmation = '', passwordMode }, locale = 'zh-CN') {
   const en = locale === 'en-US'
-  if (password.length < 8) return en ? 'Use at least 8 characters.' : '密码至少需要 8 位。'
-  if (new TextEncoder().encode(password).length > 72) return en ? 'Use no more than 72 UTF-8 bytes. Some characters use more than one byte.' : '密码不能超过 72 个 UTF-8 字节；中文等字符会占用多个字节。'
+  if (passwordMode === 'SET') {
+    const issue = validateNewPassword(password, locale)
+    if (issue) return issue
+  } else {
+    if (password.length < 8) return en ? 'Use at least 8 characters.' : '密码至少需要 8 位。'
+    if (new TextEncoder().encode(password).length > 72) return en ? 'Use no more than 72 UTF-8 bytes. Some characters use more than one byte.' : '密码不能超过 72 个 UTF-8 字节；中文等字符会占用多个字节。'
+  }
   if (passwordMode === 'SET' && password !== confirmation) return en ? 'Passwords do not match.' : '两次输入的密码不一致。'
   return ''
 }
 
 export function weeklyInvitationErrorMessage(error, locale = 'zh-CN') {
+  if ((error?.data?.error || error?.data?.code) === 'PASSWORD_POLICY') return passwordPolicyHint(locale)
   if (locale === 'en-US') {
     const messages = {
       INVALID_PASSWORD: 'The current password is incorrect. Try again.',

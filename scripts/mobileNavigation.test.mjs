@@ -15,6 +15,13 @@ test('returning to a Tab preserves query, sort, page, comparisons and scroll', (
   assert.equal(target.state.restoreScrollY, 428)
 })
 
+test('the lobby cannot trap the Events tab or replace its remembered destination', () => {
+  assert.equal(getMobileNavigationGroup({ pathname: '/lobby' }), 'lobby')
+  assert.equal(getMobileNavigationGroup({ pathname: '/lobby/me' }), 'lobby')
+  assert.equal(sanitizeMobileNavigationPath('/lobby?lang=zh'), '')
+  assert.deepEqual(buildMobileTabTarget({ path: '/lobby?lang=zh' }, '/?lang=zh', 'overview'), { to: '/?lang=zh' })
+})
+
 test('a player detail stays in its source Tab, including nested match navigation', () => {
   assert.equal(getMobileNavigationGroup({ pathname: '/players/p1', state: { returnTo: '/leaderboard?q=石头' } }), 'database')
   assert.equal(getMobileNavigationGroup({ pathname: '/players/p1', state: { returnTo: '/matches/m1', parentReturnTo: '/leaderboard' } }), 'database')

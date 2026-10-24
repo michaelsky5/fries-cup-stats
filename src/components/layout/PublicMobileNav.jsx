@@ -59,8 +59,6 @@ export function PublicMobileMenu({ items, locale, navPath, children, reviewAvail
     </button>
     <KprDialog open={open} onClose={close} title={title} locale={locale} className={styles.sheet}>
       <nav className={styles.destinations} aria-label={title} data-i18n-ignore>
-        <Link to="/lobby" onClick={close}><strong>{pickUiLocale(locale, '组队大厅', 'Team lobby', '팀 찾기', '組隊大廳')}</strong><span aria-hidden="true">→</span></Link>
-        <Link to="/lobby/me" onClick={close}><strong>{pickUiLocale(locale, '我的组队', 'My lobby', '내 팀 찾기', '我的組隊')}</strong><span aria-hidden="true">→</span></Link>
         {destinations.map(item => <Link key={item.group} to={navPath(item.to)} onClick={close}><strong>{getNavLabel(item, locale)}</strong><span aria-hidden="true">→</span></Link>)}
         {reviewAvailable ? <Link to={navPath('/review')} onClick={close}><strong>{pickUiLocale(locale, '赛季回顾', 'Season review', '시즌 리뷰', '賽季回顧')}</strong><span aria-hidden="true">→</span></Link> : null}
         {personalAvailable ? <>

@@ -1,3 +1,4 @@
+import { validateNewPassword } from '../../src/features/auth/passwordPolicy.js'
 // Isolated in-memory data for the local review server. Never imported by the application.
 import { buildAccountDesignPreviewFixture } from '../../src/pages/dev/accountDesignPreviewFixtures.js'
 export function createAccountReviewFixture(initialScenario = 'preparing') {
@@ -135,7 +136,7 @@ const handle = async (req,res) => {
   if(path === '/auth/password-resets/confirm') {
     if (body.token !== 'account-review-password-reset-token') return send({error:'PASSWORD_RESET_TOKEN_INVALID'},400)
     if (passwordResetUsed) return send({error:'PASSWORD_RESET_TOKEN_USED'},400)
-    if (typeof body.newPassword !== 'string' || body.newPassword.length < 8 || Buffer.byteLength(body.newPassword,'utf8') > 72) return send({error:'INVALID_INPUT'},400)
+    if (validateNewPassword(body.newPassword)) return send({error:'INVALID_INPUT'},400)
     passwordResetUsed = true
     loggedIn = false
     sessions = []

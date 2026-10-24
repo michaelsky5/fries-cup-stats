@@ -146,7 +146,7 @@ function LanguageMenu({ locale, mobile = false, onLocaleChange }) {
   )
 }
 
-export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, activeGroup = "space", layoutLocale = "zh-CN", compatibleLayoutLocale = layoutLocale, withSeason = path => path, accountAttention, activeNavLabel = "我的空间", season, seasonId, updatedAtText = "", seasonStatus, summary, isSyncing = false, dataStatus, handleSeasonChange, headerContextMode = "data", isReviewEntryRoute = false, handleLocaleChange, activeSection, showSeason = true, showLanguage = true }) {
+export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, activeGroup = "space", layoutLocale = "zh-CN", compatibleLayoutLocale = layoutLocale, withSeason = path => path, accountAttention, activeNavLabel = "我的空间", season, seasonId, updatedAtText = "", seasonStatus, summary, isSyncing = false, dataStatus, handleSeasonChange, headerContextMode = "data", isReviewEntryRoute = false, handleLocaleChange, activeSection, showSeason = true, showLanguage = true, accountControl, showAccountModeSwitch = true }) {
   const { isAuthenticated } = useAuth()
   const location = useLocation()
   const fallbackMenuRef = useRef(null)
@@ -198,7 +198,6 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
           </Link> : null}
 
           <nav className={styles.nav} data-upgrade-nav aria-label={pickUiLocale(layoutLocale, '赛事中心导航', 'Event navigation', '대회 센터 탐색', '賽事中心導覽')} data-i18n-ignore>
-            <Link className={styles.navLink} to="/lobby">{pickUiLocale(layoutLocale, '组队大厅', 'Team lobby', '팀 찾기', '組隊大廳')}</Link>
             {headerNavItems.map(item => (
               <PortalNavItem
                 key={item.group}
@@ -284,7 +283,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
               </div>
             )}
             <div className={styles.accountCluster} data-upgrade-account>
-              <AuthButton locale={compatibleLayoutLocale} seasonId={seasonId} />
+              {accountControl === undefined ? <AuthButton locale={compatibleLayoutLocale} seasonId={seasonId} /> : accountControl}
             </div>
           </div>
         </div>
@@ -304,7 +303,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
           contextMode={headerContextMode}
         /> : null}
       </header>
-      <AccountModeSwitch locale={compatibleLayoutLocale} seasonId={seasonId} />
+      {showAccountModeSwitch ? <AccountModeSwitch locale={compatibleLayoutLocale} seasonId={seasonId} /> : null}
       {phoneNavigation ? <PublicMobileNav items={headerNavItems} locale={layoutLocale} navPath={navPath} accountAttention={accountAttention} /> : null}
   </>)
 }

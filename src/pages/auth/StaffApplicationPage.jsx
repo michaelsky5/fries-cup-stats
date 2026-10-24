@@ -1,3 +1,5 @@
+import PasswordRequirements from '../../features/auth/PasswordRequirements.jsx'
+import { validateNewPassword } from '../../features/auth/passwordPolicy.js'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import AccountFrame from '../../features/account-ui/AccountFrame.jsx'
@@ -50,6 +52,7 @@ export default function StaffApplicationPage() {
   async function submit(event) {
     event.preventDefault()
     if (pending.current) return
+    if (!token && form.accountMode === 'NEW') { const issue = validateNewPassword(form.password, locale, 12); if (issue) { setError(issue); return } }
     if (!token && form.accountMode === 'NEW' && form.password !== form.confirmation) { setError('两次输入的密码不一致。'); return }
     pending.current = true; setBusy(true); setError('')
     try {
@@ -86,8 +89,8 @@ export default function StaffApplicationPage() {
             <div className={formStyles.modes} aria-label={t('账号使用方式')}>{['EXISTING', 'NEW'].map(mode => <button type="button" key={mode} aria-pressed={form.accountMode === mode} disabled={busy} onClick={() => edit({ accountMode: mode, password: '', confirmation: '' })}>{t(mode === 'EXISTING' ? '使用已有账号' : '创建新账号')}</button>)}</div>
             <p className={styles.hint}>{t('已经是选手或工作人员，请使用原账号，无需重复注册。')}</p>
             <label className={styles.field}>{t('本人邮箱')}<input type="email" autoComplete="email" required maxLength={254} value={form.email} disabled={busy} onChange={event => edit({ email: event.target.value })} /></label>
-            <label className={styles.field}>{t(form.accountMode === 'NEW' ? '设置账号密码' : '原账号密码')}<input type="password" autoComplete={form.accountMode === 'NEW' ? 'new-password' : 'current-password'} required minLength={form.accountMode === 'NEW' ? 12 : 8} maxLength={128} value={form.password} disabled={busy} onChange={event => edit({ password: event.target.value })} /></label>
-            {form.accountMode === 'NEW' && <label className={styles.field}>{t('再次输入密码')}<input type="password" autoComplete="new-password" required minLength={12} maxLength={128} value={form.confirmation} disabled={busy} onChange={event => edit({ confirmation: event.target.value })} /><small>{t('新账号密码至少需要 12 个字符。')}</small></label>}
+            <label className={styles.field}>{t(form.accountMode === 'NEW' ? '设置账号密码' : '原账号密码')}<input type="password" autoComplete={form.accountMode === 'NEW' ? 'new-password' : 'current-password'} required minLength={form.accountMode === 'NEW' ? 12 : 8} value={form.password} disabled={busy} onChange={event => edit({ password: event.target.value })} /></label>
+            {form.accountMode === 'NEW' && <label className={styles.field}>{t('再次输入密码')}<input type="password" autoComplete="new-password" required minLength={12} value={form.confirmation} disabled={busy} onChange={event => edit({ confirmation: event.target.value })} /><PasswordRequirements locale={locale} minLength={12} /></label>}
             <div className={styles.passwords}><label className={styles.field}>{t('工作人员称呼')}<input required maxLength={80} autoComplete="nickname" value={form.displayName} disabled={busy} onChange={event => edit({ displayName: event.target.value })} /></label><label className={styles.field}>BattleTag<input required minLength={3} maxLength={120} value={form.battleTag} disabled={busy} placeholder="Name#1234" onChange={event => edit({ battleTag: event.target.value })} /></label></div>
             <fieldset className={formStyles.roles} disabled={busy}><legend>{t('申请职责（可多选）')}</legend>{Object.entries(roleNames).map(([role, name]) => <label key={role}><input type="checkbox" checked={form.roles.includes(role)} onChange={event => edit({ roles: event.target.checked ? [...form.roles, role] : form.roles.filter(value => value !== role) })} />{t(name)}</label>)}</fieldset>
           </>}

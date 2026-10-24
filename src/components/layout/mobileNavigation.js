@@ -19,6 +19,8 @@ const isDetail = pathname => /^\/(?:players|teams|staff|matches|maps)\/[^/]+/.te
 
 export function getMobileNavigationGroup(location, depth = 0) {
   const pathname = location?.pathname || '/'
+  // Lobby is reached from Home or My Space; it must not replace the Events tab.
+  if (/^\/lobby(?:\/|$)/.test(pathname)) return 'lobby'
   if (isDetail(pathname) && depth < 4) {
     if (GROUPS.has(location.state?.mobileTabGroup)) return location.state.mobileTabGroup
     const source = getSafeInternalPath(location.state?.returnTo)

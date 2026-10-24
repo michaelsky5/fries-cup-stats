@@ -1,3 +1,4 @@
+import { passwordPolicyHint } from '../../features/auth/passwordPolicy.js'
 import { useEffect, useRef, useState } from 'react'
 import AccountFrame from '../../features/account-ui/AccountFrame.jsx'
 import { platformRequest } from '../../features/auth/platformApi.js'
@@ -74,10 +75,10 @@ export default function WeeklyAdminInvitationPage() {
             <label className={styles.field}>管理员称呼<input required autoComplete="nickname" value={name} maxLength={80} onChange={event => setName(event.target.value)} disabled={busy} /></label>
             <label className={styles.field}>本人邮箱<input required type="email" autoComplete="email" value={email} maxLength={254} onChange={event => setEmail(event.target.value)} disabled={busy} /></label>
             <div className={styles.passwords}>
-              <label className={styles.field}>账号密码<input required type="password" autoComplete="new-password" maxLength={128} value={password} onChange={event => setPassword(event.target.value)} disabled={busy} /></label>
-              <label className={styles.field}>再次输入密码<input required type="password" autoComplete="new-password" maxLength={128} value={confirmation} onChange={event => setConfirmation(event.target.value)} disabled={busy} /></label>
+              <label className={styles.field}>账号密码<input required type="password" autoComplete="new-password" value={password} onChange={event => setPassword(event.target.value)} disabled={busy} /></label>
+              <label className={styles.field}>再次输入密码<input required type="password" autoComplete="new-password" value={confirmation} onChange={event => setConfirmation(event.target.value)} disabled={busy} /></label>
             </div>
-            <p className={styles.hint}>新账号请设置至少 12 位密码；邮箱已有薯条杯账号时，请输入现有密码。</p>
+            <p className={styles.hint}>{passwordPolicyHint('zh-CN', 12)} 邮箱已有薯条杯账号时，请输入现有密码。</p>
           </>}
           {error && <p className={styles.error} role="alert">{error}</p>}
           <button className={styles.primary} type="submit" disabled={busy}>{busy ? '正在处理…' : credential.verification ? '确认邮箱并启用管理权限' : '继续验证本人邮箱 →'}</button>
