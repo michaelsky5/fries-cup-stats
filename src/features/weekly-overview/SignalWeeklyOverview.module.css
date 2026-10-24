@@ -503,3 +503,31 @@
 }
 .mainGrid + .publishedMapPool { margin-top: 24px; }
 .page > .supportEntry:last-child { margin-top: 24px; border-top: 1px solid var(--line); }
+
+/* 票 2.22: following is the reader's own schedule — followed teams first, picker folded. */
+.followingSection { grid-template-columns: minmax(0, 1fr); align-items: start; }
+.followingHead { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; }
+.followingHead h2 { margin: 6px 0 0; }
+.followingHead p:last-child { max-width: 520px; margin: 8px 0 0; }
+.page .followPickerToggle { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 14px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised, #f6f5ef); color: var(--ink); font-size: 13px; font-weight: 650; }
+.followPickerToggle > span { color: var(--fc-data-focus-on-light, #806000); font-size: 16px; }
+.followedList { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.followedList li { display: grid; grid-template-columns: minmax(120px, .7fr) minmax(0, 2fr) minmax(130px, 1fr); grid-template-areas: 'team match standing'; align-items: center; gap: 2px 16px; padding: 4px 0; border-bottom: 1px solid var(--line); }
+.followedTeam { grid-area: team; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; min-width: 0; }
+.followedTeam b { font-size: 16px; font-weight: 800; }
+.followedMatch { grid-area: match; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; min-width: 0; font-size: 13px; line-height: 1.5; }
+a.followedMatch > span { color: var(--fc-data-focus-on-light, #806000); }
+.followedList li[data-state='live'] .followedMatch { color: var(--fc-data-status-success, #1f7a3a); font-weight: 700; }
+.followedList li[data-state='none'] .followedMatch { color: var(--muted); }
+.followedStanding { grid-area: standing; display: grid; justify-items: end; gap: 2px; min-width: 0; text-align: right; }
+.followedStanding b { font-size: 14px; font-weight: 800; }
+.followedStanding small { color: var(--muted); font-size: 12px; }
+.followPicker { min-width: 0; }
+@media (max-width: 600px) {
+  .followedList li { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'team standing' 'match match'; padding: 2px 0 4px; }
+  .followedMatch { font-size: 12px; }
+}
+@media (min-width: 901px) {
+  /* Under the phase card the followed list needs air before the cycle and week rail. */
+  .page > .followingSection[data-followed] { margin-bottom: 28px; padding-bottom: 12px; }
+}

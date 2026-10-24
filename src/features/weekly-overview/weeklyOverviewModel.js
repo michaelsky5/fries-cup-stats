@@ -102,3 +102,24 @@ export function buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch
     followedMatches: weekEntries.flatMap(entry => entry.matches).filter(isFollowed),
     isPilot: cycle?.counts_toward_standings === false }
 }
+
+// 票 2.22: what a follower looks for first — each followed team's live, next or latest
+// published match, across every public cycle. Only published states and times are used.
+export function buildWeeklyFollowedTeams(db, teamIds = []) {
+  const ids = [...new Set(list(teamIds).map(text).filter(Boolean))]
+  if (!ids.length) return []
+  const base = buildWeeklyOverview(db)
+  const entries = base.cycles.flatMap(cycle => {
+    const overview = text(cycle.id) === text(base.cycle?.id) ? base : buildWeeklyOverview(db, { cycleId: cycle.id })
+    if (text(overview.cycle?.id) !== text(cycle.id)) return []
+    return overview.weekEntries.flatMap(entry => entry.matches.map(match => ({ match, week: entry.week, cycle: overview.cycle })))
+  })
+  const teams = new Map(list(db?.teams).map(team => [teamId(team), team]))
+  const at = entry => Date.parse(entry.match.scheduled_at)
+  return ids.map(id => {
+    const own = entries.filter(({ match }) => teamId(match.team_a) === id || teamId(match.team_b) === id)
+    const upcoming = own.filter(({ match }) => match.state === 'upcoming').sort((a, b) => (at(a) || Infinity) - (at(b) || Infinity))
+    const played = own.filter(({ match }) => ['complete', 'ruling'].includes(match.state)).sort((a, b) => (at(b) || 0) - (at(a) || 0))
+    return { id, team: teams.get(id) || null, live: own.find(({ match }) => match.state === 'live') || null, next: upcoming[0] || null, latest: played[0] || null }
+  }).filter(row => row.team)
+}

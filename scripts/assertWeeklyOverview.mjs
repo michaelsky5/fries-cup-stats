@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { buildWeeklyOverview, isWeeklyOverview, weeklyMapSlots, weeklyMatchState, weeklyScore } from '../src/features/weekly-overview/weeklyOverviewModel.js'
+import { buildWeeklyFollowedTeams, buildWeeklyOverview, isWeeklyOverview, weeklyMapSlots, weeklyMatchState, weeklyScore } from '../src/features/weekly-overview/weeklyOverviewModel.js'
 import { buildWeeklyOverviewFixture } from './lib/weeklyOverviewFixture.mjs'
 import { COUNTDOWN_WINDOW_MS, formatMatchCountdown } from '../src/features/weekly-overview/matchCountdown.js'
 import { buildWeeklyPhases } from '../src/features/weekly-overview/weeklyPhase.js'
@@ -138,5 +138,16 @@ test('phase card leads with the live match and honours deadlines instead of the 
   assert.ok(!buildWeeklyPhases(fixture, { now: Date.parse('2026-10-30T05:00:00.000Z') }).some(phase => phase.kind === 'confirmation'))
   fixture.season.rules.registration.closesAt = '2026-10-25T15:59:00.000Z'
   assert.ok(!buildWeeklyPhases(fixture, { now }).some(phase => phase.kind === 'registration'))
+})
+test('票 2.22: a followed team shows its live, next or latest published match', () => {
+  const rows = buildWeeklyFollowedTeams(db, ['FCW26-T001', 'NOT-A-TEAM'])
+  assert.equal(rows.length, 1, 'unknown ids are dropped')
+  const [row] = rows
+  const own = match => [match.team_a, match.team_b].some(team => (team.id || team.team_id) === 'FCW26-T001')
+  for (const key of ['live', 'next', 'latest']) if (row[key]) assert.ok(own(row[key].match), `${key} belongs to the team`)
+  if (row.next) assert.equal(row.next.match.state, 'upcoming')
+  if (row.latest) assert.ok(['complete', 'ruling'].includes(row.latest.match.state))
+  assert.ok(row.live || row.next || row.latest, 'the fixture team has published matches')
+  assert.deepEqual(buildWeeklyFollowedTeams(db, []), [])
 })
 console.log(`${checks} weekly overview checks passed.`)
