@@ -1,0 +1,7 @@
+.entry { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 20px 24px; margin: 0 0 28px; border: 1px solid var(--fc-data-line, #181a1726); border-left: 4px solid var(--fc-data-signal, #f4c320); background: var(--fc-data-paper-raised, #f6f5ef); color: var(--fc-data-ink, #181a17); }
+.eyebrow { color: var(--fc-data-text-muted, #66685f); font: 700 10px/1.4 var(--font-sans); letter-spacing: .12em; }
+.entry h2 { margin: 4px 0; font: 750 22px/1.35 var(--font-sans); }
+.entry p { margin: 0; font: 13px/1.6 var(--font-sans); color: var(--fc-data-text-muted, #66685f); }
+.entry a { display: flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 44px; padding: 10px 16px; background: var(--fc-data-ink, #181a17); color: var(--fc-data-paper, #eeede6); font: 650 14px/1.5 var(--font-sans); text-decoration: none; flex-shrink: 0; }
+.entry a:focus-visible { outline: 3px solid var(--fc-data-focus, #806000); outline-offset: 3px; }
+@media(max-width:600px) { .entry { align-items: stretch; flex-direction: column; gap: 14px; padding: 18px; margin-bottom: 20px; } .entry h2 { font-size: 21px; } }

@@ -1,4 +1,5 @@
 import { platformRequest } from './platformApi.js'
+import { assertNewPassword } from './passwordPolicy.js'
 
 const TOKEN_STORAGE_KEY = 'FRIES_CUP_STATS_AUTH_TOKEN'
 const USER_STORAGE_KEY = 'FRIES_CUP_STATS_AUTH_USER'
@@ -36,6 +37,7 @@ export async function loginWithPassword({ email, password }) {
 }
 
 export async function registerWithPassword({ email, password, username, displayName }) {
+  assertNewPassword(password)
   const auth = await platformRequest('/auth/register', {
     method: 'POST',
     body: { email, password, username, displayName }
@@ -86,6 +88,7 @@ export async function requestPasswordReset(email) {
 }
 
 export async function confirmPasswordReset(token, newPassword) {
+  assertNewPassword(newPassword)
   return platformRequest('/auth/password-resets/confirm', {
     method: 'POST',
     body: { token, newPassword }

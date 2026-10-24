@@ -5,6 +5,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import usePasswordRecovery from '../auth/usePasswordRecovery.js'
 import PasswordRecoveryPanel from '../auth/PasswordRecoveryPanel.jsx'
+import PasswordRequirements from '../auth/PasswordRequirements.jsx'
+import { validateNewPassword } from '../auth/passwordPolicy.js'
 import { readPasswordResetLocation } from '../auth/passwordRecoveryModel.js'
 import { safeLobbyReturn, accountFailure } from './lobbyModel.js'
 import styles from './Lobby.module.css'
@@ -48,6 +50,10 @@ function AccountForm({ mode }) {
     event.preventDefault()
     if (lock.current) return
     setError('')
+    if (mode === 'register') {
+      const issue = validateNewPassword(form.password, uiLocale)
+      if (issue) { setError(issue); return }
+    }
     if (mode === 'register' && form.password !== form.confirmation) { setError(t("两次输入的密码不一致。")); return }
     lock.current = true; setBusy(true)
     try {
@@ -86,7 +92,8 @@ function AccountForm({ mode }) {
           : <form onSubmit={submit} className={styles.stack}>
             <label>{t("邮箱")}<input type="email" autoComplete="email" required maxLength={254} {...field('email')} /></label>
             {mode === 'register' && <><label>{t("用户名")}<input autoComplete="username" required minLength={2} maxLength={24} {...field('username')} /><small>{t("2—24 位字母、数字、下划线、短横线或点。")}</small></label><label>{t("显示名（可选）")}<input maxLength={40} {...field('displayName')} /></label></>}
-            <label>{t("密码")}<input type="password" autoComplete={mode === 'register' ? 'new-password' : 'current-password'} required minLength={mode === 'register' ? 8 : 1} {...field('password')} /></label>
+            <label>{t("密码")}<input type="password" autoComplete={mode === 'register' ? 'new-password' : 'current-password'} required minLength={mode === 'register' ? 8 : 1} aria-describedby={mode === 'register' ? 'registration-password-hint' : undefined} {...field('password')} /></label>
+            {mode === 'register' && <PasswordRequirements locale={uiLocale} id="registration-password-hint" />}
             {mode === 'register' && <label>{t("再次输入密码")}<input type="password" autoComplete="new-password" required minLength={8} {...field('confirmation')} /></label>}
             {mode === 'register' && <p>{t("验证邮箱后可使用已开放的大厅功能；正式参赛另行报名。QQ 在每次联系时填写并单独授权。")}</p>}
             {mode === 'register' && auth.authConfig?.selfRegistrationEnabled && auth.authConfig?.registrationDailyLimit > 0 && <p role="status">{t("目前分批开放，每天最多新增 {0} 个账号；邮件额度不足时会提前暂停。已有账号仍可登录。", [auth.authConfig.registrationDailyLimit])}</p>}

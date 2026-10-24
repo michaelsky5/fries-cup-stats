@@ -4,6 +4,7 @@ import SeasonRegistrationEntry from '../../features/event-registration/SeasonReg
 import { isWeeklyOverview } from '../../features/weekly-overview/weeklyOverviewModel.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
+import TeamLobbyEntry from '../../features/team-lobby/TeamLobbyEntry.jsx'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigationType, useOutletContext, useSearchParams } from 'react-router-dom'
 import { withSeason as withPublicSeason } from '../../config/seasons.js'
@@ -779,6 +780,7 @@ function MySpaceContent() {
       </SpaceHeader>
       {entrySection === 'overview' ? <MobileSpaceMenu sections={entrySections.filter(section => section.id !== 'overview')} withSeason={pageLink} locale={locale} /> : null}
       <AccountCompetitionBar competition={competition} locale={locale} withSeason={pageLink} entry mobileHome={entrySection === 'overview'} />
+      {entrySection === 'overview' ? <TeamLobbyEntry locale={locale} personal /> : null}
     </main>
   }
 
@@ -851,6 +853,7 @@ function MySpaceContent() {
         <div className={styles.desktopSpaceNavigation}><SpaceTabs key={activeSection} activeSection={activeSection} withSeason={pageLink} sections={spaceSections} overview={navigationSummary} locale={locale} /></div>
       </SpaceHeader>
       {location.state?.spaceEntryNotice ? <SpaceEntryNotice reason={location.state.spaceEntryNotice} locale={locale} withSeason={pageLink} /> : null}
+      {activeSection === 'overview' ? <TeamLobbyEntry locale={locale} personal /> : null}
       {['overview', 'tasks'].includes(activeSection) ? <AccountActivityWorkspace key={`${seasonId}:${authUser?.id || ''}`} view={activeSection} activity={activity} locale={locale} participationView={participationView} quickEntries={activeSection === 'overview' ? <MobileSpaceMenu sections={spaceSections} overview={navigationSummary} withSeason={pageLink} locale={locale} /> : null} registrationEntry={activeSection === 'overview' && registrationPolicy.onHome ? registrationEntry : null} context={effectiveSpaceContext} withSeason={pageLink} sections={spaceSections} followingSummary={followingSummary} managerStatus={isPrimaryManager ? managerWorkspaceStatus : null} playerStatus={isPrimaryPlayer ? playerWorkspaceStatus : null} genericTasks={hasAccountFeatureAccess(accountLaunch, 'communications')} weeklyPreparation={isWeekly && canViewWeeklyCompetition && spaceSections.some(section => section.id === 'team')} weeklyRooms={isWeekly && canViewWeeklyMatchRooms && spaceSections.some(section => section.id === 'matches')} roomsReadOnly={!canWriteMatchRooms} /> : null}
       {activeSection === 'stream' ? <PlayerStreamWorkspace key={seasonId} seasonId={seasonId} /> : null}
       {activeSection === 'events' ? <MyEventsPanel context={effectiveSpaceContext} withSeason={pageLink} /> : null}

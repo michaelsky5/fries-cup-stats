@@ -1,3 +1,5 @@
+import PasswordRequirements from '../../features/auth/PasswordRequirements.jsx'
+import { validateNewPassword } from '../../features/auth/passwordPolicy.js'
 import { translateUiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
@@ -58,6 +60,7 @@ export default function StaffInvitationPage() {
   async function submit(event) {
     event.preventDefault()
     if (pending.current) return
+    if (!credential.verification && !invitation.existingAccount) { const issue = validateNewPassword(password, locale, 12); if (issue) { setError(issue); return } }
     if (!credential.verification && !invitation.existingAccount && password !== confirmation) { setError('两次输入的密码不一致。'); return }
     pending.current = true; setBusy(true); setError('')
     try {
@@ -95,8 +98,9 @@ export default function StaffInvitationPage() {
           <div className={styles.scope}><strong>{invitation.displayName} · {roleLabel}</strong><p>{t('本届：{0}。具体比赛按已发布排班或管理员单场指派开放；不会获得其他赛事管理权。', [invitation.seasonName])}</p></div>
           {credential.verification ? <p>{t('确认邮箱 {0} 后，此邀请绑定到刚核对的本人账号。', [invitation.maskedEmail])}</p> : <>
             <label className={styles.field}>{t("邀请指定的本人邮箱")}<input required type="email" autoComplete="email" placeholder={invitation.maskedEmail} value={email} maxLength={254} onChange={event => setEmail(event.target.value)} disabled={busy} /></label>
-            <label className={styles.field}>{invitation.existingAccount ? t("原账号密码") : t("设置账号密码")}<input required type="password" autoComplete={invitation.existingAccount ? 'current-password' : 'new-password'} minLength={invitation.existingAccount ? 8 : 12} maxLength={128} value={password} onChange={event => setPassword(event.target.value)} disabled={busy} /></label>
-            {!invitation.existingAccount && <label className={styles.field}>{t("再次输入密码")}<input required type="password" autoComplete="new-password" minLength={12} maxLength={128} value={confirmation} onChange={event => setConfirmation(event.target.value)} disabled={busy} /></label>}
+            <label className={styles.field}>{invitation.existingAccount ? t("原账号密码") : t("设置账号密码")}<input required type="password" autoComplete={invitation.existingAccount ? 'current-password' : 'new-password'} minLength={invitation.existingAccount ? 8 : 12} value={password} onChange={event => setPassword(event.target.value)} disabled={busy} /></label>
+            {!invitation.existingAccount && <label className={styles.field}>{t("再次输入密码")}<input required type="password" autoComplete="new-password" minLength={12} value={confirmation} onChange={event => setConfirmation(event.target.value)} disabled={busy} /></label>}
+            {!invitation.existingAccount && <PasswordRequirements locale={locale} minLength={12} />}
             <p className={styles.hint}>{invitation.existingAccount ? t("复用原账号，原密码、选手档案和队伍关系保留。忘记密码可先在登录窗口找回。") : t("新账号请设置至少 12 位密码。邮箱验证完成后，才能获得工作人员身份。")}</p>
           </>}
           {error && <p className={styles.error} role="alert">{t(error)}</p>}

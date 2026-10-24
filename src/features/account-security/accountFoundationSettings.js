@@ -1,4 +1,7 @@
+import { passwordPolicyHint, validateNewPassword } from '../auth/passwordPolicy.js'
+
 export function accountSettingsError(error, locale) {
+  if ((error?.data?.error || error?.data?.code) === 'PASSWORD_POLICY') return passwordPolicyHint(locale)
   if (String(error?.data?.error || '').startsWith('AVATAR_')) return locale === 'en-US' ? ({ AVATAR_TOO_LARGE: 'Choose an image smaller than 2 MB.', AVATAR_FORMAT: 'Use a JPG, PNG or static WebP. Animated images are not supported.', AVATAR_BUSY: 'Another image is being processed. Please try saving again shortly.', AVATAR_CROP: 'The crop is outside the image. Adjust it and try again.', AVATAR_STORAGE: 'The avatar could not be saved. Your changes are still here; try again shortly.' }[error.data.error] || 'This image could not be saved. Choose a readable static image up to 16 megapixels and try again.') : error.data.message
   const messages = {
     PASSWORD_INVALID: '当前密码不正确，请重新输入。',
@@ -47,10 +50,11 @@ export function reconcileAccountProfileDraft(form, original, latest) {
   return Object.fromEntries(Object.keys(latest).map(key => [key, Object.hasOwn(edited, key) ? form[key] : latest[key]]))
 }
 
-export function validateAccountPassword({ currentPassword = '', newPassword = '', confirmation = '' }) {
+export function validateAccountPassword({ currentPassword = '', newPassword = '', confirmation = '' }, locale) {
   if (!currentPassword) return '请填写当前密码。'
-  if (newPassword.length < 8) return '新密码至少需要 8 位。'
-  if ([currentPassword, newPassword].some(value => new TextEncoder().encode(value).length > 72)) return '密码不能超过 72 个 UTF-8 字节。'
+  const issue = validateNewPassword(newPassword, locale)
+  if (issue) return issue
+  if (new TextEncoder().encode(currentPassword).length > 72) return '密码不能超过 72 个 UTF-8 字节。'
   if (currentPassword === newPassword) return '新密码需要与当前密码不同。'
   if (newPassword !== confirmation) return '两次输入的新密码不一致。'
   return ''

@@ -20,6 +20,7 @@ import {
 import { fetchAccountProfile } from '../account-security/accountSecurityApi.js'
 import { synchronizeAfterCredentialChange } from '../account-security/accountRecoveryModel.js'
 import { startVisiblePolling } from '../../lib/visiblePolling.js'
+import RequiredPasswordChange from './RequiredPasswordChange.jsx'
 
 const AuthContext = createContext(null)
 
@@ -117,7 +118,7 @@ export function AuthProvider({ children }) {
   // Profile invalidation must not unmount forms or reset the authenticated tab.
   const refreshProfile = useCallback(async () => {
     const userId = currentUserId.current
-    if (!userId) return
+    if (!userId || currentSessionUser.current?.passwordChangeRequired) return
     const epoch = sessionEpoch.current
     const requestId = ++profileRequest.current
     const isCurrent = () => epoch === sessionEpoch.current && requestId === profileRequest.current
@@ -183,7 +184,7 @@ export function AuthProvider({ children }) {
 
   const refreshAccountData = useCallback(async () => {
     const userId = currentUserId.current
-    if (!userId) return emptyAccountState()
+    if (!userId || currentSessionUser.current?.passwordChangeRequired) return emptyAccountState()
     const epoch = sessionEpoch.current
     const requestId = ++accountRequest.current
     const profileVersion = profileRequest.current
@@ -247,7 +248,7 @@ export function AuthProvider({ children }) {
   }, [installSession])
 
   useEffect(() => {
-    if (!authState.user?.canSwitchAccountMode) return undefined
+    if (!authState.user?.canSwitchAccountMode || authState.user.passwordChangeRequired) return undefined
     let cancelled = false
     const refresh = async ({ signal }) => {
       const epoch = sessionEpoch.current
@@ -266,7 +267,7 @@ export function AuthProvider({ children }) {
     }
     const polling = startVisiblePolling(refresh, { intervalMs: 15_000, initialDelayMs: 15_000 })
     return () => { cancelled = true; polling.stop() }
-  }, [authState.user?.canSwitchAccountMode, clearRevokedSession, installSession])
+  }, [authState.user?.canSwitchAccountMode, authState.user?.passwordChangeRequired, clearRevokedSession, installSession])
 
   useEffect(() => {
     if (!authState.user?.id) return undefined
@@ -455,7 +456,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {authState.user?.passwordChangeRequired ? <RequiredPasswordChange user={authState.user} logout={logout} clearSession={clearRevokedSession} /> : children}
     </AuthContext.Provider>
   )
 }
