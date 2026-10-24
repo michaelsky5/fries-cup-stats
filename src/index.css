@@ -69,3 +69,17 @@
     opacity: 0.72;
   }
 }
+
+/* X5 / 票 2.15: scrollers fade (24px) on the side that still has content; see src/lib/scrollFades.js. */
+[data-scroll-fades][data-fade-start] {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 24px);
+  mask-image: linear-gradient(to right, transparent, #000 24px);
+}
+[data-scroll-fades][data-fade-end] {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+}
+[data-scroll-fades][data-fade-start][data-fade-end] {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+}

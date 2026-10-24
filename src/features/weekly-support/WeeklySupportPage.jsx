@@ -37,7 +37,7 @@ export default function WeeklySupportPage() {
   return <div className={styles.page} data-weekly-support>
     <header className={styles.hero}>
       <div className={styles.eyebrow}>FRIES CUP / WEEKLY SUPPORT</div>
-      <Link to={withSeason('/')} className={styles.back}>{t('返回赛事总览', 'Event overview', '대회 개요', '返回賽事總覽')} ↗</Link>
+      <Link to={withSeason('/')} className={styles.back}>← {t('返回赛事总览', 'Event overview', '대회 개요', '返回賽事總覽')}</Link>
       <h1>{title}</h1>
       <p>{t('已复核并公布的资金记录、支持者与直播升级进度。', 'Reviewed, published funding records, supporters and broadcast upgrades.', '검토 후 공개된 자금 기록, 후원자 및 중계 개선 현황입니다.', '已複核並公布的資金記錄、支持者與直播升級進度。')}</p>
     </header>

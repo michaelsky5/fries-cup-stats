@@ -50,7 +50,7 @@ export default function HomeTopEntry({ db, season, locale, withSeason }) {
   }, [registrationOpen])
 
   if (registrationOpen) return <RegistrationBand deadline={deadline} season={season} locale={locale} withSeason={withSeason} />
-  return lobbyOpen ? <TeamLobbyEntry locale={locale} /> : null
+  return lobbyOpen ? <div className={styles.lobbySlot}><TeamLobbyEntry locale={locale} /></div> : null
 }
 
 function RegistrationBand({ deadline, season, locale, withSeason }) {

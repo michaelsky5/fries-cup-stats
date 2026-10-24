@@ -33,8 +33,8 @@ export default function TeamExhibitionPoster({
     if (!selectedButton) return
     const item = selectedButton.getBoundingClientRect()
     const area = list.getBoundingClientRect()
-    if (item.left < area.left) list.scrollLeft += item.left - area.left
-    else if (item.right > area.right) list.scrollLeft += item.right - area.right
+    if (item.left < area.left + 24) list.scrollLeft += item.left - area.left - 24
+    else if (item.right > area.right - 24) list.scrollLeft += item.right - area.right + 24
   }, [id])
   const connections = getMemberConnections(member, members).slice(0, 4)
   const supporting = connections.slice(0, 2).map(connection => roster.find(player => getDossierPlayerKey(player) === connection.playerId)).filter(Boolean)
@@ -94,7 +94,7 @@ export default function TeamExhibitionPoster({
           <p className={styles.eyebrow}>THE PEOPLE / {String(roster.length).padStart(2, '0')}</p>
           <h2 ref={peopleRef} tabIndex={-1}>{en ? <>Together.<br />{' '}On the map.</> : <>{uiText("一起。", locale)}<br />{uiText("上场。", locale)}</>}</h2>
           <p className={styles.chooseHint}>{en ? 'Select a player to view their hero and appearance records.' : uiText("选择选手，查看英雄形象与出场记录。", locale)}</p>
-          <div ref={memberIndexRef} className={styles.memberIndex} role="group" aria-label={en ? 'Exhibition members' : uiText("展厅人物选择", locale)}>
+          <div ref={memberIndexRef} className={styles.memberIndex} data-scroll-fades role="group" aria-label={en ? 'Exhibition members' : uiText("展厅人物选择", locale)}>
             {roster.map((player, index) => {
               const key = getDossierPlayerKey(player)
               return <button type="button" key={key} onClick={() => onSelect(key)} aria-pressed={id === key} aria-controls="exhibition-member"><small>{String(index + 1).padStart(2, '0')}</small><b>{getDossierPlayerName(player)}</b><span>{getRosterRoleLabel(player.registrationRole || getRosterRegistrationRole(player.role), locale)}</span><i aria-hidden="true">{id === key ? '●' : '+'}</i></button>

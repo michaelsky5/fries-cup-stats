@@ -26,3 +26,5 @@
 .pageHeading h1,.intro h1{font-weight:800;letter-spacing:-.025em}
 .card{border-color:var(--fc-data-line);border-top:2px solid var(--fc-data-ink)}
 @media(max-width:600px){.main{width:calc(100% - 32px);margin:16px auto 32px}.sectionBar{gap:16px;margin-bottom:24px;flex-wrap:wrap}.sectionBar nav{gap:20px}.sectionBar>a span{margin-left:8px}.footer{padding:20px 0 calc(88px + env(safe-area-inset-bottom))}}
+.empty p, .empty h1 { text-wrap: balance; } /* X5 / 票 2.15: no lone 「录。」 line */
+@media(max-width:600px){.header{padding:16px 12px}.main{width:calc(100% - 24px)}.footer{padding:20px 0}} /* X5 / 票 2.15: phone gutter 12px like the event center */

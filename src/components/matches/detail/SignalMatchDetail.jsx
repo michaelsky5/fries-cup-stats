@@ -56,7 +56,7 @@ function SeriesProgress({ maps, currentOrder, onSelectMap, en }) {
   if (maps.length < 2) return null
   return <div className={styles.progress}>
     <div className={styles.progressHeading}><strong>{en ? 'Series progression' : uiText("比赛走势", uiLocale)}</strong><span>{en ? 'After each map' : uiText("每图后的大比分", uiLocale)}</span></div>
-    <nav className={styles.progressRail} aria-label={en ? 'Series progression' : uiText("系列赛走势", uiLocale)}>
+    <nav className={styles.progressRail} data-scroll-fades aria-label={en ? 'Series progression' : uiText("系列赛走势", uiLocale)}>
       {maps.map(map => <button key={map.key} type="button" className={styles.progressStep} aria-current={currentOrder === map.order ? 'location' : undefined} onClick={() => onSelectMap(map.order)} aria-label={`${en ? 'View map' : uiText("查看第", uiLocale)} ${map.order}${en ? '' : uiText(" 图", uiLocale)} · ${map.name} · ${getMapOutcome(map, uiLocale)} · ${en ? 'Series score' : uiText("大比分", uiLocale)} ${map.cumulative}`}>
         <span className={styles.progressMap}><small>{map.orderLabel}</small><strong>{map.name}</strong></span>
         <span className={styles.progressResult}><b>{map.cumulative.replace(':', ' : ')}</b><span>{getMapOutcome(map, uiLocale)}</span></span>
@@ -293,7 +293,7 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
     {progress.length ? <section className={styles.review} id="map-records" data-match-section="maps" ref={analysisRef} aria-labelledby="map-records-title">
       <aside ref={mapIndexRef} className={styles.index}>
         <div className={styles.indexHeading}><span>MAP INDEX</span><strong>{en ? 'Map records' : uiText("逐图战报", locale)}</strong><small>{en ? 'Map scores · Select to jump' : uiText("本图比分 · 点选跳转", locale)}</small></div>
-        <nav ref={railRef} className={styles.mapRail} aria-label={en ? 'Map navigation' : uiText("地图导航", locale)}>
+        <nav ref={railRef} className={styles.mapRail} data-scroll-fades aria-label={en ? 'Map navigation' : uiText("地图导航", locale)}>
           {progress.map(map => <button key={map.key} type="button" aria-current={currentOrder === map.order ? 'location' : undefined} onClick={() => onSelectMap(map.order)} aria-label={(en ? 'View map ' : uiText("查看第 ", locale)) + map.order + (en ? ' · ' : uiText(" 图 · ", locale)) + map.name + ' · ' + (en ? 'Map score ' : uiText("本图 ", locale)) + map.scoreA + ':' + map.scoreB + ' · ' + (en ? 'Series score ' : uiText("大比分 ", locale)) + map.cumulative}>
             <span className={styles.mapNumber}>{map.orderLabel}</span><strong>{map.name}</strong><span className={styles.indexScore}><b><span className={styles.indexMapScore}><small>{en ? 'Map ' : uiText("本图 ", locale)}</small>{map.scoreA} : {map.scoreB}</span><span className={styles.indexSeriesScore}>{map.cumulative.replace(':', ' : ')}</span></b><small>{getMapOutcome(map, locale)}</small></span>
           </button>)}

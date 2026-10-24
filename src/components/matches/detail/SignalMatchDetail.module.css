@@ -268,3 +268,12 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
   .scoreAxis h1 { font-size: 54px; }
 }
 @media (prefers-reduced-motion: reduce) { .shell * { scroll-behavior: auto; } }
+
+/* X5 / 票 2.15: toolbar labels share one baseline, and the sticky nav's 8px mask (top: -10px)
+   no longer hides the buttons' bottom border; on phones the match number lines up with the
+   schedule facts above it. */
+.toolbar :is(button, a) { line-height: 1.5; }
+.toolbar { margin-bottom: 12px; }
+@media (max-width: 600px) {
+  .matchIdentifier { justify-content: flex-start; }
+}

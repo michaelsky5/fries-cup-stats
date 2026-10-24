@@ -4,6 +4,9 @@ import './index.css'
 import './trial-start.css'
 import { initializeTrialSeason } from './config/seasons.js'
 import { initializeVisitorLocale } from './lib/visitorLocale.js'
+import { installScrollFades } from './lib/scrollFades.js'
+
+installScrollFades()
 
 const root = createRoot(document.getElementById('root'))
 function TrialStartError({ message }) {

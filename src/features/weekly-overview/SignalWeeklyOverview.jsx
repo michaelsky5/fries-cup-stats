@@ -181,7 +181,7 @@ export default function SignalWeeklyOverview() {
           </div>
           {maps.length > 0 && <div className={styles.mapsSection}>
             <div className={styles.mapHeading}><b>{rr5 ? t(uiText("五局进程", locale), 'Five-map series') : t(uiText("地图记录", locale), 'Map records')}</b><span>{rr5 ? t('RR5 · 固定五图，可按规则提前结束', 'RR5 · Five maps, subject to event rules') : weeklyFormatHint(focus.format, locale) || weeklyFormatLabel(focus, locale)}</span></div>
-            <ol className={styles.mapRail} style={{ '--map-count': maps.length }}>
+            <ol className={styles.mapRail} style={{ '--map-count': maps.length }} data-scroll-fades>
               {mapProgress.map(({ order, map, state, cumulative }) => <li key={order} data-map-state={state} style={map?.map_name ? { '--weekly-map-photo': `url("${getMapImage(map.map_type, map.map_name)}")` } : undefined}>
                 <span className={styles.mapNumber}>{String(order).padStart(2, '0')}</span><b>{formatOwMapName(map?.map_name, locale) || t(uiText("地图待公布", locale), 'Map TBA')}</b>
                 <span>{state === 'recorded' ? t(uiText("已记录", locale), 'Recorded') : state === 'ruling' ? t(uiText("判定记录", locale), 'By ruling') : state === 'live' ? t(uiText("进行中", locale), 'In progress') : t(uiText("待记录", locale), 'Pending')}</span>

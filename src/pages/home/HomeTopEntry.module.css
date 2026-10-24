@@ -13,3 +13,7 @@
   font: 650 14px/1.4 var(--font-sans); text-decoration: none;
 }
 .action:focus-visible { outline: 3px solid var(--fc-data-focus, #806000); outline-offset: 3px; }
+
+/* X5 / 票 2.15: the lobby entry sits in the page gutter like the registration band. */
+.lobbySlot { margin: 16px var(--kpr-gutter, clamp(20px, 3.4vw, 64px)) 0; }
+.lobbySlot > section { margin-bottom: 0; }

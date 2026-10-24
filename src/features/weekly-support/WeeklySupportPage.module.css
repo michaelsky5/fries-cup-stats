@@ -61,3 +61,6 @@
 .section { scroll-margin-top: calc(var(--kpr-header-height,84px) + 24px); }
 .sectionHead { display: block; }
 .sectionHead > span { display: block; margin-bottom: 10px; }
+
+/* X5 / 票 2.15: the frame is already inset; the composed overview padding doubled the gutter (24px on phones). */
+.page[data-weekly-support] { padding-inline: 0; }

@@ -367,3 +367,6 @@
 .dossier[data-archive-view='gallery'] > :not([data-gallery-cover]) { margin-inline: var(--exhibition-gutter); }
 @media (max-width: 700px) { .dossier[data-archive-view='gallery'] { --exhibition-gutter: 20px; } }
 @media (max-width: 360px) { .dossier[data-archive-view='gallery'] { --exhibition-gutter: 16px; } }
+
+/* X5 / 票 2.15: phones use the event-center gutter (12px) instead of 20px / 16px. */
+@media (max-width: 600px) { .dossier[data-archive-view='gallery'] { --exhibition-gutter: var(--kpr-gutter, 12px); } }

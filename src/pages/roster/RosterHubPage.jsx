@@ -1,4 +1,4 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { eventCenterText } from '../../lib/eventCenterCopy.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
@@ -70,7 +70,7 @@ function OverviewSearch({ model, value, onChange, withSeason, en }) {
     }
   }, [hasQuery])
   return <div className={styles.searchArea} data-overview-search>
-    <label ref={fieldRef} className={styles.search}><span>{en ? 'Find a team or a name' : uiText("查找队伍或名字", uiLocale)}</span><ImeSafeInput type="search" value={value} onValueChange={onChange} onKeyDown={event => { if (event.key === 'Escape') onChange('') }} placeholder={en ? 'Team, player, manager, coach, official, caster…' : uiText("队伍、选手、经理、教练、赛管、解说…", uiLocale)} aria-controls={value.trim() ? resultsId : undefined} /><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" /><path d="m13 13 4 4" /></svg></label>
+    <label ref={fieldRef} className={styles.search}><span>{en ? 'Find a team or a name' : uiText("查找队伍或名字", uiLocale)}</span><ImeSafeInput type="search" value={value} onValueChange={onChange} onKeyDown={event => { if (event.key === 'Escape') onChange('') }} placeholder={en ? 'Team, player, manager, coach, official, caster…' : String(uiLocale).startsWith('zh') ? pickUiLocale(uiLocale, '搜索队伍、选手或职员', '', '', '搜尋隊伍、選手或職員') : uiText("队伍、选手、经理、教练、赛管、解说…", uiLocale)} aria-controls={value.trim() ? resultsId : undefined} /><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" /><path d="m13 13 4 4" /></svg></label>
     {value.trim() ? <div id={resultsId} className={styles.searchResults} data-placement={placement.above ? 'above' : 'below'} style={{ '--search-height': placement.height + 'px' }}>
       <div className={styles.searchStatus}><span role="status">{count ? count + (en ? ' matching records' : uiText(" 条匹配记录", uiLocale)) : en ? 'No matching records' : uiText("没有找到匹配记录", uiLocale)}</span><button type="button" onClick={() => onChange('')}>{en ? 'Clear' : uiText("清除", uiLocale)}</button></div>
       {groups.length ? groups.map(group => <section key={group.id} aria-label={uiText(groupNames[group.id][en ? 1 : 0], uiLocale)}><h2>{uiText(groupNames[group.id][en ? 1 : 0], uiLocale)} <span>{group.total}</span></h2><ul>{group.items.map(item => <li key={item.id}><DirectoryLink to={withSeason(item.href)}><strong>{item.name}</strong><small>{item.detail === 'admin' ? en ? 'Official' : uiText("赛管", uiLocale) : item.detail === 'caster' ? en ? 'Caster' : uiText("解说", uiLocale) : item.detail}</small><span aria-hidden="true">↗</span></DirectoryLink></li>)}</ul>{group.total > group.items.length ? <DirectoryLink to={withSeason(group.href)} className={styles.moreResults}>{en ? 'View all ' + group.total + ' results' : uiText('查看全部 {0} 条结果', uiLocale, [group.total])} ↗</DirectoryLink> : null}</section>) : <p>{en ? 'Try a nickname, BattleTag or team abbreviation.' : uiText("试试昵称、BattleTag 或队伍简称。", uiLocale)}</p>}
@@ -232,8 +232,8 @@ export default function RosterHubPage() {
       const row = selected.getBoundingClientRect()
       const area = list.getBoundingClientRect()
       if (compact) {
-        if (row.left < area.left) list.scrollLeft += row.left - area.left
-        else if (row.right > area.right) list.scrollLeft += row.right - area.right
+        if (row.left < area.left + 24) list.scrollLeft += row.left - area.left - 24
+        else if (row.right > area.right - 24) list.scrollLeft += row.right - area.right + 24
       } else {
         if (row.top < area.top) list.scrollTop += row.top - area.top
         else if (row.bottom > area.bottom) list.scrollTop += row.bottom - area.bottom
@@ -260,7 +260,7 @@ export default function RosterHubPage() {
       <OverviewSearch model={model} value={query} onChange={q => update({ q })} withSeason={withSeason} en={en} />
       <div className={styles.ensemble}>
         <header className={styles.fieldHeading}><span>{eventCenterText('rosterTeamsHeading', locale)}</span><DirectoryLink className={styles.allTeamsLink} to={withSeason('/teams')}>{eventCenterText('rosterTeamDirectory', locale)} <i aria-hidden="true">↗</i></DirectoryLink></header>
-        <div ref={teamGridRef} className={styles.teamGrid} data-expanded={expandedTeams} role="group" aria-label={en ? 'Select a team' : uiText("选择队伍", locale)}>{model.teams.map((team, index) => <button key={team.routeId} type="button" aria-pressed={selectedTeam?.routeId === team.routeId} aria-label={(en ? 'Show roster for ' : uiText("查看阵容 ", locale)) + getTeamDisplayName(team)} title={team.fullName} style={{ '--arrival-order': Math.min(index, 14) }} onClick={() => { const compact = window.matchMedia('(max-width: 760px)').matches; pendingTeamScroll.current = compact && expandedTeams; update({ rosterTeam: team.routeId, ...(compact ? { teamsExpanded: '' } : {}) }) }}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><strong>{getTeamDisplayName(team)}</strong></button>)}</div>
+        <div ref={teamGridRef} className={styles.teamGrid} data-expanded={expandedTeams} data-scroll-fades role="group" aria-label={en ? 'Select a team' : uiText("选择队伍", locale)}>{model.teams.map((team, index) => <button key={team.routeId} type="button" aria-pressed={selectedTeam?.routeId === team.routeId} aria-label={(en ? 'Show roster for ' : uiText("查看阵容 ", locale)) + getTeamDisplayName(team)} title={team.fullName} style={{ '--arrival-order': Math.min(index, 14) }} onClick={() => { const compact = window.matchMedia('(max-width: 760px)').matches; pendingTeamScroll.current = compact && expandedTeams; update({ rosterTeam: team.routeId, ...(compact ? { teamsExpanded: '' } : {}) }) }}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><strong>{getTeamDisplayName(team)}</strong></button>)}</div>
         {model.teams.length > 5 ? <button type="button" className={styles.expandTeams} aria-expanded={expandedTeams} onClick={() => update({ teamsExpanded: expandedTeams ? '' : '1' })}>{expandedTeams ? en ? 'Show fewer teams' : uiText("收起队徽", locale) : en ? 'Show all ' + model.teams.length + ' teams' : uiText('展开全部 {0} 支队伍', locale, [model.teams.length])} <span aria-hidden="true">{expandedTeams ? '−' : '+'}</span></button> : null}
         <div className={styles.teamSelectionStatus} role="status">{selectedTeam ? (en ? 'Showing ' : uiText("当前查看：", locale)) + getTeamDisplayName(selectedTeam) : ''}</div>
         <SelectedTeam key={seasonId + ':' + (selectedTeam?.routeId || '')} team={selectedTeam} seasonId={seasonId} withSeason={withSeason} locale={locale} panelRef={panelRef} />
