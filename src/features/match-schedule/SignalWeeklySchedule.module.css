@@ -346,3 +346,8 @@
   .matchRow[data-expanded] > :is(.mapToggle, .watch) { border-left-color: var(--fc-data-line-on-dark); }
   .mapProgress, .matchRow:has(> .watch) > .mapProgress { order: 0; grid-column: 1 / -1; }
 }
+
+/* 票 2.13: the Chinese interface states the time zone once at the page end. */
+@media (max-width: 600px) {
+  :global([data-locale^='zh']) .dayHeading h3::after { content: none; }
+}

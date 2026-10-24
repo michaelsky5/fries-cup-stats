@@ -3,11 +3,11 @@ import { translateUiText as uiText } from '../../lib/uiText.js'
 import { getMatchDisplayCode, getWeeklyMatchIdentityLabel } from '../../lib/weeklyMatchIdentity.js'
 import styles from './WeeklyMatchIdentity.module.css'
 
-export default function WeeklyMatchIdentity({ match, locale = 'zh-CN', copyable = false, showContext = true, compact = false }) {
+export default function WeeklyMatchIdentity({ match, locale = 'zh-CN', copyable = false, showContext = true, compact = false, label: labelOverride = '', showCode = true }) {
   const [copiedCode, setCopiedCode] = useState('')
   const [failedCode, setFailedCode] = useState('')
-  const label = getWeeklyMatchIdentityLabel(match, locale)
-  const code = getMatchDisplayCode(match)
+  const label = labelOverride || getWeeklyMatchIdentityLabel(match, locale)
+  const code = showCode ? getMatchDisplayCode(match) : ''
   const en = String(locale).startsWith('en')
   if (!label) return null
   const copy = async () => {

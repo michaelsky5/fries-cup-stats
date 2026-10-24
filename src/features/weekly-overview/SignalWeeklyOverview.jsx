@@ -6,14 +6,13 @@ import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import WeeklyMatchIdentity from '../../components/matches/WeeklyMatchIdentity.jsx'
 import { formatOwMapName } from '../../lib/heroes.js'
 import { getMapImage } from '../../lib/reviewAssets.js'
-import { getMatchFormatLabel } from '../../lib/matchFormat.js'
 import { formatMatchSchedule, getMatchScheduleValue } from '../../lib/scheduleFormat.js'
 import { getWatchLink } from '../../lib/watchLink.js'
 import { getLocationPath, getRestoreScrollY, getReturnState, getSavedReturnScroll, saveReturnScroll } from '../../lib/navigationState.js'
 import { buildWeeklyOverview, weeklyMapSlots, weeklyScore } from './weeklyOverviewModel.js'
 import { WeeklyCyclePicker, WeeklyWeekRail } from './WeeklyNavigation.jsx'
 import { WeeklyRegistrationBand, WeeklyPublishedMapPool, weeklyCycleDateRange } from './WeeklyExistingSections.jsx'
-import { weeklyCycleTitle, weeklyPeriodPath, weeklyStatusLabel, weeklyWeekTitle, weeklyTeamShort as shortName } from './weeklyPresentation.js'
+import { isChineseLocale, showsInlineTimeZone, weeklyCycleTitle, weeklyFormatHint, weeklyFormatLabel, weeklyMatchContextLabel, weeklyPeriodPath, weeklyStatusLabel, weeklyWeekTitle, weeklyTeamShort as shortName } from './weeklyPresentation.js'
 import { weeklyOverviewReturnLocation } from './weeklyInteractionNavigation.js'
 import { weeklyStandingsPreviewLimit, selectWeeklyFollowingPreview, selectWeeklyStandingsPreview } from './weeklyOverviewPreview.js'
 import { WeeklyReportTeaser, WeeklyEventPathway } from '../weekly-report/WeeklyReportTeaser.jsx'
@@ -170,8 +169,8 @@ export default function SignalWeeklyOverview() {
       <section className={styles.matchSection} aria-labelledby="weekly-focus-title">
         <div className={styles.sectionBar}><h2 id="weekly-focus-title" className={styles.viewingTitle}>{week && <span>{pickUiLocale(locale, '正在查看', 'Viewing', '보고 있는 주차', '正在查看')}</span>}{week ? weekTitle : t(uiText("本周对阵", locale), 'This week')}</h2><div className={styles.weekSummary}><span>{matches.length ? t(uiText("{0} 场对阵 · {1} 场已结束", locale, [matches.length, model.complete]), `${matches.length} matches · ${model.complete} final`) : t(uiText("等待赛程公布", locale), 'Awaiting publication')}</span></div></div>
         {focus ? <div className={styles.spotlight} id="weekly-focus" ref={focusRef} role="region" tabIndex={-1} aria-label={`${pickUiLocale(locale, '比赛预览', 'Match preview', '경기 미리 보기', '比賽預覽')} · ${shortName(focus.team_a)} / ${shortName(focus.team_b)}`} data-match-state={focus.state}>
-          <WeeklyMatchIdentity match={focus} locale={locale} copyable />
-          <div className={styles.matchTop}><span className={styles.state} data-state={focus.state}><i />{status(focus.state)}</span><span className={styles.matchSchedule}>{dateText(focus, true)} <small>UTC+8</small>{focus.state === 'upcoming' && <MatchCountdown startsAt={getMatchScheduleValue(focus)} locale={locale} className={styles.countdown} />}</span><span>{getMatchFormatLabel(focus)}</span></div>
+          <WeeklyMatchIdentity match={focus} locale={locale} label={weeklyMatchContextLabel(focus, locale)} showCode={false} />
+          <div className={styles.matchTop}><span className={styles.state} data-state={focus.state}><i />{status(focus.state)}</span><span className={styles.matchSchedule}>{dateText(focus, true)}{showsInlineTimeZone(locale) && <> <small>UTC+8</small></>}{focus.state === 'upcoming' && <MatchCountdown startsAt={getMatchScheduleValue(focus)} locale={locale} className={styles.countdown} />}</span><span>{weeklyFormatLabel(focus, locale)}</span></div>
           <div className={styles.scoreboard}>
             {[focus.team_a, focus.team_b].map((team, side) => <div className={side ? styles.teamB : styles.teamA} key={side}>
               <TeamLogo team={team} seasonId={seasonId} className={styles.heroLogo} />
@@ -181,7 +180,7 @@ export default function SignalWeeklyOverview() {
             <div className={styles.score}><strong>{renderScore(focus)}</strong><span>{focus.state === 'live' ? t(uiText("比赛仍在继续", locale), 'Still in play') : status(focus.state)}</span></div>
           </div>
           {maps.length > 0 && <div className={styles.mapsSection}>
-            <div className={styles.mapHeading}><b>{rr5 ? t(uiText("五局进程", locale), 'Five-map series') : t(uiText("地图记录", locale), 'Map records')}</b><span>{rr5 ? t('RR5 · 固定五图，可按规则提前结束', 'RR5 · Five maps, subject to event rules') : getMatchFormatLabel(focus)}</span></div>
+            <div className={styles.mapHeading}><b>{rr5 ? t(uiText("五局进程", locale), 'Five-map series') : t(uiText("地图记录", locale), 'Map records')}</b><span>{rr5 ? t('RR5 · 固定五图，可按规则提前结束', 'RR5 · Five maps, subject to event rules') : weeklyFormatHint(focus.format, locale) || weeklyFormatLabel(focus, locale)}</span></div>
             <ol className={styles.mapRail} style={{ '--map-count': maps.length }}>
               {mapProgress.map(({ order, map, state, cumulative }) => <li key={order} data-map-state={state} style={map?.map_name ? { '--weekly-map-photo': `url("${getMapImage(map.map_type, map.map_name)}")` } : undefined}>
                 <span className={styles.mapNumber}>{String(order).padStart(2, '0')}</span><b>{formatOwMapName(map?.map_name, locale) || t(uiText("地图待公布", locale), 'Map TBA')}</b>
@@ -222,7 +221,7 @@ export default function SignalWeeklyOverview() {
           </table>
           <p className={styles.standingsNote}>{t(uiText("同分保留公布的并列名次；不同队伍已赛场数可能不同。", locale), 'Published ties are preserved. Teams may have played different numbers of matches.')}</p>
         </> : <div className={styles.pointsEmpty}><span>—</span><p>{isPilot ? t(uiText("保留比赛记录，不生成积分名次。", locale), 'Match records are kept without a points ranking.') : t(uiText("积分榜尚未公布。", locale), 'Standings have not been published.')}</p></div>}
-        {!isPilot && <div className={styles.pointsRule}><span>RR5</span><p><b>{t(uiText("胜一局 2 分 · 负或平 1 分", locale), 'Map win 2 pts · loss or draw 1 pt')}</b><small>{t(uiText("常规完赛计分；弃权等特殊结果按赛事判定。", locale), 'Normal completed play. Exceptional results follow event rulings.')}</small></p></div>}
+        {!isPilot && <div className={styles.pointsRule}><span>RR5</span><p><b>{isChineseLocale(locale) ? pickUiLocale(locale, '五局积分制：胜一局 2 分，负或平 1 分', '', '', '五局積分制：勝一局 2 分，負或平 1 分') : t(uiText("胜一局 2 分 · 负或平 1 分", locale), 'Map win 2 pts · loss or draw 1 pt')}</b><small>{t(uiText("常规完赛计分；弃权等特殊结果按赛事判定。", locale), 'Normal completed play. Exceptional results follow event rulings.')}</small></p></div>}
         <Link className={styles.advanceLink} to={withSeason(weeklyPeriodPath('/advance', cycle, week))}>{hasStandingsExcerpt ? pickUiLocale(locale, '完整积分与晋级形势', 'Full standings & advancement', '전체 순위 및 진출 현황', '完整積分與晉級形勢') : t(uiText("查看晋级形势", locale), 'Explore advancement')} <span aria-hidden="true">→</span></Link>
         </div>
       </aside>

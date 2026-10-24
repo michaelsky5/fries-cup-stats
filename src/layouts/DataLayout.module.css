@@ -794,6 +794,15 @@
 }
 .dataRetry:disabled { opacity: .6; cursor: wait; }
 .dataRetry:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.timeNote {
+  margin: 28px 0 0;
+  padding: 12px 0 0;
+  color: var(--fc-data-text-muted, #66685f);
+  font-size: 12px;
+  line-height: 1.6;
+}
+/* Home pages run full width and pad themselves; every other frame is already inset. */
+.timeNoteGutter { padding-inline: var(--kpr-gutter, clamp(20px, 3.4vw, 64px)); }
 .dataStamp {
   display: flex;
   justify-content: flex-end;

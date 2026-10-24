@@ -10,7 +10,7 @@ import { getWeeklyRoundLabel } from '../../lib/weeklyMatchIdentity.js'
 import { formatMatchSchedule, getMatchScheduleValue } from '../../lib/scheduleFormat.js'
 import { getLocationPath, getRestoreScrollY, getReturnState, getSavedReturnScroll, restoreWindowScroll, saveReturnScroll } from '../../lib/navigationState.js'
 import { WeeklyCyclePicker, WeeklyWeekRail } from '../weekly-overview/WeeklyNavigation.jsx'
-import { weeklyCycleTitle, weeklyPeriodPath, weeklyStatusLabel, weeklyTeamShort, weeklyWeekTitle } from '../weekly-overview/weeklyPresentation.js'
+import { showsInlineTimeZone, weeklyCycleTitle, weeklyPeriodPath, weeklyStatusLabel, weeklyTeamShort, weeklyWeekTitle } from '../weekly-overview/weeklyPresentation.js'
 import { buildWeeklySchedule, getWeeklyScheduleScore, resetWeeklyScheduleSearch, selectWeeklyScheduleMatch, WEEKLY_SCHEDULE_STATUSES } from './weeklyScheduleModel.js'
 import WeeklyMatchMaps from './WeeklyMatchMaps.jsx'
 import WeeklyMatchPreview from './WeeklyMatchPreview.jsx'
@@ -157,7 +157,7 @@ export default function SignalWeeklySchedule() {
         </div>
         <div className={styles.statusBar}>
           <nav className={styles.statusTabs} aria-label={t(uiText("比赛状态", locale), 'Match status')}>{shownStatuses.map(key => <button key={key} type="button" aria-pressed={model.activeStatus === key} onClick={() => change({ status: key === 'all' ? null : key })}>{uiText(statusNames[key][en ? 1 : 0], locale)} <b>{counts[key]}</b></button>)}</nav>
-          <span className={styles.timezone}>UTC+8</span>
+          {showsInlineTimeZone(locale) && <span className={styles.timezone}>UTC+8</span>}
         </div>
         <div className={styles.listHeading}>
           <h2>{selectedWeekId === 'all' ? weeklyCycleTitle(cycle, locale) : week ? weeklyWeekTitle(week, locale) : t(uiText("周赛赛程", locale), 'Weekly schedule')}<span aria-live="polite">{t(uiText("{0} 场对阵", locale, [model.resultCount]), `${model.resultCount} matches`)}</span></h2>

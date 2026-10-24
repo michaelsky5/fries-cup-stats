@@ -60,7 +60,7 @@ function RegistrationBand({ deadline, season, locale, withSeason }) {
   return <section className={styles.band} data-home-registration="true" aria-label={pickUiLocale(locale, '队伍报名', 'Team registration', '팀 등록', '隊伍報名')} data-i18n-ignore>
     <p className={styles.copy}>
       <strong>{pickUiLocale(locale, '队伍报名开放中', 'Team registration is open', '팀 등록 진행 중', '隊伍報名開放中')}</strong>
-      <span>{pickUiLocale(locale, `${closes} 截止（UTC+8）`, `Closes ${closes} (UTC+8)`, `${closes} 마감 (UTC+8)`, `${closes} 截止（UTC+8）`)}</span>
+      <span>{pickUiLocale(locale, `${closes} 截止`, `Closes ${closes} (UTC+8)`, `${closes} 마감 (UTC+8)`, `${closes} 截止`)}</span>
     </p>
     <Link className={styles.action} to={withSeason(`/participate/${encodeURIComponent(season.id)}`)}>
       {pickUiLocale(locale, '去报名', 'Register', '등록하기', '去報名')}<span aria-hidden="true">→</span>

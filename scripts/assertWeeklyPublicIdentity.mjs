@@ -94,3 +94,21 @@ test('schedule rows name the playoff round or special phase, never the prelim ma
   assert.equal(getWeeklyRoundLabel({ match_code: 'FCW26-C01-W02-REG-M03', weekly_context: { phase: 'REGULAR', match_number: 3 } }, 'zh-CN'), '')
   assert.equal(getWeeklyRoundLabel({ match_id: 'plain' }, 'zh-CN'), '')
 })
+
+test('Chinese pages lead with the human cycle name and explain formats; English keeps its labels', async () => {
+  const presentation = await import('../src/features/weekly-overview/weeklyPresentation.js')
+  const cycle = { id: 'c1', sequence: 1, code: 'C01', name: '第一周期', season_id: 'FCW26' }
+  assert.equal(presentation.weeklyCycleTitle(cycle, 'zh-CN'), '第一赛段')
+  assert.equal(presentation.weeklyCycleTitle(cycle, 'zh-TW'), '第一賽段')
+  assert.equal(presentation.weeklyCycleTitle({ ...cycle, sequence: 2, code: 'C02', name: '' }, 'zh-CN'), '第二赛段')
+  assert.equal(presentation.weeklyCycleTitle(cycle, 'en-US'), 'FCW S1 C1')
+  assert.equal(presentation.weeklyCycleCode(cycle), 'FCW S1 C1')
+  const final = { match_code: 'FCW26-C01-W06-PO-M04', weekly_context: { phase: 'PLAYOFFS', round_label: '决赛', week_number: 6, cycle_sequence: 1, cycle_name: '第一周期' } }
+  assert.equal(presentation.weeklyMatchContextLabel(final, 'zh-CN'), '第一赛段 · 第 6 周 · 决赛')
+  assert.match(presentation.weeklyMatchContextLabel(final, 'en-US'), /^FCW S1 C1 · Week 6/)
+  assert.equal(presentation.weeklyFormatLabel({ format: 'FT3' }, 'zh-CN'), 'FT3（先赢 3 图）')
+  assert.equal(presentation.weeklyFormatLabel({ format: 'RR5' }, 'zh-CN'), 'RR5（五局积分制）')
+  assert.equal(presentation.weeklyFormatLabel({ format: 'FT3' }, 'en-US'), 'FT3')
+  assert.equal(presentation.showsInlineTimeZone('zh-CN'), false)
+  assert.equal(presentation.showsInlineTimeZone('en-US'), true)
+})

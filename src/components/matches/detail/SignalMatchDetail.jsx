@@ -1,6 +1,6 @@
 import { translateUiText as uiText } from '../../../lib/uiText.js'
 import WeeklyMatchIdentity from '../WeeklyMatchIdentity.jsx'
-import { getWeeklyMatchIdentityLabel } from '../../../lib/weeklyMatchIdentity.js'
+import { showsInlineTimeZone, weeklyMatchContextLabel } from '../../../features/weekly-overview/weeklyPresentation.js'
 import { useUiLocale } from '../../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
@@ -273,7 +273,7 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
     </nav>
     <section className={styles.hero} id="match-overview" data-match-section="overview" aria-labelledby="match-dossier-title">
       <div className={styles.cover}>
-        <header className={styles.heroMeta}><span>{getWeeklyMatchIdentityLabel(dossier.match, locale) || <>{getScheduleStageLabel(dossier.match.stage, locale)} <b>/</b> {getRoundLabel(dossier, locale)}</>}</span><strong data-live={phase.key === 'live'}>{status}</strong></header>
+        <header className={styles.heroMeta}><span>{weeklyMatchContextLabel(dossier.match, locale) || <>{getScheduleStageLabel(dossier.match.stage, locale)} <b>/</b> {getRoundLabel(dossier, locale)}</>}</span><strong data-live={phase.key === 'live'}>{status}</strong></header>
         <WeeklyMatchIdentity match={dossier.match} locale={locale} copyable showContext={false} />
         <div className={styles.versus}>
           <TeamIdentity team={dossier.teamA} logoTeam={dossier.match.team_a} side="A" seasonId={seasonId} winner={dossier.hasSeriesScore && winnerSide === 'A'} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} />
@@ -282,7 +282,7 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
         </div>
         {summary ? <p className={styles.matchSummary} data-match-summary={matchFact.kind}>{summary}</p> : null}
         {phase.active ? <>{phase.roomProgress ? <p className={styles.phaseCaption} data-public-room-status={roomSnapshot.status} role="status">{eventCenterText('roomProgressSource', locale)} · {eventCenterText(roomSnapshot.status === 'reconnecting' ? 'roomProgressReconnecting' : roomSnapshot.status === 'paused' ? 'roomProgressPaused' : 'roomProgressConnected', locale)}</p> : null}<p className={styles.phaseCaption}>{phase.caption}</p><SignalMatchPhaseProgress key={dossier.internalId} phase={phase} onSelectMap={onSelectMap} en={en} /></> : <SeriesProgress key={dossier.internalId} maps={progress} currentOrder={currentOrder} onSelectMap={onSelectMap} en={en} />}
-        <footer className={styles.heroFooter}><span>{en ? 'SCHEDULE' : uiText("比赛时间", locale)}<strong>{phase.active ? phase.scheduleLabel : dossier.scheduleLabel}</strong>{phase.active ? <small>UTC+8</small> : null}</span>{dossier.totalDurationLabel ? <span>{phase.active ? (en ? 'RECORDED TIME' : uiText("已记录时长", locale)) : (en ? 'IN-GAME TIME' : uiText("局内总时长", locale))}<strong>{dossier.totalDurationLabel}</strong></span> : null}{!phase.active || phase.recordedCount ? <span>{en ? 'MAPS RECORDED' : uiText("地图记录", locale)}<strong>{phase.active ? phase.recordedCount : dossier.mapRecords.length}</strong></span> : null}</footer>
+        <footer className={styles.heroFooter}><span>{en ? 'SCHEDULE' : uiText("比赛时间", locale)}<strong>{phase.active ? phase.scheduleLabel : dossier.scheduleLabel}</strong>{phase.active && showsInlineTimeZone(locale) ? <small>UTC+8</small> : null}</span>{dossier.totalDurationLabel ? <span>{phase.active ? (en ? 'RECORDED TIME' : uiText("已记录时长", locale)) : (en ? 'IN-GAME TIME' : uiText("局内总时长", locale))}<strong>{dossier.totalDurationLabel}</strong></span> : null}{!phase.active || phase.recordedCount ? <span>{en ? 'MAPS RECORDED' : uiText("地图记录", locale)}<strong>{phase.active ? phase.recordedCount : dossier.mapRecords.length}</strong></span> : null}</footer>
         {dossier.match.cycle_week_id && <p className={styles.matchIdentifier}>{en ? 'MATCH ID' : uiText("比赛编号", locale)} <span data-public-match-code>{dossier.displayCode}</span></p>}
         {!phase.active ? <SignalMatchSpotlight dossier={dossier} locale={locale} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} /> : null}
       </div>

@@ -1,6 +1,6 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
-import { weeklyCycleTitle, weeklyStatusLabel, weeklyWeekTitle } from './weeklyPresentation.js'
+import { isChineseLocale, weeklyCycleCode, weeklyCycleTitle, weeklyStatusLabel, weeklyWeekTitle } from './weeklyPresentation.js'
 import styles from './WeeklyNavigation.module.css'
 import sectionStyles from '../../components/navigation/SignalSectionNav.module.css'
 
@@ -57,7 +57,7 @@ export function WeeklyCyclePicker({ cycles, cycle, locale, onChange, dateRange =
             else if (event.key === 'Escape' && open) { event.preventDefault(); closeMenu() }
           }}><span>{title}</span><svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m4 6 4 4 4-4" /></svg></button>
           {open && <div id={menuId} className={styles.cycleMenu} role="menu" aria-label={selectLabel} onKeyDown={menuKeys}>
-            {cycles.map((item, index) => <button type="button" key={item.id} ref={element => { optionRefs.current[index] = element }} role="menuitemradio" aria-checked={item.id === current?.id} tabIndex={-1} onClick={() => { closeMenu(); if (item.id !== current?.id) onChange(item.id) }}><span><strong>{weeklyCycleTitle(item, locale)}</strong><small>{weeklyStatusLabel(item.status, locale)}</small></span><svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m3 8 3 3 7-7" /></svg></button>)}
+            {cycles.map((item, index) => <button type="button" key={item.id} ref={element => { optionRefs.current[index] = element }} role="menuitemradio" aria-checked={item.id === current?.id} tabIndex={-1} onClick={() => { closeMenu(); if (item.id !== current?.id) onChange(item.id) }}><span><strong>{weeklyCycleTitle(item, locale)}</strong><small>{[isChineseLocale(locale) && weeklyCycleCode(item), weeklyStatusLabel(item.status, locale)].filter(Boolean).join(' · ')}</small></span><svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m3 8 3 3 7-7" /></svg></button>)}
           </div>}
         </> : <strong className={`${styles.cycleValue} ${!current ? styles.cyclePending : ''}`} data-weekly-cycle-value="true"><span>{title}</span></strong>}
       </div>

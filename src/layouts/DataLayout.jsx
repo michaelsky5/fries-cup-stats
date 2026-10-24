@@ -1,4 +1,4 @@
-import { translateUiText as uiText } from '../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../lib/uiText.js'
 import { Outlet, useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -23,6 +23,7 @@ import { getPublicDataStatus } from '../lib/publicDataStatus.js'
 import { formatUpdatedAt } from '../lib/format.js'
 import { getGlobalSummary, getSeasonStatus } from '../lib/seasonSummary.js'
 import { isWeeklyOverview } from '../features/weekly-overview/weeklyOverviewModel.js'
+import { isChineseLocale } from '../features/weekly-overview/weeklyPresentation.js'
 import { buildFriesCupTitle, getDataCenterPageLabel } from '../lib/pageTitle.js'
 import { getRestoreScrollY, restoreWindowScroll } from '../lib/navigationState.js'
 import { FavoritesProvider, normalizeSeasonId, useFavorites } from '../features/favorites/index.js'
@@ -449,7 +450,7 @@ export default function DataLayout() {
           <PartnerTrialNotice season={season} locale={layoutLocale} />
           {isLoading && needsPublicSnapshot ? (
             <div className={`${styles.systemBox} ${styles.syncBox}`} role="status" aria-live="polite">
-              <span className={styles.syncKicker}>LIVE DATA SYNC</span>
+              <span className={styles.syncKicker}>{pickUiLocale(layoutLocale, '赛事数据同步', 'LIVE DATA SYNC', 'LIVE DATA SYNC', '賽事數據同步')}</span>
               <div className={styles.syncMark} aria-hidden="true"><span /></div>
               <strong className={styles.syncTitle}>{t('layout.state.loading')}</strong>
               <p className={styles.syncDescription}>
@@ -492,6 +493,10 @@ export default function DataLayout() {
                   <div className={styles.dataStamp} data-i18n-ignore>
                     <span>{dataStatus.label}</span><time>{updatedAtText}</time>
                   </div>
+                ) : null}
+                {/* 票 2.13: Chinese pages drop the UTC+8 after each time and say it once here. */}
+                {isKprHybridDesign && needsPublicSnapshot && isChineseLocale(layoutLocale) ? (
+                  <p className={`${styles.timeNote} ${/^\/?$/.test(location.pathname) ? styles.timeNoteGutter : ''}`} data-time-zone-note data-i18n-ignore>{pickUiLocale(layoutLocale, '时间均为北京时间（UTC+8）', '', '', '時間均為北京時間（UTC+8）')}</p>
                 ) : null}
               </>
             </FavoritesProvider>
