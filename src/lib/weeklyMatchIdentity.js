@@ -75,6 +75,18 @@ export function getWeeklyPhaseLabel(phase, locale = 'zh-CN') {
   return label ? uiText(label, locale) : ''
 }
 
+const ROUND_LABELS_EN = { 总决赛: 'Grand Final', 决赛: 'Final', 半决赛: 'Semifinal', 季军赛: 'Third place' }
+
+// The round a list row needs to tell matches of one day apart: the playoff round, or the phase
+// for qualifier / finals weeks. Ordinary prelim matches need none.
+export function getWeeklyRoundLabel(match, locale = 'zh-CN') {
+  const identity = getWeeklyMatchIdentity(match)
+  if (!identity) return ''
+  const round = text(identity.round_label)
+  if (round) return String(locale).startsWith('en') ? ROUND_LABELS_EN[round] || uiText(round, locale) : uiText(round, locale)
+  return identity.phase && identity.phase !== 'REGULAR' ? getWeeklyPhaseLabel(identity.phase, locale) : ''
+}
+
 export function getWeeklyCycleIdentityLabel(identity, locale = 'zh-CN') {
   const en = String(locale).startsWith('en');
   const sequence = identity?.cycle_sequence ?? identity?.sequence;

@@ -306,3 +306,43 @@
   .matchRow:has(> .watch) { grid-template-columns: minmax(0, 1fr) auto 40px; }
   .watch { padding: 0 12px; }
 }
+
+/* One row per match (票 2.12): time and status | teams, score and round | watch | maps.
+   The match number lives on the detail page; search still matches it. */
+.followedMark, .watchShort { display: none; }
+@media (min-width: 901px) {
+  .score > small { display: block; }
+}
+@media (max-width: 600px) {
+  /* Page head: the dock and the status line already say where you are. */
+  .heading { padding: 6px 0 4px; gap: 0; }
+  .heading .eyebrow, .heading > div:first-child > p:last-child { display: none; }
+  .heading h1 { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .listHeading { padding: 14px 0 10px; }
+  .listHeading p { display: none; }
+  .matchRow, .matchRow:has(> .watch) { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .matchRow:has(> .watch) > .matchMain { grid-column: auto; }
+  .matchMain { grid-template-columns: 50px minmax(0, 1fr); gap: 6px; padding: 10px 6px 10px 10px; min-height: 64px; }
+  .time { display: grid; gap: 3px; align-content: center; }
+  .time > strong { font-size: 15px; }
+  .time .state { font-size: 11px; gap: 0; white-space: nowrap; }
+  .time .state i { display: none; } /* live rows keep their green text and edge */
+  .headingActions [data-weekly-cycle-picker] > span { display: none; } /* cycle status: the week rail shows it */
+  .time > .format { display: none; }
+  .followedMark { display: block; color: #896c1b; font-size: 11px; }
+  .duel { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 6px; }
+  .team { gap: 4px; }
+  .team b { font-size: 15px; }
+  .logo { width: 18px; height: 18px; flex-basis: 18px; }
+  .score { min-width: 44px; gap: 2px; }
+  .score > strong { font-size: 20px; }
+  .score > small { font-size: 11px; white-space: nowrap; }
+  .watch, .matchRow:has(> .watch) > .watch { order: 0; min-height: 0; padding: 0 7px; border-top: 0; border-left: 1px solid var(--line); font-size: 11px; gap: 3px; }
+  .watch i { font-size: 13px; }
+  .watchLong { display: none; }
+  .watchShort { display: inline; }
+  .mapToggle, .matchRow:has(> .watch) > .mapToggle { order: 0; width: 44px; min-width: 44px; min-height: 0; padding: 0; border-top: 0; border-left: 1px solid var(--line); justify-content: center; }
+  .mapToggle > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .matchRow[data-expanded] > :is(.mapToggle, .watch) { border-left-color: var(--fc-data-line-on-dark); }
+  .mapProgress, .matchRow:has(> .watch) > .mapProgress { order: 0; grid-column: 1 / -1; }
+}

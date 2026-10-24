@@ -83,3 +83,14 @@ test('weekly team standing comes from the published cycle, never Swiss calculati
   assert.equal(present().rank, null)
   assert.equal(present().label, '排名待公布')
 })
+
+test('schedule rows name the playoff round or special phase, never the prelim match number', async () => {
+  const { getWeeklyRoundLabel } = await import('../src/lib/weeklyMatchIdentity.js')
+  const playoff = { match_code: 'FCW26-C01-W06-PO-M03', weekly_context: { phase: 'PLAYOFFS', round_label: '季军赛', week_number: 6, cycle_sequence: 1 } }
+  assert.equal(getWeeklyRoundLabel(playoff, 'zh-CN'), '季军赛')
+  assert.equal(getWeeklyRoundLabel(playoff, 'en-US'), 'Third place')
+  assert.equal(getWeeklyRoundLabel({ match_code: 'FCW26-C01-W06-PO-M04', weekly_context: { phase: 'PLAYOFFS', round_label: '决赛' } }, 'en-US'), 'Final')
+  assert.equal(getWeeklyRoundLabel({ match_code: 'FCW26-C01-W05-QUAL-M01' }, 'zh-CN'), '晋级加赛')
+  assert.equal(getWeeklyRoundLabel({ match_code: 'FCW26-C01-W02-REG-M03', weekly_context: { phase: 'REGULAR', match_number: 3 } }, 'zh-CN'), '')
+  assert.equal(getWeeklyRoundLabel({ match_id: 'plain' }, 'zh-CN'), '')
+})

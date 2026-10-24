@@ -4,9 +4,9 @@ import { useEffect, useId, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigationType, useOutletContext, useSearchParams } from 'react-router-dom'
 import ImeSafeInput from '../../components/common/ImeSafeInput.jsx'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
-import WeeklyMatchIdentity from '../../components/matches/WeeklyMatchIdentity.jsx'
 import { getMatchFormatLabel } from '../../lib/matchFormat.js'
 import { getWatchLink } from '../../lib/watchLink.js'
+import { getWeeklyRoundLabel } from '../../lib/weeklyMatchIdentity.js'
 import { formatMatchSchedule, getMatchScheduleValue } from '../../lib/scheduleFormat.js'
 import { getLocationPath, getRestoreScrollY, getReturnState, getSavedReturnScroll, restoreWindowScroll, saveReturnScroll } from '../../lib/navigationState.js'
 import { WeeklyCyclePicker, WeeklyWeekRail } from '../weekly-overview/WeeklyNavigation.jsx'
@@ -37,8 +37,12 @@ function WeeklyMatchRow({ match, locale, seasonId, withSeason, returnProps, maps
       : match.state === 'cancelled' ? t('本场已取消', 'This match is cancelled')
         : match.state === 'ruling' ? t('按赛事判定', 'Event ruling applies')
           : match.state === 'live' ? t('比赛仍在继续', 'Still in play') : ''
+  // One row per match (票 2.12): time, teams, score, status. The cycle and week sit in the day heading,
+  // the round under the score, and the match number only on the detail page (search still finds it).
+  const scoreNote = getWeeklyRoundLabel(match, locale) || note
   const watch = getWatchLink(match, match.state, now)
   const watchLabel = watch?.kind === 'live' ? pickUiLocale(locale, '看直播', 'Watch live', '생중계', '看直播') : pickUiLocale(locale, '看录像', 'Replays', '다시보기', '看錄像')
+  const watchShort = watch?.kind === 'live' ? pickUiLocale(locale, '直播', 'Live', '생중계', '直播') : pickUiLocale(locale, '录像', 'Replay', '다시보기', '錄像')
   const MatchMain = isDesktop ? 'button' : Link
   const mainProps = isDesktop ? {
     type: 'button', onClick: onSelect, 'aria-pressed': selected, 'aria-controls': previewId,
@@ -48,21 +52,21 @@ function WeeklyMatchRow({ match, locale, seasonId, withSeason, returnProps, maps
     'aria-label': `${weeklyTeamShort(match.team_a)} ${score} ${weeklyTeamShort(match.team_b)} · ${weeklyStatusLabel(match.state, locale)} · ${t('比赛详情', 'Match details')}`
   }
   return <article className={styles.matchRow} data-state={match.state} data-weekly-match={match.id} data-selected={isDesktop && selected || undefined} data-expanded={!isDesktop && mapsExpanded || undefined}>
-    <WeeklyMatchIdentity match={match} locale={locale} />
     <MatchMain className={styles.matchMain} {...mainProps}>
       <span className={styles.time}>
-        <span className={styles.state} data-state={match.state}><i aria-hidden="true" />{weeklyStatusLabel(match.state, locale)}</span>
         <strong>{match.state === 'postponed' && schedule.hasSchedule ? t(uiText("原定 {0}", locale, [time]), `Was ${time}`) : time}</strong>
-        <small>{getMatchFormatLabel(match)}{match.followed && <span className={styles.followed}> · {t(uiText("已关注", locale), 'Following')}</span>}</small>
+        <span className={styles.state} data-state={match.state}><i aria-hidden="true" />{weeklyStatusLabel(match.state, locale)}</span>
+        <small className={styles.format}>{getMatchFormatLabel(match)}{match.followed && <span className={styles.followed}> · {t(uiText("已关注", locale), 'Following')}</span>}</small>
+        {match.followed && <small className={styles.followedMark}>{t(uiText("已关注", locale), 'Following')}</small>}
       </span>
       <span className={styles.duel}>
         <span className={styles.team}><TeamLogo team={match.team_a} seasonId={seasonId} className={styles.logo} /><span><b>{weeklyTeamShort(match.team_a)}</b><small>{match.team_a?.name || match.team_a?.team_name}</small></span></span>
-        <span className={styles.score}><strong>{score}</strong><small>{note || (match.state === 'complete' ? t(uiText("最终比分", locale), 'Final score') : getMatchFormatLabel(match))}</small></span>
+        <span className={styles.score}><strong>{score}</strong>{scoreNote ? <small>{scoreNote}</small> : null}</span>
         <span className={`${styles.team} ${styles.teamB}`}><TeamLogo team={match.team_b} seasonId={seasonId} className={styles.logo} /><span><b>{weeklyTeamShort(match.team_b)}</b><small>{match.team_b?.name || match.team_b?.team_name}</small></span></span>
       </span>
       <span className={styles.arrow} aria-hidden="true">{eventCenterText('matchDetails', locale)} <i>↗</i></span>
     </MatchMain>
-    {watch ? <a className={styles.watch} href={watch.url} target="_blank" rel="noreferrer" data-watch-kind={watch.kind} aria-label={`${watchLabel} · ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`}><span>{watchLabel}</span><i aria-hidden="true">↗</i></a> : null}
+    {watch ? <a className={styles.watch} href={watch.url} target="_blank" rel="noreferrer" data-watch-kind={watch.kind} aria-label={`${watchLabel} · ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`}><span className={styles.watchLong}>{watchLabel}</span><span className={styles.watchShort} aria-hidden="true">{watchShort}</span><i aria-hidden="true">↗</i></a> : null}
     {isDesktop && <Link className={styles.rowDetails} to={withSeason(path)} {...returnProps} aria-label={`${t('比赛详情', 'Match details')} · ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`} title={eventCenterText('matchDetails', locale)}><span>{eventCenterText('matchDetails', locale)}</span><i aria-hidden="true">↗</i></Link>}
     <button type="button" className={styles.mapToggle} aria-expanded={mapsExpanded} aria-controls={mapPanelId} onClick={onToggleMaps} aria-label={`${eventCenterText(mapsExpanded ? 'collapseMatchMaps' : 'expandMatchMaps', locale)} · ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`}>
       <span>{eventCenterText(mapsExpanded ? 'collapseMatchMaps' : 'expandMatchMaps', locale)}</span><i aria-hidden="true">{mapsExpanded ? '−' : '+'}</i>
@@ -122,7 +126,13 @@ export default function SignalWeeklySchedule() {
   const returnProps = { state: getReturnState(location), onClick: () => saveReturnScroll(location) }
   const overviewPath = withSeason(weeklyPeriodPath('/', cycle, week))
   const shownStatuses = WEEKLY_SCHEDULE_STATUSES.filter((key, index) => index < 4 || counts[key] || model.activeStatus === key)
-  const dayLabel = day => day === 'tbd' ? t('日期待定', 'Date TBD') : new Intl.DateTimeFormat(locale, { timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit', weekday: 'short' }).format(new Date(`${day}T12:00:00+08:00`))
+  const dayLabel = day => {
+    if (day === 'tbd') return t('日期待定', 'Date TBD')
+    const date = new Date(`${day}T12:00:00+08:00`)
+    if (!String(locale).startsWith('zh')) return new Intl.DateTimeFormat(locale, { timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit', weekday: 'short' }).format(date)
+    const parts = Object.fromEntries(new Intl.DateTimeFormat(locale, { timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit', weekday: 'short' }).formatToParts(date).map(part => [part.type, part.value]))
+    return `${parts.month}/${parts.day} ${parts.weekday}`
+  }
 
   return <div className={styles.page} data-weekly-schedule="true">
     <header className={styles.heading}>
