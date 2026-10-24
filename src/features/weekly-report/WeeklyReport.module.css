@@ -143,6 +143,10 @@
 .cycleLinks { display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
 .cycleLinks a { min-height:38px; padding:10px 14px; border:1px solid var(--journal-line); font-size:12px; }
 .cycleLinks a[aria-current="page"] { background:var(--fc-data-paper-deep); border-bottom:2px solid var(--fc-data-signal); }
+/* 票 2.28: how fresh the archive is, above the issues. */
+.archiveStatus { display:grid; gap:4px; margin-top:20px; padding:12px 0; border-block:1px solid var(--journal-line); color:var(--journal-muted); font-size:13px; line-height:1.7; }
+.archiveStatus p { margin:0; }
+.archiveStatus [data-report-archive-gaps] { color:var(--journal-ink); }
 .unavailable { padding:48px 0; border-top:2px solid var(--journal-ink); margin-top:28px; }
 .unavailable h1 { font-size:32px; margin:0 0 14px; }
 .unavailable p { font-size:15px; color:var(--journal-muted); line-height:1.9; }

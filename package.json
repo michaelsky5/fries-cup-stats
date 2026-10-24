@@ -70,7 +70,7 @@
     "test:room-guide": "node --test scripts/roomGuide.test.mjs scripts/roomSimulation.test.mjs scripts/roomPractice.test.mjs",
     "test:region-picker": "node --test scripts/regionPicker.test.mjs",
     "test:visitor-locale": "node --test scripts/visitorLocale.test.mjs",
-    "test:weekly-newspaper": "node --test scripts/assertWeeklyAwards.mjs scripts/assertWeeklyBanLeaders.mjs scripts/assertWeeklyDataStories.mjs scripts/assertWeeklyEditorial.mjs scripts/assertWeeklyIssueVersions.mjs scripts/assertWeeklyMatchCode.mjs scripts/assertWeeklyNewspaper.mjs scripts/weeklyNewspaperPresentation.test.mjs scripts/assertWeeklyReportPreview.mjs scripts/assertRosterOverview.mjs scripts/assertTeamArchiveContent.mjs",
+    "test:weekly-newspaper": "node --test scripts/weeklyReportFreshness.test.mjs scripts/assertWeeklyAwards.mjs scripts/assertWeeklyBanLeaders.mjs scripts/assertWeeklyDataStories.mjs scripts/assertWeeklyEditorial.mjs scripts/assertWeeklyIssueVersions.mjs scripts/assertWeeklyMatchCode.mjs scripts/assertWeeklyNewspaper.mjs scripts/weeklyNewspaperPresentation.test.mjs scripts/assertWeeklyReportPreview.mjs scripts/assertRosterOverview.mjs scripts/assertTeamArchiveContent.mjs",
     "build:newspaper-runtime": "node scripts/buildNewspaperRuntime.mjs"
   },
   "dependencies": {

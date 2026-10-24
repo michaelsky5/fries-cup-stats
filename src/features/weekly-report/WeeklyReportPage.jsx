@@ -3,7 +3,7 @@ import { Link, useOutletContext, useParams, useSearchParams } from 'react-router
 import { pickUiLocale, translateUiText } from '../../lib/uiText.js'
 import { weeklyCycleTitle, weeklyPeriodPath } from '../weekly-overview/weeklyPresentation.js'
 import { buildWeeklyOverview } from '../weekly-overview/weeklyOverviewModel.js'
-import { formatReportTime, weeklyReportPath } from './weeklyReportPresentation.js'
+import { formatReportTime, latestNewspaperIssue, newspaperIssueDate, newspaperWeekLabel, unpublishedNewspaperWeeks, weeklyReportPath } from './weeklyReportPresentation.js'
 import usePublishedNewspaper from './usePublishedNewspaper.js'
 import { ReportCover } from './WeeklyReportTeaser.jsx'
 import WeeklyNewspaper from './WeeklyNewspaper.jsx'
@@ -20,6 +20,12 @@ export default function WeeklyReportPage() {
   const { issue, issues, loading, error } = usePublishedNewspaper({ seasonId, cycleId: weekly ? cycleId : null, weekId, locale }, !weekId)
   // Delayed backfills keep their publication time without moving an earlier week above later weeks.
   const archiveIssues = useMemo(() => [...issues].sort((a, b) => b.report.week.week_number - a.report.week.week_number), [issues])
+  // 票 2.28: the archive says how fresh it is — the newest issue, and the finished weeks with no issue.
+  const latestIssue = latestNewspaperIssue(issues)
+  const latestWeek = latestIssue ? newspaperWeekLabel(latestIssue.report.week, locale) : ''
+  const latestDate = latestIssue ? newspaperIssueDate(latestIssue.publishedAt, locale) : ''
+  const knownCycle = overview.cycle?.id === cycleId
+  const unpublishedWeeks = useMemo(() => knownCycle ? unpublishedNewspaperWeeks(overview.weeks, issues) : [], [knownCycle, overview.weeks, issues])
   const report = issue?.report
   const t = (zh, en) => String(locale).startsWith('en') ? en : translateUiText(zh, locale)
   const home = report ? withSeason(weeklyPeriodPath('/', report.cycle, report.week)) : withSeason('/')
@@ -30,6 +36,14 @@ export default function WeeklyReportPage() {
     {!weekId && <>
       <header className={styles.archiveHeading}><div><span className={styles.eyebrow}>FRIES CUP / WEEKLY NEWSPAPER</span><h1>{t('薯条周报', 'Fries Cup Weekly')}</h1></div><p>{t('每周赛果、最佳阵容与数据看点。', 'Weekly results, best lineups and data stories.')}</p></header>
       <nav className={styles.cycleLinks} aria-label={t('周报比赛赛段', 'Report cycles')}>{overview.cycles.map(cycle => <Link key={cycle.id} to={withSeason('/reports?cycle=' + encodeURIComponent(cycle.id))} aria-current={cycle.id === cycleId ? 'page' : undefined}>{weeklyCycleTitle(cycle, locale)}</Link>)}</nav>
+      {weekly && knownCycle && !loading && !error && (latestIssue || unpublishedWeeks.length > 0) && <div className={styles.archiveStatus} data-report-archive-status>
+        {latestIssue && <p data-report-archive-latest>{pickUiLocale(locale,
+          `已出刊 ${issues.length} 期 · 最新 ${latestWeek}（${latestDate}）`,
+          `${issues.length} issue${issues.length === 1 ? '' : 's'} published · latest: ${latestWeek} (${latestDate})`,
+          `${issues.length}호 발행 · 최신 ${latestWeek} (${latestDate})`,
+          `已出刊 ${issues.length} 期 · 最新 ${latestWeek}（${latestDate}）`)}</p>}
+        {unpublishedWeeks.length > 0 && <p data-report-archive-gaps>{pickUiLocale(locale, '未出刊：', 'Not published: ', '미발행: ', '未出刊：')}{unpublishedWeeks.map(week => newspaperWeekLabel(week, locale)).join(pickUiLocale(locale, '、', ', ', ', ', '、'))}</p>}
+      </div>}
     </>}
     {(loading || error || (weekId ? !issue : !issues.length)) && <section className={styles.unavailable} role={error ? 'alert' : 'status'}>
       <h2>{!weekly ? pickUiLocale(locale, '当前赛事暂无周报', 'No weekly reports for this event', '이 대회에는 주간 신문이 없습니다', '目前賽事暫無週報') : loading ? t('正在读取周报…', 'Loading the issue…') : error ? t('周报暂时无法读取', 'The issue could not be loaded') : t('本期周报尚未出刊', 'This issue has not been published')}</h2>

@@ -21,6 +21,7 @@ import { weeklyOverviewReturnLocation } from './weeklyInteractionNavigation.js'
 import { weeklyStandingsPreviewLimit, selectWeeklyFollowingPreview, selectWeeklyStandingsPreview } from './weeklyOverviewPreview.js'
 import { WeeklyReportTeaser, WeeklyEventPathway } from '../weekly-report/WeeklyReportTeaser.jsx'
 import usePublishedNewspaper from '../weekly-report/usePublishedNewspaper.js'
+import { latestNewspaperIssue, newspaperIssueDate, newspaperWeekLabel } from '../weekly-report/weeklyReportPresentation.js'
 import MatchCountdown from './MatchCountdown.jsx'
 import styles from './SignalWeeklyOverview.module.css'
 
@@ -136,8 +137,11 @@ export default function SignalWeeklyOverview() {
   const focusWatch = getWatchLink(focus, focus?.state, openedAt)
   const selectedCycleId = cycle?.id
   const selectedWeekId = week?.id
-  const { issue } = usePublishedNewspaper({ seasonId, cycleId: selectedCycleId, weekId: selectedWeekId, locale })
+  // 票 2.28: one archive read gives both the selected week's issue and how fresh the reports are.
+  const { issues: reportIssues, loading: reportsLoading, error: reportsError } = usePublishedNewspaper({ seasonId, cycleId: selectedCycleId, locale }, true)
+  const issue = reportIssues.find(item => item.report?.week?.id === selectedWeekId) || null
   const report = issue ? { ...issue.report, newspaper: issue.newspaper } : null
+  const latestIssue = latestNewspaperIssue(reportIssues)
   const focusId = focus?.id
   const restoreScrollY = getRestoreScrollY(location.state) ?? (navigationType === 'POP' ? getSavedReturnScroll(getLocationPath(location)) : null)
   useLayoutEffect(() => {
@@ -195,7 +199,14 @@ export default function SignalWeeklyOverview() {
     ? `https://fries-cup.com/rules/?book=${encodeURIComponent(cycle.rulebook.slug)}&version=${encodeURIComponent(cycle.rulebook.version)}`
     : 'https://fries-cup.com/rules/'
 
-  const quickLinks = <div className={styles.headingActions} data-weekly-quick-links="true"><Link className={styles.rulesLink} data-weekly-report-archive-link to={withSeason(`/reports?cycle=${encodeURIComponent(selectedCycleId || '')}`)}>{pickUiLocale(locale, '周报归档', 'Weekly reports', '주간 신문', '週報歸檔')} <span aria-hidden="true">→</span><small>{pickUiLocale(locale, '赛果与选手数据', 'Results & player statistics', '경기 결과와 선수 기록', '賽果與選手數據')}</small></Link><a className={styles.rulesLink} href={rulebookUrl} target="_blank" rel="noreferrer">{t(uiText("规则中心", locale), 'Rulebook')} <span aria-hidden="true">↗</span><small>{cycle?.rulebook?.version ? `V${cycle.rulebook.version}` : t(uiText("完整条款与历史版本", locale), 'Rules & version history')}</small></a><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a>{registration ? <Link className={styles.rulesLink} data-weekly-registration-link to={withSeason(`/participate/${encodeURIComponent(seasonId)}`)}>{pickUiLocale(locale, '报名参赛', 'Register a team', '팀 등록', '報名參賽')} <span aria-hidden="true">→</span><small>{registration}</small></Link> : null}</div>
+  // 票 2.28: the report link says which issue is newest and when it came out, and no longer leads the row.
+  const reportFreshness = latestIssue
+    ? `${pickUiLocale(locale, '最新 ', 'Latest: ', '최신 ', '最新 ')}${newspaperWeekLabel(latestIssue.report.week, locale)} · ${newspaperIssueDate(latestIssue.publishedAt, locale)}`
+    : reportsLoading || reportsError || !selectedCycleId
+      ? pickUiLocale(locale, '赛果与选手数据', 'Results & player statistics', '경기 결과와 선수 기록', '賽果與選手數據')
+      : pickUiLocale(locale, '本赛段尚未出刊', 'No issue this cycle yet', '이번 주기 발행 전', '本賽段尚未出刊')
+  const reportLink = <Link className={styles.rulesLink} data-weekly-report-archive-link data-report-latest-week={latestIssue?.report.week.week_number} to={withSeason(`/reports?cycle=${encodeURIComponent(selectedCycleId || '')}`)}>{pickUiLocale(locale, '周报归档', 'Weekly reports', '주간 신문', '週報歸檔')} <span aria-hidden="true">→</span><small>{reportFreshness}</small></Link>
+  const quickLinks = <div className={styles.headingActions} data-weekly-quick-links="true"><a className={styles.rulesLink} href={rulebookUrl} target="_blank" rel="noreferrer">{t(uiText("规则中心", locale), 'Rulebook')} <span aria-hidden="true">↗</span><small>{cycle?.rulebook?.version ? `V${cycle.rulebook.version}` : t(uiText("完整条款与历史版本", locale), 'Rules & version history')}</small></a><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a>{registration ? <Link className={styles.rulesLink} data-weekly-registration-link to={withSeason(`/participate/${encodeURIComponent(seasonId)}`)}>{pickUiLocale(locale, '报名参赛', 'Register a team', '팀 등록', '報名參賽')} <span aria-hidden="true">→</span><small>{registration}</small></Link> : null}{reportLink}</div>
   // Supporter thanks keep their place above the matches; the funding link moves to the end of the page.
   const supporterThanks = seasonId === 'FCW26' ? <SupporterThanks seasonId="FCW26" withSeason={withSeason} locale={locale} /> : null
   const supportLink = seasonId === 'FCW26' ? <div className={styles.supportEntry}><Link to={withSeason('/support')}>{pickUiLocale(locale,'周赛支持与资金进度','Weekly support & funding','주간 대회 후원 및 자금 현황','週賽支持與資金進度')} →</Link></div> : null

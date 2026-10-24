@@ -545,3 +545,11 @@ a.followedMatch > span { color: var(--fc-data-focus-on-light, #806000); }
   .page .advanceLink { min-height: 44px; padding-block: 0; }
   .supportEntry > a { min-height: 44px; }
 }
+
+/* 票 2.28: the report link comes last; on phones it takes its own row so the newest issue and its date fit. */
+@media (max-width: 600px) {
+  .phoneLinks .headingActions { flex-wrap: wrap; row-gap: 0; }
+  .phoneLinks .rulesLink[data-weekly-report-archive-link] { flex: 1 0 100%; gap: 8px; border-top: 1px solid var(--line); }
+  .phoneLinks .rulesLink[data-weekly-report-archive-link] small { display: block; order: 1; margin-left: auto; color: var(--muted); font-size: 11px; }
+  .phoneLinks .rulesLink[data-weekly-report-archive-link] > span { order: 2; }
+}
