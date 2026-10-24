@@ -13,7 +13,8 @@
 @media (max-width: 600px) {
   :global([data-design][data-design-edition] [data-phone-navigation='true']) .desktopBrand.desktopBrand { display: none; }
   :global([data-design][data-design-edition] [data-phone-navigation='true']) .mobileBrand.mobileBrand { display: inline-grid; }
-  .menuTrigger { display: grid; place-items: center; flex-shrink: 0; width: 44px; min-height: 44px; padding: 8px; border: 1px solid #ffffff30; background: transparent; color: var(--fc-data-paper); cursor: pointer; }
+  /* A cell of the header control group: the group draws the frame, cells only the divider. */
+  .menuTrigger { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; min-height: 44px; padding: 8px; border: 0; border-left: 1px solid rgba(255, 255, 255, .15); background: transparent; color: var(--fc-data-paper); cursor: pointer; }
   .menuTrigger svg { width: 20px; height: 20px; }
   .menuTrigger:focus-visible { outline: 2px solid var(--fc-data-signal); outline-offset: -3px; }
   .dock { position: fixed; z-index: 40; inset: auto 0 0; display: grid; grid-template-columns: repeat(var(--mobile-tab-count, 4), minmax(0, 1fr)); padding: 0 max(8px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(8px, env(safe-area-inset-left)); border-top: 1px solid #ffffff30; background: var(--fc-data-ink); color: var(--fc-data-paper); font: 12px/1.2 var(--fc-data-font-interface); }

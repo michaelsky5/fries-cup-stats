@@ -1065,3 +1065,11 @@
 /* The archive owns its footer; its final surface also carries the phone dock clearance. */
 .shell:global([data-design='kpr'][data-design-edition='hybrid'][data-archive-home='true']) { padding-bottom: 0; }
 :global([data-design='kpr'][data-design-edition='hybrid'][data-archive-home='true']) .pageFrame { padding-bottom: 0; }
+
+/* Phone header controls: one 46px frame holding three 44px cells (season, menu, account)
+   split by 1px rules, so every cell is a full tap target and no cell draws its own box. */
+@media (max-width: 600px) {
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .headerRight { height: 46px; min-height: 46px; align-items: stretch; }
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .accountCluster { height: 44px; min-height: 44px; border-left: 1px solid rgba(255, 255, 255, .15); }
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .accountCluster button { width: 44px; height: 44px; min-height: 44px; }
+}
