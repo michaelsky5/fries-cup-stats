@@ -6,11 +6,20 @@ import { translateUiText } from '../../lib/uiText.js'
 import { withLocale } from '../../lib/locales.js'
 import { WeeklyRoomView } from '../weekly-competition/WeeklyLiveRoomPage.jsx'
 import { RoomTransportProvider } from '../weekly-competition/RoomTransport.jsx'
+import { useMobileRoom } from '../weekly-competition/RoomMobile.jsx'
 import { buildRoomPractice, createPracticeSession, createPracticeTransport, practiceLesson, PRACTICE_ROLES } from './roomPractice.js'
 import copy from './roomGuideCopy.json'
 import styles from './RoomPracticePage.module.css'
 
 function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
+  const mobile = useMobileRoom() && !frameOnly
+  const [guideOpen, setGuideOpen] = useState(false)
+  const guide = useRef(null)
+  useEffect(() => {
+    const dialog = guide.current
+    if (mobile && guideOpen) dialog?.showModal()
+    else dialog?.close()
+  }, [mobile, guideOpen])
   const [session] = useState(() => createPracticeSession(role, initialScene))
   useEffect(() => { const timer = setInterval(() => session.tick(), 500); return () => clearInterval(timer) }, [session])
   const state = useSyncExternalStore(session.subscribe, session.getSnapshot)
@@ -25,7 +34,7 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
     data, error: '', busy: false, notice,
     refresh: async () => setNotice(text['room.synced']), clearNotice: () => setNotice(''),
     mutate: async operation => {
-      try { const result = await operation(); setHint(false); setNotice(frameOnly ? '' : textRef.current['room.saved']); return result }
+      try { const result = await operation(); setHint(false); setNotice(frameOnly || mobile ? '' : textRef.current['room.saved']); return result }
       catch (error) { setNotice(error.practice ? error.message : textRef.current['room.error.unsupported']); return false }
     },
   }
@@ -33,6 +42,8 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
   const teachingKey = practiceLesson(state)
   const target = state.scene === 'result' ? '[data-stage-view]' : role === 'manager' || state.scene === 'checkin' ? '[data-side="A"]' : ['member', 'caster'].includes(role) || (state.scene === 'live' && !staff && !state.pausedOnce) ? 'footer' : '[data-stage-view]'
   function locate() {
+    guide.current?.close()
+    setGuideOpen(false)
     setHint(true)
     const element = room.current?.querySelector(target)
     const surface = target === '[data-stage-view]' ? element?.querySelector('section') || element : element
@@ -42,7 +53,7 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
     control?.focus({ preventScroll: true })
   }
   const jumpResult = () => { session.apply('result', {}, 'scene'); setRun(value => value + 1); setNotice(''); setHint(false); coach.current?.scrollIntoView({ block: 'start' }) }
-  return <div className={styles.page} lang={locale} data-frame-only={frameOnly}>
+  const teaching = <>
     <header className={styles.topbar} data-i18n-ignore><Link to={withLocale(`/guides/weekly-room?role=${role}`, locale)}>← {text['room.exit']}</Link><strong>{text['room.title']}</strong><div><label>{text['sim.role']} <select value={role} onChange={event => onRole(event.target.value)}>{PRACTICE_ROLES.map(value => <option key={value} value={value}>{text[`role.${value}`]}</option>)}</select></label><button type="button" onClick={reset}>{text['sim.reset']}</button></div></header>
     <p className={styles.boundary} data-i18n-ignore>{text['room.boundary']}</p>
     <section ref={coach} className={styles.coach} data-i18n-ignore aria-labelledby="practice-task-title">
@@ -50,10 +61,20 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
       <div className={styles.coachActions}><button type="button" onClick={locate}>{text['room.locate']} ↓</button>{state.scene === 'ready' && role === 'representative' && <button type="button" onClick={() => session.apply('start', {}, 'scene')}>{text['room.simulate-start']}</button>}{['live', 'review'].includes(state.scene) && <button type="button" onClick={jumpResult}>{text['room.jump']} →</button>}<details><summary>{text['room.terms']}</summary><p>{text['room.glossary']}</p></details></div>
       {state.event !== 'welcome' && <p className={styles.response} role="status">✓ {text[`room.event.${state.event}`] || text['room.saved']}</p>}
     </section>
+  </>
+  const after = <footer className={styles.after} data-i18n-ignore><p>{text['room.after']}</p><Link to={withLocale('/me?section=matches', locale)}>{text['room.real-entry']} ↗</Link></footer>
+  return <div className={styles.page} lang={locale} data-frame-only={frameOnly} data-mobile={mobile}>
+    {mobile ? <>
+      <header className={styles.mobileBar} data-i18n-ignore><strong>{text['room.title']}</strong><button type="button" onClick={() => setGuideOpen(true)} aria-haspopup="dialog">{text['room.instructions']}</button></header>
+      <dialog ref={guide} className={styles.guideDialog} aria-labelledby="practice-guide-title" onClose={() => setGuideOpen(false)} onCancel={() => setGuideOpen(false)}>
+        <header className={styles.guideHeader} data-i18n-ignore><h2 id="practice-guide-title">{text['room.instructions']}</h2><button type="button" onClick={() => setGuideOpen(false)}>{translateUiText('关闭', locale)} ×</button></header>
+        <div className={styles.guideBody}>{teaching}{after}</div>
+      </dialog>
+    </> : teaching}
     <div ref={room} className={styles.room} data-hint={hint ? target === '[data-side="A"]' ? 'team' : target === 'footer' ? 'footer' : 'center' : ''}>
       <RoomTransportProvider value={transport}><WeeklyRoomView key={`${role}:${run}`} preview matchId={data.match.id} controller={controller} returnPathOverride={withLocale('/guides/weekly-room', locale)} returnLabelOverride={text['room.exit']} accountControl={<span className={styles.identity}>{text['room.you']} · {text[`role.${role}`]}</span>} /></RoomTransportProvider>
     </div>
-    <footer className={styles.after} data-i18n-ignore><p>{text['room.after']}</p><Link to={withLocale('/me?section=matches', locale)}>{text['room.real-entry']} ↗</Link></footer>
+    {!mobile && after}
   </div>
 }
 
