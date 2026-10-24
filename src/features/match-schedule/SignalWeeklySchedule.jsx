@@ -1,4 +1,4 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { eventCenterText } from '../../lib/eventCenterCopy.js'
 import { useEffect, useId, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigationType, useOutletContext, useSearchParams } from 'react-router-dom'
@@ -6,6 +6,7 @@ import ImeSafeInput from '../../components/common/ImeSafeInput.jsx'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import WeeklyMatchIdentity from '../../components/matches/WeeklyMatchIdentity.jsx'
 import { getMatchFormatLabel } from '../../lib/matchFormat.js'
+import { getWatchLink } from '../../lib/watchLink.js'
 import { formatMatchSchedule, getMatchScheduleValue } from '../../lib/scheduleFormat.js'
 import { getLocationPath, getRestoreScrollY, getReturnState, getSavedReturnScroll, restoreWindowScroll, saveReturnScroll } from '../../lib/navigationState.js'
 import { WeeklyCyclePicker, WeeklyWeekRail } from '../weekly-overview/WeeklyNavigation.jsx'
@@ -21,7 +22,7 @@ const statusNames = {
 }
 const idOf = team => String(team?.id || team?.team_id || '')
 
-function WeeklyMatchRow({ match, locale, seasonId, withSeason, returnProps, mapsExpanded, onToggleMaps, isDesktop, selected, onSelect, previewId }) {
+function WeeklyMatchRow({ match, locale, seasonId, withSeason, returnProps, mapsExpanded, onToggleMaps, isDesktop, selected, onSelect, previewId, now }) {
   const mapPanelId = useId()
   const en = String(locale).startsWith('en')
   const t = (zh, english) => en ? english : uiText(zh, locale)
@@ -36,6 +37,8 @@ function WeeklyMatchRow({ match, locale, seasonId, withSeason, returnProps, maps
       : match.state === 'cancelled' ? t('本场已取消', 'This match is cancelled')
         : match.state === 'ruling' ? t('按赛事判定', 'Event ruling applies')
           : match.state === 'live' ? t('比赛仍在继续', 'Still in play') : ''
+  const watch = getWatchLink(match, match.state, now)
+  const watchLabel = watch?.kind === 'live' ? pickUiLocale(locale, '看直播', 'Watch live', '생중계', '看直播') : pickUiLocale(locale, '看录像', 'Replays', '다시보기', '看錄像')
   const MatchMain = isDesktop ? 'button' : Link
   const mainProps = isDesktop ? {
     type: 'button', onClick: onSelect, 'aria-pressed': selected, 'aria-controls': previewId,
@@ -59,6 +62,7 @@ function WeeklyMatchRow({ match, locale, seasonId, withSeason, returnProps, maps
       </span>
       <span className={styles.arrow} aria-hidden="true">{eventCenterText('matchDetails', locale)} <i>↗</i></span>
     </MatchMain>
+    {watch ? <a className={styles.watch} href={watch.url} target="_blank" rel="noreferrer" data-watch-kind={watch.kind} aria-label={`${watchLabel} · ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`}><span>{watchLabel}</span><i aria-hidden="true">↗</i></a> : null}
     {isDesktop && <Link className={styles.rowDetails} to={withSeason(path)} {...returnProps} aria-label={`${t('比赛详情', 'Match details')} · ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`} title={eventCenterText('matchDetails', locale)}><span>{eventCenterText('matchDetails', locale)}</span><i aria-hidden="true">↗</i></Link>}
     <button type="button" className={styles.mapToggle} aria-expanded={mapsExpanded} aria-controls={mapPanelId} onClick={onToggleMaps} aria-label={`${eventCenterText(mapsExpanded ? 'collapseMatchMaps' : 'expandMatchMaps', locale)} · ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`}>
       <span>{eventCenterText(mapsExpanded ? 'collapseMatchMaps' : 'expandMatchMaps', locale)}</span><i aria-hidden="true">{mapsExpanded ? '−' : '+'}</i>
@@ -84,6 +88,7 @@ export default function SignalWeeklySchedule() {
   }, [])
   const en = String(locale).startsWith('en')
   const t = (zh, english) => en ? english : uiText(zh, locale)
+  const [openedAt] = useState(() => Date.now())
   const query = params.get('query') || ''
   const teamId = params.get('teamId') || ''
   const expandedMatchId = params.get('expanded') || ''
@@ -152,7 +157,7 @@ export default function SignalWeeklySchedule() {
           {selectedWeekId === 'all' && <h3 className={styles.weekHeading}><span>{weeklyWeekTitle(entry.week, locale)}</span><small>{weeklyStatusLabel(entry.week.status, locale)}</small></h3>}
           {entry.days.map(group => <section className={styles.dayGroup} key={group.day} aria-label={dayLabel(group.day)}>
             <div className={styles.dayHeading}><h3>{dayLabel(group.day)}</h3><span>{t(uiText("{0} 场", locale, [group.matches.length]), `${group.matches.length} matches`)}</span></div>
-            <div>{group.matches.map(match => <WeeklyMatchRow key={match.id} match={match} locale={locale} seasonId={seasonId} withSeason={withSeason} returnProps={returnProps} mapsExpanded={expandedMatchId === match.id} onToggleMaps={() => change({ expanded: expandedMatchId === match.id ? null : match.id })} isDesktop={isDesktop} selected={selectedMatch?.id === match.id} onSelect={() => change({ match: match.id })} previewId={previewId} />)}</div>
+            <div>{group.matches.map(match => <WeeklyMatchRow key={match.id} match={match} now={openedAt} locale={locale} seasonId={seasonId} withSeason={withSeason} returnProps={returnProps} mapsExpanded={expandedMatchId === match.id} onToggleMaps={() => change({ expanded: expandedMatchId === match.id ? null : match.id })} isDesktop={isDesktop} selected={selectedMatch?.id === match.id} onSelect={() => change({ match: match.id })} previewId={previewId} />)}</div>
           </section>)}
         </section>)}</div> : <section className={styles.empty}>
           <span>WEEKLY / MATCHES</span>

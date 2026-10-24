@@ -8,6 +8,7 @@ import { formatOwMapName } from '../../lib/heroes.js'
 import { getMapImage } from '../../lib/reviewAssets.js'
 import { getMatchFormatLabel } from '../../lib/matchFormat.js'
 import { formatMatchSchedule } from '../../lib/scheduleFormat.js'
+import { getWatchLink } from '../../lib/watchLink.js'
 import { getLocationPath, getRestoreScrollY, getReturnState, getSavedReturnScroll, saveReturnScroll } from '../../lib/navigationState.js'
 import { buildWeeklyOverview, weeklyMapSlots, weeklyScore } from './weeklyOverviewModel.js'
 import { WeeklyCyclePicker, WeeklyWeekRail } from './WeeklyNavigation.jsx'
@@ -21,6 +22,18 @@ import styles from './SignalWeeklyOverview.module.css'
 
 const fullName = team => team?.name || team?.team_name || shortName(team)
 const idOf = team => team?.id || team?.team_id
+
+// Weekly registration is normally open-ended. When System does set a deadline the
+// note shows it, and the link goes away once it has passed (System rejects late writes).
+function registrationNote(db, now, locale) {
+  const registration = db?.season?.rules?.registration
+  if (registration?.enabled !== true) return null
+  const closesAt = Date.parse(registration.closesAt || '')
+  if (!Number.isFinite(closesAt)) return pickUiLocale(locale, '随时可以报名', 'Open any time', '언제든 등록 가능', '隨時可以報名')
+  if (closesAt <= now) return null
+  const time = new Intl.DateTimeFormat(String(locale).startsWith('en') ? 'en-GB' : 'zh-CN', { timeZone: 'Asia/Shanghai', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(closesAt))
+  return pickUiLocale(locale, `${time} 截止`, `Closes ${time}`, `${time} 마감`, `${time} 截止`)
+}
 
 const desktopQuery = '(min-width: 901px)'
 const subscribeDesktop = callback => {
@@ -58,6 +71,8 @@ export default function SignalWeeklyOverview() {
   const isDesktop = useSyncExternalStore(subscribeDesktop, getDesktopSnapshot, getServerSnapshot)
   const en = String(locale).startsWith('en')
   const t = (zh, english) => en ? english : zh
+  const [openedAt] = useState(() => Date.now())
+  const registration = registrationNote(db, openedAt, locale)
   const status = key => weeklyStatusLabel(key, locale)
   const followedIds = (db?.teams || []).filter(team => isFavoriteTeam?.(idOf(team))).map(idOf)
   const followedKey = followedIds.join('|')
@@ -66,6 +81,7 @@ export default function SignalWeeklyOverview() {
   const requestedMatch = params.get('match')
   const model = useMemo(() => buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch, followedTeamIds: followedKey ? followedKey.split('|') : [] }), [db, cycleId, weekId, requestedMatch, followedKey])
   const { cycles, cycle, weeks, week, matches, focus, standings, isPilot } = model
+  const focusWatch = getWatchLink(focus, focus?.state, openedAt)
   const selectedCycleId = cycle?.id
   const selectedWeekId = week?.id
   const { issue } = usePublishedNewspaper({ seasonId, cycleId: selectedCycleId, weekId: selectedWeekId, locale })
@@ -127,7 +143,7 @@ export default function SignalWeeklyOverview() {
   return <div className={styles.page} data-weekly-overview="true">
     <header className={styles.heading}>
       <div><p className={styles.eyebrow}>FRIES CUP / WEEKLY</p><h1>{eventCenterText('overviewTitle', locale)}</h1><p>{eventCenterText('overviewIntro', locale)}</p></div>
-      <div className={styles.headingActions}><Link className={styles.rulesLink} data-weekly-report-archive-link to={withSeason(`/reports?cycle=${encodeURIComponent(selectedCycleId || '')}`)}>{pickUiLocale(locale, '周报归档', 'Weekly reports', '주간 신문', '週報歸檔')} <span aria-hidden="true">→</span><small>{pickUiLocale(locale, '赛果与选手数据', 'Results & player statistics', '경기 결과와 선수 기록', '賽果與選手數據')}</small></Link><a className={styles.rulesLink} href={rulebookUrl} target="_blank" rel="noreferrer">{t(uiText("规则中心", locale), 'Rulebook')} <span aria-hidden="true">↗</span><small>{cycle?.rulebook?.version ? `V${cycle.rulebook.version}` : t(uiText("完整条款与历史版本", locale), 'Rules & version history')}</small></a><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a></div>
+      <div className={styles.headingActions}><Link className={styles.rulesLink} data-weekly-report-archive-link to={withSeason(`/reports?cycle=${encodeURIComponent(selectedCycleId || '')}`)}>{pickUiLocale(locale, '周报归档', 'Weekly reports', '주간 신문', '週報歸檔')} <span aria-hidden="true">→</span><small>{pickUiLocale(locale, '赛果与选手数据', 'Results & player statistics', '경기 결과와 선수 기록', '賽果與選手數據')}</small></Link><a className={styles.rulesLink} href={rulebookUrl} target="_blank" rel="noreferrer">{t(uiText("规则中心", locale), 'Rulebook')} <span aria-hidden="true">↗</span><small>{cycle?.rulebook?.version ? `V${cycle.rulebook.version}` : t(uiText("完整条款与历史版本", locale), 'Rules & version history')}</small></a><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a>{registration ? <Link className={styles.rulesLink} data-weekly-registration-link to={withSeason(`/participate/${encodeURIComponent(seasonId)}`)}>{pickUiLocale(locale, '报名参赛', 'Register a team', '팀 등록', '報名參賽')} <span aria-hidden="true">→</span><small>{registration}</small></Link> : null}</div>
     </header>
     <WeeklyRegistrationBand registration={db?.weekly_competition?.registration} locale={locale} withSeason={withSeason} />
     {seasonId === 'FCW26' && <div className={styles.supportEntry}><Link to={withSeason('/support')}>{pickUiLocale(locale,'周赛支持与资金进度','Weekly support & funding','주간 대회 후원 및 자금 현황','週賽支持與資金進度')} →</Link><SupporterThanks seasonId="FCW26" withSeason={withSeason} locale={locale} /></div>}
@@ -165,7 +181,7 @@ export default function SignalWeeklyOverview() {
               </li>)}
             </ol>
           </div>}
-          <div className={styles.matchFooter}><span>{focus.state === 'live' ? t(uiText("进行中的比分尚未计入赛段积分。", locale), 'Live scores are not added to the published cycle points.') : focus.state === 'ruling' ? t(uiText("按赛事判定记录，积分以公布榜单为准。", locale), 'A ruling applies. Points follow the published standings.') : t(uiText("地图记录与结果以公布内容为准。", locale), 'Map records and results follow the published data.')}</span><Link to={withSeason(`/matches/${encodeURIComponent(focus.id)}`)} {...returnProps(focus)}>{t(uiText("比赛详情", locale), 'Match details')} <span aria-hidden="true">→</span></Link></div>
+          <div className={styles.matchFooter}><span>{focus.state === 'live' ? t(uiText("进行中的比分尚未计入赛段积分。", locale), 'Live scores are not added to the published cycle points.') : focus.state === 'ruling' ? t(uiText("按赛事判定记录，积分以公布榜单为准。", locale), 'A ruling applies. Points follow the published standings.') : t(uiText("地图记录与结果以公布内容为准。", locale), 'Map records and results follow the published data.')}</span><span className={styles.matchActions}>{focusWatch ? <a href={focusWatch.url} target="_blank" rel="noreferrer" data-watch-kind={focusWatch.kind}>{focusWatch.kind === 'live' ? pickUiLocale(locale, '看直播', 'Watch live', '생중계', '看直播') : pickUiLocale(locale, '看录像', 'Replays', '다시보기', '看錄像')} <span aria-hidden="true">↗</span></a> : null}<Link to={withSeason(`/matches/${encodeURIComponent(focus.id)}`)} {...returnProps(focus)}>{t(uiText("比赛详情", locale), 'Match details')} <span aria-hidden="true">→</span></Link></span></div>
         </div> : <div className={styles.empty}><span>WEEKLY / MATCHES</span><h3>{t(uiText("赛程尚未公布", locale), 'Schedule not yet published')}</h3><p>{t(uiText("可切换其他已发布周次，查看对阵与赛果。", locale), 'Choose another published week to view fixtures and results.')}</p></div>}
       </section>
       {matches.length > 0 && <section className={styles.matchList} aria-labelledby="weekly-matches-title">

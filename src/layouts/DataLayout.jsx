@@ -31,7 +31,8 @@ import { buildAccountIdentity, findVerifiedAccountIdentity, getAccountCapabiliti
 import PublicHeader from '../components/layout/PublicHeader.jsx'
 import PartnerTrialNotice from '../components/layout/PartnerTrialNotice.jsx'
 import { getDossierView } from '../features/team-dossier/teamDossierScenes.js'
-import { PRIMARY_NAV, getNavLabel, getPersonalNavItem, getNavigationSearch } from '../components/layout/publicNavigation.js'
+import { PRIMARY_NAV, getNavLabel, getPersonalNavItem, getNavigationSearch, getWeeklyNavigationPath } from '../components/layout/publicNavigation.js'
+import OverviewSectionNav, { overviewSectionId } from '../components/navigation/OverviewSectionNav.jsx'
 import EventContextBar from '../components/layout/EventContextBar.jsx'
 import UrgentAnnouncementGate from '../features/communications/UrgentAnnouncementGate.jsx'
 import { fetchAccountAttentionContext } from '../features/my-space/accountAttentionApi.js'
@@ -239,6 +240,8 @@ export default function DataLayout() {
     () => path => withAccountCompetition(buildSeasonLink(path, seasonId, navigationSearch), competition.navigationId, navigationSearch),
     [seasonId, navigationSearch, competition.navigationId]
   )
+  const overviewSection = isKprHybridDesign && !season?.partnerTrial ? overviewSectionId(location.pathname) : null
+  const overviewNavPath = path => withSeason(getWeeklyNavigationPath(path, location.search, season?.rules?.weeklyCompetition?.enabled || season?.competitionFormat === 'WEEKLY'))
   const accountIdentity = useMemo(
     () => buildAccountIdentity({
       primaryIdentity: accountPrimaryIdentity,
@@ -482,6 +485,7 @@ export default function DataLayout() {
                     </button>
                   </div>
                 ) : null}
+                {overviewSection ? <OverviewSectionNav active={overviewSection} locale={layoutLocale} navPath={overviewNavPath} inset={overviewSection !== 'overview'} /> : null}
                 <Outlet context={outletContext} />
                 {isTeamExhibitionRoute ? eventContextDock : null}
                 {isKprHybridDesign && headerContextMode === 'overview' && !isWeeklyHomeRoute && !isArchivedHomeRoute ? (
