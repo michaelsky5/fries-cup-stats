@@ -118,3 +118,20 @@
 .placements li a > span { margin-left: auto; }
 .placementLogo { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; }
 @media (max-width: 800px) { .placements { padding: 24px 16px; } .placements ol { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; } .placements li strong { font-size: 22px; } }
+
+/* 票 2.24: on phones the four final placements lead; the decorative chapter title stays for
+   screen readers only, and the schedule notice follows the placements. */
+@media (max-width: 600px) {
+  .section.section { margin-top: 12px; padding-top: 12px; row-gap: 12px; }
+  .section .bracketHeading { position: absolute; width: 1px; height: 1px; min-height: 0; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .section > .placements { order: 1; }
+  .section > .scheduleNotice { order: 2; }
+  .section > .bracketOverview { order: 3; }
+  .section > details { order: 4; }
+  .placements { padding: 14px 12px; }
+  .placements h3 { font-size: 18px; }
+  .placements ol { gap: 4px 16px; margin: 10px 0 8px; }
+  .placements li { padding-top: 8px; }
+  .placements li a { min-height: 44px; padding: 6px 0; }
+  .placementLogo { width: 30px; height: 30px; }
+}
