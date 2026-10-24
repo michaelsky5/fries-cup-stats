@@ -135,3 +135,9 @@
   .placements li a { min-height: 44px; padding: 6px 0; }
   .placementLogo { width: 30px; height: 30px; }
 }
+
+/* 票 2.25: phone legibility — system text at least 11px, every tap target at least 44×44. */
+@media (max-width: 600px) {
+  .fullCaption, .fullCard > footer { font-size: 11px; }
+  .bracketMeta a { display: inline-flex; align-items: center; min-height: 44px; }
+}

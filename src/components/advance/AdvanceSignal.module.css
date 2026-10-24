@@ -8171,3 +8171,10 @@ a.lcqSignalMatch:hover {
   .championMetrics dd { font-size: 24px; }
   .finalWorkspace .sectionEyebrow > p { font-size: 12px; }
 }
+
+/* 票 2.25: phone legibility for the shared advance chapters — system text at least 11px. */
+@media (max-width: 600px) {
+  .journeyNodeIndex, .journeyResult, .routeStoryHeader dt, .routeStoryHeader > div:first-child > span,
+  .routeStoryHeader > a > span, .routeIdentity > div > small, .journeyScore > i, .routeStoryFooter { font-size: 11px; }
+  .fullBracketDisclosure > summary > span:first-child > b { display: none; } /* English label; the Chinese one follows */
+}

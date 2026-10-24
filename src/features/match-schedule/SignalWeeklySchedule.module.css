@@ -367,3 +367,11 @@
   .filters[data-open] { padding: 4px 0 8px; border-bottom: 1px solid var(--line); }
   .listHeading { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
+
+/* 票 2.25: phone legibility — system text at least 11px, every tap target at least 44×44. */
+@media (max-width: 600px) {
+  .state, .time > small, .team small, .score > small, .noMaps, .empty > span, .teamFilter > span, .listHeading p,
+  .dayHeading h3::after, .dayHeading > span, .mapHeading > span, .footer, .previewSummary time > span { font-size: 11px; }
+  .page .reset { min-width: 44px; min-height: 44px; font-size: 11px !important; }
+  .footer a { display: inline-flex; align-items: center; min-height: 44px; }
+}

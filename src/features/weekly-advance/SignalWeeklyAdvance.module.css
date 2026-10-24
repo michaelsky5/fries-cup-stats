@@ -261,3 +261,12 @@
   .page [data-weekly-phase-index] a { min-height: 44px; padding-block: 6px; }
   .page [data-weekly-phase-index] a > small { display: none; }
 }
+
+/* 票 2.25: phone legibility — system text at least 11px, every tap target at least 44×44. */
+@media (max-width: 600px) {
+  .rank small, .teamButton small, .journeyTop > span, .followTeam > span, .heroPoints small, .teamStats span,
+  .journeyHeading p, .journeyHeading > span, .weekLabel > span, .fixtureDate, .matchState, .journeyEmpty > span,
+  .table thead th { font-size: 11px; }
+  .page .reset { min-width: 44px; }
+  .page .followTeam { min-height: 44px; }
+}

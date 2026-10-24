@@ -531,3 +531,17 @@ a.followedMatch > span { color: var(--fc-data-focus-on-light, #806000); }
   /* Under the phase card the followed list needs air before the cycle and week rail. */
   .page > .followingSection[data-followed] { margin-bottom: 28px; padding-bottom: 12px; }
 }
+
+/* 票 2.25: phone legibility — system text at least 11px, every tap target at least 44×44. */
+@media (max-width: 600px) {
+  .page .eyebrow { display: none; } /* English eyebrows (票 2.20) */
+  .matchTop, .matchTop small, .sectionBar > span, .scoreboard p, .score > span, .mapHeading > span,
+  .mapRail b, .mapRail small, .mapRail li > span:not(.mapNumber), .mapCumulative small, .matchFooter > span,
+  .listHeading > span, .rowTime small, .standings thead th, .standings td > small, .pointsRule small,
+  .pathway small, .pathway > p { font-size: 11px; }
+  .page .follow { min-height: 44px; padding-block: 0; font-size: 11px !important; }
+  .listHeading .scheduleLink { display: inline-flex; align-items: center; min-height: 44px; }
+  .standings tbody th a { display: flex; align-items: center; min-height: 44px; }
+  .page .advanceLink { min-height: 44px; padding-block: 0; }
+  .supportEntry > a { min-height: 44px; }
+}
