@@ -162,7 +162,7 @@ export default function FollowingWorkspace({ db, favorites, favoriteLimits = { t
             const summary = teamSummaries.get(team.id)
             return <article className={styles.directoryCard} key={team.id} data-selected={view.subjectKey === `team:${team.id}`}>
               <FollowingLink className={styles.directoryRow} to={withSeason(`/teams/${encodeURIComponent(team.routeId)}`)}><TeamLogo team={team} seasonId={season?.id} className={styles.teamLogo} /><div><strong>{getPreferredTeamShortName(team.short, team.full)}{team.primary ? <small className={styles.primaryTag}>{copy.primary}</small> : null}</strong><span>{team.full}</span></div><b aria-label={copy.profile}>↗</b></FollowingLink>
-              {summary ? <div className={styles.teamStanding} data-tone={summary.tone} data-weekly={summary.weekly}><span>{summary.heading}</span><strong>{summary.label}</strong><small>{summary.zone}</small></div> : null}
+              {summary ? <div className={styles.teamStanding} data-tone={summary.tone} data-weekly={summary.weekly} data-honor={summary.honor || undefined}><span>{summary.heading}</span><strong>{summary.label}</strong><small>{summary.zone}</small></div> : null}
               <SubjectOutlook feed={feed} type="team" id={team.id} locale={locale} />
             <div className={styles.directoryActions}><button type="button" aria-label={`${team.short} · ${copy.showMatches}`} onClick={() => showSubject(`team:${team.id}`)}>{copy.showMatches} ↑</button>{summary ? <FollowingLink to={withSeason(summary.advanceHref)}>{summary.advanceLabel || (summary.isArchived ? copy.finalTable : copy.advancement)} ↗</FollowingLink> : null}</div>
             </article>

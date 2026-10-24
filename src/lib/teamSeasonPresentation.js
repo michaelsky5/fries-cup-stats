@@ -2,6 +2,8 @@ import { getFinalRanking, getFinalResult } from './advanceSelectors.js'
 import { getSeasonStatus } from './homeSelectors.js'
 import { getSeasonLifecycleGroup } from './publicDataStatus.js'
 import { buildWeeklyOverview, isWeeklyOverview } from '../features/weekly-overview/weeklyOverviewModel.js'
+import { weeklyCycleTitle } from '../features/weekly-overview/weeklyPresentation.js'
+import { getTeamCycleHonors, weeklyHonorLabel } from '../features/weekly-advance/weeklyCycleHonors.js'
 import { pickUiLocale } from './uiText.js'
 
 const identityKeys = team => [team?.team_id, team?.teamId, team?.id, team?.routeId, team?.team_short_name,
@@ -18,17 +20,36 @@ export function getTeamSeasonPresentation({ db, season, team, standing, groupCom
     const published = standings.find(row => id && String(row.team_id).toLowerCase() === id)
     const value = Number(published?.display_rank)
     const rank = !isPilot && Number.isInteger(value) && value > 0 ? value : null
+    const rankLabel = rank ? (published.tied
+      ? pickUiLocale(locale, `并列第 ${rank} 名`, `Tied #${rank}`, `공동 ${rank}위`, `並列第 ${rank} 名`)
+      : pickUiLocale(locale, `第 ${rank} 名`, `#${rank}`, `${rank}위`, `第 ${rank} 名`)) : ''
+    // 票 2.13 naming: 「第一赛段」, not the System name 「第一周期」.
+    const cycleZone = (cycle && weeklyCycleTitle(cycle, locale)) || pickUiLocale(locale, '赛段待公布', 'Cycle pending', '사이클 발표 대기', '賽段待公布')
+    // 票 2.19: a published cycle placement leads; the points-race rank becomes the secondary line.
+    const honors = getTeamCycleHonors(db, id)
+    if (honors.length) {
+      const [honor] = honors
+      const points = rankLabel ? pickUiLocale(locale, `积分赛${rankLabel}`, `Points ${rankLabel}`, `포인트 ${rankLabel}`, `積分賽${rankLabel}`) : ''
+      const sameCycle = String(honor.cycle?.id) === String(cycle?.id)
+      return {
+        isArchived: false,
+        heading: pickUiLocale(locale, '赛段荣誉', 'Cycle honours', '사이클 성적', '賽段榮譽'),
+        code: 'CYCLE HONOURS',
+        rank: honor.rank,
+        label: weeklyHonorLabel(honor, locale),
+        zone: sameCycle ? points || cycleZone : [cycleZone, points].filter(Boolean).join(' · '),
+        tone: honor.rank <= 3 ? 'win' : 'pending',
+        honors: honors.map(item => ({ rank: item.rank, label: weeklyHonorLabel(item, locale) }))
+      }
+    }
     return {
       isArchived: false,
-      heading: pickUiLocale(locale, '周期排名', 'Cycle ranking', '주기 순위', '週期排名'),
+      heading: pickUiLocale(locale, '赛段排名', 'Cycle ranking', '사이클 순위', '賽段排名'),
       code: 'CYCLE STANDINGS',
       rank,
       label: isPilot ? pickUiLocale(locale, '不计积分', 'Unranked', '순위 미반영', '不計積分')
-        : rank ? (published.tied
-          ? pickUiLocale(locale, `并列第 ${rank} 名`, `Tied #${rank}`, `공동 ${rank}위`, `並列第 ${rank} 名`)
-          : pickUiLocale(locale, `第 ${rank} 名`, `#${rank}`, `${rank}위`, `第 ${rank} 名`))
-          : pickUiLocale(locale, '排名待公布', 'Ranking pending', '순위 발표 대기', '排名待公布'),
-      zone: cycle?.name || cycle?.code || pickUiLocale(locale, '周期待公布', 'Cycle pending', '주기 발표 대기', '週期待公布'),
+        : rankLabel || pickUiLocale(locale, '排名待公布', 'Ranking pending', '순위 발표 대기', '排名待公布'),
+      zone: cycleZone,
       tone: 'pending'
     }
   }

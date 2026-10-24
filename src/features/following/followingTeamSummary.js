@@ -1,6 +1,9 @@
 import { getDefaultAdvancePhase, getGroupStandings, getSwissStandingsRows, isGroupCompetition } from '../../lib/advanceSelectors.js'
 import { getTeamSeasonPresentation } from '../../lib/teamSeasonPresentation.js'
 import { buildWeeklyAdvance, weeklyPublishedRank } from '../weekly-advance/weeklyAdvanceModel.js'
+import { getTeamCycleHonors, weeklyHonorLabel } from '../weekly-advance/weeklyCycleHonors.js'
+import { pickUiLocale } from '../../lib/uiText.js'
+import { weeklyCycleTitle } from '../weekly-overview/weeklyPresentation.js'
 import { isWeeklyOverview, weeklyScore } from '../weekly-overview/weeklyOverviewModel.js'
 
 const identityKeys = team => [team.team_id, team.teamId, team.id, team.routeId, team.team_short_name, team.teamShortName, team.short, team.team_name, team.teamName]
@@ -19,6 +22,18 @@ export function getFollowingTeamSummaries(db, season, teams, locale, cycleId) {
       const rank = weeklyPublishedRank(standing?.display_rank)
       const played = weeklyScore(standing?.played)
       const rankLabel = rank === '—' ? en ? 'Rank unpublished' : '名次未公布' : `${standing?.tied ? en ? 'Tied ' : '并列' : ''}${en ? '#' + rank : '第 ' + rank + ' 名'}`
+      // 票 2.19: a published cycle placement leads the card; points stay as the second line.
+      const [honor] = getTeamCycleHonors(db, row?.team || team.team_id || team.teamId || team.id)
+      if (honor) return [team.id, {
+        weekly: true, honor: true, tone: honor.rank <= 3 ? 'win' : 'pending',
+        heading: pickUiLocale(locale, '赛段荣誉', 'Cycle honours', '사이클 성적', '賽段榮譽'),
+        label: weeklyHonorLabel(honor, locale),
+        // Points belong to the cycle being viewed; name it when the honour is from an earlier cycle.
+        zone: [String(honor.cycle.id) === String(model.cycle?.id) ? '' : model.cycle ? weeklyCycleTitle(model.cycle, locale) : '',
+          standing && points !== '—' ? `${points} ${en ? 'pts' : '分'} · ${rankLabel}` : ''].filter(Boolean).join(' · '),
+        advanceHref: `/advance?${new URLSearchParams({ cycle: honor.cycle.id, teamId: row?.id || team.routeId })}`,
+        advanceLabel: en ? 'Cycle record' : '周期历程'
+      }]
       return [team.id, {
         weekly: true, heading: en ? 'Published cycle points' : '已公布周期积分',
         label: model.isPilot ? en ? 'Unranked' : '不计积分' : points === '—' ? '—' : `${points} ${en ? 'pts' : '分'}`,

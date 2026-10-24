@@ -5,6 +5,7 @@ import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import { SignalBattleTag, SignalHeroPortrait } from '../../components/matches/detail/SignalPlayerData.jsx'
 import { formatOwHeroName } from '../../lib/heroes.js'
 import { ARCHIVE_OFFICIAL_HONORS } from '../kpr-design/archiveHonors.js'
+import { getPlayerCycleHonors, weeklyHonorLabel } from '../weekly-advance/weeklyCycleHonors.js'
 import { getPlayerPrimaryRole, getRecordedPlayerHeroes } from './playerDossierPresentation.js'
 import { getPlayerCompanions } from './playerArchiveModel.js'
 import { ArchiveHeading, PlayerArchiveMoments, PlayerArchiveNext, PlayerCompanions, archiveCopy, archiveDate, archiveRole } from './PlayerArchiveSections.jsx'
@@ -25,6 +26,8 @@ export default function SignalPlayerArchive({ db, dossier, appearances, archive,
   const shareProfile = () => onShare({ kind: 'season', role: featuredHero?.roles[0] || primary.role, heroKey: featuredHero?.key || '' })
   const team = { id: identity.teamRouteId, short: identity.teamShort, name: identity.teamFull, logo: identity.teamLogo }
   const fmvp = ARCHIVE_OFFICIAL_HONORS[season?.id || seasonId]?.fmvpPlayerId === identity.playerId
+  // 票 2.19: weekly cycle placements the player earned by playing for the team in that cycle.
+  const cycleHonors = useMemo(() => fmvp ? [] : getPlayerCycleHonors(db, appearances), [db, appearances, fmvp])
   const nameSize = identity.displayName.length > 12 ? 'long' : /^[\w\s.-]{1,7}$/.test(identity.displayName) ? 'short' : 'regular'
   const chooseHero = hero => {
     const next = new URLSearchParams(params)
@@ -40,6 +43,7 @@ export default function SignalPlayerArchive({ db, dossier, appearances, archive,
         <div className={styles.name}><p className={styles.nameChapter}>01 / {text('选手档案', 'PLAYER PROFILE')}</p><p className={styles.mobileRole}>{(archive.roles.length ? archive.roles : dossier.roles).map(role => archiveRole(role, locale)).join(' / ')}</p><h1 data-name-size={nameSize}>{identity.displayName}</h1><SignalBattleTag value={identity.battleTag} en={locale === 'en-US'} /></div>
         <p className={styles.identityLine}>{identity.teamFull}<span>{archive.roles.length ? archive.roles.map(role => archiveRole(role, locale)).join(' / ') : `${text('登记职责', 'Registered role')} · ${dossier.roles.map(role => archiveRole(role, locale)).join(' / ')}`}</span></p>
         {fmvp && <div className={styles.honor} aria-label={text('赛事荣誉', 'Tournament honor')}><strong>FMVP</strong><span>{text('总决赛最有价值选手', 'Finals Most Valuable Player')}</span></div>}
+        {cycleHonors.length > 0 && <div className={styles.honor} data-cycle-honor aria-label={text('赛段荣誉', 'Cycle honours')}><strong>{weeklyHonorLabel(cycleHonors[0], locale)}</strong><span>{[cycleHonors[0].team?.team_short_name || cycleHonors[0].team?.short || identity.teamShort, ...cycleHonors.slice(1).map(honor => weeklyHonorLabel(honor, locale))].join(' · ')}</span></div>}
         {hasAppearances ? <dl className={styles.coverFacts}><div><dt>{text('场比赛', archive.matches.length === 1 ? 'match' : 'matches')}</dt><dd>{archive.matches.length}</dd></div><div><dt>{text('图出场', archive.mapCount === 1 ? 'map played' : 'maps played')}</dt><dd>{archive.mapCount}</dd></div><div><dt>{text('位出场英雄', heroes.length === 1 ? 'recorded hero' : 'recorded heroes')}</dt><dd>{heroes.length}</dd></div></dl> : <div className={styles.registration}><strong>{text('本届阵容成员', 'On this season’s roster')}</strong><p>{text('暂无已发布出场记录。', 'No published appearances are available.')}</p></div>}
         <div className={styles.coverActions}><Link {...(hasAppearances ? journeyLink({ jmatch: '', pstage: '' }) : teamLink)} className={styles.primary}>{hasAppearances ? archive.matches.length === 1 ? text('查看出场记录', 'View this appearance') : text('展开赛季征程', 'Explore the season') : text('查看所属队伍', 'View the team')} <span aria-hidden="true">↗</span></Link><button type="button" onClick={onFavorite} disabled={favoriteDisabled} aria-pressed={favorited}>{favorited ? text('已关注', 'Following') : favoriteDisabled ? text('关注已满', 'Limit reached') : text('关注选手', 'Follow player')}</button><button type="button" onClick={shareProfile}>{text('分享档案', 'Share profile')} ↗</button></div>
       </div>

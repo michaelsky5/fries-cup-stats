@@ -101,6 +101,9 @@
 .teamStanding[data-tone='loss'] strong { color: var(--fc-data-status-danger); }
 .teamStanding[data-weekly='true'] { padding: 20px 0; }
 .teamStanding[data-weekly='true'] strong { font-family: var(--fc-data-font-display); font-size: 32px; }
+/* 票 2.19: an honour is a phrase, not a number; it reads on its own line above the points. */
+.teamStanding[data-honor='true'] { grid-template-columns: minmax(0, 1fr); }
+.teamStanding[data-honor='true'] strong { grid-column: 1; grid-row: auto; font: 800 20px/1.4 var(--font-sans); text-align: left; }
 .directoryActions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 18px; padding: 6px 0; border-top: 1px solid var(--fc-data-line); }
 .directoryActions :is(a, button) { display: inline-flex; align-items: center; min-height: 44px; gap: 8px; padding: 8px 0; background: transparent; border: 0; color: var(--fc-data-ink); font-size: 13px; }
 .directoryActions :is(a, button):hover { text-decoration: underline; text-underline-offset: 4px; }
