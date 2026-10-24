@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { buildWeeklyOverview, isWeeklyOverview, weeklyMapSlots, weeklyMatchState, weeklyScore } from '../src/features/weekly-overview/weeklyOverviewModel.js'
 import { buildWeeklyOverviewFixture } from './lib/weeklyOverviewFixture.mjs'
+import { COUNTDOWN_WINDOW_MS, formatMatchCountdown } from '../src/features/weekly-overview/matchCountdown.js'
 
 let checks = 0
 const test = (name, fn) => { fn(); checks += 1; console.log(`PASS ${name}`) }
@@ -114,5 +115,15 @@ test('weekly routing is opt-in and leaves ordinary seasons unchanged', () => {
 test('explicit focus survives followed-team prioritization', () => {
   const choice = buildWeeklyOverview(db, { match: 'FCW26-W3-M3', followedTeamIds: ['FCW26-T001'] })
   assert.equal(choice.focus.id, 'FCW26-W3-M3')
+})
+test('focus countdown runs for the coming week and never claims a live match', () => {
+  const start = Date.parse('2026-10-31T11:00:00.000Z')
+  assert.equal(formatMatchCountdown(start, start - (2 * 3600 + 30 * 60) * 1000, 'zh-CN').text, '距开赛 02:30:00')
+  assert.equal(formatMatchCountdown('2026-10-31T11:00:00.000Z', start - (26 * 3600 + 5) * 1000, 'zh-CN').text, '距开赛 1 天 02:00:05')
+  assert.equal(formatMatchCountdown(start, start - (26 * 3600) * 1000, 'en-US').text, 'Starts in 1d 02:00:00')
+  assert.equal(formatMatchCountdown(start, start - COUNTDOWN_WINDOW_MS - 1000, 'zh-CN'), null)
+  assert.deepEqual(formatMatchCountdown(start, start, 'zh-CN'), { done: true, text: '已到开赛时间' })
+  assert.equal(formatMatchCountdown(start, start + 60000, 'zh-CN').done, true)
+  for (const value of [null, '', 'TBD']) assert.equal(formatMatchCountdown(value, start, 'zh-CN'), null)
 })
 console.log(`${checks} weekly overview checks passed.`)

@@ -30,6 +30,14 @@
   .directoryData { justify-content: flex-start; }
   .directoryData p { flex-basis: 100%; text-align: left; }
   .directoryRetry { align-self: start; padding-top: 0; }
+  /* Phone header budget (票 2.2): status and update time share one 40px line; the official-event
+     label is implied there. A notice (fallback / error snapshot) keeps the two-line layout. */
+  .directoryContext:not(:has(.directoryData p)) { min-height: 40px; padding-block: 0; }
+  .directoryContext:not(:has(.directoryData p)) .directoryIdentity { grid-column: auto; flex-wrap: nowrap; gap: 8px; min-width: 0; white-space: nowrap; }
+  .directoryContext:not(:has(.directoryData p)) .directoryIdentity > span { min-width: 0; padding-left: 8px; overflow: hidden; text-overflow: ellipsis; }
+  .directoryContext:not(:has(.directoryData p)) .directoryIdentity [data-event-kind='OFFICIAL'] { display: none; }
+  .directoryContext:not(:has(.directoryData p)) .directoryData { justify-content: flex-end; flex-wrap: nowrap; }
+  .directoryContext:not(:has(.directoryData p)) .directoryStamp { flex-wrap: nowrap; gap: 6px; white-space: nowrap; }
 }
 
 .syncLine {

@@ -487,3 +487,19 @@
 /* Footer links: arrow centred on the label at every width (on phones it sat 8px low), 44px tap height. */
 .matchFooter a { align-items: center; min-height: 44px; }
 .matchFooter a > span { line-height: 1; }
+
+/* First screen (票 2.2): the match comes first. The map pool and the funding link follow the matches at
+   every width; on phones the title collapses and the quick links sit under the focus card. */
+.countdown { margin-left: 10px; color: var(--yellow); font-weight: 700; white-space: nowrap; }
+@media (max-width: 600px) {
+  .heading { padding: 0; gap: 0; }
+  .heading .eyebrow, .heading > div > p:last-child { display: none; }
+  .heading h1 { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .countdown { display: block; margin: 4px 0 0; font-size: 13px; }
+  .cycleBlock > div > small { display: none; } /* phones drop the cycle's date range to keep the first screen for the match */
+  .phoneLinks { border-bottom: 1px solid var(--line); }
+  .phoneLinks .headingActions { justify-content: space-between; gap: 8px; }
+  .phoneLinks .rulesLink { min-height: 44px; align-items: center; font-size: 12px; }
+}
+.mainGrid + .publishedMapPool { margin-top: 24px; }
+.page > .supportEntry:last-child { margin-top: 24px; border-top: 1px solid var(--line); }

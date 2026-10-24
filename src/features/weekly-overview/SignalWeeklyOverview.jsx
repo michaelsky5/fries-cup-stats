@@ -7,7 +7,7 @@ import WeeklyMatchIdentity from '../../components/matches/WeeklyMatchIdentity.js
 import { formatOwMapName } from '../../lib/heroes.js'
 import { getMapImage } from '../../lib/reviewAssets.js'
 import { getMatchFormatLabel } from '../../lib/matchFormat.js'
-import { formatMatchSchedule } from '../../lib/scheduleFormat.js'
+import { formatMatchSchedule, getMatchScheduleValue } from '../../lib/scheduleFormat.js'
 import { getWatchLink } from '../../lib/watchLink.js'
 import { getLocationPath, getRestoreScrollY, getReturnState, getSavedReturnScroll, saveReturnScroll } from '../../lib/navigationState.js'
 import { buildWeeklyOverview, weeklyMapSlots, weeklyScore } from './weeklyOverviewModel.js'
@@ -18,6 +18,7 @@ import { weeklyOverviewReturnLocation } from './weeklyInteractionNavigation.js'
 import { weeklyStandingsPreviewLimit, selectWeeklyFollowingPreview, selectWeeklyStandingsPreview } from './weeklyOverviewPreview.js'
 import { WeeklyReportTeaser, WeeklyEventPathway } from '../weekly-report/WeeklyReportTeaser.jsx'
 import usePublishedNewspaper from '../weekly-report/usePublishedNewspaper.js'
+import MatchCountdown from './MatchCountdown.jsx'
 import styles from './SignalWeeklyOverview.module.css'
 
 const fullName = team => team?.name || team?.team_name || shortName(team)
@@ -35,13 +36,17 @@ function registrationNote(db, now, locale) {
   return pickUiLocale(locale, `${time} 截止`, `Closes ${time}`, `${time} 마감`, `${time} 截止`)
 }
 
-const desktopQuery = '(min-width: 901px)'
-const subscribeDesktop = callback => {
-  const media = window.matchMedia(desktopQuery)
-  media.addEventListener('change', callback)
-  return () => media.removeEventListener('change', callback)
-}
-const getDesktopSnapshot = () => window.matchMedia(desktopQuery).matches
+const mediaStore = query => ({
+  subscribe: callback => {
+    const media = window.matchMedia(query)
+    media.addEventListener('change', callback)
+    return () => media.removeEventListener('change', callback)
+  },
+  snapshot: () => window.matchMedia(query).matches
+})
+const desktopMedia = mediaStore('(min-width: 901px)')
+// Phones get a different reading order (票 2.2): the match first, links and housekeeping after it.
+const phoneMedia = mediaStore('(max-width: 600px)')
 const getServerSnapshot = () => false
 
 function WeeklyFollowingSection({ teams, matches, followedIds, isFavoriteTeam, toggleTeamFavorite, seasonId, locale, withSeason, isDesktop }) {
@@ -68,7 +73,8 @@ export default function SignalWeeklyOverview() {
   const navigationType = useNavigationType()
   const focusRef = useRef(null)
   const pendingPreviewId = useRef('')
-  const isDesktop = useSyncExternalStore(subscribeDesktop, getDesktopSnapshot, getServerSnapshot)
+  const isDesktop = useSyncExternalStore(desktopMedia.subscribe, desktopMedia.snapshot, getServerSnapshot)
+  const isPhone = useSyncExternalStore(phoneMedia.subscribe, phoneMedia.snapshot, getServerSnapshot)
   const en = String(locale).startsWith('en')
   const t = (zh, english) => en ? english : zh
   const [openedAt] = useState(() => Date.now())
@@ -140,18 +146,23 @@ export default function SignalWeeklyOverview() {
     ? `https://fries-cup.com/rules/?book=${encodeURIComponent(cycle.rulebook.slug)}&version=${encodeURIComponent(cycle.rulebook.version)}`
     : 'https://fries-cup.com/rules/'
 
+  const quickLinks = <div className={styles.headingActions} data-weekly-quick-links="true"><Link className={styles.rulesLink} data-weekly-report-archive-link to={withSeason(`/reports?cycle=${encodeURIComponent(selectedCycleId || '')}`)}>{pickUiLocale(locale, '周报归档', 'Weekly reports', '주간 신문', '週報歸檔')} <span aria-hidden="true">→</span><small>{pickUiLocale(locale, '赛果与选手数据', 'Results & player statistics', '경기 결과와 선수 기록', '賽果與選手數據')}</small></Link><a className={styles.rulesLink} href={rulebookUrl} target="_blank" rel="noreferrer">{t(uiText("规则中心", locale), 'Rulebook')} <span aria-hidden="true">↗</span><small>{cycle?.rulebook?.version ? `V${cycle.rulebook.version}` : t(uiText("完整条款与历史版本", locale), 'Rules & version history')}</small></a><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a>{registration ? <Link className={styles.rulesLink} data-weekly-registration-link to={withSeason(`/participate/${encodeURIComponent(seasonId)}`)}>{pickUiLocale(locale, '报名参赛', 'Register a team', '팀 등록', '報名參賽')} <span aria-hidden="true">→</span><small>{registration}</small></Link> : null}</div>
+  // Supporter thanks keep their place above the matches; the funding link moves to the end of the page.
+  const supporterThanks = seasonId === 'FCW26' ? <SupporterThanks seasonId="FCW26" withSeason={withSeason} locale={locale} /> : null
+  const supportLink = seasonId === 'FCW26' ? <div className={styles.supportEntry}><Link to={withSeason('/support')}>{pickUiLocale(locale,'周赛支持与资金进度','Weekly support & funding','주간 대회 후원 및 자금 현황','週賽支持與資金進度')} →</Link></div> : null
+  const mapPool = <WeeklyPublishedMapPool cycle={cycle} locale={locale} />
+
   return <div className={styles.page} data-weekly-overview="true">
     <header className={styles.heading}>
       <div><p className={styles.eyebrow}>FRIES CUP / WEEKLY</p><h1>{eventCenterText('overviewTitle', locale)}</h1><p>{eventCenterText('overviewIntro', locale)}</p></div>
-      <div className={styles.headingActions}><Link className={styles.rulesLink} data-weekly-report-archive-link to={withSeason(`/reports?cycle=${encodeURIComponent(selectedCycleId || '')}`)}>{pickUiLocale(locale, '周报归档', 'Weekly reports', '주간 신문', '週報歸檔')} <span aria-hidden="true">→</span><small>{pickUiLocale(locale, '赛果与选手数据', 'Results & player statistics', '경기 결과와 선수 기록', '賽果與選手數據')}</small></Link><a className={styles.rulesLink} href={rulebookUrl} target="_blank" rel="noreferrer">{t(uiText("规则中心", locale), 'Rulebook')} <span aria-hidden="true">↗</span><small>{cycle?.rulebook?.version ? `V${cycle.rulebook.version}` : t(uiText("完整条款与历史版本", locale), 'Rules & version history')}</small></a><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a>{registration ? <Link className={styles.rulesLink} data-weekly-registration-link to={withSeason(`/participate/${encodeURIComponent(seasonId)}`)}>{pickUiLocale(locale, '报名参赛', 'Register a team', '팀 등록', '報名參賽')} <span aria-hidden="true">→</span><small>{registration}</small></Link> : null}</div>
+      {!isPhone && quickLinks}
     </header>
     <WeeklyRegistrationBand registration={db?.weekly_competition?.registration} locale={locale} withSeason={withSeason} />
-    {seasonId === 'FCW26' && <div className={styles.supportEntry}><Link to={withSeason('/support')}>{pickUiLocale(locale,'周赛支持与资金进度','Weekly support & funding','주간 대회 후원 및 자금 현황','週賽支持與資金進度')} →</Link><SupporterThanks seasonId="FCW26" withSeason={withSeason} locale={locale} /></div>}
+    {supporterThanks}
     <section className={styles.periodNavigation} data-weekly-period-nav="true" aria-label={pickUiLocale(locale, '比赛赛段与周次', 'Cycle and weeks', '주기 및 주차', '比賽賽段與週次')}>
       <div className={styles.cycleBlock}><WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} dateRange={weeklyCycleDateRange(cycle, locale)} onChange={id => change({ cycle: id, week: null, match: null })} /></div>
       <WeeklyWeekRail weeks={weeks} selectedId={week?.id} locale={locale} onChange={id => change({ cycle: cycle.id, week: id, match: null })} />
     </section>
-    <WeeklyPublishedMapPool cycle={cycle} locale={locale} />
     {isDesktop && <WeeklyReportTeaser db={db} cycle={cycle} week={week} report={report} compact locale={locale} withSeason={withSeason} />}
 
     <div className={styles.mainGrid}>
@@ -160,7 +171,7 @@ export default function SignalWeeklyOverview() {
         <div className={styles.sectionBar}><h2 id="weekly-focus-title" className={styles.viewingTitle}>{week && <span>{pickUiLocale(locale, '正在查看', 'Viewing', '보고 있는 주차', '正在查看')}</span>}{week ? weekTitle : t(uiText("本周对阵", locale), 'This week')}</h2><div className={styles.weekSummary}><span>{matches.length ? t(uiText("{0} 场对阵 · {1} 场已结束", locale, [matches.length, model.complete]), `${matches.length} matches · ${model.complete} final`) : t(uiText("等待赛程公布", locale), 'Awaiting publication')}</span></div></div>
         {focus ? <div className={styles.spotlight} id="weekly-focus" ref={focusRef} role="region" tabIndex={-1} aria-label={`${pickUiLocale(locale, '比赛预览', 'Match preview', '경기 미리 보기', '比賽預覽')} · ${shortName(focus.team_a)} / ${shortName(focus.team_b)}`} data-match-state={focus.state}>
           <WeeklyMatchIdentity match={focus} locale={locale} copyable />
-          <div className={styles.matchTop}><span className={styles.state} data-state={focus.state}><i />{status(focus.state)}</span><span className={styles.matchSchedule}>{dateText(focus, true)} <small>UTC+8</small></span><span>{getMatchFormatLabel(focus)}</span></div>
+          <div className={styles.matchTop}><span className={styles.state} data-state={focus.state}><i />{status(focus.state)}</span><span className={styles.matchSchedule}>{dateText(focus, true)} <small>UTC+8</small>{focus.state === 'upcoming' && <MatchCountdown startsAt={getMatchScheduleValue(focus)} locale={locale} className={styles.countdown} />}</span><span>{getMatchFormatLabel(focus)}</span></div>
           <div className={styles.scoreboard}>
             {[focus.team_a, focus.team_b].map((team, side) => <div className={side ? styles.teamB : styles.teamA} key={side}>
               <TeamLogo team={team} seasonId={seasonId} className={styles.heroLogo} />
@@ -183,6 +194,7 @@ export default function SignalWeeklyOverview() {
           </div>}
           <div className={styles.matchFooter}><span>{focus.state === 'live' ? t(uiText("进行中的比分尚未计入赛段积分。", locale), 'Live scores are not added to the published cycle points.') : focus.state === 'ruling' ? t(uiText("按赛事判定记录，积分以公布榜单为准。", locale), 'A ruling applies. Points follow the published standings.') : t(uiText("地图记录与结果以公布内容为准。", locale), 'Map records and results follow the published data.')}</span><span className={styles.matchActions}>{focusWatch ? <a href={focusWatch.url} target="_blank" rel="noreferrer" data-watch-kind={focusWatch.kind}>{focusWatch.kind === 'live' ? pickUiLocale(locale, '看直播', 'Watch live', '생중계', '看直播') : pickUiLocale(locale, '看录像', 'Replays', '다시보기', '看錄像')} <span aria-hidden="true">↗</span></a> : null}<Link to={withSeason(`/matches/${encodeURIComponent(focus.id)}`)} {...returnProps(focus)}>{t(uiText("比赛详情", locale), 'Match details')} <span aria-hidden="true">→</span></Link></span></div>
         </div> : <div className={styles.empty}><span>WEEKLY / MATCHES</span><h3>{t(uiText("赛程尚未公布", locale), 'Schedule not yet published')}</h3><p>{t(uiText("可切换其他已发布周次，查看对阵与赛果。", locale), 'Choose another published week to view fixtures and results.')}</p></div>}
+        {isPhone && <div className={styles.phoneLinks}>{quickLinks}</div>}
       </section>
       {matches.length > 0 && <section className={styles.matchList} aria-labelledby="weekly-matches-title">
           <div className={styles.listHeading}><h2 id="weekly-matches-title">{pickUiLocale(locale, `第 ${currentWeek} 周全部对阵`, `All matches · Week ${currentWeek}`, `${currentWeek}주차 전체 경기`, `第 ${currentWeek} 週全部對陣`)}</h2><Link className={styles.scheduleLink} to={withSeason(weeklyPeriodPath('/matches', cycle, week))}>{t(uiText("完整周赛赛程", locale), 'Full weekly schedule')} <span aria-hidden="true">→</span></Link></div>
@@ -216,9 +228,11 @@ export default function SignalWeeklyOverview() {
       </aside>
     </div>
 
+    {mapPool}
     {!isDesktop && <WeeklyReportTeaser db={db} cycle={cycle} week={week} report={report} locale={locale} withSeason={withSeason} />}
     {isDesktop && following}
     <WeeklyEventPathway cycle={cycle} week={week} locale={locale} withSeason={withSeason} />
+    {supportLink}
   </div>
 }
 import SupporterThanks from '../weekly-support/SupporterThanks.jsx'

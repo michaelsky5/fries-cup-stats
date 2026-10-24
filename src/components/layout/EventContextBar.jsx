@@ -199,7 +199,7 @@ export default function EventContextBar({
     <section className={styles.directoryContext} data-directory-context data-source={dataStatus?.key} data-i18n-ignore aria-label={contextText(locale, uiText("赛事与数据状态", locale), 'Event and data status', '대회 및 데이터 상태')}>
       <div className={styles.directoryIdentity}>
         <strong>{season?.displayCode || season?.publicCode || seasonId}</strong>
-        <small className={styles.eventKindLabel}>{getEventKindLabel(season, locale)}</small>
+        <small className={styles.eventKindLabel} data-event-kind={getSeasonEventKind(season)}>{getEventKindLabel(season, locale)}</small>
         <span>{statusLabel}</span>
       </div>
       <div className={styles.directoryData} role="status">
