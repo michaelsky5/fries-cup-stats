@@ -432,3 +432,18 @@
   :global([data-design-edition='hybrid']) .rankings .compareDock { bottom: calc(var(--fc-mobile-navigation-height, 0px) + 8px); }
   :global([data-design-edition='hybrid']) .rankings .compareWarning { bottom: calc(var(--fc-mobile-navigation-height, 0px) + 128px); }
 }
+
+/* 票 2.23: compact phone rows — rank · avatar · name and team · OVR, details on demand.
+   Sorting, filters and comparison are unchanged; only what a closed row shows. */
+.mobileExpand { display: none; }
+@media (max-width: 600px) {
+  :global([data-design-edition='hybrid']) .rankings .mobileList li { padding: 4px 0 4px 6px; }
+  :global([data-design-edition='hybrid']) .rankings .mobileList li:not([data-open]) .mobileDetail { display: none; }
+  :global([data-design-edition='hybrid']) .rankings .mobileList li[data-open] .mobileDetail { padding: 0 0 8px; }
+  .mobileIdentity { gap: 10px; }
+  .mobileIdentity .playerPreview { min-height: 48px; }
+  .mobileScore { flex-basis: 34px; }
+  .mobileScore b { font-size: 28px; }
+  .mobileExpand { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border: 1px solid var(--fc-data-line); border-radius: 0; background: transparent; color: var(--fc-data-ink); font-size: 20px; line-height: 1; }
+  .mobileList li[data-open] .mobileExpand { border-color: var(--fc-data-ink); background: var(--fc-data-ink); color: var(--fc-data-paper); }
+}
