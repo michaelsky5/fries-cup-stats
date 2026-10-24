@@ -8,6 +8,7 @@ import { formatOwMapName } from '../../lib/heroes.js'
 import { getMapImage } from '../../lib/reviewAssets.js'
 import { getMatchFormatLabel } from '../../lib/matchFormat.js'
 import { formatMatchSchedule } from '../../lib/scheduleFormat.js'
+import { getWatchLink } from '../../lib/watchLink.js'
 import { getLocationPath, getRestoreScrollY, getReturnState, getSavedReturnScroll, saveReturnScroll } from '../../lib/navigationState.js'
 import { buildWeeklyOverview, weeklyMapSlots, weeklyScore } from './weeklyOverviewModel.js'
 import { WeeklyCyclePicker, WeeklyWeekRail } from './WeeklyNavigation.jsx'
@@ -80,6 +81,7 @@ export default function SignalWeeklyOverview() {
   const requestedMatch = params.get('match')
   const model = useMemo(() => buildWeeklyOverview(db, { cycleId, weekId, match: requestedMatch, followedTeamIds: followedKey ? followedKey.split('|') : [] }), [db, cycleId, weekId, requestedMatch, followedKey])
   const { cycles, cycle, weeks, week, matches, focus, standings, isPilot } = model
+  const focusWatch = getWatchLink(focus, focus?.state, openedAt)
   const selectedCycleId = cycle?.id
   const selectedWeekId = week?.id
   const { issue } = usePublishedNewspaper({ seasonId, cycleId: selectedCycleId, weekId: selectedWeekId, locale })
@@ -179,7 +181,7 @@ export default function SignalWeeklyOverview() {
               </li>)}
             </ol>
           </div>}
-          <div className={styles.matchFooter}><span>{focus.state === 'live' ? t(uiText("进行中的比分尚未计入赛段积分。", locale), 'Live scores are not added to the published cycle points.') : focus.state === 'ruling' ? t(uiText("按赛事判定记录，积分以公布榜单为准。", locale), 'A ruling applies. Points follow the published standings.') : t(uiText("地图记录与结果以公布内容为准。", locale), 'Map records and results follow the published data.')}</span><Link to={withSeason(`/matches/${encodeURIComponent(focus.id)}`)} {...returnProps(focus)}>{t(uiText("比赛详情", locale), 'Match details')} <span aria-hidden="true">→</span></Link></div>
+          <div className={styles.matchFooter}><span>{focus.state === 'live' ? t(uiText("进行中的比分尚未计入赛段积分。", locale), 'Live scores are not added to the published cycle points.') : focus.state === 'ruling' ? t(uiText("按赛事判定记录，积分以公布榜单为准。", locale), 'A ruling applies. Points follow the published standings.') : t(uiText("地图记录与结果以公布内容为准。", locale), 'Map records and results follow the published data.')}</span><span className={styles.matchActions}>{focusWatch ? <a href={focusWatch.url} target="_blank" rel="noreferrer" data-watch-kind={focusWatch.kind}>{focusWatch.kind === 'live' ? pickUiLocale(locale, '看直播', 'Watch live', '생중계', '看直播') : pickUiLocale(locale, '看录像', 'Replays', '다시보기', '看錄像')} <span aria-hidden="true">↗</span></a> : null}<Link to={withSeason(`/matches/${encodeURIComponent(focus.id)}`)} {...returnProps(focus)}>{t(uiText("比赛详情", locale), 'Match details')} <span aria-hidden="true">→</span></Link></span></div>
         </div> : <div className={styles.empty}><span>WEEKLY / MATCHES</span><h3>{t(uiText("赛程尚未公布", locale), 'Schedule not yet published')}</h3><p>{t(uiText("可切换其他已发布周次，查看对阵与赛果。", locale), 'Choose another published week to view fixtures and results.')}</p></div>}
       </section>
       {matches.length > 0 && <section className={styles.matchList} aria-labelledby="weekly-matches-title">

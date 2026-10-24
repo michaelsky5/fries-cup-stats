@@ -192,14 +192,19 @@ function emptyBroadcastInfo() {
   }
 }
 
-export function getBroadcastInfo(match = {}) {
+function broadcastSource(match) {
   const candidate = match?.broadcast || match?.stream || match?.live
-  const source = candidate && typeof candidate === 'object' ? candidate : {}
-  const replayUrl = cleanText(source.replay_url || source.replayUrl || source.vod_url || source.vodUrl ||
-    match.replay_url || match.replayUrl || match.vod_url || match.vodUrl)
-  const validReplayUrl = /^https?:\/\//i.test(replayUrl) ? replayUrl : ''
+  return candidate && typeof candidate === 'object' ? candidate : {}
+}
 
-  const streamUrl = cleanText(
+function recordedReplayUrl(match, source) {
+  const replayUrl = cleanText(source.replay_url || source.replayUrl || source.vod_url || source.vodUrl ||
+    match?.replay_url || match?.replayUrl || match?.vod_url || match?.vodUrl)
+  return /^https?:\/\//i.test(replayUrl) ? replayUrl : ''
+}
+
+function primaryStreamUrl(source) {
+  return cleanText(
     source.stream_url ||
     source.streamUrl ||
     source.url ||
@@ -211,6 +216,20 @@ export function getBroadcastInfo(match = {}) {
     source.link ||
     source['\u76f4\u64ad\u95f4']
   )
+}
+
+// The live rooms and replay a match's broadcast record names, whatever state the match is in.
+// A broadcast entry that only lists referees or casters has no rooms: that match was not streamed.
+export function getBroadcastRecord(match = {}) {
+  const source = broadcastSource(match)
+  if (isExplicitFalse(source.is_broadcast ?? source.isBroadcast)) return { rooms: [], replayUrl: '' }
+  return { rooms: collectStreamLinks(source, primaryStreamUrl(source)), replayUrl: recordedReplayUrl(match, source) }
+}
+
+export function getBroadcastInfo(match = {}) {
+  const source = broadcastSource(match)
+  const validReplayUrl = recordedReplayUrl(match, source)
+  const streamUrl = primaryStreamUrl(source)
   const liveStreamLinks = collectStreamLinks(source, streamUrl)
   const crew = asList(source.crew)
   const crewInRole = role => crew.filter(person => cleanText(person?.role).toUpperCase() === role)

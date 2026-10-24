@@ -478,3 +478,12 @@
 }
 .supportEntry { font-size:13px;line-height:1.6;padding:12px 0;border-bottom:1px solid var(--line); }
 .supportEntry>a { display:inline-flex;align-items:center;min-height:40px;font-weight:700; }
+
+/* Focus card footer actions (票 2.3): watch link beside match details. */
+.matchActions { display: flex; align-items: center; gap: 22px; flex-shrink: 0; }
+.matchActions a[data-watch-kind="live"] { color: var(--fc-data-status-live-bright, #55cbb8); }
+.matchActions a[data-watch-kind="replay"] { color: var(--paper, #eeede6); font-weight: 600; }
+@media (max-width: 600px) { .matchActions { gap: 14px; } }
+/* Footer links: arrow centred on the label at every width (on phones it sat 8px low), 44px tap height. */
+.matchFooter a { align-items: center; min-height: 44px; }
+.matchFooter a > span { line-height: 1; }
