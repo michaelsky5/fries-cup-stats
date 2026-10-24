@@ -30,6 +30,7 @@ export function getDataCenterPageLabel(pathname = '/', search = '') {
   if (path === '/') return DEFAULT_PAGE_LABEL
   if (path === '/support') return '周赛支持与计划'
   if (path === '/play') return '参赛'
+  if (path === '/guides/weekly-room') return '比赛房指南'
   if (path === '/schedule') return '赛程赛果'
   if (path === '/matches') return isFollowingMatchView(search) ? '我的关注' : '赛程赛果'
   if (/^\/me\/matches\/[^/]+\/room$/.test(path)) return '比赛房间'

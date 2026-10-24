@@ -137,7 +137,6 @@ const router = createBrowserRouter([
     { path: '/lobby/me/formation', lazy: async () => ({ Component: (await import('../features/team-lobby/LobbyPages.jsx')).LobbyEditor }) },
     ...['register', 'login', 'verify-email', 'recover', 'reset-password'].map(path => ({ path: `/account/${path}`, lazy: lazyDefault(() => import('../features/team-lobby/AccountEntryPage.jsx')) }))
   ] },
-  { path: '/guides/weekly-room', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/room-guide/WeeklyRoomGuidePage.jsx')) },
   { path: '/guides/weekly-room/simulate', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/room-guide/RoomPracticePage.jsx')) },
   { path: '/account', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/account/AccountSettingsPage.jsx')) },
   { path: '/account/recovery', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/account/AccountRecoveryPage.jsx')) },
@@ -180,6 +179,8 @@ const router = createBrowserRouter([
       { path: 'advance', lazy: lazyDefault(() => import('../pages/advance/AdvancePage.jsx')) },
       { path: 'support', lazy: lazyDefault(() => import('../features/weekly-support/WeeklySupportPage.jsx')) },
       { path: 'play', lazy: lazyDefault(() => import('../features/participation-hub/ParticipationHubPage.jsx')) },
+      // 票 2.26: the room guide shares the event centre header, status line and tab bar.
+      { path: 'guides/weekly-room', lazy: lazyDefault(() => import('../features/room-guide/WeeklyRoomGuidePage.jsx')) },
       { path: 'standings', lazy: lazyDefault(() => import('../pages/standings/StandingsPage.jsx')) },
       { path: 'maps', lazy: lazyDefault(() => import('../pages/stats/MapStatsPage.jsx')) },
       { path: 'maps/:mapName', lazy: lazyDefault(() => import('../pages/stats/MapDetailPage.jsx')) },

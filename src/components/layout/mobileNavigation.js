@@ -30,7 +30,7 @@ export function getMobileNavigationGroup(location, depth = 0) {
         state: { returnTo: location.state?.parentReturnTo } }, depth + 1)
     }
   }
-  if (/^\/play\/?$/.test(pathname)) return 'play'
+  if (/^\/(?:play|guides\/weekly-room)\/?$/.test(pathname)) return 'play'
   if (/^\/(?:me|following|account|participate|auth|activate-weekly)(?:\/|$)/.test(pathname)) return 'space'
   if (/^\/(?:matches|schedule)(?:\/|$)/.test(pathname)) return 'matches'
   if (/^\/(?:leaderboard|heroes|maps)(?:\/|$)/.test(pathname)) return 'database'
@@ -43,7 +43,7 @@ export function sanitizeMobileNavigationPath(path) {
   const url = new URL(safe, 'https://navigation.invalid')
   if (url.origin !== 'https://navigation.invalid') return ''
   // Invitation and authentication pages must never become remembered Tab destinations.
-  if (!/^\/(?:$|matches(?:\/|$)|leaderboard$|heroes$|maps(?:\/|$)|roster$|players(?:\/|$)|teams(?:\/|$)|staff(?:\/|$)|advance$|standings$|review$|play$|me$|following$|account$)/.test(url.pathname)) return ''
+  if (!/^\/(?:$|matches(?:\/|$)|leaderboard$|heroes$|maps(?:\/|$)|roster$|players(?:\/|$)|teams(?:\/|$)|staff(?:\/|$)|advance$|standings$|review$|play$|guides\/weekly-room$|me$|following$|account$)/.test(url.pathname)) return ''
   const params = new URLSearchParams()
   url.searchParams.forEach((value, key) => { if (QUERY_KEYS.has(key)) params.append(key, value) })
   const hash = /^#[a-z0-9_-]+$/i.test(url.hash) ? url.hash : ''

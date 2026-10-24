@@ -18,6 +18,6 @@ export function isCompetitionMatchesEntry({ pathname, search = '' }) {
 export function requiresPublicSnapshot({ pathname, search = '', section, isAuthenticated }) {
   if (isCompetitionMatchesEntry({ pathname, search })) return false
   // 票 2.18: the 参赛 page only explains and links, so it never waits for the public snapshot.
-  if (/^\/play\/?$/.test(pathname)) return false
+  if (/^\/(?:play|guides\/weekly-room)\/?$/.test(pathname)) return false
   return !isAuthenticated || !/^\/me\/?$/.test(pathname) || ['following', 'stats'].includes(section)
 }

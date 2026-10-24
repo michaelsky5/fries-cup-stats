@@ -147,6 +147,8 @@ test('票 2.18: 参赛 is its own Tab and remembers only its public page', async
   assert.equal(getPersonalNavItem(false).cn, '我的关注')
   assert.equal(getPersonalNavItem(true).cn, '我的空间')
   assert.equal(getMobileNavigationGroup({ pathname: '/play' }), 'play')
+  assert.equal(getMobileNavigationGroup({ pathname: '/guides/weekly-room' }), 'play', '票 2.26: the room guide sits under 参赛')
+  assert.equal(sanitizeMobileNavigationPath('/guides/weekly-room?role=member&step=entry'), '/guides/weekly-room?role=member&step=entry')
   assert.equal(getMobileNavigationGroup({ pathname: '/participate/FCW26' }), 'space', 'registration stays a personal flow, so tapping 参赛 returns to the 参赛 page')
   assert.equal(sanitizeMobileNavigationPath('/play?season=FCW2026&lang=zh'), '/play?season=FCW2026&lang=zh')
   const scope = getMobileNavigationScope('/?season=FCW2026', 'play')

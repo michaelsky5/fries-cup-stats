@@ -97,7 +97,7 @@ function getNavActiveGroup(pathname, search = '') {
   if (pathname.startsWith('/advance') || pathname.startsWith('/standings')) return 'advance'
   if (pathname.startsWith('/teams') || pathname.startsWith('/players') || pathname.startsWith('/staff') || pathname.startsWith('/roster')) return 'roster'
   if (pathname.startsWith('/leaderboard') || pathname.startsWith('/heroes') || pathname.startsWith('/maps')) return 'database'
-  if (/^\/play\/?$/.test(pathname)) return 'play'
+  if (/^\/(?:play|guides\/weekly-room)\/?$/.test(pathname)) return 'play'
   return ''
 }
 
@@ -146,6 +146,8 @@ export default function DataLayout() {
   const isTeamExhibitionRoute = isTeamArchiveRoute && getDossierView(location.pathname, location.search) === 'gallery'
   const isPlayerArchiveRoute = isKprHybridDesign && /^\/players\/[^/]+(?:\/(?:analysis|journey))?\/?$/.test(location.pathname)
   const isPlayRoute = isKprHybridDesign && /^\/play\/?$/.test(location.pathname)
+  // 票 2.26: every hybrid page uses the one-line directory status line.
+  const isUnifiedContextRoute = isKprHybridDesign && /^\/(?:support|guides\/weekly-room)\/?$/.test(location.pathname)
   const isKprSamplePage = /^(?:\/|\/leaderboard\/?)$/.test(location.pathname) ||
     (isKprHybridDesign && /^\/(?:matches|advance)(?:\/)?$/.test(location.pathname))
   const isFdSamplePage = /^(?:\/leaderboard|\/teams\/[^/]+)\/?$/.test(location.pathname)
@@ -175,7 +177,7 @@ export default function DataLayout() {
   const isWeeklyHomeRoute = isKprHybridDesign && location.pathname === '/' && isWeeklyOverview(db, season)
   const isAdvanceIndexRoute = isKprHybridDesign && /^\/advance\/?$/.test(location.pathname)
   const isPublicFollowingRoute = isAccountSpaceRoute && ((!isAuthenticated && !isMatchEntry) || location.pathname.startsWith('/following') || new URLSearchParams(location.search).get('section') === 'following')
-  const isCompactContextRoute = /^\/reports(?:\/|$)/.test(location.pathname) || /^\/staff\/[^/]+\/?$/.test(location.pathname) || isRosterDirectoryRoute || isScheduleDirectoryRoute || isPublicMatchDetailRoute || isPlayerRankingsRoute || isHeroDataRoute || isMapDataRoute || isAdvanceIndexRoute || isWeeklyHomeRoute || isPublicFollowingRoute || isPlayerArchiveRoute || isPlayRoute || (isTeamArchiveRoute && !isTeamExhibitionRoute)
+  const isCompactContextRoute = /^\/reports(?:\/|$)/.test(location.pathname) || /^\/staff\/[^/]+\/?$/.test(location.pathname) || isRosterDirectoryRoute || isScheduleDirectoryRoute || isPublicMatchDetailRoute || isPlayerRankingsRoute || isHeroDataRoute || isMapDataRoute || isAdvanceIndexRoute || isWeeklyHomeRoute || isPublicFollowingRoute || isPlayerArchiveRoute || isPlayRoute || isUnifiedContextRoute || (isTeamArchiveRoute && !isTeamExhibitionRoute)
   const competition = useAccountCompetition(season.id)
   const attentionSeasonId = competition.id
   const attentionEnabled = isAuthenticated && !competition.loading && !competition.error && !competition.issue
