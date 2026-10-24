@@ -2,7 +2,6 @@ import { translateUiText as formatUiText } from '../lib/uiText.js'
 import { isReviewReady } from '../lib/reviewReadiness.js'
 import { PARTNER_TRIAL, buildTrialCatalog, trialSeasonFromManifest } from './partnerTrial.js'
 
-export let DEFAULT_SEASON_ID = PARTNER_TRIAL?.ids[0] || 'FCR26'
 export const SEASON_STORAGE_KEY = 'fries_cup_stats_active_season'
 export const SEASON_URL_PARAM = 'season'
 
@@ -377,6 +376,19 @@ if (import.meta.env?.DEV && import.meta.env?.VITE_WEEKLY_PREVIEW === '1') {
 }
 
 if (PARTNER_TRIAL) SEASONS.splice(0, SEASONS.length, ...buildTrialCatalog(PARTNER_TRIAL))
+
+// New visitors land on the season being played: the first ACTIVE official
+// season, otherwise the most recently archived one (SEASONS is listed newest
+// first). A partner trial keeps its own sample, and a stored choice or a
+// ?season= link still wins via getStoredSeasonId / resolveSeasonFromSearch.
+function pickDefaultSeasonId(seasons) {
+  const season = seasons.find(item => getSeasonEventKind(item) === 'OFFICIAL' && item.lifecycle === 'ACTIVE') ||
+    seasons.find(item => item.lifecycle === 'ARCHIVED') ||
+    seasons[0]
+  return season?.id
+}
+
+export let DEFAULT_SEASON_ID = PARTNER_TRIAL?.ids[0] || pickDefaultSeasonId(SEASONS)
 
 export function getSeasonById(seasonId) {
   const id = String(seasonId || '').trim().toUpperCase()
