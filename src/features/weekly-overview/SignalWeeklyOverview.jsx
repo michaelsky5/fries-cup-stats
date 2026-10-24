@@ -11,7 +11,10 @@ import { getWatchLink } from '../../lib/watchLink.js'
 import { getLocationPath, getRestoreScrollY, getReturnState, getSavedReturnScroll, saveReturnScroll } from '../../lib/navigationState.js'
 import { buildWeeklyOverview, weeklyMapSlots, weeklyScore } from './weeklyOverviewModel.js'
 import { WeeklyCyclePicker, WeeklyWeekRail } from './WeeklyNavigation.jsx'
-import { WeeklyRegistrationBand, WeeklyPublishedMapPool, weeklyCycleDateRange } from './WeeklyExistingSections.jsx'
+import { WeeklyPublishedMapPool, weeklyCycleDateRange } from './WeeklyExistingSections.jsx'
+import WeeklyPhaseCard from './WeeklyPhaseCard.jsx'
+import { buildWeeklyPhases } from './weeklyPhase.js'
+import { getSeasonById } from '../../config/seasons.js'
 import { isChineseLocale, showsInlineTimeZone, weeklyCycleTitle, weeklyFormatHint, weeklyFormatLabel, weeklyMatchContextLabel, weeklyPeriodPath, weeklyStatusLabel, weeklyWeekTitle, weeklyTeamShort as shortName } from './weeklyPresentation.js'
 import { weeklyOverviewReturnLocation } from './weeklyInteractionNavigation.js'
 import { weeklyStandingsPreviewLimit, selectWeeklyFollowingPreview, selectWeeklyStandingsPreview } from './weeklyOverviewPreview.js'
@@ -78,6 +81,8 @@ export default function SignalWeeklyOverview() {
   const t = (zh, english) => en ? english : zh
   const [openedAt] = useState(() => Date.now())
   const registration = registrationNote(db, openedAt, locale)
+  const weeklyPlan = getSeasonById(seasonId)?.weeklyPlan || null
+  const phases = useMemo(() => buildWeeklyPhases(db, { now: openedAt, plan: weeklyPlan }), [db, openedAt, weeklyPlan])
   const status = key => weeklyStatusLabel(key, locale)
   const followedIds = (db?.teams || []).filter(team => isFavoriteTeam?.(idOf(team))).map(idOf)
   const followedKey = followedIds.join('|')
@@ -156,7 +161,7 @@ export default function SignalWeeklyOverview() {
       <div><p className={styles.eyebrow}>FRIES CUP / WEEKLY</p><h1>{eventCenterText('overviewTitle', locale)}</h1><p>{eventCenterText('overviewIntro', locale)}</p></div>
       {!isPhone && quickLinks}
     </header>
-    <WeeklyRegistrationBand registration={db?.weekly_competition?.registration} locale={locale} withSeason={withSeason} />
+    <WeeklyPhaseCard phases={phases} plan={weeklyPlan} locale={locale} withSeason={withSeason} now={openedAt} seasonId={seasonId} />
     {supporterThanks}
     <section className={styles.periodNavigation} data-weekly-period-nav="true" aria-label={pickUiLocale(locale, '比赛赛段与周次', 'Cycle and weeks', '주기 및 주차', '比賽賽段與週次')}>
       <div className={styles.cycleBlock}><WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} dateRange={weeklyCycleDateRange(cycle, locale)} onChange={id => change({ cycle: id, week: null, match: null })} /></div>

@@ -28,7 +28,7 @@ function registrationDeadline(db) {
 // season registration until its deadline, then the team lobby once System
 // opens it. A lobby that is OFF, still loading or unreadable shows nothing, so
 // Home never links to a page that only says "not open yet".
-export default function HomeTopEntry({ db, season, locale, withSeason }) {
+export default function HomeTopEntry({ db, season, locale, withSeason, phaseCard = false }) {
   const deadline = registrationDeadline(db)
   const [now, setNow] = useState(() => Date.now())
   const [lobbyOpen, setLobbyOpen] = useState(false)
@@ -49,7 +49,8 @@ export default function HomeTopEntry({ db, season, locale, withSeason }) {
     return () => { active = false }
   }, [registrationOpen])
 
-  if (registrationOpen) return <RegistrationBand deadline={deadline} season={season} locale={locale} withSeason={withSeason} />
+  // The weekly home's phase card (票 2.16) carries registration itself; this band stays for other seasons.
+  if (registrationOpen) return phaseCard ? null : <RegistrationBand deadline={deadline} season={season} locale={locale} withSeason={withSeason} />
   return lobbyOpen ? <div className={styles.lobbySlot}><TeamLobbyEntry locale={locale} /></div> : null
 }
 

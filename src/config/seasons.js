@@ -15,7 +15,14 @@ export const SEASONS = [
     proxyReportUrl: '/api/admin-public/seasons/FCW26/publish/latest/report',
     dataUrl: 'https://admin.fries-cup.com/api/public/seasons/FCW26/publish/latest/data',
     reportUrl: 'https://admin.fries-cup.com/api/public/seasons/FCW26/publish/latest/report',
-    reviewEnabled: false, rules: { weeklyCompetition: { enabled: true } }
+    reviewEnabled: false, rules: { weeklyCompetition: { enabled: true } },
+    // 赛事方案书 V1.9（2026-10-17）里的计划日期。System 发布对应赛段或周次之前，首页阶段主卡用它，
+    // 并标「计划」（票 2.16）；已发布的数据永远优先。
+    weeklyPlan: {
+      source: 'V1.9',
+      cycles: [{ sequence: 2, name: '第二赛段', nameEn: 'Cycle 2', nameKo: '2주기', nameTw: '第二賽段', startsOn: '2026-10-31' }],
+      weekly: { confirmationCloses: { weekday: 5, time: '12:00' }, pairingPublished: { weekday: 5, time: '20:00' }, scheduleReview: { weekday: 6, time: '12:00' } }
+    }
   },
   {
     id: 'FCR26',

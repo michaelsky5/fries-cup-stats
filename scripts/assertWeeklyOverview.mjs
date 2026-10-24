@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { buildWeeklyOverview, isWeeklyOverview, weeklyMapSlots, weeklyMatchState, weeklyScore } from '../src/features/weekly-overview/weeklyOverviewModel.js'
 import { buildWeeklyOverviewFixture } from './lib/weeklyOverviewFixture.mjs'
 import { COUNTDOWN_WINDOW_MS, formatMatchCountdown } from '../src/features/weekly-overview/matchCountdown.js'
+import { buildWeeklyPhases } from '../src/features/weekly-overview/weeklyPhase.js'
 
 let checks = 0
 const test = (name, fn) => { fn(); checks += 1; console.log(`PASS ${name}`) }
@@ -125,5 +126,17 @@ test('focus countdown runs for the coming week and never claims a live match', (
   assert.deepEqual(formatMatchCountdown(start, start, 'zh-CN'), { done: true, text: '已到开赛时间' })
   assert.equal(formatMatchCountdown(start, start + 60000, 'zh-CN').done, true)
   for (const value of [null, '', 'TBD']) assert.equal(formatMatchCountdown(value, start, 'zh-CN'), null)
+})
+test('phase card leads with the live match and honours deadlines instead of the published status', () => {
+  const now = Date.parse('2026-10-29T04:00:00.000Z')
+  const fixture = structuredClone(db)
+  assert.equal(buildWeeklyPhases(fixture, { now })[0].kind, 'live')
+  fixture.weekly_competition.registration = { week_number: 4, status: 'CONFIRMATION_OPEN', opens_at: '2026-10-26T04:00:00.000Z', closes_at: '2026-10-30T04:00:00.000Z' }
+  fixture.season = { ...(fixture.season || {}), rules: { registration: { enabled: true, closesAt: null } } }
+  assert.deepEqual(buildWeeklyPhases(fixture, { now }).map(phase => phase.kind).filter(kind => kind !== 'matchweek'), ['live', 'confirmation', 'registration'])
+  // Past the deadline the window is gone even though System still says CONFIRMATION_OPEN.
+  assert.ok(!buildWeeklyPhases(fixture, { now: Date.parse('2026-10-30T05:00:00.000Z') }).some(phase => phase.kind === 'confirmation'))
+  fixture.season.rules.registration.closesAt = '2026-10-25T15:59:00.000Z'
+  assert.ok(!buildWeeklyPhases(fixture, { now }).some(phase => phase.kind === 'registration'))
 })
 console.log(`${checks} weekly overview checks passed.`)
