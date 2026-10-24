@@ -277,3 +277,24 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
 @media (max-width: 600px) {
   .matchIdentifier { justify-content: flex-start; }
 }
+
+/* 票 2.27: toolbar. Desktop keeps feedback · copy link · video in one row; phones show
+   返回 · 分享 · 更多, with feedback and the video link in the 更多 panel. */
+.moreActions { display: contents; }
+.moreActions [data-match-feedback-entry] { order: 1; }
+.shareAction { order: 2; }
+.moreActions > a { order: 3; }
+.toolbar .moreToggle, .shortLabel { display: none; }
+@media (max-width: 600px) {
+  .toolbar > div { position: relative; flex-wrap: nowrap; }
+  .toolbar :is(button, a) { min-width: 44px; min-height: 44px; }
+  .longLabel { display: none; }
+  .shortLabel { display: inline; }
+  .toolbar .moreToggle { order: 4; display: inline-flex; gap: 8px; }
+  .moreToggle > span { color: var(--fc-data-focus-on-light, #806000); }
+  .toolbar .moreToggle[aria-expanded='true'], .toolbar .moreToggle[aria-expanded='true']:hover { background: var(--fc-data-ink); color: var(--fc-data-paper); }
+  .toolbar .moreToggle[aria-expanded='true'] > span { color: var(--fc-data-signal, #f4c320); }
+  .moreActions { position: absolute; z-index: 30; top: calc(100% + 6px); right: 0; display: none; min-width: 180px; padding: 6px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper); box-shadow: 0 10px 24px rgb(24 26 23 / 18%); }
+  .moreActions[data-open] { display: grid; gap: 6px; }
+  .moreActions :is(button, a) { justify-content: flex-start; width: 100%; }
+}

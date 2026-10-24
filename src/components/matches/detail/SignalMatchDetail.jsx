@@ -2,7 +2,7 @@ import { translateUiText as uiText } from '../../../lib/uiText.js'
 import WeeklyMatchIdentity from '../WeeklyMatchIdentity.jsx'
 import { showsInlineTimeZone, weeklyMatchContextLabel } from '../../../features/weekly-overview/weeklyPresentation.js'
 import { useUiLocale } from '../../../hooks/useUiLocale.js'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import TeamLogo from '../TeamLogo.jsx'
 import SignalMatchPlayers from './SignalMatchPlayers.jsx'
@@ -256,9 +256,26 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
   const status = phase.active ? phase.statusLabel : dossier.state.isForfeit ? (en ? 'FORFEIT' : uiText("弃权", locale)) : en ? dossier.statusEn : dossier.statusLabel
   const video = dossier.broadcast?.streamLinks.find(stream => stream.kind === 'replay') || dossier.broadcast?.streamLinks.find(stream => stream.kind === 'archive')
   const adjacentState = { returnTo, ...(Number.isFinite(Number(returnScrollY)) ? { returnScrollY } : {}) }
+  // 票 2.27: phones keep 返回 and 分享 in the toolbar; feedback and the video link sit behind 更多.
+  const [moreOpen, setMoreOpen] = useState(false)
+  const moreId = useId()
+  const moreRef = useRef(null)
+  useEffect(() => {
+    if (!moreOpen) return undefined
+    const dismiss = event => {
+      if (event.type === 'keydown' ? event.key === 'Escape' : !moreRef.current?.contains(event.target)) setMoreOpen(false)
+    }
+    document.addEventListener('pointerdown', dismiss)
+    document.addEventListener('keydown', dismiss)
+    return () => { document.removeEventListener('pointerdown', dismiss); document.removeEventListener('keydown', dismiss) }
+  }, [moreOpen])
 
   return <div ref={shellRef} className={styles.shell} data-page-mode="index" data-match-design="signal-coach" data-match-phase={phase.key}>
-    <div className={styles.toolbar}><button type="button" onClick={onBack}>← {backLabel}</button><div><MatchDataFeedback key={dossier.internalId} dossier={dossier} seasonId={seasonId} locale={locale} mapOrder={searchParams.has('map') ? compactSelection.map?.order ?? '' : ''} isPreview={isPreview} /><button type="button" onClick={onCopyLink}>{en ? 'Copy link' : uiText("复制链接", locale)}</button>{!phase.active && video ? <a className={video.kind === 'replay' ? styles.primaryAction : undefined} href={video.url} target="_blank" rel="noreferrer">{video.kind === 'replay' ? (en ? 'Watch replay' : uiText("观看录像", locale)) : (en ? 'Video archive' : uiText("赛事录像库", locale))} ↗</a> : null}</div></div>
+    <div className={styles.toolbar}><button type="button" onClick={onBack}>← {backLabel}</button><div ref={moreRef}>
+      <button type="button" className={styles.shareAction} onClick={onCopyLink}><span className={styles.longLabel}>{en ? 'Copy link' : uiText("复制链接", locale)}</span><span className={styles.shortLabel}>{en ? 'Share' : uiText("分享", locale)}</span></button>
+      <button type="button" className={styles.moreToggle} aria-expanded={moreOpen} aria-controls={moreId} onClick={() => setMoreOpen(open => !open)}>{en ? 'More' : uiText("更多", locale)}<span aria-hidden="true">{moreOpen ? '−' : '+'}</span></button>
+      <div id={moreId} className={styles.moreActions} data-open={moreOpen || undefined}><MatchDataFeedback key={dossier.internalId} dossier={dossier} seasonId={seasonId} locale={locale} mapOrder={searchParams.has('map') ? compactSelection.map?.order ?? '' : ''} isPreview={isPreview} />{!phase.active && video ? <a className={video.kind === 'replay' ? styles.primaryAction : undefined} href={video.url} target="_blank" rel="noreferrer">{video.kind === 'replay' ? (en ? 'Watch replay' : uiText("观看录像", locale)) : (en ? 'Video archive' : uiText("赛事录像库", locale))} ↗</a> : null}</div>
+    </div></div>
     {copyMessage ? <p className={styles.copyFeedback} role="status">{copyMessage}</p> : null}
     {isPreview ? <p className={styles.phasePreview}>{en ? 'Design preview · fictional fixtures, scores, staff and broadcast links' : uiText("设计样例 · 对阵、比分、工作人员与直播入口均为演示", locale)}</p> : null}
     <nav ref={navigationRef} className={styles.sectionNav} data-match-navigation aria-label={en ? 'Match sections' : uiText("比赛详情章节", locale)}>
@@ -283,7 +300,7 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
         {summary ? <p className={styles.matchSummary} data-match-summary={matchFact.kind}>{summary}</p> : null}
         {phase.active ? <>{phase.roomProgress ? <p className={styles.phaseCaption} data-public-room-status={roomSnapshot.status} role="status">{eventCenterText('roomProgressSource', locale)} · {eventCenterText(roomSnapshot.status === 'reconnecting' ? 'roomProgressReconnecting' : roomSnapshot.status === 'paused' ? 'roomProgressPaused' : 'roomProgressConnected', locale)}</p> : null}<p className={styles.phaseCaption}>{phase.caption}</p><SignalMatchPhaseProgress key={dossier.internalId} phase={phase} onSelectMap={onSelectMap} en={en} /></> : <SeriesProgress key={dossier.internalId} maps={progress} currentOrder={currentOrder} onSelectMap={onSelectMap} en={en} />}
         <footer className={styles.heroFooter}><span>{en ? 'SCHEDULE' : uiText("比赛时间", locale)}<strong>{phase.active ? phase.scheduleLabel : dossier.scheduleLabel}</strong>{phase.active && showsInlineTimeZone(locale) ? <small>UTC+8</small> : null}</span>{dossier.totalDurationLabel ? <span>{phase.active ? (en ? 'RECORDED TIME' : uiText("已记录时长", locale)) : (en ? 'IN-GAME TIME' : uiText("局内总时长", locale))}<strong>{dossier.totalDurationLabel}</strong></span> : null}{!phase.active || phase.recordedCount ? <span>{en ? 'MAPS RECORDED' : uiText("地图记录", locale)}<strong>{phase.active ? phase.recordedCount : dossier.mapRecords.length}</strong></span> : null}</footer>
-        {dossier.match.cycle_week_id && <p className={styles.matchIdentifier}>{en ? 'MATCH ID' : uiText("比赛编号", locale)} <span data-public-match-code>{dossier.displayCode}</span></p>}
+        {/* 票 2.27: the match number shows once, in the identity line above, with its copy button. */}
         {!phase.active ? <SignalMatchSpotlight dossier={dossier} locale={locale} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} /> : null}
       </div>
     </section>
