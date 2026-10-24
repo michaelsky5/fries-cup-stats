@@ -4,12 +4,10 @@ import { accountSettingsError } from '../src/features/account-security/accountFo
 
 // Retire assertions for the unused security panel, keep meaningful live input
 // boundaries. Browser/API acceptance covers the actual new routes and forms.
-assert.equal(validateRecoveryPassword('1234567', '1234567'), '新密码至少需要 8 位。')
+for (const invalid of ['1234567', '密'.repeat(24), '密'.repeat(25), 'x'.repeat(65), 'has space1', 'Emoji123😀']) assert.match(validateRecoveryPassword(invalid, invalid), /8–64/)
 assert.equal(validateRecoveryPassword('password1', 'password2'), '两次输入的新密码不一致。')
-assert.equal(validateRecoveryPassword('密'.repeat(25), '密'.repeat(25)), '新密码不能超过 72 个 UTF-8 字节。')
-assert.equal(validateRecoveryPassword('密'.repeat(24), '密'.repeat(24)), '')
-assert.equal(validateRecoveryPassword('x'.repeat(72), 'x'.repeat(72)), '')
-assert.equal(validateRecoveryPassword('x'.repeat(73), 'x'.repeat(73)), '新密码不能超过 72 个 UTF-8 字节。')
+assert.equal(validateRecoveryPassword('x'.repeat(8), 'x'.repeat(8)), '')
+assert.equal(validateRecoveryPassword('x'.repeat(64), 'x'.repeat(64)), '')
 for (const code of ['EMAIL_ALREADY_IN_USE', 'EMAIL_UNCHANGED', 'EMAIL_VERIFICATION_REQUIRED', 'RECOVERY_TOKEN_INVALID', 'RECOVERY_TOKEN_EXPIRED', 'RECOVERY_ACCOUNT_CHANGED']) assert.notEqual(accountSettingsError({ data: { error: code } }), '操作未完成，请稍后重试。')
 console.log('Account email and recovery input/error boundaries passed.')
 

@@ -27,7 +27,7 @@ jobs:
         run: npm run test:account-ui
 
       - name: Check lobby continuation, consent copy and language boundaries
-        run: node --test scripts/teamLobby.test.mjs
+        run: node --test scripts/teamLobby.test.mjs scripts/lobbyEntry.test.mjs scripts/passwordPolicy.test.mjs
 
       - name: Check weekly public pages and media
         run: npm run test:weekly-public-ui

@@ -1,4 +1,5 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { translateUiText as uiText, pickUiLocale } from '../../lib/uiText.js'
+import PasswordRequirements from './PasswordRequirements.jsx'
 import styles from './PasswordRecoveryPanel.module.css'
 
 export default function PasswordRecoveryPanel({ recovery, locale = 'zh-CN', deliveryEnabled, configLoading = false, configError, retryConfig, onLogin }) {
@@ -8,7 +9,7 @@ export default function PasswordRecoveryPanel({ recovery, locale = 'zh-CN', deli
   const issue = error && stage !== 'invalid' ? <p className={styles.error} role="alert">{error.body}</p> : null
   return <div className={styles.panel} data-i18n-ignore aria-busy={busy}>
     <ol className={styles.steps} aria-label={t(uiText("密码找回进度", locale), 'Password recovery progress')}>
-      {[t('申请邮件', 'Request'), t('设置密码', 'Reset'), t('重新登录', 'Sign in')].map((label, index) => <li key={index} aria-current={index === (stage === 'complete' ? 2 : ['reset', 'invalid'].includes(stage) ? 1 : 0) ? 'step' : undefined}><span>0{index + 1}</span>{label}</li>)}
+      {[pickUiLocale(locale, '申请邮件', 'Request', '이메일 요청', '申請郵件'), pickUiLocale(locale, '设置密码', 'Reset', '비밀번호 설정', '設定密碼'), pickUiLocale(locale, '重新登录', 'Sign in', '다시 로그인', '重新登入')].map((label, index) => <li key={index} aria-current={index === (stage === 'complete' ? 2 : ['reset', 'invalid'].includes(stage) ? 1 : 0) ? 'step' : undefined}><span>0{index + 1}</span>{label}</li>)}
     </ol>
     {stage === 'sent' ? <>
       <div className={styles.receipt} role="status"><span>{t(uiText("申请邮箱", locale), 'Requested email')}</span><strong>{sentTo}</strong><p>{t(uiText("如果该账号符合找回条件，你会收到一次性重置链接。此回执不代表邮件已送达。", locale), 'Eligible accounts will receive a single-use reset link. This receipt does not confirm email delivery.')}</p></div>
@@ -26,7 +27,7 @@ export default function PasswordRecoveryPanel({ recovery, locale = 'zh-CN', deli
       <form onSubmit={recovery.submit} className={styles.form} aria-label={stage === 'reset' ? t(uiText("重置密码", locale), 'Reset password') : t(uiText("申请密码重置", locale), 'Request password reset')}>
         {stage === 'request' ? <label><span>{t(uiText("账号邮箱", locale), 'Account email')}</span><input type="email" autoComplete="email" value={recovery.email} onChange={event => recovery.setEmail(event.target.value)} disabled={busy} required /></label> : <>
           <label><span>{t(uiText("新密码", locale), 'New password')}</span><span className={styles.passwordField}><input aria-label={t(uiText("新密码", locale), 'New password')} type={recovery.showPassword ? 'text' : 'password'} autoComplete="new-password" minLength={8} value={recovery.password} onChange={event => recovery.setPassword(event.target.value)} disabled={busy} required aria-describedby="reset-password-hint" /><button type="button" aria-pressed={recovery.showPassword} onClick={() => recovery.setShowPassword(!recovery.showPassword)}>{recovery.showPassword ? t(uiText("隐藏", locale), 'Hide') : t(uiText("显示", locale), 'Show')}</button></span></label>
-          <small id="reset-password-hint">{t(uiText("至少 8 位，最多 72 个 UTF-8 字节；中文等字符占多个字节。", locale), 'At least 8 characters, up to 72 UTF-8 bytes; some characters use multiple bytes.')}</small>
+          <PasswordRequirements locale={locale} id="reset-password-hint" />
           <label><span>{t(uiText("再次输入新密码", locale), 'Confirm new password')}</span><input type={recovery.showPassword ? 'text' : 'password'} autoComplete="new-password" minLength={8} value={recovery.confirmation} onChange={event => recovery.setConfirmation(event.target.value)} disabled={busy} required /></label>
         </>}
         {issue}<button className={styles.primary} type="submit" disabled={busy || (stage === 'request' && !deliveryEnabled)}>{busy ? t(uiText("正在处理…", locale), 'Working…') : stage === 'reset' ? t(uiText("确认更新密码", locale), 'Update password') : t(uiText("发送重置链接", locale), 'Send reset link')} <span aria-hidden="true">→</span></button>

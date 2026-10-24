@@ -26,10 +26,11 @@ assert.equal(isPendingWeeklyInvitation({ ...pending, identityType: 'COACH', pass
 for (const change of [{ status: 'ACCEPTED' }, { user: null }, { team: {} }, { passwordMode: 'UNKNOWN' }, { identityType: 'ADMIN' }]) {
   assert.equal(isPendingWeeklyInvitation({ ...pending, ...change }), false)
 }
-assert.match(validateWeeklyInvitationPassword({ password: 'short', passwordMode: 'SET' }), /至少/)
+assert.match(validateWeeklyInvitationPassword({ password: 'short', passwordMode: 'SET' }), /8–64/)
 assert.match(validateWeeklyInvitationPassword({ password: 'test-pass', confirmation: 'not-same', passwordMode: 'SET' }), /不一致/)
 assert.equal(validateWeeklyInvitationPassword({ password: 'test-pass', passwordMode: 'CONFIRM' }), '')
-assert.equal(validateWeeklyInvitationPassword({ password: '中'.repeat(24), confirmation: '中'.repeat(24), passwordMode: 'SET' }), '')
+assert.match(validateWeeklyInvitationPassword({ password: '中'.repeat(24), confirmation: '中'.repeat(24), passwordMode: 'SET' }), /英文字母/)
+assert.equal(validateWeeklyInvitationPassword({ password: '中'.repeat(24), passwordMode: 'CONFIRM' }), '')
 assert.match(validateWeeklyInvitationPassword({ password: '中'.repeat(25), passwordMode: 'CONFIRM' }), /72/)
 assert.match(weeklyInvitationErrorMessage({ data: { error: 'ACCOUNT_LINK_INVITATION_EXPIRED' } }), /过期/)
 assert.match(weeklyInvitationErrorMessage({ data: { error: 'ACCOUNT_LINK_INVITATION_REVOKED' } }), /撤销/)
