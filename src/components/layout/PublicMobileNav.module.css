@@ -1,5 +1,6 @@
 .dock { display: none; }
 .menuTrigger { display: none; }
+.avatarAttention { display: none; }
 :global([data-design][data-design-edition] [data-phone-navigation='true']) .mobileBrand.mobileBrand { display: none; }
 .sheet { color: var(--fc-data-ink); color-scheme: light; }
 .destinations { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 8px 16px 16px; }
@@ -22,7 +23,7 @@
   .dock svg { width: 21px; height: 21px; }
   .dock [aria-current='page'], .dock [data-active='true'], .dock [aria-expanded='true'] { color: var(--fc-data-signal); box-shadow: inset 0 3px var(--fc-data-signal); }
   .dock :is(a, button):focus-visible { outline: 2px solid var(--fc-data-signal); outline-offset: -5px; }
-  .attention { position: absolute; width: 5px; height: 5px; right: 22%; top: 9px; background: var(--fc-data-signal); }
+  .avatarAttention { position: absolute; z-index: 2; top: 8px; right: 8px; display: block; width: 6px; height: 6px; background: var(--fc-data-signal); pointer-events: none; }
   .sheet.sheet { position: fixed; inset: auto 0 0; margin: 0; width: 100%; max-width: none; max-height: calc(100dvh - 64px); border: 0; border-top: 3px solid var(--fc-data-signal); border-radius: 0; padding-bottom: env(safe-area-inset-bottom); }
   .sheet > header { position: sticky; top: 0; z-index: 1; background: var(--fc-data-paper); }
   .sheet :global([aria-label='Language']) > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }

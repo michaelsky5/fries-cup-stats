@@ -9,12 +9,16 @@ export const PRIMARY_NAV = [
   { to: '/advance', cn: '晋级形势', en: 'ADVANCE', ko: '진출 현황', group: 'advance' },
   { to: '/roster', cn: '参赛阵容', en: 'ROSTER', ko: '참가 명단', group: 'roster' },
   { to: '/leaderboard', cn: '数据排行', en: 'STATS', ko: '데이터 순위', group: 'database' },
+  // 票 2.18: how to take part — registration, weekly confirmation and match rooms.
+  { to: '/play', cn: '参赛', en: 'PLAY', ko: '참가', group: 'play' },
   { to: '/me', cn: '我的空间', en: 'MY SPACE', ko: '내 공간', group: 'space' }
 ]
 
+const SPACE_NAV = PRIMARY_NAV.find(item => item.group === 'space')
+
 export function getPersonalNavItem(isAuthenticated = false) {
-  return isAuthenticated ? PRIMARY_NAV[5] : {
-    ...PRIMARY_NAV[5], cn: '我的关注', en: 'MY FOLLOWING', ko: '내 관심 목록'
+  return isAuthenticated ? SPACE_NAV : {
+    ...SPACE_NAV, cn: '我的关注', en: 'MY FOLLOWING', ko: '내 관심 목록'
   }
 }
 

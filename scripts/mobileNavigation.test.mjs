@@ -140,3 +140,18 @@ test('direct representative selection closes with Back without leaving the room 
   assert.equal(fromRoster.options.state.roomPanel.originKey, 'room-base')
   assert.equal(fromRoster.options.state.returnTo, room.state.returnTo)
 })
+
+test('票 2.18: 参赛 is its own Tab and remembers only its public page', async () => {
+  const { getPrimaryNavigation, getPersonalNavItem } = await import('../src/components/layout/publicNavigation.js')
+  assert.deepEqual(getPrimaryNavigation(false).map(item => item.group), ['overview', 'matches', 'advance', 'roster', 'database', 'play', 'space'])
+  assert.equal(getPersonalNavItem(false).cn, '我的关注')
+  assert.equal(getPersonalNavItem(true).cn, '我的空间')
+  assert.equal(getMobileNavigationGroup({ pathname: '/play' }), 'play')
+  assert.equal(getMobileNavigationGroup({ pathname: '/participate/FCW26' }), 'space', 'registration stays a personal flow, so tapping 参赛 returns to the 参赛 page')
+  assert.equal(sanitizeMobileNavigationPath('/play?season=FCW2026&lang=zh'), '/play?season=FCW2026&lang=zh')
+  const scope = getMobileNavigationScope('/?season=FCW2026', 'play')
+  rememberMobileTab(scope, 'play', { path: '/play?season=FCW2026', scrollY: 120 })
+  const target = buildMobileTabTarget(readMobileTab(scope, 'play'), '/play?season=FCW2026', 'play')
+  assert.equal(target.to, '/play?season=FCW2026')
+  assert.equal(target.state.restoreScrollY, 120)
+})

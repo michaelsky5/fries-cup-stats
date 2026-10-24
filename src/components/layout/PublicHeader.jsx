@@ -151,7 +151,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
   const location = useLocation()
   const fallbackMenuRef = useRef(null)
   const menuRef = mobileMenuRef || fallbackMenuRef
-  const headerNavItems = getPrimaryNavigation(isAuthenticated).filter(item => !season?.partnerTrial || !['advance', 'space'].includes(item.group))
+  const headerNavItems = getPrimaryNavigation(isAuthenticated).filter(item => !season?.partnerTrial || !['advance', 'play', 'space'].includes(item.group))
   const navPath = path => withSeason(getWeeklyNavigationPath(path, location.search, season?.rules?.weeklyCompetition?.enabled || season?.competitionFormat === 'WEEKLY'))
   const currentLabel = activeGroup === 'space' ? getNavLabel(getPersonalNavItem(isAuthenticated), layoutLocale) : activeNavLabel
   const phoneNavigation = isKprHybridDesign && !/^\/dev(?:\/|$)/.test(location.pathname) && !/\/room\/?$/.test(location.pathname)
@@ -284,6 +284,8 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
             )}
             <div className={styles.accountCluster} data-upgrade-account>
               {accountControl === undefined ? <AuthButton locale={compatibleLayoutLocale} seasonId={seasonId} /> : accountControl}
+              {/* 票 2.18: on phones 我的 lives behind the avatar, so its attention mark moves here from the tab bar. */}
+              {phoneNavigation && accountAttention?.visible ? <i className={mobileStyles.avatarAttention} role="img" aria-label={accountAttention.ariaLabel} /> : null}
             </div>
           </div>
         </div>
@@ -304,6 +306,6 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
         /> : null}
       </header>
       {showAccountModeSwitch ? <AccountModeSwitch locale={compatibleLayoutLocale} seasonId={seasonId} /> : null}
-      {phoneNavigation ? <PublicMobileNav items={headerNavItems} locale={layoutLocale} navPath={navPath} accountAttention={accountAttention} /> : null}
+      {phoneNavigation ? <PublicMobileNav items={headerNavItems} locale={layoutLocale} navPath={navPath} /> : null}
   </>)
 }
