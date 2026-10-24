@@ -83,6 +83,9 @@ export default function SignalWeeklySchedule() {
   const location = useLocation()
   const navigationType = useNavigationType()
   const previewId = useId()
+  const filtersId = useId()
+  // 票 2.20: on phones search, team, following-only and reset sit behind one 筛选 button.
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 901px)').matches)
   useEffect(() => {
     const media = window.matchMedia('(min-width: 901px)')
@@ -123,6 +126,7 @@ export default function SignalWeeklySchedule() {
     setParams(next, { replace: true, preventScrollReset: true })
   }
   const reset = () => setParams(resetWeeklyScheduleSearch(params), { replace: true, preventScrollReset: true })
+  const activeFilters = [query, teamId, followedOnly].filter(Boolean).length
   const returnProps = { state: getReturnState(location), onClick: () => saveReturnScroll(location) }
   const overviewPath = withSeason(weeklyPeriodPath('/', cycle, week))
   const shownStatuses = WEEKLY_SCHEDULE_STATUSES.filter((key, index) => index < 4 || counts[key] || model.activeStatus === key)
@@ -140,12 +144,13 @@ export default function SignalWeeklySchedule() {
       <div className={styles.headingActions}>
         <WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, match: null, teamId: null, expanded: null })} />
         <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">↗</span><small>{t(uiText("赛况与赛段积分", locale), 'Matches & cycle points')}</small></Link>
+        <button type="button" className={styles.filterToggle} aria-expanded={filtersOpen} aria-controls={filtersId} onClick={() => setFiltersOpen(open => !open)}>{t(uiText("筛选", locale), 'Filters')}{activeFilters ? <b>{activeFilters}</b> : <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M6 10h8M8 15h4" /></svg>}</button>
       </div>
     </header>
     <WeeklyWeekRail weeks={weeks} selectedId={selectedWeekId} locale={locale} includeAll onChange={id => change({ week: id, match: null, expanded: null })} />
     <div className={styles.workspace}>
       <div className={styles.listColumn}>
-        <div className={styles.filters}>
+        <div className={styles.filters} id={filtersId} data-open={filtersOpen || undefined}>
           <label className={styles.search}><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg><ImeSafeInput type="search" value={query} onValueChange={value => change({ query: value })} placeholder={t(uiText("搜索队伍或比赛编号…", locale), 'Search teams or match numbers…')} aria-label={t(uiText("搜索周赛队伍或比赛编号", locale), 'Search weekly teams or match numbers')} /></label>
           <label className={styles.teamFilter}><span>{t(uiText("队伍", locale), 'Team')}</span><select value={teamId} onChange={event => change({ teamId: event.target.value })} aria-label={t(uiText("筛选队伍", locale), 'Filter team')}>
             <option value="">{t(uiText("全部队伍", locale), 'All teams')}</option>

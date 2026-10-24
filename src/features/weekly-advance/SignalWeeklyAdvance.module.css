@@ -247,3 +247,17 @@
   .nextNumber { font-size: 32px; }
   .nextStages h2 { font-size: 21px; }
 }
+
+/* 票 2.20: phone header budget — the dock and status line already say where you are. */
+@media (max-width: 600px) {
+  .heading { padding: 6px 0 4px; gap: 0; }
+  .heading .eyebrow, .heading > div:first-child > p { display: none; }
+  .heading h1 { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .headingActions { width: 100%; align-items: center; }
+  .overviewLink { display: none; }
+  .headingActions [data-weekly-cycle-picker] { border-right: 0; padding-right: 0; }
+  .headingActions [data-weekly-cycle-picker] > span { display: none; } /* cycle status: the status line and placements show it */
+  .page [data-weekly-phase-index] { min-height: 44px; }
+  .page [data-weekly-phase-index] a { min-height: 44px; padding-block: 6px; }
+  .page [data-weekly-phase-index] a > small { display: none; }
+}

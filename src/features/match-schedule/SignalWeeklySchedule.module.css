@@ -351,3 +351,19 @@
 @media (max-width: 600px) {
   :global([data-locale^='zh']) .dayHeading h3::after { content: none; }
 }
+
+/* 票 2.20: phone header budget. One 筛选 button replaces the always-open filter rows,
+   the week rail reads on one line, and the list title stays for screen readers only. */
+.filterToggle { display: none; }
+@media (max-width: 600px) {
+  .overviewLink { display: none; }
+  .headingActions { justify-content: space-between; }
+  .headingActions [data-weekly-cycle-picker] { border-right: 0; padding-right: 0; }
+  .filterToggle { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; min-width: 44px; min-height: 44px; padding: 0 12px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised); color: var(--fc-data-ink); font-size: 13px; }
+  .filterToggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+  .filterToggle b { display: grid; place-items: center; min-width: 20px; min-height: 20px; padding-inline: 4px; background: var(--fc-data-ink); color: var(--fc-data-signal); font-size: 12px; }
+  .filterToggle[aria-expanded='true'] { background: var(--fc-data-ink); color: var(--fc-data-paper); }
+  .filters:not([data-open]) { display: none; }
+  .filters[data-open] { padding: 4px 0 8px; border-bottom: 1px solid var(--line); }
+  .listHeading { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}

@@ -41,4 +41,7 @@
   .weekRail { grid-auto-columns: minmax(112px, 1fr); }
   .weekRail .weekItem { display: grid; min-height: 64px; gap: 6px; }
   .weekItem > span { gap: 6px; }
+  /* 票 2.20: one line per week on phones — 「04 第 4 周 已结束」. */
+  .weekRail { grid-auto-columns: max-content; }
+  .weekRail .weekItem { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; min-height: 44px; gap: 8px; }
 }
