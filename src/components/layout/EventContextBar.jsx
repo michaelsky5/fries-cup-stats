@@ -203,7 +203,8 @@ export default function EventContextBar({
         <span>{statusLabel}</span>
       </div>
       <div className={styles.directoryData} role="status">
-        <div className={styles.directoryStamp}><strong>{dataStatus?.label || contextText(locale, uiText("数据更新于", locale), 'Updated', '업데이트')}</strong><time>{updatedAtText || '—'}</time></div>
+        {/* While the first snapshot loads there is no update time yet; don't print 「暂无数据」 beside 「正在载入」. */}
+        <div className={styles.directoryStamp}><strong>{dataStatus?.label || contextText(locale, uiText("数据更新于", locale), 'Updated', '업데이트')}</strong>{dataStatus?.key === 'loading' ? null : <time>{updatedAtText || '—'}</time>}</div>
         {directoryNotice ? <p>{directoryNotice}</p> : null}
       </div>
       {dataStatus?.notice && onRetry ? <button type="button" className={styles.directoryRetry} onClick={onRetry} disabled={isSyncing}>{isSyncing ? dataStatus.refreshingLabel : dataStatus.retryLabel}</button> : null}
@@ -247,7 +248,7 @@ export default function EventContextBar({
         </span> : null}
         {!isHeaderPlacement ? <span className={styles.updatedMeta} title={`${dataStatus?.label || ''} ${updatedAtText || '—'}`}>
           <span>{dataStatus?.label || contextText(locale, uiText("数据更新于", locale), 'Updated', '업데이트')}</span>
-          <time>{updatedAtText || '—'}</time>
+          {dataStatus?.key === 'loading' ? null : <time>{updatedAtText || '—'}</time>}
         </span> : null}
         {!isHeaderPlacement && !isContentPlacement ? <a href="https://fries-cup.com/" className={styles.homeLink}>
           HOME

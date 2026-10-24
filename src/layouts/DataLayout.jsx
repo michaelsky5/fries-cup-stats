@@ -100,6 +100,8 @@ function getNavActiveGroup(pathname, search = '') {
   return ''
 }
 
+const SKELETON_ROWS = [0, 1, 2, 3, 4]
+
 export default function DataLayout() {
   const shellRef = useRef(null)
   const mobileMenuRef = useRef(null)
@@ -145,6 +147,8 @@ export default function DataLayout() {
   const isKprSamplePage = /^(?:\/|\/leaderboard\/?)$/.test(location.pathname) ||
     (isKprHybridDesign && /^\/(?:matches|advance)(?:\/)?$/.test(location.pathname))
   const isFdSamplePage = /^(?:\/leaderboard|\/teams\/[^/]+)\/?$/.test(location.pathname)
+  // Pages whose frame spans the window and carry their own side gutters.
+  const isFullBleedFrame = location.pathname === '/' || isTeamArchiveRoute || isPlayerArchiveRoute
   const {
     accountDataError,
     accountIdentities,
@@ -448,7 +452,15 @@ export default function DataLayout() {
       <div className={styles.pageFrame} data-roster-index={isRosterIndexRoute || undefined} data-roster-directory={isRosterDirectoryRoute || undefined} data-schedule-directory={isScheduleDirectoryRoute || undefined} data-match-detail={isPublicMatchDetailRoute || undefined} data-player-rankings={isPlayerRankingsRoute || undefined} data-hero-data={isHeroDataRoute || undefined} data-map-data={isMapDataRoute || undefined} data-data-section={isEditorialDataRoute || undefined} data-team-archive={isTeamArchiveRoute || undefined}>
         <main className={styles.main} aria-busy={isLoading && needsPublicSnapshot ? 'true' : 'false'}>
           <PartnerTrialNotice season={season} locale={layoutLocale} />
-          {isLoading && needsPublicSnapshot ? (
+          {isLoading && needsPublicSnapshot && isKprHybridDesign ? (
+            // 票 2.17: the header and status bar are already drawn; a page-shaped placeholder holds the
+            // content area until the snapshot arrives. The full-page box below is left to the preview designs.
+            <div className={styles.pageSkeleton} data-page-skeleton data-bleed={isFullBleedFrame || undefined} role="status" aria-live="polite">
+              <span className={styles.skeletonLabel}>{t('layout.state.loading')}</span>
+              <div className={styles.skeletonCard} aria-hidden="true"><i /><i /><i /><span><i /><i /></span></div>
+              <ul className={styles.skeletonRows} aria-hidden="true">{SKELETON_ROWS.map(row => <li key={row}><i /><i /></li>)}</ul>
+            </div>
+          ) : isLoading && needsPublicSnapshot ? (
             <div className={`${styles.systemBox} ${styles.syncBox}`} role="status" aria-live="polite">
               <span className={styles.syncKicker}>{pickUiLocale(layoutLocale, '赛事数据同步', 'LIVE DATA SYNC', 'LIVE DATA SYNC', '賽事數據同步')}</span>
               <div className={styles.syncMark} aria-hidden="true"><span /></div>

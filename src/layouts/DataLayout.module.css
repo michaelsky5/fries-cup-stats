@@ -828,3 +828,28 @@
   .dataNoticeCompact .dataRetry { max-width: 100px; padding-top: 0; }
   .pageFrame[data-roster-index="true"] .dataNoticeCompact { margin-bottom: 12px; }
 }
+
+/* 票 2.17: page-shaped placeholder while the first snapshot loads (hybrid design). */
+.pageSkeleton { display: grid; gap: 16px; margin: 16px 0 0; }
+.pageSkeleton[data-bleed] { padding-inline: var(--kpr-gutter, clamp(20px, 3.4vw, 64px)); }
+.skeletonLabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skeletonCard { display: grid; gap: 12px; padding: 18px 20px 20px; border-top: 3px solid var(--fc-data-ink, #181a17); background: var(--fc-data-paper-raised, #f6f5ef); }
+.skeletonCard i, .skeletonRows i { display: block; height: 12px; background: var(--fc-data-paper-deep, #e4e3db); animation: skeletonPulse 1.1s ease-in-out infinite alternate; }
+.skeletonCard > i:nth-child(1) { width: 28%; }
+.skeletonCard > i:nth-child(2) { width: 58%; height: 30px; }
+.skeletonCard > i:nth-child(3) { width: 72%; height: 14px; }
+.skeletonCard > span { display: flex; gap: 10px; margin-top: 4px; }
+.skeletonCard > span i { width: 132px; height: 44px; }
+.skeletonRows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--fc-data-line, rgb(24 26 23 / 15%)); }
+.skeletonRows li { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 52px; border-bottom: 1px solid var(--fc-data-line, rgb(24 26 23 / 15%)); }
+.skeletonRows li i:first-child { width: min(46%, 320px); }
+.skeletonRows li:nth-child(even) i:first-child { width: min(36%, 240px); }
+.skeletonRows li i:last-child { width: 64px; }
+@keyframes skeletonPulse { from { opacity: 0.5; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .skeletonCard i, .skeletonRows i { animation: none; } }
+@media (max-width: 600px) {
+  .pageSkeleton { gap: 12px; margin-top: 12px; }
+  .skeletonCard { padding: 14px 14px 16px; }
+  .skeletonCard > i:nth-child(2) { height: 26px; }
+  .skeletonCard > span i { flex: 1 1 0; width: auto; }
+}
