@@ -44,6 +44,13 @@ function lazyReviewStory(storyType) {
   }
 }
 
+// 票 2.14: bare review links open a season whose review is open (see getReviewSeasonRedirect).
+async function reviewSeasonLoader({ request }) {
+  const { getReviewSeasonRedirect } = await import('../config/seasons.js')
+  const target = getReviewSeasonRedirect(new URL(request.url))
+  return target ? redirect(target) : null
+}
+
 function ScheduleRedirect() {
   const location = useLocation()
   const params = new URLSearchParams(location.search)
@@ -176,7 +183,7 @@ const router = createBrowserRouter([
       { path: 'maps', lazy: lazyDefault(() => import('../pages/stats/MapStatsPage.jsx')) },
       { path: 'maps/:mapName', lazy: lazyDefault(() => import('../pages/stats/MapDetailPage.jsx')) },
 
-      { path: 'review', lazy: lazyDefault(() => import('../pages/review/ReviewEntryPage.jsx')) },
+      { path: 'review', loader: reviewSeasonLoader, lazy: lazyDefault(() => import('../pages/review/ReviewEntryPage.jsx')) },
 
       { path: 'fantasy', lazy: lazyDefault(() => import('../EsportsManagerClassic/pages/FantasyPage.jsx')) },
       { path: 'fantasy-classic', lazy: lazyDefault(() => import('../EsportsManagerClassic/pages/FantasyPage.jsx')) },
@@ -187,11 +194,11 @@ const router = createBrowserRouter([
     ]
   },
 
-  { path: '/review/story/tournament', HydrateFallback: RouteFallback, lazy: lazyReviewStory('tournament') },
-  { path: '/review/story/person/:identityKey', HydrateFallback: RouteFallback, lazy: lazyReviewStory('person') },
-  { path: '/review/story/player/:playerId', HydrateFallback: RouteFallback, lazy: lazyReviewStory('player') },
-  { path: '/review/story/team/:teamId', HydrateFallback: RouteFallback, lazy: lazyReviewStory('team') },
-  { path: '/review/story/staff/:staffType/:staffKey', HydrateFallback: RouteFallback, lazy: lazyReviewStory('staff') },
+  { path: '/review/story/tournament', loader: reviewSeasonLoader, HydrateFallback: RouteFallback, lazy: lazyReviewStory('tournament') },
+  { path: '/review/story/person/:identityKey', loader: reviewSeasonLoader, HydrateFallback: RouteFallback, lazy: lazyReviewStory('person') },
+  { path: '/review/story/player/:playerId', loader: reviewSeasonLoader, HydrateFallback: RouteFallback, lazy: lazyReviewStory('player') },
+  { path: '/review/story/team/:teamId', loader: reviewSeasonLoader, HydrateFallback: RouteFallback, lazy: lazyReviewStory('team') },
+  { path: '/review/story/staff/:staffType/:staffKey', loader: reviewSeasonLoader, HydrateFallback: RouteFallback, lazy: lazyReviewStory('staff') },
   { path: '/scouting/:shareKey', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/scouting/ScoutingReportRoute.jsx')) },
   { path: '/scouting/:shareKey/players/:playerId', HydrateFallback: RouteFallback, lazy: lazyNamed(() => import('../pages/scouting/ScoutingReportRoute.jsx'), 'ScoutingPlayerRoute') },
   { path: '*', element: <RouteErrorPage notFound /> }

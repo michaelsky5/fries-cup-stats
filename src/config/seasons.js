@@ -517,6 +517,22 @@ export function getSeasonRules(season, db) {
   }
 }
 
+// 票 2.14: the newest official season whose review is open.
+export function getLatestReviewSeasonId(seasons = SEASONS) {
+  return seasons.find(season => season.reviewEnabled === true && getSeasonEventKind(season) === 'OFFICIAL')?.id || null
+}
+
+// A review link without ?season= opens the visitor's season when it has a review, otherwise the
+// newest season with an open review, and says so in the address bar. Links naming a season stay as they are.
+export function getReviewSeasonRedirect(url, currentSeasonId = getStoredSeasonId()) {
+  if (url.searchParams.has(SEASON_URL_PARAM) || getSeasonById(currentSeasonId).reviewEnabled === true) return null
+  const latest = getLatestReviewSeasonId()
+  if (!latest) return null
+  const next = new URL(url)
+  next.searchParams.set(SEASON_URL_PARAM, getSeasonById(latest).publicCode)
+  return `${next.pathname}${next.search}${next.hash}`
+}
+
 export function seasonHasReview(season, db) {
   return isReviewReady(season, db)
 }
