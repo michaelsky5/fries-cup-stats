@@ -8,6 +8,7 @@ import AuthButton from '../../features/auth/AuthDialog.jsx'
 import AccountModeSwitch from '../../features/auth/AccountModeSwitch.jsx'
 import { useAuth } from '../../features/auth/AuthProvider.jsx'
 import EventContextBar from './EventContextBar.jsx'
+import SiteSearch from '../../features/site-search/SiteSearch.jsx'
 import PublicMobileNav, { PublicMobileMenu } from './PublicMobileNav.jsx'
 import mobileStyles from './PublicMobileNav.module.css'
 import { getPrimaryNavigation, getPersonalNavItem, getNavLabel, getWeeklyNavigationPath } from './publicNavigation.js'
@@ -257,6 +258,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
                 placement="header"
               />
             ) : null}
+            {isKprHybridDesign && showSeason ? <SiteSearch seasonId={seasonId} locale={layoutLocale} withSeason={withSeason} /> : null}
             {phoneNavigation ? <PublicMobileMenu items={headerNavItems} locale={layoutLocale} navPath={navPath} reviewAvailable={Boolean(season?.reviewEnabled)} personalAvailable={!season?.partnerTrial}>
               {showLanguage ? <LanguageMenu locale={layoutLocale} mobile onLocaleChange={handleLocaleChange} /> : null}
             </PublicMobileMenu> : null}
