@@ -1,4 +1,5 @@
 import { platformRequest } from '../auth/platformApi.js'
+import { assertNewPassword } from '../auth/passwordPolicy.js'
 
 export async function fetchAccountProfile(options = {}) {
   const data = await platformRequest('/me/profile', options)
@@ -25,6 +26,7 @@ export async function revokeOtherAccountSessions() {
 }
 
 export async function changeAccountPassword(currentPassword, newPassword) {
+  assertNewPassword(newPassword)
   return platformRequest('/me/password', {
     method: 'PATCH',
     body: { currentPassword, newPassword }

@@ -26,6 +26,7 @@ import {
   emailVerificationNotice, validateAccountPassword
 } from '../../features/account-security/accountFoundationSettings.js'
 import styles from './AccountSettingsPage.module.css'
+import PasswordRequirements from '../../features/auth/PasswordRequirements.jsx'
 
 const SECTIONS = [
   ['overview', '00', '账号概览', 'OVERVIEW'],
@@ -167,7 +168,7 @@ function PasswordSettings({ user, onRevoked, onDirtyChange }) {
   async function submit(event) {
     event.preventDefault()
     if (lock.current) return
-    const error = validateAccountPassword(form)
+    const error = validateAccountPassword(form, uiLocale)
     if (error) { setNotice({ tone: 'error', text: error }); return }
     lock.current = true
     setBusy(true)
@@ -195,7 +196,7 @@ function PasswordSettings({ user, onRevoked, onDirtyChange }) {
       <fieldset disabled={busy} className={styles.fields}>
         {[['currentPassword', '当前密码', 'current-password'], ['newPassword', '新密码', 'new-password'], ['confirmation', '确认新密码', 'new-password']].map(([key, label, autoComplete]) => <div className={key === 'currentPassword' ? styles.wide : undefined} key={key}><label htmlFor={key}>{label}</label><div className={styles.passwordInput}><input id={key} type={visible[key] ? 'text' : 'password'} name={key} autoComplete={autoComplete} required minLength={key === 'currentPassword' ? undefined : 8} value={form[key]} onChange={event => setForm(current => ({ ...current, [key]: event.target.value }))} aria-describedby="password-hint" /><button type="button" aria-label={`${visible[key] ? '隐藏' : '显示'}${label}`} aria-pressed={Boolean(visible[key])} onClick={() => setVisible(value => ({ ...value, [key]: !value[key] }))}>{visible[key] ? uiText("隐藏", uiLocale) : uiText("显示", uiLocale)}</button></div></div>)}
       </fieldset>
-      <p id="password-hint" className={styles.hint}>{uiText("新密码至少 8 位，不超过 72 个 UTF-8 字节；中文字符会占用多个字节。", uiLocale)}</p>
+      <PasswordRequirements locale={uiLocale} id="password-hint" />
       <div className={styles.securityImpact}><strong>{uiText("更新后需要重新登录", uiLocale)}</strong><p>{uiText("当前设备和其他设备都会退出。请确认你能使用新密码重新登录。", uiLocale)}</p></div>
       <div className={styles.saveBar}><span className={styles.hint}>{uiText("仅提交后才会更新密码", uiLocale)}</span><button className={styles.primary} disabled={busy || !dirty}>{busy ? uiText("正在更新…", uiLocale) : uiText("更新密码并退出登录", uiLocale)}</button></div>
     </form>}

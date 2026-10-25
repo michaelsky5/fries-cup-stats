@@ -27,9 +27,10 @@ const password = { currentPassword: 'old-password', newPassword: 'new-password',
 assert.equal(validateAccountPassword(password), '')
 assert.match(validateAccountPassword({ ...password, confirmation: 'different' }), /不一致/)
 assert.match(validateAccountPassword({ ...password, newPassword: 'old-password' }), /不同/)
-assert.match(validateAccountPassword({ ...password, newPassword: '短' }), /8 位/)
-assert.match(validateAccountPassword({ ...password, newPassword: '中'.repeat(25) }), /72/)
-assert.equal(validateAccountPassword({ ...password, newPassword: '中'.repeat(24), confirmation: '中'.repeat(24) }), '')
+assert.match(validateAccountPassword({ ...password, newPassword: '短' }), /8–64/)
+assert.match(validateAccountPassword({ ...password, newPassword: '中'.repeat(25) }), /英文字母/)
+assert.match(validateAccountPassword({ ...password, newPassword: '中'.repeat(24), confirmation: '中'.repeat(24) }), /英文字母/)
+assert.equal(validateAccountPassword({ currentPassword: '原有密码12345', newPassword: 'A'.repeat(64), confirmation: 'A'.repeat(64) }), '')
 
 assert.equal(emailVerificationNotice({ status: 'SENT', result: { delivered: false } }).tone, 'error')
 assert.equal(emailVerificationNotice({ status: 'UNDELIVERED' }).tone, 'error')

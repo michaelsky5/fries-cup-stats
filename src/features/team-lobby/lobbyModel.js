@@ -1,5 +1,6 @@
 import { lobbyText as t } from './lobbyCopy.js'
 import { getActiveLocale } from '../../lib/locales.js'
+import { passwordPolicyHint } from '../auth/passwordPolicy.js'
 export const LOBBY_ROLES = [{ value: 'TANK', label: '重装' }, { value: 'DPS', label: '输出' }, { value: 'SUP', label: '支援' }]
 export const roleLabel = role => t(LOBBY_ROLES.find(item => item.value === role)?.label || role)
 export const statusLabel = state => ({ ACTIVE: t("展示中"), CLOSED: t("已关闭"), EXPIRED: t("已到期"), HIDDEN: t("管理员隐藏"), PENDING: t("待核对"), RETURNED: t("退回修改"), APPROVED: t("核对通过"), REJECTED: t("未通过"), WITHDRAWN: t("已撤回") })[state] || state
@@ -24,6 +25,7 @@ export function leavesLobbyPage(current, next) {
 }
 export function accountFailure(error) {
   const quotaCode = error.data?.error || error.data?.code
+  if (quotaCode === 'PASSWORD_POLICY') return passwordPolicyHint(getActiveLocale())
   if (['REGISTRATION_CAPACITY_REACHED', 'EMAIL_QUOTA_RESERVED'].includes(quotaCode)) {
     const message = quotaCode === 'REGISTRATION_CAPACITY_REACHED'
       ? t("本批注册名额已用完，已有账号仍可登录。")

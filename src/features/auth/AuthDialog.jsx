@@ -7,6 +7,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthProvider.jsx'
 import useAccountCompetition from '../my-space/useAccountCompetition.js'
 import PasswordRecoveryPanel from './PasswordRecoveryPanel.jsx'
+import PasswordRequirements from './PasswordRequirements.jsx'
+import { passwordPolicyHint } from './passwordPolicy.js'
 import usePasswordRecovery from './usePasswordRecovery.js'
 import { passwordRecoveryTitle, readPasswordResetLocation } from './passwordRecoveryModel.js'
 import styles from './AuthDialog.module.css'
@@ -26,7 +28,8 @@ function getAuthErrorText(error, locale) {
     : uiText("请求未完成，请稍后重试。", locale)
 
   if (!error) return ''
-  const errorCode = error?.data?.error
+  const errorCode = error?.data?.error || error?.data?.code
+  if (errorCode === 'PASSWORD_POLICY') return passwordPolicyHint(locale)
   if (errorCode === 'REGISTRATION_DISABLED') return locale === 'en-US' ? 'Access is by invitation. Open the link from your organizer or team captain.' : uiText("当前采用邀请制，请打开赛事负责人或队长提供的邀请链接。", locale)
   if (errorCode === 'ORIGIN_NOT_ALLOWED') return locale === 'en-US' ? 'This site is not connected to the account service yet.' : uiText("当前站点尚未接通账号服务，请联系赛事负责人。", locale)
   if (errorCode === 'EMAIL_DELIVERY_UNAVAILABLE') return locale === 'en-US' ? 'Email delivery is not available yet.' : uiText("邮件服务暂未开放，请联系赛事负责人。", locale)
@@ -325,6 +328,7 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
 
                 {['register', 'reset'].includes(mode) ? (
                   <div className={styles.field}>
+                    <PasswordRequirements locale={locale} />
                     <label htmlFor="fries-cup-auth-confirm-password">{copy.confirmPassword}</label>
                     <input
                       id="fries-cup-auth-confirm-password"
