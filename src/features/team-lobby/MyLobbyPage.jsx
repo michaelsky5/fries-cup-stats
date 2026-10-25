@@ -63,9 +63,13 @@ function MyCard({ card, canWrite, busy, act }) {
   useUiLocale()
 
   const [reason, setReason] = useState('PAUSED')
-  return <article className={styles.card}><div className={styles.cardTop}><span>{card.kind === 'PERSON' ? t("个人求队") : t("队伍招募")}</span><strong>{statusLabel(card.state)}</strong></div><h2>{card.title}</h2>
-    <p>{t("有效至")} {lobbyDate(card.expiresAt)}</p>{card.moderationReason && <p className={styles.error}>{card.moderationReason}</p>}
-    <div className={styles.actions}><Link to={`/lobby/me/cards/${card.id}/edit`}>{t("编辑资料")}</Link>{card.state !== 'HIDDEN' && <button disabled={busy || !canWrite} onClick={() => act(() => api.changeCard(card.id, { action: 'RENEW', revision: card.revision, operationId: crypto.randomUUID() }))}>{t("确认仍有需求，续期 14 天")}</button>}</div>
-    {card.state !== 'CLOSED' && <div className={styles.closeCard}><label>{t("关闭原因")}<select value={reason} onChange={event => setReason(event.target.value)} disabled={busy}><option value="PAUSED">{t("暂停需求")}</option><option value="FILLED">{card.kind === 'PERSON' ? t("已找到队伍") : t("已招满")}</option></select></label><button disabled={busy} onClick={() => act(() => api.changeCard(card.id, { action: 'CLOSE', reason: reason === 'PAUSED' ? t('暂停需求') : card.kind === 'PERSON' ? t('已找到队伍') : t('已招满'), revision: card.revision, operationId: crypto.randomUUID() }))}>{t("关闭需求")}</button></div>}
+  const offline = ['EXPIRED', 'CLOSED'].includes(card.state)
+  // Stored close reasons stay in one language whatever the viewer's language.
+  const storedReason = reason === 'PAUSED' ? '暂停需求' : card.kind === 'PERSON' ? '已找到队伍' : '已招满'
+  return <article className={styles.card}><div className={styles.cardTop}><span>{card.kind === 'PERSON' ? t("个人求队") : t("队伍招募")}</span><strong>{statusLabel(card.state)}</strong></div>
+    <h2>{card.state === 'ACTIVE' ? <Link to={`/lobby/cards/${card.publicId}`}>{card.title}</Link> : card.title}</h2>
+    <p>{card.state === 'CLOSED' ? t("已关闭，不在大厅展示") : card.state === 'EXPIRED' ? t("已于 {0} 到期", [lobbyDate(card.expiresAt)]) : <>{t("有效至")} {lobbyDate(card.expiresAt)}</>}</p>{card.moderationReason && <p className={styles.error}>{card.moderationReason}</p>}
+    <div className={styles.actions}><Link to={`/lobby/me/cards/${card.id}/edit`}>{t("编辑资料")}</Link>{card.state !== 'HIDDEN' && <button disabled={busy || !canWrite} onClick={() => act(() => api.changeCard(card.id, { action: 'RENEW', revision: card.revision, operationId: crypto.randomUUID() }))}>{offline ? t("重新发布，展示 14 天") : t("确认仍有需求，续期 14 天")}</button>}</div>
+    {card.state !== 'CLOSED' && <div className={styles.closeCard}><label>{t("关闭原因")}<select value={reason} onChange={event => setReason(event.target.value)} disabled={busy}><option value="PAUSED">{t("暂停需求")}</option><option value="FILLED">{card.kind === 'PERSON' ? t("已找到队伍") : t("已招满")}</option></select></label><button disabled={busy} onClick={() => act(() => api.changeCard(card.id, { action: 'CLOSE', reason: storedReason, revision: card.revision, operationId: crypto.randomUUID() }))}>{t("关闭需求")}</button></div>}
   </article>
 }

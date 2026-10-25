@@ -376,6 +376,18 @@ rows.push(
   ['这一页已经没有需求了', 'No cards on this page', '이 페이지에는 카드가 없습니다', '這一頁已經沒有需求了'],
   ['回到第一页', 'Back to page 1', '첫 페이지로', '回到第一頁']
 )
+// Closed or expired cards: editing alone keeps them hidden, so say how to republish.
+rows.push(
+  ['这张卡片已于 {0} 到期，目前不在大厅展示。核对预览后选择“保存并重新发布”，即可重新展示 14 天。', 'This card expired on {0} and is not shown in the lobby. After reviewing the preview, choose “Save and republish” to show it for 14 days.', '이 카드는 {0}에 만료되어 팀 찾기에 표시되지 않습니다. 미리보기를 확인한 뒤 ‘저장 후 다시 게시’를 선택하면 14일간 다시 표시됩니다.', '這張卡片已於 {0} 到期，目前不在大廳展示。核對預覽後選擇「儲存並重新發布」，即可重新展示 14 天。'],
+  ['这张卡片已关闭，目前不在大厅展示。核对预览后选择“保存并重新发布”，即可重新展示 14 天。', 'This card is closed and is not shown in the lobby. After reviewing the preview, choose “Save and republish” to show it for 14 days.', '이 카드는 닫혀 있어 팀 찾기에 표시되지 않습니다. 미리보기를 확인한 뒤 ‘저장 후 다시 게시’를 선택하면 14일간 다시 표시됩니다.', '這張卡片已關閉，目前不在大廳展示。核對預覽後選擇「儲存並重新發布」，即可重新展示 14 天。'],
+  ['保存并重新发布', 'Save and republish', '저장 후 다시 게시', '儲存並重新發布'],
+  ['仅保存资料', 'Save only', '저장만 하기', '僅儲存資料'],
+  ['资料已保存，但重新发布没有完成：{0}', 'Your details were saved, but republishing did not finish: {0}', '내용은 저장되었지만 다시 게시하지 못했습니다: {0}', '資料已儲存，但重新發布沒有完成：{0}'],
+  ['到我的组队重新发布', 'Republish from My lobby', '내 팀 찾기에서 다시 게시', '到我的組隊重新發布'],
+  ['重新发布，展示 14 天', 'Republish for 14 days', '다시 게시 (14일)', '重新發布，展示 14 天'],
+  ['已于 {0} 到期', 'Expired {0}', '{0} 만료', '已於 {0} 到期'],
+  ['已关闭，不在大厅展示', 'Closed · not shown in the lobby', '닫힘 · 팀 찾기에 표시되지 않음', '已關閉，不在大廳展示']
+)
 export const lobbyCopyRows = rows
 const copy = new Map(rows.map(([source, en, ko, tw]) => [source, { 'en-US': en, 'ko-KR': ko, 'zh-TW': tw }]))
 export const hasLobbyCopy = source => copy.has(source)

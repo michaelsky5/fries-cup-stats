@@ -114,7 +114,12 @@ function Editor({ data, cardId, formation, query }) {
   const seed = prior || (kind === 'TEAM' && !formation ? data.formations.find(item => item.status === 'APPROVED' && item.teamId === sourceTeamId) : null)
   const initial = seed ? { ...blank, ...seed, title: seed.title || seed.name, counts: Object.fromEntries((seed.needs || []).map(item => [item.role, item.count])) } : blank
   const [form, setForm] = useState(initial), [preview, setPreview] = useState(false), [error, setError] = useState(null), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false)
-  const lock = useRef(false), operation = useRef(crypto.randomUUID()), committed = useRef(false)
+  const lock = useRef(false), operation = useRef(crypto.randomUUID()), committed = useRef(false), renewOperation = useRef(crypto.randomUUID())
+  // Editing never changes visibility. A closed or expired card needs the same
+  // explicit renew that My lobby uses, so offer it here instead of a silent save.
+  const republishable = !formation && ['EXPIRED', 'CLOSED'].includes(prior?.state)
+  const [savedOnly, setSavedOnly] = useState(null), savedRef = useRef(null)
+  useEffect(() => { if (savedOnly) revealAlert(savedRef.current) }, [savedOnly])
   const blocker = useBlocker(({ currentLocation, nextLocation }) => dirty && !committed.current && leavesLobbyPage(currentLocation, nextLocation))
   useEffect(() => { if (!dirty) return undefined; const warn = event => { event.preventDefault(); event.returnValue = '' }; window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn) }, [dirty])
   const field = key => ({ name: key, value: form[key], onChange: event => { setForm(current => ({ ...current, [key]: event.target.value })); setDirty(true) }, disabled: busy })
@@ -142,19 +147,29 @@ function Editor({ data, cardId, formation, query }) {
     if (blank) { reportInvalidField(formElement.elements.namedItem(blank[0]), t("请填写「{0}」，不能只输入空格。", [blank[1]])); return }
     if (!form.roles.length) { if (!reportInvalidField(formElement.querySelector('input[name=roles]'), t("请至少选择一个岗位。"))) setError(new Error(t("请至少选择一个岗位。"))); return }
     if (!preview) { setPreview(true); return }
+    const republish = republishable && event.nativeEvent?.submitter?.value !== 'save'
     lock.current = true; setBusy(true); setError(null)
     const payload = { roles: form.roles, availability: text('availability'), goal: text('goal'), bio: text('bio'), operationId: operation.current, ...(prior ? { revision: prior.revision } : {}) }
     if (kind === 'TEAM') payload.needs = form.roles.map(role => ({ role, count: Number(form.counts[role] || 1) }))
     try {
       if (formation) await api.saveFormation({ ...payload, name: text('title') }, application?.id)
-      else await api.saveCard({ ...payload, kind, title: kind === 'TEAM' ? sources.find(item => item.value === source)?.name || t("队伍招募") : text('title'),
-        level: text('level'), heroes: text('heroes'), ...(kind === 'TEAM' ? source.startsWith('organization:') ? { organizationId: source.slice(13) } : { teamId: source.slice(5) } : {}) })
+      else {
+        const saved = await api.saveCard({ ...payload, kind, title: kind === 'TEAM' ? sources.find(item => item.value === source)?.name || t("队伍招募") : text('title'),
+          level: text('level'), heroes: text('heroes'), ...(kind === 'TEAM' ? source.startsWith('organization:') ? { organizationId: source.slice(13) } : { teamId: source.slice(5) } : {}) })
+        if (republish) {
+          try { await api.changeCard(saved.card.id, { action: 'RENEW', revision: saved.card.revision, operationId: renewOperation.current }) }
+          // The details are saved; renewing again from My lobby is safe and visible.
+          catch (failure) { committed.current = true; setDirty(false); setSavedOnly(failure); return }
+        }
+      }
       committed.current = true; setDirty(false); navigate(formation ? '/lobby/me?tab=formation' : '/lobby/me?tab=cards', { replace: true })
     } catch (failure) { setError(failure) } finally { lock.current = false; setBusy(false) }
   }
   return <><div className={styles.pageHeading}><div><span className={styles.eyebrow}>{formation ? 'FORM A TEAM' : 'PUBLISH'}</span><h1>{formation ? t("申请筹建招募") : kind === 'PERSON' ? prior ? t("编辑我的求队卡") : t("发布我的求队") : t("队伍招募")}</h1><p>{formation ? t("一个负责人即可开始；首次核对后，由你确认并发布。") : t("只公开预览中的资料，不展示私人联系方式。")}</p></div><Link to="/lobby/me">{t("返回我的组队")}</Link></div>
     {blocker.state === 'blocked' && <div role="alert" className={styles.notice}>{t("有未提交的内容。")}<button onClick={() => blocker.reset()}>{t("继续编辑")}</button><button onClick={() => blocker.proceed()}>{t("放弃并离开")}</button></div>}
     <ErrorNotice error={error} ref={alertRef} />{(error?.data?.outcomeUnknown || error?.name === 'TypeError') && <p><Link to="/lobby/me">{t("先查看本人记录，确认是否保存成功")}</Link></p>}
+    {savedOnly && <p ref={savedRef} tabIndex={-1} role="alert" className={styles.error}>{t("资料已保存，但重新发布没有完成：{0}", [accountFailure(savedOnly)])} <Link to="/lobby/me?tab=cards">{t("到我的组队重新发布")}</Link></p>}
+    {republishable && <p className={styles.notice}>{prior.state === 'EXPIRED' ? t("这张卡片已于 {0} 到期，目前不在大厅展示。核对预览后选择“保存并重新发布”，即可重新展示 14 天。", [lobbyDate(prior.expiresAt)]) : t("这张卡片已关闭，目前不在大厅展示。核对预览后选择“保存并重新发布”，即可重新展示 14 天。")}</p>}
     <form onSubmit={submit} className={styles.editorGrid}>
       <div className={`${styles.formPanel} ${styles.stack}`}>
         {kind === 'TEAM' && !formation && <label>{t("代表队伍")}<select value={source} onChange={event => updateSource(event.target.value)} disabled={busy || Boolean(cardId)}>{sources.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>}
@@ -164,8 +179,9 @@ function Editor({ data, cardId, formation, query }) {
         <label>{t("组队目标")}<input required maxLength={120} placeholder={t("例如：稳定训练，准备参加周赛")} {...field('goal')} /></label>
         <label>{formation ? t("筹建介绍") : copy.bio}<textarea required rows={5} maxLength={1000} placeholder={formation ? undefined : copy.bioPlaceholder} {...field('bio')} /><small>{formation ? t("请勿填写 QQ、邮箱或其他私人联系方式。") : copy.bioHint}</small></label>
         {!formation && <><label>{copy.level}<input maxLength={80} placeholder={copy.levelPlaceholder} {...field('level')} /></label><label>{copy.heroes}<input maxLength={200} placeholder={copy.heroesPlaceholder} {...field('heroes')} /></label></>}
-        <div className={styles.actions}><button className={styles.primary} disabled={busy || error?.data?.outcomeUnknown || error?.name === 'TypeError'}>{busy ? t("正在保存…") : !preview ? t("核对预览") : formation ? t("提交首次核对") : prior ? t("确认保存资料") : t("确认发布")}</button>{preview && <button type="button" onClick={() => setPreview(false)}>{t("继续修改")}</button>}</div>
-        {prior && !formation && <p>{t("普通编辑不会续期或顶置。需求完成后请关闭卡片。")}</p>}
+        <div className={styles.actions}><button className={styles.primary} value={republishable ? 'republish' : 'save'} disabled={busy || Boolean(savedOnly) || error?.data?.outcomeUnknown || error?.name === 'TypeError'}>{busy ? t("正在保存…") : !preview ? t("核对预览") : formation ? t("提交首次核对") : republishable ? t("保存并重新发布") : prior ? t("确认保存资料") : t("确认发布")}</button>
+          {preview && republishable && <button value="save" disabled={busy || Boolean(savedOnly)}>{t("仅保存资料")}</button>}{preview && <button type="button" onClick={() => setPreview(false)}>{t("继续修改")}</button>}</div>
+        {prior && !formation && !republishable && <p>{t("普通编辑不会续期或顶置。需求完成后请关闭卡片。")}</p>}
       </div>
       <aside className={styles.preview} aria-label={t("公开预览")}><span className={styles.eyebrow}>{formation ? t("待核对资料预览 · 尚不公开") : source.startsWith('team:') && kind === 'TEAM' ? t("公开预览 · 组队中") : t("公开预览")}</span><h2>{kind === 'TEAM' && !formation ? sources.find(item => item.value === source)?.name : form.title || t("你的公开名称")}</h2><p>{form.roles.map(roleLabel).join(' / ') || t("选择可胜任或所需岗位")}</p><dl><div><dt>{t("时间")}</dt><dd>{form.availability || t("填写可赛时间")}</dd></div><div><dt>{t("目标")}</dt><dd>{form.goal || t("填写组队目标")}</dd></div>
         {kind === 'TEAM' && form.roles.length > 0 && <div><dt>{t("招募需求")}</dt><dd>{needsLabel(form.roles.map(role => ({ role, count: Number(form.counts[role] || 1) })))}</dd></div>}
