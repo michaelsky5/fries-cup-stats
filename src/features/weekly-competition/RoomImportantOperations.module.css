@@ -1,4 +1,4 @@
-.panel{display:flex;align-items:center;gap:10px;flex:none;height:44px;min-width:0;padding:0 10px;border:1px solid var(--fc-data-room-line);border-left:2px solid var(--fc-data-room-accent);background:var(--fc-data-room-surface);color:var(--fc-data-room-text)}
+.panel{display:flex;align-items:center;gap:10px;flex:none;height:44px;min-width:0;padding:0 10px;border:1px solid var(--fc-data-room-line);background:var(--fc-data-room-surface);color:var(--fc-data-room-text)}
 .panel[data-personnel-change=true] .message { background:color-mix(in srgb,var(--fc-data-room-action-bg) 20%,var(--fc-data-room-surface));color:var(--fc-data-room-text);padding-inline:8px; }
 .panel[data-personnel-change=true] .category { color:var(--fc-data-room-accent);font-weight:750; }
 .party { flex:none;max-width:72px;padding:1px 5px;border:1px solid var(--fc-data-room-line);color:var(--fc-data-room-text);font-size:10px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }

@@ -26,7 +26,7 @@ export default function WeeklyMatchResponseDialog({ pending, busy, onConfirm, on
       <p id={descriptionId}>{isDispute
         ? uiText("争议会进入周赛管理员的收件箱，并冻结标准积分结算。这里不会直接改动正式比分。", uiLocale)
         : uiText("此操作表示本队接受当前已审核赛果，会记录账号与修订。积分仍由管理员按规则结算。", uiLocale)}</p>
-      <div className={styles.dialogResult}><strong>{pending.matchup}</strong><span>{uiText("正式比分 ", uiLocale)}{pending.score} · REV {pending.input.expectedRevision}</span></div>
+      <div className={styles.dialogResult}><strong>{pending.matchup}</strong><span>{uiText("正式比分 ", uiLocale)}{pending.score} · {uiText("第 {0} 版", uiLocale, [pending.input.expectedRevision])}</span></div>
       {pending.input.note ? <p className={styles.dialogNote}>{pending.input.note}</p> : null}
       <div className={styles.actions}>
         <button type="button" className={styles.secondaryButton} onClick={onCancel} disabled={busy} autoFocus>{uiText("返回核对", uiLocale)}</button>

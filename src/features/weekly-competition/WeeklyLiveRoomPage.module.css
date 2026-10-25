@@ -149,7 +149,7 @@
 .teamEyebrow>small { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--fc-data-room-faint);font-size:11px; }
 .representative { display:grid;gap:5px;padding:12px 16px 14px;background:var(--fc-data-room-surface);border-block:1px solid var(--line); }
 .representativeHeading { display:flex;align-items:center;flex-wrap:wrap;gap:6px;justify-content:space-between; }
-.representativeHeading em { color:var(--yellow);font-size:10px;font-style:normal; }
+.representativeHeading em { color:var(--muted);font-size:10px;font-style:normal; }
 .representativeHeadingActions { display:flex;align-items:center;gap:7px;min-width:0; }
 .room .representativeHeadingActions > button { min-height:28px;padding:3px 8px;background:transparent;border-color:var(--line);font-size:10px; }
 .room .representativeHeadingActions > button[data-self-claim] { min-height:36px;padding:6px 10px;color:var(--yellow);border-color:var(--fc-data-room-accent-line);font-size:12px; }
@@ -227,7 +227,7 @@
 .room .communication>header button { min-height:32px;padding:5px 9px;font-size:12px;background:transparent;border-color:var(--line); }
 .communication>nav { padding:0 14px;gap:20px;background:var(--fc-data-room-canvas); }
 .room .communication>nav>button { min-height:36px;padding:7px 0;font-size:12px;border-width:0 0 2px; }
-.pinned { padding:8px 12px;margin:0 14px;background:var(--fc-data-room-surface);border-left:2px solid var(--yellow); }
+.pinned { padding:8px 12px;margin:0 14px;background:var(--fc-data-room-surface);border-left:2px solid var(--line); }
 .pinned>small { font-size:11px; }
 .pinned>p { font-size:12px;line-height:1.5; }
 .feed { flex:1;min-height:72px;padding:0 14px;scrollbar-width:thin; }

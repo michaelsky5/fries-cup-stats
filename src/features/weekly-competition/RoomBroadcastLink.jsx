@@ -14,7 +14,7 @@ export default function RoomBroadcastLink({ data, disabled }) {
   const url = connection ? `${roomBroadcastUrl(connection.path)}#${connection.token}` : ''
   return <section className={styles.task} aria-label={uiText("导播自动跟随", locale)}>
     <h3>{uiText("连接 FD / FCBT", locale)}</h3>
-    <p>{uiText("在导播工具的“比赛房跟随”中粘贴连接，先核对本场，再选择自动播出。两端使用同一份已确认的地图、首发、Ban 与比分。", locale)}</p>
+    <p>{uiText("在导播工具的“比赛房跟随”中粘贴连接，先核对本场，再选择自动播出。两端使用同一份已确认的地图、首发、禁用与比分。", locale)}</p>
     <p>{uiText("连接仅可读取本场播出资料，有效期 12 小时；生成者退出登录或失去本场权限后失效。请只交给本场导播。", locale)}</p>
     <button type="button" disabled={disabled || busy || !roomBroadcastUrl('/api/weekly-broadcast/check')} onClick={async () => {
       setBusy(true); setMessage('')

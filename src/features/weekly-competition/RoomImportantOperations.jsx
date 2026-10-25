@@ -39,10 +39,10 @@ export default function RoomImportantOperations({ data, stale, side }) {
   const describe = (event, compact = false) => {
     if (!event) return t('暂无本队操作记录')
     if (event.body) return t(event.body)
-    const prefix = event.mapOrder && !compact ? 'MAP ' + String(event.mapOrder).padStart(2, '0') + ' · ' : ''
+    const prefix = event.mapOrder && !compact ? t('第 {0} 图', [event.mapOrder]) + ' · ' : ''
     if (event.kind === 'MAP') return prefix + t('地图已确定：{0}', [formatOwMapName(event.map.name, locale)])
     if (event.kind === 'LINEUPS') return prefix + t('双方首发已公开')
-    if (event.kind === 'BAN_TIMEOUT') return prefix + t(event.reason === 'MAP_SELECTION' ? '{0} 选图超时，本图 Ban 已取消' : '{0} 超时，已放弃本轮禁用', [team(event.side)])
+    if (event.kind === 'BAN_TIMEOUT') return prefix + t(event.reason === 'MAP_SELECTION' ? '{0} 选图超时，本图禁用已取消' : '{0} 超时，已放弃本轮禁用', [team(event.side)])
     if (event.kind === 'BAN_A' || event.kind === 'BAN_B') return prefix + t('{0} 已禁用 {1}', [team(event.side), formatOwHeroName(event.hero, locale)])
     if (event.kind === 'LIVE') return prefix + t('已记录本图开赛')
     if (event.kind === 'RESULT') return prefix + team('A') + ' ' + event.scoreA + ' : ' + event.scoreB + ' ' + team('B')

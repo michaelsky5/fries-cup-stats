@@ -145,7 +145,7 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
     if (count >= 2) { next.banTimedOut = true; next.hero = ''; next.banOrder = 'SECOND' }
     if (count >= 3) { next.mapName = practiceMaps[Math.floor(Math.random() * practiceMaps.length)]; next.randomMap = true; next.scene = 'lineup' }
     else next.phaseClock = { ...state.phaseClock, revision: state.phaseClock.revision + 1, submissionGrace: null, remainingMs: 60000, deadlineAt: new Date(Date.now() + 60000).toISOString() }
-    next.messages.push({ id: `map-timeout-${count}`, channel: 'PUBLIC', kind: 'OPENING_MAP_TIMEOUT', authorName: 'DEMO', roleLabel: 'system', body: count === 1 ? '选图超时：警告，补时 60 秒。' : count === 2 ? '选图再次超时：取消本图 Ban，补时 60 秒。' : `选图第三次超时：随机选择 ${next.mapName}，本图 Ban 权已取消。`, createdAt: at })
+    next.messages.push({ id: `map-timeout-${count}`, channel: 'PUBLIC', kind: 'OPENING_MAP_TIMEOUT', authorName: 'DEMO', roleLabel: 'system', body: count === 1 ? '选图超时：警告，补时 60 秒。' : count === 2 ? '选图再次超时：取消本图禁用，补时 60 秒。' : `选图第三次超时：随机选择 ${next.mapName}，本图禁用权已取消。`, createdAt: at })
     event = 'map-timeout'
   }
   else if (kind === 'scene' && path === 'start' && representative && scene === 'ready' && startersPresent(state)) { next.scene = 'live'; event = 'bot-start' }

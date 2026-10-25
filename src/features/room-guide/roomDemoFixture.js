@@ -1,6 +1,6 @@
 import { demoRoomClock } from './roomDemoClock.js'
 import { OW_HEROES, OW_MAPS } from '../../lib/heroes.js'
-export const PREVIEW_STAGES = { opening: '1V1 先手权', confirming: '双方确认先手权', choosing: '选图', lineup: '首发', banorder: 'Ban 顺序', banning: 'Ban', ready: '禁用完成 · 待开赛', live: '比赛中', paused: '暂停', review: '图结果', result: '整场赛果' }
+export const PREVIEW_STAGES = { opening: '1V1 先手权', confirming: '双方确认先手权', choosing: '选图', lineup: '首发', banorder: '禁用顺序', banning: '英雄禁用', ready: '禁用完成 · 待开赛', live: '比赛中', paused: '暂停', review: '图结果', result: '整场赛果' }
 export const PREVIEW_ROLES = { representative: '操作代表', staff: '赛管', player: '队员', caster: '解说' }
 
 // Synthetic, read-only data. Never use a real match ID or an account API here.

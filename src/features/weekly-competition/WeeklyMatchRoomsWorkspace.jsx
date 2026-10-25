@@ -51,7 +51,7 @@ function TeamResponse({ room, ownTeam, readOnly, busy, saving, timezone, onRespo
 
   return (
     <section className={styles.teamResponse} aria-label={uiText("{0} 本队响应", uiLocale, [name])}>
-      <header><div><span>MY TEAM RESPONSE</span><h4>{name}</h4></div><strong data-tone={disputed ? 'red' : confirmed ? 'mint' : 'quiet'}>{WEEKLY_RESPONSE_LABELS[confirmation?.status] || uiText("待开启", uiLocale)}</strong></header>
+      <header><div><span>{uiText("本队响应", uiLocale)}</span><h4>{name}</h4></div><strong data-tone={disputed ? 'red' : confirmed ? 'mint' : 'quiet'}>{WEEKLY_RESPONSE_LABELS[confirmation?.status] || uiText("待开启", uiLocale)}</strong></header>
       {confirmation?.actedAt ? <p className={styles.responseTime}>{uiText("最近响应 · ", uiLocale)}{formatTime(confirmation.actedAt, timezone)}</p> : null}
       {confirmation?.note ? <blockquote>{confirmation.note}</blockquote> : null}
       {access.allowed ? (
@@ -258,7 +258,7 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
 
       {loadError ? <p className={styles.message} data-error="true" role="alert">{weeklyRoomError(loadError)} <RoomGuideLink season={seasonId} scenario="access" label="无法操作？查看指南" />{currentWorkspace ? uiText(" 当前显示上次同步记录，重新同步前不可提交。", uiLocale) : ''}</p> : null}
       {feedback ? <div className={styles.message} data-error={feedback.error ? 'true' : 'false'} role={feedback.error ? 'alert' : 'status'}><p>{feedback.message}</p>{!feedback.error && tasksVisible && <Link to={taskUrl}>{uiText("返回任务中心，查看下一步 →", uiLocale)}</Link>}</div> : null}
-      {!currentWorkspace && loading ? <div className={styles.state} role="status"><span>SYNCING TEAM CHANNEL</span><strong>{uiText("正在同步获授权比赛与赛果状态", uiLocale)}</strong><p>{uiText("同步完成前，不会把未知状态显示成“没有比赛”或“已确认”。", uiLocale)}</p></div> : null}
+      {!currentWorkspace && loading ? <div className={styles.state} role="status"><strong>{uiText("正在同步获授权比赛与赛果状态", uiLocale)}</strong><p>{uiText("同步完成前，不会把未知状态显示成“没有比赛”或“已确认”。", uiLocale)}</p></div> : null}
 
       {currentWorkspace ? (
         <>
@@ -303,13 +303,13 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
                       {(room.myTeams || []).map(ownTeam => <TeamResponse key={`${room.id}:${ownTeam.team.id}`} room={room} ownTeam={ownTeam} readOnly={effectiveReadOnly || Boolean(loadError)} busy={controlsBusy} saving={submitting && pending?.input.confirmingTeamId === ownTeam.team.id} timezone={timezone} onRespond={prepareResponse} />)}
                       {[room.teamA, room.teamB].filter(team => team && !room.myTeams?.some(own => own.team?.id === team.id)).map(team => {
                         const response = room.otherTeamResponses?.find(item => item.confirmingTeam?.id === team.id)
-                        return <section key={team.id} className={styles.opponentResponse} aria-label={uiText("{0} 响应状态", uiLocale, [weeklyTeamName(team)])}><span>{operatorView ? 'TEAM RESPONSE' : 'OPPONENT RESPONSE'}</span><h4>{weeklyTeamName(team)}</h4><strong data-tone={response?.status === 'DISPUTED' ? 'red' : 'quiet'}>{WEEKLY_RESPONSE_LABELS[response?.status] || uiText("等待开启确认", uiLocale)}</strong><p>{uiText("此处展示队伍响应状态，争议说明由周赛管理员复核。", uiLocale)}</p></section>
+                        return <section key={team.id} className={styles.opponentResponse} aria-label={uiText("{0} 响应状态", uiLocale, [weeklyTeamName(team)])}><span>{uiText(operatorView ? '队伍响应' : '对方响应', uiLocale)}</span><h4>{weeklyTeamName(team)}</h4><strong data-tone={response?.status === 'DISPUTED' ? 'red' : 'quiet'}>{WEEKLY_RESPONSE_LABELS[response?.status] || uiText("等待开启确认", uiLocale)}</strong><p>{uiText("此处展示队伍响应状态，争议说明由周赛管理员复核。", uiLocale)}</p></section>
                       })}
                     </div>}
                     {!journey.preMatch && (room.myTeams || []).map(ownTeam => <WeeklyCoordinationPanel key={`${room.id}:${ownTeam.team.id}`} weekId={room.week.id} teamId={ownTeam.team.id} matchId={room.id} showPreparation={false} readOnly={Boolean(loadError) || currentWorkspace?.featureAccess !== 'WRITE'} onActivityChange={onActivityChange} />)}
                     <footer className={styles.matchFoot}><p>{journey.preMatch ? uiText("赛程如有调整，请以最新发布安排为准。", uiLocale) : operatorView ? uiText("双方赛果响应与管理员结算分别记录。请进入比赛房按职责处理。", uiLocale) : uiText("本队响应与管理员结算分别记录；比分更正可提交赛果争议，由周赛管理员在系统内处理。", uiLocale)}</p>{tasksVisible && !journey.preMatch && <Link to={taskUrl}>{uiText("回到待办 →", uiLocale)}</Link>}</footer>
                   </article>
-                ) : <div className={styles.state}><span>ROOM NOT AVAILABLE</span><strong>{uiText("该比赛不在当前账号可见范围内", uiLocale)}</strong><p>{uiText("请从比赛列表选择获授权比赛，或清除旧的比赛链接。", uiLocale)}</p><button type="button" className={styles.secondaryButton} onClick={() => selectRoom('')}>{uiText("查看可见比赛", uiLocale)}</button></div>}
+                ) : <div className={styles.state}><strong>{uiText("该比赛不在当前账号可见范围内", uiLocale)}</strong><p>{uiText("请从比赛列表选择获授权比赛，或清除旧的比赛链接。", uiLocale)}</p><button type="button" className={styles.secondaryButton} onClick={() => selectRoom('')}>{uiText("查看可见比赛", uiLocale)}</button></div>}
               </div>
             </>
           )}
