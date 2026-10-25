@@ -71,7 +71,7 @@ export function FollowingDigest({ db, favorites, season, locale = 'zh-CN', withS
   const candidates = [...feed.groups.live.slice(0, 1), ...feed.groups.review.slice(0, 1), ...feed.groups.upcoming.slice(0, 1), ...(!feed.archived ? [...feed.groups.postponed, ...feed.groups.pending, ...feed.groups.cancelled].slice(0, 1) : []), ...feed.matches]
   const entries = [...new Map(candidates.map(item => [item.id, item])).values()].slice(0, 3)
   return <section className={styles.digest} data-i18n-ignore aria-label={copy.digest}>
-    <header className={styles.sectionHeader}><div><span className={styles.eyebrow} data-deco-en>MY FOLLOWING</span><h2>{copy.digest}</h2>{scopeLabel ? <p>{scopeLabel}</p> : null}<p>{feed.archived ? copy.archiveIntro : copy.activityIntro}</p></div><Link className={styles.textLink} to={withSeason('/me?section=following')}>{copy.viewAll} ↗</Link></header>
+    <header className={styles.sectionHeader}><div><h2>{copy.digest}</h2>{scopeLabel ? <p>{scopeLabel}</p> : null}<p>{feed.archived ? copy.archiveIntro : copy.activityIntro}</p></div><Link className={styles.textLink} to={withSeason('/me?section=following')}>{copy.viewAll} ↗</Link></header>
     {!feed.loaded ? <p className={styles.notice}>{copy.loadingData}</p> : !feed.hasFavorites ? <EmptyFollowing copy={copy} onManageTeams={onManageTeams} onManagePlayers={onManagePlayers} compact />
       : entries.length ? <div className={styles.matchList}>{entries.map(item => <MatchRow key={item.id} item={item} seasonId={season?.id} withSeason={withSeason} copy={copy} sourceSection="overview" locale={locale} />)}</div>
         : <p className={styles.notice}>{copy.noMatches} · {copy.noMatchesText}</p>}
@@ -118,7 +118,7 @@ export default function FollowingWorkspace({ db, favorites, favoriteLimits = { t
   const storage = <div className={styles.storage} data-error={Boolean(syncError || syncStatus === 'error')}><span role={syncError || syncStatus === 'error' ? 'alert' : 'status'}><i aria-hidden="true" />{syncLabel}</span>{!isAuthenticated ? <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('fries-cup:open-account'))}>{copy.login} ↗</button> : null}</div>
   return <section className={styles.workspace} data-embedded={!standalone} data-i18n-ignore aria-label={copy.title}>
     <header className={styles.pageHeader}>
-      {standalone ? <div><span className={styles.eyebrow} data-deco-en>MY FOLLOWING</span><Title>{copy.title}</Title><p>{copy.intro}</p></div> : null}
+      {standalone ? <div><Title>{copy.title}</Title><p>{copy.intro}</p></div> : null}
       <div className={styles.headerActions}>
         <div className={styles.followingSummary}><span><b>{feed.teams.length}</b><span className={styles.quota}> / {favoriteLimits.teams}</span> {locale === 'en-US' && feed.teams.length === 1 ? 'Team' : copy.teams} · <b>{feed.players.length}</b><span className={styles.quota}> / {favoriteLimits.players}</span> {locale === 'en-US' && feed.players.length === 1 ? 'Player' : copy.players}</span><div className={styles.desktopStorage}>{storage}</div></div>
         <div className={styles.manageActions} data-has-following={feed.hasFavorites}>
@@ -138,7 +138,7 @@ export default function FollowingWorkspace({ db, favorites, favoriteLimits = { t
       <nav className={`${styles.viewSwitch} ${sectionStyles.root}`} aria-label={locale === 'en-US' ? 'Following views' : uiText("关注视图", locale)}><button type="button" className={sectionStyles.item} aria-pressed={!matchesView} onClick={() => changeView({ view: 'overview', subjectKey: '', state: 'all' })}>{locale === 'en-US' ? 'Latest & collections' : uiText("近况与关注对象", locale)}</button><button type="button" className={sectionStyles.item} aria-pressed={matchesView} onClick={() => changeView({ view: 'matches' })}>{locale === 'en-US' ? 'All linked matches' : uiText("全部关联比赛", locale)} <span>{feed.matches.length}</span></button></nav>
       {feed.hasFavorites && !matchesView && <FollowingBriefing focusRef={briefingRef} feed={feed} observation={observation} locale={locale} withSeason={withSeason} seasonId={season?.id} />}
       <section hidden={!matchesView} className={styles.feed} ref={feedRef} tabIndex={-1} aria-label={copy.activity}>
-        <header className={styles.sectionHeader}><div><span className={styles.eyebrow}>{feed.archived ? 'SEASON RECAP' : 'FOLLOWING MATCHES'}</span><SectionTitle>{feed.archived ? copy.archive : copy.activity}</SectionTitle></div><small>{copy.publicTime}</small></header>
+        <header className={styles.sectionHeader}><div><SectionTitle>{feed.archived ? copy.archive : copy.activity}</SectionTitle></div><small>{copy.publicTime}</small></header>
         <div className={styles.filterRail}>
         <CollapsibleFilterRail inline locale={locale} activeCount={Number(Boolean(view.subjectKey)) + Number(view.state !== 'all')} resultLabel={`${copy.matchCount(view.entries.length)} · ${copy.shown(Math.min(view.limit, view.entries.length))}`} onReset={() => changeView({ subjectKey: '', state: 'all' })}>
         <div className={styles.subjectBar}>

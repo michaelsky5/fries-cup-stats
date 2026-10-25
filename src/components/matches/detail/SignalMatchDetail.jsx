@@ -330,7 +330,7 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
     </section> : !phase.active ? <section className={styles.emptyReview} ref={analysisRef}><PendingRoster dossier={dossier} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} /></section> : null}
 
     {canAnalyze ? <details ref={seriesRef} className={styles.seriesAnalysis} id="series-analysis" data-match-section="analysis" open={analysisExpanded}>
-      <summary onClick={toggleAnalysis}><span className={styles.sectionTitle}><small>SERIES ANALYSIS</small><strong>{en ? 'Full-match statistics & player comparison' : uiText("全场统计与选手对比", locale)}</strong></span><span className={styles.expandMark} aria-hidden="true">{analysisExpanded ? '−' : '＋'}</span></summary>
+      <summary onClick={toggleAnalysis}><span className={styles.sectionTitle}><strong>{en ? 'Full-match statistics & player comparison' : uiText("全场统计与选手对比", locale)}</strong></span><span className={styles.expandMark} aria-hidden="true">{analysisExpanded ? '−' : '＋'}</span></summary>
       <div className={styles.seriesBody}><div className={styles.analysisWorkspace} data-player-search-target><SignalMatchPlayers dossier={dossier} seasonId={seasonId} locale={locale} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} onSelectMap={onSelectMap} searchInputRef={playerSearchRef} /></div><TeamComparison dossier={dossier} seasonId={seasonId} en={en} /><RoleStandouts dossier={dossier} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} /></div>
     </details> : null}
     {!phase.active ? <SignalMatchResources dossier={dossier} roomPath={roomPath} en={en} onSelectMap={onSelectMap} /> : null}

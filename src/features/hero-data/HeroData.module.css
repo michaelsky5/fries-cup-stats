@@ -28,7 +28,6 @@
 .spotlights { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .spotlight { min-width: 0; }
 .spotlightTop { display: flex; justify-content: space-between; padding: 8px 0; border-top: 2px solid var(--hero-accent); font-weight: 700; }
-.spotlightTop i { margin-left: 7px; font-weight: 400; font-size: 11px; color: var(--fc-data-text-muted); letter-spacing: .08em; }
 .spotlightTop > small { color: var(--fc-data-text-muted); }
 .spotlightMain { display: block; height: 196px; position: relative; overflow: hidden; isolation: isolate; background: var(--hero-tone); }
 .spotlightArtWindow { position: absolute; inset: 0 0 68px 42%; overflow: hidden; }
@@ -246,7 +245,6 @@
   .spotlights { grid-template-columns: 1fr; gap: 10px; }
   .spotlight { display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 10px; }
   .spotlightTop { justify-content: flex-start; align-items: center; border-top: 0; border-left: 2px solid var(--hero-accent); padding: 0 0 0 10px; font-size: 13px; }
-  .spotlightTop i { display: block; margin: 4px 0 0; font-size: 9px; letter-spacing: 0; }
   .spotlightTop > small { display: none; }
   .spotlightMain { height: 112px; }
   .spotlightArtWindow { inset: 0 0 0 48%; }
@@ -353,7 +351,7 @@
   .spotlights { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .spotlight { display: block; min-width: 0; background: var(--hero-tone); }
   .spotlightTop { min-height: 30px; padding: 7px 9px; border-left: 0; border-top: 2px solid var(--hero-accent); font-size: 12px; }
-  .spotlightTop i, .spotlightArtWindow { display: none; }
+  .spotlightArtWindow { display: none; }
   .spotlightMain { display: grid; justify-items: start; align-content: start; height: auto; min-height: 0; padding: 3px 9px 10px; }
   .spotlightPortrait { display: block; width: 32px; height: 32px; }
   .spotlightCopy { width: 100%; padding: 8px 0 0; }

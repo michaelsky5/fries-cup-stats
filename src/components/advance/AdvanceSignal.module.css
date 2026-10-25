@@ -1738,14 +1738,8 @@ a.matchIndexCard:hover {
   border-right: 1px solid #efeddb20;
 }
 
-.focusedRouteSummary > header > span {
-  color: var(--signal-yellow);
-  font: 7px var(--font-mono);
-  letter-spacing: .08em;
-}
-
 .focusedRouteSummary > header > strong {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .focusedRouteSummary > ol {
@@ -1938,14 +1932,6 @@ a.matchIndexCard:hover {
   left: 24px;
 }
 
-.bracketLaneTitle > span {
-  padding-left: 8px;
-  border-left: 3px solid var(--signal-yellow);
-  color: var(--signal-muted);
-  font: 9px var(--font-mono);
-  letter-spacing: .08em;
-}
-
 .bracketLaneTitle > strong {
   font-size: 16px;
 }
@@ -2091,12 +2077,6 @@ a.matchIndexCard:hover {
   border-left: 2px dashed #777a70;
 }
 
-.bracketCrossoverNote > span {
-  color: var(--signal-faint);
-  font: 9px var(--font-mono);
-  letter-spacing: .07em;
-}
-
 .bracketCrossoverNote > strong {
   font-size: 11px;
 }
@@ -2111,12 +2091,6 @@ a.matchIndexCard:hover {
   padding: 8px 10px;
   border-left: 3px solid var(--signal-yellow);
   background: #e9e8df;
-}
-
-.bracketUpperHoldNote > span {
-  color: var(--signal-faint);
-  font: 9px var(--font-mono);
-  letter-spacing: .07em;
 }
 
 .bracketUpperHoldNote > strong {
@@ -2146,8 +2120,7 @@ a.matchIndexCard:hover {
 
 .bracketChampionTarget > span {
   color: var(--signal-yellow);
-  font: 9px var(--font-mono);
-  letter-spacing: .08em;
+  font: 700 12px/1.4 var(--font-sans);
 }
 
 .bracketChampionTarget > div {
@@ -2185,12 +2158,6 @@ a.matchIndexCard:hover {
   border: 1px solid var(--signal-line);
   background: rgb(238 237 230 / 76%);
   text-align: center;
-}
-
-.playoffPending > span {
-  color: var(--signal-muted);
-  font: 8px var(--font-mono);
-  letter-spacing: .08em;
 }
 
 .playoffPending > h2 {
@@ -3727,7 +3694,7 @@ a.matchIndexCard:hover {
 .routeStoryHeader {
   display: grid;
   min-height: 92px;
-  grid-template-columns: minmax(220px, 1fr) auto 142px;
+  grid-template-columns: minmax(220px, 1fr) auto minmax(142px, max-content);
   margin-inline: var(--kpr-gutter);
   border-top: 1px solid #efeddb2d;
   border-bottom: 1px solid #efeddb2d;
@@ -3740,16 +3707,11 @@ a.matchIndexCard:hover {
   padding: 18px 22px;
 }
 
-.routeStoryHeader > div:first-child > span,
 .routeStoryHeader dt,
 .routeStoryHeader > a > span {
   color: #efeddb9c;
   font: 9px var(--font-mono);
   letter-spacing: .08em;
-}
-
-.routeStoryHeader > div:first-child > span {
-  color: var(--signal-yellow);
 }
 
 .routeStoryHeader > div:first-child > strong {
@@ -3846,8 +3808,7 @@ a.matchIndexCard:hover {
   position: absolute;
   top: 22px;
   left: 22px;
-  font: 9px var(--font-mono);
-  letter-spacing: .09em;
+  font: 700 12px/1.4 var(--font-sans);
 }
 
 .routeIdentityGhost {
@@ -3962,9 +3923,8 @@ a.matchIndexCard:hover {
   z-index: 3;
   display: grid;
   gap: 5px;
-  color: #efeddb8f;
-  font: 9px var(--font-mono);
-  letter-spacing: .08em;
+  color: var(--signal-paper);
+  font: 700 12px/1.4 var(--font-sans);
 }
 
 .journeyLaneLabel[data-lane="upper"] {
@@ -3981,11 +3941,6 @@ a.matchIndexCard:hover {
 
 .journeyLaneLabel[data-lane="lower"] {
   top: 413px;
-}
-
-.journeyLaneLabel > span {
-  color: var(--signal-paper);
-  font-weight: 700;
 }
 
 .journeyTeamGhost {
@@ -4185,15 +4140,9 @@ a.matchIndexCard:hover {
   border-right: 1px solid #efeddb2d;
 }
 
-.routeTeamDock > header > span {
-  color: var(--signal-yellow);
-  font: 9px var(--font-mono);
-  letter-spacing: .09em;
-}
-
 .routeTeamDock > header > small {
-  color: #efeddb9c;
-  font: 10px var(--font-mono);
+  color: #efeddbc4;
+  font: 500 12px/1.5 var(--font-sans);
 }
 
 .routeTeamDock > div {
@@ -4307,12 +4256,6 @@ a.matchIndexCard:hover {
   font: 900 clamp(24px, 2.7vw, 40px)/.9 var(--signal-display);
 }
 
-.fullBracketDisclosure > summary > span:first-child > b {
-  color: #9a7500;
-  font: 9px var(--font-mono);
-  letter-spacing: .1em;
-}
-
 .fullBracketDisclosure > summary > span:nth-child(2) {
   display: flex;
   align-items: center;
@@ -4348,11 +4291,6 @@ a.matchIndexCard:hover {
   justify-content: space-between;
   gap: 28px;
   border-bottom: 1px solid var(--signal-ink);
-}
-
-.fullBracketBody > header > span {
-  font: 9px var(--font-mono);
-  letter-spacing: .08em;
 }
 
 .fullBracketBody > header > p {
@@ -8174,7 +8112,6 @@ a.lcqSignalMatch:hover {
 
 /* 票 2.25: phone legibility for the shared advance chapters — system text at least 11px. */
 @media (max-width: 600px) {
-  .journeyNodeIndex, .journeyResult, .routeStoryHeader dt, .routeStoryHeader > div:first-child > span,
+  .journeyNodeIndex, .journeyResult, .routeStoryHeader dt,
   .routeStoryHeader > a > span, .routeIdentity > div > small, .journeyScore > i, .routeStoryFooter { font-size: 11px; }
-  .fullBracketDisclosure > summary > span:first-child > b { display: none; } /* English label; the Chinese one follows */
 }

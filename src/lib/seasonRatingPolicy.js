@@ -63,7 +63,7 @@ export function getSeasonRatingLabel(entry, locale = 'zh-CN') {
     ? getSeasonRatingStatusLabel(entry, locale)
     : entry?.seasonRatingStatus === 'UNRATED'
       ? getSeasonRatingStatusLabel(entry, locale)
-      : 'SEASON OVR', locale)
+      : '赛季 OVR', locale)
 }
 
 export function formatSeasonSampleRequirements(minTimeMins = 30, locale = 'zh-CN') {

@@ -6,7 +6,6 @@
 .dialog button { cursor: pointer; border: 1px solid var(--fc-data-line-strong); padding: 8px 14px; min-height: 44px; background: transparent; font-weight: 600; }
 .dialog :disabled { cursor: default; opacity: .65; }
 .header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.header span { font-size: 10px; letter-spacing: .1em; color: var(--fc-data-text-muted); }
 .header h2 { font: 700 23px/1.4 var(--fc-data-font-interface); }
 .header .close { font-size: 25px; padding: 0; min-width: 44px; border: 0; }
 .context { display: flex; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; margin: 18px 0; padding: 12px 0; border-block: 1px solid var(--fc-data-line-strong); overflow-wrap: anywhere; }

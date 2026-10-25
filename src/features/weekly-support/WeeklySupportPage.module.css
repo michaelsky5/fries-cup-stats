@@ -9,7 +9,6 @@
 .page ol, .page ul { padding: 0; list-style: none; }
 
 .hero { padding: 18px 0 24px; border-bottom: 1px solid var(--line); }
-.eyebrow { margin: 0; color: var(--muted); font-size: 11px; letter-spacing: .09em; }
 .hero h1 { margin: 8px 0 10px; font-size: var(--fc-data-index-title-size, 44px); font-weight: 900; line-height: var(--fc-data-index-title-leading, 1.05); letter-spacing: -.04em; }
 .lead { max-width: 62ch; color: var(--muted); font-size: 15px; line-height: 1.75; }
 .heroActions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; margin-top: 20px; }

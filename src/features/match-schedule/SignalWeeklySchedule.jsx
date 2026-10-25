@@ -140,7 +140,7 @@ export default function SignalWeeklySchedule() {
 
   return <div className={styles.page} data-weekly-schedule="true">
     <header className={styles.heading}>
-      <div><p className={styles.eyebrow} data-deco-en>FRIES CUP / WEEKLY MATCHES</p><h1>{t(uiText("赛程赛果", locale), 'Schedule & results')}</h1><p>{eventCenterText('matchesIntro', locale)}</p></div>
+      <div><h1>{t(uiText("赛程赛果", locale), 'Schedule & results')}</h1><p>{eventCenterText('matchesIntro', locale)}</p></div>
       <div className={styles.headingActions}>
         <WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, match: null, teamId: null, expanded: null })} />
         <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">↗</span><small>{t(uiText("赛况与赛段积分", locale), 'Matches & cycle points')}</small></Link>

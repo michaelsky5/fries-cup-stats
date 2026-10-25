@@ -44,7 +44,7 @@ export default function SignalMatchResources({ dossier, roomPath, en, onSelectMa
   const primary = links.find(link => link.kind === 'replay') || links[0]
   const label = link => link.kind === 'archive' ? (en ? 'Tournament video archive' : uiText("赛事录像库", uiLocale)) : link.kind === 'replay' ? (en ? 'Watch this match' : uiText("观看本场录像", uiLocale)) : (en ? 'Watch live' : uiText("观看直播", uiLocale))
   return <section className={styles.resources} id="match-resources" data-match-section="resources" aria-labelledby="match-resources-title">
-    <header className={styles.heading}><span>REPLAY & MATCH INFO</span><h2 id="match-resources-title">{en ? 'Video & match information' : uiText("录像与赛事信息", uiLocale)}</h2></header>
+    <header className={styles.heading}><h2 id="match-resources-title">{en ? 'Video & match information' : uiText("录像与赛事信息", uiLocale)}</h2></header>
     <div className={styles.grid}>
       <div className={styles.replay}>
         {primary ? <a className={styles.video} href={primary.url} target="_blank" rel="noreferrer" data-video-kind={primary.kind || 'live'}>

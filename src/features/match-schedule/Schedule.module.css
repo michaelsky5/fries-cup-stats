@@ -5,7 +5,6 @@
 .nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid var(--fc-data-line); }
 .nav a { position: relative; display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 14px 18px; color: var(--fc-data-text-muted); text-decoration: none; font-size: 14px; }
 .nav a + a::before { position: absolute; content: ''; left: 0; top: 18px; bottom: 18px; width: 1px; background: var(--fc-data-line); }
-.nav small { font-size: 11px; color: var(--fc-data-text-muted); }
 .nav a[aria-current="page"] { color: var(--fc-data-ink); font-weight: 700; }
 .nav a[aria-current="page"]::after { position: absolute; content: ''; bottom: -1px; left: 0; right: 0; height: 3px; background: var(--fc-data-signal); }
 .nav a:hover { color: var(--fc-data-ink); background: var(--fc-data-paper-raised); }
@@ -111,7 +110,6 @@
 }
 @media (max-width: 760px) {
   .nav a { min-height: 48px; padding: 12px 10px; font-size: 13px; }
-  .nav small { display: none; }
   .heading { align-items: flex-start; flex-direction: column; gap: 10px; padding: 16px 0 18px; }
   .heading h1 { font-size: clamp(32px, 8.2vw, 40px); }
   .headingAside { text-align: left; }

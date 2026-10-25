@@ -74,7 +74,7 @@ function AccountForm({ mode }) {
   const verified = auth.user ? Boolean(auth.user.emailVerifiedAt) : auth.emailVerificationState.status === 'VERIFIED'
   const title = mode === 'register' ? t("创建你的薯条杯账号") : mode === 'verify-email' ? t("验证邮箱") : ['recover', 'reset-password'].includes(mode) ? t("找回账号") : t("欢迎回来")
   return <section className={styles.authPage}>
-    <div className={styles.intro}><span className={styles.eyebrow}>FRIES CUP / ACCOUNT</span><h1>{title}</h1><p>{t("先找到队友，再一起上场。")}</p><Link to="/lobby">{t("← 返回组队大厅")}</Link></div>
+    <div className={styles.intro}><h1>{title}</h1><p>{t("先找到队友，再一起上场。")}</p><Link to="/lobby">{t("← 返回组队大厅")}</Link></div>
     <div className={styles.formPanel}>
       {error && <p role="alert" className={styles.error}>{error}</p>}
       {auth.authConfigError && <p role="alert" className={styles.error}>{t("账号配置暂时无法读取。")}<button onClick={auth.retryAuthConfig}>{t("重试")}</button></p>}

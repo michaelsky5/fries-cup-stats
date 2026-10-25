@@ -93,7 +93,6 @@ export default function WeeklySupportPage() {
 
   return <div className={styles.page} data-weekly-support>
     <header className={styles.hero}>
-      <p className={styles.eyebrow} data-deco-en>FRIES CUP / WEEKLY SUPPORT</p>
       <h1>{t('周赛支持与资金进度', 'Weekly support & funding', '주간 대회 후원 및 자금 현황', '週賽支持與資金進度')}</h1>
       <p className={styles.lead}>{t('让支持落到下一场比赛里。钱用在哪、奖池到了多少、约定直播兑现了几场、感谢了谁，都在这里公开。',
         'Support goes into the next match. Where the money goes, how big the prize pools are, how many agreed broadcasts were delivered and who is thanked are all published here.',

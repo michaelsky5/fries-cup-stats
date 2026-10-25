@@ -174,7 +174,7 @@ export default function AdvanceSignalFinal({
                       <TeamLogo team={team} seasonId={seasonId} className={styles.orderLogo} />
                       <strong>{teamShort(team)}</strong>
                       <small>{teamFull(team)}</small>
-                      {primary ? <em>PRIMARY</em> : favorite ? <em>FOLLOWING</em> : null}
+                      {primary ? <em>{uiText("主队", locale)}</em> : favorite ? <em>{uiText("已关注", locale)}</em> : null}
                     </Link>
                   </li>
                 )

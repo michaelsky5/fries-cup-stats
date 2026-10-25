@@ -100,7 +100,7 @@ export default function SignalWeeklyAdvance() {
 
   return <div className={styles.page} data-weekly-advance="true" data-weekly-phase={phase}>
     <header className={styles.heading}>
-      <div><p className={styles.eyebrow} data-deco-en>FRIES CUP / WEEKLY ADVANCE</p><h1>{eventCenterText('advanceTitle', locale)}</h1><p>{eventCenterText('advanceIntro', locale)}</p></div>
+      <div><h1>{eventCenterText('advanceTitle', locale)}</h1><p>{eventCenterText('advanceIntro', locale)}</p></div>
       <div className={styles.headingActions}>
         <WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, teamId: null, query: null, followed: null, view: null, bracket: null })} />
         <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">↗</span><small>{t(uiText("回到本周对阵", locale), 'This week’s matchups')}</small></Link>

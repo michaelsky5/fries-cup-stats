@@ -23,7 +23,7 @@
 .sectionBar nav a[aria-current=page]{border-color:var(--fc-data-signal);color:var(--fc-data-ink)}
 .sectionBar>button{margin-left:auto;border:0;padding:8px;color:var(--fc-data-text-muted);font-size:12px}
 .footer{width:var(--portal-shell-width);margin:0 auto;padding:20px 0}
-.pageHeading h1,.intro h1{font-size:var(--fc-data-index-title-size);line-height:var(--fc-data-index-title-leading);font-weight:900;letter-spacing:-.04em}
+.pageHeading h1,.intro h1{margin-top:0;font-size:var(--fc-data-index-title-size);line-height:var(--fc-data-index-title-leading);font-weight:900;letter-spacing:-.04em}
 .card{border-color:var(--fc-data-line);border-top:2px solid var(--fc-data-ink)}
 @media(max-width:600px){.main{width:calc(100% - 32px);margin:16px auto 32px}.sectionBar{gap:16px;margin-bottom:24px;flex-wrap:wrap}.sectionBar nav{gap:20px}.sectionBar>a span{margin-left:8px}.footer{padding:20px 0 calc(88px + env(safe-area-inset-bottom))}}
 .empty p, .empty h1 { text-wrap: balance; } /* X5 / 票 2.15: no lone 「录。」 line */

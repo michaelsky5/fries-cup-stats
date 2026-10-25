@@ -22505,6 +22505,11 @@
     "en-US": "Finals FT4",
     "ko-KR": "결승전 FT4"
   },
+  "总决赛 {0}": {
+    "zh-TW": "總決賽 {0}",
+    "en-US": "{0} FINAL",
+    "ko-KR": "결승전 {0}"
+  },
   "总决赛 {0} 战胜 {1}。{2}": {
     "zh-TW": "總決賽 {0} 戰勝 {1}。{2}",
     "en-US": "{0} against {1} in the grand final. {2}",
@@ -57309,6 +57314,11 @@
     "en-US": "Seeds have changed. Review the published bracket first.",
     "ko-KR": "시드가 변경되었습니다. 공개된 대진표를 먼저 재검토해 주세요.",
     "zh-TW": "種子已變更，請先複核已發布籤表。"
+  },
+  "种子 {0}": {
+    "zh-TW": "種子 {0}",
+    "en-US": "SEED / {0}",
+    "ko-KR": "시드 {0}"
   },
   "资格赛参赛队伍、积分或签表刚刚变化，请重新核对首轮。": {
     "en-US": "Qualification teams, points, or the bracket have just changed. Check the first round again.",

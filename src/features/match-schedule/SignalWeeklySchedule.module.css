@@ -6,7 +6,6 @@
 .page :is(button, select, input, a):focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 4px; }
 .page :is(h1, h2, h3, p) { margin: 0; }
 .heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px 32px; padding: var(--fc-data-index-heading-space) 0; }
-.eyebrow { color: var(--muted); font-size: 11px; letter-spacing: .09em; }
 .heading h1 { font-size: var(--fc-data-index-title-size); line-height: var(--fc-data-index-title-leading); letter-spacing: -.04em; font-weight: 900; margin: 8px 0 12px; }
 .heading p:last-child { color: var(--fc-data-text-muted); font-size: 14px; line-height: 1.7; }
 .headingActions { display: flex; align-items: center; gap: 24px; padding-bottom: 3px; flex-shrink: 0; }
@@ -118,7 +117,6 @@
 @media (max-width: 600px) {
   .heading { padding: 20px 0 16px; gap: 15px; }
   .heading p:last-child { font-size: 13px; }
-  .eyebrow { font-size: 9px; }
   .headingActions { gap: 12px; align-items: center; padding: 0; }
   .overviewLink { font-size: 11px; display: flex; gap: 8px; }
   .overviewLink small { display: none; }
@@ -316,7 +314,7 @@
 @media (max-width: 600px) {
   /* Page head: the dock and the status line already say where you are. */
   .heading { padding: 6px 0 4px; gap: 0; }
-  .heading .eyebrow, .heading > div:first-child > p:last-child { display: none; }
+  .heading > div:first-child > p:last-child { display: none; }
   .heading h1 { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .listHeading { padding: 14px 0 10px; }
   .listHeading p { display: none; }

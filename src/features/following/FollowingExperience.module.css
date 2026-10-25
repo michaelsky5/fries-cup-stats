@@ -10,7 +10,6 @@
 .briefing :is(a, button, summary):focus-visible, .discovery :is(a, button, input):focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 2px; }
 .briefing p, .discovery p { font-size: 14px; line-height: 1.8; color: var(--fc-data-text-muted); }
 .next { min-width: 0; padding: 28px; border-top: 3px solid var(--fc-data-signal); background: var(--fc-data-ink); color: var(--fc-data-on-ink); }
-.discovery header > div > span { font: 800 15px/1 var(--fc-data-font-display); letter-spacing: .04em; color: var(--fc-data-text-muted); }
 .next > header { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
 .next > header > span { font-size: 16px; font-weight: 650; }
 .next[data-state='live'] > header > span { color: var(--fc-data-status-live-bright); }
@@ -117,7 +116,6 @@
   .updates[data-quiet='true'] { padding-block: 0; }
   .briefing .updates h2 { font-size: 19px; }
   .discovery header { align-items: start; flex-wrap: wrap; }
-  .discovery header > div > span { display: none; }
   .discovery h2 { font-size: 20px; margin: 0 0 6px; }
   .discovery header p { font-size: 13px; }
   .discoveryTools { gap: 12px; margin-top: 16px; }
