@@ -4,6 +4,7 @@ import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Navigate, useLocation, useNavigationType, useOutletContext, useSearchParams } from 'react-router-dom'
 import RosterSubnav from '../../components/roster/RosterSubnav.jsx'
+import { SignalDataHeading } from '../../components/database/SignalDataHeader.jsx'
 import ImeSafeInput from '../../components/common/ImeSafeInput.jsx'
 import HeroArtwork from '../../components/media/HeroArtwork.jsx'
 import { DirectoryLink } from '../../features/roster-directory/RosterDirectory.jsx'
@@ -254,10 +255,11 @@ export default function RosterHubPage() {
   ]
   return <div className={indexStyles.shell + ' ' + styles.shell} data-roster-directory="overview" data-i18n-ignore>
     <RosterSubnav presentation="index" />
-    <section className={styles.hero} aria-labelledby="roster-overview-heading">
-      <header className={styles.intro}><span className={styles.eyebrow}>{season?.publicCode || seasonId} <i /> {en ? 'THE PEOPLE OF THIS SEASON' : uiText("本届参赛阵容", locale)}</span><h1 id="roster-overview-heading">{eventCenterText('rosterTitleLead', locale)}<br /><span>{eventCenterText('rosterTitleAccent', locale)}</span></h1><p>{introCopy}</p></header>
-      <dl className={styles.metrics}>{metrics.map(metric => <div key={metric.href}><dt>{metric.label}</dt><dd><DirectoryLink to={withSeason(metric.href)} label={(en ? 'Browse ' : uiText("查看", locale)) + metric.label.replace(/^[支位份]/, '')}><b>{metric.count}</b><span aria-hidden="true">↗</span></DirectoryLink></dd></div>)}</dl>
+    {/* 票 2.40: same title row as the other pages with tabs; the dark block below opens with the search. */}
+    <div className={styles.pageHeading}><SignalDataHeading compact title={pickUiLocale(locale, '参赛阵容', 'Event roster', '참가자 명단', '參賽陣容')} description={introCopy} /></div>
+    <section className={styles.hero} aria-label={en ? 'The people of this season' : uiText("本届参赛阵容", locale)}>
       <OverviewSearch model={model} value={query} onChange={q => update({ q })} withSeason={withSeason} en={en} />
+      <dl className={styles.metrics}>{metrics.map(metric => <div key={metric.href}><dt>{metric.label}</dt><dd><DirectoryLink to={withSeason(metric.href)} label={(en ? 'Browse ' : uiText("查看", locale)) + metric.label.replace(/^[支位份]/, '')}><b>{metric.count}</b><span aria-hidden="true">↗</span></DirectoryLink></dd></div>)}</dl>
       <div className={styles.ensemble}>
         <header className={styles.fieldHeading}><span>{eventCenterText('rosterTeamsHeading', locale)}</span><DirectoryLink className={styles.allTeamsLink} to={withSeason('/teams')}>{eventCenterText('rosterTeamDirectory', locale)} <i aria-hidden="true">↗</i></DirectoryLink></header>
         <div ref={teamGridRef} className={styles.teamGrid} data-expanded={expandedTeams} data-scroll-fades role="group" aria-label={en ? 'Select a team' : uiText("选择队伍", locale)}>{model.teams.map((team, index) => <button key={team.routeId} type="button" aria-pressed={selectedTeam?.routeId === team.routeId} aria-label={(en ? 'Show roster for ' : uiText("查看阵容 ", locale)) + getTeamDisplayName(team)} title={team.fullName} style={{ '--arrival-order': Math.min(index, 14) }} onClick={() => { const compact = window.matchMedia('(max-width: 760px)').matches; pendingTeamScroll.current = compact && expandedTeams; update({ rosterTeam: team.routeId, ...(compact ? { teamsExpanded: '' } : {}) }) }}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><strong>{getTeamDisplayName(team)}</strong></button>)}</div>

@@ -7,6 +7,7 @@ import { formatReportTime, latestNewspaperIssue, newspaperIssueDate, newspaperWe
 import usePublishedNewspaper from './usePublishedNewspaper.js'
 import { ReportCover } from './WeeklyReportTeaser.jsx'
 import WeeklyNewspaper from './WeeklyNewspaper.jsx'
+import { SignalDataHeading } from '../../components/database/SignalDataHeader.jsx'
 import styles from './WeeklyReport.module.css'
 
 export default function WeeklyReportPage() {
@@ -34,7 +35,8 @@ export default function WeeklyReportPage() {
   return <div className={styles.page} data-weekly-report-archive={!weekId || undefined} data-i18n-ignore>
     <nav className={styles.breadcrumbs} aria-label={t('周报导航', 'Report navigation')}><Link to={home}>← {t('赛事总览', 'Event overview')}</Link><Link to={archive}>{t('周报归档', 'Report archive')} →</Link></nav>
     {!weekId && <>
-      <header className={styles.archiveHeading}><div><span className={styles.eyebrow} data-deco-en>FRIES CUP / WEEKLY NEWSPAPER</span><h1>{t('薯条周报', 'Fries Cup Weekly')}</h1></div><p>{t('每周赛果、最佳阵容与数据看点。', 'Weekly results, best lineups and data stories.')}</p></header>
+      {/* 票 2.40: the same title row as other pages under a tab or back-link row. */}
+      <SignalDataHeading compact title={t('薯条周报', 'Fries Cup Weekly')} description={t('每周赛果、最佳阵容与数据看点。', 'Weekly results, best lineups and data stories.')} />
       <nav className={styles.cycleLinks} aria-label={t('周报比赛赛段', 'Report cycles')}>{overview.cycles.map(cycle => <Link key={cycle.id} to={withSeason('/reports?cycle=' + encodeURIComponent(cycle.id))} aria-current={cycle.id === cycleId ? 'page' : undefined}>{weeklyCycleTitle(cycle, locale)}</Link>)}</nav>
       {weekly && knownCycle && !loading && !error && (latestIssue || unpublishedWeeks.length > 0) && <div className={styles.archiveStatus} data-report-archive-status>
         {latestIssue && <p data-report-archive-latest>{pickUiLocale(locale,
