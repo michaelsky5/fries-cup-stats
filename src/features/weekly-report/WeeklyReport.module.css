@@ -48,6 +48,15 @@
 .pathwayStages small { display:block; color:var(--journal-muted); font-size:12px; line-height:1.6; margin-top:4px; }
 .stageArrow { justify-self:end; color:var(--journal-muted); }
 .pathway > p { font-size:12px; line-height:1.6; color:var(--journal-muted); margin:12px 0 0; }
+/* 票 2.50: the support page sits at the end of the event path. */
+.pathwaySupport { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 24px; margin-top:18px; padding:16px 20px; background:var(--fc-data-paper-raised,#f6f5ef); border:1px solid var(--journal-line); border-left:3px solid var(--fc-data-signal,#f4c320); }
+.pathwaySupport > span:first-child { display:grid; gap:4px; min-width:0; }
+.pathwaySupport b { font-size:15px; }
+.pathwaySupport small { color:var(--journal-muted); font-size:12px; line-height:1.6; }
+.pathwaySupport > span:last-child { display:inline-flex; align-items:center; gap:12px; font-size:13px; font-weight:800; white-space:nowrap; }
+.pathwaySupport i { color:var(--fc-data-focus-on-light,#806000); font-style:normal; font-size:18px; }
+.page .pathwaySupport:hover, .pathwaySupport:hover { text-decoration:none; }
+.pathwaySupport:hover > span:last-child { text-decoration:underline; text-underline-offset:4px; }
 .page { width:100%; padding:0 0 40px; }
 .breadcrumbs { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px 24px; font-size:12px; line-height:1.6; padding:16px 0; border-bottom:1px solid var(--journal-line); }
 .breadcrumbs a { display:inline-flex; gap:10px; min-height:28px; align-items:center; }

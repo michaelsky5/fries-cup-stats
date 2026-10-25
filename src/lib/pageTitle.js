@@ -28,7 +28,7 @@ export function getDataCenterPageLabel(pathname = '/', search = '') {
   const path = normalizePathname(pathname)
 
   if (path === '/') return DEFAULT_PAGE_LABEL
-  if (path === '/support') return '周赛支持与计划'
+  if (path === '/support') return '周赛支持与资金进度'
   if (path === '/play') return '参赛指南'
   if (path === '/guides/weekly-room') return '比赛房指南'
   if (path === '/schedule') return '赛程赛果'

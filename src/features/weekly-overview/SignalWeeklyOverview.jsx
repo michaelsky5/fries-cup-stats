@@ -197,7 +197,6 @@ export default function SignalWeeklyOverview() {
   const quickLinks = <div className={styles.headingActions} data-weekly-quick-links="true"><a className={styles.rulesLink} href={rulebookUrl} target="_blank" rel="noreferrer">{t(uiText("规则中心", locale), 'Rulebook')} <span aria-hidden="true">↗</span><small>{cycle?.rulebook?.version ? `V${cycle.rulebook.version}` : t(uiText("完整条款与历史版本", locale), 'Rules & version history')}</small></a><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a>{reportLink}</div>
   // Supporter thanks keep their place above the matches; the funding link moves to the end of the page.
   const supporterThanks = seasonId === 'FCW26' ? <SupporterThanks seasonId="FCW26" withSeason={withSeason} locale={locale} /> : null
-  const supportLink = seasonId === 'FCW26' ? <div className={styles.supportEntry}><Link to={withSeason('/support')}>{pickUiLocale(locale,'周赛支持与资金进度','Weekly support & funding','주간 대회 후원 및 자금 현황','週賽支持與資金進度')} →</Link></div> : null
   const mapPool = <WeeklyPublishedMapPool cycle={cycle} locale={locale} />
 
   return <div className={styles.page} data-weekly-overview="true">
@@ -282,8 +281,8 @@ export default function SignalWeeklyOverview() {
     {mapPool}
     {!isDesktop && <WeeklyReportTeaser db={db} cycle={cycle} week={week} report={report} locale={locale} withSeason={withSeason} />}
     {isDesktop && !followingOnTop && following}
-    <WeeklyEventPathway cycle={cycle} week={week} locale={locale} withSeason={withSeason} />
-    {supportLink}
+    {/* 票 2.50: the support page belongs to the event path, not to a lone link under the page. */}
+    <WeeklyEventPathway cycle={cycle} week={week} locale={locale} withSeason={withSeason} supportPath={seasonId === 'FCW26' ? withSeason('/support') : null} />
   </div>
 }
 import SupporterThanks from '../weekly-support/SupporterThanks.jsx'

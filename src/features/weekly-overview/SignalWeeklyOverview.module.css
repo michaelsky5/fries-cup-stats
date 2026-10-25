@@ -476,8 +476,6 @@
   /* The two masthead rows need more room than the legacy anchor offset. */
   .spotlight { scroll-margin-top: max(calc(var(--kpr-header-height, 84px) + 16px), 124px); }
 }
-.supportEntry { font-size:13px;line-height:1.6;padding:12px 0;border-bottom:1px solid var(--line); }
-.supportEntry>a { display:inline-flex;align-items:center;min-height:40px;font-weight:700; }
 
 /* Focus card footer actions (票 2.3): watch link beside match details. */
 .matchActions { display: flex; align-items: center; gap: 22px; flex-shrink: 0; }
@@ -502,7 +500,6 @@
   .phoneLinks .rulesLink { min-height: 44px; align-items: center; font-size: 12px; }
 }
 .mainGrid + .publishedMapPool { margin-top: 24px; }
-.page > .supportEntry:last-child { margin-top: 24px; border-top: 1px solid var(--line); }
 
 /* 票 2.22: following is the reader's own schedule — followed teams first, picker folded. */
 .followingSection { grid-template-columns: minmax(0, 1fr); align-items: start; }
@@ -543,7 +540,6 @@ a.followedMatch > span { color: var(--fc-data-focus-on-light, #806000); }
   .listHeading .scheduleLink { display: inline-flex; align-items: center; min-height: 44px; }
   .standings tbody th a { display: flex; align-items: center; min-height: 44px; }
   .page .advanceLink { min-height: 44px; padding-block: 0; }
-  .supportEntry > a { min-height: 44px; }
 }
 
 /* 票 2.28: the report link comes last; on phones it takes its own row so the newest issue and its date fit. */

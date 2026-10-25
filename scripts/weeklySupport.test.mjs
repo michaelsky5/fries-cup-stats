@@ -31,3 +31,19 @@ test('reviewed spending keeps advances separate and preserves an actual funding 
   assert.equal(view.summary.available.OPERATIONS,-1000)
   assert(!JSON.stringify(view).includes('SECRET'))
 })
+// 票 2.50: the page shows the fixed broadcast list and the champion prize; nothing else passes through.
+test('broadcast slots, playoff prize and tiers are projected without anything private',()=>{
+  const view=publicSupportView({schema:'friescup-weekly-support-v1',seasonId:'FCW26',published:true,
+    broadcasts:[{id:'B01',label:'积分赛精选直播 1',startsAt:'2026-10-31T12:00:00.000Z',matchId:'FCW26-WEEKLY-12155612',privateNote:'SECRET'},{id:'B02',label:'积分赛精选直播 2',startsAt:'later',matchId:''}],
+    summary:{playoffs:{awardCents:10000,carryCents:2500,funded:true,orders:['SECRET']},finals:{minimumCents:30000,earmarkedCents:12000,poolCents:30000,funded:false,awards:{champion:20000,runnerUp:10000}}},
+    supporters:[{displayName:'甲',tier:'D',roll:true},{displayName:'乙',tier:'Z',roll:true}],
+    upgrades:[{label:'双解说',status:'FUNDED',amountCents:5000},{label:'未知',status:'HACKED'}]},'FCW26')
+  assert.deepEqual(view.broadcasts,[{id:'B01',label:'积分赛精选直播 1',startsAt:'2026-10-31T12:00:00.000Z',matchId:'FCW26-WEEKLY-12155612'},{id:'B02',label:'积分赛精选直播 2',startsAt:null,matchId:null}])
+  assert.deepEqual(view.summary.playoffs,{awardCents:10000,carryCents:2500,funded:true})
+  assert.equal(view.summary.finals.minimumCents,30000);assert.equal(view.summary.finals.earmarkedCents,12000)
+  assert.deepEqual(view.supporters.map(s=>s.tier),['D',''])
+  assert.deepEqual(view.upgrades.map(u=>u.status),['FUNDED','PLANNED'])
+  assert(!JSON.stringify(view).includes('SECRET'))
+  const empty=publicSupportView({schema:'friescup-weekly-support-v1',seasonId:'FCW26',published:false},'FCW26')
+  assert.deepEqual(empty,{published:false,cycles:[],supporters:[],broadcasts:[],upgrades:[]})
+})

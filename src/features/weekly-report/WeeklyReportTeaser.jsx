@@ -96,7 +96,7 @@ export function WeeklyReportTeaser({ cycle, week, report: providedReport, compac
   </section>
 }
 
-export function WeeklyEventPathway({ cycle, week, locale, withSeason }) {
+export function WeeklyEventPathway({ cycle, week, locale, withSeason, supportPath = null }) {
   const t = (zh, en) => copy(locale, zh, en)
   const stages = [
     ['01', getWeeklyPhaseLabel('REGULAR', locale), t('五局累计赛段积分', 'Five maps, cycle points')],
@@ -107,5 +107,9 @@ export function WeeklyEventPathway({ cycle, week, locale, withSeason }) {
     <div className={styles.pathwayHeading}><h2 id="weekly-pathway-title">{t('赛事路径', 'The competition path')}</h2><Link to={withSeason(weeklyPeriodPath('/advance', cycle, week))}>{t('查看晋级形势', 'Explore advancement')}<span aria-hidden="true">→</span></Link></div>
     <ol className={styles.pathwayStages}>{stages.map(([number, title, description], index) => <li key={number}><span className={styles.stageNumber}>{number}</span><div><b>{title}</b><small>{description}</small></div>{index < 2 && <span className={styles.stageArrow} aria-hidden="true">→</span>}</li>)}</ol>
     <p>{t('晋级名额与日期，以当期公示为准。', 'Qualification places and dates follow the current announcement.')}</p>
+    {supportPath && <Link className={styles.pathwaySupport} data-weekly-support-entry to={supportPath}>
+      <span><b>{pickUiLocale(locale, '支持周赛', 'Support the weekly', '주간 대회 후원', '支持週賽')}</b><small>{pickUiLocale(locale, '钱用在哪、奖池多少、约定直播兑现了几场，都公开在这里。', 'Where the money goes, the prize pools and the agreed broadcasts, all published.', '자금 사용처, 상금, 약정 중계 현황을 모두 공개합니다.', '錢用在哪、獎池多少、約定直播兌現了幾場，都公開在這裡。')}</small></span>
+      <span>{pickUiLocale(locale, '周赛支持与资金进度', 'Weekly support & funding', '주간 대회 후원 및 자금 현황', '週賽支持與資金進度')} <i aria-hidden="true">→</i></span>
+    </Link>}
   </footer>
 }
