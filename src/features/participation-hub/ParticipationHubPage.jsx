@@ -46,10 +46,11 @@ export default function ParticipationHubPage() {
     {
       who: t('队长', 'Captain', '주장', '隊長'),
       title: t('报名', 'Register the team', '팀 등록', '報名'),
-      body: t('向赛事负责人领取「队伍负责人邀请链接」，用它登录或注册参赛账号，然后创建队伍、提交报名。',
-        'Ask the event lead for the team-lead invitation link, use it to sign in or create your player account, then create the team and submit the registration.',
-        '대회 담당자에게 팀 책임자 초대 링크를 받아 참가 계정으로 로그인하거나 가입한 뒤, 팀을 만들고 등록을 제출하세요.',
-        '向賽事負責人領取「隊伍負責人邀請連結」，用它登入或註冊參賽帳號，然後建立隊伍、提交報名。'),
+      // 票 2.53 (owner, 10/25): captains start their own team; the organizer reviews the submitted registration.
+      body: t('登录或注册参赛账号并验证邮箱，在报名页创建队伍。队员到齐并各自确认后提交，赛事方审核通过即完成报名，不需要先领邀请链接。',
+        'Sign in or create a player account and verify your email, then create the team on the registration page. Submit once your players have joined and confirmed; the registration is complete when the organizers approve it. No invitation link is needed.',
+        '참가 계정에 로그인하거나 가입해 이메일을 인증한 뒤, 등록 페이지에서 팀을 만드세요. 팀원이 모두 합류해 확인하면 제출하고, 주최 측이 승인하면 등록이 완료됩니다. 초대 링크는 필요 없습니다.',
+        '登入或註冊參賽帳號並驗證郵箱，在報名頁建立隊伍。隊員到齊並各自確認後提交，賽事方審核通過即完成報名，不需要先領邀請連結。'),
       link: { to: registrationPath, label: t('去报名页', 'Open registration', '등록 페이지', '前往報名頁') }
     },
     {
