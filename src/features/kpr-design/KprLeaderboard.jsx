@@ -139,7 +139,7 @@ export default function KprLeaderboard({
   const header = <>
     <SignalDataNav active="players" withSeason={withSeason} isEn={isEn} />
     <div className={styles.desktopHeading}>
-    <SignalDataHeading compact title={isEn ? 'Every role. Every performance.' : uiText("不同职责，各有锋芒。", locale)} description={summary.totalEntries === 0 ? (isEn ? 'Follow the matches while player statistics are being prepared.' : uiText("先从比赛开始，等待这一季的选手表现留下记录。", locale)) : (isEn ? 'One record per player, per role. Select a name to preview their season.' : uiText("每位选手按职责分别记录。点选名字，继续看他的赛季。", locale))}>
+    <SignalDataHeading compact title={isEn ? 'Player rankings' : uiText("选手排行", locale)} description={summary.totalEntries === 0 ? (isEn ? 'Follow the matches while player statistics are being prepared.' : uiText("先从比赛开始，等待这一季的选手表现留下记录。", locale)) : (isEn ? 'One record per player, per role. Select a name to preview their season.' : uiText("每位选手按职责分别记录。点选名字，继续看他的赛季。", locale))}>
       <span>{isEn ? 'Official ranking requires' : uiText("正式排名门槛", locale)}</span>
       <span>{formatSeasonSampleRequirements(minTimeMins, locale)}</span>
     </SignalDataHeading>

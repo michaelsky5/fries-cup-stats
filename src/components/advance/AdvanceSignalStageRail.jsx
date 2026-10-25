@@ -20,7 +20,7 @@ export default function AdvanceSignalStageRail({ items, locale = 'zh-CN', t, get
 
   return (
     <nav className={styles.phaseIndex} style={{ '--advance-phase-count': items.length }} aria-label={t('advance.stageRail', uiText("晋级阶段", locale))}>
-      <span className={styles.phaseIndexLabel}><img src="/logos/fries-cup-symbol.png" alt="" /><b>FC / ROUTE</b></span>
+      <span className={styles.phaseIndexLabel}><img src="/logos/fries-cup-symbol.png" alt="" /><b>{locale === 'en-US' ? 'FC / ROUTE' : uiText('晋级路线', locale)}</b></span>
       <div className={styles.phaseLinks}>
         {items.map(item => (
           <Link

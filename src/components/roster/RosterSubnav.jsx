@@ -47,7 +47,6 @@ export default function RosterSubnav({ className = '', presentation = 'default',
   if (presentation === 'index') return <nav ref={navRef} className={`${indexStyles.subnav} ${sectionStyles.root}`} aria-label={locale === 'en-US' ? 'Roster sections' : uiText("参赛阵容导航", locale)} data-roster-subnav data-i18n-ignore>
     {INDEX_NAV_ITEMS.map(item => <Link key={item.to} className={sectionStyles.item} to={withSeason(item.to)} aria-current={location.pathname.startsWith(item.match) && (!item.group || item.group === staffGroup) ? 'page' : undefined}>
       <span>{locale === 'en-US' ? item.english : uiText(item.label, locale)}</span>
-      {locale !== 'en-US' ? <small className={sectionStyles.code} aria-hidden="true">{item.code}</small> : null}
     </Link>)}
   </nav>
 

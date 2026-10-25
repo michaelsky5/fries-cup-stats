@@ -74,7 +74,7 @@ export default function ParticipationHubPage() {
 
   return <div className={styles.page} data-participation-hub>
     <header className={styles.hero}>
-      <p className={styles.eyebrow}>FRIES CUP / PLAY</p>
+      <p className={styles.eyebrow} data-deco-en>FRIES CUP / PLAY</p>
       <h1>{title}</h1>
       <p>{t('报名、入队、每周确认和比赛夜进房间，都从这里开始。', 'Registration, joining a team, weekly confirmation and match-night rooms all start here.', '등록, 팀 합류, 주간 확인, 경기 날 입장까지 여기서 시작하세요.', '報名、入隊、每週確認和比賽夜進房間，都從這裡開始。')}</p>
       {!isAuthenticated ? <button type="button" className={styles.signIn} onClick={signIn}>{t('登录参赛账号', 'Sign in to your player account', '참가 계정 로그인', '登入參賽帳號')} <span aria-hidden="true">→</span></button> : null}

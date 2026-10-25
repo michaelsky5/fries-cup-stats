@@ -1,4 +1,4 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useState } from 'react'
 import { getTeamLogoCandidates, getDefaultTeamLogoCandidates } from '../../lib/teamLogoResolver.js'
@@ -24,7 +24,7 @@ function TeamEmblem({ team, seasonId, className = '' }) {
 
 export function TeamIndexHeading({ seasonCode, count, total, locale, favoriteCount, withSeason }) {
   const en = locale === 'en-US'
-  return <DirectoryHeading seasonCode={seasonCode} count={count} total={total} kicker="FRIES CUP / TEAMS" title={en ? 'Participating teams' : uiText("参赛战队", locale)} description={en ? 'Explore full rosters, managers, coaches, schedules and results.' : uiText("查看完整阵容、经理与教练，以及本届赛程赛果。", locale)} unit={en ? 'teams' : uiText("支参赛队伍", locale)} action={<ArchiveLink to={withSeason('/me?section=following&manage=1')} label={en ? 'Manage followed teams' : uiText("管理关注的队伍", locale)}><span>{en ? favoriteCount + ' followed' : uiText("已关注 {0} 支", locale, [favoriteCount])}</span><span>{en ? 'Manage' : uiText("管理关注", locale)} ↗</span></ArchiveLink>} />
+  return <DirectoryHeading seasonCode={seasonCode} count={count} total={total} kicker={pickUiLocale(locale, '本届参赛战队', 'THE TEAMS', '올해의 참가 팀', '本屆參賽戰隊')} title={en ? 'Participating teams' : uiText("参赛战队", locale)} description={en ? 'Explore full rosters, managers, coaches, schedules and results.' : uiText("查看完整阵容、经理与教练，以及本届赛程赛果。", locale)} unit={en ? 'teams' : uiText("支参赛队伍", locale)} action={<ArchiveLink to={withSeason('/me?section=following&manage=1')} label={en ? 'Manage followed teams' : uiText("管理关注的队伍", locale)}><span>{en ? favoriteCount + ' followed' : uiText("已关注 {0} 支", locale, [favoriteCount])}</span><span>{en ? 'Manage' : uiText("管理关注", locale)} ↗</span></ArchiveLink>} />
 }
 
 export function TeamIndexControls({ fields, ...props }) {

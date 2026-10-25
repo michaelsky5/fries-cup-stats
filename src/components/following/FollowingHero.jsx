@@ -30,7 +30,7 @@ export default function FollowingHero({
   return (
     <section className={styles.followingHero}>
       <div className={styles.heroIdentityCard}>
-        <p className={styles.kicker}>MY FOLLOWING</p>
+        <p className={styles.kicker} data-deco-en>MY FOLLOWING</p>
         <h1>{uiText("我的关注", locale)}</h1>
         {overview ? (
           <>

@@ -100,14 +100,14 @@ export default function SignalWeeklyAdvance() {
 
   return <div className={styles.page} data-weekly-advance="true" data-weekly-phase={phase}>
     <header className={styles.heading}>
-      <div><p className={styles.eyebrow}>FRIES CUP / WEEKLY ADVANCE</p><h1>{eventCenterText('advanceTitle', locale)}</h1><p>{eventCenterText('advanceIntro', locale)}</p></div>
+      <div><p className={styles.eyebrow} data-deco-en>FRIES CUP / WEEKLY ADVANCE</p><h1>{eventCenterText('advanceTitle', locale)}</h1><p>{eventCenterText('advanceIntro', locale)}</p></div>
       <div className={styles.headingActions}>
         <WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, teamId: null, query: null, followed: null, view: null, bracket: null })} />
         <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">↗</span><small>{t(uiText("回到本周对阵", locale), 'This week’s matchups')}</small></Link>
       </div>
     </header>
     <nav className={advanceStyles.phaseIndex} data-weekly-phase-index style={{ '--advance-phase-count': stages.length }} aria-label={t(uiText("周赛晋级路径", locale), 'Weekly advancement path')}>
-      <span className={advanceStyles.phaseIndexLabel}><img src="/logos/fries-cup-symbol.png" alt="" /><b>FC / ROUTE</b></span>
+      <span className={advanceStyles.phaseIndexLabel}><img src="/logos/fries-cup-symbol.png" alt="" /><b>{pickUiLocale(locale, '晋级路线', 'FC / ROUTE', '진출 경로', '晉級路線')}</b></span>
       <div className={advanceStyles.phaseLinks}>{stages.map((stage, index) => <Link key={stage.id} to={getWeeklyAdvancePhasePath(params, stage.id)} data-status={model.activeStage === stage.id ? 'current' : 'pending'} aria-current={phase === stage.id ? 'page' : undefined}><span>{String(index + 1).padStart(2, '0')} / {stage.title}</span><small>{stage.note}</small></Link>)}</div>
       <span className={advanceStyles.phaseStamp}><b>{String(stages.findIndex(stage => stage.id === phase) + 1).padStart(2, '0')}</b> / 03</span>
     </nav>

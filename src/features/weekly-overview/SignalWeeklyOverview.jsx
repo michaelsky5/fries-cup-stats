@@ -202,7 +202,7 @@ export default function SignalWeeklyOverview() {
 
   return <div className={styles.page} data-weekly-overview="true">
     <header className={styles.heading}>
-      <div><p className={styles.eyebrow}>FRIES CUP / WEEKLY</p><h1>{eventCenterText('overviewTitle', locale)}</h1><p>{eventCenterText('overviewIntro', locale)}</p></div>
+      <div><p className={styles.eyebrow} data-deco-en>FRIES CUP / WEEKLY</p><h1>{eventCenterText('overviewTitle', locale)}</h1><p>{eventCenterText('overviewIntro', locale)}</p></div>
       {!isPhone && quickLinks}
     </header>
     <WeeklyPhaseCard phases={phases} plan={weeklyPlan} locale={locale} withSeason={withSeason} now={openedAt} seasonId={seasonId} />

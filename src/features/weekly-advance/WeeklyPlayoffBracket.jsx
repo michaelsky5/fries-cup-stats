@@ -102,7 +102,7 @@ export default function WeeklyPlayoffBracket({ model, cycle, locale, seasonId, w
   const activeId = idOf(route.activeTeam)
   const highlightId = route.entrants.some(team => idOf(team) === selectedTeamId) ? selectedTeamId : null
   return <section id="weekly-playoffs" className={`${signal.playoffWorkspace} ${styles.section}`} data-chapter="02" aria-labelledby="weekly-playoffs-title" data-weekly-playoffs="true">
-    <header className={`${signal.routeChapterHeading} ${styles.bracketHeading}`}><span>02 / PLAYOFFS / {cycle.code || cycle.name}</span><h2 id="weekly-playoffs-title">{text('bracket', locale)}{' '}<em>{text('bracketFocus', locale)}</em></h2><p>{text('bracketIntro', locale)}</p></header>
+    <header className={`${signal.routeChapterHeading} ${styles.bracketHeading}`}><span data-deco-en>02 / PLAYOFFS / {cycle.code || cycle.name}</span><h2 id="weekly-playoffs-title">{text('bracket', locale)}{' '}<em>{text('bracketFocus', locale)}</em></h2><p>{text('bracketIntro', locale)}</p></header>
     <div className={styles.scheduleNotice}><strong>{notice.title}</strong><span>{text('timeZone', locale)}</span>{notice.note && <p>{notice.note}</p>}</div>
     {model.placements?.length === 4 && <section className={styles.placements} aria-label={text('finalPlacements', locale)}>
       <header><h3>{isChineseLocale(locale) ? weeklyCycleTitle(cycle, locale) : cycle.code} · {text('finalPlacements', locale)}</h3><span>{text(cycle.status === 'CLOSED' ? 'cycleClosed' : 'closeoutPending', locale)}</span></header>
