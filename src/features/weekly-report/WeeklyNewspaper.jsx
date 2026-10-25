@@ -5,7 +5,7 @@ import { formatOwMapName, formatOwHeroName } from '../../lib/heroes.js'
 import { getMapImage, getHeroImage } from '../../lib/reviewAssets.js'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import { weeklyPeriodPath } from '../weekly-overview/weeklyPresentation.js'
-import { formatReportTime } from './weeklyReportPresentation.js'
+import { formatReportTime, newspaperIssueStamp, newspaperStageLabel } from './weeklyReportPresentation.js'
 import { buildWeeklyNewspaper, newspaperTeamName, resolveWeeklyHeroRole } from './weeklyNewsroom.js'
 import { formatUpcomingMatch, formatWeeklyMatchScope, buildMatchBrief, buildLeadPrintNote } from './weeklyEditorial.js'
 import { WEEKLY_POSITIONS, WEEKLY_POSITION_ROLES } from './weeklyPositions.js'
@@ -16,6 +16,12 @@ import { playoffText } from './weeklyPlayoffNewspaper.js'
 import styles from './WeeklyNewspaper.module.css'
 
 const PAPER_SIZE = { width: 900, height: 1273 }
+
+// 票 2.49: the playoff edition is 季后赛专刊, not "week 6".
+function IssueStamp({ report, locale }) {
+  const stamp = newspaperIssueStamp(report, locale)
+  return <span className={styles.issueStamp} data-edition={stamp.edition}>{stamp.value}<small>{stamp.note}</small></span>
+}
 
 function SaveActions({ busy, savePdf, savePng, t, placement }) {
   return <div className={styles.pageActions} data-paper-actions={placement}>
@@ -46,7 +52,7 @@ function NewspaperSheet({ children, busy, savePdf, savePng, status, error, scale
       <section className={styles.sheet} id="newspaper-page-1" lang={locale} data-newspaper-sheet data-paper-page="1" data-paper-layout={newspaper.layout} data-has-intro={Boolean(newspaper.lead?.intro)} data-brief-count={newspaper.briefs.length} data-has-roundup={newspaper.otherResults.length>0} data-has-updates={newspaper.updates.length>0} aria-label={t('本期报纸','This issue')} ref={node=>{if(node)sheetsRef.current.set(0,node);else sheetsRef.current.delete(0)}} style={{ transform:`scale(${scale})` }}>
         <header className={styles.masthead}>
           <div className={styles.mastheadTop}><span>FRIES CUP / WEEKLY NEWSPAPER</span><span>{t('赛果 · 阵容 · 数据','RESULTS · LINEUPS · DATA')}</span></div>
-          <div className={styles.nameplate}><div className={styles.brandSignature}><img src="/logos/fries-cup-mark-ink.svg" alt=""/><span>FRIES CUP<small>THE WEEK, IN PRINT.</small></span></div><h1>{t('薯条周报','THE WEEKLY')}</h1><span className={styles.issueStamp}>{report.number}<small>{t('周','WEEK')}</small></span></div>
+          <div className={styles.nameplate}><div className={styles.brandSignature}><img src="/logos/fries-cup-mark-ink.svg" alt=""/><span>FRIES CUP<small>THE WEEK, IN PRINT.</small></span></div><h1>{t('薯条周报','THE WEEKLY')}</h1><IssueStamp report={report} locale={locale}/></div>
           <div className={styles.editionLine} data-edition-line><span>{seasonId} / {newspaper.edition}</span><span>{t('数据截至','Data as of')} {date}</span></div>
         </header>
         <div className={styles.paperBody} data-paper-body>{children}</div>
@@ -292,7 +298,7 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
   const leadTeams=lead?.displayTeams
   const leadPrintNote=newspaper.playoff ? lead?.visualNote : lead?.intro ? buildLeadPrintNote(lead,newspaper.articles,locale) : lead?.visualNote
   return <div className={styles.root} data-weekly-report-page data-weekly-newspaper data-report-week={report.week.id} data-i18n-ignore>
-    {!embedded&&<nav className={styles.breadcrumbs} aria-label={t('周报导航','Report navigation')}><Link to={home}>← {t(`第 ${report.week.week_number} 周赛事总览`,`Week ${report.week.week_number} overview`)}</Link><Link to={archive}>{t('周报归档','Report archive')} →</Link></nav>}
+    {!embedded&&<nav className={styles.breadcrumbs} aria-label={t('周报导航','Report navigation')}><Link to={home}>← {pickUiLocale(locale,`${newspaperStageLabel(report.week,locale)}赛事总览`,`${newspaperStageLabel(report.week,locale)} overview`,`${newspaperStageLabel(report.week,locale)} 개요`,`${newspaperStageLabel(report.week,locale)}賽事總覽`)}</Link><Link to={archive}>{t('周报归档','Report archive')} →</Link></nav>}
     <div className={styles.pages} ref={pagesRef}>
       <NewspaperSheet busy={busy} savePdf={savePdf} savePng={savePng} status={status} error={error} scale={scale} t={t} report={report} seasonId={seasonId} newspaper={newspaper} date={date} sheetsRef={sheetsRef} locale={locale}>
         <div className={styles.frontKicker}><span>{newspaper.playoff?playoffText('edition',locale):t('本周主新闻','THIS WEEK’S LEAD')}</span><span data-weekly-match-scope>{lead?.intro?formatWeeklyMatchScope(report,locale):<>{report.completed.length} {t('场对阵','matches')}</>} / {report.maps.length} {t('图赛果','map results')} / {report.playerCount} {t('名出场选手','players')}</span></div>
@@ -331,7 +337,7 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
     {!embedded&&<WeeklyNewsDesk newspaper={newspaper} locale={locale} t={t} withSeason={withSeason}/>}
     {!embedded&&<WeeklyAwardNotes awards={report.awards} locale={locale}/>}
     {!embedded&&<footer className={styles.readerFooter}>
-      <div className={styles.readerLinks}><Link to={home}>← {t(`回到第 ${report.week.week_number} 周`,`Back to week ${report.week.week_number}`)}</Link><Link to={archive}>{t('周报归档','Report archive')} →</Link></div>
+      <div className={styles.readerLinks}><Link to={home}>← {pickUiLocale(locale,`回到${newspaperStageLabel(report.week,locale)}`,`Back to ${newspaperStageLabel(report.week,locale)}`,`${newspaperStageLabel(report.week,locale)}로 돌아가기`,`回到${newspaperStageLabel(report.week,locale)}`)}</Link><Link to={archive}>{t('周报归档','Report archive')} →</Link></div>
       <SaveActions busy={busy} savePdf={savePdf} savePng={savePng} t={t} placement="bottom"/>
       <div className={styles.footerFeedback}>{error||status}</div>
     </footer>}

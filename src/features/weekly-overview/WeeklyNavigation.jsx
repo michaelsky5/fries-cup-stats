@@ -1,6 +1,6 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
-import { isChineseLocale, weeklyCycleCode, weeklyCycleTitle, weeklyStatusLabel, weeklyWeekRailTitle } from './weeklyPresentation.js'
+import { isChineseLocale, weeklyCycleCode, weeklyCycleTitle, weeklyStatusLabel, weeklyWeekHasNumber, weeklyWeekRailTitle } from './weeklyPresentation.js'
 import styles from './WeeklyNavigation.module.css'
 import sectionStyles from '../../components/navigation/SignalSectionNav.module.css'
 import { SCROLL_FADE_SIZE } from '../../lib/scrollFades.js'
@@ -93,7 +93,8 @@ export function WeeklyWeekRail({ weeks, selectedId, locale, onChange, includeAll
   const items = includeAll ? [{ id: 'all' }, ...weeks] : weeks
   return <nav ref={ref} className={`${styles.weekRail} ${sectionStyles.root}`} data-scroll-fades aria-label={en ? 'Published weeks' : uiText("已发布周次", locale)}>
     {items.map(item => <button type="button" key={item.id} className={`${styles.weekItem} ${sectionStyles.item}`} aria-current={selectedId === item.id ? 'true' : undefined} onClick={() => onChange(item.id)}>
-      <span><b>{item.id === 'all' ? '↔' : String(item.week_number).padStart(2, '0')}</b>{item.id === 'all' ? en ? 'Whole cycle' : uiText("整个赛段", locale) : weeklyWeekRailTitle(item, locale)}</span>
+      {/* 票 2.49: 晋级加赛 and 季后赛 are stages, not weeks 5 and 6, so they carry no number. */}
+      <span>{item.id === 'all' ? <b>↔</b> : weeklyWeekHasNumber(item) ? <b>{String(item.week_number).padStart(2, '0')}</b> : null}{item.id === 'all' ? en ? 'Whole cycle' : uiText("整个赛段", locale) : weeklyWeekRailTitle(item, locale)}</span>
       {/* 票 2.30: a finished week needs no label of its own; only weeks still to come or in play say where they stand. */}
       {(item.id === 'all' || String(item.status).toUpperCase() !== 'CLOSED') && <small>{item.id === 'all' ? en ? 'Published only' : uiText("已公布赛程", locale) : weeklyStatusLabel(item.status, locale)}</small>}
     </button>)}

@@ -7,6 +7,7 @@ import { weeklyCycleTitle } from '../weekly-overview/weeklyPresentation.js'
 import { changeNewspaper, readNewspaperWorkbench } from './weeklyNewspaperApi.js'
 import { applyIssueEdits, validateIssueDraft } from './weeklyIssueVersions.js'
 import WeeklyNewspaper from './WeeklyNewspaper.jsx'
+import { isNewspaperIssueWeek, newspaperWeekLabel } from './weeklyReportPresentation.js'
 import styles from './WeeklyReportWorkbench.module.css'
 
 export default function WeeklyReportWorkbench() {
@@ -26,6 +27,8 @@ export default function WeeklyReportWorkbench() {
   const paper = useMemo(() => draft ? applyIssueEdits(draft) : null, [draft])
   const checks = draft ? validateIssueDraft(draft) : { errors: [] }
   const dirty = Boolean(edits && active?.latest && JSON.stringify(edits) !== JSON.stringify(active.latest.draft.edits))
+  const scopeWeek = overview.weeks.find(week => week.id === scope.weekId)
+  const noIssue = Boolean(scopeWeek && !isNewspaperIssueWeek(scopeWeek))
 
   useEffect(() => {
     if (!user?.id || !scope.cycleId || !scope.weekId) return undefined
@@ -60,9 +63,13 @@ export default function WeeklyReportWorkbench() {
     <header className={styles.heading}><h1>{t('周报工作台', 'Newspaper workbench')}</h1><p>{weeklyCycleTitle(overview.cycle, locale)}</p></header>
     <div className={styles.workspace}>
     <section className={styles.desk}><div className={styles.deskBody}>
-    <nav className={styles.weekTabs} aria-label={t('选择周次', 'Choose week')}>{overview.weeks.map(week => <button type="button" key={week.id} aria-pressed={week.id === scope.weekId} disabled={busy || dirty} onClick={() => { setEdits(null); setParams({ cycle: scope.cycleId, week: week.id, lang: params.get('lang') || 'zh', season: params.get('season') || seasonId }) }}>{t('第 ' + week.week_number + ' 周', 'Week ' + week.week_number)}</button>)}</nav>
+    {/* 票 2.49: four prelim issues and one 季后赛专刊 per segment; the 晋级加赛 has no issue of its own. */}
+    <nav className={styles.weekTabs} aria-label={t('选择期次', 'Choose issue')}>{overview.weeks.filter(isNewspaperIssueWeek).map(week => <button type="button" key={week.id} aria-pressed={week.id === scope.weekId} disabled={busy || dirty} onClick={() => { setEdits(null); setParams({ cycle: scope.cycleId, week: week.id, lang: params.get('lang') || 'zh', season: params.get('season') || seasonId }) }}>{newspaperWeekLabel(week, locale)}</button>)}</nav>
+      {noIssue && <p role="note" data-workbench-no-issue>{String(scopeWeek.phase).toUpperCase() === 'QUALIFIER'
+        ? t('晋级加赛归入季后赛，不单独出刊。', 'The tiebreak qualifier belongs to the playoffs and has no issue of its own.')
+        : t('这个阶段不单独出刊。', 'This stage has no issue of its own.')}</p>}
       <p>{t('版本 ', 'Revision ') + (active?.issue?.headRevision || 0)} · {active?.issue?.publishedRevision ? t('已刊登版本 ', 'Published revision ') + active.issue.publishedRevision : t('尚未刊登', 'Unpublished')}</p>
-      <button type="button" disabled={busy || dirty} onClick={() => run('generate')}>{t('生成本期', 'Generate issue')}</button>
+      <button type="button" disabled={busy || dirty || noIssue} onClick={() => run('generate')}>{t('生成本期', 'Generate issue')}</button>
       {draft && <>
         <label className={styles.field}>{t('主标题', 'Headline')}<textarea rows={2} value={draft.edits.headline} maxLength={checks.headlineLimit} disabled={busy} onChange={event => setEdits({ ...draft.edits, headline: event.target.value })} /></label>
          {draft.paper.lead?.intro !== undefined&&<label className={styles.field}>{t('头条导语', 'Lead introduction')}<textarea rows={4} value={draft.edits.intro ?? draft.paper.lead.intro} maxLength={checks.introLimit} disabled={busy} onChange={event => setEdits({ ...draft.edits, intro: event.target.value })} /></label>}

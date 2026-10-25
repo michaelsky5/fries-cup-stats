@@ -16,7 +16,7 @@ import { WeeklyPublishedMapPool, weeklyCycleDateRange } from './WeeklyExistingSe
 import WeeklyPhaseCard from './WeeklyPhaseCard.jsx'
 import { buildWeeklyPhases } from './weeklyPhase.js'
 import { getSeasonById } from '../../config/seasons.js'
-import { isChineseLocale, showsInlineTimeZone, weeklyCycleTitle, weeklyFormatHint, weeklyFormatLabel, weeklyMatchContextLabel, weeklyPeriodPath, weeklyStatusLabel, weeklyWeekTitle, weeklyTeamShort as shortName } from './weeklyPresentation.js'
+import { isChineseLocale, showsInlineTimeZone, weeklyCycleTitle, weeklyFormatHint, weeklyFormatLabel, weeklyMatchContextLabel, weeklyPeriodPath, weeklyStatusLabel, weeklyWeekHasNumber, weeklyWeekRailTitle, weeklyWeekTitle, weeklyTeamShort as shortName } from './weeklyPresentation.js'
 import { weeklyOverviewReturnLocation } from './weeklyInteractionNavigation.js'
 import { weeklyStandingsPreviewLimit, selectWeeklyFollowingPreview, selectWeeklyStandingsPreview } from './weeklyOverviewPreview.js'
 import { WeeklyReportTeaser, WeeklyEventPathway } from '../weekly-report/WeeklyReportTeaser.jsx'
@@ -246,7 +246,9 @@ export default function SignalWeeklyOverview() {
         {isPhone && <div className={styles.phoneLinks}>{quickLinks}</div>}
       </section>
       {matches.length > 0 && <section className={styles.matchList} aria-labelledby="weekly-matches-title">
-          <div className={styles.listHeading}><h2 id="weekly-matches-title">{pickUiLocale(locale, `第 ${currentWeek} 周全部对阵`, `All matches · Week ${currentWeek}`, `${currentWeek}주차 전체 경기`, `第 ${currentWeek} 週全部對陣`)}</h2><Link className={styles.scheduleLink} to={withSeason(weeklyPeriodPath('/matches', cycle, week))}>{t(uiText("完整周赛赛程", locale), 'Full weekly schedule')} <span aria-hidden="true">→</span></Link></div>
+          <div className={styles.listHeading}><h2 id="weekly-matches-title">{week && !weeklyWeekHasNumber(week)
+            ? pickUiLocale(locale, `${weeklyWeekRailTitle(week, locale)}全部对阵`, `All matches · ${weeklyWeekRailTitle(week, locale)}`, `${weeklyWeekRailTitle(week, locale)} 전체 경기`, `${weeklyWeekRailTitle(week, locale)}全部對陣`)
+            : pickUiLocale(locale, `第 ${currentWeek} 周全部对阵`, `All matches · Week ${currentWeek}`, `${currentWeek}주차 전체 경기`, `第 ${currentWeek} 週全部對陣`)}</h2><Link className={styles.scheduleLink} to={withSeason(weeklyPeriodPath('/matches', cycle, week))}>{t(uiText("完整周赛赛程", locale), 'Full weekly schedule')} <span aria-hidden="true">→</span></Link></div>
           {matches.map(match => <div className={styles.matchEntry} key={match.id}><button type="button" className={styles.matchRow} aria-label={`${pickUiLocale(locale, '预览对阵', 'Preview matchup', '대진 미리 보기', '預覽對陣')} ${shortName(match.team_a)} / ${shortName(match.team_b)} · ${renderScore(match)}`} aria-pressed={focus?.id === match.id} onClick={() => chooseMatch(match)}>
             <span className={styles.rowTime}><b>{status(match.state)}</b><small>{dateText(match)}</small></span>
             <span className={styles.rowTeam}><TeamLogo team={match.team_a} seasonId={seasonId} className={styles.rowLogo} /><b>{shortName(match.team_a)}</b></span>

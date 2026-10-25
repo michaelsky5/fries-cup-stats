@@ -104,8 +104,21 @@ test('Chinese pages lead with the human cycle name and explain formats; English 
   assert.equal(presentation.weeklyCycleTitle(cycle, 'en-US'), 'FCW S1 C1')
   assert.equal(presentation.weeklyCycleCode(cycle), 'FCW S1 C1')
   const final = { match_code: 'FCW26-C01-W06-PO-M04', weekly_context: { phase: 'PLAYOFFS', round_label: '决赛', week_number: 6, cycle_sequence: 1, cycle_name: '第一周期' } }
-  assert.equal(presentation.weeklyMatchContextLabel(final, 'zh-CN'), '第一赛段 · 第 6 周 · 决赛')
-  assert.match(presentation.weeklyMatchContextLabel(final, 'en-US'), /^FCW S1 C1 · Week 6/)
+  // 票 2.49: 晋级加赛 belongs to the playoffs; neither carries a week number.
+  assert.equal(presentation.weeklyMatchContextLabel(final, 'zh-CN'), '第一赛段 · 季后赛 · 决赛')
+  assert.equal(presentation.weeklyMatchContextLabel(final, 'zh-TW'), '第一賽段 · 季後賽 · 決賽')
+  assert.match(presentation.weeklyMatchContextLabel(final, 'en-US'), /^FCW S1 C1 · Playoffs · Final/)
+  const qualifier = { match_code: 'FCW26-C01-W05-QUAL-M01', weekly_context: { phase: 'QUALIFIER', week_number: 5, week_label: '第 5 周', cycle_sequence: 1, cycle_name: '第一周期' } }
+  assert.equal(presentation.weeklyMatchContextLabel(qualifier, 'zh-CN'), '第一赛段 · 季后赛 · 晋级加赛')
+  const prelim = { match_code: 'FCW26-C01-W03-REG-M02', weekly_context: { phase: 'REGULAR', week_number: 3, cycle_sequence: 1, cycle_name: '第一周期' } }
+  assert.equal(presentation.weeklyMatchContextLabel(prelim, 'zh-CN'), '第一赛段 · 第 3 周')
+  assert.equal(presentation.weeklyWeekTitle({ week_number: 5, phase: 'QUALIFIER', label: '第 5 周' }, 'zh-CN'), '季后赛 · 晋级加赛')
+  assert.equal(presentation.weeklyWeekTitle({ week_number: 6, phase: 'PLAYOFFS', label: '第一赛段季后赛' }, 'zh-CN'), '季后赛')
+  assert.equal(presentation.weeklyWeekTitle({ week_number: 6, phase: 'PLAYOFFS' }, 'en-US'), 'Playoffs')
+  assert.equal(presentation.weeklyWeekTitle({ week_number: 2, phase: 'REGULAR', label: '第 2 周' }, 'zh-CN'), '第 2 周')
+  assert.equal(presentation.weeklyWeekHasNumber({ phase: 'REGULAR' }), true)
+  assert.equal(presentation.weeklyWeekHasNumber({ phase: 'QUALIFIER' }), false)
+  assert.equal(presentation.weeklyWeekHasNumber({ phase: 'PLAYOFFS' }), false)
   assert.equal(presentation.weeklyFormatLabel({ format: 'FT3' }, 'zh-CN'), 'FT3（先赢 3 图）')
   assert.equal(presentation.weeklyFormatLabel({ format: 'RR5' }, 'zh-CN'), 'RR5（五局积分制）')
   assert.equal(presentation.weeklyFormatLabel({ format: 'FT3' }, 'en-US'), 'FT3')

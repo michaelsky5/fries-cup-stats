@@ -1,4 +1,4 @@
-import { translateUiText as uiText } from './uiText.js'
+import { pickUiLocale, translateUiText as uiText } from './uiText.js'
 import { getPublicMatchCode } from './publicMatchCode.js'
 
 // These are display labels. Rules and immutable codes keep their existing keys.
@@ -8,6 +8,31 @@ export const WEEKLY_PHASE_LABELS = Object.freeze({
   PLAYOFFS: ['季后赛', 'Playoffs'],
   MAJOR: ['巅峰赛', 'Finals']
 })
+
+// zh-CN, en, ko, zh-TW. The shared catalog has no Korean or Traditional Chinese for 晋级加赛.
+export const WEEKLY_STAGE_NAMES = Object.freeze({
+  QUALIFIER: ['晋级加赛', 'Tiebreak qualifier', '진출권 결정전', '晉級加賽'],
+  PLAYOFFS: ['季后赛', 'Playoffs', '플레이오프', '季後賽'],
+  MAJOR: ['巅峰赛', 'Finals', '파이널', '巔峰賽']
+})
+const stageName = (phase, locale) => WEEKLY_STAGE_NAMES[phase] ? pickUiLocale(locale, ...WEEKLY_STAGE_NAMES[phase]) : ''
+
+// 票 2.49: a segment is four prelim weeks plus its playoffs, and the tiebreak qualifier is part of
+// the playoffs. Only prelim weeks are named by number; qualifier and playoff matches by stage.
+// Returns null for a numbered week.
+export function getWeeklyStageParts(phase, locale = 'zh-CN') {
+  const key = String(phase || '').trim().toUpperCase()
+  if (key === 'QUALIFIER') return [stageName('PLAYOFFS', locale), stageName('QUALIFIER', locale)]
+  if (key === 'PLAYOFFS') return [stageName('PLAYOFFS', locale)]
+  return null
+}
+
+// Drops empty parts and a part that repeats the one before it (季后赛 · 季后赛).
+export function joinWeeklyLabelParts(parts) {
+  const kept = []
+  for (const part of parts) if (part && part !== kept.at(-1)) kept.push(part)
+  return kept.join(' · ')
+}
 const PHASE_CODES = { REG: 'REGULAR', QUAL: 'QUALIFIER', PO: 'PLAYOFFS' }
 const text = value => String(value ?? '').trim()
 const list = value => Array.isArray(value) ? value : []
@@ -75,7 +100,14 @@ export function getWeeklyPhaseLabel(phase, locale = 'zh-CN') {
   return label ? uiText(label, locale) : ''
 }
 
-const ROUND_LABELS_EN = { 总决赛: 'Grand Final', 决赛: 'Final', 半决赛: 'Semifinal', 季军赛: 'Third place' }
+// zh-CN, en, ko, zh-TW. The shared catalog has no Traditional Chinese for these round names.
+const ROUND_NAMES = {
+  总决赛: ['总决赛', 'Grand Final', '그랜드 파이널', '總決賽'],
+  决赛: ['决赛', 'Final', '결승', '決賽'],
+  半决赛: ['半决赛', 'Semifinal', '준결승', '準決賽'],
+  季军赛: ['季军赛', 'Third place', '3위 결정전', '季軍賽']
+}
+const roundName = (round, locale) => ROUND_NAMES[round] ? pickUiLocale(locale, ...ROUND_NAMES[round]) : uiText(round, locale)
 
 // The round a list row needs to tell matches of one day apart: the playoff round, or the phase
 // for qualifier / finals weeks. Ordinary prelim matches need none.
@@ -83,7 +115,7 @@ export function getWeeklyRoundLabel(match, locale = 'zh-CN') {
   const identity = getWeeklyMatchIdentity(match)
   if (!identity) return ''
   const round = text(identity.round_label)
-  if (round) return String(locale).startsWith('en') ? ROUND_LABELS_EN[round] || uiText(round, locale) : uiText(round, locale)
+  if (round) return roundName(round, locale)
   return identity.phase && identity.phase !== 'REGULAR' ? getWeeklyPhaseLabel(identity.phase, locale) : ''
 }
 
@@ -101,12 +133,12 @@ export function getWeeklyMatchIdentityLabel(match, locale = 'zh-CN') {
   const identity = getWeeklyMatchIdentity(match)
   if (!identity) return ''
   const en = String(locale).startsWith('en')
-  const round = identity.round_label === '总决赛' ? en ? 'Grand Final' : uiText('总决赛', locale)
-    : identity.round_label === '决赛' ? en ? 'Final' : uiText('决赛', locale)
-    : identity.round_label === '半决赛' ? en ? 'Semifinal' : uiText('半决赛', locale) : uiText(identity.round_label || '', locale)
-  return [getWeeklyCycleIdentityLabel({ ...identity, seasonId: identity.seasonId || match.season_id || (/^FCW26-/.test(getMatchDisplayCode(match)) ? 'FCW26' : '') }, locale),
-    identity.week_number ? en ? `Week ${identity.week_number}` : uiText('第 {0} 周', locale, [identity.week_number]) : identity.week_label,
-    getWeeklyPhaseLabel(identity.phase, locale), round,
+  const round = roundName(text(identity.round_label), locale)
+  const stage = getWeeklyStageParts(identity.phase, locale)
+  return joinWeeklyLabelParts([getWeeklyCycleIdentityLabel({ ...identity, seasonId: identity.seasonId || match.season_id || (/^FCW26-/.test(getMatchDisplayCode(match)) ? 'FCW26' : '') }, locale),
+    ...(stage || [identity.week_number ? en ? `Week ${identity.week_number}` : uiText('第 {0} 周', locale, [identity.week_number]) : identity.week_label,
+      getWeeklyPhaseLabel(identity.phase, locale)]),
+    round,
     identity.match_number ? en ? `Match ${String(identity.match_number).padStart(2, '0')}` : uiText('第 {0} 场', locale, [String(identity.match_number).padStart(2, '0')]) : ''
-  ].filter(Boolean).join(' · ')
+  ])
 }

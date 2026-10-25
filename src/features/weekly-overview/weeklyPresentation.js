@@ -1,6 +1,6 @@
 import { normalizeLocale } from '../../lib/locales.js'
 import { pickUiLocale, translateUiText } from '../../lib/uiText.js'
-import { getWeeklyCycleIdentityLabel, getWeeklyMatchIdentity, getWeeklyMatchIdentityLabel, getWeeklyRoundLabel } from '../../lib/weeklyMatchIdentity.js'
+import { WEEKLY_STAGE_NAMES, getWeeklyCycleIdentityLabel, getWeeklyMatchIdentity, getWeeklyMatchIdentityLabel, getWeeklyRoundLabel, getWeeklyStageParts, joinWeeklyLabelParts } from '../../lib/weeklyMatchIdentity.js'
 import { getMatchFormatLabel } from '../../lib/matchFormat.js'
 import { getPreferredTeamShortName } from '../../lib/teamDisplayIdentity.js'
 const labels = {
@@ -37,13 +37,15 @@ export function weeklyCycleCode(cycle) {
 export const weeklyCycleTitle = (cycle, locale) => (isChineseLocale(locale) && weeklyCycleHumanName(cycle, locale))
   || getWeeklyCycleIdentityLabel(cycle, locale) || (isEnglish(locale) ? cycle?.code || 'Cycle' : cycle?.name?.replaceAll('周期', '赛段') || cycle?.code || '赛段')
 
-// A match in a list or card: 第一赛段 · 第 6 周 · 决赛. The match number stays on the detail page.
+// A match in a list or card: 第一赛段 · 第 3 周, 第一赛段 · 季后赛 · 决赛, 第一赛段 · 季后赛 · 晋级加赛
+// (票 2.49: playoff and qualifier matches carry no week number). The match number stays on the detail page.
 export function weeklyMatchContextLabel(match, locale) {
   if (!isChineseLocale(locale)) return getWeeklyMatchIdentityLabel(match, locale)
   const identity = getWeeklyMatchIdentity(match)
   if (!identity) return ''
-  const week = identity.week_number ? translateUiText(`第 ${identity.week_number} 周`, locale) : translateUiText(identity.week_label || '', locale)
-  return [weeklyCycleHumanName(identity, locale), week, getWeeklyRoundLabel(match, locale)].filter(Boolean).join(' · ')
+  const week = getWeeklyStageParts(identity.phase, locale)
+    || [identity.week_number ? translateUiText(`第 ${identity.week_number} 周`, locale) : translateUiText(identity.week_label || '', locale)]
+  return joinWeeklyLabelParts([weeklyCycleHumanName(identity, locale), ...week, getWeeklyRoundLabel(match, locale)])
 }
 
 // RR5 / FT3 explained where they first appear (Chinese interface only).
@@ -63,13 +65,8 @@ export function weeklyFormatLabel(match, locale) {
 
 // Times are Beijing time; the Chinese interface says so once per page instead of after every time.
 export const showsInlineTimeZone = locale => !isChineseLocale(locale)
-// The shared phase table has no Korean or Traditional Chinese for 晋级加赛, so the four names are
-// spelled out here (zh-CN, en, ko, zh-TW), matching the advance page.
-export const WEEKLY_PHASE_NAMES = {
-  QUALIFIER: ['晋级加赛', 'Tiebreak qualifier', '진출권 결정전', '晉級加賽'],
-  PLAYOFFS: ['季后赛', 'Playoffs', '플레이오프', '季後賽'],
-  MAJOR: ['巅峰赛', 'Finals', '파이널', '巔峰賽']
-}
+// The four names (zh-CN, en, ko, zh-TW) of the stages that are not numbered weeks, matching the advance page.
+export const WEEKLY_PHASE_NAMES = WEEKLY_STAGE_NAMES
 
 // 票 2.30: the week rail sits under the cycle name, so a phase week reads 季后赛, not 第一赛段季后赛.
 export const weeklyWeekRailTitle = (week, locale) => {
@@ -77,7 +74,12 @@ export const weeklyWeekRailTitle = (week, locale) => {
   return names ? pickUiLocale(locale, ...names) : weeklyWeekTitle(week, locale)
 }
 
+// 票 2.49: only prelim weeks have a number a reader should see. 晋级加赛 belongs to the playoffs.
+export const weeklyWeekHasNumber = week => !WEEKLY_PHASE_NAMES[String(week?.phase || '').toUpperCase()]
+
 export const weeklyWeekTitle = (week, locale) => {
+  const stage = getWeeklyStageParts(week?.phase, locale)
+  if (stage) return joinWeeklyLabelParts(stage)
   if (isEnglish(locale)) return `Week ${week?.week_number}`
   const fallback = `第 ${week?.week_number} 周`
   const label = String(week?.label || fallback).replace(/\s*[·•—–-]?\s*首[周週][试試][运運]行\s*$/, '').trim()
