@@ -12,7 +12,7 @@ const ABOUT_WEEKLY_URL = 'https://fries-cup.com/events/weekly/'
 // 票 2.18: one page that explains how to take part and links to every participation page.
 // It only links; registration, confirmation and match rooms keep their own pages and rules.
 export default function ParticipationHubPage() {
-  const { season, seasonId, withSeason, locale, isAuthenticated } = useOutletContext()
+  const { season, seasonId, withSeason, locale, isAuthenticated, accountNextAction } = useOutletContext()
   const location = useLocation()
   const t = (...copy) => pickUiLocale(locale, ...copy)
   const [lobbyMode, setLobbyMode] = useState(null)
@@ -84,10 +84,16 @@ export default function ParticipationHubPage() {
 
   return <div className={styles.page} data-participation-hub>
     <header className={styles.hero}>
-      <p className={styles.eyebrow} data-deco-en>FRIES CUP / PLAY</p>
       <h1>{title}</h1>
       <p>{t('报名、入队、每周确认和比赛夜进房间，都从这里开始。', 'Registration, joining a team, weekly confirmation and match-night rooms all start here.', '등록, 팀 합류, 주간 확인, 경기 날 입장까지 여기서 시작하세요.', '報名、入隊、每週確認和比賽夜進房間，都從這裡開始。')}</p>
       {!isAuthenticated ? <button type="button" className={styles.signIn} onClick={signIn}>{t('登录参赛账号', 'Sign in to your player account', '참가 계정 로그인', '登入參賽帳號')} <span aria-hidden="true">→</span></button> : null}
+      {/* 票 2.45: signed in, the first screen leads with the one thing to do now; nothing shows without one. */}
+      {isAuthenticated && accountNextAction?.to ? <Link className={styles.nextAction} to={accountNextAction.to} data-account-next-action={accountNextAction.kind}>
+        <span>{t('现在要做', 'Next for you', '지금 할 일', '現在要做')}</span>
+        <strong>{accountNextAction.label}</strong>
+        {accountNextAction.detail ? <small>{accountNextAction.detail}</small> : null}
+        <i aria-hidden="true">→</i>
+      </Link> : null}
     </header>
 
     {isAuthenticated ? <nav className={styles.mine} aria-label={t('我的参赛', 'My participation', '내 참가', '我的參賽')} data-participation-mine>

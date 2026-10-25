@@ -1,4 +1,5 @@
 import { normalizeLocale } from '../../lib/locales.js'
+import { describeAccountNextAction } from '../account-ui/accountNextAction.js'
 
 const COPY = {
   'zh-CN': { task: '待', unread: '未', count: (tasks, unread) => `${tasks} 项待办，${unread} 条未读消息`, partial: (tasks, unread, state) => `至少 ${tasks} 项待办，其他待办${state === 'error' ? '同步失败' : '正在同步'}；${unread} 条未读消息`, unknown: (unread, state) => `待办${state === 'error' ? '同步失败，数量暂时未知' : '正在同步，数量尚未确认'}；${unread} 条未读消息` },
@@ -17,7 +18,9 @@ export function formatAttentionCount(value) {
   return count > 99 ? '99+' : String(count)
 }
 
-export function buildAccountAttention(context, locale = 'zh-CN') {
+// 票 2.45: registration comes from the public season data; it is only the next action when the
+// account has nothing more specific to do and no team in this season.
+export function buildAccountAttention(context, locale = 'zh-CN', { registration = null } = {}) {
   const openTaskCount = normalizeCount(context?.overview?.openTaskCount)
   const unreadNotificationCount = normalizeCount(context?.overview?.unreadNotificationCount)
   const copy = COPY[normalizeLocale(locale)] || COPY['zh-CN']
@@ -26,7 +29,13 @@ export function buildAccountAttention(context, locale = 'zh-CN') {
   const count = formatAttentionCount(openTaskCount)
   const taskCountText = incomplete ? openTaskCount ? `${count}${openTaskCount > 99 ? '' : '+'}` : taskSyncStatus === 'error' ? '!' : '…' : count
 
+  const closes = Date.parse(registration?.closesAt || '')
+  const registrationOpen = Boolean(registration) && (!Number.isFinite(closes) || closes > Number(context?.checkedAt || 0))
+  const nextAction = describeAccountNextAction(context?.nextAction
+    || (context?.checkedAt && registrationOpen && !context.hasTeam ? { kind: 'register', to: registration.path, at: registration.closesAt || null } : null), locale)
+
   return {
+    nextAction,
     openTaskCount,
     unreadNotificationCount,
     taskSyncStatus,

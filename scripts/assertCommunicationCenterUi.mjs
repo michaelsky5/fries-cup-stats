@@ -65,6 +65,7 @@ assert.equal(formatAttentionCount(120), '99+')
 assert.deepEqual(buildAccountAttention({
   overview: { openTaskCount: 3.8, unreadNotificationCount: 120 }
 }), {
+  nextAction: null,
   openTaskCount: 3,
   unreadNotificationCount: 120,
   taskSyncStatus: 'ready',

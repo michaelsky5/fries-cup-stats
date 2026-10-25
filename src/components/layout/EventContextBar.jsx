@@ -1,5 +1,6 @@
 import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import styles from '../../features/fd-design/eventContextStyles.js'
 import { pickLocale } from '../../lib/legacyI18n.js'
 import { getSeasonLifecycleGroup, getSeasonStatusKey } from '../../lib/publicDataStatus.js'
@@ -166,6 +167,15 @@ function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary,
   )
 }
 
+// 票 2.45: a signed-in participant's one next step sits at the end of the status line on wide
+// screens: today's match room, this week's confirmation, or registration.
+function NextActionLink({ action }) {
+  if (!action?.to) return null
+  return <Link className={styles.nextAction} to={action.to} data-account-next-action={action.kind}>
+    <strong>{action.label}</strong>{action.detail ? <span>{action.detail}</span> : null}<i aria-hidden="true">→</i>
+  </Link>
+}
+
 export default function EventContextBar({
   season,
   seasonId,
@@ -182,7 +192,8 @@ export default function EventContextBar({
   placement = '',
   presentation = 'default',
   isPreview = false,
-  onRetry
+  onRetry,
+  nextAction = null
 }) {
   const isHeaderPlacement = placement === 'header'
   const isContentPlacement = placement === 'content'
@@ -208,6 +219,7 @@ export default function EventContextBar({
         {directoryNotice ? <p>{directoryNotice}</p> : null}
       </div>
       {dataStatus?.notice && onRetry ? <button type="button" className={styles.directoryRetry} onClick={onRetry} disabled={isSyncing}>{isSyncing ? dataStatus.refreshingLabel : dataStatus.retryLabel}</button> : null}
+      <NextActionLink action={nextAction} />
     </section>
   )
 
@@ -263,6 +275,7 @@ export default function EventContextBar({
           compact={isHeaderPlacement}
         /> : null}
       </div>
+      {isContentPlacement ? <NextActionLink action={nextAction} /> : null}
       {!isHeaderPlacement && isSyncing ? <i className={styles.syncLine} aria-hidden="true"><span /></i> : null}
     </section>
   )

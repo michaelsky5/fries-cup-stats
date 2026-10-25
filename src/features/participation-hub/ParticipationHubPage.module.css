@@ -10,11 +10,16 @@
 .page a { color: inherit; text-decoration: none; }
 .page a:focus-visible, .page button:focus-visible { outline: 2px solid var(--fc-data-focus-on-light, #806000); outline-offset: 3px; }
 .hero { padding: 18px 0 22px; border-bottom: 1px solid var(--line); }
-.eyebrow { margin: 0; color: var(--muted); font-size: 11px; letter-spacing: .09em; }
-.hero h1 { margin: 8px 0 10px; font-size: var(--fc-data-index-title-size, 44px); font-weight: 900; line-height: var(--fc-data-index-title-leading, 1.05); letter-spacing: -.04em; }
+.hero h1 { margin: 0 0 10px; font-size: var(--fc-data-index-title-size, 44px); font-weight: 900; line-height: var(--fc-data-index-title-leading, 1.05); letter-spacing: -.04em; }
 .hero p { max-width: 64ch; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
 .signIn { display: inline-flex; align-items: center; gap: 14px; min-height: 44px; margin-top: 16px; padding: 0 16px; border: 0; border-radius: 0; background: var(--ink); color: var(--fc-data-paper, #eeede6); font: 650 14px/1.4 var(--font-sans); cursor: pointer; }
 .signIn > span { color: var(--fc-data-signal, #f4c320); }
+.nextAction { display: inline-grid; grid-template-columns: auto auto auto; align-items: baseline; gap: 4px 16px; margin-top: 16px; padding: 12px 16px; background: var(--fc-data-signal, #f4c320); color: var(--ink); text-decoration: none; }
+.nextAction > span { grid-column: 1 / -1; font-size: 12px; }
+.nextAction strong { font-size: 20px; font-weight: 800; }
+.nextAction small { font-size: 14px; }
+.nextAction i { font-style: normal; font-size: 20px; }
+.nextAction:hover strong { text-decoration: underline; text-underline-offset: 4px; }
 .hero .primary { margin-top: 16px; }
 .mine { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 18px 0; border-bottom: 1px solid var(--line); }
 .page .primary, .page .secondary { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 56px; padding: 10px 16px; font-size: 14px; }
@@ -54,7 +59,6 @@
   .entries li:not(:last-child) { border-right: 0; }
 }
 @media (max-width: 600px) {
-  .eyebrow { display: none; }
   .hero { padding: 14px 0 18px; }
   .hero h1 { margin-top: 0; }
   .mine { grid-template-columns: 1fr; }

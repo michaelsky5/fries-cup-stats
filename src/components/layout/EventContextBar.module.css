@@ -24,6 +24,15 @@
 .directoryRetry { min-height: 44px; padding: 8px 0 8px 8px; border: 0; background: transparent; color: var(--fc-data-ink); font: inherit; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 .directoryRetry:disabled { color: var(--fc-data-text-muted); cursor: wait; }
 .directoryRetry:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 3px; }
+.directoryContext:has(.directoryRetry):has(.nextAction) { grid-template-columns: auto minmax(0, 1fr) auto auto; }
+/* 票 2.45: the one next step; yellow marks the main action, as everywhere else. */
+.nextAction { display: inline-flex; align-items: baseline; gap: 8px; min-height: 32px; align-self: center; padding: 6px 12px; background: var(--fc-data-signal); color: var(--fc-data-ink); font: 12px/1.5 var(--font-sans); text-decoration: none; white-space: nowrap; }
+.nextAction strong { font-weight: 800; }
+.nextAction span { color: var(--fc-data-ink); }
+.nextAction i { font-style: normal; }
+.nextAction:hover strong { text-decoration: underline; text-underline-offset: 3px; }
+.nextAction:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 3px; }
+@media (max-width: 900px) { .nextAction { display: none; } .directoryContext:has(.directoryRetry):has(.nextAction) { grid-template-columns: auto minmax(0, 1fr) auto; } }
 @media (max-width: 600px) {
   .directoryContext { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding-block: 6px 10px; }
   .directoryIdentity { grid-column: 1 / -1; }

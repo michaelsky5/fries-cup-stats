@@ -245,14 +245,20 @@ export default function DataLayout() {
         number: String(activeNavIndex + 1).padStart(2, '0')
       }
     : null
-  const accountAttention = useMemo(
-    () => buildAccountAttention(attentionEnabled && accountAttentionContext?.scope === attentionScope ? accountAttentionContext : null, compatibleLayoutLocale),
-    [accountAttentionContext, compatibleLayoutLocale, attentionEnabled, attentionScope]
-  )
   const navigationSearch = getNavigationSearch(location.search, designPreview, layoutLocale)
   const withSeason = useMemo(
     () => path => withAccountCompetition(buildSeasonLink(path, seasonId, navigationSearch), competition.navigationId, navigationSearch),
     [seasonId, navigationSearch, competition.navigationId]
+  )
+  // 票 2.45: same rule as the phase card — open while enabled and before any deadline; the deadline
+  // is compared with the time the account data was last read, not during render.
+  const seasonRegistrationRules = db?.season?.rules?.registration
+  const registrationNextAction = useMemo(() => seasonRegistrationRules?.enabled === true
+    ? { closesAt: seasonRegistrationRules.closesAt || null, path: withSeason(`/participate/${encodeURIComponent(seasonId)}`) }
+    : null, [seasonRegistrationRules, seasonId, withSeason])
+  const accountAttention = useMemo(
+    () => buildAccountAttention(attentionEnabled && accountAttentionContext?.scope === attentionScope ? accountAttentionContext : null, compatibleLayoutLocale, { registration: registrationNextAction }),
+    [accountAttentionContext, compatibleLayoutLocale, attentionEnabled, attentionScope, registrationNextAction]
   )
   const overviewSection = isKprHybridDesign && !season?.partnerTrial ? overviewSectionId(location.pathname) : null
   const overviewNavPath = path => withSeason(getWeeklyNavigationPath(path, location.search, season?.rules?.weeklyCompetition?.enabled || season?.competitionFormat === 'WEEKLY'))
@@ -391,7 +397,8 @@ export default function DataLayout() {
     accountIdentityError: accountDataError?.message || '',
     isAccountIdentityLoading: isAccountDataLoading,
     isAuthenticated,
-    authUser
+    authUser,
+    accountNextAction: accountAttention.nextAction
   }
 
   const eventContextDock = isKprHybridDesign && (headerContextMode === 'data' || isWeeklyHomeRoute) ? (
@@ -413,6 +420,7 @@ export default function DataLayout() {
             presentation={isCompactContextRoute ? 'directory' : 'default'}
             isPreview={Boolean(db?.meta?.preview)}
             onRetry={isCompactContextRoute && !isLoading && !error ? retry : undefined}
+            nextAction={isPlayRoute ? null : accountAttention.nextAction}
           />
         </div>
       ) : null
