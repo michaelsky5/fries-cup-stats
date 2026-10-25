@@ -80,7 +80,7 @@ export function WeeklyReportTeaser({ cycle, week, report: providedReport, compac
     ? story.editorialHook === 'number-echo' ? story.headline : `${story.headline} · ${story.name} / ${story.stats.map(stat => `${stat.label} ${new Intl.NumberFormat(locale).format(stat.value)}`).join(' · ')}`
     : t('本周赛果与选手数据。', 'Results and player statistics.')
   return <section className={styles.teaser} aria-labelledby="weekly-report-heading" data-weekly-report-teaser data-i18n-ignore>
-    <div className={styles.teaserLabel}><h2 id="weekly-report-heading">{t('周报', 'Weekly report')}<small>THE WEEK, IN PRINT.</small></h2><Link to={withSeason(`/reports?cycle=${encodeURIComponent(cycle.id)}`)}>{t('周报归档', 'Report archive')}<span aria-hidden="true">→</span></Link></div>
+    <div className={styles.teaserLabel}><h2 id="weekly-report-heading">{t('周报', 'Weekly report')}</h2><Link to={withSeason(`/reports?cycle=${encodeURIComponent(cycle.id)}`)}>{t('周报归档', 'Report archive')}<span aria-hidden="true">→</span></Link></div>
     <div className={styles.teaserBody}>
       <Link className={styles.coverLink} to={withSeason(weeklyReportPath(report))} aria-label={openLabel}><ReportCover report={report} locale={locale} /></Link>
       <div className={styles.teaserCopy}>

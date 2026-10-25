@@ -1,22 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import TeamLobbyEntry from '../../features/team-lobby/TeamLobbyEntry.jsx'
-import { getLobbyConfig } from '../../features/team-lobby/lobbyApi.js'
+import { useLobbyOpen } from '../../features/team-lobby/useLobbyOpen.js'
 import { pickUiLocale } from '../../lib/uiText.js'
 import styles from './HomeTopEntry.module.css'
 
-const OPEN_LOBBY_MODES = new Set(['READ_ONLY', 'WRITE'])
 const MAX_TIMER_MS = 2 ** 31 - 1
-
-// Read the lobby switch once per page load; a failed read is retried on the next visit.
-let lobbyConfigRequest = null
-function loadLobbyConfig() {
-  lobbyConfigRequest ??= getLobbyConfig().catch(() => {
-    lobbyConfigRequest = null
-    return null
-  })
-  return lobbyConfigRequest
-}
 
 function registrationDeadline(db) {
   const registration = db?.season?.rules?.registration
@@ -28,11 +17,12 @@ function registrationDeadline(db) {
 // season registration until its deadline, then the team lobby once System
 // opens it. A lobby that is OFF, still loading or unreadable shows nothing, so
 // Home never links to a page that only says "not open yet".
+// 票 2.41: the weekly home has no slot above its title; its phase card carries both.
 export default function HomeTopEntry({ db, season, locale, withSeason, phaseCard = false }) {
   const deadline = registrationDeadline(db)
   const [now, setNow] = useState(() => Date.now())
-  const [lobbyOpen, setLobbyOpen] = useState(false)
   const registrationOpen = deadline !== null && now < deadline
+  const lobbyOpen = useLobbyOpen(!phaseCard && !registrationOpen)
 
   useEffect(() => {
     if (!registrationOpen) return undefined
@@ -40,17 +30,8 @@ export default function HomeTopEntry({ db, season, locale, withSeason, phaseCard
     return () => clearTimeout(timer)
   }, [deadline, registrationOpen])
 
-  useEffect(() => {
-    if (registrationOpen) return undefined
-    let active = true
-    loadLobbyConfig().then(config => {
-      if (active) setLobbyOpen(OPEN_LOBBY_MODES.has(config?.mode))
-    })
-    return () => { active = false }
-  }, [registrationOpen])
-
-  // The weekly home's phase card (票 2.16) carries registration itself; this band stays for other seasons.
-  if (registrationOpen) return phaseCard ? null : <RegistrationBand deadline={deadline} season={season} locale={locale} withSeason={withSeason} />
+  if (phaseCard) return null
+  if (registrationOpen) return <RegistrationBand deadline={deadline} season={season} locale={locale} withSeason={withSeason} />
   return lobbyOpen ? <div className={styles.lobbySlot}><TeamLobbyEntry locale={locale} /></div> : null
 }
 

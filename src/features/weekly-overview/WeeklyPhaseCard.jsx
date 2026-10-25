@@ -124,10 +124,17 @@ function describe(phase, { locale, withSeason, plan, now, seasonId }) {
 
 // The phase card leads the weekly home (票 2.16): the most urgent phase as the main card,
 // other phases that also hold right now as one line each below it.
-export default function WeeklyPhaseCard({ phases, plan, locale, withSeason, now, seasonId }) {
+// 票 2.41: the team lobby is a standing way in, so it joins as the last line instead of a band
+// above the page title.
+export default function WeeklyPhaseCard({ phases, plan, locale, withSeason, now, seasonId, lobbyPath = null }) {
   const described = phases.map(phase => ({ phase, view: describe(phase, { locale, withSeason, plan, now, seasonId }) })).filter(item => item.view)
   if (!described.length) return null
-  const [{ phase, view }, ...rest] = described
+  const [{ phase, view }, ...phaseRows] = described
+  const lobbyRow = lobbyPath ? [{ phase: { kind: 'lobby' }, view: {
+    line: pickUiLocale(locale, '组队大厅 · 找队友、招队员', 'Team lobby · Find teammates or players', '팀 찾기 · 팀원과 선수 찾기', '組隊大廳 · 找隊友、招隊員'),
+    actions: [{ to: lobbyPath, label: pickUiLocale(locale, '去组队大厅', 'Open the lobby', '팀 찾기로 이동', '前往組隊大廳') }]
+  } }] : []
+  const rest = [...phaseRows, ...lobbyRow]
   const actionNode = (action, index) => action.href
     ? <a key={index} className={action.primary ? styles.primary : styles.secondary} href={action.href} target="_blank" rel="noreferrer">{action.label} <span aria-hidden="true">↗</span></a>
     : <Link key={index} className={action.primary ? styles.primary : styles.secondary} to={action.to}>{action.label} <span aria-hidden="true">→</span></Link>

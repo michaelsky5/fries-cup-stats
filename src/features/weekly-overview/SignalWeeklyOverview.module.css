@@ -14,7 +14,6 @@
 .page a { color: inherit; text-decoration: none; }
 .page h1, .page h2, .page h3, .page p { margin: 0; }
 .heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px 32px; padding: 18px 0; }
-.eyebrow { color: var(--muted); font-size: 11px; letter-spacing: .09em; }
 .heading h1 { font-size: var(--fc-data-index-title-size); line-height: var(--fc-data-index-title-leading); letter-spacing: -.04em; font-weight: 900; margin: 8px 0 12px; }
 .heading p:last-child { color: var(--fc-data-text-muted); font-size: 14px; line-height: 1.7; }
 .rulesLink { flex-shrink: 0; display: grid; grid-template-columns: 1fr auto; gap: 5px 30px; padding-bottom: 5px; font-size: 14px; }
@@ -26,9 +25,10 @@
 .matchSection { grid-area: focus; }
 .matchList { grid-area: matches; }
 .standings { --matchup-shade: #edc54414; grid-area: standings; }
-.listHeading h2 { font-size: 16px; font-weight: 700; }
+.listHeading h2 { font-size: var(--fc-data-section-title-size); font-weight: 800; }
 .sectionBar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 0 16px; min-height: 38px; }
-.sectionBar h2 { font-size: 17px; font-weight: 800; }
+/* 票 2.41: every section title on the overview is one level: 20px/800 (18px on phones). */
+.sectionBar h2 { font-size: var(--fc-data-section-title-size); font-weight: 800; }
 .sectionBar .viewingTitle { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; min-width: 0; }
 .sectionBar .viewingTitle > span { color: #484b43; font-size: 12px; font-weight: 500; line-height: 1.5; white-space: nowrap; }
 .sectionBar > span { font-size: 11px; color: var(--muted); }
@@ -121,7 +121,7 @@
 .pointsEmpty > span { font: 800 50px var(--fc-data-font-display); }
 .pointsEmpty p { font-size: 13px; line-height: 1.8; color: var(--muted); }
 .followingSection { border-top: 1px solid var(--line); margin-top: 30px; padding: 26px 0 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px 48px; align-items: center; }
-.followingSection h2 { font-size: clamp(24px, 2.3vw, 36px); margin: 12px 0; }
+.followingSection h2 { font-size: var(--fc-data-section-title-size); font-weight: 800; margin: 0; }
 .followingSection p:last-child { font-size: 12px; color: var(--muted); line-height: 1.8; max-width: 500px; }
 .followTeams { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .followTeams button { border: 1px solid var(--line); margin: 0 -1px -1px 0; background: transparent; padding: 14px 12px; display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -170,13 +170,11 @@
 @media (max-width: 600px) {
   .heading { padding: 16px 0; display: grid; gap: 18px; }
   .heading p:last-child { font-size: 13px; }
-  .eyebrow { font-size: 9px; }
   .rulesLink { font-size: 11px; display: flex; gap: 6px; padding-top: 1px; }
   .rulesLink > span { font-size: 15px; }
   .rulesLink small { display: none; }
   .headingActions { justify-content: space-between; gap: 14px; padding-bottom: 0; }
   .mainGrid { padding-top: 16px; }
-  .sectionBar h2 { font-size: 15px; }
   .sectionBar > span { font-size: 10px; }
   .matchSection > .sectionBar { align-items: baseline; flex-wrap: wrap; gap: 8px 14px; }
   .sectionBar .viewingTitle > span { font-size: 11px; }
@@ -204,7 +202,6 @@
   .matchFooter a { font-size: 11px; gap: 10px; }
   .listHeading { align-items: baseline; gap: 14px; }
   .listHeading > span { font-size: 9px; }
-  .listHeading h2 { font-size: 14px; }
   .matchRow { grid-template-columns: minmax(0, 1fr) 54px minmax(0, 1fr); gap: 10px; padding: 12px 10px; }
   .rowTime { grid-column: 1 / -1; display: flex; justify-content: space-between; }
   .rowArrow { display: none; }
@@ -228,7 +225,6 @@
 .mainColumn { grid-area: content; min-width: 0; }
 .mainColumn .matchSection, .mainColumn .matchList { grid-area: auto; }
 .followingSection { grid-template-columns: 1fr; gap: 16px; margin-top: 24px; padding: 24px 0 30px; }
-.followingSection h2 { font-size: 25px; }
 .followTeams { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .periodNavigation { display: grid; grid-template-columns: 320px minmax(0, 1fr); border-block: 1px solid var(--line); }
 .periodNavigation > nav { min-width: 0; border: 0; }
@@ -491,7 +487,7 @@
 .countdown { margin-left: 10px; color: var(--yellow); font-weight: 700; white-space: nowrap; }
 @media (max-width: 600px) {
   .heading { padding: 0; gap: 0; }
-  .heading .eyebrow, .heading > div > p:last-child { display: none; }
+  .heading > div > p:last-child { display: none; }
   .heading h1 { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .countdown { display: block; margin: 4px 0 0; font-size: 13px; }
   .cycleBlock > div > small { display: none; } /* phones drop the cycle's date range to keep the first screen for the match */
@@ -504,7 +500,7 @@
 /* 票 2.22: following is the reader's own schedule — followed teams first, picker folded. */
 .followingSection { grid-template-columns: minmax(0, 1fr); align-items: start; }
 .followingHead { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; }
-.followingHead h2 { margin: 6px 0 0; }
+.followingHead h2 { margin: 0; }
 .followingHead p:last-child { max-width: 520px; margin: 8px 0 0; }
 .page .followPickerToggle { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 14px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised, #f6f5ef); color: var(--ink); font-size: 13px; font-weight: 650; }
 .followPickerToggle > span { color: var(--fc-data-focus-on-light, #806000); font-size: 16px; }
@@ -528,10 +524,13 @@ a.followedMatch > span { color: var(--fc-data-focus-on-light, #806000); }
   /* Under the phase card the followed list needs air before the cycle and week rail. */
   .page > .followingSection[data-followed] { margin-bottom: 28px; padding-bottom: 12px; }
 }
+@media (min-width: 901px) {
+  /* 票 2.41: without followed teams the block ends on its own text and button, 24px above the rule. */
+  .followingSection:not([data-followed]) { padding-bottom: 24px; }
+}
 
 /* 票 2.25: phone legibility — system text at least 11px, every tap target at least 44×44. */
 @media (max-width: 600px) {
-  .page .eyebrow { display: none; } /* English eyebrows (票 2.20) */
   .matchTop, .matchTop small, .sectionBar > span, .scoreboard p, .score > span, .mapHeading > span,
   .mapRail b, .mapRail small, .mapRail li > span:not(.mapNumber), .mapCumulative small, .matchFooter > span,
   .listHeading > span, .rowTime small, .standings thead th, .standings td > small, .pointsRule small,

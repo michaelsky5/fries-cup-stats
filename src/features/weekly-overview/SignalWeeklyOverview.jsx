@@ -14,6 +14,8 @@ import { getTeamSeasonPresentation } from '../../lib/teamSeasonPresentation.js'
 import { WeeklyCyclePicker, WeeklyWeekRail } from './WeeklyNavigation.jsx'
 import { WeeklyPublishedMapPool, weeklyCycleDateRange } from './WeeklyExistingSections.jsx'
 import WeeklyPhaseCard from './WeeklyPhaseCard.jsx'
+import { useLobbyOpen } from '../team-lobby/useLobbyOpen.js'
+import { withLocale } from '../../lib/locales.js'
 import { buildWeeklyPhases } from './weeklyPhase.js'
 import { getSeasonById } from '../../config/seasons.js'
 import { isChineseLocale, showsInlineTimeZone, weeklyCycleTitle, weeklyFormatHint, weeklyFormatLabel, weeklyMatchContextLabel, weeklyPeriodPath, weeklyStatusLabel, weeklyWeekHasNumber, weeklyWeekRailTitle, weeklyWeekTitle, weeklyTeamShort as shortName } from './weeklyPresentation.js'
@@ -87,7 +89,7 @@ function WeeklyFollowingSection({ rows, picker, locale, defaultOpen = false }) {
   const followed = rows.length > 0
   return <section className={styles.followingSection} id="weekly-following" data-followed={followed || undefined}>
     <div className={styles.followingHead}>
-      <div><p className={styles.eyebrow}>FOLLOWING</p><h2>{followed ? t('你关注的队伍', 'Teams you follow', '팔로우한 팀', '你關注的隊伍') : t('关注队伍', 'Follow teams', '팀 팔로우', '關注隊伍')}</h2>
+      <div><h2>{followed ? t('你关注的队伍', 'Teams you follow', '팔로우한 팀', '你關注的隊伍') : t('关注队伍', 'Follow teams', '팀 팔로우', '關注隊伍')}</h2>
         {!followed && <p>{t('关注队伍后，这里会显示它们的下一场比赛、最近赛果和名次。', 'Follow teams to see their next match, latest result and standing here.', '팀을 팔로우하면 다음 경기, 최근 결과와 순위가 여기에 표시됩니다.', '關注隊伍後，這裡會顯示它們的下一場比賽、最近賽果和名次。')}</p>}</div>
       <button type="button" className={styles.followPickerToggle} aria-expanded={open} aria-controls={pickerId} onClick={() => setOpen(value => !value)}>{open ? t('收起', 'Done', '닫기', '收起') : followed ? t('添加关注', 'Follow more', '팀 추가', '添加關注') : t('选择队伍', 'Choose teams', '팀 선택', '選擇隊伍')}<span aria-hidden="true">{open ? '−' : '+'}</span></button>
     </div>
@@ -105,6 +107,7 @@ export default function SignalWeeklyOverview() {
   const pendingPreviewId = useRef('')
   const isDesktop = useSyncExternalStore(desktopMedia.subscribe, desktopMedia.snapshot, getServerSnapshot)
   const isPhone = useSyncExternalStore(phoneMedia.subscribe, phoneMedia.snapshot, getServerSnapshot)
+  const lobbyOpen = useLobbyOpen()
   const en = String(locale).startsWith('en')
   const t = (zh, english) => en ? english : zh
   const [openedAt] = useState(() => Date.now())
@@ -201,10 +204,10 @@ export default function SignalWeeklyOverview() {
 
   return <div className={styles.page} data-weekly-overview="true">
     <header className={styles.heading}>
-      <div><p className={styles.eyebrow} data-deco-en>FRIES CUP / WEEKLY</p><h1>{eventCenterText('overviewTitle', locale)}</h1><p>{eventCenterText('overviewIntro', locale)}</p></div>
+      <div><h1>{eventCenterText('overviewTitle', locale)}</h1><p>{eventCenterText('overviewIntro', locale)}</p></div>
       {!isPhone && quickLinks}
     </header>
-    <WeeklyPhaseCard phases={phases} plan={weeklyPlan} locale={locale} withSeason={withSeason} now={openedAt} seasonId={seasonId} />
+    <WeeklyPhaseCard phases={phases} plan={weeklyPlan} locale={locale} withSeason={withSeason} now={openedAt} seasonId={seasonId} lobbyPath={lobbyOpen ? withLocale('/lobby', locale) : null} />
     {followingOnTop && following}
     {supporterThanks}
     <section className={styles.periodNavigation} data-weekly-period-nav="true" aria-label={pickUiLocale(locale, '比赛赛段与周次', 'Cycle and weeks', '주기 및 주차', '比賽賽段與週次')}>
