@@ -410,6 +410,8 @@
   .room.room.room .resultSteps li, .room.room.room .resultSteps li span { font-size: var(--room-caption); }
   .room.room.room .resultProgress>.resultTitle { font-size: var(--room-title); }
   .room.room.room .resultCorrection button { min-height: 32px; padding: 4px 12px; font-size: var(--room-caption); }
+  /* 票 2.61: the match communication now sits in the main view on desktop. */
+  .room.room.room .feed article>header>small, .room.room.room .sendRow small, .room.room.room .pinned>small { font-size: var(--room-caption); }
 }
 
 /* 票 2.59 · 手机与平板：操作代表说明和赛果步骤最小 12px；版式不动（small / em 由 RoomGrid 统一）。 */

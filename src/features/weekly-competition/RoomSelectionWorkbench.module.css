@@ -352,3 +352,9 @@
 @media (width < 1180px) {
   :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .intro strong { font-size: var(--room-caption); }
 }
+
+/* 票 2.61 · 电脑版：没选时右侧只留标题，提示只在底部说一次；选中后再显示地图或英雄的图和名字。 */
+@media (min-width: 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] .selection[data-selected=false] { align-self: start; }
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] .selection[data-selected=false] :is(.mapPreview, .heroPreview, .explanation) { display: none; }
+}

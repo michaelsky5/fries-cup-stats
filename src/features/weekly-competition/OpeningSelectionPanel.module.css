@@ -397,3 +397,12 @@
   :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .responsibility>:is(span, strong),
   :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .method>div>span { font-size: var(--room-caption); }
 }
+
+/* 票 2.61 · 电脑版：先手权面板里的内容一律齐左、从顶部开始（左边距由 RoomGrid 统一为 16px）。 */
+@media (min-width: 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .firstPick { align-content: start; }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .firstPickConfirmation { justify-content: flex-start; }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening :is(.firstPick, .firstPickConfirmation) :is(.waiting, .start) { padding-inline: 0; text-align: start; }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice { text-align: start; }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice .order { padding-inline: 0; }
+}

@@ -31,6 +31,19 @@
   .grid > footer [data-room-slot=facts] > span:last-child { flex: none; font-size: var(--room-caption); white-space: nowrap; }
   @container (max-width: 680px) { .grid > footer [data-room-slot=facts] > span:last-child { display: none; } }
   @container (max-width: 560px) { .grid > footer [data-room-slot=facts] > div > span:nth-of-type(3) { display: none; } }
+
+  /* 票 2.61 · 中间任务面板只用一个内边距：内容从面板左边 16px 起，齐左（各阶段原来是 13 / 15 / 17 / 21px，倒计时提示贴边 1px）。 */
+  .grid.grid [data-room-slot=center] > section[data-room-slot=current-task] { padding-inline: 16px; }
+  .grid.grid [data-room-slot=center] > section[data-room-slot=opening] > * { padding-inline: 16px; margin-inline: 0; }
+  /* 票 2.61: in the quieter stages the task keeps its own height and the match communication takes the rest of the centre. */
+  .grid [data-room-slot=center][data-communication] > section:is([data-room-slot=current-task], [data-room-slot=opening]) { flex: 0 1 auto; }
+  .grid.grid [data-room-slot=center][data-communication] > [id=room-communication] { flex: 1 1 0; height: auto; min-height: 0; overflow: hidden; container: room-comm / size; }
+  /* Too short to write comfortably (short windows, busier task): the latest messages stay readable and 展开沟通 opens the full panel to reply. */
+  @container room-comm (max-height: 239px) { .grid.grid [data-room-slot=center] > [id=room-communication] > :is(nav, form) { display: none; } }
+  /* The pinned note stays in the full panel; inline, the feed gives way first so the composer is always reachable. */
+  .grid.grid [data-room-slot=center][data-communication] > [id=room-communication] [data-pinned] { display: none; }
+  .grid.grid [data-room-slot=center][data-communication] > [id=room-communication] [role=region] { flex: 1 1 0; min-height: 0; }
+  .grid.grid [data-room-slot=center][data-communication] > [id=room-communication] > header h2 { font-size: var(--room-body); font-weight: 700; }
 }
 
 /* 手机与平板（<1180px）：版式不动，只把小于 12px 的字提到 12px。比赛房里的说明文字（small / em）一律 12px，
