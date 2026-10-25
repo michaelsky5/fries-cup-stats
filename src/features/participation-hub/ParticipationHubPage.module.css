@@ -32,12 +32,16 @@
 .steps h3 { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin: 2px 0 8px; font-size: 16px; font-weight: 800; }
 .steps h3 small { color: var(--muted); font-size: 12px; font-weight: 600; }
 .steps p { margin: 0; font-size: 13px; line-height: 1.75; }
+.steps .stepNote { margin-top: 8px; color: var(--muted); }
+/* 票 2.39: the lobby sits right after the steps while System has it open. */
+.lobbyCopy > p { max-width: 70ch; margin: 0; font-size: 14px; line-height: 1.8; }
+.lobbyActions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
 .steps a, .inline a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; font-weight: 700; }
 .steps a > span, .inline a > span { color: var(--fc-data-focus-on-light, #806000); }
 .inline { display: flex; flex-wrap: wrap; gap: 0 24px; margin-top: 6px; }
-.entries { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.entries { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
 .entries li { border-bottom: 1px solid var(--line); }
-.entries li:nth-child(odd) { border-right: 1px solid var(--line); }
+.entries li:not(:last-child) { border-right: 1px solid var(--line); }
 .entries a { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; padding: 12px 14px; }
 .entries a:hover { background: var(--fc-data-paper-deep, #e4e3db); }
 .entries strong { display: block; font-size: 15px; }
@@ -45,13 +49,14 @@
 .entries a > span:last-child { color: var(--fc-data-focus-on-light, #806000); }
 @media (max-width: 760px) {
   .steps { grid-template-columns: 1fr; gap: 18px; }
+  .lobbyActions { grid-template-columns: 1fr; }
+  .entries { grid-template-columns: 1fr; }
+  .entries li:not(:last-child) { border-right: 0; }
 }
 @media (max-width: 600px) {
   .eyebrow { display: none; }
   .hero { padding: 14px 0 18px; }
   .hero h1 { margin-top: 0; }
   .mine { grid-template-columns: 1fr; }
-  .entries { grid-template-columns: 1fr; }
-  .entries li:nth-child(odd) { border-right: 0; }
   .section { padding: 18px 0; }
 }

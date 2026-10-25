@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation, useOutletContext } from 'react-router-dom'
 import { DEFAULT_SEASON_ID, getSeasonById, getSeasonName, withSeason as seasonLink } from '../../config/seasons.js'
 import { pickUiLocale } from '../../lib/uiText.js'
+import { withLocale } from '../../lib/locales.js'
 import { getLobbyConfig } from '../team-lobby/lobbyApi.js'
 import styles from './ParticipationHubPage.module.css'
 
@@ -14,13 +15,17 @@ export default function ParticipationHubPage() {
   const { season, seasonId, withSeason, locale, isAuthenticated } = useOutletContext()
   const location = useLocation()
   const t = (...copy) => pickUiLocale(locale, ...copy)
-  const [lobbyOpen, setLobbyOpen] = useState(false)
+  const [lobbyMode, setLobbyMode] = useState(null)
   useEffect(() => {
     let active = true
     // Same switch as the home lobby slot: show the lobby only while System has it open.
-    getLobbyConfig().then(config => { if (active) setLobbyOpen(OPEN_LOBBY_MODES.has(config?.mode)) }).catch(() => {})
+    getLobbyConfig().then(config => { if (active) setLobbyMode(OPEN_LOBBY_MODES.has(config?.mode) ? config.mode : null) }).catch(() => {})
     return () => { active = false }
   }, [])
+  const lobbyOpen = Boolean(lobbyMode)
+  // Publishing links only while the lobby accepts new cards; READ_ONLY keeps browsing.
+  const lobbyWritable = lobbyMode === 'WRITE'
+  const lobbyPath = path => withLocale(path, locale)
 
   const title = t('参赛指南', 'How to play', '참가 안내', '參賽指南')
   const signIn = () => window.dispatchEvent(new Event('fries-cup:open-account'))
@@ -53,7 +58,12 @@ export default function ParticipationHubPage() {
       body: t('队长在报名页复制「队伍邀请链接」发到队伍群；队员各自打开链接填写，审核通过后进入报名名单。',
         'The captain copies the team invitation link on the registration page and shares it with the team. Each player opens it and fills it in; approved players join the registered roster.',
         '주장이 등록 페이지에서 팀 초대 링크를 복사해 팀 채팅에 공유합니다. 팀원은 각자 링크를 열어 작성하고, 승인되면 등록 명단에 들어갑니다.',
-        '隊長在報名頁複製「隊伍邀請連結」發到隊伍群；隊員各自打開連結填寫，審核通過後進入報名名單。')
+        '隊長在報名頁複製「隊伍邀請連結」發到隊伍群；隊員各自打開連結填寫，審核通過後進入報名名單。'),
+      // 票 2.39 (owner, 10/25): finding a team or players belongs to this step, not to the link list.
+      ...(lobbyOpen ? {
+        note: t('还没有队伍，或队伍还缺人？先去组队大厅找。', 'No team yet, or short of players? Start in the team lobby.', '아직 팀이 없거나 인원이 부족하다면 팀 찾기에서 먼저 찾아보세요.', '還沒有隊伍，或隊伍還缺人？先去組隊大廳找。'),
+        link: { to: lobbyPath('/lobby'), label: t('去组队大厅', 'Open the team lobby', '팀 찾기로 이동', '前往組隊大廳') }
+      } : {})
     },
     {
       who: t('队长或经理', 'Captain or manager', '주장 또는 매니저', '隊長或經理'),
@@ -68,9 +78,8 @@ export default function ParticipationHubPage() {
   const entries = [
     { to: registrationPath, label: t('报名页', 'Registration', '등록 페이지', '報名頁'), note: t('首次报名 / 继续报名', 'Start or continue a registration', '첫 등록 / 이어서 등록', '首次報名 / 繼續報名') },
     { to: '/guides/weekly-room', label: t('比赛房指南', 'Match room guide', '경기 방 안내', '比賽房指南'), note: t('免登录阅读，可分享给队伍', 'No sign-in needed; share it with your team', '로그인 없이 읽고 팀과 공유', '免登入閱讀，可分享給隊伍') },
-    lobbyOpen ? { to: '/lobby', label: t('组队大厅', 'Team lobby', '팀 찾기', '組隊大廳'), note: t('找队伍，或发布求队需求', 'Find a team or post your profile', '팀을 찾거나 구직 글 게시', '找隊伍，或發布求隊需求') } : null,
     { href: ABOUT_WEEKLY_URL, label: t('了解周赛', 'About the weekly', '주간 대회 소개', '了解週賽'), note: t('赛制与参赛说明', 'Format and how to take part', '대회 방식과 참가 안내', '賽制與參賽說明') }
-  ].filter(Boolean)
+  ]
 
   return <div className={styles.page} data-participation-hub>
     <header className={styles.hero}>
@@ -93,11 +102,29 @@ export default function ParticipationHubPage() {
           <div>
             <h3>{step.title}<small>{step.who}</small></h3>
             <p>{step.body}</p>
+            {step.note ? <p className={styles.stepNote}>{step.note}</p> : null}
             {step.link ? <Link to={step.link.to}>{step.link.label} <span aria-hidden="true">→</span></Link> : null}
           </div>
         </li>)}
       </ol>
     </section>
+
+    {lobbyOpen ? <section className={`${styles.section} ${styles.lobby}`} aria-labelledby="play-lobby" data-participation-lobby>
+      <div className={styles.lobbyCopy}>
+        <h2 id="play-lobby">{t('组队大厅', 'Team lobby', '팀 찾기', '組隊大廳')}</h2>
+        <p>{t('还没有队伍，就发布求队卡，让队伍找到你；队伍缺人，由队长或经理发布队伍招募。QQ 只在双方都愿意联系并授权后展示；谈好后，仍用队伍邀请链接正式入队。',
+          'No team yet? Post a player card so teams can find you. Short of players? Captains or managers post a team recruitment. QQ is shown only after both sides agree to talk and allow it; players still join officially through the team invitation link.',
+          '아직 팀이 없다면 팀 찾기 카드를 게시해 팀이 찾을 수 있게 하세요. 인원이 부족하면 주장이나 매니저가 팀원 모집을 게시합니다. QQ는 양쪽이 연락에 동의하고 각각 허용한 뒤에만 표시되며, 정식 합류는 팀 초대 링크로 진행합니다.',
+          '還沒有隊伍，就發布求隊卡，讓隊伍找到你；隊伍缺人，由隊長或經理發布隊伍招募。QQ 只在雙方都願意聯絡並授權後顯示；談好後，仍用隊伍邀請連結正式入隊。')}</p>
+      </div>
+      <div className={styles.lobbyActions}>
+        <Link className={styles.primary} to={lobbyPath('/lobby')}><span><strong>{t('浏览组队大厅', 'Browse the lobby', '팀 찾기 둘러보기', '瀏覽組隊大廳')}</strong><small>{t('看看正在招人的队伍和求队的选手', 'Teams recruiting and players looking for a team', '모집 중인 팀과 팀을 찾는 선수', '看看正在招人的隊伍和求隊的選手')}</small></span><span aria-hidden="true">→</span></Link>
+        {lobbyWritable ? <>
+          <Link className={styles.secondary} to={lobbyPath('/lobby/me/publish?type=person')}><span><strong>{t('发布求队卡', 'Post a player card', '팀 찾기 카드 게시', '發布求隊卡')}</strong><small>{t('还没有队伍的选手', 'For players without a team', '팀이 없는 선수', '還沒有隊伍的選手')}</small></span><span aria-hidden="true">→</span></Link>
+          <Link className={styles.secondary} to={lobbyPath('/lobby/me/publish?type=team')}><span><strong>{t('队伍招募', 'Team recruitment', '팀원 모집', '隊伍招募')}</strong><small>{t('队长或经理为缺人的队伍发布', 'Captains or managers of teams short of players', '인원이 부족한 팀의 주장 또는 매니저', '隊長或經理為缺人的隊伍發布')}</small></span><span aria-hidden="true">→</span></Link>
+        </> : null}
+      </div>
+    </section> : null}
 
     <section className={styles.section} aria-labelledby="play-night">
       <h2 id="play-night">{t('比赛夜', 'Match night', '경기 날', '比賽夜')}</h2>
