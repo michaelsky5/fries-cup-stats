@@ -343,6 +343,8 @@
   :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .roleTabs :is(strong, small) { font-size: var(--room-caption); }
   :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) :is(.mapCards strong, .mapCards .mapMark, .banSlots strong, .commit button, .commit button span) { font-size: var(--room-body); }
   :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .selectionTitle strong { font-size: var(--room-title); }
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .waiting h2 { font-size: var(--room-title); }
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .waiting p { font-size: var(--room-body); }
   :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .slotNumber, :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .slotNumber span { font-size: var(--room-number); }
 }
 

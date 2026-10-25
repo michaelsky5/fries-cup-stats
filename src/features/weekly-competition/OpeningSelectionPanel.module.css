@@ -389,7 +389,7 @@
   :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .confirmationTeams span { font-size: var(--room-caption); }
   :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening h1 { font-size: var(--room-title); }
   :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice .order button { font-size: var(--room-title); }
-  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening :is(.firstPick p, .firstPickConfirmation button) { font-size: var(--room-body); }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening :is(.firstPick p, .firstPick button, .firstPickConfirmation button, .waiting) { font-size: var(--room-body); }
 }
 
 /* 票 2.59 · 手机与平板：先手权面板的责任行和方式说明最小 12px；版式不动（small / em 由 RoomGrid 统一）。 */
