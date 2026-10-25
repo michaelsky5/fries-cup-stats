@@ -19,7 +19,7 @@ export default function MatchReminderSummary({ userId, locale, withSeason }) {
   const current = state.userId === userId ? state : { loading: true }
   const enabled = current.data?.preference?.emailEnabled && current.data?.emailVerified
   return <aside className={styles.summary} aria-label={copy.title} data-i18n-ignore>
-    <div><span className={styles.eyebrow}>MATCH REMINDERS</span><strong>{current.loading ? copy.loading : current.error ? copy.loadFailed : !current.data?.available ? copy.unavailable : enabled ? copy.on : copy.off}</strong></div>
+    <div><strong>{current.loading ? copy.loading : current.error ? copy.loadFailed : !current.data?.available ? copy.unavailable : enabled ? copy.on : copy.off}</strong></div>
     <Link to={withSeason('/account#reminders')}>{current.data?.available && !enabled ? copy.enable : copy.manage} <span aria-hidden="true">→</span></Link>
   </aside>
 }

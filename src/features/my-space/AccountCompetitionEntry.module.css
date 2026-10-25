@@ -18,7 +18,6 @@
 .status button { display: inline-flex; gap: 12px; align-items: center; min-height: 44px; padding: 10px 14px; border: 1px solid var(--fc-data-line-strong); color: inherit; background: transparent; white-space: nowrap; cursor: pointer; font-size: 14px; }
 .grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); border: 1px solid var(--fc-data-line-strong); }
 .join { min-width: 0; padding: clamp(24px, 3vw, 40px); background: var(--fc-data-ink); color: var(--fc-data-paper); }
-.eyebrow { color: var(--fc-data-signal); font: 700 16px/1.5 var(--fc-data-font-display); letter-spacing: .04em; }
 .entry .join h3 { font-size: clamp(24px, 2.3vw, 32px); line-height: 1.4; margin: 16px 0 12px; }
 .join p { color: var(--fc-data-text-dark-muted); margin: 0; max-width: 60ch; }
 .join form { margin-top: 28px; display: grid; gap: 10px; }

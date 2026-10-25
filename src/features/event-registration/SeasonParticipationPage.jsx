@@ -43,7 +43,7 @@ function ParticipationPage({ seasonId }) {
   const [hasAdditions, setHasAdditions] = useState(false)
   const [hasTransfers, setHasTransfers] = useState(false)
   const [joinToken] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get('join') || '')
-  return <AccountFrame title={uiText("赛事报名", uiLocale)} eyebrow="EVENT REGISTRATION" description={uiText("组建本队名单，确认后提交赛事负责人审核。", uiLocale)}><div className={styles.page}>
+  return <AccountFrame title={uiText("赛事报名", uiLocale)} description={uiText("组建本队名单，确认后提交赛事负责人审核。", uiLocale)}><div className={styles.page}>
     <header className={styles.header}>
       <div><span>{uiText("参赛账号", uiLocale)}</span><strong>{user?.displayName || uiText("等待登录", uiLocale)}</strong></div>
       <div className={styles.actions}><RoomGuideLink season={seasonId} role="manager" label="参赛与比赛指南" />{user ? <><button type="button" onClick={async () => { if (await confirmDiscard()) await logout() }}>{uiText("退出账号", uiLocale)}</button></> : null}<Link to={teamManagementDestination({ search: location.search, competitionId: seasonId })}>{uiText("我的队伍", uiLocale)}</Link></div>

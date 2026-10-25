@@ -29,9 +29,9 @@ import styles from './AccountSettingsPage.module.css'
 import PasswordRequirements from '../../features/auth/PasswordRequirements.jsx'
 
 const SECTIONS = [
-  ['overview', '00', '账号概览', 'OVERVIEW'],
-  ['profile', '01', '个人资料', 'PROFILE'], ['password', '02', '修改密码', 'PASSWORD'],
-  ['email', '03', '邮箱管理', 'EMAIL'], ['sessions', '04', '登录设备', 'DEVICES'], ['reminders', '05', '比赛提醒', 'REMINDERS']
+  ['overview', '00', '账号概览'],
+  ['profile', '01', '个人资料'], ['password', '02', '修改密码'],
+  ['email', '03', '邮箱管理'], ['sessions', '04', '登录设备'], ['reminders', '05', '比赛提醒']
 ]
 
 function Notice({ notice }) {
@@ -398,7 +398,7 @@ function SettingsWorkspace({ user, onRevoked }) {
   return <div className={styles.workspace} data-mobile-panel={mobilePanel}>
     {mobilePanel ? <nav className={styles.mobileBack} aria-label={uiText('账号设置', uiLocale)}><Link to={{ pathname: location.pathname, search: location.search, hash: '' }}>← {uiText('账号设置', uiLocale)}</Link></nav> : null}
     {blocker.state === 'blocked' && <ConfirmationDialog title={uiText("修改尚未保存", uiLocale)} description={uiText("离开后，本页尚未提交的内容会丢失。", uiLocale)} cancelLabel="继续编辑" confirmLabel="放弃修改并离开" onCancel={blocker.reset} onConfirm={blocker.proceed} />}
-    <aside className={styles.sidebar}><span className={styles.kicker}>{uiText("账号设置", uiLocale)}</span><nav aria-label={uiText("账号设置分区", uiLocale)}>{SECTIONS.map(([id, , title, english]) => <Link key={id} to={{ pathname: location.pathname, search: location.search, hash: `#${id}` }} aria-current={section === id ? 'page' : undefined}><strong data-i18n-ignore={id === 'reminders' || undefined}>{id === 'reminders' ? reminderCopy(uiLocale).title : title}<small>{english}</small></strong><i aria-hidden="true">→</i></Link>)}</nav><p>{uiText("报名、队伍和比赛事务", uiLocale)}<br />{uiText("可以在我的空间处理。", uiLocale)}</p><Link to={spaceHref}>{uiText("返回我的空间 ↗", uiLocale)}</Link></aside>
+    <aside className={styles.sidebar}><span className={styles.kicker}>{uiText("账号设置", uiLocale)}</span><nav aria-label={uiText("账号设置分区", uiLocale)}>{SECTIONS.map(([id, , title]) => <Link key={id} to={{ pathname: location.pathname, search: location.search, hash: `#${id}` }} aria-current={section === id ? 'page' : undefined}><strong data-i18n-ignore={id === 'reminders' || undefined}>{id === 'reminders' ? reminderCopy(uiLocale).title : title}</strong><i aria-hidden="true">→</i></Link>)}</nav><p>{uiText("报名、队伍和比赛事务", uiLocale)}<br />{uiText("可以在我的空间处理。", uiLocale)}</p><Link to={spaceHref}>{uiText("返回我的空间 ↗", uiLocale)}</Link></aside>
     <div className={styles.cards} ref={cards}>
       {section === 'overview' && <AccountOverview user={user} spaceHref={spaceHref} />}
       {section === 'profile' && <ProfileSettings user={user} onDirtyChange={onDirtyChange} />}
@@ -444,11 +444,11 @@ export default function AccountSettingsPage() {
     document.title = `${translateAccountSettingsText('账号设置', locale)} | 薯条杯`
     return () => { document.title = previousTitle }
   }, [locale])
-  return <AccountFrame compact title={uiText("账号设置", locale)} eyebrow="ACCOUNT SETTINGS" description={uiText("管理你的个人资料与账号安全。", locale)} aside={<div className={styles.identity}><AccountAvatar className={styles.avatar} user={user} /><div><strong data-i18n-ignore={user ? '' : undefined}>{user?.displayName || (isBootstrapping ? uiText("正在核对账号…", locale) : uiText("账号设置", locale))}</strong><span data-i18n-ignore={user ? '' : undefined}>{user?.email || uiText("登录后管理账号", locale)}</span></div></div>}>
+  return <AccountFrame compact title={uiText("账号设置", locale)} description={uiText("管理你的个人资料与账号安全。", locale)} aside={<div className={styles.identity}><AccountAvatar className={styles.avatar} user={user} /><div><strong data-i18n-ignore={user ? '' : undefined}>{user?.displayName || (isBootstrapping ? uiText("正在核对账号…", locale) : uiText("账号设置", locale))}</strong><span data-i18n-ignore={user ? '' : undefined}>{user?.email || uiText("登录后管理账号", locale)}</span></div></div>}>
     <div className={styles.page}>
       <EmailChangeConfirmation />
       {isBootstrapping ? <section className={styles.guest} role="status"><h2>{uiText("正在核对登录状态…", locale)}</h2></section> : user ? <SettingsWorkspace key={user.id} user={user} onRevoked={setSignedOutNotice} /> : emailChangeState.status === 'COMPLETED' ? null : <section className={styles.guest}>
-        <span className={styles.kicker}>ACCOUNT ACCESS</span><h2>{uiText("欢迎回到薯条杯", locale)}</h2><Notice notice={signedOutNotice ? { tone: 'success', text: signedOutNotice } : accountDataError ? { tone: 'error', text: accountSettingsError(accountDataError, locale) } : null} /><p>{uiText(authConfig?.selfRegistrationEnabled === true ? "登录或注册账号，管理个人资料与安全设置。参赛身份通过邀请或报名关联。" : authConfig?.selfRegistrationEnabled === false ? "使用受邀邮箱登录，即可管理资料和安全设置。首次参加，请打开赛事负责人或队长提供的邀请链接。" : "登录后管理个人资料与账号安全。", locale)}</p><button type="button" className={styles.primary} onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText(authConfig?.selfRegistrationEnabled === true ? "登录 / 注册 →" : "登录账号 →", locale)}</button><Link className={styles.guestLink} to={withSeason('/me', getInitialSeasonId(), location.search)}>{uiText("前往我的空间 ↗", locale)}</Link>
+        <h2>{uiText("欢迎回到薯条杯", locale)}</h2><Notice notice={signedOutNotice ? { tone: 'success', text: signedOutNotice } : accountDataError ? { tone: 'error', text: accountSettingsError(accountDataError, locale) } : null} /><p>{uiText(authConfig?.selfRegistrationEnabled === true ? "登录或注册账号，管理个人资料与安全设置。参赛身份通过邀请或报名关联。" : authConfig?.selfRegistrationEnabled === false ? "使用受邀邮箱登录，即可管理资料和安全设置。首次参加，请打开赛事负责人或队长提供的邀请链接。" : "登录后管理个人资料与账号安全。", locale)}</p><button type="button" className={styles.primary} onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText(authConfig?.selfRegistrationEnabled === true ? "登录 / 注册 →" : "登录账号 →", locale)}</button><Link className={styles.guestLink} to={withSeason('/me', getInitialSeasonId(), location.search)}>{uiText("前往我的空间 ↗", locale)}</Link>
       </section>}
     </div>
   </AccountFrame>

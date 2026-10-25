@@ -38,7 +38,7 @@ export default function AccountOverview({ user, spaceHref }) {
   const emailKnown = typeof user.emailVerified === 'boolean'
   const profileReadOnly = ['GUEST', 'OPERATOR'].includes(user.role)
   return <section className={styles.overview} aria-labelledby="overview-title">
-    <div className={styles.overviewHeading}><div><h2 id="overview-title" tabIndex={-1}>{uiText("账号概览", uiLocale)}</h2><p>{uiText("个人资料、登录与验证状态，都在这里。", uiLocale)}</p></div><span className={styles.kicker} aria-hidden="true">YOUR ACCOUNT</span></div>
+    <div className={styles.overviewHeading}><div><h2 id="overview-title" tabIndex={-1}>{uiText("账号概览", uiLocale)}</h2><p>{uiText("个人资料、登录与验证状态，都在这里。", uiLocale)}</p></div></div>
     <div className={styles.overviewGrid}>
       <section className={styles.accountSummary} aria-label={uiText("当前账号", uiLocale)}>
         <AccountAvatar className={styles.summaryAvatar} user={user} />

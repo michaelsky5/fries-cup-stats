@@ -102,7 +102,6 @@ function PlayerTaskFlow({ stages, withSeason }) {
           <article key={stage.key} data-state={stage.state}>
             <div className={styles.flowOrder}>{stage.order}</div>
             <div className={styles.flowMain}>
-              <span>{stage.eyebrow}</span>
               <strong>{stage.title}</strong>
               <p data-i18n-ignore>{stage.nextTask ? taskTitle(stage.nextTask, uiLocale) : uiText(stage.description, uiLocale)}</p>
             </div>
@@ -164,7 +163,6 @@ export default function TaskNotificationCenter({ activity, identityType = 'VIEWE
     <section className={`${styles.center} ${standalone ? styles.standalone : ''}`}>
       <header className={styles.header}>
         <div>
-          <span>ACTION QUEUE</span>
           <h2>{uiText("任务中心", uiLocale)}</h2>
           <p>{uiText("按截止时间与优先级排列，先处理需要你回应的事项。", uiLocale)}</p>
         </div>
@@ -188,7 +186,7 @@ export default function TaskNotificationCenter({ activity, identityType = 'VIEWE
           {primaryTask ? (
             <section key={primaryTask.id} className={styles.priorityHero} data-deadline={primaryTask.deadline.key}>
               <div className={styles.priorityMain}>
-                <div className={styles.priorityMeta}><span>{primaryTask.workflow.en} · {identityTypeLabel(primaryTask.identityType)}</span><em>{primaryTask.deadline.label}</em></div>
+                <div className={styles.priorityMeta}><span>{uiLocale === 'en-US' ? primaryTask.workflow.en : uiText(primaryTask.workflow.label, uiLocale)} · {identityTypeLabel(primaryTask.identityType)}</span><em>{primaryTask.deadline.label}</em></div>
                 <strong data-i18n-ignore>{taskTitle(primaryTask, uiLocale)}</strong>
                 <p data-i18n-ignore>{taskBody(primaryTask, uiLocale) || uiText("进入对应流程完成操作后，任务状态会自动同步。", uiLocale)}</p>
                 <small>{primaryTask.dueAt ? uiText("截止 {0}", uiLocale, [formatTime(primaryTask.dueAt, uiLocale)]) : uiText("没有固定截止时间，但仍需要主动处理", uiLocale)}</small>
@@ -198,7 +196,6 @@ export default function TaskNotificationCenter({ activity, identityType = 'VIEWE
                 </div>
               </div>
               <div className={styles.prioritySide}>
-                <span>CURRENT ACTION</span>
                 <strong>{primaryTask.actionMode.label}</strong>
                 <em>{PRIORITY_LABEL[primaryTask.priority] || primaryTask.priority}</em>
                 <p>{primaryTask.actionMode.detail}</p>
@@ -234,7 +231,7 @@ export default function TaskNotificationCenter({ activity, identityType = 'VIEWE
             {view === 'open' ? (
               taskView.groups.length ? <div className={styles.groupList}>{taskView.groups.map(group => (
                 <section className={styles.queueGroup} data-group={group.key} key={group.key}>
-                  <header><div><span>{group.eyebrow}</span><strong>{group.title}</strong><p>{group.description}</p></div><em>{group.tasks.length}</em></header>
+                  <header><div><strong>{group.title}</strong><p>{group.description}</p></div><em>{group.tasks.length}</em></header>
                   <div className={styles.list}>{group.tasks.map((task, index) => <TaskCard key={task.id} task={task} index={index} workingId={workingId} onComplete={finishTask} withSeason={withSeason} />)}</div>
                 </section>
               ))}</div> : primaryTask ? <div className={styles.queueComplete}><span>FOCUS MODE</span><strong>{synchronized ? uiText("只剩顶部这一项", uiLocale) : uiText("先处理已同步的事项", uiLocale)}</strong><p>{uiText("处理后返回这里，会重新同步并展示下一项。", uiLocale)}</p></div> : null

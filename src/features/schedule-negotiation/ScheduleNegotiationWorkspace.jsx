@@ -104,7 +104,7 @@ export default function ScheduleNegotiationWorkspace({ seasonId, capabilitySnaps
 
   return (
     <section className={styles.workspace} id="schedule-negotiation">
-      <header className={styles.header}><div><span>MATCH SCHEDULING</span><h3>{uiText("赛程协商", uiLocale)}</h3><p>{uiText("默认比赛时间始终有效；双方最多协商三个候选时间，满足规则后自动生效，否则交给 System。所有时间均按北京时间（UTC+8）填写和显示。", uiLocale)}</p></div><button type="button" onClick={refresh} disabled={loading}>{uiText("刷新", uiLocale)}</button></header>
+      <header className={styles.header}><div><h3>{uiText("赛程协商", uiLocale)}</h3><p>{uiText("默认比赛时间始终有效；双方最多协商三个候选时间，满足规则后自动生效，否则交给 System。所有时间均按北京时间（UTC+8）填写和显示。", uiLocale)}</p></div><button type="button" onClick={refresh} disabled={loading}>{uiText("刷新", uiLocale)}</button></header>
       {notice ? <div className={styles.notice}>{notice}</div> : null}
       {error ? <div className={styles.error}>{errorText(error)}</div> : null}
       {context && !loading && !error && !matches.length ? <div className={styles.empty}><strong>{uiText("当前没有关联的正式比赛", uiLocale)}</strong><span>{uiText("对阵排定并绑定本届队伍后会显示在这里。", uiLocale)}</span></div> : null}

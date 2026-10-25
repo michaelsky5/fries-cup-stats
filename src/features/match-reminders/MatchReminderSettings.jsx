@@ -55,7 +55,7 @@ export default function MatchReminderSettings({ user, onDirtyChange }) {
   }
   const disabled = Boolean(busy || loading || !data?.available || readonly)
   return <section className={styles.settings} aria-labelledby="reminder-settings-title" data-i18n-ignore>
-    <header><span className={styles.eyebrow}>MATCH REMINDERS</span><h2 id="reminder-settings-title" tabIndex={-1}>{copy.title}</h2><p>{copy.description}</p></header>
+    <header><h2 id="reminder-settings-title" tabIndex={-1}>{copy.title}</h2><p>{copy.description}</p></header>
     {notice && <p className={styles.notice} data-error={notice.error || undefined} role={notice.error ? 'alert' : 'status'}>{copy[notice.key]}</p>}
     {loading ? <p role="status">{copy.loading}</p> : !data ? <button onClick={() => setAttempt(value => value + 1)}>{copy.retry}</button> : <>
       {!data.available && <p className={styles.notice}>{copy.unavailable}</p>}

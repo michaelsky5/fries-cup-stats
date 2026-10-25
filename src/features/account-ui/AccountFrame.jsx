@@ -1,4 +1,4 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import PublicHeader from '../../components/layout/PublicHeader.jsx'
@@ -15,7 +15,7 @@ import { translateAccountSettingsText } from './accountSettingsCopy.js'
 import { getRestoreScrollY, restoreWindowScroll } from '../../lib/navigationState.js'
 
 // Global account pages share the public frame without fetching a season snapshot.
-export default function AccountFrame({ children, title, eyebrow = 'ACCOUNT', description, aside, compact = false }) {
+export default function AccountFrame({ children, title, description, aside, compact = false }) {
   const location = useLocation()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
@@ -46,9 +46,9 @@ export default function AccountFrame({ children, title, eyebrow = 'ACCOUNT', des
     <PublicHeader mobileMenuRef={menu} activeNavLabel={personalLabel} withSeason={publicLink} layoutLocale={locale} compatibleLayoutLocale={locale} season={season} seasonId={season.id} seasonStatus={season.lifecycle === 'ARCHIVED' ? { isFinished: true } : undefined} handleSeasonChange={id => changeContext('season', getSeasonById(id).publicCode)} handleLocaleChange={value => changeContext('lang', getReviewLocaleParam(value))} />
     <div className={styles.context}><Link to={publicLink('/me')} data-i18n-ignore>{personalLabel}</Link><span aria-hidden="true">/</span><strong>{title}</strong><span className={styles.scope}>{location.pathname === '/account' ? uiText("通用账号设置", locale) : uiText("参赛服务", locale)}</span></div>
     <main className={styles.main} data-compact={compact}>
-      <header className={styles.intro}><div><span className={styles.eyebrow}>{eyebrow}</span><h1>{title}</h1>{description && <p>{description}</p>}</div>{aside}</header>
+      <header className={styles.intro}><div><h1>{title}</h1>{description && <p>{description}</p>}</div>{aside}</header>
       {children}
     </main>
-    <footer className={styles.footer}><span>FRIES CUP <b>DATA CENTER</b></span><Link to={publicLink('/')}>{uiText("返回赛事总览 ↗", locale)}</Link></footer>
+    <footer className={styles.footer}><span>FRIES CUP <b>{pickUiLocale(locale, '赛事中心', 'EVENT CENTER', '대회 센터', '賽事中心')}</b></span><Link to={publicLink('/')}>{uiText("返回赛事总览 ↗", locale)}</Link></footer>
   </div>
 }

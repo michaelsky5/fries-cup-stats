@@ -78,7 +78,7 @@ export default function StaffInvitationPage() {
   }
   const stage = step === 'complete' ? 3 : step === 'email' || credential.verification ? 2 : 1
   const roleLabel = invitation?.roles.map(role => t(role === 'REFEREE' ? '赛管' : '解说')).join(' / ')
-  return <AccountFrame title={t("接受工作人员邀请")} eyebrow="MATCH DAY STAFF" description={t("一个账号，按赛事与场次承担不同职责。")} compact>
+  return <AccountFrame title={t("接受工作人员邀请")} description={t("一个账号，按赛事与场次承担不同职责。")} compact>
     <section className={styles.card} aria-labelledby="staff-invite-title">
       <ol className={styles.steps} aria-label={t("工作人员认领流程")}>{[t("核对账号"), t("验证邮箱"), t("查看比赛安排")].map((label, index) => <li key={label} aria-current={stage === index + 1 ? 'step' : undefined}><span>0{index + 1}</span>{label}</li>)}</ol>
       <div className={styles.body}>

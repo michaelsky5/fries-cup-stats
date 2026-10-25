@@ -69,7 +69,7 @@ export default function StaffApplicationPage() {
     finally { pending.current = false; setBusy(false) }
   }
   const stage = step === 'done' ? 3 : step === 'email' || token ? 2 : 1
-  return <AccountFrame title={t('申请赛管与解说')} eyebrow="JOIN THE CREW" description={t('复用一个本人账号，参与赛事工作。')} compact>
+  return <AccountFrame title={t('申请赛管与解说')} description={t('复用一个本人账号，参与赛事工作。')} compact>
     <section className={styles.card} aria-labelledby="staff-application-title">
       <ol className={styles.steps} aria-label={t('工作人员申请流程')}>{[t('填写申请'), t('验证邮箱'), t('等待审核')].map((name, index) => <li key={name} aria-current={stage === index + 1 ? 'step' : undefined}><span>0{index + 1}</span>{name}</li>)}</ol>
       <div className={styles.body}><p className={styles.kicker} data-i18n-ignore>{context?.season.name || t('工作人员申请')}</p>

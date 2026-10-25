@@ -29872,6 +29872,11 @@
     "en-US": "This session",
     "ko-KR": "이 세션"
   },
+  "本届身份": {
+    "zh-TW": "本屆身份",
+    "en-US": "Role this season",
+    "ko-KR": "이번 시즌 역할"
+  },
   "本届 {0} 场{1}排班已结束": {
     "zh-TW": "本屆 {0} 場{1}排班已結束",
     "en-US": "The schedule of {1} for {0} this term has ended",
@@ -33796,6 +33801,11 @@
     "zh-TW": "正式出場",
     "en-US": "Recorded appearance",
     "ko-KR": "공식 출전"
+  },
+  "正式队伍": {
+    "zh-TW": "正式隊伍",
+    "en-US": "Official team",
+    "ko-KR": "공식 팀"
   },
   "正式出场、职责样本、排名和英雄池都从本届公开比赛数据自动生成。": {
     "zh-TW": "正式出場、職責樣本、排名和英雄池都從本屆公開比賽資料自動生成。",
@@ -50726,6 +50736,11 @@
     "zh-TW": "隊伍",
     "en-US": "Team",
     "ko-KR": "팀"
+  },
+  "队伍比赛": {
+    "zh-TW": "隊伍比賽",
+    "en-US": "Team match",
+    "ko-KR": "팀 경기"
   },
   "队伍 / 样本": {
     "zh-TW": "隊伍 / 樣本",

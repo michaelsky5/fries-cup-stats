@@ -249,7 +249,7 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
   return (
     <section id="weekly-match-rooms" className={styles.workspace} aria-label={uiText("周赛比赛房间", uiLocale)} aria-busy={loading}>
       <header className={styles.workHeader}>
-        <div><span>WEEKLY MATCHES</span><h2>{uiText(currentWorkspace?.operatorView ? '我的执勤比赛' : '我的比赛', uiLocale)}</h2><p>{uiText('显示本届赛事中与你的队伍或执勤有关的全部场次。切换队伍不会隐藏其他关联比赛。', uiLocale)}</p></div>
+        <div><h2>{uiText(currentWorkspace?.operatorView ? '我的执勤比赛' : '我的比赛', uiLocale)}</h2><p>{uiText('显示本届赛事中与你的队伍或执勤有关的全部场次。切换队伍不会隐藏其他关联比赛。', uiLocale)}</p></div>
         <div className={styles.headerActions}><RoomGuideLink season={seasonId} />
           {(tasksVisible || preparationVisible) && <nav className={styles.returnLinks} aria-label={uiText("参赛流程导航", uiLocale)}>{tasksVisible && <Link to={taskUrl}>{uiText("← 待办", uiLocale)}</Link>}{preparationVisible && <Link to={preparationUrl}>{uiText("参赛进度 ↗", uiLocale)}</Link>}</nav>}
         <button type="button" className={styles.secondaryButton} disabled={loading || submitting} onClick={async () => { if (await confirmDiscard() && mounted.current && !submitLock.current) { setFeedback(null); refresh() } }}>{loading ? uiText("同步中…", uiLocale) : uiText("刷新比赛资料", uiLocale)}</button>
@@ -267,7 +267,7 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
             <span>{!effectiveReadOnly && room?.myTeams?.some(team => (team.isRepresentative && team.responseAccessMode === 'WRITE') || weeklyResponseAccess(room, team, { readOnly: effectiveReadOnly }).allowed) ? uiText("本场指定代表 · 可代表本队响应", uiLocale) : room?.roleLabel ? uiText(room.roleLabel, uiLocale) : operatorView ? uiText("本场工作人员 · 在比赛房按职责操作", uiLocale) : uiText("当前仅可查看 · 由本场指定代表响应", uiLocale)}</span>
             <span>{timezone === 'Asia/Shanghai' ? uiText("时间均为北京时间", uiLocale) : timezone}</span>
           </div>
-          {rooms.length === 0 ? <div className={styles.state}><span>{currentWorkspace.operatorView ? 'WAITING FOR STAFF ASSIGNMENT' : currentWorkspace.teams.length ? 'WAITING FOR PUBLISHED MATCHES' : 'NO TEAM LINK'}</span><strong>{currentWorkspace.operatorView ? uiText("工作人员身份已就绪，等待本场安排", uiLocale) : currentWorkspace.teams.length ? uiText("暂时没有已发布的本队周赛", uiLocale) : uiText("当前账号尚未绑定本赛季队伍", uiLocale)}</strong><p>{currentWorkspace.operatorView ? uiText("正式排班发布或管理员完成单场指派后，比赛会出现在这里。无需重复注册或加入队伍。", uiLocale) : currentWorkspace.teams.length ? uiText("管理员发布配对后，比赛会出现在这里；草稿和其他队伍的比赛不会显示。", uiLocale) : uiText("请联系周赛管理员完成邀请认领，不需要重新创建队伍。", uiLocale)}</p></div> : (
+          {rooms.length === 0 ? <div className={styles.state}><strong>{currentWorkspace.operatorView ? uiText("工作人员身份已就绪，等待本场安排", uiLocale) : currentWorkspace.teams.length ? uiText("暂时没有已发布的本队周赛", uiLocale) : uiText("当前账号尚未绑定本赛季队伍", uiLocale)}</strong><p>{currentWorkspace.operatorView ? uiText("正式排班发布或管理员完成单场指派后，比赛会出现在这里。无需重复注册或加入队伍。", uiLocale) : currentWorkspace.teams.length ? uiText("管理员发布配对后，比赛会出现在这里；草稿和其他队伍的比赛不会显示。", uiLocale) : uiText("请联系周赛管理员完成邀请认领，不需要重新创建队伍。", uiLocale)}</p></div> : (
             <>
               <div className={styles.layout}>
                 <aside className={styles.roomIndex}>

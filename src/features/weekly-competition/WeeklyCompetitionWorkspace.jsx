@@ -354,7 +354,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
   }
 
   if (!workspace?.teams?.length) {
-    return <section className={styles.state} data-tone="quiet"><span>NO WEEKLY TEAM LINK</span><strong>{uiText("当前账号还没有已连接的周赛队伍", uiLocale)}</strong><p>{error || uiText("队长、经理、选手或教练完成邀请认领后，这里会自动出现对应队伍的赛段与每周资料。", uiLocale)}</p></section>
+    return <section className={styles.state} data-tone="quiet"><strong>{uiText("当前账号还没有已连接的周赛队伍", uiLocale)}</strong><p>{error || uiText("队长、经理、选手或教练完成邀请认领后，这里会自动出现对应队伍的赛段与每周资料。", uiLocale)}</p></section>
   }
 
   if (invalidSelection) return <section className={styles.state} role="alert"><span>PARTICIPATION LINK</span><strong>{uiText("此队伍或周次已不可用", uiLocale)}</strong><p>{uiText("链接对应的参赛关系不存在，或当前账号无权查看。请从参赛准备重新选择。", uiLocale)}</p><Link to={teamManagementDestination({ search: searchParams.toString(), competitionId: seasonId })}>{uiText("重新选择我的队伍 →", uiLocale)}</Link></section>
