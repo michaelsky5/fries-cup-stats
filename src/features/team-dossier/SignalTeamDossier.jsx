@@ -63,6 +63,8 @@ export default function SignalTeamDossier({ team, seasonId, locale, withSeason, 
     const next = openedEvidence.includes(id) ? openedEvidence.filter(key => key !== id) : [...openedEvidence, id]
     updateQuery({ teamEvidence: next.join(',') })
   }
+  // 票 2.42 补: the 展厅 cover already shows the full name and honours, so its title row is the
+  // name alone; the 数据 page keeps them under the title.
   const fullName = team.fullName && team.fullName !== team.shortName ? team.fullName : ''
   const standing = advanceState.label && advanceState.label !== '—' ? advanceState.label : ''
   const followLabel = favorited
@@ -72,11 +74,11 @@ export default function SignalTeamDossier({ team, seasonId, locale, withSeason, 
   return <article className={styles.dossier} data-team-dossier="signal" data-archive-view={view} data-page-mode={view === 'analysis' ? 'index' : 'archive'} style={getArchiveIdentity()} data-i18n-ignore>
     <TeamArchiveNavigation team={team} seasonId={seasonId} locale={locale} view={view} galleryHref={galleryHref} analysisHref={analysisHref} viewState={viewState} onBack={onBack} onShare={view === 'gallery' ? shareDossier : null} />
     <div className={styles.titleRow}>
-      <SignalDataHeading title={team.shortName} description={[fullName, standing].filter(Boolean).join(' · ') || null}>
+      <SignalDataHeading title={team.shortName} description={view === 'analysis' ? [fullName, standing].filter(Boolean).join(' · ') || null : null}>
         <button type="button" className={styles.follow} aria-pressed={favorited} disabled={favoriteDisabled && !favorited} onClick={onToggleFavorite}>{followLabel}<span aria-hidden="true">{favorited ? '✓' : '+'}</span></button>
       </SignalDataHeading>
     </div>
-    {view === 'gallery' ? <TeamGalleryScenes team={team} seasonId={seasonId} locale={locale} roster={roster} rows={rows} advanceState={advanceState} research={research} memberId={params.get('member')} onMemberChange={member => updateQuery({ member })} analysisHref={analysisHref} ledgerHref={ledgerHref} withSeason={withSeason} returnState={returnState} viewState={viewState} onLeave={onLeave} favorited={favorited} favoriteDisabled={favoriteDisabled} onToggleFavorite={onToggleFavorite}>
+    {view === 'gallery' ? <TeamGalleryScenes team={team} seasonId={seasonId} locale={locale} roster={roster} rows={rows} advanceState={advanceState} research={research} memberId={params.get('member')} onMemberChange={member => updateQuery({ member })} analysisHref={analysisHref} ledgerHref={ledgerHref} withSeason={withSeason} returnState={returnState} viewState={viewState} onLeave={onLeave}>
       <TeamSeasonChronicle key={team.routeId + seasonId} team={team} seasonId={seasonId} locale={locale} rows={rows} advanceState={advanceState} matchId={params.get('teamMatch') || params.get('journalMatch')} onMatchChange={teamMatch => updateQuery({ teamMatch, journalMatch: null })} ledgerHref={ledgerHref} viewState={viewState} withSeason={withSeason} returnState={returnState} onLeave={onLeave} />
     </TeamGalleryScenes> : <>
       <TeamMatchLedger team={team} seasonId={seasonId} locale={locale} rows={rows} stages={stages} params={params} updateQuery={updateQuery} onShowAll={() => updateQuery({ journey: 'all' })} withSeason={withSeason} returnState={returnState} onLeave={onLeave} />

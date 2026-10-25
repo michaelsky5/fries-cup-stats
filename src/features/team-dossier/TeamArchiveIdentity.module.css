@@ -68,7 +68,8 @@
   .navigation nav a { flex: 1; justify-content: center; padding: 14px 3px; font-size: 13px; white-space: nowrap; }
   .navigation nav small { display: none; }
   .actions { flex-basis: 44px; }
-  .export { padding: 8px 0; font-size: 22px; min-width: 44px; }
+  /* Fits the 50px tab bar, so both pages' titles sit at the same height on phones too. */
+  .export { padding: 5px 0; font-size: 18px; line-height: 1; min-width: 44px; min-height: 44px; }
   .export span { display: block; padding: 0; font-size: 10px; line-height: 1.2; }
   .cover { grid-template-columns: minmax(0,1fr); }
   .coverIdentity { padding: 22px 22px 0; }

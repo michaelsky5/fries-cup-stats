@@ -38,6 +38,7 @@ export default function SignalPlayerDossier({ db, dossier, season, seasonId, loc
     delete state.restoreScrollY
     return { to: playerPagePath(identity.playerId, page, location.search, changes), state, onClick: () => saveReturnScroll(location) }
   }
+  // 票 2.42 补: the 选手展厅 cover already shows team and roles; only the data page repeats them here.
   const roleLine = (archive.roles.length ? archive.roles : dossier.roles).map(role => uiText(en ? getRoleEnLabel(role) : getRoleLabel(role), locale)).join(' / ')
   const followLabel = favorited
     ? pickUiLocale(locale, '已关注', 'Following', '팔로우 중', '已追蹤')
@@ -48,7 +49,7 @@ export default function SignalPlayerDossier({ db, dossier, season, seasonId, loc
       <div>{PLAYER_ARCHIVE_PAGES.map(([key, ...labels]) => <Link key={key} {...pageLink(key)} className={navStyles.item} aria-current={page === key ? 'page' : undefined}>{pickUiLocale(locale, ...labels)}</Link>)}</div>
     </nav></div>
     <div className={pages.titleRow}>
-      <SignalDataHeading title={identity.displayName} description={[identity.teamShort, roleLine].filter(Boolean).join(' · ') || null}>
+      <SignalDataHeading title={identity.displayName} description={analysisPage ? [identity.teamShort, roleLine].filter(Boolean).join(' · ') || null : null}>
         <button type="button" className={pages.follow} aria-pressed={favorited} disabled={favoriteDisabled && !favorited} onClick={onFavorite}>{followLabel}<span aria-hidden="true">{favorited ? '✓' : '+'}</span></button>
       </SignalDataHeading>
     </div>
