@@ -98,7 +98,7 @@
 .rosterNotice { flex: none; margin: 10px 0; color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.6; }
 .teamEmpty { padding: 50px 15px; color: var(--fc-data-text-dark-muted); }
 .sectionHeading { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 30px 0 16px; }
-.sectionHeading h2 { margin: 0; font: 900 clamp(22px, 2vw, 28px)/1.25 var(--fc-data-font-interface); letter-spacing: -.025em; }
+.sectionHeading h2 { margin: 0; font: 800 var(--fc-data-section-title-size)/1.35 var(--fc-data-font-interface); letter-spacing: -.02em; }
 .sectionHeading > a { flex-shrink: 0; color: var(--fc-data-text-muted); font-size: 12px; text-decoration: none; }
 .sectionHeading > a:hover { color: var(--fc-data-ink); text-decoration: underline; text-underline-offset: 4px; }
 .creditLayout { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); height: 360px; border: 1px solid var(--fc-data-line); }
@@ -217,7 +217,6 @@
   .changeNote::before { content: ' · '; color: var(--fc-data-text-muted); white-space: pre; }
   .heroFigure { display: none; }
   .sectionHeading { gap: 12px; padding: 24px 0 14px; }
-  .sectionHeading h2 { font-size: 22px; }
   .sectionHeading > a { font-size: 11px; }
   .creditLayout { grid-template-columns: 1fr; grid-template-rows: 282px 360px; height: auto; }
   .creditLayout[data-empty] { grid-template-rows: auto; }

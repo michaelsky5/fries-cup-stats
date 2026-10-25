@@ -29,7 +29,7 @@
 .page .secondary > span:last-child { color: var(--fc-data-focus-on-light, #806000); }
 .primary small, .secondary small { display: block; margin-top: 2px; font-size: 12px; font-weight: 400; opacity: .78; }
 .section { padding: 22px 0; border-bottom: 1px solid var(--line); }
-.section h2 { margin: 0 0 14px; font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+.section h2 { margin: 0 0 14px; font-size: var(--fc-data-section-title-size); font-weight: 800; letter-spacing: -.02em; }
 .section > p { max-width: 70ch; margin: 0; font-size: 14px; line-height: 1.8; }
 .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; }
 .steps li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; padding-top: 14px; border-top: 2px solid var(--fc-data-signal, #f4c320); }

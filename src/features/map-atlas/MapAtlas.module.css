@@ -475,7 +475,7 @@
 .searchField > button { min-width: 44px; height: 44px; }
 .indexHeading { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; margin-bottom: 10px; min-height: 35px; }
 .indexHeading > div { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.indexHeading h2 { font-size: 22px; font-weight: 700; line-height: 1.35; }
+.indexHeading h2 { font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .indexHeading span { font-size: 12px; color: var(--atlas-muted); }
 .indexHeading button { font-size: 13px; min-height: 44px; padding: 0; }
 .indexReading { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; padding: 0 0 18px; font-size: 12px; color: var(--atlas-muted); }
@@ -526,7 +526,6 @@
   .modeStrip > button:nth-child(3n) { border-right: 0; }
   .modeStrip > button > small { font-size: 11px; }
   .indexReading { gap: 12px; padding-bottom: 12px; }
-  .indexHeading h2 { font-size: 20px; }
   .indexHeading > div { gap: 6px 10px; }
   .indexReading a { min-height: 44px; }
   .indexColumns { padding-top: 7px; }
