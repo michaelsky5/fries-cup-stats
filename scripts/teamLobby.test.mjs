@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { readdirSync, readFileSync } from 'node:fs'
 import { safeLobbyReturn, accountFailure, roleLabel, statusLabel, leavesLobbyPage, lobbyReadFailure, canPublishLobby, lobbyRegistrationMessage, lobbyCardCopy, needsLabel } from '../src/features/team-lobby/lobbyModel.js'
 import { lobbyText, lobbyNoticeCopy, lobbyCopyRows } from '../src/features/team-lobby/lobbyCopy.js'
 
@@ -83,4 +84,18 @@ test('post fields say what a team needs and what a player offers, in every local
   }
   assert.equal(needsLabel([{ role: 'TANK', count: 1 }, { role: 'SUP', count: 2 }]), '重装 1 人 · 支援 2 人')
   assert.equal(needsLabel(null), '')
+})
+
+test('every literal lobby interface string has a four-locale copy row', () => {
+  const sources = new Set(lobbyCopyRows.map(row => row[0]))
+  const directory = new URL('../src/features/team-lobby/', import.meta.url)
+  const missing = []
+  for (const name of readdirSync(directory).filter(file => /\.jsx?$/.test(file) && file !== 'lobbyCopy.js')) {
+    const text = readFileSync(new URL(name, directory), 'utf8')
+    for (const match of text.matchAll(/\b(?:t|say)\(\s*(["'])((?:\\.|(?!\1).)*)\1/g)) {
+      const source = match[2].replace(/\\n/g, '\n').replace(/\\(["'\\])/g, '$1')
+      if (!sources.has(source)) missing.push(`${name}: ${source}`)
+    }
+  }
+  assert.deepEqual(missing, [])
 })

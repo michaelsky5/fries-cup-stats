@@ -5,6 +5,7 @@ import { getActiveLocale, normalizeLocale } from '../../lib/locales.js'
 const rows = [
   ['薯条杯', 'Fries Cup', '프라이즈 컵', '薯條杯'],
   ['组队大厅 · TEAM LOBBY', 'TEAM LOBBY', '팀 찾기 · TEAM LOBBY', '組隊大廳 · TEAM LOBBY'],
+  ['组队大厅', 'Team lobby', '팀 찾기', '組隊大廳'],
   ['组队大厅导航', 'Team lobby navigation', '팀 찾기 탐색', '組隊大廳導覽'],
   ['大厅', 'Lobby', '팀 찾기', '大廳'],
   ['我的组队', 'My lobby', '내 팀 찾기', '我的組隊'],

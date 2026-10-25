@@ -27,6 +27,8 @@ export default function LobbyFrame() {
   const localPath = path => withLocale(path, uiLocale)
   const loginPath = localPath(`/account/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`)
   useEffect(() => { document.documentElement.lang = uiLocale; setStoredLocale(uiLocale) }, [uiLocale])
+  const lobbyRoute = !location.pathname.startsWith('/account/')
+  useEffect(() => { if (lobbyRoute) document.title = `${t('组队大厅', [], uiLocale)} | ${t('薯条杯', [], uiLocale)}` }, [lobbyRoute, uiLocale])
   async function signOut() {
     if (!canSignOutOfAccount()) { setLogoutError(UNSAVED_ACCOUNT_MESSAGE); return }
     setSigningOut(true); setLogoutError('')
