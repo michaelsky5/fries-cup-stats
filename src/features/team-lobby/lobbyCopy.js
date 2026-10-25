@@ -200,7 +200,6 @@ const rows = [
   ['发出的联系', 'Sent', '보낸 요청', '寄出的聯絡'],
   ['全部联系', 'All contacts', '모든 연락', '全部聯絡'],
   ['刷新记录', 'Refresh', '새로고침', '重新整理紀錄'],
-  ['；已显示的记录可能过时。', ' Displayed records may be out of date.', ' 표시된 기록이 최신 상태가 아닐 수 있습니다.', '；已顯示的紀錄可能過時。'],
   ['正在读取联系…', 'Loading contacts…', '연락 불러오는 중…', '正在讀取聯絡…'],
   ['本页 {0} 条可回应联系；标记已读不会代替回应。', '{0} requests on this page need a reply. Marking them read does not reply.', '이 페이지에 응답할 요청이 {0}개 있습니다. 읽음 표시는 응답을 대신하지 않습니다.', '本頁 {0} 條可回應聯絡；標記已讀不會代替回應。'],
   ['暂无联系记录。可以先到大厅寻找合适的需求。', 'No contact records yet. Browse the lobby for a match.', '아직 연락 기록이 없습니다. 팀 찾기에서 적합한 카드를 찾아보세요.', '暫無聯絡紀錄。可以先到大廳尋找合適的需求。'],
@@ -271,7 +270,6 @@ const rows = [
   ['用户名已被使用，请换一个。', 'This username is taken. Choose another.', '이미 사용 중인 사용자 이름입니다. 다른 이름을 선택하세요.', '使用者名稱已被使用，請換一個。'],
   ['用户名需为 2—24 位字母、数字、下划线、短横线或点。', 'Use 2–24 letters, numbers, underscores, hyphens or dots for your username.', '사용자 이름은 영문, 숫자, 밑줄, 하이픈, 마침표 2–24자여야 합니다.', '使用者名稱需為 2—24 位英文字母、數字、底線、連字號或點。'],
   ['邮箱或密码不正确。', 'Incorrect email or password.', '이메일 또는 비밀번호가 올바르지 않습니다.', '電子郵件或密碼不正確。'],
-  ['操作较频繁，请按提示稍后重试。', 'Too many requests. Wait as instructed and try again.', '요청이 너무 많습니다. 안내된 시간 후 다시 시도하세요.', '操作較頻繁，請按提示稍後重試。'],
   ['暂时无法确认处理结果。请先查看账号或本人记录，再决定是否重试。', 'The result is uncertain. Check your account or records before retrying.', '처리 결과를 확인할 수 없습니다. 다시 시도하기 전에 계정 또는 내 기록을 확인하세요.', '暫時無法確認處理結果。請先查看帳號或本人紀錄，再決定是否重試。'],
   ['请求未完成，请稍后重试。', 'The request did not complete. Try again later.', '요청이 완료되지 않았습니다. 나중에 다시 시도하세요.', '請求未完成，請稍後重試。'],
   ['语言', 'Language', '언어', '語言'],
@@ -325,8 +323,62 @@ rows.push(
   ['发布／编辑我的求队', 'Post / edit my player card', '내 팀 찾기 카드 게시 / 수정', '發布／編輯我的求隊'],
   ['队伍招募 →', 'Team recruitment →', '팀원 모집 →', '隊伍招募 →']
 )
+// Lobby and account errors in our own words. Server messages listed here are
+// translated when the server sends them verbatim; anything else is never shown raw.
+rows.push(
+  ['请先验证本人邮箱。', 'Verify your email first.', '먼저 본인 이메일을 인증하세요.', '請先驗證本人電子郵件。'],
+  ['账号状态已变化，请重新登录。', 'Your account changed. Please sign in again.', '계정 상태가 변경되었습니다. 다시 로그인하세요.', '帳號狀態已變更，請重新登入。'],
+  ['登录状态已失效，请重新登录。', 'Your session has expired. Please sign in again.', '로그인이 만료되었습니다. 다시 로그인하세요.', '登入狀態已失效，請重新登入。'],
+  ['当前账号没有此操作权限。', 'This account cannot do that.', '이 계정에는 해당 권한이 없습니다.', '目前帳號沒有此操作權限。'],
+  ['记录或有效名额已变化，请刷新本人记录后核对，不要重复创建。', 'Your records changed. Refresh and check them before trying again, and don\'t create a duplicate.', '기록 또는 이용 가능 슬롯이 변경되었습니다. 내 기록을 새로 불러와 확인하고 중복으로 만들지 마세요.', '紀錄或有效名額已變更，請重新整理本人紀錄後核對，不要重複建立。'],
+  ['暂时无法完成处理，请先查看本人记录后再重试。', 'This could not be completed right now. Check your records, then try again.', '지금은 처리할 수 없습니다. 내 기록을 확인한 뒤 다시 시도하세요.', '暫時無法完成處理，請先查看本人紀錄後再重試。'],
+  ['这张卡片已下线或暂不可用。', 'This card is no longer available.', '이 카드는 내려갔거나 지금 볼 수 없습니다.', '這張卡片已下線或暫時無法使用。'],
+  ['卡片已变化，请刷新本人记录后核对。', 'This card changed. Refresh your records and check it.', '카드가 변경되었습니다. 내 기록을 새로 불러와 확인하세요.', '卡片已變更，請重新整理本人紀錄後核對。'],
+  ['卡片已被管理隐藏，请查看处理原因。', 'Staff hid this card. Check the reason in your records.', '운영진이 이 카드를 숨겼습니다. 처리 사유를 확인하세요.', '卡片已被管理員隱藏，請查看處理原因。'],
+  ['管理员隐藏的卡片不能自行恢复。', 'Cards hidden by staff cannot be restored by their owner.', '운영진이 숨긴 카드는 직접 복구할 수 없습니다.', '管理員隱藏的卡片不能自行恢復。'],
+  ['没有找到这条记录，请刷新后核对。', 'This record was not found. Refresh and check again.', '기록을 찾지 못했습니다. 새로 불러와 확인하세요.', '沒有找到這筆紀錄，請重新整理後核對。'],
+  ['这次提交已失效，请刷新后重新操作。', 'This submission is no longer valid. Refresh and try again.', '이 요청은 더 이상 유효하지 않습니다. 새로 불러와 다시 시도하세요.', '這次提交已失效，請重新整理後重新操作。'],
+  ['申请状态已变化，请刷新后核对。', 'This application changed. Refresh and check it.', '신청 상태가 변경되었습니다. 새로 불러와 확인하세요.', '申請狀態已變更，請重新整理後核對。'],
+  ['你已有一份有效筹建申请或招募，请先处理已有需求。', 'You already have an active team formation or recruitment. Handle that one first.', '이미 진행 중인 팀 구성 신청이나 모집이 있습니다. 먼저 처리하세요.', '你已有一份有效籌建申請或招募，請先處理已有需求。'],
+  ['筹建申请尚未通过核对。', 'Your team formation has not been approved yet.', '팀 구성 신청이 아직 승인되지 않았습니다.', '籌建申請尚未通過核對。'],
+  ['队伍负责人已变化。', 'The team organizer changed.', '팀 담당자가 변경되었습니다.', '隊伍負責人已變更。'],
+  ['只有当前队伍负责人可以代表队伍操作。', 'Only the team\'s current organizer can act for the team.', '현재 팀 담당자만 팀을 대표해 처리할 수 있습니다.', '只有目前的隊伍負責人可以代表隊伍操作。'],
+  ['请先发布本人有权队伍的招募或通过筹建核对。', 'Publish recruitment for a team you manage, or get a team formation approved first.', '먼저 관리하는 팀의 모집을 게시하거나 팀 구성 승인을 받으세요.', '請先發布本人有權隊伍的招募或通過籌建核對。'],
+  ['请选择本人有权管理的队伍，或先申请筹建招募。', 'Choose a team you manage, or apply to form a team first.', '관리 권한이 있는 팀을 선택하거나 먼저 팀 구성을 신청하세요.', '請選擇本人有權管理的隊伍，或先申請籌建招募。'],
+  ['队伍名称包含私人联系方式，请先修正队伍资料。', 'The team name contains private contact details. Fix the team profile first.', '팀 이름에 개인 연락처가 포함되어 있습니다. 먼저 팀 정보를 수정하세요.', '隊伍名稱包含私人聯絡方式，請先修正隊伍資料。'],
+  ['不能向本人发送联系请求。', 'You cannot send a contact request to yourself.', '본인에게는 연락 요청을 보낼 수 없습니다.', '不能向本人寄送聯絡請求。'],
+  ['对方当前不能使用大厅联系。', 'The other person cannot use lobby contacts right now.', '상대방이 지금은 팀 찾기 연락을 이용할 수 없습니다.', '對方目前無法使用大廳聯絡。'],
+  ['当前身份或状态不能执行此操作。', 'This action is not available for your role or this status.', '현재 신분이나 상태로는 이 작업을 할 수 없습니다.', '目前身分或狀態不能執行此操作。'],
+  ['愿意联系时需填写并授权本人的本次 QQ。', 'To accept, enter your QQ for this contact and confirm consent.', '수락하려면 이번 연락에 쓸 QQ를 입력하고 공개에 동의하세요.', '願意聯絡時需填寫並授權本人的本次 QQ。'],
+  ['联系状态或授权已变化，请重新读取本人记录。', 'The contact or consent changed. Reload your records.', '연락 상태나 동의가 변경되었습니다. 내 기록을 새로 불러오세요.', '聯絡狀態或授權已變更，請重新讀取本人紀錄。'],
+  ['双方尚未授权，或本次联系已结束。', 'Both people have not consented yet, or this contact has ended.', '양쪽 동의가 아직 없거나 이번 연락이 종료되었습니다.', '雙方尚未授權，或本次聯絡已結束。'],
+  ['服务繁忙，请稍后重试。', 'The service is busy. Please try again shortly.', '서비스가 혼잡합니다. 잠시 후 다시 시도하세요.', '服務繁忙，請稍後重試。'],
+  ['读取超时，请检查网络后重试。', 'Loading timed out. Check your connection and try again.', '불러오기 시간이 초과되었습니다. 네트워크를 확인한 뒤 다시 시도하세요.', '讀取逾時，請檢查網路後重試。'],
+  ['大厅操作暂受限制。', 'Your lobby actions are temporarily restricted.', '팀 찾기 이용이 일시적으로 제한되었습니다.', '大廳操作暫時受到限制。'],
+  ['大厅操作暂受限制：{0}', 'Your lobby actions are temporarily restricted: {0}', '팀 찾기 이용이 일시적으로 제한되었습니다: {0}', '大廳操作暫時受到限制：{0}'],
+  ['操作较频繁，请约 {0} 分钟后重试。', 'Too many requests. Try again in about {0} min.', '요청이 너무 많습니다. 약 {0}분 후 다시 시도하세요.', '操作較頻繁，請約 {0} 分鐘後重試。'],
+  ['操作较频繁，请稍后重试。', 'Too many requests. Please try again later.', '요청이 너무 많습니다. 잠시 후 다시 시도하세요.', '操作較頻繁，請稍後重試。'],
+  ['提交的内容未通过检查，请修改后重试。', 'Some details did not pass the check. Edit them and try again.', '입력한 내용이 확인을 통과하지 못했습니다. 수정 후 다시 시도하세요.', '提交的內容未通過檢查，請修改後重試。'],
+  ['请填写「{0}」，不能只输入空格。', 'Fill in “{0}”. Spaces alone do not count.', '‘{0}’ 항목을 입력하세요. 공백만으로는 안 됩니다.', '請填寫「{0}」，不能只輸入空格。'],
+  ['「{0}」超出长度上限，请删减后重试。', '“{0}” is too long. Shorten it and try again.', '‘{0}’ 항목이 너무 깁니다. 줄인 뒤 다시 시도하세요.', '「{0}」超出長度上限，請刪減後重試。'],
+  ['请检查「{0}」后重试。', 'Check “{0}” and try again.', '‘{0}’ 항목을 확인한 뒤 다시 시도하세요.', '請檢查「{0}」後重試。'],
+  ['英雄', 'Heroes', '영웅', '英雄'],
+  ['公开资料请勿填写私人联系方式或外部链接。', 'Public details cannot include private contact details or external links.', '공개 정보에는 개인 연락처나 외부 링크를 넣을 수 없습니다.', '公開資料請勿填寫私人聯絡方式或外部連結。'],
+  ['公开资料不能含私人联系方式。', 'Public details cannot include private contact details.', '공개 정보에는 개인 연락처를 넣을 수 없습니다.', '公開資料不能含私人聯絡方式。'],
+  ['岗位与人数必须对应，不能重复。', 'Each selected role needs one player count, with no duplicates.', '포지션과 인원은 하나씩 짝지어야 하며 중복될 수 없습니다.', '職位與人數必須對應，不能重複。'],
+  ['请选择队伍并填写招募人数。', 'Choose a team and enter how many players you need.', '팀을 선택하고 모집 인원을 입력하세요.', '請選擇隊伍並填寫招募人數。'],
+  ['个人求队不能指定队伍。', 'A player card cannot name a team.', '팀 찾기 카드에는 팀을 지정할 수 없습니다.', '個人求隊不能指定隊伍。'],
+  ['请填写 5—12 位 QQ 号码。', 'Enter a QQ number with 5–12 digits.', '5–12자리 QQ 번호를 입력하세요.', '請填寫 5—12 位 QQ 號碼。'],
+  ['请明确同意本次 QQ 授权。', 'Please confirm consent to share your QQ for this contact.', '이번 QQ 공개에 동의해 주세요.', '請明確同意本次 QQ 授權。'],
+  ['留言请勿填写 QQ、邮箱或其他私人联系方式。', 'Do not include QQ, email or other private contact details in the message.', '메시지에 QQ, 이메일 등 개인 연락처를 입력하지 마세요.', '留言請勿填寫 QQ、電子郵件或其他私人聯絡方式。'],
+  ['个人联系招募卡时不应指定另一支队伍。', 'When contacting a team as a player, do not choose another team.', '선수로서 모집 카드에 연락할 때는 다른 팀을 선택하지 마세요.', '個人聯絡招募卡時不應指定另一支隊伍。'],
+  ['已显示的记录可能过时。', 'Displayed records may be out of date.', '표시된 기록이 최신 상태가 아닐 수 있습니다.', '已顯示的紀錄可能過時。'],
+  ['这一页已经没有需求了', 'No cards on this page', '이 페이지에는 카드가 없습니다', '這一頁已經沒有需求了'],
+  ['回到第一页', 'Back to page 1', '첫 페이지로', '回到第一頁']
+)
 export const lobbyCopyRows = rows
 const copy = new Map(rows.map(([source, en, ko, tw]) => [source, { 'en-US': en, 'ko-KR': ko, 'zh-TW': tw }]))
+export const hasLobbyCopy = source => copy.has(source)
 export function lobbyText(source, values = [], locale = getActiveLocale()) {
   const translated = copy.get(source)?.[normalizeLocale(locale)] || source
   return translated.replace(/\{(\d+)\}/g, (token, index) => index in values ? String(values[index]) : token)

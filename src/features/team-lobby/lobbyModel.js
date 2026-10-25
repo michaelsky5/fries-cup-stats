@@ -1,5 +1,5 @@
-import { lobbyText as t } from './lobbyCopy.js'
-import { getActiveLocale } from '../../lib/locales.js'
+import { lobbyText as t, hasLobbyCopy } from './lobbyCopy.js'
+import { getActiveLocale, normalizeLocale } from '../../lib/locales.js'
 import { passwordPolicyHint } from '../auth/passwordPolicy.js'
 export const LOBBY_ROLES = [{ value: 'TANK', label: '重装' }, { value: 'DPS', label: '输出' }, { value: 'SUP', label: '支援' }]
 export const roleLabel = role => t(LOBBY_ROLES.find(item => item.value === role)?.label || role)
@@ -45,28 +45,80 @@ export function leavesLobbyPage(current, next) {
   }
   return withoutLanguage(current) !== withoutLanguage(next)
 }
+// Server codes shown in our own words. Keys are copy sources in lobbyCopy.js.
+export const ERROR_COPY = {
+  USER_EXISTS: "这个邮箱已注册，请登录或找回原账号。", USERNAME_EXISTS: "用户名已被使用，请换一个。",
+  INVALID_USERNAME: "用户名需为 2—24 位字母、数字、下划线、短横线或点。", INVALID_CREDENTIALS: "邮箱或密码不正确。",
+  REGISTRATION_DISABLED: "普通注册暂未开放，已有账号仍可登录。",
+  LOBBY_OFF: "组队大厅暂未开放", LOBBY_READ_ONLY: "大厅当前只读，可以浏览需求和管理已有联系。", LOBBY_CONTACT_OFF: "联系功能当前不可操作，已有记录仍保留。",
+  EMAIL_VERIFICATION_REQUIRED: "请先验证本人邮箱。", ACCOUNT_CHANGED: "账号状态已变化，请重新登录。", UNAUTHORIZED: "登录状态已失效，请重新登录。",
+  LOBBY_FORBIDDEN: "当前账号没有此操作权限。", LOBBY_CONFLICT: "记录或有效名额已变化，请刷新本人记录后核对，不要重复创建。",
+  LOBBY_UNAVAILABLE: "暂时无法完成处理，请先查看本人记录后再重试。",
+  CARD_UNAVAILABLE: "这张卡片已下线或暂不可用。", CARD_CHANGED: "卡片已变化，请刷新本人记录后核对。", CARD_HIDDEN: "管理员隐藏的卡片不能自行恢复。",
+  NOT_FOUND: "没有找到这条记录，请刷新后核对。", OPERATION_CONFLICT: "这次提交已失效，请刷新后重新操作。", APPLICATION_CHANGED: "申请状态已变化，请刷新后核对。",
+  FORMATION_LIMIT: "你已有一份有效筹建申请或招募，请先处理已有需求。", FORMATION_APPROVAL_REQUIRED: "筹建申请尚未通过核对。",
+  TEAM_AUTHORITY_CHANGED: "队伍负责人已变化。", TEAM_AUTHORITY_REQUIRED: "只有当前队伍负责人可以代表队伍操作。",
+  PRIVATE_CONTACT_IN_PUBLIC_TEXT: "队伍名称包含私人联系方式，请先修正队伍资料。",
+  CONTACT_SELF: "不能向本人发送联系请求。", CONTACT_UNAVAILABLE: "对方当前不能使用大厅联系。", CONTACT_ACTION_FORBIDDEN: "当前身份或状态不能执行此操作。",
+  CONSENT_REQUIRED: "愿意联系时需填写并授权本人的本次 QQ。", CONTACT_CHANGED: "联系状态或授权已变化，请重新读取本人记录。",
+  CONTACT_NOT_AUTHORIZED: "双方尚未授权，或本次联系已结束。",
+  RATE_LIMIT_CAPACITY: "服务繁忙，请稍后重试。", AUTH_RATE_LIMIT_UNAVAILABLE: "服务繁忙，请稍后重试。", REQUEST_TIMEOUT: "读取超时，请检查网络后重试。"
+}
+export const FIELD_COPY = { title: "公开显示名称", name: "筹建队名", availability: "可赛／训练时间（北京时间）", goal: "组队目标", bio: "介绍", level: "段位", heroes: "英雄",
+  message: "简短留言", qq: "本次联系 QQ", roles: "岗位", needs: "所需岗位与人数", email: "邮箱", username: "用户名", password: "密码" }
+function invalidInput(data) {
+  const issue = Array.isArray(data?.issues) ? data.issues[0] : null
+  const field = FIELD_COPY[issue?.path?.[0]]
+  if (!field) return t("提交的内容未通过检查，请修改后重试。")
+  if (issue.code === 'too_small' && issue.origin === 'string') return t("请填写「{0}」，不能只输入空格。", [t(field)])
+  if (issue.code === 'too_big' && issue.origin === 'string') return t("「{0}」超出长度上限，请删减后重试。", [t(field)])
+  return t("请检查「{0}」后重试。", [t(field)])
+}
+
 export function accountFailure(error) {
-  const quotaCode = error.data?.error || error.data?.code
-  if (quotaCode === 'PASSWORD_POLICY') return passwordPolicyHint(getActiveLocale())
-  if (['REGISTRATION_CAPACITY_REACHED', 'EMAIL_QUOTA_RESERVED'].includes(quotaCode)) {
-    const message = quotaCode === 'REGISTRATION_CAPACITY_REACHED'
+  // A non-JSON body (an HTML gateway page, for example) is never shown.
+  const data = error?.data && typeof error.data === 'object' ? error.data : null
+  const code = data?.error || data?.code, message = typeof data?.message === 'string' ? data.message : ''
+  if (code === 'PASSWORD_POLICY') return passwordPolicyHint(getActiveLocale())
+  if (['REGISTRATION_CAPACITY_REACHED', 'EMAIL_QUOTA_RESERVED'].includes(code)) {
+    const notice = code === 'REGISTRATION_CAPACITY_REACHED'
       ? t("本批注册名额已用完，已有账号仍可登录。")
       : t("邮件额度暂时不足，请稍后重试。")
-    const seconds = Number(error.data?.retryAfter)
+    const seconds = Number(data?.retryAfter)
     return Number.isFinite(seconds) && seconds > 0 && seconds <= 32 * 86400
-      ? message + ' ' + t("可于 {0} 后重试。", [lobbyDate(Date.now() + seconds * 1000)]) : message
+      ? notice + ' ' + t("可于 {0} 后重试。", [lobbyDate(Date.now() + seconds * 1000)]) : notice
   }
-  const messages = { USER_EXISTS: t("这个邮箱已注册，请登录或找回原账号。"), USERNAME_EXISTS: t("用户名已被使用，请换一个。"), INVALID_USERNAME: t("用户名需为 2—24 位字母、数字、下划线、短横线或点。"), INVALID_CREDENTIALS: t("邮箱或密码不正确。"), REGISTRATION_DISABLED: t("普通注册暂未开放，已有账号仍可登录。"), RATE_LIMITED: t("操作较频繁，请按提示稍后重试。") }
-  if (error.data?.outcomeUnknown || error.name === 'TypeError') return t("暂时无法确认处理结果。请先查看账号或本人记录，再决定是否重试。")
-  return messages[error.data?.error] || error.message || t("请求未完成，请稍后重试。")
+  if (data?.outcomeUnknown || error?.name === 'TypeError') return t("暂时无法确认处理结果。请先查看账号或本人记录，再决定是否重试。")
+  if (code === 'RATE_LIMITED') {
+    const minutes = Math.ceil(Number(error?.retryAfterMs) / 60000)
+    return minutes > 0 && minutes <= 24 * 60 ? t("操作较频繁，请约 {0} 分钟后重试。", [minutes]) : t("操作较频繁，请稍后重试。")
+  }
+  // The restriction reason is written by staff and is shown as written.
+  if (code === 'LOBBY_RESTRICTED') return message && message !== '大厅操作暂受限制。' ? t("大厅操作暂受限制：{0}", [message]) : t("大厅操作暂受限制。")
+  if (message && hasLobbyCopy(message)) return t(message)
+  if (code === 'INVALID_INPUT') return invalidInput(data)
+  if (ERROR_COPY[code]) return t(ERROR_COPY[code])
+  if (error?.status === 401) return t(ERROR_COPY.UNAUTHORIZED)
+  // Local validation errors already carry translated copy and no response.
+  if (!error?.status && !data && error?.message) return error.message
+  if (message && /[一-鿿]/.test(message) && normalizeLocale(getActiveLocale()) === 'zh-CN') return message
+  return t("请求未完成，请稍后重试。")
 }
 
 export function lobbyReadFailure(error) {
-  if (error?.data?.error === 'LOBBY_OFF') return t("组队大厅暂未开放")
+  const code = error?.data?.error
+  if (code === 'LOBBY_OFF') return t("组队大厅暂未开放")
+  if (code === 'CARD_UNAVAILABLE') return t(ERROR_COPY.CARD_UNAVAILABLE)
+  if (code === 'NOT_FOUND') return t(ERROR_COPY.NOT_FOUND)
+  if (error?.status === 401 || code === 'ACCOUNT_CHANGED') return t(ERROR_COPY.UNAUTHORIZED)
   // Initial discovery must not expose upstream routing or infrastructure errors.
   // A failed read also must not imply that an account write may have occurred.
   return t("组队大厅暂时无法读取，请稍后重试。已有记录会保留。")
 }
+export const retryableRead = error => !['LOBBY_OFF', 'CARD_UNAVAILABLE', 'NOT_FOUND'].includes(error?.data?.error)
+// Only an uncertain outcome sends people to their records before retrying.
+export const uncertainWrite = error => Boolean(error?.data?.outcomeUnknown) || error?.name === 'TypeError'
+  || ['LOBBY_CONFLICT', 'CONTACT_CHANGED', 'OPERATION_CONFLICT'].includes(error?.data?.error)
 
 export function canPublishLobby(config, error) {
   return config?.mode === 'WRITE' && !error

@@ -5,7 +5,8 @@ import { Link, useBlocker, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { startVisiblePolling } from '../../lib/visiblePolling.js'
 import { useLobbyMine } from './useLobbyState.js'
-import { accountFailure, lobbyDate, leavesLobbyPage } from './lobbyModel.js'
+import { accountFailure, lobbyDate, leavesLobbyPage, lobbyReadFailure, retryableRead, uncertainWrite } from './lobbyModel.js'
+import { reportInvalidField, revealAlert } from './lobbyFocus.js'
 import * as api from './lobbyApi.js'
 import styles from './Lobby.module.css'
 
@@ -45,13 +46,13 @@ export function FeedbackLink({ config }) {
 export function ContactEntry({ card }) {
   useUiLocale()
 
-  const { user, isBootstrapping } = useAuth(), { data, error } = useLobbyMine()
+  const { user, isBootstrapping } = useAuth(), { data, error, refresh } = useLobbyMine()
   const [open, setOpen] = useState(false)
   const destination = `/lobby/cards/${card.publicId}`
   if (isBootstrapping) return <p role="status">{t("正在读取账号…")}</p>
   if (!user) return <><h2>{t("申请联系")}</h2><p>{t("登录后可以表达联系意愿，正式入队另行确认。")}</p><Link to={`/account/login?returnTo=${encodeURIComponent(destination)}`}>{t("登录／注册后继续")}</Link></>
   if (!user.emailVerifiedAt) return <><h2>{t("先验证邮箱")}</h2><Link to={`/account/verify-email?returnTo=${encodeURIComponent(destination)}`}>{t("验证后继续联系")}</Link></>
-  if (error) return <p role="alert">{accountFailure(error)}</p>
+  if (error) return <p role="alert">{lobbyReadFailure(error)}{retryableRead(error) && <> <button type="button" onClick={refresh}>{t("重新读取")}</button></>}</p>
   if (!data) return <p role="status">{t("正在读取联系权限…")}</p>
   const own = data.cards.some(item => item.publicId === card.publicId)
   const canContact = data.canWrite && data.config.contactEnabled
@@ -75,25 +76,28 @@ function ContactComposer({ card, teams, onClose }) {
   const [busy, setBusy] = useState(false), [error, setError] = useState(null), [result, setResult] = useState(null), [discard, setDiscard] = useState(false)
   const dirty = !result && Boolean(message || qq || consent), guard = useDraftGuard(dirty)
   const close = useCallback(() => { if (!busy) { if (dirty) setDiscard(true); else onClose() } }, [busy, dirty, onClose])
+  const alertRef = useRef(null)
   useEffect(() => { const element = dialog.current; element?.showModal(); return () => element?.close() }, [])
+  useEffect(() => { if (error) revealAlert(alertRef.current) }, [error])
   async function submit(event) {
     event.preventDefault(); if (locked.current || !consent) return
+    if (!message.trim()) { reportInvalidField(event.currentTarget.elements.namedItem('message'), t("请填写「{0}」，不能只输入空格。", [t("简短留言")])); return }
     locked.current = true; setBusy(true); setError(null)
     try {
       const value = await api.createContact({ operationId: operation.current, targetCardPublicId: card.publicId,
-        ...(card.kind === 'PERSON' ? { teamId } : {}), message, qq, consent })
+        ...(card.kind === 'PERSON' ? { teamId } : {}), message: message.trim(), qq, consent })
       setResult(value.contact); setQq(''); setConsent(false); setMessage('')
     } catch (failure) { setError(failure) }
     finally { locked.current = false; setBusy(false) }
   }
   return <dialog className={styles.contactDialog} ref={dialog} aria-labelledby="lobby-contact-title" onCancel={event => { event.preventDefault(); close() }}>
     <div className={styles.dialogHeader}><h2 id="lobby-contact-title">{t("联系")} {card.title}</h2><button onClick={close} disabled={busy} aria-label={t("关闭联系表单")}>×</button></div>
-    {guard}{error && <p role="alert" className={styles.error}>{accountFailure(error)} <Link to="/lobby/me?tab=sent">{t("先核对已发记录")}</Link></p>}
+    {guard}{error && <p ref={alertRef} tabIndex={-1} role="alert" className={styles.error}>{accountFailure(error)}{uncertainWrite(error) && <> <Link to="/lobby/me?tab=sent">{t("先核对已发记录")}</Link></>}</p>}
     {discard && <div role="alert" className={styles.notice}><p>{t("放弃未发送内容后，本次 QQ 和留言会清空。")}</p><button onClick={() => setDiscard(false)}>{t("继续填写")}</button><button onClick={onClose}>{t("放弃并关闭")}</button></div>}
     {result ? <div className={styles.stack}><h3>{t("联系记录已保存")}</h3><p>{contactStatus(result.status)}</p><p>{t("如已有同一联系，将直接使用原记录。")}</p><Link className={styles.primary} to={`/lobby/me?tab=contacts&requestId=${result.id}`}>{t("查看这次联系")}</Link><button onClick={onClose}>{t("关闭")}</button></div>
       : <form className={styles.stack} onSubmit={submit}>
         {card.kind === 'PERSON' && <label>{t("以哪支队伍联系")}<select value={teamId} onChange={event => setTeamId(event.target.value)} disabled={busy} required>{teams.map(team => <option key={team.id} value={team.id}>{team.name}</option>)}</select><small>{t("由当前登录负责人本人处理，不向其他队员共享 QQ。")}</small></label>}
-        <label>{t("简短留言")}<textarea value={message} onChange={event => setMessage(event.target.value)} maxLength={500} rows={4} required disabled={busy} /><small>{t("请勿在留言中填写私人联系方式。")}</small></label>
+        <label>{t("简短留言")}<textarea name="message" value={message} onChange={event => setMessage(event.target.value)} maxLength={500} rows={4} required disabled={busy} /><small>{t("请勿在留言中填写私人联系方式。")}</small></label>
         <label>{t("本次联系 QQ")}<input value={qq} onChange={event => setQq(event.target.value)} inputMode="numeric" pattern="[1-9][0-9]{4,11}" minLength={5} maxLength={12} autoComplete="off" required disabled={busy} /></label>
         <label className={styles.consent}><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} disabled={busy} required /><span>{t("我同意在对方愿意联系并授权后，仅向本次联系的对方展示这个 QQ。")}</span></label>
         <p>{t("对方同样需要授权。请求最长有效 7 天；正式入队另行确认。")}</p>
@@ -122,7 +126,7 @@ export function ContactInbox({ direction, config, onChanged }) {
   function select(id) { setQuery(current => { if (id) current.set('requestId', id); else current.delete('requestId'); return current }) }
   if (requestId) return <ContactDetail key={requestId} id={requestId} config={config} onBack={() => select('')} onChanged={changed} />
   return <section aria-label={t("联系列表")}><div className={styles.sectionHeading}><h2>{direction === 'received' ? t("收到的联系") : direction === 'sent' ? t("发出的联系") : t("全部联系")}</h2><button onClick={() => polling.current?.refresh()}>{t("刷新记录")}</button></div>
-    {error && <p role="alert" className={styles.error}>{accountFailure(error)}{t("；已显示的记录可能过时。")}</p>}
+    {error && <p role="alert" className={styles.error}>{lobbyReadFailure(error)}{data && <> {t("已显示的记录可能过时。")}</>}</p>}
     {!data && !error && <p role="status">{t("正在读取联系…")}</p>}
     {data && <><p>{t('本页 {0} 条可回应联系；标记已读不会代替回应。', [data.pendingOnPage])}</p>
       {!data.contacts.length && <p className={styles.empty}>{t("暂无联系记录。可以先到大厅寻找合适的需求。")}</p>}
@@ -135,12 +139,14 @@ export function ContactInbox({ direction, config, onChanged }) {
 function ContactDetail({ id, config, onBack, onChanged }) {
   useUiLocale()
 
-  const [row, setRow] = useState(null), [error, setError] = useState(null), [busy, setBusy] = useState(false)
+  // Reading the contact and acting on it fail in different ways; keep them apart.
+  const [row, setRow] = useState(null), [readError, setReadError] = useState(null), [actionError, setActionError] = useState(null), [busy, setBusy] = useState(false)
   const [qq, setQq] = useState(''), [consent, setConsent] = useState(false), [revealed, setRevealed] = useState(''), [copied, setCopied] = useState(false)
-  const locked = useRef(false), operation = useRef(null), alive = useRef(false), poller = useRef(null), readEpoch = useRef(0)
+  const locked = useRef(false), operation = useRef(null), alive = useRef(false), poller = useRef(null), readEpoch = useRef(0), alertRef = useRef(null)
   const guard = useDraftGuard(Boolean(qq || consent))
   const canAccept = Boolean(row?.canAccept)
   useEffect(() => { if (!canAccept) { setQq(''); setConsent(false) } }, [canAccept])
+  useEffect(() => { if (actionError) revealAlert(alertRef.current) }, [actionError])
   useEffect(() => {
     alive.current = true
     const hide = () => { readEpoch.current++; setRevealed(''); setCopied(false) }
@@ -148,8 +154,8 @@ function ContactDetail({ id, config, onBack, onChanged }) {
     window.addEventListener('blur', hide); document.addEventListener('visibilitychange', visibility)
     const poll = startVisiblePolling(async ({ signal }) => {
       const epoch = ++readEpoch.current
-      try { const value = await api.getContact(id, { signal }); if (!signal.aborted && epoch === readEpoch.current) { setRow(value.contact); setError(null); if (!value.contact.canReadQq) hide() } }
-      catch (failure) { if (!signal.aborted) { setError(failure); hide(); setRow(current => current && { ...current, canReadQq: false, canAccept: false }) }; throw failure }
+      try { const value = await api.getContact(id, { signal }); if (!signal.aborted && epoch === readEpoch.current) { setRow(value.contact); setReadError(null); if (!value.contact.canReadQq) hide() } }
+      catch (failure) { if (!signal.aborted) { setReadError(failure); hide(); setRow(current => current && { ...current, canReadQq: false, canAccept: false }) }; throw failure }
     }, { intervalMs: 30000 })
     poller.current = poll
     return () => { alive.current = false; poll.stop(); window.removeEventListener('blur', hide); document.removeEventListener('visibilitychange', visibility) }
@@ -157,30 +163,31 @@ function ContactDetail({ id, config, onBack, onChanged }) {
   useEffect(() => { if (!revealed) return undefined; const timer = window.setTimeout(() => { readEpoch.current++; setRevealed(''); setCopied(false) }, 30000); return () => clearTimeout(timer) }, [revealed])
   async function act(action) {
     if (locked.current || !row) return
-    locked.current = true; setBusy(true); setError(null); setRevealed(''); readEpoch.current++
+    locked.current = true; setBusy(true); setActionError(null); setRevealed(''); readEpoch.current++
     if (operation.current?.action !== action || operation.current?.revision !== row.revision) operation.current = { action, revision: row.revision, operationId: crypto.randomUUID() }
     try {
       const value = await api.changeContact(id, { ...operation.current, ...(action === 'ACCEPT' ? { qq, consent } : {}) })
       if (!alive.current) return
       setRow(value.contact); setQq(''); setConsent(false); operation.current = null; onChanged()
-    } catch (failure) { if (alive.current) { setError(failure); poller.current?.refresh({ changed: true }) } }
+    } catch (failure) { if (alive.current) { setActionError(failure); poller.current?.refresh({ changed: true }) } }
     finally { locked.current = false; if (alive.current) setBusy(false) }
   }
   async function reveal(copy = false) {
     if (locked.current) return
-    locked.current = true; setBusy(true); setError(null); setCopied(false)
+    locked.current = true; setBusy(true); setActionError(null); setCopied(false)
     const epoch = ++readEpoch.current
     try {
       const value = await api.readContactQq(id)
       if (!alive.current || epoch !== readEpoch.current || document.visibilityState === 'hidden') return
       setRevealed(value.qq)
       if (copy) { await navigator.clipboard.writeText(value.qq); if (alive.current) setCopied(true) }
-    } catch (failure) { if (alive.current) { setRevealed(''); setError(failure); poller.current?.refresh({ changed: true }) } }
+    } catch (failure) { if (alive.current) { setRevealed(''); setActionError(failure); poller.current?.refresh({ changed: true }) } }
     finally { locked.current = false; if (alive.current) setBusy(false) }
   }
   return <section><button onClick={onBack}>{t("← 返回联系列表")}</button>{guard}
-    {error && <p role="alert" className={styles.error}>{accountFailure(error)} <button onClick={() => poller.current?.refresh()}>{t("重新读取")}</button></p>}
-    {!row && !error && <p role="status">{t("正在读取本次联系…")}</p>}
+    {readError && <p role="alert" className={styles.error}>{lobbyReadFailure(readError)}{retryableRead(readError) && <> <button onClick={() => poller.current?.refresh()}>{t("重新读取")}</button></>}</p>}
+    {actionError && <p ref={alertRef} tabIndex={-1} role="alert" className={styles.error}>{accountFailure(actionError)}</p>}
+    {!row && !readError && <p role="status">{t("正在读取本次联系…")}</p>}
     {row && <article className={styles.detail}><div className={styles.sectionHeading}><h2>{row.personName} ↔ {row.teamName}</h2><strong>{contactStatus(row.status)}</strong></div>
       <p>{t("本次队伍处理人：")}{row.handlerName}</p><p className={styles.bodyCopy}>{row.message}</p>
       <p>{t("发起于")} {lobbyDate(row.createdAt)}{row.status === 'PENDING' && t(' · 回应期限 {0}', [lobbyDate(row.expiresAt)])}</p>

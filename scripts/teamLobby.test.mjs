@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { readdirSync, readFileSync } from 'node:fs'
-import { safeLobbyReturn, accountFailure, roleLabel, statusLabel, leavesLobbyPage, lobbyReadFailure, canPublishLobby, lobbyRegistrationMessage, lobbyCardCopy, needsLabel } from '../src/features/team-lobby/lobbyModel.js'
+import { safeLobbyReturn, accountFailure, roleLabel, statusLabel, leavesLobbyPage, lobbyReadFailure, canPublishLobby, lobbyRegistrationMessage, lobbyCardCopy, needsLabel, ERROR_COPY, FIELD_COPY, retryableRead, uncertainWrite } from '../src/features/team-lobby/lobbyModel.js'
 import { lobbyText, lobbyNoticeCopy, lobbyCopyRows } from '../src/features/team-lobby/lobbyCopy.js'
 
 test('account continuation only retains a local lobby destination and public reading state', () => {
@@ -98,4 +98,35 @@ test('every literal lobby interface string has a four-locale copy row', () => {
     }
   }
   assert.deepEqual(missing, [])
+})
+
+test('lobby errors speak our own words and never render a raw response body', () => {
+  const gateway = '<html><head><title>502 Bad Gateway</title></head><body>nginx</body></html>'
+  assert.equal(accountFailure({ status: 502, data: gateway, message: gateway }), '请求未完成，请稍后重试。')
+  assert.equal(accountFailure({ status: 404, data: { error: 'CARD_UNAVAILABLE', message: '这张卡片已下线或暂不可联系。' } }), '这张卡片已下线或暂不可用。')
+  assert.equal(accountFailure({ status: 400, data: { error: 'INVALID_INPUT', message: 'Too small: expected string to have >=1 characters',
+    issues: [{ code: 'too_small', origin: 'string', path: ['availability'] }] } }), '请填写「可赛／训练时间（北京时间）」，不能只输入空格。')
+  assert.equal(accountFailure({ status: 400, data: { error: 'INVALID_INPUT', message: '公开资料请勿填写私人联系方式或外部链接。' } }), '公开资料请勿填写私人联系方式或外部链接。')
+  assert.equal(accountFailure({ status: 400, data: { error: 'INVALID_INPUT', issues: [{ code: 'custom', path: ['unknown'] }] } }), '提交的内容未通过检查，请修改后重试。')
+  assert.equal(accountFailure({ status: 429, retryAfterMs: 90000, data: { error: 'RATE_LIMITED', message: 'Too many requests. Please retry shortly.' } }), '操作较频繁，请约 2 分钟后重试。')
+  assert.equal(accountFailure({ status: 403, data: { error: 'LOBBY_RESTRICTED', message: '多次发布引流信息' } }), '大厅操作暂受限制：多次发布引流信息')
+  assert.equal(accountFailure({ status: 401, data: { error: 'SOMETHING_NEW', message: 'Authentication required' } }), '登录状态已失效，请重新登录。')
+  // Unknown codes keep the server's Chinese wording only in Simplified Chinese; English text never leaks.
+  assert.equal(accountFailure({ status: 409, data: { error: 'SOMETHING_NEW', message: '服务端说明' } }), '服务端说明')
+  assert.equal(accountFailure({ status: 409, data: { error: 'SOMETHING_NEW', message: 'Server diagnostic' } }), '请求未完成，请稍后重试。')
+  assert.equal(accountFailure(new Error('请至少选择一个岗位。')), '请至少选择一个岗位。')
+  const sources = new Set(lobbyCopyRows.map(row => row[0]))
+  for (const value of [...Object.values(ERROR_COPY), ...Object.values(FIELD_COPY)]) assert.ok(sources.has(value), `missing copy row: ${value}`)
+})
+
+test('reads explain what happened without implying a write, and say when retrying helps', () => {
+  assert.equal(lobbyReadFailure({ status: 404, data: { error: 'CARD_UNAVAILABLE' } }), '这张卡片已下线或暂不可用。')
+  assert.equal(lobbyReadFailure({ status: 404, data: { error: 'NOT_FOUND' } }), '没有找到这条记录，请刷新后核对。')
+  assert.equal(lobbyReadFailure({ status: 401, data: { error: 'UNAUTHORIZED' } }), '登录状态已失效，请重新登录。')
+  assert.equal(lobbyReadFailure({ status: 502, data: '<html>' }), '组队大厅暂时无法读取，请稍后重试。已有记录会保留。')
+  assert.equal(retryableRead({ data: { error: 'CARD_UNAVAILABLE' } }), false)
+  assert.equal(retryableRead({ status: 500, data: { error: 'LOBBY_UNAVAILABLE' } }), true)
+  assert.equal(uncertainWrite({ data: { error: 'INVALID_INPUT' } }), false)
+  assert.equal(uncertainWrite({ data: { error: 'LOBBY_CONFLICT' } }), true)
+  assert.equal(uncertainWrite(new TypeError('Failed to fetch')), true)
 })
