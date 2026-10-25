@@ -51,9 +51,9 @@
 .teamIdentity em[data-winner="false"] { visibility: hidden; }
 a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset: 4px; }
 .scoreAxis { display: grid; justify-items: center; gap: 10px; padding: 8px 18px; color: var(--fc-data-paper); }
-.scoreAxis h1 { display: flex; align-items: center; gap: 12px; font: 900 80px/.85 var(--fc-data-font-display); }
-.scoreAxis h1 i { font-style: normal; font-size: .5em; color: var(--fc-data-text-dark-muted); }
-.scoreAxis h1 [data-winner="true"] { color: var(--fc-data-signal); }
+.scoreAxis .score { display: flex; align-items: center; gap: 12px; margin: 0; font: 900 80px/.85 var(--fc-data-font-display); }
+.scoreAxis .score i { font-style: normal; font-size: .5em; color: var(--fc-data-text-dark-muted); }
+.scoreAxis .score [data-winner="true"] { color: var(--fc-data-signal); }
 .scoreAxis > span { font-size: 12px; line-height: 1.5; text-align: center; color: var(--fc-data-text-on-dark); }
 .cover .matchSummary { max-width: 840px; margin: 0 auto; padding: 0 0 14px; color: var(--fc-data-paper); font-size: 14px; line-height: 1.6; text-align: center; text-wrap: pretty; }
 .heroFooter { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 28px; padding: 10px 0; border-top: 1px solid var(--fc-data-line-on-dark); }
@@ -83,8 +83,6 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
 .review { display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: start; gap: 24px; margin-top: 30px; scroll-margin-top: var(--coach-section-offset); }
 .index { position: sticky; top: var(--coach-section-offset); min-width: 0; }
 .indexHeading { display: grid; gap: 8px; margin: 6px 0 20px; }
-.indexHeading > span { font: 500 12px/1.5 var(--fc-data-font-system); color: var(--fc-data-text-muted); letter-spacing: .06em; }
-.indexHeading > strong { font-size: 21px; }
 .indexHeading > small { font-size: 12px; color: var(--fc-data-text-muted); }
 .mapRail { display: grid; border-top: 1px solid var(--fc-data-line-strong); }
 .mapRail button { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 7px 12px; align-items: center; min-width: 0; padding: 17px 6px; border: 0; border-bottom: 1px solid var(--fc-data-line); background: transparent; text-align: left; color: var(--fc-data-ink); }
@@ -195,7 +193,7 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
   .versus { grid-template-columns: minmax(0, 1fr) 180px minmax(0, 1fr); gap: 24px; }
   .teamIdentity { --team-logo-size: 48px; gap: 8px 12px; }
   .teamIdentity strong { font-size: 42px; }
-  .scoreAxis h1 { font-size: 70px; }
+  .scoreAxis .score { font-size: 70px; }
   .cover { padding-inline: 24px; }
 }
 @media (max-width: 760px) {
@@ -224,7 +222,7 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
   .teamIdentity small { display: none; }
   .teamIdentity[data-side] em { grid-column: 1; grid-row: 3; justify-self: center; font-size: 12px; padding: 3px 5px; }
   .scoreAxis { padding: 8px 4px; gap: 8px; }
-  .scoreAxis h1 { font-size: 58px; gap: 8px; }
+  .scoreAxis .score { font-size: 58px; gap: 8px; }
   .scoreAxis > span { font-size: 12px; }
   .cover .matchSummary { padding-bottom: 12px; font-size: 13px; }
   .heroFooter { justify-content: flex-start; gap: 7px 16px; padding: 10px 0; }
@@ -265,7 +263,7 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
 @media (max-width: 360px) {
   .versus { grid-template-columns: minmax(0, 1fr) 90px minmax(0, 1fr); gap: 6px; }
   .teamIdentity strong { font-size: 24px; }
-  .scoreAxis h1 { font-size: 54px; }
+  .scoreAxis .score { font-size: 54px; }
 }
 @media (prefers-reduced-motion: reduce) { .shell * { scroll-behavior: auto; } }
 
@@ -298,3 +296,5 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
   .moreActions[data-open] { display: grid; gap: 6px; }
   .moreActions :is(button, a) { justify-content: flex-start; width: 100%; }
 }
+/* 票 2.44: the matchup heading for assistive technology; the poster above is unchanged. */
+.visuallyHidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

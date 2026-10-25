@@ -289,12 +289,14 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
       <div className={styles.navTools}><span className={styles.navMatch} data-visible={visibleSection !== 'overview'} aria-hidden={visibleSection === 'overview'}>{dossier.teamA.short}<b>{scoreLabel}</b>{dossier.teamB.short}</span>{canAnalyze ? <button type="button" className={styles.findPlayer} onClick={event => openAnalysis(event, true)} aria-label={en ? 'Find a player in this match' : uiText("查找本场选手", locale)} title={en ? 'Find a player in this match' : uiText("查找本场选手", locale)}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4.5 4.5" /></svg><span>{en ? 'Find player' : uiText("查找选手", locale)}</span></button> : null}</div>
     </nav>
     <section className={styles.hero} id="match-overview" data-match-section="overview" aria-labelledby="match-dossier-title">
+      {/* 票 2.44: the page heading names the pairing; the score below stays the visual centre. */}
+      <h1 id="match-dossier-title" className={styles.visuallyHidden}>{dossier.title}</h1>
       <div className={styles.cover}>
         <header className={styles.heroMeta}><span>{weeklyMatchContextLabel(dossier.match, locale) || <>{getScheduleStageLabel(dossier.match.stage, locale)} <b>/</b> {getRoundLabel(dossier, locale)}</>}</span><strong data-live={phase.key === 'live'}>{status}</strong></header>
         <WeeklyMatchIdentity match={dossier.match} locale={locale} copyable showContext={false} />
         <div className={styles.versus}>
           <TeamIdentity team={dossier.teamA} logoTeam={dossier.match.team_a} side="A" seasonId={seasonId} winner={dossier.hasSeriesScore && winnerSide === 'A'} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} />
-          <div className={styles.scoreAxis}><span>{phase.scoreTitle}</span><h1 id="match-dossier-title" aria-label={dossier.title + ' · ' + scoreLabel}>{scoreParts.length === 2 ? <><span data-winner={winnerSide === 'A'}>{scoreParts[0]}</span><i>:</i><span data-winner={winnerSide === 'B'}>{scoreParts[1]}</span></> : 'VS'}</h1><span>{uiText(getReviewFormat(dossier.formatLabel, en), locale)}</span></div>
+          <div className={styles.scoreAxis}><span>{phase.scoreTitle}</span><p className={styles.score}>{scoreParts.length === 2 ? <><span data-winner={winnerSide === 'A'}>{scoreParts[0]}</span><i>:</i><span data-winner={winnerSide === 'B'}>{scoreParts[1]}</span></> : 'VS'}</p><span>{uiText(getReviewFormat(dossier.formatLabel, en), locale)}</span></div>
           <TeamIdentity team={dossier.teamB} logoTeam={dossier.match.team_b} side="B" seasonId={seasonId} winner={dossier.hasSeriesScore && winnerSide === 'B'} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} />
         </div>
         {summary ? <p className={styles.matchSummary} data-match-summary={matchFact.kind}>{summary}</p> : null}
@@ -309,7 +311,7 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
     {!phase.active && !canAnalyze && progress.length > 0 ? <div className={styles.emptyReview}><PendingRoster dossier={dossier} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} /></div> : null}
     {progress.length ? <section className={styles.review} id="map-records" data-match-section="maps" ref={analysisRef} aria-labelledby="map-records-title">
       <aside ref={mapIndexRef} className={styles.index}>
-        <div className={styles.indexHeading}><span>MAP INDEX</span><strong>{en ? 'Map records' : uiText("逐图战报", locale)}</strong><small>{en ? 'Map scores · Select to jump' : uiText("本图比分 · 点选跳转", locale)}</small></div>
+        <div className={styles.indexHeading}><small>{en ? 'Map scores · Select to jump' : uiText("本图比分 · 点选跳转", locale)}</small></div>
         <nav ref={railRef} className={styles.mapRail} data-scroll-fades aria-label={en ? 'Map navigation' : uiText("地图导航", locale)}>
           {progress.map(map => <button key={map.key} type="button" aria-current={currentOrder === map.order ? 'location' : undefined} onClick={() => onSelectMap(map.order)} aria-label={(en ? 'View map ' : uiText("查看第 ", locale)) + map.order + (en ? ' · ' : uiText(" 图 · ", locale)) + map.name + ' · ' + (en ? 'Map score ' : uiText("本图 ", locale)) + map.scoreA + ':' + map.scoreB + ' · ' + (en ? 'Series score ' : uiText("大比分 ", locale)) + map.cumulative}>
             <span className={styles.mapNumber}>{map.orderLabel}</span><strong>{map.name}</strong><span className={styles.indexScore}><b><span className={styles.indexMapScore}><small>{en ? 'Map ' : uiText("本图 ", locale)}</small>{map.scoreA} : {map.scoreB}</span><span className={styles.indexSeriesScore}>{map.cumulative.replace(':', ' : ')}</span></b><small>{getMapOutcome(map, locale)}</small></span>

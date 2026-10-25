@@ -23,7 +23,8 @@ import { getPublicDataStatus } from '../lib/publicDataStatus.js'
 import { formatUpdatedAt } from '../lib/format.js'
 import { getGlobalSummary, getSeasonStatus } from '../lib/seasonSummary.js'
 import { isWeeklyOverview } from '../features/weekly-overview/weeklyOverviewModel.js'
-import { isChineseLocale } from '../features/weekly-overview/weeklyPresentation.js'
+import { isChineseLocale, weeklyMatchContextLabel } from '../features/weekly-overview/weeklyPresentation.js'
+import { getMatchPairingLabel } from '../lib/matchDetailSelectors.js'
 import { buildFriesCupTitle, getDataCenterPageLabel } from '../lib/pageTitle.js'
 import { getRestoreScrollY, restoreWindowScroll } from '../lib/navigationState.js'
 import { FavoritesProvider, normalizeSeasonId, useFavorites } from '../features/favorites/index.js'
@@ -77,8 +78,12 @@ function createLayoutTranslator(locale) {
   return (key, fallback = key) => REVIEW_LAYOUT_COPY_KO[key] || baseTranslator(key, fallback)
 }
 
-function getLayoutDocumentTitle(pathname, search, locale) {
+function getLayoutDocumentTitle(pathname, search, locale, db) {
   if (/^\/reports(?:\/|$)/.test(pathname)) return buildFriesCupTitle(locale === 'en-US' ? 'Fries Cup Weekly' : '薯条周报', locale)
+  // 票 2.44: a match tab reads 「BBB vs SPS · 第一赛段 · 季后赛 · 决赛」 once the season data is in.
+  const matchPath = /^\/matches\/([^/]+)$/.exec(pathname)
+  const pairing = matchPath && db ? getMatchPairingLabel(db, decodeURIComponent(matchPath[1])) : null
+  if (pairing) return buildFriesCupTitle([pairing.pairing, weeklyMatchContextLabel(pairing.match, locale)].filter(Boolean).join(' · '), locale)
   if (/^\/review\/?$/.test(pathname)) {
     if (locale === 'ko-KR') return '시즌 리뷰 | Fries Cup'
     if (locale === 'en-US') return 'Season Review | Fries Cup'
@@ -300,8 +305,8 @@ export default function DataLayout() {
   useEffect(() => {
     document.title = isAccountSpaceRoute && !isAuthenticated && !isMatchEntry
       ? buildFriesCupTitle(getNavLabel(getPersonalNavItem(false), layoutLocale), layoutLocale)
-      : getLayoutDocumentTitle(location.pathname, location.search, layoutLocale)
-  }, [layoutLocale, location.pathname, location.search, isAccountSpaceRoute, isAuthenticated, isMatchEntry])
+      : getLayoutDocumentTitle(location.pathname, location.search, layoutLocale, db)
+  }, [layoutLocale, location.pathname, location.search, isAccountSpaceRoute, isAuthenticated, isMatchEntry, db])
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)

@@ -549,6 +549,13 @@ function getAdjacentMatches(matches, match) {
   }
 }
 
+// 票 2.44: the browser tab names the pairing, like the page heading; callers add where it sits.
+export function getMatchPairingLabel(db, matchId) {
+  const match = resolvePublicMatchIdentity(getMatchById(db, matchId), db?.teams, db?.weekly_competition)
+  if (!match) return null
+  return { match, pairing: `${getTeamModel(match.team_a, 'A').short} vs ${getTeamModel(match.team_b, 'B').short}` }
+}
+
 export function getMatchDossier(db, matchId, { locale = 'zh-CN' } = {}) {
   const match = resolvePublicMatchIdentity(getMatchById(db, matchId), db?.teams, db?.weekly_competition)
   if (!match) return null

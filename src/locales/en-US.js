@@ -10467,5 +10467,6 @@ export default {
   "末两图逆转": "Final-two-map comeback",
   "五图全胜": "Five-map sweep",
   "四图连胜": "Four-map streak",
-  "周赛支持与资金进度": "Weekly support & funding"
+  "周赛支持与资金进度": "Weekly support & funding",
+  "第 {0} 场": "Match {0}"
 }
