@@ -181,7 +181,7 @@ export default function SignalWeeklyOverview() {
   const standingsPreview = selectWeeklyStandingsPreview(standings, focusedIds, { limit: standingsLimit })
   const visibleStandings = isDesktop ? standingsPreview.leading : standings
   const hasStandingsExcerpt = isDesktop && standings.length > standingsLimit
-  const renderStandingRow = row => <tr key={row.team_id} data-focused={focusedIds.includes(row.team_id) || undefined}><td>{row.display_rank ?? '—'}{row.tied && <small>{t(uiText("并列", locale), 'Tied')}</small>}</td><th scope="row"><Link to={withSeason(`/teams/${encodeURIComponent(row.team_id)}`)}><TeamLogo team={row.team} seasonId={seasonId} className={styles.rowLogo} />{shortName(row)}</Link></th><td>{row.played ?? '—'}</td><td><strong>{row.points ?? '—'}</strong></td></tr>
+  const renderStandingRow = row => <tr key={row.team_id} data-focused={focusedIds.includes(row.team_id) || undefined}><td>{row.display_rank ?? '—'}{row.tied && <small>{t(uiText("并列", locale), 'Tied')}</small>}</td><th scope="row"><Link to={withSeason(`/teams/${encodeURIComponent(row.team_id)}/analysis`)}><TeamLogo team={row.team} seasonId={seasonId} className={styles.rowLogo} />{shortName(row)}</Link></th><td>{row.played ?? '—'}</td><td><strong>{row.points ?? '—'}</strong></td></tr>
   const hasFocusedStandings = !isPilot && standings.some(row => focusedIds.includes(row.team_id))
   const rulebookUrl = cycle?.rulebook?.slug && cycle?.rulebook?.version
     ? `https://fries-cup.com/rules/?book=${encodeURIComponent(cycle.rulebook.slug)}&version=${encodeURIComponent(cycle.rulebook.version)}`

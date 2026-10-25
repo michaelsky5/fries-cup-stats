@@ -52,7 +52,7 @@ function BracketTeamSlot({
   )
 
   if (!routeId || team?.isTbd) return <div className={className}>{content}</div>
-  return <Link className={className} to={withSeason(`/teams/${routeId}`)}>{content}</Link>
+  return <Link className={className} to={withSeason(`/teams/${routeId}/analysis`)}>{content}</Link>
 }
 
 export default function BracketMatchCard({

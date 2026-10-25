@@ -42,7 +42,7 @@ function getRoundLabel(dossier, locale) {
 
 function TeamIdentity({ team, logoTeam, side, seasonId, winner, withSeason, returnState, onNavigate, en }) {
   const uiLocale = useUiLocale()
-  const path = team.id && !['TBD', 'UNKNOWN', '-'].includes(String(team.id).toUpperCase()) ? withSeason(`/teams/${encodeURIComponent(team.id)}`) : ''
+  const path = team.id && !['TBD', 'UNKNOWN', '-'].includes(String(team.id).toUpperCase()) ? withSeason(`/teams/${encodeURIComponent(team.id)}/analysis`) : ''
   const content = <>
     <TeamLogo team={logoTeam || { id: team.id, short: team.short, name: team.full }} seasonId={seasonId} teamShortName={team.short} teamName={team.full} large className={styles.teamLogo} />
     <span><strong>{team.short}</strong><small>{team.full}</small></span>

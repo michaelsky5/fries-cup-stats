@@ -35,7 +35,7 @@
     "check:fcr26-swiss-rating": "node scripts/freezeFcr26SwissBaselines.mjs --check",
     "test:frozen-rating-baseline": "node scripts/assertFrozenRatingBaseline.mjs",
     "test:roster-identity": "node scripts/assertRosterIdentityResolution.mjs",
-    "test:roster-display": "node --test scripts/defaultTeamLogo.test.mjs scripts/playerPreview.test.mjs scripts/staffAvatarCandidates.test.mjs scripts/staffMatchDisplay.test.mjs scripts/teamDisplayIdentity.test.mjs",
+    "test:roster-display": "node --test scripts/defaultTeamLogo.test.mjs scripts/playerPreview.test.mjs scripts/staffAvatarCandidates.test.mjs scripts/staffMatchDisplay.test.mjs scripts/teamDisplayIdentity.test.mjs scripts/teamArchivePages.test.mjs",
     "test:review-season": "node scripts/assertReviewSeason.mjs",
     "test:season-switch": "node scripts/assertSeasonSwitchStability.mjs",
     "test:mobile-navigation": "node --test scripts/mobileNavigation.test.mjs",

@@ -66,7 +66,7 @@ function GroupCard({ group, seasonId, withSeason, locale }) {
               >
                 <td><b>{String(row.rank).padStart(2, '0')}</b></td>
                 <td>
-                  <Link to={withSeason(`/teams/${row.teamId}`)} title={row.teamName}>
+                  <Link to={withSeason(`/teams/${row.teamId}/analysis`)} title={row.teamName}>
                     <TeamLogo team={row.team} seasonId={seasonId} className={styles.groupTeamLogo} />
                     <span>{teamShort(row.team)}</span>
                     {row.isPrimaryFavorite

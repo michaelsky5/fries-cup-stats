@@ -38,28 +38,6 @@ export function getArchiveMembers(roster, rows, locale = 'zh-CN') {
   }))
 }
 
-export function getArchiveJourneyHref(journeyHref, matchId, memberId) {
-  const [path, search = ''] = journeyHref.split('?')
-  const params = new URLSearchParams(search)
-  params.set('chapter', 'season-route')
-  params.set('teamMatch', matchId)
-  params.delete('journeyView')
-  if (memberId) params.set('member', memberId)
-  return `${path}?${params}`
-}
-
-export function getArchiveStageHref(journeyHref, stage) {
-  const [path, search = ''] = journeyHref.split('?')
-  const params = new URLSearchParams(search)
-  params.set('chapter', 'journey')
-  params.set('journeyView', 'records')
-  params.set('teamStage', stage)
-  params.set('journey', 'all')
-  params.delete('result')
-  params.delete('teamMatch')
-  return `${path}?${params}`
-}
-
 export function getArchiveMatchReading(row, rows, locale = 'zh-CN') {
   const en = locale === 'en-US'
   if (row.bye || row.administrative || !row.decided) return row.note || (en ? 'The story continues when a result is published.' : '赛果发布后，这段征程会继续展开。')

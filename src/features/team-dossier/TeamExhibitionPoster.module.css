@@ -16,16 +16,17 @@
 .sceneMast > span { display: flex; gap: 12px; align-items: center; letter-spacing: .04em; }
 .sceneMast > span i { width: 5px; height: 5px; background: var(--fc-data-signal); }
 .sceneMast b { opacity: .4; font-weight: 400; }
-.exhibition .motionControl { display: flex; align-items: center; gap: 16px; min-height: 36px; padding: 5px 12px; border: 1px solid currentColor; background: transparent; color: inherit; font: 10px var(--fc-data-font-system); }
+.exhibition .motionControl { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid currentColor; border-radius: 50%; background: transparent; color: inherit; font: 12px/1 var(--fc-data-font-system); opacity: .7; }
+.exhibition .motionControl:hover { opacity: 1; }
 .motionControl:hover { background: var(--fc-data-signal); color: var(--fc-data-ink); }
 .exhibition[data-scene='1'] .sceneMast { color: var(--fc-data-paper); }
 .arrival { position: relative; z-index: 0; isolation: isolate; min-height: var(--scene-height); display: grid; grid-template-columns: 49% 51%; padding: 85px var(--scene-gutter) 122px; align-items: center; }
 .identity { min-width: 0; position: relative; z-index: 2; transform: translateY(calc(var(--scene-turn) * -80px)); opacity: 1; }
 .identity:focus, .peopleIntro h2:focus { outline: none; }
 .eyebrow { font: 10px/1.6 var(--fc-data-font-system); letter-spacing: .1em; }
-.identity h1 { font: 900 clamp(135px, 24.3vw, 400px)/.83 var(--fc-data-font-display); letter-spacing: -.035em; margin: 26px 0 24px !important; overflow-wrap: anywhere; }
-.identity h1 span { color: var(--fc-data-signal); }
-.identity h1[data-long] { font-size: clamp(65px, 8.4vw, 148px); line-height: 1.02; }
+.identity .wordmark { font: 900 clamp(135px, 24.3vw, 400px)/.83 var(--fc-data-font-display); letter-spacing: -.035em; margin: 26px 0 24px !important; overflow-wrap: anywhere; }
+.identity .wordmark span { color: var(--fc-data-signal); }
+.identity .wordmark[data-long] { font-size: clamp(65px, 8.4vw, 148px); line-height: 1.02; }
 .fullName { font-size: clamp(17px, 1.65vw, 25px); font-weight: 600; overflow-wrap: anywhere; }
 .invitation { margin-top: clamp(32px, 5vh, 68px); display: flex; gap: 35px; align-items: end; }
 .invitation h2 { font-size: clamp(24px, 2.3vw, 36px); line-height: 1.38; letter-spacing: -.04em; font-weight: 900; }
@@ -142,8 +143,8 @@
 .exhibition[data-motion='false'] * { transition: none !important; animation: none !important; }
 @media (min-width: 1100px) and (max-height: 900px) {
   .exhibition[data-pinned='true'] .arrival { padding-top: 66px; padding-bottom: 96px; }
-  .exhibition[data-pinned='true'] .identity h1 { font-size: 19vw; margin-block: 18px !important; }
-  .exhibition[data-pinned='true'] .identity h1[data-long] { font-size: 7vw; }
+  .exhibition[data-pinned='true'] .identity .wordmark { font-size: 19vw; margin-block: 18px !important; }
+  .exhibition[data-pinned='true'] .identity .wordmark[data-long] { font-size: 7vw; }
   .exhibition[data-pinned='true'] .invitation { margin-top: 27px; }
   .exhibition[data-pinned='true'] .artifactStage { height: 440px; }
   .exhibition[data-pinned='true'] .credential { min-height: 365px; }
@@ -154,7 +155,7 @@
 }
 @media (max-width: 1099px) {
   .arrival { padding-top: 95px; padding-bottom: 125px; }
-  .identity h1 { font-size: 24vw; }
+  .identity .wordmark { font-size: 24vw; }
   .invitation { display: block; }
   .invitation h2 { font-size: 28px; }
   .exhibition .enter { margin-top: 20px; width: fit-content; }
@@ -174,11 +175,11 @@
   .sceneMast { top: 14px; gap: 12px; }
   .sceneMast > span { font-size: 9px; gap: 7px; flex-wrap: wrap; }
   .sceneMast > span b { display: none; }
-  .exhibition .motionControl { flex-shrink: 0; font-size: 9px; gap: 9px; }
+  .exhibition .motionControl { flex-shrink: 0; width: 32px; height: 32px; font-size: 11px; }
   .arrival { grid-template-columns: minmax(0,1fr); padding-top: 78px; padding-bottom: 150px; }
   .exhibition[data-pinned='false'] .arrival { min-height: 0; }
-  .identity h1 { font-size: clamp(125px, 40vw, 230px); margin-block: 23px 14px !important; }
-  .identity h1[data-long] { font-size: clamp(46px, 12vw, 78px); }
+  .identity .wordmark { font-size: clamp(125px, 40vw, 230px); margin-block: 23px 14px !important; }
+  .identity .wordmark[data-long] { font-size: clamp(46px, 12vw, 78px); }
   .eyebrow { font-size: 9px; }
   .fullName { font-size: 17px; }
   .invitation { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-top: 27px; }
@@ -257,7 +258,7 @@
 }
 @media (prefers-reduced-motion: reduce) { .exhibition *, .exhibition *::before, .exhibition *::after { animation: none !important; transition: none !important; } }
 
-.exhibition .identity h1:not([data-long]) { width: max-content; white-space: nowrap; font-size: var(--wordmark-size, 18vw); }
+.exhibition .identity .wordmark:not([data-long]) { width: max-content; white-space: nowrap; font-size: var(--wordmark-size, 18vw); }
 
 @media (min-width: 701px) and (max-width: 1099px) {
   .posterArrangement { height: 575px; }
@@ -277,8 +278,8 @@
   .exhibition[data-pinned='false'] .arrival { min-height: 0; grid-template-columns: minmax(0,1fr) 80px; align-items: center; gap: 16px; padding: 20px var(--scene-gutter) 22px; }
   .identity { grid-column: 1; transform: none; }
   .identity > .eyebrow, .invitation { display: none; }
-  .identity h1 { margin: 0 0 12px !important; }
-  .identity h1[data-long] { font-size: clamp(32px,9vw,54px); line-height: 1.05; }
+  .identity .wordmark { margin: 0 0 12px !important; }
+  .identity .wordmark[data-long] { font-size: clamp(32px,9vw,54px); line-height: 1.05; }
   .fullName { font-size: 14px; line-height: 1.6; }
   .artifactStage { grid-column: 2; height: 80px; width: 80px; margin: 0; perspective: none; transform: none; }
   .credential { position: static; width: 100%; height: 100%; min-height: 0; transform: none; }

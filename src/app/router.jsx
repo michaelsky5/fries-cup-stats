@@ -3,6 +3,8 @@ import RouteErrorPage from '../pages/errors/RouteErrorPage.jsx'
 import { getStoredLocale } from '../lib/i18n.js'
 import { normalizeLocale } from '../lib/locales.js'
 import { ensureUiLocale, ensureTraditionalReview } from '../lib/localeCatalog.js'
+import { getTeamArchiveRedirect } from '../features/team-dossier/teamArchiveRoutes.js'
+import { getDesignPreview } from '../features/fd-design/designPreview.js'
 
 export function RouteFallback() {
   const location = useLocation()
@@ -23,6 +25,16 @@ export function RouteFallback() {
       <i className="sys-booting__track" aria-hidden="true"><em /></i>
     </div>
   )
+}
+
+// 票 2.42: old 赛季征程 links (/teams/:id/journey, ?chapter=, ?tab=) open the page that now holds
+// that content, keeping the season and language.
+function teamArchiveLoader({ request }) {
+  const url = new URL(request.url)
+  // The older preview designs keep their own ?tab= views.
+  if (getDesignPreview(url.search) !== 'kpr5') return null
+  const target = getTeamArchiveRedirect(url.pathname, url.search, url.hash)
+  return target ? redirect(target) : null
 }
 
 function lazyDefault(importer) {
@@ -169,9 +181,9 @@ const router = createBrowserRouter([
       { path: 'players/:playerId/journey', lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
       { path: 'players/:playerId/analysis', lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
       { path: 'teams', lazy: lazyDefault(() => import('../pages/teams/TeamsPage.jsx')) },
-      { path: 'teams/:teamId', lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
-      { path: 'teams/:teamId/journey', lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
-      { path: 'teams/:teamId/analysis', lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
+      { path: 'teams/:teamId', loader: teamArchiveLoader, lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
+      { path: 'teams/:teamId/journey', loader: teamArchiveLoader, lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
+      { path: 'teams/:teamId/analysis', loader: teamArchiveLoader, lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
       { path: 'staff', lazy: lazyDefault(() => import('../pages/staff/StaffPage.jsx')) },
       { path: 'staff/:staffId', lazy: lazyDefault(() => import('../pages/staff/StaffDetailPage.jsx')) },
       { path: 'roster', lazy: lazyDefault(() => import('../pages/roster/RosterHubPage.jsx')) },

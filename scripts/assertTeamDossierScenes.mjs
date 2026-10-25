@@ -54,7 +54,8 @@ test('page switching preserves season, member and match selection, but clears co
   assert.equal(url.searchParams.get('season'), 'QGCS4')
   assert.equal(url.searchParams.has('chapter'), false)
   assert.equal(url.searchParams.has('tab'), false)
-  assert.equal(getDossierViewHref('/teams/A', '', 'journey', 'maps'), '/teams/A/journey?chapter=maps')
+  assert.equal(getDossierViewHref('/teams/A', '', 'analysis', 'team-matches'), '/teams/A/analysis#team-matches')
+  assert.equal(getDossierViewHref('/teams/A/journey', '', 'journey'), '/teams/A', 'the former journey page is not a destination')
 })
 test('gallery cast uses recorded appearances without adding heroes to unrecorded members', () => {
   const roster = ['TANK', 'DPS', 'DPS', 'SUP', 'SUP', 'SUP'].map((role, index) => ({ player_id: `P${index}`, role, maps_played: index < 5 ? 3 : 0, most_played_hero: 'Kiriko' }))

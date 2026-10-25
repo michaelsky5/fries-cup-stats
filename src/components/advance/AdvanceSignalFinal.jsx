@@ -153,7 +153,7 @@ export default function AdvanceSignalFinal({
 
           <div className={styles.podiumStrip}>
             {podium.map(team => (
-              <Link key={teamRouteId(team)} to={withSeason(`/teams/${teamRouteId(team)}`)} data-rank={team.final_rank}>
+              <Link key={teamRouteId(team)} to={withSeason(`/teams/${teamRouteId(team)}/analysis`)} data-rank={team.final_rank}>
                 <span>{String(team.final_rank).padStart(2, '0')}</span>
                 <TeamLogo team={team} seasonId={seasonId} className={styles.podiumLogo} />
                 <strong>{teamShort(team)}</strong>
@@ -169,7 +169,7 @@ export default function AdvanceSignalFinal({
                 const primary = isPrimaryFavoriteTeam?.(team)
                 return (
                   <li key={teamRouteId(team)}>
-                    <Link to={withSeason(`/teams/${teamRouteId(team)}`)}>
+                    <Link to={withSeason(`/teams/${teamRouteId(team)}/analysis`)}>
                       <span>{String(team.final_rank).padStart(2, '0')}</span>
                       <TeamLogo team={team} seasonId={seasonId} className={styles.orderLogo} />
                       <strong>{teamShort(team)}</strong>

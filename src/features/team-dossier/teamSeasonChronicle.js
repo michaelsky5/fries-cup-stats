@@ -1,4 +1,5 @@
 import { translateUiText as formatUiText } from '../../lib/uiText.js'
+import { getArchiveMatchReading } from './teamArchiveContent.js'
 import { getTeamSeasonChapters } from './teamEditorialContent.js'
 import { getDossierSceneRows, getDossierSeasonStory } from './teamDossierScenes.js'
 import { buildDossierSummary } from './teamDossierPresentation.js'
@@ -32,6 +33,30 @@ export function buildSeasonChronicle(source, advanceState, locale = 'zh-CN') {
     played: rows.filter(row => row.decided && !row.bye && !row.administrative),
     story: getDossierSeasonStory(rows, advanceState, locale)
   }
+}
+
+// 票 2.42: the 展厅's "这一季" tells at most four chapters, always keeping the closing one. Below
+// three played matches there is no arc to tell, so it shows the first match alone rather than
+// padding chapters; the full ledger stays on the 数据 page.
+export const SEASON_STORY_MAX_CHAPTERS = 4
+export const SEASON_STORY_MIN_PLAYED = 3
+
+export function getSeasonStoryChapters(chronicle, locale = 'zh-CN') {
+  const played = chronicle?.played || []
+  if (!played.length) return { mode: 'empty', chapters: [] }
+  if (played.length < SEASON_STORY_MIN_PLAYED) {
+    const row = played[0]
+    const date = calendarDate(row, locale)
+    return { mode: 'first', chapters: [{
+      id: row.match.match_id, kind: 'opening', number: '01', row, records: [row], before: [], entries: [row],
+      title: locale === 'en-US' ? 'First match' : formatUiText('首场比赛', locale),
+      reading: getArchiveMatchReading(row, chronicle.rows, locale),
+      firstDate: date, date, elapsedDays: null, summary: buildDossierSummary([row])
+    }] }
+  }
+  const all = chronicle.chapters
+  const chapters = all.length > SEASON_STORY_MAX_CHAPTERS ? [...all.slice(0, SEASON_STORY_MAX_CHAPTERS - 1), all.at(-1)] : all
+  return { mode: 'chapters', chapters: chapters.map((chapter, index) => ({ ...chapter, number: String(index + 1).padStart(2, '0') })) }
 }
 
 export function getChronicleChapterLabel(kind, locale = 'zh-CN') {
