@@ -4,6 +4,7 @@ import { DEFAULT_SEASON_ID, getSeasonById, getSeasonName, withSeason as seasonLi
 import { pickUiLocale } from '../../lib/uiText.js'
 import { withLocale } from '../../lib/locales.js'
 import { getLobbyConfig } from '../team-lobby/lobbyApi.js'
+import WeeklyConfirmationStatus from './WeeklyConfirmationStatus.jsx'
 import styles from './ParticipationHubPage.module.css'
 
 const OPEN_LOBBY_MODES = new Set(['READ_ONLY', 'WRITE'])
@@ -12,7 +13,7 @@ const ABOUT_WEEKLY_URL = 'https://fries-cup.com/events/weekly/'
 // 票 2.18: one page that explains how to take part and links to every participation page.
 // It only links; registration, confirmation and match rooms keep their own pages and rules.
 export default function ParticipationHubPage() {
-  const { season, seasonId, withSeason, locale, isAuthenticated, accountNextAction } = useOutletContext()
+  const { db, season, seasonId, withSeason, locale, isAuthenticated, accountNextAction } = useOutletContext()
   const location = useLocation()
   const t = (...copy) => pickUiLocale(locale, ...copy)
   const [lobbyMode, setLobbyMode] = useState(null)
@@ -73,6 +74,8 @@ export default function ParticipationHubPage() {
         'Once registered, confirm each match week and submit the lineup under My Space · Team. The confirmation page shows the window and deadline.',
         '등록이 승인되면 매 경기 주마다 내 공간 · 팀에서 참가를 확인하고 출전 명단을 제출하세요. 확인 기간과 마감은 확인 페이지를 따릅니다.',
         '報名通過後，每個比賽週都要在「我的空間 · 隊伍」確認當週參賽並提交出賽名單。確認窗口與截止時間以確認頁為準。'),
+      // 票 2.46: the open window and its deadline, from the public snapshot.
+      status: <WeeklyConfirmationStatus db={db} locale={locale} className={styles.stepStatus} countdownClassName={styles.stepCountdown} />,
       link: { to: confirmationPath, label: t('本周参赛确认', 'This week’s confirmation', '이번 주 참가 확인', '本週參賽確認') }
     }
   ]
@@ -109,6 +112,7 @@ export default function ParticipationHubPage() {
           <div>
             <h3>{step.title}<small>{step.who}</small></h3>
             <p>{step.body}</p>
+            {step.status || null}
             {step.note ? <p className={styles.stepNote}>{step.note}</p> : null}
             {step.link ? <Link to={step.link.to}>{step.link.label} <span aria-hidden="true">→</span></Link> : null}
           </div>

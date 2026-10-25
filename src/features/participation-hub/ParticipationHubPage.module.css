@@ -38,6 +38,11 @@
 .steps h3 small { color: var(--muted); font-size: 12px; font-weight: 600; }
 .steps p { margin: 0; font-size: 13px; line-height: 1.75; }
 .steps .stepNote { margin-top: 8px; color: var(--muted); }
+/* 票 2.46: this week's open confirmation window, inside the weekly step. */
+.steps .stepStatus { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
+.steps .stepStatus strong { font-size: 13px; font-weight: 800; }
+.steps .stepStatus > span { color: var(--muted); font-size: 12px; }
+.steps .stepStatus > .stepCountdown { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
 /* 票 2.39: the lobby sits right after the steps while System has it open. */
 .lobbyCopy > p { max-width: 70ch; margin: 0; font-size: 14px; line-height: 1.8; }
 .lobbyActions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }

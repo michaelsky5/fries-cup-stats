@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { buildWeeklyFollowedTeams, buildWeeklyOverview, isWeeklyOverview, weeklyMapSlots, weeklyMatchState, weeklyScore } from '../src/features/weekly-overview/weeklyOverviewModel.js'
 import { buildWeeklyOverviewFixture } from './lib/weeklyOverviewFixture.mjs'
 import { COUNTDOWN_WINDOW_MS, formatMatchCountdown } from '../src/features/weekly-overview/matchCountdown.js'
-import { buildWeeklyPhases } from '../src/features/weekly-overview/weeklyPhase.js'
+import { buildWeeklyPhases, openWeeklyConfirmation } from '../src/features/weekly-overview/weeklyPhase.js'
 
 let checks = 0
 const test = (name, fn) => { fn(); checks += 1; console.log(`PASS ${name}`) }
@@ -126,6 +126,21 @@ test('focus countdown runs for the coming week and never claims a live match', (
   assert.deepEqual(formatMatchCountdown(start, start, 'zh-CN'), { done: true, text: '已到开赛时间' })
   assert.equal(formatMatchCountdown(start, start + 60000, 'zh-CN').done, true)
   for (const value of [null, '', 'TBD']) assert.equal(formatMatchCountdown(value, start, 'zh-CN'), null)
+})
+test('票 2.46: the confirmation deadline counts down, then says it has closed', () => {
+  const deadline = Date.parse('2026-10-30T04:00:00.000Z')
+  assert.equal(formatMatchCountdown(deadline, deadline - (2 * 3600 + 30 * 60) * 1000, 'zh-CN', 'deadline').text, '距截止 02:30:00')
+  assert.equal(formatMatchCountdown(deadline, deadline - (26 * 3600) * 1000, 'en-US', 'deadline').text, 'Closes in 1d 02:00:00')
+  assert.deepEqual(formatMatchCountdown(deadline, deadline, 'zh-CN', 'deadline'), { done: true, text: '已截止' })
+  assert.equal(formatMatchCountdown(deadline, deadline - 1000, 'zh-CN').text, '距开赛 00:00:01', 'match countdowns keep their wording')
+})
+test('票 2.46: the open confirmation is read from the public snapshot by time alone', () => {
+  const registration = { week_number: 1, status: 'CONFIRMATION_OPEN', cycle_name: '第二周期', opens_at: '2026-10-26T04:00:00.000Z', closes_at: '2026-10-30T04:00:00.000Z' }
+  const snapshot = { weekly_competition: { registration } }
+  assert.equal(openWeeklyConfirmation(snapshot, Date.parse('2026-10-26T03:59:00.000Z')), null, 'not open yet')
+  assert.equal(openWeeklyConfirmation(snapshot, Date.parse('2026-10-28T00:00:00.000Z')).closesAt, Date.parse(registration.closes_at))
+  assert.equal(openWeeklyConfirmation(snapshot, Date.parse(registration.closes_at)), null, 'closed at the deadline')
+  assert.equal(openWeeklyConfirmation({ weekly_competition: {} }, Date.parse('2026-10-28T00:00:00.000Z')), null)
 })
 test('phase card leads with the live match and honours deadlines instead of the published status', () => {
   const now = Date.parse('2026-10-29T04:00:00.000Z')

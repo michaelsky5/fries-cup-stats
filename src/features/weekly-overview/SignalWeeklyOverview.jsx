@@ -1,6 +1,6 @@
 import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { eventCenterText } from '../../lib/eventCenterCopy.js'
-import { useId, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { Link, useLocation, useNavigationType, useOutletContext, useSearchParams } from 'react-router-dom'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import WeeklyMatchIdentity from '../../components/matches/WeeklyMatchIdentity.jsx'
@@ -110,7 +110,9 @@ export default function SignalWeeklyOverview() {
   const lobbyOpen = useLobbyOpen()
   const en = String(locale).startsWith('en')
   const t = (zh, english) => en ? english : zh
-  const [openedAt] = useState(() => Date.now())
+  const [openedAt, setOpenedAt] = useState(() => Date.now())
+  // 票 2.46: when the weekly confirmation closes on an open page, re-read the phases so it stops showing as open.
+  const refreshPhases = useCallback(() => setOpenedAt(Date.now()), [])
   const weeklyPlan = getSeasonById(seasonId)?.weeklyPlan || null
   const phases = useMemo(() => buildWeeklyPhases(db, { now: openedAt, plan: weeklyPlan }), [db, openedAt, weeklyPlan])
   const status = key => weeklyStatusLabel(key, locale)
@@ -207,7 +209,7 @@ export default function SignalWeeklyOverview() {
       <div><h1>{eventCenterText('overviewTitle', locale)}</h1><p>{eventCenterText('overviewIntro', locale)}</p></div>
       {!isPhone && quickLinks}
     </header>
-    <WeeklyPhaseCard phases={phases} plan={weeklyPlan} locale={locale} withSeason={withSeason} now={openedAt} seasonId={seasonId} lobbyPath={lobbyOpen ? withLocale('/lobby', locale) : null} />
+    <WeeklyPhaseCard phases={phases} plan={weeklyPlan} locale={locale} withSeason={withSeason} now={openedAt} seasonId={seasonId} lobbyPath={lobbyOpen ? withLocale('/lobby', locale) : null} onPhaseExpired={refreshPhases} />
     {followingOnTop && following}
     {supporterThanks}
     <section className={styles.periodNavigation} data-weekly-period-nav="true" aria-label={pickUiLocale(locale, '比赛赛段与周次', 'Cycle and weeks', '주기 및 주차', '比賽賽段與週次')}>

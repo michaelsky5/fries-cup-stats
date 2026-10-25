@@ -17,6 +17,18 @@ function nextCycle(cycles, closed, plan) {
   return planned ? { sequence, plan: planned, startsAt: time(`${planned.startsOn}T00:00:00+08:00`), planned: true } : null
 }
 
+// This week's confirmation while it is open at `now`, from the public snapshot (票 2.46: the overview
+// and the participation guide both read it, signed in or not).
+// System keeps CONFIRMATION_OPEN until the next publish; the deadline itself decides here.
+export function openWeeklyConfirmation(db, now = Date.now()) {
+  const registration = db?.weekly_competition?.registration
+  if (!registration) return null
+  const opens = time(registration.opens_at)
+  const closes = time(registration.closes_at)
+  if ((opens !== null && opens > now) || (closes !== null && closes <= now)) return null
+  return { registration, closesAt: closes, matchWindowStartsAt: time(registration.match_window_starts_at) }
+}
+
 // What the weekly home announces, most urgent first (票 2.16):
 // live match > weekly confirmation > next match > a cycle about to start > a cycle that just ended > season registration.
 // Only published data and the event plan's dates are used. Plan dates are marked `planned`.
@@ -29,15 +41,8 @@ export function buildWeeklyPhases(db, { now = Date.now(), plan = null } = {}) {
   const live = matches.filter(match => match.state === 'live')
   if (live.length) phases.push({ kind: 'live', match: live[0], count: live.length, cycle })
 
-  const registration = db?.weekly_competition?.registration
-  if (registration) {
-    const opens = time(registration.opens_at)
-    const closes = time(registration.closes_at)
-    // System keeps CONFIRMATION_OPEN until the next publish; the deadline itself decides here.
-    if ((opens === null || opens <= now) && (closes === null || closes > now)) {
-      phases.push({ kind: 'confirmation', registration, closesAt: closes, matchWindowStartsAt: time(registration.match_window_starts_at) })
-    }
-  }
+  const confirmation = openWeeklyConfirmation(db, now)
+  if (confirmation) phases.push({ kind: 'confirmation', ...confirmation })
 
   const upcoming = matches.filter(match => match.state === 'upcoming')
     .map(match => ({ match, at: time(getMatchScheduleValue(match)) }))

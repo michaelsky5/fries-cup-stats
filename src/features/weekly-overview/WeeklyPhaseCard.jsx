@@ -85,6 +85,9 @@ function describe(phase, { locale, withSeason, plan, now, seasonId }) {
         pairing ? `${t('对阵', 'Pairings', '대진', '對陣')} ${weekly(pairing, locale)} ${t('公布', 'published', '공개', '公布')}${plannedMark(locale)}` : '',
         phase.matchWindowStartsAt ? t(`比赛 ${dayText(phase.matchWindowStartsAt, locale)} 起`, `Matches from ${dayText(phase.matchWindowStartsAt, locale)}`, `${dayText(phase.matchWindowStartsAt, locale)}부터 경기`, `比賽 ${dayText(phase.matchWindowStartsAt, locale)} 起`) : ''
       ].filter(Boolean),
+      // 票 2.46: the deadline counts down for everyone, signed in or not.
+      countdown: phase.closesAt,
+      countdownKind: 'deadline',
       actions: [
         { to: withSeason(weeklyParticipationPath(registration)), label: t('确认参赛（队长）', 'Confirm (captains)', '참가 확인 (주장)', '確認參賽（隊長）'), primary: true },
         { to: withSeason('/participate/FCW26'), label: t('首次报名', 'Register a team', '신규 등록', '首次報名') }
@@ -126,7 +129,7 @@ function describe(phase, { locale, withSeason, plan, now, seasonId }) {
 // other phases that also hold right now as one line each below it.
 // 票 2.41: the team lobby is a standing way in, so it joins as the last line instead of a band
 // above the page title.
-export default function WeeklyPhaseCard({ phases, plan, locale, withSeason, now, seasonId, lobbyPath = null }) {
+export default function WeeklyPhaseCard({ phases, plan, locale, withSeason, now, seasonId, lobbyPath = null, onPhaseExpired }) {
   const described = phases.map(phase => ({ phase, view: describe(phase, { locale, withSeason, plan, now, seasonId }) })).filter(item => item.view)
   if (!described.length) return null
   const [{ phase, view }, ...phaseRows] = described
@@ -143,7 +146,7 @@ export default function WeeklyPhaseCard({ phases, plan, locale, withSeason, now,
     <div className={styles.main}>
       <p className={styles.eyebrow}>{view.eyebrow}</p>
       <h2 className={styles.title}>{view.title}</h2>
-      {(view.facts.length > 0 || view.countdown) && <p className={styles.facts}><span>{view.facts.join(' · ')}</span>{view.countdown && <MatchCountdown startsAt={view.countdown} locale={locale} className={styles.countdown} />}</p>}
+      {(view.facts.length > 0 || view.countdown) && <p className={styles.facts}><span>{view.facts.join(' · ')}</span>{view.countdown && <MatchCountdown startsAt={view.countdown} locale={locale} className={styles.countdown} kind={view.countdownKind} onDone={view.countdownKind === 'deadline' ? onPhaseExpired : undefined} />}</p>}
       <div className={styles.actions}>{view.actions.map(actionNode)}</div>
     </div>
     {rest.length > 0 && <ul className={styles.rows}>{rest.map(({ phase: item, view: row }) => <li key={item.kind} data-weekly-phase-row={item.kind}>
