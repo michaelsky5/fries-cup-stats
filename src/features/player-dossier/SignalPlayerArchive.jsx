@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { pickUiLocale } from '../../lib/uiText.js'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import HeroArtwork from '../../components/media/HeroArtwork.jsx'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
@@ -12,7 +13,8 @@ import { ArchiveHeading, PlayerArchiveMoments, PlayerArchiveNext, PlayerCompanio
 import { PlayerSignatureMatch } from './PlayerPersonalStory.jsx'
 import styles from './PlayerArchive.module.css'
 
-export default function SignalPlayerArchive({ db, dossier, appearances, archive, season, seasonId, locale, linkProps, analysisLink, journeyLink, onFavorite, favorited, favoriteDisabled, onShare }) {
+// 票 2.52: the 选手展厅. Its match links open the 选手数据 page's 比赛记录 (the former 赛季征程).
+export default function SignalPlayerArchive({ db, dossier, appearances, archive, season, seasonId, locale, linkProps, analysisLink, onShare }) {
   const location = useLocation()
   const [params, setParams] = useSearchParams()
   const text = (zh, en) => archiveCopy(locale, zh, en)
@@ -35,17 +37,18 @@ export default function SignalPlayerArchive({ db, dossier, appearances, archive,
     setParams(next, { replace: true, state: location.state, preventScrollReset: true })
   }
   const teamLink = linkProps(`/teams/${encodeURIComponent(identity.teamRouteId)}`)
+  const matchesLink = (changes = {}) => analysisLink({ pview: 'matches', jmatch: '', popen: '', phero: '', pmap: '', presult: '', ...changes })
 
   return <section className={styles.archive} data-player-profile>
     <header className={styles.cover} data-record-state={hasAppearances ? 'played' : 'registered'}>
       <div className={styles.coverCopy}>
         <div className={styles.coverContext}><Link {...teamLink}><TeamLogo team={team} seasonId={seasonId} className={styles.logo} /><strong>{identity.teamShort}</strong><span aria-hidden="true">↗</span></Link><span>{season?.publicCode || seasonId}</span></div>
-        <div className={styles.name}><p className={styles.nameChapter}>01 / {text('选手档案', 'PLAYER PROFILE')}</p><p className={styles.mobileRole}>{(archive.roles.length ? archive.roles : dossier.roles).map(role => archiveRole(role, locale)).join(' / ')}</p><h1 data-name-size={nameSize}>{identity.displayName}</h1><SignalBattleTag value={identity.battleTag} en={locale === 'en-US'} /></div>
+        <div className={styles.name}><p className={styles.nameChapter}>{text('选手档案', 'PLAYER PROFILE')}</p><p className={styles.mobileRole}>{(archive.roles.length ? archive.roles : dossier.roles).map(role => archiveRole(role, locale)).join(' / ')}</p><p className={styles.displayName} data-name-size={nameSize} aria-hidden="true">{identity.displayName}</p><SignalBattleTag value={identity.battleTag} en={locale === 'en-US'} /></div>
         <p className={styles.identityLine}>{identity.teamFull}<span>{archive.roles.length ? archive.roles.map(role => archiveRole(role, locale)).join(' / ') : `${text('登记职责', 'Registered role')} · ${dossier.roles.map(role => archiveRole(role, locale)).join(' / ')}`}</span></p>
         {fmvp && <div className={styles.honor} aria-label={text('赛事荣誉', 'Tournament honor')}><strong>FMVP</strong><span>{text('总决赛最有价值选手', 'Finals Most Valuable Player')}</span></div>}
         {cycleHonors.length > 0 && <div className={styles.honor} data-cycle-honor aria-label={text('赛段荣誉', 'Cycle honours')}><strong>{weeklyHonorLabel(cycleHonors[0], locale)}</strong><span>{[cycleHonors[0].team?.team_short_name || cycleHonors[0].team?.short || identity.teamShort, ...cycleHonors.slice(1).map(honor => weeklyHonorLabel(honor, locale))].join(' · ')}</span></div>}
         {hasAppearances ? <dl className={styles.coverFacts}><div><dt>{text('场比赛', archive.matches.length === 1 ? 'match' : 'matches')}</dt><dd>{archive.matches.length}</dd></div><div><dt>{text('图出场', archive.mapCount === 1 ? 'map played' : 'maps played')}</dt><dd>{archive.mapCount}</dd></div><div><dt>{text('位出场英雄', heroes.length === 1 ? 'recorded hero' : 'recorded heroes')}</dt><dd>{heroes.length}</dd></div></dl> : <div className={styles.registration}><strong>{text('本届阵容成员', 'On this season’s roster')}</strong><p>{text('暂无已发布出场记录。', 'No published appearances are available.')}</p></div>}
-        <div className={styles.coverActions}><Link {...(hasAppearances ? journeyLink({ jmatch: '', pstage: '' }) : teamLink)} className={styles.primary}>{hasAppearances ? archive.matches.length === 1 ? text('查看出场记录', 'View this appearance') : text('展开赛季征程', 'Explore the season') : text('查看所属队伍', 'View the team')} <span aria-hidden="true">↗</span></Link><button type="button" onClick={onFavorite} disabled={favoriteDisabled} aria-pressed={favorited}>{favorited ? text('已关注', 'Following') : favoriteDisabled ? text('关注已满', 'Limit reached') : text('关注选手', 'Follow player')}</button><button type="button" onClick={shareProfile}>{text('分享档案', 'Share profile')} ↗</button></div>
+        <div className={styles.coverActions}><Link {...(hasAppearances ? matchesLink() : teamLink)} className={styles.primary}>{hasAppearances ? archive.matches.length === 1 ? text('查看出场记录', 'View this appearance') : pickUiLocale(locale, '查看全部比赛记录', 'View every match', '모든 경기 기록 보기', '查看全部比賽記錄') : text('查看所属队伍', 'View the team')} <span aria-hidden="true">↗</span></Link><button type="button" onClick={shareProfile}>{text('分享档案', 'Share profile')} ↗</button></div>
       </div>
       <figure className={styles.portrait}>
         <div className={styles.portraitMeta}><span>{text(featuredHero ? '来自本季出场记录' : '所属战队', featuredHero ? 'FROM THIS SEASON' : 'TEAM IDENTITY')}</span><span>{archive.first ? archiveDate(archive.first) : season?.publicCode || seasonId}{archive.latest && archive.latest !== archive.first ? ` — ${archiveDate(archive.latest)}` : ''}</span></div>
@@ -68,8 +71,8 @@ export default function SignalPlayerArchive({ db, dossier, appearances, archive,
         <div className={styles.heroFoot}><p>{text('同一张图可记录多个英雄；出场图数不等于使用时长或熟练度。', 'A map can record several heroes. Map counts do not measure playtime or proficiency.')}</p><Link {...analysisLink({ role: primary.role, pview: 'heroes' })}>{text('查看英雄使用分析', 'Explore hero usage')} ↗</Link></div>
       </section>
       <PlayerCompanions companions={companions} locale={locale} linkProps={linkProps} teamLink={teamLink} />
-      {hasSeasonMoments && <PlayerArchiveMoments archive={archive} locale={locale} seasonId={seasonId} journeyLink={journeyLink} />}
-      <PlayerArchiveNext journeyLink={journeyLink({ jmatch: '', pstage: '' })} analysisLink={analysisLink()} locale={locale} />
+      {hasSeasonMoments && <PlayerArchiveMoments archive={archive} locale={locale} seasonId={seasonId} matchLink={match => matchesLink({ jmatch: match.matchId, role: match.roles?.[0] || '' })} />}
+      <PlayerArchiveNext matchesLink={matchesLink()} analysisLink={analysisLink()} locale={locale} />
     </>}
   </section>
 }

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { formatOwHeroName } from '../../lib/heroes.js'
 import { getRoleLabel, getRoleEnLabel } from '../../lib/leaderboardSelectors.js'
 import { SignalHeroPortrait } from '../../components/matches/detail/SignalPlayerData.jsx'
@@ -16,13 +16,13 @@ export const archiveResult = (value, locale) => archiveCopy(locale, ({ win: '胜
 export const archiveReason = (reason, locale) => ({ first: archiveCopy(locale, '首次收录出场', 'First recorded appearance'), latest: archiveCopy(locale, '最近一次出场', 'Latest appearance'), maps: archiveCopy(locale, '单场出场图数最多', 'Most maps in a match'), phase: archiveCopy(locale, '进入新的阶段', 'A new stage'), record: archiveCopy(locale, '已收录出场', 'Recorded appearance') })[reason]
 
 export function ArchiveHeading({ number, title, english, detail, locale }) {
-  return <header className={styles.sectionHeading}><div><p>{number} / {english}</p><h2>{title}</h2></div>{detail && <p>{uiText(detail, locale)}</p>}</header>
+  return <header className={styles.sectionHeading}><div><p>{number}<span data-deco-en> / {english}</span></p><h2>{title}</h2></div>{detail && <p>{uiText(detail, locale)}</p>}</header>
 }
 
 export function PlayerCompanions({ companions, locale, linkProps, teamLink }) {
   const text = (zh, en) => archiveCopy(locale, zh, en)
   return <section id="player-companions" className={styles.companions} aria-labelledby="player-companions-title">
-    <header className={styles.sectionHeading}><div><p>02 / SIDE BY SIDE</p><h2 id="player-companions-title">{text('同场队友', 'Teammates')}</h2></div><Link {...teamLink}>{text('查看队伍资料', 'View team profile')} ↗</Link></header>
+    <header className={styles.sectionHeading}><div><p>02<span data-deco-en> / SIDE BY SIDE</span></p><h2 id="player-companions-title">{text('同场队友', 'Teammates')}</h2></div><Link {...teamLink}>{text('查看队伍资料', 'View team profile')} ↗</Link></header>
     {companions.length ? <><div className={styles.companionList}>{companions.slice(0, 5).map((peer, index) => {
       const content = <><span className={styles.peerIndex}>{String(index + 1).padStart(2, '0')}</span>{peer.hero ? <SignalHeroPortrait hero={peer.hero} role={peer.roles[0]} description={formatOwHeroName(peer.hero, locale)} /> : <span className={styles.peerFallback} aria-hidden="true">{peer.name.slice(0, 2)}</span>}<div className={styles.peerIdentity}><strong>{peer.name}</strong><span>{peer.roles.map(role => archiveRole(role, locale)).join(' / ')}</span></div><div className={styles.peerCount}><strong>{peer.maps}</strong><span>{text('图同场', 'maps together')}</span></div>{peer.playerId && <span aria-hidden="true">↗</span>}</>
       return peer.playerId ? <Link key={peer.key} {...linkProps(`/players/${encodeURIComponent(peer.playerId)}`)} className={styles.peer}>{content}</Link> : <div key={peer.key} className={styles.peer}>{content}</div>
@@ -30,21 +30,22 @@ export function PlayerCompanions({ companions, locale, linkProps, teamLink }) {
   </section>
 }
 
-export function PlayerArchiveMoments({ archive, locale, seasonId, journeyLink }) {
+export function PlayerArchiveMoments({ archive, locale, seasonId, matchLink }) {
   const text = (zh, en) => archiveCopy(locale, zh, en)
   if (!archive.highlights.length) return null
   return <section id="player-season-moments" className={styles.moments}>
     <ArchiveHeading number="03" english="A SEASON TO REVISIT" title={text('比赛记录', 'Match records')} detail={text('查看首场、最近出场与代表比赛。', 'First, latest and featured appearances.')} locale={locale} />
-    <div className={styles.momentGrid}>{archive.highlights.map(({ match, reasons }) => <Link key={match.matchId} {...journeyLink({ jmatch: match.matchId, pstage: '' })} className={styles.moment}>
+    <div className={styles.momentGrid}>{archive.highlights.map(({ match, reasons }) => <Link key={match.matchId} {...matchLink(match)} className={styles.moment}>
       <div className={styles.momentTop}><span>{reasons.map(reason => archiveReason(reason, locale)).join(' · ')}</span><time dateTime={match.date || undefined}>{archiveDate(match)}</time></div><p>{archiveStage(match.stage, locale)}</p><div className={styles.momentOpponent}><TeamLogo team={match.opponent} seasonId={seasonId} className={styles.logo} /><strong><small>{text('对阵', 'VERSUS')}</small>{match.opponent.short}</strong><div className={styles.momentScore}><b>{archiveScore(match)}</b><small>{text('本队在前', 'Our team first')}</small></div></div><div className={styles.momentBottom}><span>{match.maps.length} {text('图出场', match.maps.length === 1 ? 'map played' : 'maps played')} · {archiveResult(match.result, locale)}</span><span>{text('查看比赛', 'View match')} ↗</span></div>
     </Link>)}</div>
   </section>
 }
 
-export function PlayerArchiveNext({ journeyLink, analysisLink, profileLink, locale }) {
+// 票 2.52: both continue into the 选手数据 page — its 比赛记录 tab and its analysis.
+export function PlayerArchiveNext({ matchesLink, analysisLink, locale }) {
   const text = (zh, en) => archiveCopy(locale, zh, en)
   return <nav className={styles.next} aria-label={text('继续了解这位选手', 'Continue exploring this player')}>
-    <Link {...(journeyLink || profileLink)}><small>{journeyLink ? '02 / SEASON JOURNEY' : '01 / PLAYER PROFILE'}</small><strong>{journeyLink ? text('查看比赛记录', 'View match records') : text('查看选手档案', 'View player profile')}</strong><span aria-hidden="true">↗</span></Link>
-    <Link {...analysisLink}><small>03 / PERFORMANCE</small><strong>{text('查看数据分析', 'View performance analysis')}</strong><span aria-hidden="true">↗</span></Link>
+    <Link {...matchesLink}><small>{pickUiLocale(locale, '选手数据 · 比赛记录', 'Player data · Matches', '선수 데이터 · 경기 기록', '選手數據 · 比賽記錄')}</small><strong>{pickUiLocale(locale, '查看全部比赛记录', 'View every match', '모든 경기 기록 보기', '查看全部比賽記錄')}</strong><span aria-hidden="true">↗</span></Link>
+    <Link {...analysisLink}><small>{pickUiLocale(locale, '选手数据 · 竞技分析', 'Player data · Performance', '선수 데이터 · 경기력 분석', '選手數據 · 競技分析')}</small><strong>{text('查看数据分析', 'View performance analysis')}</strong><span aria-hidden="true">↗</span></Link>
   </nav>
 }

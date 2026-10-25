@@ -79,3 +79,10 @@ test('with fewer than three played matches there is only a first-match card, nev
   assert.deepEqual(none, { mode: 'empty', chapters: [] })
   assert.deepEqual(getSeasonStoryChapters(null), { mode: 'empty', chapters: [] })
 })
+
+test('team ids that look like page names stay team pages', () => {
+  assert.equal(getDossierView('/teams/analysis'), 'gallery')
+  assert.equal(getTeamArchiveRedirect('/teams/journey', '?season=S'), null)
+  assert.equal(getDossierViewHref('/teams/analysis/analysis', '', 'gallery'), '/teams/analysis')
+  assert.equal(getDossierViewHref('/teams/journey', '', 'analysis'), '/teams/journey/analysis')
+})

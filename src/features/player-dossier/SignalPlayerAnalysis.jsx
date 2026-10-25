@@ -9,6 +9,7 @@ import { getRoleEnLabel, getRoleLabel } from '../../lib/leaderboardSelectors.js'
 import { formatOwHeroName, formatOwMapName } from '../../lib/heroes.js'
 import { filterPlayerAppearances, getPlayerMapProfiles, getRecordedPlayerHeroes, playerComparisonPath } from './playerDossierPresentation.js'
 import SignalPlayerHistory from './SignalPlayerHistory.jsx'
+import { PLAYER_MATCHES_ANCHOR } from './playerArchiveRoutes.js'
 import SignalPlayerRatingJourney from './SignalPlayerRatingJourney.jsx'
 import { PlayerHeroWorkbench, PlayerMapAtlas, PlayerPerformanceTable, PlayerRecentForm } from './SignalPlayerInsights.jsx'
 import { PlayerPersonalReadout } from './PlayerPersonalStory.jsx'
@@ -34,9 +35,12 @@ export default function SignalPlayerAnalysis({ db, dossier, active, appearances,
   const result = ['win', 'loss', 'draw', 'pending'].includes(params.get('presult')) ? params.get('presult') : ''
   const filtered = filterPlayerAppearances(roleAppearances, { hero: selectedHero?.key, map: selectedMap?.key, result })
   const requestedView = params.get('pview')
-  const view = ['performance', 'heroes', 'maps', 'matches'].includes(requestedView) ? requestedView : params.has('popen') || selectedHero || selectedMap || result ? 'matches' : 'performance'
+  // 票 2.52: ?jmatch= (links from the 选手展厅 and the former 赛季征程) opens that match in 比赛记录.
+  const jmatch = params.get('popen') ? '' : params.get('jmatch') || ''
+  const view = ['performance', 'heroes', 'maps', 'matches'].includes(requestedView) ? requestedView : params.has('popen') || jmatch || selectedHero || selectedMap || result ? 'matches' : 'performance'
   const change = values => {
     const next = new URLSearchParams(params)
+    next.delete('jmatch') // a one-time "open this match" link; any later choice replaces it
     Object.entries(values).forEach(([name, value]) => value ? next.set(name, value) : next.delete(name))
     setParams(next, { replace: true, state: location.state, preventScrollReset: true })
   }
@@ -47,7 +51,7 @@ export default function SignalPlayerAnalysis({ db, dossier, active, appearances,
     change({ ptrend: key })
     document.getElementById('player-rating-journey')?.scrollIntoView({ block: 'start', behavior: 'instant' })
   }
-  const expandedIndex = filtered.findIndex(match => match.key === params.get('popen'))
+  const expandedIndex = filtered.findIndex(match => jmatch ? match.matchId === jmatch : match.key === params.get('popen'))
   const expandedKey = filtered[expandedIndex]?.key || ''
   const showCount = Math.max(8, expandedIndex + 1, Math.min(roleAppearances.length, Number(params.get('pshow')) || 8))
   const wins = roleAppearances.filter(match => match.result === 'win').length
@@ -63,10 +67,17 @@ export default function SignalPlayerAnalysis({ db, dossier, active, appearances,
     const frame = requestAnimationFrame(() => document.getElementById(`player-maps-${expandedKey.replaceAll(':', '-')}`)?.previousElementSibling?.scrollIntoView({ block: 'center', behavior: 'instant' }))
     return () => cancelAnimationFrame(frame)
   }, [expandedKey, view])
+  // #player-history: arriving from the former 赛季征程 page. The page first scrolls to the top.
+  const historyAnchor = location.hash === `#${PLAYER_MATCHES_ANCHOR}`
+  useEffect(() => {
+    if (view !== 'matches' || expandedKey || !historyAnchor) return undefined
+    const timer = window.setTimeout(() => document.getElementById(PLAYER_MATCHES_ANCHOR)?.scrollIntoView({ block: 'start', behavior: 'instant' }), 80)
+    return () => window.clearTimeout(timer)
+  }, [historyAnchor, expandedKey, view])
 
   return <section className={pages.analysis} data-player-analysis>
     <header className={pages.analysisHeading}>
-      <div className={pages.analysisIdentity}><p><Link {...linkProps(`/teams/${encodeURIComponent(identity.teamRouteId)}/analysis`)}>{identity.teamShort} ↗</Link><span>03 / {text(en, uiText('竞技分析', locale), 'PLAYER PERFORMANCE')}</span></p><h1>{identity.displayName}</h1><p><SignalBattleTag value={identity.battleTag} en={en} /></p></div>
+      <div className={pages.analysisIdentity}><p><Link {...linkProps(`/teams/${encodeURIComponent(identity.teamRouteId)}/analysis`)}>{identity.teamShort} ↗</Link></p><h2>{text(en, uiText('竞技分析', locale), 'Performance')}</h2><p><SignalBattleTag value={identity.battleTag} en={en} /></p></div>
         <div className={pages.analysisActions}>{analysis.summary.maps > 0 && <Link {...linkProps(playerComparisonPath(active.entry, location.search, mode))}>{text(en, uiText('同职责选手对比', locale), 'Compare this role')} ↗</Link>}<button type="button" onClick={onShare}>{text(en, uiText('分享数据', locale), 'Share stats')} ↗</button></div>
       <div className={pages.analysisRating}><p>SEASON OVR <span>{roleLabel(active.role, en, locale)}</span></p><div className={pages.ratingValue}><strong>{formatSeasonRatingValue(active.entry)}</strong><span>{getSeasonRatingStatusLabel(active.entry, locale)}{analysis.summary.rank ? <b>#{analysis.summary.rank}<small> / {analysis.summary.rankTotal}</small><small>{text(en, uiText('同职责排名', locale), 'Rank in this role')}</small></b> : <small>{noRankLabel}</small>}</span></div><SeasonRating entry={active.entry} locale={locale} explanationOnly /></div>
       <div className={pages.scopeBar}>
@@ -90,7 +101,7 @@ export default function SignalPlayerAnalysis({ db, dossier, active, appearances,
           <div className={pages.historySelects}><label className={styles.heroFilter}>{text(en, uiText("英雄", locale), 'Hero')}<select aria-label={text(en, uiText("筛选比赛英雄", locale), 'Filter matches by hero')} value={selectedHero?.key || ''} onChange={event => change({ phero: event.target.value, pshow: '', popen: '' })}><option value="">{text(en, uiText("全部英雄", locale), 'All heroes')}</option>{heroes.map(hero => <option value={hero.key} key={hero.key}>{formatOwHeroName(hero.hero, locale)}</option>)}</select></label><label className={styles.heroFilter}>{text(en, uiText("地图", locale), 'Map')}<select aria-label={text(en, uiText("筛选比赛地图", locale), 'Filter matches by map')} value={selectedMap?.key || ''} onChange={event => change({ pmap: event.target.value, pshow: '', popen: '' })}><option value="">{text(en, uiText("全部地图", locale), 'All maps')}</option>{maps.map(map => <option key={map.key} value={map.key}>{formatOwMapName(map.name, locale)}</option>)}</select></label></div>
         </div>
         <div className={pages.recordNote}><p>{text(en, uiText('比分为所在队伍在前；评分满分 10。展开比赛，查看本职责的逐图数据。', locale), 'Scores show this player’s team first. Ratings are out of 10. Expand a match for this role’s map statistics.')}</p><button type="button" disabled={!hasFilters} onClick={viewAllMatches}>{text(en, uiText('重置筛选', locale), 'Reset filters')} ↺</button></div>
-        <SignalPlayerHistory selectedMap={selectedMap?.key || ''} matches={filtered.slice(0, showCount)} en={en} locale={locale} seasonId={seasonId} selectedHero={selectedHero?.key || ''} expanded={params.get('popen') || ''} onExpand={value => change({ popen: value })} linkProps={linkProps} />
+        <SignalPlayerHistory selectedMap={selectedMap?.key || ''} matches={filtered.slice(0, showCount)} en={en} locale={locale} seasonId={seasonId} selectedHero={selectedHero?.key || ''} expanded={expandedKey} onExpand={value => change({ popen: value, jmatch: '' })} linkProps={linkProps} />
         {!filtered.length && <div className={styles.empty}><p>{roleAppearances.length ? text(en, uiText("没有符合筛选条件的比赛。", locale), 'No matches for these filters.') : text(en, uiText("暂无已公开的比赛记录。", locale), 'No published match appearances yet.')}</p>{roleAppearances.length > 0 && <button type="button" className={styles.textButton} onClick={() => change({ phero: '', pmap: '', presult: '' })}>{text(en, uiText("重置筛选", locale), 'Reset filters')} ↗</button>}</div>}
         {filtered.length > showCount && <button type="button" className={styles.showMore} onClick={() => change({ pshow: String(showCount + 8) })}>{text(en, uiText("查看更多比赛", locale), 'Show more matches')} <span>{showCount} / {filtered.length}</span> ↓</button>}
       </section>}

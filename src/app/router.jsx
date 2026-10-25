@@ -5,6 +5,7 @@ import { normalizeLocale } from '../lib/locales.js'
 import { ensureUiLocale, ensureTraditionalReview } from '../lib/localeCatalog.js'
 import { getTeamArchiveRedirect } from '../features/team-dossier/teamArchiveRoutes.js'
 import { getDesignPreview } from '../features/fd-design/designPreview.js'
+import { getPlayerArchiveRedirect } from '../features/player-dossier/playerArchiveRoutes.js'
 
 export function RouteFallback() {
   const location = useLocation()
@@ -34,6 +35,14 @@ function teamArchiveLoader({ request }) {
   // The older preview designs keep their own ?tab= views.
   if (getDesignPreview(url.search) !== 'kpr5') return null
   const target = getTeamArchiveRedirect(url.pathname, url.search, url.hash)
+  return target ? redirect(target) : null
+}
+
+// 票 2.52: the former player 赛季征程 page opens the data page's 比赛记录.
+function playerArchiveLoader({ request }) {
+  const url = new URL(request.url)
+  if (getDesignPreview(url.search) !== 'kpr5') return null
+  const target = getPlayerArchiveRedirect(url.pathname, url.search)
   return target ? redirect(target) : null
 }
 
@@ -178,7 +187,7 @@ const router = createBrowserRouter([
       { path: 'leaderboard', lazy: lazyDefault(() => import('../pages/leaderboard/LeaderboardPage.jsx')) },
       { path: 'players', lazy: lazyDefault(() => import('../pages/players/PlayersPage.jsx')) },
       { path: 'players/:playerId', lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
-      { path: 'players/:playerId/journey', lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
+      { path: 'players/:playerId/journey', loader: playerArchiveLoader, lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
       { path: 'players/:playerId/analysis', lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
       { path: 'teams', lazy: lazyDefault(() => import('../pages/teams/TeamsPage.jsx')) },
       { path: 'teams/:teamId', loader: teamArchiveLoader, lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },

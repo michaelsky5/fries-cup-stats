@@ -6,8 +6,14 @@ export const TEAM_SEASON_ANCHOR = 'team-season'
 export const TEAM_MATCHES_ANCHOR = 'team-matches'
 
 const LEGACY_VIEW_KEYS = ['chapter', 'tab', 'journeyView']
-const archiveBase = pathname => String(pathname || '').replace(/\/(?:journey|analysis)\/?$/, '').replace(/\/$/, '')
-const isPath = (pathname, page) => new RegExp(`/${page}/?$`).test(String(pathname || ''))
+// /teams/<id>[/journey|/analysis][/] — segment-aware, so a team whose id is "analysis" stays itself.
+const ARCHIVE_PATH = /^(.*\/teams\/[^/]+)(?:\/(journey|analysis))?\/?$/
+const parsePath = pathname => {
+  const match = String(pathname || '').match(ARCHIVE_PATH)
+  return match ? { base: match[1], page: match[2] || '' } : { base: String(pathname || '').replace(/\/$/, ''), page: '' }
+}
+const archiveBase = pathname => parsePath(pathname).base
+const isPath = (pathname, page) => parsePath(pathname).page === page
 
 export function getDossierView(pathname) {
   return isPath(pathname, 'analysis') ? 'analysis' : 'gallery'

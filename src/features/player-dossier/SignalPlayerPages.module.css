@@ -2,7 +2,16 @@
 .pageTop > button { background: transparent; border: 0; padding: 10px 0; min-height: 40px; color: var(--fc-data-text-muted); font-size: 13px; }
 .pageTop > button { justify-self: start; text-align: left; }
 .pageNav { min-width: 0; }
-.pageNav > div { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); }
+.pageNav > div { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+/* 票 2.52: the same title row as the team pages — name, team and roles, follow. */
+.titleRow { margin-bottom: 8px; }
+.follow { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 44px; padding: 10px 16px; border: 1px solid var(--fc-data-ink); background: transparent; color: var(--fc-data-ink); font: 600 13px var(--fc-data-font-interface); white-space: nowrap; cursor: pointer; }
+.follow > span { font-size: 16px; }
+.follow[aria-pressed='true'] { background: var(--fc-data-ink); color: var(--fc-data-paper); }
+.follow:hover:not(:disabled):not([aria-pressed='true']) { background: var(--fc-data-paper-deep); }
+.follow:disabled { cursor: default; opacity: .55; }
+.follow:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 3px; }
+@media (max-width: 600px) { .titleRow [data-signal-data-heading] > div:last-child { text-align: left; } .follow { width: 100%; justify-content: space-between; } }
 .profile { min-width: 0; }
 .profileIndex { display: flex; flex-wrap: wrap; gap: 12px 40px; padding: 16px 0; border-bottom: 1px solid var(--fc-data-line); }
 .profileIndex a { display: inline-flex; gap: 10px; align-items: baseline; font-size: 14px; padding-block: 6px; }
