@@ -4,7 +4,8 @@
   --yellow: var(--fc-data-signal, #f4c320);
   --muted: var(--fc-data-text-muted, #66685f);
   --line: var(--fc-data-line, #181a1726);
-  box-sizing: border-box; width: 100%; color: var(--ink); padding: 0 var(--kpr-gutter, clamp(20px, 3.4vw, 64px)) 30px;
+  /* 票 2.47: the page sits on the shared 1600px grid like every other page. */
+  box-sizing: border-box; width: var(--portal-shell-width, calc(100% - 2 * var(--kpr-gutter, clamp(20px, 3.4vw, 64px)))); margin-inline: auto; color: var(--ink); padding: 0 0 30px;
   font-family: var(--font-sans); font-variant-numeric: tabular-nums;
 }
 .page * { box-sizing: border-box; }

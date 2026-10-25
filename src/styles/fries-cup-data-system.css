@@ -79,7 +79,7 @@
 
   /* Grid and geometry */
   --fc-data-gutter: clamp(20px, 3.4vw, 64px);
-  --fc-data-content-max: 1840px;
+  --fc-data-content-max: 1600px;
   --fc-data-grid-unit: 8px;
   --fc-data-radius-panel: 0px;
   --fc-data-radius-control: 0px;

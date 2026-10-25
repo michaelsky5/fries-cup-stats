@@ -1,6 +1,6 @@
 .band {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px;
-  margin: 16px var(--kpr-gutter, clamp(20px, 3.4vw, 64px)) 0; padding: 10px 10px 10px 14px;
+  width: var(--portal-shell-width, calc(100% - 2 * var(--kpr-gutter, clamp(20px, 3.4vw, 64px)))); margin: 16px auto 0; padding: 10px 10px 10px 14px;
   border: 1px solid var(--fc-data-line, #181a1726); border-left: 4px solid var(--fc-data-signal, #f4c320);
   background: var(--fc-data-paper-raised, #f6f5ef); color: var(--fc-data-ink, #181a17);
 }
@@ -15,5 +15,5 @@
 .action:focus-visible { outline: 3px solid var(--fc-data-focus, #806000); outline-offset: 3px; }
 
 /* X5 / 票 2.15: the lobby entry sits in the page gutter like the registration band. */
-.lobbySlot { margin: 16px var(--kpr-gutter, clamp(20px, 3.4vw, 64px)) 0; }
+.lobbySlot { width: var(--portal-shell-width, calc(100% - 2 * var(--kpr-gutter, clamp(20px, 3.4vw, 64px)))); margin: 16px auto 0; }
 .lobbySlot > section { margin-bottom: 0; }

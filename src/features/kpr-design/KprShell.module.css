@@ -6,7 +6,8 @@
   --kpr-line: var(--fc-data-line, #17181726);
   --kpr-gutter: var(--fc-data-gutter, clamp(20px, 3.4vw, 64px));
   --kpr-header-height: 141px;
-  --portal-shell-width: calc(100% - var(--kpr-gutter) * 2);
+  /* 票 2.47: past 1600px the page stops growing and centres, header included (统一网格). */
+  --portal-shell-width: min(var(--fc-data-content-max, 1600px), calc(100% - var(--kpr-gutter) * 2));
   background: var(--kpr-paper);
   color: var(--kpr-ink);
 }

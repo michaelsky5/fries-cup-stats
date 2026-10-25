@@ -1,7 +1,7 @@
 /* 票 2.50: the support page, for the community and for supporters. Same frame as the other
    pages (title 44px, left aligned); paper, ink and yellow only. */
 .page { composes: page from '../weekly-overview/SignalWeeklyOverview.module.css'; }
-.page[data-weekly-support] { padding-inline: 0; }
+.page[data-weekly-support] { width: 100%; padding-inline: 0; } /* already inside the page frame */
 .page * { box-sizing: border-box; }
 .page a { color: inherit; text-decoration: none; }
 .page a:focus-visible, .page button:focus-visible, .page summary:focus-visible, .page select:focus-visible { outline: 2px solid var(--fc-data-focus-on-light, #806000); outline-offset: 3px; }
