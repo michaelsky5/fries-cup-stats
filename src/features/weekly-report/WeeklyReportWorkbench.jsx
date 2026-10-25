@@ -66,7 +66,7 @@ export default function WeeklyReportWorkbench() {
     {/* 票 2.49: four prelim issues and one 季后赛专刊 per segment; the 晋级加赛 has no issue of its own. */}
     <nav className={styles.weekTabs} aria-label={t('选择期次', 'Choose issue')}>{overview.weeks.filter(isNewspaperIssueWeek).map(week => <button type="button" key={week.id} aria-pressed={week.id === scope.weekId} disabled={busy || dirty} onClick={() => { setEdits(null); setParams({ cycle: scope.cycleId, week: week.id, lang: params.get('lang') || 'zh', season: params.get('season') || seasonId }) }}>{newspaperWeekLabel(week, locale)}</button>)}</nav>
       {noIssue && <p role="note" data-workbench-no-issue>{String(scopeWeek.phase).toUpperCase() === 'QUALIFIER'
-        ? t('晋级加赛归入季后赛，不单独出刊。', 'The tiebreak qualifier belongs to the playoffs and has no issue of its own.')
+        ? t('晋级加赛归入季后赛，不单独出刊；赛果写在季后赛专刊的「晋级之路」里。', 'The tiebreak qualifier belongs to the playoffs and has no issue of its own; its result appears in the playoff edition.')
         : t('这个阶段不单独出刊。', 'This stage has no issue of its own.')}</p>}
       <p>{t('版本 ', 'Revision ') + (active?.issue?.headRevision || 0)} · {active?.issue?.publishedRevision ? t('已刊登版本 ', 'Published revision ') + active.issue.publishedRevision : t('尚未刊登', 'Unpublished')}</p>
       <button type="button" disabled={busy || dirty || noIssue} onClick={() => run('generate')}>{t('生成本期', 'Generate issue')}</button>

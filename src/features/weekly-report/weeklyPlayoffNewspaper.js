@@ -8,6 +8,7 @@ const teamFact = team => team ? Object.fromEntries(['id', 'team_id', 'name', 'sh
 export const playoffText = (key, locale) => pickUiLocale(locale, ...({
   edition: ['季后赛专刊', 'PLAYOFF EDITION', '플레이오프 특집', '季後賽專刊'],
   route: ['晋级之路', 'ROAD TO THE TITLE', '우승을 향한 여정', '晉級之路'],
+  QUALIFIER: ['晋级加赛', 'TIEBREAK QUALIFIER', '진출권 결정전', '晉級加賽'],
   SEMIFINAL: ['半决赛', 'SEMIFINALS', '준결승', '準決賽'],
   FINAL: ['决赛', 'FINAL', '결승', '決賽'],
   THIRD_PLACE: ['季军赛', 'THIRD-PLACE MATCH', '3위 결정전', '季軍賽'],
@@ -43,12 +44,15 @@ export function buildPlayoffNewspaperFacts(db, overview, sourceAt) {
       : entry.matches.filter(match => match.state === 'upcoming') })) }
   const bracket = buildWeeklyElimination(db, scoped)
   if (!bracket) return result
-  const groups = [['SEMIFINAL', bracket.semifinals, 2], ['FINAL', bracket.finals, 1], ['THIRD_PLACE', bracket.thirdPlaces, 1]]
+  // 票 2.51: the tiebreak qualifier belongs to the playoffs, so the edition carries its played
+  // matches too. A segment without a qualifier keeps exactly the facts it had before.
+  const groups = [['QUALIFIER', bracket.qualifiers, Infinity], ['SEMIFINAL', bracket.semifinals, 2], ['FINAL', bracket.finals, 1], ['THIRD_PLACE', bracket.thirdPlaces, 1]]
   const itemsByKind = new Map()
   const allIds = groups.flatMap(([, rounds]) => rounds.flatMap(round => round.items.map(item => item.id)))
   if (new Set(allIds).size !== allIds.length) return result
   for (const [kind, rounds, maximum] of groups) {
-    const items = rounds.flatMap(round => round.items.map(item => ({ ...item, weekId: round.week_id })))
+    const items = rounds.flatMap(round => round.items.filter(item => kind !== 'QUALIFIER' || item.type === 'MATCH').map(item => ({ ...item, weekId: round.week_id })))
+    if (kind === 'QUALIFIER' && !items.length) continue
     if (items.length > maximum || new Set(items.map(item => item.id)).size !== items.length) continue
     itemsByKind.set(kind, items)
     result.rounds.push({ kind, items: items.map(item => {
@@ -60,7 +64,7 @@ export function buildPlayoffNewspaperFacts(db, overview, sourceAt) {
         winnerId: confirmed ? idOf(item.winner) || null : null }
     }) })
   }
-  result.bracketAvailable = result.rounds.some(round => round.items.length)
+  result.bracketAvailable = result.rounds.some(round => round.kind !== 'QUALIFIER' && round.items.length)
   result.finalFormat = bracket.finalFormat
   const semis = itemsByKind.get('SEMIFINAL') || []
   const entrants = semis.flatMap(item => [idOf(item.a), idOf(item.b)])
