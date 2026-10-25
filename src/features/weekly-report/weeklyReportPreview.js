@@ -1,6 +1,7 @@
 import { buildWeeklyOverview, weeklyMapSlots } from '../weekly-overview/weeklyOverviewModel.js'
 import { buildWeeklyAwards } from './weeklyAwards.js'
 import { collectWeeklyNewsContext } from './weeklyEditorial.js'
+import { buildPlayoffNewspaperFacts } from './weeklyPlayoffNewspaper.js'
 export { formatReportTime, weeklyReportPath } from './weeklyReportPresentation.js'
 
 const list = value => Array.isArray(value) ? value : []
@@ -69,6 +70,8 @@ function buildWeeklyReportData(db, { cycleId, weekId } = {}) {
     sourceAt: db?.meta?.ranking_as_of || db?.updated_at || null,
     number: String(Number(week.week_number) || 0).padStart(2, '0')
   }
+  const playoff = buildPlayoffNewspaperFacts(db, overview, report.sourceAt)
+  if (playoff) report.playoff = playoff
   return report
 }
 

@@ -24,7 +24,7 @@ const sameScope = (a,b) => ['seasonId','cycleId','weekId','locale'].every(key =>
 export function createIssueDraft(report, seasonId, locale) {
   const scope=issueScope(report,seasonId,locale)
   // Freeze the public fact pack, not the whole application database or its latest-data pointer.
-  const frozenReport=copy({...pick(report,['cycle','week','number','seasonId','sourceAt','maps','playerCount','teamCount','namedBans','newsContext']),completed:report.completed.map(matchFacts),pending:report.pending.map(matchFacts),awards:freezeAwards(report.awards)})
+  const frozenReport=copy({...pick(report,['cycle','week','number','seasonId','sourceAt','maps','playerCount','teamCount','namedBans','newsContext','playoff']),completed:report.completed.map(matchFacts),pending:report.pending.map(matchFacts),awards:freezeAwards(report.awards)})
   const newspaper=buildWeeklyNewspaper(report,locale)
   const {report: ignoredReport, ...paper}=newspaper
   void ignoredReport
@@ -73,6 +73,7 @@ export function validateIssueDraft(draft) {
     if (!historicalMatches.has(JSON.stringify([source.weekId,source.weekNumber,source.matchId]))) errors.push('新闻背景缺少本期已冻结的历史赛果。 / Unverified historical match reference.')
   }
   if (paper?.nextWeek && JSON.stringify(paper.nextWeek)!==JSON.stringify(report?.newsContext?.nextWeek)) errors.push('下周赛程与本期已公布记录不一致。 / Next-week fixture mismatch.')
+  if (paper?.playoff && (report?.week?.phase !== 'PLAYOFFS' || paper.playoff.cycleId !== scope?.cycleId || paper.playoff.weekId !== scope?.weekId || paper.playoff.sourceAt !== report?.sourceAt || JSON.stringify(paper.playoff) !== JSON.stringify(report?.playoff))) errors.push('季后赛签表与本期冻结记录不一致。 / Playoff snapshot mismatch.')
   for (const story of paper?.dataStories?.cards || []) for (const stat of story.stats || []) {
     if (!maps.has(JSON.stringify([String(stat.matchId),Number(stat.order)]))) errors.push('数据趣闻引用了其他周次的地图。 / Out-of-week story reference.')
   }

@@ -6,6 +6,8 @@ export { newspaperTeamName } from './weeklyReportPresentation.js'
 import { buildWeeklyDataStories, formatWeeklyDataStory } from './weeklyDataStories.js'
 import { buildWeeklyPeopleNews } from './weeklyPeopleNews.js'
 import { buildLeadIntro, buildMatchBackground, buildMatchBrief, selectWeeklyLead } from './weeklyEditorial.js'
+import { hasPlayoffNewspaperFacts, playoffLeadId, playoffText } from './weeklyPlayoffNewspaper.js'
+import { buildSeriesMatchNews } from './weeklySeriesNews.js'
 
 const identity = team => String(team?.id || team?.team_id || '')
 const score = value => value != null && String(value).trim() !== '' && Number.isFinite(Number(value)) ? Number(value) : null
@@ -66,6 +68,7 @@ function recordedMapScore(map, winnerSide) {
 }
 
 export function buildMatchNews(report, match, locale = 'zh-CN') {
+  if (hasPlayoffNewspaperFacts(report)) return buildSeriesMatchNews(report, match, locale, recordedMapScore)
   const t = tFor(locale), a = score(match.team_a?.score), b = score(match.team_b?.score)
   const maps = report.maps.filter(map => map.matchId === match.id).sort((x, y) => x.order - y.order)
   const sides = [match.team_a, match.team_b]
@@ -208,13 +211,16 @@ export function buildWeeklyFunFacts(report, articles) {
 export function buildWeeklyNewspaper(report, locale = 'zh-CN') {
   if (!report) return null
   const t = tFor(locale)
+  const playoff = hasPlayoffNewspaperFacts(report) ? report.playoff : null
+  if (report.playoff && !playoff) throw new Error('Playoff facts do not belong to this issue.')
   const articles = report.completed.map(match => {
     const article = buildMatchNews(report, match, locale)
+    if (playoff) return { ...article, state: match.state, background: null, recap: article.brief }
     const background = buildMatchBackground(article, report, locale)
     return { ...article, state: match.state, background, recap: article.brief, brief: buildMatchBrief({ ...article, background }, locale) }
   })
-  const lead = selectWeeklyLead(articles, report.closeMatch?.id)
-  if (lead) lead.intro = buildLeadIntro(lead, articles, locale)
+  const lead = articles.find(article => article.id === playoffLeadId(playoff, report.completed)) || selectWeeklyLead(articles, report.closeMatch?.id)
+  if (lead) lead.intro = playoff ? lead.brief : buildLeadIntro(lead, articles, locale)
   const briefs=selectMatchBriefs(articles,lead)
   const otherResults=articles.filter(article=>article!==lead&&!briefs.some(brief=>brief.id===article.id)).sort((a,b)=>String(a.id).localeCompare(String(b.id)))
   const topMap = report.mapFrequency[0]
@@ -252,7 +258,7 @@ export function buildWeeklyNewspaper(report, locale = 'zh-CN') {
     tieCount:topHero?heroUsage.frequency.filter(hero=>hero.count===topHero.count).length:0,
     omittedTies:lastHero?heroUsage.frequency.filter(hero=>hero.count===lastHero.count).length-heroHighlights.filter(hero=>hero.count===lastHero.count).length:0
   }
-  const edition = t(`${weeklyCycleTitle(report.cycle,locale)} · 第 ${report.week.week_number} 周`, `${weeklyCycleTitle(report.cycle,locale)} · Week ${report.week.week_number}`)
+  const edition = playoff ? `${weeklyCycleTitle(report.cycle,locale)} · ${playoffText('edition', locale)}` : t(`${weeklyCycleTitle(report.cycle,locale)} · 第 ${report.week.week_number} 周`, `${weeklyCycleTitle(report.cycle,locale)} · Week ${report.week.week_number}`)
   const sharingText = [t(`薯条周报｜${edition}（样报）`,`Fries Cup Weekly | ${edition} (sample)`),lead?.title, t(`${report.completed.length} 场已确认对阵 · ${report.maps.length} 张实际地图 · ${report.playerCount} 名出场选手`,`${report.completed.length} confirmed matches · ${report.maps.length} played maps · ${report.playerCount} recorded players`),t('最佳阵容与 MVP 依当周有效数据自动试评，尚未正式发布。','Team of the week and MVP are calculated from valid weekly data, not formally published.'),t(`数据截至 ${formatReportTime(report.sourceAt,locale)}，本期为可保存的报纸样稿。`,`Data version: ${formatReportTime(report.sourceAt,locale)}. This is a downloadable newspaper sample.`)].filter(Boolean).join('\n')
-  return { report,locale,edition,articles,lead,briefs,otherResults:otherResults.slice(0,3),otherResultCount:otherResults.length,layout:report.completed.length<=2?'compact':'standard',mapNews,heroNews,banNews,peopleNews,funFacts,dataStories,updates,nextWeek:report.newsContext?.nextWeek || null,pageCount:1,sharingText,generation:{mode:'verified-facts-template',version:'frypress-v11',sourceAt:report.sourceAt,cycleId:report.cycle.id,weekId:report.week.id},publication:null,awards:report.awards,issueStandings:null }
+  return { report,locale,edition,articles,lead,briefs,otherResults:otherResults.slice(0,3),otherResultCount:otherResults.length,layout:playoff?'playoffs':report.completed.length<=2?'compact':'standard',...(playoff?{playoff}:{}),mapNews,heroNews,banNews,peopleNews,funFacts,dataStories,updates,nextWeek:report.newsContext?.nextWeek || null,pageCount:1,sharingText,generation:{mode:'verified-facts-template',version:playoff?'frypress-playoffs-v1':'frypress-v11',sourceAt:report.sourceAt,cycleId:report.cycle.id,weekId:report.week.id},publication:null,awards:report.awards,issueStandings:null }
 }

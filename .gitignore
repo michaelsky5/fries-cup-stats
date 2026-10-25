@@ -19,6 +19,8 @@ tmp/
 node_modules
 dist
 dist-ssr
+/output/newspaper-runtime/
+/output/playoff-preview/
 *.local
 
 # Editor directories and files

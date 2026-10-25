@@ -11,6 +11,8 @@ import { formatUpcomingMatch, formatWeeklyMatchScope, buildMatchBrief, buildLead
 import { WEEKLY_POSITIONS, WEEKLY_POSITION_ROLES } from './weeklyPositions.js'
 import { buildWeeklyNewspaperResultsUrl, buildWeeklyNewspaperQr } from './weeklyNewspaperShare.js'
 import { localizePublishedPersonNote } from './weeklyNewspaperPresentation.js'
+import PlayoffNewspaperPath from './PlayoffNewspaperPath.jsx'
+import { playoffText } from './weeklyPlayoffNewspaper.js'
 import styles from './WeeklyNewspaper.module.css'
 
 const PAPER_SIZE = { width: 900, height: 1273 }
@@ -112,7 +114,7 @@ function RoleSymbol({role,label}) {
 function MapTimeline({article,locale,t,compact=false}) {
   if (article.state==='ruling') return <small className={styles.rulingLabel} data-ruling-result>{t('赛事判定','Official ruling')}</small>
   if (!article.sequence.length) return <small className={styles.sequencePending}>{t('逐图胜方记录待补齐','Map-winner records pending')}</small>
-  return <ol className={compact ? styles.miniSequence : styles.mapTimeline} aria-label={t(`逐图赛果；比分顺序 ${article.scoreOrder.join(' / ')}`,`Map results; score order ${article.scoreOrder.join(' / ')}`)}>
+  return <ol className={compact ? styles.miniSequence : styles.mapTimeline} style={article.seriesFormat?{gridTemplateColumns:`repeat(${article.sequence.length},minmax(0,1fr))`}:undefined} aria-label={t(`逐图赛果；比分顺序 ${article.scoreOrder.join(' / ')}`,`Map results; score order ${article.scoreOrder.join(' / ')}`)}>
     {article.sequence.map(map=><li key={map.order} data-winner-side={map.winnerSide} data-deciding={article.decisive?.order===map.order} data-map-score={map.mapScore?.join(':')||''} data-series-score={map.runningScore.join(':')}>
       {!compact&&<div className={styles.timelineArt}><img src={getMapImage(map.map_type,map.map_name)} alt=""/><span>{String(map.order).padStart(2,'0')}</span><b>{formatOwMapName(map.map_name,locale)}</b></div>}
       {compact ? <span title={`${formatOwMapName(map.map_name,locale)} · ${map.winnerName}`}>{map.winnerName}</span> : <><div className={styles.mapScore}><strong>{map.mapScore?map.mapScore.join(' : '):'—'}</strong></div><small>{map.winnerName} {t('胜','wins')}</small></>}
@@ -288,34 +290,40 @@ export default function WeeklyNewspaper({ report, locale, seasonId, withSeason, 
   }
   const lead=newspaper.lead
   const leadTeams=lead?.displayTeams
-  const leadPrintNote=lead?.intro ? buildLeadPrintNote(lead,newspaper.articles,locale) : lead?.visualNote
+  const leadPrintNote=newspaper.playoff ? lead?.visualNote : lead?.intro ? buildLeadPrintNote(lead,newspaper.articles,locale) : lead?.visualNote
   return <div className={styles.root} data-weekly-report-page data-weekly-newspaper data-report-week={report.week.id} data-i18n-ignore>
     {!embedded&&<nav className={styles.breadcrumbs} aria-label={t('周报导航','Report navigation')}><Link to={home}>← {t(`第 ${report.week.week_number} 周赛事总览`,`Week ${report.week.week_number} overview`)}</Link><Link to={archive}>{t('周报归档','Report archive')} →</Link></nav>}
     <div className={styles.pages} ref={pagesRef}>
       <NewspaperSheet busy={busy} savePdf={savePdf} savePng={savePng} status={status} error={error} scale={scale} t={t} report={report} seasonId={seasonId} newspaper={newspaper} date={date} sheetsRef={sheetsRef} locale={locale}>
-        <div className={styles.frontKicker}><span>{t('本周主新闻','THIS WEEK’S LEAD')}</span><span data-weekly-match-scope>{lead?.intro?formatWeeklyMatchScope(report,locale):<>{report.completed.length} {t('场对阵','matches')}</>} / {report.maps.length} {t('图赛果','map results')} / {report.playerCount} {t('名出场选手','players')}</span></div>
+        <div className={styles.frontKicker}><span>{newspaper.playoff?playoffText('edition',locale):t('本周主新闻','THIS WEEK’S LEAD')}</span><span data-weekly-match-scope>{lead?.intro?formatWeeklyMatchScope(report,locale):<>{report.completed.length} {t('场对阵','matches')}</>} / {report.maps.length} {t('图赛果','map results')} / {report.playerCount} {t('名出场选手','players')}</span></div>
         <h2 className={styles.leadHeadline}>{lead?<Link to={withSeason(lead.path)}>{lead.title}</Link>:t('这一周，等待赛果确认。','This week awaits confirmed results.')}</h2>
         <div className={styles.frontColumns} data-front-layout={newspaper.layout}>
           <article className={styles.leadColumn}>
             {lead?.image&&<figure className={styles.leadPhoto}><div className={styles.photoWindow}><img className={styles.mapArt} src={getMapImage(lead.image.map_type,lead.image.map_name)} alt={formatOwMapName(lead.image.map_name,locale)} />{leadTeams&&<div className={styles.photoScore} data-photo-score-order={lead.scoreOrder.join(' / ')}><div><NewspaperTeamLogo team={leadTeams[0]} seasonId={seasonId} className={styles.teamEmblem}/><b>{newspaperTeamName(leadTeams[0])}</b></div><strong>{lead.displayScores[0]??'—'}<i>:</i>{lead.displayScores[1]??'—'}</strong><div><b>{newspaperTeamName(leadTeams[1])}</b><NewspaperTeamLogo team={leadTeams[1]} seasonId={seasonId} className={styles.teamEmblem}/></div></div>}{lead.editorialMark?<span className={styles.photoStamp} data-match-mark={lead.editorialMark.kind}>{translateUiText(lead.editorialMark.label,locale)}</span>:<span className={styles.photoTag}>{lead.decisive?t('决胜图','DECIDING MAP'):t('赛场记录','MATCH RECORD')}</span>}</div></figure>}
-            {!lead&&<p>{t('本期尚无已确认赛果。新闻将在比赛记录确认后生成。','News will appear when this week’s results are confirmed.')}</p>}
+            {newspaper.playoff&&!lead?.image&&<div className={styles.playoffResultNotice} data-playoff-result-notice={lead?.state||'pending'}>
+              <span>{lead?.state==='ruling'?t('赛事判定','Official ruling'):playoffText('pending',locale)}</span>
+              {leadTeams&&<div className={styles.playoffNoticeScore}><b>{newspaperTeamName(leadTeams[0])}</b><strong>{lead.displayScores[0]??'—'} : {lead.displayScores[1]??'—'}</strong><b>{newspaperTeamName(leadTeams[1])}</b></div>}
+              <p>{lead?.brief||t('本期尚无已确认赛果。新闻将在比赛记录确认后生成。','News will appear when this week’s results are confirmed.')}</p>
+              {lead&&<SourceLink t={t} withSeason={withSeason} article={lead}/>}
+            </div>}
+            {!newspaper.playoff&&!lead&&<p>{t('本期尚无已确认赛果。新闻将在比赛记录确认后生成。','News will appear when this week’s results are confirmed.')}</p>}
           </article>
-          <aside className={styles.frontSidebar}>
+          {!newspaper.playoff&&<aside className={styles.frontSidebar}>
             <h3 className={styles.columnLabel}>{t('赛场短讯','MATCH BRIEFS')}</h3>
             {newspaper.briefs.map(article=><MatchBrief key={article.id} article={article} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason}/>)}
             {!newspaper.briefs.length&&<p className={styles.emptyBrief}>{t('本期暂无其他赛果。','No other results this week.')}</p>}
-            {newspaper.peopleNews.people.length>0&&<article className={styles.peopleNote}>
+            {!newspaper.playoff&&newspaper.peopleNews.people.length>0&&<article className={styles.peopleNote}>
               <span className={styles.columnLabel}>{translateUiText(newspaper.peopleNews.title,locale)}</span>
               <PeopleNotes people={newspaper.peopleNews.people} editorial={Boolean(lead?.intro)} compact={newspaper.layout==='compact'} locale={locale} seasonId={seasonId} withSeason={withSeason}/>
             </article>}
-          </aside>
-          {lead&&<div className={styles.leadResults}><div className={styles.timelineHeading}><b>{t('逐图赛果','MAP RESULTS')}</b><span data-lead-print-note>{leadPrintNote}</span><SourceLink t={t} withSeason={withSeason} article={lead}/></div><MapTimeline article={lead} locale={locale} t={t}/></div>}
+          </aside>}
+          {lead&&(!newspaper.playoff||lead.image)&&<div className={styles.leadResults}><div className={styles.timelineHeading}><b>{t('逐图赛果','MAP RESULTS')}</b><span data-lead-print-note>{leadPrintNote}</span><SourceLink t={t} withSeason={withSeason} article={lead}/></div><MapTimeline article={lead} locale={locale} t={t}/></div>}
         </div>
-        <div className={styles.recordsLine}><span>{t('黄色 / 左队胜 · 黑色 / 右队胜','Yellow / left-team win · black / right-team win')}</span><Link data-paper-web-only to={withSeason(weeklyPeriodPath('/matches',report.cycle,report.week))}>{t('本周全部比赛记录','All weekly match records')} →</Link></div>
+        <div className={styles.recordsLine}><span>{(!newspaper.playoff||Boolean(lead?.sequence.length))&&t('黄色 / 左队胜 · 黑色 / 右队胜','Yellow / left-team win · black / right-team win')}</span><Link data-paper-web-only to={withSeason(weeklyPeriodPath('/matches',report.cycle,report.week))}>{t('本周全部比赛记录','All weekly match records')} →</Link></div>
         <ResultRoundup newspaper={newspaper} t={t} withSeason={withSeason}/>
-        <DataCuriosities facts={newspaper.funFacts} stories={newspaper.dataStories} locale={locale} t={t} withSeason={withSeason}/>
+        {newspaper.playoff?<PlayoffNewspaperPath playoff={newspaper.playoff} locale={locale} withSeason={withSeason}/>:<DataCuriosities facts={newspaper.funFacts} stories={newspaper.dataStories} locale={locale} t={t} withSeason={withSeason}/>}
         <WeeklyHonours awards={report.awards} t={t} locale={locale} seasonId={seasonId} withSeason={withSeason}/>
-        <WeeklyTrends newspaper={newspaper} report={report} locale={locale} t={t}/>
+        {!newspaper.playoff&&<WeeklyTrends newspaper={newspaper} report={report} locale={locale} t={t}/>}
         <UpdatesDesk updates={newspaper.updates} t={t}/>
         {!report.publication&&<p className={styles.editionNote}>{t('样报','SAMPLE')}</p>}
       </NewspaperSheet>
