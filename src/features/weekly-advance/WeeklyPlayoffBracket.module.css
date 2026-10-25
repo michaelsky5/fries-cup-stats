@@ -3,6 +3,15 @@
 .section .bracketHeading::after { content: '02'; font-size: 170px; bottom: -34px; }
 .section .bracketHeading h2 { font-size: clamp(34px, 3.4vw, 52px); line-height: 1.05; }
 .section .bracketHeading > p { font-size: 12px; padding-top: 12px; }
+/* 票 2.32: the bracket is what this page is for. From 761px the chapter opener shrinks to one band
+   and the two outline numerals go, so the final placements and the bracket start in the first screen. */
+@media (min-width: 761px) {
+  .section.section { padding-top: 24px; padding-bottom: 56px; }
+  .section.section::after, .section .bracketHeading::after { display: none; }
+  .section .bracketHeading { min-height: 0; padding: 18px var(--kpr-gutter); align-items: center; }
+  .section .bracketHeading h2 { font-size: clamp(26px, 2.2vw, 34px); line-height: 1.2; }
+  .section .bracketHeading h2 > em { display: inline; }
+}
 .bracketOverview { min-width: 0; padding: 0 var(--kpr-gutter); background: var(--fc-data-paper, #eeede6); scroll-margin-top: calc(var(--kpr-header-height, 124px) + 20px); }
 .bracketTeamDock { margin-inline: 0; color: #eeede6; background: #181a17; }
 .bracketTeamDock > div { grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
