@@ -402,7 +402,8 @@
 @media (min-width: 1180px) {
   :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .firstPick { align-content: start; }
   :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .firstPickConfirmation { justify-content: flex-start; }
-  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening :is(.firstPick, .firstPickConfirmation) :is(.waiting, .start) { padding-inline: 0; text-align: start; }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening :is(.firstPick, .firstPickConfirmation) :is(.waiting, .start) { padding-inline: 0; }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening :is(.waiting, .start, .result) { align-items: flex-start; text-align: start; }
   :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice { text-align: start; }
   :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice .order { padding-inline: 0; }
 }
