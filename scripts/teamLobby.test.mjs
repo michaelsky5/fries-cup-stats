@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { readdirSync, readFileSync } from 'node:fs'
-import { safeLobbyReturn, accountFailure, roleLabel, statusLabel, leavesLobbyPage, lobbyReadFailure, canPublishLobby, lobbyRegistrationMessage, lobbyCardCopy, needsLabel, ERROR_COPY, FIELD_COPY, retryableRead, uncertainWrite } from '../src/features/team-lobby/lobbyModel.js'
+import { safeLobbyReturn, accountFailure, roleLabel, statusLabel, leavesLobbyPage, lobbyReadFailure, canPublishLobby, lobbyRegistrationMessage, lobbyCardCopy, needsLabel, ERROR_COPY, FIELD_COPY, retryableRead, uncertainWrite, contactReason, contactResultKind } from '../src/features/team-lobby/lobbyModel.js'
 import { lobbyText, lobbyNoticeCopy, lobbyCopyRows } from '../src/features/team-lobby/lobbyCopy.js'
 
 test('account continuation only retains a local lobby destination and public reading state', () => {
@@ -129,4 +129,17 @@ test('reads explain what happened without implying a write, and say when retryin
   assert.equal(uncertainWrite({ data: { error: 'INVALID_INPUT' } }), false)
   assert.equal(uncertainWrite({ data: { error: 'LOBBY_CONFLICT' } }), true)
   assert.equal(uncertainWrite(new TypeError('Failed to fetch')), true)
+})
+
+test('contact copy is written for the side reading it', () => {
+  assert.equal(contactResultKind({ status: 'PENDING', received: false, message: '你好，想试训。' }, ' 你好，想试训。 '), 'SENT')
+  // The server returns an existing open contact instead of saving the new message.
+  assert.equal(contactResultKind({ status: 'PENDING', received: false, message: '上周发的留言' }, '你好，想试训。'), 'EXISTING')
+  assert.equal(contactResultKind({ status: 'PENDING', received: true, message: '欢迎来试训' }, '你好，想试训。'), 'AWAITING_YOU')
+  assert.equal(contactResultKind({ status: 'CONNECTED', received: true, message: '欢迎来试训' }, '你好'), 'CONNECTED')
+  assert.equal(contactReason('REQUEST_EXPIRED', true), '你没有在有效期内回应，请求已到期。')
+  assert.equal(contactReason('REQUEST_EXPIRED', false), '对方未在有效期内回应。')
+  assert.equal(contactReason('DECLINED', true), '你已选择暂不联系。')
+  assert.equal(contactReason('DECLINED', false), '对方暂不联系。')
+  assert.equal(contactReason('UNKNOWN_REASON', true), '')
 })

@@ -183,8 +183,6 @@ const rows = [
   ['先核对已发记录', 'Check sent requests first', '보낸 요청 먼저 확인', '先核對已寄送紀錄'],
   ['放弃未发送内容后，本次 QQ 和留言会清空。', 'Discarding this draft clears its QQ and message.', '작성을 취소하면 QQ와 메시지가 지워집니다.', '放棄未寄送內容後，本次 QQ 和留言會清空。'],
   ['放弃并关闭', 'Discard and close', '삭제하고 닫기', '放棄並關閉'],
-  ['联系记录已保存', 'Contact request saved', '연락 기록 저장 완료', '聯絡紀錄已儲存'],
-  ['如已有同一联系，将直接使用原记录。', 'An existing active contact uses the original record.', '같은 연락이 진행 중이면 기존 기록을 사용합니다.', '如已有相同聯絡，將直接使用原紀錄。'],
   ['查看这次联系', 'View this contact', '이번 연락 보기', '查看這次聯絡'],
   ['关闭', 'Close', '닫기', '關閉'],
   ['以哪支队伍联系', 'Contacting for which team?', '어느 팀을 대표하나요?', '以哪支隊伍聯絡'],
@@ -201,7 +199,6 @@ const rows = [
   ['全部联系', 'All contacts', '모든 연락', '全部聯絡'],
   ['刷新记录', 'Refresh', '새로고침', '重新整理紀錄'],
   ['正在读取联系…', 'Loading contacts…', '연락 불러오는 중…', '正在讀取聯絡…'],
-  ['本页 {0} 条可回应联系；标记已读不会代替回应。', '{0} requests on this page need a reply. Marking them read does not reply.', '이 페이지에 응답할 요청이 {0}개 있습니다. 읽음 표시는 응답을 대신하지 않습니다.', '本頁 {0} 條可回應聯絡；標記已讀不會代替回應。'],
   ['暂无联系记录。可以先到大厅寻找合适的需求。', 'No contact records yet. Browse the lobby for a match.', '아직 연락 기록이 없습니다. 팀 찾기에서 적합한 카드를 찾아보세요.', '暫無聯絡紀錄。可以先到大廳尋找合適的需求。'],
   ['收到', 'Received', '받음', '收到'],
   ['发出', 'Sent', '보냄', '寄出'],
@@ -387,6 +384,21 @@ rows.push(
   ['重新发布，展示 14 天', 'Republish for 14 days', '다시 게시 (14일)', '重新發布，展示 14 天'],
   ['已于 {0} 到期', 'Expired {0}', '{0} 만료', '已於 {0} 到期'],
   ['已关闭，不在大厅展示', 'Closed · not shown in the lobby', '닫힘 · 팀 찾기에 표시되지 않음', '已關閉，不在大廳展示']
+)
+// Contact results and reasons, worded for the side reading them.
+rows.push(
+  ['联系请求已发送', 'Contact request sent', '연락 요청을 보냈습니다', '聯絡請求已寄出'],
+  ['对方最长 7 天内回应；双方都授权后才会看到本次 QQ。', 'They have up to 7 days to reply. QQ is shown only after both of you consent.', '상대방은 최대 7일 안에 응답합니다. 양쪽 모두 동의한 뒤에만 이번 QQ가 표시됩니다.', '對方最長 7 天內回應；雙方都授權後才會看到本次 QQ。'],
+  ['你之前发出的联系请求仍在等待回应', 'Your earlier request is still waiting for a reply', '이전에 보낸 연락 요청이 아직 응답을 기다리고 있습니다', '你之前寄出的聯絡請求仍在等待回應'],
+  ['本次填写的留言和 QQ 没有发送，原请求保持不变。', 'The message and QQ you just entered were not sent; the earlier request is unchanged.', '방금 입력한 메시지와 QQ는 보내지 않았으며 기존 요청은 그대로입니다.', '本次填寫的留言和 QQ 沒有寄出，原請求保持不變。'],
+  ['对方已经向你发出联系请求', 'They already sent you a contact request', '상대방이 이미 연락 요청을 보냈습니다', '對方已經向你寄出聯絡請求'],
+  ['你们之间已有一条待你回应的联系。本次填写的留言和 QQ 没有发送，请在联系详情中回应。', 'A request is already waiting for your reply. The message and QQ you just entered were not sent; reply in the contact details.', '답변을 기다리는 연락이 이미 있습니다. 방금 입력한 메시지와 QQ는 보내지 않았습니다. 연락 상세에서 응답하세요.', '你們之間已有一條待你回應的聯絡。本次填寫的留言和 QQ 沒有寄出，請在聯絡詳情中回應。'],
+  ['去回应这次联系', 'Reply to this request', '이 요청에 응답하기', '去回應這次聯絡'],
+  ['你们已经在联系中', 'You are already connected', '이미 연락 중입니다', '你們已經在聯絡中'],
+  ['本次填写的留言和 QQ 没有发送；可以在联系详情查看本次授权。', 'The message and QQ you just entered were not sent. Open this contact to see what was shared.', '방금 입력한 메시지와 QQ는 보내지 않았습니다. 연락 상세에서 이번 동의 내용을 확인하세요.', '本次填寫的留言和 QQ 沒有寄出；可以在聯絡詳情查看本次授權。'],
+  ['你没有在有效期内回应，请求已到期。', 'You did not reply before the request expired.', '기한 내에 응답하지 않아 요청이 만료되었습니다.', '你沒有在有效期內回應，請求已到期。'],
+  ['你已选择暂不联系。', 'You declined this contact.', '이 연락을 거절했습니다.', '你已選擇暫不聯絡。'],
+  ['本页有 {0} 条联系等待你回应。', '{0} requests on this page are waiting for your reply.', '이 페이지에 응답을 기다리는 요청이 {0}개 있습니다.', '本頁有 {0} 條聯絡等待你回應。']
 )
 export const lobbyCopyRows = rows
 const copy = new Map(rows.map(([source, en, ko, tw]) => [source, { 'en-US': en, 'ko-KR': ko, 'zh-TW': tw }]))

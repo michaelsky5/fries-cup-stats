@@ -5,14 +5,10 @@ import { Link, useBlocker, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { startVisiblePolling } from '../../lib/visiblePolling.js'
 import { useLobbyMine } from './useLobbyState.js'
-import { accountFailure, lobbyDate, leavesLobbyPage, lobbyReadFailure, retryableRead, uncertainWrite } from './lobbyModel.js'
+import { accountFailure, lobbyDate, leavesLobbyPage, lobbyReadFailure, retryableRead, uncertainWrite, contactStatus, contactReason, contactResultKind } from './lobbyModel.js'
 import { reportInvalidField, revealAlert } from './lobbyFocus.js'
 import * as api from './lobbyApi.js'
 import styles from './Lobby.module.css'
-
-export const contactStatus = value => ({ PENDING: t("待回应"), CONNECTED: t("联系中"), DECLINED: t("暂不联系"), WITHDRAWN: t("已撤回"), ENDED: t("已结束"), EXPIRED: t("已到期") })[value] || value
-export const contactReason = value => ({ AUTHORITY_CHANGED: t("账号、负责人或大厅权限已变化，请重新申请联系。"), CARD_UNAVAILABLE: t("原需求已关闭、到期或被隐藏。"),
-  REQUEST_EXPIRED: t("对方未在有效期内回应。"), CONSENT_REVOKED: t("一方已撤销本次 QQ 授权。"), ENDED_BY_PARTY: t("一方已结束联系。"), DECLINED: t("对方暂不联系。"), WITHDRAWN: t("发起人已撤回。") })[value] || ''
 
 function useDraftGuard(dirty) {
   useUiLocale()
@@ -76,13 +72,14 @@ function ContactComposer({ card, teams, onClose }) {
   const [busy, setBusy] = useState(false), [error, setError] = useState(null), [result, setResult] = useState(null), [discard, setDiscard] = useState(false)
   const dirty = !result && Boolean(message || qq || consent), guard = useDraftGuard(dirty)
   const close = useCallback(() => { if (!busy) { if (dirty) setDiscard(true); else onClose() } }, [busy, dirty, onClose])
-  const alertRef = useRef(null)
+  const alertRef = useRef(null), sent = useRef('')
+  const resultKind = result && contactResultKind(result, sent.current)
   useEffect(() => { const element = dialog.current; element?.showModal(); return () => element?.close() }, [])
   useEffect(() => { if (error) revealAlert(alertRef.current) }, [error])
   async function submit(event) {
     event.preventDefault(); if (locked.current || !consent) return
     if (!message.trim()) { reportInvalidField(event.currentTarget.elements.namedItem('message'), t("请填写「{0}」，不能只输入空格。", [t("简短留言")])); return }
-    locked.current = true; setBusy(true); setError(null)
+    locked.current = true; setBusy(true); setError(null); sent.current = message.trim()
     try {
       const value = await api.createContact({ operationId: operation.current, targetCardPublicId: card.publicId,
         ...(card.kind === 'PERSON' ? { teamId } : {}), message: message.trim(), qq, consent })
@@ -94,7 +91,10 @@ function ContactComposer({ card, teams, onClose }) {
     <div className={styles.dialogHeader}><h2 id="lobby-contact-title">{t("联系")} {card.title}</h2><button onClick={close} disabled={busy} aria-label={t("关闭联系表单")}>×</button></div>
     {guard}{error && <p ref={alertRef} tabIndex={-1} role="alert" className={styles.error}>{accountFailure(error)}{uncertainWrite(error) && <> <Link to="/lobby/me?tab=sent">{t("先核对已发记录")}</Link></>}</p>}
     {discard && <div role="alert" className={styles.notice}><p>{t("放弃未发送内容后，本次 QQ 和留言会清空。")}</p><button onClick={() => setDiscard(false)}>{t("继续填写")}</button><button onClick={onClose}>{t("放弃并关闭")}</button></div>}
-    {result ? <div className={styles.stack}><h3>{t("联系记录已保存")}</h3><p>{contactStatus(result.status)}</p><p>{t("如已有同一联系，将直接使用原记录。")}</p><Link className={styles.primary} to={`/lobby/me?tab=contacts&requestId=${result.id}`}>{t("查看这次联系")}</Link><button onClick={onClose}>{t("关闭")}</button></div>
+    {result ? <div className={styles.stack}>
+        <h3>{resultKind === 'AWAITING_YOU' ? t("对方已经向你发出联系请求") : resultKind === 'CONNECTED' ? t("你们已经在联系中") : resultKind === 'EXISTING' ? t("你之前发出的联系请求仍在等待回应") : t("联系请求已发送")}</h3>
+        <p>{resultKind === 'AWAITING_YOU' ? t("你们之间已有一条待你回应的联系。本次填写的留言和 QQ 没有发送，请在联系详情中回应。") : resultKind === 'CONNECTED' ? t("本次填写的留言和 QQ 没有发送；可以在联系详情查看本次授权。") : resultKind === 'EXISTING' ? t("本次填写的留言和 QQ 没有发送，原请求保持不变。") : t("对方最长 7 天内回应；双方都授权后才会看到本次 QQ。")}</p>
+        <Link className={styles.primary} to={`/lobby/me?tab=${resultKind === 'AWAITING_YOU' ? 'received' : 'contacts'}&requestId=${result.id}`}>{resultKind === 'AWAITING_YOU' ? t("去回应这次联系") : t("查看这次联系")}</Link><button onClick={onClose}>{t("关闭")}</button></div>
       : <form className={styles.stack} onSubmit={submit}>
         {card.kind === 'PERSON' && <label>{t("以哪支队伍联系")}<select value={teamId} onChange={event => setTeamId(event.target.value)} disabled={busy} required>{teams.map(team => <option key={team.id} value={team.id}>{team.name}</option>)}</select><small>{t("由当前登录负责人本人处理，不向其他队员共享 QQ。")}</small></label>}
         <label>{t("简短留言")}<textarea name="message" value={message} onChange={event => setMessage(event.target.value)} maxLength={500} rows={4} required disabled={busy} /><small>{t("请勿在留言中填写私人联系方式。")}</small></label>
@@ -128,9 +128,9 @@ export function ContactInbox({ direction, config, onChanged }) {
   return <section aria-label={t("联系列表")}><div className={styles.sectionHeading}><h2>{direction === 'received' ? t("收到的联系") : direction === 'sent' ? t("发出的联系") : t("全部联系")}</h2><button onClick={() => polling.current?.refresh()}>{t("刷新记录")}</button></div>
     {error && <p role="alert" className={styles.error}>{lobbyReadFailure(error)}{data && <> {t("已显示的记录可能过时。")}</>}</p>}
     {!data && !error && <p role="status">{t("正在读取联系…")}</p>}
-    {data && <><p>{t('本页 {0} 条可回应联系；标记已读不会代替回应。', [data.pendingOnPage])}</p>
+    {data && <>{data.pendingOnPage > 0 && <p>{t('本页有 {0} 条联系等待你回应。', [data.pendingOnPage])}</p>}
       {!data.contacts.length && <p className={styles.empty}>{t("暂无联系记录。可以先到大厅寻找合适的需求。")}</p>}
-      {data.contacts.map(row => <article key={row.id} className={styles.progress}><div><h3>{row.perspective === 'PERSON' ? row.teamName : row.personName}</h3><p>{contactStatus(row.status)} · {row.received ? t("收到") : t("发出")} · {lobbyDate(row.createdAt)}</p>{row.reason && <p>{contactReason(row.reason)}</p>}</div><button onClick={() => select(row.id)}>{t("查看联系")}</button></article>)}
+      {data.contacts.map(row => <article key={row.id} className={styles.progress}><div><h3>{row.perspective === 'PERSON' ? row.teamName : row.personName}</h3><p>{contactStatus(row.status)} · {row.received ? t("收到") : t("发出")}{row.perspective === 'TEAM' && row.teamName ? ` · ${row.teamName}` : ''} · {lobbyDate(row.createdAt)}</p>{row.reason && <p>{contactReason(row.reason, row.received)}</p>}</div><button onClick={() => select(row.id)}>{t("查看联系")}</button></article>)}
       <div className={styles.pagination}><button disabled={page <= 1} onClick={() => setQuery(current => { current.set('contactPage', String(page - 1)); return current })}>{t("上一页")}</button><span>{t('第 {0} 页 · {1} 条', [page, data.total])}</span><button disabled={page * data.pageSize >= data.total} onClick={() => setQuery(current => { current.set('contactPage', String(page + 1)); return current })}>{t("下一页")}</button></div>
     </>}
   </section>
@@ -191,7 +191,7 @@ function ContactDetail({ id, config, onBack, onChanged }) {
     {row && <article className={styles.detail}><div className={styles.sectionHeading}><h2>{row.personName} ↔ {row.teamName}</h2><strong>{contactStatus(row.status)}</strong></div>
       <p>{t("本次队伍处理人：")}{row.handlerName}</p><p className={styles.bodyCopy}>{row.message}</p>
       <p>{t("发起于")} {lobbyDate(row.createdAt)}{row.status === 'PENDING' && t(' · 回应期限 {0}', [lobbyDate(row.expiresAt)])}</p>
-      {row.reason && <p className={styles.notice}>{contactReason(row.reason)}</p>}
+      {row.reason && <p className={styles.notice}>{contactReason(row.reason, row.received)}</p>}
       {row.canAccept && <form className={styles.stack} onSubmit={event => { event.preventDefault(); act('ACCEPT') }}>
         <label>{t("本次联系 QQ")}<input value={qq} onChange={event => setQq(event.target.value)} inputMode="numeric" pattern="[1-9][0-9]{4,11}" autoComplete="off" minLength={5} maxLength={12} required disabled={busy} /></label>
         <label className={styles.consent}><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} disabled={busy} required /><span>{t("我愿意联系，并仅向本次对方授权展示这个 QQ。")}</span></label>
