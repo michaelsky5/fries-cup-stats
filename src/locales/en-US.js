@@ -10466,5 +10466,8 @@ export default {
   "{0}：{1} · 第 {2} 图": "{0}: {1} · Map {2}",
   "末两图逆转": "Final-two-map comeback",
   "五图全胜": "Five-map sweep",
-  "四图连胜": "Four-map streak"
+  "四图连胜": "Four-map streak",
+  "登录或注册参赛账号，验证邮箱后就能创建队伍报名。队员请打开队长发来的入队链接。": "Sign in or create a player account; once your email is verified you can start a team registration. Players open the join link their captain sends.",
+  "不限，随时可以报名": "None: registration stays open",
+  "自己当队长：创建新队伍": "Lead your own team: start a new registration"
 }
