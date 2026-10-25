@@ -63,6 +63,20 @@ export function weeklyFormatLabel(match, locale) {
 
 // Times are Beijing time; the Chinese interface says so once per page instead of after every time.
 export const showsInlineTimeZone = locale => !isChineseLocale(locale)
+// The shared phase table has no Korean or Traditional Chinese for 晋级加赛, so the four names are
+// spelled out here (zh-CN, en, ko, zh-TW), matching the advance page.
+export const WEEKLY_PHASE_NAMES = {
+  QUALIFIER: ['晋级加赛', 'Tiebreak qualifier', '진출권 결정전', '晉級加賽'],
+  PLAYOFFS: ['季后赛', 'Playoffs', '플레이오프', '季後賽'],
+  MAJOR: ['巅峰赛', 'Finals', '파이널', '巔峰賽']
+}
+
+// 票 2.30: the week rail sits under the cycle name, so a phase week reads 季后赛, not 第一赛段季后赛.
+export const weeklyWeekRailTitle = (week, locale) => {
+  const names = WEEKLY_PHASE_NAMES[String(week?.phase || '').toUpperCase()]
+  return names ? pickUiLocale(locale, ...names) : weeklyWeekTitle(week, locale)
+}
+
 export const weeklyWeekTitle = (week, locale) => {
   if (isEnglish(locale)) return `Week ${week?.week_number}`
   const fallback = `第 ${week?.week_number} 周`

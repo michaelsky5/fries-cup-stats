@@ -23,7 +23,8 @@
 .cycleMenu > button:hover { background: var(--fc-data-paper-deep); }
 .cycleMenu > button:focus-visible { outline: 1px solid var(--fc-data-focus-on-light); outline-offset: -3px; }
 .cycleBar > span { color: var(--fc-data-text-muted); }
-.weekRail { display: grid; grid-auto-columns: minmax(150px, 1fr); grid-auto-flow: column; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--fc-data-line-strong) transparent; border-block: 1px solid var(--fc-data-line); }
+/* 票 2.30: short labels without per-week 已结束 fit six or seven weeks in one row from 1280px. */
+.weekRail { display: grid; grid-auto-columns: minmax(120px, 1fr); grid-auto-flow: column; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--fc-data-line-strong) transparent; border-block: 1px solid var(--fc-data-line); }
 .weekRail .weekItem { justify-content: space-between; gap: 12px; }
 .weekItem > span { display: flex; gap: 12px; align-items: center; white-space: nowrap; }
 .weekItem b { color: var(--fc-data-text-muted); font: 900 16px var(--fc-data-font-display); }

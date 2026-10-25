@@ -1,6 +1,6 @@
 import { pickUiLocale } from '../../lib/uiText.js'
 import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
-import { weeklyTeamShort } from '../weekly-overview/weeklyPresentation.js'
+import { WEEKLY_PHASE_NAMES, weeklyTeamShort } from '../weekly-overview/weeklyPresentation.js'
 
 // Reading a published cover must not load the award generator or scoring engine.
 export const newspaperTeamName = team => weeklyTeamShort(team) === '?' ? team?.name || team?.team_name || '?' : weeklyTeamShort(team)
@@ -47,19 +47,11 @@ export function newspaperIssueDate(value, locale = 'zh-CN') {
   return String(locale).startsWith('en') ? `${parts.day}/${parts.month}` : `${parts.month}/${parts.day}`
 }
 
-// The shared phase table has no Korean or Traditional Chinese for 晋级加赛, so the four names are
-// spelled out here, matching the advance page.
-const PHASE_NAMES = {
-  QUALIFIER: ['晋级加赛', 'Tiebreak qualifier', '진출권 결정전', '晉級加賽'],
-  PLAYOFFS: ['季后赛', 'Playoffs', '플레이오프', '季後賽'],
-  MAJOR: ['巅峰赛', 'Finals', '파이널', '巔峰賽']
-}
-
 // 第 5 周（晋级加赛）: the week number, plus the phase when it is not an ordinary prelim week.
 export function newspaperWeekLabel(week, locale = 'zh-CN') {
   const number = week?.week_number
   const base = pickUiLocale(locale, `第 ${number} 周`, `Week ${number}`, `${number}주차`, `第 ${number} 週`)
-  const names = PHASE_NAMES[week?.phase]
+  const names = WEEKLY_PHASE_NAMES[week?.phase]
   const phase = names ? pickUiLocale(locale, ...names) : week?.phase && week.phase !== 'REGULAR' ? getWeeklyPhaseLabel(week.phase, locale) : ''
   return phase ? pickUiLocale(locale, `${base}（${phase}）`, `${base} (${phase})`, `${base} (${phase})`, `${base}（${phase}）`) : base
 }
