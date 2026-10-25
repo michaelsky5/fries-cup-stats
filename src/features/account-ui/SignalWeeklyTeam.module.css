@@ -118,7 +118,7 @@
 .workspace [hidden] { display: none; }
 .workHeader { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .workHeader > div > span { font: 800 13px/1.4 var(--fc-data-font-display); color: var(--fc-data-text-muted); }
-.workHeader h2 { margin: 4px 0 0; font-size: 24px; }
+.workHeader h2 { margin: 0; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .workHeader button { background: transparent; border-color: transparent; font-weight: 500; }
 .enrollment { display: grid; gap: 16px; padding-block: 16px; border-top: 1px solid var(--fc-data-line); }
 .enrollment > header { display: grid; gap: 8px; }
@@ -195,7 +195,7 @@
 @media (max-width: 600px) {
   .workspace { gap: 12px; }
   .workHeader > div > span { display: none; }
-  .workHeader h2 { margin: 0; font-size: 22px; }
+  .workHeader h2 { margin: 0; }
   .workHeader button { min-height: 44px; padding-inline: 8px; white-space: nowrap; }
   .preparationReturn { padding-block: 8px; gap: 4px 10px; }
   .stepRail { grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); }

@@ -35,7 +35,7 @@
 .resultCount small { font-size: 11px; color: var(--fc-data-text-muted); }
 .reset { display: inline-flex; align-items: center; min-height: 44px; margin-top: 14px; padding: 8px 14px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper); color: var(--fc-data-ink); }
 .sectionHeader { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px; }
-.workspace .sectionHeader :is(h2, h3), .digest .sectionHeader h2 { margin: 8px 0 0; font-size: 30px; line-height: 1.35; }
+.workspace .sectionHeader :is(h2, h3), .digest .sectionHeader h2 { margin: 0; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .sectionHeader > small { font-size: 11px; color: var(--fc-data-text-muted); white-space: nowrap; }
 .textLink { color: var(--fc-data-ink); font-size: 13px !important; white-space: nowrap; padding-block: 10px; }
 .filters { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0 0; overflow-x: auto; scrollbar-width: thin; }
@@ -181,7 +181,6 @@
   .viewSwitch button { min-height: 48px; gap: 6px; padding: 8px; font-size: 13px; }
   .feed { scroll-margin-top: 76px; }
   .sectionHeader { gap: 4px; padding: 16px; }
-  .workspace .sectionHeader :is(h2, h3) { margin: 0; font-size: 21px; }
   .sectionHeader > small { font-size: 12px; }
   .matchRow { padding: 16px; gap: 12px 8px; }
   .duel { gap: 8px; }

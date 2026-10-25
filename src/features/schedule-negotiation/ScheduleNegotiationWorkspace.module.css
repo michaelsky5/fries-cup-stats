@@ -44,7 +44,7 @@
 /* FC Signal: account workspaces share the public paper and section rhythm. */
 .workspace { color: var(--fc-data-ink); font-family: var(--font-sans); border-top: 1px solid var(--fc-data-line); }
 .header { padding-bottom: 22px; border-bottom: 1px solid var(--fc-data-line); }
-.header h3 { margin: 8px 0 10px; font-size: 26px; line-height: 1.4; }
+.header h3 { margin: 0 0 8px; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .header p { font-size: 13px; line-height: 1.8; font-weight: 400; color: var(--fc-data-text-muted); }
 .header > div > span { color: var(--fc-data-text-muted); font: 900 17px/1.2 var(--fc-data-font-display); }
 .workspace :is(input,select,textarea,button) { border-radius: 0; min-height: 44px; font-size: 14px; }
