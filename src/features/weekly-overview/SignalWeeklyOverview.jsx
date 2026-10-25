@@ -28,17 +28,6 @@ import styles from './SignalWeeklyOverview.module.css'
 const fullName = team => team?.name || team?.team_name || shortName(team)
 const idOf = team => team?.id || team?.team_id
 
-// Weekly registration is normally open-ended. When System does set a deadline the
-// note shows it, and the link goes away once it has passed (System rejects late writes).
-function registrationNote(db, now, locale) {
-  const registration = db?.season?.rules?.registration
-  if (registration?.enabled !== true) return null
-  const closesAt = Date.parse(registration.closesAt || '')
-  if (!Number.isFinite(closesAt)) return pickUiLocale(locale, '随时可以报名', 'Open any time', '언제든 등록 가능', '隨時可以報名')
-  if (closesAt <= now) return null
-  const time = new Intl.DateTimeFormat(String(locale).startsWith('en') ? 'en-GB' : 'zh-CN', { timeZone: 'Asia/Shanghai', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(closesAt))
-  return pickUiLocale(locale, `${time} 截止`, `Closes ${time}`, `${time} 마감`, `${time} 截止`)
-}
 
 const mediaStore = query => ({
   subscribe: callback => {
@@ -119,7 +108,6 @@ export default function SignalWeeklyOverview() {
   const en = String(locale).startsWith('en')
   const t = (zh, english) => en ? english : zh
   const [openedAt] = useState(() => Date.now())
-  const registration = registrationNote(db, openedAt, locale)
   const weeklyPlan = getSeasonById(seasonId)?.weeklyPlan || null
   const phases = useMemo(() => buildWeeklyPhases(db, { now: openedAt, plan: weeklyPlan }), [db, openedAt, weeklyPlan])
   const status = key => weeklyStatusLabel(key, locale)
@@ -206,7 +194,7 @@ export default function SignalWeeklyOverview() {
       ? pickUiLocale(locale, '赛果与选手数据', 'Results & player statistics', '경기 결과와 선수 기록', '賽果與選手數據')
       : pickUiLocale(locale, '本赛段尚未出刊', 'No issue this cycle yet', '이번 주기 발행 전', '本賽段尚未出刊')
   const reportLink = <Link className={styles.rulesLink} data-weekly-report-archive-link data-report-latest-week={latestIssue?.report.week.week_number} to={withSeason(`/reports?cycle=${encodeURIComponent(selectedCycleId || '')}`)}>{pickUiLocale(locale, '周报归档', 'Weekly reports', '주간 신문', '週報歸檔')} <span aria-hidden="true">→</span><small>{reportFreshness}</small></Link>
-  const quickLinks = <div className={styles.headingActions} data-weekly-quick-links="true"><a className={styles.rulesLink} href={rulebookUrl} target="_blank" rel="noreferrer">{t(uiText("规则中心", locale), 'Rulebook')} <span aria-hidden="true">↗</span><small>{cycle?.rulebook?.version ? `V${cycle.rulebook.version}` : t(uiText("完整条款与历史版本", locale), 'Rules & version history')}</small></a><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a>{registration ? <Link className={styles.rulesLink} data-weekly-registration-link to={withSeason(`/participate/${encodeURIComponent(seasonId)}`)}>{pickUiLocale(locale, '报名参赛', 'Register a team', '팀 등록', '報名參賽')} <span aria-hidden="true">→</span><small>{registration}</small></Link> : null}{reportLink}</div>
+  const quickLinks = <div className={styles.headingActions} data-weekly-quick-links="true"><a className={styles.rulesLink} href={rulebookUrl} target="_blank" rel="noreferrer">{t(uiText("规则中心", locale), 'Rulebook')} <span aria-hidden="true">↗</span><small>{cycle?.rulebook?.version ? `V${cycle.rulebook.version}` : t(uiText("完整条款与历史版本", locale), 'Rules & version history')}</small></a><a className={styles.rulesLink} href="https://fries-cup.com/events/weekly/" target="_blank" rel="noreferrer">{t(uiText("了解周赛", locale), 'About the weekly')} <span aria-hidden="true">↗</span><small>{t(uiText("赛制与参赛说明", locale), 'Format & participation')}</small></a>{reportLink}</div>
   // Supporter thanks keep their place above the matches; the funding link moves to the end of the page.
   const supporterThanks = seasonId === 'FCW26' ? <SupporterThanks seasonId="FCW26" withSeason={withSeason} locale={locale} /> : null
   const supportLink = seasonId === 'FCW26' ? <div className={styles.supportEntry}><Link to={withSeason('/support')}>{pickUiLocale(locale,'周赛支持与资金进度','Weekly support & funding','주간 대회 후원 및 자금 현황','週賽支持與資金進度')} →</Link></div> : null

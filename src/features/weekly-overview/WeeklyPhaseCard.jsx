@@ -131,7 +131,8 @@ export default function WeeklyPhaseCard({ phases, plan, locale, withSeason, now,
   const actionNode = (action, index) => action.href
     ? <a key={index} className={action.primary ? styles.primary : styles.secondary} href={action.href} target="_blank" rel="noreferrer">{action.label} <span aria-hidden="true">↗</span></a>
     : <Link key={index} className={action.primary ? styles.primary : styles.secondary} to={action.to}>{action.label} <span aria-hidden="true">→</span></Link>
-  return <section className={styles.phase} data-weekly-phase={phase.kind} aria-label={pickUiLocale(locale, '赛事现在', 'Right now', '지금 대회', '賽事現在')}>
+  // 票 2.31: on wide screens the phases that also hold right now sit beside the main card, not under it.
+  return <section className={rest.length ? `${styles.phase} ${styles.withRows}` : styles.phase} data-weekly-phase={phase.kind} aria-label={pickUiLocale(locale, '赛事现在', 'Right now', '지금 대회', '賽事現在')}>
     <div className={styles.main}>
       <p className={styles.eyebrow}>{view.eyebrow}</p>
       <h2 className={styles.title}>{view.title}</h2>

@@ -24,6 +24,14 @@
 .rows li + li { border-top: 1px solid var(--fc-data-line); }
 .phase .rows a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; flex-shrink: 0; font-weight: 700; white-space: nowrap; }
 .phase .rows a > span { color: var(--fc-data-focus-on-light, #806000); }
+/* 票 2.31: beside the main card from 961px, so the card has no empty right half and one band less. */
+@media (min-width: 961px) {
+  .withRows { display: grid; grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr); }
+  .withRows .rows { display: grid; align-content: center; padding: 8px 24px; border-top: 0; border-left: 1px solid var(--fc-data-line); }
+  .withRows .rows li { display: grid; justify-items: start; gap: 10px; padding: 14px 0; font: 650 15px/1.5 var(--font-sans); }
+  .withRows .rows a { padding: 0 16px; border: 1px solid var(--fc-data-line-strong); font-size: 14px; }
+  .withRows .rows a:hover { background: var(--fc-data-paper-deep); }
+}
 @media (max-width: 600px) {
   .phase { margin-top: 12px; }
   .main { gap: 8px; padding: 14px 14px 16px; }

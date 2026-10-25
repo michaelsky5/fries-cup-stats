@@ -67,7 +67,7 @@ function getReadableStatus(seasonStatus, locale = 'zh-CN', season = null) {
   const key = getSeasonStatusKey(season, seasonStatus)
   if (key === 'archive') return contextText(locale, uiText('赛季已归档', locale), 'Season Archived', '시즌 아카이브 완료')
   if (key === 'live') return contextText(locale, uiText('比赛进行中', locale), 'Live', '경기 진행 중')
-  if (key === 'active') return contextText(locale, uiText('赛事进行中', locale), 'Season Active', '시즌 진행 중')
+  if (key === 'active') return contextText(locale, uiText('赛季进行中', locale), 'Season Active', '시즌 진행 중')
   if (key === 'scheduled') return contextText(locale, uiText('赛程已发布', locale), 'Schedule Published', '일정 공개')
   return contextText(locale, uiText('赛程待发布', locale), 'Schedule Pending', '일정 공개 대기')
 }
