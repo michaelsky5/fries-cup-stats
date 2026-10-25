@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams, useSearchParams, useBlocker } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import * as api from './lobbyApi.js'
-import { LOBBY_ROLES, roleLabel, lobbyDate, accountFailure, leavesLobbyPage, lobbyReadFailure, canPublishLobby, lobbyRegistrationMessage } from './lobbyModel.js'
+import { LOBBY_ROLES, roleLabel, lobbyDate, accountFailure, leavesLobbyPage, lobbyReadFailure, canPublishLobby, lobbyRegistrationMessage, lobbyCardCopy, needsLabel } from './lobbyModel.js'
 import styles from './Lobby.module.css'
 import { useLobbyMine as useMine } from './useLobbyState.js'
 import { ContactEntry } from './LobbyContacts.jsx'
@@ -27,12 +27,15 @@ function Access({ children, write = false, data }) {
 }
 function CardSummary({ card, returnTo }) {
   useUiLocale()
+  const copy = lobbyCardCopy(card.kind)
 
   return <article className={styles.card}>
     <div className={styles.cardTop}><span className={styles.eyebrow}>{card.kind === 'PERSON' ? t("个人找队") : card.forming ? t("组队中") : t("队伍招募")}</span><span>{card.roles.map(roleLabel).join(' / ')}</span></div>
     <h2><Link to={`/lobby/cards/${card.publicId}`} state={{ returnTo }}>{card.title}</Link></h2>
-    {card.needs && <p>{card.needs.map(item => t('{0} {1} 人', [roleLabel(item.role), item.count])).join(' · ')}</p>}
-    <dl><div><dt>{t("可赛时间")}</dt><dd>{card.availability}</dd></div><div><dt>{t("组队目标")}</dt><dd>{card.goal}</dd></div></dl>
+    {card.needs && <p>{needsLabel(card.needs)}</p>}
+    <dl><div><dt>{t("可赛时间")}</dt><dd>{card.availability}</dd></div><div><dt>{t("组队目标")}</dt><dd>{card.goal}</dd></div>
+      {card.level && <div><dt>{copy.levelLabel}</dt><dd>{card.level}</dd></div>}
+      {card.kind === 'PERSON' && card.heroes && <div><dt>{copy.heroesLabel}</dt><dd>{card.heroes}</dd></div>}</dl>
     <p className={styles.excerpt}>{card.bio}</p><footer>{t("需求确认于")} {lobbyDate(card.confirmedAt)}<Link to={`/lobby/cards/${card.publicId}`} state={{ returnTo }}>{t("查看详情 →")}</Link></footer>
   </article>
 }
@@ -72,8 +75,9 @@ export function LobbyDetail() {
   const { publicId } = useParams(), location = useLocation()
   const [card, setCard] = useState(null), [error, setError] = useState(null)
   const returnTo = location.state?.returnTo?.startsWith('/lobby?') ? location.state.returnTo : '/lobby'
+  const copy = card ? lobbyCardCopy(card.kind) : null
   useEffect(() => { const controller = new AbortController(); setCard(null); setError(null); api.getLobbyCard(publicId, { signal: controller.signal }).then(value => { if (!controller.signal.aborted) setCard(value.card) }).catch(failure => { if (!controller.signal.aborted) setError(failure) }); return () => controller.abort() }, [publicId])
-  return <><Link to={returnTo}>{t("← 返回需求列表")}</Link><ErrorNotice error={error} />{!card && !error && <p role="status">{t("正在读取卡片…")}</p>}{card && <div className={styles.detailGrid}><article className={styles.detail}><span className={styles.eyebrow}>{card.kind === 'PERSON' ? t("个人找队") : card.forming ? t("组队中") : t("队伍招募")}</span><h1>{card.title}</h1><div className={styles.tags}>{card.roles.map(role => <span key={role}>{roleLabel(role)}</span>)}</div><dl><div><dt>{t("可赛时间")}</dt><dd>{card.availability}</dd></div><div><dt>{t("组队目标")}</dt><dd>{card.goal}</dd></div>{card.needs && <div><dt>{t("招募需求")}</dt><dd>{card.needs.map(item => t('{0} {1} 人', [roleLabel(item.role), item.count])).join(' · ')}</dd></div>}{card.level && <div><dt>{t("自报水平")}</dt><dd>{card.level}{t("（非官方认证）")}</dd></div>}{card.heroes && <div><dt>{t("英雄偏好")}</dt><dd>{card.heroes}</dd></div>}</dl><h2>{t("介绍")}</h2><p className={styles.bodyCopy}>{card.bio}</p><p>{t("需求有效至")} {lobbyDate(card.expiresAt)}</p></article><aside className={styles.actionPanel}><ContactEntry card={card} /></aside></div>}</>
+  return <><Link to={returnTo}>{t("← 返回需求列表")}</Link><ErrorNotice error={error} />{!card && !error && <p role="status">{t("正在读取卡片…")}</p>}{card && <div className={styles.detailGrid}><article className={styles.detail}><span className={styles.eyebrow}>{card.kind === 'PERSON' ? t("个人找队") : card.forming ? t("组队中") : t("队伍招募")}</span><h1>{card.title}</h1><div className={styles.tags}>{card.roles.map(role => <span key={role}>{roleLabel(role)}</span>)}</div><dl><div><dt>{t("可赛时间")}</dt><dd>{card.availability}</dd></div><div><dt>{t("组队目标")}</dt><dd>{card.goal}</dd></div>{card.needs && <div><dt>{t("招募需求")}</dt><dd>{needsLabel(card.needs)}</dd></div>}{card.level && <div><dt>{copy.levelLabel}</dt><dd>{card.level}{copy.levelNote}</dd></div>}{card.heroes && <div><dt>{copy.heroesLabel}</dt><dd>{card.heroes}</dd></div>}</dl><h2>{copy.bio}</h2><p className={styles.bodyCopy}>{card.bio}</p><p>{t("需求有效至")} {lobbyDate(card.expiresAt)}</p></article><aside className={styles.actionPanel}><ContactEntry card={card} /></aside></div>}</>
 }
 export { default as MyLobby } from './MyLobbyPage.jsx'
 
@@ -93,6 +97,7 @@ function Editor({ data, cardId, formation, query }) {
   const existing = cardId ? data.cards.find(item => item.id === cardId) : !formation && query.get('type') !== 'team' ? data.cards.find(item => item.kind === 'PERSON') : null
   const application = formation && query.get('id') ? data.formations.find(item => item.id === query.get('id')) : null
   const kind = formation || existing?.kind === 'TEAM' || query.get('type') === 'team' ? 'TEAM' : 'PERSON'
+  const copy = lobbyCardCopy(kind)
   const sources = [...data.organizations.map(item => ({ value: `organization:${item.id}`, name: item.name, label: item.name })), ...data.teams.filter(item => !item.organizationId).map(item => ({ value: `team:${item.id}`, name: item.name, label: t('{0}（组队中）', [item.name]) }))]
   const requestedTeam = data.teams.find(item => item.id === query.get('team'))
   const [source, setSource] = useState(existing?.organizationId ? `organization:${existing.organizationId}` : existing?.teamId ? `team:${existing.teamId}` : requestedTeam?.organizationId ? `organization:${requestedTeam.organizationId}` : requestedTeam ? `team:${requestedTeam.id}` : sources[0]?.value || '')
@@ -139,14 +144,17 @@ function Editor({ data, cardId, formation, query }) {
         {kind === 'TEAM' && !formation && <label>{t("代表队伍")}<select value={source} onChange={event => updateSource(event.target.value)} disabled={busy || Boolean(cardId)}>{sources.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>}
         {(kind === 'PERSON' || formation) && <label>{formation ? t("筹建队名") : t("公开显示名称")}<input required maxLength={60} {...field('title')} /></label>}
         <fieldset><legend>{kind === 'PERSON' ? t("可胜任岗位") : t("所需岗位与人数")}</legend>{LOBBY_ROLES.map(item => <div className={styles.roleInput} key={item.value}><label><input type="checkbox" checked={form.roles.includes(item.value)} onChange={event => { setForm(current => ({ ...current, roles: event.target.checked ? [...current.roles, item.value] : current.roles.filter(value => value !== item.value) })); setDirty(true) }} disabled={busy} />{t(item.label)}</label>{kind === 'TEAM' && form.roles.includes(item.value) && <label>{t("人数")}<input type="number" min={1} max={7} required value={form.counts[item.value] || 1} onChange={event => { setForm(current => ({ ...current, counts: { ...current.counts, [item.value]: event.target.value } })); setDirty(true) }} disabled={busy} /></label>}</div>)}</fieldset>
-        <label>{t("可赛／训练时间")}<input required maxLength={200} placeholder={t("例如：周三、周五 20:00—23:00")} {...field('availability')} /></label>
+        <label>{copy.availability}<input required maxLength={200} placeholder={t("例如：周三、周五 20:00—23:00")} {...field('availability')} /></label>
         <label>{t("组队目标")}<input required maxLength={120} placeholder={t("例如：稳定训练，准备参加周赛")} {...field('goal')} /></label>
-        <label>{formation ? t("筹建介绍") : t("公开介绍")}<textarea required rows={5} maxLength={1000} {...field('bio')} /><small>{t("请勿填写 QQ、邮箱或其他私人联系方式。")}</small></label>
-        {!formation && <><label>{t("自报水平（可选）")}<input maxLength={80} {...field('level')} /></label><label>{t("英雄偏好（可选）")}<input maxLength={200} {...field('heroes')} /></label></>}
+        <label>{formation ? t("筹建介绍") : copy.bio}<textarea required rows={5} maxLength={1000} placeholder={formation ? undefined : copy.bioPlaceholder} {...field('bio')} /><small>{formation ? t("请勿填写 QQ、邮箱或其他私人联系方式。") : copy.bioHint}</small></label>
+        {!formation && <><label>{copy.level}<input maxLength={80} placeholder={copy.levelPlaceholder} {...field('level')} /></label><label>{copy.heroes}<input maxLength={200} placeholder={copy.heroesPlaceholder} {...field('heroes')} /></label></>}
         <div className={styles.actions}><button className={styles.primary} disabled={busy || error?.data?.outcomeUnknown || error?.name === 'TypeError'}>{busy ? t("正在保存…") : !preview ? t("核对预览") : formation ? t("提交首次核对") : prior ? t("确认保存资料") : t("确认发布")}</button>{preview && <button type="button" onClick={() => setPreview(false)}>{t("继续修改")}</button>}</div>
         {prior && !formation && <p>{t("普通编辑不会续期或顶置。需求完成后请关闭卡片。")}</p>}
       </div>
-      <aside className={styles.preview} aria-label={t("公开预览")}><span className={styles.eyebrow}>{formation ? t("待核对资料预览 · 尚不公开") : source.startsWith('team:') && kind === 'TEAM' ? t("公开预览 · 组队中") : t("公开预览")}</span><h2>{kind === 'TEAM' && !formation ? sources.find(item => item.value === source)?.name : form.title || t("你的公开名称")}</h2><p>{form.roles.map(roleLabel).join(' / ') || t("选择可胜任或所需岗位")}</p><dl><div><dt>{t("时间")}</dt><dd>{form.availability || t("填写可赛时间")}</dd></div><div><dt>{t("目标")}</dt><dd>{form.goal || t("填写组队目标")}</dd></div></dl><p className={styles.bodyCopy}>{form.bio || t("介绍你或你的队伍。")}</p>{form.level && <p>{t("自报水平：")}{form.level}</p>}{form.heroes && <p>{t("英雄偏好：")}{form.heroes}</p>}<p>{formation ? t("首次核对不等于参赛审核，不自动生成正式队伍。") : t("新发布及明确续期默认有效 14 天。")}</p></aside>
+      <aside className={styles.preview} aria-label={t("公开预览")}><span className={styles.eyebrow}>{formation ? t("待核对资料预览 · 尚不公开") : source.startsWith('team:') && kind === 'TEAM' ? t("公开预览 · 组队中") : t("公开预览")}</span><h2>{kind === 'TEAM' && !formation ? sources.find(item => item.value === source)?.name : form.title || t("你的公开名称")}</h2><p>{form.roles.map(roleLabel).join(' / ') || t("选择可胜任或所需岗位")}</p><dl><div><dt>{t("时间")}</dt><dd>{form.availability || t("填写可赛时间")}</dd></div><div><dt>{t("目标")}</dt><dd>{form.goal || t("填写组队目标")}</dd></div>
+        {kind === 'TEAM' && form.roles.length > 0 && <div><dt>{t("招募需求")}</dt><dd>{needsLabel(form.roles.map(role => ({ role, count: Number(form.counts[role] || 1) })))}</dd></div>}
+        {!formation && form.level && <div><dt>{copy.levelLabel}</dt><dd>{form.level}{copy.levelNote}</dd></div>}
+        {!formation && form.heroes && <div><dt>{copy.heroesLabel}</dt><dd>{form.heroes}</dd></div>}</dl><p className={styles.bodyCopy}>{form.bio || t("介绍你或你的队伍。")}</p><p>{formation ? t("首次核对不等于参赛审核，不自动生成正式队伍。") : t("新发布及明确续期默认有效 14 天。")}</p></aside>
     </form>
   </>
 }

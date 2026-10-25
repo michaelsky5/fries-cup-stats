@@ -4,7 +4,29 @@ import { passwordPolicyHint } from '../auth/passwordPolicy.js'
 export const LOBBY_ROLES = [{ value: 'TANK', label: '重装' }, { value: 'DPS', label: '输出' }, { value: 'SUP', label: '支援' }]
 export const roleLabel = role => t(LOBBY_ROLES.find(item => item.value === role)?.label || role)
 export const statusLabel = state => ({ ACTIVE: t("展示中"), CLOSED: t("已关闭"), EXPIRED: t("已到期"), HIDDEN: t("管理员隐藏"), PENDING: t("待核对"), RETURNED: t("退回修改"), APPROVED: t("核对通过"), REJECTED: t("未通过"), WITHDRAWN: t("已撤回") })[state] || state
-export const lobbyDate = value => new Intl.DateTimeFormat(getActiveLocale(), { timeZone: 'Asia/Singapore', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(value)) + ' (UTC+8)'
+export const lobbyDate = value => new Intl.DateTimeFormat(getActiveLocale(), { timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(value)) + ' (UTC+8)'
+export const needsLabel = needs => (needs || []).map(item => t('{0} {1} 人', [roleLabel(item.role), item.count])).join(' · ')
+
+// Stored card keys stay bio, level and heroes so existing cards still render.
+// Only the wording depends on the post: a team states what it needs from new
+// players, while a player describes themself and the team they want.
+export function lobbyCardCopy(kind, locale = getActiveLocale()) {
+  const team = kind === 'TEAM', say = source => t(source, [], locale)
+  return {
+    availability: say("可赛／训练时间（北京时间）"),
+    bio: say(team ? "队伍介绍与招募要求" : "自我介绍与期望"),
+    bioHint: say(team ? "写清队伍现状，以及对新队员的要求（段位、位置、能否开麦、出勤）。请勿填写 QQ、微信、邮箱或群号；对方可通过“申请联系”找到你。" : "介绍你的打法和沟通习惯，以及希望加入什么样的队伍。请勿填写 QQ、微信、邮箱或群号。"),
+    bioPlaceholder: say(team ? "队伍现状：例如 4 人固定，常打周赛\n希望你：例如 钻石以上，能开麦，周三、周五晚有空\n我们提供：例如 固定训练与复盘" : "打法与沟通：例如 主玩支援，能开麦\n希望加入：例如 每周固定训练两次的队伍"),
+    level: say(team ? "段位要求（可选）" : "段位（可选）"),
+    levelPlaceholder: say(team ? "例如：钻石 1 以上；主坦大师优先" : "例如：重装 大师 3，支援 钻石 1"),
+    heroes: say(team ? "希望会玩的英雄（可选）" : "常用英雄（可选）"),
+    heroesPlaceholder: say(team ? "例如：主坦 温斯顿、D.Va；副辅 雾子" : "例如：安娜、雾子、巴蒂斯特"),
+    levelLabel: say(team ? "段位要求" : "段位"),
+    // A team's requirement is not a claim about anyone's verified rank.
+    levelNote: team ? '' : say("（非官方认证）"),
+    heroesLabel: say(team ? "希望会玩的英雄" : "常用英雄")
+  }
+}
 export function safeLobbyReturn(value) {
   if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//') || value.includes('\\') || Array.from(value).some(character => character.charCodeAt(0) <= 32)) return '/lobby'
   const url = new URL(value, 'https://lobby.invalid')

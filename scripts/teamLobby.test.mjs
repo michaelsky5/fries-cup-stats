@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { safeLobbyReturn, accountFailure, roleLabel, statusLabel, leavesLobbyPage, lobbyReadFailure, canPublishLobby, lobbyRegistrationMessage } from '../src/features/team-lobby/lobbyModel.js'
+import { safeLobbyReturn, accountFailure, roleLabel, statusLabel, leavesLobbyPage, lobbyReadFailure, canPublishLobby, lobbyRegistrationMessage, lobbyCardCopy, needsLabel } from '../src/features/team-lobby/lobbyModel.js'
 import { lobbyText, lobbyNoticeCopy, lobbyCopyRows } from '../src/features/team-lobby/lobbyCopy.js'
 
 test('account continuation only retains a local lobby destination and public reading state', () => {
@@ -64,4 +64,23 @@ test('localization preserves authored moderation reasons and interpolated names'
     assert.ok(value.trim())
     assert.deepEqual([...value.matchAll(/\{\d+\}/g)].map(match => match[0]).sort(), [...source.matchAll(/\{\d+\}/g)].map(match => match[0]).sort())
   }
+})
+
+test('post fields say what a team needs and what a player offers, in every locale', () => {
+  const team = lobbyCardCopy('TEAM', 'zh-CN'), player = lobbyCardCopy('PERSON', 'zh-CN')
+  assert.equal(team.bio, '队伍介绍与招募要求')
+  assert.match(team.bioPlaceholder, /^队伍现状：.*\n希望你：.*\n我们提供：/)
+  assert.equal(team.levelLabel, '段位要求')
+  // A team's rank requirement is not a claim about anyone's verified rank.
+  assert.equal(team.levelNote, '')
+  assert.equal(player.levelLabel, '段位')
+  assert.equal(player.levelNote, '（非官方认证）')
+  assert.match(team.availability, /北京时间/)
+  const sources = new Set(lobbyCopyRows.map(row => row[0]))
+  for (const kind of ['TEAM', 'PERSON']) {
+    for (const value of Object.values(lobbyCardCopy(kind, 'zh-CN'))) if (value) assert.ok(sources.has(value), `missing copy row: ${value}`)
+    for (const locale of ['en-US', 'ko-KR']) for (const value of Object.values(lobbyCardCopy(kind, locale))) assert.doesNotMatch(value, /[一-鿿]/)
+  }
+  assert.equal(needsLabel([{ role: 'TANK', count: 1 }, { role: 'SUP', count: 2 }]), '重装 1 人 · 支援 2 人')
+  assert.equal(needsLabel(null), '')
 })

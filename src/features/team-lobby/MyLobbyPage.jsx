@@ -27,7 +27,7 @@ export default function MyLobbyPage() {
   }
   if (isBootstrapping) return <p role="status">{t("正在读取账号…")}</p>
   if (!user) return <section className={styles.empty}><h1>{t("登录后管理我的组队")}</h1>{registrationMessage && <p>{registrationMessage}</p>}<Link className={styles.primary} to={`/account/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`}>{t("登录／注册")}</Link></section>
-  return <><div className={styles.pageHeading}><div><span className={styles.eyebrow}>MY LOBBY</span><h1>{t("我的组队")}</h1><p>{t("联系、卡片和筹建进度，集中在这里处理。")}</p></div>{data?.canWrite && !error && <Link className={styles.primary} to="/lobby/me/publish?type=person">{t("发布／编辑需求")}</Link>}</div>
+  return <><div className={styles.pageHeading}><div><span className={styles.eyebrow}>MY LOBBY</span><h1>{t("我的组队")}</h1><p>{t("联系、卡片和筹建进度，集中在这里处理。")}</p></div>{data?.canWrite && !error && <Link className={styles.primary} to="/lobby/me/publish?type=person">{t("发布／编辑我的求队")}</Link>}</div>
     {(error || failure) && <p role="alert" className={styles.error}>{error ? lobbyReadFailure(error) : accountFailure(failure)} <button onClick={refresh}>{t("重新读取")}</button></p>}
     {!data && !error && <p role="status">{t("正在读取本人记录…")}</p>}
     {data && <>
@@ -35,7 +35,7 @@ export default function MyLobbyPage() {
       <nav className={`${styles.tabs} ${styles.lobbyTabs}`} aria-label={t("我的组队分类")}>{tabs.map(([id, label]) => <button key={id} aria-pressed={tab === id} onClick={() => setQuery(current => { current.set('tab', id); current.delete('requestId'); current.delete('contactPage'); return current })}>{t(label)}</button>)}</nav>
       {['received', 'sent', 'contacts'].includes(tab) && <ContactInbox direction={tab === 'contacts' ? 'all' : tab} config={data.config} onChanged={refresh} />}
       {tab === 'cards' && <>
-        <div className={styles.sectionHeading}><h2>{t("我的需求卡")}</h2><Link to="/lobby/me/publish?type=team">{t("管理队伍招募 →")}</Link></div>
+        <div className={styles.sectionHeading}><h2>{t("我的需求卡")}</h2><Link to="/lobby/me/publish?type=team">{t("队伍招募 →")}</Link></div>
         {!data.cards.length && <p className={styles.empty}>{t("还没有发布需求。可以先发布个人求队卡，或申请筹建招募。")}</p>}
         <div className={styles.cards}>{data.cards.map(card => <MyCard key={`${card.id}:${card.revision}`} card={card} canWrite={data.canWrite} busy={busy} act={act} />)}</div>
       </>}

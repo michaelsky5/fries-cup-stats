@@ -25,4 +25,6 @@
 .footer{width:var(--portal-shell-width);margin:0 auto;padding:20px 0}
 .pageHeading h1,.intro h1{font-weight:800;letter-spacing:-.025em}
 .card{border-color:var(--fc-data-line);border-top:2px solid var(--fc-data-ink)}
+/* The site-wide placeholder colour targets the old dark theme; keep examples readable here. */
+.main ::placeholder{color:#66685f;opacity:1;font-weight:400}
 @media(max-width:600px){.main{width:calc(100% - 32px);margin:16px auto 32px}.sectionBar{gap:16px;margin-bottom:24px;flex-wrap:wrap}.sectionBar nav{gap:20px}.sectionBar>a span{margin-left:8px}.footer{padding:20px 0 calc(88px + env(safe-area-inset-bottom))}}
