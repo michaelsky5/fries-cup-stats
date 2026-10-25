@@ -402,3 +402,16 @@
   .room .task h2 { font-size:calc(28 * var(--room-unit)); }.room .task p { font-size:calc(14 * var(--room-unit)); }
   .room .task button,.room .resultLink { font-size:calc(14 * var(--room-unit));min-height:calc(40 * var(--room-unit));padding:calc(8 * var(--room-unit)) calc(14 * var(--room-unit)); }
 }
+
+/* 票 2.59 · 字级：操作代表区和赛果步骤最小 12px（变量定义在 RoomGrid.module.css）。 */
+@media (min-width: 1180px) {
+  .room.room.room .representativeHeading small, .room.room.room .representativeHeading em, .room.room.room .representativePerson>small, .room.room.room .representative>p, .room.room.room .representative>small { font-size: var(--room-caption); }
+  .room.room.room .representativeHeadingActions>button { min-height: 32px; padding: 4px 8px; font-size: var(--room-caption); }
+  .room.room.room .resultSteps li, .room.room.room .resultSteps li span { font-size: var(--room-caption); }
+  .room.room.room .resultProgress>.resultTitle { font-size: var(--room-title); }
+}
+
+/* 票 2.59 · 手机与平板：操作代表说明和赛果步骤最小 12px；版式不动（small / em 由 RoomGrid 统一）。 */
+@media (width < 1180px) {
+  .room.room.room .representative>p, .room.room.room .resultSteps li, .room.room.room .resultSteps li span { font-size: var(--room-caption); }
+}

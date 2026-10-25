@@ -9179,6 +9179,7 @@ export default {
   "已拒绝接任，队伍归属未改变。": "Ownership declined. Team ownership is unchanged.",
   "交接范围（队伍归属及以下未归档赛季）": "Transfer scope: team organization and these unarchived seasons",
   "比赛房操作指南": "Match room guide",
+  "操作指南": "Room guide",
   "参赛与比赛指南": "Participation and match guide",
   "无法操作？查看指南": "Cannot act? Read the guide",
   "比赛房间设置码": "Lobby settings code",

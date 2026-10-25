@@ -376,3 +376,24 @@
     }
   }
 }
+
+/* 票 2.59 · 字级：先手权、禁用顺序面板里最小 12px（变量定义在 RoomGrid.module.css）。 */
+@media (min-width: 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening header>span,
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .responsibility>span,
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .confirmationTeams small,
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice small,
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .method,
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .method :is(span, small),
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .confirm small,
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .confirmationTeams span { font-size: var(--room-caption); }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening h1 { font-size: var(--room-title); }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice .order button { font-size: var(--room-title); }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening :is(.firstPick p, .firstPickConfirmation button) { font-size: var(--room-body); }
+}
+
+/* 票 2.59 · 手机与平板：先手权面板的责任行和方式说明最小 12px；版式不动（small / em 由 RoomGrid 统一）。 */
+@media (width < 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .responsibility>:is(span, strong),
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .method>div>span { font-size: var(--room-caption); }
+}

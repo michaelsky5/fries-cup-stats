@@ -18,7 +18,16 @@ const teamName = team => team?.shortName || team?.name || '队伍待定'
 const numericScore = value => typeof value === 'number' && Number.isFinite(value)
 const isDraw = map => map.status === 'COMPLETE' && numericScore(map.scoreA) && numericScore(map.scoreB) && map.scoreA === map.scoreB
 
-export function RoomMatchHeader({ data, phaseLabel, returnPath, busy, error, refresh, accountControl, mutate, disabled }) {
+// 票 2.59: on desktop the game-room facts sit in the footer, so the header stays one row.
+// In the footer the room already frames them, so the code is labelled 设置码 rather than 比赛房间设置码.
+export function RoomMatchFacts({ data, error, mutate, disabled }) {
+  const uiLocale = useUiLocale()
+  const roomName = data.preparation.brief?.roomName
+  const operator = data.access.operatorMode === 'TEAM_CAPTAINS' ? uiText("双方代表操作", uiLocale) : data.staff.map(item => item.name).join(' / ') || uiText("等待指派", uiLocale)
+  return <div className={styles.matchFacts} data-room-slot="facts"><div><span>{uiText("游戏房间", uiLocale)}<b title={roomName || undefined}>{roomName || uiText(data.access.operatorMode === 'TEAM_CAPTAINS' ? '等待双方设置' : '等待赛管发布', uiLocale)}</b></span><span>{uiText("设置码", uiLocale)}<b className={styles.mono}>{data.preparation.brief?.roomCode || uiText("未设置", uiLocale)}</b></span><span>{uiText(data.access.operatorMode === 'TEAM_CAPTAINS' ? "本场控制" : "本场赛管", uiLocale)}<b title={operator}>{operator}</b></span><RoomLobbyTools data={data} disabled={disabled} mutate={mutate} /></div><span className={styles.sync} data-error={!!error}>{error ? uiText("同步中断 · 上次记录", uiLocale) : data.syncedAt ? uiText("最近同步 {0}", uiLocale, [new Date(data.syncedAt).toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', hour12: false })]) : uiText("同步时间待确认", uiLocale)}</span></div>
+}
+
+export function RoomMatchHeader({ data, phaseLabel, returnPath, busy, refresh, accountControl }) {
   const uiLocale = useUiLocale()
   const completed = data.maps.filter(map => map.status === 'COMPLETE')
   const official = data.result?.official
@@ -33,7 +42,6 @@ export function RoomMatchHeader({ data, phaseLabel, returnPath, busy, error, ref
       <div className={styles.tools}><button type="button" disabled={busy} onClick={() => refresh({ force: true })}><span aria-hidden="true">↻</span>{uiText(" 重新同步", uiLocale)}</button>{accountControl}</div>
     </header>
     <WeeklyMatchIdentity match={data.match} locale={uiLocale} copyable compact />
-    <div className={styles.matchFacts} data-room-slot="facts"><div><span>{uiText("游戏房间", uiLocale)}<b>{data.preparation.brief?.roomName || uiText(data.access.operatorMode === 'TEAM_CAPTAINS' ? '等待双方设置' : '等待赛管发布', uiLocale)}</b></span><span>{uiText("比赛房间设置码", uiLocale)}<b className={styles.mono}>{data.preparation.brief?.roomCode || uiText("未设置", uiLocale)}</b></span><span>{uiText(data.access.operatorMode === 'TEAM_CAPTAINS' ? "本场控制" : "本场赛管", uiLocale)}<b>{data.access.operatorMode === 'TEAM_CAPTAINS' ? uiText("双方代表操作", uiLocale) : data.staff.map(item => item.name).join(' / ') || uiText("等待指派", uiLocale)}</b></span><RoomLobbyTools data={data} disabled={disabled} mutate={mutate} /></div><span className={styles.sync} data-error={!!error}>{error ? uiText("同步中断 · 上次记录", uiLocale) : data.syncedAt ? uiText("最近同步 {0}", uiLocale, [new Date(data.syncedAt).toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', hour12: false })]) : uiText("同步时间待确认", uiLocale)}</span></div>
   </>
 }
 

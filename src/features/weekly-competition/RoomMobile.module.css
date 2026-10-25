@@ -168,3 +168,8 @@
 @media(width < 1180px) {
   .mobileFrame.mobileFrame :global([data-room-slot=center])>section:global([data-room-task-layout]) { flex:1;min-height:0;overflow:hidden; }
 }
+
+/* 票 2.59 · 手机与平板：底部导航的字最小 12px（变量定义在 RoomGrid.module.css）。 */
+@media (width < 1180px) {
+  .mobileFrame.mobileFrame.mobileFrame .nav button { font-size: var(--room-caption); }
+}

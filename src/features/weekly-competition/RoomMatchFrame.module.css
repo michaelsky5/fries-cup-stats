@@ -367,3 +367,27 @@
 @media(max-width:600px) and (max-height:700px) {
   .decisionTask[data-result-confirmation=true] :global([data-room-slot=map-result-agreement][data-agreement-status=PENDING])>strong { display:none; }
 }
+
+/* 票 2.59 · 字级：标题行、五图条、步骤条、任务标题和赛果表最小 12px（变量定义在 RoomGrid.module.css）。 */
+@media (min-width: 1180px) {
+  .frame.frame.frame .brand small { font-size: var(--room-caption); letter-spacing: 0; }
+  .frame.frame.frame .headerMeta { gap: 8px; font-size: var(--room-caption); }
+  .frame.frame.frame .headerMeta span + span { padding-left: 8px; }
+  .frame.frame.frame .seriesLabel small { font-size: var(--room-caption); }
+  .frame.frame.frame .mapRail :is(button, li>div)>span { font-size: var(--room-number); }
+  .frame.frame.frame .mapRail b { font-size: var(--room-body); }
+  .frame.frame.frame .mapRail :is(small, em) { font-size: var(--room-caption); }
+  .frame.frame.frame .stageRail li, .frame.frame.frame .stageRail button, .frame.frame.frame .stageRail span { font-size: var(--room-caption); }
+  .frame.frame.frame .decisionTitle h2, .frame.frame.frame .phaseViewHeader h2 { font-size: var(--room-title); line-height: 1.35; }
+  .frame.frame.frame .decisionTitle>span, .frame.frame.frame .phaseViewHeader>span { font-size: var(--room-caption); }
+  .frame.frame.frame .resultMapTable caption, .frame.frame.frame .resultMapTable thead th, .frame.frame.frame .resultMapTable td:last-child { font-size: var(--room-caption); }
+  .frame.frame.frame .resultMapTable td:nth-child(3) { font-size: var(--room-body); }
+  .frame.frame.frame .nextMapSummary strong { font-size: var(--room-title); }
+}
+
+/* 票 2.59 · 手机与平板：任务标题旁的说明、赛果表和沟通频道说明最小 12px；版式不动。 */
+@media (width < 1180px) {
+  .frame.frame.frame .decisionTitle>span, .frame.frame.frame .phaseViewHeader>span,
+  .frame.frame.frame .resultMapTable :is(caption, th, td:last-child),
+  .frame.frame.frame .channelScope { font-size: var(--room-caption); }
+}

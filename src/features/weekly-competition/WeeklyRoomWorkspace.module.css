@@ -408,3 +408,37 @@
 @media(min-width:1180px) and (max-height:850px) {
   .viewport.viewport .lineupEditor>footer button { min-height:44px;font-size:14px; }
 }
+
+/* 票 2.59 · 字级：名单、队伍栏和首发编辑里不再有小于 12px 的字（变量定义在 RoomGrid.module.css）。 */
+@media (min-width: 1180px) {
+  .viewport.viewport .team>header { padding: 12px 16px; gap: 4px 8px; }
+  .viewport.viewport .team>header>h2, .viewport.viewport .team>header .teamTitle { font-size: var(--room-title); line-height: 1.2; }
+  .viewport.viewport .team>header .teamTitle span, .viewport.viewport .team>header>span, .viewport.viewport .team>header>small { font-size: var(--room-caption); letter-spacing: 0; }
+  .viewport.viewport .rosterLabel, .viewport.viewport .rosterLabel strong, .viewport.viewport .rosterLabel small { font-size: var(--room-caption); }
+  .viewport.viewport .person .role { font-size: var(--room-caption); }
+  .viewport.viewport .person .identity small, .viewport.viewport .person>small { font-size: var(--room-caption); }
+  .viewport.viewport .person button { min-height: 32px; padding: 4px 8px; font-size: var(--room-caption); }
+  .viewport.viewport .person .changeTag { font-size: var(--room-caption); }
+  .viewport.viewport .lineupCorrection { min-height: 32px; padding: 4px 8px; font-size: var(--room-caption); }
+  .viewport.viewport .teamContent>footer strong, .viewport.viewport .teamContent>footer small { font-size: var(--room-caption); }
+  .viewport.viewport .lineupEditor>header span, .viewport.viewport .lineupEditor>footer small, .viewport.viewport .lineupEditor>footer p { font-size: var(--room-caption); }
+  .viewport.viewport .lobbyOrder :is(b, span) { font-size: var(--room-caption); }
+  .viewport.viewport .lineupChoices label small, .viewport.viewport .lineupStatus>div { font-size: var(--room-caption); }
+  .viewport.viewport .lineupEditor>header strong, .viewport.viewport .lineupEditor>footer b { font-size: var(--room-body); }
+}
+
+/* 票 2.59 · 手机与平板：名单、队伍栏、首发编辑里不再有小于 12px 的字；版式不动（small / em 由 RoomGrid 统一）。 */
+@media (width < 1180px) {
+  .viewport.viewport.viewport .person .role,
+  .viewport.viewport.viewport .rosterLabel,
+  .viewport.viewport.viewport .rosterLabel strong,
+  .viewport.viewport.viewport .team>header .teamTitle span,
+  .viewport.viewport.viewport .teamContent>footer strong,
+  .viewport.viewport.viewport .lineupEditor>header span { font-size: var(--room-caption); }
+}
+@container room-workspace (max-height:900px) {
+  @media (width < 1180px) {
+    .viewport.viewport.viewport .lineupStatus :is(b, span),
+    .viewport.viewport.viewport .lobbyOrder :is(b, span) { font-size: var(--room-caption); }
+  }
+}

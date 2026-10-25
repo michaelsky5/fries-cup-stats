@@ -325,3 +325,28 @@
 }
 .timeoutNotice { flex:none;margin:0;padding:5px 8px;border:1px solid #d1b261;border-left:4px solid #c99a19;background:#fff1c8;color:#49350d;font-size:12px;line-height:1.5; }
 .timeoutNotice[data-penalty=true] { border-color:#bd5140;background:#ffe5dc;color:#6d241b; }
+
+/* 票 2.59 · 字级：选图、禁用工作台里最小 12px（变量定义在 RoomGrid.module.css）。 */
+@media (min-width: 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .heroGrid button>span,
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .mapCards small,
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .mapCards .mapIndex,
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .roleTabs small,
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .banSlots small,
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .slotState,
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .selectionTitle small,
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .commit small,
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .poolNote,
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .intro,
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .intro span,
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .explanation,
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .roleTabs :is(strong, small) { font-size: var(--room-caption); }
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) :is(.mapCards strong, .mapCards .mapMark, .banSlots strong, .commit button, .commit button span) { font-size: var(--room-body); }
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .selectionTitle strong { font-size: var(--room-title); }
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .slotNumber, :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .slotNumber span { font-size: var(--room-number); }
+}
+
+/* 票 2.59 · 手机与平板：选图说明最小 12px；版式不动（small / em 由 RoomGrid 统一）。 */
+@media (width < 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) [data-room-slot=center] :is(.mapStage, .banStage) .intro strong { font-size: var(--room-caption); }
+}

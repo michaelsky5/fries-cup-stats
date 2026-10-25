@@ -27,3 +27,23 @@
   .dialog h2 { font-size:17px; }
   .dialogTools { gap:2px; }
 }
+
+/* 票 2.59 · 电脑版：本队最新的重要操作放在队伍栏队名下面，不再单独占一条；队名不重复。 */
+@media (min-width: 1180px) {
+  [data-room-slot=columns] .panel[data-team-side] { height: auto; margin: 0; padding: 8px 16px; border: 0; border-bottom: 1px solid var(--fc-data-room-line); background: transparent; }
+  [data-room-slot=columns] .panel[data-team-side] .message { grid-template-rows: auto auto; gap: 4px; padding: 0; font-size: var(--room-caption); }
+  [data-room-slot=columns] .panel[data-team-side] .teamHeading { gap: 8px; font-size: var(--room-caption); }
+  [data-room-slot=columns] .panel[data-team-side] .teamHeading b { display: none; }
+  [data-room-slot=columns] .panel[data-team-side] .teamHeading small { font-size: var(--room-caption); }
+  [data-room-slot=columns] .panel[data-team-side] .message>span:last-child { color: var(--fc-data-room-text); font-size: var(--room-caption); }
+}
+
+/* 票 2.59 · 手机与平板：状态条里双方动态的字最小 12px；版式不动。 */
+@media (width < 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) .panel .message,
+  :global([data-room-layout=workspace][data-page-mode=control]) .panel .message>span,
+  :global([data-room-layout=workspace][data-page-mode=control]) .panel .teamHeading,
+  :global([data-room-layout=workspace][data-page-mode=control]) .panel .teamHeading :is(b, span),
+  :global([data-room-layout=workspace][data-page-mode=control]) .panel :is(.label, .party, .historyButton),
+  :global([data-room-layout=workspace][data-page-mode=control]) .dialog time { font-size: var(--room-caption); }
+}
