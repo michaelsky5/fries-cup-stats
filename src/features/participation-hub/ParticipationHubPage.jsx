@@ -22,7 +22,7 @@ export default function ParticipationHubPage() {
     return () => { active = false }
   }, [])
 
-  const title = t('参赛', 'Play', '참가', '參賽')
+  const title = t('参赛指南', 'How to play', '참가 안내', '參賽指南')
   const signIn = () => window.dispatchEvent(new Event('fries-cup:open-account'))
   if (season?.lifecycle === 'ARCHIVED' || season?.partnerTrial) {
     const current = getSeasonById(DEFAULT_SEASON_ID)

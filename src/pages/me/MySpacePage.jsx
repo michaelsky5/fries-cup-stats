@@ -838,7 +838,8 @@ function MySpaceContent() {
       </div>
     </section>
   </main>
-  if (!isAuthenticated) return <><div className={styles.guideEntry}><RoomGuideLink label="参赛与比赛指南" /></div><FollowingPage /></>
+  // 票 2.29: the guide is a header item (参赛指南) now; it no longer floats above 我的关注.
+  if (!isAuthenticated) return <FollowingPage />
   if (currentSpaceContext && spaceEntry.replacement) return <Navigate replace to={spaceEntry.replacement} state={{ ...location.state, spaceEntryNotice: spaceEntry.notice }} />
   return (
     <main className={styles.page} data-design="signal" data-native-mobile data-page-mode={activeSection === 'following' ? 'index' : 'control'}>
