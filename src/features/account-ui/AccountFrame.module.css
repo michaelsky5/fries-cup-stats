@@ -13,7 +13,7 @@
 .main[data-compact='true'] { padding-top: 24px; }
 .main[data-compact='true'] .intro { align-items: center; margin-bottom: 24px; padding-bottom: 24px; }
 .main[data-compact='true'] .intro h1 { margin-block: 0 8px; }
-.footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding-block: 24px; border-top: 1px solid var(--fc-data-line); color: var(--fc-data-text-muted); font-size: 11px; }
+.footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding-block: 24px; border-top: 1px solid var(--fc-data-line); color: var(--fc-data-text-muted); font-size: 12px; }
 .footer b { margin-left: 8px; font-weight: 500; }
 .footer a { color: inherit; }
 .frame :is(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid var(--fc-data-focus); outline-offset: 4px; }
@@ -26,7 +26,7 @@
   .main, .main[data-compact='true'] { padding-top: 16px; }
   .intro, .main[data-compact='true'] .intro { margin-bottom: 16px; padding-bottom: 16px; gap: 12px; }
   .intro h1, .main[data-compact='true'] .intro h1 { margin: 0 0 8px; }
-  .intro p { font-size: 13px; line-height: 1.6; }
+  .intro p { font-size: 14px; line-height: 1.6; }
   .frame :is(input, select, textarea) { scroll-margin-bottom: calc(90px + env(safe-area-inset-bottom)); }
 }
 

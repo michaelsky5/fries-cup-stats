@@ -42262,8 +42262,8 @@
   },
   "补位": {
     "zh-TW": "補位",
-    "en-US": "fill-in",
-    "ko-KR": "위치 채우기"
+    "en-US": "Flex",
+    "ko-KR": "플렉스"
   },
   "补位置": {
     "zh-TW": "補位置"
@@ -60508,5 +60508,80 @@
     "en-US": "Lead your own team: start a new registration",
     "ko-KR": "직접 주장 맡기: 새 팀 만들기",
     "zh-TW": "自己當隊長：建立新隊伍"
+  },
+  "队标（可选）": {
+    "en-US": "Team logo (optional)",
+    "ko-KR": "팀 로고 (선택)",
+    "zh-TW": "隊標（選填）"
+  },
+  "上传队标": {
+    "en-US": "Upload team logo",
+    "ko-KR": "팀 로고 업로드",
+    "zh-TW": "上傳隊標"
+  },
+  "更换队标": {
+    "en-US": "Replace team logo",
+    "ko-KR": "팀 로고 변경",
+    "zh-TW": "更換隊標"
+  },
+  "队标预览": {
+    "en-US": "Team logo preview",
+    "ko-KR": "팀 로고 미리보기",
+    "zh-TW": "隊標預覽"
+  },
+  "队标不能超过 2 MB，请压缩后再选择。": {
+    "en-US": "The team logo must be 2 MB or smaller. Compress it and choose it again.",
+    "ko-KR": "팀 로고는 2MB 이하여야 합니다. 압축한 뒤 다시 선택하세요.",
+    "zh-TW": "隊標不能超過 2 MB，請壓縮後再選擇。"
+  },
+  "使用已有图片链接": {
+    "en-US": "Use an existing image link",
+    "ko-KR": "기존 이미지 링크 사용",
+    "zh-TW": "使用已有圖片連結"
+  },
+  "HTTPS 图片链接": {
+    "en-US": "HTTPS image link",
+    "ko-KR": "HTTPS 이미지 링크",
+    "zh-TW": "HTTPS 圖片連結"
+  },
+  "本赛季报名已通过。赛段登记和每周名单请按赛事安排处理。": {
+    "en-US": "Registration for this season has been approved. Cycle check-ins and weekly rosters follow the event schedule.",
+    "ko-KR": "이번 시즌 등록이 승인되었습니다. 사이클 등록과 주간 명단은 대회 일정에 따라 처리하세요.",
+    "zh-TW": "本賽季報名已通過。賽段登記和每週名單請按賽事安排處理。"
+  },
+  "负责人邀请 → 选手本人确认 → 赛事管理员审核 → 加入队内名单。": {
+    "en-US": "Manager invites → player confirms → administrator reviews → added to the team.",
+    "ko-KR": "담당자 초대 → 선수 본인 확인 → 대회 관리자 심사 → 팀 명단 추가.",
+    "zh-TW": "負責人邀請 → 選手本人確認 → 賽事管理員審核 → 加入隊內名單。"
+  },
+  "邀请已生成，选手确认后将进入赛事管理员审核。": {
+    "en-US": "Invitation created. After the player confirms, an administrator reviews the addition.",
+    "ko-KR": "초대를 생성했습니다. 선수가 확인하면 대회 관리자가 심사합니다.",
+    "zh-TW": "邀請已產生，選手確認後將進入賽事管理員審核。"
+  },
+  "现负责人发起 → 接任者本人确认 → 赛事管理员审核生效。": {
+    "en-US": "Current owner requests → new owner confirms → administrator approves.",
+    "ko-KR": "현재 소유자 신청 → 새 소유자 본인 확인 → 대회 관리자 승인",
+    "zh-TW": "現負責人發起 → 接任者本人確認 → 賽事管理員審核生效。"
+  },
+  "接任已确认，等待赛事管理员审核。": {
+    "en-US": "Ownership accepted. Awaiting administrator approval.",
+    "ko-KR": "소유권 수락이 확인되었습니다. 대회 관리자 승인을 기다리는 중입니다.",
+    "zh-TW": "接任已確認，等待賽事管理員審核。"
+  },
+  "规则书": {
+    "en-US": "Rulebook",
+    "ko-KR": "규정집",
+    "zh-TW": "規則書"
+  },
+  "{0} · 下载阅读": {
+    "en-US": "{0} · Download",
+    "ko-KR": "{0} · 다운로드",
+    "zh-TW": "{0} · 下載閱讀"
+  },
+  "例如：请核对 BattleTag，或补充段位信息": {
+    "en-US": "For example: check your BattleTag or provide current ranks",
+    "ko-KR": "예: 배틀태그를 확인하거나 등급 정보를 추가해 주세요",
+    "zh-TW": "例如：請核對 BattleTag，或補充段位資訊"
   }
 }

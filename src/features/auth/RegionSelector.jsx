@@ -85,7 +85,7 @@ export default function RegionSelector({ value = '', onChange, label, name, requ
     }}>
       <div className={styles.panel}>
         <header className={styles.header}>
-          <div><span className={styles.eyebrow}>FRIES CUP / REGION</span><h2 id={`${id}-title`}>{copy.title}</h2></div>
+          <div><h2 id={`${id}-title`}>{copy.title}</h2></div>
           <button type="button" className={styles.close} aria-label={copy.close} onClick={() => setOpen(false)}>×</button>
         </header>
         <div className={styles.search}>

@@ -10,7 +10,8 @@ import { useUiLocale } from '../../hooks/useUiLocale.js'
 import styles from './SharedRegistrationJoin.module.css'
 import { canEditJoinApplication, canWithdrawJoinApplication, joinApplicationStatusLabel } from './registrationJoinModel.js'
 
-const roles = { DPS: 'DPS', TANK: 'TANK', SUP: 'SUP', FLEX: 'FLEX', UNKNOWN: '待确定' }
+// 票 2.58: same role words as the captain's form (「自由人」 is a damage position, so FLEX reads 补位).
+const roles = { TANK: '重装', DPS: '输出', SUP: '支援', FLEX: '补位', UNKNOWN: '待确定' }
 const registrationPath = seasonId => `/seasons/${encodeURIComponent(seasonId)}/registration`
 const openLogin = () => window.dispatchEvent(new Event('fries-cup:open-account'))
 
@@ -87,7 +88,7 @@ export function SharedRegistrationJoin({ token, applicationId, seasonId }) {
   const application = state?.application
   const additionMode = invitation?.joinMode === 'TEAM_ADDITION'
   return <section className={styles.join} data-i18n-ignore>
-    <header className={styles.hero}><div><span>TEAM REGISTRATION</span><h2>{invitation ? `${invitation.shortName} · ${invitation.teamName}` : uiText('队内报名', locale)}</h2><p>{invitation?.seasonName || uiText('正在核对报名链接…', locale)}</p></div><span className={styles.badge}>{uiText('本人填写 · 经理审核', locale)}</span></header>
+    <header className={styles.hero}><div><h2>{invitation ? `${invitation.shortName} · ${invitation.teamName}` : uiText('队内报名', locale)}</h2><p>{invitation?.seasonName || uiText('正在核对报名链接…', locale)}</p></div><span className={styles.badge}>{uiText('本人填写 · 经理审核', locale)}</span></header>
     <ol className={styles.steps}>{['登录本人账号', '填写参赛资料', '经理审核入队', additionMode ? '赛事增员审核' : '整队资格审核'].map((label, index) => <li key={label}><b>0{index + 1}</b>{uiText(label, locale)}</li>)}</ol>
     {invitation?.joinMode === 'WAITING_REVIEW' && <p>{uiText('队伍报名正在审核，可以先提交本人资料；已送审名单不会改变。', locale)}</p>}
     {error && <p className={styles.error} role="alert">{translateRegistrationError(error, locale)}</p>}
@@ -212,7 +213,7 @@ export function RegistrationJoinManager({ record, seasonId, editable, busy, perf
   const canAccept = data?.canAcceptApplications ?? editable
   const additionMode = data?.joinMode === 'TEAM_ADDITION'
   return <section className={styles.manager} data-i18n-ignore>
-    <div className={styles.row}><div><span>TEAM JOIN LINK</span><h3>{uiText('队伍邀请链接', locale)}</h3><p>{uiText(additionMode ? '发到队伍群，让新队员本人填写；经理通过后提交赛事增员审核。' : '发到队伍群，让队员各自填写；审核通过后进入报名名单。', locale)}</p></div><b>{active.length} {uiText('待处理', locale)}</b></div>
+    <div className={styles.row}><div><h3>{uiText('队伍邀请链接', locale)}</h3><p>{uiText(additionMode ? '发到队伍群，让新队员本人填写；经理通过后提交赛事增员审核。' : '发到队伍群，让队员各自填写；审核通过后进入报名名单。', locale)}</p></div><b>{active.length} {uiText('待处理', locale)}</b></div>
     {error && <p className={styles.error} role="alert">{translateRegistrationError(error, locale)} <button type="button" disabled={busy} onClick={() => setVersion(value => value + 1)}>{uiText('重新读取', locale)}</button></p>}
     {!data && !error && <p role="status">{uiText('正在读取申请…', locale)}</p>}
     {notice && <p role="status" className={styles.success}>{uiText(notice, locale)}</p>}
@@ -234,7 +235,7 @@ function JoinReview({ application, editable, canAccept, additionMode, busy, onRe
   return <article id={`join-review-${application.id}`} tabIndex={-1} className={styles.review}><div className={styles.row}><div><strong>{application.displayName}</strong><p>{application.battleTag} · {uiText(roles[application.role], locale)} · {application.email}</p></div><span className={styles.badge}>{uiText(joinApplicationStatusLabel(application), locale)}</span></div>
     {eligibility && <dl className={styles.eligibility}><div><dt>{uiText('国籍／地区', locale)}</dt><dd>{eligibility.countryOrRegion || uiText(eligibility.countryGroup === 'CN_HMT' ? '中国（含港澳台）' : '待补充具体国家、地区', locale)}</dd></div><div><dt>OWCS 2026</dt><dd>{uiText(eligibility.owcs2026 === 'NONE' ? '没有参加' : eligibility.owcs2026 === 'QUALIFIERS' ? '仅海选／公开预选' : '进入正赛名单', locale)}</dd></div><div><dt>{uiText('当前段位', locale)}</dt><dd>T {eligibility.ranks?.tank} · D {eligibility.ranks?.damage} · S {eligibility.ranks?.support}</dd></div></dl>}
     {application.reviewNote && <p>{uiText('上次审核意见：', locale)}{application.reviewNote}</p>}
-    {editable && <><label>{uiText('审核意见（退回补充时必填）', locale)}<input value={reason} maxLength={1000} disabled={busy} placeholder={uiText('例如：请核对战网 ID，或补充段位信息', locale)} onChange={event => setReason(event.target.value)} /></label><div className={styles.actions}>{application.status === 'PENDING' ? <><button className={styles.primary} type="button" disabled={busy || !canAccept} onClick={async () => { if (await onReview(application, 'ACCEPT', reason.trim())) setReason('') }}>{uiText(additionMode ? '经理通过并提交增员审核' : '审核通过并加入名单', locale)}</button><button type="button" disabled={busy || !reason.trim()} onClick={async () => { if (await onReview(application, 'RETURN', reason.trim())) setReason('') }}>{uiText('退回补充', locale)}</button></> : <span>{uiText('等待队员本人补充并重新提交。', locale)}</span>}<button type="button" disabled={busy} onClick={async () => { if (await onReview(application, 'REJECT', reason.trim())) setReason('') }}>{uiText('拒绝申请', locale)}</button></div></>}
+    {editable && <><label>{uiText('审核意见（退回补充时必填）', locale)}<input value={reason} maxLength={1000} disabled={busy} placeholder={uiText('例如：请核对 BattleTag，或补充段位信息', locale)} onChange={event => setReason(event.target.value)} /></label><div className={styles.actions}>{application.status === 'PENDING' ? <><button className={styles.primary} type="button" disabled={busy || !canAccept} onClick={async () => { if (await onReview(application, 'ACCEPT', reason.trim())) setReason('') }}>{uiText(additionMode ? '经理通过并提交增员审核' : '审核通过并加入名单', locale)}</button><button type="button" disabled={busy || !reason.trim()} onClick={async () => { if (await onReview(application, 'RETURN', reason.trim())) setReason('') }}>{uiText('退回补充', locale)}</button></> : <span>{uiText('等待队员本人补充并重新提交。', locale)}</span>}<button type="button" disabled={busy} onClick={async () => { if (await onReview(application, 'REJECT', reason.trim())) setReason('') }}>{uiText('拒绝申请', locale)}</button></div></>}
   </article>
 }
 
@@ -257,5 +258,5 @@ export function MyRegistrationJoinApplications({ seasonId }) {
     finally { setBusy(false) }
   }
   if (applications?.length === 0 && !error) return null
-  return <section className={styles.manager} data-i18n-ignore><div className={styles.row}><h3>{uiText('本人的入队申请', locale)}</h3><button type="button" disabled={busy} onClick={() => load()}>{uiText('刷新审核状态', locale)}</button></div>{error && <p role="alert" className={styles.error}>{uiText(error, locale)}</p>}{applications?.map(item => <article className={styles.review} key={item.id}><div className={styles.row}><strong>{item.shortName} · {item.teamName}</strong><span>{uiText(joinApplicationStatusLabel(item), locale)}</span></div><p>{item.displayName} · {item.battleTag}</p>{item.reviewNote && <p>{item.reviewNote}</p>}{item.addition?.reviewNote && <p>{item.addition.reviewNote}</p>}{canWithdrawJoinApplication(item) && <button type="button" disabled={busy} onClick={() => withdraw(item)}>{uiText('撤回本人申请', locale)}</button>}{canEditJoinApplication(item) && <Link to={`/participate/${encodeURIComponent(seasonId)}?joinApplication=${encodeURIComponent(item.id)}`}>{uiText('修改本人资料 →', locale)}</Link>}</article>)}</section>
+  return <section className={`${styles.manager} ${styles.standalone}`} data-i18n-ignore><div className={styles.row}><h3>{uiText('本人的入队申请', locale)}</h3><button type="button" disabled={busy} onClick={() => load()}>{uiText('刷新审核状态', locale)}</button></div>{error && <p role="alert" className={styles.error}>{uiText(error, locale)}</p>}{applications?.map(item => <article className={styles.review} key={item.id}><div className={styles.row}><strong>{item.shortName} · {item.teamName}</strong><span>{uiText(joinApplicationStatusLabel(item), locale)}</span></div><p>{item.displayName} · {item.battleTag}</p>{item.reviewNote && <p>{item.reviewNote}</p>}{item.addition?.reviewNote && <p>{item.addition.reviewNote}</p>}{canWithdrawJoinApplication(item) && <button type="button" disabled={busy} onClick={() => withdraw(item)}>{uiText('撤回本人申请', locale)}</button>}{canEditJoinApplication(item) && <Link to={`/participate/${encodeURIComponent(seasonId)}?joinApplication=${encodeURIComponent(item.id)}`}>{uiText('修改本人资料 →', locale)}</Link>}</article>)}</section>
 }

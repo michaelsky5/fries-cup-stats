@@ -27,3 +27,9 @@
 .link input { margin-bottom: 10px; }
 .error { color: #9f2718; }
 @media(max-width: 600px) { .panel { padding: 14px; } .panel header { flex-direction: column; } .fields { grid-template-columns: 1fr; } }
+
+/* 票 2.58: on the registration page these panels follow the page: no box, flush left, section-level title. */
+.panel.inline { margin: 0; padding: 24px 0 0; border: 0; border-top: 1px solid var(--fc-data-line-strong); background: transparent; color: var(--fc-data-ink); }
+.panel.inline h3 { font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
+.panel.inline p, .panel.inline .records strong, .panel.inline .actions a { font-size: 14px; }
+@media (max-width: 600px) { .panel.inline { padding: 16px 0 0; } }

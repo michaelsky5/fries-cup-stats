@@ -21,7 +21,8 @@ import { SharedRegistrationJoin, RegistrationJoinManager, MyRegistrationJoinAppl
 const emptyDetails = { region: '', history: '', logoUrl: '', coachName: '', coachContact: '', managerBattleTag: '' }
 const emptyTeam = { name: '', shortName: '', contact: '', note: '', kind: 'LONG_TERM', organizationId: '' }
 const emptyPlayer = { displayName: '', email: '', battleTag: '', role: 'UNKNOWN' }
-const roleLabels = { TANK: '坦克', DPS: '输出', SUP: '支援', FLEX: '自由人', UNKNOWN: '待确定' }
+// 票 2.58: one role vocabulary across the flow. 「自由人」 is a damage position in Overwatch, so FLEX reads 补位.
+const roleLabels = { TANK: '重装', DPS: '输出', SUP: '支援', FLEX: '补位', UNKNOWN: '待确定' }
 const path = seasonId => `/seasons/${encodeURIComponent(seasonId)}/registration`
 
 export default function SeasonParticipationPage() {
@@ -57,7 +58,7 @@ function ParticipationPage({ seasonId }) {
 
 function Login() {
   const uiLocale = useUiLocale()
-  return <section className={styles.login}><span className={styles.kicker}>JOIN THE COMPETITION</span><h2>{uiText("从你的参赛账号开始", uiLocale)}</h2><p>{uiText("登录或注册参赛账号，验证邮箱后就能创建队伍报名。队员请打开队长发来的入队链接。", uiLocale)}</p><button type="button" className={styles.primary} onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText("登录参赛账号 →", uiLocale)}</button></section>
+  return <section className={styles.login}><h2>{uiText("从你的参赛账号开始", uiLocale)}</h2><p>{uiText("登录或注册参赛账号，验证邮箱后就能创建队伍报名。队员请打开队长发来的入队链接。", uiLocale)}</p><button type="button" className={styles.primary} onClick={() => window.dispatchEvent(new Event('fries-cup:open-account'))}>{uiText("登录参赛账号 →", uiLocale)}</button></section>
 }
 
 function ParticipationNotice({ seasonId, noticeId }) {
@@ -201,8 +202,7 @@ function Workspace({ user, seasonId, hasAdditions }) {
   if (!workspace) return <section className={styles.panel}>{error ? <p role="alert" className={styles.error}>{translateRegistrationError(error, uiLocale)}</p> : <p role="status">{uiText("正在读取本赛季报名…", uiLocale)}</p>}<button type="button" onClick={() => setVersion(value => value + 1)}>{uiText("重新读取", uiLocale)}</button></section>
   const ownerRegistration = workspace.registrations.find(item => item.ownerUserId === user.id && item.status !== 'WITHDRAWN')
   return <>
-    <div className={styles.context}><div><span>{uiText("当前赛季", uiLocale)}</span><strong>{workspace.season.name}</strong></div><div><span>{uiText("报名人数", uiLocale)}</span><strong>{workspace.policy.rosterMin}–{workspace.policy.rosterMax}{uiText(" 人", uiLocale)}</strong></div><div><span>{uiText("报名截止", uiLocale)}</span><strong>{workspace.policy.closesAt ? new Date(workspace.policy.closesAt).toLocaleString() : uiText("不限，随时可以报名", uiLocale)}</strong></div><span>{workspace.canWrite ? uiText("报名开放", uiLocale) : uiText(workspace.canManageLogo && workspace.registrations.some(record => record.status === "APPROVED" && record.ownerUserId === user.id) ? "报名只读，队标可更新" : "当前只读", uiLocale)}</span></div>
-    {workspace.policy.rulebook && <p><a className={styles.rulebookLink} href={workspace.policy.rulebook.url} target="_blank" rel="noreferrer">{uiText("当前规则书 {0} · 下载阅读", uiLocale, [workspace.policy.rulebook.label])} ↗</a></p>}
+    <div className={styles.context}><div><span>{uiText("当前赛季", uiLocale)}</span><strong>{workspace.season.name}</strong></div><div><span>{uiText("报名人数", uiLocale)}</span><strong>{workspace.policy.rosterMin}–{workspace.policy.rosterMax}{uiText(" 人", uiLocale)}</strong></div><div><span>{uiText("报名截止", uiLocale)}</span><strong>{workspace.policy.closesAt ? new Date(workspace.policy.closesAt).toLocaleString() : uiText("不限，随时可以报名", uiLocale)}</strong></div>{/* 票 2.58: the rulebook is one of the season facts, not a yellow button of its own. */}{workspace.policy.rulebook && <div><span>{uiText("规则书", uiLocale)}</span><a className={styles.rulebookLink} href={workspace.policy.rulebook.url} target="_blank" rel="noreferrer">{uiText("{0} · 下载阅读", uiLocale, [workspace.policy.rulebook.label])} ↗</a></div>}<span>{workspace.canWrite ? uiText("报名开放", uiLocale) : uiText(workspace.canManageLogo && workspace.registrations.some(record => record.status === "APPROVED" && record.ownerUserId === user.id) ? "报名只读，队标可更新" : "当前只读", uiLocale)}</span></div>
     {(error || notice) && <p ref={feedback} tabIndex={-1} role={error ? "alert" : "status"} className={error ? styles.error : styles.success}>{error ? translateRegistrationError(error, uiLocale) : uiText(notice, uiLocale)}</p>}
     {link && <InvitationLink invitation={link} />}
     <MyRegistrationJoinApplications seasonId={seasonId} />
@@ -302,7 +302,7 @@ function Registration({ seasonId, rulebook, eligibilityRequired, record, userId,
     {owner && canManageLogo && record.status === 'APPROVED' && <ApprovedTeamLogoEditor key={record.logoUrl || 'no-logo'} logoUrl={record.logoUrl || ''} busy={busy} onSave={input => perform(`${prefix}/logo`, input, 'PUT', '队伍队标')} />}
     <ol className={styles.journey} aria-label={uiText("报名进度", uiLocale)}>{stageLabels.map((label, index) => <li key={index} data-state={record.status === 'WITHDRAWN' ? 'inactive' : index < stage || record.status === 'APPROVED' ? 'done' : index === stage ? 'current' : 'upcoming'} aria-current={record.status !== 'WITHDRAWN' && index === stage ? 'step' : undefined}><span>{String(index + 1).padStart(2, '0')}</span><strong>{label}</strong></li>)}</ol>
     {record.reviewNote && <p className={styles.feedback}>{uiText("审核意见：", uiLocale)}{record.reviewNote}</p>}
-    {record.status === 'APPROVED' && <p className={styles.feedback}>{uiText("本赛季报名已通过。周期登记和每周名单请按赛事安排处理。", uiLocale)}</p>}
+    {record.status === 'APPROVED' && <p className={styles.feedback}>{uiText("本赛季报名已通过。赛段登记和每周名单请按赛事安排处理。", uiLocale)}</p>}
     {record.status === 'SUBMITTED' && <p className={styles.success} role="status">{uiText("报名已提交，正在等待赛事负责人审核。名单已冻结；需要修改时可撤回后重新提交。", uiLocale)}</p>}
     {owner && editable && confirmed && <p className={styles.feedback} role="status">{uiText("全部队员已确认，但队伍报名尚未提交。请点击下方“提交赛事负责人审核”完成最后一步。", uiLocale)}</p>}
     <div className={styles.tableScroll}><table><thead><tr><th>{uiText("选手", uiLocale)}</th><th>BattleTag</th><th>{uiText("职责", uiLocale)}</th><th>{uiText("本人确认", uiLocale)}</th>{editable && <th>{uiText("操作", uiLocale)}</th>}</tr></thead><tbody>{record.members.map(member => <tr key={member.id}><td data-label={uiText("选手", uiLocale)}>{member.displayName}</td><td data-label="BattleTag">{member.battleTag}</td><td data-label={uiText("职责", uiLocale)}>{roleLabels[member.role]}</td><td data-label={uiText("本人确认", uiLocale)}>{statusLabel(member.status)}</td>{editable && <td data-label={uiText("操作", uiLocale)}><div className={styles.memberActions}>{member.status === 'INVITED' ? <button type="button" disabled={busy} onClick={() => copyInvitation(member)}>{invitationLinks?.[member.id] ? uiText("复制链接", uiLocale) : uiText("生成并复制链接", uiLocale)}</button> : null}{['DRAFT', 'INVITED', 'CONFIRMED'].includes(member.status) ? <button type="button" disabled={busy} onClick={() => { if (window.confirm(uiText("确定从这份报名草稿中移出 {0} 吗？", uiLocale, [member.displayName]))) perform(`${prefix}/remove-member`, { revision: record.revision, memberId: member.id }) }}>{uiText("移出草稿", uiLocale)}</button> : null}</div></td>}</tr>)}</tbody></table></div>
@@ -317,7 +317,7 @@ function Registration({ seasonId, rulebook, eligibilityRequired, record, userId,
           <label>{uiText("选手称呼", uiLocale)}<input required disabled={busy || rosterFull} value={player.displayName} maxLength={80} onChange={event => setPlayer(current => ({ ...current, displayName: event.target.value }))} /></label>
           <label>{uiText("选手邮箱", uiLocale)}<input type="email" required disabled={busy || rosterFull} value={player.email} onChange={event => setPlayer(current => ({ ...current, email: event.target.value.trim() }))} /></label>
           <label>{uiText("完整 BattleTag", uiLocale)}<input required disabled={busy || rosterFull} value={player.battleTag} placeholder={uiText("名称#12345", uiLocale)} onChange={event => setPlayer(current => ({ ...current, battleTag: event.target.value }))} /></label>
-          <label>{uiText("游戏职责", uiLocale)}<select disabled={busy || rosterFull} value={player.role} onChange={event => setPlayer(current => ({ ...current, role: event.target.value }))}><option value="UNKNOWN">{uiText("待确定", uiLocale)}</option><option value="TANK">{uiText("坦克", uiLocale)}</option><option value="DPS">{uiText("输出", uiLocale)}</option><option value="SUP">{uiText("支援", uiLocale)}</option><option value="FLEX">{uiText("自由人", uiLocale)}</option></select></label>
+          <label>{uiText("游戏职责", uiLocale)}<select disabled={busy || rosterFull} value={player.role} onChange={event => setPlayer(current => ({ ...current, role: event.target.value }))}><option value="UNKNOWN">{uiText("待确定", uiLocale)}</option><option value="TANK">{uiText("重装", uiLocale)}</option><option value="DPS">{uiText("输出", uiLocale)}</option><option value="SUP">{uiText("支援", uiLocale)}</option><option value="FLEX">{uiText("补位", uiLocale)}</option></select></label>
         </div>{rosterFull ? <p className={styles.warning} role="status">{uiText("当前名单已达到 {0} 人上限。请先移除一名草稿成员，再邀请其他选手。", uiLocale, [rosterMax])}</p> : null}<button disabled={busy || rosterFull}>{rosterFull ? uiText("名单已满", uiLocale) : uiText("生成本人确认邀请", uiLocale)}</button>
       </form>
 

@@ -29,7 +29,7 @@ export default function WeeklyTeamAdditions({ seasonId, selectedTeamId, readOnly
   const writable = data?.canWrite && !readOnly && !busy
   if (navigationOnly) {
     if (data && !data.teams.length && !data.additions.length) return null
-    return <section className={styles.panel} aria-label={t('已报名队伍管理')}>
+    return <section className={`${styles.panel} ${styles.inline}`} aria-label={t('已报名队伍管理')}>
       <header><div><h3>{t('已报名队伍管理')}</h3><p>{t('教练、队员与所有权转让统一在“我的队伍”维护。报名草稿与本人邀请确认仍在本页处理。')}</p></div></header>
       {error ? <p role="alert" className={styles.error}>{t(error)} <button type="button" onClick={() => refresh()}>{t('重新读取')}</button></p> : !data ? <p role="status">{t('正在读取队伍管理入口…')}</p> : data.teams.length ? <ul className={styles.records}>{data.teams.map(team => <li key={team.id}><strong>{team.name}</strong><div className={styles.actions}>{[['', '本周参赛准备'], ['coaches', '教练管理'], ['members', '队员管理'], ['ownership', '队伍所有权转让']].map(([manage, label]) => <Link key={manage} to={teamManagementDestination({ search: location.search, competitionId: seasonId, teamId: team.id, manage })}>{t(label)} →</Link>)}</div></li>)}</ul> : <p>{t('增员申请仍在处理，可从待办查看本人确认与审核状态。')}</p>}
     </section>
@@ -49,12 +49,12 @@ export default function WeeklyTeamAdditions({ seasonId, selectedTeamId, readOnly
   }
   if (data && !data.teams.length && !data.additions.length) return null
   return <section className={styles.panel} id="weekly-team-additions" aria-label={t('队伍自主增员')}>
-    <header><div><h3>{t('队伍自主增员')}</h3><p>{t('负责人邀请 → 选手本人确认 → System 管理员审核 → 加入队内名单。')}</p></div><button type="button" disabled={busy} onClick={() => { setError(''); refresh() }}>{t('刷新增员记录')}</button></header>
+    <header><div><h3>{t('队伍自主增员')}</h3><p>{t('负责人邀请 → 选手本人确认 → 赛事管理员审核 → 加入队内名单。')}</p></div><button type="button" disabled={busy} onClick={() => { setError(''); refresh() }}>{t('刷新增员记录')}</button></header>
     {error && <p role="alert" className={styles.error}>{error}</p>}{notice && <p role="status">{t(notice)}</p>}
     {!data ? <p>{t('正在读取增员记录；读取失败时可点击刷新。')}</p> : <>
-      {data.teams.length > 0 && <details><summary>{t('邀请新队员')}</summary><form onSubmit={event => { event.preventDefault(); action(`/teams/${encodeURIComponent(teamId)}/additions`, form, '邀请已生成，选手确认后将进入 System 审核。', true) }}>
+      {data.teams.length > 0 && <details><summary>{t('邀请新队员')}</summary><form onSubmit={event => { event.preventDefault(); action(`/teams/${encodeURIComponent(teamId)}/additions`, form, '邀请已生成，选手确认后将进入赛事管理员审核。', true) }}>
         <label>{t('队伍')}<select value={teamId} onChange={event => setTeamId(event.target.value)} disabled={!writable}>{data.teams.map(team => <option key={team.id} value={team.id}>{team.name}</option>)}</select></label>
-        <div className={styles.fields}>{[['displayName', '选手称呼', 'text'], ['email', '选手本人邮箱', 'email'], ['battleTag', '完整 BattleTag', 'text']].map(([key, label, type]) => <label key={key}>{t(label)}<input type={type} value={form[key]} required maxLength={key === 'email' ? 254 : 80} pattern={key === 'battleTag' ? '[^\\s]+#[0-9]+' : undefined} onChange={event => setForm(current => ({ ...current, [key]: event.target.value }))} disabled={!writable} /></label>)}<label>{t('职责')}<select value={form.role} onChange={event => setForm(current => ({ ...current, role: event.target.value }))} disabled={!writable}>{Object.entries({ UNKNOWN: '待确定', TANK: '重装', DPS: '输出', SUP: '支援', FLEX: '自由人' }).map(([value, label]) => <option key={value} value={value}>{t(label)}</option>)}</select></label></div>
+        <div className={styles.fields}>{[['displayName', '选手称呼', 'text'], ['email', '选手本人邮箱', 'email'], ['battleTag', '完整 BattleTag', 'text']].map(([key, label, type]) => <label key={key}>{t(label)}<input type={type} value={form[key]} required maxLength={key === 'email' ? 254 : 80} pattern={key === 'battleTag' ? '[^\\s]+#[0-9]+' : undefined} onChange={event => setForm(current => ({ ...current, [key]: event.target.value }))} disabled={!writable} /></label>)}<label>{t('职责')}<select value={form.role} onChange={event => setForm(current => ({ ...current, role: event.target.value }))} disabled={!writable}>{Object.entries({ UNKNOWN: '待确定', TANK: '重装', DPS: '输出', SUP: '支援', FLEX: '补位' }).map(([value, label]) => <option key={value} value={value}>{t(label)}</option>)}</select></label></div>
         <p>{t('增员通过后，请刷新周赛资料并选择当周出赛名单。已锁定的名单和历史赛绩不会自动改变。')}</p><button type="submit" disabled={!writable || !teamId}>{t('生成增员邀请')}</button>
       </form></details>}
       {!data.canWrite || readOnly ? <p>{t('当前入口仅可查看增员记录。')}</p> : null}
