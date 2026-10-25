@@ -124,7 +124,7 @@
 .placements li > span { font-size: 12px; color: #64665d; }
 .placements li a { display: flex; align-items: center; gap: 12px; padding: 16px 0; color: #191b18; text-decoration: none; }
 .placements li strong { font-size: 26px; overflow-wrap: anywhere; }
-.placements li a > span { margin-left: auto; }
+.placements li a > span:last-child { margin-left: auto; }
 .placementLogo { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; }
 @media (max-width: 800px) { .placements { padding: 24px 16px; } .placements ol { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; } .placements li strong { font-size: 22px; } }
 
@@ -150,3 +150,26 @@
   .fullCaption, .fullCard > footer { font-size: 11px; }
   .bracketMeta a { display: inline-flex; align-items: center; min-height: 44px; }
 }
+
+/* 票 2.56: the weekly playoffs sit on the page grid — no inset band, no background grid lines and no
+   outline numerals; the chapter and the placements use the section title level, the yellow stays
+   for the current item. */
+.section.section { --kpr-gutter: 0px; padding-inline: 0; background: transparent; overflow: visible; }
+.section.section::before, .section.section::after, .section .bracketHeading::after { display: none; }
+@media (min-width: 601px) { .section.section { margin-top: 32px; padding-block: 0 48px; gap: 24px; } }
+.section .scheduleNotice { padding-inline: 0; }
+.section .bracketHeading { grid-template-columns: minmax(0, 1fr); gap: 8px; min-height: 0; padding: 0; background: none; }
+.section .bracketHeading h2 { font: 800 var(--fc-data-section-title-size, 20px)/1.35 var(--font-sans); letter-spacing: -.02em; }
+.section .bracketHeading h2 > em { display: inline; color: inherit; }
+.section .bracketHeading > p { max-width: 70ch; padding: 0; border-top: 0; color: var(--fc-data-text-muted, #66685f); font-size: 14px; line-height: 1.7; }
+.section .placements { padding: 24px 0; background: none; }
+.section .placements h3 { font: 800 var(--fc-data-section-title-size, 20px)/1.35 var(--font-sans); }
+.section .teamRouteDisclosure { background: none; }
+.section .teamRouteDisclosure > summary { min-height: 64px; }
+.section .fullCanvas { margin-left: 0; }
+.section .teamRouteDisclosure > summary > span:first-child { font: 800 var(--fc-data-section-title-size, 20px)/1.35 var(--font-sans); letter-spacing: -.02em; }
+/* Inside the dark route band the rows keep an 8px-grid inset from the band edges. */
+.section .routeStory { --kpr-gutter: 24px; }
+.section .storyFooter { font: 400 12px/1.5 var(--font-sans); }
+@media (max-width: 800px) { .section .fullViewport { margin-inline: 0; } }
+@media (max-width: 600px) { .section .routeStory { --kpr-gutter: 16px; } }
