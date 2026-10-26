@@ -57,6 +57,9 @@
 .lineupStatus { display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0; }
 .lineupStatus>div { display:flex;justify-content:space-between;gap:10px;padding:8px 10px;background:var(--fc-data-room-inset);border:1px solid var(--line);font-size:12px; }
 .lineupStatus [data-submitted=true] span { color:var(--fc-data-room-success); }
+/* 票 2.65: a long team name ends in an ellipsis; the status beside it stays on one line. */
+.lineupStatus>div>b { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.lineupStatus>div>span { flex:none;white-space:nowrap; }
 .lineupTabs { display:flex;gap:8px;flex-shrink:0; }
 .lineupTabs button[aria-pressed=true] { border-color:var(--fc-data-room-action-bg); }
 .forceDialog { max-height:calc(100dvh - 32px);overflow:auto; }
@@ -129,7 +132,8 @@
   .columns { grid-template-rows:minmax(0,1fr);container:room-workspace / size; }
   .columns>.team { min-height:0;overflow:hidden; }
   .columns>.team>.teamContent { display:flex;flex-direction:column;flex:1;min-height:0;overflow:auto;overscroll-behavior:contain; }
-  .columns>.team>.teamContent>.roster { flex-shrink:0; }
+  /* 票 2.65: the list scrolls on its own when the column is short, so rows keep their height and the lineup footer never covers one. */
+  .columns>.team>.teamContent>.roster { flex:1 1 auto;min-height:120px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin; }
   .columns>.team>.teamContent>footer { position:sticky;bottom:0;flex-shrink:0;z-index:1; }
   .viewport [data-room-slot=stages] { height:42px;grid-template-rows:42px; }
   .viewport [data-room-slot=stages] li { min-height:0; }
@@ -162,17 +166,17 @@
   .viewport .team>header { padding:calc(12 * var(--room-unit));gap:calc(4 * var(--room-unit)); }
   .viewport .team>header h2 { font-size:calc(28 * var(--room-unit)); }
   .viewport .team>header>small,.viewport .team>header>span { font-size:calc(11 * var(--room-unit)); }
-  .viewport .roster { padding:0 calc(14 * var(--room-unit));display:flex;flex-direction:column;flex:1;min-height:0; }
-  .viewport .rosterLabel { padding:calc(10 * var(--room-unit)) calc(14 * var(--room-unit)) calc(6 * var(--room-unit));font-size:calc(11 * var(--room-unit)); }
+  .viewport .roster { padding:0 calc(14 * var(--room-unit));display:flex;flex-direction:column; }
+  .viewport .rosterLabel { padding:calc(8 * var(--room-unit)) calc(14 * var(--room-unit)) calc(4 * var(--room-unit));font-size:calc(11 * var(--room-unit)); }
   .viewport .rosterLabel strong { font-size:calc(12 * var(--room-unit)); }.viewport .rosterLabel small { font-size:calc(10 * var(--room-unit)); }
-  .viewport .person { grid-template-columns:calc(30 * var(--room-unit)) minmax(0,1fr) auto;flex:1;min-height:0;gap:calc(7 * var(--room-unit));padding:calc(3 * var(--room-unit)) 0; }
+  .viewport .person { grid-template-columns:calc(30 * var(--room-unit)) minmax(0,1fr) auto;flex:1 0 auto;min-height:0;gap:calc(7 * var(--room-unit));padding:calc(2 * var(--room-unit)) 0; }
   .viewport .role { min-height:calc(24 * var(--room-unit));font-size:calc(12 * var(--room-unit)); }
-  .viewport .identity b { font-size:calc(14 * var(--room-unit)); }.viewport .identity small { font-size:calc(10 * var(--room-unit));margin-top:calc(3 * var(--room-unit)); }
+  .viewport .identity b { font-size:calc(14 * var(--room-unit)); }.viewport .identity small { font-size:calc(10 * var(--room-unit)); }
   .viewport .person button { font-size:calc(11 * var(--room-unit));padding:calc(4 * var(--room-unit)) calc(6 * var(--room-unit));min-height:calc(30 * var(--room-unit)); }
-  .viewport .teamContent>footer { padding:calc(10 * var(--room-unit)) calc(14 * var(--room-unit));gap:calc(4 * var(--room-unit)); }
+  .viewport .teamContent>footer { padding:calc(8 * var(--room-unit)) calc(14 * var(--room-unit));gap:calc(4 * var(--room-unit)); }
   .viewport .teamContent>footer strong { font-size:calc(12 * var(--room-unit)); }.viewport .teamContent>footer small { font-size:calc(10 * var(--room-unit)); }
   .viewport .lineupCorrection { min-height:calc(30 * var(--room-unit)); padding:calc(4 * var(--room-unit)) calc(6 * var(--room-unit)); font-size:calc(11 * var(--room-unit)); }
-  .viewport [data-room-slot=representative] { padding:calc(12 * var(--room-unit)) calc(14 * var(--room-unit)); }
+  .viewport [data-room-slot=representative] { padding:calc(8 * var(--room-unit)) calc(14 * var(--room-unit)); }
   .viewport [data-room-slot=representative]>div:first-child small,.viewport [data-room-slot=representative] em { font-size:calc(10 * var(--room-unit)); }
   .viewport [data-room-slot=representative]>div:first-child button { font-size:calc(11 * var(--room-unit));min-height:calc(28 * var(--room-unit));padding:calc(3 * var(--room-unit)) calc(6 * var(--room-unit)); }
   .viewport [data-room-slot=representative]>div:nth-child(2) strong { font-size:calc(13 * var(--room-unit)); }.viewport [data-room-slot=representative]>div:nth-child(2) small { font-size:calc(10 * var(--room-unit)); }
@@ -445,3 +449,10 @@
 
 /* 票 2.60 · 名单未公开时徽标不写字，只留职责色条（补位等没有专属颜色的职责用中性色）。 */
 .role:empty { background: transparent; border-left: 2px solid var(--line); }
+
+/* 票 2.65 · 电脑端队伍栏：操作代表的名字和 BattleTag 各占一行，过长用省略号（悬停看全名），不再把名单挤下去。 */
+@media (min-width: 1180px) {
+  .columns>.team [data-room-slot=representative] { grid-template-columns: minmax(0, 1fr); }
+  .columns>.team [data-room-slot=representative]>div { min-width: 0; }
+  .columns>.team [data-room-slot=representative]>div:nth-child(2)>:is(strong, small:not([data-representative-changed])) { min-width: 0; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}

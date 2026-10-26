@@ -5,12 +5,31 @@ import styles from './WeeklyRoomDesignPreview.module.css'
 
 const messageLoader = async () => ({ items: [], hasMore: false })
 const noWrite = async () => false
+// names=long: the longest names registration accepts (short name 24, team name 80; BattleTag 12 characters + digits)
+// so the rosters and team headers can be checked for overlap. Synthetic text only.
+const fill = (text, length) => text.repeat(Math.ceil(length / text.length)).slice(0, length)
+function stretchPreviewNames(data) {
+  for (const [index, team] of [data.match.teamA, data.match.teamB].entries()) {
+    const side = index ? 'B' : 'A'
+    team.shortName = fill('示例超长简称队伍', 23) + side
+    team.name = fill('示例队伍全称很长用于检查换行与省略号', 79) + side
+  }
+  const people = new Map()
+  data.rosters.forEach((roster, index) => [...roster.members, ...roster.staff].forEach((person, i) => {
+    person.name = fill('示例选手超长显示名称', 23) + (i + 1)
+    person.battleTag = `${fill('示例超长战网昵称', 11)}${index + 1}#${1234560 + i}`
+    people.set(person.id, person)
+  }))
+  for (const map of data.maps) for (const key of ['lineupA', 'lineupB']) map[key] = map[key].map(player => ({ ...player, name: people.get(player.playerId)?.name ?? player.name, battleTag: people.get(player.playerId)?.battleTag ?? player.battleTag }))
+  data.representatives?.sides.forEach((side, index) => Object.assign(side, { name: data.rosters[index].members[0].name, battleTag: data.rosters[index].members[0].battleTag }))
+}
 
 export default function WeeklyRoomDesignPreview() {
   const [searchParams, setSearchParams] = useSearchParams()
   const stage = Object.hasOwn(PREVIEW_STAGES, searchParams.get('stage')) ? searchParams.get('stage') : 'lineup'
   const role = Object.hasOwn(PREVIEW_ROLES, searchParams.get('role')) ? searchParams.get('role') : 'representative'
   const data = buildWeeklyRoomPreview(stage, role)
+  if (searchParams.get('names') === 'long') stretchPreviewNames(data)
   if (searchParams.get('changes') === '1' && data.map.lineupsRevealed) {
     const previous = structuredClone(data.map); previous.status = 'COMPLETE'; previous.scoreA = 2; previous.scoreB = 0
     data.map.order = 2; data.map.lineupContext = 'preview-second-map'; data.opening.mapOrder = 2; data.maps = [previous, data.map]

@@ -10,7 +10,7 @@
 .boundary { margin:0;padding:8px 20px;color:#5f604d;font-size:12px;line-height:1.6;background:#fffdf0; }.response { grid-column:1/-1;color:#245f36;font-weight:600; }
 .room [data-room-layout=workspace] { height:auto;max-height:none;min-height:740px; }
 .room [data-room-slot=header] { scroll-margin-top:12px; }.room [data-stage-view] { scroll-margin-top:12px; }
-.room[data-hint=team] [data-side=A],.room[data-hint=center] [data-stage-view],.room[data-hint=footer] main>footer { outline:3px solid #d99c04;outline-offset:3px; }
+.room[data-hint=team] [data-side=A],.room[data-hint=center] [data-stage-view],.room[data-hint=footer] [data-room-entry=communication],.room[data-hint=teams] [data-room-entry=teams] { outline:3px solid #d99c04;outline-offset:3px; }
 .identity { font-size:11px;line-height:1.5;padding:6px;color:inherit; }
 .after { padding:16px 24px;font-size:13px;display:flex;gap:24px;align-items:center;justify-content:space-between; }.after a { white-space:nowrap; }
 .page :is(button,a,summary,select):focus-visible { outline:3px solid #aa7000;outline-offset:3px; }

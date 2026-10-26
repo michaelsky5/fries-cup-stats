@@ -44,7 +44,7 @@ export default function FirstPickConfirmation({ data, disabled, send, mutate }) 
     <p>{uiText('由赛管直接确认，或双方操作代表确认同一结果，即可进入选图。', locale)}</p>
     <div className={styles.confirmationTeams}>{['A', 'B'].map(side => {
       const vote = confirmations.find(item => item.side === side)
-      return <div key={side} data-confirmed={Boolean(vote?.chooserSide)}><small>{uiText(side === 'A' ? 'A 队' : 'B 队', locale)}</small><strong>{name(side)}</strong><span>{vote?.chooserSide ? uiText('已确认：{0} 获得选择权', locale, [name(vote.chooserSide)]) : uiText('等待确认', locale)}</span>{vote?.by && <small>{vote.by}</small>}</div>
+      return <div key={side} data-confirmed={Boolean(vote?.chooserSide)}><small>{uiText(side === 'A' ? 'A 队' : 'B 队', locale)}</small><strong title={name(side)}>{name(side)}</strong><span>{vote?.chooserSide ? uiText('已确认：{0} 获得选择权', locale, [name(vote.chooserSide)]) : uiText('等待确认', locale)}</span>{vote?.by && <small>{vote.by}</small>}</div>
     })}</div>
     {canAct ? <form onSubmit={event => { event.preventDefault(); send(opening.phase === 'NOT_STARTED' ? 'BEGIN' : 'CONFIRM_FIRST_PICK', { chooserSide: chooser, ...(ownId ? { teamId: ownId } : {}) }) }}>
       <label>{uiText('获得首图选择权的队伍', locale)}<select value={chooser} onChange={event => setChooser(event.target.value)} required disabled={disabled}><option value="">{uiText('选择队伍', locale)}</option>{['A', 'B'].map(side => <option value={side} key={side}>{name(side)}</option>)}</select></label>

@@ -55,7 +55,9 @@
   .mobileFrame.mobileFrame :global(dialog[data-room-panel]) :global([data-roster-row]) { min-height:62px;gap:10px; }
   .mobileFrame.mobileFrame :global(dialog[data-room-panel]) :global([data-roster-row]) b { font-size:15px; }
   .mobileFrame.mobileFrame :global(dialog[data-room-panel]) :global([data-roster-row]) small { font-size:12px; }
-  .mobileFrame.mobileFrame :global(dialog[data-room-panel]) :global([data-roster-row]) button { font-size:13px;min-width:48px; }
+  .mobileFrame.mobileFrame :global(dialog[data-room-panel]) :global([data-roster-row]) button { font-size:13px;min-width:48px;min-height:44px; }
+  /* 票 2.65: tablets and landscape phones are touch screens too; roster and representative buttons keep a 44px target. */
+  .mobileFrame.mobileFrame :global(dialog[data-room-panel]) :global([data-room-slot=representative]) button { min-height:44px; }
   .mobileFrame.mobileFrame :global(dialog[data-room-panel]) :global([data-room-slot=representative]) { padding:12px; }
   .mobileFrame.mobileFrame :global([id=room-communication]) { min-height:360px;height:calc(100dvh - 118px);max-height:660px; }
   .mobileFrame.mobileFrame :global([id=room-communication])>header { display:none; }
