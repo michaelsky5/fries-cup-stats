@@ -5,6 +5,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { AuthDialog } from '../auth/AuthDialog.jsx'
+import PasswordRequirements from '../auth/PasswordRequirements.jsx'
+import { NEW_PASSWORD_MIN_LENGTH, NEW_PASSWORD_MAX_LENGTH, validateNewPassword } from '../auth/passwordPolicy.js'
+import { registrationSubmissionState } from './registrationSubmissionModel.js'
 import { platformRequest } from '../auth/platformApi.js'
 import { getRegistrationStatusLabel } from '../my-space/myEventsModel.js'
 import { RegistrationDraftGuard, useRegistrationDraft, useRegistrationDraftActions } from './registrationDraftGuard.jsx'
@@ -119,6 +122,10 @@ function Invitation({ token, invitationId, seasonId }) {
     if (lock.current) return
     const form = new FormData(event.currentTarget)
     if (invitation.passwordMode === 'SET' && form.get('password') !== form.get('confirmation')) { setError('两次输入的密码不一致。'); return }
+    if (invitation.passwordMode === 'SET') {
+      const policyError = validateNewPassword(form.get('password'), uiLocale)
+      if (policyError) { setError(policyError); return }
+    }
     lock.current = true; setBusy(true); setError('')
     try {
       const result = await platformRequest(token ? '/auth/participation-invitations/accept' : `${path(seasonId)}/invitations/${encodeURIComponent(invitationId)}/accept`, { method: 'POST', body: { ...(token ? { token } : {}), password: form.get('password'), consent: form.get('consent') === 'on', ...(invitation.eligibilityRequired ? { eligibility: readWeeklyEligibility(form) } : {}) } })
@@ -141,8 +148,8 @@ function Invitation({ token, invitationId, seasonId }) {
       <p><strong>{invitation.seasonName}</strong> · {invitation.maskedEmail}</p>
       {['PLAYER', 'TEAM_ADDITION'].includes(invitation.kind) ? <p>{invitation.teamName}{uiText(" 邀请你以 ", uiLocale)}<strong>{invitation.displayName} · {invitation.battleTag}</strong>{uiText(" 参加报名。确认前请核对本人资料，报名仍需赛事负责人审核。", uiLocale)}</p> : <p>{uiText("接受后可以创建队伍报名、邀请选手本人确认，再提交审核。", uiLocale)}</p>}
       {accepted ? <><p>{uiText("邀请已接受，正在同步登录状态。", uiLocale)}</p><button disabled={busy} onClick={enterWorkspace}>{uiText("重新同步并进入报名", uiLocale)}</button></> : <form onSubmit={accept}>
-        <label>{invitation.passwordMode === 'SET' ? uiText("设置账号密码（至少 12 位）", uiLocale) : uiText("受邀账号的现有密码", uiLocale)}<input name="password" type="password" autoComplete={invitation.passwordMode === 'SET' ? 'new-password' : 'current-password'} minLength={invitation.passwordMode === 'SET' ? 12 : 1} required /></label>
-        {invitation.passwordMode === 'SET' && <label>{uiText("再次输入密码", uiLocale)}<input name="confirmation" type="password" autoComplete="new-password" required /></label>}
+        <label>{uiText(invitation.passwordMode === 'SET' ? '设置账号密码' : '受邀账号的现有密码', uiLocale)}<input name="password" type="password" autoComplete={invitation.passwordMode === 'SET' ? 'new-password' : 'current-password'} minLength={invitation.passwordMode === 'SET' ? NEW_PASSWORD_MIN_LENGTH : 1} maxLength={invitation.passwordMode === 'SET' ? NEW_PASSWORD_MAX_LENGTH : undefined} pattern={invitation.passwordMode === 'SET' ? '[!-~]+' : undefined} aria-describedby={invitation.passwordMode === 'SET' ? 'participation-password-policy' : undefined} required disabled={busy} /></label>
+        {invitation.passwordMode === 'SET' && <><PasswordRequirements locale={uiLocale} id="participation-password-policy" /><label>{uiText("再次输入密码", uiLocale)}<input name="confirmation" type="password" autoComplete="new-password" minLength={NEW_PASSWORD_MIN_LENGTH} maxLength={NEW_PASSWORD_MAX_LENGTH} pattern="[!-~]+" required disabled={busy} /></label></>}
         {invitation.passwordMode === 'CONFIRM' && <button type="button" disabled={busy} onClick={() => setRecovering(true)}>{uiText('忘记现有密码？', uiLocale)}</button>}
         {invitation.eligibilityRequired && <WeeklyEligibilityFields rulebook={invitation.rulebook} disabled={busy} />}
         <label className={styles.check}><input name="consent" type="checkbox" required />{['PLAYER', 'TEAM_ADDITION'].includes(invitation.kind) ? uiText("以上选手资料属于本人，我同意加入该队伍的本赛季报名。", uiLocale) : uiText("我将使用本人账号负责队伍报名。", uiLocale)}</label>
@@ -274,10 +281,9 @@ function Registration({ seasonId, rulebook, eligibilityRequired, record, userId,
   useRegistrationDraft(JSON.stringify(player) !== JSON.stringify(emptyPlayer), { label: uiText("选手邀请", uiLocale), busy, discard: () => setPlayer(emptyPlayer) })
   const editable = owner && canWrite && ['DRAFT', 'RETURNED'].includes(record.status)
   const prefix = `/drafts/${record.id}`
-  const confirmed = record.members.length > 0 && record.members.every(member => member.status === 'CONFIRMED')
   const rosterFull = record.members.length >= rosterMax
-  const rosterReady = record.members.length >= rosterMin && confirmed && (!owner || joinPending === 0)
-  const stage = record.status === 'APPROVED' ? 3 : record.status === 'SUBMITTED' || confirmed ? 2 : 1
+  const readiness = registrationSubmissionState({ members: record.members, rosterMin, rosterMax, pendingApplications: joinPending, eligibilityRequired: owner && eligibilityRequired, rulesVersion: rulebook?.version, checkApplications: owner })
+  const stage = record.status === 'APPROVED' ? 3 : record.status === 'SUBMITTED' || readiness.ready ? 2 : 1
   const stageLabels = ['队伍资料', '队员确认', record.status === 'SUBMITTED' ? '等待审核' : '提交审核', '参赛资格']
   const statusLabel = value => getRegistrationStatusLabel(value, value)
   async function copyInvitation(member) {
@@ -304,7 +310,7 @@ function Registration({ seasonId, rulebook, eligibilityRequired, record, userId,
     {record.reviewNote && <p className={styles.feedback}>{uiText("审核意见：", uiLocale)}{record.reviewNote}</p>}
     {record.status === 'APPROVED' && <p className={styles.feedback}>{uiText("本赛季报名已通过。赛段登记和每周名单请按赛事安排处理。", uiLocale)}</p>}
     {record.status === 'SUBMITTED' && <p className={styles.success} role="status">{uiText("报名已提交，正在等待赛事负责人审核。名单已冻结；需要修改时可撤回后重新提交。", uiLocale)}</p>}
-    {owner && editable && confirmed && <p className={styles.feedback} role="status">{uiText("全部队员已确认，但队伍报名尚未提交。请点击下方“提交赛事负责人审核”完成最后一步。", uiLocale)}</p>}
+    {owner && editable && <div className={styles.feedback} role="status" aria-live="polite">{readiness.ready ? <p>{uiText("全部队员已确认，但队伍报名尚未提交。请点击下方“提交赛事负责人审核”完成最后一步。", uiLocale)}</p> : <><strong>{uiText('送审前还需完成', uiLocale)}</strong><ul className={styles.submissionIssues}>{readiness.issues.map(issue => <li key={issue.id}>{uiText(issue.message, uiLocale, issue.values)}</li>)}</ul></>}</div>}
     <div className={styles.tableScroll}><table><thead><tr><th>{uiText("选手", uiLocale)}</th><th>BattleTag</th><th>{uiText("职责", uiLocale)}</th><th>{uiText("本人确认", uiLocale)}</th>{editable && <th>{uiText("操作", uiLocale)}</th>}</tr></thead><tbody>{record.members.map(member => <tr key={member.id}><td data-label={uiText("选手", uiLocale)}>{member.displayName}</td><td data-label="BattleTag">{member.battleTag}</td><td data-label={uiText("职责", uiLocale)}>{roleLabels[member.role]}</td><td data-label={uiText("本人确认", uiLocale)}>{statusLabel(member.status)}</td>{editable && <td data-label={uiText("操作", uiLocale)}><div className={styles.memberActions}>{member.status === 'INVITED' ? <button type="button" disabled={busy} onClick={() => copyInvitation(member)}>{invitationLinks?.[member.id] ? uiText("复制链接", uiLocale) : uiText("生成并复制链接", uiLocale)}</button> : null}{['DRAFT', 'INVITED', 'CONFIRMED'].includes(member.status) ? <button type="button" disabled={busy} onClick={() => { if (window.confirm(uiText("确定从这份报名草稿中移出 {0} 吗？", uiLocale, [member.displayName]))) perform(`${prefix}/remove-member`, { revision: record.revision, memberId: member.id }) }}>{uiText("移出草稿", uiLocale)}</button> : null}</div></td>}</tr>)}</tbody></table></div>
     {owner && editable && record.members.some(member => member.status === 'CONFIRMED') ? <p className={styles.feedback} role="status">{uiText("已确认资料由选手本人修改。队伍提交审核后会冻结资料，需要负责人撤回报名后才能修改。", uiLocale)}</p> : null}
     {copyNotice && <p role="status" className={styles.feedback}>{copyNotice}</p>}
@@ -321,7 +327,7 @@ function Registration({ seasonId, rulebook, eligibilityRequired, record, userId,
         </div>{rosterFull ? <p className={styles.warning} role="status">{uiText("当前名单已达到 {0} 人上限。请先移除一名草稿成员，再邀请其他选手。", uiLocale, [rosterMax])}</p> : null}<button disabled={busy || rosterFull}>{rosterFull ? uiText("名单已满", uiLocale) : uiText("生成本人确认邀请", uiLocale)}</button>
       </form>
 
-      <div className={`${styles.actions} ${styles.submission}`}><button className={styles.primary} disabled={busy || !rosterReady} onClick={() => perform(`${prefix}/submit`, { revision: record.revision })}>{uiText("提交赛事负责人审核", uiLocale)}</button><span>{uiText("全部队员确认且达到本赛季人数要求后可以提交。", uiLocale)}</span></div>
+      <div className={`${styles.actions} ${styles.submission}`}><button className={styles.primary} disabled={busy || !readiness.ready} onClick={() => perform(`${prefix}/submit`, { revision: record.revision })}>{uiText("提交赛事负责人审核", uiLocale)}</button><span>{uiText(readiness.ready ? '全部队员确认且达到本赛季人数要求后可以提交。' : '请先完成上方待处理事项。', uiLocale)}</span></div>
     </>}
     {owner && record.status === 'SUBMITTED' && <button disabled={busy} onClick={() => perform(`${prefix}/withdraw`, { revision: record.revision })}>{uiText("撤回并修改", uiLocale)}</button>}
     {['DRAFT', 'RETURNED', 'SUBMITTED'].includes(record.status) && record.members.some(member => member.userId === userId && member.status === 'CONFIRMED') && <button disabled={busy} onClick={() => perform(`${prefix}/withdraw-consent`, { memberId: record.members.find(member => member.userId === userId).id })}>{uiText("撤回本人的入队确认", uiLocale)}</button>}

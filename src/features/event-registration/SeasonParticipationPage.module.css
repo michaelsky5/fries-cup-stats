@@ -60,6 +60,8 @@
 .page .check { display:flex;align-items:flex-start;gap:10px;line-height:1.6; }
 .page .check input { flex:none;width:18px;height:18px;margin-top:3px;accent-color:#efc533; }
 .page .error { white-space:pre-line; }
+.submissionIssues { margin: 8px 0 0; padding-left: 20px; }
+.submissionIssues li { margin-block: 4px; overflow-wrap: anywhere; }
 .page .success { padding:12px 16px;border:0;border-left:3px solid #47723d;background:#47723d0b;color:#31592a;font-size:14px;font-weight:700; }
 .eligibilityFields,.logoField { border:0;border-top:1px solid var(--fc-data-line);padding:16px 0 0;margin:24px 0 0;min-width:0; }
 .eligibilityFields legend,.logoField legend { float:left;width:100%;padding:0;margin:0 0 16px;font-size:14px;font-weight:800; }.eligibilityFields > legend + *,.logoField > legend + * { clear:both; }.eligibilityFields p { margin:8px 0 16px; }
