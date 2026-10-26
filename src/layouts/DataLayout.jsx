@@ -398,7 +398,8 @@ export default function DataLayout() {
     isAccountIdentityLoading: isAccountDataLoading,
     isAuthenticated,
     authUser,
-    accountNextAction: accountAttention.nextAction
+    accountNextAction: accountAttention.nextAction,
+    accountHasTeam: accountAttention.hasTeam
   }
 
   const eventContextDock = isKprHybridDesign && (headerContextMode === 'data' || isWeeklyHomeRoute) ? (

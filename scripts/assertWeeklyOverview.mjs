@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { buildWeeklyFollowedTeams, buildWeeklyOverview, isWeeklyOverview, weeklyMapSlots, weeklyMatchState, weeklyScore } from '../src/features/weekly-overview/weeklyOverviewModel.js'
 import { buildWeeklyOverviewFixture } from './lib/weeklyOverviewFixture.mjs'
 import { COUNTDOWN_WINDOW_MS, formatMatchCountdown } from '../src/features/weekly-overview/matchCountdown.js'
-import { buildWeeklyPhases, openWeeklyConfirmation } from '../src/features/weekly-overview/weeklyPhase.js'
+import { buildWeeklyPhases, keepWeeklyPhaseRow, openWeeklyConfirmation, weeklyAccountStep, weeklyMatchWindow } from '../src/features/weekly-overview/weeklyPhase.js'
 
 let checks = 0
 const test = (name, fn) => { fn(); checks += 1; console.log(`PASS ${name}`) }
@@ -153,6 +153,45 @@ test('phase card leads with the live match and honours deadlines instead of the 
   assert.ok(!buildWeeklyPhases(fixture, { now: Date.parse('2026-10-30T05:00:00.000Z') }).some(phase => phase.kind === 'confirmation'))
   fixture.season.rules.registration.closesAt = '2026-10-25T15:59:00.000Z'
   assert.ok(!buildWeeklyPhases(fixture, { now }).some(phase => phase.kind === 'registration'))
+})
+test('票 2.66: after the confirmation deadline the week is named by its published match window', () => {
+  // The second cycle's first week as published: confirmation closes Fri 12:00, matches Sat 19:00 to Sun 23:59 (UTC+8).
+  const registration = { cycle_id: 'C02', cycle_name: '第二赛段', week_number: 1, status: 'CONFIRMATION_OPEN', opens_at: '2026-10-25T16:00:00.000Z', closes_at: '2026-10-30T04:00:00.000Z', match_window_starts_at: '2026-10-31T11:00:00.000Z', match_window_ends_at: '2026-11-01T15:59:00.000Z' }
+  const snapshot = { weekly_competition: { registration } }
+  assert.equal(weeklyMatchWindow(snapshot, Date.parse('2026-10-28T00:00:00.000Z')), null, 'still confirming')
+  const ahead = weeklyMatchWindow(snapshot, Date.parse('2026-10-30T05:00:00.000Z'))
+  assert.equal(ahead.started, false); assert.equal(ahead.startsAt, Date.parse(registration.match_window_starts_at))
+  assert.equal(weeklyMatchWindow(snapshot, Date.parse('2026-10-31T12:00:00.000Z')).started, true, 'inside the window')
+  assert.equal(weeklyMatchWindow(snapshot, Date.parse(registration.match_window_ends_at)), null, 'over at the published end')
+  const noEnd = { weekly_competition: { registration: { ...registration, match_window_ends_at: null } } }
+  assert.equal(weeklyMatchWindow(noEnd, Date.parse('2026-10-31T12:00:00.000Z')), null, 'without a published end it is not stretched past the start')
+  assert.equal(weeklyMatchWindow({ weekly_competition: { registration: { ...registration, match_window_starts_at: null } } }, Date.parse('2026-10-30T05:00:00.000Z')), null, 'no window, no phase')
+  // On the home it ranks above the cycle that just ended, and published pairings take over from it.
+  const fixture = structuredClone(db)
+  fixture.weekly_competition.registration = registration
+  for (const match of fixture.matches || []) match.status = 'COMPLETE'
+  const kinds = buildWeeklyPhases(fixture, { now: Date.parse('2026-10-30T05:00:00.000Z') }).map(phase => phase.kind)
+  assert.ok(kinds.includes('weekAhead') && !kinds.includes('confirmation'), kinds.join())
+  if (kinds.includes('cycleClosed')) assert.ok(kinds.indexOf('weekAhead') < kinds.indexOf('cycleClosed'))
+})
+test('票 2.66: the card offers the reader its own step and drops the registration line where it repeats', () => {
+  const signedIn = (nextAction, hasTeam = false) => ({ signedIn: true, nextAction, hasTeam })
+  assert.equal(weeklyAccountStep(null), null, 'signed out: public choices')
+  assert.equal(weeklyAccountStep({ signedIn: false, nextAction: { kind: 'confirm', to: '/me' } }), null)
+  assert.deepEqual(weeklyAccountStep(signedIn({ kind: 'confirm', to: '/me?section=team' })), { kind: 'confirm', to: '/me?section=team' })
+  assert.deepEqual(weeklyAccountStep(signedIn({ kind: 'submit', to: '/participate/S?registration=r' })), { kind: 'submit', to: '/participate/S?registration=r' })
+  assert.deepEqual(weeklyAccountStep(signedIn({ kind: 'register', to: '/participate/S' })), { kind: 'register' })
+  assert.deepEqual(weeklyAccountStep(signedIn(null, true)), { kind: 'team' }, 'a formal team with nothing open')
+  assert.equal(weeklyAccountStep(signedIn(null)), null)
+  const registration = { kind: 'registration', closesAt: null }
+  const confirmation = { kind: 'confirmation' }, weekAhead = { kind: 'weekAhead' }
+  assert.equal(keepWeeklyPhaseRow(confirmation, registration, null), false, 'the confirmation card already carries first registration')
+  assert.equal(keepWeeklyPhaseRow(confirmation, { ...registration, closesAt: Date.parse('2026-11-15T15:59:00.000Z') }, null), true, 'a registration deadline is still worth its line')
+  assert.equal(keepWeeklyPhaseRow(weekAhead, registration, null), true)
+  assert.equal(keepWeeklyPhaseRow(weekAhead, registration, signedIn(null)), true, 'signed in without a team')
+  assert.equal(keepWeeklyPhaseRow(weekAhead, registration, signedIn(null, true)), false, 'formal team')
+  assert.equal(keepWeeklyPhaseRow(weekAhead, registration, signedIn({ kind: 'submit', to: '/x' })), false, 'draft')
+  assert.equal(keepWeeklyPhaseRow(weekAhead, { kind: 'cycleClosed' }, signedIn(null, true)), true, 'other lines stay')
 })
 test('票 2.22: a followed team shows its live, next or latest published match', () => {
   const rows = buildWeeklyFollowedTeams(db, ['FCW26-T001', 'NOT-A-TEAM'])

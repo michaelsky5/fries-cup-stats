@@ -5,6 +5,7 @@ import { getWatchLink } from '../../lib/watchLink.js'
 import MatchCountdown from './MatchCountdown.jsx'
 import { weeklyParticipationPath, participationWeekNumber } from './weeklyInteractionNavigation.js'
 import { weeklyScore } from './weeklyOverviewModel.js'
+import { keepWeeklyPhaseRow, weeklyAccountStep } from './weeklyPhase.js'
 import { weeklyCycleTitle, weeklyMatchContextLabel, weeklyPeriodPath, weeklyTeamShort } from './weeklyPresentation.js'
 import styles from './WeeklyPhaseCard.module.css'
 
@@ -28,12 +29,18 @@ const weekly = (slot, locale) => slot ? `${pickUiLocale(locale, WEEKDAYS.zh[slot
 const plannedMark = locale => pickUiLocale(locale, '（计划）', ' (planned)', ' (계획)', '（計畫）')
 const plannedCycleName = (plan, locale) => pickUiLocale(locale, plan.name, plan.nameEn, plan.nameKo, plan.nameTw)
 
-function nextCycleText(next, locale) {
+// 票 2.66: a published cycle *opens* on its start date; its first matches are week 1's match window. Only the
+// event plan (not yet published) still speaks of the cycle starting, marked as planned.
+function nextCycleText(next, locale, now) {
   if (!next?.startsAt) return ''
   const name = next.planned ? plannedCycleName(next.plan, locale) : weeklyCycleTitle(next.cycle, locale)
   const day = dayText(next.startsAt, locale)
-  const text = pickUiLocale(locale, `${name} ${day} 开赛`, `${name} starts ${day}`, `${name} ${day} 시작`, `${name} ${day} 開賽`)
-  return next.planned ? `${text}${plannedMark(locale)}` : text
+  if (next.planned) return `${pickUiLocale(locale, `${name} ${day} 开赛`, `${name} starts ${day}`, `${name} ${day} 시작`, `${name} ${day} 開賽`)}${plannedMark(locale)}`
+  const opened = next.startsAt <= now
+    ? pickUiLocale(locale, `${name}已开放`, `${name} is open`, `${name} 진행 중`, `${name}已開放`)
+    : pickUiLocale(locale, `${name} ${day} 开放`, `${name} opens ${day}`, `${name} ${day} 오픈`, `${name} ${day} 開放`)
+  const first = next.firstMatchAt ? pickUiLocale(locale, `首周比赛 ${timeText(next.firstMatchAt, locale)}`, `first matches ${timeText(next.firstMatchAt, locale)}`, `첫 주 경기 ${timeText(next.firstMatchAt, locale)}`, `首週比賽 ${timeText(next.firstMatchAt, locale)}`) : ''
+  return [opened, first].filter(Boolean).join(' · ')
 }
 
 // The championship line reads from the winner's side: 决赛 3 : 0 BBB.
@@ -48,7 +55,23 @@ function finalLine(phase, locale) {
   return pickUiLocale(locale, `决赛 ${own} : ${other} ${opponent}`, `Final ${own}–${other} vs ${opponent}`, `결승 ${own} : ${other} ${opponent}`, `決賽 ${own} : ${other} ${opponent}`)
 }
 
-function describe(phase, { locale, withSeason, plan, now, seasonId }) {
+// 票 2.66: the confirmation card offers what this reader can do. Signed out, or nothing known about the account yet:
+// confirm (captains) and first registration. Signed in: the account's own step (weeklyAccountStep) — this week's
+// confirmation, a draft registration to finish, or registering a team; others with a team see the captains' button.
+const continueDraft = (step, t) => step?.kind === 'submit'
+  ? { to: step.to, label: t('继续填写报名', 'Continue registration', '등록 계속하기', '繼續填寫報名'), primary: true } : null
+function confirmationActions(registration, account, { t, withSeason }) {
+  const confirm = { to: withSeason(weeklyParticipationPath(registration)), label: t('确认参赛（队长）', 'Confirm (captains)', '참가 확인 (주장)', '確認參賽（隊長）'), primary: true }
+  const register = { to: withSeason('/participate/FCW26'), label: t('首次报名', 'Register a team', '신규 등록', '首次報名') }
+  const step = weeklyAccountStep(account)
+  if (step?.kind === 'confirm') return [{ ...confirm, to: step.to, label: t('确认本队参赛', 'Confirm your team', '우리 팀 참가 확인', '確認本隊參賽') }]
+  if (step?.kind === 'submit') return [continueDraft(step, t)]
+  if (step?.kind === 'register') return [{ ...register, primary: true }]
+  if (step) return [confirm]
+  return [confirm, register]
+}
+
+function describe(phase, { locale, withSeason, plan, now, seasonId, account }) {
   const t = (zh, en, ko, tw) => pickUiLocale(locale, zh, en, ko, tw)
   if (phase.kind === 'cycleClosed') {
     const cycle = weeklyCycleTitle(phase.cycle, locale)
@@ -57,7 +80,7 @@ function describe(phase, { locale, withSeason, plan, now, seasonId }) {
       eyebrow: `${cycle} · ${t('已结束', 'Closed', '종료', '已結束')}`,
       title: <><TeamLogo team={champion} seasonId={seasonId} className={styles.titleLogo} /><span>{t(`${cycle}优胜者`, `${cycle} winner`, `${cycle} 우승`, `${cycle}優勝者`)} <b>{weeklyTeamShort(champion)}</b></span></>,
       line: `${cycle}${t('优胜者', ' winner', ' 우승', '優勝者')} ${weeklyTeamShort(champion)}`,
-      facts: [finalLine(phase, locale), nextCycleText(phase.next, locale)].filter(Boolean),
+      facts: [finalLine(phase, locale), nextCycleText(phase.next, locale, now)].filter(Boolean),
       actions: [{ to: withSeason(weeklyPeriodPath('/advance', phase.cycle)), label: t('查看晋级形势', 'See advancement', '진출 현황 보기', '查看晉級形勢'), primary: true }]
     }
   }
@@ -68,7 +91,8 @@ function describe(phase, { locale, withSeason, plan, now, seasonId }) {
       title: t('队伍报名开放中', 'Team registration is open', '팀 등록 진행 중', '隊伍報名開放中'),
       line: `${t('队伍报名开放中', 'Team registration open', '팀 등록 진행 중', '隊伍報名開放中')} · ${closes}`,
       facts: [closes],
-      actions: [{ to: withSeason('/participate/FCW26'), label: t('去报名', 'Register', '등록하기', '去報名'), primary: true }]
+      // 票 2.66: someone with a draft continues it rather than starting another.
+      actions: [continueDraft(weeklyAccountStep(account), t) || { to: withSeason('/participate/FCW26'), label: t('去报名', 'Register', '등록하기', '去報名'), primary: true }]
     }
   }
   if (phase.kind === 'confirmation') {
@@ -83,15 +107,42 @@ function describe(phase, { locale, withSeason, plan, now, seasonId }) {
       facts: [
         phase.closesAt ? t(`${timeText(phase.closesAt, locale)} 截止`, `Closes ${timeText(phase.closesAt, locale)}`, `${timeText(phase.closesAt, locale)} 마감`, `${timeText(phase.closesAt, locale)} 截止`) : '',
         pairing ? `${t('对阵', 'Pairings', '대진', '對陣')} ${weekly(pairing, locale)} ${t('公布', 'published', '공개', '公布')}${plannedMark(locale)}` : '',
-        phase.matchWindowStartsAt ? t(`比赛 ${dayText(phase.matchWindowStartsAt, locale)} 起`, `Matches from ${dayText(phase.matchWindowStartsAt, locale)}`, `${dayText(phase.matchWindowStartsAt, locale)}부터 경기`, `比賽 ${dayText(phase.matchWindowStartsAt, locale)} 起`) : ''
+        phase.matchWindowStartsAt ? t(`比赛 ${timeText(phase.matchWindowStartsAt, locale)} 开始`, `Matches from ${timeText(phase.matchWindowStartsAt, locale)}`, `${timeText(phase.matchWindowStartsAt, locale)} 경기 시작`, `比賽 ${timeText(phase.matchWindowStartsAt, locale)} 開始`) : ''
       ].filter(Boolean),
       // 票 2.46: the deadline counts down for everyone, signed in or not.
       countdown: phase.closesAt,
       countdownKind: 'deadline',
-      actions: [
-        { to: withSeason(weeklyParticipationPath(registration)), label: t('确认参赛（队长）', 'Confirm (captains)', '참가 확인 (주장)', '確認參賽（隊長）'), primary: true },
-        { to: withSeason('/participate/FCW26'), label: t('首次报名', 'Register a team', '신규 등록', '首次報名') }
-      ]
+      actions: confirmationActions(registration, account, { t, withSeason })
+    }
+  }
+  if (phase.kind === 'weekAhead') {
+    const registration = phase.registration
+    const week = participationWeekNumber(registration.week_number)
+    const label = [registration.cycle_name ? weeklyCycleTitle({ name: registration.cycle_name }, locale) : '', week ? t(`第 ${week} 周`, `Week ${week}`, `${week}주차`, `第 ${week} 週`) : ''].filter(Boolean).join(' · ')
+    const weekName = week ? t(`第 ${week} 周`, `Week ${week}`, `${week}주차`, `第 ${week} 週`) : t('本周', 'This week', '이번 주', '本週')
+    const pairing = plan?.weekly?.pairingPublished
+    const schedule = { to: withSeason(weeklyPeriodPath('/matches', { id: registration.cycle_id })), label: t('查看赛程', 'Schedule', '일정 보기', '查看賽程'), primary: true }
+    const ends = phase.endsAt ? t(`${timeText(phase.endsAt, locale)} 结束`, `ends ${timeText(phase.endsAt, locale)}`, `${timeText(phase.endsAt, locale)} 종료`, `${timeText(phase.endsAt, locale)} 結束`) : ''
+    if (phase.started) return {
+      eyebrow: label || weekName,
+      title: t(`${weekName}比赛进行中`, `${weekName} matches are on`, `${weekName} 경기 진행 중`, `${weekName}比賽進行中`),
+      line: [t(`${weekName}比赛进行中`, `${weekName} matches are on`, `${weekName} 경기 진행 중`, `${weekName}比賽進行中`), ends].filter(Boolean).join(' · '),
+      facts: [ends].filter(Boolean),
+      actions: [schedule]
+    }
+    const starts = timeText(phase.startsAt, locale)
+    return {
+      eyebrow: label || weekName,
+      title: t(`${weekName}比赛 ${starts} 开始`, `${weekName} matches start ${starts}`, `${weekName} 경기 ${starts} 시작`, `${weekName}比賽 ${starts} 開始`),
+      line: t(`${weekName}比赛 ${starts} 开始`, `${weekName} matches start ${starts}`, `${weekName} 경기 ${starts} 시작`, `${weekName}比賽 ${starts} 開始`),
+      facts: [
+        t(`参赛确认已于 ${timeText(phase.closesAt, locale)} 截止`, `Confirmation closed ${timeText(phase.closesAt, locale)}`, `참가 확인 ${timeText(phase.closesAt, locale)} 마감`, `參賽確認已於 ${timeText(phase.closesAt, locale)} 截止`),
+        pairing ? `${t('对阵', 'Pairings', '대진', '對陣')} ${weekly(pairing, locale)} ${t('公布', 'published', '공개', '公布')}${plannedMark(locale)}` : '',
+        ends ? t(`比赛至 ${timeText(phase.endsAt, locale)}`, `matches until ${timeText(phase.endsAt, locale)}`, `${timeText(phase.endsAt, locale)}까지 경기`, `比賽至 ${timeText(phase.endsAt, locale)}`) : ''
+      ].filter(Boolean),
+      countdown: phase.startsAt,
+      countdownKind: 'start',
+      actions: [schedule]
     }
   }
   if (phase.kind === 'matchweek' || phase.kind === 'live') {
@@ -129,10 +180,11 @@ function describe(phase, { locale, withSeason, plan, now, seasonId }) {
 // other phases that also hold right now as one line each below it.
 // 票 2.41: the team lobby is a standing way in, so it joins as the last line instead of a band
 // above the page title.
-export default function WeeklyPhaseCard({ phases, plan, locale, withSeason, now, seasonId, lobbyPath = null, onPhaseExpired }) {
-  const described = phases.map(phase => ({ phase, view: describe(phase, { locale, withSeason, plan, now, seasonId }) })).filter(item => item.view)
+export default function WeeklyPhaseCard({ phases, plan, locale, withSeason, now, seasonId, lobbyPath = null, onPhaseExpired, account = null }) {
+  const described = phases.map(phase => ({ phase, view: describe(phase, { locale, withSeason, plan, now, seasonId, account }) })).filter(item => item.view)
   if (!described.length) return null
-  const [{ phase, view }, ...phaseRows] = described
+  const [{ phase, view }, ...others] = described
+  const phaseRows = others.filter(({ phase: item }) => keepWeeklyPhaseRow(phase, item, account))
   const lobbyRow = lobbyPath ? [{ phase: { kind: 'lobby' }, view: {
     line: pickUiLocale(locale, '组队大厅 · 找队友、招队员', 'Team lobby · Find teammates or players', '팀 찾기 · 팀원과 선수 찾기', '組隊大廳 · 找隊友、招隊員'),
     actions: [{ to: lobbyPath, label: pickUiLocale(locale, '去组队大厅', 'Open the lobby', '팀 찾기로 이동', '前往組隊大廳') }]
@@ -146,7 +198,7 @@ export default function WeeklyPhaseCard({ phases, plan, locale, withSeason, now,
     <div className={styles.main}>
       <p className={styles.eyebrow}>{view.eyebrow}</p>
       <h2 className={styles.title}>{view.title}</h2>
-      {(view.facts.length > 0 || view.countdown) && <p className={styles.facts}><span>{view.facts.join(' · ')}</span>{view.countdown && <MatchCountdown startsAt={view.countdown} locale={locale} className={styles.countdown} kind={view.countdownKind} onDone={view.countdownKind === 'deadline' ? onPhaseExpired : undefined} />}</p>}
+      {(view.facts.length > 0 || view.countdown) && <p className={styles.facts}><span>{view.facts.join(' · ')}</span>{view.countdown && <MatchCountdown startsAt={view.countdown} locale={locale} className={styles.countdown} kind={view.countdownKind} onDone={view.countdownKind === 'deadline' || phase.kind === 'weekAhead' ? onPhaseExpired : undefined} />}</p>}
       <div className={styles.actions}>{view.actions.map(actionNode)}</div>
     </div>
     {rest.length > 0 && <ul className={styles.rows}>{rest.map(({ phase: item, view: row }) => <li key={item.kind} data-weekly-phase-row={item.kind}>

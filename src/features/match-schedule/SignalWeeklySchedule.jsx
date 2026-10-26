@@ -175,7 +175,6 @@ export default function SignalWeeklySchedule() {
             <div>{group.matches.map(match => <WeeklyMatchRow key={match.id} match={match} now={openedAt} locale={locale} seasonId={seasonId} withSeason={withSeason} returnProps={returnProps} mapsExpanded={expandedMatchId === match.id} onToggleMaps={() => change({ expanded: expandedMatchId === match.id ? null : match.id })} isDesktop={isDesktop} selected={selectedMatch?.id === match.id} onSelect={() => change({ match: match.id })} previewId={previewId} />)}</div>
           </section>)}
         </section>)}</div> : <section className={styles.empty}>
-          <span>WEEKLY / MATCHES</span>
           <h3>{!model.total ? t(uiText("赛程尚未公布", locale), 'Schedule not yet published') : followedOnly && !followedKey ? t(uiText("尚未关注队伍", locale), 'No followed teams') : eventCenterText('fixturesEmpty', locale)}</h3>
           <p>{!model.total ? t(uiText("当前周次尚无公开对阵，可切换其他已发布周次。", locale), 'There are no public fixtures in this selection. Try another published week.') : followedOnly && !followedKey ? t(uiText("在周赛总览关注队伍，再回来查看他们的赛程。", locale), 'Follow teams in the weekly overview to see their fixtures here.') : eventCenterText('fixturesEmptyIntro', locale)}</p>
           {followedOnly && !followedKey ? <Link to={`${overviewPath}#weekly-following`}>{t(uiText("去关注队伍", locale), 'Choose teams')} ↗</Link> : model.hasFilters && <button type="button" onClick={reset}>{t(uiText("重置筛选", locale), 'Reset filters')} ↺</button>}

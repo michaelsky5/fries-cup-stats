@@ -105,7 +105,6 @@
 .mapCells a:hover { background: #edc54433; border-color: var(--fc-data-focus-on-light); }
 .noMaps { font-size: 10px; color: var(--muted); }
 .empty { border-block: 1px solid var(--line); padding: 58px 32px; min-height: 270px; background: #ffffff35; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
-.empty > span { font-size: 10px; letter-spacing: .07em; color: var(--muted); }
 .empty h3 { font-size: 28px; }
 .empty p { font-size: 13px; color: var(--muted); line-height: 1.8; }
 .empty :is(a, button) { border: 1px solid var(--line); background: transparent; padding: 12px 18px; font-size: 12px; }
@@ -368,7 +367,7 @@
 
 /* 票 2.25: phone legibility — system text at least 11px, every tap target at least 44×44. */
 @media (max-width: 600px) {
-  .state, .time > small, .team small, .score > small, .noMaps, .empty > span, .teamFilter > span, .listHeading p,
+  .state, .time > small, .team small, .score > small, .noMaps, .teamFilter > span, .listHeading p,
   .dayHeading h3::after, .dayHeading > span, .mapHeading > span, .footer, .previewSummary time > span { font-size: 11px; }
   .page .reset { min-width: 44px; min-height: 44px; font-size: 11px !important; }
   .footer a { display: inline-flex; align-items: center; min-height: 44px; }

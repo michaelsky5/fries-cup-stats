@@ -36,6 +36,8 @@ export function buildAccountAttention(context, locale = 'zh-CN', { registration 
 
   return {
     nextAction,
+    // 票 2.66: the weekly home leaves out the registration line for accounts that already have a formal team.
+    hasTeam: Boolean(context?.hasTeam),
     openTaskCount,
     unreadNotificationCount,
     taskSyncStatus,

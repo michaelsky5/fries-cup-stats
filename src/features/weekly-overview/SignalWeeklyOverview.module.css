@@ -114,9 +114,9 @@
 .pointsRule p { display: grid; gap: 9px; }
 .pointsRule b { font-size: 11px; font-weight: 600; }
 .pointsRule small { font-size: 10px; line-height: 1.7; color: var(--muted); }
-.empty { background: var(--ink); color: var(--paper); padding: clamp(24px, 5vw, 70px); min-height: 390px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 20px; }
-.empty > span { font-size: 11px; color: var(--yellow); }
-.empty h3 { font-size: clamp(26px, 3vw, 40px); }
+/* 票 2.66: before a week's pairings are out this is a short note; the phase card above carries the dates. */
+.empty { background: var(--ink); color: var(--paper); padding: 24px 32px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; }
+.empty h3 { font-size: 20px; }
 .empty p { font-size: 14px; line-height: 1.8; color: #a2a59a; max-width: 460px; }
 .pointsEmpty { padding: 35px 15px 55px; border-block: 1px solid var(--line); }
 .pointsEmpty > span { font: 800 50px var(--fc-data-font-display); }

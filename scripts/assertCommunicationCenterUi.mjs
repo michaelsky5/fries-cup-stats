@@ -66,6 +66,7 @@ assert.deepEqual(buildAccountAttention({
   overview: { openTaskCount: 3.8, unreadNotificationCount: 120 }
 }), {
   nextAction: null,
+  hasTeam: false,
   openTaskCount: 3,
   unreadNotificationCount: 120,
   taskSyncStatus: 'ready',

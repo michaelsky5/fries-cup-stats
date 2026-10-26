@@ -99,7 +99,7 @@ function WeeklyFollowingSection({ rows, picker, locale, defaultOpen = false }) {
 }
 
 export default function SignalWeeklyOverview() {
-  const { db, seasonId, locale, withSeason, isFavoriteTeam, toggleTeamFavorite } = useOutletContext()
+  const { db, seasonId, locale, withSeason, isFavoriteTeam, toggleTeamFavorite, isAuthenticated, accountNextAction, accountHasTeam } = useOutletContext()
   const [params, setParams] = useSearchParams()
   const location = useLocation()
   const navigationType = useNavigationType()
@@ -209,7 +209,7 @@ export default function SignalWeeklyOverview() {
       <div><h1>{eventCenterText('overviewTitle', locale)}</h1><p>{eventCenterText('overviewIntro', locale)}</p></div>
       {!isPhone && quickLinks}
     </header>
-    <WeeklyPhaseCard phases={phases} plan={weeklyPlan} locale={locale} withSeason={withSeason} now={openedAt} seasonId={seasonId} lobbyPath={lobbyOpen ? withLocale('/lobby', locale) : null} onPhaseExpired={refreshPhases} />
+    <WeeklyPhaseCard phases={phases} plan={weeklyPlan} locale={locale} withSeason={withSeason} now={openedAt} seasonId={seasonId} lobbyPath={lobbyOpen ? withLocale('/lobby', locale) : null} onPhaseExpired={refreshPhases} account={{ signedIn: Boolean(isAuthenticated), nextAction: accountNextAction || null, hasTeam: Boolean(accountHasTeam) }} />
     {followingOnTop && following}
     {supporterThanks}
     <section className={styles.periodNavigation} data-weekly-period-nav="true" aria-label={pickUiLocale(locale, '比赛赛段与周次', 'Cycle and weeks', '주기 및 주차', '比賽賽段與週次')}>
@@ -246,7 +246,7 @@ export default function SignalWeeklyOverview() {
             </ol>
           </div>}
           <div className={styles.matchFooter}><span>{focus.state === 'live' ? t(uiText("进行中的比分尚未计入赛段积分。", locale), 'Live scores are not added to the published cycle points.') : focus.state === 'ruling' ? t(uiText("按赛事判定记录，积分以公布榜单为准。", locale), 'A ruling applies. Points follow the published standings.') : t(uiText("地图记录与结果以公布内容为准。", locale), 'Map records and results follow the published data.')}</span><span className={styles.matchActions}>{focusWatch ? <a href={focusWatch.url} target="_blank" rel="noreferrer" data-watch-kind={focusWatch.kind}>{focusWatch.kind === 'live' ? pickUiLocale(locale, '看直播', 'Watch live', '생중계', '看直播') : pickUiLocale(locale, '看录像', 'Replays', '다시보기', '看錄像')} <span aria-hidden="true">↗</span></a> : null}<Link to={withSeason(`/matches/${encodeURIComponent(focus.id)}`)} {...returnProps(focus)}>{t(uiText("比赛详情", locale), 'Match details')} <span aria-hidden="true">→</span></Link></span></div>
-        </div> : <div className={styles.empty}><span>WEEKLY / MATCHES</span><h3>{t(uiText("赛程尚未公布", locale), 'Schedule not yet published')}</h3><p>{t(uiText("可切换其他已发布周次，查看对阵与赛果。", locale), 'Choose another published week to view fixtures and results.')}</p></div>}
+        </div> : <div className={styles.empty}><h3>{t(uiText("赛程尚未公布", locale), 'Schedule not yet published')}</h3><p>{t(uiText("可切换其他已发布周次，查看对阵与赛果。", locale), 'Choose another published week to view fixtures and results.')}</p></div>}
         {isPhone && <div className={styles.phoneLinks}>{quickLinks}</div>}
       </section>
       {matches.length > 0 && <section className={styles.matchList} aria-labelledby="weekly-matches-title">
