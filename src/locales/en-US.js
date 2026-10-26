@@ -10499,5 +10499,7 @@ export default {
   "第 {0} 图 · 地图记录": "Map {0} · Map record",
   "第 {0} 版": "Revision {0}",
   "BattleTag 待填写": "BattleTag not provided",
-  "对方响应": "Opponent response"
+  "对方响应": "Opponent response",
+  "记录 A 队获胜": "Record Team A win",
+  "记录 B 队获胜": "Record Team B win"
 }

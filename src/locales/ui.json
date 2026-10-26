@@ -60623,5 +60623,15 @@
     "zh-TW": "對方響應",
     "en-US": "Opponent response",
     "ko-KR": "상대 팀 응답"
+  },
+  "记录 A 队获胜": {
+    "zh-TW": "記錄 A 隊獲勝",
+    "en-US": "Record Team A win",
+    "ko-KR": "A팀 승리 기록"
+  },
+  "记录 B 队获胜": {
+    "zh-TW": "記錄 B 隊獲勝",
+    "en-US": "Record Team B win",
+    "ko-KR": "B팀 승리 기록"
   }
 }
