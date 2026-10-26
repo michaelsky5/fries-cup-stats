@@ -5,7 +5,9 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'tmp', '.codex-tmp', 'artifacts', 'output', 'src/features/weekly-report/vendor']),
+  // This independent Taro/React 18 workspace has native runtime checks and
+  // generated JSX; the Web/browser-only rules do not apply to its sources.
+  globalIgnores(['dist', 'tmp', '.codex-tmp', 'artifacts', 'output', 'src/features/weekly-report/vendor', 'experiments/shared-schedule/**']),
   {
     files: ['**/*.{js,jsx}'],
     extends: [

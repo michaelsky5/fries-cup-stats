@@ -1,0 +1,12 @@
+/* Shared platform-normalization only; the design source remains Stats CSS. */
+.shared-root .shared-search-input { flex: 1; width: 100%; min-width: 0; min-height: 48px; padding: 8px 0; font-size: 16px; }
+.shared-root .shared-search-input input { min-width: 0; min-height: 32px; }
+.shared-root .shared-selected { background: #181a17; color: #eeede6; border-bottom-color: #f4c320; }
+.shared-root .shared-selected .shared-tag-b { color: #f4c320; }
+.shared-root .shared-week-rail .shared-selected { background: #f4c320; color: #181a17; }
+.shared-root .shared-match .h5-img { display: block; width: 100%; height: 100%; }
+.shared-root .shared-logo-fallback { font-size: 20px; line-height: 1; white-space: nowrap; }
+/* Both outputs of this trial use the existing <=600px Stats layout. */
+.shared-root .shared-match { grid-template-columns: minmax(0, 1fr); }
+.shared-detail-teams { display: flex; flex-wrap: wrap; gap: 12px; padding: 16px 0; }
+.shared-root .shared-detail-team { min-height: 44px; padding: 8px 12px; border: 1px solid var(--fc-data-line); background: transparent; text-align: left; font-size: 12px; }
