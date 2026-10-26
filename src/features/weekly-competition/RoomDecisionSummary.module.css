@@ -71,3 +71,8 @@
 @media(max-width:360px) {
   .recap[data-inline=true]>.compactInfo { min-width:76px;max-width:82px;padding-inline:5px; }
 }
+
+/* 票 2.59 · 手机与平板：状态条里「本图信息」最小 12px（变量定义在 RoomGrid.module.css）。 */
+@media (width < 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) .recap[data-inline=true]>.compactInfo { font-size: var(--room-caption); }
+}

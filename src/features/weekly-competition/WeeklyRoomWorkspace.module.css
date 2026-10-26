@@ -13,7 +13,7 @@
 @media(width < 1180px) { .statusStrip { margin:6px 12px 0;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px;height:46px; } }
 @media(width < 1180px) and (max-height:540px) { .statusStrip { margin-top:0; } }
 .team { min-width:0;display:flex;flex-direction:column;border:1px solid var(--line);background:var(--fc-data-room-surface); }
-.team>header { padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:3px 8px;border-top:3px solid var(--fc-data-room-action-bg);border-bottom:1px solid var(--line); }
+.team>header { padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:3px 8px;border-bottom:1px solid var(--line); }
 .team>header>small { grid-column:1/-1;font-size:9px;letter-spacing:.16em; }
 .team>header>h2 { font-size:22px;line-height:1.15;overflow-wrap:anywhere; }
 .team>header>span { grid-column:1/-1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;color:var(--muted); }
@@ -57,6 +57,9 @@
 .lineupStatus { display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0; }
 .lineupStatus>div { display:flex;justify-content:space-between;gap:10px;padding:8px 10px;background:var(--fc-data-room-inset);border:1px solid var(--line);font-size:12px; }
 .lineupStatus [data-submitted=true] span { color:var(--fc-data-room-success); }
+/* 票 2.65: a long team name ends in an ellipsis; the status beside it stays on one line. */
+.lineupStatus>div>b { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.lineupStatus>div>span { flex:none;white-space:nowrap; }
 .lineupTabs { display:flex;gap:8px;flex-shrink:0; }
 .lineupTabs button[aria-pressed=true] { border-color:var(--fc-data-room-action-bg); }
 .forceDialog { max-height:calc(100dvh - 32px);overflow:auto; }
@@ -79,7 +82,7 @@
 .lineupEditor>header { display:flex;justify-content:space-between;gap:12px;align-items:center;padding:6px 0;font-size:13px;border-bottom:1px solid var(--line); }.lineupEditor>header span { font-size:11px;color:var(--muted); }
 .lineupChoices { display:grid;grid-template-columns:1fr 1fr;gap:6px; }
 .lineupChoices>div { display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px;border:1px solid var(--line);background:var(--fc-data-room-inset);min-width:0; }
-.lineupChoices>div[data-selected=true] { border-color:var(--fc-data-room-accent);background:var(--fc-data-room-selection); }
+.lineupChoices>div[data-selected=true] { border-color:var(--fc-data-room-accent);box-shadow:inset 4px 0 0 var(--fc-data-room-action-bg); }
 .lineupChoices label { display:flex;gap:7px;align-items:center;min-width:0;cursor:pointer; }.lineupChoices input { width:16px;height:16px;min-height:0;padding:0;flex:none;accent-color:var(--fc-data-ink,#181a17); }.lineupChoices label>span { display:grid;min-width:0; }.lineupChoices b { font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }.lineupChoices small { font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
 .viewport .lineupChoices select { font-size:11px;padding:5px;min-height:31px;max-width:112px; }
 .lobbyOrder { display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px; }.lobbyOrder>div { display:grid;gap:4px;padding:8px;background:var(--fc-data-room-inset);border-bottom:2px solid var(--fc-data-room-warning);min-width:0; }.lobbyOrder>div[data-valid=true] { border-color:var(--fc-data-room-success); }.lobbyOrder b { font-size:11px; }.lobbyOrder span { font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; }
@@ -129,7 +132,8 @@
   .columns { grid-template-rows:minmax(0,1fr);container:room-workspace / size; }
   .columns>.team { min-height:0;overflow:hidden; }
   .columns>.team>.teamContent { display:flex;flex-direction:column;flex:1;min-height:0;overflow:auto;overscroll-behavior:contain; }
-  .columns>.team>.teamContent>.roster { flex-shrink:0; }
+  /* 票 2.65: the list scrolls on its own when the column is short, so rows keep their height and the lineup footer never covers one. */
+  .columns>.team>.teamContent>.roster { flex:1 1 auto;min-height:120px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin; }
   .columns>.team>.teamContent>footer { position:sticky;bottom:0;flex-shrink:0;z-index:1; }
   .viewport [data-room-slot=stages] { height:42px;grid-template-rows:42px; }
   .viewport [data-room-slot=stages] li { min-height:0; }
@@ -162,17 +166,17 @@
   .viewport .team>header { padding:calc(12 * var(--room-unit));gap:calc(4 * var(--room-unit)); }
   .viewport .team>header h2 { font-size:calc(28 * var(--room-unit)); }
   .viewport .team>header>small,.viewport .team>header>span { font-size:calc(11 * var(--room-unit)); }
-  .viewport .roster { padding:0 calc(14 * var(--room-unit));display:flex;flex-direction:column;flex:1;min-height:0; }
-  .viewport .rosterLabel { padding:calc(10 * var(--room-unit)) calc(14 * var(--room-unit)) calc(6 * var(--room-unit));font-size:calc(11 * var(--room-unit)); }
+  .viewport .roster { padding:0 calc(14 * var(--room-unit));display:flex;flex-direction:column; }
+  .viewport .rosterLabel { padding:calc(8 * var(--room-unit)) calc(14 * var(--room-unit)) calc(4 * var(--room-unit));font-size:calc(11 * var(--room-unit)); }
   .viewport .rosterLabel strong { font-size:calc(12 * var(--room-unit)); }.viewport .rosterLabel small { font-size:calc(10 * var(--room-unit)); }
-  .viewport .person { grid-template-columns:calc(30 * var(--room-unit)) minmax(0,1fr) auto;flex:1;min-height:0;gap:calc(7 * var(--room-unit));padding:calc(3 * var(--room-unit)) 0; }
+  .viewport .person { grid-template-columns:calc(30 * var(--room-unit)) minmax(0,1fr) auto;flex:1 0 auto;min-height:0;gap:calc(7 * var(--room-unit));padding:calc(2 * var(--room-unit)) 0; }
   .viewport .role { min-height:calc(24 * var(--room-unit));font-size:calc(12 * var(--room-unit)); }
-  .viewport .identity b { font-size:calc(14 * var(--room-unit)); }.viewport .identity small { font-size:calc(10 * var(--room-unit));margin-top:calc(3 * var(--room-unit)); }
+  .viewport .identity b { font-size:calc(14 * var(--room-unit)); }.viewport .identity small { font-size:calc(10 * var(--room-unit)); }
   .viewport .person button { font-size:calc(11 * var(--room-unit));padding:calc(4 * var(--room-unit)) calc(6 * var(--room-unit));min-height:calc(30 * var(--room-unit)); }
-  .viewport .teamContent>footer { padding:calc(10 * var(--room-unit)) calc(14 * var(--room-unit));gap:calc(4 * var(--room-unit)); }
+  .viewport .teamContent>footer { padding:calc(8 * var(--room-unit)) calc(14 * var(--room-unit));gap:calc(4 * var(--room-unit)); }
   .viewport .teamContent>footer strong { font-size:calc(12 * var(--room-unit)); }.viewport .teamContent>footer small { font-size:calc(10 * var(--room-unit)); }
   .viewport .lineupCorrection { min-height:calc(30 * var(--room-unit)); padding:calc(4 * var(--room-unit)) calc(6 * var(--room-unit)); font-size:calc(11 * var(--room-unit)); }
-  .viewport [data-room-slot=representative] { padding:calc(12 * var(--room-unit)) calc(14 * var(--room-unit)); }
+  .viewport [data-room-slot=representative] { padding:calc(8 * var(--room-unit)) calc(14 * var(--room-unit)); }
   .viewport [data-room-slot=representative]>div:first-child small,.viewport [data-room-slot=representative] em { font-size:calc(10 * var(--room-unit)); }
   .viewport [data-room-slot=representative]>div:first-child button { font-size:calc(11 * var(--room-unit));min-height:calc(28 * var(--room-unit));padding:calc(3 * var(--room-unit)) calc(6 * var(--room-unit)); }
   .viewport [data-room-slot=representative]>div:nth-child(2) strong { font-size:calc(13 * var(--room-unit)); }.viewport [data-room-slot=representative]>div:nth-child(2) small { font-size:calc(10 * var(--room-unit)); }
@@ -255,7 +259,6 @@
     .center[data-stage-view=lineup]>section>header small,.lineupInstruction{display:none}
     .center[data-stage-view=lineup]>section>header>span{font-size:12px}
     .lineupStatus>div{display:grid;gap:4px;padding:8px 10px}
-    .lineupChoices>div[data-selected=true]{background:color-mix(in srgb,var(--fc-data-room-action-bg) 12%,var(--fc-data-room-inset))}
   }
 }
 
@@ -407,4 +410,49 @@
 }
 @media(min-width:1180px) and (max-height:850px) {
   .viewport.viewport .lineupEditor>footer button { min-height:44px;font-size:14px; }
+}
+
+/* 票 2.59 · 字级：名单、队伍栏和首发编辑里不再有小于 12px 的字（变量定义在 RoomGrid.module.css）。 */
+@media (min-width: 1180px) {
+  .viewport.viewport .team>header { padding: 12px 16px; gap: 4px 8px; }
+  .viewport.viewport .team>header>h2, .viewport.viewport .team>header .teamTitle { font-size: var(--room-title); line-height: 1.2; }
+  .viewport.viewport .team>header .teamTitle span, .viewport.viewport .team>header>span, .viewport.viewport .team>header>small { font-size: var(--room-caption); letter-spacing: 0; }
+  .viewport.viewport .rosterLabel, .viewport.viewport .rosterLabel strong, .viewport.viewport .rosterLabel small { font-size: var(--room-caption); }
+  .viewport.viewport .person .role { font-size: var(--room-caption); }
+  .viewport.viewport .person .identity small, .viewport.viewport .person>small { font-size: var(--room-caption); }
+  .viewport.viewport .person button { min-height: 32px; padding: 4px 8px; font-size: var(--room-caption); }
+  .viewport.viewport .person .changeTag { font-size: var(--room-caption); }
+  .viewport.viewport .lineupCorrection { min-height: 32px; padding: 4px 8px; font-size: var(--room-caption); }
+  .viewport.viewport .teamContent>footer strong, .viewport.viewport .teamContent>footer small { font-size: var(--room-caption); }
+  .viewport.viewport .lineupEditor>header span, .viewport.viewport .lineupEditor>footer small, .viewport.viewport .lineupEditor>footer p { font-size: var(--room-caption); }
+  .viewport.viewport .lobbyOrder :is(b, span) { font-size: var(--room-caption); }
+  .viewport.viewport .lineupChoices label small, .viewport.viewport .lineupStatus>div { font-size: var(--room-caption); }
+  .viewport.viewport .lineupEditor>header strong, .viewport.viewport .lineupEditor>footer b { font-size: var(--room-body); }
+  .viewport.viewport .waiting strong { font-size: var(--room-title); }
+}
+
+/* 票 2.59 · 手机与平板：名单、队伍栏、首发编辑里不再有小于 12px 的字；版式不动（small / em 由 RoomGrid 统一）。 */
+@media (width < 1180px) {
+  .viewport.viewport.viewport .person .role,
+  .viewport.viewport.viewport .rosterLabel,
+  .viewport.viewport.viewport .rosterLabel strong,
+  .viewport.viewport.viewport .team>header .teamTitle span,
+  .viewport.viewport.viewport .teamContent>footer strong,
+  .viewport.viewport.viewport .lineupEditor>header span { font-size: var(--room-caption); }
+}
+@container room-workspace (max-height:900px) {
+  @media (width < 1180px) {
+    .viewport.viewport.viewport .lineupStatus :is(b, span),
+    .viewport.viewport.viewport .lobbyOrder :is(b, span) { font-size: var(--room-caption); }
+  }
+}
+
+/* 票 2.60 · 名单未公开时徽标不写字，只留职责色条（补位等没有专属颜色的职责用中性色）。 */
+.role:empty { background: transparent; border-left: 2px solid var(--line); }
+
+/* 票 2.65 · 电脑端队伍栏：操作代表的名字和 BattleTag 各占一行，过长用省略号（悬停看全名），不再把名单挤下去。 */
+@media (min-width: 1180px) {
+  .columns>.team [data-room-slot=representative] { grid-template-columns: minmax(0, 1fr); }
+  .columns>.team [data-room-slot=representative]>div { min-width: 0; }
+  .columns>.team [data-room-slot=representative]>div:nth-child(2)>:is(strong, small:not([data-representative-changed])) { min-width: 0; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }

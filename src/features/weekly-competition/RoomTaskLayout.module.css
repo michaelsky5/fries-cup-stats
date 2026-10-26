@@ -14,7 +14,7 @@
 .actions :global([data-room-result-responses]) { margin:0; }
 @media(width < 1180px) {
   .layout.layout { gap:6px; }
-  .actions { padding:6px 10px;gap:6px;border-top:2px solid var(--fc-data-room-action-bg); }
+  .actions { padding:6px 10px;gap:6px;border-top:1px solid var(--fc-data-room-line); }
   .actions :global([data-room-result-responses]) { grid-template-columns:1fr 1fr;gap:6px; }
   .actions :global([data-room-result-responses])>div { flex-wrap:wrap;align-content:start;padding-top:0;border-top:0; }
   .body>p { font-size:13px; }

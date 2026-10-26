@@ -42,7 +42,7 @@ export function presentPublicRoomProgress(base, dossier, room, locale) {
   if (!room || !base.active || !dossier.state.isWeekly || !['upcoming', 'live', 'review'].includes(base.key)) return base
   const t = (key, values) => uiText(key, locale, values)
   const key = room.phase === 'CANCELLED' ? 'cancelled' : room.phase === 'REVIEW' ? 'review' : room.phase === 'PREPARING' && !room.completedMaps ? 'upcoming' : 'live'
-  const stageLabels = { CHOOSING: '选择地图', LINEUPS: '首发确认', BAN_ORDER: 'Ban 顺序', BANNING: '英雄禁用', COMPLETE: '等待实际开赛', LIVE: '本局进行中', PAUSED: '比赛暂停', REVIEW: '结果待审核', CANCELLED: '已取消' }
+  const stageLabels = { CHOOSING: '选择地图', LINEUPS: '首发确认', BAN_ORDER: '禁用顺序', BANNING: '英雄禁用', COMPLETE: '等待实际开赛', LIVE: '本局进行中', PAUSED: '比赛暂停', REVIEW: '结果待审核', CANCELLED: '已取消' }
   const currentLabel = t(stageLabels[room.stage] || '赛前准备')
   const cumulative = new Map()
   let scoreA = 0, scoreB = 0

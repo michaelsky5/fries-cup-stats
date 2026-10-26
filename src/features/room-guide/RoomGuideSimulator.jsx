@@ -48,14 +48,14 @@ export default function RoomGuideSimulator({ role, mode, scenario = '', text, on
   const currentId = state.ids[state.index], stage = SIM_CHALLENGES[currentId].stage
   const finished = state.complete && state.index === state.ids.length - 1
   return <section className={styles.simulator} aria-labelledby="simulation-title" id="room-simulation">
-    <header className={styles.heading}><div><span className={styles.eyebrow}>LEARN BY PLAYING / RR5</span><h2 id="simulation-title">{text['sim.title']}</h2><p>{text['sim.intro']}</p></div><span className={styles.demo}>SIMULATION</span></header>
+    <header className={styles.heading}><div><h2 id="simulation-title">{text['sim.title']}</h2><p>{text['sim.intro']}</p></div></header>
     <p className={styles.boundary}>{text['sim.boundary']}</p>
     <div className={styles.toolbar}><p>{text['sim.role']} <strong>{text[`role.${state.role}`]}</strong>{state.scenario && <> · {text[`case.${state.scenario}.title`]}</>}</p><div>{state.scenario && <button type="button" onClick={() => onFullCourse(state.role)}>{text['sim.full']}</button>}<button type="button" onClick={() => dispatch({ type: 'RESET' })}>{text['sim.reset']}</button></div></div>
     {state.scenario && <p className={styles.note}>{text['sim.role-change']}</p>}
     <div className={styles.progress}><label htmlFor="simulation-progress">{text['sim.progress']} {state.history.length}/{state.ids.length}</label><progress id="simulation-progress" max={state.ids.length} value={state.history.length} /></div>
     <div className={styles.layout}><div className={styles.room}>
       <div className={styles.scoreboard}><span>{text['sim.team-a']}</span><strong>A <i>VS</i> B</strong><span>{text['sim.team-b']}</span></div>
-      <div className={styles.stage}><span>RR5 / 05 MAPS</span><strong>{text[`step.${stage}.title`]}</strong></div>
+      <div className={styles.stage}><strong>{text[`step.${stage}.title`]}</strong></div>
       <dl className={styles.board} aria-label={text['sim.board']}><div><dt>{text['sim.map']}</dt><dd>{state.setup.map ? text[`sim.map.${state.setup.map}`] : text['sim.pending']}</dd></div><div><dt>{text['sim.order']}</dt><dd>{state.setup.order ? text[state.setup.order === 'FIRST' ? 'sim.first' : 'sim.second'] : text['sim.pending']}</dd></div><div><dt>{text['sim.ban']}</dt><dd>{state.setup.hero ? text[`sim.hero.${state.setup.hero}`] : text['sim.pending']}</dd></div></dl>
       {state.setup.players && <div className={styles.savedLineup}><span>{text['sim.lineup-order']}</span><div>{lineupOrder(state.setup.players).map(player => <b key={player.id}>{playerName(player.id)}<small>{text[`sim.role.${player.role}`]}</small></b>)}</div></div>}
       <aside className={styles.opponent} aria-live="polite"><strong>◉ {text['sim.scripted']}</strong><p>{state.complete ? text[`sim.${currentId}.success`] : text['sim.waiting']}</p></aside>

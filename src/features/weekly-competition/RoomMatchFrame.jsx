@@ -18,7 +18,16 @@ const teamName = team => team?.shortName || team?.name || '队伍待定'
 const numericScore = value => typeof value === 'number' && Number.isFinite(value)
 const isDraw = map => map.status === 'COMPLETE' && numericScore(map.scoreA) && numericScore(map.scoreB) && map.scoreA === map.scoreB
 
-export function RoomMatchHeader({ data, phaseLabel, returnPath, busy, error, refresh, accountControl, mutate, disabled }) {
+// 票 2.59: on desktop the game-room facts sit in the footer, so the header stays one row.
+// In the footer the room already frames them, so the code is labelled 设置码 rather than 比赛房间设置码.
+export function RoomMatchFacts({ data, error, mutate, disabled }) {
+  const uiLocale = useUiLocale()
+  const roomName = data.preparation.brief?.roomName
+  const operator = data.access.operatorMode === 'TEAM_CAPTAINS' ? uiText("双方代表操作", uiLocale) : data.staff.map(item => item.name).join(' / ') || uiText("等待指派", uiLocale)
+  return <div className={styles.matchFacts} data-room-slot="facts"><div><span>{uiText("游戏房间", uiLocale)}<b title={roomName || undefined}>{roomName || uiText(data.access.operatorMode === 'TEAM_CAPTAINS' ? '等待双方设置' : '等待赛管发布', uiLocale)}</b></span><span>{uiText("设置码", uiLocale)}<b className={styles.mono}>{data.preparation.brief?.roomCode || uiText("未设置", uiLocale)}</b></span><span>{uiText(data.access.operatorMode === 'TEAM_CAPTAINS' ? "本场控制" : "本场赛管", uiLocale)}<b title={operator}>{operator}</b></span><RoomLobbyTools data={data} disabled={disabled} mutate={mutate} /></div><span className={styles.sync} data-error={!!error}>{error ? uiText("同步中断 · 上次记录", uiLocale) : data.syncedAt ? uiText("最近同步 {0}", uiLocale, [new Date(data.syncedAt).toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', hour12: false })]) : uiText("同步时间待确认", uiLocale)}</span></div>
+}
+
+export function RoomMatchHeader({ data, phaseLabel, returnPath, busy, refresh, accountControl }) {
   const uiLocale = useUiLocale()
   const completed = data.maps.filter(map => map.status === 'COMPLETE')
   const official = data.result?.official
@@ -33,7 +42,6 @@ export function RoomMatchHeader({ data, phaseLabel, returnPath, busy, error, ref
       <div className={styles.tools}><button type="button" disabled={busy} onClick={() => refresh({ force: true })}><span aria-hidden="true">↻</span>{uiText(" 重新同步", uiLocale)}</button>{accountControl}</div>
     </header>
     <WeeklyMatchIdentity match={data.match} locale={uiLocale} copyable compact />
-    <div className={styles.matchFacts} data-room-slot="facts"><div><span>{uiText("游戏房间", uiLocale)}<b>{data.preparation.brief?.roomName || uiText(data.access.operatorMode === 'TEAM_CAPTAINS' ? '等待双方设置' : '等待赛管发布', uiLocale)}</b></span><span>{uiText("比赛房间设置码", uiLocale)}<b className={styles.mono}>{data.preparation.brief?.roomCode || uiText("未设置", uiLocale)}</b></span><span>{uiText(data.access.operatorMode === 'TEAM_CAPTAINS' ? "本场控制" : "本场赛管", uiLocale)}<b>{data.access.operatorMode === 'TEAM_CAPTAINS' ? uiText("双方代表操作", uiLocale) : data.staff.map(item => item.name).join(' / ') || uiText("等待指派", uiLocale)}</b></span><RoomLobbyTools data={data} disabled={disabled} mutate={mutate} /></div><span className={styles.sync} data-error={!!error}>{error ? uiText("同步中断 · 上次记录", uiLocale) : data.syncedAt ? uiText("最近同步 {0}", uiLocale, [new Date(data.syncedAt).toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', hour12: false })]) : uiText("同步时间待确认", uiLocale)}</span></div>
   </>
 }
 
@@ -66,7 +74,7 @@ export function RoomSeriesRail({ data, phaseLabel }) {
       </ol>
     </section>
     <dialog ref={dialog} className={styles.recordDialog} onCancel={() => setSelected(null)} aria-labelledby="room-map-record-title">
-      {selectedMap && <><header><div><small>MAP {String(selectedMap.order).padStart(2, '0')}{uiText(" / 地图记录", uiLocale)}</small><h2 id="room-map-record-title">{formatOwMapName(selectedMap.name, uiLocale)}</h2></div><button type="button" aria-label={uiText("关闭地图记录", uiLocale)} onClick={() => setSelected(null)}>×</button></header>
+      {selectedMap && <><header><div><small>{uiText("第 {0} 图 · 地图记录", uiLocale, [selectedMap.order])}</small><h2 id="room-map-record-title">{formatOwMapName(selectedMap.name, uiLocale)}</h2></div><button type="button" aria-label={uiText("关闭地图记录", uiLocale)} onClick={() => setSelected(null)}>×</button></header>
         <div className={styles.recordMap} style={selectedImage ? { backgroundImage: `linear-gradient(90deg,#181a17cf,#181a1780),url("${selectedImage}")` } : undefined}><span>{teamName(data.match.teamA)}</span><strong>{selectedMap.status === 'COMPLETE' ? roomMapResultLabel(selectedMap, data.match, uiLocale) : 'VS'}</strong><span>{teamName(data.match.teamB)}</span></div>
         <p>{formatOwMapMode(selectedMap.type, uiLocale)} · {selectedMap.status === 'COMPLETE' ? isDraw(selectedMap) ? uiText("平局{0}", uiLocale, [data.match.format === 'RR5' ? ' · 计入固定五局' : '']) : uiText("本图已完成", uiLocale) : uiText("本图尚未完成", uiLocale)}{official ? '' : uiText(" · 赛管工作记录", uiLocale)}</p>
         {!official && <><RoomMapSides map={selectedMap} match={data.match} /><dl className={styles.recordBans}><div><dt>{teamName(data.match.teamA)}{uiText(" 禁用", uiLocale)}</dt><dd>{roomBanLabel(selectedMap, 'A', uiLocale) || uiText("尚未记录", uiLocale)}</dd></div><div><dt>{teamName(data.match.teamB)}{uiText(" 禁用", uiLocale)}</dt><dd>{roomBanLabel(selectedMap, 'B', uiLocale) || uiText("尚未记录", uiLocale)}</dd></div></dl></>}
@@ -89,7 +97,7 @@ export function RoomStageRail({ data, selectedStage, onStageSelect, clock }) {
     ? opening?.phase === 'CHOOSING' || opening?.phase === 'BANNING' && !opening.setup?.firstBanSide ? opening?.winner : opening?.phase === 'BANNING' ? opening.nextSide : null
     : null
   const actingTeam = ['A', 'B'].includes(actingSide) ? data.match[`team${actingSide}`] : null
-  const liveSummary = map && view >= 4 ? `${formatOwMapName(map.name, uiLocale) || uiText("地图待定", uiLocale)} · ${data.match.teamA.shortName || data.match.teamA.name} Ban ${roomBanLabel(map, 'A', uiLocale) || uiText("待定", uiLocale)} · ${data.match.teamB.shortName || data.match.teamB.name} Ban ${roomBanLabel(map, 'B', uiLocale) || uiText("待定", uiLocale)} · ${uiText("首发", uiLocale)} ${lineupSummary('A')} / ${lineupSummary('B')}` : ''
+  const liveSummary = map && view >= 4 ? `${formatOwMapName(map.name, uiLocale) || uiText("地图待定", uiLocale)} · ${data.match.teamA.shortName || data.match.teamA.name}${uiText(" 禁用", uiLocale)} ${roomBanLabel(map, 'A', uiLocale) || uiText("待定", uiLocale)} · ${data.match.teamB.shortName || data.match.teamB.name}${uiText(" 禁用", uiLocale)} ${roomBanLabel(map, 'B', uiLocale) || uiText("待定", uiLocale)} · ${uiText("首发", uiLocale)} ${lineupSummary('A')} / ${lineupSummary('B')}` : ''
   const completedMaps = data.maps.filter(item => item.status === 'COMPLETE').map(item => `${item.order}. ${formatOwMapName(item.name, uiLocale) || uiText("地图待定", uiLocale)} ${roomMapResultLabel(item, data.match, uiLocale)}`).join(' · ')
   const selectedSetup = data.opening?.setup || (map?.name ? { name: map.name, type: map.type, chooserSide: map.chooserSide, attackFirstSide: map.attackFirstSide, firstBanSide: map.firstBanSide, banA: map.banA, banB: map.banB, banAStatus: map.banAStatus, banBStatus: map.banBStatus } : null)
   const chooser = selectedSetup?.chooserSide === 'A' ? data.match.teamA : selectedSetup?.chooserSide === 'B' ? data.match.teamB : null
@@ -98,7 +106,7 @@ export function RoomStageRail({ data, selectedStage, onStageSelect, clock }) {
   const mapTypes = data.opening?.typeCycle?.types || []
   const mapPool = data.opening?.rules?.maps || []
   const mapSelectionPage = view === 1 && view !== current ? <section className={styles.mapSelectionPage} data-room-slot="stage-record" aria-label={uiText("地图选择", uiLocale)}>
-    <header><div><small>02 / MAP SELECTION</small><h2>{uiText("地图选择", uiLocale)}</h2></div><span>{uiText("只读查看本场选图记录", uiLocale)}</span></header>
+    <header><div><h2>{uiText("地图选择", uiLocale)}</h2></div><span>{uiText("只读查看本场选图记录", uiLocale)}</span></header>
     <div className={styles.mapSelectionFacts}><span><b>{uiText("选图方", uiLocale)}</b>{chooser?.shortName || chooser?.name || uiText("待定", uiLocale)}</span><span><b>{uiText("首攻方", uiLocale)}</b>{['Hybrid', 'Escort'].includes(selectedSetup?.type) ? attackFirst?.shortName || attackFirst?.name || uiText("待定", uiLocale) : uiText("无需选择攻防", uiLocale)}</span><span><b>{uiText("当前地图", uiLocale)}</b>{formatOwMapName(selectedSetup?.name, uiLocale) || uiText("待定", uiLocale)}</span></div>
     <div className={styles.mapTypeRail}>{mapTypes.map(item => <div key={item.type} data-used={item.used}><strong>{formatOwMapMode(item.type, uiLocale)}</strong><small>{item.used ? uiText("已使用", uiLocale) : item.remaining ? uiText("{0} 张可选", uiLocale, [item.remaining]) : uiText("无可用地图", uiLocale)}</small></div>)}</div>
     <div className={styles.mapPoolReadonly}>{mapPool.filter(item => playedNames.has(item.name) || item.name === selectedSetup?.name).map(item => <div key={item.name} data-played={playedNames.has(item.name)} data-selected={item.name === selectedSetup?.name} data-disabled={Boolean(item.reason)}><strong>{formatOwMapName(item.name, uiLocale)}</strong><span>{formatOwMapMode(item.type, uiLocale)}</span><small>{playedNames.has(item.name) ? uiText("已打过", uiLocale) : item.reason || item.name === selectedSetup?.name ? item.name === selectedSetup?.name ? uiText("本图已选择", uiLocale) : item.reason : uiText("可选", uiLocale)}</small></div>)}</div>

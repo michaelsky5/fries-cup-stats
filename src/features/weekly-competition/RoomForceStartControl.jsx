@@ -25,7 +25,7 @@ export default function RoomForceStartControl({ data, disabled, command, notice,
         pending.current ||= { clientKey: crypto.randomUUID(), expectedRevision: data.revision, matchRevision: data.match.revision, draftRevision: data.draftRevision, note: note.trim(), actualStartConfirmed: true }
         if (await command('FORCE_START', pending.current)) { setOpen(false); setNote(''); setConfirmed(false); pending.current = null }
       }}>
-        <p>{uiText("当场赛管可接管准备超时或网页确认卡住的情况。地图、双方首发及职责、Ban 记录须完整，且已到计划开赛时间；先在游戏内开始，再填写原因并记录实际开赛。", locale)}</p>
+        <p>{uiText("当场赛管可接管准备超时或网页确认卡住的情况。地图、双方首发及职责、禁用记录须完整，且已到计划开赛时间；先在游戏内开始，再填写原因并记录实际开赛。", locale)}</p>
         {required.length > 0 && <section><strong>{uiText("仍需先处理", locale)}</strong><ul>{required.map(item => <li key={item}>{uiText(item, locale)}</li>)}</ul><p>{uiText("返回当前步骤可由赛管代为操作。正在被其他赛管编辑时，需要先交接。", locale)}</p></section>}
         {overridable.length > 0 && <section><strong>{uiText("本次接管的确认项", locale)}</strong><ul>{overridable.map(item => <li key={item}>{uiText(item, locale)}</li>)}</ul></section>}
         {!required.length && !overridable.length && <p>{uiText("当前已满足正常开赛条件，关闭此窗口后点击“记录本图开赛”即可。", locale)}</p>}

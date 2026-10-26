@@ -47,7 +47,7 @@ export function RoomMobileNav({ auxiliary, navigate, assistance, staff = false }
   const locale = useUiLocale()
   const active = ['teams', 'communication'].includes(auxiliary) ? auxiliary : auxiliary ? 'more' : 'operation'
   return <nav className={styles.nav} aria-label={uiText('比赛房导航', locale)}>
-    {[['operation', '当前操作'], ['teams', '双方名单'], ['communication', '比赛沟通'], ['more', staff ? '赛管工具' : '更多操作']].map(([key, label]) => <button type="button" key={key} aria-current={active === key ? 'page' : undefined} onClick={() => navigate(key)}><span><RoomMobileIcon kind={key} />{key === 'communication' && assistance && <i aria-label={uiText('有待处理协助', locale)} />}</span><span>{uiText(label, locale)}</span></button>)}
+    {[['operation', '当前操作'], ['teams', '双方名单'], ['communication', '比赛沟通'], ['more', staff ? '赛管工具' : '更多操作']].map(([key, label]) => <button type="button" key={key} aria-current={active === key ? 'page' : undefined} data-room-entry={key} onClick={() => navigate(key)}><span><RoomMobileIcon kind={key} />{key === 'communication' && assistance && <i aria-label={uiText('有待处理协助', locale)} />}</span><span>{uiText(label, locale)}</span></button>)}
   </nav>
 }
 

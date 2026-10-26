@@ -21,7 +21,7 @@ export default function RoomStartControl({ data, disabled, command, mutate, noti
     {data.timing?.startTimeBlocked && <p role="status"><strong>{uiText(data.timing.startBlockReason, locale)}</strong>{data.timing.scheduledStartAt && <> · {new Date(data.timing.scheduledStartAt).toLocaleString(locale, { timeZone: 'Asia/Shanghai', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })} UTC+8</>}</p>}
     <div className={`${styles.conditions} ${frame.readiness}`}>
       {data.preparation.sides.map(side => { const key = side.team.id === data.match.teamA.id ? 'A' : 'B'; const confirmed = data.map?.[`lineup${key}`]?.length === 5; return <span key={side.team.id} data-ready={confirmed}>
-        <b>{side.team.shortName || side.team.name}</b>
+        <b title={side.team.shortName || side.team.name}>{side.team.shortName || side.team.name}</b>
         <span>{uiText(confirmed ? '首发已确认 · D D T S S' : '首发待确认', locale)}</span>
         <small>{uiText('禁用', locale)} · {roomBanLabel(data.map, key, locale)}</small>
       </span> })}

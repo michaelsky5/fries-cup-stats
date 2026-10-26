@@ -38,16 +38,25 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
       catch (error) { setNotice(error.practice ? error.message : textRef.current['room.error.unsupported']); return false }
     },
   }
-  const staff = ['referee', 'admin'].includes(role)
   const teachingKey = practiceLesson(state)
-  const target = state.scene === 'result' ? '[data-stage-view]' : role === 'manager' || state.scene === 'checkin' ? '[data-side="A"]' : ['member', 'caster'].includes(role) || (state.scene === 'live' && !staff && !state.pausedOnce) ? 'footer' : '[data-stage-view]'
+  // 票 2.65: "带我找到操作区" lands on the control the lesson names. Players (and casters outside the live map) go to the
+  // room's "比赛沟通" entry; a plain 'footer' used to match the team column's lineup footer. The team column now opens with
+  // the latest-activity strip, so the manager goes to the representative block and check-in to the first roster button.
+  // On phones the rosters live behind "双方名单" in the bottom bar.
+  const communication = '[data-room-entry=communication]', teams = '[data-room-entry=teams]'
+  const target = state.scene === 'result' ? '[data-stage-view]'
+    : role === 'manager' ? mobile ? teams : '[data-side="A"] [data-room-slot=representative]'
+    : role === 'member' || (role === 'caster' && state.scene !== 'live') ? communication
+    : state.scene === 'checkin' ? mobile ? teams : '[data-side="A"] [data-roster-row] button'
+    : '[data-stage-view]'
+  const hintArea = target === communication ? 'footer' : target === teams ? 'teams' : target.startsWith('[data-side="A"]') ? 'team' : 'center'
   function locate() {
     guide.current?.close()
     setGuideOpen(false)
     setHint(true)
     const element = room.current?.querySelector(target)
     const surface = target === '[data-stage-view]' ? element?.querySelector('section') || element : element
-    const control = [...(surface?.querySelectorAll('button:not(:disabled), input:not(:disabled)') || [])].find(node => node.getClientRects().length > 0)
+    const control = surface?.matches('button:not(:disabled)') ? surface : [...(surface?.querySelectorAll('button:not(:disabled), input:not(:disabled)') || [])].find(node => node.getClientRects().length > 0)
     const scrollTarget = control || surface
     scrollTarget?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     control?.focus({ preventScroll: true })
@@ -57,7 +66,7 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
     <header className={styles.topbar} data-i18n-ignore><Link to={withLocale(`/guides/weekly-room?role=${role}`, locale)}>← {text['room.exit']}</Link><strong>{text['room.title']}</strong><div><label>{text['sim.role']} <select value={role} onChange={event => onRole(event.target.value)}>{PRACTICE_ROLES.map(value => <option key={value} value={value}>{text[`role.${value}`]}</option>)}</select></label><button type="button" onClick={reset}>{text['sim.reset']}</button></div></header>
     <p className={styles.boundary} data-i18n-ignore>{text['room.boundary']}</p>
     <section ref={coach} className={styles.coach} data-i18n-ignore aria-labelledby="practice-task-title">
-      <div className={styles.coachTitle}><span>SIMULATION / {text['room.coach']}</span><h1 id="practice-task-title">{text[`room.task.${teachingKey}`]}</h1><p>{text[`room.help.${teachingKey}`]}</p></div>
+      <div className={styles.coachTitle}><span>{text['room.coach']}</span><h1 id="practice-task-title">{text[`room.task.${teachingKey}`]}</h1><p>{text[`room.help.${teachingKey}`]}</p></div>
       <div className={styles.coachActions}><button type="button" onClick={locate}>{text['room.locate']} ↓</button>{state.scene === 'ready' && role === 'representative' && <button type="button" onClick={() => session.apply('start', {}, 'scene')}>{text['room.simulate-start']}</button>}{['live', 'review'].includes(state.scene) && <button type="button" onClick={jumpResult}>{text['room.jump']} →</button>}<details><summary>{text['room.terms']}</summary><p>{text['room.glossary']}</p></details></div>
       {state.event !== 'welcome' && <p className={styles.response} role="status">✓ {text[`room.event.${state.event}`] || text['room.saved']}</p>}
     </section>
@@ -71,7 +80,7 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
         <div className={styles.guideBody}>{teaching}{after}</div>
       </dialog>
     </> : teaching}
-    <div ref={room} className={styles.room} data-hint={hint ? target === '[data-side="A"]' ? 'team' : target === 'footer' ? 'footer' : 'center' : ''}>
+    <div ref={room} className={styles.room} data-hint={hint ? hintArea : ''}>
       <RoomTransportProvider value={transport}><WeeklyRoomView key={`${role}:${run}`} preview matchId={data.match.id} controller={controller} returnPathOverride={withLocale('/guides/weekly-room', locale)} returnLabelOverride={text['room.exit']} accountControl={<span className={styles.identity}>{text['room.you']} · {text[`role.${role}`]}</span>} /></RoomTransportProvider>
     </div>
     {!mobile && after}
