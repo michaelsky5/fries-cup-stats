@@ -26,6 +26,8 @@ import { useAuth } from '../auth/AuthProvider.jsx'
 import AccountModeSwitch from '../auth/AccountModeSwitch.jsx'
 import AuthButton from '../auth/AuthDialog.jsx'
 import useWeeklyLiveRoom from './useWeeklyLiveRoom.js'
+import useRoomAlerts, { playRoomAlertSound, setRoomAlertsEnabled, unlockRoomAlertSound, useRoomAlertsEnabled } from './useRoomAlerts.js'
+import { ROOM_BACKGROUND_POLL_MS } from './roomAlerts.js'
 import useRoomPanelNavigation from './useRoomPanelNavigation.js'
 import { useRoomTransport } from './RoomTransport.jsx'
 import styles from './WeeklyLiveRoomPage.module.css'
@@ -226,6 +228,11 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
   const penaltyNotice = useRoomPenaltyNotice(data, { stale: !!error, blocked: pauseOpen, panel: auxiliary, setPanel: setAuxiliary })
   const [channel, setChannel] = useState('PUBLIC')
   const [selectedStage, setSelectedStage] = useState(null)
+  // 票 2.64: sound and tab-title alerts when the room moves on while nobody is looking at it.
+  const alertsOn = useRoomAlertsEnabled()
+  useRoomAlerts(data, alertsOn, uiLocale)
+  const toggleAlerts = () => { const next = !alertsOn; setRoomAlertsEnabled(next); if (next) { unlockRoomAlertSound(); playRoomAlertSound('stage') } }
+  const alertsToggle = <button type="button" aria-pressed={alertsOn} onClick={toggleAlerts} title={uiText('切到游戏时，轮到你操作或进入新阶段会响提示音，标签页标题会闪动。', uiLocale)} data-room-alerts>{uiText(alertsOn ? '声音提醒 · 开' : '声音提醒 · 关', uiLocale)}</button>
   const stageIndex = data ? getRoomStageIndex(data) : null
   useEffect(() => { setSelectedStage(null) }, [data?.map?.order, stageIndex])
   useEffect(() => {
@@ -309,7 +316,7 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
     {!compact && <footer className={workspace.toolbar}>
       <span><b>{data.actor.name}</b> · {data.actor.label}</span>
       <RoomMatchFacts data={data} error={error} mutate={preview ? undefined : mutate} disabled={disabled} />
-      <div>{data.access.staff && <button type="button" onClick={() => setAuxiliary('more')}>{uiText('赛管工具', uiLocale)}</button>}<button type="button" onClick={() => setAuxiliary('communication')}>{uiText('比赛沟通', uiLocale)}{data.requests?.some(request => request.status !== 'RESOLVED') ? uiText(' · 有待处理协助', uiLocale) : ''}</button><button type="button" onClick={() => setAuxiliary('records')}>{uiText('规则与记录', uiLocale)}</button>{(!data.result && (data.forfeit?.canPropose || data.forfeit?.history?.length > 0)) && <button type="button" onClick={() => setAuxiliary('forfeit')}>{uiText('弃权处理', uiLocale)}</button>}<RoomGuideLink data={data} label="操作指南" /><Link to={returnPath}>{returnLabelOverride || uiText('返回我的比赛 ↗', uiLocale)}</Link></div>
+      <div>{data.access.staff && <button type="button" onClick={() => setAuxiliary('more')}>{uiText('赛管工具', uiLocale)}</button>}<button type="button" onClick={() => setAuxiliary('communication')}>{uiText('比赛沟通', uiLocale)}{data.requests?.some(request => request.status !== 'RESOLVED') ? uiText(' · 有待处理协助', uiLocale) : ''}</button><button type="button" onClick={() => setAuxiliary('records')}>{uiText('规则与记录', uiLocale)}</button>{(!data.result && (data.forfeit?.canPropose || data.forfeit?.history?.length > 0)) && <button type="button" onClick={() => setAuxiliary('forfeit')}>{uiText('弃权处理', uiLocale)}</button>}{alertsToggle}<RoomGuideLink data={data} label="操作指南" /><Link to={returnPath}>{returnLabelOverride || uiText('返回我的比赛 ↗', uiLocale)}</Link></div>
     </footer>}
     {compact && <RoomMobileNav auxiliary={auxiliary} staff={data.access.staff} assistance={data.requests?.some(request => request.status !== 'RESOLVED')} navigate={key => { if (key === 'operation') { setAuxiliary(''); setSelectedStage(null); operation.current?.focus({ preventScroll: true }) } else setAuxiliary(key) }} />}
     {compact && <>
@@ -323,6 +330,7 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
         <p><b>{data.actor.name}</b> · {data.actor.label}</p>
         {compact && <button type="button" onClick={() => setAuxiliary('info')}>{uiText('房间信息', uiLocale)} <span>↗</span></button>}
         <button type="button" onClick={() => setAuxiliary('records')}>{uiText('规则与记录', uiLocale)} <span>↗</span></button>
+        {alertsToggle}
         <RoomForceStartControl key={data.map?.order + ':' + data.map?.lineupContext} data={data} disabled={disabled} command={command} notice={notice} onPreparationExtension={() => setAuxiliary('preparation')} />
         {canExtendRoomPreparation(data) && <button type="button" onClick={() => setAuxiliary('preparation')}>{uiText('本图准备加时', uiLocale)} <span>↗</span></button>}
         {data.access.staff && data.phaseClock?.canManage && !data.result && <RoomPhaseClock data={data} disabled={disabled} mutate={mutate} stale={!!error} onPreparationExtension={() => setAuxiliary('preparation')} />}
@@ -358,7 +366,8 @@ export function WeeklyRoomView({ matchId, controller, accountControl = <AuthButt
 
 function LiveRoom({ matchId }) {
   const location = useLocation()
-  const controller = useWeeklyLiveRoom(matchId)
+  const alertsOn = useRoomAlertsEnabled()
+  const controller = useWeeklyLiveRoom(matchId, undefined, { backgroundPollMs: alertsOn ? ROOM_BACKGROUND_POLL_MS : 0 })
   const locale = useUiLocale()
   const returnPath = matchListDestination(matchId, { search: location.search, competitionId: controller.data?.match?.seasonId })
   return <RoomRenderBoundary matchId={matchId} locale={locale} refresh={controller.refresh} returnPath={returnPath}><WeeklyRoomView matchId={matchId} controller={controller} /></RoomRenderBoundary>

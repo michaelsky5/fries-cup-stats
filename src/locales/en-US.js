@@ -6543,7 +6543,7 @@ export default {
   "确认长期教练邀请": "Confirmation of long-term coaching invitation",
   "确认队伍邀请": "Confirm team invitation",
   "确认首发": "Confirmed first release",
-  "确认首图选择权": "Confirm the right to select the first image",
+  "确认首图选择权": "Confirm first map pick",
   "禁用": "BAN",
   "禁用 {0} · 确认后锁定": "Disable {0} · Lock after confirmation",
   "禁用对照": "Ban comparison",
@@ -8899,7 +8899,7 @@ export default {
   "首发名单": "Starting lineup",
   "首发锁定": "First lock",
   "首图": "First map",
-  "首图先手权": "First picture right",
+  "首图先手权": "First map pick",
   "首图只能选择占领要点地图": "On the first map, you can only choose to capture the key point map.",
   "首图失利，最终系列赛获胜；完整逐图赛果可以核对。": "The first recorded map was lost and the series was won.",
   "首图方式：": "First image method:",
@@ -10501,5 +10501,9 @@ export default {
   "BattleTag 待填写": "BattleTag not provided",
   "对方响应": "Opponent response",
   "记录 A 队获胜": "Record Team A win",
-  "记录 B 队获胜": "Record Team B win"
+  "记录 B 队获胜": "Record Team B win",
+  "轮到你：{0}": "Your turn: {0}",
+  "声音提醒 · 开": "Alerts · On",
+  "声音提醒 · 关": "Alerts · Off",
+  "切到游戏时，轮到你操作或进入新阶段会响提示音，标签页标题会闪动。": "While you are in game, a sound plays and the tab title flashes when it is your turn or the room moves to a new stage."
 }
