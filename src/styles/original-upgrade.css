@@ -6,10 +6,6 @@ html [data-design='kpr'][data-design-edition='hybrid'][data-header-mode] {
   --kpr-header-height: calc(var(--fc-masthead-height) + var(--fc-masthead-inset) + var(--kpr-preview-height));
 }
 
-html [data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true'] {
-  --fc-masthead-inset: 2px;
-}
-
 html [data-design='kpr'][data-design-edition='hybrid'] [data-upgrade-header='event-center'] {
   box-shadow: 0 10px 24px #090a081f;
   --fc-header-control-height: 44px;

@@ -1025,20 +1025,6 @@
   :global([data-design='kpr'][data-design-edition='hybrid']) .mobileNavItemEnglish { margin-left: 8px; font-size: 9px; font-style: normal; opacity: .7; }
 }
 
-/* Exhibition: integrated masthead, with all global controls retained. */
-.shell:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) { --kpr-header-height: 92px; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .topShell { width: 100%; margin: 0; box-shadow: none; border-inline: 0; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .topBar { min-height: 56px; padding-inline: 4.5vw; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .navLink { min-height: 56px; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .headerRight { min-height: 56px; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .pageFrame[data-team-archive='true'] { width: 100%; padding-top: 0; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .dataNotice { margin-inline: 4.5vw; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .contentContextDock { margin-block: 28px; }
-@media (max-width: 700px) {
-  .shell:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) { --kpr-header-height: 96px; }
-  :global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .topBar { padding-inline: 16px; }
-}
-
 /* Phone public navigation has its own order; tablet and desktop retain the masthead. */
 @media (max-width: 600px) {
   .shell:global([data-design='kpr'][data-design-edition='hybrid']):has([data-phone-navigation='true']) {

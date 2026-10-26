@@ -8,7 +8,9 @@
 .crest { display: grid; place-items: center; width: 35px; height: 35px; flex-shrink: 0; }
 .crest img { width: 100%; height: 100%; object-fit: contain; }
 .crest > b { font: 900 20px var(--fc-data-font-display); letter-spacing: -.03em; }
-.navigation nav { display: grid; flex: 1; min-width: 0; grid-template-columns: repeat(3,minmax(0,1fr)); }
+.navigation nav { display: grid; flex: 1; min-width: 0; grid-template-columns: repeat(2,minmax(0,1fr)); }
+/* 票 2.42: a fixed action column keeps the two page tabs in the same place on both pages. */
+.actions { display: flex; flex: 0 0 112px; justify-content: flex-end; align-items: center; }
 .export { background: var(--fc-data-paper-raised); border: 1px solid var(--fc-data-line-strong); padding: 9px 12px; align-self: center; min-width: 44px; min-height: 44px; font-size: 18px; }
 .export span { font-size: 12px; padding-left: 6px; }
 .cover { display: grid; grid-template-columns: 39% minmax(0,1fr); background: var(--team-ink); color: var(--fc-data-paper); min-height: 590px; overflow: hidden; position: relative; isolation: isolate; }
@@ -65,7 +67,9 @@
   .navigation nav { flex: 1; }
   .navigation nav a { flex: 1; justify-content: center; padding: 14px 3px; font-size: 13px; white-space: nowrap; }
   .navigation nav small { display: none; }
-  .export { padding: 8px 0; font-size: 22px; min-width: 44px; }
+  .actions { flex-basis: 44px; }
+  /* Fits the 50px tab bar, so both pages' titles sit at the same height on phones too. */
+  .export { padding: 5px 0; font-size: 18px; line-height: 1; min-width: 44px; min-height: 44px; }
   .export span { display: block; padding: 0; font-size: 10px; line-height: 1.2; }
   .cover { grid-template-columns: minmax(0,1fr); }
   .coverIdentity { padding: 22px 22px 0; }
@@ -92,6 +96,3 @@
 }
 @media (prefers-reduced-motion:reduce) { .ensembleMember > [data-hero-artwork] { transition: none; } }
 
-.navigation[data-exhibition="true"] { min-height: 58px; margin-block: 0; border-top: 0; }
-.navigation[data-exhibition="true"]::before { display: none; }
-@media (max-width: 700px) { .navigation[data-exhibition="true"] { position: relative; top: auto; } }

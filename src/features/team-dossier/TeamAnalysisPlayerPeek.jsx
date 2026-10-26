@@ -15,7 +15,7 @@ export default function TeamAnalysisPlayerPeek({ report, params, updateQuery, on
   const hero = member.maps ? member.heroes[0]?.hero : null
   return <section className={styles.playerPeek} id="analysis-player-peek" aria-labelledby="analysis-player-title">
     <header className={styles.playerHeader}>
-      <div><span>PLAYER CHECK</span><h2 id="analysis-player-title">{en ? 'The player, in context.' : uiText("把表现，放回选手身上。", locale)}</h2></div>
+      <div><span data-deco-en>PLAYER CHECK</span><h2 id="analysis-player-title">{en ? 'The player, in context.' : uiText("把表现，放回选手身上。", locale)}</h2></div>
       <label>{en ? 'Player' : uiText("查看成员", locale)}<select aria-label={en ? 'Overview player' : uiText("速览成员", locale)} value={member.id} onChange={event => updateQuery({ member: event.target.value, performanceMember: null, analysisView: 'brief' })}>
         {report.members.map(player => <option value={player.id} key={player.id}>{player.name} · {roleLabel(player.role, en, locale)}</option>)}
       </select></label>

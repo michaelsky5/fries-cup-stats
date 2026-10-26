@@ -29,7 +29,7 @@ function TeamLine({ team, score, winnerId, seasonId, t, withSeason, isFavorite, 
   }
 
   return (
-    <Link to={withSeason(`/teams/${routeId}`)} className={`${styles.bracketTeam} ${isWinner ? styles.bracketWinner : ''}`}>
+    <Link to={withSeason(`/teams/${routeId}/analysis`)} className={`${styles.bracketTeam} ${isWinner ? styles.bracketWinner : ''}`}>
       {inner}
     </Link>
   )

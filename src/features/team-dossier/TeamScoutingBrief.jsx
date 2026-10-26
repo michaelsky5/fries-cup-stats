@@ -1,4 +1,4 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { buildScoutingBrief } from './teamScoutingBrief.js'
@@ -16,7 +16,7 @@ export default function TeamScoutingBrief({ team, report, mapPool, onInspect, en
   const labels = en ? { strength: 'OBSERVED STRENGTH', watch: 'REVIEW PRIORITY', profile: 'LINEUP PROFILE', context: 'STAGE CHANGE' }
     : { strength: uiText("已表现的优势", locale), watch: uiText("优先复盘", locale), profile: uiText("成员与阵容", locale), context: uiText("阶段变化", locale) }
   return <section className={styles.brief} id="performance-brief" aria-labelledby="scouting-brief-heading">
-    <header className={styles.heading}><h2 id="scouting-brief-heading">{en ? 'What stands out in this scope' : uiText("当前范围，先看这几件事", locale)}</h2><span>{String(brief.findings.length).padStart(2, '0')} / TEAM BRIEF</span></header>
+    <header className={styles.heading}><h2 id="scouting-brief-heading">{en ? 'What stands out in this scope' : uiText("当前范围，先看这几件事", locale)}</h2><span>{pickUiLocale(locale, `${brief.findings.length} 件`, `${String(brief.findings.length).padStart(2, '0')} / TEAM BRIEF`, `${brief.findings.length}가지`, `${brief.findings.length} 件`)}</span></header>
     <div className={styles.findings} data-count={brief.findings.length}>
       {brief.findings.map((finding, index) => {
         const matches = index === 0 ? getFindingMatches(report, finding) : []

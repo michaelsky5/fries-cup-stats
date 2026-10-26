@@ -3,11 +3,12 @@ import { getDossierStageLabel } from './teamDossierPresentation.js'
 import { rateLabel } from './TeamPerformancePrimitives.jsx'
 import styles from './TeamAnalysisReading.module.css'
 
-export default function TeamPerformanceCover({ team, report, stage, stageOptions, en, locale, updateQuery }) {
+// 票 2.42: a section of the 数据 page; the page title (the team name) is the title row above.
+export default function TeamPerformanceCover({ report, stage, stageOptions, en, locale, updateQuery }) {
   return <header className={styles.cover}>
     <div className={styles.masthead}>
       <div className={styles.identity}>
-        <h1 id="team-performance-title"><strong>{team.shortName}</strong><span>{en ? 'Competitive analysis' : uiText("竞技分析", locale)}</span></h1>
+        <h2 id="team-performance-title">{en ? 'Competitive analysis' : uiText("竞技分析", locale)}</h2>
       </div>
       <label className={styles.scope}><span>{en ? 'Stage' : uiText("分析赛段", locale)}</span>
         <select aria-label={en ? 'Analysis stage' : uiText("分析赛段", locale)} value={stage} onChange={event => updateQuery({ analysisStage: event.target.value, teamOpponent: null, teamMap: null, chapter: null, tab: null, performanceMember: null })}>

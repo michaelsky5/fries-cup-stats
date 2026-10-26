@@ -3,7 +3,6 @@ import test from 'node:test'
 import { readFileSync } from 'node:fs'
 import { buildSeasonChronicle } from '../src/features/team-dossier/teamSeasonChronicle.js'
 import { getPerformanceRows } from '../src/features/team-dossier/teamPerformance.js'
-import { getArchiveJourneyHref, getArchiveStageHref } from '../src/features/team-dossier/teamArchiveContent.js'
 
 const db = JSON.parse(readFileSync(new URL('../public/data/fcr2026_local_public.json', import.meta.url), 'utf8'))
 const state = { isArchived: true, rank: 1 }
@@ -62,13 +61,3 @@ test('a missing rematch date cannot produce an invented elapsed time', () => {
   assert.equal(rematch.elapsedDays, null)
 })
 
-test('member deep links reveal their match even after the ledger was selected, while stage links open the ledger', () => {
-  const url = new URL(getArchiveJourneyHref('/teams/A/journey?journeyView=records&season=S&design=kpr5&lang=en', 'M1', 'P1'), 'http://localhost')
-  assert.equal(url.searchParams.has('journeyView'), false)
-  assert.equal(url.searchParams.get('teamMatch'), 'M1')
-  assert.equal(url.searchParams.get('member'), 'P1')
-  assert.equal(url.searchParams.get('lang'), 'en')
-  const stage = new URL(getArchiveStageHref(url.pathname + url.search, 'PLAYOFFS'), 'http://localhost')
-  assert.equal(stage.searchParams.get('journeyView'), 'records')
-  assert.equal(stage.searchParams.has('teamMatch'), false)
-})

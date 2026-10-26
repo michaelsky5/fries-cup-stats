@@ -3,7 +3,7 @@
 .analysisIdentity { min-width: 0; padding: 26px 32px 0; }
 .analysisIdentity > p:first-child { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; font-size: 11px; letter-spacing: .06em; color: var(--fc-data-text-muted); }
 .analysisIdentity > p:first-child a { font-size: 14px; font-weight: 700; color: var(--fc-data-ink); }
-.analysisIdentity h1 { font: 800 clamp(38px,4vw,64px)/1.13 var(--fc-data-font-display),var(--fc-data-font-interface); margin: 18px 0 10px; overflow-wrap: anywhere; }
+.analysisIdentity h2 { font-size: clamp(26px, 2.6vw, 36px); line-height: 1.2; font-weight: 900; letter-spacing: -.04em; margin: 14px 0 10px; overflow-wrap: anywhere; }
 .analysisIdentity > p:last-of-type { color: var(--fc-data-text-muted); font-size: 13px; overflow-wrap: anywhere; }
 .analysisActions { grid-column: 1; grid-row: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 28px; padding: 12px 32px 22px; }
 .analysisActions > :is(a,button) { min-height: 40px; padding: 9px 0; border: 0; background: transparent; font-size: 13px; }
@@ -57,7 +57,7 @@
 @media (max-width: 760px) {
   .analysisHeading { grid-template-columns: minmax(0,1fr) minmax(120px,.65fr); }
   .analysisIdentity { padding: 20px 18px; }
-  .analysisIdentity h1 { font-size: clamp(30px,8.8vw,44px); margin-block: 16px 8px; }
+  .analysisIdentity h2 { font-size: 26px; margin-block: 12px 8px; }
   .analysisIdentity > p:first-child { flex-direction: column; align-items: start; gap: 8px; }
   .analysisIdentity > p:first-child > span { font-size: 9px; }
   .analysisIdentity > p:last-of-type { font-size: 11px; }

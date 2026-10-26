@@ -1,12 +1,13 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { getArchiveStageAnalysis, getArchiveStageHref } from './teamArchiveContent.js'
+import { getArchiveStageAnalysis } from './teamArchiveContent.js'
+import { getTeamStageLedgerHref } from './teamArchiveRoutes.js'
 import styles from './TeamSeasonAnalysis.module.css'
 
 const percent = value => `${(value * 100).toFixed(1)}%`
 
-export default function TeamSeasonAnalysis({ rows, locale, journeyHref, viewState }) {
+export default function TeamSeasonAnalysis({ rows, locale, teamHref, viewState }) {
   const en = locale === 'en-US'
   const stages = useMemo(() => getArchiveStageAnalysis(rows, locale), [rows, locale])
   const previous = stages.at(-2)
@@ -24,7 +25,7 @@ export default function TeamSeasonAnalysis({ rows, locale, journeyHref, viewStat
       <div className={styles.stages}>{stages.map((stage, index) => <article key={stage.key} className={styles.stage}>
         <header><span><small>{String(index + 1).padStart(2, '0')}</small><b>{stage.label}</b></span><strong>{percent(stage.winRate)}<small>{en ? 'map win rate' : uiText("地图胜率", locale)}</small></strong></header>
         <div className={styles.resultBar} aria-label={en ? `${stage.wins} map wins, ${stage.losses} losses, ${stage.draws} draws` : uiText("{0} 图获胜，{1} 图失利，{2} 图平局", locale, [stage.wins, stage.losses, stage.draws])}><i style={{ width: `${stage.wins / stage.maps * 100}%` }} /><i style={{ width: `${stage.losses / stage.maps * 100}%` }} /><i style={{ width: `${stage.draws / stage.maps * 100}%` }} /></div>
-        <div className={styles.stageFacts}><span>{stage.wins} {en ? 'W' : uiText("胜", locale)} / {stage.losses} {en ? 'L' : uiText("负", locale)}{stage.draws ? ` / ${stage.draws} ${en ? 'D' : uiText("平", locale)}` : ''}</span><span>{stage.maps} {en ? 'maps' : uiText("图", locale)} · {stage.opponentCount} {en ? 'opponents' : uiText("个对手", locale)}</span><Link to={getArchiveStageHref(journeyHref, stage.key)} state={viewState}>{en ? 'Read the matches' : uiText("回看这个赛段", locale)} ↗</Link></div>
+        <div className={styles.stageFacts}><span>{stage.wins} {en ? 'W' : uiText("胜", locale)} / {stage.losses} {en ? 'L' : uiText("负", locale)}{stage.draws ? ` / ${stage.draws} ${en ? 'D' : uiText("平", locale)}` : ''}</span><span>{stage.maps} {en ? 'maps' : uiText("图", locale)} · {stage.opponentCount} {en ? 'opponents' : uiText("个对手", locale)}</span><Link to={getTeamStageLedgerHref(teamHref, stage.key)} state={viewState}>{en ? 'Read the matches' : uiText("回看这个赛段", locale)} ↗</Link></div>
       </article>)}</div>
     </div> : <p className={styles.empty}>{en ? 'Stage analysis begins with the first named, scored map.' : uiText("首份具名且有比分的地图发布后，这里将呈现赛段表现。", locale)}</p>}
     <footer>{en ? 'Win rate = map wins ÷ all eligible maps, including draws. Administrative results and byes are excluded.' : uiText("胜率 = 获胜地图 ÷ 有效地图总数，平局计入分母；不包含判罚结果与轮空。", locale)}</footer>

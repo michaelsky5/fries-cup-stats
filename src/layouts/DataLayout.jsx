@@ -32,7 +32,6 @@ import { useAuth } from '../features/auth/AuthProvider.jsx'
 import { buildAccountIdentity, findVerifiedAccountIdentity, getAccountCapabilities, resolveAccountIdentityTarget } from '../features/auth/accountIdentity.js'
 import PublicHeader from '../components/layout/PublicHeader.jsx'
 import PartnerTrialNotice from '../components/layout/PartnerTrialNotice.jsx'
-import { getDossierView } from '../features/team-dossier/teamDossierScenes.js'
 import { PRIMARY_NAV, getNavLabel, getPersonalNavItem, getNavigationSearch, getWeeklyNavigationPath } from '../components/layout/publicNavigation.js'
 import OverviewSectionNav, { overviewSectionId } from '../components/navigation/OverviewSectionNav.jsx'
 import EventContextBar from '../components/layout/EventContextBar.jsx'
@@ -148,7 +147,6 @@ export default function DataLayout() {
   const isHeroDataRoute = isKprHybridDesign && /^\/heroes\/?$/.test(location.pathname)
   const isMapDataRoute = isKprHybridDesign && /^\/maps(?:\/|$)/.test(location.pathname)
   const isTeamArchiveRoute = isKprHybridDesign && /^\/teams\/[^/]+(?:\/(?:journey|analysis))?\/?$/.test(location.pathname)
-  const isTeamExhibitionRoute = isTeamArchiveRoute && getDossierView(location.pathname, location.search) === 'gallery'
   const isPlayerArchiveRoute = isKprHybridDesign && /^\/players\/[^/]+(?:\/(?:analysis|journey))?\/?$/.test(location.pathname)
   const isPlayRoute = isKprHybridDesign && /^\/play\/?$/.test(location.pathname)
   // 票 2.26: every hybrid page uses the one-line directory status line.
@@ -182,7 +180,7 @@ export default function DataLayout() {
   const isWeeklyHomeRoute = isKprHybridDesign && location.pathname === '/' && isWeeklyOverview(db, season)
   const isAdvanceIndexRoute = isKprHybridDesign && /^\/advance\/?$/.test(location.pathname)
   const isPublicFollowingRoute = isAccountSpaceRoute && ((!isAuthenticated && !isMatchEntry) || location.pathname.startsWith('/following') || new URLSearchParams(location.search).get('section') === 'following')
-  const isCompactContextRoute = /^\/reports(?:\/|$)/.test(location.pathname) || /^\/staff\/[^/]+\/?$/.test(location.pathname) || isRosterDirectoryRoute || isScheduleDirectoryRoute || isPublicMatchDetailRoute || isPlayerRankingsRoute || isHeroDataRoute || isMapDataRoute || isAdvanceIndexRoute || isWeeklyHomeRoute || isPublicFollowingRoute || isPlayerArchiveRoute || isPlayRoute || isUnifiedContextRoute || (isTeamArchiveRoute && !isTeamExhibitionRoute)
+  const isCompactContextRoute = /^\/reports(?:\/|$)/.test(location.pathname) || /^\/staff\/[^/]+\/?$/.test(location.pathname) || isRosterDirectoryRoute || isScheduleDirectoryRoute || isPublicMatchDetailRoute || isPlayerRankingsRoute || isHeroDataRoute || isMapDataRoute || isAdvanceIndexRoute || isWeeklyHomeRoute || isPublicFollowingRoute || isPlayerArchiveRoute || isPlayRoute || isUnifiedContextRoute || isTeamArchiveRoute
   const competition = useAccountCompetition(season.id)
   const attentionSeasonId = competition.id
   const attentionEnabled = isAuthenticated && !competition.loading && !competition.error && !competition.issue
@@ -439,7 +437,6 @@ export default function DataLayout() {
       data-header-mode={headerContextMode}
       data-archive-home={isArchivedHomeRoute || undefined}
       data-compact-context={isCompactContextRoute || undefined}
-      data-team-exhibition={isTeamExhibitionRoute || undefined}
       data-roster-directory={isRosterDirectoryRoute || undefined}
       data-schedule-directory={isScheduleDirectoryRoute || undefined}
       data-weekly-advance={isWeeklyAdvanceRoute || undefined}
@@ -458,7 +455,7 @@ export default function DataLayout() {
         isReviewEntryRoute={isReviewEntryRoute} handleLocaleChange={handleLocaleChange} activeSection={activeSection}
       />
 
-      {!isTeamExhibitionRoute && !isMatchEntry && !(isAuthenticated && /^\/me\/?$/.test(location.pathname) && new URLSearchParams(location.search).get('section') !== 'following') ? eventContextDock : null}
+      {!isMatchEntry && !(isAuthenticated && /^\/me\/?$/.test(location.pathname) && new URLSearchParams(location.search).get('section') !== 'following') ? eventContextDock : null}
 
       <UrgentAnnouncementGate
         seasonId={seasonId}
@@ -518,7 +515,6 @@ export default function DataLayout() {
                 ) : null}
                 {overviewSection ? <OverviewSectionNav active={overviewSection} locale={layoutLocale} navPath={overviewNavPath} inset={overviewSection !== 'overview'} /> : null}
                 <Outlet context={outletContext} />
-                {isTeamExhibitionRoute ? eventContextDock : null}
                 {isKprHybridDesign && headerContextMode === 'overview' && !isWeeklyHomeRoute && !isArchivedHomeRoute ? (
                   <div className={styles.dataStamp} data-i18n-ignore>
                     <span>{dataStatus.label}</span><time>{updatedAtText}</time>

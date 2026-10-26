@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 
-export default function ExhibitionWordmark({ name }) {
+// 票 2.42: the page title is the title row's h1; the wordmark is cover art, hidden from readers.
+export default function ExhibitionWordmark({ name, className = '' }) {
   const wordmarkRef = useRef(null)
   const long = name.length > 7
   useEffect(() => {
@@ -29,5 +30,5 @@ export default function ExhibitionWordmark({ name }) {
     schedule()
     return () => { active = false; cancelAnimationFrame(frame); observer.disconnect(); window.removeEventListener('resize', schedule) }
   }, [name, long])
-  return <h1 ref={wordmarkRef} data-long={long || undefined}>{name}{!long && <span aria-hidden="true">.</span>}</h1>
+  return <p ref={wordmarkRef} className={className} data-long={long || undefined} aria-hidden="true">{name}{!long && <span>.</span>}</p>
 }

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { getTeamLogoCandidates, getDefaultTeamLogoCandidates } from '../../lib/teamLogoResolver.js'
 import { formatStaffPerson } from '../../lib/rosterSelectors.js'
 import { getRosterChangeLabel } from '../../lib/rosterStage.js'
-import { getArchiveStageHref } from '../team-dossier/teamArchiveContent.js'
+import { TEAM_MATCHES_ANCHOR, getTeamStageLedgerHref } from '../team-dossier/teamArchiveRoutes.js'
 import RosterDirectory, { DirectoryHeading, DirectoryControls, DirectoryLink as ArchiveLink } from '../roster-directory/RosterDirectory.jsx'
 import directoryStyles from '../roster-directory/RosterDirectory.module.css'
 import { teamIndexText, teamIndexRole } from './teamIndexCopy.js'
@@ -39,7 +39,8 @@ function TeamShowcase({ team, preview, seasonId, seasonCode, locale, withSeason,
   const en = locale === 'en-US'
   const identity = getTeamDisplayIdentity(team.shortName, team.fullName)
   const name = identity.primary
-  const journeyHref = withSeason('/teams/' + team.routeId + '/journey')
+  // 票 2.42: schedule entries live in the team's 数据 page (赛程赛果).
+  const ledgerHref = withSeason('/teams/' + team.routeId + '/analysis') + '#' + TEAM_MATCHES_ANCHOR
   const staffNames = people => people?.map(formatStaffPerson).filter(Boolean).join(' / ') || (en ? 'Not registered' : uiText("未登记", locale))
   const weightedLength = Array.from(name).reduce((length, char) => length + (/\p{Script=Han}/u.test(char) ? 1 : .56), 0)
   return <article className={styles.showcase} data-team-showcase={team.routeId} aria-label={(en ? 'Selected team ' : uiText("当前队伍 ", locale)) + name}>
@@ -62,8 +63,8 @@ function TeamShowcase({ team, preview, seasonId, seasonCode, locale, withSeason,
           {player.player_id ? <ArchiveLink className={styles.rosterEntry} to={withSeason('/players/' + player.player_id)} label={(en ? 'Open player archive ' : uiText("打开选手档案 ", locale)) + player.identity.primary + (changeLabel ? ' · ' + changeLabel : '')}>{content}<i aria-hidden="true">↗</i></ArchiveLink> : <span className={styles.rosterEntry}>{content}</span>}
         </li>
       })}</ul> : <p className={styles.noRoster}>{en ? 'Player names have not been published.' : uiText("选手姓名尚未发布。", locale)}</p>}
-      <div className={styles.recordHeading}><span>{en ? 'SEASON SCHEDULE' : uiText("赛程记录", locale)}</span><ArchiveLink to={journeyHref}>{preview.scheduleCount} {en ? 'entries · Journey' : uiText("条记录 · 赛季征程", locale)} ↗</ArchiveLink></div>
-      {preview.stages.length ? <div className={styles.stages}>{preview.stages.map(stage => <ArchiveLink key={stage.value} to={getArchiveStageHref(journeyHref, stage.value)}><span>{teamIndexText(stage.title, locale)}</span><b>{stage.count}<small>{en ? stage.count === 1 ? ' entry' : ' entries' : uiText(" 条", locale)}</small></b></ArchiveLink>)}</div> : <p className={styles.noRoster}>{en ? 'No published schedule entries.' : uiText("暂无已发布赛程。", locale)}</p>}
+      <div className={styles.recordHeading}><span>{en ? 'SEASON SCHEDULE' : uiText("赛程记录", locale)}</span><ArchiveLink to={ledgerHref}>{preview.scheduleCount} {pickUiLocale(locale, '条记录 · 赛程赛果', 'entries · Results', '개 기록 · 일정과 결과', '條記錄 · 賽程賽果')} ↗</ArchiveLink></div>
+      {preview.stages.length ? <div className={styles.stages}>{preview.stages.map(stage => <ArchiveLink key={stage.value} to={getTeamStageLedgerHref(withSeason('/teams/' + team.routeId), stage.value)}><span>{teamIndexText(stage.title, locale)}</span><b>{stage.count}<small>{en ? stage.count === 1 ? ' entry' : ' entries' : uiText(" 条", locale)}</small></b></ArchiveLink>)}</div> : <p className={styles.noRoster}>{en ? 'No published schedule entries.' : uiText("暂无已发布赛程。", locale)}</p>}
       <p className={styles.recordNote}>{en ? 'Published schedule entries include byes and administrative results.' : uiText("赛程记录包含已发布的轮空及判罚结果。", locale)}</p>
     </div>
     <footer className={styles.teamActions}><button type="button" aria-pressed={Boolean(team.isFavorite)} disabled={favoriteDisabled} onClick={() => onToggleFavorite(team)} aria-label={team.isFavorite ? (en ? 'Unfollow team ' : uiText("取消关注队伍 ", locale)) + name : favoriteDisabled ? en ? 'Follow limit reached' : uiText("关注已满", locale) : (en ? 'Follow team ' : uiText("关注队伍 ", locale)) + name}>{team.isFavorite ? en ? '★ Following' : uiText("★ 已关注", locale) : favoriteDisabled ? en ? 'Limit reached' : uiText("关注已满", locale) : en ? '☆ Follow team' : uiText("☆ 关注队伍", locale)}</button><ArchiveLink to={withSeason('/teams/' + team.routeId)}>{en ? 'View team profile' : uiText("查看队伍资料", locale)} <span aria-hidden="true">↗</span></ArchiveLink></footer>

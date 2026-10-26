@@ -410,7 +410,7 @@ export default function AdvanceSignalSwiss({
                     <div><dt>{copy(locale, uiText("排名", locale), 'RANK')}</dt><dd>{String(selectedRow.rank).padStart(2, '0')}</dd></div>
                     <div><dt>{copy(locale, uiText("去向", locale), 'OUTCOME')}</dt><dd>{t(`advance.zone.${selectedRow.status}`, selectedRow.status)}</dd></div>
                   </dl>
-                  <AdvanceRecordLink className={styles.swissTraceProfileLink} to={withSeason(`/teams/${teamRouteId(selectedRow)}`)}>
+                  <AdvanceRecordLink className={styles.swissTraceProfileLink} to={withSeason(`/teams/${teamRouteId(selectedRow)}/analysis`)}>
                     <span>{copy(locale, uiText("查看队伍档案", locale), 'Open team profile')}</span><b aria-hidden="true">↗</b>
                   </AdvanceRecordLink>
                 </div>

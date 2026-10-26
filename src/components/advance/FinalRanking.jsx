@@ -28,7 +28,7 @@ export default function FinalRanking({ rows, seasonId, t, withSeason, isFavorite
           return (
             <Link
               key={routeId(team)}
-              to={withSeason(`/teams/${routeId(team)}`)}
+              to={withSeason(`/teams/${routeId(team)}/analysis`)}
               className={[
                 styles.finalRankingRow,
                 Number(team.final_rank) <= 3 ? styles.finalTopRow : '',

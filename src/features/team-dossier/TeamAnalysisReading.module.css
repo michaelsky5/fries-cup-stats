@@ -1,9 +1,7 @@
-.cover { padding: 24px 0; border-bottom: 1px solid var(--fc-data-line-strong); }
+.cover { padding: 18px 0 24px; border-top: 3px solid var(--fc-data-ink); border-bottom: 1px solid var(--fc-data-line-strong); }
 .masthead { display: grid; grid-template-columns: minmax(260px,1fr) auto auto; gap: 32px; align-items: center; }
 .identity { min-width: 0; }
-.identity h1 { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px 16px; }
-.identity h1 strong { font: 900 clamp(42px,4vw,60px)/1 var(--fc-data-font-display); overflow-wrap: anywhere; }
-.identity h1 > span { font-size: 23px; font-weight: 750; letter-spacing: -.04em; }
+.identity h2 { font-size: clamp(26px, 2.6vw, 36px); line-height: 1.2; font-weight: 900; letter-spacing: -.04em; }
 .scope { order: 3; display: flex; align-items: center; gap: 12px; font-size: 13px; white-space: nowrap; }
 .scope select { min-width: 132px; }
 .record { order: 2; display: flex; align-items: center; gap: 26px; }
@@ -103,9 +101,7 @@
 @media(max-width:700px) {
   .cover { padding-block: 20px; }
   .masthead { gap: 22px 14px; }
-  .identity h1 { display: block; }
-  .identity h1 strong { display: block; font-size: 45px; }
-  .identity h1 > span { display: block; font-size: 15px; margin-top: 6px; }
+  .identity h2 { font-size: 26px; }
   .scope { display: block; }
   .scope > span { display: block; font-size: 12px; margin-bottom: 6px; }
   .scope select { min-width: 115px; max-width: 150px; font-size: 13px; }

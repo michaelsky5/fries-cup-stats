@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { getDossierMapAnalysis, getDossierMapMatchPath, getDossierMapReading } from '../src/features/team-dossier/teamDossierAnalysis.js'
-import { getDossierView, getDossierViewHref } from '../src/features/team-dossier/teamDossierScenes.js'
+import { getDossierView, getDossierViewHref, getTeamArchiveRedirect } from '../src/features/team-dossier/teamArchiveRoutes.js'
 import { getDossierMatch, getDossierMapPool } from '../src/features/team-dossier/teamDossierPresentation.js'
 
 const map = (name, maps, wins, draws = 0) => ({ name, displayName: name, maps, wins, losses: maps - wins - draws, draws, winRate: wins / maps })
@@ -77,26 +77,28 @@ test('evidence outcomes are from the map and selected side, even when the series
   assert.equal(getDossierMapAnalysis(getDossierMapPool([{ ...row, administrative: true }])).samples, 0)
 })
 
-test('all three archive pages switch without nesting paths and preserve evidence and member selection', () => {
+test('the two archive pages switch without nesting paths and preserve evidence and member selection', () => {
   for (const from of ['', '/journey', '/analysis/']) {
-    for (const view of ['gallery', 'journey', 'analysis']) {
-      const href = getDossierViewHref(`/teams/A${from}`, '?season=FCR2026&design=kpr5&lang=en&teamMap=Ilios&mapEvidence=open&member=P1&teamMatch=M1&chapter=records&tab=stats', view)
+    for (const view of ['gallery', 'analysis']) {
+      const href = getDossierViewHref(`/teams/A${from}`, '?season=FCR2026&design=kpr5&lang=en&teamMap=Ilios&mapEvidence=open&member=P1&teamMatch=M1&chapter=records&tab=stats&journeyView=records', view)
       const url = new URL(href, 'http://localhost')
-      assert.equal(url.pathname, `/teams/A${view === 'gallery' ? '' : `/${view}`}`)
-      assert.equal(getDossierView(url.pathname, url.search), view)
+      assert.equal(url.pathname, `/teams/A${view === 'gallery' ? '' : '/analysis'}`)
+      assert.equal(getDossierView(url.pathname), view)
       for (const [key, value] of Object.entries({ season: 'FCR2026', design: 'kpr5', lang: 'en', teamMap: 'Ilios', mapEvidence: 'open', member: 'P1', teamMatch: 'M1' })) assert.equal(url.searchParams.get(key), value)
-      assert.equal(url.searchParams.has('chapter'), false)
-      assert.equal(url.searchParams.has('tab'), false)
+      for (const key of ['chapter', 'tab', 'journeyView']) assert.equal(url.searchParams.has(key), false)
     }
   }
 })
 
-test('legacy map and combat links open analysis, while match and roster links keep their pages', () => {
-  assert.equal(getDossierView('/teams/A', '?chapter=maps'), 'analysis')
-  assert.equal(getDossierView('/teams/A/journey', '?chapter=records'), 'analysis')
-  assert.equal(getDossierView('/teams/A', '?tab=stats'), 'analysis')
-  assert.equal(getDossierView('/teams/A', '?tab=matches'), 'journey')
-  assert.equal(getDossierView('/teams/A', '?chapter=roster'), 'gallery')
+test('legacy map and combat links open the data page; roster links keep the showcase', () => {
+  const target = (path, search = '') => { const url = new URL(getTeamArchiveRedirect(path, search), 'http://localhost'); return url.pathname + url.hash }
+  assert.equal(target('/teams/A', '?chapter=maps'), '/teams/A/analysis')
+  assert.equal(target('/teams/A/journey', '?chapter=records'), '/teams/A/analysis')
+  assert.equal(target('/teams/A', '?tab=stats'), '/teams/A/analysis')
+  assert.equal(target('/teams/A', '?tab=matches'), '/teams/A/analysis#team-matches')
+  assert.equal(target('/teams/A', '?chapter=roster'), '/teams/A')
+  assert.equal(getTeamArchiveRedirect('/teams/A', '?season=S'), null)
+  assert.equal(getTeamArchiveRedirect('/teams/A/analysis', '?season=S'), null)
 })
 
 test('map evidence opens the corresponding map chapter using the existing match URL contract', () => {
