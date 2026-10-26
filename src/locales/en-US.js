@@ -9385,7 +9385,6 @@ export default {
   "确认强制开始本图": "Confirm forced map start",
   "请先完成地图、首发与英雄禁用": "Complete map selection, lineups and hero bans first",
   "先防": "Defend first",
-  "Ban 顺序": "Ban order",
   "禁用顺序": "Ban order",
   "阶段倒计时": "Stage countdown",
   "第 {0} 图 · {1}": "Map {0} · {1}",

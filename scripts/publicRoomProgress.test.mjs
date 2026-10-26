@@ -31,6 +31,7 @@ test('room state overlays a stale published snapshot without inventing statistic
   const base = getMatchPhasePresentation(dossier), room = frame(), phase = presentPublicRoomProgress(base, dossier, room, 'zh-CN')
   assert.equal(base.key, 'upcoming'); assert.equal(phase.key, 'live')
   assert.equal(phase.scoreLabel, '1 : 1'); assert.equal(phase.statusLabel, '第 3 图 · 选择地图')
+  assert.equal(presentPublicRoomProgress(base, dossier, { ...room, stage: 'BAN_ORDER' }, 'zh-CN').statusLabel, '第 3 图 · 禁用顺序')
   assert.equal(phase.slots[0].roomScore, '0 : 2'); assert.equal(phase.slots[2].state, 'preparing')
   assert.equal(phase.slots[2].name, '地图待公布'); assert.equal(phase.slots[3].state, 'pending')
   assert.ok(phase.slots.every(slot => !slot.record)); assert.equal(phase.records.length, 0); assert.equal(phase.canAnalyze, false)
