@@ -54,8 +54,8 @@
 .viewport [data-room-slot=stage-summary] { margin:0;font-size:11px; }
 .center[data-stage-view=lineup]>section { flex:1;min-height:0;gap:8px;padding:14px 16px; }
 .lineupEditor { display:flex;flex-direction:column;gap:8px;min-height:0; }
-.lineupStatus { display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0; }
-.lineupStatus>div { display:flex;justify-content:space-between;gap:10px;padding:8px 10px;background:var(--fc-data-room-inset);border:1px solid var(--line);font-size:12px; }
+.lineupStatus { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;flex-shrink:0; }
+.lineupStatus>div { display:flex;min-width:0;justify-content:space-between;gap:10px;padding:8px 10px;background:var(--fc-data-room-inset);border:1px solid var(--line);font-size:12px; }
 .lineupStatus [data-submitted=true] span { color:var(--fc-data-room-success); }
 /* 票 2.65: a long team name ends in an ellipsis; the status beside it stays on one line. */
 .lineupStatus>div>b { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }

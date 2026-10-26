@@ -51677,7 +51677,7 @@
   "阿特利斯": {
     "zh-TW": "埃特利斯",
     "ko-KR": "아틀리스",
-    "en-US": "Atlis"
+    "en-US": "Aatlis"
   },
   "阿玖": {
     "zh-TW": "阿玖"
@@ -52794,8 +52794,8 @@
     "en-US": "Runasapi"
   },
   "鲁纳萨皮": {
-    "zh-TW": "魯納薩皮",
-    "en-US": "Lunasapi",
+    "zh-TW": "盧納薩庇",
+    "en-US": "Runasapi",
     "ko-KR": "루나사피"
   },
   "鵶鵶纸#5581": {
@@ -60713,5 +60713,25 @@
     "zh-TW": "切到遊戲時，輪到你操作或進入新階段會響提示音，分頁標題會閃動。",
     "en-US": "While you are in game, a sound plays and the tab title flashes when it is your turn or the room moves to a new stage.",
     "ko-KR": "게임 중일 때 내 차례가 되거나 새 단계로 넘어가면 알림음이 울리고 탭 제목이 깜박입니다."
+  },
+  "安燃": {
+    "zh-TW": "安燃",
+    "ko-KR": "안란",
+    "en-US": "Anran"
+  },
+  "弗蕾娅": {
+    "zh-TW": "弗蕾亞",
+    "ko-KR": "프레야",
+    "en-US": "Freja"
+  },
+  "鲁纳塞彼": {
+    "zh-TW": "盧納薩庇",
+    "ko-KR": "루나사피",
+    "en-US": "Runasapi"
+  },
+  "死怨、死神、安燃以外，是否有足够的自由人英雄记录支持轮换？": {
+    "zh-TW": "死怨、死神、安燃以外，是否有足夠的自由人英雄記錄支援輪換？",
+    "en-US": "What flex-DPS evidence supports rotation beyond Shion, Reaper and Anran?",
+    "ko-KR": "Shion·리퍼·안란 외 플렉스 DPS 영웅의 교대를 뒷받침할 기록이 있나요?"
   }
 }

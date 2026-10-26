@@ -30,7 +30,7 @@ export default function TeamGalleryScenes({ team, seasonId, locale, roster, rows
   const openRecord = id => { onMemberChange(id); setRecordMemberId(id) }
 
   return <>
-    <TeamExhibitionPoster key={team.routeId + seasonId} team={team} seasonId={seasonId} locale={locale} roster={roster} cohort={cohort} appeared={members.filter(member => member.maps > 0).length} dates={dates} advanceState={advanceState} members={members} selectedId={selectedId} onSelect={onMemberChange} onOpenMember={openRecord} onCredits={() => { const target = document.getElementById('team-credits'); target?.focus({ preventScroll: true }); target?.scrollIntoView({ block: 'start', behavior: 'instant' }) }} />
+    <TeamExhibitionPoster key={`poster:${team.routeId}:${seasonId}`} team={team} seasonId={seasonId} locale={locale} roster={roster} cohort={cohort} appeared={members.filter(member => member.maps > 0).length} dates={dates} advanceState={advanceState} members={members} selectedId={selectedId} onSelect={onMemberChange} onOpenMember={openRecord} onCredits={() => { const target = document.getElementById('team-credits'); target?.focus({ preventScroll: true }); target?.scrollIntoView({ block: 'start', behavior: 'instant' }) }} />
     {recordPlayer ? <TeamMemberRecordDrawer player={recordPlayer} member={members.find(member => member.playerId === recordMemberId)} team={team} locale={locale} withSeason={withSeason} returnState={returnState} onLeave={onLeave} onClose={() => setRecordMemberId(null)} /> : null}
     {children}
     <section className={styles.credits} id="team-credits" tabIndex={-1} aria-label={en ? 'Behind the team' : uiText("幕后署名", locale)}>

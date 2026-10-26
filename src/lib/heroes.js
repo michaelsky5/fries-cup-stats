@@ -18,13 +18,13 @@ export const OW_HEROES = [
   { id: 'wrecking-ball', zh: '破坏球', en: 'Wrecking Ball', role: 'tank', assetKey: 'wrecking-ball' },
   { id: 'zarya', zh: '查莉娅', en: 'Zarya', role: 'tank', assetKey: 'zarya' },
 
-  { id: 'anran', zh: '安然', en: 'Anran', role: 'damage', assetKey: 'anran' },
+  { id: 'anran', zh: '安燃', en: 'Anran', role: 'damage', assetKey: 'anran', aliases: ['安然'] },
   { id: 'ashe', zh: '艾什', en: 'Ashe', role: 'damage', assetKey: 'ashe' },
   { id: 'bastion', zh: '堡垒', en: 'Bastion', role: 'damage', assetKey: 'bastion' },
   { id: 'cassidy', zh: '卡西迪', en: 'Cassidy', role: 'damage', assetKey: 'cassidy' },
   { id: 'echo', zh: '回声', en: 'Echo', role: 'damage', assetKey: 'echo' },
   { id: 'emre', zh: '埃姆雷', en: 'Emre', role: 'damage', assetKey: 'emre' },
-  { id: 'freja', zh: '芙蕾雅', en: 'Freja', role: 'damage', assetKey: 'freja' },
+  { id: 'freja', zh: '弗蕾娅', en: 'Freja', role: 'damage', assetKey: 'freja', aliases: ['芙蕾雅'] },
   { id: 'genji', zh: '源氏', en: 'Genji', role: 'damage', assetKey: 'genji' },
   { id: 'hanzo', zh: '半藏', en: 'Hanzo', role: 'damage', assetKey: 'hanzo' },
   { id: 'junkrat', zh: '狂鼠', en: 'Junkrat', role: 'damage', assetKey: 'junkrat' },
@@ -91,11 +91,11 @@ export const OW_MAPS = [
   { id: 'colosseo', zh: '斗兽场', en: 'Colosseo', mode: 'push', assetKey: 'colosseo', imageName: 'Colosseo' },
   { id: 'new-queen-street', zh: '新皇后街', en: 'New Queen Street', mode: 'push', assetKey: 'new-queen-street', imageName: 'New_Queen_Street' },
   { id: 'esperanca', zh: '埃斯佩兰萨', en: 'Esperança', mode: 'push', assetKey: 'esperanca', imageName: 'Esperanca', aliases: ['Esperanca'] },
-  { id: 'runasapi', zh: '鲁纳萨彼', en: 'Runasapi', mode: 'push', assetKey: 'runasapi', imageName: 'Runasapi' },
+  { id: 'runasapi', zh: '鲁纳塞彼', en: 'Runasapi', mode: 'push', assetKey: 'runasapi', imageName: 'Runasapi', aliases: ['鲁纳萨彼', '鲁纳萨皮'] },
 
   { id: 'suravasa', zh: '苏拉瓦萨', en: 'Suravasa', mode: 'flashpoint', assetKey: 'suravasa', imageName: 'Suravasa' },
   { id: 'new-junk-city', zh: '新渣客城', en: 'New Junk City', mode: 'flashpoint', assetKey: 'new-junk-city', imageName: 'New_Junk_City' },
-  { id: 'aatlis', zh: '阿特利斯', en: 'Atlis', mode: 'flashpoint', assetKey: 'atlis', imageName: 'Aatlis', aliases: ['Aatlis'] },
+  { id: 'aatlis', zh: '阿特利斯', en: 'Aatlis', mode: 'flashpoint', assetKey: 'atlis', imageName: 'Aatlis', aliases: ['Atlis'] },
 
   { id: 'hanaoka', zh: '花冈', en: 'Hanaoka', mode: 'clash', assetKey: 'hanaoka', imageName: 'Hanaoka' },
   { id: 'throne-of-anubis', zh: '阿努比斯王座', en: 'Throne of Anubis', mode: 'clash', assetKey: 'throne-of-anubis', imageName: 'Throne_of_Anubis' }

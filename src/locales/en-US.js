@@ -8809,7 +8809,7 @@ export default {
   "阿拉伯联合酋长国": "United Arab Emirates",
   "阿曼": "Oman",
   "阿根廷": "Argentina",
-  "阿特利斯": "Atlis",
+  "阿特利斯": "Aatlis",
   "降序": "Descending",
   "降序 ↓": "Descending ↓",
   "限时重开": "Reopening within a limited time",
@@ -8984,7 +8984,7 @@ export default {
   "高顺位先选控制图": "High-order first-choice control chart",
   "高风险换血型": "High-risk trading",
   "鲁纳萨彼": "Runasapi",
-  "鲁纳萨皮": "Lunasapi",
+  "鲁纳萨皮": "Runasapi",
   "鵶鵶纸#5581": "YEYA",
   "黄色线内前 {0} 名进入八强": "Top {0} above the signal line advance",
   "黄色细线标记当前晋级边界；排名按官方小组积分更新。": "The yellow signal line marks the current qualification boundary.",
@@ -10517,5 +10517,9 @@ export default {
   "轮到你：{0}": "Your turn: {0}",
   "声音提醒 · 开": "Alerts · On",
   "声音提醒 · 关": "Alerts · Off",
-  "切到游戏时，轮到你操作或进入新阶段会响提示音，标签页标题会闪动。": "While you are in game, a sound plays and the tab title flashes when it is your turn or the room moves to a new stage."
+  "切到游戏时，轮到你操作或进入新阶段会响提示音，标签页标题会闪动。": "While you are in game, a sound plays and the tab title flashes when it is your turn or the room moves to a new stage.",
+  "安燃": "Anran",
+  "弗蕾娅": "Freja",
+  "鲁纳塞彼": "Runasapi",
+  "死怨、死神、安燃以外，是否有足够的自由人英雄记录支持轮换？": "What flex-DPS evidence supports rotation beyond Shion, Reaper and Anran?"
 }

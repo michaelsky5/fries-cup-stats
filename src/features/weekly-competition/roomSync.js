@@ -139,7 +139,10 @@ export function createRoomSync({ matchId, read, now = Date.now, monotonicNow = (
     setOnline(value) {
       const restored = !online && value; online = value
       if (!value) { clearScheduled(); cancelRead(); publish({ error: '网络连接已中断，正在等待恢复。' }, { status: 'offline', syncing: false, nextRetryAt: null, recoveredAt: null }) }
-      else if (restored) wake()
+      else if (restored) {
+        if (visible) wake()
+        else schedule()
+      }
     },
     wake,
   }
