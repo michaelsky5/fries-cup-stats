@@ -29,7 +29,7 @@ export default function MyLobbyPage() {
   }
   if (isBootstrapping) return <p role="status">{t("正在读取账号…")}</p>
   if (!user) return <section className={styles.empty}><h1>{t("登录后管理我的组队")}</h1>{registrationMessage && <p>{registrationMessage}</p>}<Link className={styles.primary} to={`/account/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`}>{t("登录／注册")}</Link></section>
-  return <><div className={styles.pageHeading}><div><span className={styles.eyebrow}>MY LOBBY</span><h1>{t("我的组队")}</h1><p>{t("联系、卡片和筹建进度，集中在这里处理。")}</p></div>{data?.canWrite && !error && <Link className={styles.primary} to="/lobby/me/publish?type=person">{t("发布／编辑我的求队")}</Link>}</div>
+  return <><div className={styles.pageHeading}><div><h1>{t("我的组队")}</h1><p>{t("联系、卡片和筹建进度，集中在这里处理。")}</p></div>{data?.canWrite && !error && <Link className={styles.primary} to="/lobby/me/publish?type=person">{t("发布／编辑我的求队")}</Link>}</div>
     {(error || failure) && <p ref={alertRef} tabIndex={-1} role="alert" className={styles.error}>{error ? lobbyReadFailure(error) : accountFailure(failure)} <button onClick={() => { setFailure(null); refresh() }}>{t("重新读取")}</button></p>}
     {!data && !error && <p role="status">{t("正在读取本人记录…")}</p>}
     {data && <>
