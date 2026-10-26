@@ -1,4 +1,4 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import PublicHeader from '../../components/layout/PublicHeader.jsx'
@@ -13,9 +13,10 @@ import layout from '../fd-design/layoutStyles.js'
 import styles from './AccountFrame.module.css'
 import { translateAccountSettingsText } from './accountSettingsCopy.js'
 import { getRestoreScrollY, restoreWindowScroll } from '../../lib/navigationState.js'
+import { buildFriesCupTitle } from '../../lib/pageTitle.js'
 
 // Global account pages share the public frame without fetching a season snapshot.
-export default function AccountFrame({ children, title, eyebrow = 'ACCOUNT', description, aside, compact = false }) {
+export default function AccountFrame({ children, title, description, aside, compact = false }) {
   const location = useLocation()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
@@ -34,6 +35,9 @@ export default function AccountFrame({ children, title, eyebrow = 'ACCOUNT', des
   useLocaleDomTranslation(locale, shell, location.pathname === '/account' ? translateAccountSettingsText : undefined)
   useEffect(() => { setStoredSeasonId(season.id) }, [season.id])
   useEffect(() => { document.documentElement.lang = locale; setStoredLocale(locale) }, [locale])
+  // 票 2.68: these pages sit outside the season layout, which names the tab, so the tab used to keep the previous page's
+  // name (我的空间 → 继续填写报名 still read 「我的空间」). A page that names its own tab still does so after this.
+  useEffect(() => { if (typeof title === 'string' && title.trim()) document.title = buildFriesCupTitle(title, locale) }, [title, locale])
   useEffect(() => {
     if (location.state?.mobileTabRestore) restoreWindowScroll(getRestoreScrollY(location.state))
   }, [location.key, location.state])
@@ -46,9 +50,9 @@ export default function AccountFrame({ children, title, eyebrow = 'ACCOUNT', des
     <PublicHeader mobileMenuRef={menu} activeNavLabel={personalLabel} withSeason={publicLink} layoutLocale={locale} compatibleLayoutLocale={locale} season={season} seasonId={season.id} seasonStatus={season.lifecycle === 'ARCHIVED' ? { isFinished: true } : undefined} handleSeasonChange={id => changeContext('season', getSeasonById(id).publicCode)} handleLocaleChange={value => changeContext('lang', getReviewLocaleParam(value))} />
     <div className={styles.context}><Link to={publicLink('/me')} data-i18n-ignore>{personalLabel}</Link><span aria-hidden="true">/</span><strong>{title}</strong><span className={styles.scope}>{location.pathname === '/account' ? uiText("通用账号设置", locale) : uiText("参赛服务", locale)}</span></div>
     <main className={styles.main} data-compact={compact}>
-      <header className={styles.intro}><div><span className={styles.eyebrow}>{eyebrow}</span><h1>{title}</h1>{description && <p>{description}</p>}</div>{aside}</header>
+      <header className={styles.intro}><div><h1>{title}</h1>{description && <p>{description}</p>}</div>{aside}</header>
       {children}
     </main>
-    <footer className={styles.footer}><span>FRIES CUP <b>DATA CENTER</b></span><Link to={publicLink('/')}>{uiText("返回赛事总览 ↗", locale)}</Link></footer>
+    <footer className={styles.footer}><span>FRIES CUP <b>{pickUiLocale(locale, '赛事中心', 'EVENT CENTER', '대회 센터', '賽事中心')}</b></span><Link to={publicLink('/')}>{uiText("返回赛事总览 ↗", locale)}</Link></footer>
   </div>
 }

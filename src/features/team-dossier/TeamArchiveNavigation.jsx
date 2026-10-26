@@ -1,4 +1,4 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getDefaultTeamLogoCandidates, getTeamLogoCandidates } from '../../lib/teamLogoResolver.js'
@@ -14,11 +14,18 @@ export function ArchiveCrest({ team, seasonId, className = '' }) {
   </span>
 }
 
-export default function TeamArchiveNavigation({ team, seasonId, locale, view, galleryHref, journeyHref, analysisHref, viewState, onBack, onShare }) {
+// 票 2.42: two page tabs in the same place on both pages; the poster export belongs to the 展厅.
+export const TEAM_ARCHIVE_PAGES = [
+  ['gallery', '队伍展厅', 'Showcase', '팀 전시실', '隊伍展廳'],
+  ['analysis', '队伍数据', 'Team data', '팀 데이터', '隊伍數據']
+]
+
+export default function TeamArchiveNavigation({ team, seasonId, locale, view, galleryHref, analysisHref, viewState, onBack, onShare }) {
   const en = locale === 'en-US'
-  return <div className={styles.navigation} data-exhibition={view === 'gallery' || undefined}>
+  const hrefs = { gallery: galleryHref, analysis: analysisHref }
+  return <div className={styles.navigation} data-archive-tabs>
     <div className={styles.identity}><button type="button" onClick={onBack} aria-label={en ? 'Back to previous page' : uiText("返回上一页", locale)} title={en ? 'Back to previous page' : uiText("返回上一页", locale)}>←</button><ArchiveCrest key={`${seasonId}-${team.routeId}`} team={team} seasonId={seasonId} /><span><b>{team.shortName}</b><small>{seasonId}</small></span></div>
-    <nav className={navStyles.root} aria-label={en ? 'Team archive pages' : uiText("队伍档案页面", locale)}>{[[galleryHref, 'gallery', '队伍展厅', 'Exhibition'], [journeyHref, 'journey', '赛季征程', 'Journey'], [analysisHref, 'analysis', '竞技分析', 'Analysis']].map(([href, id, zh, english], index) => <Link key={id} className={navStyles.item} to={href} state={viewState} aria-current={view === id ? 'page' : undefined}><small className={navStyles.code}>0{index + 1}</small>{en ? english : zh}</Link>)}</nav>
-    <button type="button" className={styles.export} onClick={onShare} aria-label={en ? 'Export roster poster' : uiText("导出阵容海报", locale)} title={en ? 'Export roster poster' : uiText("导出阵容海报", locale)}><span>{en ? 'Poster' : uiText("导出海报", locale)}</span> ↓</button>
+    <nav className={navStyles.root} aria-label={en ? 'Team pages' : pickUiLocale(locale, '队伍页面', 'Team pages', '팀 페이지', '隊伍頁面')}>{TEAM_ARCHIVE_PAGES.map(([id, ...labels]) => <Link key={id} className={navStyles.item} to={hrefs[id]} state={viewState} aria-current={view === id ? 'page' : undefined}>{pickUiLocale(locale, ...labels)}</Link>)}</nav>
+    <div className={styles.actions}>{onShare ? <button type="button" className={styles.export} onClick={onShare} aria-label={en ? 'Export roster poster' : uiText("导出阵容海报", locale)} title={en ? 'Export roster poster' : uiText("导出阵容海报", locale)}><span>{en ? 'Poster' : uiText("导出海报", locale)}</span> ↓</button> : null}</div>
   </div>
 }

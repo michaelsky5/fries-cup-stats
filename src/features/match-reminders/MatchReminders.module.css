@@ -1,7 +1,6 @@
 .settings { padding: clamp(22px, 3vw, 36px); background: #161a18; color: #eeeee5; border: 1px solid #3c433c; min-width: 0; }
 .settings h2 { font-size: clamp(25px, 3vw, 34px); margin: 9px 0 12px; letter-spacing: -.03em; }
 .settings header p, .help { color: #b7bcb4; font-size: 14px; line-height: 1.7; }
-.eyebrow { display: block; color: #edc744; font-size: 11px; letter-spacing: .12em; font-weight: 700; }
 .email { margin: 26px 0 18px; color: #e2e4da; overflow-wrap: anywhere; font-size: 14px; }
 .master, .option { display: flex; gap: 22px; justify-content: space-between; align-items: center; cursor: pointer; }
 .master { padding: 22px; border: 1px solid #666942; background: #23281f; }
@@ -30,7 +29,7 @@
 .deliveryStatus { padding: 4px 8px; border: 1px solid #4d5746; max-width: 48%; overflow-wrap: anywhere; text-align: right; }
 .deliveryStatus[data-failed="true"] { color: #ffa28b; }
 .summary { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 22px; border: 1px solid #b5b5a5; border-left: 3px solid #746b1a; background: #e9e9dd; color: #1c241b; }
-.summary .eyebrow { color: #5c5a28; }.summary strong { display: block; margin-top: 5px; font-size: 14px; line-height: 1.6; }
+.summary strong { display: block; font-size: 14px; line-height: 1.6; }
 .summary a { flex-shrink: 0; color: #1c241b; font-size: 14px; font-weight: 700; padding: 9px 0; text-decoration: none; }
 .countdown { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; margin: 16px 24px 0; padding: 12px 14px; border-left: 3px solid #746b1a; background: #e9e9dd; color: #3d4538; }
 .countdown strong { font-size: 19px; }.countdown span { font-size: 12px; }.countdown[data-soon="true"] strong { color: #766200; }

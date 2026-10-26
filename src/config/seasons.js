@@ -2,7 +2,6 @@ import { translateUiText as formatUiText } from '../lib/uiText.js'
 import { isReviewReady } from '../lib/reviewReadiness.js'
 import { PARTNER_TRIAL, buildTrialCatalog, trialSeasonFromManifest } from './partnerTrial.js'
 
-export let DEFAULT_SEASON_ID = PARTNER_TRIAL?.ids[0] || 'FCR26'
 export const SEASON_STORAGE_KEY = 'fries_cup_stats_active_season'
 export const SEASON_URL_PARAM = 'season'
 
@@ -16,7 +15,14 @@ export const SEASONS = [
     proxyReportUrl: '/api/admin-public/seasons/FCW26/publish/latest/report',
     dataUrl: 'https://admin.fries-cup.com/api/public/seasons/FCW26/publish/latest/data',
     reportUrl: 'https://admin.fries-cup.com/api/public/seasons/FCW26/publish/latest/report',
-    reviewEnabled: false, rules: { weeklyCompetition: { enabled: true } }
+    reviewEnabled: false, rules: { weeklyCompetition: { enabled: true } },
+    // 赛事方案书 V1.9（2026-10-17）里的计划日期。System 发布对应赛段或周次之前，首页阶段主卡用它，
+    // 并标「计划」（票 2.16）；已发布的数据永远优先。
+    weeklyPlan: {
+      source: 'V1.9',
+      cycles: [{ sequence: 2, name: '第二赛段', nameEn: 'Cycle 2', nameKo: '2주기', nameTw: '第二賽段', startsOn: '2026-10-31' }],
+      weekly: { confirmationCloses: { weekday: 5, time: '12:00' }, pairingPublished: { weekday: 5, time: '20:00' }, scheduleReview: { weekday: 6, time: '12:00' } }
+    }
   },
   {
     id: 'FCR26',
@@ -378,6 +384,19 @@ if (import.meta.env?.DEV && import.meta.env?.VITE_WEEKLY_PREVIEW === '1') {
 
 if (PARTNER_TRIAL) SEASONS.splice(0, SEASONS.length, ...buildTrialCatalog(PARTNER_TRIAL))
 
+// New visitors land on the season being played: the first ACTIVE official
+// season, otherwise the most recently archived one (SEASONS is listed newest
+// first). A partner trial keeps its own sample, and a stored choice or a
+// ?season= link still wins via getStoredSeasonId / resolveSeasonFromSearch.
+function pickDefaultSeasonId(seasons) {
+  const season = seasons.find(item => getSeasonEventKind(item) === 'OFFICIAL' && item.lifecycle === 'ACTIVE') ||
+    seasons.find(item => item.lifecycle === 'ARCHIVED') ||
+    seasons[0]
+  return season?.id
+}
+
+export let DEFAULT_SEASON_ID = PARTNER_TRIAL?.ids[0] || pickDefaultSeasonId(SEASONS)
+
 export function getSeasonById(seasonId) {
   const id = String(seasonId || '').trim().toUpperCase()
   return SEASONS.find(season => season.id === id || String(season.publicCode).toUpperCase() === id) ||
@@ -503,6 +522,22 @@ export function getSeasonRules(season, db) {
     ...(season?.rules || {}),
     ...(sourceRules && typeof sourceRules === 'object' ? sourceRules : {})
   }
+}
+
+// 票 2.14: the newest official season whose review is open.
+export function getLatestReviewSeasonId(seasons = SEASONS) {
+  return seasons.find(season => season.reviewEnabled === true && getSeasonEventKind(season) === 'OFFICIAL')?.id || null
+}
+
+// A review link without ?season= opens the visitor's season when it has a review, otherwise the
+// newest season with an open review, and says so in the address bar. Links naming a season stay as they are.
+export function getReviewSeasonRedirect(url, currentSeasonId = getStoredSeasonId()) {
+  if (url.searchParams.has(SEASON_URL_PARAM) || getSeasonById(currentSeasonId).reviewEnabled === true) return null
+  const latest = getLatestReviewSeasonId()
+  if (!latest) return null
+  const next = new URL(url)
+  next.searchParams.set(SEASON_URL_PARAM, getSeasonById(latest).publicCode)
+  return `${next.pathname}${next.search}${next.hash}`
 }
 
 export function seasonHasReview(season, db) {

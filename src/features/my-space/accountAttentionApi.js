@@ -3,6 +3,7 @@ import { fetchTaskCenter } from '../tasks/taskNotificationApi.js'
 import { fetchMyWeeklyCompetition, fetchMyOwnershipTransfers } from '../weekly-competition/weeklyCompetitionApi.js'
 import { fetchMyWeeklyMatchRooms } from '../weekly-competition/weeklyMatchRoomsApi.js'
 import { buildAccountActivity, getAccountActivityAccess, isAccountActivitySource } from '../account-ui/accountActivityModel.js'
+import { pickAccountNextAction } from '../account-ui/accountNextAction.js'
 
 const LOADERS = { launch: fetchAccountLaunchStatus, context: fetchMySpaceContext, tasks: fetchTaskCenter, preparation: fetchMyWeeklyCompetition, rooms: fetchMyWeeklyMatchRooms, ownership: fetchMyOwnershipTransfers }
 
@@ -28,5 +29,8 @@ export async function fetchAccountAttentionContext(seasonId, userId, { signal, n
   const refreshError = failures.length ? Object.assign(new Error('Some account activity sources failed'), {
     retryAfterMs: Math.max(0, ...failures.map(error => error?.retryAfterMs || 0))
   }) : null
-  return { overview: { ...context.overview, openTaskCount: activity.taskView.openTasks.length, taskSyncStatus: activity.status }, refreshError }
+  // 票 2.45: registration is added later from the public season data, so it is not decided here.
+  const hasTeam = (context.teamContexts || []).length > 0
+  const nextAction = pickAccountNextAction({ rooms: sources.rooms?.status === 'ready' ? sources.rooms.data.rooms : [], tasks: activity.taskView.openTasks, hasTeam, now })
+  return { overview: { ...context.overview, openTaskCount: activity.taskView.openTasks.length, taskSyncStatus: activity.status }, nextAction, hasTeam, checkedAt: now, refreshError }
 }

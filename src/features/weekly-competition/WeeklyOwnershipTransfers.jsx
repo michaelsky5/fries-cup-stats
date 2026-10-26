@@ -48,8 +48,8 @@ export default function WeeklyOwnershipTransfers({ seasonId, selectedTeamId, foc
   }
   const responseField = (id, key, value) => setResponses(current => ({ ...current, [id]: { ...current[id], [key]: value } }))
   if (data && !data.teams.length && !data.transfers.length && !focusTransferId) return null
-  return <section className={styles.panel} id="weekly-ownership-transfers" aria-label={t('队伍所有权转让')}>
-    <header><div><h3>{t('队伍所有权转让')}</h3><p>{t('现负责人发起 → 接任者本人确认 → System 管理员审核生效。')}</p></div><button type="button" disabled={busy} onClick={() => refresh()}>{t('刷新交接记录')}</button></header>
+  return <section className={responseOnly ? `${styles.panel} ${styles.inline}` : styles.panel} id="weekly-ownership-transfers" aria-label={t('队伍所有权转让')}>
+    <header><div><h3>{t('队伍所有权转让')}</h3><p>{t('现负责人发起 → 接任者本人确认 → 赛事管理员审核生效。')}</p></div><button type="button" disabled={busy} onClick={() => refresh()}>{t('刷新交接记录')}</button></header>
     {error && <p role="alert" className={styles.error}>{error}</p>}{notice && <p role="status">{t(notice)}</p>}
     {!data ? <p>{t('正在读取交接记录；读取失败时请刷新。')}</p> : <>
       {focusTransferId && !focusedRow && <p role="alert" className={styles.error}>{t('事项可能已经更新，或不属于当前账号与赛事。请从当前待办重新选择。')}</p>}
@@ -69,7 +69,7 @@ export default function WeeklyOwnershipTransfers({ seasonId, selectedTeamId, foc
         {['PENDING', 'SUBMITTED'].includes(row.status) && <p>{t('确认和审核有效至：')}{new Date(row.expiresAt).toLocaleString()}</p>}
         {row.reviewNote && <p>{t('审核说明：')}{row.reviewNote}</p>}
         {row.status === 'APPROVED' && <p>{t('交接已生效。请刷新周赛资料和报名资料，查看当前管理权限。')}</p>}
-        {row.status === 'PENDING' && row.toUserId === data.userId && <form onSubmit={event => { event.preventDefault(); action(`/ownership-transfers/${row.id}/respond`, { action: 'ACCEPT', revision: row.revision, ...responses[row.id] }, '接任已确认，等待 System 管理员审核。') }}>
+        {row.status === 'PENDING' && row.toUserId === data.userId && <form onSubmit={event => { event.preventDefault(); action(`/ownership-transfers/${row.id}/respond`, { action: 'ACCEPT', revision: row.revision, ...responses[row.id] }, '接任已确认，等待赛事管理员审核。') }}>
           <p>{t('审核通过后，你将接管上述队伍及赛季报名。')}</p>
           <div className={styles.fields}><label>{t('当前账号密码')}<input ref={row.id === focusTransferId ? confirmationInput : undefined} type="password" required autoComplete="current-password" disabled={!writable} value={responses[row.id]?.password || ''} onChange={event => responseField(row.id, 'password', event.target.value)} /></label><label>{t('接任后的联系方式')}<input required minLength={3} maxLength={240} disabled={!writable} value={responses[row.id]?.contact || ''} onChange={event => responseField(row.id, 'contact', event.target.value)} /></label></div>
           <label className={styles.consentField}><input type="checkbox" required checked={responses[row.id]?.consent || false} disabled={!writable} onChange={event => responseField(row.id, 'consent', event.target.checked)} /><span>{t('我已核对交接范围，同意接任队伍负责人并提交管理员审核。')}</span></label><button type="submit" disabled={!writable}>{t('本人确认接任')}</button>

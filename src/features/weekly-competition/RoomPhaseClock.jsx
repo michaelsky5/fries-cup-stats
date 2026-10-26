@@ -14,10 +14,10 @@ export function RoomStageTimes({ data }) {
     <h3>{uiText('各环节时长与超时规则', locale)}</h3>
     <dl>{durations.map(item => <div key={item.kind}><dt>{uiText(item.label, locale)}</dt><dd>{uiText(item.kind === 'BAN' ? '每轮 {0} 秒' : '{0} 秒', locale, [item.seconds])}</dd></div>)}</dl>
     <p>{uiText('以上为标准时长；当前剩余时间以倒计时为准，加时与暂停会单独显示。', locale)}</p>
-    <p>{uiText('选图和每轮 Ban 各有一次 15 秒补交宽限；选图处罚后的 60 秒补时与无效 Ban 的纠正窗口不再追加宽限。', locale)}</p>
+    <p>{uiText('选图和每轮禁用各有一次 15 秒补交宽限；选图处罚后的 60 秒补时与无效禁用的纠正窗口不再追加宽限。', locale)}</p>
     <p>{uiText('选图处罚按本队整场流程超时次数累计：第 1 次警告并补时 60 秒；第 2 次取消本图英雄禁用权并补时 60 秒；第 3 次起随机选择合法地图及攻防。处罚补时不再追加 15 秒宽限。', locale)}</p>
-    <p>{uiText('首发与 Ban 顺序超时也计入本队整场流程超时次数：首次警告，第二次起取消本图 Ban；第三次起，仅超时方拥有本图选择权时重新随机地图。首发仍须由队伍确认。', locale)}</p>
-    <p>{uiText('每轮 Ban 的补交宽限或无效 Ban 的纠正窗口结束后仍未确认，将放弃本轮禁用权，不得补 Ban。', locale)}</p>
+    <p>{uiText('首发与禁用顺序超时也计入本队整场流程超时次数：首次警告，第二次起取消本图禁用；第三次起，仅超时方拥有本图选择权时重新随机地图。首发仍须由队伍确认。', locale)}</p>
+    <p>{uiText('每轮禁用的补交宽限或无效禁用的纠正窗口结束后仍未确认，将放弃本轮禁用权，不得补禁用。', locale)}</p>
   </section>
 }
 
@@ -104,7 +104,7 @@ export default function RoomPhaseClock({ data, disabled, mutate, stale = false, 
   const grace = clock.stage?.kind === 'MAP' && clock.mapTimeouts?.latest?.mapOrder === clock.stage.mapOrder ? clock.mapTimeouts.latest : null
   const status = stale ? uiText('同步中断 · 计时待核对', locale) : data.timing?.publicFault?.active ? uiText('公共故障 · 计时已暂停',locale) : data.timing?.preparationOverdue ? uiText(data.timing.noRefereePolicy ? data.captainAgreements?.preparation.agreed ? '准备超时 · 双方已同意继续' : '准备超时 · 完整准备后双方确认' : '准备总时限已到 · 请赛管处理',locale) : data.timing?.noRefereeGrace?.active ? uiText('单次准备补时 · 3 分钟', locale) : expired ? uiText('已超时', locale) : inSubmissionGrace ? uiText('补交宽限 · 请立即确认', locale) : clock.status === 'WAITING' ? uiText('等待开始', locale) : clock.status === 'IDLE' ? uiText('等待下一阶段', locale) : grace && clock.enabled ? uiText('第 {0} 次超时 · 补时', locale, [grace.count]) : ''
   const canExtendPreparation = Boolean(onPreparationExtension && canExtendRoomPreparation(data))
-  const description = [stageLabel, owner, status, grace?.count >= 2 ? uiText('本图 Ban 权已取消', locale) : ''].filter(Boolean).join(' · ')
+  const description = [stageLabel, owner, status, grace?.count >= 2 ? uiText('本图禁用权已取消', locale) : ''].filter(Boolean).join(' · ')
   const cannotAdjust = disabled || stale || expired && ['MAP', 'BAN'].includes(clock.stage?.kind)
   const toggleLabel = uiText(clock.enabled ? '关闭本场倒计时' : '开启本场倒计时', locale)
   const restEnding = clock.stage?.kind === 'REST' && ['warning', 'critical'].includes(urgency)

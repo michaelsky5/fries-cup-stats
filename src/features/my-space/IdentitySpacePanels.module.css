@@ -29,7 +29,7 @@
 .overviewGrid[data-has-tasks='false'] .nextPanel .nextCard > a { grid-column: 1; }
 .priorityPanel, .nextPanel { border-top: 2px solid #2a2a2a; padding-top: 18px; }
 .priorityPanel > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 14px; }
-.priorityPanel h2, .nextPanel h2 { margin: 5px 0 0; font-size: 31px; line-height: 1; }
+.priorityPanel h2, .nextPanel h2 { margin: 0; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .priorityPanel header p { max-width: 620px; margin: 7px 0 0; color: #6e6e6e; font-size: 11px; line-height: 1.5; }
 .priorityActions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
 .priorityActions a { border: 1px solid #2a2a2a; background: #f4c320; padding: 9px 12px; color: inherit; font-size: 10px; font-weight: 950; text-decoration: none; }
@@ -182,7 +182,7 @@
 .managerJourney { border: 2px solid #2a2a2a; background: #fff; }
 .managerJourney > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding: 18px 20px; border-bottom: 2px solid #2a2a2a; }
 .managerJourney > header > div { display: grid; gap: 5px; }
-.managerJourney > header h2 { margin: 0; font-size: 25px; line-height: 1.05; }
+.managerJourney > header h2 { margin: 0; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .managerJourney > header p { margin: 0; color: #6e6e6e; font-size: 10px; line-height: 1.5; }
 .managerJourney > header > em { flex: 0 0 auto; border: 1px solid #2a2a2a; padding: 7px 10px; font-size: 9px; font-style: normal; font-weight: 950; }
 .managerJourney > ol { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
@@ -246,7 +246,7 @@
 .eventJourney > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding: 18px 20px; border-bottom: 2px solid #2a2a2a; }
 .eventJourney > header > div { display: grid; gap: 5px; }
 .eventJourney > header span { color: #9a7800; font-size: 9px; font-weight: 950; letter-spacing: .1em; }
-.eventJourney > header h2 { margin: 0; font-size: 25px; line-height: 1.05; }
+.eventJourney > header h2 { margin: 0; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .eventJourney > header p { margin: 0; color: #6e6e6e; font-size: 10px; line-height: 1.5; }
 .eventJourney > header > em { flex: 0 0 auto; border: 1px solid #2a2a2a; padding: 7px 10px; font-size: 9px; font-style: normal; font-weight: 950; }
 .eventJourneySteps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
@@ -267,7 +267,7 @@
 .eventJourneySteps p { margin: 0; color: #6e6e6e; font-size: 9px; line-height: 1.45; }
 .eventRelationSection { margin-top: 24px; padding-top: 18px; border-top: 2px solid #2a2a2a; }
 .eventRelationSection > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 14px; }
-.eventRelationSection > header h2 { margin: 5px 0 0; font-size: 28px; line-height: 1; }
+.eventRelationSection > header h2 { margin: 0; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .eventRelationSection > header p { margin: 7px 0 0; color: #6e6e6e; font-size: 11px; }
 .eventRelationSection > header > em { border: 1px solid #2a2a2a; padding: 7px 10px; font-size: 9px; font-style: normal; font-weight: 950; }
 .eventOnboarding, .viewerEventCard { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 20px; border: 2px solid #2a2a2a; border-left: 8px solid #f4c320; background: #fff; padding: 20px 22px; }
@@ -280,7 +280,7 @@
 .viewerEventCard a + a { background: #fff; }
 .playerEventHistory { margin-top: 24px; padding-top: 18px; border-top: 2px solid #2a2a2a; }
 .playerEventHistory > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 14px; }
-.playerEventHistory > header h2 { margin: 5px 0 0; font-size: 28px; line-height: 1; }
+.playerEventHistory > header h2 { margin: 0; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .playerEventHistory > header p { max-width: 760px; margin: 7px 0 0; color: #6e6e6e; font-size: 11px; line-height: 1.5; }
 .playerEventHistory > header > em { flex: 0 0 auto; border: 1px solid #2a2a2a; padding: 7px 10px; font-size: 9px; font-style: normal; font-weight: 950; }
 .playerEventHistoryGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
@@ -387,7 +387,7 @@
 .matchFactRail small { grid-row: 2; color: #777; font-size: 9px; font-weight: 900; }
 .matchCollection { margin-top: 24px; padding-top: 18px; border-top: 2px solid #2a2a2a; }
 .matchCollection > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 14px; }
-.matchCollection > header h2 { margin: 5px 0 0; font-size: 28px; line-height: 1; }
+.matchCollection > header h2 { margin: 0; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .matchCollection > header p { margin: 7px 0 0; color: #6e6e6e; font-size: 11px; }
 .matchCollection > header > em { border: 1px solid #2a2a2a; padding: 7px 10px; font-size: 9px; font-style: normal; font-weight: 950; }
 .matchCollectionList { display: grid; border: 2px solid #2a2a2a; background: #fff; }

@@ -149,7 +149,7 @@
 .teamEyebrow>small { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--fc-data-room-faint);font-size:11px; }
 .representative { display:grid;gap:5px;padding:12px 16px 14px;background:var(--fc-data-room-surface);border-block:1px solid var(--line); }
 .representativeHeading { display:flex;align-items:center;flex-wrap:wrap;gap:6px;justify-content:space-between; }
-.representativeHeading em { color:var(--yellow);font-size:10px;font-style:normal; }
+.representativeHeading em { color:var(--muted);font-size:10px;font-style:normal; }
 .representativeHeadingActions { display:flex;align-items:center;gap:7px;min-width:0; }
 .room .representativeHeadingActions > button { min-height:28px;padding:3px 8px;background:transparent;border-color:var(--line);font-size:10px; }
 .room .representativeHeadingActions > button[data-self-claim] { min-height:36px;padding:6px 10px;color:var(--yellow);border-color:var(--fc-data-room-accent-line);font-size:12px; }
@@ -227,7 +227,7 @@
 .room .communication>header button { min-height:32px;padding:5px 9px;font-size:12px;background:transparent;border-color:var(--line); }
 .communication>nav { padding:0 14px;gap:20px;background:var(--fc-data-room-canvas); }
 .room .communication>nav>button { min-height:36px;padding:7px 0;font-size:12px;border-width:0 0 2px; }
-.pinned { padding:8px 12px;margin:0 14px;background:var(--fc-data-room-surface);border-left:2px solid var(--yellow); }
+.pinned { padding:8px 12px;margin:0 14px;background:var(--fc-data-room-surface);border-left:2px solid var(--line); }
 .pinned>small { font-size:11px; }
 .pinned>p { font-size:12px;line-height:1.5; }
 .feed { flex:1;min-height:72px;padding:0 14px;scrollbar-width:thin; }
@@ -401,4 +401,20 @@
   .room .resultSteps li { font-size:calc(12 * var(--room-unit));padding-bottom:calc(8 * var(--room-unit)); }
   .room .task h2 { font-size:calc(28 * var(--room-unit)); }.room .task p { font-size:calc(14 * var(--room-unit)); }
   .room .task button,.room .resultLink { font-size:calc(14 * var(--room-unit));min-height:calc(40 * var(--room-unit));padding:calc(8 * var(--room-unit)) calc(14 * var(--room-unit)); }
+}
+
+/* 票 2.59 · 字级：操作代表区和赛果步骤最小 12px（变量定义在 RoomGrid.module.css）。 */
+@media (min-width: 1180px) {
+  .room.room.room .representativeHeading small, .room.room.room .representativeHeading em, .room.room.room .representativePerson>small, .room.room.room .representative>p, .room.room.room .representative>small { font-size: var(--room-caption); }
+  .room.room.room .representativeHeadingActions>button { min-height: 32px; padding: 4px 8px; font-size: var(--room-caption); }
+  .room.room.room .resultSteps li, .room.room.room .resultSteps li span { font-size: var(--room-caption); }
+  .room.room.room .resultProgress>.resultTitle { font-size: var(--room-title); }
+  .room.room.room .resultCorrection button { min-height: 32px; padding: 4px 12px; font-size: var(--room-caption); }
+  /* 票 2.61: the match communication now sits in the main view on desktop. */
+  .room.room.room .feed article>header>small, .room.room.room .sendRow small, .room.room.room .pinned>small { font-size: var(--room-caption); }
+}
+
+/* 票 2.59 · 手机与平板：操作代表说明和赛果步骤最小 12px；版式不动（small / em 由 RoomGrid 统一）。 */
+@media (width < 1180px) {
+  .room.room.room .representative>p, .room.room.room .resultSteps li, .room.room.room .resultSteps li span, .room.room.room .resultCorrection button { font-size: var(--room-caption); }
 }

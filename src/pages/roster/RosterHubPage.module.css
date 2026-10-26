@@ -1,15 +1,11 @@
 .shell { min-width: 0; }
 /* Team switches adapt the member grid inside a shared frame; the left column stays still. */
-.hero { --roster-inset: 28px; display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); grid-template-areas: 'intro ensemble' 'metrics ensemble' 'search ensemble'; grid-template-rows: auto minmax(0, 1fr) auto; height: clamp(640px, 33.333vw, 680px); margin-top: 20px; background: var(--fc-data-ink); color: var(--fc-data-paper); }
-.intro { grid-area: intro; display: flex; flex-direction: column; min-width: 0; padding: var(--roster-inset) var(--roster-inset) 0; animation: arrive 480ms ease both; }
-.hero > .searchArea { grid-area: search; min-width: 0; margin: auto var(--roster-inset) var(--roster-inset); }
+/* 票 2.40: the page title sits on paper above the dark block, like every other page. The block
+   opens with the search, level with 「队伍名单」, then the numbers; phones already did this. */
+.hero { --roster-inset: 28px; display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); grid-template-areas: 'search ensemble' 'metrics ensemble'; grid-template-rows: auto minmax(0, 1fr); height: clamp(640px, 33.333vw, 680px); margin-top: 0; background: var(--fc-data-ink); color: var(--fc-data-paper); }
+.hero > .searchArea { grid-area: search; min-width: 0; margin: var(--roster-inset) var(--roster-inset) 0; padding-top: 0; }
 .hero > .metrics { grid-area: metrics; margin-inline: var(--roster-inset); }
 .ensemble { grid-area: ensemble; }
-.eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; color: var(--fc-data-text-dark-muted); font: 11px/1.5 var(--font-mono); letter-spacing: .04em; }
-.eyebrow i { width: 18px; height: 1px; background: var(--fc-data-signal); }
-.intro h1 { margin: 18px 0 14px; font: 900 clamp(42px, 4.1vw, 72px)/1.12 var(--fc-data-font-interface); letter-spacing: -.045em; }
-.intro h1 > span { color: var(--fc-data-signal); }
-.intro > p { max-width: 28em; margin: 0; color: var(--fc-data-text-on-dark); font-size: 14px; line-height: 1.65; }
 .metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 26px; row-gap: 16px; margin: 24px 0; }
 .metrics > div { display: flex; flex-direction: column-reverse; justify-content: center; min-width: 0; padding-bottom: 12px; border-bottom: 1px solid var(--fc-data-line-on-dark); }
 .metrics dt { color: var(--fc-data-text-on-dark); font-size: 12px; line-height: 1.5; }
@@ -102,7 +98,7 @@
 .rosterNotice { flex: none; margin: 10px 0; color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.6; }
 .teamEmpty { padding: 50px 15px; color: var(--fc-data-text-dark-muted); }
 .sectionHeading { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 30px 0 16px; }
-.sectionHeading h2 { margin: 0; font: 900 clamp(22px, 2vw, 28px)/1.25 var(--fc-data-font-interface); letter-spacing: -.025em; }
+.sectionHeading h2 { margin: 0; font: 800 var(--fc-data-section-title-size)/1.35 var(--fc-data-font-interface); letter-spacing: -.02em; }
 .sectionHeading > a { flex-shrink: 0; color: var(--fc-data-text-muted); font-size: 12px; text-decoration: none; }
 .sectionHeading > a:hover { color: var(--fc-data-ink); text-decoration: underline; text-underline-offset: 4px; }
 .creditLayout { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); height: 360px; border: 1px solid var(--fc-data-line); }
@@ -157,7 +153,6 @@
 .hero :is(a, button, input):focus-visible, .creditDetail a:focus-visible { outline-color: var(--fc-data-signal); }
 .selectedTeam a:focus-visible { outline-color: var(--fc-data-focus-on-light); }
 .searchResults :is(a, button):focus-visible { outline-color: var(--fc-data-focus-on-light); }
-@keyframes arrive { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
 @keyframes crestArrive { from { opacity: .15; transform: translateY(7px); } to { opacity: 1; transform: none; } }
 @keyframes heroReveal { from { opacity: 0; } to { opacity: 1; } }
 @media (min-width: 981px) {
@@ -166,8 +161,6 @@
 @media (min-width: 1500px) { .hero { --roster-inset: 32px; } .teamGrid { grid-template-columns: repeat(10, minmax(0, 1fr)); } .teamGrid button { min-height: 65px; } .teamCopy { padding-inline: 24px; } .members strong { font-size: 17px; } .teamIdentity h2 { font-size: 40px; } }
 @media (max-width: 1100px) {
   .hero { --roster-inset: 24px; grid-template-columns: minmax(0, .83fr) minmax(0, 1.17fr); }
-  .intro h1 { font-size: 43px; }
-  .intro > p { font-size: 13px; }
   .metrics { margin: 24px 0; gap: 18px 18px; }
   .metrics b { font-size: 46px; }
   .teamGrid { grid-template-columns: repeat(8, minmax(0, 1fr)); }
@@ -191,13 +184,7 @@
   .teamStaff { padding-right: 0; }
 }
 @media (max-width: 760px) {
-  .hero { --roster-inset: 16px; grid-template-columns: 1fr; grid-template-areas: 'intro' 'search' 'ensemble' 'metrics'; grid-template-rows: auto; height: auto; margin-top: 14px; }
-  .intro { padding: 18px 16px 0; }
-  .eyebrow { font-size: 10px; }
-  .intro h1 { margin: 10px 0 0; font-size: clamp(28px, 7.6vw, 38px); line-height: 1.22; }
-  .intro h1 br { display: none; }
-  .intro h1 > span { margin-left: .15em; }
-  .intro > p { display: none; }
+  .hero { --roster-inset: 16px; grid-template-columns: 1fr; grid-template-areas: 'search' 'ensemble' 'metrics'; grid-template-rows: auto; height: auto; }
   .hero > .searchArea { margin: 16px 16px 18px; }
   .hero > .metrics { margin: 0 16px; padding: 20px 0; border-top: 1px solid var(--fc-data-line-on-dark); gap: 16px 24px; }
   .metrics > div { padding-bottom: 10px; }
@@ -230,7 +217,6 @@
   .changeNote::before { content: ' · '; color: var(--fc-data-text-muted); white-space: pre; }
   .heroFigure { display: none; }
   .sectionHeading { gap: 12px; padding: 24px 0 14px; }
-  .sectionHeading h2 { font-size: 22px; }
   .sectionHeading > a { font-size: 11px; }
   .creditLayout { grid-template-columns: 1fr; grid-template-rows: 282px 360px; height: auto; }
   .creditLayout[data-empty] { grid-template-rows: auto; }
@@ -245,6 +231,15 @@
   .method { font-size: 11px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .intro, .teamGrid button, .selectedTeam, .creditDetail, .heroVisual, .heroCaption { animation: none; transition: none; }
+  .teamGrid button, .selectedTeam, .creditDetail, .heroVisual, .heroCaption { animation: none; transition: none; }
   .teamGrid button:hover { transform: none; }
+}
+
+/* 票 2.20: phone header budget. The tabs above already name the page, and 「全部队伍」 is the
+   参赛战队 tab, so the title block and list heading stay for screen readers only. */
+@media (max-width: 600px) {
+  .hero { margin-top: 10px; }
+  .pageHeading, .search > span, .fieldHeading { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .hero > .searchArea { margin: 12px; }
+  .ensemble { padding: 12px; }
 }

@@ -1,0 +1,54 @@
+/* 票 2.59 · 比赛房一屏与字级。
+   电脑版（≥1180px）：房间信息并进底栏、状态条的队伍动态并进两侧队伍栏后，顶部只剩标题和五图条；字分四档，最小 12px；
+   外框、底栏、队伍栏标题和动态行的间距收在 4 / 8 / 12 / 16 / 24 上。手机与平板见文件末尾。
+   各组件自己的字号写在各自样式文件末尾的「票 2.59」块里。 */
+@media (min-width: 1180px) {
+  /* Four sizes for the console. At 1px per unit the spacing sits exactly on 4 / 8 / 12 / 16 / 24; on large screens everything follows the room's --room-unit. */
+  .grid.grid.grid { --room-caption: max(12px, calc(12 * var(--room-unit, 1px))); --room-body: max(14px, calc(14 * var(--room-unit, 1px))); --room-title: max(20px, calc(20 * var(--room-unit, 1px))); --room-number: max(24px, calc(24 * var(--room-unit, 1px))); padding: calc(12 * var(--room-unit, 1px)) calc(24 * var(--room-unit, 1px)); gap: calc(8 * var(--room-unit, 1px)); }
+
+  /* Footer: who you are | game-room facts ………… actions, on one row. When the facts run out of room the values
+     shorten first (full text on hover), then the sync time and then the referee step out; the copy buttons and the
+     actions always stay whole. */
+  .grid > footer { gap: calc(16 * var(--room-unit, 1px)); min-height: calc(40 * var(--room-unit, 1px)); padding-top: calc(8 * var(--room-unit, 1px)); border-top: 1px solid var(--fc-data-room-line); font-size: var(--room-caption); }
+  .grid > footer > span:first-child { flex: none; white-space: nowrap; }
+  .grid > footer > div:last-child { flex: none; gap: calc(8 * var(--room-unit, 1px)); }
+  .grid.grid > footer :is(button, a) { min-height: calc(32 * var(--room-unit, 1px)); padding: calc(4 * var(--room-unit, 1px)) calc(12 * var(--room-unit, 1px)); font-size: var(--room-caption); white-space: nowrap; }
+  .grid.grid > footer :is(button, a) span { font-size: var(--room-caption); }
+  .grid.grid > footer a { display: inline-flex; align-items: center; }
+  .grid > footer [data-room-slot=facts] { container-type: inline-size; flex: 1; min-width: 0; min-height: 0; display: flex; align-items: center; gap: calc(16 * var(--room-unit, 1px)); margin: 0; padding: 0 0 0 calc(16 * var(--room-unit, 1px)); overflow-x: clip; border: 0; border-left: 1px solid var(--fc-data-room-line); color: var(--fc-data-room-muted); font-size: var(--room-caption); }
+  /* Room name · code · referee: each fact is one line that ends in an ellipsis when short of room (full value on hover).
+     The room name and the referee share what the code and the buttons leave (basis 0, never wider than their own text),
+     four parts to the room name for one to the referee. The code and the copy buttons stay whole; only if even they
+     cannot fit (long translations on the narrowest desktop) do the buttons drop to a second row instead of being cut. */
+  .grid > footer [data-room-slot=facts] > div { display: flex; flex: 1; flex-wrap: wrap; align-items: center; gap: calc(8 * var(--room-unit, 1px)) calc(16 * var(--room-unit, 1px)); min-width: 0; }
+  .grid > footer [data-room-slot=facts] > div > span:not(:last-of-type) { display: block; flex: 1 1 0; min-width: 0; max-width: max-content; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .grid > footer [data-room-slot=facts] > div > span:not(:last-of-type) b { margin: 0 0 0 calc(8 * var(--room-unit, 1px)); color: var(--fc-data-room-text); font-size: var(--room-caption); }
+  .grid > footer [data-room-slot=facts] > div > span:nth-of-type(1) { flex-grow: 4; }
+  .grid > footer [data-room-slot=facts] > div > span:nth-of-type(2) { flex: none; }
+  /* Copy / edit buttons. */
+  .grid > footer [data-room-slot=facts] > div > span:last-of-type { display: flex; flex: none; flex-wrap: nowrap; gap: calc(8 * var(--room-unit, 1px)); }
+  .grid > footer [data-room-slot=facts] > div > span:last-of-type > small { max-width: 10em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .grid > footer [data-room-slot=facts] > span:last-child { flex: none; font-size: var(--room-caption); white-space: nowrap; }
+  @container (max-width: 680px) { .grid > footer [data-room-slot=facts] > span:last-child { display: none; } }
+  @container (max-width: 560px) { .grid > footer [data-room-slot=facts] > div > span:nth-of-type(3) { display: none; } }
+
+  /* 票 2.61 · 中间任务面板只用一个内边距：内容从面板左边 16px 起，齐左（各阶段原来是 13 / 15 / 17 / 21px，倒计时提示贴边 1px）。 */
+  .grid.grid [data-room-slot=center] > section[data-room-slot=current-task] { padding-inline: 16px; }
+  .grid.grid [data-room-slot=center] > section[data-room-slot=opening] > * { padding-inline: 16px; margin-inline: 0; }
+  /* 票 2.61: in the quieter stages the task keeps its own height and the match communication takes the rest of the centre. */
+  .grid [data-room-slot=center][data-communication] > section:is([data-room-slot=current-task], [data-room-slot=opening]) { flex: 0 1 auto; }
+  .grid.grid [data-room-slot=center][data-communication] > [id=room-communication] { flex: 1 1 0; height: auto; min-height: 0; overflow: hidden; container: room-comm / size; }
+  /* Too short to write comfortably (short windows, busier task): the latest messages stay readable and 展开沟通 opens the full panel to reply. */
+  @container room-comm (max-height: 239px) { .grid.grid [data-room-slot=center] > [id=room-communication] > :is(nav, form) { display: none; } }
+  /* The pinned note stays in the full panel; inline, the feed gives way first so the composer is always reachable. */
+  .grid.grid [data-room-slot=center][data-communication] > [id=room-communication] [data-pinned] { display: none; }
+  .grid.grid [data-room-slot=center][data-communication] > [id=room-communication] [role=region] { flex: 1 1 0; min-height: 0; }
+  .grid.grid [data-room-slot=center][data-communication] > [id=room-communication] > header h2 { font-size: var(--room-body); font-weight: 700; }
+}
+
+/* 手机与平板（<1180px）：版式不动，只把小于 12px 的字提到 12px。比赛房里的说明文字（small / em）一律 12px，
+   其余元素写在各自样式文件末尾的「票 2.59 · 手机与平板」块里。 */
+@media (width < 1180px) {
+  .grid.grid.grid { --room-caption: 12px; }
+  :global(main[data-room-layout=workspace]).grid.grid.grid :is(small, em) { font-size: var(--room-caption); }
+}

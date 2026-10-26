@@ -19,7 +19,7 @@ function RoleSpotlight({ role, heroes, samples, locale, isEn, toHero, index }) {
   if (!leader) return null
   const tied = heroes[1]?.count === leader.count
   return <article className={styles.spotlight} data-role={role}>
-    <div className={styles.spotlightTop}><span>{roleLabel(role, locale)}{!isEn ? <i>/ {role.toUpperCase()}</i> : null}</span><small>0{index + 1}</small></div>
+    <div className={styles.spotlightTop}><span>{roleLabel(role, locale)}</span><small>0{index + 1}</small></div>
     <Link to={toHero(leader.key)} state={getReturnState(location)} onClick={() => saveReturnScroll(location)} className={styles.spotlightMain} aria-label={`${formatOwHeroName(leader.name, locale)} · ${isEn ? 'Explore hero' : uiText("查看英雄档案", locale)}`}>
       <HeroPortrait name={leader.name} className={styles.spotlightPortrait} />
       <span className={styles.spotlightArtWindow}><HeroArtwork hero={leader.name} decorative priority className={styles.spotlightArt} /></span>

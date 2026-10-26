@@ -4,6 +4,7 @@ import { pickUiLocale } from '../../lib/uiText.js'
 import { formatOwMapName, formatOwMapMode } from '../../lib/heroes.js'
 import { getMapImage } from '../../lib/reviewAssets.js'
 import { participationWeekNumber, weeklyParticipationPath } from './weeklyInteractionNavigation.js'
+import { showsInlineTimeZone } from './weeklyPresentation.js'
 import styles from './SignalWeeklyOverview.module.css'
 
 const dateFormatter = (locale, options) => new Intl.DateTimeFormat(String(locale).startsWith('en') ? 'en-GB' : 'zh-CN', { timeZone: 'Asia/Shanghai', ...options })
@@ -26,7 +27,7 @@ export function WeeklyRegistrationBand({ registration, locale, withSeason }) {
   return <section className={styles.registrationBand} data-weekly-registration="true" aria-label={pickUiLocale(locale, '报名与参赛', 'Registration & participation', '등록 및 참가', '報名與參賽')}>
     <div className={styles.registrationInfo}>
       <strong>{pickUiLocale(locale, '参赛办理', 'Participation', '참가 절차', '參賽辦理')}{registration.status === 'CONFIRMATION_OPEN' && <span> {pickUiLocale(locale, '确认中', 'Confirmation open', '확인 진행 중', '確認中')}</span>}</strong>
-      {deadline && <small>{pickUiLocale(locale, '截止：', 'Closes: ', '마감: ', '截止：')}{deadline} UTC+8</small>}
+      {deadline && <small>{pickUiLocale(locale, '截止：', 'Closes: ', '마감: ', '截止：')}{deadline}{showsInlineTimeZone(locale) ? ' UTC+8' : ''}</small>}
     </div>
     <Link className={styles.confirmationLink} to={withSeason(weeklyParticipationPath(registration))}><strong>{confirmationTitle}</strong><span aria-hidden="true">→</span></Link>
     <Link className={styles.registrationLink} to={withSeason('/participate/FCW26')}><strong>{pickUiLocale(locale, '首次报名 / 继续报名', 'Register / continue', '신규 / 계속 등록', '首次報名 / 繼續報名')}</strong><span aria-hidden="true">→</span></Link>

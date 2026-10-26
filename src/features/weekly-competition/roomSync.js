@@ -16,7 +16,8 @@ export function roomRetryDelay(attempt, random = Math.random) {
 export function createRoomSync({ matchId, read, now = Date.now, monotonicNow = () => performance.now(), random = Math.random, setTimer = setTimeout, clearTimer = clearTimeout }) {
   let state = { data: null, error: '', busy: false, notice: '', noticeKind: '', connection: { status: 'connecting', attempts: 0, syncing: false, lastSuccessAt: null, nextRetryAt: null, retryAfterUntil: 0, recoveredAt: null } }
   const listeners = new Set()
-  let running = false, visible = true, online = true, timer = null, request = null, sequence = 0, lifecycle = 0, writeIssue = null
+  // background: 0 stops reading while the tab is hidden; a positive interval keeps alerts working (票 2.64).
+  let running = false, visible = true, online = true, background = 0, timer = null, request = null, sequence = 0, lifecycle = 0, writeIssue = null
   const publish = (patch = {}, connection = {}) => {
     state = { ...state, ...patch, connection: { ...state.connection, ...connection } }
     listeners.forEach(listener => listener())
@@ -26,9 +27,10 @@ export function createRoomSync({ matchId, read, now = Date.now, monotonicNow = (
 
   function schedule() {
     clearScheduled()
-    if (!running || !visible || !online || state.busy || request || state.connection.status === 'blocked') return
-    const failed = Boolean(state.error)
-    const delay = Math.max(failed ? roomRetryDelay(state.connection.attempts, random) : Math.round(ROOM_POLL_MS * (.9 + .2 * random())), state.connection.retryAfterUntil - now())
+    if (!running || (!visible && !background) || !online || state.busy || request || state.connection.status === 'blocked') return
+    const failed = Boolean(state.error), interval = visible ? ROOM_POLL_MS : background
+    const base = failed ? roomRetryDelay(state.connection.attempts, random) : Math.round(interval * (.9 + .2 * random()))
+    const delay = Math.max(visible ? base : Math.max(base, background), state.connection.retryAfterUntil - now())
     if (failed) publish({}, { nextRetryAt: now() + delay })
     timer = setTimer(() => { timer = null; void readNow() }, delay)
   }
@@ -125,11 +127,22 @@ export function createRoomSync({ matchId, read, now = Date.now, monotonicNow = (
       else publish({ error: '网络连接已中断，正在等待恢复。' }, { status: 'offline', syncing: false, nextRetryAt: null })
     },
     stop() { running = false; lifecycle++; clearScheduled(); cancelRead() },
-    setVisible(value) { visible = value; if (!visible) { clearScheduled(); publish({}, { nextRetryAt: null }) } else wake() },
+    // Hidden: read at the background interval or not at all. Visible again: back to the 3 s poll, and an
+    // immediate read unless the room was read less than a second ago.
+    setVisible(value) { visible = value; clearScheduled(); publish({}, { nextRetryAt: null }); schedule(); if (visible) wake() },
+    setBackground(value) {
+      const next = Math.max(0, Number(value) || 0)
+      if (next === background) return
+      background = next
+      if (!visible) { clearScheduled(); schedule() }
+    },
     setOnline(value) {
       const restored = !online && value; online = value
       if (!value) { clearScheduled(); cancelRead(); publish({ error: '网络连接已中断，正在等待恢复。' }, { status: 'offline', syncing: false, nextRetryAt: null, recoveredAt: null }) }
-      else if (restored) wake()
+      else if (restored) {
+        if (visible) wake()
+        else schedule()
+      }
     },
     wake,
   }

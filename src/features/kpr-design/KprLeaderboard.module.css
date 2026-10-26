@@ -62,7 +62,7 @@
 .resultHeader { display: flex; justify-content: space-between; align-items: center; gap: 12px 16px; margin: 0 0 12px; }
 .resultHeader .eyebrow { display: none; }
 .eyebrow { color: var(--fc-data-text-muted); font-size: 11px; letter-spacing: .07em; }
-.resultHeader h2 { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; font-size: 24px; line-height: 1.3; margin: 0; letter-spacing: -.025em; }
+.resultHeader h2 { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; margin: 0; letter-spacing: -.02em; }
 .resultHeader h2 > span { display: inline-flex; align-items: baseline; gap: 6px; color: var(--fc-data-text-muted); }
 .resultHeader h2 > span b { font: 900 26px/1 var(--fc-data-font-display); }
 .resultHeader h2 > span small { font: 400 12px/1.5 var(--fc-data-font-interface); letter-spacing: 0; }
@@ -211,8 +211,8 @@
 .dossierActions > :is(a, button) > span { font-size: 20px; }
 .dossierHint { font-size: 12px; color: var(--fc-data-text-muted); margin: 12px 0 0; }
 .emptyDossier { min-height: 280px; border: 1px solid var(--fc-data-line); padding: 24px; }
-.emptyDossier > span, .emptyDossier small { color: var(--fc-data-text-muted); font-size: 12px; }
-.emptyDossier p { margin: 48px 0 12px; font-size: 22px; font-weight: 700; }
+.emptyDossier small { color: var(--fc-data-text-muted); font-size: 12px; }
+.emptyDossier p { margin: 0 0 12px; font-size: 22px; font-weight: 700; }
 .compareDock { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 35; width: min(1180px, calc(100% - 48px)); display: flex; gap: 12px; align-items: center; padding: 12px 16px; border-top: 2px solid var(--fc-data-signal); background: var(--fc-data-ink); color: var(--fc-data-paper); box-shadow: 0 12px 48px rgb(0 0 0 / 24%); }
 .dockLabel { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
 .dockLabel > b { font: 900 34px/1 var(--fc-data-font-display); color: var(--fc-data-signal); }
@@ -334,7 +334,6 @@
   .activeFilters button { min-height: 44px; }
   .resultHeader { flex-wrap: wrap; gap: 4px 12px; margin-bottom: 8px; }
   .resultHeader .eyebrow { display: none; }
-  .resultHeader h2 { margin: 0; font-size: 20px; }
   .resultHeader p { text-align: left; }
   .readingControls { flex-wrap: wrap; gap: 4px; }
   .modeTabs button { min-height: 44px; padding: 8px 10px; font-size: 12px; }
@@ -431,4 +430,19 @@
   :global([data-design-edition='hybrid']) .rankings .mobileMetrics { margin-top: 8px; }
   :global([data-design-edition='hybrid']) .rankings .compareDock { bottom: calc(var(--fc-mobile-navigation-height, 0px) + 8px); }
   :global([data-design-edition='hybrid']) .rankings .compareWarning { bottom: calc(var(--fc-mobile-navigation-height, 0px) + 128px); }
+}
+
+/* 票 2.23: compact phone rows — rank · avatar · name and team · OVR, details on demand.
+   Sorting, filters and comparison are unchanged; only what a closed row shows. */
+.mobileExpand { display: none; }
+@media (max-width: 600px) {
+  :global([data-design-edition='hybrid']) .rankings .mobileList li { padding: 4px 0 4px 6px; }
+  :global([data-design-edition='hybrid']) .rankings .mobileList li:not([data-open]) .mobileDetail { display: none; }
+  :global([data-design-edition='hybrid']) .rankings .mobileList li[data-open] .mobileDetail { padding: 0 0 8px; }
+  .mobileIdentity { gap: 10px; }
+  .mobileIdentity .playerPreview { min-height: 48px; }
+  .mobileScore { flex-basis: 34px; }
+  .mobileScore b { font-size: 28px; }
+  .mobileExpand { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border: 1px solid var(--fc-data-line); border-radius: 0; background: transparent; color: var(--fc-data-ink); font-size: 20px; line-height: 1; }
+  .mobileList li[data-open] .mobileExpand { border-color: var(--fc-data-ink); background: var(--fc-data-ink); color: var(--fc-data-paper); }
 }

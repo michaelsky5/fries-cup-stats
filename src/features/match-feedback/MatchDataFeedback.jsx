@@ -102,7 +102,7 @@ function FeedbackDialog({ dossier, seasonId, initialMap, locale, onClose, return
 
   return createPortal(<>
     <dialog ref={dialog} data-design="signal" data-match-feedback className={styles.dialog} aria-labelledby="match-feedback-title" onCancel={event => { event.preventDefault(); if (!busy) onClose() }}>
-      <header className={styles.header}><div><span>FRIES CUP / DATA</span><h2 id="match-feedback-title">{label('数据错误反馈', 'Report a data error')}</h2></div><button type="button" className={styles.close} onClick={onClose} disabled={busy} aria-label={label('关闭反馈', 'Close feedback')}>×</button></header>
+      <header className={styles.header}><div><h2 id="match-feedback-title">{label('数据错误反馈', 'Report a data error')}</h2></div><button type="button" className={styles.close} onClick={onClose} disabled={busy} aria-label={label('关闭反馈', 'Close feedback')}>×</button></header>
       <div className={styles.context}><strong>{dossier.teamA.short} vs {dossier.teamB.short}</strong><span>{dossier.displayCode}</span></div>
       {state === 'submitted' ? <div className={styles.success} role="status"><strong>{label('反馈已提交', 'Report submitted')}</strong><p>{label('已进入数据核对队列，工作人员会检查你指出的错误。', 'Your report is in the data review queue for staff to check.')}</p><small>{label('反馈编号', 'Report ID')}：{record.id}</small><button type="button" onClick={onClose}>{label('完成', 'Done')}</button></div> : <form onSubmit={submit}>
         <div className={styles.fields}>

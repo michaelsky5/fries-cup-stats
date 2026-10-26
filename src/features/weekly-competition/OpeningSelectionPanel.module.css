@@ -276,7 +276,7 @@
 .confirmationTeams { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
 .confirmationTeams>div { display:grid;gap:8px;align-content:start;padding:20px;border:1px solid var(--fc-data-room-line);background:var(--fc-data-room-raised);border-top:3px solid var(--fc-data-room-control); }
 .confirmationTeams>div[data-confirmed=true] { border-top-color:var(--fc-data-room-success); }
-.confirmationTeams strong { font-size:24px;overflow-wrap:anywhere; }.confirmationTeams span { font-size:13px; }.confirmationTeams small { font-size:11px; }
+.confirmationTeams strong { font-size:24px;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden; }.confirmationTeams span { font-size:13px; }.confirmationTeams small { font-size:11px; }
 .firstPickConfirmation>form { display:flex;align-items:end;gap:14px;padding-top:12px;border-top:1px solid var(--fc-data-room-line); }
 .firstPickConfirmation>form label { display:grid;gap:8px;flex:1;font-size:12px;min-width:0; }.firstPickConfirmation select { width:100%;min-height:42px; }
 .firstPickEvidence { border-top:1px solid var(--fc-data-room-line);padding-top:14px; }
@@ -374,5 +374,54 @@
       .banOrderChoice>strong { display:none; }
       .banOrderChoice .order button { min-height:44px; }
     }
+  }
+}
+
+/* 票 2.59 · 字级：先手权、禁用顺序面板里最小 12px（变量定义在 RoomGrid.module.css）。 */
+@media (min-width: 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening header>span,
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .responsibility>span,
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .confirmationTeams small,
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice small,
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .method,
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .method :is(span, small),
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .confirm small,
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .confirmationTeams span { font-size: var(--room-caption); }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening h1 { font-size: var(--room-title); }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice .order button { font-size: var(--room-title); }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening :is(.firstPick p, .firstPick button, .firstPickConfirmation button, .waiting) { font-size: var(--room-body); }
+}
+
+/* 票 2.59 · 手机与平板：先手权面板的责任行和方式说明最小 12px；版式不动（small / em 由 RoomGrid 统一）。 */
+@media (width < 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .responsibility>:is(span, strong),
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .method>div>span { font-size: var(--room-caption); }
+}
+
+/* 票 2.61 · 电脑版：先手权面板里的内容一律齐左、从顶部开始（左边距由 RoomGrid 统一为 16px）。 */
+@media (min-width: 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .firstPick { align-content: start; }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .firstPickConfirmation { justify-content: flex-start; }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening :is(.firstPick, .firstPickConfirmation) :is(.waiting, .start) { padding-inline: 0; }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening :is(.waiting, .start, .result) { align-items: flex-start; text-align: start; }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice { text-align: start; }
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice .order { padding-inline: 0; }
+}
+
+/* 票 2.63 · 选中只用黄框加勾：出手、禁用顺序选中时底色不变，3px 黄框，右上角黄底勾（和英雄格、选图、首发一致）。
+   电脑版的禁用顺序从顶部往下排，空白留在选项和确认栏之间。 */
+.opening.opening :is(.choices, .order) button[aria-pressed=true],
+.opening.opening :is(.choices, .order) button[aria-pressed=true]:not(:disabled):hover { background: var(--fc-data-room-raised); color: var(--fc-data-room-text); border-color: var(--fc-data-room-text); box-shadow: inset 0 0 0 3px var(--fc-data-room-action-bg); }
+.opening.opening .order button { position: relative; }
+.opening.opening :is(.choices, .order) .choiceMark { position: absolute; top: 0; right: 0; padding: 1px 5px; border-top-right-radius: inherit; background: var(--fc-data-room-action-bg); color: var(--fc-data-room-action-text); font-size: var(--room-caption, 12px); line-height: 1.4; }
+.opening.opening .choiceMark:empty { display: none; }
+@media (min-width: 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice { justify-content: flex-start; margin: 0; }
+}
+
+/* 票 2.65 · 手机：禁用顺序两个按钮各占半宽，按钮里的两行字上下排，不再被挤成一字一行。 */
+@container room-workspace (max-height:700px) {
+  @media (max-width: 600px) {
+    :global([data-room-layout=workspace][data-page-mode=control]) .opening.opening .banOrderChoice .order button { flex-direction: column; justify-content: center; gap: 2px; }
   }
 }

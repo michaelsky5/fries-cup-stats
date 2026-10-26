@@ -53,7 +53,7 @@ export const PLAYER_COPY = {
     lead: ['输出突出，正面记录覆盖三轮季后赛。', 'Strong output supported across three playoff rounds.', '화력이 뛰어나며 플레이오프 세 라운드의 긍정적 기록이 뒷받침합니다.'],
     strength: ['消灭 22.63、伤害 10,009/10 分钟，均为同位最高；季后赛有 9 张自由人地图。', '22.63 eliminations and 10,009 damage/10 min lead flex DPS; nine playoff maps belong to this position.', '10분당 처치 22.63·피해량 10,009로 플렉스 DPS 중 최고이며 플레이오프 해당 포지션은 9맵입니다.'],
     watch: ['自由人仅 11 图；小组赛只有 2 图，不能据阶段差值宣称明显进步。', 'Only 11 flex-DPS maps, including two in groups; stage differences do not establish clear improvement.', '플렉스 DPS는 11맵, 조별리그는 2맵뿐입니다. 단계 차이로 뚜렷한 향상을 단정할 수 없습니다.'],
-    question: ['死怨、死神、安然以外，是否有足够的自由人英雄记录支持轮换？', 'What flex-DPS evidence supports rotation beyond Shion, Reaper and Anran?', 'Shion·리퍼·안란 외 플렉스 DPS 영웅의 교대를 뒷받침할 기록이 있나요?']
+    question: ['死怨、死神、安燃以外，是否有足够的自由人英雄记录支持轮换？', 'What flex-DPS evidence supports rotation beyond Shion, Reaper and Anran?', 'Shion·리퍼·안란 외 플렉스 DPS 영웅의 교대를 뒷받침할 기록이 있나요?']
   },
   'QGCS4-P-971911B6F183': {
     lead: ['猎空／死怨记录充分，较长赛程内生存可控。', 'Substantial Tracer/Shion evidence and controlled deaths over a longer event sample.', '트레이서·Shion 기록이 충분하고 비교적 긴 대회 표본에서 죽음이 적었습니다.'],

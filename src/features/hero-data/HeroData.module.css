@@ -23,12 +23,11 @@
 .shell i { font-style: normal; }
 .overview { padding: 18px 0 22px; border-bottom: 1px solid var(--fc-data-line); }
 .overviewHeading { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 10px; }
-.overviewHeading h2 { font-size: 17px; font-weight: 600; }
+.overviewHeading h2 { font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .overviewHeading a { display: inline-flex; align-items: center; gap: 10px; min-height: 36px; font-size: 12px; }
 .spotlights { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .spotlight { min-width: 0; }
 .spotlightTop { display: flex; justify-content: space-between; padding: 8px 0; border-top: 2px solid var(--hero-accent); font-weight: 700; }
-.spotlightTop i { margin-left: 7px; font-weight: 400; font-size: 11px; color: var(--fc-data-text-muted); letter-spacing: .08em; }
 .spotlightTop > small { color: var(--fc-data-text-muted); }
 .spotlightMain { display: block; height: 196px; position: relative; overflow: hidden; isolation: isolate; background: var(--hero-tone); }
 .spotlightArtWindow { position: absolute; inset: 0 0 68px 42%; overflow: hidden; }
@@ -54,7 +53,7 @@
 .directory, .results { scroll-margin-top: calc(var(--kpr-header-height, 124px) + 24px); }
 .results { padding-top: 22px; }
 .directoryHeading { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
-.directoryHeading h2 { font-size: 23px; letter-spacing: -.025em; }
+.directoryHeading h2 { font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; letter-spacing: -.02em; }
 .directoryHeading > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px; }
 .directoryHeading span { color: var(--fc-data-text-muted); font-size: 12px; }
 .directoryHeading > span { display: flex; align-items: center; gap: 8px; }
@@ -241,12 +240,11 @@
 }
 @media (max-width: 760px) {
   .overviewHeading { align-items: flex-start; gap: 12px; }
-  .overviewHeading h2 { font-size: 16px; padding-top: 6px; }
+  .overviewHeading h2 { padding-top: 6px; }
   .overviewHeading a { flex-shrink: 0; }
   .spotlights { grid-template-columns: 1fr; gap: 10px; }
   .spotlight { display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 10px; }
   .spotlightTop { justify-content: flex-start; align-items: center; border-top: 0; border-left: 2px solid var(--hero-accent); padding: 0 0 0 10px; font-size: 13px; }
-  .spotlightTop i { display: block; margin: 4px 0 0; font-size: 9px; letter-spacing: 0; }
   .spotlightTop > small { display: none; }
   .spotlightMain { height: 112px; }
   .spotlightArtWindow { inset: 0 0 0 48%; }
@@ -258,7 +256,6 @@
   .spotlightMetric > strong { font-size: 29px; }
   .spotlightMetric > span { font-size: 10px; line-height: 1.35; white-space: nowrap; }
   .spotlightMetric small, .spotlightMetric > svg, .runners { display: none; }
-  .directoryHeading h2 { font-size: 23px; }
   .roles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .roles button { padding-inline: 12px; gap: 8px; }
   .searchControls { justify-content: space-between; gap: 8px; min-height: 54px; }
@@ -349,11 +346,11 @@
   .searchControls select { max-width: 152px; }
   .overview { padding: 14px 0 18px; }
   .overviewHeading { align-items: center; }
-  .overviewHeading h2 { padding: 0; font-size: 15px; }
+  .overviewHeading h2 { padding: 0; }
   .spotlights { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .spotlight { display: block; min-width: 0; background: var(--hero-tone); }
   .spotlightTop { min-height: 30px; padding: 7px 9px; border-left: 0; border-top: 2px solid var(--hero-accent); font-size: 12px; }
-  .spotlightTop i, .spotlightArtWindow { display: none; }
+  .spotlightArtWindow { display: none; }
   .spotlightMain { display: grid; justify-items: start; align-content: start; height: auto; min-height: 0; padding: 3px 9px 10px; }
   .spotlightPortrait { display: block; width: 32px; height: 32px; }
   .spotlightCopy { width: 100%; padding: 8px 0 0; }
@@ -364,7 +361,6 @@
   .results { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; padding-top: 12px; }
   .results > * { grid-column: 1 / -1; }
   .results > .directoryHeading { grid-column: 1; grid-row: 1; display: block; padding-bottom: 12px; }
-  .directoryHeading h2 { font-size: 20px; }
   .directoryHeading > div { display: flex; gap: 4px 10px; }
   .directoryReading { display: none; }
   .results > .mobileMethodLink { grid-column: 2; grid-row: 1; display: inline-flex; align-items: center; align-self: start; gap: 5px; min-height: 44px; font-size: 12px; color: var(--fc-data-text-muted); }

@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { translateUiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText } from '../../lib/uiText.js'
 import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
 import { getHeroImage, getMapImage } from '../../lib/reviewAssets.js'
 import { weeklyCycleTitle, weeklyPeriodPath } from '../weekly-overview/weeklyPresentation.js'
-import { weeklyReportPath, newspaperTeamName } from './weeklyReportPresentation.js'
+import { weeklyReportPath, newspaperIssueStamp, newspaperIssueTitle, newspaperTeamName, newspaperWeekLabel } from './weeklyReportPresentation.js'
 import styles from './WeeklyReport.module.css'
 
 const copy = (locale, zh, en) => String(locale).startsWith('en') ? en : translateUiText(zh, locale)
@@ -12,9 +12,9 @@ export function ReportCover({ report, newspaper: publishedPaper, locale }) {
   const newspaper=publishedPaper || report.newspaper
   if (!newspaper) return null
   return <div className={styles.paperCover} aria-hidden="true">
-    <div className={styles.paperCoverTop}>FRIES CUP / WEEKLY NEWSPAPER <span>{report.number}</span></div>
+    <div className={styles.paperCoverTop}>FRIES CUP / WEEKLY NEWSPAPER <span>{newspaperIssueStamp(report,locale).value}</span></div>
     <strong className={styles.paperCoverName}><img src="/logos/fries-cup-mark-ink.svg" alt=""/>{copy(locale,'薯条周报','THE WEEKLY')}</strong>
-    <span className={styles.paperCoverIssue}>{weeklyCycleTitle(report.cycle,locale)} / {copy(locale,`第 ${report.week.week_number} 周`,`WEEK ${report.week.week_number}`)}</span>
+    <span className={styles.paperCoverIssue}>{weeklyCycleTitle(report.cycle,locale)} / {newspaperWeekLabel(report.week,locale)}</span>
     <b className={styles.paperCoverHeadline}>{newspaper.lead?.title||copy(locale,'本周赛果待确认','Confirmed results pending')}</b>
     <div className={styles.paperCoverColumns}><p>{newspaper.lead?.visualNote||copy(locale,'本周赛果待确认','Confirmed results pending')}</p><p>{copy(locale,translateUiText('{0} 支队伍 · {1} 名选手',locale,[report.teamCount,report.playerCount]),`${report.teamCount} teams · ${report.playerCount} players`)}</p></div>
     <div className={styles.paperCoverFoot}>{report.completed.length} {copy(locale,'场对阵','matches')} · {report.maps.length} {copy(locale,'张地图','maps')}<span>{copy(locale,'可保存 PDF / 图片','PDF / IMAGES')}</span></div>
@@ -23,8 +23,9 @@ export function ReportCover({ report, newspaper: publishedPaper, locale }) {
 
 export function WeeklyReportQuickLink({ report, locale, withSeason }) {
   if (!report?.completed.length) return null
-  return <Link className={styles.reportQuickLink} data-weekly-report-quick-link to={withSeason(weeklyReportPath(report))} aria-label={copy(locale, `阅读第 ${report.week.week_number} 周周报`, `Read week ${report.week.week_number} report`)}>
-    {copy(locale, `第 ${report.week.week_number} 周周报`, `Week ${report.week.week_number} report`)}<span aria-hidden="true">→</span>
+  const title = newspaperIssueTitle(report.week, locale)
+  return <Link className={styles.reportQuickLink} data-weekly-report-quick-link to={withSeason(weeklyReportPath(report))} aria-label={pickUiLocale(locale, `阅读${title}`, `Read ${title}`, `${title} 읽기`, `閱讀${title}`)}>
+    {title}<span aria-hidden="true">→</span>
   </Link>
 }
 
@@ -34,8 +35,8 @@ function ReportPreviewCover({ report, newspaper, locale }) {
   const lineup = (report.awards?.bestFive || []).flatMap(slot => slot.player ? [slot.player] : [])
   return <div className={styles.previewCover} aria-hidden="true">
     <div className={styles.previewCoverSheet}>
-    <div className={styles.previewCoverBrand}><img src="/logos/fries-cup-mark-ink.svg" alt="" /><span>FRIES CUP<small>{copy(locale, '薯条周报', 'THE WEEKLY')}</small></span><b>{report.number}</b></div>
-    <div className={styles.previewCoverIssue}>{weeklyCycleTitle(report.cycle, locale)} · {copy(locale, `第 ${report.week.week_number} 周`, `WEEK ${report.week.week_number}`)}</div>
+    <div className={styles.previewCoverBrand}><img src="/logos/fries-cup-mark-ink.svg" alt="" /><span>FRIES CUP<small>{copy(locale, '薯条周报', 'THE WEEKLY')}</small></span><b data-edition={newspaperIssueStamp(report, locale).edition}>{newspaperIssueStamp(report, locale).value}</b></div>
+    <div className={styles.previewCoverIssue}>{weeklyCycleTitle(report.cycle, locale)} · {newspaperWeekLabel(report.week, locale)}</div>
     <b className={styles.previewCoverHeadline}>{lead?.title}</b>
     {image?.map_name && <img className={styles.previewCoverPhoto} src={getMapImage(image.map_type, image.map_name)} alt="" />}
     {lead && <div className={styles.previewCoverResult}><span>{lead.scoreOrder[0]}</span><strong>{lead.displayScores.join(':')}</strong><span>{lead.scoreOrder[1]}</span></div>}
@@ -63,11 +64,13 @@ export function WeeklyReportTeaser({ cycle, week, report: providedReport, compac
   if (!report?.completed?.length) return null
   const t = (zh, en) => copy(locale, zh, en)
   const story = newspaper.dataStories.cards[0]
+  const issueTitle = newspaperIssueTitle(report.week, locale)
+  const openLabel = pickUiLocale(locale, `打开${issueTitle}`, `Open ${issueTitle}`, `${issueTitle} 열기`, `打開${issueTitle}`)
   if (compact) return <section className={`${styles.teaser} ${styles.compactTeaser}`} aria-labelledby="weekly-report-heading" data-weekly-report-teaser data-report-week={report.week.id} data-i18n-ignore>
     <div className={styles.compactBody}>
-      <Link className={`${styles.coverLink} ${styles.previewCoverLink}`} to={withSeason(weeklyReportPath(report))} aria-label={t(`打开第 ${report.week.week_number} 周周报`, `Open week ${report.week.week_number} report`)}><ReportPreviewCover report={report} newspaper={newspaper} locale={locale} /></Link>
+      <Link className={`${styles.coverLink} ${styles.previewCoverLink}`} to={withSeason(weeklyReportPath(report))} aria-label={openLabel}><ReportPreviewCover report={report} newspaper={newspaper} locale={locale} /></Link>
       <div className={styles.compactCopy}>
-        <div className={styles.teaserLabel}><div className={styles.previewHeading}><h2 id="weekly-report-heading">{t(`第 ${report.week.week_number} 周周报`, `Week ${report.week.week_number} report`)}</h2></div><Link to={withSeason(`/reports?cycle=${encodeURIComponent(report.cycle.id)}`)}>{t('周报归档', 'Report archive')}<span aria-hidden="true">→</span></Link></div>
+        <div className={styles.teaserLabel}><div className={styles.previewHeading}><h2 id="weekly-report-heading">{issueTitle}</h2></div><Link to={withSeason(`/reports?cycle=${encodeURIComponent(report.cycle.id)}`)}>{t('周报归档', 'Report archive')}<span aria-hidden="true">→</span></Link></div>
         <h3>{newspaper.lead?.title || t('本周赛果待确认', 'Confirmed results pending')}</h3>{newspaper.lead?.visualNote && <p>{newspaper.lead.visualNote}</p>}
         <div className={styles.previewActions}><ReportPreviewHighlight report={report} story={story} locale={locale} /><Link className={styles.primaryLink} to={withSeason(weeklyReportPath(report))}>{t('阅读周报', 'Read issue')}<span aria-hidden="true">→</span></Link></div>
       </div>
@@ -77,11 +80,11 @@ export function WeeklyReportTeaser({ cycle, week, report: providedReport, compac
     ? story.editorialHook === 'number-echo' ? story.headline : `${story.headline} · ${story.name} / ${story.stats.map(stat => `${stat.label} ${new Intl.NumberFormat(locale).format(stat.value)}`).join(' · ')}`
     : t('本周赛果与选手数据。', 'Results and player statistics.')
   return <section className={styles.teaser} aria-labelledby="weekly-report-heading" data-weekly-report-teaser data-i18n-ignore>
-    <div className={styles.teaserLabel}><h2 id="weekly-report-heading">{t('周报', 'Weekly report')}<small>THE WEEK, IN PRINT.</small></h2><Link to={withSeason(`/reports?cycle=${encodeURIComponent(cycle.id)}`)}>{t('周报归档', 'Report archive')}<span aria-hidden="true">→</span></Link></div>
+    <div className={styles.teaserLabel}><h2 id="weekly-report-heading">{t('周报', 'Weekly report')}</h2><Link to={withSeason(`/reports?cycle=${encodeURIComponent(cycle.id)}`)}>{t('周报归档', 'Report archive')}<span aria-hidden="true">→</span></Link></div>
     <div className={styles.teaserBody}>
-      <Link className={styles.coverLink} to={withSeason(weeklyReportPath(report))} aria-label={t(`打开第 ${week.week_number} 周周报`, `Open week ${week.week_number} report`)}><ReportCover report={report} locale={locale} /></Link>
+      <Link className={styles.coverLink} to={withSeason(weeklyReportPath(report))} aria-label={openLabel}><ReportCover report={report} locale={locale} /></Link>
       <div className={styles.teaserCopy}>
-        <div className={styles.issueMeta}><span>{weeklyCycleTitle(cycle, locale)} · {t(`第 ${week.week_number} 周`, `Week ${week.week_number}`)}</span></div>
+        <div className={styles.issueMeta}><span>{weeklyCycleTitle(cycle, locale)} · {newspaperWeekLabel(week, locale)}</span></div>
         <h3>{newspaper.lead?.title||t('本周赛果待确认', 'Confirmed results pending')}</h3>
         <p>{storySummary}</p>
         <div className={styles.teaserFacts}>
@@ -93,7 +96,7 @@ export function WeeklyReportTeaser({ cycle, week, report: providedReport, compac
   </section>
 }
 
-export function WeeklyEventPathway({ cycle, week, locale, withSeason }) {
+export function WeeklyEventPathway({ cycle, week, locale, withSeason, supportPath = null }) {
   const t = (zh, en) => copy(locale, zh, en)
   const stages = [
     ['01', getWeeklyPhaseLabel('REGULAR', locale), t('五局累计赛段积分', 'Five maps, cycle points')],
@@ -104,5 +107,9 @@ export function WeeklyEventPathway({ cycle, week, locale, withSeason }) {
     <div className={styles.pathwayHeading}><h2 id="weekly-pathway-title">{t('赛事路径', 'The competition path')}</h2><Link to={withSeason(weeklyPeriodPath('/advance', cycle, week))}>{t('查看晋级形势', 'Explore advancement')}<span aria-hidden="true">→</span></Link></div>
     <ol className={styles.pathwayStages}>{stages.map(([number, title, description], index) => <li key={number}><span className={styles.stageNumber}>{number}</span><div><b>{title}</b><small>{description}</small></div>{index < 2 && <span className={styles.stageArrow} aria-hidden="true">→</span>}</li>)}</ol>
     <p>{t('晋级名额与日期，以当期公示为准。', 'Qualification places and dates follow the current announcement.')}</p>
+    {supportPath && <Link className={styles.pathwaySupport} data-weekly-support-entry to={supportPath}>
+      <span><b>{pickUiLocale(locale, '支持周赛', 'Support the weekly', '주간 대회 후원', '支持週賽')}</b><small>{pickUiLocale(locale, '钱用在哪、奖池多少、约定直播兑现了几场，都公开在这里。', 'Where the money goes, the prize pools and the agreed broadcasts, all published.', '자금 사용처, 상금, 약정 중계 현황을 모두 공개합니다.', '錢用在哪、獎池多少、約定直播兌現了幾場，都公開在這裡。')}</small></span>
+      <span>{pickUiLocale(locale, '周赛支持与资金进度', 'Weekly support & funding', '주간 대회 후원 및 자금 현황', '週賽支持與資金進度')} <i aria-hidden="true">→</i></span>
+    </Link>}
   </footer>
 }

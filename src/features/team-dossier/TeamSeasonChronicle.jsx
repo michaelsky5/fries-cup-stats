@@ -1,10 +1,11 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import { getArchiveMapRecords } from './teamArchiveContent.js'
 import { getDossierMapMatchPath } from './teamDossierAnalysis.js'
-import { buildSeasonChronicle, getChronicleChapterLabel } from './teamSeasonChronicle.js'
+import { buildSeasonChronicle, getChronicleChapterLabel, getSeasonStoryChapters } from './teamSeasonChronicle.js'
+import { TEAM_SEASON_ANCHOR } from './teamArchiveRoutes.js'
 import { calendarDate } from './teamSeasonCalendar.js'
 import TeamSeasonRecords from './TeamSeasonRecords.jsx'
 import styles from './TeamSeasonChronicle.module.css'
@@ -46,13 +47,13 @@ function CompactRun({ rows, context, label }) {
   </div>
 }
 
-function ChronicleChapter({ chapter, context, advanceState }) {
+function ChronicleChapter({ chapter, context, advanceState, runs = true }) {
   const { en, locale, team, seasonId, selectedId } = context
   const grouped = chapter.kind === 'opening' && chapter.records.length > 1
   const rematch = chapter.kind === 'return' && chapter.previous
   const final = chapter.kind === 'champion' || chapter.kind === 'latest'
   return <>
-    <CompactRun rows={chapter.before} context={context} label={en ? 'Along the way' : uiText("沿途的比赛", locale)} />
+    {runs ? <CompactRun rows={chapter.before} context={context} label={en ? 'Along the way' : uiText("沿途的比赛", locale)} /> : null}
     <section id={`journey-chapter-${chapter.id}`} className={styles.chapter} data-kind={chapter.kind} data-chronicle-chapter={chapter.id} tabIndex={-1}>
       <header className={styles.chapterMast}><span><b>{chapter.number}</b> {getChronicleChapterLabel(chapter.kind, locale)}</span><span>{shortDate(chapter.firstDate)}{chapter.firstDate.date !== chapter.date.date ? ` — ${shortDate(chapter.date)}` : ''}</span></header>
       <div className={styles.chapterComposition}>
@@ -70,48 +71,28 @@ function ChronicleChapter({ chapter, context, advanceState }) {
   </>
 }
 
-export default function TeamSeasonChronicle({ team, seasonId, locale, rows, summary, advanceState, matchId, journalMatchId, onMatchChange, recordsMode, onViewChange, withSeason, returnState, onLeave, restoreScroll }) {
+// 票 2.42: the 展厅's "这一季" — the season told in a few chapters. The complete ledger is the
+// 数据 page's "赛程赛果"; this section links there instead of repeating it.
+export default function TeamSeasonChronicle({ team, seasonId, locale, rows, advanceState, matchId, onMatchChange, ledgerHref, viewState, withSeason, returnState, onLeave }) {
   const en = locale === 'en-US'
   const chronicle = useMemo(() => buildSeasonChronicle(rows, advanceState, locale), [rows, advanceState, locale])
-  const rootRef = useRef(null)
-  const [active, setActive] = useState(null)
-  const initialMatch = useRef(matchId || journalMatchId)
-  const selectedId = matchId || journalMatchId
-  const storyTitle = en ? 'Season journey' : uiText("赛季征程", locale)
-  const select = id => onMatchChange(id === selectedId ? null : id)
-  const context = { en, team, seasonId, locale, selectedId, select, withSeason, returnState, onLeave }
-  useEffect(() => {
-    if (recordsMode) return undefined
-    const observer = new IntersectionObserver(entries => {
-      for (const entry of entries) if (entry.isIntersecting) setActive(entry.target.dataset.chronicleChapter)
-    }, { rootMargin: '-25% 0px -50% 0px' })
-    rootRef.current.querySelectorAll('[data-chronicle-chapter]').forEach(element => observer.observe(element))
-    return () => observer.disconnect()
-  }, [chronicle, recordsMode])
-  useEffect(() => {
-    if (!initialMatch.current || recordsMode || restoreScroll != null) return undefined
-    const frame = requestAnimationFrame(() => {
-      const target = rootRef.current.querySelector('[data-chronicle-evidence]')
-      if (target) { target.focus({ preventScroll: true }); target.scrollIntoView({ block: 'start', behavior: 'instant' }); initialMatch.current = null }
-    })
-    return () => cancelAnimationFrame(frame)
-  }, [selectedId, recordsMode, restoreScroll])
-
-  return <div ref={rootRef} className={styles.chronicle} data-season-chronicle>
-    <header className={styles.cover} data-journey-cover data-records-mode={recordsMode}>
-      <div className={styles.coverMast}><span>{team.shortName} / {seasonId}</span><span>02 / {en ? 'SEASON JOURNEY' : uiText("赛季征程", locale)}</span></div>
-      <div className={styles.coverComposition}><div><span className={styles.eyebrow}>{recordsMode ? 'THE MATCH LEDGER' : 'A SEASON, IN CHAPTERS'}</span><h1>{recordsMode ? (en ? 'Match records' : uiText("比赛记录", locale)) : storyTitle}</h1><p>{recordsMode ? (en ? 'Filter by stage or result. Open a match to inspect its record.' : uiText("按阶段或赛果检索，进入比赛查看完整记录。", locale)) : (en ? 'First, latest and notable results from each stage.' : uiText("回看首场、最近比赛及各阶段的重要赛果。", locale))}</p></div>
-        {!recordsMode && chronicle.chapters.length ? <nav className={styles.coverRoute} aria-label={en ? 'Season chapters' : uiText("赛季章节", locale)}><span>{en ? 'FOLLOW THEIR ROUTE' : uiText("沿着这条路", locale)}</span>{chronicle.chapters.map(chapter => <a key={chapter.id} href={`#journey-chapter-${chapter.id}`}><small>{chapter.number}</small><b>{getChronicleChapterLabel(chapter.kind, locale)}</b><time>{shortDate(chapter.firstDate)}{chapter.firstDate.date !== chapter.date.date ? `–${shortDate(chapter.date)}` : ''} </time><i aria-hidden="true">↘</i></a>)}<p>{chronicle.played.length} {en ? 'played series' : uiText("场实际交手", locale)}<span>{summary.administrative} {en ? 'admin' : uiText("场判罚", locale)} · {summary.byes} {en ? 'byes' : uiText("次轮空", locale)}</span></p></nav> : null}
-      </div>
-      <div className={styles.viewSwitch} role="group" aria-label={en ? 'Journey reading mode' : uiText("征程阅读方式", locale)}><button type="button" aria-pressed={!recordsMode} onClick={() => onViewChange(false)}>{en ? 'Season chronicle' : uiText("赛季纪事", locale)}<span>↗</span></button><button type="button" aria-pressed={recordsMode} onClick={() => onViewChange(true)}>{en ? 'All match records' : uiText("全部比赛记录", locale)}<small>{chronicle.rows.length}</small><span>↗</span></button></div>
+  const story = useMemo(() => getSeasonStoryChapters(chronicle, locale), [chronicle, locale])
+  const select = id => onMatchChange(id === matchId ? null : id)
+  const context = { en, team, seasonId, locale, selectedId: matchId, select, withSeason, returnState, onLeave }
+  const t = (zh, english, ko, tw) => pickUiLocale(locale, zh, english, ko, tw)
+  const intro = story.mode === 'chapters'
+    ? t('首场、转折与最近的比赛，按时间读这一季。', 'The first match, the turns and the latest result, in order.', '첫 경기와 전환점, 최근 경기까지 순서대로 읽는 이번 시즌.', '首場、轉折與最近的比賽，按時間讀這一季。')
+    : story.mode === 'first'
+      ? t('比赛还不多，先从首场看起。', 'Only a few matches so far — it starts with the first one.', '아직 경기가 많지 않아 첫 경기부터 소개합니다.', '比賽還不多，先從首場看起。')
+      : advanceState.isArchived
+        ? t('本季没有实际交手记录。', 'No played matches on record this season.', '이번 시즌에는 실제 경기 기록이 없습니다.', '本季沒有實際交手記錄。')
+        : t('第一场比赛结束后，这里会写下开篇。', 'The story starts after the first completed match.', '첫 경기가 끝나면 이곳에 이야기가 시작됩니다.', '第一場比賽結束後，這裡會寫下開篇。')
+  return <section id={TEAM_SEASON_ANCHOR} className={styles.season} data-season-story={story.mode} tabIndex={-1} aria-labelledby="team-season-title">
+    <header className={styles.seasonHeading}>
+      <div><h2 id="team-season-title">{t('这一季', 'This season', '이번 시즌', '這一季')}</h2><p>{intro}</p></div>
+      {chronicle.rows.length ? <Link to={ledgerHref} state={viewState}>{t(`全部 ${chronicle.rows.length} 条赛程赛果`, `All ${chronicle.rows.length} schedule entries`, `일정과 결과 ${chronicle.rows.length}건 모두 보기`, `全部 ${chronicle.rows.length} 條賽程賽果`)} <span aria-hidden="true">↗</span></Link> : null}
     </header>
-    {!recordsMode ? <div className={styles.body} data-empty={!chronicle.chapters.length}>
-      {chronicle.chapters.length ? <nav className={styles.rail} aria-label={en ? 'Chapter navigation' : uiText("章节导航", locale)}>{chronicle.chapters.map(chapter => <a key={chapter.id} href={`#journey-chapter-${chapter.id}`} aria-current={(active || chronicle.chapters[0].id) === chapter.id ? 'step' : undefined}><b>{chapter.number}</b><span>{getChronicleChapterLabel(chapter.kind, locale)}</span></a>)}</nav> : null}
-      <div className={styles.pages}>{chronicle.chapters.map(chapter => <ChronicleChapter key={chapter.id} chapter={chapter} context={context} advanceState={advanceState} />)}<CompactRun rows={chronicle.tail} context={context} label={chronicle.chapters.length ? (en ? 'Also on the season record' : uiText("赛季里，还有这些记录", locale)) : (en ? 'The schedule so far' : uiText("已发布的赛程", locale))} />
-        {!chronicle.played.length ? <div className={styles.empty}><span>{advanceState.heading} / {advanceState.label}</span><h2>{advanceState.isArchived ? (en ? 'No played results on record.' : uiText("本季暂无实际交手记录。", locale)) : (en ? 'No completed matches yet.' : uiText("暂无已结束的比赛。", locale))}</h2><p>{advanceState.isArchived ? (en ? 'Published fixtures, byes and administrative results remain available in all match records.' : uiText("已发布的赛程、轮空和判罚结果仍保留在全部比赛记录中。", locale)) : (en ? 'Chapters begin with published, played results. The available schedule remains accessible above and in all match records.' : uiText("有实际交手的赛果发布后，这里会写下开篇。已发布的赛程仍可在上方及全部比赛记录中查阅。", locale))}</p></div> : null}
-        <TeamSeasonRecords rows={chronicle.rows} archived={advanceState.isArchived} locale={locale} withSeason={withSeason} returnState={returnState} onLeave={onLeave} />
-        <footer className={styles.end}><span>{en ? 'Every date has its record.' : uiText("每一段经历，都有记录可循。", locale)}</span><button type="button" onClick={() => onViewChange(true)}>{en ? 'Search all matches' : uiText("检索全部比赛", locale)} ↗</button></footer>
-      </div>
-    </div> : null}
-  </div>
+    {story.chapters.length ? <div className={styles.storyChapters}>{story.chapters.map(chapter => <ChronicleChapter key={chapter.id} chapter={chapter} context={context} advanceState={advanceState} runs={false} />)}</div> : null}
+    {story.mode === 'chapters' ? <TeamSeasonRecords rows={chronicle.rows} archived={advanceState.isArchived} locale={locale} withSeason={withSeason} returnState={returnState} onLeave={onLeave} /> : null}
+  </section>
 }

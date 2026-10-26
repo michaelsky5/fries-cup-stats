@@ -17,5 +17,7 @@ export function isCompetitionMatchesEntry({ pathname, search = '' }) {
 // must not prevent a participant from reaching a deadline-sensitive task.
 export function requiresPublicSnapshot({ pathname, search = '', section, isAuthenticated }) {
   if (isCompetitionMatchesEntry({ pathname, search })) return false
+  // 票 2.18: the 参赛 page only explains and links, so it never waits for the public snapshot.
+  if (/^\/(?:play|guides\/weekly-room)\/?$/.test(pathname)) return false
   return !isAuthenticated || !/^\/me\/?$/.test(pathname) || ['following', 'stats'].includes(section)
 }

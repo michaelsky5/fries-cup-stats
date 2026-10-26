@@ -8,7 +8,7 @@ import { formatMatchSchedule } from '../../lib/scheduleFormat.js'
 import { getLocationPath, getRestoreScrollY, getReturnState, getSavedReturnScroll, restoreWindowScroll, saveReturnScroll } from '../../lib/navigationState.js'
 import { WeeklyCyclePicker } from '../weekly-overview/WeeklyNavigation.jsx'
 import { weeklyScore } from '../weekly-overview/weeklyOverviewModel.js'
-import { weeklyCycleTitle, weeklyPeriodPath, weeklyStatusLabel, weeklyTeamShort, weeklyWeekTitle } from '../weekly-overview/weeklyPresentation.js'
+import { showsInlineTimeZone, weeklyCycleTitle, weeklyPeriodPath, weeklyStatusLabel, weeklyTeamShort, weeklyWeekTitle } from '../weekly-overview/weeklyPresentation.js'
 import { buildWeeklyAdvance, getWeeklyAdvancePhase, getWeeklyAdvancePhasePath, resetWeeklyAdvanceSearch, weeklyPublishedRank } from './weeklyAdvanceModel.js'
 import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
 import WeeklyPlayoffBracket from './WeeklyPlayoffBracket.jsx'
@@ -100,14 +100,14 @@ export default function SignalWeeklyAdvance() {
 
   return <div className={styles.page} data-weekly-advance="true" data-weekly-phase={phase}>
     <header className={styles.heading}>
-      <div><p className={styles.eyebrow}>FRIES CUP / WEEKLY ADVANCE</p><h1>{eventCenterText('advanceTitle', locale)}</h1><p>{eventCenterText('advanceIntro', locale)}</p></div>
+      <div><h1>{eventCenterText('advanceTitle', locale)}</h1><p>{eventCenterText('advanceIntro', locale)}</p></div>
       <div className={styles.headingActions}>
         <WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, teamId: null, query: null, followed: null, view: null, bracket: null })} />
         <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">↗</span><small>{t(uiText("回到本周对阵", locale), 'This week’s matchups')}</small></Link>
       </div>
     </header>
-    <nav className={advanceStyles.phaseIndex} style={{ '--advance-phase-count': stages.length }} aria-label={t(uiText("周赛晋级路径", locale), 'Weekly advancement path')}>
-      <span className={advanceStyles.phaseIndexLabel}><img src="/logos/fries-cup-symbol.png" alt="" /><b>FC / ROUTE</b></span>
+    <nav className={advanceStyles.phaseIndex} data-weekly-phase-index style={{ '--advance-phase-count': stages.length }} aria-label={t(uiText("周赛晋级路径", locale), 'Weekly advancement path')}>
+      <span className={advanceStyles.phaseIndexLabel}><img src="/logos/fries-cup-symbol.png" alt="" /><b>{pickUiLocale(locale, '晋级路线', 'FC / ROUTE', '진출 경로', '晉級路線')}</b></span>
       <div className={advanceStyles.phaseLinks}>{stages.map((stage, index) => <Link key={stage.id} to={getWeeklyAdvancePhasePath(params, stage.id)} data-status={model.activeStage === stage.id ? 'current' : 'pending'} aria-current={phase === stage.id ? 'page' : undefined}><span>{String(index + 1).padStart(2, '0')} / {stage.title}</span><small>{stage.note}</small></Link>)}</div>
       <span className={advanceStyles.phaseStamp}><b>{String(stages.findIndex(stage => stage.id === phase) + 1).padStart(2, '0')}</b> / 03</span>
     </nav>
@@ -139,7 +139,7 @@ export default function SignalWeeklyAdvance() {
           <div className={styles.journeyTop}><span>{eventCenterText('advanceTeamHeading', locale)}</span><button type="button" className={styles.followTeam} aria-label={`${t('关注队伍', 'Follow team')} ${weeklyTeamShort(selected.team)}`} aria-pressed={isFollowing} onClick={() => toggleTeamFavorite(selected.id)}>{isFollowing ? '★' : '☆'}<span>{isFollowing ? t(uiText("已关注", locale), 'Following') : t(uiText("关注队伍", locale), 'Follow team')}</span></button></div>
           <div className={styles.teamIdentity}><TeamLogo team={selected.team} seasonId={seasonId} className={styles.heroLogo} /><div><h2 id="weekly-team-title">{weeklyTeamShort(selected.team)}</h2><p>{selected.team?.name || selected.team?.team_name}</p></div>{standing && <div className={styles.heroPoints}><strong>{weeklyScore(standing.points)}</strong><small>{t(uiText("赛段积分", locale), 'Cycle points')}</small></div>}</div>
           {standing ? <div className={styles.teamStats}><div><span>{standing.tied ? t(uiText("并列名次", locale), 'Tied rank') : t(uiText("公布名次", locale), 'Published rank')}</span><b>{rank === '—' ? rank : rank.padStart(2, '0')}</b></div><div><span>{t(uiText("已赛", locale), 'Played')}</span><b>{weeklyScore(standing.played)}</b></div><div><span>{t(uiText("胜 / 平 / 负", locale), 'W / D / L')}</span><b className={styles.results}>{[standing.wins, standing.draws, standing.losses].map(weeklyScore).join(' / ')}</b></div></div> : <p className={styles.noPoints}>{isPilot ? t(uiText("本赛段不计积分", locale), 'No standings points in this cycle') : t(uiText("暂无公布积分", locale), 'No published points yet')}</p>}
-          <div className={styles.journeyHeading}><div><h3>{t(uiText("本赛段比赛", locale), 'Matches in this cycle')}</h3><p>{t(uiText("比分以 {0} 在前", locale, [weeklyTeamShort(selected.team)]), `${weeklyTeamShort(selected.team)}’s score is shown first`)}</p></div><span>UTC+8</span></div>
+          <div className={styles.journeyHeading}><div><h3>{t(uiText("本赛段比赛", locale), 'Matches in this cycle')}</h3><p>{t(uiText("比分以 {0} 在前", locale, [weeklyTeamShort(selected.team)]), `${weeklyTeamShort(selected.team)}’s score is shown first`)}</p></div>{showsInlineTimeZone(locale) && <span>UTC+8</span>}</div>
           <ol className={styles.weeks} ref={journeyMatchesRef}>{journey.map(({ week: item, fixtures }) => <li key={item.id}>
             <div className={styles.weekLabel}><b>{weeklyWeekTitle(item, locale)}</b><span>{weeklyStatusLabel(item.status, locale)}</span></div>
             {fixtures.length ? fixtures.map(({ match, opponent, score }) => {

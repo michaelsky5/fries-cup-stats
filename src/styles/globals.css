@@ -234,3 +234,7 @@ button {
 .status-complete { color: var(--accent); }
 .status-progress { color: var(--progress); }
 .status-pending { color: var(--pending); }
+
+/* 票 2.33: decorative English labels (FRIES CUP / WEEKLY, MY FOLLOWING …) belong to the English
+   interface; Chinese and Korean pages lead with their own titles. */
+html:not(:lang(en)) [data-deco-en] { display: none !important; }

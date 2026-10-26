@@ -83,6 +83,14 @@ export function buildSpaceSections({ player = false, team = false, manager = fal
   ]
 }
 
+// 票 2.68: a failed sync shows a sentence, never an upstream code (TEMPORARILY_UNAVAILABLE, "Failed to fetch"); a sentence
+// the server wrote in Chinese is kept. A read changes nothing, so the text says so.
+const SPACE_READ_FAILURE = '请稍后重新同步；已有的报名、队伍和待办不受影响。'
+function spaceReadFailure(error) {
+  const message = String(error?.message || '')
+  return /[\u3400-\u9fff]/u.test(message) ? message : SPACE_READ_FAILURE
+}
+
 function hasResolvedCapability(context, key) {
   return Boolean(context?.capabilitySnapshot?.grantedKeys?.includes(key))
 }
@@ -119,30 +127,25 @@ function AccountReleaseGate({ launch, loading = false, error = '', withSeason, o
   const uiLocale = useUiLocale()
   const content = error
     ? {
-      eyebrow: 'RELEASE CHECK INTERRUPTED',
       title: uiText("暂时无法确认本届参赛权限", uiLocale),
       description: uiText("本届参赛工作区暂不可用，你仍可使用我的关注、账号设置和公开赛事资料。请稍后重试或联系赛管确认。", uiLocale)
     }
     : loading
       ? {
-        eyebrow: 'CHECKING RELEASE ACCESS',
         title: uiText("正在确认本届参赛权限", uiLocale),
         description: uiText("正在核对账号与本届赛事的开放状态。", uiLocale)
       }
       : launch?.reason === 'EMAIL_VERIFICATION_REQUIRED'
         ? {
-          eyebrow: 'EMAIL VERIFICATION REQUIRED',
           title: uiText("验证邮箱后继续参赛", uiLocale),
           description: uiText("本轮参赛内测需要验证邮箱。完成后会重新检查本届参赛权限，我的关注与账号设置仍可使用。", uiLocale)
         }
         : launch?.reason === 'NOT_ALLOWLISTED'
           ? {
-            eyebrow: 'LIMITED SHADOW BETA',
             title: uiText("本届参赛功能正在小范围内测", uiLocale),
             description: uiText("本轮先由参赛选手、队伍人员和赛事工作人员参与真实流程，QQ 群与赛管仍是正式兜底。", uiLocale)
           }
           : {
-            eyebrow: 'ACCOUNT PORTAL PAUSED',
             title: uiText("本届参赛工作区尚未开放", uiLocale),
             description: uiText("你仍可使用我的关注、账号设置和公开赛事资料；参赛功能开放后从这里进入。", uiLocale)
           }
@@ -150,9 +153,7 @@ function AccountReleaseGate({ launch, loading = false, error = '', withSeason, o
   return (
     <main className={styles.releaseGate} aria-busy={loading}>
       <section>
-        <div className={styles.releaseGateIndex}>MY SPACE</div>
         <div className={styles.releaseGateCopy}>
-          <span>{content.eyebrow}</span>
           <h1>{content.title}</h1>
           <p>{content.description}</p>
           {error ? <p role="alert">{error}</p> : null}
@@ -372,7 +373,7 @@ function PerformancePanel({ dossier, statsWorkspace = null, withSeason, expanded
       <section className={styles.contentSection}>
         {!expanded ? <div className={styles.sectionHeading}><div><span>MY PERFORMANCE</span><h2>{uiText("本赛季个人表现", uiLocale)}</h2><p>{uiText("正式阵容发布并产生比赛数据后自动生成。", uiLocale)}</p></div></div> : null}
         <section className={styles.statsStatusHero} data-tone={workspace.status.tone}>
-          <div><span>{workspace.status.eyebrow}</span><h3>{workspace.status.headline}</h3><p>{workspace.status.description}</p></div>
+          <div><h3>{workspace.status.headline}</h3><p>{workspace.status.description}</p></div>
           <strong>{uiText("身份有效", uiLocale)}</strong>
         </section>
         {expanded ? <div className={styles.statsDataSteps}><article><span>01</span><strong>{uiText("正式名单发布", uiLocale)}</strong><p>{uiText("System 锁定本届阵容后，建立公开选手关联。", uiLocale)}</p></article><article><span>02</span><strong>{uiText("完成正式地图", uiLocale)}</strong><p>{uiText("至少实际参加一张正式地图，才计算本届出场。", uiLocale)}</p></article><article><span>03</span><strong>{uiText("形成职责样本", uiLocale)}</strong><p>{uiText("数据按实际职责独立累计，并在达到门槛后进入排名。", uiLocale)}</p></article></div> : <div className={styles.detailEmpty}>{uiText("当前赛季公开名单或比赛数据尚未关联；这里不会因此降级成普通观众空间。", uiLocale)}</div>}
@@ -389,7 +390,7 @@ function PerformancePanel({ dossier, statsWorkspace = null, withSeason, expanded
 
       {expanded ? <>
         <section className={styles.statsStatusHero} data-tone={workspace.status.tone}>
-          <div><span>{workspace.status.eyebrow}</span><h3>{workspace.status.headline}</h3><p>{workspace.status.description}</p></div>
+          <div><h3>{workspace.status.headline}</h3><p>{workspace.status.description}</p></div>
           {publicProfileUrl ? <Link to={publicProfileUrl}>{uiText("查看公开选手档案 →", uiLocale)}</Link> : <strong>{uiText("公开档案待同步", uiLocale)}</strong>}
         </section>
         <div className={styles.statsFactRail}>{workspace.facts.map(fact => <div key={fact.label}><span>{fact.label}</span><strong>{fact.value}</strong><small>{fact.detail}</small></div>)}</div>
@@ -610,7 +611,7 @@ function MySpaceContent() {
     setSpaceContextError('')
     fetchSynchronizedSpaceContext(seasonId)
       .then(nextContext => { if (!cancelled && requestId === spaceRequest.current) setSpaceContext(nextContext) })
-      .catch(error => { if (!cancelled && requestId === spaceRequest.current) setSpaceContextError(error?.message || '身份与赛事关系同步失败。') })
+      .catch(error => { if (!cancelled && requestId === spaceRequest.current) setSpaceContextError(spaceReadFailure(error)) })
       .finally(() => { if (!cancelled && requestId === spaceRequest.current) setSpaceContextLoading(false) })
     return () => { cancelled = true; spaceRequest.current += 1 }
   }, [accountSpaceAllowed, authUser?.id, isAuthenticated, seasonId])
@@ -624,7 +625,7 @@ function MySpaceContent() {
       const nextContext = await fetchSynchronizedSpaceContext(seasonId)
       if (requestId === spaceRequest.current) setSpaceContext(nextContext)
     } catch (error) {
-      if (requestId === spaceRequest.current) setSpaceContextError(error?.message || '身份与赛事关系同步失败。')
+      if (requestId === spaceRequest.current) setSpaceContextError(spaceReadFailure(error))
     } finally {
       if (requestId === spaceRequest.current) setSpaceContextLoading(false)
     }
@@ -801,9 +802,8 @@ function MySpaceContent() {
         </SpaceHeader>
         <IdentityContextStrip context={effectiveSpaceContext} loading={spaceContextLoading || !spaceContextError} error={spaceContextError} />
         <section className={styles.spaceContextState} data-error={spaceContextError ? 'true' : 'false'}>
-          <span>{spaceContextError ? 'SYNC INTERRUPTED' : 'SYNCING EVENT CONTEXT'}</span>
           <strong>{spaceContextError ? uiText("赛事账号暂时无法完成同步", locale) : uiText("正在读取你的赛事关系与待办", locale)}</strong>
-          <p>{spaceContextError || uiText("同步完成前不会把未知状态显示成“没有待办”。", locale)}</p>
+          <p>{spaceContextError ? uiText(spaceContextError, locale) : uiText("同步完成前不会把未知状态显示成“没有待办”。", locale)}</p>
           {spaceContextError ? <button type="button" onClick={refreshSpaceContext}>{uiText("重新同步", locale)}</button> : null}
         </section>
       </main>
@@ -815,7 +815,6 @@ function MySpaceContent() {
     return <main className={styles.page} data-design="signal" data-i18n-ignore>
       <section className={styles.releaseGate}>
         <div className={styles.releaseGateCopy}>
-          <span>MATCH REMINDERS</span>
           <h1>{copy.signInTitle}</h1>
           <p>{copy.signInDescription}</p>
           <nav aria-label={copy.title}>
@@ -828,7 +827,6 @@ function MySpaceContent() {
   if (!isAuthenticated && requestedSection === 'team' && isWeeklyOverview(db, season)) return <main className={styles.page} data-design="signal">
     <section className={styles.releaseGate}>
       <div className={styles.releaseGateCopy}>
-        <span>WEEKLY / PARTICIPATION</span>
         <h1>{uiText('本周参赛确认', locale)}</h1>
         <p>{uiText('请先登录参赛账号，登录后继续确认本周参赛并提交出赛名单。', locale)}</p>
         <RoomGuideLink season={seasonId} role="manager" label="参赛与比赛指南" /><nav aria-label={uiText('报名与参赛', locale)}>
@@ -838,7 +836,8 @@ function MySpaceContent() {
       </div>
     </section>
   </main>
-  if (!isAuthenticated) return <><div className={styles.guideEntry}><RoomGuideLink label="参赛与比赛指南" /></div><FollowingPage /></>
+  // 票 2.29: the guide is a header item (参赛指南) now; it no longer floats above 我的关注.
+  if (!isAuthenticated) return <FollowingPage />
   if (currentSpaceContext && spaceEntry.replacement) return <Navigate replace to={spaceEntry.replacement} state={{ ...location.state, spaceEntryNotice: spaceEntry.notice }} />
   return (
     <main className={styles.page} data-design="signal" data-native-mobile data-page-mode={activeSection === 'following' ? 'index' : 'control'}>
@@ -859,7 +858,7 @@ function MySpaceContent() {
       {activeSection === 'events' ? <MyEventsPanel context={effectiveSpaceContext} withSeason={pageLink} /> : null}
       {activeSection === 'communications' ? <AccountCommunicationsCenter seasonId={seasonId} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} withSeason={pageLink} onSummaryChange={handleTaskSummaryChange} onActivityChange={activity.refresh} /> : null}
       {activeSection === 'matches' ? <>{matchesWorkspace}{canUseScheduleNegotiation ? <ScheduleNegotiationWorkspace seasonId={seasonId} capabilitySnapshot={effectiveSpaceContext.capabilitySnapshot} /> : null}</> : null}
-      {activeSection === 'stats' ? <><WorkspaceSectionHeader eyebrow="MY STATS" title={uiText("我的数据", locale)} description={uiText("正式出场、职责样本、排名和英雄池都从本届公开比赛数据自动生成。", locale)} badge={playerStatsWorkspace.status.key === 'RANKED' ? `${playerStatsWorkspace.totals.rankedRoles} RANKED ROLES` : playerStatsWorkspace.status.key.replaceAll('_', ' ')} /><PerformancePanel dossier={dossier} statsWorkspace={playerStatsWorkspace} withSeason={pageLink} expanded /></> : null}
+      {activeSection === 'stats' ? <><WorkspaceSectionHeader title={uiText("我的数据", locale)} description={uiText("正式出场、职责样本、排名和英雄池都从本届公开比赛数据自动生成。", locale)} badge={playerStatsWorkspace.status.key === 'RANKED' ? `${playerStatsWorkspace.totals.rankedRoles} RANKED ROLES` : playerStatsWorkspace.status.key.replaceAll('_', ' ')} /><PerformancePanel dossier={dossier} statsWorkspace={playerStatsWorkspace} withSeason={pageLink} expanded /></> : null}
       {activeSection === 'team' ? <>{canViewWeeklyCompetition ? <WeeklyCompetitionWorkspace seasonId={seasonId} readOnly={!canWriteWeeklyCompetition} onActivityChange={activity.refresh} /> : null}{canShowRegistrationEntry ? registrationEntry : null}{!canViewWeeklyCompetition && !canShowRegistrationEntry ? <ReadOnlyWorkspaceNotice title={uiText("队伍与名单暂为只读", locale)} description={uiText("当前队伍资料仅供查看。如需更新参赛名单，请联系周赛管理员核对本届权限。", locale)} /> : null}{teamOverview?.team ? <TeamPanel db={db} teamOverview={teamOverview} seasonId={seasonId} withSeason={pageLink} /> : null}</> : null}
       {activeSection === 'referee' ? <RefereeWorkspace context={effectiveSpaceContext} withSeason={pageLink} onContextChange={refreshSpaceContext} /> : null}
       {activeSection === 'caster' ? <CasterWorkspace context={effectiveSpaceContext} withSeason={pageLink} onContextChange={refreshSpaceContext} /> : null}

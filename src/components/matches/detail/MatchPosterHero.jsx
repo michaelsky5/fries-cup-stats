@@ -16,7 +16,7 @@ function splitScore(scoreLabel) {
 function getTeamPath(team, withSeason) {
   const routeId = String(team?.id || team?.short || team?.full || '').trim()
   if (!routeId || ['TBD', 'UNKNOWN', '-'].includes(routeId.toUpperCase())) return ''
-  return withSeason(`/teams/${encodeURIComponent(routeId)}`)
+  return withSeason(`/teams/${encodeURIComponent(routeId)}/analysis`)
 }
 
 function PosterTeamShortName({ children }) {

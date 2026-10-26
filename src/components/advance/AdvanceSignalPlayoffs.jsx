@@ -221,7 +221,6 @@ function FocusedRouteSummary({ matches, activeTeamKey, locale }) {
   return (
     <section className={styles.focusedRouteSummary} aria-label={copy(locale, uiText("{0} 的比赛路线", locale, [teamShort(activeTeam)]), `${teamShort(activeTeam)} match route`)}>
       <header>
-        <span>FOCUSED JOURNEY</span>
         <strong>{teamShort(activeTeam)} · {copy(locale, uiText("{0} 场 / {1} 胜 {2} 负", locale, [route.length, wins, losses]), `${route.length} matches / ${wins}W ${losses}L`)}</strong>
       </header>
       <ol>
@@ -292,9 +291,9 @@ function TeamJourneyStage({ matches, activeTeamKey, seasonId, locale, withSeason
     <div className={styles.journeyMapViewport} tabIndex={0} aria-label={copy(locale, uiText("{0} 的季后赛路线", locale, [teamShort(activeTeam)]), `${teamShort(activeTeam)} playoff journey`)}>
       <p className={styles.mobileScoreNote}>{copy(locale, uiText('比分以 {0} 在前', locale, [teamShort(activeTeam)]), `${teamShort(activeTeam)}’s score is shown first`)}</p>
       <div className={styles.journeyMapCanvas}>
-        <div className={styles.journeyLaneLabel} data-lane="upper"><span>UPPER</span><small>{copy(locale, uiText("胜者路线", locale), 'WINNERS ROUTE')}</small></div>
-        <div className={styles.journeyLaneLabel} data-lane="lower"><span>LOWER</span><small>{copy(locale, uiText("背水一战", locale), 'ONE LIFE LEFT')}</small></div>
-        <div className={styles.journeyLaneLabel} data-lane="final"><span>FINAL</span><small>{copy(locale, uiText("冠军战", locale), 'TITLE MATCH')}</small></div>
+        <div className={styles.journeyLaneLabel} data-lane="upper"><small>{copy(locale, uiText("胜者路线", locale), 'WINNERS ROUTE')}</small></div>
+        <div className={styles.journeyLaneLabel} data-lane="lower"><small>{copy(locale, uiText("背水一战", locale), 'ONE LIFE LEFT')}</small></div>
+        <div className={styles.journeyLaneLabel} data-lane="final"><small>{copy(locale, uiText("冠军战", locale), 'TITLE MATCH')}</small></div>
         <span className={styles.journeyTeamGhost} aria-hidden="true">{teamShort(activeTeam)}</span>
 
         <svg className={styles.journeyConnectors} viewBox="0 0 1000 520" aria-hidden="true">
@@ -380,14 +379,14 @@ function ConnectedDoubleBracket({ layout, seasonId, locale, t, withSeason, activ
           <div className={styles.bracketLaneRule} data-lane="lower" aria-hidden="true" />
 
           <div className={styles.bracketLaneTitle} data-lane="upper">
-            <span>UPPER</span><strong>{copy(locale, uiText("胜者组", locale), 'UPPER BRACKET')}</strong><small>{copy(locale, uiText("保持全胜，直通总决赛", locale), 'Stay unbeaten to reach the final')}</small>
+            <strong>{copy(locale, uiText("胜者组", locale), 'UPPER BRACKET')}</strong><small>{copy(locale, uiText("保持全胜，直通总决赛", locale), 'Stay unbeaten to reach the final')}</small>
           </div>
           <BracketRoundCaption x={24} y={70} index="01" code="UB R1" label={copy(locale, uiText("胜者组首轮", locale), 'Upper round 1')} meta="M1–M4 · FT3" />
           <BracketRoundCaption x={270} y={136} index="02" code="UB SF" label={copy(locale, uiText("胜者组半决赛", locale), 'Upper semifinal')} meta="M7–M8 · FT3" />
           <BracketRoundCaption x={516} y={292} index="03" code="UB F" label={copy(locale, uiText("胜者组决赛", locale), 'Upper final')} meta="M11 · FT3" />
 
           <div className={styles.bracketLaneTitle} data-lane="lower">
-            <span>LOWER</span><strong>{copy(locale, uiText("败者组", locale), 'LOWER BRACKET')}</strong><small>{copy(locale, uiText("再输一场即淘汰", locale), 'One more loss ends the run')}</small>
+            <strong>{copy(locale, uiText("败者组", locale), 'LOWER BRACKET')}</strong><small>{copy(locale, uiText("再输一场即淘汰", locale), 'One more loss ends the run')}</small>
           </div>
           <BracketRoundCaption x={270} y={744} index="01" code="LB R1" label={copy(locale, uiText("败者组第一轮", locale), 'Lower round 1')} meta="M5–M6 · FT3" />
           <BracketRoundCaption x={516} y={744} index="02" code="LB R2" label={copy(locale, uiText("败者组第二轮", locale), 'Lower round 2')} meta={copy(locale, 'M9–M10 · 交叉落位', 'M9–M10 · crossover')} />
@@ -395,7 +394,7 @@ function ConnectedDoubleBracket({ layout, seasonId, locale, t, withSeason, activ
           <BracketRoundCaption x={1008} y={824} index="04" code="LB F" label={copy(locale, uiText("败者组决赛", locale), 'Lower final')} meta="M13 · FT3" />
 
           <div className={styles.bracketFinalCaption}>
-            <span>05 / GRAND FINAL</span>
+            <span>05 / GF</span>
             <strong>{copy(locale, uiText("总决赛", locale), 'GRAND FINAL')}</strong>
             <small>{copy(locale, uiText("两条路线在此汇合 · FT4", locale), 'Both routes converge here · FT4')}</small>
           </div>
@@ -437,17 +436,15 @@ function ConnectedDoubleBracket({ layout, seasonId, locale, t, withSeason, activ
           })}
 
           <div className={styles.bracketCrossoverNote}>
-            <span>DROP / CROSSOVER</span>
             <strong>{copy(locale, uiText("M7、M8 的败者交叉落位", locale), 'M7 and M8 losers cross over')}</strong>
           </div>
 
           <div className={styles.bracketUpperHoldNote}>
-            <span>UPPER WINNER / FINAL BERTH</span>
             <strong>{copy(locale, uiText("M11 胜者锁定总决赛席位", locale), 'The M11 winner secures a grand-final berth')}</strong>
           </div>
 
           <div className={styles.bracketChampionTarget} data-route-active={championActive ? 'true' : undefined}>
-            <span>WINNER / SEASON CHAMPION</span>
+            <span>{copy(locale, uiText("赛季冠军", locale), 'WINNER / SEASON CHAMPION')}</span>
             <div>
               {champion ? <TeamLogo team={champion} seasonId={seasonId} className={styles.bracketChampionLogo} /> : null}
               <strong>{teamShort(champion) || copy(locale, uiText("冠军席位", locale), 'CHAMPION')}</strong>
@@ -562,7 +559,6 @@ export default function AdvanceSignalPlayoffs({
     return (
       <div className={styles.playoffWorkspace} data-chapter={singleElimination ? '02' : '03'}>
         <div className={styles.playoffPending}>
-          <span>BRACKET / PENDING</span>
           <h2>{copy(locale, uiText("对阵尚未发布", locale), 'Bracket not published')}</h2>
           <p>{copy(locale, uiText("晋级队伍与签位确认后，这里会按真实轮次生成完整路径。", locale), 'The complete route will appear once teams and seeds are confirmed.')}</p>
         </div>
@@ -599,7 +595,6 @@ export default function AdvanceSignalPlayoffs({
         <AdvanceTeamPicker teams={seeds.map(team => ({ id: teamKey(team), label: `${teamShort(team)} · ${teamFull(team)}` }))} value={activeTeamKey} onChange={setRouteSelection} locale={locale} />
         <header className={styles.routeStoryHeader}>
           <div>
-            <span>PLAYOFF TRANSMISSION / {String(activeSeed || '—').padStart(2, '0')}</span>
             <strong>{phaseComplete ? copy(locale, uiText("赛季路径已封存", locale), 'SEASON ROUTE ARCHIVED') : copy(locale, uiText("赛季路径正在更新", locale), 'LIVE ROUTE SIGNAL')}</strong>
           </div>
           <dl>
@@ -612,7 +607,7 @@ export default function AdvanceSignalPlayoffs({
 
         <div className={styles.routeStoryBody}>
           <aside className={styles.routeIdentity}>
-            <span className={styles.routeIdentitySeed}>SEED / {String(activeSeed || '—').padStart(2, '0')}</span>
+            <span className={styles.routeIdentitySeed}>{copy(locale, uiText("种子 {0}", locale, [String(activeSeed || '—').padStart(2, '0')]), `SEED / ${String(activeSeed || '—').padStart(2, '0')}`)}</span>
             <span className={styles.routeIdentityGhost} aria-hidden="true">{teamShort(activeTeam)}</span>
             <TeamLogo team={activeTeam} seasonId={seasonId} className={styles.routeIdentityLogo} />
             <div>
@@ -628,7 +623,6 @@ export default function AdvanceSignalPlayoffs({
 
         <div className={styles.routeTeamDock}>
           <header>
-            <span>CHOOSE A RUNNER</span>
             <small>{copy(locale, uiText("切换队伍，路线立即重构", locale), 'CHANGE TEAM · REBUILD THE ROUTE')}</small>
           </header>
           <div role="group" aria-label={copy(locale, uiText("选择要追踪的队伍路线", locale), 'Select a team route to follow')}>
@@ -655,13 +649,12 @@ export default function AdvanceSignalPlayoffs({
 
       <details className={styles.fullBracketDisclosure} open={fullBracketOpen} onToggle={toggleFullBracket}>
         <summary>
-          <span><b>FULL SYSTEM</b>{copy(locale, uiText("完整双败签表", locale), 'FULL DOUBLE-ELIMINATION BRACKET')}</span>
-          <span>{participantCount || '—'} {copy(locale, uiText("支队伍", locale), 'TEAMS')} / {allMatches.length} {copy(locale, uiText("场比赛", locale), 'MATCHES')} / {getMatchFormatLabel(lastMatch)} FINAL</span>
+          <span>{copy(locale, uiText("完整双败签表", locale), 'FULL DOUBLE-ELIMINATION BRACKET')}</span>
+          <span>{participantCount || '—'} {copy(locale, uiText("支队伍", locale), 'TEAMS')} / {allMatches.length} {copy(locale, uiText("场比赛", locale), 'MATCHES')} / {copy(locale, uiText("总决赛 {0}", locale, [getMatchFormatLabel(lastMatch)]), `${getMatchFormatLabel(lastMatch)} FINAL`)}</span>
           <i aria-hidden="true">+</i>
         </summary>
         <div className={styles.fullBracketBody}>
           <header>
-            <span>DEPENDENCY MAP / WIN + LOSS ROUTES</span>
             <p>{copy(locale, uiText("已高亮 {0}；实线代表胜者晋级，虚线代表败者落位。", locale, [teamShort(activeTeam)]), `${teamShort(activeTeam)} is highlighted. Solid lines advance winners; dashed lines place losers.`)}</p>
           </header>
           <ConnectedDoubleBracket layout={layout} seasonId={seasonId} locale={locale} t={t} withSeason={withSeason} activeTeamKey={activeTeamKey} showFocusedRoute={false} />

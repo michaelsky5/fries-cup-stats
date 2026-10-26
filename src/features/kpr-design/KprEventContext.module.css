@@ -1,4 +1,5 @@
 :global([data-design="kpr"]) .contextBar { grid-template-columns: minmax(0, 1fr) auto; min-height: 40px; padding: 0; gap: 12px; border-top: 1px solid #ffffff20; background: transparent; }
+:global([data-design="kpr"]) .contextBar:has(.nextAction) { grid-template-columns: minmax(0, 1fr) auto auto; } /* 票 2.45 */
 :global([data-design="kpr"]) .eventLead { gap: 8px; }
 :global([data-design="kpr"]) .eventLogo { width: 20px; height: 20px; border: 0; border-radius: 0; }
 :global([data-design="kpr"]) .eventCode { font-size: 13px; font-weight: 700; letter-spacing: .04em; }
@@ -750,8 +751,12 @@
 }
 
 @media (max-width: 600px) {
-  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .contextBar[data-placement='header'] .eventSwitcher > summary { min-width: 96px; width: 96px; }
-  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .contextBar[data-placement='header'] .eventSwitcher > summary strong { font-size: 11px; }
+  /* Content width, so a longer name (常规赛 · 2026) pushes the caret instead of running under it. */
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .contextBar[data-placement='header'],
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .contextBar[data-placement='header'] .eventMeta,
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .contextBar[data-placement='header'] .eventSwitcher { height: 44px; min-height: 44px; }
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .contextBar[data-placement='header'] .eventSwitcher > summary { width: auto; min-width: 96px; height: 44px; min-height: 44px; display: flex; align-items: center; padding: 0 10px; gap: 6px; }
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .contextBar[data-placement='header'] .eventSwitcher > summary strong { flex-shrink: 0; font-size: 11px; white-space: nowrap; }
 }
 
 /* Event ownership is independent from the lifecycle shown on each entry. */
@@ -765,4 +770,18 @@
   :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .switcherPanel { max-height: calc(100dvh - var(--kpr-header-height) - var(--fc-mobile-navigation-height, 0px) - 20px); overflow-y: auto; }
   :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .switcherPanel button { grid-template-columns: 88px minmax(0, 1fr); gap: 5px 10px; }
   :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .switcherPanel button strong { font-size: 18px; }
+}
+
+/* Desktop header: the season cell matches the language and account cells beside it —
+   same height, same type, and the caret follows the label instead of sitting in a corner. */
+@media (min-width: 901px) {
+  :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'],
+  :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .eventMeta,
+  :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .eventSwitcher { height: var(--fc-header-control-height, 44px); min-height: var(--fc-header-control-height, 44px); }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .eventSwitcher > summary { width: auto; min-width: 112px; height: var(--fc-header-control-height, 44px); min-height: var(--fc-header-control-height, 44px); display: flex; align-items: center; gap: 8px; padding: 0 12px; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .eventSwitcher > summary strong { overflow: visible; white-space: nowrap; font: 600 var(--fc-header-control-font, 13px)/var(--fc-header-control-line, 1.2) var(--font-sans); letter-spacing: 0; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .eventSwitcher > summary::after { position: static; transform: none; font-size: 10px; }
+  /* The kind (OFFICIAL / ARCHIVE) is already in the status bar under the header. */
+  :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .eventSwitcher > summary span { display: none; }
+  :global([data-design='kpr'][data-design-edition='hybrid']) .contextBar[data-placement='header'] .eventSwitcher[open] > summary::after { transform: rotate(180deg); }
 }

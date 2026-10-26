@@ -362,8 +362,26 @@
 @media (max-width:600px) { .dossier { --dossier-header-bottom: calc(var(--kpr-header-height,136px) - 24px); } }
 @media (prefers-reduced-motion:reduce) { .dossier * { transition: none !important; } }
 
-/* The exhibition owns the canvas; the ledger retains the reading gutter. */
-.dossier[data-archive-view='gallery'] { --exhibition-gutter: clamp(20px, 4.5vw, 92px); --dossier-nav-height: 58px; }
-.dossier[data-archive-view='gallery'] > :not([data-gallery-cover]) { margin-inline: var(--exhibition-gutter); }
-@media (max-width: 700px) { .dossier[data-archive-view='gallery'] { --exhibition-gutter: 20px; } }
-@media (max-width: 360px) { .dossier[data-archive-view='gallery'] { --exhibition-gutter: 16px; } }
+/* 票 2.42: both pages sit in the site column — the same header, status bar, page tabs and title
+   row. Only the 展厅 cover is immersive; it keeps an inner gutter for its scenes. */
+.dossier[data-archive-view='gallery'] { --exhibition-gutter: clamp(20px, 3vw, 44px); }
+/* The cover reads as one framed exhibit inside the column. */
+.dossier[data-archive-view='gallery'] [data-gallery-cover] { border-top: 3px solid var(--fc-data-ink); background: var(--fc-data-paper-raised); }
+.titleRow { margin-bottom: 8px; }
+.follow { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 44px; padding: 10px 16px; border: 1px solid var(--fc-data-ink); background: transparent; color: var(--fc-data-ink); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.follow > span { font-size: 16px; }
+.follow[aria-pressed='true'] { background: var(--fc-data-ink); color: var(--fc-data-paper); }
+.follow:hover:not(:disabled) { background: var(--fc-data-paper-deep); }
+.follow[aria-pressed='true']:hover:not(:disabled) { background: var(--fc-data-ink-raised, #2a2d29); }
+.ledgerSection { padding-top: 12px; scroll-margin-top: calc(var(--dossier-nav-top) + 12px); }
+.ledgerSection:focus { outline: none; }
+.sectionHeading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; padding: 18px 0 16px; margin-bottom: 24px; border-top: 3px solid var(--fc-data-ink); border-bottom: 1px solid var(--fc-data-line-strong); }
+.sectionHeading h2 { font-size: clamp(26px, 2.6vw, 36px); line-height: 1.2; font-weight: 900; letter-spacing: -.04em; }
+.sectionHeading p { color: var(--fc-data-text-muted); font-size: 13px; }
+.dossier[data-archive-view='analysis'] [data-team-performance] { margin-top: 56px; }
+@media (max-width: 600px) {
+  .dossier[data-archive-view='gallery'] { --exhibition-gutter: var(--kpr-gutter, 12px); }
+  .titleRow [data-signal-data-heading] > div:last-child { text-align: left; }
+  .follow { width: 100%; justify-content: space-between; }
+  .dossier[data-archive-view='analysis'] [data-team-performance] { margin-top: 40px; }
+}

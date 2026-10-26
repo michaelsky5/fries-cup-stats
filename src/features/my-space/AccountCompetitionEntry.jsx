@@ -41,7 +41,6 @@ export default function AccountCompetitionEntry({ competition, locale, withSeaso
     {!loading && !error && Boolean(competitions?.length) && <nav className={styles.choices} aria-label={en ? 'Your competitions' : uiText("你的参赛赛事", locale)}>{competitions.map(item => <Link key={item.id} to={`/me?${competitionSwitchSearch(search, item.id)}`}><div><small>{item.competitionKind === 'WEEKLY' ? en ? 'Weekly tournament' : uiText("周赛", locale) : en ? 'Tournament' : uiText("赛事", locale)} · {item.status === 'ARCHIVED' ? en ? 'Archived' : uiText("已归档", locale) : en ? 'Ongoing' : uiText("进行中", locale)}</small><strong>{item.name}</strong><span>{item.teams.length ? item.teams.map(team => team.shortName || team.name).join(' / ') : (item.registrations || []).map(record => record.name).join(' / ')}</span></div><b aria-hidden="true">→</b></Link>)}</nav>}
     {!loading && <div className={styles.grid}>
       <section className={styles.join} aria-labelledby="join-event-title">
-        <span className={styles.eyebrow}>JOIN YOUR TEAM</span>
         <h3 id="join-event-title">{en ? 'Have a team invitation?' : uiText("已经收到队伍邀请？", locale)}</h3>
         <p>{en ? 'Open it here to confirm the invited account and team. You can review everything before accepting.' : uiText("在这里打开邀请，先核对受邀账号和队伍，再完成认领。", locale)}</p>
         <form onSubmit={openInvitation}>
@@ -52,7 +51,7 @@ export default function AccountCompetitionEntry({ competition, locale, withSeaso
         <details><summary>{en ? 'Already joined, but no team is shown?' : uiText("已经参加过，为什么看不到队伍？", locale)}</summary><p>{en ? 'Check that you signed in with the email used for the invitation. Team links belong to that account; an organizer account does not automatically join a team.' : uiText("请核对当前登录账号是否为邀请中的邮箱。队伍关系属于受邀账号；赛管账号不会自动成为参赛队员。", locale)}</p><Link to={withSeason('/account')}>{en ? 'Check my account' : uiText("查看当前账号资料", locale)} ↗</Link></details>
       </section>
       <aside className={styles.personal} aria-label={en ? 'Available now' : uiText("现在就可以使用", locale)}>
-        <header><span>YOUR SPACE</span><h3>{en ? 'Make this space yours' : uiText("先从你关心的比赛开始", locale)}</h3></header>
+        <header><h3>{en ? 'Make this space yours' : uiText("先从你关心的比赛开始", locale)}</h3></header>
         <Link to={withSeason('/me?section=following')}><span className={styles.symbol} aria-hidden="true">☆</span><div><strong>{en ? 'My Following' : uiText("我的关注", locale)}</strong><p>{en ? 'Follow teams and players to collect their schedules and results.' : uiText("关注队伍与选手，把相关赛程和赛果收在一起。", locale)}</p></div><b aria-hidden="true">↗</b></Link>
         <Link to={withSeason('/account')}><span className={styles.symbol} aria-hidden="true">◎</span><div><strong>{en ? 'Account settings' : uiText("账号设置", locale)}</strong><p>{en ? 'Manage your profile, password, email and signed-in devices.' : uiText("管理资料、密码、邮箱验证和登录设备。", locale)}</p></div><b aria-hidden="true">↗</b></Link>
       </aside>

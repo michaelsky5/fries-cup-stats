@@ -1,7 +1,6 @@
 import styles from './WorkspaceSectionHeader.module.css'
 
 export default function WorkspaceSectionHeader({
-  eyebrow,
   title,
   description,
   badge = '',
@@ -10,7 +9,6 @@ export default function WorkspaceSectionHeader({
   return (
     <header className={styles.header}>
       <div>
-        <span>{eyebrow}</span>
         <h2>{title}</h2>
         <p>{description}</p>
       </div>

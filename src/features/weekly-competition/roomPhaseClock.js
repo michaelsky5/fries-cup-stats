@@ -1,5 +1,5 @@
 import { roomBanResolved } from './roomBans.js'
-export const ROOM_CLOCK_LABELS = { REST: '局间休息', PREPARATION: '赛前准备', MAP: '地图选择', LINEUP: '首发确认', BAN_ORDER: 'Ban 顺序', BAN: '英雄禁用' }
+export const ROOM_CLOCK_LABELS = { REST: '局间休息', PREPARATION: '赛前准备', MAP: '地图选择', LINEUP: '首发确认', BAN_ORDER: '禁用顺序', BAN: '英雄禁用' }
 
 export function roomClockState(clock, elapsedMs = 0) {
   if (!clock) return { seconds: null, inSubmissionGrace: false }
@@ -33,9 +33,9 @@ export function roomClockHint(data, action) {
   if (!limits) return null
   const hints = {
     SELECT_SETUP: ['确认地图后，双方首发倒计时同时开始（{0} 秒）。', limits.LINEUP],
-    SET_LINEUP: roomBanResolved(data.map, 'A') || roomBanResolved(data.map, 'B') ? ['双方首发都确认后，由剩余禁用方完成 Ban（{0} 秒）。', limits.BAN] : ['双方首发都确认后，开始 Ban 顺序倒计时（{0} 秒）。', limits.BAN_ORDER],
-    SELECT_BAN_ORDER: ['确认后，先手方 Ban 倒计时开始（{0} 秒）。', limits.BAN],
-    BAN: roomBanResolved(data.map, 'A') || roomBanResolved(data.map, 'B') ? ['确认后，本图选禁倒计时结束。'] : ['确认后，对方 Ban 倒计时开始（{0} 秒）。', limits.BAN],
+    SET_LINEUP: roomBanResolved(data.map, 'A') || roomBanResolved(data.map, 'B') ? ['双方首发都确认后，由剩余禁用方完成禁用（{0} 秒）。', limits.BAN] : ['双方首发都确认后，开始禁用顺序倒计时（{0} 秒）。', limits.BAN_ORDER],
+    SELECT_BAN_ORDER: ['确认后，先手方禁用倒计时开始（{0} 秒）。', limits.BAN],
+    BAN: roomBanResolved(data.map, 'A') || roomBanResolved(data.map, 'B') ? ['确认后，本图选禁倒计时结束。'] : ['确认后，对方禁用倒计时开始（{0} 秒）。', limits.BAN],
     BEGIN: ['首图选择权确认后，选图倒计时开始（{0} 秒）。', limits.FIRST_MAP],
     CONFIRM_FIRST_PICK: ['首图选择权确认后，选图倒计时开始（{0} 秒）。', limits.FIRST_MAP],
     REPORT_1V1_RESULT: ['确认获胜方后，选图倒计时开始（{0} 秒）。', limits.FIRST_MAP],
@@ -45,7 +45,7 @@ export function roomClockHint(data, action) {
   }
   if (['BAN', 'SELECT_BAN_ORDER'].includes(action) && hints[action]) {
     const hint = hints[action]
-    return [hint[0] + ' 超时将自动放弃本轮禁用权，不得补 Ban。', ...hint.slice(1)]
+    return [hint[0] + ' 超时将自动放弃本轮禁用权，不得补禁用。', ...hint.slice(1)]
   }
   return hints[action] || null
 }

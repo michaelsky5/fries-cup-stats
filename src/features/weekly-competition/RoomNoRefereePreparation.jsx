@@ -41,7 +41,7 @@ export default function RoomNoRefereePreparation({ data, disabled, onReport, onS
     {grace && !currentGrace && <p>{uiText('本场补时已在第 {0} 图使用，本图不再自动补时。', locale, [grace.mapOrder])}</p>}
     <details className={styles.details} open={expanded || undefined}>
       <summary>{uiText('补时规则与留证记录', locale)}</summary>
-      <p>{uiText('双方在到场截止前声明五名锁定名单选手到齐，准备超时后整场自动补时一次 3 分钟，无需临时表决。到场截止、选图和 Ban 超时处罚不变。', locale)}</p>
+      <p>{uiText('双方在到场截止前声明五名锁定名单选手到齐，准备超时后整场自动补时一次 3 分钟，无需临时表决。到场截止、选图和禁用超时处罚不变。', locale)}</p>
       <p>{uiText('五人到齐且选禁完整后，双方代表可同意超时继续开赛，原截止和处罚保留；仍无法开赛或有异议时，可留证结束现场等待，赛事组稍后核验，不自动判负或弃权。', locale)}</p>
       <RoomPreparationIncidents data={data} />
       <small>{uiText('到场为双方站内声明，系统未接入游戏；迟到或声明有争议需截图、录像等证据，由赛事组裁定。', locale)}</small>

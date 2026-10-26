@@ -13,8 +13,20 @@ export default function PlayoffNewspaperPath({ playoff, locale, withSeason }) {
     </div>)}
     <small>{[item.format, item.state === 'review' ? t('review') : item.state === 'ruling' ? t('ruling') : !item.winnerId ? t(item.state === 'live' ? 'live' : 'scheduled') : ''].filter(Boolean).join(' · ')}</small>
   </Link>
+  // 票 2.51: the tiebreak qualifier opens the road to the title, one line above the bracket.
+  const qualifiers = round('QUALIFIER')
   return <section className={styles.playoffPath} data-playoff-path aria-label={t('route')}>
     <header><h3>{t('route')}</h3><small>{t('note')}</small></header>
+    {qualifiers.length > 0 && <div className={styles.playoffQualifier} data-playoff-qualifier>
+      <h4>{t('QUALIFIER')}</h4>
+      <ol>{qualifiers.map(item => {
+        const side = team => <span data-confirmed-winner={Boolean(team && item.winnerId === String(team.id || team.team_id))}>{team ? newspaperTeamName(team) : t('pending')}</span>
+        return <li key={item.id}><Link to={withSeason(`/matches/${encodeURIComponent(item.id)}`)} data-playoff-match={item.id} data-result-state={item.state}>
+          {side(item.a)}<b>{item.scores ? `${item.scores[0]} : ${item.scores[1]}` : '—'}</b>{side(item.b)}
+          <small>{[item.format, item.state === 'review' ? t('review') : item.state === 'ruling' ? t('ruling') : !item.winnerId ? t(item.state === 'live' ? 'live' : 'scheduled') : ''].filter(Boolean).join(' · ')}</small>
+        </Link></li>
+      })}</ol>
+    </div>}
     <div className={styles.playoffBracket}>
       <div className={styles.playoffSemis}><h4>{t('SEMIFINAL')}</h4>{round('SEMIFINAL').map(fixture)}{!round('SEMIFINAL').length && <p>{t('missing')}</p>}</div>
       <div className={styles.playoffMedalMatches}><div><h4>{t('FINAL')}</h4>{round('FINAL').map(fixture)}{!round('FINAL').length && <p>{t('pending')}</p>}</div><div><h4>{t('THIRD_PLACE')}</h4>{round('THIRD_PLACE').map(fixture)}{!round('THIRD_PLACE').length && <p>{t('pending')}</p>}</div></div>

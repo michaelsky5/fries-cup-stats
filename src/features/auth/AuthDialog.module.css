@@ -333,3 +333,13 @@
 .accountMenu button { border-top: 1px solid #eeede629; }
 .accountMenu p { color: #ff776d; font-size: 12px; padding: 0 20px; }
 @media (max-width: 600px) { .backdrop { padding: 16px; } .dialog { max-height: calc(100dvh - 32px); } .dialogHeader { padding: 24px 22px; } .dialogBody { padding: 22px; } .dialogRail { padding: 16px 22px; } .dialogTitle { font-size: 25px; } .contactPair { grid-template-columns: 1fr; } .accountMenu { max-width: calc(100vw - 40px); } }
+
+/* 票 2.67: 「我的空间」 sits behind the avatar, so its count rides on the avatar's corner (a yellow tag ringed in the
+   masthead ink so it reads against the yellow avatar) and beside 「我的空间」 in the menu. Phones keep their dot. */
+.avatarSlot { position: relative; display: inline-grid; flex: none; }
+.attentionBadge { position: absolute; z-index: 1; top: -6px; right: -6px; min-width: 18px; height: 15px; padding: 0 3px; display: inline-grid; place-items: center; background: var(--fc-data-signal, #f4c320); color: var(--fc-data-ink, #181a17); box-shadow: 0 0 0 2px var(--fc-data-ink, #181a17); font-size: 9px; font-weight: 900; line-height: 1; letter-spacing: 0; white-space: nowrap; pointer-events: none; }
+.accountMenu .menuLabel { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.accountMenu .menuLabel em { padding: 3px 5px; background: var(--fc-data-signal, #f4c320); color: var(--fc-data-ink, #181a17); font-size: 10px; font-style: normal; font-weight: 900; line-height: 1; white-space: nowrap; }
+@media (max-width: 600px) { .attentionBadge { display: none; } }
+/* 601–640px: the dock has room for the avatar only (as on phones); the name was being clipped mid-character. */
+@media (min-width: 601px) and (max-width: 640px) { :global([data-design="kpr"][data-design-edition="hybrid"]) .authCopy { display: none; } }

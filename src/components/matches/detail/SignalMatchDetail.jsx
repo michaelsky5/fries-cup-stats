@@ -1,8 +1,8 @@
 import { translateUiText as uiText } from '../../../lib/uiText.js'
 import WeeklyMatchIdentity from '../WeeklyMatchIdentity.jsx'
-import { getWeeklyMatchIdentityLabel } from '../../../lib/weeklyMatchIdentity.js'
+import { showsInlineTimeZone, weeklyMatchContextLabel } from '../../../features/weekly-overview/weeklyPresentation.js'
 import { useUiLocale } from '../../../hooks/useUiLocale.js'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import TeamLogo from '../TeamLogo.jsx'
 import SignalMatchPlayers from './SignalMatchPlayers.jsx'
@@ -42,7 +42,7 @@ function getRoundLabel(dossier, locale) {
 
 function TeamIdentity({ team, logoTeam, side, seasonId, winner, withSeason, returnState, onNavigate, en }) {
   const uiLocale = useUiLocale()
-  const path = team.id && !['TBD', 'UNKNOWN', '-'].includes(String(team.id).toUpperCase()) ? withSeason(`/teams/${encodeURIComponent(team.id)}`) : ''
+  const path = team.id && !['TBD', 'UNKNOWN', '-'].includes(String(team.id).toUpperCase()) ? withSeason(`/teams/${encodeURIComponent(team.id)}/analysis`) : ''
   const content = <>
     <TeamLogo team={logoTeam || { id: team.id, short: team.short, name: team.full }} seasonId={seasonId} teamShortName={team.short} teamName={team.full} large className={styles.teamLogo} />
     <span><strong>{team.short}</strong><small>{team.full}</small></span>
@@ -56,7 +56,7 @@ function SeriesProgress({ maps, currentOrder, onSelectMap, en }) {
   if (maps.length < 2) return null
   return <div className={styles.progress}>
     <div className={styles.progressHeading}><strong>{en ? 'Series progression' : uiText("比赛走势", uiLocale)}</strong><span>{en ? 'After each map' : uiText("每图后的大比分", uiLocale)}</span></div>
-    <nav className={styles.progressRail} aria-label={en ? 'Series progression' : uiText("系列赛走势", uiLocale)}>
+    <nav className={styles.progressRail} data-scroll-fades aria-label={en ? 'Series progression' : uiText("系列赛走势", uiLocale)}>
       {maps.map(map => <button key={map.key} type="button" className={styles.progressStep} aria-current={currentOrder === map.order ? 'location' : undefined} onClick={() => onSelectMap(map.order)} aria-label={`${en ? 'View map' : uiText("查看第", uiLocale)} ${map.order}${en ? '' : uiText(" 图", uiLocale)} · ${map.name} · ${getMapOutcome(map, uiLocale)} · ${en ? 'Series score' : uiText("大比分", uiLocale)} ${map.cumulative}`}>
         <span className={styles.progressMap}><small>{map.orderLabel}</small><strong>{map.name}</strong></span>
         <span className={styles.progressResult}><b>{map.cumulative.replace(':', ' : ')}</b><span>{getMapOutcome(map, uiLocale)}</span></span>
@@ -256,9 +256,26 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
   const status = phase.active ? phase.statusLabel : dossier.state.isForfeit ? (en ? 'FORFEIT' : uiText("弃权", locale)) : en ? dossier.statusEn : dossier.statusLabel
   const video = dossier.broadcast?.streamLinks.find(stream => stream.kind === 'replay') || dossier.broadcast?.streamLinks.find(stream => stream.kind === 'archive')
   const adjacentState = { returnTo, ...(Number.isFinite(Number(returnScrollY)) ? { returnScrollY } : {}) }
+  // 票 2.27: phones keep 返回 and 分享 in the toolbar; feedback and the video link sit behind 更多.
+  const [moreOpen, setMoreOpen] = useState(false)
+  const moreId = useId()
+  const moreRef = useRef(null)
+  useEffect(() => {
+    if (!moreOpen) return undefined
+    const dismiss = event => {
+      if (event.type === 'keydown' ? event.key === 'Escape' : !moreRef.current?.contains(event.target)) setMoreOpen(false)
+    }
+    document.addEventListener('pointerdown', dismiss)
+    document.addEventListener('keydown', dismiss)
+    return () => { document.removeEventListener('pointerdown', dismiss); document.removeEventListener('keydown', dismiss) }
+  }, [moreOpen])
 
   return <div ref={shellRef} className={styles.shell} data-page-mode="index" data-match-design="signal-coach" data-match-phase={phase.key}>
-    <div className={styles.toolbar}><button type="button" onClick={onBack}>← {backLabel}</button><div><MatchDataFeedback key={dossier.internalId} dossier={dossier} seasonId={seasonId} locale={locale} mapOrder={searchParams.has('map') ? compactSelection.map?.order ?? '' : ''} isPreview={isPreview} /><button type="button" onClick={onCopyLink}>{en ? 'Copy link' : uiText("复制链接", locale)}</button>{!phase.active && video ? <a className={video.kind === 'replay' ? styles.primaryAction : undefined} href={video.url} target="_blank" rel="noreferrer">{video.kind === 'replay' ? (en ? 'Watch replay' : uiText("观看录像", locale)) : (en ? 'Video archive' : uiText("赛事录像库", locale))} ↗</a> : null}</div></div>
+    <div className={styles.toolbar}><button type="button" onClick={onBack}>← {backLabel}</button><div ref={moreRef}>
+      <button type="button" className={styles.shareAction} onClick={onCopyLink}><span className={styles.longLabel}>{en ? 'Copy link' : uiText("复制链接", locale)}</span><span className={styles.shortLabel}>{en ? 'Share' : uiText("分享", locale)}</span></button>
+      <button type="button" className={styles.moreToggle} aria-expanded={moreOpen} aria-controls={moreId} onClick={() => setMoreOpen(open => !open)}>{en ? 'More' : uiText("更多", locale)}<span aria-hidden="true">{moreOpen ? '−' : '+'}</span></button>
+      <div id={moreId} className={styles.moreActions} data-open={moreOpen || undefined}><MatchDataFeedback key={dossier.internalId} dossier={dossier} seasonId={seasonId} locale={locale} mapOrder={searchParams.has('map') ? compactSelection.map?.order ?? '' : ''} isPreview={isPreview} />{!phase.active && video ? <a className={video.kind === 'replay' ? styles.primaryAction : undefined} href={video.url} target="_blank" rel="noreferrer">{video.kind === 'replay' ? (en ? 'Watch replay' : uiText("观看录像", locale)) : (en ? 'Video archive' : uiText("赛事录像库", locale))} ↗</a> : null}</div>
+    </div></div>
     {copyMessage ? <p className={styles.copyFeedback} role="status">{copyMessage}</p> : null}
     {isPreview ? <p className={styles.phasePreview}>{en ? 'Design preview · fictional fixtures, scores, staff and broadcast links' : uiText("设计样例 · 对阵、比分、工作人员与直播入口均为演示", locale)}</p> : null}
     <nav ref={navigationRef} className={styles.sectionNav} data-match-navigation aria-label={en ? 'Match sections' : uiText("比赛详情章节", locale)}>
@@ -272,18 +289,20 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
       <div className={styles.navTools}><span className={styles.navMatch} data-visible={visibleSection !== 'overview'} aria-hidden={visibleSection === 'overview'}>{dossier.teamA.short}<b>{scoreLabel}</b>{dossier.teamB.short}</span>{canAnalyze ? <button type="button" className={styles.findPlayer} onClick={event => openAnalysis(event, true)} aria-label={en ? 'Find a player in this match' : uiText("查找本场选手", locale)} title={en ? 'Find a player in this match' : uiText("查找本场选手", locale)}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4.5 4.5" /></svg><span>{en ? 'Find player' : uiText("查找选手", locale)}</span></button> : null}</div>
     </nav>
     <section className={styles.hero} id="match-overview" data-match-section="overview" aria-labelledby="match-dossier-title">
+      {/* 票 2.44: the page heading names the pairing; the score below stays the visual centre. */}
+      <h1 id="match-dossier-title" className={styles.visuallyHidden}>{dossier.title}</h1>
       <div className={styles.cover}>
-        <header className={styles.heroMeta}><span>{getWeeklyMatchIdentityLabel(dossier.match, locale) || <>{getScheduleStageLabel(dossier.match.stage, locale)} <b>/</b> {getRoundLabel(dossier, locale)}</>}</span><strong data-live={phase.key === 'live'}>{status}</strong></header>
+        <header className={styles.heroMeta}><span>{weeklyMatchContextLabel(dossier.match, locale) || <>{getScheduleStageLabel(dossier.match.stage, locale)} <b>/</b> {getRoundLabel(dossier, locale)}</>}</span><strong data-live={phase.key === 'live'}>{status}</strong></header>
         <WeeklyMatchIdentity match={dossier.match} locale={locale} copyable showContext={false} />
         <div className={styles.versus}>
           <TeamIdentity team={dossier.teamA} logoTeam={dossier.match.team_a} side="A" seasonId={seasonId} winner={dossier.hasSeriesScore && winnerSide === 'A'} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} />
-          <div className={styles.scoreAxis}><span>{phase.scoreTitle}</span><h1 id="match-dossier-title" aria-label={dossier.title + ' · ' + scoreLabel}>{scoreParts.length === 2 ? <><span data-winner={winnerSide === 'A'}>{scoreParts[0]}</span><i>:</i><span data-winner={winnerSide === 'B'}>{scoreParts[1]}</span></> : 'VS'}</h1><span>{uiText(getReviewFormat(dossier.formatLabel, en), locale)}</span></div>
+          <div className={styles.scoreAxis}><span>{phase.scoreTitle}</span><p className={styles.score}>{scoreParts.length === 2 ? <><span data-winner={winnerSide === 'A'}>{scoreParts[0]}</span><i>:</i><span data-winner={winnerSide === 'B'}>{scoreParts[1]}</span></> : 'VS'}</p><span>{uiText(getReviewFormat(dossier.formatLabel, en), locale)}</span></div>
           <TeamIdentity team={dossier.teamB} logoTeam={dossier.match.team_b} side="B" seasonId={seasonId} winner={dossier.hasSeriesScore && winnerSide === 'B'} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} />
         </div>
         {summary ? <p className={styles.matchSummary} data-match-summary={matchFact.kind}>{summary}</p> : null}
         {phase.active ? <>{phase.roomProgress ? <p className={styles.phaseCaption} data-public-room-status={roomSnapshot.status} role="status">{eventCenterText('roomProgressSource', locale)} · {eventCenterText(roomSnapshot.status === 'reconnecting' ? 'roomProgressReconnecting' : roomSnapshot.status === 'paused' ? 'roomProgressPaused' : 'roomProgressConnected', locale)}</p> : null}<p className={styles.phaseCaption}>{phase.caption}</p><SignalMatchPhaseProgress key={dossier.internalId} phase={phase} onSelectMap={onSelectMap} en={en} /></> : <SeriesProgress key={dossier.internalId} maps={progress} currentOrder={currentOrder} onSelectMap={onSelectMap} en={en} />}
-        <footer className={styles.heroFooter}><span>{en ? 'SCHEDULE' : uiText("比赛时间", locale)}<strong>{phase.active ? phase.scheduleLabel : dossier.scheduleLabel}</strong>{phase.active ? <small>UTC+8</small> : null}</span>{dossier.totalDurationLabel ? <span>{phase.active ? (en ? 'RECORDED TIME' : uiText("已记录时长", locale)) : (en ? 'IN-GAME TIME' : uiText("局内总时长", locale))}<strong>{dossier.totalDurationLabel}</strong></span> : null}{!phase.active || phase.recordedCount ? <span>{en ? 'MAPS RECORDED' : uiText("地图记录", locale)}<strong>{phase.active ? phase.recordedCount : dossier.mapRecords.length}</strong></span> : null}</footer>
-        {dossier.match.cycle_week_id && <p className={styles.matchIdentifier}>{en ? 'MATCH ID' : uiText("比赛编号", locale)} <span data-public-match-code>{dossier.displayCode}</span></p>}
+        <footer className={styles.heroFooter}><span>{en ? 'SCHEDULE' : uiText("比赛时间", locale)}<strong>{phase.active ? phase.scheduleLabel : dossier.scheduleLabel}</strong>{phase.active && showsInlineTimeZone(locale) ? <small>UTC+8</small> : null}</span>{dossier.totalDurationLabel ? <span>{phase.active ? (en ? 'RECORDED TIME' : uiText("已记录时长", locale)) : (en ? 'IN-GAME TIME' : uiText("局内总时长", locale))}<strong>{dossier.totalDurationLabel}</strong></span> : null}{!phase.active || phase.recordedCount ? <span>{en ? 'MAPS RECORDED' : uiText("地图记录", locale)}<strong>{phase.active ? phase.recordedCount : dossier.mapRecords.length}</strong></span> : null}</footer>
+        {/* 票 2.27: the match number shows once, in the identity line above, with its copy button. */}
         {!phase.active ? <SignalMatchSpotlight dossier={dossier} locale={locale} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} /> : null}
       </div>
     </section>
@@ -292,8 +311,8 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
     {!phase.active && !canAnalyze && progress.length > 0 ? <div className={styles.emptyReview}><PendingRoster dossier={dossier} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} /></div> : null}
     {progress.length ? <section className={styles.review} id="map-records" data-match-section="maps" ref={analysisRef} aria-labelledby="map-records-title">
       <aside ref={mapIndexRef} className={styles.index}>
-        <div className={styles.indexHeading}><span>MAP INDEX</span><strong>{en ? 'Map records' : uiText("逐图战报", locale)}</strong><small>{en ? 'Map scores · Select to jump' : uiText("本图比分 · 点选跳转", locale)}</small></div>
-        <nav ref={railRef} className={styles.mapRail} aria-label={en ? 'Map navigation' : uiText("地图导航", locale)}>
+        <div className={styles.indexHeading}><small>{en ? 'Map scores · Select to jump' : uiText("本图比分 · 点选跳转", locale)}</small></div>
+        <nav ref={railRef} className={styles.mapRail} data-scroll-fades aria-label={en ? 'Map navigation' : uiText("地图导航", locale)}>
           {progress.map(map => <button key={map.key} type="button" aria-current={currentOrder === map.order ? 'location' : undefined} onClick={() => onSelectMap(map.order)} aria-label={(en ? 'View map ' : uiText("查看第 ", locale)) + map.order + (en ? ' · ' : uiText(" 图 · ", locale)) + map.name + ' · ' + (en ? 'Map score ' : uiText("本图 ", locale)) + map.scoreA + ':' + map.scoreB + ' · ' + (en ? 'Series score ' : uiText("大比分 ", locale)) + map.cumulative}>
             <span className={styles.mapNumber}>{map.orderLabel}</span><strong>{map.name}</strong><span className={styles.indexScore}><b><span className={styles.indexMapScore}><small>{en ? 'Map ' : uiText("本图 ", locale)}</small>{map.scoreA} : {map.scoreB}</span><span className={styles.indexSeriesScore}>{map.cumulative.replace(':', ' : ')}</span></b><small>{getMapOutcome(map, locale)}</small></span>
           </button>)}
@@ -311,7 +330,7 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
     </section> : !phase.active ? <section className={styles.emptyReview} ref={analysisRef}><PendingRoster dossier={dossier} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} /></section> : null}
 
     {canAnalyze ? <details ref={seriesRef} className={styles.seriesAnalysis} id="series-analysis" data-match-section="analysis" open={analysisExpanded}>
-      <summary onClick={toggleAnalysis}><span className={styles.sectionTitle}><small>SERIES ANALYSIS</small><strong>{en ? 'Full-match statistics & player comparison' : uiText("全场统计与选手对比", locale)}</strong></span><span className={styles.expandMark} aria-hidden="true">{analysisExpanded ? '−' : '＋'}</span></summary>
+      <summary onClick={toggleAnalysis}><span className={styles.sectionTitle}><strong>{en ? 'Full-match statistics & player comparison' : uiText("全场统计与选手对比", locale)}</strong></span><span className={styles.expandMark} aria-hidden="true">{analysisExpanded ? '−' : '＋'}</span></summary>
       <div className={styles.seriesBody}><div className={styles.analysisWorkspace} data-player-search-target><SignalMatchPlayers dossier={dossier} seasonId={seasonId} locale={locale} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} onSelectMap={onSelectMap} searchInputRef={playerSearchRef} /></div><TeamComparison dossier={dossier} seasonId={seasonId} en={en} /><RoleStandouts dossier={dossier} withSeason={withSeason} returnState={returnState} onNavigate={onNavigate} en={en} /></div>
     </details> : null}
     {!phase.active ? <SignalMatchResources dossier={dossier} roomPath={roomPath} en={en} onSelectMap={onSelectMap} /> : null}

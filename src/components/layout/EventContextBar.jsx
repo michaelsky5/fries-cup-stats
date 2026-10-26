@@ -1,5 +1,6 @@
 import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import styles from '../../features/fd-design/eventContextStyles.js'
 import { pickLocale } from '../../lib/legacyI18n.js'
 import { getSeasonLifecycleGroup, getSeasonStatusKey } from '../../lib/publicDataStatus.js'
@@ -67,7 +68,7 @@ function getReadableStatus(seasonStatus, locale = 'zh-CN', season = null) {
   const key = getSeasonStatusKey(season, seasonStatus)
   if (key === 'archive') return contextText(locale, uiText('赛季已归档', locale), 'Season Archived', '시즌 아카이브 완료')
   if (key === 'live') return contextText(locale, uiText('比赛进行中', locale), 'Live', '경기 진행 중')
-  if (key === 'active') return contextText(locale, uiText('赛事进行中', locale), 'Season Active', '시즌 진행 중')
+  if (key === 'active') return contextText(locale, uiText('赛季进行中', locale), 'Season Active', '시즌 진행 중')
   if (key === 'scheduled') return contextText(locale, uiText('赛程已发布', locale), 'Schedule Published', '일정 공개')
   return contextText(locale, uiText('赛程待发布', locale), 'Schedule Pending', '일정 공개 대기')
 }
@@ -166,6 +167,15 @@ function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary,
   )
 }
 
+// 票 2.45: a signed-in participant's one next step sits at the end of the status line on wide
+// screens: today's match room, this week's confirmation, or registration.
+function NextActionLink({ action }) {
+  if (!action?.to) return null
+  return <Link className={styles.nextAction} to={action.to} data-account-next-action={action.kind}>
+    <strong>{action.label}</strong>{action.detail ? <span>{action.detail}</span> : null}<i aria-hidden="true">→</i>
+  </Link>
+}
+
 export default function EventContextBar({
   season,
   seasonId,
@@ -182,7 +192,8 @@ export default function EventContextBar({
   placement = '',
   presentation = 'default',
   isPreview = false,
-  onRetry
+  onRetry,
+  nextAction = null
 }) {
   const isHeaderPlacement = placement === 'header'
   const isContentPlacement = placement === 'content'
@@ -199,14 +210,16 @@ export default function EventContextBar({
     <section className={styles.directoryContext} data-directory-context data-source={dataStatus?.key} data-i18n-ignore aria-label={contextText(locale, uiText("赛事与数据状态", locale), 'Event and data status', '대회 및 데이터 상태')}>
       <div className={styles.directoryIdentity}>
         <strong>{season?.displayCode || season?.publicCode || seasonId}</strong>
-        <small className={styles.eventKindLabel}>{getEventKindLabel(season, locale)}</small>
+        <small className={styles.eventKindLabel} data-event-kind={getSeasonEventKind(season)}>{getEventKindLabel(season, locale)}</small>
         <span>{statusLabel}</span>
       </div>
       <div className={styles.directoryData} role="status">
-        <div className={styles.directoryStamp}><strong>{dataStatus?.label || contextText(locale, uiText("数据更新于", locale), 'Updated', '업데이트')}</strong><time>{updatedAtText || '—'}</time></div>
+        {/* While the first snapshot loads there is no update time yet; don't print 「暂无数据」 beside 「正在载入」. */}
+        <div className={styles.directoryStamp}><strong>{dataStatus?.label || contextText(locale, uiText("数据更新于", locale), 'Updated', '업데이트')}</strong>{dataStatus?.key === 'loading' ? null : <time>{updatedAtText || '—'}</time>}</div>
         {directoryNotice ? <p>{directoryNotice}</p> : null}
       </div>
       {dataStatus?.notice && onRetry ? <button type="button" className={styles.directoryRetry} onClick={onRetry} disabled={isSyncing}>{isSyncing ? dataStatus.refreshingLabel : dataStatus.retryLabel}</button> : null}
+      <NextActionLink action={nextAction} />
     </section>
   )
 
@@ -247,7 +260,7 @@ export default function EventContextBar({
         </span> : null}
         {!isHeaderPlacement ? <span className={styles.updatedMeta} title={`${dataStatus?.label || ''} ${updatedAtText || '—'}`}>
           <span>{dataStatus?.label || contextText(locale, uiText("数据更新于", locale), 'Updated', '업데이트')}</span>
-          <time>{updatedAtText || '—'}</time>
+          {dataStatus?.key === 'loading' ? null : <time>{updatedAtText || '—'}</time>}
         </span> : null}
         {!isHeaderPlacement && !isContentPlacement ? <a href="https://fries-cup.com/" className={styles.homeLink}>
           HOME
@@ -262,6 +275,7 @@ export default function EventContextBar({
           compact={isHeaderPlacement}
         /> : null}
       </div>
+      {isContentPlacement ? <NextActionLink action={nextAction} /> : null}
       {!isHeaderPlacement && isSyncing ? <i className={styles.syncLine} aria-hidden="true"><span /></i> : null}
     </section>
   )

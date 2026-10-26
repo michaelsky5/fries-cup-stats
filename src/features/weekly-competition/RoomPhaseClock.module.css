@@ -68,3 +68,14 @@
   .bar[data-urgent=true] .caption small,.bar[data-urgent=true] .status { color:#f4e8cf; }
   .bar[data-urgent=true] .status { font-weight:800; }
 }
+
+/* 票 2.59 · 字级：倒计时旁的说明最小 12px（变量定义在 RoomGrid.module.css）。 */
+@media (min-width: 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) .bar :is(.caption, .caption small, .caption span, .status),
+  :global([data-room-layout=workspace][data-page-mode=control]) .hint { font-size: var(--room-caption); }
+}
+
+/* 票 2.59 · 手机与平板：倒计时旁的说明最小 12px；版式不动。 */
+@media (width < 1180px) {
+  :global([data-room-layout=workspace][data-page-mode=control]) .bar :is(.caption, .caption span, .status) { font-size: var(--room-caption); }
+}

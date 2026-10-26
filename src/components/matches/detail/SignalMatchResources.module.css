@@ -1,7 +1,6 @@
 .resources { display: grid; grid-template-columns: 180px minmax(0, 1fr); align-items: start; gap: 36px; margin-top: 56px; padding: 32px; background: var(--fc-data-paper-deep); scroll-margin-top: var(--coach-section-offset); }
 .heading { display: grid; gap: 12px; padding-top: 2px; }
-.heading > span { font: 500 11px/1.5 var(--fc-data-font-system); letter-spacing: .06em; color: var(--fc-data-text-muted); }
-.heading h2 { font-size: 23px; line-height: 1.5; font-weight: 650; }
+.heading h2 { font-size: var(--fc-data-section-title-size); line-height: 1.35; font-weight: 800; }
 .grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 28px; align-items: stretch; min-width: 0; }
 .replay, .info { min-width: 0; }
 .replay { display: flex; flex-direction: column; }
@@ -67,7 +66,6 @@
 @media (max-width: 760px) {
   .resources { margin-top: 36px; padding: 24px 16px; }
   .heading { gap: 8px; padding-bottom: 24px; }
-  .heading h2 { font-size: 20px; }
   .grid { grid-template-columns: 1fr; gap: 22px; }
   .video { padding: 20px; gap: 20px; }
   .video > strong { font-size: 24px; }

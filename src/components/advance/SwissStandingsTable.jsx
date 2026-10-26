@@ -59,7 +59,7 @@ function TeamRow({ row, seasonId, t, withSeason }) {
         <span className={styles.rankPill}>{String(row.rank).padStart(2, '0')}</span>
       </td>
       <td className={styles.colTeam}>
-        <Link to={withSeason(`/teams/${getRouteId(row)}`)} className={styles.tableTeam}>
+        <Link to={withSeason(`/teams/${getRouteId(row)}/analysis`)} className={styles.tableTeam}>
           <TeamLogo team={row} seasonId={seasonId} className={styles.tableTeamLogo} />
           <span>
             <strong>{row.team_short_name || row.team_name}</strong>

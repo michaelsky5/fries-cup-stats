@@ -9,17 +9,28 @@ export const PRIMARY_NAV = [
   { to: '/advance', cn: '晋级形势', en: 'ADVANCE', ko: '진출 현황', group: 'advance' },
   { to: '/roster', cn: '参赛阵容', en: 'ROSTER', ko: '참가 명단', group: 'roster' },
   { to: '/leaderboard', cn: '数据排行', en: 'STATS', ko: '데이터 순위', group: 'database' },
+  // 票 2.18: how to take part — registration, weekly confirmation and match rooms.
+  // 票 2.29: four characters like the other desktop items; the phone dock keeps 「参赛」.
+  { to: '/play', cn: '参赛指南', en: 'PLAY', ko: '참가 안내', group: 'play' },
   { to: '/me', cn: '我的空间', en: 'MY SPACE', ko: '내 공간', group: 'space' }
 ]
 
+const SPACE_NAV = PRIMARY_NAV.find(item => item.group === 'space')
+
 export function getPersonalNavItem(isAuthenticated = false) {
-  return isAuthenticated ? PRIMARY_NAV[5] : {
-    ...PRIMARY_NAV[5], cn: '我的关注', en: 'MY FOLLOWING', ko: '내 관심 목록'
+  return isAuthenticated ? SPACE_NAV : {
+    ...SPACE_NAV, cn: '我的关注', en: 'MY FOLLOWING', ko: '내 관심 목록'
   }
 }
 
 export function getPrimaryNavigation(isAuthenticated = false) {
   return [...PRIMARY_NAV.slice(0, -1), getPersonalNavItem(isAuthenticated)]
+}
+
+// 票 2.67: the masthead and its shared menu carry the event pages only. Personal pages sit with the account control,
+// as on phones: 「我的空间」 (and its 待 N) behind the avatar, 「我的关注」 beside 「登录」 when signed out.
+export function getEventNavigation(items = PRIMARY_NAV) {
+  return items.filter(item => item.group !== 'space')
 }
 
 // Ordinary public links use the build default without adding preview parameters.

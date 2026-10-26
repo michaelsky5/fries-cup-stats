@@ -13,12 +13,12 @@ import styles from './KprLeaderboard.module.css'
 
 export default function KprPlayerDossier({ entry, rank, rankScope, mode, modeLabel, locale, withSeason, returnState, isFavorite, isCompared, compareDisabled, compareLimitReached, onToggleFavorite, onToggleCompare, onProfileNavigate, id }) {
   const isEn = locale === 'en-US'
-  if (!entry) return <div className={styles.emptyDossier}><span>PLAYER DOSSIER</span><p>{isEn ? 'A player’s season, in focus.' : uiText("一位选手，一份赛季档案。", locale)}</p><small>{isEn ? 'Select a matching name to explore.' : uiText("找到选手后，在这里继续查看。", locale)}</small></div>
+  if (!entry) return <div className={styles.emptyDossier}><p>{isEn ? 'A player’s season, in focus.' : uiText("一位选手，一份赛季档案。", locale)}</p><small>{isEn ? 'Select a matching name to explore.' : uiText("找到选手后，在这里继续查看。", locale)}</small></div>
   const metrics = getRoleCoreMetricIds(entry.role, entry.most_played_hero).slice(0, 3)
   const sampleMeta = getEntrySeasonScoreMeta(entry, locale)
   const comparisonReason = compareDisabled ? (isEn ? 'Same-role comparison only' : uiText("仅支持同职责比较", locale)) : compareLimitReached && !isCompared ? (isEn ? '4 selected; remove one to change' : uiText("已选满 4 位，移出后可更换", locale)) : ''
   return <article className={styles.dossier} id={id} aria-label={isEn ? 'Player dossier preview' : uiText("选手档案预览", locale)}>
-    <div className={styles.dossierTop}><span>{isEn ? 'IN FOCUS / PLAYER' : uiText("当前选手 / PLAYER", locale)}</span><button type="button" aria-label={`${isFavorite ? (isEn ? 'Unfollow' : uiText("取消关注", locale)) : (isEn ? 'Follow player' : uiText("关注选手", locale))}：${playerLabel(entry)}`} aria-pressed={isFavorite} onClick={() => onToggleFavorite(entry)}>{isFavorite ? '★' : '☆'}</button></div>
+    <div className={styles.dossierTop}><span>{uiText("当前选手", locale)}</span><button type="button" aria-label={`${isFavorite ? (isEn ? 'Unfollow' : uiText("取消关注", locale)) : (isEn ? 'Follow player' : uiText("关注选手", locale))}：${playerLabel(entry)}`} aria-pressed={isFavorite} onClick={() => onToggleFavorite(entry)}>{isFavorite ? '★' : '☆'}</button></div>
     <div className={styles.dossierVisual}>
       <div className={styles.dossierRank}><small>{rankScope === 'ALL' ? (isEn ? 'Overall rank' : uiText("综合榜名次", locale)) : (isEn ? 'Role rank' : uiText("职责榜名次", locale))}</small><b>{rank ? String(rank).padStart(2, '0') : '—'}</b></div>
       <div className={styles.dossierArt}><HeroArtwork hero={entry.most_played_hero} variant="spotlight" decorative priority locale={locale} /></div>

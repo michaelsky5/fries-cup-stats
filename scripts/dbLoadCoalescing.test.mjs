@@ -160,3 +160,55 @@ test('rate limits retain retry metadata and do not retry through a second API ho
   await assert.rejects(refreshDb('FCW26'), error => error.status === 429 && error.retryAfterMs === 45_000)
   assert.deepEqual(calls, ['/api/admin-public/seasons/FCW26/publish/latest/data'])
 })
+
+// 票 2.17: a snapshot cached more than a day ago is not drawn before the network answers.
+const DAY = 24 * 60 * 60 * 1000
+const FCW26_SOURCE = '/api/admin-public/seasons/FCW26/publish/latest/data'
+const latest = url => json(url.endsWith('/team-logos') ? { logos: [] } : fixture(2))
+
+test('a cached snapshot from the last day draws first; the network is not awaited', async t => {
+  storage(t, { data: fixture(0), sourceUrl: FCW26_SOURCE, savedAt: Date.now() - 60_000 })
+  const calls = []
+  t.mock.method(globalThis, 'fetch', async url => { calls.push(url); return latest(url) })
+  const value = await getDb('FCW26')
+  assert.equal(value.revision, 0)
+  assert.equal(getDbSource(value).fromCache, true)
+  assert.equal(calls.length, 0)
+})
+
+for (const [label, savedAt] of [['older than a day', Date.now() - DAY - 60_000], ['without a save time', undefined]]) {
+  test(`a cached snapshot ${label} waits for the network`, async t => {
+    const disk = storage(t, { data: fixture(0), sourceUrl: FCW26_SOURCE, ...(savedAt ? { savedAt } : {}) })
+    t.mock.method(globalThis, 'fetch', async url => latest(url))
+    const value = await getDb('FCW26')
+    assert.equal(value.revision, 2)
+    assert.equal(getDbSource(value).fromCache, false)
+    await tick()
+    assert.equal(disk.writes.length, 1)
+    assert.ok(Number.isFinite(disk.writes[0].savedAt), 'a fresh download records when it was saved')
+  })
+}
+
+test('offline, an old cached snapshot is still shown', async t => {
+  storage(t, { data: fixture(0), sourceUrl: FCW26_SOURCE, savedAt: Date.now() - 3 * DAY })
+  t.mock.method(globalThis, 'fetch', async () => { throw new Error('OFFLINE') })
+  const value = await getDb('FCW26')
+  assert.equal(value.revision, 0)
+  assert.equal(getDbSource(value).fromCache, true)
+})
+
+test('offline with nothing cached, the first load still fails', async t => {
+  storage(t, null)
+  t.mock.method(globalThis, 'fetch', async () => { throw new Error('OFFLINE') })
+  await assert.rejects(getDb('FCW26'))
+})
+
+test('an archived season keeps drawing its cached snapshot first at any age', async t => {
+  const archive = JSON.parse(await readFile(new URL('../public/data/qgcs4_review_public.json', import.meta.url)))
+  storage(t, { data: { ...archive, revision: 'cached' }, sourceUrl: '/api/admin-public/seasons/QGCS4/publish/latest/data', savedAt: Date.now() - 30 * DAY })
+  const calls = []
+  t.mock.method(globalThis, 'fetch', async url => { calls.push(url); return json({ ...structuredClone(archive), revision: 'network' }) })
+  const value = await getDb('QGCS4')
+  assert.equal(value.revision, 'cached')
+  assert.equal(calls.length, 0)
+})

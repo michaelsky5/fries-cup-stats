@@ -1,6 +1,6 @@
 import { translateUiText as uiText, pickUiLocale } from '../../lib/uiText.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { Link, useLocation, useNavigationType } from 'react-router-dom'
 import { SignalDataHeading, SignalDataNav } from '../../components/database/SignalDataHeader.jsx'
 import ImeSafeInput from '../../components/common/ImeSafeInput.jsx'
@@ -85,6 +85,9 @@ export default function KprLeaderboard({
   const location = useLocation()
   const navigationType = useNavigationType()
   const [mobileOpen, setMobileOpen] = useState(false)
+  // 票 2.23: on phones a row is rank · avatar · name · OVR; its metrics, sample and compare open on demand.
+  const [openRowKey, setOpenRowKey] = useState('')
+  const rowDetailId = useId()
   useEffect(() => {
     if (navigationType === 'REPLACE') return
     const scroll = getRestoreScrollY(location.state) ?? (navigationType === 'POP' ? getSavedReturnScroll(getLocationPath(location)) : null)
@@ -136,7 +139,7 @@ export default function KprLeaderboard({
   const header = <>
     <SignalDataNav active="players" withSeason={withSeason} isEn={isEn} />
     <div className={styles.desktopHeading}>
-    <SignalDataHeading compact title={isEn ? 'Every role. Every performance.' : uiText("不同职责，各有锋芒。", locale)} description={summary.totalEntries === 0 ? (isEn ? 'Follow the matches while player statistics are being prepared.' : uiText("先从比赛开始，等待这一季的选手表现留下记录。", locale)) : (isEn ? 'One record per player, per role. Select a name to preview their season.' : uiText("每位选手按职责分别记录。点选名字，继续看他的赛季。", locale))}>
+    <SignalDataHeading compact title={isEn ? 'Player rankings' : uiText("选手排行", locale)} description={summary.totalEntries === 0 ? (isEn ? 'Follow the matches while player statistics are being prepared.' : uiText("先从比赛开始，等待这一季的选手表现留下记录。", locale)) : (isEn ? 'One record per player, per role. Select a name to preview their season.' : uiText("每位选手按职责分别记录。点选名字，继续看他的赛季。", locale))}>
       <span>{isEn ? 'Official ranking requires' : uiText("正式排名门槛", locale)}</span>
       <span>{formatSeasonSampleRequirements(minTimeMins, locale)}</span>
     </SignalDataHeading>
@@ -228,11 +231,18 @@ export default function KprLeaderboard({
               </tr>)}</tbody>
             </table>
           </div>
-          {!allColumns ? <ol className={styles.mobileList} aria-label={isEn ? 'Player ranking list' : uiText("选手排行列表", locale)}>{pagination.rows.map(entry => <li key={entry.entryKey} data-selected={entry.entryKey === selected?.entryKey || undefined}>
-            <div className={styles.mobileIdentity}><span className={styles.rankCell}>{getRank(entry, activeTab) ? String(getRank(entry, activeTab)).padStart(2, '0') : '—'}</span><PlayerName entry={entry} selected={entry.entryKey === selected?.entryKey} onSelect={selectPreview} locale={locale} /><div className={styles.mobileScore}><SeasonRating entry={entry} locale={locale} /></div></div>
-            <dl className={styles.mobileMetrics}>{columns.filter(column => column.id !== 'score').map(column => <div key={column.id}><dt>{isEn ? column.en : uiText(column.label, locale)}</dt><dd>{fieldValue(entry, column.id, mode, locale)}</dd></div>)}</dl>
-            <div className={styles.mobileSample}><Sample entry={entry} isEn={isEn} /><CompareChoice entry={entry} compared={selectedCompareKeys.has(entry.entryKey)} compareRole={compareRole} atLimit={atCompareLimit} onToggleCompare={onToggleCompare} isEn={isEn} /></div>
-          </li>)}</ol> : null}
+          {!allColumns ? <ol className={styles.mobileList} aria-label={isEn ? 'Player ranking list' : uiText("选手排行列表", locale)}>{pagination.rows.map((entry, index) => {
+            const open = openRowKey === entry.entryKey
+            const detailId = `${rowDetailId}-${index}`
+            return <li key={entry.entryKey} data-selected={entry.entryKey === selected?.entryKey || undefined} data-open={open || undefined}>
+              <div className={styles.mobileIdentity}><span className={styles.rankCell}>{getRank(entry, activeTab) ? String(getRank(entry, activeTab)).padStart(2, '0') : '—'}</span><PlayerName entry={entry} selected={entry.entryKey === selected?.entryKey} onSelect={selectPreview} locale={locale} /><div className={styles.mobileScore}><SeasonRating entry={entry} locale={locale} /></div>
+                <button type="button" className={styles.mobileExpand} aria-expanded={open} aria-controls={detailId} aria-label={`${open ? (isEn ? 'Hide statistics' : uiText('收起数据', locale)) : (isEn ? 'Show statistics' : uiText('展开数据', locale))}：${playerLabel(entry)}`} onClick={() => setOpenRowKey(open ? '' : entry.entryKey)}><svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.6"><path d={open ? 'm4 10 4-4 4 4' : 'm4 6 4 4 4-4'} /></svg></button></div>
+              <div className={styles.mobileDetail} id={detailId}>
+                <dl className={styles.mobileMetrics}>{columns.filter(column => column.id !== 'score').map(column => <div key={column.id}><dt>{isEn ? column.en : uiText(column.label, locale)}</dt><dd>{fieldValue(entry, column.id, mode, locale)}</dd></div>)}</dl>
+                <div className={styles.mobileSample}><Sample entry={entry} isEn={isEn} /><CompareChoice entry={entry} compared={selectedCompareKeys.has(entry.entryKey)} compareRole={compareRole} atLimit={atCompareLimit} onToggleCompare={onToggleCompare} isEn={isEn} /></div>
+              </div>
+            </li>
+          })}</ol> : null}
         </> : <div className={styles.emptyState}><span>{summary.totalEntries ? 'NO RESULTS / 00' : 'AWAITING RECORDS'}</span><h3>{summary.totalEntries ? (isEn ? 'No matching players.' : uiText("没有符合条件的选手。", locale)) : (isEn ? 'Rankings are not available yet.' : uiText("本赛季尚无可排行数据。", locale))}</h3><p>{summary.totalEntries ? (isEn ? 'Try another name, role or team.' : uiText("试试其他名字、职责或队伍。", locale)) : (isEn ? 'Player rankings will appear when match statistics are published.' : uiText("比赛统计公开后，将在这里呈现选手的职责表现。", locale))}</p>{hasFilters ? <button type="button" onClick={onReset}>{isEn ? 'Clear filters' : uiText("清空筛选", locale)} ↗</button> : null}</div>}
         <div className={styles.pagination}>
           <span>{start}–{end} <b>/ {pagination.totalRows}</b></span>

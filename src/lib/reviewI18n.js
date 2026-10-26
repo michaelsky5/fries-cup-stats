@@ -50,13 +50,13 @@ export const HERO_CN = {
   Zarya: '查莉娅',
 
   // DPS
-  Anran: '安然',
+  Anran: '安燃',
   Ashe: '艾什',
   Bastion: '堡垒',
   Cassidy: '卡西迪',
   Echo: '回声',
   Emre: '埃姆雷',
-  Freja: '芙蕾雅',
+  Freja: '弗蕾娅',
   Genji: '源氏',
   Hanzo: '半藏',
   Junkrat: '狂鼠',
@@ -155,8 +155,8 @@ export const MAP_CN = {
   ESPERANCA: '埃斯佩兰萨',
   'New Queen Street': '新皇后街',
   'NEW QUEEN STREET': '新皇后街',
-  Runasapi: '鲁纳萨皮',
-  RUNASAPI: '鲁纳萨皮',
+  Runasapi: '鲁纳塞彼',
+  RUNASAPI: '鲁纳塞彼',
 
   Suravasa: '苏拉瓦萨',
   SURAVASA: '苏拉瓦萨',

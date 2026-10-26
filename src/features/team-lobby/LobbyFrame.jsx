@@ -15,7 +15,7 @@ import '../../styles/fries-cup-data-system.css'
 export default function LobbyFrame() {
   const uiLocale = useUiLocale()
 
-  const { user, logout, isBootstrapping, authConfig } = useAuth()
+  const { user, logout, isBootstrapping } = useAuth()
   const [logoutError, setLogoutError] = useState('')
   const [signingOut, setSigningOut] = useState(false)
   const location = useLocation()
@@ -27,6 +27,8 @@ export default function LobbyFrame() {
   const localPath = path => withLocale(path, uiLocale)
   const loginPath = localPath(`/account/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`)
   useEffect(() => { document.documentElement.lang = uiLocale; setStoredLocale(uiLocale) }, [uiLocale])
+  const lobbyRoute = !location.pathname.startsWith('/account/')
+  useEffect(() => { if (lobbyRoute) document.title = `${t('组队大厅', [], uiLocale)} | ${t('薯条杯', [], uiLocale)}` }, [lobbyRoute, uiLocale])
   async function signOut() {
     if (!canSignOutOfAccount()) { setLogoutError(UNSAVED_ACCOUNT_MESSAGE); return }
     setSigningOut(true); setLogoutError('')
@@ -37,7 +39,7 @@ export default function LobbyFrame() {
   // duplicate recovery form and independently consume the same URL.
   const accountControl = <Link className={authStyles.authButton} to={user ? localPath('/account') : loginPath} aria-label={user?.displayName || user?.username || t('登录')}>
     <AccountAvatar className={authStyles.avatar} user={user} />
-    <span className={authStyles.authCopy}><span className={authStyles.authName}>{isBootstrapping ? t('读取账号…') : user?.displayName || user?.username || (authConfig?.selfRegistrationEnabled ? t('登录／注册') : t('登录'))}</span></span>
+    <span className={authStyles.authCopy}><span className={authStyles.authName}>{isBootstrapping ? t('读取账号…') : user?.displayName || user?.username || t('登录')}</span></span>
   </Link>
   return <div className={`${shellStyles.shell} ${styles.frame}`} lang={uiLocale} data-design="kpr" data-design-edition="hybrid" style={{ '--kpr-preview-height': '0px' }}>
     <PublicHeader activeGroup="lobby" activeNavLabel={t('组队大厅')} layoutLocale={uiLocale} withSeason={localPath} showSeason={false} showAccountModeSwitch={false} accountControl={accountControl}

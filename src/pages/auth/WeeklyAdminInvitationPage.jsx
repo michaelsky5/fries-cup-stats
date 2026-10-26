@@ -53,7 +53,7 @@ export default function WeeklyAdminInvitationPage() {
     finally { pending.current = false; setBusy(false) }
   }
   const stage = step === 'complete' ? 3 : step === 'email' || credential.verification ? 2 : 1
-  return <AccountFrame title="成为周赛管理员" eyebrow="WEEKLY OPERATIONS" description="使用本人账号，共同管理这一季周赛。" compact>
+  return <AccountFrame title="成为周赛管理员" description="使用本人账号，共同管理这一季周赛。" compact>
     <section className={styles.card} aria-labelledby="weekly-admin-title">
       <ol className={styles.steps} aria-label="管理员认领流程">{['登记账号', '验证邮箱', '进入赛管后台'].map((label, index) => <li key={label} aria-current={stage === index + 1 ? 'step' : undefined}><span>0{index + 1}</span>{label}</li>)}</ol>
       <div className={styles.body}>

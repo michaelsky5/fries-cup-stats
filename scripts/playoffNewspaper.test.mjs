@@ -109,3 +109,35 @@ test('all four locales have playoff labels and old models without playoff facts 
     assert.notEqual(playoffText('edition',locale),'edition')
   }
 })
+
+// 票 2.51: the tiebreak qualifier belongs to the playoffs, so the playoff edition carries its played match.
+function withQualifier() {
+  const db = fixture('medal-complete'), cycle = db.weekly_competition.cycles.find(c => c.id === options.cycleId)
+  const playoffs = cycle.weeks.find(w => w.id === options.weekId); playoffs.week_number = 6
+  const [a, b, c] = cycle.standings.slice(3, 6).map(row => row.team_id)
+  const ref = (id, score) => { const team = db.teams.find(item => item.team_id === id); return { id, name: team.team_name, short: team.team_short_name, score } }
+  const qWeek = 'sample-cycle-1-qualifier'
+  const q = { match_id: 'QUALIFIER-FIXTURE-Q1', raw_match_id: 'raw-QUALIFIER-FIXTURE-Q1', cycle_id: cycle.id, cycle_week_id: qWeek,
+    match_code: 'FCW26-C01-W05-QUAL-M01', stage: 'OTHER', round: 'QUALIFIER', status: 'COMPLETE', format: 'FT2',
+    scheduled_at: '2026-10-16T13:00:00Z', team_a: ref(a, 2), team_b: ref(b, 0), winner: a, is_forfeit: false, maps: [] }
+  db.matches.push(q)
+  cycle.weeks.splice(cycle.weeks.indexOf(playoffs), 0, { id: qWeek, week_number: 5, label: '第 5 周', phase: 'QUALIFIER', status: 'CLOSED', match_ids: [q.raw_match_id] })
+  cycle.elimination.rounds.unshift({ id: 'q1', week_id: qWeek, phase: 'QUALIFIER', kind: 'QUALIFIER', round_number: 1, slots: 1,
+    qualified_team_ids: [a], outcome_team_ids: [a],
+    items: [{ order: 1, type: 'MATCH', team_a_id: a, team_b_id: b, match_id: q.raw_match_id }, { order: 2, type: 'BYE', team_a_id: c, team_b_id: null, match_id: null }] })
+  return db
+}
+
+test('the playoff edition carries the tiebreak qualifier ahead of the bracket; byes stay out', () => {
+  const before = reportOf('medal-complete').playoff
+  assert.equal(before.rounds.some(round => round.kind === 'QUALIFIER'), false, 'a segment without a qualifier keeps its facts')
+  const report = buildWeeklyReportPreview(withQualifier(), options)
+  const [qualifier] = report.playoff.rounds
+  assert.equal(qualifier.kind, 'QUALIFIER')
+  assert.deepEqual(qualifier.items.map(item => [item.id, item.weekId, item.scores, item.format]), [['QUALIFIER-FIXTURE-Q1', 'sample-cycle-1-qualifier', ['2', '0'], 'FT2']])
+  assert.deepEqual(report.playoff.rounds.slice(1).map(round => round.kind), before.rounds.map(round => round.kind))
+  assert.deepEqual(report.playoff.placements, before.placements, 'medals come from the bracket only')
+  const draft = createIssueDraft(report, 'FCW2026', 'zh-CN')
+  assert.deepEqual(validateIssueDraft(draft).errors, [])
+  for (const locale of ['zh-CN', 'zh-TW', 'en-US', 'ko-KR']) assert.notEqual(playoffText('QUALIFIER', locale), 'QUALIFIER')
+})

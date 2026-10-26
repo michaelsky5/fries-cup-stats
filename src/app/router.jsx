@@ -3,6 +3,9 @@ import RouteErrorPage from '../pages/errors/RouteErrorPage.jsx'
 import { getStoredLocale } from '../lib/i18n.js'
 import { normalizeLocale } from '../lib/locales.js'
 import { ensureUiLocale, ensureTraditionalReview } from '../lib/localeCatalog.js'
+import { getTeamArchiveRedirect } from '../features/team-dossier/teamArchiveRoutes.js'
+import { getDesignPreview } from '../features/fd-design/designPreview.js'
+import { getPlayerArchiveRedirect } from '../features/player-dossier/playerArchiveRoutes.js'
 
 export function RouteFallback() {
   const location = useLocation()
@@ -25,6 +28,24 @@ export function RouteFallback() {
   )
 }
 
+// 票 2.42: old 赛季征程 links (/teams/:id/journey, ?chapter=, ?tab=) open the page that now holds
+// that content, keeping the season and language.
+function teamArchiveLoader({ request }) {
+  const url = new URL(request.url)
+  // The older preview designs keep their own ?tab= views.
+  if (getDesignPreview(url.search) !== 'kpr5') return null
+  const target = getTeamArchiveRedirect(url.pathname, url.search, url.hash)
+  return target ? redirect(target) : null
+}
+
+// 票 2.52: the former player 赛季征程 page opens the data page's 比赛记录.
+function playerArchiveLoader({ request }) {
+  const url = new URL(request.url)
+  if (getDesignPreview(url.search) !== 'kpr5') return null
+  const target = getPlayerArchiveRedirect(url.pathname, url.search)
+  return target ? redirect(target) : null
+}
+
 function lazyDefault(importer) {
   return async () => ({ Component: (await importer()).default })
 }
@@ -42,6 +63,13 @@ function lazyReviewStory(storyType) {
       }
     }
   }
+}
+
+// 票 2.14: bare review links open a season whose review is open (see getReviewSeasonRedirect).
+async function reviewSeasonLoader({ request }) {
+  const { getReviewSeasonRedirect } = await import('../config/seasons.js')
+  const target = getReviewSeasonRedirect(new URL(request.url))
+  return target ? redirect(target) : null
 }
 
 function ScheduleRedirect() {
@@ -130,7 +158,6 @@ const router = createBrowserRouter([
     { path: '/lobby/me/formation', lazy: async () => ({ Component: (await import('../features/team-lobby/LobbyPages.jsx')).LobbyEditor }) },
     ...['register', 'login', 'verify-email', 'recover', 'reset-password'].map(path => ({ path: `/account/${path}`, lazy: lazyDefault(() => import('../features/team-lobby/AccountEntryPage.jsx')) }))
   ] },
-  { path: '/guides/weekly-room', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/room-guide/WeeklyRoomGuidePage.jsx')) },
   { path: '/guides/weekly-room/simulate', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../features/room-guide/RoomPracticePage.jsx')) },
   { path: '/account', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/account/AccountSettingsPage.jsx')) },
   { path: '/account/recovery', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/account/AccountRecoveryPage.jsx')) },
@@ -160,23 +187,26 @@ const router = createBrowserRouter([
       { path: 'leaderboard', lazy: lazyDefault(() => import('../pages/leaderboard/LeaderboardPage.jsx')) },
       { path: 'players', lazy: lazyDefault(() => import('../pages/players/PlayersPage.jsx')) },
       { path: 'players/:playerId', lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
-      { path: 'players/:playerId/journey', lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
+      { path: 'players/:playerId/journey', loader: playerArchiveLoader, lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
       { path: 'players/:playerId/analysis', lazy: lazyDefault(() => import('../pages/players/PlayerDetailPage.jsx')) },
       { path: 'teams', lazy: lazyDefault(() => import('../pages/teams/TeamsPage.jsx')) },
-      { path: 'teams/:teamId', lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
-      { path: 'teams/:teamId/journey', lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
-      { path: 'teams/:teamId/analysis', lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
+      { path: 'teams/:teamId', loader: teamArchiveLoader, lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
+      { path: 'teams/:teamId/journey', loader: teamArchiveLoader, lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
+      { path: 'teams/:teamId/analysis', loader: teamArchiveLoader, lazy: lazyDefault(() => import('../pages/teams/TeamDetailPage.jsx')) },
       { path: 'staff', lazy: lazyDefault(() => import('../pages/staff/StaffPage.jsx')) },
       { path: 'staff/:staffId', lazy: lazyDefault(() => import('../pages/staff/StaffDetailPage.jsx')) },
       { path: 'roster', lazy: lazyDefault(() => import('../pages/roster/RosterHubPage.jsx')) },
       { path: 'heroes', lazy: lazyDefault(() => import('../pages/heroes/HeroesPage.jsx')) },
       { path: 'advance', lazy: lazyDefault(() => import('../pages/advance/AdvancePage.jsx')) },
       { path: 'support', lazy: lazyDefault(() => import('../features/weekly-support/WeeklySupportPage.jsx')) },
+      { path: 'play', lazy: lazyDefault(() => import('../features/participation-hub/ParticipationHubPage.jsx')) },
+      // 票 2.26: the room guide shares the event centre header, status line and tab bar.
+      { path: 'guides/weekly-room', lazy: lazyDefault(() => import('../features/room-guide/WeeklyRoomGuidePage.jsx')) },
       { path: 'standings', lazy: lazyDefault(() => import('../pages/standings/StandingsPage.jsx')) },
       { path: 'maps', lazy: lazyDefault(() => import('../pages/stats/MapStatsPage.jsx')) },
       { path: 'maps/:mapName', lazy: lazyDefault(() => import('../pages/stats/MapDetailPage.jsx')) },
 
-      { path: 'review', lazy: lazyDefault(() => import('../pages/review/ReviewEntryPage.jsx')) },
+      { path: 'review', loader: reviewSeasonLoader, lazy: lazyDefault(() => import('../pages/review/ReviewEntryPage.jsx')) },
 
       { path: 'fantasy', lazy: lazyDefault(() => import('../EsportsManagerClassic/pages/FantasyPage.jsx')) },
       { path: 'fantasy-classic', lazy: lazyDefault(() => import('../EsportsManagerClassic/pages/FantasyPage.jsx')) },
@@ -187,11 +217,11 @@ const router = createBrowserRouter([
     ]
   },
 
-  { path: '/review/story/tournament', HydrateFallback: RouteFallback, lazy: lazyReviewStory('tournament') },
-  { path: '/review/story/person/:identityKey', HydrateFallback: RouteFallback, lazy: lazyReviewStory('person') },
-  { path: '/review/story/player/:playerId', HydrateFallback: RouteFallback, lazy: lazyReviewStory('player') },
-  { path: '/review/story/team/:teamId', HydrateFallback: RouteFallback, lazy: lazyReviewStory('team') },
-  { path: '/review/story/staff/:staffType/:staffKey', HydrateFallback: RouteFallback, lazy: lazyReviewStory('staff') },
+  { path: '/review/story/tournament', loader: reviewSeasonLoader, HydrateFallback: RouteFallback, lazy: lazyReviewStory('tournament') },
+  { path: '/review/story/person/:identityKey', loader: reviewSeasonLoader, HydrateFallback: RouteFallback, lazy: lazyReviewStory('person') },
+  { path: '/review/story/player/:playerId', loader: reviewSeasonLoader, HydrateFallback: RouteFallback, lazy: lazyReviewStory('player') },
+  { path: '/review/story/team/:teamId', loader: reviewSeasonLoader, HydrateFallback: RouteFallback, lazy: lazyReviewStory('team') },
+  { path: '/review/story/staff/:staffType/:staffKey', loader: reviewSeasonLoader, HydrateFallback: RouteFallback, lazy: lazyReviewStory('staff') },
   { path: '/scouting/:shareKey', HydrateFallback: RouteFallback, lazy: lazyDefault(() => import('../pages/scouting/ScoutingReportRoute.jsx')) },
   { path: '/scouting/:shareKey/players/:playerId', HydrateFallback: RouteFallback, lazy: lazyNamed(() => import('../pages/scouting/ScoutingReportRoute.jsx'), 'ScoutingPlayerRoute') },
   { path: '*', element: <RouteErrorPage notFound /> }

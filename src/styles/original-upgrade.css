@@ -6,19 +6,17 @@ html [data-design='kpr'][data-design-edition='hybrid'][data-header-mode] {
   --kpr-header-height: calc(var(--fc-masthead-height) + var(--fc-masthead-inset) + var(--kpr-preview-height));
 }
 
-html [data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true'] {
-  --fc-masthead-inset: 2px;
-}
-
 html [data-design='kpr'][data-design-edition='hybrid'] [data-upgrade-header='event-center'] {
   box-shadow: 0 10px 24px #090a081f;
   --fc-header-control-height: 44px;
   --fc-header-control-font: 12px;
   --fc-header-control-line: 18px;
 
+  /* 票 2.67: the navigation stays centred while the control dock fits its half; a wider dock (signed out, with
+     「我的关注」) widens its own column and moves the navigation left instead of running under it. */
   [data-upgrade-bar] {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) max-content minmax(max-content, 1fr);
     align-items: center;
     gap: 20px;
     min-height: var(--fc-masthead-height);

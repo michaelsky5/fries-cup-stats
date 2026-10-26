@@ -19,7 +19,7 @@ export function SignalDataNav({ active, withSeason, isEn, backTo, backLabel, bac
       to={item.id === active ? activeHref || backTo || withSeason(item.path) : withSeason(item.path)}
       state={item.id === active && (!activeHref || activeHref === backTo) ? backState : undefined}
       aria-current={item.id === active ? 'page' : undefined}
-    ><span>{isEn ? item.en : uiText(item.zh, uiLocale)}</span>{!isEn ? <small className={sectionStyles.code} aria-hidden="true">{item.code}</small> : null}</Link>)}</div>
+    ><span>{isEn ? item.en : uiText(item.zh, uiLocale)}</span></Link>)}</div>
     {backTo ? <Link to={backTo} state={backState} className={styles.back} aria-label={backLabel}>
       <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M20 12H5m6-6-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
       <span>{backLabel}</span>

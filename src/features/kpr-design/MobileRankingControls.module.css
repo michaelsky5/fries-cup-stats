@@ -53,3 +53,14 @@
   .footer button { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 46px; padding: 10px 14px; border: 1px solid var(--fc-data-line-strong); background: transparent; color: var(--fc-data-ink); font-size: 14px; }
   .footer button:last-child { background: var(--fc-data-signal); border-color: var(--fc-data-signal); font-weight: 700; }
 }
+
+/* 票 2.20: phone header budget. The section tabs above name the page; role tabs read on one
+   line; the sort shortcut row folds into the results line (the 筛选 sheet still sets it). */
+@media (max-width: 600px) {
+  .heading { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .controls { padding-top: 12px; }
+  .roles button { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 6px 2px; }
+  .searchRow { padding-top: 8px; }
+  .results { min-height: 44px; padding: 4px 0; }
+  .reading { display: none; }
+}

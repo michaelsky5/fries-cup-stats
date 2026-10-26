@@ -25,8 +25,14 @@ test('main stage labels follow the approved names; qualifier remains an auxiliar
 test('Chinese and English identity labels use persisted numbers and phase instead of format or live state', () => {
   const match = { match_code: 'FCW26-C02-W05-PO-M03', format: 'RR5', status: 'LIVE',
     weekly_context: { cycle_sequence: 9, week_number: 9, phase: 'REGULAR', round_label: '决赛' } }
-  assert.equal(getWeeklyMatchIdentityLabel(match), 'FCW S1 C2 · 第 5 周 · 季后赛 · 决赛 · 第 03 场')
-  assert.equal(getWeeklyMatchIdentityLabel(match, 'en-US'), 'FCW S1 C2 · Week 5 · Playoffs · Final · Match 03')
+  // 票 2.49: playoff and qualifier matches are named by stage, never by a week number.
+  assert.equal(getWeeklyMatchIdentityLabel(match), 'FCW S1 C2 · 季后赛 · 决赛 · 第 03 场')
+  assert.equal(getWeeklyMatchIdentityLabel(match, 'en-US'), 'FCW S1 C2 · Playoffs · Final · Match 03')
+  const qualifier = { match_code: 'FCW26-C01-W05-QUAL-M01', weekly_context: { cycle_sequence: 1, week_number: 5, phase: 'QUALIFIER', week_label: '第 5 周' } }
+  assert.equal(getWeeklyMatchIdentityLabel(qualifier), 'FCW S1 C1 · 季后赛 · 晋级加赛 · 第 01 场')
+  assert.equal(getWeeklyMatchIdentityLabel(qualifier, 'en-US'), 'FCW S1 C1 · Playoffs · Tiebreak qualifier · Match 01')
+  assert.match(getWeeklyMatchIdentityLabel(qualifier, 'ko-KR'), /^FCW S1 C1 · 플레이오프 · 진출권 결정전 · /)
+  assert.equal(getWeeklyMatchIdentityLabel({ match_code: 'FCW26-C01-W06-PO-M02', weekly_context: { week_label: '第一赛段季后赛', phase: 'PLAYOFFS' } }), 'FCW S1 C1 · 季后赛 · 第 02 场', 'no round label: the stage is not repeated')
   assert.equal(getWeeklyMatchIdentity({ weeklyIdentity: { code: 'FCW26-C01-W04-QUAL-M02', phase: 'QUALIFIER', roundLabel: '第 2 轮' } }).match_number, 2)
   assert.equal(getWeeklyMatchIdentityLabel({ match_code: 'FCW26-C00-W01-REG-M01', weekly_context: { cycle_name: '试运行' } }), '试运行 · 第 1 周 · 积分赛 · 第 01 场')
 })

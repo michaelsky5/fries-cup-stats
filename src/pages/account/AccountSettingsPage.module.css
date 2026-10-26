@@ -29,7 +29,7 @@
 .emailChange .actions { align-items: end; }
 .emailChange input { box-sizing: border-box; }
 .cardHeader { padding: 24px 32px; border-bottom: 1px solid var(--fc-data-line); }
-.cardHeader h2 { margin: 0; font-size: 22px; font-weight: 750; }
+.cardHeader h2 { margin: 0; font-size: var(--fc-data-section-title-size); font-weight: 800; }
 .cardHeader p { margin: 10px 0 0; font-size: 13px; line-height: 1.8; color: var(--fc-data-text-muted); }
 .cardBody { padding: 24px 32px; }
 .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; min-width: 0; margin: 0; padding: 0; border: 0; }
@@ -93,7 +93,7 @@
 .deviceTitle strong { font-size: 15px; overflow-wrap: anywhere; }
 .deviceDetails > span, .deviceDetails > small { color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
 .guest { max-width: 760px; padding: clamp(24px, 4vw, 48px); border: 1px solid var(--fc-data-line); background: var(--fc-data-paper-raised); }
-.guest h2 { margin: 18px 0; font-size: 28px; }
+.guest h2 { margin: 0 0 16px; font-size: var(--fc-data-section-title-size); font-weight: 800; }
 .guest > p { max-width: 560px; font-size: 14px; line-height: 1.9; color: var(--fc-data-text-muted); }
 .guest > button { margin-top: 20px; }
 .guestLink { display: inline-block; margin: 24px 0 0 24px; color: inherit; font-size: 13px; }
@@ -103,7 +103,7 @@
 .leavePrompt p { font-size: 14px; line-height: 1.8; overflow-wrap: anywhere; }
 .overview { min-width: 0; }
 .overviewHeading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
-.overviewHeading h2 { margin: 0; font-size: 22px; }
+.overviewHeading h2 { margin: 0; font-size: var(--fc-data-section-title-size); font-weight: 800; }
 .overviewHeading p { margin: 8px 0 0; font-size: 13px; color: var(--fc-data-text-muted); line-height: 1.8; }
 .overviewGrid { display: grid; grid-template-columns: 270px minmax(0, 1fr); border: 1px solid var(--fc-data-line); }
 .accountSummary { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; padding: 28px; color: var(--fc-data-paper-raised); background: var(--fc-data-ink); }
@@ -184,4 +184,4 @@
   .saveBar { position: sticky; z-index: 10; bottom: calc(63px + env(safe-area-inset-bottom)); padding: 12px; margin-inline: -12px; background: var(--fc-data-paper-raised); border: 1px solid var(--fc-data-line); }
 }
 .emailConfirmation { color: var(--fc-data-ink); font-size: 14px; }
-.emailConfirmation h2 { margin: 0 0 12px; font-size: 24px; line-height: 1.4; color: var(--fc-data-ink); }
+.emailConfirmation h2 { margin: 0 0 12px; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; color: var(--fc-data-ink); }

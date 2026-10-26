@@ -1,4 +1,4 @@
-import { translateUiText as uiText } from '../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../lib/uiText.js'
 import { Outlet, useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -23,6 +23,8 @@ import { getPublicDataStatus } from '../lib/publicDataStatus.js'
 import { formatUpdatedAt } from '../lib/format.js'
 import { getGlobalSummary, getSeasonStatus } from '../lib/seasonSummary.js'
 import { isWeeklyOverview } from '../features/weekly-overview/weeklyOverviewModel.js'
+import { isChineseLocale, weeklyMatchContextLabel } from '../features/weekly-overview/weeklyPresentation.js'
+import { getMatchPairingLabel } from '../lib/matchPairingLabel.js'
 import { buildFriesCupTitle, getDataCenterPageLabel } from '../lib/pageTitle.js'
 import { getRestoreScrollY, restoreWindowScroll } from '../lib/navigationState.js'
 import { FavoritesProvider, normalizeSeasonId, useFavorites } from '../features/favorites/index.js'
@@ -30,8 +32,8 @@ import { useAuth } from '../features/auth/AuthProvider.jsx'
 import { buildAccountIdentity, findVerifiedAccountIdentity, getAccountCapabilities, resolveAccountIdentityTarget } from '../features/auth/accountIdentity.js'
 import PublicHeader from '../components/layout/PublicHeader.jsx'
 import PartnerTrialNotice from '../components/layout/PartnerTrialNotice.jsx'
-import { getDossierView } from '../features/team-dossier/teamDossierScenes.js'
-import { PRIMARY_NAV, getNavLabel, getPersonalNavItem, getNavigationSearch } from '../components/layout/publicNavigation.js'
+import { PRIMARY_NAV, getNavLabel, getPersonalNavItem, getNavigationSearch, getWeeklyNavigationPath } from '../components/layout/publicNavigation.js'
+import OverviewSectionNav, { overviewSectionId } from '../components/navigation/OverviewSectionNav.jsx'
 import EventContextBar from '../components/layout/EventContextBar.jsx'
 import UrgentAnnouncementGate from '../features/communications/UrgentAnnouncementGate.jsx'
 import { fetchAccountAttentionContext } from '../features/my-space/accountAttentionApi.js'
@@ -75,8 +77,12 @@ function createLayoutTranslator(locale) {
   return (key, fallback = key) => REVIEW_LAYOUT_COPY_KO[key] || baseTranslator(key, fallback)
 }
 
-function getLayoutDocumentTitle(pathname, search, locale) {
+function getLayoutDocumentTitle(pathname, search, locale, db) {
   if (/^\/reports(?:\/|$)/.test(pathname)) return buildFriesCupTitle(locale === 'en-US' ? 'Fries Cup Weekly' : '薯条周报', locale)
+  // 票 2.44: a match tab reads 「BBB vs SPS · 第一赛段 · 季后赛 · 决赛」 once the season data is in.
+  const matchPath = /^\/matches\/([^/]+)$/.exec(pathname)
+  const pairing = matchPath && db ? getMatchPairingLabel(db, decodeURIComponent(matchPath[1])) : null
+  if (pairing) return buildFriesCupTitle([pairing.pairing, weeklyMatchContextLabel(pairing.match, locale)].filter(Boolean).join(' · '), locale)
   if (/^\/review\/?$/.test(pathname)) {
     if (locale === 'ko-KR') return '시즌 리뷰 | Fries Cup'
     if (locale === 'en-US') return 'Season Review | Fries Cup'
@@ -95,8 +101,11 @@ function getNavActiveGroup(pathname, search = '') {
   if (pathname.startsWith('/advance') || pathname.startsWith('/standings')) return 'advance'
   if (pathname.startsWith('/teams') || pathname.startsWith('/players') || pathname.startsWith('/staff') || pathname.startsWith('/roster')) return 'roster'
   if (pathname.startsWith('/leaderboard') || pathname.startsWith('/heroes') || pathname.startsWith('/maps')) return 'database'
+  if (/^\/(?:play|guides\/weekly-room)\/?$/.test(pathname)) return 'play'
   return ''
 }
+
+const SKELETON_ROWS = [0, 1, 2, 3, 4]
 
 export default function DataLayout() {
   const shellRef = useRef(null)
@@ -138,11 +147,15 @@ export default function DataLayout() {
   const isHeroDataRoute = isKprHybridDesign && /^\/heroes\/?$/.test(location.pathname)
   const isMapDataRoute = isKprHybridDesign && /^\/maps(?:\/|$)/.test(location.pathname)
   const isTeamArchiveRoute = isKprHybridDesign && /^\/teams\/[^/]+(?:\/(?:journey|analysis))?\/?$/.test(location.pathname)
-  const isTeamExhibitionRoute = isTeamArchiveRoute && getDossierView(location.pathname, location.search) === 'gallery'
   const isPlayerArchiveRoute = isKprHybridDesign && /^\/players\/[^/]+(?:\/(?:analysis|journey))?\/?$/.test(location.pathname)
+  const isPlayRoute = isKprHybridDesign && /^\/play\/?$/.test(location.pathname)
+  // 票 2.26: every hybrid page uses the one-line directory status line.
+  const isUnifiedContextRoute = isKprHybridDesign && /^\/(?:support|guides\/weekly-room)\/?$/.test(location.pathname)
   const isKprSamplePage = /^(?:\/|\/leaderboard\/?)$/.test(location.pathname) ||
     (isKprHybridDesign && /^\/(?:matches|advance)(?:\/)?$/.test(location.pathname))
   const isFdSamplePage = /^(?:\/leaderboard|\/teams\/[^/]+)\/?$/.test(location.pathname)
+  // Pages whose frame spans the window and carry their own side gutters.
+  const isFullBleedFrame = location.pathname === '/' || isTeamArchiveRoute || isPlayerArchiveRoute
   const {
     accountDataError,
     accountIdentities,
@@ -167,7 +180,7 @@ export default function DataLayout() {
   const isWeeklyHomeRoute = isKprHybridDesign && location.pathname === '/' && isWeeklyOverview(db, season)
   const isAdvanceIndexRoute = isKprHybridDesign && /^\/advance\/?$/.test(location.pathname)
   const isPublicFollowingRoute = isAccountSpaceRoute && ((!isAuthenticated && !isMatchEntry) || location.pathname.startsWith('/following') || new URLSearchParams(location.search).get('section') === 'following')
-  const isCompactContextRoute = /^\/reports(?:\/|$)/.test(location.pathname) || /^\/staff\/[^/]+\/?$/.test(location.pathname) || isRosterDirectoryRoute || isScheduleDirectoryRoute || isPublicMatchDetailRoute || isPlayerRankingsRoute || isHeroDataRoute || isMapDataRoute || isAdvanceIndexRoute || isWeeklyHomeRoute || isPublicFollowingRoute || isPlayerArchiveRoute || (isTeamArchiveRoute && !isTeamExhibitionRoute)
+  const isCompactContextRoute = /^\/reports(?:\/|$)/.test(location.pathname) || /^\/staff\/[^/]+\/?$/.test(location.pathname) || isRosterDirectoryRoute || isScheduleDirectoryRoute || isPublicMatchDetailRoute || isPlayerRankingsRoute || isHeroDataRoute || isMapDataRoute || isAdvanceIndexRoute || isWeeklyHomeRoute || isPublicFollowingRoute || isPlayerArchiveRoute || isPlayRoute || isUnifiedContextRoute || isTeamArchiveRoute
   const competition = useAccountCompetition(season.id)
   const attentionSeasonId = competition.id
   const attentionEnabled = isAuthenticated && !competition.loading && !competition.error && !competition.issue
@@ -230,15 +243,23 @@ export default function DataLayout() {
         number: String(activeNavIndex + 1).padStart(2, '0')
       }
     : null
-  const accountAttention = useMemo(
-    () => buildAccountAttention(attentionEnabled && accountAttentionContext?.scope === attentionScope ? accountAttentionContext : null, compatibleLayoutLocale),
-    [accountAttentionContext, compatibleLayoutLocale, attentionEnabled, attentionScope]
-  )
   const navigationSearch = getNavigationSearch(location.search, designPreview, layoutLocale)
   const withSeason = useMemo(
     () => path => withAccountCompetition(buildSeasonLink(path, seasonId, navigationSearch), competition.navigationId, navigationSearch),
     [seasonId, navigationSearch, competition.navigationId]
   )
+  // 票 2.45: same rule as the phase card — open while enabled and before any deadline; the deadline
+  // is compared with the time the account data was last read, not during render.
+  const seasonRegistrationRules = db?.season?.rules?.registration
+  const registrationNextAction = useMemo(() => seasonRegistrationRules?.enabled === true
+    ? { closesAt: seasonRegistrationRules.closesAt || null, path: withSeason(`/participate/${encodeURIComponent(seasonId)}`) }
+    : null, [seasonRegistrationRules, seasonId, withSeason])
+  const accountAttention = useMemo(
+    () => buildAccountAttention(attentionEnabled && accountAttentionContext?.scope === attentionScope ? accountAttentionContext : null, compatibleLayoutLocale, { registration: registrationNextAction }),
+    [accountAttentionContext, compatibleLayoutLocale, attentionEnabled, attentionScope, registrationNextAction]
+  )
+  const overviewSection = isKprHybridDesign && !season?.partnerTrial ? overviewSectionId(location.pathname) : null
+  const overviewNavPath = path => withSeason(getWeeklyNavigationPath(path, location.search, season?.rules?.weeklyCompetition?.enabled || season?.competitionFormat === 'WEEKLY'))
   const accountIdentity = useMemo(
     () => buildAccountIdentity({
       primaryIdentity: accountPrimaryIdentity,
@@ -288,8 +309,8 @@ export default function DataLayout() {
   useEffect(() => {
     document.title = isAccountSpaceRoute && !isAuthenticated && !isMatchEntry
       ? buildFriesCupTitle(getNavLabel(getPersonalNavItem(false), layoutLocale), layoutLocale)
-      : getLayoutDocumentTitle(location.pathname, location.search, layoutLocale)
-  }, [layoutLocale, location.pathname, location.search, isAccountSpaceRoute, isAuthenticated, isMatchEntry])
+      : getLayoutDocumentTitle(location.pathname, location.search, layoutLocale, db)
+  }, [layoutLocale, location.pathname, location.search, isAccountSpaceRoute, isAuthenticated, isMatchEntry, db])
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
@@ -374,7 +395,9 @@ export default function DataLayout() {
     accountIdentityError: accountDataError?.message || '',
     isAccountIdentityLoading: isAccountDataLoading,
     isAuthenticated,
-    authUser
+    authUser,
+    accountNextAction: accountAttention.nextAction,
+    accountHasTeam: accountAttention.hasTeam
   }
 
   const eventContextDock = isKprHybridDesign && (headerContextMode === 'data' || isWeeklyHomeRoute) ? (
@@ -396,6 +419,7 @@ export default function DataLayout() {
             presentation={isCompactContextRoute ? 'directory' : 'default'}
             isPreview={Boolean(db?.meta?.preview)}
             onRetry={isCompactContextRoute && !isLoading && !error ? retry : undefined}
+            nextAction={isPlayRoute ? null : accountAttention.nextAction}
           />
         </div>
       ) : null
@@ -413,7 +437,6 @@ export default function DataLayout() {
       data-header-mode={headerContextMode}
       data-archive-home={isArchivedHomeRoute || undefined}
       data-compact-context={isCompactContextRoute || undefined}
-      data-team-exhibition={isTeamExhibitionRoute || undefined}
       data-roster-directory={isRosterDirectoryRoute || undefined}
       data-schedule-directory={isScheduleDirectoryRoute || undefined}
       data-weekly-advance={isWeeklyAdvanceRoute || undefined}
@@ -432,7 +455,7 @@ export default function DataLayout() {
         isReviewEntryRoute={isReviewEntryRoute} handleLocaleChange={handleLocaleChange} activeSection={activeSection}
       />
 
-      {!isTeamExhibitionRoute && !isMatchEntry && !(isAuthenticated && /^\/me\/?$/.test(location.pathname) && new URLSearchParams(location.search).get('section') !== 'following') ? eventContextDock : null}
+      {!isMatchEntry && !(isAuthenticated && /^\/me\/?$/.test(location.pathname) && new URLSearchParams(location.search).get('section') !== 'following') ? eventContextDock : null}
 
       <UrgentAnnouncementGate
         seasonId={seasonId}
@@ -444,9 +467,17 @@ export default function DataLayout() {
       <div className={styles.pageFrame} data-roster-index={isRosterIndexRoute || undefined} data-roster-directory={isRosterDirectoryRoute || undefined} data-schedule-directory={isScheduleDirectoryRoute || undefined} data-match-detail={isPublicMatchDetailRoute || undefined} data-player-rankings={isPlayerRankingsRoute || undefined} data-hero-data={isHeroDataRoute || undefined} data-map-data={isMapDataRoute || undefined} data-data-section={isEditorialDataRoute || undefined} data-team-archive={isTeamArchiveRoute || undefined}>
         <main className={styles.main} aria-busy={isLoading && needsPublicSnapshot ? 'true' : 'false'}>
           <PartnerTrialNotice season={season} locale={layoutLocale} />
-          {isLoading && needsPublicSnapshot ? (
+          {isLoading && needsPublicSnapshot && isKprHybridDesign ? (
+            // 票 2.17: the header and status bar are already drawn; a page-shaped placeholder holds the
+            // content area until the snapshot arrives. The full-page box below is left to the preview designs.
+            <div className={styles.pageSkeleton} data-page-skeleton data-bleed={isFullBleedFrame || undefined} role="status" aria-live="polite">
+              <span className={styles.skeletonLabel}>{t('layout.state.loading')}</span>
+              <div className={styles.skeletonCard} aria-hidden="true"><i /><i /><i /><span><i /><i /></span></div>
+              <ul className={styles.skeletonRows} aria-hidden="true">{SKELETON_ROWS.map(row => <li key={row}><i /><i /></li>)}</ul>
+            </div>
+          ) : isLoading && needsPublicSnapshot ? (
             <div className={`${styles.systemBox} ${styles.syncBox}`} role="status" aria-live="polite">
-              <span className={styles.syncKicker}>LIVE DATA SYNC</span>
+              <span className={styles.syncKicker}>{pickUiLocale(layoutLocale, '赛事数据同步', 'LIVE DATA SYNC', 'LIVE DATA SYNC', '賽事數據同步')}</span>
               <div className={styles.syncMark} aria-hidden="true"><span /></div>
               <strong className={styles.syncTitle}>{t('layout.state.loading')}</strong>
               <p className={styles.syncDescription}>
@@ -482,12 +513,16 @@ export default function DataLayout() {
                     </button>
                   </div>
                 ) : null}
+                {overviewSection ? <OverviewSectionNav active={overviewSection} locale={layoutLocale} navPath={overviewNavPath} inset={overviewSection !== 'overview'} /> : null}
                 <Outlet context={outletContext} />
-                {isTeamExhibitionRoute ? eventContextDock : null}
                 {isKprHybridDesign && headerContextMode === 'overview' && !isWeeklyHomeRoute && !isArchivedHomeRoute ? (
                   <div className={styles.dataStamp} data-i18n-ignore>
                     <span>{dataStatus.label}</span><time>{updatedAtText}</time>
                   </div>
+                ) : null}
+                {/* 票 2.13: Chinese pages drop the UTC+8 after each time and say it once here. */}
+                {isKprHybridDesign && needsPublicSnapshot && isChineseLocale(layoutLocale) ? (
+                  <p className={`${styles.timeNote} ${/^\/?$/.test(location.pathname) ? styles.timeNoteGutter : ''}`} data-time-zone-note data-i18n-ignore>{pickUiLocale(layoutLocale, '时间均为北京时间（UTC+8）', '', '', '時間均為北京時間（UTC+8）')}</p>
                 ) : null}
               </>
             </FavoritesProvider>

@@ -6,7 +6,6 @@
 .page :is(button, select, input, a):focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 4px; }
 .page :is(h1, h2, h3, p) { margin: 0; }
 .heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px 32px; padding: var(--fc-data-index-heading-space) 0; }
-.eyebrow { color: var(--muted); font-size: 11px; letter-spacing: .09em; }
 .heading h1 { font-size: var(--fc-data-index-title-size); line-height: var(--fc-data-index-title-leading); letter-spacing: -.04em; font-weight: 900; margin: 8px 0 12px; }
 .heading p:last-child { color: var(--fc-data-text-muted); font-size: 14px; line-height: 1.7; }
 .headingActions { display: flex; align-items: center; gap: 24px; padding-bottom: 3px; flex-shrink: 0; }
@@ -106,7 +105,6 @@
 .mapCells a:hover { background: #edc54433; border-color: var(--fc-data-focus-on-light); }
 .noMaps { font-size: 10px; color: var(--muted); }
 .empty { border-block: 1px solid var(--line); padding: 58px 32px; min-height: 270px; background: #ffffff35; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
-.empty > span { font-size: 10px; letter-spacing: .07em; color: var(--muted); }
 .empty h3 { font-size: 28px; }
 .empty p { font-size: 13px; color: var(--muted); line-height: 1.8; }
 .empty :is(a, button) { border: 1px solid var(--line); background: transparent; padding: 12px 18px; font-size: 12px; }
@@ -118,7 +116,6 @@
 @media (max-width: 600px) {
   .heading { padding: 20px 0 16px; gap: 15px; }
   .heading p:last-child { font-size: 13px; }
-  .eyebrow { font-size: 9px; }
   .headingActions { gap: 12px; align-items: center; padding: 0; }
   .overviewLink { font-size: 11px; display: flex; gap: 8px; }
   .overviewLink small { display: none; }
@@ -277,4 +274,101 @@
   .previewMaps .mapHeading { margin-bottom: 10px; }
   .previewMaps .mapCells li > :is(a, span) { min-height: 46px; padding-block: 4px; }
   .previewMaps .mapArt { height: 34px; }
+}
+
+/* Watch cell (票 2.3): live room from an hour before the start, recordings afterwards.
+   Sits between the match and the details / maps control; on phones it shares the
+   bottom bar with the maps toggle. */
+.watch { display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 44px; min-height: 44px; padding: 0 16px; border-left: 1px solid var(--line); color: var(--ink); font-size: 12px; font-weight: 700; white-space: nowrap; text-decoration: none; }
+.watch i { font-style: normal; font-size: 17px; color: var(--fc-data-focus-on-light); }
+.watch[data-watch-kind="live"] { color: var(--fc-data-status-live, #277e70); }
+.watch[data-watch-kind="replay"] { color: var(--muted); font-weight: 600; }
+.watch:hover { background: var(--fc-data-paper-deep); }
+.watch:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: -4px; }
+.matchRow:has(> .watch) { grid-template-columns: minmax(0, 1fr) auto auto; }
+.matchRow[data-expanded] > .watch { background: var(--ink); color: var(--paper); border-left-color: var(--fc-data-line-on-dark); }
+.matchRow[data-expanded] > .watch i { color: var(--yellow); }
+@media (max-width: 600px) {
+  .matchRow:has(> .watch) { grid-template-columns: minmax(0, 1fr) auto; }
+  .matchRow:has(> .watch) > .matchMain { grid-column: 1 / -1; }
+  .matchRow:has(> .watch) > .mapToggle { order: 1; }
+  .matchRow:has(> .watch) > .watch { order: 2; min-height: 36px; padding: 0 14px; border-top: 1px solid var(--line); font-size: 11px; }
+  .matchRow:has(> .watch) > .mapProgress { order: 3; grid-column: 1 / -1; }
+  .matchRow[data-expanded] > .watch { border-top-color: var(--fc-data-line-on-dark); }
+}
+@media (min-width: 901px) {
+  .matchRow:has(> .watch) { grid-template-columns: minmax(0, 1fr) auto 92px; }
+}
+@media (min-width: 901px) and (max-width: 1100px) {
+  .matchRow:has(> .watch) { grid-template-columns: minmax(0, 1fr) auto 40px; }
+  .watch { padding: 0 12px; }
+}
+
+/* One row per match (票 2.12): time and status | teams, score and round | watch | maps.
+   The match number lives on the detail page; search still matches it. */
+.followedMark, .watchShort { display: none; }
+@media (min-width: 901px) {
+  .score > small { display: block; }
+}
+@media (max-width: 600px) {
+  /* Page head: the dock and the status line already say where you are. */
+  .heading { padding: 6px 0 4px; gap: 0; }
+  .heading > div:first-child > p:last-child { display: none; }
+  .heading h1 { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .listHeading { padding: 14px 0 10px; }
+  .listHeading p { display: none; }
+  .matchRow, .matchRow:has(> .watch) { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .matchRow:has(> .watch) > .matchMain { grid-column: auto; }
+  .matchMain { grid-template-columns: 50px minmax(0, 1fr); gap: 6px; padding: 10px 6px 10px 10px; min-height: 64px; }
+  .time { display: grid; gap: 3px; align-content: center; }
+  .time > strong { font-size: 15px; }
+  .time .state { font-size: 11px; gap: 0; white-space: nowrap; }
+  .time .state i { display: none; } /* live rows keep their green text and edge */
+  .headingActions [data-weekly-cycle-picker] > span { display: none; } /* cycle status: the week rail shows it */
+  .time > .format { display: none; }
+  .followedMark { display: block; color: #896c1b; font-size: 11px; }
+  .duel { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 6px; }
+  .team { gap: 4px; }
+  .team b { font-size: 15px; }
+  .logo { width: 18px; height: 18px; flex-basis: 18px; }
+  .score { min-width: 44px; gap: 2px; }
+  .score > strong { font-size: 20px; }
+  .score > small { font-size: 11px; white-space: nowrap; }
+  .watch, .matchRow:has(> .watch) > .watch { order: 0; min-height: 0; padding: 0 7px; border-top: 0; border-left: 1px solid var(--line); font-size: 11px; gap: 3px; }
+  .watch i { font-size: 13px; }
+  .watchLong { display: none; }
+  .watchShort { display: inline; }
+  .mapToggle, .matchRow:has(> .watch) > .mapToggle { order: 0; width: 44px; min-width: 44px; min-height: 0; padding: 0; border-top: 0; border-left: 1px solid var(--line); justify-content: center; }
+  .mapToggle > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .matchRow[data-expanded] > :is(.mapToggle, .watch) { border-left-color: var(--fc-data-line-on-dark); }
+  .mapProgress, .matchRow:has(> .watch) > .mapProgress { order: 0; grid-column: 1 / -1; }
+}
+
+/* 票 2.13: the Chinese interface states the time zone once at the page end. */
+@media (max-width: 600px) {
+  :global([data-locale^='zh']) .dayHeading h3::after { content: none; }
+}
+
+/* 票 2.20: phone header budget. One 筛选 button replaces the always-open filter rows,
+   the week rail reads on one line, and the list title stays for screen readers only. */
+.filterToggle { display: none; }
+@media (max-width: 600px) {
+  .overviewLink { display: none; }
+  .headingActions { justify-content: space-between; }
+  .headingActions [data-weekly-cycle-picker] { border-right: 0; padding-right: 0; }
+  .filterToggle { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; min-width: 44px; min-height: 44px; padding: 0 12px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised); color: var(--fc-data-ink); font-size: 13px; }
+  .filterToggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+  .filterToggle b { display: grid; place-items: center; min-width: 20px; min-height: 20px; padding-inline: 4px; background: var(--fc-data-ink); color: var(--fc-data-signal); font-size: 12px; }
+  .filterToggle[aria-expanded='true'] { background: var(--fc-data-ink); color: var(--fc-data-paper); }
+  .filters:not([data-open]) { display: none; }
+  .filters[data-open] { padding: 4px 0 8px; border-bottom: 1px solid var(--line); }
+  .listHeading { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+
+/* 票 2.25: phone legibility — system text at least 11px, every tap target at least 44×44. */
+@media (max-width: 600px) {
+  .state, .time > small, .team small, .score > small, .noMaps, .teamFilter > span, .listHeading p,
+  .dayHeading h3::after, .dayHeading > span, .mapHeading > span, .footer, .previewSummary time > span { font-size: 11px; }
+  .page .reset { min-width: 44px; min-height: 44px; font-size: 11px !important; }
+  .footer a { display: inline-flex; align-items: center; min-height: 44px; }
 }

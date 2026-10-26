@@ -351,6 +351,13 @@ export function getDbSource(data) {
   return dbSourceBySnapshot.get(data) || {}
 }
 
+// 票 2.17 / 2.8: an active season's cached snapshot is drawn before the network answers only when
+// it was saved within a day; an older one could show finished matches as upcoming. It is still
+// used when the network fails. Archived seasons never change, so their cache is always good.
+const CACHE_FIRST_MAX_AGE_MS = 24 * 60 * 60 * 1000
+const isRecentSnapshot = (stored, season) => season.lifecycle === 'ARCHIVED'
+  || (Number.isFinite(stored?.savedAt) && Date.now() - stored.savedAt < CACHE_FIRST_MAX_AGE_MS)
+
 export async function getDb(seasonId, options = {}) {
   const season = getSeasonById(seasonId || getStoredSeasonId())
   const preferLocalData = options?.preferLocalData === true || season.preferLocalData
@@ -365,6 +372,7 @@ export async function getDb(seasonId, options = {}) {
   }
 
   return shareLoad(dbLoads, cacheKey, async isCurrent => {
+    let staleCached = null
     if (!preferLocalData) {
       const stored = await readPublicSnapshot(season.id)
       // A network refresh can finish while IndexedDB is still opening.
@@ -372,13 +380,24 @@ export async function getDb(seasonId, options = {}) {
       if (stored?.data && stored.sourceUrl && stored.sourceUrl !== season.localDataUrl && (!season.partnerTrial || getDbUrls(season).includes(stored.sourceUrl))) {
         try {
           const cached = markDbSource(validatePublicDb(stored.data, season), stored.sourceUrl, season, true, stored.etag)
-          if (isCurrent()) dbCache.set(cacheKey, cached)
-          return cached
+          if (isRecentSnapshot(stored, season)) {
+            if (isCurrent()) dbCache.set(cacheKey, cached)
+            return cached
+          }
+          staleCached = cached
         } catch { /* Old or incomplete cache entries fall through to the API. */ }
       }
     }
 
-    const fetchedData = await fetchDb(sourceSeason)
+    let fetchedData
+    try {
+      fetchedData = await fetchDb(sourceSeason)
+    } catch (error) {
+      // Offline: an old snapshot still beats an empty page; its update time stays visible in the status line.
+      if (!staleCached) throw error
+      if (isCurrent()) dbCache.set(cacheKey, staleCached)
+      return staleCached
+    }
     const data = dbCache.get(cacheKey) || fetchedData
     if (isCurrent()) {
       dbCache.set(cacheKey, data)

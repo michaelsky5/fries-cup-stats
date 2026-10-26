@@ -1049,7 +1049,7 @@
 /* FC Signal: account workspaces share the public paper and section rhythm. */
 .center { color: var(--fc-data-ink); font-family: var(--font-sans); }
 .center > .header { min-height: 0; border: 0; border-bottom: 1px solid var(--fc-data-line-strong); background: transparent; padding: 0 0 24px; margin-bottom: 24px; box-shadow: none; }
-.center > .header h2, .center > .header h1 { font-size: 26px; line-height: 1.4; margin: 8px 0 10px; font-weight: 750; }
+.center > .header h2, .center > .header h1 { font-size: var(--fc-data-section-title-size); line-height: 1.35; margin: 0 0 8px; font-weight: 800; }
 .center > .header p { font-size: 13px; line-height: 1.8; font-weight: 400; color: var(--fc-data-text-muted); }
 .center > .header > div > span { color: var(--fc-data-text-muted); font: 900 17px/1.2 var(--fc-data-font-display); }
 .center :is(input,select,textarea) { min-height: 44px; font-size: 14px; border-radius: 0; }
@@ -1085,7 +1085,7 @@
 /* Keep the queue ahead of explanatory summaries on a phone. */
 @media (max-width: 600px) {
   .center > .header { padding-bottom: 10px; margin-bottom: 12px; }
-  .center > .header h2 { margin: 0; font-size: 22px; }
+  .center > .header h2 { margin: 0; }
   .center > .header > div > span, .center > .header p { display: none; }
   .viewSwitch { margin-bottom: 12px; }
   .viewSwitch a { min-height: 44px; padding-inline: 12px; gap: 6px; }

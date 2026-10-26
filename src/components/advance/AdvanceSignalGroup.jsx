@@ -70,7 +70,7 @@ function GroupIndex({ group, seasonId, withSeason, locale, selected }) {
               >
                 <td>{String(row.rank).padStart(2, '0')}</td>
                 <td>
-                  <Link to={withSeason(`/teams/${teamRouteId(row)}`)}>
+                  <Link to={withSeason(`/teams/${teamRouteId(row)}/analysis`)}>
                     <TeamLogo team={row.team} seasonId={seasonId} className={styles.groupLogo} />
                     <span>
                       <strong>{teamShort(row.team)}</strong>

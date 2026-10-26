@@ -2,7 +2,7 @@ import {
   getTeamLogo as resolveTeamLogo,
   getTeamLogoCandidates as resolveTeamLogoCandidates
 } from './teamLogoResolver.js'
-import { getOwHeroAssetKey, getOwHeroRole } from './heroes.js'
+import { getOwHeroAssetKey, getOwHeroRole, getOwMap } from './heroes.js'
 
 export const safeArr = value => Array.isArray(value) ? value : []
 
@@ -365,6 +365,9 @@ export function normalizeMapTypeFolder(mapType) {
 export function mapNameToFileName(mapName) {
   const raw = String(mapName ?? '').trim()
   if (!raw) return 'UNKNOWN'
+
+  const catalogImage = getOwMap(raw)?.imageName
+  if (catalogImage) return catalogImage
 
   const alias = MAP_FILE_ALIASES[normalizeLooseKey(raw)]
   if (alias) return alias

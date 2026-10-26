@@ -2,9 +2,8 @@ import { Link } from 'react-router-dom'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { eventCenterText } from '../../lib/eventCenterCopy.js'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
-import { getMatchFormatLabel } from '../../lib/matchFormat.js'
 import { formatMatchSchedule } from '../../lib/scheduleFormat.js'
-import { weeklyStatusLabel, weeklyTeamShort, weeklyWeekTitle } from '../weekly-overview/weeklyPresentation.js'
+import { showsInlineTimeZone, weeklyFormatLabel, weeklyStatusLabel, weeklyTeamShort, weeklyWeekTitle } from '../weekly-overview/weeklyPresentation.js'
 import { getWeeklyScheduleScore } from './weeklyScheduleModel.js'
 import WeeklyMatchMaps from './WeeklyMatchMaps.jsx'
 import styles from './SignalWeeklySchedule.module.css'
@@ -23,11 +22,11 @@ export default function WeeklyMatchPreview({ id, match, week, locale, seasonId, 
       : match.state === 'postponed' ? t('新时间以公布为准', 'Awaiting the revised schedule') : ''
   return <aside className={styles.preview} id={id} data-schedule-preview={match.id} aria-label={`${eventCenterText('selectedMatch', locale)} ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`}>
     <header className={styles.previewHeader}>
-      <span>{weeklyWeekTitle(week, locale)} · {getMatchFormatLabel(match)}</span>
+      <span>{weeklyWeekTitle(week, locale)} · {weeklyFormatLabel(match, locale)}</span>
       <span className={styles.state} data-state={match.state}><i aria-hidden="true" />{weeklyStatusLabel(match.state, locale)}</span>
     </header>
     <div className={styles.previewSummary}>
-      <time>{schedule.hasSchedule ? schedule.label : t('时间待定', 'Time TBD')}{schedule.hasSchedule && <span>UTC+8</span>}</time>
+      <time>{schedule.hasSchedule ? schedule.label : t('时间待定', 'Time TBD')}{schedule.hasSchedule && showsInlineTimeZone(locale) && <span>UTC+8</span>}</time>
       <div className={styles.previewDuel}>
         <div className={styles.previewTeam}><TeamLogo team={match.team_a} seasonId={seasonId} className={styles.previewLogo} /><b>{weeklyTeamShort(match.team_a)}</b></div>
         <strong className={styles.previewScore}>{getWeeklyScheduleScore(match)}</strong>

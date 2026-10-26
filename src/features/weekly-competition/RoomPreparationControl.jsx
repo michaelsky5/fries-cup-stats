@@ -28,7 +28,7 @@ export default function RoomPreparationControl({ data, disabled, mutate, onSaved
     <label>{uiText('追加准备时间', locale)}<select value={seconds} disabled={disabled} onChange={event => setSeconds(Number(event.target.value))}>{[300, 600, 900].map(value => <option key={value} value={value}>{uiText('{0} 分钟', locale, [value / 60])}</option>)}</select></label>
     <p>{uiText(data.timing.preparationOverdue ? '已超时，将从当前时间重新给予所选准备时间。' : '尚未超时，将在原截止时间后追加所选准备时间。', locale)}<br />{uiText('预计新截止', locale)} · <b>{time(preparationExtensionDeadline(data, seconds))} UTC+8</b></p>
     <label>{uiText('公开加时原因', locale)}<textarea value={reason} required minLength={3} maxLength={1000} disabled={disabled} onChange={event => setReason(event.target.value)} placeholder={uiText('例如：比赛房页面故障导致准备延误，已核对双方情况。', locale)} /></label>
-    <p>{uiText('加时只调整本图准备总时限；开赛时间限制、首发与 Ban 校验继续执行。', locale)}</p>
+    <p>{uiText('加时只调整本图准备总时限；开赛时间限制、首发与禁用校验继续执行。', locale)}</p>
     <button className={styles.primary} disabled={disabled || reason.trim().length < 3}>{uiText('确认加时并向双方公布', locale)}</button>
   </form>
 }

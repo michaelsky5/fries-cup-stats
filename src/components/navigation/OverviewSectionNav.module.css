@@ -1,0 +1,14 @@
+.nav { display: none; }
+
+@media (max-width: 600px) {
+  .nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0 var(--kpr-gutter, 12px);
+    border-bottom: 1px solid var(--fc-data-line);
+    --fc-data-section-nav-height: 44px;
+  }
+  /* Advance and roster already sit in an inset page frame; only Home needs the gutter here. */
+  .nav[data-inset] { margin-inline: 0; }
+  .nav a { justify-content: center; }
+}

@@ -10,7 +10,6 @@
 .briefing :is(a, button, summary):focus-visible, .discovery :is(a, button, input):focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 2px; }
 .briefing p, .discovery p { font-size: 14px; line-height: 1.8; color: var(--fc-data-text-muted); }
 .next { min-width: 0; padding: 28px; border-top: 3px solid var(--fc-data-signal); background: var(--fc-data-ink); color: var(--fc-data-on-ink); }
-.discovery header > div > span { font: 800 15px/1 var(--fc-data-font-display); letter-spacing: .04em; color: var(--fc-data-text-muted); }
 .next > header { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
 .next > header > span { font-size: 16px; font-weight: 650; }
 .next[data-state='live'] > header > span { color: var(--fc-data-status-live-bright); }
@@ -54,7 +53,7 @@
 .next a:hover strong, .changeList a:hover strong { text-decoration: underline; text-underline-offset: 4px; }
 .updates { grid-column: 1 / -1; min-width: 0; padding: 16px 24px; border-top: 1px solid var(--fc-data-line); }
 .updates header, .discovery header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.briefing .updates h2 { margin: 8px 0 0; font-size: 22px; line-height: 1.4; }
+.briefing .updates h2 { margin: 0; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .updates h2 b { margin-left: 12px; font-variant-numeric: tabular-nums; }
 .updates header button { flex-shrink: 0; }
 .updates > p { margin: 0; }
@@ -66,7 +65,7 @@
 .changeList summary, .attention summary { padding-block: 12px; }
 .attention { grid-column: 1 / -1; padding: 0 24px; border-top: 1px solid var(--fc-data-line); }
 .discovery { padding: 24px; }
-.discovery h2 { margin: 8px 0; font-size: 26px; line-height: 1.4; }
+.discovery h2 { margin: 0 0 8px; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 .discovery header p { margin: 0; }
 .discovery header > button { flex-shrink: 0; }
 .discoveryTools { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; margin-top: 24px; }
@@ -115,10 +114,7 @@
   .related b { grid-column: 2; grid-row: 2 / 4; align-self: center; }
   .related strong { font-size: 16px; }
   .updates[data-quiet='true'] { padding-block: 0; }
-  .briefing .updates h2 { font-size: 19px; }
   .discovery header { align-items: start; flex-wrap: wrap; }
-  .discovery header > div > span { display: none; }
-  .discovery h2 { font-size: 20px; margin: 0 0 6px; }
   .discovery header p { font-size: 13px; }
   .discoveryTools { gap: 12px; margin-top: 16px; }
   .discoveryTools label { flex-basis: 100%; order: 2; }

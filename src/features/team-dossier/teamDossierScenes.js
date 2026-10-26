@@ -62,21 +62,5 @@ export function getDossierSeasonStory(rows, advanceState, locale = 'zh-CN') {
   }
 }
 
-export function getDossierViewHref(pathname, search, view, chapter) {
-  const base = pathname.replace(/\/(?:journey|analysis)\/?$/, '').replace(/\/$/, '')
-  const params = new URLSearchParams(search)
-  params.delete('chapter')
-  params.delete('tab')
-  if (chapter) params.set('chapter', chapter)
-  const query = params.toString()
-  return `${base}${['journey', 'analysis'].includes(view) ? `/${view}` : ''}${query ? `?${query}` : ''}`
-}
-
-export function getDossierView(pathname, search) {
-  const params = new URLSearchParams(search)
-  const chapter = params.get('chapter') || ({ matches: 'journey', stats: 'records' })[params.get('tab')]
-  if (/\/analysis\/?$/.test(pathname) || ['maps', 'records'].includes(chapter)) return 'analysis'
-  if (/\/journey\/?$/.test(pathname) || chapter === 'journey') return 'journey'
-  return 'gallery'
-}
+export { getDossierView, getDossierViewHref } from './teamArchiveRoutes.js'
 import { getMatchTimeLabel } from '../../lib/matchesSelectors.js'

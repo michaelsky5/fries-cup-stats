@@ -4,7 +4,8 @@
   --yellow: var(--fc-data-signal, #f4c320);
   --muted: var(--fc-data-text-muted, #66685f);
   --line: var(--fc-data-line, #181a1726);
-  box-sizing: border-box; width: 100%; color: var(--ink); padding: 0 var(--kpr-gutter, clamp(20px, 3.4vw, 64px)) 30px;
+  /* 票 2.47: the page sits on the shared 1600px grid like every other page. */
+  box-sizing: border-box; width: var(--portal-shell-width, calc(100% - 2 * var(--kpr-gutter, clamp(20px, 3.4vw, 64px)))); margin-inline: auto; color: var(--ink); padding: 0 0 30px;
   font-family: var(--font-sans); font-variant-numeric: tabular-nums;
 }
 .page * { box-sizing: border-box; }
@@ -14,7 +15,6 @@
 .page a { color: inherit; text-decoration: none; }
 .page h1, .page h2, .page h3, .page p { margin: 0; }
 .heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px 32px; padding: 18px 0; }
-.eyebrow { color: var(--muted); font-size: 11px; letter-spacing: .09em; }
 .heading h1 { font-size: var(--fc-data-index-title-size); line-height: var(--fc-data-index-title-leading); letter-spacing: -.04em; font-weight: 900; margin: 8px 0 12px; }
 .heading p:last-child { color: var(--fc-data-text-muted); font-size: 14px; line-height: 1.7; }
 .rulesLink { flex-shrink: 0; display: grid; grid-template-columns: 1fr auto; gap: 5px 30px; padding-bottom: 5px; font-size: 14px; }
@@ -26,9 +26,10 @@
 .matchSection { grid-area: focus; }
 .matchList { grid-area: matches; }
 .standings { --matchup-shade: #edc54414; grid-area: standings; }
-.listHeading h2 { font-size: 16px; font-weight: 700; }
+.listHeading h2 { font-size: var(--fc-data-section-title-size); font-weight: 800; }
 .sectionBar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 0 16px; min-height: 38px; }
-.sectionBar h2 { font-size: 17px; font-weight: 800; }
+/* 票 2.41: every section title on the overview is one level: 20px/800 (18px on phones). */
+.sectionBar h2 { font-size: var(--fc-data-section-title-size); font-weight: 800; }
 .sectionBar .viewingTitle { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; min-width: 0; }
 .sectionBar .viewingTitle > span { color: #484b43; font-size: 12px; font-weight: 500; line-height: 1.5; white-space: nowrap; }
 .sectionBar > span { font-size: 11px; color: var(--muted); }
@@ -113,15 +114,15 @@
 .pointsRule p { display: grid; gap: 9px; }
 .pointsRule b { font-size: 11px; font-weight: 600; }
 .pointsRule small { font-size: 10px; line-height: 1.7; color: var(--muted); }
-.empty { background: var(--ink); color: var(--paper); padding: clamp(24px, 5vw, 70px); min-height: 390px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 20px; }
-.empty > span { font-size: 11px; color: var(--yellow); }
-.empty h3 { font-size: clamp(26px, 3vw, 40px); }
+/* 票 2.66: before a week's pairings are out this is a short note; the phase card above carries the dates. */
+.empty { background: var(--ink); color: var(--paper); padding: 24px 32px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; }
+.empty h3 { font-size: 20px; }
 .empty p { font-size: 14px; line-height: 1.8; color: #a2a59a; max-width: 460px; }
 .pointsEmpty { padding: 35px 15px 55px; border-block: 1px solid var(--line); }
 .pointsEmpty > span { font: 800 50px var(--fc-data-font-display); }
 .pointsEmpty p { font-size: 13px; line-height: 1.8; color: var(--muted); }
 .followingSection { border-top: 1px solid var(--line); margin-top: 30px; padding: 26px 0 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px 48px; align-items: center; }
-.followingSection h2 { font-size: clamp(24px, 2.3vw, 36px); margin: 12px 0; }
+.followingSection h2 { font-size: var(--fc-data-section-title-size); font-weight: 800; margin: 0; }
 .followingSection p:last-child { font-size: 12px; color: var(--muted); line-height: 1.8; max-width: 500px; }
 .followTeams { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .followTeams button { border: 1px solid var(--line); margin: 0 -1px -1px 0; background: transparent; padding: 14px 12px; display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -170,13 +171,11 @@
 @media (max-width: 600px) {
   .heading { padding: 16px 0; display: grid; gap: 18px; }
   .heading p:last-child { font-size: 13px; }
-  .eyebrow { font-size: 9px; }
   .rulesLink { font-size: 11px; display: flex; gap: 6px; padding-top: 1px; }
   .rulesLink > span { font-size: 15px; }
   .rulesLink small { display: none; }
   .headingActions { justify-content: space-between; gap: 14px; padding-bottom: 0; }
   .mainGrid { padding-top: 16px; }
-  .sectionBar h2 { font-size: 15px; }
   .sectionBar > span { font-size: 10px; }
   .matchSection > .sectionBar { align-items: baseline; flex-wrap: wrap; gap: 8px 14px; }
   .sectionBar .viewingTitle > span { font-size: 11px; }
@@ -204,7 +203,6 @@
   .matchFooter a { font-size: 11px; gap: 10px; }
   .listHeading { align-items: baseline; gap: 14px; }
   .listHeading > span { font-size: 9px; }
-  .listHeading h2 { font-size: 14px; }
   .matchRow { grid-template-columns: minmax(0, 1fr) 54px minmax(0, 1fr); gap: 10px; padding: 12px 10px; }
   .rowTime { grid-column: 1 / -1; display: flex; justify-content: space-between; }
   .rowArrow { display: none; }
@@ -228,7 +226,6 @@
 .mainColumn { grid-area: content; min-width: 0; }
 .mainColumn .matchSection, .mainColumn .matchList { grid-area: auto; }
 .followingSection { grid-template-columns: 1fr; gap: 16px; margin-top: 24px; padding: 24px 0 30px; }
-.followingSection h2 { font-size: 25px; }
 .followTeams { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .periodNavigation { display: grid; grid-template-columns: 320px minmax(0, 1fr); border-block: 1px solid var(--line); }
 .periodNavigation > nav { min-width: 0; border: 0; }
@@ -476,5 +473,79 @@
   /* The two masthead rows need more room than the legacy anchor offset. */
   .spotlight { scroll-margin-top: max(calc(var(--kpr-header-height, 84px) + 16px), 124px); }
 }
-.supportEntry { font-size:13px;line-height:1.6;padding:12px 0;border-bottom:1px solid var(--line); }
-.supportEntry>a { display:inline-flex;align-items:center;min-height:40px;font-weight:700; }
+
+/* Focus card footer actions (票 2.3): watch link beside match details. */
+.matchActions { display: flex; align-items: center; gap: 22px; flex-shrink: 0; }
+.matchActions a[data-watch-kind="live"] { color: var(--fc-data-status-live-bright, #55cbb8); }
+.matchActions a[data-watch-kind="replay"] { color: var(--paper, #eeede6); font-weight: 600; }
+@media (max-width: 600px) { .matchActions { gap: 14px; } }
+/* Footer links: arrow centred on the label at every width (on phones it sat 8px low), 44px tap height. */
+.matchFooter a { align-items: center; min-height: 44px; }
+.matchFooter a > span { line-height: 1; }
+
+/* First screen (票 2.2): the match comes first. The map pool and the funding link follow the matches at
+   every width; on phones the title collapses and the quick links sit under the focus card. */
+.countdown { margin-left: 10px; color: var(--yellow); font-weight: 700; white-space: nowrap; }
+@media (max-width: 600px) {
+  .heading { padding: 0; gap: 0; }
+  .heading > div > p:last-child { display: none; }
+  .heading h1 { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .countdown { display: block; margin: 4px 0 0; font-size: 13px; }
+  .cycleBlock > div > small { display: none; } /* phones drop the cycle's date range to keep the first screen for the match */
+  .phoneLinks { border-bottom: 1px solid var(--line); }
+  .phoneLinks .headingActions { justify-content: space-between; gap: 8px; }
+  .phoneLinks .rulesLink { min-height: 44px; align-items: center; font-size: 12px; }
+}
+.mainGrid + .publishedMapPool { margin-top: 24px; }
+
+/* 票 2.22: following is the reader's own schedule — followed teams first, picker folded. */
+.followingSection { grid-template-columns: minmax(0, 1fr); align-items: start; }
+.followingHead { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; }
+.followingHead h2 { margin: 0; }
+.followingHead p:last-child { max-width: 520px; margin: 8px 0 0; }
+.page .followPickerToggle { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 14px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised, #f6f5ef); color: var(--ink); font-size: 13px; font-weight: 650; }
+.followPickerToggle > span { color: var(--fc-data-focus-on-light, #806000); font-size: 16px; }
+.followedList { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.followedList li { display: grid; grid-template-columns: minmax(120px, .7fr) minmax(0, 2fr) minmax(130px, 1fr); grid-template-areas: 'team match standing'; align-items: center; gap: 2px 16px; padding: 4px 0; border-bottom: 1px solid var(--line); }
+.followedTeam { grid-area: team; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; min-width: 0; }
+.followedTeam b { font-size: 16px; font-weight: 800; }
+.followedMatch { grid-area: match; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; min-width: 0; font-size: 13px; line-height: 1.5; }
+a.followedMatch > span { color: var(--fc-data-focus-on-light, #806000); }
+.followedList li[data-state='live'] .followedMatch { color: var(--fc-data-status-success, #1f7a3a); font-weight: 700; }
+.followedList li[data-state='none'] .followedMatch { color: var(--muted); }
+.followedStanding { grid-area: standing; display: grid; justify-items: end; gap: 2px; min-width: 0; text-align: right; }
+.followedStanding b { font-size: 14px; font-weight: 800; }
+.followedStanding small { color: var(--muted); font-size: 12px; }
+.followPicker { min-width: 0; }
+@media (max-width: 600px) {
+  .followedList li { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'team standing' 'match match'; padding: 2px 0 4px; }
+  .followedMatch { font-size: 12px; }
+}
+@media (min-width: 901px) {
+  /* Under the phase card the followed list needs air before the cycle and week rail. */
+  .page > .followingSection[data-followed] { margin-bottom: 28px; padding-bottom: 12px; }
+}
+@media (min-width: 901px) {
+  /* 票 2.41: without followed teams the block ends on its own text and button, 24px above the rule. */
+  .followingSection:not([data-followed]) { padding-bottom: 24px; }
+}
+
+/* 票 2.25: phone legibility — system text at least 11px, every tap target at least 44×44. */
+@media (max-width: 600px) {
+  .matchTop, .matchTop small, .sectionBar > span, .scoreboard p, .score > span, .mapHeading > span,
+  .mapRail b, .mapRail small, .mapRail li > span:not(.mapNumber), .mapCumulative small, .matchFooter > span,
+  .listHeading > span, .rowTime small, .standings thead th, .standings td > small, .pointsRule small,
+  .pathway small, .pathway > p { font-size: 11px; }
+  .page .follow { min-height: 44px; padding-block: 0; font-size: 11px !important; }
+  .listHeading .scheduleLink { display: inline-flex; align-items: center; min-height: 44px; }
+  .standings tbody th a { display: flex; align-items: center; min-height: 44px; }
+  .page .advanceLink { min-height: 44px; padding-block: 0; }
+}
+
+/* 票 2.28: the report link comes last; on phones it takes its own row so the newest issue and its date fit. */
+@media (max-width: 600px) {
+  .phoneLinks .headingActions { flex-wrap: wrap; row-gap: 0; }
+  .phoneLinks .rulesLink[data-weekly-report-archive-link] { flex: 1 0 100%; gap: 8px; border-top: 1px solid var(--line); }
+  .phoneLinks .rulesLink[data-weekly-report-archive-link] small { display: block; order: 1; margin-left: auto; color: var(--muted); font-size: 11px; }
+  .phoneLinks .rulesLink[data-weekly-report-archive-link] > span { order: 2; }
+}

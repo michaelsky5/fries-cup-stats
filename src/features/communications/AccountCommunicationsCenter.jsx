@@ -85,7 +85,7 @@ function MessageHero({ notification, busy, onRead, withSeason }) {
     <section className={styles.messageHero} data-priority={notification.priority} data-unread={!notification.readAt}>
       <div className={styles.messageHeroMain}>
         <div className={styles.messageHeroMeta}>
-          <span>{notification.category.eyebrow}</span>
+          <span>{uiText(notification.category.label, uiLocale)}</span>
           <em>{notification.readState.label}</em>
         </div>
         <strong>{localizeWorkflowText(notification.title)}</strong>
@@ -261,7 +261,7 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
 
   return (
     <section className={`${styles.center} ${standalone ? styles.standalone : ''}`}>
-      <header className={styles.header}><div><span>EVENT COMMUNICATIONS</span><h2>{uiText("赛事消息", uiLocale)}</h2><p>{uiText("流程结果、定向公告和正式比赛申诉集中留档，但不会混入需要操作的任务队列。", uiLocale)}</p></div><button type="button" onClick={load} disabled={loading}>{loading ? uiText("同步中", uiLocale) : uiText("刷新消息", uiLocale)}</button></header>
+      <header className={styles.header}><div><h2>{uiText("赛事消息", uiLocale)}</h2><p>{uiText("流程结果、定向公告和正式比赛申诉集中留档，但不会混入需要操作的任务队列。", uiLocale)}</p></div><button type="button" onClick={load} disabled={loading}>{loading ? uiText("同步中", uiLocale) : uiText("刷新消息", uiLocale)}</button></header>
       <div className={styles.tabs} role="tablist" aria-label={uiText("赛事消息分类", uiLocale)}>
         <button type="button" role="tab" aria-selected={tab === 'messages'} data-active={tab === 'messages'} onClick={() => setTab('messages')}><span>{uiText("流程消息", uiLocale)}</span><em>{loaded.notifications && !sourceErrors.notifications ? unreadMessageCount : '—'}</em></button>
         <button type="button" role="tab" aria-selected={tab === 'announcements'} data-active={tab === 'announcements'} onClick={() => setTab('announcements')}><span>{uiText("赛事公告", uiLocale)}</span><em>{loaded.announcements && !sourceErrors.announcements ? unreadAnnouncementCount : '—'}</em></button>
@@ -284,8 +284,8 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
           </section> : null}
 
           <section className={styles.communicationBoundary} aria-label={uiText("消息与任务的分工", uiLocale)}>
-            <div><span>INFORMATION</span><strong>{uiText("这里记录结果与变化", uiLocale)}</strong><p>{uiText("报名审核、名单锁定、比赛排期和身份变化都保留在消息记录中。", uiLocale)}</p></div>
-            <div><span>ACTION</span><strong>{uiText("需要回应时进入任务中心", uiLocale)}</strong><p>{uiText("邀请、名单确认、转会放行和赛程协商不会被未读消息代替。", uiLocale)}</p><Link to={resolveNotificationActionUrl('/me?section=tasks', withSeason)}>{uiText("前往任务中心 →", uiLocale)}</Link></div>
+            <div><strong>{uiText("这里记录结果与变化", uiLocale)}</strong><p>{uiText("报名审核、名单锁定、比赛排期和身份变化都保留在消息记录中。", uiLocale)}</p></div>
+            <div><strong>{uiText("需要回应时进入任务中心", uiLocale)}</strong><p>{uiText("邀请、名单确认、转会放行和赛程协商不会被未读消息代替。", uiLocale)}</p><Link to={resolveNotificationActionUrl('/me?section=tasks', withSeason)}>{uiText("前往任务中心 →", uiLocale)}</Link></div>
           </section>
 
           <div className={styles.messageToolbar}>
@@ -294,10 +294,10 @@ export default function AccountCommunicationsCenter({ seasonId, capabilitySnapsh
           </div>
           {messageView.groups.length ? <div className={styles.messageGroups}>{messageView.groups.map(group => (
             <section className={styles.messageGroup} key={group.key} data-category={group.key}>
-              <header><div><span>{group.eyebrow}</span><strong>{group.label}</strong><p>{group.description}</p></div><em>{group.notifications.length}</em></header>
+              <header><div><strong>{group.label}</strong><p>{group.description}</p></div><em>{group.notifications.length}</em></header>
               <div className={styles.list}>{group.notifications.map(notification => <MessageCard key={notification.id} notification={notification} busy={busy || loading || sourceErrors.notifications} onRead={readNotification} withSeason={withSeason} />)}</div>
             </section>
-          ))}</div> : messageView.primaryNotification ? <div className={styles.messageComplete}><span>ONE UPDATE</span><strong>{uiText("当前只有上方这一条消息", uiLocale)}</strong><p>{uiText("阅读后仍会保留在这里，不会因为已读而消失。", uiLocale)}</p></div> : sourceErrors.notifications ? null : <div className={styles.empty}><strong>{uiText("目前没有流程消息", uiLocale)}</strong><p>{uiText("报名、阵容、身份、赛程和竞猜状态变化后会显示在这里。", uiLocale)}</p></div>}
+          ))}</div> : messageView.primaryNotification ? <div className={styles.messageComplete}><strong>{uiText("当前只有上方这一条消息", uiLocale)}</strong><p>{uiText("阅读后仍会保留在这里，不会因为已读而消失。", uiLocale)}</p></div> : sourceErrors.notifications ? null : <div className={styles.empty}><strong>{uiText("目前没有流程消息", uiLocale)}</strong><p>{uiText("报名、阵容、身份、赛程和竞猜状态变化后会显示在这里。", uiLocale)}</p></div>}
         </div>
       ) : null}
 

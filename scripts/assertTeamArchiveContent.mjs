@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { getDossierMatch, getDossierRoundLabel } from '../src/features/team-dossier/teamDossierPresentation.js'
-import { getArchiveMapRecords, getArchiveMembers, getArchiveJourneyHref, getArchiveStageHref, getArchiveMatchReading, getArchiveStageAnalysis, getArchiveDistribution, getArchiveMetricAvailability } from '../src/features/team-dossier/teamArchiveContent.js'
+import { getArchiveMapRecords, getArchiveMembers, getArchiveMatchReading, getArchiveStageAnalysis, getArchiveDistribution, getArchiveMetricAvailability } from '../src/features/team-dossier/teamArchiveContent.js'
+import { getTeamStageLedgerHref } from '../src/features/team-dossier/teamArchiveRoutes.js'
 
 const map = (overrides = {}) => ({ map_name: 'Ilios', map_type: 'Control', score_a: 2, score_b: 0, ...overrides })
 const row = (overrides = {}, side = 'team_a') => getDossierMatch({ side, opponent: { id: side === 'team_a' ? 'B' : 'A' }, opponentLabel: side === 'team_a' ? 'B' : 'A', match: {
@@ -42,23 +43,15 @@ test('map and member trails stay in fixture order after map aggregation groups a
   assert.deepEqual(member.stages.map(stage => [stage.key, stage.maps]), [['SWISS', 2], ['PLAYOFFS', 1]])
 })
 
-test('member-to-journey links preserve team context and target the exact match scene', () => {
-  const url = new URL(getArchiveJourneyHref('/teams/A/journey?season=S&design=kpr5&lang=en&teamMap=Ilios', 'M / 2', 'P1'), 'http://localhost')
-  assert.equal(url.searchParams.get('chapter'), 'season-route')
-  assert.equal(url.searchParams.get('teamMatch'), 'M / 2')
-  assert.equal(url.searchParams.get('member'), 'P1')
-  assert.equal(url.searchParams.get('teamMap'), 'Ilios')
-  assert.equal(url.searchParams.get('season'), 'S')
-})
-
-test('stage evidence clears a stale result filter and opens the full relevant ledger', () => {
-  const url = new URL(getArchiveStageHref('/teams/A/journey?season=S&result=loss&teamMatch=OLD&member=P1', 'PLAYOFFS'), 'http://localhost')
-  assert.equal(url.searchParams.get('chapter'), 'journey')
+test('stage evidence clears a stale result filter and opens the full ledger on the data page', () => {
+  const url = new URL(getTeamStageLedgerHref('/teams/A/journey?season=S&result=loss&teamMatch=OLD&member=P1&chapter=journey&journeyView=records', 'PLAYOFFS'), 'http://localhost')
+  assert.equal(url.pathname, '/teams/A/analysis')
+  assert.equal(url.hash, '#team-matches')
   assert.equal(url.searchParams.get('teamStage'), 'PLAYOFFS')
   assert.equal(url.searchParams.get('journey'), 'all')
-  assert.equal(url.searchParams.has('result'), false)
-  assert.equal(url.searchParams.has('teamMatch'), false)
+  for (const key of ['result', 'teamMatch', 'chapter', 'journeyView']) assert.equal(url.searchParams.has(key), false)
   assert.equal(url.searchParams.get('member'), 'P1')
+  assert.equal(url.searchParams.get('season'), 'S')
 })
 
 test('match reading only describes an opening-map recovery when the full score is supported', () => {

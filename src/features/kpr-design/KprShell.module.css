@@ -6,7 +6,8 @@
   --kpr-line: var(--fc-data-line, #17181726);
   --kpr-gutter: var(--fc-data-gutter, clamp(20px, 3.4vw, 64px));
   --kpr-header-height: 141px;
-  --portal-shell-width: calc(100% - var(--kpr-gutter) * 2);
+  /* 票 2.47: past 1600px the page stops growing and centres, header included (统一网格). */
+  --portal-shell-width: min(var(--fc-data-content-max, 1600px), calc(100% - var(--kpr-gutter) * 2));
   background: var(--kpr-paper);
   color: var(--kpr-ink);
 }
@@ -1024,20 +1025,6 @@
   :global([data-design='kpr'][data-design-edition='hybrid']) .mobileNavItemEnglish { margin-left: 8px; font-size: 9px; font-style: normal; opacity: .7; }
 }
 
-/* Exhibition: integrated masthead, with all global controls retained. */
-.shell:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) { --kpr-header-height: 92px; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .topShell { width: 100%; margin: 0; box-shadow: none; border-inline: 0; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .topBar { min-height: 56px; padding-inline: 4.5vw; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .navLink { min-height: 56px; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .headerRight { min-height: 56px; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .pageFrame[data-team-archive='true'] { width: 100%; padding-top: 0; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .dataNotice { margin-inline: 4.5vw; }
-:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .contentContextDock { margin-block: 28px; }
-@media (max-width: 700px) {
-  .shell:global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) { --kpr-header-height: 96px; }
-  :global([data-design='kpr'][data-design-edition='hybrid'][data-team-exhibition='true']) .topBar { padding-inline: 16px; }
-}
-
 /* Phone public navigation has its own order; tablet and desktop retain the masthead. */
 @media (max-width: 600px) {
   .shell:global([data-design='kpr'][data-design-edition='hybrid']):has([data-phone-navigation='true']) {
@@ -1065,3 +1052,44 @@
 /* The archive owns its footer; its final surface also carries the phone dock clearance. */
 .shell:global([data-design='kpr'][data-design-edition='hybrid'][data-archive-home='true']) { padding-bottom: 0; }
 :global([data-design='kpr'][data-design-edition='hybrid'][data-archive-home='true']) .pageFrame { padding-bottom: 0; }
+
+/* Phone header controls: one 46px frame holding three 44px cells (season, menu, account)
+   split by 1px rules, so every cell is a full tap target and no cell draws its own box. */
+@media (max-width: 600px) {
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .headerRight { height: 46px; min-height: 46px; align-items: stretch; }
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .accountCluster { height: 44px; min-height: 44px; border-left: 1px solid rgba(255, 255, 255, .15); }
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .accountCluster button { width: 44px; height: 44px; min-height: 44px; }
+}
+
+/* 票 2.67: signed out, 「我的关注」 is its own cell of the control dock, left of 「登录」; phones keep it in the menu sheet. */
+.followingLink { display: none; }
+:global([data-design="kpr"][data-design-edition="hybrid"]) .followingLink {
+  height: 100%;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  padding: 0 12px;
+  border-right: 1px solid #ffffff1e;
+  color: #f2f2e9;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color .16s ease, color .16s ease;
+}
+:global([data-design="kpr"][data-design-edition="hybrid"]) .followingLink:hover,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .followingLink:focus-visible { background: #ffffff12; color: var(--kpr-yellow); }
+:global([data-design="kpr"][data-design-edition="hybrid"]) .followingLink[aria-current="page"] { color: var(--kpr-yellow); }
+/* Below 721px the dock has no room for it, so it moves into the shared menu as its last line (as on phones). */
+@media (min-width: 721px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavPanel [data-following-item] { display: none; }
+}
+@media (max-width: 720px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .followingLink { display: none; }
+}
+/* 601–640px: the brand, the menu and the dock overlapped by up to 24px before this ticket; their minimums now fit. */
+@media (min-width: 601px) and (max-width: 640px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .topBar { grid-template-columns: minmax(151px, 1fr) minmax(124px, auto) auto; }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavMenu > summary { min-width: 124px; }
+}

@@ -11,7 +11,7 @@
 [data-design] .workspace .staffList .actions a { min-height: 44px; padding: 12px 16px; border: 1px solid var(--fc-data-signal); background: var(--fc-data-signal); color: var(--fc-data-ink); font-size: 13px; }
 [data-design] .workspace[data-workspace-mode='manager'] > .workspaceHeader { padding: 0 0 24px; border: 0; border-bottom: 1px solid var(--fc-data-line); background: transparent; box-shadow: none; }
 [data-design] .workspace[data-workspace-mode='manager'] > .workspaceHeader::before { display: none; }
-[data-design] .workspace[data-workspace-mode='manager'] > .workspaceHeader h2 { font-size: 26px; line-height: 1.4; }
+[data-design] .workspace[data-workspace-mode='manager'] > .workspaceHeader h2 { font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 [data-design] .workspace .managerTabs > button { background: var(--fc-data-paper-raised); color: var(--fc-data-ink); }
 [data-design] .workspace .managerTabs > button[data-active='true'] { background: var(--fc-data-signal); }
 [data-design] .workspace .managerTabs small { color: var(--fc-data-text-muted); font-size: 12px; font-weight: 400; }
@@ -30,7 +30,7 @@
 [data-design] .workspace .managerCard, [data-design] .workspace .managerCard > .teamHeading { background: var(--fc-data-paper-raised); border-color: var(--fc-data-line); border-width: 1px; }
 [data-design] .workspace { color: var(--fc-data-ink); gap: 24px; }
 [data-design] .workspaceHeader, [data-design] .managerOverviewFocus, [data-design] .teamHeading { border: 1px solid var(--fc-data-line); border-left-width: 1px; background: var(--fc-data-paper-raised); padding: 24px; box-shadow: none; }
-[data-design] .workspaceHeader h2, [data-design] .workspaceHeader h1 { font-size: 24px; line-height: 1.4; }
+[data-design] .workspaceHeader h2, [data-design] .workspaceHeader h1 { font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
 [data-design] .workspaceHeader p, [data-design] .sectionTitle p { color: var(--fc-data-text-muted); font-size: 13px; font-weight: 400; line-height: 1.8; }
 [data-design] .workspaceHeader span, [data-design] .sectionTitle span { font: 900 17px/1.2 var(--fc-data-font-display); color: var(--fc-data-text-muted); }
 [data-design] .card, [data-design] .teamCard, [data-design] .staffEventCard, [data-design] .eventJourney, [data-design] .eventRelationSection, [data-design] .roomCard { background: var(--fc-data-paper-raised); border: 1px solid var(--fc-data-line); box-shadow: none; }
@@ -52,7 +52,7 @@
 [data-design] .eventFactRail strong, [data-design] .statRail strong { font-size: 24px; }
 [data-design] .eventFactRail span, [data-design] .eventFactRail small, [data-design] .statRail span, [data-design] .statRail small { font-size: 12px; color: var(--fc-data-text-muted); line-height: 1.6; }
 [data-design] .eventJourney header { padding: 24px; border-bottom: 1px solid var(--fc-data-line); }
-[data-design] .eventJourney header h2 { font-size: 22px; }
+[data-design] .eventJourney header h2 { font-size: var(--fc-data-section-title-size); }
 [data-design] .eventJourney header p { font-size: 13px; font-weight: 400; line-height: 1.8; color: var(--fc-data-text-muted); }
 [data-design] .eventJourneySteps { gap: 0; }
 [data-design] .eventJourneySteps li { border: 0; border-right: 1px solid var(--fc-data-line); background: transparent; padding: 22px; box-shadow: none; }

@@ -1,8 +1,9 @@
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
-import { weeklyCycleTitle, weeklyStatusLabel, weeklyWeekTitle } from './weeklyPresentation.js'
+import { isChineseLocale, weeklyCycleCode, weeklyCycleTitle, weeklyStatusLabel, weeklyWeekHasNumber, weeklyWeekRailTitle } from './weeklyPresentation.js'
 import styles from './WeeklyNavigation.module.css'
 import sectionStyles from '../../components/navigation/SignalSectionNav.module.css'
+import { SCROLL_FADE_SIZE } from '../../lib/scrollFades.js'
 
 export function WeeklyCyclePicker({ cycles, cycle, locale, onChange, dateRange = '' }) {
   const en = String(locale).startsWith('en')
@@ -57,7 +58,7 @@ export function WeeklyCyclePicker({ cycles, cycle, locale, onChange, dateRange =
             else if (event.key === 'Escape' && open) { event.preventDefault(); closeMenu() }
           }}><span>{title}</span><svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m4 6 4 4 4-4" /></svg></button>
           {open && <div id={menuId} className={styles.cycleMenu} role="menu" aria-label={selectLabel} onKeyDown={menuKeys}>
-            {cycles.map((item, index) => <button type="button" key={item.id} ref={element => { optionRefs.current[index] = element }} role="menuitemradio" aria-checked={item.id === current?.id} tabIndex={-1} onClick={() => { closeMenu(); if (item.id !== current?.id) onChange(item.id) }}><span><strong>{weeklyCycleTitle(item, locale)}</strong><small>{weeklyStatusLabel(item.status, locale)}</small></span><svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m3 8 3 3 7-7" /></svg></button>)}
+            {cycles.map((item, index) => <button type="button" key={item.id} ref={element => { optionRefs.current[index] = element }} role="menuitemradio" aria-checked={item.id === current?.id} tabIndex={-1} onClick={() => { closeMenu(); if (item.id !== current?.id) onChange(item.id) }}><span><strong>{weeklyCycleTitle(item, locale)}</strong><small>{[isChineseLocale(locale) && weeklyCycleCode(item), weeklyStatusLabel(item.status, locale)].filter(Boolean).join(' · ')}</small></span><svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m3 8 3 3 7-7" /></svg></button>)}
           </div>}
         </> : <strong className={`${styles.cycleValue} ${!current ? styles.cyclePending : ''}`} data-weekly-cycle-value="true"><span>{title}</span></strong>}
       </div>
@@ -78,8 +79,9 @@ export function WeeklyWeekRail({ weeks, selectedId, locale, onChange, includeAll
       const box = active.getBoundingClientRect()
       const bounds = rail.getBoundingClientRect()
       // Reveal a selected week within the rail without scrolling the page.
-      if (box.left < bounds.left) rail.scrollLeft += box.left - bounds.left
-      else if (box.right > bounds.right) rail.scrollLeft += box.right - bounds.right
+      // and clear of the edge fades, so the selected week is never half hidden.
+      if (box.left < bounds.left + SCROLL_FADE_SIZE) rail.scrollLeft += box.left - bounds.left - SCROLL_FADE_SIZE
+      else if (box.right > bounds.right - SCROLL_FADE_SIZE) rail.scrollLeft += box.right - bounds.right + SCROLL_FADE_SIZE
     }
     reveal()
     const observer = new ResizeObserver(reveal)
@@ -89,10 +91,12 @@ export function WeeklyWeekRail({ weeks, selectedId, locale, onChange, includeAll
   }, [selectedId, weeks])
   if (!weeks.length) return null
   const items = includeAll ? [{ id: 'all' }, ...weeks] : weeks
-  return <nav ref={ref} className={`${styles.weekRail} ${sectionStyles.root}`} aria-label={en ? 'Published weeks' : uiText("已发布周次", locale)}>
+  return <nav ref={ref} className={`${styles.weekRail} ${sectionStyles.root}`} data-scroll-fades aria-label={en ? 'Published weeks' : uiText("已发布周次", locale)}>
     {items.map(item => <button type="button" key={item.id} className={`${styles.weekItem} ${sectionStyles.item}`} aria-current={selectedId === item.id ? 'true' : undefined} onClick={() => onChange(item.id)}>
-      <span><b>{item.id === 'all' ? '↔' : String(item.week_number).padStart(2, '0')}</b>{item.id === 'all' ? en ? 'Whole cycle' : uiText("整个赛段", locale) : weeklyWeekTitle(item, locale)}</span>
-      <small>{item.id === 'all' ? en ? 'Published only' : uiText("已公布赛程", locale) : weeklyStatusLabel(item.status, locale)}</small>
+      {/* 票 2.49: 晋级加赛 and 季后赛 are stages, not weeks 5 and 6, so they carry no number. */}
+      <span>{item.id === 'all' ? <b>↔</b> : weeklyWeekHasNumber(item) ? <b>{String(item.week_number).padStart(2, '0')}</b> : null}{item.id === 'all' ? en ? 'Whole cycle' : uiText("整个赛段", locale) : weeklyWeekRailTitle(item, locale)}</span>
+      {/* 票 2.30: a finished week needs no label of its own; only weeks still to come or in play say where they stand. */}
+      {(item.id === 'all' || String(item.status).toUpperCase() !== 'CLOSED') && <small>{item.id === 'all' ? en ? 'Published only' : uiText("已公布赛程", locale) : weeklyStatusLabel(item.status, locale)}</small>}
     </button>)}
   </nav>
 }

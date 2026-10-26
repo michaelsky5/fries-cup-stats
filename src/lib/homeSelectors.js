@@ -731,7 +731,7 @@ export function getOverviewStatus(db, season = null) {
     : seasonStatus.liveMatches
       ? '比赛进行中'
       : seasonStatus.completedMatches
-        ? '赛事进行中'
+        ? '赛季进行中'
         : summary.matches
           ? '赛程已发布'
           : '赛程待发布'

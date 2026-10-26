@@ -7,17 +7,18 @@ import useMobileTabNavigation from './useMobileTabNavigation.js'
 import styles from './PublicMobileNav.module.css'
 
 const DOCK_ITEMS = [
-  { group: 'overview', zh: '赛事', en: 'Events', ko: '대회', icon: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z' },
-  { group: 'matches', zh: '比赛', en: 'Matches', ko: '경기', icon: 'M3 5h18v15H3z M7 2v6 M17 2v6 M3 10h18 M8 14v3 M16 14v3' },
+  { group: 'overview', zh: '总览', en: 'Overview', ko: '개요', icon: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z' },
+  { group: 'matches', zh: '赛程', en: 'Matches', ko: '일정', icon: 'M3 5h18v15H3z M7 2v6 M17 2v6 M3 10h18 M8 14v3 M16 14v3' },
   { group: 'database', zh: '数据', en: 'Stats', ko: '기록', icon: 'M4 20V12h4v8 M10 20V4h4v16 M16 20V8h4v12 M2 20h20' },
-  { group: 'space', zh: '我的', en: 'My', ko: '내 정보', icon: 'M8 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0 M4 21v-3a8 8 0 0 1 16 0v3' }
+  // 票 2.18: the fourth tab is 参赛; personal pages stay behind the avatar at the top right.
+  { group: 'play', zh: '参赛', en: 'Play', ko: '참가', icon: 'M5 21V3 M5 4h12l-2.5 4.5L17 13H5' }
 ]
 
 function NavIcon({ path }) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d={path} /></svg>
 }
 
-export default function PublicMobileNav({ items, locale, navPath, accountAttention }) {
+export default function PublicMobileNav({ items, locale, navPath }) {
   const navigation = useMobileTabNavigation(navPath)
   const dockItems = DOCK_ITEMS.filter(item => items.some(target => target.group === item.group))
   return <nav className={styles.dock} style={{ '--mobile-tab-count': dockItems.length }} aria-label={pickUiLocale(locale, '手机主导航', 'Mobile primary navigation', '모바일 기본 메뉴', '手機主導覽')} data-public-mobile-nav data-i18n-ignore>
@@ -34,7 +35,6 @@ export default function PublicMobileNav({ items, locale, navPath, accountAttenti
         onClick={event => navigation.activate(event, item.group, fallback)}
         aria-current={navigation.group === item.group ? 'page' : undefined}>
         <NavIcon path={item.icon} /><span>{pickUiLocale(locale, item.zh, item.en, item.ko, uiText(item.zh, 'zh-TW'))}</span>
-        {item.group === 'space' && accountAttention?.visible ? <i className={styles.attention} aria-label={accountAttention.ariaLabel} /> : null}
       </Link>
     })}
   </nav>

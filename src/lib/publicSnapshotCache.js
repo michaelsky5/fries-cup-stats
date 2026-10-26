@@ -39,4 +39,5 @@ function transact(seasonId, value) {
 }
 
 export const readPublicSnapshot = seasonId => transact(seasonId)
-export const savePublicSnapshot = (seasonId, data, sourceUrl, etag = '') => transact(seasonId, { data, sourceUrl, etag })
+// savedAt tells getDb whether a cached snapshot is recent enough to draw before the network answers (票 2.17).
+export const savePublicSnapshot = (seasonId, data, sourceUrl, etag = '') => transact(seasonId, { data, sourceUrl, etag, savedAt: Date.now() })

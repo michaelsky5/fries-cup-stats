@@ -1,4 +1,4 @@
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useEffect, useMemo, useRef } from 'react'
 import HeroArtwork from '../../components/media/HeroArtwork.jsx'
 import MissingHeroPortrait from '../../components/media/MissingHeroPortrait.jsx'
@@ -33,8 +33,8 @@ export default function TeamExhibitionPoster({
     if (!selectedButton) return
     const item = selectedButton.getBoundingClientRect()
     const area = list.getBoundingClientRect()
-    if (item.left < area.left) list.scrollLeft += item.left - area.left
-    else if (item.right > area.right) list.scrollLeft += item.right - area.right
+    if (item.left < area.left + 24) list.scrollLeft += item.left - area.left - 24
+    else if (item.right > area.right - 24) list.scrollLeft += item.right - area.right + 24
   }, [id])
   const connections = getMemberConnections(member, members).slice(0, 4)
   const supporting = connections.slice(0, 2).map(connection => roster.find(player => getDossierPlayerKey(player) === connection.playerId)).filter(Boolean)
@@ -52,13 +52,13 @@ export default function TeamExhibitionPoster({
     <div ref={stageRef} className={styles.stage}>
       <div className={styles.sceneMast}>
         <span><i aria-hidden="true" /> {seasonId} <b>/</b> {en ? 'A TEAM, A SEASON.' : uiText("一支队伍，一段赛季。", locale)}</span>
-        <button type="button" className={styles.motionControl} onClick={toggleMotion} disabled={reduced} aria-pressed={animated} title={reduced ? (en ? 'Following system reduced motion' : uiText("已遵循系统的减少动效设置", locale)) : undefined}>{en ? 'Motion' : uiText("动效", locale)} {animated ? 'ON' : 'OFF'} <span aria-hidden="true">{animated ? 'Ⅱ' : '▷'}</span></button>
+        {reduced ? null : <button type="button" className={styles.motionControl} onClick={toggleMotion} aria-label={animated ? pickUiLocale(locale, '暂停动效', 'Pause motion', '모션 일시정지', '暫停動效') : pickUiLocale(locale, '播放动效', 'Play motion', '모션 재생', '播放動效')} title={animated ? pickUiLocale(locale, '暂停动效', 'Pause motion', '모션 일시정지', '暫停動效') : pickUiLocale(locale, '播放动效', 'Play motion', '모션 재생', '播放動效')}><span aria-hidden="true">{animated ? 'Ⅱ' : '▷'}</span></button>}
       </div>
 
       <div className={styles.arrival} inert={pinned && chapter === 1 ? true : undefined}>
         <div className={styles.identity} ref={identityRef} tabIndex={-1}>
           <p className={styles.eyebrow}>FRIES CUP / {en ? 'SEASON COLLECTION' : uiText("队伍赛季珍藏", locale)}</p>
-          <ExhibitionWordmark name={team.shortName} />
+          <ExhibitionWordmark name={team.shortName} className={styles.wordmark} />
           <p className={styles.fullName}>{team.fullName || team.shortName}</p>
           <div className={styles.invitation}>
             <h2>{en ? <>A name.<br />A season of their own.</> : <>{uiText("让这些名字，", locale)}<br />{uiText("拥有自己的主场。", locale)}</>}</h2>
@@ -72,7 +72,7 @@ export default function TeamExhibitionPoster({
             <span className={styles.credentialEdge} aria-hidden="true" />
             <div className={styles.credentialFace}>
               <div className={styles.credentialTop}><span>FRIES CUP</span><b>{seasonId}</b></div>
-              <span className={styles.credentialRail} aria-hidden="true">THE NAMES THAT MAKE A TEAM</span>
+              <span className={styles.credentialRail} aria-hidden="true" data-deco-en>THE NAMES THAT MAKE A TEAM</span>
               <div className={styles.crestPrint}><ArchiveCrest key={team.routeId} team={team} seasonId={seasonId} className={styles.largeCrest} /><span>{en ? 'TEAM EMBLEM' : uiText("队伍徽记", locale)}</span></div>
               <div className={styles.credentialName}><strong>{team.shortName}</strong><span>{team.fullName || team.shortName}</span></div>
               <div className={styles.credentialFoot}><span>{en ? 'SEASON EDITION' : uiText("赛季档案", locale)}</span><b>{year || seasonId}</b></div>
@@ -91,10 +91,10 @@ export default function TeamExhibitionPoster({
 
       <div className={styles.people} inert={pinned && chapter === 0 ? true : undefined}>
         <div className={styles.peopleIntro}>
-          <p className={styles.eyebrow}>THE PEOPLE / {String(roster.length).padStart(2, '0')}</p>
+          <p className={styles.eyebrow}>{pickUiLocale(locale, '成员', 'THE PEOPLE', '멤버', '成員')} / {String(roster.length).padStart(2, '0')}</p>
           <h2 ref={peopleRef} tabIndex={-1}>{en ? <>Together.<br />{' '}On the map.</> : <>{uiText("一起。", locale)}<br />{uiText("上场。", locale)}</>}</h2>
           <p className={styles.chooseHint}>{en ? 'Select a player to view their hero and appearance records.' : uiText("选择选手，查看英雄形象与出场记录。", locale)}</p>
-          <div ref={memberIndexRef} className={styles.memberIndex} role="group" aria-label={en ? 'Exhibition members' : uiText("展厅人物选择", locale)}>
+          <div ref={memberIndexRef} className={styles.memberIndex} data-scroll-fades role="group" aria-label={en ? 'Exhibition members' : uiText("展厅人物选择", locale)}>
             {roster.map((player, index) => {
               const key = getDossierPlayerKey(player)
               return <button type="button" key={key} onClick={() => onSelect(key)} aria-pressed={id === key} aria-controls="exhibition-member"><small>{String(index + 1).padStart(2, '0')}</small><b>{getDossierPlayerName(player)}</b><span>{getRosterRoleLabel(player.registrationRole || getRosterRegistrationRole(player.role), locale)}</span><i aria-hidden="true">{id === key ? '●' : '+'}</i></button>

@@ -138,7 +138,7 @@ function WeeklyInvitationFlow({ invitationLocation }) {
   }
   const title = loading ? t('正在核对邀请', 'Checking your invitation') : failure ? failureTitles[failure.kind] : accepted ? t('身份已认领，继续参赛', 'Your identity is linked') : setupMode ? t('设置密码，激活参赛账号', 'Activate your account') : t('用现有账号认领身份', 'Link your existing account')
 
-  return <AccountFrame compact title={t(uiText("邀请认领", locale), 'Claim invitation')} eyebrow="JOIN YOUR TEAM" description={t(uiText("一次认领，连接队伍、比赛与个人事务。", locale), 'Connect your account to your team and matches.')}>
+  return <AccountFrame compact title={t(uiText("邀请认领", locale), 'Claim invitation')} description={t(uiText("一次认领，连接队伍、比赛与个人事务。", locale), 'Connect your account to your team and matches.')}>
     <div className={styles.shell} data-i18n-ignore>
       <ol className={styles.steps} aria-label={t(uiText("认领进度", locale), 'Claim progress')}>
         {[t('核对邀请', 'Check invitation'), t('绑定身份', 'Link identity'), t('进入周赛', 'Enter workspace')].map((label, index) => <li key={index} aria-current={index === (accepted ? 2 : invitation && !failure ? 1 : 0) ? 'step' : undefined} data-done={index < (accepted ? 2 : invitation && !failure ? 1 : 0)}><span>0{index + 1}</span>{label}</li>)}

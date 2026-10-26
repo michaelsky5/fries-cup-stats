@@ -80,6 +80,73 @@ test('hidden rooms stop scheduled polling, and returning to the foreground synch
   h.store.stop()
 })
 
+test('with alerts on, a hidden room keeps reading every 10 seconds and stops when alerts are turned off', async () => {
+  const h = harness(async () => room())
+  await h.start(); h.store.setBackground(10000); h.store.setVisible(false)
+  await h.advance(9999); assert.equal(h.calls.length, 1)
+  await h.advance(1); assert.equal(h.calls.length, 2)
+  await h.advance(10000); assert.equal(h.calls.length, 3)
+  h.store.setBackground(0); await h.advance(60000); assert.equal(h.calls.length, 3)
+  h.store.setBackground(10000); await h.advance(10000); assert.equal(h.calls.length, 4)
+  // Back in the foreground right after a background read: no duplicate read, then the 3-second poll again.
+  h.store.setVisible(true); h.store.wake(); await flush(); assert.equal(h.calls.length, 4)
+  await h.advance(3000); assert.equal(h.calls.length, 5)
+  await h.advance(3000); assert.equal(h.calls.length, 6)
+  h.store.stop(); assert.equal(h.timers.size, 0)
+})
+
+test('a hidden room that fails to read waits at least the background interval before retrying', async () => {
+  let failure = false
+  const h = harness(async () => { if (failure) throw new TypeError('Failed to fetch'); return room() })
+  await h.start(); h.store.setBackground(10000); h.store.setVisible(false)
+  failure = true; await h.advance(10000); assert.equal(h.calls.length, 2)
+  assert.equal(h.store.getSnapshot().connection.status, 'retrying')
+  await h.advance(9999); assert.equal(h.calls.length, 2)
+  failure = false; await h.advance(1); assert.equal(h.calls.length, 3)
+  assert.equal(h.store.getSnapshot().connection.status, 'connected')
+  h.store.stop()
+})
+
+test('online recovery resumes a hidden room only when background reminders are enabled', async () => {
+  const h = harness(async () => room())
+  await h.start(); h.store.setBackground(10000); h.store.setVisible(false)
+  h.store.setOnline(false); await h.advance(60000)
+  assert.equal(h.calls.length, 1)
+  h.store.setOnline(true); await h.advance(9999)
+  assert.equal(h.calls.length, 1)
+  await h.advance(1)
+  assert.equal(h.calls.length, 2)
+  assert.equal(h.store.getSnapshot().connection.status, 'connected')
+  h.store.setBackground(0); h.store.setOnline(false); h.store.setOnline(true)
+  await h.advance(60000); assert.equal(h.calls.length, 2)
+  h.store.stop(); assert.equal(h.timers.size, 0)
+})
+
+test('a room opened offline in the background resumes after online recovery and stays stopped after unmount', async () => {
+  const h = harness(async () => room())
+  h.store.setBackground(10000)
+  await h.start({ visible: false, online: false })
+  assert.equal(h.calls.length, 0)
+  h.store.setOnline(true); await h.advance(10000)
+  assert.equal(h.calls.length, 1)
+  assert.equal(h.store.getSnapshot().connection.status, 'connected')
+  h.store.stop(); h.store.setOnline(false); h.store.setOnline(true)
+  await h.advance(60000)
+  assert.equal(h.calls.length, 1)
+  assert.equal(h.timers.size, 0)
+})
+
+test('background online recovery preserves Retry-After before resuming reads', async () => {
+  let throttled = true
+  const h = harness(async () => { if (throttled) throw new PlatformApiError('Busy', { status: 429, retryAfterMs: 60000 }); return room() })
+  await h.start(); h.store.setBackground(10000); h.store.setVisible(false)
+  h.store.setOnline(false); h.store.setOnline(true); throttled = false
+  await h.advance(59999); assert.equal(h.calls.length, 1)
+  await h.advance(1); assert.equal(h.calls.length, 2)
+  assert.equal(h.store.getSnapshot().connection.status, 'connected')
+  h.store.stop()
+})
+
 test('a throttled write also respects Retry-After without replaying the command', async () => {
   let writes = 0
   const h = harness(async () => room())

@@ -184,3 +184,43 @@ test('all four locales distinguish known, syncing and unknown counts', () => {
   assert.equal(buildAccountAttention({ overview: { openTaskCount: 120, taskSyncStatus: 'error' } }).taskBadge, '待 99+')
   assert.equal(buildAccountAttention(null).visible, false)
 })
+
+// 票 2.45: the one next step for a signed-in participant.
+test('next action: today\'s match room, then this week\'s confirmation, then registration', async () => {
+  const { pickAccountNextAction, describeAccountNextAction } = await import('../src/features/account-ui/accountNextAction.js')
+  const team = { id: 'team-a', shortName: 'Alpha' }
+  const room = (id, at, status = 'SCHEDULED') => ({ id, status, scheduledAt: new Date(at).toISOString(), teamA: team, teamB: { shortName: 'Beta' }, myTeams: [{ team }] })
+  const confirm = { status: 'OPEN', taskType: 'WEEKLY_PREPARATION_PARTICIPATION', actionUrl: '/me?section=team#confirm', dueAt: '2026-09-06T14:00:00Z' }
+  const registration = { path: '/participate/season-a', closesAt: null, open: true }
+  // 2026-09-06 12:00 UTC is 20:00 in UTC+8; a 21:30 match the same evening counts, tomorrow's does not.
+  const today = pickAccountNextAction({ rooms: [room('later', now + 90 * 60000)], tasks: [confirm], registration, now })
+  assert.deepEqual([today.kind, today.to], ['room', '/me/matches/later/room'])
+  assert.equal(describeAccountNextAction(today, 'zh-CN').detail, 'Alpha vs Beta · 21:30')
+  assert.equal(pickAccountNextAction({ rooms: [room('tomorrow', now + 20 * 3600000)], tasks: [confirm], now }).kind, 'confirm')
+  assert.equal(pickAccountNextAction({ rooms: [room('live', now - 3600000, 'IN_PROGRESS')], now }).live, true)
+  assert.equal(pickAccountNextAction({ rooms: [{ ...room('other', now + 3600000), myTeams: [] }], now }), null, 'only the account\'s own matches')
+  const confirmation = describeAccountNextAction(pickAccountNextAction({ tasks: [confirm], registration, now }), 'zh-CN')
+  assert.deepEqual([confirmation.label, confirmation.detail, confirmation.to], ['本周确认', '9/6 22:00 截止', '/me?section=team#confirm'])
+  assert.equal(describeAccountNextAction(pickAccountNextAction({ registration, now }), 'zh-CN').detail, '随时可以报名')
+  assert.equal(pickAccountNextAction({ registration, hasTeam: true, now }), null, 'a team in this season does not need to register again')
+  assert.equal(pickAccountNextAction({ tasks: [{ ...confirm, status: 'COMPLETED' }], now }), null)
+  assert.equal(describeAccountNextAction(pickAccountNextAction({ tasks: [confirm], now }), 'en-US').label, 'Confirm this week')
+})
+
+test('next action: registration is decided from the season rules at the time the account was read', () => {
+  const registration = { path: '/participate/season-a', closesAt: '2026-09-07T00:00:00Z' }
+  const read = { overview: { openTaskCount: 0, taskSyncStatus: 'ready' }, nextAction: null, hasTeam: false, checkedAt: now }
+  assert.equal(buildAccountAttention(read, 'zh-CN', { registration }).nextAction.kind, 'register')
+  assert.equal(buildAccountAttention({ ...read, hasTeam: true }, 'zh-CN', { registration }).nextAction, null)
+  assert.equal(buildAccountAttention({ ...read, checkedAt: Date.parse('2026-09-08T00:00:00Z') }, 'zh-CN', { registration }).nextAction, null, 'closed after the deadline')
+  assert.equal(buildAccountAttention({ overview: { taskSyncStatus: 'loading' } }, 'zh-CN', { registration }).nextAction, null, 'nothing while the account is loading')
+  assert.equal(buildAccountAttention(null, 'zh-CN', { registration }).nextAction, null, 'signed out shows nothing')
+})
+
+test('next action: the account read carries today\'s room', async () => {
+  const f = fixture()
+  f.data.rooms.rooms.push({ id: 'tonight', status: 'SCHEDULED', scheduledAt: new Date(now + 3600000).toISOString(), teamAId: 'team-a', teamBId: 'team-b', teamA: { shortName: 'Alpha' }, teamB: { shortName: 'Beta' }, week: { status: 'MATCHES' }, myTeams: [{ team: { id: 'team-a' }, role: 'MANAGER', accessMode: 'WRITE' }] })
+  const context = await count(f)
+  assert.equal(context.nextAction.kind, 'room')
+  assert.equal(buildAccountAttention(context).nextAction.label, '进入比赛房')
+})

@@ -89,7 +89,7 @@ function RecoveryFlow({ tokens }) {
     verification.current = null
     setProgressAttempt(value => value + 1)
   }
-  return <AccountFrame compact title={uiText('账号恢复', locale)} eyebrow="ACCOUNT RECOVERY" description={uiText('旧邮箱无法使用时，先验证新邮箱，再由平台核验账号归属。', locale)}>
+  return <AccountFrame compact title={uiText('账号恢复', locale)} description={uiText('旧邮箱无法使用时，先验证新邮箱，再由平台核验账号归属。', locale)}>
     <div className={styles.layout}><aside className={styles.guide}><strong>01 / 02 / 03</strong><ol><li>{uiText('验证可收信的新邮箱', locale)}</li><li>{uiText('平台独立核验原账号归属', locale)}</li><li>{uiText('设置新密码并重新登录', locale)}</li></ol><details><summary>{uiText('恢复说明', locale)}</summary><p>{uiText('申请和邮箱验证不会改变原账号。审核通过后，仍需本人打开完成链接才能生效。', locale)}</p></details><Link to={withLocale('/account#email', locale)}>{uiText('返回邮箱管理', locale)} →</Link></aside>
       <section className={styles.panel} aria-labelledby="recovery-title" aria-busy={busy || (stage === 'complete' && previewLoading)}><h2 id="recovery-title" tabIndex={-1} ref={heading}>{uiText(stage === 'complete' ? '完成账号恢复' : stage === 'status' ? '恢复申请进度' : stage === 'done' ? '账号已恢复' : stage === 'sent' ? '请检查新邮箱' : '提交恢复申请', locale)}</h2>
         {error && <p className={styles.error} role="alert" tabIndex={-1} ref={errorTarget}>{uiText(error, locale)}</p>}
