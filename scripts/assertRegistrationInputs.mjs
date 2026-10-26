@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { detectRegistrationLogoType } from '../src/features/event-registration/registrationLogoInput.js'
-import { describeRegistrationError, translateRegistrationError } from '../src/features/event-registration/registrationErrors.js'
+import { READ_FAILURE_TEXT, describeReadFailure, describeRegistrationError, translateRegistrationError } from '../src/features/event-registration/registrationErrors.js'
 import { ensureUiLocale } from '../src/lib/localeCatalog.js'
 import { translateUiText } from '../src/lib/uiText.js'
 
@@ -95,6 +95,22 @@ test('outdated rulebook feedback preserves the player and required version in ev
       const translated = translateRegistrationError(message, locale)
       assert.ok(translated.includes('Player#12345'))
       assert.ok(translated.includes(version))
+      assert.notEqual(translated, message)
+      if (locale !== 'zh-TW') assert.doesNotMatch(translated, /[\u4e00-\u9fff]/u)
+    }
+  }
+})
+
+test('票 2.68: a failed read names no upstream code and keeps a server sentence written in Chinese', async () => {
+  assert.equal(describeReadFailure({ status: 503, message: 'TEMPORARILY_UNAVAILABLE' }), READ_FAILURE_TEXT)
+  assert.equal(describeReadFailure(new TypeError('Failed to fetch')), READ_FAILURE_TEXT)
+  assert.equal(describeReadFailure({ status: 500, message: 'Request failed with status 500' }), READ_FAILURE_TEXT)
+  assert.equal(describeReadFailure({ status: 409, message: '本赛季报名已关闭。' }), '本赛季报名已关闭。')
+  assert.equal(describeReadFailure({ status: 401, message: 'UNAUTHENTICATED' }), '登录已失效，请重新登录后再试。')
+  for (const locale of ['en-US', 'ko-KR', 'zh-TW']) {
+    await ensureUiLocale(locale)
+    for (const message of [READ_FAILURE_TEXT, '登录已失效，请重新登录后再试。']) {
+      const translated = translateRegistrationError(message, locale)
       assert.notEqual(translated, message)
       if (locale !== 'zh-TW') assert.doesNotMatch(translated, /[\u4e00-\u9fff]/u)
     }

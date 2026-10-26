@@ -20,6 +20,15 @@ export function translateRegistrationError(message, locale) {
   }).join('\n')
 }
 
+// 票 2.68: a failed read never shows an upstream code (TEMPORARILY_UNAVAILABLE, "Failed to fetch"). A sentence the server
+// wrote in Chinese is kept; otherwise the reader is told nothing changed and can retry.
+export const READ_FAILURE_TEXT = '报名信息暂时无法读取，请稍后重试。已保存的报名不受影响。'
+export function describeReadFailure(failure, fallback = READ_FAILURE_TEXT) {
+  if (failure?.status === 401) return '登录已失效，请重新登录后再试。'
+  const message = String(failure?.message || '')
+  return /[\u3400-\u9fff]/u.test(message) ? message : fallback
+}
+
 export function describeRegistrationError(failure) {
   const issues = failure.data?.issues || []
   return [failure.message, ...issues.map(issue => {

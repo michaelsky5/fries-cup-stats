@@ -61,8 +61,9 @@ export function IdentityContextStrip({ context, loading = false, error = '' }) {
   return (
     <section className={styles.identityStrip} data-loading={loading} data-single={orderedIdentities.length <= 1 ? 'true' : 'false'}>
       <div>
-        <strong>{loading ? uiText("正在同步工作身份…", uiLocale) : uiText("{0}视角", uiLocale, [primaryCopy.label])}</strong>
-        <small>{error || (identities.length > 1 ? uiText("默认身份决定空间首页的优先内容，可在账号中心切换。", uiLocale) : uiText("身份与本届赛事关系已同步。", uiLocale))}</small>
+        {/* 票 2.68: an unfinished sync does not claim a viewer's perspective. */}
+        <strong>{loading ? uiText("正在同步工作身份…", uiLocale) : error ? uiText("身份暂未同步", uiLocale) : uiText("{0}视角", uiLocale, [primaryCopy.label])}</strong>
+        <small>{error ? uiText(error, uiLocale) : identities.length > 1 ? uiText("默认身份决定空间首页的优先内容，可在账号中心切换。", uiLocale) : uiText("身份与本届赛事关系已同步。", uiLocale)}</small>
       </div>
       <div className={styles.identityChips}>{orderedIdentities.length ? orderedIdentities.map(identity => { const copy = IDENTITY_COPY[identity.type] || { label: identity.label || identity.type, en: identity.type }; return <span key={identity.id || identity.type} data-type={identity.type} data-primary={identity.isPrimary ? 'true' : 'false'}><b>{uiText(copy.label, uiLocale)}</b><small>{identity.isPrimary ? uiText("当前默认 · ", uiLocale) : ''}{identity.seasonContextCount ? uiText("{0} 项本届关系", uiLocale, [identity.seasonContextCount]) : uiText("长期身份", uiLocale)}</small></span> }) : <span data-type="VIEWER" data-primary="true"><b>{uiText("普通观众", uiLocale)}</b><small>{uiText("当前默认账号视角", uiLocale)}</small></span>}</div>
     </section>

@@ -126,7 +126,9 @@
 .taskDescription { margin-bottom: 16px; }
 @media (max-width: 700px) {
   .identity { gap: 12px; }
-  .identity h1 { font-size: 28px; }
+  /* 票 2.68: the page title keeps the system's index size on phones (30px, as on 赛事报名 and 组队大厅); it was 24px here,
+     smaller than the 26px 「关注动态」 heading below it. */
+  .identity h1 { font-size: var(--fc-data-index-title-size); }
   .person summary { gap: 8px; }
   .person .avatar { display: none; }
   .task[data-primary='true'] .taskFoot time { font-size: 13px; }
@@ -152,7 +154,7 @@
 @media (max-width: 600px) {
   .identity { gap: 12px; min-height: 44px; }
   .accountName small { display: none; }
-  .identity h1 { margin: 0; font-size: 22px; line-height: 1.3; }
+  .identity h1 { margin: 0; line-height: 1.3; }
   .person { max-width: 48%; }
   .person summary { gap: 6px; }
   .activitySync { font-size: 12px; gap: 8px; }
@@ -178,7 +180,7 @@
 @media (max-width: 600px) {
   .identity { gap: 12px; align-items: flex-start; }
   .identityMain { flex-direction: column; align-items: flex-start; gap: 10px; }
-  .identity h1 { margin: 0; font-size: 24px; }
+  .identity h1 { margin: 0; }
   .identityContext { width: 100%; padding: 0; border: 0; }
   .overview[data-mobile-home='true'] { gap: 14px; }
   .overview[data-mobile-home='true'] .focusGrid { display: flex; flex-direction: column; gap: 14px; }

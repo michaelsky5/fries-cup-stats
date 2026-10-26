@@ -13,6 +13,7 @@ import layout from '../fd-design/layoutStyles.js'
 import styles from './AccountFrame.module.css'
 import { translateAccountSettingsText } from './accountSettingsCopy.js'
 import { getRestoreScrollY, restoreWindowScroll } from '../../lib/navigationState.js'
+import { buildFriesCupTitle } from '../../lib/pageTitle.js'
 
 // Global account pages share the public frame without fetching a season snapshot.
 export default function AccountFrame({ children, title, description, aside, compact = false }) {
@@ -34,6 +35,9 @@ export default function AccountFrame({ children, title, description, aside, comp
   useLocaleDomTranslation(locale, shell, location.pathname === '/account' ? translateAccountSettingsText : undefined)
   useEffect(() => { setStoredSeasonId(season.id) }, [season.id])
   useEffect(() => { document.documentElement.lang = locale; setStoredLocale(locale) }, [locale])
+  // 票 2.68: these pages sit outside the season layout, which names the tab, so the tab used to keep the previous page's
+  // name (我的空间 → 继续填写报名 still read 「我的空间」). A page that names its own tab still does so after this.
+  useEffect(() => { if (typeof title === 'string' && title.trim()) document.title = buildFriesCupTitle(title, locale) }, [title, locale])
   useEffect(() => {
     if (location.state?.mobileTabRestore) restoreWindowScroll(getRestoreScrollY(location.state))
   }, [location.key, location.state])

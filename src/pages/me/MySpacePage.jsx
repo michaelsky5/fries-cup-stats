@@ -83,6 +83,14 @@ export function buildSpaceSections({ player = false, team = false, manager = fal
   ]
 }
 
+// 票 2.68: a failed sync shows a sentence, never an upstream code (TEMPORARILY_UNAVAILABLE, "Failed to fetch"); a sentence
+// the server wrote in Chinese is kept. A read changes nothing, so the text says so.
+const SPACE_READ_FAILURE = '请稍后重新同步；已有的报名、队伍和待办不受影响。'
+function spaceReadFailure(error) {
+  const message = String(error?.message || '')
+  return /[\u3400-\u9fff]/u.test(message) ? message : SPACE_READ_FAILURE
+}
+
 function hasResolvedCapability(context, key) {
   return Boolean(context?.capabilitySnapshot?.grantedKeys?.includes(key))
 }
@@ -603,7 +611,7 @@ function MySpaceContent() {
     setSpaceContextError('')
     fetchSynchronizedSpaceContext(seasonId)
       .then(nextContext => { if (!cancelled && requestId === spaceRequest.current) setSpaceContext(nextContext) })
-      .catch(error => { if (!cancelled && requestId === spaceRequest.current) setSpaceContextError(error?.message || '身份与赛事关系同步失败。') })
+      .catch(error => { if (!cancelled && requestId === spaceRequest.current) setSpaceContextError(spaceReadFailure(error)) })
       .finally(() => { if (!cancelled && requestId === spaceRequest.current) setSpaceContextLoading(false) })
     return () => { cancelled = true; spaceRequest.current += 1 }
   }, [accountSpaceAllowed, authUser?.id, isAuthenticated, seasonId])
@@ -617,7 +625,7 @@ function MySpaceContent() {
       const nextContext = await fetchSynchronizedSpaceContext(seasonId)
       if (requestId === spaceRequest.current) setSpaceContext(nextContext)
     } catch (error) {
-      if (requestId === spaceRequest.current) setSpaceContextError(error?.message || '身份与赛事关系同步失败。')
+      if (requestId === spaceRequest.current) setSpaceContextError(spaceReadFailure(error))
     } finally {
       if (requestId === spaceRequest.current) setSpaceContextLoading(false)
     }
@@ -794,9 +802,8 @@ function MySpaceContent() {
         </SpaceHeader>
         <IdentityContextStrip context={effectiveSpaceContext} loading={spaceContextLoading || !spaceContextError} error={spaceContextError} />
         <section className={styles.spaceContextState} data-error={spaceContextError ? 'true' : 'false'}>
-          <span>{spaceContextError ? 'SYNC INTERRUPTED' : 'SYNCING EVENT CONTEXT'}</span>
           <strong>{spaceContextError ? uiText("赛事账号暂时无法完成同步", locale) : uiText("正在读取你的赛事关系与待办", locale)}</strong>
-          <p>{spaceContextError || uiText("同步完成前不会把未知状态显示成“没有待办”。", locale)}</p>
+          <p>{spaceContextError ? uiText(spaceContextError, locale) : uiText("同步完成前不会把未知状态显示成“没有待办”。", locale)}</p>
           {spaceContextError ? <button type="button" onClick={refreshSpaceContext}>{uiText("重新同步", locale)}</button> : null}
         </section>
       </main>

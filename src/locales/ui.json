@@ -1,4 +1,24 @@
 {
+  "报名信息暂时无法读取，请稍后重试。已保存的报名不受影响。": {
+    "en-US": "Registration details could not be loaded. Please try again shortly; saved registrations are not affected.",
+    "ko-KR": "등록 정보를 불러올 수 없습니다. 잠시 후 다시 시도해 주세요. 저장된 등록에는 영향이 없습니다.",
+    "zh-TW": "報名資訊暫時無法讀取，請稍後重試。已儲存的報名不受影響。"
+  },
+  "登录已失效，请重新登录后再试。": {
+    "en-US": "Your sign-in has expired. Please sign in again and retry.",
+    "ko-KR": "로그인이 만료되었습니다. 다시 로그인한 뒤 시도해 주세요.",
+    "zh-TW": "登入已失效，請重新登入後再試。"
+  },
+  "请稍后重新同步；已有的报名、队伍和待办不受影响。": {
+    "en-US": "Please sync again shortly; your registrations, teams and tasks are not affected.",
+    "ko-KR": "잠시 후 다시 동기화해 주세요. 기존 등록, 팀, 할 일에는 영향이 없습니다.",
+    "zh-TW": "請稍後重新同步；已有的報名、隊伍和待辦不受影響。"
+  },
+  "身份暂未同步": {
+    "en-US": "Roles not synced yet",
+    "ko-KR": "역할이 아직 동기화되지 않았습니다",
+    "zh-TW": "身分暫未同步"
+  },
   "送审前还需完成": {
     "en-US": "Before submitting for review",
     "ko-KR": "심사 제출 전 확인 사항",

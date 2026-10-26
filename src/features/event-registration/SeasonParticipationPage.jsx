@@ -19,7 +19,7 @@ import WeeklyTeamAdditions from '../weekly-competition/WeeklyTeamAdditions.jsx'
 import WeeklyOwnershipTransfers from '../weekly-competition/WeeklyOwnershipTransfers.jsx'
 import { spaceSectionDestination, teamManagementDestination } from '../my-space/spaceDestinations.js'
 import WeeklyEligibilityFields, { MemberEligibilityEditor, readWeeklyEligibility } from './WeeklyEligibilityFields.jsx'
-import { describeRegistrationError as describeError, translateRegistrationError } from './registrationErrors.js'
+import { describeReadFailure, describeRegistrationError as describeError, translateRegistrationError } from './registrationErrors.js'
 import { SharedRegistrationJoin, RegistrationJoinManager, MyRegistrationJoinApplications } from './SharedRegistrationJoin.jsx'
 const emptyDetails = { region: '', history: '', logoUrl: '', coachName: '', coachContact: '', managerBattleTag: '' }
 const emptyTeam = { name: '', shortName: '', contact: '', note: '', kind: 'LONG_TERM', organizationId: '' }
@@ -73,7 +73,7 @@ function ParticipationNotice({ seasonId, noticeId }) {
     const controller = new AbortController()
     platformRequest(`${path(seasonId)}/notices/${encodeURIComponent(noticeId)}`, { signal: controller.signal })
       .then(result => { if (!controller.signal.aborted) { setNotice(result.notice); setError('') } })
-      .catch(failure => { if (!controller.signal.aborted) setError(describeError(failure)) })
+      .catch(failure => { if (!controller.signal.aborted) setError(describeReadFailure(failure)) })
     return () => controller.abort()
   }, [seasonId, noticeId, attempt])
   async function acknowledge() {
@@ -186,7 +186,7 @@ function Workspace({ user, seasonId, hasAdditions }) {
     const controller = new AbortController()
     platformRequest(`${path(seasonId)}/me`, { signal: controller.signal })
       .then(data => { if (!controller.signal.aborted) { setWorkspace(data); setError('') } })
-      .catch(failure => { if (!controller.signal.aborted) setError(describeError(failure)) })
+      .catch(failure => { if (!controller.signal.aborted) setError(describeReadFailure(failure)) })
     return () => controller.abort()
   }, [seasonId, version])
   async function perform(suffix, body, method = 'POST', savingDraftLabel) {
