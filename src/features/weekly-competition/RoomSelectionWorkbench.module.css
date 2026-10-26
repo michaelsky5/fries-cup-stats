@@ -137,8 +137,10 @@
   .commitSummary>strong { color:var(--fc-data-room-text);font-size:13px; }
   .footerSideChoice { display:grid;grid-template-columns:auto auto auto;align-items:center;gap:6px; }
   .footerSideChoice>small { font-size:11px;max-width:72px; }
-  .footerSideChoice button { min-height:38px;padding:6px 12px;font-size:12px;white-space:nowrap; }
-  .footerSideChoice button[aria-pressed=true] { background:var(--fc-data-room-selection);color:var(--fc-data-room-text);border-color:var(--fc-data-room-action-bg); }
+  .footerSideChoice button { position:relative;min-height:38px;padding:6px 24px 6px 12px;font-size:12px;white-space:nowrap; }
+  .footerSideChoice button[aria-pressed=true],.footerSideChoice button[aria-pressed=true]:not(:disabled):hover { background:var(--fc-data-room-raised);color:var(--fc-data-room-text);border-color:var(--fc-data-room-text);box-shadow:inset 0 0 0 3px var(--fc-data-room-action-bg); }
+  .footerSideChoice .sideMark { position:absolute;top:0;right:0;padding:1px 5px;border-top-right-radius:inherit;background:var(--fc-data-room-action-bg);color:var(--fc-data-room-action-text);font-size:var(--room-caption,12px);line-height:1.4; }
+  .footerSideChoice .sideMark:empty { display:none; }
   @media(width < 1180px) {
     .mapStage,.banStage { flex:none;min-height:min-content; }
     .mapStage [data-room-map-preview] { display:none; }
