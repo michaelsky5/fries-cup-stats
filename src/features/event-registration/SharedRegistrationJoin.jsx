@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
+import PasswordRequirements from '../auth/PasswordRequirements.jsx'
+import { NEW_PASSWORD_MIN_LENGTH, NEW_PASSWORD_MAX_LENGTH, validateNewPassword } from '../auth/passwordPolicy.js'
 import { platformRequest } from '../auth/platformApi.js'
 import { useRegistrationDraft } from './registrationDraftGuard.jsx'
 import WeeklyEligibilityFields, { readWeeklyEligibility } from './WeeklyEligibilityFields.jsx'
@@ -123,6 +125,8 @@ function JoinAccount({ token }) {
     if (lock.current) return
     const values = new FormData(event.currentTarget)
     if (values.get('password') !== values.get('confirmation')) { setError('两次输入的密码不一致。'); return }
+    const policyError = validateNewPassword(values.get('password'), locale)
+    if (policyError) { setError(policyError); return }
     lock.current = true; setBusy(true); setError('')
     try {
       const result = await platformRequest('/registration/join-links/register', { method: 'POST', body: {
@@ -136,7 +140,8 @@ function JoinAccount({ token }) {
   }
   return <section className={styles.card}><h3>{uiText('使用本人账号填写', locale)}</h3><p>{uiText('已有账号直接登录，参赛资料会自动带入。首次参加可在这里创建账号。', locale)}</p><div className={styles.actions}><button className={!creating ? styles.primary : ''} type="button" onClick={openLogin}>{uiText('已有账号，登录', locale)}</button><button type="button" onClick={() => setCreating(value => !value)}>{uiText(creating ? '收起注册' : '首次参加，创建账号', locale)}</button></div>
     {creating && <form ref={form} className={styles.form} onChange={() => setDirty(true)} onSubmit={register}>
-      <div className={styles.fields}><label>{uiText('本人称呼', locale)}<input name="displayName" autoComplete="nickname" required maxLength={80} disabled={busy} /></label><label>{uiText('本人邮箱', locale)}<input name="email" type="email" autoComplete="email" required maxLength={254} disabled={busy} /></label><label>{uiText('设置密码（至少 12 位）', locale)}<input name="password" type="password" autoComplete="new-password" minLength={12} required disabled={busy} /></label><label>{uiText('再次输入密码', locale)}<input name="confirmation" type="password" autoComplete="new-password" minLength={12} required disabled={busy} /></label></div>
+      <div className={styles.fields}><label>{uiText('本人称呼', locale)}<input name="displayName" autoComplete="nickname" required maxLength={80} disabled={busy} /></label><label>{uiText('本人邮箱', locale)}<input name="email" type="email" autoComplete="email" required maxLength={254} disabled={busy} /></label><label>{uiText('设置账号密码', locale)}<input name="password" type="password" autoComplete="new-password" minLength={NEW_PASSWORD_MIN_LENGTH} maxLength={NEW_PASSWORD_MAX_LENGTH} pattern="[!-~]+" aria-describedby="join-password-policy" required disabled={busy} /></label><label>{uiText('再次输入密码', locale)}<input name="confirmation" type="password" autoComplete="new-password" minLength={NEW_PASSWORD_MIN_LENGTH} maxLength={NEW_PASSWORD_MAX_LENGTH} pattern="[!-~]+" required disabled={busy} /></label></div>
+      <PasswordRequirements locale={locale} id="join-password-policy" />
       <label className={styles.check}><input name="consent" type="checkbox" required disabled={busy} />{uiText('我使用本人邮箱注册，并由本人填写参赛资料。', locale)}</label>{error && <p className={styles.error} role="alert">{translateRegistrationError(error, locale)}</p>}<button className={styles.primary} disabled={busy}>{uiText(busy ? '正在创建…' : '创建账号并验证邮箱', locale)}</button>
     </form>}
   </section>
@@ -179,6 +184,7 @@ export function RegistrationJoinManager({ record, seasonId, editable, busy, perf
   }, [data, focusId])
   useEffect(() => {
     const controller = new AbortController()
+    onPendingChange(null)
     platformRequest(`${registrationPath(seasonId)}${prefix}/join-link`, { signal: controller.signal })
       .then(result => {
         if (controller.signal.aborted) return
