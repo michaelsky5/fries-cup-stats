@@ -363,7 +363,7 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
   )
 }
 
-export default function AuthButton({ locale = 'zh-CN', dialogOnly = false }) {
+export default function AuthButton({ locale = 'zh-CN', dialogOnly = false, attention = null }) {
   const {
     emailChangeState,
     emailVerificationState,
@@ -412,6 +412,11 @@ export default function AuthButton({ locale = 'zh-CN', dialogOnly = false }) {
   const accountModeLabel = isAuthenticated
     ? (isEn ? 'ACCOUNT' : uiText("账号中心", locale))
     : (isEn ? 'ACCOUNT ACCESS' : uiText("账户入口", locale))
+  // 票 2.67: 「我的空间」 lives behind the avatar on every width, so its 待 N / 未 N come with it: on the avatar and
+  // beside 「我的空间」 in the menu (phones keep their dot on the avatar instead).
+  const attentionBadges = isAuthenticated && attention?.visible
+    ? [attention.showTaskBadge ? attention.taskBadge : '', attention.unreadNotificationCount ? attention.unreadBadge : ''].filter(Boolean)
+    : []
 
   useEffect(() => {
     window.addEventListener('fries-cup:open-account', openAccount)
@@ -439,20 +444,22 @@ export default function AuthButton({ locale = 'zh-CN', dialogOnly = false }) {
       {!dialogOnly ? <div ref={menuRef} className={styles.accountEntry}><button
         type="button"
         className={styles.authButton}
-        aria-label={label}
+        aria-label={attentionBadges.length ? `${label} · ${attention.ariaLabel}` : label}
         onClick={() => isAuthenticated ? setMenuOpen(value => !value) : openAccount()}
         aria-expanded={isAuthenticated ? menuOpen : undefined}
         aria-controls={isAuthenticated ? "account-navigation" : undefined}
         disabled={isBootstrapping}
       >
-        <AccountAvatar className={styles.avatar} user={isAuthenticated ? user : null} />
+        {attentionBadges.length
+          ? <span className={styles.avatarSlot}><AccountAvatar className={styles.avatar} user={user} /><b className={styles.attentionBadge} data-account-attention aria-hidden="true">{attentionBadges[0]}</b></span>
+          : <AccountAvatar className={styles.avatar} user={isAuthenticated ? user : null} />}
         <span className={styles.authCopy}>
           <span className={styles.authName}>{isBootstrapping ? (isEn ? 'CHECKING' : uiText("检查中", locale)) : label}</span>
           <small className={styles.authMode}>{accountModeLabel}</small>
         </span>
         <span className={styles.authArrow} aria-hidden="true">⌄</span>
       </button>
-      {menuOpen && isAuthenticated ? <nav id="account-navigation" className={styles.accountMenu} aria-label={isEn ? 'Account navigation' : uiText("账号导航", locale)}><div><strong>{user?.displayName || label}</strong><span>{user?.email}</span></div><Link to={roomsHref} onClick={() => setMenuOpen(false)}>{uiText("比赛房", locale)} <span>→</span></Link><Link to={spaceHref} onClick={() => setMenuOpen(false)}>{isEn ? 'My Space' : uiText("我的空间", locale)} <span>→</span></Link><Link to={accountHref} onClick={() => setMenuOpen(false)}>{isEn ? 'Account settings' : uiText("账号设置", locale)} <span>↗</span></Link><button type="button" disabled={logoutState === 'busy'} onClick={async () => { if (!canSignOutOfAccount()) { setLogoutState('unsaved'); return } setLogoutState('busy'); try { await logout(); setMenuOpen(false); setLogoutState('') } catch { setLogoutState('error') } }}>{logoutState === 'busy' ? (isEn ? 'Signing out…' : uiText("正在退出…", locale)) : (isEn ? 'Sign out' : uiText("退出登录", locale))}</button>{logoutState === 'unsaved' ? <p role="alert">{isEn ? 'Save or discard your changes before signing out.' : UNSAVED_ACCOUNT_MESSAGE}</p> : null}{logoutState === 'error' ? <p role="alert">{isEn ? 'Sign out failed. Please retry.' : uiText("退出失败，请重试。", locale)}</p> : null}</nav> : null}
+      {menuOpen && isAuthenticated ? <nav id="account-navigation" className={styles.accountMenu} aria-label={isEn ? 'Account navigation' : uiText("账号导航", locale)}><div><strong>{user?.displayName || label}</strong><span>{user?.email}</span></div><Link to={spaceHref} onClick={() => setMenuOpen(false)}><span className={styles.menuLabel}>{isEn ? 'My Space' : uiText("我的空间", locale)}{attentionBadges.map(text => <em key={text}>{text}</em>)}</span> <span>→</span></Link><Link to={roomsHref} onClick={() => setMenuOpen(false)}>{uiText("比赛房", locale)} <span>→</span></Link><Link to={accountHref} onClick={() => setMenuOpen(false)}>{isEn ? 'Account settings' : uiText("账号设置", locale)} <span>↗</span></Link><button type="button" disabled={logoutState === 'busy'} onClick={async () => { if (!canSignOutOfAccount()) { setLogoutState('unsaved'); return } setLogoutState('busy'); try { await logout(); setMenuOpen(false); setLogoutState('') } catch { setLogoutState('error') } }}>{logoutState === 'busy' ? (isEn ? 'Signing out…' : uiText("正在退出…", locale)) : (isEn ? 'Sign out' : uiText("退出登录", locale))}</button>{logoutState === 'unsaved' ? <p role="alert">{isEn ? 'Save or discard your changes before signing out.' : UNSAVED_ACCOUNT_MESSAGE}</p> : null}{logoutState === 'error' ? <p role="alert">{isEn ? 'Sign out failed. Please retry.' : uiText("退出失败，请重试。", locale)}</p> : null}</nav> : null}
       </div> : null}
       <AuthDialog open={open} onClose={close} locale={locale} resetLink={resetLink} />
     </>

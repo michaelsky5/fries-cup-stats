@@ -91,6 +91,12 @@ assert.equal(gateSource.includes('startVisiblePolling(refreshAnnouncements'), tr
 assert.equal(gateSource.includes('暂时无法核验赛事公告'), true)
 const headerSource = readFileSync(new URL('../src/components/layout/PublicHeader.jsx', import.meta.url), 'utf8')
 assert.equal(headerSource.includes('<AccountAttentionBadge attention={accountAttention} />'), true)
+// 票 2.67: in the default design the count rides on the avatar and beside 「我的空间」 in the avatar menu.
+assert.equal(headerSource.includes('attention={isKprHybridDesign ? accountAttention : null}'), true)
+const authButtonSource = readFileSync(new URL('../src/features/auth/AuthDialog.jsx', import.meta.url), 'utf8')
+assert.match(authButtonSource, /data-account-attention aria-hidden="true">\{attentionBadges\[0\]\}/)
+assert.ok(authButtonSource.includes('<Link to={spaceHref} onClick={() => setMenuOpen(false)}><span className={styles.menuLabel}>'), '我的空间 carries the count in the avatar menu')
+assert.ok(authButtonSource.indexOf('<Link to={spaceHref}') < authButtonSource.indexOf('<Link to={roomsHref}'), '我的空间 leads the avatar menu')
 assert.equal(layoutSource.includes('accountAttention={accountAttention}'), true)
 assert.equal(layoutSource.includes('fetchAccountAttentionContext(attentionSeasonId, authUser?.id'), true)
 assert.match(layoutSource, /<UrgentAnnouncementGate\s+seasonId=\{seasonId\}/)

@@ -1074,3 +1074,36 @@
   :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .accountCluster { height: 44px; min-height: 44px; border-left: 1px solid rgba(255, 255, 255, .15); }
   :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .accountCluster button { width: 44px; height: 44px; min-height: 44px; }
 }
+
+/* 票 2.67: signed out, 「我的关注」 is its own cell of the control dock, left of 「登录」; phones keep it in the menu sheet. */
+.followingLink { display: none; }
+:global([data-design="kpr"][data-design-edition="hybrid"]) .followingLink {
+  height: 100%;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  padding: 0 12px;
+  border-right: 1px solid #ffffff1e;
+  color: #f2f2e9;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color .16s ease, color .16s ease;
+}
+:global([data-design="kpr"][data-design-edition="hybrid"]) .followingLink:hover,
+:global([data-design="kpr"][data-design-edition="hybrid"]) .followingLink:focus-visible { background: #ffffff12; color: var(--kpr-yellow); }
+:global([data-design="kpr"][data-design-edition="hybrid"]) .followingLink[aria-current="page"] { color: var(--kpr-yellow); }
+/* Below 721px the dock has no room for it, so it moves into the shared menu as its last line (as on phones). */
+@media (min-width: 721px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavPanel [data-following-item] { display: none; }
+}
+@media (max-width: 720px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .followingLink { display: none; }
+}
+/* 601–640px: the brand, the menu and the dock overlapped by up to 24px before this ticket; their minimums now fit. */
+@media (min-width: 601px) and (max-width: 640px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .topBar { grid-template-columns: minmax(151px, 1fr) minmax(124px, auto) auto; }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavMenu > summary { min-width: 124px; }
+}

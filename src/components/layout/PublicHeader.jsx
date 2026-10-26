@@ -11,9 +11,10 @@ import EventContextBar from './EventContextBar.jsx'
 import SiteSearch from '../../features/site-search/SiteSearch.jsx'
 import PublicMobileNav, { PublicMobileMenu } from './PublicMobileNav.jsx'
 import mobileStyles from './PublicMobileNav.module.css'
-import { getPrimaryNavigation, getPersonalNavItem, getNavLabel, getWeeklyNavigationPath } from './publicNavigation.js'
+import { getEventNavigation, getPrimaryNavigation, getPersonalNavItem, getNavLabel, getWeeklyNavigationPath } from './publicNavigation.js'
 import styles from '../../features/fd-design/layoutStyles.js'
 
+// Older preview designs still list 「我的空间」 in the masthead with this count; the default design shows it on the avatar.
 function AccountAttentionBadge({ attention }) {
   if (!attention?.visible) return null
 
@@ -44,13 +45,14 @@ function PortalNavItem({ item, activeGroup, locale, to, accountAttention }) {
   )
 }
 
-function MobileNavItem({ item, activeGroup, locale, to, accountAttention }) {
+function MobileNavItem({ item, activeGroup, locale, to, accountAttention, following = false }) {
   const label = getNavLabel(item, locale)
 
   return (
     <Link
       to={to}
       data-nav-group={item.group}
+      data-following-item={following || undefined}
       aria-current={activeGroup === item.group ? 'page' : undefined}
       onClick={event => event.currentTarget.closest('details')?.removeAttribute('open')}
       className={[
@@ -153,6 +155,10 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
   const fallbackMenuRef = useRef(null)
   const menuRef = mobileMenuRef || fallbackMenuRef
   const headerNavItems = getPrimaryNavigation(isAuthenticated).filter(item => !season?.partnerTrial || !['advance', 'play', 'space'].includes(item.group))
+  // 票 2.67: in the default design the masthead and its shared menu list the event pages only; personal pages sit with
+  // the account control. Phones keep their own navigation (all items); older preview designs are left as they were.
+  const eventNavItems = isKprHybridDesign ? getEventNavigation(headerNavItems) : headerNavItems
+  const followingItem = isKprHybridDesign && !isAuthenticated ? headerNavItems.find(item => item.group === 'space') : null
   const navPath = path => withSeason(getWeeklyNavigationPath(path, location.search, season?.rules?.weeklyCompetition?.enabled || season?.competitionFormat === 'WEEKLY'))
   const currentLabel = activeGroup === 'space' ? getNavLabel(getPersonalNavItem(isAuthenticated), layoutLocale) : activeNavLabel
   const phoneNavigation = isKprHybridDesign && !/^\/dev(?:\/|$)/.test(location.pathname) && !/\/room\/?$/.test(location.pathname)
@@ -199,7 +205,7 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
           </Link> : null}
 
           <nav className={styles.nav} data-upgrade-nav aria-label={pickUiLocale(layoutLocale, '赛事中心导航', 'Event navigation', '대회 센터 탐색', '賽事中心導覽')} data-i18n-ignore>
-            {headerNavItems.map(item => (
+            {eventNavItems.map(item => (
               <PortalNavItem
                 key={item.group}
                 item={item}
@@ -215,12 +221,12 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
             <summary>
               <span className={styles.mobileNavCurrent}>{currentLabel}</span>
               <span className={styles.mobileNavSummaryMeta}>
-                <AccountAttentionBadge attention={accountAttention} />
+                {isKprHybridDesign ? null : <AccountAttentionBadge attention={accountAttention} />}
                 <b className={styles.mobileMenuLabel}>MENU</b>
               </span>
             </summary>
             <nav className={styles.mobileNavPanel} aria-label={pickUiLocale(layoutLocale, '赛事中心菜单', 'Event menu', '대회 센터 메뉴', '賽事中心選單')}>
-              {headerNavItems.map(item => (
+              {eventNavItems.map(item => (
                 <MobileNavItem
                   key={item.group}
                   item={item}
@@ -230,6 +236,8 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
                   accountAttention={accountAttention}
                 />
               ))}
+              {/* 票 2.67: below 721px the signed-out 「我的关注」 cell has no room in the dock and is listed here instead. */}
+              {followingItem ? <MobileNavItem item={followingItem} activeGroup={activeGroup} locale={layoutLocale} to={navPath(followingItem.to)} following /> : null}
               {isKprHybridDesign && showLanguage ? (
                 <LanguageMenu
                   locale={layoutLocale}
@@ -285,7 +293,9 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
               </div>
             )}
             <div className={styles.accountCluster} data-upgrade-account>
-              {accountControl === undefined ? <AuthButton locale={compatibleLayoutLocale} seasonId={seasonId} /> : accountControl}
+              {/* 票 2.67: signed out, 「我的关注」 sits left of 「登录」 (phones keep it in their menu sheet). */}
+              {followingItem ? <Link to={navPath(followingItem.to)} className={styles.followingLink} data-nav-group="space" aria-current={activeGroup === 'space' ? 'page' : undefined}>{getNavLabel(followingItem, layoutLocale)}</Link> : null}
+              {accountControl === undefined ? <AuthButton locale={compatibleLayoutLocale} seasonId={seasonId} attention={isKprHybridDesign ? accountAttention : null} /> : accountControl}
               {/* 票 2.18: on phones 我的 lives behind the avatar, so its attention mark moves here from the tab bar. */}
               {phoneNavigation && accountAttention?.visible ? <i className={mobileStyles.avatarAttention} role="img" aria-label={accountAttention.ariaLabel} /> : null}
             </div>

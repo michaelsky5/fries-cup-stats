@@ -27,6 +27,12 @@ export function getPrimaryNavigation(isAuthenticated = false) {
   return [...PRIMARY_NAV.slice(0, -1), getPersonalNavItem(isAuthenticated)]
 }
 
+// 票 2.67: the masthead and its shared menu carry the event pages only. Personal pages sit with the account control,
+// as on phones: 「我的空间」 (and its 待 N) behind the avatar, 「我的关注」 beside 「登录」 when signed out.
+export function getEventNavigation(items = PRIMARY_NAV) {
+  return items.filter(item => item.group !== 'space')
+}
+
 // Ordinary public links use the build default without adding preview parameters.
 // Explicit versions and pages that override that default retain their context.
 export function getNavigationSearch(search = '', design = '', locale) {

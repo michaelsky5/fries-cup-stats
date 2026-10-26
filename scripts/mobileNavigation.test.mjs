@@ -157,3 +157,14 @@ test('票 2.18: 参赛 is its own Tab and remembers only its public page', async
   assert.equal(target.to, '/play?season=FCW2026')
   assert.equal(target.state.restoreScrollY, 120)
 })
+
+test('票 2.67: the masthead lists the six event pages; personal pages sit with the account control', async () => {
+  const { getEventNavigation, getPrimaryNavigation } = await import('../src/components/layout/publicNavigation.js')
+  const events = ['overview', 'matches', 'advance', 'roster', 'database', 'play']
+  assert.deepEqual(getEventNavigation().map(item => item.group), events)
+  for (const signedIn of [false, true]) assert.deepEqual(getEventNavigation(getPrimaryNavigation(signedIn)).map(item => item.group), events)
+  assert.equal(getPrimaryNavigation(false).at(-1).cn, '我的关注', 'phones and the signed-out account cell still get the personal item')
+  // A partner trial hides some pages before the split; what is left keeps its order.
+  const trial = getPrimaryNavigation(true).filter(item => !['advance', 'play', 'space'].includes(item.group))
+  assert.deepEqual(getEventNavigation(trial).map(item => item.group), ['overview', 'matches', 'roster', 'database'])
+})
