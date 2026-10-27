@@ -205,3 +205,4 @@
   .mapRecords [data-hero-match="true"] { box-shadow: inset 3px 0 var(--fc-data-signal-deep); }
   .mapRecords [data-hero-match="true"] th:first-child { box-shadow: none; padding-left: 0; }
 }
+@media (max-width: 760px) { .empty a { display: inline-flex; align-items: center; min-height: 44px; } } /* 票 2.75 补 2 */

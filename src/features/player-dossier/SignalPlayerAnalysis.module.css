@@ -111,3 +111,8 @@
   .analysisSample { column-gap: 8px; }
   .analysisSample > div { padding-left: 8px; }
 }
+/* 票 2.75 补 2: the data tab's links and buttons are 44px tall on phones. */
+@media (max-width: 760px) {
+  .analysisIdentity > p:first-child a, .analysisActions > :is(a, button) { display: inline-flex; align-items: center; min-height: 44px; }
+  .analysisRating > button { min-height: 44px; }
+}

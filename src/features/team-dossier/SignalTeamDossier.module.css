@@ -387,3 +387,8 @@
 }
 /* 票 2.75: the footer links are 44px tall on phones. */
 @media (max-width: 760px) { .pageFoot a, .pageFoot button { display: inline-flex; align-items: center; min-height: 44px; } }
+/* 票 2.75 补 2: the team data tab's filters and links are 44px tall on phones. */
+@media (max-width: 760px) {
+  .matchControls button, .matchControls select { min-height: 44px; }
+  .ledgerFoot a { display: inline-flex; align-items: center; min-height: 44px; }
+}

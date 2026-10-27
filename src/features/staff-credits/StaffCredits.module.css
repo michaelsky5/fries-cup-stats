@@ -167,3 +167,4 @@
   .folio[data-staff-group="event"] .scene { min-height: 140px; padding-block: 16px; }
   .folio[data-staff-group="event"] .matchRecords { padding-block: 16px; }
 }
+@media (max-width: 760px) { .method summary { min-height: 44px; display: flex; align-items: center; } } /* 票 2.75 补 2 */

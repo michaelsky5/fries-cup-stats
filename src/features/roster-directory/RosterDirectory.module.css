@@ -177,3 +177,16 @@
   .shell[data-staff-group="event"] .nameRow > button { gap: 12px; padding-inline: 12px; }
   .shell[data-staff-group="event"] .serial { width: 26px; }
 }
+/* 票 2.75 补 2: phone tap targets in the directories are at least 44px. The pagination puts its page
+   numbers on their own row and splits 上一页 / 下一页 below (seven 44px numbers fit; one row did not). */
+@media (max-width: 760px) {
+  .roleTabs button, .moreFilters { min-height: 44px; }
+  .search input, .selectField select { height: 44px; }
+  .headingAside a { min-height: 44px; align-items: center; }
+  .directory .pagination nav > div:nth-child(2) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .directory .pagination nav > div:nth-child(2) > div { grid-column: 1 / -1; grid-row: 1; flex-wrap: wrap; }
+  .directory .pagination nav > div:nth-child(2) > button:first-child { grid-column: 1; grid-row: 2; }
+  .directory .pagination nav > div:nth-child(2) > button:last-child { grid-column: 2; grid-row: 2; }
+  .directory .pagination nav button { min-width: 44px; min-height: 44px; height: 44px; }
+  .directory .pagination nav select { width: 64px; min-height: 44px; height: 44px; }
+}
