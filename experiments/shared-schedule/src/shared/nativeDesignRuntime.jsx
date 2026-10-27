@@ -195,6 +195,34 @@ export function changeNativeLanguage(locale) { closeNativeMenus();setStoredLocal
 
 export const copyNativeText=value=>Taro.setClipboardData({data:String(value)})
 export function useNativeCompactLayout() { return true }
+export function useNativeCondensedIdentity(_articleRef, view) {
+  const [condensed,setCondensed]=useState(false)
+  const generation=useRef(0),measuring=useRef(false)
+  const measure=useCallback(()=>{
+    if(measuring.current)return
+    const current=generation.current;measuring.current=true
+    Taro.nextTick(()=>{
+      if(current!==generation.current)return
+      const query=Taro.createSelectorQuery()
+      query.select('#native-team-archive-nav').boundingClientRect()
+      query.select('#native-team-cover-name').boundingClientRect()
+      query.select('#native-team-title-row').boundingClientRect()
+      query.exec(rects=>{
+        if(current!==generation.current)return
+        measuring.current=false
+        const [nav,cover,title]=rects||[],holder=cover||title
+        setCondensed(Boolean(nav&&holder&&holder.bottom<=nav.bottom))
+      })
+    })
+  },[])
+  useEffect(()=>{
+    generation.current+=1;measuring.current=false;setCondensed(false)
+    const cancel=afterNativeRender(measure)
+    return()=>{generation.current+=1;measuring.current=false;cancel()}
+  },[view,measure])
+  usePageScroll(measure)
+  return condensed
+}
 export function useNativeStagePointer() { /* Authored phone layout has no pointer scene. */ }
 export function useNativeExhibitionScene(){const rootRef=useRef(null),stageRef=useRef(null),identityRef=useRef(null),peopleRef=useRef(null);const [chapter,setChapter]=useState(0);return {rootRef,stageRef,identityRef,peopleRef,animated:false,pinned:false,reduced:true,chapter,moveTo:target=>{setChapter(target);nativeRevealElement(target?peopleRef.current:identityRef.current)},toggleMotion(){}}}
 export function useNativeArchiveStory() {

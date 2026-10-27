@@ -24,6 +24,7 @@ export const nativeBoundaryImports={
   'useLobbyOpen.js':'useNativeLobbyOpen',
   'useMobileTabNavigation.js':'useNativeMobileTabNavigation',
   'usePublishedNewspaper.js':'useNativeDeferredNewspaper',
+  'useCondensedIdentity.js':'useNativeCondensedIdentity',
   'MatchDataFeedback.jsx':'NativeAccountFeature',
   'TeamShareDialog.jsx':'NativeTeamShareDialog',
   'PlayerStoryShareDialog.jsx':'NativePlayerShareDialog'

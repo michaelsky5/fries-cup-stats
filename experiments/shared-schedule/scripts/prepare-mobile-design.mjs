@@ -302,6 +302,15 @@ export function prepareMobileDesign(stats, out) {
           p.replaceWith(t.jsxElement(t.jsxOpeningElement(t.jsxIdentifier('ScrollView'),[t.jsxAttribute(t.jsxIdentifier('scrollX'),t.jsxExpressionContainer(t.booleanLiteral(true))),t.jsxAttribute(t.jsxIdentifier('className'),t.stringLiteral('native-map-scroll'))]),t.jsxClosingElement(t.jsxIdentifier('ScrollView')),[element]));p.skip();return
         }
         const classAttribute=element.openingElement.attributes.find(attr=>attr.name?.name==='className')
+        const identityAnchor = {
+          'data-archive-tabs': 'native-team-archive-nav',
+          'data-cover-name': 'native-team-cover-name',
+          'data-team-title-row': 'native-team-title-row'
+        }
+        const anchorAttribute = element.openingElement.attributes.find(attr=>identityAnchor[attr.name?.name])
+        if(anchorAttribute && !element.openingElement.attributes.some(attr=>attr.name?.name==='id')) {
+          element.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('id'),t.stringLiteral(identityAnchor[anchorAttribute.name.name])))
+        }
         // Opening-element adaptation has already appended native state classes.
         // Match the original base class when choosing a platform component.
         let authoredExpression=classAttribute?.value?.expression

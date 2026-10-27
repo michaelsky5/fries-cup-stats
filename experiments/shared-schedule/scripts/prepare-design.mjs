@@ -9,6 +9,7 @@ import { portableScheduleCss } from './portable-css.mjs'
 import { navigationSources, prepareNavigation } from './prepare-navigation.mjs'
 import { mobileDesignSources, prepareMobileDesign } from './prepare-mobile-design.mjs'
 import { nativePublicFoundationCss } from './prepare-public-foundation.mjs'
+import { rootCustomProperties, resolveDesignToken } from './native-design-tokens.mjs'
 import './prepare-seasons.mjs'
 import './prepare-team-model.mjs'
 import './prepare-classic.mjs'
@@ -24,14 +25,15 @@ const brand = postcss.parse(fs.readFileSync(brandPath, 'utf8'))
 // Stats' root tokens. Omitting these leaves var(--portal-yellow), for example,
 // unresolved in the native account avatar and silently makes it transparent.
 const rootTokensPath = 'src/styles/tokens.css'
+const sharedTokensPath = 'src/styles/fries-cup-tokens.css'
 const publicGlobalsPath = 'src/styles/globals.css'
 fs.writeFileSync(path.join(out,'public-foundation.css'),nativePublicFoundationCss(fs.readFileSync(path.join(stats,publicGlobalsPath),'utf8')))
-const rootTokens = postcss.parse(fs.readFileSync(path.join(stats, rootTokensPath), 'utf8'))
-const inheritedDeclarations = rootTokens.nodes.filter(node => node.type === 'rule' && node.selector === ':root').flatMap(node => node.nodes.filter(declaration => declaration.type === 'decl' && declaration.prop.startsWith('--')).map(declaration => declaration.toString() + ';')).join('\n')
+const inheritedTokens = rootCustomProperties(fs.readFileSync(path.join(stats, sharedTokensPath), 'utf8'), fs.readFileSync(path.join(stats, rootTokensPath), 'utf8'))
+const inheritedDeclarations = inheritedTokens.map(([name,value]) => name + ':' + value + ';').join('\n')
 const rule = brand.nodes.find(node => node.type === 'rule' && node.selector.includes('[data-design="signal"]'))
 if (!rule) throw new Error('Stats canonical design tokens not found')
 const declarations = rule.nodes.filter(node => node.type === 'decl' && node.prop.startsWith('--fc-data-')).map(node => node.toString() + ';').join('\n')
-const tokens = Object.fromEntries(rule.nodes.filter(node => node.type === 'decl').map(node => [node.prop, node.value]))
+const tokens = Object.fromEntries([...inheritedTokens, ...rule.nodes.filter(node => node.type === 'decl').map(node => [node.prop, node.value])])
 const font = fs.readFileSync(path.join(stats, 'public/fonts/barlow-condensed/BarlowCondensed-Black.ttf')).toString('base64')
 fs.writeFileSync(path.join(out, 'brand.css'), `/* postcss-pxtransform disable */\n/* Generated from current Stats tokens; do not edit. */\n@font-face {font-family:"FC Data Display";src:url("data:font/ttf;base64,${font}") format("truetype");font-weight:900;font-display:swap;}\n.shared-root {${inheritedDeclarations}\n${declarations}\n--font-sans:"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:var(--font-sans);font-family:var(--font-sans);font-size:14px;line-height:1.5;background:var(--fc-data-paper);color:var(--fc-data-ink);}\n`)
 const viewStyles = {
@@ -40,7 +42,7 @@ const viewStyles = {
 }
 const shareLogo = 'public/logos/fc_data_center.svg'
 prepareMobileDesign(stats,out)
-const sources = ['src/styles/fries-cup-data-system.css', 'src/features/match-schedule/SignalWeeklySchedule.module.css', 'src/features/match-schedule/weeklyScheduleModel.js', 'src/features/weekly-overview/weeklyOverviewModel.js', 'src/features/weekly-advance/weeklyAdvanceModel.js', ...Object.values(viewStyles), ...navigationSources, ...mobileDesignSources, rootTokensPath, publicGlobalsPath, shareLogo]
+const sources = ['src/styles/fries-cup-data-system.css', 'src/features/match-schedule/SignalWeeklySchedule.module.css', 'src/features/match-schedule/weeklyScheduleModel.js', 'src/features/weekly-overview/weeklyOverviewModel.js', 'src/features/weekly-advance/weeklyAdvanceModel.js', ...Object.values(viewStyles), ...navigationSources, ...mobileDesignSources, sharedTokensPath, rootTokensPath, publicGlobalsPath, shareLogo]
 // Record the canonical model closure used by the native adapters as well as
 // the generated styles. Boundary replacements do not pull Web storage/private
 // season modules into this build. Team bindings are extracted from this source.
@@ -76,5 +78,6 @@ for (const [name, file] of Object.entries(viewStyles)) fs.writeFileSync(path.joi
 await prepareNavigation(stats, out, tokens)
 await sharp(Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#171a14" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>')).resize(48,48).png().toFile(path.join(out,'mobile-assets/search.png'))
 await import('./prepare-locales.mjs')
-await sharp(path.join(stats, shareLogo)).resize(500, 300, { fit: 'contain', background: tokens['--fc-data-paper'] }).extend({ top: 90, bottom: 90, left: 50, right: 50, background: tokens['--fc-data-paper'] }).png().toFile(path.join(out, 'share-public.png'))
+const paperColour = resolveDesignToken('--fc-data-paper', tokens)
+await sharp(path.join(stats, shareLogo)).resize(500, 300, { fit: 'contain', background: paperColour }).extend({ top: 90, bottom: 90, left: 50, right: 50, background: paperColour }).png().toFile(path.join(out, 'share-public.png'))
 console.log('Generated Stats tokens, font, mobile schedule and navigation design; models are imported directly.')
