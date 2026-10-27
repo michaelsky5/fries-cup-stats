@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.swc/
+.temp/
+.taro/
+src/generated/
+project.private.config.json
+*.log
+scripts/audit-free-identifiers.mjs

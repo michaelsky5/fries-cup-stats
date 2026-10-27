@@ -1,0 +1,18 @@
+/* Behavior/layout constraints only. Dock, icons, active state and menu tiles
+   come from the canonical Stats navigation and dialog styles. */
+.shared-root { --fc-mobile-navigation-height: calc(63px + env(safe-area-inset-bottom, 0px)); padding-bottom: calc(36px + var(--fc-mobile-navigation-height)); }
+.shared-root .shared-mobile-dock .shared-tag-button { margin: 0; line-height: 1.2; }
+.shared-mobile-dock .shared-tag-img { display: block; }
+.shared-nav-overlay { position: fixed; z-index: 90; inset: 0; }
+.shared-root .shared-nav-backdrop { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; background: rgb(12 14 11 / 65%); }
+.shared-root .shared-nav-surface { z-index: 1; overflow-y: auto; overscroll-behavior: contain; }
+.shared-nav-surface .shared-tag-h2 { font-size: 18px; }
+.shared-nav-surface .shared-tag-button { text-align: left; font-family: inherit; line-height: inherit; }
+.shared-nav-surface .shared-tag-a { background: transparent; border: 0; border-bottom: 1px solid var(--fc-data-line); border-radius: 0; font: inherit; }
+.shared-nav-surface .shared-nav-close { text-align: center; }
+.shared-nav-pending { padding: 18px; }
+.shared-nav-pending .shared-tag-p { margin-bottom: 12px; font-size: 15px; }
+.shared-nav-pending .shared-nav-note { color: var(--fc-data-text-muted); font-size: 13px; }
+.shared-nav-pending .shared-tag-button { padding: 10px 14px; min-height: 44px; margin-top: 12px; border: 1px solid var(--fc-data-line); background: transparent; font-size: 13px; }
+.shared-nav-pending .shared-nav-continue { background: var(--fc-data-signal); border-color: var(--fc-data-signal); }
+.shared-more-scroll {height:60vh;max-height:430px;}

@@ -32,3 +32,13 @@ export async function changeAccountPassword(currentPassword, newPassword) {
     body: { currentPassword, newPassword }
   })
 }
+
+export async function fetchWechatBinding(options = {}) {
+  const value = await platformRequest('/account/wechat-binding', options)
+  if (typeof value?.linked !== 'boolean') throw new Error('微信关联状态暂时无法核对。')
+  return { linked: value.linked, linkedAt: value.linkedAt || null }
+}
+
+export function unlinkWechatAccount(password) {
+  return platformRequest('/account/wechat-binding', { method: 'DELETE', body: { password } })
+}

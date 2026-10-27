@@ -1,0 +1,29 @@
+page, body { background: #eeede6; margin: 0; }
+view, text, button, input, image, .shared-root, .shared-element { box-sizing: border-box; }
+.shared-tag-button::after { border: 0; }
+.shared-root { min-height: 100vh; padding: 0 18px 36px; }
+.shared-root .shared-tag-button { width: auto; margin: 0; border-radius: 0; line-height: 1.5; }
+.shared-tag-span { display: inline; }
+.shared-tag-b, .shared-tag-strong { font-weight: 700; }
+.shared-root .shared-tag-h1, .shared-root .shared-tag-h2, .shared-root .shared-tag-h3, .shared-root .shared-tag-p { margin: 0; }
+.shared-root .shared-state { padding: 28px 0; font-size: 14px; }
+.shared-root .shared-state .shared-tag-p { margin-bottom: 16px; }
+.shared-root .shared-state .shared-tag-button { padding: 10px 16px; background: #f4c320; }
+.shared-root .cycle-selector { display: flex; align-items: center; gap: 8px; font-size: 12px; min-height: 44px; }
+.shared-root .cycle-selector .shared-tag-b { font-size: 16px; border-bottom: 1px solid #181a1760; padding: 6px 0; }
+.shared-root .shared-week-rail { display: flex; border-top: 1px solid #181a1726; border-bottom: 1px solid #181a1726; }
+.shared-root .shared-week-rail .shared-tag-button { flex: 1; min-width: 0; padding: 12px 8px; min-height: 54px; text-align: left; border: 0; background: transparent; font-size: 12px; }
+.shared-root .shared-week-rail .shared-tag-button.shared-selected { background: #f4c320; font-weight: 700; }
+.shared-root .shared-week-rail .shared-tag-small { display: block; margin-top: 4px; font-size: 10px; color: #66685f; }
+.shared-root .shared-selected { background: #181a17; color: #eeede6; border-bottom-color: #f4c320; }
+.shared-root .team-choice { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; }
+.shared-root .team-choice-label { font-size: 10px; color: #66685f; }
+.shared-root .shared-clear { padding: 10px; background: transparent; border: 0; font-size: 12px; }
+.shared-root .shared-search-symbol { width: 16px; height: 16px; border: 1px solid #66685f; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
+.shared-root .shared-map-result { display: block; font-size: 10px; font-weight: 600; overflow-wrap: anywhere; }
+.shared-root .shared-map-order { display: block; font-size: 12px; color: #66685f; }
+.shared-root .shared-map-recorded { border-top: 2px solid #a48729; background: #d8c99120; }
+.shared-root .shared-result-note { display: block; margin-top: 16px; font-size: 11px; color: #66685f; }
+.shared-root .shared-detail-back { min-height: 44px; padding: 10px 0; background: transparent; border: 0; text-align: left; font-size: 13px; }
+.shared-root .shared-detail-map { border-bottom: 1px solid #181a1726; padding: 14px 0; font-size: 13px; }
+.shared-root .shared-detail-map .shared-tag-small { display: block; color: #66685f; font-size: 11px; margin-top: 4px; }

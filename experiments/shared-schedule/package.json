@@ -1,0 +1,49 @@
+{
+  "name": "fries-cup-shared-schedule-trial",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "prepare:design": "node scripts/prepare-design.mjs && node scripts/check-native-boundaries.mjs",
+    "prepare:runtime": "node scripts/prepare-intl.mjs",
+    "build:h5": "npm run prepare:design && npm run prepare:runtime && taro build --type h5 && node scripts/copy-license.mjs h5",
+    "build:weapp": "npm run prepare:design && npm run prepare:runtime && taro build --type weapp && node scripts/copy-license.mjs weapp && node scripts/check-native-packages.mjs",
+    "serve": "node --use-env-proxy scripts/serve.mjs",
+    "test": "npm run prepare:design && npm run prepare:runtime && node --test tests/*.test.mjs",
+    "test:account": "node --test tests/native-account.test.mjs",
+    "build:account-visual": "node scripts/build-account-visual.mjs",
+    "serve:account-visual": "node scripts/serve-account-visual.mjs"
+  },
+  "dependencies": {
+    "@babel/runtime": "7.29.7",
+    "@formatjs/intl-datetimeformat": "6.18.2",
+    "@formatjs/intl-getcanonicallocales": "2.5.6",
+    "@formatjs/intl-locale": "4.2.13",
+    "@formatjs/intl-numberformat": "8.15.6",
+    "@formatjs/intl-pluralrules": "5.4.6",
+    "@tarojs/components": "4.3.0",
+    "@tarojs/helper": "4.3.0",
+    "@tarojs/react": "4.3.0",
+    "@tarojs/runtime": "4.3.0",
+    "@tarojs/shared": "4.3.0",
+    "@tarojs/taro": "4.3.0",
+    "core-js": "3.50.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "7.28.0",
+    "@babel/preset-react": "7.28.5",
+    "@tarojs/cli": "4.3.0",
+    "@tarojs/plugin-framework-react": "4.3.0",
+    "@tarojs/plugin-html": "4.3.0",
+    "@tarojs/plugin-platform-h5": "4.3.0",
+    "@tarojs/plugin-platform-weapp": "4.3.0",
+    "@tarojs/webpack5-runner": "4.3.0",
+    "babel-preset-taro": "4.3.0",
+    "postcss": "8.5.6",
+    "postcss-selector-parser": "6.1.4",
+    "react-refresh": "0.14.2",
+    "sharp": "0.35.4",
+    "webpack": "5.91.0"
+  }
+}
