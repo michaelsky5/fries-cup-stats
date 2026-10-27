@@ -1095,3 +1095,23 @@
   :global([data-design="kpr"][data-design-edition="hybrid"]) .topBar { grid-template-columns: minmax(151px, 1fr) minmax(124px, auto) auto; }
   :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavMenu > summary { min-width: 124px; }
 }
+/* 票 2.80: the 640–980px menu summary ends with a menu icon (was the word MENU), so it needs less room;
+   the freed width keeps the account cell's 「SIGN IN」 whole in English. */
+.mobileMenuLabel svg { display: block; }
+@media (min-width: 641px) and (max-width: 980px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .topBar { grid-template-columns: minmax(164px, 1fr) minmax(120px, auto) auto; }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavMenu > summary { min-width: 120px; }
+}
+/* The menu rows lost their English second label; number, name and badge now sit in the row's three columns.
+   The four languages take two columns, so 「ZH-CN / 简体中文」 no longer break inside 97px cells. */
+@media (min-width: 601px) and (max-width: 980px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavLink { display: grid; align-items: center; column-gap: 12px; }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavPanel .mobileLanguageOptions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavPanel .mobileLanguageOptions .languageOption { border-bottom: 1px solid #1718171c; }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavPanel .mobileLanguageOptions .languageOption:nth-child(2n) { border-right: 0; }
+}
+/* English 「MY FOLLOWING」 is twice as long as 「我的关注」: below 760px it stays in the menu, as below 721px. */
+@media (min-width: 721px) and (max-width: 759.98px) {
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .followingLink:lang(en) { display: none; }
+  :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavPanel [data-following-item]:lang(en) { display: flex; }
+}

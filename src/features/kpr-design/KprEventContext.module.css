@@ -574,9 +574,9 @@
   display: block;
   padding: 0;
   background: transparent;
-  color: #777a70;
+  color: #9a9c92; /* 票 2.80: 官方赛事 / Official event in words — 4.5:1 on the header ink */
   font: 12px/1 var(--font-mono);
-  letter-spacing: .12em;
+  letter-spacing: .04em;
 }
 
 :global([data-design="kpr"][data-design-edition="hybrid"]) .contextBar[data-placement="header"] .eventSwitcher > summary::after {

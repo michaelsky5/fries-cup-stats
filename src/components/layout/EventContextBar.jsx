@@ -146,7 +146,8 @@ function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary,
         {compact ? (
           <>
             <strong>{getHeaderEventLabel(currentSeason, locale, currentName)}</strong>
-            <span>{getSeasonEventKind(currentSeason)}</span>
+            {/* 票 2.80: the event kind in words (官方赛事 / 合作赛事), not the data code OFFICIAL. */}
+            <span>{getEventKindLabel(currentSeason, locale)}</span>
           </>
         ) : (
           <>
@@ -158,7 +159,7 @@ function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary,
       <div className={styles.switcherPanel}>
         {eventGroups.map(group => (
           <section key={group.kind} data-event-kind={group.kind}>
-            <h3><span>{getEventKindLabel(group.seasons[0], locale)}</span><small>{group.kind} / {String(group.seasons.length).padStart(2, '0')}</small></h3>
+            <h3><span>{getEventKindLabel(group.seasons[0], locale)}</span><small>{String(group.seasons.length).padStart(2, '0')}</small></h3>
             {group.seasons.map(renderSeasonButton)}
           </section>
         ))}

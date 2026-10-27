@@ -2,7 +2,7 @@ import { useId } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import TeamLogo from '../../components/matches/TeamLogo.jsx'
 import AdvanceTeamPicker from '../../components/advance/AdvanceTeamPicker.jsx'
-import { isChineseLocale, weeklyCycleTitle, weeklyStatusLabel, weeklyTeamShort } from '../weekly-overview/weeklyPresentation.js'
+import { weeklyCycleTitle, weeklyStatusLabel, weeklyTeamShort } from '../weekly-overview/weeklyPresentation.js'
 import { buildWeeklyRouteModel } from './weeklyRouteModel.js'
 import { routeScheduleNotice, routeSourceLabel, routeText as text, routeTime, routeTitle } from './weeklyRoutePresentation.js'
 import signal from '../../components/advance/AdvanceSignal.module.css'
@@ -105,7 +105,7 @@ export default function WeeklyPlayoffBracket({ model, cycle, locale, seasonId, w
     <header className={`${signal.routeChapterHeading} ${styles.bracketHeading}`}><h2 id="weekly-playoffs-title">{text('bracket', locale)}{' '}<em>{text('bracketFocus', locale)}</em></h2><p>{text('bracketIntro', locale)}</p></header>
     <div className={styles.scheduleNotice}><strong>{notice.title}</strong><span>{text('timeZone', locale)}</span>{notice.note && <p>{notice.note}</p>}</div>
     {model.placements?.length === 4 && <section className={styles.placements} aria-label={text('finalPlacements', locale)}>
-      <header><h3>{isChineseLocale(locale) ? weeklyCycleTitle(cycle, locale) : cycle.code} · {text('finalPlacements', locale)}</h3><span>{text(cycle.status === 'CLOSED' ? 'cycleClosed' : 'closeoutPending', locale)}</span></header>
+      <header><h3>{weeklyCycleTitle(cycle, locale)} · {text('finalPlacements', locale)}</h3><span>{text(cycle.status === 'CLOSED' ? 'cycleClosed' : 'closeoutPending', locale)}</span></header>
       <ol>{model.placements.map(({ rank, team, match }) => <li key={idOf(team)} data-place={rank}>
         <span>{String(rank).padStart(2, '0')} / {text(['champion', 'runnerUp', 'thirdPlace', 'fourthPlace'][rank - 1], locale)}</span>
         <Link to={withSeason(`/matches/${encodeURIComponent(match.id)}`)} {...returnProps}><TeamLogo team={team} seasonId={seasonId} className={styles.placementLogo} /><strong>{weeklyTeamShort(team)}</strong><span aria-hidden="true">→</span></Link>
