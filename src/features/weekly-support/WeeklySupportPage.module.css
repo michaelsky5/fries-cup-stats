@@ -37,7 +37,8 @@
 .status b { color: var(--ink); }
 .status label { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; }
 .status select { max-width: 100%; padding: 6px 10px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); }
-.page .status button, .page .copy { min-height: 36px; padding: 6px 14px; background: var(--ink); color: var(--fc-data-paper, #eeede6); border: 1px solid var(--ink); font-size: 12px; font-weight: 700; cursor: pointer; }
+/* 票 2.70: only the primary action is filled; 「复制」 is an outlined secondary button (was ink). */
+.page .status button, .page .copy { min-height: 36px; padding: 6px 14px; background: transparent; color: var(--ink); border: 1px solid var(--fc-data-line-strong, rgb(24 26 23 / 38%)); font-size: 12px; font-weight: 700; cursor: pointer; }
 .pending { margin-top: 8px !important; color: var(--muted); font-size: 12px; }
 .figures { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 18px; border-block: 2px solid var(--ink); }
 .figures article { display: grid; align-content: start; gap: 6px; min-width: 0; padding: 20px 20px 18px; border-right: 1px solid var(--line); }

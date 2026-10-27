@@ -116,7 +116,8 @@
 .fixture[data-state="live"] .matchState { color: var(--fc-data-status-live-bright, #55cbb8); }
 .fixture:is([data-state="review"], [data-state="ruling"], [data-state="postponed"]) .matchState { color: var(--fc-data-status-warning-bright, #f0ac4e); }
 .noFixture { font-size: 11px; color: var(--dark-muted); line-height: 1.8; }
-.scheduleLink { display: flex; justify-content: space-between; align-items: center; gap: 16px; background: var(--yellow); color: var(--ink) !important; padding: 15px 17px; font-size: 12px; font-weight: 700; margin-top: 24px; }
+/* 票 2.70: on phones this is the site-wide yellow primary — 44px, 14px/750 (was 60px, 12px/700). */
+.scheduleLink { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: var(--fc-data-primary-height, 44px); background: var(--fc-data-primary-bg, var(--yellow)); color: var(--fc-data-primary-text, var(--ink)) !important; padding: 0 16px; font-size: 14px; font-weight: var(--fc-data-primary-weight, 750); margin-top: 24px; }
 .scheduleLink span { font-size: 20px; }
 .journeyEmpty { padding: 38px 0; }
 .journeyEmpty > span { color: var(--dark-muted); font-size: 10px; }

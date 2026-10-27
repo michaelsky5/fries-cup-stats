@@ -60,9 +60,10 @@
 .wide { grid-column: 1 / -1; }
 .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
 .cardBody > .actions:first-child { margin-top: 0; margin-bottom: 24px; }
-.primary, .secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 11px 18px; border: 1px solid var(--fc-data-line-strong); border-radius: 0; line-height: 1.5; font-size: 14px; font-weight: 650; }
-.primary { color: var(--fc-data-ink); background: var(--fc-data-signal); border-color: var(--fc-data-signal); }
-.primary:hover:not(:disabled) { background: var(--fc-data-signal-bright); }
+.primary, .secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border: 1px solid var(--fc-data-line-strong); border-radius: 0; line-height: 1.5; font-size: 14px; font-weight: 650; }
+/* 票 2.70: the site-wide primary — 750, padding 0 16px like the other account pages. */
+.primary { color: var(--fc-data-primary-text, #181a17); background: var(--fc-data-primary-bg, #f4c320); border-color: var(--fc-data-primary-bg, #f4c320); font-weight: var(--fc-data-primary-weight, 750); }
+.primary:hover:not(:disabled) { background: var(--fc-data-primary-bg-hover, #ffd64a); }
 .secondary { color: var(--fc-data-ink); background: transparent; }
 .secondary:hover:not(:disabled) { background: var(--fc-data-paper-deep); }
 .textButton { padding: 10px 0; min-height: 44px; border: 0; background: transparent; text-decoration: underline; text-underline-offset: 4px; color: inherit; font-size: 13px; }

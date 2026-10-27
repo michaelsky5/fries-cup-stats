@@ -205,10 +205,12 @@
 .dossierMetrics dt { color: var(--fc-data-text-on-dark); font-size: 13px; }
 .dossierMetrics dd { margin: 0; font-size: 20px; }
 .dossierActions { display: grid; gap: 8px; margin-top: 16px; }
-.dossierActions > :is(a, button) { min-height: 46px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; text-decoration: none; font-size: 13px; }
-.dossierActions a { color: var(--fc-data-ink); background: var(--fc-data-signal); font-weight: 700; }
+.dossierActions > :is(a, button) { min-height: var(--fc-data-primary-height, 44px); display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 16px; text-decoration: none; font-size: 13px; }
+/* 票 2.70: the site-wide primary — 14px/750 (was 13px/700, 46px). */
+.dossierActions a { color: var(--fc-data-primary-text, #181a17); background: var(--fc-data-primary-bg, #f4c320); font-size: 14px; font-weight: var(--fc-data-primary-weight, 750); }
+.dossierActions a:hover { background: var(--fc-data-primary-bg-hover, #ffd64a); }
 .dossierActions button { border: 1px solid var(--fc-data-line-on-dark); background: transparent; color: var(--fc-data-on-ink); }
-.dossierActions > :is(a, button) > span { font-size: 20px; }
+.dossierActions > :is(a, button) > span { font-size: 20px; line-height: 1; }
 .dossierHint { font-size: 12px; color: var(--fc-data-text-muted); margin: 12px 0 0; }
 .emptyDossier { min-height: 280px; border: 1px solid var(--fc-data-line); padding: 24px; }
 .emptyDossier small { color: var(--fc-data-text-muted); font-size: 12px; }

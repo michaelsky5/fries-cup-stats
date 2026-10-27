@@ -42,6 +42,11 @@
 
 .start { display:flex;align-items:center;gap:24px;padding:24px;background:#e8eddf;color:#17221a;border:1px solid #89967a; }.start h2 { margin:0 0 10px;font-size:23px; }.start p { margin:0;line-height:1.7;font-size:14px; }.start a { flex-shrink:0;background:#f4cc39;color:#17221a;padding:16px 20px;font-weight:700;border:1px solid #7b681e; }.start a:focus-visible { outline:3px solid #243b25;outline-offset:3px; }@media(max-width:700px) { .start { flex-direction:column;align-items:stretch;padding:20px;gap:16px; }.start a { text-align:center; } }
 
+/* 票 2.70: the guide's filled buttons are the site-wide primary — #F4C320, ink text, 44px, 14px/750, no outline
+   (were #f4cc39 / #eacb4b with an outline, and a dark green System link). */
+.start a, .caseAnswer button, .practice a { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: var(--fc-data-primary-height, 44px); padding: 0 16px; border: 0; background: var(--fc-data-primary-bg, #f4c320); color: var(--fc-data-primary-text, #181a17); font-size: 14px; font-weight: var(--fc-data-primary-weight, 750); text-decoration: none; }
+.start a:hover, .caseAnswer button:hover, .practice a:hover { background: var(--fc-data-primary-bg-hover, #ffd64a); }
+
 /* 票 2.26: inside the event centre frame the guide is a dark panel, not a whole page. */
 .page[data-room-guide] { min-height: 0; padding-bottom: 8px; }
 .page[data-room-guide] .hero { padding-top: 36px; }

@@ -35,7 +35,7 @@
 /* 票 2.70: same size and weight as the site-wide primary (was 48px, 700). */
 .primary { display: inline-flex; justify-content: space-between; align-items: center; gap: 26px; min-height: var(--fc-data-primary-height, 44px); padding: 0 16px; color: var(--fc-data-primary-text, #181a17) !important; background: var(--fc-data-primary-bg, #f4c320); font-size: 14px; font-weight: var(--fc-data-primary-weight, 750); }
 .primary > span { font-size: 24px; line-height: 1; }
-.primary:hover { background: var(--fc-data-paper); }
+.primary:hover { background: var(--fc-data-primary-bg-hover, #ffd64a); }
 .coverActions button { border: 0; border-radius: 0; padding: 10px 0; min-height: 44px; background: transparent; color: var(--fc-data-paper); font-size: 13px; }
 .coverActions button[aria-pressed="true"] { color: var(--fc-data-signal); }
 .portrait { min-width: 0; position: relative; isolation: isolate; overflow: hidden; margin: 16px 16px 16px 0; min-height: 520px; color: var(--fc-data-ink); background: #d9ddcf; }
@@ -243,7 +243,7 @@
   .coverFacts dt { font-size:11px; }
   .coverFacts dd { font-size:32px; }
   .coverActions { grid-area:actions;display:grid;grid-template-columns:minmax(0,1.5fr) repeat(2,minmax(0,1fr));gap:8px;margin-top:14px; }
-  .coverActions .primary { width:auto;min-height:46px;padding:10px 8px;gap:4px;font-size:12px; }
+  .coverActions .primary { width:auto;min-height:var(--fc-data-primary-height,44px);padding:0 12px;gap:4px;font-size:14px; }
   .coverActions .primary > span { font-size:18px; }
   .coverActions button { font-size:12px; }
   .coverActions button { min-height: 44px; }
