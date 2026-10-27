@@ -31,7 +31,8 @@
 .analysisTabs { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); margin: 24px 0; border-bottom: 1px solid var(--fc-data-line); }
 .analysisTabs button { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 16px 22px; min-height: 56px; border: 0; border-bottom: 3px solid transparent; border-right: 1px solid var(--fc-data-line); background: transparent; color: var(--fc-data-text-muted); font-size: 14px; text-align: left; }
 .analysisTabs button:last-child { border-right: 0; }
-.analysisTabs button[aria-pressed="true"] { background: var(--fc-data-paper-raised); color: var(--fc-data-ink); border-bottom-color: var(--fc-data-ink); font-weight: 700; }
+/* 票 2.73: tabs carry the yellow underline (was a grey box with an ink line). */
+.analysisTabs button[aria-pressed="true"] { background: transparent; color: var(--fc-data-ink); border-bottom-color: var(--fc-data-signal); font-weight: 800; }
 .analysisTabs button:hover { color: var(--fc-data-ink); background: var(--fc-data-paper-raised); }
 .analysisTabs small { font: 500 14px/1 var(--fc-data-font-display); color: var(--fc-data-text-muted); }
 .analysisContent { min-width: 0; }

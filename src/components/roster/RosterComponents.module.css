@@ -1100,8 +1100,11 @@
   opacity: 0.42;
 }
 
+/* 票 2.73: the current page is a selected segment — ink, not the primary yellow. */
 .pageNumberActive {
-  background: var(--portal-yellow);
+  background: var(--fc-data-ink, #181a17);
+  border-color: var(--fc-data-ink, #181a17);
+  color: var(--fc-data-paper, #eeede6);
 }
 
 .pageEllipsis {
@@ -2156,6 +2159,6 @@
 
 .pagination.paginationIndex { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; padding: 16px 0; border: 0; border-top: 1px solid var(--fc-data-line); background: transparent; color: var(--fc-data-ink); gap: 14px; flex-wrap: wrap; }
 .paginationIndex :is(.pageButton, .pageNumber, .pageSizeSelect) { min-height: 38px; border: 1px solid var(--fc-data-line); background: transparent; color: var(--fc-data-ink); }
-.paginationIndex .pageNumberActive { background: var(--fc-data-signal); }
+.paginationIndex .pageNumberActive { background: var(--fc-data-ink); border-color: var(--fc-data-ink); color: var(--fc-data-paper); } /* 票 2.73 */
 .paginationIndex :is(.paginationRange, .pageSizeControl) { color: var(--fc-data-text-muted); font-size: 12px; }
 @media (max-width: 600px) { .paginationIndex .paginationControls { flex-wrap: wrap; justify-content: start; } }

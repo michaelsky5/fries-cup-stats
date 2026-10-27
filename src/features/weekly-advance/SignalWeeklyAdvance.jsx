@@ -14,7 +14,7 @@ import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
 import WeeklyPlayoffBracket from './WeeklyPlayoffBracket.jsx'
 import WeeklyFinalsPath from './WeeklyFinalsPath.jsx'
 import WeeklySeasonPoints from './WeeklySeasonPoints.jsx'
-import advanceStyles from '../../components/advance/AdvanceSignal.module.css'
+import navStyles from '../../components/navigation/SignalSectionNav.module.css'
 import styles from './SignalWeeklyAdvance.module.css'
 
 const idOf = team => String(team?.id || team?.team_id || '')
@@ -106,10 +106,10 @@ export default function SignalWeeklyAdvance() {
         <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">→</span><small>{t(uiText("回到本周对阵", locale), 'This week’s matchups')}</small></Link>
       </div>
     </header>
-    <nav className={advanceStyles.phaseIndex} data-weekly-phase-index style={{ '--advance-phase-count': stages.length }} aria-label={t(uiText("周赛晋级路径", locale), 'Weekly advancement path')}>
-      <span className={advanceStyles.phaseIndexLabel}><img src="/logos/fries-cup-symbol.png" alt="" /><b>{pickUiLocale(locale, '晋级路线', 'FC / ROUTE', '진출 경로', '晉級路線')}</b></span>
-      <div className={advanceStyles.phaseLinks}>{stages.map((stage, index) => <Link key={stage.id} to={getWeeklyAdvancePhasePath(params, stage.id)} data-status={model.activeStage === stage.id ? 'current' : 'pending'} aria-current={phase === stage.id ? 'page' : undefined}><span>{String(index + 1).padStart(2, '0')} / {stage.title}</span><small>{stage.note}</small></Link>)}</div>
-      <span className={advanceStyles.phaseStamp}><b>{String(stages.findIndex(stage => stage.id === phase) + 1).padStart(2, '0')}</b> / 03</span>
+    {/* 票 2.73: the three stages are sub-page tabs — the shared light tab row with the yellow underline
+        (was a dark numbered dock with its own selected style). */}
+    <nav className={`${navStyles.root} ${styles.phaseTabs}`} data-weekly-phase-index style={{ '--advance-phase-count': stages.length }} aria-label={t(uiText("周赛晋级路径", locale), 'Weekly advancement path')}>
+      {stages.map(stage => <Link key={stage.id} className={navStyles.item} to={getWeeklyAdvancePhasePath(params, stage.id)} data-status={model.activeStage === stage.id ? 'current' : 'pending'} aria-current={phase === stage.id ? 'page' : undefined}><span>{stage.title}</span><small>{stage.note}</small></Link>)}
     </nav>
 
     {phase === 'points' && <WeeklySeasonPoints snapshot={db?.weekly_competition} locale={locale} />}

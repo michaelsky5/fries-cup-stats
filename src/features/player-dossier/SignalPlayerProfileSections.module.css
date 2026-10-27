@@ -65,7 +65,7 @@
 .collectionFilters { display: flex; flex-wrap: wrap; gap: 8px 24px; border-bottom: 1px solid var(--fc-data-border); margin-bottom: 26px; }
 .collectionFilters button { display: flex; gap: 12px; align-items: baseline; background: transparent; border: 0; border-bottom: 3px solid transparent; padding: 10px 0 14px; font-size: 14px; }
 .collectionFilters small { font-size: 12px; color: var(--fc-data-text-muted); }
-.collectionFilters [aria-pressed="true"] { border-bottom-color: var(--fc-data-ink); font-weight: 700; }
+.collectionFilters [aria-pressed="true"] { border-bottom-color: var(--fc-data-signal); font-weight: 800; } /* 票 2.73: underline tabs are yellow */
 .collectionBody { display: grid; grid-template-columns: minmax(260px,.85fr) minmax(0,1.5fr); gap: 28px; align-items: stretch; }
 .collectionBody[data-compact] { grid-template-columns: repeat(var(--hero-count),minmax(0,1fr)); gap: 18px; }
 .collectionBody[data-compact] .collectionFeature { min-height: 320px; }

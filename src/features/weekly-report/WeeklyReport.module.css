@@ -145,9 +145,14 @@
 .archiveRow .coverBottom { font-size:9px; }
 .archiveRow h2 { font-size:26px; margin:10px 0; }
 .archiveRow p { color:var(--journal-muted); font-size:13px; line-height:1.8; margin:0; }
-.cycleLinks { display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
-.cycleLinks a { min-height:38px; padding:10px 14px; border:1px solid var(--journal-line); font-size:12px; }
-.cycleLinks a[aria-current="page"] { background:var(--fc-data-paper-deep); border-bottom:2px solid var(--fc-data-signal); }
+/* 票 2.73: the cycle links filter the archive, so they are a filter segment like the ranking roles —
+   one outlined group, the selected cycle ink with a yellow base line (was a grey box with a yellow edge). */
+.cycleLinks { display:flex; flex-wrap:wrap; width:fit-content; max-width:100%; margin-top:20px; border:1px solid var(--fc-data-line-strong); }
+.cycleLinks a { display:inline-flex; align-items:center; min-height:44px; padding:0 16px; color:var(--fc-data-text-muted); font-size:13px; font-weight:650; }
+.cycleLinks a + a { border-left:1px solid var(--fc-data-line); }
+.page .cycleLinks a:hover { text-decoration:none; }
+.cycleLinks a:hover:not([aria-current="page"]) { background:var(--fc-data-paper-raised); color:var(--fc-data-ink); }
+.cycleLinks a[aria-current="page"] { background:var(--fc-data-ink); color:var(--fc-data-paper); box-shadow:inset 0 -3px var(--fc-data-signal); font-weight:700; }
 /* 票 2.28: how fresh the archive is, above the issues. */
 .archiveStatus { display:grid; gap:4px; margin-top:20px; padding:12px 0; border-block:1px solid var(--journal-line); color:var(--journal-muted); font-size:13px; line-height:1.7; }
 .archiveStatus p { margin:0; }

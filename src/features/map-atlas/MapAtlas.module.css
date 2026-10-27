@@ -139,8 +139,13 @@
 .viewSwitch, .roleSwitch { display: flex; gap: 22px; align-items: stretch; }
 .viewSwitch button, .roleSwitch button { min-height: 44px; padding: 8px 0; font-size: 14px; position: relative; color: var(--atlas-muted); }
 .viewSwitch button[aria-pressed="true"], .roleSwitch button[aria-pressed="true"] { font-weight: 700; color: var(--atlas-ink); }
-.viewSwitch button[aria-pressed="true"]::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 3px; background: var(--atlas-ink); }
-.roleSwitch button[aria-pressed="true"]::before { content: ''; display: inline-block; width: 5px; height: 5px; margin-right: 6px; background: var(--atlas-ink); vertical-align: middle; }
+/* 票 2.73: the view switch is a tab row (yellow underline, was ink); the role switch is a filter segment
+   (ink fill with a yellow base line, was a bold label with a square marker). */
+.viewSwitch button[aria-pressed="true"]::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 3px; background: var(--atlas-yellow); }
+.roleSwitch { gap: 2px; }
+.roleSwitch button { padding: 8px 12px; }
+.roleSwitch button:not([aria-pressed="true"]):hover { color: var(--atlas-ink); background: var(--fc-data-paper-raised, #f6f5ef); }
+.roleSwitch button[aria-pressed="true"] { color: var(--atlas-paper); background: var(--atlas-ink); box-shadow: inset 0 -3px var(--atlas-yellow); }
 .heroColumns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px; }
 .heroRoleColumn { min-width: 0; }
 .heroRoleColumn h3 { display: flex; justify-content: space-between; align-items: baseline; font-size: 16px; font-weight: 600; padding: 4px 0 12px; border-bottom: 1px solid var(--atlas-ink); }
@@ -393,8 +398,8 @@
   .environmentToolbar { flex-wrap: wrap; gap: 0; margin-bottom: 20px; }
   .viewSwitch { gap: 24px; flex-basis: 100%; border-bottom: 1px solid var(--atlas-line); }
   .viewSwitch button, .roleSwitch button { font-size: 14px; }
-  .viewSwitch button[aria-pressed="true"]::after { height: 2px; }
-  .roleSwitch { gap: 22px; }
+  .viewSwitch button[aria-pressed="true"]::after { height: 3px; }
+  .roleSwitch { gap: 2px; }
   .environmentToolbar > .muted { min-height: 40px; display: flex; align-items: center; font-size: 13px; }
   .heroColumns { display: block; }
   .heroRoleColumn + .heroRoleColumn { margin-top: 24px; }
@@ -587,8 +592,8 @@
   .chapterHeading h2 { font-size: 22px; }
   .chapterMeta { font-size: 12px; }
   .environmentToolbar { margin-bottom: 12px; }
-  .roleSwitch { gap: 0; justify-content: space-between; width: 100%; }
-  .roleSwitch button { min-height: 44px; }
+  .roleSwitch { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 2px; width: 100%; }
+  .roleSwitch button { min-height: 44px; padding-inline: 6px; }
   .heroColumns[data-single="false"] .roleRunners { display: none; }
   .heroColumns[data-single="false"] .heroRoleColumn + .heroRoleColumn { margin-top: 16px; }
   .heroColumns[data-single="false"] .roleLeader { gap: 12px; padding: 12px 0; }

@@ -13,7 +13,10 @@
 .sidebar nav { margin: 12px 0 24px; border-top: 1px solid var(--fc-data-line); }
 .sidebar nav a { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--fc-data-line); color: inherit; }
 .sidebar nav a:hover { background: var(--fc-data-paper-deep); }
-.sidebar nav a[aria-current='page'] { background: var(--fc-data-signal); box-shadow: inset 3px 0 var(--fc-data-ink); }
+/* 票 2.73: the section list is sub-page navigation — the tab marker (yellow line, ink 800), not a yellow fill,
+   which is kept for the primary action. */
+.sidebar nav a[aria-current='page'] { background: transparent; box-shadow: inset 3px 0 var(--fc-data-signal); }
+.sidebar nav a[aria-current='page'] strong { font-weight: 800; }
 .sidebar nav strong { font-size: 14px; font-weight: 650; }
 .sidebar nav small { display: block; margin-top: 6px; color: var(--fc-data-text-muted); font: 900 15px/1 var(--fc-data-font-display); letter-spacing: .04em; }
 .sidebar nav a[aria-current='page'] small { color: var(--fc-data-ink); }
@@ -148,7 +151,7 @@
   .sidebar nav a { grid-column: span 2; min-height: 48px; padding: 12px 8px; justify-content: center; text-align: center; border: 0; }
   .sidebar nav a:nth-last-child(-n+2) { grid-column: span 3; border-top: 1px solid var(--fc-data-line); }
   .sidebar nav strong { font-size: 13px; }
-  .sidebar nav a[aria-current='page'] { box-shadow: inset 0 -3px var(--fc-data-ink); }
+  .sidebar nav a[aria-current='page'] { box-shadow: inset 0 -3px var(--fc-data-signal); }
   .sidebar nav :is(small, i) { display: none; }
   .cardHeader, .cardBody { padding: 22px 18px; } .fields { grid-template-columns: 1fr; gap: 20px; }
   .fields :is(input, select, textarea) { font-size: 16px; }

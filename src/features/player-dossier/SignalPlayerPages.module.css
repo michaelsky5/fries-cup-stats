@@ -131,7 +131,7 @@
 .analysisSample { flex-wrap: wrap; }
 .analysisTabs { display: flex; gap: 32px; border-bottom: 1px solid var(--fc-data-line); margin-bottom: 24px; }
 .analysisTabs button { display: flex; align-items: baseline; gap: 9px; padding: 13px 0; background: transparent; border: 0; border-bottom: 3px solid transparent; font-size: 15px; color: var(--fc-data-text-muted); }
-.analysisTabs button[aria-pressed="true"] { border-bottom-color: var(--fc-data-ink); color: var(--fc-data-ink); font-weight: 700; }
+.analysisTabs button[aria-pressed="true"] { border-bottom-color: var(--fc-data-signal); color: var(--fc-data-ink); font-weight: 800; } /* 票 2.73 */
 .analysisTabs small { font-size: 12px; font-weight: 400; }
 .analysisContent { min-width: 0; }
 .analysisContent > section { margin-top: 0; }

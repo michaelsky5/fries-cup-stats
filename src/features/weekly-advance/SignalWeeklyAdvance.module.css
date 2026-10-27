@@ -10,6 +10,10 @@
 .eyebrow { color: var(--muted); font-size: 11px; letter-spacing: .07em; }
 .heading h1 { font-size: var(--fc-data-index-title-size); line-height: var(--fc-data-index-title-leading); letter-spacing: -.04em; font-weight: 900; margin: 8px 0 12px; }
 .heading p:last-child { color: var(--fc-data-text-muted); font-size: 14px; line-height: 1.7; }
+/* 票 2.73: the stage tabs use the shared tab items (SignalSectionNav): three equal columns under a hairline,
+   the stage name 14px with its note at 12px beside it. */
+.phaseTabs { display: grid; grid-template-columns: repeat(var(--advance-phase-count, 3), minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
+.phaseTabs > a > small { overflow: hidden; color: var(--muted); font-size: 12px; font-weight: 400; text-overflow: ellipsis; }
 .headingActions { display: flex; align-items: center; gap: 24px; padding-bottom: 3px; flex-shrink: 0; }
 .overviewLink { display: grid; grid-template-columns: 1fr auto; gap: 5px 24px; font-size: 13px; }
 .overviewLink > span { grid-row: span 2; color: var(--fc-data-focus-on-light, #806000); font-size: 23px; }
