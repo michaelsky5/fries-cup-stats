@@ -11,7 +11,9 @@ export async function fetchAuthConfig(options = {}) {
   }
   return { selfRegistrationEnabled: data.selfRegistrationEnabled, emailVerificationEnabled: data.emailVerificationEnabled,
     ...(Number.isInteger(data.registrationDailyLimit) && data.registrationDailyLimit > 0 && data.registrationDailyLimit <= 10000
-      ? { registrationDailyLimit: data.registrationDailyLimit } : {}) }
+      ? { registrationDailyLimit: data.registrationDailyLimit } : {}),
+    // 小程序扫码登录只在 System 明确打开时出现；缺省、旧版 System 或格式不对都按关闭处理。
+    ...(data.wechatQrLogin?.enabled === true ? { wechatQrLogin: { enabled: true } } : {}) }
 }
 
 export function clearStoredAuth() {
