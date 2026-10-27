@@ -275,7 +275,7 @@ html [data-design='kpr'][data-design-edition='hybrid'] [data-upgrade-header='eve
   }
 
   :is([data-placement='header'] details > div, [data-upgrade-language] > div) button:focus-visible {
-    outline-color: #806000;
+    outline-color: #705100;
   }
 }
 

@@ -311,8 +311,8 @@
 .formIntro p { font-size: 13px; line-height: 1.8; color: var(--fc-data-text-muted); margin: 8px 0 0; }
 .formIntro a { color: inherit; font-size: 14px; }
 .errorText, .successText, .emailChangeNotice { margin: 0; padding: 12px 14px; border-left: 3px solid currentColor; font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
-.errorText, .emailChangeNotice[data-tone='error'] { color: var(--fc-data-status-danger); background: #b33a320a; }
-.successText, .emailChangeNotice[data-tone='success'] { color: var(--fc-data-status-success); background: #237a4b0a; }
+.errorText, .emailChangeNotice[data-tone='error'] { color: var(--fc-data-status-danger); background: #b423180a; }
+.successText, .emailChangeNotice[data-tone='success'] { color: var(--fc-data-status-success); background: #25653a0a; }
 .emailChangeNotice { margin-bottom: 20px; }
 .dialogRail { padding: 17px 32px; border-top: 1px solid var(--fc-data-line); color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.7; }
 .tabs { display: flex; gap: 16px; border-bottom: 1px solid var(--fc-data-line); margin-bottom: 24px; }

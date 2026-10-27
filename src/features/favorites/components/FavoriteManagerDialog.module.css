@@ -6,7 +6,7 @@
 .dialog button, .prompt button { min-height: 44px; border: 1px solid var(--fc-data-line-strong, #b9bab0); border-radius: 0; padding: 9px 13px; background: transparent; color: inherit; cursor: pointer; }
 .dialog button:hover:enabled, .prompt button:hover:enabled { background: var(--fc-data-paper-deep, #e1e0d7); }
 .dialog button:disabled, .prompt button:disabled { cursor: default; opacity: .48; }
-.dialog :is(button, input, select):focus-visible, .prompt :is(button, input):focus-visible { outline: 2px solid var(--fc-data-focus-on-light, #806000); outline-offset: 3px; }
+.dialog :is(button, input, select):focus-visible, .prompt :is(button, input):focus-visible { outline: 2px solid var(--fc-data-focus-on-light, #705100); outline-offset: 3px; }
 .header { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 16px 24px; color: var(--fc-data-on-ink); background: var(--fc-data-ink, #20221c); border-top: 3px solid var(--fc-data-signal, #f4c320); }
 .kicker { margin: 0 0 8px; color: var(--fc-data-signal); font: 700 14px/1 var(--fc-data-font-display, sans-serif); letter-spacing: .065em; }
 .kicker span { color: var(--fc-data-text-dark-muted); margin-left: 8px; font: 12px/1.5 var(--font-sans); letter-spacing: .04em; }

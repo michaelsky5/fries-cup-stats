@@ -4,7 +4,7 @@
 .root button,.root input,.root textarea { font:inherit; }
 .root button { cursor:pointer; color:var(--desk-ink); }
 .root button:disabled { cursor:default; opacity:.5; }
-.root button:focus-visible,.root a:focus-visible,.root input:focus-visible,.root textarea:focus-visible { outline:2px solid #806000; outline-offset:3px; }
+.root button:focus-visible,.root a:focus-visible,.root input:focus-visible,.root textarea:focus-visible { outline:2px solid #705100; outline-offset:3px; }
 .breadcrumbs { display:flex; justify-content:space-between; align-items:center; min-height:50px; border-bottom:1px solid var(--desk-line); font-size:12px; gap:20px; }
 .breadcrumbs>span { color:var(--desk-muted); }
 .heading { display:flex; justify-content:space-between; align-items:flex-end; padding:26px 0; gap:24px; }

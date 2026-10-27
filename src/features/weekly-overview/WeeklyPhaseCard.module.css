@@ -9,7 +9,7 @@
 .duel { display: inline-flex; align-items: center; gap: 10px; }
 .duel strong { padding: 0 6px; font: 900 32px/1 var(--fc-data-font-display); }
 .facts { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 0; font-size: 14px; line-height: 1.6; }
-.countdown { color: var(--fc-data-focus-on-light, #806000); font-weight: 700; white-space: nowrap; }
+.countdown { color: var(--fc-data-focus-on-light, #705100); font-weight: 700; white-space: nowrap; }
 /* 票 2.70: buttons keep their 44px instead of stretching to the card's grid row (was 51px on desktop). */
 .actions { display: flex; flex-wrap: wrap; align-items: flex-start; align-content: flex-start; gap: 10px; margin-top: 4px; }
 .phase .primary, .phase .secondary { display: inline-flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 44px; padding: 0 16px; font: 650 14px/1.4 var(--font-sans); text-decoration: none; }
@@ -17,7 +17,7 @@
 .phase .primary { min-height: var(--fc-data-primary-height, 44px); background: var(--fc-data-primary-bg, #f4c320); color: var(--fc-data-primary-text, #181a17); font-weight: var(--fc-data-primary-weight, 750); }
 .phase .primary > span { color: inherit; }
 .phase .secondary { border: 1px solid var(--fc-data-line-strong); color: var(--fc-data-ink, #181a17); }
-.phase .secondary > span { color: var(--fc-data-focus-on-light, #806000); }
+.phase .secondary > span { color: var(--fc-data-focus-on-light, #705100); }
 .phase .primary:hover { background: var(--fc-data-primary-bg-hover, #ffd64a); }
 .phase .secondary:hover { background: var(--fc-data-paper-deep); }
 .primary:focus-visible, .secondary:focus-visible, .rows a:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 3px; }
@@ -25,7 +25,7 @@
 .rows li { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; font-size: 13px; line-height: 1.5; }
 .rows li + li { border-top: 1px solid var(--fc-data-line); }
 .phase .rows a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; flex-shrink: 0; font-weight: 700; white-space: nowrap; }
-.phase .rows a > span { color: var(--fc-data-focus-on-light, #806000); }
+.phase .rows a > span { color: var(--fc-data-focus-on-light, #705100); }
 /* 票 2.31: beside the main card from 961px, so the card has no empty right half and one band less. */
 @media (min-width: 961px) {
   .withRows { display: grid; grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr); }

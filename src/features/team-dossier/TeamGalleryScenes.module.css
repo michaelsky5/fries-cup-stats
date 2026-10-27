@@ -23,7 +23,7 @@
 .drawer :is(a,button) { color: inherit; font: inherit; }
 .drawer a { text-decoration: none; }
 .drawer button { cursor: pointer; }
-.drawer :is(a,button):focus-visible { outline: 3px solid var(--fc-data-focus-on-light,#806000); outline-offset: 3px; }
+.drawer :is(a,button):focus-visible { outline: 3px solid var(--fc-data-focus-on-light,#705100); outline-offset: 3px; }
 .drawerSheet { min-height: 100%; padding: 0 32px 32px; }
 .drawerTools { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--fc-data-paper,#eeede6); border-bottom: 1px solid var(--fc-data-line-strong); padding-block: 14px; font-size: 12px; }
 .drawerTools button { display: flex; gap: 18px; align-items: center; background: transparent; border: 1px solid var(--fc-data-line-strong); padding: 8px 12px; min-height: 44px; font-size: 12px; }

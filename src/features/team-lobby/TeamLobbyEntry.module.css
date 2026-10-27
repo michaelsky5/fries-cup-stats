@@ -3,7 +3,7 @@
 .entry p { margin: 0; font: 13px/1.6 var(--font-sans); color: var(--fc-data-text-muted, #5f6158); }
 /* 票 2.70: an outlined secondary link — the page's primary action is elsewhere (was ink filled). */
 .entry a { display: flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 44px; padding: 10px 16px; border: 1px solid var(--fc-data-line-strong, rgb(24 26 23 / 38%)); background: transparent; color: var(--fc-data-ink, #181a17); font: 650 14px/1.5 var(--font-sans); text-decoration: none; flex-shrink: 0; }
-.entry a > span { color: var(--fc-data-focus-on-light, #806000); }
+.entry a > span { color: var(--fc-data-focus-on-light, #705100); }
 .entry a:hover { background: var(--fc-data-paper-deep, #e4e3db); }
-.entry a:focus-visible { outline: 3px solid var(--fc-data-focus, #806000); outline-offset: 3px; }
+.entry a:focus-visible { outline: 3px solid var(--fc-data-focus, #705100); outline-offset: 3px; }
 @media(max-width:600px) { .entry { align-items: stretch; flex-direction: column; gap: 14px; padding: 18px; margin-bottom: 20px; } }

@@ -4691,7 +4691,7 @@ a.matchIndexCard:hover {
 .swissSignalWorkspace button:focus-visible,
 .lcqSignalWorkspace a:focus-visible,
 .lcqSignalWorkspace button:focus-visible {
-  outline: 3px solid var(--fc-data-focus-on-light, #806000);
+  outline: 3px solid var(--fc-data-focus-on-light, #705100);
   outline-offset: 3px;
 }
 
@@ -7355,7 +7355,7 @@ a.lcqSignalMatch:hover {
 }
 
 .swissLedgerScroller:focus-visible {
-  outline: 3px solid var(--fc-data-focus-on-light, #806000);
+  outline: 3px solid var(--fc-data-focus-on-light, #705100);
   outline-offset: -3px;
 }
 

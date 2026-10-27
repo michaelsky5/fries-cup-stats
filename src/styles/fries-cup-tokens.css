@@ -1,0 +1,50 @@
+/*
+ * 薯条杯共享颜色 — Stats 与 System 共用（票 S35，2026-10-27）
+ *
+ * 源文件：fries-cup-stats/src/styles/fries-cup-tokens.css
+ * System 的 src/styles/fries-cup-tokens.css 是这份文件的副本：改颜色先改这里，再把整个文件原样复制过去
+ * （System 的 scripts/test-shared-tokens.mjs 会核对必备变量和来源说明）。
+ *
+ * 只放两边必须一致的值：品牌黄、墨色、纸色、浅色底上的强调文字和焦点、状态色、选中标记。
+ * 各产品自己的字号、间距、文字灰阶仍在各自的样式里。浅色底用基础值，深色底用 -bright。
+ */
+:root {
+  /* 品牌与底色 */
+  --fc-color-signal: #f4c320;
+  --fc-color-signal-hover: #ffd64a;
+  --fc-color-ink: #181a17;
+  --fc-color-paper: #eeede6;
+  --fc-color-paper-raised: #f6f5ef;
+  --fc-color-paper-deep: #e4e3db;
+  --fc-color-on-signal: #181a17;
+  --fc-color-on-ink: #eeede6;
+
+  /* 浅色底上的黄色系文字（链接、计数、强调）与键盘焦点：同一个深金色，正文对比 6.2:1 以上 */
+  --fc-color-accent-text: #705100;
+  --fc-color-focus: #705100;
+  --fc-color-focus-on-dark: #f4c320;
+
+  /* 状态色：浅色底（在 8–10% 同色浅底上也不低于 4.5:1） */
+  --fc-color-success: #25653a;
+  --fc-color-success-rgb: 37, 101, 58;
+  --fc-color-danger: #b42318;
+  --fc-color-danger-rgb: 180, 35, 24;
+  --fc-color-warning: #9a4d00;
+  --fc-color-warning-rgb: 154, 77, 0;
+  --fc-color-info: #2f6690;
+  --fc-color-info-rgb: 47, 102, 144;
+
+  /* 状态色：深色底 */
+  --fc-color-success-bright: #65c98c;
+  --fc-color-success-bright-rgb: 101, 201, 140;
+  --fc-color-danger-bright: #ff776d;
+  --fc-color-danger-bright-rgb: 255, 119, 109;
+  --fc-color-warning-bright: #f0ac4e;
+  --fc-color-info-bright: #79b9e6;
+
+  /* 选中状态（Stats 票 2.73 / System 票 S37）：子页标签黄色下划线；筛选分段黑底、浅色字、黄色底线 */
+  --fc-color-tab-mark: #f4c320;
+  --fc-color-segment-selected-bg: #181a17;
+  --fc-color-segment-selected-text: #eeede6;
+  --fc-color-segment-selected-mark: inset 0 -3px #f4c320;
+}

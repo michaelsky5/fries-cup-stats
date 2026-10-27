@@ -71,9 +71,9 @@
 .secondary:hover:not(:disabled) { background: var(--fc-data-paper-deep); }
 .textButton { padding: 10px 0; min-height: 44px; border: 0; background: transparent; text-decoration: underline; text-underline-offset: 4px; color: inherit; font-size: 13px; }
 .hint { color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.8; }
-.notice { margin: 0 0 20px; padding: 12px 15px; border-left: 3px solid var(--fc-data-status-info); background: #356f9a0d; color: var(--fc-data-status-info); font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
-.notice[data-tone='error'] { color: var(--fc-data-status-danger); border-color: currentColor; background: #b33a320a; }
-.notice[data-tone='success'] { color: var(--fc-data-status-success); border-color: currentColor; background: #237a4b0a; }
+.notice { margin: 0 0 20px; padding: 12px 15px; border-left: 3px solid var(--fc-data-status-info); background: #2f66900d; color: var(--fc-data-status-info); font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
+.notice[data-tone='error'] { color: var(--fc-data-status-danger); border-color: currentColor; background: #b423180a; }
+.notice[data-tone='success'] { color: var(--fc-data-status-success); border-color: currentColor; background: #25653a0a; }
 .emailLine { display: flex; align-items: center; flex-wrap: wrap; gap: 13px; margin-top: 10px; }
 .emailAddress { padding: 20px; border: 1px solid var(--fc-data-line); background: var(--fc-data-paper); margin-bottom: 24px; }
 .verificationSteps { list-style: none; margin: 24px 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: 1px solid var(--fc-data-line); }

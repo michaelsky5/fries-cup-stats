@@ -89,7 +89,7 @@
 .previewArea { grid-row: 4; }
 .footer { grid-row: 5; }
 .previewArea[data-zoomed] { display: block; place-items: start; overflow: auto; overscroll-behavior: contain; }
-.previewArea:focus-visible { outline: 3px solid #806000; outline-offset: -3px; }
+.previewArea:focus-visible { outline: 3px solid #705100; outline-offset: -3px; }
 
 .controlActions {
   display: flex;
@@ -384,7 +384,7 @@
 
 .dialog a:focus-visible,
 .dialog button:focus-visible,
-.dialog select:focus-visible { outline: 3px solid #806000; outline-offset: 2px; }
+.dialog select:focus-visible { outline: 3px solid #705100; outline-offset: 2px; }
 .header button:focus-visible { outline-color: #f4c320; }
 .editorButton[aria-expanded='true']:hover:not(:disabled) { background: #2a2a2a; color: #fff; }
 

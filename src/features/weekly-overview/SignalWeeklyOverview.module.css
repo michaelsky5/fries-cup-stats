@@ -219,7 +219,7 @@
 }
 .listHeading .scheduleLink { font-size: 12px; color: var(--muted); text-decoration: none; white-space: nowrap; }
 .advanceLink { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 17px 0; border-top: 1px solid var(--line); font-size: 12px; font-weight: 700; }
-.advanceLink > span { color: var(--fc-data-focus-on-light, #806000); font-size: 20px; }
+.advanceLink > span { color: var(--fc-data-focus-on-light, #705100); font-size: 20px; }
 
 /* Keep the published site's feature, illustrated maps, and adjacent standings. */
 .mainGrid { grid-template-areas: 'content standings'; }
@@ -413,7 +413,7 @@
   .followingFooter > span { color: var(--muted); }
   .followingFooter > a { display: inline-flex; align-items: center; gap: 16px; min-height: 30px; font-weight: 700; }
   .followingFooter > a:hover { text-decoration: underline; text-underline-offset: 4px; }
-  .followingFooter > a > span { color: var(--fc-data-focus-on-light, #806000); font-size: 20px; }
+  .followingFooter > a > span { color: var(--fc-data-focus-on-light, #705100); font-size: 20px; }
   .standingsCaption { padding-bottom: 12px; color: var(--muted); text-align: left; font-size: 12px; line-height: 1.6; }
   .standingsContextLabel > th { padding-block: 12px; border-top: 2px solid var(--line); font-size: 12px !important; font-weight: 600; text-align: left; }
   .standings { padding-bottom: 0; }
@@ -504,13 +504,13 @@
 .followingHead h2 { margin: 0; }
 .followingHead p:last-child { max-width: 520px; margin: 8px 0 0; }
 .page .followPickerToggle { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 14px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised, #f6f5ef); color: var(--ink); font-size: 13px; font-weight: 650; }
-.followPickerToggle > span { color: var(--fc-data-focus-on-light, #806000); font-size: 16px; }
+.followPickerToggle > span { color: var(--fc-data-focus-on-light, #705100); font-size: 16px; }
 .followedList { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
 .followedList li { display: grid; grid-template-columns: minmax(120px, .7fr) minmax(0, 2fr) minmax(130px, 1fr); grid-template-areas: 'team match standing'; align-items: center; gap: 2px 16px; padding: 4px 0; border-bottom: 1px solid var(--line); }
 .followedTeam { grid-area: team; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; min-width: 0; }
 .followedTeam b { font-size: 16px; font-weight: 800; }
 .followedMatch { grid-area: match; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; min-width: 0; font-size: 13px; line-height: 1.5; }
-a.followedMatch > span { color: var(--fc-data-focus-on-light, #806000); }
+a.followedMatch > span { color: var(--fc-data-focus-on-light, #705100); }
 .followedList li[data-state='live'] .followedMatch { color: var(--fc-data-status-success, #1f7a3a); font-weight: 700; }
 .followedList li[data-state='none'] .followedMatch { color: var(--muted); }
 .followedStanding { grid-area: standing; display: grid; justify-items: end; gap: 2px; min-width: 0; text-align: right; }

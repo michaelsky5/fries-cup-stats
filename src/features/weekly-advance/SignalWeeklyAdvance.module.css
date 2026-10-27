@@ -4,7 +4,7 @@
 .page :is(button, select, input) { font: inherit; border-radius: 0; color: inherit; }
 .page :is(button, select, summary) { cursor: pointer; }
 .page a { color: inherit; text-decoration: none; }
-.page :is(button, select, input, a, summary):focus-visible { outline: 2px solid var(--fc-data-focus-on-light, #806000); outline-offset: 4px; }
+.page :is(button, select, input, a, summary):focus-visible { outline: 2px solid var(--fc-data-focus-on-light, #705100); outline-offset: 4px; }
 .page :is(h1, h2, h3, p) { margin: 0; }
 .heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px 32px; padding: var(--fc-data-index-heading-space) 0; }
 .eyebrow { color: var(--muted); font-size: 12px; letter-spacing: .07em; }
@@ -16,7 +16,7 @@
 .phaseTabs > a > small { overflow: hidden; color: var(--muted); font-size: 12px; font-weight: 400; text-overflow: ellipsis; }
 .headingActions { display: flex; align-items: center; gap: 24px; padding-bottom: 3px; flex-shrink: 0; }
 .overviewLink { display: grid; grid-template-columns: 1fr auto; gap: 5px 24px; font-size: 13px; }
-.overviewLink > span { grid-row: span 2; color: var(--fc-data-focus-on-light, #806000); font-size: 23px; }
+.overviewLink > span { grid-row: span 2; color: var(--fc-data-focus-on-light, #705100); font-size: 23px; }
 .overviewLink small { color: var(--muted); font-size: 12px; }
 .pathway { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: 1px solid var(--line); }
 .pathway a { display: flex; align-items: center; gap: 18px; padding: 22px 25px; border-bottom: 3px solid transparent; min-width: 0; }
@@ -46,7 +46,7 @@
 .followToggle { display: flex; gap: 12px; align-items: center; min-height: 44px; border: 0; background: transparent; padding: 10px 0; font-size: 12px !important; white-space: nowrap; }
 .followToggle i { border: 1px solid #181a1755; width: 34px; height: 20px; padding: 3px; display: flex; align-items: center; }
 .followToggle b { width: 12px; height: 12px; background: var(--ink); }
-.followToggle[aria-pressed="true"] i { background: var(--yellow); border-color: var(--fc-data-focus-on-light, #806000); justify-content: flex-end; }
+.followToggle[aria-pressed="true"] i { background: var(--yellow); border-color: var(--fc-data-focus-on-light, #705100); justify-content: flex-end; }
 .reset { padding: 14px 0; border: 0; background: transparent; font-size: 12px !important; text-decoration: underline; text-underline-offset: 4px; white-space: nowrap; }
 .reset:disabled { color: var(--muted); opacity: .65; cursor: default; text-decoration: none; }
 .table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -67,7 +67,7 @@
 .logo { display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 38px; }
 .logo img, .heroLogo img, .opponentLogo img { width: 100%; height: 100%; object-fit: contain; }
 .rowArrow { color: var(--muted); font-size: 18px; margin-left: auto; padding-left: 8px; }
-.teamButton[aria-pressed="true"] .rowArrow, .teamButton:hover .rowArrow { color: var(--fc-data-focus-on-light, #806000); }
+.teamButton[aria-pressed="true"] .rowArrow, .teamButton:hover .rowArrow { color: var(--fc-data-focus-on-light, #705100); }
 .table .points { font: 800 32px/1 var(--fc-data-font-display); }
 .rankingNotes { border-bottom: 1px solid var(--line); margin-top: 17px; color: var(--muted); font-size: 12px; }
 .rankingNotes summary { list-style: none; display: flex; justify-content: space-between; padding: 15px 0; }
