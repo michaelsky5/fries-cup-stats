@@ -233,7 +233,6 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
       <section ref={dialogRef} className={styles.dialog} role="dialog" aria-modal="true" aria-label={copy.account}>
         <header className={styles.dialogHeader}>
           <div className={styles.dialogHeading}>
-            <span>FRIES CUP / ACCOUNT</span>
             <h2 tabIndex={-1} className={styles.dialogTitle}>{isRecovery ? passwordRecoveryTitle(recovery.stage, locale, recovery.error) : mode === 'register' ? copy.register : (locale === 'en-US' ? 'Welcome back' : uiText("欢迎回到薯条杯", locale))}</h2>
           </div>
           <button type="button" className={styles.closeButton} onClick={onClose} disabled={recovery.busy || isSubmitting} aria-label={copy.close}>

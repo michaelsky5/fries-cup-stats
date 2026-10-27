@@ -209,7 +209,8 @@ export default function EventContextBar({
   if (presentation === 'directory') return (
     <section className={styles.directoryContext} data-directory-context data-source={dataStatus?.key} data-i18n-ignore aria-label={contextText(locale, uiText("赛事与数据状态", locale), 'Event and data status', '대회 및 데이터 상태')}>
       <div className={styles.directoryIdentity}>
-        <strong>{season?.displayCode || season?.publicCode || seasonId}</strong>
+        {/* 票 2.76: the season's name (「2026 薯条杯周赛」), not its code; the code stays as the tooltip. */}
+        <strong title={season?.publicCode || seasonId}>{(season?.name?.zh && contextText(locale, uiText(season.name.zh, locale), season.name.en, uiText(season.name.zh, locale))) || season?.displayCode || season?.publicCode || seasonId}</strong>
         <small className={styles.eventKindLabel} data-event-kind={getSeasonEventKind(season)}>{getEventKindLabel(season, locale)}</small>
         <span>{statusLabel}</span>
       </div>

@@ -30,7 +30,7 @@ const COPY = {
   more: ['查看更多比赛', 'More matches', '경기 더 보기', '查看更多比賽'],
   empty: ['暂无可展示的公开记录。', 'No public records to show yet.', '표시할 공개 기록이 없습니다.', '暫無可展示的公開記錄。'],
   alongside: ['同场搭档', 'Alongside them', '함께한 동료', '同場搭檔'],
-  colleagues: ['其他战队职员', 'Other team staff', '다른 팀 스태프', '其他戰隊職員'],
+  colleagues: ['其他队伍职员', 'Other team staff', '다른 팀 스태프', '其他隊伍職員'],
   shared: ['场共同署名', 'shared credits', '공동 참여 경기', '場共同署名'],
   source: ['名册与署名说明', 'About these records', '기록 출처', '名冊與署名說明'],
   eventSource: ['来自本届已发布比赛的职员署名。按当前职责分别记录，同一人兼任不同职责时，各自保留档案。', 'Based on staff credits in this event’s published matches. Each role has its own record, including when one person holds multiple roles.', '공개된 경기의 스태프 기록을 사용합니다. 한 사람이 여러 역할을 맡아도 역할별 기록은 구분합니다.', '來自本屆已發布比賽的職員署名。按當前職責分別記錄，同一人兼任不同職責時，各自保留檔案。'],

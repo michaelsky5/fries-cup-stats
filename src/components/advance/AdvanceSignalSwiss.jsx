@@ -437,7 +437,7 @@ export default function AdvanceSignalSwiss({
 
           <div className={styles.swissLedgerTable}>
             <div className={styles.swissLedgerHead} aria-hidden="true">
-              <span>NO.</span><span>{copy(locale, uiText("战队", locale), 'TEAM')}</span><span>{copy(locale, uiText("胜负", locale), 'W—L')}</span><span>{copy(locale, uiText("对手分", locale), 'BUCHHOLZ')}</span><span>{copy(locale, uiText("对手胜率", locale), 'OMW')}</span><span>{copy(locale, uiText("净胜", locale), 'DIFF')}</span><span>{copy(locale, uiText("去向", locale), 'OUTCOME')}</span>
+              <span>NO.</span><span>{copy(locale, uiText("队伍", locale), 'TEAM')}</span><span>{copy(locale, uiText("胜负", locale), 'W—L')}</span><span>{copy(locale, uiText("对手分", locale), 'BUCHHOLZ')}</span><span>{copy(locale, uiText("对手胜率", locale), 'OMW')}</span><span>{copy(locale, uiText("净胜", locale), 'DIFF')}</span><span>{copy(locale, uiText("去向", locale), 'OUTCOME')}</span>
             </div>
             <div
               className={styles.swissLedgerScroller}

@@ -23,7 +23,7 @@ import { buildTeamIndexPreview } from '../../features/team-index/teamIndexModel.
 import directoryStyles from '../../features/roster-directory/RosterDirectory.module.css'
 
 const TEAM_FILTERS = [
-  { value: 'all', label: '全部战队' },
+  { value: 'all', label: '全部队伍' },
   { value: 'following', label: '我的关注' },
   { value: 'roster5', label: '5 人名单' },
   { value: 'roster6', label: '6 人名单' },
@@ -156,7 +156,7 @@ export default function TeamsPage() {
     <div className={styles.shell}>
       <RosterPageHeader
         stats={[
-          { value: summary.totalTeams, label: uiText("参赛战队", locale) },
+          { value: summary.totalTeams, label: uiText("参赛队伍", locale) },
           { value: summary.totalPlayers, label: uiText("参赛选手", locale) },
           { value: summary.managers, label: uiText("经理岗位", locale) },
           { value: summary.coaches, label: uiText("教练岗位", locale) }
@@ -169,7 +169,7 @@ export default function TeamsPage() {
         <RosterToolbar
           compact
           searchValue={queryState.q}
-          searchPlaceholder="搜索战队简称、全称、经理或教练"
+          searchPlaceholder="搜索队伍简称、全称、经理或教练"
           onSearchChange={value => setQuery({ q: { value, fallback: '' } })}
           resultLabel={`${filteredTeams.length} 支结果`}
           actions={followingAction}
@@ -182,7 +182,7 @@ export default function TeamsPage() {
       <section ref={directoryRef} className={styles.directorySection}>
         <div className={rosterStyles.directoryHead}>
           <div className={rosterStyles.directoryTitleGroup}>
-            <h2 className={rosterStyles.directoryTitle}>{uiText("全部战队", locale)}</h2>
+            <h2 className={rosterStyles.directoryTitle}>{uiText("全部队伍", locale)}</h2>
             <div className={rosterStyles.directorySubtitle}>TEAM DIRECTORY</div>
           </div>
           <div className={rosterStyles.directoryCount}>{filteredTeams.length}{uiText(" 支结果", locale)}</div>
@@ -204,7 +204,7 @@ export default function TeamsPage() {
             ))}
           </div>
         ) : (
-          <RosterEmptyState title={uiText("未找到符合条件的战队。", locale)} onReset={reset} />
+          <RosterEmptyState title={uiText("未找到符合条件的队伍。", locale)} onReset={reset} />
         )}
       </section>
 

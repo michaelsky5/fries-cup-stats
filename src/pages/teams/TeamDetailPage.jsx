@@ -54,9 +54,9 @@ import { getArchiveMetricAvailability } from '../../features/team-dossier/teamAr
 import styles from '../../features/fd-design/teamDetailStyles.js'
 
 const TABS = [
-  { id: 'overview', label: '战队概览' },
+  { id: 'overview', label: '队伍概览' },
   { id: 'matches', label: '赛程赛果' },
-  { id: 'stats', label: '战队数据' }
+  { id: 'stats', label: '队伍数据' }
 ]
 
 const ROLE_ORDER = ['TANK', 'DPS', 'SUP']
@@ -1927,9 +1927,9 @@ export default function TeamDetailPage() {
       <div className={styles.shell}>
         <section className={styles.errorState}>
           <div className={styles.sectionLabel}>TEAM DOSSIER</div>
-          <h1>{uiText("未找到战队", locale)}</h1>
-          <p>{uiText("当前赛季中不存在编号或简称为 ", locale)}{teamId}{uiText(" 的战队。", locale)}</p>
-          <button type="button" onClick={handleBack} className={styles.primaryButton}>{uiText("返回战队目录", locale)}</button>
+          <h1>{uiText("未找到队伍", locale)}</h1>
+          <p>{uiText("当前赛季中不存在编号或简称为 ", locale)}{teamId}{uiText(" 的队伍。", locale)}</p>
+          <button type="button" onClick={handleBack} className={styles.primaryButton}>{uiText("返回队伍目录", locale)}</button>
         </section>
       </div>
     )
@@ -2023,7 +2023,7 @@ export default function TeamDetailPage() {
               onClick={() => toggleTeamFavorite?.(team)}
               disabled={favoriteLimitReached}
             >
-              {teamFavorited ? uiText("取消关注", locale) : favoriteLimitReached ? uiText("关注已满", locale) : uiText("关注战队", locale)}
+              {teamFavorited ? uiText("取消关注", locale) : favoriteLimitReached ? uiText("关注已满", locale) : uiText("关注队伍", locale)}
             </button>
             <button
               type="button"
@@ -2345,7 +2345,7 @@ export default function TeamDetailPage() {
       {activeTab === 'stats' ? (
         <section className={`${styles.panel} ${styles.statsPanel}`}>
           <div className={styles.panelHead}>
-            <h2>{isEn ? 'Team Stats' : uiText("战队数据", locale)}</h2>
+            <h2>{isEn ? 'Team Stats' : uiText("队伍数据", locale)}</h2>
             <span>{isEn ? 'TACTICAL PROFILE' : uiText("战术画像", locale)}</span>
           </div>
 

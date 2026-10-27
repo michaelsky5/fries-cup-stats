@@ -19,7 +19,7 @@ import indexStyles from '../../features/roster-index/RosterIndex.module.css'
 import styles from './RosterHubPage.module.css'
 
 const roleNames = { TANK: ['重装', 'Tank'], DPS: ['输出', 'Damage'], SUP: ['支援', 'Support'], FLEX: ['灵活', 'Flex'], UNKNOWN: ['未注明', 'Unspecified'] }
-const groupNames = { teams: ['参赛战队', 'Teams'], players: ['参赛选手', 'Players'], teamStaff: ['战队职员', 'Team staff'], eventStaff: ['赛事职员', 'Event staff'] }
+const groupNames = { teams: ['参赛队伍', 'Teams'], players: ['参赛选手', 'Players'], teamStaff: ['队伍职员', 'Team staff'], eventStaff: ['赛事职员', 'Event staff'] }
 const roleLabel = (role, locale) => locale === 'en-US' ? roleNames[role]?.[1] || 'Other' : uiText(roleNames[role]?.[0] || '其他', locale)
 const memberKey = member => member.identity.playerId || `${member.role}:${member.identity.primary}`
 
@@ -250,7 +250,7 @@ export default function RosterHubPage() {
   const metrics = [
     { count: model.teams.length, label: en ? 'teams' : uiText("支参赛队伍", locale), href: '/teams' },
     { count: model.totalPlayers, label: en ? 'players across the season' : uiText("位选手 · 全季收录", locale), href: '/players' },
-    { count: model.teamStaffCount, label: en ? 'team staff records' : uiText("份战队职员档案", locale), href: '/staff?group=team' },
+    { count: model.teamStaffCount, label: en ? 'team staff records' : uiText("份队伍职员档案", locale), href: '/staff?group=team' },
     { count: model.eventStaffCount, label: en ? 'event staff records' : uiText("份赛事职员档案", locale), href: '/staff?group=event' }
   ]
   return <div className={indexStyles.shell + ' ' + styles.shell} data-roster-directory="overview" data-i18n-ignore>

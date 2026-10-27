@@ -56,6 +56,6 @@ test('version comparison preserves filters, locale, season, hash and external li
 
 test('staff titles follow the default design and retain original-view wording', () => {
   assert.equal(getDataCenterPageLabel('/staff'), '赛事职员')
-  assert.equal(getDataCenterPageLabel('/staff', '?group=team'), '战队职员')
+  assert.equal(getDataCenterPageLabel('/staff', '?group=team'), '队伍职员')
   assert.equal(getDataCenterPageLabel('/staff', '?design=original&group=team'), '赛事人员')
 })

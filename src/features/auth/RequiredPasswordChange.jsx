@@ -41,9 +41,8 @@ export default function RequiredPasswordChange({ user, logout, clearSession }) {
     catch (failure) { setError(accountSettingsError(failure, locale)); lock.current = false; setBusy(false) }
   }
   return <main className={styles.page} lang={locale} data-i18n-ignore>
-    <header>FRIES CUP <span>ACCOUNT SECURITY</span></header>
+    <header>FRIES CUP <span>{t('账号安全', 'Account security', '계정 보안', '帳號安全')}</span></header>
     <section className={styles.panel} aria-labelledby="required-password-title" aria-busy={busy}>
-      <span className={styles.eyebrow}>ACCOUNT / PASSWORD</span>
       <h1 id="required-password-title">{done ? t('密码已更新', 'Password updated', '비밀번호 변경 완료', '密碼已更新') : t('请先更新密码', 'Update your password to continue', '먼저 비밀번호를 변경하세요', '請先更新密碼')}</h1>
       <p className={styles.identity}>{user.email}</p>
       <p>{done ? t('旧登录会话已退出，请使用新密码重新登录。', 'Previous sessions have ended. Sign in with your new password.', '이전 로그인 세션이 종료되었습니다. 새 비밀번호로 로그인하세요.', '舊登入工作階段已退出，請使用新密碼重新登入。') : t('你的旧密码包含当前不再支持的字符。完成修改后，才能继续使用账号功能。', 'Your previous password contains characters that are no longer supported. Update it before using your account.', '기존 비밀번호에 더 이상 지원되지 않는 문자가 있습니다. 계정 기능을 사용하려면 먼저 변경하세요.', '你的舊密碼包含目前不再支援的字元。完成修改後，才能繼續使用帳號功能。')}</p>

@@ -236,7 +236,7 @@
 }
 
 /* 票 2.20: phone header budget. The tabs above already name the page, and 「全部队伍」 is the
-   参赛战队 tab, so the title block and list heading stay for screen readers only. */
+   参赛队伍 tab, so the title block and list heading stay for screen readers only. */
 @media (max-width: 600px) {
   .hero { margin-top: 10px; }
   .pageHeading, .search > span, .fieldHeading { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

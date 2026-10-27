@@ -13,7 +13,7 @@ import styles from './SiteSearch.module.css'
 const GROUP_NAMES = {
   players: ['选手', 'Players', '선수', '選手'],
   teams: ['队伍', 'Teams', '팀', '隊伍'],
-  teamStaff: ['战队职员', 'Team staff', '팀 스태프', '戰隊職員'],
+  teamStaff: ['队伍职员', 'Team staff', '팀 스태프', '隊伍職員'],
   eventStaff: ['赛事职员', 'Event staff', '대회 스태프', '賽事職員']
 }
 const STAFF_ROLES = { admin: ['赛管', 'Official', '운영', '賽管'], caster: ['解说', 'Caster', '해설', '解說'] }

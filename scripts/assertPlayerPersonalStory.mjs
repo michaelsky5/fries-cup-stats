@@ -85,7 +85,7 @@ check('registered-only players receive an identity card instead of invented rati
   assert.equal(model.title, '我在这一届。')
   assert.equal(model.rawHero, '')
   assert.equal(model.rating, null)
-  assert.equal(model.heroCaption, '所属战队')
+  assert.equal(model.heroCaption, '所属队伍')
   assert.deepEqual(model.facts.map(item => item.value), ['支援', 'TEAM', 'TEST'])
 })
 check('season artwork preserves a selected recorded hero without changing season totals', () => {

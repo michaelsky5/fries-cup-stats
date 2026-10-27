@@ -65,7 +65,7 @@ const copy = {
   playersTitle: ['参赛选手', 'Players', '참가 선수', '參賽選手'],
   playersEmpty: ['暂无可预览选手', 'No player to preview', '미리 볼 선수 없음', '暫無可預覽選手'],
   playersEmptyIntro: ['调整筛选，查看其他选手。', 'Change the filters to view other players.', '필터를 변경해 다른 선수를 확인하세요.', '調整篩選，查看其他選手。'],
-  teamStaffTitle: ['战队职员', 'Team staff', '팀 스태프', '戰隊職員'],
+  teamStaffTitle: ['队伍职员', 'Team staff', '팀 스태프', '隊伍職員'],
   teamStaffIntro: ['查看经理、教练及所属队伍。', 'Find managers, coaches and their teams.', '매니저, 코치 및 소속 팀을 확인하세요.', '查看經理、教練及所屬隊伍。'],
   eventStaffTitle: ['赛事职员', 'Event staff', '대회 스태프', '賽事職員'],
   staffIdentity: ['职员资料', 'Staff profile', '스태프 정보', '職員資料'],

@@ -76,7 +76,7 @@ export default function StaffDirectoryItem({
               </>
             ) : (
               <>
-                <div className={styles.staffSignalWideStat}><strong>{affiliation.primary}</strong><span>{uiText("所属战队", uiLocale)}{affiliation.secondary ? <em>{affiliation.secondary}</em> : null}</span></div>
+                <div className={styles.staffSignalWideStat}><strong>{affiliation.primary}</strong><span>{uiText("所属队伍", uiLocale)}{affiliation.secondary ? <em>{affiliation.secondary}</em> : null}</span></div>
                 <div><strong>{staff.roles?.length || 1}</strong><span>{uiText("职务", uiLocale)}<em>DUTIES</em></span></div>
               </>
             )}
@@ -111,7 +111,7 @@ export default function StaffDirectoryItem({
 
       <div className={styles.staffMetaGrid}>
         <div className={styles.staffMetaBlock}>
-          <span className={styles.staffMetaLabel}>{isEventStaff ? uiText("公开记录", uiLocale) : uiText("所属战队", uiLocale)}</span>
+          <span className={styles.staffMetaLabel}>{isEventStaff ? uiText("公开记录", uiLocale) : uiText("所属队伍", uiLocale)}</span>
           <strong>{isEventStaff ? uiText("{0} 场比赛", uiLocale, [staff.matchCount]) : affiliation.primary}</strong>
           {isEventStaff || affiliation.secondary ? <em>{isEventStaff ? uiText("{0} 个阶段 · {1} 支队伍", uiLocale, [staff.stageCount, staff.teamCount]) : affiliation.secondary}</em> : null}
         </div>

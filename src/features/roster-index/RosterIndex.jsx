@@ -61,7 +61,7 @@ export function TeamAtlasExplorer({ directoryRef, teams, focusedTeam, onFocusTea
   if (!focusedTeam) return null
   const en = locale === 'en-US'
   const preview = <TeamPreview team={focusedTeam} {...{ seasonId, withSeason, onToggleFavorite, favoriteDisabled, en }} />
-  return <section ref={directoryRef} className={styles.explorer} aria-label={en ? 'Team directory' : uiText("战队目录", locale)}>
+  return <section ref={directoryRef} className={styles.explorer} aria-label={en ? 'Team directory' : uiText("队伍目录", locale)}>
     <div className={styles.results}>
       <div className={styles.listHeading}><span>{en ? 'Team / registered roster' : uiText("队伍 / 注册名单", locale)}</span><span>{en ? 'Preview or open archive' : uiText("预览或进入档案", locale)}</span></div>
       <ul className={styles.teamGrid}>{teams.map(team => {

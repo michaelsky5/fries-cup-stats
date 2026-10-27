@@ -880,7 +880,7 @@ function OverviewGatewaySection({ overview, summary, latest }) {
       label: 'ROSTER',
       title: homeText(locale, uiText("参赛阵容", locale), 'Roster'),
       status: teamPlayerScaleText(locale, summary.teams, summary.players),
-      text: homeText(locale, uiText("战队、选手与赛事职员目录。", locale), 'Team, player, and staff directory.'),
+      text: homeText(locale, uiText("队伍、选手与赛事职员目录。", locale), 'Team, player, and staff directory.'),
       to: '/teams'
     },
     {
