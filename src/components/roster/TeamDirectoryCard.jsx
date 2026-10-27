@@ -62,7 +62,7 @@ export default function TeamDirectoryCard({
 
   return (
     <article className={`${styles.teamCard} ${presentation === 'signal' ? styles.teamCardSignal : ''} ${team.isFavorite ? styles.teamCardFavorite : ''}`}>
-      <Link to={teamPath} className={styles.cardLinkOverlay} aria-label={uiText("查看战队 {0}", uiLocale, [team.shortName])} />
+      <Link to={teamPath} className={styles.cardLinkOverlay} aria-label={uiText("查看队伍 {0}", uiLocale, [team.shortName])} />
 
       <div className={styles.teamBrandArea} data-team-code={team.shortName}>
         {presentation === 'signal' ? <span className={styles.teamFileIndex}>{String(index).padStart(2, '0')}</span> : null}
@@ -97,7 +97,7 @@ export default function TeamDirectoryCard({
           <StaffBlock label={uiText("教练", uiLocale)} person={coach} />
         </div>
 
-        <span className={styles.cardTextLink}>{uiText("查看战队 →", uiLocale)}</span>
+        <span className={styles.cardTextLink}>{uiText("查看队伍 →", uiLocale)}</span>
       </div>
     </article>
   )

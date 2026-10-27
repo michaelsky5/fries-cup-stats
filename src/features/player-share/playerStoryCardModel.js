@@ -64,10 +64,10 @@ export function getPlayerStoryCardModel({ dossier, appearances, role, selection,
   } else {
     model.title = text('我在这一届。', 'Part of this season.')
     model.category = text('参赛选手档案', 'PLAYER ARCHIVE')
-    model.facts = [{ value: roleLabel, label: text('登记职责', 'REGISTERED ROLE'), compact: true }, { value: dossier.identity.teamShort, label: text('所属战队', 'TEAM'), compact: true }, { value: seasonCode, label: text('参赛赛季', 'SEASON'), compact: true }]
+    model.facts = [{ value: roleLabel, label: text('登记职责', 'REGISTERED ROLE'), compact: true }, { value: dossier.identity.teamShort, label: text('所属队伍', 'TEAM'), compact: true }, { value: seasonCode, label: text('参赛赛季', 'SEASON'), compact: true }]
     model.note = text('已收录本届登记身份，公开出场记录尚待补充。', 'The registered identity is on record. Published appearances are not available yet.')
   }
   model.heroLabel = model.rawHero ? formatOwHeroName(model.rawHero, locale) : dossier.identity.teamShort
-  if (!model.rawHero) model.heroCaption = text('所属战队', 'TEAM IDENTITY')
+  if (!model.rawHero) model.heroCaption = text('所属队伍', 'TEAM IDENTITY')
   return model
 }

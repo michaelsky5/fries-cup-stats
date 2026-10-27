@@ -68,7 +68,7 @@ test('category navigation starts clean while preserving the selected season and 
 })
 
 test('browser titles distinguish the categories and retain the original directory title', () => {
-  assert.equal(getDataCenterPageLabel('/staff', '?design=kpr5&type=coach'), '战队职员')
+  assert.equal(getDataCenterPageLabel('/staff', '?design=kpr5&type=coach'), '队伍职员')
   assert.equal(getDataCenterPageLabel('/staff', '?group=event'), '赛事职员')
   assert.equal(getDataCenterPageLabel('/staff', '?design=original'), '赛事人员')
   assert.equal(getDataCenterPageLabel('/staff', '?design=original&group=team'), '赛事人员')

@@ -18,7 +18,7 @@ export function AtlasImage({ src, alt = '', className = '', eager = false }) {
 export function HeroPortrait({ name, className = '' }) {
   const asset = getOwHeroAssetKey(name)
   const role = getOwHeroRole(name)
-  return <AtlasImage className={className} src={asset && role ? `/heroes/${role}/${asset}.png` : ''} />
+  return <AtlasImage className={className} src={asset && role ? `/heroes/${role}/${asset}.webp` : ''} />
 }
 
 export function AtlasNav({ withSeason, locale, backTo = '', backState, indexTo, backLabel }) {

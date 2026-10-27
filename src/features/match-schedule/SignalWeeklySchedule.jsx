@@ -64,10 +64,10 @@ function WeeklyMatchRow({ match, locale, seasonId, withSeason, returnProps, maps
         <span className={styles.score}><strong>{score}</strong>{scoreNote ? <small>{scoreNote}</small> : null}</span>
         <span className={`${styles.team} ${styles.teamB}`}><TeamLogo team={match.team_b} seasonId={seasonId} className={styles.logo} /><span><b>{weeklyTeamShort(match.team_b)}</b><small>{match.team_b?.name || match.team_b?.team_name}</small></span></span>
       </span>
-      <span className={styles.arrow} aria-hidden="true">{eventCenterText('matchDetails', locale)} <i>↗</i></span>
+      <span className={styles.arrow} aria-hidden="true">{eventCenterText('matchDetails', locale)} <i>→</i></span>
     </MatchMain>
     {watch ? <a className={styles.watch} href={watch.url} target="_blank" rel="noreferrer" data-watch-kind={watch.kind} aria-label={`${watchLabel} · ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`}><span className={styles.watchLong}>{watchLabel}</span><span className={styles.watchShort} aria-hidden="true">{watchShort}</span><i aria-hidden="true">↗</i></a> : null}
-    {isDesktop && <Link className={styles.rowDetails} to={withSeason(path)} {...returnProps} aria-label={`${t('比赛详情', 'Match details')} · ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`} title={eventCenterText('matchDetails', locale)}><span>{eventCenterText('matchDetails', locale)}</span><i aria-hidden="true">↗</i></Link>}
+    {isDesktop && <Link className={styles.rowDetails} to={withSeason(path)} {...returnProps} aria-label={`${t('比赛详情', 'Match details')} · ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`} title={eventCenterText('matchDetails', locale)}><span>{eventCenterText('matchDetails', locale)}</span><i aria-hidden="true">→</i></Link>}
     <button type="button" className={styles.mapToggle} aria-expanded={mapsExpanded} aria-controls={mapPanelId} onClick={onToggleMaps} aria-label={`${eventCenterText(mapsExpanded ? 'collapseMatchMaps' : 'expandMatchMaps', locale)} · ${weeklyTeamShort(match.team_a)} / ${weeklyTeamShort(match.team_b)}`}>
       <span>{eventCenterText(mapsExpanded ? 'collapseMatchMaps' : 'expandMatchMaps', locale)}</span><i aria-hidden="true">{mapsExpanded ? '−' : '+'}</i>
     </button>
@@ -143,12 +143,13 @@ export default function SignalWeeklySchedule() {
       <div><h1>{t(uiText("赛程赛果", locale), 'Schedule & results')}</h1><p>{eventCenterText('matchesIntro', locale)}</p></div>
       <div className={styles.headingActions}>
         <WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, match: null, teamId: null, expanded: null })} />
-        <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">↗</span><small>{t(uiText("赛况与赛段积分", locale), 'Matches & cycle points')}</small></Link>
+        <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">→</span><small>{t(uiText("赛况与赛段积分", locale), 'Matches & cycle points')}</small></Link>
         <button type="button" className={styles.filterToggle} aria-expanded={filtersOpen} aria-controls={filtersId} onClick={() => setFiltersOpen(open => !open)}>{t(uiText("筛选", locale), 'Filters')}{activeFilters ? <b>{activeFilters}</b> : <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M6 10h8M8 15h4" /></svg>}</button>
       </div>
     </header>
     <WeeklyWeekRail weeks={weeks} selectedId={selectedWeekId} locale={locale} includeAll onChange={id => change({ week: id, match: null, expanded: null })} />
-    <div className={styles.workspace}>
+    {/* 票 2.78: with no fixtures the list's empty state is the only one — no preview panel beside it. */}
+    <div className={styles.workspace} data-empty={entries.length ? undefined : ''}>
       <div className={styles.listColumn}>
         <div className={styles.filters} id={filtersId} data-open={filtersOpen || undefined}>
           <label className={styles.search}><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg><ImeSafeInput type="search" value={query} onValueChange={value => change({ query: value })} placeholder={t(uiText("搜索队伍或比赛编号…", locale), 'Search teams or match numbers…')} aria-label={t(uiText("搜索周赛队伍或比赛编号", locale), 'Search weekly teams or match numbers')} /></label>
@@ -166,7 +167,7 @@ export default function SignalWeeklySchedule() {
         </div>
         <div className={styles.listHeading}>
           <h2>{selectedWeekId === 'all' ? weeklyCycleTitle(cycle, locale) : week ? weeklyWeekTitle(week, locale) : t(uiText("周赛赛程", locale), 'Weekly schedule')}<span aria-live="polite">{t(uiText("{0} 场对阵", locale, [model.resultCount]), `${model.resultCount} matches`)}</span></h2>
-          <p>{isDesktop ? eventCenterText('previewMatchHint', locale) : entries.length && entries.every(entry => entry.matches.every(match => String(match.format).toUpperCase() === 'RR5')) ? t(uiText("RR5 · 固定五图，可按规则提前结束", locale), 'RR5 · Five maps, subject to event rules') : t(uiText("各场赛制以对阵公示为准", locale), 'Each match follows its published format')}</p>
+          {entries.length ? <p>{isDesktop ? eventCenterText('previewMatchHint', locale) : entries.every(entry => entry.matches.every(match => String(match.format).toUpperCase() === 'RR5')) ? t(uiText("RR5 · 固定五图，可按规则提前结束", locale), 'RR5 · Five maps, subject to event rules') : t(uiText("各场赛制以对阵公示为准", locale), 'Each match follows its published format')}</p> : null}
         </div>
         {entries.length ? <div className={styles.groups}>{entries.map(entry => <section key={entry.week.id} aria-label={weeklyWeekTitle(entry.week, locale)}>
           {selectedWeekId === 'all' && <h3 className={styles.weekHeading}><span>{weeklyWeekTitle(entry.week, locale)}</span><small>{weeklyStatusLabel(entry.week.status, locale)}</small></h3>}
@@ -177,11 +178,11 @@ export default function SignalWeeklySchedule() {
         </section>)}</div> : <section className={styles.empty}>
           <h3>{!model.total ? t(uiText("赛程尚未公布", locale), 'Schedule not yet published') : followedOnly && !followedKey ? t(uiText("尚未关注队伍", locale), 'No followed teams') : eventCenterText('fixturesEmpty', locale)}</h3>
           <p>{!model.total ? t(uiText("当前周次尚无公开对阵，可切换其他已发布周次。", locale), 'There are no public fixtures in this selection. Try another published week.') : followedOnly && !followedKey ? t(uiText("在周赛总览关注队伍，再回来查看他们的赛程。", locale), 'Follow teams in the weekly overview to see their fixtures here.') : eventCenterText('fixturesEmptyIntro', locale)}</p>
-          {followedOnly && !followedKey ? <Link to={`${overviewPath}#weekly-following`}>{t(uiText("去关注队伍", locale), 'Choose teams')} ↗</Link> : model.hasFilters && <button type="button" onClick={reset}>{t(uiText("重置筛选", locale), 'Reset filters')} ↺</button>}
+          {followedOnly && !followedKey ? <Link to={`${overviewPath}#weekly-following`}>{t(uiText("去关注队伍", locale), 'Choose teams')} →</Link> : model.hasFilters && <button type="button" onClick={reset}>{t(uiText("重置筛选", locale), 'Reset filters')} ↺</button>}
         </section>}
       </div>
-      {isDesktop && <WeeklyMatchPreview id={previewId} match={selectedMatch} week={selectedMatchWeek} locale={locale} seasonId={seasonId} withSeason={withSeason} returnProps={returnProps} />}
+      {isDesktop && entries.length ? <WeeklyMatchPreview id={previewId} match={selectedMatch} week={selectedMatchWeek} locale={locale} seasonId={seasonId} withSeason={withSeason} returnProps={returnProps} /> : null}
     </div>
-    <footer className={styles.footer}><p>{t(uiText("比分与地图记录以公布内容为准；赛段积分见总览。", locale), 'Scores and map records follow the published data. Cycle points are in the overview.')}</p><Link to={overviewPath}>{t(uiText("查看赛段积分", locale), 'View cycle points')} ↗</Link></footer>
+    <footer className={styles.footer}><p>{t(uiText("比分与地图记录以公布内容为准；赛段积分见总览。", locale), 'Scores and map records follow the published data. Cycle points are in the overview.')}</p><Link to={overviewPath}>{t(uiText("查看赛段积分", locale), 'View cycle points')} →</Link></footer>
   </div>
 }

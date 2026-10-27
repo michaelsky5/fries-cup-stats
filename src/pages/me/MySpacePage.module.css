@@ -24,7 +24,7 @@
 .spaceNavGroups > a:hover, .spaceNavUtilities > a:hover, .spaceNavGroup summary:hover, .spaceNavGroup[open] > summary { color: var(--fc-data-ink); background: var(--fc-data-paper-deep); }
 .spaceTabs .spaceTabActive, .spaceNavGroup[data-active='true'] > summary { color: var(--fc-data-ink); font-weight: 750; }
 .spaceTabs .spaceTabActive::after, .spaceNavGroup[data-active='true'] > summary::after { content: ''; position: absolute; inset: auto 12px 0; height: 3px; background: var(--fc-data-signal); }
-.spaceTabs b { display: grid; place-items: center; min-width: 20px; height: 20px; padding-inline: 4px; background: var(--fc-data-ink); color: var(--fc-data-paper); font: 600 11px/1 var(--fc-data-font-mono); }
+.spaceTabs b { display: grid; place-items: center; min-width: 20px; height: 20px; padding-inline: 4px; background: var(--fc-data-ink); color: var(--fc-data-paper); font: 600 12px/1 var(--fc-data-font-mono); }
 .spaceNavGroup { position: relative; }
 .spaceNavMenu { position: absolute; top: calc(100% + 4px); left: 0; width: 240px; z-index: 30; background: var(--fc-data-paper-raised); border: 1px solid var(--fc-data-line-strong); box-shadow: var(--fc-data-shadow-float); }
 .spaceNavMenu a { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 16px; border-bottom: 1px solid var(--fc-data-line); color: inherit; font-size: 13px; }
@@ -120,7 +120,7 @@
   .spaceQuickNav { display: flex; min-width: 0; overflow-x: auto; scrollbar-width: thin; }
   .spaceQuickNav a { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; gap: 4px; min-height: 44px; padding: 8px 12px; color: var(--fc-data-text-muted); font-size: 13px; white-space: nowrap; }
   .spaceQuickNav a[aria-current] { color: var(--fc-data-ink); font-weight: 750; box-shadow: inset 0 -3px var(--fc-data-signal); }
-  .spaceQuickNav b { font-size: 11px; color: var(--fc-data-paper); }
+  .spaceQuickNav b { font-size: 12px; color: var(--fc-data-paper); }
   .spaceTabs .spaceNavToggle { justify-content: center; padding: 8px; border-left: 1px solid var(--fc-data-line); }
   .spaceNavToggle > strong, .mobileTaskSummary > span:first-child:not(:last-child) { display: none; }
   .spaceNavToggle .mobileTaskSummary > span:last-child { font-size: 0; }

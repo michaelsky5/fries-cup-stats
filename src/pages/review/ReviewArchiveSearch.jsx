@@ -146,7 +146,7 @@ export default function ReviewArchiveSearch({
                     <strong>{item.title}</strong>
                     <span className={styles.resultSub}>{item.subtitle}</span>
                   </div>
-                  <b className={styles.resultArrow} aria-hidden="true">↗</b>
+                  <b className={styles.resultArrow} aria-hidden="true">→</b>
                 </Link>
               </li>
             ))}
@@ -155,7 +155,7 @@ export default function ReviewArchiveSearch({
             <div className={styles.empty}>
               <strong>{copy.empty}</strong>
               <p>{copy.emptyBody}</p>
-              {identity !== 'all' ? <button type="button" onClick={() => onIdentityChange('all')}>{copy.reset} ↗</button> : null}
+              {identity !== 'all' ? <button type="button" onClick={() => onIdentityChange('all')}>{copy.reset}</button> : null}
             </div>
           ) : null}
         </section>
@@ -170,7 +170,7 @@ export default function ReviewArchiveSearch({
         <h2>{copy.event}</h2>
         <p>{copy.eventBody}</p>
         <div className={styles.route}>{copy.route}</div>
-        <div className={styles.eventAction}><span>{copy.start}</span><b aria-hidden="true">↗</b></div>
+        <div className={styles.eventAction}><span>{copy.start}</span><b aria-hidden="true">→</b></div>
       </Link>
     </div>
   )

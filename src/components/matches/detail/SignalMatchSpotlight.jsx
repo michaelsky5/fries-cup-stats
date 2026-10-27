@@ -36,7 +36,7 @@ export default function SignalMatchSpotlight({ dossier, locale, withSeason, retu
       <div className={styles.identity}>
         <div className={styles.eyebrow}><h2 id="match-mvp-title">{en ? 'MATCH MVP' : uiText("全场 MVP", locale)}</h2></div>
         <div className={styles.playerName}>
-          {playerPath ? <Link to={playerPath} state={returnState} onClick={onNavigate}>{player.displayName}<span aria-hidden="true">↗</span></Link> : <strong>{player.displayName}</strong>}
+          {playerPath ? <Link to={playerPath} state={returnState} onClick={onNavigate}>{player.displayName}<span aria-hidden="true">→</span></Link> : <strong>{player.displayName}</strong>}
         </div>
         <div className={styles.byline}><strong>{team.short}</strong><span>{role}</span><span className={styles.battleTag} data-battle-tag><SignalBattleTag value={player.battleTag} en={en} /></span></div>
         <SignalHeroList row={player} en={en} />

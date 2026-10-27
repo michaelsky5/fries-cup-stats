@@ -29,7 +29,7 @@ export default function TeamHeroReview({ review, scopeLabel, ...context }) {
       {review.members.map(player => <button key={player.id} type="button" aria-pressed={member?.id === player.id}
         aria-label={en ? `Filter review by ${player.name}` : uiText("按{0}筛选复盘", uiLocale, [player.name])}
         onClick={() => updateQuery({ member: member?.id === player.id ? null : player.id, performanceMember: null })}>
-        <b>{player.name}</b><small>{player.records.length} {mapUnit(player.records.length)}</small><span aria-hidden="true">{member?.id === player.id ? '×' : '↗'}</span>
+        <b>{player.name}</b><small>{player.records.length} {mapUnit(player.records.length)}</small><span aria-hidden="true">{member?.id === player.id ? '×' : '→'}</span>
       </button>)}
     </div> : null}
     {review.repeated.length ? <div className={styles.repeated}>

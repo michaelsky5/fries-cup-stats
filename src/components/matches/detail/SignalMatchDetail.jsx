@@ -339,6 +339,6 @@ export default function SignalMatchDetail({ dossier, seasonId, locale, t, withSe
       if (!match) return <div key={direction} />
       const teams = getMatchDisplayTeams(match)
       return <Link key={direction} to={withSeason(getMatchPath(match))} state={adjacentState}><span>{direction === 'previous' ? (en ? '← Previous match' : uiText("← 上一场比赛", locale)) : (en ? 'Next match →' : uiText("下一场比赛 →", locale))}</span><strong>{teams.teamA.short} <small>vs</small> {teams.teamB.short}</strong></Link>
-    })}<Link className={styles.footerBack} to={returnTo} state={getRestoreScrollState(returnScrollY)}>{backLabel} ↗</Link></nav>
+    })}<Link className={styles.footerBack} to={returnTo} state={getRestoreScrollState(returnScrollY)}><span aria-hidden="true">←</span> {backLabel}</Link></nav>
   </div>
 }

@@ -29,7 +29,7 @@
   place-items: center;
   background: var(--portal-yellow);
   color: var(--portal-black);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   text-transform: uppercase;
 }
@@ -70,7 +70,7 @@
 :global([data-design="kpr"]) .avatar {
   width: 32px;
   height: 32px;
-  font: 900 11px/1 var(--font-mono);
+  font: 900 12px/1 var(--font-mono);
   letter-spacing: 0.03em;
 }
 
@@ -83,7 +83,7 @@
 :global([data-design="kpr"]) .authName {
   max-width: 92px;
   color: #f2f2e9;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1;
 }
@@ -92,7 +92,7 @@
   display: block;
   overflow: hidden;
   color: #8f9187;
-  font: 6px/1 var(--font-mono);
+  font: 12px/1 var(--font-mono);
   letter-spacing: 0.11em;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -145,7 +145,7 @@
 
 :global([data-design="kpr"][data-design-edition="hybrid"]) .authName {
   max-width: 72px;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 :global([data-design="kpr"][data-design-edition="hybrid"]) .authMode {
@@ -154,7 +154,7 @@
 
 :global([data-design="kpr"][data-design-edition="hybrid"]) .authArrow {
   width: 10px;
-  font-size: 10px;
+  font-size: 12px;
   transform: translateY(-1px);
 }
 
@@ -215,17 +215,17 @@
 :global([data-design="kpr"][data-design-edition="hybrid"]) .authMode {
   display: block;
   color: #777a70;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 :global([data-design="kpr"][data-design-edition="hybrid"]) .authName {
   max-width: 76px;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 :global([data-design="kpr"][data-design-edition="hybrid"]) .authArrow {
   width: 10px;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 @media (min-width: 1280px) and (max-width: 1799px) {
@@ -311,8 +311,8 @@
 .formIntro p { font-size: 13px; line-height: 1.8; color: var(--fc-data-text-muted); margin: 8px 0 0; }
 .formIntro a { color: inherit; font-size: 14px; }
 .errorText, .successText, .emailChangeNotice { margin: 0; padding: 12px 14px; border-left: 3px solid currentColor; font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
-.errorText, .emailChangeNotice[data-tone='error'] { color: var(--fc-data-status-danger); background: #b33a320a; }
-.successText, .emailChangeNotice[data-tone='success'] { color: var(--fc-data-status-success); background: #237a4b0a; }
+.errorText, .emailChangeNotice[data-tone='error'] { color: var(--fc-data-status-danger); background: #b423180a; }
+.successText, .emailChangeNotice[data-tone='success'] { color: var(--fc-data-status-success); background: #25653a0a; }
 .emailChangeNotice { margin-bottom: 20px; }
 .dialogRail { padding: 17px 32px; border-top: 1px solid var(--fc-data-line); color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.7; }
 .tabs { display: flex; gap: 16px; border-bottom: 1px solid var(--fc-data-line); margin-bottom: 24px; }
@@ -337,9 +337,20 @@
 /* 票 2.67: 「我的空间」 sits behind the avatar, so its count rides on the avatar's corner (a yellow tag ringed in the
    masthead ink so it reads against the yellow avatar) and beside 「我的空间」 in the menu. Phones keep their dot. */
 .avatarSlot { position: relative; display: inline-grid; flex: none; }
-.attentionBadge { position: absolute; z-index: 1; top: -6px; right: -6px; min-width: 18px; height: 15px; padding: 0 3px; display: inline-grid; place-items: center; background: var(--fc-data-signal, #f4c320); color: var(--fc-data-ink, #181a17); box-shadow: 0 0 0 2px var(--fc-data-ink, #181a17); font-size: 9px; font-weight: 900; line-height: 1; letter-spacing: 0; white-space: nowrap; pointer-events: none; }
+.attentionBadge { position: absolute; z-index: 1; top: -6px; right: -6px; min-width: 18px; height: 15px; padding: 0 3px; display: inline-grid; place-items: center; background: var(--fc-data-signal, #f4c320); color: var(--fc-data-ink, #181a17); box-shadow: 0 0 0 2px var(--fc-data-ink, #181a17); font-size: 12px; font-weight: 900; line-height: 1; letter-spacing: 0; white-space: nowrap; pointer-events: none; }
 .accountMenu .menuLabel { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
-.accountMenu .menuLabel em { padding: 3px 5px; background: var(--fc-data-signal, #f4c320); color: var(--fc-data-ink, #181a17); font-size: 10px; font-style: normal; font-weight: 900; line-height: 1; white-space: nowrap; }
+.accountMenu .menuLabel em { padding: 3px 5px; background: var(--fc-data-signal, #f4c320); color: var(--fc-data-ink, #181a17); font-size: 12px; font-style: normal; font-weight: 900; line-height: 1; white-space: nowrap; }
 @media (max-width: 600px) { .attentionBadge { display: none; } }
 /* 601–640px: the dock has room for the avatar only (as on phones); the name was being clipped mid-character. */
 @media (min-width: 601px) and (max-width: 640px) { :global([data-design="kpr"][data-design-edition="hybrid"]) .authCopy { display: none; } }
+
+/* 票 2.77: signed out, the account control says 「登录」 at every width — never an 「FC」 avatar. */
+:global([data-design="kpr"]) .authButton[data-signed-out] { justify-content: center; gap: 0; min-width: 44px; padding-inline: 10px; }
+:global([data-design="kpr"]) .authButton[data-signed-out] .avatar { display: none; }
+@media (max-width: 640px) {
+  :global([data-design="kpr"]) .authButton[data-signed-out] { width: auto; padding: 0 8px; }
+  :global([data-design="kpr"]) .authButton[data-signed-out] .authCopy { display: grid; }
+  :global([data-design="kpr"]) .authButton[data-signed-out] .authMode,
+  :global([data-design="kpr"]) .authButton[data-signed-out] .authArrow { display: none; }
+  :global([data-design="kpr"]) .authButton[data-signed-out] .authName { max-width: 64px; font-size: 13px; font-weight: 750; }
+}

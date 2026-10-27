@@ -72,13 +72,13 @@ export default function KprArchivePage({ archive, overview, summary, includeRevi
             </div>
             {finalResult ? (
               <Link className={styles.finalScore} to={withSeason(`/matches/${encodeURIComponent(archive.finalMatch.match_id || archive.finalMatch.id)}`)}>
-                <span>GRAND FINAL <i>↗</i></span>
+                <span>GRAND FINAL <i>→</i></span>
                 <strong>{finalResult.score}<b>:</b>{finalResult.opponentScore}</strong>
                 <small>{formatTeamName(finalResult.own)} <em>VS</em> {formatTeamName(finalResult.opponent)}</small>
               </Link>
             ) : <span className={styles.pending}>{isEn ? 'Final results pending' : uiText("决赛结果待补充", locale)}</span>}
             <Link className={styles.teamLink} to={withSeason(story.championId ? `/teams/${encodeURIComponent(story.championId)}` : '/teams')}>
-              <span>{isEn ? 'Meet the champions' : uiText("走近这支冠军队伍", locale)}</span><b>↗</b>
+              <span>{isEn ? 'Meet the champions' : uiText("走近这支冠军队伍", locale)}</span><b>→</b>
             </Link>
           </div>
 
@@ -90,7 +90,7 @@ export default function KprArchivePage({ archive, overview, summary, includeRevi
             <p>{isOfficialFmvpSubject
               ? (isEn ? 'One player. A defining season.' : uiText("一个名字，一个赛季的回响。", locale))
               : (isEn ? 'One of the players behind the title.' : uiText("冠军背后的一个名字。", locale))}</p>
-            <Link className={styles.spotlightLink} to={playerPath}>{isEn ? 'Explore player' : uiText("查看选手档案", locale)} <b>↗</b></Link>
+            <Link className={styles.spotlightLink} to={playerPath}>{isEn ? 'Explore player' : uiText("查看选手档案", locale)} <b>→</b></Link>
           </div>
 
           {subject ? <div className={styles.spotlightStats} aria-hidden={act !== 1} inert={act !== 1}>
@@ -119,7 +119,7 @@ export default function KprArchivePage({ archive, overview, summary, includeRevi
         <div className={styles.sectionHeading}><span>THE FIVE / 01—05</span><h2 id="kpr-roster-title">{isEn ? 'The winning lineup.' : uiText("冠军，由他们写下。", locale)}</h2><p>{isEn ? 'The champion team’s presentation heroes. Select a player to preview the spotlight.' : uiText("冠军队伍确认的展示英雄。点选选手，进入他的人物镜头。", locale)}</p></div>
         <div className={styles.rosterList}>
           {story.cast.map((entry, index) => <button key={entry.entryKey} type="button" aria-label={isEn ? `Preview ${playerLabel(entry)}` : uiText("特写预览：{0}", locale, [playerLabel(entry)])} aria-pressed={subject?.entryKey === entry.entryKey} onClick={() => { setSubjectKey(entry.entryKey); goToAct(1) }}>
-            <span className={styles.rosterNumber}>0{index + 1}</span><span><strong>{playerLabel(entry)}</strong><small>{isEn ? entry.role : uiText(getRoleLabel(entry.role), locale)} <i>/</i> {formatOwHeroName(presentationHero(entry), locale)}</small></span><b>↗</b>
+            <span className={styles.rosterNumber}>0{index + 1}</span><span><strong>{playerLabel(entry)}</strong><small>{isEn ? entry.role : uiText(getRoleLabel(entry.role), locale)} <i>/</i> {formatOwHeroName(presentationHero(entry), locale)}</small></span><b>→</b>
           </button>)}
           {!story.cast.length ? <p>{isEn ? 'The roster will appear when player data is available.' : uiText("选手数据补齐后，这里将呈现冠军阵容。", locale)}</p> : null}
         </div>
@@ -134,7 +134,7 @@ export default function KprArchivePage({ archive, overview, summary, includeRevi
             return <Link key={match.match_id || match.id} to={withSeason(`/matches/${encodeURIComponent(match.match_id || match.id)}`)} className={isFinal ? styles.finalJourney : ''}>
               <span className={styles.journeyIndex}>0{index + 1}</span>
               <div className={styles.journeyMatch}><span>{isFinal ? 'GRAND FINAL' : (match.round || match.stage || 'MATCH')}</span><strong>{formatTeamName(result.own)} <small>VS</small> {formatTeamName(result.opponent)}</strong></div>
-              <time>{formatMatchDate(match).slice(0, 10)}</time><b className={styles.journeyScore}>{result.score}<i>:</i>{result.opponentScore}</b><span className={styles.journeyArrow}>↗</span>
+              <time>{formatMatchDate(match).slice(0, 10)}</time><b className={styles.journeyScore}>{result.score}<i>:</i>{result.opponentScore}</b><span className={styles.journeyArrow}>→</span>
             </Link>
           })}
         </div>
@@ -142,7 +142,7 @@ export default function KprArchivePage({ archive, overview, summary, includeRevi
 
       <footer className={styles.archiveFooter}>
         <div><span>BEYOND THE SPOTLIGHT</span><h2>{isEn ? 'The story lives in the data.' : uiText("镜头之后，数据继续。", locale)}</h2><p>{summary.teams ?? '—'} {isEn ? 'TEAMS' : uiText("支队伍", locale)} <b>·</b> {summary.players ?? '—'} {isEn ? 'PLAYERS' : uiText("名选手", locale)} <b>·</b> {summary.maps ?? '—'} {isEn ? 'MAPS' : uiText("张地图", locale)}</p></div>
-        <nav><Link to={withSeason('/leaderboard')}>{isEn ? 'Explore rankings' : uiText("进入数据排行榜", locale)} <b>↗</b></Link><Link to={withSeason(includeReview ? '/review' : '/matches')}>{isEn ? 'Season archive' : uiText("完整赛季回顾", locale)} <b>↗</b></Link></nav>
+        <nav><Link to={withSeason('/leaderboard')}>{isEn ? 'Explore rankings' : uiText("进入数据排行榜", locale)} <b>→</b></Link><Link to={withSeason(includeReview ? '/review' : '/matches')}>{isEn ? 'Season archive' : uiText("完整赛季回顾", locale)} <b>→</b></Link></nav>
       </footer>
     </div>
   )

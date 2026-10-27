@@ -16,7 +16,9 @@ import { getRestoreScrollY, restoreWindowScroll } from '../../lib/navigationStat
 import { buildFriesCupTitle } from '../../lib/pageTitle.js'
 
 // Global account pages share the public frame without fetching a season snapshot.
-export default function AccountFrame({ children, title, description, aside, compact = false }) {
+// 票 2.71: `entry` is the sign-in fallback (/account/login and the other entry pages): no 「我的空间」
+// trail, no header account control (the page is the sign-in form and may hold an email token).
+export default function AccountFrame({ children, title, description, aside, compact = false, entry = false }) {
   const location = useLocation()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
@@ -47,12 +49,12 @@ export default function AccountFrame({ children, title, description, aside, comp
     navigate({ pathname: location.pathname, search: `?${next}`, hash: location.hash }, { replace: true })
   }
   return <div ref={shell} className={`${layout.shell} ${styles.frame}`} style={{ '--kpr-preview-height': '0px' }} data-design="kpr" data-design-edition="hybrid" data-header-mode="account" data-locale={locale} data-account-subpage={location.pathname === '/account' && /^#(?:overview|profile|password|email|sessions|reminders)$/.test(location.hash) || undefined}>
-    <PublicHeader mobileMenuRef={menu} activeNavLabel={personalLabel} withSeason={publicLink} layoutLocale={locale} compatibleLayoutLocale={locale} season={season} seasonId={season.id} seasonStatus={season.lifecycle === 'ARCHIVED' ? { isFinished: true } : undefined} handleSeasonChange={id => changeContext('season', getSeasonById(id).publicCode)} handleLocaleChange={value => changeContext('lang', getReviewLocaleParam(value))} />
-    <div className={styles.context}><Link to={publicLink('/me')} data-i18n-ignore>{personalLabel}</Link><span aria-hidden="true">/</span><strong>{title}</strong><span className={styles.scope}>{location.pathname === '/account' ? uiText("通用账号设置", locale) : uiText("参赛服务", locale)}</span></div>
+    <PublicHeader mobileMenuRef={menu} activeGroup={entry ? 'account' : undefined} activeNavLabel={entry ? title : personalLabel} accountControl={entry ? null : undefined} withSeason={publicLink} layoutLocale={locale} compatibleLayoutLocale={locale} season={season} seasonId={season.id} seasonStatus={season.lifecycle === 'ARCHIVED' ? { isFinished: true } : undefined} handleSeasonChange={id => changeContext('season', getSeasonById(id).publicCode)} handleLocaleChange={value => changeContext('lang', getReviewLocaleParam(value))} />
+    {!entry && <div className={styles.context}><Link to={publicLink('/me')} data-i18n-ignore>{personalLabel}</Link><span aria-hidden="true">/</span><strong>{title}</strong><span className={styles.scope}>{location.pathname === '/account' ? uiText("通用账号设置", locale) : uiText("参赛服务", locale)}</span></div>}
     <main className={styles.main} data-compact={compact}>
       <header className={styles.intro}><div><h1>{title}</h1>{description && <p>{description}</p>}</div>{aside}</header>
       {children}
     </main>
-    <footer className={styles.footer}><span>FRIES CUP <b>{pickUiLocale(locale, '赛事中心', 'EVENT CENTER', '대회 센터', '賽事中心')}</b></span><Link to={publicLink('/')}>{uiText("返回赛事总览 ↗", locale)}</Link></footer>
+    <footer className={styles.footer}><span>FRIES CUP <b>{pickUiLocale(locale, '赛事中心', 'EVENT CENTER', '대회 센터', '賽事中心')}</b></span><Link to={publicLink('/')}>{uiText("← 返回赛事总览", locale)}</Link></footer>
   </div>
 }

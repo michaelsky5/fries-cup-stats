@@ -1,25 +1,35 @@
 import { lobbyText as t, lobbyNoticeCopy } from './lobbyCopy.js'
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
-import { Link, useLocation, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
+import { requestSignIn } from '../auth/signInRequest.js'
 import { useLobbyMine } from './useLobbyState.js'
 import { ContactInbox, FeedbackLink } from './LobbyContacts.jsx'
 import { accountFailure, lobbyDate, statusLabel, lobbyReadFailure, lobbyRegistrationMessage } from './lobbyModel.js'
 import * as api from './lobbyApi.js'
 import { revealAlert } from './lobbyFocus.js'
 import styles from './Lobby.module.css'
+import navStyles from '../../components/navigation/SignalSectionNav.module.css'
 
 const tabs = [['received', '收到的联系'], ['sent', '发出的联系'], ['contacts', '全部联系'], ['cards', '我的卡片'], ['formation', '筹建进度']]
 export default function MyLobbyPage() {
   useUiLocale()
 
-  const { user, isBootstrapping, authConfig } = useAuth(), location = useLocation(), [query, setQuery] = useSearchParams()
+  const { user, isBootstrapping, authConfig } = useAuth(), [query, setQuery] = useSearchParams()
   const registrationMessage = lobbyRegistrationMessage(authConfig)
   const { data, error, refresh } = useLobbyMine()
   const [failure, setFailure] = useState(null), [busy, setBusy] = useState(false), lock = useRef(false), alertRef = useRef(null)
   useEffect(() => { if (failure) revealAlert(alertRef.current) }, [failure])
   const tab = tabs.some(([id]) => id === query.get('tab')) ? query.get('tab') : 'cards'
+  // 票 2.73: on phones the tab row scrolls; keep the selected tab in view.
+  const tabsRef = useRef(null)
+  useEffect(() => {
+    const row = tabsRef.current, item = row?.querySelector('[aria-pressed="true"]')
+    if (!row || !item || row.scrollWidth <= row.clientWidth) return
+    const box = row.getBoundingClientRect(), target = item.getBoundingClientRect()
+    row.scrollLeft += target.left - box.left - (box.width - target.width) / 2
+  }, [tab, data])
   async function act(action) {
     if (lock.current) return
     lock.current = true; setBusy(true); setFailure(null)
@@ -28,13 +38,13 @@ export default function MyLobbyPage() {
     finally { lock.current = false; setBusy(false) }
   }
   if (isBootstrapping) return <p role="status">{t("正在读取账号…")}</p>
-  if (!user) return <section className={styles.empty}><h1>{t("登录后管理我的组队")}</h1>{registrationMessage && <p>{registrationMessage}</p>}<Link className={styles.primary} to={`/account/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`}>{t("登录／注册")}</Link></section>
+  if (!user) return <section className={styles.empty}><h1>{t("登录后管理我的组队")}</h1>{registrationMessage && <p>{registrationMessage}</p>}<button type="button" className={styles.primary} onClick={requestSignIn}>{t("登录／注册")}</button></section>
   return <><div className={styles.pageHeading}><div><h1>{t("我的组队")}</h1><p>{t("联系、卡片和筹建进度，集中在这里处理。")}</p></div>{data?.canWrite && !error && <Link className={styles.primary} to="/lobby/me/publish?type=person">{t("发布／编辑我的求队")}</Link>}</div>
     {(error || failure) && <p ref={alertRef} tabIndex={-1} role="alert" className={styles.error}>{error ? lobbyReadFailure(error) : accountFailure(failure)} <button onClick={() => { setFailure(null); refresh() }}>{t("重新读取")}</button></p>}
     {!data && !error && <p role="status">{t("正在读取本人记录…")}</p>}
     {data && <>
       {!data.canWrite && <p className={styles.notice}>{data.restriction || t("当前账号未验证邮箱或大厅尚不可操作。已有记录保留。")} {!user.emailVerifiedAt && <Link to="/account/verify-email?returnTo=%2Flobby%2Fme">{t("验证本人邮箱")}</Link>}</p>}
-      <nav className={`${styles.tabs} ${styles.lobbyTabs}`} aria-label={t("我的组队分类")}>{tabs.map(([id, label]) => <button key={id} aria-pressed={tab === id} onClick={() => setQuery(current => { current.set('tab', id); current.delete('requestId'); current.delete('contactPage'); return current })}>{t(label)}</button>)}</nav>
+      <nav ref={tabsRef} className={`${navStyles.root} ${styles.lobbyTabs}`} aria-label={t("我的组队分类")}>{tabs.map(([id, label]) => <button key={id} type="button" className={navStyles.item} aria-pressed={tab === id} onClick={() => setQuery(current => { current.set('tab', id); current.delete('requestId'); current.delete('contactPage'); return current })}>{t(label)}</button>)}</nav>
       {['received', 'sent', 'contacts'].includes(tab) && <ContactInbox direction={tab === 'contacts' ? 'all' : tab} config={data.config} onChanged={refresh} />}
       {tab === 'cards' && <>
         <div className={styles.sectionHeading}><h2>{t("我的需求卡")}</h2><Link to="/lobby/me/publish?type=team">{t("队伍招募 →")}</Link></div>

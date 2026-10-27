@@ -19,7 +19,7 @@ import indexStyles from '../../features/roster-index/RosterIndex.module.css'
 import styles from './RosterHubPage.module.css'
 
 const roleNames = { TANK: ['重装', 'Tank'], DPS: ['输出', 'Damage'], SUP: ['支援', 'Support'], FLEX: ['灵活', 'Flex'], UNKNOWN: ['未注明', 'Unspecified'] }
-const groupNames = { teams: ['参赛战队', 'Teams'], players: ['参赛选手', 'Players'], teamStaff: ['战队职员', 'Team staff'], eventStaff: ['赛事职员', 'Event staff'] }
+const groupNames = { teams: ['参赛队伍', 'Teams'], players: ['参赛选手', 'Players'], teamStaff: ['队伍职员', 'Team staff'], eventStaff: ['赛事职员', 'Event staff'] }
 const roleLabel = (role, locale) => locale === 'en-US' ? roleNames[role]?.[1] || 'Other' : uiText(roleNames[role]?.[0] || '其他', locale)
 const memberKey = member => member.identity.playerId || `${member.role}:${member.identity.primary}`
 
@@ -74,7 +74,7 @@ function OverviewSearch({ model, value, onChange, withSeason, en }) {
     <label ref={fieldRef} className={styles.search}><span>{en ? 'Find a team or a name' : uiText("查找队伍或名字", uiLocale)}</span><ImeSafeInput type="search" value={value} onValueChange={onChange} onKeyDown={event => { if (event.key === 'Escape') onChange('') }} placeholder={en ? 'Team, player, manager, coach, official, caster…' : String(uiLocale).startsWith('zh') ? pickUiLocale(uiLocale, '搜索队伍、选手或职员', '', '', '搜尋隊伍、選手或職員') : uiText("队伍、选手、经理、教练、赛管、解说…", uiLocale)} aria-controls={value.trim() ? resultsId : undefined} /><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" /><path d="m13 13 4 4" /></svg></label>
     {value.trim() ? <div id={resultsId} className={styles.searchResults} data-placement={placement.above ? 'above' : 'below'} style={{ '--search-height': placement.height + 'px' }}>
       <div className={styles.searchStatus}><span role="status">{count ? count + (en ? ' matching records' : uiText(" 条匹配记录", uiLocale)) : en ? 'No matching records' : uiText("没有找到匹配记录", uiLocale)}</span><button type="button" onClick={() => onChange('')}>{en ? 'Clear' : uiText("清除", uiLocale)}</button></div>
-      {groups.length ? groups.map(group => <section key={group.id} aria-label={uiText(groupNames[group.id][en ? 1 : 0], uiLocale)}><h2>{uiText(groupNames[group.id][en ? 1 : 0], uiLocale)} <span>{group.total}</span></h2><ul>{group.items.map(item => <li key={item.id}><DirectoryLink to={withSeason(item.href)}><strong>{item.name}</strong><small>{item.detail === 'admin' ? en ? 'Official' : uiText("赛管", uiLocale) : item.detail === 'caster' ? en ? 'Caster' : uiText("解说", uiLocale) : item.detail}</small><span aria-hidden="true">↗</span></DirectoryLink></li>)}</ul>{group.total > group.items.length ? <DirectoryLink to={withSeason(group.href)} className={styles.moreResults}>{en ? 'View all ' + group.total + ' results' : uiText('查看全部 {0} 条结果', uiLocale, [group.total])} ↗</DirectoryLink> : null}</section>) : <p>{en ? 'Try a nickname, BattleTag or team abbreviation.' : uiText("试试昵称、BattleTag 或队伍简称。", uiLocale)}</p>}
+      {groups.length ? groups.map(group => <section key={group.id} aria-label={uiText(groupNames[group.id][en ? 1 : 0], uiLocale)}><h2>{uiText(groupNames[group.id][en ? 1 : 0], uiLocale)} <span>{group.total}</span></h2><ul>{group.items.map(item => <li key={item.id}><DirectoryLink to={withSeason(item.href)}><strong>{item.name}</strong><small>{item.detail === 'admin' ? en ? 'Official' : uiText("赛管", uiLocale) : item.detail === 'caster' ? en ? 'Caster' : uiText("解说", uiLocale) : item.detail}</small><span aria-hidden="true">→</span></DirectoryLink></li>)}</ul>{group.total > group.items.length ? <DirectoryLink to={withSeason(group.href)} className={styles.moreResults}>{en ? 'View all ' + group.total + ' results' : uiText('查看全部 {0} 条结果', uiLocale, [group.total])} →</DirectoryLink> : null}</section>) : <p>{en ? 'Try a nickname, BattleTag or team abbreviation.' : uiText("试试昵称、BattleTag 或队伍简称。", uiLocale)}</p>}
     </div> : null}
   </div>
 }
@@ -90,7 +90,7 @@ function SelectedTeam({ team, seasonId, withSeason, locale, panelRef }) {
     : eventCenterText('rosterPlayerCountUnavailable', locale)
   return <article ref={panelRef} className={styles.selectedTeam} data-overview-team={team.routeId} style={{ '--roster-rows': Math.max(1, Math.ceil(team.members.length / 2)) }} aria-label={(en ? 'Selected team ' : uiText("当前队伍 ", locale)) + identity.primary}>
     <div className={styles.teamCopy}>
-      <header className={styles.teamIdentity}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><div><span>{en ? 'SEASON PLAYER ARCHIVE' : uiText("全季选手名录", locale)}</span><div className={styles.teamNameLine}><h2>{identity.primary}</h2><small className={styles.teamPlayerCount}>{playerCount}</small></div>{identity.secondary ? <p>{identity.secondary}</p> : null}</div><DirectoryLink to={withSeason('/teams/' + encodeURIComponent(team.routeId))} label={(en ? 'Open team archive ' : uiText("查看队伍档案 ", locale)) + identity.primary}>↗</DirectoryLink></header>
+      <header className={styles.teamIdentity}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><div><span>{en ? 'SEASON PLAYER ARCHIVE' : uiText("全季选手名录", locale)}</span><div className={styles.teamNameLine}><h2>{identity.primary}</h2><small className={styles.teamPlayerCount}>{playerCount}</small></div>{identity.secondary ? <p>{identity.secondary}</p> : null}</div><DirectoryLink to={withSeason('/teams/' + encodeURIComponent(team.routeId))} label={(en ? 'Open team archive ' : uiText("查看队伍档案 ", locale)) + identity.primary}>→</DirectoryLink></header>
       {(team.playoffJoins || team.playoffExits) && team.openingRosterSize !== null ? <p className={styles.rosterHistory}>{en ? 'Opening roster: ' + team.openingRosterSize : uiText('初始报名 {0} 人', locale, [team.openingRosterSize])}</p> : null}
       <ul className={styles.members}>{team.members.map((member, index) => {
         const changeLabel = getRosterChangeLabel(member.rosterChange, locale)
@@ -150,7 +150,7 @@ function CreditSection({ model, role, selectedKey, onChangeRole, onSelect, seaso
   return <section className={styles.creditsSection} aria-labelledby="roster-credits-heading" data-overview-credits>
     <header className={styles.sectionHeading}>
       <h2 id="roster-credits-heading">{eventCenterText('rosterCreditsHeading', uiLocale)}</h2>
-      <DirectoryLink to={withSeason('/staff?group=event&type=' + role)}>{eventCenterText('rosterCreditDirectory', uiLocale)} <span aria-hidden="true">↗</span></DirectoryLink>
+      <DirectoryLink to={withSeason('/staff?group=event&type=' + role)}>{eventCenterText('rosterCreditDirectory', uiLocale)} <span aria-hidden="true">→</span></DirectoryLink>
     </header>
     <div className={styles.teamSelectionStatus} role="status">{selected ? (en ? 'Showing ' : uiText("当前查看：", uiLocale)) + selected.staff_name : ''}</div>
     <div className={styles.creditLayout} data-empty={!selected || undefined}>
@@ -182,12 +182,12 @@ function CreditSection({ model, role, selectedKey, onChangeRole, onSelect, seaso
           {selected.matchLinks.length ? <ul className={styles.creditMatches}>
             {selected.matchLinks.map((match, index) => <li key={match.id + ':' + index}>
               <DirectoryLink to={withSeason('/matches/' + encodeURIComponent(match.id))}>
-                <span>{match.teamA || (en ? 'TBD' : uiText("待定", uiLocale))}</span><small>VS</small><span>{match.teamB || (en ? 'TBD' : uiText("待定", uiLocale))}</span><b aria-hidden="true">↗</b>
+                <span>{match.teamA || (en ? 'TBD' : uiText("待定", uiLocale))}</span><small>VS</small><span>{match.teamB || (en ? 'TBD' : uiText("待定", uiLocale))}</span><b aria-hidden="true">→</b>
               </DirectoryLink>
             </li>)}
           </ul> : <p className={styles.emptyNote}>{en ? 'Match links are not available in this record.' : uiText("该记录暂未提供比赛入口。", uiLocale)}</p>}
         </div>
-        <footer><DirectoryLink to={withSeason(selected.href)}>{eventCenterText('rosterCreditProfile', uiLocale)} <span aria-hidden="true">↗</span></DirectoryLink></footer>
+        <footer><DirectoryLink to={withSeason(selected.href)}>{eventCenterText('rosterCreditProfile', uiLocale)} <span aria-hidden="true">→</span></DirectoryLink></footer>
       </article> : null}
     </div>
   </section>
@@ -250,18 +250,19 @@ export default function RosterHubPage() {
   const metrics = [
     { count: model.teams.length, label: en ? 'teams' : uiText("支参赛队伍", locale), href: '/teams' },
     { count: model.totalPlayers, label: en ? 'players across the season' : uiText("位选手 · 全季收录", locale), href: '/players' },
-    { count: model.teamStaffCount, label: en ? 'team staff records' : uiText("份战队职员档案", locale), href: '/staff?group=team' },
+    { count: model.teamStaffCount, label: en ? 'team staff records' : uiText("份队伍职员档案", locale), href: '/staff?group=team' },
     { count: model.eventStaffCount, label: en ? 'event staff records' : uiText("份赛事职员档案", locale), href: '/staff?group=event' }
   ]
   return <div className={indexStyles.shell + ' ' + styles.shell} data-roster-directory="overview" data-i18n-ignore>
-    <RosterSubnav presentation="index" />
+    {/* 票 2.77: phones already have the 总览 / 晋级 / 阵容 row and the four directory links below, so this second tab row is desktop-only. */}
+    <div className={styles.hubSubnav}><RosterSubnav presentation="index" /></div>
     {/* 票 2.40: same title row as the other pages with tabs; the dark block below opens with the search. */}
     <div className={styles.pageHeading}><SignalDataHeading compact title={pickUiLocale(locale, '参赛阵容', 'Event roster', '참가자 명단', '參賽陣容')} description={introCopy} /></div>
     <section className={styles.hero} aria-label={en ? 'The people of this season' : uiText("本届参赛阵容", locale)}>
       <OverviewSearch model={model} value={query} onChange={q => update({ q })} withSeason={withSeason} en={en} />
-      <dl className={styles.metrics}>{metrics.map(metric => <div key={metric.href}><dt>{metric.label}</dt><dd><DirectoryLink to={withSeason(metric.href)} label={(en ? 'Browse ' : uiText("查看", locale)) + metric.label.replace(/^[支位份]/, '')}><b>{metric.count}</b><span aria-hidden="true">↗</span></DirectoryLink></dd></div>)}</dl>
+      <dl className={styles.metrics}>{metrics.map(metric => <div key={metric.href}><dt>{metric.label}</dt><dd><DirectoryLink to={withSeason(metric.href)} label={(en ? 'Browse ' : uiText("查看", locale)) + metric.label.replace(/^[支位份]/, '')}><b>{metric.count}</b><span aria-hidden="true">→</span></DirectoryLink></dd></div>)}</dl>
       <div className={styles.ensemble}>
-        <header className={styles.fieldHeading}><span>{eventCenterText('rosterTeamsHeading', locale)}</span><DirectoryLink className={styles.allTeamsLink} to={withSeason('/teams')}>{eventCenterText('rosterTeamDirectory', locale)} <i aria-hidden="true">↗</i></DirectoryLink></header>
+        <header className={styles.fieldHeading}><span>{eventCenterText('rosterTeamsHeading', locale)}</span><DirectoryLink className={styles.allTeamsLink} to={withSeason('/teams')}>{eventCenterText('rosterTeamDirectory', locale)} <i aria-hidden="true">→</i></DirectoryLink></header>
         <div ref={teamGridRef} className={styles.teamGrid} data-expanded={expandedTeams} data-scroll-fades role="group" aria-label={en ? 'Select a team' : uiText("选择队伍", locale)}>{model.teams.map((team, index) => <button key={team.routeId} type="button" aria-pressed={selectedTeam?.routeId === team.routeId} aria-label={(en ? 'Show roster for ' : uiText("查看阵容 ", locale)) + getTeamDisplayName(team)} title={team.fullName} style={{ '--arrival-order': Math.min(index, 14) }} onClick={() => { const compact = window.matchMedia('(max-width: 760px)').matches; pendingTeamScroll.current = compact && expandedTeams; update({ rosterTeam: team.routeId, ...(compact ? { teamsExpanded: '' } : {}) }) }}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><strong>{getTeamDisplayName(team)}</strong></button>)}</div>
         {model.teams.length > 5 ? <button type="button" className={styles.expandTeams} aria-expanded={expandedTeams} onClick={() => update({ teamsExpanded: expandedTeams ? '' : '1' })}>{expandedTeams ? en ? 'Show fewer teams' : uiText("收起队徽", locale) : en ? 'Show all ' + model.teams.length + ' teams' : uiText('展开全部 {0} 支队伍', locale, [model.teams.length])} <span aria-hidden="true">{expandedTeams ? '−' : '+'}</span></button> : null}
         <div className={styles.teamSelectionStatus} role="status">{selectedTeam ? (en ? 'Showing ' : uiText("当前查看：", locale)) + getTeamDisplayName(selectedTeam) : ''}</div>

@@ -67,14 +67,14 @@
 }
 
 .headCn {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1;
   color: rgba(255, 255, 255, 0.8);
 }
 
 .headEn {
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.14em;
@@ -132,7 +132,7 @@
   justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.03);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 900;
   color: rgba(255, 255, 255, 0.58);
   font-family: var(--font-mono);
@@ -157,7 +157,7 @@
 .broadcastLine {
   max-width: 100%;
   color: rgba(255, 255, 255, 0.62);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1.35;
   overflow-wrap: anywhere;
@@ -176,14 +176,14 @@
   padding: 0 8px;
   border: 1px solid rgba(244, 195, 32, 0.26);
   background: rgba(244, 195, 32, 0.08);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   color: #f4c320;
   text-transform: uppercase;
 }
 
 .stageSub {
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
   color: rgba(255, 255, 255, 0.42);
   text-transform: uppercase;
@@ -218,7 +218,7 @@
 }
 
 .vs {
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
   color: rgba(255, 255, 255, 0.26);
   letter-spacing: 0.12em;
@@ -286,13 +286,13 @@
 }
 
 .statusCn {
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1;
 }
 
 .statusEn {
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.14em;
@@ -340,13 +340,13 @@
 }
 
 .actionBtnCn {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1;
 }
 
 .actionBtnEn {
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.12em;
@@ -394,7 +394,7 @@
 .emptyEn {
   display: block;
   margin-top: 6px;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
   color: rgba(255, 255, 255, 0.24);
   letter-spacing: 0.14em;

@@ -105,7 +105,7 @@ export default function StaffPage() {
       })
     })
     return [
-      { value: 'ALL', label: uiText("全部战队", locale) },
+      { value: 'ALL', label: uiText("全部队伍", locale) },
       ...[...map.values()].sort((a, b) => a.label.localeCompare(b.label, 'zh-Hans-CN'))
     ]
   }, [staff, locale])
@@ -168,7 +168,7 @@ export default function StaffPage() {
     <StaffCreditsHeading staffGroup={staffGroup} seasonCode={season?.publicCode || seasonId} count={filteredStaff.length} total={directoryStaff.length} locale={locale} />
     <StaffCredits key={staffGroup} staffGroup={staffGroup} items={pagination.items} focusedStaff={focusedStaff} mobileExpanded={Boolean(focusedStaffId)} onFocus={setFocusedStaffId} startIndex={pagination.startIndex} resultCount={filteredStaff.length} directoryRef={directoryRef} withSeason={withSeason} locale={locale} seasonId={seasonId} seasonCode={season?.publicCode || seasonId} reviewAvailable={reviewAvailable}
       controls={<StaffCreditsControls staffGroup={staffGroup} roleTabs={roleTabs} locale={locale} searchValue={queryState.q} onSearchChange={value => setQuery({ q: value })} fields={[{ name: 'sort', value: queryState.sort, onChange: value => setQuery({ sort: { value, fallback: defaultSort } }), options: directorySortOptions }, ...(isTeamStaff ? [{ name: 'team', value: queryState.team, onChange: value => setQuery({ team: { value, fallback: 'ALL' } }), options: teamOptions }] : [])]} activeFilters={activeFilters} onReset={hasFilters ? reset : null} />}
-      emptyState={<RosterEmptyState title={isTeamStaff ? en ? 'No matching team staff.' : uiText("没有找到匹配的战队职员。", locale) : en ? 'No matching event staff.' : uiText("没有找到匹配的赛事职员。", locale)} onReset={reset} locale={locale} />}
+      emptyState={<RosterEmptyState title={isTeamStaff ? en ? 'No matching team staff.' : uiText("没有找到匹配的队伍职员。", locale) : en ? 'No matching event staff.' : uiText("没有找到匹配的赛事职员。", locale)} onReset={reset} locale={locale} />}
       pagination={<RosterPagination presentation="index" locale={locale} pagination={pagination} pageSizeOptions={STAFF_PAGE_SIZES} scrollTargetRef={directoryRef} onPageChange={page => setQuery({ page: { value: page, fallback: 1 }, rosterFocus: '' }, { resetPage: false, replace: false })} onPageSizeChange={pageSize => setQuery({ pageSize: { value: pageSize, fallback: 20 } })} />}
     />
     <details className={creditStyles.method}><summary>{en ? 'About these records' : uiText("这些记录来自哪里", locale)}</summary><p>{isTeamStaff ? en ? 'Managers and coaches come from published team rosters. Roles for the same person on one team share a record; records across teams remain separate. Role totals can overlap, and records do not represent unique people.' : uiText("经理和教练来自已发布的队伍报名名单。同一人在同队兼任经理与教练时合并为一份档案，跨队记录分别保留；职务数量可能重叠，档案条数不代表去重人数。", locale) : en ? 'Officials and casters come from published match credits. One person can have records in both roles, so records do not represent unique people.' : uiText("赛管与解说来自已发布比赛的署名。同一人可能在两类职务中分别留下记录，档案条数不代表去重人数。", locale)}</p></details>
@@ -213,7 +213,7 @@ export default function StaffPage() {
             </div>
           )}
           searchValue={queryState.q}
-          searchPlaceholder="搜索昵称、BattleTag、战队简称或全称"
+          searchPlaceholder="搜索昵称、BattleTag、队伍简称或全称"
           onSearchChange={value => setQuery({ q: { value, fallback: '' } })}
           resultLabel={isKprHybridDesign ? '' : `${filteredStaff.length} 条结果`}
           fields={[

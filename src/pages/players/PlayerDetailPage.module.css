@@ -147,7 +147,7 @@
   padding: 7px 10px;
   border: 1px solid rgba(244, 198, 47, 0.55);
   color: var(--yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -169,7 +169,7 @@
 
 .heroRail b {
   color: #b8b6ae;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .heroIdentity {
@@ -329,7 +329,7 @@
   gap: 5px;
   padding: 14px 4px;
   color: #5f5b4c;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -347,7 +347,7 @@
 .ratingDock > small {
   margin-top: 14px;
   color: #615c4d;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -382,7 +382,7 @@
 
 .roleTabs button small {
   color: #98958d;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -407,7 +407,7 @@
   display: block;
   margin-bottom: 7px;
   color: var(--yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -454,7 +454,7 @@
   gap: 6px;
   padding: 10px 13px;
   color: #99978f;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -493,7 +493,7 @@
 .overviewIdentityCard > span,
 .overviewSubhead span {
   color: var(--yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -523,7 +523,7 @@
 .overviewIdentityFacts span {
   min-width: 0;
   color: #8f8d86;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -601,7 +601,7 @@
 .roleMixList button > span em {
   margin-top: 3px;
   color: #96948c;
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 800;
 }
@@ -677,13 +677,13 @@
 .overviewHeroGrid article span {
   margin-top: 3px;
   color: #8f8d86;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
 }
 
 .overviewHeroGrid article > b {
   color: #cbc9c0;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .overviewHeroGrid article > i {
@@ -722,7 +722,7 @@
   padding: 6px 7px;
   background: var(--yellow);
   color: var(--ink);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -745,7 +745,7 @@
 .overviewRecentList small {
   margin-top: 3px;
   color: #918f88;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 750;
 }
 
@@ -807,7 +807,7 @@
   padding: 7px 9px;
   background: var(--role-accent);
   color: #181816;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -820,7 +820,7 @@
 
 .roleCardBody > span {
   color: var(--yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -859,7 +859,7 @@
   gap: 4px;
   padding: 13px;
   color: #8f8d86;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -977,7 +977,7 @@
   gap: 5px;
   padding-top: 14px;
   color: #8e8c84;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -996,7 +996,7 @@
 
 .panelLabel span {
   color: var(--yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1025,7 +1025,7 @@
   border: 1px solid var(--yellow);
   background: #20201d;
   color: #fff;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .chartTooltip span,
@@ -1055,7 +1055,7 @@
 
 .coachingNotes span {
   color: var(--role-accent);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1092,7 +1092,7 @@
   padding: 13px 16px;
   background: var(--yellow);
   color: #22221f;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1112,7 +1112,7 @@
 
 .achievementStrip small {
   color: #9f9d95;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .coreStatsSection {
@@ -1134,7 +1134,7 @@
   background: transparent;
   color: inherit;
   font: inherit;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   cursor: pointer;
 }
@@ -1167,7 +1167,7 @@
 
 .coreStat > span {
   color: var(--muted-light);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1190,13 +1190,13 @@
 
 .percentileRow small {
   color: var(--ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
 .percentileRow em {
   color: #8b8981;
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 750;
   text-align: right;
@@ -1239,7 +1239,7 @@
   min-width: 92px;
   padding: 9px 12px;
   color: #918f87;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -1306,7 +1306,7 @@
 .limitedMatches small {
   margin-top: 4px;
   color: #929088;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 750;
 }
 
@@ -1317,7 +1317,7 @@
 
 .limitedMatches > a > em {
   color: #c1bfb6;
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 800;
 }
@@ -1352,7 +1352,7 @@
 .limitedHeroes span {
   margin-top: 4px;
   color: #929088;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 750;
 }
 
@@ -1373,14 +1373,14 @@
 
 .limitedEvidence > footer span {
   color: var(--yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
 .limitedEvidence > footer p {
   margin: 0;
   color: #a09e96;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   line-height: 1.5;
 }
@@ -1437,7 +1437,7 @@
 .recentRow small {
   margin-top: 5px;
   color: #96948c;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 750;
 }
 
@@ -1459,7 +1459,7 @@
   display: block;
   margin: 0 0 5px;
   color: #77766f;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 850;
   white-space: nowrap;
 }
@@ -1471,7 +1471,7 @@
 
 .recentMetric b {
   color: #c7c5bc;
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
 }
 
@@ -1507,7 +1507,7 @@
 .heroUsageStrip i {
   grid-column: 1 / -1;
   color: rgba(255, 255, 255, 0.28);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
 }
@@ -1522,7 +1522,7 @@
 
 .heroUsageStrip em {
   color: var(--yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -1571,7 +1571,7 @@
 
 .primaryHeroCard > span {
   color: var(--yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1583,7 +1583,7 @@
 .primaryHeroCard p {
   margin: 7px 0 0;
   color: #afada4;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 750;
 }
 
@@ -1622,7 +1622,7 @@
   overflow: hidden;
   background: #23231f;
   color: var(--yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1652,14 +1652,14 @@
 .secondaryHeroCard span {
   margin-top: 2px;
   color: #cbc9c0;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
 }
 
 .secondaryHeroCard small {
   margin-top: 2px;
   color: #88867f;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .mapSection {
@@ -1695,7 +1695,7 @@
 
 .mapInsightStrip span {
   color: var(--muted-light);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1711,7 +1711,7 @@
 .mapInsightStrip b {
   margin-top: 4px;
   color: #77746b;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .mapInsightStrip + .mapRows {
@@ -1763,7 +1763,7 @@
 .mapNameBlock small {
   margin-top: 4px;
   color: var(--muted-light);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -1807,7 +1807,7 @@
 
 .errorState > span {
   color: #9a7900;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -2191,7 +2191,7 @@
   .heroActions button,
   .heroActions a {
     padding: 0 10px;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .heroActions .secondaryAction {
@@ -2465,7 +2465,7 @@
   }
 
   .mapRow b {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .mapInsightStrip {
@@ -2491,7 +2491,7 @@
   --line-dark: var(--fc-data-line-on-dark, rgba(238, 237, 230, 0.16));
   --line-light: var(--fc-data-line-strong, rgba(24, 26, 23, 0.38));
   --muted-dark: var(--fc-data-text-dark-muted, #a2a59a);
-  --muted-light: var(--fc-data-text-muted, #66685f);
+  --muted-light: var(--fc-data-text-muted, #5f6158);
   --dossier-display: var(--fc-data-font-display, var(--font-display));
   --dossier-mono: var(--fc-data-font-system, var(--font-mono));
   padding-top: 32px;
@@ -2567,7 +2567,7 @@
   padding: 0 32px;
   border-bottom: 1px solid var(--line-dark);
   color: var(--yellow);
-  font: 850 10px/1 var(--dossier-mono);
+  font: 850 12px/1 var(--dossier-mono);
   letter-spacing: 0.08em;
 }
 
@@ -2605,7 +2605,7 @@
   border-left: 4px solid var(--role-accent);
   background: var(--yellow);
   color: var(--ink);
-  font: 900 11px/1 var(--dossier-mono);
+  font: 900 12px/1 var(--dossier-mono);
   letter-spacing: 0.035em;
 }
 
@@ -2638,7 +2638,7 @@
   padding-top: 16px;
   border-top: 1px solid var(--line-dark);
   color: var(--muted-dark);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 750;
   line-height: 1.6;
 }
@@ -2658,7 +2658,7 @@
   border: 1px solid var(--line-dark);
   background: transparent;
   color: rgba(238, 237, 230, 0.78);
-  font: 800 10px/1 var(--dossier-mono);
+  font: 800 12px/1 var(--dossier-mono);
 }
 
 .heroActions {
@@ -2678,7 +2678,7 @@
   border-right: 1px solid var(--line-dark);
   background: transparent;
   color: var(--paper);
-  font: 850 11px/1 var(--dossier-mono);
+  font: 850 12px/1 var(--dossier-mono);
 }
 
 .heroActions button:first-child {
@@ -2781,7 +2781,7 @@
   padding: 0 10px;
   background: var(--role-accent);
   color: var(--ink);
-  font: 900 10px/1 var(--dossier-mono);
+  font: 900 12px/1 var(--dossier-mono);
   letter-spacing: 0.06em;
 }
 
@@ -2801,7 +2801,7 @@
 
 .heroVisual figcaption span {
   color: var(--muted-dark);
-  font: 800 9px/1 var(--dossier-mono);
+  font: 800 12px/1 var(--dossier-mono);
   letter-spacing: 0.08em;
 }
 
@@ -2831,7 +2831,7 @@
 .heroSignalGhost span,
 .heroSignalGhost em {
   color: var(--muted-dark);
-  font: 800 9px/1 var(--dossier-mono);
+  font: 800 12px/1 var(--dossier-mono);
   font-style: normal;
   letter-spacing: 0.08em;
 }
@@ -2894,7 +2894,7 @@
   padding: 0 25px;
   border-bottom: 1px solid var(--line-light);
   color: var(--muted-light);
-  font: 800 10px/1 var(--dossier-mono);
+  font: 800 12px/1 var(--dossier-mono);
   letter-spacing: 0.06em;
 }
 
@@ -2917,7 +2917,7 @@
 
 .ratingLabel {
   color: var(--ink);
-  font: 900 10px/1 var(--dossier-mono);
+  font: 900 12px/1 var(--dossier-mono);
   letter-spacing: 0.06em;
 }
 
@@ -2950,7 +2950,7 @@
   gap: 7px;
   padding: 15px 18px;
   color: var(--muted-light);
-  font: 750 10px/1.25 var(--dossier-mono);
+  font: 750 12px/1.25 var(--dossier-mono);
 }
 
 .ratingFacts span + span {
@@ -2974,7 +2974,7 @@
 
 .ratingFooter small {
   color: var(--muted-light);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 750;
   line-height: 1.5;
 }
@@ -3002,7 +3002,7 @@
   padding: 16px;
   background: var(--ink);
   color: var(--paper);
-  font: 800 9px/1 var(--dossier-mono);
+  font: 800 12px/1 var(--dossier-mono);
   letter-spacing: 0.08em;
 }
 
@@ -3067,12 +3067,12 @@
 
 .roleTabs .roleTab > span small {
   color: var(--muted-light);
-  font: 750 10px/1 var(--dossier-mono);
+  font: 750 12px/1 var(--dossier-mono);
 }
 
 .roleTab > em {
   color: var(--muted-light);
-  font: 850 10px/1 var(--dossier-mono);
+  font: 850 12px/1 var(--dossier-mono);
   font-style: normal;
   white-space: nowrap;
 }
@@ -3691,7 +3691,7 @@
   .heroActions a {
     min-height: 52px;
     padding-inline: 12px;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .ratingDock {

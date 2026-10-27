@@ -3,8 +3,8 @@
 :global([data-design="fd"]) .eventLogo { width: 26px; height: 26px; border: 0; border-radius: 0; background: var(--fd-paper); }
 :global([data-design="fd"]) .eventCode { font-size: 18px; letter-spacing: -.02em; font-weight: 900; }
 :global([data-design="fd"]) .eventIdentity { gap: 12px; }
-:global([data-design="fd"]) .partnerLabel { min-height: 20px; border: 0; border-left: 1px solid var(--fd-line-dark); padding-left: 12px; font-size: 10px; font-weight: 500; }
-:global([data-design="fd"]) .eventMeta { flex-wrap: nowrap; color: #b3b3b3; font-size: 11px; font-weight: 400; }
+:global([data-design="fd"]) .partnerLabel { min-height: 20px; border: 0; border-left: 1px solid var(--fd-line-dark); padding-left: 12px; font-size: 12px; font-weight: 500; }
+:global([data-design="fd"]) .eventMeta { flex-wrap: nowrap; color: #b3b3b3; font-size: 12px; font-weight: 400; }
 :global([data-design="fd"]) .eventMeta > span { min-height: 26px; padding: 0 14px; border-left-color: var(--fd-line-dark); }
 :global([data-design="fd"]) .eventMeta > span:first-child { border-left: 0; }
 :global([data-design="fd"]) .homeLink { display: none; }
@@ -27,12 +27,12 @@
   :global([data-design="fd"]) .eventLead { gap: 8px; }
   :global([data-design="fd"]) .eventCode { font-size: 17px; }
   :global([data-design="fd"]) .partnerLabel { display: none; }
-  :global([data-design="fd"]) .eventMeta > span { font-size: 10px; }
+  :global([data-design="fd"]) .eventMeta > span { font-size: 12px; }
   :global([data-design="fd"]) .eventSwitcher > summary { min-height: 40px; padding: 0 9px; }
   :global([data-design="fd"]) .eventSwitcher > summary strong { display: none; }
   :global([data-design="fd"]) .switcherPanel { right: 0; width: min(350px, calc(100vw - 28px)); }
 }
 
 @media (max-width: 360px) {
-  :global([data-design="fd"]) .eventMeta > span { padding: 0 5px; font-size: 9px; }
+  :global([data-design="fd"]) .eventMeta > span { padding: 0 5px; font-size: 12px; }
 }

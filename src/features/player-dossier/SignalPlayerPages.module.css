@@ -34,9 +34,10 @@
 .profileTag { color: var(--fc-data-text-on-dark); font-size: 17px; overflow-wrap: anywhere; }
 .profileCoverBottom { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .profileCoverBottom > p { max-width: 46%; color: var(--fc-data-text-on-dark); font-size: 13px; overflow-wrap: anywhere; }
-.primaryAction { display: inline-flex; align-items: center; justify-content: space-between; gap: 32px; min-height: 48px; padding: 13px 18px; color: var(--fc-data-on-signal) !important; background: var(--fc-data-signal); font-size: 14px; font-weight: 700; white-space: nowrap; }
+/* 票 2.70: same size and weight as the site-wide primary (was 48px, 700). */
+.primaryAction { display: inline-flex; align-items: center; justify-content: space-between; gap: 32px; min-height: var(--fc-data-primary-height, 44px); padding: 0 16px; color: var(--fc-data-primary-text, #181a17) !important; background: var(--fc-data-primary-bg, #f4c320); font-size: 14px; font-weight: var(--fc-data-primary-weight, 750); white-space: nowrap; }
 .primaryAction > span { font-size: 24px; font-weight: 400; line-height: 1; }
-.primaryAction:hover { background: var(--fc-data-paper); }
+.primaryAction:hover { background: var(--fc-data-primary-bg-hover, #ffd64a); }
 .profileActions { display: flex; flex-wrap: wrap; gap: 25px; border-top: 1px solid #42473c; padding-top: 17px; margin-top: 25px; }
 .profileActions button { padding: 6px 0; border: 0; background: transparent; color: var(--fc-data-text-on-dark); font-size: 12px; }
 .profileActions button:hover { color: var(--fc-data-paper); text-decoration: underline; text-underline-offset: 5px; }
@@ -44,7 +45,7 @@
 .profilePortrait { position: relative; min-width: 0; min-height: 450px; overflow: hidden; margin: 18px 18px 18px 0; background: #d9ddd2; color: var(--fc-data-ink); isolation: isolate; }
 .portraitWordmark { position: absolute; top: 10%; left: 6%; right: 6%; font: 900 clamp(74px,11vw,196px)/1 var(--fc-data-font-display); letter-spacing: -.03em; color: #b8c2af; overflow-wrap: anywhere; max-height: 50%; overflow: hidden; }
 .portraitArtwork { position: absolute; inset: 10% 0 75px; height: auto; }
-.portraitHeading { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 18px 23px; font-size: 11px; letter-spacing: .07em; }
+.portraitHeading { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 18px 23px; font-size: 12px; letter-spacing: .07em; }
 .portraitChoices { position: absolute; z-index: 2; display: flex; gap: 6px; left: 23px; bottom: 77px; }
 .portraitChoices button { padding: 3px; background: #e8ebe3; border: 1px solid #878e7f; min-width: 44px; min-height: 48px; }
 .portraitChoices button[aria-pressed="true"] { background: var(--fc-data-ink); border-color: var(--fc-data-ink); }
@@ -130,7 +131,7 @@
 .analysisSample { flex-wrap: wrap; }
 .analysisTabs { display: flex; gap: 32px; border-bottom: 1px solid var(--fc-data-line); margin-bottom: 24px; }
 .analysisTabs button { display: flex; align-items: baseline; gap: 9px; padding: 13px 0; background: transparent; border: 0; border-bottom: 3px solid transparent; font-size: 15px; color: var(--fc-data-text-muted); }
-.analysisTabs button[aria-pressed="true"] { border-bottom-color: var(--fc-data-ink); color: var(--fc-data-ink); font-weight: 700; }
+.analysisTabs button[aria-pressed="true"] { border-bottom-color: var(--fc-data-signal); color: var(--fc-data-ink); font-weight: 800; } /* 票 2.73 */
 .analysisTabs small { font-size: 12px; font-weight: 400; }
 .analysisContent { min-width: 0; }
 .analysisContent > section { margin-top: 0; }
@@ -192,12 +193,12 @@
   .profileTag { font-size: 16px; }
   .profileCoverBottom { flex-direction: row; align-items: center; gap: 14px; }
   .profileCoverBottom > p { max-width: 46%; font-size: 12px; }
-  .primaryAction { font-size: 13px; gap: 14px; padding-inline: 13px; }
+  .primaryAction { gap: 14px; padding-inline: 12px; }
   .profileActions { padding-top: 10px; margin-top: 20px; }
   .profilePortrait { min-height: 350px; margin: 0 14px 14px; }
   .portraitWordmark { font-size: 100px; }
   .portraitArtwork { inset: 8% 0 75px; }
-  .portraitHeading { padding: 15px 16px; font-size: 10px; }
+  .portraitHeading { padding: 15px 16px; font-size: 12px; }
   .portraitChoices { left: 16px; bottom: 70px; }
   .profilePortrait figcaption { padding: 12px 16px; min-height: 50px; gap: 5px 10px; }
   .profilePortrait figcaption > a { gap: 8px; }
@@ -234,7 +235,7 @@
   .analysisIdentity > p { font-size: 12px; }
   .analysisRating { flex-direction: column; align-items: flex-start; gap: 8px; max-width: 150px; }
   .analysisRating > strong { font-size: 58px; }
-  .analysisRating > div > p { font-size: 11px; }
+  .analysisRating > div > p { font-size: 12px; }
   .analysisRating > div > span { font-size: 12px; gap: 4px 8px; }
   .analysisActions { gap: 24px; }
   .analysisActions > a { font-size: 13px; }
@@ -250,7 +251,15 @@
   .profileCoverBottom { align-items: start; flex-direction: column; }
   .profileCoverBottom > p { max-width: 100%; }
   .seasonSummary dl > div { gap: 6px; }
-  .seasonSummary dt { font-size: 11px; }
+  .seasonSummary dt { font-size: 12px; }
   .analysisTabs { gap: 20px; }
   .analysisTabs button { font-size: 13px; gap: 5px; }
+}
+@media (max-width: 760px) { .pageTop > button { min-height: 44px; } } /* 票 2.75 */
+/* 票 2.77: phones put the season name on the back row (the season bar is hidden there). */
+.pageSeason { display: none; }
+@media (max-width: 600px) {
+  .pageTop { grid-template-columns: auto minmax(0, 1fr); column-gap: 12px; }
+  .pageTop > nav { grid-column: 1 / -1; }
+  .pageSeason { display: block; justify-self: end; min-width: 0; overflow: hidden; color: var(--fc-data-text-muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 }

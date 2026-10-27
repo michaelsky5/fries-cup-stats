@@ -21,7 +21,7 @@
 .proposalForm .note { grid-column: 2 / 5; }
 .proposal { display: grid; gap: 12px; border-top: 1px solid #aaa397; padding-top: 14px; }
 .proposalHeading strong { display: block; font-size: 20px; }
-.proposalHeading em { padding: 7px 9px; background: var(--fc-data-ink); color: var(--fc-data-paper-raised); font-style: normal; font-size: 11px; font-weight: 900; }
+.proposalHeading em { padding: 7px 9px; background: var(--fc-data-ink); color: var(--fc-data-paper-raised); font-style: normal; font-size: 12px; font-weight: 900; }
 .proposalHeading em[data-status='PENDING_ADMIN'] { background: #a86617; }
 .proposalHeading em[data-status='CONFIRMED'] { background: #3c6f4a; }
 .candidateList { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; }

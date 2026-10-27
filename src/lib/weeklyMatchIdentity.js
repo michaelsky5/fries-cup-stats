@@ -2,11 +2,12 @@ import { pickUiLocale, translateUiText as uiText } from './uiText.js'
 import { getPublicMatchCode } from './publicMatchCode.js'
 
 // These are display labels. Rules and immutable codes keep their existing keys.
+// 票 2.80: zh-CN, en, ko, zh-TW — every stage name comes from this table, so no page falls back to Chinese.
 export const WEEKLY_PHASE_LABELS = Object.freeze({
-  REGULAR: ['积分赛', 'Prelims'],
-  QUALIFIER: ['晋级加赛', 'Tiebreak qualifier'],
-  PLAYOFFS: ['季后赛', 'Playoffs'],
-  MAJOR: ['巅峰赛', 'Finals']
+  REGULAR: ['积分赛', 'Prelims', '예선', '積分賽'],
+  QUALIFIER: ['晋级加赛', 'Tiebreak qualifier', '진출권 결정전', '晉級加賽'],
+  PLAYOFFS: ['季后赛', 'Playoffs', '플레이오프', '季後賽'],
+  MAJOR: ['巅峰赛', 'Finals', '파이널', '巔峰賽']
 })
 
 // zh-CN, en, ko, zh-TW. The shared catalog has no Korean or Traditional Chinese for 晋级加赛.
@@ -95,9 +96,8 @@ export function getWeeklyMatchIdentity(match) {
 }
 
 export function getWeeklyPhaseLabel(phase, locale = 'zh-CN') {
-  const en = String(locale).startsWith('en')
-  const label = WEEKLY_PHASE_LABELS[phase]?.[en ? 1 : 0]
-  return label ? uiText(label, locale) : ''
+  const labels = WEEKLY_PHASE_LABELS[phase]
+  return labels ? pickUiLocale(locale, ...labels) : ''
 }
 
 // zh-CN, en, ko, zh-TW. The shared catalog has no Traditional Chinese for these round names.

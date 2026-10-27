@@ -33,7 +33,7 @@ function MatchRow({ match }) {
         {index === 0 ? <b className={styles.score}>{status === 'finished' || status === 'live' ? getMatchScore(match) : 'vs'}</b> : null}
       </span>)}
     </span>
-    <span className={styles.status} data-status={status}>{statusLabel}</span><span className={styles.arrow} aria-hidden="true">↗</span>
+    <span className={styles.status} data-status={status}>{statusLabel}</span><span className={styles.arrow} aria-hidden="true">→</span>
     {summary ? <span className={styles.mapSummary}>{summary}{maps.length > 3 ? (en ? ` · ${maps.length} maps in total` : uiText(" · 共 {0} 图", locale, [maps.length])) : ''}</span> : null}
   </Link>
 }
@@ -112,8 +112,8 @@ export default function SignalMatchIndex({ rows, groups, filters, options, activ
       </div>
     </div> : <div className={styles.empty}>
       <span className={styles.kicker}>NO MATCHES / 00</span><h2>{activeTab === 'following' && !favoriteCount ? (en ? 'Follow your first team.' : uiText("关注一支队伍。", locale)) : (en ? 'No matching games.' : uiText("没有符合条件的比赛。", locale))}</h2><p>{en ? 'Change the filters to find another match.' : uiText("调整筛选条件，继续查找比赛记录。", locale)}</p>
-      {activeTab === 'following' ? <Link to={withSeason('/me?section=following&manage=1')}>{en ? 'Manage following' : uiText("管理关注", locale)} ↗</Link> : null}<button type="button" onClick={resetFilters}>{en ? 'Clear filters' : uiText("清除筛选", locale)} ↗</button>
+      {activeTab === 'following' ? <Link to={withSeason('/me?section=following&manage=1')}>{en ? 'Manage following' : uiText("管理关注", locale)} →</Link> : null}<button type="button" onClick={resetFilters}>{en ? 'Clear filters' : uiText("清除筛选", locale)} →</button>
     </div>}
-    <footer className={styles.footer}>{en ? 'Open a match for map results, player statistics and available video links. Forfeits and awarded results are retained; byes are excluded.' : uiText("进入比赛查看单图赛果、选手统计及已发布录像。列表保留弃权与判罚结果，不包含轮空记录。", locale)}<Link to={withSeason('/matches')} state={{ restoreScrollY: 0 }}>{hub.isArchive ? en ? 'Match highlights' : uiText("返回赛事精选", locale) : en ? 'Match hub' : uiText("返回赛程总览", locale)} ↗</Link></footer>
+    <footer className={styles.footer}>{en ? 'Open a match for map results, player statistics and available video links. Forfeits and awarded results are retained; byes are excluded.' : uiText("进入比赛查看单图赛果、选手统计及已发布录像。列表保留弃权与判罚结果，不包含轮空记录。", locale)}<Link to={withSeason('/matches')} state={{ restoreScrollY: 0 }}>{hub.isArchive ? en ? 'Match highlights' : uiText("返回赛事精选", locale) : en ? 'Match hub' : uiText("返回赛程总览", locale)} →</Link></footer>
   </div>
 }

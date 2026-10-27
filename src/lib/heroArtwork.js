@@ -23,7 +23,7 @@ export function getHeroArtwork(heroName, variant = 'roster') {
     srcSet: variants.map(item => `${item.src} ${item.width}w`).join(', ') || undefined,
     sizes: variant === 'spotlight' ? '(max-width: 600px) 580px, 840px' : '(max-width: 600px) 420px, 540px',
     original: `${base}.png`,
-    thumbnail: `/heroes/${hero.role}/${assetKey.replace(/-/g, '_')}.png`,
+    thumbnail: `/heroes/${hero.role}/${assetKey.replace(/-/g, '_')}.webp`,
     style: {
       '--hero-art-height': `${100 * scale / height}%`,
       '--hero-art-top': `${3 - 100 * top * scale / height}%`,

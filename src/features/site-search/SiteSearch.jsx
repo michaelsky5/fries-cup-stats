@@ -13,7 +13,7 @@ import styles from './SiteSearch.module.css'
 const GROUP_NAMES = {
   players: ['选手', 'Players', '선수', '選手'],
   teams: ['队伍', 'Teams', '팀', '隊伍'],
-  teamStaff: ['战队职员', 'Team staff', '팀 스태프', '戰隊職員'],
+  teamStaff: ['队伍职员', 'Team staff', '팀 스태프', '隊伍職員'],
   eventStaff: ['赛事职员', 'Event staff', '대회 스태프', '賽事職員']
 }
 const STAFF_ROLES = { admin: ['赛管', 'Official', '운영', '賽管'], caster: ['解说', 'Caster', '해설', '解說'] }
@@ -82,8 +82,8 @@ export default function SiteSearch({ seasonId, locale, withSeason }) {
                   : t('没有找到，试试昵称、BattleTag 或队伍简称。', 'Nothing found. Try a nickname, BattleTag or team abbreviation.', '결과가 없습니다. 닉네임, BattleTag 또는 팀 약칭으로 찾아보세요.', '沒有找到，試試暱稱、BattleTag 或隊伍簡稱。')}</p>
           {groups.map(group => <section key={group.id} aria-label={t(...GROUP_NAMES[group.id])}>
             <h3>{t(...GROUP_NAMES[group.id])}<span>{group.total}</span></h3>
-            <ul>{group.items.map(item => <li key={item.id}><Link {...linkProps(item.href)}><strong>{item.name}</strong>{detail(item) ? <small>{detail(item)}</small> : null}<span aria-hidden="true">↗</span></Link></li>)}</ul>
-            {group.total > group.items.length ? <Link className={styles.more} {...linkProps(group.href)}>{t(`查看全部 ${group.total} 条`, `View all ${group.total}`, `${group.total}개 모두 보기`, `查看全部 ${group.total} 條`)} <span aria-hidden="true">↗</span></Link> : null}
+            <ul>{group.items.map(item => <li key={item.id}><Link {...linkProps(item.href)}><strong>{item.name}</strong>{detail(item) ? <small>{detail(item)}</small> : null}<span aria-hidden="true">→</span></Link></li>)}</ul>
+            {group.total > group.items.length ? <Link className={styles.more} {...linkProps(group.href)}>{t(`查看全部 ${group.total} 条`, `View all ${group.total}`, `${group.total}개 모두 보기`, `查看全部 ${group.total} 條`)} <span aria-hidden="true">→</span></Link> : null}
           </section>)}
         </div>
       </div>

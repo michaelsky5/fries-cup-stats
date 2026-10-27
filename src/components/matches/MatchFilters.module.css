@@ -47,7 +47,7 @@
 }
 
 .panelSubTitle {
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.16em;
@@ -57,7 +57,7 @@
 }
 
 .panelMeta {
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.16em;
   color: rgba(255, 255, 255, 0.3);
@@ -105,7 +105,7 @@
 }
 
 .labelCn {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1;
   letter-spacing: 0.06em;
@@ -113,7 +113,7 @@
 }
 
 .labelEn {
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.14em;
@@ -206,7 +206,7 @@
   border: 1px solid rgba(244, 195, 32, 0.92);
   background: transparent;
   color: #f4c320;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.08em;
   border-radius: 0;
@@ -219,7 +219,7 @@
 }
 
 .resetBtnEn {
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.14em;
   font-family: var(--font-mono);

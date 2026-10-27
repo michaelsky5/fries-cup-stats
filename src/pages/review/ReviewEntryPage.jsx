@@ -201,7 +201,7 @@ export default function ReviewEntryPage() {
             <h1>{reviewText(locale, 'noReview')}</h1>
             <p>{reviewText(locale, 'noReviewBody')}</p>
             <Link to={outlet.withSeason('/')}>
-              {locale === 'en-US' ? 'Back to this event' : locale === 'ko-KR' ? '대회 개요로 돌아가기' : uiText('返回本届赛事', locale)} <span aria-hidden="true">↗</span>
+              {locale === 'en-US' ? 'Back to this event' : locale === 'ko-KR' ? '대회 개요로 돌아가기' : uiText('返回本届赛事', locale)} <span aria-hidden="true">→</span>
             </Link>
           </div>
         </section>

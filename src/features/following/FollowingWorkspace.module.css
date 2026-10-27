@@ -32,16 +32,16 @@
 .subjectField label { color: var(--fc-data-text-muted); font-size: 13px; }
 .subjectField select { width: 100%; min-width: 0; min-height: 44px; padding: 10px 32px 10px 12px; border: 1px solid var(--fc-data-line-strong); border-radius: 0; background: var(--fc-data-paper); color: var(--fc-data-ink); font: 600 14px/1.5 var(--font-sans); cursor: pointer; }
 .resultCount { display: grid; gap: 6px; padding-block: 3px; font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
-.resultCount small { font-size: 11px; color: var(--fc-data-text-muted); }
+.resultCount small { font-size: 12px; color: var(--fc-data-text-muted); }
 .reset { display: inline-flex; align-items: center; min-height: 44px; margin-top: 14px; padding: 8px 14px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper); color: var(--fc-data-ink); }
 .sectionHeader { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px; }
 .workspace .sectionHeader :is(h2, h3), .digest .sectionHeader h2 { margin: 0; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; }
-.sectionHeader > small { font-size: 11px; color: var(--fc-data-text-muted); white-space: nowrap; }
+.sectionHeader > small { font-size: 12px; color: var(--fc-data-text-muted); white-space: nowrap; }
 .textLink { color: var(--fc-data-ink); font-size: 13px !important; white-space: nowrap; padding-block: 10px; }
 .filters { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0 0; overflow-x: auto; scrollbar-width: thin; }
 .filters button { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 9px 12px; flex: 0 0 auto; border: 1px solid var(--fc-data-line); background: transparent; color: var(--fc-data-text-muted); font-size: 13px; }
 .filters button[aria-pressed='true'] { color: var(--fc-data-ink); background: var(--fc-data-signal); border-color: var(--fc-data-signal); }
-.filters span { font-variant-numeric: tabular-nums; font-size: 11px; }
+.filters span { font-variant-numeric: tabular-nums; font-size: 12px; }
 .matchList { border-top: 1px solid var(--fc-data-line-strong); }
 .matchRow { display: grid; grid-template-columns: 150px minmax(280px, 1.2fr) minmax(180px, 1fr) 16px; align-items: center; gap: 22px; padding: 22px 28px; min-width: 0; border-bottom: 1px solid var(--fc-data-line); color: var(--fc-data-ink); transition: background 150ms; }
 .matchRow:last-child { border-bottom: 0; }
@@ -49,12 +49,12 @@
 .matchRow[data-state='live'] { box-shadow: inset 3px 0 var(--fc-data-status-success); }
 .matchWhen { display: grid; justify-items: start; gap: 9px; }
 .matchWhen time { font-size: 12px; color: var(--fc-data-text-muted); line-height: 1.65; }
-.state { font-size: 11px; color: var(--fc-data-text-muted); border: 1px solid var(--fc-data-line); padding: 4px 7px; }
+.state { font-size: 12px; color: var(--fc-data-text-muted); border: 1px solid var(--fc-data-line); padding: 4px 7px; }
 [data-state='live'] .state { color: var(--fc-data-status-success); border-color: currentColor; }
 [data-state='upcoming'] .state { color: var(--fc-data-ink); background: color-mix(in srgb, var(--fc-data-signal) 18%, transparent); }
 [data-state='review'] .state { color: var(--fc-data-ink); border-color: var(--fc-data-signal); background: color-mix(in srgb, var(--fc-data-signal) 18%, transparent); }
 .scoreBlock { display: grid; justify-items: center; gap: 5px; }
-.scoreBlock small { color: var(--fc-data-text-muted); font-size: 10px; line-height: 1.5; text-align: center; max-width: 90px; }
+.scoreBlock small { color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.5; text-align: center; max-width: 90px; }
 .scoreBlock small:empty { display: none; }
 .duel { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 16px; min-width: 0; }
 .duel > span { display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -65,7 +65,7 @@
 .matchDetail { min-width: 0; display: grid; gap: 8px; font-size: 12px; line-height: 1.6; }
 .matchDetail > span { overflow-wrap: anywhere; }
 .relations { display: flex; flex-wrap: wrap; gap: 4px 10px; }
-.matchDetail small { color: var(--fc-data-text-muted); font-size: 11px; overflow-wrap: anywhere; }
+.matchDetail small { color: var(--fc-data-text-muted); font-size: 12px; overflow-wrap: anywhere; }
 .matchArrow { color: var(--fc-data-text-muted); font-size: 17px; }
 .more { width: 100%; min-height: 46px; display: flex; justify-content: center; align-items: center; gap: 14px; border: 0; border-top: 1px solid var(--fc-data-line); color: var(--fc-data-ink); background: transparent; font-size: 13px !important; }
 .more span { color: var(--fc-data-text-muted); }
@@ -87,13 +87,13 @@
 .directoryRow > b { font-weight: 400; }
 .teamLogo, .playerMark { width: 44px; height: 44px; flex: 0 0 44px; }
 .playerMark { display: grid; place-items: center; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-deep); font-weight: 750; }
-.directoryRow .primaryTag { font-size: 11px; font-weight: 500; margin-left: 10px; padding: 3px 6px; border: 1px solid var(--fc-data-line-strong); }
+.directoryRow .primaryTag { font-size: 12px; font-weight: 500; margin-left: 10px; padding: 3px 6px; border: 1px solid var(--fc-data-line-strong); }
 .directoryCard { padding: 0 20px; border-bottom: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised); }
 .directoryCard[data-selected='true'] { box-shadow: inset 3px 0 var(--fc-data-ink); }
 .directoryCard .directoryRow { border-bottom: 0; }
 .directoryCard .directoryRow:hover strong { text-decoration: underline; text-underline-offset: 4px; }
 .teamStanding { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 6px 20px; padding: 16px 0; border-top: 1px solid var(--fc-data-line); }
-.teamStanding > span { color: var(--fc-data-text-muted); font-size: 11px; }
+.teamStanding > span { color: var(--fc-data-text-muted); font-size: 12px; }
 .teamStanding strong { grid-column: 2; grid-row: 1 / 3; font-size: 21px; line-height: 1.5; text-align: right; overflow-wrap: anywhere; }
 .teamStanding small { color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.6; }
 .teamStanding[data-tone='win'] strong { color: var(--fc-data-status-success); }
@@ -190,7 +190,7 @@
   .duel strong { font-size: 15px; }
   .logo { width: 26px; height: 26px; flex-basis: 26px; }
   .score { font-size: 28px; }
-  .scoreBlock small { font-size: 11px; max-width: 80px; }
+  .scoreBlock small { font-size: 12px; max-width: 80px; }
   .matchDetail { gap: 6px; }
   .collections { gap: 0; }
   .collections .directory, .collections[data-only] .directory { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
@@ -204,7 +204,7 @@
   .collectionHeader :is(h2, h3) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .directoryRow { padding: 16px 0; gap: 12px; }
   .directoryRow strong { font-size: 17px; }
-  .directoryRow .primaryTag { margin-left: 6px; padding: 2px 4px; font-size: 10px; }
+  .directoryRow .primaryTag { margin-left: 6px; padding: 2px 4px; font-size: 12px; }
   .directoryRow > div > small { display: none; }
   .teamStanding, .teamStanding[data-weekly='true'] { padding: 12px 0; }
   .subjectOutlook { margin: 0; gap: 4px; }

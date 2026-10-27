@@ -1969,7 +1969,8 @@ function HeroIcon({ hero, role, locale }) {
 function getHeroRenderSrc(hero, role) {
   const avatarSrc = hero ? getHeroAvatarSrc(hero, role) : ''
   if (!avatarSrc) return ''
-  return avatarSrc.replace('/heroes/', '/review/hero-renders/').replace(/_/g, '-')
+  // 票 2.79: portraits are WebP; the full-body renders stay PNG.
+  return avatarSrc.replace('/heroes/', '/review/hero-renders/').replace(/_/g, '-').replace(/\.webp$/, '.png')
 }
 
 function HeroArtwork({ hero, role, className = '', loading = 'lazy' }) {

@@ -8,9 +8,14 @@ import PasswordRecoveryPanel from '../auth/PasswordRecoveryPanel.jsx'
 import PasswordRequirements from '../auth/PasswordRequirements.jsx'
 import { validateNewPassword } from '../auth/passwordPolicy.js'
 import { readPasswordResetLocation } from '../auth/passwordRecoveryModel.js'
-import { safeLobbyReturn, accountFailure } from './lobbyModel.js'
-import styles from './Lobby.module.css'
+import { safeAccountReturn } from '../auth/accountReturn.js'
+import AccountFrame from '../account-ui/AccountFrame.jsx'
+import { accountFailure } from './lobbyModel.js'
+import styles from './AccountEntryPage.module.css'
 
+// 票 2.71: everyone signs in with the dialog; these pages are the fallback (a bookmarked
+// /account/login, email links, the lobby's verify step). They use the Stats account frame instead of
+// the lobby's, and after signing in return to the page in returnTo.
 export default function AccountEntryPage() {
   useUiLocale()
 
@@ -25,7 +30,7 @@ function AccountForm({ mode }) {
   const { refreshSession } = auth
   const navigate = useNavigate()
   const location = useLocation()
-  const destination = safeLobbyReturn(new URLSearchParams(location.search).get('returnTo'))
+  const destination = safeAccountReturn(new URLSearchParams(location.search).get('returnTo'))
   const [form, setForm] = useState({ email: '', username: '', displayName: '', password: '', confirmation: '' })
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -72,23 +77,22 @@ function AccountForm({ mode }) {
     finally { lock.current = false; setBusy(false) }
   }
   const verified = auth.user ? Boolean(auth.user.emailVerifiedAt) : auth.emailVerificationState.status === 'VERIFIED'
-  const title = mode === 'register' ? t("创建你的薯条杯账号") : mode === 'verify-email' ? t("验证邮箱") : ['recover', 'reset-password'].includes(mode) ? t("找回账号") : t("欢迎回来")
-  return <section className={styles.authPage}>
-    <div className={styles.intro}><h1>{title}</h1><p>{t("先找到队友，再一起上场。")}</p><Link to="/lobby">{t("← 返回组队大厅")}</Link></div>
-    <div className={styles.formPanel}>
+  const title = mode === 'register' ? t("创建你的薯条杯账号") : mode === 'verify-email' ? t("验证邮箱") : ['recover', 'reset-password'].includes(mode) ? t("找回账号") : t("登录")
+  return <AccountFrame entry compact title={title} description={t("比赛、队伍与个人事务，都从这里继续。")}>
+    <div className={styles.panel} data-i18n-ignore>
       {error && <p role="alert" className={styles.error}>{error}</p>}
-      {auth.authConfigError && <p role="alert" className={styles.error}>{t("账号配置暂时无法读取。")}<button onClick={auth.retryAuthConfig}>{t("重试")}</button></p>}
+      {auth.authConfigError && <p role="alert" className={styles.error}>{t("账号配置暂时无法读取。")}<button type="button" className={styles.inlineButton} onClick={auth.retryAuthConfig}>{t("重试")}</button></p>}
       {['recover', 'reset-password'].includes(mode) ? <PasswordRecoveryPanel recovery={recovery} locale={uiLocale} deliveryEnabled={auth.authConfig?.emailVerificationEnabled === true} configLoading={!auth.authConfig && !auth.authConfigError} configError={auth.authConfigError} retryConfig={auth.retryAuthConfig} onLogin={() => navigate(accountPath('login'))} />
         : mode === 'verify-email' ? <div className={styles.stack}>
           {auth.emailVerificationState.status === 'VERIFYING' ? <p role="status">{t("正在核对验证链接…")}</p> : verified ? <><h2>{t("邮箱已验证")}</h2><p>{t("现在可以继续使用已开放的账号功能。")}</p><Link className={styles.primary} to={auth.user ? destination : accountPath('login')}>{auth.user ? t("继续原来的操作") : t("登录后继续")}</Link></>
             : <><h2>{auth.user ? t("账号已创建，请验证邮箱") : t("登录后查看验证状态")}</h2>{auth.user && <p>{auth.user.email}</p>}
               <p>{auth.emailVerificationState.result?.queued ? t("账号已保留，验证邮件正在排队发送。请稍后检查收件箱与垃圾邮件。") : auth.emailVerificationState.result?.delivered ? t("验证邮件已提交发送，请检查收件箱与垃圾邮件。") : t("验证邮件的发送与账号创建分别记录。尚未收到时，可登录本人账号重新发送。")}</p>
               {auth.emailVerificationState.status === 'ERROR' && <p role="alert" className={styles.error}>{t("验证链接无效或已过期，请登录本人账号后重新发送。")}</p>}
-              {auth.emailVerificationState.status === 'VERIFIED' && auth.user && !auth.user.emailVerifiedAt && <div className={styles.notice}><p>{auth.emailVerificationState.sessionWarning || t("链接已验证，当前登录账号尚未显示已验证状态。请重新读取状态并核对账号，必要时为当前账号重发邮件。")}</p><button onClick={() => refreshSession().catch(failure => setError(accountFailure(failure)))}>{t("重新读取账号状态")}</button></div>}
-              {auth.user ? <button className={styles.primary} onClick={resend} disabled={busy || cooldown > 0 || !auth.authConfig?.emailVerificationEnabled}>{cooldown ? t('{0} 秒后可重发', [cooldown]) : busy ? t("正在发送…") : t("重新发送验证邮件")}</button> : <Link className={styles.primary} to={accountPath('login')}>{t("登录本人账号")}</Link>}
+              {auth.emailVerificationState.status === 'VERIFIED' && auth.user && !auth.user.emailVerifiedAt && <div className={styles.notice}><p>{auth.emailVerificationState.sessionWarning || t("链接已验证，当前登录账号尚未显示已验证状态。请重新读取状态并核对账号，必要时为当前账号重发邮件。")}</p><button type="button" className={styles.secondary} onClick={() => refreshSession().catch(failure => setError(accountFailure(failure)))}>{t("重新读取账号状态")}</button></div>}
+              {auth.user ? <button type="button" className={styles.primary} onClick={resend} disabled={busy || cooldown > 0 || !auth.authConfig?.emailVerificationEnabled}>{cooldown ? t('{0} 秒后可重发', [cooldown]) : busy ? t("正在发送…") : t("重新发送验证邮件")}</button> : <Link className={styles.primary} to={accountPath('login')}>{t("登录本人账号")}</Link>}
               {auth.authConfig?.emailVerificationEnabled === false && <p>{t("邮件服务暂不可用。账号已保留，可以稍后登录并重发。")}</p>}
-              <Link to="/lobby">{t("先浏览大厅")}</Link></>}
-        </div> : auth.isBootstrapping ? <p role="status">{t("正在读取账号…")}</p> : auth.user ? <div className={styles.stack}><h2>{t("已登录")} {auth.user.displayName}</h2><Link className={styles.primary} to={auth.user.emailVerifiedAt ? destination : accountPath('verify-email')}>{t("继续")}</Link><button onClick={auth.logout}>{t("退出并使用其他账号")}</button></div>
+              <Link className={styles.textLink} to={destination}>{t("稍后再验证")}</Link></>}
+        </div> : auth.isBootstrapping ? <p role="status">{t("正在读取账号…")}</p> : auth.user ? <div className={styles.stack}><h2>{t("已登录")} {auth.user.displayName}</h2><Link className={styles.primary} to={auth.user.emailVerifiedAt ? destination : accountPath('verify-email')}>{t("继续")}</Link><button type="button" className={styles.secondary} onClick={auth.logout}>{t("退出并使用其他账号")}</button></div>
           : <form onSubmit={submit} className={styles.stack}>
             <label>{t("邮箱")}<input type="email" autoComplete="email" required maxLength={254} {...field('email')} /></label>
             {mode === 'register' && <><label>{t("用户名")}<input autoComplete="username" required minLength={2} maxLength={24} {...field('username')} /><small>{t("2—24 位字母、数字、下划线、短横线或点。")}</small></label><label>{t("显示名（可选）")}<input maxLength={40} {...field('displayName')} /></label></>}
@@ -102,5 +106,5 @@ function AccountForm({ mode }) {
             <div className={styles.actions}>{(mode === 'register' || auth.authConfig?.selfRegistrationEnabled === true) && <Link to={accountPath(mode === 'register' ? 'login' : 'register')}>{mode === 'register' ? t("已有账号，去登录") : t("没有账号，创建账号")}</Link>}<Link to={accountPath('recover')}>{t("忘记密码")}</Link></div>
           </form>}
     </div>
-  </section>
+  </AccountFrame>
 }

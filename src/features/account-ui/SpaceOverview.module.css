@@ -14,17 +14,17 @@
 .avatar i { position: absolute; top: 2px; right: 2px; width: 7px; height: 7px; border: 1px solid var(--fc-data-paper); border-radius: 50%; background: var(--fc-data-status-warning); }
 .accountName { display: grid; gap: 2px; min-width: 0; }
 .accountName strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; line-height: 1.4; }
-.accountName small { color: var(--fc-data-text-muted); font-size: 11px; line-height: 1.4; }
+.accountName small { color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.4; }
 .accountChevron { flex-shrink: 0; color: var(--fc-data-text-muted); }
 .person[open] > summary .accountChevron { transform: rotate(180deg); }
 .accountMenu { position: absolute; top: calc(100% + 8px); right: 0; z-index: 40; width: min(280px, calc(100vw - 40px)); background: var(--fc-data-paper-raised); border: 1px solid var(--fc-data-line-strong); box-shadow: var(--fc-data-shadow-float); }
 .accountRoles { padding: 16px; border-bottom: 1px solid var(--fc-data-line); }
-.accountRoles > span { color: var(--fc-data-text-muted); font-size: 11px; }
+.accountRoles > span { color: var(--fc-data-text-muted); font-size: 12px; }
 .identity .accountRoles p { margin: 6px 0 0; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
 .accountMenu a { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; padding: 12px 16px; color: var(--fc-data-ink); font-size: 13px; text-decoration: none; }
 .accountMenu a:hover { background: var(--fc-data-paper-deep); }
 .emailAction { border-top: 1px solid var(--fc-data-line); }
-.emailAction small { color: var(--fc-data-status-warning); font-size: 11px; }
+.emailAction small { color: var(--fc-data-status-warning); font-size: 12px; }
 .emailStatus { padding: 12px 16px; border-top: 1px solid var(--fc-data-line); color: var(--fc-data-text-muted); font-size: 12px; }
 .overview { display: grid; gap: 24px; color: var(--fc-data-ink); }
 .overview a { text-decoration: none; }
@@ -191,3 +191,5 @@
   .overview[data-mobile-home='true'][data-mobile-progress='true'] .homeFollowing { display: none; }
   .overview[data-mobile-home='true'] .support { display: none; }
 }
+/* 票 2.75: phone tap targets are at least 44px. */
+@media (max-width: 760px) { .person summary, .identityActions .person summary { min-height: 44px; } .clearTasks a, .empty a { display: inline-flex; align-items: center; min-height: 44px; } .empty a { padding-bottom: 0; border-bottom: 0; text-decoration: underline; text-underline-offset: 4px; } }

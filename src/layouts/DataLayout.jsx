@@ -177,6 +177,8 @@ export default function DataLayout() {
     isAuthenticated
   })
   const isWeeklyAdvanceRoute = isKprHybridDesign && /^\/advance\/?$/.test(location.pathname) && isWeeklyOverview(db, season)
+  // 票 2.77: player and team pages start with their own back row on phones.
+  const isDossierRoute = /^\/(?:players|teams)\/[^/]+(?:\/(?:analysis|journey))?\/?$/.test(location.pathname)
   const isWeeklyHomeRoute = isKprHybridDesign && location.pathname === '/' && isWeeklyOverview(db, season)
   const isAdvanceIndexRoute = isKprHybridDesign && /^\/advance\/?$/.test(location.pathname)
   const isPublicFollowingRoute = isAccountSpaceRoute && ((!isAuthenticated && !isMatchEntry) || location.pathname.startsWith('/following') || new URLSearchParams(location.search).get('section') === 'following')
@@ -401,7 +403,7 @@ export default function DataLayout() {
   }
 
   const eventContextDock = isKprHybridDesign && (headerContextMode === 'data' || isWeeklyHomeRoute) ? (
-        <div className={styles.contentContextDock}>
+        <div className={styles.contentContextDock} data-dossier-route={isDossierRoute || undefined}>
           <EventContextBar
             season={season}
             seasonId={seasonId}

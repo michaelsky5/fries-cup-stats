@@ -28,3 +28,10 @@
   .sheet > header { position: sticky; top: 0; z-index: 1; background: var(--fc-data-paper); }
   .sheet :global([aria-label='Language']) > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+/* 票 2.80: the phone brand keeps its words only when they fit beside the season switch; otherwise the
+   mark stands alone (as at 360px). Chinese words need about 106px; English 「EVENT CENTER」 about 134px. */
+@media (max-width: 600px) {
+  :global([data-design][data-design-edition] [data-phone-navigation='true']) .mobileBrand.mobileBrand { container: phone-brand / inline-size; justify-self: stretch; min-width: 44px; }
+}
+@container phone-brand (max-width: 105.98px) { :global([data-design][data-design-edition] [data-phone-navigation='true']) .mobileBrand.mobileBrand [data-upgrade-lockup] { display: none; } }
+@container phone-brand (max-width: 139.98px) { :global([data-design][data-design-edition] [data-phone-navigation='true']) .mobileBrand.mobileBrand [data-upgrade-lockup]:lang(en) { display: none; } }

@@ -20,12 +20,13 @@ export const TEAM_ARCHIVE_PAGES = [
   ['analysis', '队伍数据', 'Team data', '팀 데이터', '隊伍數據']
 ]
 
-export default function TeamArchiveNavigation({ team, seasonId, locale, view, galleryHref, analysisHref, viewState, onBack, onShare }) {
+export default function TeamArchiveNavigation({ team, seasonId, locale, view, galleryHref, analysisHref, viewState, backLabel, onBack, onShare, condensed = false }) {
   const en = locale === 'en-US'
   const hrefs = { gallery: galleryHref, analysis: analysisHref }
-  return <div className={styles.navigation} data-archive-tabs>
-    <div className={styles.identity}><button type="button" onClick={onBack} aria-label={en ? 'Back to previous page' : uiText("返回上一页", locale)} title={en ? 'Back to previous page' : uiText("返回上一页", locale)}>←</button><ArchiveCrest key={`${seasonId}-${team.routeId}`} team={team} seasonId={seasonId} /><span><b>{team.shortName}</b><small>{seasonId}</small></span></div>
+  // 票 2.72: the back button reads 「← 返回参赛队伍」 (where it goes) instead of a bare ←.
+  return <div className={styles.navigation} data-archive-tabs data-condensed={condensed || undefined}>
+    <div className={styles.identity}><button type="button" className={styles.back} onClick={onBack}><span aria-hidden="true">←</span>{backLabel}</button><ArchiveCrest key={`${seasonId}-${team.routeId}`} team={team} seasonId={seasonId} /><span><b>{team.shortName}</b><small>{seasonId}</small></span></div>
     <nav className={navStyles.root} aria-label={en ? 'Team pages' : pickUiLocale(locale, '队伍页面', 'Team pages', '팀 페이지', '隊伍頁面')}>{TEAM_ARCHIVE_PAGES.map(([id, ...labels]) => <Link key={id} className={navStyles.item} to={hrefs[id]} state={viewState} aria-current={view === id ? 'page' : undefined}>{pickUiLocale(locale, ...labels)}</Link>)}</nav>
-    <div className={styles.actions}>{onShare ? <button type="button" className={styles.export} onClick={onShare} aria-label={en ? 'Export roster poster' : uiText("导出阵容海报", locale)} title={en ? 'Export roster poster' : uiText("导出阵容海报", locale)}><span>{en ? 'Poster' : uiText("导出海报", locale)}</span> ↓</button> : null}</div>
+    <div className={styles.actions}>{onShare ? <button type="button" className={styles.export} onClick={onShare} aria-label={en ? 'Export roster poster' : uiText("导出阵容海报", locale)} title={en ? 'Export roster poster' : uiText("导出阵容海报", locale)}><span className={styles.exportLabel}>{en ? 'Poster' : uiText("导出海报", locale)}</span><span className={styles.exportShort}>{pickUiLocale(locale, '海报', 'Poster', '포스터', '海報')}</span> ↓</button> : null}</div>
   </div>
 }

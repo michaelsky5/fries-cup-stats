@@ -14,7 +14,7 @@
 .preview { grid-row:4; }
 .footer { grid-row:5; }
 .header { display:flex;align-items:center;justify-content:space-between;gap:24px;padding:22px 28px;border-top:3px solid var(--fc-data-signal);border-bottom:1px solid var(--fc-data-line); }
-.header p { font-size:11px;letter-spacing:.08em;color:var(--fc-data-text-muted); }
+.header p { font-size:12px;letter-spacing:.08em;color:var(--fc-data-text-muted); }
 .header h2 { font-size:25px;line-height:1.4;font-weight:800;margin-top:5px; }
 .header>button { width:44px;height:44px;background:none;border:1px solid var(--fc-data-line-strong);font-size:27px;flex-shrink:0; }
 .controls { border:0;padding:0 28px 18px;margin:0;min-width:0; }

@@ -13,7 +13,7 @@ export function createSeasonReportEvidence(adapter) {
   function HeroIcon({ name, size = 36 }) {
     const hero = getOwHero(name)
     if (!hero) return null
-    return <span className={report.heroIcon} style={{ width: size, height: size }}><img src={`/heroes/${hero.role}/${hero.assetKey.replace(/-/g, '_')}.png`} width={size} height={size} loading="lazy" decoding="async" alt="" /></span>
+    return <span className={report.heroIcon} style={{ width: size, height: size }}><img src={`/heroes/${hero.role}/${hero.assetKey.replace(/-/g, '_')}.webp`} width={size} height={size} loading="lazy" decoding="async" alt="" /></span>
   }
   
   function StageStatus({ player, lang, explanation = false }) {

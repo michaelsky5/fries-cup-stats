@@ -52,7 +52,7 @@
 .scope small {
   display: block;
   color: var(--fc-data-text-muted);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.04em;
 }
 .scope select {
@@ -92,7 +92,7 @@
 .winRate small {
   display: block;
   margin-top: 5px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--fc-data-text-on-dark);
 }
 .coverage {
@@ -141,7 +141,7 @@
 }
 .recent > span small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 6px;
   color: var(--fc-data-text-muted);
 }
@@ -161,7 +161,7 @@
   border-bottom: 2px dashed var(--fc-data-text-muted);
 }
 .recent a small {
-  font-size: 10px;
+  font-size: 12px;
   max-width: 55px;
   overflow-wrap: anywhere;
 }
@@ -224,7 +224,7 @@
   justify-content: space-between;
   gap: 20px;
   color: var(--fc-data-text-on-dark);
-  font: 11px var(--fc-data-font-system);
+  font: 12px var(--fc-data-font-system);
   letter-spacing: 0.04em;
 }
 .readingTop > span:first-child::before {
@@ -280,7 +280,7 @@
 }
 .unit {
   color: var(--fc-data-text-on-dark);
-  font-size: 11px;
+  font-size: 12px;
 }
 .reading .metricNote {
   font-size: 13px;
@@ -298,7 +298,7 @@
   margin-top: auto;
 }
 .readingFooter > span {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.9;
   color: var(--fc-data-text-on-dark);
 }
@@ -341,7 +341,7 @@
 }
 .comparisonTop h2 small {
   display: block;
-  font: 11px/1.3 var(--fc-data-font-system);
+  font: 12px/1.3 var(--fc-data-font-system);
   letter-spacing: 0.03em;
   margin-bottom: 12px;
   color: var(--fc-data-text-muted);
@@ -394,7 +394,7 @@
 }
 .columnLabels {
   padding: 24px 12px 14px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--fc-data-text-muted);
   line-height: 1.5;
 }
@@ -404,7 +404,7 @@
 }
 .columnLabels small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
 }
 .axisLabels {
   display: flex;
@@ -460,7 +460,7 @@
   box-shadow: inset 0 0 0 2px var(--fc-data-signal);
 }
 .metricName small {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--fc-data-text-muted);
 }
 .metricName b {
@@ -562,7 +562,7 @@
   display: flex;
   justify-content: space-between;
   padding: 13px 0 0;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--fc-data-text-muted);
 }
 .comparison .chartNote {
@@ -589,7 +589,7 @@
   max-width: 65em;
 }
 .combatContext > span {
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
 }
 @media (max-width: 1250px) {
@@ -944,10 +944,10 @@
   }
   .columnLabels .axisLabels {
     margin-inline: 5px;
-    font-size: 11px;
+    font-size: 12px;
   }
   .axisLabels b {
-    font-size: 11px;
+    font-size: 12px;
   }
   .chartRow {
     gap: 0 9px;
@@ -1003,7 +1003,7 @@
   .ownValue > small,
   .referenceValue > small {
     display: block;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--fc-data-text-muted);
     line-height: 1.2;
     overflow-wrap: anywhere;
@@ -1016,7 +1016,7 @@
     font-size: 16px;
   }
   .chartFoot {
-    font-size: 11px;
+    font-size: 12px;
   }
   .comparison .chartNote {
     font-size: 12px;

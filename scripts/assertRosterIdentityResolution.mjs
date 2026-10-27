@@ -350,7 +350,7 @@ assert.equal(getOwHeroAssetKey('D.Mon'), 'dmon')
 assert.deepEqual(getShareHeroArtwork('D.Mon', 'TANK'), {
   type: 'roster',
   src: '/roster/tank/dmon.png',
-  fallbackSrc: '/heroes/tank/dmon.png',
+  fallbackSrc: '/heroes/tank/dmon.webp',
   slug: 'dmon',
   crop: {
     objectPosition: '50% 48%',
@@ -361,6 +361,7 @@ assert.deepEqual(getShareHeroArtwork('D.Mon', 'TANK'), {
   }
 })
 assert.equal(existsSync(new URL('../public/heroes/tank/dmon.png', import.meta.url)), true)
+assert.equal(existsSync(new URL('../public/heroes/tank/dmon.webp', import.meta.url)), true)
 assert.equal(existsSync(new URL('../public/roster/tank/dmon.png', import.meta.url)), true)
 
 console.log('Roster identity resolution assertions passed.')

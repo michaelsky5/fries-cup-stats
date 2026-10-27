@@ -33,7 +33,7 @@ function getRoleFolder(hero) {
 
 function getHeroImageUrl(hero) {
   const assetKey = getOwHeroAssetKey(hero)
-  return assetKey ? `/heroes/${getRoleFolder(hero)}/${assetKey}.png` : ''
+  return assetKey ? `/heroes/${getRoleFolder(hero)}/${assetKey}.webp` : ''
 }
 
 function getHeroRoleOrder(hero) {
@@ -751,7 +751,7 @@ const MapDetailPage = () => {
           <p className={styles.heroDesc}>
             {isEn
               ? 'A compact readout of this map across valid matches: play volume, top picks, peak performances, team results and recent series.'
-              : uiText("汇总该地图在当前赛季有效对局中的登场频率、英雄选择、单图极值、战队结果与近期交战。", locale)}
+              : uiText("汇总该地图在当前赛季有效对局中的登场频率、英雄选择、单图极值、队伍结果与近期交战。", locale)}
           </p>
 
           <div className={styles.heroSummary}>
@@ -839,7 +839,7 @@ const MapDetailPage = () => {
         <section className={styles.panelSection}>
           <SectionHeader
             kicker="TEAM WIN RATES"
-            title={isEn ? 'Team Results' : uiText("战队表现", locale)}
+            title={isEn ? 'Team Results' : uiText("队伍表现", locale)}
             meta={`TOP ${teamMetaLimit} / ${data.teamWinRates.length} · ${reliableTeamWinRates.length} ${isEn ? 'QUALIFIED' : uiText("稳定样本", locale)}`}
           />
 

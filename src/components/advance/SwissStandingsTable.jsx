@@ -124,7 +124,7 @@ export default function SwissStandingsTable({
           <thead>
             <tr>
               <th className={styles.colRank}>{t('advance.table.rank', uiText("排名", uiLocale))}</th>
-              <th className={styles.colTeam}>{t('advance.table.team', uiText("战队", uiLocale))}</th>
+              <th className={styles.colTeam}>{t('advance.table.team', uiText("队伍", uiLocale))}</th>
               <th>{t('advance.table.matchRecord', uiText("胜负", uiLocale))}</th>
               <th>{t('advance.table.buchholz', uiText("对手分", uiLocale))}</th>
               <th>{t('advance.table.omw', uiText("对手胜率", uiLocale))}</th>

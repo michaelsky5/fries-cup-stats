@@ -49,7 +49,7 @@
   background: var(--brand-black);
   border: 2px solid var(--border-strong);
   color: var(--brand-yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   letter-spacing: 0.08em;
@@ -99,7 +99,7 @@
 .matchStage,
 .matchId,
 .matchIdLink {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   letter-spacing: 0.08em;
@@ -503,7 +503,7 @@
   min-width: 0;
   overflow: hidden;
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1.2;
   letter-spacing: 0.06em;
@@ -574,7 +574,7 @@
   max-width: 100%;
   overflow: hidden;
   color: rgba(42, 42, 42, 0.52);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -665,7 +665,7 @@
 .compositionMetaGrid b {
   overflow: hidden;
   color: rgba(42, 42, 42, 0.58);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   text-overflow: ellipsis;
@@ -708,7 +708,7 @@
   padding: 0 8px;
   background: var(--brand-black);
   color: var(--brand-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -802,7 +802,7 @@
 }
 
 .lineupHeroTokenCompact span {
-  font-size: 10px;
+  font-size: 12px;
   text-align: center;
 }
 
@@ -826,7 +826,7 @@
 
 .compositionRate em {
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -962,7 +962,7 @@
 .teamSpotlightCopy em,
 .teamSpotlightCopy b {
   color: rgba(42, 42, 42, 0.62);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -1134,7 +1134,7 @@
   background: var(--surface-yellow);
   border: 1px solid rgba(42, 42, 42, 0.14);
   color: var(--text-secondary);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   letter-spacing: 0.06em;
@@ -1316,7 +1316,7 @@
   max-width: 100%;
   overflow: hidden;
   color: var(--brand-yellow);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   text-align: center;

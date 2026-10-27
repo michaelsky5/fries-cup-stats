@@ -38,14 +38,14 @@ function MatchCard({ item, variant }) {
     {compact ? <>
       <span className={styles.recordMeta}><strong>{round}</strong><time>{getScheduleTimeLabel(match, locale)}</time></span>
       {duel}
-      <span className={styles.recordReason}>{fact.kind === 'result' ? getMatchFormatLabel(match) + ' · ' + getScheduleStatusLabel(match, locale) : fact.label}</span><i className={styles.recordArrow} aria-hidden="true">↗</i>
+      <span className={styles.recordReason}>{fact.kind === 'result' ? getMatchFormatLabel(match) + ' · ' + getScheduleStatusLabel(match, locale) : fact.label}</span><i className={styles.recordArrow} aria-hidden="true">→</i>
     </> : <>
       <header><span>{primary ? round : stageRound}</span><time>{getScheduleTimeLabel(match, locale)}</time></header>
       {!primary ? <h3>{fact.label}</h3> : null}
       {duel}
       {maps.length ? <ol className={styles.maps} aria-label={en ? 'Published map results' : uiText("已发布单图赛果", locale)}>{maps.map(map => <li key={map.key}><span><i aria-hidden="true">{String(map.order).padStart(2, '0')}</i>{map.name}</span><b>{map.hasScore ? map.score : en ? 'Result TBD' : uiText("赛果待定", locale)}</b></li>)}</ol> : null}
       {!primary ? <p className={styles.featureReason}>{fact.detail}</p> : null}
-      <footer><span>{detailHint}</span><b>{en ? 'View match' : uiText("查看比赛", locale)} <i aria-hidden="true">↗</i></b></footer>
+      <footer><span>{detailHint}</span><b>{en ? 'View match' : uiText("查看比赛", locale)} <i aria-hidden="true">→</i></b></footer>
     </>}
   </Link>
 }
@@ -73,8 +73,8 @@ export default function SignalScheduleFeatured({ hub }) {
       {highlights.primary ? <MatchCard item={highlights.primary} variant="primary" /> : <div className={styles.noFeatured}><h2>{en ? 'Match records are on their way.' : uiText("比赛记录，等待更新。", locale)}</h2><p>{en ? 'Use the schedule to view published fixtures.' : uiText("进入完整赛程，查看已发布的对阵。", locale)}</p></div>}
       <section className={styles.finder} aria-label={en ? 'Find a match' : uiText("查找比赛", locale)}>
         <div className={styles.finderSearch}><h2>{en ? 'Find your match.' : uiText("找到你想看的比赛。", locale)}</h2><ScheduleTeamSearch matches={hub.matches} value={query} onValueChange={setQuery} onSearch={value => search(value)} onSelectTeam={team => search(team.short, team.id)} /></div>
-        <div className={styles.stageLinks}><h3>{en ? 'Browse by stage' : uiText("按阶段回看", locale)}</h3>{stages.map(stage => <Link key={stage.value} to={withSeason('/matches?view=list&stage=' + encodeURIComponent(stage.value))} state={{ restoreScrollY: 0 }}><span>{getScheduleStageLabel(stage.value, locale)}</span><b>{stage.count}<small>{en ? ' matches' : uiText(" 场", locale)}</small></b><i aria-hidden="true">↗</i></Link>)}</div>
-        <Link className={styles.allMatches} to={withSeason('/matches?view=list')} state={{ restoreScrollY: 0 }}>{en ? 'View full schedule' : uiText("查看完整赛程", locale)} <span aria-hidden="true">↗</span></Link>
+        <div className={styles.stageLinks}><h3>{en ? 'Browse by stage' : uiText("按阶段回看", locale)}</h3>{stages.map(stage => <Link key={stage.value} to={withSeason('/matches?view=list&stage=' + encodeURIComponent(stage.value))} state={{ restoreScrollY: 0 }}><span>{getScheduleStageLabel(stage.value, locale)}</span><b>{stage.count}<small>{en ? ' matches' : uiText(" 场", locale)}</small></b><i aria-hidden="true">→</i></Link>)}</div>
+        <Link className={styles.allMatches} to={withSeason('/matches?view=list')} state={{ restoreScrollY: 0 }}>{en ? 'View full schedule' : uiText("查看完整赛程", locale)} <span aria-hidden="true">→</span></Link>
       </section>
     </div>
     {highlights.focus.length ? <section className={styles.more}>
@@ -82,7 +82,7 @@ export default function SignalScheduleFeatured({ hub }) {
       <div className={styles.focusCards}>{highlights.focus.map(item => <MatchCard key={item.match.match_id} item={item} variant="focus" />)}</div>
     </section> : null}
     {highlights.records.length ? <section className={styles.otherRecords}>
-      <header><h2>{en ? 'More matches to revisit' : uiText("还有这些比赛", locale)}</h2><Link to={withSeason('/matches?view=list')} state={{ restoreScrollY: 0 }}>{en ? 'Full schedule' : uiText("完整赛程", locale)} ↗</Link></header>
+      <header><h2>{en ? 'More matches to revisit' : uiText("还有这些比赛", locale)}</h2><Link to={withSeason('/matches?view=list')} state={{ restoreScrollY: 0 }}>{en ? 'Full schedule' : uiText("完整赛程", locale)} →</Link></header>
       <div className={styles.records}>{highlights.records.map(item => <MatchCard key={item.match.match_id} item={item} variant="compact" />)}</div>
     </section> : null}
     <p className={styles.sourceNote}>{en ? 'Match notes follow published results. The full schedule also retains forfeits and awarded results, excluding byes.' : uiText("比赛看点依据已发布赛果整理。完整赛程保留弃权与判罚结果，不包含轮空记录。", locale)}</p>

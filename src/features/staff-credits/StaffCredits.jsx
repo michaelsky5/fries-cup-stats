@@ -16,7 +16,7 @@ export function StaffCreditsHeading({ staffGroup, seasonCode, count, total, loca
   const en = locale === 'en-US'
   const team = staffGroup === 'team'
   return <DirectoryHeading seasonCode={seasonCode} count={count} total={total}
-    kicker={team ? en ? 'TEAM STAFF' : uiText("本届战队职员", locale) : en ? 'EVENT STAFF' : uiText("本届赛事职员", locale)}
+    kicker={team ? en ? 'TEAM STAFF' : uiText("本届队伍职员", locale) : en ? 'EVENT STAFF' : uiText("本届赛事职员", locale)}
     title={eventCenterText(team ? 'teamStaffTitle' : 'eventStaffTitle', locale)}
     description={team ? eventCenterText('teamStaffIntro', locale) : pickUiLocale(locale, '查找赛管与解说，回看参与过的比赛。赛管包含裁判、导播与 OB。', 'Explore match staff and casters. Match staff includes referees, directors and observers.', '운영진과 중계진의 경기 기록을 확인하세요. 운영진에는 심판, 방송 연출, 옵저버가 포함됩니다.', '查找賽管與解說，回看參與過的比賽。賽管包含裁判、導播與 OB。')}
     unit={en ? 'staff records' : uiText("份职员档案", locale)} />
@@ -51,10 +51,10 @@ function CreditFolio({ staff, seasonId, seasonCode, withSeason, locale }) {
   const weightedLength = Array.from(staff.name).reduce((length, char) => length + (/\p{Script=Han}/u.test(char) ? 1 : .56), 0)
   const target = getStaffProfilePath(staff)
   return <article className={styles.folio} data-staff-folio={staff.id} data-staff-group={staff.team ? 'team' : 'event'} aria-label={(en ? 'Selected staff ' : uiText("当前职员 ", locale)) + staff.name}>
-    <header className={styles.folioTop}><span>{seasonCode} <i /> {en ? 'STAFF ARCHIVE' : uiText("职员档案", locale)}</span><b>{staff.team ? en ? 'Team staff' : uiText("战队职员", locale) : en ? 'Match credits' : uiText("赛事署名", locale)}</b></header>
+    <header className={styles.folioTop}><span>{seasonCode} <i /> {en ? 'STAFF ARCHIVE' : uiText("职员档案", locale)}</span><b>{staff.team ? en ? 'Team staff' : uiText("队伍职员", locale) : en ? 'Match credits' : uiText("赛事署名", locale)}</b></header>
     <div className={styles.scene}>
       <span className={styles.backprint} aria-hidden="true">{staff.team ? affiliation.primary : 'STAFF'}</span>
-      <div className={styles.identity} style={{ '--credit-name-units': Math.max(4, weightedLength) }}><span>{eventCenterText('staffIdentity', locale)}</span><h2 data-name-length={weightedLength > 9 ? 'long' : weightedLength > 5.5 ? 'medium' : 'short'}>{staff.name}</h2>{staff.battleTag && staff.battleTag !== staff.name ? <p>{staff.battleTag}</p> : null}<strong className={styles.role}>{staffRoleLabel(staff, locale)}</strong>{staff.team ? <CreditLink className={styles.affiliation} to={withSeason(`/teams/${encodeURIComponent(staff.team.routeId)}`)}>{affiliation.primary}{affiliation.secondary ? ` · ${affiliation.secondary}` : ''} ↗</CreditLink> : null}</div>
+      <div className={styles.identity} style={{ '--credit-name-units': Math.max(4, weightedLength) }}><span>{eventCenterText('staffIdentity', locale)}</span><h2 data-name-length={weightedLength > 9 ? 'long' : weightedLength > 5.5 ? 'medium' : 'short'}>{staff.name}</h2>{staff.battleTag && staff.battleTag !== staff.name ? <p>{staff.battleTag}</p> : null}<strong className={styles.role}>{staffRoleLabel(staff, locale)}</strong>{staff.team ? <CreditLink className={styles.affiliation} to={withSeason(`/teams/${encodeURIComponent(staff.team.routeId)}`)}>{affiliation.primary}{affiliation.secondary ? ` · ${affiliation.secondary}` : ''} →</CreditLink> : null}</div>
       <CreditVisual key={seasonId + ':' + staff.id} staff={staff} seasonId={seasonId} locale={locale} />
     </div>
     {staff.team ? <div className={styles.teamRecord}><div><span>{en ? 'Published team roster' : uiText("队伍报名记录", locale)}</span><strong>{affiliation.primary}</strong>{affiliation.secondary ? <p>{affiliation.secondary}</p> : null}</div><div><span>{en ? 'Players across the season' : uiText("全季收录选手", locale)}</span><b>{staff.team.rosterSize}</b></div></div> : <div className={`${styles.recordNumbers} ${styles.legacyDetails}`}><div><span>{en ? 'Credited matches' : uiText("比赛署名", locale)}</span><b>{staff.matchCount}</b></div><div><span>{en ? 'Stages' : uiText("赛事阶段", locale)}</span><b>{staff.stageCount}</b></div><div><span>{en ? 'Teams seen' : uiText("涉及队伍", locale)}</span><b>{staff.teamCount}</b></div></div>}
@@ -63,14 +63,14 @@ function CreditFolio({ staff, seasonId, seasonCode, withSeason, locale }) {
       <header><span>{pickUiLocale(locale, '参与比赛', 'Match credits', '참여 경기', '參與比賽')}</span><b>{staff.matchCount}<small>{pickUiLocale(locale, ' 场', ' matches', ' 경기', ' 場')}</small></b></header>
       <ul>{(staff.matches || []).slice(0, 3).map(match => {
         const display = getStaffMatchDisplay(match, locale)
-        return <li key={match.match_id}><CreditLink to={withSeason(`/matches/${encodeURIComponent(match.match_id)}`)}><time>{uiText(getMatchTimeLabel(match), locale)}</time><span>{getTeamLabel(match.team_a)} <i>vs</i> {getTeamLabel(match.team_b)}</span><b className={display.isScore ? undefined : styles.matchState}>{display.label}</b><span aria-hidden="true">↗</span></CreditLink></li>
+        return <li key={match.match_id}><CreditLink to={withSeason(`/matches/${encodeURIComponent(match.match_id)}`)}><time>{uiText(getMatchTimeLabel(match), locale)}</time><span>{getTeamLabel(match.team_a)} <i>vs</i> {getTeamLabel(match.team_b)}</span><b className={display.isScore ? undefined : styles.matchState}>{display.label}</b><span aria-hidden="true">→</span></CreditLink></li>
       })}</ul>
       {!staff.matches?.length ? <p>{pickUiLocale(locale, '暂无已发布比赛记录', 'No published match records', '공개된 경기 기록이 없습니다', '暫無已發布比賽記錄')}</p> : null}
     </section> : null}
     <p className={styles.source}>{staff.team ? en ? 'Source · Published team roster' : uiText("来自已发布的队伍报名名单", locale) : staff.role === 'caster' ? en ? 'Source · Published caster credits' : uiText("来自已发布比赛的解说署名", locale) : en ? 'Source · Published official credits' : uiText("来自已发布比赛的赛管署名", locale)}</p>
     <footer className={styles.folioFooter}><CreditLink to={withSeason(target)}>{!staff.team && staff.matchCount > 3
       ? pickUiLocale(locale, `查看全部 ${staff.matchCount} 场比赛`, `View all ${staff.matchCount} matches`, `전체 ${staff.matchCount}경기 보기`, `查看全部 ${staff.matchCount} 場比賽`)
-      : pickUiLocale(locale, '查看完整职员档案', 'Open staff profile', '전체 스태프 기록', '查看完整職員檔案')} <span aria-hidden="true">↗</span></CreditLink></footer>
+      : pickUiLocale(locale, '查看完整职员档案', 'Open staff profile', '전체 스태프 기록', '查看完整職員檔案')} <span aria-hidden="true">→</span></CreditLink></footer>
   </article>
 }
 
@@ -88,7 +88,7 @@ function EventStaffIdentity({ staff, locale }) {
 export default function StaffCredits({ staffGroup, items, focusedStaff, onFocus, mobileExpanded, startIndex, resultCount, directoryRef, controls, pagination, emptyState, ...folioProps }) {
   const uiLocale = useUiLocale()
   const en = folioProps.locale === 'en-US'
-  return <RosterDirectory kind="staff" label={staffGroup === 'team' ? en ? 'Team staff directory' : uiText("战队职员目录", uiLocale) : en ? 'Event staff credits directory' : uiText("赛事职员署名目录", uiLocale)} listTitle={staffGroup === 'team' ? en ? 'TEAM STAFF LIST' : uiText("战队职员索引", uiLocale) : en ? 'EVENT CREDIT LIST' : uiText("赛事职员索引", uiLocale)}
+  return <RosterDirectory kind="staff" label={staffGroup === 'team' ? en ? 'Team staff directory' : uiText("队伍职员目录", uiLocale) : en ? 'Event staff credits directory' : uiText("赛事职员署名目录", uiLocale)} listTitle={staffGroup === 'team' ? en ? 'TEAM STAFF LIST' : uiText("队伍职员索引", uiLocale) : en ? 'EVENT CREDIT LIST' : uiText("赛事职员索引", uiLocale)}
     directoryRef={directoryRef} items={items} focusedKey={focusedStaff?.id} getKey={staff => staff.id} getName={staff => staff.name}
     listHeader={staffGroup === 'event' ? <div className={`${styles.indexHeader} ${styles.indexIdentity}`} data-staff-list-header aria-hidden="true"><span>{pickUiLocale(folioProps.locale, '姓名', 'Name', '이름', '姓名')}</span><span>{pickUiLocale(folioProps.locale, '职责', 'Role', '역할', '職責')}</span><span>{pickUiLocale(folioProps.locale, '参与比赛', 'Matches', '참여 경기', '參與比賽')}</span></div> : null}
     renderIdentity={staff => staffGroup === 'team' ? <span className={directoryStyles.rowIdentity}><strong>{staff.name}</strong><small>{getTeamLabel(staff.team)} <i /> {staffRoleLabel(staff, folioProps.locale)}</small></span> : <EventStaffIdentity staff={staff} locale={folioProps.locale} />}

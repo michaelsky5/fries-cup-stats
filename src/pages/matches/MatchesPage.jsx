@@ -313,7 +313,7 @@ function FeaturedMatchCard({ match, primary = false, compact = false }) {
       </div>
       <b>
         {compact ? null : primary ? uiText("打开冠军战记录", locale) : uiText("查看比赛记录", locale)}
-        <span aria-hidden="true">{compact ? '→' : '↗'}</span>
+        <span aria-hidden="true">{compact ? '→' : '→'}</span>
       </b>
     </Link>
   )
@@ -377,7 +377,7 @@ function ArchiveStageHub({ hub }) {
           <span>{String(getMatchArchiveStages(hub.matches).length).padStart(2, '0')} STAGES / {hub.summary.total} RECORDS</span>
           <strong>{uiText("按阶段回看", uiLocale)}</strong>
           <p>{uiText("沿各个比赛阶段，回看这个赛季的完整比赛档案。", uiLocale)}</p>
-          <Link to={withSeason(cleanMatchesListPath(seasonId, { tab: 'all' }))}>{uiText("查看全部比赛 ", uiLocale)}<span aria-hidden="true">↗</span>
+          <Link to={withSeason(cleanMatchesListPath(seasonId, { tab: 'all' }))}>{uiText("查看全部比赛 ", uiLocale)}<span aria-hidden="true">→</span>
           </Link>
         </div>
         <div className={styles.stageEntryGrid}>
@@ -391,7 +391,7 @@ function ArchiveStageHub({ hub }) {
                 <strong>{link.title}</strong>
                 <span>{link.label}</span>
               </div>
-              <i aria-hidden="true">↗</i>
+              <i aria-hidden="true">→</i>
             </Link>
           ))}
         </div>
@@ -440,7 +440,7 @@ function ArchiveHero({ hub, seasonId }) {
           <p>{uiText("比分停在终场，比赛仍留在档案里。沿着阶段、对手与时间，重新进入这个赛季。", locale)}</p>
           <div className={styles.archiveHeroSummary}>
             <span><strong>{hub.summary.finished}</strong><em>{uiText("场正式比赛完成归档", locale)}</em></span>
-            <Link to={withSeason(cleanMatchesListPath(seasonId, { tab: 'all' }))}>{uiText("浏览完整档案 ", locale)}<b aria-hidden="true">↗</b></Link>
+            <Link to={withSeason(cleanMatchesListPath(seasonId, { tab: 'all' }))}>{uiText("浏览完整档案 ", locale)}<b aria-hidden="true">→</b></Link>
           </div>
         </div>
 
@@ -454,7 +454,7 @@ function ArchiveHero({ hub, seasonId }) {
             <header><span>LAST RECORD</span><strong>{getRoundText(finalMatch)}</strong></header>
             <LogoDuel match={finalMatch} seasonId={seasonId} score large />
             <p>{finalMatch.format || 'TBD'} · {getMatchStatusText(finalMatch)}{mapSummary ? ` · ${mapSummary}` : ''}</p>
-            <footer><span>{getMatchTimeLabel(finalMatch)}</span><strong>OPEN MATCH <i aria-hidden="true">↗</i></strong></footer>
+            <footer><span>{getMatchTimeLabel(finalMatch)}</span><strong>OPEN MATCH <i aria-hidden="true">→</i></strong></footer>
           </Link>
         ) : null}
       </div>
@@ -748,7 +748,7 @@ function FullListView({ rows, groups, filters, options, activeTab, favoriteCount
           <span>VISIBLE RECORDS <em>{activeStageEntry?.label || 'CURRENT SCOPE'}</em></span>
           <strong>{String(rows.length).padStart(2, '0')}</strong>
           <em>{hub?.summary?.total || rows.length}{uiText(" TOTAL / 当前筛选结果", uiLocale)}</em>
-          <Link to={withSeason(cleanMatchesHubPath())} state={{ restoreScrollY: 0 }}>{uiText("返回精选回顾 ", uiLocale)}<b aria-hidden="true">↗</b></Link>
+          <Link to={withSeason(cleanMatchesHubPath())} state={{ restoreScrollY: 0 }}>{uiText("返回精选回顾 ", uiLocale)}<b aria-hidden="true">→</b></Link>
         </div>
       </section>
 

@@ -17,8 +17,8 @@ export default function WeeklyConfirmationCard({ preparation, seasonId, locale, 
     <button type="button" className={styles.mobileToggle} aria-expanded={expanded} aria-controls={actionsId} onClick={() => setExpanded(value => !value)}><span>{t('报名与参赛')}</span><span aria-hidden="true">{expanded ? '−' : '+'}</span></button>
     <div className={styles.actions} id={actionsId}>
       <div className={styles.intro}><span>PLAY THIS WEEK</span><strong>{t('报名与参赛')}</strong></div>
-      <Link className={styles.entry} to={withSeason(`/participate/${encodeURIComponent(seasonId)}`)}><span><small>01 / {t('本赛季报名')}</small><b>{t('首次报名 / 继续报名')}</b></span><span aria-hidden="true">↗</span></Link>
-      <Link className={styles.entry} to={withSeason(`/me?section=team&competition=${encodeURIComponent(seasonId)}`)}><span><small>02 / {t('每周参赛确认')}</small><b>{t('本周参赛确认')}</b></span><span aria-hidden="true">↗</span></Link>
+      <Link className={styles.entry} to={withSeason(`/participate/${encodeURIComponent(seasonId)}`)}><span><small>01 / {t('本赛季报名')}</small><b>{t('首次报名 / 继续报名')}</b></span><span aria-hidden="true">→</span></Link>
+      <Link className={styles.entry} to={withSeason(`/me?section=team&competition=${encodeURIComponent(seasonId)}`)}><span><small>02 / {t('每周参赛确认')}</small><b>{t('本周参赛确认')}</b></span><span aria-hidden="true">→</span></Link>
       <details className={styles.help}>
         <summary>{pickUiLocale(locale, '参赛说明', 'Entry guide', '참가 안내', '參賽說明')}</summary>
         <div className={styles.helpContent}>

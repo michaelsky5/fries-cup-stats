@@ -264,7 +264,7 @@ export default function MatchDetailPage() {
         <button type="button" className={styles.posterBack} onClick={handleBack}>← {backLabel}</button>
         <div className={styles.detailActions}>
           <button type="button" className={styles.textButton} onClick={handleCopyLink}>{isEn ? 'Copy link' : uiText("复制链接", locale)}</button>
-          {roomPath && <Link className={styles.roomActionLink} to={roomPath}>{isEn ? 'Match room' : uiText("比赛房间", locale)} ↗</Link>}
+          {roomPath && <Link className={styles.roomActionLink} to={roomPath}>{isEn ? 'Match room' : uiText("比赛房间", locale)} →</Link>}
         </div>
       </div>
       {copyMessage ? <p className={styles.copyFeedback} role="status">{copyMessage}</p> : null}

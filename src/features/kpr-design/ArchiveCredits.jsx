@@ -12,7 +12,7 @@ export default function ArchiveCredits({ locale, dataStatus, updatedAtText, show
       <p>{uiText('非官方社区网站。守望先锋美术素材版权归 Blizzard Entertainment 所有。', locale)}</p>
       <div className={styles.resources}>
         <span>{text('本站使用 ', 'This site uses ', '이 사이트는 다음 글꼴을 사용합니다: ', '本站使用 ')}<a href="/fonts/harmonyos/LICENSE.txt" target="_blank" rel="noreferrer">HarmonyOS Sans</a></span>
-        <button type="button" aria-haspopup="dialog" onClick={() => setOpen(true)}>{title} <span aria-hidden="true">↗</span></button>
+        <button type="button" aria-haspopup="dialog" onClick={() => setOpen(true)}>{title} <span aria-hidden="true">→</span></button>
       </div>
     </div>
     {showStatus ? <div className={styles.status} data-archive-data-status data-source={dataStatus?.key}>

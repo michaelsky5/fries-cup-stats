@@ -13,6 +13,7 @@ import usePasswordRecovery from './usePasswordRecovery.js'
 import { passwordRecoveryTitle, readPasswordResetLocation } from './passwordRecoveryModel.js'
 import styles from './AuthDialog.module.css'
 import { canSignOutOfAccount, UNSAVED_ACCOUNT_MESSAGE } from '../account-ui/accountNavigationGuard.js'
+import { takePendingSignIn } from './signInRequest.js'
 
 function createLocalAuthError(code) {
   return {
@@ -232,7 +233,6 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
       <section ref={dialogRef} className={styles.dialog} role="dialog" aria-modal="true" aria-label={copy.account}>
         <header className={styles.dialogHeader}>
           <div className={styles.dialogHeading}>
-            <span>FRIES CUP / ACCOUNT</span>
             <h2 tabIndex={-1} className={styles.dialogTitle}>{isRecovery ? passwordRecoveryTitle(recovery.stage, locale, recovery.error) : mode === 'register' ? copy.register : (locale === 'en-US' ? 'Welcome back' : uiText("欢迎回到薯条杯", locale))}</h2>
           </div>
           <button type="button" className={styles.closeButton} onClick={onClose} disabled={recovery.busy || isSubmitting} aria-label={copy.close}>
@@ -419,9 +419,17 @@ export default function AuthButton({ locale = 'zh-CN', dialogOnly = false, atten
     : []
 
   useEffect(() => {
-    window.addEventListener('fries-cup:open-account', openAccount)
-    return () => window.removeEventListener('fries-cup:open-account', openAccount)
+    const onRequest = () => { takePendingSignIn(); openAccount() }
+    window.addEventListener('fries-cup:open-account', onRequest)
+    return () => window.removeEventListener('fries-cup:open-account', onRequest)
   }, [openAccount])
+
+  // 票 2.71: a sign-in asked for before any account control was mounted (the forced password change
+  // replaces the whole router) opens here, on the page the visitor is on.
+  useEffect(() => {
+    if (isBootstrapping) return
+    if (takePendingSignIn() && !isAuthenticated) setOpen(true)
+  }, [isBootstrapping, isAuthenticated])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -444,6 +452,7 @@ export default function AuthButton({ locale = 'zh-CN', dialogOnly = false, atten
       {!dialogOnly ? <div ref={menuRef} className={styles.accountEntry}><button
         type="button"
         className={styles.authButton}
+        data-signed-out={!isBootstrapping && !isAuthenticated ? '' : undefined}
         aria-label={attentionBadges.length ? `${label} · ${attention.ariaLabel}` : label}
         onClick={() => isAuthenticated ? setMenuOpen(value => !value) : openAccount()}
         aria-expanded={isAuthenticated ? menuOpen : undefined}
@@ -459,7 +468,7 @@ export default function AuthButton({ locale = 'zh-CN', dialogOnly = false, atten
         </span>
         <span className={styles.authArrow} aria-hidden="true">⌄</span>
       </button>
-      {menuOpen && isAuthenticated ? <nav id="account-navigation" className={styles.accountMenu} aria-label={isEn ? 'Account navigation' : uiText("账号导航", locale)}><div><strong>{user?.displayName || label}</strong><span>{user?.email}</span></div><Link to={spaceHref} onClick={() => setMenuOpen(false)}><span className={styles.menuLabel}>{isEn ? 'My Space' : uiText("我的空间", locale)}{attentionBadges.map(text => <em key={text}>{text}</em>)}</span> <span>→</span></Link><Link to={roomsHref} onClick={() => setMenuOpen(false)}>{uiText("比赛房", locale)} <span>→</span></Link><Link to={accountHref} onClick={() => setMenuOpen(false)}>{isEn ? 'Account settings' : uiText("账号设置", locale)} <span>↗</span></Link><button type="button" disabled={logoutState === 'busy'} onClick={async () => { if (!canSignOutOfAccount()) { setLogoutState('unsaved'); return } setLogoutState('busy'); try { await logout(); setMenuOpen(false); setLogoutState('') } catch { setLogoutState('error') } }}>{logoutState === 'busy' ? (isEn ? 'Signing out…' : uiText("正在退出…", locale)) : (isEn ? 'Sign out' : uiText("退出登录", locale))}</button>{logoutState === 'unsaved' ? <p role="alert">{isEn ? 'Save or discard your changes before signing out.' : UNSAVED_ACCOUNT_MESSAGE}</p> : null}{logoutState === 'error' ? <p role="alert">{isEn ? 'Sign out failed. Please retry.' : uiText("退出失败，请重试。", locale)}</p> : null}</nav> : null}
+      {menuOpen && isAuthenticated ? <nav id="account-navigation" className={styles.accountMenu} aria-label={isEn ? 'Account navigation' : uiText("账号导航", locale)}><div><strong>{user?.displayName || label}</strong><span>{user?.email}</span></div><Link to={spaceHref} onClick={() => setMenuOpen(false)}><span className={styles.menuLabel}>{isEn ? 'My Space' : uiText("我的空间", locale)}{attentionBadges.map(text => <em key={text}>{text}</em>)}</span> <span>→</span></Link><Link to={roomsHref} onClick={() => setMenuOpen(false)}>{uiText("比赛房", locale)} <span>→</span></Link><Link to={accountHref} onClick={() => setMenuOpen(false)}>{isEn ? 'Account settings' : uiText("账号设置", locale)} <span>→</span></Link><button type="button" disabled={logoutState === 'busy'} onClick={async () => { if (!canSignOutOfAccount()) { setLogoutState('unsaved'); return } setLogoutState('busy'); try { await logout(); setMenuOpen(false); setLogoutState('') } catch { setLogoutState('error') } }}>{logoutState === 'busy' ? (isEn ? 'Signing out…' : uiText("正在退出…", locale)) : (isEn ? 'Sign out' : uiText("退出登录", locale))}</button>{logoutState === 'unsaved' ? <p role="alert">{isEn ? 'Save or discard your changes before signing out.' : UNSAVED_ACCOUNT_MESSAGE}</p> : null}{logoutState === 'error' ? <p role="alert">{isEn ? 'Sign out failed. Please retry.' : uiText("退出失败，请重试。", locale)}</p> : null}</nav> : null}
       </div> : null}
       <AuthDialog open={open} onClose={close} locale={locale} resetLink={resetLink} />
     </>

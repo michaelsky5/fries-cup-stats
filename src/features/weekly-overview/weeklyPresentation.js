@@ -1,6 +1,6 @@
 import { normalizeLocale } from '../../lib/locales.js'
 import { pickUiLocale, translateUiText } from '../../lib/uiText.js'
-import { WEEKLY_STAGE_NAMES, getWeeklyCycleIdentityLabel, getWeeklyMatchIdentity, getWeeklyMatchIdentityLabel, getWeeklyRoundLabel, getWeeklyStageParts, joinWeeklyLabelParts } from '../../lib/weeklyMatchIdentity.js'
+import { WEEKLY_STAGE_NAMES, getWeeklyCycleIdentityLabel, getWeeklyMatchIdentity, getWeeklyRoundLabel, getWeeklyStageParts, joinWeeklyLabelParts } from '../../lib/weeklyMatchIdentity.js'
 import { getMatchFormatLabel } from '../../lib/matchFormat.js'
 import { getPreferredTeamShortName } from '../../lib/teamDisplayIdentity.js'
 const labels = {
@@ -14,18 +14,33 @@ const labels = {
 const isEnglish = locale => String(locale).startsWith('en')
 export const weeklyStatusLabel = (key, locale) => translateUiText(labels[key]?.[isEnglish(locale) ? 1 : 0] || (isEnglish(locale) ? 'To be announced' : '待公布'), locale)
 
-// 人话优先 (票 2.13): the Chinese interface leads with 第一赛段 and keeps the V3.1 code
-// (FCW S1 C1) as small print; English and Korean keep their existing labels.
+// 人话优先 (票 2.13): pages lead with the cycle's name and keep the V3.1 code (FCW S1 C1) as small print.
+// 票 2.80: the name comes from one four-language table — 第二赛段 / Cycle 2 / 사이클 2 / 第二賽段 — so a cycle
+// is called the same thing everywhere on a page (English pages used to mix 第二赛段, FCW S1 C2 and Cycle 2).
 export const isChineseLocale = locale => normalizeLocale(locale || 'zh-CN').startsWith('zh')
-const isTraditional = locale => normalizeLocale(locale) === 'zh-TW'
 const CN_NUMERALS = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
+const PILOT_NAME = ['试运行', 'Pilot', '시범 운영', '試運行']
+
+// The cycle's number, from its sequence, else its name (第一周期 / 第 2 赛段), else its code (C01, FCW S1 C2).
+export function weeklyCycleSequence(cycle) {
+  const raw = cycle?.cycle_sequence ?? cycle?.sequence
+  if (raw !== undefined && raw !== null && raw !== '' && Number.isInteger(Number(raw))) return Number(raw)
+  const name = String(cycle?.cycle_name || cycle?.name || '')
+  if (/试运行|試運行/.test(name)) return 0
+  const numbered = name.match(/第\s*([一二三四五六七八九十]|\d+)\s*(?:赛段|賽段|周期|週期)/)
+  if (numbered) { const index = CN_NUMERALS.indexOf(numbered[1]); return index > 0 ? index : Number(numbered[1]) }
+  const code = String(cycle?.code || cycle?.cycle_code || '').match(/C0*(\d+)$/i)
+  return code ? Number(code[1]) : null
+}
 
 export function weeklyCycleHumanName(cycle, locale) {
-  const sequence = cycle?.cycle_sequence ?? cycle?.sequence
+  const sequence = weeklyCycleSequence(cycle)
+  if (sequence === 0) return pickUiLocale(locale, ...PILOT_NAME)
+  if (sequence > 0) {
+    const numeral = CN_NUMERALS[sequence]
+    return pickUiLocale(locale, numeral ? `第${numeral}赛段` : `第 ${sequence} 赛段`, `Cycle ${sequence}`, `사이클 ${sequence}`, numeral ? `第${numeral}賽段` : `第 ${sequence} 賽段`)
+  }
   const name = String(cycle?.cycle_name || cycle?.name || '').replaceAll('周期', '赛段').trim()
-  if (sequence === 0) return translateUiText(name || '试运行', locale)
-  const numeral = CN_NUMERALS[Number(sequence)]
-  if (Number.isInteger(Number(sequence)) && numeral) return isTraditional(locale) ? `第${numeral}賽段` : `第${numeral}赛段`
   return name ? translateUiText(name, locale) : ''
 }
 
@@ -34,17 +49,18 @@ export function weeklyCycleCode(cycle) {
   return /^FCW S\d+ C\d+$/.test(label) ? label : String(cycle?.code || '')
 }
 
-export const weeklyCycleTitle = (cycle, locale) => (isChineseLocale(locale) && weeklyCycleHumanName(cycle, locale))
-  || getWeeklyCycleIdentityLabel(cycle, locale) || (isEnglish(locale) ? cycle?.code || 'Cycle' : cycle?.name?.replaceAll('周期', '赛段') || cycle?.code || '赛段')
+export const weeklyCycleTitle = (cycle, locale) => weeklyCycleHumanName(cycle, locale)
+  || (isEnglish(locale) ? cycle?.code || 'Cycle' : cycle?.code || pickUiLocale(locale, '赛段', 'Cycle', '사이클', '賽段'))
 
 // A match in a list or card: 第一赛段 · 第 3 周, 第一赛段 · 季后赛 · 决赛, 第一赛段 · 季后赛 · 晋级加赛
 // (票 2.49: playoff and qualifier matches carry no week number). The match number stays on the detail page.
+// 票 2.80: the same shape in every language (Cycle 1 · Week 3, Cycle 1 · Playoffs · Final).
 export function weeklyMatchContextLabel(match, locale) {
-  if (!isChineseLocale(locale)) return getWeeklyMatchIdentityLabel(match, locale)
   const identity = getWeeklyMatchIdentity(match)
   if (!identity) return ''
+  const number = identity.week_number
   const week = getWeeklyStageParts(identity.phase, locale)
-    || [identity.week_number ? translateUiText(`第 ${identity.week_number} 周`, locale) : translateUiText(identity.week_label || '', locale)]
+    || [number ? pickUiLocale(locale, `第 ${number} 周`, `Week ${number}`, `${number}주차`, `第 ${number} 週`) : translateUiText(identity.week_label || '', locale)]
   return joinWeeklyLabelParts([weeklyCycleHumanName(identity, locale), ...week, getWeeklyRoundLabel(match, locale)])
 }
 

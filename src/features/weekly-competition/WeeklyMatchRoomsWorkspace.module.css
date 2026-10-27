@@ -123,7 +123,7 @@
   .matchMeta strong { padding-block: 4px; }
   .workspace .matchHeader h3 { font-size: 26px; gap: 10px; margin-block: 8px; }
   .resultRoute li { display: grid; align-content: start; gap: 6px; padding: 10px; }
-  .resultRoute strong { font-size: 11px; }
+  .resultRoute strong { font-size: 12px; }
   .roomNotice { margin: 16px; }
   .responses { padding: 0 16px 16px; }
   .teamResponse, .opponentResponse { padding: 18px 16px; }

@@ -133,7 +133,7 @@
   place-items: center;
   color: var(--portal-yellow);
   content: "0" counter(data-nav);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.06em;
 }
@@ -182,7 +182,7 @@
   align-items: center;
   gap: 3px;
   color: var(--portal-black);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0;
   line-height: 1;
@@ -317,7 +317,7 @@
   align-items: center;
   gap: 12px;
   color: #9a7200;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.12em;
   line-height: 1;
@@ -387,7 +387,7 @@
 
 .syncBox small {
   color: var(--portal-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -417,7 +417,7 @@
   padding: 0 8px;
   background: var(--portal-black);
   color: var(--portal-yellow);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
   white-space: nowrap;
@@ -433,7 +433,7 @@
 .fallbackSyncNotice > p {
   margin: 0;
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1.45;
 }
@@ -624,7 +624,7 @@
 
   .mobileMenuLabel {
     color: var(--portal-yellow);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 950;
     letter-spacing: 0.08em;
     line-height: 1;
@@ -679,7 +679,7 @@
 
   .mobileNavItemEnglish {
     color: var(--portal-muted);
-    font-size: 10px;
+    font-size: 12px;
     font-style: normal;
     font-weight: 950;
     letter-spacing: 0.08em;
@@ -797,7 +797,7 @@
 .timeNote {
   margin: 28px 0 0;
   padding: 12px 0 0;
-  color: var(--fc-data-text-muted, #66685f);
+  color: var(--fc-data-text-muted, #5f6158);
   font-size: 12px;
   line-height: 1.6;
 }
@@ -852,4 +852,10 @@
   .skeletonCard { padding: 14px 14px 16px; }
   .skeletonCard > i:nth-child(2) { height: 26px; }
   .skeletonCard > span i { flex: 1 1 0; width: auto; }
+}
+
+/* 票 2.77: on phones a player or team page opens with its own back row, which names the season on the player page;
+   the season bar steps aside unless it carries a data notice, a retry or a next step. Titles move up 40px or more. */
+@media (max-width: 600px) {
+  .shell .contentContextDock[data-dossier-route]:not(:has(p, button, a)) { display: none; }
 }

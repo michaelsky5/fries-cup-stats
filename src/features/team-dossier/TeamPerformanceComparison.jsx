@@ -212,7 +212,7 @@ export default function TeamPerformanceComparison({
                         {en && row.id === 'eliminations' ? 'Elims' : label}
                       </span>
                     </b>
-                    <i aria-hidden="true">↗</i>
+                    <i aria-hidden="true">→</i>
                   </span>
                   <span className={styles.plot} aria-hidden="true">
                     <span className={styles.plotGrid} />

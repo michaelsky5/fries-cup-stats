@@ -291,7 +291,7 @@ export function MemberSection({ report, team, rolePeers, ...context }) {
               state={returnState}
               onClick={onLeave}
             >
-              {en ? 'Full player profile' : uiText("完整选手档案", uiLocale)} ↗
+              {en ? 'Full player profile' : uiText("完整选手档案", uiLocale)} →
             </Link>
           </aside>
         ) : (
@@ -493,7 +493,7 @@ export function TrendSection({ report, research, team, ...context }) {
                     {en ? 'opponent' : uiText("对手", locale)} · {item.paired[metric.id].own.count} {en ? 'maps' : uiText("图", locale)}
                   </small>
                 </span>
-                <i aria-hidden="true">↗</i>
+                <i aria-hidden="true">→</i>
               </Link>
             ))}
           </div>
@@ -590,7 +590,7 @@ export function OpponentSection({ report, research, team, seasonId, ...context }
                 state={returnState}
                 onClick={onLeave}
               >
-                {en ? 'Their team analysis' : uiText("进入对手竞技分析", locale)} ↗
+                {en ? 'Their team analysis' : uiText("进入对手竞技分析", locale)} →
               </Link>
             </p>
           </header>
@@ -627,7 +627,7 @@ export function OpponentSection({ report, research, team, seasonId, ...context }
                       <span>
                         {row.timeLabel.split(' ')[0]} · {row.roundLabel}
                       </span>
-                      <b>{row.scoreLabel} ↗</b>
+                      <b>{row.scoreLabel} →</b>
                     </Link>
                     <span>
                       {en ? 'Damage' : uiText("伤害", locale)} {valueLabel(metrics.damage.own.value)} /{' '}

@@ -14,7 +14,7 @@ import { getWeeklyPhaseLabel } from '../../lib/weeklyMatchIdentity.js'
 import WeeklyPlayoffBracket from './WeeklyPlayoffBracket.jsx'
 import WeeklyFinalsPath from './WeeklyFinalsPath.jsx'
 import WeeklySeasonPoints from './WeeklySeasonPoints.jsx'
-import advanceStyles from '../../components/advance/AdvanceSignal.module.css'
+import navStyles from '../../components/navigation/SignalSectionNav.module.css'
 import styles from './SignalWeeklyAdvance.module.css'
 
 const idOf = team => String(team?.id || team?.team_id || '')
@@ -103,19 +103,19 @@ export default function SignalWeeklyAdvance() {
       <div><h1>{eventCenterText('advanceTitle', locale)}</h1><p>{eventCenterText('advanceIntro', locale)}</p></div>
       <div className={styles.headingActions}>
         <WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} onChange={id => change({ cycle: id, week: null, teamId: null, query: null, followed: null, view: null, bracket: null })} />
-        <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">↗</span><small>{t(uiText("回到本周对阵", locale), 'This week’s matchups')}</small></Link>
+        <Link to={overviewPath} className={styles.overviewLink}>{eventCenterText('overviewLink', locale)} <span aria-hidden="true">→</span><small>{t(uiText("回到本周对阵", locale), 'This week’s matchups')}</small></Link>
       </div>
     </header>
-    <nav className={advanceStyles.phaseIndex} data-weekly-phase-index style={{ '--advance-phase-count': stages.length }} aria-label={t(uiText("周赛晋级路径", locale), 'Weekly advancement path')}>
-      <span className={advanceStyles.phaseIndexLabel}><img src="/logos/fries-cup-symbol.png" alt="" /><b>{pickUiLocale(locale, '晋级路线', 'FC / ROUTE', '진출 경로', '晉級路線')}</b></span>
-      <div className={advanceStyles.phaseLinks}>{stages.map((stage, index) => <Link key={stage.id} to={getWeeklyAdvancePhasePath(params, stage.id)} data-status={model.activeStage === stage.id ? 'current' : 'pending'} aria-current={phase === stage.id ? 'page' : undefined}><span>{String(index + 1).padStart(2, '0')} / {stage.title}</span><small>{stage.note}</small></Link>)}</div>
-      <span className={advanceStyles.phaseStamp}><b>{String(stages.findIndex(stage => stage.id === phase) + 1).padStart(2, '0')}</b> / 03</span>
+    {/* 票 2.73: the three stages are sub-page tabs — the shared light tab row with the yellow underline
+        (was a dark numbered dock with its own selected style). */}
+    <nav className={`${navStyles.root} ${styles.phaseTabs}`} data-weekly-phase-index style={{ '--advance-phase-count': stages.length }} aria-label={t(uiText("周赛晋级路径", locale), 'Weekly advancement path')}>
+      {stages.map(stage => <Link key={stage.id} className={navStyles.item} to={getWeeklyAdvancePhasePath(params, stage.id)} data-status={model.activeStage === stage.id ? 'current' : 'pending'} aria-current={phase === stage.id ? 'page' : undefined}><span>{stage.title}</span><small>{stage.note}</small></Link>)}
     </nav>
 
     {phase === 'points' && <WeeklySeasonPoints snapshot={db?.weekly_competition} locale={locale} />}
     {phase === 'points' && <section className={styles.workspace} id="weekly-points" aria-labelledby="weekly-points-title">
       <div className={styles.ranking}>
-        <header className={styles.sectionHeading}><div><p className={styles.eyebrow}>{weeklyCycleTitle(cycle, locale)}</p><h2 id="weekly-points-title">{isPilot ? t(uiText("队伍比赛记录", locale), 'Team match records') : t(uiText("赛段积分", locale), 'Cycle points')}<span aria-live="polite">{t(uiText("{0} 支队伍", locale, [rows.length]), `${rows.length} teams`)}</span></h2></div><span className={styles.selectionHint}>{eventCenterText('advanceSelectHint', locale)} ↗</span></header>
+        <header className={styles.sectionHeading}><div><p className={styles.eyebrow}>{weeklyCycleTitle(cycle, locale)}</p><h2 id="weekly-points-title">{isPilot ? t(uiText("队伍比赛记录", locale), 'Team match records') : t(uiText("赛段积分", locale), 'Cycle points')}<span aria-live="polite">{t(uiText("{0} 支队伍", locale, [rows.length]), `${rows.length} teams`)}</span></h2></div><span className={styles.selectionHint}>{eventCenterText('advanceSelectHint', locale)} →</span></header>
         <p className={styles.pointsIntro}>{isPilot ? t(uiText("本赛段不计积分，比赛记录照常保留。", locale), 'This cycle keeps match records without awarding standings points.') : eventCenterText('latestCyclePoints', locale)}</p>
         <div className={styles.filters}>
           <label className={styles.search}><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg><ImeSafeInput type="search" value={query} onValueChange={value => change({ query: value })} placeholder={t(uiText("搜索队伍…", locale), 'Search teams…')} aria-label={t(uiText("搜索积分榜队伍", locale), 'Search standings teams')} /></label>
@@ -126,7 +126,7 @@ export default function SignalWeeklyAdvance() {
           <thead><tr>{hasStandings && <th scope="col">{t(uiText("名次", locale), 'Rank')}</th>}<th scope="col">{t(uiText("队伍", locale), 'Team')}</th>{hasStandings && <><th scope="col">{t(uiText("已赛", locale), 'Played')}</th><th scope="col" className={styles.recordColumn}>{t(uiText("胜 / 平 / 负", locale), 'W / D / L')}</th><th scope="col">{t(uiText("积分", locale), 'Pts')}</th></>}</tr></thead>
           <tbody>{rows.map(row => <tr key={row.id} data-selected={row.id === selected?.id || undefined}>
             {hasStandings && <td className={styles.rank}><b>{rankLabel(row.standing?.display_rank)}</b>{row.standing?.tied && <small>{t(uiText("并列", locale), 'Tied')}</small>}</td>}
-            <th scope="row"><button type="button" className={styles.teamButton} aria-pressed={row.id === selected?.id} onClick={() => chooseTeam(row.id)}><TeamLogo team={row.team} seasonId={seasonId} className={styles.logo} /><span><b>{weeklyTeamShort(row.team)}</b><small>{row.team?.name || row.team?.team_name}</small></span><span className={styles.rowArrow} aria-hidden="true">↗</span></button></th>
+            <th scope="row"><button type="button" className={styles.teamButton} aria-pressed={row.id === selected?.id} onClick={() => chooseTeam(row.id)}><TeamLogo team={row.team} seasonId={seasonId} className={styles.logo} /><span><b>{weeklyTeamShort(row.team)}</b><small>{row.team?.name || row.team?.team_name}</small></span><span className={styles.rowArrow} aria-hidden="true">→</span></button></th>
             {hasStandings && <><td>{weeklyScore(row.standing?.played)}</td><td className={styles.recordColumn}>{[row.standing?.wins, row.standing?.draws, row.standing?.losses].map(weeklyScore).join(' / ')}</td><td className={styles.points}>{weeklyScore(row.standing?.points)}</td></>}
           </tr>)}</tbody>
         </table> : <div className={styles.empty}><h3>{!model.totalTeams ? t(uiText("等待赛段记录公布。", locale), 'Awaiting cycle records.') : followedOnly && !followedKey ? t(uiText("先关注一支想看的队伍。", locale), 'Start with a team to follow.') : t(uiText("没有符合条件的队伍。", locale), 'No matching teams.')}</h3><p>{!model.totalTeams ? t(uiText("已发布的积分与对阵会在这里呈现。", locale), 'Published standings and fixtures will appear here.') : t(uiText("可以调整搜索或重置筛选。", locale), 'Adjust your search or reset the filters.')}</p>{model.hasFilters && <button type="button" onClick={reset}>{t(uiText("重置筛选", locale), 'Reset filters')} ↺</button>}</div>}
@@ -147,13 +147,13 @@ export default function SignalWeeklyAdvance() {
               const date = schedule.hasSchedule ? schedule.label.replace('TBD', t('时间待定', 'Time TBD')) : t('时间待定', 'Time TBD')
               const dateLabel = match.state === 'postponed' && schedule.hasSchedule ? t(`原定 ${date}`, `Was ${date}`) : date
               return <Link className={styles.fixture} key={match.id} to={withSeason(`/matches/${encodeURIComponent(match.id)}`)} {...returnProps} data-state={match.state} aria-label={`${weeklyWeekTitle(item, locale)} · ${weeklyTeamShort(selected.team)} ${score} ${weeklyTeamShort(opponent)} · ${weeklyStatusLabel(match.state, locale)}`}>
-                <span className={styles.opponent}><TeamLogo team={opponent} seasonId={seasonId} className={styles.opponentLogo} /><b>{weeklyTeamShort(opponent)}</b></span><strong className={styles.fixtureScore}>{score}</strong><span className={styles.fixtureArrow} aria-hidden="true">↗</span>
+                <span className={styles.opponent}><TeamLogo team={opponent} seasonId={seasonId} className={styles.opponentLogo} /><b>{weeklyTeamShort(opponent)}</b></span><strong className={styles.fixtureScore}>{score}</strong><span className={styles.fixtureArrow} aria-hidden="true">→</span>
                 <span className={styles.fixtureDate}>{dateLabel}</span><span className={styles.matchState}>{weeklyStatusLabel(match.state, locale)}</span>
               </Link>
             }) : <p className={styles.noFixture}>{t(uiText("无公开对阵", locale), 'No public fixture')}</p>}
           </li>)}</ol>
           {!journey.length && <p className={styles.noFixture}>{t(uiText("暂无已发布周次。", locale), 'No published weeks yet.')}</p>}
-          <Link className={styles.scheduleLink} to={withSeason(`/matches?cycle=${encodeURIComponent(cycle.id)}&week=all&teamId=${encodeURIComponent(selected.id)}`)}>{t(uiText("查看该队完整赛程", locale), 'View this team’s full schedule')} <span aria-hidden="true">↗</span></Link>
+          <Link className={styles.scheduleLink} to={withSeason(`/matches?cycle=${encodeURIComponent(cycle.id)}&week=all&teamId=${encodeURIComponent(selected.id)}`)}>{t(uiText("查看该队完整赛程", locale), 'View this team’s full schedule')} <span aria-hidden="true">→</span></Link>
         </> : <div className={styles.journeyEmpty}><span>TEAM / RESULTS</span><h2 id="weekly-team-title">{eventCenterText('advanceEmptyTitle', locale)}</h2><p>{eventCenterText('advanceEmptyIntro', locale)}</p></div>}
       </aside>
     </section>}

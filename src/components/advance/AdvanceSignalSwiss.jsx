@@ -137,7 +137,7 @@ function SwissTraceStep({ step, seasonId, locale, withSeason }) {
         <strong>{step.opponent ? teamShort(step.opponent) : copy(locale, uiText("无对阵", locale), 'NO MATCH')}</strong>
         <b>{step.score}</b>
       </div>
-      <footer><span>{step.record}</span><small>{step.match ? formatShortDateTime(step.match) : copy(locale, uiText("本轮未出赛", locale), 'No match this round')}</small><em aria-hidden="true">{step.matchId ? '↗' : '·'}</em></footer>
+      <footer><span>{step.record}</span><small>{step.match ? formatShortDateTime(step.match) : copy(locale, uiText("本轮未出赛", locale), 'No match this round')}</small><em aria-hidden="true">{step.matchId ? '→' : '·'}</em></footer>
     </>
   )
 
@@ -411,7 +411,7 @@ export default function AdvanceSignalSwiss({
                     <div><dt>{copy(locale, uiText("去向", locale), 'OUTCOME')}</dt><dd>{t(`advance.zone.${selectedRow.status}`, selectedRow.status)}</dd></div>
                   </dl>
                   <AdvanceRecordLink className={styles.swissTraceProfileLink} to={withSeason(`/teams/${teamRouteId(selectedRow)}/analysis`)}>
-                    <span>{copy(locale, uiText("查看队伍档案", locale), 'Open team profile')}</span><b aria-hidden="true">↗</b>
+                    <span>{copy(locale, uiText("查看队伍档案", locale), 'Open team profile')}</span><b aria-hidden="true">→</b>
                   </AdvanceRecordLink>
                 </div>
                 <div className={styles.swissLedgerDetailBody}>
@@ -437,7 +437,7 @@ export default function AdvanceSignalSwiss({
 
           <div className={styles.swissLedgerTable}>
             <div className={styles.swissLedgerHead} aria-hidden="true">
-              <span>NO.</span><span>{copy(locale, uiText("战队", locale), 'TEAM')}</span><span>{copy(locale, uiText("胜负", locale), 'W—L')}</span><span>{copy(locale, uiText("对手分", locale), 'BUCHHOLZ')}</span><span>{copy(locale, uiText("对手胜率", locale), 'OMW')}</span><span>{copy(locale, uiText("净胜", locale), 'DIFF')}</span><span>{copy(locale, uiText("去向", locale), 'OUTCOME')}</span>
+              <span>NO.</span><span>{copy(locale, uiText("队伍", locale), 'TEAM')}</span><span>{copy(locale, uiText("胜负", locale), 'W—L')}</span><span>{copy(locale, uiText("对手分", locale), 'BUCHHOLZ')}</span><span>{copy(locale, uiText("对手胜率", locale), 'OMW')}</span><span>{copy(locale, uiText("净胜", locale), 'DIFF')}</span><span>{copy(locale, uiText("去向", locale), 'OUTCOME')}</span>
             </div>
             <div
               className={styles.swissLedgerScroller}
@@ -489,7 +489,7 @@ export default function AdvanceSignalSwiss({
               <AdvanceRecordLink key={matchRouteId(match)} to={withSeason(`/matches/${matchRouteId(match)}`)}>
                 <strong>{teamShort(match.team_a)} <i>VS</i> {teamShort(match.team_b)}</strong>
                 <small>{formatShortDateTime(match) || copy(locale, uiText("待定", locale), 'TBD')}</small>
-                <b aria-hidden="true">↗</b>
+                <b aria-hidden="true">→</b>
               </AdvanceRecordLink>
             ))}
           </aside>

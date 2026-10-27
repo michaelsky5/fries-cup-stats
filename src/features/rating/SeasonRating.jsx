@@ -175,7 +175,7 @@ export default function SeasonRating({ entry, locale = 'zh-CN', variant = 'compa
         event.stopPropagation()
         setOpenDesign(event.currentTarget.closest('[data-design="kpr"], [data-design="signal"]') ? 'signal' : 'original')
       }} onKeyDown={event => event.stopPropagation()}>
-      {explanationOnly ? (en ? 'Rating details' : uiText("评分依据", locale)) : <><b>{formatSeasonRatingValue(entry)}</b>{entry.statisticalRating && entry.eligible ? null : <small>{entry.eligible ? (en ? 'Details ↗' : uiText("依据 ↗", locale)) : `${getSeasonRatingStatusLabel(entry, locale)} ↗`}</small>}</>}
+      {explanationOnly ? (en ? 'Rating details' : uiText("评分依据", locale)) : <><b>{formatSeasonRatingValue(entry)}</b>{entry.statisticalRating && entry.eligible ? null : <small>{entry.eligible ? (en ? 'Details →' : uiText("依据 →", locale)) : `${getSeasonRatingStatusLabel(entry, locale)} →`}</small>}</>}
     </button>
     {openDesign ? <RatingExplanation entry={entry} locale={locale} signal={openDesign === 'signal'} onClose={() => setOpenDesign(null)} /> : null}
   </>
