@@ -343,3 +343,13 @@
 @media (max-width: 600px) { .attentionBadge { display: none; } }
 /* 601–640px: the dock has room for the avatar only (as on phones); the name was being clipped mid-character. */
 @media (min-width: 601px) and (max-width: 640px) { :global([data-design="kpr"][data-design-edition="hybrid"]) .authCopy { display: none; } }
+
+/* 票 2.77: signed out on a phone, the corner says 「登录」 instead of showing an 「FC」 avatar. */
+@media (max-width: 640px) {
+  :global([data-design="kpr"]) .authButton[data-signed-out] { width: auto; min-width: 44px; padding: 0 8px; }
+  :global([data-design="kpr"]) .authButton[data-signed-out] .avatar { display: none; }
+  :global([data-design="kpr"]) .authButton[data-signed-out] .authCopy { display: grid; }
+  :global([data-design="kpr"]) .authButton[data-signed-out] .authMode,
+  :global([data-design="kpr"]) .authButton[data-signed-out] .authArrow { display: none; }
+  :global([data-design="kpr"]) .authButton[data-signed-out] .authName { max-width: 64px; font-size: 13px; font-weight: 750; }
+}

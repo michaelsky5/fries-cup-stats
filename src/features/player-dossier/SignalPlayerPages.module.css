@@ -256,3 +256,10 @@
   .analysisTabs button { font-size: 13px; gap: 5px; }
 }
 @media (max-width: 760px) { .pageTop > button { min-height: 44px; } } /* 票 2.75 */
+/* 票 2.77: phones put the season name on the back row (the season bar is hidden there). */
+.pageSeason { display: none; }
+@media (max-width: 600px) {
+  .pageTop { grid-template-columns: auto minmax(0, 1fr); column-gap: 12px; }
+  .pageTop > nav { grid-column: 1 / -1; }
+  .pageSeason { display: block; justify-self: end; min-width: 0; overflow: hidden; color: var(--fc-data-text-muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+}

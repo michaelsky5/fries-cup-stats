@@ -254,7 +254,8 @@ export default function RosterHubPage() {
     { count: model.eventStaffCount, label: en ? 'event staff records' : uiText("份赛事职员档案", locale), href: '/staff?group=event' }
   ]
   return <div className={indexStyles.shell + ' ' + styles.shell} data-roster-directory="overview" data-i18n-ignore>
-    <RosterSubnav presentation="index" />
+    {/* 票 2.77: phones already have the 总览 / 晋级 / 阵容 row and the four directory links below, so this second tab row is desktop-only. */}
+    <div className={styles.hubSubnav}><RosterSubnav presentation="index" /></div>
     {/* 票 2.40: same title row as the other pages with tabs; the dark block below opens with the search. */}
     <div className={styles.pageHeading}><SignalDataHeading compact title={pickUiLocale(locale, '参赛阵容', 'Event roster', '참가자 명단', '參賽陣容')} description={introCopy} /></div>
     <section className={styles.hero} aria-label={en ? 'The people of this season' : uiText("本届参赛阵容", locale)}>

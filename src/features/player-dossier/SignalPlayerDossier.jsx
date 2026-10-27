@@ -44,8 +44,10 @@ export default function SignalPlayerDossier({ db, dossier, season, seasonId, loc
     ? pickUiLocale(locale, '已关注', 'Following', '팔로우 중', '已追蹤')
     : favoriteDisabled ? pickUiLocale(locale, '关注已满', 'Follow limit reached', '팔로우 한도 도달', '追蹤已滿') : pickUiLocale(locale, '关注选手', 'Follow player', '선수 팔로우', '追蹤選手')
 
+  // 票 2.77: on phones the back row also names the season (the season bar above is hidden there).
+  const seasonName = season?.name?.zh ? pickUiLocale(locale, season.name.zh, season.name.en, uiText(season.name.zh, 'ko-KR'), uiText(season.name.zh, 'zh-TW')) : season?.publicCode || seasonId
   return <article className={analysisPage ? styles.dossier : archiveStyles.archiveHost} data-player-dossier="signal" data-role={active.role} data-player-page={page}>
-    <div className={pages.pageTop}><button type="button" onClick={onBack}>← {backLabel}</button><nav className={`${pages.pageNav} ${navStyles.root}`} aria-label={en ? 'Player pages' : pickUiLocale(locale, '选手页面', 'Player pages', '선수 페이지', '選手頁面')} data-archive-tabs>
+    <div className={pages.pageTop}><button type="button" onClick={onBack}>← {backLabel}</button><span className={pages.pageSeason}>{seasonName}</span><nav className={`${pages.pageNav} ${navStyles.root}`} aria-label={en ? 'Player pages' : pickUiLocale(locale, '选手页面', 'Player pages', '선수 페이지', '選手頁面')} data-archive-tabs>
       <div>{PLAYER_ARCHIVE_PAGES.map(([key, ...labels]) => <Link key={key} {...pageLink(key)} className={navStyles.item} aria-current={page === key ? 'page' : undefined}>{pickUiLocale(locale, ...labels)}</Link>)}</div>
     </nav></div>
     <div className={pages.titleRow}>

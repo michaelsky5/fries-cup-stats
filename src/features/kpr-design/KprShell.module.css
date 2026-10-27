@@ -1059,6 +1059,8 @@
   :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .headerRight { height: 46px; min-height: 46px; align-items: stretch; }
   :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .accountCluster { height: 44px; min-height: 44px; border-left: 1px solid rgba(255, 255, 255, .15); }
   :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .accountCluster button { width: 44px; height: 44px; min-height: 44px; }
+  /* 票 2.77: signed out, the account cell reads 「登录」: two characters keep it 44px, longer labels widen it. */
+  :global([data-design='kpr'][data-design-edition='hybrid'] [data-phone-navigation='true']) .accountCluster button[data-signed-out] { width: auto; min-width: 44px; padding: 0 8px; }
 }
 
 /* 票 2.67: signed out, 「我的关注」 is its own cell of the control dock, left of 「登录」; phones keep it in the menu sheet. */

@@ -254,3 +254,6 @@
   .method summary { min-height: 44px; box-sizing: border-box; padding-block: 12px; }
 }
 @media (max-width: 760px) { .teamStaff a { min-width: 44px; } } /* 票 2.75: short names */
+/* 票 2.77: one tab row on phones (the overview row); the roster sub-tabs stay on wider screens. */
+.hubSubnav { display: contents; }
+@media (max-width: 600px) { .hubSubnav { display: none; } }

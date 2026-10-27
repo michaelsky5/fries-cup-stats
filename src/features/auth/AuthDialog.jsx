@@ -452,6 +452,7 @@ export default function AuthButton({ locale = 'zh-CN', dialogOnly = false, atten
       {!dialogOnly ? <div ref={menuRef} className={styles.accountEntry}><button
         type="button"
         className={styles.authButton}
+        data-signed-out={!isBootstrapping && !isAuthenticated ? '' : undefined}
         aria-label={attentionBadges.length ? `${label} · ${attention.ariaLabel}` : label}
         onClick={() => isAuthenticated ? setMenuOpen(value => !value) : openAccount()}
         aria-expanded={isAuthenticated ? menuOpen : undefined}
