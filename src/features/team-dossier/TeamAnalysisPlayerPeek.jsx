@@ -35,12 +35,12 @@ export default function TeamAnalysisPlayerPeek({ report, params, updateQuery, on
             <span className={styles.metricName}>{en ? metric.en : uiText(metric.zh, locale)}<small>{measure.count} {en ? 'paired maps' : uiText("图可比", locale)}</small></span>
             <span className={styles.metricOwn}><b>{valueLabel(measure.own)}</b>{measure.own !== null ? <i aria-hidden="true" style={{ width: measure.own / max * 100 + '%' }} /> : null}</span>
             <span className={styles.metricReference}><span className={styles.referenceLabel}>{en ? 'Opposing role' : uiText("对手同职责", locale)} </span><b>{valueLabel(measure.opponent)}</b>{measure.opponent !== null ? <i aria-hidden="true" style={{ width: measure.opponent / max * 100 + '%' }} /> : null}</span>
-            <span className={styles.metricDelta}>{measure.difference === null ? '—' : `${measure.difference > 0 ? '+' : ''}${measure.difference.toFixed(1)}%`} <i aria-hidden="true">↗</i></span>
+            <span className={styles.metricDelta}>{measure.difference === null ? '—' : `${measure.difference > 0 ? '+' : ''}${measure.difference.toFixed(1)}%`} <i aria-hidden="true">→</i></span>
           </button>
         })}
         <p>{en ? 'Same maps, same recorded role; opposing players are time-weighted. Higher is not always better.' : uiText("对照同场同职责选手，按出场时间加权；数值高低不直接等于好坏。", locale)}</p>
       </div> : <div className={styles.playerEmpty}><p>{en ? 'Performance values remain unknown. The registered profile is still available.' : uiText("表现数值保持未知，仍可查看已登记的成员资料。", locale)}</p></div>}
     </div>
-    <button className={styles.playerMore} type="button" onClick={() => onInspect(member)}>{en ? 'Explore player performance' : uiText("查看这位成员的完整表现", locale)} <span aria-hidden="true">↗</span></button>
+    <button className={styles.playerMore} type="button" onClick={() => onInspect(member)}>{en ? 'Explore player performance' : uiText("查看这位成员的完整表现", locale)} <span aria-hidden="true">→</span></button>
   </section>
 }

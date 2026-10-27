@@ -71,7 +71,7 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
       {state.event !== 'welcome' && <p className={styles.response} role="status">✓ {text[`room.event.${state.event}`] || text['room.saved']}</p>}
     </section>
   </>
-  const after = <footer className={styles.after} data-i18n-ignore><p>{text['room.after']}</p><Link to={withLocale('/me?section=matches', locale)}>{text['room.real-entry']} ↗</Link></footer>
+  const after = <footer className={styles.after} data-i18n-ignore><p>{text['room.after']}</p><Link to={withLocale('/me?section=matches', locale)}>{text['room.real-entry']} →</Link></footer>
   return <div className={styles.page} lang={locale} data-frame-only={frameOnly} data-mobile={mobile}>
     {mobile ? <>
       <header className={styles.mobileBar} data-i18n-ignore><strong>{text['room.title']}</strong><button type="button" onClick={() => setGuideOpen(true)} aria-haspopup="dialog">{text['room.instructions']}</button></header>

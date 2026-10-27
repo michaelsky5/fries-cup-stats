@@ -12,7 +12,7 @@ import useKprStory from './useKprStory.js'
 import useStagePointer from './useStagePointer.js'
 import styles from './KprStageArchive.module.css'
 
-const Arrow = () => <span aria-hidden="true">↗</span>
+const Arrow = () => <span aria-hidden="true">→</span>
 
 function PlayerRecord({ entry, locale, championName }) {
   const isEn = locale === 'en-US'

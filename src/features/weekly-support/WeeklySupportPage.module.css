@@ -8,7 +8,7 @@
 .page h2, .page h3, .page p, .page dl, .page dd, .page ol, .page ul { margin: 0; }
 .page ol, .page ul { padding: 0; list-style: none; }
 
-.hero { padding: 18px 0 24px; border-bottom: 1px solid var(--line); }
+.hero { padding: 6px 0 24px; border-bottom: 1px solid var(--line); }
 .hero h1 { margin: 8px 0 10px; font-size: var(--fc-data-index-title-size, 44px); font-weight: 900; line-height: var(--fc-data-index-title-leading, 1.05); letter-spacing: -.04em; }
 .lead { max-width: 62ch; color: var(--muted); font-size: 15px; line-height: 1.75; }
 .heroActions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; margin-top: 20px; }
@@ -19,8 +19,9 @@
 .secondary { border: 1px solid var(--fc-data-line-strong, rgb(24 26 23 / 38%)); }
 .page .primary:hover { background: var(--fc-data-primary-bg-hover, #ffd64a); }
 .secondary:hover { text-decoration: underline; text-underline-offset: 4px; }
-.back { margin-left: auto; color: var(--muted); font-size: 12px; }
-.back::before { content: '← '; }
+/* 票 2.72: 「← 返回赛事总览」 top-left, above the title, like the other back rows. */
+.page .back { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--muted); font-size: 13px; font-weight: 650; }
+.page .back:hover { color: var(--ink); }
 
 .sectionNav { display: flex; gap: 28px; overflow-x: auto; padding: 0; border-bottom: 1px solid var(--line); scrollbar-width: none; }
 .sectionNav a { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; white-space: nowrap; font-size: 13px; font-weight: 700; border-bottom: 2px solid transparent; }
@@ -190,8 +191,7 @@
 }
 @media (max-width: 760px) {
   .hero h1 { font-size: 34px; }
-  .heroActions > a:not(.back) { flex: 1 1 100%; justify-content: space-between; }
-  .back { margin-left: 0; }
+  .heroActions > a { flex: 1 1 100%; justify-content: space-between; }
   .sectionNav { gap: 20px; }
   .figures article { padding: 16px 12px 14px 0; }
   .figures article:nth-child(odd) { padding-left: 0; }

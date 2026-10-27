@@ -31,7 +31,7 @@ export function RosterIndexHeading({ title, description, count, unit, code, chil
 
 function ArchiveLink({ to, children, className = '', label }) {
   const location = useLocation()
-  return <Link to={to} state={getReturnState(location)} onClick={() => saveReturnScroll(location)} className={className} aria-label={label}>{children}<span aria-hidden="true">↗</span></Link>
+  return <Link to={to} state={getReturnState(location)} onClick={() => saveReturnScroll(location)} className={className} aria-label={label}>{children}<span aria-hidden="true">→</span></Link>
 }
 
 function FollowButton({ subject, onToggle, disabled, en }) {

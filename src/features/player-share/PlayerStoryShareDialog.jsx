@@ -93,7 +93,7 @@ export default function PlayerStoryShareDialog({ dossier, appearances, seasonCod
       </fieldset>
       <div className={styles.previewTools}><p>{zoomed ? text('滑动查看完整卡面', 'Scroll to inspect the full image') : text('卡面预览', 'Image preview')}</p><button ref={previewToggleRef} type="button" aria-expanded={zoomed} aria-controls="player-story-preview" onClick={toggleZoom}>{zoomed ? text('返回分享设置', 'Back to share options') : text('放大查看', 'View larger')} <span aria-hidden="true">{zoomed ? '↙' : '↗'}</span></button></div>
       <div id="player-story-preview" className={styles.preview} data-zoomed={zoomed || undefined} ref={previewRef} role="region" aria-label={text('分享图预览', 'Share image preview')} tabIndex={zoomed ? 0 : -1}><div className={styles.frame} style={{ width: 1600 * previewScale, height: 900 * previewScale }}><div className={styles.scaled} style={{ transform: `scale(${previewScale})` }}><PlayerStoryShareCard model={model} /></div></div></div>
-      <footer className={styles.footer}><p role="status">{status || text('选择会直接用于导出的卡面。', 'Your choices are reflected in the exported image.')}</p><button type="button" onClick={exportCard} disabled={exporting}>{exporting ? text('正在生成…', 'Creating…') : text('保存分享图', 'Save image')} ↗</button></footer>
+      <footer className={styles.footer}><p role="status">{status || text('选择会直接用于导出的卡面。', 'Your choices are reflected in the exported image.')}</p><button type="button" onClick={exportCard} disabled={exporting}>{exporting ? text('正在生成…', 'Creating…') : text('保存分享图', 'Save image')}</button></footer>
       <div className={styles.exportMount} aria-hidden="true"><div ref={exportRef}><PlayerStoryShareCard model={model} /></div></div>
     </section>
   </div>, document.body)

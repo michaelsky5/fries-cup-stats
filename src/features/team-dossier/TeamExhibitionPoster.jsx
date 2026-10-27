@@ -77,7 +77,7 @@ export default function TeamExhibitionPoster({
               <div className={styles.credentialName}><strong>{team.shortName}</strong><span>{team.fullName || team.shortName}</span></div>
               <div className={styles.credentialFoot}><span>{en ? 'SEASON EDITION' : uiText("赛季档案", locale)}</span><b>{year || seasonId}</b></div>
             </div>
-            <div className={styles.resultSlip}><span>{advanceState.heading}</span><strong>{advanceState.label}</strong><i aria-hidden="true">↗</i></div>
+            <div className={styles.resultSlip}><span>{advanceState.heading}</span><strong>{advanceState.label}</strong><i aria-hidden="true">→</i></div>
           </div>
           <div className={styles.objectAnnotation}><span aria-hidden="true">└</span><p>{en ? 'Roster and match records.' : uiText("本届参赛名单与比赛记录。", locale)}<small>{dates.length ? dates.join(' — ') : en ? 'Registered roster' : uiText("注册名单已留档", locale)}</small></p></div>
         </div>
@@ -108,7 +108,7 @@ export default function TeamExhibitionPoster({
             <div className={styles.memberPosterTop}><span>{getRosterRoleLabel(selected?.registrationRole || getRosterRegistrationRole(selected?.role), locale) || (en ? 'ROSTER' : uiText("注册名单", locale))}</span><b>{seasonId} / {ordinal}</b></div>
             <div className={styles.memberPortrait} key={id}><Portrait player={selected} member={member} locale={locale} priority /><span className={styles.posterPrint} aria-hidden="true">{team.shortName}</span></div>
             <div className={styles.memberPosterName}><h3>{selected ? getDossierPlayerName(selected) : en ? 'To be announced' : uiText("等待名单", locale)}</h3><span>{member?.maps ? (en ? member.maps + ' maps · ' + member.series + ' series' : uiText("{0} 图出场 · {1} 场比赛", locale, [member.maps, member.series])) : en ? 'No published appearances' : uiText("尚无已发布的出场记录", locale)}</span></div>
-            <button type="button" className={styles.openMember} onClick={() => onOpenMember(id)} disabled={!selected} aria-haspopup="dialog">{en ? 'Explore player records' : uiText("查看这位成员的记录", locale)}<span aria-hidden="true">↗</span></button>
+            <button type="button" className={styles.openMember} onClick={() => onOpenMember(id)} disabled={!selected} aria-haspopup="dialog">{en ? 'Explore player records' : uiText("查看这位成员的记录", locale)}<span aria-hidden="true">→</span></button>
           </div>
           <aside className={styles.connections}>
             <span className={styles.connectionTitle}>{en ? 'ON THE SAME MAP' : uiText("并肩出场", locale)}</span>

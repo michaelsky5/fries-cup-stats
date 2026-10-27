@@ -47,7 +47,7 @@ export default function FdLeaderboardSpotlight({ entry, withSeason, locale = 'zh
             <div><dt>{isEn ? 'Maps played' : uiText("出场地图", locale)}</dt><dd>{formatInt(entry.roleMapsPlayed)}</dd></div>
             <div><dt>{isEn ? 'Playtime' : uiText("出场时间", locale)}</dt><dd>{formatPlayerTime({ raw_time_mins: entry.roleTimeMins, total_time_played: entry.total_time_played })}</dd></div>
           </dl>
-          <span className={styles.spotlightCta}>{isEn ? 'OPEN PLAYER DOSSIER' : uiText("打开选手档案", locale)}<b aria-hidden="true">↗</b></span>
+          <span className={styles.spotlightCta}>{isEn ? 'OPEN PLAYER DOSSIER' : uiText("打开选手档案", locale)}<b aria-hidden="true">→</b></span>
         </aside>
       </div>
     </Link>

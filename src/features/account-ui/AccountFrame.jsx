@@ -53,6 +53,6 @@ export default function AccountFrame({ children, title, description, aside, comp
       <header className={styles.intro}><div><h1>{title}</h1>{description && <p>{description}</p>}</div>{aside}</header>
       {children}
     </main>
-    <footer className={styles.footer}><span>FRIES CUP <b>{pickUiLocale(locale, '赛事中心', 'EVENT CENTER', '대회 센터', '賽事中心')}</b></span><Link to={publicLink('/')}>{uiText("返回赛事总览 ↗", locale)}</Link></footer>
+    <footer className={styles.footer}><span>FRIES CUP <b>{pickUiLocale(locale, '赛事中心', 'EVENT CENTER', '대회 센터', '賽事中心')}</b></span><Link to={publicLink('/')}>{uiText("← 返回赛事总览", locale)}</Link></footer>
   </div>
 }

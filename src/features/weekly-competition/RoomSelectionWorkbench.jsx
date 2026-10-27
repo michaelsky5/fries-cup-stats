@@ -28,7 +28,7 @@ export function MapSelectionWorkbench({ data, draft, edit, send, disabled, mapTy
       <div className={styles.mapWorkspace}>
         <div className={styles.mapCards} data-compact={pool.length > 3} data-map-count={pool.length} role="group" aria-label={t('选择第 {0} 图', [opening.mapOrder])}>
           {pool.map((map, index) => <button type="button" key={map.name} aria-pressed={draft.mapName === map.name} disabled={locked || !!map.reason} title={map.reason || formatOwMapName(map.name, locale)} onClick={() => edit({ mapName: map.name, startSide: '' })} style={{ backgroundImage: `linear-gradient(90deg,#141712dc,#14171220),url("${getMapImage(map.type, map.name)}")` }}>
-            <span className={styles.mapIndex}>{String(index + 1).padStart(2, '0')}</span><div><small>{formatOwMapMode(map.type, locale)}</small><strong>{formatOwMapName(map.name, locale)}</strong>{map.reason && <span>{map.reason}</span>}</div><b className={styles.mapMark}>{draft.mapName === map.name ? '✓' : '↗'}</b>
+            <span className={styles.mapIndex}>{String(index + 1).padStart(2, '0')}</span><div><small>{formatOwMapMode(map.type, locale)}</small><strong>{formatOwMapName(map.name, locale)}</strong>{map.reason && <span>{map.reason}</span>}</div><b className={styles.mapMark}>{draft.mapName === map.name ? '✓' : '→'}</b>
           </button>)}
           {!pool.length && <p>{t('本轮剩余类型没有可用地图，请赛管联系管理员补充地图池。')}</p>}
         </div>

@@ -30,7 +30,7 @@ function PlayerIdentity({ player, team, nameLength, seasonId, withSeason, locale
   const teamId = player.teamRouteId || player.team_id
   const teamPath = teamId && !/^[?？—-]+$/.test(teamId) ? withSeason(`/teams/${teamId}`) : ''
   const identity = getPlayerTeamDisplayIdentity(player)
-  const teamIdentity = <><TeamLogo team={team} teamShortName={identity.primary} seasonId={seasonId} className={styles.teamMark} /><span><b>{identity.primary}</b>{identity.secondary ? <small>{identity.secondary}</small> : null}</span>{teamPath ? <i aria-hidden="true">↗</i> : null}</>
+  const teamIdentity = <><TeamLogo team={team} teamShortName={identity.primary} seasonId={seasonId} className={styles.teamMark} /><span><b>{identity.primary}</b>{identity.secondary ? <small>{identity.secondary}</small> : null}</span>{teamPath ? <i aria-hidden="true">→</i> : null}</>
   return <div className={styles.identityBlock} data-player-identity>
     <h2 data-name-length={nameLength}>{player.identity.primary}</h2>
     {player.identity.secondary ? <p className={styles.battleTag}>{player.identity.secondary}</p> : null}
@@ -48,10 +48,10 @@ function PlayerRoster({ player, peers, withSeason, locale }) {
       <h3>{playerPreviewText('teamRoster', locale)}</h3>
       <ul>{peers.map(peer => <li key={playerKey(peer)} data-roster-peer={playerKey(peer)}>
         <RecordLink to={withSeason(`/players/${playerKey(peer)}`)} label={playerPreviewText('profile', locale) + ' · ' + peer.identity.primary}>
-          <strong>{peer.identity.primary}</strong><small>{getRosterRoleLabel(peer.registrationRole, locale)}</small><span aria-hidden="true">↗</span>
+          <strong>{peer.identity.primary}</strong><small>{getRosterRoleLabel(peer.registrationRole, locale)}</small><span aria-hidden="true">→</span>
         </RecordLink>
       </li>)}</ul>
-      {teamPath ? <RecordLink to={teamPath} className={styles.rosterLink}>{playerPreviewText('viewTeamRoster', locale)} <span aria-hidden="true">↗</span></RecordLink> : null}
+      {teamPath ? <RecordLink to={teamPath} className={styles.rosterLink}>{playerPreviewText('viewTeamRoster', locale)} <span aria-hidden="true">→</span></RecordLink> : null}
     </div>
   </section>
 }
@@ -101,12 +101,12 @@ function PlayerPortrait({ player, rosterPlayers, previewData, seasonId, seasonCo
     <section className={styles.recent} aria-label={playerPreviewText('recent', locale)}>
       <span>{playerPreviewText('recent', locale)}</span>
       {recent ? <RecordLink to={withSeason(`/matches/${encodeURIComponent(recent.matchId)}`)} label={`${playerPreviewText('recent', locale)} · ${recent.opponent}`}>
-        <time>{formatPlayerPreviewDate(recent.timestamp, locale)}</time><span className={styles.opponent}>vs <strong>{recent.opponent}</strong></span>{recent.score ? <b className={styles.recentScore}>{recent.score}</b> : null}<small data-result={recent.result || undefined}>{playerPreviewText(recent.result || recent.state, locale)}</small><i aria-hidden="true">↗</i>
+        <time>{formatPlayerPreviewDate(recent.timestamp, locale)}</time><span className={styles.opponent}>vs <strong>{recent.opponent}</strong></span>{recent.score ? <b className={styles.recentScore}>{recent.score}</b> : null}<small data-result={recent.result || undefined}>{playerPreviewText(recent.result || recent.state, locale)}</small><i aria-hidden="true">→</i>
       </RecordLink> : <p>{playerPreviewText(previewData?.hasRecords ? 'noRecentDetails' : 'noRecent', locale)}</p>}
     </section>
     <footer className={styles.portraitActions}>
       <button type="button" onClick={() => onToggleFavorite(player)} disabled={favoriteDisabled} aria-pressed={Boolean(player.isFavorite)} aria-label={player.isFavorite ? (en ? 'Unfollow player ' : uiText("取消关注选手 ", locale)) + name : favoriteDisabled ? (en ? 'Follow limit reached' : uiText("关注已满", locale)) : (en ? 'Follow player ' : uiText("关注选手 ", locale)) + name}>{player.isFavorite ? (en ? '★ Following' : uiText("★ 已关注", locale)) : favoriteDisabled ? (en ? 'Limit reached' : uiText("关注已满", locale)) : (en ? '☆ Follow' : uiText("☆ 关注选手", locale))}</button>
-      <RecordLink to={withSeason(`/players/${playerKey(player)}`)}>{playerPreviewText('profile', locale)} <span aria-hidden="true">↗</span></RecordLink>
+      <RecordLink to={withSeason(`/players/${playerKey(player)}`)}>{playerPreviewText('profile', locale)} <span aria-hidden="true">→</span></RecordLink>
     </footer>
   </article>
 }

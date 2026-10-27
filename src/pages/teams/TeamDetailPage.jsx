@@ -2039,7 +2039,7 @@ export default function TeamDetailPage() {
             {focusMatch ? <>
               <b>{focusMatch.score}</b>
               <Link to={withSeason(`/matches/${encodeURIComponent(focusMatch.match.match_id)}`)} state={getReturnState(location)} onClick={() => saveReturnScroll(location)}>
-                {isEn ? 'Open match record' : uiText("查看比赛记录", locale)} ↗
+                {isEn ? 'Open match record' : uiText("查看比赛记录", locale)} →
               </Link>
             </> : null}
           </div>

@@ -8,6 +8,7 @@ import TeamGalleryScenes from './TeamGalleryScenes.jsx'
 import TeamSeasonChronicle from './TeamSeasonChronicle.jsx'
 import TeamMatchLedger from './TeamMatchLedger.jsx'
 import TeamArchiveNavigation from './TeamArchiveNavigation.jsx'
+import { getTeamBackLabel } from './teamBackLabel.js'
 import TeamPerformanceReport from './TeamPerformanceReport.jsx'
 import { getArchiveIdentity } from './teamArchiveContent.js'
 import { getTeamResearch } from './teamDossierResearch.js'
@@ -72,7 +73,7 @@ export default function SignalTeamDossier({ team, seasonId, locale, withSeason, 
     : favoriteDisabled ? pickUiLocale(locale, '关注已满', 'Follow limit reached', '팔로우 한도 도달', '追蹤已滿') : pickUiLocale(locale, '关注队伍', 'Follow team', '팀 팔로우', '追蹤隊伍')
 
   return <article className={styles.dossier} data-team-dossier="signal" data-archive-view={view} data-page-mode={view === 'analysis' ? 'index' : 'archive'} style={getArchiveIdentity()} data-i18n-ignore>
-    <TeamArchiveNavigation team={team} seasonId={seasonId} locale={locale} view={view} galleryHref={galleryHref} analysisHref={analysisHref} viewState={viewState} onBack={onBack} onShare={view === 'gallery' ? shareDossier : null} />
+    <TeamArchiveNavigation team={team} seasonId={seasonId} locale={locale} view={view} galleryHref={galleryHref} analysisHref={analysisHref} viewState={viewState} backLabel={getTeamBackLabel(sourceReturnState.returnTo, locale)} onBack={onBack} onShare={view === 'gallery' ? shareDossier : null} />
     <div className={styles.titleRow}>
       <SignalDataHeading title={team.shortName} description={view === 'analysis' ? [fullName, standing].filter(Boolean).join(' · ') || null : null}>
         <button type="button" className={styles.follow} aria-pressed={favorited} disabled={favoriteDisabled && !favorited} onClick={onToggleFavorite}>{followLabel}<span aria-hidden="true">{favorited ? '✓' : '+'}</span></button>

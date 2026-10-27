@@ -86,11 +86,11 @@ export default function SignalPlayerRatingJourney({ matches, en, locale, seasonI
           <div className={styles.matchMeta}><span>{formatPlayerMatchStage(selected.stage, en)}</span><time dateTime={selected.date}>{selected.dateLabel}</time></div>
           <div className={styles.matchTitle}><TeamLogo team={selected.opponent} seasonId={seasonId} className={styles.logo} /><div><span>{text(en, uiText('对阵', locale), 'VERSUS')}</span><strong>{selected.opponent.short}</strong></div><div className={styles.result} data-result={selected.result}><strong>{score(selected)}</strong><span>{resultLabel(selected.result, en, locale)} · {text(en, uiText('本队在前', locale), 'our team first')}</span></div></div>
           <div className={styles.matchRating}><span>{text(en, uiText("全场评分", locale), 'Match rating')}<small>{text(en, uiText("满分 10 分", locale), 'Out of 10')}</small></span><strong>{rating(selected.rating)}</strong></div>
-          <Link {...linkProps(`/matches/${encodeURIComponent(selected.matchId)}`)} className={styles.report}>{text(en, uiText("完整比赛战报", locale), 'Full match report')} <span aria-hidden="true">↗</span></Link>
+          <Link {...linkProps(`/matches/${encodeURIComponent(selected.matchId)}`)} className={styles.report}>{text(en, uiText("完整比赛战报", locale), 'Full match report')} <span aria-hidden="true">→</span></Link>
         </div>
         <div className={styles.mapHeading}><span>{text(en, uiText("出场地图", locale), 'Maps played')} <b>{selected.maps.length}</b></span><span>{text(en, uiText("单图评分 · 满分 10 分", locale), 'Map rating · out of 10')}</span></div>
         <div className={styles.maps} data-count={selected.maps.length}>{selected.maps.map(map => <Link key={map.order} {...linkProps(`/matches/${encodeURIComponent(selected.matchId)}?map=${map.order}`)}>
-          <small>{String(map.order).padStart(2, '0')}</small><strong>{formatOwMapName(map.name, locale)}</strong><span className={styles.mapHeroes}>{map.heroes.map(hero => <SignalHeroPortrait key={hero} hero={hero} role={map.role} description={formatOwHeroName(hero, locale)} />)}</span><b>{rating(map.rating)}</b><span className={styles.mapArrow} aria-hidden="true">↗</span>
+          <small>{String(map.order).padStart(2, '0')}</small><strong>{formatOwMapName(map.name, locale)}</strong><span className={styles.mapHeroes}>{map.heroes.map(hero => <SignalHeroPortrait key={hero} hero={hero} role={map.role} description={formatOwHeroName(hero, locale)} />)}</span><b>{rating(map.rating)}</b><span className={styles.mapArrow} aria-hidden="true">→</span>
         </Link>)}</div>
       </section>
     </div> : <p className={styles.empty}>{text(en, uiText("暂无已公开的比赛记录。", locale), 'No published match appearances yet.')}</p>}

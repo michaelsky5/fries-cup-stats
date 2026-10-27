@@ -173,7 +173,8 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
 .footerNav strong { font: 800 28px/1.2 var(--fc-data-font-display); }
 .footerNav strong small { font-size: 13px; font-weight: 400; }
 .footerNav a:hover strong { text-decoration: underline; text-underline-offset: 5px; }
-.footerNav .footerBack { grid-column: 1 / -1; padding: 18px 0; border-top: 1px solid var(--fc-data-line); font-size: 12px; }
+/* 票 2.72: 「← 返回周赛赛程」 on one line (was 「返回… →」). */
+.footerNav .footerBack { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; padding: 18px 0; border-top: 1px solid var(--fc-data-line); font-size: 12px; }
 
 @media (max-width: 1360px) {
   .seriesBody { padding-inline: 8px; }

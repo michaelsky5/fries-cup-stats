@@ -79,11 +79,11 @@ export default function SpaceOverview({ context, withSeason, sections, managerSt
   return <div className={styles.overview} data-mobile-home={Boolean(quickEntries)} data-mobile-progress={participationView}>
     <div className={styles.homeSummary}>
     {followingFirst ? followingSummary : null}
-    {presentation.collapseTasks ? <div className={styles.clearTasks}><span><i aria-hidden="true">✓</i>{uiText("目前没有需要处理的待办", locale)}</span>{allowed('tasks') ? <Link to={withSeason('/me?section=tasks&view=history')}>{uiText("查看处理记录 ↗", locale)}</Link> : null}</div> : null}
+    {presentation.collapseTasks ? <div className={styles.clearTasks}><span><i aria-hidden="true">✓</i>{uiText("目前没有需要处理的待办", locale)}</span>{allowed('tasks') ? <Link to={withSeason('/me?section=tasks&view=history')}>{uiText("查看处理记录 →", locale)}</Link> : null}</div> : null}
     {!followingFirst ? <div className={styles.focusGrid} data-single={presentation.collapseTasks}>
       {canEnter ? matchCard : null}
       {!presentation.collapseTasks ? <section className={styles.tasks} aria-labelledby="space-tasks-title">
-        <header className={styles.sectionHead}><div><h2 id="space-tasks-title">{uiText("当前待办 ", locale)}<b>{tasksPending ? count ? `${count}+` : '—' : String(count).padStart(2, '0')}</b></h2></div>{allowed('tasks') && <Link to={withSeason('/me?section=tasks')}>{uiText("全部待办 ↗", locale)}</Link>}</header>
+        <header className={styles.sectionHead}><div><h2 id="space-tasks-title">{uiText("当前待办 ", locale)}<b>{tasksPending ? count ? `${count}+` : '—' : String(count).padStart(2, '0')}</b></h2></div>{allowed('tasks') && <Link to={withSeason('/me?section=tasks')}>{uiText("全部待办 →", locale)}</Link>}</header>
         {tasks.length ? <div className={styles.taskList}>{tasks.slice(0, 3).map((task, index) => {
           const action = getOverviewTaskAction(task)
           return <Link key={task.id} to={withSeason(action.url)} className={styles.task} data-primary={index === 0} data-deadline={task.deadline?.key}>
@@ -91,7 +91,7 @@ export default function SpaceOverview({ context, withSeason, sections, managerSt
             <h3 data-i18n-ignore>{taskTitle(task, locale)}</h3>{index === 0 && task.body ? <p className={styles.taskDescription} data-i18n-ignore>{taskBody(task, locale)}</p> : null}
             <div className={styles.taskFoot}><time dateTime={task.dueAt || undefined}>{formatTime(task.dueAt, locale, '无固定截止时间')}{task.dueAt ? uiText(" 截止 · 北京时间", locale) : ''}</time><strong>{uiText(action.label, locale)} →</strong></div>
           </Link>
-        })}{count > 3 && allowed('tasks') ? <Link className={styles.moreTasks} to={withSeason('/me?section=tasks')}>{uiText("还有 ", locale)}{count - 3}{tasksPending ? '+' : ''}{uiText(" 项待办 · 查看完整队列 ↗", locale)}</Link> : null}</div> : <div className={styles.empty}>{!tasksPending && !count && <span className={styles.emptyMark} aria-hidden="true">✓</span>}<h3>{tasksPending ? uiText("待办状态尚未同步", locale) : count ? uiText("查看待办详情", locale) : uiText("目前没有需要处理的待办", locale)}</h3><p>{tasksPending ? tasksMessage : count ? uiText("待办内容可在任务中心查看。", locale) : uiText("新的名单确认、赛程安排与赛事通知会出现在这里。", locale)}</p>{allowed('tasks') && <Link to={withSeason(count || tasksPending ? '/me?section=tasks' : '/me?section=tasks&view=history')}>{count || tasksPending ? uiText("打开任务中心", locale) : uiText("查看处理记录", locale)} →</Link>}</div>}
+        })}{count > 3 && allowed('tasks') ? <Link className={styles.moreTasks} to={withSeason('/me?section=tasks')}>{uiText("还有 ", locale)}{count - 3}{tasksPending ? '+' : ''}{uiText(" 项待办 · 查看完整队列 →", locale)}</Link> : null}</div> : <div className={styles.empty}>{!tasksPending && !count && <span className={styles.emptyMark} aria-hidden="true">✓</span>}<h3>{tasksPending ? uiText("待办状态尚未同步", locale) : count ? uiText("查看待办详情", locale) : uiText("目前没有需要处理的待办", locale)}</h3><p>{tasksPending ? tasksMessage : count ? uiText("待办内容可在任务中心查看。", locale) : uiText("新的名单确认、赛程安排与赛事通知会出现在这里。", locale)}</p>{allowed('tasks') && <Link to={withSeason(count || tasksPending ? '/me?section=tasks' : '/me?section=tasks&view=history')}>{count || tasksPending ? uiText("打开任务中心", locale) : uiText("查看处理记录", locale)} →</Link>}</div>}
       </section> : null}
       {!canEnter ? matchCard : null}
     </div> : null}
@@ -101,7 +101,7 @@ export default function SpaceOverview({ context, withSeason, sections, managerSt
     {!archived && !followingFirst && context?.user?.id && <MatchReminderSummary userId={context.user.id} locale={locale} withSeason={withSeason} />}
     </div>
     <div className={styles.homeDetails}>{preparation}{!followingFirst ? <div className={styles.homeFollowing}>{followingSummary}</div> : null}</div>
-    <section className={styles.support} aria-label={uiText("赛事概况", locale)}><Link to={withSeason(relationshipPath)}><span>{uiText("本届参赛关系", locale)}</span><strong>{relationshipLabel}</strong><small>{status?.registrationLabel || uiText("报名与身份关系", locale)} ↗</small></Link>{allowed('communications') && <Link to={withSeason('/me?section=communications')}><span>{uiText("赛事消息", locale)}</span><strong>{overview.unreadNotificationCount || 0}<em>{uiText("条未读", locale)}</em></strong><small>{uiText("通知与沟通 ↗", locale)}</small></Link>}{!followingSummary ? <Link to={withSeason('/me?section=following')}><span>{uiText("关注动态", locale)}</span><strong>{uiText("我的关注", locale)}</strong><small>{uiText("队伍与选手 ↗", locale)}</small></Link> : null}</section>
+    <section className={styles.support} aria-label={uiText("赛事概况", locale)}><Link to={withSeason(relationshipPath)}><span>{uiText("本届参赛关系", locale)}</span><strong>{relationshipLabel}</strong><small>{status?.registrationLabel || uiText("报名与身份关系", locale)} →</small></Link>{allowed('communications') && <Link to={withSeason('/me?section=communications')}><span>{uiText("赛事消息", locale)}</span><strong>{overview.unreadNotificationCount || 0}<em>{uiText("条未读", locale)}</em></strong><small>{uiText("通知与沟通 →", locale)}</small></Link>}{!followingSummary ? <Link to={withSeason('/me?section=following')}><span>{uiText("关注动态", locale)}</span><strong>{uiText("我的关注", locale)}</strong><small>{uiText("队伍与选手 →", locale)}</small></Link> : null}</section>
     {children}
   </div>
 }

@@ -148,7 +148,7 @@ export default function AdvanceSignalGroup({ overview, groups, seasonId, withSea
                 <Link to={withSeason(`/matches/${nextMatchId}`)}>
                   <strong>{teamShort(nextMatch.team_a)} <i>VS</i> {teamShort(nextMatch.team_b)}</strong>
                   <small>{formatShortDateTime(nextMatch) || copy(locale, uiText("时间待定", locale), 'TIME TBD')}</small>
-                  <b aria-hidden="true">↗</b>
+                  <b aria-hidden="true">→</b>
                 </Link>
               ) : (
                 <p>{teamShort(nextMatch.team_a)} VS {teamShort(nextMatch.team_b)}</p>

@@ -81,7 +81,7 @@ export default function StaffDirectoryItem({
               </>
             )}
           </div>
-          <Link to={targetPath} className={styles.staffSignalLink} onClick={stop}>{actionLabel}<span aria-hidden="true">↗</span></Link>
+          <Link to={targetPath} className={styles.staffSignalLink} onClick={stop}>{actionLabel}<span aria-hidden="true">→</span></Link>
         </div>
       </article>
     )

@@ -102,10 +102,10 @@ export default function StaffDetailPage() {
         <section id={staff.team ? 'staff-roster' : 'staff-matches'} className={styles.records}>
           <header className={styles.sectionHead}><span>{staff.team ? 'ON THE SAME TEAM' : 'MATCH LOG'}</span><h2>{text(staff.team ? 'roster' : 'matches')} <small>{staff.team ? staff.players.length : matches.length}</small></h2><p>{text(staff.team ? 'rosterNote' : 'recordNote')}</p></header>
           {staff.team ? <>
-            <DirectoryLink to={withSeason(`/teams/${encodeURIComponent(staff.team.routeId)}`)} className={styles.teamLink}><TeamLogo team={staff.team} teamShortName={affiliation.primary} seasonId={seasonId} /><span><strong>{affiliation.primary}</strong>{affiliation.secondary ? <small>{affiliation.secondary}</small> : null}</span><span aria-hidden="true">↗</span></DirectoryLink>
+            <DirectoryLink to={withSeason(`/teams/${encodeURIComponent(staff.team.routeId)}`)} className={styles.teamLink}><TeamLogo team={staff.team} teamShortName={affiliation.primary} seasonId={seasonId} /><span><strong>{affiliation.primary}</strong>{affiliation.secondary ? <small>{affiliation.secondary}</small> : null}</span><span aria-hidden="true">→</span></DirectoryLink>
             <div className={styles.roster}>{staff.players.map(player => {
               const identity = getPlayerDisplayIdentity(player)
-              return <DirectoryLink key={identity.playerId} to={withSeason(`/players/${encodeURIComponent(identity.playerId)}`)} className={styles.player}><span>{getRosterRoleLabel(getRosterRegistrationRole(player.role), locale)}</span><strong>{identity.primary}</strong><span aria-hidden="true">↗</span></DirectoryLink>
+              return <DirectoryLink key={identity.playerId} to={withSeason(`/players/${encodeURIComponent(identity.playerId)}`)} className={styles.player}><span>{getRosterRoleLabel(getRosterRegistrationRole(player.role), locale)}</span><strong>{identity.primary}</strong><span aria-hidden="true">→</span></DirectoryLink>
             })}</div>
             {!staff.players.length ? <p className={styles.empty}>{text('empty')}</p> : null}
             {staff.unavailablePlayers > 0 ? <p className={styles.empty}>{staff.unavailablePlayers} {text('unpublished')}</p> : null}
@@ -115,7 +115,7 @@ export default function StaffDetailPage() {
               const display = getStaffMatchDisplay(match, locale)
               return <DirectoryLink key={match.match_id} to={withSeason(`/matches/${encodeURIComponent(match.match_id)}`)} className={styles.match}>
               <span className={styles.matchMeta}><time>{translateUiText(getMatchTimeLabel(match), locale)}</time><span>{staffCreditsText(staff.stages.find(item => item.value === String(match.stage || '').toUpperCase())?.title || match.stage, locale)} · {translateUiText(getMatchStatusText(match), locale)}</span></span>
-              <span className={styles.duel}><span><TeamLogo team={match.team_a} seasonId={seasonId} /><strong>{getTeamLabel(match.team_a)}</strong></span><b className={display.isScore ? undefined : styles.matchState}>{display.label}</b><span><strong>{getTeamLabel(match.team_b)}</strong><TeamLogo team={match.team_b} seasonId={seasonId} /></span></span><span className={styles.arrow} aria-hidden="true">↗</span>
+              <span className={styles.duel}><span><TeamLogo team={match.team_a} seasonId={seasonId} /><strong>{getTeamLabel(match.team_a)}</strong></span><b className={display.isScore ? undefined : styles.matchState}>{display.label}</b><span><strong>{getTeamLabel(match.team_b)}</strong><TeamLogo team={match.team_b} seasonId={seasonId} /></span></span><span className={styles.arrow} aria-hidden="true">→</span>
             </DirectoryLink>
             })}</div>
             {!matches.length ? <p className={styles.empty}>{text('empty')}</p> : null}
@@ -123,8 +123,8 @@ export default function StaffDetailPage() {
           </>}
         </section>
         <aside className={styles.aside}>
-          {staff.colleagues.length ? <section><h2>{text(staff.team ? 'colleagues' : 'alongside')}</h2><div className={styles.colleagues}>{staff.colleagues.map(person => <DirectoryLink key={person.id} to={withSeason(getStaffProfilePath(person))}><strong>{person.name}</strong><small>{staff.team ? staffRoleLabel(person, locale) : `${person.sharedMatchCount} ${text('shared')}`}</small><span aria-hidden="true">↗</span></DirectoryLink>)}</div></section> : null}
-          <details className={styles.source}><summary>{text('source')}</summary><p>{text(staff.team ? 'teamSource' : staff.creditSource === 'archive' ? 'archiveSource' : 'eventSource')}</p>{staff.team ? <DirectoryLink to={withSeason(`/teams/${encodeURIComponent(staff.team.routeId)}`)}>{text('teamArchive')} <span aria-hidden="true">↗</span></DirectoryLink> : reviewAvailable && staff.storyPath ? <DirectoryLink to={withSeason(staff.storyPath)}>{text('story')} <span aria-hidden="true">↗</span></DirectoryLink> : null}</details>
+          {staff.colleagues.length ? <section><h2>{text(staff.team ? 'colleagues' : 'alongside')}</h2><div className={styles.colleagues}>{staff.colleagues.map(person => <DirectoryLink key={person.id} to={withSeason(getStaffProfilePath(person))}><strong>{person.name}</strong><small>{staff.team ? staffRoleLabel(person, locale) : `${person.sharedMatchCount} ${text('shared')}`}</small><span aria-hidden="true">→</span></DirectoryLink>)}</div></section> : null}
+          <details className={styles.source}><summary>{text('source')}</summary><p>{text(staff.team ? 'teamSource' : staff.creditSource === 'archive' ? 'archiveSource' : 'eventSource')}</p>{staff.team ? <DirectoryLink to={withSeason(`/teams/${encodeURIComponent(staff.team.routeId)}`)}>{text('teamArchive')} <span aria-hidden="true">→</span></DirectoryLink> : reviewAvailable && staff.storyPath ? <DirectoryLink to={withSeason(staff.storyPath)}>{text('story')} <span aria-hidden="true">→</span></DirectoryLink> : null}</details>
         </aside>
       </div>
     </>}

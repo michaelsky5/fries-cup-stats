@@ -55,7 +55,7 @@ function MatchRow({ item, seasonId, withSeason, copy, sourceSection, locale }) {
     <div className={styles.matchWhen}><span className={styles.state}>{item.presentation?.label || copy[item.group === 'results' ? 'finished' : item.group]}</span><time dateTime={item.schedule.hasSchedule ? item.scheduledAt : undefined}>{item.group === 'postponed' && item.schedule.hasSchedule ? locale === 'en-US' ? 'Originally ' : uiText("原定 ", locale) : ''}{item.schedule.hasSchedule ? item.schedule.compact : copy.tbd}</time></div>
     <div className={styles.duel}><span><TeamLogo team={item.teamA} seasonId={seasonId} className={styles.logo} /><strong>{item.teamA.short}</strong></span><div className={styles.scoreBlock}><small>{item.presentation?.scoreLabel}</small><b className={styles.score}>{followingScore(item)}</b></div><span><TeamLogo team={item.teamB} seasonId={seasonId} className={styles.logo} /><strong>{item.teamB.short}</strong></span></div>
     <div className={styles.matchDetail}><span>{item.stage}</span><FollowingMapProgress item={item} locale={locale} compact /><div className={styles.relations}>{item.relations.map(reason => <small key={`${reason.type}:${reason.id}`}>{reason.name} · {reason.type === 'team' ? copy.teamReason : reason.type === 'appearance' ? copy.appearance : copy.playerReason}</small>)}</div></div>
-    <span className={styles.matchArrow} aria-label={copy.details}>↗</span>
+    <span className={styles.matchArrow} aria-label={copy.details}>→</span>
   </FollowingLink>
 }
 
@@ -71,7 +71,7 @@ export function FollowingDigest({ db, favorites, season, locale = 'zh-CN', withS
   const candidates = [...feed.groups.live.slice(0, 1), ...feed.groups.review.slice(0, 1), ...feed.groups.upcoming.slice(0, 1), ...(!feed.archived ? [...feed.groups.postponed, ...feed.groups.pending, ...feed.groups.cancelled].slice(0, 1) : []), ...feed.matches]
   const entries = [...new Map(candidates.map(item => [item.id, item])).values()].slice(0, 3)
   return <section className={styles.digest} data-i18n-ignore aria-label={copy.digest}>
-    <header className={styles.sectionHeader}><div><h2>{copy.digest}</h2>{scopeLabel ? <p>{scopeLabel}</p> : null}<p>{feed.archived ? copy.archiveIntro : copy.activityIntro}</p></div><Link className={styles.textLink} to={withSeason('/me?section=following')}>{copy.viewAll} ↗</Link></header>
+    <header className={styles.sectionHeader}><div><h2>{copy.digest}</h2>{scopeLabel ? <p>{scopeLabel}</p> : null}<p>{feed.archived ? copy.archiveIntro : copy.activityIntro}</p></div><Link className={styles.textLink} to={withSeason('/me?section=following')}>{copy.viewAll} →</Link></header>
     {!feed.loaded ? <p className={styles.notice}>{copy.loadingData}</p> : !feed.hasFavorites ? <EmptyFollowing copy={copy} onManageTeams={onManageTeams} onManagePlayers={onManagePlayers} compact />
       : entries.length ? <div className={styles.matchList}>{entries.map(item => <MatchRow key={item.id} item={item} seasonId={season?.id} withSeason={withSeason} copy={copy} sourceSection="overview" locale={locale} />)}</div>
         : <p className={styles.notice}>{copy.noMatches} · {copy.noMatchesText}</p>}
@@ -115,7 +115,7 @@ export default function FollowingWorkspace({ db, favorites, favoriteLimits = { t
     target.focus({ preventScroll: true })
     target.scrollIntoView({ block: 'start', behavior: 'auto' })
   }, [location.key, matchesView, discoveryVisible])
-  const storage = <div className={styles.storage} data-error={Boolean(syncError || syncStatus === 'error')}><span role={syncError || syncStatus === 'error' ? 'alert' : 'status'}><i aria-hidden="true" />{syncLabel}</span>{!isAuthenticated ? <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('fries-cup:open-account'))}>{copy.login} ↗</button> : null}</div>
+  const storage = <div className={styles.storage} data-error={Boolean(syncError || syncStatus === 'error')}><span role={syncError || syncStatus === 'error' ? 'alert' : 'status'}><i aria-hidden="true" />{syncLabel}</span>{!isAuthenticated ? <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('fries-cup:open-account'))}>{copy.login} →</button> : null}</div>
   return <section className={styles.workspace} data-embedded={!standalone} data-i18n-ignore aria-label={copy.title}>
     <header className={styles.pageHeader}>
       {standalone ? <div><Title>{copy.title}</Title><p>{copy.intro}</p></div> : null}
@@ -123,7 +123,7 @@ export default function FollowingWorkspace({ db, favorites, favoriteLimits = { t
         <div className={styles.followingSummary}><span><b>{feed.teams.length}</b><span className={styles.quota}> / {favoriteLimits.teams}</span> {locale === 'en-US' && feed.teams.length === 1 ? 'Team' : copy.teams} · <b>{feed.players.length}</b><span className={styles.quota}> / {favoriteLimits.players}</span> {locale === 'en-US' && feed.players.length === 1 ? 'Player' : copy.players}</span><div className={styles.desktopStorage}>{storage}</div></div>
         <div className={styles.manageActions} data-has-following={feed.hasFavorites}>
           {feed.hasFavorites && <button type="button" className={styles.discoverButton} aria-label={locale === 'en-US' ? 'Find following' : uiText("发现关注", locale)} aria-expanded={discoveryVisible} aria-controls={discoveryId} onClick={() => setDiscoveryOpen(value => !value)}><span className={styles.manageLabel}>{locale === 'en-US' ? 'Find following' : uiText("发现关注", locale)}</span><span className={styles.manageShort}>{locale === 'en-US' ? 'Add' : uiText("添加", locale)}</span> ＋</button>}
-          <button type="button" aria-label={copy.manage} onClick={onManageTeams}><span className={styles.manageLabel}>{copy.manage}</span><span className={styles.manageShort}>{copy.manageShort}</span><span aria-hidden="true"> ↗</span></button>
+          <button type="button" aria-label={copy.manage} onClick={onManageTeams}><span className={styles.manageLabel}>{copy.manage}</span><span className={styles.manageShort}>{copy.manageShort}</span><span aria-hidden="true"> →</span></button>
         </div>
       </div>
     </header>
@@ -157,20 +157,20 @@ export default function FollowingWorkspace({ db, favorites, favoriteLimits = { t
       </section>
       <div hidden={matchesView} className={styles.collections} data-collection={view.collection} data-only={!feed.players.length ? 'teams' : !feed.teams.length ? 'players' : undefined}>
         <div className={styles.collectionSwitch} role="group" aria-label={locale === 'en-US' ? 'Followed profiles' : uiText("关注对象", locale)}>{['teams', 'players'].map(type => <button key={type} type="button" aria-pressed={view.collection === type} aria-controls={`${collectionId}-${type}`} onClick={() => changeView({ collection: type })}>{copy[type]} <span>{feed[type].length}</span></button>)}</div>
-        <section id={`${collectionId}-teams`} className={styles.teamCollection}><header className={styles.collectionHeader}><SectionTitle>{copy.teams} <span>{feed.teams.length}</span></SectionTitle><button type="button" onClick={onManageTeams}>{copy.changeTeams} ↗</button></header>
+        <section id={`${collectionId}-teams`} className={styles.teamCollection}><header className={styles.collectionHeader}><SectionTitle>{copy.teams} <span>{feed.teams.length}</span></SectionTitle><button type="button" onClick={onManageTeams}>{copy.changeTeams} →</button></header>
           {feed.teams.length ? <div className={styles.directory}>{feed.teams.map(team => {
             const summary = teamSummaries.get(team.id)
             return <article className={styles.directoryCard} key={team.id} data-selected={view.subjectKey === `team:${team.id}`}>
-              <FollowingLink className={styles.directoryRow} to={withSeason(`/teams/${encodeURIComponent(team.routeId)}`)}><TeamLogo team={team} seasonId={season?.id} className={styles.teamLogo} /><div><strong>{getPreferredTeamShortName(team.short, team.full)}{team.primary ? <small className={styles.primaryTag}>{copy.primary}</small> : null}</strong><span>{team.full}</span></div><b aria-label={copy.profile}>↗</b></FollowingLink>
+              <FollowingLink className={styles.directoryRow} to={withSeason(`/teams/${encodeURIComponent(team.routeId)}`)}><TeamLogo team={team} seasonId={season?.id} className={styles.teamLogo} /><div><strong>{getPreferredTeamShortName(team.short, team.full)}{team.primary ? <small className={styles.primaryTag}>{copy.primary}</small> : null}</strong><span>{team.full}</span></div><b aria-label={copy.profile}>→</b></FollowingLink>
               {summary ? <div className={styles.teamStanding} data-tone={summary.tone} data-weekly={summary.weekly} data-honor={summary.honor || undefined}><span>{summary.heading}</span><strong>{summary.label}</strong><small>{summary.zone}</small></div> : null}
               <SubjectOutlook feed={feed} type="team" id={team.id} locale={locale} />
-            <div className={styles.directoryActions}><button type="button" aria-label={`${team.short} · ${copy.showMatches}`} onClick={() => showSubject(`team:${team.id}`)}>{copy.showMatches} ↑</button>{summary ? <FollowingLink to={withSeason(summary.advanceHref)}>{summary.advanceLabel || (summary.isArchived ? copy.finalTable : copy.advancement)} ↗</FollowingLink> : null}</div>
+            <div className={styles.directoryActions}><button type="button" aria-label={`${team.short} · ${copy.showMatches}`} onClick={() => showSubject(`team:${team.id}`)}>{copy.showMatches} ↑</button>{summary ? <FollowingLink to={withSeason(summary.advanceHref)}>{summary.advanceLabel || (summary.isArchived ? copy.finalTable : copy.advancement)} →</FollowingLink> : null}</div>
             </article>
           })}</div> : <p className={styles.notice}>{copy.noTeams}</p>}
         </section>
-        <section id={`${collectionId}-players`} className={styles.playerCollection}><header className={styles.collectionHeader}><SectionTitle>{copy.players} <span>{feed.players.length}</span></SectionTitle><button type="button" onClick={onManagePlayers}>{copy.changePlayers} ↗</button></header>
+        <section id={`${collectionId}-players`} className={styles.playerCollection}><header className={styles.collectionHeader}><SectionTitle>{copy.players} <span>{feed.players.length}</span></SectionTitle><button type="button" onClick={onManagePlayers}>{copy.changePlayers} →</button></header>
           {feed.players.length ? <div className={styles.directory}>{feed.players.map(player => <article className={styles.directoryCard} key={player.id} data-selected={view.subjectKey === `player:${player.id}`}>
-            <FollowingLink className={styles.directoryRow} to={withSeason(`/players/${encodeURIComponent(player.id)}`)}><FollowingPlayerPortrait player={player.player} db={db} locale={locale} className={styles.playerMark} /><div><strong>{player.name}</strong><span>{player.team ? getTeamLabel(player.team) : '—'} · {locale === 'en-US' ? 'Registered: ' : uiText('登记职责：', locale)}{copy.roles[String(player.role).toUpperCase()] || player.role || copy.noRole}</span><small>{copy.profile}</small></div><b aria-hidden="true">↗</b></FollowingLink>
+            <FollowingLink className={styles.directoryRow} to={withSeason(`/players/${encodeURIComponent(player.id)}`)}><FollowingPlayerPortrait player={player.player} db={db} locale={locale} className={styles.playerMark} /><div><strong>{player.name}</strong><span>{player.team ? getTeamLabel(player.team) : '—'} · {locale === 'en-US' ? 'Registered: ' : uiText('登记职责：', locale)}{copy.roles[String(player.role).toUpperCase()] || player.role || copy.noRole}</span><small>{copy.profile}</small></div><b aria-hidden="true">→</b></FollowingLink>
             <SubjectOutlook feed={feed} type="player" id={player.id} locale={locale} />
             <div className={styles.directoryActions}><button type="button" aria-label={`${player.name} · ${copy.showMatches}`} onClick={() => showSubject(`player:${player.id}`)}>{copy.showMatches} ↑</button></div>
           </article>)}</div> : <p className={styles.notice}>{copy.noPlayers}</p>}

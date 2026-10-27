@@ -251,7 +251,7 @@ function WeeklyMatchChannel({ seasonId, readOnly = true, withSeason, tasksVisibl
       <header className={styles.workHeader}>
         <div><h2>{uiText(currentWorkspace?.operatorView ? '我的执勤比赛' : '我的比赛', uiLocale)}</h2><p>{uiText('显示本届赛事中与你的队伍或执勤有关的全部场次。切换队伍不会隐藏其他关联比赛。', uiLocale)}</p></div>
         <div className={styles.headerActions}><RoomGuideLink season={seasonId} />
-          {(tasksVisible || preparationVisible) && <nav className={styles.returnLinks} aria-label={uiText("参赛流程导航", uiLocale)}>{tasksVisible && <Link to={taskUrl}>{uiText("← 待办", uiLocale)}</Link>}{preparationVisible && <Link to={preparationUrl}>{uiText("参赛进度 ↗", uiLocale)}</Link>}</nav>}
+          {(tasksVisible || preparationVisible) && <nav className={styles.returnLinks} aria-label={uiText("参赛流程导航", uiLocale)}>{tasksVisible && <Link to={taskUrl}>{uiText("← 待办", uiLocale)}</Link>}{preparationVisible && <Link to={preparationUrl}>{uiText("参赛进度 →", uiLocale)}</Link>}</nav>}
         <button type="button" className={styles.secondaryButton} disabled={loading || submitting} onClick={async () => { if (await confirmDiscard() && mounted.current && !submitLock.current) { setFeedback(null); refresh() } }}>{loading ? uiText("同步中…", uiLocale) : uiText("刷新比赛资料", uiLocale)}</button>
         </div>
       </header>

@@ -46928,8 +46928,8 @@
   },
   "返回我的关注": {
     "zh-TW": "返回我的追蹤",
-    "en-US": "Return my attention",
-    "ko-KR": "관심을 돌려주세요"
+    "en-US": "Back to following",
+    "ko-KR": "팔로우 목록으로 돌아가기"
   },
   "返回我的空间": {
     "zh-TW": "返回我的空間",
@@ -60733,5 +60733,110 @@
     "zh-TW": "死怨、死神、安燃以外，是否有足夠的自由人英雄記錄支援輪換？",
     "en-US": "What flex-DPS evidence supports rotation beyond Shion, Reaper and Anran?",
     "ko-KR": "Shion·리퍼·안란 외 플렉스 DPS 영웅의 교대를 뒷받침할 기록이 있나요?"
+  },
+  "← 返回赛事总览": {
+    "zh-TW": "← 返回賽事總覽",
+    "en-US": "← Back to overview",
+    "ko-KR": "← 대회 개요로 돌아가기"
+  },
+  "参赛记录 →": {
+    "zh-TW": "參賽記錄 →",
+    "en-US": "Entry record →",
+    "ko-KR": "참가 기록 →"
+  },
+  "查看队伍与参赛入口 →": {
+    "zh-TW": "檢視隊伍與參賽入口 →",
+    "en-US": "View teams and entry →",
+    "ko-KR": "팀 및 입장 입구 확인 →"
+  },
+  "查看比赛安排 →": {
+    "zh-TW": "檢視比賽安排 →",
+    "en-US": "Check the game schedule →",
+    "ko-KR": "경기일정 확인 →"
+  },
+  "查看处理记录 →": {
+    "zh-TW": "檢視處理記錄 →",
+    "en-US": "View processing records →",
+    "ko-KR": "처리 기록 보기 →"
+  },
+  "全部待办 →": {
+    "zh-TW": "全部待辦 →",
+    "en-US": "All to be done →",
+    "ko-KR": "모두 완료해야 함 →"
+  },
+  "项待办 · 查看完整队列 →": {
+    "zh-TW": "項待辦 · 檢視完整佇列 →",
+    "en-US": "Item Backlog · View full queue →",
+    "ko-KR": "항목 백로그 · 전체 대기열 보기 →"
+  },
+  "通知与沟通 →": {
+    "zh-TW": "通知與溝通 →",
+    "en-US": "Notification and Communication →",
+    "ko-KR": "알림 및 통신 →"
+  },
+  "队伍与选手 →": {
+    "zh-TW": "隊伍與選手 →",
+    "en-US": "Teams and Players →",
+    "ko-KR": "팀 및 선수 →"
+  },
+  "← 返回我的空间": {
+    "zh-TW": "← 返回我的空間",
+    "en-US": "← Back to My Space",
+    "ko-KR": "← 내 공간으로 돌아가기"
+  },
+  "前往我的空间 →": {
+    "zh-TW": "前往我的空間 →",
+    "en-US": "Go to My Space →",
+    "ko-KR": "내 공간으로 이동 →"
+  },
+  "依据 →": {
+    "zh-TW": "依據 →",
+    "en-US": "Details →",
+    "ko-KR": "기준 →"
+  },
+  "只需知道的内容在赛事消息 →": {
+    "zh-TW": "只需知道的內容在賽事訊息 →",
+    "en-US": "All you need to know is in the event news →",
+    "ko-KR": "당신이 알아야 할 모든 것은 대회 뉴스에 있습니다 →"
+  },
+  "复盘 →": {
+    "zh-TW": "復盤 →",
+    "en-US": "Review →",
+    "ko-KR": "검토 →"
+  },
+  "· 指定代表 →": {
+    "zh-TW": "· 指定代表 →",
+    "en-US": "· Designated Representative →",
+    "ko-KR": "· 지정 대리인 →"
+  },
+  "← 返回我的比赛": {
+    "zh-TW": "← 返回我的比賽",
+    "en-US": "← Back to My matches",
+    "ko-KR": "← 내 경기로 돌아가기"
+  },
+  "参赛进度 →": {
+    "en-US": "Participation progress →",
+    "zh-TW": "參賽進度 →",
+    "ko-KR": "참가 진행 상황 →"
+  },
+  "← 返回参赛进度": {
+    "en-US": "← Back to participation progress",
+    "zh-TW": "← 返回參賽進度",
+    "ko-KR": "← 참가 진행 상황으로"
+  },
+  "查看完整参赛进度 →": {
+    "zh-TW": "檢視完整參賽進度 →",
+    "en-US": "View complete entry progress →",
+    "ko-KR": "전체 입력 진행 상황 보기 →"
+  },
+  "发送消息": {
+    "zh-TW": "傳送訊息",
+    "en-US": "Send message",
+    "ko-KR": "메시지 보내기"
+  },
+  "返回职员档案": {
+    "zh-TW": "返回職員檔案",
+    "en-US": "Back to staff profile",
+    "ko-KR": "스태프 프로필로 돌아가기"
   }
 }

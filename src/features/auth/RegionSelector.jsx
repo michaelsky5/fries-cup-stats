@@ -118,7 +118,7 @@ export default function RegionSelector({ value = '', onChange, label, name, requ
         </div>
         <footer className={styles.footer}>
           <div><span>{copy.selected} · {selected ? getLocalizedOption(selected, locale) : copy.none}</span><small>{copy.hint}</small></div>
-          <div className={styles.footerActions}><button type="button" onClick={() => select('OTHER')}>{copy.other} ↗</button>{clearable && value && <button type="button" onClick={() => select('')}>{locale === 'en-US' ? 'Clear' : locale === 'zh-TW' ? '清除選擇' : locale === 'ko-KR' ? '선택 해제' : '清除选择'}</button>}</div>
+          <div className={styles.footerActions}><button type="button" onClick={() => select('OTHER')}>{copy.other} →</button>{clearable && value && <button type="button" onClick={() => select('')}>{locale === 'en-US' ? 'Clear' : locale === 'zh-TW' ? '清除選擇' : locale === 'ko-KR' ? '선택 해제' : '清除选择'}</button>}</div>
         </footer>
       </div>
     </dialog>, document.body)}

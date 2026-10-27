@@ -93,6 +93,8 @@ export default function WeeklySupportPage() {
 
   return <div className={styles.page} data-weekly-support>
     <header className={styles.hero}>
+      {/* 票 2.72: the way back sits top-left like every other page's back row (it was the last item in the button row). */}
+      <Link className={styles.back} to={withSeason('/')}><span aria-hidden="true">←</span> {t('返回赛事总览', 'Back to overview', '대회 개요로 돌아가기', '返回賽事總覽')}</Link>
       <h1>{t('周赛支持与资金进度', 'Weekly support & funding', '주간 대회 후원 및 자금 현황', '週賽支持與資金進度')}</h1>
       <p className={styles.lead}>{t('让支持落到下一场比赛里。钱用在哪、奖池到了多少、约定直播兑现了几场、感谢了谁，都在这里公开。',
         'Support goes into the next match. Where the money goes, how big the prize pools are, how many agreed broadcasts were delivered and who is thanked are all published here.',
@@ -101,11 +103,10 @@ export default function WeeklySupportPage() {
       <div className={styles.heroActions}>
         <a className={styles.primary} href="#support-how">{t('我想支持', 'I want to support', '후원하기', '我想支持')} <span aria-hidden="true">→</span></a>
         <a className={styles.secondary} href="#support-funds">{t('先看钱用在哪', 'See where the money goes', '자금 사용처 먼저 보기', '先看錢用在哪')}</a>
-        <Link className={styles.back} to={withSeason('/')}>{t('返回赛事总览', 'Event overview', '대회 개요', '返回賽事總覽')}</Link>
       </div>
     </header>
 
-    {seasonId !== 'FCW26' ? <section className={styles.section}><p>{t('当前赛事没有已配置的周赛支持计划。', 'No weekly support plan is configured for this event.', '이 대회에는 설정된 주간 후원 계획이 없습니다.', '當前賽事沒有已配置的週賽支持計畫。')}</p><Link to="/support?season=FCW2026">FCW2026 ↗</Link></section> : <>
+    {seasonId !== 'FCW26' ? <section className={styles.section}><p>{t('当前赛事没有已配置的周赛支持计划。', 'No weekly support plan is configured for this event.', '이 대회에는 설정된 주간 후원 계획이 없습니다.', '當前賽事沒有已配置的週賽支持計畫。')}</p><Link to="/support?season=FCW2026">FCW2026 →</Link></section> : <>
       <nav className={styles.sectionNav} aria-label={t('本页目录', 'On this page', '이 페이지', '本頁目錄')}>
         {SECTIONS.map(([id, label], index) => <a key={id} href={`#${id}`}><b aria-hidden="true">{String(index + 1).padStart(2, '0')}</b>{tx(label)}</a>)}
       </nav>
@@ -198,7 +199,7 @@ export default function WeeklySupportPage() {
             {published && broadcasts.length ? <ol className={styles.slots}>{broadcasts.map((slot, index) => <li key={slot.id || index} data-state={slot.state || 'pending'}>
               <b aria-hidden="true">{String(index + 1).padStart(2, '0')}</b>
               <span><strong data-i18n-ignore>{slot.label}</strong><small>{slot.startsAt ? `${accountDateTime(slot.startsAt, locale)} UTC+8` : t('时间待定', 'Time to be confirmed', '시간 미정', '時間待定')}</small></span>
-              {slot.match ? <Link to={withSeason(`/matches/${encodeURIComponent(slot.match.match_id || slot.matchId)}`)} data-i18n-ignore>{weeklyTeamShort(slot.match.team_a)} vs {weeklyTeamShort(slot.match.team_b)} ↗</Link> : <small>{t('对阵待定', 'Match to be confirmed', '경기 미정', '對陣待定')}</small>}
+              {slot.match ? <Link to={withSeason(`/matches/${encodeURIComponent(slot.match.match_id || slot.matchId)}`)} data-i18n-ignore>{weeklyTeamShort(slot.match.team_a)} vs {weeklyTeamShort(slot.match.team_b)} →</Link> : <small>{t('对阵待定', 'Match to be confirmed', '경기 미정', '對陣待定')}</small>}
               <em>{['complete', 'ruling'].includes(slot.state) ? t('已完赛', 'Played', '경기 완료', '已完賽') : slot.state === 'live' ? t('进行中', 'Live', '진행 중', '進行中') : t('待播', 'Upcoming', '방송 예정', '待播')}</em>
             </li>)}</ol>
               : <ol className={styles.planSlots} aria-label={t('直播分布', 'How the broadcasts are spread', '중계 배치', '直播分佈')}>

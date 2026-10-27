@@ -240,10 +240,10 @@ function FavoriteManagerSession({ db, favorites, seasonId, locale = 'zh-CN', syn
       </div>
       <footer className={styles.footer}>
         <div className={styles.footerMeta}><span className={styles.draftState} data-dirty={dirty}>{dirty ? copy.pending : copy.unchanged}</span><div className={styles.backupActions} aria-label={copy.backup}>
-          <button type="button" onClick={exportDraft} disabled={Boolean(busy)}>{copy.export} ↗</button><button type="button" onClick={() => importInputRef.current?.click()} disabled={Boolean(busy)}>{busy === 'import' ? copy.reading : copy.import} ↙</button>
+          <button type="button" onClick={exportDraft} disabled={Boolean(busy)}>{copy.export}</button><button type="button" onClick={() => importInputRef.current?.click()} disabled={Boolean(busy)}>{busy === 'import' ? copy.reading : copy.import}</button>
           <input ref={importInputRef} type="file" accept="application/json,.json" className={styles.fileInput} onChange={importDraft} aria-label={copy.import} tabIndex={-1} />
         </div></div>
-        <div className={styles.footerActions}><button type="button" onClick={requestClose}>{copy.cancel}</button><button type="button" className={styles.saveButton} onClick={save} disabled={!dirty || Boolean(busy) || externalChange}>{busy === 'save' ? copy.saving : copy.save} <span aria-hidden="true">↗</span></button></div>
+        <div className={styles.footerActions}><button type="button" onClick={requestClose}>{copy.cancel}</button><button type="button" className={styles.saveButton} onClick={save} disabled={!dirty || Boolean(busy) || externalChange}>{busy === 'save' ? copy.saving : copy.save}</button></div>
       </footer>
     </dialog>
     {importPreview && <ManagerPrompt title={copy.previewTitle} onCancel={() => setImportPreview(null)}>

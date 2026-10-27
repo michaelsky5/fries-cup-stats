@@ -87,7 +87,7 @@ export default function AdvanceSignalFinal({
             <nav className={styles.dossierActions} aria-label={copy(locale, uiText("冠军档案相关入口", locale), 'Champion dossier links')}>
               <Link to={getPhaseHref('playoffs')}>
                 <span>{copy(locale, uiText("查看完整季后赛晋级图", locale), 'Open full playoff bracket')}</span>
-                <b aria-hidden="true">↗</b>
+                <b aria-hidden="true">→</b>
               </Link>
             </nav>
           </div>
@@ -97,7 +97,7 @@ export default function AdvanceSignalFinal({
         <section className={styles.routeSection} aria-labelledby="signal-champion-route-title">
           <header className={styles.sectionEyebrow}>
             <span>CHAMPION ROUTE × {String(path.length).padStart(2, '0')}</span>
-            <p>{copy(locale, uiText("沿比赛顺序读取冠军路径，点击任一场进入比赛档案。", locale), 'Follow the title route in match order. Open any match for its dossier.')} <b aria-hidden="true">↗</b></p>
+            <p>{copy(locale, uiText("沿比赛顺序读取冠军路径，点击任一场进入比赛档案。", locale), 'Follow the title route in match order. Open any match for its dossier.')} <b aria-hidden="true">→</b></p>
           </header>
 
           <div className={styles.routeTable} role="table" aria-label={copy(locale, uiText("冠军比赛路径", locale), 'Champion match route')}>
@@ -127,7 +127,7 @@ export default function AdvanceSignalFinal({
                         </span>
                       </span>
                       <strong className={styles.routeScore}>{item.scoreLabel || '—'}</strong>
-                      <span className={styles.routeResult}>{item.won ? 'W' : 'L'}<i aria-hidden="true">↗</i></span>
+                      <span className={styles.routeResult}>{item.won ? 'W' : 'L'}<i aria-hidden="true">→</i></span>
                     </Link>
                   </li>
                 ))}
@@ -190,7 +190,7 @@ export default function AdvanceSignalFinal({
           {singleElimination
             ? copy(locale, uiText("查看小组赛最终积分榜", locale), 'Open final group standings')
             : copy(locale, uiText("查看瑞士轮最终积分榜", locale), 'Open final Swiss standings')}
-          <b aria-hidden="true">↗</b>
+          <b aria-hidden="true">→</b>
         </Link>
       </footer>
     </div>

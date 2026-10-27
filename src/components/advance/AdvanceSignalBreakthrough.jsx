@@ -68,7 +68,7 @@ function LcqSignalMatchCard({ match, seasonId, locale, withSeason, t }) {
           )
         })}
       </div>
-      <footer><span>{formatSchedule(match?.scheduledAt) || t(getMatchStatusLabelKey(status), status)}</span><b aria-hidden="true">{href ? '↗' : '·'}</b></footer>
+      <footer><span>{formatSchedule(match?.scheduledAt) || t(getMatchStatusLabelKey(status), status)}</span><b aria-hidden="true">{href ? '→' : '·'}</b></footer>
     </>
   )
 
@@ -139,7 +139,7 @@ export default function AdvanceSignalBreakthrough({ state, seasonId, locale = 'z
               <span>BREAKTHROUGH CONTROL / {String(activeNumber).padStart(2, '0')}</span>
               <strong id="signal-lcq-story-title">{phaseComplete ? copy(locale, uiText("四个季后赛席位已确认", locale), 'Four playoff berths confirmed') : copy(locale, uiText("一个分区，只留下一个名字", locale), 'One division leaves one name')}</strong>
             </div>
-            <Link to={getPhaseHref('playoffs')}><span>{copy(locale, uiText("进入季后赛", locale), 'OPEN PLAYOFFS')}</span><b aria-hidden="true">↗</b></Link>
+            <Link to={getPhaseHref('playoffs')}><span>{copy(locale, uiText("进入季后赛", locale), 'OPEN PLAYOFFS')}</span><b aria-hidden="true">→</b></Link>
           </header>
 
           <nav className={styles.lcqGateDock} aria-label={copy(locale, uiText("选择要查看的突围分区", locale), 'Choose a breakthrough division')}>
