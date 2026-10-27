@@ -79,7 +79,7 @@
 .previewImage > span:last-child { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, #11170dda); color: white; display: flex; justify-content: space-between; align-items: baseline; padding: 35px 22px 15px; font-size: 12px; }
 .previewImage > span:last-child b { font: 800 52px/.9 var(--fc-data-font-display); }
 .previewCopy { padding: 22px; }
-.previewCopy h2 { font-size: 32px; font-weight: 700; line-height: 1.25; margin: 7px 0 12px; letter-spacing: -.04em; overflow-wrap: anywhere; }
+.previewCopy h2 { font: var(--fc-data-panel-title); margin: 7px 0 12px; letter-spacing: -.02em; overflow-wrap: anywhere; } /* 票 2.78: same name title as the other detail panels */
 .previewCopy > p { font-size: 14px; color: var(--atlas-muted); }
 .previewFacts { display: flex; gap: 28px; padding: 24px 0; }
 .previewFacts > div { display: grid; gap: 4px; }

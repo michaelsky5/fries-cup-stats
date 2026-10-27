@@ -184,7 +184,7 @@
 .dossierIdentity { min-width: 0; }
 .dossierIdentity > span { font-size: 12px; color: var(--fc-data-text-on-dark); }
 .dossierIdentity > span b { padding-inline: 5px; font-weight: 400; color: var(--fc-data-text-dark-muted); }
-.dossierIdentity h2 { font-size: 28px; line-height: 1.25; margin: 8px 0 6px; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.dossierIdentity h2 { font: var(--fc-data-panel-title); margin: 8px 0 6px; letter-spacing: -.02em; overflow-wrap: anywhere; } /* 票 2.78: same name title as the other detail panels */
 .dossierIdentity p { font-size: 12px; color: var(--fc-data-text-dark-muted); overflow-wrap: anywhere; margin: 0; }
 .dossierRating { display: grid; justify-items: end; gap: 6px; text-align: right; }
 .dossierRating > span { color: var(--fc-data-text-on-dark); font-size: 12px; }

@@ -56,7 +56,7 @@ export default function TeamExhibitionPoster({
       </div>
 
       <div className={styles.arrival} inert={pinned && chapter === 1 ? true : undefined}>
-        <div className={styles.identity} ref={identityRef} tabIndex={-1}>
+        <div className={styles.identity} ref={identityRef} tabIndex={-1} data-cover-name>
           <p className={styles.eyebrow}>FRIES CUP / {en ? 'SEASON COLLECTION' : uiText("队伍赛季珍藏", locale)}</p>
           <ExhibitionWordmark name={team.shortName} className={styles.wordmark} />
           <p className={styles.fullName}>{team.fullName || team.shortName}</p>

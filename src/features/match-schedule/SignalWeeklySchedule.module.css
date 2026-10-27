@@ -178,6 +178,7 @@
   .heading { padding-block: 24px 20px; }
   .heading h1 { margin-block: 6px 8px; }
   .workspace { display: grid; grid-template-columns: minmax(0, 1fr) clamp(300px, 28vw, 420px); gap: 28px; align-items: start; margin-top: 16px; }
+  .workspace[data-empty] { grid-template-columns: minmax(0, 1fr); }
   .filters { grid-template-columns: minmax(0, 1fr) 160px auto 50px; gap: 20px; padding-top: 0; }
   .search input, .teamFilter select { min-height: 44px; font-size: 13px; }
   .statusTabs button { padding: 12px 16px; font-size: 12px; }

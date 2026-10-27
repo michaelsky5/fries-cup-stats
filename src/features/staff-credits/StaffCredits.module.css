@@ -136,7 +136,7 @@
   .folio[data-staff-group="event"] .scene { grid-template-columns: 56px minmax(0, 1fr); gap: 18px; min-height: 164px; flex: 0 0 auto; padding: 24px; }
   .folio[data-staff-group="event"] .identity { grid-column: 2; grid-row: 1; }
   .folio[data-staff-group="event"] .identity > span { display: none; }
-  .folio[data-staff-group="event"] .identity h2 { margin: 0 0 8px; font-size: clamp(22px, calc(96cqi / var(--credit-name-units, 8)), 38px); line-height: 1.2; text-wrap: initial; }
+  .folio[data-staff-group="event"] .identity h2 { margin: 0 0 8px; font-size: clamp(22px, calc(96cqi / var(--credit-name-units, 8)), var(--fc-data-panel-title-size)); line-height: 1.1; letter-spacing: -.02em; text-wrap: initial; } /* 票 2.78: capped at the shared panel title size */
   .folio[data-staff-group="event"] .identity p { font-size: 12px; }
   .folio[data-staff-group="event"] .role { margin-top: 12px; padding-top: 0; border: 0; color: var(--fc-data-signal); font-size: 12px; }
   .folio[data-staff-group="event"] .visual { grid-column: 1; grid-row: 1; align-self: start; width: 56px; }

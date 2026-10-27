@@ -145,7 +145,7 @@
   .journeyTop { padding-bottom: 12px; }
   .page .teamIdentity { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; gap: 12px; padding: 20px 0; }
   .page .heroLogo { width: 42px; height: 42px; }
-  .page .teamIdentity h2 { font-size: 34px; line-height: 1.15; }
+  .page .teamIdentity h2 { font: var(--fc-data-panel-title); letter-spacing: -.02em; } /* 票 2.78 */
   .teamIdentity p { margin-top: 6px; }
   .page .heroPoints strong { font-size: 46px; }
   .heroPoints small { margin-top: 4px; }

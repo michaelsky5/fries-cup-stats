@@ -101,4 +101,7 @@
   .memberEvidence { grid-template-columns: minmax(0,1fr); gap: 25px; padding: 24px 0; }
 }
 @media (prefers-reduced-motion:reduce) { .ensembleMember > [data-hero-artwork] { transition: none; } }
-
+/* 票 2.78: the crest and name in the sticky row appear once the page's own name has scrolled away,
+   so the first screen names the team once; their space stays reserved so the tabs never move. */
+.navigation:not([data-condensed]) .identity > :not(.back) { visibility: hidden; opacity: 0; }
+@media (prefers-reduced-motion: no-preference) { .identity > :not(.back) { transition: opacity 160ms ease; } }

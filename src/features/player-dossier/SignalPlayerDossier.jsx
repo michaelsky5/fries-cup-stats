@@ -51,7 +51,7 @@ export default function SignalPlayerDossier({ db, dossier, season, seasonId, loc
       <div>{PLAYER_ARCHIVE_PAGES.map(([key, ...labels]) => <Link key={key} {...pageLink(key)} className={navStyles.item} aria-current={page === key ? 'page' : undefined}>{pickUiLocale(locale, ...labels)}</Link>)}</div>
     </nav></div>
     <div className={pages.titleRow}>
-      <SignalDataHeading title={identity.displayName} description={analysisPage ? [identity.teamShort, roleLine].filter(Boolean).join(' · ') || null : null}>
+      <SignalDataHeading title={identity.displayName} titleHidden={!analysisPage} description={analysisPage ? [identity.teamShort, roleLine].filter(Boolean).join(' · ') || null : null}>
         <button type="button" className={pages.follow} aria-pressed={favorited} disabled={favoriteDisabled && !favorited} onClick={onFavorite}>{followLabel}<span aria-hidden="true">{favorited ? '✓' : '+'}</span></button>
       </SignalDataHeading>
     </div>

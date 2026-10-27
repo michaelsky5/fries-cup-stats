@@ -81,6 +81,9 @@
   --fc-data-index-title-size: clamp(30px, 3.3vw, 46px);
   --fc-data-section-title-size: 20px;
   --fc-data-index-title-leading: 1.2;
+  /* 票 2.78: the name at the top of a right-hand detail panel (晋级、数据排行、地图、赛事职员). */
+  --fc-data-panel-title: 900 32px/1.1 var(--fc-data-font-display);
+  --fc-data-panel-title-size: 32px;
   --fc-data-index-heading-space: 24px;
   --fc-data-section-nav-height: 56px;
 

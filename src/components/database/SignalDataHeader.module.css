@@ -56,3 +56,8 @@
   .compact .description { margin-top: 6px; }
   .compact .meta { gap: 2px 8px; font-size: 12px; }
 }
+/* 票 2.78: the cover below shows the name; the h1 is kept for screen readers and the row holds only the actions. */
+.heading.titleHidden { padding: 12px 0; }
+.titleHidden .intro { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.titleHidden .meta { grid-column: 2; }
+@media (max-width: 600px) { .heading.titleHidden { padding: 8px 0; } .titleHidden .meta { grid-column: 1; } }

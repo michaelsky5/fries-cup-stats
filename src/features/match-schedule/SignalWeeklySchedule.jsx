@@ -148,7 +148,8 @@ export default function SignalWeeklySchedule() {
       </div>
     </header>
     <WeeklyWeekRail weeks={weeks} selectedId={selectedWeekId} locale={locale} includeAll onChange={id => change({ week: id, match: null, expanded: null })} />
-    <div className={styles.workspace}>
+    {/* 票 2.78: with no fixtures the list's empty state is the only one — no preview panel beside it. */}
+    <div className={styles.workspace} data-empty={entries.length ? undefined : ''}>
       <div className={styles.listColumn}>
         <div className={styles.filters} id={filtersId} data-open={filtersOpen || undefined}>
           <label className={styles.search}><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg><ImeSafeInput type="search" value={query} onValueChange={value => change({ query: value })} placeholder={t(uiText("搜索队伍或比赛编号…", locale), 'Search teams or match numbers…')} aria-label={t(uiText("搜索周赛队伍或比赛编号", locale), 'Search weekly teams or match numbers')} /></label>
@@ -166,7 +167,7 @@ export default function SignalWeeklySchedule() {
         </div>
         <div className={styles.listHeading}>
           <h2>{selectedWeekId === 'all' ? weeklyCycleTitle(cycle, locale) : week ? weeklyWeekTitle(week, locale) : t(uiText("周赛赛程", locale), 'Weekly schedule')}<span aria-live="polite">{t(uiText("{0} 场对阵", locale, [model.resultCount]), `${model.resultCount} matches`)}</span></h2>
-          <p>{isDesktop ? eventCenterText('previewMatchHint', locale) : entries.length && entries.every(entry => entry.matches.every(match => String(match.format).toUpperCase() === 'RR5')) ? t(uiText("RR5 · 固定五图，可按规则提前结束", locale), 'RR5 · Five maps, subject to event rules') : t(uiText("各场赛制以对阵公示为准", locale), 'Each match follows its published format')}</p>
+          {entries.length ? <p>{isDesktop ? eventCenterText('previewMatchHint', locale) : entries.every(entry => entry.matches.every(match => String(match.format).toUpperCase() === 'RR5')) ? t(uiText("RR5 · 固定五图，可按规则提前结束", locale), 'RR5 · Five maps, subject to event rules') : t(uiText("各场赛制以对阵公示为准", locale), 'Each match follows its published format')}</p> : null}
         </div>
         {entries.length ? <div className={styles.groups}>{entries.map(entry => <section key={entry.week.id} aria-label={weeklyWeekTitle(entry.week, locale)}>
           {selectedWeekId === 'all' && <h3 className={styles.weekHeading}><span>{weeklyWeekTitle(entry.week, locale)}</span><small>{weeklyStatusLabel(entry.week.status, locale)}</small></h3>}
@@ -180,7 +181,7 @@ export default function SignalWeeklySchedule() {
           {followedOnly && !followedKey ? <Link to={`${overviewPath}#weekly-following`}>{t(uiText("去关注队伍", locale), 'Choose teams')} →</Link> : model.hasFilters && <button type="button" onClick={reset}>{t(uiText("重置筛选", locale), 'Reset filters')} ↺</button>}
         </section>}
       </div>
-      {isDesktop && <WeeklyMatchPreview id={previewId} match={selectedMatch} week={selectedMatchWeek} locale={locale} seasonId={seasonId} withSeason={withSeason} returnProps={returnProps} />}
+      {isDesktop && entries.length ? <WeeklyMatchPreview id={previewId} match={selectedMatch} week={selectedMatchWeek} locale={locale} seasonId={seasonId} withSeason={withSeason} returnProps={returnProps} /> : null}
     </div>
     <footer className={styles.footer}><p>{t(uiText("比分与地图记录以公布内容为准；赛段积分见总览。", locale), 'Scores and map records follow the published data. Cycle points are in the overview.')}</p><Link to={overviewPath}>{t(uiText("查看赛段积分", locale), 'View cycle points')} →</Link></footer>
   </div>
