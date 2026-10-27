@@ -750,9 +750,15 @@
   text-decoration: none;
 }
 
+/* 票 2.70: the site-wide yellow primary on archived seasons' advancement page too (was black). */
 .primaryAction {
   align-self: center;
   white-space: nowrap;
+  border-color: var(--fc-data-primary-bg, #f4c320);
+  background: var(--fc-data-primary-bg, #f4c320);
+  color: var(--fc-data-primary-text, #181a17);
+  font-size: 14px;
+  font-weight: var(--fc-data-primary-weight, 750);
 }
 
 .secondaryAction {

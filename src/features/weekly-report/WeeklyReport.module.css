@@ -33,9 +33,10 @@
 .teaserFoot { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-top:auto; padding-top:14px; border-top:1px solid var(--journal-line); }
 .teaserFoot > span { font-size:13px; font-weight:700; line-height:1.5; }
 .teaserFoot small { display:block; color:var(--journal-muted); font-size:11px; font-weight:400; margin-top:4px; }
-.primaryLink { display:inline-flex; align-items:center; justify-content:space-between; gap:32px; min-height:44px; padding:11px 16px; color:var(--fc-data-paper-raised,#f6f5ef) !important; background:#2a2a2a; font-size:13px; font-weight:650; white-space:nowrap; }
-.primaryLink:hover { background:#383838; text-decoration:none !important; }
-.primaryLink > span { color:var(--fc-data-signal,#f4c320); font-size:20px; line-height:1; }
+/* 票 2.70: 「阅读周报」 is the site-wide yellow primary (was #2a2a2a, 13px/650). */
+.primaryLink { display:inline-flex; align-items:center; justify-content:space-between; gap:32px; min-height:var(--fc-data-primary-height,44px); padding:0 16px; color:var(--fc-data-primary-text,#181a17) !important; background:var(--fc-data-primary-bg,#f4c320); font-size:14px; font-weight:var(--fc-data-primary-weight,750); white-space:nowrap; }
+.primaryLink:hover { background:var(--fc-data-primary-bg-hover,#ffd64a); text-decoration:none !important; }
+.primaryLink > span { color:inherit; font-size:20px; line-height:1; }
 .pathway { padding:20px 0 0; border-top:1px solid var(--fc-data-line-strong); }
 .pathwayHeading h2 { margin:0; font-size:var(--fc-data-section-title-size); font-weight:800; }
 .pathwayStages { list-style:none; margin:14px 0 0; padding:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-block:1px solid var(--journal-line); }

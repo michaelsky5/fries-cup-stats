@@ -70,9 +70,10 @@
 .championIdentity strong { font-size: 13px; font-weight: 500; }
 .championIdentity span { font: 10px var(--font-mono); letter-spacing: .06em; color: #717367; }
 .championIdentity span > b { padding: 0 7px; font-weight: 400; }
-.primaryLink { display: flex; width: fit-content; min-width: 182px; min-height: 42px; gap: 35px; justify-content: space-between; align-items: center; padding: 0 15px; margin-top: 24px; background: var(--archive-ink); color: var(--archive-paper) !important; font-size: 11px; }
+/* 票 2.70: the site-wide yellow primary (was ink with 11px type). */
+.primaryLink { display: flex; width: fit-content; min-width: 182px; min-height: var(--fc-data-primary-height, 44px); gap: 35px; justify-content: space-between; align-items: center; padding: 0 16px; margin-top: 24px; background: var(--fc-data-primary-bg, #f4c320); color: var(--fc-data-primary-text, #181a17) !important; font-size: 14px; font-weight: var(--fc-data-primary-weight, 750); }
 .primaryLink > span, .playerLink > span { font-size: 20px; transition: transform .2s; }
-.primaryLink:hover { background: #36392e; }
+.primaryLink:hover { background: var(--fc-data-primary-bg-hover, #ffd64a); }
 .primaryLink:hover > span, .playerLink:hover > span { transform: translate(3px, -3px); }
 
 .figure { position: absolute; z-index: 3; bottom: 157px; left: calc(59% + var(--story-mix) * 4%); width: 42%; height: 66%; transform: translateX(-50%) translate(calc(var(--pointer-x, 0) * 11px), calc(var(--pointer-y, 0) * 7px + var(--story-mix) * 3px)) scale(calc(1 + var(--story-mix) * .08)); transform-origin: 50% 100%; pointer-events: none; }

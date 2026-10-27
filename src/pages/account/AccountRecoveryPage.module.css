@@ -19,7 +19,9 @@
 .hint { color: var(--fc-data-text-muted); font-size: 13px; margin: 0; }
 .actions { display: flex; justify-content: flex-end; align-items: end; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
 .actions :is(button, a), .guide a { display: inline-flex; justify-content: center; align-items: center; box-sizing: border-box; min-height: 46px; padding: 12px 18px; color: var(--fc-data-ink); border: 1px solid var(--fc-data-line-strong); background: transparent; font: inherit; font-weight: 650; text-decoration: none; cursor: pointer; }
-.actions .primary { background: var(--fc-data-ink); color: var(--fc-data-paper); border-color: var(--fc-data-ink); }
+/* 票 2.70: the site-wide yellow primary (was ink). */
+.actions .primary { min-height: var(--fc-data-primary-height, 44px); padding: 0 16px; background: var(--fc-data-primary-bg, #f4c320); color: var(--fc-data-primary-text, #181a17); border-color: var(--fc-data-primary-bg, #f4c320); font-weight: var(--fc-data-primary-weight, 750); }
+.actions .primary:hover:enabled { background: var(--fc-data-primary-bg-hover, #ffd64a); }
 .panel :is(input, textarea, button, a):focus-visible, .guide a:focus-visible { outline: 2px solid var(--fc-data-ink); outline-offset: 3px; }
 .panel button:disabled { cursor: not-allowed; opacity: .65; }
 .error, .warning, .note { padding: 14px 18px; border-left: 3px solid var(--fc-data-ink); background: var(--fc-data-paper-deep); line-height: 1.8; }

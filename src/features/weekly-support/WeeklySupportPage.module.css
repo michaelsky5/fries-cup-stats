@@ -12,11 +12,13 @@
 .hero h1 { margin: 8px 0 10px; font-size: var(--fc-data-index-title-size, 44px); font-weight: 900; line-height: var(--fc-data-index-title-leading, 1.05); letter-spacing: -.04em; }
 .lead { max-width: 62ch; color: var(--muted); font-size: 15px; line-height: 1.75; }
 .heroActions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; margin-top: 20px; }
-.primary, .secondary { display: inline-flex; align-items: center; gap: 14px; min-height: 48px; padding: 10px 18px; font-size: 14px; font-weight: 800; }
-.page .primary { background: var(--ink); color: var(--fc-data-paper, #eeede6); }
-.primary > span { color: var(--fc-data-signal, #f4c320); }
+/* 票 2.70: the site-wide yellow primary (was ink, 48px, 800); the outlined button matches its height. */
+.primary, .secondary { display: inline-flex; align-items: center; gap: 14px; min-height: var(--fc-data-primary-height, 44px); padding: 0 16px; font-size: 14px; font-weight: 650; }
+.page .primary { background: var(--fc-data-primary-bg, #f4c320); color: var(--fc-data-primary-text, #181a17); font-weight: var(--fc-data-primary-weight, 750); }
+.primary > span { color: inherit; }
 .secondary { border: 1px solid var(--fc-data-line-strong, rgb(24 26 23 / 38%)); }
-.primary:hover, .secondary:hover { text-decoration: underline; text-underline-offset: 4px; }
+.page .primary:hover { background: var(--fc-data-primary-bg-hover, #ffd64a); }
+.secondary:hover { text-decoration: underline; text-underline-offset: 4px; }
 .back { margin-left: auto; color: var(--muted); font-size: 12px; }
 .back::before { content: '← '; }
 

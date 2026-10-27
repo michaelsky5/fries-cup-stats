@@ -39,7 +39,8 @@
 .dialog footer p { margin: 0; font-size: 12px; line-height: 1.6; color: var(--fc-data-text-muted); max-width: 300px; }
 .dialog footer p span { display: block; color: var(--fc-data-ink); margin-top: 4px; }
 .dialog footer > div { display: flex; gap: 10px; flex-shrink: 0; }
-.editor .primary { background: var(--fc-data-signal); border-color: var(--fc-data-ink); font-weight: 700; }
+/* 票 2.70: the site-wide primary — yellow without the ink outline, 750. */
+.editor .primary { background: var(--fc-data-primary-bg, #f4c320); border-color: var(--fc-data-primary-bg, #f4c320); color: var(--fc-data-primary-text, #181a17); font-weight: var(--fc-data-primary-weight, 750); }
 @media (max-width: 640px) {
   .editor { gap: 14px; flex-wrap: wrap; }.identity { flex-basis: calc(100% - 90px); }.actions { padding-left: 86px; }
   .dialog > header, .body, .dialog footer { padding: 18px; }.tabs { padding-inline: 18px; }.gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }

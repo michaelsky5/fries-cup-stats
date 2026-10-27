@@ -32,7 +32,8 @@
 .coverFacts dt { color: var(--fc-data-text-on-dark); font-size: 12px; order: 2; }
 .coverFacts dd { margin: 0; font: 800 48px/1 var(--fc-data-font-display); }
 .coverActions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 22px; }
-.primary { display: inline-flex; justify-content: space-between; align-items: center; gap: 26px; min-height: 48px; padding: 12px 17px; color: var(--fc-data-ink) !important; background: var(--fc-data-signal); font-size: 14px; font-weight: 700; }
+/* 票 2.70: same size and weight as the site-wide primary (was 48px, 700). */
+.primary { display: inline-flex; justify-content: space-between; align-items: center; gap: 26px; min-height: var(--fc-data-primary-height, 44px); padding: 0 16px; color: var(--fc-data-primary-text, #181a17) !important; background: var(--fc-data-primary-bg, #f4c320); font-size: 14px; font-weight: var(--fc-data-primary-weight, 750); }
 .primary > span { font-size: 24px; line-height: 1; }
 .primary:hover { background: var(--fc-data-paper); }
 .coverActions button { border: 0; border-radius: 0; padding: 10px 0; min-height: 44px; background: transparent; color: var(--fc-data-paper); font-size: 13px; }

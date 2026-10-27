@@ -43,6 +43,13 @@
   --fc-data-focus-on-light: #806000;
   --fc-data-focus-on-dark: #f4c320;
   --fc-data-focus: var(--fc-data-focus-on-light);
+  /* 票 2.70: the only filled button is the primary action — yellow with ink text, 44px, 14px/750, no outline;
+     at most one per section. Everything else is outlined or a text link. */
+  --fc-data-primary-bg: var(--fc-data-signal);
+  --fc-data-primary-bg-hover: var(--fc-data-signal-bright);
+  --fc-data-primary-text: var(--fc-data-on-signal);
+  --fc-data-primary-height: 44px;
+  --fc-data-primary-weight: 750;
 
   /* Semantic states: base values are for paper surfaces, bright values for ink. */
   --fc-data-status-live: #0f766e;

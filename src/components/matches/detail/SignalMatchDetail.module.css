@@ -7,11 +7,12 @@
 .shell a { text-decoration: none; color: inherit; }
 .toolbar, .toolbar > div { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
 .toolbar { margin-bottom: 6px; }
-.toolbar :is(button, a) { display: inline-flex; align-items: center; justify-content: center; padding: 9px 12px; min-height: 40px; border: 1px solid var(--fc-data-line-strong); background: transparent; color: var(--fc-data-ink); font-size: 12px; font-weight: 600; }
+.toolbar :is(button, a) { display: inline-flex; align-items: center; justify-content: center; padding: 9px 12px; min-height: 44px; border: 1px solid var(--fc-data-line-strong); background: transparent; color: var(--fc-data-ink); font-size: 12px; font-weight: 600; }
 .toolbar > button { border-color: transparent; padding-left: 0; }
-.toolbar .primaryAction { background: var(--fc-data-ink); color: var(--fc-data-paper); border-color: var(--fc-data-ink); }
+/* 票 2.70: 「观看录像」 is the site-wide yellow primary (was ink); the toolbar row is 44px to match. */
+.toolbar .primaryAction { padding: 0 16px; background: var(--fc-data-primary-bg, #f4c320); color: var(--fc-data-primary-text, #181a17); border-color: transparent; font-size: 14px; font-weight: var(--fc-data-primary-weight, 750); }
 .toolbar button:hover { background: var(--fc-data-paper-raised); }
-.toolbar .primaryAction:hover { background: var(--fc-data-signal); color: var(--fc-data-ink); }
+.toolbar .primaryAction:hover { background: var(--fc-data-primary-bg-hover, #ffd64a); color: var(--fc-data-primary-text, #181a17); }
 .copyFeedback { padding-bottom: 12px; font-size: 12px; }
 .shell .phasePreview { padding: 2px 0 12px; font-size: 10px; color: var(--fc-data-text-muted); line-height: 1.7; }
 .cover .phaseCaption { padding: 6px 0 18px; color: var(--fc-data-text-on-dark); text-align: center; font-size: 13px; line-height: 1.8; }

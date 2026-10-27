@@ -34,9 +34,10 @@
 .profileTag { color: var(--fc-data-text-on-dark); font-size: 17px; overflow-wrap: anywhere; }
 .profileCoverBottom { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .profileCoverBottom > p { max-width: 46%; color: var(--fc-data-text-on-dark); font-size: 13px; overflow-wrap: anywhere; }
-.primaryAction { display: inline-flex; align-items: center; justify-content: space-between; gap: 32px; min-height: 48px; padding: 13px 18px; color: var(--fc-data-on-signal) !important; background: var(--fc-data-signal); font-size: 14px; font-weight: 700; white-space: nowrap; }
+/* 票 2.70: same size and weight as the site-wide primary (was 48px, 700). */
+.primaryAction { display: inline-flex; align-items: center; justify-content: space-between; gap: 32px; min-height: var(--fc-data-primary-height, 44px); padding: 0 16px; color: var(--fc-data-primary-text, #181a17) !important; background: var(--fc-data-primary-bg, #f4c320); font-size: 14px; font-weight: var(--fc-data-primary-weight, 750); white-space: nowrap; }
 .primaryAction > span { font-size: 24px; font-weight: 400; line-height: 1; }
-.primaryAction:hover { background: var(--fc-data-paper); }
+.primaryAction:hover { background: var(--fc-data-primary-bg-hover, #ffd64a); }
 .profileActions { display: flex; flex-wrap: wrap; gap: 25px; border-top: 1px solid #42473c; padding-top: 17px; margin-top: 25px; }
 .profileActions button { padding: 6px 0; border: 0; background: transparent; color: var(--fc-data-text-on-dark); font-size: 12px; }
 .profileActions button:hover { color: var(--fc-data-paper); text-decoration: underline; text-underline-offset: 5px; }
@@ -192,7 +193,7 @@
   .profileTag { font-size: 16px; }
   .profileCoverBottom { flex-direction: row; align-items: center; gap: 14px; }
   .profileCoverBottom > p { max-width: 46%; font-size: 12px; }
-  .primaryAction { font-size: 13px; gap: 14px; padding-inline: 13px; }
+  .primaryAction { gap: 14px; padding-inline: 12px; }
   .profileActions { padding-top: 10px; margin-top: 20px; }
   .profilePortrait { min-height: 350px; margin: 0 14px 14px; }
   .portraitWordmark { font-size: 100px; }

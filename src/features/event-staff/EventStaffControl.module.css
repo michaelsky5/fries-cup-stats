@@ -59,5 +59,7 @@
 .relationshipCard button:focus-visible { outline: 2px solid #9c7912; outline-offset: 3px; }
 .relationshipCard > p.error { color: #8f2119; }
 .relationshipCard > p.notice { color: #4a3b00; }
+/* 票 2.70: the filled button is the site-wide primary — yellow, ink text, 44px, 14px/750, no outline. */
+.primaryAction, .relationshipCard .actions button:not(.secondaryAction):first-child { min-height: var(--fc-data-primary-height, 44px); padding: 0 16px; border-color: var(--fc-data-primary-bg, #f4c320); background: var(--fc-data-primary-bg, #f4c320); color: var(--fc-data-primary-text, #181a17); font-size: 14px; font-weight: var(--fc-data-primary-weight, 750); }
 @media (max-width: 760px) { .relationshipCard { padding: 20px 16px; } .relationshipCard h2 { font-size: 23px; } }
 @media (max-width: 760px) { .relationshipBody dl, .preferenceGrid { grid-template-columns: 1fr; } .relationshipBody dl > div { border-right: 0; border-bottom: 1px solid #2a2a2a; } .relationshipBody dl > div:last-child { border-bottom: 0; } .slotGrid { min-width: 520px; } .availabilityCard { overflow-x: auto; } }
