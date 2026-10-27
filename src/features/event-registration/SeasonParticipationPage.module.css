@@ -130,3 +130,6 @@
   .context .rulebookLink { min-height: 0; }
   .submission { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--fc-data-line); }
 }
+
+/* 票 2.75: the header actions are at least 44px tall on phones. */
+@media (max-width: 760px) { .header .actions > :is(a, button) { display: inline-flex; align-items: center; min-height: 44px; } }

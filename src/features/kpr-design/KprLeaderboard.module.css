@@ -450,3 +450,4 @@
   .mobileExpand { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border: 1px solid var(--fc-data-line); border-radius: 0; background: transparent; color: var(--fc-data-ink); font-size: 20px; line-height: 1; }
   .mobileList li[data-open] .mobileExpand { border-color: var(--fc-data-ink); background: var(--fc-data-ink); color: var(--fc-data-paper); }
 }
+@media (max-width: 760px) { .methodNote summary { min-height: 44px; box-sizing: border-box; } } /* 票 2.75 */

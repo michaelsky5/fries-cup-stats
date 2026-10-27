@@ -35,3 +35,4 @@
 .countdown strong { font-size: 19px; }.countdown span { font-size: 12px; }.countdown[data-soon="true"] strong { color: #766200; }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 @media(max-width: 600px) { .settings { padding: 20px 16px; }.master, .option { padding: 17px 14px; gap: 14px; }.summary { align-items: start; flex-direction: column; gap: 8px; padding: 16px; }.summary a { padding: 3px 0; }.actions button { flex: 1 1 150px; }.countdown { margin-inline: 20px; }.countdown strong { font-size: 17px; } }
+@media (max-width: 760px) { .summary a { display: inline-flex; align-items: center; min-height: 44px; } } /* 票 2.75 */

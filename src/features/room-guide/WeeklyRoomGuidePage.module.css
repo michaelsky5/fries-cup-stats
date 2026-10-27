@@ -52,3 +52,9 @@
 .page[data-room-guide] .hero { padding-top: 36px; }
 @media (max-width: 650px) { .page[data-room-guide] .hero { padding-top: 22px; } }
 .page[data-room-guide] .lessonNav { top: calc(var(--kpr-header-height, 84px) + 12px); }
+
+/* 票 2.75: phone tap targets are at least 44px (back link, copy, mode, lessons, pager, guide links). */
+@media (max-width: 760px) {
+  .utility a, .utility button, .pager button, .guideLink, .modeButtons button { display: inline-flex; align-items: center; min-height: 44px; box-sizing: border-box; }
+  .lessonNav button { min-height: 44px; }
+}

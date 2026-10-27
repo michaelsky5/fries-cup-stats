@@ -392,3 +392,5 @@
   .analysisPanel h3 { font-size: 17px; }
   .recordToolbar select { font-size: 16px; }
 }
+/* 票 2.75: the search field and the 「查看完整列表」 link are 44px tall on phones. */
+@media (max-width: 760px) { .search input { height: 44px; } .overviewHeading a { display: inline-flex; align-items: center; min-height: 44px; } }

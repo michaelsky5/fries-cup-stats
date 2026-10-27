@@ -191,3 +191,5 @@
   .overview[data-mobile-home='true'][data-mobile-progress='true'] .homeFollowing { display: none; }
   .overview[data-mobile-home='true'] .support { display: none; }
 }
+/* 票 2.75: phone tap targets are at least 44px. */
+@media (max-width: 760px) { .person summary, .identityActions .person summary { min-height: 44px; } .clearTasks a, .empty a { display: inline-flex; align-items: center; min-height: 44px; } .empty a { padding-bottom: 0; border-bottom: 0; text-decoration: underline; text-underline-offset: 4px; } }

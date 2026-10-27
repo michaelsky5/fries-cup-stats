@@ -243,3 +243,14 @@
   .hero > .searchArea { margin: 12px; }
   .ensemble { padding: 12px; }
 }
+
+/* 票 2.75: phone tap targets are at least 44px. */
+@media (max-width: 760px) {
+  .metrics a, .allTeamsLink, .sectionHeading a, .creditDetail a { min-height: 44px; }
+  .sectionHeading a, .creditDetail a { display: inline-flex; align-items: center; }
+  .teamIdentity a { min-width: 44px; justify-content: center; }
+  .teamStaff a { display: inline-flex; align-items: center; min-height: 44px; }
+  .creditTabs button { min-width: 44px; justify-content: center; }
+  .method summary { min-height: 44px; box-sizing: border-box; padding-block: 12px; }
+}
+@media (max-width: 760px) { .teamStaff a { min-width: 44px; } } /* 票 2.75: short names */

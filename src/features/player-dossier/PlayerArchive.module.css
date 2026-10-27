@@ -335,3 +335,4 @@
   .recordActions > a { display: flex; font-size: 13px; }
 }
 @media (prefers-reduced-motion: reduce) { .heroCardArt { transition: none; } .heroCard:hover .heroCardArt { transform: none; } }
+@media (max-width: 760px) { .coverContext a { min-height: 44px; } } /* 票 2.75 */

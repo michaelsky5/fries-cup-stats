@@ -36,3 +36,11 @@
 @media(max-width:600px){.header{padding:16px 12px}.main{width:calc(100% - 24px)}.footer{padding:20px 0}} /* X5 / 票 2.15: phone gutter 12px like the event center */
 /* 票 2.69: same scale as 赛事报名 and 我的空间 — page title on the system index size (46 / 30px), 44px fields and
    controls, the yellow primary without the ink outline, 14px buttons with 10px 14px padding. */
+
+/* 票 2.75: phone tap targets are at least 44px (section bar, card links, headings, disclosures). */
+@media (max-width: 760px) {
+  .sectionBar a, .sectionHeading a, .card h2 a, .card a { display: inline-flex; align-items: center; min-height: 44px; }
+  .sectionBar button { min-width: 44px; }
+  .noticeList summary, .feedback summary { display: flex; align-items: center; min-height: 44px; }
+}
+@media (max-width: 760px) { .sectionBar a { min-width: 44px; justify-content: center; } } /* 票 2.75 */

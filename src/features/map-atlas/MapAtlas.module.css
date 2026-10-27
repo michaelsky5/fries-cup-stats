@@ -611,3 +611,4 @@
   .recordHighlights .mobileDisclosure { margin-left: auto; }
   .recordHighlights[data-expanded="false"] .extremes { display: none; }
 }
+@media (max-width: 760px) { .method summary { min-height: 44px; display: flex; align-items: center; } } /* 票 2.75 */

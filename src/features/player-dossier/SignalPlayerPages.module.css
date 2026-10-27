@@ -255,3 +255,4 @@
   .analysisTabs { gap: 20px; }
   .analysisTabs button { font-size: 13px; gap: 5px; }
 }
+@media (max-width: 760px) { .pageTop > button { min-height: 44px; } } /* 票 2.75 */

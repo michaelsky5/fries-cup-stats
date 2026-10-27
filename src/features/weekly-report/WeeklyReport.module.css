@@ -229,3 +229,6 @@
 
 /* 票 2.25: phone tap targets and text on the home teaser and the event path. */
 @media (max-width: 600px) { .teaserLabel > a, .pathwayHeading > a { min-height: 44px; } .teaserFoot small { font-size: 12px; } }
+
+/* 票 2.75: phone tap targets are at least 44px. */
+@media (max-width: 760px) { .breadcrumbs a { min-height: 44px; } }

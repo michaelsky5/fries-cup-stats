@@ -385,3 +385,5 @@
   .follow { width: 100%; justify-content: space-between; }
   .dossier[data-archive-view='analysis'] [data-team-performance] { margin-top: 40px; }
 }
+/* 票 2.75: the footer links are 44px tall on phones. */
+@media (max-width: 760px) { .pageFoot a, .pageFoot button { display: inline-flex; align-items: center; min-height: 44px; } }
