@@ -137,6 +137,17 @@ export function createNativeAccountClient({ request, login, storage, origin = 'h
     snapshot: () => ({ ...state }),
     subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener) },
     capabilities: () => send('/capabilities'),
+    async webLogin(action, ticketId) {
+      if (!['scan','confirm','deny'].includes(action) || !/^[A-Za-z0-9_-]{16,32}$/.test(ticketId || '')) throw fault('INVALID_ROUTE', '登录二维码无效，请在电脑上刷新后重试。');
+      const expected = epoch;
+      const route = `/web-login/${ticketId}/${action}`;
+      const value = session ? await guarded(route, { method: 'POST', body: {} })
+        : action !== 'confirm' && ticket && Date.parse(ticket.expiresAt) > now()
+          ? await send(route, { method: 'POST', body: { bindingTicket: ticket.value } })
+          : (() => { throw fault('UNAUTHORIZED', '请先微信登录并关联薯条杯账号。'); })();
+      if (expected !== epoch) throw stale();
+      return value;
+    },
     async restore() {
       if (!session) return state
       const expected = epoch

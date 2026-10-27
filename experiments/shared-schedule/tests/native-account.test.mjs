@@ -24,6 +24,42 @@ function fixture(seed) {
   return { client, requests, stored, queue, data, enqueue, response, authenticate, advance: ms => { clock += ms }, ticket: () => ({ status: 'BINDING_REQUIRED', bindingTicket: 'short-lived-ticket-000000000000', expiresAt: new Date(clock + 300000).toISOString() }) }
 }
 
+test('web QR approval uses only the native Bearer and never the public scene as an account credential', async () => {
+  const f = fixture(), id = 'Synthetic_0123456789AB'
+  await f.authenticate('first')
+  f.enqueue({ status: 'SCANNED' })
+  await f.client.webLogin('scan', id)
+  const request = f.requests.at(-1)
+  assert.equal(request.url, 'https://admin.fries-cup.com/api/mini/v1/web-login/' + id + '/scan')
+  assert.equal(request.method, 'POST')
+  assert.equal(request.header.Authorization, 'Bearer ' + f.data('first').accessToken)
+  assert.equal(Object.hasOwn(request.header, 'Cookie'), false)
+  assert.deepEqual(request.data, {})
+  const before = f.requests.length
+  await assert.rejects(f.client.webLogin('confirm', '../other-account'), { code: 'INVALID_ROUTE' })
+  assert.equal(f.requests.length, before)
+})
+test('an unbound phone may report its binding state or deny, but cannot confirm a web login', async () => {
+  const f = fixture(), id = 'Synthetic_0123456789AB', ticket = f.ticket()
+  f.enqueue(ticket); await f.client.beginLogin()
+  f.enqueue({ status: 'BINDING' }); await f.client.webLogin('scan', id)
+  assert.deepEqual(f.requests.at(-1).data, { bindingTicket: ticket.bindingTicket })
+  assert.equal(Object.hasOwn(f.requests.at(-1).header, 'Authorization'), false)
+  const before = f.requests.length
+  await assert.rejects(f.client.webLogin('confirm', id), { code: 'UNAUTHORIZED' })
+  assert.equal(f.requests.length, before)
+})
+test('an account switch invalidates an in-flight QR review without exposing the old review', async () => {
+  const f = fixture(), id = 'Synthetic_0123456789AB', pending = deferred()
+  await f.authenticate('first')
+  f.queue.push(() => pending.promise)
+  const reading = f.client.webLogin('scan', id)
+  f.enqueue(null, 204); await f.client.logout()
+  pending.resolve(f.response({ status: 'SCANNED', browser: 'old-account-review' }))
+  await assert.rejects(reading, { code: 'STALE_REQUEST' })
+  assert.equal(f.client.snapshot().user, null)
+})
+
 test('first binding uses a fresh WeChat code and persists only the completed scoped session', async () => {
   const f = fixture()
   f.enqueue(f.ticket())

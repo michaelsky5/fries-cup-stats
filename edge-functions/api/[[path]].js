@@ -169,6 +169,18 @@ export async function proxyRequest(request, {
   }
   // Clone Headers directly so separate Set-Cookie values stay separate.
   const responseHeaders = new Headers(upstream.headers)
+  // The QR proof stays scoped to the same ticket after /api is proxied through
+  // /api/platform. Session cookies and unrelated paths keep their exact scope.
+  if (!route.public && /^\/api\/platform\/auth\/wechat-qr(?:\/|$)/.test(url.pathname)) {
+    const cookies = typeof responseHeaders.getSetCookie === 'function'
+      ? responseHeaders.getSetCookie() : [responseHeaders.get('set-cookie')].filter(Boolean)
+    if (cookies.some(value => /(?:^|,\s*)(?:__Secure-)?fries_wechat_qr(?:_[A-Za-z0-9_-]{16,32})?=/.test(value))) {
+      responseHeaders.delete('set-cookie')
+      for (const value of cookies) responseHeaders.append('set-cookie',
+        /^(?:__Secure-)?fries_wechat_qr(?:_[A-Za-z0-9_-]{16,32})?=/.test(value)
+          ? value.replace(/(;\s*Path=)\/api\/auth\/wechat-qr(?=\/|;|$)/i, '$1/api/platform/auth/wechat-qr') : value)
+    }
+  }
   for (const name of ['connection', 'keep-alive', 'transfer-encoding', 'content-length', 'content-encoding', 'server', 'access-control-allow-origin', 'access-control-allow-credentials']) {
     responseHeaders.delete(name)
   }
