@@ -3,8 +3,16 @@ const webpack = require('webpack')
 const statsSource = path.resolve(__dirname, '../../../src')
 const statsCatalog = path.resolve(__dirname, '../../../src/lib/localeCatalog.js')
 const statsSeasons = path.resolve(__dirname, '../../../src/config/seasons.js')
+const accountVisualFixture = process.env.TARO_ENV === 'h5' && process.env.NATIVE_ACCOUNT_VISUAL_FIXTURE === '1'
 // Canonical presentation helpers use native preferences and a generated public UI dictionary subset.
 function configureSharedBuild(chain) {
+  if (accountVisualFixture) chain.plugin('account-visual-fixture').use(webpack.NormalModuleReplacementPlugin, [
+    /nativeAccountRuntime\.js$/, resource => {
+      if (path.resolve(resource.context, resource.request) === path.resolve(__dirname, '../src/account/nativeAccountRuntime.js')) {
+        resource.request = path.resolve(__dirname, '../tests/fixtures/nativeAccountRuntime.js')
+      }
+    }
+  ])
   if(process.env.NATIVE_BUNDLE_REPORT)chain.plugin('native-bundle-report').use(class NativeBundleReport {apply(compiler){compiler.hooks.done.tap('NativeBundleReport',stats=>require('node:fs').writeFileSync(process.env.NATIVE_BUNDLE_REPORT,JSON.stringify(stats.toJson({all:false,chunks:true,chunkModules:true,modules:true,nestedModules:true}),null,2)))}})
   // Canonical files outside this trial resolve dependencies from the Stats
   // checkout. Keep every imported hook on the same React as Taro's renderer.
@@ -31,7 +39,7 @@ module.exports = {
   designWidth: 375,
   deviceRatio: { 375: 2 },
   sourceRoot: 'src',
-  outputRoot: `dist/${process.env.TARO_ENV || 'weapp'}`,
+  outputRoot: accountVisualFixture ? 'dist/h5-account-visual' : `dist/${process.env.TARO_ENV || 'weapp'}`,
   framework: 'react',
   compiler: 'webpack5',
   plugins: ['@tarojs/plugin-html'],

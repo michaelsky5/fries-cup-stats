@@ -2,10 +2,10 @@ import http from 'node:http'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../dist/h5')
+const defaultRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../dist/h5')
 const api = '/api/public/seasons/FCW26/publish/latest/data'
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml', '.ttf': 'font/ttf' }
-export function createPreviewServer(readPublic = route => fetch('https://admin.fries-cup.com' + route, { signal: AbortSignal.timeout(20000) })) {
+export function createPreviewServer(readPublic = route => fetch('https://admin.fries-cup.com' + route, { signal: AbortSignal.timeout(20000) }), { root = defaultRoot } = {}) {
   return http.createServer(async (request, response) => {
   try {
     const url = new URL(request.url, 'http://127.0.0.1:3027')

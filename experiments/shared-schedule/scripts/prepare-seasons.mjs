@@ -20,6 +20,7 @@ function literal(node) {
 const keys = new Set(['id', 'name', 'kind', 'lifecycle', 'publicCode', 'seriesCode', 'seriesName', 'competitionFormat', 'reviewEnabled', 'reviewRequirements', 'rankingMinTimeMins', 'rules', 'switcherMeta'])
 const catalog = declaration.init.elements.map(item => Object.fromEntries(item.properties.filter(property => keys.has(property.key.name)).map(property => [property.key.name, literal(property.value)])))
 if (!catalog.length || catalog.some(item => !/^[A-Z0-9]+$/.test(item.id))) throw new Error('Invalid public season catalog')
+fs.mkdirSync(path.join(trial, 'src/generated'), { recursive: true })
 fs.writeFileSync(path.join(trial, 'src/generated/seasons.json'), JSON.stringify(catalog, null, 2) + '\n')
 fs.writeFileSync(path.join(trial, 'src/generated/seasons.js'), `/* Generated from Stats public catalog. */\nexport default ${JSON.stringify(catalog)}\n`)
 console.log(`Generated ${catalog.length} public seasons from Stats configuration.`)

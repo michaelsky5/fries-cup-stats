@@ -6,6 +6,10 @@ import { getSeasonById, SEASON_STORAGE_KEY } from './shared/publicSeasons'
 import { createPublicSeasonReader } from './shared/publicSeasonReader'
 import { configureLocaleStorage } from './shared/nativeLocales'
 export { centerUrl }
+export function openNativeAccount() {
+  const options = { url: '/account/pages/index' }
+  return Taro.getCurrentPages().length >= 8 ? Taro.redirectTo(options) : Taro.navigateTo(options)
+}
 
 // Keep platform transport separate from the shared Stats UI/model. Native
 // callbacks give the phone a RequestTask without an SDK interceptor/Promise.

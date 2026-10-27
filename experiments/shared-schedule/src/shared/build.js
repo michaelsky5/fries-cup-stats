@@ -1,1 +1,1 @@
-export const BUILD = 'public-native-20261027-r5'
+export const BUILD = 'wechat-native-20261027-c1'

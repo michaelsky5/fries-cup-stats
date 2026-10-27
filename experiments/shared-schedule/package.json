@@ -8,7 +8,10 @@
     "build:h5": "npm run prepare:design && npm run prepare:runtime && taro build --type h5 && node scripts/copy-license.mjs h5",
     "build:weapp": "npm run prepare:design && npm run prepare:runtime && taro build --type weapp && node scripts/copy-license.mjs weapp && node scripts/check-native-packages.mjs",
     "serve": "node --use-env-proxy scripts/serve.mjs",
-    "test": "npm run prepare:runtime && node --test tests/*.test.mjs"
+    "test": "npm run prepare:design && npm run prepare:runtime && node --test tests/*.test.mjs",
+    "test:account": "node --test tests/native-account.test.mjs",
+    "build:account-visual": "node scripts/build-account-visual.mjs",
+    "serve:account-visual": "node scripts/serve-account-visual.mjs"
   },
   "dependencies": {
     "@babel/runtime": "7.29.7",

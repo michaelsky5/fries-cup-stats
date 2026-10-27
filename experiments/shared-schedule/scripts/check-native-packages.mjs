@@ -12,6 +12,9 @@ function visit(dir) {
     if (entry.isDirectory()) { visit(filename); continue }
     const relative = path.relative(root, filename).replaceAll('\\', '/')
     const owner = subPackages.find(name => relative.startsWith(name + '/')) || 'main'
+    if (/\.(?:js|json)$/.test(relative) && /synthetic\.preview\.token|NativeDemo123!|WECHAT_MINI_APP_SECRET|jscode2session/.test(fs.readFileSync(filename, 'utf8'))) {
+      throw new Error('Native output contains a server credential boundary or visual fixture: ' + relative)
+    }
     bytes.set(owner, bytes.get(owner) + fs.statSync(filename).size)
   }
 }

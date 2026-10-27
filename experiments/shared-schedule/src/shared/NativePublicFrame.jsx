@@ -11,7 +11,7 @@ import { getPublicDataStatus } from '../../../../src/lib/publicDataStatus.js'
 import { getArchiveHighlights,getHomeSummary,getOverviewStatus,getSeasonStatus } from '../../../../src/lib/homeSelectors.js'
 import { getArchiveStory,getChampionResult } from '../../../../src/features/kpr-design/kprSelectors.js'
 import { pickUiLocale } from '../../../../src/lib/uiText.js'
-import { changeSeason } from '../platform.js'
+import { changeSeason, openNativeAccount } from '../platform.js'
 import { nativeSelectorClasses } from './nativeDesignModel.js'
 import styles from '../generated/mobile/layoutStyles.js'
 import { getNativeLayoutState } from '../generated/mobile/layoutState.js'
@@ -34,7 +34,7 @@ function FrameContents({props,season,children}) {
   const pageStates=nativeSelectorClasses({'data-roster-index':layout.isRosterIndexRoute||undefined,'data-roster-directory':layout.isRosterDirectoryRoute||undefined,'data-schedule-directory':layout.isScheduleDirectoryRoute||undefined,'data-match-detail':layout.isPublicMatchDetailRoute||undefined,'data-player-rankings':layout.isPlayerRankingsRoute||undefined,'data-hero-data':layout.isHeroDataRoute||undefined,'data-map-data':layout.isMapDataRoute||undefined,'data-data-section':layout.isEditorialDataRoute||undefined,'data-team-archive':layout.isTeamArchiveRoute||undefined})
   const states=nativeSelectorClasses({'data-design':'kpr','data-design-edition':'hybrid','data-kpr-page':layout.isKprSamplePage?'sample':'legacy','data-locale':locale,'data-header-mode':headerContextMode,'data-archive-home':archived||undefined,'data-compact-context':directory||undefined,'data-team-exhibition':layout.isTeamExhibitionRoute||undefined,'data-weekly-advance':layout.isWeeklyAdvanceRoute||undefined})+' '+pageStates
   return <div className={`shared-root center-root native-stats-frame ${styles.shell} ${states} shared-has-phone-navigation ${archived?'shared-has-mobile-season-archive':''}`} style={{'--kpr-preview-height':'0px'}} data-native-stats-design='current'>
-    <PublicHeader {...contextProps} accountControl={null} showAccountModeSwitch={false} summary={summary} activeGroup={activeGroup} layoutLocale={locale} compatibleLayoutLocale={locale} withSeason={context.withSeason} activeNavLabel={activeSection.label} handleSeasonChange={contextProps.onSeasonChange} headerContextMode={headerContextMode} handleLocaleChange={changeNativeLanguage} />
+    <PublicHeader {...contextProps} accountControl={<button type='button' className='native-account-entry' onClick={openNativeAccount}>{pickUiLocale(locale,'我的','Account','내 계정','我的')}</button>} showAccountModeSwitch={false} summary={summary} activeGroup={activeGroup} layoutLocale={locale} compatibleLayoutLocale={locale} withSeason={context.withSeason} activeNavLabel={activeSection.label} handleSeasonChange={contextProps.onSeasonChange} headerContextMode={headerContextMode} handleLocaleChange={changeNativeLanguage} />
     {!archived ? <div className={styles.contentContextDock}><EventContextBar {...contextProps} placement='content' presentation={directory?'directory':'default'} onRetry={onRetry}/></div> : null}
     <div className={`${styles.pageFrame} ${pageStates}`}><main className={styles.main}>
       {raw&&dataStatus.notice&&!directory?<div className={`${styles.dataNotice} ${styles.dataNoticeCompact} ${nativeSelectorClasses({'data-source':dataStatus.key})}`} role='status'>

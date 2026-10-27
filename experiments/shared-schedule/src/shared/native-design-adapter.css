@@ -82,3 +82,4 @@
 .native-stats-frame .native-advance-table .shared-tag-thead .shared-tag-th { font-size:12px; }
 .native-stats-frame .shared-tag-fieldset .shared-tag-legend { grid-column: 1 / -1; }
 .native-record-notice { margin: 16px; }
+.native-stats-frame .native-account-entry { min-height: 44px; padding: 10px 12px; border: 1px solid #181a174d; border-radius: 0; background: #f4c320; color: #181a17; font-size: 12px; white-space: nowrap; }
