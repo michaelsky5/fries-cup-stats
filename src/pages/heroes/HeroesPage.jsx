@@ -180,7 +180,7 @@ function RecordedHeroAvatar({ hero, role, locale }) {
     <span className={styles.compHero}>
       <span className={styles.compHeroAvatar}>
         <img
-          src={`/heroes/${getRoleFolder(role)}/${formatHeroName(hero)}.png`}
+          src={`/heroes/${getRoleFolder(role)}/${formatHeroName(hero)}.webp`}
           alt=""
           onError={(e) => {
             e.target.style.display = 'none'
@@ -435,7 +435,7 @@ function HeroesPage() {
                   <div className={styles.cardTop}>
                     <div className={styles.avatarBox}>
                       <img
-                        src={`/heroes/${roleFolder}/${heroFileName}.png`}
+                        src={`/heroes/${roleFolder}/${heroFileName}.webp`}
                         alt={heroDisplayName}
                         className={styles.avatarImg}
                         onError={(e) => {

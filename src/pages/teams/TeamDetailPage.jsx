@@ -1063,7 +1063,7 @@ function getHeroPortraitSrc(hero, role) {
     DPS: 'damage',
     SUP: 'support'
   }[normalizeRosterRole(role)] || getOwHeroRole(hero)
-  return assetKey && folder ? `/heroes/${folder}/${assetKey}.png` : ''
+  return assetKey && folder ? `/heroes/${folder}/${assetKey}.webp` : ''
 }
 
 function getRecordedLineups(matchRows, locale = 'zh-CN') {

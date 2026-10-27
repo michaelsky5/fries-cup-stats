@@ -43,7 +43,7 @@ const artifacts = createScoutingArtifacts(report, db.meta)
 function getHeroRenderPath(hero, role) {
   const avatarPath = getHeroAvatarSrc(hero, role)
   assert.ok(avatarPath, `Missing hero avatar mapping for ${role}:${hero}`)
-  return avatarPath.replace('/heroes/', '/review/hero-renders/').replace(/_/g, '-')
+  return avatarPath.replace('/heroes/', '/review/hero-renders/').replace(/_/g, '-').replace(/\.webp$/, '.png')
 }
 
 const heroArtworkAssets = [...new Map(report.players.flatMap(player => {

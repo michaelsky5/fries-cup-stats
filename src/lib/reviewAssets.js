@@ -633,7 +633,8 @@ export function normalizeHeroFolder(role, heroName = '') {
 export function getHeroImage(heroName, role) {
   const slug = heroNameToSlug(heroName)
   const folder = normalizeHeroFolder(role, heroName)
-  return `/heroes/${encodePathSegment(folder)}/${encodePathSegment(slug)}.png`
+  // 票 2.79: WebP portraits; the PNGs stay in public/heroes for stored avatars.
+  return `/heroes/${encodePathSegment(folder)}/${encodePathSegment(slug)}.webp`
 }
 
 export function getHeroRenderImage(heroName, role) {

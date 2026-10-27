@@ -733,7 +733,8 @@ export function getHeroAvatarSrc(heroName, role) {
   const slug = getHeroSlug(heroName)
   if (!slug) return ''
   const assetRole = getOwHeroRole(heroName) || role
-  return `/heroes/${getRoleHeroFolder(assetRole)}/${slug}.png`
+  // 票 2.79: portraits are served as WebP (55 files 8.4 MB → 0.8 MB); the PNGs stay for avatars and older tools.
+  return `/heroes/${getRoleHeroFolder(assetRole)}/${slug}.webp`
 }
 
 export function getPlayerInitials(entry) {

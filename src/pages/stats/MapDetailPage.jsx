@@ -33,7 +33,7 @@ function getRoleFolder(hero) {
 
 function getHeroImageUrl(hero) {
   const assetKey = getOwHeroAssetKey(hero)
-  return assetKey ? `/heroes/${getRoleFolder(hero)}/${assetKey}.png` : ''
+  return assetKey ? `/heroes/${getRoleFolder(hero)}/${assetKey}.webp` : ''
 }
 
 function getHeroRoleOrder(hero) {
