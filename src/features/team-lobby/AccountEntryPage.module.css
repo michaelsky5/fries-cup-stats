@@ -6,7 +6,7 @@
 .stack h2 { margin: 0; font-size: 20px; line-height: 1.4; }
 .stack p { margin: 0; font-size: 14px; line-height: 1.7; }
 .stack label { display: flex; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 600; }
-.stack label small { color: var(--fc-data-text-muted, #66685f); font-size: 12px; font-weight: 400; }
+.stack label small { color: var(--fc-data-text-muted, #5f6158); font-size: 12px; font-weight: 400; }
 .stack input { width: 100%; min-height: 46px; padding: 11px 12px; color: var(--fc-data-ink, #181a17); background: var(--fc-data-paper, #eeede6); border: 1px solid var(--fc-data-line-strong, rgb(24 26 23 / 38%)); border-radius: 0; font-size: 15px; font-weight: 400; }
 .primary { display: inline-flex; align-items: center; justify-content: center; min-height: var(--fc-data-primary-height, 44px); padding: 0 16px; border: 0; border-radius: 0; background: var(--fc-data-primary-bg, #f4c320); color: var(--fc-data-primary-text, #181a17); font-size: 14px; font-weight: var(--fc-data-primary-weight, 750); text-align: center; text-decoration: none; cursor: pointer; }
 .primary:hover:not(:disabled) { background: var(--fc-data-primary-bg-hover, #ffd64a); }

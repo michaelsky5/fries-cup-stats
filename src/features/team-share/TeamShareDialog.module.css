@@ -82,7 +82,7 @@
 .toolArea { grid-row: 2; }
 .toolArea[hidden] { display: none; }
 .previewTools { grid-row: 3; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 6px 32px; background: var(--fc-data-paper, #f1ebdf); }
-.previewTools > span { color: #66685f; font-size: 12px; }
+.previewTools > span { color: #5f6158; font-size: 12px; }
 .previewTools button { min-height: 44px; padding: 8px 0; border: 0; border-radius: 0; color: #2a2a2a; background: transparent; font: 700 13px var(--fc-data-font-interface); cursor: pointer; }
 .previewTools button:disabled { opacity: .5; cursor: default; }
 .previewTools button > span { margin-left: 8px; }
@@ -197,7 +197,7 @@
 .heroEditor > header span,
 .heroEditor > header em {
   color: rgba(42, 42, 42, 0.62);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
 }
@@ -241,7 +241,7 @@
 
 .heroEditorGrid label em {
   color: rgba(42, 42, 42, 0.58);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
 }
@@ -254,7 +254,7 @@
   border-radius: 0;
   background: #fffaf0;
   color: #2a2a2a;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -410,7 +410,7 @@
   .heroEditorGrid { grid-template-columns: 1fr; }
   .heroEditorGrid select { width: 130px; height: 40px; font-size: 13px; }
   .heroEditorGrid label b { font-size: 13px; }
-  .heroEditorGrid label > span em { display: block; font-size: 11px; color: #66685f; }
+  .heroEditorGrid label > span em { display: block; font-size: 12px; color: #5f6158; }
   .footer { min-height: 44px; padding: 12px; flex-wrap: wrap; gap: 10px; }
   .footer > :is(button, a) { width: 100%; }
   .footer span { font-size: 12px; line-height: 1.5; }

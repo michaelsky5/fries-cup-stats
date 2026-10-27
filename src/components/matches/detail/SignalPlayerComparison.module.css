@@ -17,13 +17,13 @@
 .identity + .identity { border-left: 1px solid var(--fc-data-line); padding-left: 24px; }
 .player { display: grid; gap: 5px; min-width: 0; }
 .team { display: flex; align-items: baseline; gap: 10px; font-size: 12px; color: var(--fc-data-text-muted); }
-.team > span { font-size: 11px; }
+.team > span { font-size: 12px; }
 .player > strong { font-size: 20px; font-weight: 650; line-height: 1.3; overflow-wrap: anywhere; }
 .player > small { font-size: 12px; color: var(--fc-data-text-muted); overflow-wrap: anywhere; }
 .player [data-player-heroes] { margin-top: 3px; }
 .rating { display: grid; justify-items: end; gap: 7px; flex-shrink: 0; }
-.rating > span:first-child { font-size: 11px; color: var(--fc-data-text-muted); }
-.legend { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px 18px; padding: 12px 0; color: var(--fc-data-text-muted); font-size: 11px; }
+.rating > span:first-child { font-size: 12px; color: var(--fc-data-text-muted); }
+.legend { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px 18px; padding: 12px 0; color: var(--fc-data-text-muted); font-size: 12px; }
 .metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 30px; margin: 0; }
 .metrics > div { display: grid; grid-template-columns: 1fr auto; min-width: 0; gap: 6px 10px; }
 .metrics dt { font-size: 12px; color: var(--fc-data-text-muted); }
@@ -49,6 +49,6 @@
   .rating { display: flex; justify-content: flex-start; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
   .values { font-size: 14px; }
-  .delta { font-size: 11px; }
+  .delta { font-size: 12px; }
 }
 @media (pointer: coarse) { .options button, .heading button, .pending button, .empty button { min-height: 44px; } }

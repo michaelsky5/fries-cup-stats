@@ -118,9 +118,9 @@
 .moment > p { margin-top: 18px; min-height: 24px; color: var(--fc-data-text-on-dark); font-size: 12px; }
 .momentOpponent { display: flex; align-items: center; gap: 15px; margin: 24px 0; }
 .momentOpponent > strong { font-size: 22px; overflow-wrap: anywhere; }
-.momentOpponent > strong small { display: block; margin-bottom: 5px; font-size: 10px; font-weight: 400; color: var(--fc-data-text-on-dark); }
+.momentOpponent > strong small { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 400; color: var(--fc-data-text-on-dark); }
 .momentScore { margin-left: auto; text-align: right; }
-.momentScore small { display: block; margin-top: 6px; font-size: 10px; color: var(--fc-data-text-on-dark); }
+.momentScore small { display: block; margin-top: 6px; font-size: 12px; color: var(--fc-data-text-on-dark); }
 .momentOpponent b { font: 800 44px/1 var(--fc-data-font-display); margin-left: auto; white-space: nowrap; }
 .momentBottom { display: flex; gap: 15px; justify-content: space-between; border-top: 1px solid #454a3d; padding-top: 18px; font-size: 13px; color: var(--fc-data-text-on-dark); }
 .momentBottom > span:last-child { color: var(--fc-data-paper); }
@@ -155,7 +155,7 @@
 .milestones b { font-size: 23px; font-weight: 400; margin-left: auto; }
 .milestones button[aria-pressed="true"],.milestones button:hover { background: var(--fc-data-paper-deep); }
 .chronicleHeading { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 25px; padding: 44px 0 26px; }
-.chronicleHeading > div > p { font-size: 11px; letter-spacing: .08em; color: var(--fc-data-text-muted); }
+.chronicleHeading > div > p { font-size: 12px; letter-spacing: .08em; color: var(--fc-data-text-muted); }
 .chronicleNote { font-size: 12px; color: var(--fc-data-text-muted); padding-bottom: 18px; }
 .chronicleHeading h2 { font-size: clamp(24px,2.5vw,37px); font-weight: 800; margin-top: 10px; }
 .chronicleHeading nav { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -233,14 +233,14 @@
   .name .nameChapter { display:none; }
   .name .mobileRole { display:block; }
   .name > span { font-size:12px; }
-  .name > p { font-size: 11px; }
+  .name > p { font-size: 12px; }
   .identityLine { display:none; }
   .honor { grid-area:honor;margin-top:12px;gap:12px; }
   .honor > strong { font-size:25px; }
   .honor > span { font-size: 12px; }
   .coverFacts { grid-area:facts;margin:14px 0;padding-top:12px;gap:10px; }
   .coverFacts > div { gap:4px;flex-direction:row; }
-  .coverFacts dt { font-size:11px; }
+  .coverFacts dt { font-size:12px; }
   .coverFacts dd { font-size:32px; }
   .coverActions { grid-area:actions;display:grid;grid-template-columns:minmax(0,1.5fr) repeat(2,minmax(0,1fr));gap:8px;margin-top:14px; }
   .coverActions .primary { width:auto;min-height:var(--fc-data-primary-height,44px);padding:0 12px;gap:4px;font-size:14px; }
@@ -252,7 +252,7 @@
   .coverArt { inset:0; }
   .heroSelection { grid-area:choices;position:static;display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0; }
   .mobileHeroLabel { display:block;min-width:0; }
-  .mobileHeroLabel > span { display:block;font-size:11px;color:var(--fc-data-text-on-dark); }
+  .mobileHeroLabel > span { display:block;font-size:12px;color:var(--fc-data-text-on-dark); }
   .mobileHeroLabel > a { display:inline-flex;align-items:center;min-height:32px;font-size:13px;font-weight:700; }
   .heroChoices { gap:6px;padding:2px;min-width:0;max-width:198px;overflow-x:auto;scrollbar-width:thin;overscroll-behavior-x:contain; }
   .heroChoices button { width: 44px; height: 44px; flex: 0 0 44px; }
@@ -273,21 +273,21 @@
   .heroGrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .moreHeroes > div { grid-template-columns: minmax(0,1fr); }
   .heroCard { min-height: 265px; }
-  .heroCardTop { padding: 13px; gap: 8px; font-size: 11px; }
+  .heroCardTop { padding: 13px; gap: 8px; font-size: 12px; }
   .heroCardTop > span:first-child { font-size: 21px; }
   .heroCardArt { inset: 28px 0 68px; }
   .heroCardText { padding: 40px 13px 16px; }
   .heroCardText > strong { font-size: 19px; }
   .heroCardText > div { gap: 5px; flex-wrap: wrap; margin-top: 8px; }
   .heroCardText b { font-size: 31px; }
-  .heroCardText span { font-size: 11px; }
+  .heroCardText span { font-size: 12px; }
   .heroFoot { display: block; }
   .heroFoot a { display: inline-flex; margin-top: 7px; }
   .companionList { grid-template-columns: minmax(0,1fr); }
   .peer { padding: 19px 4px; gap: 12px; grid-template-columns: 22px 48px minmax(0,1fr) auto 18px; }
   .peer:nth-child(odd) { border-right: 0; }
   .peerCount strong { font-size: 34px; }
-  .peerCount > span { font-size: 11px; }
+  .peerCount > span { font-size: 12px; }
   .momentGrid { grid-template-columns: minmax(0,1fr); gap: 15px; }
   .moment { padding: 22px; }
   .momentOpponent { margin: 18px 0; }
@@ -320,7 +320,7 @@
   .appearanceButton > .logo { grid-column: 1; grid-row: 2; width: 30px; height: 35px; }
   .appearanceIdentity { grid-column: 2; grid-row: 2; }
   .appearanceIdentity > strong { font-size: 20px; }
-  .appearanceIdentity > span { font-size: 11px; }
+  .appearanceIdentity > span { font-size: 12px; }
   .appearanceSample { grid-column: 1/3; grid-row: 3; display: flex; gap: 12px; flex-wrap: wrap; align-items: baseline; }
   .appearanceSample > strong { font-size: 12px; }
   .appearanceSample > span { margin-top: 0; font-size: 12px; }

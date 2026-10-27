@@ -1,7 +1,7 @@
 /* 票 2.16: the phase card leads the weekly home. */
 .phase { margin: 16px 0 0; border-top: 3px solid var(--fc-data-ink, #181a17); background: var(--fc-data-paper-raised, #f6f5ef); color: var(--fc-data-ink, #181a17); }
 .main { display: grid; gap: 10px; padding: 18px 20px 20px; }
-.eyebrow { margin: 0; color: var(--fc-data-text-muted, #66685f); font: 600 12px/1.5 var(--font-sans); letter-spacing: .04em; }
+.eyebrow { margin: 0; color: var(--fc-data-text-muted, #5f6158); font: 600 12px/1.5 var(--font-sans); letter-spacing: .04em; }
 .title { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin: 0; font: 800 clamp(24px, 2.6vw, 34px)/1.25 var(--font-sans); letter-spacing: -.02em; }
 .title b { font-family: var(--fc-data-font-display); font-weight: 900; letter-spacing: 0; }
 .titleLogo { display: inline-grid; place-items: center; width: 40px; height: 40px; flex: 0 0 40px; }

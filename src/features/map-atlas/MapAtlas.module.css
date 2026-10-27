@@ -106,7 +106,7 @@
 .mapLandscape > .image img { object-position: 50% 45%; }
 .landscapeCaption { position: absolute; left: -14px; bottom: 24px; display: flex; align-items: center; max-width: calc(100% + 14px); gap: 14px; background: var(--atlas-paper); padding: 0 16px 0 0; min-height: 34px; }
 .landscapeCaption b { background: var(--atlas-yellow); padding: 9px 14px; font-size: 12px; font-weight: 700; }
-.landscapeCaption > span { font: 500 11px/1.5 var(--fc-data-font-system); letter-spacing: .04em; }
+.landscapeCaption > span { font: 500 12px/1.5 var(--fc-data-font-system); letter-spacing: .04em; }
 .heroSummary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-content: start; gap: 14px; border-top: 1px solid var(--atlas-ink); padding-top: 22px; }
 .heroSummary > div { min-width: 0; }
 .heroSummary dt { font-size: 13px; color: var(--atlas-muted); }
@@ -199,7 +199,7 @@
 .compositionChoices > .eyebrow { padding-bottom: 8px; }
 .compositionChoices > button { width: 100%; display: grid; grid-template-columns: 24px minmax(0, 1fr) 50px; gap: 14px; align-items: center; padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--atlas-line); }
 .compositionChoices > button[aria-pressed="true"] { background: var(--atlas-ink); color: var(--atlas-paper); }
-.compositionChoices > button > span:first-child { font: 500 11px var(--fc-data-font-system); }
+.compositionChoices > button > span:first-child { font: 500 12px var(--fc-data-font-system); }
 .compositionChoices > button > strong { text-align: right; font: 700 24px/1 var(--fc-data-font-interface); }
 .compositionChoices > button small { display: block; font: 400 12px/1.5 var(--fc-data-font-interface); margin-top: 3px; opacity: .8; }
 .miniLineup { display: flex; gap: 4px; }
@@ -221,7 +221,7 @@
 .teamName { display: grid; grid-template-columns: 38px minmax(0, 1fr); column-gap: 14px; align-items: center; min-width: 0; }
 .teamLogo { grid-row: 1 / 3; width: 38px; height: 38px; display: grid; place-items: center; }
 .teamLogo img { max-width: 100%; max-height: 100%; object-fit: contain; }
-.teamLogo b { font-size: 11px; overflow-wrap: anywhere; }
+.teamLogo b { font-size: 12px; overflow-wrap: anywhere; }
 .teamName > :is(a,strong) { font-size: 17px; font-weight: 650; overflow-wrap: anywhere; line-height: 1.3; }
 .teamName a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .teamName > small { font-size: 12px; color: var(--atlas-muted); margin-top: 5px; }
@@ -239,7 +239,7 @@
 .expandButton:hover { background: #181a1705; }
 .recordHighlights { margin-bottom: 26px; background: #e6e7dd; }
 .recordHighlights > h3 { font-size: 15px; font-weight: 600; padding: 14px 18px 0; }
-.recordHighlights > h3 > small { margin-left: 12px; font: 400 11px var(--fc-data-font-system); letter-spacing: .04em; color: var(--atlas-muted); }
+.recordHighlights > h3 > small { margin-left: 12px; font: 400 12px var(--fc-data-font-system); letter-spacing: .04em; color: var(--atlas-muted); }
 .extremes { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-bottom: 1px solid var(--atlas-line); }
 .extremes > div { min-width: 0; padding: 17px 18px; border-left: 1px solid var(--atlas-line); }
 .extremes > div:first-child { border-left: 0; }
@@ -274,7 +274,7 @@
 .matchRecordTime { text-align: right; font-size: 14px; }
 .matchRecordTime small { display: block; color: var(--atlas-muted); font-size: 12px; margin-top: 4px; }
 .matchRecord > svg { width: 17px; color: var(--atlas-muted); }
-.ruling { font-size: 11px; border: 1px solid var(--atlas-line); padding: 2px 5px; }
+.ruling { font-size: 12px; border: 1px solid var(--atlas-line); padding: 2px 5px; }
 .bottomBack { display: flex; align-items: center; gap: 12px; min-height: 70px; border-top: 1px solid var(--atlas-ink); margin-top: 15px; font-size: 14px; }
 .bottomBack > span { margin-left: auto; font: 800 32px/1 var(--fc-data-font-display); color: #959986; }
 
@@ -343,7 +343,7 @@
 }
 @media (max-width: 600px) {
   .shell { --atlas-anchor-offset: calc(var(--kpr-header-height, 104px) + 68px); font-size: 14px; }
-  .eyebrow { font-size: 11px; letter-spacing: .06em; }
+  .eyebrow { font-size: 12px; letter-spacing: .06em; }
   .indexLayout { margin-top: 18px; }
   .indexToolbar { gap: 12px; padding-bottom: 13px; }
   .indexToolbar select { max-width: 124px; font-size: 13px; padding-right: 14px; }
@@ -377,8 +377,8 @@
   .heroStatistic small { font-size: 12px; }
   .mapLandscape { min-height: 220px; }
   .landscapeCaption { left: -6px; bottom: 17px; max-width: calc(100% + 6px); gap: 10px; padding-right: 12px; }
-  .landscapeCaption b { font-size: 11px; padding: 8px 10px; }
-  .landscapeCaption > span { font-size: 10px; }
+  .landscapeCaption b { font-size: 12px; padding: 8px 10px; }
+  .landscapeCaption > span { font-size: 12px; }
   .heroSummary { gap: 12px; margin-top: 18px !important; padding: 18px 0; }
   .heroSummary dt { font-size: 12px; }
   .heroSummary dd { font-size: 30px; }
@@ -493,13 +493,13 @@
 .previewImage { height: 184px; }
 .previewImage > span:last-child { padding: 30px 22px 16px; }
 .previewRank { text-align: right; display: grid; gap: 9px; }
-.previewRank small { font-size: 10px; opacity: .8; }
+.previewRank small { font-size: 12px; opacity: .8; }
 .previewImage > span:last-child b { font-size: 42px; }
 .previewCopy h2 { margin-top: 5px; }
 .previewFacts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 20px 0; }
 .previewFacts > div { min-width: 0; gap: 8px; }
 .previewFacts strong { font-size: 36px; }
-.previewFacts small { color: var(--atlas-muted); font-size: 11px; }
+.previewFacts small { color: var(--atlas-muted); font-size: 12px; }
 .previewMatch { padding-bottom: 18px; }
 .method { scroll-margin-top: var(--atlas-anchor-offset); }
 .heroSummary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; }
@@ -528,7 +528,7 @@
   .modeStrip > button { min-height: 60px; border-bottom: 1px solid var(--atlas-line); padding-inline: 14px; }
   .modeStrip > button > span { font-size: 14px; }
   .modeStrip > button:nth-child(3n) { border-right: 0; }
-  .modeStrip > button > small { font-size: 11px; }
+  .modeStrip > button > small { font-size: 12px; }
   .indexReading { gap: 12px; padding-bottom: 12px; }
   .indexHeading > div { gap: 6px 10px; }
   .indexReading a { min-height: 44px; }
@@ -569,15 +569,15 @@
   .heroStatistic { margin: 18px 0 0; gap: 8px; flex-wrap: wrap; }
   .heroStatistic > strong { font-size: 46px; }
   .heroStatistic > p { font-size: 12px; line-height: 1.5; }
-  .heroStatistic small { margin-top: 4px; font-size: 11px; }
+  .heroStatistic small { margin-top: 4px; font-size: 12px; }
   .mapLandscape { min-height: 180px; }
   .landscapeCaption { padding: 10px; }
   .landscapeCaption > span { display: none; }
   .heroSummary { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 0 !important; padding: 14px 0 0; }
   .heroSummary > div:first-child { display: none; }
-  .heroSummary dt { font-size: 11px; line-height: 1.5; }
+  .heroSummary dt { font-size: 12px; line-height: 1.5; }
   .heroSummary dd { font-size: 28px; padding-top: 4px; }
-  .heroSummary small { font-size: 11px; line-height: 1.5; padding-top: 4px; }
+  .heroSummary small { font-size: 12px; line-height: 1.5; padding-top: 4px; }
   .modeContext { grid-column: 1 / -1; border-top: 1px solid var(--atlas-line); padding: 0; }
   .modeContextHeading { align-items: center; gap: 0 12px; margin: 0; }
   .modeContextHeading h2 { flex: 1; }
@@ -599,15 +599,15 @@
   .heroColumns[data-single="false"] .roleLeader { gap: 12px; padding: 12px 0; }
   .heroColumns[data-single="false"] .leaderPortrait { width: 52px; height: 62px; }
   .heroColumns[data-single="false"] .leaderIdentity { display: grid; flex: 1; grid-template-columns: minmax(0, 1fr) auto; column-gap: 10px; align-items: center; }
-  .heroColumns[data-single="false"] .leaderIdentity > small { grid-column: 1; font-size: 11px; }
+  .heroColumns[data-single="false"] .leaderIdentity > small { grid-column: 1; font-size: 12px; }
   .heroColumns[data-single="false"] .leaderIdentity > strong { grid-column: 1; grid-row: 2; font-size: 17px; }
   .heroColumns[data-single="false"] .leaderIdentity > b { grid-column: 2; grid-row: 1 / span 2; font-size: 28px; margin: 0; }
-  .heroColumns[data-single="false"] .leaderIdentity > span { grid-column: 2; text-align: right; font-size: 11px; }
+  .heroColumns[data-single="false"] .leaderIdentity > span { grid-column: 2; text-align: right; font-size: 12px; }
   .textButton[data-mobile-only="true"] { display: inline-flex; }
   .heroRoleColumn > .textButton { min-height: 44px; }
   .recordHighlights { margin-bottom: 16px; }
   .recordHighlights > h3 { display: flex; align-items: center; gap: 8px; padding: 4px 12px; }
-  .recordHighlights > h3 > small { margin-left: 0; font-size: 10px; }
+  .recordHighlights > h3 > small { margin-left: 0; font-size: 12px; }
   .recordHighlights .mobileDisclosure { margin-left: auto; }
   .recordHighlights[data-expanded="false"] .extremes { display: none; }
 }

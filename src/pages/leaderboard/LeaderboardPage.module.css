@@ -71,7 +71,7 @@
 .comparePanelHeader span,
 .compareBarMeta span,
 .compareBarMeta em {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   letter-spacing: 0.08em;
@@ -152,7 +152,7 @@
 .headerFacts span,
 .headerFacts em {
   color: rgba(42, 42, 42, 0.62);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -197,7 +197,7 @@
 
 .eventMetaStrip b {
   color: var(--text-muted);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
   line-height: 1;
@@ -270,7 +270,7 @@
 .disclaimer {
   max-width: 230px;
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1.45;
   text-align: right;
@@ -339,7 +339,7 @@
 
 .mvpIdentity span {
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
 }
@@ -356,7 +356,7 @@
 .mvpScore span,
 .mvpScore em {
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -399,7 +399,7 @@
 .roleLeaderStats span,
 .compareScore span {
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -581,7 +581,7 @@
 .mainTab b,
 .modeTab b {
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   letter-spacing: 0.08em;
@@ -598,7 +598,7 @@
 .mainTab em {
   grid-column: 2;
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -721,7 +721,7 @@
   background: var(--panel-background);
   border: 1px solid var(--border-strong);
   color: var(--text-primary);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -784,7 +784,7 @@
 
 .columnPickerPanel b {
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -847,7 +847,7 @@
 
 .tableTitleText span {
   color: var(--brand-yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   letter-spacing: 0.08em;
@@ -875,7 +875,7 @@
   padding: 0 9px;
   border: 1px solid rgba(255, 255, 255, 0.24);
   color: rgba(255, 255, 255, 0.76);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   letter-spacing: 0.04em;
@@ -958,7 +958,7 @@
   height: 28px;
   padding: 0 10px;
   color: rgba(255, 255, 255, 0.56);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
   line-height: 1;
@@ -1060,7 +1060,7 @@ td.stickyPlayer {
 
 .sortButton span {
   color: var(--brand-white);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -1068,7 +1068,7 @@ td.stickyPlayer {
 .sortButton b,
 .sortButton em {
   color: rgba(255, 255, 255, 0.46);
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -1166,7 +1166,7 @@ td.stickyPlayer {
   min-width: 0;
   overflow: hidden;
   color: var(--text-secondary);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 800;
   line-height: 1.2;
@@ -1181,7 +1181,7 @@ td.stickyPlayer {
   padding: 3px 6px;
   background: var(--brand-yellow);
   color: var(--brand-black);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   letter-spacing: 0.08em;
@@ -1224,7 +1224,7 @@ td.stickyPlayer {
   padding: 3px 5px;
   border: 1px solid var(--border-strong);
   color: var(--text-primary);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   text-align: center;
@@ -1233,7 +1233,7 @@ td.stickyPlayer {
 
 .roleTag b {
   color: currentColor;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
   opacity: 0.72;
 }
@@ -1261,7 +1261,7 @@ td.stickyPlayer {
   margin-left: 6px;
   padding: 0 6px;
   border: 1px solid var(--border-light);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -1331,7 +1331,7 @@ td.metricBlock {
 
 .actionHead {
   color: var(--brand-white);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   text-align: center;
 }
@@ -1360,7 +1360,7 @@ td.metricBlock {
   border: 1px solid var(--border-strong);
   background: var(--panel-background);
   color: var(--text-primary);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   cursor: pointer;
@@ -1396,7 +1396,7 @@ td.metricBlock {
   width: 100%;
   min-height: 28px;
   padding: 0;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .followButtonActive {
@@ -1431,7 +1431,7 @@ td.metricBlock {
 .paginationMeta b,
 .paginationActions strong {
   color: var(--text-secondary);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -1461,7 +1461,7 @@ td.metricBlock {
   border-right: 1px solid var(--border-light);
   background: transparent;
   color: var(--text-secondary);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .pageSizeSwitch button:last-child {
@@ -1499,7 +1499,7 @@ td.metricBlock {
 
 .emptyState span {
   color: var(--brand-yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
 }
@@ -1576,7 +1576,7 @@ td.metricBlock {
 
 .dataPendingGrid span {
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -1650,7 +1650,7 @@ td.metricBlock {
 
 .compareChips b {
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .compareWarning {
@@ -1745,7 +1745,7 @@ td.metricBlock {
 
 .comparePlayerCard em {
   color: var(--text-secondary);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -1796,7 +1796,7 @@ td.metricBlock {
 
 .compareMetricLabel span {
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -2070,7 +2070,7 @@ td.metricBlock {
   .mobileMetricStrip b,
   .mobileDetails span {
     color: var(--text-muted);
-    font-size: 10px;
+    font-size: 12px;
     font-style: normal;
     font-weight: 950;
     line-height: 1;

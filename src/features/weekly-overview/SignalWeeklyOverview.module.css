@@ -2,7 +2,7 @@
   --paper: var(--fc-data-paper, #eeede6);
   --ink: var(--fc-data-ink, #181a17);
   --yellow: var(--fc-data-signal, #f4c320);
-  --muted: var(--fc-data-text-muted, #66685f);
+  --muted: var(--fc-data-text-muted, #5f6158);
   --line: var(--fc-data-line, #181a1726);
   /* 票 2.47: the page sits on the shared 1600px grid like every other page. */
   box-sizing: border-box; width: var(--portal-shell-width, calc(100% - 2 * var(--kpr-gutter, clamp(20px, 3.4vw, 64px)))); margin-inline: auto; color: var(--ink); padding: 0 0 30px;
@@ -19,7 +19,7 @@
 .heading p:last-child { color: var(--fc-data-text-muted); font-size: 14px; line-height: 1.7; }
 .rulesLink { flex-shrink: 0; display: grid; grid-template-columns: 1fr auto; gap: 5px 30px; padding-bottom: 5px; font-size: 14px; }
 .rulesLink > span { color: #947300; font-size: 24px; grid-row: span 2; }
-.rulesLink small { color: var(--muted); font-size: 11px; }
+.rulesLink small { color: var(--muted); font-size: 12px; }
 .headingActions { display: flex; align-items: center; gap: 24px; padding-bottom: 3px; flex-shrink: 0; }
 .mainGrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(290px, .38fr); grid-template-areas: 'focus standings' 'matches matches'; gap: 24px 30px; align-items: start; padding-top: 18px; }
 .mainGrid > * { min-width: 0; }
@@ -32,13 +32,13 @@
 .sectionBar h2 { font-size: var(--fc-data-section-title-size); font-weight: 800; }
 .sectionBar .viewingTitle { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; min-width: 0; }
 .sectionBar .viewingTitle > span { color: #484b43; font-size: 12px; font-weight: 500; line-height: 1.5; white-space: nowrap; }
-.sectionBar > span { font-size: 11px; color: var(--muted); }
-.weekSummary { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 4px 16px; min-width: 0; font-size: 11px; color: var(--muted); }
+.sectionBar > span { font-size: 12px; color: var(--muted); }
+.weekSummary { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 4px 16px; min-width: 0; font-size: 12px; color: var(--muted); }
 .spotlight { color: var(--paper); background: var(--ink); border-top: 3px solid var(--yellow); padding: 24px 28px 0; scroll-margin-top: calc(var(--kpr-header-height, 84px) + 16px); }
 .spotlight a:focus-visible, .spotlight button:focus-visible { outline-color: var(--yellow); }
 .matchTop { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #b5b7ac; font-size: 12px; }
 .matchTop .matchSchedule { color: #d5d7cd; font-size: 13px; font-weight: 600; }
-.matchTop small { margin-left: 5px; font-size: 9px; }
+.matchTop small { margin-left: 5px; font-size: 12px; }
 .state { display: inline-flex; align-items: center; gap: 8px; }
 .state i { width: 6px; height: 6px; background: #b5b7ac; }
 .state[data-state="live"] { color: var(--fc-data-status-live-bright, #55cbb8); }
@@ -50,16 +50,16 @@
 .heroLogo { display: grid; place-items: center; width: clamp(66px, 7vw, 116px); height: clamp(66px, 7vw, 116px); margin-bottom: 12px; }
 .heroLogo img { width: 100%; height: 100%; object-fit: contain; }
 .scoreboard h3 { font: 800 clamp(28px, 3vw, 48px)/1.1 var(--fc-data-font-display); overflow-wrap: anywhere; }
-.scoreboard p { color: #a2a59a; font-size: 11px; line-height: 1.5; min-height: 2.8em; margin: 8px 0; max-width: 220px; }
+.scoreboard p { color: #a2a59a; font-size: 12px; line-height: 1.5; min-height: 2.8em; margin: 8px 0; max-width: 220px; }
 .follow { background: transparent; border: 1px solid #eeede62b; color: #eeede6; padding: 6px 13px; font-size: 12px !important; display: flex; align-items: center; gap: 8px; }
 .follow[aria-pressed="true"] { color: var(--yellow); border-color: #edc54466; }
 .score { grid-row: 1; grid-column: 2; display: grid; text-align: center; gap: 10px; padding-bottom: 15px; }
 .score strong { font: 900 clamp(40px, 5.7vw, 92px)/1 var(--fc-data-font-display); white-space: nowrap; letter-spacing: -.025em; }
-.score > span { color: #b5b7ac; font-size: 11px; }
+.score > span { color: #b5b7ac; font-size: 12px; }
 .mapsSection { border-top: 1px solid #eeede626; padding-top: 16px; }
 .mapHeading { display: flex; justify-content: space-between; gap: 15px; margin-bottom: 16px; align-items: center; }
 .mapHeading b { font-size: 12px; }
-.mapHeading > span { font-size: 11px; color: #b5b7ac; }
+.mapHeading > span { font-size: 12px; color: #b5b7ac; }
 .mapRail { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--map-count, 5), minmax(0, 1fr)); }
 .mapRail li { position: relative; min-width: 0; display: flex; flex-direction: column; gap: 6px; background: #eeede606; border: 1px solid #eeede61c; padding: 14px 12px; min-height: 125px; }
 .mapRail li + li { border-left: 0; }
@@ -68,23 +68,23 @@
 .mapNumber { font: 800 29px/1 var(--fc-data-font-display); color: #787c6f; margin-bottom: 6px; }
 .mapRail li[data-map-state="recorded"] .mapNumber { color: var(--yellow); }
 .mapRail b { font-size: 12px; overflow-wrap: anywhere; line-height: 1.5; }
-.mapRail li > span:not(.mapNumber) { color: #a2a59a; font-size: 10px; }
-.mapRail small { color: var(--yellow); font-size: 10px; overflow-wrap: anywhere; }
-.mapRail li > small { font-size: 11px; font-weight: 600; line-height: 1.5; }
+.mapRail li > span:not(.mapNumber) { color: #a2a59a; font-size: 12px; }
+.mapRail small { color: var(--yellow); font-size: 12px; overflow-wrap: anywhere; }
+.mapRail li > small { font-size: 12px; font-weight: 600; line-height: 1.5; }
 .matchFooter { display: flex; justify-content: space-between; gap: 24px; align-items: center; min-height: 64px; padding: 16px 0; }
-.matchFooter > span { font-size: 11px; line-height: 1.6; color: #a2a59a; }
+.matchFooter > span { font-size: 12px; line-height: 1.6; color: #a2a59a; }
 .matchFooter a { display: flex; justify-content: space-between; gap: 24px; color: var(--yellow); font-size: 12px; font-weight: 700; flex-shrink: 0; }
 .matchFooter a > span { font-size: 20px; }
 .listHeading { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 0 14px; }
 .listHeading h3 { font-size: 14px; }
-.listHeading > span { font-size: 11px; color: var(--muted); }
+.listHeading > span { font-size: 12px; color: var(--muted); }
 .matchRow { display: grid; grid-template-columns: 110px minmax(0, 1fr) 80px minmax(0, 1fr) 16px; width: 100%; align-items: center; gap: 14px; text-align: left; padding: 16px 18px; background: transparent; border: 0; border-top: 1px solid var(--line); min-height: 79px; }
 .matchRow:last-child { border-bottom: 1px solid var(--line); }
 .matchRow[aria-pressed="true"] { background: #fff8; box-shadow: inset 3px 0 var(--yellow); }
 .matchRow:hover { background: #fff8; }
 .rowTime { display: grid; gap: 6px; }
-.rowTime b { font-size: 11px; font-weight: 500; }
-.rowTime small { font-size: 10px; color: var(--muted); }
+.rowTime b { font-size: 12px; font-weight: 500; }
+.rowTime small { font-size: 12px; color: var(--muted); }
 .rowTeam { display: flex; align-items: center; gap: 12px; min-width: 0; font-size: 14px; }
 .rowTeam b { overflow-wrap: anywhere; }
 .rowTeamB { justify-content: flex-end; text-align: right; }
@@ -94,26 +94,26 @@
 .rowArrow { color: var(--muted); font-size: 20px; }
 .standingsIntro { border-top: 3px solid var(--ink); padding: 18px 0 16px; }
 .standingsIntro > p { font-size: 16px; font-weight: 700; line-height: 1.5; margin-bottom: 9px; }
-.standingsIntro > span { font-size: 11px; line-height: 1.7; color: var(--muted); }
+.standingsIntro > span { font-size: 12px; line-height: 1.7; color: var(--muted); }
 .standingsFocusLegend { display: flex; align-items: center; gap: 8px; margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.7; }
 .standingsFocusLegend > i { width: 12px; height: 12px; flex: 0 0 12px; background: var(--matchup-shade); border: 1px solid var(--line); }
 .standings table { width: 100%; border-collapse: collapse; }
-.standings thead th { color: var(--muted); font-size: 10px; font-weight: 400; padding: 12px 5px; border-block: 1px solid var(--line); }
+.standings thead th { color: var(--muted); font-size: 12px; font-weight: 400; padding: 12px 5px; border-block: 1px solid var(--line); }
 .standings th:first-child, .standings td:first-child { text-align: left; padding-left: 8px; }
 .standings thead th:nth-child(2) { text-align: left; }
 .standings tbody td, .standings tbody th { padding: 10px 5px; border-bottom: 1px solid var(--line); font-size: 13px; }
 .standings td:nth-last-child(-n+2) { text-align: center; }
 .standings td:first-child { width: 38px; }
-.standings td > small { display: block; color: var(--muted); font-size: 9px; margin-top: 3px; }
+.standings td > small { display: block; color: var(--muted); font-size: 12px; margin-top: 3px; }
 .standings th span { display: flex; gap: 10px; align-items: center; text-align: left; overflow-wrap: anywhere; }
 .standings td strong { font: 800 28px/1 var(--fc-data-font-display); }
 .standings tr[data-focused] { background: var(--matchup-shade); }
-.standingsNote { padding: 12px 0 14px; color: var(--muted); font-size: 11px; line-height: 1.7; }
+.standingsNote { padding: 12px 0 14px; color: var(--muted); font-size: 12px; line-height: 1.7; }
 .pointsRule { border-top: 1px solid var(--line); display: flex; align-items: flex-start; gap: 14px; padding-top: 18px; }
 .pointsRule > span { font: 800 28px/1 var(--fc-data-font-display); }
 .pointsRule p { display: grid; gap: 9px; }
-.pointsRule b { font-size: 11px; font-weight: 600; }
-.pointsRule small { font-size: 10px; line-height: 1.7; color: var(--muted); }
+.pointsRule b { font-size: 12px; font-weight: 600; }
+.pointsRule small { font-size: 12px; line-height: 1.7; color: var(--muted); }
 /* 票 2.66: before a week's pairings are out this is a short note; the phase card above carries the dates. */
 .empty { background: var(--ink); color: var(--paper); padding: 24px 32px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; }
 .empty h3 { font-size: 20px; }
@@ -133,9 +133,9 @@
 .pathway > div { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; align-items: start; }
 .pathway > div > span { grid-row: span 2; font: 800 34px/1 var(--fc-data-font-display); color: #898b80; }
 .pathway b { font-size: 13px; }
-.pathway small { font-size: 10px; color: var(--muted); }
+.pathway small { font-size: 12px; color: var(--muted); }
 .pathway > i { font-style: normal; color: var(--muted); }
-.pathway > p { grid-column: 1 / -1; color: var(--muted); font-size: 10px; padding-top: 6px; }
+.pathway > p { grid-column: 1 / -1; color: var(--muted); font-size: 12px; padding-top: 6px; }
 @media (min-width: 1750px) {
   .mainGrid { grid-template-columns: minmax(0, 1fr) minmax(330px, .35fr); gap: 42px; }
   .spotlight { padding: 28px 38px 0; }
@@ -171,38 +171,38 @@
 @media (max-width: 600px) {
   .heading { padding: 16px 0; display: grid; gap: 18px; }
   .heading p:last-child { font-size: 13px; }
-  .rulesLink { font-size: 11px; display: flex; gap: 6px; padding-top: 1px; }
+  .rulesLink { font-size: 12px; display: flex; gap: 6px; padding-top: 1px; }
   .rulesLink > span { font-size: 15px; }
   .rulesLink small { display: none; }
   .headingActions { justify-content: space-between; gap: 14px; padding-bottom: 0; }
   .mainGrid { padding-top: 16px; }
-  .sectionBar > span { font-size: 10px; }
+  .sectionBar > span { font-size: 12px; }
   .matchSection > .sectionBar { align-items: baseline; flex-wrap: wrap; gap: 8px 14px; }
-  .sectionBar .viewingTitle > span { font-size: 11px; }
+  .sectionBar .viewingTitle > span { font-size: 12px; }
   .spotlight { padding: 17px 14px 0; }
-  .matchTop { font-size: 10px; flex-wrap: wrap; }
+  .matchTop { font-size: 12px; flex-wrap: wrap; }
   .matchTop > span:nth-child(2) { order: 3; flex-basis: 100%; margin-top: 2px; color: #d5d7cd; }
   .matchTop .matchSchedule { font-size: 12px; }
   .scoreboard { gap: 10px; padding: 24px 0; }
   .heroLogo { width: 62px; height: 62px; }
   .scoreboard h3 { font-size: 28px; }
-  .scoreboard p { font-size: 9px; min-height: 3em; }
+  .scoreboard p { font-size: 12px; min-height: 3em; }
   .score strong { font-size: 45px; }
-  .score > span { font-size: 9px; max-width: 90px; line-height: 1.5; }
-  .follow { padding: 5px 8px; font-size: 10px !important; gap: 5px; }
+  .score > span { font-size: 12px; max-width: 90px; line-height: 1.5; }
+  .follow { padding: 5px 8px; font-size: 12px !important; gap: 5px; }
   .mapHeading { gap: 12px; }
-  .mapHeading > span { font-size: 9px; max-width: 65%; }
-  .mapHeading > b { font-size: 11px; }
+  .mapHeading > span { font-size: 12px; max-width: 65%; }
+  .mapHeading > b { font-size: 12px; }
   .mapRail { grid-template-columns: repeat(var(--map-count, 5), minmax(56px, 1fr)); overflow-x: auto; }
   .mapRail li { padding: 12px 7px; min-height: 126px; }
-  .mapRail b { font-size: 10px; }
+  .mapRail b { font-size: 12px; }
   .mapNumber { font-size: 25px; }
-  .mapRail small, .mapRail li > span:not(.mapNumber) { font-size: 9px; }
+  .mapRail small, .mapRail li > span:not(.mapNumber) { font-size: 12px; }
   .matchFooter { gap: 12px; min-height: 71px; }
-  .matchFooter > span { font-size: 9px; }
-  .matchFooter a { font-size: 11px; gap: 10px; }
+  .matchFooter > span { font-size: 12px; }
+  .matchFooter a { font-size: 12px; gap: 10px; }
   .listHeading { align-items: baseline; gap: 14px; }
-  .listHeading > span { font-size: 9px; }
+  .listHeading > span { font-size: 12px; }
   .matchRow { grid-template-columns: minmax(0, 1fr) 54px minmax(0, 1fr); gap: 10px; padding: 12px 10px; }
   .rowTime { grid-column: 1 / -1; display: flex; justify-content: space-between; }
   .rowArrow { display: none; }
@@ -211,13 +211,13 @@
   .followTeams { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pathway { grid-template-columns: 1fr; gap: 16px; }
   .pathway > i { display: none; }
-  .pathway small { font-size: 11px; }
+  .pathway small { font-size: 12px; }
   .pathway > p { line-height: 1.7; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .follow, .matchRow, .followTeams button { transition: background-color 160ms ease, color 160ms ease; }
 }
-.listHeading .scheduleLink { font-size: 11px; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.listHeading .scheduleLink { font-size: 12px; color: var(--muted); text-decoration: none; white-space: nowrap; }
 .advanceLink { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 17px 0; border-top: 1px solid var(--line); font-size: 12px; font-weight: 700; }
 .advanceLink > span { color: var(--fc-data-focus-on-light, #806000); font-size: 20px; }
 
@@ -300,7 +300,7 @@
 .mapReportLink { position: absolute; inset: 0; z-index: 1; }
 .mapReportLink:focus-visible { outline-offset: -4px !important; }
 .mapCumulative { margin-top: auto; font: 900 20px/1.2 var(--fc-data-font-display); display: flex; align-items: baseline; gap: 7px; }
-.mapCumulative small { font: 10px var(--font-sans); color: var(--fc-data-text-dark-muted); }
+.mapCumulative small { font: 12px var(--font-sans); color: var(--fc-data-text-dark-muted); }
 .matchEntry { display: grid; grid-template-columns: minmax(0, 1fr) 91px; align-items: stretch; border-top: 1px solid var(--line); }
 .matchEntry:last-child { border-bottom: 1px solid var(--line); }
 .matchEntry .matchRow { border: 0; grid-template-columns: 85px minmax(0, 1fr) 68px minmax(0, 1fr) 60px; gap: 10px; padding: 15px 12px; min-height: 76px; }
@@ -327,7 +327,7 @@
   .teamB { grid-template-columns: minmax(0,1fr) 38px; }
   .heroLogo { width: 36px; height: 36px; }
   .scoreboard h3 { font-size: 27px; }
-  .scoreboard p { font-size: 11px; }
+  .scoreboard p { font-size: 12px; }
   .score strong { font-size: 54px; }
   .matchEntry .matchRow { grid-template-columns: 70px minmax(0,1fr) 55px minmax(0,1fr) 58px; gap: 7px; }
 }
@@ -360,8 +360,8 @@
   .publishedMapPool { margin-top: 6px; }
   .poolSummaryTitle { gap: 2px 10px; }
   .poolSummaryTitle > strong { font-size: 13px; }
-  .poolSummaryTitle > small { font-size: 11px; }
-  .poolToggle { gap: 6px; font-size: 11px; }
+  .poolSummaryTitle > small { font-size: 12px; }
+  .poolToggle { gap: 6px; font-size: 12px; }
   .poolModePicker > button { padding-inline: 12px; font-size: 12px; }
   .poolMaps { grid-template-columns: 1fr; gap: 0; }
   .poolMaps li { min-height: 72px; padding-block: 8px; }
@@ -370,21 +370,21 @@
   .teamA,.teamB { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; }
   .heroLogo { width: 48px; height: 48px; }
   .scoreboard h3 { font-size: 28px; }
-  .scoreboard p { font-size: 11px; overflow-wrap: anywhere; }
+  .scoreboard p { font-size: 12px; overflow-wrap: anywhere; }
   .score strong { font-size: 49px; }
-  .follow { min-height: 35px; font-size: 11px !important; }
+  .follow { min-height: 35px; font-size: 12px !important; }
   .mapRail { grid-template-columns: repeat(var(--map-count, 5), minmax(86px, 1fr)); overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: thin; }
   .mapRail li { min-height: 155px; padding: 12px 10px; scroll-snap-align: start; }
   .mapCumulative { display: grid; gap: 3px; font-size: 19px; }
-  .mapCumulative small { font-size: 10px; }
+  .mapCumulative small { font-size: 12px; }
   .matchEntry { grid-template-columns: minmax(0,1fr) 70px; }
   .matchEntry .matchRow { grid-template-columns: minmax(0,1fr) 52px minmax(0,1fr); padding: 12px 7px; gap: 9px; }
   .rowTime { grid-column: 1 / -1; grid-row: 1; padding-right: 60px; }
-  .rowPreview { grid-column: 2 / -1; grid-row: 1; justify-self: end; align-self: center; font-size: 11px; }
+  .rowPreview { grid-column: 2 / -1; grid-row: 1; justify-self: end; align-self: center; font-size: 12px; }
   .rowTeam { gap: 6px; }
   .rowLogo { width: 23px; height: 23px; flex-basis: 23px; }
-  .rowTeam b { font-size: 11px; }
-  .rowReport { font-size: 11px; gap: 4px; flex-direction: column; }
+  .rowTeam b { font-size: 12px; }
+  .rowReport { font-size: 12px; gap: 4px; flex-direction: column; }
 }
 @media (max-width: 360px) {
   .cycleBlock [data-weekly-cycle-field] { grid-column: 1 / -1; }
@@ -437,7 +437,7 @@
   .followTeams button:not([aria-pressed="true"]):hover { background: var(--fc-data-paper-raised); }
   .rulesLink small, .sectionBar > span { font-size: 12px; }
   .matchTop .matchSchedule { font-size: 14px; line-height: 1.5; }
-  .matchTop small { font-size: 11px; }
+  .matchTop small { font-size: 12px; }
   .scoreboard p, .score > span { font-size: 12px; line-height: 1.5; }
   .mapHeading b { font-size: 13px; }
   .mapHeading > span { font-size: 12px; line-height: 1.6; }
@@ -451,15 +451,15 @@
   }
   .mapRail li + li { border-left: 1px solid #eeede61c; }
   .mapRail b { font-size: 13px; }
-  .mapRail li > span:not(.mapNumber) { font-size: 11px; line-height: 1.5; color: var(--fc-data-text-on-dark); }
+  .mapRail li > span:not(.mapNumber) { font-size: 12px; line-height: 1.5; color: var(--fc-data-text-on-dark); }
   .mapRail li > small { font-size: 12px; }
-  .mapCumulative small { font-size: 11px; color: var(--fc-data-text-on-dark); }
+  .mapCumulative small { font-size: 12px; color: var(--fc-data-text-on-dark); }
   .matchFooter > span { font-size: 12px; }
   .matchFooter a { min-height: 36px; align-items: center; }
   .listHeading .scheduleLink { font-size: 12px; }
   .standings thead th { font-size: 12px; font-weight: 500; }
   .standings tbody td, .standings tbody th { font-size: 14px; }
-  .standings td > small { font-size: 11px; }
+  .standings td > small { font-size: 12px; }
   .pointsRule b { font-size: 12px; line-height: 1.6; }
   .pathway small, .pathway > p { font-size: 12px; line-height: 1.6; }
 }
@@ -535,8 +535,8 @@ a.followedMatch > span { color: var(--fc-data-focus-on-light, #806000); }
   .matchTop, .matchTop small, .sectionBar > span, .scoreboard p, .score > span, .mapHeading > span,
   .mapRail b, .mapRail small, .mapRail li > span:not(.mapNumber), .mapCumulative small, .matchFooter > span,
   .listHeading > span, .rowTime small, .standings thead th, .standings td > small, .pointsRule small,
-  .pathway small, .pathway > p { font-size: 11px; }
-  .page .follow { min-height: 44px; padding-block: 0; font-size: 11px !important; }
+  .pathway small, .pathway > p { font-size: 12px; }
+  .page .follow { min-height: 44px; padding-block: 0; font-size: 12px !important; }
   .listHeading .scheduleLink { display: inline-flex; align-items: center; min-height: 44px; }
   .standings tbody th a { display: flex; align-items: center; min-height: 44px; }
   .page .advanceLink { min-height: 44px; padding-block: 0; }
@@ -546,6 +546,6 @@ a.followedMatch > span { color: var(--fc-data-focus-on-light, #806000); }
 @media (max-width: 600px) {
   .phoneLinks .headingActions { flex-wrap: wrap; row-gap: 0; }
   .phoneLinks .rulesLink[data-weekly-report-archive-link] { flex: 1 0 100%; gap: 8px; border-top: 1px solid var(--line); }
-  .phoneLinks .rulesLink[data-weekly-report-archive-link] small { display: block; order: 1; margin-left: auto; color: var(--muted); font-size: 11px; }
+  .phoneLinks .rulesLink[data-weekly-report-archive-link] small { display: block; order: 1; margin-left: auto; color: var(--muted); font-size: 12px; }
   .phoneLinks .rulesLink[data-weekly-report-archive-link] > span { order: 2; }
 }

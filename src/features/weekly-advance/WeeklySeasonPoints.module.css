@@ -9,5 +9,5 @@
 .panel th, .panel td { padding: 14px 12px; border-bottom: 1px solid #191b1820; }
 .panel thead th { color: #64665d; font-size: 12px; }
 .panel th:last-child, .panel td:last-child { text-align: right; }
-.panel small { font-size: 11px; font-weight: normal; }
+.panel small { font-size: 12px; font-weight: normal; }
 @media (max-width: 800px) { .panel { padding: 0 16px; } .panel summary strong { font-size: 19px; } .panel th, .panel td { padding: 12px 7px; font-size: 12px; } }

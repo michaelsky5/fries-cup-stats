@@ -14,11 +14,11 @@
 .toolbar button:hover { background: var(--fc-data-paper-raised); }
 .toolbar .primaryAction:hover { background: var(--fc-data-primary-bg-hover, #ffd64a); color: var(--fc-data-primary-text, #181a17); }
 .copyFeedback { padding-bottom: 12px; font-size: 12px; }
-.shell .phasePreview { padding: 2px 0 12px; font-size: 10px; color: var(--fc-data-text-muted); line-height: 1.7; }
+.shell .phasePreview { padding: 2px 0 12px; font-size: 12px; color: var(--fc-data-text-muted); line-height: 1.7; }
 .cover .phaseCaption { padding: 6px 0 18px; color: var(--fc-data-text-on-dark); text-align: center; font-size: 13px; line-height: 1.8; }
 .shell[data-match-phase="live"] .heroMeta > strong::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--fc-data-status-live-bright); margin-right: 8px; vertical-align: 2px; }
 .shell:is([data-match-phase="review"], [data-match-phase="postponed"]) .heroMeta > strong { color: var(--fc-data-status-warning-bright); }
-.heroFooter small { font-size: 10px; color: var(--fc-data-text-dark-muted); }
+.heroFooter small { font-size: 12px; color: var(--fc-data-text-dark-muted); }
 .sectionNav { position: sticky; top: var(--coach-header-offset); z-index: 8; display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: var(--coach-nav-height); margin-bottom: 12px; border-top: 2px solid var(--fc-data-ink); border-bottom: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper); }
 .sectionNav::before { content: ''; position: absolute; inset: -10px 0 auto; height: 8px; background: var(--fc-data-paper); pointer-events: none; }
 .sectionLinks { display: flex; align-self: stretch; gap: 28px; min-width: 0; }
@@ -61,14 +61,14 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
 .heroFooter { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 28px; padding: 10px 0; border-top: 1px solid var(--fc-data-line-on-dark); }
 .heroFooter > span { display: flex; gap: 12px; align-items: baseline; font-size: 12px; color: var(--fc-data-text-on-dark); }
 .heroFooter strong { color: var(--fc-data-paper); font-weight: 600; }
-.matchIdentifier { display:flex; justify-content:center; flex-wrap:wrap; gap:6px 12px; margin:0; padding:2px 0 10px; color:var(--fc-data-text-on-dark); font-size:11px; line-height:1.5; }
+.matchIdentifier { display:flex; justify-content:center; flex-wrap:wrap; gap:6px 12px; margin:0; padding:2px 0 10px; color:var(--fc-data-text-on-dark); font-size:12px; line-height:1.5; }
 .matchIdentifier > span { color:var(--fc-data-paper); overflow-wrap:anywhere; }
 .progress { display: grid; grid-template-columns: 88px minmax(0, 1fr); align-items: center; gap: 16px; padding: 10px 0; border-top: 1px solid var(--fc-data-line-on-dark); }
 .progressHeading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 9px; font-size: 12px; }
 .progressHeading > strong { font-weight: 600; }
 .progressHeading > span { color: var(--fc-data-text-muted); }
 .progress > .progressHeading { display: grid; gap: 4px; margin: 0; }
-.progress > .progressHeading > span { color: var(--fc-data-text-on-dark); font-size: 11px; }
+.progress > .progressHeading > span { color: var(--fc-data-text-on-dark); font-size: 12px; }
 .progressRail { display: grid; min-width: 0; grid-auto-flow: column; grid-auto-columns: minmax(124px, 1fr); overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-width: thin; scrollbar-color: var(--fc-data-text-dark-muted) var(--fc-data-ink); scroll-snap-type: x proximity; }
 .progressStep { min-width: 0; padding: 7px 12px 8px; border: 0; border-left: 1px solid var(--fc-data-line-on-dark); border-bottom: 2px solid transparent; background: transparent; color: var(--fc-data-paper); text-align: left; scroll-snap-align: start; }
 .progressStep:first-child { border-left: 0; }
@@ -76,11 +76,11 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
 .progressStep:hover { background: var(--fc-data-ink-raised); }
 .progressStep:focus-visible { outline-offset: -3px; }
 .progressMap { display: flex; align-items: baseline; gap: 8px; }
-.progressMap > small { font: 500 11px/1.4 var(--fc-data-font-system); color: var(--fc-data-text-on-dark); }
+.progressMap > small { font: 500 12px/1.4 var(--fc-data-font-system); color: var(--fc-data-text-on-dark); }
 .progressMap > strong { min-width: 0; font-size: 12px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
 .progressResult { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 8px; margin-top: 6px; }
 .progressResult > b { font: 900 22px/1 var(--fc-data-font-display); white-space: nowrap; }
-.progressResult > span { color: var(--fc-data-text-on-dark); font-size: 11px; line-height: 1.4; }
+.progressResult > span { color: var(--fc-data-text-on-dark); font-size: 12px; line-height: 1.4; }
 .indexSeriesScore { display: none; }
 .review { display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: start; gap: 24px; margin-top: 30px; scroll-margin-top: var(--coach-section-offset); }
 .index { position: sticky; top: var(--coach-section-offset); min-width: 0; }
@@ -142,7 +142,7 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
 .comparisonMetric { margin-bottom: 12px; color: var(--fc-data-text-muted); font-size: 12px; font-weight: 600; line-height: 1.5; }
 .comparisonValues { display: grid; gap: 8px; margin: auto 0 0; }
 .comparisonValues > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 8px; }
-.comparisonValues dt { min-width: 0; padding-left: 8px; border-left: 2px solid var(--fc-data-ink); color: var(--fc-data-text-muted); font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
+.comparisonValues dt { min-width: 0; padding-left: 8px; border-left: 2px solid var(--fc-data-ink); color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
 .comparisonValues [data-side="B"] dt { border-left-color: var(--fc-data-text-muted); }
 .comparisonValues dd { margin: 0; font-size: 14px; font-weight: 650; line-height: 1.5; text-align: right; white-space: nowrap; }
 .comparisonBar { display: flex; height: 3px; gap: 3px; margin-top: 12px; }
@@ -245,14 +245,14 @@ a.teamIdentity:hover strong { text-decoration: underline; text-underline-offset:
   .mapDataControls button { min-height: 40px; padding-inline: 12px; }
   .seriesAnalysis { margin-top: 36px; }
   .seriesAnalysis > summary { gap: 14px; padding: 16px; }
-  .seriesAnalysis > summary small { font-size: 11px; }
+  .seriesAnalysis > summary small { font-size: 12px; }
   .seriesBody { padding: 0 0 12px; }
   .analysisWorkspace { padding: 8px 0 0; }
   .standouts, .rosters { grid-template-columns: 1fr; gap: 20px; }
   .comparison { padding: 10px 14px; }
   .comparison summary { gap: 10px; min-height: 54px; }
   .comparison summary > strong { font-size: 13px; }
-  .comparisonLegend { gap: 10px; font-size: 11px; }
+  .comparisonLegend { gap: 10px; font-size: 12px; }
   .comparisonLogo { width: 18px; height: 18px; }
   .comparisonLegend > span { gap: 5px; }
   .comparison details[open] .comparisonGrid { padding-bottom: 20px; }

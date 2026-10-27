@@ -9,7 +9,7 @@
 .dialog :is(button, input, select):focus-visible, .prompt :is(button, input):focus-visible { outline: 2px solid var(--fc-data-focus-on-light, #806000); outline-offset: 3px; }
 .header { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 16px 24px; color: var(--fc-data-on-ink); background: var(--fc-data-ink, #20221c); border-top: 3px solid var(--fc-data-signal, #f4c320); }
 .kicker { margin: 0 0 8px; color: var(--fc-data-signal); font: 700 14px/1 var(--fc-data-font-display, sans-serif); letter-spacing: .065em; }
-.kicker span { color: var(--fc-data-text-dark-muted); margin-left: 8px; font: 11px/1.5 var(--font-sans); letter-spacing: .04em; }
+.kicker span { color: var(--fc-data-text-dark-muted); margin-left: 8px; font: 12px/1.5 var(--font-sans); letter-spacing: .04em; }
 .header h2 { margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -.025em; }
 .header .closeButton { border-color: #f6f3df4d; width: 44px; height: 44px; padding: 0; font-size: 26px; flex-shrink: 0; }
 .header .closeButton:hover:enabled { background: var(--fc-data-ink-soft); }
@@ -54,11 +54,11 @@
 .optionLogo, .playerAvatar { width: 36px; height: 36px; }
 .playerAvatar, .playerInitial { display: grid; place-items: center; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-deep); font-size: 13px; font-weight: 700; overflow: hidden; }
 .optionText strong { font-size: 14px; line-height: 1.4; }
-.optionText :is(span, em) { color: var(--fc-data-text-muted); font-size: 11px; font-style: normal; line-height: 1.5; }
+.optionText :is(span, em) { color: var(--fc-data-text-muted); font-size: 12px; font-style: normal; line-height: 1.5; }
 .optionActionRail { display: grid; gap: 4px; justify-items: end; }
 .optionActionRail button { min-width: 44px; font-size: 13px; padding: 8px 12px; }
 .optionCard[data-selected='true'] .optionActionRail button { border-color: transparent; opacity: 1; color: var(--fc-data-text-muted); }
-.primaryPill { font-size: 11px; color: var(--fc-data-text-muted); }
+.primaryPill { font-size: 12px; color: var(--fc-data-text-muted); }
 .empty { grid-column: 1 / -1; display: grid; justify-items: start; gap: 16px; padding: 24px 0; font-size: 14px; line-height: 1.8; }
 .empty p { margin: 0; color: var(--fc-data-text-muted); }
 .notice { margin: 0; padding: 13px 24px; border-bottom: 1px solid var(--fc-data-line); background: var(--fc-data-paper-deep); font-size: 14px; line-height: 1.7; }
@@ -108,7 +108,7 @@
   .header { padding: 16px; gap: 16px; }
   .header h2 { font-size: 24px; }
   .kicker { font-size: 13px; }
-  .kicker span { font-size: 11px; margin-left: 3px; }
+  .kicker span { font-size: 12px; margin-left: 3px; }
   .tabs { padding: 0 12px; gap: 8px; }
   .tabs button { flex: 1; justify-content: space-between; min-height: 48px; padding: 12px; gap: 10px; }
   .storageHint { display: none; }

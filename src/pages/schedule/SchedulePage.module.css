@@ -45,7 +45,7 @@
 .heroKicker,
 .sectionKicker {
   color: rgba(255, 255, 255, 0.36);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1;
   letter-spacing: 0.14em;
@@ -185,7 +185,7 @@
 
 .stageMeta {
   color: rgba(255, 255, 255, 0.36);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
   font-family: var(--font-mono, monospace);
@@ -272,7 +272,7 @@
 
 .swissSnapshotInline span {
   color: rgba(255,255,255,0.34);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -294,7 +294,7 @@
   margin-bottom: 2px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
   color: rgba(255,255,255,0.34);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -355,13 +355,13 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   color: rgba(255,255,255,0.38);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
 }
 
 .swissRowMetric {
   color: rgba(255,255,255,0.7);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   text-align: right;
 }
@@ -384,7 +384,7 @@
   min-width: 46px;
   padding: 0 6px;
   border: 1px solid rgba(255,255,255,0.14);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -424,14 +424,14 @@
   flex-wrap: wrap;
   border-top: 1px solid rgba(255,255,255,0.08);
   color: rgba(255,255,255,0.42);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.08em;
 }
 
 .swissSnapshotFoot strong {
   color: #f4c320;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -479,14 +479,14 @@
   padding: 0 8px;
   border: 1px solid rgba(244, 195, 32, 0.24);
   color: #f4c320;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.06em;
 }
 
 .noticeRelease {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -508,7 +508,7 @@
 .noticeMeta {
   margin-top: auto;
   color: rgba(255, 255, 255, 0.38);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -605,7 +605,7 @@
   padding: 0 8px;
   border: 1px solid rgba(244, 195, 32, 0.24);
   color: #f4c320;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.06em;
   font-family: var(--font-mono, monospace);
@@ -617,7 +617,7 @@
   align-items: center;
   gap: 10px;
   color: rgba(255, 255, 255, 0.62);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.08em;
   font-family: var(--font-mono, monospace);
@@ -674,7 +674,7 @@
 .completeResultMeta span,
 .statusSummary span {
   color: rgba(255, 255, 255, 0.54);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.08em;
 }
@@ -705,7 +705,7 @@
   margin-top: auto;
   padding-top: 6px;
   color: rgba(255, 255, 255, 0.44);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   font-family: var(--font-mono, monospace);
 }
@@ -729,7 +729,7 @@
 
 .factLabel {
   color: rgba(255, 255, 255, 0.38);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -756,7 +756,7 @@
   padding: 0 10px;
   border: 1px solid rgba(244, 195, 32, 0.26);
   color: #f4c320;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.08em;
   font-family: var(--font-mono, monospace);
@@ -801,7 +801,7 @@
 .completeResultTime,
 .statusSummary strong {
   color: #f4c320;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -836,7 +836,7 @@
 
 .statusHeroLabel {
   color: rgba(255, 255, 255, 0.62);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -858,7 +858,7 @@
   justify-content: space-between;
   gap: 12px;
   color: rgba(255, 255, 255, 0.68);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.1em;
   font-family: var(--font-mono, monospace);
@@ -912,7 +912,7 @@
   gap: 8px 14px;
   min-width: 0;
   color: rgba(255, 255, 255, 0.42);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.08em;
   font-family: var(--font-mono, monospace);
@@ -954,7 +954,7 @@
 
 .scheduleTeams small {
   color: rgba(255, 255, 255, 0.34);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.12em;
   font-family: var(--font-mono, monospace);
@@ -971,14 +971,14 @@
 .scheduleTime,
 .resultTime {
   color: rgba(255, 255, 255, 0.62);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   font-family: var(--font-mono, monospace);
 }
 
 .scheduleRowSide strong {
   color: #f4c320;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.08em;
   font-family: var(--font-mono, monospace);
@@ -1068,7 +1068,7 @@
 
 .seedRank {
   color: rgba(255, 255, 255, 0.38);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1138,7 +1138,7 @@
 
 .roundTab span,
 .roundTab strong {
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
   font-family: var(--font-mono, monospace);
   white-space: nowrap;
@@ -1148,7 +1148,7 @@
 
 .roundTab strong {
   color: #f4c320;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .roundTabActive {
@@ -1175,7 +1175,7 @@
   padding: 9px 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.72);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.1em;
   font-family: var(--font-mono, monospace);
@@ -1245,7 +1245,7 @@
 .matchFormatText,
 .matchStatusInline {
   color: rgba(255, 255, 255, 0.4);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1257,7 +1257,7 @@
 
 .matchDivider {
   color: rgba(255, 255, 255, 0.24);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
   font-family: var(--font-mono, monospace);
 }

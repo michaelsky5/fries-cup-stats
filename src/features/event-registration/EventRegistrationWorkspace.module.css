@@ -36,7 +36,7 @@
 .invitationCard span,
 .formHeading span {
   color: #a67c00;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: .12em;
 }
@@ -144,7 +144,7 @@
 
 .playerFlowGroup > header span {
   color: #a67c00;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: .1em;
 }
@@ -158,7 +158,7 @@
 .playerFlowGroup > header p {
   margin: 0;
   color: #6b665d;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -167,7 +167,7 @@
   border: 1px solid #302d28;
   background: #fff;
   padding: 7px 9px;
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   white-space: nowrap;
@@ -194,7 +194,7 @@
   border: 1px solid #24221f;
   background: #f5bf16;
   color: #24221f;
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
 }
@@ -299,7 +299,7 @@
   background: #f5bf16;
   padding: 8px 11px;
   color: #24221f;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   text-decoration: none;
 }
@@ -310,7 +310,7 @@
 .eventFlowHeading span,
 .longTermManagement summary span {
   color: #c39200;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: .12em;
 }
@@ -327,7 +327,7 @@
 .longTermManagement summary small {
   margin: 0;
   color: #777167;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -358,7 +358,7 @@
 
 .journeyContext small {
   color: #4f4632;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.4;
 }
 
@@ -367,7 +367,7 @@
   margin-top: 5px;
   border: 1px solid #24221f;
   padding: 5px 7px;
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -408,7 +408,7 @@
   place-items: center;
   border: 1px solid #302d28;
   background: #eee9df;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .registrationJourney li span {
@@ -483,7 +483,7 @@
 
 .formCard label > span,
 .inlineForm label > span {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -577,7 +577,7 @@
 
 .managerTeamAction > span {
   color: #f5bf16;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: .1em;
 }
@@ -591,7 +591,7 @@
   max-width: 660px;
   margin: 0;
   color: #c8c2b7;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.55;
 }
 
@@ -602,7 +602,7 @@
   background: #f5bf16;
   padding: 8px 11px;
   color: #24221f;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   text-decoration: none;
 }
@@ -644,7 +644,7 @@
 
 .managerTeamSnapshot dt {
   color: #777167;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -672,7 +672,7 @@
   place-items: center;
   border-right: 1px solid #24221f;
   color: #24221f;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   text-align: center;
   text-decoration: none;
@@ -738,7 +738,7 @@
   border: 1px solid #24221f;
   background: #f5bf16;
   color: #24221f;
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
 }
@@ -797,7 +797,7 @@
   border: 1px solid #24221f;
   background: #fff;
   color: #24221f;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -894,7 +894,7 @@
 .managerPersonRow > div:first-child > span,
 .managerTalentPool > header span {
   color: #8b6a05;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: .08em;
 }
@@ -910,7 +910,7 @@
 .managerTalentPool > header p {
   margin: 0;
   color: #6b665d;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -937,7 +937,7 @@
 
 .managerPeopleHeader dt {
   color: #777167;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -953,7 +953,7 @@
   background: #fff5ce;
   padding: 10px 13px;
   color: #665000;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -1002,7 +1002,7 @@
   border: 1px solid #24221f;
   background: #fff;
   padding: 6px 8px;
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -1044,7 +1044,7 @@
 .managerPersonRow button {
   min-height: 31px;
   padding-inline: 10px;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .managerPersonRow .secondaryPeopleAction {
@@ -1118,7 +1118,7 @@
   border-left: 3px solid #f4c320;
   background: #fff8dc;
   color: #2f2a20;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1159,7 +1159,7 @@
 .managerTransferForm label > span,
 .managerTransferResponse label > span {
   color: #8b6a05;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: .08em;
 }
@@ -1224,7 +1224,7 @@
   padding: 7px 9px;
   background: #fff;
   color: #5f584d;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -1266,7 +1266,7 @@
 .coachEventState span,
 .coachInviteForm label > span {
   color: #8b6a05;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: .08em;
 }
@@ -1296,7 +1296,7 @@
 
 .coachPanelHeader small {
   color: #706a60;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .coachInviteForm {
@@ -1331,7 +1331,7 @@
 
 .coachRelationshipRow > div:first-child span {
   color: #6b665d;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .coachStatuses,
@@ -1345,7 +1345,7 @@
 
 .coachStatuses small {
   color: #777167;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1410,7 +1410,7 @@
 .officerFields label > span,
 .rosterSubmitBar label > span {
   color: #8b6a05;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: .08em;
 }
@@ -1439,7 +1439,7 @@
 
 .rosterCounts small {
   color: #706a60;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .rosterReviewNote {
@@ -1472,7 +1472,7 @@
   min-height: 34px;
   background: #24221f;
   color: #fff;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1490,7 +1490,7 @@
 .rosterTableRow small {
   overflow: hidden;
   color: #746e64;
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
 }
 
@@ -1503,7 +1503,7 @@
   background: #f4f1ea;
   padding: 6px 9px;
   color: #3d3933;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1541,7 +1541,7 @@
 
 .officerSummary dt {
   color: #6f695f;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: .08em;
 }
@@ -1608,7 +1608,7 @@
 .lockedRosterRegisterHead span {
   padding: 8px 12px;
   color: rgba(255, 255, 255, .68);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: .08em;
 }
@@ -1628,7 +1628,7 @@
   border-right: 1px solid #d3cdc2;
   background: #f4f1ea;
   color: #7b7469;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 1000;
 }
 
@@ -1649,7 +1649,7 @@
   border: 1px solid #2a2a2a;
   background: #2a2a2a;
   color: #f5bf16;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 1000;
 }
 
@@ -1657,7 +1657,7 @@
 .lockedRosterIdentity strong,
 .lockedRosterIdentity small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lockedRosterIdentity strong { color: #2a2a2a; font-size: 14px; line-height: 1; }
-.lockedRosterIdentity small { color: #777167; font-size: 9px; font-weight: 800; }
+.lockedRosterIdentity small { color: #777167; font-size: 12px; font-weight: 800; }
 
 .lockedRosterRole,
 .lockedRosterState {
@@ -1667,7 +1667,7 @@
   background: #f4f1ea;
   padding: 6px 9px;
   color: #3d3933;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1677,7 +1677,7 @@
   display: flex;
   gap: 7px;
   align-items: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1776,7 +1776,7 @@
 
 .selectionOutcome span {
   color: #a67c00;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: .1em;
 }
@@ -1816,7 +1816,7 @@
 .applicationHistory summary {
   padding: 10px 0;
   color: #6b665d;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   cursor: pointer;
 }
@@ -1861,7 +1861,7 @@
 .playerHistoryHeading span,
 .playerHistoryRow span {
   color: #a67c00;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: .1em;
 }
@@ -1871,7 +1871,7 @@
 .playerHistoryRow p {
   margin: 0;
   color: #6b665d;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .playerHistory > div:last-child {
@@ -1926,7 +1926,7 @@
 
 .recruitingGrid dt {
   color: #777167;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1951,7 +1951,7 @@
 
 .applicationNote label > span {
   color: #6b665d;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1961,7 +1961,7 @@
   background: #fff5ce;
   padding: 10px 12px;
   color: #665000;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1.5;
 }
@@ -1993,7 +1993,7 @@
   display: block;
   margin-top: 6px;
   color: #8b281f;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -2075,7 +2075,7 @@
   top: 14px;
   right: 16px;
   color: rgba(36, 34, 31, .42);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: .12em;
 }
@@ -2414,7 +2414,7 @@
   padding: 7px 9px;
   background: #f5f2eb;
   color: #24221f;
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -2477,7 +2477,7 @@
 
 .managerTabs small {
   color: #a9a39a;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -2524,7 +2524,7 @@
 .managerPanelHeader span,
 .managerOverviewFacts span {
   color: #f5bf16;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: .11em;
 }
@@ -2568,7 +2568,7 @@
   background: #f5bf16;
   padding: 8px 12px;
   color: #24221f;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   text-decoration: none;
 }
@@ -2603,7 +2603,7 @@
 .managerTaskSide > p {
   margin: 0;
   color: #584a1a;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -2611,7 +2611,7 @@
   border-top: 1px solid rgba(36, 34, 31, .35);
   padding-top: 8px;
   color: #584a1a;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -2673,7 +2673,7 @@
 
 .managerOverviewFacts small {
   color: #777167;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -2700,12 +2700,12 @@
 .managerPanelHeader p {
   margin: 0;
   color: #6b665d;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .managerPanelHeader > small {
   color: #777167;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
 }
 

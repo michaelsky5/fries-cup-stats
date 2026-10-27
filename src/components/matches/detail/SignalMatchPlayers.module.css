@@ -46,8 +46,8 @@
 .identityName:hover strong { text-decoration: underline; text-underline-offset: 3px; }
 .battleTag { font-size: 12px; line-height: 1.4; font-weight: 400; white-space: normal; overflow-wrap: anywhere; color: var(--fc-data-text-muted); user-select: text; }
 .mapCount { display: flex; align-items: baseline; gap: 3px; margin-left: auto; color: var(--fc-data-text-muted); font-size: 12px; font-weight: 500; white-space: nowrap; }
-.mapCount small { font-size: 10px; font-weight: 400; }
-.sample { font-size: 11px; font-weight: 400; color: var(--fc-data-text-muted); }
+.mapCount small { font-size: 12px; font-weight: 400; }
+.sample { font-size: 12px; font-weight: 400; color: var(--fc-data-text-muted); }
 .compareButton { display: inline-grid; place-items: center; width: 30px; height: 36px; border: 1px solid transparent; color: var(--fc-data-ink); background: transparent; font-size: 19px; }
 .compareButton:hover { border-color: var(--fc-data-line-strong); }
 .compareLabel { display: none; }
@@ -105,7 +105,7 @@
 @media (max-width: 760px) {
   .viewSwitch { gap: 18px; }
   .viewSwitch button { font-size: 14px; }
-  .resultMeta { font-size: 11px; }
+  .resultMeta { font-size: 12px; }
   .viewBar { flex-wrap: wrap; gap: 0; }
   .resultMeta { padding-bottom: 8px; }
   .pairPicker { grid-template-columns: 1fr; gap: 12px; padding: 14px; }
@@ -134,7 +134,7 @@
   .summaryTable .compareGlyph { display: none; }
   .summaryTable .compareLabel { display: inline; }
   .summaryTable [data-metric] { grid-column: span 2; display: grid; gap: 5px; text-align: left; }
-  .summaryTable .mobileLabel { display: block; color: var(--fc-data-text-muted); font-size: 11px; font-weight: 400; }
+  .summaryTable .mobileLabel { display: block; color: var(--fc-data-text-muted); font-size: 12px; font-weight: 400; }
   .summaryTable [data-stat] { font-size: 14px; }
   .summaryTable tr[data-selected="true"] { box-shadow: inset 3px 0 var(--fc-data-ink); }
   .summaryTable .mapCount { margin-right: 8px; }

@@ -25,7 +25,7 @@
   font-family: var(--fc-data-font-interface);
 }
 .intro { min-width: 0; }
-.heading .eyebrow { display: block; font-size: 11px; line-height: 1.5; letter-spacing: .1em; color: var(--fc-data-text-muted); }
+.heading .eyebrow { display: block; font-size: 12px; line-height: 1.5; letter-spacing: .1em; color: var(--fc-data-text-muted); }
 .heading .title { margin: 9px 0 0; font-size: var(--fc-data-index-title-size); line-height: var(--fc-data-index-title-leading); letter-spacing: -.04em; font-weight: 900; }
 .heading .description { margin: 12px 0 0; max-width: 65ch; color: var(--fc-data-text-muted); font-size: 14px; line-height: 1.7; }
 .heading .description a { color: var(--fc-data-ink); font-weight: 600; text-decoration: underline; text-decoration-color: var(--fc-data-line-strong); text-underline-offset: 4px; }
@@ -54,5 +54,5 @@
   .meta b { font-size: 14px; }
   .heading.compact { padding: 16px 0; gap: 10px; }
   .compact .description { margin-top: 6px; }
-  .compact .meta { gap: 2px 8px; font-size: 11px; }
+  .compact .meta { gap: 2px 8px; font-size: 12px; }
 }

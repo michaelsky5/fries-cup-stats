@@ -157,7 +157,7 @@
 
 .priorityMain > small {
   color: rgba(41, 41, 41, .58);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -175,7 +175,7 @@
   color: var(--fc-data-paper-raised);
   padding: 0 15px;
   font: inherit;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 1000;
   text-decoration: none;
 }
@@ -231,7 +231,7 @@
   margin: 0;
   color: currentColor;
   opacity: .7;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -388,7 +388,7 @@
 .flowMain > p {
   margin: 0;
   color: rgba(41, 41, 41, .62);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1.45;
 }
@@ -450,7 +450,7 @@
 .taskBoundary p {
   margin: 0;
   color: rgba(41, 41, 41, .64);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1.5;
 }
@@ -602,7 +602,7 @@
 }
 
 .panelToolbar p {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .groupList {
@@ -1093,13 +1093,13 @@
   .priorityMain > strong { font-size: 22px; line-height: 1.4; }
   .priorityMain > p { margin: 0; font-size: 13px; line-height: 1.6; }
   .priorityMeta { gap: 6px; }
-  .priorityMeta span, .priorityMeta em { font-size: 11px; letter-spacing: 0; }
+  .priorityMeta span, .priorityMeta em { font-size: 12px; letter-spacing: 0; }
   .priorityActions { gap: 8px; margin-top: 4px; }
   .priorityActions a, .priorityActions button { width: auto; flex: 1 1 110px; min-height: 44px; }
   .prioritySide { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 16px; }
   .prioritySide > span, .prioritySide > p, .taskFactRail { display: none; }
   .prioritySide > strong { font-size: 12px; }
-  .prioritySide > em { font-size: 11px; padding: 3px 6px; }
+  .prioritySide > em { font-size: 12px; padding: 3px 6px; }
   .panelToolbar { min-height: 44px; flex-direction: row; align-items: center; padding: 10px 14px; gap: 8px; }
   .panelToolbar p, .queueGroup > header p, .queueGroup > header span { display: none; }
   .queueGroup > header { min-height: 44px; padding: 8px 14px; }

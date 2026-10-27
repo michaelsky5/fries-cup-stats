@@ -28,7 +28,7 @@
 .castMember small { display: block; font-size: 12px; margin-top: 6px; color: var(--fc-data-text-on-dark); }
 .castMember:hover > [data-hero-artwork] { transform: translateY(-8px); z-index: 3; }
 .castMember:focus-visible { z-index: 5; }
-.castNote { position: absolute; inset: auto 24px 18px; font-size: 11px; color: var(--fc-data-text-on-dark); line-height: 1.6; }
+.castNote { position: absolute; inset: auto 24px 18px; font-size: 12px; color: var(--fc-data-text-on-dark); line-height: 1.6; }
 .emptyCast { height: 420px; width: 100%; }
 .teamCredits { display: grid; grid-template-columns: 140px minmax(0,1fr) auto; align-items: center; gap: 24px; padding: 20px 32px; border-top: 1px solid var(--fc-data-line-on-dark); font-size: 13px; line-height: 1.8; }
 .teamCredits > span { color: var(--fc-data-signal); }
@@ -73,7 +73,7 @@
 .mobileSelector { display: none; }
 .memberDetail { min-width: 0; border-left: 1px solid var(--fc-data-line); scroll-margin-top: calc(var(--dossier-nav-top) + 24px); }
 .memberVisual { position: relative; min-height: 450px; overflow: clip; isolation: isolate; background: var(--fc-data-paper-deep); }
-.memberMast { position: relative; z-index: 2; display: flex; justify-content: space-between; gap: 20px; margin-inline: 28px; padding-block: 20px; border-bottom: 1px solid var(--fc-data-line); font-size: 11px; }
+.memberMast { position: relative; z-index: 2; display: flex; justify-content: space-between; gap: 20px; margin-inline: 28px; padding-block: 20px; border-bottom: 1px solid var(--fc-data-line); font-size: 12px; }
 .memberMast b { color: var(--fc-data-text-muted); margin-inline: 8px; }
 .memberNumber { position: absolute; inset: auto 15px -45px auto; font: 900 330px/1 var(--fc-data-font-display); color: var(--fc-data-ink); opacity: .06; z-index: -1; }
 .memberPortrait { position: absolute; inset: 40px -5% 0 30%; z-index: -1; }
@@ -147,7 +147,7 @@
   .memberInfo { max-width: 74%; }
 }
 @media (max-width:767px) {
-  .coverMast { padding: 14px 16px; font-size: 11px; gap: 12px; }
+  .coverMast { padding: 14px 16px; font-size: 12px; gap: 12px; }
   .coverMast > span:last-child { justify-content: end; text-align: right; gap: 5px; }
   .coverStage { display: block; }
   .teamIdentity { padding: 24px 20px 0; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; }
@@ -167,7 +167,7 @@
   .castMember > span:last-child { inset-inline: 3px; }
   .castMember b { font-size: 16px; }
   .castMember small { font-size: 12px; }
-  .castNote { position: sticky; width: calc(100% - 32px); left: 16px; font-size: 11px; margin-top: 16px !important; }
+  .castNote { position: sticky; width: calc(100% - 32px); left: 16px; font-size: 12px; margin-top: 16px !important; }
   .emptyCast { height: 310px; }
   .teamCredits { grid-template-columns: minmax(0,1fr); padding: 20px; gap: 12px; font-size: 14px; }
   .teamCredits > span { font-size: 12px; }
@@ -189,7 +189,7 @@
   .mobileSelector select { width: 100%; height: 48px; padding: 10px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper); color: var(--fc-data-ink); font-size: 14px; }
   .memberDetail { border: 0; }
   .memberVisual { min-height: 460px; }
-  .memberMast { margin-inline: 16px; font-size: 11px; gap: 12px; }
+  .memberMast { margin-inline: 16px; font-size: 12px; gap: 12px; }
   .memberMast > span:last-child { text-align: right; }
   .memberPortrait { inset: 65px -52% 0 -8%; }
   .memberPortrait > [data-hero-artwork] { opacity: .9; mask-image: linear-gradient(0deg,transparent,#000 30%); }

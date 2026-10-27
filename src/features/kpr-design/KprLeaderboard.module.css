@@ -62,7 +62,7 @@
 .tableSection { min-width: 0; scroll-margin-top: calc(var(--kpr-header-height, 124px) + 16px); }
 .resultHeader { display: flex; justify-content: space-between; align-items: center; gap: 12px 16px; margin: 0 0 12px; }
 .resultHeader .eyebrow { display: none; }
-.eyebrow { color: var(--fc-data-text-muted); font-size: 11px; letter-spacing: .07em; }
+.eyebrow { color: var(--fc-data-text-muted); font-size: 12px; letter-spacing: .07em; }
 .resultHeader h2 { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; font-size: var(--fc-data-section-title-size); font-weight: 800; line-height: 1.35; margin: 0; letter-spacing: -.02em; }
 .resultHeader h2 > span { display: inline-flex; align-items: baseline; gap: 6px; color: var(--fc-data-text-muted); }
 .resultHeader h2 > span b { font: 900 26px/1 var(--fc-data-font-display); }
@@ -70,7 +70,7 @@
 .resultHeader p { margin: 5px 0 0; font-size: 12px; color: var(--fc-data-text-muted); }
 .resultHeader p b { color: var(--fc-data-ink); font-weight: 500; }
 .awaitingRecords { padding: clamp(28px,4vw,56px); border-block: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised); }
-.awaitingRecords > span { font-size: 11px; letter-spacing: .08em; color: var(--fc-data-text-muted); }
+.awaitingRecords > span { font-size: 12px; letter-spacing: .08em; color: var(--fc-data-text-muted); }
 .awaitingRecords h2 { font-size: clamp(26px,2.4vw,38px); line-height: 1.3; margin: 18px 0 12px; }
 .awaitingRecords p { max-width: 620px; color: var(--fc-data-text-muted); font-size: 14px; line-height: 1.8; }
 .awaitingRecords > div { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 28px; }
@@ -124,19 +124,19 @@
 .heroAvatar img, .compareAvatar img { width: 100%; height: 100%; object-fit: cover; }
 .playerText { display: grid; gap: 4px; min-width: 0; }
 .playerText strong { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
-.playerText strong i { font: normal 11px var(--fc-data-font-interface); color: var(--fc-data-text-muted); white-space: nowrap; opacity: 0; transition: opacity var(--fc-data-motion-quick); }
+.playerText strong i { font: normal 12px var(--fc-data-font-interface); color: var(--fc-data-text-muted); white-space: nowrap; opacity: 0; transition: opacity var(--fc-data-motion-quick); }
 .playerPreview:hover i, .playerPreview:focus-visible i, .playerPreview[aria-pressed="true"] i { opacity: 1; }
 .playerText small { font-size: 12px; color: var(--fc-data-text-muted); line-height: 1.4; }
 .playerText small b { padding-inline: 4px; font-weight: 400; opacity: .55; }
 .table .scoreCell { font: 900 34px/1 var(--fc-data-font-display); }
 .metricCell { font-size: 16px; white-space: nowrap; }
 .metricCell[data-sorted="true"] { font-weight: 700; }
-.metricCell small { font-size: 11px; color: var(--fc-data-text-muted); }
+.metricCell small { font-size: 12px; color: var(--fc-data-text-muted); }
 .sample { display: inline-flex; flex-direction: column; gap: 4px; color: var(--fc-data-text-muted); font-size: 12px; white-space: nowrap; }
 .sample b { font-size: 14px; font-weight: 700; color: var(--fc-data-ink); }
 .sample i { font-style: normal; opacity: .5; padding-inline: 3px; }
-.sample small { font-size: 11px; color: var(--fc-data-text-muted); }
-.sample[data-low="true"] small, .lowSample { font-size: 11px; color: var(--fc-data-status-warning); }
+.sample small { font-size: 12px; color: var(--fc-data-text-muted); }
+.sample[data-low="true"] small, .lowSample { font-size: 12px; color: var(--fc-data-status-warning); }
 .table .compareHead, .table .compareCell { width: 48px; padding-inline: 0; text-align: center; }
 .compareChoice { display: inline-flex; position: relative; align-items: center; justify-content: center; width: 44px; height: 44px; vertical-align: middle; }
 .compareChoice input { position: absolute; inset: 0; width: 100% !important; height: 100% !important; opacity: 0; cursor: pointer; }
@@ -162,7 +162,7 @@
 .methodNote p { max-width: 860px; line-height: 1.9; margin: 8px 0; }
 .methodNote > div { border-color: var(--fc-data-line); border-left-color: var(--fc-data-signal-deep); color: var(--fc-data-ink); background: var(--fc-data-paper-raised); }
 .emptyState { padding: 56px 24px; border-block: 1px solid var(--fc-data-line); text-align: center; }
-.emptyState > span { font-size: 11px; color: var(--fc-data-text-muted); letter-spacing: .08em; }
+.emptyState > span { font-size: 12px; color: var(--fc-data-text-muted); letter-spacing: .08em; }
 .emptyState h3 { font-size: 24px; margin: 16px 0 8px; }
 .emptyState p { color: var(--fc-data-text-muted); }
 .emptyState button { min-height: 44px; padding: 8px 20px; border: 0; background: var(--fc-data-ink); color: var(--fc-data-paper); }
@@ -170,16 +170,16 @@
 .dossierSticky { position: sticky; top: calc(var(--kpr-header-height, 124px) + 16px); max-height: calc(100dvh - var(--kpr-header-height, 124px) - 32px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--fc-data-text-faint) var(--fc-data-ink); }
 .dossier { background: var(--fc-data-ink); color: var(--fc-data-on-ink); padding: 0 22px 22px; }
 .dossier :is(a, button):focus-visible, .compareDock button:focus-visible { outline-color: var(--fc-data-focus-on-dark); }
-.dossierTop { display: flex; align-items: center; justify-content: space-between; min-height: 48px; border-bottom: 1px solid var(--fc-data-line-on-dark); color: var(--fc-data-text-dark-muted); font-size: 11px; letter-spacing: .04em; }
+.dossierTop { display: flex; align-items: center; justify-content: space-between; min-height: 48px; border-bottom: 1px solid var(--fc-data-line-on-dark); color: var(--fc-data-text-dark-muted); font-size: 12px; letter-spacing: .04em; }
 .dossierTop button { color: var(--fc-data-signal); background: none; border: 0; width: 44px; height: 44px; font-size: 24px; }
 .dossierVisual { height: 164px; position: relative; isolation: isolate; overflow: hidden; margin-inline: -22px; background: var(--fc-data-ink-raised); }
 .dossierVisual::after { position: absolute; content: ''; inset: 60% 0 0; background: linear-gradient(transparent, var(--fc-data-ink)); z-index: -1; }
 .dossierRank { position: absolute; left: 22px; top: 20px; display: grid; gap: 8px; }
-.dossierRank small { font-size: 11px; color: var(--fc-data-text-dark-muted); }
+.dossierRank small { font-size: 12px; color: var(--fc-data-text-dark-muted); }
 .dossierRank b { font: 900 62px/.9 var(--fc-data-font-display); color: var(--fc-data-text-on-dark); }
 .dossierArt { position: absolute; right: -12%; top: -10px; width: 83%; height: 200px; z-index: -2; opacity: .9; }
 .dossierArt > * { width: 100%; height: 100%; }
-.dossierHeroName { position: absolute; left: 22px; right: 12px; bottom: 10px; color: var(--fc-data-text-on-dark); font-size: 11px; }
+.dossierHeroName { position: absolute; left: 22px; right: 12px; bottom: 10px; color: var(--fc-data-text-on-dark); font-size: 12px; }
 .dossierPerson { display: grid; grid-template-columns: minmax(0, 1fr) 92px; align-items: start; gap: 12px; padding-top: 14px; }
 .dossierIdentity { min-width: 0; }
 .dossierIdentity > span { font-size: 12px; color: var(--fc-data-text-on-dark); }
@@ -187,20 +187,20 @@
 .dossierIdentity h2 { font-size: 28px; line-height: 1.25; margin: 8px 0 6px; letter-spacing: -.02em; overflow-wrap: anywhere; }
 .dossierIdentity p { font-size: 12px; color: var(--fc-data-text-dark-muted); overflow-wrap: anywhere; margin: 0; }
 .dossierRating { display: grid; justify-items: end; gap: 6px; text-align: right; }
-.dossierRating > span { color: var(--fc-data-text-on-dark); font-size: 11px; }
+.dossierRating > span { color: var(--fc-data-text-on-dark); font-size: 12px; }
 .dossierRating button { align-items: flex-end; padding: 0; }
 .dossierRating button b { font: 900 46px/.95 var(--fc-data-font-display); color: var(--fc-data-signal); }
 .dossierRating button small { color: var(--fc-data-text-on-dark); padding-left: 0; font-size: 12px; }
 .dossierRating button[data-status="PROVISIONAL"] b { color: var(--fc-data-status-warning-bright); }
 .dossierRating button[data-status="UNRATED"] b { color: var(--fc-data-text-dark-muted); }
-.dossierRating > p { margin: 0; font-size: 11px; line-height: 1.5; color: var(--fc-data-text-dark-muted); }
+.dossierRating > p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--fc-data-text-dark-muted); }
 .dossierSample { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding-block: 16px; border-bottom: 1px solid var(--fc-data-line-on-dark); }
 .dossierSample > div + div { padding-left: 10px; border-left: 1px solid var(--fc-data-line-on-dark); }
-.dossierSample dt { font-size: 11px; color: var(--fc-data-text-dark-muted); }
+.dossierSample dt { font-size: 12px; color: var(--fc-data-text-dark-muted); }
 .dossierSample dd { margin: 6px 0 0; font-size: 22px; font-weight: 700; }
-.dossierSample dd small { font-size: 11px; font-weight: 400; color: var(--fc-data-text-on-dark); }
+.dossierSample dd small { font-size: 12px; font-weight: 400; color: var(--fc-data-text-on-dark); }
 .dossierMetrics { padding-block: 16px; }
-.dossierMetrics > div { display: flex; align-items: center; justify-content: space-between; color: var(--fc-data-text-dark-muted); font-size: 11px; }
+.dossierMetrics > div { display: flex; align-items: center; justify-content: space-between; color: var(--fc-data-text-dark-muted); font-size: 12px; }
 .dossierMetrics > div b { font-weight: 400; }
 .dossierMetrics dl { margin: 10px 0 0; display: grid; gap: 8px; }
 .dossierMetrics dl > div { display: flex; justify-content: space-between; align-items: center; }
@@ -221,7 +221,7 @@
 .dockLabel { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
 .dockLabel > b { font: 900 34px/1 var(--fc-data-font-display); color: var(--fc-data-signal); }
 .dockLabel > span { font-size: 13px; white-space: nowrap; }
-.dockLabel small { display: block; color: var(--fc-data-text-dark-muted); font-size: 11px; }
+.dockLabel small { display: block; color: var(--fc-data-text-dark-muted); font-size: 12px; }
 .dockPlayers { display: flex; gap: 8px; flex: 1; min-width: 0; overflow-x: auto; }
 .dockPlayers button { display: flex; flex-shrink: 0; align-items: center; gap: 16px; padding: 8px 12px; min-height: 44px; color: var(--fc-data-on-ink); border: 1px solid var(--fc-data-line-on-dark); background: transparent; font-size: 13px; }
 .dockPlayers button > span { color: var(--fc-data-text-dark-muted); font-size: 18px; }
@@ -264,7 +264,7 @@
 .compareTable thead th[data-baseline="true"] { box-shadow: inset 0 3px var(--fc-data-ink); }
 .compareVs { display: block; font: 900 40px/1 var(--fc-data-font-display); margin-bottom: 12px; }
 .comparePlayer { display: flex; align-items: center; gap: 10px; margin-block: 2px; }
-.comparePlayerStatus { display: block; color: var(--fc-data-text-muted); font-size: 11px; font-weight: 400; }
+.comparePlayerStatus { display: block; color: var(--fc-data-text-muted); font-size: 12px; font-weight: 400; }
 .compareAvatar { flex: 0 0 36px !important; width: 36px !important; height: 36px !important; border-radius: 0 !important; border: 0 !important; }
 .compareTable th > strong { display: block; font-size: 22px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; margin-bottom: 6px; }
 .compareProfile { display: flex; align-items: center; gap: 8px; width: fit-content; min-width: 0; max-width: 100%; min-height: 44px; color: var(--fc-data-ink); font-size: 22px; line-height: 1.3; font-weight: 700; text-decoration: none; overflow-wrap: anywhere; }
@@ -276,7 +276,7 @@
 .compareSample b { font-size: 16px; color: var(--fc-data-ink); font-weight: 700; }
 .compareTable th > .lowSample { margin-top: 8px; color: var(--fc-data-status-warning); }
 .compareTable tbody th { vertical-align: middle; font-weight: 500; }
-.compareTable tbody th > small { margin-top: 6px; font-size: 11px; }
+.compareTable tbody th > small { margin-top: 6px; font-size: 12px; }
 .compareValue { display: block; font-size: 24px; line-height: 1.2; font-weight: 700; }
 .compareTable [data-metric="score"] .compareValue { font: 900 40px/1 var(--fc-data-font-display); }
 .compareDelta { display: block; color: var(--fc-data-text-muted); font-size: 12px; margin-top: 6px; min-height: 18px; }
@@ -329,7 +329,7 @@
   .roleTabs button { font-size: 13px; padding: 12px; gap: 8px; min-height: 52px; }
   .roleTabs button:nth-child(2) { border-right: 0; }
   .roleTabs button:nth-child(n + 3) { border-top: 1px solid var(--fc-data-line); }
-  .roleTabs button span { font-size: 11px; }
+  .roleTabs button span { font-size: 12px; }
   .search input { font-size: 16px; }
   .findControls { padding-top: 8px; }
   .filterToggle { min-width: 124px; }
@@ -360,12 +360,12 @@
   .mobileIdentity .playerText strong { font-size: 16px; gap: 6px; }
   .mobileIdentity .playerText strong i { display: none; }
   .mobileScore { display: grid; gap: 4px; justify-items: end; margin-left: auto; flex: 0 0 40px; }
-  .mobileScore small { font-size: 11px; color: var(--fc-data-text-muted); }
+  .mobileScore small { font-size: 12px; color: var(--fc-data-text-muted); }
   .mobileScore b { font: 900 36px/1 var(--fc-data-font-display); }
   .mobileScore button { padding-inline: 0; }
   .mobileMetrics { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0 0 34px; }
   .mobileMetrics > div { flex: 1; min-width: 58px; }
-  .mobileMetrics dt { font-size: 11px; color: var(--fc-data-text-muted); }
+  .mobileMetrics dt { font-size: 12px; color: var(--fc-data-text-muted); }
   .mobileMetrics dd { margin: 3px 0 0; font-size: 18px; }
   .mobileSample { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 8px 0 0 34px; }
   .sample b { font-size: 13px; }
@@ -396,8 +396,8 @@
   .baselineControl { gap: 8px; flex: 1 0 auto; }
   .baselineControl select { min-width: 84px; max-width: 128px; font-size: 13px; }
   .compareControls .deltaControl { gap: 6px; font-size: 12px; }
-  .compareContext { align-items: start; font-size: 11px; }
-  .compareContext button { font-size: 11px; padding-left: 4px; max-width: 120px; }
+  .compareContext { align-items: start; font-size: 12px; }
+  .compareContext button { font-size: 12px; padding-left: 4px; max-width: 120px; }
   .compareTable { min-width: calc(72px + var(--compare-count) * 160px); }
   .compareTable :is(th, td) { padding: 12px 10px; }
   .compareTable tr > th:first-child { width: 72px; padding-inline: 6px; font-size: 12px; }
@@ -405,13 +405,13 @@
   .comparePlayer { gap: 6px; }
   .compareAvatar { width: 30px !important; height: 30px !important; flex-basis: 30px !important; }
   .compareTable th > strong, .compareProfile { font-size: 18px; }
-  .compareTable th > small { font-size: 11px; }
-  .compareSample { gap: 4px 10px; font-size: 11px; }
+  .compareTable th > small { font-size: 12px; }
+  .compareSample { gap: 4px 10px; font-size: 12px; }
   .compareSample b { font-size: 14px; }
   .compareValue { font-size: 22px; }
-  .compareDelta { font-size: 11px; }
+  .compareDelta { font-size: 12px; }
   .compareTable [data-metric="score"] .compareValue { font-size: 34px; }
-  .compareFootnote { font-size: 11px; }
+  .compareFootnote { font-size: 12px; }
 }
 
 @media (max-width: 699px), (max-height: 600px) {

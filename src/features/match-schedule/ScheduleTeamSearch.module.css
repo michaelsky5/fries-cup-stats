@@ -27,6 +27,6 @@
   .root[data-variant="index"] { min-width: 160px; }
   .label { font-size: 13px; }
   .popup li { gap: 9px; padding-inline: 10px; }
-  .count { gap: 5px; font-size: 11px; }
+  .count { gap: 5px; font-size: 12px; }
   .count i { display: none; }
 }

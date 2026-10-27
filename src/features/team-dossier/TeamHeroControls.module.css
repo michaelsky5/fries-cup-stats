@@ -20,6 +20,6 @@
 @media(max-width:700px) {
   .controls { padding: 14px; margin-bottom: 26px; gap: 14px 10px; }
   .samples button { padding: 10px 8px; }
-  .samples small { font-size: 11px; }
+  .samples small { font-size: 12px; }
   .hint { font-size: 13px; }
 }

@@ -59,7 +59,7 @@
   transform: rotate(2deg);
 }
 .datebook > span {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--fc-data-text-muted);
 }
 .datebook > div {
@@ -141,7 +141,7 @@
   font-size: 14px;
 }
 .monthNav a small {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--fc-data-text-muted);
 }
 .monthNav a:hover {
@@ -226,7 +226,7 @@
   display: block;
   margin-top: 7px;
   color: var(--fc-data-text-muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 .resultStamp {
   font-size: 13px;
@@ -262,7 +262,7 @@
   min-width: 0;
 }
 .opponent small {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--fc-data-text-muted);
 }
 .opponent b {
@@ -358,7 +358,7 @@
   flex-shrink: 0;
 }
 .reading > span {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--fc-data-text-muted);
 }
 .reading h3 {
@@ -399,7 +399,7 @@
   gap: 14px;
   border-bottom: 1px solid var(--fc-data-line-strong);
   padding-bottom: 14px;
-  font-size: 11px;
+  font-size: 12px;
 }
 .mapRecords > header span {
   color: var(--fc-data-text-muted);
@@ -421,7 +421,7 @@
 .mapRecords a small {
   color: var(--fc-data-text-muted);
   margin-right: 12px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .mapRecords a b {
   font-weight: 600;
@@ -579,7 +579,7 @@
     font-size: 13px;
   }
   .monthNav a small {
-    font-size: 10px;
+    font-size: 12px;
   }
   .monthHeading {
     align-items: start;

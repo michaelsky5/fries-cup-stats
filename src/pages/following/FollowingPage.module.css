@@ -91,7 +91,7 @@
   align-items: center;
   border: 1px solid #2a2a2a;
   padding: 0 9px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 1000;
 }
 
@@ -123,7 +123,7 @@
   color: #2a2a2a;
   padding: 0 9px;
   font-style: normal;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 1000;
 }
 
@@ -763,7 +763,7 @@
   color: #2a2a2a;
   padding: 0 7px;
   font-style: normal;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 1000;
   white-space: nowrap;
 }

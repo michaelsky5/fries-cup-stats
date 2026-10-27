@@ -1,7 +1,7 @@
 /* 票 2.18: the 参赛 page. The frame is already inset, so the page adds no side padding. */
 .page {
   --ink: var(--fc-data-ink, #181a17);
-  --muted: var(--fc-data-text-muted, #66685f);
+  --muted: var(--fc-data-text-muted, #5f6158);
   --line: var(--fc-data-line, rgb(24 26 23 / 15%));
   box-sizing: border-box; width: 100%; padding: 0 0 32px; color: var(--ink);
   font-family: var(--font-sans);

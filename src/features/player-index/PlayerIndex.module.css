@@ -106,38 +106,38 @@
 @media (max-width: 760px) {
   .portrait { height: 600px; }
   .portraitTop { min-height: 42px; padding: 12px 16px; }
-  .portraitTop > span { font-size: 10px; }
+  .portraitTop > span { font-size: 12px; }
   .identity { width: 54%; padding: 18px 14px; }
   .scene::before { left: 54%; }
   .identityBlock h2 { font-size: 48px; }
   .identityBlock h2[data-name-length="medium"] { font-size: 32px; }
   .identityBlock h2[data-name-length="long"] { font-size: 24px; }
-  .battleTag { font-size: 11px; }
+  .battleTag { font-size: 12px; }
   .artFrame { right: -3%; width: 51%; height: min(76%, 240px); }
   .rosterFrame { left: 54%; padding: 18px 14px 18px 8px; }
-  .identityRoster h3 { margin-bottom: 12px; font-size: 11px; }
+  .identityRoster h3 { margin-bottom: 12px; font-size: 12px; }
   .identityRoster li a { grid-template-columns: minmax(0, 1fr) 12px; gap: 4px 8px; min-height: 58px; padding-block: 10px; }
   .identityRoster strong { font-size: 14px; }
-  .identityRoster li small { grid-column: 1; grid-row: 2; font-size: 10px; }
+  .identityRoster li small { grid-column: 1; grid-row: 2; font-size: 12px; }
   .identityRoster li a > span { grid-column: 2; grid-row: 1 / 3; font-size: 12px; }
-  .rosterLink { gap: 6px; margin-top: 12px; font-size: 11px; }
+  .rosterLink { gap: 6px; margin-top: 12px; font-size: 12px; }
   .teamCard { margin: 14px 0 18px; gap: 8px; }
   .teamCard b { font-size: 19px; }
-  .teamCard small { font-size: 10px; }
+  .teamCard small { font-size: 12px; }
   .teamMark { width: 28px; height: 28px; }
   .artCaption { right: 14px; bottom: 14px; gap: 4px; }
   .artCaption b { font-size: 12px; }
-  .performance header { font-size: 11px; gap: 5px; }
+  .performance header { font-size: 12px; gap: 5px; }
   .performance dt { font-size: 12px; }
   .performance dd { font-size: clamp(21px, 6vw, 26px); }
   .performance dl { gap: 8px; }
   .recordStrip { min-height: 90px; grid-template-columns: minmax(0, 1fr) 65px 83px; }
   .recordStrip > div { padding: 12px 8px; }
-  .recordStrip span { font-size: 11px; }
+  .recordStrip span { font-size: 12px; }
   .recordStrip strong { font-size: 12px; }
   .recordStrip b { font-size: 26px; }
-  .recordStrip small { font-size: 11px; }
-  .recordStrip b em { display: block; margin: 3px 0 0; font-size: 11px; }
+  .recordStrip small { font-size: 12px; }
+  .recordStrip b em { display: block; margin: 3px 0 0; font-size: 12px; }
   .recent { grid-template-columns: minmax(0, 1fr); gap: 8px; min-height: 80px; padding: 12px 14px; }
   .recent a { gap: 10px; }
   .recentScore { font-size: 22px; }

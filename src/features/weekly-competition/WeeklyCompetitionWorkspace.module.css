@@ -28,7 +28,7 @@
 
 .state > span {
   color: var(--weekly-mint);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.13em;
 }
@@ -106,7 +106,7 @@
 
 .selectors label > span {
   color: var(--weekly-mint);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
 }
@@ -114,7 +114,7 @@
 .actionRow label > span,
 .responseForm label > span {
   color: rgba(35, 33, 34, 0.62);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.05em;
 }
@@ -166,14 +166,14 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.22);
   color: rgba(255, 255, 255, 0.54);
   background: #080a0b;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.1em;
 }
 
 .channelRail strong {
   color: var(--weekly-mint);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .channelRail em {
@@ -206,7 +206,7 @@
 
 .teamDossier > span {
   color: var(--weekly-mint);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.12em;
 }
@@ -222,7 +222,7 @@
 .teamDossier p {
   margin: 0;
   color: rgba(255, 255, 255, 0.58);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -254,13 +254,13 @@
 
 .teamDossier dt {
   color: rgba(255, 255, 255, 0.44);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 900;
 }
 
 .teamDossier dd {
   color: #fff;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -310,7 +310,7 @@
 
 .channelRoute strong {
   overflow-wrap: anywhere;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 1000;
   letter-spacing: 0.05em;
 }
@@ -318,7 +318,7 @@
 .channelRoute small {
   overflow: hidden;
   color: rgba(35, 33, 34, 0.58);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 900;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -366,7 +366,7 @@
   padding: 0 7px;
   color: var(--weekly-ink);
   background: var(--weekly-mint);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 1000;
   letter-spacing: 0.08em;
   line-height: 18px;
@@ -389,7 +389,7 @@
 
 .card > header span {
   color: var(--weekly-mint-dark);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 1000;
   letter-spacing: 0.12em;
 }
@@ -405,7 +405,7 @@
   border: 1px solid rgba(35, 33, 34, 0.24);
   color: #765e0b;
   background: rgba(244, 195, 32, 0.24);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   white-space: nowrap;
@@ -421,7 +421,7 @@
 .card > p {
   margin: 0;
   color: rgba(35, 33, 34, 0.64);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 780;
   line-height: 1.6;
 }
@@ -470,19 +470,19 @@
 }
 
 .playerGrid strong {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
 .playerGrid small {
   color: rgba(35, 33, 34, 0.54);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
 }
 
 .playerGrid em {
   color: var(--weekly-mint-dark);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -502,7 +502,7 @@
   border-radius: 0;
   color: var(--weekly-ink);
   background: var(--weekly-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 1000;
   cursor: pointer;
 }
@@ -551,7 +551,7 @@
 
 .rosterBlock > div:first-child > span {
   color: rgba(35, 33, 34, 0.56);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -562,7 +562,7 @@
   border: 1px dashed rgba(35, 33, 34, 0.36);
   color: rgba(35, 33, 34, 0.58);
   background: rgba(255, 255, 255, 0.34);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -570,7 +570,7 @@
   padding-left: 10px;
   border-left: 3px solid rgba(35, 33, 34, 0.28);
   color: rgba(35, 33, 34, 0.56);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1.5;
 }
@@ -657,7 +657,7 @@
   gap: 10px;
   margin: 14px 0;
   color: #697262;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .refreshRow button {

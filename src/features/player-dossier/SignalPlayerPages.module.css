@@ -45,7 +45,7 @@
 .profilePortrait { position: relative; min-width: 0; min-height: 450px; overflow: hidden; margin: 18px 18px 18px 0; background: #d9ddd2; color: var(--fc-data-ink); isolation: isolate; }
 .portraitWordmark { position: absolute; top: 10%; left: 6%; right: 6%; font: 900 clamp(74px,11vw,196px)/1 var(--fc-data-font-display); letter-spacing: -.03em; color: #b8c2af; overflow-wrap: anywhere; max-height: 50%; overflow: hidden; }
 .portraitArtwork { position: absolute; inset: 10% 0 75px; height: auto; }
-.portraitHeading { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 18px 23px; font-size: 11px; letter-spacing: .07em; }
+.portraitHeading { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 18px 23px; font-size: 12px; letter-spacing: .07em; }
 .portraitChoices { position: absolute; z-index: 2; display: flex; gap: 6px; left: 23px; bottom: 77px; }
 .portraitChoices button { padding: 3px; background: #e8ebe3; border: 1px solid #878e7f; min-width: 44px; min-height: 48px; }
 .portraitChoices button[aria-pressed="true"] { background: var(--fc-data-ink); border-color: var(--fc-data-ink); }
@@ -198,7 +198,7 @@
   .profilePortrait { min-height: 350px; margin: 0 14px 14px; }
   .portraitWordmark { font-size: 100px; }
   .portraitArtwork { inset: 8% 0 75px; }
-  .portraitHeading { padding: 15px 16px; font-size: 10px; }
+  .portraitHeading { padding: 15px 16px; font-size: 12px; }
   .portraitChoices { left: 16px; bottom: 70px; }
   .profilePortrait figcaption { padding: 12px 16px; min-height: 50px; gap: 5px 10px; }
   .profilePortrait figcaption > a { gap: 8px; }
@@ -235,7 +235,7 @@
   .analysisIdentity > p { font-size: 12px; }
   .analysisRating { flex-direction: column; align-items: flex-start; gap: 8px; max-width: 150px; }
   .analysisRating > strong { font-size: 58px; }
-  .analysisRating > div > p { font-size: 11px; }
+  .analysisRating > div > p { font-size: 12px; }
   .analysisRating > div > span { font-size: 12px; gap: 4px 8px; }
   .analysisActions { gap: 24px; }
   .analysisActions > a { font-size: 13px; }
@@ -251,7 +251,7 @@
   .profileCoverBottom { align-items: start; flex-direction: column; }
   .profileCoverBottom > p { max-width: 100%; }
   .seasonSummary dl > div { gap: 6px; }
-  .seasonSummary dt { font-size: 11px; }
+  .seasonSummary dt { font-size: 12px; }
   .analysisTabs { gap: 20px; }
   .analysisTabs button { font-size: 13px; gap: 5px; }
 }

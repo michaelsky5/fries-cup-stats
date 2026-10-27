@@ -5,10 +5,10 @@
   --fc-data-room-raised:var(--fc-data-paper-raised,#f6f5ef);
   --fc-data-room-inset:var(--fc-data-paper-deep,#e4e3db);
   --fc-data-room-line:var(--fc-data-line,rgb(24 26 23 / 15%));
-  --fc-data-room-control:var(--fc-data-text-muted,#66685f);
+  --fc-data-room-control:var(--fc-data-text-muted,#5f6158);
   --fc-data-room-text:var(--fc-data-on-paper,#181a17);
-  --fc-data-room-muted:var(--fc-data-text-muted,#66685f);
-  --fc-data-room-faint:var(--fc-data-text-muted,#66685f);
+  --fc-data-room-muted:var(--fc-data-text-muted,#5f6158);
+  --fc-data-room-faint:var(--fc-data-text-muted,#5f6158);
   --fc-data-room-accent:var(--fc-data-on-paper,#181a17);
   --fc-data-room-selection:var(--fc-data-signal,#f4c320);
   --fc-data-room-accent-line:var(--fc-data-line-strong,rgb(24 26 23 / 38%));

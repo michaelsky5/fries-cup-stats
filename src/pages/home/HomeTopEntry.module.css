@@ -6,7 +6,7 @@
 }
 .copy { display: grid; gap: 2px; min-width: 0; margin: 0; }
 .copy strong { font: 700 15px/1.4 var(--font-sans); }
-.copy span { font: 13px/1.45 var(--font-sans); color: var(--fc-data-text-muted, #66685f); }
+.copy span { font: 13px/1.45 var(--font-sans); color: var(--fc-data-text-muted, #5f6158); }
 .action {
   display: inline-flex; align-items: center; gap: 12px; min-width: 44px; min-height: 44px; padding: 0 14px;
   background: var(--fc-data-ink, #181a17); color: var(--fc-data-paper, #eeede6);
