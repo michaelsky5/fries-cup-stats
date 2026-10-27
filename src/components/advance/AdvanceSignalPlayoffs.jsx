@@ -142,7 +142,7 @@ function MatchIndexCard({ match, seasonId, withSeason, t, locale = 'zh-CN', acti
       </div>
       <footer>
         <span>{formatMatchTime(match?.scheduledAt || match?.scheduled_at) || t(getMatchStatusLabelKey(status), status)}</span>
-        {href ? <b aria-hidden="true">↗</b> : null}
+        {href ? <b aria-hidden="true">→</b> : null}
       </footer>
     </>
   )
@@ -602,7 +602,7 @@ export default function AdvanceSignalPlayoffs({
             <div><dt>{copy(locale, uiText("比赛", locale), 'MATCHES')}</dt><dd>{String(activeRoute.length).padStart(2, '0')}</dd></div>
             <div><dt>{copy(locale, uiText("赛制", locale), 'FORMAT')}</dt><dd>DE</dd></div>
           </dl>
-          <Link to={getPhaseHref('final')}><span>{copy(locale, uiText("最终结果", locale), 'FINAL RESULT')}</span><b aria-hidden="true">↗</b></Link>
+          <Link to={getPhaseHref('final')}><span>{copy(locale, uiText("最终结果", locale), 'FINAL RESULT')}</span><b aria-hidden="true">→</b></Link>
         </header>
 
         <div className={styles.routeStoryBody}>
@@ -634,7 +634,7 @@ export default function AdvanceSignalPlayoffs({
                   <span>{String(seed.seed || '—').padStart(2, '0')}</span>
                   <TeamLogo team={seed} seasonId={seasonId} className={styles.routeDockLogo} />
                   <strong>{teamShort(seed)}</strong>
-                  <i aria-hidden="true">↗</i>
+                  <i aria-hidden="true">→</i>
                 </button>
               )
             })}

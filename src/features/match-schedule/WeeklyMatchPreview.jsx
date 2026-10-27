@@ -35,6 +35,6 @@ export default function WeeklyMatchPreview({ id, match, week, locale, seasonId, 
       {hint && <p className={styles.previewHint}>{hint}</p>}
     </div>
     <div className={styles.previewMaps} key={match.id}><WeeklyMatchMaps match={match} locale={locale} withSeason={withSeason} returnProps={returnProps} preview /></div>
-    <Link className={styles.previewDetails} to={withSeason(`/matches/${encodeURIComponent(match.id)}`)} {...returnProps}>{eventCenterText('matchDetails', locale)}<span aria-hidden="true">↗</span></Link>
+    <Link className={styles.previewDetails} to={withSeason(`/matches/${encodeURIComponent(match.id)}`)} {...returnProps}>{eventCenterText('matchDetails', locale)}<span aria-hidden="true">→</span></Link>
   </aside>
 }

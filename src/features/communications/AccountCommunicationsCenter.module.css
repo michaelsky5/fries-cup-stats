@@ -24,15 +24,15 @@
 .messageHeroMeta em { background: var(--fc-data-signal); color: var(--fc-data-ink); }
 .messageHeroMain > strong { max-width: 780px; font-size: clamp(27px, 3.4vw, 45px); font-weight: 1000; letter-spacing: -.035em; line-height: 1.04; }
 .messageHeroMain > p { max-width: 760px; margin: 0; color: rgba(42, 42, 42, .7); font-size: 13px; font-weight: 750; line-height: 1.6; }
-.messageHeroMain > small { color: rgba(42, 42, 42, .58); font-size: 11px; font-weight: 900; }
+.messageHeroMain > small { color: rgba(42, 42, 42, .58); font-size: 12px; font-weight: 900; }
 .messageHeroActions { margin-top: 3px; }
-.messageHeroActions a, .messageHeroActions button { min-height: 40px; display: inline-grid; place-items: center; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-ink); color: var(--fc-data-paper-raised); padding: 0 15px; font: inherit; font-size: 11px; font-weight: 1000; text-decoration: none; cursor: pointer; }
+.messageHeroActions a, .messageHeroActions button { min-height: 40px; display: inline-grid; place-items: center; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-ink); color: var(--fc-data-paper-raised); padding: 0 15px; font: inherit; font-size: 12px; font-weight: 1000; text-decoration: none; cursor: pointer; }
 .messageHeroActions button { background: var(--fc-data-paper-raised); color: var(--fc-data-ink); }
 .messageHeroSide { display: grid; align-content: center; gap: 8px; border-left: 1px solid var(--fc-data-line-strong); background: var(--fc-data-ink); color: var(--fc-data-paper-raised); padding: clamp(22px, 3vw, 34px); }
 .messageHeroSide > span { color: var(--fc-data-signal); font-size: 12px; font-weight: 1000; letter-spacing: .1em; }
 .messageHeroSide > strong { font-size: clamp(23px, 2.7vw, 34px); font-weight: 1000; line-height: 1; }
 .messageHeroSide > em { width: fit-content; border: 1px solid currentColor; padding: 5px 8px; font-size: 12px; font-style: normal; font-weight: 1000; }
-.messageHeroSide > p { margin: 0; color: rgba(255, 255, 255, .68); font-size: 11px; font-weight: 850; }
+.messageHeroSide > p { margin: 0; color: rgba(255, 255, 255, .68); font-size: 12px; font-weight: 850; }
 .messageFacts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised); }
 .messageFacts > div { min-height: 82px; display: grid; grid-template-columns: 1fr auto; align-content: center; gap: 2px 7px; border-right: 1px solid var(--fc-data-ink); padding: 13px 16px; }
 .messageFacts > div:last-child { border-right: 0; }
@@ -45,11 +45,11 @@
 .communicationBoundary span, .messageGroup > header span, .messageComplete span { color: #9a7600; font-size: 12px; font-weight: 1000; letter-spacing: .1em; }
 .communicationBoundary > div:first-child span { color: #725800; }
 .communicationBoundary strong { font-size: 18px; font-weight: 1000; }
-.communicationBoundary p { margin: 0; color: rgba(42, 42, 42, .65); font-size: 11px; font-weight: 800; line-height: 1.5; }
+.communicationBoundary p { margin: 0; color: rgba(42, 42, 42, .65); font-size: 12px; font-weight: 800; line-height: 1.5; }
 .communicationBoundary a { width: fit-content; color: var(--fc-data-ink); font-size: 12px; font-weight: 1000; text-decoration: none; }
 .messageToolbar { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised); padding: 12px 18px; }
 .messageToolbar > div { display: grid; gap: 4px; }
-.messageToolbar p { margin: 0; color: rgba(42, 42, 42, .66); font-size: 11px; font-weight: 750; line-height: 1.5; }
+.messageToolbar p { margin: 0; color: rgba(42, 42, 42, .66); font-size: 12px; font-weight: 750; line-height: 1.5; }
 .message { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; border: 1px solid var(--fc-data-line-strong); background: var(--fc-data-paper-raised); padding-left: 8px; overflow: hidden; }
 .message[data-unread='true'] { background: #fffbdf; box-shadow: 6px 6px 0 var(--fc-data-ink); }
 .message[data-priority='URGENT'] { background: #fff0eb; }
@@ -62,7 +62,7 @@
 .messageMeta em { background: var(--fc-data-signal); }
 .messageMain h3 { margin: 0; font-size: clamp(19px, 2.2vw, 27px); line-height: 1.15; }
 .messageMain p { margin: 0; color: rgba(42, 42, 42, .72); font-size: 13px; font-weight: 700; line-height: 1.6; }
-.messageMain small { color: rgba(42, 42, 42, .56); font-size: 11px; font-weight: 850; }
+.messageMain small { color: rgba(42, 42, 42, .56); font-size: 12px; font-weight: 850; }
 .messageActions { min-width: 132px; display: grid; align-content: center; gap: 8px; border-left: 1px solid rgba(42, 42, 42, .3); padding: 16px; }
 .messageActions a { background: var(--fc-data-ink); color: var(--fc-data-paper-raised); }
 .messageActions a:hover, .messageActions button:hover, .messageToolbar button:hover { background: var(--fc-data-signal); color: var(--fc-data-ink); }
@@ -90,13 +90,13 @@
 .announcement > p { margin: 0; white-space: pre-wrap; line-height: 1.7; }
 .announcement footer, .appeal footer { display: flex; align-items: center; justify-content: space-between; gap: 14px; border-top: 1px solid rgba(42, 42, 42, .25); padding-top: 14px; }
 .announcement footer > div { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; }
-.announcement footer span { font-size: 11px; font-weight: 900; opacity: .62; }
+.announcement footer span { font-size: 12px; font-weight: 900; opacity: .62; }
 .appealPanel { grid-template-columns: minmax(310px, .38fr) minmax(0, .62fr); align-items: start; }
 .appealForm { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; position: sticky; top: 20px; }
 .appealForm header, .appealForm .wide { grid-column: 1 / -1; }
 .appealForm h3 { margin: 6px 0; font-size: 24px; }
 .appealForm label { display: grid; gap: 7px; }
-.appealForm label > span { font-size: 11px; font-weight: 1000; }
+.appealForm label > span { font-size: 12px; font-weight: 1000; }
 .appealForm input, .appealForm select, .appealForm textarea, .evidenceForm input, .evidenceForm select, .evidenceForm textarea { width: 100%; min-height: 42px; box-sizing: border-box; border: 1px solid var(--fc-data-line-strong); border-radius: 0; background: #faf7ef; color: var(--fc-data-ink); padding: 9px 10px; font: inherit; }
 .appealForm textarea, .evidenceForm textarea { resize: vertical; line-height: 1.55; }
 .appealForm > button { justify-self: start; }
@@ -112,11 +112,11 @@
 .flags strong { border-color: #c84531; color: #c84531; }
 .description { margin: 0; line-height: 1.65; white-space: pre-wrap; }
 .evidenceList { display: grid; gap: 8px; border: 1px solid rgba(42, 42, 42, .35); padding: 12px; }
-.evidenceList > strong, .resolution > strong { font-size: 11px; color: #8c6c00; }
+.evidenceList > strong, .resolution > strong { font-size: 12px; color: #8c6c00; }
 .evidenceList > div { display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 9px; border-top: 1px solid rgba(42, 42, 42, .18); padding-top: 8px; }
 .evidenceList span { font-size: 12px; font-weight: 1000; opacity: .55; }
 .evidenceList p { margin: 0; line-height: 1.45; }
-.evidenceList a { color: #725800; font-size: 11px; font-weight: 900; }
+.evidenceList a { color: #725800; font-size: 12px; font-weight: 900; }
 .resolution { border: 2px solid #278c5c; padding: 12px; }
 .resolution p { margin: 7px 0 0; line-height: 1.55; }
 .evidenceForm { display: grid; gap: 9px; border: 2px solid var(--fc-data-signal); background: #faf7ef; padding: 12px; }
@@ -156,7 +156,7 @@
   .messageHeroSide { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 16px; }
   .messageHeroSide > span, .messageHeroSide > p, .messageFacts { display: none; }
   .messageHeroSide > strong { font-size: 12px; }
-  .messageHeroSide > em { padding: 3px 6px; font-size: 11px; }
+  .messageHeroSide > em { padding: 3px 6px; font-size: 12px; }
   .communicationBoundary { display: flex; order: 1; padding: 0; border: 0; background: transparent; }
   .communicationBoundary > div:first-child, .communicationBoundary :is(span, strong, p) { display: none; }
   .communicationBoundary > div:last-child { min-height: 0; padding: 0; border: 0; background: transparent; }

@@ -1,5 +1,5 @@
 import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { SignalDataHeading } from '../../components/database/SignalDataHeader.jsx'
 import { getRestoreScrollY, getReturnState, saveReturnScroll } from '../../lib/navigationState.js'
@@ -8,6 +8,8 @@ import TeamGalleryScenes from './TeamGalleryScenes.jsx'
 import TeamSeasonChronicle from './TeamSeasonChronicle.jsx'
 import TeamMatchLedger from './TeamMatchLedger.jsx'
 import TeamArchiveNavigation from './TeamArchiveNavigation.jsx'
+import useCondensedIdentity from './useCondensedIdentity.js'
+import { getTeamBackLabel } from './teamBackLabel.js'
 import TeamPerformanceReport from './TeamPerformanceReport.jsx'
 import { getArchiveIdentity } from './teamArchiveContent.js'
 import { getTeamResearch } from './teamDossierResearch.js'
@@ -67,14 +69,16 @@ export default function SignalTeamDossier({ team, seasonId, locale, withSeason, 
   // name alone; the 数据 page keeps them under the title.
   const fullName = team.fullName && team.fullName !== team.shortName ? team.fullName : ''
   const standing = advanceState.label && advanceState.label !== '—' ? advanceState.label : ''
+  const articleRef = useRef(null)
+  const condensed = useCondensedIdentity(articleRef, view)
   const followLabel = favorited
     ? pickUiLocale(locale, '已关注', 'Following', '팔로우 중', '已追蹤')
     : favoriteDisabled ? pickUiLocale(locale, '关注已满', 'Follow limit reached', '팔로우 한도 도달', '追蹤已滿') : pickUiLocale(locale, '关注队伍', 'Follow team', '팀 팔로우', '追蹤隊伍')
 
-  return <article className={styles.dossier} data-team-dossier="signal" data-archive-view={view} data-page-mode={view === 'analysis' ? 'index' : 'archive'} style={getArchiveIdentity()} data-i18n-ignore>
-    <TeamArchiveNavigation team={team} seasonId={seasonId} locale={locale} view={view} galleryHref={galleryHref} analysisHref={analysisHref} viewState={viewState} onBack={onBack} onShare={view === 'gallery' ? shareDossier : null} />
-    <div className={styles.titleRow}>
-      <SignalDataHeading title={team.shortName} description={view === 'analysis' ? [fullName, standing].filter(Boolean).join(' · ') || null : null}>
+  return <article ref={articleRef} className={styles.dossier} data-team-dossier="signal" data-archive-view={view} data-page-mode={view === 'analysis' ? 'index' : 'archive'} style={getArchiveIdentity()} data-i18n-ignore>
+    <TeamArchiveNavigation team={team} seasonId={seasonId} locale={locale} view={view} galleryHref={galleryHref} analysisHref={analysisHref} viewState={viewState} backLabel={getTeamBackLabel(sourceReturnState.returnTo, locale)} onBack={onBack} onShare={view === 'gallery' ? shareDossier : null} condensed={condensed} />
+    <div className={styles.titleRow} data-team-title-row>
+      <SignalDataHeading title={team.shortName} titleHidden={view === 'gallery'} description={view === 'analysis' ? [fullName, standing].filter(Boolean).join(' · ') || null : null}>
         <button type="button" className={styles.follow} aria-pressed={favorited} disabled={favoriteDisabled && !favorited} onClick={onToggleFavorite}>{followLabel}<span aria-hidden="true">{favorited ? '✓' : '+'}</span></button>
       </SignalDataHeading>
     </div>

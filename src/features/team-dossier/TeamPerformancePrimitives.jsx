@@ -80,7 +80,7 @@ export function PerformanceRecords({ records, en, withSeason, returnState, onLea
               </small>
             </span>
             <strong>{record.mapScore}</strong>
-            <span data-result={record.mapOutcome}>{resultLabel(record.mapOutcome, en, uiLocale)} ↗</span>
+            <span data-result={record.mapOutcome}>{resultLabel(record.mapOutcome, en, uiLocale)} →</span>
           </Link>
         ))
       ) : (

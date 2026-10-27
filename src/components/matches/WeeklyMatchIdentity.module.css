@@ -1,10 +1,10 @@
 .root { display: flex; flex-direction: column; grid-column: 1 / -1; gap: 5px; min-width: 0; padding: 12px 18px; font-size: 12px; line-height: 1.5; }
 .context { color: inherit; overflow-wrap: anywhere; }
 .codeRow { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 12px; min-width: 0; }
-.codeRow code { min-width: 0; max-width: 100%; font-family: var(--font-mono, monospace); font-size: 11px; opacity: .72; overflow-wrap: anywhere; user-select: all; }
+.codeRow code { min-width: 0; max-width: 100%; font-family: var(--font-mono, monospace); font-size: 12px; opacity: .72; overflow-wrap: anywhere; user-select: all; }
 .codeRow button { padding: 3px 7px; border: 1px solid currentColor; border-radius: 3px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
 .codeRow button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
-.feedback { font-size: 11px; }
+.feedback { font-size: 12px; }
 .feedback:empty { display: none; }
 @media (max-width: 480px) { .root { padding: 10px 12px; } .codeRow button { min-height: 36px; } }
 
@@ -13,7 +13,7 @@
 .compact .context { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .compact .codeRow { flex: none; align-items: center; flex-wrap: nowrap; gap: 8px; }
 .compact .codeRow code { white-space: nowrap; overflow-wrap: normal; }
-.compact.compact .codeRow button { min-height: 28px; padding: 3px 8px; border-radius: 0; font-size: 11px; line-height: 18px; }
+.compact.compact .codeRow button { min-height: 28px; padding: 3px 8px; border-radius: 0; font-size: 12px; line-height: 18px; }
 .compact .feedback { flex: none; }
 @media (max-width: 480px) {
   .compact.compact { min-height: 44px; gap: 8px; padding: 0; }

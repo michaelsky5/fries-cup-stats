@@ -30,7 +30,7 @@ const COPY = {
   more: ['查看更多比赛', 'More matches', '경기 더 보기', '查看更多比賽'],
   empty: ['暂无可展示的公开记录。', 'No public records to show yet.', '표시할 공개 기록이 없습니다.', '暫無可展示的公開記錄。'],
   alongside: ['同场搭档', 'Alongside them', '함께한 동료', '同場搭檔'],
-  colleagues: ['其他战队职员', 'Other team staff', '다른 팀 스태프', '其他戰隊職員'],
+  colleagues: ['其他队伍职员', 'Other team staff', '다른 팀 스태프', '其他隊伍職員'],
   shared: ['场共同署名', 'shared credits', '공동 참여 경기', '場共同署名'],
   source: ['名册与署名说明', 'About these records', '기록 출처', '名冊與署名說明'],
   eventSource: ['来自本届已发布比赛的职员署名。按当前职责分别记录，同一人兼任不同职责时，各自保留档案。', 'Based on staff credits in this event’s published matches. Each role has its own record, including when one person holds multiple roles.', '공개된 경기의 스태프 기록을 사용합니다. 한 사람이 여러 역할을 맡아도 역할별 기록은 구분합니다.', '來自本屆已發布比賽的職員署名。按當前職責分別記錄，同一人兼任不同職責時，各自保留檔案。'],
@@ -102,10 +102,10 @@ export default function StaffDetailPage() {
         <section id={staff.team ? 'staff-roster' : 'staff-matches'} className={styles.records}>
           <header className={styles.sectionHead}><span>{staff.team ? 'ON THE SAME TEAM' : 'MATCH LOG'}</span><h2>{text(staff.team ? 'roster' : 'matches')} <small>{staff.team ? staff.players.length : matches.length}</small></h2><p>{text(staff.team ? 'rosterNote' : 'recordNote')}</p></header>
           {staff.team ? <>
-            <DirectoryLink to={withSeason(`/teams/${encodeURIComponent(staff.team.routeId)}`)} className={styles.teamLink}><TeamLogo team={staff.team} teamShortName={affiliation.primary} seasonId={seasonId} /><span><strong>{affiliation.primary}</strong>{affiliation.secondary ? <small>{affiliation.secondary}</small> : null}</span><span aria-hidden="true">↗</span></DirectoryLink>
+            <DirectoryLink to={withSeason(`/teams/${encodeURIComponent(staff.team.routeId)}`)} className={styles.teamLink}><TeamLogo team={staff.team} teamShortName={affiliation.primary} seasonId={seasonId} /><span><strong>{affiliation.primary}</strong>{affiliation.secondary ? <small>{affiliation.secondary}</small> : null}</span><span aria-hidden="true">→</span></DirectoryLink>
             <div className={styles.roster}>{staff.players.map(player => {
               const identity = getPlayerDisplayIdentity(player)
-              return <DirectoryLink key={identity.playerId} to={withSeason(`/players/${encodeURIComponent(identity.playerId)}`)} className={styles.player}><span>{getRosterRoleLabel(getRosterRegistrationRole(player.role), locale)}</span><strong>{identity.primary}</strong><span aria-hidden="true">↗</span></DirectoryLink>
+              return <DirectoryLink key={identity.playerId} to={withSeason(`/players/${encodeURIComponent(identity.playerId)}`)} className={styles.player}><span>{getRosterRoleLabel(getRosterRegistrationRole(player.role), locale)}</span><strong>{identity.primary}</strong><span aria-hidden="true">→</span></DirectoryLink>
             })}</div>
             {!staff.players.length ? <p className={styles.empty}>{text('empty')}</p> : null}
             {staff.unavailablePlayers > 0 ? <p className={styles.empty}>{staff.unavailablePlayers} {text('unpublished')}</p> : null}
@@ -115,7 +115,7 @@ export default function StaffDetailPage() {
               const display = getStaffMatchDisplay(match, locale)
               return <DirectoryLink key={match.match_id} to={withSeason(`/matches/${encodeURIComponent(match.match_id)}`)} className={styles.match}>
               <span className={styles.matchMeta}><time>{translateUiText(getMatchTimeLabel(match), locale)}</time><span>{staffCreditsText(staff.stages.find(item => item.value === String(match.stage || '').toUpperCase())?.title || match.stage, locale)} · {translateUiText(getMatchStatusText(match), locale)}</span></span>
-              <span className={styles.duel}><span><TeamLogo team={match.team_a} seasonId={seasonId} /><strong>{getTeamLabel(match.team_a)}</strong></span><b className={display.isScore ? undefined : styles.matchState}>{display.label}</b><span><strong>{getTeamLabel(match.team_b)}</strong><TeamLogo team={match.team_b} seasonId={seasonId} /></span></span><span className={styles.arrow} aria-hidden="true">↗</span>
+              <span className={styles.duel}><span><TeamLogo team={match.team_a} seasonId={seasonId} /><strong>{getTeamLabel(match.team_a)}</strong></span><b className={display.isScore ? undefined : styles.matchState}>{display.label}</b><span><strong>{getTeamLabel(match.team_b)}</strong><TeamLogo team={match.team_b} seasonId={seasonId} /></span></span><span className={styles.arrow} aria-hidden="true">→</span>
             </DirectoryLink>
             })}</div>
             {!matches.length ? <p className={styles.empty}>{text('empty')}</p> : null}
@@ -123,8 +123,8 @@ export default function StaffDetailPage() {
           </>}
         </section>
         <aside className={styles.aside}>
-          {staff.colleagues.length ? <section><h2>{text(staff.team ? 'colleagues' : 'alongside')}</h2><div className={styles.colleagues}>{staff.colleagues.map(person => <DirectoryLink key={person.id} to={withSeason(getStaffProfilePath(person))}><strong>{person.name}</strong><small>{staff.team ? staffRoleLabel(person, locale) : `${person.sharedMatchCount} ${text('shared')}`}</small><span aria-hidden="true">↗</span></DirectoryLink>)}</div></section> : null}
-          <details className={styles.source}><summary>{text('source')}</summary><p>{text(staff.team ? 'teamSource' : staff.creditSource === 'archive' ? 'archiveSource' : 'eventSource')}</p>{staff.team ? <DirectoryLink to={withSeason(`/teams/${encodeURIComponent(staff.team.routeId)}`)}>{text('teamArchive')} <span aria-hidden="true">↗</span></DirectoryLink> : reviewAvailable && staff.storyPath ? <DirectoryLink to={withSeason(staff.storyPath)}>{text('story')} <span aria-hidden="true">↗</span></DirectoryLink> : null}</details>
+          {staff.colleagues.length ? <section><h2>{text(staff.team ? 'colleagues' : 'alongside')}</h2><div className={styles.colleagues}>{staff.colleagues.map(person => <DirectoryLink key={person.id} to={withSeason(getStaffProfilePath(person))}><strong>{person.name}</strong><small>{staff.team ? staffRoleLabel(person, locale) : `${person.sharedMatchCount} ${text('shared')}`}</small><span aria-hidden="true">→</span></DirectoryLink>)}</div></section> : null}
+          <details className={styles.source}><summary>{text('source')}</summary><p>{text(staff.team ? 'teamSource' : staff.creditSource === 'archive' ? 'archiveSource' : 'eventSource')}</p>{staff.team ? <DirectoryLink to={withSeason(`/teams/${encodeURIComponent(staff.team.routeId)}`)}>{text('teamArchive')} <span aria-hidden="true">→</span></DirectoryLink> : reviewAvailable && staff.storyPath ? <DirectoryLink to={withSeason(staff.storyPath)}>{text('story')} <span aria-hidden="true">→</span></DirectoryLink> : null}</details>
         </aside>
       </div>
     </>}

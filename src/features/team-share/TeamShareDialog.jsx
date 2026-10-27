@@ -15,7 +15,7 @@ import styles from './TeamShareDialog.module.css'
 
 export default function TeamShareDialog({ open, onClose, model }) {
   const uiLocale = useUiLocale()
-  const dialogTitle = pickUiLocale(uiLocale, '导出战队分享图', 'Share team roster', '팀 명단 공유', '匯出戰隊分享圖')
+  const dialogTitle = pickUiLocale(uiLocale, '导出队伍分享图', 'Share team roster', '팀 명단 공유', '匯出隊伍分享圖')
   const exportRef = useRef(null)
   const dialogRef = useRef(null)
   const previewAreaRef = useRef(null)
@@ -109,7 +109,7 @@ export default function TeamShareDialog({ open, onClose, model }) {
     if (!exportRef.current || !previewModel || exporting) return
     const request = ++exportRequestRef.current
     setExporting(true)
-    setStatus('正在生成战队分享图...')
+    setStatus('正在生成队伍分享图...')
     try {
       const file = await exportTeamSharePng(exportRef.current, createTeamShareFileName({
         seasonCode: model.seasonLabel,
@@ -231,7 +231,7 @@ export default function TeamShareDialog({ open, onClose, model }) {
           <span>{zoomed ? pickUiLocale(uiLocale, '滑动查看完整卡面', 'Scroll to inspect the full image', '스크롤하여 전체 이미지 보기', '滑動查看完整卡面') : pickUiLocale(uiLocale, '卡面预览', 'Image preview', '이미지 미리보기', '卡面預覽')}</span>
           <button ref={previewToggleRef} type="button" onClick={toggleZoom} aria-expanded={zoomed} aria-controls={previewId} disabled={!model}>{zoomed ? pickUiLocale(uiLocale, '返回分享设置', 'Back to share options', '공유 설정으로', '返回分享設定') : pickUiLocale(uiLocale, '放大查看', 'View larger', '크게 보기', '放大查看')} <span aria-hidden="true">{zoomed ? '↙' : '↗'}</span></button>
         </div>
-        <div id={previewId} className={styles.previewArea} data-zoomed={zoomed || undefined} ref={previewAreaRef} role="region" aria-label={pickUiLocale(uiLocale, '战队分享图预览', 'Team share image preview', '팀 공유 이미지 미리보기', '戰隊分享圖預覽')} tabIndex={zoomed ? 0 : -1}>
+        <div id={previewId} className={styles.previewArea} data-zoomed={zoomed || undefined} ref={previewAreaRef} role="region" aria-label={pickUiLocale(uiLocale, '队伍分享图预览', 'Team share image preview', '팀 공유 이미지 미리보기', '隊伍分享圖預覽')} tabIndex={zoomed ? 0 : -1}>
           {model ? (
             <div className={styles.previewFrame} style={{ width: 1600 * shownScale, height: 900 * shownScale }}>
               <div className={styles.previewScale} style={{ transform: `scale(${shownScale})` }}>
@@ -239,7 +239,7 @@ export default function TeamShareDialog({ open, onClose, model }) {
               </div>
             </div>
           ) : (
-            <div className={styles.emptyState}>{uiText("当前战队暂无可导出的数据。", uiLocale)}</div>
+            <div className={styles.emptyState}>{uiText("当前队伍暂无可导出的数据。", uiLocale)}</div>
           )}
         </div>
 

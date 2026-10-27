@@ -133,7 +133,7 @@
   --player-paper: var(--fc-data-paper, #eeede6);
   --player-paper-raised: var(--fc-data-paper-raised, #f6f5ee);
   --player-signal: var(--fc-data-signal, #f4c320);
-  --player-muted: var(--fc-data-text-muted, #66685f);
+  --player-muted: var(--fc-data-text-muted, #5f6158);
   --player-line: var(--fc-data-line, rgba(23, 24, 23, 0.15));
   --player-line-strong: var(--fc-data-line-strong, rgba(23, 24, 23, 0.38));
   --player-line-dark: var(--fc-data-line-on-dark, rgba(238, 237, 230, 0.16));
@@ -201,7 +201,7 @@
   align-items: center;
   gap: 12px;
   color: var(--player-signal);
-  font: 800 10px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   letter-spacing: 0.08em;
 }
 
@@ -268,13 +268,13 @@
 
 .playerSignalCount b {
   color: var(--player-signal);
-  font: 800 10px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   letter-spacing: 0.08em;
 }
 
 .playerSignalCount em {
   color: rgba(238, 237, 230, 0.48);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .playerRoleIndex {
@@ -296,13 +296,13 @@
 
 .playerRoleIndex > header span {
   color: var(--player-signal);
-  font: 800 9px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   letter-spacing: 0.08em;
 }
 
 .playerRoleIndex > header strong {
   color: rgba(238, 237, 230, 0.72);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .playerRoleGrid {
@@ -381,7 +381,7 @@
 
 .playerRoleGrid > a > div span,
 .playerRoleGrid > a > div em {
-  font: 800 8px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   font-style: normal;
   letter-spacing: 0.08em;
 }
@@ -407,7 +407,7 @@
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -477,13 +477,13 @@
 .playerSignalMetrics > div > span {
   display: grid;
   gap: 4px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
 .playerSignalMetrics > div > span em {
   color: var(--player-muted);
-  font: 8px/1 var(--font-mono);
+  font: 12px/1 var(--font-mono);
   font-style: normal;
   letter-spacing: 0.08em;
 }
@@ -540,7 +540,7 @@
 
 .signalSubnav > a > span:last-child {
   color: inherit;
-  font: 800 9px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   opacity: 0.52;
 }
 
@@ -579,7 +579,7 @@
 
 .signalToolbar label > span {
   color: rgba(238, 237, 230, 0.48);
-  font: 800 8px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   letter-spacing: 0.08em;
 }
 
@@ -621,7 +621,7 @@
   display: block;
   margin-bottom: 14px;
   color: var(--player-signal);
-  font: 800 9px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   letter-spacing: 0.08em;
 }
 
@@ -648,7 +648,7 @@
 
 .signalDirectoryHead > strong em {
   color: var(--player-muted);
-  font: 8px/1 var(--font-mono);
+  font: 12px/1 var(--font-mono);
   font-style: normal;
   letter-spacing: 0.1em;
 }
@@ -860,7 +860,7 @@
 .playerCommandDeck .signalRoleTabs .roleTab {
   min-height: 42px;
   padding-inline: 12px;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .playerExplorer,
@@ -901,7 +901,7 @@
   align-items: center;
   gap: 8px;
   color: var(--player-muted);
-  font: 800 10px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   letter-spacing: 0.08em;
 }
 
@@ -935,7 +935,7 @@
 
 .playerExplorerHeader > strong em {
   color: var(--player-muted);
-  font: 800 8px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   font-style: normal;
   letter-spacing: 0.1em;
 }
@@ -969,7 +969,7 @@
   padding: 0 18px;
   border-bottom: 1px solid var(--player-line);
   color: var(--player-muted);
-  font: 800 8px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   letter-spacing: 0.08em;
 }
 
@@ -1025,7 +1025,7 @@
 .playerIndexRow > i,
 .playerIndexRow > small {
   color: var(--player-muted);
-  font: 800 8px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   font-style: normal;
   letter-spacing: 0.04em;
 }
@@ -1135,7 +1135,7 @@
   display: grid;
   gap: 5px;
   color: rgba(238, 237, 230, 0.48);
-  font: 800 8px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   letter-spacing: 0.08em;
   text-align: right;
 }
@@ -1158,7 +1158,7 @@
   padding: 8px 10px;
   background: var(--player-role-accent);
   color: var(--player-ink);
-  font: 900 9px/1 var(--font-mono);
+  font: 900 12px/1 var(--font-mono);
   letter-spacing: 0.08em;
 }
 
@@ -1176,7 +1176,7 @@
   gap: 9px;
   margin: 0;
   color: rgba(238, 237, 230, 0.78);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.72);
 }
@@ -1295,7 +1295,7 @@
   align-items: center;
   gap: 7px;
   color: rgba(238, 237, 230, 0.56);
-  font: 800 8px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   letter-spacing: 0.09em;
   white-space: nowrap;
 }
@@ -1321,7 +1321,7 @@
 
 .playerMissingHeroStatus em {
   color: rgba(238, 237, 230, 0.42);
-  font: 750 9px/1 var(--font-mono);
+  font: 750 12px/1 var(--font-mono);
   font-style: normal;
   letter-spacing: 0.04em;
 }
@@ -1362,7 +1362,7 @@
 
 .playerFocusReadout span {
   color: rgba(238, 237, 230, 0.42);
-  font: 800 8px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-mono);
   letter-spacing: 0.08em;
 }
 
@@ -1400,7 +1400,7 @@
   padding: 0 20px;
   border: 0;
   color: var(--player-paper);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   text-decoration: none;
 }
@@ -1592,7 +1592,7 @@
   .playerFocusActions button,
   .playerFocusActions a {
     padding-inline: 12px;
-    font-size: 10px;
+    font-size: 12px;
   }
 }
 

@@ -5,21 +5,24 @@ import { OW_HEROES, getOwHero, getOwMap, formatOwHeroName, formatOwMapName } fro
 import { getHeroImage, getHeroRenderImage, getMapImage } from '../src/lib/reviewAssets.js'
 import { heroCn, mapCn } from '../src/lib/reviewI18n.js'
 
-test('every room hero resolves by ID and localized names to an existing PNG portrait', async () => {
+// 票 2.79: portraits are served as WebP; the PNG next to each stays for stored avatars and older tools.
+test('every room hero resolves by ID and localized names to an existing WebP portrait with its PNG kept', async () => {
   for (const hero of OW_HEROES) {
     const source = getHeroImage(hero.id)
     for (const name of [hero.zh, hero.en, ...(hero.aliases || [])]) assert.equal(getHeroImage(name), source, `${hero.id}: ${name}`)
     const image = await readFile(new URL(`../public${source}`, import.meta.url))
-    assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', source)
+    assert.equal(image.subarray(0, 4).toString('ascii') + image.subarray(8, 12).toString('ascii'), 'RIFFWEBP', source)
+    const png = await readFile(new URL(`../public${source.replace(/\.webp$/, '.png')}`, import.meta.url))
+    assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', source)
   }
 })
 
 test('current Doctrine and Sombra use support assets while recorded damage Sombra remains readable', () => {
-  assert.equal(getHeroImage('血律'), '/heroes/support/doctrine.png')
-  assert.equal(getHeroImage('Doctrine', 'SUP'), '/heroes/support/doctrine.png')
-  assert.equal(getHeroImage('黑影'), '/heroes/support/sombra.png')
-  assert.equal(getHeroImage('Sombra', 'SUP'), '/heroes/support/sombra.png')
-  assert.equal(getHeroImage('Sombra', 'DPS'), '/heroes/damage/sombra.png')
+  assert.equal(getHeroImage('血律'), '/heroes/support/doctrine.webp')
+  assert.equal(getHeroImage('Doctrine', 'SUP'), '/heroes/support/doctrine.webp')
+  assert.equal(getHeroImage('黑影'), '/heroes/support/sombra.webp')
+  assert.equal(getHeroImage('Sombra', 'SUP'), '/heroes/support/sombra.webp')
+  assert.equal(getHeroImage('Sombra', 'DPS'), '/heroes/damage/sombra.webp')
   assert.equal(getHeroRenderImage('血律'), '/review/hero-renders/support/doctrine.png')
   assert.equal(getHeroRenderImage('黑影'), '/review/hero-renders/support/sombra.png')
 })

@@ -22,7 +22,7 @@ import ArchiveCredits from './ArchiveCredits.jsx'
 import { getScheduleRoundLabel } from '../match-schedule/schedulePresentation.js'
 import styles from './KprImmersiveArchive.module.css'
 
-const Arrow = () => <span aria-hidden="true">↗</span>
+const Arrow = () => <span aria-hidden="true">→</span>
 
 function SectionSignal({ chapter, label, code, tone = 'light' }) {
   return <span className={styles.sectionSignal} data-tone={tone} aria-hidden="true">
@@ -378,7 +378,7 @@ export default function KprImmersiveArchive({ archive, overview, summary, includ
                 <span className={styles.dockNumber}>{String(index + 1).padStart(2, '0')}</span>
                 <HeroArtwork hero={presentationHero(entry)} variant="roster" className={styles.dockPortrait} decorative locale={locale} />
                 <span className={styles.dockName}><strong>{playerLabel(entry)}</strong><small>{isEn ? entry.role : uiText(getRoleLabel(entry.role), locale)}</small></span>
-                <span className={styles.dockArrow} aria-hidden="true">↗</span>
+                <span className={styles.dockArrow} aria-hidden="true">→</span>
               </button>)}
             </div>
             <span className={styles.srOnly} aria-live="polite">{isEn ? 'Current player: ' : uiText("当前选手：", locale)}{name}{isEn ? ', ' : '，'}{heroName}</span>

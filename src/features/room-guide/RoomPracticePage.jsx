@@ -4,6 +4,7 @@ import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useLocaleDomTranslation } from '../../hooks/useLocaleDomTranslation.js'
 import { translateUiText } from '../../lib/uiText.js'
 import { withLocale } from '../../lib/locales.js'
+import { buildFriesCupTitle } from '../../lib/pageTitle.js'
 import { WeeklyRoomView } from '../weekly-competition/WeeklyLiveRoomPage.jsx'
 import { RoomTransportProvider } from '../weekly-competition/RoomTransport.jsx'
 import { useMobileRoom } from '../weekly-competition/RoomMobile.jsx'
@@ -71,7 +72,7 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
       {state.event !== 'welcome' && <p className={styles.response} role="status">✓ {text[`room.event.${state.event}`] || text['room.saved']}</p>}
     </section>
   </>
-  const after = <footer className={styles.after} data-i18n-ignore><p>{text['room.after']}</p><Link to={withLocale('/me?section=matches', locale)}>{text['room.real-entry']} ↗</Link></footer>
+  const after = <footer className={styles.after} data-i18n-ignore><p>{text['room.after']}</p><Link to={withLocale('/me?section=matches', locale)}>{text['room.real-entry']} →</Link></footer>
   return <div className={styles.page} lang={locale} data-frame-only={frameOnly} data-mobile={mobile}>
     {mobile ? <>
       <header className={styles.mobileBar} data-i18n-ignore><strong>{text['room.title']}</strong><button type="button" onClick={() => setGuideOpen(true)} aria-haspopup="dialog">{text['room.instructions']}</button></header>
@@ -91,6 +92,7 @@ export default function RoomPracticePage() {
   const locale = useUiLocale(), [params, setParams] = useSearchParams()
   const text = copy[locale] || copy['zh-CN'], role = PRACTICE_ROLES.includes(params.get('role')) ? params.get('role') : 'representative'
   const scene = params.get('scene') || ''
-  useEffect(() => { document.title = `${text['room.title']} · Fries Cup` }, [text])
+  // 票 2.76: the same tab title pattern as every other page (「模拟比赛房 | 薯条杯」).
+  useEffect(() => { document.title = buildFriesCupTitle(text['room.title'], locale) }, [text, locale])
   return <Practice frameOnly={import.meta.env.DEV && params.get('frame') === 'room'} key={role + scene} role={role} initialScene={scene} locale={locale} text={text} onRole={value => setParams({ role: value, ...(params.get('lang') ? { lang: params.get('lang') } : {}) })} />
 }

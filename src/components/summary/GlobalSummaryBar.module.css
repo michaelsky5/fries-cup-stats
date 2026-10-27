@@ -81,7 +81,7 @@
 }
 
 .metricLabel {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1;
   letter-spacing: 0.06em;
@@ -89,7 +89,7 @@
 }
 
 .metricMeta {
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.14em;
@@ -203,11 +203,11 @@
   }
 
   .metricLabel {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .metricMeta {
-    font-size: 7px;
+    font-size: 12px;
     opacity: 0.6;
   }
 

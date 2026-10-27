@@ -56,7 +56,7 @@
 }
 .chapterNav small {
   color: var(--fc-data-text-muted);
-  font: 11px var(--fc-data-font-system);
+  font: 12px var(--fc-data-font-system);
 }
 .chapterNav button:hover {
   background: var(--fc-data-ink);
@@ -242,7 +242,7 @@
 }
 .recordList small {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--fc-data-text-muted);
   line-height: 1.7;
 }
@@ -287,7 +287,7 @@
 }
 .memberLabels {
   padding: 14px 12px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--fc-data-text-muted);
 }
 .memberLabels > :last-child {
@@ -317,7 +317,7 @@
 }
 .memberRow small {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--fc-data-text-muted);
   margin-top: 5px;
   line-height: 1.5;
@@ -332,7 +332,7 @@
 }
 .rowAction {
   display: block;
-  font: 11px/1.5 var(--fc-data-font-interface);
+  font: 12px/1.5 var(--fc-data-font-interface);
   margin-top: 6px;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -434,7 +434,7 @@
 }
 .memberHeroes small {
   color: var(--fc-data-text-muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 .textLink {
   display: inline-flex;
@@ -484,7 +484,7 @@
   margin: 10px 0 !important;
 }
 .cohort > div > span {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--fc-data-text-muted);
 }
 .cohort p {
@@ -513,7 +513,7 @@
 }
 .cohortRow small {
   display: block;
-  font: 11px var(--fc-data-font-interface);
+  font: 12px var(--fc-data-font-interface);
   color: var(--fc-data-text-muted);
 }
 .inlineEvidence {
@@ -583,7 +583,7 @@
 .seriesRows small {
   display: block;
   color: var(--fc-data-text-muted);
-  font-size: 11px;
+  font-size: 12px;
   margin-top: 5px;
   line-height: 1.6;
 }
@@ -648,7 +648,7 @@
   font-size: 14px;
 }
 .opponentChoices button > span:last-child {
-  font-size: 11px;
+  font-size: 12px;
 }
 .opponentChoices button[aria-pressed='true'] {
   background: var(--fc-data-ink);
@@ -701,7 +701,7 @@
   margin-bottom: 18px !important;
 }
 .opponentMetrics article > small {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--fc-data-text-muted);
   display: block;
   margin-top: 12px;
@@ -1009,7 +1009,7 @@
     font-size: 12px;
   }
   .seriesRows small {
-    font-size: 11px;
+    font-size: 12px;
   }
   .stageCards {
     grid-template-columns: minmax(0, 1fr);
@@ -1063,7 +1063,7 @@
   .mapSummary small {
     display: block;
     margin: 5px 0 0;
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

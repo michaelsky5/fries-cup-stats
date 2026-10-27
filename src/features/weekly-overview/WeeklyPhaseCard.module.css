@@ -1,7 +1,7 @@
 /* 票 2.16: the phase card leads the weekly home. */
 .phase { margin: 16px 0 0; border-top: 3px solid var(--fc-data-ink, #181a17); background: var(--fc-data-paper-raised, #f6f5ef); color: var(--fc-data-ink, #181a17); }
 .main { display: grid; gap: 10px; padding: 18px 20px 20px; }
-.eyebrow { margin: 0; color: var(--fc-data-text-muted, #66685f); font: 600 12px/1.5 var(--font-sans); letter-spacing: .04em; }
+.eyebrow { margin: 0; color: var(--fc-data-text-muted, #5f6158); font: 600 12px/1.5 var(--font-sans); letter-spacing: .04em; }
 .title { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin: 0; font: 800 clamp(24px, 2.6vw, 34px)/1.25 var(--font-sans); letter-spacing: -.02em; }
 .title b { font-family: var(--fc-data-font-display); font-weight: 900; letter-spacing: 0; }
 .titleLogo { display: inline-grid; place-items: center; width: 40px; height: 40px; flex: 0 0 40px; }
@@ -9,21 +9,23 @@
 .duel { display: inline-flex; align-items: center; gap: 10px; }
 .duel strong { padding: 0 6px; font: 900 32px/1 var(--fc-data-font-display); }
 .facts { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 0; font-size: 14px; line-height: 1.6; }
-.countdown { color: var(--fc-data-focus-on-light, #806000); font-weight: 700; white-space: nowrap; }
-.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.countdown { color: var(--fc-data-focus-on-light, #705100); font-weight: 700; white-space: nowrap; }
+/* 票 2.70: buttons keep their 44px instead of stretching to the card's grid row (was 51px on desktop). */
+.actions { display: flex; flex-wrap: wrap; align-items: flex-start; align-content: flex-start; gap: 10px; margin-top: 4px; }
 .phase .primary, .phase .secondary { display: inline-flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 44px; padding: 0 16px; font: 650 14px/1.4 var(--font-sans); text-decoration: none; }
-.phase .primary { background: var(--fc-data-ink, #181a17); color: var(--fc-data-paper, #eeede6); } /* beats the overview's `.page a { color: inherit }` */
-.phase .primary > span { color: var(--fc-data-signal, #f4c320); }
+/* 票 2.70: the primary action is the site-wide yellow button (was ink). Selector beats the overview's `.page a { color: inherit }`. */
+.phase .primary { min-height: var(--fc-data-primary-height, 44px); background: var(--fc-data-primary-bg, #f4c320); color: var(--fc-data-primary-text, #181a17); font-weight: var(--fc-data-primary-weight, 750); }
+.phase .primary > span { color: inherit; }
 .phase .secondary { border: 1px solid var(--fc-data-line-strong); color: var(--fc-data-ink, #181a17); }
-.phase .secondary > span { color: var(--fc-data-focus-on-light, #806000); }
-.phase .primary:hover { background: var(--fc-data-ink-raised, #2a2c27); }
+.phase .secondary > span { color: var(--fc-data-focus-on-light, #705100); }
+.phase .primary:hover { background: var(--fc-data-primary-bg-hover, #ffd64a); }
 .phase .secondary:hover { background: var(--fc-data-paper-deep); }
 .primary:focus-visible, .secondary:focus-visible, .rows a:focus-visible { outline: 2px solid var(--fc-data-focus-on-light); outline-offset: 3px; }
 .rows { list-style: none; margin: 0; padding: 0 20px; border-top: 1px solid var(--fc-data-line); }
 .rows li { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; font-size: 13px; line-height: 1.5; }
 .rows li + li { border-top: 1px solid var(--fc-data-line); }
 .phase .rows a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; flex-shrink: 0; font-weight: 700; white-space: nowrap; }
-.phase .rows a > span { color: var(--fc-data-focus-on-light, #806000); }
+.phase .rows a > span { color: var(--fc-data-focus-on-light, #705100); }
 /* 票 2.31: beside the main card from 961px, so the card has no empty right half and one band less. */
 @media (min-width: 961px) {
   .withRows { display: grid; grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr); }

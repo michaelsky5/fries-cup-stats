@@ -5,7 +5,7 @@
 .notice small { display:block; color:var(--muted); }
 .notice dl { display:flex; flex-wrap:wrap; gap:4px 14px; margin:0; }
 .notice dl>div { min-width:0; display:flex; flex-wrap:wrap; align-items:baseline; gap:0 6px; }
-.notice dt { color:var(--muted); font-size:11px; }
+.notice dt { color:var(--muted); font-size:12px; }
 .notice dd { margin:0; font-variant-numeric:tabular-nums; font-weight:650; }
 .details { margin:0 0 0 auto; }
 .details summary { cursor:pointer; min-height:28px; display:list-item; }

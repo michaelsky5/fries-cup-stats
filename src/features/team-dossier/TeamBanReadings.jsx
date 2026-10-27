@@ -39,7 +39,7 @@ export default function TeamBanReadings({ report, scopeLabel, onReviewHero, ...c
             <tr>
               <th scope="row"><button type="button" className={styles.banIdentity} aria-label={en ? `Review bans for ${row.label}` : uiText("复盘{0}的禁用", uiLocale, [row.label])}
                 onClick={() => onReviewHero(row.key, row[preferredSide].maps > 0 ? preferredSide : preferredSide === 'own' ? 'opponent' : 'own')}>
-                <HeroPortrait hero={row.hero} /><span><b>{row.label}</b><small>{en ? 'Review ↗' : uiText("复盘 ↗", uiLocale)}</small></span>
+                <HeroPortrait hero={row.hero} /><span><b>{row.label}</b><small>{en ? 'Review →' : uiText("复盘 →", uiLocale)}</small></span>
               </button></th>
               {sides.map(([side, label]) => {
                 const sample = row[side]

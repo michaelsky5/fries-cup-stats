@@ -160,7 +160,7 @@
 
 .overviewNextLabel {
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   text-transform: uppercase;
@@ -189,7 +189,7 @@
   padding: 0 8px;
   border: 1px solid var(--portal-border);
   color: var(--portal-ink);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -203,7 +203,7 @@
   display: grid;
   gap: 5px;
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1.35;
 }
@@ -342,7 +342,7 @@
   padding: 0 8px;
   background: var(--portal-black);
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 1000;
   line-height: 1;
 }
@@ -510,7 +510,7 @@
   padding: 0 8px;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 1000;
   line-height: 1;
 }
@@ -696,7 +696,7 @@
   padding: 0 8px;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 1000;
   line-height: 1;
@@ -999,7 +999,7 @@
 .matchBoardRowCompact .boardIndex {
   width: 28px;
   height: 28px;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .boardDuel {
@@ -1059,7 +1059,7 @@
 
 .boardTeamLogo b {
   color: var(--portal-yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1088,7 +1088,7 @@
   min-width: 0;
   overflow: hidden;
   color: rgba(42, 42, 42, 0.54);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
   line-height: 1.1;
@@ -1137,7 +1137,7 @@
   justify-content: flex-end;
   gap: 6px;
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 1000;
   line-height: 1;
 }
@@ -1251,7 +1251,7 @@
 
 .teamLogo b {
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1425,7 +1425,7 @@
   padding: 0 8px;
   background: var(--portal-black);
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 1000;
   line-height: 1;
 }
@@ -1757,7 +1757,7 @@
 
 .followStats span {
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 1000;
 }
 
@@ -2146,7 +2146,7 @@
 
 .resultsList .matchMeta {
   gap: 8px;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1;
 }
 
@@ -2308,7 +2308,7 @@
 
 .archiveLegacyLine em {
   color: rgba(255, 255, 255, 0.52);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -2802,7 +2802,7 @@
   padding: 0 8px;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -2854,7 +2854,7 @@
 
 .archiveFinalResult em {
   color: var(--portal-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.08em;
@@ -2951,7 +2951,7 @@
   justify-self: end;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -2974,7 +2974,7 @@
 
 .archiveFinalLink em {
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.08em;
@@ -3352,7 +3352,7 @@
 .archiveClassicList header span {
   grid-column: 1 / -1;
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
   line-height: 1;
@@ -3408,7 +3408,7 @@
   place-items: center;
   background: var(--portal-black);
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -3468,7 +3468,7 @@
   place-items: center;
   padding: 0 6px;
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -3754,7 +3754,7 @@
   .boardIndex {
     width: 30px;
     height: 30px;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .boardDuel,

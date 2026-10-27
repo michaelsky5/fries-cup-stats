@@ -18,7 +18,7 @@ export default function TeamReviewRecords({ records, en, locale, withSeason, ret
         <div><small>{record.timeLabel} · {record.roundLabel}</small><h4>{record.opponentLabel}<span> / {record.mapName} · {en ? 'Map' : uiText("第", locale)} {record.mapOrder}{en ? '' : uiText(" 图", locale)}</span></h4></div>
         <div className={styles.result}><b>{record.mapScore}</b><span>{resultLabel(record.mapOutcome, en, locale)}</span></div>
         <Link to={withSeason(getDossierMapMatchPath(record))} state={returnState} onClick={onLeave}
-          aria-label={en ? `Open match against ${record.opponentLabel}, ${record.mapName}, map ${record.mapOrder}, ${record.timeLabel}` : uiText("打开对阵{0}的比赛，{1}第{2}图，{3}", locale, [record.opponentLabel, record.mapName, record.mapOrder, record.timeLabel])}>{en ? 'Open match' : uiText("打开比赛", locale)} ↗</Link>
+          aria-label={en ? `Open match against ${record.opponentLabel}, ${record.mapName}, map ${record.mapOrder}, ${record.timeLabel}` : uiText("打开对阵{0}的比赛，{1}第{2}图，{3}", locale, [record.opponentLabel, record.mapName, record.mapOrder, record.timeLabel])}>{en ? 'Open match' : uiText("打开比赛", locale)} →</Link>
       </header>
       <div className={styles.players} aria-label={en ? 'Recorded team players and heroes' : uiText("本队成员与最终英雄记录", locale)}>
         {[...record.own.players].sort((a, b) => ({ TANK: 0, DPS: 1, SUP: 2 }[a.role] ?? 3) - ({ TANK: 0, DPS: 1, SUP: 2 }[b.role] ?? 3) || a.id.localeCompare(b.id)).map(player => <div key={player.id}

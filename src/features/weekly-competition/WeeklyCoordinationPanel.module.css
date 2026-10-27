@@ -26,7 +26,7 @@
 .readiness > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 12px 0; min-width: 0; border-bottom: 1px solid var(--fc-data-line); overflow-wrap: anywhere; }
 .readiness > div > div { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .readiness strong { font-size: 14px; }
-.readiness em { font-size: 11px; color: var(--fc-data-text-muted); font-style: normal; }
+.readiness em { font-size: 12px; color: var(--fc-data-text-muted); font-style: normal; }
 .readiness span, .muted { color: var(--fc-data-text-muted); font-size: 13px; }
 .readiness > div > span { text-align: right; max-width: 155px; }
 .readiness [data-ready='true'] > span { color: var(--fc-data-status-success); }

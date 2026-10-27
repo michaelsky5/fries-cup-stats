@@ -18,7 +18,7 @@
 .topicTabs button { display: grid; grid-template-columns: 25px minmax(0,1fr); align-items: center; gap: 12px; min-width: 0; height: 76px; padding: 12px 16px; border: 1px solid var(--fc-data-line-strong); background: transparent; text-align: left; transition: background var(--fc-data-motion-quick), color var(--fc-data-motion-quick); }
 .topicNumber { font: 900 25px var(--fc-data-font-display); color: var(--fc-data-text-muted); }
 .topicTabs b { font-size: 16px; font-weight: 700; line-height: 1.3; white-space: nowrap; }
-.topicTabs small { display: block; margin-top: 6px; font-size: 11px; line-height: 1.5; color: var(--fc-data-text-muted); }
+.topicTabs small { display: block; margin-top: 6px; font-size: 12px; line-height: 1.5; color: var(--fc-data-text-muted); }
 .topicTabs button[aria-pressed='true'] { background: var(--fc-data-ink); border-color: var(--fc-data-ink); color: var(--fc-data-paper); box-shadow: inset 0 -3px var(--fc-data-signal); }
 .topicTabs button[aria-pressed='true'] .topicNumber { color: var(--fc-data-signal); }
 .topicTabs button[aria-pressed='true'] small { color: var(--fc-data-text-on-dark); }
@@ -37,7 +37,7 @@
 .method p { font-size: 14px; line-height: 1.9; margin-bottom: 18px !important; max-width: 80em; color: var(--fc-data-text-muted); }
 .playerPeek { border-top: 2px solid var(--fc-data-ink); padding-top: 28px; margin-top: 40px; scroll-margin-top: var(--performance-scroll); min-width: 0; }
 .playerHeader { display: flex; justify-content: space-between; align-items: end; gap: 24px; }
-.playerHeader > div > span { font: 11px var(--fc-data-font-system); letter-spacing: .05em; color: var(--fc-data-text-muted); }
+.playerHeader > div > span { font: 12px var(--fc-data-font-system); letter-spacing: .05em; color: var(--fc-data-text-muted); }
 .playerHeader h2 { font-size: clamp(26px,2.5vw,34px); line-height: 1.3; letter-spacing: -.04em; margin-top: 9px !important; }
 .playerHeader label { display: flex; align-items: center; gap: 14px; font-size: 13px; white-space: nowrap; min-width: 0; }
 .playerHeader select { max-width: 260px; min-width: 180px; }
@@ -51,7 +51,7 @@
 .playerName > span { font-size: 13px; color: var(--fc-data-signal); }
 .playerName h3 { font: 900 clamp(38px,4vw,58px)/1.07 var(--fc-data-font-display); overflow-wrap: anywhere; margin-top: 23px !important; }
 .playerName p { font-size: 13px; line-height: 1.8; color: var(--fc-data-text-on-dark); margin-top: 22px !important; max-width: 16em; }
-.heroNote { position: absolute; bottom: 22px; left: 28px; right: 22px; font-size: 11px; line-height: 1.7; color: var(--fc-data-text-on-dark); }
+.heroNote { position: absolute; bottom: 22px; left: 28px; right: 22px; font-size: 12px; line-height: 1.7; color: var(--fc-data-text-on-dark); }
 .playerMeasures { min-width: 0; padding: 20px 28px 4px; }
 .measureLabels, .playerMeasures > button { display: grid; grid-template-columns: minmax(76px,1fr) repeat(2,minmax(0,1.2fr)) minmax(104px,.9fr); align-items: center; column-gap: 18px; }
 .measureLabels { color: var(--fc-data-text-muted); font-size: 12px; padding: 0 0 14px; }
@@ -59,7 +59,7 @@
 .playerMeasures > button { width: 100%; min-height: 86px; border: 0; border-top: 1px solid var(--fc-data-line-strong); background: transparent; padding: 16px 0; text-align: left; transition: background var(--fc-data-motion-quick); }
 .playerMeasures > button:hover { background: var(--fc-data-paper-deep); }
 .metricName { font-size: 15px; font-weight: 650; }
-.metricName small { display: block; font-size: 11px; font-weight: 400; color: var(--fc-data-text-muted); margin-top: 6px; }
+.metricName small { display: block; font-size: 12px; font-weight: 400; color: var(--fc-data-text-muted); margin-top: 6px; }
 .metricOwn, .metricReference { display: flex; flex-direction: column; align-items: end; min-width: 0; }
 .metricOwn > b { font: 900 38px/1 var(--fc-data-font-display); }
 .metricReference > b { font: 900 29px/1 var(--fc-data-font-display); color: var(--fc-data-text-muted); }
@@ -126,7 +126,7 @@
   .playerName h3 { font-size: 46px; }
   .playerName p { font-size: 13px; }
   .playerArt { left: 33%; right: -17%; }
-  .heroNote { left: 22px; bottom: 19px; font-size: 11px; }
+  .heroNote { left: 22px; bottom: 19px; font-size: 12px; }
   .playerMeasures { padding: 20px 18px 0; }
   .measureLabels { display: block; font-size: 12px; padding-bottom: 12px; }
   .measureLabels > :not(:first-child) { display: none; }

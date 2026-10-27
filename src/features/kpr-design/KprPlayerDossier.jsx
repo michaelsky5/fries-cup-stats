@@ -29,7 +29,7 @@ export default function KprPlayerDossier({ entry, rank, rankScope, mode, modeLab
       <div className={styles.dossierRating}><span>{getSeasonRatingLabel(entry, locale)}</span><SeasonRating entry={entry} locale={locale} variant="large" /><p>{sampleMeta || (isEn ? 'Season rating' : uiText("赛季评分", locale))}</p></div>
     </div>
     <div className={styles.dossierActions}>
-      <Link to={withSeason(`/players/${encodeURIComponent(entry.player_id)}?role=${entry.role}`)} state={returnState} onClick={onProfileNavigate}>{isEn ? 'Full player profile' : uiText("查看完整选手档案", locale)}<span aria-hidden="true">↗</span></Link>
+      <Link to={withSeason(`/players/${encodeURIComponent(entry.player_id)}?role=${entry.role}`)} state={returnState} onClick={onProfileNavigate}>{isEn ? 'Full player profile' : uiText("查看完整选手档案", locale)}<span aria-hidden="true">→</span></Link>
       <button type="button" aria-pressed={isCompared} disabled={Boolean(comparisonReason)} onClick={() => onToggleCompare(entry, !isCompared)}>{comparisonReason || (isCompared ? (isEn ? 'Remove from comparison' : uiText("移出比较", locale)) : (isEn ? 'Compare in this role' : uiText("加入同职责比较", locale)))}<span aria-hidden="true">{isCompared ? '✓' : '+'}</span></button>
     </div>
     <dl className={styles.dossierSample}><div><dt>{isEn ? 'Maps played' : uiText("出场地图", locale)}</dt><dd>{entry.roleMapsPlayed || 0}<small>{isEn ? ' maps' : uiText(" 图", locale)}</small></dd></div><div><dt>{isEn ? 'Time played' : uiText("出场时间", locale)}</dt><dd>{Math.round(entry.roleTimeMins || 0)}<small>{isEn ? ' min' : uiText(" 分钟", locale)}</small></dd></div><div><dt>{isEn ? 'Matches' : uiText("参与比赛", locale)}</dt><dd>{entry.roleMatchesPlayed ?? '—'}<small>{isEn ? ' played' : uiText(" 场", locale)}</small></dd></div></dl>

@@ -675,7 +675,7 @@ function SwissSnapshotPanel({ standings, swissRules, locale, displayCount, withS
 
       <div className={styles.swissTableHead}>
         <span>#</span>
-        <span>{ui(locale, '战队', 'Team')}</span>
+        <span>{ui(locale, '队伍', 'Team')}</span>
         <span>W-L</span>
         <span>BHZ</span>
         <span>OMW</span>

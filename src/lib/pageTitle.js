@@ -27,7 +27,8 @@ export function buildFriesCupTitle(pageLabel = DEFAULT_PAGE_LABEL, locale = 'zh-
 export function getDataCenterPageLabel(pathname = '/', search = '') {
   const path = normalizePathname(pathname)
 
-  if (path === '/') return DEFAULT_PAGE_LABEL
+  // 票 2.76: the tab title uses the navigation name (「赛事总览」), not the site name.
+  if (path === '/') return '赛事总览'
   if (path === '/support') return '周赛支持与资金进度'
   if (path === '/play') return '参赛指南'
   if (path === '/guides/weekly-room') return '比赛房指南'
@@ -45,17 +46,17 @@ export function getDataCenterPageLabel(pathname = '/', search = '') {
   if (/^\/players\/[^/]+\/journey$/.test(path)) return '赛季征程'
   if (/^\/players\/[^/]+$/.test(path)) return '选手详情'
   if (path === '/roster') return '参赛阵容'
-  if (path === '/teams') return '参赛战队'
+  if (path === '/teams') return '参赛队伍'
   if (/^\/teams\/[^/]+\/journey$/.test(path)) return '赛季征程'
   if (/^\/teams\/[^/]+\/analysis$/.test(path)) return '竞技分析'
-  if (/^\/teams\/[^/]+$/.test(path)) return '战队详情'
+  if (/^\/teams\/[^/]+$/.test(path)) return '队伍详情'
   if (/^\/staff\/[^/]+$/.test(path)) return '职员档案'
   if (path === '/staff') {
     const params = new URLSearchParams(search)
     const design = getDesignPreview(search)
     if (design === 'original') return '赛事人员'
     return design === 'kpr5' || params.has('group')
-      ? getStaffDirectoryGroup(params) === 'team' ? '战队职员' : '赛事职员'
+      ? getStaffDirectoryGroup(params) === 'team' ? '队伍职员' : '赛事职员'
       : '赛事人员'
   }
   if (path === '/heroes') return '英雄数据'
@@ -74,7 +75,7 @@ export function getDataCenterPageLabel(pathname = '/', search = '') {
 export function getReviewStoryPageLabel(storyType = '') {
   if (storyType === 'person') return '个人赛季回顾'
   if (storyType === 'player') return '选手回顾'
-  if (storyType === 'team') return '战队回顾'
+  if (storyType === 'team') return '队伍回顾'
   if (storyType === 'staff') return '赛事人员回顾'
   if (storyType === 'tournament') return '赛事回顾'
   return '赛季回顾'

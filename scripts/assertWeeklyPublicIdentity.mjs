@@ -95,19 +95,27 @@ test('schedule rows name the playoff round or special phase, never the prelim ma
   assert.equal(getWeeklyRoundLabel({ match_id: 'plain' }, 'zh-CN'), '')
 })
 
-test('Chinese pages lead with the human cycle name and explain formats; English keeps its labels', async () => {
+// 票 2.80: every language leads with the cycle's name from one four-language table; the code is small print.
+test('pages lead with the human cycle name in every language and explain formats in Chinese', async () => {
   const presentation = await import('../src/features/weekly-overview/weeklyPresentation.js')
   const cycle = { id: 'c1', sequence: 1, code: 'C01', name: '第一周期', season_id: 'FCW26' }
   assert.equal(presentation.weeklyCycleTitle(cycle, 'zh-CN'), '第一赛段')
   assert.equal(presentation.weeklyCycleTitle(cycle, 'zh-TW'), '第一賽段')
   assert.equal(presentation.weeklyCycleTitle({ ...cycle, sequence: 2, code: 'C02', name: '' }, 'zh-CN'), '第二赛段')
-  assert.equal(presentation.weeklyCycleTitle(cycle, 'en-US'), 'FCW S1 C1')
+  assert.equal(presentation.weeklyCycleTitle(cycle, 'en-US'), 'Cycle 1')
+  assert.equal(presentation.weeklyCycleTitle(cycle, 'ko-KR'), '사이클 1')
+  // Name-only and code-only records (registration rows, season totals) resolve to the same name.
+  assert.equal(presentation.weeklyCycleTitle({ name: '第二周期' }, 'en-US'), 'Cycle 2')
+  assert.equal(presentation.weeklyCycleTitle({ code: 'C02', name: '第二周期' }, 'zh-TW'), '第二賽段')
+  assert.equal(presentation.weeklyCycleTitle({ code: 'C01' }, 'ko-KR'), '사이클 1')
+  assert.equal(presentation.weeklyCycleTitle({ sequence: 0, name: '试运行' }, 'en-US'), 'Pilot')
   assert.equal(presentation.weeklyCycleCode(cycle), 'FCW S1 C1')
   const final = { match_code: 'FCW26-C01-W06-PO-M04', weekly_context: { phase: 'PLAYOFFS', round_label: '决赛', week_number: 6, cycle_sequence: 1, cycle_name: '第一周期' } }
   // 票 2.49: 晋级加赛 belongs to the playoffs; neither carries a week number.
   assert.equal(presentation.weeklyMatchContextLabel(final, 'zh-CN'), '第一赛段 · 季后赛 · 决赛')
   assert.equal(presentation.weeklyMatchContextLabel(final, 'zh-TW'), '第一賽段 · 季後賽 · 決賽')
-  assert.match(presentation.weeklyMatchContextLabel(final, 'en-US'), /^FCW S1 C1 · Playoffs · Final/)
+  assert.equal(presentation.weeklyMatchContextLabel(final, 'en-US'), 'Cycle 1 · Playoffs · Final')
+  assert.equal(presentation.weeklyMatchContextLabel(final, 'ko-KR'), '사이클 1 · 플레이오프 · 결승')
   const qualifier = { match_code: 'FCW26-C01-W05-QUAL-M01', weekly_context: { phase: 'QUALIFIER', week_number: 5, week_label: '第 5 周', cycle_sequence: 1, cycle_name: '第一周期' } }
   assert.equal(presentation.weeklyMatchContextLabel(qualifier, 'zh-CN'), '第一赛段 · 季后赛 · 晋级加赛')
   const prelim = { match_code: 'FCW26-C01-W03-REG-M02', weekly_context: { phase: 'REGULAR', week_number: 3, cycle_sequence: 1, cycle_name: '第一周期' } }

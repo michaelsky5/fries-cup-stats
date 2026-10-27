@@ -59,7 +59,8 @@
 .championName div > span { display: block; margin-top: 7px; font-size: 9px; color: #919588; }
 .championName div > span > b { margin: 0 9px; color: #575b51; font-weight: 400; }
 .championStatement { margin: 23px 0 22px; color: #a4a797; font-size: 11px; line-height: 1.8; }
-.primaryLink { display: inline-flex; align-items: center; justify-content: space-between; gap: 46px; min-height: 45px; padding: 0 17px; color: var(--stage-black); background: var(--stage-yellow); border: 1px solid var(--stage-yellow); font-size: 12px; font-weight: 700; transition: background .2s, color .2s; }
+/* 票 2.70: same size and weight as the site-wide primary (was 45px, 12px/700). */
+.primaryLink { display: inline-flex; align-items: center; justify-content: space-between; gap: 46px; min-height: var(--fc-data-primary-height, 44px); padding: 0 16px; color: var(--fc-data-primary-text, #181a17); background: var(--fc-data-primary-bg, #f4c320); border: 0; font-size: 14px; font-weight: var(--fc-data-primary-weight, 750); transition: background .2s, color .2s; }
 .primaryLink > span { font-size: 21px; line-height: 1; font-weight: 400; transition: transform .2s; }
 .primaryLink:hover { background: #ffdb5d; }
 .primaryLink:hover > span { transform: translate(2px, -2px); }

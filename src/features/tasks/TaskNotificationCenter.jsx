@@ -150,12 +150,12 @@ export default function TaskNotificationCenter({ activity, identityType = 'VIEWE
 
   if (requestedTask) return <section className={styles.center} aria-label={uiText("待办详情", uiLocale)}>
     <header className={styles.header}><div><span>TASK DETAILS</span><h2>{uiText("待办详情", uiLocale)}</h2><p>{uiText("核对事项与处理身份，完成后继续查看当前队列。", uiLocale)}</p></div></header>
-    <nav className={styles.detailNavigation} aria-label={uiText("待办返回", uiLocale)}><Link to={resolveWorkflowActionUrl('/me?section=overview', withSeason)}>{uiText("← 我的空间", uiLocale)}</Link><Link to={resolveWorkflowActionUrl('/me?section=tasks', withSeason)}>{uiText("全部待办 ↗", uiLocale)}</Link></nav>
+    <nav className={styles.detailNavigation} aria-label={uiText("待办返回", uiLocale)}><Link to={resolveWorkflowActionUrl('/me?section=overview', withSeason)}>{uiText("← 我的空间", uiLocale)}</Link><Link to={resolveWorkflowActionUrl('/me?section=tasks', withSeason)}>{uiText("全部待办 →", uiLocale)}</Link></nav>
     {error ? <div className={styles.error} role="alert"><strong>{uiText("状态尚未确认", uiLocale)}</strong><span>{error}</span><button type="button" onClick={activity.refresh} disabled={loading || Boolean(workingId)}>{uiText("重新同步", uiLocale)}</button></div> : null}
     {selectedTask ? <>
       {selectedTask.status !== 'OPEN' && <div ref={receiptRef} tabIndex={-1} className={styles.completion} role="status" data-status={selectedTask.status}><strong>{TASK_STATUS[selectedTask.status] || uiText("事项已结束", uiLocale)}</strong><span>{selectedTask.closure.detail}</span></div>}
       <TaskCard task={selectedTask} index={0} workingId={workingId} onComplete={finishTask} withSeason={withSeason} focused history={selectedTask.status !== 'OPEN'} />
-      {selectedTask.status !== 'OPEN' && <div className={styles.detailNavigation}><Link to={resolveWorkflowActionUrl(synchronized && !taskView.openTasks.length ? progressAction.url : '/me?section=tasks', withSeason)}>{synchronized ? taskView.openTasks.length ? uiText("继续处理 {0} 项待办", uiLocale, [taskView.openTasks.length]) : progressAction.label : uiText("返回队列核对其余待办", uiLocale)} →</Link><Link to={resolveWorkflowActionUrl('/me?section=tasks&view=history', withSeason)}>{uiText("查看处理记录 ↗", uiLocale)}</Link></div>}
+      {selectedTask.status !== 'OPEN' && <div className={styles.detailNavigation}><Link to={resolveWorkflowActionUrl(synchronized && !taskView.openTasks.length ? progressAction.url : '/me?section=tasks', withSeason)}>{synchronized ? taskView.openTasks.length ? uiText("继续处理 {0} 项待办", uiLocale, [taskView.openTasks.length]) : progressAction.label : uiText("返回队列核对其余待办", uiLocale)} →</Link><Link to={resolveWorkflowActionUrl('/me?section=tasks&view=history', withSeason)}>{uiText("查看处理记录 →", uiLocale)}</Link></div>}
     </> : loading ? <p className={styles.loading} role="status">{uiText("正在核对这项待办…", uiLocale)}</p> : <div className={styles.emptyState}><strong>{synchronized ? uiText("这项待办当前不可用", uiLocale) : uiText("这项待办尚未同步", uiLocale)}</strong><p>{synchronized ? uiText("事项可能已经更新，或不属于当前账号与赛事。请从当前待办重新选择。", uiLocale) : uiText("同步完成后才能确认处理状态，请重新同步后核对。", uiLocale)}</p></div>}
   </section>
 
@@ -242,7 +242,7 @@ export default function TaskNotificationCenter({ activity, identityType = 'VIEWE
         </>
       ) : null}
       {view === 'open' && <>
-        {communicationsVisible && <aside className={styles.taskGuide} aria-label={uiText("这里需要你操作", uiLocale)}><p>{uiText("在对应流程处理后，待办会自动同步。", uiLocale)}</p><Link to={resolveWorkflowActionUrl('/me?section=communications&view=messages', withSeason)}>{uiText("只需知道的内容在赛事消息 ↗", uiLocale)}</Link></aside>}
+        {communicationsVisible && <aside className={styles.taskGuide} aria-label={uiText("这里需要你操作", uiLocale)}><p>{uiText("在对应流程处理后，待办会自动同步。", uiLocale)}</p><Link to={resolveWorkflowActionUrl('/me?section=communications&view=messages', withSeason)}>{uiText("只需知道的内容在赛事消息 →", uiLocale)}</Link></aside>}
         {children}
       </>}
     </section>

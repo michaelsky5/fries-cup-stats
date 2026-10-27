@@ -152,7 +152,7 @@ export default function KprLeaderboard({
     <section className={styles.awaitingRecords} aria-labelledby="ranking-awaiting-title">
       <span>AWAITING RECORDS</span><h2 id="ranking-awaiting-title">{isEn ? 'Player statistics are not available yet.' : uiText("选手统计尚未公布。", locale)}</h2>
       <p>{isEn ? 'No player statistics have been published for this season yet. Rankings will appear here once records are available.' : uiText("本赛季尚无已公开的选手统计。记录公布后，这里会呈现各职责的赛季表现。", locale)}</p>
-      <div><Link to={withSeason('/matches')}>{isEn ? 'Explore the schedule' : uiText("先看赛程赛果", locale)} <span aria-hidden="true">↗</span></Link><Link to={withSeason('/roster')}>{isEn ? 'Meet the field' : uiText("认识参赛阵容", locale)} <span aria-hidden="true">↗</span></Link></div>
+      <div><Link to={withSeason('/matches')}>{isEn ? 'Explore the schedule' : uiText("先看赛程赛果", locale)} <span aria-hidden="true">→</span></Link><Link to={withSeason('/roster')}>{isEn ? 'Meet the field' : uiText("认识参赛阵容", locale)} <span aria-hidden="true">→</span></Link></div>
     </section>
   </div>
 
@@ -243,7 +243,7 @@ export default function KprLeaderboard({
               </div>
             </li>
           })}</ol> : null}
-        </> : <div className={styles.emptyState}><span>{summary.totalEntries ? 'NO RESULTS / 00' : 'AWAITING RECORDS'}</span><h3>{summary.totalEntries ? (isEn ? 'No matching players.' : uiText("没有符合条件的选手。", locale)) : (isEn ? 'Rankings are not available yet.' : uiText("本赛季尚无可排行数据。", locale))}</h3><p>{summary.totalEntries ? (isEn ? 'Try another name, role or team.' : uiText("试试其他名字、职责或队伍。", locale)) : (isEn ? 'Player rankings will appear when match statistics are published.' : uiText("比赛统计公开后，将在这里呈现选手的职责表现。", locale))}</p>{hasFilters ? <button type="button" onClick={onReset}>{isEn ? 'Clear filters' : uiText("清空筛选", locale)} ↗</button> : null}</div>}
+        </> : <div className={styles.emptyState}><span>{summary.totalEntries ? 'NO RESULTS / 00' : 'AWAITING RECORDS'}</span><h3>{summary.totalEntries ? (isEn ? 'No matching players.' : uiText("没有符合条件的选手。", locale)) : (isEn ? 'Rankings are not available yet.' : uiText("本赛季尚无可排行数据。", locale))}</h3><p>{summary.totalEntries ? (isEn ? 'Try another name, role or team.' : uiText("试试其他名字、职责或队伍。", locale)) : (isEn ? 'Player rankings will appear when match statistics are published.' : uiText("比赛统计公开后，将在这里呈现选手的职责表现。", locale))}</p>{hasFilters ? <button type="button" onClick={onReset}>{isEn ? 'Clear filters' : uiText("清空筛选", locale)}</button> : null}</div>}
         <div className={styles.pagination}>
           <span>{start}–{end} <b>/ {pagination.totalRows}</b></span>
           <label className={styles.pageSize}><span>{isEn ? 'Rows' : uiText("每页", locale)}</span><select aria-label={isEn ? 'Rows per page' : uiText("每页条数", locale)} value={pagination.pageSize} onChange={event => onPageSizeChange(Number(event.target.value))}>{pageSizeOptions.map(size => <option key={size} value={size}>{size}</option>)}</select></label>
@@ -259,7 +259,7 @@ export default function KprLeaderboard({
       <div className={styles.dockPlayers}>{selectedCompareEntries.map(entry => <button key={entry.entryKey} type="button" onClick={() => onToggleCompare(entry, false)} aria-label={`${isEn ? 'Remove from comparison' : uiText("移出比较", locale)}：${playerLabel(entry)}`}>{playerLabel(entry)}<span>×</span></button>)}</div>
       {selectedCompareEntries.length >= 2 && activeRole !== compareRole ? <button type="button" className={styles.sameRoleButton} onClick={findComparisonCandidates}>{isEn ? 'Find same role' : uiText("找同职责选手", locale)}</button> : null}
       <button type="button" className={styles.clearCompare} onClick={onClearCompare}>{isEn ? 'Clear' : uiText("清空", locale)}</button>
-      <button type="button" className={styles.openCompare} onClick={selectedCompareEntries.length < 2 ? findComparisonCandidates : onOpenCompare}>{selectedCompareEntries.length < 2 ? (isEn ? 'Find same role' : uiText("找同职责选手", locale)) : (isEn ? 'Compare players' : uiText("展开比较", locale))} <b aria-hidden="true">{selectedCompareEntries.length < 2 ? '+' : '↗'}</b></button>
+      <button type="button" className={styles.openCompare} onClick={selectedCompareEntries.length < 2 ? findComparisonCandidates : onOpenCompare}>{selectedCompareEntries.length < 2 ? (isEn ? 'Find same role' : uiText("找同职责选手", locale)) : (isEn ? 'Compare players' : uiText("展开比较", locale))} <b aria-hidden="true">{selectedCompareEntries.length < 2 ? '+' : '→'}</b></button>
     </div> : null}
     {compareWarning ? <div role="status" className={styles.compareWarning}>{isEn ? 'Select 2–4 players in the same role.' : compareWarning}</div> : null}
     <KprDialog open={mobileOpen && Boolean(selected)} onClose={() => setMobileOpen(false)} title={isEn ? 'Player preview' : uiText("选手预览", locale)} compact locale={locale}><KprPlayerDossier {...dossierProps} id="kpr-mobile-dossier" /></KprDialog>

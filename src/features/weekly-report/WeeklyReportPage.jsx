@@ -50,7 +50,7 @@ export default function WeeklyReportPage() {
     {(loading || error || (weekId ? !issue : !issues.length)) && <section className={styles.unavailable} role={error ? 'alert' : 'status'}>
       <h2>{!weekly ? pickUiLocale(locale, '当前赛事暂无周报', 'No weekly reports for this event', '이 대회에는 주간 신문이 없습니다', '目前賽事暫無週報') : loading ? t('正在读取周报…', 'Loading the issue…') : error ? t('周报暂时无法读取', 'The issue could not be loaded') : t('本期周报尚未出刊', 'This issue has not been published')}</h2>
       <p>{weekly && (error ? t('请稍后刷新重试。', 'Please refresh and retry.') : !loading ? t('每周二 12:00（UTC+8）出刊。', 'Published Tuesdays at 12:00 (UTC+8).') : '')}</p>
-      <Link className={styles.textLink} to={home}>{t('返回赛事总览', 'Return to the overview')} →</Link>
+      {/* 票 2.72: the breadcrumb row above already returns to the overview, so the empty state no longer repeats it. */}
     </section>}
     <div className={styles.archiveList}>{archiveIssues.map(item => {
       const published = item.report

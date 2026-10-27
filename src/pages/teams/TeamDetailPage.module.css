@@ -180,7 +180,7 @@
 .focusDossier span,
 .heroFormBlock span {
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.12em;
   line-height: 1;
@@ -288,7 +288,7 @@
 
 .staffIdentityItem small {
   color: rgba(255, 255, 255, 0.48);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1;
 }
@@ -330,7 +330,7 @@
 
 .heroMetaStrip strong {
   color: rgba(255, 255, 255, 0.52);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.1em;
   line-height: 1;
@@ -469,7 +469,7 @@
 
 .heroIntelFacts em {
   color: rgba(255, 255, 255, 0.56);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.08em;
@@ -510,7 +510,7 @@
   padding: 0 8px;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.1em;
 }
@@ -651,7 +651,7 @@
 .profileList strong,
 .headerMetric em {
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
   line-height: 1;
@@ -742,7 +742,7 @@
 .panelHead span,
 .panelHead a {
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.12em;
   line-height: 1;
@@ -815,7 +815,7 @@
 .mapIntelKicker,
 .mapIntelNote span {
   color: rgba(255, 255, 255, 0.62);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.1em;
@@ -876,7 +876,7 @@
   padding: 0 8px;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -918,7 +918,7 @@
 
 .mapIntelGrid em {
   color: rgba(255, 255, 255, 0.58);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
   line-height: 1.2;
@@ -1053,7 +1053,7 @@
   padding: 0 8px;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.02em;
   line-height: 1;
@@ -1152,7 +1152,7 @@
   background: rgba(244, 195, 32, 0.12);
   border: 1px solid rgba(244, 195, 32, 0.36);
   color: var(--portal-yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   white-space: nowrap;
@@ -1265,7 +1265,7 @@
 
 .coreRosterMeta em {
   color: rgba(255, 255, 255, 0.48);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.04em;
@@ -1386,7 +1386,7 @@
 
 .scheduleSubhead span {
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.12em;
   line-height: 1;
@@ -1468,7 +1468,7 @@
 .focusMatchMain b,
 .focusMatchHint em {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.08em;
@@ -1553,7 +1553,7 @@
 
 .focusMatchPrep em {
   color: rgba(255, 255, 255, 0.54);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.08em;
@@ -1613,7 +1613,7 @@
 
 .focusMatchStats em {
   color: rgba(255, 255, 255, 0.52);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
   line-height: 1;
@@ -1676,7 +1676,7 @@
   justify-content: center;
   border: 2px solid var(--portal-border);
   color: var(--portal-ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1727,7 +1727,7 @@
   min-width: 0;
   display: block;
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1.1;
   overflow: hidden;
@@ -1898,7 +1898,7 @@
   padding: 0 9px;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -1950,7 +1950,7 @@
 
 .rosterPlayerPerformance > em {
   color: rgba(255, 255, 255, 0.54);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -1975,7 +1975,7 @@
 
 .rosterPlayerPerformance small {
   color: rgba(255, 255, 255, 0.46);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   white-space: nowrap;
@@ -2017,7 +2017,7 @@
 
 .rosterPlayerMeta em {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -2029,7 +2029,7 @@
   padding: 0;
   border-right: 0;
   color: rgba(255, 255, 255, 0.54);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -2175,12 +2175,12 @@
 .tacticalIdentity > b,
 .tacticalSubhead em {
   color: var(--portal-yellow);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .tacticalEyebrow small {
   color: rgba(255, 255, 255, 0.46);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .tacticalIdentity > strong {
@@ -2232,7 +2232,7 @@
 
 .tacticalMetaStrip em {
   color: rgba(255, 255, 255, 0.42);
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .tacticalMetaStrip strong {
@@ -2289,7 +2289,7 @@
 
 .tacticalAxisRow em {
   color: rgba(255, 255, 255, 0.48);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -2326,7 +2326,7 @@
 
 .tacticalAxisRow > small {
   color: rgba(255, 255, 255, 0.3);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.06em;
 }
@@ -2381,7 +2381,7 @@
 .recordedCompCardHead em,
 .recordedCompCardMeta em {
   color: rgba(255, 255, 255, 0.46);
-  font-size: 7px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.05em;
@@ -2477,7 +2477,7 @@
   right: 6px;
   bottom: 5px;
   color: rgba(255, 255, 255, 0.72);
-  font-size: 7px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -2486,7 +2486,7 @@
 .recordedCompHero strong {
   max-width: 100%;
   color: var(--fc-white);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1.1;
   overflow: hidden;
@@ -2496,7 +2496,7 @@
 
 .recordedCompHero em {
   color: var(--portal-yellow);
-  font-size: 7px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   text-transform: uppercase;
@@ -2543,14 +2543,14 @@
 .recordedCompsMethod strong {
   flex: 0 0 auto;
   color: var(--portal-yellow);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.06em;
 }
 
 .recordedCompsMethod span {
   color: rgba(255, 255, 255, 0.48);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1.35;
   text-align: right;
@@ -2573,7 +2573,7 @@
 
 .recordedCompsEmpty span {
   color: rgba(255, 255, 255, 0.45);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .coachingWorkbench {
@@ -2614,7 +2614,7 @@
 
 .coachingNote em {
   color: var(--portal-yellow);
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.08em;
@@ -2634,7 +2634,7 @@
 .coachingNote p {
   margin: 0;
   color: rgba(255, 255, 255, 0.5);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 750;
   line-height: 1.45;
 }
@@ -2697,7 +2697,7 @@
   padding: 7px 9px;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -2722,7 +2722,7 @@
 
 .playerStyleIdentity small {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -2735,7 +2735,7 @@
 .playerStyleReadout em,
 .playerStylePercentile em {
   color: rgba(255, 255, 255, 0.38);
-  font-size: 7px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.06em;
@@ -2749,7 +2749,7 @@
 
 .playerStyleReadout small {
   color: rgba(255, 255, 255, 0.58);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -2798,7 +2798,7 @@
 .teamDataSummary em,
 .teamDataSummary small {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.08em;
@@ -2850,7 +2850,7 @@
 
 .statsSectionHead em {
   color: var(--portal-yellow);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.1em;
@@ -2867,7 +2867,7 @@
 
 .statsSectionHead > small {
   color: rgba(255, 255, 255, 0.48);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1.2;
   text-align: right;
@@ -2921,7 +2921,7 @@
 
 .combatMetricHead small {
   color: rgba(255, 255, 255, 0.34);
-  font-size: 8px;
+  font-size: 12px;
   white-space: nowrap;
 }
 
@@ -2934,7 +2934,7 @@
 
 .combatMetricDelta {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1;
 }
@@ -2974,7 +2974,7 @@
 
 .combatMetricFoot {
   color: rgba(255, 255, 255, 0.4);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1;
 }
@@ -3021,7 +3021,7 @@
 .mapModeIdentity em,
 .mapModeRecord em {
   color: rgba(255, 255, 255, 0.46);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
   line-height: 1;
@@ -3098,7 +3098,7 @@
   justify-content: center;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -3114,7 +3114,7 @@
 
 .teamMapInfo > small {
   color: var(--portal-yellow);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
   line-height: 1;
@@ -3165,7 +3165,7 @@
 
 .teamMapMetrics em {
   color: rgba(255, 255, 255, 0.42);
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
   line-height: 1.1;
@@ -3188,7 +3188,7 @@
   place-items: center;
   background: rgba(255, 255, 255, 0.1);
   color: var(--fc-white);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -3199,7 +3199,7 @@
 
 .teamMapLatest em {
   min-width: 0;
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
   overflow: hidden;
@@ -3267,7 +3267,7 @@
 .matchLedgerSummary em,
 .matchLedgerSummary small {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.08em;
@@ -3303,7 +3303,7 @@
 
 .matchLedgerToolbar > div:first-child span {
   color: var(--portal-yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.12em;
   line-height: 1;
@@ -3342,7 +3342,7 @@
 
 .matchFilters button span {
   color: inherit;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .matchFilters .matchFilterActive {
@@ -3447,7 +3447,7 @@
 
 .seasonMatchRound em {
   color: rgba(255, 255, 255, 0.54);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -3479,7 +3479,7 @@
 
 .seasonMatchLogo b {
   color: inherit;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -3513,7 +3513,7 @@
 .seasonMatchOpponent small,
 .seasonMatchOpponent em {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 850;
   line-height: 1;
@@ -3521,7 +3521,7 @@
 
 .seasonMatchMaps em {
   color: var(--portal-yellow);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   letter-spacing: 0.08em;
@@ -3546,7 +3546,7 @@
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.14);
   color: rgba(255, 255, 255, 0.72);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1;
   overflow: hidden;
@@ -3564,7 +3564,7 @@
   flex: 0 0 auto;
   margin-left: auto;
   color: rgba(255, 255, 255, 0.48);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -3577,7 +3577,7 @@
   place-items: center;
   background: rgba(255, 255, 255, 0.12);
   color: var(--fc-white);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -3605,7 +3605,7 @@
 
 .seasonMatchMapEmpty {
   color: rgba(255, 255, 255, 0.48);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 20px;
 }
@@ -3737,7 +3737,7 @@
 
 .timelineLogo b {
   color: inherit;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -3763,7 +3763,7 @@
   min-width: 0;
   display: block;
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1.1;
   overflow: hidden;
@@ -4381,7 +4381,7 @@
   }
 
   .recordedCompHero strong {
-    font-size: 9px;
+    font-size: 12px;
   }
 
   .recordedCompCardHeroes {
@@ -4471,7 +4471,7 @@
 
   .seasonMatchRound em {
     max-width: 36px;
-    font-size: 7px;
+    font-size: 12px;
   }
 
   .seasonMatchLogo {

@@ -10,11 +10,11 @@
   border-bottom: 1px solid #3d3d3d;
   background: #232323;
   color: #f3f3e9;
-  font: 500 11px/1.3 var(--font-sans);
+  font: 500 12px/1.3 var(--font-sans);
 }
 
 .identity { display: flex; align-items: center; gap: 14px; }
-.identity b { color: #f4c320; font-size: 10px; letter-spacing: .08em; }
+.identity b { color: #f4c320; font-size: 12px; letter-spacing: .08em; }
 .identity span { letter-spacing: .12em; }
 .identity em { color: #b4b4b4; font-style: normal; }
 .bar nav { display: flex; align-items: center; gap: 2px; }
@@ -36,10 +36,10 @@
   .identity { display: none; }
   .bar nav { width: 100%; overflow-x: auto; scrollbar-width: none; }
   .bar nav::-webkit-scrollbar { display: none; }
-  .bar nav a { flex: 0 0 auto; padding: 0 8px; font-size: 10px; }
+  .bar nav a { flex: 0 0 auto; padding: 0 8px; font-size: 12px; }
 }
 
 @media (max-width: 360px) {
   .bar nav { min-width: 0; flex: 1; }
-  .bar nav a { padding: 0 5px; font-size: 9px; white-space: nowrap; }
+  .bar nav a { padding: 0 5px; font-size: 12px; white-space: nowrap; }
 }

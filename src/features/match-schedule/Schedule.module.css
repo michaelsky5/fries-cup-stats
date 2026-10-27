@@ -9,7 +9,7 @@
 .nav a[aria-current="page"]::after { position: absolute; content: ''; bottom: -1px; left: 0; right: 0; height: 3px; background: var(--fc-data-signal); }
 .nav a:hover { color: var(--fc-data-ink); background: var(--fc-data-paper-raised); }
 .heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding: 22px 0 26px; }
-.kicker { color: var(--fc-data-text-muted); font: 11px/1.5 var(--fc-data-font-interface); letter-spacing: .04em; }
+.kicker { color: var(--fc-data-text-muted); font: 12px/1.5 var(--fc-data-font-interface); letter-spacing: .04em; }
 .heading h1 { margin-top: 8px; font: 900 clamp(34px, 3.5vw, 54px)/1.15 var(--fc-data-font-interface); letter-spacing: -.05em; }
 .heading h1 span { color: var(--fc-data-text-muted); }
 .headingAside { text-align: right; }
@@ -31,11 +31,11 @@
 .team > small { max-width: 100%; font-size: 12px; line-height: 1.5; color: var(--fc-data-text-dark-muted); overflow-wrap: anywhere; }
 .score { display: grid; justify-items: center; gap: 12px; text-align: center; }
 .score > strong { white-space: nowrap; font: 900 clamp(58px, 6vw, 88px)/.95 var(--fc-data-font-display); letter-spacing: -.035em; }
-.score > span { font-size: 11px; color: var(--fc-data-text-dark-muted); }
+.score > span { font-size: 12px; color: var(--fc-data-text-dark-muted); }
 .maps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; list-style: none; padding: 0; margin: 0 0 18px; }
 .maps li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--fc-data-line-on-dark); font-size: 12px; line-height: 1.5; }
 .maps li > span { min-width: 0; overflow-wrap: anywhere; }
-.maps i { margin-right: 8px; color: var(--fc-data-text-dark-muted); font: normal 10px var(--fc-data-font-interface); }
+.maps i { margin-right: 8px; color: var(--fc-data-text-dark-muted); font: normal 12px var(--fc-data-font-interface); }
 .maps b { font-weight: 600; white-space: nowrap; }
 .spotlight > footer, .featureCard > footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .spotlight > footer { min-height: 54px; padding: 14px 0; border-top: 1px solid var(--fc-data-line-on-dark); }
@@ -50,7 +50,7 @@
 .stageLinks h3 { margin-bottom: 8px; color: var(--fc-data-text-muted); font-size: 12px; font-weight: 400; }
 .stageLinks a { display: flex; align-items: baseline; gap: 12px; min-height: 45px; padding: 11px 0; border-top: 1px solid var(--fc-data-line); color: var(--fc-data-ink); font-size: 13px; }
 .stageLinks b { margin-left: auto; font: 800 22px/1 var(--fc-data-font-display); }
-.stageLinks small { font: 11px var(--fc-data-font-interface); color: var(--fc-data-text-muted); }
+.stageLinks small { font: 12px var(--fc-data-font-interface); color: var(--fc-data-text-muted); }
 .stageLinks i { font-size: 14px; color: var(--fc-data-text-muted); }
 .stageLinks a:hover > span { text-decoration: underline; text-underline-offset: 4px; }
 .allMatches { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 46px; padding: 12px 16px; margin-top: auto; background: var(--fc-data-ink); color: var(--fc-data-paper); font-size: 13px; --fc-data-focus: var(--fc-data-focus-on-dark); }
@@ -61,7 +61,7 @@
 .more > header > p { color: var(--fc-data-text-muted); font-size: 13px; line-height: 1.6; }
 .focusCards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .featureCard { display: flex; flex-direction: column; min-width: 0; padding: 22px 26px 0; background: var(--fc-data-paper-raised); border: 1px solid var(--fc-data-line); border-top: 3px solid var(--fc-data-ink); color: var(--fc-data-ink); }
-.featureCard > header { color: var(--fc-data-text-muted); font-size: 11px; }
+.featureCard > header { color: var(--fc-data-text-muted); font-size: 12px; }
 .featureCard h3 { margin-top: 18px; font-size: clamp(24px, 2.6vw, 34px); font-weight: 800; line-height: 1.2; letter-spacing: -.035em; }
 .shell .featureReason { margin: 0 0 16px; color: var(--fc-data-text-muted); font-size: 13px; line-height: 1.7; }
 .featureCard .duel { flex: 1; padding: 26px 0; gap: 14px; }
@@ -70,7 +70,7 @@
 .featureCard .score { gap: 8px; }
 .featureCard .score > strong { font-size: 46px; }
 .featureCard .score > span { color: var(--fc-data-text-muted); }
-.featureCard > footer { min-height: 48px; padding: 12px 0; border-top: 1px solid var(--fc-data-line); font-size: 11px; color: var(--fc-data-text-muted); }
+.featureCard > footer { min-height: 48px; padding: 12px 0; border-top: 1px solid var(--fc-data-line); font-size: 12px; color: var(--fc-data-text-muted); }
 .featureCard > footer b { font-size: 12px; font-weight: 600; color: var(--fc-data-ink); white-space: nowrap; }
 .featureCard:hover > footer b { text-decoration: underline; text-underline-offset: 4px; }
 .otherRecords { margin-top: 30px; }
@@ -82,7 +82,7 @@
 .compactRecord { display: grid; grid-template-columns: minmax(140px, .7fr) minmax(0, 2fr) minmax(150px, .8fr) 18px; align-items: center; gap: 20px; min-width: 0; padding: 18px 12px; border-bottom: 1px solid var(--fc-data-line); color: var(--fc-data-ink); }
 .recordMeta { display: grid; gap: 6px; min-width: 0; font-size: 13px; line-height: 1.5; }
 .recordMeta strong { font-weight: 500; }
-.recordMeta time { font-size: 11px; color: var(--fc-data-text-muted); }
+.recordMeta time { font-size: 12px; color: var(--fc-data-text-muted); }
 .compactRecord .duel { gap: 14px; }
 .compactRecord .team { display: flex; flex-direction: row; gap: 10px; justify-content: center; align-items: center; }
 .compactRecord .team[data-side="A"] { flex-direction: row-reverse; }
@@ -132,13 +132,13 @@
   .spotlight .duel { padding: 24px 0; gap: 8px; }
   .logoWell { width: 56px; height: 56px; padding: 6px; }
   .team > strong { font-size: clamp(25px, 7vw, 32px); }
-  .team > small { font-size: 11px; }
+  .team > small { font-size: 12px; }
   .score > strong { font-size: clamp(46px, 13vw, 62px); }
-  .score > span { font-size: 11px; }
+  .score > span { font-size: 12px; }
   .maps { column-gap: 16px; }
-  .maps li { font-size: 11px; gap: 8px; }
+  .maps li { font-size: 12px; gap: 8px; }
   .maps i { display: none; }
-  .spotlight > footer > span { font-size: 11px; }
+  .spotlight > footer > span { font-size: 12px; }
   .spotlight > footer b { font-size: 12px; }
   .more { margin-top: 30px; }
   .more > header { align-items: flex-start; flex-direction: column; gap: 8px; padding-bottom: 16px; }
@@ -159,7 +159,7 @@
   .compactRecord .team > strong { font-size: 26px; }
   .compactRecord .duel { gap: 10px; }
   .compactRecord .score > strong { font-size: 34px; }
-  .recordReason { font-size: 11px; text-align: center; }
+  .recordReason { font-size: 12px; text-align: center; }
   .recordArrow { position: absolute; top: 14px; right: 0; }
-  .sourceNote { font-size: 11px; }
+  .sourceNote { font-size: 12px; }
 }

@@ -63,7 +63,6 @@ function MobileNavItem({ item, activeGroup, locale, to, accountAttention, follow
       <span className={styles.mobileNavItemLabel}>{label}</span>
       <span className={styles.mobileNavItemMeta}>
         {item.group === 'space' ? <AccountAttentionBadge attention={accountAttention} /> : null}
-        {label !== item.en ? <em className={styles.mobileNavItemEnglish}>{item.en}</em> : null}
       </span>
     </Link>
   )
@@ -218,11 +217,12 @@ export default function PublicHeader({ isKprHybridDesign = true, mobileMenuRef, 
           </nav>
 
           <details ref={menuRef} className={styles.mobileNavMenu} data-upgrade-menu data-i18n-ignore>
-            <summary>
+            <summary aria-label={`${currentLabel} · ${pickUiLocale(layoutLocale, '菜单', 'Menu', '메뉴', '選單')}`}>
               <span className={styles.mobileNavCurrent}>{currentLabel}</span>
               <span className={styles.mobileNavSummaryMeta}>
                 {isKprHybridDesign ? null : <AccountAttentionBadge attention={accountAttention} />}
-                <b className={styles.mobileMenuLabel}>MENU</b>
+                {/* 票 2.80: a menu icon instead of the English word MENU. */}
+                <b className={styles.mobileMenuLabel} aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" strokeWidth="1.8" /></svg></b>
               </span>
             </summary>
             <nav className={styles.mobileNavPanel} aria-label={pickUiLocale(layoutLocale, '赛事中心菜单', 'Event menu', '대회 센터 메뉴', '賽事中心選單')}>

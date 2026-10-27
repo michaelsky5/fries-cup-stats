@@ -13,7 +13,7 @@
 .ban > i::after { content: ''; position: absolute; top: 50%; left: -2px; width: 28px; height: 2px; background: var(--fc-data-status-danger); transform: rotate(-45deg); }
 .ban .avatar { width: 24px; height: 24px; filter: grayscale(1); }
 .teamBest { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; min-width: 0; font-size: 12px; line-height: 1.5; }
-.teamBest > span { flex-shrink: 0; color: var(--fc-data-text-muted); font-size: 11px; letter-spacing: .03em; }
+.teamBest > span { flex-shrink: 0; color: var(--fc-data-text-muted); font-size: 12px; letter-spacing: .03em; }
 .teamBest > div { display: flex; flex-wrap: wrap; gap: 3px 10px; min-width: 0; }
 .teamBest strong { font-weight: 600; overflow-wrap: anywhere; }
 .teamBest strong + strong { padding-left: 10px; border-left: 1px solid var(--fc-data-line-strong); }
@@ -73,14 +73,14 @@ a.identity:hover strong { text-decoration: underline; }
 .compactIdentity { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .compactIdentity > span:last-child { display: grid; gap: 4px; min-width: 0; }
 .compactIdentity strong { font-size: 15px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
-.compactIdentity small { color: var(--fc-data-text-muted); font-size: 11px; line-height: 1.4; overflow-wrap: anywhere; }
+.compactIdentity small { color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
 .compactIdentity:hover strong { text-decoration: underline; }
 .compactRating { display: grid; align-content: center; justify-items: end; gap: 4px; }
-.compactRating > span { color: var(--fc-data-text-muted); font-size: 10px; }
+.compactRating > span { color: var(--fc-data-text-muted); font-size: 12px; }
 .compactRating strong { font-size: 26px; }
 .compactMetrics { grid-column: 1 / -1; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 5px 16px; margin: 0; padding-left: 41px; font-variant-numeric: tabular-nums; }
 .compactMetrics > div { display: flex; align-items: baseline; gap: 7px; }
-.compactMetrics dt { color: var(--fc-data-text-muted); font-size: 10px; }
+.compactMetrics dt { color: var(--fc-data-text-muted); font-size: 12px; }
 .compactMetrics dd { margin: 0; font-size: 12px; font-weight: 600; white-space: nowrap; }
 .compactEmpty { margin: 0; padding: 16px 12px; font-size: 13px; line-height: 1.7; }
 @container map-stats (min-width: 1218px) {

@@ -3,6 +3,7 @@ import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useBlocker, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
+import { requestSignIn } from '../auth/signInRequest.js'
 import { startVisiblePolling } from '../../lib/visiblePolling.js'
 import { useLobbyMine } from './useLobbyState.js'
 import { accountFailure, lobbyDate, leavesLobbyPage, lobbyReadFailure, retryableRead, uncertainWrite, contactStatus, contactReason, contactResultKind } from './lobbyModel.js'
@@ -46,7 +47,7 @@ export function ContactEntry({ card }) {
   const [open, setOpen] = useState(false)
   const destination = `/lobby/cards/${card.publicId}`
   if (isBootstrapping) return <p role="status">{t("正在读取账号…")}</p>
-  if (!user) return <><h2>{t("申请联系")}</h2><p>{t("登录后可以表达联系意愿，正式入队另行确认。")}</p><Link to={`/account/login?returnTo=${encodeURIComponent(destination)}`}>{t("登录／注册后继续")}</Link></>
+  if (!user) return <><h2>{t("申请联系")}</h2><p>{t("登录后可以表达联系意愿，正式入队另行确认。")}</p><button type="button" onClick={requestSignIn}>{t("登录／注册后继续")}</button></>
   if (!user.emailVerifiedAt) return <><h2>{t("先验证邮箱")}</h2><Link to={`/account/verify-email?returnTo=${encodeURIComponent(destination)}`}>{t("验证后继续联系")}</Link></>
   if (error) return <p role="alert">{lobbyReadFailure(error)}{retryableRead(error) && <> <button type="button" onClick={refresh}>{t("重新读取")}</button></>}</p>
   if (!data) return <p role="status">{t("正在读取联系权限…")}</p>

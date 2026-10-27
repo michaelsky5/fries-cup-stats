@@ -166,7 +166,7 @@ function WeeklyInvitationFlow({ invitationLocation }) {
             <div className={styles.actions}>
               {failure.kind === 'retry' ? <button className={styles.primary} type="button" onClick={() => setAttempt(value => value + 1)}>{t(uiText("重新核对邀请", locale), 'Retry invitation check')}</button> : null}
               {['used', 'missing'].includes(failure.kind) ? <button className={styles.primary} type="button" onClick={() => setDialogMode('login')}>{t(uiText("登录已有账号", locale), 'Sign in to your account')}</button> : null}
-              <Link to={spaceHref}>{t(uiText("返回我的空间", locale), 'Return to My Space')} <span aria-hidden="true">↗</span></Link>
+              <Link to={spaceHref}><span aria-hidden="true">←</span> {t(uiText("返回我的空间", locale), 'Return to My Space')}</Link>
             </div>
           </div> : null}
           {invitation && !accepted && !failure ? <form className={styles.form} onSubmit={handleAccept} aria-label={t(uiText("认领周赛身份", locale), 'Claim weekly identity')}>

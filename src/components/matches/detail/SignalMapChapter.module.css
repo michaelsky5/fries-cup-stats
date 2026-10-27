@@ -27,7 +27,7 @@
 .score [data-winner="true"] > strong { color: var(--fc-data-signal); }
 .score > i { font: normal 25px/1.5 var(--fc-data-font-display); color: var(--fc-data-text-dark-muted); }
 .result dl { display: grid; grid-template-columns: 1fr; gap: 7px; margin: 0; padding-left: 12px; border-left: 1px solid var(--fc-data-line-on-dark); }
-.result dt { color: var(--fc-data-text-dark-muted); font-size: 11px; line-height: 1.4; margin-bottom: 3px; }
+.result dt { color: var(--fc-data-text-dark-muted); font-size: 12px; line-height: 1.4; margin-bottom: 3px; }
 .result dd { margin: 0; font: 600 16px/1.25 var(--fc-data-font-system); }
 .lineups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid var(--fc-data-line); }
 .lineup { padding: 18px 24px 20px; min-width: 0; }
@@ -59,7 +59,7 @@
 .chapterNav > button { display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 44px; padding: 6px 10px; border: 0; color: var(--fc-data-ink); background: transparent; text-align: left; font: inherit; cursor: pointer; }
 .chapterNav > button:nth-child(2) { justify-content: flex-end; text-align: right; }
 .chapterNav > button > span { display: grid; gap: 4px; min-width: 0; }
-.chapterNav small { color: var(--fc-data-text-muted); font-size: 11px; }
+.chapterNav small { color: var(--fc-data-text-muted); font-size: 12px; }
 .chapterNav strong { font-size: 13px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
 .chapterNav i { color: var(--fc-data-text-muted); font-size: 16px; font-style: normal; }
 .chapterNav > button:hover { background: var(--fc-data-paper-deep); }
@@ -105,7 +105,7 @@
   .footer { display: block; padding: 0; }
   .footerResources { justify-content: space-between; gap: 4px 12px; padding: 8px 12px; }
   .footerResources > a, .code button { min-height: 44px; }
-  .code > span { font-size: 11px; }
+  .code > span { font-size: 12px; }
   .code code { font-size: 14px; }
   .chapterNav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin: 0; padding: 0; border-left: 0; border-top: 1px solid var(--fc-data-line); }
   .chapterNav > span { display: block; }

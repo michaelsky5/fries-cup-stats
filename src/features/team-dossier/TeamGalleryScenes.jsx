@@ -38,8 +38,8 @@ export default function TeamGalleryScenes({ team, seasonId, locale, roster, rows
       <dl><div><dt>{en ? 'COACH' : uiText("教练", locale)}</dt><StaffCredit people={team.staff?.coaches} en={en} /></div><div><dt>{en ? 'MANAGER' : uiText("经理", locale)}</dt><StaffCredit people={team.staff?.managers} en={en} /></div></dl>
     </section>
     <nav className={styles.next} aria-label={pickUiLocale(locale, '前往队伍数据', 'Go to team data', '팀 데이터로 이동', '前往隊伍數據')}>
-      <Link to={ledgerHref} state={viewState}><span>{pickUiLocale(locale, '队伍数据 · 赛程赛果', 'Team data · Results', '팀 데이터 · 일정과 결과', '隊伍數據 · 賽程賽果')}</span><b>{pickUiLocale(locale, '查看全部比赛记录', 'View every match', '모든 경기 기록 보기', '查看全部比賽記錄')}</b><i aria-hidden="true">↗</i></Link>
-      <Link to={analysisHref} state={viewState}><span>{pickUiLocale(locale, '队伍数据 · 竞技分析', 'Team data · Analysis', '팀 데이터 · 경기력 분석', '隊伍數據 · 競技分析')}</span><b>{pickUiLocale(locale, '查看数据分析', 'View performance analysis', '데이터 분석 보기', '查看數據分析')}</b><i aria-hidden="true">↗</i></Link>
+      <Link to={ledgerHref} state={viewState}><span>{pickUiLocale(locale, '队伍数据 · 赛程赛果', 'Team data · Results', '팀 데이터 · 일정과 결과', '隊伍數據 · 賽程賽果')}</span><b>{pickUiLocale(locale, '查看全部比赛记录', 'View every match', '모든 경기 기록 보기', '查看全部比賽記錄')}</b><i aria-hidden="true">→</i></Link>
+      <Link to={analysisHref} state={viewState}><span>{pickUiLocale(locale, '队伍数据 · 竞技分析', 'Team data · Analysis', '팀 데이터 · 경기력 분석', '隊伍數據 · 競技分析')}</span><b>{pickUiLocale(locale, '查看数据分析', 'View performance analysis', '데이터 분석 보기', '查看數據分析')}</b><i aria-hidden="true">→</i></Link>
     </nav>
   </>
 }

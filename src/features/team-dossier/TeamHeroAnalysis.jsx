@@ -43,7 +43,7 @@ export default function TeamHeroAnalysis({ report, ...context }) {
     {!directory ? <span className={styles.rank} aria-hidden="true">{String(index + 1).padStart(2, '0')}</span> : null}
     <HeroPortrait hero={hero.hero} />
     <span className={styles.heroName}><b>{hero.label}</b>{!directory ? <span className={styles.frequencyTrack} aria-hidden="true"><i style={{ width: `${review.base.records.length ? hero.maps / review.base.records.length * 100 : 0}%` }} /></span> : null}</span>
-    <span className={styles.heroValue}><strong>{hero.maps}<small>{mapUnit(hero.maps)}</small></strong><span>{selectedKey === hero.key ? (en ? 'Selected −' : uiText("已选 −", locale)) : (en ? 'Review ↗' : uiText("复盘 ↗", locale))}</span></span>
+    <span className={styles.heroValue}><strong>{hero.maps}<small>{mapUnit(hero.maps)}</small></strong><span>{selectedKey === hero.key ? (en ? 'Selected −' : uiText("已选 −", locale)) : (en ? 'Review →' : uiText("复盘 →", locale))}</span></span>
   </button>
   const grid = all => <div className={styles.heroGrid} data-member={Boolean(member)}>{['TANK', 'DPS', 'SUP'].filter(role => !member || heroes.some(hero => hero.role === role)).map(role => {
     const choices = heroes.filter(hero => hero.role === role)

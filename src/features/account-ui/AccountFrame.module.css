@@ -33,3 +33,6 @@
 @media (max-width: 600px) {
   .frame[data-account-subpage='true'] .context, .frame[data-account-subpage='true'] .intro { display: none; }
 }
+
+/* 票 2.75: the trail and footer links are at least 44px tall on phones. */
+@media (max-width: 760px) { .context a, .footer a { display: inline-flex; align-items: center; min-height: 44px; } }

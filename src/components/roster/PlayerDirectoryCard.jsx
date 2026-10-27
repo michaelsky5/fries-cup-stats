@@ -115,7 +115,7 @@ export default function PlayerDirectoryCard({
             <span>HERO RECORD</span>
             <strong title={heroText}>{heroText}</strong>
           </div>
-          <Link to={playerPath} className={styles.playerSignalLink}>{uiText("查看选手档案 ", locale)}<span aria-hidden="true">↗</span></Link>
+          <Link to={playerPath} className={styles.playerSignalLink}>{uiText("查看选手档案 ", locale)}<span aria-hidden="true">→</span></Link>
         </div>
       </article>
     )

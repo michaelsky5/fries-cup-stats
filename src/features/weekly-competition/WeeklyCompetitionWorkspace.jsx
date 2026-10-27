@@ -106,7 +106,7 @@ function SaveFeedback({ notice, kind, step = kind, plan, nextHref, progressHref,
   return <div ref={feedbackRef} className={styles.saveFeedback} tabIndex={-1} role="status">
     <strong><span aria-hidden="true">✓</span> {notice.message}</strong>
     <p>{plan.guidance.detail}</p>
-    <nav aria-label={uiText("保存后的下一步", uiLocale)}>{plan.next && plan.next.key !== step ? <Link className={styles.nextStep} to={nextHref}>{uiText("继续", uiLocale)}{plan.next.title} →</Link> : null}<Link to={progressHref}>{uiText("参赛进度 ↗", uiLocale)}</Link><Link to={overviewHref}>{uiText("返回我的空间", uiLocale)}</Link></nav>
+    <nav aria-label={uiText("保存后的下一步", uiLocale)}>{plan.next && plan.next.key !== step ? <Link className={styles.nextStep} to={nextHref}>{uiText("继续", uiLocale)}{plan.next.title} →</Link> : null}<Link to={progressHref}>{uiText("参赛进度 →", uiLocale)}</Link><Link to={overviewHref}>{uiText("返回我的空间", uiLocale)}</Link></nav>
   </div>
 }
 
@@ -376,7 +376,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
       : <WeeklyOwnershipTransfers key={`ownership:${seasonId}:${teamId}`} seasonId={seasonId} selectedTeamId={teamId} readOnly={readOnly || stale || Boolean(busy)} />}
   </section>
 
-  if (!activeStep) return <section className={styles.state} role="alert"><strong>{uiText("这个参赛步骤不存在", uiLocale)}</strong><Link to={progressHref}>{uiText("返回参赛进度 →", uiLocale)}</Link></section>
+  if (!activeStep) return <section className={styles.state} role="alert"><strong>{uiText("这个参赛步骤不存在", uiLocale)}</strong><Link to={progressHref}>{uiText("← 返回参赛进度", uiLocale)}</Link></section>
 
   return (
     <section className={styles.workspace} aria-label={uiText("周赛队伍工作台", uiLocale)}>
@@ -448,7 +448,7 @@ function WeeklyTeamChannel({ seasonId, readOnly, user, onActivityChange }) {
           {activeStep === 'roster' && <SaveFeedback {...feedbackProps} kind="roster" />}
           {activeStep === 'roster' && <SaveFeedback {...feedbackProps} kind="participation" />}
         </section>
-        <footer className={styles.taskFooter}><span>{currentPlan?.guidance.detail}</span><Link to={progressHref}>{uiText("查看完整参赛进度 ↗", uiLocale)}</Link></footer>
+        <footer className={styles.taskFooter}><span>{currentPlan?.guidance.detail}</span><Link to={progressHref}>{uiText("查看完整参赛进度 →", uiLocale)}</Link></footer>
         {weekId && entry?.team?.id && <WeeklyCoordinationPanel key={`${weekId}:${entry.team.id}`} weekId={weekId} teamId={entry.team.id} readOnly={readOnly || !canManageTeam || stale || Boolean(busy)} onActivityChange={onActivityChange} />}
       </>}
       {participationChange && <WeeklyParticipationChangeDialog team={entry?.team?.shortName || entry?.team?.name} week={weekRecord?.week?.label} status={participationChange} busy={Boolean(busy)} onCancel={() => setParticipationChange(null)} onConfirm={() => runAction('participation', () => saveMyWeeklyParticipation(weekId, { entryId: entry.id, status: participationChange, revision: participation?.revision || 0, availability, availabilityNote: availabilityNote.trim() || null }), '本周参赛状态已更新。')} />}

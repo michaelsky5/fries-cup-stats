@@ -57,7 +57,7 @@
 .championPathList em,
 .keyMatchGrid span,
 .keyMatchGrid em {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0;
   line-height: 1;
@@ -171,7 +171,7 @@
 
 .headerChampionLogo b {
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -247,7 +247,7 @@
   border: 1px dashed var(--portal-border);
   padding: 0 7px;
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -408,7 +408,7 @@
 
 .phaseHeroMetrics em {
   color: var(--portal-muted);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1.1;
   text-align: center;
@@ -472,7 +472,7 @@
   place-items: center;
   border: 1px solid var(--portal-yellow);
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -499,7 +499,7 @@
 
 .swissRuleStrip em {
   color: rgba(255, 255, 255, 0.58);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1.2;
 }
@@ -510,7 +510,7 @@
   place-items: center;
   padding: 10px 20px;
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1.3;
   text-align: center;
@@ -536,7 +536,7 @@
   padding: 0 8px;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   white-space: nowrap;
@@ -549,7 +549,7 @@
 
 .swissNextMatchStrip em {
   color: var(--portal-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
   text-align: right;
 }
@@ -613,7 +613,7 @@
 
 .swissZonePool > div > button > span {
   color: var(--portal-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -639,7 +639,7 @@
   min-width: 0;
   overflow: hidden;
   color: var(--portal-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 850;
   line-height: 1.2;
@@ -750,9 +750,15 @@
   text-decoration: none;
 }
 
+/* 票 2.70: the site-wide yellow primary on archived seasons' advancement page too (was black). */
 .primaryAction {
   align-self: center;
   white-space: nowrap;
+  border-color: var(--fc-data-primary-bg, #f4c320);
+  background: var(--fc-data-primary-bg, #f4c320);
+  color: var(--fc-data-primary-text, #181a17);
+  font-size: 14px;
+  font-weight: var(--fc-data-primary-weight, 750);
 }
 
 .secondaryAction {
@@ -875,7 +881,7 @@
 
 .tiebreakerStrip > span {
   color: #b88700;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0;
   line-height: 1;
@@ -910,7 +916,7 @@
   padding: 0 7px;
   background: var(--portal-black);
   color: var(--portal-yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -920,7 +926,7 @@
   overflow: hidden;
   padding: 0 8px;
   color: var(--portal-ink-soft);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
   line-height: 1;
@@ -1015,7 +1021,7 @@
   background: var(--portal-black);
   color: var(--portal-yellow);
   padding: 0 10px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -1090,7 +1096,7 @@
 
 .zoneDividerRow td > strong {
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1202,7 +1208,7 @@
 .championLogo b,
 .finalHeroLogo b {
   color: var(--portal-yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1229,7 +1235,7 @@
 
 .tableTeam em {
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 800;
   line-height: 1;
@@ -1481,7 +1487,7 @@
   padding: 0 7px;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   white-space: nowrap;
@@ -1489,7 +1495,7 @@
 
 .bracketScheduleNoticeStrip strong {
   color: var(--portal-ink);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1.45;
 }
@@ -1508,7 +1514,7 @@
   padding: 8px 12px;
   border-right: 1px solid var(--portal-border);
   color: var(--portal-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1553,7 +1559,7 @@
   place-items: center;
   border: 1px solid var(--portal-yellow);
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1565,7 +1571,7 @@
 
 .lcqRuleStrip em {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 850;
 }
@@ -1577,7 +1583,7 @@
   margin: 0;
   padding: 12px 18px;
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   text-align: center;
 }
@@ -1613,7 +1619,7 @@
 .lcqPool > header em {
   flex: 0 0 auto;
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -1643,7 +1649,7 @@
 
 .lcqPoolSlot span {
   color: var(--portal-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -1651,7 +1657,7 @@
   min-width: 0;
   overflow: hidden;
   color: var(--portal-ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1670,7 +1676,7 @@
 
 .lcqBracketLead span,
 .lcqBracketLead em {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -1740,7 +1746,7 @@
 .lcqRoundGuide > div > span,
 .lcqRoundGuide > div > em {
   color: var(--portal-muted);
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -1843,7 +1849,7 @@
 .lcqDivisionHeader strong {
   max-width: 82px;
   color: rgba(255, 255, 255, 0.66);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1.5;
 }
@@ -1908,7 +1914,7 @@
 .lcqDirectEntry span {
   grid-column: 1 / -1;
   color: var(--portal-muted);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -1916,7 +1922,7 @@
 .lcqDirectEntry strong {
   min-width: 0;
   color: var(--portal-ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
 }
@@ -1925,7 +1931,7 @@
   min-width: 0;
   overflow: hidden;
   color: var(--portal-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 850;
   line-height: 1;
@@ -2034,13 +2040,13 @@
   place-items: center;
   background: var(--portal-yellow);
   color: var(--portal-black);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
 .lcqAdvanceSlot span {
   color: var(--portal-yellow);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -2263,7 +2269,7 @@
   background: var(--portal-black);
   color: var(--portal-yellow);
   padding: 0 5px;
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -2296,7 +2302,7 @@
 .bracketNode footer a {
   min-height: 28px;
   padding: 0 8px;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .bracketConnector {
@@ -2392,7 +2398,7 @@
 
 .fixedPlayoffMetrics em {
   color: var(--portal-muted);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   text-transform: uppercase;
 }
@@ -2428,7 +2434,7 @@
   place-items: center;
   border: 1px solid var(--portal-yellow);
   color: var(--portal-yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -2451,7 +2457,7 @@
 
 .playoffRuleStrip em {
   color: var(--portal-yellow);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -2461,7 +2467,7 @@
   place-items: center;
   color: var(--portal-yellow);
   padding: 10px 14px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   text-align: center;
 }
@@ -2486,7 +2492,7 @@
 
 .playoffSeedPath > header .sectionLabel {
   grid-column: 1 / -1;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .playoffSeedPath > header strong,
@@ -2503,7 +2509,7 @@
 
 .playoffSeedPath > header em {
   color: var(--portal-muted);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -2535,7 +2541,7 @@
   place-items: center;
   background: var(--portal-black);
   color: var(--fc-white);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -2548,7 +2554,7 @@
 
 .playoffSeedPath i {
   color: #9a7200;
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -2599,7 +2605,7 @@
 
 .playoffBracketLead span,
 .playoffBracketLead em {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1;
 }
@@ -2682,7 +2688,7 @@
 
 .playoffLaneLabel span {
   color: var(--portal-yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
 }
@@ -2696,7 +2702,7 @@
 
 .playoffLaneLabel em {
   color: rgba(255, 255, 255, 0.68);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1.5;
 }
@@ -2781,7 +2787,7 @@
 .playoffLaneGuide span,
 .playoffLaneGuide em {
   color: var(--portal-muted);
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -2805,7 +2811,7 @@
   padding: 3px 5px;
   background: var(--portal-yellow);
   color: var(--portal-ink);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   white-space: nowrap;
@@ -2889,7 +2895,7 @@
 .playoffGrandFinalColumn > header span,
 .playoffGrandFinalColumn > header em {
   color: rgba(42, 42, 42, 0.68);
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -2973,7 +2979,7 @@
   display: grid;
   gap: 3px;
   color: rgba(255, 255, 255, 0.58);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1.2;
   text-align: center;
@@ -2985,14 +2991,14 @@
   min-width: 0;
   overflow: hidden;
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
   text-overflow: ellipsis;
 }
 
 .playoffGrandFinalRoute i {
   color: var(--portal-yellow);
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -3043,7 +3049,7 @@
 }
 
 .playoffChampionTarget span {
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.1em;
 }
@@ -3058,7 +3064,7 @@
   max-width: 100%;
   overflow: hidden;
   color: rgba(42, 42, 42, 0.68);
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 850;
   text-overflow: ellipsis;
@@ -3178,13 +3184,13 @@
   background: var(--portal-black);
   color: var(--fc-white);
   padding: 4px 6px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
 .playoffMatchCard > header span {
   color: var(--portal-ink);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -3192,7 +3198,7 @@
   justify-self: end;
   overflow: hidden;
   color: #9a7200;
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
   text-overflow: ellipsis;
@@ -3208,7 +3214,7 @@
   border: 1px solid var(--portal-border);
   background: var(--fc-white);
   color: var(--portal-ink);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
   line-height: 1;
   text-decoration: none;
@@ -3222,7 +3228,7 @@
 
 .bracketMatchDetails i {
   color: #9a7200;
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
 }
 
@@ -3262,7 +3268,7 @@
   min-height: 20px;
   border: 1px solid var(--portal-border);
   color: var(--portal-ink);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -3304,13 +3310,13 @@
 
 .playoffTeamIdentity strong {
   color: var(--portal-ink);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
 }
 
 .playoffTeamIdentity em {
   color: var(--portal-muted);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -3318,7 +3324,7 @@
   background: var(--portal-black);
   color: var(--portal-yellow);
   padding: 3px 4px;
-  font-size: 6px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -3335,7 +3341,7 @@
   align-items: center;
   gap: 7px;
   color: var(--portal-muted);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -3387,7 +3393,7 @@
 
 .finalChampionSeason {
   color: rgba(42, 42, 42, 0.68);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.04em;
   line-height: 1;
@@ -3439,7 +3445,7 @@
 
 .finalMatchHeading em {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -3539,7 +3545,7 @@
   display: grid;
   place-items: center;
   border: 1px solid var(--portal-border);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -3678,7 +3684,7 @@
 .groupSummary span,
 .groupSummary em {
   color: rgba(255, 255, 255, 0.58);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
   line-height: 1.1;
@@ -3711,7 +3717,7 @@
 }
 
 .groupRules > header span {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
 }
@@ -3750,11 +3756,11 @@
   place-items: center;
   background: var(--portal-black);
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .groupRules li span {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1.25;
 }
@@ -3809,7 +3815,7 @@
 .groupCardHeader p {
   margin: 0;
   color: rgba(255, 255, 255, 0.6);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1;
 }
@@ -3846,7 +3852,7 @@
   border-bottom: 1px solid var(--portal-border);
   background: var(--portal-cream);
   color: var(--portal-muted);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 950;
   text-align: center;
 }
@@ -3894,7 +3900,7 @@
   padding: 4px 5px;
   background: var(--portal-yellow);
   color: var(--portal-black);
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
 }
@@ -3916,7 +3922,7 @@
 }
 
 .groupTeamLogo b {
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .groupAdvanceRow {
@@ -3937,7 +3943,7 @@
   align-items: center;
   padding: 0 6px;
   border: 1px solid rgba(42, 42, 42, 0.28);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
   white-space: nowrap;
 }
@@ -3970,7 +3976,7 @@
   padding: 9px 13px;
   background: var(--portal-cream);
   color: var(--portal-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -4013,7 +4019,7 @@
 
 .singleElimSummary span {
   color: rgba(255, 255, 255, 0.58);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   line-height: 1.15;
   text-transform: uppercase;
@@ -4045,7 +4051,7 @@
 }
 
 .singleElimPath > header span {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.08em;
 }
@@ -4103,7 +4109,7 @@
   place-items: center;
   background: var(--portal-black);
   color: var(--portal-yellow);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -4122,7 +4128,7 @@
 
 .singleElimPath li em {
   color: var(--portal-muted);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 900;
   line-height: 1.2;
@@ -4136,7 +4142,7 @@
   max-width: 500px;
   margin: 0;
   color: var(--portal-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1.5;
   text-align: right;
@@ -4150,7 +4156,7 @@
   border-bottom: 2px solid var(--portal-border);
   background: var(--portal-black);
   color: var(--portal-yellow);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 950;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -4232,7 +4238,7 @@
 .singleElimColumnHeader span,
 .singleElimColumnHeader em {
   color: rgba(255, 255, 255, 0.56);
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -4313,7 +4319,7 @@
 
 .singleElimMedalMatches > section > header span {
   color: rgba(255, 255, 255, 0.58);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 950;
 }
 

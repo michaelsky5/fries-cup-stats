@@ -143,7 +143,7 @@ export function PosterBroadcast({ broadcast, locale = 'zh-CN' }) {
 
   return (
     <details className={styles.broadcastDetails}>
-      <summary>{en ? 'Video & match staff' : uiText("录像与比赛人员", locale)}<span>{en ? 'View details' : uiText("查看资料", locale)} ↗</span></summary>
+      <summary>{en ? 'Video & match staff' : uiText("录像与比赛人员", locale)}<span>{en ? 'View details' : uiText("查看资料", locale)} →</span></summary>
       <div className={styles.posterBroadcast}>
       {broadcast.streamLinks.map((stream, index) => (
         <BroadcastItem

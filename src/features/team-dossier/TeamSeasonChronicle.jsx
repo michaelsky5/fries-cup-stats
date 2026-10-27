@@ -16,8 +16,8 @@ function MatchEvidence({ row, locale, withSeason, returnState, onLeave }) {
   const en = locale === 'en-US'
   const maps = getArchiveMapRecords([row], locale)
   return <div className={styles.evidence} id="team-season-route" tabIndex={-1} data-chronicle-evidence={row.match.match_id}>
-    <header><h3>{en ? 'Inside this match' : uiText("这一场，逐图回看", locale)}</h3><Link to={withSeason(`/matches/${encodeURIComponent(row.match.match_id)}`)} state={returnState} onClick={onLeave}>{en ? 'Match details' : uiText("进入比赛详情", locale)} ↗</Link></header>
-    {maps.length ? <><p>{en ? 'Team scores are shown on the left.' : uiText("本队比分在左。", locale)}</p><ol>{maps.map(map => <li key={map.mapIndex}><Link to={withSeason(getDossierMapMatchPath(map))} state={returnState} onClick={onLeave}><small>{String(map.mapOrder).padStart(2, '0')}</small><b>{map.mapName}</b><strong>{map.mapScore}</strong><span>{map.mapOutcome === 'win' ? (en ? 'W' : uiText("胜", locale)) : map.mapOutcome === 'loss' ? (en ? 'L' : uiText("负", locale)) : (en ? 'D' : uiText("平", locale))} ↗</span></Link></li>)}</ol></> : <p>{row.bye ? (en ? 'A bye, without a played match.' : uiText("本次为轮空，没有实际交手。", locale)) : row.administrative ? (en ? 'An administrative result, without played-map evidence.' : uiText("本场为判罚结果，不作为实际交手的地图证据。", locale)) : (en ? 'Map records have not been published.' : uiText("逐图记录暂未发布。", locale))}</p>}
+    <header><h3>{en ? 'Inside this match' : uiText("这一场，逐图回看", locale)}</h3><Link to={withSeason(`/matches/${encodeURIComponent(row.match.match_id)}`)} state={returnState} onClick={onLeave}>{en ? 'Match details' : uiText("进入比赛详情", locale)} →</Link></header>
+    {maps.length ? <><p>{en ? 'Team scores are shown on the left.' : uiText("本队比分在左。", locale)}</p><ol>{maps.map(map => <li key={map.mapIndex}><Link to={withSeason(getDossierMapMatchPath(map))} state={returnState} onClick={onLeave}><small>{String(map.mapOrder).padStart(2, '0')}</small><b>{map.mapName}</b><strong>{map.mapScore}</strong><span>{map.mapOutcome === 'win' ? (en ? 'W' : uiText("胜", locale)) : map.mapOutcome === 'loss' ? (en ? 'L' : uiText("负", locale)) : (en ? 'D' : uiText("平", locale))} →</span></Link></li>)}</ol></> : <p>{row.bye ? (en ? 'A bye, without a played match.' : uiText("本次为轮空，没有实际交手。", locale)) : row.administrative ? (en ? 'An administrative result, without played-map evidence.' : uiText("本场为判罚结果，不作为实际交手的地图证据。", locale)) : (en ? 'Map records have not been published.' : uiText("逐图记录暂未发布。", locale))}</p>}
   </div>
 }
 
@@ -28,7 +28,7 @@ function MatchTicket({ row, previous = false, context }) {
     <span className={styles.ticketDate}><time dateTime={date.date || undefined}>{date.date || (en ? 'Date unrecorded' : uiText("日期未记录", locale))}</time><span>{previous ? (en ? 'PREVIOUS MEETING' : uiText("上一次交手", locale)) : row.roundLabel}</span></span>
     <span className={styles.ticketTeams}><span>{team.shortName} <small>{en ? 'vs' : uiText("对阵", locale)}</small></span><TeamLogo team={row.opponent} seasonId={seasonId} className={styles.teamLogo} /><b>{row.opponentLabel}</b></span>
     <strong className={styles.ticketScore}>{row.scoreLabel}</strong>
-    <span className={styles.ticketAction}>{previous ? (en ? 'Revisit that match' : uiText("回看上次交手", locale)) : selectedId === row.match.match_id ? (en ? 'Close map records' : uiText("收起逐图记录", locale)) : (en ? 'Open map records' : uiText("展开逐图记录", locale))}<i aria-hidden="true">{previous ? '↗' : selectedId === row.match.match_id ? '−' : '+'}</i></span>
+    <span className={styles.ticketAction}>{previous ? (en ? 'Revisit that match' : uiText("回看上次交手", locale)) : selectedId === row.match.match_id ? (en ? 'Close map records' : uiText("收起逐图记录", locale)) : (en ? 'Open map records' : uiText("展开逐图记录", locale))}<i aria-hidden="true">{previous ? '→' : selectedId === row.match.match_id ? '−' : '+'}</i></span>
   </>
   return previous ? <Link className={styles.ticket} data-previous to={withSeason(`/matches/${encodeURIComponent(row.match.match_id)}`)} state={returnState} onClick={onLeave}>{content}</Link> : <button type="button" className={styles.ticket} onClick={() => select(row.match.match_id)} aria-expanded={selectedId === row.match.match_id} aria-controls={selectedId === row.match.match_id ? 'team-season-route' : undefined} data-chronicle-record={row.match.match_id}>{content}</button>
 }
@@ -90,7 +90,7 @@ export default function TeamSeasonChronicle({ team, seasonId, locale, rows, adva
   return <section id={TEAM_SEASON_ANCHOR} className={styles.season} data-season-story={story.mode} tabIndex={-1} aria-labelledby="team-season-title">
     <header className={styles.seasonHeading}>
       <div><h2 id="team-season-title">{t('这一季', 'This season', '이번 시즌', '這一季')}</h2><p>{intro}</p></div>
-      {chronicle.rows.length ? <Link to={ledgerHref} state={viewState}>{t(`全部 ${chronicle.rows.length} 条赛程赛果`, `All ${chronicle.rows.length} schedule entries`, `일정과 결과 ${chronicle.rows.length}건 모두 보기`, `全部 ${chronicle.rows.length} 條賽程賽果`)} <span aria-hidden="true">↗</span></Link> : null}
+      {chronicle.rows.length ? <Link to={ledgerHref} state={viewState}>{t(`全部 ${chronicle.rows.length} 条赛程赛果`, `All ${chronicle.rows.length} schedule entries`, `일정과 결과 ${chronicle.rows.length}건 모두 보기`, `全部 ${chronicle.rows.length} 條賽程賽果`)} <span aria-hidden="true">→</span></Link> : null}
     </header>
     {story.chapters.length ? <div className={styles.storyChapters}>{story.chapters.map(chapter => <ChronicleChapter key={chapter.id} chapter={chapter} context={context} advanceState={advanceState} runs={false} />)}</div> : null}
     {story.mode === 'chapters' ? <TeamSeasonRecords rows={chronicle.rows} archived={advanceState.isArchived} locale={locale} withSeason={withSeason} returnState={returnState} onLeave={onLeave} /> : null}

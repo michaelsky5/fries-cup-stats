@@ -27,8 +27,10 @@ export function SignalDataNav({ active, withSeason, isEn, backTo, backLabel, bac
   </nav>
 }
 
-export function SignalDataHeading({ eyebrow, title, description, children, compact = false }) {
-  return <header className={`${styles.heading} ${compact ? styles.compact : ''}`} data-signal-data-heading data-i18n-ignore>
+// 票 2.78: titleHidden — the page's cover already shows the name in large type, so the h1 stays for
+// screen readers only and the row keeps just its actions (one visible name on the first screen).
+export function SignalDataHeading({ eyebrow, title, description, children, compact = false, titleHidden = false }) {
+  return <header className={`${styles.heading} ${compact ? styles.compact : ''} ${titleHidden ? styles.titleHidden : ''}`} data-signal-data-heading data-i18n-ignore>
     <div className={styles.intro}>
       {eyebrow ? <span className={styles.eyebrow}>{eyebrow}</span> : null}
       <h1 className={styles.title}>{title}</h1>

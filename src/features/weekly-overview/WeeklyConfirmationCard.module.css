@@ -2,11 +2,11 @@
 .actions { display: contents; }
 .mobileToggle { display: none; }
 .intro { display: grid; gap: 5px; padding: 16px 20px; }
-.intro > span { font-size: 9px; letter-spacing: .07em; color: var(--fc-data-text-muted); }
+.intro > span { font-size: 12px; letter-spacing: .07em; color: var(--fc-data-text-muted); }
 .intro > strong { font-size: 14px; }
 .card .entry { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 76px; padding: 14px 22px; border-left: 1px solid var(--fc-data-line); color: var(--fc-data-ink); text-decoration: none; }
 .entry > span:first-child { display: grid; gap: 5px; }
-.entry small { color: var(--fc-data-text-muted); font-size: 10px; }
+.entry small { color: var(--fc-data-text-muted); font-size: 12px; }
 .entry b { font-size: 14px; line-height: 1.5; }
 .entry > span:last-child { color: var(--fc-data-focus-on-light); font-size: 21px; }
 .card .entry:hover { background: #ffffff70; }
@@ -21,8 +21,8 @@
 .helpContent { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 30px; padding: 0 20px 18px; }
 .helpContent p { display: grid; gap: 6px; color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.8; }
 .helpContent p b { color: var(--fc-data-ink); font-size: 12px; }
-.helpContent > small { grid-column: 1 / -1; color: var(--fc-data-text-muted); font-size: 11px; }
-.window { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px 20px; padding: 10px 20px; border-top: 1px solid var(--fc-data-line); color: var(--fc-data-text-muted); font-size: 11px; line-height: 1.6; }
+.helpContent > small { grid-column: 1 / -1; color: var(--fc-data-text-muted); font-size: 12px; }
+.window { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px 20px; padding: 10px 20px; border-top: 1px solid var(--fc-data-line); color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.6; }
 .window strong { color: var(--fc-data-focus-on-light); }
 @media (max-width: 1100px) {
   .card { grid-template-columns: 130px minmax(0, 1fr) minmax(0, 1fr) auto; }
@@ -40,10 +40,10 @@
   .card .entry { min-height: 72px; padding: 12px 14px; gap: 8px; }
   .card .entry:nth-child(2) { border-left: 0; }
   .entry b { font-size: 13px; }
-  .entry small { font-size: 9px; }
+  .entry small { font-size: 12px; }
   .entry > span:last-child { font-size: 18px; }
   .help { grid-column: 1 / -1; border-top: 1px solid var(--fc-data-line); }
-  .help summary { justify-content: flex-start; min-height: 40px; padding: 8px 14px; font-size: 11px; }
+  .help summary { justify-content: flex-start; min-height: 40px; padding: 8px 14px; font-size: 12px; }
   .helpContent { grid-template-columns: 1fr; padding: 0 14px 14px; }
   .window { padding: 10px 14px; }
 }

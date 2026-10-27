@@ -232,7 +232,7 @@ function DossierHero({
           <button type="button" onClick={onFavorite} disabled={favoriteDisabled}>
             {favoriteLabel}
           </button>
-          {teamPath ? <Link to={teamPath}>{copy(locale, uiText("查看战队", locale), 'View team')}</Link> : null}
+          {teamPath ? <Link to={teamPath}>{copy(locale, uiText("查看队伍", locale), 'View team')}</Link> : null}
           <button type="button" onClick={onExport} className={styles.secondaryAction}>
             {copy(locale, uiText("导出分享图", locale), 'Export card')}
           </button>
@@ -243,7 +243,6 @@ function DossierHero({
         <div className={styles.heroVisualGrid} aria-hidden="true" />
         {!topHero ? (
           <div className={`${styles.heroSignalGhost} ${styles.heroSignalGhostVisible}`} aria-hidden="true">
-            <span><i /> HERO SIGNAL // 00</span>
             <strong>{copy(locale, uiText("暂无英雄数据", locale), 'NO HERO DATA')}</strong>
             <em>{copy(locale, uiText("等待比赛记录写入", locale), 'AWAITING MATCH RECORD')}</em>
           </div>

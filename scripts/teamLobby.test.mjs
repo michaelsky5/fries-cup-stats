@@ -3,11 +3,26 @@ import test from 'node:test'
 import { readdirSync, readFileSync } from 'node:fs'
 import { safeLobbyReturn, accountFailure, roleLabel, statusLabel, leavesLobbyPage, lobbyReadFailure, canPublishLobby, lobbyRegistrationMessage, lobbyCardCopy, needsLabel, ERROR_COPY, FIELD_COPY, retryableRead, uncertainWrite, contactReason, contactResultKind } from '../src/features/team-lobby/lobbyModel.js'
 import { lobbyText, lobbyNoticeCopy, lobbyCopyRows } from '../src/features/team-lobby/lobbyCopy.js'
+import { safeAccountReturn } from '../src/features/auth/accountReturn.js'
+import { isAccountEntryPath } from '../src/features/auth/signInRequest.js'
 
 test('account continuation only retains a local lobby destination and public reading state', () => {
   assert.equal(safeLobbyReturn('/lobby/me/publish?type=person'), '/lobby/me/publish?type=person')
   assert.equal(safeLobbyReturn('/lobby?type=teams&role=SUP&page=2&qq=12345678&verifyEmail=secret'), '/lobby?type=teams&role=SUP&page=2')
   for (const value of ['https://outside.example/lobby', '//outside.example', '/lobby/../account', '/lobby\\outside', '/lobby\nnext', '', null]) assert.equal(safeLobbyReturn(value), '/lobby')
+})
+test('票 2.71: the sign-in fallback returns to the page it came from, without email tokens', () => {
+  assert.equal(safeAccountReturn('/participate/FCW26?lang=en'), '/participate/FCW26?lang=en')
+  assert.equal(safeAccountReturn('/matches/FCW26-SWISS-R1-M01?season=FCW2026#maps'), '/matches/FCW26-SWISS-R1-M01?season=FCW2026#maps')
+  assert.equal(safeAccountReturn('/me?section=matches&verifyEmail=secret&passwordResetToken=secret'), '/me?section=matches')
+  assert.equal(safeAccountReturn('/account#passwordResetToken=secret'), '/account')
+  // Lobby destinations keep the lobby's own filter.
+  assert.equal(safeAccountReturn('/lobby?type=teams&qq=12345678'), '/lobby?type=teams')
+  // Entry pages, other sites and malformed values fall back to 我的空间.
+  for (const value of ['/account/login', '/account/reset-password?x=1', '/me/../account/register', 'https://outside.example/me', '//outside.example', '/me\\outside', '/me\nnext', '', null]) assert.equal(safeAccountReturn(value), '/me')
+  assert.equal(isAccountEntryPath('/account/verify-email'), true)
+  assert.equal(isAccountEntryPath('/account'), false)
+  assert.equal(isAccountEntryPath('/account/recovery'), false)
 })
 test('registration conflicts and uncertain submissions have actionable distinct explanations', () => {
   assert.match(accountFailure({ data: { error: 'USER_EXISTS' } }), /登录或找回/)

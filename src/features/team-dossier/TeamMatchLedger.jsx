@@ -15,7 +15,7 @@ function MatchRow({ row, withSeason, returnState, onLeave, en, seasonId }) {
     <span className={styles.matchOpponent}><TeamLogo team={row.opponent} seasonId={seasonId} className={styles.opponentLogo} /><span><b><small>{en ? 'vs' : uiText("对阵", uiLocale)} </small>{row.opponentLabel}</b><small>{row.roundLabel}{row.note ? ` · ${row.note}` : ''}</small></span></span>
     <strong className={styles.matchScore}>{row.scoreLabel}</strong>
     <span className={styles.result} data-tone={row.tone}>{row.label}</span>
-    <span className={styles.rowArrow} aria-hidden="true">↗</span>
+    <span className={styles.rowArrow} aria-hidden="true">→</span>
   </Link>
 }
 
@@ -66,8 +66,8 @@ export default function TeamMatchLedger({ team, seasonId, locale, rows, stages, 
     </header>
     <div className={styles.journeyGrid}>
       <aside className={styles.journeyAside}>
-        <div className={styles.stageRail}>{stages.map((stage, index) => <button type="button" key={stage.key} aria-pressed={selectedStage === stage.key} onClick={() => updateQuery({ teamStage: selectedStage === stage.key ? 'all' : stage.key, journey: null })}><span className={styles.stageIndex}>0{index + 1}</span><span><b>{stage.label}</b><small>{stage.summary.completed ? formatDossierRecord(stage.summary, locale) : en ? 'Awaiting results' : uiText("等待赛果", locale)}{stage.summary.byes ? ` · ${stage.summary.byes} ${en ? 'bye' : uiText("轮空", locale)}` : ''}</small></span><span aria-hidden="true">↗</span></button>)}</div>
-        {focus ? <Link className={styles.focusMatch} to={withSeason(`/matches/${encodeURIComponent(focus.match.match_id)}`)} state={returnState} onClick={onLeave}><span className={styles.eyebrow}>{focus.live ? (en ? 'LIVE NOW' : uiText("正在进行", locale)) : (en ? 'NEXT MATCH' : uiText("下一场比赛", locale))}</span><p>{focus.roundLabel}</p><div><TeamLogo team={focus.opponent} seasonId={seasonId} className={styles.focusLogo} /><b>{en ? 'vs' : uiText("对阵", locale)} {focus.opponentLabel}</b></div><strong>{focus.scoreLabel}</strong><footer><span>{focus.timeLabel}</span><span aria-hidden="true">↗</span></footer></Link> : null}
+        <div className={styles.stageRail}>{stages.map((stage, index) => <button type="button" key={stage.key} aria-pressed={selectedStage === stage.key} onClick={() => updateQuery({ teamStage: selectedStage === stage.key ? 'all' : stage.key, journey: null })}><span className={styles.stageIndex}>0{index + 1}</span><span><b>{stage.label}</b><small>{stage.summary.completed ? formatDossierRecord(stage.summary, locale) : en ? 'Awaiting results' : uiText("等待赛果", locale)}{stage.summary.byes ? ` · ${stage.summary.byes} ${en ? 'bye' : uiText("轮空", locale)}` : ''}</small></span><span aria-hidden="true">→</span></button>)}</div>
+        {focus ? <Link className={styles.focusMatch} to={withSeason(`/matches/${encodeURIComponent(focus.match.match_id)}`)} state={returnState} onClick={onLeave}><span className={styles.eyebrow}>{focus.live ? (en ? 'LIVE NOW' : uiText("正在进行", locale)) : (en ? 'NEXT MATCH' : uiText("下一场比赛", locale))}</span><p>{focus.roundLabel}</p><div><TeamLogo team={focus.opponent} seasonId={seasonId} className={styles.focusLogo} /><b>{en ? 'vs' : uiText("对阵", locale)} {focus.opponentLabel}</b></div><strong>{focus.scoreLabel}</strong><footer><span>{focus.timeLabel}</span><span aria-hidden="true">→</span></footer></Link> : null}
         <WinRateTrace rows={rows} en={en} />
       </aside>
       <div className={styles.journeyLedger}>
@@ -76,7 +76,7 @@ export default function TeamMatchLedger({ team, seasonId, locale, rows, stages, 
         <div className={styles.matchList}>{visibleRows.map(row => <MatchRow key={row.match.match_id} row={row} seasonId={seasonId} withSeason={withSeason} returnState={returnState} onLeave={onLeave} en={en} />)}</div>
         {!matchingRows.length ? <div className={styles.empty}><p>{en ? 'No matches match this selection.' : uiText("这个条件下暂无比赛。", locale)}</p>{selectedStage !== 'all' || selectedResult !== 'all' ? <button type="button" onClick={() => updateQuery({ teamStage: null, result: null })}>{en ? 'Clear filters' : uiText("清除筛选", locale)}</button> : null}</div> : null}
         {visibleRows.length < matchingRows.length ? <button className={styles.showAll} type="button" onClick={onShowAll}>{en ? `Show all ${matchingRows.length} records` : uiText("展开全部 {0} 条记录", locale, [matchingRows.length])} ↓</button> : null}
-        <div className={styles.ledgerFoot}><span>{visibleRows.length} / {matchingRows.length}</span><Link to={withSeason(`/matches?view=list&tab=all&team=${encodeURIComponent(team.shortName)}&teamId=${encodeURIComponent(team.routeId)}`)} state={returnState} onClick={onLeave}>{en ? 'Open match index' : uiText("前往赛程索引", locale)} ↗</Link></div>
+        <div className={styles.ledgerFoot}><span>{visibleRows.length} / {matchingRows.length}</span><Link to={withSeason(`/matches?view=list&tab=all&team=${encodeURIComponent(team.shortName)}&teamId=${encodeURIComponent(team.routeId)}`)} state={returnState} onClick={onLeave}>{en ? 'Open match index' : uiText("前往赛程索引", locale)} →</Link></div>
       </div>
     </div>
   </section>

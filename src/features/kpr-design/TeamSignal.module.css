@@ -5,13 +5,13 @@
 :global([data-design="kpr"]) .heroSeason,
 :global([data-design="kpr"]) .sectionLabel,
 :global([data-design="kpr"]) .focusDossier > span,
-:global([data-design="kpr"]) .heroFormBlock > span { font-size: 11px; }
+:global([data-design="kpr"]) .heroFormBlock > span { font-size: 12px; }
 :global([data-design="kpr"]) .focusDossier a { display: inline-flex; align-items: center; min-height: 36px; color: var(--fc-data-paper); font-size: 13px; text-underline-offset: 4px; }
 :global([data-design="kpr"]) .focusDossier a:focus-visible { outline: 2px solid var(--fc-data-signal); outline-offset: 3px; }
 :global([data-design="kpr"]) .teamHero .headerMetric > span,
 :global([data-design="kpr"]) .teamHero .headerMetric > em,
 :global([data-design="kpr"]) .teamHero .heroIntelFacts em,
-:global([data-design="kpr"]) .staffIdentityItem small { font-size: 11px; line-height: 1.5; }
+:global([data-design="kpr"]) .staffIdentityItem small { font-size: 12px; line-height: 1.5; }
 :global([data-design="kpr"]) .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
 :global([data-design="kpr"]) .tabs button { min-width: 0; min-height: 48px; font-size: 14px; }
 
@@ -111,7 +111,7 @@
 :global([data-design="kpr"]) .seasonMatchMaps em,
 :global([data-design="kpr"]) .seasonMatchMapChip small,
 :global([data-design="kpr"]) .seasonMatchMapChip b,
-:global([data-design="kpr"]) .timelineLogo b { font-size: 11px; line-height: 1.5; }
+:global([data-design="kpr"]) .timelineLogo b { font-size: 12px; line-height: 1.5; }
 :global([data-design="kpr"]) .coachingNote p { font-size: 14px; line-height: 1.65; }
 :global([data-design="kpr"]) .recordedCompsMethod span { font-size: 13px; line-height: 1.6; }
 :global([data-design="kpr"]) .tacticalAxisRow > small { color: var(--fc-data-text-on-dark); }

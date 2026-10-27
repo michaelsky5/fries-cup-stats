@@ -42,7 +42,7 @@ export default function TeamShareCard({
       <div className={styles.topRow}>
         <div className={styles.brandBlock}>
           <div className={styles.brandCn}>{uiText("薯条杯 2026", uiLocale)}</div>
-          <div className={styles.brandSub}>{uiText("战队数据分享图", uiLocale)}</div>
+          <div className={styles.brandSub}>{uiText("队伍数据分享图", uiLocale)}</div>
         </div>
 
         <div className={styles.teamShortTag}>
@@ -53,7 +53,7 @@ export default function TeamShareCard({
       <div className={styles.mainGrid}>
         <div className={styles.left}>
           <div className={styles.teamIdBox}>{team.team_id}</div>
-          <div className={styles.teamName}>{team.team_name || uiText("未命名战队", uiLocale)}</div>
+          <div className={styles.teamName}>{team.team_name || uiText("未命名队伍", uiLocale)}</div>
           <div className={styles.teamSubline}>
             <span className={styles.teamShortName}>{team.team_short_name || team.team_name || 'TEAM'}</span>
             <span className={styles.dot}>/</span>
@@ -61,12 +61,12 @@ export default function TeamShareCard({
           </div>
 
           <div className={styles.titleGroup}>
-            <div className={styles.titleBadge}>{teamProfile?.tag || uiText("战队画像", uiLocale)}</div>
-            <div className={styles.titleSub}>{uiText("赛季战队标签", uiLocale)}</div>
+            <div className={styles.titleBadge}>{teamProfile?.tag || uiText("队伍画像", uiLocale)}</div>
+            <div className={styles.titleSub}>{uiText("赛季队伍标签", uiLocale)}</div>
           </div>
 
           <p className={styles.desc}>
-            {teamProfile?.hook || teamProfile?.desc || uiText("系统正在生成该战队的赛季数据摘要。", uiLocale)}
+            {teamProfile?.hook || teamProfile?.desc || uiText("系统正在生成该队伍的赛季数据摘要。", uiLocale)}
           </p>
 
           <div className={styles.metaGrid}>

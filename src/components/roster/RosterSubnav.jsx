@@ -8,7 +8,7 @@ import sectionStyles from '../navigation/SignalSectionNav.module.css'
 
 const NAV_ITEMS = [
   { to: '/roster', label: '阵容总览', code: 'FIELD', match: '/roster' },
-  { to: '/teams', label: '参赛战队', code: 'TEAMS', match: '/teams' },
+  { to: '/teams', label: '参赛队伍', code: 'TEAMS', match: '/teams' },
   { to: '/players', label: '参赛选手', code: 'PLAYERS', match: '/players' },
   { to: '/staff', label: '赛事职员', code: 'STAFF', match: '/staff' }
 ]
@@ -17,7 +17,7 @@ const INDEX_NAV_ITEMS = [
   { ...NAV_ITEMS[0], english: 'Overview' },
   { ...NAV_ITEMS[1], english: 'Teams' },
   { ...NAV_ITEMS[2], english: 'Players' },
-  { to: '/staff?group=team', label: '战队职员', english: 'Team staff', code: 'TEAM STAFF', match: '/staff', group: 'team' },
+  { to: '/staff?group=team', label: '队伍职员', english: 'Team staff', code: 'TEAM STAFF', match: '/staff', group: 'team' },
   { to: '/staff?group=event', label: '赛事职员', english: 'Event staff', code: 'EVENT STAFF', match: '/staff', group: 'event' }
 ]
 

@@ -10,7 +10,7 @@
   --signal-paper-deep: #e4e3db;
   --signal-ink: var(--fc-data-ink, #181a17);
   --signal-yellow: var(--fc-data-signal, #f4c320);
-  --signal-muted: var(--fc-data-text-muted, #66685f);
+  --signal-muted: var(--fc-data-text-muted, #5f6158);
   --signal-faint: #898b80;
   --signal-line: rgb(24 26 23 / 18%);
   --signal-display: var(--fc-data-font-display, "FC Data Display", var(--font-sans));
@@ -157,7 +157,7 @@
   right: 13%;
   bottom: 16%;
   color: #4f431e;
-  font: 8px var(--font-mono);
+  font: 12px var(--font-mono);
   font-weight: 500;
   letter-spacing: .1em;
 }
@@ -172,7 +172,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  font: 9px/1.4 var(--font-mono);
+  font: 12px/1.4 var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -223,7 +223,7 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  font: 10px/1.4 var(--font-mono);
+  font: 12px/1.4 var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -259,7 +259,7 @@
   max-width: 470px;
   margin: 18px 0 0;
   color: var(--signal-muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.85;
 }
 
@@ -277,7 +277,7 @@
 
 .headingMeta > span {
   color: var(--signal-muted);
-  font: 8px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -296,13 +296,13 @@
 .headingMeta > strong > small {
   padding-bottom: 3px;
   color: var(--signal-faint);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .05em;
 }
 
 .headingMeta > p {
   margin: 3px 0 0;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -354,7 +354,7 @@
   border: 1px solid #74766c;
   border-radius: 50%;
   background: var(--signal-paper);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   font-weight: 500;
 }
 
@@ -369,7 +369,7 @@
 
 .heroRouteNode > i {
   color: var(--signal-muted);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
 }
 
@@ -435,7 +435,7 @@
 
 .heroRouteTarget > span {
   color: var(--signal-yellow);
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -451,7 +451,7 @@
   max-width: 92px;
   overflow: hidden;
   color: #a5a89b;
-  font-size: 7px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -470,7 +470,7 @@
   border-top: 1px solid #77796d52;
   padding-top: 9px;
   color: var(--signal-muted);
-  font: 8px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .05em;
 }
 
@@ -518,7 +518,7 @@
 }
 
 .phaseIndexLabel > b {
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   font-weight: 600;
   letter-spacing: .08em;
   white-space: nowrap;
@@ -564,7 +564,7 @@
 
 .phaseLinks > a > small {
   color: #7f8277;
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -590,7 +590,7 @@
   justify-content: flex-end;
   gap: 5px;
   color: #777b6f;
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .phaseStamp > b {
@@ -669,7 +669,7 @@
 
 .chapterIntro > div > span {
   color: var(--signal-muted);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .09em;
 }
 
@@ -702,7 +702,7 @@
   padding-top: 18px;
   border-top: 1px solid #181a1735;
   color: var(--signal-muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.9;
 }
 
@@ -729,7 +729,7 @@
 
 .sectionEyebrow > span,
 .sectionEyebrow > p {
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -776,7 +776,7 @@
   padding: 0 17px;
   border-bottom: 1px solid #eeeecc22;
   color: #b7baad;
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -825,7 +825,7 @@
 
 .phaseReadout > span {
   color: var(--signal-yellow);
-  font: 8px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -842,13 +842,13 @@
 .phaseReadout > strong > small {
   margin-left: 6px;
   color: #777b6f;
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .phaseReadout > p {
   margin: 0;
   color: #aeb1a5;
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1.55;
 }
 
@@ -875,7 +875,7 @@
 .phaseMetrics dt,
 .championMetrics dt {
   color: #888c80;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .phaseMetrics dd,
@@ -891,7 +891,7 @@
 .championMetrics dd > small {
   margin-left: 3px;
   color: #7f8377;
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .nextMatchSignal,
@@ -911,7 +911,7 @@
   justify-content: space-between;
   gap: 12px;
   color: #888c80;
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -929,13 +929,13 @@
 .nextMatchSignal > a > strong > i {
   margin-inline: 5px;
   color: var(--signal-yellow);
-  font: 8px var(--font-mono);
+  font: 12px var(--font-mono);
   font-style: normal;
 }
 
 .nextMatchSignal > a > small {
   color: #8c9083;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .nextMatchSignal > a > b {
@@ -950,7 +950,7 @@
 .nextMatchSignal > p {
   margin: 13px 0 0;
   color: #b5b8ac;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .keyMatchIndex ol,
@@ -977,12 +977,12 @@
 
 .keyMatchIndex a > span {
   color: #82867a;
-  font-size: 7px;
+  font-size: 12px;
 }
 
 .keyMatchIndex a > strong {
   overflow: hidden;
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -990,7 +990,7 @@
 .keyMatchIndex a > strong > i {
   margin-inline: 4px;
   color: var(--signal-yellow);
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
   font-style: normal;
 }
 
@@ -998,7 +998,7 @@
   grid-row: 1;
   grid-column: 2;
   color: #7f8378;
-  font-size: 7px;
+  font-size: 12px;
 }
 
 .keyMatchIndex a > b {
@@ -1019,13 +1019,13 @@
 .ruleIndex li > span,
 .seedIndex li > span {
   color: var(--signal-yellow);
-  font: 8px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .ruleIndex li > strong,
 .seedIndex li > strong {
   overflow: hidden;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1091,7 +1091,7 @@
 
 .groupIndex > header span {
   color: var(--signal-muted);
-  font: 8px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -1103,7 +1103,7 @@
 .groupIndex > header p {
   margin: 0;
   color: var(--signal-faint);
-  font: 8px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .groupIndex > header p > strong {
@@ -1122,7 +1122,7 @@
 .swissIndexTable {
   width: 100%;
   border-collapse: collapse;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .groupIndexTable {
@@ -1135,7 +1135,7 @@
   padding: 0 10px;
   background: #d9d8d0;
   color: var(--signal-muted);
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
   font-weight: 500;
   text-align: right;
 }
@@ -1156,7 +1156,7 @@
 .groupIndexTable td:first-child,
 .swissIndexTable td:first-child {
   color: var(--signal-faint);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .groupIndexTable td:nth-child(2),
@@ -1182,7 +1182,7 @@
 .groupIndexTable td:nth-child(2) strong,
 .swissIndexTable td:nth-child(2) strong {
   overflow: hidden;
-  font-size: 11px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1191,7 +1191,7 @@
 .swissIndexTable td:nth-child(2) small {
   overflow: hidden;
   color: var(--signal-faint);
-  font-size: 8px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1229,7 +1229,7 @@
   align-items: center;
   padding-inline: 6px;
   border: 1px solid var(--signal-line);
-  font-size: 7px;
+  font-size: 12px;
   white-space: nowrap;
 }
 
@@ -1237,7 +1237,7 @@
   min-height: 38px;
   padding: 12px 18px;
   color: var(--signal-muted);
-  font-size: 8px;
+  font-size: 12px;
 }
 
 /* Swiss */
@@ -1258,7 +1258,7 @@
   border-right: 1px solid var(--signal-line);
   background: transparent;
   color: var(--signal-muted);
-  font: 9px var(--font-sans);
+  font: 12px var(--font-sans);
   cursor: pointer;
 }
 
@@ -1269,7 +1269,7 @@
 .swissFilter > button > sup {
   margin-left: 6px;
   color: var(--signal-faint);
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .swissFilter > button[aria-pressed="true"] {
@@ -1356,7 +1356,7 @@
 .playoffLane > header span,
 .lcqDivisionIndex > header span {
   color: var(--signal-muted);
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -1368,7 +1368,7 @@
 .playoffLane > header small,
 .lcqDivisionIndex > header small {
   color: var(--signal-faint);
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -1412,13 +1412,13 @@
 .playoffRound > header > span,
 .lcqFlow > section > header > span {
   color: var(--signal-faint);
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .06em;
 }
 
 .playoffRound > header > strong,
 .lcqFlow > section > header > strong {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .playoffRound > header > i,
@@ -1465,7 +1465,7 @@ a.matchIndexCard:hover {
   gap: 10px;
   padding: 0 9px;
   color: var(--signal-faint);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .matchIndexCard > header {
@@ -1502,7 +1502,7 @@ a.matchIndexCard:hover {
 
 .matchIndexTeams > div > span {
   color: var(--signal-faint);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .matchIndexTeams > div > strong {
@@ -1558,7 +1558,7 @@ a.matchIndexCard:hover {
 .playoffOverviewStrip dt,
 .playoffOverviewStrip > a > span {
   color: #efeddb88;
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -1597,7 +1597,7 @@ a.matchIndexCard:hover {
 .playoffOverviewStrip dd small {
   margin-left: 4px;
   color: #efeddb66;
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .playoffOverviewStrip > a {
@@ -1639,13 +1639,13 @@ a.matchIndexCard:hover {
 
 .routeTeamPicker > header > span {
   color: var(--signal-muted);
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
 .routeTeamPicker > header > strong {
   overflow: hidden;
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1688,7 +1688,7 @@ a.matchIndexCard:hover {
 
 .routeTeamPicker button > span {
   color: var(--signal-faint);
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .routeTeamPicker button[data-active="true"] > span {
@@ -1697,7 +1697,7 @@ a.matchIndexCard:hover {
 
 .routeTeamPicker button > strong {
   overflow: hidden;
-  font-size: 9px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1765,14 +1765,14 @@ a.matchIndexCard:hover {
 .focusedRouteSummary li > span {
   overflow: hidden;
   color: #efeddb77;
-  font: 6px var(--font-mono);
+  font: 12px var(--font-mono);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .focusedRouteSummary li > strong {
   overflow: hidden;
-  font-size: 9px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1788,7 +1788,7 @@ a.matchIndexCard:hover {
   padding: 3px 5px;
   background: #efeddb13;
   color: #efeddb88;
-  font: normal 6px var(--font-mono);
+  font: normal 12px var(--font-mono);
 }
 
 .focusedRouteSummary li[data-result="win"] > em {
@@ -1819,7 +1819,7 @@ a.matchIndexCard:hover {
 .connectedBracketToolbar > p {
   margin: 0;
   color: var(--signal-muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: right;
 }
@@ -1836,7 +1836,7 @@ a.matchIndexCard:hover {
   align-items: center;
   gap: 7px;
   color: var(--signal-muted);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .05em;
 }
 
@@ -1938,7 +1938,7 @@ a.matchIndexCard:hover {
 
 .bracketLaneTitle > small {
   color: var(--signal-faint);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .bracketRoundCaption,
@@ -1954,7 +1954,7 @@ a.matchIndexCard:hover {
 .bracketRoundCaption > span,
 .bracketFinalCaption > span {
   color: var(--signal-faint);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .06em;
 }
 
@@ -1966,7 +1966,7 @@ a.matchIndexCard:hover {
 .bracketRoundCaption > small,
 .bracketFinalCaption > small {
   color: var(--signal-faint);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .bracketFinalCaption {
@@ -2050,11 +2050,11 @@ a.matchIndexCard:hover {
 }
 
 .bracketMatchNode .matchIndexTeams > div > span {
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .bracketMatchNode .matchIndexTeams > div > strong {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .bracketMatchNode .matchIndexTeams > div > b {
@@ -2078,7 +2078,7 @@ a.matchIndexCard:hover {
 }
 
 .bracketCrossoverNote > strong {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .bracketUpperHoldNote {
@@ -2094,7 +2094,7 @@ a.matchIndexCard:hover {
 }
 
 .bracketUpperHoldNote > strong {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .bracketChampionTarget {
@@ -2169,7 +2169,7 @@ a.matchIndexCard:hover {
   max-width: 430px;
   margin: 0;
   color: var(--signal-muted);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.8;
 }
 
@@ -2205,7 +2205,7 @@ a.matchIndexCard:hover {
 }
 
 .lcqAdvanceTarget > span {
-  font: 7px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -2250,7 +2250,7 @@ a.matchIndexCard:hover {
 
 .routeTableHead > span {
   padding-inline: 10px;
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .routeTableHead > span:nth-last-child(-n + 2) {
@@ -2295,7 +2295,7 @@ a.matchIndexCard:hover {
 
 .routeNumber {
   color: var(--signal-faint);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   text-align: center;
 }
 
@@ -2308,7 +2308,7 @@ a.matchIndexCard:hover {
 .routeStage > strong,
 .routeOpponent strong {
   overflow: hidden;
-  font-size: 11px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -2317,7 +2317,7 @@ a.matchIndexCard:hover {
 .routeOpponent small {
   overflow: hidden;
   color: var(--signal-faint);
-  font-size: 11px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -2351,7 +2351,7 @@ a.matchIndexCard:hover {
   justify-content: flex-end;
   gap: 8px;
   color: #7d6415;
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .routeResult > i {
@@ -2366,7 +2366,7 @@ a.matchIndexCard:hover {
   place-items: center;
   margin: 0;
   color: var(--signal-muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .championVisual {
@@ -2407,7 +2407,7 @@ a.matchIndexCard:hover {
   z-index: 2;
   margin-top: 7px;
   color: var(--signal-yellow);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .championVisual > small > i {
@@ -2423,7 +2423,7 @@ a.matchIndexCard:hover {
 
 .championIdentity > span {
   color: #8b8f82;
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .championIdentity > span > b {
@@ -2451,7 +2451,7 @@ a.matchIndexCard:hover {
 
 .finalScore > span {
   color: #85897d;
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -2477,7 +2477,7 @@ a.matchIndexCard:hover {
   gap: 12px;
   padding: 0 17px;
   color: #898d80;
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .championMetrics > span > b {
@@ -2488,7 +2488,7 @@ a.matchIndexCard:hover {
 .dossierHint {
   margin: 12px 0 0;
   color: var(--signal-muted);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
   text-align: right;
 }
@@ -2509,7 +2509,7 @@ a.matchIndexCard:hover {
 
 .orderHeading > div > span {
   color: var(--signal-muted);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -2594,7 +2594,7 @@ a.matchIndexCard:hover {
   z-index: 2;
   margin-top: 8px;
   color: var(--signal-muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .podiumStrip > a:hover > small {
@@ -2634,7 +2634,7 @@ a.matchIndexCard:hover {
 
 .orderRows a > span {
   color: var(--signal-faint);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .orderLogo {
@@ -2662,7 +2662,7 @@ a.matchIndexCard:hover {
 .orderRows a > em {
   padding: 4px 5px;
   background: var(--signal-yellow);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   font-style: normal;
 }
 
@@ -2679,7 +2679,7 @@ a.matchIndexCard:hover {
 
 .finalFoot > span {
   color: var(--signal-muted);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -2893,7 +2893,7 @@ a.matchIndexCard:hover {
   }
 
   .heroTopline > span:last-child {
-    font-size: 7px;
+    font-size: 12px;
   }
 
   .headingTitle {
@@ -2901,7 +2901,7 @@ a.matchIndexCard:hover {
   }
 
   .pageKicker {
-    font-size: 8px;
+    font-size: 12px;
   }
 
   .pageHeading h1 {
@@ -2913,7 +2913,7 @@ a.matchIndexCard:hover {
 
   .headingTitle > p {
     max-width: 76%;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .heroGhost {
@@ -2968,7 +2968,7 @@ a.matchIndexCard:hover {
   .heroRouteNode > i {
     max-width: 58px;
     overflow: hidden;
-    font-size: 7px;
+    font-size: 12px;
     text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -3032,7 +3032,7 @@ a.matchIndexCard:hover {
 
   .chapterIntro > p {
     padding-top: 14px;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .sectionEyebrow {
@@ -3406,7 +3406,7 @@ a.matchIndexCard:hover {
   right: calc(var(--kpr-gutter) + 10px);
   z-index: 4;
   color: #efeddb56;
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .17em;
   writing-mode: vertical-rl;
 }
@@ -3423,7 +3423,7 @@ a.matchIndexCard:hover {
   align-items: center;
   gap: 24px;
   border-bottom: 1px solid #efeddb32;
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -3461,7 +3461,7 @@ a.matchIndexCard:hover {
   align-items: center;
   gap: 13px;
   color: var(--signal-yellow);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .12em;
 }
 
@@ -3523,7 +3523,7 @@ a.matchIndexCard:hover {
   position: absolute;
   top: 24px;
   left: 25px;
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .09em;
 }
 
@@ -3537,7 +3537,7 @@ a.matchIndexCard:hover {
 }
 
 .routeHeroChampion > div > small {
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -3600,7 +3600,7 @@ a.matchIndexCard:hover {
   padding: 0 19px;
   border-right: 1px solid #efeddb24;
   color: #efeddb9c;
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -3654,7 +3654,7 @@ a.matchIndexCard:hover {
 .routeChapterHeading > span {
   grid-column: 1 / -1;
   color: var(--signal-muted);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .1em;
 }
 
@@ -3710,7 +3710,7 @@ a.matchIndexCard:hover {
 .routeStoryHeader dt,
 .routeStoryHeader > a > span {
   color: #efeddb9c;
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -3745,7 +3745,7 @@ a.matchIndexCard:hover {
 .routeStoryHeader dd > small {
   margin-inline: 3px 8px;
   color: var(--signal-yellow);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .routeStoryHeader > a {
@@ -3843,7 +3843,7 @@ a.matchIndexCard:hover {
 }
 
 .routeIdentity > div > small {
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .09em;
 }
 
@@ -3870,7 +3870,7 @@ a.matchIndexCard:hover {
   margin-top: 25px;
   padding-top: 15px;
   border-top: 1px solid rgb(24 26 23 / 30%);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -4032,7 +4032,7 @@ a.matchIndexCard:hover {
 .journeyNodeIndex {
   grid-column: 1 / -1;
   color: #65675f;
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .06em;
 }
 
@@ -4058,7 +4058,7 @@ a.matchIndexCard:hover {
 
 .journeyOpponent > b {
   overflow: hidden;
-  font-size: 11px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -4084,7 +4084,7 @@ a.matchIndexCard:hover {
 
 .journeyScore > i {
   color: #7e8077;
-  font: 400 10px var(--font-mono);
+  font: 400 12px var(--font-mono);
 }
 
 .journeyResult {
@@ -4093,7 +4093,7 @@ a.matchIndexCard:hover {
   padding: 5px 7px;
   background: var(--signal-yellow);
   color: var(--signal-ink);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   font-style: normal;
   letter-spacing: .06em;
 }
@@ -4111,7 +4111,7 @@ a.matchIndexCard:hover {
   padding: 7px 10px;
   background: var(--signal-yellow);
   color: var(--signal-ink);
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -4174,7 +4174,7 @@ a.matchIndexCard:hover {
 
 .routeTeamDock button > span {
   color: #efeddb55;
-  font: 9px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .routeTeamDock button[data-active="true"] > span {
@@ -4194,7 +4194,7 @@ a.matchIndexCard:hover {
 
 .routeTeamDock button > strong {
   overflow: hidden;
-  font: 800 11px var(--font-sans);
+  font: 800 12px var(--font-sans);
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -4219,7 +4219,7 @@ a.matchIndexCard:hover {
   gap: 28px;
   margin-inline: var(--kpr-gutter);
   color: #efeddb9c;
-  font: 10px/1.5 var(--font-mono);
+  font: 12px/1.5 var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -4262,7 +4262,7 @@ a.matchIndexCard:hover {
   padding: 0 23px;
   border-left: 1px solid var(--signal-line);
   color: var(--signal-muted);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -4540,7 +4540,7 @@ a.matchIndexCard:hover {
 
   .journeyNodeIndex,
   .journeyResult {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .journeyOpponent > b {
@@ -4566,7 +4566,7 @@ a.matchIndexCard:hover {
   }
 
   .routeTeamDock button > span {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .routeTeamDock button > strong {
@@ -4666,7 +4666,7 @@ a.matchIndexCard:hover {
   --signal-paper-deep: var(--fc-data-paper-deep, #e4e3db);
   --signal-ink: var(--fc-data-ink, #181a17);
   --signal-yellow: var(--fc-data-signal, #f4c320);
-  --signal-muted: var(--fc-data-text-muted, #66685f);
+  --signal-muted: var(--fc-data-text-muted, #5f6158);
   --signal-line: rgb(24 26 23 / 18%);
   --signal-display: var(--fc-data-font-display, "FC Data Display", var(--font-sans));
   min-width: 0;
@@ -4691,7 +4691,7 @@ a.matchIndexCard:hover {
 .swissSignalWorkspace button:focus-visible,
 .lcqSignalWorkspace a:focus-visible,
 .lcqSignalWorkspace button:focus-visible {
-  outline: 3px solid var(--fc-data-focus-on-light, #806000);
+  outline: 3px solid var(--fc-data-focus-on-light, #705100);
   outline-offset: 3px;
 }
 
@@ -4734,7 +4734,7 @@ a.matchIndexCard:hover {
 .phaseSignalHeading > span {
   grid-column: 1 / -1;
   color: var(--signal-muted);
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .1em;
 }
 
@@ -4791,7 +4791,7 @@ a.matchIndexCard:hover {
 
 .phaseSignalSummary dt {
   color: var(--signal-muted);
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -4803,7 +4803,7 @@ a.matchIndexCard:hover {
 .phaseSignalSummary dd > small {
   margin-left: 5px;
   color: var(--signal-muted);
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .swissSignalBoard,
@@ -4848,7 +4848,7 @@ a.matchIndexCard:hover {
 
 .signalBoardHeader > div > span {
   color: var(--signal-yellow);
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .09em;
 }
 
@@ -4917,7 +4917,7 @@ a.matchIndexCard:hover {
   grid-column: 1 / -1;
   align-self: start;
   color: #7f8378;
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -4985,7 +4985,7 @@ a.matchIndexCard:hover {
 .swissThresholdRail > p > span {
   grid-column: 1 / -1;
   color: #898d81;
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -5035,7 +5035,7 @@ a.matchIndexCard:hover {
 
 .signalIndexHeader > div > span {
   color: var(--signal-muted);
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .09em;
 }
 
@@ -5069,7 +5069,7 @@ a.matchIndexCard:hover {
   align-items: center;
   border-bottom: 1px solid #181a1730;
   color: var(--signal-muted);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .06em;
 }
 
@@ -5259,7 +5259,7 @@ a.matchIndexCard:hover {
 .swissMethodPanel > header span,
 .swissKeyMatches > span {
   color: var(--signal-yellow);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .09em;
 }
 
@@ -5328,13 +5328,13 @@ a.matchIndexCard:hover {
 
 .swissKeyMatches > a i {
   color: var(--signal-yellow);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   font-style: normal;
 }
 
 .swissKeyMatches > a > small {
   color: #999d91;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .swissKeyMatches > a > b {
@@ -5392,7 +5392,7 @@ a.matchIndexCard:hover {
 .lcqGateLabel {
   grid-column: 1 / -1;
   color: #888c80;
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -5436,7 +5436,7 @@ a.matchIndexCard:hover {
 .lcqGateDock > button > small {
   overflow: hidden;
   color: #969a8d;
-  font-size: 11px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -5445,7 +5445,7 @@ a.matchIndexCard:hover {
   grid-row: 2 / 4;
   grid-column: 3;
   color: var(--signal-yellow);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   font-style: normal;
   letter-spacing: .05em;
 }
@@ -5479,7 +5479,7 @@ a.matchIndexCard:hover {
   position: absolute;
   top: 22px;
   left: 22px;
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .09em;
 }
 
@@ -5517,7 +5517,7 @@ a.matchIndexCard:hover {
 }
 
 .lcqRouteIdentity > div > small {
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .06em;
 }
 
@@ -5561,7 +5561,7 @@ a.matchIndexCard:hover {
 }
 
 .lcqRouteIdentity dt {
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .lcqRouteIdentity dd {
@@ -5571,7 +5571,7 @@ a.matchIndexCard:hover {
 
 .lcqRouteIdentity dd > small {
   margin-left: 3px;
-  font: 10px var(--font-sans);
+  font: 12px var(--font-sans);
 }
 
 .lcqRoutePlan {
@@ -5597,7 +5597,7 @@ a.matchIndexCard:hover {
 .lcqRoutePlan > header span,
 .lcqRoutePlan > header p {
   color: #85897d;
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -5635,7 +5635,7 @@ a.matchIndexCard:hover {
 
 .lcqRoundFlow > section > header > span {
   color: var(--signal-yellow);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -5673,7 +5673,7 @@ a.lcqSignalMatch:hover {
   justify-content: space-between;
   padding-inline: 11px;
   color: var(--signal-muted);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .lcqSignalMatch > header {
@@ -5721,7 +5721,7 @@ a.lcqSignalMatch:hover {
 
 .lcqSignalTeams > div > span {
   color: var(--signal-muted);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .lcqSignalLogo {
@@ -5758,7 +5758,7 @@ a.lcqSignalMatch:hover {
 .lcqFlowArrow > small {
   max-width: 62px;
   color: #8f9387;
-  font: 10px/1.45 var(--font-mono);
+  font: 12px/1.45 var(--font-mono);
   text-align: center;
 }
 
@@ -5779,7 +5779,7 @@ a.lcqSignalMatch:hover {
 }
 
 .lcqRouteTarget > span {
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -5810,7 +5810,7 @@ a.lcqSignalMatch:hover {
 
 .lcqStoryFooter > span {
   color: var(--signal-yellow);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -5831,7 +5831,7 @@ a.lcqSignalMatch:hover {
 
 .lcqSignalPending > span {
   color: var(--signal-yellow);
-  font: 10px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .lcqSignalPending > h2 {
@@ -5964,7 +5964,7 @@ a.lcqSignalMatch:hover {
   .swissLedgerRank > small {
     display: block;
     color: var(--signal-muted);
-    font: 9px var(--font-mono);
+    font: 12px var(--font-mono);
   }
 
   .swissLedgerTeam {
@@ -5993,7 +5993,7 @@ a.lcqSignalMatch:hover {
   .swissLedgerMetrics dt {
     display: block;
     color: var(--signal-muted);
-    font: 9px var(--font-mono);
+    font: 12px var(--font-mono);
   }
 
   .swissLedgerMetrics dd {
@@ -6060,7 +6060,7 @@ a.lcqSignalMatch:hover {
   .lcqRouteTarget > span,
   .lcqStoryFooter > span,
   .lcqSignalPending > span {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .phaseSignalHeading {
@@ -6087,7 +6087,7 @@ a.lcqSignalMatch:hover {
   }
 
   .phaseSignalSummary dt {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .phaseSignalSummary dd {
@@ -6280,7 +6280,7 @@ a.lcqSignalMatch:hover {
 
   .lcqFlowArrow > small {
     max-width: none;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .lcqFlowArrow > b {
@@ -6329,7 +6329,7 @@ a.lcqSignalMatch:hover {
   .phaseSignalSummary dd > small {
     display: block;
     margin: 5px 0 0;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .swissOutcomeMap > button {
@@ -6395,7 +6395,7 @@ a.lcqSignalMatch:hover {
 .swissTeamDock > button:first-child > span {
   grid-column: 1 / -1;
   color: var(--signal-yellow);
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -6439,7 +6439,7 @@ a.lcqSignalMatch:hover {
 .swissTeamDock > button > small {
   overflow: hidden;
   color: #858980;
-  font: 11px/1.15 var(--font-mono);
+  font: 12px/1.15 var(--font-mono);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -6532,13 +6532,13 @@ a.lcqSignalMatch:hover {
 
 .swissFlowRoundLabel > span {
   color: var(--signal-yellow);
-  font: 800 11px var(--font-mono);
+  font: 800 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
 .swissFlowRoundLabel > small {
   color: #7d8177;
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .swissFlowPool {
@@ -6575,7 +6575,7 @@ a.lcqSignalMatch:hover {
 
 .swissFlowPool > span > small {
   color: var(--signal-muted);
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .swissFlowPoolTeams {
@@ -6603,7 +6603,7 @@ a.lcqSignalMatch:hover {
   min-width: 0;
   margin-left: 5px;
   overflow: hidden;
-  font: 800 11px var(--font-mono);
+  font: 800 12px var(--font-mono);
   font-style: normal;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -6659,7 +6659,7 @@ a.lcqSignalMatch:hover {
 
 .swissFlowOutcome > small {
   color: #8f9388;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.35;
 }
 
@@ -6712,7 +6712,7 @@ a.lcqSignalMatch:hover {
 
 .swissTraceKicker {
   grid-column: 1 / -1;
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .07em;
 }
 
@@ -6768,7 +6768,7 @@ a.lcqSignalMatch:hover {
 
 .swissTraceIdentity dt {
   color: rgb(24 26 23 / 64%);
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
 }
 
 .swissTraceIdentity dd {
@@ -6843,7 +6843,7 @@ a.lcqSignalMatch:hover {
 
 .swissTraceStep > header {
   color: var(--signal-muted);
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .04em;
 }
 
@@ -6851,7 +6851,7 @@ a.lcqSignalMatch:hover {
   padding: 4px 6px;
   background: var(--signal-yellow);
   color: var(--signal-ink);
-  font: 900 11px var(--font-mono);
+  font: 900 12px var(--font-mono);
 }
 
 .swissTraceStep > header > b[data-result="loss"] {
@@ -6895,7 +6895,7 @@ a.lcqSignalMatch:hover {
   padding-top: 12px;
   border-top: 1px solid #181a172e;
   color: var(--signal-muted);
-  font: 11px/1.3 var(--font-mono);
+  font: 12px/1.3 var(--font-mono);
 }
 
 .swissTraceStep > footer > span {
@@ -6931,7 +6931,7 @@ a.lcqSignalMatch:hover {
 
 .swissFlowPrompt > span {
   color: var(--signal-yellow);
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .09em;
 }
 
@@ -7006,7 +7006,7 @@ a.lcqSignalMatch:hover {
   .swissTeamDock > button:first-child > span,
   .swissTeamDock > button > small,
   .swissFlowPrompt > span {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .swissFlowCanvasViewport {
@@ -7053,7 +7053,7 @@ a.lcqSignalMatch:hover {
 
   .swissFlowMobileRounds > li > header > span {
     color: #8f9388;
-    font: 11px/1.35 var(--font-mono);
+    font: 12px/1.35 var(--font-mono);
   }
 
   .swissFlowMobileRounds > li > div {
@@ -7083,7 +7083,7 @@ a.lcqSignalMatch:hover {
 
   .swissFlowMobileRounds > li > div small {
     color: #8f9388;
-    font: 11px var(--font-mono);
+    font: 12px var(--font-mono);
   }
 
   .swissFlowMobileOutcomes {
@@ -7134,7 +7134,7 @@ a.lcqSignalMatch:hover {
 
   .swissFlowMobileOutcomes > button > small {
     color: #8f9388;
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1.4;
   }
 
@@ -7170,7 +7170,7 @@ a.lcqSignalMatch:hover {
 
   .swissTraceKicker,
   .swissTraceIdentity dt {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .swissTraceSteps {
@@ -7209,12 +7209,12 @@ a.lcqSignalMatch:hover {
     display: grid;
     justify-content: start;
     gap: 10px;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .swissTraceStep > header > b {
     width: max-content;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .swissTraceStep > div {
@@ -7243,7 +7243,7 @@ a.lcqSignalMatch:hover {
     padding: 0 0 0 13px;
     border-top: 0;
     border-left: 1px solid #181a172e;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .swissTraceStep > footer > small {
@@ -7341,7 +7341,7 @@ a.lcqSignalMatch:hover {
 .swissLedgerTable .swissLedgerHead {
   min-height: 45px;
   background: var(--signal-paper-deep);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .swissLedgerScroller {
@@ -7355,7 +7355,7 @@ a.lcqSignalMatch:hover {
 }
 
 .swissLedgerScroller:focus-visible {
-  outline: 3px solid var(--fc-data-focus-on-light, #806000);
+  outline: 3px solid var(--fc-data-focus-on-light, #705100);
   outline-offset: -3px;
 }
 
@@ -7411,7 +7411,7 @@ a.lcqSignalMatch:hover {
 
 .swissLedgerTable .swissLedgerTeam small,
 .swissLedgerTable .swissLedgerZone {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .swissLedgerTable .swissLedgerMetrics > div {
@@ -7439,7 +7439,7 @@ a.lcqSignalMatch:hover {
 
 .swissLedgerScrollFooter > span {
   color: #8a6900;
-  font: 800 11px var(--font-mono);
+  font: 800 12px var(--font-mono);
   letter-spacing: .05em;
 }
 
@@ -7561,7 +7561,7 @@ a.lcqSignalMatch:hover {
 
 .swissLedgerDetailBody > header > span {
   color: var(--signal-yellow);
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .06em;
 }
 
@@ -7572,7 +7572,7 @@ a.lcqSignalMatch:hover {
 .swissLedgerDetailBody > header > p {
   margin: 0;
   color: #989c91;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.45;
 }
 
@@ -7607,7 +7607,7 @@ a.lcqSignalMatch:hover {
 
 .swissLedgerDetail .swissTraceStep > header,
 .swissLedgerDetail .swissTraceStep > footer {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .swissLedgerDetail .swissTraceStep > div {
@@ -7647,7 +7647,7 @@ a.lcqSignalMatch:hover {
 
 .swissLedgerDetailEmpty > span {
   color: var(--signal-yellow);
-  font: 11px var(--font-mono);
+  font: 12px var(--font-mono);
   letter-spacing: .08em;
 }
 
@@ -7739,7 +7739,7 @@ a.lcqSignalMatch:hover {
 
   .swissLedgerTable .swissLedgerRank > small,
   .swissLedgerTable .swissLedgerMetrics dt {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .swissLedgerTable .swissLedgerTeam {
@@ -7757,7 +7757,7 @@ a.lcqSignalMatch:hover {
   }
 
   .swissLedgerTable .swissLedgerTeam small {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .swissLedgerTable .swissLedgerZone {
@@ -7840,7 +7840,7 @@ a.lcqSignalMatch:hover {
   .swissLedgerDetail .swissTraceStep > footer {
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .swissLedgerDetail .swissTraceStep > div {
@@ -7983,7 +7983,7 @@ a.lcqSignalMatch:hover {
   .phaseLinks { display: grid; grid-template-columns: repeat(var(--advance-phase-count), minmax(0, 1fr)); width: 100%; }
   .phaseLinks > a { min-height: 67px; padding: 12px 8px; gap: 7px; }
   .phaseLinks > a > span { font-size: 12px; line-height: 1.4; white-space: normal; overflow: visible; text-overflow: clip; }
-  .phaseLinks > a > small { font-size: 10px; }
+  .phaseLinks > a > small { font-size: 12px; }
 
   .playoffWorkspace, .groupWorkspace, .finalIndex { padding: 20px 16px 30px; }
   .routeChapterHeading, .phaseSignalHeading { min-height: 0; padding: 20px 16px; gap: 12px; }
@@ -7998,7 +7998,7 @@ a.lcqSignalMatch:hover {
   .chapterIntro h2 > em::after { display: none; }
   .phaseSignalSummary { gap: 0; margin: 0; }
   .phaseSignalSummary > div { padding: 10px 12px; }
-  .phaseSignalSummary dt { font-size: 10px; }
+  .phaseSignalSummary dt { font-size: 12px; }
   .phaseSignalSummary dd { display: flex; align-items: baseline; gap: 4px; font-size: 21px; line-height: 1.2; }
   .phaseSignalSummary dd > small { font-size: 12px; }
 
@@ -8021,8 +8021,8 @@ a.lcqSignalMatch:hover {
   .routeIdentityLogo { position: static; width: 50px; height: 50px; flex: 0 0 50px; }
   .routeIdentity > div { position: static; min-width: 0; }
   .routeIdentity > div > strong { display: block; font-size: 32px; line-height: 1.05; margin-top: 6px; }
-  .routeIdentity > div > p { margin-top: 6px; font-size: 11px; }
-  .mobileScoreNote { display: block; margin: 14px 0 0; color: var(--signal-dark-muted, #a2a59a); font-size: 11px; }
+  .routeIdentity > div > p { margin-top: 6px; font-size: 12px; }
+  .mobileScoreNote { display: block; margin: 14px 0 0; color: var(--signal-dark-muted, #a2a59a); font-size: 12px; }
   .journeyNodes { padding: 12px 0 16px; }
   .journeyNodes > li > a, .journeyNodes > li > div { min-height: 104px; }
   .routeStoryFooter { min-height: 0; padding: 14px 16px; }
@@ -8049,7 +8049,7 @@ a.lcqSignalMatch:hover {
   .swissSignalBoard[data-has-selection="true"] .swissMobileField[open] .swissFlowMobileRounds { display: grid; }
   .swissFlowMobileOutcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); min-height: 0; }
   .swissFlowMobileOutcomes > button { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 56px; padding: 10px; }
-  .swissFlowMobileOutcomes > button > span { font-size: 11px; overflow-wrap: anywhere; }
+  .swissFlowMobileOutcomes > button > span { font-size: 12px; overflow-wrap: anywhere; }
   .swissFlowMobileOutcomes > button > strong { font-size: 24px; }
   .swissFlowMobileOutcomes > button > small { display: none; }
   .swissLedger { display: flex; flex-direction: column; padding-top: 18px; }
@@ -8081,7 +8081,7 @@ a.lcqSignalMatch:hover {
   .groupIndex:not([data-selected="true"]) { display: none; }
   .groupStandings > .sectionEyebrow { display: none; }
   .groupIndexTable td { font-size: 13px; }
-  .groupIndexTable td > span { font-size: 11px; }
+  .groupIndexTable td > span { font-size: 12px; }
   .groupIndexTable th, .groupIndexTable td { padding-inline: 6px; }
   .groupIndexTable td:nth-child(2) small { display: none; }
   .groupIndexTable td:nth-child(2) a { gap: 7px; }
@@ -8094,7 +8094,7 @@ a.lcqSignalMatch:hover {
   .championVisual { grid-column: 1; grid-row: 2; min-height: 106px; padding: 12px; background: none; }
   .championRankMark { display: none; }
   .championLogo { width: 52px; height: 52px; }
-  .championVisual > small { font-size: 9px; }
+  .championVisual > small { font-size: 12px; }
   .championVisual > small > i { display: none; }
   .championIdentity { grid-column: 2; grid-row: 2; align-self: center; border: 0; padding: 14px 14px 14px 0; }
   .championIdentity > span { display: none; }
@@ -8113,5 +8113,5 @@ a.lcqSignalMatch:hover {
 /* 票 2.25: phone legibility for the shared advance chapters — system text at least 11px. */
 @media (max-width: 600px) {
   .journeyNodeIndex, .journeyResult, .routeStoryHeader dt,
-  .routeStoryHeader > a > span, .routeIdentity > div > small, .journeyScore > i, .routeStoryFooter { font-size: 11px; }
+  .routeStoryHeader > a > span, .routeIdentity > div > small, .journeyScore > i, .routeStoryFooter { font-size: 12px; }
 }

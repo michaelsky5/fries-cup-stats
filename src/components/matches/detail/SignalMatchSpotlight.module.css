@@ -38,9 +38,9 @@
 .ratingInfo > div { display: grid; gap: 7px; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--fc-data-line-on-dark); color: var(--fc-data-text-on-dark); font-size: 12px; line-height: 1.8; }
 .ratingInfo summary:focus-visible { outline: 2px solid var(--fc-data-focus-on-dark); outline-offset: 3px; }
 .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0; padding-top: 8px; border-top: 1px solid var(--fc-data-line-on-dark); }
-.facts dt { font-size: 11px; color: var(--fc-data-text-on-dark); line-height: 1.5; }
+.facts dt { font-size: 12px; color: var(--fc-data-text-on-dark); line-height: 1.5; }
 .facts dd { margin: 6px 0 0; font-size: 17px; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.facts dd small { color: var(--fc-data-text-on-dark); font-size: 11px; font-weight: 400; }
+.facts dd small { color: var(--fc-data-text-on-dark); font-size: 12px; font-weight: 400; }
 .spotlight a:focus-visible { outline: 2px solid var(--fc-data-focus-on-dark); outline-offset: 5px; }
 @media (max-width: 1150px) {
   .spotlight { grid-template-columns: minmax(0, 1fr) minmax(280px, .9fr); }
@@ -60,9 +60,9 @@
   .portrait { display: none; }
   .performance { display: contents; }
   .rating { grid-column: 2; grid-row: 1; align-self: start; flex-direction: column; align-items: flex-end; gap: 8px; padding-top: 2px; }
-  .rating > span { font-size: 11px; text-align: right; }
+  .rating > span { font-size: 12px; text-align: right; }
   .rating > strong { font-size: 30px; }
-  .rating small { margin-left: 4px; font-size: 11px; }
+  .rating small { margin-left: 4px; font-size: 12px; }
   .facts { grid-column: 1 / -1; grid-row: 2; padding-top: 12px; gap: 12px; }
   .facts dd { font-size: 17px; }
   .ratingInfo { grid-column: 1 / -1; grid-row: 3; }

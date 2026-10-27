@@ -48,7 +48,7 @@ const dictionary = {
     'en-US': 'Players'
   },
   'layout.nav.teams': {
-    'zh-CN': '战队档案',
+    'zh-CN': '队伍档案',
     'en-US': 'Teams'
   },
   'layout.nav.heroes': {
@@ -60,7 +60,7 @@ const dictionary = {
     'en-US': 'Maps'
   },
   'layout.nav.standings': {
-    'zh-CN': '战队排名',
+    'zh-CN': '队伍排名',
     'en-US': 'Standings'
   },
   'layout.nav.review': {
@@ -820,7 +820,7 @@ const dictionary = {
     'en-US': 'Rank'
   },
   'advance.table.team': {
-    'zh-CN': '战队',
+    'zh-CN': '队伍',
     'en-US': 'Team'
   },
   'advance.table.matchRecord': {

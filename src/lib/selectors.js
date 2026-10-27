@@ -206,7 +206,7 @@ export function getMapDetail(db, mapName) {
     const secs = parseInt(timeParts[1], 10) || 0
     totalTimeSeconds += (mins * 60 + secs)
 
-    // 统计战队胜率
+    // 统计队伍胜率
     const winnerId = mapData.winner
     const teamAId = match.team_a?.id
     const teamBId = match.team_b?.id
@@ -311,7 +311,7 @@ export function getMapDetail(db, mapName) {
   }
 }
 
-// ✨ 新增/替换：获取瑞士轮战队积分榜 (规则书对齐版)
+// ✨ 新增/替换：获取瑞士轮队伍积分榜 (规则书对齐版)
 export function getSwissStandings(db) {
   const teams = safeArr(db?.teams)
   const matches = safeArr(db?.matches)

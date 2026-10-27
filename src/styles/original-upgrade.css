@@ -193,7 +193,7 @@ html [data-design='kpr'][data-design-edition='hybrid'] [data-upgrade-header='eve
     top: 50%;
     right: 10px;
     color: var(--fc-data-signal);
-    font: 10px/1 var(--font-mono);
+    font: 12px/1 var(--font-mono);
     transform: translateY(-50%);
   }
 
@@ -275,7 +275,7 @@ html [data-design='kpr'][data-design-edition='hybrid'] [data-upgrade-header='eve
   }
 
   :is([data-placement='header'] details > div, [data-upgrade-language] > div) button:focus-visible {
-    outline-color: #806000;
+    outline-color: #705100;
   }
 }
 
