@@ -549,3 +549,5 @@ a.followedMatch > span { color: var(--fc-data-focus-on-light, #806000); }
   .phoneLinks .rulesLink[data-weekly-report-archive-link] small { display: block; order: 1; margin-left: auto; color: var(--muted); font-size: 12px; }
   .phoneLinks .rulesLink[data-weekly-report-archive-link] > span { order: 2; }
 }
+/* 票 2.81: points use the body face with tabular figures (the condensed black face drew 「0」 as a capsule). */
+.standings td strong { font: 800 22px/1 var(--fc-data-font-interface); font-variant-numeric: tabular-nums; }

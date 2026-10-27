@@ -1115,3 +1115,6 @@
   :global([data-design="kpr"][data-design-edition="hybrid"]) .followingLink:lang(en) { display: none; }
   :global([data-design="kpr"][data-design-edition="hybrid"]) .mobileNavPanel [data-following-item]:lang(en) { display: flex; }
 }
+/* 票 2.81: the language switch fills yellow at once on hover/focus/open (its 0.16s fade passed through
+   grey text on half-yellow, about 1.5:1), like the season switch beside it. */
+:global([data-design="kpr"][data-design-edition="hybrid"]) .languageMenu > summary { transition: none; }

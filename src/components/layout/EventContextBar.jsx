@@ -53,8 +53,9 @@ function getArchiveMetaText(season, locale = 'zh-CN', activeSummary = null) {
   )
 }
 
-function getSwitcherMeta(season, currentSeasonId, seasonStatus, locale = 'zh-CN', activeSummary = null) {
+function getSwitcherMeta(season, currentSeasonId, seasonStatus, locale = 'zh-CN', activeSummary = null, statusUnknown = false) {
   if (season?.id === currentSeasonId) {
+    if (statusUnknown) return getCurrentScaleText(locale, activeSummary, season)
     const status = getReadableStatus(seasonStatus, locale, season)
     if (getSeasonLifecycleGroup(season, seasonStatus) === 'ARCHIVE') return `${status} · ${getArchiveMetaText(season, locale, activeSummary)}`
     return `${status} · ${getCurrentScaleText(locale, activeSummary, season)}`
@@ -85,7 +86,7 @@ function getHeaderEventLabel(season, locale, fullName) {
   return `${pickUiLocale(locale, ...labels[match[2]])} · ${match[1]}`
 }
 
-function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary, onSeasonChange, compact = false }) {
+function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary, onSeasonChange, compact = false, statusUnknown = false }) {
   const detailsRef = useRef(null)
   const currentSeason = seasons.find(item => item.id === seasonId) || seasons[0]
   const eventGroups = getSeasonEventGroups(seasons)
@@ -132,7 +133,7 @@ function EventSwitcher({ seasonId, seasons, locale, seasonStatus, activeSummary,
       >
         <strong>{item.displayCode || item.publicCode}</strong>
         <span>{name}</span>
-        <em>{getSwitcherMeta(item, seasonId, seasonStatus, locale, activeSummary)}</em>
+        <em>{getSwitcherMeta(item, seasonId, seasonStatus, locale, activeSummary, statusUnknown)}</em>
       </button>
     )
   }
@@ -199,9 +200,12 @@ export default function EventContextBar({
   const isHeaderPlacement = placement === 'header'
   const isContentPlacement = placement === 'content'
   const lifecycle = getSeasonLifecycleGroup(season, seasonStatus)
+  // 票 2.81: when the snapshot failed to load there is no schedule to describe — the bar says nothing
+  // about it rather than 「赛程待发布」 beside 「加载失败」.
+  const statusUnknown = dataStatus?.key === 'error' && !seasonStatus?.totalMatches
   const statusLabel = dataStatus?.key === 'loading'
     ? contextText(locale, '正在载入赛事状态', 'Loading event status', '대회 상태 불러오는 중')
-    : getReadableStatus(seasonStatus, locale, season)
+    : statusUnknown ? '' : getReadableStatus(seasonStatus, locale, season)
   const directoryNotice = [
     isPreview && dataStatus?.key === 'local' ? '' : dataStatus?.notice,
     isPreview ? contextText(locale, '设计样例 · 对阵、比分与积分均为演示', 'Design sample · fictional fixtures, scores and points', '디자인 예시 · 대진, 점수 및 순위 점수는 가상입니다') : ''
@@ -213,7 +217,7 @@ export default function EventContextBar({
         {/* 票 2.76: the season's name (「2026 薯条杯周赛」), not its code; the code stays as the tooltip. */}
         <strong title={season?.publicCode || seasonId}>{(season?.name?.zh && contextText(locale, uiText(season.name.zh, locale), season.name.en, uiText(season.name.zh, locale))) || season?.displayCode || season?.publicCode || seasonId}</strong>
         <small className={styles.eventKindLabel} data-event-kind={getSeasonEventKind(season)}>{getEventKindLabel(season, locale)}</small>
-        <span>{statusLabel}</span>
+        {statusLabel ? <span>{statusLabel}</span> : null}
       </div>
       <div className={styles.directoryData} role="status">
         {/* While the first snapshot loads there is no update time yet; don't print 「暂无数据」 beside 「正在载入」. */}
@@ -256,7 +260,7 @@ export default function EventContextBar({
       ) : null}
 
       <div className={styles.eventMeta}>
-        {!isHeaderPlacement ? <span className={styles.statusMeta} aria-live="polite" title={statusLabel}>
+        {!isHeaderPlacement && statusLabel ? <span className={styles.statusMeta} aria-live="polite" title={statusLabel}>
           <i aria-hidden="true" />
           {contextMode ? statusLabel : `${contextText(locale, '状态：', 'Status: ', '상태: ')}${statusLabel}`}
         </span> : null}
@@ -275,6 +279,7 @@ export default function EventContextBar({
           activeSummary={activeSummary}
           onSeasonChange={onSeasonChange}
           compact={isHeaderPlacement}
+          statusUnknown={statusUnknown}
         /> : null}
       </div>
       {isContentPlacement ? <NextActionLink action={nextAction} /> : null}
