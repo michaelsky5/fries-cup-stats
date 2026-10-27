@@ -344,10 +344,11 @@
 /* 601–640px: the dock has room for the avatar only (as on phones); the name was being clipped mid-character. */
 @media (min-width: 601px) and (max-width: 640px) { :global([data-design="kpr"][data-design-edition="hybrid"]) .authCopy { display: none; } }
 
-/* 票 2.77: signed out on a phone, the corner says 「登录」 instead of showing an 「FC」 avatar. */
+/* 票 2.77: signed out, the account control says 「登录」 at every width — never an 「FC」 avatar. */
+:global([data-design="kpr"]) .authButton[data-signed-out] { justify-content: center; gap: 0; min-width: 44px; padding-inline: 10px; }
+:global([data-design="kpr"]) .authButton[data-signed-out] .avatar { display: none; }
 @media (max-width: 640px) {
-  :global([data-design="kpr"]) .authButton[data-signed-out] { width: auto; min-width: 44px; padding: 0 8px; }
-  :global([data-design="kpr"]) .authButton[data-signed-out] .avatar { display: none; }
+  :global([data-design="kpr"]) .authButton[data-signed-out] { width: auto; padding: 0 8px; }
   :global([data-design="kpr"]) .authButton[data-signed-out] .authCopy { display: grid; }
   :global([data-design="kpr"]) .authButton[data-signed-out] .authMode,
   :global([data-design="kpr"]) .authButton[data-signed-out] .authArrow { display: none; }
