@@ -111,6 +111,8 @@ const rows = [
   ['欢迎回来', 'Welcome back', '다시 오신 것을 환영합니다', '歡迎回來'],
   ['先找到队友，再一起上场。', 'Find teammates, then play together.', '팀원을 찾고, 함께 출전하세요.', '先找到隊友，再一起上場。'],
   ['← 返回组队大厅', '← Back to the team lobby', '← 팀 찾기로 돌아가기', '← 返回組隊大廳'],
+  ['比赛、队伍与个人事务，都从这里继续。', 'Your matches. Your team. One account.', '경기와 팀, 개인 업무를 여기에서 이어가세요.', '比賽、隊伍與個人事務，都從這裡繼續。'],
+  ['稍后再验证', 'Verify later', '나중에 인증하기', '稍後再驗證'],
   ['账号配置暂时无法读取。', 'Account settings could not be loaded.', '계정 설정을 불러오지 못했습니다.', '帳號設定暫時無法讀取。'],
   ['重试', 'Retry', '다시 시도', '重試'],
   ['正在核对验证链接…', 'Checking verification link…', '인증 링크 확인 중…', '正在核對驗證連結…'],

@@ -1,10 +1,15 @@
 import { useRef, useState } from 'react'
 import { pickUiLocale } from '../../lib/uiText.js'
-import { getActiveLocale, withLocale } from '../../lib/locales.js'
+import { getActiveLocale } from '../../lib/locales.js'
 import { changeAccountPassword } from '../account-security/accountSecurityApi.js'
 import { accountSettingsError, validateAccountPassword } from '../account-security/accountFoundationSettings.js'
 import PasswordRequirements from './PasswordRequirements.jsx'
+import { isAccountEntryPath, requestSignIn } from './signInRequest.js'
 import styles from './RequiredPasswordChange.module.css'
+
+// 票 2.71: signing in again opens the sign-in dialog on the page the visitor was on (this used to load
+// /account/login). The entry pages carry their own form, so they get no dialog.
+const signInHere = () => { if (!isAccountEntryPath(window.location.pathname)) requestSignIn() }
 
 // Lives above the router so changing the URL cannot dismiss this requirement.
 // The server independently restricts this signed session to password/logout.
@@ -15,7 +20,7 @@ export default function RequiredPasswordChange({ user, logout, clearSession }) {
   const [busy, setBusy] = useState(false), [done, setDone] = useState(false), [error, setError] = useState('')
   const [visible, setVisible] = useState(false)
   const lock = useRef(false)
-  const login = () => { clearSession(); window.location.assign(withLocale('/account/login', locale)) }
+  const login = () => { signInHere(); clearSession() }
   async function submit(event) {
     event.preventDefault()
     if (lock.current) return
@@ -32,7 +37,7 @@ export default function RequiredPasswordChange({ user, logout, clearSession }) {
   async function signOut() {
     if (lock.current) return
     lock.current = true; setBusy(true); setError('')
-    try { await logout(); window.location.assign(withLocale('/account/login', locale)) }
+    try { await logout(); signInHere() }
     catch (failure) { setError(accountSettingsError(failure, locale)); lock.current = false; setBusy(false) }
   }
   return <main className={styles.page} lang={locale} data-i18n-ignore>

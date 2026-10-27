@@ -3,6 +3,7 @@ import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams, useSearchParams, useBlocker } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider.jsx'
+import { requestSignIn } from '../auth/signInRequest.js'
 import * as api from './lobbyApi.js'
 import { LOBBY_ROLES, roleLabel, lobbyDate, accountFailure, leavesLobbyPage, lobbyReadFailure, retryableRead, canPublishLobby, lobbyRegistrationMessage, lobbyCardCopy, needsLabel } from './lobbyModel.js'
 import { reportInvalidField, revealAlert } from './lobbyFocus.js'
@@ -25,7 +26,7 @@ function Access({ children, write = false, data }) {
   const registrationMessage = lobbyRegistrationMessage(authConfig)
   const location = useLocation()
   if (isBootstrapping) return <p role="status">{t("正在读取账号…")}</p>
-  if (!user) return <section className={styles.empty}><h1>{t("登录后管理我的组队")}</h1>{registrationMessage && <p>{registrationMessage}</p>}<Link className={styles.primary} to={`/account/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`}>{t("登录／注册")}</Link></section>
+  if (!user) return <section className={styles.empty}><h1>{t("登录后管理我的组队")}</h1>{registrationMessage && <p>{registrationMessage}</p>}<button type="button" className={styles.primary} onClick={requestSignIn}>{t("登录／注册")}</button></section>
   if (write && !user.emailVerifiedAt) return <section className={styles.empty}><h1>{t("先验证邮箱")}</h1><Link className={styles.primary} to={`/account/verify-email?returnTo=${encodeURIComponent(location.pathname + location.search)}`}>{t("前往验证邮箱")}</Link></section>
   if (write && data && !data.canWrite) return <section className={styles.empty}><h1>{t("暂时不能发布或修改")}</h1><p>{data.restriction || t("大厅当前为只读或尚未开放。")}</p><Link to="/lobby/me">{t("返回本人记录")}</Link></section>
   return children

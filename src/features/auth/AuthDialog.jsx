@@ -13,6 +13,7 @@ import usePasswordRecovery from './usePasswordRecovery.js'
 import { passwordRecoveryTitle, readPasswordResetLocation } from './passwordRecoveryModel.js'
 import styles from './AuthDialog.module.css'
 import { canSignOutOfAccount, UNSAVED_ACCOUNT_MESSAGE } from '../account-ui/accountNavigationGuard.js'
+import { takePendingSignIn } from './signInRequest.js'
 
 function createLocalAuthError(code) {
   return {
@@ -419,9 +420,17 @@ export default function AuthButton({ locale = 'zh-CN', dialogOnly = false, atten
     : []
 
   useEffect(() => {
-    window.addEventListener('fries-cup:open-account', openAccount)
-    return () => window.removeEventListener('fries-cup:open-account', openAccount)
+    const onRequest = () => { takePendingSignIn(); openAccount() }
+    window.addEventListener('fries-cup:open-account', onRequest)
+    return () => window.removeEventListener('fries-cup:open-account', onRequest)
   }, [openAccount])
+
+  // 票 2.71: a sign-in asked for before any account control was mounted (the forced password change
+  // replaces the whole router) opens here, on the page the visitor is on.
+  useEffect(() => {
+    if (isBootstrapping) return
+    if (takePendingSignIn() && !isAuthenticated) setOpen(true)
+  }, [isBootstrapping, isAuthenticated])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
