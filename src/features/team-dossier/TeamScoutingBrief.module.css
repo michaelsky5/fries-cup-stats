@@ -1,7 +1,7 @@
 .brief { margin-top: 4px; scroll-margin-top: var(--performance-scroll); }
 .heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 0 0 16px; }
 .heading h2 { font-size: 14px; font-weight: 600; color: var(--fc-data-text-muted); }
-.heading > span { font: 11px var(--fc-data-font-system); color: var(--fc-data-text-muted); letter-spacing: .05em; }
+.heading > span { font: 12px var(--fc-data-font-system); color: var(--fc-data-text-muted); letter-spacing: .05em; }
 .findings { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 36px; }
 .finding { min-width: 0; padding: 28px 0; border-bottom: 1px solid var(--fc-data-line-strong); }
 .body { min-width: 0; }
@@ -28,7 +28,7 @@
 .finding[data-lead='true'] :is(a,button):focus-visible { outline-color: var(--fc-data-paper); }
 .evidence { min-width: 0; }
 .figure { margin: 0; padding: 23px 26px 18px; background: var(--fc-data-paper); color: var(--fc-data-ink); clip-path: polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%); }
-.figure figcaption > span { display: block; font-size: 11px; color: var(--fc-data-text-muted); }
+.figure figcaption > span { display: block; font-size: 12px; color: var(--fc-data-text-muted); }
 .figure figcaption > b { display: block; margin-top: 8px; font-size: 14px; line-height: 1.6; font-weight: 600; }
 .figureRows { display: grid; gap: 15px; margin-top: 22px; }
 .figureRows > div > div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
@@ -38,7 +38,7 @@
 .figureTrack { display: block; height: 6px; background: var(--fc-data-paper-muted); margin-top: 9px; }
 .figureTrack > i { display: block; height: 100%; background: var(--fc-data-text-muted); transform-origin: left; animation: barEnter 500ms var(--fc-data-ease-out); }
 .figureRows > div[data-own='true'] .figureTrack > i { background: var(--fc-data-ink); }
-.figure footer { display: flex; align-items: baseline; gap: 16px; border-top: 1px solid var(--fc-data-line-strong); padding-top: 14px; margin-top: 22px; font-size: 11px; flex-wrap: wrap; }
+.figure footer { display: flex; align-items: baseline; gap: 16px; border-top: 1px solid var(--fc-data-line-strong); padding-top: 14px; margin-top: 22px; font-size: 12px; flex-wrap: wrap; }
 .figure footer b { font-size: 16px; margin-right: 5px; }
 .figure footer > span:last-child { margin-left: auto; color: var(--fc-data-text-muted); }
 .figureFact { display: block; font: 900 clamp(52px,5vw,76px)/1 var(--fc-data-font-display); margin-top: 28px; }
@@ -75,13 +75,13 @@
   .findings[data-count='2'] > .finding:last-child h3 { grid-row: 2/4; align-self: start; }
 }
 @media(max-width:700px) {
-  .heading h2 { font-size: 13px; } .heading > span { font-size: 11px; } .heading { gap: 12px; }
+  .heading h2 { font-size: 13px; } .heading > span { font-size: 12px; } .heading { gap: 12px; }
   .findings { grid-template-columns: 1fr; gap: 0; }
   .finding[data-lead='true'] { grid-template-columns: 1fr; padding: 24px 20px 12px; gap: 24px; }
   .finding[data-lead='true'] h3 { font-size: 32px; margin-top: 22px !important; }
   .finding[data-lead='true'] .summary { font-size: 14px; margin-top: 18px !important; }
   .finding[data-lead='true'] .body { padding: 0; } .finding[data-lead='true'] .actions { width: 100%; padding-top: 22px; } .actions button { width: 100%; min-height: 48px; }
-  .figure { padding: 20px; } .figureRows strong { font-size: 44px; } .figure figcaption > span { font-size: 11px; } .figure figcaption > b { font-size: 14px; }
+  .figure { padding: 20px; } .figureRows strong { font-size: 44px; } .figure figcaption > span { font-size: 12px; } .figure figcaption > b { font-size: 14px; }
   .review { font-size: 14px; }
   .matches { grid-template-columns: 1fr; } .matches a { padding: 13px 0; gap: 14px; } .matches a + a { padding: 13px 0; border-left: 0; border-top: 1px solid var(--fc-data-line-on-dark); } .matches b { font-size: 32px; } .matches a > span { font-size: 16px; } .matches time { font-size: 23px; } .matches small { font-size: 12px; }
   .finding { padding-block: 24px; } .finding h3 { font-size: 25px; }

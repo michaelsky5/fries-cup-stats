@@ -94,7 +94,7 @@
 .detailHero { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.4fr); gap: 24px 44px; padding: 30px 0 22px; }
 .mapIdentity { min-width: 0; padding: 10px 0 20px; display: flex; flex-direction: column; align-items: flex-start; }
 .mapIdentity h1 { font-size: clamp(38px, 4.8vw, 72px); line-height: 1.1; letter-spacing: -.045em; font-weight: 760; margin: 18px 0 10px; overflow-wrap: anywhere; text-wrap: balance; }
-.mapEnglish { display: block; font: 800 clamp(24px, 2.6vw, 40px)/1.1 var(--fc-data-font-display); letter-spacing: .025em; color: #69715b; }
+.mapEnglish { display: block; font: 800 clamp(24px, 2.6vw, 40px)/1.1 var(--fc-data-font-display); letter-spacing: .025em; color: #5e6650; } /* 票 2.74: 4.5:1 at phone size */
 .heroStatistic { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 16px 20px; margin-top: auto; padding-top: 40px; }
 .heroStatistic > strong { font: 850 clamp(76px, 8.3vw, 120px)/.85 var(--fc-data-font-display); letter-spacing: -.05em; }
 .heroStatistic > strong > span { font-size: .37em; letter-spacing: 0; padding-left: 3px; }
@@ -132,7 +132,7 @@
 .chapter { padding: 38px 0 32px; border-bottom: 1px solid var(--atlas-line); scroll-margin-top: var(--atlas-anchor-offset); }
 .recordAnchor { scroll-margin-top: var(--atlas-anchor-offset); }
 .chapterHeading { display: flex; align-items: flex-end; gap: 22px; margin-bottom: 24px; }
-.chapterNumber { font: 800 54px/.85 var(--fc-data-font-display); color: #919583; align-self: flex-start; padding-top: 2px; }
+.chapterNumber { font: 800 54px/.85 var(--fc-data-font-display); color: #75796a; align-self: flex-start; padding-top: 2px; }
 .chapterHeading h2 { font-size: clamp(25px, 2.6vw, 36px); line-height: 1.3; font-weight: 650; letter-spacing: -.035em; margin-top: 7px; text-wrap: balance; }
 .chapterMeta { margin-left: auto; color: var(--atlas-muted); font-size: 13px; flex: 0 0 auto; padding-bottom: 2px; }
 .environmentToolbar { display: flex; justify-content: space-between; gap: 18px; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--atlas-line); }

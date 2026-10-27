@@ -16,6 +16,7 @@
 .actions { display: flex; flex: 0 0 112px; justify-content: flex-end; align-items: center; }
 .export { background: var(--fc-data-paper-raised); border: 1px solid var(--fc-data-line-strong); padding: 9px 12px; align-self: center; min-width: 44px; min-height: 44px; font-size: 18px; }
 .export span { font-size: 12px; padding-left: 6px; }
+.export .exportShort { display: none; } /* 票 2.74 补: phones show 「海报」 — 「导出海报」 at 12px no longer fits the 44px column */
 .cover { display: grid; grid-template-columns: 39% minmax(0,1fr); background: var(--team-ink); color: var(--fc-data-paper); min-height: 590px; overflow: hidden; position: relative; isolation: isolate; }
 .cover::before { content: ''; position: absolute; inset: 0; z-index: -1; background: repeating-linear-gradient(90deg,transparent 0 calc(20% - 1px),#ffffff0b calc(20% - 1px) 20%); }
 .coverIdentity { position: relative; z-index: 11; padding: 32px 0 40px 36px; display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
@@ -74,6 +75,8 @@
   /* Fits the 50px tab bar, so both pages' titles sit at the same height on phones too. */
   .export { padding: 5px 0; font-size: 18px; line-height: 1; min-width: 44px; min-height: 44px; }
   .export span { display: block; padding: 0; font-size: 12px; line-height: 1.2; }
+  .export .exportLabel { display: none; }
+  .export .exportShort { display: block; }
   .cover { grid-template-columns: minmax(0,1fr); }
   .coverIdentity { padding: 22px 22px 0; }
   .edition { font-size: 12px; }
