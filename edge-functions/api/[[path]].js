@@ -9,42 +9,6 @@ const READ_METHODS = new Set(['GET', 'HEAD', 'OPTIONS'])
 const METHODS = new Set([...READ_METHODS, 'POST', 'PUT', 'PATCH', 'DELETE'])
 const FORWARD_HEADERS = ['accept', 'accept-language', 'content-type', 'origin', 'referer', 'sec-fetch-site']
 
-function acceptsGzip(value) {
-  let gzip, wildcard
-  for (const entry of String(value || '').split(',')) {
-    const [name, ...parameters] = entry.trim().toLowerCase().split(';').map(part => part.trim())
-    const quality = parameters.find(part => part.startsWith('q='))
-    const weight = quality ? Number(quality.slice(2)) : 1
-    const accepted = Number.isFinite(weight) && weight >= 0 && weight <= 1 ? weight : 0
-    if (name === 'gzip') gzip = accepted
-    if (name === '*') wildcard = accepted
-  }
-  return (gzip ?? wildcard ?? 0) > 0
-}
-
-function snapshotResponse(request, response, route) {
-  if (!route.snapshot) return response
-  const headers = new Headers(response.headers)
-  const vary = (headers.get('vary') || '').split(',').map(value => value.trim()).filter(Boolean)
-  if (!vary.some(value => value.toLowerCase() === 'accept-encoding')) vary.push('Accept-Encoding')
-  headers.set('vary', vary.join(', '))
-  const cacheControl = headers.get('cache-control') || ''
-  const compress = request.method === 'GET' && response.status === 200 && response.body
-    && /application\/json/i.test(headers.get('content-type') || '')
-    && /\bpublic\b/i.test(cacheControl) && !/private|no-store/i.test(cacheControl)
-    && acceptsGzip(request.headers.get('accept-encoding'))
-  if (!compress) return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
-  headers.set('content-encoding', 'gzip')
-  headers.delete('content-length')
-  const etag = headers.get('etag')
-  if (etag && !etag.startsWith('W/')) headers.set('etag', 'W/' + etag)
-  // EdgeOne supports CompressionStream. Keep large snapshots streaming: its
-  // response.text/json/arrayBuffer helpers have a 1 MiB buffered-body limit.
-  return new Response(response.body.pipeThrough(new CompressionStream('gzip')), {
-    status: response.status, statusText: response.statusText, headers
-  })
-}
-
 function matchesIfNoneMatch(value, currentEtag) {
   if (typeof value !== 'string' || typeof currentEtag !== 'string') return false
   const field = value.trim()
@@ -106,7 +70,7 @@ function resolveRoute(url, { platformOrigin, publicOrigin, rehearsal }) {
   }
   if (/^\/api\/admin-public\/seasons\/[A-Za-z0-9_-]+\/publish\/latest\/(data|report)$/.test(pathname)) {
     const snapshotOrigin = rehearsal && pathname.startsWith('/api/admin-public/seasons/WEBWEEK20260914/') ? platformOrigin : publicOrigin
-    return { public: true, snapshot: true, url: `${snapshotOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}${url.search}` }
+    return { public: true, url: `${snapshotOrigin}${pathname.replace('/api/admin-public/', '/api/public/')}${url.search}` }
   }
   if (/^\/api\/platform\/media\/avatars\/[a-f0-9]{24}\/[a-f0-9]{32}-(256|96)\.webp$/.test(pathname)) {
     return { public: true, media: true, url: `${platformOrigin}${pathname.replace('/api/platform/', '/api/')}` }
@@ -146,7 +110,7 @@ export async function proxyRequest(request, {
     try {
       const hit = await cache.match(cacheKey)
       if (hit?.ok) {
-        return snapshotResponse(request, cachedResponse(request, hit), route)
+        return cachedResponse(request, hit)
       }
     } catch { /* Expired or unavailable node cache: use the published origin. */ }
   }
@@ -244,7 +208,7 @@ export async function proxyRequest(request, {
     else if (waitUntil) waitUntil(task)
     else await task
   }
-  return snapshotResponse(request, response, route)
+  return response
 }
 
 // Keep the geo response inside the existing catch-all entry. Importing another
