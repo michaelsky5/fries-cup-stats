@@ -52,7 +52,7 @@ assert.match(license, /MIT License/)
 assert.ok(!license.includes('*/'))
 const begin = '// BEGIN GENERATED PUBLIC GZIP CODEC'
 const end = '// END GENERATED PUBLIC GZIP CODEC'
-const block = `${begin}\n/*! fflate ${version}, gzip-only browser bundle.\n * Regenerate: node scripts/generateSnapshotGzip.mjs\n * Source integrity: ${integrity}\n * ${license.split('\n').join('\n * ')}\n */\n/* eslint-disable no-redeclare, no-sparse-arrays, no-empty -- Pinned generated third-party codec only. */\n${code}\n/* eslint-enable no-redeclare, no-sparse-arrays, no-empty */\n${end}`
+const block = `${begin}\n/*! fflate ${version}, gzip-only browser bundle.\n * Regenerate: node scripts/generateSnapshotGzip.mjs\n * Source integrity: ${integrity}\n * ${license.split('\n').join('\n * ')}\n */\n/* eslint-disable no-redeclare, no-sparse-arrays, no-empty -- Pinned generated third-party codec only. */\n${code}\n/* eslint-enable no-redeclare, no-sparse-arrays, no-empty */\n${end}`.replace(/[ \t]+$/gm, '')
 const target = path.join(root, 'edge-functions/api/[[path]].js')
 const source = readFileSync(target, 'utf8').replaceAll('\r\n', '\n')
 const generated = source.includes(begin)
