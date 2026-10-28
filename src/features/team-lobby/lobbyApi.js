@@ -14,6 +14,8 @@ export const changeCard = (id, body) => platformRequest(`/lobby/me/cards/${encod
 export const saveFormation = (body, id) => platformRequest(`/lobby/me/formations${id ? `/${encodeURIComponent(id)}` : ''}`, { method: id ? 'PUT' : 'POST', body })
 export const withdrawFormation = item => platformRequest(`/lobby/me/formations/${encodeURIComponent(item.id)}/withdraw`, { method: 'POST', body: { revision: item.revision } })
 export const createContact = body => platformRequest('/lobby/contacts', { method: 'POST', body })
+export const createCardContact = (publicId, body) => platformRequest(`/lobby/cards/${encodeURIComponent(publicId)}/contact`, { method: 'POST', body })
+export const saveCardQqSettings = (id, body) => platformRequest(`/lobby/me/cards/${encodeURIComponent(id)}/qq-settings`, { method: 'PUT', body })
 export const listContacts = ({ direction = 'all', page = 1 } = {}, options) => platformRequest(`/lobby/contacts?direction=${direction}&page=${page}&pageSize=20`, options)
 export const getContact = (id, options) => platformRequest(`/lobby/contacts/${encodeURIComponent(id)}`, options)
 export const changeContact = (id, body) => platformRequest(`/lobby/contacts/${encodeURIComponent(id)}/action`, { method: 'POST', body })

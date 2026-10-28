@@ -6,6 +6,7 @@ import { useAuth } from '../auth/AuthProvider.jsx'
 import { requestSignIn } from '../auth/signInRequest.js'
 import { useLobbyMine } from './useLobbyState.js'
 import { ContactInbox, FeedbackLink } from './LobbyContacts.jsx'
+import CardQqSettings from './CardQqSettings.jsx'
 import { accountFailure, lobbyDate, statusLabel, lobbyReadFailure, lobbyRegistrationMessage } from './lobbyModel.js'
 import * as api from './lobbyApi.js'
 import { revealAlert } from './lobbyFocus.js'
@@ -49,7 +50,7 @@ export default function MyLobbyPage() {
       {tab === 'cards' && <>
         <div className={styles.sectionHeading}><h2>{t("我的需求卡")}</h2><Link to="/lobby/me/publish?type=team">{t("队伍招募 →")}</Link></div>
         {!data.cards.length && <p className={styles.empty}>{t("还没有发布需求。可以先发布个人求队卡，或申请筹建招募。")}</p>}
-        <div className={styles.cards}>{data.cards.map(card => <MyCard key={`${card.id}:${card.revision}`} card={card} canWrite={data.canWrite} busy={busy} act={act} />)}</div>
+        <div className={styles.cards}>{data.cards.map(card => <MyCard key={`${card.id}:${card.revision}`} card={card} canWrite={data.canWrite} busy={busy} act={act} onSaved={refresh} />)}</div>
       </>}
       {tab === 'formation' && <>
         <div className={styles.sectionHeading}><h2>{t("筹建招募进度")}</h2><Link to="/lobby/me/formation">{t("申请筹建招募 →")}</Link></div>
@@ -69,7 +70,7 @@ export default function MyLobbyPage() {
   </>
 }
 
-function MyCard({ card, canWrite, busy, act }) {
+function MyCard({ card, canWrite, busy, act, onSaved }) {
   useUiLocale()
 
   const [reason, setReason] = useState('PAUSED')
@@ -80,6 +81,7 @@ function MyCard({ card, canWrite, busy, act }) {
     <h2>{card.state === 'ACTIVE' ? <Link to={`/lobby/cards/${card.publicId}`}>{card.title}</Link> : card.title}</h2>
     <p>{card.state === 'CLOSED' ? t("已关闭，不在大厅展示") : card.state === 'EXPIRED' ? t("已于 {0} 到期", [lobbyDate(card.expiresAt)]) : <>{t("有效至")} {lobbyDate(card.expiresAt)}</>}</p>{card.moderationReason && <p className={styles.error}>{card.moderationReason}</p>}
     <div className={styles.actions}><Link to={`/lobby/me/cards/${card.id}/edit`}>{t("编辑资料")}</Link>{card.state !== 'HIDDEN' && <button disabled={busy || !canWrite} onClick={() => act(() => api.changeCard(card.id, { action: 'RENEW', revision: card.revision, operationId: crypto.randomUUID() }))}>{offline ? t("重新发布，展示 14 天") : t("确认仍有需求，续期 14 天")}</button>}</div>
+    <CardQqSettings card={card} disabled={busy || !canWrite || card.state === 'HIDDEN'} onSaved={onSaved} />
     {card.state !== 'CLOSED' && <div className={styles.closeCard}><label>{t("关闭原因")}<select value={reason} onChange={event => setReason(event.target.value)} disabled={busy}><option value="PAUSED">{t("暂停需求")}</option><option value="FILLED">{card.kind === 'PERSON' ? t("已找到队伍") : t("已招满")}</option></select></label><button disabled={busy} onClick={() => act(() => api.changeCard(card.id, { action: 'CLOSE', reason: storedReason, revision: card.revision, operationId: crypto.randomUUID() }))}>{t("关闭需求")}</button></div>}
   </article>
 }

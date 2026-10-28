@@ -33,6 +33,7 @@
 .main ::placeholder{color:#5f6158;opacity:1;font-weight:400}
 @media(max-width:600px){.main{width:calc(100% - 32px);margin:16px auto 32px}.sectionBar{gap:16px;margin-bottom:24px;flex-wrap:wrap}.sectionBar nav{gap:20px}.sectionBar>a span{margin-left:8px}.footer{padding:20px 0 calc(88px + env(safe-area-inset-bottom))}}
 .empty p, .empty h1 { text-wrap: balance; } /* X5 / 票 2.15: no lone 「录。」 line */
+.qqSettings{border-block:1px solid #bfc0b6;margin-top:20px;padding:16px 0}.qqSettings h3{margin:0;font-size:16px}.qqSettings .sectionHeading{margin-bottom:8px}.qqSettings p{margin:8px 0}.finePrint{font-size:12px;line-height:1.7;color:var(--fc-data-text-muted,#5f6158)}.actionPanel>.finePrint{color:#c7c9bf}.actionPanel>.primary{width:100%;min-height:44px;text-align:center}.contactAccess .actions{align-items:center;flex-wrap:wrap;gap:12px}.contactAccess .primary{display:inline-flex;align-items:center;min-height:44px}.qqSettings .stack{margin-top:16px}
 @media(max-width:600px){.header{padding:16px 12px}.main{width:calc(100% - 24px)}.footer{padding:20px 0}} /* X5 / 票 2.15: phone gutter 12px like the event center */
 /* 票 2.69: same scale as 赛事报名 and 我的空间 — page title on the system index size (46 / 30px), 44px fields and
    controls, the yellow primary without the ink outline, 14px buttons with 10px 14px padding. */

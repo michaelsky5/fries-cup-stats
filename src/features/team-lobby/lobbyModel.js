@@ -134,6 +134,7 @@ export const contactStatus = value => ({ PENDING: t("待回应"), CONNECTED: t("
 // Expiry and declines read differently for the person who let a request lapse
 // or declined it (received) and for the person who sent it.
 export const contactReason = (value, received = false) => ({ AUTHORITY_CHANGED: t("账号、负责人或大厅权限已变化，请重新申请联系。"), CARD_UNAVAILABLE: t("原需求已关闭、到期或被隐藏。"),
+  QQ_SETTINGS_CHANGED: t('QQ 设置已变化，请重新发起查看请求。'),
   REQUEST_EXPIRED: received ? t("你没有在有效期内回应，请求已到期。") : t("对方未在有效期内回应。"), CONSENT_REVOKED: t("一方已撤销本次 QQ 授权。"), ENDED_BY_PARTY: t("一方已结束联系。"),
   DECLINED: received ? t("你已选择暂不联系。") : t("对方暂不联系。"), WITHDRAWN: t("发起人已撤回。") })[value] || ''
 // A person and a team share one open contact, so sending can return an existing
