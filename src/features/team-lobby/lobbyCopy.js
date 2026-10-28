@@ -1,4 +1,5 @@
 import { getActiveLocale, normalizeLocale } from '../../lib/locales.js'
+import { qqCopyRows } from './lobbyQqCopy.js'
 
 // Interface copy only. Never translate account names, biographies, messages,
 // moderation reasons or other user-authored content through this dictionary.
@@ -402,6 +403,7 @@ rows.push(
   ['你已选择暂不联系。', 'You declined this contact.', '이 연락을 거절했습니다.', '你已選擇暫不聯絡。'],
   ['本页有 {0} 条联系等待你回应。', '{0} requests on this page are waiting for your reply.', '이 페이지에 응답을 기다리는 요청이 {0}개 있습니다.', '本頁有 {0} 條聯絡等待你回應。']
 )
+rows.push(...qqCopyRows)
 export const lobbyCopyRows = rows
 const copy = new Map(rows.map(([source, en, ko, tw]) => [source, { 'en-US': en, 'ko-KR': ko, 'zh-TW': tw }]))
 export const hasLobbyCopy = source => copy.has(source)
@@ -411,7 +413,7 @@ export function lobbyText(source, values = [], locale = getActiveLocale()) {
 }
 
 export function lobbyNoticeCopy(item, locale = getActiveLocale()) {
-  const generatedTitle = ['LOBBY_CONTACT_REQUEST', 'LOBBY_CONTACT_RESULT', 'LOBBY_FORMATION_RESULT', 'LOBBY_MODERATION_RESULT'].includes(item.type)
+  const generatedTitle = ['LOBBY_CONTACT_REQUEST', 'LOBBY_CONTACT_RESULT', 'LOBBY_FORMATION_RESULT', 'LOBBY_MODERATION_RESULT', 'LOBBY_QQ_VIEWED'].includes(item.type)
   const generatedBody = ['LOBBY_CONTACT_REQUEST', 'LOBBY_CONTACT_RESULT'].includes(item.type)
     || (item.type === 'LOBBY_FORMATION_RESULT' && item.title === '筹建招募核对通过')
   return { title: generatedTitle ? lobbyText(item.title, [], locale) : item.title,
