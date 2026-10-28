@@ -337,24 +337,6 @@ export function localeResponse({ request }) {
 }
 
 export default function onRequest(context) {
-  // Temporary diagnostic, only reachable on protected provider previews.
-  const probeUrl = new URL(context.request.url)
-  if (probeUrl.pathname === '/api/__fries_gzip_probe' && probeUrl.hostname.endsWith('.edgeone.cool')) {
-    const mode = probeUrl.searchParams.get('mode')
-    const bytes = new TextEncoder().encode(JSON.stringify({ publicProbe: 'fixed-gzip-byte-control', text: 'public test fixture '.repeat(60) }))
-    const chunks = []
-    const encoder = new FriesSnapshotGzip.Gzip({ level: 1, mtime: 0 }, chunk => chunks.push(chunk))
-    encoder.push(bytes, true)
-    const gzip = new Uint8Array(chunks.reduce((size, chunk) => size + chunk.length, 0))
-    let offset = 0
-    for (const chunk of chunks) { gzip.set(chunk, offset); offset += chunk.length }
-    const headers = new Headers({ 'Content-Type': mode === 'opaque' ? 'application/gzip' : 'application/json', 'Cache-Control': 'private, no-store', 'X-Fries-Probe-Mode': String(mode), 'X-Fries-Probe-Encoded-Bytes': String(gzip.length), 'X-Fries-Probe-Input-Bytes': String(bytes.length) })
-    if (['buffer', 'identity-labeled', 'manual', 'no-transform', 'length'].includes(mode)) headers.set('Content-Encoding', 'gzip')
-    if (mode === 'no-transform') headers.set('Cache-Control', 'private, no-store, no-transform')
-    if (mode === 'length') headers.set('Content-Length', String(gzip.length))
-    if (!['buffer', 'opaque', 'identity-labeled', 'identity', 'manual', 'no-transform', 'length'].includes(mode)) return new Response(null, { status: 400 })
-    return new Response((mode === 'identity-labeled' || mode === 'identity' ? bytes : gzip).buffer, { headers, ...(mode === 'manual' ? { encodeBody: 'manual' } : {}) })
-  }
   if (new URL(context.request.url).pathname === '/api/release') {
     const headers = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'private, no-store, max-age=0', 'CDN-Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }
     if (!['GET', 'HEAD'].includes(context.request.method)) return new Response(null, { status: 405, headers: { ...headers, Allow: 'GET, HEAD' } })
