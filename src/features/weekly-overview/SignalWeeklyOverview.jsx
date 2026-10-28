@@ -216,6 +216,7 @@ export default function SignalWeeklyOverview() {
       <div className={styles.cycleBlock}><WeeklyCyclePicker cycles={cycles} cycle={cycle} locale={locale} dateRange={weeklyCycleDateRange(cycle, locale)} onChange={id => change({ cycle: id, week: null, match: null })} /></div>
       <WeeklyWeekRail weeks={weeks} selectedId={week?.id} locale={locale} onChange={id => change({ cycle: cycle.id, week: id, match: null })} />
     </section>
+    {mapPool}
     {isDesktop && <WeeklyReportTeaser db={db} cycle={cycle} week={week} report={report} compact locale={locale} withSeason={withSeason} />}
 
     <div className={styles.mainGrid}>
@@ -283,7 +284,6 @@ export default function SignalWeeklyOverview() {
       </aside>
     </div>
 
-    {mapPool}
     {!isDesktop && <WeeklyReportTeaser db={db} cycle={cycle} week={week} report={report} locale={locale} withSeason={withSeason} />}
     {isDesktop && !followingOnTop && following}
     {/* 票 2.50: the support page belongs to the event path, not to a lone link under the page. */}
