@@ -53,36 +53,39 @@ function acceptsGzip(value) {
   return (gzip ?? wildcard ?? 0) > 0
 }
 
-function createSnapshotGzipStream(body) {
-  const output = new TransformStream()
-  const writer = output.writable.getWriter()
+async function encodeSnapshotGzip(body) {
   const chunks = []
-  const encoder = new FriesSnapshotGzip.Gzip({ level: 1, mtime: 0 }, chunk => chunks.push(chunk))
+  let inputBytes = 0, outputBytes = 0
+  const encoder = new FriesSnapshotGzip.Gzip({ level: 1, mtime: 0 }, chunk => {
+    outputBytes += chunk.byteLength
+    if (outputBytes > MAX_BODY_BYTES) throw new Error('PUBLIC_GZIP_OUTPUT_LIMIT')
+    chunks.push(chunk)
+  })
   const reader = body.getReader()
-  const done = (async () => {
-    try {
-      while (true) {
-        const next = await reader.read()
-        const value = next.done ? new Uint8Array(0) : next.value
-        const bytes = value instanceof Uint8Array ? value : ArrayBuffer.isView(value)
-          ? new Uint8Array(value.buffer, value.byteOffset, value.byteLength) : new Uint8Array(value)
-        encoder.push(bytes, next.done)
-        while (chunks.length) await writer.write(chunks.shift())
-        if (next.done) break
-      }
-      await writer.close()
-    } catch (error) {
-      await Promise.allSettled([writer.abort(error), reader.cancel(error)])
-      throw error
-    } finally {
-      reader.releaseLock()
-      writer.releaseLock()
+  try {
+    while (true) {
+      const next = await reader.read()
+      const value = next.done ? new Uint8Array(0) : next.value
+      const bytes = value instanceof Uint8Array ? value : ArrayBuffer.isView(value)
+        ? new Uint8Array(value.buffer, value.byteOffset, value.byteLength) : new Uint8Array(value)
+      inputBytes += bytes.byteLength
+      if (inputBytes > 8 * MAX_BODY_BYTES) throw new Error('PUBLIC_GZIP_INPUT_LIMIT')
+      encoder.push(bytes, next.done)
+      if (next.done) break
     }
-  })()
-  return { readable: output.readable, done }
+    const encoded = new Uint8Array(outputBytes)
+    let offset = 0
+    for (const chunk of chunks) { encoded.set(chunk, offset); offset += chunk.byteLength }
+    return encoded.buffer
+  } catch (error) {
+    // The other tee branch is the intact identity fallback. Waiting for its
+    // cancellation before returning that fallback would deadlock the read.
+    reader.cancel(error).catch(() => {})
+    throw error
+  } finally { reader.releaseLock() }
 }
 
-function snapshotResponse(request, response, route, waitUntil) {
+async function snapshotResponse(request, response, route) {
   if (!route.snapshot) return response
   const headers = new Headers(response.headers)
   const vary = (headers.get('vary') || '').split(',').map(value => value.trim()).filter(Boolean)
@@ -94,30 +97,22 @@ function snapshotResponse(request, response, route, waitUntil) {
     && /\bpublic\b/i.test(cacheControl) && !/private|no-store/i.test(cacheControl)
     && acceptsGzip(request.headers.get('accept-encoding'))
   if (!compress) return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
-  // Explicit byte encoding avoids runtime CompressionStream implementations
-  // that can return identity bytes. Only an identity TransformStream is used.
-  if (typeof TransformStream !== 'function' || typeof response.body.getReader !== 'function') {
-    headers.set('X-Fries-Compression', 'identity-unavailable')
-    return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
-  }
-  let pipeline
-  try { pipeline = createSnapshotGzipStream(response.body) }
+  // Actual provider acceptance did not preserve rewritten stream bytes. Build
+  // a bounded compressed ArrayBuffer instead; read the origin with getReader
+  // because the runtime's text/json/arrayBuffer helpers reject bodies >1 MiB.
+  let encoded
+  try { encoded = await encodeSnapshotGzip(response.clone(true).body) }
   catch {
     headers.set('X-Fries-Compression', 'identity-unavailable')
     return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
   }
-  const completed = pipeline.done.catch(error => {
-    if (error && !/abort|cancel/i.test(error.name || '')) console.warn('PUBLIC_SNAPSHOT_COMPRESSION_STREAM_FAILED')
-  })
-  if (waitUntil) waitUntil(completed)
+  response.body.cancel().catch(() => {})
   headers.set('content-encoding', 'gzip')
-  headers.set('X-Fries-Compression', 'gzip-js')
+  headers.set('X-Fries-Compression', 'gzip-js-buffered')
   headers.delete('content-length')
   const etag = headers.get('etag')
   if (etag && !etag.startsWith('W/')) headers.set('etag', 'W/' + etag)
-  // Keep snapshots streaming: EdgeOne text/json/arrayBuffer helpers have a
-  // 1 MiB buffered-body limit, smaller than the published weekly snapshot.
-  return new Response(pipeline.readable, {
+  return new Response(encoded, {
     status: response.status, statusText: response.statusText, headers
   })
 }
@@ -223,7 +218,7 @@ export async function proxyRequest(request, {
     try {
       const hit = await cache.match(cacheKey)
       if (hit?.ok) {
-        return snapshotResponse(request, cachedResponse(request, hit), route, waitUntil)
+        return snapshotResponse(request, cachedResponse(request, hit), route)
       }
     } catch { /* Expired or unavailable node cache: use the published origin. */ }
   }
@@ -321,7 +316,7 @@ export async function proxyRequest(request, {
     else if (waitUntil) waitUntil(task)
     else await task
   }
-  return snapshotResponse(request, response, route, waitUntil)
+  return snapshotResponse(request, response, route)
 }
 
 // Keep the geo response inside the existing catch-all entry. Importing another

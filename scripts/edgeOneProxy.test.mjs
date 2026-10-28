@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { randomBytes } from 'node:crypto'
 import { gunzipSync } from 'node:zlib'
 import edgeRequest, { proxyRequest } from '../edge-functions/api/[[path]].js'
 
@@ -360,7 +361,7 @@ test('ordinary public reads negotiate gzip without an acceptance query', async (
   assert.deepEqual(await new Response(result.body.pipeThrough(new DecompressionStream('gzip'))).json(), { version: 42 })
 })
 
-test('large published snapshots stream as gzip without invoking buffered upstream readers', async () => {
+test('large published snapshots produce bounded gzip bytes without buffered origin readers', async () => {
   const body = JSON.stringify({ public: '公开赛事记录'.repeat(180000) })
   assert.ok(new TextEncoder().encode(body).byteLength > 1024 * 1024)
   const upstream = new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=5', etag: '"published-42"' } })
@@ -390,29 +391,28 @@ test('gzip bytes remain correct with missing, rejecting or identity-only native 
       assert.equal(result.status, 200)
       assert.equal(result.headers.get('content-encoding'), 'gzip')
       assert.equal(result.headers.get('etag'), 'W/"v42"')
-      assert.equal(result.headers.get('x-fries-compression'), 'gzip-js')
+      assert.equal(result.headers.get('x-fries-compression'), 'gzip-js-buffered')
       assert.deepEqual(JSON.parse(gunzipSync(Buffer.from(await result.arrayBuffer())).toString('utf8')), { version: 42 })
     }
   } finally { globalThis.CompressionStream = NativeCompressionStream }
 })
 
-test('missing or rejecting stream setup preserves normal identity JSON', async () => {
+test('gzip encoding does not depend on native TransformStream setup', async () => {
   const NativeTransformStream = globalThis.TransformStream
   try {
     for (const implementation of [undefined, class { constructor() { throw new Error('unsupported stream') } }]) {
       globalThis.TransformStream = implementation
-      const plain = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': 'gzip' } }), {
+      const result = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': 'gzip' } }), {
         fetchImpl: async () => json({ version: 42 }, { headers: { 'cache-control': 'public, max-age=5' } })
       })
-      assert.equal(plain.status, 200)
-      assert.equal(plain.headers.get('content-encoding'), null)
-      assert.equal(plain.headers.get('x-fries-compression'), 'identity-unavailable')
-      assert.deepEqual(await plain.json(), { version: 42 })
+      assert.equal(result.status, 200)
+      assert.equal(result.headers.get('content-encoding'), 'gzip')
+      assert.deepEqual(JSON.parse(gunzipSync(Buffer.from(await result.arrayBuffer())).toString('utf8')), { version: 42 })
     }
   } finally { globalThis.TransformStream = NativeTransformStream }
 })
 
-test('gzip pumping retains response lifetime and accepts native ArrayBuffer chunks', async () => {
+test('gzip encoding completes before response and accepts native ArrayBuffer chunks', async () => {
   const pending = []
   const body = JSON.stringify({ public: '合法公开记录'.repeat(10000) })
   const bytes = new TextEncoder().encode(body)
@@ -425,9 +425,29 @@ test('gzip pumping retains response lifetime and accepts native ArrayBuffer chun
   const result = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': 'gzip' } }), {
     fetchImpl: async () => upstream, waitUntil: task => pending.push(task)
   })
-  assert.equal(pending.length, 1)
+  assert.equal(pending.length, 0)
   assert.equal(gunzipSync(Buffer.from(await result.arrayBuffer())).toString('utf8'), body)
   await Promise.all(pending)
+})
+
+test('oversized public snapshots retain a complete identity fallback', async () => {
+  const body = JSON.stringify({ public: 'x'.repeat(8 * 1024 * 1024) })
+  const result = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': 'gzip' } }), {
+    fetchImpl: async () => new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=5' } })
+  })
+  assert.equal(result.headers.get('content-encoding'), null)
+  assert.equal(result.headers.get('x-fries-compression'), 'identity-unavailable')
+  assert.equal(await result.text(), body)
+})
+
+test('poorly compressible snapshots retain identity when encoded output exceeds its bound', async () => {
+  const body = JSON.stringify({ public: randomBytes(1100000).toString('base64') })
+  const result = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': 'gzip' } }), {
+    fetchImpl: async () => new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=5' } })
+  })
+  assert.equal(result.headers.get('content-encoding'), null)
+  assert.equal(result.headers.get('x-fries-compression'), 'identity-unavailable')
+  assert.equal(await result.text(), body)
 })
 
 test('edge cache keeps one identity snapshot while gzip, identity and conditional clients remain separate', async () => {
