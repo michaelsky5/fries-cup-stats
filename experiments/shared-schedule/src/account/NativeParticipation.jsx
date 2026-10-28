@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Taro, { useDidShow } from '@tarojs/taro'
-import { View, Text, Button, Picker } from '@tarojs/components'
+import { View, Text, Picker } from '@tarojs/components'
+import Button from './NativeAccountButton.jsx'
 import { nativeAccount } from './nativeAccountRuntime.js'
 import { storedSeasonId, openCenter } from '../platform.js'
 import { SEASONS, getSeasonName } from '../shared/publicSeasons.js'

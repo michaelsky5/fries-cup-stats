@@ -1,9 +1,12 @@
 import { createNativeAccountClient } from '../../src/account/nativeAccountClient.js'
+import { roomVisualActor, roomVisualResponse } from './nativeRoomVisualFixture.js'
 
 export const accountPreviewLabel = '本机模拟预览 · 账号与赛事均为虚构'
+export const authorizeNativeAccountPrivacy = async () => {}
+export const openNativePrivacyPolicy = async () => {}
 const stored = new Map(), now = Date.now()
 let linked = false, active = false
-const user = { id: 'synthetic-preview-user', displayName: '示例队长', emailVerified: true, effectiveMode: 'VIEWER' }
+const user = { id: roomVisualActor, displayName: '示例队长', emailVerified: true, effectiveMode: 'VIEWER' }
 const week = {
   id: 'preview-week', label: '第 1 周', status: 'CONFIRMATION_OPEN', weekNumber: 1,
   confirmationOpensAt: new Date(now - 86400000).toISOString(), confirmationDeadlineAt: new Date(now + 86400000).toISOString(),
@@ -24,7 +27,7 @@ export const nativeAccount = createNativeAccountClient({
   login: async () => ({ code: 'synthetic-preview-code' }),
   request: async options => {
     const url = new URL(options.url), route = url.pathname.replace('/api/mini/v1', '')
-    if (route === '/capabilities') return response({ capabilities: { wechatLogin: true, participationRead: true, weeklyConfirmation: true, lineup: true, matchRoom: false } })
+    if (route === '/capabilities') return response({ capabilities: { wechatLogin: true, participationRead: true, weeklyConfirmation: true, lineup: true, matchRoom: true } })
     if (route === '/auth/wechat/login') {
       if (linked) { active = true; return response(session()) }
       return response({ status: 'BINDING_REQUIRED', bindingTicket: 'synthetic-preview-binding-ticket', expiresAt: new Date(Date.now() + 300000).toISOString() })
@@ -37,6 +40,9 @@ export const nativeAccount = createNativeAccountClient({
     if (!active) return response({ error: 'UNAUTHORIZED' }, 401)
     if (route === '/me') return response({ user, session: session().session })
     if (route === '/auth/logout') { active = false; return response(null, 204) }
+    if (route === '/auth/wechat/binding' && options.method === 'DELETE') { linked = active = false; return response(null, 204) }
+    const room = roomVisualResponse(route, options.method)
+    if (room) return response(room)
     if (route === '/participation') return response({ contract: 'MINI_PARTICIPATION_V1', season: { id: url.searchParams.get('seasonId'), name: '模拟赛事', status: 'ACTIVE' }, teams: [{ team, roleLabels: ['队伍负责人'] }], tasks: [{ id: 'task-one', title: '请核对本周参赛准备', handling: 'WEB_WORKFLOW' }], openTaskCount: 1 })
     if (route === '/weekly/workspace') return response({
       userId: user.id, season: { id: url.searchParams.get('seasonId'), name: '模拟赛事', status: 'ACTIVE' }, accessMode: 'WRITE',

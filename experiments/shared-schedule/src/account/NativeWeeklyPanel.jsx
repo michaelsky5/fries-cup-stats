@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Taro, { useDidShow } from '@tarojs/taro'
-import { Button, Checkbox, CheckboxGroup, Label, Picker, Text, Textarea, View } from '@tarojs/components'
+import { Checkbox, CheckboxGroup, Label, Picker, Text, Textarea, View } from '@tarojs/components'
+import Button from './NativeAccountButton.jsx'
 import { nativeAccount, accountPreviewLabel } from './nativeAccountRuntime.js'
 import { storedSeasonId } from '../platform.js'
 import { SEASONS, getSeasonName } from '../shared/publicSeasons.js'
@@ -72,6 +73,7 @@ function WeeklyForm({ item, capabilities, disabled, mutate, onDirty }) {
       <CheckboxGroup onChange={event => setIds(event.detail.value)}>{(entry.players || []).map(player => <Label className='native-weekly-choice' key={player.id}><View className='native-weekly-choice-row'><Checkbox color='#a58416' value={player.id} checked={ids.includes(player.id)} disabled={!canRoster}/><View className='native-weekly-choice-copy'><Text className='native-weekly-player'>{player.displayName || player.battleTag}</Text><Text className='native-account-detail'>{player.battleTag}</Text></View></View></Label>)}</CheckboxGroup>
       {check.errors.map(message => <Text className='native-account-detail' key={message}>{message}</Text>)}
       <Text className='native-account-detail'>{dirty ? '有尚未提交的编辑。' : '当前显示已同步记录。'}</Text>
+      <Text className='native-account-detail'>提交名单后，经赛事正式发布的选手昵称、BattleTag、阵容与赛果会公开展示。请先核对队员已知情；邮箱、微信标识和密码不作为赛事公开资料。</Text>
       <View className='native-weekly-actions'><Button className='native-account-secondary' disabled={!canRoster || !dirty} onClick={() => saveRoster('DRAFT')}>保存草稿与可赛时间</Button><Button className='native-account-primary' disabled={!canRoster || !check.canSubmit} onClick={() => saveRoster('SUBMITTED')}>提交名单与可赛时间</Button></View>
     </View>
   </View>

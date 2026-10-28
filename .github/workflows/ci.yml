@@ -23,7 +23,7 @@ jobs:
           npm ci
           npm ci --prefix experiments/shared-schedule
       - name: Test native public and private account boundaries
-        run: npm test --prefix experiments/shared-schedule
+        run: npm run lint:account --prefix experiments/shared-schedule && npm test --prefix experiments/shared-schedule
       - name: Build native candidate and enforce package and credential boundaries
         run: npm run build:weapp --prefix experiments/shared-schedule
 

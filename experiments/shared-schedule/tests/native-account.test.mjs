@@ -24,6 +24,31 @@ function fixture(seed) {
   return { client, requests, stored, queue, data, enqueue, response, authenticate, advance: ms => { clock += ms }, ticket: () => ({ status: 'BINDING_REQUIRED', bindingTicket: 'short-lived-ticket-000000000000', expiresAt: new Date(clock + 300000).toISOString() }) }
 }
 
+test('room operations preserve one named native endpoint and do not replay an uncertain submission', async () => {
+  const f = fixture(); await f.authenticate()
+  const body = { action: 'SET_LINEUP', expectedRevision: 3, clientKey: 'one-attempt' }
+  f.enqueue({ error: 'AUTH_SERVICE_UNAVAILABLE' }, 503)
+  await assert.rejects(f.client.roomWrite('match-one', 'commands', body), { outcomeUnknown: true })
+  const calls = f.requests.filter(item => item.url.includes('/weekly-live-rooms/'))
+  assert.equal(calls.length, 1); assert.equal(calls[0].method, 'POST'); assert.deepEqual(calls[0].data, body)
+  assert(calls[0].header.Authorization.startsWith('Bearer ')); assert(!calls[0].header.Cookie)
+  for (const operation of ['result-handoff', 'rulings', 'forfeit', 'casters', '../auth/login']) {
+    await assert.rejects(f.client.roomWrite('match-one', operation, {}), { code: 'INVALID_ROUTE' })
+  }
+  await assert.rejects(f.client.roomWrite('../admin', 'commands', {}), { code: 'INVALID_ROUTE' })
+})
+
+test('a late room result and a late unlink cannot replace or clear a different account', async () => {
+  const f = fixture(); await f.authenticate('first')
+  const late = deferred(); f.queue.push(() => late.promise)
+  const pending = f.client.unlink('current-password'); await f.authenticate('second')
+  late.resolve(f.response(null, 204)); await assert.rejects(pending, { code: 'STALE_REQUEST' })
+  assert.equal(f.client.snapshot().user.id, 'second')
+  f.enqueue(null, 204); await f.client.unlink('current-password')
+  assert.equal(f.client.snapshot().status, 'SIGNED_OUT'); assert.equal(f.stored.size, 0)
+  assert.equal(f.requests.filter(item => item.url.endsWith('/auth/wechat/binding')).length, 2)
+})
+
 test('first binding uses a fresh WeChat code and persists only the completed scoped session', async () => {
   const f = fixture()
   f.enqueue(f.ticket())

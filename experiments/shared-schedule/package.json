@@ -10,6 +10,7 @@
     "serve": "node --use-env-proxy scripts/serve.mjs",
     "test": "npm run prepare:design && npm run prepare:runtime && node --test tests/*.test.mjs",
     "test:account": "node --test tests/native-account.test.mjs",
+    "lint:account": "node ../../node_modules/eslint/bin/eslint.js --config eslint.account.config.mjs src/account tests/native-account.test.mjs tests/native-room.test.mjs tests/native-privacy.test.mjs",
     "build:account-visual": "node scripts/build-account-visual.mjs",
     "serve:account-visual": "node scripts/serve-account-visual.mjs"
   },

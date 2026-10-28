@@ -1,5 +1,8 @@
 const MAX_SESSION_MS = 12 * 60 * 60 * 1000
-const SAFE_READ = new Set(['/me', '/participation', '/weekly/workspace'])
+const SAFE_READ = new Set(['/me', '/participation', '/weekly/workspace', '/rooms'])
+const SAFE_ROOM = /^\/weekly-live-rooms\/[A-Za-z0-9_-]{1,128}$/
+const ROOM_OPERATIONS = { 'check-ins': 'PUT', representatives: 'PUT', commands: 'POST', opening: 'POST',
+  clock: 'POST', messages: 'POST', 'result-response': 'POST', 'opening/evidence': 'POST', brief: 'PUT', readiness: 'PUT' }
 const SAFE_WRITE = /^\/weekly\/(?:weeks\/[A-Za-z0-9_-]{1,128}\/participation|participations\/[A-Za-z0-9_-]{1,128}\/roster)$/
 const fault = (code, message, extra = {}) => Object.assign(new Error(message), { code, ...extra })
 const stale = () => fault('STALE_REQUEST', '账号状态已变化，请重新读取。')
@@ -84,6 +87,11 @@ export function createNativeAccountClient({ request, login, storage, origin = 'h
       }
       const retryAfter = Number(response?.header?.['retry-after'] || response?.header?.['Retry-After'])
       const weeklyMessages = {
+        WEEKLY_ROOM_CONFLICT: '比赛状态刚刚更新，请同步后重新核对。',
+        WEEKLY_OPENING_CONFLICT: '选禁状态已变化，请同步后重新选择。',
+        WEEKLY_ROOM_RESULT_CHANGED: '赛果或本队响应已变化，请重新核对。',
+        WEEKLY_ROOM_ACTION_FORBIDDEN: '当前身份不能执行这项操作，请核对本场操作代表。',
+        WEEKLY_ROOM_LINEUP_CONTEXT_CHANGED: '本图首发条件已变化，请同步后重新选择。',
         WEEKLY_REVISION_CONFLICT: '资料已更新，本次操作未保存，请刷新核对。',
         WEEKLY_WRITE_CONFLICT: '资料正在变化，请刷新后重新核对。',
         WEEKLY_TEAM_ACCESS_FORBIDDEN: '你没有此队伍的管理权限，请核对当前身份。',
@@ -99,10 +107,11 @@ export function createNativeAccountClient({ request, login, storage, origin = 'h
         WEEKLY_ROSTER_HISTORY_MISSING: '历史正式名单缺失，请联系赛管核对。',
         INVALID_AVAILABILITY: '可比赛时段已变化，请刷新后重新选择。'
       }
+      const roomMessage = /^WEEKLY_/.test(code) && typeof data.message === 'string' && data.message.length <= 1000 ? data.message : null
       throw fault(code, status === 401 && token ? '登录已失效，请重新微信登录。'
         : status === 429 ? '操作较频繁，请稍后重试。' : messages[code] || '服务暂不可用，请稍后重试。',
       { status, outcomeUnknown: method !== 'GET' && status >= 500,
-        ...(weeklyMessages[code] ? { message: weeklyMessages[code] } : {}),
+        ...(weeklyMessages[code] || roomMessage ? { message: weeklyMessages[code] || roomMessage } : {}),
         retryAfterMs: Number.isFinite(retryAfter) && retryAfter > 0 ? Math.min(retryAfter, 900) * 1000 : 0 })
     }
     if (status !== 204 && (!data || typeof data !== 'object' || Array.isArray(data))) throw fault('INVALID_RESPONSE', '服务响应不完整，请重新读取。')
@@ -187,7 +196,7 @@ export function createNativeAccountClient({ request, login, storage, origin = 'h
     },
     async read(path, { season = '', force = false } = {}) {
       const route = path.split('?')[0]
-      if (!SAFE_READ.has(route) || /[\\#]/.test(path) || path.includes('..')) throw fault('INVALID_ROUTE', '此入口暂不可用。')
+      if ((!SAFE_READ.has(route) && !SAFE_ROOM.test(route)) || /[\\#]/.test(path) || path.includes('..')) throw fault('INVALID_ROUTE', '此入口暂不可用。')
       if (!session || Date.parse(session.session.expiresAt) <= now()) { clear(); throw fault('UNAUTHORIZED', '登录已失效，请重新微信登录。', { status: 401 }) }
       const key = [endpoint, session.user.id, session.user.effectiveMode, season, path].join('|')
       const cached = privateCache.get(key)
@@ -203,7 +212,19 @@ export function createNativeAccountClient({ request, login, storage, origin = 'h
       privateCache.clear()
       return result
     },
+    async roomWrite(matchId, operation, body) {
+      const path = '/weekly-live-rooms/' + matchId
+      if (!SAFE_ROOM.test(path) || !Object.prototype.hasOwnProperty.call(ROOM_OPERATIONS, operation)) throw fault('INVALID_ROUTE', '此比赛房操作暂不可用。')
+      privateCache.clear()
+      try { return await guarded(path + '/' + operation, { method: ROOM_OPERATIONS[operation], body }) }
+      finally { privateCache.clear() }
+    },
     discardBinding() { if (ticket || state.status === 'CONNECTING') clear() },
+    async unlink(password) {
+      const expected = epoch
+      try { await guarded('/auth/wechat/binding', { method: 'DELETE', body: { password } }) }
+      finally { if (expected === epoch) clear() }
+    },
     async logout() {
       const token = session?.accessToken
       clear()
