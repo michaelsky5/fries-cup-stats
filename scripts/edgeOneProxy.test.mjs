@@ -4,6 +4,7 @@ import edgeRequest, { proxyRequest } from '../edge-functions/api/[[path]].js'
 
 const origin = 'https://hub-preview.fries-cup.com'
 const snapshot = '/api/admin-public/seasons/QGCS4/publish/latest/data'
+const gzipSnapshot = snapshot + '?__fries_gzip=1'
 const request = (path, options) => new Request(origin + path, options)
 const json = (data, init = {}) => new Response(JSON.stringify(data), { ...init, headers: { 'Content-Type': 'application/json', ...init.headers } })
 const mustNotFetch = () => { throw new Error('Unexpected upstream request') }
@@ -351,13 +352,21 @@ test('private validators are not forwarded or used to turn credentialed errors i
   assert.match(result.headers.get('cache-control'), /no-store/)
 })
 
+test('ordinary public reads stay on identity while the provider acceptance gate is closed', async () => {
+  const result = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': 'gzip' } }), {
+    fetchImpl: async () => json({ version: 42 }, { headers: { 'cache-control': 'public, max-age=5' } })
+  })
+  assert.equal(result.headers.get('content-encoding'), null)
+  assert.deepEqual(await result.json(), { version: 42 })
+})
+
 test('large published snapshots stream as gzip without invoking buffered upstream readers', async () => {
   const body = JSON.stringify({ public: '公开赛事记录'.repeat(180000) })
   assert.ok(new TextEncoder().encode(body).byteLength > 1024 * 1024)
   const upstream = new Response(body, { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=5', etag: '"published-42"' } })
   for (const method of ['text', 'json', 'arrayBuffer']) upstream[method] = () => assert.fail('Large origin responses must remain streaming')
   upstream.body.pipeThrough = () => assert.fail('Do not depend on edge pipeThrough accepting CompressionStream')
-  const result = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': 'br, gzip' } }), { fetchImpl: async () => upstream })
+  const result = await proxyRequest(request(gzipSnapshot, { headers: { 'accept-encoding': 'br, gzip' } }), { fetchImpl: async () => upstream })
   assert.equal(result.headers.get('content-encoding'), 'gzip')
   assert.equal(result.headers.get('etag'), 'W/"published-42"')
   assert.equal(result.headers.get('vary'), 'Accept-Encoding')
@@ -374,7 +383,7 @@ test('missing or rejecting compression runtime leaves public JSON available with
   try {
     for (const implementation of [undefined, class { constructor() { throw new Error('unsupported runtime') } }]) {
       globalThis.CompressionStream = implementation
-      const result = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': 'gzip' } }), {
+      const result = await proxyRequest(request(gzipSnapshot, { headers: { 'accept-encoding': 'gzip' } }), {
         fetchImpl: async () => json({ version: 42 }, { headers: { etag: '"v42"', 'cache-control': 'public, max-age=5' } })
       })
       assert.equal(result.status, 200)
@@ -389,7 +398,7 @@ test('missing or rejecting compression runtime leaves public JSON available with
 test('gzip pumping is retained for the response lifetime and a rejected setup keeps the identity body', async () => {
   const pending = []
   const upstream = () => json({ version: 42 }, { headers: { 'cache-control': 'public, max-age=5' } })
-  const result = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': 'gzip' } }), {
+  const result = await proxyRequest(request(gzipSnapshot, { headers: { 'accept-encoding': 'gzip' } }), {
     fetchImpl: async () => upstream(), waitUntil: task => pending.push(task)
   })
   assert.equal(pending.length, 1)
@@ -397,7 +406,7 @@ test('gzip pumping is retained for the response lifetime and a rejected setup ke
   await Promise.all(pending)
   const rejected = upstream()
   rejected.body.pipeTo = () => { throw new TypeError('unsupported pipe') }
-  const plain = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': 'gzip' } }), { fetchImpl: async () => rejected })
+  const plain = await proxyRequest(request(gzipSnapshot, { headers: { 'accept-encoding': 'gzip' } }), { fetchImpl: async () => rejected })
   assert.equal(plain.headers.get('content-encoding'), null)
   assert.equal(plain.headers.get('x-fries-compression'), 'identity-pipe-unavailable')
   assert.deepEqual(await plain.json(), { version: 42 })
@@ -416,17 +425,17 @@ test('edge cache keeps one identity snapshot while gzip, identity and conditiona
       return json({ version: 42 }, { headers: { etag: '"v42"', vary: 'Origin, Accept-Encoding', 'cache-control': 'public, max-age=5' } })
     }
   }
-  const compressed = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': 'gzip', cookie: 'not-forwarded=1' } }), options)
+  const compressed = await proxyRequest(request(gzipSnapshot, { headers: { 'accept-encoding': 'gzip', cookie: 'not-forwarded=1' } }), options)
   assert.equal(compressed.headers.get('content-encoding'), 'gzip')
   assert.deepEqual(await new Response(compressed.body.pipeThrough(new DecompressionStream('gzip'))).json(), { version: 42 })
   assert.equal([...stored.values()][0].headers.get('content-encoding'), null)
   assert.equal([...stored.values()][0].headers.get('vary'), null)
-  const plain = await proxyRequest(request(snapshot), options)
+  const plain = await proxyRequest(request(gzipSnapshot), options)
   assert.equal(plain.headers.get('x-fries-public-cache'), 'HIT')
   assert.equal(plain.headers.get('content-encoding'), null)
   assert.equal(plain.headers.get('etag'), '"v42"')
   assert.deepEqual(await plain.json(), { version: 42 })
-  const unchanged = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': 'gzip', 'if-none-match': 'W/"v42"' } }), options)
+  const unchanged = await proxyRequest(request(gzipSnapshot, { headers: { 'accept-encoding': 'gzip', 'if-none-match': 'W/"v42"' } }), options)
   assert.equal(unchanged.status, 304)
   assert.equal(unchanged.headers.get('content-encoding'), null)
   assert.equal(await unchanged.text(), '')
@@ -435,7 +444,7 @@ test('edge cache keeps one identity snapshot while gzip, identity and conditiona
 
 test('gzip negotiation respects explicit exclusions and never compresses private, error or HEAD responses', async () => {
   for (const [encoding, expected] of [['gzip;q=0', false], ['gzip;q=0, *;q=1', false], ['br', false], ['gzip;q=.5', true], ['*', true]]) {
-    const result = await proxyRequest(request(snapshot, { headers: { 'accept-encoding': encoding } }), {
+    const result = await proxyRequest(request(gzipSnapshot, { headers: { 'accept-encoding': encoding } }), {
       fetchImpl: async () => json({ public: true }, { headers: { 'cache-control': 'public, max-age=5' } })
     })
     assert.equal(result.headers.get('content-encoding') === 'gzip', expected, encoding)
@@ -450,7 +459,7 @@ test('gzip negotiation respects explicit exclusions and never compresses private
     })
     assert.equal(result.headers.get('content-encoding'), null)
   }
-  const head = await proxyRequest(request(snapshot, { method: 'HEAD', headers: { 'accept-encoding': 'gzip' } }), {
+  const head = await proxyRequest(request(gzipSnapshot, { method: 'HEAD', headers: { 'accept-encoding': 'gzip' } }), {
     fetchImpl: async () => json({ public: true }, { headers: { 'cache-control': 'public, max-age=5' } })
   })
   assert.equal(await head.text(), '')

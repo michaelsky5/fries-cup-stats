@@ -5,6 +5,9 @@ const PLATFORM_ORIGIN = globalThis.process?.env?.FRIES_PLATFORM_ORIGIN || 'https
 const PUBLIC_ORIGIN = 'https://admin.fries-cup.com'
 const RELEASE_IDENTITY = null // stamped by the production release builder
 const MAX_BODY_BYTES = 1024 * 1024
+// Keep ordinary clients on the stable identity path during provider acceptance.
+// The opt-in only changes encoding of the same anonymous public snapshot.
+const PUBLIC_GZIP_ENABLED = false
 const READ_METHODS = new Set(['GET', 'HEAD', 'OPTIONS'])
 const METHODS = new Set([...READ_METHODS, 'POST', 'PUT', 'PATCH', 'DELETE'])
 const FORWARD_HEADERS = ['accept', 'accept-language', 'content-type', 'origin', 'referer', 'sec-fetch-site']
@@ -30,6 +33,7 @@ function snapshotResponse(request, response, route, waitUntil) {
   headers.set('vary', vary.join(', '))
   const cacheControl = headers.get('cache-control') || ''
   const compress = request.method === 'GET' && response.status === 200 && response.body
+    && (PUBLIC_GZIP_ENABLED || new URL(request.url).searchParams.get('__fries_gzip') === '1')
     && /application\/json/i.test(headers.get('content-type') || '')
     && /\bpublic\b/i.test(cacheControl) && !/private|no-store/i.test(cacheControl)
     && acceptsGzip(request.headers.get('accept-encoding'))
