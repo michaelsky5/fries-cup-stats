@@ -200,7 +200,7 @@ function Workspace({ user, seasonId, hasAdditions }) {
         setLink(result.invitation)
         if (result.invitation.memberId) setInvitationLinks(current => ({ ...current, [result.invitation.memberId]: result.invitation }))
       }
-      setNotice(suffix.endsWith('/logo') ? '队标已保存，报名与队员确认状态保持不变。' : suffix.endsWith('/submit') ? '报名已成功提交！现在等待赛事负责人审核，无需重复提交。' : suffix.endsWith('/eligibility') ? '本人的报名资料已保存。队伍仍需由负责人提交审核。' : method === 'PATCH' ? '队伍报名资料已保存。全部队员确认后，请继续提交赛事负责人审核。' : '')
+      setNotice(suffix.endsWith('/logo') ? '队标申请已提交，审核通过前仍显示原队标。' : suffix.endsWith('/submit') ? '报名已成功提交！现在等待赛事负责人审核，无需重复提交。' : suffix.endsWith('/eligibility') ? '本人的报名资料已保存。队伍仍需由负责人提交审核。' : method === 'PATCH' ? '队伍报名资料已保存。全部队员确认后，请继续提交赛事负责人审核。' : '')
       setVersion(current => current + 1)
       globalThis.dispatchEvent(new Event('fc:account-activity-changed'))
       return result
@@ -305,7 +305,7 @@ function Registration({ seasonId, rulebook, eligibilityRequired, record, userId,
     {editable && <button type="button" disabled={busy} aria-expanded={editingTeam} onClick={() => setEditingTeam(value => !value)}>{uiText("修改队伍资料", uiLocale)}</button>}
     {editable && <div hidden={!editingTeam}><TeamForm eligibilityRequired={eligibilityRequired} record={record} busy={busy} onSave={input => perform(prefix, input, 'PATCH', '队伍报名资料')} /></div>}
     {owner && !editable && <p className={styles.feedback}>{uiText(record.status === 'SUBMITTED' ? '需要修改队伍资料？点击“撤回并修改”，修改后重新提交审核。' : record.status === 'APPROVED' ? '队伍资料已审核。教练、队员与每周参赛准备请进入“我的队伍”维护；报名记录仍可在本页查看。' : '当前报名不可编辑，请核对报名开放时间或联系赛事管理员。', uiLocale)}</p>}
-    {owner && canManageLogo && record.status === 'APPROVED' && <ApprovedTeamLogoEditor key={record.logoUrl || 'no-logo'} logoUrl={record.logoUrl || ''} busy={busy} onSave={input => perform(`${prefix}/logo`, input, 'PUT', '队伍队标')} />}
+    {owner && canManageLogo && record.status === 'APPROVED' && <ApprovedTeamLogoEditor key={`${record.logoUrl}:${record.logoReview?.id}:${record.logoReview?.status}`} logoUrl={record.logoUrl || ''} review={record.logoReview} busy={busy} onSave={input => perform(`${prefix}/logo`, input, 'PUT', '队伍队标')} />}
     <ol className={styles.journey} aria-label={uiText("报名进度", uiLocale)}>{stageLabels.map((label, index) => <li key={index} data-state={record.status === 'WITHDRAWN' ? 'inactive' : index < stage || record.status === 'APPROVED' ? 'done' : index === stage ? 'current' : 'upcoming'} aria-current={record.status !== 'WITHDRAWN' && index === stage ? 'step' : undefined}><span>{String(index + 1).padStart(2, '0')}</span><strong>{label}</strong></li>)}</ol>
     {record.reviewNote && <p className={styles.feedback}>{uiText("审核意见：", uiLocale)}{record.reviewNote}</p>}
     {record.status === 'APPROVED' && <p className={styles.feedback}>{uiText("本赛季报名已通过。赛段登记和每周名单请按赛事安排处理。", uiLocale)}</p>}
