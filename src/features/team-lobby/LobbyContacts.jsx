@@ -9,7 +9,9 @@ import { startVisiblePolling } from '../../lib/visiblePolling.js'
 import { accountFailure, lobbyDate, leavesLobbyPage, lobbyReadFailure, retryableRead, contactStatus, contactReason } from './lobbyModel.js'
 import { revealAlert } from './lobbyFocus.js'
 import * as api from './lobbyApi.js'
-import { contactPurpose, qqContactStatus, qqChatUrl } from './lobbyQq.js'
+import { contactPurpose, qqContactStatus, qqChatUrl, supportsCardQqAccess } from './lobbyQq.js'
+import CardQqContact from './CardQqContact.jsx'
+import LegacyLobbyContact from './LegacyLobbyContact.jsx'
 import QqAccess from './QqAccess.jsx'
 import styles from './Lobby.module.css'
 
@@ -42,7 +44,9 @@ export function FeedbackLink({ config }) {
   </details>
 }
 
-export { default as ContactEntry } from './CardQqContact.jsx'
+export function ContactEntry({ card }) {
+  return supportsCardQqAccess(card) ? <CardQqContact card={card} /> : <LegacyLobbyContact card={card} />
+}
 
 export function ContactInbox({ direction, config, onChanged }) {
   useUiLocale()
