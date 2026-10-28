@@ -1,0 +1,85 @@
+/* postcss-pxtransform disable */
+/* Native element/scroll boundaries. Visual declarations stay in generated
+   Stats modules; this supplies APIs that WXSS/WeChat do not implement. */
+.shared-root.native-stats-frame { padding: 0 0 var(--fc-mobile-navigation-height, 63px); --kpr-gutter: 16px; }
+.native-stats-frame .shared-tag-a { text-decoration: none; }
+.native-stats-frame .shared-state { margin:0; padding:24px 16px; font-size:14px; line-height:1.6; }
+.native-stats-frame .shared-state .shared-tag-button { display:block; width:auto; min-height:44px; margin:16px 0 0; padding:8px 20px; font-size:14px; line-height:28px; }
+.native-roster-entry { display:flex; align-items:center; justify-content:center; width:44px; min-height:44px; }
+.native-roster-search-icon { width:20px; height:20px; }
+.native-share-layer { position:fixed; inset:0; z-index:120; }
+.native-share-backdrop { position:absolute; inset:0; background:#181a17bb; }
+.native-share-panel { position:absolute; left:16px; right:16px; bottom:calc(20px + env(safe-area-inset-bottom)); background:var(--fc-data-paper); padding:24px; color:var(--fc-data-ink); }
+.native-share-panel .shared-tag-h2 { font-size:20px; margin:0 0 12px; }
+.native-share-panel .shared-tag-p { font-size:14px; margin:0 0 20px; }
+.native-share-primary,.native-share-close { min-height:44px; font-size:14px; border:1px solid var(--fc-data-ink); border-radius:0; }
+.native-share-primary { background:var(--fc-data-signal); color:var(--fc-data-ink); }
+.native-share-close { margin-top:12px; background:transparent; color:var(--fc-data-ink); }
+.native-stats-frame .shared-tag-img { display: block; }
+.native-stats-frame .native-team-logo-image { width: 100%; height: 100%; }
+.native-stats-frame .native-public-support { margin: 0 16px; }
+.native-stats-frame .native-public-support .center-record-bar { margin: 0; padding: 0; border: 0; }
+.native-stats-frame .native-public-support .center-record-bar > .shared-tag-div:first-child { display: none; }
+.native-stats-frame .native-public-support .center-record-actions { margin-left: auto; }
+.native-stats-frame .native-public-support .center-record-actions .shared-tag-button { min-height: 36px; line-height: 36px; }
+.native-stats-frame .native-public-content { padding: 0 16px; }
+.native-disclosure { position: relative; }
+.native-disclosure-backdrop { position: fixed; inset: 56px 0 63px; z-index: 39; background: transparent; }
+.native-dialog-layer { position: fixed; inset: 0; z-index: 100; }
+.native-dialog-backdrop { position: absolute; inset: 0; background: #0c0d0be0; }
+.native-stats-frame .native-dialog-surface { height: calc(100vh - 90px); max-height: calc(100vh - 90px); overflow-y: auto; }
+.native-week-scroll, .native-map-scroll { display: block; width: 100%; }
+.native-authored-scroll { display: block; width: 100%; max-width: 100%; }
+.native-scroll-x > .shared-element { min-width: 100%; width: max-content; overflow: visible; }
+.native-week-scroll > .shared-tag-nav { width: max-content; min-width: 100%; overflow: visible; }
+.native-stats-frame .native-map-scroll .shared-tag-ol { min-width: 280px; }
+/* HTML table algorithms are absent in WeChat. Keep the original four cells,
+   authored padding/type/borders, and replace only the layout algorithm. */
+.native-stats-frame .shared-data-weekly-overview-true .shared-tag-table { display: block; }
+.native-stats-frame .shared-data-weekly-overview-true .shared-tag-thead,
+.native-stats-frame .shared-data-weekly-overview-true .shared-tag-tbody { display: block; }
+.native-stats-frame .shared-data-weekly-overview-true .shared-tag-tr { display: grid; grid-template-columns: 65px minmax(0,1fr) 70px 85px; align-items: stretch; }
+.native-stats-frame .shared-data-weekly-overview-true .shared-tag-th,
+.native-stats-frame .shared-data-weekly-overview-true .shared-tag-td { width: auto; min-width: 0; display: flex; align-items: center; justify-content: center; }
+.native-stats-frame .shared-data-weekly-overview-true .shared-tag-th:nth-child(-n+2),
+.native-stats-frame .shared-data-weekly-overview-true .shared-tag-td:first-child { justify-content: flex-start; }
+.native-stats-frame .shared-data-weekly-overview-true .shared-tag-td:first-child { flex-wrap: wrap; }
+.native-stats-frame .shared-data-weekly-overview-true .shared-tag-td:first-child .shared-tag-small { flex-basis: 100%; }
+.native-source-match { padding: 0 16px; }
+.native-match-rail { width: 100%; display: block; }
+.native-match-rail > .shared-tag-nav { min-width: 100%; width: max-content; overflow: visible; }
+.native-source-match .native-stat-table,
+.native-source-match .native-player-table { display: block; }
+.native-source-match .shared-tag-thead,
+.native-source-match .shared-tag-tbody,
+.native-source-match .shared-tag-tfoot { display: block; }
+.native-source-match .native-stat-table .shared-tag-tr { display: grid; grid-template-columns: 32% repeat(3,5.8%) repeat(3,minmax(0,1fr)) 52px; }
+.native-source-match .native-player-summary .shared-tag-tr { display: grid; grid-template-columns: 28% repeat(3,6%) repeat(3,minmax(0,1fr)) 64px 36px; }
+.native-source-match .native-player-maps .shared-tag-tr { display: grid; grid-template-columns: 158px repeat(var(--map-count),76px) 36px; }
+.native-source-match .native-stat-table .shared-tag-th,
+.native-source-match .native-stat-table .shared-tag-td,
+.native-source-match .native-player-table .shared-tag-th,
+.native-source-match .native-player-table .shared-tag-td { min-width: 0; display: flex; align-items: center; justify-content: flex-end; }
+.native-source-match .native-stat-table .shared-tag-th:first-child,
+.native-source-match .native-player-table .shared-tag-th:first-child { justify-content: flex-start; }
+.native-source-match .native-stat-table .shared-tag-th:first-child,
+.native-source-match .native-stat-table .shared-tag-td:first-child {
+  /* Native color-mix fallbacks must keep the frozen identity column opaque. */
+  background: var(--fc-data-paper-raised) !important;
+  border-right-color: var(--fc-data-paper-raised) !important;
+}
+.native-source-match .shared-tag-colgroup { display: none; }
+.native-stats-frame .shared-tag-colgroup { display: none; }
+.native-stats-frame .native-advance-table,
+.native-stats-frame .native-advance-table .shared-tag-thead,
+.native-stats-frame .native-advance-table .shared-tag-tbody { display:block; width:100%; }
+.native-stats-frame .native-advance-table .shared-tag-tr { display:grid; align-items:center; width:100%; }
+.native-stats-frame .native-advance-standings .shared-tag-tr { grid-template-columns:43px minmax(0,1fr) 44px 60px; }
+.native-stats-frame .native-advance-roster .shared-tag-tr { grid-template-columns:minmax(0,1fr); }
+.native-stats-frame .native-advance-table .shared-tag-td,
+.native-stats-frame .native-advance-table .shared-tag-th { display:block; min-width:0; }
+.native-stats-frame .native-advance-table .native-advance-record-column { display:none; }
+.native-stats-frame .native-advance-table .shared-tag-thead .shared-tag-th { font-size:12px; }
+.native-stats-frame .shared-tag-fieldset .shared-tag-legend { grid-column: 1 / -1; }
+.native-record-notice { margin: 16px; }
+.native-stats-frame .native-account-entry { min-height: 44px; padding: 10px 12px; border: 1px solid #181a174d; border-radius: 0; background: #f4c320; color: #181a17; font-size: 12px; white-space: nowrap; }

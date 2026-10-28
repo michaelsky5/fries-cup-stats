@@ -117,11 +117,14 @@ export function getPublishedTeamLogo(team) {
   return getDirectLogoValues(team)[0] || ''
 }
 
-export function getPublicLogoSources(source) {
+export function getPublicLogoSources(source, { size } = {}) {
   // These immutable uploads are already public. Serve them through the same
   // origin/cache as avatars, with the original URL retained as a fallback.
   const match = source.match(/^https:\/\/admin\.fries-cup\.com(\/api\/media\/team-logos\/[a-f0-9]{24}\/[a-f0-9]{32}\.webp)$/)
-  return match ? [match[1].replace('/api/', '/api/platform/'), source] : [source]
+  const sameOrigin = match ? match[1].replace('/api/', '/api/platform/') : source
+  const supported = [96, 192].includes(Number(size))
+  const isPublicUpload = /^\/api\/platform\/media\/team-logos\/[a-f0-9]{24}\/[a-f0-9]{32}\.webp$/.test(sameOrigin)
+  return [...new Set([...(supported && isPublicUpload ? [sameOrigin.replace(/\.webp$/, `-${Number(size)}.webp`)] : []), sameOrigin, source])]
 }
 
 function getTeamIdentityValues(team) {
@@ -212,7 +215,7 @@ export function getDefaultTeamLogoCandidates(seasonLike, team = null) {
   ])
 }
 
-export function getTeamLogoCandidates(team, seasonLike, { fallbackSrc = '' } = {}) {
+export function getTeamLogoCandidates(team, seasonLike, { fallbackSrc = '', size } = {}) {
   const logoTeam = typeof team === 'object' && team !== null
     ? team
     : { team_short_name: text(team) }
@@ -220,7 +223,7 @@ export function getTeamLogoCandidates(team, seasonLike, { fallbackSrc = '' } = {
   const identityValues = getTeamIdentityValues(logoTeam)
   const defaults = getDefaultTeamLogoCandidates(seasonLike, logoTeam)
   const specificLogos = unique([
-    ...getDirectLogoValues(logoTeam).flatMap(getPublicLogoSources),
+    ...getDirectLogoValues(logoTeam).flatMap(source => getPublicLogoSources(source, { size })),
     ...directories.flatMap(directory => getCatalogMatches(directory, identityValues)),
     ...directories.flatMap(directory => getConventionCandidates(directory, identityValues)),
     ...(directories.length ? [] : getRootLegacyCandidates(identityValues))

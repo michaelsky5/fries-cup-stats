@@ -7,14 +7,14 @@ function getTeamShort(team, teamShortName, teamName) {
   return getPreferredTeamShortName(short, teamName || team?.team_name || team?.fullName || team?.full || team?.name)
 }
 
-export default function TeamLogo({ team, seasonId, teamShortName, teamName, className = '', large = false, fallbackSrc = '' }) {
+export default function TeamLogo({ team, seasonId, teamShortName, teamName, className = '', large = false, fallbackSrc = '', thumbnailSize = large ? 512 : 96 }) {
   const logoTeam = team || {
     team_short_name: teamShortName,
     short: teamShortName,
     team_name: teamName,
     name: teamName
   }
-  const candidates = getTeamLogoCandidates(logoTeam, seasonId, { fallbackSrc })
+  const candidates = getTeamLogoCandidates(logoTeam, seasonId, { fallbackSrc, size: thumbnailSize })
   const candidateKey = candidates.join('|')
   const [index, setIndex] = useState(0)
   const src = candidates[index]

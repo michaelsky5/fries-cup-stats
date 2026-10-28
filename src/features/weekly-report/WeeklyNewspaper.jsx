@@ -67,7 +67,7 @@ function SourceLink({ article, t, withSeason }) {
 }
 
 function NewspaperTeamLogo({team,className,...props}) {
-  return <TeamLogo team={team} teamShortName={newspaperTeamName(team)} fallbackSrc="/logos/OW.svg" className={className} {...props}/>
+  return <TeamLogo team={team} teamShortName={newspaperTeamName(team)} fallbackSrc="/logos/OW.svg" className={className} {...props} thumbnailSize={512}/>
 }
 
 function formatPersonMapContext(context,locale) {

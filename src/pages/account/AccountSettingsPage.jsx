@@ -5,6 +5,7 @@ import { Link, useBlocker, useLocation } from 'react-router-dom'
 import AccountFrame from '../../features/account-ui/AccountFrame.jsx'
 import AccountOverview from './AccountOverview.jsx'
 import EmailChangePanel from '../../features/account-security/EmailChangePanel.jsx'
+import WechatBindingSettings, { wechatSettingsLabel } from '../../features/account-security/WechatBindingSettings.jsx'
 import { reminderCopy } from '../../features/match-reminders/reminderCopy.js'
 import MatchReminderSettings from '../../features/match-reminders/MatchReminderSettings.jsx'
 import AccountAvatar from '../../features/account-ui/AccountAvatar.jsx'
@@ -31,7 +32,7 @@ import PasswordRequirements from '../../features/auth/PasswordRequirements.jsx'
 const SECTIONS = [
   ['overview', '00', '账号概览'],
   ['profile', '01', '个人资料'], ['password', '02', '修改密码'],
-  ['email', '03', '邮箱管理'], ['sessions', '04', '登录设备'], ['reminders', '05', '比赛提醒']
+  ['email', '03', '邮箱管理'], ['sessions', '04', '登录设备'], ['reminders', '05', '比赛提醒'], ['wechat', '06', '微信关联']
 ]
 
 function Notice({ notice }) {
@@ -398,7 +399,7 @@ function SettingsWorkspace({ user, onRevoked }) {
   return <div className={styles.workspace} data-mobile-panel={mobilePanel}>
     {mobilePanel ? <nav className={styles.mobileBack} aria-label={uiText('账号设置', uiLocale)}><Link to={{ pathname: location.pathname, search: location.search, hash: '' }}>← {uiText('账号设置', uiLocale)}</Link></nav> : null}
     {blocker.state === 'blocked' && <ConfirmationDialog title={uiText("修改尚未保存", uiLocale)} description={uiText("离开后，本页尚未提交的内容会丢失。", uiLocale)} cancelLabel="继续编辑" confirmLabel="放弃修改并离开" onCancel={blocker.reset} onConfirm={blocker.proceed} />}
-    <aside className={styles.sidebar}><span className={styles.kicker}>{uiText("账号设置", uiLocale)}</span><nav aria-label={uiText("账号设置分区", uiLocale)}>{SECTIONS.map(([id, , title]) => <Link key={id} to={{ pathname: location.pathname, search: location.search, hash: `#${id}` }} aria-current={section === id ? 'page' : undefined}><strong data-i18n-ignore={id === 'reminders' || undefined}>{id === 'reminders' ? reminderCopy(uiLocale).title : title}</strong><i aria-hidden="true">→</i></Link>)}</nav><p>{uiText("报名、队伍和比赛事务", uiLocale)}<br />{uiText("可以在我的空间处理。", uiLocale)}</p><Link to={spaceHref}>{uiText("← 返回我的空间", uiLocale)}</Link></aside>
+    <aside className={styles.sidebar}><span className={styles.kicker}>{uiText("账号设置", uiLocale)}</span><nav aria-label={uiText("账号设置分区", uiLocale)}>{SECTIONS.map(([id, , title]) => <Link key={id} to={{ pathname: location.pathname, search: location.search, hash: `#${id}` }} aria-current={section === id ? 'page' : undefined}><strong data-i18n-ignore={['reminders', 'wechat'].includes(id) || undefined}>{id === 'reminders' ? reminderCopy(uiLocale).title : id === 'wechat' ? wechatSettingsLabel(uiLocale) : title}</strong><i aria-hidden="true">→</i></Link>)}</nav><p>{uiText("报名、队伍和比赛事务", uiLocale)}<br />{uiText("可以在我的空间处理。", uiLocale)}</p><Link to={spaceHref}>{uiText("← 返回我的空间", uiLocale)}</Link></aside>
     <div className={styles.cards} ref={cards}>
       {section === 'overview' && <AccountOverview user={user} spaceHref={spaceHref} />}
       {section === 'profile' && <ProfileSettings user={user} onDirtyChange={onDirtyChange} />}
@@ -406,6 +407,7 @@ function SettingsWorkspace({ user, onRevoked }) {
       {section === 'email' && <EmailSettings user={user} onDirtyChange={onDirtyChange} />}
       {section === 'sessions' && <SessionSettings onRevoked={onRevoked} />}
       {section === 'reminders' && <MatchReminderSettings user={user} onDirtyChange={onDirtyChange} />}
+      {section === 'wechat' && <WechatBindingSettings key={uiLocale} Section={Section} onDirtyChange={onDirtyChange} />}
     </div>
   </div>
 }

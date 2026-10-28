@@ -7,6 +7,26 @@ on:
   pull_request:
 
 jobs:
+  native-candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            experiments/shared-schedule/package-lock.json
+      - name: Install fixed Web and native dependencies
+        run: |
+          npm ci
+          npm ci --prefix experiments/shared-schedule
+      - name: Test native public and private account boundaries
+        run: npm run lint:account --prefix experiments/shared-schedule && npm test --prefix experiments/shared-schedule
+      - name: Build native candidate and enforce package and credential boundaries
+        run: npm run build:weapp --prefix experiments/shared-schedule
+
   build-and-test:
     runs-on: ubuntu-latest
 
@@ -25,6 +45,11 @@ jobs:
 
       - name: Check account UI contracts
         run: npm run test:account-ui
+
+      - name: Check WeChat link management and native session isolation
+        run: |
+          node --test scripts/wechatBinding.test.mjs
+          node --test experiments/shared-schedule/tests/native-account.test.mjs
 
       - name: Check lobby continuation, consent copy and language boundaries
         run: node --test scripts/teamLobby.test.mjs scripts/lobbyEntry.test.mjs scripts/passwordPolicy.test.mjs

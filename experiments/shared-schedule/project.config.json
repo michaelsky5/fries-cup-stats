@@ -1,0 +1,36 @@
+{
+  "appid": "wx8244fb803ec1b65b",
+  "projectname": "friescup-native-20261027",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "dist/weapp/",
+  "libVersion": "widelyUsed",
+  "setting": {
+    "es6": false,
+    "postcss": false,
+    "minified": true,
+    "urlCheck": true,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "enhance": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {}
+}

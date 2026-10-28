@@ -1,0 +1,55 @@
+/* Platform adapters for the generated Stats overview/directory design.
+   Canonical colors, type, roster rows, spotlight and navigation stay generated. */
+.shared-root.center-root { --kpr-gutter: 20px; padding-bottom: calc(36px + var(--fc-mobile-navigation-height)); }
+.shared-root .center-embedded { padding: 0; min-height: 0; }
+.center-logo { flex-shrink: 0; }
+.center-logo .shared-tag-img, .center-logo .h5-img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.center-logo .shared-tag-b { font: 900 18px/1 var(--fc-data-font-display); }
+.shared-root .center-link, .shared-root .center-team-title { background: transparent; border: 0; padding: 0; text-align: inherit; color: inherit; }
+.shared-root .center-team-title { max-width: 100%; }
+.shared-root .center-follow { flex: 0 0 auto; align-self: center; white-space: nowrap; min-height: 44px; padding: 8px; border-color: var(--fc-data-line-strong); color: var(--fc-data-ink); }
+.shared-root .center-directory .center-follow, .shared-root .center-section .center-follow { margin-right: 12px; }
+.shared-root .center-follow.shared-selected { background: var(--fc-data-paper-deep); color: var(--fc-data-focus-on-light); }
+.shared-root .center-follow-dark { color: var(--fc-data-paper); border-color: var(--fc-data-line-on-dark); min-height: 34px; }
+.shared-root .center-follow-dark.shared-selected { color: var(--fc-data-signal); background: transparent; }
+.shared-root .center-details-link { background: transparent; border: 0; padding: 10px 0; }
+.shared-root .center-standings { min-width: 0; }
+/* WeChat has no native HTML table layout. Keep the Stats table typography and
+   row borders, but use the same four columns on both targets. */
+.center-table { display: block; width: 100%; }
+.center-table .shared-tag-thead, .center-table .shared-tag-tbody { display: block; }
+.center-table .shared-tag-tr { display: grid; grid-template-columns: 48px minmax(0, 1fr) 46px 54px; align-items: center; }
+.center-table .shared-tag-th, .center-table .shared-tag-td { display: block; width: auto !important; min-width: 0; }
+.center-table .shared-tag-th { font-weight: 600; text-align: left; }
+.center-table .shared-tag-tr > .shared-tag-th:nth-child(n+3) { text-align: center; }
+.shared-root .center-table-link { display: flex; align-items: center; width: 100%; gap: 8px; padding: 0; min-height: 36px; background: transparent; border: 0; text-align: left; font-size: 12px; overflow-wrap: anywhere; }
+.center-metrics-table .shared-tag-tr { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.shared-root .center-directory { height: auto; min-width: 0; }
+.shared-root .center-directory .shared-tag-ul { overflow: visible; }
+.shared-root .center-search { min-width: 0; width: 100%; flex: 1; height: 44px; }
+.shared-root .center-search input { height: 44px; min-width: 0; }
+.center-filter-pickers { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.center-note { color: var(--fc-data-text-muted); font-size: 11px; padding: 12px 0; line-height: 1.8; }
+.center-directory .center-note { padding-inline: 14px; }
+.center-section { margin-top: 26px; }
+.center-section > .shared-tag-ul { list-style: none; margin: 0; padding: 0; }
+.center-profile-identity { display: flex; align-items: center; justify-content: space-between; gap: 16px; overflow-wrap: anywhere; padding-bottom: 20px; }
+.shared-root .center-stat-value { font: 900 22px/1 var(--fc-data-font-display); white-space: nowrap; }
+.center-pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; font-size: 12px; }
+.shared-root .center-pagination .shared-tag-button { background: transparent; border: 1px solid var(--fc-data-line); padding: 8px 12px; font-size: 12px; }
+.center-pagination .shared-tag-button[disabled] { opacity: .4; }
+.shared-root .center-primary { background: var(--fc-data-signal); color: var(--fc-data-ink); border: 0; min-height: 44px; margin-top: 16px; padding: 10px 16px; font-size: 13px; }
+.shared-root .center-week-link { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; border-bottom: 1px solid var(--fc-data-line); min-height: 56px; text-align: left; }
+.center-week-link > .shared-tag-span { display: flex; align-items: center; gap: 8px; }
+.center-week-link .shared-tag-small { color: var(--fc-data-text-muted); font-size: 11px; }
+.center-public-footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--fc-data-line); display: grid; gap: 10px; color: var(--fc-data-text-muted); font-size: 11px; }
+.shared-root .center-public-footer .shared-tag-button { text-align: left; min-height: 44px; }
+.center-storage-error, .center-cache-notice { border-bottom: 1px solid var(--fc-data-line-strong); padding: 16px 0; font-size: 12px; line-height: 1.7; }
+.center-cache-notice { display: flex; flex-wrap: wrap; gap: 12px; }
+.center-record-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--fc-data-line); padding-bottom: 12px; margin-bottom: 24px; font-size: 11px; }
+.center-record-bar > .shared-tag-div:first-child { min-width: 0; }
+.center-record-bar .shared-tag-small { display: block; color: var(--fc-data-text-muted); font-size: 10px; line-height: 1.8; }
+.center-record-actions { display: flex; flex-shrink: 0; gap: 10px; align-items: center; }
+.shared-root .center-record-actions .shared-tag-button { width: auto; min-height: 44px; font-size: 12px; padding: 0; margin: 0; line-height: 44px; background: transparent; }
+.center-share::after { border: 0; }
+.center-record-actions .shared-tag-button[disabled] { opacity: .45; }

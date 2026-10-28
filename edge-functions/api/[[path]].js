@@ -75,7 +75,7 @@ function resolveRoute(url, { platformOrigin, publicOrigin, rehearsal }) {
   if (/^\/api\/platform\/media\/avatars\/[a-f0-9]{24}\/[a-f0-9]{32}-(256|96)\.webp$/.test(pathname)) {
     return { public: true, media: true, url: `${platformOrigin}${pathname.replace('/api/platform/', '/api/')}` }
   }
-  if (/^\/api\/platform\/media\/team-logos\/[a-f0-9]{24}\/[a-f0-9]{32}\.webp$/.test(pathname)) {
+  if (/^\/api\/platform\/media\/team-logos\/[a-f0-9]{24}\/[a-f0-9]{32}(?:-(?:96|192))?\.webp$/.test(pathname)) {
     return { public: true, media: true, url: `${platformOrigin}${pathname.replace('/api/platform/', '/api/')}` }
   }
   if (/^\/api\/platform\/[^/].*$/.test(pathname)) {
