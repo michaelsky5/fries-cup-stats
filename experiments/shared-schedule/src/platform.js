@@ -1,10 +1,11 @@
 import Taro from '@tarojs/taro'
-import { createPublicScheduleReader, formatRequestDiagnostic, requestWithDeadline } from './shared/publicScheduleReader'
+import { formatRequestDiagnostic, requestWithDeadline } from './shared/publicScheduleReader'
 import { centerUrl } from './shared/centerRoutes'
 import { createCenterNavigation } from './shared/centerNavigation'
 import { getSeasonById, SEASON_STORAGE_KEY } from './shared/publicSeasons'
 import { createPublicSeasonReader } from './shared/publicSeasonReader'
 import { configureLocaleStorage } from './shared/nativeLocales'
+import { createPublicSnapshotFileStore } from './shared/publicSnapshotCache.js'
 export { centerUrl }
 export function openNativeAccount() {
   const options = { url: '/account/pages/index' }
@@ -17,7 +18,15 @@ const requestPublic = process.env.TARO_ENV === 'weapp'
   ? options => wx.request(options)
   : options => Taro.request(options)
 
-export const readPublicSchedule = createPublicSeasonReader({ request: requestPublic, origin: process.env.TARO_ENV === 'h5' ? '' : 'https://admin.fries-cup.com' })
+export const readPublicSchedule = createPublicSeasonReader({ request: requestPublic, origin: process.env.TARO_ENV === 'h5' ? '' : 'https://stats.fries-cup.com',
+  pathPrefix: process.env.TARO_ENV === 'h5' ? '/api/public' : '/api/admin-public',
+  fallbackOrigin: process.env.TARO_ENV === 'h5' ? undefined : 'https://admin.fries-cup.com',
+  storageForSeason: seasonId => {
+    if (process.env.TARO_ENV !== 'weapp') return undefined
+    try { return createPublicSnapshotFileStore({ fileSystem: Taro.getFileSystemManager(), root: Taro.env.USER_DATA_PATH, seasonId }) }
+    catch (_) { return undefined } // Public browsing also works without device file storage.
+  }
+})
 export function storedSeasonId() { try { return getSeasonById(Taro.getStorageSync(SEASON_STORAGE_KEY)).id } catch (_) { return 'FCW26' } }
 export async function changeSeason(id, view = 'overview') {
   const season = getSeasonById(id)

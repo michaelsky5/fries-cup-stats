@@ -15,6 +15,7 @@ export const publicPageSources=[
   'pages/stats/MapStatsPage.jsx','pages/stats/MapDetailPage.jsx',
   'pages/heroes/HeroesPage.jsx','pages/matches/MatchesPage.jsx',
   'pages/advance/AdvancePage.jsx','pages/following/FollowingPage.jsx',
+  'features/participation-hub/ParticipationHubPage.jsx',
   'pages/review/ReviewEntryPage.jsx','pages/review/ReviewStoryPage.jsx'
 ].map(file=>'src/'+file)
 
@@ -22,6 +23,7 @@ export const nativeBoundaryImports={
   'SiteSearch.jsx':'NativeRosterEntry',
   'AccountModeSwitch.jsx':'NativeAccountModeSwitch',
   'useLobbyOpen.js':'useNativeLobbyOpen',
+  'lobbyApi.js':'nativeClosedLobbyConfig',
   'useMobileTabNavigation.js':'useNativeMobileTabNavigation',
   'usePublishedNewspaper.js':'useNativeDeferredNewspaper',
   'useCondensedIdentity.js':'useNativeCondensedIdentity',

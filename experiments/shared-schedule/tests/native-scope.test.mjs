@@ -8,7 +8,9 @@ import {publicNativeRoute} from '../src/shared/nativeDesignModel.js'
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..')
 
 test('public native routes reject account writes, payment, lobby and disabled experiments',()=>{
-  for(const route of ['/account','/login','/register','/lobby','/participate/FCW26','/room/M1','/support','/classic','/reports','/me?section=team&competition=FCW26','/me?section=matches'])assert.equal(publicNativeRoute(route).unavailable,true,route)
+  for(const route of ['/account','/login','/register','/lobby','/participate/FCW26','/room/M1','/support','/classic','/reports'])assert.equal(publicNativeRoute(route).unavailable,true,route)
+  for(const route of ['/me?section=team&competition=FCW26','/me?section=matches&token=not-forwarded'])assert.deepEqual(publicNativeRoute(route),{account:true})
+  assert.equal(publicNativeRoute('/play').view,'play')
   assert.equal(publicNativeRoute('/me?section=following').view,'space')
   assert.equal(publicNativeRoute('/following').view,'space')
   assert.equal(publicNativeRoute('/matches/M1').id,'M1')

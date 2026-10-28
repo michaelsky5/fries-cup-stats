@@ -62,9 +62,10 @@ export default function NativeAccountPage() {
   if (signedIn && weeklyOpen) return <NativeWeeklyPanel onBack={() => setWeeklyOpen(false)}/>
   return <View className='native-account'>
     {accountPreviewLabel ? <View className='native-account-notice'><Text>{accountPreviewLabel}</Text></View> : null}
-    <View className='native-account-top'><Button className='native-account-back' onClick={home}>返回赛事中心</Button><Text className='native-account-wordmark'>薯条杯 · 我的账号</Text></View>
-    <View className='native-account-title'><Text className='native-account-number'>01</Text><View className='native-account-title-copy'><Text className='native-account-eyebrow'>我的赛事账号</Text><Text className='native-account-heading'>{signedIn ? account.user.displayName : binding ? '关联已有账号' : '让参赛记录跟着你'}</Text></View></View>
+    <View className='native-account-top'><Button className='native-account-back' onClick={home}>← 返回赛事中心</Button></View>
+    <View className='native-account-title'><View className='native-account-title-copy'><Text className='native-account-eyebrow'>我的赛事账号</Text><Text className='native-account-heading'>{signedIn ? '我的空间' : binding ? '关联已有账号' : '登录参赛账号'}</Text></View></View>
     <Text className='native-account-intro'>{signedIn ? '微信已关联原账号，队伍与赛事身份沿用现有记录。' : '使用你已有的薯条杯账号。首次验证后，下次可直接微信登录。'}</Text>
+    <Button className='native-account-secondary native-account-following' onClick={() => Taro.navigateTo({ url: centerUrl({ view: 'space', season: storedSeasonId() }) })}>我的关注 · 保存在此设备 →</Button>
     {notice ? <View className='native-account-notice' role='alert'><Text>{notice}</Text></View> : null}
     {account.status === 'RESTORING' ? <View className='native-account-section'><Text>正在核对登录状态…</Text><Button className='native-account-secondary' onClick={() => run(() => nativeAccount.restore())}>重新核对</Button><Button className='native-account-secondary' onClick={() => run(() => nativeAccount.logout())}>退出此设备登录</Button></View>
       : signedIn ? <View className='native-account-section'>

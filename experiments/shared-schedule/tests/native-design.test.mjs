@@ -16,7 +16,7 @@ test('query-only navigation preserves the native page instead of returning to ov
   assert.equal(new URLSearchParams(advance.filters).get('phase'),'league')
   assert.equal(publicNativeRoute('?q=pororo','/leaderboard').view,'database')
   assert.equal(publicNativeRoute('#map-records','/matches/M1').id,'M1')
-  assert.equal(publicNativeRoute({search:'?section=team&competition=FCW26'},'/me').unavailable,true)
+  assert.deepEqual(publicNativeRoute({search:'?section=team&competition=FCW26'},'/me'),{account:true})
 })
 
 test('Stats links retain public subject and selected event/period when mapped to native routes',()=>{

@@ -29,7 +29,7 @@ function loadPage(pageKind='center') {
     if (name === '../../shared/SharedCenter') return { __esModule: true, default: props => React.createElement('p', null, props.loading ? 'loading' : 'ready') }
     if (name === '../../shared/ScheduleRuntimeBoundary') return { __esModule: true, default: props => props.children }
     if (name === '../../platform') return {
-      readPublicSchedule: async () => { requestCalls += 1; return { data: { matches: [] }, stale: false } },
+      readPublicSchedule: Object.assign(async () => { requestCalls += 1; return { data: { matches: [] }, stale: false } }, { cached: async () => null }),
       checkPublicConnection: async () => 'connected', finishPullDownRefresh() {}, storedSeasonId: () => 'FCR26'
     }
     if (name === '../../shared/model') return { initialSelection: (_data, params) => { selectedParams = params; return {} } }

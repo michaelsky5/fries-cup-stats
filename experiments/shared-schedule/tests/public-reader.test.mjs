@@ -93,3 +93,99 @@ test('a failed initial shared request releases its in-flight state for retry', a
   await retry
   assert.equal(calls, 2)
 })
+
+test('public reads negotiate gzip and revalidate an unchanged snapshot without downloading its body', async () => {
+  const headers = []
+  let time = 1000
+  const read = createPublicScheduleReader({ url: '/public', now: () => time, request: options => {
+    headers.push(options.header)
+    return Promise.resolve(headers.length === 1 ? { ...response, header: { ETag: 'W/"published-42"' } } : { statusCode: 304 })
+  } })
+  await read()
+  time = 40000
+  assert.deepEqual(await read(), { data, stale: false, fetchedAt: time })
+  assert.equal(headers[0]['Accept-Encoding'], 'gzip')
+  assert.equal(headers[0]['If-None-Match'], undefined)
+  assert.equal(headers[1]['If-None-Match'], 'W/"published-42"')
+  assert.equal(headers[1].Cookie, undefined)
+  assert.equal(headers[1].Authorization, undefined)
+})
+
+test('a restarted app shows a validated device cache while its network refresh is pending', async () => {
+  let saved, options
+  const storage = { read: async () => saved, write: async value => { saved = value } }
+  await createPublicScheduleReader({ url: '/public', now: () => 1000, storage, request: () => Promise.resolve({ ...response, header: { etag: '"v1"' } }) })()
+  await Promise.resolve()
+  const read = createPublicScheduleReader({ url: '/public', now: () => 80000, storage, request: value => { options = value } })
+  const pending = read()
+  assert.deepEqual(await read.cached(), { data, stale: true, fetchedAt: 1000 })
+  assert.equal(options.header['If-None-Match'], '"v1"')
+  options.success({ statusCode: 304 })
+  assert.deepEqual(await pending, { data, stale: false, fetchedAt: 80000 })
+})
+
+test('cached data is isolated by exact public URL and invalid metadata never becomes a request header', async () => {
+  let headers
+  const read = createPublicScheduleReader({ url: '/public', now: () => 80000, storage: {
+    read: () => ({ version: 1, url: '/another-event', data, fetchedAt: 1000, etag: '"wrong"' })
+  }, request: options => { headers = options.header; return Promise.resolve(response) } })
+  assert.equal(await read.cached(), null)
+  await read()
+  assert.equal(headers['If-None-Match'], undefined)
+  const injected = createPublicScheduleReader({ url: '/public', now: () => 80000, storage: {
+    read: () => ({ version: 1, url: '/public', data, fetchedAt: 1000, etag: '"v1"\r\nCookie: forbidden' })
+  }, request: options => { headers = options.header; return Promise.resolve(response) } })
+  await injected()
+  assert.equal(headers['If-None-Match'], undefined)
+})
+
+test('a device-cache failure never blocks a successful HTTPS read, and a malformed 304 fails closed', async () => {
+  const read = createPublicScheduleReader({ url: '/public', storage: { read() { throw new Error('no storage') }, write() { throw new Error('no space') } }, request: () => Promise.resolve(response) })
+  assert.equal((await read()).data, data)
+  const empty = createPublicScheduleReader({ url: '/public', request: () => Promise.resolve({ statusCode: 304 }) })
+  await assert.rejects(empty(), { code: 'PUBLIC_HTTP' })
+})
+
+test('a rejected public edge route falls back immediately and cancels a losing read', async () => {
+  const calls=[]
+  const read=createPublicScheduleReader({url:'/edge',fallbackUrls:['/origin'],request:options=>{
+    calls.push(options)
+    if(options.url==='/edge')queueMicrotask(()=>options.fail({errMsg:'url not in domain list'}))
+    else queueMicrotask(()=>options.success(response))
+    return {abort(){}}
+  }})
+  assert.equal((await read()).data,data)
+  assert.deepEqual(calls.map(call=>call.url),['/edge','/origin'])
+  for(const call of calls)assert.deepEqual(Object.keys(call.header).sort(),['Accept','Accept-Encoding'])
+})
+
+test('a slow public response uses one bounded alternate and discards late data', async () => {
+  let first, aborted=0
+  const read=createPublicScheduleReader({url:'/edge',fallbackUrls:['/origin'],timeoutMs:60,request:options=>{
+    if(options.url==='/edge') {first=options;return {abort(){aborted++;options.fail({errMsg:'abort'})}}}
+    queueMicrotask(()=>options.success(response))
+    return {abort(){}}
+  }})
+  const result=await read()
+  assert.equal(result.data,data)
+  assert.equal(aborted,1)
+  first.success({statusCode:200,data:{invalid:true}})
+  assert.equal((await read()).data,data)
+})
+
+test('alternate public reads share a deadline and never accept a malformed first response', async () => {
+  const started=Date.now(), calls=[]
+  const read=createPublicScheduleReader({url:'/edge',fallbackUrls:['/origin'],timeoutMs:40,request:options=>{
+    calls.push(options)
+    return {abort(){}}
+  }})
+  await assert.rejects(read(),{code:'PUBLIC_TIMEOUT'})
+  assert.equal(calls.length,2)
+  assert.ok(calls[1].timeout<calls[0].timeout)
+  assert.ok(Date.now()-started<140,'The alternate must not double the deadline')
+  const recover=createPublicScheduleReader({url:'/edge',fallbackUrls:['/origin'],request:options=>{
+    queueMicrotask(()=>options.success(options.url==='/edge'?{statusCode:200,data:{private:'not a public snapshot'}}:response))
+    return {}
+  }})
+  assert.equal((await recover()).data,data)
+})

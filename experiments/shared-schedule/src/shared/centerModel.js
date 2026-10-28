@@ -28,7 +28,7 @@ export function routeView(params = {}) {
   if (params.map) return 'maps'
   if (params.hero) return 'heroes'
   if (params.staff) return 'staff'
-  return ['overview', 'matches', 'database', 'space', 'advance', 'roster', 'maps', 'heroes', 'staff', 'review', 'history'].includes(params.view) ? params.view : 'overview'
+  return ['overview', 'matches', 'database', 'play', 'space', 'advance', 'roster', 'maps', 'heroes', 'staff', 'review', 'history'].includes(params.view) ? params.view : 'overview'
 }
 export function centerModel(raw, selection, following) {
   validateSnapshot(raw)
