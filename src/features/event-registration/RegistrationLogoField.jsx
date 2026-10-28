@@ -2,9 +2,12 @@ import { useEffect, useId, useRef, useState } from 'react'
 import styles from './SeasonParticipationPage.module.css'
 import { detectRegistrationLogoType, REGISTRATION_LOGO_LIMIT } from './registrationLogoInput.js'
 import { getPublicLogoSources } from '../../lib/teamLogoResolver.js'
+import { useUiLocale } from '../../hooks/useUiLocale.js'
+import { translateUiText as uiText } from '../../lib/uiText.js'
 
-export default function RegistrationLogoField({ image, url, disabled, onChange, onReading, allowUrl = true, selectedMessage = '已选择新图片，保存报名资料后生效。' }) {
+export default function RegistrationLogoField({ image, url, disabled, onChange, onReading, allowUrl = true, selectedMessage = '已选择新图片，保存报名资料后供赛管审核。' }) {
   const id = useId()
+  const locale = useUiLocale()
   const reader = useRef(null)
   const [error, setError] = useState('')
   const [reading, setReading] = useState(false)
@@ -37,17 +40,17 @@ export default function RegistrationLogoField({ image, url, disabled, onChange, 
     current.readAsDataURL(file)
   }
   return <fieldset className={styles.logoField} disabled={disabled || reading}>
-    <legend>队标（可选）</legend>
+    <legend>{uiText('队标（可选）', locale)}</legend>
     <div className={styles.logoEditor}>
-      <div className={styles.logoPreview}>{preview ? <img src={preview} alt="队标预览" /> : <span>队标预览</span>}</div>
+      <div className={styles.logoPreview}>{preview ? <img src={preview} alt={uiText('队标预览', locale)} /> : <span>{uiText('队标预览', locale)}</span>}</div>
       <div className={styles.logoControls}>
-        <label htmlFor={id}>{preview ? '更换队标' : '上传队标'}<input id={id} type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" onChange={select} aria-describedby={`${id}-help`} /></label>
-        <p id={`${id}-help`}>PNG、JPG 或静态 WebP，最大 2 MB。PNG / WebP 的透明背景会保留；JPG 不支持透明。棋盘格用于检查透明区域。</p>
-        <p role="status">{reading ? '正在读取图片…' : image ? selectedMessage : '队标将用于赛管审核和公开赛事展示。'}</p>
-        {preview && <button type="button" onClick={() => { onChange({ image: undefined, url: '' }); setError('') }}>移除队标</button>}
+        <label htmlFor={id}>{uiText(preview ? '更换队标' : '上传队标', locale)}<input id={id} type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" onChange={select} aria-describedby={`${id}-help`} /></label>
+        <p id={`${id}-help`}>{uiText('PNG、JPG 或静态 WebP，最大 2 MB。PNG / WebP 的透明背景会保留；JPG 不支持透明。棋盘格用于检查透明区域。', locale)}</p>
+        <p role="status">{uiText(reading ? '正在读取图片…' : image ? selectedMessage : '队标将用于赛管审核和公开赛事展示。', locale)}</p>
+        {preview && <button type="button" onClick={() => { onChange({ image: undefined, url: '' }); setError('') }}>{uiText('移除队标', locale)}</button>}
       </div>
     </div>
-    {error && <p className={styles.error} role="alert">{error}</p>}
-    {allowUrl && <details><summary>使用已有图片链接</summary><label>HTTPS 图片链接<input type="url" value={url || ''} maxLength={1000} placeholder="https://…" onChange={event => { onChange({ image: undefined, url: event.target.value }); setError('') }} /></label></details>}
+    {error && <p className={styles.error} role="alert">{uiText(error, locale)}</p>}
+    {allowUrl && <details><summary>{uiText('使用已有图片链接', locale)}</summary><label>{uiText('HTTPS 图片链接', locale)}<input type="url" value={url || ''} maxLength={1000} placeholder="https://…" onChange={event => { onChange({ image: undefined, url: event.target.value }); setError('') }} /></label></details>}
   </fieldset>
 }

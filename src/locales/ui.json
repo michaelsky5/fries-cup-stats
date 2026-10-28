@@ -1,4 +1,84 @@
 {
+  "已选择新图片，保存报名资料后供赛管审核。": {
+    "en-US": "New image selected. Save the registration so organizers can review it.",
+    "ko-KR": "새 이미지를 선택했습니다. 등록 정보를 저장하면 운영진이 검토할 수 있습니다.",
+    "zh-TW": "已選擇新圖片，儲存報名資料後供賽管審核。"
+  },
+  "这张图片是空文件，请重新导出后选择。": {
+    "en-US": "This image file is empty. Export it again and select the new file.",
+    "ko-KR": "이미지 파일이 비어 있습니다. 다시 내보낸 후 새 파일을 선택해 주세요.",
+    "zh-TW": "這張圖片是空白檔案，請重新匯出後選擇。"
+  },
+  "文件内容不是 PNG、JPG 或 WebP 图片。请重新导出图片，不能只修改文件后缀。": {
+    "en-US": "The file is not a PNG, JPG or WebP image. Export it again; changing the extension is not enough.",
+    "ko-KR": "파일 내용이 PNG, JPG 또는 WebP 이미지가 아닙니다. 확장자만 바꾸지 말고 이미지를 다시 내보내 주세요.",
+    "zh-TW": "檔案內容不是 PNG、JPG 或 WebP 圖片。請重新匯出圖片，不能只修改副檔名。"
+  },
+  "图片读取失败，请重新选择。": {
+    "en-US": "The image could not be read. Please select it again.",
+    "ko-KR": "이미지를 읽을 수 없습니다. 다시 선택해 주세요.",
+    "zh-TW": "圖片讀取失敗，請重新選擇。"
+  },
+  "PNG、JPG 或静态 WebP，最大 2 MB。PNG / WebP 的透明背景会保留；JPG 不支持透明。棋盘格用于检查透明区域。": {
+    "en-US": "PNG, JPG or static WebP, up to 2 MB. PNG/WebP transparency is preserved; JPG does not support transparency. The checkerboard shows transparent areas.",
+    "ko-KR": "PNG, JPG 또는 정적 WebP, 최대 2MB. PNG/WebP의 투명 배경은 유지되며 JPG는 투명도를 지원하지 않습니다. 체크무늬는 투명 영역을 표시합니다.",
+    "zh-TW": "PNG、JPG 或靜態 WebP，最大 2 MB。PNG / WebP 的透明背景會保留；JPG 不支援透明。棋盤格用於檢查透明區域。"
+  },
+  "正在读取图片…": {
+    "en-US": "Reading image…",
+    "ko-KR": "이미지를 읽는 중…",
+    "zh-TW": "正在讀取圖片…"
+  },
+  "取消修改": {
+    "en-US": "Cancel changes",
+    "ko-KR": "변경 취소",
+    "zh-TW": "取消修改"
+  },
+  "队标更换需经人工审核，审核通过前仍展示现有队标。": {
+    "en-US": "Logo changes require a manual review. The current logo stays visible until approval.",
+    "ko-KR": "팀 로고 변경은 수동 검토가 필요합니다. 승인 전까지 기존 로고가 표시됩니다.",
+    "zh-TW": "隊標更換需經人工審核，審核通過前仍顯示現有隊標。"
+  },
+  "队标待审核；可以提交新图片替换本次申请。": {
+    "en-US": "Your logo is awaiting review. Submit a new image to replace this request.",
+    "ko-KR": "팀 로고가 검토 대기 중입니다. 새 이미지를 제출하면 이번 요청을 대체합니다.",
+    "zh-TW": "隊標待審核；可以提交新圖片替換本次申請。"
+  },
+  "队标已退回：{0}": {
+    "en-US": "Logo returned for changes: {0}",
+    "ko-KR": "팀 로고 수정 요청: {0}",
+    "zh-TW": "隊標已退回：{0}"
+  },
+  "待审图片暂时无法显示，请刷新确认状态后重试。": {
+    "en-US": "The review image could not be displayed. Refresh the status and try again.",
+    "ko-KR": "검토 이미지를 표시할 수 없습니다. 상태를 새로고침한 뒤 다시 시도해 주세요.",
+    "zh-TW": "待審圖片暫時無法顯示，請重新整理確認狀態後重試。"
+  },
+  "待审队标预览": {
+    "en-US": "Logo awaiting review",
+    "ko-KR": "검토 대기 중인 팀 로고",
+    "zh-TW": "待審隊標預覽"
+  },
+  "已选择新图片，提交审核后才会发布。": {
+    "en-US": "New image selected. It will be published only after review and approval.",
+    "ko-KR": "새 이미지를 선택했습니다. 제출 후 검토 및 승인을 거쳐 공개됩니다.",
+    "zh-TW": "已選擇新圖片，提交審核後才會發布。"
+  },
+  "提交队标审核": {
+    "en-US": "Submit logo for review",
+    "ko-KR": "팀 로고 검토 요청",
+    "zh-TW": "提交隊標審核"
+  },
+  "队标申请已提交，审核通过前仍显示原队标。": {
+    "en-US": "Logo submitted for review. The previous logo stays visible until approval.",
+    "ko-KR": "팀 로고 검토를 요청했습니다. 승인 전까지 기존 로고가 표시됩니다.",
+    "zh-TW": "隊標申請已提交，審核通過前仍顯示原隊標。"
+  },
+  "队标或审核申请已变化，请刷新后再处理。": {
+    "en-US": "The logo or review request has changed. Refresh before continuing.",
+    "ko-KR": "팀 로고 또는 검토 요청이 변경되었습니다. 새로고침 후 진행해 주세요.",
+    "zh-TW": "隊標或審核申請已變更，請重新整理後再處理。"
+  },
   "报名信息暂时无法读取，请稍后重试。已保存的报名不受影响。": {
     "en-US": "Registration details could not be loaded. Please try again shortly; saved registrations are not affected.",
     "ko-KR": "등록 정보를 불러올 수 없습니다. 잠시 후 다시 시도해 주세요. 저장된 등록에는 영향이 없습니다.",
