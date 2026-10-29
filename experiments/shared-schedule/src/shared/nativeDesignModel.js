@@ -19,6 +19,7 @@ export function publicNativeRoute(to,currentPath='/') {
   if (/^(?:https?:|mailto:)/i.test(pathname)) return { external:String(to) }
   if (/^\/(?:fonts|logos|review\/assets)\//.test(pathname))return {external:`https://stats.fries-cup.com${to}`}
   const params = new URLSearchParams(search), parts = pathname.split('/').filter(Boolean)
+  if(parts.length===1&&parts[0]==='account')return {account:true}
   if(parts[0]==='me'&&(params.has('competition')||(params.has('section')&&params.get('section')!=='following')))return {account:true}
   const roots = {matches:'matches',leaderboard:'database',play:'play',roster:'roster',teams:'roster',players:'roster',advance:'advance',me:'space',following:'space',maps:'maps',heroes:'heroes',staff:'staff',review:'review',history:'history'}
   const route = {view:roots[parts[0]] || 'overview'}

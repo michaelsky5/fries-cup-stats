@@ -18,6 +18,12 @@ test('query-only navigation preserves the native page instead of returning to ov
   assert.equal(publicNativeRoute('#map-records','/matches/M1').id,'M1')
   assert.deepEqual(publicNativeRoute({search:'?section=team&competition=FCW26'},'/me'),{account:true})
 })
+test('the menu account destination opens native account settings without forwarding link credentials',()=>{
+  assert.deepEqual(publicNativeRoute('/account'),{account:true})
+  assert.deepEqual(publicNativeRoute('/account?season=FCW26&token=discard-this#email'),{account:true})
+  assert.deepEqual(publicNativeRoute('/account/unknown'),{unavailable:true})
+  assert.equal(publicNativeRoute('/me?section=following').view,'space')
+})
 
 test('Stats links retain public subject and selected event/period when mapped to native routes',()=>{
   assert.deepEqual(publicNativeRoute('/matches/C-W2-M1?season=FCW26&cycle=C&week=W2'),{view:'matches',id:'C-W2-M1',season:'FCW26',cycle:'C',week:'W2'})

@@ -280,6 +280,19 @@ export function prepareMobileDesign(stats, out) {
       },
       JSXElement: { exit(p) {
         const element = p.node, tag = element.openingElement.name.name
+        if(name==='PublicMobileNav.jsx'&&tag==='KprDialog'){
+          const cls=element.openingElement.attributes.find(attr=>attr.name?.name==='className')
+          if(!cls?.value?.expression)throw new Error('Inspect changed mobile navigation sheet')
+          cls.value.expression=t.binaryExpression('+',cls.value.expression,t.stringLiteral(' native-navigation-sheet'))
+        }
+        if(name==='PublicMobileNav.jsx'&&tag==='button'&&element.openingElement.attributes.some(attr=>attr.name?.name==='aria-haspopup')){
+          const click=element.openingElement.attributes.find(attr=>attr.name?.name==='onClick')
+          if(click)click.value=t.jsxExpressionContainer(expr('(event)=>{event.stopPropagation?.();setOpenKey(location.key)}'))
+        }
+        if(name==='PublicHeader.jsx'&&tag==='section'){
+          const cls=element.openingElement.attributes.find(attr=>attr.name?.name==='className')
+          if(cls?.value?.expression&&generate(cls.value.expression).code.includes('styles.mobileLanguageMenu'))cls.value.expression=t.binaryExpression('+',cls.value.expression,t.stringLiteral(' native-menu-language'))
+        }
         if(name==='PublicHeader.jsx'&&element.openingElement.attributes.some(attr=>attr.name?.name==='data-upgrade-lockup')) {
           // The Web's container query hides this wordmark on a narrow phone.
           // WeChat cannot evaluate that query; keep its single compact mark.

@@ -1,10 +1,10 @@
 import { Children, createContext, forwardRef, useCallback, useContext, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import Taro, { useDidHide, usePageScroll } from '@tarojs/taro'
-import { View, ScrollView, Picker, Image, Input, Checkbox,Radio } from '@tarojs/components'
+import { View, ScrollView, Picker, Image, Input, Checkbox,Radio,RootPortal } from '@tarojs/components'
 import { pickUiLocale, translateUiText } from '../../../../src/lib/uiText.js'
 import { copyPublicLink, openCenter, changeSeason, openNativeAccount } from '../platform.js'
 import { setStoredLocale, withLocale, getActiveLocale } from './nativeLocales.js'
-import { nativePublicPath, publicNativeRoute, nativeOverviewSearch, nativeOverviewSelection } from './nativeDesignModel.js'
+import { nativePublicPath, publicNativeRoute, nativeOverviewSearch, nativeOverviewSelection,nativeSelectorClasses } from './nativeDesignModel.js'
 import navigation from '../generated/navigation.json'
 import { getGlobalSummary } from '../../../../src/lib/selectors.js'
 import { formatUpdatedAt } from '../../../../src/lib/format.js'
@@ -157,11 +157,16 @@ export function NativeSummary({children,className='',onClick,...props}) {
   return <View {...props} className={className} role='button' aria-expanded={disclosure?.open} onClick={event=>{event.stopPropagation?.();let prevented=false;onClick?.({...event,preventDefault:()=>{prevented=true;event.preventDefault?.()}});if(!prevented)disclosure?.toggle()}}>{children}</View>
 }
 export const NativeDialogSurface=forwardRef(function NativeDialogSurface({open,onDismiss,onClose:_onClose,children,className='',...props},ref) {
+  const context=useOutletContext()
+  useEffect(()=>{if(!open)return;const close=()=>onDismiss?.();menuClosers.add(close);return()=>menuClosers.delete(close)},[open,onDismiss])
   if(!open)return null
-  return <View className='native-dialog-layer' catchMove>
+  // A header's stacking/overflow context must not clip a page-level sheet.
+  // RootPortal moves WXML to the page root; carry its inherited theme with it.
+  const layer=<View className={`shared-root native-stats-frame native-dialog-root native-dialog-layer ${nativeSelectorClasses({'data-design':'kpr','data-design-edition':'hybrid','data-locale':context?.locale||getActiveLocale()})}`} catchMove>
     <View className='native-dialog-backdrop' onClick={onDismiss}/>
     <ScrollView {...props} ref={ref} className={`shared-element shared-tag-dialog ${className} native-dialog-surface shared-open`} scrollY enhanced onClick={event=>event.stopPropagation?.()}>{children}</ScrollView>
   </View>
+  return process.env.TARO_ENV==='weapp'?<RootPortal>{layer}</RootPortal>:layer
 })
 export function NativeSelect({children,value,onChange,disabled,className='',...props}) {
   const label=value=>Array.isArray(value)?value.map(label).join(''):value&&typeof value==='object'?label(value.props?.children):String(value??'')
