@@ -2,7 +2,7 @@ import { initialSelection } from './model.js'
 import {cleanPublicQuery} from './publicQueryState.js'
 const HTML_BOOLEAN_ATTRIBUTES=new Set(['hidden','disabled','checked','selected','multiple','required','open'])
 
-export const PUBLIC_PATHS = { overview:'/', matches:'/matches', database:'/leaderboard', roster:'/roster', advance:'/advance', space:'/me', maps:'/maps', heroes:'/heroes', staff:'/staff', review:'/review', history:'/history' }
+export const PUBLIC_PATHS = { overview:'/', matches:'/matches', database:'/leaderboard', play:'/play', roster:'/roster', advance:'/advance', space:'/me', maps:'/maps', heroes:'/heroes', staff:'/staff', review:'/review', history:'/history' }
 export function nativePublicPath(view, params = {}) {
   if (params.id) return `/matches/${encodeURIComponent(params.id)}`
   if(params.story==='staff-key')return `/review/story/staff/${encodeURIComponent(params.role||'admin')}/${encodeURIComponent(params.subject||'')}`
@@ -19,8 +19,9 @@ export function publicNativeRoute(to,currentPath='/') {
   if (/^(?:https?:|mailto:)/i.test(pathname)) return { external:String(to) }
   if (/^\/(?:fonts|logos|review\/assets)\//.test(pathname))return {external:`https://stats.fries-cup.com${to}`}
   const params = new URLSearchParams(search), parts = pathname.split('/').filter(Boolean)
-  if(parts[0]==='me'&&(params.has('competition')||(params.has('section')&&params.get('section')!=='following')))return {unavailable:true}
-  const roots = {matches:'matches',leaderboard:'database',roster:'roster',teams:'roster',players:'roster',advance:'advance',me:'space',following:'space',maps:'maps',heroes:'heroes',staff:'staff',review:'review',history:'history'}
+  if(parts.length===1&&parts[0]==='account')return {account:true}
+  if(parts[0]==='me'&&(params.has('competition')||(params.has('section')&&params.get('section')!=='following')))return {account:true}
+  const roots = {matches:'matches',leaderboard:'database',play:'play',roster:'roster',teams:'roster',players:'roster',advance:'advance',me:'space',following:'space',maps:'maps',heroes:'heroes',staff:'staff',review:'review',history:'history'}
   const route = {view:roots[parts[0]] || 'overview'}
   if(parts[0]&&!roots[parts[0]])return {unavailable:true}
   if(['teams','players'].includes(parts[0]))route.directory=parts[0]

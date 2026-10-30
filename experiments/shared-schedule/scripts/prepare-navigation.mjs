@@ -4,6 +4,7 @@ import { parseSync } from '@babel/core'
 import postcss from 'postcss'
 import sharp from 'sharp'
 import { portableScheduleCss } from './portable-css.mjs'
+import { resolveDesignToken } from './native-design-tokens.mjs'
 
 // Read the website's actual definitions, rather than keeping another set of
 // labels, icon paths and layout rules for the trial.
@@ -49,10 +50,8 @@ export async function prepareNavigation(stats, out, tokens) {
   const mobile = parse(read(navigationSources[0]))
   const publicNav = parse(read(navigationSources[2]))
   const dock = constant(mobile, 'DOCK_ITEMS')
-  // Participation needs account binding and authenticated APIs. The public
-  // native edition uses its fourth slot for device-local following instead.
-  const participation = dock.findIndex(item => item.group === 'play')
-  if (participation >= 0) dock[participation] = { group: 'space', zh: '关注', en: 'Following', ko: '관심', icon: 'M12 3l2.8 5.8 6.4.9-4.6 4.5 1.1 6.4-5.7-3-5.7 3 1.1-6.4L2.8 9.7l6.4-.9z' }
+  // Keep the website's four destinations. The participation guide is public;
+  // its account actions enter the separately authenticated native account page.
   const destinations = constant(publicNav, 'PRIMARY_NAV')
   const personalFunction = descendants(publicNav, node => node.type === 'FunctionDeclaration' && node.id.name === 'getPersonalNavItem')[0]
   const personalReturn = descendants(personalFunction, node => node.type === 'ReturnStatement')[0]?.argument
@@ -64,7 +63,7 @@ export async function prepareNavigation(stats, out, tokens) {
   const assets = path.join(out, 'navigation')
   fs.mkdirSync(assets, { recursive: true })
   for (const icon of icons) {
-    for (const [suffix, color] of [['', tokens['--fc-data-paper']], ['-active', tokens['--fc-data-signal']]]) {
+    for (const [suffix, color] of [['', resolveDesignToken('--fc-data-paper', tokens)], ['-active', resolveDesignToken('--fc-data-signal', tokens)]]) {
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.5"><path d="${icon.icon}"/></svg>`
       await sharp(Buffer.from(svg)).png().toFile(path.join(assets, `${icon.group}${suffix}.png`))
     }

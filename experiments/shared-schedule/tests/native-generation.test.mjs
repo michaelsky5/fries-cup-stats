@@ -8,9 +8,17 @@ import { parse } from '@babel/parser'
 import traverseModule from '@babel/traverse'
 import {transformSync} from '@babel/core'
 import nativeHtml from '../scripts/shared-html-tags.cjs'
-import { prepareMobileDesign } from '../scripts/prepare-mobile-design.mjs'
+import { prepareMobileDesign, assertNativeRuntimeOperations } from '../scripts/prepare-mobile-design.mjs'
 
 const traverse = traverseModule.default || traverseModule
+
+test('native browser-operation validation checks executable syntax without rejecting interface copy', () => {
+  const ast = code => parse(code, { sourceType: 'module', plugins: ['jsx'] })
+  assert.doesNotThrow(() => assertNativeRuntimeOperations(ast('export const copy = "The confirmation window and deadline"'), 'copy'))
+  for (const code of ['window.scrollTo(0,0)', 'document.body', 'new ResizeObserver(()=>{})', 'ref.current?.getBoundingClientRect()']) {
+    assert.throws(() => assertNativeRuntimeOperations(ast(code), 'unsafe'), /Unadapted browser operation/)
+  }
+})
 
 test('compiled native text breaks and table labels use available WeChat components without losing content',()=>{
   const {code}=transformSync('export default function Labels(){return <fieldset><legend>查找范围</legend><table><caption>公开排行说明</caption><colgroup><col/></colgroup><tfoot><tr><td>A<br/>B<wbr/>#1234</td></tr></tfoot></table></fieldset>}',{filename:'src/generated/mobile/TextLabels.jsx',babelrc:false,configFile:false,parserOpts:{plugins:['jsx']},plugins:[nativeHtml]})

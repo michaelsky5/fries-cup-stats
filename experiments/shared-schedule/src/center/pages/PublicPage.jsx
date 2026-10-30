@@ -45,7 +45,15 @@ function ScheduleContents({Render,pageKind}) {
     setConnectionDetail('')
     try {
       const season = getSeasonById(requestParams.season || seasonRef.current)
-      const next = await readPublicSchedule(force, season.id)
+      const request = readPublicSchedule(force, season.id)
+      const cached = await readPublicSchedule.cached(season.id)
+      if (own === generation.current && cached && !selectionRef.current) {
+        const cachedSelection = { ...(isWeeklySeason(season) ? initialSelection(cached.data, requestParams) : { query: '', teamId: '', status: 'all' }), seasonId: season.id }
+        protectPublicIdentities(cached.data)
+        setLoaded(cached)
+        selectSelection(cachedSelection)
+      }
+      const next = await request
       if (own !== generation.current) return
       // Compute inside this try block. A functional React state updater runs
       // during rendering, where an unsupported built-in escapes this catch.

@@ -1,18 +1,18 @@
 /* postcss-pxtransform disable */
-.native-account { min-height: 100vh; padding: 16px 20px 40px; color: #181a17; background: #eeede6; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; font-size: 14px; box-sizing: border-box; }
-.native-account-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-bottom: 1px solid #181a1733; padding-bottom: 12px; }
+.native-account { min-height: 100vh; padding: 0 16px 40px; color: #181a17; background: #eeede6; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; font-size: 14px; box-sizing: border-box; }
+.native-account-top { display: flex; align-items: center; min-height: 44px; border-bottom: 1px solid #181a1733; }
 .native-account-wordmark { font-family: inherit; font-size: 14px; white-space: nowrap; }
 .native-account .native-account-primary, .native-account .native-account-secondary, .native-account .native-account-back { box-sizing: border-box; margin: 0; min-height: 44px; line-height: 1.4; border: 1px solid #181a174d; border-radius: 0; padding: 12px 14px; font-size: 14px; color: #181a17; }
 .native-account .native-account-primary::after, .native-account .native-account-secondary::after, .native-account .native-account-back::after { border: 0; }
 .native-account .native-account-back { flex: 0 0 auto; width: auto; max-width: 50%; padding: 10px 0; background: transparent; border: 0; font-size: 14px; }
-.native-account-title { display: flex; align-items: flex-start; gap: 16px; padding-top: 34px; }
+.native-account-title { padding-top: 16px; }
 .native-account-number { font-family: 'Barlow', sans-serif; font-size: 36px; line-height: 1; border-top: 4px solid #f4c320; padding-top: 10px; }
 .native-account-title-copy { flex: 1; min-width: 0; }
 .native-account-eyebrow { display: block; font-size: 14px; margin-bottom: 8px; }
-.native-account-heading { display: block; font-size: 26px; font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; }
+.native-account-heading { display: block; font-size: 30px; font-weight: 900; line-height: 1.05; letter-spacing: -.04em; overflow-wrap: anywhere; }
 .native-account-intro { display: block; margin-top: 18px; line-height: 1.7; color: #55584f; }
-.native-account-section { border-top: 2px solid #181a17; margin-top: 28px; padding: 20px 0; }
-.native-account-label { display: block; font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.native-account-section { border-top: 1px solid #181a174d; margin-top: 20px; padding: 18px 0; }
+.native-account-label { display: block; font-size: 18px; font-weight: 800; margin-bottom: 12px; }
 .native-account-detail { display: block; font-size: 14px; color: #55584f; line-height: 1.7; margin-bottom: 16px; overflow-wrap: anywhere; }
 .native-account-display { display: block; font-size: 24px; font-weight: 700; margin-bottom: 8px; overflow-wrap: anywhere; }
 .native-account-field { margin: 18px 0; }

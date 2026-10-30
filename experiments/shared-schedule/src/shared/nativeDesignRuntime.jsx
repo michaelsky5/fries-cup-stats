@@ -1,10 +1,10 @@
 import { Children, createContext, forwardRef, useCallback, useContext, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import Taro, { useDidHide, usePageScroll } from '@tarojs/taro'
-import { View, ScrollView, Picker, Image, Input, Checkbox,Radio } from '@tarojs/components'
+import { View, ScrollView, Picker, Image, Input, Checkbox,Radio,RootPortal } from '@tarojs/components'
 import { pickUiLocale, translateUiText } from '../../../../src/lib/uiText.js'
-import { copyPublicLink, openCenter, changeSeason } from '../platform.js'
+import { copyPublicLink, openCenter, changeSeason, openNativeAccount } from '../platform.js'
 import { setStoredLocale, withLocale, getActiveLocale } from './nativeLocales.js'
-import { nativePublicPath, publicNativeRoute, nativeOverviewSearch, nativeOverviewSelection } from './nativeDesignModel.js'
+import { nativePublicPath, publicNativeRoute, nativeOverviewSearch, nativeOverviewSelection,nativeSelectorClasses } from './nativeDesignModel.js'
 import navigation from '../generated/navigation.json'
 import { getGlobalSummary } from '../../../../src/lib/selectors.js'
 import { formatUpdatedAt } from '../../../../src/lib/format.js'
@@ -14,7 +14,7 @@ import {getPlayerFavoriteId,getTeamFavoriteId,sanitizeFavoritesForSeason} from '
 import {FAVORITE_LIMITS} from '../../../../src/features/favorites/favoritesConstants.js'
 import {getStaffProfile} from '../../../../src/lib/staffProfiles.js'
 import {activateLocale} from './nativeLocales.js'
-import {nativeWindow,nativeDocument,nativeRevealElement} from './nativeBrowser.js'
+import {nativeRevealElement} from './nativeBrowser.js'
 import {cleanPublicQuery} from './publicQueryState.js'
 export * from './nativeBrowser.js'
 export {default as NativeSvg} from './NativeSvg.jsx'
@@ -27,6 +27,8 @@ export const nativeDockItems=navigation.dock
 export function NativeAccountModeSwitch(){return null}
 export function NativeAccountFeature(){return null}
 export function useNativeLobbyOpen(){return false}
+export const nativeClosedLobbyConfig=()=>Promise.resolve({mode:'CLOSED'})
+export const nativeOpenAccount=()=>openNativeAccount()
 export function useNativeDeferredNewspaper(){return {loading:false,issue:null,issues:[],error:new Error('周报阅读暂未接入此原生版本')}}
 export function nativeStorageLabel(locale){return pickUiLocale(locale,'保存在此设备','Saved on this device','이 기기에 저장됨','儲存在此裝置')}
 export function NativeRosterEntry({locale='zh-CN'}) {
@@ -102,6 +104,7 @@ export function NativeDesignProvider({props,season,children}) {
       if(typeof to==='number'){await Taro.navigateBack({delta:Math.max(1,-to)});return}
       if(typeof to==='string'&&to.startsWith('#')){scrollNativeSection(to.slice(1));return}
       const route=publicNativeRoute(to,pathname)
+      if(route.account){await openNativeAccount();return}
       if(route.unavailable){await Taro.showToast({title:'这个功能正在接入小程序。',icon:'none'});return}
       if(route.external) { await copyPublicLink(route.external); return }
       if(nativePublicPath(route.view,route)===pathname){setNavigationState(options.state||null);setPageQuery(route.filters||'');props.onPublicRoute?.({...route,filters:route.filters||''});return}
@@ -122,7 +125,7 @@ export function useParams(){const context=useOutletContext(),parts=context.locat
 export function Navigate({to,replace,state}){const navigate=useNavigate();useEffect(()=>{navigate(to,{replace,state})},[String(to)]);return null}
 export function useBlocker(){return {state:'unblocked',reset(){},proceed(){}}}
 export function createPortal(children){return children}
-export const NativeLink=forwardRef(function NativeLink({to,href,children,onClick,className='',state,target,rel,end,...props},ref) {
+export const NativeLink=forwardRef(function NativeLink({to,href,children,onClick,className='',state,target:_target,rel:_rel,end:_end,...props},ref) {
   const context=useOutletContext()
   if(publicNativeRoute(to||href,context?.location?.pathname).unavailable)return null
   const click=event=>{
@@ -153,12 +156,17 @@ export function NativeSummary({children,className='',onClick,...props}) {
   const disclosure=useContext(Disclosure)
   return <View {...props} className={className} role='button' aria-expanded={disclosure?.open} onClick={event=>{event.stopPropagation?.();let prevented=false;onClick?.({...event,preventDefault:()=>{prevented=true;event.preventDefault?.()}});if(!prevented)disclosure?.toggle()}}>{children}</View>
 }
-export const NativeDialogSurface=forwardRef(function NativeDialogSurface({open,onDismiss,onClose,children,className='',...props},ref) {
+export const NativeDialogSurface=forwardRef(function NativeDialogSurface({open,onDismiss,onClose:_onClose,children,className='',...props},ref) {
+  const context=useOutletContext()
+  useEffect(()=>{if(!open)return;const close=()=>onDismiss?.();menuClosers.add(close);return()=>menuClosers.delete(close)},[open,onDismiss])
   if(!open)return null
-  return <View className='native-dialog-layer' catchMove>
+  // A header's stacking/overflow context must not clip a page-level sheet.
+  // RootPortal moves WXML to the page root; carry its inherited theme with it.
+  const layer=<View className={`shared-root native-stats-frame native-dialog-root native-dialog-layer ${nativeSelectorClasses({'data-design':'kpr','data-design-edition':'hybrid','data-locale':context?.locale||getActiveLocale()})}`} catchMove>
     <View className='native-dialog-backdrop' onClick={onDismiss}/>
     <ScrollView {...props} ref={ref} className={`shared-element shared-tag-dialog ${className} native-dialog-surface shared-open`} scrollY enhanced onClick={event=>event.stopPropagation?.()}>{children}</ScrollView>
   </View>
+  return process.env.TARO_ENV==='weapp'?<RootPortal>{layer}</RootPortal>:layer
 })
 export function NativeSelect({children,value,onChange,disabled,className='',...props}) {
   const label=value=>Array.isArray(value)?value.map(label).join(''):value&&typeof value==='object'?label(value.props?.children):String(value??'')
@@ -169,7 +177,7 @@ export function NativeSelect({children,value,onChange,disabled,className='',...p
 // Web images supply an intrinsic width for CSS height + width:auto. WeChat
 // does not, even with heightFix when authored CSS still specifies width:auto.
 // Keep the original CSS height/position and calculate only its missing width.
-export function NativeIntrinsicImage({src,className='',style,onLoad,intrinsic=true,mode:ignoredMode,...props}) {
+export function NativeIntrinsicImage({src,className='',style,onLoad,intrinsic=true,mode:_mode,...props}) {
   const id='native-art-'+useId().replace(/[^\w-]/g,''), current=useRef(src)
   const [width,setWidth]=useState(null)
   current.current=src
@@ -188,7 +196,7 @@ export function NativeIntrinsicImage({src,className='',style,onLoad,intrinsic=tr
 }
 export function NativeNavIcon({path,active}) {
   const icon=[...navigation.dock,{group:'more',icon:navigation.moreIcon}].find(item=>item.icon===path)?.group || 'more'
-  return <img className='shared-element shared-tag-svg' src={`/assets/navigation/${icon}${active?'-active':''}.png`} alt='' />
+  return <Image className='native-nav-icon shared-element shared-tag-svg' src={`/assets/navigation/${icon}${active?'-active':''}.png`} mode='aspectFit' style={{width:'21px',height:'21px'}} aria-hidden/>
 }
 export function NativeAccountEntry(){return null}
 export function changeNativeLanguage(locale) { closeNativeMenus();setStoredLocale(locale) }
@@ -312,7 +320,7 @@ export function useNativeMatchSections(setSection,setOrder,dependencies) {
   useEffect(()=>afterNativeRender(measure),dependencies)
   usePageScroll(measure)
 }
-export const NativeSearchInput=forwardRef(function NativeSearchInput({onValueChange,onChange,type, ...props},ref) {
+export const NativeSearchInput=forwardRef(function NativeSearchInput({onValueChange,onChange,type:_type, ...props},ref) {
   const inputId='native-input-'+useId().replace(/[^\w-]/g,'')
   const [focused,setFocused]=useState(false)
   useImperativeHandle(ref,()=>({focus:()=>{setFocused(false);Taro.nextTick(()=>setFocused(true))}}),[])

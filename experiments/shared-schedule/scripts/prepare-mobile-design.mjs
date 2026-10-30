@@ -11,6 +11,19 @@ import {collectCanonicalPublicSources,nativeBoundaryImports,pruneCanonicalSource
 const traverse = traverseModule.default || traverseModule
 const generate = generateModule.default || generateModule
 
+export function assertNativeRuntimeOperations(ast, name) {
+  const globals = new Set(['window', 'document', 'ResizeObserver'])
+  const methods = new Set(['getBoundingClientRect', 'querySelector', 'querySelectorAll', 'scrollIntoView'])
+  const checkCall = p => {
+    if (methods.has(p.node.callee?.property?.name)) throw new Error('Unadapted browser operation in ' + name)
+  }
+  traverse(ast, {
+    ReferencedIdentifier(p) { if (globals.has(p.node.name)) throw new Error('Unadapted browser operation in ' + name) },
+    CallExpression: checkCall,
+    OptionalCallExpression: checkCall
+  })
+}
+
 export const mobileDesignSources = [
   'src/components/layout/PublicHeader.jsx', 'src/components/layout/PublicMobileNav.jsx',
   'src/layouts/DataLayout.jsx',
@@ -211,6 +224,8 @@ export function prepareMobileDesign(stats, out) {
         if(p.node.callee?.property?.name==='querySelector'){helpers.add('nativeQueryElement');p.replaceWith(t.callExpression(t.identifier('nativeQueryElement'),[p.node.callee.object,...p.node.arguments]));return}
       },
       VariableDeclarator(p) {
+        if(name==='ParticipationHubPage.jsx'&&p.node.id?.name==='signIn'){helpers.add('nativeOpenAccount');p.node.init=t.identifier('nativeOpenAccount')}
+        if(name==='ParticipationHubPage.jsx'&&p.node.id?.name==='registrationPath')p.node.init=expr("withSeason('https://stats.fries-cup.com/participate/'+encodeURIComponent(seasonId))")
         if(name==='FollowingWorkspace.jsx'&&p.node.id?.name==='syncLabel'){helpers.add('nativeStorageLabel');p.node.init=expr("syncError || syncStatus === 'error' ? copy.error : nativeStorageLabel(locale)")}
         if(name==='PublicMobileNav.jsx'&&p.node.id?.name==='DOCK_ITEMS'){helpers.add('nativeDockItems');p.node.init=t.identifier('nativeDockItems')}
         if(name==='SeasonRating.jsx'&&p.node.id?.name==='EvidencePanel'){
@@ -265,6 +280,24 @@ export function prepareMobileDesign(stats, out) {
       },
       JSXElement: { exit(p) {
         const element = p.node, tag = element.openingElement.name.name
+        if(name==='PublicMobileNav.jsx'&&tag==='KprDialog'){
+          const cls=element.openingElement.attributes.find(attr=>attr.name?.name==='className')
+          if(!cls?.value?.expression)throw new Error('Inspect changed mobile navigation sheet')
+          cls.value.expression=t.binaryExpression('+',cls.value.expression,t.stringLiteral(' native-navigation-sheet'))
+        }
+        if(name==='PublicMobileNav.jsx'&&tag==='button'&&element.openingElement.attributes.some(attr=>attr.name?.name==='aria-haspopup')){
+          const click=element.openingElement.attributes.find(attr=>attr.name?.name==='onClick')
+          if(click)click.value=t.jsxExpressionContainer(expr('(event)=>{event.stopPropagation?.();setOpenKey(location.key)}'))
+        }
+        if(name==='PublicHeader.jsx'&&tag==='section'){
+          const cls=element.openingElement.attributes.find(attr=>attr.name?.name==='className')
+          if(cls?.value?.expression&&generate(cls.value.expression).code.includes('styles.mobileLanguageMenu'))cls.value.expression=t.binaryExpression('+',cls.value.expression,t.stringLiteral(' native-menu-language'))
+        }
+        if(name==='PublicHeader.jsx'&&element.openingElement.attributes.some(attr=>attr.name?.name==='data-upgrade-lockup')) {
+          // The Web's container query hides this wordmark on a narrow phone.
+          // WeChat cannot evaluate that query; keep its single compact mark.
+          p.replaceWith(t.jsxFragment(t.jsxOpeningFragment(),t.jsxClosingFragment(),[]));p.skip();return
+        }
         if(name==='FollowingWorkspace.jsx'&&tag==='button'&&generate(element).code.includes("new CustomEvent('fries-cup:open-account')")){
           p.replaceWith(t.jsxFragment(t.jsxOpeningFragment(),t.jsxClosingFragment(),[]));p.skip();return
         }
@@ -393,6 +426,16 @@ export function prepareMobileDesign(stats, out) {
         }
       },
       StringLiteral(p) {
+        if(name==='ParticipationHubPage.jsx') {
+          const labels={
+            '/guides/weekly-room':'https://stats.fries-cup.com/guides/weekly-room',
+            '去报名页':'复制报名页链接','Open registration':'Copy registration link','등록 페이지':'등록 링크 복사','前往報名頁':'複製報名頁連結',
+            '报名页':'报名网页','Registration':'Registration website','報名頁':'報名網頁',
+            '比赛房指南':'比赛房指南 · 复制链接','Match room guide':'Match room guide · copy link','경기 방 안내':'경기 방 안내 · 링크 복사','比賽房指南':'比賽房指南 · 複製連結',
+            '了解周赛':'了解周赛 · 复制链接','About the weekly':'About the weekly · copy link','주간 대회 소개':'주간 대회 소개 · 링크 복사','了解週賽':'了解週賽 · 複製連結'
+          }
+          if(labels[p.node.value])p.node.value=labels[p.node.value]
+        }
         if(p.node.value==='/logos/fries-cup-symbol.png')p.node.value='/assets/mobile/fries-cup-symbol.png'
         if(name==='TeamArchiveNavigation.jsx'){
           const labels={'导出海报':'分享卡片','导出阵容海报':'分享公开队伍卡片','Export roster poster':'Share public team card','Poster':'Share'}
@@ -409,9 +452,8 @@ export function prepareMobileDesign(stats, out) {
     // in the generated public bundle.
     for(let pass=0;pass<4;pass++)traverse(ast,{Program(p){p.scope.crawl()},FunctionDeclaration(p){if(p.node.id?.name==='PosterModal'&&name==='ReviewStoryPage.jsx')p.remove()},ImportDeclaration(p){p.node.specifiers=p.node.specifiers.filter(spec=>p.scope.getBinding(spec.local.name)?.referenced);if(!p.node.specifiers.length&&!/\.css$/.test(p.node.source.value))p.remove()}})
     const finalAst=pruneCanonicalSource(generate(ast).code)
+    assertNativeRuntimeOperations(finalAst, name)
     let code = '// Generated from current Stats JSX. Native browser-boundary replacements only.\n'+generate(finalAst,{comments:false}).code+'\n'
-    const forbidden=/\b(?:document|window|ResizeObserver)\b|\.getBoundingClientRect\(|\.querySelector(?:All)?\(|\.scrollIntoView\(/
-    if(forbidden.test(code))throw new Error('Unadapted browser operation in '+name)
     code=`import {${[...helpers].join(',')}} from '${runtime}'\n`+code
     if(nativeImports.size)code=`import {${[...nativeImports].join(',')}} from '@tarojs/components'\n`+code
     fs.writeFileSync(path.join(target,name),code)
