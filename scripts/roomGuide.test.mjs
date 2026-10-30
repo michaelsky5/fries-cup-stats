@@ -57,3 +57,9 @@ test('all six courses and contextual stages have complete copy in all four langu
   for (const value of Object.values(copy['en-US'])) assert.doesNotMatch(value, /[\u3400-\u9fff]/)
   assert.notEqual(copy['zh-TW'].title, copy['zh-CN'].title)
 })
+
+test('public season aliases return to the correct account competition', () => {
+  assert.equal(guideReturnPath({ season: 'FCW2026' }, 'zh-CN'), '/me?section=matches&competition=FCW26&lang=zh');
+  assert.equal(guideReturnPath({ season: 'PRIVATE-TEST' }, 'en-US'), '/me?section=matches&competition=PRIVATE-TEST&lang=en');
+  assert.match(guideReturnPath({ match: 'MATCH-1', season: 'FCW2026' }, 'zh-CN'), /^\/me\/matches\/MATCH-1\/room/);
+});

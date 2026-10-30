@@ -1,8 +1,9 @@
 import { getRoomStageIndex, isRoomAwaitingStart } from '../weekly-competition/weeklyRoomFlow.js'
 import { withLocale } from '../../lib/locales.js'
+import { resolveSeasonFromUrl } from '../../config/seasons.js'
 
 export const GUIDE_PATH = '/guides/weekly-room'
-export const GUIDE_VERSION = '2026-09-26'
+export const GUIDE_VERSION = '2026-10-30'
 export const ROOM_PRACTICE_CASES = {
   disabled: { role: 'member', scene: 'live' },
   handover: { role: 'manager', scene: 'checkin' },
@@ -53,7 +54,7 @@ export function roomGuideUrl(context = {}, locale = 'zh-CN', { share = false } =
 }
 
 export function guideReturnPath(context, locale) {
-  const match = id(context.match), season = id(context.season)
+  const match = id(context.match), season = resolveSeasonFromUrl(context.season) || id(context.season)
   return withLocale(match ? `/me/matches/${encodeURIComponent(match)}/room` : `/me?section=matches${season ? `&competition=${encodeURIComponent(season)}` : ''}`, locale)
 }
 
