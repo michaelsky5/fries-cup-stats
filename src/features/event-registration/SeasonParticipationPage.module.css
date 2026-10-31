@@ -124,6 +124,10 @@
 .header + .login { border-top: 0; padding-top: 0; }
 .notice:last-child { border-bottom: 0; }
 
+.withdrawalAction { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-block: 16px; }
+.withdrawalAction > button { color: var(--fc-data-status-danger); flex-shrink: 0; }
+.withdrawalAction > p { flex: 1 1 240px; margin: 0; }
+
 /* 票 2.58: buttons keep their own width on wide screens; the submit step gets its own rule. */
 @media (min-width: 601px) {
   .page form > button { justify-self: start; }

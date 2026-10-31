@@ -15,6 +15,7 @@ import styles from './SeasonParticipationPage.module.css'
 import AccountFrame from '../account-ui/AccountFrame.jsx'
 import RegistrationLogoField from './RegistrationLogoField.jsx'
 import ApprovedTeamLogoEditor from './ApprovedTeamLogoEditor.jsx'
+import RegistrationWithdrawalAction from './RegistrationWithdrawalAction.jsx'
 import WeeklyTeamAdditions from '../weekly-competition/WeeklyTeamAdditions.jsx'
 import WeeklyOwnershipTransfers from '../weekly-competition/WeeklyOwnershipTransfers.jsx'
 import { spaceSectionDestination, teamManagementDestination } from '../my-space/spaceDestinations.js'
@@ -200,7 +201,7 @@ function Workspace({ user, seasonId, hasAdditions }) {
         setLink(result.invitation)
         if (result.invitation.memberId) setInvitationLinks(current => ({ ...current, [result.invitation.memberId]: result.invitation }))
       }
-      setNotice(suffix.endsWith('/logo') ? '队标已保存，报名与队员确认状态保持不变。' : suffix.endsWith('/submit') ? '报名已成功提交！现在等待赛事负责人审核，无需重复提交。' : suffix.endsWith('/eligibility') ? '本人的报名资料已保存。队伍仍需由负责人提交审核。' : method === 'PATCH' ? '队伍报名资料已保存。全部队员确认后，请继续提交赛事负责人审核。' : '')
+      setNotice(suffix.endsWith('/withdraw') ? result.registration?.status === 'WITHDRAWN' ? '报名已撤回，记录和资料已保留。你现在可以创建新的报名或接任其他队伍。' : result.registration?.status === 'DRAFT' ? '报名已退回草稿，可修改后重新提交。若不再使用，请点击“撤回这份报名”释放负责人名额。' : '' : suffix.endsWith('/logo') ? '队标已保存，报名与队员确认状态保持不变。' : suffix.endsWith('/submit') ? '报名已成功提交！现在等待赛事负责人审核，无需重复提交。' : suffix.endsWith('/eligibility') ? '本人的报名资料已保存。队伍仍需由负责人提交审核。' : method === 'PATCH' ? '队伍报名资料已保存。全部队员确认后，请继续提交赛事负责人审核。' : '')
       setVersion(current => current + 1)
       globalThis.dispatchEvent(new Event('fc:account-activity-changed'))
       return result
@@ -216,7 +217,7 @@ function Workspace({ user, seasonId, hasAdditions }) {
     {workspace.notices.some(item => item.requiresAck && !item.acknowledgedAt) && <section className={styles.panel}><h2>{uiText("需要确认", uiLocale)}</h2>{workspace.notices.filter(item => item.requiresAck && !item.acknowledgedAt).map(item => <div id={`participation-notice-${item.id}`} tabIndex={-1} className={styles.notice} key={item.id}><div><strong>{item.title}</strong><p>{item.message}</p></div><button disabled={busy} onClick={() => perform(`/notices/${item.id}/acknowledge`, {})}>{uiText("我已知悉", uiLocale)}</button></div>)}</section>}
     {!ownerRegistration && workspace.canCreate && !workspace.registrations.length && <TeamForm eligibilityRequired={workspace.policy.eligibilityRequired} organizations={workspace.organizations} busy={busy} onSave={input => perform('/drafts', input, 'POST', '队伍报名资料')} />}
     {!hasAdditions && !workspace.registrations.length && workspace.canWrite && !workspace.canCreate && <section className={styles.panel}><h2>{uiText('需要队伍负责人邀请', uiLocale)}</h2><p>{uiText('请联系赛事负责人获取本赛季队伍负责人邀请链接，接受后即可创建报名。队员请使用队长发送的入队邀请链接。', uiLocale)}</p></section>}
-    {workspace.registrations.map(record => <Registration seasonId={seasonId} rulebook={workspace.policy.rulebook} key={record.id} eligibilityRequired={workspace.policy.eligibilityRequired} record={record} userId={user.id} owner={record.ownerUserId === user.id} canWrite={workspace.canWrite} canManageLogo={workspace.canManageLogo} busy={busy} perform={perform} invitationLinks={invitationLinks} rosterMin={workspace.policy.rosterMin} rosterMax={workspace.policy.rosterMax} onRefresh={async () => { if (await confirmDiscard()) setVersion(value => value + 1) }} />)}
+    {workspace.registrations.map(record => <Registration seasonId={seasonId} seasonStatus={workspace.season.status} rulebook={workspace.policy.rulebook} key={record.id} eligibilityRequired={workspace.policy.eligibilityRequired} record={record} userId={user.id} owner={record.ownerUserId === user.id} canWrite={workspace.canWrite} canManageLogo={workspace.canManageLogo} busy={busy} perform={perform} invitationLinks={invitationLinks} rosterMin={workspace.policy.rosterMin} rosterMax={workspace.policy.rosterMax} onRefresh={async () => { if (await confirmDiscard()) setVersion(value => value + 1) }} />)}
     {/* A player already on another roster sees that team first and opens the form only to lead a team of their own. */}
     {!ownerRegistration && workspace.canCreate && workspace.registrations.length > 0 && <details className={styles.createTeam} data-create-team-collapsed><summary>{uiText('自己当队长：创建新队伍', uiLocale)}</summary><TeamForm eligibilityRequired={workspace.policy.eligibilityRequired} organizations={workspace.organizations} busy={busy} onSave={input => perform('/drafts', input, 'POST', '队伍报名资料')} /></details>}
     {!hasAdditions && !workspace.registrations.length && !workspace.canWrite && <section className={styles.panel}><h2>{uiText("尚无报名", uiLocale)}</h2><p>{uiText("本赛季报名当前没有开放，请等待赛事负责人通知。", uiLocale)}</p></section>}
@@ -272,7 +273,7 @@ function TeamForm({ organizations = [], record, busy, onSave, eligibilityRequire
   </form></section>
 }
 
-function Registration({ seasonId, rulebook, eligibilityRequired, record, userId, owner, canWrite, canManageLogo, busy, perform, invitationLinks, rosterMin = 1, rosterMax = 7, onRefresh }) {
+function Registration({ seasonId, seasonStatus, rulebook, eligibilityRequired, record, userId, owner, canWrite, canManageLogo, busy, perform, invitationLinks, rosterMin = 1, rosterMax = 7, onRefresh }) {
   const uiLocale = useUiLocale()
   const [player, setPlayer] = useState(emptyPlayer)
   const [copyNotice, setCopyNotice] = useState('')
@@ -302,13 +303,15 @@ function Registration({ seasonId, rulebook, eligibilityRequired, record, userId,
   }
   return <section id={`registration-${record.id}`} tabIndex={-1} className={styles.panel}>
     <div className={styles.row}><div><h2>{record.name} <span className={styles.tag}>{statusLabel(record.status)}</span></h2><p>{owner ? uiText("你负责这份队伍报名", uiLocale) : uiText("队伍负责人：{0}", uiLocale, [record.ownerName])} · {record.members.filter(member => member.status === 'CONFIRMED').length}/{record.members.length}{uiText(" 人已确认", uiLocale)}</p></div><button disabled={busy} onClick={onRefresh}>{uiText("刷新确认状态", uiLocale)}</button></div>
+    <RegistrationWithdrawalAction record={record} owner={owner} seasonStatus={seasonStatus} busy={busy} perform={perform} />
     {editable && <button type="button" disabled={busy} aria-expanded={editingTeam} onClick={() => setEditingTeam(value => !value)}>{uiText("修改队伍资料", uiLocale)}</button>}
     {editable && <div hidden={!editingTeam}><TeamForm eligibilityRequired={eligibilityRequired} record={record} busy={busy} onSave={input => perform(prefix, input, 'PATCH', '队伍报名资料')} /></div>}
-    {owner && !editable && <p className={styles.feedback}>{uiText(record.status === 'SUBMITTED' ? '需要修改队伍资料？点击“撤回并修改”，修改后重新提交审核。' : record.status === 'APPROVED' ? '队伍资料已审核。教练、队员与每周参赛准备请进入“我的队伍”维护；报名记录仍可在本页查看。' : '当前报名不可编辑，请核对报名开放时间或联系赛事管理员。', uiLocale)}</p>}
+    {owner && !editable && record.status !== 'WITHDRAWN' && <p className={styles.feedback}>{uiText(record.status === 'SUBMITTED' ? '需要修改队伍资料？点击“撤回并修改”，修改后重新提交审核。' : record.status === 'APPROVED' ? '队伍资料已审核。教练、队员与每周参赛准备请进入“我的队伍”维护；报名记录仍可在本页查看。' : '当前报名不可编辑，请核对报名开放时间或联系赛事管理员。', uiLocale)}</p>}
     {owner && canManageLogo && record.status === 'APPROVED' && <ApprovedTeamLogoEditor key={record.logoUrl || 'no-logo'} logoUrl={record.logoUrl || ''} busy={busy} onSave={input => perform(`${prefix}/logo`, input, 'PUT', '队伍队标')} />}
     <ol className={styles.journey} aria-label={uiText("报名进度", uiLocale)}>{stageLabels.map((label, index) => <li key={index} data-state={record.status === 'WITHDRAWN' ? 'inactive' : index < stage || record.status === 'APPROVED' ? 'done' : index === stage ? 'current' : 'upcoming'} aria-current={record.status !== 'WITHDRAWN' && index === stage ? 'step' : undefined}><span>{String(index + 1).padStart(2, '0')}</span><strong>{label}</strong></li>)}</ol>
     {record.reviewNote && <p className={styles.feedback}>{uiText("审核意见：", uiLocale)}{record.reviewNote}</p>}
     {record.status === 'APPROVED' && <p className={styles.feedback}>{uiText("本赛季报名已通过。赛段登记和每周名单请按赛事安排处理。", uiLocale)}</p>}
+    {record.status === 'WITHDRAWN' && <p className={styles.feedback}>{uiText('这份报名已撤回，仅保留历史记录，不再占用本赛季的负责人名额。', uiLocale)}</p>}
     {record.status === 'SUBMITTED' && <p className={styles.success} role="status">{uiText("报名已提交，正在等待赛事负责人审核。名单已冻结；需要修改时可撤回后重新提交。", uiLocale)}</p>}
     {owner && editable && <div className={styles.feedback} role="status" aria-live="polite">{readiness.ready ? <p>{uiText("全部队员已确认，但队伍报名尚未提交。请点击下方“提交赛事负责人审核”完成最后一步。", uiLocale)}</p> : <><strong>{uiText('送审前还需完成', uiLocale)}</strong><ul className={styles.submissionIssues}>{readiness.issues.map(issue => <li key={issue.id}>{uiText(issue.message, uiLocale, issue.values)}</li>)}</ul></>}</div>}
     <div className={styles.tableScroll}><table><thead><tr><th>{uiText("选手", uiLocale)}</th><th>BattleTag</th><th>{uiText("职责", uiLocale)}</th><th>{uiText("本人确认", uiLocale)}</th>{editable && <th>{uiText("操作", uiLocale)}</th>}</tr></thead><tbody>{record.members.map(member => <tr key={member.id}><td data-label={uiText("选手", uiLocale)}>{member.displayName}</td><td data-label="BattleTag">{member.battleTag}</td><td data-label={uiText("职责", uiLocale)}>{roleLabels[member.role]}</td><td data-label={uiText("本人确认", uiLocale)}>{statusLabel(member.status)}</td>{editable && <td data-label={uiText("操作", uiLocale)}><div className={styles.memberActions}>{member.status === 'INVITED' ? <button type="button" disabled={busy} onClick={() => copyInvitation(member)}>{invitationLinks?.[member.id] ? uiText("复制链接", uiLocale) : uiText("生成并复制链接", uiLocale)}</button> : null}{['DRAFT', 'INVITED', 'CONFIRMED'].includes(member.status) ? <button type="button" disabled={busy} onClick={() => { if (window.confirm(uiText("确定从这份报名草稿中移出 {0} 吗？", uiLocale, [member.displayName]))) perform(`${prefix}/remove-member`, { revision: record.revision, memberId: member.id }) }}>{uiText("移出草稿", uiLocale)}</button> : null}</div></td>}</tr>)}</tbody></table></div>
@@ -316,7 +319,7 @@ function Registration({ seasonId, rulebook, eligibilityRequired, record, userId,
     {copyNotice && <p role="status" className={styles.feedback}>{copyNotice}</p>}
     {canWrite && ['DRAFT', 'RETURNED'].includes(record.status) && record.members.filter(member => member.userId === userId && member.status === 'CONFIRMED').map(member => <MemberEligibilityEditor rulebook={rulebook} key={`${member.id}:${member.confirmedAt}`} member={member} eligibilityRequired={eligibilityRequired} busy={busy} onSave={input => perform(`${prefix}/eligibility`, { revision: record.revision, ...input }, 'PUT', '本人参赛资料')} />)}
     {owner && <RegistrationJoinManager record={record} seasonId={seasonId} editable={editable} busy={busy} perform={perform} onPendingChange={setJoinPending} />}
-    {!record.members.length && <p>{uiText("还没有选手。负责人兼任选手时，也需要将本人加入名单并确认。", uiLocale)}</p>}
+    {record.status !== 'WITHDRAWN' && !record.members.length && <p>{uiText("还没有选手。负责人兼任选手时，也需要将本人加入名单并确认。", uiLocale)}</p>}
     {editable && <>
       <form className={styles.playerForm} onSubmit={async event => { event.preventDefault(); const payload = { ...player, displayName: player.displayName.trim(), email: player.email.trim(), battleTag: player.battleTag.trim(), revision: record.revision }; if (await perform(`${prefix}/invitations`, payload, 'POST', '选手邀请')) setPlayer(emptyPlayer) }}>
         <h3>{uiText("邀请选手本人确认", uiLocale)}</h3><div className={styles.fields}>
