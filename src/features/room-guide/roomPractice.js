@@ -280,6 +280,11 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
     next.settled = true; event = 'settled'
   } else fail('unsupported')
   next.phaseClock = demoRoomClock(next.scene, next.phaseClock)
+  if (kind === 'room' && path === '/opening' && body.action === 'NEXT_MAP' && next.scene === 'choosing') {
+    const clock = demoRoomClock(state.scene, state.phaseClock)
+    // Opening the already-counting selection does not grant a fresh deadline.
+    for (const key of ['enabled', 'remainingMs', 'deadlineAt', 'submissionGrace', 'status']) next.phaseClock[key] = clock[key]
+  }
   next.event = event; next.revision++; next.history.push(event)
   return { state: next, result }
 }

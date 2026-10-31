@@ -250,8 +250,10 @@ test('practice countdown displays the actual next map and chooser without changi
   assert.equal(data.phaseClock.deadlineAt, before.deadlineAt)
   assert.equal(data.phaseClock.revision, before.revision)
   assert.deepEqual(state.phaseClock, before)
-  state = applyRoomPractice(state, '/clock', { action: 'SET_ENABLED', enabled: false, expectedRevision: data.phaseClock.revision, stageKey: data.phaseClock.stage.key }).state
-  assert.equal(buildRoomPractice(state, copy).phaseClock.enabled, false)
   state = applyRoomPractice(state, '/opening', { action: 'NEXT_MAP' }).state
+  assert.equal(buildRoomPractice(state, copy).phaseClock.deadlineAt, before.deadlineAt)
+  const opened = buildRoomPractice(state, copy).phaseClock
+  state = applyRoomPractice(state, '/clock', { action: 'SET_ENABLED', enabled: false, expectedRevision: opened.revision, stageKey: opened.stage.key }).state
+  assert.equal(buildRoomPractice(state, copy).phaseClock.enabled, false)
   assert.equal(buildRoomPractice(state, copy).phaseClock.stage.mapOrder, 4)
 })
