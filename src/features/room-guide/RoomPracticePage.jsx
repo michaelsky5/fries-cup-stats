@@ -41,14 +41,12 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
   }
   const teachingKey = practiceLesson(state)
   // 票 2.65: "带我找到操作区" lands on the control the lesson names. Players (and casters outside the live map) go to the
-  // room's "比赛沟通" entry; a plain 'footer' used to match the team column's lineup footer. The team column now opens with
-  // the latest-activity strip, so the manager goes to the representative block and check-in to the first roster button.
-  // On phones the rosters live behind "双方名单" in the bottom bar.
+  // room's "比赛沟通" entry. Managers go to the representative block, while the
+  // full-room practice starts at map selection instead of mandatory check-ins.
   const communication = '[data-room-entry=communication]', teams = '[data-room-entry=teams]'
   const target = state.scene === 'result' ? '[data-stage-view]'
     : role === 'manager' ? mobile ? teams : '[data-side="A"] [data-room-slot=representative]'
     : role === 'member' || (role === 'caster' && state.scene !== 'live') ? communication
-    : state.scene === 'checkin' ? mobile ? teams : '[data-side="A"] [data-roster-row] button'
     : '[data-stage-view]'
   const hintArea = target === communication ? 'footer' : target === teams ? 'teams' : target.startsWith('[data-side="A"]') ? 'team' : 'center'
   function locate() {
