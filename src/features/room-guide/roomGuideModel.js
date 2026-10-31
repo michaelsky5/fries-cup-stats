@@ -3,10 +3,10 @@ import { withLocale } from '../../lib/locales.js'
 import { resolveSeasonFromUrl } from '../../config/seasons.js'
 
 export const GUIDE_PATH = '/guides/weekly-room'
-export const GUIDE_VERSION = '2026-10-30'
+export const GUIDE_VERSION = '2026-10-31'
 export const ROOM_PRACTICE_CASES = {
   disabled: { role: 'member', scene: 'live' },
-  handover: { role: 'manager', scene: 'checkin' },
+  handover: { role: 'manager', scene: 'choosing' },
   substitution: { role: 'representative', scene: 'lineup' },
   disconnect: { role: 'representative', scene: 'live' },
   'result-error': { role: 'referee', scene: 'review' },
