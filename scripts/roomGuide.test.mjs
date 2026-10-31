@@ -2,10 +2,11 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import { GUIDE_ROLES, GUIDE_STEPS, GUIDE_SCENARIOS, guideContextForRoom, guideLessons, guidePracticeUrl, guideReturnPath, guideRoleForMatch, readGuideContext, roomGuideUrl } from '../src/features/room-guide/roomGuideModel.js'
+import { GUIDE_FORMATS, guideCopyForFormat } from '../src/features/room-guide/roomGuideFormats.js'
 
 test('room guidance uses current representative and referee authority, not captain identity alone', () => {
   const data = { actor: { label: 'A · 队长' }, access: { representativeTeams: [], operatorMode: 'TEAM_CAPTAINS' }, preparation: {}, maps: [], opening: { complete: false, phase: 'BANNING' }, map: { lineupA: [], lineupB: [] }, match: { id: 'MATCH-1', seasonId: 'TEST26' } }
-  assert.deepEqual(guideContextForRoom(data), { role: 'manager', step: 'lineup', mode: 'captains', match: 'MATCH-1', season: 'TEST26' })
+  assert.deepEqual(guideContextForRoom(data), { role: 'manager', step: 'lineup', mode: 'captains', format: 'RR5', match: 'MATCH-1', season: 'TEST26' })
   assert.equal(guideContextForRoom({ ...data, access: { ...data.access, representativeTeams: ['A'] } }).role, 'representative')
   assert.equal(guideContextForRoom({ ...data, access: { staff: true } }).role, 'referee')
   assert.equal(guideContextForRoom({ ...data, access: { staff: true, administrator: true } }).role, 'admin')
@@ -40,7 +41,8 @@ test('malformed reading preferences fall back, and practice can only link to the
   const context = readGuideContext(new URLSearchParams('role=ROOT&step=delete&scenario=unknown&mode=admin&match=../x'))
   assert.equal(context.role, 'representative'); assert.equal(context.step, 'entry'); assert.equal(context.scenario, ''); assert.equal(context.match, '')
   for (const url of ['javascript:alert(1)','https://user:pass@admin.example','garbage']) assert.equal(guidePracticeUrl(url), '')
-  assert.equal(guidePracticeUrl('https://admin.example/untrusted?token=secret'), 'https://admin.example/tournaments?view=coordination#weekly-training')
+  assert.equal(guidePracticeUrl('https://admin.example/untrusted?token=secret'), 'https://admin.example/tournaments?view=training#weekly-training')
+  assert.equal(guidePracticeUrl('https://admin.example', 'FCW2026'), 'https://admin.example/tournaments?view=training&seasonId=FCW26#weekly-training')
 })
 
 test('all six courses and contextual stages have complete copy in all four languages', () => {
@@ -63,3 +65,30 @@ test('public season aliases return to the correct account competition', () => {
   assert.equal(guideReturnPath({ season: 'PRIVATE-TEST' }, 'en-US'), '/me?section=matches&competition=PRIVATE-TEST&lang=en');
   assert.match(guideReturnPath({ match: 'MATCH-1', season: 'FCW2026' }, 'zh-CN'), /^\/me\/matches\/MATCH-1\/room/);
 });
+
+test('room context and share links carry the actual format without leaking match identifiers', () => {
+  for (const format of GUIDE_FORMATS) {
+    const context = guideContextForRoom({ access: { staff: true }, match: { id: 'PRIVATE-1', seasonId: 'FCW26', format } })
+    assert.equal(context.format, format)
+    const url = new URL(roomGuideUrl(context, 'en-US', { share: true }), 'https://stats.example')
+    assert.equal(readGuideContext(url.searchParams).format, format)
+    assert.equal(url.searchParams.has('match'), false)
+    assert.equal(url.searchParams.has('season'), false)
+  }
+  assert.equal(readGuideContext(new URLSearchParams('format=DELETE')).format, 'RR5')
+})
+
+test('all locales distinguish fixed-five play from first-to wins and the one-map forfeit boundary', () => {
+  const copy = JSON.parse(readFileSync(new URL('../src/features/room-guide/roomGuideCopy.json', import.meta.url)))
+  for (const [locale, text] of Object.entries(copy)) {
+    for (const format of GUIDE_FORMATS) {
+      const selected = guideCopyForFormat(text, format)
+      for (const key of ['label', 'body', 'progress']) assert.ok(selected[`format.${format}.${key}`], `${locale}/${format}/${key}`)
+      if (format !== 'RR5') {
+        assert.notEqual(selected['step.map-result.trouble'], text['step.map-result.trouble'])
+        assert.notEqual(selected['sim.settle-fact'], text['sim.settle-fact'])
+      }
+    }
+    for (const score of ['1:1', '1:2', '1:3']) assert.ok(text['case.map-forfeit.body'].includes(score))
+  }
+})

@@ -2,10 +2,11 @@ import { demoRoomClock, changeDemoClock } from './roomDemoClock.js'
 import { buildWeeklyRoomPreview } from './roomDemoFixture.js'
 import { validRoomLineup } from '../weekly-competition/roomLineups.js'
 import { OW_HEROES } from '../../lib/heroes.js'
+import { guideFormat, practiceSeries } from './roomGuideFormats.js'
 
 export const PRACTICE_ID = 'LOCAL-ROOM-PRACTICE'
 export const PRACTICE_ROLES = ['representative', 'manager', 'member', 'referee', 'caster', 'admin']
-export const PRACTICE_SCENES = ['checkin', 'choosing', 'lineup', 'banorder', 'banning', 'ready', 'live', 'paused', 'review', 'result']
+export const PRACTICE_SCENES = ['checkin', 'choosing', 'lineup', 'banorder', 'banning', 'ready', 'live', 'paused', 'review', 'result', 'forfeit', 'forfeit-last']
 const practiceMaps = ['Busan', 'Samoa', 'Lijiang Tower']
 const staffRole = role => ['referee', 'admin'].includes(role)
 const repRole = role => role === 'representative'
@@ -16,22 +17,60 @@ const starterIds = state => state.lineup?.map(player => player.playerId) || [0, 
 const present = (state, id) => Object.hasOwn(state.checkIns, id) ? state.checkIns[id] : state.scene !== 'checkin' && /-p[0-4]$/.test(id)
 const startersPresent = state => starterIds(state).every(id => present(state, id))
 
-export function createRoomPractice(role = 'representative', scene) {
+const practiceMap = (state, changes = {}) => ({ order: state.mapOrder, name: state.mapName, status: 'COMPLETE', scoreA: state.scoreA, scoreB: state.scoreB, banA: state.hero, banB: state.botHero, chooserSide: state.chooserSide, ...changes })
+const usedBans = (state, side) => new Set(state.completedMaps.map(map => map[`ban${side}`]).filter(Boolean))
+function nextPracticeChooser(state) {
+  const last = state.completedMaps.at(-1)
+  if (last.forfeitedBySide) return last.forfeitedBySide
+  return last.scoreA > last.scoreB ? 'B' : last.scoreB > last.scoreA ? 'A' : last.order === 1 ? last.chooserSide || 'A' : state.completedMaps.at(-2)?.chooserSide || 'A'
+}
+function finishPracticeMap(state, map) {
+  state.completedMaps = [...state.completedMaps.filter(item => item.order !== map.order), map]
+  state.scene = practiceSeries(state.completedMaps, state.format).complete ? 'result' : 'review'
+  state.reviewed = false
+}
+function fillPracticeSeries(state) {
+  const maps = [...state.completedMaps]
+  // The remaining maps and review are explicitly scripted by the teaching bar.
+  // Keep every recorded map, including administrative results, unchanged.
+  while (!practiceSeries(maps, state.format).complete) {
+    const order = maps.length + 1, bWins = state.format === 'RR5' && order === 4
+    const result = { status: 'COMPLETE', scoreA: bWins ? 0 : 2, scoreB: bWins ? 2 : 1 }
+    maps.push(order === state.mapOrder ? practiceMap(state, result) : { order, name: practiceMaps[(order - 1) % practiceMaps.length], ...result })
+  }
+  state.completedMaps = maps; state.mapOrder = maps.at(-1).order; state.scene = 'result'; state.reviewed = true
+}
+
+export function createRoomPractice(role = 'representative', scene, format = 'RR5') {
   role = PRACTICE_ROLES.includes(role) ? role : 'representative'
+  format = guideFormat(format)
   scene = PRACTICE_SCENES.includes(scene) ? scene : staffRole(role) ? 'ready' : ['member', 'caster'].includes(role) ? 'live' : 'choosing'
-  return { role, scene, phaseClock: demoRoomClock(scene), mapTimeouts: [], revision: 1, mapName: 'Busan', banOrder: 'FIRST', hero: 'Ana', lineup: null, checkIns: {},
+  const exercise = ['forfeit', 'forfeit-last'].includes(scene) && format !== 'RR5' ? scene : ''
+  if (['forfeit', 'forfeit-last'].includes(scene)) scene = 'live'
+  const state = { role, scene, format, exercise, mapOrder: 1, chooserSide: 'A', botHero: 'Ashe', completedMaps: [], reviewed: scene === 'result', phaseClock: demoRoomClock(scene), mapTimeouts: [], revision: 1, mapName: 'Busan', banOrder: 'FIRST', hero: 'Ana', lineup: null, checkIns: {},
     ready: false, preflight: false, recovered: false, recoveredB: true, pausedOnce: false, representative: false,
     scoreA: scene === 'review' ? 1 : 2, scoreB: scene === 'review' ? 2 : 1, response: '', settled: false, messages: [], requests: [], history: [], event: 'welcome' }
+  if (scene === 'review') state.completedMaps = [practiceMap(state)]
+  if (exercise) {
+    state.completedMaps = [{ order: 1, name: 'Busan', status: 'COMPLETE', scoreA: 2, scoreB: 1, banA: 'Ana', banB: 'Ashe', chooserSide: 'A' }, { order: 2, name: 'Samoa', status: 'COMPLETE', scoreA: 1, scoreB: 2, banA: 'Reinhardt', banB: 'Mercy', chooserSide: 'B' }]
+    if (exercise === 'forfeit-last' && format === 'FT3') state.completedMaps.push({ order: 3, name: 'Lijiang Tower', status: 'COMPLETE', scoreA: 1, scoreB: 2, banA: 'Genji', banB: 'Kiriko', chooserSide: 'A' })
+    state.mapOrder = state.completedMaps.length + 1
+    state.hero = state.mapOrder === 3 ? 'Tracer' : 'Cassidy'; state.botHero = state.mapOrder === 3 ? 'Kiriko' : 'Zenyatta'
+  }
+  if (scene === 'result') fillPracticeSeries(state)
+  return state
 }
 
 export function practiceLesson(state) {
   const { role, scene } = state
   if (state.settled || state.response) return 'done'
+  if (scene === 'result' && !state.reviewed) return 'submit-result'
+  if (scene === 'review' && state.completedMaps.at(-1)?.isAdministrative) return 'map-forfeit-review'
   if (role === 'manager') return state.representative ? 'manager-done' : 'manager'
   if (['member', 'caster'].includes(role) && scene !== 'result') return role
   if (scene === 'review' && state.scoreA === 1 && staffRole(role)) return 'correction'
   if (scene === 'ready' && staffRole(role)) return 'ready'
-  if (scene === 'live') return staffRole(role) ? 'staff-live' : state.pausedOnce ? 'after-pause' : 'live'
+  if (scene === 'live') return staffRole(role) ? state.exercise ? 'map-forfeit' : 'staff-live' : state.pausedOnce ? 'after-pause' : 'live'
   if (scene === 'paused' && staffRole(role)) return 'staff-paused'
   if (scene === 'result' && role === 'admin') return 'settle'
   if (scene === 'result' && role !== 'representative') return 'read-result'
@@ -44,6 +83,8 @@ export function buildRoomPractice(state, text) {
   const data = buildWeeklyRoomPreview(stage, staff ? 'staff' : state.role === 'caster' ? 'caster' : representative ? 'representative' : 'player')
   data.simulation = true
   Object.assign(data.match, { id: PRACTICE_ID, seasonId: 'LOCAL-PRACTICE', weekId: 'LOCAL-PRACTICE-WEEK', seasonName: text['room.season'], weekLabel: text['room.week'] })
+  data.match.format = state.format
+  data.requiresOpeningDrawRuling = state.mapOrder === 1
   data.actor = { id: `practice-${state.role}`, name: text['room.you'], label: text[`role.${state.role}`] }
   data.revision = data.match.revision = data.draftRevision = state.revision
   data.publicNote = text['room.boundary']
@@ -80,16 +121,16 @@ export function buildRoomPractice(state, text) {
   if (data.opening.setup) Object.assign(data.map, { banA: data.opening.setup.banA, banB: data.opening.setup.banB, firstBanSide: data.opening.setup.firstBanSide })
   if (state.scene === 'banning') {
     data.opening.nextSide = 'A'
-    data.opening.heroes = data.opening.heroes.map(hero => ({ ...hero, reason: state.banOrder === 'SECOND' && hero.role === 'DPS' ? text['room.ban-blocked'] : '' }))
+    data.opening.heroes = data.opening.heroes.map(hero => ({ ...hero, reason: usedBans(state, 'A').has(hero.name) ? text['room.ban-used'] : state.banOrder === 'SECOND' && heroRole(hero.name) === heroRole(state.botHero) ? text['room.ban-blocked'] : '' }))
   }
   data.opening.revision = state.revision
   data.opening.rules.maps = data.opening.rules.maps.filter(map => practiceMaps.includes(map.name))
   Object.assign(data.access, { administrator: state.role === 'admin', canWrite: true, canStart: staff && state.scene === 'ready' && startersPresent(state),
     canPause: staff && state.scene === 'live', canResume: staff && state.scene === 'paused' && state.recovered && state.recoveredB })
   Object.assign(data.opening.access, { canChoose: (staff || representative) && state.scene === 'choosing',
-    canChooseBanOrder: (staff || representative) && state.scene === 'banorder', canBan: (staff || representative) && state.scene === 'banning', canNext: false })
+    canChooseBanOrder: (staff || representative) && state.scene === 'banorder', canBan: (staff || representative) && state.scene === 'banning', canNext: staff && state.scene === 'review' })
   if (data.opening.complete) {
-    data.map.banA = state.hero; data.map.banB = heroRole(state.hero) === 'damage' ? 'Ana' : 'Ashe'
+    data.map.banA = state.hero; data.map.banB = state.botHero
     data.map.firstBanSide = state.banOrder === 'FIRST' ? 'A' : 'B'
     Object.assign(data.opening.setup, { banA: data.map.banA, banB: data.map.banB, firstBanSide: data.map.firstBanSide })
   }
@@ -99,32 +140,41 @@ export function buildRoomPractice(state, text) {
   data.messages = state.messages
   data.requests = state.requests
   data.canRecordMapResult = staff && state.scene === 'live'
-  data.canCorrectMapResult = staff && state.scene === 'review'
+  data.canCorrectMapResult = staff && state.scene === 'review' && !state.completedMaps.at(-1)?.isAdministrative
   data.blockers = startersPresent(state) ? [] : [text['room.error.checkin']]
   data.startControl = { canForceStart: staff && state.scene === 'ready' && data.blockers.length > 0, overridable: data.blockers, required: state.scene === 'ready' ? [] : ['请先完成地图、首发与英雄禁用'] }
+  const template = data.map, bannedA = new Set(), bannedB = new Set()
+  data.maps = state.completedMaps.map(record => {
+    const banA = record.banA || OW_HEROES.find(hero => !bannedA.has(hero.en)).en
+    const banB = record.banB || OW_HEROES.find(hero => !bannedB.has(hero.en) && hero.role !== heroRole(banA)).en
+    bannedA.add(banA); bannedB.add(banB)
+    return { ...template, ...record, banA, banB }
+  })
+  const current = data.maps.find(map => map.order === state.mapOrder)
+  if (!current) data.maps.push({ ...template, order: state.mapOrder, name: afterPick ? state.mapName : '', scoreA: null, scoreB: null })
+  data.map = current || data.maps.at(-1)
+  data.series = practiceSeries(data.maps, state.format)
+  data.mapForfeit = { canRecord: staff && state.format !== 'RR5' && ['live', 'paused'].includes(state.scene) && !data.series.complete }
+  data.opening.mapOrder = state.mapOrder
+  if (data.opening.setup) Object.assign(data.opening.setup, { ...data.map })
+  if (state.scene === 'review' && !data.series.complete) {
+    data.opening.next = { order: state.mapOrder + 1, chooserSide: nextPracticeChooser(state), rightsSource: data.map.scoreA === data.map.scoreB && !data.map.isAdministrative ? state.mapOrder === 1 ? 'DRAW_RETAINED_CHOOSER' : 'DRAW_TWO_MAPS_BACK' : 'PREVIOUS_MAP_LOSER' }
+  }
   if (state.scene === 'result') {
-    // A scripted 4:1 series; unlike a live match, intermediate maps are supplied
-    // by the exercise. The coach labels this jump before it happens.
-    const bannedA = new Set(), bannedB = new Set()
-    data.maps.forEach((map, i) => {
-      map.scoreA = i === 3 ? 0 : 2; map.scoreB = i === 3 ? 2 : 1; map.status = 'COMPLETE'
-      map.banA = i ? OW_HEROES.find(hero => !bannedA.has(hero.en)).en : state.hero
-      map.banB = OW_HEROES.find(hero => !bannedB.has(hero.en) && hero.role !== heroRole(map.banA)).en
-      bannedA.add(map.banA); bannedB.add(map.banB)
-    })
-    data.series = { complete: true, completedMaps: 5, scoreA: 4, scoreB: 1, drawCount: 0 }
-    data.result = { phase: state.settled ? 'SETTLED' : state.response === 'DISPUTED' ? 'DISPUTED' : state.response === 'CONFIRMED' || staff ? 'AWAITING_SETTLEMENT' : 'CONFIRMING', official: true,
-      revision: state.revision, fingerprint: 'practice-result', confirmationVersion: 1, scoreA: 4, scoreB: 1, countsTowardStandings: true,
-      maps: data.maps, points: state.settled ? [{ teamId: data.match.teamA.id, points: 9 }, { teamId: data.match.teamB.id, points: 6 }] : [],
-      sides: [data.match.teamA, data.match.teamB].map((team, i) => ({ team, status: i || staff ? 'CONFIRMED' : state.response || 'PENDING', canRespond: !i && representative && !state.settled })),
-      administration: { canSettle: state.role === 'admin' && !state.settled }, handoff: null }
+    const countsTowardStandings = state.format === 'RR5'
+    data.opening.next = null; data.opening.access.canNext = false
+    data.result = { phase: !state.reviewed ? 'AWAITING_SUBMISSION' : state.settled ? 'SETTLED' : state.response === 'DISPUTED' ? 'DISPUTED' : state.response === 'CONFIRMED' || staff ? 'AWAITING_SETTLEMENT' : 'CONFIRMING', official: state.reviewed,
+      revision: state.revision, fingerprint: `practice-result-${state.revision}`, confirmationVersion: 1, scoreA: data.series.scoreA, scoreB: data.series.scoreB, countsTowardStandings,
+      maps: data.maps, points: state.settled ? [data.match.teamA, data.match.teamB].map((team, i) => ({ teamId: team.id, points: countsTowardStandings ? 5 + data.series[i ? 'scoreB' : 'scoreA'] : 0 })) : [],
+      sides: [data.match.teamA, data.match.teamB].map((team, i) => ({ team, status: i || staff ? 'CONFIRMED' : state.response || 'PENDING', canRespond: state.reviewed && !i && representative && !state.settled })),
+      administration: { canSettle: state.reviewed && state.role === 'admin' && !state.settled }, handoff: { canPrepare: false, canHandoff: false } }
   }
   if (state.banTimedOut) {
-    Object.assign(data.maps[0], { banA: '', banAStatus: 'TIMED_OUT' })
+    Object.assign(data.map, { banA: '', banAStatus: 'TIMED_OUT' })
     if (data.opening.setup && data.map.order === 1) Object.assign(data.opening.setup, { banA: '', banAStatus: 'TIMED_OUT' })
   }
   if (state.mapTimeouts?.length >= 2 && afterPick) {
-    for (const target of [data.maps[0], data.opening.setup].filter(Boolean)) Object.assign(target, { banA: '', banAStatus: 'TIMED_OUT', banATimeoutReason: 'MAP_SELECTION', firstBanSide: 'B', selectionMethod: state.randomMap ? 'TIMEOUT_RANDOM' : 'TEAM' })
+    for (const target of [data.map, data.opening.setup].filter(Boolean)) Object.assign(target, { banA: '', banAStatus: 'TIMED_OUT', banATimeoutReason: 'MAP_SELECTION', firstBanSide: 'B', selectionMethod: state.randomMap ? 'TIMEOUT_RANDOM' : 'TEAM' })
   }
   data.phaseClock = { ...demoRoomClock(state.scene, state.phaseClock), canManage: staff, mapTimeouts: { counts: { A: state.mapTimeouts?.length || 0, B: 0 }, latest: state.mapTimeouts?.at(-1) || null } }
   return data
@@ -149,7 +199,17 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
     event = 'map-timeout'
   }
   else if (kind === 'scene' && path === 'start' && representative && scene === 'ready' && startersPresent(state)) { next.scene = 'live'; event = 'bot-start' }
-  else if (kind === 'scene' && path === 'result' && ['live', 'review'].includes(scene)) { next.scene = 'result'; event = 'jump-result' }
+  else if (kind === 'scene' && path === 'result' && ['live', 'review'].includes(scene)) { fillPracticeSeries(next); event = 'jump-result' }
+  else if (kind === 'scene' && path === 'review-result' && scene === 'result' && !state.reviewed) { next.reviewed = true; event = 'reviewed' }
+  else if (kind === 'room' && path === '/rulings') {
+    if (!staff) fail('permission')
+    if (body.action !== 'MAP_FORFEIT' || state.format === 'RR5' || !['live', 'paused'].includes(scene) || practiceSeries(state.completedMaps, state.format).complete) fail('phase')
+    if (!['A', 'B'].includes(body.forfeitedSide) || String(body.reason || '').trim().length < 3) fail('note')
+    const forfeitedBySide = body.forfeitedSide
+    finishPracticeMap(next, practiceMap(state, { scoreA: null, scoreB: null, isAdministrative: true, administrativeReason: 'MAP_FORFEIT', resultMode: 'FORFEIT', forfeitedBySide, forfeitedSide: forfeitedBySide,
+      winnerTeamId: `preview-team-${forfeitedBySide === 'A' ? 'B' : 'A'}`, mapForfeitRuling: { kind: 'MAP_FORFEIT', actorId: `practice-${state.role}`, at: new Date().toISOString(), reason: body.reason.trim() }, playerStats: [] }))
+    event = next.scene === 'result' ? 'map-forfeit-complete' : 'map-forfeit'
+  }
   else if (kind === 'room' && path === '/clock') {
     if (!staff) fail('permission')
     if (['choosing', 'banning'].includes(scene) && demoRoomClock(scene, state.phaseClock).status === 'EXPIRED') fail('phase')
@@ -166,9 +226,20 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
   } else if (kind === 'room' && path === '/opening') {
     if (!actor) fail('permission')
     if (['choosing', 'banning'].includes(scene) && demoRoomClock(scene, state.phaseClock).status === 'EXPIRED') fail('phase')
-    if (body.action === 'SELECT_SETUP' && scene === 'choosing' && practiceMaps.includes(body.mapName) && body.teamId === ownTeam) { next.mapName = body.mapName; next.scene = 'lineup'; event = 'map' }
+    if (body.action === 'NEXT_MAP' && scene === 'review' && staff && !practiceSeries(state.completedMaps, state.format).complete) {
+      next.chooserSide = nextPracticeChooser(state)
+      next.mapOrder++; next.mapName = practiceMaps[(next.mapOrder - 1) % practiceMaps.length]; next.scene = next.chooserSide === 'B' ? 'lineup' : 'choosing'
+      next.lineup = null; next.hero = OW_HEROES.find(hero => !usedBans(state, 'A').has(hero.en)).en
+      next.botHero = OW_HEROES.find(hero => hero.role === 'damage' && !usedBans(state, 'B').has(hero.en)).en
+      next.exercise = ''; next.banTimedOut = false; next.mapTimeouts = []; event = 'next-map'
+    }
+    else if (body.action === 'SELECT_SETUP' && scene === 'choosing' && practiceMaps.includes(body.mapName) && body.teamId === ownTeam) { next.mapName = body.mapName; next.scene = 'lineup'; event = 'map' }
     else if (body.action === 'SELECT_BAN_ORDER' && scene === 'banorder' && ['FIRST', 'SECOND'].includes(body.banOrder) && body.teamId === ownTeam) { next.banOrder = body.banOrder; next.scene = 'banning'; event = 'order' }
-    else if (body.action === 'BAN' && scene === 'banning' && body.teamId === ownTeam && heroRole(body.hero) && !(state.banOrder === 'SECOND' && heroRole(body.hero) === 'damage')) { next.hero = body.hero; next.scene = 'ready'; event = 'ban' }
+    else if (body.action === 'BAN' && scene === 'banning' && body.teamId === ownTeam && heroRole(body.hero) && !usedBans(state, 'A').has(body.hero) && !(state.banOrder === 'SECOND' && heroRole(body.hero) === heroRole(state.botHero))) {
+      next.hero = body.hero
+      if (state.banOrder === 'FIRST') next.botHero = OW_HEROES.find(hero => hero.role !== heroRole(body.hero) && !usedBans(state, 'B').has(hero.en)).en
+      next.scene = 'ready'; event = 'ban'
+    }
     else fail('phase')
   } else if (kind === 'room' && path === '/commands') {
     if (body.action === 'SET_LINEUP' && scene === 'lineup' && actor && body.teamId === ownTeam && validRoomLineup(body.lineup) && body.lineup.every(player => /^preview-team-A-p[0-6]$/.test(player.playerId))) { next.lineup = body.lineup; for (const player of body.lineup) next.checkIns[player.playerId] = true; next.scene = next.banTimedOut ? 'ready' : 'banorder'; event = 'lineup' }
@@ -179,8 +250,9 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
     else if (body.action === 'RECOVER' && actor && scene === 'paused' && [ownTeam, ...(staff ? ['preview-team-B'] : [])].includes(body.teamId)) { next[body.teamId === ownTeam ? 'recovered' : 'recoveredB'] = Boolean(body.ready); if (representative && next.recovered && next.recoveredB) { next.scene = 'live'; next.pausedOnce = true } event = 'recover' }
     else if (body.action === 'RESUME' && staff && scene === 'paused' && state.recovered && state.recoveredB) { next.scene = 'live'; next.pausedOnce = true; event = 'resume' }
     else if (['RECORD_MAP_RESULT', 'CORRECT_MAP_RESULT'].includes(body.action) && staff && scene === (body.action === 'RECORD_MAP_RESULT' ? 'live' : 'review')) {
-      if (body.scoreA !== 2 || body.scoreB !== 1 || (body.action === 'CORRECT_MAP_RESULT' && String(body.note || '').trim().length < 2)) fail('score')
-      next.scoreA = body.scoreA; next.scoreB = body.scoreB; next.scene = 'review'; event = 'score'
+      if (![body.scoreA, body.scoreB].every(value => Number.isInteger(value) && value >= 0 && value <= 100) || (body.action === 'CORRECT_MAP_RESULT' && (String(body.note || '').trim().length < 2 || state.completedMaps.at(-1)?.isAdministrative))) fail('score')
+      if (state.mapOrder === 1 && body.scoreA === body.scoreB && (state.role !== 'admin' || String(body.drawRulingReason || '').trim().length < 3)) fail('score')
+      next.scoreA = body.scoreA; next.scoreB = body.scoreB; finishPracticeMap(next, practiceMap(next)); event = 'score'
     } else fail('phase')
   } else if ((kind === 'coordination' && path === '/requests') || (kind === 'room' && path === '/messages')) {
     if (String(body.body || '').trim().length < 2) fail('note')
@@ -196,10 +268,11 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
       event = 'message'
     }
   } else if (kind === 'room' && path === '/result-response') {
-    if (!representative || scene !== 'result' || body.teamId !== ownTeam || !['CONFIRMED', 'DISPUTED'].includes(body.status) || (body.status === 'DISPUTED' && String(body.note || '').trim().length < 2)) fail('phase')
+    if (!representative || scene !== 'result' || !state.reviewed || body.teamId !== ownTeam || !['CONFIRMED', 'DISPUTED'].includes(body.status) || (body.status === 'DISPUTED' && String(body.note || '').trim().length < 2)) fail('phase')
     next.response = body.status; event = 'response'
   } else if (kind === 'room' && path === '/result-actions') {
-    if (state.role !== 'admin' || scene !== 'result' || body.action !== 'SETTLE' || body.pointsA !== 9 || body.pointsB !== 6 || String(body.reason || '').trim().length < 2) fail('settle')
+    const series = practiceSeries(state.completedMaps, state.format)
+    if (state.role !== 'admin' || scene !== 'result' || !state.reviewed || body.action !== 'SETTLE' || body.pointsA !== (state.format === 'RR5' ? 5 + series.scoreA : 0) || body.pointsB !== (state.format === 'RR5' ? 5 + series.scoreB : 0) || String(body.reason || '').trim().length < 2) fail('settle')
     next.settled = true; event = 'settled'
   } else fail('unsupported')
   next.phaseClock = demoRoomClock(next.scene, next.phaseClock)
@@ -219,15 +292,15 @@ export function createPracticeTransport(read, apply, errorMessage = code => code
   }
 }
 
-export function createPracticeSession(role, scene) {
-  let state = createRoomPractice(role, scene)
+export function createPracticeSession(role, scene, format) {
+  let state = createRoomPractice(role, scene, format)
   const listeners = new Set()
   const emit = () => listeners.forEach(listener => listener())
   return {
     getSnapshot: () => state,
     subscribe: listener => { listeners.add(listener); return () => listeners.delete(listener) },
     tick: () => { if (['choosing', 'banning'].includes(state.scene) && demoRoomClock(state.scene, state.phaseClock).status === 'EXPIRED') { state = applyRoomPractice(state, 'timeout', {}, 'scene').state; emit() } },
-    reset: () => { state = createRoomPractice(role, scene); emit() },
+    reset: () => { state = createRoomPractice(role, scene, format); emit() },
     apply: (path, body, kind) => { const next = applyRoomPractice(state, path, body, kind); state = next.state; emit(); return next.result },
   }
 }

@@ -88,3 +88,17 @@ test('every challenge, control and validation response is translated in all four
     assert.ok(error.startsWith('decision.') ? text[`sim.${id}.success`] : text[`sim.error.${error}`])
   }
 })
+
+test('FT courses use first-to decisions and zero-point settlement while retaining RR5 lessons', () => {
+  for (const format of ['FT2', 'FT3']) {
+    const course = createSimulation('representative', '', 'referee', format)
+    assert.ok(course.ids.includes('ft')); assert.equal(course.ids.includes('rr5'), false)
+    assert.equal(validateSimulationInput('settle', { scoreA: 0, scoreB: 0, checks: ['settlement-ready'] }, {}, format), '')
+    assert.equal(validateSimulationInput('settle', validInput('settle'), {}, format), 'settle')
+    assert.equal(simulationReducer(course, { type: 'RESET' }).format, format)
+  }
+  assert.ok(createSimulation('representative').ids.includes('rr5'))
+  assert.equal(validateSimulationInput('map-forfeit', { choice: 'forfeit-full' }), 'decision.map-forfeit')
+  assert.equal(validateSimulationInput('map-forfeit', { choice: 'forfeit-one' }), '')
+  assert.equal(validateSimulationInput('map-forfeit-end', { choice: 'forfeit-end' }), '')
+})
