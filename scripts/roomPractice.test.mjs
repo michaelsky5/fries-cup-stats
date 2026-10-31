@@ -257,3 +257,11 @@ test('practice countdown displays the actual next map and chooser without changi
   assert.equal(buildRoomPractice(state, copy).phaseClock.enabled, false)
   assert.equal(buildRoomPractice(state, copy).phaseClock.stage.mapOrder, 4)
 })
+
+test('a valid B map win is not mislabeled as the scripted score-correction exercise', () => {
+  let state = createRoomPractice('referee', 'live', 'FT3')
+  state = applyRoomPractice(state, '/commands', { action: 'RECORD_MAP_RESULT', scoreA: 1, scoreB: 2 }).state
+  assert.equal(practiceLesson(state), 'review')
+  assert.equal(buildRoomPractice(state, copy).opening.next.chooserSide, 'A')
+  assert.equal(practiceLesson(createRoomPractice('referee', 'review', 'FT3')), 'correction')
+})

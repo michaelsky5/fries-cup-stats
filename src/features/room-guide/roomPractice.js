@@ -47,7 +47,7 @@ export function createRoomPractice(role = 'representative', scene, format = 'RR5
   scene = PRACTICE_SCENES.includes(scene) ? scene : staffRole(role) ? 'ready' : ['member', 'caster'].includes(role) ? 'live' : 'choosing'
   const exercise = ['forfeit', 'forfeit-last'].includes(scene) && format !== 'RR5' ? scene : ''
   if (['forfeit', 'forfeit-last'].includes(scene)) scene = 'live'
-  const state = { role, scene, format, exercise, mapOrder: 1, chooserSide: 'A', botHero: 'Ashe', completedMaps: [], reviewed: scene === 'result', phaseClock: demoRoomClock(scene), mapTimeouts: [], revision: 1, mapName: 'Busan', banOrder: 'FIRST', hero: 'Ana', lineup: null, checkIns: {},
+  const state = { role, scene, format, exercise, correctionExercise: scene === 'review', mapOrder: 1, chooserSide: 'A', botHero: 'Ashe', completedMaps: [], reviewed: scene === 'result', phaseClock: demoRoomClock(scene), mapTimeouts: [], revision: 1, mapName: 'Busan', banOrder: 'FIRST', hero: 'Ana', lineup: null, checkIns: {},
     ready: false, preflight: false, recovered: false, recoveredB: true, pausedOnce: false, representative: false,
     scoreA: scene === 'review' ? 1 : 2, scoreB: scene === 'review' ? 2 : 1, response: '', settled: false, messages: [], requests: [], history: [], event: 'welcome' }
   if (scene === 'review') state.completedMaps = [practiceMap(state)]
@@ -68,7 +68,7 @@ export function practiceLesson(state) {
   if (scene === 'review' && state.completedMaps.at(-1)?.isAdministrative) return 'map-forfeit-review'
   if (role === 'manager') return state.representative ? 'manager-done' : 'manager'
   if (['member', 'caster'].includes(role) && scene !== 'result') return role
-  if (scene === 'review' && state.scoreA === 1 && staffRole(role)) return 'correction'
+  if (scene === 'review' && state.correctionExercise && state.scoreA === 1 && staffRole(role)) return 'correction'
   if (scene === 'ready' && staffRole(role)) return 'ready'
   if (scene === 'live') return staffRole(role) ? state.exercise ? 'map-forfeit' : 'staff-live' : state.pausedOnce ? 'after-pause' : 'live'
   if (scene === 'paused' && staffRole(role)) return 'staff-paused'
@@ -195,7 +195,7 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
   else if (kind === 'scene' && path === 'timeout' && scene === 'choosing' && demoRoomClock(scene, state.phaseClock).status === 'EXPIRED') {
     next.mapTimeouts ||= []
     const count = next.mapTimeouts.length + 1, at = new Date().toISOString()
-    next.mapTimeouts.push({ side: 'A', mapOrder: 1, count, at, deadlineAt: state.phaseClock.deadlineAt, outcome: count === 1 ? 'WARNING' : count === 2 ? 'BAN_FORFEIT' : 'RANDOM_MAP' })
+    next.mapTimeouts.push({ side: 'A', mapOrder: state.mapOrder, count, at, deadlineAt: state.phaseClock.deadlineAt, outcome: count === 1 ? 'WARNING' : count === 2 ? 'BAN_FORFEIT' : 'RANDOM_MAP' })
     if (count >= 2) { next.banTimedOut = true; next.hero = ''; next.banOrder = 'SECOND' }
     if (count >= 3) { next.mapName = practiceMaps[Math.floor(Math.random() * practiceMaps.length)]; next.randomMap = true; next.scene = 'lineup' }
     else next.phaseClock = { ...state.phaseClock, revision: state.phaseClock.revision + 1, submissionGrace: null, remainingMs: 60000, deadlineAt: new Date(Date.now() + 60000).toISOString() }
