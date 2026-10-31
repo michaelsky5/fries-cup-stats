@@ -1,9 +1,10 @@
 import { getRoomStageIndex, isRoomAwaitingStart } from '../weekly-competition/weeklyRoomFlow.js'
 import { withLocale } from '../../lib/locales.js'
 import { resolveSeasonFromUrl } from '../../config/seasons.js'
+import { guideFormat } from './roomGuideFormats.js'
 
 export const GUIDE_PATH = '/guides/weekly-room'
-export const GUIDE_VERSION = '2026-10-30'
+export const GUIDE_VERSION = '2026-10-31'
 export const ROOM_PRACTICE_CASES = {
   disabled: { role: 'member', scene: 'live' },
   handover: { role: 'manager', scene: 'checkin' },
@@ -12,10 +13,12 @@ export const ROOM_PRACTICE_CASES = {
   'result-error': { role: 'referee', scene: 'review' },
   dispute: { role: 'representative', scene: 'result' },
   broadcast: { role: 'caster', scene: 'live' },
+  ft: { role: 'referee', scene: 'ready', format: 'FT3' },
+  'map-forfeit': { role: 'referee', scene: 'forfeit', format: 'FT3' },
 }
 export const GUIDE_ROLES = ['manager', 'representative', 'member', 'referee', 'caster', 'admin']
 export const GUIDE_STEPS = ['entry', 'opening', 'map', 'lineup', 'ban', 'ready', 'live', 'map-result', 'result']
-export const GUIDE_SCENARIOS = ['access', 'disabled', 'handover', 'substitution', 'opening-error', 'disconnect', 'result-error', 'rr5', 'forfeit', 'dispute', 'sync', 'broadcast']
+export const GUIDE_SCENARIOS = ['access', 'disabled', 'handover', 'substitution', 'opening-error', 'disconnect', 'result-error', 'rr5', 'ft', 'map-forfeit', 'forfeit', 'dispute', 'sync', 'broadcast']
 export const ROLE_LESSONS = {
   manager: ['entry', 'lineup', 'result'], representative: GUIDE_STEPS,
   member: ['entry', 'lineup', 'live', 'result'], referee: GUIDE_STEPS,
@@ -31,6 +34,7 @@ export function readGuideContext(params) {
     step: GUIDE_STEPS.includes(params.get('step')) ? params.get('step') : 'entry',
     scenario: GUIDE_SCENARIOS.includes(params.get('scenario')) ? params.get('scenario') : '',
     mode: params.get('mode') === 'captains' ? 'captains' : 'referee',
+    format: guideFormat(params.get('format')),
     match: id(params.get('match')), season: id(params.get('season')),
   }
 }
@@ -42,13 +46,13 @@ export function guideContextForRoom(data) {
       : data?.representatives?.sides?.some(side => side.canAssign) || /队长|经理/.test(data?.actor?.label || '') ? 'manager'
         : access.production ? 'caster' : 'member'
   return { role, step: data?.preparation && data?.maps ? isRoomAwaitingStart(data) ? 'ready' : STAGE_STEPS[getRoomStageIndex(data)] : 'entry',
-    mode: access.operatorMode === 'TEAM_CAPTAINS' ? 'captains' : 'referee', match: data?.match?.id, season: data?.match?.seasonId }
+    mode: access.operatorMode === 'TEAM_CAPTAINS' ? 'captains' : 'referee', format: guideFormat(data?.match?.format), match: data?.match?.id, season: data?.match?.seasonId }
 }
 
 export function roomGuideUrl(context = {}, locale = 'zh-CN', { share = false } = {}) {
   const query = new URLSearchParams()
   const safe = readGuideContext(new URLSearchParams(Object.entries(context).filter(([, value]) => typeof value === 'string')))
-  for (const key of ['role', 'step', 'mode', 'scenario']) if (safe[key]) query.set(key, safe[key])
+  for (const key of ['role', 'step', 'mode', 'scenario', 'format']) if (safe[key]) query.set(key, safe[key])
   if (!share) for (const key of ['match', 'season']) if (safe[key]) query.set(key, safe[key])
   return withLocale(`${GUIDE_PATH}?${query}`, locale)
 }
@@ -63,11 +67,14 @@ export function guideLessons(role, step) {
   return GUIDE_STEPS.filter(item => lessons.includes(item) || item === step)
 }
 
-export function guidePracticeUrl(base = 'https://admin.fries-cup.com') {
+export function guidePracticeUrl(base = 'https://admin.fries-cup.com', season = '') {
   try {
     const url = new URL(base)
     if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) return ''
-    return new URL('/tournaments?view=coordination#weekly-training', url.origin).href
+    const target = new URL('/tournaments?view=training#weekly-training', url.origin)
+    const seasonId = resolveSeasonFromUrl(season) || id(season)
+    if (seasonId) target.searchParams.set('seasonId', seasonId)
+    return target.href
   } catch { return '' }
 }
 
