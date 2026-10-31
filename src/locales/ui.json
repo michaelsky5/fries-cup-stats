@@ -59244,6 +59244,31 @@
     "en-US": "Forfeit this map",
     "ko-KR": "현재 전장 기권"
   },
+  "登记第五图弃权": {
+    "zh-TW": "登記第五圖棄權",
+    "en-US": "Record a map-five forfeit",
+    "ko-KR": "5번째 전장 기권 기록"
+  },
+  "保留前四图实赛比分、截图和选手数据。第五图按弃权判负，不录入游戏小分或选手统计，弃权方该图不计参赛分。": {
+    "zh-TW": "保留前四圖實賽比分、截圖和選手資料。第五圖按棄權判負，不錄入遊戲小分或選手統計，棄權方該圖不計參賽分。",
+    "en-US": "Keep the scores, screenshots and player stats from the four played maps. Map five is a forfeit loss with no in-game score or player stats. The forfeiting team receives no participation point for that map.",
+    "ko-KR": "앞서 진행한 4개 전장의 점수, 스크린샷과 선수 기록을 보존합니다. 5번째 전장은 기권패로 처리하며 게임 점수나 선수 기록을 입력하지 않습니다. 기권 팀은 해당 전장의 참가 점수를 받지 않습니다."
+  },
+  "本图之前被录成正常完成，本次将更正为弃权；原房间记录和更正原因会保留。": {
+    "zh-TW": "本圖之前被錄成正常完成，本次將更正為棄權；原房間記錄和更正原因會保留。",
+    "en-US": "This map was previously recorded as played. This action corrects it to a forfeit and preserves the original room record and correction reason.",
+    "ko-KR": "이 전장은 정상 완료로 기록되어 있습니다. 기권으로 정정하며 기존 방 기록과 정정 사유를 보존합니다."
+  },
+  "预计积分：{0} : {1}；仍须审核、双方确认及结算。": {
+    "zh-TW": "預計積分：{0} : {1}；仍須審核、雙方確認及結算。",
+    "en-US": "Expected points: {0} : {1}. Review, confirmation by both teams and settlement are still required.",
+    "ko-KR": "예상 점수: {0} : {1}. 검토, 양 팀 확인 및 정산이 필요합니다."
+  },
+  "确认第五图未实赛，已核对弃权方、比分和积分。": {
+    "zh-TW": "確認第五圖未實賽，已核對棄權方、比分和積分。",
+    "en-US": "I confirm map five was not played and have checked the forfeiting team, series score and points.",
+    "ko-KR": "5번째 전장을 실제로 진행하지 않았으며 기권 팀, 경기 점수와 적립 점수를 확인했습니다."
+  },
   "记录本图弃权": {
     "zh-TW": "記錄本圖棄權",
     "en-US": "Record a map forfeit",

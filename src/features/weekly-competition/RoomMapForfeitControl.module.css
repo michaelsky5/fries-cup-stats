@@ -13,3 +13,5 @@
 .dialog .form textarea { min-height: 100px; }
 .dialog .form option { color: #181a17; background: #fff; }
 .dialog .form [role='alert'] { color: #a13629; }
+.dialog .confirm { display: flex; align-items: flex-start; gap: 10px; }
+.dialog .confirm input { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 3px; }

@@ -8,6 +8,15 @@ test('reviewed RR5 includes five participation points for both teams', () => {
   assert.deepEqual(roomSettlementProposal(room()), { pointsA: 8, pointsB: 7, reason: 'RR5 五图参赛分 5 + 小局胜场分：8 / 7。' })
   assert.equal(roomSettlementProposal(room({ scoreA: 2, scoreB: 2 })).pointsB, 7)
 })
+
+test('four real map wins and a fifth-map forfeit propose 10:4 without inventing player data', () => {
+  const maps = [...Array.from({ length: 4 }, (_, i) => ({ order: i + 1, scoreA: 2, scoreB: 0 })),
+    { order: 5, scoreA: null, scoreB: null, isAdministrative: true, administrativeReason: 'MAP_FORFEIT', forfeitedBySide: 'B' }]
+  const value = room({ scoreA: 5, scoreB: 0, maps }), before = structuredClone(maps)
+  assert.deepEqual(roomSettlementProposal(value), { pointsA: 10, pointsB: 4, reason: 'RR5 实赛保留参赛分与胜场分，弃权图不给弃权方参赛分：10 / 4。' })
+  assert.deepEqual(maps, before)
+  assert.equal(roomSettlementProposal(room({ scoreA: 5, scoreB: 0, maps: [...maps.slice(0, 4), { ...maps[4], forfeitedBySide: '' }] })), null)
+})
 test('non-counting cycles and approved forfeits retain their own points', () => {
   assert.equal(roomSettlementProposal(room({ countsTowardStandings: false })).pointsA, 0)
   assert.equal(roomSettlementProposal(room({ forfeit: { pointsA: 0, pointsB: 6 }, maps: [] })).pointsB, 6)
