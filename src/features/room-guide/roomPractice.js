@@ -5,7 +5,7 @@ import { OW_HEROES } from '../../lib/heroes.js'
 
 export const PRACTICE_ID = 'LOCAL-ROOM-PRACTICE'
 export const PRACTICE_ROLES = ['representative', 'manager', 'member', 'referee', 'caster', 'admin']
-export const PRACTICE_SCENES = ['checkin', 'choosing', 'lineup', 'banorder', 'banning', 'ready', 'live', 'paused', 'review', 'result']
+export const PRACTICE_SCENES = ['choosing', 'lineup', 'banorder', 'banning', 'ready', 'live', 'paused', 'review', 'result']
 const practiceMaps = ['Busan', 'Samoa', 'Lijiang Tower']
 const staffRole = role => ['referee', 'admin'].includes(role)
 const repRole = role => role === 'representative'
@@ -13,11 +13,13 @@ const date = '2026-09-26T12:00:00.000Z'
 const heroRole = name => OW_HEROES.find(hero => hero.en === name)?.role
 const fail = code => { throw Object.assign(new Error(code), { status: 400 }) }
 const starterIds = state => state.lineup?.map(player => player.playerId) || [0, 1, 2, 3, 4].map(i => `preview-team-A-p${i}`)
-const present = (state, id) => Object.hasOwn(state.checkIns, id) ? state.checkIns[id] : state.scene !== 'checkin' && /-p[0-4]$/.test(id)
+const present = (state, id) => Object.hasOwn(state.checkIns, id) ? state.checkIns[id] : /-p[0-4]$/.test(id)
 const startersPresent = state => starterIds(state).every(id => present(state, id))
 
 export function createRoomPractice(role = 'representative', scene) {
   role = PRACTICE_ROLES.includes(role) ? role : 'representative'
+  // Legacy shared URLs used scene=checkin. Teaching now begins at map choice.
+  if (scene === 'checkin') scene = 'choosing'
   scene = PRACTICE_SCENES.includes(scene) ? scene : staffRole(role) ? 'ready' : ['member', 'caster'].includes(role) ? 'live' : 'choosing'
   return { role, scene, phaseClock: demoRoomClock(scene), mapTimeouts: [], revision: 1, mapName: 'Busan', banOrder: 'FIRST', hero: 'Ana', lineup: null, checkIns: {},
     ready: false, preflight: false, recovered: false, recoveredB: true, pausedOnce: false, representative: false,
@@ -40,7 +42,7 @@ export function practiceLesson(state) {
 
 export function buildRoomPractice(state, text) {
   const staff = staffRole(state.role), representative = repRole(state.role)
-  const stage = state.scene === 'checkin' ? 'choosing' : state.scene
+  const stage = state.scene
   const data = buildWeeklyRoomPreview(stage, staff ? 'staff' : state.role === 'caster' ? 'caster' : representative ? 'representative' : 'player')
   data.simulation = true
   Object.assign(data.match, { id: PRACTICE_ID, seasonId: 'LOCAL-PRACTICE', weekId: 'LOCAL-PRACTICE-WEEK', seasonName: text['room.season'], weekLabel: text['room.week'] })
@@ -58,7 +60,7 @@ export function buildRoomPractice(state, text) {
       player.name = `${side}${n + 1}`; player.battleTag = `Demo${side}${n + 1}#0000`
       if (player.role === 'FLEX') player.role = 'DPS'
     })
-    data.checkIns[team.id] = Object.fromEntries(roster.members.map((member, n) => [member.id, { status: Object.hasOwn(state.checkIns, member.id) ? state.checkIns[member.id] ? 'PRESENT' : 'ABSENT' : (state.scene !== 'checkin' || i) && n < 5 ? 'PRESENT' : 'PENDING' }]))
+    data.checkIns[team.id] = Object.fromEntries(roster.members.map((member, n) => [member.id, { status: Object.hasOwn(state.checkIns, member.id) ? state.checkIns[member.id] ? 'PRESENT' : 'ABSENT' : (i || !['choosing', 'lineup'].includes(state.scene)) && n < 5 ? 'PRESENT' : 'PENDING' }]))
     const rep = data.representatives.sides[i]
     Object.assign(rep, { name: i ? 'B1' : state.representative ? 'A6' : 'A1', userId: i ? 'b1' : state.representative ? 'a6' : 'a1', battleTag: i ? 'DemoB1#0000' : state.representative ? 'DemoA6#0000' : 'DemoA1#0000', revision: state.revision,
       canAssign: !i && (staff || state.role === 'manager'), requiresReason: staff,
@@ -66,7 +68,7 @@ export function buildRoomPractice(state, text) {
     const saved = state.lineup && !i ? state.lineup : roster.members.slice(0, 5).map(player => ({ playerId: player.id, role: player.role }))
     for (const map of data.maps) if (map[`lineup${side}`].length) map[`lineup${side}`] = saved.map(item => ({ ...roster.members.find(member => member.id === item.playerId), ...item }))
   }
-  const afterPick = !['checkin', 'choosing'].includes(state.scene)
+  const afterPick = state.scene !== 'choosing'
   if (afterPick) data.maps[0].name = state.mapName
   if (state.scene === 'review') {
     Object.assign(data.map, { scoreA: state.scoreA, scoreB: state.scoreB })
@@ -93,7 +95,7 @@ export function buildRoomPractice(state, text) {
     data.map.firstBanSide = state.banOrder === 'FIRST' ? 'A' : 'B'
     Object.assign(data.opening.setup, { banA: data.map.banA, banB: data.map.banB, firstBanSide: data.map.firstBanSide })
   }
-  data.preparation.sides.forEach((side, i) => { side.ready = !['checkin', 'choosing', 'lineup', 'banorder', 'banning'].includes(state.scene) && Boolean(i || state.ready || staff); side.canConfirm = state.scene === 'ready' && (!staff || !i) && (i || startersPresent(state)); side.reason = !i && !startersPresent(state) ? text['room.error.checkin'] : ''; side.confirmedBy = side.ready ? i ? text['room.bot-opponent'] : text['room.you'] : '' })
+  data.preparation.sides.forEach((side, i) => { side.ready = !['choosing', 'lineup', 'banorder', 'banning'].includes(state.scene) && Boolean(i || state.ready || staff); side.canConfirm = state.scene === 'ready' && (!staff || !i) && (i || startersPresent(state)); side.reason = !i && !startersPresent(state) ? text['room.error.checkin'] : ''; side.confirmedBy = side.ready ? i ? text['room.bot-opponent'] : text['room.you'] : '' })
   data.preflight = { required: false, canConfirm: staff && state.scene === 'ready', roomConfirmed: state.preflight, rosterVerified: state.preflight, networkTestCompleted: state.preflight }
   data.pause = { at: date, recovered: { A: { ready: state.recovered, by: text['room.you'] }, B: { ready: state.recoveredB, by: text['room.bot-opponent'] } } }
   data.messages = state.messages
@@ -158,8 +160,8 @@ export function applyRoomPractice(state, path, body = {}, kind = 'room') {
   } else if (kind === 'room' && path === '/check-ins') {
     if (!actor || ![ownTeam, ...(staff ? ['preview-team-B'] : [])].includes(body.teamId) || !new RegExp(`^${body.teamId}-p[0-6]$`).test(body.playerId)) fail('permission')
     next.checkIns[body.playerId] = body.status === 'PRESENT'
-    if (scene === 'checkin' && [0, 1, 2, 3, 4].every(i => next.checkIns[`${ownTeam}-p${i}`])) next.scene = 'choosing'
-    event = next.scene === 'choosing' ? 'checkin' : 'signed'
+    // Individual attendance controls remain optional. Lineup submission confirms starters.
+    event = 'signed'
   } else if (kind === 'room' && path === '/representatives') {
     if (!(staff || state.role === 'manager') || body.teamId !== ownTeam || body.userId !== 'a6' || (staff && String(body.reason || '').trim().length < 2)) fail('handover')
     next.representative = true; event = 'handover'
