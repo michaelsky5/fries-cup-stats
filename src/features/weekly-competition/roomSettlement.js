@@ -6,6 +6,9 @@ export function roomSettlementProposal({ match, result }) {
     return { pointsA: result.forfeit.pointsA, pointsB: result.forfeit.pointsB, reason: '按已审核 RR5 弃权裁定逐图计算积分。' }
   }
   if (match?.format !== 'RR5' || result.maps?.length !== 5 || ![result.scoreA, result.scoreB].every(value => Number.isInteger(value) && value >= 0 && value <= 5) || result.scoreA + result.scoreB > 5) return null
-  const pointsA = 5 + result.scoreA, pointsB = 5 + result.scoreB
-  return { pointsA, pointsB, reason: `RR5 五图参赛分 5 + 小局胜场分：${pointsA} / ${pointsB}。` }
+  const forfeits = result.maps.filter(map => map.isAdministrative && map.administrativeReason === 'MAP_FORFEIT')
+  if (forfeits.some(map => !['A', 'B'].includes(map.forfeitedBySide))) return null
+  const pointsA = 5 + result.scoreA - forfeits.filter(map => map.forfeitedBySide === 'A').length
+  const pointsB = 5 + result.scoreB - forfeits.filter(map => map.forfeitedBySide === 'B').length
+  return { pointsA, pointsB, reason: forfeits.length ? `RR5 实赛保留参赛分与胜场分，弃权图不给弃权方参赛分：${pointsA} / ${pointsB}。` : `RR5 五图参赛分 5 + 小局胜场分：${pointsA} / ${pointsB}。` }
 }
