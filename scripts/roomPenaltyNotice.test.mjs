@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { roomPenaltySnapshot, observeRoomPenalties } from '../src/features/weekly-competition/roomPenaltyNotice.js'
+import { roomPenaltySnapshot, observeRoomPenalties, roomPenaltyPresentation } from '../src/features/weekly-competition/roomPenaltyNotice.js'
 import { getRoomPanelNavigation } from '../src/features/weekly-competition/roomPanelNavigation.js'
 const fixture = () => ({ match: { id: 'm1', teamA: { id: 'a' }, teamB: { id: 'b' } }, actor: { id: 'u1' }, access: { teamIds: ['a'], representativeTeams: ['a'] }, phaseClock: { timeoutPenalties: [] }, map: { order: 1, name: 'Lijiang Tower' } })
 const penalty = (patch = {}) => ({ side: 'A', kind: 'MAP', mapOrder: 1, count: 1, at: '2026-10-21T00:00:00Z', outcome: 'WARNING', ...patch })
@@ -74,4 +74,67 @@ test('an already dismissed Forward notification clears in place without another 
   const cleared = getRoomPanelNavigation({ ...room, state: opened.options.state }, 'm1', '', { replace: true })
   assert.deepEqual(cleared, { to: { pathname: room.pathname, search: room.search, hash: room.hash }, options: { replace: true, state: room.state } })
   assert.equal(getRoomPanelNavigation({ ...room, state: cleared.options.state }, 'm1', '', { replace: true }), null)
+})
+
+test('an active map warning keeps the live confirmation instruction', () => {
+  const data = { ...fixture(), phase: 'PREPARING', phaseClock: { stage: { kind: 'MAP', mapOrder: 1, side: 'A' }, timeoutPenalties: [penalty()] } }
+  const view = roomPenaltyPresentation(penalty(), data)
+  assert.equal(view.historical, false)
+  assert.match(view.message, /请及时确认地图/)
+})
+
+test('a queued warning becomes history when a later penalty supersedes it', () => {
+  const data = { ...fixture(), phase: 'PREPARING', phaseClock: { stage: { kind: 'MAP', mapOrder: 1, side: 'A' }, timeoutPenalties: [penalty(), penalty({ count: 2, outcome: 'BAN_FORFEIT' })] } }
+  const first = roomPenaltyPresentation(penalty(), data)
+  assert.equal(first.historical, true)
+  assert.doesNotMatch(first.message, /请及时确认|已追加/)
+  assert.equal(roomPenaltyPresentation(data.phaseClock.timeoutPenalties[1], data).historical, false)
+})
+
+test('later phases and maps never tell a captain to redo a completed map choice', () => {
+  for (const patch of [
+    { phase: 'LIVE' }, { phase: 'PAUSED' }, { phase: 'REVIEW' },
+    { phaseClock: { stage: { kind: 'BAN', mapOrder: 1, side: 'A' } } },
+    { map: { order: 2, name: 'Busan' } }, { result: {} }, { archived: true }
+  ]) {
+    const data = { ...fixture(), phase: 'PREPARING', phaseClock: { stage: { kind: 'MAP', mapOrder: 1, side: 'A' } }, ...patch }
+    const view = roomPenaltyPresentation(penalty(), data)
+    assert.equal(view.historical, true)
+    assert.doesNotMatch(view.message, /请及时确认|已追加/)
+  }
+})
+
+test('a confirmed lineup is not requested again while the other team is pending', () => {
+  const data = { ...fixture(), phase: 'PREPARING', phaseClock: { stage: { kind: 'LINEUP', mapOrder: 1 } } }
+  const event = penalty({ kind: 'LINEUP' })
+  assert.equal(roomPenaltyPresentation(event, data).historical, false)
+  data.map.lineupLocks = { A: true }
+  assert.equal(roomPenaltyPresentation(event, data).historical, true)
+})
+
+test('random-map instructions only apply while that same random map awaits lineups', () => {
+  const event = penalty({ count: 3, outcome: 'RANDOM_MAP', mapName: 'Busan' })
+  const data = { ...fixture(), phase: 'PREPARING', map: { order: 1, name: 'Busan', selectionMethod: 'TIMEOUT_RANDOM' }, phaseClock: { stage: { kind: 'LINEUP', mapOrder: 1 } } }
+  assert.equal(roomPenaltyPresentation(event, data).historical, false)
+  assert.equal(roomPenaltyPresentation({ ...event, mapName: undefined }, data).historical, false, 'older event payloads still guide the current random-map lineup')
+  data.map.lineupLocks = { A: true }
+  assert.equal(roomPenaltyPresentation(event, data).historical, true)
+  data.map.lineupLocks = {}; data.map.name = 'Oasis'
+  assert.equal(roomPenaltyPresentation(event, data).historical, true)
+  data.map.name = 'Busan'; data.phaseClock.stage.kind = 'MAP'; data.phaseClock.stage.side = 'A'
+  assert.equal(roomPenaltyPresentation(event, data).historical, true)
+})
+
+test('an old notice cannot target the next map clock or another team turn', () => {
+  const data = { ...fixture(), phase: 'PREPARING', phaseClock: { stage: { kind: 'MAP', mapOrder: 2, side: 'A' } } }
+  assert.equal(roomPenaltyPresentation(penalty(), data).historical, true)
+  data.phaseClock.stage = { kind: 'MAP', mapOrder: 1, side: 'B' }
+  assert.equal(roomPenaltyPresentation(penalty(), data).historical, true)
+})
+
+test('historical ban and forfeiture notices keep their actual outcomes without asking for a replay', () => {
+  const data = { ...fixture(), phase: 'LIVE' }
+  assert.match(roomPenaltyPresentation(penalty({ kind: 'BAN', outcome: 'BAN_TIMEOUT' }), data).message, /不得补禁用/)
+  assert.match(roomPenaltyPresentation(penalty({ count: 2, outcome: 'BAN_FORFEIT' }), data).message, /禁用权已取消/)
+  assert.match(roomPenaltyPresentation(penalty({ count: 3, outcome: 'RANDOM_MAP' }), data).message, /随机选图/)
 })
