@@ -177,6 +177,10 @@ export function buildRoomPractice(state, text) {
     for (const target of [data.map, data.opening.setup].filter(Boolean)) Object.assign(target, { banA: '', banAStatus: 'TIMED_OUT', banATimeoutReason: 'MAP_SELECTION', firstBanSide: 'B', selectionMethod: state.randomMap ? 'TIMEOUT_RANDOM' : 'TEAM' })
   }
   data.phaseClock = { ...demoRoomClock(state.scene, state.phaseClock), canManage: staff, mapTimeouts: { counts: { A: state.mapTimeouts?.length || 0, B: 0 }, latest: state.mapTimeouts?.at(-1) || null } }
+  // The reusable first-map clock keeps its deadline and command version. Display
+  // the actual exercise map/chooser, including the map after a forfeit or draw.
+  if (data.phaseClock.stage) data.phaseClock.stage = { ...data.phaseClock.stage, mapOrder: state.mapOrder + Number(state.scene === 'review'),
+    ...(data.phaseClock.stage.kind === 'MAP' ? { side: state.scene === 'review' ? data.opening.next?.chooserSide : state.chooserSide } : {}) }
   return data
 }
 

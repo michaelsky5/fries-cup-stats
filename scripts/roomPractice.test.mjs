@@ -239,3 +239,19 @@ test('an explicit teaching jump preserves the chosen current map and does not re
   assert.deepEqual(state.completedMaps.slice(0, recorded.length), recorded)
   assert.equal(state.reviewed, true)
 })
+
+test('practice countdown displays the actual next map and chooser without changing its deadline or command version', () => {
+  let state = createRoomPractice('referee', 'forfeit', 'FT3')
+  state = applyRoomPractice(state, '/rulings', { action: 'MAP_FORFEIT', forfeitedSide: 'A', reason: 'Missing players' }).state
+  const before = structuredClone(state.phaseClock), data = buildRoomPractice(state, copy)
+  assert.equal(data.phaseClock.stage.mapOrder, 4)
+  assert.equal(data.phaseClock.stage.side, data.opening.next.chooserSide)
+  assert.equal(data.phaseClock.stage.side, 'A')
+  assert.equal(data.phaseClock.deadlineAt, before.deadlineAt)
+  assert.equal(data.phaseClock.revision, before.revision)
+  assert.deepEqual(state.phaseClock, before)
+  state = applyRoomPractice(state, '/clock', { action: 'SET_ENABLED', enabled: false, expectedRevision: data.phaseClock.revision, stageKey: data.phaseClock.stage.key }).state
+  assert.equal(buildRoomPractice(state, copy).phaseClock.enabled, false)
+  state = applyRoomPractice(state, '/opening', { action: 'NEXT_MAP' }).state
+  assert.equal(buildRoomPractice(state, copy).phaseClock.stage.mapOrder, 4)
+})
