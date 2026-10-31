@@ -43,7 +43,7 @@ export default function WeeklyOwnershipTransfers({ seasonId, selectedTeamId, foc
       setForm(empty); setResponses({}); setNotice(message)
       globalThis.dispatchEvent(new Event('fc:account-activity-changed'))
       await refresh(); await onChanged?.()
-    } catch (failure) { if (mounted.current) setError(failure.message) }
+    } catch (failure) { if (mounted.current) setError(failure.data?.error === 'TRANSFER_TARGET_CONFLICT' ? t('接任者已负责本赛季另一份报名。若只是误建草稿，请接任者进入本赛季报名页，点击“撤回这份报名”后重试；已通过的正式队伍请联系赛事管理员。') : failure.message) }
     finally { lock.current = false; if (mounted.current) setBusy(false) }
   }
   const responseField = (id, key, value) => setResponses(current => ({ ...current, [id]: { ...current[id], [key]: value } }))

@@ -1,4 +1,59 @@
 {
+  "撤回这份报名？": {
+    "en-US": "Withdraw this registration?",
+    "ko-KR": "이 참가 신청을 철회할까요?",
+    "zh-TW": "撤回這份報名？"
+  },
+  "撤回这份报名": {
+    "en-US": "Withdraw this registration",
+    "ko-KR": "이 참가 신청 철회",
+    "zh-TW": "撤回這份報名"
+  },
+  "保留报名": {
+    "en-US": "Keep registration",
+    "ko-KR": "참가 신청 유지",
+    "zh-TW": "保留報名"
+  },
+  "确认撤回报名": {
+    "en-US": "Confirm withdrawal",
+    "ko-KR": "참가 신청 철회 확인",
+    "zh-TW": "確認撤回報名"
+  },
+  "待确认的邀请将失效，报名记录和已填写资料保留。撤回后，你可以创建新的报名或接任其他队伍。": {
+    "en-US": "Pending invitations will expire. Your registration record and saved details will be kept. After withdrawing, you can start a new registration or take over another team.",
+    "ko-KR": "확인 대기 중인 초대는 무효가 됩니다. 참가 신청 기록과 입력한 정보는 보존됩니다. 철회 후 새 참가 신청을 만들거나 다른 팀의 대표를 맡을 수 있습니다.",
+    "zh-TW": "待確認的邀請將失效，報名紀錄和已填寫資料保留。撤回後，你可以建立新的報名或接任其他隊伍。"
+  },
+  "本操作不会删除长期队伍，也不会退出你已加入的其他队伍。": {
+    "en-US": "This will not delete the long-term team or leave any other team you have joined.",
+    "ko-KR": "이 작업은 장기 팀을 삭제하거나 이미 가입한 다른 팀에서 탈퇴하지 않습니다.",
+    "zh-TW": "本操作不會刪除長期隊伍，也不會退出你已加入的其他隊伍。"
+  },
+  "不再使用这份草稿？撤回后保留记录，并释放本赛季的负责人名额。": {
+    "en-US": "No longer using this draft? Withdraw it to keep the record and free your team-leader slot for this season.",
+    "ko-KR": "이 초안을 더 이상 사용하지 않나요? 철회하면 기록은 보존되고 이번 시즌의 팀 대표 자리가 비워집니다.",
+    "zh-TW": "不再使用這份草稿？撤回後保留紀錄，並釋放本賽季的負責人名額。"
+  },
+  "报名已撤回，记录和资料已保留。你现在可以创建新的报名或接任其他队伍。": {
+    "en-US": "Registration withdrawn. Your record and details have been kept. You can now start a new registration or take over another team.",
+    "ko-KR": "참가 신청을 철회했습니다. 기록과 정보는 보존됩니다. 이제 새 참가 신청을 만들거나 다른 팀의 대표를 맡을 수 있습니다.",
+    "zh-TW": "報名已撤回，紀錄和資料已保留。你現在可以建立新的報名或接任其他隊伍。"
+  },
+  "报名已退回草稿，可修改后重新提交。若不再使用，请点击“撤回这份报名”释放负责人名额。": {
+    "en-US": "Registration returned to draft. You can edit and resubmit it. If no longer needed, select “Withdraw this registration” to free your team-leader slot.",
+    "ko-KR": "참가 신청이 초안으로 돌아왔습니다. 수정 후 다시 제출할 수 있습니다. 더 이상 필요하지 않으면 ‘이 참가 신청 철회’를 눌러 팀 대표 자리를 비우세요.",
+    "zh-TW": "報名已退回草稿，可修改後重新提交。若不再使用，請點擊「撤回這份報名」釋放負責人名額。"
+  },
+  "这份报名已撤回，仅保留历史记录，不再占用本赛季的负责人名额。": {
+    "en-US": "This registration has been withdrawn and is kept as history. It no longer occupies your team-leader slot for this season.",
+    "ko-KR": "이 참가 신청은 철회되어 기록만 보존됩니다. 이번 시즌의 팀 대표 자리를 더 이상 차지하지 않습니다.",
+    "zh-TW": "這份報名已撤回，僅保留歷史紀錄，不再佔用本賽季的負責人名額。"
+  },
+  "接任者已负责本赛季另一份报名。若只是误建草稿，请接任者进入本赛季报名页，点击“撤回这份报名”后重试；已通过的正式队伍请联系赛事管理员。": {
+    "en-US": "The recipient already leads another registration this season. If it is an accidental draft, ask them to open this season’s registration page and select “Withdraw this registration”, then try again. For an approved team, contact the tournament administrator.",
+    "ko-KR": "인수자가 이번 시즌에 다른 참가 신청의 대표를 맡고 있습니다. 실수로 만든 초안이라면 인수자가 이번 시즌 참가 신청 페이지에서 ‘이 참가 신청 철회’를 누른 뒤 다시 시도하세요. 승인된 정식 팀은 대회 관리자에게 문의하세요.",
+    "zh-TW": "接任者已負責本賽季另一份報名。若只是誤建草稿，請接任者進入本賽季報名頁，點擊「撤回這份報名」後重試；已通過的正式隊伍請聯絡賽事管理員。"
+  },
   "该轮禁用已记录为超时放弃，不得补禁用。": {
     "en-US": "That ban turn was forfeited after timing out. No replacement ban is allowed.",
     "ko-KR": "해당 밴 차례는 시간 초과로 포기 처리되었습니다. 추가 밴은 할 수 없습니다.",
