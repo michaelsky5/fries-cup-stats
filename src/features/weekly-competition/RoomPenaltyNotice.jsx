@@ -1,18 +1,17 @@
 import { useUiLocale } from '../../hooks/useUiLocale.js'
 import { translateUiText as uiText } from '../../lib/uiText.js'
 import { formatOwMapName } from '../../lib/heroes.js'
+import { roomPenaltyPresentation } from './roomPenaltyNotice.js'
 import styles from './RoomPhaseClock.module.css'
 
-export default function RoomPenaltyNotice({ event, onClose, onRules }) {
+export default function RoomPenaltyNotice({ event, data, onClose, onRules }) {
   const locale = useUiLocale(), t = (key, values) => uiText(key, locale, values)
-  const message = event.outcome === 'RANDOM_MAP' ? '本图禁用权已取消，系统已随机选择地图。请按最新地图重新确认首发。'
-    : event.kind === 'BAN' ? '本轮禁用已超时，系统已记录放弃本轮禁用权，不得补禁用。'
-    : event.kind === 'MAP' ? event.outcome === 'WARNING' ? '本次为超时警告。已追加 60 秒，请及时确认地图；本次补时不再追加补交宽限。' : '本图禁用权已取消。已追加 60 秒，请及时确认地图；本次补时不再追加补交宽限。'
-    : event.outcome === 'WARNING' ? '本次为超时警告。请尽快完成当前环节。' : '本图禁用权已取消。请尽快完成当前环节，首发仍须由队伍确认。'
-  return <section className={styles.penaltyNotice} data-room-penalty={event.outcome}>
+  const { historical, message } = roomPenaltyPresentation(event, data)
+  return <section className={styles.penaltyNotice} data-room-penalty={event.outcome} data-room-penalty-history={historical}>
     <strong>{t('第 {0} 图', [event.mapOrder])} · {t(({ MAP: '选择地图', LINEUP: '首发确认', BAN_ORDER: '禁用顺序', BAN: '英雄禁用' })[event.kind])}</strong>
     {event.count && <p>{t('本队本场第 {0} 次流程超时', [event.count])}</p>}
     <p>{t(message)}</p>
+    {historical && <p>{t('此为已记录的处理结果，当前操作请以比赛房最新状态为准。')}</p>}
     {event.mapName && <p>{formatOwMapName(event.mapName, locale)}{event.attackFirstSide && ` · ${t('先攻')}: ${event.attackFirstSide}`}</p>}
     <div><button type="button" onClick={onRules}>{t('查看规则与记录')}</button><button type="button" autoFocus onClick={onClose}>{t('知道了，继续操作')}</button></div>
   </section>

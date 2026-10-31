@@ -1,4 +1,29 @@
 {
+  "该轮禁用已记录为超时放弃，不得补禁用。": {
+    "en-US": "That ban turn was forfeited after timing out. No replacement ban is allowed.",
+    "ko-KR": "해당 밴 차례는 시간 초과로 포기 처리되었습니다. 추가 밴은 할 수 없습니다.",
+    "zh-TW": "該輪禁用已記錄為超時放棄，不得補禁用。"
+  },
+  "该次超时已由系统随机选图处理。": {
+    "en-US": "A map was randomly selected for that timeout.",
+    "ko-KR": "해당 시간 초과는 무작위 맵 선택으로 처리되었습니다.",
+    "zh-TW": "該次超時已由系統隨機選圖處理。"
+  },
+  "本次超时警告已记录。": {
+    "en-US": "This timeout warning has been recorded.",
+    "ko-KR": "이번 시간 초과 경고가 기록되었습니다.",
+    "zh-TW": "本次超時警告已記錄。"
+  },
+  "该图禁用权已取消。": {
+    "en-US": "Your team's ban for that map was cancelled.",
+    "ko-KR": "해당 맵의 밴 권한이 취소되었습니다.",
+    "zh-TW": "該圖禁用權已取消。"
+  },
+  "此为已记录的处理结果，当前操作请以比赛房最新状态为准。": {
+    "en-US": "This is a recorded outcome. Follow the current match room status for your next action.",
+    "ko-KR": "이미 기록된 처리 결과입니다. 다음 조작은 경기방의 최신 상태를 따라 주세요.",
+    "zh-TW": "此為已記錄的處理結果，當前操作請以比賽房最新狀態為準。"
+  },
   "报名信息暂时无法读取，请稍后重试。已保存的报名不受影响。": {
     "en-US": "Registration details could not be loaded. Please try again shortly; saved registrations are not affected.",
     "ko-KR": "등록 정보를 불러올 수 없습니다. 잠시 후 다시 시도해 주세요. 저장된 등록에는 영향이 없습니다.",
