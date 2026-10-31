@@ -239,3 +239,29 @@ test('an explicit teaching jump preserves the chosen current map and does not re
   assert.deepEqual(state.completedMaps.slice(0, recorded.length), recorded)
   assert.equal(state.reviewed, true)
 })
+
+test('practice countdown displays the actual next map and chooser without changing its deadline or command version', () => {
+  let state = createRoomPractice('referee', 'forfeit', 'FT3')
+  state = applyRoomPractice(state, '/rulings', { action: 'MAP_FORFEIT', forfeitedSide: 'A', reason: 'Missing players' }).state
+  const before = structuredClone(state.phaseClock), data = buildRoomPractice(state, copy)
+  assert.equal(data.phaseClock.stage.mapOrder, 4)
+  assert.equal(data.phaseClock.stage.side, data.opening.next.chooserSide)
+  assert.equal(data.phaseClock.stage.side, 'A')
+  assert.equal(data.phaseClock.deadlineAt, before.deadlineAt)
+  assert.equal(data.phaseClock.revision, before.revision)
+  assert.deepEqual(state.phaseClock, before)
+  state = applyRoomPractice(state, '/opening', { action: 'NEXT_MAP' }).state
+  assert.equal(buildRoomPractice(state, copy).phaseClock.deadlineAt, before.deadlineAt)
+  const opened = buildRoomPractice(state, copy).phaseClock
+  state = applyRoomPractice(state, '/clock', { action: 'SET_ENABLED', enabled: false, expectedRevision: opened.revision, stageKey: opened.stage.key }).state
+  assert.equal(buildRoomPractice(state, copy).phaseClock.enabled, false)
+  assert.equal(buildRoomPractice(state, copy).phaseClock.stage.mapOrder, 4)
+})
+
+test('a valid B map win is not mislabeled as the scripted score-correction exercise', () => {
+  let state = createRoomPractice('referee', 'live', 'FT3')
+  state = applyRoomPractice(state, '/commands', { action: 'RECORD_MAP_RESULT', scoreA: 1, scoreB: 2 }).state
+  assert.equal(practiceLesson(state), 'review')
+  assert.equal(buildRoomPractice(state, copy).opening.next.chooserSide, 'A')
+  assert.equal(practiceLesson(createRoomPractice('referee', 'review', 'FT3')), 'correction')
+})
