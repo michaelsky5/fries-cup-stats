@@ -1,4 +1,6 @@
 // Browser-only teaching state. No account IDs, room IDs, network calls or storage.
+import { guideFormat } from './roomGuideFormats.js'
+
 export const SIM_PLAYERS = [
   { id: 'a1', role: 'DPS' }, { id: 'a2', role: 'DPS' }, { id: 'a3', role: 'TANK' },
   { id: 'a4', role: 'SUP' }, { id: 'a5', role: 'SUP' }, { id: 'a6', role: 'DPS' }, { id: 'a7', role: 'SUP' },
@@ -19,6 +21,9 @@ export const SIM_CHALLENGES = {
   'map-score': { type: 'score', stage: 'map-result' },
   'score-correct': { type: 'correction', stage: 'map-result' },
   rr5: { type: 'decision', options: ['continue-five','end-three','sixth-map'], correct: 'continue-five', stage: 'map-result' },
+  ft: { type: 'decision', options: ['finish-target','continue-five','sixth-map'], correct: 'finish-target', stage: 'map-result' },
+  'map-forfeit': { type: 'decision', options: ['forfeit-one','forfeit-full','forfeit-erase'], correct: 'forfeit-one', stage: 'map-result' },
+  'map-forfeit-end': { type: 'decision', options: ['forfeit-end','forfeit-continue','forfeit-erase'], correct: 'forfeit-end', stage: 'map-result' },
   confirm: { type: 'decision', options: ['confirm-result','edit-points'], correct: 'confirm-result', stage: 'result' },
   dispute: { type: 'dispute', stage: 'result' },
   report: { type: 'checks', checks: ['screenshots','players','series'], stage: 'result' },
@@ -49,20 +54,22 @@ export const SIM_SCENARIOS = {
   handover: { role: 'referee', ids: ['assign'] }, substitution: { role: 'representative', ids: ['substitution','lineup'] },
   'opening-error': { role: 'referee', ids: ['opening-error'] }, disconnect: { role: 'referee', ids: ['pause','resume'] },
   'result-error': { role: 'referee', ids: ['score-correct','report'] }, rr5: { role: 'representative', ids: ['rr5'] },
+  ft: { role: 'referee', ids: ['ft'] }, 'map-forfeit': { role: 'referee', ids: ['map-forfeit','map-forfeit-end'] },
   forfeit: { role: 'admin', ids: ['forfeit'] }, dispute: { role: 'representative', ids: ['dispute'] },
   sync: { role: 'member', ids: ['sync'] }, broadcast: { role: 'caster', ids: ['caster-access','caster-pause'] },
 }
 
-export function createSimulation(role = 'representative', scenario = '', mode = 'referee') {
+export function createSimulation(role = 'representative', scenario = '', mode = 'referee', format = 'RR5') {
+  format = guideFormat(format)
   const course = SIM_SCENARIOS[scenario]
   const ids = !course && role === 'representative' && mode === 'captains'
     ? ['checkin','pick','lineup','ban-order','ban','start','pause','resume','map-score','rr5','confirm']
     : course?.ids || SIM_COURSES[role] || SIM_COURSES.representative
   return { role: course?.role || (SIM_COURSES[role] ? role : 'representative'), scenario: course ? scenario : '', mode: mode === 'captains' ? mode : 'referee',
-    ids: [...ids], round: 0, index: 0, complete: false, error: '', attempts: 0, history: [], setup: {} }
+    format, ids: ids.map(id => id === 'rr5' && format !== 'RR5' && !course ? 'ft' : id), round: 0, index: 0, complete: false, error: '', attempts: 0, history: [], setup: {} }
 }
 
-export function validateSimulationInput(challengeId, input = {}, setup = {}) {
+export function validateSimulationInput(challengeId, input = {}, setup = {}, format = 'RR5') {
   const challenge = SIM_CHALLENGES[challengeId]
   if (!challenge) return 'invalid'
   const note = String(input.note || '').trim()
@@ -82,16 +89,16 @@ export function validateSimulationInput(challengeId, input = {}, setup = {}) {
   if (['reason','dispute'].includes(challenge.type)) return note.length >= 2 ? '' : 'note'
   if (['score','correction'].includes(challenge.type)) return String(input.scoreA) === '2' && String(input.scoreB) === '1' && (challenge.type !== 'correction' || note.length >= 2) ? '' : 'score'
   if (challenge.type === 'review') return input.player === 'a2' && input.checks?.includes('screenshots') ? '' : 'review'
-  if (challenge.type === 'settle') return String(input.scoreA) === '9' && String(input.scoreB) === '6' && input.checks?.includes('settlement-ready') ? '' : 'settle'
+  if (challenge.type === 'settle') return String(input.scoreA) === (format === 'RR5' ? '9' : '0') && String(input.scoreB) === (format === 'RR5' ? '6' : '0') && input.checks?.includes('settlement-ready') ? '' : 'settle'
   return 'invalid'
 }
 
 export function simulationReducer(state, action) {
-  if (action.type === 'RESET') return { ...createSimulation(state.role, state.scenario, state.mode), round: state.round + 1 }
+  if (action.type === 'RESET') return { ...createSimulation(state.role, state.scenario, state.mode, state.format), round: state.round + 1 }
   if (action.type === 'NEXT') return state.complete && state.index < state.ids.length - 1 ? { ...state, index: state.index + 1, complete: false, error: '' } : state
   if (action.type !== 'SUBMIT' || state.complete) return state
   const challengeId = state.ids[state.index], input = action.input || {}
-  const error = validateSimulationInput(challengeId, input, state.setup)
+  const error = validateSimulationInput(challengeId, input, state.setup, state.format)
   if (error) return { ...state, error, attempts: state.attempts + 1 }
   return { ...state, complete: true, error: '', history: [...state.history, challengeId], setup: challengeId === 'pick' ? { ...state.setup, map: input.map } : challengeId === 'ban-order' ? { ...state.setup, order: input.order } : challengeId === 'lineup' ? { ...state.setup, players: [...input.players] } : challengeId === 'ban' ? { ...state.setup, hero: input.hero } : state.setup }
 }

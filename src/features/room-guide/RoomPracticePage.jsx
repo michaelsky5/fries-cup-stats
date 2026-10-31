@@ -11,8 +11,9 @@ import { useMobileRoom } from '../weekly-competition/RoomMobile.jsx'
 import { buildRoomPractice, createPracticeSession, createPracticeTransport, practiceLesson, PRACTICE_ROLES } from './roomPractice.js'
 import copy from './roomGuideCopy.json'
 import styles from './RoomPracticePage.module.css'
+import { GUIDE_FORMATS, guideFormat, guideCopyForFormat } from './roomGuideFormats.js'
 
-function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
+function Practice({ role, initialScene, format, text, locale, onPreferences, frameOnly }) {
   const mobile = useMobileRoom() && !frameOnly
   const [guideOpen, setGuideOpen] = useState(false)
   const guide = useRef(null)
@@ -21,7 +22,7 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
     if (mobile && guideOpen) dialog?.showModal()
     else dialog?.close()
   }, [mobile, guideOpen])
-  const [session] = useState(() => createPracticeSession(role, initialScene))
+  const [session] = useState(() => createPracticeSession(role, initialScene, format))
   useEffect(() => { const timer = setInterval(() => session.tick(), 500); return () => clearInterval(timer) }, [session])
   const state = useSyncExternalStore(session.subscribe, session.getSnapshot)
   const [notice, setNotice] = useState(''), [run, setRun] = useState(0), [hint, setHint] = useState(false)
@@ -64,11 +65,11 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
   }
   const jumpResult = () => { session.apply('result', {}, 'scene'); setRun(value => value + 1); setNotice(''); setHint(false); coach.current?.scrollIntoView({ block: 'start' }) }
   const teaching = <>
-    <header className={styles.topbar} data-i18n-ignore><Link to={withLocale(`/guides/weekly-room?role=${role}`, locale)}>← {text['room.exit']}</Link><strong>{text['room.title']}</strong><div><label>{text['sim.role']} <select value={role} onChange={event => onRole(event.target.value)}>{PRACTICE_ROLES.map(value => <option key={value} value={value}>{text[`role.${value}`]}</option>)}</select></label><button type="button" onClick={reset}>{text['sim.reset']}</button></div></header>
-    <p className={styles.boundary} data-i18n-ignore>{text['room.boundary']}</p>
+    <header className={styles.topbar} data-i18n-ignore><Link to={withLocale(`/guides/weekly-room?role=${role}&format=${format}`, locale)}>← {text['room.exit']}</Link><strong>{text['room.title']}</strong><div><label>{text['format.title']} <select value={format} onChange={event => onPreferences({ format: event.target.value, scene: '' })}>{GUIDE_FORMATS.map(value => <option key={value} value={value}>{text[`format.${value}.label`]}</option>)}</select></label><label>{text['sim.role']} <select value={role} onChange={event => onPreferences({ role: event.target.value })}>{PRACTICE_ROLES.map(value => <option key={value} value={value}>{text[`role.${value}`]}</option>)}</select></label>{format !== 'RR5' && ['referee', 'admin'].includes(role) && <label>{text['room.exercise']} <select value={['forfeit', 'forfeit-last'].includes(initialScene) ? initialScene : ''} onChange={event => onPreferences({ scene: event.target.value })}><option value="">{text['room.exercise.flow']}</option><option value="forfeit">{text['room.exercise.forfeit']}</option>{format === 'FT3' && <option value="forfeit-last">{text['room.exercise.last']}</option>}</select></label>}<button type="button" onClick={reset}>{text['sim.reset']}</button></div></header>
+    <p className={styles.boundary} data-i18n-ignore>{text['room.boundary']} {text[`format.${format}.body`]}</p>
     <section ref={coach} className={styles.coach} data-i18n-ignore aria-labelledby="practice-task-title">
       <div className={styles.coachTitle}><span>{text['room.coach']}</span><h1 id="practice-task-title">{text[`room.task.${teachingKey}`]}</h1><p>{text[`room.help.${teachingKey}`]}</p></div>
-      <div className={styles.coachActions}><button type="button" onClick={locate}>{text['room.locate']} ↓</button>{state.scene === 'ready' && role === 'representative' && <button type="button" onClick={() => session.apply('start', {}, 'scene')}>{text['room.simulate-start']}</button>}{['live', 'review'].includes(state.scene) && <button type="button" onClick={jumpResult}>{text['room.jump']} →</button>}<details><summary>{text['room.terms']}</summary><p>{text['room.glossary']}</p></details></div>
+      <div className={styles.coachActions}><button type="button" onClick={locate}>{text['room.locate']} ↓</button>{state.scene === 'ready' && role === 'representative' && <button type="button" onClick={() => session.apply('start', {}, 'scene')}>{text['room.simulate-start']}</button>}{['live', 'review'].includes(state.scene) && <button type="button" onClick={jumpResult}>{text['room.jump']} →</button>}{state.scene === 'result' && !state.reviewed && <button type="button" onClick={() => session.apply('review-result', {}, 'scene')}>{text['room.simulate-review']}</button>}<details><summary>{text['room.terms']}</summary><p>{text['room.glossary']}</p></details></div>
       {state.event !== 'welcome' && <p className={styles.response} role="status">✓ {text[`room.event.${state.event}`] || text['room.saved']}</p>}
     </section>
   </>
@@ -82,7 +83,7 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
       </dialog>
     </> : teaching}
     <div ref={room} className={styles.room} data-hint={hint ? hintArea : ''}>
-      <RoomTransportProvider value={transport}><WeeklyRoomView key={`${role}:${run}`} preview matchId={data.match.id} controller={controller} returnPathOverride={withLocale('/guides/weekly-room', locale)} returnLabelOverride={text['room.exit']} accountControl={<span className={styles.identity}>{text['room.you']} · {text[`role.${role}`]}</span>} /></RoomTransportProvider>
+      <RoomTransportProvider value={transport}><WeeklyRoomView key={`${role}:${run}`} preview matchId={data.match.id} controller={controller} returnPathOverride={withLocale(`/guides/weekly-room?format=${format}`, locale)} returnLabelOverride={text['room.exit']} accountControl={<span className={styles.identity}>{text['room.you']} · {text[`role.${role}`]}</span>} /></RoomTransportProvider>
     </div>
     {!mobile && after}
   </div>
@@ -90,9 +91,10 @@ function Practice({ role, initialScene, text, locale, onRole, frameOnly }) {
 
 export default function RoomPracticePage() {
   const locale = useUiLocale(), [params, setParams] = useSearchParams()
-  const text = copy[locale] || copy['zh-CN'], role = PRACTICE_ROLES.includes(params.get('role')) ? params.get('role') : 'representative'
+  const format = guideFormat(params.get('format')), text = guideCopyForFormat(copy[locale] || copy['zh-CN'], format), role = PRACTICE_ROLES.includes(params.get('role')) ? params.get('role') : 'representative'
   const scene = params.get('scene') || ''
   // 票 2.76: the same tab title pattern as every other page (「模拟比赛房 | 薯条杯」).
   useEffect(() => { document.title = buildFriesCupTitle(text['room.title'], locale) }, [text, locale])
-  return <Practice frameOnly={import.meta.env.DEV && params.get('frame') === 'room'} key={role + scene} role={role} initialScene={scene} locale={locale} text={text} onRole={value => setParams({ role: value, ...(params.get('lang') ? { lang: params.get('lang') } : {}) })} />
+  const onPreferences = values => { const next = new URLSearchParams(params); for (const [key, value] of Object.entries(values)) value ? next.set(key, value) : next.delete(key); setParams(next) }
+  return <Practice frameOnly={import.meta.env.DEV && params.get('frame') === 'room'} key={`${role}:${scene}:${format}`} role={role} initialScene={scene} format={format} locale={locale} text={text} onPreferences={onPreferences} />
 }
