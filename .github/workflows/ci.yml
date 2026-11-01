@@ -65,6 +65,12 @@ jobs:
       - name: Check statistical rating and archived scoring rules
         run: npm run test:statistical-rating && npm run test:rating-release && node --test scripts/assertMatchReview.mjs
 
+      - name: Check scouting report selection, artifacts and artwork
+        run: npm run test:scouting-report
+
+      - name: Check internal team strength math and evaluation boundaries
+        run: npm run test:team-strength
+
       - name: Check match data feedback and missing MVP explanations
         run: node --test scripts/matchFeedback.test.mjs scripts/historicalMatchMvp.test.mjs
 
