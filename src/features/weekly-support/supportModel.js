@@ -1,3 +1,5 @@
+import { getMatchLookupIds } from '../../lib/weeklyMatchIdentity.js'
+
 export const SUPPORT_SCHEMA = 'friescup-weekly-support-v1'
 const cents = v => Number.isSafeInteger(v) && v >= 0 ? v : 0
 const purposeAmounts = (values,signed=false) => Object.fromEntries(['PLAYOFFS','FINALS','OPERATIONS'].map(key=>[key,signed && Number.isSafeInteger(values?.[key]) ? values[key] : cents(values?.[key])]))
@@ -6,6 +8,13 @@ export const publicUrl = value => {try {const u=new URL(value);return u.protocol
 const TIERS = ['A','B','C','D','E']
 const UPGRADE_STATUSES = ['PLANNED','FUNDED','SCHEDULED','COMPLETE']
 const isoOrNull = value => Number.isFinite(Date.parse(value)) ? String(value) : null
+// The agreed service list stays fixed; the bound public match owns its current schedule.
+export function supportBroadcastStart(slot, match) {
+  const bound = Boolean(slot?.matchId && getMatchLookupIds(match).includes(slot.matchId))
+  const scheduled = bound ? isoOrNull(match?.scheduled_at) || isoOrNull(match?.scheduledAt) : null
+  return scheduled || isoOrNull(slot?.startsAt)
+}
+
 // This projection deliberately has no orders, contacts, payment proofs or private IDs.
 export function publicSupportView(value, seasonId, now=Date.now()) {
   if (value?.schema!==SUPPORT_SCHEMA || value.seasonId!==seasonId) throw new Error('SUPPORT_SCOPE_MISMATCH')

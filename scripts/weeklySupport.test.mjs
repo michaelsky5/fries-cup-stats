@@ -1,7 +1,29 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { publicSupportView } from '../src/features/weekly-support/supportModel.js'
+import { publicSupportView, supportBroadcastStart } from '../src/features/weekly-support/supportModel.js'
 import { proxyRequest } from '../edge-functions/api/[[path]].js'
+
+test('bound broadcast uses the current public match schedule without changing agreed slots',()=>{
+  const slot={id:'B02',matchId:'raw-match-2',startsAt:null}
+  const match={match_id:'FCW26-C2-W1-REG-M9',raw_match_id:'raw-match-2',scheduled_at:'2026-11-01T13:00:00.000Z'}
+  assert.equal(supportBroadcastStart(slot,match),'2026-11-01T13:00:00.000Z')
+  const planned={...slot,startsAt:'2026-11-01T12:00:00.000Z'}
+  assert.equal(supportBroadcastStart(planned,match),match.scheduled_at)
+  assert.equal(supportBroadcastStart(planned,{...match,scheduled_at:'2026-11-02T13:00:00.000Z'}),'2026-11-02T13:00:00.000Z')
+  assert.equal(slot.startsAt,null)
+  assert.equal(planned.startsAt,'2026-11-01T12:00:00.000Z')
+})
+
+test('unbound, mismatched or invalid match times keep the agreed time or remain unknown',()=>{
+  const slot={matchId:'match-2',startsAt:'2026-11-01T13:00:00.000Z'}
+  const match={id:'match-2',scheduled_at:'invalid',scheduledAt:'2026-11-02T13:00:00.000Z'}
+  assert.equal(supportBroadcastStart(slot,match),match.scheduledAt)
+  for(const other of [null,{...match,id:'other-match'},{id:'match-2',scheduled_at:'invalid'}]) {
+    assert.equal(supportBroadcastStart(slot,other),slot.startsAt)
+    assert.equal(supportBroadcastStart({...slot,startsAt:null},other),null)
+  }
+  assert.equal(supportBroadcastStart({matchId:'',startsAt:null},match),null)
+})
 test('public UI rejects wrong scope and strips private fields and expired web names',()=>{
   const now=Date.parse('2026-10-18T12:00Z')
   const raw={schema:'friescup-weekly-support-v1',seasonId:'FCW26',published:true,orders:[{contact:'SECRET'}],contact:'SECRET',entryUrl:'javascript:alert(1)',supporters:[{displayName:'过期',web:true,startsAt:'2026-01-01',endsAt:'2026-01-02'},{displayName:'允许',roll:true,contact:'SECRET',publicId:'PRIVATE'}]}
