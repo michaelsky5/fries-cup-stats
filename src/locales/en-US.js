@@ -10598,5 +10598,6 @@ export default {
   "的队伍。": "The team.",
   "系统正在生成该队伍的赛季数据摘要。": "The system is generating the season data summary for this team.",
   "赛季队伍标签": "Season team tag",
+  "参赛中心": "Participation center",
   "返回队伍目录": "Back to Teams"
 }

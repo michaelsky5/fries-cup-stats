@@ -1,14 +1,14 @@
 import { platformRequest } from '../auth/platformApi.js'
+import { lobbyBrowseQuery } from './lobbyBrowseModel.js'
 
 export const getLobbyConfig = options => platformRequest('/lobby/config', options)
 export const getMyLobby = options => platformRequest('/lobby/me', options)
+export const getLobbyEmailPreferences = options => platformRequest('/lobby/me/email-preferences', options)
+export const saveLobbyEmailPreferences = body => platformRequest('/lobby/me/email-preferences', { method: 'PATCH', body })
 export const readNotice = id => platformRequest(`/lobby/me/notices/${encodeURIComponent(id)}/read`, { method: 'POST', body: {} })
 export const getLobbyCard = (id, options) => platformRequest(`/lobby/cards/${encodeURIComponent(id)}`, options)
-export function getLobbyCards({ type = 'teams', role = 'all', page = 1 }, options) {
-  const query = new URLSearchParams({ kind: type === 'people' ? 'PERSON' : 'TEAM', page: String(page) })
-  if (role !== 'all') query.set('role', role)
-  return platformRequest(`/lobby/cards?${query}`, options)
-}
+export const getLobbyCards = (input = {}, options) => platformRequest(`/lobby/cards?${lobbyBrowseQuery(input)}`, options)
+export const exploreLobbyCards = (input = {}, options) => platformRequest(`/lobby/cards/explore?${lobbyBrowseQuery(input, { explore: true })}`, options)
 export const saveCard = body => platformRequest('/lobby/me/card', { method: 'PUT', body })
 export const changeCard = (id, body) => platformRequest(`/lobby/me/cards/${encodeURIComponent(id)}/action`, { method: 'POST', body })
 export const saveFormation = (body, id) => platformRequest(`/lobby/me/formations${id ? `/${encodeURIComponent(id)}` : ''}`, { method: id ? 'PUT' : 'POST', body })

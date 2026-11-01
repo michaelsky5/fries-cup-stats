@@ -11,7 +11,11 @@ test('QQ link accepts only a number and never lets input choose a scheme', () =>
 test('contact labels distinguish approval and an actual QQ view', () => {
   const identity = value => value
   assert.equal(qqContactStatus({ status: 'CONNECTED' }, identity), 'QQ 已授权')
-  assert.equal(qqContactStatus({ status: 'CONNECTED', firstViewedAt: '2026-10-28' }, identity), 'QQ 已查看')
+  assert.equal(qqContactStatus({ status: 'PENDING', received: true }, identity), '待你回应')
+  assert.equal(qqContactStatus({ status: 'PENDING', received: false }, identity), '等待对方同意')
+  assert.equal(qqContactStatus({ status: 'CONNECTED', received: true }, identity), '已授权，等待对方查看')
+  assert.equal(qqContactStatus({ status: 'CONNECTED', received: false, firstViewedAt: '2026-10-28' }, identity), '你已查看 QQ')
+  assert.equal(qqContactStatus({ status: 'CONNECTED', received: true, firstViewedAt: '2026-10-28' }, identity), '对方已查看 QQ')
   assert.equal(contactPurpose('RECRUITING', identity), '帮队伍找人')
   assert.equal(qqContactStatus({ status: 'ENDED' }, identity), null)
 })

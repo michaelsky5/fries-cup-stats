@@ -7,6 +7,7 @@ import { requestSignIn } from '../auth/signInRequest.js'
 import { useLobbyMine } from './useLobbyState.js'
 import { ContactInbox, FeedbackLink } from './LobbyContacts.jsx'
 import CardQqSettings from './CardQqSettings.jsx'
+import LobbyEmailSettings from './LobbyEmailSettings.jsx'
 import { supportsCardQqAccess } from './lobbyQq.js'
 import { accountFailure, lobbyDate, statusLabel, lobbyReadFailure, lobbyRegistrationMessage } from './lobbyModel.js'
 import * as api from './lobbyApi.js'
@@ -14,7 +15,7 @@ import { revealAlert } from './lobbyFocus.js'
 import styles from './Lobby.module.css'
 import navStyles from '../../components/navigation/SignalSectionNav.module.css'
 
-const tabs = [['received', '收到的联系'], ['sent', '发出的联系'], ['contacts', '全部联系'], ['cards', '我的卡片'], ['formation', '筹建进度']]
+const tabs = [['received', '收到的联系'], ['sent', '发出的联系'], ['contacts', '全部联系'], ['cards', '我的卡片'], ['formation', '筹建进度'], ['email', '邮件提醒']]
 export default function MyLobbyPage() {
   useUiLocale()
 
@@ -48,6 +49,7 @@ export default function MyLobbyPage() {
       {!data.canWrite && <p className={styles.notice}>{data.restriction || t("当前账号未验证邮箱或大厅尚不可操作。已有记录保留。")} {!user.emailVerifiedAt && <Link to="/account/verify-email?returnTo=%2Flobby%2Fme">{t("验证本人邮箱")}</Link>}</p>}
       <nav ref={tabsRef} className={`${navStyles.root} ${styles.lobbyTabs}`} aria-label={t("我的组队分类")}>{tabs.map(([id, label]) => <button key={id} type="button" className={navStyles.item} aria-pressed={tab === id} onClick={() => setQuery(current => { current.set('tab', id); current.delete('requestId'); current.delete('contactPage'); return current })}>{t(label)}</button>)}</nav>
       {['received', 'sent', 'contacts'].includes(tab) && <ContactInbox direction={tab === 'contacts' ? 'all' : tab} config={data.config} onChanged={refresh} />}
+      {tab === 'email' && <LobbyEmailSettings key={user.id} user={user} />}
       {tab === 'cards' && <>
         <div className={styles.sectionHeading}><h2>{t("我的需求卡")}</h2><Link to="/lobby/me/publish?type=team">{t("队伍招募 →")}</Link></div>
         {!data.cards.length && <p className={styles.empty}>{t("还没有发布需求。可以先发布个人求队卡，或申请筹建招募。")}</p>}

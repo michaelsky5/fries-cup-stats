@@ -32,7 +32,13 @@ export function safeLobbyReturn(value) {
   const url = new URL(value, 'https://lobby.invalid')
   if (url.origin !== 'https://lobby.invalid' || !/^\/lobby(?:\/|$)/.test(url.pathname)) return '/lobby'
   const query = new URLSearchParams()
-  for (const key of ['type', 'role', 'page', 'tab', 'contactPage', 'lang']) if (url.searchParams.has(key)) query.set(key, url.searchParams.get(key))
+  for (const key of ['type', 'role', 'page', 'tab', 'contactPage', 'lang', 'view', 'q', 'level', 'time', 'qq', 'recent', 'teamState', 'sort']) {
+    if (!url.searchParams.has(key)) continue
+    const value = url.searchParams.get(key)
+    // The qq key is a mode selector, never a private number carried into sign-in.
+    if (key === 'qq' && !['REQUEST', 'VERIFIED'].includes(value)) continue
+    query.set(key, value)
+  }
   const requestId = url.searchParams.get('requestId')
   if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestId || '')) query.set('requestId', requestId)
   return url.pathname + (query.size ? `?${query}` : '')

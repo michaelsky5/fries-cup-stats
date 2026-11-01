@@ -5,11 +5,10 @@ import { Link, useLocation, useNavigate, useParams, useSearchParams, useBlocker 
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { requestSignIn } from '../auth/signInRequest.js'
 import * as api from './lobbyApi.js'
-import { LOBBY_ROLES, roleLabel, lobbyDate, accountFailure, leavesLobbyPage, lobbyReadFailure, retryableRead, canPublishLobby, lobbyRegistrationMessage, lobbyCardCopy, needsLabel } from './lobbyModel.js'
+import { LOBBY_ROLES, roleLabel, lobbyDate, accountFailure, leavesLobbyPage, lobbyReadFailure, retryableRead, lobbyRegistrationMessage, lobbyCardCopy, needsLabel } from './lobbyModel.js'
 import { reportInvalidField, revealAlert } from './lobbyFocus.js'
 import styles from './Lobby.module.css'
 import { useLobbyMine as useMine } from './useLobbyState.js'
-import { ContactEntry } from './LobbyContacts.jsx'
 
 function ErrorNotice({ error, ref }) {
   useUiLocale()
@@ -31,62 +30,8 @@ function Access({ children, write = false, data }) {
   if (write && data && !data.canWrite) return <section className={styles.empty}><h1>{t("暂时不能发布或修改")}</h1><p>{data.restriction || t("大厅当前为只读或尚未开放。")}</p><Link to="/lobby/me">{t("返回本人记录")}</Link></section>
   return children
 }
-function CardSummary({ card, returnTo }) {
-  useUiLocale()
-  const copy = lobbyCardCopy(card.kind)
-
-  return <article className={styles.card}>
-    <div className={styles.cardTop}><span className={styles.eyebrow}>{card.kind === 'PERSON' ? t("个人找队") : card.forming ? t("组队中") : t("队伍招募")}</span><span>{card.roles.map(roleLabel).join(' / ')}</span></div>
-    <h2><Link to={`/lobby/cards/${card.publicId}`} state={{ returnTo }}>{card.title}</Link></h2>
-    {card.needs && <p>{needsLabel(card.needs)}</p>}
-    <dl><div><dt>{t("可赛时间")}</dt><dd>{card.availability}</dd></div><div><dt>{t("组队目标")}</dt><dd>{card.goal}</dd></div>
-      {card.level && <div><dt>{copy.levelLabel}</dt><dd>{card.level}</dd></div>}
-      {card.kind === 'PERSON' && card.heroes && <div><dt>{copy.heroesLabel}</dt><dd>{card.heroes}</dd></div>}</dl>
-    <p className={styles.excerpt}>{card.bio}</p><footer>{t("需求确认于")} {lobbyDate(card.confirmedAt)}<Link to={`/lobby/cards/${card.publicId}`} state={{ returnTo }}>{t("查看详情 →")}</Link></footer>
-  </article>
-}
-export function LobbyIndex() {
-  useUiLocale()
-
-  const [query, setQuery] = useSearchParams()
-  const [data, setData] = useState(null), [config, setConfig] = useState(null), [error, setError] = useState(null), [attempt, setAttempt] = useState(0)
-  const type = query.get('type') === 'people' ? 'people' : 'teams'
-  const role = LOBBY_ROLES.some(item => item.value === query.get('role')) ? query.get('role') : 'all'
-  const page = Math.max(1, Math.min(10000, Number(query.get('page')) || 1))
-  useEffect(() => {
-    const controller = new AbortController()
-    setError(null); setData(null)
-    api.getLobbyConfig({ signal: controller.signal }).then(value => {
-      if (controller.signal.aborted) return null
-      setConfig(value)
-      return value.mode === 'OFF' ? null : api.getLobbyCards({ type, role, page }, { signal: controller.signal })
-    }).then(value => { if (!controller.signal.aborted) setData(value) }).catch(failure => { if (!controller.signal.aborted) setError(failure) })
-    return () => controller.abort()
-  }, [type, role, page, attempt])
-  function filter(key, value) { const next = new URLSearchParams(query); next.set(key, value); next.set('page', '1'); setQuery(next) }
-  return <>
-    <div className={styles.pageHeading}><div><h1>{t("找到下一位队友")}</h1><p>{t("发布求队名片，或为队伍找到合适的人。")}</p></div>{canPublishLobby(config, error) && <div className={styles.actions}><Link className={styles.primary} to="/lobby/me/publish?type=person">{t("发布我的求队")}</Link><Link to="/lobby/me/publish?type=team">{t("队伍招募")}</Link></div>}</div>
-    {config && config.mode !== 'OFF' && !error && <div className={styles.filters}><div className={styles.tabs}><button aria-pressed={type === 'teams'} onClick={() => filter('type', 'teams')}>{t("队伍招人")}</button><button aria-pressed={type === 'people'} onClick={() => filter('type', 'people')}>{t("个人找队")}</button></div><label>{t("岗位")} <select value={role} onChange={event => filter('role', event.target.value)}><option value="all">{t("全部岗位")}</option>{LOBBY_ROLES.map(item => <option key={item.value} value={item.value}>{t(item.label)}</option>)}</select></label></div>}
-    {error && <><p role="alert" className={styles.error}>{lobbyReadFailure(error)}</p><button onClick={() => setAttempt(value => value + 1)}>{t("重新读取")}</button></>}
-    {config?.mode === 'OFF' ? <div className={styles.empty}><h2>{t("组队大厅暂未开放")}</h2><p>{t("需求记录会保留，已有账号仍可按各自开放范围登录。")}</p></div> : !data && !error ? <p role="status">{t("正在读取需求…")}</p> : data && <>
-      {config?.mode === 'READ_ONLY' && <p className={styles.notice}>{t("大厅当前只读，可以浏览需求和管理已有联系。")}</p>}
-      {data.cards.length ? <div className={styles.cards}>{data.cards.map(card => <CardSummary key={card.publicId} card={card} returnTo={`/lobby?${query}`} />)}</div>
-        : data.total > 0 ? <div className={styles.empty}><h2>{t("这一页已经没有需求了")}</h2><button onClick={() => filter('page', '1')}>{t("回到第一页")}</button></div>
-        : <div className={styles.empty}><h2>{role === 'all' ? t("暂时没有展示中的需求") : t("没有符合这个岗位的需求")}</h2><p>{t("这里仅展示仍有效的真实需求。")}</p>{role !== 'all' && <button onClick={() => filter('role', 'all')}>{t("清除岗位筛选")}</button>}</div>}
-      {data.total > 0 && <div className={styles.pagination}><button disabled={page <= 1} onClick={() => setQuery(current => { current.set('page', String(page - 1)); return current })}>{t("上一页")}</button><span>{t('第 {0} 页 · {1} 条需求', [page, data.total])}</span><button disabled={page * data.pageSize >= data.total} onClick={() => setQuery(current => { current.set('page', String(page + 1)); return current })}>{t("下一页")}</button></div>}
-    </>}
-  </>
-}
-export function LobbyDetail() {
-  useUiLocale()
-
-  const { publicId } = useParams(), location = useLocation()
-  const [card, setCard] = useState(null), [error, setError] = useState(null), [attempt, setAttempt] = useState(0)
-  const returnTo = location.state?.returnTo?.startsWith('/lobby?') ? location.state.returnTo : '/lobby'
-  const copy = card ? lobbyCardCopy(card.kind) : null
-  useEffect(() => { const controller = new AbortController(); setCard(null); setError(null); api.getLobbyCard(publicId, { signal: controller.signal }).then(value => { if (!controller.signal.aborted) setCard(value.card) }).catch(failure => { if (!controller.signal.aborted) setError(failure) }); return () => controller.abort() }, [publicId, attempt])
-  return <><Link to={returnTo}>{t("← 返回需求列表")}</Link><ReadFailure error={error} onRetry={() => setAttempt(value => value + 1)} />{!card && !error && <p role="status">{t("正在读取卡片…")}</p>}{card && <div className={styles.detailGrid}><article className={styles.detail}><span className={styles.eyebrow}>{card.kind === 'PERSON' ? t("个人找队") : card.forming ? t("组队中") : t("队伍招募")}</span><h1>{card.title}</h1><div className={styles.tags}>{card.roles.map(role => <span key={role}>{roleLabel(role)}</span>)}</div><dl><div><dt>{t("可赛时间")}</dt><dd>{card.availability}</dd></div><div><dt>{t("组队目标")}</dt><dd>{card.goal}</dd></div>{card.needs && <div><dt>{t("招募需求")}</dt><dd>{needsLabel(card.needs)}</dd></div>}{card.level && <div><dt>{copy.levelLabel}</dt><dd>{card.level}{copy.levelNote}</dd></div>}{card.heroes && <div><dt>{copy.heroesLabel}</dt><dd>{card.heroes}</dd></div>}</dl><h2>{copy.bio}</h2><p className={styles.bodyCopy}>{card.bio}</p><p>{t("需求有效至")} {lobbyDate(card.expiresAt)}</p></article><aside className={styles.actionPanel}><ContactEntry card={card} /></aside></div>}</>
-}
+export { default as LobbyIndex } from './LobbyBrowse.jsx'
+export { default as LobbyDetail } from './LobbyDetail.jsx'
 export { default as MyLobby } from './MyLobbyPage.jsx'
 
 const blank = { title: '', roles: [], availability: '', goal: '', bio: '', level: '', heroes: '', counts: { TANK: 1, DPS: 1, SUP: 1 } }

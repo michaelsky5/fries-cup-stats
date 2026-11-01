@@ -11,7 +11,7 @@ export const PRIMARY_NAV = [
   { to: '/leaderboard', cn: '数据排行', en: 'STATS', ko: '데이터 순위', group: 'database' },
   // 票 2.18: how to take part — registration, weekly confirmation and match rooms.
   // 票 2.29: four characters like the other desktop items; the phone dock keeps 「参赛」.
-  { to: '/play', cn: '参赛指南', en: 'PLAY', ko: '참가 안내', group: 'play' },
+  { to: '/play', cn: '参赛中心', en: 'PARTICIPATE', ko: '참가 센터', group: 'play' },
   { to: '/me', cn: '我的空间', en: 'MY SPACE', ko: '내 공간', group: 'space' }
 ]
 
