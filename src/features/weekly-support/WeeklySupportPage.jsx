@@ -6,7 +6,7 @@ import { accountDateTime } from '../account-ui/accountDateTime.js'
 import { weeklyMatchState } from '../weekly-overview/weeklyOverviewModel.js'
 import { weeklyTeamShort } from '../weekly-overview/weeklyPresentation.js'
 import { usePublicSupport } from './usePublicSupport.js'
-import { rmb } from './supportModel.js'
+import { rmb, supportBroadcastStart } from './supportModel.js'
 import {
   BROADCAST_PLAN, CUSTOM_TIER, DELIVERY_PROMISES, FINALS_EXAMPLE, FINALS_MINIMUM_YUAN, FUND_SPLIT, PLAN_DATE,
   PLAYOFF_AWARD_YUAN, SUPPORT_CONTACT, SUPPORT_DOCUMENTS, SUPPORT_STEPS, SUPPORT_TIERS, TIER_NAMES, UPGRADE_PRIORITIES
@@ -57,7 +57,7 @@ export default function WeeklySupportPage() {
   }, [db])
   const broadcasts = (data?.broadcasts || []).map(slot => {
     const match = slot.matchId ? matchIndex.get(slot.matchId) : null
-    return { ...slot, match, state: match ? weeklyMatchState(match) : null }
+    return { ...slot, startsAt: supportBroadcastStart(slot, match), match, state: match ? weeklyMatchState(match) : null }
   })
   const finishedBroadcasts = broadcasts.filter(slot => ['complete', 'ruling'].includes(slot.state)).length
   const supporterGroups = TIER_ORDER.map(tier => ({ tier, people: (data?.supporters || []).filter(person => person.tier === tier) }))
