@@ -836,7 +836,7 @@ function MySpaceContent() {
       </div>
     </section>
   </main>
-  // 票 2.29: the guide is a header item (参赛指南) now; it no longer floats above 我的关注.
+  // The participation center lives in the header; this shortcut opens the match room guide.
   if (!isAuthenticated) return <FollowingPage />
   if (currentSpaceContext && spaceEntry.replacement) return <Navigate replace to={spaceEntry.replacement} state={{ ...location.state, spaceEntryNotice: spaceEntry.notice }} />
   return (
@@ -846,7 +846,7 @@ function MySpaceContent() {
         <div className={activeSection === 'overview' && !participationView ? styles.homeIdentity : styles.desktopIdentity}>
         <SpaceIdentity context={effectiveSpaceContext} locale={locale} withSeason={pageLink} following={activeSection === 'following'}
           contextContent={needsParticipationAccess ? <AccountCompetitionBar competition={competition} locale={locale} withSeason={pageLink} compact /> : null}
-          actions={<RoomGuideLink season={seasonId} label="参赛指南" className={styles.spaceGuide} />} />
+          actions={<RoomGuideLink season={seasonId} label="比赛房指南" className={styles.spaceGuide} />} />
         </div>
         {showIdentityContext && needsParticipationAccess ? <IdentityContextStrip context={effectiveSpaceContext} loading={spaceContextLoading} error={spaceContextError} /> : null}
         <div className={styles.desktopSpaceNavigation}><SpaceTabs key={activeSection} activeSection={activeSection} withSeason={pageLink} sections={spaceSections} overview={navigationSummary} locale={locale} /></div>

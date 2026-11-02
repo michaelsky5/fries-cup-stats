@@ -1,9 +1,13 @@
 import { getActiveLocale, normalizeLocale } from '../../lib/locales.js'
 import { qqCopyRows } from './lobbyQqCopy.js'
+import { lobbyBrowseCopyRows } from './lobbyBrowseCopy.js'
+import { lobbyEmailCopyRows } from './lobbyEmailCopy.js'
 
 // Interface copy only. Never translate account names, biographies, messages,
 // moderation reasons or other user-authored content through this dictionary.
 const rows = [
+  ['查看详情', 'View details', '자세히 보기', '查看詳情'],
+  ['{0} 条需求', '{0} listings', '모집글 {0}개', '{0} 條需求'],
   ['薯条杯', 'Fries Cup', '프라이즈 컵', '薯條杯'],
   ['组队大厅 · TEAM LOBBY', 'TEAM LOBBY', '팀 찾기 · TEAM LOBBY', '組隊大廳 · TEAM LOBBY'],
   ['组队大厅', 'Team lobby', '팀 찾기', '組隊大廳'],
@@ -404,6 +408,8 @@ rows.push(
   ['本页有 {0} 条联系等待你回应。', '{0} requests on this page are waiting for your reply.', '이 페이지에 응답을 기다리는 요청이 {0}개 있습니다.', '本頁有 {0} 條聯絡等待你回應。']
 )
 rows.push(...qqCopyRows)
+rows.push(...lobbyBrowseCopyRows)
+rows.push(...lobbyEmailCopyRows)
 export const lobbyCopyRows = rows
 const copy = new Map(rows.map(([source, en, ko, tw]) => [source, { 'en-US': en, 'ko-KR': ko, 'zh-TW': tw }]))
 export const hasLobbyCopy = source => copy.has(source)

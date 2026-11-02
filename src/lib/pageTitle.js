@@ -30,7 +30,7 @@ export function getDataCenterPageLabel(pathname = '/', search = '') {
   // 票 2.76: the tab title uses the navigation name (「赛事总览」), not the site name.
   if (path === '/') return '赛事总览'
   if (path === '/support') return '周赛支持与资金进度'
-  if (path === '/play') return '参赛指南'
+  if (path === '/play') return '参赛中心'
   if (path === '/guides/weekly-room') return '比赛房指南'
   if (path === '/schedule') return '赛程赛果'
   if (path === '/matches') return isFollowingMatchView(search) ? '我的关注' : '赛程赛果'

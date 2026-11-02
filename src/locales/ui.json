@@ -61117,6 +61117,11 @@
     "en-US": "Season team tag",
     "ko-KR": "시즌 팀 태그"
   },
+  "参赛中心": {
+    "zh-TW": "參賽中心",
+    "en-US": "Participation center",
+    "ko-KR": "참가 센터"
+  },
   "返回队伍目录": {
     "zh-TW": "返回隊伍目錄",
     "en-US": "Back to Teams",

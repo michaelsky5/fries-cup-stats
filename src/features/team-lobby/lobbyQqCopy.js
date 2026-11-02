@@ -1,4 +1,8 @@
 export const qqCopyRows = [
+  ['待你回应', 'Your response needed', '내 응답 필요', '待你回應'],
+  ['对方已查看 QQ', 'They have viewed your QQ', '상대방이 내 QQ를 조회했습니다', '對方已查看 QQ'],
+  ['你已查看 QQ', 'You have viewed their QQ', '상대방 QQ를 조회했습니다', '你已查看 QQ'],
+  ['已授权，等待对方查看', 'Access granted, awaiting their view', '공개 동의 완료, 상대방 조회 대기 중', '已授權，等待對方查看'],
   ['联系 TA', 'Contact', '연락하기', '聯絡 TA'],
   ['登录并验证邮箱后即可联系，无需先建队。', 'Sign in and verify your email to connect. No team required.', '로그인하고 이메일을 인증하면 팀 없이도 연락할 수 있습니다.', '登入並驗證電子郵件後即可聯絡，無需先建隊。'],
   ['管理卡片与 QQ', 'Manage card and QQ', '카드 및 QQ 관리', '管理卡片與 QQ'],
