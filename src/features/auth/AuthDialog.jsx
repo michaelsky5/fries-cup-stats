@@ -1,5 +1,5 @@
 import AccountAvatar from '../account-ui/AccountAvatar.jsx'
-import { translateUiText as uiText } from '../../lib/uiText.js'
+import { pickUiLocale, translateUiText as uiText } from '../../lib/uiText.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { getInitialSeasonId, withSeason } from '../../config/seasons.js'
@@ -7,6 +7,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthProvider.jsx'
 import useAccountCompetition from '../my-space/useAccountCompetition.js'
 import PasswordRecoveryPanel from './PasswordRecoveryPanel.jsx'
+import WechatQrLogin from './WechatQrLogin.jsx'
 import PasswordRequirements from './PasswordRequirements.jsx'
 import { passwordPolicyHint } from './passwordPolicy.js'
 import usePasswordRecovery from './usePasswordRecovery.js'
@@ -112,6 +113,8 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
   const submitLock = useRef(false)
   const pending = useRef(false)
   const registrationAllowed = authConfig?.selfRegistrationEnabled === true
+  // 小程序扫码登录：只有 System 在 /auth/config 里打开开关时才出现。
+  const wechatQrEnabled = authConfig?.wechatQrLogin?.enabled === true
   const recovery = usePasswordRecovery({ open, resetLink, locale, authConfig, refreshSession })
   const isRecovery = mode === 'forgot' || mode === 'reset'
   useEffect(() => { pending.current = recovery.busy || isSubmitting }, [recovery.busy, isSubmitting])
@@ -179,7 +182,8 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
 
   useEffect(() => {
     if (!registrationAllowed && mode === 'register') setMode('login')
-  }, [registrationAllowed, mode])
+    if (!wechatQrEnabled && mode === 'wechat') setMode('login')
+  }, [registrationAllowed, wechatQrEnabled, mode])
 
 
   if (!open) return null
@@ -251,6 +255,13 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
 
           {isRecovery ? <PasswordRecoveryPanel recovery={recovery} locale={locale} deliveryEnabled={authConfig?.emailVerificationEnabled === true} configLoading={!authConfig && !authConfigError} configError={authConfigError} retryConfig={retryAuthConfig} onLogin={() => { setForceSignIn(true); setMode('login'); setPassword(''); setConfirmPassword(''); if (recovery.email) setEmail(recovery.email) }} /> : isAuthenticated && !onSignedIn && !forceSignIn ? (
             <div className={styles.formIntro}><strong>{user?.displayName || user?.email}</strong><p>{locale === 'en-US' ? 'Manage your profile, password, email and devices in account settings.' : uiText("前往账号设置，管理资料、密码、邮箱和登录设备。", locale)}</p><Link to="/account" onClick={onClose}>{locale === 'en-US' ? 'Open account settings →' : uiText("打开账号设置 →", locale)}</Link></div>
+          ) : mode === 'wechat' ? (
+            <WechatQrLogin locale={locale} onUseEmail={() => setMode('login')} onConfirmed={async () => {
+              const signedIn = await refreshSession()
+              if (!signedIn?.id) throw new Error('SESSION_NOT_READY')
+              await onSignedIn?.(signedIn)
+              onClose()
+            }} />
           ) : (
             <>
               {['login', 'register'].includes(mode) ? registrationAllowed ? <div className={styles.tabs} role="group" aria-label={copy.account}>
@@ -352,6 +363,10 @@ export function AuthDialog({ open, onClose, onSignedIn, locale, initialMode = 'l
                 </button>
                 {mode === 'login' ? <button type="button" className={styles.formSwitch} disabled={isSubmitting} onClick={() => { recovery.beginRequest(email); setMode('forgot'); setSuccess(''); setPassword(''); setConfirmPassword('') }}>{locale === 'en-US' ? 'Forgot password?' : uiText("忘记密码？", locale)}</button> : null}
               </form>
+              {mode === 'login' && wechatQrEnabled ? <div className={styles.wechatEntryRow}>
+                <span className={styles.wechatDivider}>{pickUiLocale(locale, '或', 'or', '또는', '或')}</span>
+                <button type="button" className={styles.wechatEntry} disabled={isSubmitting} onClick={() => { setMode('wechat'); setSuccess(''); setPassword('') }}>{pickUiLocale(locale, '微信扫码登录', 'Sign in with WeChat', '위챗으로 로그인', '微信掃碼登入')}</button>
+              </div> : null}
             </>
           )}
         </div>

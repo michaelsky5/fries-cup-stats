@@ -354,3 +354,27 @@
   :global([data-design="kpr"]) .authButton[data-signed-out] .authArrow { display: none; }
   :global([data-design="kpr"]) .authButton[data-signed-out] .authName { max-width: 64px; font-size: 13px; font-weight: 750; }
 }
+
+/* 小程序扫码登录：邮箱表单下的次要入口，和扫码面板。 */
+.wechatEntryRow { display: grid; gap: 14px; margin-top: 22px; }
+.wechatDivider { display: flex; align-items: center; gap: 12px; color: var(--fc-data-text-muted); font-size: 12px; }
+.wechatDivider::before, .wechatDivider::after { content: ''; flex: 1; border-top: 1px solid var(--fc-data-line); }
+.wechatEntry { min-height: 48px; border: 1px solid var(--fc-data-ink); background: transparent; color: var(--fc-data-ink); font: 700 14px/1.5 var(--font-sans); cursor: pointer; }
+.wechatEntry:hover:not(:disabled) { background: var(--fc-data-paper-deep); }
+.wechatEntry:disabled { opacity: .5; cursor: not-allowed; }
+.wechatPanel { display: grid; justify-items: center; gap: 14px; text-align: center; }
+.wechatCodeFrame { position: relative; display: grid; place-items: center; width: 224px; height: 224px; border: 1px solid var(--fc-data-line-strong); background: #fff; }
+.wechatCode, .wechatCodePlaceholder { display: block; width: 200px; height: 200px; }
+.wechatCodePlaceholder { background: repeating-linear-gradient(135deg, var(--fc-data-paper-deep) 0 8px, transparent 8px 16px); }
+.wechatCodeFrame[data-dimmed] .wechatCode { opacity: .12; }
+.wechatRefresh { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); min-height: 44px; padding: 0 16px; border: 0; background: var(--fc-data-signal); color: var(--fc-data-ink); font: 700 14px/1.5 var(--font-sans); cursor: pointer; white-space: nowrap; }
+.wechatRefresh:hover { background: var(--fc-data-signal-bright); }
+.wechatStatus { display: grid; gap: 4px; margin: 0; max-width: 32ch; font-size: 14px; font-weight: 600; line-height: 1.7; }
+.wechatStatus[data-tone='progress'] { color: var(--fc-data-status-success); }
+.wechatStatus[data-tone='stopped'] { color: var(--fc-data-text-muted); }
+.wechatStatus small { color: var(--fc-data-text-muted); font-size: 12px; font-weight: 400; }
+.wechatMeta { margin: -6px 0 0; color: var(--fc-data-text-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.wechatAppLink { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; width: 100%; background: var(--fc-data-signal); color: var(--fc-data-ink); font: 700 14px/1.5 var(--font-sans); text-decoration: none; }
+.wechatPhoneHint { display: none; margin: 0; color: var(--fc-data-text-muted); font-size: 12px; line-height: 1.7; }
+.wechatPanel .formSwitch { justify-self: center; }
+@media (max-width: 600px), (pointer: coarse) { .wechatPhoneHint { display: block; } }
