@@ -5,6 +5,7 @@ import { Link, useBlocker, useLocation } from 'react-router-dom'
 import AccountFrame from '../../features/account-ui/AccountFrame.jsx'
 import AccountOverview from './AccountOverview.jsx'
 import EmailChangePanel from '../../features/account-security/EmailChangePanel.jsx'
+import BattleTagChangePanel from '../../features/account-security/BattleTagChangePanel.jsx'
 import { reminderCopy } from '../../features/match-reminders/reminderCopy.js'
 import MatchReminderSettings from '../../features/match-reminders/MatchReminderSettings.jsx'
 import AccountAvatar from '../../features/account-ui/AccountAvatar.jsx'
@@ -30,7 +31,7 @@ import PasswordRequirements from '../../features/auth/PasswordRequirements.jsx'
 
 const SECTIONS = [
   ['overview', '00', '账号概览'],
-  ['profile', '01', '个人资料'], ['password', '02', '修改密码'],
+  ['profile', '01', '个人资料'], ['battletag', '06', '战网 ID'], ['password', '02', '修改密码'],
   ['email', '03', '邮箱管理'], ['sessions', '04', '登录设备'], ['reminders', '05', '比赛提醒']
 ]
 
@@ -402,6 +403,7 @@ function SettingsWorkspace({ user, onRevoked }) {
     <div className={styles.cards} ref={cards}>
       {section === 'overview' && <AccountOverview user={user} spaceHref={spaceHref} />}
       {section === 'profile' && <ProfileSettings user={user} onDirtyChange={onDirtyChange} />}
+      {section === 'battletag' && <BattleTagChangePanel onDirtyChange={onDirtyChange} />}
       {section === 'password' && <PasswordSettings user={user} onRevoked={onRevoked} onDirtyChange={onDirtyChange} />}
       {section === 'email' && <EmailSettings user={user} onDirtyChange={onDirtyChange} />}
       {section === 'sessions' && <SessionSettings onRevoked={onRevoked} />}
