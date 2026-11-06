@@ -27,10 +27,10 @@ export default function CardQqSettings({ card, disabled, onSaved }) {
   }
   return <section className={styles.qqSettings}>
     <div className={styles.sectionHeading}><h3>{t('QQ 联系方式')}</h3><button type="button" disabled={disabled || busy} aria-expanded={open} onClick={() => { setOpen(!open); if (open) { setQq(''); setConsent(false); setMode(card.qqMode || 'REQUEST') } }}>{open ? t('取消') : t('设置 QQ')}</button></div>
-    <p>{card.qqMode === 'VERIFIED' ? t('已允许已验证用户查看；首次查看会通知你。') : t('逐次同意后，对方才能查看 QQ。')}</p>
+    <p>{card.qqMode === 'VERIFIED' ? t('已允许已验证邮箱的用户查看；每条联系首次查看时通知你。') : t('逐次同意后，对方才能查看 QQ。')}</p>
     {open && <form className={styles.stack} onSubmit={submit}>
       {error && <p ref={alertRef} tabIndex={-1} role="alert" className={styles.error}>{accountFailure(error)}</p>}
-      <label>{t('QQ 查看方式')}<select aria-label={t('QQ 查看方式')} value={mode} onChange={event => { setMode(event.target.value); setQq(''); setConsent(false) }} disabled={busy || disabled}><option value="REQUEST">{t('每次由我同意')}</option><option value="VERIFIED">{t('允许已验证用户查看并通知我')}</option></select></label>
+      <label>{t('QQ 查看方式')}<select aria-label={t('QQ 查看方式')} value={mode} onChange={event => { setMode(event.target.value); setQq(''); setConsent(false) }} disabled={busy || disabled}><option value="REQUEST">{t('每次由我同意')}</option><option value="VERIFIED">{t('允许已验证邮箱的用户查看并通知我')}</option></select></label>
       {mode === 'VERIFIED' && <>
         <label>{t('用于这张卡片的 QQ')}<input value={qq} onChange={event => setQq(event.target.value)} inputMode="numeric" pattern="[1-9][0-9]{4,11}" minLength={5} maxLength={12} autoComplete="off" required disabled={busy || disabled} /></label>
         <label className={styles.consent}><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} required disabled={busy || disabled} /><span>{t('我同意已登录并验证邮箱的用户查看此 QQ，每条联系首次查看时通知我。')}</span></label>

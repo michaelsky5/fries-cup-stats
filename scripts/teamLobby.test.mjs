@@ -5,6 +5,37 @@ import { safeLobbyReturn, accountFailure, roleLabel, statusLabel, leavesLobbyPag
 import { lobbyText, lobbyNoticeCopy, lobbyCopyRows } from '../src/features/team-lobby/lobbyCopy.js'
 import { safeAccountReturn } from '../src/features/auth/accountReturn.js'
 import { isAccountEntryPath } from '../src/features/auth/signInRequest.js'
+import { getLobbyCardHero } from '../src/features/team-lobby/lobbyPresentation.js'
+
+test('hero artwork recognizes joined names, aliases and positive prose without changing authored text', () => {
+  const cases = [
+    ['安娜，雾子', 'ana'], ['死怨闪光斩仇麦克雷', 'shion'], ['闪光、麦克雷', 'tracer'],
+    ['我只会狂鼠，看情况换地鼠卡车、阿三传送门', 'junkrat'], ['小锤 雾子 瑞希', 'brigitte'],
+    ['无恙、瑞希、依拉瑞', 'wuyang'], ['麦克雷', 'cassidy'], ['Junker Queen', 'junker-queen'],
+    ['主玩 D.VA / 温斯顿', 'dva'], ['禅雅塔, 巴蒂斯特', 'zenyatta']
+  ]
+  for (const [heroes, id] of cases) {
+    const card = { kind: 'PERSON', heroes }
+    assert.equal(getLobbyCardHero(card)?.id, id, heroes)
+    assert.equal(card.heroes, heroes)
+  }
+})
+
+test('hero artwork stays conservative for exclusions, negation, unrelated words and team requirements', () => {
+  for (const heroes of [
+    '除DJ 小锤 天使以外的所有辅助英雄', '除了天使都能玩', '天使除外',
+    '安娜不行，雾子可以', '安娜玩的不太行，雾子可以', '除了安娜之外都會',
+    '不會安娜，只玩霧子', '沒練過天使', '不会安娜，只玩雾子', '不擅长狂鼠',
+    'all supports except Mercy', 'Mercy never', 'Ana doesn’t work for me, Kiriko does',
+    'Canada', '美服坦克', '所有长枪', ''
+  ]) {
+    const card = { kind: 'PERSON', heroes }
+    assert.equal(getLobbyCardHero(card), null, heroes)
+    assert.equal(card.heroes, heroes)
+  }
+  assert.equal(getLobbyCardHero({ kind: 'PERSON', bio: '擅长安娜' }), null)
+  assert.equal(getLobbyCardHero({ kind: 'TEAM', heroes: '安娜、雾子' }), null)
+})
 
 test('account continuation only retains a local lobby destination and public reading state', () => {
   assert.equal(safeLobbyReturn('/lobby/me/publish?type=person'), '/lobby/me/publish?type=person')

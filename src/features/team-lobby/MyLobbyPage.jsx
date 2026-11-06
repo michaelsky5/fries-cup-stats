@@ -43,7 +43,7 @@ export default function MyLobbyPage() {
   if (isBootstrapping) return <p role="status">{t("正在读取账号…")}</p>
   if (!user) return <section className={styles.empty}><h1>{t("登录后管理我的组队")}</h1>{registrationMessage && <p>{registrationMessage}</p>}<button type="button" className={styles.primary} onClick={requestSignIn}>{t("登录／注册")}</button></section>
   return <><div className={styles.pageHeading}><div><h1>{t("我的组队")}</h1><p>{t("联系、卡片和筹建进度，集中在这里处理。")}</p></div>{data?.canWrite && !error && <Link className={styles.primary} to="/lobby/me/publish?type=person">{t("发布／编辑我的求队")}</Link>}</div>
-    {(error || failure) && <p ref={alertRef} tabIndex={-1} role="alert" className={styles.error}>{error ? lobbyReadFailure(error) : accountFailure(failure)} <button onClick={() => { setFailure(null); refresh() }}>{t("重新读取")}</button></p>}
+    {(error || failure) && <p ref={alertRef} tabIndex={-1} role="alert" className={styles.error}>{error ? lobbyReadFailure(error) : accountFailure(failure)} <button onClick={() => { setFailure(null); refresh() }}>{t("重试")}</button></p>}
     {!data && !error && <p role="status">{t("正在读取本人记录…")}</p>}
     {data && <>
       {!data.canWrite && <p className={styles.notice}>{data.restriction || t("当前账号未验证邮箱或大厅尚不可操作。已有记录保留。")} {!user.emailVerifiedAt && <Link to="/account/verify-email?returnTo=%2Flobby%2Fme">{t("验证本人邮箱")}</Link>}</p>}
@@ -52,11 +52,11 @@ export default function MyLobbyPage() {
       {tab === 'email' && <LobbyEmailSettings key={user.id} user={user} />}
       {tab === 'cards' && <>
         <div className={styles.sectionHeading}><h2>{t("我的需求卡")}</h2><Link to="/lobby/me/publish?type=team">{t("队伍招募 →")}</Link></div>
-        {!data.cards.length && <p className={styles.empty}>{t("还没有发布需求。可以先发布个人求队卡，或申请筹建招募。")}</p>}
+        {!data.cards.length && <p className={styles.empty}>{t("还没有发布卡片。可以发布求队资料，或申请组队招募。")}</p>}
         <div className={styles.cards}>{data.cards.map(card => <MyCard key={`${card.id}:${card.revision}`} card={card} canWrite={data.canWrite} busy={busy} act={act} onSaved={refresh} />)}</div>
       </>}
       {tab === 'formation' && <>
-        <div className={styles.sectionHeading}><h2>{t("筹建招募进度")}</h2><Link to="/lobby/me/formation">{t("申请筹建招募 →")}</Link></div>
+        <div className={styles.sectionHeading}><h2>{t("组队招募进度")}</h2><Link to="/lobby/me/formation">{t("申请组队招募 →")}</Link></div>
         {!data.formations.length && <p>{t("一个负责人即可申请，无需先有五名队员或报名记录。")}</p>}
         {data.formations.map(item => <article className={styles.progress} key={item.id}><div><h3>{item.name}</h3><p>{statusLabel(item.status)} · {lobbyDate(item.updatedAt)}</p>{item.reviewNote && <p>{item.reviewNote}</p>}</div><div className={styles.actions}>
           {item.status === 'RETURNED' && <Link to={`/lobby/me/formation?id=${item.id}`}>{t("修改并重提")}</Link>}

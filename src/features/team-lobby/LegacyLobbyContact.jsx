@@ -34,7 +34,7 @@ export default function LegacyLobbyContact({ card }) {
   if (isBootstrapping) return <p role="status">{t("正在读取账号…")}</p>
   if (!user) return <><h2>{t("申请联系")}</h2><p>{t("登录后可以表达联系意愿，正式入队另行确认。")}</p><button type="button" onClick={requestSignIn}>{t("登录／注册后继续")}</button></>
   if (!user.emailVerifiedAt) return <><h2>{t("先验证邮箱")}</h2><Link to={`/account/verify-email?returnTo=${encodeURIComponent(destination)}`}>{t("验证后继续联系")}</Link></>
-  if (error) return <p role="alert">{lobbyReadFailure(error)}{retryableRead(error) && <> <button type="button" onClick={refresh}>{t("重新读取")}</button></>}</p>
+  if (error) return <p role="alert">{lobbyReadFailure(error)}{retryableRead(error) && <> <button type="button" onClick={refresh}>{t("重试")}</button></>}</p>
   if (!data) return <p role="status">{t("正在读取联系权限…")}</p>
   const own = data.cards.some(item => item.publicId === card.publicId)
   const canContact = data.canWrite && data.config.contactEnabled
@@ -42,7 +42,7 @@ export default function LegacyLobbyContact({ card }) {
     {own ? <Link to="/lobby/me?tab=cards">{t("管理这张卡片")}</Link> : <>
       <p>{t("双方愿意联系并分别授权后，才会展示本次 QQ。接受联系不会加入正式名单。")}</p>
       {!canContact ? <p>{data.restriction || t("联系功能当前不可操作，已有记录仍保留。")}</p>
-        : card.kind === 'PERSON' && !data.teams.length ? <p>{t("代表队伍联系需要负责人身份。")}<Link to="/lobby/me/formation">{t("申请筹建招募")}</Link></p>
+        : card.kind === 'PERSON' && !data.teams.length ? <p>{t("代表队伍联系需要负责人身份。")}<Link to="/lobby/me/formation">{t("申请组队招募")}</Link></p>
           : <button className={styles.primary} onClick={() => setOpen(true)}>{card.kind === 'TEAM' ? t("申请联系") : t("代表队伍申请联系")}</button>}
       <p><Link to="/lobby/me?tab=contacts">{t("查看我的联系记录")}</Link></p>
     </>}

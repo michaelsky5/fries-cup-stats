@@ -111,38 +111,38 @@ export default function LobbyBrowse() {
   function reset() { setQuery(previous => { const next = new URLSearchParams(previous); filterKeys.forEach(key => next.delete(key)); next.set('page', '1'); return next }, { preventScrollReset: true }) }
   const errorMessage = error ? lobbyReadFailure(error) : ''
   return <>
-    <div className={`${common.pageHeading} ${styles.heading}`}><div><span className={cards.headingKicker}>{t('组队大厅 · TEAM LOBBY')}</span><h1>{t('找到下一位队友')}</h1><p>{t('发布求队名片，或为队伍找到合适的人。')}</p></div>
-      {canPublishLobby(config, error) && <div className={`${common.actions} ${styles.publishActions}`}><Link data-relevant={type === 'people'} className={common.primary} to="/lobby/me/publish?type=person">{t('发布我的求队')}</Link><Link data-relevant={type === 'teams'} to="/lobby/me/publish?type=team">{t('队伍招募')}</Link></div>}
+    <div className={`${common.pageHeading} ${styles.heading}`}><div><h1>{t('组队大厅')}</h1><p>{t('找队伍，招队员。')}</p></div>
+      {canPublishLobby(config, error) && <div className={`${common.actions} ${styles.publishActions}`}><Link data-relevant={type === 'teams'} className={type === 'teams' ? common.primary : undefined} to="/lobby/me/publish?type=person">{t('发布我的求队')}</Link><Link data-relevant={type === 'people'} className={type === 'people' ? common.primary : undefined} to="/lobby/me/publish?type=team">{t('发布队伍招募')}</Link></div>}
     </div>
     {config && config.mode !== 'OFF' && <section className={styles.controls} aria-label={t('筛选需求')}>
       <div className={styles.browseBar}>
-        <div className={styles.typeTabs}><button type="button" aria-pressed={type === 'teams'} onClick={() => filter('type', 'teams')}>{t('队伍招人')}</button><button type="button" aria-pressed={type === 'people'} onClick={() => filter('type', 'people')}>{t('个人找队')}</button></div>
+        <div className={styles.typeTabs}><button type="button" aria-pressed={type === 'teams'} onClick={() => filter('type', 'teams')}>{t('找队伍')}</button><button type="button" aria-pressed={type === 'people'} onClick={() => filter('type', 'people')}>{t('找队员')}</button></div>
         <div className={styles.viewModes} aria-label={t('浏览方式')}><button type="button" aria-pressed={mode === 'browse'} onClick={() => filter('view', 'browse')}>{t('浏览全部')}</button><button type="button" aria-pressed={mode === 'explore'} onClick={() => filter('view', 'explore')}>{t('探索三张')} <span aria-hidden="true">↗</span></button></div>
       </div>
       <div className={styles.quickFilters}>
         <label className={styles.search}><span>{t('搜索需求')}</span><input type="search" value={search} maxLength={100} placeholder={t('名字、英雄或介绍')} onChange={event => filter('q', event.target.value)} /></label>
-        <div className={styles.roleFilters} role="group" aria-label={t('岗位')}><span>{t('岗位')}</span><button type="button" aria-pressed={role === 'all'} onClick={() => filter('role', 'all')}>{t('全部岗位')}</button>{LOBBY_ROLES.map(item => <button key={item.value} type="button" aria-pressed={role === item.value} onClick={() => filter('role', item.value)}>{t(item.label)}</button>)}</div>
+        <div className={styles.roleFilters} role="group" aria-label={t('位置')}><span>{t('位置')}</span><button type="button" aria-pressed={role === 'all'} onClick={() => filter('role', 'all')}>{t('全部位置')}</button>{LOBBY_ROLES.map(item => <button key={item.value} type="button" aria-pressed={role === item.value} onClick={() => filter('role', item.value)}>{t(item.label)}</button>)}</div>
       </div>
       <details className={styles.advanced}><summary>{t('更多筛选')}{activeAdvanced > 0 && <span>{activeAdvanced}</span>}<span className={styles.expandMark} aria-hidden="true">+</span></summary>
         <div className={styles.advancedFields}>
           <label>{t('段位关键词')}<input value={level} maxLength={60} placeholder={t('例如：大师、钻石')} onChange={event => filter('level', event.target.value)} /></label>
           <label>{t('可赛时间关键词')}<input value={availability} maxLength={60} placeholder={t('例如：周六、晚上')} onChange={event => filter('time', event.target.value)} /></label>
-          <label>{t('QQ 授权方式')}<select value={qqMode} onChange={event => filter('qq', event.target.value)}><option value="all">{t('不限授权方式')}</option><option value="VERIFIED">{t('已允许验证用户查看')}</option><option value="REQUEST">{t('需对方同意')}</option></select></label>
+          <label>{t('QQ 授权方式')}<select value={qqMode} onChange={event => filter('qq', event.target.value)}><option value="all">{t('不限授权方式')}</option><option value="VERIFIED">{t('允许已验证邮箱的用户查看')}</option><option value="REQUEST">{t('需对方同意')}</option></select></label>
           <label>{t('最近确认')}<select value={recent} onChange={event => filter('recent', event.target.value)}><option value="all">{t('不限确认时间')}</option><option value="day">{t('24 小时内')}</option><option value="three">{t('3 天内')}</option><option value="week">{t('7 天内')}</option></select></label>
           {type === 'teams' && <label>{t('队伍状态')}<select value={teamState} onChange={event => filter('teamState', event.target.value)}><option value="all">{t('全部队伍')}</option><option value="established">{t('队伍招募')}</option><option value="forming">{t('组队中')}</option></select></label>}
         </div><p>{t('段位与时间按填写原文检索；段位由发布者自述。')}</p>
       </details>
     </section>}
-    {error && <div role="alert" className={common.error}>{errorMessage} <button type="button" onClick={() => setAttempt(value => value + 1)}>{t('重新读取')}</button></div>}
+    {error && <div role="alert" className={common.error}>{errorMessage} <button type="button" onClick={() => setAttempt(value => value + 1)}>{t('重试')}</button></div>}
     {config?.mode === 'OFF' ? <div className={common.empty}><h2>{t('组队大厅暂未开放')}</h2><p>{t('需求记录会保留，已有账号仍可按各自开放范围登录。')}</p></div> : !data && !error ? <p role="status">{t('正在读取需求…')}</p> : data && <>
       {config?.mode === 'READ_ONLY' && <p className={common.notice}>{t('大厅当前只读，可以浏览需求和管理已有联系。')}</p>}
       <div className={styles.resultBar}><span role="status">{t('{0} 条需求', [total])}{activeFilters && <button type="button" onClick={reset}>{t('清除筛选')}</button>}</span>
         {mode === 'browse' && <label>{t('排序')} <select value={sort} onChange={event => filter('sort', event.target.value)}><option value="recent">{t('最近确认优先')}</option><option value="expiring">{t('即将到期优先')}</option></select></label>}
       </div>
-      {mode === 'explore' && <section className={styles.exploreBanner} aria-label={t('探索三张')}><span className={styles.exploreKicker}>FRIES CUP / DISCOVER</span><p>{t('从符合当前筛选的需求中，随机展示最多三张。')}</p></section>}
-      {!total ? <div className={common.empty}><h2>{activeFilters ? t('没有符合当前筛选的需求') : t('暂时没有展示中的需求')}</h2><p>{t('试着放宽条件，或者换一个岗位看看。')}</p>{activeFilters && <button type="button" onClick={reset}>{t('清除筛选')}</button>}</div>
+      {mode === 'explore' && <section className={styles.exploreBanner} aria-label={t('探索三张')}><p>{t('从符合当前筛选的需求中，随机展示最多三张。')}</p></section>}
+      {!total ? <div className={common.empty}><h2>{activeFilters ? t('没有符合当前筛选的需求') : t('暂时没有展示中的需求')}</h2><p>{t('试着放宽条件，或者换一个位置看看。')}</p>{activeFilters && <button type="button" onClick={reset}>{t('清除筛选')}</button>}</div>
         : mode === 'browse' && !shown.length ? <div className={common.empty}><h2>{t('这一页已经没有需求了')}</h2><button type="button" onClick={() => filter('page', '1')}>{t('回到第一页')}</button></div>
-          : <div ref={railRef} className={`${cards.cardGrid} ${mode === 'explore' ? styles.exploreGrid : ''}`} data-lobby-cards data-explore={mode === 'explore'} onScroll={mode === 'explore' ? readRailPosition : undefined} role={mode === 'explore' ? 'region' : undefined} aria-label={mode === 'explore' ? t('探索卡片') : undefined} tabIndex={mode === 'explore' ? 0 : undefined}>{shown.map(card => <LobbyCard key={card.publicId} card={card} returnTo={`/lobby?${query}`} />)}</div>}
+          : <div ref={railRef} className={`${cards.cardGrid} ${mode === 'explore' ? styles.exploreGrid : ''}`} data-lobby-cards data-kind={type === 'people' ? 'PERSON' : 'TEAM'} data-explore={mode === 'explore'} onScroll={mode === 'explore' ? readRailPosition : undefined} role={mode === 'explore' ? 'region' : undefined} aria-label={mode === 'explore' ? t('探索卡片') : undefined} tabIndex={mode === 'explore' ? 0 : undefined}>{shown.map(card => <LobbyCard key={card.publicId} card={card} returnTo={`/lobby?${query}`} />)}</div>}
       {mode === 'explore' && shown.length > 0 && <div className={styles.exploreTools}>
         <p className={styles.swipeHint}>{t('左右滑动，发现下一位队友')}</p>
         <div className={styles.railControls}><button type="button" aria-label={t('上一张')} disabled={position === 0} onClick={() => stepRail(-1)}>←</button><span aria-live="polite">{position + 1} / {railState.total}</span><button type="button" aria-label={t('下一张')} disabled={position >= railState.total - 1} onClick={() => stepRail(1)}>→</button></div>

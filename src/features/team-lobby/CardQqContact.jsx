@@ -15,15 +15,16 @@ export default function CardQqContact({ card }) {
   useUiLocale()
   const { user, isBootstrapping } = useAuth(), { data, error, refresh } = useLobbyMine()
   const [open, setOpen] = useState(false)
+  const contactTitle = card.kind === 'TEAM' ? t('联系队伍') : t('联系 TA')
   if (isBootstrapping) return <p role="status">{t('正在读取账号…')}</p>
-  if (!user) return <><h2>{t('联系 TA')}</h2><p>{t('登录并验证邮箱后即可联系，无需先建队。')}</p><button type="button" className={styles.primary} onClick={requestSignIn}>{t('登录／注册后继续')}</button></>
+  if (!user) return <><h2>{contactTitle}</h2><p>{t('登录并验证邮箱后即可联系，无需先建队。')}</p><button type="button" className={styles.primary} onClick={requestSignIn}>{t('登录／注册后继续')}</button></>
   if (!user.emailVerifiedAt) return <><h2>{t('先验证邮箱')}</h2><Link to={`/account/verify-email?returnTo=${encodeURIComponent(`/lobby/cards/${card.publicId}`)}`}>{t('验证后继续联系')}</Link></>
-  if (error) return <p role="alert">{lobbyReadFailure(error)}{retryableRead(error) && <button onClick={refresh}>{t('重新读取')}</button>}</p>
+  if (error) return <p role="alert">{lobbyReadFailure(error)}{retryableRead(error) && <button onClick={refresh}>{t('重试')}</button>}</p>
   if (!data) return <p role="status">{t('正在读取联系权限…')}</p>
   const own = data.cards.some(item => item.publicId === card.publicId), direct = card.qqMode === 'VERIFIED'
-  return <><h2>{own ? t('这是你的需求卡') : t('联系 TA')}</h2>
+  return <><h2>{own ? t('这是你的需求卡') : contactTitle}</h2>
     {own ? <Link to="/lobby/me?tab=cards">{t('管理卡片与 QQ')}</Link> : <>
-      <p>{direct ? t('对方已允许已验证用户查看 QQ。查看后，对方会收到你的身份通知。') : t('对方会收到你的查看请求，同意后即可查看 QQ。')}</p>
+      <p>{direct ? t('对方已允许已验证邮箱的用户查看 QQ。首次查看时，对方会收到你的身份通知。') : t('对方会收到你的查看请求，同意后即可查看 QQ。')}</p>
       <p className={styles.finePrint}>{t('个人组队、帮队伍找人都可以，无需负责人身份。')}</p>
       {data.canWrite && data.config.contactEnabled ? <button className={styles.primary} onClick={() => setOpen(true)}>{direct ? t('查看 QQ 并通知对方') : t('请求查看 QQ')}</button>
         : <p>{data.restriction || t('联系功能当前不可操作，已有记录仍保留。')}</p>}
