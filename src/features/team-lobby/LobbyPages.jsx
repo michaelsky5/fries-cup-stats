@@ -15,7 +15,7 @@ function ErrorNotice({ error, ref }) {
  return error ? <p ref={ref} tabIndex={-1} role="alert" className={styles.error}>{accountFailure(error)}</p> : null }
 function ReadFailure({ error, onRetry }) {
   useUiLocale()
-  return error ? <p role="alert" className={styles.error}>{lobbyReadFailure(error)}{onRetry && retryableRead(error) && <> <button type="button" onClick={onRetry}>{t("重新读取")}</button></>}</p> : null
+  return error ? <p role="alert" className={styles.error}>{lobbyReadFailure(error)}{onRetry && retryableRead(error) && <> <button type="button" onClick={onRetry}>{t("重试")}</button></>}</p> : null
 }
 
 function Access({ children, write = false, data }) {
@@ -27,7 +27,7 @@ function Access({ children, write = false, data }) {
   if (isBootstrapping) return <p role="status">{t("正在读取账号…")}</p>
   if (!user) return <section className={styles.empty}><h1>{t("登录后管理我的组队")}</h1>{registrationMessage && <p>{registrationMessage}</p>}<button type="button" className={styles.primary} onClick={requestSignIn}>{t("登录／注册")}</button></section>
   if (write && !user.emailVerifiedAt) return <section className={styles.empty}><h1>{t("先验证邮箱")}</h1><Link className={styles.primary} to={`/account/verify-email?returnTo=${encodeURIComponent(location.pathname + location.search)}`}>{t("前往验证邮箱")}</Link></section>
-  if (write && data && !data.canWrite) return <section className={styles.empty}><h1>{t("暂时不能发布或修改")}</h1><p>{data.restriction || t("大厅当前为只读或尚未开放。")}</p><Link to="/lobby/me">{t("返回本人记录")}</Link></section>
+  if (write && data && !data.canWrite) return <section className={styles.empty}><h1>{t("暂时不能发布或修改")}</h1><p>{data.restriction || t("大厅当前为只读或尚未开放。")}</p><Link to="/lobby/me">{t("返回我的组队")}</Link></section>
   return children
 }
 export { default as LobbyIndex } from './LobbyBrowse.jsx'
@@ -72,12 +72,12 @@ function Editor({ data, cardId, formation, query }) {
   const alertRef = useRef(null)
   useEffect(() => { if (error) revealAlert(alertRef.current) }, [error])
   const requiredText = [...(kind === 'PERSON' || formation ? [['title', formation ? t("筹建队名") : t("公开显示名称")]] : []),
-    ['availability', copy.availability], ['goal', t("组队目标")], ['bio', formation ? t("筹建介绍") : copy.bio]]
+    ['availability', copy.availability], ['goal', t("目标")], ['bio', formation ? t("筹建介绍") : copy.bio]]
   const text = key => String(form[key] || '').trim()
-  if (cardId && !existing) return <p role="alert">{t("没有找到本人可管理的卡片。")}<Link to="/lobby/me">{t("返回本人记录")}</Link></p>
+  if (cardId && !existing) return <p role="alert">{t("没有找到本人可管理的卡片。")}<Link to="/lobby/me">{t("返回我的组队")}</Link></p>
   if (formation && query.get('id') && (!application || application.status !== 'RETURNED')) return <p role="alert">{t("这份申请当前不能重提，请查看实际进度。")}<Link to="/lobby/me">{t("返回")}</Link></p>
   if (prior?.state === 'HIDDEN') return <p role="alert">{t("卡片已被管理隐藏：")}{prior.moderationReason}<Link to="/lobby/me">{t("返回记录")}</Link></p>
-  if (kind === 'TEAM' && !formation && !sources.length) return <section className={styles.empty}><h1>{t("从一个负责人开始组队")}</h1><p>{t("暂无可管理队伍。申请筹建招募，经首次核对后即可招人。")}</p><Link className={styles.primary} to="/lobby/me/formation">{t("申请筹建招募")}</Link></section>
+  if (kind === 'TEAM' && !formation && !sources.length) return <section className={styles.empty}><h1>{t("从一个负责人开始组队")}</h1><p>{t("暂无可管理队伍。可申请组队招募，审核通过后发布。")}</p><Link className={styles.primary} to="/lobby/me/formation">{t("申请组队招募")}</Link></section>
   function updateSource(value) {
     setSource(value)
     const teamId = value.startsWith('organization:') ? data.teams.find(item => item.organizationId === value.slice(13))?.id : value.slice(5)
@@ -111,28 +111,28 @@ function Editor({ data, cardId, formation, query }) {
       committed.current = true; setDirty(false); navigate(formation ? '/lobby/me?tab=formation' : '/lobby/me?tab=cards', { replace: true })
     } catch (failure) { setError(failure) } finally { lock.current = false; setBusy(false) }
   }
-  return <><div className={styles.pageHeading}><div><h1>{formation ? t("申请筹建招募") : kind === 'PERSON' ? prior ? t("编辑我的求队卡") : t("发布我的求队") : t("队伍招募")}</h1><p>{formation ? t("一个负责人即可开始；首次核对后，由你确认并发布。") : t("只公开预览中的资料，不展示私人联系方式。")}</p></div><Link to="/lobby/me">{t("返回我的组队")}</Link></div>
+  return <><div className={styles.pageHeading}><div><h1>{formation ? t("申请组队招募") : kind === 'PERSON' ? prior ? t("编辑我的求队卡") : t("发布我的求队") : t("队伍招募")}</h1><p>{formation ? t("一名负责人即可申请。招募审核通过后，由你确认发布。") : t("公开页面只展示预览中的资料，不展示私人联系方式。")}</p></div><Link to="/lobby/me">{t("返回我的组队")}</Link></div>
     {blocker.state === 'blocked' && <div role="alert" className={styles.notice}>{t("有未提交的内容。")}<button onClick={() => blocker.reset()}>{t("继续编辑")}</button><button onClick={() => blocker.proceed()}>{t("放弃并离开")}</button></div>}
     <ErrorNotice error={error} ref={alertRef} />{(error?.data?.outcomeUnknown || error?.name === 'TypeError') && <p><Link to="/lobby/me">{t("先查看本人记录，确认是否保存成功")}</Link></p>}
     {savedOnly && <p ref={savedRef} tabIndex={-1} role="alert" className={styles.error}>{t("资料已保存，但重新发布没有完成：{0}", [accountFailure(savedOnly)])} <Link to="/lobby/me?tab=cards">{t("到我的组队重新发布")}</Link></p>}
-    {republishable && <p className={styles.notice}>{prior.state === 'EXPIRED' ? t("这张卡片已于 {0} 到期，目前不在大厅展示。核对预览后选择“保存并重新发布”，即可重新展示 14 天。", [lobbyDate(prior.expiresAt)]) : t("这张卡片已关闭，目前不在大厅展示。核对预览后选择“保存并重新发布”，即可重新展示 14 天。")}</p>}
+    {republishable && <p className={styles.notice}>{prior.state === 'EXPIRED' ? t("这张卡片已于 {0} 到期，目前不在大厅展示。预览资料后选择“保存并重新发布”，即可重新展示 14 天。", [lobbyDate(prior.expiresAt)]) : t("这张卡片已关闭，目前不在大厅展示。预览资料后选择“保存并重新发布”，即可重新展示 14 天。")}</p>}
     <form onSubmit={submit} className={styles.editorGrid}>
       <div className={`${styles.formPanel} ${styles.stack}`}>
         {kind === 'TEAM' && !formation && <label>{t("代表队伍")}<select value={source} onChange={event => updateSource(event.target.value)} disabled={busy || Boolean(cardId)}>{sources.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>}
         {(kind === 'PERSON' || formation) && <label>{formation ? t("筹建队名") : t("公开显示名称")}<input required maxLength={60} {...field('title')} /></label>}
         <fieldset><legend>{kind === 'PERSON' ? t("可胜任岗位") : t("所需岗位与人数")}</legend>{LOBBY_ROLES.map(item => <div className={styles.roleInput} key={item.value}><label><input type="checkbox" name="roles" value={item.value} checked={form.roles.includes(item.value)} onChange={event => { setForm(current => ({ ...current, roles: event.target.checked ? [...current.roles, item.value] : current.roles.filter(value => value !== item.value) })); setDirty(true) }} disabled={busy} />{t(item.label)}</label>{kind === 'TEAM' && form.roles.includes(item.value) && <label>{t("人数")}<input type="number" min={1} max={7} required value={form.counts[item.value] || 1} onChange={event => { setForm(current => ({ ...current, counts: { ...current.counts, [item.value]: event.target.value } })); setDirty(true) }} disabled={busy} /></label>}</div>)}</fieldset>
         <label>{copy.availability}<input required maxLength={200} placeholder={t("例如：周三、周五 20:00—23:00")} {...field('availability')} /></label>
-        <label>{t("组队目标")}<input required maxLength={120} placeholder={t("例如：稳定训练，准备参加周赛")} {...field('goal')} /></label>
+        <label>{t("目标")}<input required maxLength={120} placeholder={t("例如：稳定训练，准备参加周赛")} {...field('goal')} /></label>
         <label>{formation ? t("筹建介绍") : copy.bio}<textarea required rows={5} maxLength={1000} placeholder={formation ? undefined : copy.bioPlaceholder} {...field('bio')} /><small>{formation ? t("请勿填写 QQ、邮箱或其他私人联系方式。") : copy.bioHint}</small></label>
         {!formation && <><label>{copy.level}<input maxLength={80} placeholder={copy.levelPlaceholder} {...field('level')} /></label><label>{copy.heroes}<input maxLength={200} placeholder={copy.heroesPlaceholder} {...field('heroes')} /></label></>}
-        <div className={styles.actions}><button className={styles.primary} value={republishable ? 'republish' : 'save'} disabled={busy || Boolean(savedOnly) || error?.data?.outcomeUnknown || error?.name === 'TypeError'}>{busy ? t("正在保存…") : !preview ? t("核对预览") : formation ? t("提交首次核对") : republishable ? t("保存并重新发布") : prior ? t("确认保存资料") : t("确认发布")}</button>
+        <div className={styles.actions}><button className={styles.primary} value={republishable ? 'republish' : 'save'} disabled={busy || Boolean(savedOnly) || error?.data?.outcomeUnknown || error?.name === 'TypeError'}>{busy ? t("正在保存…") : !preview ? t("预览资料") : formation ? t("提交招募审核") : republishable ? t("保存并重新发布") : prior ? t("保存修改") : t("确认发布")}</button>
           {preview && republishable && <button value="save" disabled={busy || Boolean(savedOnly)}>{t("仅保存资料")}</button>}{preview && <button type="button" onClick={() => setPreview(false)}>{t("继续修改")}</button>}</div>
         {prior && !formation && !republishable && <p>{t("普通编辑不会续期或顶置。需求完成后请关闭卡片。")}</p>}
       </div>
-      <aside className={styles.preview} aria-label={t("公开预览")}><span className={styles.eyebrow}>{formation ? t("待核对资料预览 · 尚不公开") : source.startsWith('team:') && kind === 'TEAM' ? t("公开预览 · 组队中") : t("公开预览")}</span><h2>{kind === 'TEAM' && !formation ? sources.find(item => item.value === source)?.name : form.title || t("你的公开名称")}</h2><p>{form.roles.map(roleLabel).join(' / ') || t("选择可胜任或所需岗位")}</p><dl><div><dt>{t("时间")}</dt><dd>{form.availability || t("填写可赛时间")}</dd></div><div><dt>{t("目标")}</dt><dd>{form.goal || t("填写组队目标")}</dd></div>
+      <aside className={styles.preview} aria-label={t("公开预览")}><span className={styles.eyebrow}>{formation ? t("待审核资料预览 · 尚不公开") : source.startsWith('team:') && kind === 'TEAM' ? t("公开预览 · 组队中") : t("公开预览")}</span><h2>{kind === 'TEAM' && !formation ? sources.find(item => item.value === source)?.name : form.title || t("你的公开名称")}</h2><p>{form.roles.map(roleLabel).join(' / ') || t("选择可胜任或所需岗位")}</p><dl><div><dt>{t("时间")}</dt><dd>{form.availability || t("填写可赛时间")}</dd></div><div><dt>{t("目标")}</dt><dd>{form.goal || t("填写组队目标")}</dd></div>
         {kind === 'TEAM' && form.roles.length > 0 && <div><dt>{t("招募需求")}</dt><dd>{needsLabel(form.roles.map(role => ({ role, count: Number(form.counts[role] || 1) })))}</dd></div>}
         {!formation && form.level && <div><dt>{copy.levelLabel}</dt><dd>{form.level}{copy.levelNote}</dd></div>}
-        {!formation && form.heroes && <div><dt>{copy.heroesLabel}</dt><dd>{form.heroes}</dd></div>}</dl><p className={styles.bodyCopy}>{form.bio || t("介绍你或你的队伍。")}</p><p>{formation ? t("首次核对不等于参赛审核，不自动生成正式队伍。") : t("新发布及明确续期默认有效 14 天。")}</p></aside>
+        {!formation && form.heroes && <div><dt>{copy.heroesLabel}</dt><dd>{form.heroes}</dd></div>}</dl><p className={styles.bodyCopy}>{form.bio || t("介绍你或你的队伍。")}</p><p>{formation ? t("招募审核不等于参赛审核，也不会自动建立正式队伍。") : t("新发布及明确续期默认有效 14 天。")}</p></aside>
     </form>
   </>
 }

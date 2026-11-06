@@ -15,12 +15,11 @@ import styles from './LobbyDetail.module.css'
 function ProfileHeader({ card }) {
   const locale = useUiLocale()
   const hero = getLobbyCardHero(card), vacancies = getLobbyVacancies(card)
-  return <header className={styles.profileHeader}>
-    <div className={styles.profileMeta}><LobbyCardKind card={card} /><span className={styles.brand} aria-hidden="true"><img src="/logos/fries-cup-mark-ink.svg" alt="" />FRIES CUP</span></div>
-    <div className={styles.identityRow} data-illustrated={Boolean(hero || vacancies)}>
+  return <header className={styles.profileHeader} data-kind={card.kind}>
+    <div className={styles.profileMeta}><LobbyCardKind card={card} />{card.kind === 'TEAM' && vacancies > 0 && <span className={styles.vacancyBadge}>{t('招募 {0} 人', [vacancies])}</span>}</div>
+    <div className={styles.identityRow} data-illustrated={Boolean(hero)}>
       <h1>{card.title}</h1>
-      {hero && <div className={styles.portrait}><HeroArtwork hero={hero.id} decorative /><span>{t('常用英雄')} · {formatOwHeroName(hero.id, locale)}</span></div>}
-      {card.kind === 'TEAM' && vacancies > 0 && <div className={styles.vacancies}><strong aria-hidden="true">{String(vacancies).padStart(2, '0')}</strong><span>{t('招募 {0} 人', [vacancies])}</span></div>}
+      {hero && <div className={styles.portrait}><HeroArtwork hero={hero.id} decorative /><span>{formatOwHeroName(hero.id, locale)}</span></div>}
     </div>
     <div className={styles.roleBand}><LobbyRoleTags card={card} /></div>
   </header>
@@ -47,29 +46,28 @@ export default function LobbyDetail() {
   }
   return <>
     <div className={styles.toolbar}><Link to={returnTo}>{t('← 返回需求列表')}</Link>{card && <a className={styles.quickContact} href="#lobby-contact" onClick={visitContact}>{card.kind === 'TEAM' ? t('联系队伍') : t('联系 TA')} <span aria-hidden="true">↘</span></a>}</div>
-    {error && <div role="alert" className={common.error}>{lobbyReadFailure(error)}{retryableRead(error) && <button type="button" onClick={() => setAttempt(value => value + 1)}>{t('重新读取')}</button>}</div>}
+    {error && <div role="alert" className={common.error}>{lobbyReadFailure(error)}{retryableRead(error) && <button type="button" onClick={() => setAttempt(value => value + 1)}>{t('重试')}</button>}</div>}
     {!card && !error && <p role="status">{t('正在读取卡片…')}</p>}
     {card && <div className={styles.layout} data-lobby-detail>
-      <article className={styles.profile}>
+      <article className={styles.profile} data-kind={card.kind}>
         <ProfileHeader card={card} />
         <div className={styles.profileBody}>
           <section className={styles.summary} aria-labelledby="lobby-profile-facts"><h2 id="lobby-profile-facts">{t('资料概览')}</h2>
             <dl className={styles.facts}>
-              <div><dt>{copy.levelLabel}</dt><dd className={styles.rank}>{card.level || <span className={styles.missing}>{t('未填写')}</span>}{card.kind === 'PERSON' && card.level && <small>{t('段位为自述')}</small>}</dd></div>
-              <div><dt>{t('可赛时间')}</dt><dd>{card.availability}</dd></div>
-              <div className={styles.wide}><dt>{t('组队目标')}</dt><dd>{card.goal}</dd></div>
-              {(card.heroes || card.kind === 'PERSON') && <div className={styles.wide}><dt>{copy.heroesLabel}</dt><dd>{card.heroes || <span className={styles.missing}>{t('未填写')}</span>}</dd></div>}
+              {card.level && <div><dt>{copy.levelLabel}</dt><dd className={styles.rank}>{card.level}{card.kind === 'PERSON' && <small>{t('段位为自述')}</small>}</dd></div>}
+              <div><dt>{t('训练与比赛时间')}</dt><dd>{card.availability}</dd></div>
+              <div className={styles.wide}><dt>{t('目标')}</dt><dd>{card.goal}</dd></div>
+              {card.heroes && <div className={styles.wide}><dt>{copy.heroesLabel}</dt><dd>{card.heroes}</dd></div>}
             </dl>
           </section>
           <section className={styles.introduction} aria-labelledby="lobby-profile-intro"><h2 id="lobby-profile-intro">{copy.bio}</h2><p>{card.bio}</p></section>
           <footer className={styles.dates}>
-            {card.confirmedAt && <div><span>{t('需求确认于')}</span><time dateTime={card.confirmedAt}>{lobbyDate(card.confirmedAt)}</time></div>}
+            {card.confirmedAt && <div><span>{t('最近确认')}</span><time dateTime={card.confirmedAt}>{lobbyDate(card.confirmedAt)}</time></div>}
             <div><span>{t('需求有效至')}</span><time dateTime={card.expiresAt}>{lobbyDate(card.expiresAt)}</time></div>
           </footer>
         </div>
       </article>
       <aside id="lobby-contact" ref={contactRef} tabIndex={-1} aria-label={t('联系')} className={`${common.actionPanel} ${styles.contactPanel}`}>
-        <span className={styles.contactKicker}>FRIES CUP / CONNECT</span>
         <ContactEntry card={card} />
         <p className={styles.contactNote}>{t('联系意愿与正式参赛资格分别确认。')}</p>
       </aside>
