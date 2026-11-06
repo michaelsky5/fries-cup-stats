@@ -41,6 +41,8 @@ export default function LobbyBrowse() {
   const scope = JSON.stringify({ type, role, page, pageSize: LOBBY_BROWSE_PAGE_SIZE, mode, q: search,
     level, time: availability, qq: qqMode, recent, teamState, sort })
   const [pool, setPool] = useState(null), [config, setConfig] = useState(null), [error, setError] = useState(null), [attempt, setAttempt] = useState(0)
+  const [readState, setReadState] = useState('idle')
+  const reading = readState !== 'idle'
   const data = pool?.scope === scope ? pool.value : null
   const [now, setNow] = useState(() => Date.now())
   const [deal, setDeal] = useState(0)
@@ -65,6 +67,7 @@ export default function LobbyBrowse() {
     const args = JSON.parse(scope)
     const prior = drawRef.current.scope === scope ? drawRef.current.cards : []
     const replacing = drawRef.current.scope !== scope || drawRef.current.deal !== deal
+    setReadState(args.mode === 'explore' && replacing && prior.length ? 'redealing' : 'reading')
     const timer = setTimeout(() => api.getLobbyConfig({ signal: controller.signal }).then(value => {
       if (controller.signal.aborted) return null
       setConfig(value)
@@ -81,7 +84,8 @@ export default function LobbyBrowse() {
         value = { ...value, cards }
       }
       setPool(value ? { scope, value } : null); setNow(Date.now())
-    }).catch(failure => { if (!controller.signal.aborted) setError(failure) }), 250)
+    }).catch(failure => { if (!controller.signal.aborted) setError(failure) })
+      .finally(() => { if (!controller.signal.aborted) setReadState('idle') }), 250)
     return () => { clearTimeout(timer); controller.abort() }
   }, [scope, attempt, deal])
   const shown = (data?.cards || []).filter(card => new Date(card.expiresAt).getTime() > now)
@@ -101,6 +105,8 @@ export default function LobbyBrowse() {
     if (target !== undefined) rail.scrollTo({ left: target, behavior: 'auto' })
   }
   function redeal() {
+    if (reading) return
+    setReadState('redealing')
     setDeal(value => value + 1)
     setRailState(previous => ({ ...previous, position: 0 }))
     railRef.current?.scrollTo({ left: 0, behavior: 'instant' })
@@ -142,11 +148,11 @@ export default function LobbyBrowse() {
       {mode === 'explore' && <section className={styles.exploreBanner} aria-label={t('探索三张')}><p>{t('从符合当前筛选的需求中，随机展示最多三张。')}</p></section>}
       {!total ? <div className={common.empty}><h2>{activeFilters ? t('没有符合当前筛选的需求') : t('暂时没有展示中的需求')}</h2><p>{t('试着放宽条件，或者换一个位置看看。')}</p>{activeFilters && <button type="button" onClick={reset}>{t('清除筛选')}</button>}</div>
         : mode === 'browse' && !shown.length ? <div className={common.empty}><h2>{t('这一页已经没有需求了')}</h2><button type="button" onClick={() => filter('page', '1')}>{t('回到第一页')}</button></div>
-          : <div ref={railRef} className={`${cards.cardGrid} ${mode === 'explore' ? styles.exploreGrid : ''}`} data-lobby-cards data-kind={type === 'people' ? 'PERSON' : 'TEAM'} data-explore={mode === 'explore'} onScroll={mode === 'explore' ? readRailPosition : undefined} role={mode === 'explore' ? 'region' : undefined} aria-label={mode === 'explore' ? t('探索卡片') : undefined} tabIndex={mode === 'explore' ? 0 : undefined}>{shown.map(card => <LobbyCard key={card.publicId} card={card} returnTo={`/lobby?${query}`} />)}</div>}
+          : <div ref={railRef} className={`${cards.cardGrid} ${mode === 'explore' ? styles.exploreGrid : ''}`} data-lobby-cards data-kind={type === 'people' ? 'PERSON' : 'TEAM'} data-explore={mode === 'explore'} onScroll={mode === 'explore' ? readRailPosition : undefined} role={mode === 'explore' ? 'region' : undefined} aria-label={mode === 'explore' ? t('探索卡片') : undefined} aria-busy={mode === 'explore' ? reading : undefined} tabIndex={mode === 'explore' ? 0 : undefined}>{shown.map(card => <LobbyCard key={card.publicId} card={card} returnTo={`/lobby?${query}`} />)}</div>}
       {mode === 'explore' && shown.length > 0 && <div className={styles.exploreTools}>
         <p className={styles.swipeHint}>{t('左右滑动，发现下一位队友')}</p>
         <div className={styles.railControls}><button type="button" aria-label={t('上一张')} disabled={position === 0} onClick={() => stepRail(-1)}>←</button><span aria-live="polite">{position + 1} / {railState.total}</span><button type="button" aria-label={t('下一张')} disabled={position >= railState.total - 1} onClick={() => stepRail(1)}>→</button></div>
-        <button type="button" className={styles.redeal} onClick={redeal} disabled={total <= 3}>{t('再换三张')} <span aria-hidden="true">↻</span></button>
+        <button type="button" className={styles.redeal} onClick={redeal} disabled={reading || total <= 3} aria-live="polite">{reading ? t(readState === 'redealing' ? '正在换卡…' : '正在读取…') : t('再换三张')} <span aria-hidden="true">↻</span></button>
       </div>}
       {mode === 'explore' && total > 0 && total <= 3 && <p className={styles.smallPool}>{t('符合条件的需求不超过三条，已全部展示。')}</p>}
       {mode === 'browse' && total > 0 && <div className={common.pagination}><button disabled={page <= 1} onClick={() => filter('page', String(page - 1))}>{t('上一页')}</button><span>{t('第 {0} 页 · {1} 条需求', [page, total])}</span><button disabled={page * LOBBY_BROWSE_PAGE_SIZE >= total} onClick={() => filter('page', String(page + 1))}>{t('下一页')}</button></div>}
