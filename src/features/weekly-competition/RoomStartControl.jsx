@@ -5,12 +5,13 @@ import { translateUiText as uiText } from '../../lib/uiText.js'
 import { useRoomTransport } from './RoomTransport.jsx'
 import { getRoomOperatingSides } from './weeklyRoomFlow.js'
 import RoomPreflightControl from './RoomPreflightControl.jsx'
+import RoomGameSettings from './RoomGameSettings.jsx'
 import RoomForceStartControl from './RoomForceStartControl.jsx'
 import { RoomPreparationContinuation } from './RoomCaptainAgreements.jsx'
 import styles from './WeeklyLiveRoomPage.module.css'
 import frame from './RoomMatchFrame.module.css'
 
-export default function RoomStartControl({ data, disabled, command, mutate, notice, onPreparationExtension }) {
+export default function RoomStartControl({ data, disabled, settingsUnavailable = false, command, mutate, notice, onPreparationExtension }) {
   const locale = useUiLocale()
   const { coordinationWrite } = useRoomTransport()
   const legacy = data.preflight?.required ?? !data.opening
@@ -26,6 +27,7 @@ export default function RoomStartControl({ data, disabled, command, mutate, noti
         <small>{uiText('禁用', locale)} · {roomBanLabel(data.map, key, locale)}</small>
       </span> })}
     </div>
+    {data.opening?.complete && <RoomGameSettings key={data.match.id + ':' + data.map?.order} data={data} unavailable={settingsUnavailable} />}
     {legacy && <><RoomPreflightControl data={data} disabled={disabled} command={command} />
       <div className={frame.taskActions}>{getRoomOperatingSides(data).map(side => <button key={side.team.id} disabled={disabled || !side.canConfirm} onClick={() => mutate(() => coordinationWrite('/readiness', { weekId: data.match.weekId, matchId: data.match.id, teamId: side.team.id, ready: !side.ready, fingerprint: side.fingerprint, expectedRevision: side.revision }, data.access.staff, 'PUT'), '准备状态已保存。')}>{side.ready ? uiText('撤回本队准备确认', locale) : uiText('确认本队已准备好', locale)}</button>)}</div>
     </>}
