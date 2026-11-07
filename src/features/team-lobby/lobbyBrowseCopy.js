@@ -38,6 +38,7 @@ export const lobbyBrowseCopyRows = [
   ['下一支队伍，也许就在这里。', 'Your next team could be here.', '다음 팀을 여기서 만날지도 몰라요.', '下一支隊伍，也許就在這裡。'],
   ['从符合当前筛选的需求中，随机展示最多三张。', 'Up to three random cards, matching your current filters.', '현재 필터에 맞는 카드를 최대 세 장 무작위로 보여줍니다.', '從符合目前篩選的需求中，隨機展示最多三張。'],
   ['再换三张', 'Deal three more', '다른 세 장 보기', '再換三張'],
+  ['正在换卡…', 'Dealing cards…', '다른 카드 불러오는 중…', '正在換卡…'],
   ['没有符合当前筛选的需求', 'No listings match these filters', '현재 필터에 맞는 모집글이 없습니다', '沒有符合目前篩選的需求'],
   ['试着放宽条件，或者换一个岗位看看。', 'Try fewer filters or a different role.', '필터를 줄이거나 다른 역할을 선택해 보세요.', '試著放寬條件，或換一個職責看看。'],
   ['符合条件的需求不超过三条，已全部展示。', 'All matching listings are shown; there are three or fewer.', '조건에 맞는 모집글이 세 개 이하이므로 모두 표시했습니다.', '符合條件的需求不超過三條，已全部展示。'],
