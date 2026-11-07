@@ -1,0 +1,801 @@
+{
+  "source": {
+    "nativeReference": "https://github.com/Zezombye/overpy/tree/master/src/data",
+    "retrievedAt": "2026-11-02",
+    "heroBlob": "abe517d7426f2b8f3835c81c3074848467d3a4ce",
+    "mapBlob": "d9d5db471709043581fe69313cd1dd0ac3f2c7ed",
+    "note": "Native Simplified Chinese names and scene IDs originated in OverPy, then were checked against current-client exports and user game tests. On 2026-11-06 all 54 hero native names passed two full-settings import batches and prior bans were confirmed replaced. All 31 maps in the user-confirmed match scope have accepted workflows: 29 automatic map imports, and complete-settings imports followed by manual map selection for Colosseo and Esperanca. Their automatic map imports remain defective. The unused Hanaoka and Throne of Anubis maps are outside this acceptance scope. Native-exported scene IDs are provenance rather than import proof. Samoa retains its accepted seven-map exclusion including Lunar New Year Lijiang. The original tournament map pool is unchanged.",
+    "userFailureLabelNote": "User called the failed Hanaoka selection 花村; mapped provisionally to the room catalog entry 花冈/Hanaoka, since Hanamura is not in this room pool.",
+    "currentAcceptance": {
+      "date": "2026-11-06",
+      "allRoomHeroes": 54,
+      "heroTokensPassed": 54,
+      "currentMatchMaps": 31,
+      "mapImportsPassed": 29,
+      "mapImportsFailed": [
+        "colosseo",
+        "esperanca"
+      ],
+      "notInCurrentMatchScope": [
+        "hanaoka",
+        "throne-of-anubis"
+      ],
+      "note": "29 match maps have accepted automatic map imports. Colosseo and Esperanca retain native automatic-import defects, but the user-authorized complete-settings import followed by manual in-game target-map selection passed for both. All 54 hero names passed. The tournament map pool is unchanged.",
+      "nativeRoundtripDiagnosis": "Both affected maps fail direct in-game native Copy Settings -> Paste Settings. A matching minimal layout with only the map line changed to accepted New Queen Street succeeds. Client native text import/export defect is reproduced independently of the webpage. Duplicate name/header resolution is the leading explanation, not a traced importer root cause.",
+      "manualMapPolicy": {
+        "decision": "保留原地图池，接受这两张人工选图",
+        "maps": [
+          "colosseo",
+          "esperanca"
+        ],
+        "manualWorkflowGameVerified": true
+      }
+    }
+  },
+  "maps": {
+    "ilios": {
+      "name": "伊利奥斯",
+      "variants": [
+        "972777519512068292",
+        "972777519512068153",
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "lijiang-tower": {
+      "name": "漓江塔",
+      "variants": [
+        "972777519512068153"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "nepal": {
+      "name": "尼泊尔",
+      "variants": [
+        "972777519512068292",
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "oasis": {
+      "name": "绿洲城",
+      "variants": [
+        "972777519512068153",
+        "972777519512068292",
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "busan": {
+      "name": "釜山",
+      "variants": [
+        "972777519512100008"
+      ],
+      "inGameVerified": true,
+      "referenceVariants": [
+        "972777519512068153",
+        "972777519512068154",
+        "972777519512068194"
+      ],
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "importBlocked": false,
+      "nativeExportConfirmed": true,
+      "lastVerifiedAt": "2026-11-06"
+    },
+    "antarctic-peninsula": {
+      "name": "南极半岛",
+      "variants": [
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "referenceVariants": [
+        "972777519512068154",
+        "972777519512068153"
+      ],
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "importBlocked": false,
+      "nativeExportConfirmed": true,
+      "lastVerifiedAt": "2026-11-06"
+    },
+    "samoa": {
+      "name": "萨摩亚",
+      "variants": [
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "referenceVariants": [
+        "972777519512068154"
+      ],
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "importBlocked": false,
+      "nativeExportConfirmed": true,
+      "excludedMaps": [
+        "伊利奥斯",
+        "漓江塔",
+        "尼泊尔",
+        "绿洲城",
+        "釜山",
+        "南极半岛",
+        "春节漓江塔"
+      ],
+      "nameOnlyImportResult": "REJECTED_USER_REPORTED",
+      "exclusionComparisonResult": "PASSED_AFTER_SEASONAL_MAP_EXCLUDED"
+    },
+    "dorado": {
+      "name": "多拉多",
+      "variants": [
+        "972777519512068153",
+        "972777519512068292"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "route-66": {
+      "name": "66号公路",
+      "variants": [
+        "972777519512068153",
+        "972777519512068154",
+        "972777519512068194"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "watchpoint-gibraltar": {
+      "name": "监测站：直布罗陀",
+      "variants": [
+        "972777519512068154",
+        "972777519512068292"
+      ],
+      "inGameVerified": true,
+      "referenceVariants": [
+        "972777519512099996"
+      ],
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "importBlocked": false,
+      "nativeExportConfirmed": true,
+      "lastVerifiedAt": "2026-11-06"
+    },
+    "havana": {
+      "name": "哈瓦那",
+      "variants": [
+        "972777519512068153",
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "junkertown": {
+      "name": "渣客镇",
+      "variants": [
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "rialto": {
+      "name": "里阿尔托",
+      "variants": [
+        "972777519512068292",
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "shambali-monastery": {
+      "name": "香巴里寺院",
+      "variants": [
+        "972777519512068153"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "circuit-royal": {
+      "name": "皇家赛道",
+      "variants": [
+        "972777519512068153",
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "watchpoint-grimsvotn": {
+      "name": "格里姆火山",
+      "variants": [
+        "972777519512103322"
+      ],
+      "inGameVerified": true,
+      "nativeExportConfirmed": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "blizzard-world": {
+      "name": "暴雪世界",
+      "variants": [
+        "972777519512068154",
+        "972777519512068194",
+        "972777519512068153"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "eichenwalde": {
+      "name": "艾兴瓦尔德",
+      "variants": [
+        "972777519512094292"
+      ],
+      "inGameVerified": true,
+      "referenceVariants": [
+        "972777519512068292",
+        "972777519512068154"
+      ],
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "importBlocked": false,
+      "nativeExportConfirmed": true,
+      "lastVerifiedAt": "2026-11-06"
+    },
+    "hollywood": {
+      "name": "好莱坞",
+      "variants": [
+        "972777519512068153",
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "kings-row": {
+      "name": "国王大道",
+      "variants": [
+        "972777519512068153"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "numbani": {
+      "name": "努巴尼",
+      "variants": [
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "midtown": {
+      "name": "中城",
+      "variants": [
+        "972777519512068154",
+        "972777519512068153"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "neon-junction": {
+      "name": "霓虹枢纽",
+      "variants": [],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "paraiso": {
+      "name": "帕拉伊苏",
+      "variants": [
+        "972777519512095571"
+      ],
+      "inGameVerified": true,
+      "referenceVariants": [
+        "972777519512068292",
+        "972777519512068154"
+      ],
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "importBlocked": false,
+      "nativeExportConfirmed": true,
+      "lastVerifiedAt": "2026-11-06"
+    },
+    "colosseo": {
+      "name": "斗兽场",
+      "variants": [
+        "972777519512068153",
+        "972777519512068154",
+        "972777519512068292"
+      ],
+      "inGameVerified": false,
+      "referenceVariants": [
+        "972777519512068292",
+        "972777519512068154"
+      ],
+      "lastImportResult": "NO_MAP_SELECTED_USER_SCREENSHOT",
+      "importBlocked": true,
+      "nativeExportConfirmed": true,
+      "comparisonAwaitingGameTest": false,
+      "nameOnlyImportResult": "NO_MAP_SELECTED_USER_SCREENSHOT",
+      "nativeRoundtripResult": "FAILED_USER_REPORTED",
+      "nativeRoundtripClientBuild": "2.25.1.0.155284N",
+      "manualMapSelection": true,
+      "manualConfigurationInGameVerified": true,
+      "manualConfigurationLastVerifiedAt": "2026-11-06",
+      "manualConfigurationResult": "PASSED_USER_REPORTED"
+    },
+    "new-queen-street": {
+      "name": "新皇后街",
+      "variants": [
+        "972777519512068197",
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "esperanca": {
+      "name": "埃斯佩兰萨",
+      "variants": [
+        "972777519512068153",
+        "972777519512068154"
+      ],
+      "inGameVerified": false,
+      "referenceVariants": [
+        "972777519512068154"
+      ],
+      "lastImportResult": "COMPLETE_POSITIVE_IMPORT_ERROR_USER_REPORTED",
+      "importBlocked": true,
+      "nativeExportConfirmed": true,
+      "exclusionComparisonResult": "IGNORED_COLOSSEO_WITH_EXPLICIT_VARIANTS",
+      "nativeAllScenesConfirmed": true,
+      "nameOnlyImportResult": "NO_MAP_SELECTED_USER_SCREENSHOT",
+      "nativeRoundtripResult": "FAILED_USER_REPORTED",
+      "nativeRoundtripClientBuild": "2.25.1.0.155284N",
+      "manualMapSelection": true,
+      "manualConfigurationInGameVerified": true,
+      "manualConfigurationLastVerifiedAt": "2026-11-06",
+      "manualConfigurationResult": "PASSED_USER_REPORTED"
+    },
+    "runasapi": {
+      "name": "鲁纳塞彼",
+      "variants": [
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "suravasa": {
+      "name": "苏拉瓦萨",
+      "variants": [
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "new-junk-city": {
+      "name": "新渣客城",
+      "variants": [
+        "972777519512068154"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "aatlis": {
+      "name": "阿特利斯",
+      "variants": [
+        "972777519512068153"
+      ],
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED"
+    },
+    "hanaoka": {
+      "name": "花冈",
+      "variants": [],
+      "inGameVerified": false,
+      "referenceVariants": [
+        "972777519512068154"
+      ],
+      "lastImportResult": "AWAITING_REIMPORT_AFTER_NATIVE_EXPORT",
+      "importBlocked": false,
+      "excludedMaps": [
+        "阿努比斯王座"
+      ],
+      "nativeExportConfirmed": true
+    },
+    "throne-of-anubis": {
+      "name": "阿努比斯王座",
+      "variants": [],
+      "inGameVerified": false,
+      "referenceVariants": [
+        "972777519512068154"
+      ],
+      "lastImportResult": "AWAITING_REIMPORT_AFTER_NATIVE_EXPORT",
+      "importBlocked": false,
+      "excludedMaps": [
+        "花冈"
+      ],
+      "nativeExportConfirmed": true
+    }
+  },
+  "heroes": {
+    "domina": {
+      "name": "金驭",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "dmon": {
+      "name": "D.Mon",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "doomfist": {
+      "name": "末日铁拳",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "dva": {
+      "name": "D.Va",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "hazard": {
+      "name": "骇灾",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "junker-queen": {
+      "name": "渣客女王",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "mauga": {
+      "name": "毛加",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "orisa": {
+      "name": "奥丽莎",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "ramattra": {
+      "name": "拉玛刹",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "reinhardt": {
+      "name": "莱因哈特",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "roadhog": {
+      "name": "路霸",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "sigma": {
+      "name": "西格玛",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "winston": {
+      "name": "温斯顿",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "wrecking-ball": {
+      "name": "破坏球",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "zarya": {
+      "name": "查莉娅",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "anran": {
+      "name": "安燃",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "ashe": {
+      "name": "艾什",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "bastion": {
+      "name": "堡垒",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "cassidy": {
+      "name": "卡西迪",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "echo": {
+      "name": "回声",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "emre": {
+      "name": "埃姆雷",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "freja": {
+      "name": "弗蕾娅",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "genji": {
+      "name": "源氏",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "hanzo": {
+      "name": "半藏",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "junkrat": {
+      "name": "狂鼠",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "mei": {
+      "name": "美",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "pharah": {
+      "name": "法老之鹰",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "reaper": {
+      "name": "死神",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "sojourn": {
+      "name": "索杰恩",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "soldier-76": {
+      "name": "士兵：76",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "sierra": {
+      "name": "西拉",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "shion": {
+      "name": "死怨",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "symmetra": {
+      "name": "秩序之光",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "torbjorn": {
+      "name": "托比昂",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "tracer": {
+      "name": "猎空",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "vendetta": {
+      "name": "斩仇",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "venture": {
+      "name": "探奇",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "widowmaker": {
+      "name": "黑百合",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "doctrine": {
+      "name": "血律",
+      "inGameVerified": true,
+      "nativeExportConfirmed": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "sombra": {
+      "name": "黑影",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "ana": {
+      "name": "安娜",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "baptiste": {
+      "name": "巴蒂斯特",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "brigitte": {
+      "name": "布丽吉塔",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "illari": {
+      "name": "伊拉锐",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "jetpack-cat": {
+      "name": "飞天猫",
+      "inGameVerified": true,
+      "nativeExportConfirmed": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "juno": {
+      "name": "朱诺",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "kiriko": {
+      "name": "雾子",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "lifeweaver": {
+      "name": "生命之梭",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "lucio": {
+      "name": "卢西奥",
+      "inGameVerified": true,
+      "nativeExportConfirmed": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "mercy": {
+      "name": "天使",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "mizuki": {
+      "name": "瑞稀",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "moira": {
+      "name": "莫伊拉",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    },
+    "wuyang": {
+      "name": "无漾",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-1"
+    },
+    "zenyatta": {
+      "name": "禅雅塔",
+      "inGameVerified": true,
+      "lastImportResult": "PASSED_USER_REPORTED",
+      "lastVerifiedAt": "2026-11-06",
+      "verifiedInBatch": "20261106-hero-2"
+    }
+  },
+  "nonPoolMaps": {
+    "lijiang-tower-lunar-new-year": {
+      "name": "春节漓江塔",
+      "mode": "control",
+      "clientPresenceUserConfirmed": true
+    }
+  }
+}
