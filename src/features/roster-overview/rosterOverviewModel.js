@@ -9,6 +9,9 @@ const array = value => Array.isArray(value) ? value : []
 const roleOrder = ['TANK', 'DPS', 'SUP', 'FLEX', 'UNKNOWN']
 const compareNames = (a, b) => a.localeCompare(b, 'zh-Hans-CN', { numeric: true })
 const recordedNumber = value => value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value)) && Number(value) >= 0 ? Number(value) : null
+const compareRecordedPlay = (a, b) => (b.playedMinutes ?? -1) - (a.playedMinutes ?? -1) ||
+  (b.mapsPlayed ?? -1) - (a.mapsPlayed ?? -1) ||
+  compareNames(a.identity.primary, b.identity.primary) || compareNames(a.identity.playerId, b.identity.playerId)
 
 export function getOverviewTeamRoster(db, team) {
   if (!team) return []
@@ -38,21 +41,31 @@ export function buildRosterOverview(db, season) {
     const role = getRosterRegistrationRole(player.role)
     roleCounts[role]++
   })
-  const teams = sortTeams(getTeamDirectory(db), 'short').map(team => {
+  const teamDirectory = sortTeams(getTeamDirectory(db), 'short')
+  const publishedTeamIds = new Set(teamDirectory.map(team => key(team.team_id || team.id)).filter(Boolean))
+  const teams = teamDirectory.map(team => {
+    const teamId = key(team.team_id || team.id)
     const rosterRecords = getOverviewTeamRoster(db, team)
     const members = rosterRecords.map(player => {
       const identity = getPlayerDisplayIdentity(player)
       const recorded = identity.playerId ? byPlayerId.get(key(identity.playerId)) : null
+      const playerTeamId = key(player.team_id)
+      // Season rosters retain transfers; ACTIVE describes the player, not every former team.
+      // Only a different, published team ID establishes a move; legacy names do not.
+      const movedToPublishedTeam = teamId && publishedTeamIds.has(playerTeamId) && playerTeamId !== teamId
+      const recordedChange = getPlayerRosterChange(player)
       return {
         identity,
         role: getRosterRegistrationRole(player.role),
-        rosterChange: getPlayerRosterChange(player),
+        rosterChange: movedToPublishedTeam && recordedChange !== 'playoff_exit' ? 'team_exit' : recordedChange,
         href: identity.playerId ? `/players/${encodeURIComponent(identity.playerId)}` : '',
         hero: recorded?.hasStats ? recorded.avatar?.heroName || '' : '',
         playedMinutes: recordedNumber(recorded?.raw_time_mins ?? recorded?.roleTimeMins),
         mapsPlayed: recordedNumber(recorded?.maps_played)
       }
     }).sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role) || compareNames(a.identity.primary, b.identity.primary))
+    const currentMembers = members.filter(member => !['team_exit', 'playoff_exit'].includes(member.rosterChange))
+    const historicalMembers = members.filter(member => ['team_exit', 'playoff_exit'].includes(member.rosterChange))
     const rosterSize = new Set(array(team.player_ids).map(key).filter(Boolean)).size || members.length
     // A season archive can retain both replaced players and their replacements.
     // Reconstruct the opening count only when every published member has a known joining stage.
@@ -62,15 +75,15 @@ export function buildRosterOverview(db, season) {
       ...team,
       members,
       rosterSize,
+      currentMembers,
+      historicalMembers,
+      currentRosterSize: currentMembers.length,
       openingRosterSize: hasOpeningRoster ? rosterRecords.filter(player => key(player.join_stage) === 'season').length : null,
       playoffJoins: members.filter(member => member.rosterChange === 'playoff_join').length,
       playoffExits: members.filter(member => member.rosterChange === 'playoff_exit').length,
       staffRecords: teamStaff.filter(staff => key(staff.team.routeId) === key(team.routeId)),
-      heroMember: members.filter(member => member.hero).sort((a, b) =>
-        (b.playedMinutes ?? -1) - (a.playedMinutes ?? -1) ||
-        (b.mapsPlayed ?? -1) - (a.mapsPlayed ?? -1) ||
-        compareNames(a.identity.primary, b.identity.primary) || compareNames(a.identity.playerId, b.identity.playerId)
-      )[0] || null
+      heroMember: members.filter(member => member.hero).sort(compareRecordedPlay)[0] || null,
+      currentHeroMember: currentMembers.filter(member => member.hero).sort(compareRecordedPlay)[0] || null
     }
   })
   const index = buildStaffIndex(db)

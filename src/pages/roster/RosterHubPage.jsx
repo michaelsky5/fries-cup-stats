@@ -79,32 +79,44 @@ function OverviewSearch({ model, value, onChange, withSeason, en }) {
   </div>
 }
 
+function TeamMembers({ members, hero, withSeason, locale, onPreview, historical = false }) {
+  const en = locale === 'en-US'
+  return <ul className={styles.members} data-roster-members={historical ? 'history' : 'current'} style={{ '--roster-rows': Math.max(1, Math.ceil(members.length / 2)) }}>{members.map((member, index) => {
+    const changeLabel = getRosterChangeLabel(member.rosterChange, locale)
+    const memberContent = <><strong>{member.identity.primary}</strong><span className={styles.memberMeta}>
+      <span className={styles.memberRole}>{roleLabel(member.role, locale)}</span>
+      {changeLabel ? <small className={styles.changeNote}>{changeLabel}</small> : null}
+    </span></>
+    return <li key={member.identity.playerId || index} data-roster-change={member.rosterChange || undefined} data-hero-active={hero === member || undefined}
+      onPointerEnter={event => { if (event.pointerType === 'mouse' || event.pointerType === 'pen') onPreview(memberKey(member)) }}
+      onFocus={() => onPreview(memberKey(member))}>
+      {member.href ? <DirectoryLink className={styles.memberEntry} to={withSeason(member.href)} label={(en ? 'Open player archive ' : uiText("查看选手档案 ", locale)) + member.identity.primary + (changeLabel ? ' · ' + changeLabel : '')}>{memberContent}</DirectoryLink> : <span className={styles.memberEntry}>{memberContent}</span>}
+    </li>
+  })}</ul>
+}
+
 function SelectedTeam({ team, seasonId, withSeason, locale, panelRef }) {
   const en = locale === 'en-US'
   const [previewKey, setPreviewKey] = useState('')
+  const [historyOpen, setHistoryOpen] = useState(false)
   if (!team) return <div className={styles.teamEmpty}>{en ? 'Team rosters have not been published yet.' : uiText("本届队伍名单尚未发布。", locale)}</div>
   const identity = getTeamDisplayIdentity(team.shortName, team.fullName)
-  const hero = team.members.find(member => memberKey(member) === previewKey) || team.heroMember || team.members[0] || null
-  const playerCount = team.rosterSize > 0
-    ? en && team.rosterSize === 1 ? '1 player' : eventCenterText('rosterPlayerCount', locale).replace('{0}', String(team.rosterSize))
-    : eventCenterText('rosterPlayerCountUnavailable', locale)
-  return <article ref={panelRef} className={styles.selectedTeam} data-overview-team={team.routeId} style={{ '--roster-rows': Math.max(1, Math.ceil(team.members.length / 2)) }} aria-label={(en ? 'Selected team ' : uiText("当前队伍 ", locale)) + identity.primary}>
+  const visibleMembers = historyOpen ? team.members : team.currentMembers
+  const hero = visibleMembers.find(member => memberKey(member) === previewKey) || team.currentHeroMember || team.currentMembers[0] || null
+  const rosterIncomplete = team.members.length < team.rosterSize
+  const playerCount = !team.members.length ? eventCenterText('rosterPlayerCountUnavailable', locale)
+    : rosterIncomplete ? eventCenterText('rosterPublishedCurrentPlayerCount', locale).replace('{0}', String(team.currentRosterSize))
+      : en && team.currentRosterSize === 1 ? '1 player' : eventCenterText('rosterPlayerCount', locale).replace('{0}', String(team.currentRosterSize))
+  return <article ref={panelRef} className={styles.selectedTeam} data-overview-team={team.routeId} aria-label={(en ? 'Selected team ' : uiText("当前队伍 ", locale)) + identity.primary}>
     <div className={styles.teamCopy}>
-      <header className={styles.teamIdentity}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><div><span>{en ? 'SEASON PLAYER ARCHIVE' : uiText("全季选手名录", locale)}</span><div className={styles.teamNameLine}><h2>{identity.primary}</h2><small className={styles.teamPlayerCount}>{playerCount}</small></div>{identity.secondary ? <p>{identity.secondary}</p> : null}</div><DirectoryLink to={withSeason('/teams/' + encodeURIComponent(team.routeId))} label={(en ? 'Open team archive ' : uiText("查看队伍档案 ", locale)) + identity.primary}>→</DirectoryLink></header>
+      <header className={styles.teamIdentity}><TeamMark key={seasonId + team.routeId} team={team} seasonId={seasonId} /><div><span>{eventCenterText('rosterCurrentMembers', locale)}</span><div className={styles.teamNameLine}><h2>{identity.primary}</h2><small className={styles.teamPlayerCount}>{playerCount}</small></div>{identity.secondary ? <p>{identity.secondary}</p> : null}</div><DirectoryLink to={withSeason('/teams/' + encodeURIComponent(team.routeId))} label={(en ? 'Open team archive ' : uiText("查看队伍档案 ", locale)) + identity.primary}>→</DirectoryLink></header>
       {(team.playoffJoins || team.playoffExits) && team.openingRosterSize !== null ? <p className={styles.rosterHistory}>{en ? 'Opening roster: ' + team.openingRosterSize : uiText('初始报名 {0} 人', locale, [team.openingRosterSize])}</p> : null}
-      <ul className={styles.members}>{team.members.map((member, index) => {
-        const changeLabel = getRosterChangeLabel(member.rosterChange, locale)
-        const memberContent = <><strong>{member.identity.primary}</strong><span className={styles.memberMeta}>
-          <span className={styles.memberRole}>{roleLabel(member.role, locale)}</span>
-          {changeLabel ? <small className={styles.changeNote}>{changeLabel}</small> : null}
-        </span></>
-        return <li key={member.identity.playerId || index} data-roster-change={member.rosterChange || undefined} data-hero-active={hero === member || undefined}
-          onPointerEnter={event => { if (event.pointerType === 'mouse' || event.pointerType === 'pen') setPreviewKey(memberKey(member)) }}
-          onFocus={() => setPreviewKey(memberKey(member))}>
-          {member.href ? <DirectoryLink className={styles.memberEntry} to={withSeason(member.href)} label={(en ? 'Open player archive ' : uiText("查看选手档案 ", locale)) + member.identity.primary + (changeLabel ? ' · ' + changeLabel : '')}>{memberContent}</DirectoryLink> : <span className={styles.memberEntry}>{memberContent}</span>}
-        </li>
-      })}</ul>
-      {team.members.length < team.rosterSize ? <p className={styles.rosterNotice}>{en ? team.members.length + ' of ' + team.rosterSize + ' archived player records available.' : uiText('已提供 {0} / {1} 位赛季收录选手的资料。', locale, [team.members.length, team.rosterSize])}</p> : !team.members.length ? <p className={styles.rosterNotice}>{en ? 'Player names not published yet.' : uiText("选手名单尚未发布。", locale)}</p> : null}
+      {team.currentMembers.length ? <TeamMembers members={team.currentMembers} hero={hero} withSeason={withSeason} locale={locale} onPreview={setPreviewKey} /> : <p className={styles.rosterNotice}>{eventCenterText(!team.members.length || rosterIncomplete ? 'rosterPlayerCountUnavailable' : 'rosterNoCurrentMembers', locale)}</p>}
+      {team.historicalMembers.length ? <details className={styles.historyMembers} onToggle={event => setHistoryOpen(event.currentTarget.open)}>
+        <summary>{eventCenterText('rosterHistoricalMembers', locale).replace('{0}', String(team.historicalMembers.length))}</summary>
+        <TeamMembers members={team.historicalMembers} hero={hero} withSeason={withSeason} locale={locale} onPreview={setPreviewKey} historical />
+      </details> : null}
+      {rosterIncomplete ? <p className={styles.rosterNotice}>{en ? team.members.length + ' of ' + team.rosterSize + ' archived player records available.' : uiText('已提供 {0} / {1} 位赛季收录选手的资料。', locale, [team.members.length, team.rosterSize])}</p> : null}
       <div className={styles.teamStaff}>{['manager', 'coach'].map(role => { const records = team.staffRecords.filter(staff => staff.roles.includes(role)); return <div key={role}><span>{role === 'manager' ? en ? 'Manager' : uiText("经理", locale) : en ? 'Coach' : uiText("教练", locale)}</span><p>{records.length ? records.map(staff => <DirectoryLink key={staff.id} to={withSeason(staffOverviewHref(staff))}>{staff.name}</DirectoryLink>) : en ? 'Not registered' : uiText("未登记", locale)}</p></div> })}</div>
     </div>
     {hero ? <figure className={styles.heroFigure} data-overview-hero={memberKey(hero)} data-hero-missing={!hero.hero || undefined}>
@@ -270,6 +282,6 @@ export default function RosterHubPage() {
       </div>
     </section>
     <CreditSection model={model} role={creditRole} selectedKey={searchParams.get('rosterCredit')} onChangeRole={role => update({ creditRole: role === 'admin' ? '' : role, rosterCredit: '' })} onSelect={key => update({ rosterCredit: key })} seasonId={seasonId} withSeason={withSeason} en={en} />
-    <details className={styles.method}><summary>{eventCenterText('rosterNotes', locale)}</summary><p>{en ? 'Team and player archives retain records across the season, including playoff arrivals and departures; they are not simultaneous rosters. Managers and coaches come from published team records; officials and casters come from published match credits. A person may have several team or role records. Staff record totals are not unique-person counts. Hero artwork refers to a recorded hero of the named player.' : uiText("队伍与选手名录保留全季记录，包含季后赛加入与退出的选手，不代表同一阶段的报名阵容。经理与教练来自已发布队伍资料；赛管与解说来自已发布比赛的署名。同一人可能拥有跨队或不同职务的记录，职员档案条数不代表去重人数。英雄图对应画面中注明选手的英雄出场记录。", locale)}</p></details>
+    <details className={styles.method}><summary>{eventCenterText('rosterNotes', locale)}</summary><p>{eventCenterText('rosterMembershipNote', locale)}</p><p>{en ? 'Team and player archives retain records across the season, including playoff arrivals and departures; they are not simultaneous rosters. Managers and coaches come from published team records; officials and casters come from published match credits. A person may have several team or role records. Staff record totals are not unique-person counts. Hero artwork refers to a recorded hero of the named player.' : uiText("队伍与选手名录保留全季记录，包含季后赛加入与退出的选手，不代表同一阶段的报名阵容。经理与教练来自已发布队伍资料；赛管与解说来自已发布比赛的署名。同一人可能拥有跨队或不同职务的记录，职员档案条数不代表去重人数。英雄图对应画面中注明选手的英雄出场记录。", locale)}</p></details>
   </div>
 }

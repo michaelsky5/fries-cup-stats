@@ -260,3 +260,122 @@ test('registration labels do not borrow a played role, and preview records retai
   assert.equal(members.find(row => row.identity.playerId === 'P1').role, 'UNKNOWN')
   assert.equal(members.find(row => row.identity.playerId === 'P2').role, 'FLEX')
 })
+
+test('current counts exclude departures while full player and match archives remain intact', () => {
+  const db = fixture()
+  Object.assign(db.players[1], { roster_status: 'EXITED' })
+  Object.assign(db.players[2], { left_at: '2026-10-30T12:00:00Z' })
+  Object.assign(db.players[3], { exit_stage: 'PLAYOFFS' })
+  const before = structuredClone(db)
+  const model = buildRosterOverview(db, season)
+  const team = model.teams.find(row => row.routeId === 'A')
+  assert.equal(team.currentRosterSize, 1)
+  assert.deepEqual(team.currentMembers.map(member => member.identity.playerId), ['P1'])
+  assert.deepEqual(team.historicalMembers.map(member => member.identity.playerId), ['P2', 'P4', 'P3'])
+  assert.equal(team.rosterSize, 4)
+  assert.equal(team.members.length, 4)
+  assert.equal(model.totalPlayers, 4)
+  assert.equal(getPlayerDirectory(db, {}, { season }).length, 4)
+  assert.equal(searchRosterOverview(model, 'Two').find(group => group.id === 'players').items[0].href, '/players/P2')
+  assert.deepEqual(db, before, 'Roster display must not rewrite source players or past matches')
+})
+
+test('every existing departure flag moves members to history without hiding active substitutes or arrivals', () => {
+  const departures = [
+    { roster_status: 'EXITED' }, { status: 'TRANSFERRED' }, { roster_status: 'REMOVED' },
+    { roster_status: 'inactive' }, { status: 'RETIRED' }, { roster_status: 'PLAYOFF_WITHDRAWAL' },
+    { left_at: '2026-10-30T12:00:00Z' }, { exit_stage: 'SEASON' }, { exit_stage: 'PLAYOFFS' }
+  ]
+  for (const departure of departures) {
+    const db = fixture()
+    Object.assign(db.players[0], departure)
+    Object.assign(db.players[1], { status: 'ACTIVE', roster_status: 'ACTIVE', substitute: true })
+    Object.assign(db.players[2], { join_stage: 'PLAYOFFS', roster_status: 'PLAYOFF_INTRODUCTION' })
+    const team = buildRosterOverview(db, season).teams.find(row => row.routeId === 'A')
+    assert.equal(team.currentRosterSize, 3, JSON.stringify(departure))
+    assert.deepEqual(team.historicalMembers.map(member => member.identity.playerId), ['P1'])
+    assert.ok(team.currentMembers.some(member => member.identity.playerId === 'P2'))
+    assert.ok(team.currentMembers.some(member => member.identity.playerId === 'P3' && member.rosterChange === 'playoff_join'))
+    assert.ok(team.currentMembers.some(member => member.identity.playerId === 'P4'), 'Legacy records without status remain compatible')
+  }
+})
+
+test('default artwork uses current players even when a departed player has more recorded appearances', () => {
+  const db = fixture()
+  Object.assign(db.players[0], { roster_status: 'EXITED', raw_time_mins: 300, maps_played: 20, most_played_hero: 'Winston' })
+  Object.assign(db.players[1], { raw_time_mins: 50, maps_played: 5, most_played_hero: 'Mei' })
+  const team = buildRosterOverview(db, season).teams.find(row => row.routeId === 'A')
+  assert.equal(team.heroMember.identity.playerId, 'P1', 'The original season archive remains available')
+  assert.equal(team.currentHeroMember.identity.playerId, 'P2')
+  assert.ok(team.currentMembers.includes(team.currentHeroMember))
+})
+
+test('teams with only former members have an honest zero current count and no departed default preview', () => {
+  const db = fixture()
+  db.players.forEach(player => { player.roster_status = 'EXITED' })
+  const team = buildRosterOverview(db, season).teams.find(row => row.routeId === 'A')
+  assert.equal(team.currentRosterSize, 0)
+  assert.deepEqual(team.currentMembers, [])
+  assert.equal(team.currentHeroMember, null)
+  assert.equal(team.historicalMembers.length, 4)
+  assert.equal(team.members.length, 4)
+  assert.equal(team.rosterSize, 4)
+})
+
+test('missing published records do not inflate the known current count or create synthetic members', () => {
+  const db = { teams: [{ team_id: 'A', player_ids: ['P1', 'P1', 'MISSING'] }], players: [
+    { player_id: 'P1', team_id: 'A', role: 'TANK', roster_status: 'ACTIVE' }
+  ] }
+  const team = buildRosterOverview(db, season).teams[0]
+  assert.equal(team.currentRosterSize, 1)
+  assert.equal(team.rosterSize, 2)
+  assert.deepEqual(team.historicalMembers, [])
+  assert.deepEqual(team.currentMembers.map(member => member.identity.playerId), ['P1'])
+})
+
+test('an active transfer appears in the new current roster and the former team history', () => {
+  const db = fixture()
+  db.teams[1].player_ids = ['P2']
+  Object.assign(db.players[1], { team_id: 'B', status: 'ACTIVE', roster_status: 'ACTIVE' })
+  const before = structuredClone(db)
+  const model = buildRosterOverview(db, season)
+  const oldTeam = model.teams.find(team => team.routeId === 'A')
+  const newTeam = model.teams.find(team => team.routeId === 'B')
+  assert.equal(oldTeam.currentRosterSize, 3)
+  assert.equal(newTeam.currentRosterSize, 1)
+  assert.deepEqual(oldTeam.historicalMembers.map(member => member.identity.playerId), ['P2'])
+  assert.equal(newTeam.currentMembers[0].identity.playerId, 'P2')
+  assert.equal(oldTeam.members.length, 4, 'The former team keeps its full season archive')
+  assert.equal(oldTeam.rosterSize, 4)
+  assert.deepEqual(db, before, 'Transfer grouping must not rewrite players or past matches')
+})
+
+test('transfer membership follows normalized published IDs even when an old team name is reused', () => {
+  const db = fixture()
+  db.teams[1].player_ids = ['P2']
+  Object.assign(db.players[1], { team_id: ' b ', team_short_name: 'ALPHA', join_stage: 'PLAYOFFS' })
+  const teams = buildRosterOverview(db, season).teams
+  assert.equal(teams.find(team => team.routeId === 'A').historicalMembers[0].rosterChange, 'team_exit')
+  assert.equal(teams.find(team => team.routeId === 'B').currentMembers[0].rosterChange, 'playoff_join')
+})
+
+test('an unknown legacy team ID or a reused name alone does not establish a transfer', () => {
+  const db = fixture()
+  Object.assign(db.players[0], { team_id: 'OLD', team_short_name: 'BETA' })
+  delete db.players[1].team_id
+  db.players[1].team_short_name = 'BETA'
+  const team = buildRosterOverview(db, season).teams.find(row => row.routeId === 'A')
+  assert.equal(team.currentRosterSize, 4)
+  assert.deepEqual(team.historicalMembers, [])
+})
+
+test('transfer history keeps a recorded playoff exit and never becomes the former default preview', () => {
+  const db = fixture()
+  db.teams[1].player_ids = ['P1']
+  Object.assign(db.players[0], { team_id: 'B', exit_stage: 'PLAYOFFS', raw_time_mins: 300, maps_played: 20, most_played_hero: 'Winston' })
+  Object.assign(db.players[1], { raw_time_mins: 50, maps_played: 5, most_played_hero: 'Mei' })
+  const team = buildRosterOverview(db, season).teams.find(row => row.routeId === 'A')
+  assert.equal(team.historicalMembers[0].rosterChange, 'playoff_exit')
+  assert.equal(team.currentHeroMember.identity.playerId, 'P2')
+  assert.equal(team.heroMember.identity.playerId, 'P1')
+})
